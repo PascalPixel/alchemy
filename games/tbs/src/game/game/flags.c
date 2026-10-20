@@ -8,7 +8,8 @@
 // pick the bit and the next nine the byte; byte and nibble flags use the same
 // numbering.
 
-/// Returns 1 when `flag` is set.
+/// Returns 1 when `flag` is set. Every bank tests flags through it, as
+/// GameFlag_TestFar, and the scenes through the event layer.
 s32 GameFlag_Test(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
@@ -21,7 +22,8 @@ s32 GameFlag_Test(s32 flag) {
   return (u32)((0 - flagValue) | flagValue) >> 0x1F;
 }
 
-/// Returns `flag`'s byte number.
+/// Sets `flag` and returns its byte number. Called from every bank, as
+/// GameFlag_SetBitFar, and by the scenes through the event layer.
 s32 GameFlag_SetBit(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
@@ -33,6 +35,8 @@ s32 GameFlag_SetBit(s32 flag) {
   return flag;
 }
 
+/// Clears `flag`. Called from every bank, as GameFlag_ClearBitFar, and by the
+/// scenes through the event layer.
 void GameFlag_ClearBit(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
@@ -43,7 +47,8 @@ void GameFlag_ClearBit(s32 flag) {
   flagBytes[flag] &= flagMask;
 }
 
-/// Flips `flag` and returns its new value.
+/// Flips `flag` and returns its new value. Only GAME.S's bare veneer reaches
+/// it; nothing calls it by name.
 u32 GameFlag_Toggle(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
@@ -57,7 +62,9 @@ u32 GameFlag_Toggle(s32 flag) {
   return (u32)((0 - flagValue) | flagValue) >> 31;
 }
 
-/// Returns the whole byte `flag` is in.
+/// Returns the whole byte `flag` is in, a counter kept among the flags. Called
+/// by the battle encounter code and, through FieldGameFlag_GetByte, by the
+/// Colosso scenes and the Battle Arena.
 s32 GameFlag_GetByte(s32 flag) {
   u32 byteIndex;
 
@@ -66,14 +73,16 @@ s32 GameFlag_GetByte(s32 flag) {
   return gGameFlagBytes[flag];
 }
 
-/// Sets the whole byte `flag` is in.
+/// Sets the whole byte `flag` is in. Reached through FieldGameFlag_SetByte by
+/// the Colosso scenes, the world map and the Battle Arena's win counts.
 void GameFlag_SetByte(s32 flag, s32 value) {
   u32 shifted = (u32)flag << 20;
   flag = shifted >> 23;
   gGameFlagBytes[flag] = value;
 }
 
-/// Adds 1 to the byte `flag` is in, stopping at 255, and returns it.
+/// Adds 1 to the byte `flag` is in, stopping at 255, and returns it. Only
+/// GAME.S's bare veneer reaches it; nothing calls it by name.
 u8 GameFlag_IncrementByte(s32 flag) {
   u8 *flagBytes;
 
@@ -85,7 +94,8 @@ u8 GameFlag_IncrementByte(s32 flag) {
   return flagBytes[flag];
 }
 
-/// Takes 1 from the byte `flag` is in, stopping at 0, and returns it.
+/// Takes 1 from the byte `flag` is in, stopping at 0, and returns it. Only
+/// GAME.S's bare veneer reaches it; nothing calls it by name.
 u8 GameFlag_DecrementByte(s32 flag) {
   u8 *flagBytes;
 
@@ -98,6 +108,7 @@ u8 GameFlag_DecrementByte(s32 flag) {
 }
 
 /// Returns the four bits `flag` is in (bit 2 of the number picks the half).
+/// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 s32 GameFlag_GetNibble(u32 flag) {
   u32 shifted = (u32)flag << 20;
   u32 shift;
@@ -112,7 +123,8 @@ s32 GameFlag_GetNibble(u32 flag) {
   return result >> shift;
 }
 
-/// Sets the four bits `flag` is in.
+/// Sets the four bits `flag` is in. Only GAME.S's bare veneer reaches it;
+/// nothing calls it by name.
 void GameFlag_SetNibble(s32 flag, s32 value) {
   s32 fieldMask = 0xF;
   s32 shift = 4 & flag;

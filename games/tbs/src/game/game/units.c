@@ -4,37 +4,41 @@
 
 #include "../game_internal.h"
 
-/// The running totals UnitCalc builds a unit's stats in.
+/// The running totals UnitCalc builds a unit's stats in, in a block of the
+/// alternate pool that it frees at the end.
 struct StatWork {
-  s32 hp;
-  s32 pp;
-  s32 atk;
-  s32 def;
-  s32 agi;
-  s32 unk14;
+  s32 hp;    ///< maximum HP
+  s32 pp;    ///< maximum PP
+  s32 atk;   ///< Attack
+  s32 def;   ///< Defense
+  s32 agi;   ///< Agility
+  s32 unk14; ///< never written; a gap between Agility and Luck
   s32 luck;
-  s32 turns;
-  s32 hpRegen;
-  s32 ppRegen;
-  s32 element[4][2];
-  s32 kind;
-  s32 unk4c[2];
-  s32 amount;
-  struct ItemDefinition *item;
-  s32 unk5c;
+  s32 turns;                   ///< actions a round, 0 to 2
+  s32 hpRegen;                 ///< HP regained each round
+  s32 ppRegen;                 ///< PP regained each round
+  s32 element[4][2];           ///< [element][0] power and [1] resistance
+  s32 kind;                    ///< the item effect being applied
+  s32 unk4c[2];                ///< never written
+  s32 amount;                  ///< the amount of the item effect being applied
+  struct ItemDefinition *item; ///< the equipped item being applied
+  s32 unk5c;                   ///< never written
 };
 
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 /// Starts a new game: clears the game state and restarts at the opening.
+/// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_Restart(void) {
   GameState_InitDefaults();
   Game_ResetForNewGameFar(0);
 }
 
-/// Returns the party recovery bank, or battle unit 0x83 as the enemy-side
-/// recovery bank. The bank also stores the summon flags read by
-/// Summon_ListLearned.
+/// Returns the party's Djinn recovery bank (the standby Djinn and their turns
+/// to recover), or for the enemy side battle unit 0x83's record, read as a
+/// bank. The bank also holds the summon flags Summon_ListLearned reads.
+/// Called by the battle code that sets, recovers and links Djinn
+/// (DjinnRecovery_Tick, BattleSummon_UpdateAvailability, the link battle).
 void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
     return UnitGet(0x83);
@@ -43,7 +47,8 @@ void *Djinn_GetRecoveryTable(s32 enemySide) {
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
-/// members).
+/// members). Called by Encounter_SelectEnemyGroup to pick a random battle's
+/// enemies, and by the Lucky Dice game in Tolbi to set its prizes.
 u32 Party_GetAverageLevel(void) {
   s32 partySize;
   s32 totalLevels;
@@ -63,7 +68,8 @@ u32 Party_GetAverageLevel(void) {
 
 /// Returns the unit record of `owner`: 0 to 7 are the playable characters in
 /// the game state, 0x80 to 0x85 the enemies of the current battle. Anything
-/// else, or an enemy outside a battle, is NULL.
+/// else, or an enemy outside a battle, is NULL. Nearly every bank calls it,
+/// through GAME.S as UnitGetFar.
 struct BattleUnit *UnitGet(u32 owner) {
   struct BattleUnit *states;
   struct BattleUnit *unit;
@@ -88,13 +94,23 @@ struct BattleUnit *UnitGet(u32 owner) {
   return NULL;
 }
 
-/// Returns the definition of enemy `selector - 8`; an id outside the 250
-/// enemies gives the first.
+/// Returns the definition of enemy `selector - 8`; an id past the first 250
+/// gives the first. Called by the battle code that builds and scores
+/// enemies (the formations, the enemy AI, the spoils) and by the element and
+/// weakness reads in this object.
+/// XXX: why enemy ids are offset by 8 is unknown; the encounter tables'
+/// enemy column would show whether 0 to 7 were meant for the characters.
 const u8 *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex;
 
   recordIndex = selector - 8;
+  // BUG: the table has 165 rows, but only rows past 249 are refused, so 165 to
+  // 249 read the tables after it. BattleUnitSet refuses them itself.
+#ifdef BUGFIX
+  if (recordIndex > 164U) {
+#else
   if (recordIndex > 0xF9U) {
+#endif
     recordIndex = 0;
   }
   return (const u8 *)&gEnemy_Definitions[recordIndex];
@@ -124,8 +140,12 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 }
 
 /// Recomputes a unit's stats from its base stats, equipment, set Djinn, class
-/// and battle stat levels, and clamps each to its range. A change of maximum
-/// HP or PP keeps the unit's current HP and PP at the same fraction of it.
+/// and battle stat levels, clamps each to its range and writes them to the
+/// unit. A change of maximum HP or PP keeps the unit's current HP and PP at
+/// the same fraction of it. Also sets the unit's curse restraint bits and
+/// equipment bonuses. Called after anything that changes those inputs:
+/// equipping, setting Djinn, levelling up, a class change, battle stat
+/// changes.
 void UnitCalc(s32 owner) {
   struct StatWork *stats;
   struct BattleUnit *unit;
@@ -163,6 +183,8 @@ void UnitCalc(s32 owner) {
     unit->pp = unit->maxPp;
   }
 
+  // Restraint bits 0 and 1 are the curse's; bit 2 keeps bit 0 set and bit 3
+  // (an item's effect 25) clears bits 0 and 3 again below.
   unit->restraint &= ~3;
   if (unit->restraint & 4)
     unit->restraint |= 1;
@@ -325,6 +347,9 @@ void UnitCalc(s32 owner) {
     }
   }
 
+  // Battle stat levels scale by (8 + level) / 8; each element level adds
+  // 5 * (level * level + level) power, and each resistance stage 20 to every
+  // element's resistance.
   stats->atk = stats->atk * (unit->attackStage + 8) / 8;
   stats->def = stats->def * (unit->defenseStage + 8) / 8;
   stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
@@ -384,6 +409,7 @@ void UnitCalc(s32 owner) {
     unit->element[index].resistance = stats->element[index][1];
   }
 
+  // A character's maximum HP and PP stop at 1999, an enemy's at 9999.
   statLimit = 9999;
   if (unit->classIndex)
     statLimit = 1999;
@@ -414,7 +440,9 @@ void UnitCalc(s32 owner) {
 }
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
-/// with ITEM_EFFECT_LURE) equipped, and clears it otherwise.
+/// with ITEM_EFFECT_LURE) equipped, and clears it otherwise. Called on entering
+/// a scene (Scene_ResetFlagsOnEnter, Field_RunScene) and at the end of a field
+/// event, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
@@ -448,7 +476,9 @@ void GameFlag_RefreshLureCap(void) {
 
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
-/// A new game stores this value as its start stamp.
+/// GameState_InitDefaults stores it as a new game's start stamp, and the save
+/// menu (SaveMenu_SelectSlot, SaveState_BuildSummaryHeader) and the file
+/// select screen compare saves with it.
 u32 Runtime_GetBuildStampTime(void) {
   u8 *digits;
   s32 hourTens;
@@ -464,6 +494,7 @@ u32 Runtime_GetBuildStampTime(void) {
   s32 shifted;
   s32 result;
 
+  // The stamp is six ASCII digits, hhmmss.
   digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
   hourTens = *digits;
   hours = (hourTens - '0') * 10;
@@ -501,6 +532,8 @@ struct SceneStateTail {
 /// Clears the game-state header, scene state, flags and save stamp; sets a new
 /// game's defaults: Isaac alone in the party, the standard button layout,
 /// the message speed, the play time clock and the slot machine prize odds.
+/// Called by the file select screen's new game, by Game_Restart and
+/// Game_ResetForNewGame, and by the debug battle menu.
 void GameState_InitDefaults(void) {
   volatile s32 zero;
 
@@ -564,7 +597,9 @@ void GameState_InitDefaults(void) {
   gGameState.prizeWeights[14] = 64;
 }
 
-/// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna.
+/// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
+/// then take their childhood forms. Called by the file select screen when a
+/// new game starts the prologue.
 void Party_BeginChildhood(void) {
   GameFlag_SetBit(FLAG_CHILDHOOD);
   Unit_UpdateClass(ISAAC);
@@ -576,9 +611,12 @@ void Party_BeginChildhood(void) {
 }
 
 /// The party set-up after the prologue: flags, Jenna recomputed, Isaac and
-/// Garet healed with the Machete (item 15) in their inventories replaced by
-/// the Short Sword (item 16) and equipped, four Psynergy entries taught across
-/// Isaac, Garet and Ivan, and 300 coins.
+/// Garet healed with the Machete in their inventories replaced by the Short
+/// Sword and equipped, Move and Retreat taught to Isaac, Move to Garet, Mind
+/// Read to Ivan, and 300 coins. Called by Title_Run when the title shown after
+/// the prologue hands over to Vale, three years later.
+/// XXX: flags 0x21 and 0x901 are cleared and set here with no name; what reads
+/// them would name them.
 void Party_EndChildhood(void) {
   s32 owner;
 
@@ -618,8 +656,10 @@ void Party_EndChildhood(void) {
   gGameState.coins += 300;
 }
 
-/// Restores every party member's HP and PP; with `cureConditions` 1 it cures
-/// poison and haunting.
+/// Restores every party member's HP and PP; with `cureConditions` 1 it also
+/// cures poison and haunting. Called by the scenes that heal the party
+/// (leaving Vale, meeting Flint, the Colosso rounds, Faran in Lalivero), by
+/// the Battle Arena after a round, and by InventorySnapshot_Save.
 void Party_RestoreHpPp(s32 cureConditions) {
   s32 partySize;
   s32 partyIndex;
@@ -642,6 +682,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
 /// Restores the PP of each party member whose element group has a lit
 /// lighthouse: Venus or Mars for group 0, Mercury or Jupiter for the others.
+/// Called by the scenes at the top of the Mercury and Venus Lighthouses.
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;
@@ -677,11 +718,12 @@ void Party_RestorePpOfLitElements(void) {
   }
 }
 
-/// Unused reserved entry; keep its place in the far-call table.
+/// Unused reserved entry; keeps its place in the far-call table.
 UNUSED void Owner_RatioNoOp(void) {}
 
-/// Recomputes the HP and PP gauges of the selected unit from its current
-/// values.
+/// Recomputes the HP and PP gauges of `owner` from its current HP and PP, so
+/// that UnitCalc keeps the same fractions. Called after anything that writes
+/// HP or PP directly: Unit_AddHp, the inn, the sanctum, item use, battle.
 void UnitRatio(s32 owner) {
   struct BattleUnit *unit;
 
@@ -689,6 +731,7 @@ void UnitRatio(s32 owner) {
   Unit_UpdateGauges(unit);
 }
 
+/// Clamps a new HP or PP value to 0 and the maximum.
 static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
   s32 result;
 
@@ -703,7 +746,7 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
 }
 
 /// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
-/// gauges.
+/// gauges. Called by BattleActor_DestroyTemporaryObject.
 void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   s32 clamped;
 
@@ -713,7 +756,7 @@ void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
 }
 
 /// Sets the unit's PP, clamped to 0..maxPp, and recomputes its HP and PP
-/// gauges.
+/// gauges. Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
   s32 clamped;
 
@@ -723,7 +766,8 @@ void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
 }
 
 /// Adds delta to the HP of unit owner, clamped to 0..maxHp, recomputes its
-/// gauges and returns the new HP.
+/// gauges and returns the new HP. Called by battle's round end, poison and
+/// regeneration, and by the field's damage floors and status damage.
 s32 Unit_AddHp(s32 owner, s32 delta) {
   struct BattleUnit *unit = UnitGet(owner);
   s32 currentHp = unit->hp;
@@ -738,7 +782,9 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
 }
 
 /// Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
-/// gauges and returns the new PP.
+/// gauges and returns the new PP. Called when Psynergy is used in the field,
+/// in battle and from the menu, by PP recovery at the end of a battle round,
+/// and by the debug menu.
 s16 Unit_AddPp(s32 owner, s32 delta) {
   struct BattleUnit *unit = UnitGet(owner);
   s32 currentPp = unit->pp;

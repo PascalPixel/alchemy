@@ -16,7 +16,12 @@
 
 /// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats,
 /// name with its suffix letter, the items it carries, rewards and elements.
-/// Enemies 158 to 171 fight on side 2. Returns 0 for an id out of range.
+/// Enemies 158 to 171 fight on the party's side. Returns 0 for an id out of
+/// range. Called by the battle set-up (Battle_RunEncounter,
+/// BattleFormation_BuildEnemyList) and by BattleTargetExec when an enemy calls
+/// for help.
+/// XXX: which enemies 158 to 171 are, and when they join the party's side, is
+/// unknown; the encounter tables that place them would say.
 s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
   const struct EnemyDefinition *enemy;
@@ -57,6 +62,8 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   UiText_DecodeMessageFar(index + MsgEnemyName, name, 15);
   for (i = 0; i < 14 && name[i] != 0; i++)
     unit->name[i] = name[i];
+  // Enemies of one kind are told apart by a letter after the name; past the
+  // last letter the name stays bare.
   if (suffix <= ENEMY_SUFFIX_LAST) {
     unit->name[i] = ENEMY_SUFFIX_FIRST + suffix;
     i++;
@@ -81,7 +88,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   Unit_CalcBaseElements(unitId, (s16 (*)[2])unit->baseElement);
 #endif
   UnitCalc(unitId);
-  unit->side = 1;
+  unit->side = BATTLE_UNIT_ENEMY;
   switch (unit->classId) {
   case 158:
   case 159:
@@ -97,7 +104,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   case 169:
   case 170:
   case 171:
-    unit->side = 2;
+    unit->side = BATTLE_UNIT_PARTY;
     break;
   }
   return 1;
@@ -106,7 +113,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
 // The party: flags 0 to 7 say who is in it, and gGameState.activeOwners
 // lists them in order.
 
-/// Returns the number of party members.
+/// Returns the number of party members, counted from game flags 0 to 7.
 s32 Party_CountActiveOwners(void) {
   s32 owner;
   s32 count;
@@ -121,7 +128,10 @@ s32 Party_CountActiveOwners(void) {
   return count;
 }
 
-/// Adds character `owner` to the end of the party. Returns the party size.
+/// Adds character `owner` to the end of the party: sets its game flag and
+/// appends it to gGameState.activeOwners unless it is already listed.
+/// Returns the party size. Called by the scenes where a character joins, by
+/// the member chooser and the file select screen, and by the debug presets.
 s32 Party_AddActiveOwner(s32 owner) {
   s32 partySize = Party_CountActiveOwners();
   s32 partyIndex;
@@ -137,7 +147,10 @@ s32 Party_AddActiveOwner(s32 owner) {
   return partySize + 1;
 }
 
-/// Takes character `owner` out of the party. Returns the party size.
+/// Takes character `owner` out of the party: clears its game flag and closes
+/// the gap it leaves in gGameState.activeOwners. Returns the party size.
+/// Called by the scenes where a character leaves, by the member chooser and
+/// the file select screen, and by the debug presets.
 s32 Party_RemoveActiveOwner(s32 owner) {
   s32 partySize = Party_CountActiveOwners();
   s32 removedIndex;
@@ -155,7 +168,8 @@ s32 Party_RemoveActiveOwner(s32 owner) {
 }
 
 /// Writes the party members to `owners`, ending with 0xff, and returns how
-/// many there are.
+/// many there are. Every screen that lists the party starts here: the menus,
+/// the shops, the inn and the party inventory searches.
 s32 Party_ListActiveOwners(s16 *owners) {
   s32 count = 0;
 
@@ -176,7 +190,8 @@ s32 Party_ListActiveOwners(s16 *owners) {
 }
 
 /// Adds `amount` to the party's coins, kept between 0 and 999999, and returns
-/// the new total.
+/// the new total. Called by the shops, the inn and the sanctum to charge,
+/// by the battle spoils to pay, and by the Lucky Dice game.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
   struct GameState *work;
@@ -204,7 +219,9 @@ struct TradeFlags {
 };
 
 /// Each adds `amount` to a game state counter, kept between 0 and `max`, and
-/// returns the new value.
+/// returns the new value. The shops call the two: each purchase adds its
+/// price to the credit, and each Game Ticket given spends credit and counts
+/// one more gift.
 #define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
@@ -225,6 +242,7 @@ PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
 /// Writes the summons whose bit is set in the first word of the party's Djinn
 /// table to `output`, in menu order, ending with 32. Returns how many.
+/// Called by SummonMenu_SelectSummon to list the battle's Summon command.
 s32 Summon_ListLearned(u8 *output) {
   u8 *source = gSummon_OrderList;
   u8 *end = gSummon_OrderList + 15;
@@ -242,7 +260,8 @@ s32 Summon_ListLearned(u8 *output) {
   return count;
 }
 
-/// Returns summon `summonId`'s definition, or NULL past the sixteenth.
+/// Returns summon `summonId`'s definition, or NULL past the sixteenth. Reached
+/// only through GAME.S, as SummonDefinition_Get.
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
   if (summonId > 15)
     return NULL;

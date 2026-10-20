@@ -75,7 +75,7 @@ extern s32 gKolimaForestBridge_SparkleSoundOn;
 /// takes its next pose.
 static s32
 KolimaForestBridge_FlashHitBarriers(struct ScriptInterpreter *interpreter) {
-  u8 *object = (u8 *)interpreter;
+  struct FieldActor *object = (struct FieldActor *)interpreter;
   s32 *pending = &gKolimaForestBridge_BarrierHit;
   if (*pending) {
     Object_SetMode(object, 2);
@@ -89,14 +89,14 @@ KolimaForestBridge_FlashHitBarriers(struct ScriptInterpreter *interpreter) {
 /// before; at 1200 the timer starts over.
 static s32
 KolimaForestBridge_TwinkleGroundSparkle(struct ScriptInterpreter *interpreter) {
-  u8 *object = (u8 *)interpreter;
-  u16 *counter = (u16 *)(object + 100);
+  struct FieldActor *object = (struct FieldActor *)interpreter;
+  s16 *counter = &object->timer;
   *counter = (*counter + (((u32)Engine_RandomNext() * 100) >> 16));
-  if ((s16)*counter > 1000)
+  if (*counter > 1000)
     ObjectGroup_SetChildValue(object, 7);
   else
     ObjectGroup_SetChildValue(object, 10);
-  if (*(s16 *)counter > 1200) {
+  if (*counter > 1200) {
     u16 z = 0;
     *counter = z;
   }

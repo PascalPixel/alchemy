@@ -60,6 +60,10 @@ enum ImilFuchinFallsActor {
   ACTOR_FUCHIN_DJINNI = 11 ///< in the second platform room
 };
 
+enum {
+  IMIL_SLIDE_ANIMATION_STEP = 3 * 16 ///< three times normal animation speed
+};
+
 static void Fuchin_RebuildFirstRoomPlatforms(void);
 static void Fuchin_RebuildSecondRoomPlatforms(void);
 static void Fuchin_RebuildThirdRoomPlatforms(void);
@@ -1494,7 +1498,8 @@ static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *object) {
     direction = -0x1000;
   actor->facing = facing + direction;
   Object_SetMode(actor, 2);
-  ObjectDispatch_SetAnimationSpeed(actor, 0x30);
+  ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)actor,
+                                   IMIL_SLIDE_ANIMATION_STEP);
 }
 
 /// Slides along the ice until terrain or a collision boundary ends the move.
@@ -1543,7 +1548,8 @@ static void Imil_SlideActorAcrossIce(void) {
     Engine_ObjectSetPosition(actor, x, actor->y.fixed, z);
 
     Object_SetMode(actor, 2);
-    ObjectDispatch_SetAnimationSpeed(actor, 48);
+    ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)actor,
+                                     IMIL_SLIDE_ANIMATION_STEP);
     FieldObject_WaitForMove(actor);
     actor->update = Imil_TurnSkaterTowardHeldDirection;
 

@@ -2,12 +2,6 @@
 #include "field_obj.h"
 #include "field_scene.h"
 
-/// An actor's animation object, seen for the sprite number it is drawn with.
-struct SpriteNumber {
-  u8 unk00[0x28];
-  const s16 *number;
-};
-
 // Mercury and Venus Lighthouses' aeries.
 
 /// Returns the placed actor drawn with sprite 0xf2 nearest the leader, within
@@ -27,7 +21,7 @@ s32 SceneActor_FindNearestSlotOfKindF2(void) {
   do {
     struct FieldActor *actor = *slot++;
     if (actor != 0) {
-      if (*((struct SpriteNumber *)actor->sprite)->number == 0xf2) {
+      if (actor->sprite->entries[0]->animId == 0xf2) {
         s32 dist = FixedPoint_Distance(
             (const u8 *)origin + offsetof(struct FieldActor, x),
             (const u8 *)actor + offsetof(struct FieldActor, x));
@@ -38,6 +32,7 @@ s32 SceneActor_FindNearestSlotOfKindF2(void) {
       }
     }
     actorId++;
-  } while (actorId <= 65);
+  } while (actorId < ACTOR_FIRST_PLACED + sizeof(work->placedActors) /
+                                              sizeof(work->placedActors[0]));
   return nearestActor;
 }

@@ -1,7 +1,20 @@
 /// @file
-/// Bilibin's village, river crossing and raised warehouse approach.
-/// Town dialogue changes with the tree curse; the river route includes a rescue
-/// and Jill's reward for helping the stranded villager.
+/// Bilibin's overlay, which holds three places, each a scene of its own.
+///
+/// - Bilibin (Bilibin1), the village. Until Kolima's curse is lifted
+///   (FLAG_KOLIMA_CURSE_LIFTED) a man stands at the village entrance turned
+///   into a tree, and the villagers talk of the curse and of the road to
+///   Kolima, which is blocked; afterwards they talk of the curse breakers. A
+///   well to look into and a block to Move.
+/// - Bilibin Treasury (Bilibin2), behind a sign reading `McCoy's Hidden
+///   Warehouse / Do Not Enter!`. Gust, a Jupiter Djinni, waits here and joins
+///   the party when spoken to; a block to Move opens the way.
+/// - Bilibin Barricade (Bilibin3), the road out of Bilibin that a barricade
+///   closes, signed `This area is off-limits to all those without a permit.
+///   —Lord McCoy`, and the river beside it. Jill, one of a trio once called
+///   the Gang of Three, is a tree caught in the river: Move pulls her to the
+///   bank before she is washed downstream (FLAG_BILIBIN_JILL_RESCUED). Once the
+///   curse is lifted she is herself again, and she gives the party a Hard Nut.
 
 #include "game_state.h"
 #include "flags.h"
@@ -39,19 +52,19 @@ static void Bilibin_RestoreVillageActors(void);
 static void Bilibin_UpdateVillageBlockCells(void);
 static void Bilibin_RestoreRiverActors(void);
 static void Bilibin_UpdateRiverBlockCells(void);
-static void Bilibin_RestoreRaisedEntrance(void);
+static void Bilibin_SetUpTreasury(void);
 static void Bilibin_UpdateRiverEffect(void);
 static void Bilibin_SpawnRiverEffect(struct FieldActor *actor);
-static void Bilibin_UpdateRaisedBlockCells(void);
+static void Bilibin_UpdateTreasuryBlockCells(void);
 
 /// Actors of the village (Bilibin1), numbered from its placement rows.
 enum {
-  TREE_MAN = 9,        ///< the cursed traveler, a tree at the village entrance
+  TREE_MAN = 9,        ///< the man turned into a tree at the village entrance
   VILLAGE_BLOCK = 20,  ///< the block moved with Move
   FORMER_TREE_MAN = 21 ///< the same man once the curse is lifted
 };
 
-/// Actors of the river south of the village (Bilibin3).
+/// Actors of the Bilibin Barricade and its river (Bilibin3).
 enum {
   RIVER_BLOCK = 8,
   JILL_TREE = 11, ///< Jill as a tree, about to be swept downstream
@@ -61,8 +74,8 @@ enum {
   JILL = 14
 };
 
-/// Actors of the warehouse approach (Bilibin2).
-enum { RAISED_BLOCK = 8, GUST = 9 };
+/// Actors of the Bilibin Treasury (Bilibin2).
+enum { TREASURY_BLOCK = 8, GUST = 9 };
 
 /// Counts frames between the river effects, one every 30 frames.
 struct SpawnCounter {
@@ -88,7 +101,7 @@ const struct SceneEntrance *Bilibin_GetEntrances(void) {
   return (const struct SceneEntrance *)gBilibinEntrancesOther;
 }
 
-/// Only the raised approach supplies exit-region boxes.
+/// Only the Bilibin Treasury has exit regions.
 const struct SceneRegion *Bilibin_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_Bilibin2) {
     return (const struct SceneRegion *)gBilibinRegions2;
@@ -99,10 +112,12 @@ const struct SceneRegion *Bilibin_GetRegions(void) {
 /// Returns the packed exit destinations shared by the three maps.
 const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
 
-/// Gust, Jupiter Djinni 0, joins the party on the warehouse approach.
+/// Talking to Gust in the Bilibin Treasury: Gust, a Jupiter Djinni, joins the
+/// party.
 static void Event_GustJoins(void) { Djinn_JoinParty(GUST, ELEMENT_JUPITER, 0); }
 
-/// Selects the village, river or raised-approach actors.
+/// Selects the actors of Bilibin, the Bilibin Barricade or the Bilibin
+/// Treasury.
 const struct ScenePlacement *Bilibin_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -148,7 +163,7 @@ static void Event_ReadRestrictedAreaSign(void) {
   Engine_EventEnd();
 }
 
-/// Reads McCoy's warning on the hidden warehouse.
+/// The Treasury's sign: `McCoy's Hidden Warehouse / Do Not Enter!`
 static void Event_ReadWarehouseSign(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinMccoysHiddenWarehouseDoNot, 1);
@@ -440,7 +455,7 @@ s32 Bilibin_Initialize(void) {
     Bilibin_RestoreRiverActors();
     FieldScheduler_AddCallback(Bilibin_UpdateRiverEffect, 0xc80);
   } else if (gGameState.scene == (s32)&SceneId_Bilibin2) {
-    Bilibin_RestoreRaisedEntrance();
+    Bilibin_SetUpTreasury();
   }
   return 0;
 }
@@ -619,12 +634,13 @@ static void Bilibin_UpdateRiverBlockCells(void) {
   Map_CopyCellAttributes(0, 0, 1, 1, blockColumn, blockRow);
 }
 
-/// Restores the block cells and starts the raised arrivals above floor height.
-static void Bilibin_RestoreRaisedEntrance(void) {
+/// Sets up the Bilibin Treasury: its block's passage cells, and the leader
+/// arriving by entrance 3 or 4 starts 16 pixels above the floor.
+static void Bilibin_SetUpTreasury(void) {
   struct FieldActor *leader;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  Bilibin_UpdateRaisedBlockCells();
+  Bilibin_UpdateTreasuryBlockCells();
   if (gGameState.entrance == 3 || gGameState.entrance == 4) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -685,7 +701,7 @@ static void Event_PushBlock(void) {
       else if (gGameState.scene == (s32)&SceneId_Bilibin1)
         Bilibin_UpdateVillageBlockCells();
       else if (gGameState.scene == (s32)&SceneId_Bilibin2)
-        Bilibin_UpdateRaisedBlockCells();
+        Bilibin_UpdateTreasuryBlockCells();
     }
   }
 }
@@ -733,10 +749,10 @@ static void Bilibin_SpawnRiverEffect(struct FieldActor *actor) {
 }
 
 /// Updates the two passage cells according to the movable block's current row.
-static void Bilibin_UpdateRaisedBlockCells(void) {
+static void Bilibin_UpdateTreasuryBlockCells(void) {
   struct FieldActor *block;
 
-  block = Actor_Get(RAISED_BLOCK);
+  block = Actor_Get(TREASURY_BLOCK);
   if (block == NULL)
     return;
 
@@ -1001,7 +1017,7 @@ struct SceneEvent gBilibinEvents2[] = {
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadWarehouseSign) },
     { EVENT_TALK, GUST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GustJoins) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), RAISED_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateRaisedBlockCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), TREASURY_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateTreasuryBlockCells) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
     { TOUCH_WALKING, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },

@@ -5,12 +5,16 @@
 #include "../field_internal.h"
 
 enum {
+  /// The sprite copies and their ring positions; a facing kind places 4, 6, 8
+  /// or 10 of them (Map_BuildProbeRing).
   UI_SPRITE_VIEWER_COPY_COUNT = 10,
-  UI_SPRITE_VIEWER_SPRITE_LIMIT = 512,
-  UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100,
+  UI_SPRITE_VIEWER_SPRITE_LIMIT = 512,    ///< sprite ids 0 to 511 are offered
+  UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
+  /// A layer priority above 3, which Sprite_ComposeAnimationFrame skips.
   UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8
 };
 
+/// What left and right choose for L and R to change on the selected layer.
 enum UiSpriteViewerEditMode {
   UI_SPRITE_VIEWER_EDIT_ANIMATION,
   UI_SPRITE_VIEWER_EDIT_SPRITE,
@@ -307,8 +311,9 @@ next:
       }
       goto next;
 
-    // Mode 3, the draw parameter, 0 to 15 and wrapping; 15 is the value
-    // ObjectGroup_SetChildValueUnlessFifteen leaves alone.
+    // Mode 3, the draw parameter (SpriteColorMode), 0 to 15 and wrapping;
+    // 15, hidden, is the value ObjectGroup_SetChildValueUnlessFifteen leaves
+    // alone.
     case UI_SPRITE_VIEWER_EDIT_COLOR:
       changed = 0;
       if ((*repeatedKeys & KEY_L) != 0) {
@@ -543,8 +548,8 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     }                                                                          \
   }
 
-/// Sets the draw parameter or the priority of one layer of the viewer's ten
-/// sprites.
+/// Sets the colour mode (SpriteColorMode, the layer's draw parameter) or the
+/// priority of one layer of the viewer's ten sprites.
 UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
 UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
 

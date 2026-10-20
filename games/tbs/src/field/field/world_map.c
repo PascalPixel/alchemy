@@ -17,8 +17,11 @@ typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
 /// One 32-pixel cell of the world map: its tile, its kind (21 selects the
 /// second graphics set) and a flag.
 struct WorldMapCell {
-  u32 tile : 24;
-  u32 kind : 7;
+  u32 tile : 24; ///< its low halfword is the block WorldMap_CopyCellTiles draws
+  u32 kind : 7;  ///< the terrain kind; encounters read it too
+  /// Selects the second row of gWorldMap_TerrainBehaviorTable
+  /// (GetWorldMapTerrainBehavior); a cell of kind 21 takes the third row
+  /// whatever this bit says.
   u32 flag : 1;
 };
 
@@ -164,6 +167,8 @@ s32 Map_InitializePerspectiveScene(void) {
   // The ground is BG3 and BG2, two 512-pixel affine layers that wrap (char
   // blocks 2 and 3, screen blocks 8 and 10); BG1 is a plain layer on screen
   // block 5. The affine matrices start as the identity (0x100 is 1.0).
+  // fade is the word MapScrollWork calls flags, the REG_DISPCNT bits the
+  // scene's fade-in turns on: 0x1f00 is BG0 to BG3 and the sprites.
   perspective->fade = 0x1f00;
   perspective->fadeStep = 0x80;
   Io_Set16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
@@ -264,10 +269,12 @@ s32 Map_InitializePerspectiveScene(void) {
 }
 
 /// Puts world map tile (x / 16, y / 16) at cell (px / 16, py / 16) of the
-/// tile id grid, and draws it at once when it is next to the view. Layer 1
-/// takes the tile 0x140 (320) further on. Called by the world map scene
-/// (FieldMap_SetWindowCellTile, through Map_SetWindowCellTileFar). Sets
-/// perspective->tileIds.
+/// tile id grid, and draws it at once when it is next to the view. px and py
+/// count 32-pixel world map cells, so a grid cell is a 512-pixel tile; it is
+/// next to the view when px / 8 and py / 8, in 256-pixel steps, are within
+/// one step of the followed point's. Layer 1 takes the tile 0x140 (320)
+/// further on. Called by the world map scene (FieldMap_SetWindowCellTile,
+/// through Map_SetWindowCellTileFar). Sets perspective->tileIds.
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   struct PerspectiveWork *perspective;
   s32 *followedPosition;
@@ -284,6 +291,7 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
     originY = followedPosition[1];
   }
 
+  // The followed point and px, py in 256-pixel steps.
   originX >>= 24;
   originY >>= 24;
   x >>= 4;
@@ -323,6 +331,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   graphicsSet = 0;
   buffer = MemAlloc(0x200);
   perspective = gMapWork[0];
+  // The 32-pixel cell under (x, z) (16.16 / 0x200000), 32 cells to a row.
   if (WORLD_MAP_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)]
           .kind == 21)
     graphicsSet = 1;

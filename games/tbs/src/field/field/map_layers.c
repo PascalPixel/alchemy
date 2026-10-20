@@ -102,11 +102,16 @@ UNUSED void Tilemap_NumberPlaceholderBlocks(void) {
   } while (remaining != 0);
 }
 
-/// Converts the map's cells in place with Tile_ConvertMap, run from RAM, from
-/// a saved copy of the staged buffer. Called by Map_LoadLayeredScene once the
-/// cell planes are decoded. Copies the first 32 KB of Ram_MapCellBuffer to a
-/// block from the alternate pool and loads the routine into RAM; frees both
-/// when done.
+/// Converts the map's cells in place with Tile_ConvertMap, run from RAM. The
+/// grid is decoded as three planes: collision codes and shapes (16 KB each),
+/// then 32 KB of block halfwords (the block number with the layer and priority
+/// bits an object standing there takes). The routine makes each block halfword
+/// the low half of a cell word, numbering placeholder blocks (0xfff) from 0
+/// up, and interleaves the other two planes into the high halves. The 128 by
+/// 128 cell words overwrite the first two planes, so those 32 KB are first
+/// copied to a buffer from the alternate pool; the buffer and the routine's
+/// RAM copy are freed when done. Called by Map_LoadLayeredScene once the cell
+/// planes are decoded.
 void Tilemap_ConvertBuffer(void) {
   u8 *savedCells;
   TilemapConvertFn convertMap;
@@ -129,6 +134,8 @@ static __inline__ void Map_CopyMetatileHalfColumn(u32 *cell, u8 *screenMap,
                                                   u32 tileHalf) {
   u16 *metatileEntry;
   u8 *screenTile;
+  // A block is 8 bytes of gMapBlocks: its top two tile entries, then its
+  // bottom two. The cell's low 12 bits times 4 index its first halfword.
   u32 index = ((*cell << 20) >> 18) + tileHalf;
 
   metatileEntry = (u16 *)Ram_MapBlocks;
@@ -162,6 +169,8 @@ static __inline__ void Map_CopyMetatileToScreen(u32 *cell, u8 *screenMap,
 /// A row of gMap_LayeredScenes: a layered map's resources, counted from
 /// ResourceId_Map001: its header, palette, three tile sheets and layer data.
 struct LayeredSceneEntry {
+  /// Offsets from ResourceId_Map001: the header, the palette, the tile sheets
+  /// for char blocks 1, 2 and 3, and the layer data (gMapLayerData).
   u16 resources[6];
 };
 
@@ -184,17 +193,21 @@ struct LayeredSceneLayer {
 /// bases and setup, and the offsets of its packed tiles, collision, tilemap,
 /// tile animation, blend script and marker list.
 struct LayeredSceneHeader {
-  u8 origin[4]; ///< 8-pixel tiles
+  /// The camera's bounds in 8-pixel tiles: left, top, right and bottom.
+  u8 origin[4];
+  /// Each layer's BG priority, 1 to 3; 0 leaves the layer off.
   u8 priority[3];
-  u8 charBase[3];
-  u16 unk0a;
+  u8 charBase[3]; ///< each layer's BG char block
+  u16 unk0a;      ///< not read by Map_LoadLayeredScene
   struct LayeredSceneLayer layers[3];
-  s32 tiles;
-  s32 collision;
-  s32 tilemap;
-  s32 animation;
-  s32 blend;
-  s32 markers; ///< the chests and Psynergy stones (Field_PlaceMapMarkers)
+  // Offsets from the header's start: type-01 packed data, but for the
+  // markers, which are read in place.
+  s32 tiles;     ///< the blocks, staged and unpacked into gMapBlocks
+  s32 collision; ///< the collision shapes, into Ram_MapCollision
+  s32 tilemap;   ///< the cells, into Ram_MapCellBuffer
+  s32 animation; ///< the tile animation script, or 0 for none
+  s32 blend;     ///< the blend script, or 0 for none
+  s32 markers;   ///< the chests and Psynergy stones (Field_PlaceMapMarkers)
 };
 
 /// Loads layered scene index from gMap_LayeredScenes: its blocks, collision,
@@ -417,6 +430,9 @@ void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY) {
   u32 screenColumnOffset = tileX & 30;
   u32 metatileIndex;
 
+  // A block is 2x2 tiles, so the BG map's tile row and column are kept even
+  // (& 30) and wrap at 32; the grid wraps at 128 cells. Sixteen blocks are
+  // the BG map's whole width.
   for (metatileIndex = 0; metatileIndex <= 15; metatileIndex++) {
     u32 *sourceCell = (u32 *)Ram_MapCellBuffer;
     u32 *metatileRows;
@@ -450,6 +466,8 @@ void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
   u32 tileHalf = tileX & 1;
   u32 metatileIndex;
 
+  // Eleven blocks are 22 tiles: the screen's 20 and the rows partly
+  // scrolled in. Both the cells and the BG map wrap.
   for (metatileIndex = 0; metatileIndex <= 10; metatileIndex++) {
     u32 *sourceCell = (u32 *)Ram_MapCellBuffer;
 
@@ -607,6 +625,9 @@ void Map_SetCameraCenter(s32 x, s32 y) {
       x += layer->offsetX;
       y += layer->offsetY;
       layer++;
+      // 0x80000 is 8 pixels in 16.16, so x and y become tiles. A block is 2
+      // by 2 tiles: the grid, 128 blocks a row, is read at half of them, and
+      // the screen map's offsets step 2 tiles and wrap at 32.
       x /= 0x80000;
       y /= 0x80000;
       screenMap = BG_SCREEN_BLOCK(5) + (layerIndex << 11);
@@ -695,8 +716,10 @@ void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
       tmp6 = tmp11;
       offset = tmp6;
       // The first layer whose visible area (16x12 cells) holds the cell has
-      // the block written to its BG map too; offset is the cell's place in
-      // a 32x32 BG map, 0x800 bytes per layer from screen block 5.
+      // the block written to its BG map too, and only that one (a map lays
+      // its layers out in different parts of the grid); offset is
+      // the cell's place in a 32x32 BG map (128 bytes a cell row, 4 a cell),
+      // 0x800 bytes per layer from screen block 5.
       for (; i < 3; i++) {
         if (visibleLayer->x <= (s32)x && 16 + visibleLayer->x > (s32)x &&
             visibleLayer->y <= (s32)y && visibleLayer->y + 12 > (s32)y) {
@@ -733,7 +756,9 @@ void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
 /// One step of a map edit sequence: the rectangle of cells to copy from and the
 /// wait after it.
 struct MapCopyCommand {
-  u16 source;
+  u16 source; ///< the source rectangle's x in cells; 0xffff ends the sequence
+  /// The source rectangle's y, width and height in cells, and the frames to
+  /// wait after the copy.
   s16 y, width, height, delay;
 } __attribute__((packed, aligned(2)));
 typedef char MapCopyCommandSize[(sizeof(struct MapCopyCommand) == 10) ? 1 : -1];

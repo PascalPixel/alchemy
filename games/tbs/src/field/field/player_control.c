@@ -17,10 +17,10 @@
 #endif
 
 /// Stores value in a halfword of the event work.
-/// XXX: why the stores go through a helper rather than plain assignment;
-/// whether the assignment form changes Field_RequestShortcut's bytes would
-/// settle it.
 static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
+  // XXX: why the stores go through a helper rather than plain assignment;
+  // whether the assignment form changes Field_RequestShortcut's bytes would
+  // settle it.
   *address = value;
 }
 
@@ -34,9 +34,12 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 
 /// Handles a shortcut key's assignment: its top two bits choose what it
 /// requests (0 Psynergy, 1 an item) and the low 14 bits which one. With flag
-/// 0x107 set it raises event 250 instead, as the menu key does then; on the
-/// world map (mode 3) R raises event -888 (0xfc88), the world map picture,
-/// and L -889 (0xfc87), the visibility transition. Returns the request.
+/// 0x107 (FLAG_MENUS_RAISE_EVENT, which Vault's inn sets while the party
+/// corners the suspects) it raises event 250 instead, as the menus do then; on
+/// the world map (mode 3) R raises event -888 (0xfc88), the world map picture,
+/// and L -889 (0xfc87), the visibility transition. Returns the request id,
+/// the assignment's low 14 bits, even when it raised an event instead; a
+/// shortcut with nothing assigned returns 0, as no key pressed does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets fieldWork->command,
 /// fieldWork->item or fieldWork->event, which the scene loop (run_scene.c)
@@ -70,8 +73,9 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 
 /// Checks the keys the player has configured: Select, A and Start set their
 /// flag in the event work and return 1; the two shortcut keys pass on their
-/// assignment (Field_RequestShortcut). Returns 0 when none is pressed. Only
-/// the first configured key pressed this frame counts, in that order.
+/// assignment (Field_RequestShortcut) and return its request id. Returns 0
+/// when none is pressed, or with no field work. Every caller drops the result.
+/// Only the first configured key pressed this frame counts, in that order.
 ///
 /// Called each frame by the leader's control commands: SC_PLAYER, SC_WORLD
 /// and SC_KEY_COUNT. Sets fieldWork->menu, examine or start.
@@ -463,6 +467,11 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
     if (effect != 0) {
       struct AnimationObject *animation;
 
+      // collision is 0 here: the footprint takes no motion flags (it stays
+      // where it is laid) and its sprite no shadow. It lasts 120 frames,
+      // sorts underfoot (priority flag 2), draws at OAM priority 3, under
+      // any map layer of priority 0 to 2, and lies rotated a quarter turn
+      // from the heading.
       effect->terrainHeight = object->terrainHeight;
       animation = effect->animation;
       ObjectDispatch_Initialize((struct DispatchObject *)effect,
@@ -475,6 +484,8 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         animation->rotation = footprintAngle + 0x4000;
         animation->image.priority = 3;
       }
+      // The first footprint after a stop takes animation 2 and restarts the
+      // sides; each second one faces a half turn round.
       if (object->footprintSide == 2) {
         AnimationObjects_SelectAnimation(animation, 2);
         object->footprintSide = collision;
@@ -743,6 +754,7 @@ update_object:
     Object_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
                       Iwram_MulQ16(object->velocityZ, object->velocityZ));
+    // collision is 0 here: keep the speed, along the chosen heading.
     object->velocityX = collision;
     object->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)angle,
@@ -768,6 +780,9 @@ update_object:
   if (object->animationKind == 1) {
     playerSprite = object->animation;
     terrainCollision = GetWorldMapCollision((struct WorldPosition *)&object->x);
+    // On collision 9 the sprite's second layer is drawn (priority 1) and its
+    // shadow is not; elsewhere that layer takes priority 9, and a layer above
+    // 3 is not drawn.
     if (terrainCollision == 9) {
       playerSprite->entries[1]->priority = 1;
       playerSprite->flags = 0;
@@ -776,7 +791,8 @@ update_object:
       playerSprite->flags = 1;
     }
     // In shallow water a ripple (object kind 24) follows every 10 frames of
-    // walking.
+    // walking: it lasts 30 frames, takes no motion flags, and its sprite,
+    // with no shadow, is drawn semi-transparent (OAM mode 1) at priority 2.
     if (terrainCollision == 6 && object->action == 0 && collision == 0) {
       ripple = FieldObject_Create(24, object->x, object->y, object->z);
       if (ripple != 0) {

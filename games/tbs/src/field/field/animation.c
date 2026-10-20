@@ -24,7 +24,9 @@ extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 /// Loads the frames of animation id number into resource slot slot's buffer:
 /// the resource listed for it in gResourceSlot_NumberTable, decoded, its frame
 /// offsets turned into pointers, and for variant 1-5 its pixel colours (those
-/// up to 0xdf) remapped through that variant's conversion table. Returns the
+/// up to 0xdf, the basic sprite palettes 0 to 13) remapped through that
+/// variant's conversion table; a variant above 5 uses variant 1's. The caller
+/// owns buffer, which must hold the decoded resource. Returns the
 /// image's size in pixels (width * height), or 0 when the slot or id is not
 /// known. Sets the slot's tag to (slot << 12) | number and its buffer; with
 /// a null buffer and number 0 it does only that, which is how the battle frees
@@ -83,7 +85,8 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     end = (u8 *)buffer + size;
     if (index > 4)
       index = 0;
-    // Values above 0xdf are kept; only the remappable palette range changes.
+    // Values above 0xdf (palettes 14 and 15, which Palette_LoadBasicObjColors
+    // does not load) are kept; only the basic palettes' colours change.
     colorMap = gResourceSlot_ConversionTables[index];
     for (; pixels < end; pixels++) {
       u32 colorIndex = *pixels;
@@ -146,6 +149,8 @@ s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
     layer->frames = frames;
     layer->scripts = metadata->animation;
     layer->mode = metadata->frameCodec;
+    // Frame 255 and no script: Sprite_ComposeAnimationFrame skips the layer
+    // until an animation is selected on it.
     layer->frame = 0xff;
     layer->script = 0;
     layer->pos = 0;
@@ -404,16 +409,21 @@ void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
   }
 }
 
-/// Allocates and zeroes the 64 sprites and 64 animation layers (from the
-/// fixed blocks in mode 3, the heap otherwise), sets up the palette DMA,
-/// loads the shadow tiles into VRAM cache entry 93 and puts the sprite tile
-/// uploader in RAM. Called by ObjectSystem_Initialize.
+/// Allocates and zeroes the 64 sprites and 64 animation layers (heap slots 4
+/// and 3, from EWRAM first in mode 3, the world map, and IWRAM first
+/// otherwise), loads the basic sprite palettes, loads the shadow tiles into
+/// VRAM cache entry 93 and puts the sprite tile uploader in RAM. Called by
+/// ObjectSystem_Initialize. Battle_RunEncounter (mode 4) takes both slots from
+/// EWRAM, at the same sizes, before it starts the object system, so in battle
+/// this gets those blocks back.
 void ObjectSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
   volatile u32 zero;
 
-  // World-map mode keeps the sprite and layer pools in the fixed heap blocks.
+  // On the world map (MODE_WORLD_MAP) the two pools are taken from EWRAM
+  // first; elsewhere from IWRAM first, though a battle has already taken
+  // both from EWRAM.
   if (mode == 3) {
     sprites = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT *
                                            sizeof(struct AnimationObject));
@@ -506,9 +516,11 @@ void ResourceMetadata_ClearRecord(struct AnimationEntry *record) {
 
 /// Creates a sprite for animation id, taking one of the 64 free sprites and a
 /// VRAM cache entry for its tiles. Returns the sprite, or NULL when there is
-/// no room or the id has no image. Called by FieldObject_Create and the sprite
-/// viewer, and as ResourceObject_CreateFar by the battle, the battle effects,
-/// the Psynergy effects and the menus.
+/// no room or the id has no image. The caller owns it until
+/// ResourceObject_Release. When no layer record is free the sprite is still
+/// returned, with no layer and a width of 0, so it also counts as free. Called
+/// by FieldObject_Create and the sprite viewer, and as ResourceObject_CreateFar
+/// by the battle, the battle effects, the Psynergy effects and the menus.
 struct AnimationObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationObject *sprite;
@@ -540,6 +552,10 @@ struct AnimationObject *ResourceObject_Create(s32 id) {
     return NULL;
   if (slot == VRAM_CACHE_ENTRY_COUNT)
     return NULL;
+  // Claim the cache entry with no VRAM yet (size 0): the first
+  // Sprite_ComposeAnimationFrame that draws the sprite gives it width * height
+  // bytes. A 0 tile means no VRAM block is free, or that block 0 is the
+  // first free one (VramCache_Load).
   tile = VramCache_Load(slot, 0, 0);
   if (tile == 0)
     return NULL;

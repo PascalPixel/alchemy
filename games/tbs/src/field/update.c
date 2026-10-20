@@ -66,7 +66,8 @@ void Object_UpdateAll(void) {
       continue;
 
     // Count down a wait, or run commands until one yields for this frame.
-    // Words above 63 are operands, which the cursor steps over.
+    // Words above 63 are labels (SC_LABEL), which the cursor steps over; a
+    // command moves the cursor past its own operands.
     if (object->wait != 0) {
       object->wait--;
     } else {
@@ -102,7 +103,8 @@ void Object_UpdateAll(void) {
       if (object->targetX != TARGET_UNSET) {
         // Accelerate towards the target. The first distance is in whole
         // pixels, to stay in range; under 256 pixels it is measured again in
-        // 16.16.
+        // 16.16, where the root of a 16.16 square is 8.8 and << 8 makes it
+        // 16.16 again.
         deltaX = (object->targetX - x) / 65536;
         deltaZ = (object->targetZ - z) / 65536;
         distance = IwramSqrt(deltaX * deltaX + deltaZ * deltaZ) << 16;
@@ -116,6 +118,13 @@ void Object_UpdateAll(void) {
           x = object->targetX;
           z = object->targetZ;
         } else {
+          // speedRatio is acceleration / distance in 16.16. Under 256 pixels
+          // deltaX and deltaZ are 16.16 too, so each axis gains its share of
+          // the acceleration; further away they are whole pixels, and MulQ16
+          // makes the gain 65536 times smaller, which rounds to almost
+          // nothing.
+          // XXX: likely a bug, because Object_UpdateAllThumb's free flight
+          // multiplies its whole-pixel offsets by the ratio without MulQ16.
           speedRatio = IwramRatioMulQ14(distance, object->acceleration);
           velocityX = object->velocityX + MulQ16(deltaX, speedRatio);
           object->velocityX = velocityX;
@@ -225,6 +234,7 @@ void Object_UpdateAll(void) {
       z = object->velocityZ;
       if (x != 0 || z != 0) {
         travelAngle = ArcTan2FarArm(z, x);
+        // As a signed halfword the difference is the shorter way round.
         turnDelta = (s16)(travelAngle - object->facing);
         if (turnDelta > TURN_MAX)
           turnDelta = TURN_MAX;

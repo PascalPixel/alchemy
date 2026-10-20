@@ -10,12 +10,12 @@
 /// 0xfeff stops, and 0xffff loops to the start. MapAnimation_StartChannels
 /// schedules it (order 0xc80); the world map's still view
 /// (WorldMap_BeginStillView) suspends it. Moves each channel's cursor and timer
-/// in the map work. The retries stay gotos: as an inner for (;;) loop with
-/// continue and break, loop.c reshapes the channel loop.
+/// in the map work.
 void MapAnimation_Update(void) {
   // Each channel is written (mapState->anim + channelIndex): as
   // mapState->anim[channelIndex], 78 of 119 instructions differ in tbs-en, and
-  // a channel pointer swaps ip and lr.
+  // a channel pointer swaps ip and lr. The retries stay gotos: as an inner
+  // for (;;) loop with continue and break, loop.c reshapes the channel loop.
   struct MapState *mapState = gMapWork[0];
   u32 channelIndex;
 
@@ -55,7 +55,8 @@ void MapAnimation_Update(void) {
       destinationTile = commands[0];
       (mapState->anim + channelIndex)->timer = commands[1];
       // A source tile from 0x600 (0x200 for 64-byte tiles) is read from
-      // the copy in RAM; a lower one is copied within VRAM. The count is in
+      // RAM: both bases put tile 0x600 (0x200) at 0x02028000, the start of
+      // gMapLayerData. A lower one is copied within VRAM. The count is in
       // tiles, eight words each (16 when wide).
       if (mapState->wideTiles == 0) {
         if (sourceTileOrOpcode >= 0x600)

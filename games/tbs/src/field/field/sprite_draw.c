@@ -348,7 +348,9 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
   s32 y;
   struct AnimationSpritePart *shadow;
 
-  // Double-size affine sprites need enlarged image bounds and shadow margins.
+  // The margins are the 16x8 shadow's half width and height. A double-size
+  // affine sprite is drawn in a box twice as wide and tall, so both halves
+  // double.
   if (scaleX > 0x10000 || scaleY > 0x10000) {
     affine = 3;
     marginX = 16;
@@ -357,6 +359,9 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
     halfHeight <<= 1;
   }
   x = (screenX >> 16) - halfWidth;
+  // The point is offsetY pixels above the image's bottom edge: the box is
+  // raised by half the height less offsetY, scaled and rounded up to a whole
+  // pixel.
   y = ((screenY - height) >> 16) - halfHeight -
       ((((sprite->height >> 1) - sprite->offsetY) * scaleY + 0xffff) >> 16);
   sprite->image.affine = affine;
@@ -510,10 +515,14 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       halfHeight = sprite->height >> 1;
       size = 8;
       flip = Sprite_ComposeAnimationFrame(sprite, facing);
-      // Quantize the perspective scale before combining it with local scale.
+      // Round the perspective scale to the nearest 1/32 (0x800) before
+      // combining it with the sprite's own scale.
       roundedScale = (z + 0x400) & -0x800;
       scaleX = Iwram_MulQ16(roundedScale, *scale++);
       scaleY = Iwram_MulQ16(roundedScale, *scale);
+      // Hold each scale below 2 (0x1f800 is 2 less 1/32).
+      // XXX: likely to keep the scaled sprite inside its double-size box,
+      // because at 2 it would just fill it.
       if (scaleX > 0x1f7ff)
         scaleX = 0x1f800;
       if (scaleY > 0x1f7ff)
@@ -540,6 +549,8 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
         effect.scaleY = scaleY >> 8;
         z = AffineMatrix_BuildForEffect(&effect);
       } else if (flip != 0) {
+        // A plain sprite has no matrix: 8 in the matrix field is OAM's
+        // horizontal flip bit.
         z = 8;
         offsetX = -offsetX;
       } else {
@@ -584,15 +595,18 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
     }
   }
   // Invisible sprites release cached tiles unless their display flags hold
-  // them.
+  // them; marked dirty, the sprite is redrawn into new VRAM when it next
+  // comes on screen.
   if (!sprite->retainCacheEntry) {
     VramCache_ReleaseVram(sprite->slot);
     sprite->dirty = 1;
   }
 }
 
-/// Sets the draw parameter of each of a sprite's layers to value, except
-/// layers whose parameter is 15, and marks the sprite for redrawing.
+/// Sets the colour mode (SpriteColorMode) of each of a sprite's layers to
+/// value, except layers drawn hidden (SPRITE_COLOR_HIDDEN, 15), and marks the
+/// sprite for redrawing. The sprite's first count layers must all be present:
+/// it does not test them for null.
 /// Called by Animation_ApplyChildValues and, as
 /// ObjectGroup_SetChildValueUnlessFifteenFar, by the Psynergy effects, the
 /// Sanctum and the Altmiller Cave scene.

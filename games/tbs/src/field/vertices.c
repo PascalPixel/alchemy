@@ -46,13 +46,15 @@ STATIC_ASSERT(offsetof(struct RuntimeMathTable, sin) == 88);
 STATIC_ASSERT(offsetof(struct RuntimeMathTable, cos) == 96);
 
 extern const struct RuntimeMathTable FarCall_RuntimeTable;
+/// The yaw, in 1/65536 turns, that the cached rotation terms in each
+/// ScanVertex were computed for.
 extern u32 gScanlineAngle;
 
 /// The camera's eye or target point, as this routine reads it.
 struct Position {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels; not read here
+  s32 z; ///< 16.16 fixed-point pixels
 };
 
 /// One scanline of the world map's ground plane. WorldMap_BuildScanlineTable
@@ -126,6 +128,8 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
       s32 affinePc;
 
       depth = line->z;
+      // The BG affine parameters are 8.8 fixed point: / 256 takes the 16.16
+      // products there.
       affinePa = -(MulQ16(widthScale, cosYaw) / 256);
       horizontalOffset = (s16)affinePa;
       line->u = affinePa;
@@ -146,6 +150,9 @@ void Transform_UpdateVertices(struct Position *eye, struct Position *target,
       horizontalOffset = (horizontalOffset << 8) * centerX;
       depthOffset = ((s16)affinePc << 8) * -centerX;
 #endif
+      // The line's start: back from its centre by centerX pixels of the
+      // line's step, then along the view by its depth. BG2X and BG2Y take
+      // 8 fractional bits, so the 16.16 sums are >> 8.
       line->dx = -(horizontalOffset + MulQ16(negativeSinYaw, depth));
       line->dz = depthOffset + MulQ16(cosYaw, depth);
       affine->x = (originX + line->dx) >> 8;

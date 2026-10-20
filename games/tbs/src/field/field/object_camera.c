@@ -12,20 +12,25 @@ struct ObjectCameraTile {
   u32 unk10 : 16;
 };
 
-/// A field object, as the camera reads it.
+/// A field object (one of gObjectSlots' 64, 0x70 bytes), as the cameras read
+/// it.
 struct ObjectCameraObject {
   u32 active; ///< zero for a free slot
   u16 unk04;
-  u16 angle; ///< the sprite's facing, before the camera's angle is added
-  s32 x;
-  s32 y; ///< up; the on-screen test uses z - y
-  s32 z;
-  s32 height; ///< the ground height under the object
+  u16 angle;  ///< the sprite's facing, before the camera's angle is added
+  s32 x;      ///< 16.16 fixed-point pixels, across the map
+  s32 y;      ///< 16.16 fixed-point pixels, up; the on-screen test uses z - y
+  s32 z;      ///< 16.16 fixed-point pixels, down the map
+  s32 height; ///< the ground height under the object, 16.16 pixels
   s32 scaleX; ///< Q16
   s32 scaleY; ///< Q16
   u8 unk20[2];
-  u8 layer; ///< the map layer it stands on; the cell under it may change it
-  u8 flags; ///< bits: 2 draw 320 pixels down | 1 up | 0 priority from cell
+  /// The map layer it stands on, which the cell under it may change; the
+  /// fixed camera uses it as the draw slot, 0 to sort by distance.
+  u8 layer;
+  /// bits: 2 sorted as 320 pixels lower | 1 sorted as 320 pixels higher |
+  /// 0 priority from cell
+  u8 flags;
   u8 unk24[0x2c];
   void *sprite; ///< a sprite, or for kind 2 an array of four sprite pointers
   u8 kind;      ///< 1: one sprite, 2: up to four
@@ -41,6 +46,10 @@ struct ObjectCameraPoint {
   s32 z; ///< 16.16 fixed-point pixels
 };
 
+/// The start of the 3D camera's work (heap slot HEAP_SLOT_CAMERA, gCameraWork,
+/// a struct BattleCamera), as the fixed camera reads it: the eye and target it
+/// looks from and at, or the points that stand in for them. The battle, the
+/// world map or Lucky Dice owns the block.
 struct ObjectCameraFixed {
   struct ObjectCameraPoint eye;
   struct ObjectCameraPoint target;
@@ -137,7 +146,8 @@ void ObjectSystem_UpdateCamera(void) {
       // pixels above it to 224.
       if (dx > -0x200000 && dx < 0x1100000 && screenTop > -0x200000 &&
           screenTop < 0xe00000) {
-        // The cell under the object.
+        // The cell under the object: x and z >> 20 are 16-pixel cells, and a
+        // row holds 128 of them.
         tile = &((struct ObjectCameraTile *)mapWork->layers[object->layer]
                      .cells)[(object->x >> 20) + ((object->z >> 20) << 7)];
         if (object->flags & 1) {
@@ -156,8 +166,14 @@ void ObjectSystem_UpdateCamera(void) {
         drawPosition.height = object->y;
         drawPosition.y = dz;
         drawPosition.groundHeight = object->height;
-        // XXX: flag bits 1 and 2 draw the object 320 pixels up or down the
-        // map from where it is; the scenes that set them would say why.
+        // Bits 1 and 2 move the point 320 pixels up or down the map with its
+        // height and ground height, so the sprite and shadow stay where they
+        // are on screen; only the draw slot changes, which
+        // Render_ApplyProjectedPlacement takes from the point's y before its
+        // height is taken off. Bit 1 (ACTOR_PRIORITY_UNDERFOOT, which
+        // footprints take) moves the slot 160 back, and an object at most 220
+        // pixels up crosses that function's 100-pixel line into slot 1; bit 2
+        // moves it 160 on.
         if (object->flags & 2) {
           drawPosition.height += 0xfec00000; // -320 pixels
           drawPosition.y += 0xfec00000;
@@ -241,6 +257,9 @@ void ObjectSystem_UpdateCameraFixed(void) {
     eye = camera->eyeOverride;
   if (camera->targetOverride != NULL)
     target = camera->targetOverride;
+  // The camera's heading over the ground, from the eye's offset from the
+  // target in whole pixels; each sprite's facing is drawn relative to it, so
+  // a sprite keeps its world heading as the camera turns.
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
   Render_ResetTransformState();
@@ -253,6 +272,8 @@ void ObjectSystem_UpdateCameraFixed(void) {
   } else {
     Transform_SetLookAt((s32 *)eye, (s32 *)target);
   }
+  // The objects are placed from the last down. A sprite's layer byte is its
+  // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
   object = (struct ObjectCameraObject *)gObjectSlots;
   object += FIELD_OBJECT_COUNT - 1;
   fixedScale = 0x10000;

@@ -32,7 +32,8 @@ s32 Script_SetByte54(struct ScriptInterpreter *interpreter) {
 }
 
 /// Waits a frame at a time until a field object has arrived at its target, at
-/// most 600 frames. It takes void * because callers pass every view of an
+/// most 600 frames (ten seconds), after which it returns with the object still
+/// on its way. It takes void * because callers pass every view of an
 /// object. Called through FieldObject_WaitForMoveFar by the Psynergy effects
 /// and by about 50 scene overlays.
 void FieldObject_WaitForMove(void *fieldObject) {
@@ -170,6 +171,9 @@ void Object_UpdateAllThumb(void) {
             y = object->targetY;
             z = object->targetZ;
           } else {
+            // ratio is acceleration / distance in 16.16, and dx, dy and dz
+            // are whole pixels, so each axis gains its share of the
+            // acceleration toward the target.
             ratio = Iwram_RatioMulQ14(distance << 16, object->acceleration);
             object->velocityX += dx * ratio;
             object->velocityY += dy * ratio;
@@ -180,6 +184,7 @@ void Object_UpdateAllThumb(void) {
             speed = FixedSqrt(Iwram_MulQ16(velocityX, velocityX) +
                               Iwram_MulQ16(velocityY, velocityY) +
                               Iwram_MulQ16(velocityZ, velocityZ));
+            // Too fast: scale the velocity by speedLimit / speed.
             if (speed > object->speedLimit) {
               ratio = Iwram_RatioMulQ14(speed, object->speedLimit);
               SET_VELOCITY(object, Iwram_MulQ16(velocityX, ratio),
@@ -188,6 +193,8 @@ void Object_UpdateAllThumb(void) {
             }
           }
         } else {
+          // No target: take acceleration off the speed each frame, keeping
+          // the direction, until it stops.
           dx = object->velocityX;
           dy = object->velocityY;
           dz = object->velocityZ;
@@ -299,6 +306,7 @@ void Object_UpdateAllThumb(void) {
             y = ground;
             object->velocityY =
                 -Iwram_MulQ16(object->velocityY, object->vertical.bounce);
+            // A rebound no faster than one frame of gravity ends the bouncing.
             if ((object->velocityY < 0 ? -object->velocityY
                                        : object->velocityY) <= object->gravity)
               object->velocityY = 0;
@@ -306,6 +314,10 @@ void Object_UpdateAllThumb(void) {
         }
 
         // Float: bob up and down on a triangle wave (bit 3 makes it bigger).
+        // The phase runs over 64 frames, each table entry held for two. The
+        // first 32 frames' velocities sum to 128 * gravity / 64, so the
+        // object rises and falls by about 2 * gravity pixels, or 8 * gravity
+        // with bit 3 (2 and 8 pixels at the default gravity of 1.0).
         if ((object->motionFlags & 4) != 0) {
           phase = (object->vertical.phase & 0x3f);
           if ((object->motionFlags & 8) != 0)
@@ -323,7 +335,9 @@ void Object_UpdateAllThumb(void) {
     y += object->velocityY;
     z += object->velocityZ;
 
-    // A solid object does not move into another; count the refusals.
+    // An object with collision bit 7 does not move into a solid one (bit 0);
+    // count the refusals. A refused object keeps last frame's position and
+    // skips arrival and turning; SC_SYNC stops waiting for it after 60.
     if ((object->collisionFlags & 0x80) != 0) {
       SET_VECTOR(pos, x, y, z);
       if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, pos) !=
@@ -382,6 +396,7 @@ void Object_UpdateAllThumb(void) {
       if (x != 0 || z != 0) {
         s32 maximumFacingStep;
 
+        // As a signed halfword the difference is the shorter way round.
         facingStep = (s16)(ArcTan2(z, x) - object->facing);
         maximumFacingStep = 0x1000;
         if (facingStep > maximumFacingStep)
@@ -451,6 +466,9 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   if (object->snapToTarget == 0) {
     s32 brakingDistance;
 
+    // speedLimit squared over acceleration, in 16.16 pixels: twice the
+    // distance an object at its limit coasts while it brakes to a stop, so
+    // the shortened target leaves it room to coast onto the point asked for.
     brakingDistance =
         Iwram_RatioMulQ14(object->acceleration,
                           Iwram_MulQ16(object->speedLimit, object->speedLimit));
@@ -468,6 +486,9 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   object->targetX = x;
   object->targetY = y;
   object->targetZ = z;
+  // Watch the axis with the furthest to go: a crossing on an axis with
+  // little to go can come long before the target is reached. y only counts
+  // in free flight (no motion flags); otherwise the ground sets the height.
   dx = x - object->x;
   distance = y - object->y;
   dz = z - object->z;
@@ -539,6 +560,8 @@ void Object_UpdateAllMotion(void) {
         dx = (object->targetX - x) / 65536;
         dz = (object->targetZ - z) / 65536;
         distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
+        // Under 256 pixels, measure again in 16.16: the root of a 16.16
+        // square is 8.8, and << 8 makes it 16.16 again.
         if (distance <= 0xffffff) {
           dx = object->targetX - x;
           dz = object->targetZ - z;
@@ -638,7 +661,8 @@ void Object_UpdateAllMotion(void) {
       object->arrivalAxis = 0;
     }
     SET_POSITION(object, x, y, z);
-    // Turn to face the direction of travel, a sixteenth of a turn a frame.
+    // Turn to face the direction of travel, at most a sixteenth of a turn a
+    // frame, the shorter way round.
     if (object->steeringFlags & 1) {
       x = object->velocityX;
       z = object->velocityZ;

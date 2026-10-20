@@ -8,7 +8,8 @@
 /// Kinds 1, 2 and 22 have eight sectors, 3 and 5 sixteen, 4 and 6 sixty-four;
 /// kinds 8 and 88 have eight sectors centred on the eight compass directions.
 /// Kind 20 uses kind 2's table. Kind 1's table has 16 entries, but a 16-bit
-/// angle shifted down 13 reads only the first eight.
+/// angle shifted down 13 reads only the first eight. Sectors count from angle
+/// 0, which faces right; 0x4000 faces down the screen (gWorldMap_KeyHeadings).
 // clang-format off
 const u8 gAnimationFacing_Kind1[16] = {
     0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
@@ -106,10 +107,11 @@ const s16 gScript_MainScriptTail[8] = {
     0x1000, -0x2000, 0x3000, -0x4000, 0x6000, -0x8000, 0x4000, 0x0,
 };
 
-/// The heading for each state of the direction pad (bits 4-7 of the keys);
-/// 0xffff means no direction is held, or only an opposite pair. Read by
-/// FieldObject_UpdatePlayerControl, Object_MoveOnWorldMap and
-/// Object_MoveByKeys.
+/// The heading for each state of the direction pad (bits 4-7 of the keys:
+/// Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down 0x4000, Left
+/// 0x8000 and Up 0xc000; 0xffff means no direction is held, or only an
+/// opposite pair. Read by FieldObject_UpdatePlayerControl,
+/// Object_MoveOnWorldMap and Object_MoveByKeys.
 const u16 gWorldMap_KeyHeadings[16] = {
     0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xe000, 0xa000, 0xc000,
     0x4000, 0x2000, 0x6000, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff,
@@ -123,8 +125,12 @@ const s32 gWorldMap_FootprintActions[6] = {
     SC_WAIT(30), SC_FREE,
 };
 
-/// The world map camera's turn rate for each state of the direction pad, read
-/// by Object_MoveOnWorldMap.
+/// The yaw the world map camera leans to for each state of the direction pad,
+/// in 1/65536 turns: Right -512 and Left 512, or -384 and 384 with Up or Down
+/// but not both; 0 otherwise. It is a target, not a rate: each frame
+/// Object_MoveOnWorldMap turns the camera an eighth of the way there, at most
+/// 0x200, and the whole way once that step is under 16, so with the pad
+/// released it returns to 0.
 const s32 gWorldMap_KeyYaws[16] = {
     0, -512, 512, 0,
     0, -384, 384, 0,

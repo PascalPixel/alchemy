@@ -90,21 +90,23 @@ enum AnimationCommand {
   ANIM_CMD_BLANK = 255     ///< show nothing for `arg`
 };
 
+/// The engine's pool sizes, and the layer timer's step at normal speed.
 enum {
-  RESOURCE_SLOT_COUNT = 8,
-  FIELD_OBJECT_COUNT = 64,
-  ANIMATION_OBJECT_COUNT = 64,
-  ANIMATION_LAYER_COUNT = 4,
+  RESOURCE_SLOT_COUNT = 8,     ///< ObjectSystemWork.slots
+  FIELD_OBJECT_COUNT = 64,     ///< gObjectSlots, heap slot 5
+  ANIMATION_OBJECT_COUNT = 64, ///< sprites and layer records, heap slots 4, 3
+  ANIMATION_LAYER_COUNT = 4,   ///< AnimationObject.entries
+  /// Sixteenths of a frame taken off a layer's timer each frame: one frame.
   ANIMATION_NORMAL_STEP = 16
 };
 
 /// Layered-map viewport distances in 16.16 pixels. The followed point is below
 /// the vertical centre; scroll bounds and camera following share this origin.
 enum {
-  FIELD_VIEW_FOCUS_X = 120 * Q16_ONE,
-  FIELD_VIEW_FOCUS_Y = 96 * Q16_ONE,
-  FIELD_VIEW_WIDTH = 240 * Q16_ONE,
-  FIELD_VIEW_HEIGHT = 160 * Q16_ONE
+  FIELD_VIEW_FOCUS_X = 120 * Q16_ONE, ///< followed point from the left edge
+  FIELD_VIEW_FOCUS_Y = 96 * Q16_ONE,  ///< followed point from the top edge
+  FIELD_VIEW_WIDTH = 240 * Q16_ONE,   ///< the screen's width
+  FIELD_VIEW_HEIGHT = 160 * Q16_ONE   ///< the screen's height
 };
 
 /// A movement target coordinate that is not set.

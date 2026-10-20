@@ -35,14 +35,19 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
 
     // A tile is 64 bytes (32 halfwords) at 8 bits a pixel. The unsigned
     // test passes only steps 64 to 127, so later tiles start clearing
-    // first and the dissolve sweeps across the sprite.
+    // first and the dissolve sweeps across the sprite: tile i clears at
+    // steps 64 - i to 127 - i, and even the last of a 64x64 sprite's 64
+    // tiles has all 64 of its steps by step 127.
     for (; i < tileCount; i++, tile += 32, pos++) {
       if ((pos - 64) <= 63) {
         u8 pixel;
         u16 *pixelPair;
         u32 isOdd;
 
-        // VRAM takes no byte writes: rewrite the pixel pair, clearing one.
+        // Each tile reads the order 17 entries on from the tile before, so
+        // neighbouring tiles lose different pixels at the same step. VRAM
+        // takes no byte writes: rewrite the pixel pair, clearing one; the
+        // odd pixel is the pair's high byte.
         pixel = order[(pos + i * 16) & indexMask];
         pixelPair = (u16 *)((u8 *)tile + (pixel & offsetMask));
         isOdd = 1;
@@ -110,7 +115,11 @@ void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
 
 /// Writes the object's screen position, in pixels, to screenPosition[0..1] and
 /// returns 0 when it is on or near the screen; otherwise writes 0, 0 and
-/// returns -1.
+/// returns -1. The position is x and z less the view's whole pixels: where a
+/// layered map draws a point at height 0. It ignores y and the ground height,
+/// which the camera takes off z when it draws the sprite and its shadow. No
+/// code names it: its veneer in the field far-call table
+/// (system/far_call/FIELD.S) is unnamed.
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
                                   s32 *screenPosition) {
   struct MapScrollWork *mapWork = gMapWork[0];
@@ -147,7 +156,12 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
 
 /// Sets up the object system: allocates and zeroes the 64 objects and
 /// registers the per-frame updates. Mode 4 moves objects with
-/// Object_UpdateAllMotion; modes 3 and 4 use the fixed camera.
+/// Object_UpdateAllMotion, which runs no scripts; modes 3 and 4 use the fixed
+/// camera. Both blocks are heap slots, so a later call gets the same ones
+/// back. No code releases slots 5 and 6 by number, but Field_RunScene takes
+/// slot 27 from EWRAM before them, so its release of slot 27 as it returns
+/// frees their memory too; Runtime_InitializeHeap clears the slots at the next
+/// scene change.
 ///
 /// Called through ObjectSystem_InitializeFar by the field scene runner
 /// (object/object/run_scene.c: 2 for a layered map, MODE_WORLD_MAP for the
@@ -175,6 +189,8 @@ void ObjectSystem_Initialize(s32 controlMode) {
     Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
   } else {
     Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
+    // XXX: nothing in the tree reads these two IWRAM words; code that reads
+    // them by address would say what the scrolling camera resets here.
     gIwram_Data2 = 0;
     gIwram_Data1 = 0;
   }
@@ -273,6 +289,9 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
       break;
     case 2:
       // Take a zeroed list of four sprites, and fill it with id and id + 1.
+      // XXX: a list is four words but the next starts a word later, so a
+      // second list overlaps the first and its zeroing clears count. No code
+      // in the tree creates a kind 2 object to show the intended spacing.
       spriteSlots =
           (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
       object->animationKind = spriteStorageKind;
@@ -293,8 +312,10 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
     motion = (struct ScriptMotionObject *)object;
     scripted = (struct ScriptObjectRuntime *)object;
     Object_SetPositionAndResetMotion(object, x, y, z);
-    // Up to 2 pixels a frame, gaining 1 a frame; unit scale; facing a
-    // quarter turn.
+    // Up to 2 pixels a frame, gaining 1 a frame; unit scale; following the
+    // terrain and falling (flags 3); turning to face its motion (action
+    // flags 1); keeping a quarter of its speed when it bounces; facing down
+    // the screen (0x4000, the heading gWorldMap_KeyHeadings gives Down).
     object->script = (s32 *)gObjectDispatch_DefaultScript;
     object->speedLimit = 0x20000;
     object->step = 0;
@@ -488,7 +509,9 @@ void ObjectDispatch_StartCamera(struct DispatchObject *object,
   }
 }
 
-/// Waits until the object's script reaches SC_END (0x10), at most 300 frames.
+/// Waits until the object's script reaches SC_END (0x10), at most 300 frames
+/// (five seconds); it returns as soon as the script idles, and after the
+/// limit whether or not it has.
 /// Called through ObjectDispatch_WaitForValue16Far by the Psynergy actor
 /// commands and by scenes that wait for a scripted move (Colosso, Venus
 /// Lighthouse, Vale).
@@ -536,8 +559,8 @@ void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
   }
 }
 
-/// Sets the draw parameter of a one-sprite object's layers (see
-/// ObjectGroup_SetChildValueUnlessFifteen).
+/// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
+/// except those drawn hidden (see ObjectGroup_SetChildValueUnlessFifteen).
 void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
   if (object != NULL && object->kind == 1)
     ObjectGroup_SetChildValueUnlessFifteen(object->target.child, param);

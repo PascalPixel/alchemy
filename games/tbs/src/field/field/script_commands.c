@@ -10,16 +10,22 @@
 #include "../field_internal.h"
 
 enum {
-  SCRIPT_LABEL_SEARCH_WORDS = 1024,
-  SCRIPT_BLOCKED_MOVE_FRAMES = 60,
-  SCRIPT_WANDER_TRIES = 7,
+  SCRIPT_LABEL_SEARCH_WORDS = 1024, ///< script words a jump searches
+  SCRIPT_BLOCKED_MOVE_FRAMES = 60,  ///< refused frames SC_SYNC waits through
+  SCRIPT_WANDER_TRIES = 7,          ///< random points a wander tries a frame
+  /// The wander probes' distance, 8 pixels in 16.16: past the point for
+  /// ground, and along the heading for solid objects (SC_WANDER_HOME).
   SCRIPT_WANDER_PROBE_DISTANCE = 8 * Q16_ONE,
   SCRIPT_WANDER_DIAGONAL_ANGLE = 0x2000, ///< one eighth of a turn
   SCRIPT_WANDER_SIDE_ANGLE = 0x4000,     ///< one quarter of a turn
   SCRIPT_HALF_TURN = 0x8000,
+  /// Whole pixels SC_APPROACH_LINK stays short of its linked object.
   SCRIPT_APPROACH_DISTANCE = 16,
+  /// Under 64 pixels (16.16) SC_CAMERA measures its distance in 16.16.
   CAMERA_FOLLOW_FINE_DISTANCE = 64 * Q16_ONE,
+  /// Within a quarter pixel (16.16) SC_CAMERA lands on its point.
   CAMERA_FOLLOW_SNAP_DISTANCE = Q16_ONE / 4,
+  /// Within half a pixel (16.16) SC_CAMERA takes the leader's height at once.
   CAMERA_FOLLOW_HEIGHT_SNAP = Q16_ONE / 2
 };
 
@@ -72,7 +78,8 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
 
 /// Returns the cursor just past the script's label key (SC_LABEL or SC_TO,
 /// matched without the bit that tells them apart), searching its first 1024
-/// words, or 0 (the start) when key is 0 or not found. Clears the wait.
+/// words, or 0 (the start) when key is 0 or not found, so a missing label
+/// restarts the script. Clears the wait.
 /// Called by the jumps: SC_JUMP, SC_LOOP, SC_IF and SC_IFNOT.
 s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey) {
   u32 *scriptWords;
@@ -226,7 +233,8 @@ s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
 }
 
 /// SC_FREE: releases the object through ObjectDispatch_Release, which
-/// releases its sprites and zeroes its slot. Returns 0.
+/// releases its sprites and zeroes its slot. Returns 0: with its script now
+/// null, the update loop skips the rest of the object's frame.
 s32 Script_FreeObject(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_Release((struct DispatchObject *)interpreter);
   return 0;
@@ -430,6 +438,8 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
     return 1;
   }
 #endif
+  // A layered map draws a point at screen row z - y, so the z bounds move
+  // with the leader's height and the clamp keeps that row inside the map.
   minX = bounds->minX + FIELD_VIEW_FOCUS_X;
   minZ = bounds->minY + leader->y + FIELD_VIEW_FOCUS_Y;
   maxX = bounds->maxX - FIELD_VIEW_FOCUS_X;
@@ -476,6 +486,8 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
         cameraObject->x = x;
         cameraObject->z = z;
       } else {
+        // Shorten the offset to moveStep along the same direction: dx over
+        // the distance is a 16.16 fraction, times the step.
         if (distance > moveStep) {
           dx = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dx), moveStep);
           dz = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dz), moveStep);
@@ -531,6 +543,9 @@ s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
   distancePixels = _call_via_r3((deltaXPixels * deltaXPixels) +
                                     (deltaZPixels * deltaZPixels),
                                 dx, deltaZPixels, (u32)IwramSqrt);
+  // Further than 16 pixels: aim at the point 16 pixels short of the linked
+  // object along the line to it (the 16.16 offset scaled by the whole-pixel
+  // ratio) and run on to SC_WAIT(1); otherwise stand and stay on this command.
   if (distancePixels > SCRIPT_APPROACH_DISTANCE) {
     scaledDeltaX = dx;
     remainingDistance = distancePixels - SCRIPT_APPROACH_DISTANCE;
@@ -583,7 +598,9 @@ retry:
   attempts++;
   if (attempts <= SCRIPT_WANDER_TRIES) {
     SET_POSITION(&candidatePosition, object->x, object->y, object->z);
-    // Two quarter-turn rolls give a heading within 90 degrees either side.
+    // Random16 is a 16.16 fraction below 1, so the distance is base plus up
+    // to range. Two quarter-turn rolls give a heading within 90 degrees
+    // either side; their difference falls nearer the heading more often.
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
     heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
@@ -773,10 +790,12 @@ done:
   return 1;
 }
 
+/// What a work value handler does with its value, for SC_SET, SC_ADD and
+/// SC_CMP in turn.
 enum ScriptOperandOperation {
   SCRIPT_OPERAND_SET,
   SCRIPT_OPERAND_ADD,
-  SCRIPT_OPERAND_COMPARE
+  SCRIPT_OPERAND_COMPARE ///< sets conditionResult to 1 when equal, else 0
 };
 
 /// Defines the handler for a 32-bit work value: set it, add to it, or compare
@@ -908,7 +927,9 @@ SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareByte62, sceneByte62, u8)
 SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareByte63, sceneByte63, u8)
 
 /// Reads the two words after the command (a work value number and a value)
-/// and passes operation to that value's handler.
+/// and passes operation to that value's handler. The number is not checked
+/// against the table's 41 entries; only a null entry is skipped, and the
+/// table has none. Moves past both operands and returns 1.
 static __inline__ s32
 Script_ApplyOperandCommand(struct ScriptOperands *operands, s32 operation) {
   s16 commandCursor = operands->cursor;

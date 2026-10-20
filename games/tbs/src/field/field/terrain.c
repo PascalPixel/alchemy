@@ -498,11 +498,10 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
   return 0;
 }
 
-/// Returns 0 when the cell under position (its x, and y less its height) in
-/// layer 2 is a wall (collision code 0xff), else -1.
-/// The name says the opposite of what it returns: 0 is the blocked answer.
-/// Called by the player control and, as CheckMapPositionCellOccupiedFar, by
-/// the Psynergy climbing.
+/// Returns -1 when the cell under position (its x, and y less its height) in
+/// layer 2 is a wall (collision code 0xff), else 0; also 0 before the map
+/// work exists. Called by the player control and, as
+/// CheckMapPositionCellOccupiedFar, by the Psynergy climbing.
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   s32 pixelX;
   s32 pixelY;
@@ -522,7 +521,7 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   cellX = pixelX / 16;
   cellY = pixelY / 16;
   cell += cellX + cellY * 128;
-  // 1 - 1 for open ground, 0 - 1 for a wall: 0 means walled.
+  // 1 - 1 for open ground, 0 - 1 for a wall: nonzero means walled.
   return (cell->collisionCode != 0xff) - 1;
 }
 

@@ -107,7 +107,7 @@ void Object_UpdateAllThumb(void) {
   u32 phase;
 
   object = (struct ScriptMotionObject *)gObjectSlots;
-  for (objectsRemaining = 63; objectsRemaining >= 0;
+  for (objectsRemaining = FIELD_OBJECT_COUNT - 1; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     arrivedAtTarget = 0;
 

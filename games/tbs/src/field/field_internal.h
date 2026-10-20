@@ -92,9 +92,19 @@ enum AnimationCommand {
 
 enum {
   RESOURCE_SLOT_COUNT = 8,
+  FIELD_OBJECT_COUNT = 64,
   ANIMATION_OBJECT_COUNT = 64,
   ANIMATION_LAYER_COUNT = 4,
   ANIMATION_NORMAL_STEP = 16
+};
+
+/// Layered-map viewport distances in 16.16 pixels. The followed point is below
+/// the vertical centre; scroll bounds and camera following share this origin.
+enum {
+  FIELD_VIEW_FOCUS_X = 120 * Q16_ONE,
+  FIELD_VIEW_FOCUS_Y = 96 * Q16_ONE,
+  FIELD_VIEW_WIDTH = 240 * Q16_ONE,
+  FIELD_VIEW_HEIGHT = 160 * Q16_ONE
 };
 
 /// A movement target coordinate that is not set.

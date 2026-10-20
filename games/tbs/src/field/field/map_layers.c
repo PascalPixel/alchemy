@@ -486,20 +486,19 @@ void Map_UpdateLayerScroll(void) {
   if (origin == 0)
     return;
 
-  // The view's top left puts the followed point 120 pixels from the left
-  // and 96 from the top; its height counts up the screen.
-  baseX = *origin++ - 0x780000;
+  // Height projects the followed point above its ground position.
+  baseX = *origin++ - FIELD_VIEW_FOCUS_X;
   {
     s32 height = *origin++;
-    baseY = *origin - height - 0x600000;
+    baseY = *origin - height - FIELD_VIEW_FOCUS_Y;
   }
   // The bounds shrink by the shake so a shaken view stays on the map; the
   // right and bottom bounds lose the 240x160 screen. A map smaller than
   // that keeps its top left in view.
   minX = work->minX + work->shakeX;
-  maxX = work->maxX - work->shakeX - 0xf00000;
+  maxX = work->maxX - work->shakeX - FIELD_VIEW_WIDTH;
   minY = work->minY + work->shakeY;
-  maxY = work->maxY - work->shakeY - 0xa00000;
+  maxY = work->maxY - work->shakeY - FIELD_VIEW_HEIGHT;
   if (minX > maxX)
     maxX = minX;
   if (minY > maxY)
@@ -576,10 +575,10 @@ void Map_SetCameraCenter(s32 x, s32 y) {
   struct MapScrollWork *work = gMapWork[0];
   struct MapLayerScroll *layer = work->layers;
 
-  x -= 0x780000;
-  y -= 0x600000;
-  CLAMP(x, work->minX, work->maxX - 0xf00000);
-  CLAMP(y, work->minY, work->maxY - 0xa00000);
+  x -= FIELD_VIEW_FOCUS_X;
+  y -= FIELD_VIEW_FOCUS_Y;
+  CLAMP(x, work->minX, work->maxX - FIELD_VIEW_WIDTH);
+  CLAMP(y, work->minY, work->maxY - FIELD_VIEW_HEIGHT);
   work->viewX = x;
   work->viewY = y;
 

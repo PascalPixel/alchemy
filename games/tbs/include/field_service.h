@@ -163,10 +163,6 @@ static inline s32 FieldScheduler_AddOrUpdateCallback(SchedulerCallback callback,
   return FieldScheduler_AddCallback(callback, priority);
 }
 
-static inline void FieldObject_SetMoveTarget(s32 a0, s32 a1, s32 a2, s32 a3) {
-  Engine_ObjectSetPosition(a0, a1, a2, a3);
-}
-
 static inline void Field_SetMapCellCollision(s32 a0, s32 a1, s32 a2, s32 a3) {
   SetMapCellCollision(a0, a1, a2, a3);
 }

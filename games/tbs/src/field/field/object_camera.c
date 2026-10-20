@@ -107,7 +107,8 @@ void ObjectSystem_UpdateCamera(void) {
                    Render_DecodeFrameCodeSize);
   system->used = 0;
   object = (struct ObjectCameraObject *)gObjectSlots;
-  for (objectIndex = 0; objectIndex < 64; objectIndex++, object++) {
+  for (objectIndex = 0; objectIndex < FIELD_OBJECT_COUNT;
+       objectIndex++, object++) {
     if (object->active == 0)
       continue;
     // An object at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
@@ -253,9 +254,9 @@ void ObjectSystem_UpdateCameraFixed(void) {
     Transform_SetLookAt((s32 *)eye, (s32 *)target);
   }
   object = (struct ObjectCameraObject *)gObjectSlots;
-  object += 63;
+  object += FIELD_OBJECT_COUNT - 1;
   fixedScale = 0x10000;
-  for (i = 63; i >= 0; i--, object--) {
+  for (i = FIELD_OBJECT_COUNT - 1; i >= 0; i--, object--) {
     if (object->active == 0)
       continue;
     kind = object->kind & 15;

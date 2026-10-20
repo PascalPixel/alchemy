@@ -160,9 +160,10 @@ void ObjectSystem_Initialize(s32 controlMode) {
   volatile u32 fill;
 
   objectSystem = Runtime_AllocateBlock(6, sizeof(*objectSystem));
-  objectPool = Runtime_AllocateBlock(5, 64 * sizeof(*objectPool));
+  objectPool =
+      Runtime_AllocateBlock(5, FIELD_OBJECT_COUNT * sizeof(*objectPool));
   ObjectSystem_Configure(controlMode);
-  Dma_Fill32Cell(fill, 0, objectPool, 64 * sizeof(*objectPool));
+  Dma_Fill32Cell(fill, 0, objectPool, FIELD_OBJECT_COUNT * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, objectSystem, sizeof(*objectSystem));
   // The scheduler runs higher orders first: the objects move (0xc8a) before
   // the camera follows them (0xc80).
@@ -192,7 +193,7 @@ void *ObjectDispatch_FindFreeObject(void) {
   void *freeObject = 0;
   s32 objectIndex = 0;
 
-  while (objectIndex <= 63) {
+  while (objectIndex <= FIELD_OBJECT_COUNT - 1) {
     if (object->script == 0) {
       freeObject = object;
       break;

@@ -9,6 +9,23 @@
 
 #include "../field_internal.h"
 
+enum {
+  SCRIPT_LABEL_SEARCH_WORDS = 1024,
+  SCRIPT_BLOCKED_MOVE_FRAMES = 60,
+  SCRIPT_WANDER_TRIES = 7,
+  SCRIPT_WANDER_PROBE_DISTANCE = 8 * Q16_ONE,
+  SCRIPT_WANDER_DIAGONAL_ANGLE = 0x2000, ///< one eighth of a turn
+  SCRIPT_WANDER_SIDE_ANGLE = 0x4000,     ///< one quarter of a turn
+  SCRIPT_HALF_TURN = 0x8000,
+  SCRIPT_APPROACH_DISTANCE = 16,
+  CAMERA_FOLLOW_FINE_DISTANCE = 64 * Q16_ONE,
+  CAMERA_FOLLOW_SNAP_DISTANCE = Q16_ONE / 4,
+  CAMERA_FOLLOW_HEIGHT_SNAP = Q16_ONE / 2
+};
+
+/// SC_LABEL and SC_TO differ only in bit 30; a jump searches for the label.
+#define SCRIPT_LABEL_KEY_MASK 0xbfffffff
+
 /// SC_WAIT(n): waits n frames; this frame counts as the first. Sets
 /// interpreter->wait to n - 1, which the update loops count down, and moves
 /// past its operand. Returns 0 to end the object's commands for this frame.
@@ -25,7 +42,7 @@ s32 Script_Wait(struct ScriptInterpreter *interpreter) {
 /// Object_UpdateAllThumb raises). Returns 1 (run on) once it has, clearing
 /// refused when it gave up, and 0 (wait) until then.
 s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
-  if (interpreter->refused > 0x3B) {
+  if (interpreter->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
     interpreter->refused = 0;
     interpreter->cursor++;
     return 1;
@@ -68,8 +85,7 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey) {
     return 0;
   }
 
-  // Clear bit 30, which marks SC_TO, so the jump's own operand never matches.
-  labelKey &= 0xBFFFFFFF;
+  labelKey &= SCRIPT_LABEL_KEY_MASK;
   scriptWords = (u32 *)interpreter->script;
   wordIndex = 0;
   do {
@@ -77,7 +93,7 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey) {
       return wordIndex + 1;
     }
     wordIndex++;
-  } while (wordIndex <= 0x3FF);
+  } while (wordIndex <= SCRIPT_LABEL_SEARCH_WORDS - 1);
   return 0;
 }
 
@@ -241,7 +257,7 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   struct ObjectRuntime *candidate = gObjectSlots;
 
   collisionFlags = &candidate->unk59;
-  for (objectIndex = 0; objectIndex < 64;
+  for (objectIndex = 0; objectIndex < FIELD_OBJECT_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (1 & *collisionFlags) &&
         candidate != (struct ObjectRuntime *)object) {
@@ -265,7 +281,7 @@ ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
   struct ObjectRuntime *candidate = gObjectSlots;
 
   collisionFlags = &candidate->unk59;
-  for (objectIndex = 0; objectIndex < 64;
+  for (objectIndex = 0; objectIndex < FIELD_OBJECT_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (1 & *collisionFlags) &&
         candidate != (struct ObjectRuntime *)object) {
@@ -402,16 +418,22 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
   s32 distance;
   s32 moveStep;
 
-  // The bounds Map_UpdateLayerScroll keeps the view in, turned into bounds
-  // on the followed point: the view's top left is 120 pixels left of the
-  // point and 96 above it, the point drawn at z less its height, and the
-  // screen is 240 by 160 pixels.
+  // Use Map_UpdateLayerScroll's viewport origin and the leader's elevation
+  // when clamping its ground position to the viewport bounds.
   bounds = gMapWork[0];
   leader = cameraObject->linkedObject;
-  minX = bounds->minX + 0x780000;
-  minZ = bounds->minY + leader->y + 0x600000;
-  maxX = bounds->maxX - 0x780000;
-  maxZ = bounds->maxY + leader->y - 0x400000;
+  // UB: the bounds read the leader's height before the null check below.
+#ifdef UBFIX
+  if (leader == NULL) {
+    cameraObject->flags = 0;
+    cameraObject->step++;
+    return 1;
+  }
+#endif
+  minX = bounds->minX + FIELD_VIEW_FOCUS_X;
+  minZ = bounds->minY + leader->y + FIELD_VIEW_FOCUS_Y;
+  maxX = bounds->maxX - FIELD_VIEW_FOCUS_X;
+  maxZ = bounds->maxY + leader->y - (FIELD_VIEW_HEIGHT - FIELD_VIEW_FOCUS_Y);
   cameraObject->flags = 0;
   if (leader != NULL && leader->script != NULL) {
     x = leader->x;
@@ -445,12 +467,12 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
       dz = z - cameraObject->z;
       // The whole-pixel root is coarse; under 64 pixels the distance is
       // measured again in 16.16 for a finer result.
-      if (distance < 0x400000)
+      if (distance < CAMERA_FOLLOW_FINE_DISTANCE)
         distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
       if ((moveStep = distance / 8) > cameraObject->speedLimit)
         moveStep = cameraObject->speedLimit;
       // Within a quarter pixel the camera snaps to the point.
-      if (distance < 0x4000) {
+      if (distance < CAMERA_FOLLOW_SNAP_DISTANCE) {
         cameraObject->x = x;
         cameraObject->z = z;
       } else {
@@ -462,7 +484,7 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
         cameraObject->z += dz;
       }
       // Height follows at once within half a pixel, else a quarter a frame.
-      if ((dy < 0 ? -dy : dy) > 0x8000)
+      if ((dy < 0 ? -dy : dy) > CAMERA_FOLLOW_HEIGHT_SNAP)
         dy /= 4;
       cameraObject->y += dy;
     }
@@ -509,9 +531,9 @@ s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
   distancePixels = _call_via_r3((deltaXPixels * deltaXPixels) +
                                     (deltaZPixels * deltaZPixels),
                                 dx, deltaZPixels, (u32)IwramSqrt);
-  if (distancePixels > 0x10) {
+  if (distancePixels > SCRIPT_APPROACH_DISTANCE) {
     scaledDeltaX = dx;
-    remainingDistance = distancePixels - 0x10;
+    remainingDistance = distancePixels - SCRIPT_APPROACH_DISTANCE;
     moveX = scaledDeltaX * remainingDistance / distancePixels;
     moveZ = dz * remainingDistance / distancePixels;
     Object_SetMoveTarget(object, object->x + moveX, object->y,
@@ -559,10 +581,8 @@ s32 Object_Wander(struct ScriptInterpreter *interpreter) {
   homeRadiusSquared = homeRadiusSquared * homeRadiusSquared;
 retry:
   attempts++;
-  if (attempts <= 7) {
-    candidatePosition.x = object->x;
-    candidatePosition.y = object->y;
-    candidatePosition.z = object->z;
+  if (attempts <= SCRIPT_WANDER_TRIES) {
+    SET_POSITION(&candidatePosition, object->x, object->y, object->z);
     // Two quarter-turn rolls give a heading within 90 degrees either side.
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
     heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
@@ -574,10 +594,8 @@ retry:
       goto retry;
     // Probes 8 pixels past the point, ahead and at 45 degrees (0x2000)
     // either side.
-    travelDistance += 0x80000;
-    probePosition.x = object->x;
-    probePosition.y = object->y;
-    probePosition.z = object->z;
+    travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
+    SET_POSITION(&probePosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(travelDistance, heading, &probePosition);
     // BUG: the probe straight ahead is placed but never tested, so only the
     // two at 45 degrees need clear ground; SC_WANDER_HOME tests all three.
@@ -585,10 +603,9 @@ retry:
     aheadBlocked =
         Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition);
 #endif
-    probePosition.x = object->x;
-    probePosition.y = object->y;
-    probePosition.z = object->z;
-    Vector_AddPolarOffset(travelDistance, heading + 0x2000, &probePosition);
+    SET_POSITION(&probePosition, object->x, object->y, object->z);
+    Vector_AddPolarOffset(
+        travelDistance, heading + SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
 #ifdef BUGFIX
     if (aheadBlocked != 0 || Map_CheckObjectStep((struct ObjectRuntime *)object,
                                                  &probePosition) != 0)
@@ -597,10 +614,9 @@ retry:
         0)
 #endif
       goto retry;
-    probePosition.x = object->x;
-    probePosition.y = object->y;
-    probePosition.z = object->z;
-    Vector_AddPolarOffset(travelDistance, heading - 0x2000, &probePosition);
+    SET_POSITION(&probePosition, object->x, object->y, object->z);
+    Vector_AddPolarOffset(
+        travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
     if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
         0)
       goto retry;
@@ -618,7 +634,7 @@ retry:
   } else {
     // Out of tries: face the other way (half a turn) and stay on this
     // command, to try again next frame.
-    object->scriptValue += 0x8000;
+    object->scriptValue += SCRIPT_HALF_TURN;
     object->turnedBack = 1;
     return 0;
   }
@@ -664,60 +680,55 @@ s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
   if (dx * dx + dz * dz <= homeRadiusSquared) {
   roam:
     attempts++;
-    if (attempts <= 7) {
+    if (attempts <= SCRIPT_WANDER_TRIES) {
       travelDistance =
           minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
       heading = angle + (Random16() >> 2) - (Random16() >> 2);
-      candidatePosition.x = object->x;
-      candidatePosition.y = object->y;
-      candidatePosition.z = object->z;
+      SET_POSITION(&candidatePosition, object->x, object->y, object->z);
       // First no solid object 8 pixels along the heading, then the point
       // itself, then clear ground 8 pixels past it ahead, at 45 degrees and
       // at 90 degrees either side.
-      Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
+      Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
+                            &candidatePosition);
       if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
                                     (s32 *)&candidatePosition) != 0)
         goto roam;
-      candidatePosition.x = object->x;
-      candidatePosition.y = object->y;
-      candidatePosition.z = object->z;
+      SET_POSITION(&candidatePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object,
                               &candidatePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
-      travelDistance += 0x80000;
+      travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading, &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
           0)
         goto roam;
-      probePosition.x = object->x;
-      probePosition.y = object->y;
-      probePosition.z = object->z;
-      Vector_AddPolarOffset(travelDistance, heading + 0x2000, &probePosition);
+      SET_POSITION(&probePosition, object->x, object->y, object->z);
+      Vector_AddPolarOffset(travelDistance,
+                            heading + SCRIPT_WANDER_DIAGONAL_ANGLE,
+                            &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
           0)
         goto roam;
-      probePosition.x = object->x;
-      probePosition.y = object->y;
-      probePosition.z = object->z;
-      Vector_AddPolarOffset(travelDistance, heading - 0x2000, &probePosition);
+      SET_POSITION(&probePosition, object->x, object->y, object->z);
+      Vector_AddPolarOffset(travelDistance,
+                            heading - SCRIPT_WANDER_DIAGONAL_ANGLE,
+                            &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
           0)
         goto roam;
-      probePosition.x = object->x;
-      probePosition.y = object->y;
-      probePosition.z = object->z;
-      Vector_AddPolarOffset(travelDistance, heading + 0x4000, &probePosition);
+      SET_POSITION(&probePosition, object->x, object->y, object->z);
+      Vector_AddPolarOffset(travelDistance, heading + SCRIPT_WANDER_SIDE_ANGLE,
+                            &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
           0)
         goto roam;
-      probePosition.x = object->x;
-      probePosition.y = object->y;
-      probePosition.z = object->z;
-      Vector_AddPolarOffset(travelDistance, heading - 0x4000, &probePosition);
+      SET_POSITION(&probePosition, object->x, object->y, object->z);
+      Vector_AddPolarOffset(travelDistance, heading - SCRIPT_WANDER_SIDE_ANGLE,
+                            &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
           0)
         goto roam;
@@ -736,22 +747,19 @@ s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
   // with the same spread, testing only the near and far points. After seven
   // more failures the object stays put this time.
   attempts = 0;
-  angle = (u16)ArcTan2(dz, dx) + 0x8000;
+  angle = (u16)ArcTan2(dz, dx) + SCRIPT_HALF_TURN;
 back:
   attempts++;
-  if (attempts <= 7) {
+  if (attempts <= SCRIPT_WANDER_TRIES) {
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
     heading = angle + (Random16() >> 2) - (Random16() >> 2);
-    candidatePosition.x = object->x;
-    candidatePosition.y = object->y;
-    candidatePosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
+    SET_POSITION(&candidatePosition, object->x, object->y, object->z);
+    Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
+                          &candidatePosition);
     if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
                                   (s32 *)&candidatePosition) != 0)
       goto back;
-    candidatePosition.x = object->x;
-    candidatePosition.y = object->y;
-    candidatePosition.z = object->z;
+    SET_POSITION(&candidatePosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
     if (Map_CheckObjectStep((struct ObjectRuntime *)object,
                             &candidatePosition) != 0)
@@ -939,3 +947,4 @@ s32 Script_ApplyOperandCompare(struct ScriptInterpreter *interpreter) {
 #undef SCRIPT_DEFINE_OPERAND_WORD
 #undef SCRIPT_DEFINE_OPERAND_ADDRESS
 #undef SCRIPT_DEFINE_OPERAND_NARROW
+#undef SCRIPT_LABEL_KEY_MASK

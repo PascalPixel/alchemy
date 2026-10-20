@@ -136,9 +136,9 @@ struct SceneEntrance gKolimaForestClearing_Entrances[] = {
 
 /// Exit 1 on into the forest (scene 42), exit 2 back (scene 40).
 u32 gKolimaForestClearing_Exits[] = {
-    SCENE_EXITS(41),
-    SCENE_EXIT(1, 42, 1),
-    SCENE_EXIT(2, 40, 2),
+    SCENE_EXITS(KolimaForestClearing),
+    SCENE_EXIT(KOLIMA_FOREST_CLEARING_TO_KOLIMA_FOREST_RIVER, KolimaForestRiver, KOLIMA_FOREST_RIVER_FROM_KOLIMA_FOREST_CLEARING),
+    SCENE_EXIT(KOLIMA_FOREST_CLEARING_TO_KOLIMA_FOREST_BRIDGE, KolimaForestBridge, KOLIMA_FOREST_BRIDGE_FROM_KOLIMA_FOREST_CLEARING),
     SCENE_EXITS_END,
 };
 

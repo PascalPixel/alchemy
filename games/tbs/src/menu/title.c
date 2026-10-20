@@ -92,7 +92,7 @@ s32 Title_Run(void) {
           break;
       } while (gKeysPressed == 0);
     }
-    Event_SetDestination((s32)&SceneId_Title, 2);
+    Event_SetDestination((s32)&SceneId_Title, TITLE_AFTER_RUN);
     return 0;
   }
   if (gGameState.entrance == 9) {
@@ -105,7 +105,7 @@ s32 Title_Run(void) {
     Fade_Wait();
     Engine_EventWait(240);
     Engine_AudioPlayCue(MUS_019);
-    Event_SetDestination((s32)&SceneId_Clear, 2);
+    Event_SetDestination((s32)&SceneId_Clear, CLEAR_FROM_TITLE);
     return 0;
   }
   // The stub does nothing with its argument (runtime/runtime/system.c).
@@ -141,13 +141,13 @@ s32 Title_Run(void) {
       }
       break;
     }
-    Event_SetDestination((s32)&SceneId_Clear, 1);
+    Event_SetDestination((s32)&SceneId_Clear, CLEAR_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
     Engine_AudioPlayCue(MUS_064);
     PaletteFar_Entry00(0);
     Party_EndChildhood();
-    Event_SetDestination((s32)&SceneId_Vale, 16);
+    Event_SetDestination((s32)&SceneId_Vale, VALE_FROM_TITLE);
     Engine_AudioPlayCue(MUS_017);
   }
   Engine_AudioPlayCue(MUS_017);
@@ -380,7 +380,7 @@ struct SceneEntrance gTitleEntrances[] = {
 };
 
 u32 gTitleExits[] = {
-    SCENE_EXITS(511),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gTitlePlacements[] = {

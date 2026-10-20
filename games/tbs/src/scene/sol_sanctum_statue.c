@@ -1633,9 +1633,11 @@ static void Event_SayThenWait(s32 speaker, s32 frames) {
 }
 
 struct SceneEntrance gSolSanctumStatue_Entrances[] = {
-    {0, CONDITION_ALWAYS, 287, 0, 176, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_STATUE_FROM_VALE_HOME, CONDITION_ALWAYS, 287, 0, 176,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 646, 0, 329, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 647, 0, 470, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE, CONDITION_ALWAYS, 647,
+     0, 470, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {3, CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {4, CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {5, CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1645,9 +1647,17 @@ struct SceneEntrance gSolSanctumStatue_Entrances[] = {
 };
 
 u32 gSolSanctumStatue_Exits[] = {
-    SCENE_EXITS(12),      SCENE_EXIT(1, 11, 2),   SCENE_EXIT(2, 13, 1),
-    SCENE_EXIT(3, 11, 4), SCENE_EXIT(4, 11, 5),   SCENE_EXIT(5, 11, 6),
-    SCENE_EXIT(6, 11, 7), SCENE_EXIT(10, 510, 1), SCENE_EXITS_END,
+    SCENE_EXITS(SolSanctumStatue),
+    SCENE_EXIT(1, SolSanctumLunaSolRooms, 2),
+    SCENE_EXIT(SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE,
+               SolSanctumPsynergyStone,
+               SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE),
+    SCENE_EXIT(3, SolSanctumLunaSolRooms, 4),
+    SCENE_EXIT(4, SolSanctumLunaSolRooms, 5),
+    SCENE_EXIT(5, SolSanctumLunaSolRooms, 6),
+    SCENE_EXIT(6, SolSanctumLunaSolRooms, 7),
+    SCENE_EXIT_TO_BATTLE(10, 1),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

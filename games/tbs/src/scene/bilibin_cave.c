@@ -1,9 +1,9 @@
 /// @file
 /// The Bilibin Cave Entrance and Bilibin Cave, two places on the way north
 /// from Bilibin toward Imil that share this overlay: the Bilibin Cave Entrance
-/// is BilibinCaveEntrance (scene 49), and Bilibin Cave is BilibinCave2 (scene 48)
-/// and, beyond it, BilibinCave1 (scene 47), whose far end opens onto the world
-/// map farther north. No one speaks here: each scene is a run of Psynergy
+/// is BilibinCaveEntrance (scene 49), and Bilibin Cave is BilibinCave2 (scene
+/// 48) and, beyond it, BilibinCave1 (scene 47), whose far end opens onto the
+/// world map farther north. No one speaks here: each scene is a run of Psynergy
 /// puzzles, the getters pick its tables by gGameState.scene, and
 /// BilibinCave_Initialize restores what the party has already solved in the
 /// scene being entered.
@@ -80,8 +80,8 @@ static void BilibinCave_RestoreCave2(void);
 static void BilibinCave_RestoreCave1(void);
 static void BilibinCave_EmptyActorSetupHook(s32 actorId);
 
-/// Actors of the Bilibin Cave Entrance (BilibinCaveEntrance), named, as in the other
-/// two scenes, by the Psynergy that works on them.
+/// Actors of the Bilibin Cave Entrance (BilibinCaveEntrance), named, as in the
+/// other two scenes, by the Psynergy that works on them.
 enum {
   GROWTH_TARGET = 8 ///< a sprout Growth grows into a vine
 };
@@ -547,40 +547,74 @@ struct SceneEntrance gBilibinCaveEntrancesOther[] = {
 
 struct SceneEntrance gBilibinCaveEntrances3[] = {
     {0, CONDITION_ALWAYS, 372, 0, 272, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 99, 0, 447, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 342, 0, 254, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 440, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 99, 0, 447,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_2_SOUTH, CONDITION_ALWAYS, 342, 0,
+     254, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_2_NORTH, CONDITION_ALWAYS, 440, 0,
+     136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinCaveEntrances2[] = {
     {0, CONDITION_ALWAYS, 864, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 312, 0, 756, FACING_NORTH, 0, 40, 60, 630, 840, 0},
-    {2, CONDITION_ALWAYS, 472, 0, 680, FACING_NORTH, 0, 40, 60, 630, 840, 0},
-    {3, CONDITION_ALWAYS, 392, 0, 200, FACING_SOUTH, 0, 40, 60, 630, 840, 0},
+    {BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_ENTRANCE_WEST, CONDITION_ALWAYS, 312, 0,
+     756, FACING_NORTH, 0, 40, 60, 630, 840, 0},
+    {BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_ENTRANCE_EAST, CONDITION_ALWAYS, 472, 0,
+     680, FACING_NORTH, 0, 40, 60, 630, 840, 0},
+    {BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_1_WEST, CONDITION_ALWAYS, 392, 0, 200,
+     FACING_SOUTH, 0, 40, 60, 630, 840, 0},
     {4, CONDITION_ALWAYS, 536, 0, 426, FACING_SOUTH, 0, 40, 60, 630, 840, 0},
-    {5, CONDITION_ALWAYS, 856, 0, 124, FACING_SOUTH, 0, 760, 65, 925, 330, 0},
+    {BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_1_EAST, CONDITION_ALWAYS, 856, 0, 124,
+     FACING_SOUTH, 0, 760, 65, 925, 330, 0},
     {6, CONDITION_ALWAYS, 808, 0, 248, FACING_NORTH, 0, 760, 65, 925, 330, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinCaveEntrances1[] = {
     {0, CONDITION_ALWAYS, 172, 0, 300, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 120, 0, 472, FACING_NORTH, 0, 60, 60, 790, 600, 0},
-    {2, CONDITION_ALWAYS, 312, 0, 524, FACING_NORTH, 0, 60, 60, 790, 600, 0},
-    {3, CONDITION_ALWAYS, 538, 0, 548, FACING_NORTH, 0, 60, 60, 790, 600, 0},
+    {BILIBIN_CAVE_1_FROM_BILIBIN_CAVE_2_WEST, CONDITION_ALWAYS, 120, 0, 472,
+     FACING_NORTH, 0, 60, 60, 790, 600, 0},
+    {BILIBIN_CAVE_1_FROM_BILIBIN_CAVE_2_EAST, CONDITION_ALWAYS, 312, 0, 524,
+     FACING_NORTH, 0, 60, 60, 790, 600, 0},
+    {BILIBIN_CAVE_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 538, 0, 548, FACING_NORTH,
+     0, 60, 60, 790, 600, 0},
     {4, CONDITION_ALWAYS, 344, 0, 176, FACING_SOUTH, 0, 60, 60, 790, 600, 0},
     {5, CONDITION_ALWAYS, 856, 0, 632, FACING_NORTH, 0, 740, 510, 980, 690, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gBilibinCaveExits[] = {
-    SCENE_EXITS(49),      SCENE_EXIT(1, 2, 35), SCENE_EXIT(2, 48, 1),
-    SCENE_EXIT(3, 48, 2), SCENE_EXIT(0, 48, 0), SCENE_EXIT(1, 49, 2),
-    SCENE_EXIT(2, 49, 3), SCENE_EXIT(3, 47, 1), SCENE_EXIT(4, 48, 6),
-    SCENE_EXIT(5, 47, 2), SCENE_EXIT(6, 48, 4), SCENE_EXIT(0, 47, 0),
-    SCENE_EXIT(1, 48, 3), SCENE_EXIT(2, 48, 5), SCENE_EXIT(3, 2, 48),
-    SCENE_EXIT(4, 47, 5), SCENE_EXIT(5, 47, 4), SCENE_EXITS_END,
+    SCENE_EXITS(BilibinCaveEntrance),
+    SCENE_EXIT(BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_BILIBIN_CAVE_ENTRANCE),
+    SCENE_EXIT(BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_2_SOUTH, BilibinCave2,
+               BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_ENTRANCE_WEST),
+    SCENE_EXIT(BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_2_NORTH, BilibinCave2,
+               BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_ENTRANCE_EAST),
+    SCENE_EXITS(BilibinCave2),
+    SCENE_EXIT(BILIBIN_CAVE_2_TO_BILIBIN_CAVE_ENTRANCE_WEST,
+               BilibinCaveEntrance,
+               BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_2_SOUTH),
+    SCENE_EXIT(BILIBIN_CAVE_2_TO_BILIBIN_CAVE_ENTRANCE_EAST,
+               BilibinCaveEntrance,
+               BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_2_NORTH),
+    SCENE_EXIT(BILIBIN_CAVE_2_TO_BILIBIN_CAVE_1_WEST, BilibinCave1,
+               BILIBIN_CAVE_1_FROM_BILIBIN_CAVE_2_WEST),
+    SCENE_EXIT(4, BilibinCave2, 6),
+    SCENE_EXIT(BILIBIN_CAVE_2_TO_BILIBIN_CAVE_1_EAST, BilibinCave1,
+               BILIBIN_CAVE_1_FROM_BILIBIN_CAVE_2_EAST),
+    SCENE_EXIT(6, BilibinCave2, 4),
+    SCENE_EXITS(BilibinCave1),
+    SCENE_EXIT(BILIBIN_CAVE_1_TO_BILIBIN_CAVE_2_WEST, BilibinCave2,
+               BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_1_WEST),
+    SCENE_EXIT(BILIBIN_CAVE_1_TO_BILIBIN_CAVE_2_EAST, BilibinCave2,
+               BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_1_EAST),
+    SCENE_EXIT(BILIBIN_CAVE_1_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_BILIBIN_CAVE_1),
+    SCENE_EXIT(4, BilibinCave1, 5),
+    SCENE_EXIT(5, BilibinCave1, 4),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gBilibinCavePlacementsOther[] = {

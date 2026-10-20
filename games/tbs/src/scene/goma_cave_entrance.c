@@ -651,15 +651,19 @@ s32 gGomaCaveEntranceTallIvyScript[] = {
 
 struct SceneEntrance gGomaCaveEntranceEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 197, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 96, 0, 440, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 200, 0, 184, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 96, 0, 440,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_WATERWAY_1, CONDITION_ALWAYS, 200, 0,
+     184, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gGomaCaveEntranceExits[] = {
-    SCENE_EXITS(25),
-    SCENE_EXIT(1, 28, 1),
-    SCENE_EXIT(2, 2, 4),
+    SCENE_EXITS(GomaCaveEntrance),
+    SCENE_EXIT(GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_WATERWAY_1, GomaCaveWaterway1,
+               GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_ENTRANCE),
+    SCENE_EXIT(GOMA_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_GOMA_CAVE_ENTRANCE),
     SCENE_EXITS_END,
 };
 

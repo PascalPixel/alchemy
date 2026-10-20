@@ -26,7 +26,8 @@
 ///   until a blocked cell or one too high stops him. Move pushes the snowman,
 ///   which stays where it lands at cell (15, 7) for the rest of the visit
 ///   (a temporary flag). Searching finds 9 coins, a Vial and a Lucky Medal.
-/// - Imil (ImilInteriors, scene 51), inside the houses, the shops and the inn; by
+/// - Imil (ImilInteriors, scene 51), inside the houses, the shops and the inn;
+/// by
 ///   entrance 7 the same scene is the Imil Sanctum. While the epidemic lasts
 ///   the weapon and armor sellers are sick: searching their counters pans the
 ///   camera to them, and they say the shop is closed. The item seller's
@@ -711,7 +712,7 @@ s32 Imil_Initialize(void) {
       Imil_PlaceMovedSnowman();
     }
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
-        gGameState.entrance == 9) {
+        gGameState.entrance == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
   } else if (gGameState.scene == (s32)&SceneId_ImilInteriors) {
@@ -1669,25 +1670,25 @@ struct SceneEntrance gImil_InteriorEntrances[] = {
 };
 
 u32 gImil_Exits[] = {
-    SCENE_EXITS(50),
-    SCENE_EXIT(1, 51, 1),
-    SCENE_EXIT(2, 51, 5),
-    SCENE_EXIT(3, 51, 3),
-    SCENE_EXIT(4, 51, 4),
-    SCENE_EXIT(5, 51, 2),
-    SCENE_EXIT(6, 51, 7),
-    SCENE_EXIT(8, 52, 1),
-    SCENE_EXIT(11, 2, 9),
-    SCENE_EXIT(12, 2, 39),
-    SCENE_EXIT(0, 51, 0),
-    SCENE_EXIT(1, 50, 3),
-    SCENE_EXIT(2, 50, 7),
-    SCENE_EXIT(3, 50, 5),
-    SCENE_EXIT(4, 50, 6),
-    SCENE_EXIT(5, 50, 4),
-    SCENE_EXIT(6, 51, 8),
-    SCENE_EXIT(7, 50, 8),
-    SCENE_EXIT(8, 51, 6),
+    SCENE_EXITS(Imil),
+    SCENE_EXIT(1, ImilInteriors, 1),
+    SCENE_EXIT(2, ImilInteriors, 5),
+    SCENE_EXIT(3, ImilInteriors, 3),
+    SCENE_EXIT(4, ImilInteriors, 4),
+    SCENE_EXIT(5, ImilInteriors, 2),
+    SCENE_EXIT(6, ImilInteriors, 7),
+    SCENE_EXIT(IMIL_TO_IMIL_FALLS_CAVE, ImilFallsCave, IMIL_FALLS_CAVE_FROM_IMIL),
+    SCENE_EXIT(IMIL_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_IMIL_SOUTH),
+    SCENE_EXIT(IMIL_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_IMIL_NORTH),
+    SCENE_EXITS(ImilInteriors),
+    SCENE_EXIT(1, Imil, 3),
+    SCENE_EXIT(2, Imil, 7),
+    SCENE_EXIT(3, Imil, 5),
+    SCENE_EXIT(4, Imil, 6),
+    SCENE_EXIT(5, Imil, 4),
+    SCENE_EXIT(6, ImilInteriors, 8),
+    SCENE_EXIT(7, Imil, 8),
+    SCENE_EXIT(8, ImilInteriors, 6),
     SCENE_EXITS_END,
 };
 

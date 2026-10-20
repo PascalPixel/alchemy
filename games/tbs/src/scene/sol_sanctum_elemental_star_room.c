@@ -1260,7 +1260,8 @@ static void Event_TakeMarsStar(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(2);
+  Engine_EventRequestExit(
+      SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION);
 }
 
 /// Elemental Star Room: talking to Kraden, about the stars still to bag, or,
@@ -2084,7 +2085,8 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     SolSanctumElementalStarRoom_LineUpFollowers();
   }
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
-    if (gGameState.entrance == 10) {
+    if (gGameState.entrance ==
+        SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
       SolSanctumElementalStarRoom_EnterStarRoom();
     }
   }
@@ -2280,8 +2282,10 @@ struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[] = {
 };
 
 u32 gSolSanctumElementalStarRoom_Exits[] = {
-    SCENE_EXITS(17),
-    SCENE_EXIT(2, 18, 10),
+    SCENE_EXITS(SolSanctumElementalStarRoom),
+    SCENE_EXIT(SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION,
+               SolSanctumEruption,
+               SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM),
     SCENE_EXITS_END,
 };
 

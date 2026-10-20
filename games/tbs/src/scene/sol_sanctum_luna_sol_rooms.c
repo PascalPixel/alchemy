@@ -1301,7 +1301,8 @@ static void Event_RiseToElementalStarRoom(void) {
     Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(1);
-    Engine_EventRequestExit(7);
+    Engine_EventRequestExit(
+        SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM);
     Engine_EventEnd();
   }
 }
@@ -1393,7 +1394,8 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       Map_CopyCellsTo(45, 28, 34, 10, 4, 2);
       Map_CopyCellsTo(45, 30, 16, 10, 4, 2);
       Map_CopyCellsTo(14, 45, 14, 41, 8, 4);
-      if (gGameState.entrance != 8) {
+      if (gGameState.entrance !=
+          SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
         if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) == 0) {
           if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) !=
               0) {
@@ -1444,7 +1446,8 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   }
   // The arrival after the Wise One's rescue plays only once.
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN) == 0 &&
-      gGameState.entrance == 8) {
+      gGameState.entrance ==
+          SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
     SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue();
     Engine_GameFlagSet(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN);
     Map_CopyCellAttributes(15, 6, 2, 1, 17, 6);
@@ -1606,21 +1609,33 @@ static void Event_TalkToKraden(void) {
 
 struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[] = {
     {0, CONDITION_ALWAYS, 288, 0, 157, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
-    {1, CONDITION_ALWAYS, 55, 0, 477, FACING_NORTH, 0, 0, 0, 752, 496, 0},
+    {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ENTRANCE_1, CONDITION_ALWAYS,
+     55, 0, 477, FACING_NORTH, 0, 0, 0, 752, 496, 0},
     {2, CONDITION_ALWAYS, 647, 0, 327, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
     {3, CONDITION_ALWAYS, 287, 0, 218, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
     {4, CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
     {5, CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
     {6, CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
     {7, CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
-    {8, CONDITION_ALWAYS, 297, 0, 119, FACING_NORTHWEST, 0, 0, 0, 752, 496, 0},
+    {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION, CONDITION_ALWAYS,
+     297, 0, 119, FACING_NORTHWEST, 0, 0, 0, 752, 496, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumLunaSolRoomsExits[] = {
-    SCENE_EXITS(11),      SCENE_EXIT(1, 16, 16), SCENE_EXIT(2, 12, 1),
-    SCENE_EXIT(3, 12, 3), SCENE_EXIT(4, 12, 4),  SCENE_EXIT(5, 12, 5),
-    SCENE_EXIT(6, 12, 6), SCENE_EXIT(7, 17, 10), SCENE_EXIT(10, 510, 1),
+    SCENE_EXITS(SolSanctumLunaSolRooms),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ENTRANCE_1,
+               SolSanctumEntrance1,
+               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
+    SCENE_EXIT(2, SolSanctumStatue, 1),
+    SCENE_EXIT(3, SolSanctumStatue, 3),
+    SCENE_EXIT(4, SolSanctumStatue, 4),
+    SCENE_EXIT(5, SolSanctumStatue, 5),
+    SCENE_EXIT(6, SolSanctumStatue, 6),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM,
+               SolSanctumElementalStarRoom,
+               SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
+    SCENE_EXIT_TO_BATTLE(10, 1),
     SCENE_EXITS_END,
 };
 

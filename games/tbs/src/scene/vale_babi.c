@@ -155,7 +155,7 @@ const u32 *ValeBabi_GetExits(void) {
 const struct ScenePlacement *ValeBabi_GetPlacements(void) {
   struct ScenePlacement *table;
 
-  if (gGameState.entrance == 19)
+  if (gGameState.entrance == VALE_BABI_FROM_BABI_PALACE_1)
     return gValeBabi_ScholarsPlacements;
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     table = gValeBabi_PlacementsAfterKalay;
@@ -187,7 +187,7 @@ static void Event_ScholarAsksAboutKraden(s32 speakerId) {
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
 const struct SceneEvent *ValeBabi_GetEvents(void) {
-  if (gGameState.entrance == 19) {
+  if (gGameState.entrance == VALE_BABI_FROM_BABI_PALACE_1) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gValeBabi_ScholarsLaterEvents;
     }
@@ -343,7 +343,7 @@ static void Event_TakeExit11(void) {
 s32 ValeBabi_Initialize(void) {
   struct FieldActor *actor;
 
-  if (gGameState.entrance == 19) {
+  if (gGameState.entrance == VALE_BABI_FROM_BABI_PALACE_1) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -362,7 +362,8 @@ s32 ValeBabi_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
       actor = Object_GetById(17);
       Engine_ActorSetSpriteFlags(actor, 0);
-      if (gGameState.entrance == 6 || gGameState.entrance == 7) {
+      if (gGameState.entrance == VALE_BABI_FROM_VALE ||
+          gGameState.entrance == 7) {
         if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
             Map_ClearLayerEntryFlag(12);
@@ -378,7 +379,7 @@ s32 ValeBabi_Initialize(void) {
       if (gGameState.entrance == 21) {
         Event_HurryToThePlaza();
       } else {
-        if (gGameState.entrance == 20) {
+        if (gGameState.entrance == VALE_BABI_FROM_VALE_HOME_SOUTHEAST) {
           Engine_GameFlagSet(FLAG_VALE_STORM);
           Event_DoraWakesIsaac();
         } else {
@@ -1244,42 +1245,72 @@ s32 gValeBabi_MythrilBagWobblesScript[] = {
 
 struct SceneEntrance gValeBabi_Entrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 160, 0, 228, FACING_NORTH, 0, 24, 0, 248, 256, 0},
+    {VALE_BABI_FROM_VALE_HOME_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
+     FACING_NORTH, 0, 24, 0, 248, 256, 0},
     {2, CONDITION_ALWAYS, 480, 0, 176, FACING_NORTH, 0, 264, 8, 560, 240, 0},
-    {3, CONDITION_ALWAYS, 721, 0, 192, FACING_NORTH, 0, 584, 0, 848, 224, 0},
-    {4, CONDITION_ALWAYS, 144, 0, 494, FACING_NORTH, 0, 8, 256, 320, 528, 0},
+    {VALE_BABI_FROM_VALE_HOME_NORTHEAST, CONDITION_ALWAYS, 721, 0, 192,
+     FACING_NORTH, 0, 584, 0, 848, 224, 0},
+    {VALE_BABI_FROM_VALE_HOME_WEST, CONDITION_ALWAYS, 144, 0, 494, FACING_NORTH,
+     0, 8, 256, 320, 528, 0},
     {5, CONDITION_ALWAYS, 119, 0, 340, FACING_SOUTH, 0, 8, 256, 320, 528, 0},
-    {6, CONDITION_ALWAYS, 416, 0, 528, FACING_NORTH, 0, 344, 272, 640, 560, 0},
+    {VALE_BABI_FROM_VALE, CONDITION_ALWAYS, 416, 0, 528, FACING_NORTH, 0, 344,
+     272, 640, 560, 0},
     {7, CONDITION_ALWAYS, 408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
-    {8, CONDITION_ALWAYS, 184, 0, 633, FACING_EAST, 0, 8, 576, 320, 736, 0},
+    {VALE_BABI_AFTER_ENTER_BATTLE, CONDITION_ALWAYS, 184, 0, 633, FACING_EAST,
+     0, 8, 576, 320, 736, 0},
     {9, CONDITION_ALWAYS, 408, 0, 665, FACING_EAST, 0, 328, 600, 624, 816, 0},
     {10, CONDITION_ALWAYS, 528, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {11, CONDITION_ALWAYS, 705, 0, 817, FACING_NORTH, 0, 640, 552, 952, 864, 0},
-    {12, CONDITION_ALWAYS, 879, 0, 765, FACING_NORTH, 0, 640, 552, 952, 864, 0},
+    {VALE_BABI_FROM_VALE_STORM_WEST, CONDITION_ALWAYS, 705, 0, 817,
+     FACING_NORTH, 0, 640, 552, 952, 864, 0},
+    {VALE_BABI_FROM_VALE_STORM_EAST, CONDITION_ALWAYS, 879, 0, 765,
+     FACING_NORTH, 0, 640, 552, 952, 864, 0},
     {16, CONDITION_ALWAYS, 538, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {19, CONDITION_ALWAYS, 760, 0, 328, FACING_SOUTH, 0, 672, 272, 960, 488, 0},
-    {20, CONDITION_ALWAYS, 567, 0, 676, FACING_EAST, 0, 1024, 576, 1024, 576,
-     0},
+    {VALE_BABI_FROM_BABI_PALACE_1, CONDITION_ALWAYS, 760, 0, 328, FACING_SOUTH,
+     0, 672, 272, 960, 488, 0},
+    {VALE_BABI_FROM_VALE_HOME_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,
+     FACING_EAST, 0, 1024, 576, 1024, 576, 0},
     {21, CONDITION_ALWAYS, 408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
     {22, CONDITION_ALWAYS, 480, 0, 176, FACING_NORTH, 0, 264, 8, 560, 240, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gValeBabi_Exits[] = {
-    SCENE_EXITS(8),          SCENE_EXIT(1, 5, 6),   SCENE_EXIT(2, 6, 3),
-    SCENE_EXIT(3, 5, 2),     SCENE_EXIT(4, 5, 7),   SCENE_EXIT(5, 8, 8),
-    SCENE_EXIT(6, 4, 8),     SCENE_EXIT(7, 8, 9),   SCENE_EXIT(8, 8, 5),
-    SCENE_EXIT(9, 8, 7),     SCENE_EXIT(10, 3, 12), SCENE_EXIT(11, 3, 13),
-    SCENE_EXIT(19, 138, 11), SCENE_EXIT(20, 8, 21), SCENE_EXIT(21, 3, 15),
-    SCENE_EXIT(22, 6, 10),   SCENE_EXITS_END,
+    SCENE_EXITS(ValeBabi),
+    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_NORTHWEST, ValeHome, 6),
+    SCENE_EXIT(2, ValeKraden, VALE_KRADEN_FROM_VALE_BABI_NORTH),
+    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_NORTHEAST, ValeHome, 2),
+    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_WEST, ValeHome, 7),
+    SCENE_EXIT(5, ValeBabi, VALE_BABI_AFTER_ENTER_BATTLE),
+    SCENE_EXIT(VALE_BABI_TO_VALE, Vale, VALE_FROM_VALE_BABI),
+    SCENE_EXIT(7, ValeBabi, 9),
+    SCENE_EXIT(8, ValeBabi, 5),
+    SCENE_EXIT(9, ValeBabi, 7),
+    SCENE_EXIT(VALE_BABI_TO_VALE_STORM, ValeStorm, 12),
+    SCENE_EXIT(VALE_BABI_TO_VALE_STORM_WEST, ValeStorm, 13),
+    SCENE_EXIT(VALE_BABI_TO_BABI_PALACE_1, BabiPalace1,
+               BABI_PALACE_1_FROM_VALE_BABI),
+    SCENE_EXIT(20, ValeBabi, 21),
+    SCENE_EXIT(21, ValeStorm, 15),
+    SCENE_EXIT(22, ValeKraden, VALE_KRADEN_FROM_VALE_BABI_SOUTH),
+    SCENE_EXITS_END,
 };
 
 u32 gValeBabi_StormExits[] = {
-    SCENE_EXITS(8),        SCENE_EXIT(1, 5, 6),   SCENE_EXIT(2, 6, 3),
-    SCENE_EXIT(3, 5, 2),   SCENE_EXIT(4, 5, 7),   SCENE_EXIT(5, 8, 8),
-    SCENE_EXIT(6, 3, 8),   SCENE_EXIT(7, 8, 9),   SCENE_EXIT(8, 8, 5),
-    SCENE_EXIT(9, 8, 7),   SCENE_EXIT(10, 3, 12), SCENE_EXIT(11, 3, 13),
-    SCENE_EXIT(20, 8, 21), SCENE_EXIT(21, 3, 15), SCENE_EXITS_END,
+    SCENE_EXITS(ValeBabi),
+    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_NORTHWEST, ValeHome, 6),
+    SCENE_EXIT(2, ValeKraden, VALE_KRADEN_FROM_VALE_BABI_NORTH),
+    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_NORTHEAST, ValeHome, 2),
+    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_WEST, ValeHome, 7),
+    SCENE_EXIT(5, ValeBabi, VALE_BABI_AFTER_ENTER_BATTLE),
+    SCENE_EXIT(VALE_BABI_TO_VALE, ValeStorm, 8),
+    SCENE_EXIT(7, ValeBabi, 9),
+    SCENE_EXIT(8, ValeBabi, 5),
+    SCENE_EXIT(9, ValeBabi, 7),
+    SCENE_EXIT(VALE_BABI_TO_VALE_STORM, ValeStorm, 12),
+    SCENE_EXIT(VALE_BABI_TO_VALE_STORM_WEST, ValeStorm, 13),
+    SCENE_EXIT(20, ValeBabi, 21),
+    SCENE_EXIT(21, ValeStorm, 15),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

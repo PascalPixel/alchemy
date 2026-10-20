@@ -2251,11 +2251,11 @@ struct SceneEntrance gColossoLogEntrances[] = {
 };
 
 u32 gColossoLogExits[] = {
-    SCENE_EXITS(145),
-    SCENE_EXIT(10, 145, 1),
-    SCENE_EXIT(11, 140, 66),
-    SCENE_EXIT(4, 138, 99),
-    SCENE_EXIT(5, 138, 99),
+    SCENE_EXITS(ColosseumFinal3),
+    SCENE_EXIT(10, ColosseumFinal3, 1),
+    SCENE_EXIT(COLOSSEUM_FINAL_3_TO_COLOSSEUM, Colosseum, COLOSSEUM_FROM_COLOSSEUM_FINAL_3),
+    SCENE_EXIT(4, BabiPalace1, BABI_PALACE_1_FROM_COLOSSEUM_FINAL_3),
+    SCENE_EXIT(5, BabiPalace1, BABI_PALACE_1_FROM_COLOSSEUM_FINAL_3),
     SCENE_EXITS_END,
 };
 

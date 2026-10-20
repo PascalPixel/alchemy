@@ -392,9 +392,15 @@ struct SceneEntrance gVaultInteriorsRevisit_Entrances[] = {
 };
 
 u32 gVaultInteriorsRevisit_Exits[] = {
-    SCENE_EXITS(24),        SCENE_EXIT(5, 23, 5),   SCENE_EXIT(6, 23, 6),
-    SCENE_EXIT(7, 23, 7),   SCENE_EXIT(8, 23, 8),   SCENE_EXIT(9, 23, 9),
-    SCENE_EXIT(10, 23, 10), SCENE_EXIT(11, 24, 11), SCENE_EXIT(12, 24, 12),
+    SCENE_EXITS(VaultInteriorsRevisit),
+    SCENE_EXIT(5, VaultRevisit, 5),
+    SCENE_EXIT(6, VaultRevisit, 6),
+    SCENE_EXIT(7, VaultRevisit, 7),
+    SCENE_EXIT(8, VaultRevisit, 8),
+    SCENE_EXIT(9, VaultRevisit, 9),
+    SCENE_EXIT(10, VaultRevisit, 10),
+    SCENE_EXIT(11, VaultInteriorsRevisit, 11),
+    SCENE_EXIT(12, VaultInteriorsRevisit, 12),
     SCENE_EXITS_END,
 };
 

@@ -2234,7 +2234,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
         FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
     TolbiShipInteriors_RunSceneCommand(SHIP_CLEAR_ROWING_SELECTIONS, 0, 0);
     Engine_GameFlagSet(0x902);
-    Engine_EventRequestExit(1);
+    Engine_EventRequestExit(TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK);
     break;
   }
   return 0;
@@ -4111,7 +4111,8 @@ struct SceneEntrance gTolbiShipInteriors_EntrancesOther[] = {
 struct SceneEntrance gTolbiShipInteriors_Entrances[] = {
     {1, CONDITION_ALWAYS, 152, 0, 584, FACING_NORTH, 0, 30, 380, 270, 620, 0},
     {2, CONDITION_ALWAYS, 160, 0, 552, FACING_EAST, 0, 30, 380, 270, 620, 0},
-    {3, CONDITION_ALWAYS, 120, 0, 136, FACING_WEST, 0, 25, 80, 265, 350, 0},
+    {TOLBI_SHIP_INTERIORS_FROM_TOLBI_SHIP_DECK_2, CONDITION_ALWAYS, 120, 0, 136,
+     FACING_WEST, 0, 25, 80, 265, 350, 0},
     {4, CONDITION_ALWAYS, 408, 0, 136, FACING_WEST, 0, 315, 80, 555, 410, 0},
     {5, CONDITION_ALWAYS, 440, 0, 728, FACING_NORTH, 0, 315, 500, 555, 765, 0},
     {10, CONDITION_ALWAYS, 440, 0, 728, FACING_NORTH, 0, 315, 500, 555, 765, 0},
@@ -4134,12 +4135,27 @@ struct SceneEntrance gTolbiShipInteriors_Entrances[] = {
 };
 
 u32 gTolbiShipInteriors_Exits[] = {
-    SCENE_EXITS(111),        SCENE_EXIT(1, 109, 1),   SCENE_EXIT(2, 111, 4),
-    SCENE_EXIT(3, 109, 2),   SCENE_EXIT(4, 111, 2),   SCENE_EXIT(5, 109, 3),
-    SCENE_EXIT(10, 109, 10), SCENE_EXIT(11, 111, 11), SCENE_EXIT(12, 111, 12),
-    SCENE_EXIT(13, 2, 65),   SCENE_EXIT(14, 109, 11), SCENE_EXIT(15, 109, 12),
-    SCENE_EXIT(16, 2, 66),   SCENE_EXIT(17, 2, 67),   SCENE_EXIT(18, 2, 68),
-    SCENE_EXIT(19, 109, 15), SCENE_EXIT(20, 2, 69),   SCENE_EXIT(21, 2, 75),
+    SCENE_EXITS(TolbiShipInteriors),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK, TolbiShipDeck, 1),
+    SCENE_EXIT(2, TolbiShipInteriors, 4),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_TO_TOLBI_SHIP_DECK_2, TolbiShipDeck, 2),
+    SCENE_EXIT(4, TolbiShipInteriors, 2),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_HOUSE_2_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
+               3),
+    SCENE_EXIT(10, TolbiShipDeck, 10),
+    SCENE_EXIT(11, TolbiShipInteriors, 11),
+    SCENE_EXIT(12, TolbiShipInteriors, 12),
+    SCENE_EXIT(13, WorldMap, 65),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_HOUSE_3_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
+               11),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_HOUSE_4_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
+               12),
+    SCENE_EXIT(16, WorldMap, 66),
+    SCENE_EXIT(17, WorldMap, 67),
+    SCENE_EXIT(18, WorldMap, 68),
+    SCENE_EXIT(19, TolbiShipDeck, 15),
+    SCENE_EXIT(20, WorldMap, 69),
+    SCENE_EXIT(21, WorldMap, 75),
     SCENE_EXITS_END,
 };
 

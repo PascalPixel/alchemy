@@ -105,15 +105,6 @@
 
 /// Scene ids above the field maps, which Game_ResetForNewGame runs without a
 /// map; each returns a result to Scene_ReturnFromBattle instead of an exit.
-enum {
-  /// Runs nothing and returns 0; no ☀️ code sends the party there.
-  SCENE_BLANK = 0x1fb,
-  SCENE_REEL_GAME = 0x1fc,  ///< Lucky Wheels at Tolbi's spring (colorfx.c)
-  SCENE_LUCKY_DICE = 0x1fd, ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
-  /// A battle; the entrance is the enemy group, and the result -1 a defeat.
-  SCENE_BATTLE = 0x1fe
-};
-
 /// A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers
 /// read the result by name.

@@ -339,20 +339,36 @@ struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
 
 struct SceneEntrance gKalayInteriors_SanctumEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0, 110, 35, 390, 345, 0},
+    {KALAY_SANCTUM_FROM_KALAY_1, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0,
+     110, 35, 390, 345, 0},
     {2, CONDITION_ALWAYS, 248, 0, 128, FACING_SOUTH, 0, 110, 35, 390, 345, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gKalayInteriors_Exits[] = {
-    SCENE_EXITS(100),        SCENE_EXIT(1, 99, 1),    SCENE_EXIT(2, 99, 2),
-    SCENE_EXIT(3, 99, 3),    SCENE_EXIT(4, 99, 4),    SCENE_EXIT(5, 99, 12),
-    SCENE_EXIT(6, 99, 5),    SCENE_EXIT(7, 99, 6),    SCENE_EXIT(8, 99, 13),
-    SCENE_EXIT(9, 100, 11),  SCENE_EXIT(10, 99, 7),   SCENE_EXIT(11, 100, 9),
-    SCENE_EXIT(12, 100, 17), SCENE_EXIT(13, 100, 18), SCENE_EXIT(14, 100, 19),
-    SCENE_EXIT(15, 100, 16), SCENE_EXIT(16, 100, 15), SCENE_EXIT(17, 100, 12),
-    SCENE_EXIT(18, 100, 13), SCENE_EXIT(19, 100, 14), SCENE_EXIT(0, 101, 0),
-    SCENE_EXIT(1, 99, 8),    SCENE_EXITS_END,
+    SCENE_EXITS(KalayInteriors1),
+    SCENE_EXIT(1, Kalay1, 1),
+    SCENE_EXIT(2, Kalay1, 2),
+    SCENE_EXIT(3, Kalay1, 3),
+    SCENE_EXIT(4, Kalay1, 4),
+    SCENE_EXIT(5, Kalay1, 12),
+    SCENE_EXIT(6, Kalay1, 5),
+    SCENE_EXIT(7, Kalay1, 6),
+    SCENE_EXIT(8, Kalay1, 13),
+    SCENE_EXIT(9, KalayInteriors1, 11),
+    SCENE_EXIT(10, Kalay1, 7),
+    SCENE_EXIT(11, KalayInteriors1, 9),
+    SCENE_EXIT(12, KalayInteriors1, 17),
+    SCENE_EXIT(13, KalayInteriors1, 18),
+    SCENE_EXIT(14, KalayInteriors1, 19),
+    SCENE_EXIT(15, KalayInteriors1, 16),
+    SCENE_EXIT(16, KalayInteriors1, 15),
+    SCENE_EXIT(17, KalayInteriors1, 12),
+    SCENE_EXIT(18, KalayInteriors1, 13),
+    SCENE_EXIT(19, KalayInteriors1, 14),
+    SCENE_EXITS(KalaySanctum),
+    SCENE_EXIT(KALAY_SANCTUM_TO_KALAY_1, Kalay1, KALAY_1_FROM_KALAY_SANCTUM),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gKalayInteriors_NoPlacements[] = {

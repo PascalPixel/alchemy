@@ -271,7 +271,7 @@ static void Event_EnterPalace(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Engine_EventWait(16);
-  Engine_EventRequestExit(2);
+  Engine_EventRequestExit(MCCOY_PALACE_GARDEN_TO_MCCOY_PALACE);
   Engine_EventEnd();
 }
 
@@ -412,7 +412,7 @@ static void Event_GuardsArrestParty(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(10);
+  Engine_EventRequestExit(MCCOY_PALACE_GARDEN_TO_MCCOY_PALACE_EAST);
   Engine_EventEnd();
 }
 
@@ -444,10 +444,10 @@ struct SceneEntrance gMcCoyPalaceGardenEntrances[] = {
 };
 
 u32 gMcCoyPalaceGardenExits[] = {
-    SCENE_EXITS(34),
-    SCENE_EXIT(1, 30, 2),
-    SCENE_EXIT(2, 33, 1),
-    SCENE_EXIT(10, 33, 29),
+    SCENE_EXITS(McCoyPalaceGarden),
+    SCENE_EXIT(MCCOY_PALACE_GARDEN_TO_BILIBIN, Bilibin, BILIBIN_FROM_MCCOY_PALACE_GARDEN),
+    SCENE_EXIT(MCCOY_PALACE_GARDEN_TO_MCCOY_PALACE, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_WEST),
+    SCENE_EXIT(MCCOY_PALACE_GARDEN_TO_MCCOY_PALACE_EAST, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST),
     SCENE_EXITS_END,
 };
 

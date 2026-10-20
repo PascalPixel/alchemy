@@ -1,9 +1,9 @@
 /// @file
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three places that
-/// share one overlay, each a scene of its own: Bilibin (scene 30), BilibinTreasury
-/// (scene 32) and BilibinBarricade (scene 35). The getters pick each scene's tables by
-/// gGameState.scene, Bilibin_Initialize sets up the scene being entered, and
-/// Event_PushBlock serves all three.
+/// share one overlay, each a scene of its own: Bilibin (scene 30),
+/// BilibinTreasury (scene 32) and BilibinBarricade (scene 35). The getters pick
+/// each scene's tables by gGameState.scene, Bilibin_Initialize sets up the
+/// scene being entered, and Event_PushBlock serves all three.
 ///
 /// Bilibin (Bilibin) is the town past the Goma Range's cave, and the party
 /// finds it afraid. A man who came to the village under a curse stands at its
@@ -45,8 +45,8 @@
 /// clears place flags on entering a new group, so the guard seems never to see
 /// it set; a playthrough would settle it.
 ///
-/// The Bilibin Treasury (BilibinTreasury) is what its sign calls `McCoy's Hidden
-/// Warehouse`. Gust, a Jupiter Djinni, waits there, placed until he has
+/// The Bilibin Treasury (BilibinTreasury) is what its sign calls `McCoy's
+/// Hidden Warehouse`. Gust, a Jupiter Djinni, waits there, placed until he has
 /// joined, and joins the party when spoken to (Event_GustJoins). A second
 /// statue (TREASURY_BLOCK) slides along one column, and
 /// Bilibin_UpdateTreasuryBlockCells keeps the two cells it can stand on in
@@ -54,13 +54,13 @@
 /// floor; two exit regions (Bilibin_GetRegions) lead to its other entrance and
 /// back to Bilibin by the statue.
 ///
-/// The Bilibin Barricade (BilibinBarricade) is the road east to Kolima where McCoy's
-/// barricade stands, reached from the world map at either end. Its sign reads
-/// `This area is off-limits to all those without a permit. —Lord McCoy`, and a
-/// door there stays locked (`The door is tightly locked.`). At McCoy's Palace
-/// the worker who built the barricade calls it shabby, a gate guard thinks its
-/// hinges might break, and McCoy's captain hints that the party may not need
-/// a key (mccoy_palace.c, mccoy_palace_garden.c). A stack of crates
+/// The Bilibin Barricade (BilibinBarricade) is the road east to Kolima where
+/// McCoy's barricade stands, reached from the world map at either end. Its sign
+/// reads `This area is off-limits to all those without a permit. —Lord McCoy`,
+/// and a door there stays locked (`The door is tightly locked.`). At McCoy's
+/// Palace the worker who built the barricade calls it shabby, a gate guard
+/// thinks its hinges might break, and McCoy's captain hints that the party may
+/// not need a key (mccoy_palace.c, mccoy_palace_garden.c). A stack of crates
 /// (RIVER_BLOCK) slides a cell at a time under Move or a push, and
 /// Bilibin_UpdateRiverBlockCells rewrites the ten cells of its lane after
 /// each move. By the river stand three trees, one on another's shoulders
@@ -886,33 +886,48 @@ u16 gBilibinEntrancesOther[] = {
 };
 
 struct SceneEntrance gBilibinEntrances1[] = {
-    {1, CONDITION_ALWAYS, 240, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 224, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 376, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {4, CONDITION_ALWAYS, 200, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {5, CONDITION_ALWAYS, 104, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {6, CONDITION_ALWAYS, 168, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {7, CONDITION_ALWAYS, 72, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {8, CONDITION_ALWAYS, 296, 0, 184, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {9, CONDITION_ALWAYS, 400, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {10, CONDITION_ALWAYS, 40, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {11, CONDITION_ALWAYS, 264, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {BILIBIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 240, 0, 472, FACING_NORTH, 0, -1,
+     -1, -1, -1, 0},
+    {BILIBIN_FROM_MCCOY_PALACE_GARDEN, CONDITION_ALWAYS, 224, 0, 88,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {BILIBIN_FROM_INN, CONDITION_ALWAYS, 376, 0, 360, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
+    {BILIBIN_FROM_HOUSE_EAST, CONDITION_ALWAYS, 200, 0, 328, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {BILIBIN_FROM_HOUSE_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {BILIBIN_FROM_HOUSE_NORTH, CONDITION_ALWAYS, 168, 0, 216, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {BILIBIN_FROM_ITEM_SHOP, CONDITION_ALWAYS, 72, 0, 216, FACING_SOUTH, 0, -1,
+     -1, -1, -1, 0},
+    {BILIBIN_FROM_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, 296, 0, 184,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {BILIBIN_FROM_SANCTUM, CONDITION_ALWAYS, 400, 0, 168, FACING_SOUTH, 0, -1,
+     -1, -1, -1, 0},
+    {BILIBIN_FROM_BILIBIN_TREASURY_WEST, CONDITION_ALWAYS, 40, 0, 152,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {BILIBIN_FROM_BILIBIN_TREASURY_EAST, CONDITION_ALWAYS, 264, 0, 200,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinEntrances3[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 56, 0, 376, FACING_EAST, 0, 16, 16, 400, 400, 0},
-    {2, CONDITION_ALWAYS, 376, 0, 184, FACING_WEST, 0, 16, 16, 400, 400, 0},
+    {BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 56, 0, 376,
+     FACING_EAST, 0, 16, 16, 400, 400, 0},
+    {BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 376, 0, 184,
+     FACING_WEST, 0, 16, 16, 400, 400, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinEntrances2[] = {
     {0, CONDITION_ALWAYS, 232, 0, 144, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 120, 0, 408, FACING_NORTH, 0, 0, 288, 240, 448, 0},
+    {BILIBIN_TREASURY_FROM_BILIBIN_SOUTH, CONDITION_ALWAYS, 120, 0, 408,
+     FACING_NORTH, 0, 0, 288, 240, 448, 0},
     {2, CONDITION_ALWAYS, 120, 0, 384, FACING_SOUTH, 0, 0, 288, 240, 448, 0},
     {3, CONDITION_ALWAYS, 72, 4, 128, FACING_NORTH, 0, 32, 32, 384, 304, 0},
-    {4, CONDITION_ALWAYS, 296, 4, 224, FACING_NORTH, 0, 32, 32, 384, 304, 0},
+    {BILIBIN_TREASURY_FROM_BILIBIN_NORTH, CONDITION_ALWAYS, 296, 4, 224,
+     FACING_NORTH, 0, 32, 32, 384, 304, 0},
     {SCENE_TABLE_END},
 };
 
@@ -924,26 +939,26 @@ s16 gBilibinRegions2[] = {
 };
 
 u32 gBilibinExits[] = {
-    SCENE_EXITS(30),
-    SCENE_EXIT(1, 2, 5),
-    SCENE_EXIT(2, 34, 1),
-    SCENE_EXIT(3, 31, 6),
-    SCENE_EXIT(4, 31, 1),
-    SCENE_EXIT(5, 31, 2),
-    SCENE_EXIT(6, 31, 3),
-    SCENE_EXIT(7, 31, 5),
-    SCENE_EXIT(8, 31, 4),
-    SCENE_EXIT(9, 9, 35),
-    SCENE_EXIT(10, 32, 1),
-    SCENE_EXIT(11, 32, 4),
-    SCENE_EXIT(0, 32, 0),
-    SCENE_EXIT(1, 30, 10),
-    SCENE_EXIT(2, 32, 3),
-    SCENE_EXIT(3, 32, 2),
-    SCENE_EXIT(4, 30, 11),
-    SCENE_EXIT(0, 35, 0),
-    SCENE_EXIT(1, 2, 6),
-    SCENE_EXIT(2, 2, 47),
+    SCENE_EXITS(Bilibin),
+    SCENE_EXIT(BILIBIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_BILIBIN),
+    SCENE_EXIT(BILIBIN_TO_MCCOY_PALACE_GARDEN, McCoyPalaceGarden, MCCOY_PALACE_GARDEN_FROM_BILIBIN),
+    SCENE_EXIT(BILIBIN_TO_INN, BilibinInteriors, BILIBIN_INTERIORS_INN),
+    SCENE_EXIT(BILIBIN_TO_HOUSE_EAST, BilibinInteriors, BILIBIN_INTERIORS_HOUSE_EAST),
+    SCENE_EXIT(BILIBIN_TO_HOUSE_WEST, BilibinInteriors, BILIBIN_INTERIORS_HOUSE_WEST),
+    SCENE_EXIT(BILIBIN_TO_HOUSE_NORTH, BilibinInteriors, BILIBIN_INTERIORS_HOUSE_NORTH),
+    SCENE_EXIT(BILIBIN_TO_ITEM_SHOP, BilibinInteriors, BILIBIN_INTERIORS_ITEM_SHOP),
+    SCENE_EXIT(BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, BilibinInteriors, BILIBIN_INTERIORS_WEAPON_AND_ARMOR_SHOP),
+    SCENE_EXIT(BILIBIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_BILIBIN),
+    SCENE_EXIT(BILIBIN_TO_BILIBIN_TREASURY_WEST, BilibinTreasury, BILIBIN_TREASURY_FROM_BILIBIN_SOUTH),
+    SCENE_EXIT(BILIBIN_TO_BILIBIN_TREASURY_EAST, BilibinTreasury, BILIBIN_TREASURY_FROM_BILIBIN_NORTH),
+    SCENE_EXITS(BilibinTreasury),
+    SCENE_EXIT(BILIBIN_TREASURY_TO_BILIBIN_SOUTH, Bilibin, BILIBIN_FROM_BILIBIN_TREASURY_WEST),
+    SCENE_EXIT(2, BilibinTreasury, 3),
+    SCENE_EXIT(3, BilibinTreasury, 2),
+    SCENE_EXIT(BILIBIN_TREASURY_TO_BILIBIN_NORTH, Bilibin, BILIBIN_FROM_BILIBIN_TREASURY_EAST),
+    SCENE_EXITS(BilibinBarricade),
+    SCENE_EXIT(BILIBIN_BARRICADE_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_BILIBIN_BARRICADE_EAST),
+    SCENE_EXIT(BILIBIN_BARRICADE_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_BILIBIN_BARRICADE_WEST),
     SCENE_EXITS_END,
 };
 

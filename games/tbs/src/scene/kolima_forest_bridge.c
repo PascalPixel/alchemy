@@ -1263,16 +1263,25 @@ s32 gKolimaForestBridge_GroundSparkleAction[] = {
 
 struct SceneEntrance gKolimaForestBridge_Entrances[] = {
     {0, CONDITION_ALWAYS, 384, 0, 312, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {4, CONDITION_ALWAYS, 172, 0, 602, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_FOREST_BRIDGE_FROM_KOLIMA_FOREST_CLEARING, CONDITION_ALWAYS, 24, 0,
+     128, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_FOREST_BRIDGE_FROM_WORLD_MAP, CONDITION_ALWAYS, 172, 0, 602,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 /// Exit 1 on into the forest (scene 41) and exit 4 to the world map (scene 2).
 /// Exits 2 and 3, which no event uses, lead into this map (scene 40).
 u32 gKolimaForestBridge_Exits[] = {
-    SCENE_EXITS(40),      SCENE_EXIT(1, 41, 1), SCENE_EXIT(2, 40, 1),
-    SCENE_EXIT(3, 40, 1), SCENE_EXIT(4, 2, 8),  SCENE_EXITS_END,
+    SCENE_EXITS(KolimaForestBridge),
+    SCENE_EXIT(KOLIMA_FOREST_BRIDGE_TO_KOLIMA_FOREST_CLEARING,
+               KolimaForestClearing,
+               KOLIMA_FOREST_CLEARING_FROM_KOLIMA_FOREST_BRIDGE),
+    SCENE_EXIT(2, KolimaForestBridge, 1),
+    SCENE_EXIT(3, KolimaForestBridge, 1),
+    SCENE_EXIT(KOLIMA_FOREST_BRIDGE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_KOLIMA_FOREST_BRIDGE),
+    SCENE_EXITS_END,
 };
 
 /// Garet, Ivan and Mia for the curse; the three logs; Tret and Laurel; the

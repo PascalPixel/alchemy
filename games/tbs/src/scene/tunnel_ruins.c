@@ -30,11 +30,11 @@
 ///   beside it no longer run. Exits 15, 17 and 18 lead on into TunnelRuins2.
 /// - Tunnel Ruins (TunnelRuins2, scene 173), whose entrances 1 to 3 the area
 ///   names call Babi Lighthouse: they are where the three drops in Babi
-///   Lighthouse Entry (BabiLighthouseEntry, scene 176) land, and from those rooms
-///   Retreat leads back up there, the place name not shown; regions for exits
-///   15 to 17 lead back up to it. There two pillars to push or Move keep their
-///   places between visits (FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
-///   _B_PUSHED_WEST). Elsewhere: a pillar that Douse soaks
+///   Lighthouse Entry (BabiLighthouseEntry, scene 176) land, and from those
+///   rooms Retreat leads back up there, the place name not shown; regions for
+///   exits 15 to 17 lead back up to it. There two pillars to push or Move keep
+///   their places between visits (FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST
+///   and _B_PUSHED_WEST). Elsewhere: a pillar that Douse soaks
 ///   (FLAG_SCENE_TEMP_03), after which its puddle follows it and Frost freezes
 ///   the puddle into a pillar of ice (FLAG_SCENE_TEMP_04); two balance
 ///   platforms, each block set on one with Carry (FLAG_SCENE_TEMP_00 to _02)
@@ -1783,7 +1783,8 @@ struct SceneEntrance gTunnelRuinsEntrancesOther[] = {
 
 struct SceneEntrance gTunnelRuinsEntrances1[] = {
     {0, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 104, 0, 152, FACING_SOUTH, 0, 48, 48, 288, 368, 0},
+    {TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1, CONDITION_ALWAYS, 104, 0, 152,
+     FACING_SOUTH, 0, 48, 48, 288, 368, 0},
     {2, CONDITION_ALWAYS, 200, 0, 328, FACING_NORTH, 0, 48, 48, 288, 368, 0},
     {3, CONDITION_ALWAYS, 184, 0, 552, FACING_SOUTH, 0, 64, 464, 304, 816, 0},
     {4, CONDITION_ALWAYS, 168, 0, 816, FACING_NORTH, 0, 64, 464, 304, 816, 0},
@@ -1797,21 +1798,29 @@ struct SceneEntrance gTunnelRuinsEntrances1[] = {
     {12, CONDITION_ALWAYS, 504, 0, 792, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
     {13, CONDITION_ALWAYS, 568, 0, 872, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
     {14, CONDITION_ALWAYS, 776, 0, 432, FACING_NORTH, 0, 688, 368, 928, 640, 0},
-    {15, CONDITION_ALWAYS, 840, 0, 608, FACING_NORTH, 0, 688, 368, 928, 640, 0},
+    {TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_NORTH, CONDITION_ALWAYS, 840, 0, 608,
+     FACING_NORTH, 0, 688, 368, 928, 640, 0},
     {16, CONDITION_ALWAYS, 744, 0, 792, FACING_SOUTH, 0, 688, 736, 928, 976, 0},
-    {17, CONDITION_ALWAYS, 744, 0, 944, FACING_NORTH, 0, 688, 736, 928, 976, 0},
-    {18, CONDITION_ALWAYS, 872, 0, 880, FACING_NORTH, 0, 688, 736, 928, 976, 0},
+    {TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHWEST, CONDITION_ALWAYS, 744, 0,
+     944, FACING_NORTH, 0, 688, 736, 928, 976, 0},
+    {TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHEAST, CONDITION_ALWAYS, 872, 0,
+     880, FACING_NORTH, 0, 688, 736, 928, 976, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gTunnelRuinsEntrances2[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 632, 0, 344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
-    {2, CONDITION_ALWAYS, 840, 0, 120, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
-    {3, CONDITION_ALWAYS, 824, 0, 344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
-    {4, CONDITION_ALWAYS, 216, 0, 104, FACING_SOUTH, 0, 32, 48, 272, 320, 0},
+    {TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST, CONDITION_ALWAYS, 632, 0,
+     344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
+    {TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH, CONDITION_ALWAYS, 840, 0,
+     120, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
+    {TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH, CONDITION_ALWAYS, 824, 0,
+     344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
+    {TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_WEST, CONDITION_ALWAYS, 216, 0, 104,
+     FACING_SOUTH, 0, 32, 48, 272, 320, 0},
     {5, CONDITION_ALWAYS, 216, 0, 296, FACING_NORTH, 0, 32, 48, 272, 320, 0},
-    {6, CONDITION_ALWAYS, 360, 0, 104, FACING_SOUTH, 0, 304, 48, 544, 352, 0},
+    {TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_NORTH, CONDITION_ALWAYS, 360, 0, 104,
+     FACING_SOUTH, 0, 304, 48, 544, 352, 0},
     {7, CONDITION_ALWAYS, 488, 0, 328, FACING_NORTH, 0, 304, 48, 544, 352, 0},
     {8, CONDITION_ALWAYS, 120, 0, 568, FACING_NORTH, 0, 80, 400, 448, 592, 0},
     {9, CONDITION_ALWAYS, 216, 0, 456, FACING_SOUTH, 0, 80, 400, 448, 592, 0},
@@ -1821,8 +1830,10 @@ struct SceneEntrance gTunnelRuinsEntrances2[] = {
     {13, CONDITION_ALWAYS, 392, 0, 712, FACING_SOUTH, 0, 288, 656, 560, 864, 0},
     {14, CONDITION_ALWAYS, 520, 0, 776, FACING_SOUTH, 0, 288, 656, 560, 864, 0},
     {15, CONDITION_ALWAYS, 648, 0, 952, FACING_NORTH, 0, 608, 816, 848, 976, 0},
-    {16, CONDITION_ALWAYS, 776, 0, 904, FACING_SOUTH, 0, 608, 816, 848, 976, 0},
-    {17, CONDITION_ALWAYS, 696, 0, 680, FACING_SOUTH, 0, 624, 592, 864, 768, 0},
+    {TUNNEL_RUINS_2_FROM_VENUS_LIGHTHOUSE_2, CONDITION_ALWAYS, 776, 0, 904,
+     FACING_SOUTH, 0, 608, 816, 848, 976, 0},
+    {TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_SOUTH, CONDITION_ALWAYS, 696, 0, 680,
+     FACING_SOUTH, 0, 624, 592, 864, 768, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1834,19 +1845,56 @@ struct SceneRegion gTunnelRuinsRegions2[] = {
 };
 
 u32 gTunnelRuinsExits[] = {
-    SCENE_EXITS(172),        SCENE_EXIT(1, 174, 1),   SCENE_EXIT(2, 172, 3),
-    SCENE_EXIT(3, 172, 2),   SCENE_EXIT(4, 172, 5),   SCENE_EXIT(5, 172, 4),
-    SCENE_EXIT(6, 172, 8),   SCENE_EXIT(7, 172, 10),  SCENE_EXIT(8, 172, 6),
-    SCENE_EXIT(9, 172, 12),  SCENE_EXIT(10, 172, 7),  SCENE_EXIT(11, 172, 16),
-    SCENE_EXIT(12, 172, 9),  SCENE_EXIT(13, 172, 14), SCENE_EXIT(14, 172, 13),
-    SCENE_EXIT(15, 173, 4),  SCENE_EXIT(16, 172, 11), SCENE_EXIT(17, 173, 6),
-    SCENE_EXIT(18, 173, 17), SCENE_EXIT(0, 173, 0),   SCENE_EXIT(1, 172, 15),
-    SCENE_EXIT(2, 173, 9),   SCENE_EXIT(3, 172, 17),  SCENE_EXIT(4, 173, 11),
-    SCENE_EXIT(5, 173, 5),   SCENE_EXIT(6, 173, 7),   SCENE_EXIT(7, 173, 12),
-    SCENE_EXIT(8, 173, 13),  SCENE_EXIT(9, 173, 8),   SCENE_EXIT(10, 173, 10),
-    SCENE_EXIT(11, 173, 15), SCENE_EXIT(12, 172, 18), SCENE_EXIT(13, 173, 14),
-    SCENE_EXIT(14, 183, 18), SCENE_EXIT(15, 176, 4),  SCENE_EXIT(16, 176, 5),
-    SCENE_EXIT(17, 176, 6),  SCENE_EXITS_END,
+    SCENE_EXITS(TunnelRuins1),
+    SCENE_EXIT(TUNNEL_RUINS_1_TO_BABI_LIGHTHOUSE_1, BabiLighthouse1,
+               BABI_LIGHTHOUSE_1_FROM_TUNNEL_RUINS_1),
+    SCENE_EXIT(2, TunnelRuins1, 3),
+    SCENE_EXIT(3, TunnelRuins1, 2),
+    SCENE_EXIT(4, TunnelRuins1, 5),
+    SCENE_EXIT(5, TunnelRuins1, 4),
+    SCENE_EXIT(6, TunnelRuins1, 8),
+    SCENE_EXIT(7, TunnelRuins1, 10),
+    SCENE_EXIT(8, TunnelRuins1, 6),
+    SCENE_EXIT(9, TunnelRuins1, 12),
+    SCENE_EXIT(10, TunnelRuins1, 7),
+    SCENE_EXIT(11, TunnelRuins1, 16),
+    SCENE_EXIT(12, TunnelRuins1, 9),
+    SCENE_EXIT(13, TunnelRuins1, 14),
+    SCENE_EXIT(14, TunnelRuins1, 13),
+    SCENE_EXIT(TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_WEST, TunnelRuins2,
+               TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_WEST),
+    SCENE_EXIT(16, TunnelRuins1, 11),
+    SCENE_EXIT(TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHWEST, TunnelRuins2,
+               TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_NORTH),
+    SCENE_EXIT(TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHEAST, TunnelRuins2,
+               TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_SOUTH),
+    SCENE_EXITS(TunnelRuins2),
+    SCENE_EXIT(TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_NORTH, TunnelRuins1,
+               TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_NORTH),
+    SCENE_EXIT(2, TunnelRuins2, 9),
+    SCENE_EXIT(3, TunnelRuins1, TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHWEST),
+    SCENE_EXIT(4, TunnelRuins2, 11),
+    SCENE_EXIT(5, TunnelRuins2, 5),
+    SCENE_EXIT(6, TunnelRuins2, 7),
+    SCENE_EXIT(7, TunnelRuins2, 12),
+    SCENE_EXIT(8, TunnelRuins2, 13),
+    SCENE_EXIT(9, TunnelRuins2, 8),
+    SCENE_EXIT(10, TunnelRuins2, 10),
+    SCENE_EXIT(11, TunnelRuins2, 15),
+    SCENE_EXIT(12, TunnelRuins1, TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHEAST),
+    SCENE_EXIT(13, TunnelRuins2, 14),
+    SCENE_EXIT(TUNNEL_RUINS_2_TO_VENUS_LIGHTHOUSE_2, VenusLighthouse2,
+               VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_2),
+    SCENE_EXIT(TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST,
+               BabiLighthouseEntry,
+               BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_WEST),
+    SCENE_EXIT(TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH,
+               BabiLighthouseEntry,
+               BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_SOUTH),
+    SCENE_EXIT(TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_NORTH,
+               BabiLighthouseEntry,
+               BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_NORTH),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gTunnelRuinsPlacements1[] = {

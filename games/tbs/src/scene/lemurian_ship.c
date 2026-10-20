@@ -576,7 +576,7 @@ static void SetSail(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(30);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
-  Event_SetDestination((s32)&SceneId_Title, 9);
+  Event_SetDestination((s32)&SceneId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 
 /// The water's ripple, this scene's view of the HBlank scroll work
@@ -976,13 +976,15 @@ s16 gRippleSine[256] = {
 
 struct SceneEntrance gLemurianShipEntrances[] = {
     {0, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 312, 0, 296, FACING_NORTH, 0, -1, -1, -1, 328, 0},
+    {LEMURIAN_SHIP_FROM_LALIVERO_INTERIORS_2, CONDITION_ALWAYS, 312, 0, 296,
+     FACING_NORTH, 0, -1, -1, -1, 328, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gLemurianShipExits[] = {
-    SCENE_EXITS(188),
-    SCENE_EXIT(1, 180, 31),
+    SCENE_EXITS(LemurianShip),
+    SCENE_EXIT(LEMURIAN_SHIP_TO_LALIVERO_INTERIORS_2, LaliveroInteriors2,
+               LALIVERO_INTERIORS_2_FROM_LEMURIAN_SHIP),
     SCENE_EXITS_END,
 };
 

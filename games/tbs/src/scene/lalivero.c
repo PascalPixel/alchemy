@@ -905,11 +905,21 @@ struct SceneEntrance gLaliveroEntrances[] = {
 };
 
 u32 gLaliveroExits[] = {
-    SCENE_EXITS(178),       SCENE_EXIT(1, 180, 30), SCENE_EXIT(2, 179, 1),
-    SCENE_EXIT(3, 180, 23), SCENE_EXIT(4, 179, 6),  SCENE_EXIT(5, 179, 4),
-    SCENE_EXIT(6, 179, 11), SCENE_EXIT(7, 180, 21), SCENE_EXIT(8, 180, 22),
-    SCENE_EXIT(9, 179, 9),  SCENE_EXIT(10, 179, 2), SCENE_EXIT(11, 179, 10),
-    SCENE_EXIT(20, 2, 30),  SCENE_EXIT(21, 2, 59),  SCENE_EXITS_END,
+    SCENE_EXITS(Lalivero),
+    SCENE_EXIT(1, LaliveroInteriors2, 30),
+    SCENE_EXIT(2, LaliveroInteriors1, 1),
+    SCENE_EXIT(3, LaliveroInteriors2, 23),
+    SCENE_EXIT(4, LaliveroInteriors1, 6),
+    SCENE_EXIT(5, LaliveroInteriors1, 4),
+    SCENE_EXIT(6, LaliveroInteriors1, 11),
+    SCENE_EXIT(7, LaliveroInteriors2, 21),
+    SCENE_EXIT(8, LaliveroInteriors2, 22),
+    SCENE_EXIT(9, LaliveroInteriors1, 9),
+    SCENE_EXIT(10, LaliveroInteriors1, 2),
+    SCENE_EXIT(11, LaliveroInteriors1, 10),
+    SCENE_EXIT(20, WorldMap, WORLD_MAP_FROM_LALIVERO_EAST),
+    SCENE_EXIT(21, WorldMap, WORLD_MAP_FROM_LALIVERO_WEST),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

@@ -169,7 +169,7 @@ const struct ScenePlacement *ValeHome_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeHome_StormPlacements;
   }
-  if (gGameState.entrance == 12) {
+  if (gGameState.entrance == VALE_HOME_FROM_SANCTUM) {
     return gValeHome_DeparturePlacements;
   }
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
@@ -203,7 +203,7 @@ const struct SceneEvent *ValeHome_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     return gValeHome_EventsAfterLeaving;
   }
-  if (gGameState.entrance == 12) {
+  if (gGameState.entrance == VALE_HOME_FROM_SANCTUM) {
     return gValeHome_DepartureEvents;
   }
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -553,14 +553,14 @@ static void Event_OpenWestEdgeDoor(void) {
 /// entrance 4).
 static void Event_OpenSoutheastDoor(void) {
   Event_OpenDoorAndWalkThrough(51, 39, 358, 670);
-  Vale_RequestBackdropExit(7);
+  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_BABI_WEST);
 }
 
 /// In Vale on the stormy night, leaves by the west passage, back to the
 /// storm's map: stepping on cell code 9 takes exit 8, to scene 3's entrance 5.
 static void Event_LeaveThroughWestPassage(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Vale_RequestBackdropExit(8);
+  Vale_RequestBackdropExit(VALE_HOME_TO_VALE);
 }
 
 /// In Vale, leaves by the town gate for the world map, once the party has
@@ -572,7 +572,7 @@ static void Event_LeaveThroughWestPassage(void) {
 static void Event_LeaveThroughTownGate(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_AudioPlayCue(SE_MAP_EXIT);
-    Vale_RequestBackdropExit(10);
+    Vale_RequestBackdropExit(VALE_HOME_TO_WORLD_MAP);
   }
 }
 
@@ -670,7 +670,7 @@ s32 ValeHome_Initialize(void) {
         Engine_TaskWait(1);
       }
     }
-    if (gGameState.entrance == 12) {
+    if (gGameState.entrance == VALE_HOME_FROM_SANCTUM) {
       Event_DepartForQuest();
     } else {
       if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -1152,7 +1152,7 @@ static void Event_TravelersLeaveAfterBattle(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_GameFlagClear(FLAG_VALE_STORM);
-  Engine_EventRequestExit(9);
+  Engine_EventRequestExit(VALE_HOME_TO_TITLE);
   Engine_EventEnd();
 }
 
@@ -1506,7 +1506,7 @@ static void Event_DepartForQuest(void) {
   Engine_EventWaitForScreen();
   Engine_ActorStop(0);
   Engine_ActorStop(1);
-  Engine_EventRequestExit(10);
+  Engine_EventRequestExit(VALE_HOME_TO_WORLD_MAP);
   Engine_EventEnd();
 }
 
@@ -1693,7 +1693,7 @@ static void ValeHome_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_TRET_DEFEATED);
   Engine_GameFlagSet(FLAG_KOLIMA_CURSE_LIFTED);
 #endif
-  Engine_EventRequestExit(40);
+  Engine_EventRequestExit(VALE_HOME_TO_BILIBIN);
 }
 
 // clang-format off
@@ -1968,38 +1968,38 @@ struct SceneEntrance gValeHome_Entrances[] = {
 };
 
 u32 gValeHome_Exits[] = {
-    SCENE_EXITS(5),
-    SCENE_EXIT(1, 7, 8),
-    SCENE_EXIT(2, 8, 3),
-    SCENE_EXIT(3, 7, 3),
-    SCENE_EXIT(4, 7, 7),
-    SCENE_EXIT(5, 7, 4),
-    SCENE_EXIT(6, 8, 1),
-    SCENE_EXIT(7, 8, 4),
-    SCENE_EXIT(8, 4, 5),
-    SCENE_EXIT(9, 0, 1),
-    SCENE_EXIT(10, 2, 1),
-    SCENE_EXIT(11, 28, 5),
-    SCENE_EXIT(50, 8, 20),
+    SCENE_EXITS(ValeHome),
+    SCENE_EXIT(1, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_EAST),
+    SCENE_EXIT(2, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHEAST),
+    SCENE_EXIT(3, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_NORTH),
+    SCENE_EXIT(4, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_SOUTH),
+    SCENE_EXIT(5, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_WEST),
+    SCENE_EXIT(6, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHWEST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_WEST, ValeBabi, VALE_BABI_FROM_VALE_HOME_WEST),
+    SCENE_EXIT(VALE_HOME_TO_VALE, Vale, VALE_FROM_VALE_HOME),
+    SCENE_EXIT(VALE_HOME_TO_TITLE, Title, TITLE_FROM_VALE_HOME),
+    SCENE_EXIT(VALE_HOME_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_VALE_HOME),
+    SCENE_EXIT(VALE_HOME_TO_GOMA_CAVE_WATERWAY_1, GomaCaveWaterway1, GOMA_CAVE_WATERWAY_1_FROM_VALE_HOME),
+    SCENE_EXIT(50, ValeBabi, VALE_BABI_FROM_VALE_HOME_SOUTHEAST),
 #if !TBS_PATCH_3
-    SCENE_EXIT(40, 30, 1),
+    SCENE_EXIT(VALE_HOME_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
 #else
-    SCENE_EXIT(40, 12, 0),
+    SCENE_EXIT(VALE_HOME_TO_BILIBIN, SolSanctumStatue, SOL_SANCTUM_STATUE_FROM_VALE_HOME),
 #endif
     SCENE_EXITS_END,
 };
 
 u32 gValeHome_StormExits[] = {
-    SCENE_EXITS(5),
-    SCENE_EXIT(1, 7, 8),
-    SCENE_EXIT(2, 8, 3),
-    SCENE_EXIT(3, 7, 3),
-    SCENE_EXIT(4, 7, 7),
-    SCENE_EXIT(5, 7, 4),
-    SCENE_EXIT(6, 8, 1),
-    SCENE_EXIT(7, 8, 4),
-    SCENE_EXIT(8, 3, 5),
-    SCENE_EXIT(9, 0, 1),
+    SCENE_EXITS(ValeHome),
+    SCENE_EXIT(1, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_EAST),
+    SCENE_EXIT(2, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHEAST),
+    SCENE_EXIT(3, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_NORTH),
+    SCENE_EXIT(4, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_SOUTH),
+    SCENE_EXIT(5, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_WEST),
+    SCENE_EXIT(6, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHWEST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_WEST, ValeBabi, VALE_BABI_FROM_VALE_HOME_WEST),
+    SCENE_EXIT(VALE_HOME_TO_VALE, ValeStorm, VALE_STORM_FROM_VALE_HOME),
+    SCENE_EXIT(VALE_HOME_TO_TITLE, Title, TITLE_FROM_VALE_HOME),
     SCENE_EXITS_END,
 };
 

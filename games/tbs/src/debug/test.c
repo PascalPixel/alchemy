@@ -832,7 +832,7 @@ struct SceneEntrance gMenuTest_Entrances[] = {
 
 /// No exits: 511 is SCENE_EXITS_END's value.
 u32 gMenuTest_Exits[] = {
-    SCENE_EXITS(511),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gMenuTest_Placements[] = {

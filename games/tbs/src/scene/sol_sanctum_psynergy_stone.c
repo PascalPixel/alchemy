@@ -75,13 +75,16 @@ s32 Scene_Initialize(void) {
 
 struct SceneEntrance gSolSanctumPsynergyStoneEntrances[] = {
     {0, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 87, 0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE, CONDITION_ALWAYS, 87,
+     0, 142, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumPsynergyStoneExits[] = {
-    SCENE_EXITS(13),
-    SCENE_EXIT(1, 12, 2),
+    SCENE_EXITS(SolSanctumPsynergyStone),
+    SCENE_EXIT(SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE,
+               SolSanctumStatue,
+               SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE),
     SCENE_EXITS_END,
 };
 

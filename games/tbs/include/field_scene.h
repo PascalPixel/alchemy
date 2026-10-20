@@ -7,23 +7,8 @@
 
 #include "static_assert.h"
 #include "scene_ids.h"
+#include "scene_links.h"
 #include "character_ids.h"
-
-/// Scene numbers as constants, for the exit tables (SCENE_EXITS, SCENE_EXIT),
-/// whose words pack the scene with other fields. Each is the scene's row in
-/// gField_SceneTable, the value of its SceneId_ symbol.
-enum SceneId {
-  SCENE_WORLD_MAP = 2,
-  SCENE_VAULT = 20,
-  SCENE_VAULT_JAIL = 22,
-  SCENE_VAULT_REVISIT = 23,
-  SCENE_LUNPA = 104,
-  SCENE_LUNPA_SUHALLA = 105,
-  SCENE_WEST_LUNPA_CAVE = 106,
-  SCENE_LUNPA_FORTRESS_GATE = 159,
-  SCENE_LUNPA_FORTRESS = 160,
-  SCENE_SUHALLA_GATE = 169
-};
 
 /// The eight compass headings in 1/65536 turns, from east through south: a
 /// quarter turn is 0x4000, and the screen's y axis points south.
@@ -84,21 +69,40 @@ struct SceneEntrance {
 STATIC_ASSERT(sizeof(struct SceneEntrance) == 24);
 STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 
-/// An exit table's header word: the scene whose exits follow. The table is
-/// read by Scene_TakeExit as the scene ends, with the exit kind it ended on.
-#define SCENE_EXITS(scene) ((u32)(scene))
-/// One exit: exit kind `exit` leads to `entrance` of `scene`. Kind 0xff
-/// matches any exit; kind 0 or the next header sends the party to the first
-/// exit's scene. bits: 27..20 exit kind | 19..12 entrance | 11..0 scene
+/// An exit table's header word: the scene whose exits follow, named by its
+/// place (`SCENE_EXITS(Bilibin)`). The table is read by Scene_TakeExit as the
+/// scene ends, with the exit kind it ended on.
+#define SCENE_EXITS(scene) ((u32)&SceneId_##scene)
+/// One exit: exit kind `exit` leads to `entrance` of the place `scene`, both
+/// named in scene_links.h. Kind 0xff matches any exit; kind 0 or the next
+/// header sends the party to the first exit's scene. The fields are added
+/// rather than ORed so the scene can be its SceneId_ symbol, which the linker
+/// fills in; they never overlap. bits: 27..20 exit kind | 19..12 entrance |
+/// 11..0 scene
 #define SCENE_EXIT(exit, scene, entrance)                                      \
-  ((u32)(exit) << 20 | (u32)(entrance) << 12 | (u32)(scene))
+  (((u32)(exit) << 20) + ((u32)(entrance) << 12) + (u32)&SceneId_##scene)
 /// An exit with a flag word after it (bit 28). Despite the name, the exit is
 /// taken only while `flag` is clear; when it is set, the search goes on to
 /// the next exit.
 #define SCENE_EXIT_IF(exit, scene, entrance, flag)                             \
-  (SCENE_EXIT(exit, scene, entrance) | 0x10000000), (u32)(flag)
+  (SCENE_EXIT(exit, scene, entrance) + 0x10000000), (u32)(flag)
 /// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 0x1ff
+
+/// Scene numbers above the field scenes: what runs instead of a scene
+/// (Scene_Run). They have no row in gField_SceneTable.
+enum {
+  /// Runs nothing and returns 0; no ☀️ code sends the party there.
+  SCENE_BLANK = 0x1fb,
+  SCENE_REEL_GAME = 0x1fc,  ///< Lucky Wheels at Tolbi's spring (colorfx.c)
+  SCENE_LUCKY_DICE = 0x1fd, ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
+  /// A battle; the entrance is the enemy group, and the result -1 a defeat.
+  SCENE_BATTLE = 0x1fe
+};
+
+/// An exit into a battle: exit kind `exit` fights enemy group `group`.
+#define SCENE_EXIT_TO_BATTLE(exit, group)                                      \
+  (((u32)(exit) << 20) + ((u32)(group) << 12) + SCENE_BATTLE)
 
 /// An actor a scene places: its sprite, the condition for placing it, how it
 /// behaves, where it stands and which way it faces, and how it turns to talk.

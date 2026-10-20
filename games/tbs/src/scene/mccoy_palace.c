@@ -463,7 +463,7 @@ s32 Scene_Initialize(void) {
   // A first audience and a return to the entrance have different greetings.
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) == 0 &&
       Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    if (gGameState.entrance == 29) {
+    if (gGameState.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST) {
       Event_AudienceWithMcCoy();
     } else if (gGameState.entrance == 9 && Engine_GameFlagIsSet(0x321) != 0) {
       Event_CaptainHintsAtBarricade();
@@ -472,7 +472,7 @@ s32 Scene_Initialize(void) {
     rewardTaken = Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     if (rewardTaken != 0) {
     } else {
-      if (gGameState.entrance == 29) {
+      if (gGameState.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST) {
         if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
           curseLifted = Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED);
           if (curseLifted != 0) {
@@ -1394,7 +1394,8 @@ s32 gPalace_PacingActions[] = {
 
 struct SceneEntrance gMcCoyPalaceEntrances[] = {
     {0, CONDITION_ALWAYS, 256, 0, 808, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 256, 0, 808, FACING_NORTH, 0, 32, 496, 480, 856, 0},
+    {MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_WEST, CONDITION_ALWAYS, 256, 0, 808,
+     FACING_NORTH, 0, 32, 496, 480, 856, 0},
     {2, CONDITION_ALWAYS, 120, 0, 792, FACING_EAST, 0, 32, 496, 480, 856, 0},
     {3, CONDITION_ALWAYS, 392, 0, 792, FACING_WEST, 0, 32, 496, 480, 856, 0},
     {4, CONDITION_ALWAYS, 232, 0, 712, FACING_EAST, 0, 32, 496, 480, 856, 0},
@@ -1422,22 +1423,43 @@ struct SceneEntrance gMcCoyPalaceEntrances[] = {
     {26, CONDITION_ALWAYS, 744, 0, 424, FACING_EAST, 0, 592, 352, 832, 512, 0},
     {27, CONDITION_ALWAYS, 888, 0, 424, FACING_WEST, 0, 792, 352, 1032, 512, 0},
     {28, CONDITION_ALWAYS, 600, 0, 760, FACING_EAST, 0, 512, 560, 752, 816, 0},
-    {29, CONDITION_ALWAYS, 896, 0, 728, FACING_NORTH, 0, 776, 560, 1016, 768,
-     0},
+    {MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST, CONDITION_ALWAYS, 896, 0, 728,
+     FACING_NORTH, 0, 776, 560, 1016, 768, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gMcCoyPalaceExits[] = {
-    SCENE_EXITS(33),        SCENE_EXIT(1, 34, 2),   SCENE_EXIT(2, 33, 14),
-    SCENE_EXIT(3, 33, 17),  SCENE_EXIT(4, 33, 10),  SCENE_EXIT(5, 33, 11),
-    SCENE_EXIT(6, 33, 28),  SCENE_EXIT(7, 33, 22),  SCENE_EXIT(8, 33, 20),
-    SCENE_EXIT(9, 33, 29),  SCENE_EXIT(10, 33, 4),  SCENE_EXIT(11, 33, 5),
-    SCENE_EXIT(12, 33, 18), SCENE_EXIT(13, 33, 19), SCENE_EXIT(14, 33, 2),
-    SCENE_EXIT(15, 33, 26), SCENE_EXIT(16, 33, 27), SCENE_EXIT(17, 33, 3),
-    SCENE_EXIT(18, 33, 12), SCENE_EXIT(19, 33, 13), SCENE_EXIT(20, 33, 8),
-    SCENE_EXIT(21, 33, 25), SCENE_EXIT(22, 33, 7),  SCENE_EXIT(23, 33, 24),
-    SCENE_EXIT(24, 33, 23), SCENE_EXIT(25, 33, 21), SCENE_EXIT(26, 33, 15),
-    SCENE_EXIT(27, 33, 16), SCENE_EXIT(28, 33, 6),  SCENE_EXIT(29, 33, 9),
+    SCENE_EXITS(McCoyPalace),
+    SCENE_EXIT(MCCOY_PALACE_TO_MCCOY_PALACE_GARDEN_WEST, McCoyPalaceGarden,
+               MCCOY_PALACE_GARDEN_FROM_MCCOY_PALACE),
+    SCENE_EXIT(2, McCoyPalace, 14),
+    SCENE_EXIT(3, McCoyPalace, 17),
+    SCENE_EXIT(4, McCoyPalace, 10),
+    SCENE_EXIT(5, McCoyPalace, 11),
+    SCENE_EXIT(6, McCoyPalace, 28),
+    SCENE_EXIT(7, McCoyPalace, 22),
+    SCENE_EXIT(8, McCoyPalace, 20),
+    SCENE_EXIT(9, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST),
+    SCENE_EXIT(10, McCoyPalace, 4),
+    SCENE_EXIT(11, McCoyPalace, 5),
+    SCENE_EXIT(12, McCoyPalace, 18),
+    SCENE_EXIT(13, McCoyPalace, 19),
+    SCENE_EXIT(14, McCoyPalace, 2),
+    SCENE_EXIT(15, McCoyPalace, 26),
+    SCENE_EXIT(16, McCoyPalace, 27),
+    SCENE_EXIT(17, McCoyPalace, 3),
+    SCENE_EXIT(18, McCoyPalace, 12),
+    SCENE_EXIT(19, McCoyPalace, 13),
+    SCENE_EXIT(20, McCoyPalace, 8),
+    SCENE_EXIT(21, McCoyPalace, 25),
+    SCENE_EXIT(22, McCoyPalace, 7),
+    SCENE_EXIT(23, McCoyPalace, 24),
+    SCENE_EXIT(24, McCoyPalace, 23),
+    SCENE_EXIT(25, McCoyPalace, 21),
+    SCENE_EXIT(26, McCoyPalace, 15),
+    SCENE_EXIT(27, McCoyPalace, 16),
+    SCENE_EXIT(28, McCoyPalace, 6),
+    SCENE_EXIT(29, McCoyPalace, 9),
     SCENE_EXITS_END,
 };
 

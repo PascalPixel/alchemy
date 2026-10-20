@@ -1404,15 +1404,15 @@ struct SceneEntrance gCrossboneIslePlatformRoomsEntrances3[] = {
 };
 
 u32 gCrossboneIslePlatformRoomsExits[] = {
-    SCENE_EXITS(117),
-    SCENE_EXIT(1, 128, 3),
-    SCENE_EXIT(2, 128, 4),
-    SCENE_EXIT(0, 118, 0),
-    SCENE_EXIT(1, 129, 3),
-    SCENE_EXIT(2, 129, 4),
-    SCENE_EXIT(0, 120, 0),
-    SCENE_EXIT(1, 131, 3),
-    SCENE_EXIT(2, 131, 4),
+    SCENE_EXITS(CrossboneIslePlatformRooms1),
+    SCENE_EXIT(1, CrossboneIsle8, 3),
+    SCENE_EXIT(2, CrossboneIsle8, 4),
+    SCENE_EXITS(CrossboneIslePlatformRooms2),
+    SCENE_EXIT(1, CrossboneIsle9, 3),
+    SCENE_EXIT(2, CrossboneIsle9, 4),
+    SCENE_EXITS(CrossboneIslePlatformRooms3),
+    SCENE_EXIT(1, CrossboneIsle11, 3),
+    SCENE_EXIT(2, CrossboneIsle11, 4),
     SCENE_EXITS_END,
 };
 

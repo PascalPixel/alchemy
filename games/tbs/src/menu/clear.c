@@ -467,7 +467,7 @@ s32 SaveMenu_Run(void) {
     Engine_EventCloseScreen();
     Engine_AudioPlayCue(MUS_017);
     Engine_EventWait(0x12c);
-    Event_SetDestination((s32)&SceneId_WorldMap, 72);
+    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_CLEAR);
     return 0;
   }
   gSleepDisabled = blendStarted;
@@ -618,7 +618,7 @@ menu_top:;
     GameFlag_ClearBit(FLAG_MENU_OPEN);
     Engine_GameFlagSet(FLAG_IN_LINK_LOBBY);
     gSleepDisabled = 1;
-    Event_SetDestination((s32)&SceneId_LinkLobby, 1);
+    Event_SetDestination((s32)&SceneId_LinkLobby, LINK_LOBBY_FROM_CLEAR);
     goto leave;
   } else {
     if (v6 != 5) {
@@ -1336,7 +1336,7 @@ struct SceneEntrance gClear_Entrances[] = {
 };
 
 u32 gClear_Exits[] = {
-    SCENE_EXITS(511),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gClear_Placements[] = {

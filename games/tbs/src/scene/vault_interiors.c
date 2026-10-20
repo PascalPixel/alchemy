@@ -2106,7 +2106,7 @@ s32 Scene_Initialize(void) {
     Map_CopyCells(54, 2, 2, 8, 44, 81);
     Engine_ActorSetPosition(ACTOR_LOFT_ROOFER, PIXELS(824), PIXELS(456));
     VaultInteriors_LoseToThieves();
-    Engine_EventRequestExit(16);
+    Engine_EventRequestExit(VAULT_INTERIORS_TO_SANCTUM);
     break;
   case 17:
     // Won: the thieves are caught and the stolen goods handed back.
@@ -3705,19 +3705,19 @@ struct SceneRegion gVaultInteriors_Regions[] = {
 };
 
 u32 gVaultInteriors_Exits[] = {
-    SCENE_EXITS(21),
-    SCENE_EXIT(5, 20, 5),
-    SCENE_EXIT(6, 20, 6),
-    SCENE_EXIT(7, 20, 7),
-    SCENE_EXIT(8, 20, 8),
-    SCENE_EXIT(9, 20, 9),
-    SCENE_EXIT(10, 20, 10),
-    SCENE_EXIT(11, 21, 11),
-    SCENE_EXIT(12, 21, 12),
-    SCENE_EXIT(13, 20, 13),
-    SCENE_EXIT(14, 21, 14),
-    SCENE_EXIT(15, 21, 15),
-    SCENE_EXIT(16, 9, 12),
+    SCENE_EXITS(VaultInteriors),
+    SCENE_EXIT(5, Vault, 5),
+    SCENE_EXIT(6, Vault, 6),
+    SCENE_EXIT(7, Vault, 7),
+    SCENE_EXIT(8, Vault, 8),
+    SCENE_EXIT(9, Vault, 9),
+    SCENE_EXIT(10, Vault, 10),
+    SCENE_EXIT(11, VaultInteriors, 11),
+    SCENE_EXIT(12, VaultInteriors, 12),
+    SCENE_EXIT(13, Vault, 13),
+    SCENE_EXIT(14, VaultInteriors, 14),
+    SCENE_EXIT(15, VaultInteriors, 15),
+    SCENE_EXIT(VAULT_INTERIORS_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_INTERIORS),
     SCENE_EXITS_END,
 };
 

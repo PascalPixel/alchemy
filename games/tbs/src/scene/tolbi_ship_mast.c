@@ -743,7 +743,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   gGameState.savedScene = (s32)&SceneId_TolbiShipInteriors;
   gGameState.savedEntrance = 2;
   if (TolbiShipMast_GetRowingBalance() == 11) {
-    Engine_EventRequestExit(15);
+    Engine_EventRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH);
   } else {
     Engine_EventRequestExit(14);
   }
@@ -926,14 +926,14 @@ struct SceneRegion gTolbiShipMast_Regions[] = {
 };
 
 u32 gTolbiShipMast_Exits[] = {
-    SCENE_EXITS(110),
-    SCENE_EXIT(1, 109, 4),
-    SCENE_EXIT(10, 111, 10),
-    SCENE_EXIT(11, 111, 13),
-    SCENE_EXIT(12, 109, 13),
-    SCENE_EXIT(13, 109, 14),
-    SCENE_EXIT(14, 109, 17),
-    SCENE_EXIT(15, 109, 19),
+    SCENE_EXITS(TolbiShipMast),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SOUTH, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SOUTH),
+    SCENE_EXIT(10, TolbiShipInteriors, 10),
+    SCENE_EXIT(11, TolbiShipInteriors, 13),
+    SCENE_EXIT(12, TolbiShipDeck, 13),
+    SCENE_EXIT(13, TolbiShipDeck, 14),
+    SCENE_EXIT(14, TolbiShipDeck, 17),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH),
     SCENE_EXITS_END,
 };
 

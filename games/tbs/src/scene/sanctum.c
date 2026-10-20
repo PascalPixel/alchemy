@@ -315,7 +315,7 @@ static void Event_ReconsiderQuest(void) {
         Engine_AudioPlayCue(MUS_086);
         AudioCommand_WaitForCompletion();
         Engine_GameFlagSet(FLAG_SANCTUM_QUEST_ACCEPTED);
-        Engine_EventRequestExit(30);
+        Engine_EventRequestExit(SANCTUM_TO_VALE_HOME);
       }
     }
   }
@@ -470,7 +470,7 @@ static void Event_LeaveAfterRefusing(void) {
     Engine_EventRequestExit(20);
   } else {
     Engine_EventEnd();
-    Engine_EventRequestExit(50);
+    Engine_EventRequestExit(SANCTUM_TO_CLEAR);
   }
 }
 
@@ -1035,7 +1035,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_PlayCue(MUS_086);
     AudioCommand_WaitForCompletion();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-    Engine_EventRequestExit(30);
+    Engine_EventRequestExit(SANCTUM_TO_VALE_HOME);
   } else {
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(12, 1);
@@ -2189,16 +2189,16 @@ struct SceneEntrance gSanctum_Entrances[] = {
 };
 
 u32 gSanctum_Exits[] = {
-    SCENE_EXITS(9),
-    SCENE_EXIT(1, 4, 1),
-    SCENE_EXIT(10, 20, 11),
-    SCENE_EXIT(11, 23, 11),
-    SCENE_EXIT(20, 9, 21),
-    SCENE_EXIT(30, 5, 12),
-    SCENE_EXIT(40, 75, 3),
-    SCENE_EXIT(41, 30, 9),
-    SCENE_EXIT(42, 72, 11),
-    SCENE_EXIT(50, 1, 1),
+    SCENE_EXITS(Sanctum),
+    SCENE_EXIT(SANCTUM_TO_VALE, Vale, VALE_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_VAULT, Vault, VAULT_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_SANCTUM),
+    SCENE_EXIT(20, Sanctum, 21),
+    SCENE_EXIT(SANCTUM_TO_VALE_HOME, ValeHome, VALE_HOME_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_ALTIN, Altin, ALTIN_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_BILIBIN, Bilibin, BILIBIN_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_XIAN, Xian, XIAN_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_CLEAR, Clear, CLEAR_FROM_SANCTUM),
     SCENE_EXITS_END,
 };
 

@@ -28,11 +28,13 @@
 ///   village and joins when spoken to. Five doorways (triggers 5 to 9) lead
 ///   into the houses and shops (scene 37), exits 1 and 2 to the world map and
 ///   exit 10 into Kolima Tunnel.
-/// - Kolima Tunnel (KolimaTunnel, scene 38), a passage with no one in it from one of
+/// - Kolima Tunnel (KolimaTunnel, scene 38), a passage with no one in it from
+/// one of
 ///   the houses (scene 37, entrance 9) to the village (entrance 8). It shares
 ///   the village's event table, whose exits 1 and 2 are its two ways out, and
 ///   that table's two jars, an Apple and an Herb, are in one of the two maps.
-/// - Kolima Bridge (KolimaBridge, scene 39), "the grand bridge across the river" and
+/// - Kolima Bridge (KolimaBridge, scene 39), "the grand bridge across the
+/// river" and
 ///   "the pride of Kolima" to the village's armor seller, with the world map at
 ///   both ends. A villager stands beside it, a tree while the curse lasts
 ///   (actor 9) and a man afterwards (actor 8), who says that for a while he
@@ -437,7 +439,7 @@ s32 Kolima_Initialize(void) {
   }
 
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
-    if (gGameState.entrance == 1) {
+    if (gGameState.entrance == KOLIMA_TUNNEL_FROM_KOLIMA_INTERIORS) {
       Kolima_WitnessForestCurse();
     }
   }
@@ -1627,28 +1629,39 @@ u16 gKolima_DoorCells[] = {
 /// from Kolima Tunnel.
 struct SceneEntrance gKolimaEntrances[] = {
     {0, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_FROM_WORLD_MAP, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1,
+     -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 418, 0, 285, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 119, 0, 182, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {4, CONDITION_ALWAYS, 151, 0, 310, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {5, CONDITION_ALWAYS, 264, 0, 373, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {6, CONDITION_ALWAYS, 329, 0, 230, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {7, CONDITION_ALWAYS, 263, 0, 326, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {8, CONDITION_ALWAYS, 360, 0, 346, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_FROM_KOLIMA_INTERIORS_NORTHWEST, CONDITION_ALWAYS, 119, 0, 182,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_FROM_KOLIMA_INTERIORS_SOUTHWEST, CONDITION_ALWAYS, 151, 0, 310,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_FROM_KOLIMA_INTERIORS_SOUTH, CONDITION_ALWAYS, 264, 0, 373,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_FROM_KOLIMA_INTERIORS_EAST, CONDITION_ALWAYS, 329, 0, 230,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_FROM_KOLIMA_INTERIORS_SOUTHEAST, CONDITION_ALWAYS, 263, 0, 326,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_FROM_KOLIMA_TUNNEL, CONDITION_ALWAYS, 360, 0, 346, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {12, CONDITION_ALWAYS, 232, 0, 176, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKolimaEntrances3[] = {
-    {1, CONDITION_ALWAYS, 170, 0, 386, FACING_NORTH, 0, 0, 0, 288, 416, 0},
-    {2, CONDITION_ALWAYS, 168, 0, 50, FACING_SOUTH, 0, 48, 0, 288, 416, 0},
+    {KOLIMA_BRIDGE_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 170, 0, 386,
+     FACING_NORTH, 0, 0, 0, 288, 416, 0},
+    {KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 168, 0, 50,
+     FACING_SOUTH, 0, 48, 0, 288, 416, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKolimaEntrances2[] = {
-    {1, CONDITION_ALWAYS, 216, 0, 320, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 312, 0, 312, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_TUNNEL_FROM_KOLIMA_INTERIORS, CONDITION_ALWAYS, 216, 0, 320,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KOLIMA_TUNNEL_FROM_KOLIMA, CONDITION_ALWAYS, 312, 0, 312, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1662,21 +1675,21 @@ struct SceneRegion gKolimaRegions2[] = {
 /// Kolima's exits, then Kolima Bridge's (from the header word for scene 39)
 /// and Kolima Tunnel's (from the one for scene 38).
 u32 gKolimaExits[] = {
-    SCENE_EXITS(36),
-    SCENE_EXIT(1, 2, 7),
-    SCENE_EXIT(2, 2, 38),
-    SCENE_EXIT(5, 37, 4),
-    SCENE_EXIT(6, 37, 3),
-    SCENE_EXIT(7, 37, 7),
-    SCENE_EXIT(8, 37, 10),
-    SCENE_EXIT(9, 37, 8),
-    SCENE_EXIT(10, 38, 2),
-    SCENE_EXIT(0, 39, 0),
-    SCENE_EXIT(1, 2, 11),
-    SCENE_EXIT(2, 2, 46),
-    SCENE_EXIT(0, 38, 0),
-    SCENE_EXIT(1, 37, 9),
-    SCENE_EXIT(2, 36, 8),
+    SCENE_EXITS(Kolima),
+    SCENE_EXIT(KOLIMA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KOLIMA_WEST),
+    SCENE_EXIT(KOLIMA_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_KOLIMA_EAST),
+    SCENE_EXIT(KOLIMA_TO_KOLIMA_INTERIORS_SOUTH, KolimaInteriors, KOLIMA_INTERIORS_FROM_KOLIMA_NORTHEAST),
+    SCENE_EXIT(KOLIMA_TO_KOLIMA_INTERIORS_EAST, KolimaInteriors, KOLIMA_INTERIORS_FROM_KOLIMA_NORTHWEST),
+    SCENE_EXIT(KOLIMA_TO_KOLIMA_INTERIORS_SOUTHEAST, KolimaInteriors, KOLIMA_INTERIORS_FROM_KOLIMA_SOUTHWEST),
+    SCENE_EXIT(KOLIMA_TO_KOLIMA_INTERIORS_4, KolimaInteriors, KOLIMA_INTERIORS_FROM_KOLIMA_SOUTHEAST),
+    SCENE_EXIT(KOLIMA_TO_KOLIMA_INTERIORS_WEST, KolimaInteriors, KOLIMA_INTERIORS_FROM_KOLIMA_WEST),
+    SCENE_EXIT(KOLIMA_TO_KOLIMA_TUNNEL, KolimaTunnel, KOLIMA_TUNNEL_FROM_KOLIMA),
+    SCENE_EXITS(KolimaBridge),
+    SCENE_EXIT(KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_EAST),
+    SCENE_EXIT(KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST),
+    SCENE_EXITS(KolimaTunnel),
+    SCENE_EXIT(KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS, KolimaInteriors, KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL),
+    SCENE_EXIT(KOLIMA_TUNNEL_TO_KOLIMA, Kolima, KOLIMA_FROM_KOLIMA_TUNNEL),
     SCENE_EXITS_END,
 };
 

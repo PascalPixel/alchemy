@@ -36,7 +36,8 @@
 ///   soldiers of Kalay will rescue Hammet themselves, as Layana asked.
 ///   Walking into the door (trigger 2) opens it into the palace (exit 2);
 ///   exit 1 leads back to town.
-/// - Kalay Tunnel Entrance (KalayTunnelEntrance, scene 153), outside the town (the world
+/// - Kalay Tunnel Entrance (KalayTunnelEntrance, scene 153), outside the town
+/// (the world
 ///   map's exit 60 leads in at entrance 2). A guard bars `the cave up ahead`
 ///   by Hammet and Layana's command, and a Nut floats here until Catch takes
 ///   it (flag 0xfd6). After the party has freed Hammet from Lunpa, Bunza, a
@@ -48,7 +49,8 @@
 ///   the party rides off (exit 10, the world map's entrance 71). Once flag
 ///   0x915 is set the guard stands turned east. Exit 1 leads into the Kalay
 ///   Tunnel (scene 154).
-/// - Kalay Tunnel (KalayTunnel1 to KalayTunnel3, scenes 154 to 156), the passage to
+/// - Kalay Tunnel (KalayTunnel1 to KalayTunnel3, scenes 154 to 156), the
+/// passage to
 ///   Hammet Palace and his treasure, which Layana opens to the party in thanks
 ///   once Hammet is home (flag 0x915). Scene 154 joins the Kalay Tunnel
 ///   Entrance to scene 155, and a chest holds an Apple. Scene 155 opens with a
@@ -189,8 +191,8 @@ static __inline__ void Kalay_ClearScriptDone(struct FieldActor *actor) {
   actor->timer = completed;
 }
 
-/// Talking to Scorch, a Mars Djinni, in the Kalay Tunnel (KalayTunnel3) adds it to
-/// the party, without a battle.
+/// Talking to Scorch, a Mars Djinni, in the Kalay Tunnel (KalayTunnel3) adds it
+/// to the party, without a battle.
 static void Kalay_RecruitScorch(void) {
   Djinn_JoinParty(ACTOR_SCORCH, ELEMENT_MARS, 3);
 }
@@ -951,8 +953,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
   Engine_EventEnd();
 }
 
-/// Touching trigger 10 in the Kalay Tunnel (KalayTunnel3) stops the fade overlay
-/// following the leader.
+/// Touching trigger 10 in the Kalay Tunnel (KalayTunnel3) stops the fade
+/// overlay following the leader.
 static void Kalay_StopTrackingLeader(void) {
   if (GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
     gActorEffectWork->actor = NULL;
@@ -960,8 +962,8 @@ static void Kalay_StopTrackingLeader(void) {
   }
 }
 
-/// Touching trigger 11 in the Kalay Tunnel (KalayTunnel3) makes the fade overlay
-/// follow the leader.
+/// Touching trigger 11 in the Kalay Tunnel (KalayTunnel3) makes the fade
+/// overlay follow the leader.
 static void Kalay_StartTrackingLeader(void) {
   struct FadeOverlayWork *work;
 
@@ -984,8 +986,8 @@ static void Kalay_EnableLeaderAutomaticPriority(void) {
   *priorityFlags = flags;
 }
 
-/// Trigger 18 in the Kalay Tunnel (KalayTunnel3): the leader's depth priority stays
-/// fixed.
+/// Trigger 18 in the Kalay Tunnel (KalayTunnel3): the leader's depth priority
+/// stays fixed.
 static void Kalay_DisableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
   s32 flags;
@@ -1097,9 +1099,9 @@ static void Kalay_PrepareHammetPalace(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance): the Nut floats until caught,
-/// the guard turns east once flag 0x915 opens the passage, and arriving by
-/// entrance 10 brings Hammet home in Bunza's wagon.
+/// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance): the Nut floats
+/// until caught, the guard turns east once flag 0x915 opens the passage, and
+/// arriving by entrance 10 brings Hammet home in Bunza's wagon.
 static void Kalay_PrepareTunnelEntrance(void) {
   struct FieldActor *guard;
 
@@ -1134,10 +1136,10 @@ static void Kalay_StartWindowTransition(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel's scene 156 (KalayTunnel3): the fade overlay follows the
-/// leader unless he came down from the town (entrance 4); the pushed blocks,
-/// the frozen target and the opened passages are restored, and once flag
-/// 0x915 is set the man waits here and some of the cells are redrawn.
+/// Sets up the Kalay Tunnel's scene 156 (KalayTunnel3): the fade overlay
+/// follows the leader unless he came down from the town (entrance 4); the
+/// pushed blocks, the frozen target and the opened passages are restored, and
+/// once flag 0x915 is set the man waits here and some of the cells are redrawn.
 static void Kalay_PrepareTunnel(void) {
 #if TBS_PATCH_1
   s32 resumedScene;
@@ -1865,8 +1867,8 @@ static void Kalay_HammetReturnsToPalace(void) {
 // Shared source, included in link order.
 #include "common/object_findcell.h"
 
-/// In the Kalay Tunnel (KalayTunnel3), walking into a block pushes it one tile when
-/// there is room.
+/// In the Kalay Tunnel (KalayTunnel3), walking into a block pushes it one tile
+/// when there is room.
 static void Kalay_PushTunnelBlock(void) {
   struct FieldPosition destination;
   struct FieldActor *leader;
@@ -1916,8 +1918,8 @@ static void Kalay_PushTunnelBlock(void) {
   }
 }
 
-/// In the Kalay Tunnel (KalayTunnel3), once a block is pushed far enough west, its
-/// passage opens step by step, and the first raises the target for Frost.
+/// In the Kalay Tunnel (KalayTunnel3), once a block is pushed far enough west,
+/// its passage opens step by step, and the first raises the target for Frost.
 static void Kalay_UpdateTunnelPassages(void) {
   struct FieldActor *firstBlock;
   struct FieldActor *secondBlock;
@@ -2082,8 +2084,8 @@ static void Kalay_UpdateTunnelParticle(struct ScriptInterpreter *interpreter) {
 #endif
 }
 
-/// In the Kalay Tunnel (KalayTunnel3), particles stream from each block as it nears
-/// its place, while its passage is closed.
+/// In the Kalay Tunnel (KalayTunnel3), particles stream from each block as it
+/// nears its place, while its passage is closed.
 static void Kalay_UpdateTunnelEmitters(void) {
   struct FieldActor *firstEmitter;
   struct FieldActor *secondEmitter;
@@ -2173,8 +2175,8 @@ static void Kalay_UpdateNutOrbit(void) {
                         ((u32)(Engine_RandomNext() << 9) >> 16) + 0x400;
 }
 
-/// Frost on the target in the Kalay Tunnel (KalayTunnel3) sinks it into the floor,
-/// clearing its cells, until the scene is entered again.
+/// Frost on the target in the Kalay Tunnel (KalayTunnel3) sinks it into the
+/// floor, clearing its cells, until the scene is entered again.
 static void Kalay_FreezeFrostTarget(void) {
   struct FieldActor *effect = Object_GetById(ACTOR_FROST_TARGET);
 
@@ -2371,71 +2373,128 @@ struct SceneEntrance gKalay_TownEntrances[] = {
     {5, CONDITION_ALWAYS, 328, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {6, CONDITION_ALWAYS, 120, 0, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {7, CONDITION_ALWAYS, 312, 0, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {8, CONDITION_ALWAYS, 152, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {9, CONDITION_ALWAYS, 224, 0, 464, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_1_FROM_KALAY_SANCTUM, CONDITION_ALWAYS, 152, 0, 440, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {KALAY_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 224, 0, 464, FACING_NORTH, 0, -1,
+     -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 56, 0, 272, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {11, CONDITION_ALWAYS, 224, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_1_FROM_KALAY_2, CONDITION_ALWAYS, 224, 0, 88, FACING_SOUTH, 0, -1,
+     -1, -1, -1, 0},
     {12, CONDITION_ALWAYS, 296, 0, 408, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {13, CONDITION_ALWAYS, 152, 0, 232, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {14, CONDITION_ALWAYS, 440, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_1_FROM_KALAY_TUNNEL_3, CONDITION_ALWAYS, 440, 0, 88, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_HammetPalaceEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 192, 0, 280, FACING_NORTH, 0, 0, 0, 400, 352, 0},
-    {2, CONDITION_ALWAYS, 192, 0, 232, FACING_SOUTH, 0, 0, 0, 400, 352, 0},
+    {KALAY_2_FROM_KALAY_1, CONDITION_ALWAYS, 192, 0, 280, FACING_NORTH, 0, 0, 0,
+     400, 352, 0},
+    {KALAY_2_FROM_HAMMET_PALACE, CONDITION_ALWAYS, 192, 0, 232, FACING_SOUTH, 0,
+     0, 0, 400, 352, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_TunnelEntranceEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 248, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 424, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {10, CONDITION_ALWAYS, 440, 0, 540, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_1, CONDITION_ALWAYS, 248, 0, 152,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 424, 0, 520,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 440, 0, 540,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_Entrances4[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 296, 0, 104, FACING_SOUTH, 0, 100, 50, 440, 445, 0},
-    {2, CONDITION_ALWAYS, 280, 0, 392, FACING_NORTH, 0, 100, 50, 440, 445, 0},
+    {KALAY_TUNNEL_1_FROM_KALAY_TUNNEL_2, CONDITION_ALWAYS, 296, 0, 104,
+     FACING_SOUTH, 0, 100, 50, 440, 445, 0},
+    {KALAY_TUNNEL_1_FROM_KALAY_TUNNEL_ENTRANCE, CONDITION_ALWAYS, 280, 0, 392,
+     FACING_NORTH, 0, 100, 50, 440, 445, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_Entrances5[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 296, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 632, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_WEST, CONDITION_ALWAYS, 296, 0, 456,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_EAST, CONDITION_ALWAYS, 632, 0, 456,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {3, CONDITION_ALWAYS, 152, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {4, CONDITION_ALWAYS, 568, 0, 152, FACING_SOUTH, 0, 390, 0, 630, 220, 0},
-    {5, CONDITION_ALWAYS, 472, 0, 72, FACING_SOUTH, 0, 390, 0, 630, 220, 0},
+    {KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_1, CONDITION_ALWAYS, 472, 0, 72,
+     FACING_SOUTH, 0, 390, 0, 630, 220, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalay_TunnelEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 408, 0, 632, FACING_SOUTH, 0, 85, 400, 465, 880, 0},
-    {2, CONDITION_ALWAYS, 296, 0, 488, FACING_SOUTH, 0, 85, 400, 465, 880, 0},
-    {3, CONDITION_ALWAYS, 744, 0, 488, FACING_SOUTH, 0, 595, 400, 930, 880, 0},
-    {4, CONDITION_ALWAYS, 856, 0, 856, FACING_NORTH, 0, 595, 400, 930, 880, 0},
+    {KALAY_TUNNEL_3_FROM_HAMMET_PALACE, CONDITION_ALWAYS, 408, 0, 632,
+     FACING_SOUTH, 0, 85, 400, 465, 880, 0},
+    {KALAY_TUNNEL_3_FROM_KALAY_TUNNEL_2_WEST, CONDITION_ALWAYS, 296, 0, 488,
+     FACING_SOUTH, 0, 85, 400, 465, 880, 0},
+    {KALAY_TUNNEL_3_FROM_KALAY_TUNNEL_2_EAST, CONDITION_ALWAYS, 744, 0, 488,
+     FACING_SOUTH, 0, 595, 400, 930, 880, 0},
+    {KALAY_TUNNEL_3_FROM_KALAY_1, CONDITION_ALWAYS, 856, 0, 856, FACING_NORTH,
+     0, 595, 400, 930, 880, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gKalay_Exits[] = {
-    SCENE_EXITS(99),        SCENE_EXIT(1, 100, 1),  SCENE_EXIT(2, 100, 2),
-    SCENE_EXIT(3, 100, 3),  SCENE_EXIT(4, 100, 4),  SCENE_EXIT(5, 100, 6),
-    SCENE_EXIT(6, 100, 7),  SCENE_EXIT(7, 100, 10), SCENE_EXIT(8, 101, 1),
-    SCENE_EXIT(9, 2, 20),   SCENE_EXIT(10, 2, 19),  SCENE_EXIT(11, 102, 1),
-    SCENE_EXIT(12, 100, 5), SCENE_EXIT(13, 100, 8), SCENE_EXIT(14, 156, 4),
-    SCENE_EXIT(0, 102, 0),  SCENE_EXIT(1, 99, 11),  SCENE_EXIT(2, 103, 1),
-    SCENE_EXIT(5, 103, 20), SCENE_EXIT(0, 153, 0),  SCENE_EXIT(1, 154, 2),
-    SCENE_EXIT(2, 2, 60),   SCENE_EXIT(10, 2, 71),  SCENE_EXIT(0, 154, 0),
-    SCENE_EXIT(1, 155, 5),  SCENE_EXIT(2, 153, 1),  SCENE_EXIT(0, 155, 0),
-    SCENE_EXIT(1, 156, 2),  SCENE_EXIT(2, 156, 3),  SCENE_EXIT(3, 155, 4),
-    SCENE_EXIT(4, 155, 3),  SCENE_EXIT(5, 154, 1),  SCENE_EXIT(0, 156, 0),
-    SCENE_EXIT(1, 103, 11), SCENE_EXIT(2, 155, 1),  SCENE_EXIT(3, 155, 2),
-    SCENE_EXIT(4, 99, 14),  SCENE_EXITS_END,
+    SCENE_EXITS(Kalay1),
+    SCENE_EXIT(1, KalayInteriors1, 1),
+    SCENE_EXIT(2, KalayInteriors1, 2),
+    SCENE_EXIT(3, KalayInteriors1, 3),
+    SCENE_EXIT(4, KalayInteriors1, 4),
+    SCENE_EXIT(5, KalayInteriors1, 6),
+    SCENE_EXIT(6, KalayInteriors1, 7),
+    SCENE_EXIT(7, KalayInteriors1, 10),
+    SCENE_EXIT(KALAY_1_TO_KALAY_SANCTUM, KalaySanctum,
+               KALAY_SANCTUM_FROM_KALAY_1),
+    SCENE_EXIT(KALAY_1_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KALAY_1_EAST),
+    SCENE_EXIT(KALAY_1_TO_WORLD_MAP_WEST, WorldMap,
+               WORLD_MAP_FROM_KALAY_1_WEST),
+    SCENE_EXIT(KALAY_1_TO_KALAY_2, Kalay2, KALAY_2_FROM_KALAY_1),
+    SCENE_EXIT(12, KalayInteriors1, 5),
+    SCENE_EXIT(13, KalayInteriors1, 8),
+    SCENE_EXIT(KALAY_1_TO_KALAY_TUNNEL_3, KalayTunnel3,
+               KALAY_TUNNEL_3_FROM_KALAY_1),
+    SCENE_EXITS(Kalay2),
+    SCENE_EXIT(KALAY_2_TO_KALAY_1, Kalay1, KALAY_1_FROM_KALAY_2),
+    SCENE_EXIT(KALAY_2_TO_HAMMET_PALACE, HammetPalace,
+               HAMMET_PALACE_FROM_KALAY_2_WEST),
+    SCENE_EXIT(KALAY_2_TO_HAMMET_PALACE_EAST, HammetPalace,
+               HAMMET_PALACE_FROM_KALAY_2_EAST),
+    SCENE_EXITS(KalayTunnelEntrance),
+    SCENE_EXIT(KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_1, KalayTunnel1,
+               KALAY_TUNNEL_1_FROM_KALAY_TUNNEL_ENTRANCE),
+    SCENE_EXIT(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH, WorldMap, 60),
+    SCENE_EXIT(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH, WorldMap, 71),
+    SCENE_EXITS(KalayTunnel1),
+    SCENE_EXIT(KALAY_TUNNEL_1_TO_KALAY_TUNNEL_2, KalayTunnel2,
+               KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_1),
+    SCENE_EXIT(KALAY_TUNNEL_1_TO_KALAY_TUNNEL_ENTRANCE, KalayTunnelEntrance,
+               KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_1),
+    SCENE_EXITS(KalayTunnel2),
+    SCENE_EXIT(KALAY_TUNNEL_2_TO_KALAY_TUNNEL_3_WEST, KalayTunnel3,
+               KALAY_TUNNEL_3_FROM_KALAY_TUNNEL_2_WEST),
+    SCENE_EXIT(KALAY_TUNNEL_2_TO_KALAY_TUNNEL_3_EAST, KalayTunnel3,
+               KALAY_TUNNEL_3_FROM_KALAY_TUNNEL_2_EAST),
+    SCENE_EXIT(3, KalayTunnel2, 4),
+    SCENE_EXIT(4, KalayTunnel2, 3),
+    SCENE_EXIT(KALAY_TUNNEL_2_TO_KALAY_TUNNEL_1, KalayTunnel1,
+               KALAY_TUNNEL_1_FROM_KALAY_TUNNEL_2),
+    SCENE_EXITS(KalayTunnel3),
+    SCENE_EXIT(KALAY_TUNNEL_3_TO_HAMMET_PALACE, HammetPalace,
+               HAMMET_PALACE_FROM_KALAY_TUNNEL_3),
+    SCENE_EXIT(KALAY_TUNNEL_3_TO_KALAY_TUNNEL_2_WEST, KalayTunnel2,
+               KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_WEST),
+    SCENE_EXIT(KALAY_TUNNEL_3_TO_KALAY_TUNNEL_2_EAST, KalayTunnel2,
+               KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_EAST),
+    SCENE_EXIT(KALAY_TUNNEL_3_TO_KALAY_1, Kalay1, KALAY_1_FROM_KALAY_TUNNEL_3),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gKalay_NoPlacements[] = {

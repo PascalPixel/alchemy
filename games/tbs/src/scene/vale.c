@@ -162,7 +162,7 @@ const u32 *Vale_GetExits(void) { return gVale_Exits; }
 /// 16).
 const struct ScenePlacement *Vale_GetPlacements(void) {
   u8 *scene_state = (u8 *)&gGameState;
-  if (((struct GameState *)scene_state)->entrance == 16)
+  if (((struct GameState *)scene_state)->entrance == VALE_FROM_TITLE)
     return gVale_RepairPlacements;
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     return gVale_PlacementsAfterKalay;
@@ -336,7 +336,7 @@ static void Event_EnterSanctum(void) {
   Event_PlayCue(SE_188);
   Map_AnimateCells(gValeCellAnimC, 45, 11);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 257, 420);
-  Engine_EventRequestExit(11);
+  Engine_EventRequestExit(VALE_TO_SANCTUM);
 }
 
 /// The path to Mt. Aleph in Vale (touch cell 2): Jenna stops Isaac until
@@ -347,7 +347,7 @@ static void Event_ApproachMtAleph(void) {
     Vale_HaveJennaStopTheAlephDetour();
   } else {
     Engine_AudioPlayCue(SE_MAP_EXIT);
-    Engine_EventRequestExit(1);
+    Engine_EventRequestExit(VALE_TO_SOL_ENTRANCE);
   }
 }
 
@@ -366,7 +366,7 @@ static void Event_TakeExit4(void) {
 /// Touch cell 5 in Vale: exit 2, to ValeHome's entrance 8.
 static void Event_TakeExit2(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(2);
+  Engine_EventRequestExit(VALE_TO_VALE_HOME);
 }
 
 /// The door of the house of Garet's family in Vale (touch cell 6): it opens and
@@ -375,7 +375,7 @@ static void Event_EnterGaretsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 54, 32);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 406, 727);
-  Engine_EventRequestExit(5);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_EAST);
 }
 
 /// A house door in Vale (touch cell 7): it opens and exit 6 leads in
@@ -411,7 +411,7 @@ static void Event_EnterIsaacsHouse(void) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gValeCellAnimA, 50, 44);
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
-    Engine_EventRequestExit(7);
+    Engine_EventRequestExit(VALE_TO_VALE_BABI);
   }
 }
 
@@ -421,7 +421,7 @@ static void Event_EnterJennasGrandparentsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
-  Engine_EventRequestExit(8);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_NORTH);
 }
 
 /// A house door in Vale (touch cell 10): it opens and exit 9 leads in
@@ -1257,7 +1257,7 @@ s32 Vale_Initialize(void) {
   struct FieldActor *actor;
   s32 set;
 
-  if (gGameState.entrance == 16) {
+  if (gGameState.entrance == VALE_FROM_TITLE) {
     PaletteGlow_Update(((u8 *)&gGameState)[517], ((u8 *)&gGameState)[518]);
     Event_MendingTheRoof();
   } else {
@@ -1329,7 +1329,7 @@ s32 Vale_Initialize(void) {
           Object_GetById(22)->paused = set;
           Engine_GameFlagClear(FLAG_SCENE_TEMP_41);
         }
-        if (gGameState.entrance != 16 &&
+        if (gGameState.entrance != VALE_FROM_TITLE &&
             !Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephVillagerPause, 0xc80);
         }
@@ -3119,19 +3119,19 @@ struct SceneEntrance gVale_Entrances[] = {
 };
 
 u32 gVale_Exits[] = {
-    SCENE_EXITS(4),
-    SCENE_EXIT(1, 19, 1),
-    SCENE_EXIT(2, 5, 8),
-    SCENE_EXIT(3, 6, 1),
-    SCENE_EXIT(4, 6, 2),
-    SCENE_EXIT(5, 7, 6),
-    SCENE_EXIT(6, 7, 5),
-    SCENE_EXIT(7, 8, 6),
-    SCENE_EXIT(8, 7, 2),
-    SCENE_EXIT(9, 7, 1),
-    SCENE_EXIT(10, 7, 2),
-    SCENE_EXIT(11, 9, 1),
-    SCENE_EXIT(12, 4, 17),
+    SCENE_EXITS(Vale),
+    SCENE_EXIT(VALE_TO_SOL_ENTRANCE, SolEntrance, SOL_ENTRANCE_FROM_VALE),
+    SCENE_EXIT(VALE_TO_VALE_HOME, ValeHome, VALE_HOME_FROM_VALE),
+    SCENE_EXIT(3, ValeKraden, VALE_KRADEN_FROM_VALE_NORTH),
+    SCENE_EXIT(4, ValeKraden, VALE_KRADEN_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_EAST, ValeInteriors, VALE_INTERIORS_FROM_VALE_EAST),
+    SCENE_EXIT(6, ValeInteriors, VALE_INTERIORS_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_TO_VALE_BABI, ValeBabi, VALE_BABI_FROM_VALE),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_NORTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_NORTH),
+    SCENE_EXIT(9, ValeInteriors, VALE_INTERIORS_FROM_VALE_WEST),
+    SCENE_EXIT(10, ValeInteriors, VALE_INTERIORS_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE),
+    SCENE_EXIT(12, Vale, 17),
     SCENE_EXITS_END,
 };
 

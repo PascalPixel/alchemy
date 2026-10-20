@@ -596,9 +596,9 @@ struct SceneEntrance gKolimaForestBendEntrances[] = {
 
 /// Exit 1 back (scene 42), exit 2 on to Tret (scene 44).
 u32 gKolimaForestBendExits[] = {
-    SCENE_EXITS(43),
-    SCENE_EXIT(1, 42, 2),
-    SCENE_EXIT(2, 44, 1),
+    SCENE_EXITS(KolimaForestBend),
+    SCENE_EXIT(KOLIMA_FOREST_BEND_TO_KOLIMA_FOREST_RIVER, KolimaForestRiver, KOLIMA_FOREST_RIVER_FROM_KOLIMA_FOREST_BEND),
+    SCENE_EXIT(KOLIMA_FOREST_BEND_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_BEND),
     SCENE_EXITS_END,
 };
 

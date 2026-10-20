@@ -140,7 +140,7 @@ const u32 *MercuryLighthouseAerie_GetExits(void) {
 /// Returns the actors; only the first arrival (entrance 1) places Jenna,
 /// Kraden, Felix and Menardi.
 const struct ScenePlacement *MercuryLighthouseAerie_GetPlacements(void) {
-  if (gGameState.entrance != 1) {
+  if (gGameState.entrance != MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT) {
     Engine_GameFlagSet(FLAG_HOSTAGES_GONE);
   }
   return gMercuryLighthouseAeriePlacements;
@@ -198,11 +198,12 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
     Object_GetById(12)->scaleX = -0x10000;
     Object_GetById(13)->scaleX = -0x10000;
-    if (gGameState.entrance == 1) {
+    if (gGameState.entrance == MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT) {
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
       }
-    } else if (gGameState.entrance == 2) {
+    } else if (gGameState.entrance ==
+               MERCURY_LIGHTHOUSE_AERIE_1_AFTER_CONFRONT_SATUROS) {
       if (!Engine_GameFlagIsSet(FLAG_LIFT_UP)) {
         {
           struct MapLayerScroll *lift =
@@ -218,7 +219,8 @@ s32 MercuryLighthouseAerie_Initialize(void) {
           MercuryLighthouseAerie_AlexAppears();
         }
       }
-    } else if (gGameState.entrance == 5) {
+    } else if (gGameState.entrance ==
+               MERCURY_LIGHTHOUSE_AERIE_1_FROM_MERCURY_LIGHTHOUSE_4) {
       Engine_GameFlagSet(FLAG_LIFT_UP);
     }
   }
@@ -1436,7 +1438,7 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
   Engine_ActorSetSpritePriority(ACTOR_LIFT_PLATFORM_2, 0);
   MercuryLighthouseAerie_LowerLift();
   Camera_MoveTo(-1, -1, -1, 0);
-  Engine_EventRequestExit(1);
+  Engine_EventRequestExit(MERCURY_LIGHTHOUSE_AERIE_1_TO_MERCURY_LIGHTHOUSE_4);
   Engine_EventEnd();
 }
 
@@ -1770,16 +1772,21 @@ const s32 *gEffectScripts[] = {
 
 struct SceneEntrance gMercuryLighthouseAerieEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 8, 0, 8, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
-    {2, CONDITION_ALWAYS, 8, 0, 8, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
-    {5, CONDITION_ALWAYS, 504, 0, 152, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
+    {MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT, CONDITION_ALWAYS, 8, 0, 8,
+     FACING_SOUTH, 0, 0, 0, 608, 424, 0},
+    {MERCURY_LIGHTHOUSE_AERIE_1_AFTER_CONFRONT_SATUROS, CONDITION_ALWAYS, 8, 0,
+     8, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
+    {MERCURY_LIGHTHOUSE_AERIE_1_FROM_MERCURY_LIGHTHOUSE_4, CONDITION_ALWAYS,
+     504, 0, 152, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
     {51, CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gMercuryLighthouseAerieExits[] = {
-    SCENE_EXITS(58),
-    SCENE_EXIT(1, 57, 15),
+    SCENE_EXITS(MercuryLighthouseAerie1),
+    SCENE_EXIT(MERCURY_LIGHTHOUSE_AERIE_1_TO_MERCURY_LIGHTHOUSE_4,
+               MercuryLighthouse4,
+               MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_AERIE_1),
     SCENE_EXITS_END,
 };
 

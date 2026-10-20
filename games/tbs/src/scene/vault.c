@@ -893,7 +893,7 @@ s32 Scene_Initialize(void) {
   }
   // The same welcome at the western entrance (entrance 11) while Ivan is out of
   // the party (flag 2 clear).
-  if (gGameState.entrance == 11) {
+  if (gGameState.entrance == VAULT_FROM_SANCTUM) {
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
       if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
         if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) == 0) {
@@ -1213,19 +1213,19 @@ struct SceneEntrance gVault_Entrances[] = {
 };
 
 u32 gVault_Exits[] = {
-    SCENE_EXITS(SCENE_VAULT),
-    SCENE_EXIT(1, SCENE_WORLD_MAP, 3),
-    SCENE_EXIT(2, SCENE_WORLD_MAP, 44),
-    SCENE_EXIT(5, 21, 5),
-    SCENE_EXIT(6, 21, 6),
-    SCENE_EXIT(7, 21, 7),
-    SCENE_EXIT(8, 21, 8),
-    SCENE_EXIT(9, 21, 9),
-    SCENE_EXIT(10, 21, 10),
-    SCENE_EXIT(11, 9, 10),
-    SCENE_EXIT(12, SCENE_VAULT_JAIL, 1),
-    SCENE_EXIT(13, 21, 13),
-    SCENE_EXIT(14, SCENE_VAULT_REVISIT, 1),
+    SCENE_EXITS(Vault),
+    SCENE_EXIT(1, WorldMap, 3),
+    SCENE_EXIT(2, WorldMap, 44),
+    SCENE_EXIT(5, VaultInteriors, 5),
+    SCENE_EXIT(6, VaultInteriors, 6),
+    SCENE_EXIT(7, VaultInteriors, 7),
+    SCENE_EXIT(8, VaultInteriors, 8),
+    SCENE_EXIT(9, VaultInteriors, 9),
+    SCENE_EXIT(10, VaultInteriors, 10),
+    SCENE_EXIT(11, Sanctum, 10),
+    SCENE_EXIT(12, VaultJail, 1),
+    SCENE_EXIT(13, VaultInteriors, 13),
+    SCENE_EXIT(14, VaultRevisit, 1),
     SCENE_EXITS_END,
 };
 

@@ -1,7 +1,8 @@
 /// @file
-/// Colosseum Final 2 (ColosseumFinal2, scene 144), the site of the second finals
-/// match, where Isaac, having won the first, races Satrage, the fourth-ranked
-/// warrior, through five stages to the arena and fights him there.
+/// Colosseum Final 2 (ColosseumFinal2, scene 144), the site of the second
+/// finals match, where Isaac, having won the first, races Satrage, the
+/// fourth-ranked warrior, through five stages to the arena and fights him
+/// there.
 ///
 /// It works as Colosseum Final 1 does (colosso_river.c), and is reached by the
 /// Colosseum's west passage. The stages run from east to west, through the
@@ -956,11 +957,11 @@ s32 ColossoWall_Initialize(void) {
     break;
   case 4:
     ColossoWall_StageBattleResult(2);
-    Engine_EventRequestExit(4);
+    Engine_EventRequestExit(COLOSSEUM_FINAL_2_TO_COLOSSEUM_NORTH);
     break;
   case 5:
     ColossoWall_StageBattleResult(-2);
-    Engine_EventRequestExit(5);
+    Engine_EventRequestExit(COLOSSEUM_FINAL_2_TO_BABI_PALACE_1);
     break;
   }
   return 0;
@@ -1871,11 +1872,11 @@ struct SceneEntrance gColossoWallEntrances[] = {
 };
 
 u32 gColossoWallExits[] = {
-    SCENE_EXITS(144),
-    SCENE_EXIT(10, 144, 1),
-    SCENE_EXIT(11, 140, 68),
-    SCENE_EXIT(4, 140, 31),
-    SCENE_EXIT(5, 138, 98),
+    SCENE_EXITS(ColosseumFinal2),
+    SCENE_EXIT(10, ColosseumFinal2, 1),
+    SCENE_EXIT(COLOSSEUM_FINAL_2_TO_COLOSSEUM_SOUTH, Colosseum, COLOSSEUM_FROM_COLOSSEUM_FINAL_2_SOUTH),
+    SCENE_EXIT(COLOSSEUM_FINAL_2_TO_COLOSSEUM_NORTH, Colosseum, COLOSSEUM_FROM_COLOSSEUM_FINAL_2_NORTH),
+    SCENE_EXIT(COLOSSEUM_FINAL_2_TO_BABI_PALACE_1, BabiPalace1, BABI_PALACE_1_FROM_COLOSSEUM_FINAL_1),
     SCENE_EXITS_END,
 };
 

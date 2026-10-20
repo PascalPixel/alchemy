@@ -533,7 +533,7 @@ struct SceneEntrance gItemLevelEntrances[] = {
 
 /// No exits: 511 is SCENE_EXITS_END's value.
 u32 gItemLevelExits[] = {
-    SCENE_EXITS(511),
+    SCENE_EXITS_END,
 };
 
 /// The room's actors, numbered from 8 in this order: 8 the item browser, 9

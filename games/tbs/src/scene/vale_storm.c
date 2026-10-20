@@ -244,7 +244,7 @@ UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(11);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_WEST_3);
 }
 
 /// In Vale on the stormy night, stepping on cell code 2 requests exit 1, which
@@ -261,7 +261,7 @@ static void Event_LeaveByExit1(void) {
 /// (scene 6) entrance 1.
 static void Event_LeaveByExit3(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Vale_RequestBackdropExit(3);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_KRADEN_NORTH);
 }
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
@@ -270,7 +270,7 @@ static void Event_LeaveByExit3(void) {
 /// (scene 6) entrance 2.
 static void Event_LeaveByExit4(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Vale_RequestBackdropExit(4);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_KRADEN_SOUTH);
 }
 
 /// In Vale on the stormy night, leaves for the plaza, where the villagers have
@@ -284,7 +284,7 @@ static void Event_LeaveByExit2(void) {
       Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_LEFT) == 0) {
     ValeStorm_GaretFollowsIsaac();
   }
-  Vale_RequestBackdropExit(2);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_HOME);
 }
 
 /// In Vale on the stormy night, opens the door of Garet's house and goes in.
@@ -295,7 +295,7 @@ static void Event_LeaveByExit5(void) {
   Engine_MapAnimateCells(gValeStorm_CellSteps1, 54, 32);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 406, 727);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(5);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_EAST);
 }
 
 /// In Vale on the stormy night, Isaac's first time at the door of exit 6: a
@@ -317,7 +317,7 @@ static void Event_LeaveByExit6(void) {
   } else {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
     Engine_EventWait(3);
-    Vale_RequestBackdropExit(6);
+    Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS);
   }
 }
 
@@ -343,7 +343,7 @@ static void Event_LeaveByExit8(void) {
   Engine_MapAnimateCells(gValeStorm_CellSteps2, 49, 69);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(8);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_NORTH);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
@@ -3046,9 +3046,12 @@ struct SceneEntrance gValeStorm_Entrances[] = {
     {0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 257, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 27, 0, 621, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {4, CONDITION_ALWAYS, 29, 0, 792, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {5, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {VALE_STORM_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 27, 0, 621,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {VALE_STORM_FROM_VALE_KRADEN_SOUTH, CONDITION_ALWAYS, 29, 0, 792,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {VALE_STORM_FROM_VALE_HOME, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0,
+     -1, -1, -1, -1, 0},
     {6, CONDITION_ALWAYS, 406, 0, 743, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {7, CONDITION_ALWAYS, 262, 0, 821, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {8, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -3064,11 +3067,27 @@ struct SceneEntrance gValeStorm_Entrances[] = {
 };
 
 u32 gValeStorm_Exits[] = {
-    SCENE_EXITS(3),        SCENE_EXIT(2, 5, 8),   SCENE_EXIT(3, 6, 1),
-    SCENE_EXIT(4, 6, 2),   SCENE_EXIT(5, 7, 6),   SCENE_EXIT(6, 7, 5),
-    SCENE_EXIT(7, 8, 6),   SCENE_EXIT(8, 7, 2),   SCENE_EXIT(9, 7, 1),
-    SCENE_EXIT(10, 7, 1),  SCENE_EXIT(11, 7, 1),  SCENE_EXIT(12, 8, 11),
-    SCENE_EXIT(13, 8, 12), SCENE_EXIT(20, 3, 16), SCENE_EXITS_END,
+    SCENE_EXITS(ValeStorm),
+    SCENE_EXIT(VALE_STORM_TO_VALE_HOME, ValeHome, VALE_HOME_FROM_VALE),
+    SCENE_EXIT(VALE_STORM_TO_VALE_KRADEN_NORTH, ValeKraden,
+               VALE_KRADEN_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_STORM_TO_VALE_KRADEN_SOUTH, ValeKraden,
+               VALE_KRADEN_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_EAST, ValeInteriors,
+               VALE_INTERIORS_FROM_VALE_EAST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS, ValeInteriors,
+               VALE_INTERIORS_FROM_VALE_SOUTH),
+    SCENE_EXIT(7, ValeBabi, VALE_BABI_FROM_VALE),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_NORTH, ValeInteriors,
+               VALE_INTERIORS_FROM_VALE_NORTH),
+    SCENE_EXIT(9, ValeInteriors, VALE_INTERIORS_FROM_VALE_WEST),
+    SCENE_EXIT(10, ValeInteriors, VALE_INTERIORS_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_WEST_3, ValeInteriors,
+               VALE_INTERIORS_FROM_VALE_WEST),
+    SCENE_EXIT(12, ValeBabi, VALE_BABI_FROM_VALE_STORM_WEST),
+    SCENE_EXIT(13, ValeBabi, VALE_BABI_FROM_VALE_STORM_EAST),
+    SCENE_EXIT(20, ValeStorm, 16),
+    SCENE_EXITS_END,
 };
 
 // clang-format off

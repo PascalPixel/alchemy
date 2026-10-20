@@ -97,7 +97,7 @@ const struct SceneEvent *ValeEruption_GetEvents(void) {
 /// Sol Sanctum's approach leads after the eruption and before the party
 /// leaves Vale (its exit 1).
 s32 ValeEruption_Initialize(void) {
-  if (gGameState.entrance == 15) {
+  if (gGameState.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     Event_ReturnFromMtAleph();
   }
   return 0;
@@ -451,7 +451,7 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_MapRenderWaitForValues();
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
-  Engine_EventRequestExit(1);
+  Engine_EventRequestExit(VALE_ERUPTION_TO_SANCTUM);
   Engine_EventEnd();
 }
 
@@ -484,13 +484,14 @@ s32 gValeEruption_EnterSanctum[] = {
 
 struct SceneEntrance gValeEruption_Entrances[] = {
     {0, CONDITION_ALWAYS, 110, 0, 270, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {15, CONDITION_ALWAYS, 103, 0, 284, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VALE_ERUPTION_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 103, 0, 284,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gValeEruption_Exits[] = {
-    SCENE_EXITS(10),
-    SCENE_EXIT(1, 9, 20),
+    SCENE_EXITS(ValeEruption),
+    SCENE_EXIT(VALE_ERUPTION_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE_ERUPTION),
     SCENE_EXITS_END,
 };
 

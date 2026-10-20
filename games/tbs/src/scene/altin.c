@@ -1,9 +1,9 @@
 /// @file
 /// Altin, the mining village north of the Alpine Crossing, in two scenes that
 /// share this overlay and the area name Altin: Altin (scene 75), the village
-/// outdoors, and AltinInteriors (scene 76), inside its houses, shops and inn. The
-/// getters pick each scene's tables by gGameState.scene, both share one exit
-/// table, and a third, empty set of tables serves any other scene.
+/// outdoors, and AltinInteriors (scene 76), inside its houses, shops and inn.
+/// The getters pick each scene's tables by gGameState.scene, both share one
+/// exit table, and a third, empty set of tables serves any other scene.
 ///
 /// The party comes up here when boulders have closed Silk Road at the Alpine
 /// Crossing, and finds the village under water. The day the gems fell from
@@ -31,18 +31,18 @@
 /// sound and its spray running from Village_ApplyWaterLevel, until the party
 /// steps near it (Village_ScareOffBeast): it stops, cries out and hops away
 /// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (touches 2 to
-/// 9, Village_EnterDoor) lead into AltinInteriors and into the Altin Sanctum, whose
-/// wide door is redrawn by hand; coming back out of the Sanctum (entrance 3)
-/// the area name is not shown again. Three doorways (touches 10 to 12,
+/// 9, Village_EnterDoor) lead into AltinInteriors and into the Altin Sanctum,
+/// whose wide door is redrawn by hand; coming back out of the Sanctum (entrance
+/// 3) the area name is not shown again. Three doorways (touches 10 to 12,
 /// Village_WalkThroughDoorway) and exit 13 lead into the mine, to Altin Peak's
 /// AltinPeak1, AltinPeak4, AltinPeak8 and AltinPeak7. A block that Move pushes
 /// to column 22 stays there (FLAG_ALTIN_BLOCK_MOVED).
 ///
-/// Inside (AltinInteriors), two families shelter in the inn's Room One and Room Two,
-/// as the game calls them, until the first and the second drop send them home
-/// (Houses_PlaceSheltering), and the weapon seller waits in the inn until the
-/// water has drained. Each seller opens across the counter once the shop has
-/// dried, and a cook from Xian paces between his pots
+/// Inside (AltinInteriors), two families shelter in the inn's Room One and Room
+/// Two, as the game calls them, until the first and the second drop send them
+/// home (Houses_PlaceSheltering), and the weapon seller waits in the inn until
+/// the water has drained. Each seller opens across the counter once the shop
+/// has dried, and a cook from Xian paces between his pots
 /// (gAltinHouses_CookScript). The villagers point the party to a passage west
 /// at the bottom of the mine, the way on while Silk Road is closed; once the
 /// statues are beaten they also speak of a girl from Xian who asked after
@@ -735,9 +735,9 @@ static void Village_ApplyWaterLevel(void) {
   Engine_TaskWait(1);
 }
 
-/// Sets up inside Altin's buildings (AltinInteriors): the families still sheltering
-/// in the inn's rooms, the weapon seller waiting there until the water
-/// drains, and the shopkeepers kept from wandering.
+/// Sets up inside Altin's buildings (AltinInteriors): the families still
+/// sheltering in the inn's rooms, the weapon seller waiting there until the
+/// water drains, and the shopkeepers kept from wandering.
 static void Houses_PlaceSheltering(void) {
   struct FieldActor *actor;
 
@@ -897,27 +897,35 @@ struct SceneEntrance gAltinOther_Entrances[] = {
 
 struct SceneEntrance gAltinVillage_Entrances[] = {
     {0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 488, 0, 184, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {ALTIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 488, 0, 184, FACING_WEST, 0, -1,
+     -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 168, 0, 216, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 336, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ALTIN_FROM_SANCTUM, CONDITION_ALWAYS, 336, 0, 200, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {4, CONDITION_ALWAYS, 424, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {5, CONDITION_ALWAYS, 136, 0, 312, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {6, CONDITION_ALWAYS, 280, 0, 408, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {7, CONDITION_ALWAYS, 456, 0, 224, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {8, CONDITION_ALWAYS, 184, 0, 408, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {9, CONDITION_ALWAYS, 168, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {10, CONDITION_ALWAYS, 24, 0, 456, FACING_SOUTHEAST, 0, -1, -1, -1, -1, 0},
-    {11, CONDITION_ALWAYS, 264, 0, 224, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {12, CONDITION_ALWAYS, 328, 0, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {13, CONDITION_ALWAYS, 343, 0, 177, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ALTIN_FROM_ALTIN_PEAK_1, CONDITION_ALWAYS, 24, 0, 456, FACING_SOUTHEAST, 0,
+     -1, -1, -1, -1, 0},
+    {ALTIN_FROM_ALTIN_PEAK_4, CONDITION_ALWAYS, 264, 0, 224, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {ALTIN_FROM_ALTIN_PEAK_8, CONDITION_ALWAYS, 328, 0, 264, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {ALTIN_FROM_ALTIN_PEAK_7, CONDITION_ALWAYS, 343, 0, 177, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinHouses_Entrances[] = {
     {0, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 159, 0, 258, FACING_NORTH, 0, 25, 16, 255, 300, 0},
+    {ALTIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 159, 0, 258, FACING_NORTH, 0, 25,
+     16, 255, 300, 0},
     {2, CONDITION_ALWAYS, 336, 0, 213, FACING_NORTH, 0, 268, 40, 500, 250, 0},
-    {3, CONDITION_ALWAYS, 688, 0, 204, FACING_NORTH, 0, 542, 40, 768, 250, 0},
+    {ALTIN_FROM_SANCTUM, CONDITION_ALWAYS, 688, 0, 204, FACING_NORTH, 0, 542,
+     40, 768, 250, 0},
     {4, CONDITION_ALWAYS, 240, 0, 500, FACING_NORTH, 0, 110, 336, 350, 540, 0},
     {5, CONDITION_ALWAYS, 496, 0, 504, FACING_NORTH, 0, 360, 336, 600, 540, 0},
     {6, CONDITION_ALWAYS, 752, 0, 516, FACING_NORTH, 0, 635, 280, 845, 556, 0},
@@ -928,14 +936,30 @@ struct SceneEntrance gAltinHouses_Entrances[] = {
 };
 
 u32 gAltin_Exits[] = {
-    SCENE_EXITS(75),       SCENE_EXIT(1, 2, 16),  SCENE_EXIT(2, 76, 7),
-    SCENE_EXIT(3, 9, 29),  SCENE_EXIT(4, 76, 1),  SCENE_EXIT(5, 76, 2),
-    SCENE_EXIT(6, 76, 3),  SCENE_EXIT(7, 76, 5),  SCENE_EXIT(8, 76, 6),
-    SCENE_EXIT(9, 76, 4),  SCENE_EXIT(10, 77, 1), SCENE_EXIT(11, 80, 1),
-    SCENE_EXIT(12, 84, 4), SCENE_EXIT(13, 83, 3), SCENE_EXIT(0, 76, 0),
-    SCENE_EXIT(1, 75, 4),  SCENE_EXIT(2, 75, 5),  SCENE_EXIT(3, 75, 6),
-    SCENE_EXIT(4, 75, 9),  SCENE_EXIT(5, 75, 7),  SCENE_EXIT(6, 75, 8),
-    SCENE_EXIT(7, 75, 2),  SCENE_EXIT(8, 76, 9),  SCENE_EXIT(9, 76, 8),
+    SCENE_EXITS(Altin),
+    SCENE_EXIT(ALTIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN),
+    SCENE_EXIT(2, AltinInteriors, 7),
+    SCENE_EXIT(ALTIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_ALTIN),
+    SCENE_EXIT(4, AltinInteriors, 1),
+    SCENE_EXIT(5, AltinInteriors, 2),
+    SCENE_EXIT(6, AltinInteriors, 3),
+    SCENE_EXIT(7, AltinInteriors, 5),
+    SCENE_EXIT(8, AltinInteriors, 6),
+    SCENE_EXIT(9, AltinInteriors, 4),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_1, AltinPeak1, ALTIN_PEAK_1_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_4, AltinPeak4, ALTIN_PEAK_4_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_8, AltinPeak8, ALTIN_PEAK_8_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_7, AltinPeak7, ALTIN_PEAK_7_FROM_ALTIN),
+    SCENE_EXITS(AltinInteriors),
+    SCENE_EXIT(1, Altin, 4),
+    SCENE_EXIT(2, Altin, 5),
+    SCENE_EXIT(3, Altin, 6),
+    SCENE_EXIT(4, Altin, 9),
+    SCENE_EXIT(5, Altin, 7),
+    SCENE_EXIT(6, Altin, 8),
+    SCENE_EXIT(7, Altin, 2),
+    SCENE_EXIT(8, AltinInteriors, 9),
+    SCENE_EXIT(9, AltinInteriors, 8),
     SCENE_EXITS_END,
 };
 

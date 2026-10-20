@@ -2,11 +2,12 @@
 /// Babi Lighthouse, which Babi is having built on ancient ruins just north of
 /// Lalivero, and the road up to it: four scenes that share this overlay,
 /// three places in the game's area names, met in this order. The Road to
-/// Babi Lighthouse is RoadToBabiLighthouse (scene 177), the Babi Lighthouse Entry
-/// BabiLighthouseEntry (scene 176), and Babi Lighthouse itself BabiLighthouse2
-/// and BabiLighthouse1 (scenes 175 and 174), rooms 2 and 1 here. The four
-/// share one exit table, the getters pick the rest by gGameState.scene, and
-/// BabiLighthouse_SetupScene restores the scene being entered.
+/// Babi Lighthouse is RoadToBabiLighthouse (scene 177), the Babi Lighthouse
+/// Entry BabiLighthouseEntry (scene 176), and Babi Lighthouse itself
+/// BabiLighthouse2 and BabiLighthouse1 (scenes 175 and 174), rooms 2 and 1
+/// here. The four share one exit table, the getters pick the rest by
+/// gGameState.scene, and BabiLighthouse_SetupScene restores the scene being
+/// entered.
 ///
 /// The party comes here from Lalivero with Iodem, whom Babi sent with it
 /// (babi_palace.c). Sheba, the holy child of Lalivero, has been taken
@@ -109,8 +110,8 @@ enum {
 /// Room 2's Djinni, Luff.
 enum { ACTOR_DJINNI = 8 };
 
-/// The Entry (BabiLighthouseEntry): the two blocks on the ledges, the sprout for
-/// Growth and the four men the kidnappers knocked down on their way in.
+/// The Entry (BabiLighthouseEntry): the two blocks on the ledges, the sprout
+/// for Growth and the four men the kidnappers knocked down on their way in.
 enum {
   ACTOR_LEFT_BLOCK = 8,
   ACTOR_RIGHT_BLOCK = 9,
@@ -118,8 +119,8 @@ enum {
   ACTOR_FIRST_FALLEN_MAN = 11
 };
 
-/// The Road to Babi Lighthouse (RoadToBabiLighthouse): four workers and the block
-/// for Move and Carry.
+/// The Road to Babi Lighthouse (RoadToBabiLighthouse): four workers and the
+/// block for Move and Carry.
 enum { ACTOR_ROAD_BLOCK = 12 };
 
 /// The lighthouse keeps two flags in the area flags from 0x300.
@@ -1248,7 +1249,8 @@ s32 BabiLighthouse_SetupScene(void) {
     ((union FieldObject *)Object_GetById(ACTOR_RIGHT_BLOCK))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
 #endif
-    if (state->entrance == 5 && GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (state->entrance == BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_SOUTH &&
+        GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_SetPosition(ACTOR_RIGHT_BLOCK, PIXELS(312), PIXELS(328));
     }
     BabiLighthouse_RefreshMovableBlockTiles();
@@ -1337,7 +1339,7 @@ s32 BabiLighthouse_SetupScene(void) {
     Actor_SetSpeed(ACTOR_LEFT_DOOR, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_RIGHT_DOOR, 0x10000, 0x8000);
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (state->entrance == 1) {
+      if (state->entrance == BABI_LIGHTHOUSE_1_FROM_TUNNEL_RUINS_1) {
         GameFlag_Set(FLAG_BEYOND_DOOR);
       } else {
         GameFlag_Clear(FLAG_BEYOND_DOOR);
@@ -1372,7 +1374,7 @@ s32 BabiLighthouse_SetupScene(void) {
       Actor_FaceDirection(ACTOR_RIGHT_DOOR, FACING_EAST, 0);
       Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
     }
-    if (gGameState.entrance == 3) {
+    if (gGameState.entrance == BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_EAST) {
       if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
         BabiLighthouse_LandWithParticles();
       }
@@ -1459,12 +1461,18 @@ s32 gBabiLighthouse_TrembleScript[] = {
 
 struct SceneEntrance gBabiLighthouse_Entrances3[] = {
     {0, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 200, 0, 424, FACING_NORTH, 0, 0, 0, 384, 448, 0},
-    {2, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
-    {3, CONDITION_ALWAYS, 216, 0, 184, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
-    {4, CONDITION_ALWAYS, 104, 0, 312, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
-    {5, CONDITION_ALWAYS, 296, 0, 312, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
-    {6, CONDITION_ALWAYS, 312, 0, 88, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
+    {BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE, CONDITION_ALWAYS, 200,
+     0, 424, FACING_NORTH, 0, 0, 0, 384, 448, 0},
+    {BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_WEST, CONDITION_ALWAYS, 200,
+     0, 200, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
+    {BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_EAST, CONDITION_ALWAYS, 216,
+     0, 184, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
+    {BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_WEST, CONDITION_ALWAYS, 104, 0,
+     312, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
+    {BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_SOUTH, CONDITION_ALWAYS, 296, 0,
+     312, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
+    {BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_NORTH, CONDITION_ALWAYS, 312, 0,
+     88, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1476,10 +1484,13 @@ struct SceneEntrance gBabiLighthouse_Entrances2[] = {
     {4, CONDITION_ALWAYS, 424, 0, 120, FACING_SOUTH, 0, 352, 64, 592, 320, 0},
     {5, CONDITION_ALWAYS, 456, 0, 120, FACING_SOUTH, 0, 352, 64, 592, 320, 0},
     {6, CONDITION_ALWAYS, 504, 0, 120, FACING_SOUTH, 0, 352, 64, 592, 320, 0},
-    {7, CONDITION_ALWAYS, 472, 0, 288, FACING_NORTH, 0, 352, 64, 592, 320, 0},
+    {BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_ENTRY_EAST, CONDITION_ALWAYS, 472,
+     0, 288, FACING_NORTH, 0, 352, 64, 592, 320, 0},
     {8, CONDITION_ALWAYS, 120, 0, 120, FACING_SOUTH, 0, 48, 64, 288, 320, 0},
-    {9, CONDITION_ALWAYS, 184, 0, 288, FACING_NORTH, 0, 48, 64, 288, 320, 0},
-    {10, CONDITION_ALWAYS, 728, 0, 168, FACING_SOUTH, 0, 624, 96, 864, 256, 0},
+    {BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST, CONDITION_ALWAYS, 184,
+     0, 288, FACING_NORTH, 0, 48, 64, 288, 320, 0},
+    {BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_1, CONDITION_ALWAYS, 728, 0, 168,
+     FACING_SOUTH, 0, 624, 96, 864, 256, 0},
     {11, CONDITION_ALWAYS, 776, 0, 184, FACING_SOUTH, 0, 624, 96, 864, 256, 0},
     {12, CONDITION_ALWAYS, 488, 0, 184, FACING_SOUTH, 0, 352, 64, 592, 320, 0},
     {13, CONDITION_ALWAYS, 248, 0, 584, FACING_SOUTH, 0, 128, 432, 368, 672, 0},
@@ -1491,16 +1502,21 @@ struct SceneEntrance gBabiLighthouse_Entrances2[] = {
 };
 
 struct SceneEntrance gBabiLighthouse_Entrances1[] = {
-    {1, CONDITION_ALWAYS, 248, 0, 120, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
-    {2, CONDITION_ALWAYS, 136, 0, 368, FACING_NORTH, 0, 96, 48, 384, 432, 0},
-    {3, CONDITION_ALWAYS, 168, 0, 344, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
+    {BABI_LIGHTHOUSE_1_FROM_TUNNEL_RUINS_1, CONDITION_ALWAYS, 248, 0, 120,
+     FACING_SOUTH, 0, 96, 48, 384, 432, 0},
+    {BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_WEST, CONDITION_ALWAYS, 136, 0,
+     368, FACING_NORTH, 0, 96, 48, 384, 432, 0},
+    {BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_EAST, CONDITION_ALWAYS, 168, 0,
+     344, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBabiLighthouse_EntrancesOther[] = {
     {0, CONDITION_ALWAYS, 328, 0, 240, FACING_NORTH, 0, 0, 0, 464, 400, 0},
-    {1, CONDITION_ALWAYS, 112, 0, 360, FACING_NORTH, 0, 0, 0, 464, 400, 0},
-    {2, CONDITION_ALWAYS, 136, 0, 32, FACING_SOUTH, 0, 0, 0, 464, 400, 0},
+    {BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE, CONDITION_ALWAYS, 112,
+     0, 360, FACING_NORTH, 0, 0, 0, 464, 400, 0},
+    {BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_WEST, CONDITION_ALWAYS, 136,
+     0, 32, FACING_SOUTH, 0, 0, 0, 464, 400, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1512,17 +1528,57 @@ struct SceneRegion gBabiLighthouse_Regions3[] = {
 };
 
 u32 gBabiLighthouse_Exits[] = {
-    SCENE_EXITS(176),        SCENE_EXIT(1, 177, 2),   SCENE_EXIT(2, 175, 7),
-    SCENE_EXIT(3, 175, 9),   SCENE_EXIT(4, 173, 1),   SCENE_EXIT(5, 173, 3),
-    SCENE_EXIT(6, 173, 2),   SCENE_EXIT(0, 175, 0),   SCENE_EXIT(1, 175, 4),
-    SCENE_EXIT(2, 176, 3),   SCENE_EXIT(3, 175, 8),   SCENE_EXIT(4, 175, 1),
-    SCENE_EXIT(5, 175, 2),   SCENE_EXIT(6, 176, 2),   SCENE_EXIT(7, 175, 5),
-    SCENE_EXIT(8, 175, 6),   SCENE_EXIT(9, 175, 11),  SCENE_EXIT(10, 175, 3),
-    SCENE_EXIT(11, 175, 12), SCENE_EXIT(12, 175, 13), SCENE_EXIT(13, 175, 14),
-    SCENE_EXIT(14, 175, 15), SCENE_EXIT(15, 175, 16), SCENE_EXIT(16, 175, 17),
-    SCENE_EXIT(17, 174, 3),  SCENE_EXIT(18, 174, 2),  SCENE_EXIT(0, 174, 0),
-    SCENE_EXIT(1, 172, 1),   SCENE_EXIT(2, 175, 10),  SCENE_EXIT(0, 177, 0),
-    SCENE_EXIT(1, 2, 31),    SCENE_EXIT(2, 176, 1),   SCENE_EXITS_END,
+    SCENE_EXITS(BabiLighthouseEntry),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE,
+               RoadToBabiLighthouse,
+               ROAD_TO_BABI_LIGHTHOUSE_FROM_BABI_LIGHTHOUSE_ENTRY),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_2_EAST, BabiLighthouse2,
+               BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_ENTRY_EAST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_2_WEST, BabiLighthouse2,
+               BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_WEST, TunnelRuins2,
+               TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_SOUTH, TunnelRuins2,
+               TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH),
+    SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_NORTH, TunnelRuins2,
+               TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH),
+    SCENE_EXITS(BabiLighthouse2),
+    SCENE_EXIT(1, BabiLighthouse2, 4),
+    SCENE_EXIT(BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_ENTRY_EAST,
+               BabiLighthouseEntry,
+               BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_EAST),
+    SCENE_EXIT(3, BabiLighthouse2, 8),
+    SCENE_EXIT(4, BabiLighthouse2, 1),
+    SCENE_EXIT(5, BabiLighthouse2, 2),
+    SCENE_EXIT(BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST,
+               BabiLighthouseEntry,
+               BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_WEST),
+    SCENE_EXIT(7, BabiLighthouse2, 5),
+    SCENE_EXIT(8, BabiLighthouse2, 6),
+    SCENE_EXIT(9, BabiLighthouse2, 11),
+    SCENE_EXIT(10, BabiLighthouse2, 3),
+    SCENE_EXIT(11, BabiLighthouse2, 12),
+    SCENE_EXIT(12, BabiLighthouse2, 13),
+    SCENE_EXIT(13, BabiLighthouse2, 14),
+    SCENE_EXIT(14, BabiLighthouse2, 15),
+    SCENE_EXIT(15, BabiLighthouse2, 16),
+    SCENE_EXIT(16, BabiLighthouse2, 17),
+    SCENE_EXIT(BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_1_EAST, BabiLighthouse1,
+               BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_EAST),
+    SCENE_EXIT(BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_1_WEST, BabiLighthouse1,
+               BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_WEST),
+    SCENE_EXITS(BabiLighthouse1),
+    SCENE_EXIT(BABI_LIGHTHOUSE_1_TO_TUNNEL_RUINS_1, TunnelRuins1,
+               TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1),
+    SCENE_EXIT(BABI_LIGHTHOUSE_1_TO_BABI_LIGHTHOUSE_2_WEST, BabiLighthouse2,
+               BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_1),
+    SCENE_EXITS(RoadToBabiLighthouse),
+    SCENE_EXIT(ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_ROAD_TO_BABI_LIGHTHOUSE),
+    SCENE_EXIT(ROAD_TO_BABI_LIGHTHOUSE_TO_BABI_LIGHTHOUSE_ENTRY,
+               BabiLighthouseEntry,
+               BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gBabiLighthouse_NoPlacements[] = {

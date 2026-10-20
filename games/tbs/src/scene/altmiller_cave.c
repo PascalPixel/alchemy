@@ -1964,7 +1964,7 @@ s32 AltmillerCave_Initialize(void) {
   Engine_GameFlagSet(FLAG_DARK);
   GameFlag_Clear(FLAG_GRADED_DARKNESS);
   if (gGameState.scene == (s32)&SceneId_AltmillerCave1) {
-    if (gGameState.entrance == 1) {
+    if (gGameState.entrance == ALTMILLER_CAVE_1_FROM_WORLD_MAP) {
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gSceneState + 4) = 0;
       }
@@ -2199,10 +2199,12 @@ struct LightWheel *gAltmillerCave_LightWheel = &gAltmillerCave_LightWheelState;
 
 struct SceneEntrance gAltmillerCave_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 456, 0, 504, FACING_NORTH, 0, 0, 0, 544, 528, 0},
+    {ALTMILLER_CAVE_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 456, 0, 504,
+     FACING_NORTH, 0, 0, 0, 544, 528, 0},
     {2, CONDITION_ALWAYS, 280, 0, 360, FACING_SOUTH, 0, 0, 0, 544, 528, 0},
     {3, CONDITION_ALWAYS, 120, 0, 696, FACING_NORTH, 0, 0, 552, 240, 720, 0},
-    {4, CONDITION_ALWAYS, 120, 0, 600, FACING_SOUTH, 0, 0, 552, 240, 720, 0},
+    {ALTMILLER_CAVE_1_FROM_ALTMILLER_CAVE_2, CONDITION_ALWAYS, 120, 0, 600,
+     FACING_SOUTH, 0, 0, 552, 240, 720, 0},
     {10, CONDITION_ALWAYS, 392, 0, 504, FACING_SOUTH, 0, 48, 16, 496, 672, 0},
     {11, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 48, 16, 496, 672, 0},
     {20, CONDITION_ALWAYS, 232, 0, 216, FACING_SOUTH, 0, 64, 48, 592, 576, 0},
@@ -2220,14 +2222,39 @@ struct SceneEntrance gAltmillerCave_Entrances[] = {
 };
 
 u32 gAltmillerCave_Exits[] = {
-    SCENE_EXITS(146),        SCENE_EXIT(1, 2, 24),    SCENE_EXIT(2, 146, 3),
-    SCENE_EXIT(3, 146, 2),   SCENE_EXIT(4, 147, 10),  SCENE_EXIT(0, 147, 0),
-    SCENE_EXIT(10, 146, 4),  SCENE_EXIT(11, 148, 20), SCENE_EXIT(0, 148, 0),
-    SCENE_EXIT(20, 147, 11), SCENE_EXIT(21, 149, 30), SCENE_EXIT(0, 149, 0),
-    SCENE_EXIT(30, 148, 21), SCENE_EXIT(31, 150, 40), SCENE_EXIT(0, 150, 0),
-    SCENE_EXIT(40, 149, 31), SCENE_EXIT(41, 151, 50), SCENE_EXIT(0, 151, 0),
-    SCENE_EXIT(50, 150, 41), SCENE_EXIT(51, 151, 52), SCENE_EXIT(52, 151, 51),
-    SCENE_EXIT(53, 151, 54), SCENE_EXIT(54, 151, 53), SCENE_EXITS_END,
+    SCENE_EXITS(AltmillerCave1),
+    SCENE_EXIT(ALTMILLER_CAVE_1_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_ALTMILLER_CAVE_1),
+    SCENE_EXIT(2, AltmillerCave1, 3),
+    SCENE_EXIT(3, AltmillerCave1, 2),
+    SCENE_EXIT(ALTMILLER_CAVE_1_TO_ALTMILLER_CAVE_2, AltmillerCave2,
+               ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_1),
+    SCENE_EXITS(AltmillerCave2),
+    SCENE_EXIT(ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_1, AltmillerCave1,
+               ALTMILLER_CAVE_1_FROM_ALTMILLER_CAVE_2),
+    SCENE_EXIT(ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_3, AltmillerCave3,
+               ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_2),
+    SCENE_EXITS(AltmillerCave3),
+    SCENE_EXIT(ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_2, AltmillerCave2,
+               ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_3),
+    SCENE_EXIT(21, AltmillerCave4, ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_3),
+    SCENE_EXITS(AltmillerCave4),
+    SCENE_EXIT(ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_3, AltmillerCave3, 21),
+    SCENE_EXIT(ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_5, AltmillerCave5,
+               ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_4),
+    SCENE_EXITS(AltmillerCave5),
+    SCENE_EXIT(ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_4, AltmillerCave4,
+               ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_5),
+    SCENE_EXIT(ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_6, AltmillerCave6,
+               ALTMILLER_CAVE_6_FROM_ALTMILLER_CAVE_5),
+    SCENE_EXITS(AltmillerCave6),
+    SCENE_EXIT(ALTMILLER_CAVE_6_TO_ALTMILLER_CAVE_5, AltmillerCave5,
+               ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_6),
+    SCENE_EXIT(51, AltmillerCave6, 52),
+    SCENE_EXIT(52, AltmillerCave6, 51),
+    SCENE_EXIT(53, AltmillerCave6, 54),
+    SCENE_EXIT(54, AltmillerCave6, 53),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gAltmillerCave_PlacementsOther[] = {

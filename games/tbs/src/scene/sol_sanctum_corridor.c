@@ -51,15 +51,21 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 struct SceneEntrance gSolSanctumCorridorEntrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 727, 0, 92, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 56, 0, 616, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_EAST, CONDITION_ALWAYS,
+     727, 0, 92, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_WEST, CONDITION_ALWAYS,
+     56, 0, 616, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumCorridorExits[] = {
-    SCENE_EXITS(15),
-    SCENE_EXIT(1, 16, 5),
-    SCENE_EXIT(2, 16, 1),
+    SCENE_EXITS(SolSanctumCorridor),
+    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_EAST,
+               SolSanctumEntrance1,
+               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_EAST),
+    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_WEST,
+               SolSanctumEntrance1,
+               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_WEST),
     SCENE_EXITS_END,
 };
 

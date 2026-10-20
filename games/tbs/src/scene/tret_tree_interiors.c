@@ -652,7 +652,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   }
   Engine_ActorSetChildValue(ACTOR_TRET_SPEAKER, 15);
   TretTreeInteriors_PlayGesture(0);
-  if (gGameState.entrance != 19)
+  if (gGameState.entrance != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateSceneTint,
                                TASK_PRIORITY_SCENE);
   if (FLAG_CHECK(FLAG_TRET_DEFEATED)) {
@@ -706,7 +706,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   } else if (entrance == 10) {
     if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
       TretTreeInteriors_RunLandingDustScene();
-  } else if (entrance == 19) {
+  } else if (entrance == TRET_TREE_INTERIORS_AFTER_FIGHT_TRET) {
     TretTreeInteriors_ApplyPostBattleState(1);
   }
   return 0;
@@ -1257,22 +1257,22 @@ struct SceneRegion gTretTreeInteriorsRegions[] = {
 };
 
 u32 gTretTreeInteriorsExits[] = {
-    SCENE_EXITS(45),
-    SCENE_EXIT(1, 44, 2),
-    SCENE_EXIT(2, 46, 1),
-    SCENE_EXIT(3, 46, 2),
-    SCENE_EXIT(4, 46, 3),
-    SCENE_EXIT(5, 46, 4),
-    SCENE_EXIT(6, 46, 6),
-    SCENE_EXIT(7, 46, 5),
-    SCENE_EXIT(8, 46, 7),
-    SCENE_EXIT(9, 46, 8),
-    SCENE_EXIT(10, 45, 12),
-    SCENE_EXIT(11, 45, 11),
-    SCENE_EXIT(12, 45, 14),
-    SCENE_EXIT(13, 45, 13),
-    SCENE_EXIT(14, 45, 16),
-    SCENE_EXIT(15, 45, 15),
+    SCENE_EXITS(TretTreeInteriors),
+    SCENE_EXIT(TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_TRET_TREE_INTERIORS),
+    SCENE_EXIT(2, TretTreeBranch, 1),
+    SCENE_EXIT(3, TretTreeBranch, 2),
+    SCENE_EXIT(4, TretTreeBranch, 3),
+    SCENE_EXIT(5, TretTreeBranch, 4),
+    SCENE_EXIT(6, TretTreeBranch, 6),
+    SCENE_EXIT(7, TretTreeBranch, 5),
+    SCENE_EXIT(8, TretTreeBranch, 7),
+    SCENE_EXIT(9, TretTreeBranch, 8),
+    SCENE_EXIT(10, TretTreeInteriors, 12),
+    SCENE_EXIT(11, TretTreeInteriors, 11),
+    SCENE_EXIT(12, TretTreeInteriors, 14),
+    SCENE_EXIT(13, TretTreeInteriors, 13),
+    SCENE_EXIT(14, TretTreeInteriors, 16),
+    SCENE_EXIT(15, TretTreeInteriors, 15),
     SCENE_EXITS_END,
 };
 

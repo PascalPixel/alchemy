@@ -628,9 +628,9 @@ s32 Scene_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) &&
       !Engine_GameFlagIsSet(FLAG_DJINNI_0 + VAULT_VENUS_DJINNI_INDEX))
     Actor_SetPosition(ACTOR_VAULT_VENUS_DJINNI, PIXELS(408), PIXELS(120));
-  if (gGameState.entrance == 11)
+  if (gGameState.entrance == VAULT_REVISIT_FROM_SANCTUM)
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-  if (gGameState.entrance == 13)
+  if (gGameState.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_1)
     Engine_GameFlagClear(0x120);
   return 0;
 }
@@ -724,19 +724,19 @@ struct SceneEntrance gVaultRevisit_Entrances[] = {
 };
 
 u32 gVaultRevisit_Exits[] = {
-    SCENE_EXITS(SCENE_VAULT_REVISIT),
-    SCENE_EXIT(1, SCENE_WORLD_MAP, 3),
-    SCENE_EXIT(2, SCENE_WORLD_MAP, 44),
-    SCENE_EXIT(5, 24, 5),
-    SCENE_EXIT(6, 24, 6),
-    SCENE_EXIT(7, 24, 7),
-    SCENE_EXIT(8, 24, 8),
-    SCENE_EXIT(9, 24, 9),
-    SCENE_EXIT(10, 24, 10),
-    SCENE_EXIT(11, 9, 11),
-    SCENE_EXIT(12, SCENE_VAULT_JAIL, 10),
-    SCENE_EXIT(13, 96, 10),
-    SCENE_EXIT(14, 98, 1),
+    SCENE_EXITS(VaultRevisit),
+    SCENE_EXIT(1, WorldMap, 3),
+    SCENE_EXIT(2, WorldMap, 44),
+    SCENE_EXIT(5, VaultInteriorsRevisit, 5),
+    SCENE_EXIT(6, VaultInteriorsRevisit, 6),
+    SCENE_EXIT(7, VaultInteriorsRevisit, 7),
+    SCENE_EXIT(8, VaultInteriorsRevisit, 8),
+    SCENE_EXIT(9, VaultInteriorsRevisit, 9),
+    SCENE_EXIT(10, VaultInteriorsRevisit, 10),
+    SCENE_EXIT(11, Sanctum, 11),
+    SCENE_EXIT(12, VaultJail, 10),
+    SCENE_EXIT(13, VaultCave1, 10),
+    SCENE_EXIT(14, VaultCave3, 1),
     SCENE_EXITS_END,
 };
 

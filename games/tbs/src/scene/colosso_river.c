@@ -715,11 +715,11 @@ s32 ColossoRiver_Initialize(void) {
     break;
   case 4:
     ColossoRiver_RestoreMatchResult(1);
-    Engine_EventRequestExit(4);
+    Engine_EventRequestExit(COLOSSEUM_FINAL_1_TO_COLOSSEUM_EAST);
     break;
   case 5:
     ColossoRiver_RestoreMatchResult(-1);
-    Engine_EventRequestExit(5);
+    Engine_EventRequestExit(COLOSSEUM_FINAL_1_TO_BABI_PALACE_1);
     break;
   }
   return 0;
@@ -1571,11 +1571,11 @@ struct SceneEntrance gColossoRiver_Entrances[] = {
 };
 
 u32 gColossoRiver_Exits[] = {
-    SCENE_EXITS(143),
-    SCENE_EXIT(10, 143, 1),
-    SCENE_EXIT(11, 140, 12),
-    SCENE_EXIT(4, 140, 21),
-    SCENE_EXIT(5, 138, 98),
+    SCENE_EXITS(ColosseumFinal1),
+    SCENE_EXIT(10, ColosseumFinal1, 1),
+    SCENE_EXIT(COLOSSEUM_FINAL_1_TO_COLOSSEUM_WEST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST),
+    SCENE_EXIT(COLOSSEUM_FINAL_1_TO_COLOSSEUM_EAST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_FINAL_1_EAST),
+    SCENE_EXIT(COLOSSEUM_FINAL_1_TO_BABI_PALACE_1, BabiPalace1, BABI_PALACE_1_FROM_COLOSSEUM_FINAL_1),
     SCENE_EXITS_END,
 };
 

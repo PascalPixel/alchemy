@@ -1222,7 +1222,7 @@ static s32 LinkLobby_TalkByProgress(s32 actor) {
 static s32 LinkLobby_LeaveArena(void) {
   SerialRuntime_RemoveIrqHandlers();
   Sound_LoadPresetParameters(2);
-  Event_SetDestination((s32)&SceneId_Clear, 1);
+  Event_SetDestination((s32)&SceneId_Clear, CLEAR_FROM_SANCTUM);
 #ifdef UBFIX
   return 0;
 #endif
@@ -1612,7 +1612,7 @@ struct SceneEntrance gLinkLobbyEntrances[] = {
 };
 
 u32 gLinkLobbyExits[] = {
-    SCENE_EXITS(511),
+    SCENE_EXITS_END,
 };
 
 struct ScenePlacement gLinkLobbyPlacements[] = {

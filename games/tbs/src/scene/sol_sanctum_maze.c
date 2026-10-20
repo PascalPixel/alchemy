@@ -54,15 +54,21 @@ const struct SceneEvent *Scene_GetEvents(void) { return gSolSanctumMazeEvents; }
 
 struct SceneEntrance gSolSanctumMazeEntrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 424, 0, 615, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 376, 0, 53, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_SOUTH, CONDITION_ALWAYS, 424,
+     0, 615, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_NORTH, CONDITION_ALWAYS, 376,
+     0, 53, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumMazeExits[] = {
-    SCENE_EXITS(14),
-    SCENE_EXIT(1, 16, 7),
-    SCENE_EXIT(2, 16, 14),
+    SCENE_EXITS(SolSanctumMaze),
+    SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_SOUTH,
+               SolSanctumEntrance1,
+               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_WEST),
+    SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_NORTH,
+               SolSanctumEntrance1,
+               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST),
     SCENE_EXITS_END,
 };
 

@@ -288,10 +288,11 @@ struct SceneEntrance gTretTreeBranch_Entrances[] = {
 };
 
 u32 gTretTreeBranch_Exits[] = {
-    SCENE_EXITS(46),      SCENE_EXIT(1, 45, 2), SCENE_EXIT(2, 45, 3),
-    SCENE_EXIT(3, 45, 4), SCENE_EXIT(4, 45, 5), SCENE_EXIT(5, 45, 7),
-    SCENE_EXIT(6, 45, 6), SCENE_EXIT(7, 45, 8), SCENE_EXIT(8, 45, 9),
-    SCENE_EXITS_END,
+    SCENE_EXITS(TretTreeBranch),         SCENE_EXIT(1, TretTreeInteriors, 2),
+    SCENE_EXIT(2, TretTreeInteriors, 3), SCENE_EXIT(3, TretTreeInteriors, 4),
+    SCENE_EXIT(4, TretTreeInteriors, 5), SCENE_EXIT(5, TretTreeInteriors, 7),
+    SCENE_EXIT(6, TretTreeInteriors, 6), SCENE_EXIT(7, TretTreeInteriors, 8),
+    SCENE_EXIT(8, TretTreeInteriors, 9), SCENE_EXITS_END,
 };
 
 // clang-format off

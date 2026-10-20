@@ -601,7 +601,8 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 /// Plays the collapse at entrance 10, the cut from the Elemental Star Room's
 /// scene 17. Called by Field_RunScene once the actors exist.
 s32 SolSanctumEruption_Initialize(void) {
-  if (gGameState.entrance == 10) {
+  if (gGameState.entrance ==
+      SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
     FieldEffect_InitSparkles();
     SolSanctumEruption_PlayHostageScene();
   }
@@ -1481,7 +1482,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Scene_EndCutscenePsynergy();
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
-  Engine_EventRequestExit(5);
+  Engine_EventRequestExit(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
   // XXX: flag 0x100 is set nowhere else, and nothing in the repository reads
   // it by number; a read of its byte or range would say what it marks.
   GameFlag_Set(0x100);
@@ -1865,8 +1866,8 @@ struct SceneEntrance gSolSanctumEruption_Entrances[] = {
 };
 
 u32 gSolSanctumEruption_Exits[] = {
-    SCENE_EXITS(18),
-    SCENE_EXIT(5, 11, 8),
+    SCENE_EXITS(SolSanctumEruption),
+    SCENE_EXIT(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, SolSanctumLunaSolRooms, SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION),
     SCENE_EXITS_END,
 };
 

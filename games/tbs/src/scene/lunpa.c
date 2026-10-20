@@ -28,7 +28,8 @@
 ///   VaultJail, whose area name there is Lunpa). A Nut floats over the town
 ///   for Catch, a grave and a barrel hold a Sleep Bomb and a Nut, and frogs
 ///   croak in the well.
-/// - Lunpa Fortress Gates (LunpaFortressGates, scene 159), the steps up to the fortress
+/// - Lunpa Fortress Gates (LunpaFortressGates, scene 159), the steps up to the
+/// fortress
 ///   door, kept by two guards. Stepping on the ground before them uncloaked
 ///   (trigger 10, Event_GuardsBlockGate) brings them in front of the door
 ///   (FLAG_SCENE_TEMP_40). Cloak (Event_CastCloak, FLAG_SCENE_TEMP_41) lets
@@ -956,17 +957,15 @@ struct SceneEntrance gGateEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-#define ROOM_EXIT(exit)                                                        \
-  SCENE_EXIT((exit), SCENE_LUNPA_SUHALLA, ROOM_ENTRANCE(exit))
+#define ROOM_EXIT(exit) SCENE_EXIT((exit), LunpaSuhalla, ROOM_ENTRANCE(exit))
 
 u32 gLunpaExits[] = {
-    SCENE_EXITS(SCENE_LUNPA),
-    SCENE_EXIT(LUNPA_EXIT_TO_WORLD_MAP, SCENE_WORLD_MAP,
+    SCENE_EXITS(Lunpa),
+    SCENE_EXIT(LUNPA_EXIT_TO_WORLD_MAP, WorldMap,
                WORLD_MAP_ENTRANCE_FROM_LUNPA),
-    SCENE_EXIT(LUNPA_EXIT_TO_GATE, SCENE_LUNPA_FORTRESS_GATE,
+    SCENE_EXIT(LUNPA_EXIT_TO_GATE, LunpaFortressGates,
                GATE_ENTRANCE_FROM_LUNPA),
-    SCENE_EXIT(LUNPA_EXIT_TO_CAVE, SCENE_WEST_LUNPA_CAVE,
-               CAVE_ENTRANCE_FROM_LUNPA),
+    SCENE_EXIT(LUNPA_EXIT_TO_CAVE, WestLunpaCave, CAVE_ENTRANCE_FROM_LUNPA),
     ROOM_EXIT(LUNPA_EXIT_TO_FIRST_HOME),
     ROOM_EXIT(LUNPA_EXIT_TO_SECOND_HOME),
     ROOM_EXIT(LUNPA_EXIT_TO_THIRD_HOME),
@@ -975,15 +974,15 @@ u32 gLunpaExits[] = {
     ROOM_EXIT(LUNPA_EXIT_TO_INN),
     ROOM_EXIT(LUNPA_EXIT_TO_TEMPLE),
     ROOM_EXIT(LUNPA_EXIT_TO_EIGHTH_ROOM),
-    SCENE_EXIT(LUNPA_EXIT_TO_JAIL, SCENE_VAULT_JAIL, JAIL_ENTRANCE_FROM_LUNPA),
+    SCENE_EXIT(LUNPA_EXIT_TO_JAIL, VaultJail, JAIL_ENTRANCE_FROM_LUNPA),
     SCENE_EXITS_END,
 };
 
 u32 gGateExits[] = {
-    SCENE_EXITS(SCENE_LUNPA_FORTRESS_GATE),
-    SCENE_EXIT(GATE_EXIT_TO_FORTRESS, SCENE_LUNPA_FORTRESS,
+    SCENE_EXITS(LunpaFortressGates),
+    SCENE_EXIT(GATE_EXIT_TO_FORTRESS, LunpaFortress1,
                FORTRESS_ENTRANCE_FROM_GATE),
-    SCENE_EXIT(GATE_EXIT_TO_LUNPA, SCENE_LUNPA, LUNPA_ENTRANCE_FROM_GATE),
+    SCENE_EXIT(GATE_EXIT_TO_LUNPA, Lunpa, LUNPA_ENTRANCE_FROM_GATE),
     SCENE_EXITS_END,
 };
 

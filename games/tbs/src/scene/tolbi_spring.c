@@ -245,7 +245,7 @@ s32 TolbiSpring_Initialize(void) {
     Object_GetById(24)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Object_GetById(25)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Engine_EventOpenScreen();
-    if (gGameState.entrance == 1) {
+    if (gGameState.entrance == TOLBI_SPRING_2_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00)) {
         Io_SetBlendControl(0x3f42);
@@ -1368,7 +1368,8 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
 
 const struct SceneEntrance gTolbiSpring_Entrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 120, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SPRING_2_FROM_TOLBI, CONDITION_ALWAYS, 120, 0, 168, FACING_NORTH, 0,
+     -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 128, 0, 176, FACING_NORTH, 0, 8, 8, 248, 200, 0},
     {11, CONDITION_ALWAYS, 96, 0, 440, FACING_NORTH, 0, 8, 288, 248, 456, 0},
@@ -1378,11 +1379,12 @@ const struct SceneEntrance gTolbiSpring_Entrances[] = {
 };
 
 const u32 gTolbiSpring_Exits[] = {
-    SCENE_EXITS(189),
-    SCENE_EXIT_IF(1, 135, 20, 0xffffffff),
-    SCENE_EXIT(0, 137, 0),
-    SCENE_EXIT_IF(1, 135, 13, 0xffffffff),
-    SCENE_EXIT_IF(2, 135, 5, 0xffffffff),
+    SCENE_EXITS(TolbiSpring2),
+    SCENE_EXIT_IF(TOLBI_SPRING_2_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING_2,
+                  0xffffffff),
+    SCENE_EXITS(TolbiSpring1),
+    SCENE_EXIT_IF(1, Tolbi, TOLBI_FROM_TOLBI_SPRING_1, 0xffffffff),
+    SCENE_EXIT_IF(2, Tolbi, TOLBI_FROM_HOUSE_NORTHEAST, 0xffffffff),
     SCENE_EXITS_END,
 };
 

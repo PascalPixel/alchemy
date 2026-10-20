@@ -192,7 +192,7 @@ const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 /// known).
 const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
-    if (gGameState.entrance == 5) {
+    if (gGameState.entrance == LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE) {
       Engine_GameFlagSet(FLAG_LAMAKAN_MANTICORE_BEATEN);
 #if TBS_PATCH_3
       Engine_GameFlagSet(FLAG_REACHED_KALAY);
@@ -1172,22 +1172,22 @@ struct SceneEntrance gLamakanDesertEntrances4[] = {
 };
 
 u32 gLamakanDesertExits[] = {
-    SCENE_EXITS(89),
-    SCENE_EXIT(1, 2, 18),
-    SCENE_EXIT(2, 90, 1),
-    SCENE_EXIT(0, 90, 0),
-    SCENE_EXIT(1, 89, 2),
-    SCENE_EXIT(2, 91, 1),
-    SCENE_EXIT(0, 91, 0),
-    SCENE_EXIT(1, 90, 2),
-    SCENE_EXIT(2, 92, 2),
-    SCENE_EXIT(3, 92, 1),
-    SCENE_EXIT(4, 92, 3),
-    SCENE_EXIT(0, 92, 0),
-    SCENE_EXIT(1, 91, 2),
-    SCENE_EXIT(2, 91, 3),
-    SCENE_EXIT(3, 2, 53),
-    SCENE_EXIT(4, 91, 4),
+    SCENE_EXITS(LamakanDesert1),
+    SCENE_EXIT(LAMAKAN_DESERT_1_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_1),
+    SCENE_EXIT(LAMAKAN_DESERT_1_TO_LAMAKAN_DESERT_2, LamakanDesert2, LAMAKAN_DESERT_2_FROM_LAMAKAN_DESERT_1),
+    SCENE_EXITS(LamakanDesert2),
+    SCENE_EXIT(LAMAKAN_DESERT_2_TO_LAMAKAN_DESERT_1, LamakanDesert1, LAMAKAN_DESERT_1_FROM_LAMAKAN_DESERT_2),
+    SCENE_EXIT(LAMAKAN_DESERT_2_TO_LAMAKAN_DESERT_3, LamakanDesert3, LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_2),
+    SCENE_EXITS(LamakanDesert3),
+    SCENE_EXIT(LAMAKAN_DESERT_3_TO_LAMAKAN_DESERT_2, LamakanDesert2, LAMAKAN_DESERT_2_FROM_LAMAKAN_DESERT_3),
+    SCENE_EXIT(2, LamakanDesert4, 2),
+    SCENE_EXIT(3, LamakanDesert4, 1),
+    SCENE_EXIT(4, LamakanDesert4, 3),
+    SCENE_EXITS(LamakanDesert4),
+    SCENE_EXIT(1, LamakanDesert3, 2),
+    SCENE_EXIT(2, LamakanDesert3, 3),
+    SCENE_EXIT(LAMAKAN_DESERT_4_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_4),
+    SCENE_EXIT(4, LamakanDesert3, 4),
     SCENE_EXITS_END,
 };
 

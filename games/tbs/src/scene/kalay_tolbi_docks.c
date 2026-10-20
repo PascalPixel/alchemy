@@ -519,7 +519,7 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
     }
   }
   Engine_EventWait(16);
-  Engine_EventRequestExit(3);
+  Engine_EventRequestExit(TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_2);
   Engine_EventEnd();
 }
 
@@ -971,37 +971,62 @@ struct SceneEntrance gKalayTolbiDocks_NoEntrances[] = {
 /// building.
 struct SceneEntrance gKalayTolbiDocks_KalayEntrances[] = {
     {0, CONDITION_ALWAYS, 248, 0, 1368, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 288, 0, 1464, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 72, 0, 1304, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 304, 0, 1416, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {4, CONDITION_ALWAYS, 296, 0, 1048, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 288, 0, 1464,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_DOCKS_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS, 72, 0, 1304,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {KALAY_DOCKS_FROM_KALAY_TOLBI_DOCKS_2, CONDITION_ALWAYS, 304, 0, 1416,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_DOCKS_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 296, 0, 1048,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 /// Tolbi Docks: 1 off the ship, 2 from the world map, 3 from the building.
 struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
     {0, CONDITION_ALWAYS, 392, 0, 296, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 408, 0, 296, FACING_WEST, 0, 0, 0, 448, 432, 0},
-    {2, CONDITION_ALWAYS, 24, 0, 232, FACING_EAST, 0, 0, 0, 448, 432, 0},
-    {3, CONDITION_ALWAYS, 240, 0, 216, FACING_SOUTH, 0, 0, 0, 448, 432, 0},
+    {TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS, 408, 0, 296,
+     FACING_WEST, 0, 0, 0, 448, 432, 0},
+    {TOLBI_DOCKS_FROM_WORLD_MAP, CONDITION_ALWAYS, 24, 0, 232, FACING_EAST, 0,
+     0, 0, 448, 432, 0},
+    {TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_2, CONDITION_ALWAYS, 240, 0, 216,
+     FACING_SOUTH, 0, 0, 0, 448, 432, 0},
     {SCENE_TABLE_END},
 };
 
 /// The building: 1 into its Kalay room, 2 into its Tolbi room.
 struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[] = {
     {0, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, 32, 32, 272, 272, 0},
-    {2, CONDITION_ALWAYS, 384, 0, 248, FACING_NORTH, 0, 320, 32, 560, 272, 0},
+    {KALAY_TOLBI_DOCKS_2_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 96, 0, 248,
+     FACING_NORTH, 0, 32, 32, 272, 272, 0},
+    {KALAY_TOLBI_DOCKS_2_FROM_TOLBI_DOCKS, CONDITION_ALWAYS, 384, 0, 248,
+     FACING_NORTH, 0, 320, 32, 560, 272, 0},
     {SCENE_TABLE_END},
 };
 
 /// Kalay Docks' exits, then Tolbi Docks' and the building's, each after the
 /// header word (an exit of kind 0) for its scene.
 u32 gKalayTolbiDocks_Exits[] = {
-    SCENE_EXITS(107),      SCENE_EXIT(1, 2, 21),  SCENE_EXIT(2, 109, 5),
-    SCENE_EXIT(3, 108, 1), SCENE_EXIT(4, 2, 58),  SCENE_EXIT(0, 112, 0),
-    SCENE_EXIT(1, 2, 22),  SCENE_EXIT(2, 109, 6), SCENE_EXIT(3, 108, 2),
-    SCENE_EXIT(0, 108, 0), SCENE_EXIT(1, 107, 3), SCENE_EXIT(2, 112, 3),
+    SCENE_EXITS(KalayDocks),
+    SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_SOUTH, WorldMap,
+               WORLD_MAP_FROM_KALAY_DOCKS_EAST),
+    SCENE_EXIT(KALAY_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_KALAY_DOCKS),
+    SCENE_EXIT(KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_2, KalayTolbiDocks2,
+               KALAY_TOLBI_DOCKS_2_FROM_KALAY_DOCKS),
+    SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_NORTH, WorldMap,
+               WORLD_MAP_FROM_KALAY_DOCKS_WEST),
+    SCENE_EXITS(TolbiDocks),
+    SCENE_EXIT(TOLBI_DOCKS_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TOLBI_DOCKS),
+    SCENE_EXIT(TOLBI_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
+    SCENE_EXIT(TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_2, KalayTolbiDocks2,
+               KALAY_TOLBI_DOCKS_2_FROM_TOLBI_DOCKS),
+    SCENE_EXITS(KalayTolbiDocks2),
+    SCENE_EXIT(KALAY_TOLBI_DOCKS_2_TO_KALAY_DOCKS, KalayDocks,
+               KALAY_DOCKS_FROM_KALAY_TOLBI_DOCKS_2),
+    SCENE_EXIT(KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS, TolbiDocks,
+               TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_2),
     SCENE_EXITS_END,
 };
 

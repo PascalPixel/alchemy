@@ -2491,7 +2491,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Engine_EventWait(30);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   ObjectTable_Snapshot();
-  Event_SetDestination((s32)&SceneId_WorldMap, 91);
+  Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_VENUS_LIGHTHOUSE_LIT);
   {
     u16 white = 0x7fff;
 
@@ -3303,11 +3303,11 @@ struct SceneEntrance gVenusLighthouseAerieEntrances[] = {
 };
 
 u32 gVenusLighthouseAerieExits[] = {
-    SCENE_EXITS(187),
-    SCENE_EXIT(AERIE_EXIT_TO_WORLD_MAP, SCENE_WORLD_MAP,
+    SCENE_EXITS(VenusLighthouseAerie),
+    SCENE_EXIT(AERIE_EXIT_TO_WORLD_MAP, WorldMap,
                WORLD_MAP_ENTRANCE_FROM_AERIE),
-    SCENE_EXIT(AERIE_EXIT_AFTER_SHEBAS_FALL, 180, 99),
-    SCENE_EXIT(AERIE_EXIT_AFTER_DEFEAT, 179, 12),
+    SCENE_EXIT(AERIE_EXIT_AFTER_SHEBAS_FALL, LaliveroInteriors2, 99),
+    SCENE_EXIT(AERIE_EXIT_AFTER_DEFEAT, LaliveroInteriors1, 12),
     SCENE_EXITS_END,
 };
 

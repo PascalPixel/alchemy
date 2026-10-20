@@ -1287,7 +1287,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
     record = Object_GetById(21);
     record->facing = 0xb000;
   }
-  if (gGameState.entrance == 6) {
+  if (gGameState.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
     TolbiShipDeck_ReturnFromIsland();
   }
   Engine_EventEnd();
@@ -2896,19 +2896,25 @@ const struct SceneEntrance gTolbiShipDeckEntrances[] = {
     {1, CONDITION_ALWAYS, 216, 0, 600, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 232, 0, 664, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {3, CONDITION_ALWAYS, 216, 0, 808, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {4, CONDITION_ALWAYS, 216, 4, 648, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {5, CONDITION_ALWAYS, 312, -4, 656, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {6, CONDITION_ALWAYS, 120, -4, 656, FACING_EAST, 0, 65, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SOUTH, CONDITION_ALWAYS, 216, 4, 648,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 312, -4, 656,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS, CONDITION_ALWAYS, 120, -4, 656,
+     FACING_EAST, 0, 65, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 232, 0, 664, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {11, CONDITION_ALWAYS, 212, 0, 521, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {12, CONDITION_ALWAYS, 192, 0, 650, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {13, CONDITION_ALWAYS, 232, 0, 654, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {14, CONDITION_ALWAYS, 216, 0, 657, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {15, CONDITION_ALWAYS, 216, 0, 640, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {16, CONDITION_ALWAYS, 216, 0, 540, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE, CONDITION_ALWAYS, 216, 0,
+     540, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {17, CONDITION_ALWAYS, 216, 0, 540, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {18, CONDITION_ALWAYS, 196, 0, 652, FACING_SOUTH, 0, 65, -1, -1, -1, 0},
-    {19, CONDITION_ALWAYS, 212, 0, 521, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_WORLD_MAP, CONDITION_ALWAYS, 196, 0, 652,
+     FACING_SOUTH, 0, 65, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH, CONDITION_ALWAYS, 212, 0, 521,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2919,22 +2925,22 @@ const struct SceneRegion gTolbiShipDeckRegions[] = {
 };
 
 const u32 gTolbiShipDeckExits[] = {
-    SCENE_EXITS(109),
-    SCENE_EXIT(1, 111, 1),
-    SCENE_EXIT(2, 111, 3),
-    SCENE_EXIT(3, 111, 5),
-    SCENE_EXIT(4, 107, 2),
-    SCENE_EXIT(5, 110, 1),
-    SCENE_EXIT(6, 112, 1),
-    SCENE_EXIT(7, 2, 74),
-    SCENE_EXIT(10, 110, 10),
-    SCENE_EXIT(11, 111, 14),
-    SCENE_EXIT(12, 111, 15),
-    SCENE_EXIT(13, 111, 17),
-    SCENE_EXIT(14, 111, 19),
-    SCENE_EXIT(15, 2, 70),
-    SCENE_EXIT(16, 111, 22),
-    SCENE_EXIT(17, 111, 24),
+    SCENE_EXITS(TolbiShipDeck),
+    SCENE_EXIT(1, TolbiShipInteriors, 1),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_FROM_TOLBI_SHIP_DECK_2),
+    SCENE_EXIT(3, TolbiShipInteriors, 5),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_KALAY_DOCKS, KalayDocks, KALAY_DOCKS_FROM_TOLBI_SHIP_DECK),
+    SCENE_EXIT(5, TolbiShipMast, TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_DOCKS, TolbiDocks, TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK),
+    SCENE_EXIT(7, WorldMap, 74),
+    SCENE_EXIT(10, TolbiShipMast, 10),
+    SCENE_EXIT(11, TolbiShipInteriors, 14),
+    SCENE_EXIT(12, TolbiShipInteriors, 15),
+    SCENE_EXIT(13, TolbiShipInteriors, 17),
+    SCENE_EXIT(14, TolbiShipInteriors, 19),
+    SCENE_EXIT(15, WorldMap, 70),
+    SCENE_EXIT(16, TolbiShipInteriors, 22),
+    SCENE_EXIT(17, TolbiShipInteriors, 24),
     SCENE_EXITS_END,
 };
 

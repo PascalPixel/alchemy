@@ -172,7 +172,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_FuchinTemple1) {
     return gFuchinTemplePlacements1;
   }
-  if (gGameState.entrance == 3) {
+  if (gGameState.entrance == FUCHIN_TEMPLE_1_FROM_FUCHIN_FALLS_CAVE_1) {
     return gFuchinTemplePlacementsEntrance3;
   }
   // Once Hsu is known to be trapped, the tree and two students are gone, and
@@ -1409,7 +1409,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_FuchinTemple1) {
     return gFuchinTempleEvents1;
   }
-  if (gGameState.entrance == 3) {
+  if (gGameState.entrance == FUCHIN_TEMPLE_1_FROM_FUCHIN_FALLS_CAVE_1) {
     return gFuchinTempleEventsEntrance3;
   }
   return gFuchinTempleEvents;
@@ -2192,7 +2192,7 @@ s32 Scene_Initialize(void) {
 
   if (gGameState.scene == (s32)&SceneId_FuchinTemple2) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    if (gGameState.entrance == 1) {
+    if (gGameState.entrance == FUCHIN_TEMPLE_2_FROM_FUCHIN_TEMPLE_1) {
       if (Engine_GameFlagIsSet(FLAG_NYUNPA_ENLIGHTENED)) {
         OBJ_MODE(8, 6);
       } else {
@@ -2203,7 +2203,8 @@ s32 Scene_Initialize(void) {
           FuchinTemple_NyunpaTeachesKi();
         }
       }
-    } else if (gGameState.entrance == 2 || gGameState.entrance == 4) {
+    } else if (gGameState.entrance == FUCHIN_TEMPLE_2_FROM_XIAN ||
+               gGameState.entrance == FUCHIN_TEMPLE_2_FROM_HOUSE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
       heardHsuTrapped = Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED);
       if (heardHsuTrapped == 0) {
@@ -2239,7 +2240,7 @@ s32 Scene_Initialize(void) {
       OverlayObject_PrepareObject(0x1300000, 0x180000, 0xe00000, 223);
       OBJ_MODE(10, 5);
       OBJ_MODE(11, 5);
-    } else if (gGameState.entrance == 3) {
+    } else if (gGameState.entrance == FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
       if (!Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
         FuchinTemple_RunHamasRevealLesson();
@@ -2251,7 +2252,7 @@ s32 Scene_Initialize(void) {
   } else {
     BattleFx_SetQueuedSoundAndPlay(SE_170);
     Object_GetById(9)->collisionFlags |= 16;
-    if (gGameState.entrance == 3 &&
+    if (gGameState.entrance == FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE &&
         Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
         !Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST)) {
       Map_CopyCellAttributes(10, 84, 1, 1, 10, 24);
@@ -2449,26 +2450,44 @@ u16 gFuchinTemple_CellStepsC[] = {
 
 struct SceneEntrance gFuchinTempleEntrances1[] = {
     {0, CONDITION_ALWAYS, 296, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 296, 0, 504, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 296, 0, 304, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 168, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {FUCHIN_TEMPLE_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 296, 0, 504,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {FUCHIN_TEMPLE_1_FROM_FUCHIN_TEMPLE_2, CONDITION_ALWAYS, 296, 0, 304,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {FUCHIN_TEMPLE_1_FROM_FUCHIN_FALLS_CAVE_1, CONDITION_ALWAYS, 168, 0, 360,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {5, CONDITION_ALWAYS, 232, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gFuchinTempleEntrancesOther[] = {
     {0, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, 48, 384, 288, 576, 0},
-    {2, CONDITION_ALWAYS, 256, 0, 264, FACING_NORTH, 0, 48, 80, 368, 288, 0},
-    {3, CONDITION_ALWAYS, 472, 0, 552, FACING_NORTH, 0, 352, 384, 592, 576, 0},
+    {FUCHIN_TEMPLE_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 168, 0, 552,
+     FACING_NORTH, 0, 48, 384, 288, 576, 0},
+    {FUCHIN_TEMPLE_1_FROM_FUCHIN_TEMPLE_2, CONDITION_ALWAYS, 256, 0, 264,
+     FACING_NORTH, 0, 48, 80, 368, 288, 0},
+    {FUCHIN_TEMPLE_1_FROM_FUCHIN_FALLS_CAVE_1, CONDITION_ALWAYS, 472, 0, 552,
+     FACING_NORTH, 0, 352, 384, 592, 576, 0},
     {4, CONDITION_ALWAYS, 304, 0, 248, FACING_SOUTH, 0, 48, 80, 368, 288, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gFuchinTempleExits[] = {
-    SCENE_EXITS(60),       SCENE_EXIT(1, 2, 12), SCENE_EXIT(2, 61, 1),
-    SCENE_EXIT(3, 62, 1),  SCENE_EXIT(0, 61, 0), SCENE_EXIT(1, 60, 2),
-    SCENE_EXIT(2, 72, 10), SCENE_EXIT(3, 88, 2), SCENE_EXIT(4, 73, 8),
+    SCENE_EXITS(FuchinTemple1),
+    SCENE_EXIT(FUCHIN_TEMPLE_1_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_FUCHIN_TEMPLE_1),
+    SCENE_EXIT(FUCHIN_TEMPLE_1_TO_FUCHIN_TEMPLE_2, FuchinTemple2,
+               FUCHIN_TEMPLE_2_FROM_FUCHIN_TEMPLE_1),
+    SCENE_EXIT(FUCHIN_TEMPLE_1_TO_FUCHIN_FALLS_CAVE_1, FuchinFallsCave1,
+               FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_TEMPLE_1),
+    SCENE_EXITS(FuchinTemple2),
+    SCENE_EXIT(FUCHIN_TEMPLE_2_TO_FUCHIN_TEMPLE_1, FuchinTemple1,
+               FUCHIN_TEMPLE_1_FROM_FUCHIN_TEMPLE_2),
+    SCENE_EXIT(FUCHIN_TEMPLE_2_TO_XIAN, Xian, XIAN_FROM_FUCHIN_TEMPLE_2),
+    SCENE_EXIT(FUCHIN_TEMPLE_2_TO_LAMA_TEMPLE, LamaTemple,
+               LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_2),
+    SCENE_EXIT(FUCHIN_TEMPLE_2_TO_HOUSE, XianInteriors,
+               XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2),
     SCENE_EXITS_END,
 };
 

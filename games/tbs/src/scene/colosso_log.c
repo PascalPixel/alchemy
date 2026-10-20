@@ -1,5 +1,5 @@
 /// @file
-/// Colosseum Final 3 (ColossoLog, scene 145), the site of the last finals
+/// Colosseum Final 3 (ColosseumFinal3, scene 145), the site of the last finals
 /// match, where Isaac, having won the first two, races Navampa of Gondowan, the
 /// sixth-ranked warrior, through six stages to the arena and fights him there.
 ///
@@ -789,8 +789,8 @@ static void Event_ReachArena(void) {
    * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(72, last - place + 1);
   Battle_SetStart(3);
-  Event_SetNextDestination((s32)&SceneId_ColossoLog, 4);
-  Event_SetDefeatDestination((s32)&SceneId_ColossoLog, 5);
+  Event_SetNextDestination((s32)&SceneId_ColosseumFinal3, 4);
+  Event_SetDefeatDestination((s32)&SceneId_ColosseumFinal3, 5);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 

@@ -12,7 +12,7 @@
 /// her because they cannot enter Jupiter Lighthouse without a Wind Adept.
 /// Felix has sent Jenna and the others ahead to the dock at Idejima. In story
 /// order:
-/// - The arrival (entrance 1, from VenusLighthouse6;
+/// - The arrival (entrance 1, from VenusLighthouse5;
 ///   VenusLighthouseAerie_OverhearSaturosAndMenardi). A pillar carries the
 ///   leader up, and the party overhears Saturos and Menardi about to light the
 ///   beacon and Felix demanding that they free Sheba as they promised. They
@@ -745,7 +745,7 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
 /// Lighthouse, they promise not to harm her for the Shaman's Rod, Felix
 /// carries it over, they will not let her go, and the first battle begins. It
 /// sets FLAG_SHAMANS_ROD_OWNER plus the member who carried the rod, and 0x350
-/// as the battle starts (XXX: VenusLighthouse3 uses 0x350, in the same place
+/// as the battle starts (XXX: VenusLighthouse2 uses 0x350, in the same place
 /// group, for its Psynergy Stone; nothing here reads it, so what it marks is
 /// not known).
 static void Event_ConfrontSaturosAndMenardi(void) {
@@ -1273,7 +1273,7 @@ static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
 /// lit, Saturos throws the Venus Star into the lighthouse, its light restores
 /// Saturos and Menardi, Felix leaves with Sheba, and the two fuse. Refills the
 /// PP of the party's Adepts whose lighthouses are lit, starts the second
-/// battle and sets 0x351 (XXX: VenusLighthouse6's Psynergy Stone flag, as 0x350
+/// battle and sets 0x351 (XXX: VenusLighthouse5's Psynergy Stone flag, as 0x350
 /// is in Event_ConfrontSaturosAndMenardi).
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct EffectOptions menardiBurst;

@@ -2,14 +2,14 @@
 /// Imil Falls Cave, north of Imil, and Fuchin Falls Cave, the waterfall
 /// grotto of Fuchin Temple's test: two places in seven scenes.
 ///
-/// - Imil Falls Cave (ImilFuchinFalls1, scene 52), up the way north out of
+/// - Imil Falls Cave (ImilFallsCave, scene 52), up the way north out of
 ///   Imil; its only exit leads back down (Imil's entrance 9). Fever, a Mars
 ///   Djinni, waits on its ice and joins the party when spoken to, without a
 ///   battle. Every normal entry blocks Retreat and walks the leader up toward
 ///   Fever, and stepping onto the ice (collision code 10) slides the leader in
 ///   the held direction, turning toward it as he goes, until a blocked cell
 ///   or one too high stops him.
-/// - Fuchin Falls Cave (ImilFuchinFalls2 to ImilFuchinFalls7, scenes 62 to
+/// - Fuchin Falls Cave (FuchinFallsCave1 to FuchinFallsCave6, scenes 62 to
 ///   67), the waterfall grotto. Master Nyunpa of Fuchin Temple tells the
 ///   party they must survive its test before he will tell them how to pass
 ///   through Mogall Forest. The test ends at the chest of the Orb of Force
@@ -158,25 +158,25 @@ static void Fuchin_FightZephyr(void) {
 const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls1) {
+  if (sceneId == (s32)&SceneId_ImilFallsCave) {
     return gImilFuchinFalls_ImilFallsCaveEntrances;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls2) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave1) {
     return gImilFuchinFalls_FirstRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls3) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave2) {
     return gImilFuchinFalls_SecondRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls4) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave3) {
     return gImilFuchinFalls_ThirdRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls5) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave4) {
     return gImilFuchinFalls_FourthRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls6) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave5) {
     return gImilFuchinFalls_KiRoomEntrances;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls7) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave6) {
     return gImilFuchinFalls_DragonRoomEntrances;
   }
   return gImilFuchinFalls_NoEntrances;
@@ -190,22 +190,22 @@ const u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
 const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void) {
   s16 sceneId = gGameState.scene;
 
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls1) {
+  if (sceneId == (s32)&SceneId_ImilFallsCave) {
     return gImilFuchinFalls_ImilFallsCavePlacements;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls2) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave1) {
     return gImilFuchinFalls_FirstRoomPlacements;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls3) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave2) {
     return gImilFuchinFalls_SecondRoomPlacements;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls4) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave3) {
     return gImilFuchinFalls_ThirdRoomPlacements;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls5) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave4) {
     return gImilFuchinFalls_FourthRoomPlacements;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls7) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave6) {
     return gImilFuchinFalls_DragonRoomPlacements;
   }
   return gImilFuchinFalls_NoPlacements;
@@ -847,25 +847,25 @@ static struct FieldActor *Fuchin_CreateForegroundActor(s32 x, s32 y, s32 z,
 const struct SceneEvent *ImilFuchinFalls_GetEvents(void) {
   s16 sceneId = gGameState.scene;
 
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls1) {
+  if (sceneId == (s32)&SceneId_ImilFallsCave) {
     return gImilFuchinFalls_ImilFallsCaveEvents;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls2) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave1) {
     return gImilFuchinFalls_FirstRoomEvents;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls3) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave2) {
     return gImilFuchinFalls_SecondRoomEvents;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls4) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave3) {
     return gImilFuchinFalls_ThirdRoomEvents;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls5) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave4) {
     return gImilFuchinFalls_FourthRoomEvents;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls6) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave5) {
     return gImilFuchinFalls_KiRoomEvents;
   }
-  if (sceneId == (s32)&SceneId_ImilFuchinFalls7) {
+  if (sceneId == (s32)&SceneId_FuchinFallsCave6) {
     return gImilFuchinFalls_DragonRoomEvents;
   }
   return gImilFuchinFalls_NoEvents;
@@ -1244,7 +1244,7 @@ static void Fuchin_StopLightFollowingLeader(void) {
 s32 ImilFuchinFalls_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gGameState.scene == (s32)&SceneId_ImilFuchinFalls1) {
+      gGameState.scene == (s32)&SceneId_ImilFallsCave) {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     Imil_WalkTowardFever();
   } else {
@@ -1277,7 +1277,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
   s32 value;
 
   ImilFuchinFalls_RebuildPlatformRoom();
-  if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls4) {
+  if (gGameState.scene == (s32)&SceneId_FuchinFallsCave3) {
     if (!GameFlag_IsSet(0xf13) && gGameState.entrance == 1) {
       ImilFuchinFalls_PlaceDragonsEye();
     }
@@ -1285,7 +1285,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
       Fuchin_CreateForegroundActor(PIXELS(156), 0, PIXELS(452), 223);
       Fuchin_CreateForegroundActor(PIXELS(188), 0, PIXELS(452), 223);
     }
-  } else if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls7) {
+  } else if (gGameState.scene == (s32)&SceneId_FuchinFallsCave6) {
     value = 0;
     actor = Actor_Get(8);
     gImilFuchinFalls_TrackLeader = value;
@@ -1325,17 +1325,17 @@ static void ImilFuchinFalls_PrepareRoom(void) {
 /// Restores the collision templates for the current log room of Fuchin Falls
 /// Cave.
 static void ImilFuchinFalls_RebuildPlatformRoom(void) {
-  if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls2) {
+  if (gGameState.scene == (s32)&SceneId_FuchinFallsCave1) {
     Map_CopyCellAttributes(8, 29, 15, 5, 8, 42);
     Fuchin_RebuildFirstRoomPlatforms();
-  } else if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls3) {
+  } else if (gGameState.scene == (s32)&SceneId_FuchinFallsCave2) {
     Map_CopyCellAttributes(12, 8, 10, 18, 0, 28);
     Fuchin_RebuildSecondRoomPlatforms();
-  } else if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls4 &&
+  } else if (gGameState.scene == (s32)&SceneId_FuchinFallsCave3 &&
              gGameState.entrance != 1) {
     Map_CopyCellAttributes(12, 21, 9, 16, 12, 3);
     Fuchin_RebuildThirdRoomPlatforms();
-  } else if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls5) {
+  } else if (gGameState.scene == (s32)&SceneId_FuchinFallsCave4) {
     if (gGameState.entrance == 1 || gGameState.entrance == 2) {
       Map_CopyCellAttributes(14, 10, 9, 8, 22, 20);
     } else {
@@ -1351,14 +1351,14 @@ static void ImilFuchinFalls_RebuildPlatformRoom(void) {
 static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gEventWork->touchedTrigger;
 
-  if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls3) {
+  if (gGameState.scene == (s32)&SceneId_FuchinFallsCave2) {
     if (trigger == 17) {
       ImilFuchinFalls_HopBy(0, -32);
     } else {
       ImilFuchinFalls_HopBy(-32, 0);
     }
   }
-  if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls4 && trigger == 25 &&
+  if (gGameState.scene == (s32)&SceneId_FuchinFallsCave3 && trigger == 25 &&
       Engine_GameFlagIsSet(0x309)) {
     ImilFuchinFalls_HopBy(0, 32);
   }

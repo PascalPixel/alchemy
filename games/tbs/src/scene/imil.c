@@ -12,7 +12,7 @@
 /// party. Some lines also change while she travels with them
 /// (FLAG_IN_PARTY(MIA)).
 ///
-/// - Imil (Imil1, scene 50), the village. A man shivers and sneezes in the
+/// - Imil (Imil, scene 50), the village. A man shivers and sneezes in the
 ///   snow, waiting for Mia, and a child counts out his exercises against the
 ///   cold. Six doors (triggers 51 to 56) open into the houses, the shops, the
 ///   inn and the Sanctum (scene 51), exits 11 and 12 lead out to the world
@@ -26,7 +26,7 @@
 ///   until a blocked cell or one too high stops him. Move pushes the snowman,
 ///   which stays where it lands at cell (15, 7) for the rest of the visit
 ///   (a temporary flag). Searching finds 9 coins, a Vial and a Lucky Medal.
-/// - Imil (Imil2, scene 51), inside the houses, the shops and the inn; by
+/// - Imil (ImilInteriors, scene 51), inside the houses, the shops and the inn; by
 ///   entrance 7 the same scene is the Imil Sanctum. While the epidemic lasts
 ///   the weapon and armor sellers are sick: searching their counters pans the
 ///   camera to them, and they say the shop is closed. The item seller's
@@ -105,12 +105,12 @@
 /// Imil's two scenes share actor numbers; each is named in the scene it is
 /// proved.
 enum ImilActor {
-  // The village (Imil1)
+  // The village (Imil)
   ACTOR_COLD_VILLAGER = 8, ///< shivering and sneezing in the snow
   ACTOR_GREETER = 9,
   ACTOR_COUNTING_CHILD = 10,
   ACTOR_SNOWMAN = 11,
-  // The houses and the Sanctum (Imil2)
+  // The houses and the Sanctum (ImilInteriors)
   ACTOR_OLD_WOMAN = 8, ///< the old couple's house
   ACTOR_OLD_MAN = 9,
   /// Beside the old man's bed: once Mia has healed him, talking or Mind Read
@@ -188,7 +188,7 @@ static s32 Imil_UpdateShiver(struct ScriptInterpreter *interpreter) {
 
 /// Imil is two scenes: the village, and its houses and Sanctum.
 const struct SceneEntrance *Imil_GetEntrances(void) {
-  if (gGameState.scene == (s32)&SceneId_Imil2) {
+  if (gGameState.scene == (s32)&SceneId_ImilInteriors) {
     return gImil_InteriorEntrances;
   }
   return gImil_TownEntrances;
@@ -203,7 +203,7 @@ const u32 *Imil_GetExits(void) { return gImil_Exits; }
 const struct ScenePlacement *Imil_GetPlacements(void) {
   struct ScenePlacement *script;
 
-  if (gGameState.scene == ((s32)&SceneId_Imil2)) {
+  if (gGameState.scene == ((s32)&SceneId_ImilInteriors)) {
     script = gImil_InteriorPlacements;
     FieldScene_PrepareActors(script);
     if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -229,7 +229,7 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
 const struct SceneEvent *Imil_GetEvents(void) {
-  if (gGameState.scene == (s32)&SceneId_Imil2) {
+  if (gGameState.scene == (s32)&SceneId_ImilInteriors) {
     return gImil_InteriorEvents;
   }
   return gImil_TownEvents;
@@ -693,7 +693,7 @@ s32 Imil_Initialize(void) {
   struct FieldActor *leader;
   s32 entrance;
 
-  if (gGameState.scene == (s32)&SceneId_Imil1) {
+  if (gGameState.scene == (s32)&SceneId_Imil) {
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ActorSetAnimation(ACTOR_COUNTING_CHILD, 9);
@@ -714,7 +714,7 @@ s32 Imil_Initialize(void) {
         gGameState.entrance == 9) {
       Imil_ArriveFromFallsCave();
     }
-  } else if (gGameState.scene == (s32)&SceneId_Imil2) {
+  } else if (gGameState.scene == (s32)&SceneId_ImilInteriors) {
     // Restore each interior's occupants before running its arrival event.
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     entrance = gGameState.entrance;

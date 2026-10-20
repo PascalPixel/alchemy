@@ -3,7 +3,7 @@
 /// village's houses and shops are another overlay (kolima_interiors.c), and so
 /// is each map of Kolima Forest.
 ///
-/// - Kolima (Kolima1, scene 36), the village of lumberjacks, to which Lord
+/// - Kolima (Kolima, scene 36), the village of lumberjacks, to which Lord
 ///   McCoy has barricaded the road from Bilibin since the trouble began. The
 ///   party's first entry from the world map (entrance 1) plays
 ///   Kolima_WitnessForestCurse, unless the party has already seen it in Kolima
@@ -28,11 +28,11 @@
 ///   village and joins when spoken to. Five doorways (triggers 5 to 9) lead
 ///   into the houses and shops (scene 37), exits 1 and 2 to the world map and
 ///   exit 10 into Kolima Tunnel.
-/// - Kolima Tunnel (Kolima2, scene 38), a passage with no one in it from one of
+/// - Kolima Tunnel (KolimaTunnel, scene 38), a passage with no one in it from one of
 ///   the houses (scene 37, entrance 9) to the village (entrance 8). It shares
 ///   the village's event table, whose exits 1 and 2 are its two ways out, and
 ///   that table's two jars, an Apple and an Herb, are in one of the two maps.
-/// - Kolima Bridge (Kolima3, scene 39), "the grand bridge across the river" and
+/// - Kolima Bridge (KolimaBridge, scene 39), "the grand bridge across the river" and
 ///   "the pride of Kolima" to the village's armor seller, with the world map at
 ///   both ends. A villager stands beside it, a tree while the curse lasts
 ///   (actor 9) and a man afterwards (actor 8), who says that for a while he
@@ -87,7 +87,7 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames);
 static void Kolima_SpawnCurseSparkle(void);
 static void Kolima_RestoreBridgeState(void);
 
-/// Actors of Kolima (Kolima1). Garet, Ivan and Mia stand in their own slots
+/// Actors of Kolima (Kolima). Garet, Ivan and Mia stand in their own slots
 /// for the curse; the placement rows after them start at actor 8, the nine
 /// villagers (8 to 16), then the two voices, the four domes (19 to 22) and the
 /// four glints (23 to 26).
@@ -177,10 +177,10 @@ static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
 const struct SceneEntrance *Kolima_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Kolima3) {
+  if (scene == (s32)&SceneId_KolimaBridge) {
     return gKolimaEntrances3;
   }
-  if (scene == (s32)&SceneId_Kolima2) {
+  if (scene == (s32)&SceneId_KolimaTunnel) {
     return gKolimaEntrances2;
   }
   return gKolimaEntrances;
@@ -188,7 +188,7 @@ const struct SceneEntrance *Kolima_GetEntrances(void) {
 
 /// Only Kolima Tunnel has regions: its two ways out, exits 1 and 2.
 const struct SceneRegion *Kolima_GetRegions(void) {
-  if (gGameState.scene == (s32)&SceneId_Kolima2) {
+  if (gGameState.scene == (s32)&SceneId_KolimaTunnel) {
     return gKolimaRegions2;
   }
   return 0;
@@ -205,13 +205,13 @@ const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 const struct ScenePlacement *Kolima_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Kolima1) {
+  if (scene == (s32)&SceneId_Kolima) {
     if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Kolima_InitializeCursedVillagers(gKolimaPlacements1);
     }
     return gKolimaPlacements1;
   }
-  if (scene == (s32)&SceneId_Kolima3) {
+  if (scene == (s32)&SceneId_KolimaBridge) {
     return gKolimaPlacements3;
   }
   return gKolimaPlacements;
@@ -241,7 +241,7 @@ static void Kolima_GraniteJoins(void) {
 
 /// Selects Kolima Bridge's events, or the table Kolima and Kolima Tunnel share.
 const struct SceneEvent *Kolima_GetEvents(void) {
-  if (gGameState.scene == (s32)&SceneId_Kolima3) {
+  if (gGameState.scene == (s32)&SceneId_KolimaBridge) {
     return gKolimaEvents3;
   }
   return gKolimaEvents;
@@ -406,12 +406,12 @@ s32 Kolima_Initialize(void) {
 
   scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Kolima3) {
+  if (scene == (s32)&SceneId_KolimaBridge) {
     Kolima_RestoreBridgeState();
     return 0;
   }
 
-  if (scene == (s32)&SceneId_Kolima2) {
+  if (scene == (s32)&SceneId_KolimaTunnel) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     return 0;
   }

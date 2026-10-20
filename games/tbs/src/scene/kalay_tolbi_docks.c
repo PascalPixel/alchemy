@@ -1,14 +1,14 @@
 /// @file
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
-/// Karagol Sea, in three scenes that share one overlay: KalayTolbiDocks1
-/// (scene 107), KalayTolbiDocks2 (scene 108) and KalayTolbiDocks3 (scene 112).
+/// Karagol Sea, in three scenes that share one overlay: KalayDocks
+/// (scene 107), KalayTolbiDocks2 (scene 108) and TolbiDocks (scene 112).
 /// The getters pick each scene's tables by gGameState.scene, and three story
 /// flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the ship
 /// has made its crossing (set on the world map, WorldMap_CompleteTransfer);
 /// FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the Colosso Tour's group has left
 /// Kalay; and FLAG_COLOSSO_OVER, whether the Colosso finals have been fought.
 ///
-/// Kalay Docks (KalayTolbiDocks1) is where the party's road to Tolbi ends:
+/// Kalay Docks (KalayDocks) is where the party's road to Tolbi ends:
 /// Silk Road is blocked, so everyone bound for Tolbi and its Colosso must cross
 /// the Karagol Sea by ship, and the tickets are dear. The first time the party
 /// walks in from the world map (entrance 1, FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL)
@@ -37,7 +37,7 @@
 /// sailed, when he says it will not leave again for the monsters at sea; in
 /// the Tolbi room no tickets are sold at all, the sea being too dangerous.
 ///
-/// Tolbi Docks (KalayTolbiDocks3) is where the ship lands after the crossing,
+/// Tolbi Docks (TolbiDocks) is where the ship lands after the crossing,
 /// on which the party helped the crew fight off the Kraken. Stepping off
 /// (trigger 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the party is met by a
 /// man on the docks who has heard the ship was attacked by a monster; if the
@@ -126,10 +126,10 @@ static void KalayTolbiDocks_GroundJoins(void) {
 const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_KalayTolbiDocks1) {
+  if (scene == (s32)&SceneId_KalayDocks) {
     return gKalayTolbiDocks_KalayEntrances;
   }
-  if (scene == (s32)&SceneId_KalayTolbiDocks3) {
+  if (scene == (s32)&SceneId_TolbiDocks) {
     return gKalayTolbiDocks_TolbiEntrances;
   }
   if (scene == (s32)&SceneId_KalayTolbiDocks2) {
@@ -151,14 +151,14 @@ const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 const struct ScenePlacement *KalayTolbiDocks_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_KalayTolbiDocks1) {
+  if (scene == (s32)&SceneId_KalayDocks) {
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayPlacementsShipGone;
     }
     return gKalayTolbiDocks_KalayPlacements;
   }
 
-  if (scene == (s32)&SceneId_KalayTolbiDocks3) {
+  if (scene == (s32)&SceneId_TolbiDocks) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiPlacementsStranded;
     }
@@ -197,14 +197,14 @@ static void KalayTolbiDocks_GreetArrivals(void) {
 const struct SceneEvent *KalayTolbiDocks_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_KalayTolbiDocks1) {
+  if (scene == (s32)&SceneId_KalayDocks) {
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayEventsShipGone;
     }
     return gKalayTolbiDocks_KalayEvents;
   }
 
-  if (scene == (s32)&SceneId_KalayTolbiDocks3) {
+  if (scene == (s32)&SceneId_TolbiDocks) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiEventsStranded;
     }
@@ -509,11 +509,11 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
-  if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks1) {
+  if (gGameState.scene == (s32)&SceneId_KalayDocks) {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 1392);
     Map_AnimateCells(gKalayTolbiDocks_KalayDoorCells, 78, 86);
   } else {
-    if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks3) {
+    if (gGameState.scene == (s32)&SceneId_TolbiDocks) {
       Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 192);
       Map_AnimateCells(gKalayTolbiDocks_TolbiDoorCells, 74, 9);
     }
@@ -531,9 +531,9 @@ s32 KalayTolbiDocks_Initialize(void) {
   if (gGameState.entrance == 90) {
     Engine_GameFlagSet(FLAG_COLOSSO_OVER);
   }
-  if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks1) {
+  if (gGameState.scene == (s32)&SceneId_KalayDocks) {
     KalayTolbiDocks_PrepareKalayDocks();
-  } else if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks3) {
+  } else if (gGameState.scene == (s32)&SceneId_TolbiDocks) {
     KalayTolbiDocks_PrepareTolbiDocks();
   } else if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks2) {
     KalayTolbiDocks_PrepareInterior();

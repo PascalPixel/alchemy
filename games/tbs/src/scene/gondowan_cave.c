@@ -2,7 +2,7 @@
 /// Gondowan Passage, the guarded bridge into Gondowan, and Gondowan Cave, the
 /// cave east of it.
 ///
-/// - Gondowan Passage (GondowanCave1, scene 152), between two points of the
+/// - Gondowan Passage (GondowanPassage, scene 152), between two points of the
 ///   world map (exits 1 and 2, its entrances 25 and 54). Three soldiers guard
 ///   the bridge to Gondowan, and Retreat does not work here
 ///   (FLAG_RETREAT_BLOCKED, set on every entry). At first the first soldier
@@ -26,7 +26,7 @@
 ///   the party has something to fetch, he stays to wait, and a defeat now
 ///   returns them to the Tolbi Sanctum (TolbiInteriors, entrance 30); if not,
 ///   he rejoins them.
-/// - Gondowan Cave (GondowanCave2 and GondowanCave3, scenes 157 and 158), the
+/// - Gondowan Cave (GondowanCave1 and GondowanCave2, scenes 157 and 158), the
 ///   cave that, the soldiers say, no one gets through. Someone in Tolbi's
 ///   houses thinks the same (tolbi_interiors.c, Mind Read on actor 29):
 ///   `Not unless you can lift boulders, at any rate.` Both ways in are in
@@ -110,13 +110,13 @@ static void GondowanCave_RunSpinningLeap(s32 actorId);
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_GondowanCave1) {
+  if (scene == (s32)&SceneId_GondowanPassage) {
     return gGondowanCaveEntrances1;
   }
-  if (scene == (s32)&SceneId_GondowanCave2) {
+  if (scene == (s32)&SceneId_GondowanCave1) {
     return gGondowanCaveEntrances2;
   }
-  if (scene == (s32)&SceneId_GondowanCave3) {
+  if (scene == (s32)&SceneId_GondowanCave2) {
     return gGondowanCaveEntrances3;
   }
   return gGondowanCaveEntrancesOther;
@@ -132,16 +132,16 @@ const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_GondowanCave1) {
+  if (scene == (s32)&SceneId_GondowanPassage) {
     if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanCavePlacements1WithIodem;
     }
     return gGondowanCavePlacements1;
   }
-  if (scene == (s32)&SceneId_GondowanCave2) {
+  if (scene == (s32)&SceneId_GondowanCave1) {
     return gGondowanCavePlacements2;
   }
-  if (scene == (s32)&SceneId_GondowanCave3) {
+  if (scene == (s32)&SceneId_GondowanCave2) {
     return gGondowanCavePlacements3;
   }
   return gGondowanCavePlacementsOther;
@@ -151,16 +151,16 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_GondowanCave1) {
+  if (scene == (s32)&SceneId_GondowanPassage) {
     if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanCaveEvents1WithIodem;
     }
     return gGondowanCaveEvents1;
   }
-  if (scene == (s32)&SceneId_GondowanCave2) {
+  if (scene == (s32)&SceneId_GondowanCave1) {
     return gGondowanCaveEvents2;
   }
-  if (scene == (s32)&SceneId_GondowanCave3) {
+  if (scene == (s32)&SceneId_GondowanCave2) {
     return gGondowanCaveEvents3;
   }
   return gGondowanCaveEventsOther;
@@ -449,13 +449,13 @@ static void Event_LiftObject(void) { Engine_ActorSetPosition(12, 0, 0); }
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 
-  if (gGameState.scene == (s32)&SceneId_GondowanCave1) {
+  if (gGameState.scene == (s32)&SceneId_GondowanPassage) {
     FLAG_SET(FLAG_RETREAT_BLOCKED);
     if (FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       OBJ_POS_SET(IODEM, 0, 0);
     }
   }
-  if (gGameState.scene == (s32)&SceneId_GondowanCave3) {
+  if (gGameState.scene == (s32)&SceneId_GondowanCave2) {
     if (gGameState.entrance == 1) {
       Map_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }

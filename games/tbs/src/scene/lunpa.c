@@ -11,7 +11,7 @@
 /// town gLunpaReopenedEvents instead of gLunpaSealedEvents, and the people
 /// talk of the intruders who got into the fortress.
 ///
-/// - Lunpa (Lunpa1, scene 104), the town. Two guards keep the road in from
+/// - Lunpa (Lunpa, scene 104), the town. Two guards keep the road in from
 ///   the world map (exit 1) and turn the party away. The east guard wants
 ///   Dodonpa's authorization; once the guards suspect Kalay
 ///   (FLAG_GUARDS_SUSPECT_KALAY, set on the world map) he asks whether the
@@ -28,7 +28,7 @@
 ///   VaultJail, whose area name there is Lunpa). A Nut floats over the town
 ///   for Catch, a grave and a barrel hold a Sleep Bomb and a Nut, and frogs
 ///   croak in the well.
-/// - Lunpa Fortress Gates (Lunpa2, scene 159), the steps up to the fortress
+/// - Lunpa Fortress Gates (LunpaFortressGates, scene 159), the steps up to the fortress
 ///   door, kept by two guards. Stepping on the ground before them uncloaked
 ///   (trigger 10, Event_GuardsBlockGate) brings them in front of the door
 ///   (FLAG_SCENE_TEMP_40). Cloak (Event_CastCloak, FLAG_SCENE_TEMP_41) lets
@@ -103,10 +103,10 @@ const s32 *gEffectScripts[] = {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Lunpa1) {
+  if (scene == (s32)&SceneId_Lunpa) {
     return gLunpaEntrances;
   }
-  if (scene == (s32)&SceneId_Lunpa2) {
+  if (scene == (s32)&SceneId_LunpaFortressGates) {
     return gGateEntrances;
   }
   return gLunpaEntrances;
@@ -117,10 +117,10 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Lunpa1) {
+  if (scene == (s32)&SceneId_Lunpa) {
     return gLunpaExits;
   }
-  if (scene == (s32)&SceneId_Lunpa2) {
+  if (scene == (s32)&SceneId_LunpaFortressGates) {
     return gGateExits;
   }
   return gLunpaExits;
@@ -130,10 +130,10 @@ const u32 *Scene_GetExits(void) {
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Lunpa1) {
+  if (scene == (s32)&SceneId_Lunpa) {
     return gLunpaPlacements;
   }
-  if (scene == (s32)&SceneId_Lunpa2) {
+  if (scene == (s32)&SceneId_LunpaFortressGates) {
     return gGatePlacements;
   }
   return gLunpaPlacements;
@@ -274,11 +274,11 @@ static void Event_SearchWell(void) {
 const struct SceneEvent *Scene_GetEvents(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Lunpa2) {
+  if (scene == (s32)&SceneId_LunpaFortressGates) {
     Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED);
     return gGateEvents;
   }
-  if (scene == (s32)&SceneId_Lunpa1 &&
+  if (scene == (s32)&SceneId_Lunpa &&
       Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     return gLunpaReopenedEvents;
   }
@@ -871,7 +871,7 @@ static void Event_LeaderSneaksOut(void) {
 s32 Scene_Initialize(void) {
   struct FieldActor *puddle;
 
-  if (gGameState.scene == (s32)&SceneId_Lunpa1) {
+  if (gGameState.scene == (s32)&SceneId_Lunpa) {
     ((struct FieldWork *)gEventWork)->transition =
         SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_HideSecrets();
@@ -885,7 +885,7 @@ s32 Scene_Initialize(void) {
     Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
   }
   // Restore the gate's arrival scene and active detection tasks separately.
-  if (gGameState.scene == (s32)&SceneId_Lunpa2) {
+  if (gGameState.scene == (s32)&SceneId_LunpaFortressGates) {
     ((struct FieldWork *)gEventWork)->transition =
         SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gGameState.retreatEntrance = GATE_RETREAT_ENTRANCE;

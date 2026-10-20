@@ -22,7 +22,7 @@ gBattle_LocationRules:
 	location GomaCavePond, -1, -1, 1, 9
 	location GomaCavePillar, -1, -1, 1, 10
 	location GomaCaveWaterway1, -1, -1, 1, 11
-	location Kolima2, -1, -1, 1, 15
+	location KolimaTunnel, -1, -1, 1, 15
 	location KolimaForestBridge, -1, -1, 1, 16
 	location KolimaForestClearing, -1, -1, 1, 17
 	location KolimaForestRiver, -1, -1, 0, 18
@@ -103,10 +103,10 @@ gBattle_LocationRules:
 	location MercuryLighthouse3, 13, -1, 1, 34
 	location MercuryLighthouse4, 3, -1, 1, 35
 	location MercuryLighthouse4, 4, -1, 1, 35
-	location ImilFuchinFalls2, -1, -1, 0, 39
-	location ImilFuchinFalls3, -1, -1, 0, 39
-	location ImilFuchinFalls4, -1, -1, 1, 40
-	location ImilFuchinFalls7, -1, -1, 0, 41
+	location FuchinFallsCave1, -1, -1, 0, 39
+	location FuchinFallsCave2, -1, -1, 0, 39
+	location FuchinFallsCave3, -1, -1, 1, 40
+	location FuchinFallsCave6, -1, -1, 0, 41
 	location MogallForest1, -1, -1, 1, 42
 	location MogallForest2, -1, -1, 1, 43
 	location MogallForest3, -1, -1, 1, 44
@@ -145,13 +145,13 @@ gBattle_LocationRules:
 	location AltmillerCave5, -1, -1, 1, 70
 	location AltmillerCave6, 50, -1, 1, 71
 	location AltmillerCave6, 51, -1, 1, 71
-	location GondowanCave2, 1, -1, 0, 75
-	location GondowanCave2, 2, -1, 0, 75
-	location GondowanCave2, -1, -1, 1, 74
-	location GondowanCave3, 1, -1, 0, 76
-	location GondowanCave3, 2, -1, 0, 76
-	location GondowanCave3, 3, -1, 0, 76
-	location GondowanCave3, -1, -1, 1, 73
+	location GondowanCave1, 1, -1, 0, 75
+	location GondowanCave1, 2, -1, 0, 75
+	location GondowanCave1, -1, -1, 1, 74
+	location GondowanCave2, 1, -1, 0, 76
+	location GondowanCave2, 2, -1, 0, 76
+	location GondowanCave2, 3, -1, 0, 76
+	location GondowanCave2, -1, -1, 1, 73
 	location LunpaFortress3, 1, -1, 1, 77
 	location LunpaFortress3, 2, -1, 1, 77
 	location LunpaFortress3, -1, -1, 1, 78
@@ -162,21 +162,21 @@ gBattle_LocationRules:
 	location SuhallaGate2, 1, -1, 1, 85
 	location SuhallaGate2, 2, -1, 1, 85
 	location SuhallaGate2, -1, -1, 1, 86
-	location SuhallaGate3, 1, -1, 1, 87
-	location SuhallaGate3, 2, -1, 1, 87
-	location SuhallaGate3, -1, -1, 1, 88
-	location VenusLighthouse2, 20, -1, 1, 90
-	location VenusLighthouse2, 21, -1, 1, 90
-	location VenusLighthouse2, 22, -1, 1, 90
-	location VenusLighthouse2, 23, -1, 1, 90
-	location VenusLighthouse2, 24, -1, 1, 90
-	location VenusLighthouse2, 25, -1, 1, 90
-	location VenusLighthouse2, 26, -1, 1, 90
-	location VenusLighthouse2, 30, -1, 1, 90
-	location VenusLighthouse2, 31, -1, 1, 90
-	location VenusLighthouse2, 32, -1, 1, 90
-	location VenusLighthouse2, -1, -1, 1, 89
-	location BabiLighthouse3, -1, -1, 1, 91
+	location GatewayCave, 1, -1, 1, 87
+	location GatewayCave, 2, -1, 1, 87
+	location GatewayCave, -1, -1, 1, 88
+	location VenusLighthouse1, 20, -1, 1, 90
+	location VenusLighthouse1, 21, -1, 1, 90
+	location VenusLighthouse1, 22, -1, 1, 90
+	location VenusLighthouse1, 23, -1, 1, 90
+	location VenusLighthouse1, 24, -1, 1, 90
+	location VenusLighthouse1, 25, -1, 1, 90
+	location VenusLighthouse1, 26, -1, 1, 90
+	location VenusLighthouse1, 30, -1, 1, 90
+	location VenusLighthouse1, 31, -1, 1, 90
+	location VenusLighthouse1, 32, -1, 1, 90
+	location VenusLighthouse1, -1, -1, 1, 89
+	location BabiLighthouseEntry, -1, -1, 1, 91
 	location BabiLighthouse2, -1, -1, 1, 91
 	location BabiLighthouse1, -1, -1, 1, 91
 	location TunnelRuins2, 1, -1, 1, 91
@@ -200,12 +200,12 @@ gBattle_LocationRules:
 	location TunnelRuins2, 15, -1, 1, 93
 	location TunnelRuins2, 16, -1, 1, 93
 	location TunnelRuins2, 17, -1, 1, 93
-	location VenusLighthouse3, 19, -1, 1, 95
-	location VenusLighthouse3, 20, -1, 1, 95
-	location VenusLighthouse3, -1, -1, 0, 94
-	location VenusLighthouse4, 9, -1, 0, 95
-	location VenusLighthouse4, 10, -1, 0, 95
-	location VenusLighthouse4, -1, -1, 1, 95
-	location VenusLighthouse5, -1, -1, 0, 96
-	location VenusLighthouse6, -1, -1, 0, 97
+	location VenusLighthouse2, 19, -1, 1, 95
+	location VenusLighthouse2, 20, -1, 1, 95
+	location VenusLighthouse2, -1, -1, 0, 94
+	location VenusLighthouse3, 9, -1, 0, 95
+	location VenusLighthouse3, 10, -1, 0, 95
+	location VenusLighthouse3, -1, -1, 1, 95
+	location VenusLighthouse4, -1, -1, 0, 96
+	location VenusLighthouse5, -1, -1, 0, 97
 	.2byte -1, -1, 0, 0	@ end

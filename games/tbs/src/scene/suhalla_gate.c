@@ -1,6 +1,6 @@
 /// @file
 /// Suhalla Gate (SuhallaGate1 and SuhallaGate2, scenes 169 and 170) and
-/// Gateway Cave (SuhallaGate3, scene 171), the pass that Babi's soldiers
+/// Gateway Cave (GatewayCave, scene 171), the pass that Babi's soldiers
 /// guard on the way to Babi Lighthouse.
 ///
 /// The party comes here after the Suhalla Desert, and the three scenes are
@@ -118,7 +118,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (scene == (s32)&SceneId_SuhallaGate2) {
     return gSuhallaGateEntrances2;
   }
-  if (scene == (s32)&SceneId_SuhallaGate3) {
+  if (scene == (s32)&SceneId_GatewayCave) {
     return gSuhallaGateEntrances3;
   }
   return gSuhallaGateEntrancesOther;
@@ -153,7 +153,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   if (scene == (s32)&SceneId_SuhallaGate2) {
     return gSuhallaGateEvents2;
   }
-  if (scene == (s32)&SceneId_SuhallaGate3) {
+  if (scene == (s32)&SceneId_GatewayCave) {
     return gSuhallaGateEvents3;
   }
   return gSuhallaGateEventsOther;

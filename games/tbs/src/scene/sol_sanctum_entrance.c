@@ -6,7 +6,7 @@
 /// seen Sol Sanctum with their own eyes, and he means to find out whether they
 /// have been inside.
 ///
-/// - Sol Entrance (SolSanctumEntrance2, scene 19), the mountainside before the
+/// - Sol Entrance (SolEntrance, scene 19), the mountainside before the
 ///   sanctum's door, reached from Vale by its exit 1. Walking north into the
 ///   door opens it and the leader walks in (Event_OpenDoorAndEnter, exit 2);
 ///   searching another door finds it "tightly locked". Retreat does not work
@@ -134,7 +134,7 @@ void InitializeSceneRecordBuffer();
 const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_SolSanctumEntrance2) {
+  if (scene == (s32)&SceneId_SolEntrance) {
     return gSolSanctumEntranceEntrances2;
   }
   if (scene == (s32)&SceneId_SolSanctumEntrance1) {
@@ -171,7 +171,7 @@ const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
     FieldScene_PrepareActors(table);
     return table;
   }
-  if (gGameState.scene == (s32)&SceneId_SolSanctumEntrance2) {
+  if (gGameState.scene == (s32)&SceneId_SolEntrance) {
     return gSolSanctumEntrancePlacements2;
   }
   return gSolSanctumEntrancePlacementsOther;
@@ -182,7 +182,7 @@ const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
 const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
   s32 firstBlockEntrance = 11;
 
-  if (gGameState.scene == (s32)&SceneId_SolSanctumEntrance2) {
+  if (gGameState.scene == (s32)&SceneId_SolEntrance) {
     return gSolSanctumEntranceEvents2;
   }
   if (gGameState.scene == (s32)&SceneId_SolSanctumEntrance1) {
@@ -588,7 +588,7 @@ static void Event_PushStatue(void) {
 s32 SolSanctumEntrance_Initialize(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_SolSanctumEntrance2) {
+  if (scene == (s32)&SceneId_SolEntrance) {
     SolSanctumEntrance_ApplyEntryState();
   } else if (scene == (s32)&SceneId_SolSanctumEntrance1) {
     SolSanctumEntrance_RestoreInteriorState();

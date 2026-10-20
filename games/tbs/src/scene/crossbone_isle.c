@@ -7,7 +7,7 @@
 /// that ends with Deadbeard on the Pirate Ship. Its places are met in this
 /// order:
 ///
-/// - Crossbone Isle (CrossboneIsle1, scene 113), the island itself, reached
+/// - Crossbone Isle (CrossboneIsle, scene 113), the island itself, reached
 ///   from the world map (its exit 75; exit 1 leads back to it). Whirlwind
 ///   blows four ivies away for good (four flags from
 ///   FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the first also opening a cell),
@@ -36,7 +36,7 @@
 ///   to its four chests.
 /// - Crossbone Isle Cave (CrossboneIsle4, scene 124), the passage from the
 ///   ninth room to the Pirate Ship.
-/// - Pirate Ship (CrossboneIsle5, scene 125), at the end. Stepping on trigger
+/// - Pirate Ship (PirateShip, scene 125), at the end. Stepping on trigger
 ///   10 (Event_FightDeadbeard) sets off the battle with Deadbeard, encounter
 ///   table 84's sixth group; when the party comes back (entrance 5)
 ///   FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set and a chest with the Demon
@@ -98,7 +98,7 @@ UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_CrossboneIsle1) {
+  if (scene == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsleEntrances1;
   }
   if (scene == (s32)&SceneId_CrossboneIsle2) {
@@ -110,7 +110,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (scene == (s32)&SceneId_CrossboneIsle4) {
     return gCrossboneIsleEntrances4;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle5) {
+  if (scene == (s32)&SceneId_PirateShip) {
     return gCrossboneIsleEntrances5;
   }
   return &gCrossboneIsleEntrances5[2];
@@ -123,7 +123,7 @@ const u32 *Scene_GetExits(void) { return gCrossboneIsleExits; }
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_CrossboneIsle1) {
+  if (scene == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIslePlacements1;
   }
   if (scene == (s32)&SceneId_CrossboneIsle3) {
@@ -178,7 +178,7 @@ static void Event_FightDeadbeard(void) {
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_CrossboneIsle1) {
+  if (scene == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsleEvents1;
   }
   if (scene == (s32)&SceneId_CrossboneIsle2) {
@@ -190,7 +190,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   if (scene == (s32)&SceneId_CrossboneIsle4) {
     return gCrossboneIsleEvents4;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle5) {
+  if (scene == (s32)&SceneId_PirateShip) {
     return gCrossboneIsleEvents5;
   }
   return gCrossboneIsleEventsOther;
@@ -224,7 +224,7 @@ s32 Scene_Initialize(void) {
     CrossboneIsle_DrawBlockPuzzleFootprints();
     return 0;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle5) {
+  if (scene == (s32)&SceneId_PirateShip) {
     if (FLAG_CHECK(0xef7) == 0) {
       Map_CopyCellAttributes(0, 3, 1, 1, 13, 40);
       Map_CopyCellAttributes(0, 2, 1, 1, 15, 40);
@@ -243,7 +243,7 @@ s32 Scene_Initialize(void) {
     }
   }
   current = gGameState.scene;
-  if (current == (s32)&SceneId_CrossboneIsle1) {
+  if (current == (s32)&SceneId_CrossboneIsle) {
     CrossboneIsle_RestoreIvy();
     Actor_Get(8)->targetX = PIXELS(129);
     FieldScene_RedrawActorFootprint(9);

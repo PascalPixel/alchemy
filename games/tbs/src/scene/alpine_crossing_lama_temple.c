@@ -1,7 +1,7 @@
 /// @file
 /// The Alpine Crossing and Lama Temple, two places on Silk Road west of Xian
-/// that share this overlay: the Alpine Crossing is AlpineCrossingLamaTemple1
-/// (scene 74) and Lama Temple is AlpineCrossingLamaTemple2 (scene 88). The
+/// that share this overlay: the Alpine Crossing is AlpineCrossing
+/// (scene 74) and Lama Temple is LamaTemple (scene 88). The
 /// getters pick each scene's tables by gGameState.scene, both scenes share one
 /// exit table, and Scene_Initialize sets up the scene being entered from the
 /// story flags of Hsu's rescue.
@@ -94,8 +94,8 @@
 // enters another place group, and other places use the numbers for their own.
 #define FLAG_LAMA_TEMPLE_PSYNERGY_STONE 0x350 ///< the temple's Psynergy Stone
 
-#define SCENE_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossingLamaTemple1)
-#define SCENE_LAMA_TEMPLE ((s32)&SceneId_AlpineCrossingLamaTemple2)
+#define SCENE_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
+#define SCENE_LAMA_TEMPLE ((s32)&SceneId_LamaTemple)
 
 /// Lama Temple's actors. Garet, Ivan and Mia are placed in their own party
 /// slots for Hama's farewell; the others count from ACTOR_FIRST_PLACED.

@@ -36,7 +36,7 @@
 ///   soldiers of Kalay will rescue Hammet themselves, as Layana asked.
 ///   Walking into the door (trigger 2) opens it into the palace (exit 2);
 ///   exit 1 leads back to town.
-/// - Kalay Tunnel Entrance (Kalay3, scene 153), outside the town (the world
+/// - Kalay Tunnel Entrance (KalayTunnelEntrance, scene 153), outside the town (the world
 ///   map's exit 60 leads in at entrance 2). A guard bars `the cave up ahead`
 ///   by Hammet and Layana's command, and a Nut floats here until Catch takes
 ///   it (flag 0xfd6). After the party has freed Hammet from Lunpa, Bunza, a
@@ -48,7 +48,7 @@
 ///   the party rides off (exit 10, the world map's entrance 71). Once flag
 ///   0x915 is set the guard stands turned east. Exit 1 leads into the Kalay
 ///   Tunnel (scene 154).
-/// - Kalay Tunnel (Kalay4 to Kalay6, scenes 154 to 156), the passage to
+/// - Kalay Tunnel (KalayTunnel1 to KalayTunnel3, scenes 154 to 156), the passage to
 ///   Hammet Palace and his treasure, which Layana opens to the party in thanks
 ///   once Hammet is home (flag 0x915). Scene 154 joins the Kalay Tunnel
 ///   Entrance to scene 155, and a chest holds an Apple. Scene 155 opens with a
@@ -141,13 +141,13 @@ enum KalayActor {
   // Hammet Palace, before its door (Kalay2)
   ACTOR_PALACE_GUARD = 8,
   ACTOR_SECOND_PALACE_GUARD = 9,
-  // Kalay Tunnel Entrance (Kalay3)
+  // Kalay Tunnel Entrance (KalayTunnelEntrance)
   ACTOR_TUNNEL_GUARD = 8,
   ACTOR_WAGON = 9, ///< Bunza's
   ACTOR_HAMMET = 10,
   ACTOR_BUNZA = 11,
   ACTOR_TUNNEL_ENTRANCE_NUT = 12,
-  // Kalay Tunnel (Kalay6)
+  // Kalay Tunnel (KalayTunnel3)
   ACTOR_FIRST_BLOCK = 8, ///< the blocks that open the two passages
   ACTOR_SECOND_BLOCK = 9,
   ACTOR_FROST_TARGET = 11,
@@ -189,7 +189,7 @@ static __inline__ void Kalay_ClearScriptDone(struct FieldActor *actor) {
   actor->timer = completed;
 }
 
-/// Talking to Scorch, a Mars Djinni, in the Kalay Tunnel (Kalay6) adds it to
+/// Talking to Scorch, a Mars Djinni, in the Kalay Tunnel (KalayTunnel3) adds it to
 /// the party, without a battle.
 static void Kalay_RecruitScorch(void) {
   Djinn_JoinParty(ACTOR_SCORCH, ELEMENT_MARS, 3);
@@ -237,16 +237,16 @@ const struct SceneEntrance *Kalay_GetEntrances(void) {
   if (scene == (s32)&SceneId_Kalay2) {
     return gKalay_HammetPalaceEntrances;
   }
-  if (scene == (s32)&SceneId_Kalay3) {
+  if (scene == (s32)&SceneId_KalayTunnelEntrance) {
     return gKalay_TunnelEntranceEntrances;
   }
-  if (scene == (s32)&SceneId_Kalay4) {
+  if (scene == (s32)&SceneId_KalayTunnel1) {
     return gKalay_Entrances4;
   }
-  if (scene == (s32)&SceneId_Kalay5) {
+  if (scene == (s32)&SceneId_KalayTunnel2) {
     return gKalay_Entrances5;
   }
-  if (scene == (s32)&SceneId_Kalay6) {
+  if (scene == (s32)&SceneId_KalayTunnel3) {
     return gKalay_TunnelEntrances;
   }
   return gKalay_NoEntrances;
@@ -268,10 +268,10 @@ const struct ScenePlacement *Kalay_GetPlacements(void) {
   if (scene == (s32)&SceneId_Kalay2) {
     return gKalay_HammetPalacePlacements;
   }
-  if (scene == (s32)&SceneId_Kalay3) {
+  if (scene == (s32)&SceneId_KalayTunnelEntrance) {
     return gKalay_TunnelEntrancePlacements;
   }
-  if (scene == (s32)&SceneId_Kalay6) {
+  if (scene == (s32)&SceneId_KalayTunnel3) {
     return gKalay_TunnelPlacements;
   }
   return gKalay_NoPlacements;
@@ -306,16 +306,16 @@ const struct SceneEvent *Kalay_GetEvents(void) {
   if (scene == (s32)&SceneId_Kalay2) {
     return gKalay_HammetPalaceEvents;
   }
-  if (scene == (s32)&SceneId_Kalay3) {
+  if (scene == (s32)&SceneId_KalayTunnelEntrance) {
     return gKalay_TunnelEntranceEvents;
   }
-  if (scene == (s32)&SceneId_Kalay4) {
+  if (scene == (s32)&SceneId_KalayTunnel1) {
     return gKalay_Events4;
   }
-  if (scene == (s32)&SceneId_Kalay5) {
+  if (scene == (s32)&SceneId_KalayTunnel2) {
     return gKalay_Events5;
   }
-  if (scene == (s32)&SceneId_Kalay6) {
+  if (scene == (s32)&SceneId_KalayTunnel3) {
     return gKalay_TunnelEvents;
   }
   return gKalay_NoEvents;
@@ -359,7 +359,7 @@ static void Kalay_AskAboutCaveAccess(void) {
   }
 }
 
-/// In the Kalay Tunnel (Kalay6), once Hammet is home, a man asks whether
+/// In the Kalay Tunnel (KalayTunnel3), once Hammet is home, a man asks whether
 /// Layana was too hard on the party when she told them to leave.
 static void Kalay_TalkAboutLayana(void) {
   Engine_EventBegin();
@@ -951,7 +951,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
   Engine_EventEnd();
 }
 
-/// Touching trigger 10 in the Kalay Tunnel (Kalay6) stops the fade overlay
+/// Touching trigger 10 in the Kalay Tunnel (KalayTunnel3) stops the fade overlay
 /// following the leader.
 static void Kalay_StopTrackingLeader(void) {
   if (GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
@@ -960,7 +960,7 @@ static void Kalay_StopTrackingLeader(void) {
   }
 }
 
-/// Touching trigger 11 in the Kalay Tunnel (Kalay6) makes the fade overlay
+/// Touching trigger 11 in the Kalay Tunnel (KalayTunnel3) makes the fade overlay
 /// follow the leader.
 static void Kalay_StartTrackingLeader(void) {
   struct FadeOverlayWork *work;
@@ -972,7 +972,7 @@ static void Kalay_StartTrackingLeader(void) {
   }
 }
 
-/// Trigger 19 in the Kalay Tunnel (Kalay6): the leader's depth priority
+/// Trigger 19 in the Kalay Tunnel (KalayTunnel3): the leader's depth priority
 /// follows his position.
 static void Kalay_EnableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
@@ -984,7 +984,7 @@ static void Kalay_EnableLeaderAutomaticPriority(void) {
   *priorityFlags = flags;
 }
 
-/// Trigger 18 in the Kalay Tunnel (Kalay6): the leader's depth priority stays
+/// Trigger 18 in the Kalay Tunnel (KalayTunnel3): the leader's depth priority stays
 /// fixed.
 static void Kalay_DisableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
@@ -1017,11 +1017,11 @@ s32 Kalay_Initialize(void) {
     Kalay_PrepareTown();
   } else if (scene == (s32)&SceneId_Kalay2) {
     Kalay_PrepareHammetPalace();
-  } else if (scene == (s32)&SceneId_Kalay3) {
+  } else if (scene == (s32)&SceneId_KalayTunnelEntrance) {
     Kalay_PrepareTunnelEntrance();
-  } else if (scene == (s32)&SceneId_Kalay5) {
+  } else if (scene == (s32)&SceneId_KalayTunnel2) {
     Kalay_StartWindowTransition();
-  } else if (scene == (s32)&SceneId_Kalay6) {
+  } else if (scene == (s32)&SceneId_KalayTunnel3) {
     Kalay_PrepareTunnel();
   }
   return 0;
@@ -1097,7 +1097,7 @@ static void Kalay_PrepareHammetPalace(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel Entrance (Kalay3): the Nut floats until caught,
+/// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance): the Nut floats until caught,
 /// the guard turns east once flag 0x915 opens the passage, and arriving by
 /// entrance 10 brings Hammet home in Bunza's wagon.
 static void Kalay_PrepareTunnelEntrance(void) {
@@ -1115,7 +1115,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel's scene 155 (Kalay5): it opens with a window
+/// Sets up the Kalay Tunnel's scene 155 (KalayTunnel2): it opens with a window
 /// transition, its way through is drawn open once flag 0x915 is set, and
 /// entrances 1 to 3 start sound 170.
 static void Kalay_StartWindowTransition(void) {
@@ -1134,7 +1134,7 @@ static void Kalay_StartWindowTransition(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel's scene 156 (Kalay6): the fade overlay follows the
+/// Sets up the Kalay Tunnel's scene 156 (KalayTunnel3): the fade overlay follows the
 /// leader unless he came down from the town (entrance 4); the pushed blocks,
 /// the frozen target and the opened passages are restored, and once flag
 /// 0x915 is set the man waits here and some of the cells are redrawn.
@@ -1865,7 +1865,7 @@ static void Kalay_HammetReturnsToPalace(void) {
 // Shared source, included in link order.
 #include "common/object_findcell.h"
 
-/// In the Kalay Tunnel (Kalay6), walking into a block pushes it one tile when
+/// In the Kalay Tunnel (KalayTunnel3), walking into a block pushes it one tile when
 /// there is room.
 static void Kalay_PushTunnelBlock(void) {
   struct FieldPosition destination;
@@ -1916,7 +1916,7 @@ static void Kalay_PushTunnelBlock(void) {
   }
 }
 
-/// In the Kalay Tunnel (Kalay6), once a block is pushed far enough west, its
+/// In the Kalay Tunnel (KalayTunnel3), once a block is pushed far enough west, its
 /// passage opens step by step, and the first raises the target for Frost.
 static void Kalay_UpdateTunnelPassages(void) {
   struct FieldActor *firstBlock;
@@ -2082,7 +2082,7 @@ static void Kalay_UpdateTunnelParticle(struct ScriptInterpreter *interpreter) {
 #endif
 }
 
-/// In the Kalay Tunnel (Kalay6), particles stream from each block as it nears
+/// In the Kalay Tunnel (KalayTunnel3), particles stream from each block as it nears
 /// its place, while its passage is closed.
 static void Kalay_UpdateTunnelEmitters(void) {
   struct FieldActor *firstEmitter;
@@ -2173,7 +2173,7 @@ static void Kalay_UpdateNutOrbit(void) {
                         ((u32)(Engine_RandomNext() << 9) >> 16) + 0x400;
 }
 
-/// Frost on the target in the Kalay Tunnel (Kalay6) sinks it into the floor,
+/// Frost on the target in the Kalay Tunnel (KalayTunnel3) sinks it into the floor,
 /// clearing its cells, until the scene is entered again.
 static void Kalay_FreezeFrostTarget(void) {
   struct FieldActor *effect = Object_GetById(ACTOR_FROST_TARGET);

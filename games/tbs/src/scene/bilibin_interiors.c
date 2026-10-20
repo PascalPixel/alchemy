@@ -1,6 +1,6 @@
 /// @file
 /// Inside Bilibin's buildings: scene 31, a row the scene table leaves without
-/// a symbol, whose area name is Bilibin. Six of Bilibin's doors (Bilibin1's
+/// a symbol, whose area name is Bilibin. Six of Bilibin's doors (Bilibin's
 /// exits 3 to 8, in bilibin.c) lead into its rooms, and each room's door leads
 /// back out to the door it was entered by. One room holds the weapon and armor
 /// shops, another the item shop, a third the inn with the restaurant beside

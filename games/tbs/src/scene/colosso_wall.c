@@ -1,5 +1,5 @@
 /// @file
-/// Colosseum Final 2 (ColossoWall, scene 144), the site of the second finals
+/// Colosseum Final 2 (ColosseumFinal2, scene 144), the site of the second finals
 /// match, where Isaac, having won the first, races Satrage, the fourth-ranked
 /// warrior, through five stages to the arena and fights him there.
 ///
@@ -750,8 +750,8 @@ static void Event_ReachArena(void) {
   Field_RequestBattleFromEncounterTable(72,
                                         resultBase - rivalFinishedFirst + 1);
   Battle_SetStart(3);
-  Event_SetNextDestination((s32)&SceneId_ColossoWall, 4);
-  Event_SetDefeatDestination((s32)&SceneId_ColossoWall, 5);
+  Event_SetNextDestination((s32)&SceneId_ColosseumFinal2, 4);
+  Event_SetDefeatDestination((s32)&SceneId_ColosseumFinal2, 5);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 

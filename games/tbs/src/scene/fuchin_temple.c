@@ -13,7 +13,7 @@
 ///   beneath the falls guards the waterfall grotto: once Nyunpa has set the
 ///   test (FLAG_NYUNPA_TEST_ACCEPTED), he leaps aside
 ///   (FLAG_FUCHIN_FALLS_GROTTO_OPENED) and the party enters Fuchin Falls Cave
-///   (exit 3, ImilFuchinFalls2). Coming back out with the Orb of Force
+///   (exit 3, FuchinFallsCave1). Coming back out with the Orb of Force
 ///   (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), Isaac is sent on to Nyunpa
 ///   (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST). The temple door leads inside
 ///   (exit 2).
@@ -51,7 +51,7 @@
 ///   Scene_GetPlacements removes the tree and two students, and the school
 ///   talks of the boulders that overcame him. Exit 2 leads out into Xian.
 /// - Lama Temple (FuchinTemple2, entrance 3), the room in which Master Hama
-///   meditates, entered from Lama Temple (AlpineCrossingLamaTemple2). On the
+///   meditates, entered from Lama Temple (LamaTemple). On the
 ///   first visit (FuchinTemple_RunHamasRevealLesson) Hama greets Isaac and his
 ///   Adept companions, whom she foresaw, and tells Ivan that he is a Jupiter
 ///   Adept like her. She means to teach him Reveal, without which the party
@@ -62,7 +62,7 @@
 ///   her to Hsu's aid, and FLAG_XIAN_HEARD_HSU_TRAPPED is set.
 ///   Until Hsu is rescued (FLAG_HSU_RESCUED) Hama and her attendant are away;
 ///   afterwards they are back. Exit 3 leads back into Lama Temple
-///   (AlpineCrossingLamaTemple2).
+///   (LamaTemple).
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/fuchin_temple.h"

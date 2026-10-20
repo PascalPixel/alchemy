@@ -1,11 +1,11 @@
 /// @file
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three places that
-/// share one overlay, each a scene of its own: Bilibin1 (scene 30), Bilibin2
-/// (scene 32) and Bilibin3 (scene 35). The getters pick each scene's tables by
+/// share one overlay, each a scene of its own: Bilibin (scene 30), BilibinTreasury
+/// (scene 32) and BilibinBarricade (scene 35). The getters pick each scene's tables by
 /// gGameState.scene, Bilibin_Initialize sets up the scene being entered, and
 /// Event_PushBlock serves all three.
 ///
-/// Bilibin (Bilibin1) is the town past the Goma Range's cave, and the party
+/// Bilibin (Bilibin) is the town past the Goma Range's cave, and the party
 /// finds it afraid. A man who came to the village under a curse stands at its
 /// entrance turned into a tree (TREE_MAN); his last words were that he had
 /// offended the sacred tree. Lord McCoy, the chief of Bilibin, has closed the
@@ -45,7 +45,7 @@
 /// clears place flags on entering a new group, so the guard seems never to see
 /// it set; a playthrough would settle it.
 ///
-/// The Bilibin Treasury (Bilibin2) is what its sign calls `McCoy's Hidden
+/// The Bilibin Treasury (BilibinTreasury) is what its sign calls `McCoy's Hidden
 /// Warehouse`. Gust, a Jupiter Djinni, waits there, placed until he has
 /// joined, and joins the party when spoken to (Event_GustJoins). A second
 /// statue (TREASURY_BLOCK) slides along one column, and
@@ -54,7 +54,7 @@
 /// floor; two exit regions (Bilibin_GetRegions) lead to its other entrance and
 /// back to Bilibin by the statue.
 ///
-/// The Bilibin Barricade (Bilibin3) is the road east to Kolima where McCoy's
+/// The Bilibin Barricade (BilibinBarricade) is the road east to Kolima where McCoy's
 /// barricade stands, reached from the world map at either end. Its sign reads
 /// `This area is off-limits to all those without a permit. —Lord McCoy`, and a
 /// door there stays locked (`The door is tightly locked.`). At McCoy's Palace
@@ -133,14 +133,14 @@ static void Bilibin_UpdateRiverEffect(void);
 static void Bilibin_SpawnRiverEffect(struct FieldActor *actor);
 static void Bilibin_UpdateTreasuryBlockCells(void);
 
-/// Actors of Bilibin (Bilibin1), numbered from its placement rows.
+/// Actors of Bilibin (Bilibin), numbered from its placement rows.
 enum {
   TREE_MAN = 9,        ///< the man turned into a tree at the village entrance
   VILLAGE_BLOCK = 20,  ///< a statue, moved with Move or pushed
   FORMER_TREE_MAN = 21 ///< the same man once the curse is lifted
 };
 
-/// Actors of the Bilibin Barricade (Bilibin3).
+/// Actors of the Bilibin Barricade (BilibinBarricade).
 enum {
   RIVER_BLOCK = 8, ///< a stack of crates, moved with Move or pushed
   JILL_TREE = 11,  ///< Jill as a tree, the top of the three
@@ -151,7 +151,7 @@ enum {
   JILL = 14 ///< Jill herself, once the curse is lifted
 };
 
-/// Actors of the Bilibin Treasury (Bilibin2).
+/// Actors of the Bilibin Treasury (BilibinTreasury).
 enum {
   TREASURY_BLOCK = 8, ///< a statue, moved with Move or pushed
   GUST = 9
@@ -169,13 +169,13 @@ struct SpawnCounter gBilibin_RiverEffectTimer;
 const struct SceneEntrance *Bilibin_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Bilibin1) {
+  if (scene == (s32)&SceneId_Bilibin) {
     return gBilibinEntrances1;
   }
-  if (scene == (s32)&SceneId_Bilibin3) {
+  if (scene == (s32)&SceneId_BilibinBarricade) {
     return gBilibinEntrances3;
   }
-  if (scene == (s32)&SceneId_Bilibin2) {
+  if (scene == (s32)&SceneId_BilibinTreasury) {
     return gBilibinEntrances2;
   }
   return (const struct SceneEntrance *)gBilibinEntrancesOther;
@@ -183,7 +183,7 @@ const struct SceneEntrance *Bilibin_GetEntrances(void) {
 
 /// Only the Bilibin Treasury has exit regions.
 const struct SceneRegion *Bilibin_GetRegions(void) {
-  if (gGameState.scene == (s32)&SceneId_Bilibin2) {
+  if (gGameState.scene == (s32)&SceneId_BilibinTreasury) {
     return (const struct SceneRegion *)gBilibinRegions2;
   }
   return 0;
@@ -201,13 +201,13 @@ static void Event_GustJoins(void) { Djinn_JoinParty(GUST, ELEMENT_JUPITER, 0); }
 const struct ScenePlacement *Bilibin_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Bilibin1) {
+  if (scene == (s32)&SceneId_Bilibin) {
     return gBilibinPlacements1;
   }
-  if (scene == (s32)&SceneId_Bilibin3) {
+  if (scene == (s32)&SceneId_BilibinBarricade) {
     return gBilibinPlacements3;
   }
-  if (scene == (s32)&SceneId_Bilibin2) {
+  if (scene == (s32)&SceneId_BilibinTreasury) {
     return gBilibinPlacements2;
   }
   return gBilibinPlacementsOther;
@@ -225,13 +225,13 @@ static void Event_InspectWell(void) {
 const struct SceneEvent *Bilibin_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_Bilibin1) {
+  if (scene == (s32)&SceneId_Bilibin) {
     return gBilibinEvents1;
   }
-  if (scene == (s32)&SceneId_Bilibin3) {
+  if (scene == (s32)&SceneId_BilibinBarricade) {
     return gBilibinEvents3;
   }
-  if (scene == (s32)&SceneId_Bilibin2) {
+  if (scene == (s32)&SceneId_BilibinTreasury) {
     return gBilibinEvents2;
   }
   return gBilibinEventsOther;
@@ -548,12 +548,12 @@ static void Event_JillGivesHardNut(void) {
 /// opening transition.
 s32 Bilibin_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gGameState.scene == (s32)&SceneId_Bilibin1) {
+  if (gGameState.scene == (s32)&SceneId_Bilibin) {
     Bilibin_RestoreVillageActors();
-  } else if (gGameState.scene == (s32)&SceneId_Bilibin3) {
+  } else if (gGameState.scene == (s32)&SceneId_BilibinBarricade) {
     Bilibin_RestoreRiverActors();
     FieldScheduler_AddCallback(Bilibin_UpdateRiverEffect, 0xc80);
-  } else if (gGameState.scene == (s32)&SceneId_Bilibin2) {
+  } else if (gGameState.scene == (s32)&SceneId_BilibinTreasury) {
     Bilibin_SetUpTreasury();
   }
   return 0;
@@ -801,11 +801,11 @@ static void Event_PushBlock(void) {
       block->velocityZ = 0;
       Object_SetMode(leader, 1);
       // Each map derives its collision cells from this same moved actor.
-      if (gGameState.scene == (s32)&SceneId_Bilibin3)
+      if (gGameState.scene == (s32)&SceneId_BilibinBarricade)
         Bilibin_UpdateRiverBlockCells();
-      else if (gGameState.scene == (s32)&SceneId_Bilibin1)
+      else if (gGameState.scene == (s32)&SceneId_Bilibin)
         Bilibin_UpdateVillageBlockCells();
-      else if (gGameState.scene == (s32)&SceneId_Bilibin2)
+      else if (gGameState.scene == (s32)&SceneId_BilibinTreasury)
         Bilibin_UpdateTreasuryBlockCells();
     }
   }

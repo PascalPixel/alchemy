@@ -1,7 +1,7 @@
 /// @file
 /// Altin, the mining village north of the Alpine Crossing, in two scenes that
-/// share this overlay and the area name Altin: Altin1 (scene 75), the village
-/// outdoors, and Altin2 (scene 76), inside its houses, shops and inn. The
+/// share this overlay and the area name Altin: Altin (scene 75), the village
+/// outdoors, and AltinInteriors (scene 76), inside its houses, shops and inn. The
 /// getters pick each scene's tables by gGameState.scene, both share one exit
 /// table, and a third, empty set of tables serves any other scene.
 ///
@@ -24,21 +24,21 @@
 /// were Altin's own guardian statues; after, they thank the party and talk of
 /// the ancient ruins it found at the bottom of the mine.
 ///
-/// In the village (Altin1), three villagers come home one by one as the water
+/// In the village (Altin), three villagers come home one by one as the water
 /// drops, and the armor and item sellers wait outside their flooded shops
 /// until theirs dry (the item seller's after the first drop, the armor
 /// seller's after the second). A water beast spits water at the houses, its
 /// sound and its spray running from Village_ApplyWaterLevel, until the party
 /// steps near it (Village_ScareOffBeast): it stops, cries out and hops away
 /// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (touches 2 to
-/// 9, Village_EnterDoor) lead into Altin2 and into the Altin Sanctum, whose
+/// 9, Village_EnterDoor) lead into AltinInteriors and into the Altin Sanctum, whose
 /// wide door is redrawn by hand; coming back out of the Sanctum (entrance 3)
 /// the area name is not shown again. Three doorways (touches 10 to 12,
 /// Village_WalkThroughDoorway) and exit 13 lead into the mine, to Altin Peak's
 /// AltinPeak1, AltinPeak4, AltinPeak8 and AltinPeak7. A block that Move pushes
 /// to column 22 stays there (FLAG_ALTIN_BLOCK_MOVED).
 ///
-/// Inside (Altin2), two families shelter in the inn's Room One and Room Two,
+/// Inside (AltinInteriors), two families shelter in the inn's Room One and Room Two,
 /// as the game calls them, until the first and the second drop send them home
 /// (Houses_PlaceSheltering), and the weapon seller waits in the inn until the
 /// water has drained. Each seller opens across the counter once the shop has
@@ -82,8 +82,8 @@
 #define ALTIN_COOK_LAST_POT_X 380
 #endif
 
-#define SCENE_ALTIN_VILLAGE ((s32)&SceneId_Altin1)
-#define SCENE_ALTIN_HOUSES ((s32)&SceneId_Altin2)
+#define SCENE_ALTIN_VILLAGE ((s32)&SceneId_Altin)
+#define SCENE_ALTIN_HOUSES ((s32)&SceneId_AltinInteriors)
 
 /// The village's actors.
 enum AltinVillageActor {
@@ -660,7 +660,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets up Altin's village (Altin1): the map block for the current water
+/// Sets up Altin's village (Altin): the map block for the current water
 /// level (one of four 32 by 32 cell blocks kept on the map), the villagers and
 /// sellers present at that level, the water beast with its spray while it
 /// remains, and the pushed block. Then redraws the map around the leader.
@@ -735,7 +735,7 @@ static void Village_ApplyWaterLevel(void) {
   Engine_TaskWait(1);
 }
 
-/// Sets up inside Altin's buildings (Altin2): the families still sheltering
+/// Sets up inside Altin's buildings (AltinInteriors): the families still sheltering
 /// in the inn's rooms, the weapon seller waiting there until the water
 /// drains, and the shopkeepers kept from wandering.
 static void Houses_PlaceSheltering(void) {

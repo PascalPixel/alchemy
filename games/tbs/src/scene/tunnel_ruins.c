@@ -30,7 +30,7 @@
 ///   beside it no longer run. Exits 15, 17 and 18 lead on into TunnelRuins2.
 /// - Tunnel Ruins (TunnelRuins2, scene 173), whose entrances 1 to 3 the area
 ///   names call Babi Lighthouse: they are where the three drops in Babi
-///   Lighthouse Entry (BabiLighthouse3, scene 176) land, and from those rooms
+///   Lighthouse Entry (BabiLighthouseEntry, scene 176) land, and from those rooms
 ///   Retreat leads back up there, the place name not shown; regions for exits
 ///   15 to 17 lead back up to it. There two pillars to push or Move keep their
 ///   places between visits (FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
@@ -48,7 +48,7 @@
 ///   their marks the door opens (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN), closing
 ///   again if one is moved off. Two chests hold an Oracle's Robe and Asura's
 ///   Armor. Exits 1, 3 and 12 lead back into TunnelRuins1, and exit 14 into
-///   Venus Lighthouse (VenusLighthouse3, scene 183, entrance 18).
+///   Venus Lighthouse (VenusLighthouse2, scene 183, entrance 18).
 
 #include "script.h"
 #include "version.h"
@@ -1539,7 +1539,7 @@ s32 TunnelRuins_Initialize(void) {
     case 2:
     case 3:
       gGameState.retreatEntrance = 1;
-      gGameState.retreatScene = (s32)&SceneId_BabiLighthouse3;
+      gGameState.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_A, 6);
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_B, 6);

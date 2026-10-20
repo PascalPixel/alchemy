@@ -40,7 +40,7 @@
 /// Setup (Garden_ApplyProgress) places the guards by the same flags and floats
 /// a Nut over the grounds until Catch takes it
 /// (FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT). A dry well can be searched. Exit 1
-/// leads back to Bilibin (Bilibin1, scene 30, entrance 2). The patched
+/// leads back to Bilibin (Bilibin, scene 30, entrance 2). The patched
 /// editions (TBS_PATCH_3) add one more actor, sprite 0xf8 (XXX: what it is is
 /// not known).
 

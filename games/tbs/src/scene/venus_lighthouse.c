@@ -2,13 +2,13 @@
 /// Venus Lighthouse, six scenes in one overlay: the approach outside, the floor
 /// the front door opens onto, and the four floors of the climb that ends in the
 /// Lighthouse Aerie at the top (venus_lighthouse_aerie.c). Each scene has its
-/// own entrance, placement and event tables (VenusLighthouse2's entrances are
+/// own entrance, placement and event tables (VenusLighthouse1's entrances are
 /// the fallback table), all share one exit table, and Scene_RunEntrySetup
 /// redraws each scene's puzzles as their flags left them, case by entrance.
 /// The party reaches the lighthouse after the strange wanderers, as the
 /// wounded outside call them, have opened it and gone on.
 ///
-/// - Venus Lighthouse Entry (VenusLighthouse1, scene 181), outside. The
+/// - Venus Lighthouse Entry (VenusLighthouseEntry, scene 181), outside. The
 ///   scholars and Babi's soldiers the wanderers attacked lie hurt: a young boy
 ///   seemed to glow and the entrance opened, one scholar thought he
 ///   recognized one of them as Kraden ("An alchemist who served Babi... Was
@@ -16,8 +16,8 @@
 ///   tells of the attack flickers and vanishes
 ///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the collision of his spot
 ///   changes. Exits 1 and 3 lead to the world map, exit 2, the open door,
-///   into VenusLighthouse2.
-/// - Venus Lighthouse (VenusLighthouse2, scene 182, named by a scene rule of
+///   into VenusLighthouse1.
+/// - Venus Lighthouse (VenusLighthouse1, scene 182, named by a scene rule of
 ///   its own), the floor behind the front door. Three scholars say Kraden
 ///   told the attackers to stop, went in, and came back saying this is not the
 ///   entrance but something about its being the exit, and that his group did
@@ -28,7 +28,7 @@
 ///   _SECOND_PATH, chosen the first time by the frame counter's parity and
 ///   switched at each search after), redrawing cells here; the Tunnel Ruins
 ///   under Babi Lighthouse redraw their rooms to match (tunnel_ruins.c), and
-///   they lead up into VenusLighthouse3. Reliefs (search triggers 35
+///   they lead up into VenusLighthouse2. Reliefs (search triggers 35
 ///   to 40) say to seek the power within with the eyes of truth, and Reveal
 ///   shows a hidden path in two places. Move pushes a block to a wall, where
 ///   Garet wishes they could carry it (FLAG_VENUS_LIGHTHOUSE_BLOCK_AT_WALL),
@@ -37,31 +37,31 @@
 ///   pressed while the leader stands on it (FLAG_SCENE_TEMP_01) and held down
 ///   by a block Moved onto it (FLAG_SCENE_TEMP_00); until then, walking off a
 ///   ledge (trigger 45) drops the leader to the floor below. Trigger 23 and
-///   VenusLighthouse3's exit 16 link the two scenes.
-/// - Venus Lighthouse (VenusLighthouse3, scene 183), the first floor of the
+///   VenusLighthouse2's exit 16 link the two scenes.
+/// - Venus Lighthouse (VenusLighthouse2, scene 183), the first floor of the
 ///   climb, where the Tunnel Ruins come up (entrance 18; exit 18 leads back
-///   down), in the room VenusLighthouse2's trigger 23 also reaches. A floor
+///   down), in the room VenusLighthouse1's trigger 23 also reaches. A floor
 ///   drifts the party south (trigger 30), a hole drops the leader into the
 ///   room below (trigger 35), three blocks in a row can be Moved or pushed, and
 ///   two blocks by a gap are carried across it with Carry, or dropped into it
 ///   to fall through the floor. A chest holds the Thunder Crown, and a
 ///   Psynergy Stone lies here.
-/// - Venus Lighthouse (VenusLighthouse4, scene 184). A sparkling passage
+/// - Venus Lighthouse (VenusLighthouse3, scene 184). A sparkling passage
 ///   (trigger 2) takes the leader through in a trail of sparks; a floor switch
 ///   (trigger 35) slides a wall aside in a cloud of dust the first time
 ///   (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED); a block Moved or pushed into its
 ///   socket sinks and opens a gate (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN); and a
-///   door is locked. Exit 6 leads up into VenusLighthouse5.
-/// - Venus Lighthouse (VenusLighthouse5, scene 185). Three more sparkling
+///   door is locked. Exit 6 leads up into VenusLighthouse4.
+/// - Venus Lighthouse (VenusLighthouse4, scene 185). Three more sparkling
 ///   passages, a drifting floor, and three blocks that sink into free sockets
 ///   (FLAG_VENUS_LIGHTHOUSE_SOCKETS_A and _B record which); with all three
 ///   sunk the gate opens (FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN). A door
 ///   is locked and a chest holds Dragon Scales.
-/// - Venus Lighthouse (VenusLighthouse6, scene 186). A passage raises the
+/// - Venus Lighthouse (VenusLighthouse5, scene 186). A passage raises the
 ///   leader to the floor above (trigger 18), floors drift the party each way
 ///   (triggers 30 to 33), and a west and an east floor switch slide their walls
 ///   aside (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
-///   VenusLighthouse5 also redraws). Carry sets down four floating blocks,
+///   VenusLighthouse4 also redraws). Carry sets down four floating blocks,
 ///   and the platforms under them rise or sink to their weight
 ///   (FLAG_SCENE_TEMP_00 plus the block's number; Move on them does nothing).
 ///   Four blocks sunk into sockets open the gate of the room their pillars
@@ -173,7 +173,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void);
 // FLAG_SCENE_TEMP_01: the leader stands on the floor switch.
 
 /// Actors the events name, by scene. At Venus Lighthouse Entry: the man who
-/// tells of the attack and the scholar waiting to go in. In VenusLighthouse2:
+/// tells of the attack and the scholar waiting to go in. In VenusLighthouse1:
 /// the scholar by the door, the block Move pushes to the wall and the block
 /// that holds the floor switch down.
 enum {
@@ -475,8 +475,8 @@ VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Walking north into a sparkling passage, in VenusLighthouse4 (trigger 2) or
-/// VenusLighthouse5 (triggers 4, 5 and 11): the leader dissolves in sparks and
+/// Walking north into a sparkling passage, in VenusLighthouse3 (trigger 2) or
+/// VenusLighthouse4 (triggers 4, 5 and 11): the leader dissolves in sparks and
 /// leaves by the exit of the trigger's number, coming out at its far end.
 static void Event_EnterSparklingPassage(void) {
   struct FieldActor *leader;
@@ -540,13 +540,13 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   }
 }
 
-/// Stepping onto this spot in VenusLighthouse3 (trigger 32) makes the leader
+/// Stepping onto this spot in VenusLighthouse2 (trigger 32) makes the leader
 /// the actor the room's effect follows.
 static void Event_SetLeaderAsEffectTarget(void) {
   gActorEffectWork->actor = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
-/// Stepping onto this spot in VenusLighthouse3 (trigger 31): the room's effect
+/// Stepping onto this spot in VenusLighthouse2 (trigger 31): the room's effect
 /// follows no one.
 static void Event_ClearEffectTarget(void) { gActorEffectWork->actor = NULL; }
 
@@ -684,8 +684,8 @@ VenusLighthouse_CreateScriptedGateEffect(s32 x, s32 z, const s32 *script) {
   return effect;
 }
 
-/// Walking into a one-tile gap, in VenusLighthouse6 and through the
-/// jump-or-push events of VenusLighthouse3 to 6: the leader jumps it if the far
+/// Walking into a one-tile gap, in VenusLighthouse5 and through the
+/// jump-or-push events of VenusLighthouse2 to 6: the leader jumps it if the far
 /// side is clear. Returns 1 after a jump, 0 when there was none.
 static s32 Event_JumpAcrossGap(void) {
   struct FieldActor *leader;
@@ -755,23 +755,23 @@ static s32 Event_JumpAcrossGap(void) {
   return 0;
 }
 
-/// Selects the scene's entrances; VenusLighthouse2 takes the fallback table.
+/// Selects the scene's entrances; VenusLighthouse1 takes the fallback table.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_VenusLighthouse1) {
+  if (scene == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntrances1;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse3) {
+  if (scene == (s32)&SceneId_VenusLighthouse2) {
     return gVenusLighthouseEntrances3;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse4) {
+  if (scene == (s32)&SceneId_VenusLighthouse3) {
     return gVenusLighthouseEntrances4;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse5) {
+  if (scene == (s32)&SceneId_VenusLighthouse4) {
     return gVenusLighthouseEntrances5;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse6) {
+  if (scene == (s32)&SceneId_VenusLighthouse5) {
     return gVenusLighthouseEntrances6;
   }
   return gVenusLighthouseEntrancesOther;
@@ -793,30 +793,30 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene;
 
   scene = gGameState.scene;
-  if (scene == (s32)&SceneId_VenusLighthouse1) {
+  if (scene == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthousePlacements1;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse2) {
+  if (scene == (s32)&SceneId_VenusLighthouse1) {
     placements = gVenusLighthousePlacements2;
     FieldScene_PrepareActors(placements);
     return placements;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse3) {
+  if (scene == (s32)&SceneId_VenusLighthouse2) {
     placements = gVenusLighthousePlacements3;
     FieldScene_PrepareActors(placements);
     return placements;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse4) {
+  if (scene == (s32)&SceneId_VenusLighthouse3) {
     placements = gVenusLighthousePlacements4;
     FieldScene_PrepareActors(placements);
     return placements;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse5) {
+  if (scene == (s32)&SceneId_VenusLighthouse4) {
     placements = gVenusLighthousePlacements5;
     FieldScene_PrepareActors(placements);
     return placements;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse6) {
+  if (scene == (s32)&SceneId_VenusLighthouse5) {
     placements = gVenusLighthousePlacements6;
     FieldScene_PrepareActors(placements);
     return placements;
@@ -824,7 +824,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVenusLighthousePlacementsOther;
 }
 
-/// Searching a locked door, in VenusLighthouse4 to 6. "The door is tightly
+/// Searching a locked door, in VenusLighthouse3 to 6. "The door is tightly
 /// locked."
 static void Event_SearchLockedDoor(void) {
   Engine_EventBegin();
@@ -873,7 +873,7 @@ static void Event_TalkToWaitingScholar(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse2, Carry on the block Move could not push past the wall:
+/// In VenusLighthouse1, Carry on the block Move could not push past the wall:
 /// once it is set down beyond, it stays there
 /// (FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED).
 static void Event_CarryBlockPastWall(void) {
@@ -887,7 +887,7 @@ static void Event_CarryBlockPastWall(void) {
   Engine_EventEnd();
 }
 
-/// Searching a relief in VenusLighthouse2 shows its words; each relief has its
+/// Searching a relief in VenusLighthouse1 shows its words; each relief has its
 /// own message, except in English, which keeps one. "There are words carved
 /// into the relief..."
 static void Event_ReadRelief(void) {
@@ -907,7 +907,7 @@ static void Event_ReadRelief(void) {
   Engine_EventEnd();
 }
 
-/// Reveal fading in VenusLighthouse2: the hidden path disappears again, in
+/// Reveal fading in VenusLighthouse1: the hidden path disappears again, in
 /// both its places.
 static void Event_HidePath(void) {
   s32 column;
@@ -928,7 +928,7 @@ static void Event_HidePath(void) {
   Map_CopyCellsTo(121, 55, 110, 55, 3, 3);
 }
 
-/// Reveal in VenusLighthouse2: the hidden path appears, in two places, and can
+/// Reveal in VenusLighthouse1: the hidden path appears, in two places, and can
 /// be walked on.
 static void Event_RevealPath(void) {
   s32 column;
@@ -949,7 +949,7 @@ static void Event_RevealPath(void) {
   Map_CopyCellsTo(117, 55, 110, 55, 3, 3);
 }
 
-/// In VenusLighthouse2, walking off the ledge (trigger 45) before the floor
+/// In VenusLighthouse1, walking off the ledge (trigger 45) before the floor
 /// switch is held down: the leader jumps down to the floor below and shakes
 /// his head.
 static void Event_JumpDown(void) {
@@ -990,7 +990,7 @@ static void Event_JumpDown(void) {
   Engine_EventEnd();
 }
 
-/// Searching the statue in VenusLighthouse2: "The statue speaks to Isaac's
+/// Searching the statue in VenusLighthouse1: "The statue speaks to Isaac's
 /// soul..." The room flashes, the path it opens changes (the first time by the
 /// frame counter's parity, then to the other path) and its cells are redrawn,
 /// and the camera shows it.
@@ -1067,7 +1067,7 @@ static void Event_SearchStatue(void) {
   work->busy = 0;
 }
 
-/// In VenusLighthouse2, Move on the block by the wall: once it reaches the
+/// In VenusLighthouse1, Move on the block by the wall: once it reaches the
 /// wall, the first time only (FLAG_VENUS_LIGHTHOUSE_BLOCK_AT_WALL), Garet comes
 /// out. "Hmmm. We can't push the block farther than this." He wishes they
 /// could carry it, which is what Carry then does.
@@ -1129,7 +1129,7 @@ static void Event_MoveBlockTowardWall(void) {
   }
 }
 
-/// In VenusLighthouse2, pushing the block by the wall (touch trigger 50): as
+/// In VenusLighthouse1, pushing the block by the wall (touch trigger 50): as
 /// Move, with Garet's remark at the wall.
 static void Event_PushBlockTowardWall(void) {
 
@@ -1140,7 +1140,7 @@ static void Event_PushBlockTowardWall(void) {
   Event_MoveBlockTowardWall();
 }
 
-/// In VenusLighthouse2, Move on the block by the floor switch: on the switch it
+/// In VenusLighthouse1, Move on the block by the floor switch: on the switch it
 /// sinks in and holds it down (FLAG_SCENE_TEMP_00).
 static void Event_MoveBlockOntoSwitch(void) {
   struct FieldActor *block;
@@ -1161,7 +1161,7 @@ static void Event_MoveBlockOntoSwitch(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse2, standing on the floor switch presses it
+/// In VenusLighthouse1, standing on the floor switch presses it
 /// (FLAG_SCENE_TEMP_01); stepping off releases it.
 static void Event_StepOnFloorSwitch(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1189,7 +1189,7 @@ static void Event_StepOnFloorSwitch(void) {
   }
 }
 
-/// In VenusLighthouse2, talking to the scholar by the door: he explored once
+/// In VenusLighthouse1, talking to the scholar by the door: he explored once
 /// it opened, until Kraden and the others appeared and did something to the
 /// statue that lit up the floor; the camera looks at the door.
 static void Event_TalkToScholarByDoor(void) {
@@ -1211,7 +1211,7 @@ static void Event_TalkToScholarByDoor(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse3, stepping onto the hole in the floor (trigger 35): the
+/// In VenusLighthouse2, stepping onto the hole in the floor (trigger 35): the
 /// leader looks down, falls through and lands in the room below (exit 20, to
 /// the same scene's entrance 20).
 static void Event_FallThroughFloor(void) {
@@ -1278,7 +1278,7 @@ static void Event_FallThroughFloor(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse3, Move on one of the three blocks in a row: the floor
+/// In VenusLighthouse2, Move on one of the three blocks in a row: the floor
 /// under each block is solid again and the nearer block draws in front.
 static void Event_MoveDepthBlock(void) {
 
@@ -1309,7 +1309,7 @@ static void Event_MoveDepthBlock(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse3, pushing one of the three blocks in a row.
+/// In VenusLighthouse2, pushing one of the three blocks in a row.
 static void Event_PushDepthBlock(void) {
 
   Engine_EventBegin();
@@ -1319,7 +1319,7 @@ static void Event_PushDepthBlock(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse3, Move or Carry starting on one of the two blocks by the
+/// In VenusLighthouse2, Move or Carry starting on one of the two blocks by the
 /// gap: their tiles are marked before they move.
 static void Event_LiftCarryBlock(void) {
   u32 blockIndex;
@@ -1333,7 +1333,7 @@ static void Event_LiftCarryBlock(void) {
   } while (blockIndex <= 1);
 }
 
-/// In VenusLighthouse3, Move on one of the two blocks by the gap: blocks still
+/// In VenusLighthouse2, Move on one of the two blocks by the gap: blocks still
 /// above the floor are solid again.
 static void Event_MoveCarryBlock(void) {
   u32 blockIndex;
@@ -1349,7 +1349,7 @@ static void Event_MoveCarryBlock(void) {
   } while (blockIndex <= 1);
 }
 
-/// In VenusLighthouse3, walking into a gap or a block by it: jump the gap,
+/// In VenusLighthouse2, walking into a gap or a block by it: jump the gap,
 /// else push the block.
 static void Event_JumpOrPushCarryBlock(void) {
 
@@ -1397,7 +1397,7 @@ static void VenusLighthouse_ReleaseFallenCarryBlock(struct FieldActor *block) {
   }
 }
 
-/// In VenusLighthouse3, Carry on one of the two blocks by the gap: set down in
+/// In VenusLighthouse2, Carry on one of the two blocks by the gap: set down in
 /// its place it stays fixed; dropped into the gap it falls through the floor.
 static void Event_CarryBlockAcrossGap(void) {
   struct FieldActor *block;
@@ -1420,7 +1420,7 @@ static void Event_CarryBlockAcrossGap(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse4, stepping on the floor switch (trigger 35): the wall
+/// In VenusLighthouse3, stepping on the floor switch (trigger 35): the wall
 /// slides aside in a cloud of dust, the first time only
 /// (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED), and the party goes on through the next
 /// exit.
@@ -1496,7 +1496,7 @@ static void Event_StepOnWallSwitch(void) {
   }
 }
 
-/// In VenusLighthouse4, Move on the block before the gate: in its socket it
+/// In VenusLighthouse3, Move on the block before the gate: in its socket it
 /// sinks in and the gate opens, the first time only
 /// (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
 static void Event_MoveGateBlock(void) {
@@ -1576,7 +1576,7 @@ static void Event_MoveGateBlock(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse4, walking into the gap or the block before the gate:
+/// In VenusLighthouse3, walking into the gap or the block before the gate:
 /// jump the gap, else push the block, which may sink into its socket.
 static void Event_JumpOrPushGateBlock(void) {
 
@@ -1589,7 +1589,7 @@ static void Event_JumpOrPushGateBlock(void) {
   Event_MoveGateBlock();
 }
 
-/// In VenusLighthouse5, Move on one of the three blocks: a block on a free
+/// In VenusLighthouse4, Move on one of the three blocks: a block on a free
 /// socket sinks in, and with all three sunk the gate opens
 /// (FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN).
 static void Event_MoveSwitchBlock(void) {
@@ -1715,7 +1715,7 @@ static void Event_MoveSwitchBlock(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse5, walking into the gap or one of the three blocks: jump
+/// In VenusLighthouse4, walking into the gap or one of the three blocks: jump
 /// the gap, else push the block, which may sink into a socket.
 static void Event_JumpOrPushSwitchBlock(void) {
   Engine_EventBegin();
@@ -1843,7 +1843,7 @@ static __inline__ void Actor_CopyPosition(struct FieldActor *destination,
   destination->z.fixed = source->z.fixed;
 }
 
-/// In VenusLighthouse6, Carry on one of the four floating blocks: it settles
+/// In VenusLighthouse5, Carry on one of the four floating blocks: it settles
 /// where it is set down (FLAG_SCENE_TEMP_00 plus its number) and the platforms
 /// under the blocks rise or sink to their weight.
 static void Event_CarryFloatingBlock(void) {
@@ -1944,7 +1944,7 @@ static void Event_CarryFloatingBlock(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse6, pushing a block (triggers 35 to 37).
+/// In VenusLighthouse5, pushing a block (triggers 35 to 37).
 static void Event_PushPuzzleBlock(void) {
 
   Engine_EventBegin();
@@ -1952,7 +1952,7 @@ static void Event_PushPuzzleBlock(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse6, stepping on the west floor switch: the west wall
+/// In VenusLighthouse5, stepping on the west floor switch: the west wall
 /// slides aside, the first time only (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED),
 /// and the party goes on through the next exit.
 static void Event_StepOnWestWallSwitch(void) {
@@ -2019,7 +2019,7 @@ static void Event_StepOnWestWallSwitch(void) {
   }
 }
 
-/// In VenusLighthouse6, stepping on the east floor switch: the east wall
+/// In VenusLighthouse5, stepping on the east floor switch: the east wall
 /// slides aside, the first time only (FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED),
 /// and the party goes on through the next exit.
 static void Event_StepOnEastWallSwitch(void) {
@@ -2085,7 +2085,7 @@ static void Event_StepOnEastWallSwitch(void) {
   }
 }
 
-/// In VenusLighthouse6, Move on one of the four blocks in the pillar room: on
+/// In VenusLighthouse5, Move on one of the four blocks in the pillar room: on
 /// a free socket it sinks in, and with all four sunk the gate opens
 /// (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN).
 static void Event_MovePillarSwitchBlock(void) {
@@ -2234,7 +2234,7 @@ static void Event_MovePillarSwitchBlock(void) {
   Event_End();
 }
 
-/// In VenusLighthouse6, walking into the gap or a pillar-room block: jump the
+/// In VenusLighthouse5, walking into the gap or a pillar-room block: jump the
 /// gap, else push the block, which may sink into a socket.
 static void Event_JumpOrPushPillarBlock(void) {
 
@@ -2252,7 +2252,7 @@ static void Event_JumpOrPushPillarBlock(void) {
   Event_MovePillarSwitchBlock();
 }
 
-/// In VenusLighthouse6, walking south into the passage (trigger 18): the
+/// In VenusLighthouse5, walking south into the passage (trigger 18): the
 /// leader rises out of the room to the floor above (exit 20).
 static void Event_EnterRisingPassage(void) {
   Engine_EventBegin();
@@ -2272,22 +2272,22 @@ static void Event_EnterRisingPassage(void) {
 const struct SceneEvent *Scene_GetEvents(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_VenusLighthouse1) {
+  if (scene == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEvents1;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse2) {
+  if (scene == (s32)&SceneId_VenusLighthouse1) {
     return gVenusLighthouseEvents2;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse3) {
+  if (scene == (s32)&SceneId_VenusLighthouse2) {
     return gVenusLighthouseEvents3;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse4) {
+  if (scene == (s32)&SceneId_VenusLighthouse3) {
     return gVenusLighthouseEvents4;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse5) {
+  if (scene == (s32)&SceneId_VenusLighthouse4) {
     return gVenusLighthouseEvents5;
   }
-  if (scene == (s32)&SceneId_VenusLighthouse6) {
+  if (scene == (s32)&SceneId_VenusLighthouse5) {
     return gVenusLighthouseEvents6;
   }
   return gVenusLighthouseEvents2;
@@ -2328,9 +2328,9 @@ static void VenusLighthouse_VisitPillarActors(void) {
 /// Restores puzzle progress, actors and entrance effects for all six scenes,
 /// by scene and entrance; on every arrival it sets FLAG_VENUS_LIGHTHOUSE_LIT
 /// and, after a battle, restores the scripted actors' child values.
-/// VenusLighthouse2's entrances 22, 23 and 26 (23 is the way down from
-/// VenusLighthouse3) and VenusLighthouse3's entrance 16 (the way up from
-/// VenusLighthouse2) clear FLAG_SHOW_LOCATION_NAME.
+/// VenusLighthouse1's entrances 22, 23 and 26 (23 is the way down from
+/// VenusLighthouse2) and VenusLighthouse2's entrance 16 (the way up from
+/// VenusLighthouse1) clear FLAG_SHOW_LOCATION_NAME.
 s32 Scene_RunEntrySetup(void) {
   struct FieldActor *actor;
   s32 scene;
@@ -2345,7 +2345,7 @@ s32 Scene_RunEntrySetup(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   scene = gGameState.scene;
   // Restore the outdoor scholars and each interior puzzle by its entrance.
-  if (scene == (s32)&SceneId_VenusLighthouse1) {
+  if (scene == (s32)&SceneId_VenusLighthouseEntry) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
       VenusLighthouse_PrepareStandingActor(8);
@@ -2359,7 +2359,7 @@ s32 Scene_RunEntrySetup(void) {
     Engine_ActorSetSpritePriority(12, 2);
     VenusLighthouse_PrepareStandingActor(13);
     VenusLighthouse_PrepareStandingActor(14);
-  } else if (scene == (s32)&SceneId_VenusLighthouse2) {
+  } else if (scene == (s32)&SceneId_VenusLighthouse1) {
     switch (gGameState.entrance) {
     case 1:
     case 2:
@@ -2429,7 +2429,7 @@ s32 Scene_RunEntrySetup(void) {
       }
       break;
     }
-  } else if (scene == (s32)&SceneId_VenusLighthouse3) {
+  } else if (scene == (s32)&SceneId_VenusLighthouse2) {
     // Restore depth blocks, the Carry puzzle and the paired tile-wave passage.
     switch (gGameState.entrance) {
     case 16:
@@ -2497,7 +2497,7 @@ s32 Scene_RunEntrySetup(void) {
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
-  } else if (scene == (s32)&SceneId_VenusLighthouse4) {
+  } else if (scene == (s32)&SceneId_VenusLighthouse3) {
     // Restore the first sliding wall and its sunken-block gate.
     switch (gGameState.entrance) {
     case 2:
@@ -2577,7 +2577,7 @@ s32 Scene_RunEntrySetup(void) {
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
-  } else if (scene == (s32)&SceneId_VenusLighthouse5) {
+  } else if (scene == (s32)&SceneId_VenusLighthouse4) {
     // Restore the two tile waves and the three-block socket puzzle.
     switch (gGameState.entrance) {
     case 19:
@@ -2671,7 +2671,7 @@ s32 Scene_RunEntrySetup(void) {
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
-  } else if (scene == (s32)&SceneId_VenusLighthouse6) {
+  } else if (scene == (s32)&SceneId_VenusLighthouse5) {
     // Restore floating supports, opposing walls and the four-block pillar
     // puzzle.
     switch (gGameState.entrance) {
@@ -2835,10 +2835,10 @@ s32 Scene_RunEntrySetup(void) {
   return 0;
 }
 
-/// Standing on this floor (VenusLighthouse6's trigger 31) carries the party
+/// Standing on this floor (VenusLighthouse5's trigger 31) carries the party
 /// north in a trail of dust; at a ledge they drop down. The floors of
 /// triggers 30, 32 and 33 do the same south, west and east, and the southward
-/// floor also lies in VenusLighthouse3 and VenusLighthouse5.
+/// floor also lies in VenusLighthouse2 and VenusLighthouse4.
 static void Event_DriftNorth(void) {
   struct Vector3 args;
 
@@ -3335,7 +3335,7 @@ VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
       return 0;
     }
     // The socket tables retain their moving cursors between push-script calls.
-    if (gGameState.scene == (s32)&SceneId_VenusLighthouse5) {
+    if (gGameState.scene == (s32)&SceneId_VenusLighthouse4) {
       for (switchIndex = 0;
            switchIndex <= 3 &&
            !(block->x.fixed >> 20 == gVenusSwitchCells[switchIndex].x &&

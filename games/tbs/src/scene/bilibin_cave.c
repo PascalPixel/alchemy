@@ -1,7 +1,7 @@
 /// @file
 /// The Bilibin Cave Entrance and Bilibin Cave, two places on the way north
 /// from Bilibin toward Imil that share this overlay: the Bilibin Cave Entrance
-/// is BilibinCave3 (scene 49), and Bilibin Cave is BilibinCave2 (scene 48)
+/// is BilibinCaveEntrance (scene 49), and Bilibin Cave is BilibinCave2 (scene 48)
 /// and, beyond it, BilibinCave1 (scene 47), whose far end opens onto the world
 /// map farther north. No one speaks here: each scene is a run of Psynergy
 /// puzzles, the getters pick its tables by gGameState.scene, and
@@ -80,7 +80,7 @@ static void BilibinCave_RestoreCave2(void);
 static void BilibinCave_RestoreCave1(void);
 static void BilibinCave_EmptyActorSetupHook(s32 actorId);
 
-/// Actors of the Bilibin Cave Entrance (BilibinCave3), named, as in the other
+/// Actors of the Bilibin Cave Entrance (BilibinCaveEntrance), named, as in the other
 /// two scenes, by the Psynergy that works on them.
 enum {
   GROWTH_TARGET = 8 ///< a sprout Growth grows into a vine
@@ -113,7 +113,7 @@ static s32 BilibinCave_ClearScriptedActorSpriteFlags(
 const struct SceneEntrance *BilibinCave_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_BilibinCave3) {
+  if (scene == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntrances3;
   }
   if (scene == (s32)&SceneId_BilibinCave2) {
@@ -132,7 +132,7 @@ const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
 const struct ScenePlacement *BilibinCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_BilibinCave3) {
+  if (scene == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCavePlacements3;
   }
   if (scene == (s32)&SceneId_BilibinCave2) {
@@ -147,7 +147,7 @@ const struct ScenePlacement *BilibinCave_GetPlacements(void) {
 const struct SceneEvent *BilibinCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_BilibinCave3) {
+  if (scene == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEvents3;
   }
   if (scene == (s32)&SceneId_BilibinCave2) {
@@ -337,7 +337,7 @@ static void Event_ClearMapTriggerFlag(void) {
 s32 BilibinCave_Initialize(void) {
   s16 variant = gGameState.scene;
 
-  if (variant == (s32)&SceneId_BilibinCave3) {
+  if (variant == (s32)&SceneId_BilibinCaveEntrance) {
     BilibinCave_RestoreEntrance();
   } else if (variant == (s32)&SceneId_BilibinCave2) {
     BilibinCave_RestoreCave2();

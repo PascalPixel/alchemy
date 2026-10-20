@@ -652,7 +652,7 @@
 #define FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE 0x9c8
 #define FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE 0x9c9
 #define FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE 0x9ca
-/// The ivy on Crossbone Isle itself (CrossboneIsle1): four flags from this
+/// The ivy on Crossbone Isle itself (CrossboneIsle): four flags from this
 /// one.
 #define FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY 0x8c4
 /// The nine corridor rooms of Crossbone Isle Cave (CrossboneIsle6 to 14): one

@@ -11,7 +11,7 @@
 /// the finals day. FLAG_COLOSSO_OVER, set after the third finals match, closes
 /// the colosseum until next year.
 ///
-/// - Colosseum Entrance (ColosseumEntrance3, scene 142), before the gates,
+/// - Colosseum Entrance (ColosseumEntrance, scene 142), before the gates,
 ///   reached from Tolbi. During the trials the crowd cannot get in: its people
 ///   talk of the heats and of the Lucky Guess, a bet on which warrior will win
 ///   the finals, and Mind Read hears what they hope for. On the finals day
@@ -27,10 +27,10 @@
 ///   over, ColosseumEntrance_UpdateEntranceCells changes the map's cells before
 ///   the gates, and two people linger to say the colosseum is closed until next
 ///   year. Exit 1 leads back to Tolbi.
-/// - Colosseum Tunnel (ColosseumEntrance2, scene 141), the passage from Babi's
+/// - Colosseum Tunnel (ColosseumTunnel, scene 141), the passage from Babi's
 ///   Palace (its exit 13) into the Colosseum, whose end of the tunnel
 ///   (entrances 2 and 4) takes the same area name. It has only its two exits.
-/// - Colosseum (ColosseumEntrance1, scene 140), one map that holds the stands,
+/// - Colosseum (Colosseum, scene 140), one map that holds the stands,
 ///   the trial grounds, the finals' waiting room and the passages to the
 ///   finals stages. Each arrival is an entrance of its own, and
 ///   ColosseumEntrance_ApplyArrivalState plays the scene that entrance stands
@@ -113,11 +113,11 @@ static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
   ColosseumEntrance_FaceDirection(actor, facing);
 }
 
-/// The attendant by the trials in the Colosseum's stands (ColosseumEntrance1,
+/// The attendant by the trials in the Colosseum's stands (Colosseum,
 /// entrances 5 and 69).
 enum { TRIAL_ATTENDANT = 17 };
 
-/// The Colosseum's waiting room (ColosseumEntrance1, entrance 12): an official
+/// The Colosseum's waiting room (Colosseum, entrance 12): an official
 /// and the seven warriors who cleared the trials, as they introduce
 /// themselves.
 enum {
@@ -134,10 +134,10 @@ enum {
 const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_ColosseumEntrance1) {
+  if (scene == (s32)&SceneId_Colosseum) {
     return gColosseumEntranceEntrances1;
   }
-  if (scene == (s32)&SceneId_ColosseumEntrance3) {
+  if (scene == (s32)&SceneId_ColosseumEntrance) {
     return gColosseumEntranceEntrances3;
   }
   return gColosseumEntranceEntrancesOther;
@@ -154,7 +154,7 @@ const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
 const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
   const struct ScenePlacement *table;
 
-  if (gGameState.scene == (s32)&SceneId_ColosseumEntrance1) {
+  if (gGameState.scene == (s32)&SceneId_Colosseum) {
     switch (gGameState.entrance) {
     case 5:
     case 69:
@@ -183,7 +183,7 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
       table = gColosseumEntrancePlacements1;
       break;
     }
-  } else if (gGameState.scene == (s32)&SceneId_ColosseumEntrance3) {
+  } else if (gGameState.scene == (s32)&SceneId_ColosseumEntrance) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntrancePlacements3AfterColosso;
     } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
@@ -200,16 +200,16 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
 const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_ColosseumEntrance2) {
+  if (scene == (s32)&SceneId_ColosseumTunnel) {
     return gColosseumEntranceEvents2;
   }
-  if (scene == (s32)&SceneId_ColosseumEntrance1) {
+  if (scene == (s32)&SceneId_Colosseum) {
     if (gGameState.entrance == 12) {
       return gColosseumEntranceEvents1Entrance12;
     }
     return gColosseumEntranceEvents1;
   }
-  if (scene == (s32)&SceneId_ColosseumEntrance3) {
+  if (scene == (s32)&SceneId_ColosseumEntrance) {
     return gColosseumEntranceEvents3;
   }
   return gColosseumEntranceEventsOther;
@@ -1082,9 +1082,9 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 s32 ColosseumEntrance_Initialize(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_ColosseumEntrance1) {
+  if (scene == (s32)&SceneId_Colosseum) {
     ColosseumEntrance_ApplyArrivalState();
-  } else if (scene == (s32)&SceneId_ColosseumEntrance3) {
+  } else if (scene == (s32)&SceneId_ColosseumEntrance) {
     ColosseumEntrance_UpdateEntranceCells();
   }
   return 0;

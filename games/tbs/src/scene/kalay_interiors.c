@@ -18,7 +18,7 @@
 ///   find comes first in the table, under the same trigger), and barrels hold
 ///   11 coins and an Elixir. The inn's table and the houses' both carry these
 ///   searches.
-/// - Kalay Sanctum (KalayInteriors2, scene 101), whose priest offers the
+/// - Kalay Sanctum (KalaySanctum, scene 101), whose priest offers the
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back to the town's entrance 8.
 
@@ -63,7 +63,7 @@ const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
   if (scene == (s32)&SceneId_KalayInteriors1) {
     return gKalayInteriors_HouseEntrances;
   }
-  if (scene == (s32)&SceneId_KalayInteriors2) {
+  if (scene == (s32)&SceneId_KalaySanctum) {
     return gKalayInteriors_SanctumEntrances;
   }
   return gKalayInteriors_NoEntrances;
@@ -100,7 +100,7 @@ const struct ScenePlacement *KalayInteriors_GetPlacements(void) {
     FieldScene_PrepareActors(table);
     return table;
   }
-  if (scene == (s32)&SceneId_KalayInteriors2) {
+  if (scene == (s32)&SceneId_KalaySanctum) {
     return gKalayInteriors_SanctumPlacements;
   }
   return gKalayInteriors_NoPlacements;
@@ -127,7 +127,7 @@ const struct SceneEvent *KalayInteriors_GetEvents(void) {
       return gKalayInteriors_HouseEvents;
     }
   }
-  if (scene == (s32)&SceneId_KalayInteriors2) {
+  if (scene == (s32)&SceneId_KalaySanctum) {
     return gKalayInteriors_SanctumEvents;
   }
   return gKalayInteriors_NoEvents;

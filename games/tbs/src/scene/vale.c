@@ -46,7 +46,7 @@
 /// cells 100 and 101 (FLAG_SCENE_TEMP_04 while inside), and cells of an upper
 /// path that change while the leader is on it (FLAG_SCENE_TEMP_10); after a
 /// battle (FLAG_KEEP_PARTY_POSITION) the setup restores both. Exits: 1 up Mt.
-/// Aleph to Sol Entrance (SolSanctumEntrance2, scene 19), 2 to ValeHome (scene
+/// Aleph to Sol Entrance (SolEntrance, scene 19), 2 to ValeHome (scene
 /// 5), 3 and 4 to ValeKraden (scene 6), the doors 5, 6, 8, 9 and 10 into the
 /// houses (scene 7, vale_interiors.c, rooms 6, 5, 2, 1 and 2), 7 into Isaac's
 /// house (ValeBabi, scene 8) and 11 into Vale Sanctum (Sanctum, scene 9). Two

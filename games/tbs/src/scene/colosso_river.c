@@ -1,5 +1,5 @@
 /// @file
-/// Colosseum Final 1 (ColossoRiver, scene 143), the site of the first finals
+/// Colosseum Final 1 (ColosseumFinal1, scene 143), the site of the first finals
 /// match, where Isaac races Azart, the second-best of the warriors who cleared
 /// the trials, through four stages to the arena and fights him there.
 ///
@@ -543,8 +543,8 @@ static void Event_ReachArena(void) {
    * as 1 - approach, 1 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(72, base - approach + 1);
   Battle_SetStart(3);
-  Event_SetNextDestination((s32)&SceneId_ColossoRiver, 4);
-  Event_SetDefeatDestination((s32)&SceneId_ColossoRiver, 5);
+  Event_SetNextDestination((s32)&SceneId_ColosseumFinal1, 4);
+  Event_SetDefeatDestination((s32)&SceneId_ColosseumFinal1, 5);
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 

@@ -2,8 +2,8 @@
 /// Babi Lighthouse, which Babi is having built on ancient ruins just north of
 /// Lalivero, and the road up to it: four scenes that share this overlay,
 /// three places in the game's area names, met in this order. The Road to
-/// Babi Lighthouse is BabiLighthouse4 (scene 177), the Babi Lighthouse Entry
-/// BabiLighthouse3 (scene 176), and Babi Lighthouse itself BabiLighthouse2
+/// Babi Lighthouse is RoadToBabiLighthouse (scene 177), the Babi Lighthouse Entry
+/// BabiLighthouseEntry (scene 176), and Babi Lighthouse itself BabiLighthouse2
 /// and BabiLighthouse1 (scenes 175 and 174), rooms 2 and 1 here. The four
 /// share one exit table, the getters pick the rest by gGameState.scene, and
 /// BabiLighthouse_SetupScene restores the scene being entered.
@@ -109,7 +109,7 @@ enum {
 /// Room 2's Djinni, Luff.
 enum { ACTOR_DJINNI = 8 };
 
-/// The Entry (BabiLighthouse3): the two blocks on the ledges, the sprout for
+/// The Entry (BabiLighthouseEntry): the two blocks on the ledges, the sprout for
 /// Growth and the four men the kidnappers knocked down on their way in.
 enum {
   ACTOR_LEFT_BLOCK = 8,
@@ -118,7 +118,7 @@ enum {
   ACTOR_FIRST_FALLEN_MAN = 11
 };
 
-/// The Road to Babi Lighthouse (BabiLighthouse4): four workers and the block
+/// The Road to Babi Lighthouse (RoadToBabiLighthouse): four workers and the block
 /// for Move and Carry.
 enum { ACTOR_ROAD_BLOCK = 12 };
 
@@ -241,7 +241,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_BabiLighthouse3) {
+  if (scene == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_Entrances3;
   }
   if (scene == (s32)&SceneId_BabiLighthouse2) {
@@ -256,7 +256,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// Only the Entry has regions: the three spots that drop into the Tunnel
 /// Ruins.
 const struct SceneRegion *Scene_GetRegions(void) {
-  if (gGameState.scene == (s32)&SceneId_BabiLighthouse3) {
+  if (gGameState.scene == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_Regions3;
   }
   return 0;
@@ -268,7 +268,7 @@ const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_BabiLighthouse3) {
+  if (scene == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_Placements3;
   }
   if (scene == (s32)&SceneId_BabiLighthouse2) {
@@ -1130,7 +1130,7 @@ static void BabiLighthouse_ClimbOrAdvancePair(void) {
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_BabiLighthouse3) {
+  if (scene == (s32)&SceneId_BabiLighthouseEntry) {
     return gBabiLighthouse_Events3;
   }
   if (scene == (s32)&SceneId_BabiLighthouse2) {
@@ -1223,13 +1223,13 @@ s32 BabiLighthouse_SetupScene(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   state = &gGameState;
   scene = state->scene;
-  if (scene != (s32)&SceneId_BabiLighthouse4) {
+  if (scene != (s32)&SceneId_RoadToBabiLighthouse) {
     state->retreatEntrance = 1;
-    state->retreatScene = (s32)&SceneId_BabiLighthouse3;
+    state->retreatScene = (s32)&SceneId_BabiLighthouseEntry;
     sceneCopy = state->scene;
   }
   // The road: the moved block's collision where it stands.
-  if (scene == (s32)&SceneId_BabiLighthouse4) {
+  if (scene == (s32)&SceneId_RoadToBabiLighthouse) {
     placedActor = Object_GetById(ACTOR_ROAD_BLOCK);
     x = placedActor->x.fixed >> 20;
     if (x == 20) {
@@ -1238,7 +1238,7 @@ s32 BabiLighthouse_SetupScene(void) {
         Map_CopyCellAttributes(38, 12, 1, 1, x, z);
       }
     }
-  } else if (sceneCopy == (s32)&SceneId_BabiLighthouse3) {
+  } else if (sceneCopy == (s32)&SceneId_BabiLighthouseEntry) {
     // Set up the movable ledge blocks and the staggered actor animations.
     Actor_SetChildValue(ACTOR_LEFT_BLOCK, 6);
     Actor_SetChildValue(ACTOR_RIGHT_BLOCK, 6);

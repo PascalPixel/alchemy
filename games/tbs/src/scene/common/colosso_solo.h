@@ -320,9 +320,9 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
   Battle_ResetEffectCounter();
   UiWork_PushValueSlot(competitor, MSG_ARG_NUMBER);
   scene = gGameState.scene;
-  if (scene == (s32)&SceneId_ColossoRiver) {
+  if (scene == (s32)&SceneId_ColosseumFinal1) {
     message = MsgColossoStageFirstFinalsMatch;
-  } else if (scene == (s32)&SceneId_ColossoWall) {
+  } else if (scene == (s32)&SceneId_ColosseumFinal2) {
     message = MsgColossoStageSecondFinalsMatch;
   } else {
     message = MsgColossoStageThirdFinalsMatch;
@@ -357,9 +357,9 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 competitor) {
 
   UiWork_PushValueSlot(competitor, MSG_ARG_NUMBER);
   scene = gGameState.scene;
-  if (scene == (s32)&SceneId_ColossoRiver) {
+  if (scene == (s32)&SceneId_ColosseumFinal1) {
     message = MsgColossoStageFirstFinalsMatch;
-  } else if (scene == (s32)&SceneId_ColossoWall) {
+  } else if (scene == (s32)&SceneId_ColosseumFinal2) {
     message = MsgColossoStageSecondFinalsMatch;
   } else {
     message = MsgColossoStageThirdFinalsMatch;

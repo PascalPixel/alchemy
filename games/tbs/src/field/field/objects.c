@@ -1,6 +1,6 @@
 /// @file
 /// Field objects: the object pool, dissolving sprites, starting scripts.
-/// Part of field.c, the field object, compiled only through it.
+// Part of field.c.
 
 #include "../field_internal.h"
 

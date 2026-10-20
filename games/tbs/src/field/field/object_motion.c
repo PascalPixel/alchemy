@@ -1,6 +1,6 @@
 /// @file
 /// Object motion, each frame, and the first object script commands.
-/// Part of field.c, the field object, compiled only through it.
+// Part of field.c.
 
 #include "../field_internal.h"
 

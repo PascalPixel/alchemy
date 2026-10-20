@@ -1,6 +1,6 @@
 /// @file
 /// Terrain: ground heights and the collision of cells and the world map.
-/// Part of field.c, the field object, compiled only through it.
+// Part of field.c.
 
 #include "../field_internal.h"
 

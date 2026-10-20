@@ -1,7 +1,7 @@
 /// @file
 /// The Djinn menu: its screen, the Djinn list, help, and choosing the Djinn to
 /// set, put on standby, give or trade.
-/// Part of menu.c, the menu object, compiled only through it.
+// Part of menu.c.
 
 #include "../menu_internal.h"
 

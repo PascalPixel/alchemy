@@ -1,7 +1,7 @@
 /// @file
 /// An action played: its targets, and how an attack, a cast, an item, a
 /// summon or an escape is staged.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

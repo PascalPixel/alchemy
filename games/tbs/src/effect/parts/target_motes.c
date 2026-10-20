@@ -1,6 +1,6 @@
 /// @file
 /// Status motes: Taint, Delude, Paralyze, Sleep, Curse ....
-/// Part of effect.c, the battle effect object, compiled only through it.
+// Part of effect.c.
 
 #include "../effect_internal.h"
 

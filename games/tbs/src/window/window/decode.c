@@ -1,6 +1,6 @@
 /// @file
 /// The message decoder: articles, names and numbers written out.
-/// Part of window.c, the window object, compiled only through it.
+// Part of window.c.
 
 #include "../window_internal.h"
 

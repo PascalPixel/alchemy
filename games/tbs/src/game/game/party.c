@@ -1,6 +1,6 @@
 /// @file
 /// Enemy units, the active party, coins and counters, and summons.
-/// Part of game.c, the game object, compiled only through it.
+// Part of game.c.
 
 #include "../game_internal.h"
 

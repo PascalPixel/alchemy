@@ -1,6 +1,6 @@
 /// @file
 /// Interrupt handlers, the frame wait, key repeat and the VBlank handler.
-/// Part of runtime.c, the runtime object, compiled only through it.
+// Part of runtime.c.
 
 #include "../runtime_internal.h"
 

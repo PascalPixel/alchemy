@@ -1,6 +1,6 @@
 /// @file
 /// The 3D transform, its stack, the look-at matrix and the projection.
-/// Part of runtime.c, the runtime object, compiled only through it.
+// Part of runtime.c.
 
 #include "../runtime_internal.h"
 

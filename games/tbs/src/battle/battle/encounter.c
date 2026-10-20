@@ -1,6 +1,6 @@
 /// @file
 /// A whole battle, Battle_RunEncounter, and the lists of the units in it.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

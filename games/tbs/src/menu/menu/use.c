@@ -1,7 +1,7 @@
 /// @file
 /// Using an item or Psynergy from the menu: what it does to the party, and the
 /// sound it plays.
-/// Part of menu.c, the menu object, compiled only through it.
+// Part of menu.c.
 
 #include "../menu_internal.h"
 

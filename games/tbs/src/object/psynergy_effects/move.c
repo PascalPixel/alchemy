@@ -1,6 +1,6 @@
 /// @file
 /// Move: a hand pushes the target, steered with the d-pad.
-/// Part of psynergy_effects.c, compiled only through it.
+// Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 

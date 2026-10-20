@@ -1,7 +1,7 @@
 /// @file
 /// The world map: its perspective view, its tiles, and the still picture of
 /// the view BG1 shows while a menu or event runs.
-/// Part of field.c, the field object, compiled only through it.
+// Part of field.c.
 
 #include "../field_internal.h"
 

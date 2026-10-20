@@ -1,8 +1,7 @@
 /// @file
 /// The Judgment summon.
-/// Part of effect.c, the battle effect object, compiled only through it. The
-/// folder README describes its two parts, the gathering and the sweep, under
-/// "Effect families".
+/// The folder README describes its two parts, the gathering and the sweep,
+/// under "Effect families".
 
 #include "../effect_internal.h"
 

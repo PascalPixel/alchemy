@@ -1,6 +1,6 @@
 /// @file
 /// A Djinni's hop before its battle, joining the party, the effect slots.
-/// Part of psynergy_effects.c, compiled only through it.
+// Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 

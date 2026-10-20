@@ -1,6 +1,6 @@
 /// @file
 /// Debug: the party presets, the message viewer and the battle test menu.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

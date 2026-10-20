@@ -1,6 +1,6 @@
 /// @file
 /// The selection frame and price digit tiles, and the hand cursor.
-/// Part of shop.c, the shop object, compiled only through it.
+// Part of shop.c.
 
 #include "../shop_internal.h"
 

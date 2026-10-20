@@ -1,6 +1,6 @@
 /// @file
 /// The Game Ticket counter, the gift items and every shop's stock.
-/// Part of shop.c, the shop object, compiled only through it.
+// Part of shop.c.
 
 #include "../shop_internal.h"
 

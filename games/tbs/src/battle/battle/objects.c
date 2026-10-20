@@ -1,7 +1,7 @@
 /// @file
 /// Each frame's sprite priorities, the status icons, the poses and the
 /// sprites of the battle objects.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

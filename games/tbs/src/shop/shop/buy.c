@@ -1,6 +1,6 @@
 /// @file
 /// Buying: the stock list, the money and party windows, quantities and prices.
-/// Part of shop.c, the shop object, compiled only through it.
+// Part of shop.c.
 
 #include "../shop_internal.h"
 

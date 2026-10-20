@@ -1,6 +1,6 @@
 /// @file
 /// Screen fades through the blend registers.
-/// Part of runtime.c, the runtime object, compiled only through it.
+// Part of runtime.c.
 
 #include "../runtime_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
 /// An enemy's choice of action, BattleCommand_SelectAutomatic.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

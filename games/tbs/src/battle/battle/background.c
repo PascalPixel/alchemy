@@ -1,7 +1,7 @@
 /// @file
 /// The battle background, its palette and perspective, the camera's zoom and
 /// the units' highlights.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

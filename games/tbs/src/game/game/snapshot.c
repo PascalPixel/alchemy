@@ -1,6 +1,6 @@
 /// @file
 /// Equipping a given item, and the equipment put aside for the Colosso.
-/// Part of game.c, the game object, compiled only through it.
+// Part of game.c.
 
 #include "../game_internal.h"
 

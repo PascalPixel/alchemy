@@ -1,6 +1,6 @@
 /// @file
 /// Swirling stars, orbiting skulls and target bursts.
-/// Part of effect.c, the battle effect object, compiled only through it.
+// Part of effect.c.
 
 #include "../effect_internal.h"
 

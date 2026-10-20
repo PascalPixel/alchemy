@@ -1,6 +1,6 @@
 /// @file
 /// The spoils: coins, experience, items and level ups.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

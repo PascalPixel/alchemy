@@ -1,6 +1,6 @@
 /// @file
 /// The selection screen's row of icons, and the field menu.
-/// Part of window.c, the window object, compiled only through it.
+// Part of window.c.
 
 #include "../window_internal.h"
 

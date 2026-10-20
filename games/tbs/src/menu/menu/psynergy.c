@@ -1,7 +1,7 @@
 /// @file
 /// The Psynergy menu: the field menu's Psynergy screen, the member and
 /// Psynergy lists, targets, and the L and R shortcuts.
-/// Part of menu.c, the menu object, compiled only through it.
+// Part of menu.c.
 
 #include "../menu_internal.h"
 

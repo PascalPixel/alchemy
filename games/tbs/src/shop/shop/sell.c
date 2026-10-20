@@ -1,6 +1,6 @@
 /// @file
 /// Selling: choosing a party member, the item grid and the sale.
-/// Part of shop.c, the shop object, compiled only through it.
+// Part of shop.c.
 
 #include "../shop_internal.h"
 

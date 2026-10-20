@@ -1,6 +1,6 @@
 /// @file
 /// The canvas layer: transfers, opening and closing, tile maps, lines.
-/// Part of effect.c, the battle effect object, compiled only through it.
+// Part of effect.c.
 
 #include "../effect_internal.h"
 

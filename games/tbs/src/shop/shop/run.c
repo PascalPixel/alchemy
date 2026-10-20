@@ -1,6 +1,6 @@
 /// @file
 /// Running a shop, its cursor work, and the message helpers every counter uses.
-/// Part of shop.c, the shop object, compiled only through it.
+// Part of shop.c.
 
 #include "../shop_internal.h"
 

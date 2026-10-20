@@ -1,7 +1,7 @@
 /// @file
 /// A round's actions: the party's commands, the enemies' or the link
 /// opponent's, and their turn order.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

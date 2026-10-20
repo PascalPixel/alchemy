@@ -1,6 +1,6 @@
 /// @file
 /// Scene changes: exits, returns from battle, the main loop, entering.
-/// Part of object.c, the field object, compiled only through it.
+// Part of object.c.
 
 #include "../object_internal.h"
 

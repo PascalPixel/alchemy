@@ -1,7 +1,7 @@
 /// @file
 /// The end of a turn and of a round: counters, Djinn recovery, poison and
 /// the Grim Reaper.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

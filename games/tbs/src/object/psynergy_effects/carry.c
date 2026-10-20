@@ -1,6 +1,6 @@
 /// @file
 /// Carry: two hands lift the target, move it with the d-pad and drop it.
-/// Part of psynergy_effects.c, compiled only through it.
+// Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 

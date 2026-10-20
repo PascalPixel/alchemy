@@ -1,6 +1,6 @@
 /// @file
 /// The stat arrows and the other icons the menus load into VRAM blocks.
-/// Part of menu.c, the menu object, compiled only through it.
+// Part of menu.c.
 
 #include "../menu_internal.h"
 

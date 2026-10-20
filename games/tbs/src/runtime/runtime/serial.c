@@ -1,6 +1,6 @@
 /// @file
 /// The link cable: payload exchange, block transfers and the link test.
-/// Part of runtime.c, the runtime object, compiled only through it.
+// Part of runtime.c.
 
 #include "../runtime_internal.h"
 

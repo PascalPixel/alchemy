@@ -1,6 +1,6 @@
 /// @file
 /// Items and inventories: equipping, adding, removing, breaking and counting.
-/// Part of game.c, the game object, compiled only through it.
+// Part of game.c.
 
 #include "../game_internal.h"
 

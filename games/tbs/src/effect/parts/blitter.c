@@ -1,7 +1,6 @@
 /// @file
 /// The blitter builder, BattleFx_BuildBlitter.
-/// Part of effect.c, the battle effect object, compiled only through it. The
-/// folder README describes the routine it writes, block by block, under
+/// The folder README describes the routine it writes, block by block, under
 /// "Blitters"; the fragments' registers and modes are described at the top of
 /// battle_effect_composite.s.
 

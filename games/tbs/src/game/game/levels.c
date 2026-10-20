@@ -1,6 +1,6 @@
 /// @file
 /// Actions and Psynergy lists, characters, experience and levelling up.
-/// Part of game.c, the game object, compiled only through it.
+// Part of game.c.
 
 #include "../game_internal.h"
 

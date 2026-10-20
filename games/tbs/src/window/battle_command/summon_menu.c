@@ -1,6 +1,6 @@
 /// @file
 /// The battle summon menu.
-/// Part of battle_command.c, the menu object, compiled only through it.
+// Part of battle_command.c.
 
 #include "../battle_command_internal.h"
 

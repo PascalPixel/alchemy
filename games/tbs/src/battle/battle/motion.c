@@ -1,7 +1,7 @@
 /// @file
 /// The units' movements: returning, running, leaping and knocked back, and
 /// their positions on the screen.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

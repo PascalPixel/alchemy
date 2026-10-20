@@ -1,6 +1,6 @@
 /// @file
 /// Djinn: definitions, setting and standby, and their counts.
-/// Part of game.c, the game object, compiled only through it.
+// Part of game.c.
 
 #include "../game_internal.h"
 

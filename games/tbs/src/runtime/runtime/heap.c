@@ -1,6 +1,6 @@
 /// @file
 /// The heap: its two bump allocators and named slots.
-/// Part of runtime.c, the runtime object, compiled only through it.
+// Part of runtime.c.
 
 #include "../runtime_internal.h"
 

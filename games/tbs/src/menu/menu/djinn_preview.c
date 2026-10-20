@@ -1,7 +1,7 @@
 /// @file
 /// Previewing a Djinn change before it is made, the chosen member's status,
 /// and the checks that keep the members' Djinn counts even.
-/// Part of menu.c, the menu object, compiled only through it.
+// Part of menu.c.
 
 #include "../menu_internal.h"
 

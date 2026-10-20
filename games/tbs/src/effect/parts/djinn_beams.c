@@ -1,6 +1,6 @@
 /// @file
 /// Revive, Water of Life, Quartz and Dew.
-/// Part of effect.c, the battle effect object, compiled only through it.
+// Part of effect.c.
 
 #include "../effect_internal.h"
 

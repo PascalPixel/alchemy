@@ -1,6 +1,6 @@
 /// @file
 /// Battle events played over frames, BattleEvent_Playback.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

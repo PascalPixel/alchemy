@@ -1,6 +1,6 @@
 /// @file
 /// The area name notice, the Psynergy shortcut picker and heap block 19.
-/// Part of window.c, the window object, compiled only through it.
+// Part of window.c.
 
 #include "../window_internal.h"
 

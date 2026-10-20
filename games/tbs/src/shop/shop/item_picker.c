@@ -1,6 +1,6 @@
 /// @file
 /// The item picker: which member's item to drop when every bag is full.
-/// Part of shop.c, the shop object, compiled only through it.
+// Part of shop.c.
 
 #include "../shop_internal.h"
 

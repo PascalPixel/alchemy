@@ -2,7 +2,7 @@
 /// Battle events: a downed unit's reset, waiting for the player, and the
 /// event queue, filled by BattleEvPush and played at once by
 /// BattleEv_DispatchQueued.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

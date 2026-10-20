@@ -1,6 +1,6 @@
 /// @file
 /// Speaker definitions: voices and idle lines by sprite.
-/// Part of object.c, the field object, compiled only through it.
+// Part of object.c.
 
 #include "../object_internal.h"
 

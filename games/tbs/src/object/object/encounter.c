@@ -1,6 +1,6 @@
 /// @file
 /// Random encounters, and each scene's music, place name and backdrop.
-/// Part of object.c, the field object, compiled only through it.
+// Part of object.c.
 
 #include "../object_internal.h"
 

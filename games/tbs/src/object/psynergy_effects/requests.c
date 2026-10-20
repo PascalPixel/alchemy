@@ -1,6 +1,6 @@
 /// @file
 /// Battles and destinations an event requests, and the queued sound.
-/// Part of psynergy_effects.c, compiled only through it.
+// Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
 /// Showing a found item, and Reveal's sparkles on hidden things.
-/// Part of object.c, the field object, compiled only through it.
+// Part of object.c.
 
 #include "../object_internal.h"
 

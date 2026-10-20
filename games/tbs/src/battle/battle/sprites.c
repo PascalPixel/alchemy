@@ -1,6 +1,6 @@
 /// @file
 /// Battle sprites: enemy sprite slots and the party's weapon sprites.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

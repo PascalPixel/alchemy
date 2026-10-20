@@ -1,6 +1,6 @@
 /// @file
 /// Projectile volleys (Slash, Shuriken, Wing Flutter, Blizzard ...).
-/// Part of effect.c, the battle effect object, compiled only through it.
+// Part of effect.c.
 
 #include "../effect_internal.h"
 

@@ -1,7 +1,7 @@
 /// @file
 /// The battle camera each frame, the opening announcement, the unit lists,
 /// and the party's battle state and Djinn as a battle starts and ends.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
 /// Player control: the configured keys and moving objects by the pad.
-/// Part of field.c, the field object, compiled only through it.
+// Part of field.c.
 
 #include "../field_internal.h"
 

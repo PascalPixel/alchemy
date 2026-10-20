@@ -1,6 +1,6 @@
 /// @file
 /// Battle objects made and placed on the battlefield.
-/// Part of battle.c, the battle object, compiled only through it.
+// Part of battle.c.
 
 #include "../battle_internal.h"
 

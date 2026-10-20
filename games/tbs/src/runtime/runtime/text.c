@@ -1,6 +1,6 @@
 /// @file
 /// Number text, the debug text screen and the window graphics.
-/// Part of runtime.c, the runtime object, compiled only through it.
+// Part of runtime.c.
 
 #include "../runtime_internal.h"
 

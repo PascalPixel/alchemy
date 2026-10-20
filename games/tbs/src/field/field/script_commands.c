@@ -1,6 +1,5 @@
 /// @file
 /// Object script commands: waits, jumps, flags, moves and work values.
-/// Part of field.c, the field object, compiled only through it.
 ///
 /// Each `SC_` handler here is reached through gScriptObject_CommandTable
 /// (object_script.c), which Object_UpdateAll and Object_UpdateAllThumb call

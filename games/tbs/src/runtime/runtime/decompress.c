@@ -1,6 +1,6 @@
 /// @file
 /// Resource decoding and pixel buffer shading, through RAM copies of ARM code.
-/// Part of runtime.c, the runtime object, compiled only through it.
+// Part of runtime.c.
 
 #include "../runtime_internal.h"
 

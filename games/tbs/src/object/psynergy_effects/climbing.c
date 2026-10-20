@@ -1,6 +1,6 @@
 /// @file
 /// Jumping and climbing on the field.
-/// Part of psynergy_effects.c, compiled only through it.
+// Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 

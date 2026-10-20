@@ -1,6 +1,6 @@
 /// @file
 /// The render output pool, opening and closing windows, starting messages.
-/// Part of window.c, the window object, compiled only through it.
+// Part of window.c.
 
 #include "../window_internal.h"
 

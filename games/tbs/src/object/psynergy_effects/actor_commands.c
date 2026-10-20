@@ -1,6 +1,6 @@
 /// @file
 /// Event commands on actors: placing, moving and animating them.
-/// Part of psynergy_effects.c, compiled only through it.
+// Part of psynergy_effects.c.
 
 #include "../psynergy_effects_internal.h"
 

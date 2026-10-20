@@ -1,6 +1,6 @@
 /// @file
 /// Power-up, the cartridge's language, the build stamp and code loading.
-/// Part of runtime.c, the runtime object, compiled only through it.
+// Part of runtime.c.
 
 #include "../runtime_internal.h"
 

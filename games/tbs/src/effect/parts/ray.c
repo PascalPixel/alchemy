@@ -15,9 +15,7 @@
 /// Abilities: Ray, Storm Ray, Destruct Ray (kind 17).
 ///
 /// The targets flash white 4 frames apart from frame 4. Writes REG_BG2PA and
-/// REG_BG2X, sets work->shakeFrames over the first 16 frames, and ends with
-/// the transfer callback removed, the blitters freed and the canvas layer
-/// closed.
+/// REG_BG2X, sets work->shakeFrames over the first 16 frames.
 ///
 /// effect: the targets. variant 2 shows the canvas at double width;
 ///         variant 0 draws every bolt with the maximum blend, the others

@@ -44,8 +44,7 @@ enum SlashSheetCell {
 /// BattleFx_AdvanceScrollOnInterval during the gathering, holding view->busy;
 /// restores gBgScroll[1].x and gives BG1 back with
 /// BattleFx_SetupBlendedDisplay between the parts. Leaves the ember sheet in
-/// Ram_MapCellBuffer, and ends with the transfer callback removed, the
-/// blitters freed and the canvas layer closed.
+/// Ram_MapCellBuffer.
 ///
 /// effect: the targets.
 void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {

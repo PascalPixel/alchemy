@@ -19,9 +19,7 @@
 /// 256 stars of the pool are seeded, at rest in a cube 255 pixels across,
 /// though only 64 are drawn.
 ///
-/// Nothing calls it. Draws through the side's blitters mirrored (side ^ 1),
-/// and ends with the transfer callback removed, the blitters freed and the
-/// canvas layer closed.
+/// Nothing calls it. Draws through the side's blitters mirrored (side ^ 1).
 UNUSED void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -118,9 +116,7 @@ UNUSED void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
 ///
 /// Nothing calls it. Copies the skull palette over the first 128 bytes of BG
 /// palette RAM; writes REG_BG2PA, REG_BG2X and REG_BLDALPHA; keeps each
-/// skull's angle in velocityX of work->particles, three to a target. Ends
-/// with the transfer callback removed, the blitter freed and the canvas
-/// layer closed.
+/// skull's angle in velocityX of work->particles, three to a target.
 UNUSED void BattleFx_RunOrbitingSkulls(void) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -236,8 +232,7 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
 /// frames.
 ///
 /// Nothing calls it. Copies the pink burst palette over the first 128 bytes
-/// of BG palette RAM, uses work->particles six to a target, and ends with the
-/// transfer callback removed, the blitters freed and the canvas layer closed.
+/// of BG palette RAM, uses work->particles six to a target.
 UNUSED void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

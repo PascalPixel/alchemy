@@ -23,8 +23,7 @@
 ///
 /// The Djinni entrance plays whatever the prelude. Writes REG_BLDALPHA and
 /// the first 128 bytes of BG palette RAM (the water spray's, then the ice
-/// chips' on frame 1), sets work->shakeFrames on frame 8, and ends with the
-/// transfer callback removed, the blitters freed and the canvas layer closed.
+/// chips' on frame 1), sets work->shakeFrames on frame 8.
 ///
 /// effect: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleFx_RunHail(struct BattleEffectArgument *effect) {
@@ -185,8 +184,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 /// and its blitter flags in velocityY. The Djinni entrance plays whatever the
 /// prelude. From frame 17 the BG palette steps towards the portal sheet's
 /// (BattleFx_StepPaletteToResource). Writes REG_BLDALPHA, sets
-/// work->shakeFrames on each hit, and ends with the transfer callback
-/// removed, the blitter freed and the canvas layer closed.
+/// work->shakeFrames on each hit.
 ///
 /// effect: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleFx_RunGround(struct BattleEffectArgument *effect) {

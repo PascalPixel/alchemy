@@ -96,8 +96,7 @@ Every handler opens with a documentation comment of the same shape. Quake's:
 ///
 /// Writes REG_BG2PA, REG_BLDCNT and, on side 1, REG_BG2X; overwrites the
 /// first 0x8000 bytes of Ram_MapCellBuffer with BG tiles; sets the targets'
-/// vertical velocity and gravity; arms work->shakeFrames. Ends with the
-/// transfer callback removed, the blitter freed and the canvas layer closed.
+/// vertical velocity and gravity; arms work->shakeFrames.
 ///
 /// effect: the targets; variant picks the row of gQuake_Timings.
 ```
@@ -150,8 +149,11 @@ at a time, copying small pictures onto it and moving particles around.
 
 Every effect has the same shape. Its setup opens the canvas, builds the
 blitters, loads the pictures and places the particles. Then it runs a fixed
-number of frames, and at the end it releases what the setup took; the transfer
-callback has to be gone before the heap blocks are freed.
+number of frames, and at the end it releases what the setup took: it removes
+the transfer callback, frees its blitters and closes the canvas layer, and the
+transfer callback has to be gone before the heap blocks are freed.
+Since every canvas effect ends this way, a handler's comment only mentions its
+ending when it does something else, like removing a second callback.
 
 Within a frame, the steps run in a fixed order, each over its own range of
 frames, and the frame ends with the transfer. The order matters for two

@@ -413,8 +413,7 @@ BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
 ///
 /// Reached through Dull, Impair, Weaken and the unused mode 3 wrapper above.
 /// Copies the mode's palette over the first 128 bytes of BG palette RAM,
-/// writes REG_BG2PA and REG_BG2X, and ends with the transfer callback
-/// removed, both blitters freed and the canvas layer closed.
+/// writes REG_BG2PA and REG_BG2X.
 ///
 /// effect: the targets.
 /// mode: 0 the dagger and the pink burst palette, 1 the shield and the

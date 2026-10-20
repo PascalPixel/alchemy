@@ -58,8 +58,7 @@ void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
 /// Called by BattleFx_RunGrowth (mode 0) and BattleFx_RunPunji (mode 1).
 /// work->particles holds the 16 columns (struct DualColumn) and PARTICLES
 /// the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side 1,
-/// REG_BG2X; sets work->shakeFrames as each column appears. Ends with the
-/// transfer callback removed, the blitters freed and the canvas layer closed.
+/// REG_BG2X; sets work->shakeFrames as each column appears.
 ///
 /// effect: the targets; variant picks the number of columns
 ///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
@@ -326,8 +325,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 ///
 /// A Djinni appears first (BattleFx_RunDjinniEntrance). work->particles holds
 /// the 16 vines' x. Writes REG_BG2PA, REG_BLDCNT and REG_BG2X, sets
-/// work->shakeFrames, and ends with the transfer callback removed, the
-/// blitters freed and the canvas layer closed.
+/// work->shakeFrames.
 void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   u32 *slots, *cursor;
   struct BattleEffectWork *work;
@@ -433,8 +431,7 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
 ///
 /// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,
 /// REG_BLDALPHA and, on side 1, REG_BG2X; sets work->shakeFrames as each
-/// thorn appears. Ends with the transfer callback removed, the blitters freed
-/// and the canvas layer closed.
+/// thorn appears.
 void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;

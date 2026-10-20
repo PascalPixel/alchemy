@@ -96,8 +96,7 @@ void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
 /// burst is one of work->particles, its variant counting the frames it has
 /// lived (-1 when free). Writes REG_BLDALPHA, the first 64 BG colours (all but
 /// modes 5 and 7), REG_BLDCNT in the grey mode and REG_BG2PA in the lightning
-/// mode; sets work->shakeFrames on each hit. Ends with the transfer callback
-/// removed, the blitters freed and the canvas layer closed.
+/// mode; sets work->shakeFrames on each hit.
 ///
 /// effect: the user and the targets.
 /// mode: the burst and its palette: 0 flash bursts, 1 in the ice block

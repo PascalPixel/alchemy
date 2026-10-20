@@ -72,9 +72,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 ///
 /// work->particles 0 to 4 hold the flames, variant -1 until launched and then
 /// counting the frames since; Ram_MapCellBuffer takes the blue flame sheet
-/// before it is turned. Sets work->shakeFrames as each flame shatters, and
-/// ends with the transfer callback removed, the blitters freed and the canvas
-/// layer closed.
+/// before it is turned. Sets work->shakeFrames as each flame shatters.
 ///
 /// effect: the targets.
 void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
@@ -215,8 +213,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
 ///
 /// work->particles holds the flameballs. Copies the Djinni's palette over the
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
-/// work->shakeFrames as each ball lands, and ends with the transfer callback
-/// removed, the blitters freed and the canvas layer closed.
+/// work->shakeFrames as each ball lands.
 ///
 /// effect: the targets.
 void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
@@ -361,8 +358,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 ///
 /// work->particles holds the columns. Copies the Djinni's palette over the
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
-/// work->shakeFrames as each column appears, and ends with the transfer
-/// callback removed, the blitters freed and the canvas layer closed.
+/// work->shakeFrames as each column appears.
 ///
 /// effect: the targets.
 void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
@@ -495,8 +491,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
 /// palette's first 128 bytes change three times: the glow orb's at the
 /// start, the Djinni's on frame 20 and the ember streak's on frame 32, when
 /// the streak sheet replaces the Djinni in work->sheet. Sets
-/// work->shakeFrames on the strike, and ends with the transfer callback
-/// removed, the blitters freed and the canvas layer closed.
+/// work->shakeFrames on the strike.
 ///
 /// effect: the targets.
 void BattleFx_RunMars(struct BattleEffectArgument *effect) {

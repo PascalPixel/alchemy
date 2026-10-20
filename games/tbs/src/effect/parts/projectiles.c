@@ -396,9 +396,8 @@ enum VolleyField {
 /// than 63 shots in all it fires at the first target only, writing
 /// work->effect->count. Writes REG_BLDCNT in mode 1 and the first 128 bytes
 /// of BG palette RAM in modes 2 and 5; sets work->shakeFrames on each hit
-/// but in mode 7. Ends with the transfer callback removed, the blitter freed
-/// and the canvas layer closed; the second blitter is built and freed for
-/// each picture that needs it.
+/// but in mode 7. The second blitter is built and freed for each picture that
+/// needs it.
 ///
 /// effect: the user and the targets. variant picks the comet in mode 0
 ///         (mode 5 always uses comet 2, mode 8 comet 0); with prelude 1 a

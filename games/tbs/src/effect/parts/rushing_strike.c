@@ -69,8 +69,7 @@ void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
 /// variant its frames left; the six packed ring pictures go to
 /// Ram_MapCellBuffer. Moves the user with BattleFx_SetApproachMotion and does
 /// not bring it back. Copies the mode's palette over the first 128 bytes of
-/// BG palette RAM, sets work->shakeFrames on the strike, and ends with the
-/// transfer callback removed, the blitters freed and the canvas layer closed.
+/// BG palette RAM, sets work->shakeFrames on the strike.
 ///
 /// effect: the user and the targets.
 /// mode   : the palette: 0 fire pillar, 1 ice block, 2 pink burst, 3 blast.

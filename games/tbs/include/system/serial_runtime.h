@@ -12,6 +12,7 @@
 #include "dma.h"
 #include "irq.h"
 #include "dma.h"
+#include "irqlock.h"
 
 /// A link cable packet: its sequence number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.
@@ -131,9 +132,9 @@ extern u8 gSerialPeerPayloads[4][24];
 extern volatile u8 gSerialBlockSequence;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it, in tbs-en, SaveMenu_Run: differ 221, 923 instructions for
- * 920, and SerialRuntime_WaitForStatusMask: differ 18, 21 for 23. */
+/* FAKEMATCH(volatile): each mask test loads the status on its own; as plain
+ * u16, 155 of 920 instructions differ in tbs-en (SaveMenu_Run; 14 of 23 in
+ * SerialRuntime_WaitForStatusMask). */
 extern volatile u16 gLinkStatus;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status) {
@@ -148,18 +149,17 @@ static __inline__ void SerialRuntime_ResetTransferState(void) {
   u32 saved;
   u32 zero;
 
-  /* FAKEMATCH(one-pass): the blocks preserve IME write order; the repeated
-   * state assignment keeps its allocation priority above the IME pointer. */
-  do {
-    state = &gSerialTransfer;
-    ime = &REG_IME;
-  } while (0);
-  do {
-    saved = *ime;
-    *ime = (u16)(u32)ime;
-  } while (0);
+  state = &gSerialTransfer;
+  ime = &REG_IME;
+  IME_SAVE(ime, saved);
+  IME_DISABLE(ime);
+  /* FAKEMATCH(one-pass): zero and state set in a once-only block; as plain
+   * statements, 27 of 62 instructions differ in tbs-en
+   * (LinkLobby_ExchangePartyRecords). */
   do {
     zero = 0;
+    /* FAKEMATCH(dead): state set again; as the one assignment above, 16 of 62
+     * instructions differ in tbs-en (LinkLobby_ExchangePartyRecords). */
     state = &gSerialTransfer;
   } while (0);
   state->status = 0x80;

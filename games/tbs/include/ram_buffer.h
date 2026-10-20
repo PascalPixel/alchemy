@@ -24,23 +24,16 @@
 #define Ram_FrameWaitStackTop                                                  \
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
+// IWRAM variables the code reaches as constants; German moves them 16 bytes
+// up. Only BattleFx_RunSpiderWeb takes the work slot table's address as
+// Ram_WorkSlot; other code uses gWorkSlot (MATCHING.md).
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
 #define Ram_VramBlockCache FIXED_ADDRESS((u8 *), 0x03001b20, gVramBlockCache)
-/* FAKEMATCH: Ram_WorkSlot stays gWorkSlot's linked address as a constant
- * (build-checked): read through gWorkSlot, effect.c
- * (BattleFx_HideBg1AndRestoreBackdrop, BattleFx_RunSpiderWeb) and intro.c
- * (Title_UpdateIntroSprites, Title_LoadIntroBackgrounds) differ in tbs-ja and
- * tbs-en. */
 #define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e60, gWorkSlot)
 #else
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ad0, gBgScroll)
 #define Ram_VramBlockCache FIXED_ADDRESS((u8 *), 0x03001b10, gVramBlockCache)
-/* FAKEMATCH: Ram_WorkSlot stays gWorkSlot's linked address as a constant
- * (build-checked): read through gWorkSlot, effect.c
- * (BattleFx_HideBg1AndRestoreBackdrop, BattleFx_RunSpiderWeb) and intro.c
- * (Title_UpdateIntroSprites, Title_LoadIntroBackgrounds) differ in tbs-ja and
- * tbs-en. */
 #define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e50, gWorkSlot)
 #endif
 

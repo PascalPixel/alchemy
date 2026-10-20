@@ -11,18 +11,14 @@
 struct UiWindow;
 
 extern u8 gBlendBrighten;
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it five functions of tbs's runtime.c differ in tbs-en:
- * Fade_Start (31), Fade_FromBlack (19),
- * Fade_FromWhite, Fade_ToWhite and
- * Fade_ToBlack (7 each). */
+/* FAKEMATCH(volatile): the fades load the duration back after storing it; as
+ * plain u8, 13 of 29 instructions differ in tbs-en (Fade_Start). */
 extern volatile u8 gBlendDuration;
 extern u8 gBlendFramesLeft;
 extern u16 gBlendLayers;
 extern u8 gBlendStartLevel;
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it Fade_Update: differ 29 in tbs-en, 45 instructions
- * for 46. */
+/* FAKEMATCH(volatile): Fade_Update loads the target twice, for the level and
+ * for the delta; as plain u8, 11 of 46 instructions differ in tbs-en. */
 extern volatile u8 gBlendTargetLevel;
 extern u8 gRomShiftedTilePair[];
 extern const u32 RelocatedQ16DotProduct[];

@@ -67,12 +67,9 @@ struct CursorSprite {
 #define MENU_SPRITE_SIZE_16 0x40000000
 
 /// Sets sprite shape (attr0/attr1) and clears the remaining fields.
-/* FAKEMATCH: the one-pass block keeps both attribute words ahead of the stores
- * that follow (the x/y fields in the list setup loops of ItemList_SelectEntry,
- * BattleMenu_RunActionSelection and SummonMenu_SelectSummon; the tile in
- * UiText_DrawCharacter). Not source: the same two stores match only as plain
- * statements in Battle_CollectPartyCommands (resource_menu.c, five times) and
- * Ui_RunOwnerStatusScreen (preview.c, three times). */
+/* FAKEMATCH(one-pass): the two stores in a once-only block; as the plain stores
+ * Battle_CollectPartyCommands and Ui_RunOwnerStatusScreen match with, 4 of 49
+ * instructions differ in tbs-en (UiText_DrawCharacter). */
 #define MenuSprite_Init(sprite, shape)                                         \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
@@ -168,18 +165,9 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
   } while (0)
 
 /// Saves the selection: page, row and return row.
-/* FAKEMATCH(one-pass): the do { } while (0) wrapper steers, so this is a device
- * at each of its 7 sites, not a layer (S2: not every use matches through it).
- * Battle_SelectAbility writes the same three stores plainly through its already
- * loaded menu pointer, and through this macro it differs 2 in all six editions.
- * At the 7 sites the work-cell pointer it loads stays
- * apart from the reload after it, and the three stores finish before the keys
- * are read; written as three plain stores, with the dead-store pads gone,
- * SummonMenu_SelectSummon differs 84 (stores through its nav pointer; through
- * gLinkCountdownWork, the macro's own stores unwrapped, it differs 4),
- * ItemList_SelectEntry 46 and BattleMenu_RunActionSelection 42 in tbs-en, and
- * elsewhere the row store goes first (differ 4) or the base is loaded before
- * mode = 0 (differ 2 to 4). */
+/* FAKEMATCH(one-pass): the three stores in a once-only block; as the plain
+ * stores Battle_SelectAbility matches with, 46 of 770 instructions differ in
+ * tbs-en (ItemList_SelectEntry). */
 #define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
     gLinkCountdownWork->page = (page_);                                        \

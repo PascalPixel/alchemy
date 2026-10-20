@@ -391,9 +391,9 @@ struct SoundWork {
   u32 lock; ///< SOUND_LOCK when free; raised while the driver changes it.
   /// Frames until the VBlank DMA restart, which reloads it from
   /// transferPeriod; also picks the frame of the buffers being mixed.
-  /* FAKEMATCH: volatile steers library C only: without it
-   * AudioEngine_ResumeDirectSound: differ 9 in tbs-en, 22 instructions for 23.
-   */
+  /* FAKEMATCH(volatile): the byte is read before it is stored, as pret's
+   * pcmDmaCounter is; as plain u8, 1 of 23 instructions differ in tbs-en
+   * (AudioEngine_ResumeDirectSound). */
   volatile u8 transferCountdown;
   u8 reverb;       ///< 0 to 127 (mode bits 6..0); 0 skips the reverb pass.
   u8 pcmNoteCount; ///< PCM notes in use, 8 at start (mode bits 11..8).

@@ -36,9 +36,9 @@ STATIC_ASSERT(offsetof(struct SchedulerTask, mask) == 6);
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 
-/* FAKEMATCH: volatile makes every access to this cell a load or store of its
- * own; without it Scheduler_AddOrUpdateCallback: differ 14 in tbs-en, 59
- * instructions for 61. */
+/// 1 while WaitFrames runs the main-loop tasks.
+/* FAKEMATCH(volatile): the read Scheduler_AddOrUpdateCallback discards stays a
+ * load; as plain u8, 8 of 61 instructions differ in tbs-en. */
 extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerReady; ///< 1 once the task table is set up
 extern struct SchedulerTask gSchedulerTaskTable[];

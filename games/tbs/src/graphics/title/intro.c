@@ -111,7 +111,7 @@ const u8 gTitle_PromptBlendLevels[60] = {
 /// list to OAM.
 void Title_UpdateIntroSprites(void) {
   /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
-   * words are volatile (oambuf.h); as plain u32 words, 66 of 496
+   * words are volatile (oambuf.h); as plain u32 words, 157 of 496
    * instructions differ in tbs-en. */
   struct IntroWork *work;
   u32 spriteCount;
@@ -121,7 +121,7 @@ void Title_UpdateIntroSprites(void) {
   s32 y;
   s32 stripY;
 
-  work = Ram_WorkSlot[43];
+  work = WORK_SLOT(43);
   spriteCount = 0;
   if (gDebugPaused == 0) {
     if ((++work->tick & 3) == 0)
@@ -183,7 +183,7 @@ void Title_LoadIntroBackgrounds(void) {
   u16 tileIndex;
   s32 blankTile;
 
-  work = Ram_WorkSlot[43];
+  work = WORK_SLOT(43);
   REG_DISPCNT = 0;
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
   Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);

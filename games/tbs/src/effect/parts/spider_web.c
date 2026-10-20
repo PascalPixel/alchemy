@@ -113,7 +113,9 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
       work->shakeFrames = 8;
     }
     // Mode 1 throws the target up at 12 pixels a frame on frame 13, and
-    // shows the damage as it lands on frame 65.
+    // shows the damage as it lands on frame 65. Its gravity, 0x7851, takes
+    // about 0.47 pixel a frame off its speed each frame, and
+    // verticalMotionPhase 0x4000 is the quarter of its speed a bounce keeps.
     if (mode == 1) {
       if (frame == 13) {
         object->velocityY = 0xc0000;
@@ -151,8 +153,8 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   s32 size;
   s32 transparent;
 
-  // Plain, the counter's priority (20 refs over 232 insns) ties size and
-  // outranks transparent (13 over 240).
+  // As a plain local, frame's allocation priority (20 uses over 232
+  // instructions) ties with size's and outranks transparent's (13 over 240).
   /* FAKEMATCH(pin): frame fixed to r9, as native; as a plain local it takes sl
    * and transparent r9, and 15 of 233 instructions differ in tbs-en. */
   register s32 frame __asm__("r9");
@@ -187,29 +189,27 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   size = 32;
   do {
     // Frame loop. The quarters meet near (64, 72): top left, top right
-    // mirrored, bottom left flipped, bottom right both.
+    // mirrored, bottom left flipped, bottom right both. The web's share of
+    // the blend rises 2 sixteenths a frame to all of it by frame 8, and from
+    // frame 55 falls as fast, to none on frame 62.
     if (frame <= 8)
       REG_BLDALPHA = BLEND_ALPHA(frame << 1, 16);
     if (frame > 53)
       REG_BLDALPHA = BLEND_ALPHA(0x7c - (frame << 1), 16);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, transparent);
-    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work->sheet, 33,
-                                                     41, size, size);
+    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 33, 41, size, size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, transparent);
-    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work->sheet, 64,
-                                                     41, size, size);
+    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 64, 41, size, size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, transparent);
-    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work->sheet, 33,
-                                                     72, size, size);
+    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 33, 72, size, size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                         transparent);
-    ((DrawRectangle)Ram_WorkSlot[HEAP_SLOT_BLITTER])(canvas, work->sheet, 64,
-                                                     72, size, size);
+    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 64, 72, size, size);
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_143);

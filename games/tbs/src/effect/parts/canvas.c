@@ -15,7 +15,8 @@
 
 /// Wipes the whole canvas to one colour with a ragged edge: each row (or
 /// column) lags a random 0 to 63 pixels behind the front, which speeds up as
-/// it goes. Returns when the wipe is done, a frame at a time.
+/// it goes. Returns when the wipe is done, a frame at a time: 23 frames
+/// across, 15 down.
 ///
 /// Called by the summons and scenes that open on a wiped canvas: Boreas,
 /// Thor, Atalanta, Neptune, Kirin, Ramses, the particle streams and
@@ -40,9 +41,10 @@ void BattleFx_WipeCanvas(s32 mode, s32 value) {
     delay[x] = Random16() & 0x3f;
 
   // The canvas is 16x16 tiles of 8x8 pixels; (x, y) is byte
-  // ((y / 8 * 16 + x / 8) * 8 + y % 8) * 8 + x % 8. Across, the front
-  // speeds up by a column a frame and stops past 256 (128 columns plus the
-  // greatest lag); down, by two rows every frame, stopping past 191.
+  // ((y / 8 * 16 + x / 8) * 8 + y % 8) * 8 + x % 8. A line is done once the
+  // front passes 190, its last pixel (127) plus the greatest lag (63).
+  // Across, the front speeds up by a column a frame and stops only past 256;
+  // down, it speeds up by two rows a frame and stops past 191.
   if (mode == 1) {
     s32 front;
     s32 speed;
@@ -99,7 +101,8 @@ void BattleFx_WipeCanvas(s32 mode, s32 value) {
 /// adds, most through EFFECT_START_TRANSFER, and removes before its blocks
 /// are freed (EFFECT_FINISH_CANVAS). Clears work->transferPending after a
 /// copy, and counts work->framesSinceTransfer: 1 on a frame that copied,
-/// one more on each frame that did not.
+/// one more on each frame that did not. No effect reads that count;
+/// object/colorfx.c keeps the same count for its own transfer.
 void BattleFx_ProcessPendingGraphicsTransfer(void) {
   void **slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
   struct BattleEffectWork *work = slots[0];
@@ -538,10 +541,10 @@ void BattleFx_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
 
-  flag = &((struct BattleBackgroundView *)
-               Ram_WorkSlot[HEAP_SLOT_BATTLE_BACKGROUND])
-              ->secondMode;
-  battle = Ram_WorkSlot[HEAP_SLOT_BATTLE];
+  flag =
+      &((struct BattleBackgroundView *)WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND))
+           ->secondMode;
+  battle = WORK_SLOT(HEAP_SLOT_BATTLE);
   *flag = 1;
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
                                               DISPCNT_BG0_ON | DISPCNT_BG2_ON |
@@ -624,7 +627,9 @@ void BattleFx_SetupCanvasTileMap(void) {
 /// last pixel on that axis.
 ///
 /// Called by BattleFx_DrawStreaks (death_plunge.c) and BattleFx_RunNeptune.
-/// Writes only the canvas.
+/// Writes only the canvas, and only while the caller keeps x within 0 to
+/// 127: any other x wraps into a neighbouring row of tiles, or off the canvas
+/// from its first or last row of tiles.
 ///
 /// x0, y0 : the start, in pixels
 /// x1, y1 : the end, in pixels

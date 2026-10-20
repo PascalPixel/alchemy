@@ -9,12 +9,12 @@
 struct SceneEntrance;
 struct SceneRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
+const struct SceneEntrance *TunnelRuins_GetEntrances(void);
+const struct SceneRegion *TunnelRuins_GetRegions(void);
 u32 *TunnelRuins_GetExits(void);
-struct ScenePlacement *SceneData_SelectAndApplyTableBySceneId(void);
-s32 TunnelRuins_SelectEvents(void);
-s32 FieldScene_InitializeActorGroups(void);
+struct ScenePlacement *TunnelRuins_GetPlacements(void);
+const struct SceneEvent *TunnelRuins_GetEvents(void);
+s32 TunnelRuins_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];

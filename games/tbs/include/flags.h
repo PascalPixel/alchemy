@@ -391,6 +391,8 @@
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST 0x974
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST 0x975
 #define FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN 0x984
+#define FLAG_TUNNEL_RUINS_ORACLES_ROBE 0xf32 ///< a chest in the second scene
+#define FLAG_TUNNEL_RUINS_ASURAS_ARMOR 0xf33 ///< a chest in the second scene
 // Vale
 /// The prologue's stormy night: lightning over Vale, the rockslide and the
 /// monsters loose in the village.

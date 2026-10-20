@@ -79,8 +79,8 @@ enum { ENTRANCE_99 = 99 };
 /// Sets one of the sprite's two priority bits of a ship piece or a party
 /// actor: 9 sets the first, any other the second.
 #define SET_PRIORITY(actor, n)                                                 \
-  ((n) == 9 ? (ACTOR_SPRITE(actor)->image.priority = 1)                        \
-            : (ACTOR_SPRITE(actor)->shadow.priority = 1))
+  ((n) == 9 ? (void)(ACTOR_SPRITE(actor)->image.priority = 1)                  \
+            : (void)(ACTOR_SPRITE(actor)->shadow.priority = 1))
 
 s32 Math_DivideUnsigned();
 
@@ -97,34 +97,40 @@ const struct ScenePlacement *LemurianShip_GetPlacements(void) {
   return gLemurianShipPlacements;
 }
 
-/// Trigger 1, the way out: leave, clearing the backdrop color.
+/// The way out, back into Lalivero's interiors: leaves and clears the
+/// backdrop colour.
+/// Reached by stepping on cell code 1 (gLemurianShipEvents); takes exit 1.
 static void LeaveTheShip(void) {
   Engine_EventRequestExit(gEventWork->touchedTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
-/// Reveal (phase 5) stops the water's ripple; its end (phase 4) starts it
-/// again.
+/// Stops the water's ripple while Reveal shows the scene.
+/// Reached by Reveal's phase 5 anywhere in the scene; Ripple_Start, at
+/// phase 4, starts the ripple again.
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
+/// Called by LemurianShip_SetupScene, and reached by Reveal's phase 4 as the
+/// spell ends.
 static void Ripple_Start(void) {
   DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000,
                                     0x8000, 0x4000);
 }
 
-/// The exit, Reveal and trigger 10 before the water.
+/// The exit, Reveal and the Black Orb at the water's edge (cell code 10).
 const struct SceneEvent *LemurianShip_GetEvents(void) {
   return gLemurianShipEvents;
 }
 
-/// Every frame once the ship has risen: steps the ship's glowing colors
-/// (6 palettes of 6 frames each) into palette 7.
+/// Slides a window of six colours along gShipGlowPalettes into palette 7's
+/// colours 4 to 9, one step every 6 frames, so the ship's glow ripples.
+/// Run each frame once RaiseTheShip has brought the ship up.
 static void ShipGlow_CyclePalette(void) {
   u16 *frame;
   s32 paletteIndex;
 
-  frame = &gShipGlowStep;
+  frame = (u16 *)gShipGlowStep;
   paletteIndex = Math_DivideUnsigned(*frame, 6);
   Dma_Set((const void *)(((u32)(paletteIndex << 16) >> 15) +
                          (u32)gShipGlowPalettes),
@@ -134,8 +140,9 @@ static void ShipGlow_CyclePalette(void) {
     *frame = 0;
 }
 
-/// The update of a drop of spray: it rises and wobbles for its timer, then
-/// falls back by gSprayFallScript.
+/// A drop of spray rises and wobbles for its timer, then falls back by
+/// gSprayFallScript, which frees it.
+/// The update hook Ship_UpdateSwell gives each drop it creates.
 static void Spray_Update(union FieldObject *fieldObject) {
   u8 *obj = (u8 *)fieldObject;
   u16 *wait = &((struct FieldActor *)obj)->timer;
@@ -151,18 +158,19 @@ static void Spray_Update(union FieldObject *fieldObject) {
     ((struct FieldActor *)obj)->y.fixed += 0xcccc;
   } else if (*(s16 *)&((struct FieldActor *)obj)->work != 0) {
     *(s16 *)&((struct FieldActor *)obj)->work = 0;
-    Object_SetMode(obj, 1);
+    Object_SetMode((struct FieldActor *)obj, 1);
     {
       u16 *p = (u16 *)(obj + 94);
       s32 delay = 20;
 
       *p = delay;
     }
-    Engine_ObjectSetScript(obj, gSprayFallScript);
+    Engine_ObjectSetScript((struct FieldActor *)obj, gSprayFallScript);
   }
 }
 
 /// Every 40 frames, the Black Orb's glow fades a step, down to 4.
+/// Run each frame while the ship rises; RaiseTheShip adds and removes it.
 static void OrbGlow_Fade(void) {
   s32 frame = gOrbGlowFadeFrames + 1;
 
@@ -178,7 +186,9 @@ static void OrbGlow_Fade(void) {
 /// The map's scrolling layers, as the swell moves them.
 struct WaveMapLayer {
   s32 unk00[3];
-  s32 y;
+  s32 y; ///< 16.16 pixels; layers 6 and 7 are the ship's hull and deck
+  /// Layer 4's unk10[0] and [1], whole pixels in 16.16, are the corner of the
+  /// screen-sized box (240 by 160) the spray rises in.
   s32 unk10[8];
 };
 
@@ -188,9 +198,10 @@ struct WaveMap {
   struct WaveMapLayer layers[8];
 };
 
-/// Every frame while the ship rises and floats: the Black Orb's glow
-/// pulses in the blend, the ship (layers 6 and 7) and everyone on deck bob
-/// with the swell, and spray rises from the water.
+/// The Black Orb's glow pulses in the blend, the ship (layers 6 and 7) and
+/// everyone on deck bob with the swell, and spray rises from the water.
+/// Run each frame from RaiseTheShip to the end of the game; each part runs
+/// while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is set.
 static void Ship_UpdateSwell(void) {
   /* FAKEMATCH: volatile restores the form the bytes prove: blend lives at sp+18
    * and is loaded again with ldrh for the register write (a 20-byte frame for
@@ -264,8 +275,10 @@ static void Ship_UpdateSwell(void) {
   }
 }
 
-/// Called by each member's boarding script as they step on deck: from then
-/// on they bob with the ship.
+/// Remembers the leader's height on deck, so that from then on he bobs with
+/// the ship.
+/// Called by gLeaderBoardsShip as he steps on deck; the other members'
+/// boarding scripts call their own copies below.
 static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *deckY;
   struct FieldActor *actor;
@@ -309,9 +322,11 @@ static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// After the ship rises: the others step out and talk over the journey
-/// while three questions shape their replies, everyone boards, and the ship
-/// sails east as the curtains close and the game goes to the clear screen.
+/// The others step out and talk over the journey while three questions
+/// shape their replies, everyone boards, and the ship sails east as the
+/// curtains close and the game goes to the clear screen.
+/// Called by RaiseTheShip once the ship has risen. Sets FLAG_KEEP_MUSIC and
+/// sends the party to the clear screen (SceneId_Title, entrance 9).
 static void SetSail(void) {
   struct MapScrollWork *scroll;
   struct FieldActor *ship;
@@ -320,7 +335,9 @@ static void SetSail(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Map_CopyCellAttributes(18, 0, 3, 1, 18, 12);
-  // The others step out and talk about leaving Gondowan.
+  // Garet, Mia and Ivan step out around the leader. Garet: "It looks like
+  // it's finally time to leave Gondowan." Ivan and Mia say how much has
+  // happened.
   Engine_EventSetMessage(MsgFieldLooksLikeFinally);
   FieldMotion_LaunchFromFocusedObject(GARET, -10, 16, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(MIA, 0, 24, FACING_NORTH);
@@ -347,6 +364,8 @@ static void SetSail(void) {
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(60);
+  // The first question, Garet's: will the journey be over once they find
+  // Sheba? The answer picks which of his two replies he says.
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(30);
   Engine_ActorFaceDirection(GARET, FACING_NORTHEAST, 0);
@@ -364,6 +383,7 @@ static void SetSail(void) {
     Engine_EventShowMessage(GARET, 0);
   }
   Engine_EventWait(10);
+  // Ivan reminds Garet of their promise to Babi, and Lemuria comes up.
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
   Engine_EventWait(30);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 50);
@@ -389,6 +409,8 @@ static void SetSail(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
+  // The second question, Mia's: must they find Sheba before going to
+  // Lemuria? Garet answers either way.
   UiText_OpenMessageAtObject(3, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(20);
@@ -408,6 +430,8 @@ static void SetSail(void) {
     Engine_EventShowMessage(GARET, 0);
   }
   Engine_EventWait(10);
+  // Ivan: their first time on the ocean; Garet: the ocean Kraden wanted
+  // him to see.
   Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 50);
   Engine_EventWait(10);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
@@ -423,6 +447,7 @@ static void SetSail(void) {
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
+  // The third question, Mia's: the seas are rough; will they be all right?
   UiText_OpenMessageAtObject(3, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
@@ -442,6 +467,8 @@ static void SetSail(void) {
     Engine_EventShowMessage(MIA, 0);
   }
   Engine_EventWait(10);
+  // Garet: "Well... Shall we, then?" Ivan: "To sea..." Mia: Sheba is waiting
+  // for them. The departure theme starts.
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Engine_EventWait(30);
   Engine_EventShowMessage(GARET, 0);
@@ -464,7 +491,8 @@ static void SetSail(void) {
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(40);
-  // Everyone boards (gLeaderBoardsShip and the others).
+  // Everyone boards by their own scripts, hopping up onto the deck (SE_153
+  // each); the camera follows up to the ship.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
   Actor_SetSpeed(IVAN, 0x13333, 0x9999);
@@ -479,6 +507,7 @@ static void SetSail(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
+  // Mia, last, looks back at the shore before she boards.
   FieldObjectMotion_CommitPositionAndActivate(3, 0, -32);
   Engine_EventWait(30);
   Engine_ActorFaceDirection(MIA, FACING_SOUTH, 0);
@@ -489,6 +518,7 @@ static void SetSail(void) {
   Object_RefreshSelectorById(3);
   Engine_ActorFaceDirection(MIA, FACING_NORTH, 0);
   Engine_EventWait(20);
+  // On deck, all four turn west together and nod.
   Camera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
@@ -502,7 +532,8 @@ static void SetSail(void) {
   Engine_ActorSetAnimation(MIA, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(30);
-  // The ship sails east and the curtains close.
+  // The ship sails east and the curtains close: the sea's layer scrolls
+  // faster while the ship's north piece moves off, and the camera follows.
   Engine_AudioPlayCue(MUS_067);
   MusicCommand_SetPitchAndUpdateFrequency(240);
   Curtain_Start();
@@ -512,9 +543,9 @@ static void SetSail(void) {
   ship->acceleration = 131;
   ship->speed = 0x20000;
   scroll->layers[0].speedX = -0x3000;
-  ObjectMotion_CommitPositionAndActivate(8, 60, 0);
+  ObjectMotion_CommitPositionAndActivate(SHIP_NORTH, 60, 0);
   scroll->layers[0].speedX = -0x6000;
-  ObjectMotion_CommitPositionAndActivate(8, 60, 0);
+  ObjectMotion_CommitPositionAndActivate(SHIP_NORTH, 60, 0);
   Engine_EventWait(80);
   Engine_EventWait(100);
   Engine_CameraSetSpeed(0x23333, 0x28f);
@@ -532,17 +563,19 @@ static void SetSail(void) {
   Event_SetDestination((s32)&SceneId_Title, 9);
 }
 
-/// The water's ripple: two pages of per-line scroll offsets, swapped each
-/// frame, built from a sine table.
-struct ScrollWork {
-  u16 pages[2][0x3c0];
-  u8 page;
+/// The water's ripple, this scene's view of the HBlank scroll work
+/// (gHBlankScrollWork, struct DisplayScrollWork): two pages of per-line
+/// scroll offsets, swapped each frame, built from a sine table. Here a line
+/// is one word, BG3's x and y, where DisplayScrollWork has three.
+struct RippleScrollWork {
+  u16 pages[2][0x3c0]; ///< per page: 160 lines of BG3 x, y; the rest unused
+  u8 page;             ///< the page the HBlank DMA shows; the other is built
   u8 mode;
-  u16 phase;
+  u16 phase; ///< frames built so far, added to BG3's y
   u8 unkf04[4];
-  s32 frequency[2];
-  s32 step[2];
-  s32 amplitude[2];
+  s32 frequency[2]; ///< x, y: 16.16 sine entries per frame and per row
+  s32 step[2];      ///< x, y: 16.16 sine entries a line
+  s32 amplitude[2]; ///< x, y: 16.16 scale on the sine, then divided by 256
 };
 
 /// One line's ripple offset.
@@ -552,9 +585,11 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
          base;
 }
 
-/// Trigger 10, the leader at the water: the Black Orb glows, the water
-/// lights up, spray rises and the ship comes up out of the sea 90 pixels,
-/// then the party sets sail.
+/// The Black Orb glows, the water lights up, spray rises and the ship comes
+/// up out of the sea 90 pixels; then the party sets sail.
+/// Reached by using the Black Orb at the water's edge (cell code 10). Adds
+/// the swell and glow callbacks, which run to the end of the game, and calls
+/// SetSail.
 static void RaiseTheShip(void) {
   struct WaveMap *map;
   s32 i;
@@ -654,6 +689,8 @@ static void RaiseTheShip(void) {
 
 /// Sets the harbor up: the ship sunk 90 pixels, its pieces and the party
 /// drawn behind the water layers, and the ripple running.
+/// The scene's initialization; arriving by entrance 99, which the entrance
+/// table does not list, first gives the leader the Black Orb.
 s32 LemurianShip_SetupScene(void) {
   struct WaveMap *map;
   /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2
@@ -722,15 +759,17 @@ s32 LemurianShip_SetupScene(void) {
   return 0;
 }
 
-/// Each HBlank: copies the next line of the current ripple page into the
-/// background 3 scroll registers by DMA 0.
+/// Arms DMA 0 to copy the shown ripple page, a line each HBlank, into
+/// background 3's scroll registers, writing the first line itself.
+/// Run each frame; DisplayScroll_InitializeHBlankDma adds it and Ripple_Stop
+/// removes it.
 void DisplayScroll_ArmHBlankDma(void) {
-  struct ScrollWork *work;
+  struct RippleScrollWork *work;
   u32 *source;
   volatile u16 *dma0;
   volatile u32 *destination;
 
-  work = gHBlankScrollWork;
+  work = (struct RippleScrollWork *)gHBlankScrollWork;
   source = (u32 *)work->pages[work->page];
 
   dma0 = REG_DMA0;
@@ -740,12 +779,15 @@ void DisplayScroll_ArmHBlankDma(void) {
   dma0[5];
 
   *destination = *source++;
-  Dma_Set(source, destination, DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)dma0);
+  Dma_Set(source, (void *)destination, DMA_HBLANK_WORD_PER_LINE,
+          (volatile u32 *)dma0);
 }
 
-/// Each frame: builds the other ripple page and swaps it in.
+/// Builds the other ripple page and swaps it in.
+/// Run each frame; DisplayScroll_InitializeHBlankDma adds it and Ripple_Stop
+/// removes it.
 void DisplayScroll_BuildAndSwapHBlankPage(void) {
-  struct ScrollWork *work;
+  struct RippleScrollWork *work;
   u16 *line;
   s32 angle;
   u16 base;
@@ -754,7 +796,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
   u16 y;
   s32 i;
 
-  work = gHBlankScrollWork;
+  work = (struct RippleScrollWork *)gHBlankScrollWork;
   y = gBgScroll[3].y;
   line = work->pages[work->page ^ 1];
   step = work->step[0];
@@ -782,6 +824,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
 #include "common/scroll_initialize_hblank_dma.h"
 
 /// Takes the ripple's callbacks off and stops DMA 0.
+/// Called by Ripple_StopForReveal.
 static void Ripple_Stop(void) {
   volatile u16 *reg;
 
@@ -805,7 +848,8 @@ static struct CurtainSprite sCurtainSprites[24];
 static s16 sCurtainGap;
 static s16 sCurtainVramSlot;
 
-/// Every frame: moves the curtains a step closer.
+/// Moves the curtains a step closer and queues their 24 sprites.
+/// Run each frame from Curtain_Start to the end of the game.
 static void Curtain_Close(void) {
   u32 *entry;
   u32 tile;
@@ -843,25 +887,29 @@ static void Curtain_Close(void) {
     Runtime_PushSlotEntry(&sCurtainSprites[i], 255);
 }
 
-/// Fills a 256-byte tile with color 1 and starts the curtains 48 pixels
+/// Fills a 256-byte tile with colour 1 and starts the curtains 48 pixels
 /// open.
+/// Called by SetSail as the ship leaves; adds Curtain_Close.
 static void Curtain_Start(void) {
   u8 *tiles;
 
   tiles = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
   sCurtainVramSlot = Resource_FindFreeEntry();
   Dma_Fill32(0x11111111, tiles, 0x100);
-  Engine_VramLoad(sCurtainVramSlot, 0x100, (s32)tiles);
+  Engine_VramLoad(sCurtainVramSlot, 0x100, tiles);
 
   sCurtainGap = 0x30;
   FieldScheduler_AddCallback(Curtain_Close, 0xc80);
 }
 
-struct SceneEvent gShipGlowPalettes[] = {
-    {0x69c05860, 0x7f20, 0x69c0, 0x48005860},
-    {0x69c05860, 0x7f20, 0x69c0, 0x5860},
+/// The ship's glow: ShipGlow_CyclePalette shows six of these colours at a
+/// time, from a start that moves one colour every 6 frames.
+u16 gShipGlowPalettes[] = {
+    0x5860, 0x69c0, 0x7f20, 0x69c0, 0x5860, 0x4800,
+    0x5860, 0x69c0, 0x7f20, 0x69c0, 0x5860, 0x0000,
 };
 
+/// A drop of spray, at the end of its rise: freed.
 s32 gSprayFallScript[] = {
     SC_FREE,
 };

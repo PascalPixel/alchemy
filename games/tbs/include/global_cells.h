@@ -13,7 +13,7 @@ extern void *gMapWork[];
 extern void *gMenuWork;
 
 // Read work slots in gWorkSlot order through their own names.
-extern void *gFieldBlendWork[];                           ///< From slot 24
+extern void *gFieldBlendWork[];                           ///< From slot 30
 extern struct DisplayTransitionState *gDisplayTransition; ///< Slot 31
 extern s32 *gDisp;        ///< Slot 42: transition timer
 extern void *gEffectWork; ///< Slot 56: points to a scene-specific structure

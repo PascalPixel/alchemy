@@ -1006,7 +1006,7 @@ void PaletteFade_Init(void) {
   struct PaletteFade *buffer;
   s32 callbackPriority;
 
-  buffer = Runtime_AllocateBlock(32, sizeof(*buffer));
+  buffer = Runtime_AllocateBlock(HEAP_SLOT_PALETTE_BUFFER, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
   Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(0x80), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(0x80),
@@ -1021,7 +1021,7 @@ void PaletteFade_Init(void) {
 /// it.
 UNUSED void PaletteFade_Release(void) {
   Scheduler_RemoveCallback(&PaletteFade_Update);
-  Runtime_ReleaseHeapBlock(0x20);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_PALETTE_BUFFER);
 }
 
 /// Sets the fade target by transforming the saved background and/or sprite

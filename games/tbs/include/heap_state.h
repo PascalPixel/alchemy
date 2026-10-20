@@ -38,7 +38,16 @@ enum HeapSlot {
   HEAP_SLOT_CAMERA = 12,
   HEAP_SLOT_WINDOW = 15,
   HEAP_SLOT_EVENT = 27,
+  /// The field's colour blend work (gFieldBlendWork): the struct
+  /// FieldBlendWork the storm's lightning and BattleFx_StartBufferBlend
+  /// allocate.
+  HEAP_SLOT_FIELD_BLEND = 30,
   HEAP_SLOT_TRANSITION = 31,
+  /// The colour buffer (gPaletteBufferWork) that moves the BG and OBJ palettes
+  /// toward target colours: the struct BattleEffectBuffers
+  /// BattleEffect_InitializeBuffers allocates on scene load, or the title
+  /// intro's struct PaletteFade.
+  HEAP_SLOT_PALETTE_BUFFER = 32,
   HEAP_SLOT_BATTLE_EFFECT = 39,
   HEAP_SLOT_BATTLE_CANVAS = 40,
   HEAP_SLOT_BATTLE_SHEET = 41,

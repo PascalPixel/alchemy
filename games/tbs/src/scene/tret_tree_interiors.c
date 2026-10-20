@@ -672,7 +672,7 @@ static void TretPalette_UpdateSceneTint(void) {
   struct BattleEffectBuffers *paletteWork;
 
   fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
-  paletteWork = WORK_SLOT(32);
+  paletteWork = WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER);
   sourceColors = paletteWork->palette;
   if (fieldWork->command != 0)
     return;

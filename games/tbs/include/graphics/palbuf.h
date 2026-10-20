@@ -34,9 +34,9 @@ STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 0x1c00);
 STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 0x2800);
 STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x3000);
 
-/// The colour buffer (heap block 32) that fades the BG and OBJ palettes: the
-/// source palette, the shown and target colour channels, their per-frame
-/// steps, and two pages of packed RGB555 colours queued each frame.
+/// The colour buffer (HEAP_SLOT_PALETTE_BUFFER) that fades the BG and OBJ
+/// palettes: the source palette, the shown and target colour channels, their
+/// per-frame steps, and two pages of packed RGB555 colours queued each frame.
 struct BattleEffectBuffers {
   /// The source palette, RGB555: 224 BG colours, then 224 OBJ colours;
   /// palette[0] is the backdrop.

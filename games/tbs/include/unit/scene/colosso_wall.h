@@ -18,7 +18,7 @@ s32 ColossoWall_Initialize(void);
 // The native call precedes this definition; see MATCHING.md.
 #ifdef UBFIX
 void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
-                                              s32 raceMode, s32 finishX,
+                                              s32 segments, s32 finishX,
                                               s32 finishZ, s32 firstItem,
                                               s32 secondItem);
 #endif

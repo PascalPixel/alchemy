@@ -22,8 +22,8 @@
 // who races Isaac by running a recorded path, and the race gauge that shows
 // how near each of them is to the finish.
 
-/// The race's work in work slot 59, allocated whole when the gauge starts: the
-/// gauge, then the rival's path.
+/// The race's work in HEAP_SLOT_COLOSSO_RACE, allocated whole when the gauge
+/// starts: the gauge, then the rival's path.
 struct ColossoRaceWork {
   struct ColossoGaugeWork gauge;
   /// Pixels, as pairs of x and z, one pair a frame, ending with (0, 0):
@@ -126,7 +126,7 @@ extern u8 gColosso_GaugeGraphics[];
 /// The race gauge's scene callback: a bar across the top of the screen, with
 /// the finish at its centre and blinking marks for the rival and Isaac at their
 /// distances from it (a pixel of bar for 14 of course). It slides down when the
-/// race starts and back up while flag 0x106 is set; hold keeps it down.
+/// race starts and back up while FLAG_MENU_OPEN is set; hold keeps it down.
 static void Colosso_DrawGauge(void) {
   struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
   s32 *dst = (s32 *)gauge;

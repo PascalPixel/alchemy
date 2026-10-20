@@ -5,7 +5,6 @@
 #include "../object_internal.h"
 
 // Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R.
-#define HEAP_SLOT_PALBUF 32 ///< the colour buffer (gPaletteBufferWork)
 #define COLOR_MAX 448
 #define COLOR_HALF 224
 #define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
@@ -366,14 +365,13 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-/// Sets up the colour buffer (heap block 32) from the BG and OBJ palettes and
-/// starts updating the palettes from it each frame. Called by Field_RunScene
-/// on scene load; allocates heap slot 32 (gPaletteBufferWork) and registers
-/// BattlePalette_UpdateBlend at priority 0xc8f.
+/// Sets up the colour buffer (gPaletteBufferWork) from the BG and OBJ palettes
+/// and starts updating the palettes from it each frame. Called by
+/// Field_RunScene on scene load.
 void BattleEffect_InitializeBuffers(void) {
   struct BattleEffectBuffers *work;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_PALBUF, sizeof(*work));
+  work = Runtime_AllocateBlock(HEAP_SLOT_PALETTE_BUFFER, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   Dma_Set((void *)BG_PLTT, &work->palette[0],
           (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
@@ -383,12 +381,11 @@ void BattleEffect_InitializeBuffers(void) {
   Scheduler_AddOrUpdateCallback(BattlePalette_UpdateBlend, 0xc8f);
 }
 
-/// Stops the colour buffer and frees it: removes BattlePalette_UpdateBlend and
-/// releases heap slot 32. Reached only through a bare far-call veneer; no ☀️
-/// code names it.
+/// Stops the colour buffer and frees it. Reached only through a bare far-call
+/// veneer; no ☀️ code names it.
 void BattlePalette_StopBlendAndReleaseBuffer(void) {
   Scheduler_RemoveCallback(&BattlePalette_UpdateBlend);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_PALBUF);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_PALETTE_BUFFER);
 }
 
 /// Sets the colours the buffer moves toward (see BattleFx_BuildBuffer); does
@@ -456,7 +453,6 @@ s32 BattleFx_ClampRgb555Component(s32 value) {
   return value;
 }
 
-#undef HEAP_SLOT_PALBUF
 #undef COLOR_MAX
 #undef COLOR_HALF
 #undef COLOR_CHANNEL_COUNT

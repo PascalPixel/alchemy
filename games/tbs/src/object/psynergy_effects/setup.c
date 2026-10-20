@@ -239,7 +239,7 @@ void BattleEffect_InitializeSharedScene(void) {
   s32 no;
 
   scene = *(gWorkSlot + HEAP_SLOT_EVENT);
-  work = *(gWorkSlot + 32);
+  work = *(gWorkSlot + HEAP_SLOT_PALETTE_BUFFER);
   Dma_Set(&work->target[0x2a0], scene + 0x776,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
   if (((struct FieldWork *)scene)->revealActive == 0)

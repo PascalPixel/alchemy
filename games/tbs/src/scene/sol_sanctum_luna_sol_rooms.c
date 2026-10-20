@@ -1501,7 +1501,7 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
   }
   Engine_ActorWaitForMove(GARET);
   Engine_ActorSetPosition(GARET, 0, 0);
-  palette = WORK_SLOT(32);
+  palette = WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER);
   palette->target[0] = 0;
   palette->target[1] = 0;
   palette->target[2] = 0;

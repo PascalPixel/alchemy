@@ -1118,9 +1118,9 @@ static void Imil_WalkTowardDjinni(void) {
 /// Restores room props and the cave light for this entrance.
 static void ImilFuchinFalls_PrepareRoom(void) {
   struct FieldActor *actor;
-  /* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids
-   * swapping registers and adding a heap-cell add. Literal zeros and the slot
-   * read in place: differ 51. */
+  /* FAKEMATCH(temporary): one variable holds the zeros and then the slot word,
+   * so case 5 stores a fresh 0 and gGameState stays in r6; as literal zeros
+   * and the slot read in place, 51 of 144 instructions differ in tbs-en. */
   s32 value;
 
   ImilFuchinFalls_RebuildPlatformRoom();
@@ -1293,10 +1293,11 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   struct FieldEffect *effect;
   struct AnimationObject *sprite;
   const s32 *script;
-  /* FAKEMATCH: needed to match: copying three scripts keeps the 12-byte frame
-   * and prevents an early scale-script load. Reading
-   * gImilFuchinFalls_DustScripts in place: differ 107. */
-  struct EffectScripts scripts = gImilFuchinFalls_DustScripts;
+  const s32 *scripts[3] = {
+      gImilFuchinFalls_DustScript0,
+      gImilFuchinFalls_DustScript1,
+      gImilFuchinFalls_DustScript2,
+  };
 
   effect = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
   if (effect == 0)
@@ -1304,7 +1305,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   sprite = effect->sprite;
   Object_SetMode((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Engine_ObjectSetScript((struct FieldActor *)effect,
-                         scripts.script[flags & EFFECT_SCRIPT_MASK]);
+                         scripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   sprite->flags = 0;
   effect->update = Fuchin_UpdateDustMotion;
@@ -1327,7 +1328,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
     effect->scaleY = extra->startScaleY;
   }
   if (flags & EFFECT_SCALE_TO_TARGET) {
-    script = scripts.script[flags & EFFECT_SCRIPT_MASK];
+    script = scripts[flags & EFFECT_SCRIPT_MASK];
     if (flags & EFFECT_USE_START_SCALE) {
       effect->scaleRateX = (extra->targetScaleX - effect->scaleX) / script[3];
       effect->scaleRateY = (extra->targetScaleY - effect->scaleY) / script[3];
@@ -1588,13 +1589,6 @@ tail:
   Engine_TaskWait(10);
   Engine_EventEnd();
 }
-
-/// The three scripts cave dust can run, chosen by its spawn flags.
-struct EffectScripts gImilFuchinFalls_DustScripts = {{
-    gImilFuchinFalls_DustScript0,
-    gImilFuchinFalls_DustScript1,
-    gImilFuchinFalls_DustScript2,
-}};
 
 // clang-format off
 s16 gImilFuchinFalls_KeyHeadings[] = {

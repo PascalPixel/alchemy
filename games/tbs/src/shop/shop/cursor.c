@@ -127,8 +127,8 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
   u8 *eventBytes = (u8 *)gEventWork;
 #else
   u32 *workCells = (u32 *)&gEventWork;
-  struct BattleEffectBuffers *paletteBuffers =
-      (struct BattleEffectBuffers *)workCells[5];
+  struct BattleEffectBuffers *paletteBuffers = (struct BattleEffectBuffers *)
+      workCells[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_EVENT];
   u8 *eventBytes = (u8 *)workCells[0];
 #endif
   u16 *savedPalette = paletteBuffers->target;

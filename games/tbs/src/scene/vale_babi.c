@@ -345,7 +345,8 @@ s32 ValeBabi_Initialize(void) {
                 SCENE_TRANSITION(TRANSITION_WINDOW, 9);
             if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
               FieldFx_StartLightning();
-              ((struct FieldBlendWork *)WORK_SLOT(30))->loud = 1;
+              ((struct FieldBlendWork *)WORK_SLOT(HEAP_SLOT_FIELD_BLEND))
+                  ->loud = 1;
               FieldFx_LastLightning();
               Engine_TaskWait(30);
               Engine_EventOpenScreen();
@@ -577,7 +578,7 @@ static void Event_HurryToThePlaza(void) {
   SetBlendTarget(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Io_Write16(BLEND_ALPHA(12, 16), &REG_BLDALPHA);
   FieldFx_StartLightning();
-  ((struct FieldBlendWork *)WORK_SLOT(30))->loud = 1;
+  ((struct FieldBlendWork *)WORK_SLOT(HEAP_SLOT_FIELD_BLEND))->loud = 1;
   FieldFx_LastLightning();
   Engine_TaskWait(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).

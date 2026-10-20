@@ -2,10 +2,14 @@
 #define ALCHEMY_COLOSSO_GAUGE_H
 
 /// @file
-/// The Colosso race gauge's sprites and work.
+/// The Colosso race's heap slot, and the race gauge's sprites and work.
 
 #include "types.h"
 #include "static_assert.h"
+
+/// The heap slot of the Colosso finals' race work (struct ColossoRaceWork),
+/// which gColossoWork reads by its own name.
+#define HEAP_SLOT_COLOSSO_RACE 59
 
 /// One sprite of the race gauge's list: a link word, its position and shape
 /// attributes, and its tile.
@@ -15,20 +19,39 @@ struct ColossoGaugeSprite {
   s32 tile; ///< OAM attribute 2: the tile, with palette 14 and priority 1
 };
 
-/// The Colosso race gauge's work at the start of work slot 59: its sprites,
-/// how far it has slid down, the racers and the finish.
+/// The Colosso race gauge's work at the start of the race's heap slot
+/// (HEAP_SLOT_COLOSSO_RACE): its sprites, how far it has slid down, the racers
+/// and the finish.
 struct ColossoGaugeWork {
-  struct ColossoGaugeSprite sprites[18]; ///< the bar, its ends and the racers
-  s16 vramBlock;   ///< the VRAM cache entry holding the gauge's tiles
-  s16 level;       ///< 0 hidden to 2 fully down; the bar's y is level * 6 - 8
-  s16 hold;        ///< nonzero keeps the gauge down (level 2)
+  /// The bar, its ends and the racers' marks: 2 * segments + 6 sprites, all
+  /// 18 for the Colosso Log's six segments.
+  struct ColossoGaugeSprite sprites[18];
+  /// The VRAM cache entry holding the gauge's tiles: released while the gauge
+  /// is hidden, and loaded again when it slides back down.
+  s16 vramBlock;
+  /// 0 hidden to 2 fully down, stepping up while FLAG_MENU_OPEN is clear and
+  /// down while it is set; the bar's y is level * 6 - 8.
+  s16 level;
+  /// Nonzero keeps the gauge down (level 2); only the unused
+  /// Colosso_SetGaugeHold sets it.
+  s16 hold;
   s16 playerActor; ///< the actor id drawn as the player's marker
-  s16 rivalActor;  ///< the actor id drawn as the rival's marker
-  u16 finishItemActorA; ///< the first actor standing at the finish
-  u16 finishItemActorB; ///< the second actor standing at the finish
-  s16 segments;         ///< 16-pixel bar pieces either side of the centre
-  s32 finishX;          ///< 16.16 fixed-point pixels
-  s32 finishZ;          ///< 16.16 fixed-point pixels
+  /// The actor id drawn as the rival's marker, and the actor that runs the
+  /// recorded path.
+  s16 rivalActor;
+  /// The first finisher's prize: the actor raised over that finisher, who
+  /// stops at finishZ minus 16 pixels.
+  u16 finishItemActorA;
+  /// The second finisher's prize; that finisher stops at finishZ plus 16
+  /// pixels.
+  u16 finishItemActorB;
+  /// 16-pixel bar pieces either side of the centre: 6 in the Colosso Log, 4
+  /// in the River and 5 in the Wall.
+  s16 segments;
+  /// 16.16 fixed-point pixels: the rival starts opposite Isaac across it and
+  /// runs its path mirrored across it.
+  s32 finishX;
+  s32 finishZ; ///< 16.16 fixed-point pixels
 };
 
 STATIC_ASSERT(sizeof(struct ColossoGaugeSprite) == 12);

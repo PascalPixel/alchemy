@@ -60,7 +60,8 @@ void FieldFx_UpdateGroundParticles(void) {
 /// loud set. Flag 0x166 holds the next flash back.
 void FieldFx_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
-  struct BattleEffectBuffers *target = gFieldBlendWork[2];
+  struct BattleEffectBuffers *target =
+      gFieldBlendWork[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_FIELD_BLEND];
   s16 *timer = &work->timer;
 
   if (*timer < 0)
@@ -426,7 +427,8 @@ void FieldFx_StartLightning(void) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
 
-  work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
+  work = Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND,
+                               sizeof(struct FieldBlendWork));
   buffers = gPaletteBufferWork;
   Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
   BattleFx_BuildBuffer(0x10003, buffers, work, 1);
@@ -440,24 +442,24 @@ void FieldFx_StartLightning(void) {
 
 /// Stops the lightning: no flash for 0x7fff frames, and none after.
 void FieldFx_StopLightning(void) {
-  struct FieldBlendWork *state =
-      Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
+  struct FieldBlendWork *state = Runtime_AllocateBlock(
+      HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 0x7FFF;
   state->enabled = 0;
 }
 
 /// One last flash of lightning in 12 frames, then no more.
 void FieldFx_LastLightning(void) {
-  struct FieldBlendWork *state =
-      Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
+  struct FieldBlendWork *state = Runtime_AllocateBlock(
+      HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 12;
   state->enabled = 0;
 }
 
 /// Restarts the lightning: the next flash in 128 frames, repeating.
 void FieldFx_ResumeLightning(void) {
-  struct FieldBlendWork *state =
-      Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
+  struct FieldBlendWork *state = Runtime_AllocateBlock(
+      HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   state->timer = 128;
   state->enabled = 1;
 }
@@ -469,7 +471,8 @@ void BattleFx_StartBufferBlend(s32 from, s32 to) {
   struct BattleEffectBuffers *buffers;
   s16 *target;
 
-  work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
+  work = Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND,
+                               sizeof(struct FieldBlendWork));
   buffers = gPaletteBufferWork;
   Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
   BattleFx_BuildBuffer(from, buffers, work, 1);

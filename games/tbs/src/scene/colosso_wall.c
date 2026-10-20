@@ -53,6 +53,7 @@
 #include "global_cells.h"
 #include "heap_state.h"
 #include "field_runtime.h"
+#include "colosso_gauge.h"
 #include "flags.h"
 #include "songs.h"
 #include "macros.h"
@@ -148,8 +149,6 @@ enum {
   PRIZE_A = 40, ///< the arena's Chain Mail and Cotton Shirt
   PRIZE_B = 41
 };
-
-#define WORK_SLOT_STAGE 59
 
 /// Sets the party leader's walking speed and acceleration.
 static inline void InitializeActorZero(void) {
@@ -865,8 +864,9 @@ s32 ColossoWall_Initialize(void) {
   // Entrances distinguish the race, solo practice, briefing and battle results.
   switch (gGameState.entrance) {
   case 1:
-    FieldScene_BuildDescriptorAndInstallTask(0, 8, 5, 0x680000, 0x1000000, 40,
-                                             41);
+    FieldScene_BuildDescriptorAndInstallTask(ACTOR_PARTY_LEADER, OPPONENT, 5,
+                                             PIXELS(104), PIXELS(256), PRIZE_A,
+                                             PRIZE_B);
     Map_CopyCellsLayered(127, 0, 1, 2, 79, 6);
     Engine_ActorDestroy(GUIDE);
     Engine_ActorDestroy(MINI_MAZE_ATTENDANT);
@@ -1490,7 +1490,7 @@ ColossoWall_RaiseLinkedSceneEffect(struct ScriptInterpreter *interpreter) {
 /// Approaches the finish item on the unused side and shows the item message.
 static s32 ColossoWall_ApproachFinishAndTakeItem(s32 firstItem,
                                                  s32 secondItem) {
-  u8 *raceWork = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
+  struct ColossoGaugeWork *gauge = WORK_SLOT(HEAP_SLOT_COLOSSO_RACE);
   u8 *gameState;
   struct FieldActor *competitor;
   s32 finishAlreadyReached;
@@ -1504,24 +1504,24 @@ static s32 ColossoWall_ApproachFinishAndTakeItem(s32 firstItem,
   gameState = (u8 *)&gGameState;
   competitor = Object_GetById(((struct GameState *)gameState)->selectedActor);
 
-  if (*(s32 *)(raceWork + 232) < competitor->x.fixed) {
-    x = *(s32 *)(raceWork + 232) + 0xc0000;
+  if (gauge->finishX < competitor->x.fixed) {
+    x = gauge->finishX + PIXELS(12);
   } else {
-    x = *(s32 *)(raceWork + 232) - 0xc0000;
+    x = gauge->finishX - PIXELS(12);
   }
 
   if (finishAlreadyReached != 0) {
-    z = *(s32 *)(raceWork + 236) + 0x100000;
-    itemActor = (u16 *)(raceWork + 228);
+    z = gauge->finishZ + PIXELS(16);
+    itemActor = &gauge->finishItemActorB;
   } else {
-    z = *(s32 *)(raceWork + 236) - 0x100000;
-    itemActor = (u16 *)(raceWork + 226);
+    z = gauge->finishZ - PIXELS(16);
+    itemActor = &gauge->finishItemActorA;
   }
 
   timer = (s16 *)&competitor->timer;
   *timer = *itemActor;
-  competitor->acceleration = 0x4000;
-  competitor->speed = 0x10000;
+  competitor->acceleration = PIXELS(1) / 4;
+  competitor->speed = PIXELS(1);
 
   Engine_ObjectSetPosition(competitor, x, 0, z);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_11);
@@ -1560,25 +1560,26 @@ static s32 ColossoWall_ApproachFinishAndTakeItem(s32 firstItem,
 /// Allocates the race work, records both competitors and installs the gauge
 /// task.
 void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
-                                              s32 raceMode, s32 finishX,
+                                              s32 segments, s32 finishX,
                                               s32 finishZ, s32 firstItem,
                                               s32 secondItem) {
-  u8 *raceWork;
+  struct ColossoRaceWork *work;
   struct FieldActor *leader;
   struct FieldActor *rival;
   void *graphics;
   s32 vramSlot;
 
-  raceWork = Runtime_AllocateBlock(59, 0x7170);
+  work = Runtime_AllocateBlock(HEAP_SLOT_COLOSSO_RACE,
+                               sizeof(struct ColossoRaceWork));
   graphics = Runtime_BumpAllocateAlternatePool(512);
 
-  *(u16 *)(raceWork + 222) = leaderId;
-  *(u16 *)(raceWork + 224) = rivalId;
-  *(u16 *)(raceWork + 226) = firstItem;
-  *(u16 *)(raceWork + 228) = secondItem;
-  *(u16 *)(raceWork + 230) = raceMode;
-  *(s32 *)(raceWork + 232) = finishX;
-  *(s32 *)(raceWork + 236) = finishZ;
+  work->gauge.playerActor = leaderId;
+  work->gauge.rivalActor = rivalId;
+  work->gauge.finishItemActorA = firstItem;
+  work->gauge.finishItemActorB = secondItem;
+  work->gauge.segments = segments;
+  work->gauge.finishX = finishX;
+  work->gauge.finishZ = finishZ;
 
   leader = Object_GetById(leaderId);
   rival = Object_GetById(rivalId);
@@ -1589,15 +1590,15 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
     rival->z.fixed = leader->z.fixed;
   }
 
-  *(u16 *)(raceWork + 218) = 0;
-  *(u16 *)(raceWork + 220) = 0;
+  work->gauge.level = 0;
+  work->gauge.hold = 0;
 
   // Upload the gauge graphics and keep only its VRAM slot after freeing
   // scratch.
   FieldResource_DecodeType01(gColosso_GaugeGraphics, graphics);
 
   vramSlot = Resource_FindFreeEntry();
-  *(u16 *)(raceWork + 216) = vramSlot;
+  work->gauge.vramBlock = vramSlot;
   Engine_VramLoad((s16)vramSlot, 512, graphics);
 
   FieldScheduler_AddCallback(Colosso_DrawGauge, 0xc76);
@@ -1607,15 +1608,14 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
 
 /// Decodes the rival's recorded path and starts its playback task.
 static void ColossoWall_StartRivalPath(s32 pathResource) {
-  u8 *raceWork = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
+  struct ColossoRaceWork *work = WORK_SLOT(HEAP_SLOT_COLOSSO_RACE);
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
-  FieldResource_DecodeType01(Resource_GetTableEntry(pathResource),
-                             raceWork + 240);
+  FieldResource_DecodeType01(Resource_GetTableEntry(pathResource), work->path);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = 1;
     recorder->mirror = 1;
-    recorder->actor = *(u16 *)(raceWork + 224);
+    recorder->actor = work->gauge.rivalActor;
     recorder->still = 0;
     recorder->pos = 0;
   }

@@ -41,7 +41,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   position.y = djinni->y;
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
-  ObjectDispatch_ReleaseFar(djinni);
+  ObjectDispatch_ReleaseFar((struct DispatchObject *)djinni);
   AudioCommand_PlayFar(SE_164);
   slot = scene->slots;
   remainingParticles = 23;

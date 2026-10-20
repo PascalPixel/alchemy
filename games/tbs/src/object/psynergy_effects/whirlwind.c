@@ -136,7 +136,7 @@ void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   obj->scaleY = scale;
   obj->scaleX = scale;
   if (scale < 0x8000) {
-    Object_SetPositionAndResetMotionFar(obj, 0, 0, 0);
+    Object_SetPositionAndResetMotionFar((struct ObjectRuntime *)obj, 0, 0, 0);
     ((struct ScriptMotionObject *)obj)->hook = 0;
   }
 }
@@ -170,7 +170,7 @@ void FieldFx_RunWhirlwind(void) {
   to.x = scene->x;
   to.y = scene->y - (4 << 16);
   to.z = scene->z;
-  ball = Object_Spawn(0xda, 0, 0, 0);
+  ball = (struct FieldActor *)Object_Spawn(0xda, 0, 0, 0);
   if (ball == 0) {
     return;
   }
@@ -206,7 +206,7 @@ void FieldFx_RunWhirlwind(void) {
       pos.z = ball->z.fixed;
       dist = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(dist, Random16(), &pos);
-      particle = Object_Spawn(0xf9, pos.x, pos.y, pos.z);
+      particle = (struct FieldActor *)Object_Spawn(0xf9, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = BattleFx_CircleAnchor;
         particle->linkedObject = ball;
@@ -224,6 +224,6 @@ void FieldFx_RunWhirlwind(void) {
   WaitFrames(30);
   AudioCommand_PlayFar(SE_136);
   WaitFrames(20);
-  ObjectDispatch_ReleaseFar(ball);
+  ObjectDispatch_ReleaseFar((struct DispatchObject *)ball);
   BattleFx_PrepareBufferInterpolation();
 }

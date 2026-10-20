@@ -97,7 +97,8 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
     action = (s32)gObjectMotion_MoveTowardTargetScript;
     break;
   case 5:
-    object->linkedObject = Object_GetById(gGameState.selectedActor);
+    object->linkedObject =
+        (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
     action = (s32)gObjectMotion_TurnTowardLinkedScript;
     break;
   case 6:
@@ -106,7 +107,8 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
   default:
     break;
   }
-  ObjectDispatch_InitializeFar((struct DispatchObject *)object, action);
+  ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+                               (const s32 *)action);
 }
 
 /// Finds the nearest animated object to self within 40 pixels and 48 pixels of

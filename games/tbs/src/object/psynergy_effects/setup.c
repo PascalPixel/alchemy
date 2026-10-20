@@ -96,7 +96,7 @@ void EffectRuntime_StopCurrentObject(void) {
   struct ScriptMotionObject *user = work->mainObject;
 
   user->hook = NULL;
-  Animation_ApplyChildValuesFar(user, 0);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)user, 0);
   WaitFrames(1);
 }
 
@@ -205,7 +205,7 @@ void EventObject_Initialize(void) {
     caster->update = BattleFx_FlickerObjectAndTick;
   }
   if (scene->active != 0) {
-    ObjectGroup_SetActionForOthers(caster, 1, 0);
+    ObjectGroup_SetActionForOthers((struct ObjectRuntime *)caster, 1, 0);
     UiWork_PushValueSlotFar(announcedAbility, 4);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
@@ -216,7 +216,7 @@ void EventObject_Initialize(void) {
       UiText_ShowPositionedMessageAndWaitFar(MsgAbilityAnnounce,
                                              scene->messageMode);
     }
-    ObjectGroup_SetActionForOthers(caster, 0, 0x10);
+    ObjectGroup_SetActionForOthers((struct ObjectRuntime *)caster, 0, 0x10);
   }
   if (GameFlag_TestFar(0x140) != 0) {
     if (scene->visible != 0) {

@@ -151,10 +151,10 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
     do {
       if (effect->scriptWord != 0) {
         if (effect->updateHook == RevealMarker_EmitSparkles) {
-          ObjectDispatch_ReleaseFar(effect);
+          ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
         }
         if (effect->scriptWord == (s32)gBattleFx_ParticleScript) {
-          ObjectDispatch_ReleaseFar(effect);
+          ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
         }
       }
       work--;
@@ -278,7 +278,7 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
 
     WaitFrames(80);
     ObjectDispatch_SelectAnimationFar(leader, 1);
-    ObjectDispatch_ReleaseFar(object);
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)object);
   }
 }
 
@@ -301,7 +301,7 @@ void BattleFx_ClearRandomParticles(void) {
     do {
       if (effect->scriptWord != 0) {
         if (effect->scriptWord == (s32)gBattleFx_ParticleScript)
-          ObjectDispatch_ReleaseFar(effect);
+          ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
       }
       remainingActors--;
       effect++;
@@ -408,7 +408,8 @@ void FieldEffect_SpawnNearbyMarkers(void) {
               if (actor != 0) {
                 ObjectDispatch_InitializeFar((struct DispatchObject *)actor,
                                              gBattleFx_MarkerParticleScript);
-                ObjectDispatch_SetSingleChildFlagsFar(actor, 0);
+                ObjectDispatch_SetSingleChildFlagsFar(
+                    (struct DispatchObject *)actor, 0);
                 ((struct EffectObj *)actor)->updateHook =
                     RevealMarker_EmitSparkles;
               }

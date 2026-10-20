@@ -70,7 +70,7 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.
     SET_VECTOR(pos, emitter->x, emitter->y + (2 << 16), emitter->z);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
-    spark = Object_Spawn(0x11d, pos[0], pos[1], pos[2]);
+    spark = (struct SparkObject *)Object_Spawn(0x11d, pos[0], pos[1], pos[2]);
     if (spark != 0) {
       spark->update = BattleFx_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999; // 0.6
@@ -78,7 +78,7 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
       spark->gravity = 458;
       spark->phase = Random16() >> 9;
       spark->anchorX = spark->x;
-      Animation_ApplyChildValuesFar(spark, 9);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)spark, 9);
       spark->lifetime = 72;
       ObjectDispatch_InitializeFar((struct DispatchObject *)spark,
                                    gBattleFx_CommonParticleScript);
@@ -111,8 +111,8 @@ void FieldFx_RunPly(void) {
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
-    object = Object_Spawn(233, target->x.fixed, target->y.fixed + 0x200000,
-                          target->z.fixed);
+    object = (struct FieldActor *)Object_Spawn(
+        233, target->x.fixed, target->y.fixed + 0x200000, target->z.fixed);
     if (object != 0) {
       object->scaleY = 0xb333; // 0.7
       object->scaleX = 0xb333;
@@ -130,7 +130,7 @@ void FieldFx_RunPly(void) {
   WaitFrames(110);
 
   // The one in the centre.
-  target = Object_Spawn(233, 0, 0, 0);
+  target = (struct FieldActor *)Object_Spawn(233, 0, 0, 0);
   object = target;
   if (target != 0) {
     target->scaleY = 0xb333;
@@ -139,7 +139,7 @@ void FieldFx_RunPly(void) {
     target->y.fixed = scene->y + 0x100000;
     target->z.fixed = scene->z;
     target->motionFlags = 4;
-    Animation_ApplyChildValuesFar(target, 7);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)target, 7);
   }
 
   AudioCommand_PlayFar(SE_131);
@@ -152,15 +152,15 @@ void FieldFx_RunPly(void) {
        * instructions differ in tbs-en. */
       target = object;
       if (i & 3)
-        Animation_ApplyChildValuesFar(object, 9);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)object, 9);
       else
-        Animation_ApplyChildValuesFar(object, 10);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)object, 10);
       WaitFrames(2);
     }
   }
 
   // Sparks.
-  Animation_ApplyChildValuesFar(object, 0);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)object, 0);
   AudioCommand_PlayFar(MUS_084);
   if (object != 0) {
     target->update = BattleFx_RunSparkEmitter;
@@ -177,9 +177,10 @@ void FieldFx_RunPly(void) {
     target->speed = 0x50000;
     target->acceleration = 0x6666;
     target->steeringFlags = 0;
-    Motion_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
+    Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)target,
+                                               0xc00000, 0xe800);
     FieldObject_WaitForMoveFar(target);
-    ObjectDispatch_ReleaseFar(target);
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)target);
   }
   if (resourceSlot != 0x60)
     Resource_ResetEntry(resourceSlot);

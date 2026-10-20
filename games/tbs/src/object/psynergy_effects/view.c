@@ -154,8 +154,8 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
 
   target = ObjectTable_Get(actor);
   if (target != 0) {
-    struct FieldActor *bubble =
-        Object_CreateFar(21, target->x.fixed, target->y.fixed, target->z.fixed);
+    struct FieldActor *bubble = (struct FieldActor *)Object_CreateFar(
+        21, target->x.fixed, target->y.fixed, target->z.fixed);
 
     if (bubble != 0) {
       struct AnimationObject *sprite;
@@ -222,14 +222,14 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
 
   if ((flags & 3) != 0) {
     if ((flags & 3) == 2 || object->linkedObject == 0) {
-      effect = Object_CreateFar(209, object->x.fixed, object->y.fixed,
-                                object->z.fixed);
+      effect = (struct FieldActor *)Object_CreateFar(
+          209, object->x.fixed, object->y.fixed, object->z.fixed);
     }
   } else {
     effect = object->linkedObject;
     if (effect == 0)
       return;
-    ObjectDispatch_ReleaseFar(effect);
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
     object->linkedObject = 0;
     return;
   }
@@ -247,7 +247,7 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   case 2:
     ObjectDispatch_SelectAnimationFar(effect, 2);
     ObjectDispatch_InitializeFar((struct DispatchObject *)effect,
-                                 (u32)gObjectMotion_WaitScript);
+                                 (const s32 *)gObjectMotion_WaitScript);
     effect->timer = 1;
     break;
   }

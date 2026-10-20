@@ -60,7 +60,8 @@ void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
     // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
     // away.
     for (i = 0; i <= 2; i++) {
-      p = Object_Spawn(0xf0, particle->x, particle->y, particle->z);
+      p = (struct Effect05Object *)Object_Spawn(0xf0, particle->x, particle->y,
+                                                particle->z);
       if (p == NULL) {
         break;
       }
@@ -69,7 +70,8 @@ void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
       p->flag = 2;
       p->velocityY = 1 << 16;
       p->speed = Random16() + 0x13333;
-      Motion_SetTargetPositionFromMagnitudeAngle(p, 32 << 16, Random16());
+      Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)p,
+                                                 32 << 16, Random16());
       pp = &p->phase;
       phase2 = 6;
       *pp = phase2;
@@ -122,7 +124,7 @@ void FieldFx_RunDouse(void) {
   s32 y;
   struct Effect05Object *particle;
 
-  lightOrb = Object_Spawn(0xef, step = 0, 0, 0);
+  lightOrb = (struct Effect05Object *)Object_Spawn(0xef, step = 0, 0, 0);
   if (lightOrb == 0)
     return;
   BattleEffect_InitializeSharedScene();
@@ -190,7 +192,8 @@ void FieldFx_RunDouse(void) {
         pos.y = lightOrb->y;
         pos.z = lightOrb->z;
       }
-      particle = Object_Spawn(0xf0, pos.x, pos.y, pos.z);
+      particle =
+          (struct Effect05Object *)Object_Spawn(0xf0, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->altitude = pos.y - (32 << 16);
         particle->callback = FieldFx_SpawnRandomAngleTriplet;
@@ -212,13 +215,14 @@ void FieldFx_RunDouse(void) {
       pos.y = lightOrb->y;
       pos.z = lightOrb->z;
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
-      particle = Object_Spawn(0x11c, pos.x, pos.y, pos.z);
+      particle =
+          (struct Effect05Object *)Object_Spawn(0x11c, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->callback = BattleFx_UpdateDriftingFallObject;
         particle->flag = 0;
         particle->sprite->mode = 2;
         ObjectDispatch_SelectAnimationFar(particle, 8);
-        Animation_ApplyChildValuesFar(particle, 7);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 7);
       }
       WaitFrames(6);
     }
@@ -254,6 +258,6 @@ void FieldFx_RunDouse(void) {
     WaitFrames(1);
     step++;
   } while (step < steps);
-  ObjectDispatch_ReleaseFar(lightOrb);
+  ObjectDispatch_ReleaseFar((struct DispatchObject *)lightOrb);
   BattleFx_PrepareBufferInterpolation();
 }

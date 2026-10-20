@@ -201,7 +201,11 @@ s32 Field_ClimbDown(void);
 s32 Field_ClimbUp(void);
 s32 Object_GetScreenPosition(s32 objectId, s32 *position);
 void ObjectEffect_ReservedNoOp941DC(void);
+#ifdef UBFIX
+void Field_StartEncounterTransition(s32 unused);
+#else
 s32 Field_StartEncounterTransition(s32 unused);
+#endif
 void ObjectEffect_PrepareContextEffect(s32 animation);
 void ObjectEffect_BeginContextEffect26(void);
 void ObjectEffect_BeginContextEffect25(void);
@@ -232,9 +236,10 @@ void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject);
 void Djinn_RunBattleStartHop(s32 djinniId);
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void FieldObject_PlaceSceneActors(void);
-// Djinn_ResolvePendingEvent is called from object.c with no prototype in
-// scope: Field_RunScene calls it, and object.c comes before this unit in ROM
-// order, so in one file the call would still come first. No split evidence.
+// Declared without a prototype, as Field_RunScene (object.c) calls it with
+// one argument and with two. object.c comes before this unit in ROM order, so
+// in one file the calls would still come before the definition.
+void Djinn_ResolvePendingEvent();
 void BattleFx_UpdateAllSlots(void);
 void BattleFx_InitializeSlots(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
@@ -259,7 +264,7 @@ void BattleFx_Run(void);
 void BattleFx_DispatchRequestKind(void);
 void BattleFx_ClearChildValueOnMismatch(void);
 void FieldEvent_RunTypeHandler(void);
-s32 Field_RunEventAction(void *event, s32 param, s32 target);
+s32 Field_RunEventAction(const void *event, s32 param, s32 target);
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);

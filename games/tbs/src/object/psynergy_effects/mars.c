@@ -152,7 +152,7 @@ void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
   y = mote->y + 0xFFFF0000;
   mote->y = y;
   if (y < leader->y + 0x140000)
-    ObjectDispatch_ReleaseFar(mote);
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)mote);
 }
 
 /// Effect slot callback of a Venus Djinni's particles: each starts on screen

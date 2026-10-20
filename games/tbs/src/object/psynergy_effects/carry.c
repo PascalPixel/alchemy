@@ -22,7 +22,8 @@ void BattleFx_SpawnFallingParticles(void) {
   radius = Random16() * 3;
   Vector_AddPolarOffset(radius * 16, Random16(), &position);
 
-  fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
+  fragment = (struct ItemBreakFragmentObject *)Object_Spawn(
+      0x11d, position.x, position.y, position.z);
   BattleFx_InitializeFallingFragment(fragment);
 }
 
@@ -36,7 +37,8 @@ BattleFx_CheckRaisedTargetCollision(struct FieldActor *target,
   s32 collision;
 
   target->terrainHeight += 16 << 16;
-  collision = Map_CheckObjectStepFar(target, position);
+  collision = Map_CheckObjectStepFar((struct ObjectRuntime *)target,
+                                     (struct FieldPosition *)position);
   target->terrainHeight -= 16 << 16;
   return collision;
 }
@@ -77,9 +79,11 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
    * everywhere, 10 of 531 instructions differ in tbs-en. */
   p = &pos;
   SET_POSITION(p, work->x, work->y + (16 << 16), work->z);
-  obj = BattleFx_SpawnItemBreakMode1(p->x + (32 << 16), p->y, p->z, 0x8000);
+  obj = (struct FieldActor *)BattleFx_SpawnItemBreakMode1(p->x + (32 << 16),
+                                                          p->y, p->z, 0x8000);
   hands[0] = obj;
-  right = BattleFx_SpawnItemBreakMode1(p->x - (32 << 16), p->y, p->z, 0);
+  right = (struct FieldActor *)BattleFx_SpawnItemBreakMode1(p->x - (32 << 16),
+                                                            p->y, p->z, 0);
   hands[1] = right;
   if (hands[0] == NULL || right == NULL) {
     BattleFx_PrepareBufferInterpolation();
@@ -88,8 +92,10 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
-  Object_SetMoveTargetFar(obj, p->x + (16 << 16), p->y, p->z);
-  Object_SetMoveTargetFar(right, p->x - (16 << 16), p->y, p->z);
+  Object_SetMoveTargetFar((struct ObjectRuntime *)obj, p->x + (16 << 16), p->y,
+                          p->z);
+  Object_SetMoveTargetFar((struct ObjectRuntime *)right, p->x - (16 << 16),
+                          p->y, p->z);
   FieldObject_WaitForMoveFar(obj);
   FieldObject_WaitForMoveFar(right);
   obj->x.fixed = p->x + (16 << 16);
@@ -102,7 +108,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 0xc80);
   AudioCommand_PlayFar(SE_130);
   target->motionFlags = 4;
-  ObjectDispatch_SetSingleChildFlagsFar(target, 0);
+  ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
     while (target->y.fixed - target->terrainHeight <= 24 << 16) {
       obj->y.fixed += 0x6000;
@@ -134,8 +140,10 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       pos.x = target->x.fixed;
       pos.y = target->y.fixed + (16 << 16);
       pos.z = target->z.fixed;
-      Object_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
-      Object_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)hands[0],
+                              pos.x + (16 << 16), pos.y, pos.z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)hands[1],
+                              pos.x - (16 << 16), pos.y, pos.z);
       ObjectDispatch_SelectAnimationFar(hands[0], 1);
       ObjectDispatch_SelectAnimationFar(hands[1], 1);
       continue;
@@ -146,15 +154,18 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     pos.y = target->y.fixed + (16 << 16);
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(2 << 16, angle, &pos);
-    Object_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
-    Object_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
+    Object_SetMoveTargetFar((struct ObjectRuntime *)hands[0],
+                            pos.x + (16 << 16), pos.y, pos.z);
+    Object_SetMoveTargetFar((struct ObjectRuntime *)hands[1],
+                            pos.x - (16 << 16), pos.y, pos.z);
     FieldObject_WaitForMoveFar(hands[0]);
     FieldObject_WaitForMoveFar(hands[1]);
     pos.x = target->x.fixed;
     pos.y = target->terrainHeight;
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, angle, &pos);
-    i = ScriptObject_CheckOverlapFar(target, &pos);
+    i = ScriptObject_CheckOverlapFar((struct ScriptObjectEntry *)target,
+                                     (s32 *)&pos);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     // path as the ROM lays them out; written as one || test, 407 of 531
     // instructions differ in tbs-en.
@@ -183,14 +194,16 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       target->paused = i;
       target->speed = 0x3333;
       target->acceleration = 0x3333;
-      Object_SetMoveTargetFar(target, p->x, p->y, p->z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)target, p->x, p->y, p->z);
       hands[0]->speed = 0x3333;
       hands[0]->acceleration = 0x3333;
       second = hands[1];
       second->speed = 0x3333;
       second->acceleration = 0x3333;
-      Object_SetMoveTargetFar(hands[0], p->x + (16 << 16), p->y, p->z);
-      Object_SetMoveTargetFar(second, p->x - (16 << 16), p->y, p->z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)hands[0],
+                              p->x + (16 << 16), p->y, p->z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)second, p->x - (16 << 16),
+                              p->y, p->z);
       FieldObject_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
@@ -219,7 +232,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
 
     // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
     for (i = 0; i < CARRY_SHARD_MAX; i++) {
-      obj = Object_Spawn(0x11d, p->x, p->y, p->z);
+      obj = (struct FieldActor *)Object_Spawn(0x11d, p->x, p->y, p->z);
       *walk++ = obj;
       if (obj != NULL) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
@@ -228,17 +241,19 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
         obj->acceleration = 2 << 16;
         obj->motionFlags = 0;
         dist = Random16() * 24 + (8 << 16);
-        Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
+        Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)obj,
+                                                   dist, Random16());
       }
     }
   }
   AudioCommand_PlayFar(SE_131);
-  ObjectDispatch_ReleaseFar(hands[0]);
-  ObjectDispatch_ReleaseFar(hands[1]);
+  ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[0]);
+  ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[1]);
 
   // Restore the target's look and motion, and throw it up at 10 pixels a
   // frame.
-  Animation_ApplyChildValuesFar(target, work->savedPalette);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)target,
+                                work->savedPalette);
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,
                                work->savedScript);
   target->update = work->savedCallback;
@@ -247,7 +262,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   target->bounce = 0x3333;
   target->terrainId = 0;
   src->update = 0;
-  Animation_ApplyChildValuesFar(src, 0);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)src, 0);
   if (work->childOption != 0) {
     // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
@@ -255,7 +270,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     WaitFrames(1);
     for (i = 0; i < 90 && target->velocityY < 0; i++)
       WaitFrames(1);
-    BattleFx_SpawnRadialParticleRing(target);
+    BattleFx_SpawnRadialParticleRing((struct MotionObject *)target);
     BattleFx_PrepareBufferInterpolation();
     WaitFrames(30);
   } else {
@@ -278,7 +293,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
   s32 scale;
 
   AudioCommand_PlayFar(SE_ITEM_BREAK);
-  fragment = Object_Spawn(215, x, y, z);
+  fragment = (struct MotionObject *)Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;
     fragment->scaleX = 0x4000;

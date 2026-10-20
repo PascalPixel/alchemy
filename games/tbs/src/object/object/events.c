@@ -242,10 +242,11 @@ s32 Scene_TalkToActor(s32 id) {
       // facing says: following the leader (3) or its old angle (1).
       if (actor->script[actor->step] == 16) {
         if ((s8)placement->talkFacing == 3) {
-          actor->linkedObject = Object_GetById(gGameState.selectedActor);
+          actor->linkedObject =
+              (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
           actor->actionFlags |= 1;
           ObjectMotion_SetActionCallback(actor,
-                                         gObjectMotion_LinkedActionScript);
+                                         (s32)gObjectMotion_LinkedActionScript);
         } else if ((s8)placement->talkFacing == 1) {
           actor->action = savedAngle;
           ObjectDispatch_InitializeFar(

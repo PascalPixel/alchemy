@@ -267,7 +267,8 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
     for (n = 0; n < 2; n++) {                                                  \
       obj = *walk++;                                                           \
       if (obj != 0)                                                            \
-        Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle); \
+        Motion_SetTargetPositionFromMagnitudeAngle(                            \
+            (struct ObjectRuntime *)obj, 0x180000, obj->angle);                \
     }                                                                          \
                                                                                \
     FieldObject_WaitForMoveFar(pair[0]);                                       \
@@ -276,7 +277,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
       pos.x = work->x;                                                         \
       pos.y = work->y + 0x100000;                                              \
       pos.z = work->z;                                                         \
-      obj = Object_Spawn(285, pos.x, pos.y, pos.z);                            \
+      obj = (struct MotionObject *)Object_Spawn(285, pos.x, pos.y, pos.z);     \
       if (obj != 0) {                                                          \
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj,             \
                                      gBattleFx_FragmentScript);                \
@@ -284,12 +285,13 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
         obj->acceleration = 0x20000;                                           \
         obj->motionFlags = 0;                                                  \
         dist = Random16() * 24 + 0x80000;                                      \
-        Motion_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());     \
+        Motion_SetTargetPositionFromMagnitudeAngle(                            \
+            (struct ObjectRuntime *)obj, dist, Random16());                    \
       }                                                                        \
     }                                                                          \
                                                                                \
-    ObjectDispatch_ReleaseFar(pair[0]);                                        \
-    ObjectDispatch_ReleaseFar(pair[1]);                                        \
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)pair[0]);               \
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)pair[1]);               \
     BattleFx_PrepareBufferInterpolation();                                     \
   }
 

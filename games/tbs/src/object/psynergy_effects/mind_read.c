@@ -50,8 +50,9 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
   work = *(void **)((u32)&gBattleBgFxWork);
   Ui_SetBank15PaletteAndClearRenderMode();
   Scheduler_RemoveCallback(FieldFx_UpdateMindReadWave);
-  Animation_ApplyChildPalette(
-      Object_GetById(((struct WaveFxWork *)work)->sourceId), 1);
+  Animation_ApplyChildPalette((struct MotionObject *)Object_GetById(
+                                  ((struct WaveFxWork *)work)->sourceId),
+                              1);
   BattleFx_PrepareBufferInterpolation();
   Runtime_ReleaseHeapBlock(22);
 }
@@ -92,7 +93,8 @@ void FieldFx_UpdateMindReadWave(void) {
     BattleFx_StartBufferInterpolation(1);
     BattleFx_AdvanceHueCycle();
   }
-  Animation_ApplyChildPalette(Object_GetById(work->sourceId), 0);
+  Animation_ApplyChildPalette(
+      (struct MotionObject *)Object_GetById(work->sourceId), 0);
 
   // At steps 0, 8 and 16 of the cycle, a particle from the target to the
   // caster.
@@ -111,9 +113,9 @@ void FieldFx_UpdateMindReadWave(void) {
           (s16)Scene_FindActorPlacement(work->targetId)->sprite);
       to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       to.z = target->z.fixed;
-      particle = Object_CreateFar(281, to.x, to.y, to.z);
+      particle = (struct FieldActor *)Object_CreateFar(281, to.x, to.y, to.z);
       if (particle != 0) {
-        sprite = particle->sprite;
+        sprite = (struct WaveFxSprite *)particle->sprite;
         particle->motionFlags = 0;
         particle->speed = 0xa3d7; // 0.64 pixels a frame
         particle->acceleration = 0xa3d7;
@@ -121,7 +123,8 @@ void FieldFx_UpdateMindReadWave(void) {
         particle->update = BattleFx_SetCallbackWhenTargetUnset;
         sprite->palette = 0;
         sprite->mode = 1;
-        Object_SetMoveTargetFar(particle, from.x, from.y, from.z);
+        Object_SetMoveTargetFar((struct ObjectRuntime *)particle, from.x,
+                                from.y, from.z);
       }
     }
   }

@@ -174,11 +174,16 @@ void DisplayTransition_InitializeState(s32 value);
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames);
 void BattlePalette_UpdateBlend(void);
-// BattleFx_BuildBuffer is called from psynergy_effects.c with no prototype in
-// scope: in one file its definition would come before
-// FieldFx_StartLightning and BattleFx_StartBufferBlend, and they change
-// (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for
-// object|psynergy_effects.
+// UB: psynergy_effects.c calls BattleFx_BuildBuffer with no declaration in
+// scope, as a function returning int. With its prototype in scope (as in one
+// file with its definition) FieldFx_StartLightning and
+// BattleFx_StartBufferBlend change, 6 of 67 and 6 of 74 instructions in
+// tbs-en, and even a declaration without a prototype moves two instructions
+// in tbs-ja: evidence that object.c and psynergy_effects.c were separate
+// files. UBFIX declares it.
+#ifdef UBFIX
+void BattleFx_BuildBuffer();
+#endif
 void BattleEffect_InitializeBuffers(void);
 void BattlePalette_StopBlendAndReleaseBuffer(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half);

@@ -9,9 +9,9 @@ void BattleFx_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
-    Animation_ApplyChildValuesFar(particle, 2);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 2);
   } else if (frame == 2) {
-    Animation_ApplyChildValuesFar(particle, 0);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 0);
   }
 }
 
@@ -113,7 +113,7 @@ void FieldFx_RunFrost(void) {
   p = &pos;
   remainingCycles = 15;
   do {
-    particle = Object_Spawn(0xe8, 0, 0, 0);
+    particle = (struct FieldActor *)Object_Spawn(0xe8, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 radius;
@@ -129,7 +129,7 @@ void FieldFx_RunFrost(void) {
       particle->facing = Random16();
       particle->timer = 60;
       particle->work = Random16();
-      Animation_ApplyChildValuesFar(particle, 9);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 9);
 
       SET_POSITION(p, scene->x, scene->y, scene->z);
       radius = (Random16() << 2) + (2 << 16);
@@ -153,9 +153,9 @@ void FieldFx_RunFrost(void) {
     // Flash for 1 frame in every 5.
     remainingCycles = 15;
     do {
-      Animation_ApplyChildValuesFar(target, 7);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)target, 7);
       WaitFrames(1);
-      Animation_ApplyChildValuesFar(target, 0);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)target, 0);
       WaitFrames(4);
       remainingCycles--;
     } while (remainingCycles >= 0);

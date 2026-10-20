@@ -41,7 +41,8 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct MotionObject *hand = pair[handIndex];
     if (hand != NULL)
-      Motion_SetTargetPositionFromMagnitudeAngle(hand, 0xe0000, hand->angle);
+      Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)hand,
+                                                 0xe0000, hand->angle);
   }
 
   FieldObject_WaitForMoveFar(pair[0]);
@@ -79,7 +80,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   s32 scale;
 
   AudioCommand_PlayFar(SE_ITEM_BREAK);
-  fragment = Object_Spawn(215, x, y, z);
+  fragment = (struct MotionObject *)Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
     fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame

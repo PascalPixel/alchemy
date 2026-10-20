@@ -20,7 +20,8 @@
 s32 Field_TryJumpForward(void) {
   // An ordinary chained-attempt loop grows native English 0x228 -> 0x230.
   // Keep the landing retry, including its existing failure return behavior.
-  struct ObjectRuntime *leader = Object_GetById(gGameState.selectedActor);
+  struct ObjectRuntime *leader =
+      (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
   s32 result = -1;
   s32 angle = (leader->angle + 0x2000) & 0xc000; // to the nearest quarter
   u8 *flags = &leader->flags;
@@ -55,13 +56,15 @@ again:
     leader->acceleration = 0x20000;
     leader->velocityY = 0x40000;
     *flags &= 0x7e;
-    ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags & 0xfe);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)leader,
+                                          spriteFlags & 0xfe);
     ObjectMotion_SetPositionAndCommit(
         gGameState.selectedActor,
         ((union FieldCoordinate *)&pos->x)->part.pixel,
         ((union FieldCoordinate *)&pos->z)->part.pixel);
     ObjectDispatch_SelectAnimationFar(leader, 6);
-    ObjectDispatch_SetSingleChildFlagsFar(leader, spriteFlags);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)leader,
+                                          spriteFlags);
 
     // A platform underfoot dips 2 pixels with the leader and comes back up.
     if ((platform = Object_FindNearestFacingTarget(leader, 207)) != NULL ||
@@ -102,7 +105,8 @@ again:
 /// While climbing, the leader lets go and drops to the ground. Returns 0, or -1
 /// when there is nothing to climb or the way is blocked.
 s32 Field_ClimbDown(void) {
-  struct ObjectRuntime *object = Object_GetById(gGameState.selectedActor);
+  struct ObjectRuntime *object =
+      (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
   s32 gridZ =
@@ -123,7 +127,8 @@ s32 Field_ClimbDown(void) {
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
       SET_POSITION(position, object->x, object->y - 0x100000, object->z);
-      result = CheckMapPositionCellOccupiedFar((const s32 *)position);
+      result =
+          CheckMapPositionCellOccupiedFar((struct WorldPosition *)position);
       if (result != 0)
         goto failure;
 
@@ -134,7 +139,7 @@ s32 Field_ClimbDown(void) {
       Object_RefreshSelectorById(gGameState.selectedActor);
       object->actionFlags = 1;
       object->flags = 0;
-      ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
       ObjectDispatch_SelectAnimationFar(object, 13);
       Object_SetMoveTargetFar(object, gridX << 16, object->y - 0x100000,
                               (gridZ << 16) + 0x100000);
@@ -149,7 +154,7 @@ s32 Field_ClimbDown(void) {
     object->flags = 3;
     object->velocityY = 0x40000;
     object->terrainHeight = object->y;
-    ObjectDispatch_SetSingleChildFlagsFar(object, 1);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
     FieldEvent_WaitFrames(6);
     gGameState.movementMode = 0;
     object->actionFlags = 1;
@@ -170,7 +175,8 @@ failure:
 /// climbs over the top onto the ground. Returns 0, or -1 when there is nothing
 /// to climb or the way is blocked.
 s32 Field_ClimbUp(void) {
-  struct ObjectRuntime *object = Object_GetById(gGameState.selectedActor);
+  struct ObjectRuntime *object =
+      (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
   s16 spriteFlags = 1;
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
@@ -195,7 +201,8 @@ s32 Field_ClimbUp(void) {
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
       SET_POSITION(position, object->x, object->y, object->z);
-      result = CheckMapPositionCellOccupiedFar((const s32 *)position);
+      result =
+          CheckMapPositionCellOccupiedFar((struct WorldPosition *)position);
       if (result != 0)
         goto failure;
 
@@ -209,7 +216,8 @@ s32 Field_ClimbUp(void) {
       WaitFrames(4);
       object->flags = 0;
       spriteFlags &= 0xfe;
-      ObjectDispatch_SetSingleChildFlagsFar(object, spriteFlags);
+      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+                                            spriteFlags);
       object->speedLimit = 0x10000;
       object->velocityY = 0;
       ObjectDispatch_SelectAnimationFar(object, 12);
@@ -230,7 +238,8 @@ s32 Field_ClimbUp(void) {
     object->flags = 3;
     spriteFlags |= 1;
     object->terrainHeight = object->y;
-    ObjectDispatch_SetSingleChildFlagsFar(object, spriteFlags);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+                                          spriteFlags);
     FieldEvent_WaitFrames(4);
     gGameState.movementMode = 0;
     object->actionFlags = 1;

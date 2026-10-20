@@ -19,7 +19,8 @@ void Camera_FollowActor(s32 actor, s32 keepPosition) {
   map = gMapWork[0];
   if (subject != 0) {
     map->origin = &camera->x;
-    ObjectDispatch_StartCameraFar(camera, subject);
+    ObjectDispatch_StartCameraFar((struct DispatchObject *)camera,
+                                  (s32)subject);
     if (keepPosition == 0) {
       SET_POSITION(camera, subject->x, subject->y, subject->z);
       WaitFrames(1);
@@ -74,7 +75,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   maximumX = map->maxX + 0xFF880000;
   maximumZ = map->maxY + cameraY + 0xFFC00000;
   map->origin = &camera->x;
-  ObjectDispatch_StartIdleFar(camera);
+  ObjectDispatch_StartIdleFar((struct DispatchObject *)camera);
   if (positionX == -1) {
     positionX = camera->x;
   }
@@ -145,7 +146,7 @@ UNUSED void Camera_FollowObject(struct ObjectRuntime *target,
                                                       sizeof(struct FieldWork)))
                ->camera;
   if (target != NULL) {
-    ObjectDispatch_StartCameraFar(camera, NULL);
+    ObjectDispatch_StartCameraFar((struct DispatchObject *)camera, 0);
     camera->linkedObject = target;
     if (keepCurrentPosition == 0) {
       SET_POSITION(camera, target->x, target->y, target->z);

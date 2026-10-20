@@ -100,7 +100,7 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
     if (arc == 0)
       continue;
     arc->terrainHeight = linked->terrainHeight;
-    sprite = arc->sprite;
+    sprite = (struct ArcSprite *)arc->sprite;
     arc->motionFlags = 0;
     arc->timer = 0;
     arc->linkedObject = linked;

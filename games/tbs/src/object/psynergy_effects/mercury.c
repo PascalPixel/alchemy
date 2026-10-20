@@ -70,9 +70,9 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
       copy->steeringFlags |= 1;
       copy->update = BattleFx_HalveDistanceToTarget;
       copy->facing = djinni->facing;
-      Animation_ApplyChildValuesFar(copy, 9);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 9);
       ObjectDispatch_SelectAnimationFar(copy, 0);
-      ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
+      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
       resource = Sprite_ShareVramCache(copy->sprite, resource);
       copy->linkedObject = previous;
       previous = copy;
@@ -88,10 +88,10 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
     djinni->y.fixed += 8 << 16;
     WaitFrames(1);
   }
-  ObjectDispatch_ReleaseFar(djinni);
+  ObjectDispatch_ReleaseFar((struct DispatchObject *)djinni);
   list = copies;
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
-    ObjectDispatch_ReleaseFar(*list++);
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)(*list++));
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
   WaitFrames(10);

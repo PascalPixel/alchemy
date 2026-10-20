@@ -83,7 +83,7 @@ void FieldFx_UpdateLightning(void) {
   case 5:
   case 10:
     // Flash: jump to the lit palette and fade back over 12 frames.
-    BattleFx_ApplyColorToTargetBuffer(work, 1);
+    BattleFx_ApplyColorToTargetBuffer((s32)work, 1);
     Dma_Set(work->delta, target->delta, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0,
             REG_DMA3);
     target->duration = 12;
@@ -92,7 +92,7 @@ void FieldFx_UpdateLightning(void) {
   case 1:
   case 6:
   case 11:
-    BattleFx_ApplyColorToTargetBuffer(work->to, 1);
+    BattleFx_ApplyColorToTargetBuffer((s32)work->to, 1);
     target->duration = 1;
     target->step = 0;
     break;

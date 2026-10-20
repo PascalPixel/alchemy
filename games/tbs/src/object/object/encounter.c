@@ -95,7 +95,7 @@ void Encounter_SelectSceneZones(s32 useRules) {
 /// and chooses the battle backdrop for that terrain.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   s32 kind;
-  TerrainRule *rule = gWorldMap_EncounterRules;
+  TerrainRule *rule = (TerrainRule *)gWorldMap_EncounterRules;
   s32 behavior = GetWorldMapTerrainBehaviorFar(pos, &kind);
   s32 zone = 0;
 

@@ -43,7 +43,7 @@ void FieldFx_RunCatch(void) {
   spawn.x = scene->x;
   spawn.y = scene->y + (32 << 16);
   spawn.z = scene->z;
-  object = Object_Spawn(215, spawn.x, spawn.y, spawn.z);
+  object = (struct MotionObject *)Object_Spawn(215, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
   BattleEffect_InitializeSharedScene();
@@ -52,7 +52,7 @@ void FieldFx_RunCatch(void) {
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(object, 5);
-  Animation_ApplyChildValuesFar(object, 1);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)object, 1);
 
   // Reach out to the goal.
   step = 0;
@@ -80,8 +80,8 @@ void FieldFx_RunCatch(void) {
   ObjectDispatch_SelectAnimationFar(object, 5);
   AudioCommand_PlayFar(SE_132);
   if (child != 0)
-    Object_SetPositionAndResetMotionFar(child, -(9 << 16), child->y,
-                                        -(9 << 16));
+    Object_SetPositionAndResetMotionFar((struct ObjectRuntime *)child,
+                                        -(9 << 16), child->y, -(9 << 16));
   WaitFrames(20);
 
   // Rise 1.5 pixels a frame for 13 frames.
@@ -106,6 +106,6 @@ void FieldFx_RunCatch(void) {
     WaitFrames(1);
     step++;
   } while (step < steps);
-  ObjectDispatch_ReleaseFar(object);
+  ObjectDispatch_ReleaseFar((struct DispatchObject *)object);
   BattleFx_PrepareBufferInterpolation();
 }

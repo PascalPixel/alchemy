@@ -47,7 +47,8 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   radius <<= 4;
   Vector_AddPolarOffset(radius, Random16(), &position);
 
-  fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
+  fragment = (struct ItemBreakFragmentObject *)Object_Spawn(
+      0x11d, position.x, position.y, position.z);
   BattleFx_InitializeFallingFragment(fragment);
 }
 
@@ -102,7 +103,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   SET_POSITION(candidate, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
   Vector_AddPolarOffset(16 << 16, angle, candidate);
-  Object_SetMoveTargetFar(pusher, candidate->x, candidate->y, candidate->z);
+  Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, candidate->x,
+                          candidate->y, candidate->z);
   BattleFx_SnapScaleToFull((struct MotionObject *)pusher);
   pusher->speed = 4 << 16;
   pusher->acceleration = 0x8000;
@@ -125,7 +127,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       position.y = target->y.fixed + (16 << 16);
       position.z = target->z.fixed;
       Vector_AddPolarOffset(16 << 16, angle, &position);
-      Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, position.x,
+                              position.y, position.z);
       ObjectDispatch_SelectAnimationFar(pusher, 1);
       SET_VELOCITY(pusher, 0, 0, 0);
       continue;
@@ -138,7 +141,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     position.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, angle, &position);
     Vector_AddPolarOffset(2 << 16, direction, &position);
-    Object_SetMoveTargetFar(pusher, position.x, position.y, position.z);
+    Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, position.x,
+                            position.y, position.z);
     FieldObject_WaitForMoveFar(pusher);
     position.x = target->x.fixed;
     position.y = target->y.fixed;
@@ -148,13 +152,15 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     beyond.y = target->y.fixed;
     beyond.z = target->z.fixed;
     Vector_AddPolarOffset(32 << 16, direction, &beyond);
-    if (Map_CheckObjectStepFar(target, &position) > 0) {
+    if (Map_CheckObjectStepFar((struct ObjectRuntime *)target,
+                               (struct FieldPosition *)&position) > 0) {
       ObjectDispatch_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
         AudioCommand_PlayFar(SE_MENU_ERROR);
       continue;
     }
-    hit = ScriptObject_FindOverlappingEntryFar(target, candidate);
+    hit = (struct FieldActor *)ScriptObject_FindOverlappingEntryFar(
+        (struct ScriptObjectEntry *)target, (s32 *)candidate);
     if (hit != NULL) {
       if (hit != user) {
         ObjectDispatch_SelectAnimationFar(pusher, 4);
@@ -199,18 +205,20 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     target->paused = 0;
     target->speed = 0x3333;
     target->acceleration = 0x3333;
-    Object_SetMoveTargetFar(target, position.x, position.y, position.z);
+    Object_SetMoveTargetFar((struct ObjectRuntime *)target, position.x,
+                            position.y, position.z);
     pusher->motionFlags = 0;
     pusher->speed = 0x3333;
     pusher->acceleration = 0x3333;
     Vector_AddPolarOffset(16 << 16, direction, &position);
-    Object_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
-                            position.z);
+    Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, position.x,
+                            position.y + (16 << 16), position.z);
     if (moved == 1) {
       Object_GetById(work->firstObjectId)->steeringFlags &= 0xfe;
       user->speed = 0x3333;
       user->acceleration = 0x3333;
-      Object_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)user, beyond.x, beyond.y,
+                              beyond.z);
     }
     FieldObject_WaitForMoveFar(target);
     target->x.fixed = x;
@@ -221,7 +229,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   }
 
   // Restore the target's colours, script and update, and remove the hand.
-  Animation_ApplyChildValuesFar(target, work->savedPalette);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)target,
+                                work->savedPalette);
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,
                                work->savedScript);
   target->update = work->savedCallback;
@@ -285,7 +294,7 @@ next_state:
 ///
 /// Abilities: Move (field kind 1), cast with no target.
 void FieldFx_RunMove(void) {
-  s32 work[3];
+  UNUSED s32 work[3];
   struct BattleFxScene *scene;
   void *object;
 
@@ -323,7 +332,8 @@ void *BattleFx_StartItemBreak(void *object) {
   u32 jitter;
 
   angle = (source->angle + 0x2000) & 0xc000; // to the nearest quarter turn
-  parent = Object_Spawn(215, source->x, source->y + (16 << 16), source->z);
+  parent = (struct MotionObject *)Object_Spawn(
+      215, source->x, source->y + (16 << 16), source->z);
   if (parent == 0)
     return 0;
   parent->scaleY = 0x4000; // from 0.25
@@ -333,12 +343,14 @@ void *BattleFx_StartItemBreak(void *object) {
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(parent, 3);
-  Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
+  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)parent,
+                                             16 << 16, angle);
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
-    child = Object_Spawn(285, source->x, source->y + (16 << 16), source->z);
+    child = (struct MotionObject *)Object_Spawn(
+        285, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)child,
                                    gBattleFx_FragmentScript);
@@ -352,7 +364,8 @@ void *BattleFx_StartItemBreak(void *object) {
       radius = Random16() * 24 + (8 << 16);
       jitter = Random16();
       Motion_SetTargetPositionFromMagnitudeAngle(
-          child, radius, ((jitter - Random16()) >> 3) + source->angle);
+          (struct ObjectRuntime *)child, radius,
+          ((jitter - Random16()) >> 3) + source->angle);
     }
   }
   AudioCommand_PlayFar(SE_ITEM_BREAK);
@@ -397,7 +410,7 @@ void UpdateRisingParticleBurst(void *object) {
     WaitFrames(1);
   }
   for (i = 7; i >= 0; i--) {
-    child = Object_Spawn(285, src->x, src->y, src->z);
+    child = (struct MotionObject *)Object_Spawn(285, src->x, src->y, src->z);
     if (child != 0) {
       s32 speed;
       /* FAKEMATCH(temporary): 1.0 in a block local set before the block's
@@ -416,11 +429,12 @@ void UpdateRisingParticleBurst(void *object) {
       child->velocityY = spread - Random16();
       dist = Random16() * 24;
       dist += 8 << 16;
-      Motion_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
+      Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)child,
+                                                 dist, Random16());
     }
   }
   AudioCommand_PlayFar(SE_131);
-  ObjectDispatch_ReleaseFar(src);
+  ObjectDispatch_ReleaseFar((struct DispatchObject *)src);
 }
 
 #undef MOVE_CELL_MASK

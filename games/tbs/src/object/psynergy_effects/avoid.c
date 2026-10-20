@@ -38,9 +38,9 @@ void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
 
   if (gGameState.map == (s32)&SceneId_Clear) {
     if (elapsedFrames % 7 == 0)
-      BattleFx_SpawnDescendingArcParticles(caster);
+      BattleFx_SpawnDescendingArcParticles((struct FieldActor *)caster);
   } else if (elapsedFrames % 5 == 0) {
-    BattleFx_SpawnDescendingArcParticles(caster);
+    BattleFx_SpawnDescendingArcParticles((struct FieldActor *)caster);
   }
 
   if (phase == 1)
@@ -92,7 +92,7 @@ void FieldFx_RunAvoid(void) {
     VramCache_Load((s16)slot, 0x100, gBattleFx_ArcSparkTiles);
     gGameState.avoidDistance = 0x09600000;
     gGameState.avoidByItem = GameFlag_TestFar(FLAG_ITEM_USE);
-    Animation_ApplyChildValuesFar(object, zero);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)object, zero);
     object->callback = BattleFx_UpdatePairedArcSpawner;
     object->phase = zero;
     object->step = zero;
@@ -118,10 +118,10 @@ void FieldFx_RunAvoid(void) {
   WaitFrames(55);
   Scheduler_RemoveCallback(FieldFx_BlinkAvoidCaster);
   if (gGameState.cloaked != 0)
-    ObjectDispatch_SetSingleChildFlagsFar(object, 2);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 2);
   else
-    ObjectDispatch_SetSingleChildFlagsFar(object, 1);
-  Animation_ApplyChildValuesFar(object, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)object, 0);
   Resource_ResetEntry(scene->arcTileSlot);
   UiText_ShowPositionedMessageAndWaitFar(MsgMonstersAttackLess, 1);
 }

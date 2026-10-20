@@ -228,10 +228,10 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
     }
     if (win->mode != 0)
       portrait =
-          UiWindow_CreateWithSideObjectFar(sprite, 0, column, portraitTop);
+          (s32)UiWindow_CreateWithSideObjectFar(sprite, 0, column, portraitTop);
     else
       portrait =
-          UiWindow_CreateWithSideObjectFar(sprite, 0, column, portraitTop);
+          (s32)UiWindow_CreateWithSideObjectFar(sprite, 0, column, portraitTop);
     while (!UiWork_IsCompleteFar())
       WaitFrames(1);
   }
@@ -339,7 +339,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
     py = py < 20 ? 20 : py;
     if (py > 220)
       py = 220;
-    win = UiText_OpenMessageWindowFar(state->message, px, py, 1);
+    win = (s32)UiText_OpenMessageWindowFar(state->message, px, py, 1);
     state->messageWindow = win;
     while (UiWork_IsIdleFar((struct UiWindow *)win) == 0)
       WaitFrames(1);
@@ -375,7 +375,7 @@ void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
     px = 312;
   CLAMP(py, minY, 220);
 
-  window = UiText_OpenMessageWindowFar(state->message, px, py, 1);
+  window = (s32)UiText_OpenMessageWindowFar(state->message, px, py, 1);
   while (UiWork_IsIdleFar((struct UiWindow *)window) == 0)
     WaitFrames(1);
   state->message++;
@@ -404,15 +404,15 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
   s32 firstWindow;
   s32 secondWindow;
 
-  firstWindow =
-      UiText_OpenMessageWindowFar(field->message++, firstX, firstY,
-                                  BattleFx_GetResourceId(firstSprite) << 16);
+  firstWindow = (s32)UiText_OpenMessageWindowFar(
+      field->message++, firstX, firstY,
+      BattleFx_GetResourceId(firstSprite) << 16);
   UiWindow_CreateWithSideObjectFar(firstSprite, 0, firstPortraitX,
                                    firstPortraitY);
 
-  secondWindow =
-      UiText_OpenMessageWindowFar(field->message++, secondX, secondY,
-                                  BattleFx_GetResourceId(secondSprite) << 16);
+  secondWindow = (s32)UiText_OpenMessageWindowFar(
+      field->message++, secondX, secondY,
+      BattleFx_GetResourceId(secondSprite) << 16);
   UiWindow_CreateWithSideObjectFar(secondSprite, 0, secondPortraitX,
                                    secondPortraitY);
 

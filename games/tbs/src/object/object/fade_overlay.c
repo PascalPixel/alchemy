@@ -44,7 +44,7 @@ void FadeOverlay_DrawMarks(void) {
   /* FAKEMATCH(dead): four frame bytes nothing reads or writes, which make the
    * native 16-byte frame; without them, 4 of 200 instructions differ in
    * tbs-en. */
-  s16 unused[2];
+  UNUSED s16 unused[2];
 
   if (actor == 0)
     return;

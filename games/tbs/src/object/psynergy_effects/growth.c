@@ -55,7 +55,7 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
     BattleEffect_SpawnBurstParticleField();
     ObjectDispatch_SelectAnimationFar(target, 2);
     target->collisionFlags = 0;
-    ObjectDispatch_SetSingleChildFlagsFar(target, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     WaitFrames(10);
     AudioCommand_PlayFar(SE_RECOVERY);
@@ -87,8 +87,8 @@ void FieldFx_RunGrowth(void) {
     radius = (Random16() * 6) + 0x40000;
     Vector_AddPolarOffset(radius, Random16(), p);
     p->values[1] = work->y;
-    particle = Object_Spawn(GROWTH_FALL_OBJECT, p->values[0], p->values[1],
-                            p->values[2]);
+    particle = (struct FieldActor *)Object_Spawn(
+        GROWTH_FALL_OBJECT, p->values[0], p->values[1], p->values[2]);
     if (particle != 0) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                    gBattleFx_BurstParticleObjectScript);
@@ -134,7 +134,8 @@ void BattleEffect_SpawnBurstParticleField(void) {
     }
 
     // Copy the flip, shape and palette to the child sprite.
-    particle = Object_Spawn(GROWTH_PARTICLE_OBJECT, pos[0], pos[1], pos[2]);
+    particle = (struct FieldActor *)Object_Spawn(GROWTH_PARTICLE_OBJECT, pos[0],
+                                                 pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
     child->flip = visual->flip;
@@ -149,11 +150,12 @@ void BattleEffect_SpawnBurstParticleField(void) {
       particle->acceleration = 0x18000;
       particle->speed = 0x18000;
       particle->motionFlags = 0;
-      Animation_ApplyChildValuesFar(particle, 11);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 11);
       ObjectDispatch_SelectAnimationFar(particle, 7);
       ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                    gBattleFx_CommonParticleScript + 1);
-      ObjectDispatch_SetSingleChildFlagsFar(particle, 1);
+      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)particle,
+                                            1);
 
       // Destination: 4 to 10 pixels from the effect's position.
       SET_VECTOR(pos, work->x, work->y, work->z);
@@ -161,7 +163,8 @@ void BattleEffect_SpawnBurstParticleField(void) {
         Vector_AddPolarOffset(0xe0000, work->angle, pos);
       radius = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset(radius, Random16(), pos);
-      Object_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)particle, pos[0], pos[1],
+                              pos[2]);
     }
     AudioCommand_PlayFar(SE_131);
     WaitFrames(2);

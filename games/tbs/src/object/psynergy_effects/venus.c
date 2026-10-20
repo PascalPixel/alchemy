@@ -106,7 +106,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
       djinni->callback = BattleFx_UpdateDescendingOrbitObject;
       djinni->mode = 0;
       ObjectDispatch_SelectAnimationFar(djinni, 7);
-      Animation_ApplyChildValuesFar(djinni, 11);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)djinni, 11);
     }
   }
 
@@ -130,7 +130,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
     djinni->speed = Random16() + 0x16666;
     Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                                0x200000, Random16());
-    Animation_ApplyChildValuesFar(djinni, 11);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)djinni, 11);
     djinni->lifetime = 8;
     ObjectDispatch_InitializeFar((struct DispatchObject *)djinni,
                                  gBattleFx_CommonParticleScript);

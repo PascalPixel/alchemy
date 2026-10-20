@@ -62,15 +62,16 @@ void Field_PlaceMapMarkers(void) {
           if (markerActor == NULL)
             continue;
           ObjectMotion_SnapToTerrain(markerActor);
-          ObjectDispatch_SetSingleChildFlagsFar(markerActor, 0);
+          ObjectDispatch_SetSingleChildFlagsFar(
+              (struct DispatchObject *)markerActor, 0);
           if (GameFlag_TestFar(event->condition)) {
             if ((event->value & 0xfff00000) == 0x500000) {
-              ObjectDispatch_ReleaseFar(markerActor);
+              ObjectDispatch_ReleaseFar((struct DispatchObject *)markerActor);
               continue;
             }
             ObjectDispatch_SelectAnimationFar(markerActor, 2);
           }
-          ObjectDispatch_StartIdleFar(markerActor);
+          ObjectDispatch_StartIdleFar((struct DispatchObject *)markerActor);
           markerActor->homeX = markerActor->x / 0x10000;
           markerActor->homeZ = markerActor->z / 0x10000;
           markerActor->unk23 = 1;
@@ -94,8 +95,9 @@ void Field_PlaceMapMarkers(void) {
           if (markerActor == NULL)
             continue;
           ObjectMotion_SnapToTerrain(markerActor);
-          ObjectDispatch_SetSingleChildFlagsFar(markerActor, 0);
-          ObjectDispatch_StartIdleFar(markerActor);
+          ObjectDispatch_SetSingleChildFlagsFar(
+              (struct DispatchObject *)markerActor, 0);
+          ObjectDispatch_StartIdleFar((struct DispatchObject *)markerActor);
           ObjectDispatch_SelectAnimationFar(markerActor, 1);
           markerActor->homeX = markerActor->x / 0x10000;
           markerActor->homeZ = markerActor->z / 0x10000;
@@ -178,7 +180,7 @@ void Marker_LaunchMimic(s32 id) {
     AudioCommand_PlayFar(SE_146);
     if (object != NULL) {
       object->velocityY = 8 << 16;
-      ObjectDispatch_SetSingleChildFlagsFar(object, 1);
+      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
     }
   }
 }

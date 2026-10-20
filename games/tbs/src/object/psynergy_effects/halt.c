@@ -80,7 +80,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   s32 i;
 
   scene->y = caster->y;
-  orb = Object_Spawn(250, 0, 0, 0);
+  orb = (struct MotionObject *)Object_Spawn(250, 0, 0, 0);
   step = 0;
   ObjectDispatch_SelectAnimationFar(orb, 0);
   if (orb == 0)
@@ -127,7 +127,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     pos.x = orb->x;
     pos.y = orb->y + (8 << 16);
     pos.z = orb->z;
-    Camera_WorldToScreen(&pos.x);
+    Camera_WorldToScreen((struct EffectVector *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
     EffectSlot_Initialize(slot, 285, pos.x, pos.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialCamera);
@@ -139,7 +139,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   pos.y = orb->y + (8 << 16);
   pos.z = orb->z;
   WaitFrames(8);
-  ObjectDispatch_ReleaseFar(orb);
+  ObjectDispatch_ReleaseFar((struct DispatchObject *)orb);
   WaitFrames(4);
   WaitFrames(30);
   BattleFx_PrepareBufferInterpolation();
@@ -172,7 +172,7 @@ void BattleEffect_PauseObject(s32 actorId) {
     }
     object->update = BattleEffect_SetRandomTableValueOnObject;
     object->paused = 1;
-    ObjectDispatch_SetAnimationSpeedFar(object, 0);
+    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 0);
   }
 }
 
@@ -185,10 +185,11 @@ void BattleFx_ResumeObject(s32 actorId) {
       struct GameState *state = &gGameState;
       object->update = (void (*)(union FieldObject *))state->pausedUpdate;
       state->pausedUpdate = 0;
-      Animation_ApplyChildValuesFar(object, state->pausedPose);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+                                    state->pausedPose);
     }
     object->paused = 0;
-    ObjectDispatch_SetAnimationSpeedFar(object, 16);
+    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   }
 }
 

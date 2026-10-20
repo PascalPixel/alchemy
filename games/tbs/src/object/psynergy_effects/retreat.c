@@ -106,14 +106,14 @@ void FieldFx_RunRetreat(void) {
 
   // Start spinning.
   AudioCommand_PlayFar(SE_220);
-  Animation_ApplyChildValuesFar(obj, 0);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)obj, 0);
   ObjectDispatch_SelectAnimationFar(obj, 3);
   obj->update = FieldFx_UpdateSpinAngle;
   obj->timer = 0;
   WaitFrames(70);
 
   // Start shrinking, and send particles from where it is on screen.
-  ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
+  ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
   obj->motionFlags = 0;
   obj->update = BattleFx_UpdateDescendingObject;
   obj->targetX = ACTOR_NO_TARGET;
@@ -173,7 +173,7 @@ void BattleFx_UpdateDescendingParticlePositiveArc(
 
   y = particle->y.fixed;
   if (y <= limit) {
-    ObjectDispatch_ReleaseFar(particle);
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)particle);
     return;
   }
 
@@ -204,7 +204,7 @@ void BattleFx_UpdateDescendingParticleNegativeArc(
 
   y = particle->y.fixed;
   if (y <= limit) {
-    ObjectDispatch_ReleaseFar(particle);
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)particle);
     return;
   }
 
@@ -262,13 +262,13 @@ void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
   u8 zero;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
-    object = Object_CreateFar(26, source->x.fixed, source->y.fixed + 0x400000,
-                              source->z.fixed);
+    object = (struct FieldActor *)Object_CreateFar(
+        26, source->x.fixed, source->y.fixed + 0x400000, source->z.fixed);
     objects[arcIndex] = object;
     if (object == NULL)
       continue;
     object->terrainHeight = source->terrainHeight;
-    sprite = object->sprite;
+    sprite = (struct DescendingArcSprite *)object->sprite;
     object->motionFlags = 0;
     object->timer = 0;
     zero = 0;
@@ -277,7 +277,7 @@ void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
     object->scaleX = 0x6666;
     if (sprite == NULL)
       continue;
-    AnimationObjects_SelectAnimationFar(sprite, 0);
+    AnimationObjects_SelectAnimationFar((struct AnimationObject *)sprite, 0);
     sprite->animation = zero;
     Resource_ResetEntry(sprite->resource);
     sprite->resource = scene->arcTileSlot;

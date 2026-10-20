@@ -35,7 +35,7 @@ void DisplayScroll_ArmHBlankDma(void) {
 
   // Enabled, at HBlank, repeating, 32-bit, destination reloaded: 3 words.
   control = 0xa6600003;
-  Dma_Set(source, destination, control, (volatile u32 *)dma);
+  Dma_Set(source, (void *)destination, control, (volatile u32 *)dma);
 }
 
 /// Scheduler callback for the wavy background: fills the hidden page with each

@@ -47,7 +47,7 @@ void ObjectMotion_EnableActionAndResetMotion(u32 objectId) {
   if (object != NULL) {
     enabled = 1;
     object->actionFlags = enabled | object->actionFlags;
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
   }
 }
 
@@ -93,7 +93,7 @@ void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
 }
@@ -106,7 +106,7 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     FieldObject_WaitForMoveFar(object);
   }
@@ -119,7 +119,7 @@ void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
@@ -132,7 +132,7 @@ void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     FieldObject_WaitForMoveFar(object);
@@ -160,7 +160,7 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
     columnX *= 16;
     offsetInColumn = pixelX - columnX;
     object->movementState = 0;
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + ((8 - offsetInColumn) << 16),
                             object->y, object->z);
@@ -179,7 +179,7 @@ void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     Object_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
   }
@@ -193,7 +193,7 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
@@ -260,7 +260,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
 
   object = ObjectTable_Get(objectId);
   if (object != NULL) {
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     SET_VELOCITY(object, 0, 0, 0);
     object->targetY = ACTOR_NO_TARGET;
     object->targetX = ACTOR_NO_TARGET;
@@ -295,7 +295,7 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
 
   object = ObjectTable_Get(objectId);
   if (object != NULL) {
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     SET_VELOCITY(object, 0, 0, 0);
     object->targetY = ACTOR_NO_TARGET;
     object->targetX = ACTOR_NO_TARGET;
@@ -779,7 +779,7 @@ void Object_ResetTargetAndSetMode1(u32 objectId) {
     object->targetX = ACTOR_NO_TARGET;
     object->targetY = ACTOR_NO_TARGET;
     object->targetZ = ACTOR_NO_TARGET;
-    ObjectDispatch_StartIdleFar(object);
+    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }
@@ -820,12 +820,12 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
   u8 vramBlock;
   u32 tile;
 
-  object = Object_GetById(sourceId);
+  object = (struct ObjectRuntime *)Object_GetById(sourceId);
   sprite = object->animation;
   vramBlock = sprite->slot;
   tile = sprite->image.tile;
 
-  object = Object_GetById(targetId);
+  object = (struct ObjectRuntime *)Object_GetById(targetId);
   sprite = object->animation;
   sprite->slot = vramBlock;
   sprite->image.tile = tile;

@@ -212,7 +212,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
     object->y += height;
     object->terrainHeight = object->y;
     object->flags = 0;
-    ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 12);
   } else {
     gGameState.movementMode = 0;
@@ -342,7 +342,7 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
           sprite = (u8 *)actor->sprite;
           flags = sprite[29];
           sprite[29] = flags & releaseCacheMask;
-          ObjectDispatch_ReleaseFar(actor);
+          ObjectDispatch_ReleaseFar((struct DispatchObject *)actor);
           sprite = NULL;
           *actorSlot = (struct FieldActor *)sprite;
         }
@@ -366,7 +366,7 @@ void BattleEffect_ClearAllObjects(void) {
     if (actor != 0) {
       actor->spriteStorageKind = 1;
       actor->sprite->retainCacheEntry = 0;
-      ObjectDispatch_ReleaseFar(actor);
+      ObjectDispatch_ReleaseFar((struct DispatchObject *)actor);
       work->actors[ACTOR_FIRST_PLACED + slotIndex] = 0;
     }
   }
@@ -499,7 +499,8 @@ void ObjectTable_Restore(void) {
       animation = *animations;
       if (animation != 0)
         ObjectDispatch_SelectAnimationFar(object, animation);
-      ObjectDispatch_SetSingleChildFlagsFar(object, *spriteFlags);
+      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+                                            *spriteFlags);
       priority = *priorities;
       sprite->image.priority = priority;
       sprite->shadow.priority = priority;
@@ -512,7 +513,7 @@ void ObjectTable_Restore(void) {
         camera->terrainHeight = y;
         camera->y = y;
         cameraPosition[1] = y;
-        ObjectDispatch_StartIdleFar(object);
+        ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
       }
     }
     snapshot++;

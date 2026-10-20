@@ -64,7 +64,7 @@ void FieldFx_RunForce(void) {
   pos.y = caster->y.fixed + ABOVE;
   pos.z = caster->z.fixed;
   Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
-  projectile = Object_Spawn(0xd7, pos.x, pos.y, pos.z);
+  projectile = (struct FieldActor *)Object_Spawn(0xd7, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
     BattleFx_PrepareBufferInterpolation();
     return;
@@ -76,7 +76,7 @@ void FieldFx_RunForce(void) {
   projectile->acceleration = 4 << 16;
   projectile->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(projectile, 5);
-  Animation_ApplyChildValuesFar(projectile, 3);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)projectile, 3);
   scale = projectile->scaleX;
   if (scale < 0x10000) {
     do {
@@ -92,8 +92,8 @@ void FieldFx_RunForce(void) {
   // Three afterimages, sharing one set of graphics.
   sharedAnimation = NULL;
   for (i = 2; i >= 0; i--) {
-    copy = copies[i] = Object_Spawn(0xd7, projectile->x.fixed,
-                                    projectile->y.fixed, projectile->z.fixed);
+    copy = copies[i] = (struct FieldActor *)Object_Spawn(
+        0xd7, projectile->x.fixed, projectile->y.fixed, projectile->z.fixed);
     if (copy != NULL) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
@@ -102,7 +102,7 @@ void FieldFx_RunForce(void) {
       copy->acceleration = 4 << 16;
       copy->motionFlags = 0;
       ObjectDispatch_SelectAnimationFar(copy, 5);
-      Animation_ApplyChildValuesFar(copy, 2);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 2);
       sharedAnimation = Sprite_ShareVramCache(
           (struct AnimationObject *)copy->sprite, sharedAnimation);
     }
@@ -122,14 +122,16 @@ void FieldFx_RunForce(void) {
     pos.y = scene->y + ABOVE;
     pos.z = scene->z;
   }
-  Object_SetMoveTargetFar(projectile, pos.x, pos.y, pos.z);
+  Object_SetMoveTargetFar((struct ObjectRuntime *)projectile, pos.x, pos.y,
+                          pos.z);
   ObjectDispatch_InitializeFar((struct DispatchObject *)projectile,
                                gBattleFx_BurstParticleObjectScript + 4);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
       WaitFrames(3);
-      Object_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)copy, pos.x, pos.y,
+                              pos.z);
       ObjectDispatch_InitializeFar((struct DispatchObject *)copy,
                                    gBattleFx_CommonParticleScript + 1);
     }
@@ -150,11 +152,14 @@ void FieldFx_RunForce(void) {
     pos.y = target->y.fixed;
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, scene->angle, &pos);
-    if (Map_CheckObjectStepFar(target, &pos) == 0 &&
-        ScriptObject_CheckOverlapFar(target, &pos) == 0) {
+    if (Map_CheckObjectStepFar((struct ObjectRuntime *)target,
+                               (struct FieldPosition *)&pos) == 0 &&
+        ScriptObject_CheckOverlapFar((struct ScriptObjectEntry *)target,
+                                     (s32 *)&pos) == 0) {
       target->acceleration = 1 << 16;
       target->speed = 1 << 16;
-      Object_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)target, pos.x, pos.y,
+                              pos.z);
     }
   }
 

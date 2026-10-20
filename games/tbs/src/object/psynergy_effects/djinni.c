@@ -25,7 +25,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   s32 sprite;
   s32 tint;
   s32 i;
-  struct FieldActor *copies[DJINNI_CLONE_MAX];
+  UNUSED struct FieldActor *copies[DJINNI_CLONE_MAX];
 
   // The way the leader faces, to the nearest quarter turn.
   djinni = Object_GetById(djinniId);
@@ -89,9 +89,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->update = ObjectMotion_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       copy->sprite->image.priority = 0;
-      Animation_ApplyChildValuesFar(copy, tint);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)copy, tint);
       ObjectDispatch_SelectAnimationFar(copy, 0);
-      ObjectDispatch_SetSingleChildFlagsFar(copy, 0);
+      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
       sharedSprite = Sprite_ShareVramCache(copy->sprite, sharedSprite);
       copy->linkedObject = prev;
       prev = copy;

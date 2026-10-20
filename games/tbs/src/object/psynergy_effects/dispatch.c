@@ -216,15 +216,15 @@ void FieldEvent_RunTypeHandler(void) {
 /// (through r3). Afterwards, with FLAG_NOTHING_HAPPENS set, says "But nothing
 /// happens.".
 /// Returns 0.
-s32 Field_RunEventAction(void *event, s32 param, s32 target) {
+s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
   s32 script;
 
   if (event != NULL) {
-    script = ((struct EffectDescriptor *)event)->result;
+    script = ((const struct EffectDescriptor *)event)->result;
     if (script != 0) {
       if (script < 0x10000) {
         FieldEvent_Begin();
-        Event_SetMessageId(((struct EffectDescriptor *)event)->result);
+        Event_SetMessageId(((const struct EffectDescriptor *)event)->result);
         FieldEvent_ShowMessageAndWait(target, 0);
         FieldEvent_End();
       } else {
@@ -344,7 +344,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   object = Object_CreateFar(kind, x, y, z);
   if (object != NULL) {
     if (object->animationKind == 0) {
-      ObjectDispatch_ReleaseFar(object);
+      ObjectDispatch_ReleaseFar((struct DispatchObject *)object);
       return NULL;
     }
     object->terrainHeight =
@@ -352,7 +352,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
     object->flags = 4;
     object->unk23 = 4;
     ((struct AnimationObject *)object->animation)->image.priority = 0;
-    ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }
   return object;
@@ -372,7 +372,8 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
     object = ObjectTable_Get(actorId);
     if (actorId != *player && object != NULL && object != except) {
       object->movementState = state;
-      ObjectDispatch_SetAnimationSpeedFar(object, value);
+      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object,
+                                          value);
     }
     actorId++;
   } while (actorId <= OBJ_LAST);

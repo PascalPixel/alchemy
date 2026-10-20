@@ -109,6 +109,24 @@ So the effect decides when damage appears, the rules decide what it is, and
 neither waits for the other: the arithmetic of a later target happens while
 the effect is still drawing, and only once its turn in the queue comes.
 
+### Functions that return a value no caller reads
+
+Some helpers are declared to return `s32` (or a pointer) and end without a
+`return`, or with a bare one; their callers use them for their side effects.
+Changing the return type can change the return-address register: agscc's
+`pop {r1}; bx r1` preserves r0, while `pop {r0}; bx r0` does not. Matching
+keeps the existing type where the `void` form changes those instructions.
+These missing results still cause warnings in `make modern`.
+
+### One object, seen through several structs
+
+A battle unit's sprite on the field is one of the object slots the field's
+object code hands out (`Object_CreateFar`). The battle reads it as a
+`struct MotionObject`, while the field's far calls take it as a
+`struct DispatchObject` or `struct ObjectRuntime`, three views of the same
+record at the same offsets. Calls into the field cast to the view the
+prototype names.
+
 ## How a battle runs
 
 `Battle_RunEncounter` ([`battle/encounter.c`](battle/encounter.c)) fights a

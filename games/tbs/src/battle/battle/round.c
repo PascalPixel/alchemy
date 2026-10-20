@@ -10,7 +10,7 @@
 
 /// Pulses BG palette 14's colours: each takes the matching colour of
 /// palette 15 brightened by up to twelve steps, rising and falling with the
-/// frame count.
+/// frame count. Nothing in the source calls it. Writes BG palette RAM.
 void Palette_UpdatePulseBrightness(void) {
   u16 *palette;
   s32 remainingColors;
@@ -28,6 +28,8 @@ void Palette_UpdatePulseBrightness(void) {
     s32 green;
     s32 red;
 
+    // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
+    // from 0 to 2.0 (16.16), and a sixth of 1.0 (0x2aaa) is one step.
     frameCount = gFrameCount;
     angle = (frameCount * 3U) << 10;
     color = palette[16];
@@ -52,9 +54,14 @@ void Palette_UpdatePulseBrightness(void) {
   } while (remainingColors >= 0);
 }
 
-/// Sets the camera up for a scene drawn over the battle (the summons'):
-/// a fixed view raised by verticalOffset pixels, with its projection and the
-/// background's perspective to match.
+/// Sets the camera up for the fixed view the battle shows while commands are
+/// chosen, raised by verticalOffset pixels, with its projection and the
+/// background's perspective to match. Called by
+/// BattlePresentation_BuildActions, and through its far stub by
+/// Battle_CollectPartyCommands and UpdateLinkSessionCountdown. Writes the
+/// camera, the transition's targetYaw and flag (left 1, so the camera
+/// callback leaves the background alone), gProjection and the background's
+/// affine page.
 void Camera_ConfigureScene(s32 verticalOffset) {
   // UB: indexing past scalar gCameraWork reaches another work slot. Named
   // slots add four bytes in the native EN trial (0xd8 to 0xdc).
@@ -71,6 +78,8 @@ void Camera_ConfigureScene(s32 verticalOffset) {
   struct FixedPointPosition eyeOffset;
   u32 result;
 
+  // Positions are 16.16 pixels and angles 1/65536 turns: the focus 5
+  // pixels up, a quarter turn of yaw, 750 pixels away.
   camera->pos[1] = 160 << 11;
   camera->pos[0] = 0;
   camera->pos[2] = 0;
@@ -94,6 +103,8 @@ void Camera_ConfigureScene(s32 verticalOffset) {
   result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
   Projection_Set(0, result, 0x07920000);
 
+  // While active (the view's busy) is set, BattleCamera_SetRange leaves
+  // BG1's scroll alone. The range: centre x 120, scale 2.0.
   gProjection.centerY = verticalOffset + 120;
   transition->active = 1;
   BattleCamera_SetRange(240 << 15, (0x76 - verticalOffset) << 16, 0, 128 << 4,
@@ -103,6 +114,8 @@ void Camera_ConfigureScene(s32 verticalOffset) {
 }
 
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
+/// Called by BattlePresentation_BuildActions as each round begins. Clears
+/// every unit's guardLevel.
 void BattleUnit_ResetGuardLevels(void) {
   u16 unitIds[14];
   s32 count;
@@ -126,7 +139,9 @@ void BattleUnit_ResetGuardLevels(void) {
 /// the party's average level, less 500 times the enemies' average level. A
 /// party that struck first always gets away; no one gets away from a battle
 /// that forbids it. Every attempt counts toward the next. Returns 1 when
-/// the party gets away.
+/// the party gets away. Called by BattlePresentation_BuildActions when the
+/// first action is CMD_FLEE. Each roll, even a successful one, raises
+/// gBattleWork->escapeFailures.
 s32 BattleEscape_CheckSuccess(void) {
   s32 escaped;
   u8 *failedAttempts;
@@ -156,6 +171,7 @@ s32 BattleEscape_CheckSuccess(void) {
       levelTotal += UnitGetFar(livingUnits[unitIndex])->level;
     }
     chance -= levelTotal * 500 / livingCount;
+    // A roll from 0 to 9999 against the chance.
     if ((chance > 0) && (((10000 * Random16()) >> 0x10) < chance)) {
       escaped = 1;
     }
@@ -170,7 +186,8 @@ s32 BattleEscape_CheckSuccess(void) {
 /// The party's actions for the round, from the command menu: a member who
 /// is asleep, confused, charmed or stunned loses each of their turns
 /// (CMD_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
-/// Returns how many actions there are, or -1 if the menu gave up.
+/// Returns how many actions there are, or -1 if the menu gave up. Called by
+/// BattlePresentation_BuildActions. Fills entries.
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
   u16 *choosingUnits = Runtime_BumpAllocateAlternatePool(17);
   u16 *unitIds = Runtime_BumpAllocateAlternatePool(9);
@@ -184,7 +201,6 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
     s32 copyIndex;
 
     for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++) {
-      // These conditions suppress a turn rather than opening the command menu.
       if (unit->sleep != 0 || unit->confusion != 0 || unit->charm != 0 ||
           unit->stun != 0) {
         struct BattleActionRecord *entry = &entries[entryCount];
@@ -200,6 +216,7 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
     }
   }
 
+  // The command menu appends the choosing members' actions.
   {
     s32 appended;
 
@@ -222,7 +239,8 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
 /// turns. An enemy acting more than once a turn acts later at half its
 /// Agility. None act when the party struck first; when the party is caught
 /// by surprise, only two to five enemies act, once each. Returns how many
-/// actions there are.
+/// actions there are. Called by BattlePresentation_BuildActions outside a
+/// link battle. Fills entries.
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
   u16 unitIds[14];
   s32 entryCount = 0;
@@ -247,6 +265,7 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
     unitIds[second] = swap;
   }
 
+  // A roll of 1 to 5, raised to at least 2.
   if (battle->encounterMode == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
     s32 limit = ((Random16() * 5) >> 16) + 1;
 
@@ -298,7 +317,9 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
 #define DJINN_FIRST_PRIORITY 10000
 
 /// Sorts the round's actions into turn order, fastest first, after moving
-/// the guarding and grounding Djinn to the front.
+/// the guarding and grounding Djinn to the front. Called by
+/// BattlePresentation_BuildActions. Raises those Djinn actions' priority
+/// and reorders entries in place.
 void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
   s32 actionIndex;
   s32 sortIndex;
@@ -311,6 +332,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
       struct BattleAct *action;
 
       // parameter: the Djinni's element in bits 8 to 11, its number below.
+      // The unit lookup's result is unused.
       UnitGetFar(entry->unitId);
       action = BattleActGet(Djinn_GetAbilityIdFar(entry->parameter >> 8 & 15,
                                                   entry->parameter & 0xff));
@@ -322,6 +344,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
     }
   }
 
+  // Equal priorities keep their order, including the shuffle of enemies.
   do {
     swapCount = 0;
     for (sortIndex = count - 1; sortIndex > 0; sortIndex--) {
@@ -345,10 +368,10 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
 /// the next random number to check the consoles agree, and the parent's
 /// random seed for the round.
 struct BattleLinkedActionState {
-  s32 count;
-  s32 check;
-  s32 seed;
-  u8 unused[28];
+  s32 count; ///< actions that follow the header
+  s32 check; ///< the parent's next BattleRandomFar; the child checks its own
+  s32 seed;  ///< the parent's gRandomSeed, the round's battle seed
+  u8 unused[28]; ///< padding; a header packet carries only the first 20 bytes
 };
 
 /// The link sends in packets of 20 bytes (the header is one), and a transfer
@@ -368,6 +391,9 @@ struct BattleLinkedActionState {
 /// agree on the next random number. A party member's priority is made even
 /// on the parent and odd on the child, so equal speeds sort alike on both.
 /// Returns how many actions were received, or -1 when the exchange fails.
+/// Called by BattlePresentation_BuildActions in a link battle. Sets
+/// gBattleRandomSeed, writes each action's slot and priority, and on a
+/// failure resets the link transfer and removes its interrupt handlers.
 s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
                                            s32 count) {
   struct BattleWork *battle = gBattleWork;
@@ -377,7 +403,8 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
   s32 index;
 
-  // Sends the header, then this console's actions.
+  // Sends the header, then this console's actions. Both transfers share one
+  // timeout of LINK_TRANSFER_TIMEOUT frames.
   s32 BattleLink_SendActions(void) {
     s32 timeout;
     s32 disconnected;
@@ -417,7 +444,8 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
     return 0;
   }
 
-  // Receives the header, then the other console's actions after ours.
+  // Receives the header, then the other console's actions after ours. A
+  // transfer that grows past its expected size, or ends short of it, fails.
   s32 BattleLink_ReceiveActions(void) {
     // gSerialReceivedSize changes under the serial interrupt and is volatile
     // (serial_runtime.h), so every read here loads it again.
@@ -482,6 +510,8 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
     }
   }
 
+  // The parent (link side 0) sends, then receives; the child receives,
+  // then sends and checks the parent's next random number against its own.
   if (battle->linkPaused == 0) {
     if (battle->linkSide == 0) {
       u32 saved;
@@ -504,7 +534,8 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       gBattleRandomSeed = state->seed;
     }
 
-    // The received actions, seen from this side.
+    // The received actions, seen from this side: the xor with 0x80 moves a
+    // target between the party's ids and the enemies'.
     for (index = 0; index < result; index++) {
       struct BattleActionRecord *action = &actions[count + index];
 
@@ -523,8 +554,11 @@ fail:
   return -1;
 }
 
-/// Copies BG palette 15 to 14 and 5 to 4, brightened or darkened.
-/// offset : added to each of the red, green and blue values (held in 0 to 31)
+/// Copies BG palette 15 to 14 and 5 to 4, brightened or darkened. Called by
+/// BattlePresentation_BuildActions with 8, as the round's commands are
+/// chosen.
+/// @param offset added to each of the red, green and blue values (held in 0
+/// to 31)
 void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
   s32 bankIndex;
   s32 sourceBank;
@@ -566,7 +600,8 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
       adjustedColor = blue << 10;
       adjustedColor |= green << 5;
       adjustedColor |= red;
-      // Into the palette before the source: 14 and 4.
+      // Into the palette before the source, 14 and 4: 0x04ffffe0 is BG
+      // palette RAM (0x05000000) less one palette's 32 bytes.
       ((s16 *)0x04ffffe0)[paletteIndex] = adjustedColor;
     }
     bankIndex++;
@@ -577,7 +612,11 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
 /// Builds the turn's actions and sorts them into turn order: the party's
 /// commands, then the link opponent's or the enemies' actions.
 /// Returns how many actions there are; negative to abort (a link failure).
-/// actions : the actions (20 at most)
+/// Called by Battle_RunEncounter at the start of each round outside auto
+/// battle. Clears gBattleWork->actions, sets every defender's guardLevel,
+/// may set encounterMode to BATTLE_ENCOUNTER_ENEMIES_FIRST after a failed
+/// escape, and holds FLAG_CHOOSING_COMMANDS while the commands are chosen.
+/// @param actions the actions (20 at most)
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   struct BattleUnit *unit;
   struct BattleWork *battle;
@@ -587,6 +626,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   s32 remainingActions;
 
   battle = gBattleWork;
+  // Empty every action slot of the battle work.
   {
     struct BattleActionRecord *record = battle->actions;
     u32 actionIndex;
@@ -598,9 +638,10 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
     }
   }
 
+  // Last round's guards end; palettes 14 and 4 take 15 and 5 eight steps
+  // brighter; the camera takes the command view.
   BattleUnit_ResetGuardLevels();
   Palette_CopyBanksWithBrightnessOffset(8);
-  // Set while the commands are chosen.
   GameFlag_SetBitFar(FLAG_CHOOSING_COMMANDS);
   encounterMode = &battle->encounterMode;
   Camera_ConfigureScene(0);
@@ -620,6 +661,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   }
 
   // The link opponent's actions, or the enemies'.
+  // A link battle syncs even after a failed exchange, before giving up.
   if (gBattleWork->twoSided != 0) {
     received = BattlePresentation_AppendLinkedActions(actions, count);
     if (BattlePres_WaitSync() < 0) {
@@ -655,14 +697,17 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   }
 
 finish:
+  // The battle view again, turned toward the party's turn.
   GameFlag_ClearBitFar(FLAG_CHOOSING_COMMANDS);
   Camera_InitDefaultTransform();
   gTransitionWork->targetYaw = YAW_PARTY_TURN;
   return count;
 }
 
-/// Returns the unit id at a list place.
-/// taggedPlace: the place in the low four bits; 0x80 set for the enemies' list
+/// Returns the unit id at a list place. Called by BattleCommand_BuildPlan
+/// for a command's target.
+/// @param taggedPlace the place in the low four bits; 0x80 set for the
+/// enemies' list
 s32 Battle_GetTaggedSlotValue(s32 taggedPlace) {
   struct BattleWork *battle = gBattleWork;
 
@@ -672,8 +717,10 @@ s32 Battle_GetTaggedSlotValue(s32 taggedPlace) {
 }
 
 /// Returns the list place of unit id, or -1 if it is in neither list: the
-/// party's as 0x100 | place, the enemies' as 0x180 | place.
-/// unitId: 0 to 7 the party, any other an enemy
+/// party's as 0x100 | place, the enemies' as 0x180 | place (PLACE_PARTY,
+/// PLACE_ENEMY). Called by the enemies' command choice (enemy_ai.c) to aim
+/// at a unit.
+/// @param unitId 0 to 7 the party, any other an enemy
 s32 Battle_FindTaggedSlotByValue(u32 unitId) {
   struct BattleWork *battle = gBattleWork;
   s32 placeIndex;
@@ -697,8 +744,9 @@ s32 Battle_FindTaggedSlotByValue(u32 unitId) {
   }
 }
 
-/// Turns the camera while L or R is held (a second copy).
+/// Turns the camera while L or R is held (a second copy). Nothing in the
+/// source calls it.
 DEFINE_ADJUST_CAMERA(BattlePres_AdjustCameraByShoulderKeysAlt)
 
-/// Battle_RunEncounter calls it at the start of each round.
+/// Does nothing; Battle_RunEncounter calls it at the start of each round.
 void Battle_ReservedNoOp9B2C(void) {}

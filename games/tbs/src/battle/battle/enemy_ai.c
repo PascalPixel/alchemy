@@ -4,11 +4,14 @@
 
 #include "../battle_internal.h"
 
-/// An enemy's memory of its action choice, kept in BattleUnit.rewards.
+/// An enemy's memory of its action choice, kept in BattleUnit.rewards (0 in
+/// every row of enemies.tsv, so it starts cleared). Only action strategies 3
+/// and 4 use it.
+/// bits: 31..4 unused | 3..1 selection | 0 initialized
 struct BattleAutomaticState {
-  unsigned initialized : 1;
-  unsigned selection : 3; ///< the place in its action list
-  unsigned remaining : 28;
+  unsigned initialized : 1; ///< strategy 3 has drawn its random start
+  unsigned selection : 3;   ///< the place in its action list, 0 to 7
+  unsigned remaining : 28;  ///< not used here
 };
 
 /// Chooses an enemy's action (a party member's is chosen in the menu): one of
@@ -16,6 +19,11 @@ struct BattleAutomaticState {
 /// instead where its item mask says so, and a target worth the ability. A
 /// choice that cannot be made (too little PP, sealed, a forbidden escape, no
 /// worthwhile target) picks again; after 18 tries the enemy defends.
+/// Called with retry 0 for each enemy as the round is built
+/// (BattlePres_BuildOpponentEntries), and with retry 1 at its turn
+/// (BattlePresentation_DispatchAction). Writes request's command, parameter,
+/// target and range; strategies 3 and 4 advance the place remembered in
+/// BattleUnit.rewards. Returns nothing.
 /// retry : 0 when the round is built: only a guard is settled now (it must
 ///         raise before anyone acts); 1 at the enemy's turn: the rest.
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
@@ -44,7 +52,8 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
   u8 effect;
   u8 targetMode;
 
-  // Picks a place in the action list from a 0-255 roll and eight weights.
+  /// Picks a place in the action list from a 0-255 roll and eight weights:
+  /// the first place whose running total passes the roll, else place 0.
   s32 BattleEnemy_SelectWeightedAction(u8 *weights) {
     s32 roll;
     s32 total;
@@ -70,6 +79,8 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
   unit = UnitGetFar(request->unitId);
   needsChoice = itemsAllowed = 1;
   failedChoices = 0;
+  // Strategy 5's first pick is place 0. No row of enemies.tsv uses strategies
+  // 4 to 6 (only 0, 1 and 3); strategy 6 would keep this -1 as its place.
   selection = -1U;
   // A party member chooses in the menu.
   if (unit->classIndex != 0)
@@ -86,7 +97,8 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
 select_again:
   strategyKind = *actionStrategy;
   switch (strategyKind) {
-  case 0: // the first weight table
+  // Strategies 0 to 2: one of the three weight tables.
+  case 0:
     selection =
         BattleEnemy_SelectWeightedAction(gBattleCommand_SelectionWeights[0]);
     break;
@@ -105,6 +117,8 @@ select_again:
     }
     // fall through
   case 4: // in order from the remembered place
+    // It moves on only at the enemy's turn, wrapping from 7 to 0 in its three
+    // bits.
     selection = selectionMemory->selection;
     if (retry != 0) {
       selectionMemory->selection = selection + 1;
@@ -117,7 +131,8 @@ select_again:
     break;
   }
 
-  // A place marked for an item: use the first item held, if any.
+  // A place marked for an item: use the first item held, if any. Once an
+  // item is refused, later picks take the place's ability instead.
   useItem = (*itemActionMask >> selection) & 1;
   useItem &= itemsAllowed;
   abilityId = enemy->actions[selection];
@@ -127,12 +142,18 @@ select_again:
       useItem = 0;
       if (enemy->targetStrategy == 0) {
         request->command = CMD_ITEM;
+        // XXX: 0x1fd (509) is the row of the ability Can't Use, yet CMD_ITEM
+        // reads its parameter as an inventory slot (BattleCommand_BuildPlan);
+        // a Brigand or Rat Fighter (target strategy 0, item places) out of
+        // items would show what the player sees.
         request->parameter = 0x1fd;
         return;
       }
     }
     if (useItem != 0) {
       item = Item_GetDirectFar(unit->inventory[0]);
+      // Only an item that is used up, whose ability's flags are exactly kind
+      // 1 (heal HP) or 2 (an effect), with no higher bit set.
       if (item->useType == ITEM_USE_CONSUMED) {
         itemAction = BattleActGet(item->actionId);
         abilityId = item->actionId;
@@ -174,6 +195,8 @@ select_again:
       break;
     }
 
+    // As the round is built, only a guard is kept; anything else waits for
+    // the enemy's turn.
     if (retry == 0) {
       switch (request->command) {
       case CMD_DEFEND:
@@ -194,6 +217,8 @@ select_again:
       if (unit->psySeal != 0 && enemy->targetStrategy == 2)
         goto next_candidate;
     }
+    // A challenged enemy won't flee, and at its turn it no longer chooses a
+    // guard (guards are settled as the round is built): both pick again.
     command = request->command;
     if (command == CMD_FLEE && (u8)unit->challenge != 0)
       goto next_candidate;
@@ -206,7 +231,11 @@ select_again:
         request->command = CMD_ATTACK;
     }
 
-    // The target.
+    // The target. With no one listed on the side (-2) a random place is
+    // taken instead, on the actor's own side for both modes (allyIsParty and
+    // opponentIsParty both test the actor); with no one worth it (-1) the
+    // enemy picks again. Mode 3 and the others target the user, but mode 3
+    // leaves the choice open, so the enemy picks again after it too.
     request->range = ability->range;
     targetMode = ability->targetMode;
     switch (targetMode) {
@@ -247,10 +276,11 @@ select_again:
       break;
     }
   }
+  // As the round is built, one pick is all.
   if (retry == 0)
     needsChoice = 0;
 next_candidate:
-  // After 18 failed picks, defend.
+  // On the 18th failed pick, defend.
   if (needsChoice != 0 && failedChoices > 16) {
     request->command = CMD_DEFEND;
     needsChoice = 0;

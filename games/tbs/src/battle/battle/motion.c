@@ -8,8 +8,12 @@
 /// MotionObject.targetX and targetZ while the object has no move target.
 #define NO_MOVE_TARGET 0x80000000
 
+// The motion values below are 16.16 fixed point, in pixels and frames:
+// acceleration and speedLimit per frame, velocityY the hop's upward speed.
+
 /// Sends unitId back to its spot, landing there, and turns it to face
-/// the centre.
+/// the centre. Called after an action by the staging code, the auto battle,
+/// BattleTargetExec and the Quake effect.
 void ObjMotRst(s32 unitId) {
   s32 z;
   s32 stopped;
@@ -29,6 +33,7 @@ void ObjMotRst(s32 unitId) {
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
   Object_SetMoveTargetFar((struct ObjectRuntime *)object, battleObject->anchorX,
                           0, battleObject->anchorZ);
+  // z / 8, rounded toward zero, as BattleObjMake turns a new object.
   z = battleObject->anchorZ;
   if (z < 0)
     z += 7;
@@ -36,7 +41,8 @@ void ObjMotRst(s32 unitId) {
 }
 
 /// Sends unitId running off its side of the battlefield, three times
-/// as far out as its spot, with a hop.
+/// as far out as its spot, with a hop, in pose 1. Called by
+/// BattleEscape_PlayRun and BattlePres_RunEscape.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObj *battleObject;
   struct MotionObject *object;
@@ -56,7 +62,8 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
 }
 
 /// Sends the unit of startSlot leaping progress percent of the way toward
-/// the unit of endSlot.
+/// the unit of endSlot, in pose 2. Also clears REG_BLDCNT. Nothing in the
+/// source calls it.
 void BattleMotion_InterpolatePosition(struct BattleObj *startSlot,
                                       struct BattleObj *endSlot, s32 progress) {
   s32 zStep;
@@ -85,7 +92,7 @@ void BattleMotion_InterpolatePosition(struct BattleObj *startSlot,
   ObjectDispatch_SelectAnimationFar(start, 2);
 }
 
-/// Sends a unit's object back to its spot.
+/// Sends a unit's object back to its spot. Nothing in the source calls it.
 void BattleMotion_SetObjectPosition(struct BattleObj *battleObject) {
   struct MotionObject *object = battleObject->object;
 
@@ -99,7 +106,8 @@ void BattleMotion_SetObjectPosition(struct BattleObj *battleObject) {
 }
 
 /// Sends unitId hopping out to one and a half times its spot's
-/// distance from the centre.
+/// distance from the centre. Called by BattlePres_RunAttack and
+/// BattlePres_RunPlainAttack.
 void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   u32 scaledX;
   struct BattleObj *battleObject;
@@ -114,6 +122,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  // anchorX * 3 / 2, rounded toward zero.
   scaledX = battleObject->anchorX * 3;
   Object_SetMoveTargetFar((struct ObjectRuntime *)object,
                           (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0,
@@ -121,7 +130,8 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
 }
 
 /// Sends unit id leaping back to 1.3 times its spot's distance from the
-/// centre, in pose 5.
+/// centre, in pose 5. Only an unnamed overlay veneer in BATTLE.S reaches
+/// it, and nothing in the source calls that.
 void BattleMotion_InitializeObject(s32 unitId) {
   struct BattleObj *battleObject = BattleObjGet(unitId);
   struct MotionObject *object = battleObject->object;
@@ -139,11 +149,14 @@ void BattleMotion_InitializeObject(s32 unitId) {
   ObjectDispatch_SelectAnimationFar(object, 5);
 }
 
-#define CLASS_NO_KNOCKBACK 0x94 ///< a class that never moves when hit
+/// A class that never moves when hit (148, one of the two that never show
+/// the stun icon and stand nearer the party).
+#define CLASS_NO_KNOCKBACK 0x94
 
 /// Knocks unit id back, by the speed, hop and distance of motion variant
 /// (gBattleMotion_Variant*), and puts it in pose 5. One class only takes
-/// the pose.
+/// the pose. Reached through its far stub from the effects, by the
+/// EFFECT_STRIKE_TARGET macro of effect_internal.h and directly.
 void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
   struct BattleObj *battleObject;
   struct MotionObject *object;
@@ -155,6 +168,7 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
   if (UnitGetFar(unitId)->classId != CLASS_NO_KNOCKBACK) {
     object->acceleration = gBattleMotion_VariantAcceleration[variant];
     object->speedLimit = gBattleMotion_VariantSpeedLimit[variant];
+    // A unit already in the air keeps its hop, except in variants 5 and up.
     if (object->y == 0 || variant > 4)
       object->velocityY = gBattleMotion_VariantVelocityY[variant];
     object->verticalMotionStrength = 0x9999;
@@ -170,7 +184,10 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
 }
 
 /// Sends unit actorId three quarters of the way to unit targetId, arriving
-/// in travelDivisor steps, leaping up at initialVelocityY.
+/// in travelDivisor steps, leaping up at initialVelocityY, in pose 2.
+/// Called by BattlePres_RunAttack, BattlePres_RunPlainAttack and
+/// BattlePres_RunApproachAction, and through its far stub by the Bind,
+/// burst scene, Annihilation, target motes and Thrash effects.
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
   struct BattleObj *actorSlot = BattleObjGet(actorId);
@@ -186,6 +203,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   s32 stepZ = percent * dz / 100;
   s32 x = startX + stepX;
   s32 z = startZ + stepZ;
+  // The distance is taken in 1/256 pixels, so its square fits 32 bits.
   s32 cellX = stepX >> 8;
   s32 cellZ = stepZ >> 8;
   s32 speed;
@@ -207,7 +225,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   ObjectDispatch_SelectAnimationFar(object, 2);
 }
 
-/// Restarts unit id's motion in pose 2.
+/// Restarts unit id's motion in pose 2. Nothing in the source calls it.
 void BattleMotion_ResetSlotObjectMode2(s32 unitId) {
   struct MotionObject *object;
 
@@ -216,12 +234,13 @@ void BattleMotion_ResetSlotObjectMode2(s32 unitId) {
   ObjectDispatch_SelectAnimationFar(object, 2);
 }
 
-/// BattleMotion_ApplyPairMidpoint passes it a position and a distance.
+/// Does nothing; BattleMotion_ApplyPairMidpoint, its only caller, passes it
+/// a position and a distance.
 void BattleMotion_ReservedNoOp83B0() {}
 
 /// Works out the point halfway between two units, at their move targets
 /// where they have one, and hands it to BattleMotion_ReservedNoOp83B0,
-/// which does nothing.
+/// which does nothing. Nothing in the source calls it.
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   struct BattleObj *secondSlot;
   struct MotionObject *first;
@@ -262,7 +281,8 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
 #define HIT_FLASH_ANIM 0x11b
 
-/// Plays the hit flash on unit id's sprite and waits ten frames.
+/// Plays the hit flash on unit id's sprite and waits ten frames. Only a
+/// single-sprite object takes it. Nothing in the source calls it.
 void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
   struct MotionObject *object;
   struct AnimationEntry *effect;
@@ -283,7 +303,10 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
 }
 
 /// Projects the point above unit id where its effects play (its class's
-/// height, BattleUnit_GetEffectHeight) onto the screen, into projected.
+/// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
+/// height is scaled by the sprite's projected scale. Called by
+/// BattleFx_PlayUnitElementEffect, and through its far stub by
+/// EffectPosition_ProjectScaledBattler and SelectionScreen_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObjGet(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);
@@ -303,7 +326,8 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
 }
 
 /// Projects the point above unit id onto the screen, into projected: 24
-/// pixels up for a small enemy, 48 for others, as drawn.
+/// pixels up for a small enemy, 48 for others, as drawn. Reached through its
+/// far stub from BattleTarget_RunSelection, to place the target cursor.
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObjGet(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);
@@ -323,7 +347,8 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
 
 /// Returns the height above unit id where its effects play, 16.16: its
 /// class's own (BattleClass_GetEffectHeight), else 24 for a small enemy and 48
-/// for others.
+/// for others. Called by BattleMotion_ProjectScaledPosition, and through its
+/// far stub by the effects that play at a unit's body.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;

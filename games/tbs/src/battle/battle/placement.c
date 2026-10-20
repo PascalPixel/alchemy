@@ -17,7 +17,10 @@
 /// Creates the battle object of unit at (x, y) on the battlefield, in
 /// pixels: its sprite (an enemy's from its class, sharing the slot it
 /// already holds; a party member's battle sprite), palette, size and weapon
-/// sprite, turned to face the centre, and starts its motion script.
+/// sprite, turned to face the centre, and starts its motion script
+/// (gBattlePres_ActorObjectScript). Called by BattleUnit_RefreshPlacement
+/// and by BattleTargetExec for an enemy that joins. Fills in actor, creates
+/// a field object for it and, for an enemy, claims its sprite slots.
 void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
@@ -30,15 +33,21 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 weaponSprite;
   u8 classId;
 
+  // Positions are 16.16 fixed point; y is the battlefield's depth.
   fixedX = x * 65536;
   fixedZ = y * 65536;
+  // Kind 15 skips FieldObject_Create's sprite creation. Battle sprites are
+  // attached later by BattleActor_SpawnObjectsForList.
   object = (struct MotionObject *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = UnitGetFar(unitId);
   palette = 0;
   registeredSprite = SummonSlot_RegisterActorSprites(unitId);
 
-  // The sprite: an enemy's from its class, a party member's by character;
-  // enemies use the second palette.
+  // The sprite: an enemy's from its class (classIndex 0), a party member's
+  // by character. An enemy whose sprite went into its own slots takes the
+  // slot's sprite and palette 0, else its class's sprite and palette; a
+  // character fighting on the enemy side (a link opponent, unit id 8 or
+  // above) takes palette 1.
   if (unit->classIndex == 0) {
     sprite = BattleClass_GetSprite(unit->classId);
     if (registeredSprite == 0)
@@ -68,8 +77,10 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
       palette = 1;
   }
 
-  // The enemy classes drawn larger or smaller than their sprites. Grouping
-  // equal scale cases shortens the matching EN function by 148 bytes.
+  // The enemy classes drawn larger or smaller than their sprites, in 16.16
+  // (0x18000 is 1.5, 0xe666 0.9). Grouping equal scale cases shortens the
+  // matching EN function by 148 bytes, so each case keeps its own store.
+  // Class ids are enemies.tsv rows plus ENEMY_CLASS_FIRST.
   actor->scale = SCALE_ONE;
   switch (unit->classId) {
   case 78:
@@ -225,6 +236,8 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   classId = unit->classId;
   actor->overlay = weaponSprite;
 
+  // Isaac and Garet draw a Machete as part of their own sprite, with no
+  // weapon overlay.
   if (classId <= GARET &&
       Inventory_GetEquippedItemFar(unit, EQUIP_WEAPON) == ITEM_MACHETE) {
     if (unit->classId == ISAAC) {
@@ -237,7 +250,9 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
     actor->overlay = 0;
   }
 
-  // Face the centre of the battlefield; enemies are drawn larger.
+  // Face the centre of the battlefield (0x8000 is half a turn, so the
+  // angle points back along the line to the origin); enemies are drawn at
+  // 1.3 times their size. motionFlags 2 lets the object fall.
   facingAngle = ArcTan2(y / 8, x) + 0x8000;
   object->angle = facingAngle;
   object->unk59 = 3;
@@ -254,7 +269,8 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
 }
 
 /// Reads the battlefield position of party place index from
-/// gBattlePlacement_StepPairs, in pixels.
+/// gBattlePlacement_StepPairs, in pixels. Nothing in the source calls it;
+/// BattleUnit_RefreshPlacement reads the table directly.
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
   partyPlace *= 2;
   *x = gBattlePlacement_StepPairs[partyPlace];
@@ -268,13 +284,17 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 /// Lays out count enemies in a column 80 pixels left of the centre, spaced
 /// by their size (38 pixels around a large enemy, 27 around a small one, 25
 /// around an empty place, closer when there are more than four) and centred
-/// on the line. Two large classes stand nearer, 50 pixels left.
+/// on the line. Two large classes stand nearer, 50 pixels left. Called by
+/// BattleUnit_RefreshPlacement and EnemyUpdate; writes only xPositions and
+/// zPositions.
 void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
                             s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
   s32 z = ((count - 1) * totalSpacing) / 2;
   s32 index;
 
+  // z starts half a line's estimated length up and steps down by half of
+  // each enemy's spacing before it and half after it.
   for (index = 0; index != count; index++) {
     s32 spacing = 0;
 
@@ -304,6 +324,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
 }
 
 /// Returns the id of the first free enemy unit, or -1 when all six are taken.
+/// Called by BattleTargetExec when an enemy calls for help.
 s32 EnemySlotGet(void) {
   s32 enemySlot;
   s32 unitId;
@@ -318,8 +339,9 @@ s32 EnemySlotGet(void) {
   return unitId;
 }
 
-/// Lays the enemies out again (after one joins or leaves) and moves each
-/// one's object to its new place.
+/// Lays the enemies out again and moves each one's object anchor to its new
+/// place. Called by BattleTargetExec after an enemy joins. Writes the
+/// anchorX and anchorZ of every enemy's battle object.
 s32 EnemyUpdate(void) {
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[14];
@@ -348,7 +370,8 @@ s32 EnemyUpdate(void) {
 
 /// Places every unit at the start of a battle: numbers the places (party
 /// members 0 up in their order, enemies 8 to 13) and creates each unit's
-/// object at its spot.
+/// object at its spot. Called by Battle_RunEncounter once the unit lists are
+/// filled. Writes gBattleWork->placement and every unit's battle object.
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *battle;
   u16 unitIds[14];
@@ -366,6 +389,8 @@ void BattleUnit_RefreshPlacement(void) {
   enemyPlace = 0;
   battle = gBattleWork;
   count = BattleParty_PrepareActiveOwners(unitIds);
+  // placement[0..7] is each party unit id's place (0xff for none) and
+  // placement[8..13] the enemy places, numbered 8 to 13.
   placementValue = 0xff;
   for (unitIndex = 13; unitIndex >= 0; unitIndex--)
     battle->placement[unitIndex] = placementValue;
@@ -400,9 +425,10 @@ void BattleUnit_RefreshPlacement(void) {
   }
 }
 
-/// Returns 1 if the unit at place is in list.
-/// list : unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
-/// place: 0 to 7 the party, 8 to 13 the enemies
+/// Returns 1 if the unit at place is in list. Called by
+/// BattleActor_SpawnObjectsForList to find the objects to release.
+/// @param list unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
+/// @param place 0 to 7 a party unit id, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
   u32 listIndex;
 

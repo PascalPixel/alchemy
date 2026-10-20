@@ -5,12 +5,17 @@
 
 #include "../battle_internal.h"
 
-/// Rolls whether a counter of five turns or fewer ends early, using luck, turns
-/// and the supplied bias.
+/// Rolls whether a stat change or status with five turns or fewer left ends
+/// early.
+/// The chance is `luck * 3 - turns * 5 + bias` percent, so a lucky unit and a
+/// counter near its end recover sooner. Called by the turn-end Tick functions
+/// below, each with its own bias.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct BattleUnit *unit = UnitGetFar(unitId);
 
   if (turns <= 5) {
+    // 0x28f is 65536 / 100 rounded down, scaling the percentage to a 16-bit
+    // random number.
     s32 threshold = ((unit->luck * 3 - turns * 5) + bias) * 0x28f;
     if (threshold >= (BattleRandomFar() & 0xffff))
       return 1;
@@ -18,8 +23,10 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   return 0;
 }
 
-/// Ticks Attack's duration; clears its stage on expiry or an early end of a
-/// reduction.
+/// Counts down an Attack change and returns 1 when it ends.
+/// Clears attackStage when the turns run out, and clears attackStage and
+/// attackTurns when a lowered Attack recovers early (bias 30). Called by
+/// Battle_ProcessRoundEnd, which then shows `MsgAtkNormal`.
 s32 BattleUnit_TickAttackModifier(s32 unitId) {
   struct BattleUnit *unit = UnitGetFar(unitId);
 
@@ -42,9 +49,9 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
   return 0;
 }
 
-/// Decrements a stat change's turn counter. Resets level and returns one when
-/// the counter reaches zero, or when BattleUnit_RollCounterEarlyEnd ends a
-/// negative-level stat reduction early.
+/// Defines a stat change's turn-end tick, as BattleUnit_TickAttackModifier is
+/// with bias 20: clears `level` and returns 1 when `counter` runs out, or
+/// clears both when a lowered stat recovers early.
 #define DEFINE_TICK_MODIFIER(name, counter, level)                             \
   s32 name(s32 unitId) {                                                       \
     struct BattleUnit *state = UnitGetFar(unitId);                             \
@@ -65,15 +72,16 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
     return 0;                                                                  \
   }
 
-/// Ticks Defense duration and clears an expired or prematurely ended reduction.
+/// Counts down a Defense change; Battle_ProcessRoundEnd shows `MsgDefNormal`
+/// when it returns 1.
 DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseModifier, defenseTurns, defenseStage)
-/// Ticks Resistance duration and clears an expired or prematurely ended
-/// reduction.
+/// Counts down a Resistance change; Battle_ProcessRoundEnd shows
+/// `MsgResNormal` when it returns 1.
 DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns,
                      resistanceStage)
 
-/// Decrements a status condition's turn counter. Returns one when it reaches
-/// zero, or when BattleUnit_RollCounterEarlyEnd(bias) ends it early.
+/// Defines a status's turn-end tick: returns 1 when `counter` runs out, or
+/// clears it and returns 1 when the status ends early at `bias`.
 #define DEFINE_TICK_STATUS(name, counter, bias)                                \
   s32 name(s32 unitId) {                                                       \
     struct BattleUnit *state = UnitGetFar(unitId);                             \
@@ -89,12 +97,17 @@ DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns,
     return 0;                                                                  \
   }
 
-/// Ticks delusion and rolls its early end with bias 30.
+/// Counts down delusion, which may end early at bias 30;
+/// Battle_ProcessRoundEnd shows `MsgCureDelusion` when it returns 1.
 DEFINE_TICK_STATUS(BattleUnit_TickDelusion, delusion, 30)
 
-/// Ticks the unsigned confusion counter and rolls its early end with bias 60.
+/// Counts down confusion, which may end early at bias 60;
+/// Battle_ProcessRoundEnd shows `MsgConscious` when it returns 1.
 s32 BattleUnit_TickConfusion(s32 unitId) {
   struct BattleUnit *unit = UnitGetFar(unitId);
+  // XXX: BattleUnit.confusion is declared s8 but counted down here as a u8,
+  // unlike the statuses DEFINE_TICK_STATUS ticks; a read that sign-extends it
+  // elsewhere would settle its type.
   if ((u8)unit->confusion != 0) {
     (*(u8 *)&unit->confusion)--;
     if (unit->confusion == 0)
@@ -107,15 +120,22 @@ s32 BattleUnit_TickConfusion(s32 unitId) {
   return 0;
 }
 
-/// Ticks charm and rolls its early end with bias 70.
+/// Counts down charm, which may end early at bias 70; Battle_ProcessRoundEnd
+/// shows `MsgConscious2` when it returns 1.
 DEFINE_TICK_STATUS(BattleUnit_TickCharm, charm, 70)
-/// Ticks stun and rolls its early end with bias 40.
+/// Counts down stun, which may end early at bias 40; Battle_ProcessRoundEnd
+/// shows `MsgCureStun` when it returns 1.
 DEFINE_TICK_STATUS(BattleUnit_TickStun, stun, 40)
-/// Ticks sleep and rolls its early end with bias 50.
+/// Counts down sleep, which may end early at bias 50; Battle_ProcessRoundEnd
+/// shows `MsgWakes` when it returns 1.
 DEFINE_TICK_STATUS(BattleUnit_TickSleep, sleep, 50)
 
-/// Ticks both packed Psynergy-seal counters; only Bind's low-bit counter may
-/// end early.
+/// Counts down both seals packed in BattleUnit.psySeal and returns 1 when the
+/// last ends.
+/// Luff's seal counts down by 8 above the low three bits and Bind's by 1 in
+/// them (PSY_SEAL_LUFF, PSY_SEAL_BIND); only Bind's, once Luff's is gone, may
+/// end early (bias 30), which clears psySeal. Called by
+/// Battle_ProcessRoundEnd, which then shows `MsgCureSeal`.
 s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
   s32 decremented;
   u8 remaining;
@@ -149,7 +169,8 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
   return 0;
 }
 
-/// Ticks HP-regeneration duration; returns one when it expires.
+/// Counts down BattleUnit.refrain and returns 1 when it runs out; it never
+/// ends early. Battle_ProcessRoundEnd then shows `MsgRefrainEnd`.
 s32 BattleUnit_TickRefrain(s32 unitId) {
   u8 *turns = &UnitGetFar(unitId)->refrain;
   if (*turns != 0) {
@@ -161,7 +182,8 @@ s32 BattleUnit_TickRefrain(s32 unitId) {
   return 0;
 }
 
-/// Ticks reflection duration; returns one when it expires.
+/// Counts down Reflect and returns 1 when it runs out; it never ends early.
+/// Battle_ProcessRoundEnd then shows `MsgReflectEnd`.
 s32 BattleUnit_TickReflect(s32 unitId) {
   u8 *turns = (u8 *)&UnitGetFar(unitId)->reflect;
   if (*turns != 0) {
@@ -173,7 +195,9 @@ s32 BattleUnit_TickReflect(s32 unitId) {
   return 0;
 }
 
-/// Ticks Agility's duration and clears its stage on expiry.
+/// Counts down an Agility change, clearing agilityStage and returning 1 when
+/// it runs out; unlike the other stats it never ends early.
+/// Battle_ProcessRoundEnd then shows `MsgAgiNormal`.
 s32 BattleUnit_TickAgilityModifier(s32 unitId) {
   struct BattleUnit *unit = UnitGetFar(unitId);
   u8 *turns = &unit->agilityTurns;
@@ -187,8 +211,13 @@ s32 BattleUnit_TickAgilityModifier(s32 unitId) {
   return 0;
 }
 
-/// Ticks party Djinn recovery for living owners, then sets and removes every
-/// expired entry. Returns one when any entry was removed.
+/// Brings the party's recovering Djinn one turn nearer, setting each whose
+/// turns reach 0, and returns 1 when any was set.
+/// A Djinni counts down only while its owner has HP; one that is set is taken
+/// off the party's recovery list and its owner's stats worked out again
+/// (UnitCalc). Called once at the end of every battle by Battle_RunEncounter,
+/// and outside battle by Field_ProcessStep as the party walks, by the Djinn
+/// menu's tutorial and by DjinnRecovery_TickTwenty.
 s32 DjinnRecovery_Tick(void) {
   struct DjinnRecoveryList *list;
   struct DjinnRecoveryEntry *timedEntry;
@@ -211,6 +240,8 @@ s32 DjinnRecovery_Tick(void) {
       timedEntry++;
     } while (index < list->count);
   }
+  // Removing an entry moves the next one into its place, so the cursor
+  // advances only past entries that stay.
   index = 0;
   if (index < list->count) {
     expiredEntry = list->entries;
@@ -231,7 +262,10 @@ s32 DjinnRecovery_Tick(void) {
   return removed;
 }
 
-/// Advances party Djinn recovery twenty times, setting every expired Djinni.
+/// Runs DjinnRecovery_Tick twenty times, which sets every recovering Djinni
+/// of a party member with HP.
+/// Called by the link lobby when it restores the party, and by Vault's scene
+/// before Ivan hands back Isaac's Djinni.
 s32 DjinnRecovery_TickTwenty(void) {
   s32 turns;
 
@@ -243,16 +277,21 @@ s32 DjinnRecovery_TickTwenty(void) {
   return 0;
 }
 
+/// Does nothing; Battle_RunEncounter calls it at the end of each round and of
+/// the battle.
 void Battle_ReservedNoOpF674(void) {}
 
-/// The order the two sides' units take their turn-end effects in, as
-/// BATTLE_SIDE_ masks.
+/// The order the two sides' units take their round-end effects in, as
+/// gBattleParty_RoundEndGroupOrder gives it.
 struct BattleGroupOrder {
-  s32 group[2];
+  s32 group[2]; ///< enum BattleSideMask: the party (1), then the enemies (2)
 };
 
-/// Advances Djinn recovery on each battle side, applies HP/PP regeneration and
-/// announces expired stat changes and conditions in the round's side order.
+/// Ends a round: sets recovered Djinn, then gives each unit its regeneration
+/// and counts down its stat changes and statuses, showing each that ends.
+/// Called by Battle_RunEncounter once every unit has acted. Changes HP, PP,
+/// BattleUnit.ready, the Djinn recovery lists and the counters the Tick
+/// functions clear, and puts the background back in its perspective mode (2).
 s32 Battle_ProcessRoundEnd(void) {
   struct BattleWork *battle;
   s32 side;
@@ -263,6 +302,8 @@ s32 Battle_ProcessRoundEnd(void) {
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *expiredEntry;
 
+  // Djinn recovery: the party's list, and in a link battle the opponent's
+  // too. Only a Djinni whose owner is on the field with HP counts down.
   battle = gBattleWork;
   sideCount = (battle->twoSided != 0) + 1;
   for (side = 0; side < sideCount; side++) {
@@ -280,6 +321,11 @@ s32 Battle_ProcessRoundEnd(void) {
         timedEntry++;
       } while (recoveryIndex < list->count);
     }
+    // Set each recovered Djinni, as DjinnRecovery_Tick does, with its
+    // message, the owner's pose 3 and its element's effect. As there, the
+    // cursor stays on a removed entry; it would stay for ever on one whose
+    // owner is off the field, but only an owner on the field counts down to 0
+    // above.
     recoveryIndex = 0;
     if (recoveryIndex < list->count) {
       expiredEntry = list->entries;
@@ -292,6 +338,8 @@ s32 Battle_ProcessRoundEnd(void) {
             BattleEventRuntime_Reset();
             BattleEventRuntime_SchedulePhase(30);
             BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
+            // The Djinni's own ability, which names it: 300 + 20 * element +
+            // index, the ability column of djinn.tsv.
             BattleEvPush(BATTLE_EVENT_ABILITY_NAME, expiredEntry->element * 20 +
                                                         expiredEntry->index +
                                                         300);
@@ -318,6 +366,8 @@ s32 Battle_ProcessRoundEnd(void) {
       } while (recoveryIndex < list->count);
     }
   }
+  // Fade 0 leaves the palette as it is: this only puts the perspective
+  // plane back and rebuilds its map.
   BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
   {
     s32 *groupList;
@@ -326,6 +376,9 @@ s32 Battle_ProcessRoundEnd(void) {
     s32 group;
     s32 unitIndex;
 
+    // Each unit's regeneration and counters, the party's first. The link
+    // child takes the enemies first, so both consoles go through the
+    // parent's units first and show the same messages in the same order.
     if (battle->twoSided != 0 && battle->linkSide != 0) {
       order.group[0] = 2;
       order.group[1] = 1;
@@ -342,6 +395,7 @@ s32 Battle_ProcessRoundEnd(void) {
         if (unit->ready != 0) {
           unit->ready--;
         }
+        // Regeneration, capped at the maximum, for a unit still standing.
         if (unit->hp != 0) {
           if (unit->hpRegen != 0 && unit->hp != unit->maxHp) {
             hpAmount = unit->hpRegen;
@@ -376,6 +430,8 @@ s32 Battle_ProcessRoundEnd(void) {
             BattlePresentation_WaitForAdvance();
           }
         }
+        // Each counter that ends rebuilds the unit's status icons and shows
+        // its message; the end of stun or sleep also sets the unit standing.
         if (BattleUnit_TickAgilityModifier(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
@@ -455,9 +511,13 @@ s32 Battle_ProcessRoundEnd(void) {
   }
 }
 
-/// Processes the actor's standby and summoned Djinn, raises summon element
-/// power, then applies haunting, poison and the Grim Reaper before
-/// recalculating stats.
+/// Ends one unit's turn: its Djinn on standby are taken off its set, the Djinn
+/// a summon used begin to recover, and the actor takes its summon's power
+/// boost, the haunt's damage, poison and the Grim Reaper.
+/// Called by BattlePresentation_DispatchAction after every action, with the
+/// action's plan. Changes the side's Djinn recovery list, the actor's
+/// elementLevels, HP and grimReaper, and works out its stats again (UnitCalc);
+/// the messages are queued and played at once (BattleEv_DispatchQueued).
 s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   s32 unitId;
   struct BattleUnit *unit;
@@ -467,6 +527,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   s32 strongestElement;
   s32 recoveryTurn;
 
+  // Take the actor's standby Djinn (turns -1, as an unleashed Djinni is left
+  // by BattleCommand_BuildPlan) off its set. The table is the opponent's for
+  // an enemy unit id.
   unitId = plan->actorId;
   battleContinues = 0;
   unit = UnitGetFar(unitId);
@@ -492,6 +555,10 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     pending = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                     (unitId < 0 || unitId > 7)))
                    ->list;
+    // The Djinn a summon used (turns -2, from BattleCommand_BuildPlan), owner
+    // by owner: they recover one a turn, after the last the owner already has
+    // recovering and no sooner than in 2 turns. counts gathers how many of
+    // each element the summon used.
     for (i = 0; i < 4; i++) {
       counts[i] = 0;
     }
@@ -529,21 +596,24 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   }
   if (battleContinues != 0) {
     struct BattleUnit *before;
-    s32 largestSummonCost;
+    s32 mostOfOneElement;
     s32 i;
-    largestSummonCost = 0;
+    // The summon's boost: the element it used most Djinn of rises to that
+    // many levels (elementLevels), and each element's power that UnitCalc
+    // then raises is announced against a copy taken before.
+    mostOfOneElement = 0;
     before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
     Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
     strongestElement = -1;
     for (i = 0; i <= 3; i++) {
-      if (counts[i] > largestSummonCost) {
-        largestSummonCost = counts[i];
+      if (counts[i] > mostOfOneElement) {
+        mostOfOneElement = counts[i];
         strongestElement = i;
       }
     }
     if (strongestElement >= 0 &&
-        unit->elementLevels[strongestElement] < largestSummonCost) {
-      unit->elementLevels[strongestElement] = largestSummonCost;
+        unit->elementLevels[strongestElement] < mostOfOneElement) {
+      unit->elementLevels[strongestElement] = mostOfOneElement;
     }
     UnitCalcFar(unitId);
     for (i = 0; i <= 3; i++) {
@@ -555,18 +625,22 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
         BattleEvPush(BATTLE_EVENT_NUMBER, gain);
         BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
+        // MsgEarthPowerUp and the next three, in enum Element order.
         PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
         AudioCommand_PlayFar(SE_212);
         ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, 3);
         ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
-        BattleFx_PlayUnitElementEffect(unitId, i, 2, largestSummonCost - 1);
+        BattleFx_PlayUnitElementEffect(unitId, i, 2, mostOfOneElement - 1);
         BattleEventRuntime_WaitForReady();
       }
     }
     MemFree(before);
   }
+  // Damage at the turn's end, each queue played at once: the haunting
+  // spirit's (the shares of its damage BattleTargetExec gathered), poison's,
+  // then the Grim Reaper's countdown.
   if (battleContinues != 0) {
     s8 *poison;
     BattleEventRuntime_Reset();
@@ -592,6 +666,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     BattleEv_DispatchQueued();
     BattleEventRuntime_Reset();
     poison = &unit->poison;
+    // A tenth of the maximum HP, a fifth for deadly poison (POISON_DEADLY).
     if (*poison != 0) {
       s32 damage = unit->maxHp * *poison / 10;
       struct BattleWork *state = gBattleWork;
@@ -599,6 +674,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
       BattleEvPush(BATTLE_EVENT_NUMBER, damage);
       PUSH_MESSAGE(MsgPoisonDamage);
+      // DEAD: *poison is nonzero here, so the hit's cue is always
+      // SE_HEAVY_IMPACT; the compare and both stores are in the ROM.
       if (*poison != 0) {
         state->events.pendingCue = SE_HEAVY_IMPACT;
       } else {
@@ -620,6 +697,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     }
     BattleEv_DispatchQueued();
     BattleEventRuntime_Reset();
+    // At 0 the Reaper takes far more HP than any unit has. The downed
+    // message is MsgGoesDown or MsgStrengthExhausted, three either side of
+    // MsgReaperCalls (see Matching on message offsets).
     if (unit->grimReaper != 0) {
       if (--unit->grimReaper == 0 && Unit_AddHpFar(unitId, 0xc0000000) == 0) {
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);

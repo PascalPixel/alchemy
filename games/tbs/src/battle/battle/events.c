@@ -1,11 +1,19 @@
 /// @file
-/// Battle events: waiting for the player, and the queued events played at once.
+/// Battle events: a downed unit's reset, waiting for the player, and the
+/// event queue, filled by BattleEvPush and played at once by
+/// BattleEv_DispatchQueued.
 /// Part of battle.c, the battle object, compiled only through it.
 
 #include "../battle_internal.h"
 
-/// Clears every ailment and stat change of unit id, recalculates its stats
-/// and rebuilds its status icons; called when the unit goes down.
+/// Clears every ailment and stat change of a unit that goes down, recalculates
+/// its stats and rebuilds its status icons.
+/// Reached through the BATTLE_EVENT_DEFEAT event, from BattleEv_DispatchQueued
+/// and BattleEvent_Playback. Clears the unit's element levels, poison, stat
+/// stages and their turns, every status, its equipment bonuses, ready,
+/// immobile and challenge; UnitCalcFar then recomputes its stats, and
+/// BattleUnit_BuildStatusFlags its battle object's status flags, whose result
+/// it returns.
 s32 BattleActor_ResetRuntimeFields(s32 unitId) {
   struct BattleUnit *unit;
   s32 element;
@@ -43,20 +51,30 @@ s32 BattleActor_ResetRuntimeFields(s32 unitId) {
   return BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
 }
 
-/// One OAM entry.
+/// One OAM entry for Runtime_PushSlotEntry.
 /// A second view of struct BattlePromptSprite, kept: plain halfwords, where its
 /// bit-fields change BattlePresentation_WaitForAdvance (differ 50).
 struct AdvanceSprite {
-  struct AdvanceSprite *next;
-  u16 attr0;
-  u16 attr1;
-  u16 attr2;
-  u16 attr3;
+  struct AdvanceSprite *next; ///< never set here
+  u16 attr0;                  ///< OAM attribute 0: y in the low byte
+  u16 attr1;                  ///< OAM attribute 1: x in the low nine bits
+  u16 attr2;                  ///< OAM attribute 2: tile in the low ten bits
+  u16 attr3;                  ///< cleared with attr2 each frame
 };
 
-/// Shows the bobbing arrow at the message window and waits for the player:
-/// B held, or any of KEY_ADVANCE pressed, goes on; after 16 frames holding one
-/// of them is enough. Plays the cursor sound.
+/// The advance arrow's attribute 0: a 256-colour, semi-transparent tall
+/// sprite; with attribute 1's size 0 it is 8 by 16 pixels.
+#define ADVANCE_ARROW_ATTR0 0xa400
+
+/// Shows the bobbing arrow at the message window and waits for the player to
+/// go on (B, or one of KEY_ADVANCE), then plays the cursor sound.
+/// Called after a message by BattlePresentation_DispatchAction and the
+/// staging runners, BattleCommand_BuildPlan (a flight),
+/// BattleIntro_AnnounceEncounter, the round's end (turn_end.c), and
+/// BattleEv_DispatchQueued for each BATTLE_EVENT_MESSAGE. Waits for the
+/// message window first. Takes a 128-byte VRAM cache entry for the arrow's
+/// tiles and frees it; each frame queues the WINOUT writes, sets REG_BLDALPHA
+/// and pushes the arrow sprite.
 s32 BattlePresentation_WaitForAdvance(void) {
   struct AdvanceSprite *prompt;
   struct AdvanceSprite promptStorage;
@@ -83,7 +101,7 @@ s32 BattlePresentation_WaitForAdvance(void) {
     QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
     QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    *(u32 *)&prompt->attr0 = 0xa400;
+    *(u32 *)&prompt->attr0 = ADVANCE_ARROW_ATTR0;
     *(u32 *)&prompt->attr2 = 0;
     tile = VramCache_Reload(tileSlot, frameTiles) & 0x3ff;
     attr2 = prompt->attr2;
@@ -96,6 +114,8 @@ s32 BattlePresentation_WaitForAdvance(void) {
     *(u8 *)&prompt->attr0 = Trig_Sin(gFrameCount << 12) / 32768 +
                             window->y * 8 + (offset->y >> 8) + 6;
     Runtime_PushSlotEntry(prompt, 240);
+    // A held advance key counts only after 16 frames, so one still held from
+    // the previous message does not skip this one; B held goes on at once.
     if ((gKeysHeld & KEY_B) || (gKeysPressed & KEY_ADVANCE) ||
         (frame > 15 && (gKeysHeld & KEY_ADVANCE)))
       break;
@@ -107,6 +127,11 @@ s32 BattlePresentation_WaitForAdvance(void) {
 }
 
 /// Shows the cursor bobbing at (x, y) and waits for one of KEY_ADVANCE.
+/// Called by Battle_RunEncounter under the Djinn tutorial's standby message,
+/// and by Menu_RunCommandRow through BattlePresentation_WaitForPromptAtFar.
+/// Waits for the message window first; takes a 128-byte VRAM cache entry for
+/// the cursor's tiles and frees it, and each frame queues the WINOUT writes,
+/// sets REG_BLDALPHA and pushes the cursor sprite.
 /// x, y : in pixels
 s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
   struct MenuPoint position;
@@ -141,11 +166,17 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
   WaitFrames(1);
 }
 
-/// Marks the battle display for redrawing.
+/// Sets gBattleDisplayWork->marked, which the next message reads, as
+/// BATTLE_EVENT_MARK does.
+/// Called by BattleCommand_BuildPlan between a weapon's two unleash messages.
 void BattleEv_MarkDisplay(void) { gBattleDisplayWork->marked = 1; }
 
 /// Takes an enemy out of the battle at once (one that leaves rather than
 /// falls): its HP to 0, out of the lists, and its object released.
+/// Reached through the BATTLE_EVENT_REMOVE_UNIT event, which BattleTargetExec
+/// queues for a self-destructing actor, from BattleEv_DispatchQueued and
+/// BattleEvent_Playback. A party unit is left as it is. Clears the battle
+/// object's object and active and releases its dispatch object.
 /// Declared to return s32, but returns nothing.
 s32 BattleActor_DestroyTemporaryObject(s32 unitId) {
   struct BattleUnit *enemy;
@@ -169,6 +200,9 @@ s32 BattleActor_DestroyTemporaryObject(s32 unitId) {
 
 /// The BATTLE_EVENT_DJINN_BONUS event: grants the Djinn bonus for the rest of
 /// the action. Its operand is ignored.
+/// Called for the event by BattleEv_DispatchQueued and BattleEvent_Playback;
+/// BattleTargetExec queues it. Sets EVENT_FLAG_DJINN_BONUS in runtime->flags,
+/// which BattleEventRuntime_Reset clears.
 void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand) {
   runtime->flags |= EVENT_FLAG_DJINN_BONUS;
 }
@@ -176,6 +210,11 @@ void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand) {
 /// Plays the queued battle events at once, in order (BattleEvent_Playback
 /// plays them over frames instead): the messages with their arguments, the
 /// hit flashes, the downed units, the redraws. Then empties the queue.
+/// Called where an outcome is shown outside an effect: by the staging runners
+/// (a blocked cast, a dodge, a broken item, a plan's targets one by one),
+/// BattleCommand_BuildPlan's debug defeat, and the turn's end (turn_end.c).
+/// Each message, flash and fall waits its frames here. Ends with
+/// BattleEventRuntime_Reset, whose result it returns.
 u32 BattleEv_DispatchQueued(void) {
   struct BattleEventState *runtime = &gBattleWork->events;
   struct BattleEventQueue *queue = &runtime->queue;
@@ -183,6 +222,8 @@ u32 BattleEv_DispatchQueued(void) {
 
   for (eventIndex = 0; eventIndex < queue->count; eventIndex++) {
     u8 opcode = queue->opcodes[eventIndex];
+    // BATTLE_EVENT_SOUND, the last opcode, is skipped: played at once, the
+    // queue makes no sounds but a hit's.
     if (opcode <= BATTLE_EVENT_DJINN_BONUS)
       switch (opcode) {
       case BATTLE_EVENT_DJINN_BONUS:
@@ -212,6 +253,8 @@ u32 BattleEv_DispatchQueued(void) {
       case BATTLE_EVENT_CLEAR_ARGUMENTS:
         UiWork_ClearValueNameTablesFar();
         break;
+      // A negative message (MESSAGE_NONE in target_exec.c) shows nothing:
+      // the event only waits for the player.
       case BATTLE_EVENT_MESSAGE:
         if ((s32)queue->operands[eventIndex] >= 0)
           UiText_ShowMessageAndWaitCoreFar(queue->operands[eventIndex]);
@@ -248,6 +291,9 @@ u32 BattleEv_DispatchQueued(void) {
 
 /// Queues one battle event (enum BattleEventOpcode) with its operand, and
 /// returns the opcode.
+/// Called, directly or through PUSH_MESSAGE, by BattleTargetExec for each
+/// step of an outcome, and by staging.c, plan.c and turn_end.c. Appends to
+/// gBattleWork->events.queue with no test against BATTLE_EVENT_CAPACITY.
 u32 BattleEvPush(u32 opcode, u32 operand) {
   struct BattleEventQueue *queue = &gBattleWork->events.queue;
   u32 index = queue->count;
@@ -257,3 +303,5 @@ u32 BattleEvPush(u32 opcode, u32 operand) {
   queue->count = index + 1;
   return opcode;
 }
+
+#undef ADVANCE_ARROW_ATTR0

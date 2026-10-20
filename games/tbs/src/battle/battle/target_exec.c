@@ -8,6 +8,7 @@
 /// Returns 1 for an effect that still applies when the ability's damage has
 /// just knocked its target out: the drains, which give the damage they dealt
 /// back to the actor.
+/// Called by BattleTargetExec before the added effect.
 /// effect : the ability's effect (enum AbilityEffect)
 s32 BattleEffectDeadCheck(s32 effect) {
   switch (effect) {
@@ -96,6 +97,30 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// once: UnitCalcFar recalculates a unit's stats from its stages, and
 /// UnitRatioFar its HP and PP gauges after either changes.
 ///
+/// Called for each target in turn by BattleEvent_Playback (an action with an
+/// effect) and BattlePres_RunActorEntries (one without). Changes the target's
+/// HP, PP, statuses, stat stages and turns, and its guard; the actor's HP or
+/// PP for a drain, and plan->hauntDamage; adds an enemy to
+/// gBattleWork->enemyIds when one is called; sets gBattleWork->challengeFlag
+/// bit 1 when the party is challenged; queues the events that show it all.
+/// It takes BattleRandomFar rolls, and borrows a heap block for the target's
+/// copy.
+///
+/// It runs in phases, each marked in the body:
+/// 1. Setup: a copy of the target as it was; the target's distance from the
+///    aimed place; the element's affinity (resisted, neutral or weak); the
+///    actor's power in the element.
+/// 2. The Djinn bonus roll, and whether the effect lands (hit).
+/// 3. Calling an ally (Ally Search, Search for Help, Speed Surge).
+/// 4. The effects that change the damage step: Ground, Torch, Severe Blow,
+///    instant death, a self-destruct, Psy Drain.
+/// 5. Damage and healing, by the ability's kind (attack, PP damage, HP and PP
+///    healing, Psynergy damage, an effect's damage).
+/// 6. The added effect, by the ability's effect: cures, heals, stat changes,
+///    revivals, statuses, drains, Break, the curse, guards.
+/// 7. Waking from damage, the recalculated stats, the redraw, and the evil
+///    spirit's share for a haunted actor.
+///
 /// plan : the action under way: the actor, the ability, its element and its
 ///        targets, each with its distance from the aimed position, damage
 ///        multiplier, critical hit and any hit roll made in advance.
@@ -120,7 +145,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   s32 skipDamage;   // no damage step: instant death replaces it
   s32 kind;         // how the power applies: enum AbilityKind
   s32 affinity;     // -1 a resisted element, 1 a weakness, else 0
-  // The target as it was, to measure each stat's change.
+  // A copy of the target as it was, to measure each stat's change; a heap
+  // block freed at the end.
   struct BattleUnit *savedTarget;
   s32 elementPower; // the actor's power in the ability's element
   s32 targetId;
@@ -129,7 +155,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   s32 amount; // the damage, or the HP or PP restored
   s32 unitSize;
 
-  // Keep a copy of the target as it was, to show how much each stat changes.
+  //------------------------------------------------------------------
+  // 1. Setup
+  //------------------------------------------------------------------
   elementBonus = 0;
   work = gBattleWork;
   halveDefense = 0;
@@ -194,6 +222,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   else
     elementPower = 100;
 
+  //------------------------------------------------------------------
+  // 2. The Djinn bonus, and whether the effect lands
+  //------------------------------------------------------------------
   // A Djinni striking the target's weakness may earn the Djinn bonus: an
   // enemy it fells then gives more coins and experience and a better chance
   // of its item (BattleEnemy_RecordDefeat). The chance is the power less
@@ -225,9 +256,13 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       hit = plannedHit;
   }
 
+  //------------------------------------------------------------------
+  // 3. Calling an ally
+  //------------------------------------------------------------------
   // Calling for help: an enemy calls another of its kind, or a random member
   // of its formation, into an empty enemy slot. Speed Surge is an enemy
-  // splitting itself in two.
+  // splitting itself in two. It needs the roll, room among the enemy
+  // sprite slots (EnemyCheck) and a free unit id.
   if (ability->effect == ABILITY_EFFECT_CALL_ALLY ||
       ability->effect == ABILITY_EFFECT_CALL_HELP) {
     s32 classId;
@@ -294,7 +329,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     }
   }
 
-  // Effects that change how the damage step works.
+  //------------------------------------------------------------------
+  // 4. Effects that change how the damage step works
+  //------------------------------------------------------------------
   if (hit != 0) {
     if (ability->effect == ABILITY_EFFECT_GROUND) {
       u32 i;
@@ -327,7 +364,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   }
 
   //------------------------------------------------------------------
-  // Damage and healing
+  // 5. Damage and healing
   //------------------------------------------------------------------
   // A downed target is skipped, unless the ability revives.
   if (skipDamage == 0 &&
@@ -404,6 +441,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           amount = hp - 1;
         }
       }
+      // The flinch, then "<target> takes <amount> damage"; a fall queues the
+      // defeat before its message, and a target still standing is redrawn.
       hp -= amount;
       BattleEvPush(BATTLE_EVENT_HIT, targetId);
       BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
@@ -454,6 +493,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       break;
     }
 
+    // Healing, no further than the maximum: "HP fully restored" there, else
+    // the amount restored.
     case ABILITY_KIND_HEAL_HP: {
       if (ability->power == 0)
         break;
@@ -673,16 +714,20 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   }
 
   //------------------------------------------------------------------
-  // The added effect: a status, a stat change, a cure or a revival
+  // 6. The added effect: a status, a stat change, a cure or a revival
   //------------------------------------------------------------------
   // It needs the effect to have landed on a target still standing, unless
-  // it revives or drains.
+  // it revives or drains. The target's name goes first, for the effect's
+  // first message; a message uses up the arguments pushed before it, so each
+  // later message pushes the name again.
   BattleEvPush(BATTLE_EVENT_UNIT_NAME, targetId);
   if ((Battle_IsReviveEffectFar(ability->effect) != 0 || target->hp != 0 ||
        BattleEffectDeadCheck(ability->effect) != 0) &&
       hit != 0) {
     switch (ability->effect) {
-    // Tonic cures every ailment; sleep goes without a message.
+    // Tonic cures every ailment; sleep goes without a message. Most of its
+    // messages push the name for the next after them; Restore below clears
+    // the arguments and pushes the name before each instead.
     case ABILITY_EFFECT_CURE_ALL:
       if (target->delusion != 0) {
         target->delusion = 0;
@@ -823,7 +868,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     }
 
     // The stat changes. The amount shown is how much the stat itself moved,
-    // measured against the saved copy once UnitCalc has recalculated it.
+    // measured against the saved copy once UnitCalc has recalculated it, so
+    // a stage already at its limit shows 0; the turns start again either
+    // way. Zephyr and Vine set Agility's stage outright.
     case ABILITY_EFFECT_AGILITY_UP:
       target->agilityStage = AGILITY_STAGE_DOUBLED;
       target->agilityTurns = AGILITY_CHANGE_TURNS;
@@ -1194,6 +1241,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       target->immobile = 1;
       break;
 
+    // The guards: the message shows either way, but a guard is never lowered.
     case ABILITY_EFFECT_DEFEND:
       PUSH_MESSAGE(MsgAura);
       if (target->guardLevel > 0)
@@ -1220,7 +1268,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   }
 
   //------------------------------------------------------------------
-  // Waking from damage, and the recalculated stats
+  // 7. Waking from damage, and the recalculated stats
   //------------------------------------------------------------------
   BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
 
@@ -1234,11 +1282,13 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   }
   MemFree(savedTarget);
   UnitCalcFar(targetId);
+  // The party's status is drawn now, not through the queue.
   PartyStatusDrawFar(gBattleWork->partyStatus);
   if (target->hp != 0)
     BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
-  // A haunted actor: the evil spirit may hurt it for a quarter of the
-  // damage it dealt, at the end of its turn (BattleUnit_ProcessTurnEnd).
+  // A haunted actor: one time in four the evil spirit takes a quarter of the
+  // damage it dealt (at least 1), at the end of its turn
+  // (BattleUnit_ProcessTurnEnd).
   if (actor->haunt != 0 && (BattleRandomFar() & 3) == 0 && damageDealt > 0) {
     s32 share;
 
@@ -1249,16 +1299,19 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   }
 }
 
+/// The ability Psy Drain, Psynergy that costs no PP.
 #define ABILITY_PSY_DRAIN 126
 
 /// Returns 1 for an ability that costs PP, and for Psy Drain, which costs
 /// none.
+/// Called by BattleCommand_BuildPlan (a cast's staging) and
+/// BattleCommand_SelectAutomatic (an enemy's PP and seal checks).
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 
   if (abilityId == ABILITY_PSY_DRAIN)
     return 1;
   pp = BattleActGet(abilityId)->ppCost;
-  // 1 if pp is not 0.
+  // The sign bit of -pp | pp: 1 when pp is not 0, with no branch.
   return (u32)((0 - pp) | pp) >> 31;
 }

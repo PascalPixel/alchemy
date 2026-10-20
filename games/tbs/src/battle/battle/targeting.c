@@ -8,7 +8,7 @@
 #ifndef UBFIX
 /// BattleWork's unit lists, read as one array of halfwords.
 struct SlotArray {
-  s16 items[64];
+  s16 items[64]; ///< BattleWork from its start; each list at its offset / 2
 };
 #endif
 
@@ -20,6 +20,9 @@ struct SlotArray {
 /// Picks a random place: with requireLivingUnit, a party member still
 /// standing; otherwise any enemy place in use. Returns its place code, or 0
 /// when there is none.
+/// Called by BattleCommand_SelectAutomatic when BattleTarget_SelectForAction
+/// finds no one listed on the side (-2). Takes one Random16 roll when any
+/// position qualifies.
 s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 
   u16 positions[6];
@@ -57,6 +60,9 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
   count = 0;
   order = (struct SlotArray *)gBattleWork;
 
+  // The party's places whose unit is still standing; then, in the else
+  // branch, the enemies' places in use, whether standing or not. Each walk
+  // indexes order from its list's offset in BattleWork, in halfwords.
   if (requireLivingUnit != 0) {
     /* FAKEMATCH(one-pass): a loop left by its closing break; without it, 14
      * of 89 instructions differ in tbs-en. */
@@ -102,6 +108,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 
   if (count == 0)
     return 0;
+  // A 16-bit roll times the count, over 65536: an index below count.
   return positions[(Random16() * count) >> 16];
 }
 
@@ -305,6 +312,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 /// a strategy favours the strongest, the first of the sorted targets 6 times
 /// in 11, 15 or 18, the next 5 times, and so on. Returns -2 when the side
 /// has no one, -1 when the ability would affect no one.
+/// Called by BattleCommand_SelectAutomatic for an ability aimed at allies,
+/// the user or foes. Takes Random16 rolls to choose among eligible targets.
 s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
   u16 orderPositions[6];
   s32 unitIds[6];
@@ -332,6 +341,9 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
   targetCount = 0;
   candidateCount = 0;
 
+  // The candidates: every unit listed on the side the ability may target,
+  // downed or not (only the user, for TARGET_MODE_SELF), with its place code.
+  // Allies of a party unit and foes of an enemy are the party.
   if (action->targetMode != TARGET_MODE_NONE) {
     ownSide = 0;
     if (action->targetMode == TARGET_MODE_ALLIES ||
@@ -382,6 +394,7 @@ scan_complete:
   if (candidateCount == 0)
     return -2;
 
+  // Keep the candidates the ability would affect, in place.
   for (targetIndex = 0; targetIndex < candidateCount; targetIndex++) {
     unit = UnitGetFar(unitIds[targetIndex]);
     CHECK_EFFECT_TARGET(unit, action, applies, kindIndex);
@@ -400,6 +413,10 @@ scan_complete:
            UnitGetFar(actorId)->classId))
               ->targetStrategy != STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <= 2) {
+    // A single-target attack of kind 3 to 5 by an enemy with a strategy: sort
+    // the targets by HP left or by maximum HP, the most first. Each pass of
+    // the exchange sort starts one place later, so the order can come out
+    // wrong: HP 1, 2 and 3 end as 2, 3 and 1.
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
@@ -426,6 +443,9 @@ scan_complete:
       }
     }
 
+    // Weighted toward the front: two targets 6 and 5 in 11, three 6, 5 and 4
+    // in 15, four 6, 5, 4 and 3 in 18. Five or more fall through to the even
+    // roll below.
     switch (targetCount) {
     case 1:
       selected = 0;

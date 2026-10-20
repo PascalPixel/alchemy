@@ -60,7 +60,8 @@
 #include "macros.h"
 #include "songs.h"
 
-// Keep native call forms while UBFIX uses the declared void contracts.
+// UB: each of these calls a void function through an s32 function type, the
+// call the bytes show; UBFIX calls it as declared. Each use is tagged.
 #ifdef UBFIX
 #define COLOSSO_LOG_FACE_DIRECTION Engine_ActorFaceDirection
 #define COLOSSO_LOG_INITIALIZE_MODE_TASK                                       \
@@ -715,8 +716,6 @@ static void Event_ReachArena(void) {
   s32 i;
   s32 last;
 
-  /* FAKEMATCH: the last place is set at the top as a forced temporary, so the
-   * weight stays 4 - place + 1 instead of folding to 5 - place. */
   last = 4;
   ColossoLogRollingStage_NoopSceneHook();
   Engine_EventBegin();
@@ -742,6 +741,8 @@ static void Event_ReachArena(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
   Engine_ActorSetAnimation(OPPONENT, 9);
   Engine_EventWait(10);
+  /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
+   * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(72, last - place + 1);
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_ColossoLog, 4);
@@ -1466,10 +1467,9 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       Engine_EventWait(60);
       Engine_EventShowMessage(guideId, 0);
       Colosso_FadeInCompetitor(0, 504, 200);
-      // UB: the void target is called through an incompatible return type.
-      /* FAKEMATCH: called through a cast to the s32 call type the bytes show,
-       * its result discarded, so r0 loads last; as a direct call, 3
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
+       * show, which sets r0 last; as a direct call, 1 of 136 instructions
+       * differ in tbs-en. */
       COLOSSO_LOG_FACE_DIRECTION(0, 0, 0);
       ColossoLogRollingStage_WaitForSceneTask();
       Actor_SetSpeed(0, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1798,10 +1798,9 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_086);
     Colosso_LoadLettering(8);
-    // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
-     * result discarded, so r1 loads before r0; as a direct call, 2
-     * instructions differ in tbs-en. */
+    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
+     * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
+     * differ in tbs-en. */
     COLOSSO_LOG_INITIALIZE_MODE_TASK(3, 1);
     Engine_EventWait(-countdown * 60 + 60);
     actorId = 0;
@@ -1809,9 +1808,8 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(countdown + 90);
     Colosso_LoadLettering(4);
-    // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: called through the s32 cast, its result discarded, as in the
-     * first arm; as a direct call, 2 instructions differ in tbs-en. */
+    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
+     * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSO_LOG_INITIALIZE_MODE_TASK(3, 0);
     Engine_EventWait(countdown * 60 + 60);
     actorId = 8;
@@ -1951,15 +1949,14 @@ static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
     Engine_TaskWait(1);
   }
   if (rivalFinishedFirst == 0) {
-    // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: the void function is called as returning s32, which loads r1
-     * before r0; by its prototype, 2 instructions differ in tbs-en. */
+    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
+     * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
+     * differ in tbs-en. */
     COLOSSO_LOG_APPLY_MATCHING_SLOT_VALUES(0, firstItem);
     UiWork_PushValueSlot(firstItem, 2);
   } else {
-    // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: called as returning s32, as in the first arm; by its
-     * prototype, 2 instructions differ in tbs-en. */
+    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
+     * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
     COLOSSO_LOG_APPLY_MATCHING_SLOT_VALUES(0, secondItem);
     UiWork_PushValueSlot(secondItem, 2);
   }

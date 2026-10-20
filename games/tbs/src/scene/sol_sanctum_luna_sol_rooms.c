@@ -1162,9 +1162,8 @@ static void Event_RiseToElementalStarRoom(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-    /* FAKEMATCH: the zero goes through the sprite variable, whose pseudo has
-       r7; as motionFlags = 0, the zero is in r2 and 4 instructions differ in
-       tbs-en. */
+    /* FAKEMATCH(temporary): the zero goes through sprite, whose register is
+     * r7; as motionFlags = 0, 2 of 442 instructions differ in tbs-en. */
     sprite = 0;
     actor->motionFlags = (u32)sprite;
     Engine_AudioPlayCue(SE_201);
@@ -1196,9 +1195,9 @@ static void Event_RiseToElementalStarRoom(void) {
     // Repeat the ascent for Kraden before closing the room transition.
     Engine_ActorSetSpeed(ACTOR_KRADEN, PIXELS(3) / 10, PIXELS(3) / 20);
     actor = Object_GetById(ACTOR_KRADEN);
-    /* FAKEMATCH: the mask temporary puts the flags in r2 and the motion
-       address in r3, so both byte stores wait past the zero; as &=
-       ~ACTOR_FACES_MOTION, 10 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): the mask in a variable, so both byte stores wait
+     * past the zero; as &= ~ACTOR_FACES_MOTION, 5 of 442 instructions differ
+     * in tbs-en. */
     {
       s32 steeringFlags = 254;
 

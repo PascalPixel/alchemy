@@ -110,9 +110,9 @@ const u8 gTitle_PromptBlendLevels[60] = {
 /// sets every other frame so twice as many show, hides the rest and copies the
 /// list to OAM.
 void Title_UpdateIntroSprites(void) {
-  /* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words
-   * (tag in oambuf.h): without the qualifier differ 205, 471 instructions for
-   * 496. */
+  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
+   * words are volatile (oambuf.h); as plain u32 words, 66 of 496
+   * instructions differ in tbs-en. */
   struct IntroWork *work;
   u32 spriteCount;
   s32 slopeBaseY;
@@ -623,9 +623,9 @@ s32 Title_ShowAnimatedSplash(void) {
                BGCNT_SCREEN_BASE(6);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   gBgScroll[2].y = result;
-  /* FAKEMATCH: needed to match: workIndex carries the decode destination
-   * before counting; a separate pointer is coalesced with resourceData
-   * (31 differ). */
+  /* FAKEMATCH(temporary): workIndex carries the decode destination before it
+   * counts; as resourceData set before the decode, 13 of 119 instructions
+   * differ in tbs-en. */
   workIndex = (u32)Ram_MapCellBuffer;
   Resource_DecodeType01(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
   // The decoded resource: 224 colours, the map, the still tiles, then four
@@ -792,18 +792,18 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
             red + ((colorWork >> 5) & 31) + ((colorWork >> 10) & 31), 10);
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
-        /* FAKEMATCH: the reversible XOR initialization of green folds late,
-         * keeping blue's add first and its separate lower test; as green =
-         * blue, 4 instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): two XORs with red that cancel fold late, keeping
+         * blue's add first; as green = blue, 3 of 803 instructions differ in
+         * tbs-en. */
         green = blue ^ red;
         green ^= red;
         if (red < 8)
           red = 8;
         if (blue < 8) {
           green = 8;
-          /* FAKEMATCH: needed to match: green is 8, so this pair changes no
-           * bits. Its late fold retains the separate blue lower test; an
-           * ordinary copy threads past that test and loses two instructions. */
+          /* FAKEMATCH(dead): two XORs that cancel, green being 8, keep blue's
+           * separate lower test; as no pair, 8 of 803 instructions differ in
+           * tbs-en. */
           blue ^= green;
           blue ^= 8;
         }

@@ -99,6 +99,8 @@
 #define COLOSSO_WALL_PULSE_LOW_SCALE 256
 #endif
 
+// UB: each of these calls a void function through an s32 function type, the
+// call the bytes show; UBFIX calls it as declared. Each use is tagged.
 #ifdef UBFIX
 #define COLOSSO_WALL_SHOW_MESSAGE Engine_EventShowMessage
 #define COLOSSO_WALL_MOVE_ACTOR_PAIR ColossoWall_MovePusherAndLog
@@ -695,8 +697,9 @@ static void Event_ReachArena(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
   Engine_ActorSetAnimation(OPPONENT, 9);
   Engine_EventWait(10);
-  /* FAKEMATCH: resultBase, set to 2 at the top, keeps the sum unfolded; as
-   * 3 - rivalFinishedFirst, 10 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
+   * unfolded; as 3 - rivalFinishedFirst, which shares r5's 3 with
+   * Battle_SetStart(3), 3 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(72,
                                         resultBase - rivalFinishedFirst + 1);
   Battle_SetStart(3);
@@ -1043,10 +1046,9 @@ static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
       Camera_SetSpeed(0x30000, 0x6000);
       Camera_MoveTo(PIXELS(984), -1, PIXELS(232), 1);
       Engine_CameraWaitForMove();
-      // UB: the void target is called through an incompatible return type.
-      /* FAKEMATCH: called through a cast to the s32 call type the bytes show,
-       * its result discarded; as a direct call, 2 instructions differ in
-       * tbs-en. */
+      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
+       * show, which sets r1 before r0; as a direct call, 1 of 104
+       * instructions differ in tbs-en. */
       COLOSSO_WALL_SHOW_MESSAGE(attendant, 0);
       ColossoWall_StartMovingPlatforms();
       Event_ShowMessage(attendant, 0);
@@ -1101,10 +1103,9 @@ static void Event_TalkToLogRollingAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 840, 232);
       Engine_EventWait(10);
-      // UB: the void target is called through an incompatible return type.
-      /* FAKEMATCH: called through a cast to the s32 call type the bytes show,
-       * its result discarded; as a direct call, 2 instructions differ in
-       * tbs-en. */
+      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
+       * show, which sets r0 last; as a direct call, 1 of 163 instructions
+       * differ in tbs-en. */
       COLOSSO_WALL_MOVE_ACTOR_PAIR(RIDING_LOG_SOUTH, -64, 0);
       Camera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1376,9 +1377,9 @@ static void ColossoWall_ShowBattleResultLettering(s32 result) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_086);
     Colosso_LoadLettering(8);
-    // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
-     * result discarded; as a direct call, 2 instructions differ in tbs-en. */
+    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
+     * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
+     * differ in tbs-en. */
     COLOSSO_WALL_START_MODE_TASK(3, 1);
     Engine_EventWait(-result * 60 + 60);
     reactingActor = 0;
@@ -1386,9 +1387,8 @@ static void ColossoWall_ShowBattleResultLettering(s32 result) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(result + 90);
     Colosso_LoadLettering(4);
-    // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: called through the s32 cast like the call above; as a direct
-     * call, 2 instructions differ in tbs-en. */
+    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
+     * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSO_WALL_START_MODE_TASK(3, 0);
     Engine_EventWait(result * 60 + 60);
     reactingActor = 8;
@@ -1533,16 +1533,14 @@ static s32 ColossoWall_ApproachFinishAndTakeItem(s32 firstItem,
 
   // Assign the item on the side this competitor reached first.
   if (finishAlreadyReached == 0) {
-    // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: called through a cast to the s32 call type the bytes show; as
-     * a call by its void prototype, the argument moves swap and 2 instructions
+    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
+     * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
      * differ in tbs-en. */
     COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE(0, firstItem);
     UiWork_PushValueSlot(firstItem, 2);
   } else {
-    // UB: the void target is called through an incompatible return type.
-    /* FAKEMATCH: the same cast as above; as a call by its prototype, 2
-     * instructions differ in tbs-en. */
+    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
+     * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
     COLOSSO_WALL_APPLY_MATCHING_SLOT_VALUE(0, secondItem);
     UiWork_PushValueSlot(secondItem, 2);
   }

@@ -9,7 +9,7 @@
 #include "unit/scene/suhalla_interiors.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
-#include "suhalla_interiors.h"
+#include "field_service.h"
 #include "text/msg_ids.h"
 #include "types.h"
 #include "ability_ids.h"
@@ -416,28 +416,24 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Sets the houses up as the party enters: the shopkeeper and innkeeper behind
 /// their counters, and the two wounded soldiers lying in their beds.
 s32 Scene_Initialize(void) {
-  union SceneActor *work;
+  struct FieldActor *actor;
   if (gGameState.entrance == ENTRANCE_90)
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   gEventWork->transitionFrames = 24;
-  ((union SceneActor *)Object_GetById(SHOPKEEPER))->bytes[89] |= 4;
-  ((union SceneActor *)Object_GetById(INNKEEPER))->bytes[89] |= 4;
-  work = (union SceneActor *)Object_GetById(SOLDIER_SOUTH);
-  work->fields.record->field26 = 0;
-  work->fields.record->angle = 0x4000;
-  {
-    struct SceneRecord *record = work->fields.record;
-    s32 flags = ~12;
-
-    flags &= record->flags;
-    record->flags = flags | 4;
-  }
-  work = (union SceneActor *)Object_GetById(SOLDIER_NORTH);
-  work->fields.record->field26 = 0;
-  work->fields.record->angle = 0x4000;
-  work->bytes[85] = 2;
-  work->fields.y = 0;
+  // Nearer to talk to, across their counters.
+  Object_GetById(SHOPKEEPER)->collisionFlags |= 4;
+  Object_GetById(INNKEEPER)->collisionFlags |= 4;
+  // Each soldier lies a quarter turn over, with no shadow.
+  actor = Object_GetById(SOLDIER_SOUTH);
+  actor->sprite->flags = 0;
+  actor->sprite->rotation = 0x4000;
+  actor->sprite->image.priority = 1;
+  actor = Object_GetById(SOLDIER_NORTH);
+  actor->sprite->flags = 0;
+  actor->sprite->rotation = 0x4000;
+  actor->motionFlags = ACTOR_FALLS;
+  actor->y.fixed = 0;
   return 0;
 }
 

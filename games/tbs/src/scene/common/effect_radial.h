@@ -1,6 +1,7 @@
 #include "types.h"
 #include "field_obj.h"
 #include "field_effect.h"
+#include "vector3.h"
 
 // The Tunnel Ruins and Venus Lighthouse.
 
@@ -9,7 +10,7 @@
 /// (Effect_AdvanceMotion).
 static void SceneEffect_SpawnNineRadialEffects(s32 actor) {
   struct FieldActor *object;
-  struct Vec vec;
+  struct Vector3 vec;
   struct EffectOptions params;
   u32 i;
   s32 v;

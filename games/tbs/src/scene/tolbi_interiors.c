@@ -246,10 +246,10 @@ s32 TolbiInteriors_ApplyEntryState(void) {
     actor = Object_GetById(TOLBI_INTERIORS_ANGRY_SAILOR);
     // Stored as a plain byte: the field store allocates the zero differently.
     *(u8 *)&actor->priorityFlags = clearedPriorityFlags = 0;
-    ((struct TolbiInteriorsSpriteAttr *)actor->sprite)->priority = 2;
+    actor->sprite->image.priority = 2;
     actor = Object_GetById(TOLBI_INTERIORS_SAILOR_B);
     actor->priorityFlags = clearedPriorityFlags;
-    ((struct TolbiInteriorsSpriteAttr *)actor->sprite)->priority = 2;
+    actor->sprite->image.priority = 2;
     if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) != 0) {
       Actor_SetPosition(TOLBI_INTERIORS_MEDAL_WOMAN, PIXELS(560), PIXELS(680));
       Actor_FaceDirection(TOLBI_INTERIORS_MEDAL_WOMAN, FACING_WEST, 0);

@@ -18,7 +18,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "create_configured_overlay_object.h"
-#include "configured_effect_spawn.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

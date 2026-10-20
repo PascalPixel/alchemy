@@ -37,13 +37,4 @@ enum TolbiInteriorsMapObject {
 /// A facing rounded to the nearest of east, south, west and north.
 #define FACING_NEAREST_CARDINAL(facing) ((u16)(((facing) + 0x2000) & ~0x3fff))
 
-/// The byte of a sprite's attributes that holds its priority, as the code
-/// stores it.
-struct TolbiInteriorsSpriteAttr {
-  u8 unknown[9];
-  u8 tileHigh : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-};
-
 #endif

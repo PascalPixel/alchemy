@@ -74,8 +74,12 @@ enum { ENTRANCE_99 = 99 };
 /// The sprite of a ship piece or a party actor.
 // ACTOR_SPRITE reads actor->sprite through an s32, so each store reloads it as
 // the native does; read as the field, the two stores share one load.
-#define ACTOR_SPRITE(actor)                                                    \
-  ((struct AnimationObject *)*(s32 *)((u8 *)(actor) + 0x50))
+// UB: the s32 read aliases the pointer field. UBFIX reads the field itself.
+#ifdef UBFIX
+#define ACTOR_SPRITE(actor) ((actor)->sprite)
+#else
+#define ACTOR_SPRITE(actor) ((struct AnimationObject *)*(s32 *)&(actor)->sprite)
+#endif
 /// Sets one of the sprite's two priority bits of a ship piece or a party
 /// actor: 9 sets the first, any other the second.
 #define SET_PRIORITY(actor, n)                                                 \
@@ -183,23 +187,9 @@ static void OrbGlow_Fade(void) {
   }
 }
 
-/// The map's scrolling layers, as the swell moves them.
-struct WaveMapLayer {
-  s32 unk00[3];
-  s32 y; ///< 16.16 pixels; layers 6 and 7 are the ship's hull and deck
-  /// Layer 4's unk10[0] and [1], whole pixels in 16.16, are the corner of the
-  /// screen-sized box (240 by 160) the spray rises in.
-  s32 unk10[8];
-};
-
-/// The map work, seen for the scrolling layers the swell moves.
-struct WaveMap {
-  u8 unk00[20];
-  struct WaveMapLayer layers[8];
-};
-
-/// The Black Orb's glow pulses in the blend, the ship (layers 6 and 7) and
-/// everyone on deck bob with the swell, and spray rises from the water.
+/// The Black Orb's glow pulses in the blend, the ship (the hull on BG2, the
+/// deck on BG1) and everyone on deck bob with the swell, and spray rises from
+/// the water in a screen-sized box (240 by 160) at the view.
 /// Run each frame from RaiseTheShip to the end of the game; each part runs
 /// while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is set.
 static void Ship_UpdateSwell(void) {
@@ -209,7 +199,7 @@ static void Ship_UpdateSwell(void) {
   volatile u16 blend;
   struct FixedPointPosition place;
   struct FixedPointPosition *pos;
-  struct WaveMap *map;
+  struct MapScrollWork *map;
   struct FieldActor *actor;
   s32 swell;
   s32 x, z;
@@ -223,8 +213,8 @@ static void Ship_UpdateSwell(void) {
   }
   if (gSwellActive != 0) {
     swell = Iwram_MulQ16(Engine_MathSin(gSwellPhase << 9), 2) << 16;
-    map->layers[6].y = gShipHullY + swell;
-    map->layers[7].y = gShipDeckY + swell;
+    map->layers[1].offsetY = gShipHullY + swell;
+    map->layers[2].offsetY = gShipDeckY + swell;
     if (gLeaderDeckY != -0x10000) {
       actor = Object_GetById(0);
       actor->y.fixed = gLeaderDeckY + swell;
@@ -252,8 +242,8 @@ static void Ship_UpdateSwell(void) {
     gSwellPhase++;
   }
   if (gSprayActive != 0 && (gFrameCount & 1) != 0) {
-    x = map->layers[4].unk10[0] & -0x10000;
-    z = map->layers[4].unk10[1] & -0x10000;
+    x = map->viewX & -0x10000;
+    z = map->viewY & -0x10000;
     x += Random_Next() * 240;
     pos = &place;
     pos->x = x;
@@ -591,7 +581,7 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
 /// the swell and glow callbacks, which run to the end of the game, and calls
 /// SetSail.
 static void RaiseTheShip(void) {
-  struct WaveMap *map;
+  struct MapScrollWork *map;
   s32 i;
   s32 flash;
   s32 white;
@@ -650,8 +640,8 @@ static void RaiseTheShip(void) {
   // The ship rises 90 pixels, 0.2 pixels a frame.
   sunk = 0;
   do {
-    map->layers[6].y += 0x3333;
-    map->layers[7].y += 0x3333;
+    map->layers[1].offsetY += 0x3333;
+    map->layers[2].offsetY += 0x3333;
     sunk += 0x3333;
     Task_Wait(1);
   } while (sunk <= 0x59ffff);
@@ -672,8 +662,8 @@ static void RaiseTheShip(void) {
   }
   Event_Wait(40);
   Map_SetShake(-1, -1, 0xe666);
-  gShipHullY = map->layers[6].y;
-  gShipDeckY = map->layers[7].y;
+  gShipHullY = map->layers[1].offsetY;
+  gShipDeckY = map->layers[2].offsetY;
   gSwellActive = 1;
   for (dark = 16; dark >= 0; dark--) {
     REG_BLDY = dark;
@@ -692,7 +682,7 @@ static void RaiseTheShip(void) {
 /// The scene's initialization; arriving by entrance 99, which the entrance
 /// table does not list, first gives the leader the Black Orb.
 s32 LemurianShip_SetupScene(void) {
-  struct WaveMap *map;
+  struct MapScrollWork *map;
   /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2
    * and each step is stored there with strh; without it, 23 of 165
    * instructions differ in tbs-en. */
@@ -748,11 +738,11 @@ s32 LemurianShip_SetupScene(void) {
   Io_Write16(0x2648, &REG_BLDCNT);
   Io_Write16(0x810, &REG_BLDALPHA);
   {
-    struct WaveMapLayer *layer = map->layers + 6;
+    struct MapLayerScroll *layer = map->layers + 1;
 
-    layer->y += -0x5a0000;
-    layer = map->layers + 7;
-    layer->y += -0x5a0000;
+    layer->offsetY += -0x5a0000;
+    layer = map->layers + 2;
+    layer->offsetY += -0x5a0000;
   }
   Engine_MapRedraw();
   Ripple_Start();
@@ -838,19 +828,16 @@ static void Ripple_Stop(void) {
 
 /// The curtains: three columns of eight 32 by 8 sprites that close in from
 /// the sides as the ship sails.
-struct CurtainSprite {
-  u32 unused;
-  u32 attributes;
-  u32 tile;
-};
-
-static struct CurtainSprite sCurtainSprites[24];
+static struct AnimationSpritePart sCurtainSprites[24];
 static s16 sCurtainGap;
 static s16 sCurtainVramSlot;
 
 /// Moves the curtains a step closer and queues their 24 sprites.
 /// Run each frame from Curtain_Start to the end of the game.
 static void Curtain_Close(void) {
+#ifdef UBFIX
+  u32 words[24 * sizeof(struct AnimationSpritePart) / sizeof(u32)];
+#endif
   u32 *entry;
   u32 tile;
   s32 step;
@@ -858,7 +845,15 @@ static void Curtain_Close(void) {
   u32 i;
 
   tile = gVramBlockCache[sCurtainVramSlot].offset >> 5;
+  // Each part is written whole as three words: the queue link, attributes 0
+  // and 1, and attribute 2.
+  // UB: the native word cursor crosses the parts' members. UBFIX builds the
+  // same words in a word array and copies them.
+#ifdef UBFIX
+  entry = words;
+#else
   entry = (u32 *)sCurtainSprites;
+#endif
   if (sCurtainGap != 0)
     sCurtainGap--;
   for (i = 0; i < 8; i++) {
@@ -883,6 +878,9 @@ static void Curtain_Close(void) {
     *entry++ = (i << 21) | x | 0x80004000;
     *entry++ = tile;
   }
+#ifdef UBFIX
+  memcpy(sCurtainSprites, words, sizeof(words));
+#endif
   for (i = 0; i < 24; i++)
     Runtime_PushSlotEntry(&sCurtainSprites[i], 255);
 }

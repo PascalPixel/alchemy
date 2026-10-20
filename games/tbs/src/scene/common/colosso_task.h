@@ -50,12 +50,6 @@ static __inline__ void Dma_Wait(volatile u32 *dma) {
     ;
 }
 
-/// One lettering piece as queued for drawing: a header word, then its OAM
-/// attributes.
-struct Sprite {
-  u32 words[3];
-};
-
 extern s16 gColosso_LetteringTimer;
 extern s16 gColosso_ModeMoveTarget;
 extern s16 gColosso_ModeMoveDuration;
@@ -95,7 +89,9 @@ static void Colosso_LoadLettering(s32 id) {
 /// 64x32 piece, or two 32x16 in French.
 static void Colosso_UpdateLettering(void) {
   u32 *write = gColosso_LetteringSprites;
-  struct Sprite *sprite = (struct Sprite *)write;
+  // Each lettering piece is queued as a sprite part written as three words:
+  // the queue link, attributes 0 and 1, and attribute 2.
+  struct AnimationSpritePart *sprite = (struct AnimationSpritePart *)write;
   s32 tile = gVramBlockCache[gColosso_LetteringSlot].offset >> 5;
   u32 flags;
   s32 scale, blend, pos;

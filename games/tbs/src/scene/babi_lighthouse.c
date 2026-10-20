@@ -29,7 +29,6 @@
 #include "djinn_ids.h"
 #include "field_effect.h"
 #include "staged_actor.h"
-#include "spawn_configured_effect.h"
 #include "select_overlay_data_by_runtime_selector.h"
 #include "battle.h"
 #include "debug.h"

@@ -25,7 +25,6 @@
 #include "field_scene.h"
 #include "field_effect.h"
 #include "staged_actor.h"
-#include "spawn_configured_effect.h"
 #include "edition.h"
 #include "scene_ids.h"
 #include "battle.h"
@@ -119,13 +118,6 @@ static void TunnelRuins_UpdateFirstPillarCells(void);
 static void TunnelRuins_UpdateSecondPillarCells(void);
 static void TunnelRuins_UpdateBlockCells(void);
 static void TunnelRuins_MarkPushPillarCells(void);
-
-/// Position record used by the shared radial-effect source below.
-struct Vec {
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 #include "common/object_staged_actor.h"
 

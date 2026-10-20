@@ -2153,13 +2153,6 @@ static void TolbiShipDeck_ShowOar(s32 a) {
   }
 }
 
-/// An oar's animation object, seen for the tilt that follows its swing.
-struct OarSprite {
-  s32 unk00[7];
-  s16 unk1c;
-  s16 tilt;
-};
-
 /// Gives each oar the stroke of its seat's rower; empty seats take stroke 3.
 /// The first loop's stores are all overwritten below.
 static void TolbiShipDeck_ChooseOarStrokes(void) {
@@ -2266,10 +2259,10 @@ static void TolbiShipDeck_AdvanceStroke(s32 actor, s32 slot) {
 
 /// Swings one oar to its angle: unless flags bit 1 is set, the angle follows
 /// the rower whose stroke the oar takes; bit 0 marks a right-hand oar. The
-/// oar's tilt and depth follow the angle.
+/// oar's tilt (its sprite's rotation) and depth follow the angle.
 static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
   struct FieldActor *actor = Object_GetById(id);
-  struct OarSprite *sprite = (struct OarSprite *)actor->sprite;
+  struct AnimationObject *sprite = actor->sprite;
   s32 sine;
 
   if ((flags & 2) == 0) {
@@ -2294,11 +2287,11 @@ static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
   }
   if (flags & 1) {
     sine = Engine_MathSin(sOarAngle[slot]);
-    sprite->tilt = Engine_MathSin(sOarAngle[slot] + 0x8000) >> 5;
+    sprite->rotation = Engine_MathSin(sOarAngle[slot] + 0x8000) >> 5;
     actor->z.fixed = sOarDepth[slot] - (sine << 2) - (sine << 1);
   } else {
     sine = Engine_MathSin(sOarAngle[slot] + 0x8000);
-    sprite->tilt = Engine_MathSin(sOarAngle[slot]) >> 5;
+    sprite->rotation = Engine_MathSin(sOarAngle[slot]) >> 5;
     actor->z.fixed = sOarDepth[slot] + (sine << 2) + (sine << 1);
   }
 }

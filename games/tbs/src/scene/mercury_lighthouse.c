@@ -27,7 +27,9 @@
 #include "field_obj.h"
 #include "mem.h"
 #include "mercury.h"
-#include "mercury_lighthouse.h"
+#include "field_event.h"
+#include "field_effect.h"
+#include "object_effect.h"
 #include "ram_buffer.h"
 #include "battle.h"
 #include "debug.h"
@@ -185,24 +187,18 @@ static void MercuryLighthouse_StartDjinnBattle(void) {
 }
 
 #if TBS_PATCH_3
-/// The actor effect work, seen for the actor its overlay follows.
-struct LeaderEffectWork {
-  u8 unk00[24];
-  struct FieldActor *target;
-};
-
-/// Suppresses the leader's effect target while crossing the patched floor
-/// region.
+/// Scheduler callback: the fade overlay stops following the leader while he
+/// crosses the patched floor region (map layer 0, 16-pixel rows 13 to 18).
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  struct LeaderEffectWork *effectWork =
-      *(struct LeaderEffectWork **)Ram_ActorEffectWork;
+  struct FadeOverlayWork *effectWork =
+      *(struct FadeOverlayWork **)Ram_ActorEffectWork;
 
   if (leader->terrainId == 0 && leader->z.fixed >> 20 > 12 &&
       leader->z.fixed >> 20 <= 18)
-    effectWork->target = NULL;
+    effectWork->actor = NULL;
   else
-    effectWork->target = leader;
+    effectWork->actor = leader;
 }
 #endif
 
@@ -2661,7 +2657,7 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
     return;
   }
 
-  sprite = (struct AnimationObject *)effect->sprite;
+  sprite = effect->sprite;
   Engine_ObjectSetScript(effect, gMercuryLighthouse_RiseScript);
 
   effect->motionFlags = 0;

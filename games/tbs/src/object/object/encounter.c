@@ -91,7 +91,7 @@ void Encounter_SelectSceneZones(s32 useRules) {
   work->encounterBias = 0;
   // 16 in 16.16: Encounter_SelectEnemyGroup starts a battle once
   // gGameState.encounterSteps reaches it.
-  work->encounterThreshold = 0x100000;
+  work->encounterThreshold = 16 * Q16_ONE;
   Battle_SelectSceneBackdrop();
 }
 
@@ -121,9 +121,9 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 
 /// Advances the encounter counter for zone and returns the enemy group to
 /// fight, or 0 for no battle. steps (16.16) scales how far the counter moves;
-/// a battle starts once it reaches encounterThreshold. Flags 352 and 353 and
-/// gGameState.cloaked prevent battles. Flag 351 skips the checks and the
-/// counting and draws a group at once, from an entry this function never sets.
+/// a battle starts once it reaches encounterThreshold. FLAG_NO_ENCOUNTERS,
+/// flag 353 and gGameState.cloaked prevent battles. Flag 351 skips the checks
+/// and the counting and draws a group at once.
 /// Called by Encounter_RollTerrain and Encounter_RollWorldMap; adds to
 /// gGameState.encounterSteps, sets or clears work->encounterBias, and on a
 /// battle sets gGameState.sceneCue.
@@ -140,8 +140,13 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   s32 i;
 
   work = (struct FieldWork *)gEventWork;
+  // UB: flag 351 reaches the draw without setting entry. Hoisting the zone
+  // lookup changes native instructions at the same 440-byte size in tbs-en.
+#ifdef UBFIX
+  entry = (struct EncounterZone *)gEncounter_EnemyGroupTable + zone;
+#endif
   if (GameFlag_TestFar(351) == 0) {
-    if (GameFlag_TestFar(352) != 0 || GameFlag_TestFar(353) != 0)
+    if (GameFlag_TestFar(FLAG_NO_ENCOUNTERS) != 0 || GameFlag_TestFar(353) != 0)
       return 0;
     if (zone == 0)
       return 0;
@@ -192,8 +197,10 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   sum = 0;
   for (i = 0; i < ENCOUNTER_GROUP_COUNT; i++)
     sum += entry->weights[i];
+  // Zone zero stays encounter-free even when flag 351 bypasses the rate checks.
   if (sum == 0)
     return 0;
+  // Random16 is below 65536, so this draw is below sum and must stop in 0..7.
   pick = (Random16() * sum) >> 16;
   pick -= entry->weights[0];
   i = 0;
@@ -432,6 +439,8 @@ void Battle_SelectTerrainBackdrop(s32 behavior) {
 void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
   u16 key = (zone << 4) + slot;
   const u16 *table = gEncounter_BattleMusic;
+  // Encounter keys have bit 15 clear. battle_cue.c starts with a nonzero
+  // song marker, so the loop assigns music before either stopping test holds.
   u16 music;
   u16 value;
 

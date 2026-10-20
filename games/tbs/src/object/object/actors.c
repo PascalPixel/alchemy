@@ -4,17 +4,18 @@
 
 #include "../object_internal.h"
 
+enum {
+  ACTOR_DJINNI_FLAG_COUNT = NUM_ELEMENTS * 20, ///< 20 flags per element
+  ACTOR_TUNIC_ANIMATION = 226
+};
+
 /// Returns the sprite of character, which is the character itself except that
-/// FLAG_CHILDHOOD gives characters 0 and 1 sprites 0x12 and 0x13, and flag 0x21
-/// gives character 0 sprite 0x11.
+/// FLAG_CHILDHOOD gives characters 0 and 1 sprites 0x12 and 0x13, and
+/// FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite 0x11.
 ///
 /// Called by Event_SpawnObjectTable for every placement, and by
 /// PsynergyMenu_InitializeEntryObjects (through
 /// Party_RemapCharacterIdByFlagsFar) for the party's figures.
-///
-/// XXX: what flag 0x21 marks; Party_EndChildhood clears it with
-/// FLAG_CHILDHOOD, so it belongs to the prologue, and the scene that sets it
-/// would settle its name.
 s32 Party_RemapCharacterIdByFlags(s32 character) {
   s32 sprite;
 
@@ -27,7 +28,8 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
       if (sprite == 1) {
         sprite = 0x13;
       }
-    } else if ((GameFlag_TestFar(0x21) != 0) && (sprite == 0)) {
+    } else if ((GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC) != 0) &&
+               (sprite == 0)) {
       sprite = 0x11;
     }
   }
@@ -38,8 +40,8 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
 /// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
 ///
 /// Called by SaveMenu_ShowPartySprites through
-/// Party_RemapCharacterIdIfEnabledFar. It has no counterpart of flag 0x21, so
-/// it never gives sprite 0x11.
+/// Party_RemapCharacterIdIfEnabledFar. Save summaries omit the tunic flag,
+/// so this never gives sprite 0x11.
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   s32 sprite;
 
@@ -63,10 +65,9 @@ extern const struct ScenePlacement gField_DefaultPlacements[2];
 /// records the table among the scene's tables. Sprites 0 to 7 are the party's
 /// characters and take their own actor slot; other placements take the actor
 /// slots from slot on, one each, up to slot 65. A placement whose condition
-/// does not hold is skipped, and so, outside the world map, is one with a
-/// condition from 48 to 127 whose condition + 80 does not hold. An actor that
-/// already exists is only moved back to its place, unless the party keeps its
-/// position.
+/// does not hold is skipped, as is a Djinni hidden after a lost battle outside
+/// the world map. An existing actor is moved back to its place unless the
+/// party keeps its position.
 ///
 /// Called by ObjectTable_ResetForObject (the leader, then the scene's table),
 /// BattleEffect_ClearAllObjects and Event_CallWithLastActiveObjectId. Records
@@ -96,9 +97,8 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   for (placementSprite = entry->sprite;
        (s16)placementSprite != -1 && slot <= 65;
        entry++, placementSprite = entry->sprite) {
-    // XXX: what a sprite above 0x2705 means; such a row takes no slot and
-    // reuses the previous row's actorIndex (none for a first row). A
-    // placement table with one would settle it.
+    // Current placement tables use sprites 0 to 504, so every live row sets
+    // actorIndex. XXX: what the 0x2705 cutoff was for; no table reaches it.
     if (entry->sprite <= 7)
       actorIndex = entry->sprite;
     else if (entry->sprite <= 0x2705)
@@ -106,11 +106,11 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
       continue;
-    // XXX: why conditions 48 to 127 also test the flag 80 above them (128 to
-    // 207) outside the world map; what those flag ranges hold would settle
-    // it.
-    if ((u32)(condition - 48) <= 79 && work->mode != MODE_WORLD_MAP &&
-        !GameFlag_IsConditionActive(condition + 80))
+    // Djinn_ResolvePendingEvent hides a Djinni after a loss or escape.
+    // Scene_ResetFlagsOnEnter clears these temporary flags on a normal entry.
+    if ((u32)(condition - FLAG_DJINNI_0) <= ACTOR_DJINNI_FLAG_COUNT - 1 &&
+        work->mode != MODE_WORLD_MAP &&
+        !GameFlag_IsConditionActive(condition + ACTOR_DJINNI_FLAG_COUNT))
       continue;
     spriteId = Party_RemapCharacterIdByFlags(entry->sprite);
     object = ObjectTable_Get(actorIndex);
@@ -129,11 +129,11 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
           sprite->slot = spriteSlot;
         }
       }
-      // The young Isaac and Garet (sprites 0x12 and 0x13) take metadata 226
-      // under flag 0x21.
-      if (GameFlag_TestFar(0x21) && (u32)(spriteId - 0x12) <= 1)
+      // Dora's tunic overlays the young sprites with its child part.
+      if (GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC) &&
+          (u32)(spriteId - 0x12) <= 1)
         ObjectDispatch_RegisterChildMetadataFar((struct DispatchObject *)object,
-                                                226);
+                                                ACTOR_TUNIC_ANIMATION);
     } else if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
       Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }
@@ -157,11 +157,19 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
         object->y += 0x8000;
       }
       if (work->mode == MODE_WORLD_MAP) {
-        // On the world map actors are drawn at three quarters size, except
-        // under flag 0x21.
+        // World-map placements use single sprites. While the tunic flag is
+        // set, all keep their native scale; otherwise they draw at 3/4 size.
         object->flags &= 0xfe;
-        if (!GameFlag_TestFar(0x21))
-          sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
+        if (!GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC)) {
+          // UB: sprite creation can fail while the actor slot stays live.
+          // The native local is then indeterminate or from an earlier row.
+          // Checking the sprite grows tbs-en from 608 to 628 bytes.
+#ifdef UBFIX
+          if (object->animationKind == 1 &&
+              (sprite = object->animation) != NULL)
+#endif
+            sprite->scale = Iwram_MulQ16(sprite->scale, 3 * Q16_ONE / 4);
+        }
       } else {
         object->terrainHeight =
             Map_GetTerrainHeightFar(0, object->x, object->z);

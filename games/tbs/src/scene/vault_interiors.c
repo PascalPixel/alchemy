@@ -30,7 +30,6 @@
 #include "item_ids.h"
 #include "field_event.h"
 #include "field_scene.h"
-#include "fixed_point_position.h"
 #include "tbs_edition.h"
 #include "battle_party.h"
 #include "text/msg_ids.h"
@@ -181,7 +180,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Jumps the leader to the requested destination when nothing blocks it there;
 /// returns 1 when it jumped. Only the editions before the first patch have it;
 /// the patched ones look ahead instead (Engine_LeaderCheckAhead).
-static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos) {
+static s32 VaultInteriors_TryJumpTo(struct FieldPosition *pos) {
   struct FieldActor *leader;
   u8 *flags;
   u8 savedMotionFlags;
@@ -222,8 +221,8 @@ static void Event_JumpAcrossRoofGap(void) {
   s32 x;
   s32 z;
 #if !TBS_PATCH_1
-  struct FixedPointPosition target;
-  struct FixedPointPosition *pos;
+  struct FieldPosition target;
+  struct FieldPosition *pos;
   struct FieldActor *leader;
 #endif
 

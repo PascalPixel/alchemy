@@ -37,19 +37,6 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The effect options for the particles thrown up beside the training student.
-struct PeriodicEffectConfig {
-  s32 kind;
-  s32 variant;
-  u8 pad08[16];
-  u16 id;
-  u8 pad1a[2];
-  u8 *data;
-  u8 pad20[8];
-};
-
-void Effect_Spawn();
-
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -84,17 +71,6 @@ enum { ANIM_PUDDLE_FROZEN = 5 };
 /// for two seconds.
 enum { XIAN_TRIGGER_CARRIER_BLOCKED = 200, XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
-/// The effect options for the impact where the student strikes the tree.
-struct SpawnParams {
-  s32 count;
-  u8 unk04[20];
-  u16 sprite;
-  u16 pad1a;
-  s32 callback;
-  u16 facing;
-  u8 unk22[6];
-};
-
 /// Talking to the Djinni: it joins the party (Mercury Djinni 2).
 static void Xian_RecruitVillageDjinni(void) {
   Djinn_JoinParty(ACTOR_DJINNI, ELEMENT_MERCURY, 2);
@@ -120,19 +96,23 @@ static void Xian_RotateTrainingTree(void) {
 
 /// Emits particles beside the student every fourth frame.
 static void Xian_SpawnTrainingParticles(void) {
-  // The existing byte view keeps the Z load before the options-data store;
-  // typed FieldActor reads reorder three instructions in the English build.
-  u8 *studentActor = Object_GetById(ACTOR_KUNG_FU_STUDENT);
+  // The byte view keeps the Z load ahead of the options-script store.
+  u8 *studentActor = (u8 *)Object_GetById(ACTOR_KUNG_FU_STUDENT);
 
   if ((gFrameCount & 3) == 0) {
-    struct PeriodicEffectConfig config;
-    config.kind = 1;
-    config.variant = 9;
-    config.id = 169;
-    config.data = gXian_TrainingParticleScript;
-    Effect_Spawn(*(s32 *)(studentActor + 8), *(s32 *)(studentActor + 12),
-                 *(s32 *)(studentActor + 16) - PIXELS(1), 0, -0x10000, -0x10000,
-                 0x330000, &config);
+    struct EffectOptions config;
+    config.priority = 1;
+    config.palette = 9;
+    config.type = 169;
+    config.script = gXian_TrainingParticleScript;
+    Effect_Spawn(*(s32 *)(studentActor + offsetof(struct FieldActor, x)),
+                 *(s32 *)(studentActor + offsetof(struct FieldActor, y)),
+                 *(s32 *)(studentActor + offsetof(struct FieldActor, z)) -
+                     PIXELS(1),
+                 0, -PIXELS(1), -PIXELS(1),
+                 EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | EFFECT_USE_TYPE |
+                     EFFECT_USE_SCRIPT,
+                 &config);
   }
 }
 
@@ -424,7 +404,7 @@ static void Xian_TalkToKungFuStudent(void) {
   SchedulerCallback particleCallback;
   s32 reboundVelocity;
   s32 stepBackOffset[3];
-  struct SpawnParams effectParams;
+  struct EffectOptions effectParams;
 
   Engine_EventBegin();
   demonstrationSeen = Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02);
@@ -454,7 +434,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
-    effectParams.count = 1;
+    effectParams.priority = 1;
     Effect_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0, 0x20001, 0);
     Effect_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0, 0x20001, 0);
     Engine_AudioPlayCue(SE_132);
@@ -469,10 +449,13 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_AudioPlayCue(SE_HEAVY_IMPACT);
     Actor_SetActionScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
     FieldScheduler_AddCallback(Xian_RotateTrainingTree, TASK_PRIORITY_SCENE);
-    effectParams.sprite = 0x11b;
-    effectParams.callback = (s32)gXian_TreeImpactScript;
-    effectParams.facing = 0x4000;
-    Effect_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0, 0x720000, &effectParams);
+    effectParams.type = 0x11b;
+    effectParams.script = gXian_TreeImpactScript;
+    effectParams.rotation = 0x4000;
+    Effect_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,
+                 EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
+                     EFFECT_USE_ROTATION,
+                 &effectParams);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Engine_ActorWaitForMove(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
@@ -517,31 +500,31 @@ static void Xian_TalkToFeizhi(void) {
 static void Xian_JumpOverSpilledWater(void) {
   s32 savedMotionFlags;
   struct FieldActor *leader;
-  union FieldCoordinate landingPosition[3];
-  union FieldCoordinate *landing;
+  struct FieldPosition landingPosition;
+  struct FieldPosition *landing;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
-    landing = landingPosition;
-    landing[0].fixed = (leader->x.fixed & -0x100000) + PIXELS(8);
-    landing[1].fixed = leader->y.fixed;
-    landing[2].fixed = (leader->z.fixed & -0x100000) + PIXELS(8);
+    landing = &landingPosition;
+    landing->x = (leader->x.fixed & -0x100000) + PIXELS(8);
+    landing->y = leader->y.fixed;
+    landing->z = (leader->z.fixed & -0x100000) + PIXELS(8);
     FieldVector_AddPolarOffset(PIXELS(32), (leader->facing + 0x2000) & 0xc000,
-                               (struct FieldPosition *)landing);
+                               landing);
     if (FieldObject_CheckMovementCollision(leader, landing) == 0) {
       Engine_EventBegin();
       Object_SetMode(leader, 6);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
       Object_SetMode(leader, 7);
-      leader->speed = 0x30000;
-      leader->acceleration = 0x20000;
-      leader->velocityY = 0x40000;
+      leader->speed = PIXELS(3);
+      leader->acceleration = PIXELS(2);
+      leader->velocityY = PIXELS(4);
       leader->motionFlags &= 126;
       Engine_ActorSetSpriteFlags(leader, 0);
       Engine_ObjectMotionSetPositionAndCommit(
-          ACTOR_PARTY_LEADER, landing[0].part.pixel, landing[2].part.pixel);
+          ACTOR_PARTY_LEADER, landing->x >> 16, landing->z >> 16);
       Object_SetMode(leader, 6);
       Engine_ActorSetSpriteFlags(leader, 1);
       leader->motionFlags = savedMotionFlags;

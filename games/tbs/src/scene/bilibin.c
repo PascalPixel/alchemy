@@ -646,7 +646,7 @@ static void Event_PushBlock(void) {
   struct FieldActor *leader;
   struct FieldActor *block;
   u32 direction;
-  union FieldCoordinate destination[3];
+  struct FieldPosition destination;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
@@ -655,27 +655,27 @@ static void Event_PushBlock(void) {
       (leader->z.part.pixel + (s16)gBilibin_FacingCellSteps[direction]) >> 4);
   if (block != NULL) {
     block->terrainId = 2;
-    destination[0].fixed =
+    destination.x =
         block->x.fixed + (gBilibin_FacingCellSteps[direction] & -0x10000);
-    destination[1].fixed = block->y.fixed;
-    destination[2].fixed =
+    destination.y = block->y.fixed;
+    destination.z =
         block->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
-    if (FieldObject_CheckMovementCollision(block, destination) <= 0) {
+    if (FieldObject_CheckMovementCollision(block, &destination) <= 0) {
       // The leader leans on the block, then both move together.
       Object_SetMode(leader, 8);
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_185);
       block->speed = PIXELS(1) / 5;
       block->acceleration = PIXELS(1) / 5;
-      Engine_ObjectSetPosition(block, destination[0].fixed,
-                               destination[1].fixed, destination[2].fixed);
+      Engine_ObjectSetPosition(block, destination.x, destination.y,
+                               destination.z);
       leader->speed = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
-      Engine_ObjectSetPosition(leader, destination[0].fixed,
-                               destination[1].fixed, destination[2].fixed);
+      Engine_ObjectSetPosition(leader, destination.x, destination.y,
+                               destination.z);
       FieldObject_WaitForMove(block);
-      block->x.fixed = destination[0].fixed;
-      block->z.fixed = destination[2].fixed;
+      block->x.fixed = destination.x;
+      block->z.fixed = destination.z;
       block->velocityX = 0;
       block->velocityZ = 0;
       Object_SetMode(leader, 1);

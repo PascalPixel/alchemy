@@ -293,30 +293,30 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
 /// two cells ahead, off any platform and onto the next.
 static void MercuryLighthouseAerie_JumpToPlatform(void) {
   struct FieldActor *actor;
-  s32 position[3];
+  struct FieldPosition position;
   s32 angle;
   u8 flags;
 
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   angle = (actor->facing + 0x1000) & 0xe000;
   flags = actor->motionFlags;
-  SET_VECTOR(position, (actor->x.fixed & 0xfff00000) + 0x80000, actor->y.fixed,
-             (actor->z.fixed & 0xfff00000) + 0x80000);
-  Vector_AddPolarOffset(0x200000, angle, position);
-  if (FieldObject_CheckMovementCollision(actor, position) == 0) {
+  SET_POSITION(&position, (actor->x.fixed & 0xfff00000) + PIXELS(8),
+               actor->y.fixed, (actor->z.fixed & 0xfff00000) + PIXELS(8));
+  Vector_AddPolarOffset(PIXELS(32), angle, &position);
+  if (FieldObject_CheckMovementCollision(actor, &position) == 0) {
     Engine_GameFlagClear(FLAG_ON_PLATFORM);
     MercuryLighthouseAerie_SettlePlatforms();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
     Object_SetMode(actor, 7);
-    actor->speed = 0x30000;
-    actor->acceleration = 0x20000;
-    actor->velocityY = 0x40000;
+    actor->speed = PIXELS(3);
+    actor->acceleration = PIXELS(2);
+    actor->velocityY = PIXELS(4);
     actor->motionFlags &= 0x7e;
     Engine_ActorSetSpriteFlags(actor, 0);
-    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, position[0] >> 16,
-                              position[2] >> 16);
+    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, position.x >> 16,
+                              position.z >> 16);
     Object_SetMode(actor, 6);
     Engine_ActorSetSpriteFlags(actor, 1);
     actor->motionFlags = flags;

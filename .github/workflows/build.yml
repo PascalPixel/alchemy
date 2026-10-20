@@ -46,7 +46,7 @@ jobs:
 
       - name: Read the compiler pin
         id: pin
-        run: echo "alchemy-gcc=$(git rev-parse HEAD:alchemy-gcc)" >> "$GITHUB_OUTPUT"
+        run: echo "compiler=$(git rev-parse HEAD:alchemy-gcc)" >> "$GITHUB_OUTPUT"
 
       - name: Restore the compilers built from that pin
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
@@ -54,7 +54,7 @@ jobs:
           path: |
             tools/out/compilers
             tools/out/compiler-runtime
-          key: compilers-${{ runner.os }}-${{ runner.arch }}-${{ steps.pin.outputs.alchemy-gcc }}-${{ hashFiles('Makefile') }}
+          key: compilers-${{ runner.os }}-${{ runner.arch }}-${{ steps.pin.outputs.compiler }}-${{ hashFiles('Makefile') }}
 
       - name: Build the compilers from source (make bootstrap)
         run: make bootstrap CARGO=false
@@ -64,3 +64,72 @@ jobs:
 
       - name: Compile ☀️'s C with a current GCC (make modern)
         run: make -j"$(nproc)" modern
+
+  reports:
+    name: Verify and archive the twelve-edition measurement
+    needs: build
+    if: github.repository == 'PascalPixel/alchemy' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      RUSTUP_TOOLCHAIN: 1.98.1
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build the pinned development tools
+        run: |
+          git submodule update --init alchemy-devtools
+          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
+          make devtools
+          cargo test --locked --release --manifest-path alchemy-devtools/Cargo.toml -p alchemy-devtools progress::
+
+      - name: Download the durable report archive
+        run: gh release download decomp-reports --dir "$RUNNER_TEMP/measured" --pattern '*.tsv' --pattern '*.pb'
+
+      - name: Verify this revision and reconstruct its progress history
+        run: alchemy-devtools/target/release/alchemy-devtools progress --publish "$RUNNER_TEMP/measured" "$GITHUB_SHA" "$RUNNER_TEMP/publication"
+
+      - name: Archive the public figures and admit the successful measurement
+        run: |
+          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
+            -C "$RUNNER_TEMP/publication" -cf - PROGRESS.png PROGRESS_CHART.png history.tsv source.tsv \
+            | gzip -n > "$RUNNER_TEMP/publication/${GITHUB_SHA}.site.tar.gz"
+          for name in "${GITHUB_SHA}.site.tar.gz" "${GITHUB_SHA}.accepted.tsv"; do
+            path="$RUNNER_TEMP/publication/$name"
+            expected="sha256:$(sha256sum "$path" | cut -d' ' -f1)"
+            actual=$(gh api "repos/$GH_REPO/releases/tags/decomp-reports" --jq ".assets[] | select(.name == \"$name\") | .digest")
+            if test -z "$actual"; then
+              gh release upload decomp-reports "$path"
+              actual=$(gh api "repos/$GH_REPO/releases/tags/decomp-reports" --jq ".assets[] | select(.name == \"$name\") | .digest")
+            fi
+            test "$actual" = "$expected" || { echo "Refusing to replace changed archive $name" >&2; exit 1; }
+          done
+
+      - name: Hand decomp.dev all twelve editions
+        run: cp "$RUNNER_TEMP/measured/${GITHUB_SHA}.pb" "$RUNNER_TEMP/report.pb"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: combined_report
+          path: ${{ runner.temp }}/report.pb
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Pass only public figures and provenance to the docs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: publication
+          path: |
+            ${{ runner.temp }}/publication/PROGRESS.png
+            ${{ runner.temp }}/publication/PROGRESS_CHART.png
+            ${{ runner.temp }}/publication/history.tsv
+            ${{ runner.temp }}/publication/source.tsv
+          if-no-files-found: error
+          retention-days: 90

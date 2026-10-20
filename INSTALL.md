@@ -45,6 +45,20 @@ Edit, run `make tbs-en` again, and play your version. A changed game no longer m
 
 CI checks formatting with clang-format 21, available from [LLVM's packages](https://apt.llvm.org/). To use the same check locally, run `make format-check CLANG_FORMAT=clang-format-21`, or set `CLANG_FORMAT` to the path of your clang-format 21 executable.
 
+## Reconstruction tools (optional)
+
+The pinned `alchemy-gcc` submodule supplies the compilers. Matching and progress tools live in the optional `alchemy-devtools` submodule and require Rust:
+
+```sh
+git submodule update --init alchemy-devtools
+make devtools
+alchemy-devtools/target/release/alchemy-devtools --help
+```
+
+The documentation generator and theme live separately in [alchemy-docs](https://github.com/PascalPixel/alchemy-docs); building the games needs neither Doxygen nor Node.
+
+For an existing checkout after the rename, run `git submodule sync --recursive` and initialize the new paths above. A fresh clone is also supported. The old command `psynergy` is now `alchemy-devtools`, and `make psynergy` is now `make devtools`.
+
 ## The Lost Age (optional)
 
 Dump your own cartridge and put the file in `roms/` as `tla-en.gba` (or `tla-ja.gba`, `tla-de.gba` and so on), then run `make tla-en`. Don't download ROMs; the build checks each one against `rom.sha1`.

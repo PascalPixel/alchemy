@@ -30,7 +30,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   effectScene = gEffectWork;
   // Tint the screen red: PALETTE_TRANSFORM_TINT | RGB(16, 4, 4), the form
   // mercury.c spells out for its blue.
-  Shop_RestoreSceneTilesFar(0x201090);
+  Shop_SaveAndTintFieldPaletteFar(0x201090);
   WaitFrames(30);
   // Turn to face the camera (angle 0x4000), then bounce three times, a rising
   // note on each.
@@ -129,7 +129,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   leader->scaleY = 0x10000;
   // Fade the palette back from the tint and free the effect slots.
   WaitFrames(30);
-  Shop_InitEffectFar();
+  Shop_RestoreFieldPaletteFar();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 

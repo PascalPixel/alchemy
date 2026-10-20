@@ -79,7 +79,7 @@
 	.set import.Engine_ActorWalkByAndWait, 1
 	.set import.Engine_ActorFollow, 1
 	.set import.BattleFx_PlayQueuedSound, 1
-	.set import.Shop_RestoreSceneTiles, 1
-	.set import.Shop_InitEffect, 1
+	.set import.Shop_SaveAndTintFieldPalette, 1
+	.set import.Shop_RestoreFieldPalette, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

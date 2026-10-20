@@ -96,7 +96,7 @@ s32 DjinnMenu_Run(void) {
         backdrop->tutorialStep = 28;
     }
   }
-  Scheduler_EnableOverlayCallbacksWithFlags();
+  Menu_SuspendFieldTasks();
   UiWork_SetAltFlagAndClearTableFar(1);
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   menu->ownerCount = Party_ListActiveOwnersFar(menu->owners);
@@ -124,7 +124,7 @@ s32 DjinnMenu_Run(void) {
   Iwram_CopyWords(BG_CHAR_BLOCK(1), backdrop->tiles, 0x2000);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
   WaitFrames(1);
-  Scheduler_DisableOverlayCallbacksWithFlags();
+  Menu_ResumeFieldTasks();
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   MemFree(menu->backdrop);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);

@@ -2081,7 +2081,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
 
   BattleFx_InitializeSlots();
   work = (struct BattleFxScene *)gEffectWork;
-  Shop_RestoreSceneTiles(0x202108);
+  Shop_SaveAndTintFieldPalette(0x202108);
   position.x = PIXELS(504);
   position.y = PIXELS(24);
   position.z = PIXELS(144);
@@ -2121,7 +2121,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
     }
   }
   Engine_MapWaitWorkValuesBelow256();
-  Shop_InitEffect();
+  Shop_RestoreFieldPalette();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 

@@ -19,7 +19,7 @@
 	.set import.FieldObject_WaitForMove, 1
 	.set import.Engine_MapAnimateCells, 1
 	.set import.Engine_MapCopyCellsTo, 1
-	.set import.DisplayBlend_EnableRunScript, 1
+	.set import.DisplayBlend_SuspendScript, 1
 	.set import.Engine_MapCopyCells, 1
 	.set import.Engine_MapCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1

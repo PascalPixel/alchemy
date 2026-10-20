@@ -14,8 +14,8 @@ void Shop_SetCursorFar(struct ShopCursor *cursor, s32 targetX, s32 targetY,
 void ShopCursor_SetPositionImmediateFar(struct ShopCursor *cursor, s32 x,
                                         s32 y);
 void Shop_FillSelectorFar(s32 count, s32 selector, u8 *base);
-void Shop_RestoreSceneTilesFar(s32 layer);
-void Shop_InitEffectFar(void);
+void Shop_SaveAndTintFieldPaletteFar(s32 layer);
+void Shop_RestoreFieldPaletteFar(void);
 s32 Shop_PickUnitItemFar(s32 *selected_unit, s32 *selectedItem);
 void AudioCommand_WaitForStateByteClearFar(void);
 void Inn_PlaySleepFar(s32 room_price);

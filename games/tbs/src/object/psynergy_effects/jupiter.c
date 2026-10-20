@@ -20,7 +20,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     return;
   BattleFx_InitializeSlots();
   scene = gEffectWork;
-  Shop_RestoreSceneTilesFar(0x20118c);
+  Shop_SaveAndTintFieldPaletteFar(0x20118c);
   AudioCommand_PlayFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   AudioCommand_PlayFar(SE_174);
@@ -68,7 +68,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   WaitFrames(40);
   AudioCommand_PlayFar(SE_164);
   WaitFrames(100);
-  Shop_InitEffectFar();
+  Shop_RestoreFieldPaletteFar();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 

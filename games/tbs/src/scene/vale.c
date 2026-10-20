@@ -1632,10 +1632,10 @@ static void Event_MendingTheRoof(void) {
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 11);
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderHammerAction);
-  Graphics_EnableObjLayerAndCallbacks();
+  ObjectSystem_SuspendProjectionAndShowSprites();
   message = MsgValeRepairCaption;
   UiText_ShowCenteredMessage(message, 0, 0);
-  ObjectDispatch_StopCallbacksAndHideLayers();
+  ObjectSystem_ResumeProjectionAndHideLayers();
 
   // Follow Jenna through the village until she notices the repair work.
   Camera_MoveTo(PIXELS(339), PIXELS(160), PIXELS(1173), 0);

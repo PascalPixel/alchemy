@@ -38,7 +38,7 @@
 	.set import.Engine_MapCopyCellsLayered, 1
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_ActorSetSpriteFlags, 1
-	.set import.Graphics_EnableObjLayerAndCallbacks, 1
+	.set import.ObjectSystem_SuspendProjectionAndShowSprites, 1
 	.set import.SetMapCellCollision, 1
 	.set import.Engine_MessageShowCentered, 1
 	.set import.UiWork_PushValueSlot, 1

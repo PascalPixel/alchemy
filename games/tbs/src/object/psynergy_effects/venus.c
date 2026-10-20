@@ -31,7 +31,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   effectScene = gEffectWork;
   // Tint the screen green: PALETTE_TRANSFORM_TINT | RGB(4, 16, 4), the form
   // mercury.c spells out for its blue.
-  Shop_RestoreSceneTilesFar(0x201204);
+  Shop_SaveAndTintFieldPaletteFar(0x201204);
   WaitFrames(30);
   djinni->visible = 0;
   AudioCommand_PlayFar(SE_JUMP);
@@ -150,7 +150,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   }
 
   WaitFrames(15);
-  Shop_InitEffectFar();
+  Shop_RestoreFieldPaletteFar();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 

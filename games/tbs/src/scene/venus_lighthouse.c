@@ -2454,7 +2454,7 @@ s32 Scene_RunEntrySetup(void) {
     case 7:
     case 8:
       BattleFx_SetQueuedSoundAndPlay(SE_170);
-      DisplayBlend_EnableRunScript();
+      DisplayBlend_SuspendScript();
       {
         s32 zero = 0;
 
@@ -2659,7 +2659,7 @@ s32 Scene_RunEntrySetup(void) {
       Object_GetById(20)->motionFlags = 4;
       Object_GetById(20)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Object_GetById(20)->y.fixed = -0x108000;
-      DisplayBlend_EnableRunScript();
+      DisplayBlend_SuspendScript();
       Io_Write16(0, &REG_BLDCNT);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         BattleFx_SetQueuedSoundAndPlay(SE_170);

@@ -403,7 +403,7 @@ static void Event_DoraWakesIsaac(void) {
   Engine_ActorSetPosition(17, PIXELS(576), PIXELS(650));
   Map_ClearLayerEntryFlag(7);
   Engine_ActorSetPosition(ACTOR_DORA, PIXELS(534), PIXELS(688));
-  Graphics_EnableObjLayerAndCallbacks();
+  ObjectSystem_SuspendProjectionAndShowSprites();
   // On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake up!"
   Ui_SetMessageVoiceFromActor(ACTOR_DORA);
   firstMessage = MsgValeWake;
@@ -412,7 +412,7 @@ static void Event_DoraWakesIsaac(void) {
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Ui_SetMessageVoiceFromActor(ACTOR_DORA);
   UiText_ShowCenteredMessage(firstMessage + 1, 1, 0);
-  ObjectDispatch_StopCallbacksAndHideLayers();
+  ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_EventWait(40);
   // Widen the camera bounds and reveal the lightning outside.
   mapWork->minX = PIXELS(328);
@@ -573,7 +573,7 @@ static void Event_HurryToThePlaza(void) {
   Map_CopyCellsTo(94, 27, 94, 23, 6, 4);
   Map_CopyCellsTo(92, 28, 87, 23, 4, 4);
   Map_CopyCellsTo(65, 53, 88, 24, 2, 2);
-  DisplayBlend_EnableRunScript();
+  DisplayBlend_SuspendScript();
   SetBlendTarget(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Io_Write16(BLEND_ALPHA(12, 16), &REG_BLDALPHA);
   FieldFx_StartLightning();

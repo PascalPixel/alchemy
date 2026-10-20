@@ -153,7 +153,7 @@ s32 StatusMenu_Run(void) {
   ((struct ObjectSystemWork *)WORK_SLOT(HEAP_SLOT_MENU_CONTROL))->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
-  Scheduler_EnableOverlayCallbacksWithFlags();
+  Menu_SuspendFieldTasks();
   UiWindow_InitializeWork(0);
   state->page = 0;
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
@@ -197,7 +197,7 @@ s32 StatusMenu_Run(void) {
   Menu_EnsureCancelSound();
   RenderOutput_ClearListFar(state->statusWindow);
   FourObjectMotion_ClearSlotsAndSchedule();
-  Scheduler_DisableOverlayCallbacksWithFlags();
+  Menu_ResumeFieldTasks();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
 #if TBS_PATCH_1

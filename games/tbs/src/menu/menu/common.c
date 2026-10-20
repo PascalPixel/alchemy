@@ -32,12 +32,12 @@
 #define WINDOW_KEEP_EXISTING 0x100
 #define WINDOW_STYLE_MASK 0xff
 
-/// Pauses the field while a menu is open: stops the overlay's scheduler
-/// callbacks and the map update, and clears game flags 0x166 and 0x152.
+/// Resumes the overlay tasks and tile animations when a menu closes, and
+/// clears game flags 0x166 and 0x152.
 /// Returns nothing useful; callers ignore the value.
-s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
+s32 Menu_ResumeFieldTasks(void) {
   Scheduler_ResumeOverlayTasks();
-  Map_DisableUpdateCallbackFar();
+  MapAnimation_ResumeFar();
   // Flag 0x166: its meaning is not known yet.
   GameFlag_ClearBitFar(0x166);
   // Flag 0x152, while set, stops BattlePalette_UpdateBlend.
@@ -47,13 +47,12 @@ s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
 #endif
 }
 
-/// Undoes Scheduler_DisableOverlayCallbacksWithFlags when the menu closes:
-/// sets flags 0x152 and 0x166 again and restarts the map update and the
-/// overlay's scheduler callbacks. Returns the scheduler's result.
-s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
+/// Suspends the overlay tasks and tile animations while a menu is open, and
+/// sets flags 0x152 and 0x166. Returns the scheduler's result.
+s32 Menu_SuspendFieldTasks(void) {
   GameFlag_SetBitFar(0x152);
   GameFlag_SetBitFar(0x166);
-  Map_EnableUpdateCallbackFar();
+  MapAnimation_SuspendFar();
   return Scheduler_SuspendOverlayTasks();
 }
 

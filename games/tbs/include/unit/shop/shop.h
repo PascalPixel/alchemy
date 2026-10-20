@@ -26,8 +26,8 @@ void Shop_FillSelector(s32 itemCount, s32 paletteSelector, u8 *tileBuffer);
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition);
 struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
                                             s32 x, s32 y);
-void Shop_RestoreSceneTiles(s32 layer);
-void Shop_InitEffect(void);
+void Shop_SaveAndTintFieldPalette(s32 layer);
+void Shop_RestoreFieldPalette(void);
 void ShopCursor_Advance(struct ShopCursor *cursor);
 void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor);
 void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,

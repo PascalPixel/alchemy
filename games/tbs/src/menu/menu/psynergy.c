@@ -60,7 +60,7 @@ s32 PsynergyMenu_Run(void) {
   Palette_LightenBankHighlight(14);
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
-  Scheduler_EnableOverlayCallbacksWithFlags();
+  Menu_SuspendFieldTasks();
   Iwram_CopyWords(saved, PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE);
   Iwram_FillWords(PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE,
                   0x33333333);
@@ -91,7 +91,7 @@ s32 PsynergyMenu_Run(void) {
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menuBusy = 0;
   MemFree(saved);
   WaitFrames(1);
-  Scheduler_DisableOverlayCallbacksWithFlags();
+  Menu_ResumeFieldTasks();
 #endif
   WaitFrames(1);
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);

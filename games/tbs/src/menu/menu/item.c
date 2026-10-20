@@ -121,7 +121,7 @@ s32 ItemMenu_Run(void) {
   screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
 #if TBS_PATCH_1
   // Save the window tiles the menu draws over, and fill them with colour 3.
-  Scheduler_EnableOverlayCallbacksWithFlags();
+  Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, BG_CHAR_BLOCK(1), size);
   Iwram_FillWords(BG_CHAR_BLOCK(1), size, 0x33333333);
   UiWork_SetAltFlagAndClearTableFar(1);
@@ -155,7 +155,7 @@ s32 ItemMenu_Run(void) {
   ((struct UiRenderWork *)*process)->menuBusy = 0;
   MemFree(backup);
   WaitFrames(1);
-  Scheduler_DisableOverlayCallbacksWithFlags();
+  Menu_ResumeFieldTasks();
 #endif
   WaitFrames(1);
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);

@@ -2347,7 +2347,7 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     case 15:
       Engine_ActorSetPosition(MIA, 0, 0);
-      DisplayBlend_EnableRunScript();
+      DisplayBlend_SuspendScript();
       Io_Write16(0, &REG_BLDCNT);
       Object_GetById(9)->scaleX = -0x10000;
       Engine_ActorSetSpritePriority(ACTOR_FIRST_VISITOR, 1);
@@ -2369,7 +2369,7 @@ s32 MercuryLighthouse_Initialize(void) {
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
       Engine_ActorSetSpritePriority(ACTOR_LIFT_STATUE, 1);
       MercuryLighthouse_RideLift();
-      DisplayBlend_DisableRunScript();
+      DisplayBlend_ResumeScript();
       Engine_EventEnd();
       break;
     case 12:
@@ -2553,7 +2553,7 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(60);
-  DisplayBlend_EnableRunScript();
+  DisplayBlend_SuspendScript();
   Engine_AudioPlayCue(SE_223);
   // The lift layer scrolls up with both riders, slowing as it nears the top.
   for (;;) {

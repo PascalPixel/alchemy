@@ -1409,10 +1409,10 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(10);
-  Graphics_EnableObjLayerAndCallbacks();
+  ObjectSystem_SuspendProjectionAndShowSprites();
   Ui_SetMessageVoiceFromActor(21);
   UiText_ShowCenteredMessage(MsgTolbiShipArrgh, 1, 0);
-  ObjectDispatch_StopCallbacksAndHideLayers();
+  ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_EventRequestExit(12);
 }
 
@@ -1495,10 +1495,10 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Engine_ActorStop(26);
   Engine_ActorStop(27);
   Engine_EventWait(10);
-  Graphics_EnableObjLayerAndCallbacks();
+  ObjectSystem_SuspendProjectionAndShowSprites();
   Ui_SetMessageVoiceFromActor(21);
   UiText_ShowCenteredMessage(MsgTolbiShipArrgh, 1, 0);
-  ObjectDispatch_StopCallbacksAndHideLayers();
+  ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_EventRequestExit(13);
 }
 
@@ -1606,10 +1606,10 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_ActorStop(28);
   Engine_ActorStop(29);
   Engine_EventWait(10);
-  Graphics_EnableObjLayerAndCallbacks();
+  ObjectSystem_SuspendProjectionAndShowSprites();
   Ui_SetMessageVoiceFromActor(21);
   UiText_ShowCenteredMessage(MsgTolbiShipArrgh, 1, 0);
-  ObjectDispatch_StopCallbacksAndHideLayers();
+  ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_EventRequestExit(14);
 }
 

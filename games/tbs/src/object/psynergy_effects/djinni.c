@@ -135,7 +135,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 
   if (owner >= 0) {
     FieldEvent_Begin();
-    Battle_SetObjectFlag5bWhenMode3();
+    WorldMap_BeginEvent();
     if (slot != -1) {
       if (work->mode == MODE_WORLD_MAP)
         BattleEffect_ClearOutOfBoundsObjects();
@@ -155,7 +155,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
     }
 
     Djinn_ShowJoinedMessageFar(owner, element, djinn);
-    Battle_ClearObjectFlag5bWhenMode3();
+    WorldMap_EndEvent();
     FieldEvent_End();
   }
 }

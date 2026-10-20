@@ -18,8 +18,8 @@ struct RenderOutput;
 #define LIST_ORDER_EQUIPPED 0x80
 #define LIST_ORDER_END 0xff
 
-s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
-s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
+s32 Menu_ResumeFieldTasks(void);
+s32 Menu_SuspendFieldTasks(void);
 void UiWindow_InitializeWork(s32 unused);
 s32 UiWindow_UpdateOrCreate(struct UiWindow **handle, s32 x, s32 y, s32 w,
                             s32 h, s32 flags);

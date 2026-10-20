@@ -127,8 +127,8 @@ FarCall_ObjectTable:
 	export Marker_SetActorPositionFar, Marker_SetActorPosition
 	overlay_veneer Marker_Hide
 	export Marker_MoveLeaderAwayFar, Marker_MoveLeaderAway
-	export Battle_SetObjectFlag5bWhenMode3Far, Battle_SetObjectFlag5bWhenMode3
-	export Battle_ClearObjectFlag5bWhenMode3Far, Battle_ClearObjectFlag5bWhenMode3
+	export WorldMap_BeginEventFar, WorldMap_BeginEvent
+	export WorldMap_EndEventFar, WorldMap_EndEvent
 	overlay_veneer ObjectTable_ResetForObject
 	overlay_veneer Event_SpawnObjectTable
 	overlay_veneer ObjectTable_DestroyAtIndex

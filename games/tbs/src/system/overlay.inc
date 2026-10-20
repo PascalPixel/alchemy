@@ -105,8 +105,8 @@
 	import Engine_MapCopyCellsTo, Map_CopyMetatileIndicesRectFar
 	import Map_ClearLayerEntryFlag, Map_ClearLayerEntryFlagFar
 	import Map_SetLayerEntryFlag, Map_SetLayerEntryFlagFar
-	import DisplayBlend_DisableRunScript, DisplayBlend_DisableRunScriptFar
-	import DisplayBlend_EnableRunScript, DisplayBlend_EnableRunScriptFar
+	import DisplayBlend_ResumeScript, DisplayBlend_ResumeScriptFar
+	import DisplayBlend_SuspendScript, DisplayBlend_SuspendScriptFar
 	import Map_GetTerrainHeight, Map_GetTerrainHeightFar
 	import GetMapCellCollision, GetMapCellCollisionFar
 	import Engine_MapCopyCells, Map_CopyMetatileCellsRectFar
@@ -122,10 +122,10 @@
 	import Engine_MapRenderWaitForValues, Map_WaitForShakeToSettleFar
 	import Engine_MapWaitWorkValuesBelow256, Map_WaitForShakeToSettleFar
 	import Map_WaitForShakeToSettle, Map_WaitForShakeToSettleFar
-	import Graphics_EnableObjLayerAndCallbacks, Graphics_EnableObjLayerAndCallbacksFar
-	import ObjectDispatch_StopCallbacksAndHideLayers, ObjectDispatch_StopCallbacksAndHideLayersFar
+	import ObjectSystem_SuspendProjectionAndShowSprites, ObjectSystem_SuspendProjectionAndShowSpritesFar
+	import ObjectSystem_ResumeProjectionAndHideLayers, ObjectSystem_ResumeProjectionAndHideLayersFar
 	import ObjectDispatch_RegisterChildMetadata, ObjectDispatch_RegisterChildMetadataFar
-	import Map_ResumeAnimation, Map_ResumeAnimationFar
+	import WorldMap_BeginStillView, WorldMap_BeginStillViewFar
 	import Map_LoadAreaGraphics, Map_LoadAreaGraphicsFar
 	import Animation_ApplyChildValues, Animation_ApplyChildValuesFar
 	import Engine_ObjectSetPartPalettes, Animation_ApplyChildValuesFar
@@ -356,8 +356,8 @@
 	import Engine_ItemShowFound, BattleFx_StartEffectObject22Far
 	import Engine_MapObjectSetPosition, Marker_SetActorPositionFar
 	import Marker_MoveLeaderAway, Marker_MoveLeaderAwayFar
-	import Battle_SetObjectFlag5bWhenMode3, Battle_SetObjectFlag5bWhenMode3Far
-	import Battle_ClearObjectFlag5bWhenMode3, Battle_ClearObjectFlag5bWhenMode3Far
+	import WorldMap_BeginEvent, WorldMap_BeginEventFar
+	import WorldMap_EndEvent, WorldMap_EndEventFar
 	import Engine_ActorLookup, ObjectTable_GetFar
 	import BattleFx_StartFadeOverlay, BattleFx_StartFadeOverlayFar
 	import Engine_PsynergyPlayEffect, Field_DispatchTypeHandlerFar
@@ -421,8 +421,8 @@
 	import Engine_InnCheckIn, Inn_CheckInFar
 	import Engine_InnOpen, Inn_CheckInFar
 	import Inn_CheckIn, Inn_CheckInFar
-	import Shop_RestoreSceneTiles, Shop_RestoreSceneTilesFar
-	import Shop_InitEffect, Shop_InitEffectFar
+	import Shop_SaveAndTintFieldPalette, Shop_SaveAndTintFieldPaletteFar
+	import Shop_RestoreFieldPalette, Shop_RestoreFieldPaletteFar
 	import Shop_PickUnitItem, Shop_PickUnitItemFar
 	import AudioCommand_WaitForStateByteClear, AudioCommand_WaitForStateByteClearFar
 	import Inn_PlaySleep, Inn_PlaySleepFar

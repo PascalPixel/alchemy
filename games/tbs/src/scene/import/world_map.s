@@ -27,7 +27,7 @@
 	.set import.Map_LoadDefaultCellsAndUpdateBlock, 1
 	.set import.Map_SetWindowCellTile, 1
 	.set import.Engine_ActorSetSpriteFlags, 1
-	.set import.Map_ResumeAnimation, 1
+	.set import.WorldMap_BeginStillView, 1
 	.set import.Map_LoadAreaGraphics, 1
 	.set import.Engine_ObjectSetPartPalettes, 1
 	.set import.Engine_MessageShowCentered, 1
@@ -93,8 +93,8 @@
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.Battle_SetObjectFlag5bWhenMode3, 1
-	.set import.Battle_ClearObjectFlag5bWhenMode3, 1
+	.set import.WorldMap_BeginEvent, 1
+	.set import.WorldMap_EndEvent, 1
 	.set import.Engine_ActorLookup, 1
 	.set import.Engine_PsynergyBegin, 1
 	.set import.BattleEffect_CleanupSceneObjects, 1

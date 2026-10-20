@@ -12,8 +12,8 @@
 	.set import.Engine_MapCopyCellAttributes, 1
 	.set import.Engine_ActorSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.Graphics_EnableObjLayerAndCallbacks, 1
-	.set import.ObjectDispatch_StopCallbacksAndHideLayers, 1
+	.set import.ObjectSystem_SuspendProjectionAndShowSprites, 1
+	.set import.ObjectSystem_ResumeProjectionAndHideLayers, 1
 	.set import.UiText_ShowCenteredMessage, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1

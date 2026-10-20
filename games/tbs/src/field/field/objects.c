@@ -543,11 +543,12 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
 }
 
 /// Suspends the object camera updates, starts the palette back to normal and,
-/// a frame later, shows BG0 and the sprites with BG1-3 hidden. Called through
-/// Graphics_EnableObjLayerAndCallbacksFar by scenes (Colosso, the Tolbi
-/// ship, Vale, Venus Lighthouse), which pair it with
-/// ObjectDispatch_StopCallbacksAndHideLayers.
-void Graphics_EnableObjLayerAndCallbacks(void) {
+/// a frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
+/// Called through
+/// ObjectSystem_SuspendProjectionAndShowSpritesFar by scenes (Colosso, the
+/// Tolbi ship, Vale, Venus Lighthouse). The scenes except Colosso pair it
+/// with ObjectSystem_ResumeProjectionAndHideLayers.
+void ObjectSystem_SuspendProjectionAndShowSprites(void) {
   Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
   Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
   BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
@@ -559,9 +560,9 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
 }
 
 /// Resumes the object camera updates and hides BG1-3 and the sprites.
-/// Called through ObjectDispatch_StopCallbacksAndHideLayersFar by the same
+/// Called through ObjectSystem_ResumeProjectionAndHideLayersFar by the same
 /// scenes except Colosso.
-void ObjectDispatch_StopCallbacksAndHideLayers(void) {
+void ObjectSystem_ResumeProjectionAndHideLayers(void) {
   Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
   Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
   REG_DISPCNT &=

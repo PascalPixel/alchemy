@@ -64,7 +64,7 @@ headers under `games/tbs/include`, such as `inventory_menu.h`.
 
 | Prefix | What it acts on |
 | --- | --- |
-| `Menu_`, `UiMenu_` | pieces several screens share; the hand cursor in the top window |
+| `Menu_`, `UiMenu_` | pieces several screens share; field task suspension; the hand cursor in the top window |
 | `PsynergyMenu_` | the Psynergy screen, and the party figures and entry grid it set up first |
 | `ItemMenu_`, `InventoryMenu_`, `EquipmentMenu_` | the item screen, its messages and sorting, the equip markers |
 | `CharacterMenu_`, `CharacterSelector_`, `StatusMenu_` | the Status screen and the member chooser |

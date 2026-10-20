@@ -450,7 +450,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   shop->burstMember = 0xff;
   shop->cursor.anchor->active = 13;
   AudioCommand_PlayFar(sSanctumServiceCues[shop->partyAction]);
-  Shop_RestoreSceneTiles(0x00202108);
+  Shop_SaveAndTintFieldPalette(0x00202108);
   AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
   callbackPriority = 0xc80;
@@ -515,7 +515,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
 
   Scheduler_RemoveCallback(Shop_ResetEffects);
   AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 16);
-  Shop_InitEffect();
+  Shop_RestoreFieldPalette();
   WaitFrames(30);
   shop->cursor.anchor->active = savedCursorMode;
 }

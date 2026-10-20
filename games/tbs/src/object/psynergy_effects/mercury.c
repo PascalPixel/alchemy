@@ -34,7 +34,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   // Tint the screen blue (red 4, green 4, blue 16).
   BattleFx_InitializeSlots();
   effectScene = gEffectWork;
-  Shop_RestoreSceneTilesFar(PALETTE_TRANSFORM_TINT | RGB(4, 4, 16));
+  Shop_SaveAndTintFieldPaletteFar(PALETTE_TRANSFORM_TINT | RGB(4, 4, 16));
   WaitFrames(30);
   djinni->paused = 0;
   AudioCommand_PlayFar(SE_173);
@@ -142,7 +142,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
 
   // Restore the colours.
   WaitFrames(50);
-  Shop_InitEffectFar();
+  Shop_RestoreFieldPaletteFar();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 

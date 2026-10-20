@@ -2833,12 +2833,12 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(80);
-  Graphics_EnableObjLayerAndCallbacks();
+  ObjectSystem_SuspendProjectionAndShowSprites();
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->speakerVoiceSound = 0;
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->speakerVoiceCountdown =
       0;
   UiText_ShowCenteredMessage(MsgVenusDespiteLongTiring, 0, 0);
-  ObjectDispatch_StopCallbacksAndHideLayers();
+  ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_EventWait(80);
 }
 

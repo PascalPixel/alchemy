@@ -129,10 +129,10 @@ s32 Field_RunScene(s32 entrance) {
         gGameState.pendingDjinnEvent = 0;
       }
       if (gGameState.pendingItem != 0) {
-        Battle_SetObjectFlag5bWhenMode3();
+        WorldMap_BeginEvent();
         if (Party_CheckItemLimit(gGameState.pendingItem) == 0)
           PartyInventory_GiveItem(gGameState.pendingItem, 0);
-        Battle_ClearObjectFlag5bWhenMode3();
+        WorldMap_EndEvent();
         gGameState.pendingItem = 0;
       }
     }
@@ -166,7 +166,7 @@ s32 Field_RunScene(s32 entrance) {
             u32 i;
 
             Leader_StopMoving();
-            Battle_SetObjectFlag5bWhenMode3();
+            WorldMap_BeginEvent();
             for (i = 0; i < work->fallenCount; i++) {
               ObjectDispatch_SelectAnimationFar(actor, 22);
               UiWork_PushValueSlotFar(work->fallenOwners[i], 1);
@@ -193,11 +193,11 @@ s32 Field_RunScene(s32 entrance) {
               Unit_UpdateGauges(vitals);
               gGameState.scene = gGameState.savedScene;
               gGameState.entrance = gGameState.savedEntrance;
-              Battle_ClearObjectFlag5bWhenMode3();
+              WorldMap_EndEvent();
               result = EXIT_NONE;
               goto done;
             }
-            Battle_ClearObjectFlag5bWhenMode3();
+            WorldMap_EndEvent();
           } else if (work->event == -888) {
             Leader_StopMoving();
             Map_ShowWorldMap((s32)&ResourceId_WorldMapPicture);
@@ -258,7 +258,7 @@ s32 Field_RunScene(s32 entrance) {
           UiTimedNotice_CloseIfActiveFar();
           Leader_StopMoving();
           AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
-          Battle_SetObjectFlag5bWhenMode3();
+          WorldMap_BeginEvent();
           GameFlag_SetBitFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
               (gKeysHeld & KEY_SELECT) != 0) {
@@ -272,37 +272,37 @@ s32 Field_RunScene(s32 entrance) {
             Menu_RunTopSelectionFar();
             work->effectTimerRunning = 1;
           }
-          Battle_ClearObjectFlag5bWhenMode3();
+          WorldMap_EndEvent();
           GameFlag_ClearBitFar(FLAG_MENU_OPEN);
           GameFlag_RefreshLureCapFar();
           work->menu = 0;
         } else if ((s16)work->descriptor != 0) {
-          Battle_SetObjectFlag5bWhenMode3();
+          WorldMap_BeginEvent();
           Scene_TalkToActor(work->descriptor & 0xfff);
-          Battle_ClearObjectFlag5bWhenMode3();
+          WorldMap_EndEvent();
           work->descriptor = 0;
         } else if (work->tile != 0) {
-          Battle_SetObjectFlag5bWhenMode3();
+          WorldMap_BeginEvent();
           Field_SearchTile(work->tile);
-          Battle_ClearObjectFlag5bWhenMode3();
+          WorldMap_EndEvent();
           work->tile = 0;
         } else if (work->command != 0) {
           UiTimedNotice_CloseIfActiveFar();
-          Battle_SetObjectFlag5bWhenMode3();
+          WorldMap_BeginEvent();
           Field_UsePsynergy(work->command);
-          Battle_ClearObjectFlag5bWhenMode3();
+          WorldMap_EndEvent();
           work->command = 0;
         } else if (work->item != 0) {
-          Battle_SetObjectFlag5bWhenMode3();
+          WorldMap_BeginEvent();
           Field_UseItem(work->item, work->itemArgument);
-          Battle_ClearObjectFlag5bWhenMode3();
+          WorldMap_EndEvent();
           work->item = 0;
         } else if (work->start != 0) {
           // The pause menu (in debug mode, B opens the debug menu and L the
           // palette editor).
           AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
-          Battle_SetObjectFlag5bWhenMode3();
+          WorldMap_BeginEvent();
           GameFlag_SetBitFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
             Menu_RunSelectionFar();
@@ -343,7 +343,7 @@ s32 Field_RunScene(s32 entrance) {
                                                      1);
             }
           }
-          Battle_ClearObjectFlag5bWhenMode3();
+          WorldMap_EndEvent();
           GameFlag_ClearBitFar(FLAG_MENU_OPEN);
           work->start = 0;
         }

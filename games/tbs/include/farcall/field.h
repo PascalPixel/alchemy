@@ -56,8 +56,8 @@ void Map_CopyMetatileIndicesRectFar(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y,
                                     u32 width, u32 height);
 void Map_ClearLayerEntryFlagFar(u32 no);
 void Map_SetLayerEntryFlagFar(u32 no);
-void DisplayBlend_DisableRunScriptFar(void);
-void DisplayBlend_EnableRunScriptFar(void);
+void DisplayBlend_ResumeScriptFar(void);
+void DisplayBlend_SuspendScriptFar(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 y);
 s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 y);
 void Map_CopyMetatileCellsRectFar(s32 srcX, s32 srcY, s32 width, s32 height,
@@ -74,13 +74,12 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *obj,
 void ObjectDispatch_SetChildBlendModeFar(struct DispatchObject *obj, u32 mode);
 void Map_SetScreenShakeFar(s32 value0, s32 value1, s32 value2);
 void Map_WaitForShakeToSettleFar(void);
-void Graphics_EnableObjLayerAndCallbacksFar(void);
-void ObjectDispatch_StopCallbacksAndHideLayersFar(void);
+void ObjectSystem_SuspendProjectionAndShowSpritesFar(void);
+void ObjectSystem_ResumeProjectionAndHideLayersFar(void);
 s32 CheckMapPositionCellOccupiedFar(struct WorldPosition *position);
 void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *obj,
                                              s32 no);
-/// Far call to MapAnimation_Start.
-void Map_ResumeAnimationFar(void);
+void WorldMap_BeginStillViewFar(void);
 void Map_LoadAreaGraphicsFar(void);
 void Animation_ApplyChildValuesFar(struct DispatchObject *obj, u32 val);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *raw_parent, u32 value);
@@ -94,8 +93,8 @@ void SetMapCellCollisionFar(u32 layer, s32 x, s32 y, u32 collisionCode);
 void AnimationObjects_SetActiveTimerStepsFar(struct AnimationObject *group,
                                              s32 val);
 void Runtime_RemapBytesByTableFar(u8 *buf, s32 cnt);
-void Map_EnableUpdateCallbackFar(void);
-void Map_DisableUpdateCallbackFar(void);
+void MapAnimation_SuspendFar(void);
+void MapAnimation_ResumeFar(void);
 struct ScriptObjectEntry *
 ScriptObject_FindOverlappingEntryFar(struct ScriptObjectEntry *object,
                                      s32 *values);

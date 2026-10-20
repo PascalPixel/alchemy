@@ -118,8 +118,8 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
 
 /// Saves the field colours in event work and fades to `layer` over 16 frames.
 /// Called before sanctum and Djinn capture effects and Altmiller's wall burst;
-/// Shop_InitEffect restores the saved colours afterward.
-void Shop_RestoreSceneTiles(s32 layer) {
+/// Shop_RestoreFieldPalette restores the saved colours afterward.
+void Shop_SaveAndTintFieldPalette(s32 layer) {
   // UB: slot 32 lies past scalar gEventWork. Its named load adds eight
   // bytes in the native EN trial (0x54 to 0x5c).
 #ifdef UBFIX
@@ -141,9 +141,10 @@ void Shop_RestoreSceneTiles(s32 layer) {
   BattleFx_StartBufferInterpolationFar(16);
 }
 
-/// Fades back to the colours Shop_RestoreSceneTiles saved, over 16 frames.
-/// Called when the sanctum, Djinn capture or Altmiller wall effect ends.
-void Shop_InitEffect(void) {
+/// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
+/// frames. Called when the sanctum, Djinn capture or Altmiller wall effect
+/// ends.
+void Shop_RestoreFieldPalette(void) {
   BattleFx_ApplyColorToTargetBufferFar((s32)gEventWork + 0x236, 1);
   BattleFx_StartBufferInterpolationFar(0x10);
 }

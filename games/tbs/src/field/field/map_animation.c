@@ -8,11 +8,10 @@
 /// groups of four halfwords (source tile, count, destination tile, frames to
 /// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
 /// 0xfeff stops, and 0xffff loops to the start. MapAnimation_StartChannels
-/// schedules it (order 0xc80); the world map's still view (MapAnimation_Start)
-/// suspends it.
-/// Moves each channel's cursor and timer in the map work.
-/// The retries stay gotos: as an inner for (;;) loop with continue and break,
-/// loop.c reshapes the channel loop.
+/// schedules it (order 0xc80); the world map's still view
+/// (WorldMap_BeginStillView) suspends it. Moves each channel's cursor and timer
+/// in the map work. The retries stay gotos: as an inner for (;;) loop with
+/// continue and break, loop.c reshapes the channel loop.
 void MapAnimation_Update(void) {
   // Each channel is written (mapState->anim + channelIndex): as
   // mapState->anim[channelIndex], 78 of 119 instructions differ in tbs-en, and
@@ -146,19 +145,17 @@ void MapAnimation_StartChannels(const u16 *script) {
 }
 
 /// Suspends the tile animations, unless the world map's still view is shown.
-/// Scheduler_EnableOverlayCallbacksWithFlags (menu/menu/common.c) calls it
-/// through Map_EnableUpdateCallbackFar. Its name says the opposite of what it
-/// does.
-void Map_EnableUpdateCallback(void) {
+/// Menu_SuspendFieldTasks (menu/menu/common.c) calls it
+/// through MapAnimation_SuspendFar.
+void MapAnimation_Suspend(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
     Scheduler_SuspendTasks(MapAnimation_Update);
 }
 
 /// Resumes the tile animations, unless the world map's still view is shown.
-/// Scheduler_DisableOverlayCallbacksWithFlags (menu/menu/common.c) calls it
-/// through Map_DisableUpdateCallbackFar. Its name says the opposite of what it
-/// does.
-void Map_DisableUpdateCallback(void) {
+/// Menu_ResumeFieldTasks (menu/menu/common.c) calls it
+/// through MapAnimation_ResumeFar.
+void MapAnimation_Resume(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
     Scheduler_ResumeTasks(MapAnimation_Update);
 }
@@ -258,15 +255,13 @@ void DisplayBlend_StartScript(u16 *script) {
 }
 
 /// Suspends the blend script. The lighthouse scenes and Vale's Babi scene
-/// reach it through DisplayBlend_EnableRunScriptFar; its name says the
-/// opposite of what it does.
-void DisplayBlend_EnableRunScript(void) {
+/// reach it through DisplayBlend_SuspendScriptFar.
+void DisplayBlend_SuspendScript(void) {
   Scheduler_SuspendTasks(DisplayBlend_RunScript);
 }
 
-/// Resumes the blend script, through DisplayBlend_DisableRunScriptFar; its
-/// name says the opposite of what it does.
-void DisplayBlend_DisableRunScript(void) {
+/// Resumes the blend script, through DisplayBlend_ResumeScriptFar.
+void DisplayBlend_ResumeScript(void) {
   Scheduler_ResumeTasks(DisplayBlend_RunScript);
 }
 

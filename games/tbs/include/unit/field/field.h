@@ -163,8 +163,8 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode);
 void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
                                        u32 fixedScale);
 void Animation_ApplyChildValues(struct DispatchObject *object, u32 param);
-void Graphics_EnableObjLayerAndCallbacks(void);
-void ObjectDispatch_StopCallbacksAndHideLayers(void);
+void ObjectSystem_SuspendProjectionAndShowSprites(void);
+void ObjectSystem_ResumeProjectionAndHideLayers(void);
 s32 ObjectDispatch_ReturnTrue(void);
 void ObjectSystem_UpdateCamera(void);
 s32 ObjectCamera_ReturnTrue(void);
@@ -268,7 +268,7 @@ void WorldMap_UpdateView(void);
 void Map_UpdateCurrentTileBlock(void);
 void Map_PreloadCurrentTileBlock(void);
 void MapAnimation_PresentFrame(void);
-void MapAnimation_Start(void);
+void WorldMap_BeginStillView(void);
 void Map_ShowBg1FromBuffer(void);
 void Map_LoadAreaGraphics(void);
 void Map_LoadDefaultCellsAndUpdateBlock(void);
@@ -276,12 +276,12 @@ void MapAnimation_Update(void);
 void Map_ClearLayerEntryFlag(u32 channelIndex);
 void Map_SetLayerEntryFlag(u32 channelIndex);
 void MapAnimation_StartChannels(const u16 *script);
-void Map_EnableUpdateCallback(void);
-void Map_DisableUpdateCallback(void);
+void MapAnimation_Suspend(void);
+void MapAnimation_Resume(void);
 void DisplayBlend_RunScript(void);
 void DisplayBlend_StartScript(u16 *script);
-void DisplayBlend_EnableRunScript(void);
-void DisplayBlend_DisableRunScript(void);
+void DisplayBlend_SuspendScript(void);
+void DisplayBlend_ResumeScript(void);
 
 void PaletteQueue_Initialize(void);
 s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,

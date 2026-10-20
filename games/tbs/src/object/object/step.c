@@ -454,14 +454,14 @@ s32 BattleParty_ApplyStatusDamage(void) {
 }
 
 /// Starts an event or menu on the world map: ends any colour ratio transition
-/// in progress, sets the camera's movement state to 1 and resumes the map's
-/// animation. Elsewhere it does nothing.
+/// in progress, pauses camera movement and freezes the perspective view as a
+/// still picture. Elsewhere it does nothing.
 ///
 /// Called by Field_RunScene around the handling of most requests, by the
 /// Djinni effect and by the world map scene; each call is paired with
-/// Battle_ClearObjectFlag5bWhenMode3. Changes the display transition state in
+/// WorldMap_EndEvent. Changes the display transition state in
 /// heap slot 31 (0x1F, HEAP_SLOT_TRANSITION) only when it is running.
-void Battle_SetObjectFlag5bWhenMode3(void) {
+void WorldMap_BeginEvent(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *transition;
 
@@ -475,13 +475,13 @@ void Battle_SetObjectFlag5bWhenMode3(void) {
       transition->step = 0;
     }
     work->camera->movementState = 1;
-    Map_ResumeAnimationFar();
+    WorldMap_BeginStillViewFar();
   }
 }
 
-/// Ends what Battle_SetObjectFlag5bWhenMode3 started: on the world map, reloads
+/// Ends what WorldMap_BeginEvent started: on the world map, reloads
 /// the area's graphics and sets the camera's movement state back to 0.
-void Battle_ClearObjectFlag5bWhenMode3(void) {
+void WorldMap_EndEvent(void) {
   struct FieldWork *work;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));

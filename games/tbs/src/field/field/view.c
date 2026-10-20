@@ -50,7 +50,7 @@ void Map_WaitForShakeToSettle(void) {
 /// Copies TileMap_DrawRows (ARM code) to the heap and runs it once: it draws
 /// the rows that lines describes (32 bytes a row) into pixels, from the tiles
 /// in the BG tile buffer's second half and the map in the decode buffer.
-/// Called by MapAnimation_Start to draw the world map's still view;
+/// Called by WorldMap_BeginStillView to draw the world map's still view;
 /// the heap slot (49) is freed again before it returns.
 void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
   u8 *base;

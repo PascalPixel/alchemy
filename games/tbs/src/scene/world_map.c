@@ -631,7 +631,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   GameFlag_Set(FLAG_BUNZAS_WAGON_LEFT);
   Actor_SetPosition(ACTOR_BUNZA, PIXELS(5856), PIXELS(1180));
   Actor_SetDestinationOffset(ACTOR_BUNZA, 24, 8);
@@ -701,7 +701,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Engine_TaskWait(4);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -758,7 +758,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_RunActionScriptAndWait(13, gTransferDepart13);
   Event_PlayCue(SE_289);
   Engine_EventWait(20);
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   Engine_ActorSetAnimation(10, 1);
   Engine_ActorSetAnimation(11, 1);
   Engine_ActorSetAnimation(12, 1);
@@ -766,7 +766,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Camera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Actor_SetPosition(9, PIXELS(5640), PIXELS(1752));
   Engine_TaskWait(1);
   Actor_SetSpeed(9, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -812,7 +812,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_ShowEmote(9, EMOTE_IN_FRONT | 1, 60);
   Event_ShowMessageAndWait(9, 0, 20);
   Engine_ActorSetAnimationAndWait(8, 3);
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   Event_PlayCue(SE_107);
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
   // Focus on the departure effect before moving the group to the landing.
@@ -866,7 +866,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   Engine_CameraWaitForMove();
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Actor_SetAttachedEffect(9, EMOTE_IN_FRONT | 2);
   Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
@@ -905,7 +905,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_SetActionScript(12, gTransferReturn12);
   Engine_EventWait(40);
   Actor_RunActionScriptAndWait(13, gTransferReturn13);
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(5900), PIXELS(1576));
   Actor_SetPosition(GARET, PIXELS(5908), PIXELS(1600));
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
@@ -1189,10 +1189,10 @@ static void WorldMap_CompleteTransfer(void) {
 /// Called by Event_MeetFlint; sets and clears FLAG_DJINN_TUTORIAL_PART_A and
 /// _PART_B to choose the menu's two lessons.
 static void WorldMap_ShowDjinnTutorial(void) {
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   BattleFx_ScheduleRatioTransition(Q16_ONE, 6);
   Event_WaitForZoomTransition();
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Engine_ActorRunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
   Engine_EventSetMessage(MsgWorldMapAfterBringingDjinniIntoYour);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1240,7 +1240,7 @@ static void Event_MeetFlint(void) {
       Actor_SetPosition(ACTOR_VENUS_DJINNI, leader->x.fixed, leader->z.fixed);
     Djinn_AddToOwner(0, 0, 0);
     DjinnRecovery_AddStandby(0, 0, 0);
-    Battle_SetObjectFlag5bWhenMode3();
+    WorldMap_BeginEvent();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
@@ -1249,10 +1249,10 @@ static void Event_MeetFlint(void) {
     Task_Wait(16);
     Event_SetMessage(MsgWorldMapOh);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    Battle_ClearObjectFlag5bWhenMode3();
+    WorldMap_EndEvent();
     BattleFx_ScheduleRatioTransition(6 * Q16_ONE / 5, 6);
     Event_WaitForZoomTransition();
-    Battle_SetObjectFlag5bWhenMode3();
+    WorldMap_BeginEvent();
     djinni->motionFlags = 2;
     djinni->gravity = PIXELS(1) / 4;
     djinni->speed = PIXELS(1);
@@ -1358,7 +1358,7 @@ static void Event_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Event_PlayCue(MUS_009);
     WorldMap_ShowDjinnTutorial();
-    Battle_ClearObjectFlag5bWhenMode3();
+    WorldMap_EndEvent();
     return;
   }
   Event_Begin();
@@ -1368,7 +1368,7 @@ static void Event_MeetFlint(void) {
   djinni->velocityY = PIXELS(10);
   FieldObject_SetPosition(djinni, x, 0, z);
   Event_Wait(30);
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
@@ -1400,7 +1400,7 @@ static void Event_MeetFlint(void) {
       Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
       Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
       WorldMap_ShowDjinnTutorial();
-      Battle_ClearObjectFlag5bWhenMode3();
+      WorldMap_EndEvent();
       return;
     }
   }
@@ -1416,7 +1416,7 @@ static void Event_MeetFlint(void) {
   DjinnMenu_Open();
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   Djinn_JoinParty(ACTOR_VENUS_DJINNI, 0, 0);
   Event_PlayCue(MUS_042);
   Event_End();
@@ -1501,7 +1501,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   WorldMap_ActivateSite138(55);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ActorSetPosition(gWorldMapTriggerActor, leader->x.fixed,
@@ -1516,13 +1516,13 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor | SPEAKER_PORTRAIT_LEFT,
                                  0, 10);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   BattleFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 10);
   Engine_CameraSetSpeed(PIXELS(8), PIXELS(1));
   Engine_CameraMoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Engine_ActorSetAttachedEffect(gWorldMapTriggerActor, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
@@ -1562,7 +1562,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
   Engine_ActorFaceDirection(gWorldMapTriggerActor,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   BattleFx_ScheduleRatioTransition(Q16_ONE, 10);
   Engine_EventWait(20);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
@@ -1638,10 +1638,10 @@ static void Event_TalkAboutBlackOrb(void) {
 /// made it a touch event.
 static void Event_StopLeavingShip(void) {
   Engine_EventBegin();
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Engine_EventSetMessage(MsgWorldMapIsaacWhereGoingSaidUse);
   Engine_EventShowMessage(gWorldMapTriggerActor, 0);
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 6008, 3400);
   Engine_EventEnd();
@@ -1653,14 +1653,14 @@ static void Event_SearchShipwreck(void) {
 
   Engine_EventBegin();
 #if !TBS_PATCH_3
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
 #endif
   Engine_MessageShowCentered(MsgWorldMapWreckageShipScuttledOffCoast, 1);
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_34) != 0) {
     gEventWork->unk172 = 1;
   }
 #if !TBS_PATCH_3
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
 #endif
   Engine_EventEnd();
 }
@@ -1682,7 +1682,7 @@ static void Event_UseBlackOrb(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Begin();
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   BattleFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 6);
   Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Camera_MoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
@@ -1706,7 +1706,7 @@ static void Event_UseBlackOrb(void) {
   FieldObject_WaitForMove(leader);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 28);
@@ -1796,7 +1796,7 @@ static void Event_UseBlackOrb(void) {
   }
   Actor_WaitForMove(gWorldMapTriggerActor);
   Actor_SetPosition(gWorldMapTriggerActor, 0, 0);
-  Battle_ClearObjectFlag5bWhenMode3();
+  WorldMap_EndEvent();
   BattleFx_ScheduleRatioTransition(Q16_ONE, 6);
   Event_Wait(20);
   WorldMap_RestoreExitTrigger();
@@ -1836,7 +1836,7 @@ static void WorldMap_ShowEndingScene(void) {
   gEventWork->transitionFrames = 16;
   Engine_EventOpenScreen();
   Event_WaitForZoomTransition();
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Engine_EventWait(20);
@@ -1906,7 +1906,7 @@ static void WorldMap_ShowEndingScene(void) {
   Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
   Actor_SetAttachedEffect(JENNA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Event_ShowTwoMessagesAndWait(5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
   Engine_EventWait(20);
   Map_LoadDefaultCellsAndUpdateBlock();
@@ -1918,7 +1918,7 @@ static void WorldMap_ShowEndingScene(void) {
   Actor_WalkTo(8, 7804, 3512);
   Actor_WalkToAndWait(JENNA, 7788, 3544);
   Engine_ActorSetAnimation(8, 1);
-  Battle_SetObjectFlag5bWhenMode3();
+  WorldMap_BeginEvent();
   Engine_EventWait(80);
   Engine_ActorRunRepeatedMotion(8, 1);
   Event_ShowMessageAndWait(8, 0, 20);
@@ -2341,7 +2341,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
 
   Engine_TaskWait(1);
   Engine_GameFlagClear(FLAG_KEEP_PARTY_POSITION);
-  Map_ResumeAnimation();
+  WorldMap_BeginStillView();
   FieldResource_DecodeType01(gWorldMapPackedTiles, buffer);
   FieldResource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + palette * 32),

@@ -1238,7 +1238,7 @@ static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   Actor_SetPosition(GARET, PIXELS(1512), PIXELS(176));
   Actor_SetPosition(IVAN, PIXELS(1464), PIXELS(192));
   Actor_SetPosition(MIA, PIXELS(1560), PIXELS(200));
-  Graphics_EnableObjLayerAndCallbacks();
+  ObjectSystem_SuspendProjectionAndShowSprites();
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
   Engine_ColorBufferInterpolate(1);
   Engine_EventSetMessage(MsgColossoIsaacFellAsleep);

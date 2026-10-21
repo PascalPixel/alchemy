@@ -1,6 +1,6 @@
 /// @file
-/// McCoy's Palace (McCoyPalaceGrounds, scene 34), outside the palace of Lord
-/// McCoy, the lord of Bilibin. The palace itself (McCoyPalace, scene 33,
+/// McCoy's Palace (SceneId_McCoyPalaceGrounds), outside the palace of Lord
+/// McCoy, the lord of Bilibin. The palace itself (SceneId_McCoyPalace,
 /// mccoy_palace.c) has the same area name. Workers build a new palace here
 /// for Lady McCoy, who waits among them, and two guards keep the gate of
 /// McCoy's own.
@@ -41,7 +41,7 @@
 /// Setup (Garden_ApplyProgress) places the guards by the same flags and floats
 /// a Nut over the grounds until Catch takes it
 /// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT). A dry well can be searched.
-/// MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back to Bilibin (scene 30). The
+/// MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back to SceneId_Bilibin. The
 /// patched editions (TBS_PATCH_3) add one more actor, sprite 0xf8 (XXX: what it
 /// is is not known).
 

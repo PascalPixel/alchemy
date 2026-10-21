@@ -37,8 +37,8 @@
 /// Kolima Forest's actors, numbering the rows of gKolimaForestGlade_Placements.
 enum KolimaForestGladeActor {
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED, ///< the three logs
-  ACTOR_NUT = ACTOR_FIRST_LOG +
-      3 ///< the Nut that floats until Catch pulls it in
+  /// The Nut that floats until Catch pulls it in.
+  ACTOR_NUT = ACTOR_FIRST_LOG + 3
 };
 
 #include "common/object_staged_actor.h"

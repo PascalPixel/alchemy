@@ -233,9 +233,9 @@ static void TalkToWharfGuard(void) {
   Engine_EventWait(10);
 }
 
-/// Lalivero: the leader walks into a doorway: the door (or the Sanctum's gate)
-/// swings open, the leader steps in and the exit of the touched trigger is
-/// taken.
+/// The leader walks through one of Lalivero's doors. As the leader walks into a
+/// doorway, the door (or the Sanctum's gate) swings open, the leader steps in
+/// and the exit of the touched trigger is taken.
 static void EnterDoor(void) {
   s32 door = gEventWork->touchedTrigger;
   s32 x = gLaliveroDoorCells[door][0];

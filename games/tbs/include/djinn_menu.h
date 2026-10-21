@@ -35,8 +35,8 @@ struct DjinnMenuBackdrop {
   u8 tiles[0x2000];  ///< BG character block 1's first 0x2000 bytes
   u16 palette[64];   ///< BG palettes 4 to 7
   s32 tutorialTimer; ///< frames into the tutorial's current step
-  /// The Djinn tutorial's step: 0 outside it, else 1, 14, 27 or 28 to start,
-  /// by FLAG_DJINN_TUTORIAL_PART_A and FLAG_DJINN_TUTORIAL_PART_B.
+  /// The Djinn tutorial's step (DJINN_TUTORIAL_ in menu_internal.h), chosen
+  /// to start by FLAG_DJINN_TUTORIAL_PART_A and FLAG_DJINN_TUTORIAL_PART_B.
   long tutorialStep;
 };
 

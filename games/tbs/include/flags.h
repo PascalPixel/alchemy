@@ -103,8 +103,9 @@
 /// scene sets it.
 #define FLAG_DJINN_TUTORIAL 0x16e
 /// With FLAG_DJINN_TUTORIAL set, these two choose the part of the tutorial the
-/// Djinn menu plays: neither, step 1; only the second, step 14; only the first,
-/// step 27; both, step 28 (DjinnMenu_Open).
+/// Djinn menu plays: neither, DJINN_TUTORIAL_GIVE; only the second,
+/// DJINN_TUTORIAL_POWERS; only the first, DJINN_TUTORIAL_RECOVERY; both,
+/// DJINN_TUTORIAL_CLOSE (DjinnMenu_Open).
 #define FLAG_DJINN_TUTORIAL_PART_A 0x16f
 #define FLAG_DJINN_TUTORIAL_PART_B 0x171
 /// A linked battle has been arranged in the link lobby, with FLAG_LINK_BATTLE:

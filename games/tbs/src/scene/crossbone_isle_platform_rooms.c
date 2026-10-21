@@ -427,9 +427,14 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gCrossboneIslePlatformRoomsEventsOther;
 }
 
-/// Walking south into CrossboneIsleKeys's third or fourth blue door:
-/// look at what is ahead.
-static void Event_CheckLeaderAhead(void) { Engine_LeaderCheckAhead(); }
+/// Unused: walking south into CrossboneIsleKeys's third or fourth blue door
+/// looks at what is ahead.
+///
+/// Both rows that name it follow a plain touch row for the same door
+/// (Event_OpenThirdBlueDoor, Event_OpenFourthBlueDoor), which Scene_FindEvent
+/// always finds first; those events look ahead themselves after a dozen steps
+/// pressed south against the door, so the player sees the same thing.
+static void Event_UnusedCheckLeaderAhead(void) { Engine_LeaderCheckAhead(); }
 
 /// Opens the selected blue door, playing its opening when asked.
 static void CrossboneIslePlatformRooms_OpenBlueDoor(s32 passageInfo) {
@@ -1556,8 +1561,9 @@ struct SceneEvent gCrossboneIslePlatformRoomsEvents1[] = {
     { EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenSecondBlueDoor) },
     { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenThirdBlueDoor) },
     { EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenFourthBlueDoor) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckLeaderAhead) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckLeaderAhead) },
+    // Unused: the plain touch rows above answer codes 53 and 54 first.
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedCheckLeaderAhead) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedCheckLeaderAhead) },
     { SEARCH(SEARCH_CHEST), 100, 0xeca, FIND_COINS(333) },
     { SEARCH(SEARCH_CHEST), 101, 0xecb, FIND_ITEM(ITEM_FAIRY_RING) },
     { SEARCH(SEARCH_CHEST), 102, 0xecc, FIND_ITEM(ITEM_COOKIE) },

@@ -17,8 +17,7 @@
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP.
 ///
 /// - MercuryLighthouseExterior (scene 57), the lighthouse's door and the ground
-/// around
-///   it, reached from the world map
+///   around it, reached from the world map
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP). Until Mia has hurried here
 ///   the door stays shut. Then she stands before it, blocked by a statue
 ///   (ACTOR_DOOR_STATUE): she senses someone inside
@@ -30,9 +29,8 @@
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE, through the
 ///   door, leads into MercuryLighthouseEntrance.
 /// - MercuryLighthouseLower (scene 54). Mia is blocked again by a statue that
-/// was
-///   not there before; Move pushes it aside, and she joins the party with Fizz,
-///   a Mercury Djinni (MercuryLighthouse_MiaJoinsAfterRescue,
+///   was not there before; Move pushes it aside, and she joins the party with
+///   Fizz, a Mercury Djinni (MercuryLighthouse_MiaJoinsAfterRescue,
 ///   FLAG_MIA_JOINED_PARTY). Three channel pillars pushed into place let the
 ///   water run (FLAG_CHANNEL_1_OPEN to _3_OPEN) and carry the party down to
 ///   MercuryLighthouseEntrance
@@ -48,14 +46,13 @@
 ///   only while the leader stays. Sleet, a Mercury Djinni, fights when spoken
 ///   to. Chests hold a Psy Crystal and a Nut.
 /// - MercuryLighthouseUpper (scene 56). A pillar pushed along a row opens one
-/// of
-///   three stone doors by its column, and at column 48 sends a statue sliding
-///   off its ledge to the floor below (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL),
-///   where Move sets it on the stair gate's switch
-///   (FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN). Five pillars pushed into
-///   a row, and one more into a gap, open crossings.
+///   of three stone doors by its column, and at column 48 sends a statue
+///   sliding off its ledge to the floor below
+///   (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL), where Move sets it on the stair
+///   gate's switch (FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN). Five pillars
+///   pushed into a row, and one more into a gap, open crossings.
 /// - MercuryLighthouseExterior again, higher up, reached from
-/// MercuryLighthouseMiddle
+///   MercuryLighthouseMiddle
 ///   (MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR) and
 ///   MercuryLighthouseUpper
 ///   (MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST and

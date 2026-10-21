@@ -26,16 +26,15 @@
 ///   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE down to
 ///   LunpaFortressCave.
 /// - LunpaFortressUpperFloor (scene 161), where Donpa sleeps. A patrolling pair
-/// and a
-///   patrol to the east keep watch. Walking up to the west, east or hall guard
-///   starts a battle with a Brigand, and walking up to three guards together
-///   a battle with three (FLAG_LUNPA_FORTRESS_*_GUARD_BEATEN); beaten, two of
-///   them send the party down to the cave for Hammet. The Cell Key hangs here
-///   (Catch or talk, FLAG_LUNPA_FORTRESS_CELL_KEY); it opens the cell doors of
-///   all four scenes, each remembered in a place flag from 0x350. Donpa lies
-///   asleep, worn out, beside his attendant, who tells how he spoiled
-///   Dodonpa (place flag FLAG_PLACE_TEMP_13 once told); Dodonpa's family and
-///   the women he brought here talk.
+///   and a patrol to the east keep watch. Walking up to the west, east or hall
+///   guard starts a battle with a Brigand, and walking up to three guards
+///   together a battle with three (FLAG_LUNPA_FORTRESS_*_GUARD_BEATEN); beaten,
+///   two of them send the party down to the cave for Hammet. The Cell Key hangs
+///   here (Catch or talk, FLAG_LUNPA_FORTRESS_CELL_KEY); it opens the cell
+///   doors of all four scenes, each remembered in a place flag from 0x350.
+///   Donpa lies asleep, worn out, beside his attendant, who tells how he
+///   spoiled Dodonpa (place flag FLAG_PLACE_TEMP_13 once told); Dodonpa's
+///   family and the women he brought here talk.
 /// - LunpaFortressCave (scene 162), the cave, whose ways are hidden. Whirlwind
 ///   blows away what covers two switches and a passage
 ///   (FLAG_LUNPA_FORTRESS_*_UNCOVERED; FLAG_SCENE_TEMP_17 and _18 while the
@@ -46,8 +45,7 @@
 ///   LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST, _NORTH and
 ///   _NORTHWEST lead to LunpaFortressToadonpa.
 /// - LunpaFortressToadonpa (scene 163), deeper in the cave, where Hammet is
-/// held in a
-///   cell. A chest holds Power Bread. Walking into Hammet's cell
+///   held in a cell. A chest holds Power Bread. Walking into Hammet's cell
 ///   (trigger 20, Event_FindHammet, FLAG_SCENE_TEMP_70) is the rescue: Hammet
 ///   knows Ivan, Dodonpa arrives, gloats that Hammet is his money tree, pulls
 ///   a lever and frees Toadonpa on them (FLAG_LUNPA_FORTRESS_TRAP_SEEN; a

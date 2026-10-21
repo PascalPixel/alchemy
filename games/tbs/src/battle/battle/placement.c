@@ -262,11 +262,11 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
 
   // Face the centre of the battlefield (0x8000 is half a turn, so the
   // angle points back along the line to the origin); enemies are drawn at
-  // 1.3 times their size. motionFlags 2 lets the object fall.
+  // 1.3 times their size. ACTOR_FALLS lets the object fall.
   facingAngle = ArcTan2(y / 8, x) + 0x8000;
   object->angle = facingAngle;
   object->unk59 = 3;
-  object->motionFlags = 2;
+  object->motionFlags = ACTOR_FALLS;
   if (unit->classIndex == CLASS_INDEX_ENEMY) {
     object->scaleX = 0x14ccc;
     object->scaleY = 0x14ccc;

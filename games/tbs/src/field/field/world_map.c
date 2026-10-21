@@ -229,14 +229,16 @@ s32 Map_InitializePerspectiveScene(void) {
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState();
   Transform_SetLookAt(camera->eye, cameraPosition);
-  RamCode_LoadSlot(46, Transform_UpdateVertices, &Transform_UpdateVerticesSize);
+  RamCode_LoadSlot(HEAP_SLOT_BLITTER, Transform_UpdateVertices,
+                   &Transform_UpdateVerticesSize);
   WorldMap_BuildScanlineTable(
       Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)), cameraPosition,
       frameWork->scanlines);
   gScanlineAngle = 0;
   gScanlinePitch = perspective->pitch;
-  ((WorldMapPlaneFn)gWorkSlot[46])(camera, cameraPosition, frameWork->scanlines,
-                                   affinePages[gFrameCount & 1]);
+  ((WorldMapPlaneFn)gWorkSlot[HEAP_SLOT_BLITTER])(camera, cameraPosition,
+                                                  frameWork->scanlines,
+                                                  affinePages[gFrameCount & 1]);
   // Then the world map's own view: pitch 0xe000 (minus an eighth of a
   // turn) and yaw 0, with the eye one pixel beyond the distance.
   SET_VECTOR(cameraPosition, 0, 0, 0);
@@ -605,7 +607,7 @@ void WorldMap_UpdateView(void) {
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
   }
-  ((s32 (*)(void *, s32 *, void *, void *))gWorkSlot[46])(
+  ((s32 (*)(void *, s32 *, void *, void *))gWorkSlot[HEAP_SLOT_BLITTER])(
       camera, cameraPosition, frameWork->scanlines,
       affinePages[gFrameCount & 1]);
 }

@@ -20,8 +20,7 @@
 ///   hold a Lucky Medal and an Antidote. The doors lead back out into Lalivero
 ///   (lalivero.c, scene 178).
 /// - LaliveroFaransHouse (scene 180): Faran's house, the inn, and the way out
-/// to
-///   the edge of town where Babi's ship lies
+///   to the edge of town where Babi's ship lies
 ///   (LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP, to
 ///   LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE). Before Venus Lighthouse,
 ///   Faran's household waits for news, and a maid too worried about Sheba to

@@ -12,8 +12,7 @@
 /// leader in the rooms that need it (TunnelRuins_UpdateTrackedActor).
 ///
 /// - Tunnel Ruins (TunnelRuinsGreatStatue, scene 172), entered from Babi
-/// Lighthouse
-///   (BabiLighthouseStoneDoor, scene 174) at
+///   Lighthouse (BabiLighthouseStoneDoor, scene 174) at
 ///   TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR, where
 ///   TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR leads back;
 ///   Retreat returns to

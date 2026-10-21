@@ -8,14 +8,12 @@
 /// sandstorms, and in Suhalla the survivors said she had not been caught with
 /// them. The three scenes, in the order the party meets them:
 /// - Suhalla Desert (SuhallaDesertNorth, scene 164), entered from the world map
-/// near Suhalla,
-///   where SUHALLA_DESERT_NORTH_TO_WORLD_MAP leads back out;
+///   near Suhalla, where SUHALLA_DESERT_NORTH_TO_WORLD_MAP leads back out;
 ///   SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH leads on into
 ///   SuhallaDesertSouth. Five storms stand here.
 /// - Suhalla Desert (SuhallaDesertSouth, scene 165), with four storms and a
-/// fifth that gives
-///   chase. SUHALLA_DESERT_SOUTH_TO_WORLD_MAP leads out onto the world map, and
-///   SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST and
+///   fifth that gives chase. SUHALLA_DESERT_SOUTH_TO_WORLD_MAP leads out onto
+///   the world map, and SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST and
 ///   SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST into SuhallaDesertCaves.
 ///   Flash, a Mars Djinni, waits here and fights when spoken to
 ///   (Event_FightDjinni). Near the way out, once Iodem has questioned the
@@ -25,9 +23,8 @@
 ///   and leave Sheba to its soldiers (Event_IodemAsksWhetherToPressOn, once,
 ///   FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
 /// - Suhalla Desert (SuhallaDesertCaves, scene 166), two caves under the
-/// desert, whose exits lead only back into SuhallaDesertSouth
-///   and between its two caves; it places nothing and plays a sound on
-///   entry.
+///   desert, whose exits lead only back into SuhallaDesertSouth and between its
+///   two caves; it places nothing and plays a sound on entry.
 ///
 /// The storms are ACTOR_FIRST_STORM to ACTOR_LAST_STORM of the first two
 /// scenes, and their logic is the desert's:

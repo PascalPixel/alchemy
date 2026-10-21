@@ -441,7 +441,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
           case FIND_ITEM(0):
           case FIND_COINS(0):
           case FIND_PSYNERGY_STONE:
-          case 0x500000:
+          case FIND_MIMIC:
             if (entry->condition != -1 &&
                 GameFlag_TestFar(entry->condition) == 0) {
               /* FAKEMATCH(temporary): the spawned marker reuses actor, so the

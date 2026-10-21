@@ -20,19 +20,17 @@
 ///   friend to cheer, and the guide then sends Isaac back to the west passage
 ///   (COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH).
 /// - COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST, `Lend a Hand`: Garet, Ivan
-/// and Mia
-///   in turn may use Psynergy on the stages. Move shifts the Mini-Maze's stone
-///   pillars and the stone pillar by The Wall, Halt stops the lifts' operator
-///   and with him the shifting floor, Frost freezes two targets on the
-///   Log-Rolling Stage, Growth grows a plant up The Wall, and Force knocks an
-///   obstacle down onto the Board Walk. After Mia,
+///   and Mia in turn may use Psynergy on the stages. Move shifts the
+///   Mini-Maze's stone pillars and the stone pillar by The Wall, Halt stops the
+///   lifts' operator and with him the shifting floor, Frost freezes two targets
+///   on the Log-Rolling Stage, Growth grows a plant up The Wall, and Force
+///   knocks an obstacle down onto the Board Walk. After Mia,
 ///   COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE starts the race.
 /// - COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND, the race against Satrage,
-/// who follows a recorded path, after
-///   the lettering `Match 2` and a count of three. At the arena the first to
-///   arrive takes the Chain Mail and the second the Cotton Shirt, and the
-///   battle is encounter table 72's third or fourth group, the Satrage with or
-///   without the mail.
+///   who follows a recorded path, after the lettering `Match 2` and a count of
+///   three. At the arena the first to arrive takes the Chain Mail and the
+///   second the Cotton Shirt, and the battle is encounter table 72's third or
+///   fourth group, the Satrage with or without the mail.
 ///
 /// A win returns to entrance 4 and on to the Colosseum
 /// (COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH, arriving at

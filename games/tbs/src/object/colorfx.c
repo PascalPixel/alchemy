@@ -563,7 +563,7 @@ void ReelGame_RunFrame(void) {
         work->timer = 0;
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
-        fx->transferMode = 2;
+        fx->transferMode = CANVAS_COPY_AND_FADE;
         fx->transferValue = 75;
       }
     } else if (work->state == REEL_SHOWING_WIN) {
@@ -673,7 +673,7 @@ void ReelGame_RunFrame(void) {
           save->wonPrizes[hits] = -1;
           work->state = REEL_WON;
           AudioCommand_PlayFar(SE_171);
-          fx->transferMode = 1;
+          fx->transferMode = CANVAS_COPY_AND_CLEAR;
           fx->transferValue = 0;
           REG_BLDCNT = 0;
           UiWork_FinalizeFar(work->window, 1);
@@ -718,7 +718,7 @@ void ReelGame_RunFrame(void) {
               work->reels[i].held = 0;
               work->reels[i].stop = -1;
             }
-            fx->transferMode = 1;
+            fx->transferMode = CANVAS_COPY_AND_CLEAR;
             fx->transferValue = 0;
             REG_BLDCNT = 0;
             window = UiWindow_CreateFar(18, 0, 12, 4, 6);
@@ -940,7 +940,7 @@ void ReelGame_InitTitle(void) {
   state->spins = 0;
   state->state = REEL_BETTING;
   state->cursor = 0;
-  work->transferMode = 1;
+  work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
   REG_BLDCNT = 0;
   window = UiWindow_CreateFar(18, 0, 12, 4, 6);

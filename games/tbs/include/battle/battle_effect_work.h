@@ -23,6 +23,25 @@ struct BattleCanvasOrigin {
 STATIC_ASSERT(sizeof(struct BattleCanvasOrigin) == 0x0c);
 STATIC_ASSERT(offsetof(struct BattleCanvasOrigin, y) == 0x04);
 
+/// How BattleFx_ProcessPendingGraphicsTransfer moves the effect's
+/// 128x128 canvas into VRAM once a frame (work->transferMode); the canvas
+/// pixels are indices into a palette ramp, so scaling them fades a trail.
+/// For the clear, darken and brighten modes transferValue is a word, a fill or
+/// a step repeated in each of its four bytes (one per pixel); the fade mode
+/// only compares it with 50.
+enum CanvasTransferMode {
+  CANVAS_COPY,             ///< copy as drawn
+  CANVAS_COPY_AND_CLEAR,   ///< copy, then fill the canvas with transferValue (0
+                           ///< clears it; 0x10101010 is level 16 everywhere)
+  CANVAS_COPY_AND_FADE,    ///< copy, keeping half of each pixel's level for the
+                           ///< next frame when transferValue is 50, and three
+                           ///< quarters for any other value (75 by convention)
+  CANVAS_COPY_AND_DARKEN,  ///< copy, then lower each level by a byte of
+                           ///< transferValue, stopping at 0
+  CANVAS_COPY_AND_BRIGHTEN ///< copy, then raise each level by a byte of
+                           ///< transferValue, stopping at 63
+};
+
 /// The running battle effect's work: its canvas image, 64 particles, the
 /// display registers it stages and its animation objects. It lives in the
 /// HEAP_SLOT_BATTLE_EFFECT work slot.
@@ -45,7 +64,7 @@ struct BattleEffectWork {
   struct EffectStep particles[64]; ///< free while variant is -1
   /// How the canvas transfer callbacks treat the canvas after each copy
   /// (enum CanvasTransferMode in effect_internal.h).
-  s32 transferMode;
+  s32 transferMode; ///< an enum CanvasTransferMode
   /// The transfer mode's argument: the fill value, the share kept (50 or 75
   /// percent) or the darken or brighten amount.
   s32 transferValue;

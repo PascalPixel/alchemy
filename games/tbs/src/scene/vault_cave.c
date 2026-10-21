@@ -10,13 +10,13 @@
 /// "The door is tightly locked." and "Isaac flipped the switch." are shown.
 ///
 /// - Vault Cave (scene 96, SceneId_VaultCavePassage), the way in from the
-/// hidden passage.
-///   VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT is the foot of the ladder down from
-///   that passage, where a region takes VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT
-///   back out to Vault (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE); Retreat also
-///   leads there (Scene_Initialize). Searching the switch flips it
-///   (Event_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch turns, the
-///   cave rumbles and shakes for eight seconds, and its map changes as it fades
+///   hidden passage. VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT is the foot of the
+///   ladder down from that passage, where a region takes
+///   VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT back out to Vault
+///   (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE); Retreat also leads there
+///   (Scene_Initialize). Searching the switch flips it (Event_FlipSwitch,
+///   FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch turns, the cave rumbles and
+///   shakes for eight seconds, and its map changes as it fades
 ///   (VaultCave_RunRumble). The change reaches SceneId_VaultCaveVambrace too:
 ///   arriving in its northern room
 ///   (VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH,
@@ -34,8 +34,7 @@
 ///   its changed cells. The room's chest is a mimic (search value type 5,
 ///   battle 3).
 /// - Vault Cave (scene 97, SceneId_VaultCaveVambrace). In its southern room a
-/// pillar
-///   (ACTOR_SOUTHERN_PILLAR) goes onto its switch by pushing
+///   pillar (ACTOR_SOUTHERN_PILLAR) goes onto its switch by pushing
 ///   (Event_PushSouthernPillar) or Move (Event_MoveSouthernPillar); once it
 ///   rests there the puzzle chime plays and the switch opens the way
 ///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In the puddle room, six objects
@@ -51,10 +50,9 @@
 ///   stays in the cave (FLAG_WHIRLWIND_USED, a place flag). A chest holds the
 ///   Vambrace.
 /// - Vault Cave (scene 98, SceneId_VaultCaveMouth). In its northern room four
-/// objects
-///   (ACTOR_FIRST_TIMED_FALLING_OBJECT and the three after it) fall on a fixed
-///   schedule (gVaultCave_ScheduleFrames) while the party pushes or Moves a
-///   pillar (ACTOR_NORTHERN_PILLAR) onto its switch
+///   objects (ACTOR_FIRST_TIMED_FALLING_OBJECT and the three after it) fall on
+///   a fixed schedule (gVaultCave_ScheduleFrames) while the party pushes or
+///   Moves a pillar (ACTOR_NORTHERN_PILLAR) onto its switch
 ///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A falling object that lands on
 ///   that pillar marks it struck (FLAG_NORTH_PILLAR_STRUCK, SE_204), and a
 ///   struck pillar no longer opens the switch until the room is entered again.

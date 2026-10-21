@@ -131,7 +131,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   WaitFrames(18);
 }
 
-/// Leaves through an exit of kind 0x20 (animation 26);
+/// Leaves through an EXIT_STYLE_ANIMATED exit (animation 26);
 /// FLAG_EXIT_ARRIVAL_PENDING makes the next scene play the matching arrival
 /// (ObjectEffect_RunPendingFlagEvent). Called by the exit handling in events.c,
 /// after it plays SE_128.
@@ -140,11 +140,12 @@ void ObjectEffect_BeginContextEffect26(void) {
   GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_PENDING);
 }
 
-/// Leaves through an exit of kind 0x30 (animation 25), recorded in flag 0x121.
-/// Called by the exit handling in events.c, after it plays SE_129.
+/// Leaves through an EXIT_STYLE_ANIMATED_ALTERNATE exit (animation 25),
+/// recorded in FLAG_EXIT_ARRIVAL_ALTERNATE. Called by the exit handling in
+/// events.c, after it plays SE_129.
 void ObjectEffect_BeginContextEffect25(void) {
   ObjectEffect_PrepareContextEffect(0x19);
-  GameFlag_SetBitFar(0x121);
+  GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_ALTERNATE);
 }
 
 /// Plays the leader's arrival animation through an exit: centred on its tile
@@ -182,8 +183,9 @@ void ObjectEffect_EndContextEffect(s32 animation) {
 }
 
 /// Plays the leader's arrival for the way the last scene was left: through an
-/// exit of kind 0x20 (FLAG_EXIT_ARRIVAL_PENDING, animation 24, returns 1) or
-/// 0x30 (flag 0x121, animation 23, returns 2), or falling in from 160 pixels
+/// EXIT_STYLE_ANIMATED exit (FLAG_EXIT_ARRIVAL_PENDING, animation 24, returns
+/// 1) or an EXIT_STYLE_ANIMATED_ALTERNATE one (FLAG_EXIT_ARRIVAL_ALTERNATE,
+/// animation 23, returns 2), or falling in from 160 pixels
 /// above (FLAG_ARRIVE_FALLING, returns 3). Returns 0 when there is nothing to
 /// play. Called by Field_RunScene as the scene fades in, which waits out the
 /// fade itself only when this returns 0. Clears the flag it acts on.
@@ -196,7 +198,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
     GameFlag_ClearBitFar(flag);
     result = 1;
   } else {
-    flag = 0x121;
+    flag = FLAG_EXIT_ARRIVAL_ALTERNATE;
     if (GameFlag_TestFar(flag) != 0) {
       ObjectEffect_EndContextEffect(23);
       GameFlag_ClearBitFar(flag);

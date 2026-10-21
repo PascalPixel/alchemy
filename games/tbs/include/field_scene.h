@@ -116,7 +116,7 @@ struct ScenePlacement {
   /// Djinn_ResolvePendingEvent sets after a lost or fled Djinni battle: the
   /// Djinni stays hidden until the scene is entered normally again.
   s16 condition;
-  /// A built-in action (enum ActorBehavior, 1 to 7) or an action script, for
+  /// A built-in action (enum ActorBehavior) or an action script, for
   /// ObjectMotion_SetActionCallback.
   s32 behavior;
   s32 x;         ///< 16.16 fixed-point pixels
@@ -131,13 +131,16 @@ STATIC_ASSERT(sizeof(struct ScenePlacement) == 24);
 STATIC_ASSERT(offsetof(struct ScenePlacement, talkFacing) == 22);
 
 /// The built-in actions a placement's behavior can name, which
-/// ObjectMotion_SetActionCallback turns into scripts: 1 stands, 2 to 4 wander,
-/// 5 follows the linked object, 6 faces the leader, 7 resets.
+/// ObjectMotion_SetActionCallback turns into scripts.
 enum ActorBehavior {
   ACTOR_STAND = 1, ///< its script only ends
-  /// Wanders about where it stands (SC_WANDER_HOME); 3 and 4 do so at their
-  /// own speed and range.
-  ACTOR_WANDER = 2
+  /// Wanders about where it stands (SC_WANDER_HOME), within 16 pixels.
+  ACTOR_WANDER = 2,
+  ACTOR_WANDER_NEAR = 3,   ///< as ACTOR_WANDER, within 8 pixels
+  ACTOR_WANDER_CLOSE = 4,  ///< within 6 pixels, at its own speed
+  ACTOR_FOLLOW_LINKED = 5, ///< moves toward the linked object
+  ACTOR_FACE_LEADER = 6,   ///< links to the leader and turns toward it
+  ACTOR_RESET_ACTION = 7   ///< gObjectMotion_ResetActionScript
 };
 
 /// How a placed actor turns when the leader talks to it (Scene_TalkToActor).
@@ -197,14 +200,31 @@ enum SceneEventKind {
   EVENT_TALK_HALTED = 7
 };
 
+/// An exit event's control bits 5..4: how the leader leaves
+/// (Scene_RunTouchOrExit). XXX: what leaving animations 26 and 25 and arrivals
+/// 24 and 23 show; recordings of an exit of each style would settle it.
+enum ExitStyle {
+  EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
+  EXIT_STYLE_SILENT = 0x10,
+  /// With SE_128 and leaving animation 26; the next scene plays arrival 24
+  /// (FLAG_EXIT_ARRIVAL_PENDING).
+  EXIT_STYLE_ANIMATED = 0x20,
+  /// With SE_129 and leaving animation 25; the next scene plays arrival 23
+  /// (FLAG_EXIT_ARRIVAL_ALTERNATE).
+  EXIT_STYLE_ANIMATED_ALTERNATE = 0x30,
+  EXIT_STYLE_MASK = 0x30
+};
+
 /// The raised event the menus and shortcut keys raise instead of opening
 /// while FLAG_MENUS_RAISE_EVENT is set, as Vault's inn sets it while the
 /// party corners the suspects.
 #define FIELD_EVENT_MENUS_RAISED 250
 
 /// A touch event that needs the leader to have pushed against it for more
-/// than 12 frames, or 2 with control bit 11.
+/// than 12 frames, or 2 with EVENT_TOUCH_QUICK.
 #define EVENT_TOUCH_WALKING 0x200
+/// With EVENT_TOUCH_WALKING, 2 frames of pushing are enough.
+#define EVENT_TOUCH_QUICK 0x800
 /// A touch event that needs the leader to face within an eighth of a turn of
 /// the heading in control bits 15..12 (Scene_FindEvent).
 #define EVENT_TOUCH_FACING 0x400
@@ -278,13 +298,15 @@ enum SearchTarget {
 };
 
 /// What a search finds, a search event's value: a function when bits 27..24
-/// are set, else a type in its top twelve bits (type 5, a mimic chest's
-/// battle, has no macro).
+/// are set, else a type in its top twelve bits.
 #define FIND_ITEM(item) (0x00100000 | (item))
 #define FIND_COINS(coins) (0x00200000 | (coins))
 /// A Psynergy Stone, which restores all PP.
 #define FIND_PSYNERGY_STONE 0x00300000
 #define FIND_MESSAGE(message) (0x00400000 | (message))
+/// A mimic chest's battle, with the event's value its slot of
+/// ENCOUNTER_ZONE_MIMIC.
+#define FIND_MIMIC 0x00500000
 
 /// An event function as a SceneEvent value; its address is above 0x10000, so
 /// it is never taken for a message.

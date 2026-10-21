@@ -35,14 +35,13 @@
 ///   friend's turn, and where they stand is kept as their place; after Mia,
 ///   COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE starts the race.
 /// - COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, the race. Isaac runs alone
-/// against Azart, who follows a
-///   recorded path (Colosso_StartRival), with a gauge at the top of the screen
-///   showing how near each is to the finish (Colosso_StartRaceGauge), after the
-///   lettering `Match 1` and a count of three. At the arena (Event_ReachArena)
-///   the first to arrive takes the Iron Shield and the second the Padded
-///   Gloves, which Isaac is given and equipped with, and the two fight: the
-///   battle is encounter table 72's first or second group, the Azart who has
-///   the shield or the one who has not.
+///   against Azart, who follows a recorded path (Colosso_StartRival), with a
+///   gauge at the top of the screen showing how near each is to the finish
+///   (Colosso_StartRaceGauge), after the lettering `Match 1` and a count of
+///   three. At the arena (Event_ReachArena) the first to arrive takes the Iron
+///   Shield and the second the Padded Gloves, which Isaac is given and equipped
+///   with, and the two fight: the battle is encounter table 72's first or
+///   second group, the Azart who has the shield or the one who has not.
 ///
 /// A win returns to entrance 4, which shows the result and sends Isaac back to
 /// the Colosseum (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST, to

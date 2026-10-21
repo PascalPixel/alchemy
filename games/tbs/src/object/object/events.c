@@ -94,7 +94,7 @@ u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
   searchFlags = flags & 0x1ff;
   ignoresCondition = 0;
   if (searchFlags != EVENT_SEARCH) {
-    mimicDifference = (result & 0xfff00000) ^ 0x500000;
+    mimicDifference = (result & 0xfff00000) ^ FIND_MIMIC;
     ignoresCondition = mimicDifference | (0U - mimicDifference);
     // 1 when mimicDifference is not 0.
     ignoresCondition >>= 31;
@@ -128,7 +128,7 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
       s32 minimumPushFrames = 12;
       s32 touchRequirements;
 
-      if ((flags & 0x800) != 0)
+      if ((flags & EVENT_TOUCH_QUICK) != 0)
         minimumPushFrames = 2;
       touchRequirements = flags & (EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING);
 
@@ -170,8 +170,8 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
 UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk event of actor id, or 0: for the actor stopped with Halt
-/// (gGameState.pausedObject), its kind 7 event if it has one, the event for
-/// talking to it while it is stopped (Crossbone Isle's Bane has one).
+/// (gGameState.pausedObject), its EVENT_TALK_HALTED event if it has one, the
+/// event for talking to it while it is stopped (Crossbone Isle's Bane has one).
 ///
 /// Called by Field_RunScene for the A button, to choose between talking and
 /// searching, and by the field Psynergy dispatch, which Halts only an actor
@@ -181,7 +181,8 @@ s32 Scene_FindActorTalkEvent(s32 id) {
   s32 pausedActor = gGameState.pausedObject;
 
   if (pausedActor == id) {
-    struct EffectDescriptor *pausedEvent = Scene_FindEvent(7, pausedActor);
+    struct EffectDescriptor *pausedEvent =
+        Scene_FindEvent(EVENT_TALK_HALTED, pausedActor);
 
     if (pausedEvent != 0) {
       return (s32)pausedEvent;
@@ -192,8 +193,8 @@ s32 Scene_FindActorTalkEvent(s32 id) {
 
 /// Talks to actor id: shows its event's message or calls its event function,
 /// with the actor stopped and turned as its placement says. For the actor
-/// stopped with Halt, its kind 7 event comes first; without one, a talk event
-/// that is a function gives one of two lines at random instead, from
+/// stopped with Halt, its EVENT_TALK_HALTED event comes first; without one, a
+/// talk event that is a function gives one of two lines at random instead, from
 /// MsgPonderEllipsis on (dots spoken with pauses). Returns 0 when an event ran,
 /// -1 when there was none or such a line stood in for it; Field_RunScene
 /// ignores the result.
@@ -364,20 +365,18 @@ s32 Scene_RunTouchOrExit(s32 value) {
   } else {
     exit = Scene_FindEvent(EVENT_EXIT, value);
     if (exit != 0) {
-      // Bits 5 and 4 choose how the leader leaves: 0 with the usual sound,
-      // 16 silently, 32 and 48 with their own sound and leaving animation (26
-      // and 25), whose flag (FLAG_EXIT_ARRIVAL_PENDING, flag 0x121) makes the
-      // next scene play the matching arrival.
-      exitKind = exit->flags & 0x30;
+      // An enum ExitStyle chooses how the leader leaves; the animated styles'
+      // flags make the next scene play the matching arrival.
+      exitKind = exit->flags & EXIT_STYLE_MASK;
       switch (exitKind) {
-      case 0:
+      case EXIT_STYLE_NORMAL:
         AudioCommand_PlayFar(SE_MAP_EXIT);
         break;
-      case 32:
+      case EXIT_STYLE_ANIMATED:
         AudioCommand_PlayFar(SE_128);
         ObjectEffect_BeginContextEffect26();
         break;
-      case 48:
+      case EXIT_STYLE_ANIMATED_ALTERNATE:
         AudioCommand_PlayFar(SE_129);
         ObjectEffect_BeginContextEffect25();
         break;
@@ -536,7 +535,7 @@ s32 Field_SearchTile(s32 tile) {
               Marker_Hide(tile);
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
-            } else if (rewardType == 0x500000) {
+            } else if (rewardType == FIND_MIMIC) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
               struct FieldWork *work = (struct FieldWork *)gEventWork;
 

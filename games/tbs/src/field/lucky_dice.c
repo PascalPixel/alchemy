@@ -327,7 +327,7 @@ void LuckyDice_Run(void) {
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   spritePalette = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x200);
   diceWork = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceWork));
-  sprites = Runtime_AllocateBlock(45, 0x618);
+  sprites = Runtime_AllocateBlock(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
   camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(*camera));
   RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
   Camera_ResetSceneDefaults();
@@ -977,7 +977,7 @@ void LuckyDice_Run(void) {
     WaitFrames(1);
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_CAMERA);
-  Runtime_ReleaseHeapBlock(45);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_LUCKY_DICE_SPRITES);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);

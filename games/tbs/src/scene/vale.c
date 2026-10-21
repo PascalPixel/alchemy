@@ -8,18 +8,17 @@
 /// story order:
 ///
 /// - The day the story begins, three years after the storm
-/// (vale_interiors_inn.c),
-///   which took Jenna's family and Isaac's father, Kyle. The game opens at
-///   VALE_FROM_TITLE with Event_MendingTheRoof: under the caption "Three years
-///   later...", Isaac is mending the roof of his house while Dora, his mother,
-///   calls up to him; Garet, who will travel with him, trains his Psynergy
-///   nearby, and Jenna comes by, and the two speak of that day before going to
-///   fetch Isaac to go to Kraden's. Exit 12 brings the party back in at
-///   entrance 17, where Event_RoofMended plays once (group flag
-///   FLAG_PLACE_TEMP_08): Dora praises the roof, remembers Kyle, and sends the
-///   three off on their climb of Mt. Aleph with Kraden, the scholar who teaches
-///   them Alchemy (FLAG_SCENE_TEMP_02); for the rest of that visit Dora frets
-///   about the hole clumsy Garet left.
+///   (vale_interiors_inn.c), which took Jenna's family and Isaac's father,
+///   Kyle. The game opens at VALE_FROM_TITLE with Event_MendingTheRoof: under
+///   the caption "Three years later...", Isaac is mending the roof of his house
+///   while Dora, his mother, calls up to him; Garet, who will travel with him,
+///   trains his Psynergy nearby, and Jenna comes by, and the two speak of that
+///   day before going to fetch Isaac to go to Kraden's. Exit 12 brings the
+///   party back in at entrance 17, where Event_RoofMended plays once (group
+///   flag FLAG_PLACE_TEMP_08): Dora praises the roof, remembers Kyle, and sends
+///   the three off on their climb of Mt. Aleph with Kraden, the scholar who
+///   teaches them Alchemy (FLAG_SCENE_TEMP_02); for the rest of that visit Dora
+///   frets about the hole clumsy Garet left.
 /// - Vale before the party leaves. Until Kraden has planned the visit to Sol
 ///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
 ///   Aleph; a villager jumps out to warn him against sneaking up the sacred

@@ -215,9 +215,9 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->snapToTarget = 1;
 
   // Removing the repeated store shortens the matching EN function by 16 bytes.
-  // The test is for a floating unit (motionFlags bit 2); both paths store
+  // The test is for a floating unit (ACTOR_FLOATS); both paths store
   // the same hop.
-  if (object->motionFlags & 4)
+  if (object->motionFlags & ACTOR_FLOATS)
     object->velocityY = initialVelocityY;
   object->velocityY = initialVelocityY;
   object->verticalMotionStrength = 0xab85;

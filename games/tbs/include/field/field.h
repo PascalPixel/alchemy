@@ -128,7 +128,7 @@ extern const u8 gBattleFx_BurstParticleScriptA[];
 extern const u8 gBattleFx_BurstParticleScriptB[];
 extern u32 gWorldMap_GraphicsResources[][6];
 /// SC_WAIT(40), then SC_FREE: the one-off attached effect that ends by itself
-/// (BattleFx_ConfigureLinkedObject, mode 2).
+/// (BattleFx_ConfigureLinkedObject, ATTACHED_EFFECT_ONCE).
 extern const u8 gObjectMotion_WaitScript[];
 /// The sparkles' 16 by 16 tiles, packed (FieldEffect_InitSparkles).
 extern const u8 gFieldFx_SparkleTiles[];

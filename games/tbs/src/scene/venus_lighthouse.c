@@ -19,14 +19,13 @@
 ///   world map, and VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR,
 ///   the open door, into VenusLighthouseGroundFloor.
 /// - Venus Lighthouse (VenusLighthouseGroundFloor, scene 182, named by a scene
-/// rule of
-///   its own), the floor behind the front door. Three scholars say Kraden
-///   told the attackers to stop, went in, and came back saying this is not the
-///   entrance but something about its being the exit, and that his group did
-///   something to the statue that lit up the floor. The statue (search
-///   trigger 41) speaks to Isaac's soul: the path long closed begins far
-///   away, on the soil of an ancient people. The room flashes and the statue
-///   opens one of its two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
+///   rule of its own), the floor behind the front door. Three scholars say
+///   Kraden told the attackers to stop, went in, and came back saying this is
+///   not the entrance but something about its being the exit, and that his
+///   group did something to the statue that lit up the floor. The statue
+///   (search trigger 41) speaks to Isaac's soul: the path long closed begins
+///   far away, on the soil of an ancient people. The room flashes and the
+///   statue opens one of its two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
 ///   _SECOND_PATH, chosen the first time by the frame counter's parity and
 ///   switched at each search after), redrawing cells here; the Tunnel Ruins
 ///   under Babi Lighthouse redraw their rooms to match (tunnel_ruins.c), and
@@ -43,8 +42,7 @@
 ///   and VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR link the
 ///   two scenes.
 /// - Venus Lighthouse (VenusLighthouseFirstFloor, scene 183), the first floor
-/// of the
-///   climb, where the Tunnel Ruins come up
+///   of the climb, where the Tunnel Ruins come up
 ///   (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES;
 ///   VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES leads back
 ///   down), in the room
@@ -55,31 +53,29 @@
 ///   dropped into it to fall through the floor. A chest holds the Thunder
 ///   Crown, and a Psynergy Stone lies here.
 /// - Venus Lighthouse (VenusLighthouseSecondFloor, scene 184). A sparkling
-/// passage
-///   (trigger 2) takes the leader through in a trail of sparks; a floor switch
-///   (trigger 35) slides a wall aside in a cloud of dust the first time
+///   passage (trigger 2) takes the leader through in a trail of sparks; a floor
+///   switch (trigger 35) slides a wall aside in a cloud of dust the first time
 ///   (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED); a pillar Moved or pushed into its
 ///   socket sinks and opens a gate (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN); and a
 ///   door is locked.
 ///   VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR leads up
 ///   into VenusLighthouseThirdFloor.
 /// - Venus Lighthouse (VenusLighthouseThirdFloor, scene 185). Three more
-/// sparkling
-///   passages, a drifting floor, and three pillars that sink into free sockets
-///   (FLAG_VENUS_LIGHTHOUSE_SOCKETS_A and _B record which); with all three
-///   sunk the gate opens (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN). A door
-///   is locked and a chest holds Dragon Scales.
+///   sparkling passages, a drifting floor, and three pillars that sink into
+///   free sockets (FLAG_VENUS_LIGHTHOUSE_SOCKETS_A and _B record which); with
+///   all three sunk the gate opens
+///   (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN). A door is locked and a
+///   chest holds Dragon Scales.
 /// - Venus Lighthouse (VenusLighthouseFourthFloor, scene 186). A passage raises
-/// the
-///   leader to the floor above (trigger 18), floors drift the party each way
-///   (triggers 30 to 33), and a west and an east floor switch slide their walls
-///   aside (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
-///   VenusLighthouseThirdFloor also redraws). Carry sets down four floating
-///   pillars, and the platforms under them rise or sink to their weight
-///   (FLAG_SCENE_TEMP_00 plus the pillar's number; Move on them does nothing).
-///   Four pillars sunk into sockets open the gate of the room their pillars
-///   stand in (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN). A door is locked, a
-///   chest holds the Gaia Blade, a Psynergy Stone lies here, and
+///   the leader to the floor above (trigger 18), floors drift the party each
+///   way (triggers 30 to 33), and a west and an east floor switch slide their
+///   walls aside (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED,
+///   which VenusLighthouseThirdFloor also redraws). Carry sets down four
+///   floating pillars, and the platforms under them rise or sink to their
+///   weight (FLAG_SCENE_TEMP_00 plus the pillar's number; Move on them does
+///   nothing). Four pillars sunk into sockets open the gate of the room their
+///   pillars stand in (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN). A door is
+///   locked, a chest holds the Gaia Blade, a Psynergy Stone lies here, and
 ///   VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE leads to the
 ///   Lighthouse Aerie.
 ///
@@ -802,8 +798,9 @@ VenusLighthouse_CreateScriptedGateEffect(s32 x, s32 z, const s32 *script) {
 }
 
 /// Walking into a one-tile gap, in VenusLighthouseFourthFloor and through the
-/// jump-or-push events of VenusLighthouseFirstFloor to 5: the leader jumps it
-/// if the far side is clear. Returns 1 after a jump, 0 when there was none.
+/// jump-or-push events of VenusLighthouseFirstFloor to
+/// VenusLighthouseFourthFloor: the leader jumps it if the far side is clear.
+/// Returns 1 after a jump, 0 when there was none.
 static s32 Event_JumpAcrossGap(void) {
   struct FieldActor *leader;
   struct FieldPosition landing;
@@ -942,8 +939,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVenusLighthousePlacementsOther;
 }
 
-/// Searching a locked door, in VenusLighthouseSecondFloor to 5. "The door is
-/// tightly locked."
+/// Searching a locked door, in VenusLighthouseSecondFloor to
+/// VenusLighthouseFourthFloor. "The door is tightly locked."
 static void Event_SearchLockedDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);

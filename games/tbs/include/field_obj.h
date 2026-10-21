@@ -14,12 +14,14 @@
 extern struct EventWork *gEventWork;
 
 /// How a scene fades in and out: SCENE_TRANSITION's high byte, which
-/// DisplayTransition_Start and DisplayTransition_Finish read. Kinds 3, a
-/// dissolve, and 4, opening from the centre line, have no name here.
+/// DisplayTransition_Start and DisplayTransition_Finish read.
 enum SceneTransitionStyle {
   TRANSITION_FADE = 0,          ///< from or to black
   TRANSITION_BACKDROP_FADE = 1, ///< from or to the backdrop colour
-  TRANSITION_WINDOW = 2         ///< a window shape the variant chooses
+  TRANSITION_WINDOW = 2,        ///< a window shape the variant chooses
+  TRANSITION_DISSOLVE = 3,      ///< a dissolve
+  /// Opening from, or closing to, the centre line; the variant picks how.
+  TRANSITION_CENTRE_LINE = 4
 };
 
 /// A scene transition as EventWork.startTransition holds it. For
@@ -55,8 +57,6 @@ struct FieldActor {
   /// it as the sprite's draw slot.
   u8 terrainId;
   /// ActorPriorityFlag bits, read by the scrolling camera.
-  /// bits: 2 sorted as if 320 pixels lower | 1 sorted as if 320 pixels
-  /// higher | 0 sprite priority from the cell under it
   u8 priorityFlags;
   s32 velocityX; ///< 16.16 fixed-point pixels per frame
   s32 velocityY; ///< 16.16 fixed-point pixels per frame
@@ -85,18 +85,14 @@ struct FieldActor {
   /// Zero hides sprites; one draws a single sprite, two draws a group.
   /// The engine reads the low four bits; SC_B54_ON and SC_B54_OFF set 1 and 0.
   u8 spriteStorageKind;
-  /// ActorMotionFlag bits; zero is free flight in 3D, and 3 is set on
-  /// creation.
-  /// bits: 4 no slowdown on slopes | 3 bigger float | 2 floats | 1 falls |
-  /// 0 follows the terrain
+  /// ActorMotionFlag bits; none is free flight in 3D, and ACTOR_FOLLOWS_TERRAIN
+  /// and ACTOR_FALLS are set on creation.
   u8 motionFlags;
   /// The ARRIVAL_AXIS_* watched for arrival, the object script's last flag
   /// test (ScriptInterpreter.conditionResult), and whether it snaps onto its
   /// target on arrival: ScriptMotionObject names 0x56 and 0x58.
   u8 unk56[3];
-  /// bits: 7 refuses to move into a solid object | 4 nearer for Psynergy
-  /// targets | 3 never a talk or Psynergy target | 2 nearer to talk to |
-  /// 1 the player pushes it | 0 solid
+  /// ActorCollisionFlag bits.
   u8 collisionFlags;
   u8 steeringFlags; ///< ActorSteeringFlag bits
   u8 paused;        ///< nonzero skips its script and motion, not its update
@@ -161,13 +157,30 @@ enum ActorPriorityFlag {
   /// The sprite takes its priority from the map cell under it.
   ACTOR_PRIORITY_AUTOMATIC = 0x01,
   /// The depth sort treats it as 320 pixels higher on the screen.
-  ACTOR_PRIORITY_UNDERFOOT = 0x02
+  ACTOR_PRIORITY_UNDERFOOT = 0x02,
+  /// The depth sort treats it as 320 pixels lower on the screen.
+  ACTOR_PRIORITY_OVERHEAD = 0x04
 };
 
 /// FieldActor.motionFlags bits.
 enum ActorMotionFlag {
   ACTOR_FOLLOWS_TERRAIN = 0x01, ///< moves with the ground height under it
-  ACTOR_FALLS = 0x02            ///< falls by its gravity and bounces
+  ACTOR_FALLS = 0x02,           ///< falls by its gravity and bounces
+  ACTOR_FLOATS = 0x04,          ///< bobs up and down by its gravity
+  ACTOR_FLOATS_HIGH = 0x08,     ///< with ACTOR_FLOATS, four times as far
+  /// Keeps its speed on slopes, which slow others down.
+  ACTOR_KEEPS_SPEED_ON_SLOPES = 0x10
+};
+
+/// FieldActor.collisionFlags bits.
+enum ActorCollisionFlag {
+  ACTOR_SOLID = 0x01,         ///< blocks other objects and the player
+  ACTOR_PUSHABLE = 0x02,      ///< the player pushes it
+  ACTOR_NEAR_TALK = 0x04,     ///< nearer to talk to
+  ACTOR_NOT_TARGETED = 0x08,  ///< never a talk or Psynergy target
+  ACTOR_NEAR_PSYNERGY = 0x10, ///< nearer for Psynergy targets
+  /// Refuses to move into a solid object (FieldActor.refused).
+  ACTOR_BLOCKED_BY_SOLID = 0x80
 };
 
 /// FieldActor.steeringFlags bits.

@@ -34,13 +34,12 @@
 ///   are set and put on standby (FLAG_DJINN_TUTORIAL and its two parts), and
 ///   a tutorial battle follows.
 /// - Vault, the first time (touching ACTOR_PLACE_VAULT):
-/// WORLD_MAP_HAMMETS_CARAVAN_LEAVES plays
-///   Hammet's caravan leaving Vault for Kalay. Hammet, the merchant of Kalay
-///   whose rod was stolen, blames Ivan, his servant, whom he leaves behind;
-///   the bridge south is destroyed, so the caravan heads north for Lunpa. It
-///   sets FLAG_GUARDS_SUSPECT_KALAY, after which Lunpa's east guard asks
-///   whether the party came from Kalay, and goes on into Vault, where touching
-///   the place leads straight in from then on.
+///   WORLD_MAP_HAMMETS_CARAVAN_LEAVES plays Hammet's caravan leaving Vault for
+///   Kalay. Hammet, the merchant of Kalay whose rod was stolen, blames Ivan,
+///   his servant, whom he leaves behind; the bridge south is destroyed, so the
+///   caravan heads north for Lunpa. It sets FLAG_GUARDS_SUSPECT_KALAY, after
+///   which Lunpa's east guard asks whether the party came from Kalay, and goes
+///   on into Vault, where touching the place leads straight in from then on.
 /// - Mercury Lighthouse (WORLD_MAP_MERCURY_LIGHTHOUSE_LIT): the lighthouse
 ///   transition (WorldMap_PlayLighthouseTransition) takes the party to
 ///   Mercury Lighthouse Aerie (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).

@@ -15,26 +15,6 @@ struct StepOwner {
 };
 #endif
 
-/// The collision codes of map cells that mean something when stepped on (a
-/// map cell's byte 2). Codes 242 to 247 are search spots instead
-/// (Field_SearchTile).
-enum StepTileEvent {
-  /// 1 to 239: the scene's step events, touch (kind 2) or exit (kind 1)
-  /// events whose trigger is the code (Scene_RunTouchOrExit).
-  STEP_EVENT_FIRST = 1,
-  STEP_EVENT_LAST = 239,
-  /// 240 and 241: ground with its own encounters, grounds 1 and 2 of
-  /// work->encounterGroups.
-  STEP_TERRAIN_FIRST = 240,
-  STEP_TERRAIN_LAST = 241,
-  /// Ground that hurts the party over time, as gGameState's hazard fields
-  /// count it: the Lamakan Desert's sand, whose scene sets those fields.
-  STEP_EVENT_HAZARD = 250,
-  STEP_WARP_FIRST = 252, ///< 252 to 254: ledges and climbing spots the
-                         ///< leader pushes against (Field_RunPushTileEvent)
-  STEP_WARP_LAST = 254
-};
-
 /// Clears the field's twelve pending requests (see struct FieldWork).
 ///
 /// Called by Field_RunScene while it sets a scene up.
@@ -256,9 +236,9 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   // request it raises.
   if (event != 0)
     Field_CheckExitRegions(x, y, z);
-  if (event >= STEP_EVENT_FIRST && event <= STEP_EVENT_LAST)
+  if (event >= MAP_CELL_EVENT_FIRST && event <= MAP_CELL_EVENT_LAST)
     work->action = event;
-  if (event >= STEP_WARP_FIRST && event <= STEP_WARP_LAST)
+  if (event >= MAP_CELL_LEDGE && event <= MAP_CELL_JUMP_FORWARD)
     work->input = event;
 
   // Only while walking (not climbing) towards a target.
@@ -273,11 +253,12 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     if (work->mode == MODE_WORLD_MAP) {
       fullEncounterRate = 1;
       work->battle = Encounter_RollWorldMap((s32)&leader->x, encounterSpeed);
-    } else if (event == STEP_TERRAIN_FIRST || event == STEP_TERRAIN_LAST) {
+    } else if (event == MAP_CELL_ENCOUNTER_GROUND_1 ||
+               event == MAP_CELL_ENCOUNTER_GROUND_2) {
       fullEncounterRate =
-          work->encounterGroups[event - (STEP_TERRAIN_FIRST - 1)];
-      work->battle = Encounter_RollTerrain(event - (STEP_TERRAIN_FIRST - 1),
-                                           encounterSpeed);
+          work->encounterGroups[event - (MAP_CELL_ENCOUNTER_GROUND_1 - 1)];
+      work->battle = Encounter_RollTerrain(
+          event - (MAP_CELL_ENCOUNTER_GROUND_1 - 1), encounterSpeed);
     } else {
       fullEncounterRate = work->encounterGroups[0];
       work->battle = Encounter_RollTerrain(0, encounterSpeed);
@@ -305,8 +286,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     // frame walked on it adds the leader's speed limit in whole pixels, so
     // the count follows the distance walked there (the Lamakan Desert's
     // limit is 600).
-    if (gGameState.hazardMode == 0 && event == STEP_EVENT_HAZARD) {
-      if (work->previousTile->collisionCode == STEP_EVENT_HAZARD)
+    if (gGameState.hazardMode == 0 && event == MAP_CELL_HAZARD) {
+      if (work->previousTile->collisionCode == MAP_CELL_HAZARD)
         gGameState.hazardSteps += leader->speedLimit / 0x10000;
       else
         gGameState.hazardSteps = gGameState.hazardLimit / 2;

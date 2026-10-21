@@ -57,12 +57,16 @@ more), and the other three bytes are height samples, in steps of eight
 pixels, which the kind's height function fills in between
 (`Map_GetTerrainHeight`, through `gMap_TerrainHeightFunctions`).
 
-The **collision code** says what standing on the cell means. 255 is a wall. The codes from 1
-to 239 belong to the scene: a scene's touch event fires when the leader steps
+The **collision code** says what standing on the cell means, and
+`enum MapCellCode` in [`map.h`](../../include/map.h) names each one. `MAP_CELL_WALL` is a
+wall. The codes from `MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST`, 1 to
+239, belong to the scene: a scene's touch event fires when the leader steps
 onto or pushes against a cell with its code, and its search event when the
-player presses A facing one. Some of the codes above 239 mean the same thing
-on every map: 240 and 241 mark ground where battles can start, 250 a hazard,
-and 252 to 254 the tiles `Field_RunPushTileEvent` acts on.
+player presses A facing one. The codes above them mean the same thing on
+every map: ground where battles can start, the jar, barrel, wooden box,
+grave, books and well that every map searches with the same lines, the
+desert's hazardous sand, and the ledges, climbing spots and jumps that
+`Field_RunPushTileEvent` acts on when the leader pushes against them.
 
 A **layer** is one of the map's three backgrounds, each a window onto the
 cell grid. A **plane** is one byte, or one halfword (two bytes), per cell

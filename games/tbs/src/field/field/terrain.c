@@ -445,7 +445,7 @@ UNUSED s32 Map_GetCellHighFlags(s32 x, s32 y) {
 }
 
 /// Returns whether an object can step to position: 2 when the cell there is
-/// a wall (collision code 0xff), 1 when the ground is more than 8 pixels
+/// a wall (MAP_CELL_WALL), 1 when the ground is more than 8 pixels
 /// higher than the object's, -1 when it is more than 12 pixels lower, else 0.
 ///
 /// Called by the player control and the script commands that pick a free
@@ -474,7 +474,7 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
     cell = (struct MapCell *)Ram_MapCellBuffer;
   cell += pixelX / 16 + (pixelZ / 16 << 7);
   // A wall blocks whatever the heights.
-  if (cell->collisionCode == 0xff)
+  if (cell->collisionCode == MAP_CELL_WALL)
     return 2;
   heightBytes = Ram_MapCollision + cell->attributeB * 4;
   // UB: sequence the kind-byte read before passing the remaining samples.
@@ -499,7 +499,7 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
 }
 
 /// Returns -1 when the cell under position (its x, and y less its height) in
-/// layer 2 is a wall (collision code 0xff), else 0; also 0 before the map
+/// layer 2 is a wall (MAP_CELL_WALL), else 0; also 0 before the map
 /// work exists. Called by the player control and, as
 /// CheckMapPositionCellOccupiedFar, by the Psynergy climbing.
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
@@ -522,7 +522,7 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   cellY = pixelY / 16;
   cell += cellX + cellY * 128;
   // 1 - 1 for open ground, 0 - 1 for a wall: nonzero means walled.
-  return (cell->collisionCode != 0xff) - 1;
+  return (cell->collisionCode != MAP_CELL_WALL) - 1;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper

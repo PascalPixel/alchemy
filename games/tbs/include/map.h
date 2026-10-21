@@ -8,14 +8,42 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A map cell's collision code (`MapCell.collisionCode`): what stepping on,
+/// pushing against or searching the cell does. 0 is open ground.
+enum MapCellCode {
+  /// 1 to 239: the scene's own events, touch or exit when stepped on
+  /// (Scene_RunTouchOrExit), search when the player presses A facing the cell.
+  MAP_CELL_EVENT_FIRST = 1,
+  MAP_CELL_EVENT_LAST = 239,
+  /// Ground with encounters of its own: grounds 1 and 2 of the scene's zones.
+  MAP_CELL_ENCOUNTER_GROUND_1 = 240,
+  MAP_CELL_ENCOUNTER_GROUND_2 = 241,
+  /// 242 to 247: search spots with lines of their own, the same on every map
+  /// (Field_SearchTile, gField_TileMessageOffsets).
+  MAP_CELL_JAR = 242,
+  MAP_CELL_BARREL = 243,
+  MAP_CELL_WOODEN_BOX = 244,
+  MAP_CELL_GRAVE = 245,
+  MAP_CELL_BOOKS = 246,
+  MAP_CELL_WELL = 247,
+  /// Jumps forward like MAP_CELL_JUMP_FORWARD, but Field_ProcessStep never
+  /// passes it to Field_RunPushTileEvent.
+  MAP_CELL_JUMP_FORWARD_UNREACHED = 249,
+  /// Ground that hurts the party over time: the Lamakan Desert's sand.
+  MAP_CELL_HAZARD = 250,
+  /// 252 to 254: cells the leader pushes against (Field_RunPushTileEvent).
+  MAP_CELL_LEDGE = 252,        ///< jumped down with Down held
+  MAP_CELL_CLIMB = 253,        ///< climbed up or down with Up or Down held
+  MAP_CELL_JUMP_FORWARD = 254, ///< jumped across
+  MAP_CELL_WALL = 255          ///< blocks whatever the heights
+};
+
 /// One cell of a map layer: its metatile and flags, its collision code and an
 /// attribute indexing the collision table.
 struct MapCell {
   /// bits: 15..12 flags (15..14 read by Map_GetCellHighFlags) | 11..0 metatile
   u16 metatileAndFlags;
-  /// The step code: 1 to 239 scene events, 240 and 241 encounter ground, 250
-  /// hazard, 252 to 254 for Field_RunPushTileEvent, 0xff a wall.
-  u8 collisionCode;
+  u8 collisionCode; ///< an enum MapCellCode
   /// Indexes the 4-byte collision entries (gMapCollision): terrain kind in the
   /// first byte's low four bits, then its height samples.
   u8 attributeB;

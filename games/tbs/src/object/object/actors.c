@@ -223,7 +223,7 @@ void ObjectTable_DestroyAtIndex(s32 actorIndex) {
 /// Creates a scene's actors on entering it: the party leader where the game
 /// state puts it, then the scene's placement table from actor slot 8, and the
 /// camera that follows the leader. A leader entering above ground where its
-/// cell and the cell north of it are climbing spots (collision code 0xfd) is
+/// cell and the cell north of it are climbing spots (MAP_CELL_CLIMB) is
 /// raised by the ground height of the cell north of it less 32 pixels, and
 /// starts climbing (movement mode 1).
 ///
@@ -268,8 +268,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
   cell = &MAP_CELLS[pos];
   above = &MAP_CELLS[pos - 128];
-  if (gGameState.y != 0 && cell->collisionCode == 0xfd &&
-      above->collisionCode == 0xfd) {
+  if (gGameState.y != 0 && cell->collisionCode == MAP_CELL_CLIMB &&
+      above->collisionCode == MAP_CELL_CLIMB) {
     gGameState.movementMode = 1;
     height =
         Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) - 0x200000;

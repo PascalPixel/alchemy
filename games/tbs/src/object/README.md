@@ -143,8 +143,8 @@ The loop then handles the requests one at a time, in a fixed order:
 | 1 | `exit` | leave the scene by this exit |
 | 2 | `event` | run a raised event, or one of the negative codes below |
 | 3 | `battle` | a random battle against this enemy group |
-| 4 | `action` | a touch event or exit on the cell stepped onto (codes 1 to 239) |
-| 5 | `input` | a pushed tile (codes 252 to 254) |
+| 4 | `action` | a touch event or exit on the cell stepped onto (`MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST`) |
+| 5 | `input` | a ledge, climbing spot or jump the leader pushes against (`MAP_CELL_LEDGE` to `MAP_CELL_JUMP_FORWARD`) |
 | 6 | `examine` | the A button: talk to the actor ahead, else search the tile ahead, else open the menu |
 | 7 | `menu` | the main menu |
 | 8 | `descriptor` | talk to an actor |
@@ -211,8 +211,9 @@ flag is one of the yes-or-no facts the game remembers about the journey,
 such as whether a chest is open; [Game rules](../game/README.md) explains
 them. Ordinary ground (ground 0) normally has no battles, and grounds 1 to 7 take
 consecutive zones from the rule's first one. A rule can also move the first
-zone onto ground 0, leaving ground 1 none, and most rules do. Cells with
-collision codes 240 and 241 are grounds 1 and 2. With no matching rule,
+zone onto ground 0, leaving ground 1 none, and most rules do. Cells marked
+`MAP_CELL_ENCOUNTER_GROUND_1` and `MAP_CELL_ENCOUNTER_GROUND_2` are grounds 1
+and 2. With no matching rule,
 nowhere in the scene has battles. The world map's zones come from
 `gWorldMap_EncounterRules` (`zonedata.c`), by the terrain under the leader.
 

@@ -333,8 +333,9 @@ s32 Scene_RunRaisedEvent(s32 value) {
 /// leads. Returns 0 when something ran, -1 when there was nothing.
 ///
 /// Called by Field_RunScene for its step request (work->action), which
-/// Field_ProcessStep raises for collision codes 1 to 239. Sets work->exit for
-/// an exit, and clears work->blockedSteps after a touch that needs pushing.
+/// Field_ProcessStep raises for MAP_CELL_EVENT_FIRST to MAP_CELL_EVENT_LAST.
+/// Sets work->exit for an exit, and clears work->blockedSteps after a touch
+/// that needs pushing.
 s32 Scene_RunTouchOrExit(s32 value) {
   struct EffectDescriptor *touch;
   struct EffectDescriptor *exit;
@@ -387,31 +388,32 @@ s32 Scene_RunTouchOrExit(s32 value) {
   return handled;
 }
 
-/// Runs the event of a tile the leader pushes against (codes 0xf9 and 0xfc to
-/// 0xfe), once it has pushed for more than 12 frames; the count then restarts.
+/// Runs the event of a tile the leader pushes against (MAP_CELL_LEDGE to
+/// MAP_CELL_JUMP_FORWARD, and MAP_CELL_JUMP_FORWARD_UNREACHED), once it has
+/// pushed for more than 12 frames; the count then restarts.
 ///
 /// Called by Field_RunScene for its push request (work->input), which
-/// Field_ProcessStep raises for codes 252 to 254; nothing raises 0xf9 there.
+/// Field_ProcessStep raises for MAP_CELL_LEDGE to MAP_CELL_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
 s32 Field_RunPushTileEvent(s32 collisionCode) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 leader = gGameState.selectedActor;
 
   switch (collisionCode) {
-  case 0xfc: // a ledge, jumped down with Down held
+  case MAP_CELL_LEDGE:
     if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
       Actor_JumpDownLedge(leader, 6, 0);
       work->blockedSteps = 0;
     }
     break;
-  case 0xf9:
-  case 0xfe: // jump forward
+  case MAP_CELL_JUMP_FORWARD_UNREACHED:
+  case MAP_CELL_JUMP_FORWARD:
     if (work->blockedSteps > 12) {
       Field_TryJumpForward();
       work->blockedSteps = 0;
     }
     break;
-  case 0xfd: // a climbing spot: Down climbs down, Up climbs up
+  case MAP_CELL_CLIMB:
     if (work->blockedSteps > 12) {
       if (gKeysHeld & KEY_DOWN) {
         Field_ClimbDown();
@@ -425,10 +427,11 @@ s32 Field_RunPushTileEvent(s32 collisionCode) {
   return 0;
 }
 
-/// Searches the tile ahead with the given collision code. Codes 242 to 247 show
-/// their two messages. Otherwise the scene's search event for the tile runs: a
-/// function, a message, or a chest holding a Psynergy stone, a mimic, coins or
-/// an item; with no event, "checked the ground" and "found nothing".
+/// Searches the tile ahead with the given collision code. The fixed search
+/// spots, MAP_CELL_JAR to MAP_CELL_WELL, show their two messages. Otherwise the
+/// scene's search event for the tile runs: a function, a message, or a chest
+/// holding a Psynergy stone, a mimic, coins or an item; with no event, "checked
+/// the ground" and "found nothing".
 ///
 /// Called by Field_RunScene for its search request (work->tile). Opening a
 /// chest sets its condition flag, and it may raise a mimic battle
@@ -443,11 +446,11 @@ s32 Field_SearchTile(s32 tile) {
   s32 canOpen;
 
   leader = gGameState.selectedActor;
-  // Codes 242 to 247 are fixed kinds of spot, each with its own pair of lines
-  // chosen through gField_TileMessageOffsets; the unsigned compare also
-  // rejects codes below 242.
-  messageOffset = tile - 242;
-  if (messageOffset <= 5) {
+  // Each fixed spot has its own pair of lines, chosen through
+  // gField_TileMessageOffsets; the unsigned compare also rejects codes below
+  // MAP_CELL_JAR.
+  messageOffset = tile - MAP_CELL_JAR;
+  if (messageOffset <= MAP_CELL_WELL - MAP_CELL_JAR) {
     Leader_StopMoving();
     tile = gField_TileMessageOffsets[messageOffset];
     UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + tile, 1);

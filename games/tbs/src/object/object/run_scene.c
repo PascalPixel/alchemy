@@ -414,9 +414,10 @@ struct Object {
 };
 
 /// Returns the collision code of the map cell 16 pixels ahead of the party
-/// leader when there is something to search there: a tile code from 242 to 247
-/// whose ground is level with the leader or up to 64 pixels above it, or a
-/// code the scene has a search event for. Returns 0 otherwise.
+/// leader when there is something to search there: a fixed search spot
+/// (MAP_CELL_JAR to MAP_CELL_WELL) whose ground is level with the leader or up
+/// to 64 pixels above it, or a code the scene has a search event for. Returns 0
+/// otherwise.
 ///
 /// Called by Field_RunScene for the A button (a non-zero result becomes
 /// work->tile, for Field_SearchTile), and by Menu_RunTopSelection's search
@@ -456,7 +457,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
                       << 2);
     }
     collisionCode = cell[2];
-    if (collisionCode >= 242 && collisionCode <= 247) {
+    if (collisionCode >= MAP_CELL_JAR && collisionCode <= MAP_CELL_WELL) {
       terrainHeight = Map_GetTerrainHeightFar(
           leader->kind, probePosition.vector.x, probePosition.vector.z);
       if (terrainHeight >= leader->pos.y &&

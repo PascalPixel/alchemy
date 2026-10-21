@@ -242,7 +242,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
 
 /// Rolls a random battle on the encounter zone of the ground underfoot.
 /// terrain: the ground, an index into work->encounterGroups: 0 for ordinary
-/// ground, 1 and 2 for cells of collision code 240 and 241.
+/// ground, 1 and 2 for MAP_CELL_ENCOUNTER_GROUND_1 and _2 cells.
 /// steps: the step weight, passed on to Encounter_SelectEnemyGroup.
 /// Returns the enemy group to fight, or 0 for no battle.
 /// Called by Field_ProcessStep in a field scene, which stores the result in

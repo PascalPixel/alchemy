@@ -205,11 +205,15 @@ static void Event_WarnOfThievesRevenge(void) {
                                      MsgVaultThoseGuysReallyWantedRevenge);
 }
 
-/// The cook has useless bones left from cooking and asks if the party wants
-/// some, but gives none. The cook's earlier talk row, a plain message with no
-/// condition, always answers first (Scene_FindEvent takes the first match), so
-/// this is never shown.
-static void Event_OfferLeftoverBones(void) {
+/// Unused: the cook in the inn's other room offers the party his leftover
+/// bones, but gives none.
+///
+/// He would have said `I did some cooking, so now I've got all these useless
+/// bones.` and asked `...You want some?`. His earlier talk row,
+/// MsgVaultWeDontGetALotOf with no condition, always answers first
+/// (Scene_FindEvent takes the first match), so the player only ever hears that
+/// travelers are few in winter.
+static void Event_UnusedOfferLeftoverBones(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_COOK, MsgVaultDidSomeCookingNowIve);
 }
 
@@ -503,7 +507,8 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { EVENT_TALK, ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
     { EVENT_TALK, ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
-    { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OfferLeftoverBones) },
+    // Unused: the row above always answers the cook first.
+    { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedOfferLeftoverBones) },
     { EVENT_TALK, ACTOR_VAULT_BONE_GIVER, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },

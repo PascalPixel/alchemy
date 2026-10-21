@@ -1,5 +1,5 @@
 /// @file
-/// Tret Tree (TretTreeInteriors, scene 45), the inside of Tret, the holy tree
+/// Tret Tree (SceneId_TretTreeInteriors), the inside of Tret, the holy tree
 /// of Kolima Forest, and the first of Tret Tree's two scenes. Tret turned the
 /// people of Kolima into trees and is withering. In Kolima Forest Tret's
 /// wrathful side answers for him and will not let the party do anything to him
@@ -9,13 +9,14 @@
 /// party since, decides most of the scene.
 ///
 /// The scene is six rooms, the six camera boxes of its entrance table. The
-/// party comes in from Kolima Forest (KolimaForestTree, scene 44) at
+/// party comes in from Kolima Forest (SceneId_KolimaForestTree) at
 /// TRET_TREE_INTERIORS_FROM_KOLIMA_FOREST_TREE and leaves by
 /// TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE; eight exits, from
 /// TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST to _NORTH_NORTHEAST,
-/// lead out to Tret Tree's other scene (TretTreeBranch, scene 46), and exits 10
-/// to 15 lead from room to room, three of them (10, 12 and 14) through regions
-/// 28 to 36 pixels up.
+/// lead out to Tret Tree's other scene (SceneId_TretTreeBranch), and six more,
+/// TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR to
+/// TRET_TREE_INTERIORS_ENTRANCE_TO_TRET, lead from room to room, three of them
+/// through regions 28 to 36 pixels up (Scene_GetRegions).
 ///
 /// Webs hold cocoons, each a touch cell (21 to 29, 31, 32 and 50 to 59) with
 /// a temporary flag of its own (FLAG_SCENE_TEMP_00 to _14). The first step on
@@ -139,7 +140,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTretTreeInteriorsEntrances;
 }
 
-/// Returns the three exit regions 28 to 36 pixels up (exits 10, 12 and 14).
+/// Returns the three exit regions 28 to 36 pixels up: up to the second floor
+/// (TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR), up to the fourth
+/// (TRET_TREE_INTERIORS_THIRD_FLOOR_TO_FOURTH_FLOOR) and back from Tret
+/// (TRET_TREE_INTERIORS_TRET_TO_ENTRANCE).
 const struct SceneRegion *Scene_GetRegions(void) {
   return gTretTreeInteriorsRegions;
 }
@@ -187,7 +191,8 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Event_SetDestination((s32)&SceneId_TretTreeInteriors, entrance);
   OBJ_MODE(selectedActorId, 27);
   Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
-  Actor_SetAttachedEffect(selectedActorId, 0x101);
+  Actor_SetAttachedEffect(selectedActorId,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   WAIT(30);
   Camera_MoveTo(-1, -1, -1, 0);
   actor->motionFlags = ACTOR_FALLS;
@@ -375,16 +380,20 @@ static void Event_FightTret(void) {
   Engine_ActorStartRepeatedMotion(MIA, 1);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
   Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-  Actor_SetAttachedEffect(GARET, 0x102);
-  Actor_SetAttachedEffect(MIA, 0x102);
-  Engine_ActorSetAttachedEffect(IVAN, 0x102);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ActorSetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                          ATTACHED_EFFECT_ONCE);
   WAIT(40);
   TretTreeInteriors_PlayGesture(11);
   MESSAGE_PUT(SPEAKER(ACTOR_TRET), 0);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   gEventWork->transitionFrames = 64;
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_TretTreeInteriors,
                            TRET_TREE_INTERIORS_AFTER_FIGHT_TRET);
   Field_RequestBattleFromEncounterTable(36, 0);
@@ -488,10 +497,13 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   TretTreeInteriors_PlayGesture(0);
   WAIT(40);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-  Actor_SetAttachedEffect(GARET, 0x102);
-  Actor_SetAttachedEffect(MIA, 0x102);
-  Actor_SetAttachedEffect(IVAN, 0x102);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(IVAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   WAIT(60);
   // Garet and Ivan will not let Tret die while they still need his help.
   Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -682,7 +694,8 @@ s32 TretTreeInteriors_EnterRoom(void) {
   Engine_TaskWait(1);
   TretTreeInteriors_ApplyPostBattleState(0);
   fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
-  fieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+  fieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   entrance = gGameState.entrance;
   selectedActorId = gGameState.selectedActor;
   actor = Object_GetById(selectedActorId);
@@ -694,7 +707,8 @@ s32 TretTreeInteriors_EnterRoom(void) {
     Engine_EventOpenScreen();
     OBJ_MODE(selectedActorId, 27);
     Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
-    Actor_SetAttachedEffect(selectedActorId, 0x101);
+    Actor_SetAttachedEffect(selectedActorId,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Camera_MoveTo(-1, -1, -1, 0);
     actor->motionFlags = ACTOR_FALLS;
     actor->y.fixed = PIXELS(100);
@@ -706,7 +720,8 @@ s32 TretTreeInteriors_EnterRoom(void) {
     actor->terrainId = 2;
     Engine_ActorSetSpritePriority(selectedActorId, 3);
     WAIT(2);
-    Engine_ActorSetAttachedEffect(selectedActorId, 0x100);
+    Engine_ActorSetAttachedEffect(selectedActorId, ATTACHED_EFFECT_IN_FRONT |
+                                                       ATTACHED_EFFECT_REMOVE);
     WAIT(8);
   } else if (entrance == 10) {
     if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
@@ -1030,12 +1045,14 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
                  particleOptions);
   }
   SE(SE_188);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   OBJ_MODE(ACTOR_PARTY_LEADER, 22);
   Map_SetShake(0x50000, 0x50000, 0x10000);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapWaitWorkValuesBelow256();
-  Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+  Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                        ATTACHED_EFFECT_REMOVE);
   Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
   Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
   EV_END();
@@ -1216,12 +1233,12 @@ struct SceneEntrance gTretTreeInteriorsEntrances[] = {
     { TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST, CONDITION_ALWAYS, 712, 0, 424, FACING_EAST, 0, 672, 272, 960, 544, 0 },
     { TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST, CONDITION_ALWAYS, 920, 0, 424, FACING_WEST, 0, 672, 272, 960, 544, 0 },
     { 10, CONDITION_ALWAYS, 168, 0, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
-    { 11, CONDITION_ALWAYS, 424, 24, 72, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { 12, CONDITION_ALWAYS, 744, 0, 88, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-    { 13, CONDITION_ALWAYS, 232, 24, 344, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
-    { 14, CONDITION_ALWAYS, 552, 0, 360, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 15, CONDITION_ALWAYS, 168, 24, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
-    { 16, CONDITION_ALWAYS, 488, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_ENTRANCE_FROM_SECOND_FLOOR, CONDITION_ALWAYS, 424, 24, 72, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TRET_TREE_INTERIORS_SECOND_FLOOR_FROM_ENTRANCE, CONDITION_ALWAYS, 744, 0, 88, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TRET_TREE_INTERIORS_THIRD_FLOOR_FROM_FOURTH_FLOOR, CONDITION_ALWAYS, 232, 24, 344, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
+    { TRET_TREE_INTERIORS_FOURTH_FLOOR_FROM_THIRD_FLOOR, CONDITION_ALWAYS, 552, 0, 360, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TRET_TREE_INTERIORS_TRET_FROM_ENTRANCE, CONDITION_ALWAYS, 168, 24, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
+    { TRET_TREE_INTERIORS_ENTRANCE_FROM_TRET, CONDITION_ALWAYS, 488, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
     { 21, CONDITION_ALWAYS, 472, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
     { 22, CONDITION_ALWAYS, 504, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
     { 23, CONDITION_ALWAYS, 424, 0, 136, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
@@ -1251,12 +1268,12 @@ struct SceneEntrance gTretTreeInteriorsEntrances[] = {
 };
 
 struct SceneRegion gTretTreeInteriorsRegions[] = {
-    { 420, 28, 68, 428, 36, 76, -1, 10 },
-    { 228, 28, 338, 236, 36, 346, -1, 12 },
+    { 420, 28, 68, 428, 36, 76, -1, TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR },
+    { 228, 28, 338, 236, 36, 346, -1, TRET_TREE_INTERIORS_THIRD_FLOOR_TO_FOURTH_FLOOR },
 #if !TBS_PATCH_3
-    { 163, 28, 148, 171, 36, 156, -1, 14 },
+    { 163, 28, 148, 171, 36, 156, -1, TRET_TREE_INTERIORS_TRET_TO_ENTRANCE },
 #else
-    { 159, 24, 144, 175, 40, 160, -1, 14 },
+    { 159, 24, 144, 175, 40, 160, -1, TRET_TREE_INTERIORS_TRET_TO_ENTRANCE },
 #endif
     { -1, 0, 0, 0, 0, 0, 0, 0 },
 };

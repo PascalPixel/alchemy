@@ -127,6 +127,13 @@ enum ItemUseResult {
   ITEM_USE_RESULT_DEFENSE_UP = 21  ///< "Your Defense increased!"
 };
 
+/// CharacterMenuState.page: which screen the member row belongs to.
+enum CharacterMenuPage {
+  CHARACTER_MENU_PAGE_STATUS = 0, ///< the Status menu (StatusMenu_Run)
+  /// The member chooser (Menu_OpenCharacterSelector).
+  CHARACTER_MENU_PAGE_CHOOSER = 3
+};
+
 /// The bytes of the menu work, heap block HEAP_SLOT_MENU. Each screen's run
 /// function takes the block as it opens and releases it as it closes.
 #define MENU_WORK_SIZE 0xa70

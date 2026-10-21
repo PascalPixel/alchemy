@@ -111,7 +111,7 @@ s32 Menu_OpenCharacterSelector(void) {
   state->selectorWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);
   for (index = 0; index < CHARACTER_SELECTOR_OWNER_COUNT; index++)
     state->ownerY[index] = 30;
-  state->page = 3; // the member chooser
+  state->page = CHARACTER_MENU_PAGE_CHOOSER;
 
   result = CharacterSelector_Run();
 
@@ -141,9 +141,9 @@ s32 CharacterSelector_Run(void) {
   return result;
 }
 
-/// The field menu's Status screen (Menu_RunTopSelection, icon 4), over the
-/// field: saves the first two background palettes and the window tiles it
-/// draws over, sets up the party row and, when the party has Djinn, the four
+/// The field menu's Status screen (Menu_RunTopSelection, FIELD_MENU_STATUS),
+/// over the field: saves the first two background palettes and the window tiles
+/// it draws over, sets up the party row and, when the party has Djinn, the four
 /// Djinn sprites, runs the status pages, then puts everything back. Returns
 /// their result; -1 (backed out or Start) opens the field menu again. The menu
 /// work and the two saved copies, taken from the alternate pool, are freed
@@ -161,7 +161,7 @@ s32 StatusMenu_Run(void) {
   WaitFrames(1);
   Menu_SuspendFieldTasks();
   UiWindow_InitializeWork(0);
-  state->page = 0;
+  state->page = CHARACTER_MENU_PAGE_STATUS;
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
   Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
@@ -198,7 +198,7 @@ s32 StatusMenu_Run(void) {
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   // Run the pages.
   Menu_CancelSoundReset();
-  state->page = 0;
+  state->page = CHARACTER_MENU_PAGE_STATUS;
 
   result = Menu_RunActionFlow();
 
@@ -229,43 +229,51 @@ s32 StatusMenu_Run(void) {
   return result;
 }
 
+/// The steps of the Status menu (Menu_RunActionFlow).
+enum StatusMenuStep {
+  STATUS_STEP_MEMBER = 0,   ///< choose a member
+  STATUS_STEP_STATUS = 1,   ///< their status page
+  STATUS_STEP_PSYNERGY = 2, ///< their Psynergy page
+  STATUS_STEP_EQUIPMENT = 3 ///< their equipment page
+};
+
 /// The Status menu's pages: choose a party member, then their status page, A
 /// for their Psynergy page and A again for their equipment page, whose A goes
 /// back round to the status page; B on any page goes back to the member row.
 /// Returns -1 when the player backs out of the member row or presses Start.
 s32 Menu_RunActionFlow(void) {
   struct CharacterMenuState *state = gMenuWork;
-  s32 step = 0;
+  s32 step = STATUS_STEP_MEMBER;
   s32 finished = step;
   s32 result = 0;
   u32 changed;
 
   while (!finished && !GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     switch (step) {
-    case 0: // choose a member
+    case STATUS_STEP_MEMBER:
       state->selectedSlots[0] = finished;
       if (CharacterMenu_SelectOwner(0) == -1) {
         result = -1;
         finished = 1;
       }
-      step = 1;
+      step = STATUS_STEP_STATUS;
       break;
-    case 1: // their status
+    case STATUS_STEP_STATUS:
       state->ownerCursors[0]->active = ICON_HIDDEN;
       result = CharacterMenu_SelectCommand();
-      step = result == -1 ? 0 : 2;
+      step = result == -1 ? STATUS_STEP_MEMBER : STATUS_STEP_PSYNERGY;
       break;
-    case 2: // their Psynergy
+    case STATUS_STEP_PSYNERGY:
       state->ownerCursors[0]->active = ICON_HIDDEN;
       result = PsynergyMenu_SelectAction();
-      step = 0;
+      step = STATUS_STEP_MEMBER;
       if (result != -1)
-        step = 3;
+        step = STATUS_STEP_EQUIPMENT;
       break;
-    case 3: // their equipment
+    case STATUS_STEP_EQUIPMENT:
       state->ownerCursors[0]->active = ICON_HIDDEN;
       result = ItemMenu_SelectItem();
-      // Step 0 (the member row) for -1, step 1 (the status page) otherwise.
+      // STATUS_STEP_MEMBER for -1, STATUS_STEP_STATUS otherwise.
       changed = ~result;
       step = (-changed | changed) >> 31;
       break;
@@ -282,9 +290,9 @@ s32 Menu_RunActionFlow(void) {
 }
 
 /// Lets the player choose a party member in slot, from the one chosen last: the
-/// member chooser when the menu is on page 3, else the Status menu's party row.
-/// Returns the chooser's result: 1 when a member was chosen, -1 when the player
-/// backed out, and on the party row 0 when Start ended it.
+/// member chooser on CHARACTER_MENU_PAGE_CHOOSER, else the Status menu's party
+/// row. Returns the chooser's result: 1 when a member was chosen, -1 when the
+/// player backed out, and on the party row 0 when Start ended it.
 s32 CharacterMenu_SelectOwner(s32 slot) {
   struct CharacterMenuState *menu;
   struct RenderOutput *cursor;
@@ -308,7 +316,7 @@ s32 CharacterMenu_SelectOwner(s32 slot) {
     menu->ownerIndex[slot] = 0;
   else
     UiMenu_SlideCursor(index * 24 - 10, 16);
-  if (menu->page == 3)
+  if (menu->page == CHARACTER_MENU_PAGE_CHOOSER)
     result = PsynergyMenu_SelectOwner();
   else
     result = CharacterSelector_RunRearrange();
@@ -697,7 +705,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
     cursor = SideObject_CreateFar(resource, 0, 0, window, 0, 0);
     menu->statusCursor = cursor;
     // The portrait goes to depth slot 240, as the category sprites do.
-    if ((cursor->sentinel = 0xF0, menu->page) == 3) {
+    if ((cursor->sentinel = 0xF0, menu->page) == CHARACTER_MENU_PAGE_CHOOSER) {
       Menu_SpawnIconEntries((struct InventoryMenuState *)menu, window);
     }
     Menu_CreateEightEntryObjects(window);
@@ -1660,7 +1668,7 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
     if (rowIndex == state->row) {
       item =
           Item_GetDirectFar(menu->items[state->selectedIndex] & ITEM_ID_MASK);
-      if (item->element != 4) {
+      if (item->element != ELEMENT_NONE) {
         UiWindow_SetTilemapEntryFar(window, item->element + 1, 27,
                                     rowIndex * 2 + 1, 0);
         Render_SetTilemapFlagRect(window, 14, rowIndex * 2 + 1, 13, 1, 14);
@@ -1670,7 +1678,7 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
     } else {
       item =
           Item_GetDirectFar(menu->items[firstEntry + rowIndex] & ITEM_ID_MASK);
-      if (item->element != 4) {
+      if (item->element != ELEMENT_NONE) {
         UiWindow_SetTilemapEntryFar(window, item->element + 1, 27,
                                     rowIndex * 2 + 1, 4);
         Render_SetTilemapFlagRect(window, 14, rowIndex * 2 + 1, 13, 1, 15);
@@ -1690,19 +1698,19 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
   if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED) {
     item = Item_GetDirectFar(menu->items[state->selectedIndex] & ITEM_ID_MASK);
     switch (item->type) {
-    case 1:
+    case ITEM_TYPE_WEAPON:
       Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X, 1,
                                 STATUS_EQUIP_SLOT_WIDTH, 1, 14);
       break;
-    case 4:
+    case ITEM_TYPE_HELM:
       Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X, 3,
                                 STATUS_EQUIP_SLOT_WIDTH, 1, 14);
       break;
-    case 3:
+    case ITEM_TYPE_SHIELD:
       Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X, 5,
                                 STATUS_EQUIP_SLOT_WIDTH, 1, 14);
       break;
-    case 2:
+    case ITEM_TYPE_ARMOR:
       Render_SetTilemapFlagRect(menu->equipWindow, STATUS_EQUIP_SLOT_X, 7,
                                 STATUS_EQUIP_SLOT_WIDTH, 1, 14);
       break;
@@ -1998,23 +2006,23 @@ void ItemMenu_DrawEquippedItemNames(struct UiWindow *window, u16 *items) {
   s32 slotIndex;
   s32 itemId;
 
-  for (slotIndex = 0; slotIndex < 15; slotIndex++) {
+  for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
     if (items[slotIndex] & INVENTORY_EQUIPPED) {
       itemId = items[slotIndex] & ITEM_ID_MASK;
       switch (Item_GetDirectFar(itemId)->type) {
-      case 1:
+      case ITEM_TYPE_WEAPON:
         UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window,
                                         STATUS_EQUIPPED_NAME_X, 8);
         break;
-      case 2:
+      case ITEM_TYPE_ARMOR:
         UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window,
                                         STATUS_EQUIPPED_NAME_X, 56);
         break;
-      case 3:
+      case ITEM_TYPE_SHIELD:
         UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window,
                                         STATUS_EQUIPPED_NAME_X, 40);
         break;
-      case 4:
+      case ITEM_TYPE_HELM:
         UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window,
                                         STATUS_EQUIPPED_NAME_X, 24);
         break;
@@ -2066,24 +2074,24 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
 
   menu = gMenuWork;
   ItemMenu_PosCategory();
-  for (slotIndex = 0; slotIndex < 15; slotIndex++) {
+  for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
     if (items[slotIndex] != 0 && (items[slotIndex] & INVENTORY_EQUIPPED) != 0) {
       icon = menu->entryIcons[slotIndex];
       if (icon != 0) {
         switch (Item_GetDirectFar(items[slotIndex] & ITEM_ID_MASK)->type) {
-        case 1:
+        case ITEM_TYPE_WEAPON:
           icon->x = 216;
           icon->y = 32;
           break;
-        case 2:
+        case ITEM_TYPE_ARMOR:
           icon->x = 216;
           icon->y = 80;
           break;
-        case 3:
+        case ITEM_TYPE_SHIELD:
           icon->x = 216;
           icon->y = 64;
           break;
-        case 4:
+        case ITEM_TYPE_HELM:
           icon->x = 216;
           icon->y = 48;
           break;

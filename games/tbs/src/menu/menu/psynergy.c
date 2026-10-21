@@ -34,14 +34,14 @@
 #define PSYNERGY_LIST_CURSOR_X 98
 #endif
 
-/// The field menu's Psynergy screen (Menu_RunTopSelection, icon 1), over the
-/// field, which stops meanwhile. Psynergy used on a member takes effect here.
-/// When the player picks Psynergy to use on the field, it is recorded as the
-/// field's Psynergy request (EventWork's psynergyRequest, owner << 10 |
-/// Psynergy), which Field_RunScene hands to Field_UsePsynergy once the menu has
-/// closed, and 1 is returned; -1 when the player backs out or presses Start
-/// (the field menu then opens again). Owns the menu work (HEAP_SLOT_MENU)
-/// while it runs and frees it before returning.
+/// The field menu's Psynergy screen (Menu_RunTopSelection,
+/// FIELD_MENU_PSYNERGY), over the field, which stops meanwhile. Psynergy used
+/// on a member takes effect here. When the player picks Psynergy to use on the
+/// field, it is recorded as the field's Psynergy request (EventWork's
+/// psynergyRequest, owner << 10 | Psynergy), which Field_RunScene hands to
+/// Field_UsePsynergy once the menu has closed, and 1 is returned; -1 when the
+/// player backs out or presses Start (the field menu then opens again). Owns
+/// the menu work (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 PsynergyMenu_Run(void) {
 #if TBS_PATCH_2
   void *saved = Runtime_BumpAllocateAlternatePool(PSYNERGY_PROMPT_TILES_SIZE);

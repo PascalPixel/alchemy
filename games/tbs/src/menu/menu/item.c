@@ -86,8 +86,8 @@ struct ItemPickerResult {
   u16 chosenSlot;   ///< FieldWork.itemArgument: the owner's inventory slot
 };
 
-/// The field menu's Item screen (Menu_RunTopSelection, icon 3): choose a
-/// party member, one of their items and a command. Items used here take
+/// The field menu's Item screen (Menu_RunTopSelection, FIELD_MENU_ITEM): choose
+/// a party member, one of their items and a command. Items used here take
 /// effect at once; an item to be used on the field is written as the field's
 /// item request (struct ItemPickerResult), run when the field menu has closed.
 /// Owns the menu work (HEAP_SLOT_MENU) while it runs and frees it before

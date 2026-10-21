@@ -617,7 +617,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     plan->element = Item_GetEquippedElementFar(request->unitId);
     plan->outcome = PLAN_SHOW_ATTACK;
     // An enemy's attack effect comes from its class; a party member's is
-    // effect 1 or 4 by who it is, any other none.
+    // effect 1 for Isaac, Garet and Jenna and 4 for Ivan and Mia, any other
+    // none. Each is played by id range (STAGING_BY_ID_RANGE).
     if (actor->classIndex == 0) {
       plan->presentationFlags =
           BattleClass_GetAttackEffect(actor->classId) | STAGING_BY_ID_RANGE;
@@ -776,6 +777,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       plan->outcome = PLAN_SHOW_MESSAGES;
     if (Battle_IsReviveEffectFar(ability->effect))
       plan->presentationFlags |= STAGING_ON_DOWNED;
+    // When Annihilation's instant death lands on its first target, the
+    // variant becomes 1: the burst then shows its second picture and plays a
+    // sound (BattleFx_RunAnnihilation).
     if (abilityId == ABILITY_ANNIHILATION && plan->targetHit[0] != 0)
       plan->presentationFlags |= 1 << STAGING_VARIANT_SHIFT;
   }

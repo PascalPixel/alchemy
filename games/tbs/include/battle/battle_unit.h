@@ -59,7 +59,8 @@ enum Element {
 /// Power Bread...), Defend, Flee and the enemies' commands (Threaten, Ally
 /// Search...). The enemies' targeting check (CHECK_EFFECT_TARGET) treats
 /// ability kind 9 as a summon: worth it on a living unit only when the power
-/// is nonzero.
+/// is nonzero. No row has ability kind 12 to 15, which would apply no power
+/// either.
 enum AbilityKind {
   ABILITY_KIND_HEAL_HP = 1,           ///< Cure, Fizz, healing items
   ABILITY_KIND_EFFECT = 2,            ///< damage only if the effect lands
@@ -84,14 +85,16 @@ enum AbilityKind {
 /// BattleAct.effect: what an ability does besides its damage or healing,
 /// applied by BattleTargetExec unless noted. Each is named for the abilities
 /// that have it (actions.tsv, with their English names and descriptions).
-/// Sidestep (48) and Crazy Voice (52) have effects no code here reads.
+/// Sidestep (48) and Crazy Voice (52) have effects no code here reads. A stat
+/// change whose name ends in `_2` moves its stat two stages, one without moves
+/// it one.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
   ABILITY_EFFECT_CURE_POISON = 3,        ///< Cure Poison, Antidote
   ABILITY_EFFECT_RESTORE = 4,            ///< Restore, Elixir
   ABILITY_EFFECT_REVIVE = 5,             ///< Revive, Water of Life: full HP
-  ABILITY_EFFECT_ATTACK_UP_2 = 6,        ///< Impact: two stages
-  ABILITY_EFFECT_ATTACK_UP = 7,          ///< High Impact: one stage
+  ABILITY_EFFECT_ATTACK_UP_2 = 6,        ///< Impact
+  ABILITY_EFFECT_ATTACK_UP = 7,          ///< High Impact
   ABILITY_EFFECT_ATTACK_DOWN_2 = 8,      ///< Dull
   ABILITY_EFFECT_ATTACK_DOWN = 9,        ///< Blunt
   ABILITY_EFFECT_DEFENSE_UP_2 = 10,      ///< Guard
@@ -121,7 +124,8 @@ enum AbilityEffect {
   ABILITY_EFFECT_LEAVE_ONE_HP = 34,      ///< Severe Blow, Thrash
   ABILITY_EFFECT_HALVE_DEFENSE = 35,     ///< Torch
   /// A 1 in 64 to 1 in 4 chance of an ability's critical hit, rolled by
-  /// BattleCommand_BuildPlan.
+  /// BattleCommand_BuildPlan. Only an attack (ABILITY_KIND_ATTACK or
+  /// ABILITY_KIND_ATTACK_MULTIPLIED) applies it, and no ability has one.
   ABILITY_EFFECT_CRITICAL_1_IN_64 = 36,
   ABILITY_EFFECT_CRITICAL_1_IN_32 = 37,
   ABILITY_EFFECT_CRITICAL_1_IN_16 = 38,
@@ -135,7 +139,7 @@ enum AbilityEffect {
   ABILITY_EFFECT_THREATEN = 45,           ///< Contain, Threaten, Tremble
   ABILITY_EFFECT_DEFEND = 46,             ///< Defend, Granite
   ABILITY_EFFECT_TOTAL_DEFENSE = 47,      ///< Total Defense, Flash
-  ABILITY_EFFECT_FLEE = 49,               ///< Flee
+  ABILITY_EFFECT_FLEE = 49,               ///< Flee: an enemy's becomes CMD_FLEE
   ABILITY_EFFECT_CALL_ALLY = 50,          ///< Ally Search, Speed Surge
   ABILITY_EFFECT_CALL_HELP = 51,          ///< Search for Help
   ABILITY_EFFECT_GROUND = 53,             ///< Ground, War Cry, Wicked Howl
@@ -283,7 +287,8 @@ struct BattleUnit {
   s8 poison; ///< 1 poisoned, 2 deadly poison
   /// Each stat change: the turns it has left, and its stage (UnitCalc: an
   /// eighth of Attack, Defense or Agility, or 20 Resistance, a stage).
-  /// Stages run -4 to 4 and last 7 turns.
+  /// Stages run -4 to 4 and last 7 turns; a lowered one may recover sooner at
+  /// the end of a turn.
   ///@{
   u8 attackTurns;
   s8 attackStage;

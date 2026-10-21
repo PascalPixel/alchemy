@@ -260,7 +260,9 @@ enum BattlePlanStaging {
 
 // BattleAct.targetMode: whom an ability may target, from its user's view.
 // The party's cursor (BattleTarget_RunSelection) shows the enemies for every
-// mode but TARGET_MODE_ALLIES and TARGET_MODE_SELF.
+// mode but TARGET_MODE_ALLIES and TARGET_MODE_SELF. No row of actions.tsv has
+// mode 3 or one above 4; BattlePlan_SetTargets would walk such a mode's range
+// as it does TARGET_MODE_FOES'.
 /// The ability takes one target, the aimed unit, whatever its range
 /// (BattlePlan_SetTargets), and an enemy aims it at itself. The field
 /// Psynergy and enemies' commands such as Threaten, Ally Search and Flee have

@@ -32,8 +32,9 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// A Resistance stage adds 20 to the resistance to every element (UnitCalc).
 #define RESISTANCE_PER_STAGE 20
 
-// The turns a stat change or a status lasts; each may end sooner, at the
-// rolls the end of every turn makes (BattleUnit_RollCounterEarlyEnd).
+// The turns a stat change or a status lasts. A status, or a lowered stat but
+// never a raised one or Agility, may end sooner at the rolls the end of every
+// turn makes (BattleUnit_RollCounterEarlyEnd).
 #define STAT_CHANGE_TURNS 7
 #define AGILITY_CHANGE_TURNS 5
 #define STATUS_TURNS 7
@@ -338,10 +339,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       u32 i;
 
       // Ground holds only a target with an entry in this round's action
-      // list, which keeps the entries that have run. XXX: likely meant as an
-      // action still to come, because the Djinni Ground is sorted to the
-      // round's front (BattleQueue_SortByPriority); War Cry and Wicked Howl,
-      // which have this effect too, can hold a target that has acted.
+      // list. BattlePresentation_DispatchAction clears each entry once it has
+      // played, so a target that has already acted is left alone; the auto
+      // battle's BattlePres_RunAction clears none.
       hit = 0;
       for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
         if (work->actions[i].unitId == targetId) {

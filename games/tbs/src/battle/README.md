@@ -180,6 +180,13 @@ the list from one turn to the next. A choice it can't make (too little PP, a
 seal, nobody worth aiming at) is drawn again, and after 18 tries the enemy
 defends.
 
+An enemy that picks an ability whose added effect is Defend, Total Defense or
+Flee never uses that ability at all. `BattleCommand_SelectAutomatic` turns the
+choice into a command of its own, `CMD_DEFEND`, `CMD_DEFEND2` or `CMD_FLEE`,
+aimed at the enemy itself. A guard is chosen as the round is built and raised
+before anyone acts (`round.c`), and a Flee waits for the enemy's turn, when
+the player reads `<unit> runs!`.
+
 Sometimes one side gets the jump on the other. Unless a battle sets its own
 start, the party strikes first one time in 16, and always in the Djinn
 tutorial: no enemy acts in the first round, and running away can't fail.
@@ -256,6 +263,12 @@ whose added effect is all they do; and 9, for the field Psynergy, Defend,
 Total Defense, Stand Ready, Flee, the enemies' commands such as Threaten and
 Ally Search, and the stat-raising items: Power Bread, Cookie, Apple, Hard Nut,
 Mint and Lucky Pepper.
+
+The other ability kinds have nothing to apply when the power is 0, either.
+`BattleTargetExec` skips the damage or healing of an ability of kind 1, 2, 5,
+6, 8, 10 or 11 with no power, so all it does is its added effect. An attack
+only adds its power to the blow, so Attack itself, whose power is 0, still
+strikes.
 
 Ability kind 6 belongs to the enemies' Blessings, Deadly Gas, Sonic Wave,
 Shriek, War Cry, howls and Wing Beats, and it's why most of them are announced
@@ -344,9 +357,11 @@ the item (the `CMD_ITEM` test in `BattleTargetExec`). The element multiplier
 `gElement_PowerResistCurve` in `../game/element_curve.s`) turns the bonus into
 the number the damage is multiplied by. It's 1 at an even match and moves half
 a percent for every point of bonus, from 0 at 200 points behind to 2 at 200
-ahead. Attacks feel the element at half strength, from 0.5 to 1.5. Healing
-goes by the healer's own Power instead, with no Resist in it: one percent more
-or less for each point above or below 100, from nothing at 0 to double at 200.
+ahead. Attacks feel the element at half strength, from 0.5 to 1.5. An ability
+with no element (`ELEMENT_NONE`) gets no bonus at all, so its multiplier stays
+1, whether it's an attack or not. Healing goes by the healer's own Power
+instead, with no Resist in it: one percent more or less for each point above
+or below 100, from nothing at 0 to double at 200.
 An ability with no element heals as if at 100. The game counts these
 multipliers in 256ths, so 1 is 256 (`FULL_RATE`), and every result rounds
 down.
@@ -417,6 +432,10 @@ where it adds 10 percent to Avalanche. Because it costs PP, it's staged as a cas
 Flint, Venus's first Djinni (ability 300), multiplies the same blow instead:
 ability kind 4 with a power of 16, so the plain 20 becomes 32, and 32 to 35
 with the random.
+
+However weak the actor and however strong the Defense or the guard, a blow
+always does at least 1 damage, a plain one or one that multiplies it.
+Psynergy damage has no such floor and can come to 0.
 
 A plain Attack has rolls of its own, made as the plan is built. It misses one
 time in 32, and a deluded attacker misses about three times in five as well
@@ -514,16 +533,21 @@ Restore or Tonic on a unit with nothing to cure, a curse on a unit whose
 countdown is already at its last turn. Otherwise the chance starts from the
 effect's base rate (Sleep 45 percent, Taint 55, Condemn's instant death 20
 and so on, in `BattleFx_GetBaseSuccessRate`), gains 3 for each element level
-the caster is ahead of the target, loses 3 for every two points of the
-target's Luck, and gains 25 when the effect is one of the three weaknesses
-the target's class lists, or an enemy's `weak_effect0` to `weak_effect2` in
-`enemies.tsv`.
+the caster is ahead of the target (nothing for an effect with no element,
+since `Unit_GetElementLevel` gives every unit level 0 there), loses 3 for
+every two points of the target's Luck, and gains 25 when the effect is one of
+the three weaknesses the target's class lists, or an enemy's `weak_effect0`
+to `weak_effect2` in `enemies.tsv`.
 The distance table above then scales it, so a Sleep with a 60 percent chance
 on the aimed foe has 36 on its neighbours. Quartz and Dew revive at a fixed 60
 and 90 percent, and an effect with no rate of its own, such as a raised stat
 or no effect at all, always works on the aimed target, though the distance
 table still scales it for its neighbours; levels, Luck and weaknesses don't
 change those. Luff gets three tries.
+
+When the effect of an ability of kind 2 (`ABILITY_KIND_EFFECT`) fails, its
+target takes no damage either, and the player reads
+`But it has no effect on <unit>!` (`MsgNoEffect`).
 
 Three effects are rolled earlier, as the plan is built (`plan.c`): a double
 or triple blow, an ability's critical hit, and Annihilation's instant death,
@@ -555,10 +579,14 @@ still standing. A revival needs the target down instead, and a drain still
 works on a target its own damage has just felled (`BattleEffectDeadCheck`).
 
 Stat changes move Attack, Defense or Resistance a stage or two, between -4 and
-4, for seven turns. A stage is an eighth of Attack or Defense, or 20 Resist in
-every element, and the number in the message is how far the stat really
-moved, so a stat already at its limit shows 0. Zephyr and Vine set Agility
-outright instead, doubled or halved, for five turns.
+4, for seven turns. A raised stat always lasts its seven turns, but a lowered
+one may recover sooner: once five turns or fewer are left, the end of each
+turn rolls for it, more often for a lucky unit and as the turns run down
+(`BattleUnit_RollCounterEarlyEnd`). A stage is an eighth of Attack or Defense,
+or 20 Resist in every element, and the number in the message is how far the
+stat really moved, so a stat already at its limit shows 0. Zephyr and Vine set
+Agility outright instead, doubled or halved, for five turns, which never end
+early.
 
 The statuses that Delude, Confuse, Charm, Paralyze and Sleep cause last seven
 turns and may wear off sooner, and so does Bind's seal on Psynergy. Luff's

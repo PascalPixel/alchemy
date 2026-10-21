@@ -184,7 +184,7 @@ select_again:
   }
 
   if (needsChoice != 0) {
-    // A guard or an escape targets the user itself.
+    // A guard or an escape becomes its own command, aimed at the user itself.
     ability = BattleActGet(abilityId);
     effect = ability->effect;
     switch (effect) {

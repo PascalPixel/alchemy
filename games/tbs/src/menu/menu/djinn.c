@@ -17,9 +17,9 @@
 #endif
 
 #if TBS_PATCH_1
-#define DJINN_SWAP_PREVIEW_MODE 2
+#define DJINN_SWAP_PREVIEW_MODE DJINN_PREVIEW_TRADE
 #else
-#define DJINN_SWAP_PREVIEW_MODE 4
+#define DJINN_SWAP_PREVIEW_MODE DJINN_PREVIEW_ADD
 #endif
 
 // The stat preview's columns; an arrow stands at x (in tiles) or, in the
@@ -604,10 +604,6 @@ s32 DjinnMenu_BuildLists(void *table) {
 #endif
 }
 
-/// The window map entry of the first element icon, in palette 5; the four
-/// elements follow it in order.
-#define DJINN_ELEMENT_TILE 0x5001
-
 /// Draws each owner's Djinn column, including set and recovering entries.
 /// Rebuilds table's lists first. Each name follows its element's icon: in the
 /// normal colour when set, colour 2 on standby and colour 4 while recovering.
@@ -748,8 +744,9 @@ void UiWindow_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
 /// The Djinn menu's help, opened by Select on the first chooser: a list of
 /// seven topics (Djinn, Set, Standby, Summon, Recovery, Class, Psynergy) with
 /// the chosen one's text typed beside it. The d-pad moves through the topics,
-/// and A moves on once the text has finished. Returns -1 for B or Select,
-/// back to the list, or -2 for Start, which closes the Djinn menu.
+/// and A moves on once the text has finished. Returns DJINN_RESULT_BACK for B
+/// or Select, back to the list, or DJINN_RESULT_START for Start, which closes
+/// the Djinn menu.
 s32 DjinnMenu_ShowHelp(void) {
   struct UiWindow *helpWindow;
   struct UiWindow *statusWindow;
@@ -815,11 +812,11 @@ s32 DjinnMenu_ShowHelp(void) {
         break;
       } else if (gKeysPressed & KEY_START) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
-        result = -2;
+        result = DJINN_RESULT_START;
         break;
       } else if (gKeysPressed & (KEY_B | KEY_SELECT)) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
-        result = -1;
+        result = DJINN_RESULT_BACK;
         break;
       } else if (gKeysPressed & KEY_A) {
         if (UiWork_IsCompleteFar()) {
@@ -868,12 +865,6 @@ s32 DjinnMenu_ShowHelp(void) {
 
 /// DJINN_ENTRY_IS_SET as a negative int, for entries built in s32.
 #define DJINN_ENTRY_SET (-0x8000)
-
-/// A Djinn list entry's owner, element and index (DJINN_ENTRY_OWNER,
-/// _ELEMENT and _INDEX), shifted down.
-#define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
-#define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
-#define DJINN_NUMBER(v) ((v) & 0x1f)
 
 /// The flags DjinnMenu_SelectDjinn keeps for each member's column.
 enum DjinnColumnFlag {
@@ -1656,14 +1647,14 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
   menu = gMenuWork;
   if (mode == DJINN_COMPARE_TRADE) {
     DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairOwner[1], 1,
-                              mode, 2, pageIndex, 1);
+                              mode, DJINN_PREVIEW_TRADE, pageIndex, 1);
     DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], mode, 1,
-                              2, pageIndex, mode);
+                              DJINN_PREVIEW_TRADE, pageIndex, mode);
   } else {
     DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->shownOwner[1], 1,
                               0, DJINN_SWAP_PREVIEW_MODE, pageIndex, 1);
-    DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownOwner[0], 0, 0, 1,
-                              pageIndex, 0);
+    DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownOwner[0], 0, 0,
+                              DJINN_PREVIEW_UNSET, pageIndex, 0);
   }
   return 1;
 }
@@ -1677,11 +1668,7 @@ static __inline__ void Unit_Copy(struct BattleUnit *destination,
 /// Saves the unit, applies a hypothetical Djinn change, draws its differences
 /// and restores the original unit before returning.
 ///
-/// previewMode says the change, with the Djinn chosen in the work's panes
-/// removePairSlot and addPairSlot: 0 the other's Djinni is added and set, 1
-/// the chosen Djinni is unset, 2 a trade (the own one is unset if set, the
-/// other's is added, and set if it was), 4 the other's Djinni is added (set if
-/// it was), 3 no change, with maximum HP and PP shown too. Page 0 shows the
+/// previewMode says the change (enum DjinnPreviewMode). Page 0 shows the
 /// stats, class and set Djinn counts, with an arrow beside each stat that
 /// changes; page n the nth page of the Psynergy list, new Psynergy in colour 4
 /// and lost Psynergy in colour 2. side is the portrait slot. The saved copy is
@@ -1708,15 +1695,15 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
   menu = gMenuWork;
   giveElement = menu->pairElement[removePairSlot];
   giveIndex = menu->pairIndex[removePairSlot];
-  giveSet = menu->pairEntries[removePairSlot] & 0x8000;
+  giveSet = menu->pairEntries[removePairSlot] & DJINN_ENTRY_IS_SET;
   takeElement = menu->pairElement[addPairSlot];
   takeIndex = menu->pairIndex[addPairSlot];
-  takeSet = menu->pairEntries[addPairSlot] & 0x8000;
+  takeSet = menu->pairEntries[addPairSlot] & DJINN_ENTRY_IS_SET;
   originalUnit = MemAlloc(sizeof(struct BattleUnit));
   Unit_Copy(originalUnit, unit);
 
   if (page == 0) {
-    if (previewMode == 3) {
+    if (previewMode == DJINN_PREVIEW_NO_CHANGE) {
       UiText_DrawNumberInWindowFar(unit->maxHp, DJINN_PREVIEW_DIGITS, window,
                                    x * 8 + DJINN_PREVIEW_MAX_X, y * 8 + 56);
       UiText_DrawNumberInWindowFar(unit->maxPp, DJINN_PREVIEW_DIGITS, window,
@@ -1747,27 +1734,27 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
 
   // Only the temporary unit changes; the saved record is restored below.
   switch (previewMode) {
-  case 0:
-    Djinn_AddToOwnerFar(ownerId, takeElement, takeIndex & 31);
-    Djinn_ActivateFar(ownerId, takeElement, takeIndex & 31);
+  case DJINN_PREVIEW_ADD_AND_SET:
+    Djinn_AddToOwnerFar(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
+    Djinn_ActivateFar(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
     break;
-  case 1:
-    giveIndex &= 31;
+  case DJINN_PREVIEW_UNSET:
+    giveIndex &= DJINN_ENTRY_INDEX;
     Djinn_DeactivateFar(ownerId, giveElement, giveIndex);
     break;
-  case 2:
+  case DJINN_PREVIEW_TRADE:
     if (giveSet) {
-      giveIndex &= 31;
+      giveIndex &= DJINN_ENTRY_INDEX;
       Djinn_DeactivateFar(ownerId, giveElement, giveIndex);
     }
-    Djinn_AddToOwnerFar(ownerId, takeElement, takeIndex & 31);
+    Djinn_AddToOwnerFar(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
     if (takeSet)
-      Djinn_ActivateFar(ownerId, takeElement, takeIndex & 31);
+      Djinn_ActivateFar(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
     break;
-  case 4:
-    Djinn_AddToOwnerFar(ownerId, takeElement, takeIndex & 31);
+  case DJINN_PREVIEW_ADD:
+    Djinn_AddToOwnerFar(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
     if (takeSet)
-      Djinn_ActivateFar(ownerId, takeElement, takeIndex & 31);
+      Djinn_ActivateFar(ownerId, takeElement, takeIndex & DJINN_ENTRY_INDEX);
     break;
   }
 
@@ -1966,8 +1953,4 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
 #undef DJINN_BACKDROP_FRAME_TILE
 #undef DJINN_PREVIEW_GAINED
 #undef DJINN_PREVIEW_LOST
-#undef DJINN_ELEMENT_TILE
 #undef DJINN_ENTRY_SET
-#undef DJINN_OWNER
-#undef DJINN_ELEMENT
-#undef DJINN_NUMBER

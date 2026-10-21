@@ -13,9 +13,9 @@
 /// pages: both members' stats (the first), then the giver's and then the
 /// receiver's stats beside their Psynergy list; Left and Right turn the
 /// Psynergy list's pages. A set or standby shows the member's stats and
-/// Psynergy. Returns 1 for A, -1 for B and -2 for Start; the caller makes the
-/// change. The page counts are measured on the real units, which are put back
-/// from a copy at once.
+/// Psynergy. Returns DJINN_RESULT_CONFIRMED for A, DJINN_RESULT_BACK for B and
+/// DJINN_RESULT_START for Start; the caller makes the change. The page counts
+/// are measured on the real units, which are put back from a copy at once.
 s32 OwnerAction_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
@@ -37,12 +37,12 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   s32 ownerIndex;
 
   menu = gMenuWork;
-  confirmationChoice = 0;
+  confirmationChoice = CONFIRM_YES;
   result = 0;
   redraw = 1;
   frame = 0;
   selectedPages[0] = 0;
-  page = 2;
+  page = DJINN_COMPARE_PAGE_BOTH;
   menu->cursor->active = ICON_HIDDEN;
   selectedPages[1] = 0;
 
@@ -87,7 +87,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     secondIndex = 0;
     ownerId = menu->shownOwner[0];
     firstElement = menu->pairElement[0];
-    firstIndex = menu->pairIndex[0] & 31;
+    firstIndex = menu->pairIndex[0] & DJINN_ENTRY_INDEX;
     firstWasSet = (u16)(menu->pairEntries[0] & DJINN_ENTRY_IS_SET);
 
     unit = UnitGetFar(ownerId);
@@ -95,7 +95,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     Djinn_DeactivateFar(ownerId, firstElement, firstIndex);
     if (mode == DJINN_COMPARE_TRADE) {
       secondElement = menu->pairElement[1];
-      secondIndex = menu->pairIndex[1] & 31;
+      secondIndex = menu->pairIndex[1] & DJINN_ENTRY_INDEX;
       secondWasSet = (u16)(menu->pairEntries[1] & DJINN_ENTRY_IS_SET);
       Djinn_AddToOwnerFar(ownerId, secondElement, secondIndex);
       if (secondWasSet != 0) {
@@ -125,7 +125,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     Iwram_CopyWords(unit, originalUnit, size);
     MemFree(originalUnit);
     MemFree(diffWork);
-  } else if (mode - 2 <= 1) {
+  } else if (mode == DJINN_COMPARE_STANDBY || mode == DJINN_COMPARE_SET) {
     u16 *diffWork;
     struct BattleUnit *originalUnit;
     struct BattleUnit *unit;
@@ -140,7 +140,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     originalUnit = Runtime_BumpAllocateAlternatePool(sizeof(*originalUnit));
     firstOwnerId = menu->shownOwner[0];
     firstElement = menu->pairElement[0];
-    firstIndex = menu->pairIndex[0] & 31;
+    firstIndex = menu->pairIndex[0] & DJINN_ENTRY_INDEX;
     applySecond = (mode == DJINN_COMPARE_SET);
 
     unit = UnitGetFar(firstOwnerId);
@@ -155,7 +155,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
                               diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, sizeof(*originalUnit));
     pageCounts[1] = pageCounts[0];
-    page = 0;
+    page = DJINN_COMPARE_PAGE_GIVER;
     MemFree(originalUnit);
     MemFree(diffWork);
   }
@@ -205,38 +205,39 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
     UiWork_SetParamNibbleFar(2);
   }
-  UiText_DrawCharacterAtOffsetFar(((menu->pairEntries[0] & 0xe0) >> 5) * 20 +
-                                      (menu->pairEntries[0] & 31) +
-                                      MsgDjinnName,
-                                  menu->helpWindow, 48, row * 8);
+  UiText_DrawCharacterAtOffsetFar(
+      DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
+          DJINN_NUMBER(menu->pairEntries[0]) + MsgDjinnName,
+      menu->helpWindow, 48, row * 8);
   UiWindow_SetTilemapEntryFar(menu->helpWindow,
-                              ((menu->pairEntries[0] & 0xe0) >> 5) + 0x5001, 5,
-                              row, zero = 0);
+                              DJINN_ELEMENT(menu->pairEntries[0]) +
+                                  DJINN_ELEMENT_TILE,
+                              5, row, zero = 0);
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
 
   if (mode == DJINN_COMPARE_TRADE) {
     if ((menu->pairEntries[1] & DJINN_ENTRY_IS_SET) == 0) {
       UiWork_SetParamNibbleFar(2);
     }
-    UiText_DrawCharacterAtOffsetFar(((menu->pairEntries[1] & 0xe0) >> 5) * 20 +
-                                        (menu->pairEntries[1] & 31) +
-                                        MsgDjinnName,
-                                    menu->helpWindow, 48, 16);
-    UiWindow_SetTilemapEntryFar(menu->helpWindow,
-                                ((menu->pairEntries[1] & 0xe0) >> 5) + 0x5001,
-                                5, 2, mode);
+    UiText_DrawCharacterAtOffsetFar(
+        DJINN_ELEMENT(menu->pairEntries[1]) * DJINN_PER_ELEMENT +
+            DJINN_NUMBER(menu->pairEntries[1]) + MsgDjinnName,
+        menu->helpWindow, 48, 16);
+    UiWindow_SetTilemapEntryFar(
+        menu->helpWindow,
+        DJINN_ELEMENT(menu->pairEntries[1]) + DJINN_ELEMENT_TILE, 5, 2, mode);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else if (mode - 2 <= 1) {
     if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) != 0) {
       UiWork_SetParamNibbleFar(2);
     }
-    UiText_DrawCharacterAtOffsetFar(((menu->pairEntries[0] & 0xe0) >> 5) * 20 +
-                                        (menu->pairEntries[0] & 31) +
-                                        MsgDjinnName,
-                                    menu->helpWindow, 48, 16);
-    UiWindow_SetTilemapEntryFar(menu->helpWindow,
-                                ((menu->pairEntries[0] & 0xe0) >> 5) + 0x5001,
-                                5, 2, zero);
+    UiText_DrawCharacterAtOffsetFar(
+        DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
+            DJINN_NUMBER(menu->pairEntries[0]) + MsgDjinnName,
+        menu->helpWindow, 48, 16);
+    UiWindow_SetTilemapEntryFar(
+        menu->helpWindow,
+        DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
     UiWindow_SetTilemapEntryFar(menu->helpWindow, 0xf296, 7, 1, zero);
   }
@@ -250,7 +251,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
 
-    // The tutorial presses A (1) for the player after 100 frames, or shows
+    // The tutorial presses A for the player after 100 frames, or shows
     // its messages; around each message the first 0x200 bytes of the window
     // work (the tilemap's top eight rows) are saved and put back.
     if (backdrop->tutorialStep != 0) {
@@ -268,8 +269,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       case 12:
       case 23:
         if (backdrop->tutorialTimer == 100) {
-          repeatedKeys = 1;
-          pressedKeys = 1;
+          repeatedKeys = KEY_A;
+          pressedKeys = KEY_A;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep += 1;
         }
@@ -347,18 +348,19 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       MemFree(saved);
     }
 
-    // The pages: 2 both members' stats, 0 the giver's stats and Psynergy, 1
-    // the receiver's. The help names what R shows next: "R: <giver>'s Psy"
-    // on page 2, the receiver's on page 0, "R: Status" on page 1.
+    // The help names what R shows next: `R: <giver>'s Psy` on
+    // DJINN_COMPARE_PAGE_BOTH, the receiver's on DJINN_COMPARE_PAGE_GIVER,
+    // "R: Status" on DJINN_COMPARE_PAGE_RECEIVER.
     if (redraw != 0) {
       addPairSlot = 1;
       if (mode <= DJINN_COMPARE_GIVE) {
         UiWindow_ClearInteriorTilesFar(menu->helpWindow, 128, 16, 224, 24);
-        if (page == 1) {
+        if (page == DJINN_COMPARE_PAGE_RECEIVER) {
           UiText_DrawCharacterAtOffsetFar(MsgDjinnStatusHelp, menu->helpWindow,
                                           128, 16);
         } else {
-          UiWork_PushValueSlotFar(menu->shownOwner[page != 2], 1);
+          UiWork_PushValueSlotFar(
+              menu->shownOwner[page != DJINN_COMPARE_PAGE_BOTH], MSG_ARG_ACTOR);
           UiText_DrawCharacterAtOffsetFar(MsgDjinnPsyHelp, menu->helpWindow,
                                           128, 16);
         }
@@ -371,22 +373,22 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       }
 
       if (mode == DJINN_COMPARE_SET) {
-        previewMode = 0;
+        previewMode = DJINN_PREVIEW_ADD_AND_SET;
         addPairSlot = 0;
       } else if (mode == DJINN_COMPARE_STANDBY) {
-        previewMode = 1;
+        previewMode = DJINN_PREVIEW_UNSET;
         addPairSlot = 0;
       } else {
-        previewMode = 2;
+        previewMode = DJINN_PREVIEW_TRADE;
       }
 
       switch (page) {
       default:
         DjinnMenu_DrawPairPreview(mode, 0);
         break;
-      case 1:
+      case DJINN_COMPARE_PAGE_RECEIVER:
         if (mode == DJINN_COMPARE_GIVE) {
-          previewMode = 4;
+          previewMode = DJINN_PREVIEW_ADD;
         }
         DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownOwner[1], page,
                                   0, previewMode, 0, 0);
@@ -394,9 +396,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
                                   page, 0, previewMode, selectedPages[1] + 1,
                                   0);
         break;
-      case 0:
+      case DJINN_COMPARE_PAGE_GIVER:
         if (mode == DJINN_COMPARE_GIVE) {
-          previewMode = 1;
+          previewMode = DJINN_PREVIEW_UNSET;
           addPairSlot = 0;
         }
         DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], page,
@@ -412,7 +414,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     // The Psynergy list's page numbers on the right window's top border:
     // 0xf031 + n is the window font's digit n + 1 in palette 15 ('0' past the
     // tenth page); less 0x1000, palette 14 for the page shown.
-    if (page <= 1) {
+    if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
       list = menu->secondWindow;
       if (pageCounts[page] > 1) {
         s32 top;
@@ -500,21 +502,21 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     }
 
     if ((pressedKeys & KEY_A) != 0) {
-      if (confirmationChoice == 0) {
-        result = 1;
+      if (confirmationChoice == CONFIRM_YES) {
+        result = DJINN_RESULT_CONFIRMED;
         break;
       }
       AudioCommand_PlayFar(SE_MENU_CANCEL);
-      result = -1;
+      result = DJINN_RESULT_BACK;
       break;
     }
     if ((pressedKeys & KEY_START) != 0) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
-      result = -2;
+      result = DJINN_RESULT_START;
       break;
     } else if ((pressedKeys & KEY_B) != 0) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
-      result = -1;
+      result = DJINN_RESULT_BACK;
       break;
     } else if ((pressedKeys & KEY_R) != 0) {
       if (mode <= DJINN_COMPARE_GIVE) {
@@ -523,7 +525,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     } else if ((repeatedKeys & KEY_LEFT) != 0) {
-      if (page <= 1) {
+      if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
         selectedPages[page]--;
         selectedPages[page] =
             Menu_WrapIndex(selectedPages[page], pageCounts[page]);
@@ -532,7 +534,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         redraw = 1;
       }
     } else if ((repeatedKeys & KEY_RIGHT) != 0) {
-      if (page <= 1) {
+      if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         selectedPages[page]++;
@@ -567,7 +569,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
 /// Shows the chosen owner's current stats and paged Psynergy list.
 /// Opened by L on the Djinn list ("Char. Status"): the member's stats on the
 /// left, their Psynergy six to a page on the right, which Left and Right turn.
-/// Returns -1 for A, B, L or R, and -2 for Start, which closes the Djinn menu.
+/// Returns DJINN_RESULT_BACK for A, B, L or R, and DJINN_RESULT_START for
+/// Start, which closes the Djinn menu.
 s32 DjinnMenu_ShowOwnerStatus(void) {
   s32 selectedPages[2];
   s32 pageCounts[2];
@@ -639,10 +642,11 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
       render->menuBusy = 1;
       RenderOutput_PrepareForRedrawFar(menu->window);
       RenderOutput_PrepareForRedrawFar(menu->secondWindow);
-      DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], 0, 0, 3,
-                                0, 1);
+      DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], 0, 0,
+                                DJINN_PREVIEW_NO_CHANGE, 0, 1);
       DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairOwner[0], 0,
-                                0, 3, selectedPages[0] + 1, 1);
+                                0, DJINN_PREVIEW_NO_CHANGE,
+                                selectedPages[0] + 1, 1);
       render->menuBusy = 0;
     }
     if (counts[side] > 1) {
@@ -680,12 +684,12 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
     }
     if (pressedKeys & KEY_START) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
-      result = -2;
+      result = DJINN_RESULT_START;
       break;
     }
     if (pressedKeys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
-      result = -1;
+      result = DJINN_RESULT_BACK;
       break;
     }
     if (repeatedKeys & KEY_LEFT) {

@@ -195,6 +195,26 @@ enum StatusPanelKind {
 /// half (size 1).
 #define ICON_SPRITE_16X16 0x40000000
 
+/// The Djinn change DjinnMenu_DrawStatPreview previews, with the Djinn in the
+/// work's panes removePairSlot and addPairSlot.
+enum DjinnPreviewMode {
+  DJINN_PREVIEW_ADD_AND_SET = 0, ///< the other's Djinni is added and set
+  DJINN_PREVIEW_UNSET = 1,       ///< the chosen Djinni is unset
+  /// A trade: the own Djinni is unset if set, the other's is added, and set
+  /// if it was.
+  DJINN_PREVIEW_TRADE = 2,
+  DJINN_PREVIEW_NO_CHANGE = 3, ///< nothing changes; maximum HP and PP shown
+  DJINN_PREVIEW_ADD = 4        ///< the other's Djinni is added, set if it was
+};
+
+/// OwnerAction_RunCompareLoop's pages for a give or trade, which R cycles; the
+/// first two also index its per-member page counts.
+enum DjinnComparePage {
+  DJINN_COMPARE_PAGE_GIVER = 0,    ///< the giver's stats and Psynergy
+  DJINN_COMPARE_PAGE_RECEIVER = 1, ///< the receiver's stats and Psynergy
+  DJINN_COMPARE_PAGE_BOTH = 2      ///< both members' stats, shown first
+};
+
 /// What the Djinn menu's choosers return. DjinnMenu_SelectDjinn's Djinni
 /// chooser returns DJINN_RESULT_CHOSEN, DJINN_RESULT_STATUS or
 /// DJINN_RESULT_HELP; its action chooser one of the commands. Every Djinn menu
@@ -202,7 +222,8 @@ enum StatusPanelKind {
 enum DjinnMenuResult {
   DJINN_RESULT_START = -2, ///< Start: the Djinn menu closes
   DJINN_RESULT_BACK = -1,
-  DJINN_RESULT_CHOSEN = 1, ///< A on a Djinni
+  DJINN_RESULT_CHOSEN = 1,    ///< A on a Djinni
+  DJINN_RESULT_CONFIRMED = 1, ///< A on the preview's "Is this OK?"
   DJINN_RESULT_SET = 1,
   DJINN_RESULT_STANDBY = 2,
   DJINN_RESULT_GIVE = 3,
@@ -239,6 +260,16 @@ enum DjinnSelectMode {
   DJINN_SELECT_DJINNI = 0, ///< a Djinni in any member's column
   DJINN_SELECT_ACTION = 1  ///< what to do with the Djinni chosen
 };
+
+/// The window map entry of the first element icon, in palette 5; the four
+/// elements follow it in order.
+#define DJINN_ELEMENT_TILE 0x5001
+
+/// A Djinn list entry's owner, element and index (DJINN_ENTRY_OWNER,
+/// _ELEMENT and _INDEX), shifted down.
+#define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
+#define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
+#define DJINN_NUMBER(v) ((v) & 0x1f)
 
 /// The preview loop's four operations, as its confirmation text describes them
 /// (OwnerAction_RunCompareLoop's mode). Trade and Give, the first two, have

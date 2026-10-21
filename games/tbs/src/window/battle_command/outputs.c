@@ -53,7 +53,7 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
   output->index = slot;
   // Kind 1: the output owns the slot, which is freed with it. Its motion is
   // UI_SPRITE_STILL.
-  output->kind = 1;
+  output->kind = RENDER_OUTPUT_SPRITE;
   output->active = 1;
   RenderOutput_AppendToList(&window->output, output);
   return output;
@@ -178,7 +178,7 @@ struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
   portrait = RenderOutput_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
   if (portrait != NULL) {
     portrait->oam.palette = palette;
-    portrait->kind = 2;
+    portrait->kind = RENDER_OUTPUT_PORTRAIT;
   }
 
   // Recorded even when no output was free and RenderOutput_Create released

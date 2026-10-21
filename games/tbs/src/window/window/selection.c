@@ -39,8 +39,8 @@ void UiGlyph_ResetWorkState(void) {
   // chosen icons, 14 the pointing hand and 15 the large icon.
   i = 0;
   do {
-    work->records[i + 2].kind = 0;
-    work->records[i + 9].kind = 0;
+    work->records[i + 2].kind = ICON_KIND_NONE;
+    work->records[i + 9].kind = ICON_KIND_NONE;
     i++;
   } while (i != 5);
   // Cleared through a view from each record's base field, which forms
@@ -57,7 +57,7 @@ void UiGlyph_ResetWorkState(void) {
   work->records[14].tile = VramCache_Load(work->records[14].slot, 256, table);
   work->records[14].kind = 0;
   work->records[14].scale = 0;
-  work->records[15].kind = 0;
+  work->records[15].kind = ICON_KIND_NONE;
   visual = &work->records[14].sprite;
   visual->mode = 0;
   visual->mosaic = 0;
@@ -495,7 +495,7 @@ void Resource_ResetOwnerEntries(void) {
   while (node != 0) {
     if (node->kind != ICON_KIND_NONE) {
       Resource_ResetEntry(node->slot);
-      node->kind = 0;
+      node->kind = ICON_KIND_NONE;
     }
     node = node->next;
   }
@@ -503,7 +503,7 @@ void Resource_ResetOwnerEntries(void) {
   while (node != 0) {
     if (node->kind != ICON_KIND_NONE) {
       Resource_ResetEntry(node->slot);
-      node->kind = 0;
+      node->kind = ICON_KIND_NONE;
     }
     node = node->next;
   }
@@ -1015,7 +1015,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     } while (node->scale != 0);
     screen->head = node->next;
     Resource_ResetEntry(node->slot);
-    node->kind = 0;
+    node->kind = ICON_KIND_NONE;
     node = node->next;
     node->prev = NULL;
   } else {
@@ -1236,7 +1236,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   for (other = screen->head; other != NULL; other = other->next) {
     if (other != node) {
       Resource_ResetEntry(other->slot);
-      other->kind = 0;
+      other->kind = ICON_KIND_NONE;
     }
   }
   screen->head = node;
@@ -1281,7 +1281,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   sprite->shape = 0;
   sprite->palette = 0;
   sprite->tile = other->tile;
-  node->kind = 0;
+  node->kind = ICON_KIND_NONE;
   screen->head = NULL;
   if (screen->path != NULL) {
     node = screen->path;
@@ -1370,7 +1370,7 @@ void SelectionScreen_LoadLargeIcon(void) {
   if (transfer->kind == ICON_KIND_NONE)
     transfer->slot = Resource_FindFreeEntry();
   transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
-  transfer->kind = 1;
+  transfer->kind = ICON_KIND_COMMAND;
   transfer->base = resourceId;
   transfer->scale = 40;
   transfer->scaleStep = 40;
@@ -1385,7 +1385,7 @@ void Resource_ResetPendingTransfer(void) {
 
   if (largeIcon->kind != ICON_KIND_NONE) {
     Resource_ResetEntry(largeIcon->slot);
-    largeIcon->kind = 0;
+    largeIcon->kind = ICON_KIND_NONE;
   }
 }
 

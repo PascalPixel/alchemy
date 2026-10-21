@@ -160,7 +160,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     u32 zero;
     if (output) {
       output->active = 1;
-      output->kind = 1;
+      output->kind = RENDER_OUTPUT_SPRITE;
       // Stored through a cast, the index stays ahead of the attribute word.
       *(s8 *)&output->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)((u8 *)output + 16);

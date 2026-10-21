@@ -520,15 +520,14 @@ void RenderOutput_AppendToList(struct RenderOutputList *list,
 }
 
 /// Frees a render output: returns it to the free list, releases its VRAM cache
-/// entry unless it is a glyph (kind 0), and for a portrait (kind 2) frees its
-/// palette slot too. Its one caller, RenderOutput_ClearList, has detached the
-/// list first: the free list reuses the output's link.
+/// entry unless it is a glyph, and for a portrait frees its palette slot too.
+/// Its one caller, RenderOutput_ClearList, has detached the list first: the
+/// free list reuses the output's link.
 void RenderOutput_Release(struct RenderOutput *entry) {
   RenderOutput_ReleaseFree(entry);
-  if ((u8)entry->kind != 0) {
+  if ((u8)entry->kind != RENDER_OUTPUT_GLYPH) {
     Resource_ResetEntry((u8)entry->index);
-    if ((u8)entry->kind == 2) {
-      // Free its palette slot (999 marks a free slot).
+    if ((u8)entry->kind == RENDER_OUTPUT_PORTRAIT) {
       u8 *work = gWindowWork[0];
       s32 offset = entry->oam.palette * 2 + RENDER_PALETTE_TABLE_OFFSET;
       *(u16 *)(work + offset) = UI_PALETTE_SLOT_FREE;

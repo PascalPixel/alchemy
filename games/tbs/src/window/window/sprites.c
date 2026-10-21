@@ -89,7 +89,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     // The output's own four tiles of the glyph sheet.
     index = (output - work->outputs) * 4;
     output->active = UI_SPRITE_STILL;
-    output->kind = 0;
+    output->kind = RENDER_OUTPUT_GLYPH;
     if (mode == GLYPH_DRAW_PAGE_ARROW) {
       width = 1;
       output->active = UI_SPRITE_PAGE_ARROW;

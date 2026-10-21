@@ -177,6 +177,14 @@ enum CommandIcon {
   COMMAND_ICON_BRONZE = 48
 };
 
+/// RenderOutput.kind: what a render output owns besides itself, which
+/// RenderOutput_Release frees.
+enum RenderOutputKind {
+  RENDER_OUTPUT_GLYPH = 0,   ///< a glyph of the window's glyph sheet
+  RENDER_OUTPUT_SPRITE = 1,  ///< its own VRAM cache entry
+  RENDER_OUTPUT_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
+};
+
 /// What UiText_DrawGlyph and UiWindow_PutGlyph draw.
 enum GlyphDrawMode {
   GLYPH_DRAW_CHARACTER = 0, ///< the character given

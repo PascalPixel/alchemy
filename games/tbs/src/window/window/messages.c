@@ -633,7 +633,7 @@ void UiWork_FinalizeEntityMatchingLocalizedId(u32 speaker) {
     if (portraitOutput == NULL)
       continue;
 #endif
-    if ((u8)portraitOutput->kind == 2 &&
+    if ((u8)portraitOutput->kind == RENDER_OUTPUT_PORTRAIT &&
         (u8)portraitOutput->index == resourceId) {
       UiWork_Finalize(window, 2);
       return;

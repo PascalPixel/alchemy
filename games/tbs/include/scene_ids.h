@@ -43,7 +43,7 @@ extern char SceneId_Bilibin;
 extern char SceneId_BilibinInteriors;
 extern char SceneId_BilibinTreasury;
 extern char SceneId_McCoyPalace;
-extern char SceneId_McCoyPalaceGarden;
+extern char SceneId_McCoyPalaceGrounds;
 extern char SceneId_BilibinBarricade;
 extern char SceneId_Kolima;
 extern char SceneId_KolimaInteriors;

@@ -60,7 +60,7 @@
 /// and a door there stays locked (`The door is tightly locked.`). At McCoy's
 /// Palace the worker who built the barricade calls it shabby, a gate guard
 /// thinks its hinges might break, and McCoy's captain hints that the party may
-/// not need a key (mccoy_palace.c, mccoy_palace_garden.c). A stack of crates
+/// not need a key (mccoy_palace.c, mccoy_palace_grounds.c). A stack of crates
 /// (RIVER_PILLAR) slides a cell at a time under Move or a push, and
 /// Bilibin_UpdateRiverPillarCells rewrites the ten cells of its lane after
 /// each move. By the river stand three trees, one on another's shoulders
@@ -888,7 +888,7 @@ u16 gBilibinEntrancesOther[] = {
 struct SceneEntrance gBilibinEntrances1[] = {
     {BILIBIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 240, 0, 472, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
-    {BILIBIN_FROM_MCCOY_PALACE_GARDEN, CONDITION_ALWAYS, 224, 0, 88,
+    {BILIBIN_FROM_MCCOY_PALACE_GROUNDS, CONDITION_ALWAYS, 224, 0, 88,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {BILIBIN_FROM_INN, CONDITION_ALWAYS, 376, 0, 360, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
@@ -941,7 +941,7 @@ s16 gBilibinRegions2[] = {
 u32 gBilibinExits[] = {
     SCENE_EXITS(Bilibin),
     SCENE_EXIT(BILIBIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_BILIBIN),
-    SCENE_EXIT(BILIBIN_TO_MCCOY_PALACE_GARDEN, McCoyPalaceGarden, MCCOY_PALACE_GARDEN_FROM_BILIBIN),
+    SCENE_EXIT(BILIBIN_TO_MCCOY_PALACE_GROUNDS, McCoyPalaceGrounds, MCCOY_PALACE_GROUNDS_FROM_BILIBIN),
     SCENE_EXIT(BILIBIN_TO_INN, BilibinInteriors, BILIBIN_INTERIORS_INN),
     SCENE_EXIT(BILIBIN_TO_HOUSE_EAST, BilibinInteriors, BILIBIN_INTERIORS_HOUSE_EAST),
     SCENE_EXIT(BILIBIN_TO_HOUSE_WEST, BilibinInteriors, BILIBIN_INTERIORS_HOUSE_WEST),

@@ -195,7 +195,7 @@ gScene_AreaNameRules:
 	group_name 7, -1, 18
 	scene_name BilibinTreasury, -1, 19
 	group_name 8, -1, 20
-	scene_name McCoyPalaceGarden, -1, 21
+	scene_name McCoyPalaceGrounds, -1, 21
 	group_name 9, -1, 21
 	group_name 10, -1, 22
 	scene_name KolimaTunnel, -1, 23

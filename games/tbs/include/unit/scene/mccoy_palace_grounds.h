@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_SCENE_MCCOY_PALACE_GARDEN_H
-#define ALCHEMY_UNIT_SCENE_MCCOY_PALACE_GARDEN_H
+#ifndef ALCHEMY_UNIT_SCENE_MCCOY_PALACE_GROUNDS_H
+#define ALCHEMY_UNIT_SCENE_MCCOY_PALACE_GROUNDS_H
 
 #include "types.h"
 #include "field_scene.h"
@@ -16,11 +16,11 @@ const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern u16 gPalaceGateOpenSteps[];
 extern s32 gGuardWatchesParty[];
-extern struct SceneEntrance gMcCoyPalaceGardenEntrances[];
-extern u32 gMcCoyPalaceGardenExits[];
-extern struct ScenePlacement gMcCoyPalaceGardenPlacementsOther[];
-extern struct ScenePlacement gMcCoyPalaceGardenPlacements[];
-extern struct SceneEvent gMcCoyPalaceGardenEventsOther[];
-extern struct SceneEvent gMcCoyPalaceGardenEvents[];
+extern struct SceneEntrance gMcCoyPalaceGroundsEntrances[];
+extern u32 gMcCoyPalaceGroundsExits[];
+extern struct ScenePlacement gMcCoyPalaceGroundsPlacementsOther[];
+extern struct ScenePlacement gMcCoyPalaceGroundsPlacements[];
+extern struct SceneEvent gMcCoyPalaceGroundsEventsOther[];
+extern struct SceneEvent gMcCoyPalaceGroundsEvents[];
 
 #endif

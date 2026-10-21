@@ -1,7 +1,7 @@
 /// @file
 /// McCoy's Palace (McCoyPalace, scene 33), the palace of Lord McCoy, the lord
-/// of Bilibin. The grounds outside its gate (McCoyPalaceGarden, scene 34,
-/// mccoy_palace_garden.c) have the same area name, and the party comes in
+/// of Bilibin. The grounds outside its gate (McCoyPalaceGrounds, scene 34,
+/// mccoy_palace_grounds.c) have the same area name, and the party comes in
 /// from there (its exit 2, this scene's entrance 1; exit 1 leads back out).
 ///
 /// Where it falls in the story: the people of Kolima have been turned into
@@ -464,7 +464,7 @@ s32 Scene_Initialize(void) {
   // A first audience and a return to the entrance have different greetings.
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) == 0 &&
       Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    if (gGameState.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST) {
+    if (gGameState.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
       Event_AudienceWithMcCoy();
     } else if (gGameState.entrance == 9 &&
                Engine_GameFlagIsSet(FLAG_PLACE_TEMP_21) != 0) {
@@ -474,7 +474,7 @@ s32 Scene_Initialize(void) {
     rewardTaken = Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     if (rewardTaken != 0) {
     } else {
-      if (gGameState.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST) {
+      if (gGameState.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
         if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
           curseLifted = Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED);
           if (curseLifted != 0) {
@@ -1396,7 +1396,7 @@ s32 gPalace_PacingActions[] = {
 
 struct SceneEntrance gMcCoyPalaceEntrances[] = {
     {0, CONDITION_ALWAYS, 256, 0, 808, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_WEST, CONDITION_ALWAYS, 256, 0, 808,
+    {MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST, CONDITION_ALWAYS, 256, 0, 808,
      FACING_NORTH, 0, 32, 496, 480, 856, 0},
     {2, CONDITION_ALWAYS, 120, 0, 792, FACING_EAST, 0, 32, 496, 480, 856, 0},
     {3, CONDITION_ALWAYS, 392, 0, 792, FACING_WEST, 0, 32, 496, 480, 856, 0},
@@ -1425,15 +1425,15 @@ struct SceneEntrance gMcCoyPalaceEntrances[] = {
     {26, CONDITION_ALWAYS, 744, 0, 424, FACING_EAST, 0, 592, 352, 832, 512, 0},
     {27, CONDITION_ALWAYS, 888, 0, 424, FACING_WEST, 0, 792, 352, 1032, 512, 0},
     {28, CONDITION_ALWAYS, 600, 0, 760, FACING_EAST, 0, 512, 560, 752, 816, 0},
-    {MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST, CONDITION_ALWAYS, 896, 0, 728,
+    {MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, CONDITION_ALWAYS, 896, 0, 728,
      FACING_NORTH, 0, 776, 560, 1016, 768, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gMcCoyPalaceExits[] = {
     SCENE_EXITS(McCoyPalace),
-    SCENE_EXIT(MCCOY_PALACE_TO_MCCOY_PALACE_GARDEN_WEST, McCoyPalaceGarden,
-               MCCOY_PALACE_GARDEN_FROM_MCCOY_PALACE),
+    SCENE_EXIT(MCCOY_PALACE_TO_MCCOY_PALACE_GROUNDS_WEST, McCoyPalaceGrounds,
+               MCCOY_PALACE_GROUNDS_FROM_MCCOY_PALACE),
     SCENE_EXIT(2, McCoyPalace, 14),
     SCENE_EXIT(3, McCoyPalace, 17),
     SCENE_EXIT(4, McCoyPalace, 10),
@@ -1441,7 +1441,7 @@ u32 gMcCoyPalaceExits[] = {
     SCENE_EXIT(6, McCoyPalace, 28),
     SCENE_EXIT(7, McCoyPalace, 22),
     SCENE_EXIT(8, McCoyPalace, 20),
-    SCENE_EXIT(9, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST),
+    SCENE_EXIT(9, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST),
     SCENE_EXIT(10, McCoyPalace, 4),
     SCENE_EXIT(11, McCoyPalace, 5),
     SCENE_EXIT(12, McCoyPalace, 18),

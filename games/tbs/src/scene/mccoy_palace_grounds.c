@@ -1,5 +1,5 @@
 /// @file
-/// McCoy's Palace (McCoyPalaceGarden, scene 34), outside the palace of Lord
+/// McCoy's Palace (McCoyPalaceGrounds, scene 34), outside the palace of Lord
 /// McCoy, the lord of Bilibin. The palace itself (McCoyPalace, scene 33,
 /// mccoy_palace.c) has the same area name. Workers build a new palace here
 /// for Lady McCoy, who waits among them, and two guards keep the gate of
@@ -39,14 +39,14 @@
 ///
 /// Setup (Garden_ApplyProgress) places the guards by the same flags and floats
 /// a Nut over the grounds until Catch takes it
-/// (FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT). A dry well can be searched. Exit 1
+/// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT). A dry well can be searched. Exit 1
 /// leads back to Bilibin (Bilibin, scene 30, entrance 2). The patched
 /// editions (TBS_PATCH_3) add one more actor, sprite 0xf8 (XXX: what it is is
 /// not known).
 
 #include "game_state.h"
 #include "scene_ids.h"
-#include "unit/scene/mccoy_palace_garden.h"
+#include "unit/scene/mccoy_palace_grounds.h"
 #include "unit/scene/common/object_orbit.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -60,7 +60,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "mccoy_palace_garden.h"
+#include "mccoy_palace_grounds.h"
 #include "types.h"
 #include "call.h"
 #include "field_event.h"
@@ -97,25 +97,25 @@ static void Garden_OpenPalaceGate(void);
 #include "common/object_facing.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gMcCoyPalaceGardenEntrances;
+  return gMcCoyPalaceGroundsEntrances;
 }
 
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-const u32 *Scene_GetExits(void) { return gMcCoyPalaceGardenExits; }
+const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 
 /// The people outside McCoy's Palace. Once McCoy has turned the party away,
 /// the east guard turns back after talking, and once the curse is lifted Lady
 /// McCoy faces the party.
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
+  if (gGameState.scene == (s32)&SceneId_McCoyPalaceGrounds) {
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) != 0)
-      gMcCoyPalaceGardenPlacements[4].talkFacing = TALK_FACE_PARTY_AND_BACK;
+      gMcCoyPalaceGroundsPlacements[4].talkFacing = TALK_FACE_PARTY_AND_BACK;
     if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0)
-      gMcCoyPalaceGardenPlacements[2].talkFacing = TALK_FACE_PARTY;
-    return gMcCoyPalaceGardenPlacements;
+      gMcCoyPalaceGroundsPlacements[2].talkFacing = TALK_FACE_PARTY;
+    return gMcCoyPalaceGroundsPlacements;
   }
-  return gMcCoyPalaceGardenPlacementsOther;
+  return gMcCoyPalaceGroundsPlacementsOther;
 }
 
 /// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
@@ -123,7 +123,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 static void Event_CatchFloatingNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
-  Engine_GameFlagSet(FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT);
+  Engine_GameFlagSet(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
   Engine_EventEnd();
@@ -139,10 +139,10 @@ static void Event_SearchWell(void) {
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
-    return gMcCoyPalaceGardenEvents;
+  if (gGameState.scene == (s32)&SceneId_McCoyPalaceGrounds) {
+    return gMcCoyPalaceGroundsEvents;
   }
-  return gMcCoyPalaceGardenEventsOther;
+  return gMcCoyPalaceGroundsEventsOther;
 }
 
 /// McCoy's Palace, outside, before the curse is lifted: the north worker asks
@@ -271,7 +271,7 @@ static void Event_EnterPalace(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Engine_EventWait(16);
-  Engine_EventRequestExit(MCCOY_PALACE_GARDEN_TO_MCCOY_PALACE);
+  Engine_EventRequestExit(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
   Engine_EventEnd();
 }
 
@@ -287,7 +287,7 @@ s32 Scene_Initialize(void) {
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 1;
 
-  if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
+  if (gGameState.scene == (s32)&SceneId_McCoyPalaceGrounds) {
     Garden_ApplyProgress();
   }
 
@@ -301,7 +301,7 @@ static void Garden_ApplyProgress(void) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
   }
-  if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT) == 0) {
     Scene_FloatNut(ACTOR_FLOATING_NUT);
   }
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
@@ -412,7 +412,7 @@ static void Event_GuardsArrestParty(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(MCCOY_PALACE_GARDEN_TO_MCCOY_PALACE_EAST);
+  Engine_EventRequestExit(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
   Engine_EventEnd();
 }
 
@@ -437,25 +437,25 @@ s32 gGuardWatchesParty[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gMcCoyPalaceGardenEntrances[] = {
-    { MCCOY_PALACE_GARDEN_FROM_BILIBIN, CONDITION_ALWAYS, 320, 0, 328, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { MCCOY_PALACE_GARDEN_FROM_MCCOY_PALACE, CONDITION_ALWAYS, 328, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gMcCoyPalaceGroundsEntrances[] = {
+    { MCCOY_PALACE_GROUNDS_FROM_BILIBIN, CONDITION_ALWAYS, 320, 0, 328, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { MCCOY_PALACE_GROUNDS_FROM_MCCOY_PALACE, CONDITION_ALWAYS, 328, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-u32 gMcCoyPalaceGardenExits[] = {
-    SCENE_EXITS(McCoyPalaceGarden),
-    SCENE_EXIT(MCCOY_PALACE_GARDEN_TO_BILIBIN, Bilibin, BILIBIN_FROM_MCCOY_PALACE_GARDEN),
-    SCENE_EXIT(MCCOY_PALACE_GARDEN_TO_MCCOY_PALACE, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_WEST),
-    SCENE_EXIT(MCCOY_PALACE_GARDEN_TO_MCCOY_PALACE_EAST, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GARDEN_EAST),
+u32 gMcCoyPalaceGroundsExits[] = {
+    SCENE_EXITS(McCoyPalaceGrounds),
+    SCENE_EXIT(MCCOY_PALACE_GROUNDS_TO_BILIBIN, Bilibin, BILIBIN_FROM_MCCOY_PALACE_GROUNDS),
+    SCENE_EXIT(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST),
+    SCENE_EXIT(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST, McCoyPalace, MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST),
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gMcCoyPalaceGardenPlacementsOther[] = {
+struct ScenePlacement gMcCoyPalaceGroundsPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMcCoyPalaceGardenPlacements[] = {
+struct ScenePlacement gMcCoyPalaceGroundsPlacements[] = {
     { 0x87, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(103), 0, PIXELS(280), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x87, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -466,7 +466,7 @@ struct ScenePlacement gMcCoyPalaceGardenPlacements[] = {
         PIXELS(320), 0, PIXELS(263), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(334), 0, PIXELS(263), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x16, FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT, 7,
+    { 0x16, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, 7,
         PIXELS(216), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #if TBS_PATCH_3
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -475,11 +475,11 @@ struct ScenePlacement gMcCoyPalaceGardenPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gMcCoyPalaceGardenEventsOther[] = {
+struct SceneEvent gMcCoyPalaceGroundsEventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gMcCoyPalaceGardenEvents[] = {
+struct SceneEvent gMcCoyPalaceGroundsEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterPalace) },
     { EVENT_TALK, ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
@@ -508,7 +508,7 @@ struct SceneEvent gMcCoyPalaceGardenEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchWell) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT, FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchFloatingNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchFloatingNut) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

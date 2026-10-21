@@ -370,7 +370,7 @@
 #define FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD 0xfa7
 #define FLAG_LUNPA_FORTRESS_CELL_KEY 0xf2e ///< caught or taken from its hook
 
-// McCoy's Palace in Bilibin (McCoyPalace and McCoyPalaceGarden)
+// McCoy's Palace in Bilibin (McCoyPalace and McCoyPalaceGrounds)
 /// The gate guards have let the party into the palace.
 #define FLAG_MCCOY_PALACE_ADMITTED 0x84a
 #define FLAG_MCCOY_PALACE_VISITED 0x84b ///< set on every entry to the palace
@@ -383,7 +383,7 @@
 #define FLAG_MCCOY_PALACE_JOB_REFUSED 0x85f
 #define FLAG_MCCOY_PALACE_BARREL_ELIXIR 0xf55
 #define FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB 0xf56
-#define FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT 0xfd2 ///< the Nut floating outside
+#define FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT 0xfd2 ///< the Nut floating outside
 // Mercury Lighthouse
 /// Mia has told the party she senses someone inside the lighthouse.
 #define FLAG_MIA_SENSED_SOMEONE_INSIDE 0x870

@@ -739,9 +739,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 38d	text	games/tbs/src/scene/entry/mccoy_palace
 38d	text	games/tbs/src/scene/mccoy_palace
 38d	text	games/tbs/src/scene/import/mccoy_palace
-38e	text	games/tbs/src/scene/entry/mccoy_palace_garden
-38e	text	games/tbs/src/scene/mccoy_palace_garden
-38e	text	games/tbs/src/scene/import/mccoy_palace_garden
+38e	text	games/tbs/src/scene/entry/mccoy_palace_grounds
+38e	text	games/tbs/src/scene/mccoy_palace_grounds
+38e	text	games/tbs/src/scene/import/mccoy_palace_grounds
 38f	text	games/tbs/src/scene/entry/kolima
 38f	text	games/tbs/src/scene/kolima
 38f	text	games/tbs/src/scene/import/kolima

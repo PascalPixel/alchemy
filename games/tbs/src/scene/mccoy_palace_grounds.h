@@ -1,5 +1,5 @@
-#ifndef MCCOY_PALACE_GARDEN_H
-#define MCCOY_PALACE_GARDEN_H
+#ifndef MCCOY_PALACE_GROUNDS_H
+#define MCCOY_PALACE_GROUNDS_H
 
 #include "types.h"
 #include "field_event.h"

@@ -725,9 +725,10 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
-/// On entry: Tret, Laurel and the wrathful side stand 28 pixels up, nothing
-/// passes through them, Retreat is set to the forest's way in, and the forest
-/// takes its cursed colours until the curse is lifted.
+/// Sets up Tret, Laurel and the forest's colours on entry. Tret, Laurel and the
+/// wrathful side stand 28 pixels up, nothing passes through them, Retreat is
+/// set to the forest's way in, and the forest takes its cursed colours until
+/// the curse is lifted.
 s32 KolimaForestTree_Initialize(void) {
   struct FieldActor *tretAuxiliary;
   struct FieldActor *tretsWrathfulSide;

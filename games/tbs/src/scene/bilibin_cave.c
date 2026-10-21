@@ -33,7 +33,7 @@
 /// a pillar drawn underfoot, which the party walks over. The second puddle
 /// stands beside a torch that cannot be moved, and Frost on it always melts
 /// back. The third is an ice pillar: two of the six torches
-/// (ACTOR_MOVABLE_TORCH_A and ACTOR_MOVABLE_TORCH_B) can be pushed or moved
+/// (ACTOR_THIRD_TORCH and ACTOR_FOURTH_TORCH) can be pushed or moved
 /// with Move, and while either stands beside the pillar, on cell (35, 23), the
 /// pillar melts into a puddle and the cells north and south of it change with
 /// it; when both leave it freezes again
@@ -91,9 +91,15 @@ enum {
 /// Actors of BilibinCaveRapier, numbered by the rows of
 /// gBilibinCavePlacements2.
 enum {
-  ACTOR_CAVE2_WEST_TORCH = 8, ///< a torch west of the fire
-  CAVE2_DOUSE_TARGET = 9,     ///< a fire between two torches
-  ACTOR_CAVE2_EAST_TORCH = 10 ///< a torch east of the fire
+  /// A torch west of the fire.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
+  ACTOR_CAVE2_WEST_TORCH = 8,
+  CAVE2_DOUSE_TARGET = 9, ///< a fire between two torches
+  /// A torch east of the fire.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
+  ACTOR_CAVE2_EAST_TORCH = 10
 };
 
 /// Actors of BilibinCaveIce, numbered by the rows of gBilibinCavePlacements1.
@@ -101,19 +107,31 @@ enum {
   CAVE1_DOUSE_TARGET = 8, ///< a fire beside the first puddle
   /// Six torches, 9 to 14; the second stands beside
   /// FROST_TARGET_B.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
   ACTOR_FIRST_TORCH = 9,
-  ACTOR_MOVABLE_TORCH_A = 11, ///< the third torch, moved by Move or pushed
-  ACTOR_MOVABLE_TORCH_B = 12, ///< the fourth torch, moved by Move or pushed
-  FROST_TARGET_A = 15,        ///< a puddle, walkable once the fire is out
-  FROST_TARGET_B = 16,        ///< a puddle beside a torch that stays put
+  /// The third torch, moved by Move or pushed.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
+  ACTOR_THIRD_TORCH = 11,
+  /// The fourth torch, moved by Move or pushed.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
+  ACTOR_FOURTH_TORCH = 12,
+  FROST_TARGET_A = 15, ///< a puddle, walkable once the fire is out
+  FROST_TARGET_B = 16, ///< a puddle beside a torch that stays put
   /// An ice pillar, melted while a torch stands on cell (35, 23).
   FROST_TARGET_C = 17,
   /// Five ice pillars, 18 to 22, drawn as a frozen Frost target is (animation
   /// 5); nothing acts on them.
+  /// ★ Named from what the player sees: tall pillars of pale blue ice (its
+  /// render)
   ACTOR_FIRST_ICE_PILLAR = 18,
   /// Four pieces of ice, 23 to 26, held at the second step of freezing: their
   /// animation 3 shows frame 2 of the five that a Frost target's animation 2
   /// plays from puddle to pillar. Nothing acts on them.
+  /// ★ Named from what the player sees: low, jagged lumps of pale blue ice
+  /// (its render)
   ACTOR_FIRST_LOW_ICE = 23
 };
 
@@ -287,8 +305,8 @@ static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   s32 destinationCellX;
 
   // Track each movable actor independently before changing the Frost target.
-  firstActor = Object_GetById(ACTOR_MOVABLE_TORCH_A);
-  secondActor = Actor_Get(ACTOR_MOVABLE_TORCH_B);
+  firstActor = Object_GetById(ACTOR_THIRD_TORCH);
+  secondActor = Actor_Get(ACTOR_FOURTH_TORCH);
   if ((firstActor->x.fixed >> 20) == 35 && (firstActor->z.fixed >> 20) == 23) {
     GameFlag_Set(FLAG_PLACE_TEMP_03);
   } else {
@@ -475,10 +493,10 @@ static void BilibinCave_RestoreIceRoom(void) {
     Map_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_03) != 0) {
-    Actor_SetPosition(ACTOR_MOVABLE_TORCH_A, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_THIRD_TORCH, PIXELS(570), PIXELS(376));
   }
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_04) != 0) {
-    Actor_SetPosition(ACTOR_MOVABLE_TORCH_B, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_FOURTH_TORCH, PIXELS(570), PIXELS(376));
   }
 }
 
@@ -754,8 +772,8 @@ struct SceneEvent gBilibinCaveEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_A, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_FreezeFirstTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FreezeSecondTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_C, IF_FLAG_SET(FLAG_PLACE_TEMP_02), EVENT_SCRIPT(Event_FreezeThirdTarget) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVABLE_TORCH_A, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVABLE_TORCH_B, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
     { TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushActorAhead) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushActorAhead) },
     { SEARCH(SEARCH_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },

@@ -7,42 +7,48 @@
 /// have been inside.
 ///
 /// - Sol Entrance (SolEntrance, scene 19), the mountainside before the
-///   sanctum's door, reached from Vale by its exit 1. Walking north into the
-///   door opens it and the leader walks in (Event_OpenDoorAndEnter, exit 2);
-///   searching another door finds it "tightly locked". Retreat does not work
-///   here. Once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the ground
-///   rumbles now and then, and the way down leads to Vale during the eruption
-///   (scene 10, vale_eruption.c) until the party has left Vale
-///   (FLAG_PARTY_LEFT_VALE); before and after, it leads to Vale itself (scene
-///   4). Once Isaac and Garet have come back down to Vale
+///   sanctum's door, reached from Vale (VALE_TO_SOL_ENTRANCE). Walking north
+///   into the door opens it and the leader walks in (Event_OpenDoorAndEnter,
+///   SOL_ENTRANCE_TO_SOL_SANCTUM_ENTRANCE_1); searching another door finds it
+///   "tightly locked". Retreat does not work here. Once Mt. Aleph has erupted
+///   (FLAG_SOL_SANCTUM_ERUPTED), the ground rumbles now and then, and the way
+///   down leads to Vale during the eruption (scene 10, vale_eruption.c) until
+///   the party has left Vale (FLAG_PARTY_LEFT_VALE); before and after, it leads
+///   to Vale itself (scene 4). Once Isaac and Garet have come back down to Vale
 ///   (FLAG_VALE_RETURNED_FROM_MT_ALEPH), the cells before the door take other
 ///   collision. Once the party has left Vale, a man stands in the path below
 ///   and warns everyone away while Mt. Aleph is active (with Mind Read: "How
-///   can the Great Healer treat me like this...?"), and three cells across
-///   the path change with him.
+///   can the Great Healer treat me like this...?"), and three cells across the
+///   path change with him.
 /// - Sol Sanctum (SolSanctumEntrance1, scene 16), the rooms inside the door.
-///   The first time the party comes in through the door (entrance 8, which is
-///   also the Retreat point), Kraden gathers everyone: "This is the entrance to
-///   Sol Sanctum. This is your first time here, right?"
-///   (FLAG_SOL_SANCTUM_ENTERED). The first time it enters the room of entrances
-///   11 to 13, Kraden looks round and recalls that the strangers spoke of a
-///   hidden passage leading deeper into the sanctum, which a sanctum built in
-///   honour of the sun ought to have; Garet asks whether to help him, and
-///   either way the four stay together (FLAG_SEARCHING_FOR_HIDDEN_PASSAGE). Two
-///   of that room's eleven statues can be pushed a cell east or west. A
-///   minotaur relief (cell code 20) has a hole where its left eye should be;
-///   the Small Jewel from this map's chest set in it opens a passage
-///   (FLAG_SOL_SANCTUM_FIRST_GEM_PLACED). The first time the party enters the
-///   room of entrances 14 to 16, Kraden sees a row of six statues out of reach
-///   and asks Isaac to try his Psynergy (FLAG_SOL_SANCTUM_INNER_STATUES_SEEN);
-///   each can be pushed a cell either way. The second relief is there (cell
-///   code 21), and the second Small Jewel, from the chest in scene 14
-///   (sol_sanctum_maze.c), opens a doorway in it
-///   (FLAG_SOL_SANCTUM_SECOND_GEM_PLACED). Exits 1 and 5 lead to the passage of
-///   scene 15, exits 7 and 14 to scene 14, exit 8 back out to Sol Entrance and
-///   exit 16 on to scene 11, where Kraden finds what he came for; the others
-///   lead between its own rooms. After the eruption its rooms rumble and shake
-///   as Isaac and Garet make their way out.
+///   The first time the party comes in through the door
+///   (SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE, which is also the Retreat
+///   point), Kraden gathers everyone: "This is the entrance to Sol Sanctum.
+///   This is your first time here, right?" (FLAG_SOL_SANCTUM_ENTERED). The
+///   first time it enters the room of entrances 11 to 13, Kraden looks round
+///   and recalls that the strangers spoke of a hidden passage leading deeper
+///   into the sanctum, which a sanctum built in honour of the sun ought to
+///   have; Garet asks whether to help him, and either way the four stay
+///   together (FLAG_SEARCHING_FOR_HIDDEN_PASSAGE). Two of that room's eleven
+///   statues can be pushed a cell east or west. A minotaur relief (cell code
+///   20) has a hole where its left eye should be; the Small Jewel from this
+///   map's chest set in it opens a passage (FLAG_SOL_SANCTUM_FIRST_GEM_PLACED).
+///   The first time the party enters the room of entrances 14 to 16, Kraden
+///   sees a row of six statues out of reach and asks Isaac to try his Psynergy
+///   (FLAG_SOL_SANCTUM_INNER_STATUES_SEEN); each can be pushed a cell either
+///   way. The second relief is there (cell code 21), and the second Small
+///   Jewel, from the chest in scene 14 (sol_sanctum_maze.c), opens a doorway in
+///   it (FLAG_SOL_SANCTUM_SECOND_GEM_PLACED). The room of entrances 14 to 16 is
+///   reached from scene 14 (SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST)
+///   and from scene 11
+///   (SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS).
+///   SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST and _EAST lead to the
+///   passage of scene 15, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST and
+///   _EAST to scene 14, SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE back out to Sol
+///   Entrance and SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS on to
+///   scene 11, where Kraden finds what he came for; the others lead between its
+///   own rooms. After the eruption its rooms rumble and shake as Isaac and
+///   Garet make their way out.
 ///
 /// Scene 16 is one map, but the rooms of entrances 11 to 13 and 14 to 16 have
 /// tables of their own: SolSanctumEntrance_GetPlacements and _GetEvents choose
@@ -152,13 +158,13 @@ const u32 *SolSanctumEntrance_GetExits(void) {
 /// Selects the actors for the place and, in Sol Sanctum, the room. Entrances 11
 /// to 13 place Kraden and that room's eleven statues, entrances 14 to 16 Kraden
 /// and the row of six; the rest of Sol Sanctum places Kraden and one statue
-/// (actor 9), and Sol Entrance its sentry.
+/// (ACTOR_LONE_STATUE), and Sol Entrance its sentry.
 const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   struct ScenePlacement *table;
-  s32 firstBlockEntrance = 11;
+  s32 firstStatueRoomEntrance = 11;
 
   if (gGameState.scene == (s32)&SceneId_SolSanctumEntrance1) {
-    if (gGameState.entrance >= firstBlockEntrance) {
+    if (gGameState.entrance >= firstStatueRoomEntrance) {
       if (gGameState.entrance > 13) {
         if (gGameState.entrance <= 16) {
           return gSolSanctumEntrancePlacements1Entrances14To16;
@@ -180,13 +186,13 @@ const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
 /// Selects the events for the place and room, by the same entrances as
 /// SolSanctumEntrance_GetPlacements.
 const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
-  s32 firstBlockEntrance = 11;
+  s32 firstStatueRoomEntrance = 11;
 
   if (gGameState.scene == (s32)&SceneId_SolEntrance) {
     return gSolSanctumEntranceEvents2;
   }
   if (gGameState.scene == (s32)&SceneId_SolSanctumEntrance1) {
-    if (gGameState.entrance >= firstBlockEntrance) {
+    if (gGameState.entrance >= firstStatueRoomEntrance) {
       if (gGameState.entrance > 13) {
         if (gGameState.entrance <= 16) {
           return gSolSanctumEntranceEvents1Entrances14To16;
@@ -201,7 +207,8 @@ const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
 }
 
 /// Sol Entrance: walking north into the sanctum's door (cell code 2) slides it
-/// open, and the leader walks in. Takes exit 2, into Sol Sanctum at entrance 8.
+/// open, and the leader walks in. Takes SOL_ENTRANCE_TO_SOL_SANCTUM_ENTRANCE_1,
+/// into Sol Sanctum at SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE.
 static void Event_OpenDoorAndEnter(void) {
   s32 width;
   s32 height;
@@ -225,7 +232,7 @@ static void Event_OpenDoorAndEnter(void) {
   Engine_EventWait(10);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(2);
+  Engine_EventRequestExit(SOL_ENTRANCE_TO_SOL_SANCTUM_ENTRANCE_1);
   Engine_EventEnd();
 }
 
@@ -385,33 +392,34 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
   }
 }
 
-/// Sol Sanctum, the room of entrances 11 to 13: Move on the west statue (actor
-/// 9) while FLAG_SCENE_TEMP_34 is clear, and called by Event_PushStatue there.
-/// The column it stops in is saved: sets FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST
-/// or _AT_WEST, or clears both when it stands in neither column.
+/// Sol Sanctum, the room of entrances 11 to 13: Move on the west statue
+/// (ACTOR_WEST_STATUE) while FLAG_SCENE_TEMP_34 is clear, and called by
+/// Event_PushStatue there. The column it stops in is saved: sets
+/// FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST or _AT_WEST, or clears both when it
+/// stands in neither column.
 static void Event_WestStatueMoved(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_WEST_STATUE);
+  struct FieldActor *statue = Object_GetById(ACTOR_WEST_STATUE);
   s32 column;
 
-  if (block == NULL) {
+  if (statue == NULL) {
     return;
   }
-  column = block->x.fixed >> 20;
+  column = statue->x.fixed >> 20;
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST, 93, 95);
 }
 
-/// Sol Sanctum, the room of entrances 11 to 13: Move on the east statue (actor
-/// 10), as the west one. Sets FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST or _AT_WEST,
-/// or clears both.
+/// Sol Sanctum, the room of entrances 11 to 13: Move on the east statue
+/// (ACTOR_EAST_STATUE), as the west one. Sets
+/// FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST or _AT_WEST, or clears both.
 static void Event_EastStatueMoved(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_EAST_STATUE);
+  struct FieldActor *statue = Object_GetById(ACTOR_EAST_STATUE);
   s32 column;
 
-  if (block == NULL) {
+  if (statue == NULL) {
     return;
   }
-  column = block->x.fixed >> 20;
+  column = statue->x.fixed >> 20;
   GameFlag_Clear(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST);
   GameFlag_Clear(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST);
   if (column == 115) {
@@ -422,91 +430,91 @@ static void Event_EastStatueMoved(void) {
 }
 
 /// Sol Sanctum, the room of entrances 14 to 16: Move on the first statue of the
-/// row (actor 9), and called by Event_PushStatue there. The column it stops in
-/// is saved and the cells under all six are set again. Sets
+/// row (ACTOR_ROW_STATUE_1), and called by Event_PushStatue there. The column
+/// it stops in is saved and the cells under all six are set again. Sets
 /// FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST or _AT_WEST, or clears both.
 static void Event_RowStatue1Moved(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_ROW_STATUE_1);
+  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_1);
   s32 column;
 
-  if (block == NULL) {
+  if (statue == NULL) {
     return;
   }
-  column = block->x.fixed >> 20;
+  column = statue->x.fixed >> 20;
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST, 99, 101);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
 /// Sol Sanctum, the room of entrances 14 to 16: as Event_RowStatue1Moved, for
-/// the row's second statue (actor 10).
+/// the row's second statue (ACTOR_ROW_STATUE_2).
 static void Event_RowStatue2Moved(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_ROW_STATUE_2);
+  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_2);
   s32 column;
 
-  if (block == NULL) {
+  if (statue == NULL) {
     return;
   }
-  column = block->x.fixed >> 20;
+  column = statue->x.fixed >> 20;
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST, 103, 105);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
 /// Sol Sanctum, the room of entrances 14 to 16: as Event_RowStatue1Moved, for
-/// the row's third statue (actor 11).
+/// the row's third statue (ACTOR_ROW_STATUE_3).
 static void Event_RowStatue3Moved(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_ROW_STATUE_3);
+  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_3);
   s32 column;
 
-  if (block == NULL) {
+  if (statue == NULL) {
     return;
   }
-  column = block->x.fixed >> 20;
+  column = statue->x.fixed >> 20;
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST, 107, 109);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
 /// Sol Sanctum, the room of entrances 14 to 16: as Event_RowStatue1Moved, for
-/// the row's fourth statue (actor 12).
+/// the row's fourth statue (ACTOR_ROW_STATUE_4).
 static void Event_RowStatue4Moved(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_ROW_STATUE_4);
+  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_4);
   s32 column;
 
-  if (block == NULL) {
+  if (statue == NULL) {
     return;
   }
-  column = block->x.fixed >> 20;
+  column = statue->x.fixed >> 20;
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST, 111, 113);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
 /// Sol Sanctum, the room of entrances 14 to 16: as Event_RowStatue1Moved, for
-/// the row's fifth statue (actor 13).
+/// the row's fifth statue (ACTOR_ROW_STATUE_5).
 static void Event_RowStatue5Moved(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_ROW_STATUE_5);
+  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_5);
   s32 column;
 
-  if (block == NULL) {
+  if (statue == NULL) {
     return;
   }
-  column = block->x.fixed >> 20;
+  column = statue->x.fixed >> 20;
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST, 115, 117);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
 /// Sol Sanctum, the room of entrances 14 to 16: as Event_RowStatue1Moved, for
-/// the row's sixth statue (actor 14).
+/// the row's sixth statue (ACTOR_ROW_STATUE_6).
 static void Event_RowStatue6Moved(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_ROW_STATUE_6);
+  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_6);
   s32 column;
 
-  if (block == NULL)
+  if (statue == NULL)
     return;
-  column = block->x.fixed >> 20;
+  column = statue->x.fixed >> 20;
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST, 119, 121);
   SolSanctumEntrance_RestoreRowStatueCells(0);
@@ -521,7 +529,7 @@ static void Event_RowStatue6Moved(void) {
 /// in the room of entrances 14 to 16.
 static void Event_PushStatue(void) {
   struct FieldActor *leader;
-  struct FieldActor *block;
+  struct FieldActor *statue;
   s32 stoppedVelocity;
   s32 packedStep;
   u32 direction;
@@ -531,34 +539,34 @@ static void Event_PushStatue(void) {
   // Find the statue one map cell ahead in the leader's facing direction.
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
-  block = SceneActor_FindActorAtCell(
+  statue = SceneActor_FindActorAtCell(
       (leader->x.part.pixel + (gSolSanctumPushSteps[direction] >> 16)) >> 4,
       (leader->z.part.pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
-  if (block != NULL) {
+  if (statue != NULL) {
     stoppedVelocity = 0;
-    block->terrainId = 2;
+    statue->terrainId = 2;
     destination = &target;
     packedStep = gSolSanctumPushSteps[direction];
-    SET_POSITION(destination, block->x.fixed + (packedStep & -0x10000),
-                 block->y.fixed, block->z.fixed + (packedStep << 16));
+    SET_POSITION(destination, statue->x.fixed + (packedStep & -0x10000),
+                 statue->y.fixed, statue->z.fixed + (packedStep << 16));
     // Move only after the statue's proposed position passes collision.
-    if (FieldObject_CheckMovementCollision(block, destination) <= 0) {
+    if (FieldObject_CheckMovementCollision(statue, destination) <= 0) {
       Object_SetMode(leader, 8);
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_185);
-      block->speed = PIXELS(1) / 5;
-      block->acceleration = PIXELS(1) / 5;
-      Engine_ObjectSetPosition(block, destination->x, destination->y,
+      statue->speed = PIXELS(1) / 5;
+      statue->acceleration = PIXELS(1) / 5;
+      Engine_ObjectSetPosition(statue, destination->x, destination->y,
                                destination->z);
       leader->speed = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(leader, destination->x, destination->y,
                                destination->z);
-      FieldObject_WaitForMove(block);
-      block->x.fixed = destination->x;
-      block->z.fixed = destination->z;
-      block->velocityX = stoppedVelocity;
-      block->velocityZ = stoppedVelocity;
+      FieldObject_WaitForMove(statue);
+      statue->x.fixed = destination->x;
+      statue->z.fixed = destination->z;
+      statue->velocityX = stoppedVelocity;
+      statue->velocityZ = stoppedVelocity;
       Object_SetMode(leader, 1);
       // Save the moved statue in the flag set belonging to this room.
       switch (gGameState.entrance) {
@@ -568,9 +576,9 @@ static void Event_PushStatue(void) {
         Event_WestStatueMoved();
         Event_EastStatueMoved();
         break;
-      case 14:
+      case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST:
       case 15:
-      case 16:
+      case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
         Event_RowStatue1Moved();
         Event_RowStatue2Moved();
         Event_RowStatue3Moved();
@@ -605,7 +613,7 @@ s32 SolSanctumEntrance_Initialize(void) {
 /// (FLAG_PARTY_LEFT_VALE), the sentry, placed off the map until then, stands in
 /// the path and the three cells across it change.
 static void SolSanctumEntrance_ApplyEntryState(void) {
-  // Retreat does not work here (flag 0x144).
+  // Retreat does not work here.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gEventWork->startTransition = 0x100;
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
@@ -627,15 +635,16 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 }
 
 /// Sets up Sol Sanctum (scene 16): after the eruption its rooms rumble and
-/// shake. Entrances 1 and 2 show the first relief's passage once it is open;
-/// entrance 8, the way in, makes itself the Retreat point and plays Kraden's
-/// welcome until FLAG_SOL_SANCTUM_ENTERED is set. In the room of entrances 11
-/// to 13 Kraden's talk of the hidden passage plays until
-/// FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, and the two statues go back to
-/// their saved columns; in the room of entrances 14 to 16 Kraden sees the row
-/// of statues until FLAG_SOL_SANCTUM_INNER_STATUES_SEEN is set, the six go back
-/// to their columns, FLAG_SCENE_TEMP_34 is set and the second relief's doorway
-/// shows once it is open.
+/// shake. SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_WEST and entrance 2
+/// show the first relief's passage once it is open;
+/// SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE, the way in, makes itself the
+/// Retreat point and plays Kraden's welcome until FLAG_SOL_SANCTUM_ENTERED is
+/// set. In the room of entrances 11 to 13 Kraden's talk of the hidden passage
+/// plays until FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, and the two statues go
+/// back to their saved columns; in the room of entrances 14 to 16 Kraden sees
+/// the row of statues until FLAG_SOL_SANCTUM_INNER_STATUES_SEEN is set, the six
+/// go back to their columns, FLAG_SCENE_TEMP_34 is set and the second relief's
+/// doorway shows once it is open.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 entrance;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -647,7 +656,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 
   entrance = gGameState.entrance;
   switch (entrance) {
-  case 1:
+  case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case 2:
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
       Map_CopyCellsTo(1, 109, 4, 81, 1, 1);
@@ -659,12 +668,12 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case 3:
-    Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_LONE_STATUE), 0);
     break;
 
-  case 8:
+  case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE:
     gGameState.retreatScene = (s32)&SceneId_SolSanctumEntrance1;
-    gGameState.retreatEntrance = 8;
+    gGameState.retreatEntrance = SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE;
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
     break;
@@ -673,17 +682,17 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case 12:
   case 13:
     // Put back this room's statues after its introduction has played.
-    Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(15), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(16), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(18), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(19), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEST_STATUE), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_EAST_STATUE), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 1), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 2), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 3), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 4), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 5), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 6), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 7), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 8), 0);
     if (Engine_GameFlagIsSet(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE) == 0)
       SolSanctumEntrance_KradenSuspectsHiddenPassage();
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST) != 0)
@@ -696,16 +705,16 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
       Actor_SetPosition(ACTOR_EAST_STATUE, PIXELS(1848), PIXELS(136));
     break;
 
-  case 14:
+  case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST:
   case 15:
-  case 16:
+  case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
     // Restore the row of statues and the second gem's doorway.
-    Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_1), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_2), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_3), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_4), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_5), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_6), 0);
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_INNER_STATUES_SEEN) == 0)
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
@@ -722,11 +731,11 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 
 /// Sol Sanctum, the first time the party comes in through the door: Kraden,
 /// Garet and Jenna step out of the leader, and Kraden asks whether this is the
-/// party's first time here. "This is the entrance to Sol Sanctum." Yes: "Take
-/// a good look at it." No: "I doubt that..." Called by
-/// SolSanctumEntrance_RestoreInteriorState at entrance 8 until
-/// FLAG_SOL_SANCTUM_ENTERED is set, which it sets; clears
-/// FLAG_SHOW_LOCATION_NAME.
+/// party's first time here. "This is the entrance to Sol Sanctum." Yes: "Take a
+/// good look at it." No: "I doubt that..." Called by
+/// SolSanctumEntrance_RestoreInteriorState at
+/// SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE until FLAG_SOL_SANCTUM_ENTERED is
+/// set, which it sets; clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct FieldActor *leader;
 
@@ -964,7 +973,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     // Yes: Garet says it is too dangerous to split up; they stay together.
     Engine_EventSetMessage(MsgSolSanctumDangerousSplitStay);
     Engine_ActorRunRepeatedMotion(GARET, 1);
-    Engine_EventShowMessageAndWait(1, 0, 10);
+    Engine_EventShowMessageAndWait(GARET, 0, 10);
   } else {
     // No: Jenna objects to turning back now; Isaac nods and Garet agrees to
     // help Kraden.
@@ -983,7 +992,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     Actor_FaceDirection(JENNA, FACING_WEST, 30);
     Engine_ActorRunRepeatedMotion(GARET, 1);
     Engine_EventWait(10);
-    Engine_EventShowMessageAndWait(1, 0, 10);
+    Engine_EventShowMessageAndWait(GARET, 0, 10);
   }
 
   // Bring Kraden back and return the followers to the party.
@@ -1391,31 +1400,31 @@ struct SceneEvent gSolSanctumEntranceEventsOther[] = {
 };
 
 struct SceneEvent gSolSanctumEntranceEvents2[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_ENTRANCE_TO_VALE },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndEnter) },
     { SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DoorTightlyLocked) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
+    { EVENT_TALK, ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gSolSanctumEntranceEvents1[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_EAST },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { 0x21, 7, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
+    { 0x21, 7, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
+    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_EAST },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
+    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
     { SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
     { USE_ITEM(ITEM_SMALL_JEWEL), 0x414, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetFirstSmallJewel) },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectFirstMinotaurRelief) },
@@ -1423,24 +1432,24 @@ struct SceneEvent gSolSanctumEntranceEvents1[] = {
 };
 
 struct SceneEvent gSolSanctumEntranceEvents1Entrances11To13[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_EAST },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { 0x21, 7, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
+    { 0x21, 7, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
+    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_EAST },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_WestStatueMoved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_EastStatueMoved) },
+    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_STATUE, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_WestStatueMoved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_STATUE, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_EastStatueMoved) },
     { TOUCH_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStatue) },
     { TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStatue) },
     { TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStatue) },
@@ -1448,28 +1457,28 @@ struct SceneEvent gSolSanctumEntranceEvents1Entrances11To13[] = {
 };
 
 struct SceneEvent gSolSanctumEntranceEvents1Entrances14To16[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_EAST },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { 0x21, 7, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
+    { 0x21, 7, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
+    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_EAST },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue1Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue2Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue3Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue4Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue5Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue6Moved) },
+    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue1Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue2Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue3Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue4Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue5Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue6Moved) },
     { TOUCH_WALKING, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStatue) },
     { USE_ITEM(ITEM_SMALL_JEWEL), 0x415, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetSecondSmallJewel) },
     { SEARCH(SEARCH_UNNAMED), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectSecondMinotaurRelief) },

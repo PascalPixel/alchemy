@@ -3,21 +3,25 @@
 /// GomaCaveWaterway2, scenes 28 and 29), the cave in the Goma Range that the
 /// mayor of Vault tells the party to pass through on the way to Bilibin.
 ///
-/// - Goma Cave, scene 28. The party walks in from the Goma Cave Entrance (its
-///   exit 1, entrance 1 here) at the bottom of the room. A stump answers Move:
-///   pushed to column 24, it spins in place, leaps away, lands with a shake
-///   and a ring of dust and lies flat underfoot, and the cells where it lands
-///   change (FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED, a story flag, so it stays
-///   there for good). A chest holds Power Bread. Exits lead back to the Goma
-///   Cave Entrance (exit 1), into the room of two pillars (goma_cave_pillar.c;
-///   exits 2 and 3, its entrances 1 and 2) and north into scene 29 (exit 4).
-///   Exit 5, on collision code 1, leads to Vale (vale_gate.c, scene 5,
-///   entrance 11), and Vale's exit 11 leads back in at entrance 5, which
-///   arrives without the place name. No exit leads to entrance 99.
-/// - Goma Cave, scene 29, the way out. It has no actors and only its two
-///   exits: back south into scene 28 (exit 1, its entrance 4) and out onto
-///   the world map (exit 2, its entrance 40), toward Bilibin. The world map's
-///   exit 40 leads back in at entrance 2.
+/// - Goma Cave, scene 28. The party walks in from the Goma Cave Entrance
+///   (GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_ENTRANCE) at the bottom of the room.
+///   A stump answers Move: pushed to column 24, it spins in place, leaps away,
+///   lands with a shake and a ring of dust and lies flat underfoot, and the
+///   cells where it lands change (FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED, a story
+///   flag, so it stays there for good). A chest holds Power Bread. Exits lead
+///   back to the Goma Cave Entrance, into the room of two pillars
+///   (goma_cave_pillar.c; GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_PILLAR_WEST and
+///   GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_PILLAR_EAST) and north into scene 29
+///   (GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_WATERWAY_2).
+///   GOMA_CAVE_WATERWAY_1_TO_VALE_GATE, on collision code 1, leads to Vale
+///   (vale_gate.c, scene 5), and Vale's VALE_GATE_TO_GOMA_CAVE_WATERWAY_1
+///   leads back in at GOMA_CAVE_WATERWAY_1_FROM_VALE_GATE, which arrives
+///   without the place name. No exit leads to entrance 99.
+/// - Goma Cave, scene 29, the way out. It has no actors and only its two exits:
+///   back south into scene 28 (GOMA_CAVE_WATERWAY_2_TO_GOMA_CAVE_WATERWAY_1)
+///   and out onto the world map (GOMA_CAVE_WATERWAY_2_TO_WORLD_MAP), toward
+///   Bilibin; the world map leads back in at
+///   GOMA_CAVE_WATERWAY_2_FROM_WORLD_MAP.
 ///
 /// The getters give scene 29 its own tables; any other scene number takes
 /// scene 28's.
@@ -52,7 +56,12 @@
 #include "ability_ids.h"
 #include "vector3.h"
 
-#define STUMP 8
+/// Scene 28's actors, numbering its placement rows from ACTOR_FIRST_PLACED.
+enum GomaCaveWaterwayActor {
+  /// The stump Move pushes, sprite 0xd4, as Garet calls the one at the Goma
+  /// Cave Entrance: "Our Psynergy isn't strong enough to free that stump."
+  ACTOR_STUMP = ACTOR_FIRST_PLACED
+};
 
 // Forward declarations.
 static void GomaCaveWaterway_LeapStump(s32 no);
@@ -86,13 +95,13 @@ static void Event_MoveStump(void) {
   struct FieldActor *landed;
   s32 column;
 
-  stump = Object_GetById(STUMP);
+  stump = Object_GetById(ACTOR_STUMP);
   column = stump->x.fixed / PIXELS(16);
   if (column == 24) {
-    GomaCaveWaterway_LeapStump(STUMP);
-    Object_GetById(STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    GomaCaveWaterway_LeapStump(ACTOR_STUMP);
+    Object_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
-    landed = Object_GetById(STUMP);
+    landed = Object_GetById(ACTOR_STUMP);
     Engine_ActorSetSpriteFlags(landed, 0);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED);
   }
@@ -106,8 +115,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 }
 
 /// Sets up Goma Cave's scene 28 as the party enters (scene 29 needs nothing).
-/// Arriving by entrance 5 shows no place name; otherwise the stump lies where
-/// the party moved it.
+/// Arriving from Vale (GOMA_CAVE_WATERWAY_1_FROM_VALE_GATE) shows no place
+/// name; otherwise the stump lies where the party moved it.
 s32 Scene_Initialize(void) {
   struct FieldActor *stump;
 
@@ -116,13 +125,13 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance == GOMA_CAVE_WATERWAY_1_FROM_VALE_GATE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     } else {
-      Object_GetById(STUMP)->collisionFlags |= 16;
+      Object_GetById(ACTOR_STUMP)->collisionFlags |= 16;
       if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED) != 0) {
-        Engine_ActorSetPosition(STUMP, PIXELS(346), PIXELS(292));
-        stump = Object_GetById(STUMP);
+        Engine_ActorSetPosition(ACTOR_STUMP, PIXELS(346), PIXELS(292));
+        stump = Object_GetById(ACTOR_STUMP);
         Engine_ActorSetSpriteFlags(stump, 0);
-        Object_GetById(STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_MODE(STUMP, 2);
+        Object_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+        OBJ_MODE(ACTOR_STUMP, 2);
         Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -278,19 +287,22 @@ struct ScenePlacement gGomaCaveWaterwayPlacements2[] = {
 };
 
 struct SceneEvent gGomaCaveWaterwayEventsOther[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 5},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, 1},
-    {0x31, 6, CONDITION_ALWAYS, 2},
-    {0x31, 7, CONDITION_ALWAYS, 3},
-    {EVENT_EXIT, 8, CONDITION_ALWAYS, 4},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_WATERWAY_1_TO_VALE_GATE},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS,
+     GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_ENTRANCE},
+    {0x31, 6, CONDITION_ALWAYS, GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_PILLAR_WEST},
+    {0x31, 7, CONDITION_ALWAYS, GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_PILLAR_EAST},
+    {EVENT_EXIT, 8, CONDITION_ALWAYS,
+     GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_WATERWAY_2},
     {SEARCH(SEARCH_CHEST), 100, 0xf28, FIND_ITEM(ITEM_POWER_BREAD)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), STUMP,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP,
      FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump)},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gGomaCaveWaterwayEvents2[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+     GOMA_CAVE_WATERWAY_2_TO_GOMA_CAVE_WATERWAY_1},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_WATERWAY_2_TO_WORLD_MAP},
     {SCENE_EVENTS_END},
 };

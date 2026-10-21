@@ -11,12 +11,13 @@
 /// point is set and a fade overlay follows the leader in the rooms that need it
 /// (TunnelRuins_UpdateTrackedActor).
 ///
-/// - Tunnel Ruins (TunnelRuins1, scene 172), entered at entrance 1 from Babi
-///   Lighthouse (BabiLighthouse1, scene 174), where exit 1 leads back;
-///   Retreat returns to entrance 1. In the first room a statue (search code
-///   40) speaks to the leader's soul: those who would climb Venus Lighthouse
-///   must seek the lady's leave. Once the statue in Venus Lighthouse has
-///   opened one of its two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
+/// - Tunnel Ruins (TunnelRuins1, scene 172), entered from Babi Lighthouse
+///   (BabiLighthouse1, scene 174) at TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1,
+///   where TUNNEL_RUINS_1_TO_BABI_LIGHTHOUSE_1 leads back; Retreat returns to
+///   TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1. In the first room a statue (search
+///   code 40) speaks to the leader's soul: those who would climb Venus
+///   Lighthouse must seek the lady's leave. Once the statue in Venus Lighthouse
+///   has opened one of its two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
 ///   _SECOND_PATH) it says instead that the path will not open here, and the
 ///   setup redraws this room and the room of entrances 5 to 7 to match the
 ///   path. The rooms that follow hold two pairs of pillars to push or Move,
@@ -24,31 +25,35 @@
 ///   FLAG_SCENE_TEMP_00 and _01, change what block C can do; bush C stays gone,
 ///   FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY), and two pillars that sink into the
 ///   floor once moved onto their columns (FLAG_TUNNEL_RUINS_PILLAR_A_SUNK and
-///   _B_SUNK, B only after Douse has soaked it, FLAG_SCENE_TEMP_02); each
-///   sunk pillar carries a puddle that Frost freezes into a pillar of ice
+///   _B_SUNK, B only after Douse has soaked it, FLAG_SCENE_TEMP_02); each sunk
+///   pillar carries a puddle that Frost freezes into a pillar of ice
 ///   (FLAG_SCENE_TEMP_00 and _01 in that room), after which some of the hops
-///   beside it no longer run. Exits 15, 17 and 18 lead on into TunnelRuins2.
-/// - Tunnel Ruins (TunnelRuins2, scene 173), whose entrances 1 to 3 the area
-///   names call Babi Lighthouse: they are where the three drops in Babi
+///   beside it no longer run. TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_WEST, _SOUTHWEST
+///   and _SOUTHEAST lead on into TunnelRuins2.
+/// - Tunnel Ruins (TunnelRuins2, scene 173), whose entrances 1 to 3
+///   (TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST, _NORTH and _SOUTH) the
+///   area names call Babi Lighthouse: they are where the three drops in Babi
 ///   Lighthouse Entry (BabiLighthouseEntry, scene 176) land, and from those
 ///   rooms Retreat leads back up there, the place name not shown; regions for
-///   exits 15 to 17 lead back up to it. There two pillars to push or Move keep
-///   their places between visits (FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST
-///   and _B_PUSHED_WEST). Elsewhere: a pillar that Douse soaks
-///   (FLAG_SCENE_TEMP_03), after which its puddle follows it and Frost freezes
-///   the puddle into a pillar of ice (FLAG_SCENE_TEMP_04); two balance
-///   platforms, each block set on one with Carry (FLAG_SCENE_TEMP_00 to _02)
-///   sinking it a step and raising the other, set out with all three blocks on
-///   them when the party comes in at entrance 5; two false statues that block
-///   their cells until Reveal's phase 5 makes them vanish; the rooms of
-///   entrances 8 to 11, redrawn for the path the statue in Venus Lighthouse
-///   opened; and five coloured statues of a woman before a door. Searching a
-///   statue there (search code 42) speaks to the soul, Mind Read on the five
-///   tells which colour shines in which direction, and with all five moved onto
-///   their marks the door opens (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN), closing
-///   again if one is moved off. Two chests hold an Oracle's Robe and Asura's
-///   Armor. Exits 1, 3 and 12 lead back into TunnelRuins1, and exit 14 into
-///   Venus Lighthouse (VenusLighthouse2, scene 183, entrance 18).
+///   TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST, _SOUTH and _NORTH lead back
+///   up to it. There two pillars to push or Move keep their places between
+///   visits (FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and _B_PUSHED_WEST).
+///   Elsewhere: a pillar that Douse soaks (FLAG_SCENE_TEMP_03), after which its
+///   puddle follows it and Frost freezes the puddle into a pillar of ice
+///   (FLAG_SCENE_TEMP_04); two balance platforms, each block set on one with
+///   Carry (FLAG_SCENE_TEMP_00 to _02) sinking it a step and raising the other,
+///   set out with all three blocks on them when the party comes in at entrance
+///   5; two false statues that block their cells until Reveal's phase 5 makes
+///   them vanish; the rooms of entrances 8 to 11, redrawn for the path the
+///   statue in Venus Lighthouse opened; and five coloured statues of a woman
+///   before a door. Searching a statue there (search code 42) speaks to the
+///   soul, Mind Read on the five tells which colour shines in which direction,
+///   and with all five moved onto their marks the door opens
+///   (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN), closing again if one is moved off.
+///   Two chests hold an Oracle's Robe and Asura's Armor.
+///   TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_NORTH, _SOUTHWEST and _SOUTHEAST lead
+///   back into TunnelRuins1, and TUNNEL_RUINS_2_TO_VENUS_LIGHTHOUSE_2 into
+///   Venus Lighthouse (VenusLighthouse2, scene 183).
 
 #include "script.h"
 #include "version.h"
@@ -1402,9 +1407,10 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 
 /// On entering a room: the puzzle as it was left, and the path the statue in
 /// Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH).
-/// Retreat leads back to TunnelRuins1's entrance 1, or from TunnelRuins2's
-/// entrances 1 to 3 to Babi Lighthouse Entry.
-/// The scene's initialization. Entering rooms 8 to 11 sets flag 0x973.
+/// Retreat leads back to TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1, or, from
+/// TunnelRuins2's three entrances from Babi Lighthouse Entry, up there to
+/// BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE.
+/// The scene's initialization. Entering at entrances 8 to 11 sets flag 0x973.
 /// XXX: no other code of the game reads flag 0x973; a reader elsewhere would
 /// say what it records.
 s32 TunnelRuins_Initialize(void) {
@@ -1412,12 +1418,12 @@ s32 TunnelRuins_Initialize(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1 ||
       gGameState.scene == (s32)&SceneId_TunnelRuins2) {
     BattleFx_StartFadeOverlay(0);
-    gGameState.retreatEntrance = 1;
+    gGameState.retreatEntrance = TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1;
     gGameState.retreatScene = (s32)&SceneId_TunnelRuins1;
   }
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
     switch (gGameState.entrance) {
-    case 1:
+    case TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1:
     case 2:
       if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
         Map_CopyCellsTo(121, 4, 74, 9, 5, 8);
@@ -1535,10 +1541,11 @@ s32 TunnelRuins_Initialize(void) {
     switch (gGameState.entrance) {
     case 0:
       break;
-    case 1:
-    case 2:
-    case 3:
-      gGameState.retreatEntrance = 1;
+    case TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST:
+    case TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH:
+    case TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH:
+      gGameState.retreatEntrance =
+          BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
       gGameState.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_A, 6);
@@ -1549,7 +1556,7 @@ s32 TunnelRuins_Initialize(void) {
         OBJ_POS_SET(ACTOR_EAST_PILLAR_B, 744, 312);
       TunnelRuins_MarkPushPillarCells();
       break;
-    case 6:
+    case TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_NORTH:
     case 7:
       Engine_ActorSetSpritePriority(ACTOR_DOUSE_PILLAR, 1);
       Object_GetById(ACTOR_DOUSE_PILLAR)->motionFlags = 0;
@@ -1568,7 +1575,7 @@ s32 TunnelRuins_Initialize(void) {
       Object_GetById(ACTOR_DOUSE_PUDDLE)->update = ACTOR_UPDATE_IDLE;
       Object_GetById(ACTOR_DOUSE_PILLAR)->update = ACTOR_UPDATE_IDLE;
       break;
-    case 4:
+    case TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_WEST:
     case 5:
       if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION)) {
         Object_GetById(ACTOR_BALANCE_WEST)->motionFlags = 0;
@@ -1682,7 +1689,7 @@ s32 TunnelRuins_Initialize(void) {
           20, 56, 1, 1, Object_GetById(ACTOR_LADY_STATUE_E)->x.fixed >> 20,
           Object_GetById(ACTOR_LADY_STATUE_E)->z.fixed >> 20);
       break;
-    case 17:
+    case TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_SOUTH:
       Map_CopyCellAttributes(49, 43, 1, 1, 49, 107);
       Event_ShowFalseStatues();
       break;
@@ -1838,9 +1845,12 @@ struct SceneEntrance gTunnelRuinsEntrances2[] = {
 };
 
 struct SceneRegion gTunnelRuinsRegions2[] = {
-    {624, 16, 336, 640, 32, 352, -1, 15},
-    {816, 16, 336, 832, 32, 352, -1, 16},
-    {832, 16, 112, 848, 32, 128, -1, 17},
+    {624, 16, 336, 640, 32, 352, -1,
+     TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST},
+    {816, 16, 336, 832, 32, 352, -1,
+     TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH},
+    {832, 16, 112, 848, 32, 128, -1,
+     TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_NORTH},
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
@@ -1972,7 +1982,7 @@ struct ScenePlacement gTunnelRuinsPlacementsOther[] = {
 
 // clang-format off
 struct SceneEvent gTunnelRuinsEvents1[] = {
-    {0x21, 1, CONDITION_ALWAYS, 1},
+    {0x21, 1, CONDITION_ALWAYS, TUNNEL_RUINS_1_TO_BABI_LIGHTHOUSE_1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -1986,10 +1996,10 @@ struct SceneEvent gTunnelRuinsEvents1[] = {
     {EVENT_EXIT, 12, CONDITION_ALWAYS, 12},
     {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
     {EVENT_EXIT, 14, CONDITION_ALWAYS, 14},
-    {EVENT_EXIT, 15, CONDITION_ALWAYS, 15},
+    {EVENT_EXIT, 15, CONDITION_ALWAYS, TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_WEST},
     {EVENT_EXIT, 16, CONDITION_ALWAYS, 16},
-    {EVENT_EXIT, 17, CONDITION_ALWAYS, 17},
-    {EVENT_EXIT, 18, CONDITION_ALWAYS, 18},
+    {EVENT_EXIT, 17, CONDITION_ALWAYS, TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHWEST},
+    {EVENT_EXIT, 18, CONDITION_ALWAYS, TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHEAST},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpDownLedge)},
     {TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS,
         EVENT_SCRIPT(Event_HopWest)},
@@ -2056,9 +2066,9 @@ struct SceneEvent gTunnelRuinsEvents1[] = {
 };
 
 struct SceneEvent gTunnelRuinsEventsOther[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_NORTH},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_SOUTHWEST},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
     {EVENT_EXIT, 6, CONDITION_ALWAYS, 6},
@@ -2067,9 +2077,9 @@ struct SceneEvent gTunnelRuinsEventsOther[] = {
     {EVENT_EXIT, 9, CONDITION_ALWAYS, 9},
     {EVENT_EXIT, 10, CONDITION_ALWAYS, 10},
     {EVENT_EXIT, 11, CONDITION_ALWAYS, 11},
-    {EVENT_EXIT, 12, CONDITION_ALWAYS, 12},
+    {EVENT_EXIT, 12, CONDITION_ALWAYS, TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_SOUTHEAST},
     {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
-    {0x21, 14, CONDITION_ALWAYS, 14},
+    {0x21, 14, CONDITION_ALWAYS, TUNNEL_RUINS_2_TO_VENUS_LIGHTHOUSE_2},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDousePillar)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpDownLedge)},
     {TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,

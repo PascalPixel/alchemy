@@ -220,8 +220,8 @@ s32 SerialRuntime_PollStatus(void) {
 ///   0x1000       : SIOCNT's bit 6 was set at the last transfer interrupt
 ///                  (isParent)
 ///   0x2000       : SIOCNT's multiplayer id is 2 or more
-/// So 3, both consoles heard this frame, is what the block transfer and
-/// SerialRuntime_WaitForStatusMask(3) wait for.
+/// So LINK_STATUS_HEARD_BOTH is what the block transfer and
+/// SerialRuntime_WaitForStatusMask(LINK_STATUS_HEARD_BOTH) wait for.
 s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
@@ -588,7 +588,7 @@ void SerialRuntime_StepBlockTransfer(void) {
   own = &gSerialTransfer;
   peer = (struct SerialTransferState *)gSerialPeerPayloads[id];
   // Both consoles must have been heard from this frame
-  if ((gLinkStatus & 3) != 3)
+  if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH)
     return;
   // Receiving advances only when the peer presents the expected sequence.
   // peerFlags is the sender's block kind, an enum SerialSendState.
@@ -719,7 +719,7 @@ void SerialTest_Run(void) {
     value--;
   } while (n >= 0);
   Cpu_Fill32(0, gMapCellBuffer, 0x400);
-  SerialRuntime_WaitForStatusMask(3);
+  SerialRuntime_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
 restart:
   SerialRuntime_BeginReceive(gMapCellBuffer);
   for (;;) {

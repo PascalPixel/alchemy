@@ -201,7 +201,7 @@ s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
 void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
                                           s32 step);
 void ObjectSystem_Configure(s32 mode);
-struct AnimationEntry *AnimationObject_Allocate(s32 id);
+struct AnimationEntry *Animation_AllocateLayer(s32 id);
 void ResourceMetadata_ClearRecord(struct AnimationEntry *record);
 struct AnimationObject *ResourceObject_Create(s32 id);
 void ResourceObject_Release(struct AnimationObject *sprite);

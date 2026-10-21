@@ -167,7 +167,7 @@ These turn up all over the game.
 - A value can be reached through a view of another type. That is undefined
   behaviour, marked `// UB:`, with the declared access behind `UBFIX`:
   - a pointer read or stored as an integer: `*(s32 *)&metadata->frames`,
-    which keeps the zero load ahead of it (`AnimationObject_Allocate`); the
+    which keeps the zero load ahead of it (`Animation_AllocateLayer`); the
     `u32` views of `gMapWork[0]` (`SceneActor_MoveAndRedraw`) and of
     `gEventWork` (`TolbiShipDeck_SightLand`, where the word may alias the
     halfword facing stores before it and so stays after them); the update

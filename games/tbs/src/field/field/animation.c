@@ -212,7 +212,7 @@ s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id) {
   }
   if (freeIndex == ANIMATION_LAYER_COUNT)
     return -1;
-  layerHandle = (s32)AnimationObject_Allocate(id);
+  layerHandle = (s32)Animation_AllocateLayer(id);
   if (layerHandle == 0)
     return 0;
   sprite->entries[freeIndex] = (struct AnimationEntry *)layerHandle;
@@ -457,7 +457,7 @@ void ObjectSystem_Configure(s32 mode) {
 /// Takes a free animation layer record and starts it on animation id's first
 /// animation. Returns the layer, or NULL when none is free or the id has no
 /// image. Called by ResourceMetadata_Register.
-struct AnimationEntry *AnimationObject_Allocate(s32 id) {
+struct AnimationEntry *Animation_AllocateLayer(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationEntry *candidate;
   struct AnimationEntry *found;
@@ -508,7 +508,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
 }
 
 /// Zeroes one animation layer (struct AnimationEntry); does nothing for NULL.
-/// Zeroing kind frees the record for AnimationObject_Allocate. Called by the
+/// Zeroing kind frees the record for Animation_AllocateLayer. Called by the
 /// layer release functions here and, as ResourceMetadata_ClearRecordFar, by
 /// the Psynergy effects and scene scripts.
 void ResourceMetadata_ClearRecord(struct AnimationEntry *record) {

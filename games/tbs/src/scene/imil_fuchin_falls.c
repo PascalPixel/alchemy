@@ -123,14 +123,11 @@ enum ImilFuchinFallsActor {
   /// ★ Named from what the player sees: yellow logs floating on the cave's
   /// water (its render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a log floating on the water (its
-  /// render)
+  /// ★ Named from what the player sees: a floating log (its render)
   ACTOR_SECOND_LOG,
-  /// ★ Named from what the player sees: a log floating on the water (its
-  /// render)
+  /// ★ Named from what the player sees: a floating log (its render)
   ACTOR_THIRD_LOG,
-  /// ★ Named from what the player sees: a log floating on the water (its
-  /// render)
+  /// ★ Named from what the player sees: a floating log (its render)
   ACTOR_FOURTH_LOG,
   /// Zephyr, a Jupiter Djinni, after the second room's three logs.
   /// ★ Named from the game: "Zephyr" (MsgDjinnName)
@@ -139,8 +136,7 @@ enum ImilFuchinFallsActor {
   /// two foreground pieces (Fuchin_CreateForegroundActor); on entry
   /// ImilFuchinFalls_PrepareRoom stills it at floor height and draws it at
   /// sprite priority 1, as those are drawn. XXX: what it shows is not known;
-  /// the
-  /// room's renders show nothing where it stands.
+  /// the room's renders show nothing where it stands.
   ACTOR_DRAGON_ROOM_FOREGROUND = ACTOR_FIRST_PLACED
 };
 

@@ -277,6 +277,33 @@ enum BattleCastKind {
   CAST_ENEMY = 2     ///< the element's streaks
 };
 
+// EnemyDefinition.targetStrategy: a single-target attacker favours the
+// target with the most HP left, the most maximum HP, or no one
+// (BattleTarget_SelectForAction). The same column steers
+// BattleCommand_SelectAutomatic: with any strategy but STRATEGY_MOST_HP an
+// enemy skips Psynergy it lacks the PP for, and with STRATEGY_RANDOM any
+// Psynergy while sealed; with STRATEGY_MOST_HP, an enemy that picks an item
+// place with no items left still commands CMD_ITEM.
+#define STRATEGY_MOST_HP 0
+#define STRATEGY_MOST_MAX_HP 1
+#define STRATEGY_RANDOM 2
+
+/// EnemyDefinition.actionStrategy: how BattleCommand_SelectAutomatic picks a
+/// place in the enemy's eight actions. The first three roll against
+/// gBattleCommand_SelectionWeights; the next two remember the place in
+/// BattleUnit.rewards. No row of enemies.tsv has a strategy past
+/// ACTION_STRATEGY_RANDOM_START.
+enum EnemyActionStrategy {
+  ACTION_STRATEGY_EVEN,           ///< 32 in 256 each
+  ACTION_STRATEGY_FALLING,        ///< from 53 in 256 down to 11
+  ACTION_STRATEGY_FIRST_FAVOURED, ///< the first 113 in 256, down to 5
+  /// A random place the first time, then each in turn at the enemy's turn.
+  ACTION_STRATEGY_RANDOM_START,
+  ACTION_STRATEGY_IN_ORDER,  ///< each in turn from the remembered place
+  ACTION_STRATEGY_NEXT_PICK, ///< the next place at each new pick, from 0
+  ACTION_STRATEGY_SAME       ///< the place last picked
+};
+
 // ItemDefinition.useType: what using an item in battle does to it.
 #define ITEM_USE_CONSUMED 1  ///< one is used up
 #define ITEM_USE_MAY_BREAK 2 ///< breaks one time in eight
@@ -296,6 +323,11 @@ enum BattleCastKind {
 #define TARGET_MODE_FOES 1
 #define TARGET_MODE_ALLIES 2 ///< the user's side, the user included
 #define TARGET_MODE_SELF 4   ///< the user alone, whatever the range
+
+/// BattleTarget_SelectForAction's results when it picks no one: the side it
+/// may target lists no one, or no one there is worth the ability.
+#define TARGET_PICK_SIDE_EMPTY -2
+#define TARGET_PICK_NONE -1
 
 /// BattleActionRecord.target of a held unit's lost turn (CMD_NONE, from
 /// BattlePres_BuildOpponentEntries and BattlePres_BuildUnitEntries): as a

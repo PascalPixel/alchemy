@@ -5,13 +5,14 @@
 #include "../battle_internal.h"
 
 /// An enemy's memory of its action choice, kept in BattleUnit.rewards (0 in
-/// every row of enemies.tsv, so it starts cleared). Only action strategies 3
-/// and 4 use it.
+/// every row of enemies.tsv, so it starts cleared). Only
+/// ACTION_STRATEGY_RANDOM_START and ACTION_STRATEGY_IN_ORDER use it.
 /// bits: 31..4 unused | 3..1 selection | 0 initialized
 struct BattleAutomaticState {
-  unsigned initialized : 1; ///< strategy 3 has drawn its random start
-  unsigned selection : 3;   ///< the place in its action list, 0 to 7
-  unsigned remaining : 28;  ///< not used here
+  unsigned initialized
+      : 1;                 ///< ACTION_STRATEGY_RANDOM_START has drawn its start
+  unsigned selection : 3;  ///< the place in its action list, 0 to 7
+  unsigned remaining : 28; ///< not used here
 };
 
 /// Chooses an enemy's action (a party member's is chosen in the menu): one of
@@ -22,7 +23,8 @@ struct BattleAutomaticState {
 /// Called with retry 0 for each enemy as the round is built
 /// (BattlePres_BuildOpponentEntries), and with retry 1 at its turn
 /// (BattlePresentation_DispatchAction). Writes request's command, parameter,
-/// target and range; strategies 3 and 4 advance the place remembered in
+/// target and range; ACTION_STRATEGY_RANDOM_START and
+/// ACTION_STRATEGY_IN_ORDER advance the place remembered in
 /// BattleUnit.rewards. Returns nothing.
 /// @param retry 0 when the round is built: only a guard is settled now (it
 /// must raise before anyone acts); 1 at the enemy's turn: the rest
@@ -84,8 +86,9 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
   unit = UnitGetFar(request->unitId);
   needsChoice = itemsAllowed = 1;
   failedChoices = 0;
-  // Strategy 5's first pick is place 0. No row of enemies.tsv uses strategies
-  // 4 to 6 (only 0, 1 and 3); strategy 6 would keep this -1 as its place.
+  // ACTION_STRATEGY_NEXT_PICK's first pick is place 0, and
+  // ACTION_STRATEGY_SAME would keep this -1 as its place; no row of
+  // enemies.tsv uses either.
   selection = -1U;
   // A party member chooses in the menu.
   if (unit->classIndex != 0)
@@ -102,28 +105,26 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
 select_again:
   strategyKind = *actionStrategy;
   switch (strategyKind) {
-  // Strategies 0 to 2: one of the three weight tables, in 256ths
-  // (battle_data.s): 0 even, 32 each; 1 falling from 53 to 11; 2 favouring
-  // the first action, 113, down to 5 for the last.
-  case 0:
-    selection =
-        BattleEnemy_SelectWeightedAction(gBattleCommand_SelectionWeights[0]);
+  // The three weight tables are in battle_data.s.
+  case ACTION_STRATEGY_EVEN:
+    selection = BattleEnemy_SelectWeightedAction(
+        gBattleCommand_SelectionWeights[ACTION_STRATEGY_EVEN]);
     break;
-  case 1:
-    selection =
-        BattleEnemy_SelectWeightedAction(gBattleCommand_SelectionWeights[1]);
+  case ACTION_STRATEGY_FALLING:
+    selection = BattleEnemy_SelectWeightedAction(
+        gBattleCommand_SelectionWeights[ACTION_STRATEGY_FALLING]);
     break;
-  case 2:
-    selection =
-        BattleEnemy_SelectWeightedAction(gBattleCommand_SelectionWeights[2]);
+  case ACTION_STRATEGY_FIRST_FAVOURED:
+    selection = BattleEnemy_SelectWeightedAction(
+        gBattleCommand_SelectionWeights[ACTION_STRATEGY_FIRST_FAVOURED]);
     break;
-  case 3: // from a random place, then in order
+  case ACTION_STRATEGY_RANDOM_START:
     if (selectionMemory->initialized == 0) {
       selectionMemory->selection = BattleRandomFar();
       selectionMemory->initialized = 1;
     }
     // fall through
-  case 4: // in order from the remembered place
+  case ACTION_STRATEGY_IN_ORDER:
     // It moves on only at the enemy's turn, wrapping from 7 to 0 in its three
     // bits.
     selection = selectionMemory->selection;
@@ -131,10 +132,10 @@ select_again:
       selectionMemory->selection = selection + 1;
     }
     break;
-  case 5: // the next place at each new pick
+  case ACTION_STRATEGY_NEXT_PICK:
     selection++;
     break;
-  case 6: // the same place
+  case ACTION_STRATEGY_SAME:
     break;
   }
 
@@ -147,11 +148,11 @@ select_again:
   if (useItem != 0 && retry != 0) {
     if (!(ITEM_ID_MASK & unit->inventory[0])) {
       useItem = 0;
-      if (enemy->targetStrategy == 0) {
+      if (enemy->targetStrategy == STRATEGY_MOST_HP) {
         request->command = CMD_ITEM;
         // XXX: 0x1fd (509) is the row of the ability Can't Use, yet CMD_ITEM
         // reads its parameter as an inventory slot (BattleCommand_BuildPlan);
-        // a Brigand or Rat Fighter (target strategy 0, item places) out of
+        // a Brigand or Rat Fighter (STRATEGY_MOST_HP, item places) out of
         // items would show what the player sees.
         request->parameter = 0x1fd;
         return;
@@ -159,8 +160,8 @@ select_again:
     }
     if (useItem != 0) {
       item = Item_GetDirectFar(unit->inventory[0]);
-      // Only an item that is used up, whose ability's flags are exactly kind
-      // 1 (heal HP) or 2 (an effect), with no higher bit set.
+      // Only an item that is used up, whose ability's flags are exactly
+      // ABILITY_KIND_HEAL_HP or ABILITY_KIND_EFFECT, with no higher bit set.
       if (item->useType == ITEM_USE_CONSUMED) {
         itemAction = BattleActGet(item->actionId);
         abilityId = item->actionId;
@@ -168,8 +169,8 @@ select_again:
         flags = itemAction->flags;
         request->parameter = 0;
         switch (flags) {
-        case 1:
-        case 2:
+        case ABILITY_KIND_HEAL_HP:
+        case ABILITY_KIND_EFFECT:
           break;
         default:
           useItem = 0;
@@ -214,14 +215,15 @@ select_again:
       }
     }
 
-    // Psynergy: a careful enemy (strategy not 0) avoids it without the PP,
-    // and the most careful (2) also while sealed.
+    // Psynergy: an enemy whose strategy is not STRATEGY_MOST_HP avoids it
+    // without the PP, and with STRATEGY_RANDOM also while sealed.
     if (request->command != CMD_ITEM && Ability_IsPsynergy(abilityId) != 0) {
       request->command = CMD_PSYNERGY;
       request->parameter = abilityId;
-      if (ability->ppCost > unit->pp && enemy->targetStrategy != 0)
+      if (ability->ppCost > unit->pp &&
+          enemy->targetStrategy != STRATEGY_MOST_HP)
         goto next_candidate;
-      if (unit->psySeal != 0 && enemy->targetStrategy == 2)
+      if (unit->psySeal != 0 && enemy->targetStrategy == STRATEGY_RANDOM)
         goto next_candidate;
     }
     // A challenged enemy won't flee, and at its turn it no longer chooses a
@@ -238,37 +240,38 @@ select_again:
         request->command = CMD_ATTACK;
     }
 
-    // The target. With no one listed on the side (-2) a random place is
-    // taken instead, on the actor's own side for both modes (allyIsParty and
-    // opponentIsParty both test the actor); with no one worth it (-1) the
-    // enemy picks again. Mode 3 and the others target the user, but mode 3
-    // leaves the choice open, so the enemy picks again after it too.
+    // The target. With no one listed on the side (TARGET_PICK_SIDE_EMPTY) a
+    // random place is taken instead, on the actor's own side for both modes
+    // (allyIsParty and opponentIsParty both test the actor); with no one worth
+    // it (TARGET_PICK_NONE) the enemy picks again. A mode no ability has (3, or
+    // one above TARGET_MODE_SELF) targets the user, but 3 leaves the choice
+    // open, so the enemy picks again after it too.
     request->range = ability->range;
     targetMode = ability->targetMode;
     switch (targetMode) {
     case TARGET_MODE_ALLIES:
     case TARGET_MODE_SELF:
       allyTarget = BattleTarget_SelectForAction(request->unitId, ability);
-      if (allyTarget == -2) {
+      if (allyTarget == TARGET_PICK_SIDE_EMPTY) {
         allyIsParty = 0;
         if (request->unitId <= (u32)ALLY_MAX)
           allyIsParty = 1;
         allyTarget = BattleTarget_SelectRandomPosition(allyIsParty);
       }
-      if (allyTarget != -1) {
+      if (allyTarget != TARGET_PICK_NONE) {
         request->target = allyTarget;
         needsChoice = 0;
       }
       break;
     case TARGET_MODE_FOES:
       opponentTarget = BattleTarget_SelectForAction(request->unitId, ability);
-      if (opponentTarget == -2) {
+      if (opponentTarget == TARGET_PICK_SIDE_EMPTY) {
         opponentIsParty = 0;
         if (request->unitId <= (u32)ALLY_MAX)
           opponentIsParty = 1;
         opponentTarget = BattleTarget_SelectRandomPosition(opponentIsParty);
       }
-      if (opponentTarget != -1) {
+      if (opponentTarget != TARGET_PICK_NONE) {
         request->target = opponentTarget;
         needsChoice = 0;
       }

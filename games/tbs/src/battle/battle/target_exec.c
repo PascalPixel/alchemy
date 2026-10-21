@@ -53,7 +53,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// A message operand that shows nothing: the event only waits for the player.
 #define MESSAGE_NONE -1
 
-/// Unit ids 0 to 7 are the party's; enemy units start at FIRST_ENEMY_UNIT.
+/// Party unit ids run to ALLY_MAX; enemy units start at FIRST_ENEMY_UNIT.
 #define IS_PARTY_UNIT(unitId) ((unitId) >= 0 && (unitId) <= ALLY_MAX)
 
 // The helpers below are macros because the bytes need them so: written as
@@ -681,10 +681,10 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       break;
     }
 
-    // The ability kinds with no damage or healing (see enum AbilityKind).
-    case 0:
-    case 7:
-    case 9:
+    // The ability kinds with no damage or healing.
+    case ABILITY_KIND_BLANK:
+    case ABILITY_KIND_EFFECT_ONLY:
+    case ABILITY_KIND_NO_POWER:
       break;
 
     // An effect ability: its power deals damage only if the effect lands.

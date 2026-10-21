@@ -21,8 +21,9 @@ struct SlotArray {
 /// standing; otherwise any enemy place in use. Returns its place code, or 0
 /// when there is none.
 /// Called by BattleCommand_SelectAutomatic when BattleTarget_SelectForAction
-/// finds no one listed on the side (-2), with requireLivingUnit set for a
-/// party actor. Takes one Random16 roll when any position qualifies.
+/// finds no one listed on the side (TARGET_PICK_SIDE_EMPTY), with
+/// requireLivingUnit set for a party actor. Takes one Random16 roll when any
+/// position qualifies.
 s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 
   u16 positions[6];
@@ -158,13 +159,13 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       (count)++;                                                               \
     if ((unit)->resistanceStage > 0)                                           \
       (count)++;                                                               \
-    if ((unit)->elementLevels[0] > 0)                                          \
+    if ((unit)->elementLevels[ELEMENT_VENUS] > 0)                              \
       (count)++;                                                               \
-    if ((unit)->elementLevels[1] > 0)                                          \
+    if ((unit)->elementLevels[ELEMENT_MERCURY] > 0)                            \
       (count)++;                                                               \
-    if ((unit)->elementLevels[2] > 0)                                          \
+    if ((unit)->elementLevels[ELEMENT_MARS] > 0)                               \
       (count)++;                                                               \
-    if ((unit)->elementLevels[3] > 0)                                          \
+    if ((unit)->elementLevels[ELEMENT_JUPITER] > 0)                            \
       (count)++;                                                               \
   }
 
@@ -173,8 +174,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 /// to wear off), a cure or a heal the unit needs, an ailment it lacks, a
 /// revival of a downed unit (100). Failing its added effect, the ability's
 /// damage or healing must have something to work on. kindIndex receives the
-/// ability kind less one (enum AbilityKind, which says what the unnamed
-/// ability kinds hold). No row of actions.tsv has effect 1 or 2.
+/// ability kind less one (enum AbilityKind). The two unnamed effects below
+/// ABILITY_EFFECT_CURE_POISON, which no row has, count as nothing.
 #define CHECK_EFFECT_TARGET(unit, action, applies, kindIndex)                  \
   {                                                                            \
     (applies) = 0;                                                             \
@@ -269,7 +270,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       if ((unit)->hp == 0)                                                     \
         (applies) = 100;                                                       \
       break;                                                                   \
-    case 0:                                                                    \
+    case ABILITY_EFFECT_NONE:                                                  \
     case 1:                                                                    \
     case 2:                                                                    \
       break;                                                                   \
@@ -288,7 +289,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
           (applies)++;                                                         \
         break;                                                                 \
       case ABILITY_KIND_SUMMON - 1:                                            \
-      case 9 - 1:                                                              \
+      case ABILITY_KIND_NO_POWER - 1:                                          \
         if ((action)->power != 0 && (unit)->hp != 0)                           \
           (applies)++;                                                         \
         break;                                                                 \
@@ -310,22 +311,13 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
     }                                                                          \
   }
 
-// EnemyDefinition.targetStrategy: a single-target attacker favours the
-// target with the most HP left, the most maximum HP, or no one. The same
-// column steers BattleCommand_SelectAutomatic (enemy_ai.c): with any
-// strategy but 0 an enemy skips Psynergy it lacks the PP for, and at 2 any
-// Psynergy while sealed; at 0, an enemy that picks an item place with no
-// items left still commands CMD_ITEM.
-#define STRATEGY_MOST_HP 0
-#define STRATEGY_MOST_MAX_HP 1
-#define STRATEGY_RANDOM 2
-
 /// Picks the target of an enemy's ability (or a confused unit's), as a place
 /// code: among the units of the side it may target, those it would affect
 /// (CHECK_EFFECT_TARGET), at random; a single-target attack by an enemy with
 /// a strategy favours the strongest, the first of the sorted targets 6 times
-/// in 11, 15 or 18, the next 5 times, and so on. Returns -2 when the side
-/// has no one, -1 when the ability would affect no one.
+/// in 11, 15 or 18, the next 5 times, and so on. Returns
+/// TARGET_PICK_SIDE_EMPTY when the side has no one, TARGET_PICK_NONE when the
+/// ability would affect no one.
 /// Called by BattleCommand_SelectAutomatic for an ability aimed at allies,
 /// the user or foes. Takes Random16 rolls to choose among eligible targets.
 s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
@@ -406,7 +398,7 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
 scan_complete:
 
   if (candidateCount == 0)
-    return -2;
+    return TARGET_PICK_SIDE_EMPTY;
 
   // Keep the candidates the ability would affect, in place.
   for (targetIndex = 0; targetIndex < candidateCount; targetIndex++) {
@@ -420,13 +412,14 @@ scan_complete:
   }
 
   if (targetCount == 0)
-    return -1;
+    return TARGET_PICK_NONE;
 
   if (action->targetMode == TARGET_MODE_FOES && action->range == 1 &&
       ((struct EnemyDefinition *)Enemy_GetDefinitionFar(
            UnitGetFar(actorId)->classId))
               ->targetStrategy != STRATEGY_RANDOM &&
-      (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <= 2) {
+      (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <=
+          ABILITY_KIND_DAMAGE - ABILITY_KIND_ATTACK) {
     // A single-target ability of ABILITY_KIND_ATTACK to ABILITY_KIND_DAMAGE
     // by an enemy with a strategy: sort the targets by HP left or by maximum
     // HP, the most first. Each pass of the exchange sort starts one place

@@ -52,16 +52,11 @@ enum Element {
 #define ABILITY_KIND_MASK 15
 
 /// An ability kind picks what the ability's power does to each target: the
-/// formula BattleTargetExec puts it through. Three ability kinds have no
-/// enumerator, because they apply no power: 0 is only in the blank rows no
-/// table uses; 7 is Granite, Flash and Kite, whose effect is all they do; 9 is
-/// the field Psynergy (Move, Catch...), the field-only stat items (Apple,
-/// Power Bread...), Defend, Flee and the enemies' commands (Threaten, Ally
-/// Search...). The enemies' targeting check (CHECK_EFFECT_TARGET) treats
-/// ability kind 9 as a summon: worth it on a living unit only when the power
-/// is nonzero. No row has ability kind 12 to 15, which would apply no power
-/// either.
+/// formula BattleTargetExec puts it through. ABILITY_KIND_BLANK,
+/// ABILITY_KIND_EFFECT_ONLY and ABILITY_KIND_NO_POWER apply no power. No row
+/// has a kind above ABILITY_KIND_HEAL_PP, which would apply none either.
 enum AbilityKind {
+  ABILITY_KIND_BLANK = 0,             ///< only the blank rows no table uses
   ABILITY_KIND_HEAL_HP = 1,           ///< Cure, Fizz, healing items
   ABILITY_KIND_EFFECT = 2,            ///< damage only if the effect lands
   ABILITY_KIND_ATTACK = 3,            ///< Attack vs Defense, plus the power
@@ -73,11 +68,18 @@ enum AbilityKind {
   /// weapon's unleash is something else: ABILITY_KIND_ATTACK, or for Rapid
   /// Smash ABILITY_KIND_ATTACK_MULTIPLIED.
   ABILITY_KIND_UNLEASHED_DAMAGE = 6,
+  /// Granite, Flash and Kite, whose effect is all they do.
+  ABILITY_KIND_EFFECT_ONLY = 7,
   /// Summon damage falls off faster than Psynergy's (gHpDmgTable8). Called
   /// with the Summon command, a summon also adds 3% of the target's maximum
   /// HP to its power for each Djinni it spends; the Fusion Dragon's Outer
   /// Space and Dragon Driver go without that bonus.
   ABILITY_KIND_SUMMON = 8,
+  /// The field Psynergy (Move, Catch...), the field-only stat items (Apple,
+  /// Power Bread...), Defend, Flee and the enemies' commands (Threaten, Ally
+  /// Search...). The enemies' targeting check (CHECK_EFFECT_TARGET) treats it
+  /// as a summon: worth it on a living unit only when the power is nonzero.
+  ABILITY_KIND_NO_POWER = 9,
   ABILITY_KIND_PP_DAMAGE = 10, ///< Crazy Voice, and Psy Drain when it lands
   ABILITY_KIND_HEAL_PP = 11    ///< Ember, Psy Crystal, Adept Ring
 };
@@ -85,7 +87,9 @@ enum AbilityKind {
 /// BattleAct.effect: what an ability does besides its damage or healing,
 /// applied by BattleTargetExec unless noted. Each is named for the abilities
 /// that have it (actions.tsv, with their English names and descriptions).
-/// Sidestep (48) and Crazy Voice (52) have effects no code here reads. A stat
+/// ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are read by no code
+/// here, and no row has an effect between ABILITY_EFFECT_NONE and
+/// ABILITY_EFFECT_CURE_POISON. A stat
 /// change whose name ends in `_2` moves its stat two stages, one without moves
 /// it one.
 enum AbilityEffect {
@@ -139,9 +143,11 @@ enum AbilityEffect {
   ABILITY_EFFECT_THREATEN = 45,           ///< Contain, Threaten, Tremble
   ABILITY_EFFECT_DEFEND = 46,             ///< Defend, Granite
   ABILITY_EFFECT_TOTAL_DEFENSE = 47,      ///< Total Defense, Flash
+  ABILITY_EFFECT_SIDESTEP = 48,           ///< Sidestep
   ABILITY_EFFECT_FLEE = 49,               ///< Flee: an enemy's becomes CMD_FLEE
   ABILITY_EFFECT_CALL_ALLY = 50,          ///< Ally Search, Speed Surge
   ABILITY_EFFECT_CALL_HELP = 51,          ///< Search for Help
+  ABILITY_EFFECT_CRAZY_VOICE = 52,        ///< Crazy Voice
   ABILITY_EFFECT_GROUND = 53,             ///< Ground, War Cry, Wicked Howl
   ABILITY_EFFECT_CHALLENGE = 54,          ///< no ability has it
   ABILITY_EFFECT_SELF_DESTRUCT = 55,      ///< Dynamite, Mortal Blow

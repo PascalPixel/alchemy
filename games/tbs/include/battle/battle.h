@@ -97,8 +97,9 @@ struct ScatterPosition {
   s32 z; ///< 16.16 fixed-point pixels
 };
 extern u8 gAnimation_ChildPaletteCycle[];
-/// The weights an enemy of action strategy 0, 1 or 2 picks among its eight
-/// actions by: even, falling by 6, or falling steeply from 113 to 5.
+/// The weights an enemy picks among its eight actions by, one table for each
+/// weighted action strategy (enum EnemyActionStrategy, battle_internal.h):
+/// even, falling by 6, or falling steeply from 113 to 5.
 extern u8 gBattleCommand_SelectionWeights[3][8];
 /// The 32 by 16 spark of Avoid's falling arcs (spark_b), 4 bits a pixel;
 /// FieldFx_RunAvoid loads it.

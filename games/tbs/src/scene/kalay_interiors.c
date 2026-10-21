@@ -1,10 +1,13 @@
 /// @file
 /// Inside Kalay: the houses and the inn, and the Kalay Sanctum.
 ///
-/// - Kalay (KalayInteriors, scene 100), one map holding every house and the
+/// - Kalay (SceneId_KalayInteriors), one map holding every house and the
 ///   inn, each entered from its own door in the town (kalay.c) at an entrance
-///   of its own, and left by the matching exit. Entrances 9 to 15 and 17 are
-///   the inn's rooms and take the inn's placements and events; every other
+///   of its own, and left by the matching exit. The inn's entrances,
+///   KALAY_INTERIORS_INN_FROM_INN_CORRIDOR to
+///   KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST and
+///   KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR, take the inn's
+///   placements and events; every other
 ///   entrance takes the houses'. The inn is full of tourists on their way to
 ///   see Colosso in Tolbi. The innkeeper offers a room when spoken to across
 ///   the counter; from elsewhere he asks `Are you going to Tolbi also?`, and
@@ -20,7 +23,7 @@
 ///   eggplant line is unused. Barrels hold
 ///   11 coins and an Elixir. The inn's table and the houses' both carry these
 ///   searches.
-/// - Kalay Sanctum (KalaySanctum, scene 101), whose priest offers the
+/// - Kalay Sanctum (SceneId_KalaySanctum), whose priest offers the
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
@@ -50,7 +53,7 @@
 
 /// Each table numbers its own rows from ACTOR_FIRST_PLACED: the houses'
 /// (gKalayInteriors_HousePlacements), the inn's, whose rooms are entered
-/// through entrances 9 to 15 and 17 (gKalayInteriors_InnPlacements), and the
+/// through the inn's entrances (gKalayInteriors_InnPlacements), and the
 /// Kalay Sanctum's (gKalayInteriors_SanctumPlacements). Unless a note says
 /// otherwise, it quotes what its actor says before the Colosso tour leaves.
 enum KalayInteriorsActor {
@@ -149,14 +152,14 @@ const struct ScenePlacement *KalayInteriors_GetPlacements(void) {
     struct ScenePlacement *table;
 
     switch (entrance) {
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-    case 15:
-    case 17:
+    case KALAY_INTERIORS_INN_FROM_INN_CORRIDOR:
+    case KALAY_INTERIORS_INN:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_INN:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST:
+    case KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR:
       table = gKalayInteriors_InnPlacements;
       break;
     default:
@@ -180,14 +183,14 @@ const struct SceneEvent *KalayInteriors_GetEvents(void) {
     s32 entrance = gGameState.entrance;
 
     switch (entrance) {
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-    case 15:
-    case 17:
+    case KALAY_INTERIORS_INN_FROM_INN_CORRIDOR:
+    case KALAY_INTERIORS_INN:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_INN:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST:
+    case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST:
+    case KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR:
       return gKalayInteriors_InnEvents;
     default:
       return gKalayInteriors_HouseEvents;
@@ -325,7 +328,8 @@ static void KalayInteriors_OpenDoorAndExit(void) {
 
 /// Sets the opening transition and restores room-specific actors and tiles.
 s32 KalayInteriors_Initialize(void) {
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gGameState.scene == (s32)&SceneId_KalayInteriors) {
     KalayInteriors_ApplyRoomState();
   }
@@ -344,14 +348,14 @@ static void KalayInteriors_ApplyRoomState(void) {
     Map_CopyCellsTo(30, 14, 30, 16, 4, 2);
     return;
   }
-  case 9:
-  case 10:
-  case 11:
-  case 12:
-  case 13:
-  case 14:
-  case 15:
-  case 17:
+  case KALAY_INTERIORS_INN_FROM_INN_CORRIDOR:
+  case KALAY_INTERIORS_INN:
+  case KALAY_INTERIORS_INN_CORRIDOR_FROM_INN:
+  case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST:
+  case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST:
+  case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST:
+  case KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST:
+  case KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR:
     if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       Engine_ActorDestroy(ACTOR_FIRST_TOURIST);
       Engine_ActorDestroy(ACTOR_SECOND_TOURIST);
@@ -398,18 +402,28 @@ struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
      630, 305, 875, 535, 0},
     {KALAY_INTERIORS_ARMOR_SHOP_COUNTER, CONDITION_ALWAYS, 800, 0, 440,
      FACING_NORTH, 0, 630, 305, 875, 535, 0},
-    {9, CONDITION_ALWAYS, 48, 0, 640, FACING_NORTH, 0, 0, 495, 305, 775, 0},
+    {KALAY_INTERIORS_INN_FROM_INN_CORRIDOR, CONDITION_ALWAYS, 48, 0, 640,
+     FACING_NORTH, 0, 0, 495, 305, 775, 0},
     {KALAY_INTERIORS_INN, CONDITION_ALWAYS, 224, 0, 736, FACING_NORTH, 0, 0,
      495, 305, 775, 0},
-    {11, CONDITION_ALWAYS, 408, 0, 616, FACING_SOUTH, 0, 355, 525, 690, 710, 0},
-    {12, CONDITION_ALWAYS, 552, 0, 648, FACING_SOUTH, 0, 355, 525, 690, 710, 0},
-    {13, CONDITION_ALWAYS, 632, 0, 648, FACING_SOUTH, 0, 355, 525, 690, 710, 0},
-    {14, CONDITION_ALWAYS, 552, 0, 680, FACING_NORTH, 0, 355, 525, 690, 710, 0},
-    {15, CONDITION_ALWAYS, 632, 0, 680, FACING_NORTH, 0, 355, 525, 690, 710, 0},
-    {16, CONDITION_ALWAYS, 808, 0, 616, FACING_SOUTH, 0, 745, 570, 935, 720, 0},
-    {17, CONDITION_ALWAYS, 440, 0, 872, FACING_NORTH, 0, 340, 740, 520, 900, 0},
-    {18, CONDITION_ALWAYS, 584, 0, 872, FACING_NORTH, 0, 540, 740, 730, 900, 0},
-    {19, CONDITION_ALWAYS, 840, 0, 792, FACING_SOUTH, 0, 710, 740, 940, 900, 0},
+    {KALAY_INTERIORS_INN_CORRIDOR_FROM_INN, CONDITION_ALWAYS, 408, 0, 616,
+     FACING_SOUTH, 0, 355, 525, 690, 710, 0},
+    {KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST, CONDITION_ALWAYS,
+     552, 0, 648, FACING_SOUTH, 0, 355, 525, 690, 710, 0},
+    {KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST, CONDITION_ALWAYS,
+     632, 0, 648, FACING_SOUTH, 0, 355, 525, 690, 710, 0},
+    {KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST, CONDITION_ALWAYS,
+     552, 0, 680, FACING_NORTH, 0, 355, 525, 690, 710, 0},
+    {KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST, CONDITION_ALWAYS,
+     632, 0, 680, FACING_NORTH, 0, 355, 525, 690, 710, 0},
+    {KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     808, 0, 616, FACING_SOUTH, 0, 745, 570, 935, 720, 0},
+    {KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     440, 0, 872, FACING_NORTH, 0, 340, 740, 520, 900, 0},
+    {KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     584, 0, 872, FACING_NORTH, 0, 540, 740, 730, 900, 0},
+    {KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     840, 0, 792, FACING_SOUTH, 0, 710, 740, 940, 900, 0},
     {SCENE_TABLE_END},
 };
 

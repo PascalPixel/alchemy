@@ -982,7 +982,7 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
           Unit_GetExperienceForLevelFar(menu->selectedIds[0],
                                         owner->level + 1) -
           owner->experience;
-      UiWork_PushValueSlotFar(remaining, 5);
+      UiWork_PushValueSlotFar(remaining, MSG_ARG_NUMBER);
     }
   }
 
@@ -2140,8 +2140,8 @@ s32 Menu_CreateEightEntryObjects(struct UiWindow *window) {
   spriteFlags = 0xA8;
   slot = menu->categoryIcons;
   do {
-    icon = RenderOutput_CreateFromResourceFar(2, slotIndex, window, 0xF8,
-                                              spriteFlags);
+    icon = RenderOutput_CreateFromResourceFar(ICON_KIND_ITEM, slotIndex, window,
+                                              0xF8, spriteFlags);
     slotIndex += 1;
     *slot = icon;
     slot += 1;
@@ -2230,7 +2230,7 @@ s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled) {
         kind = 0;
         break;
       }
-      Resource_LoadByModeIntoSlotFar(8, kind,
+      Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN, kind,
                                      (u8)state->categoryIcons[index]->index, 0);
     }
     index++;

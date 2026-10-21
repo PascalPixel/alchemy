@@ -423,7 +423,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
                           menu->psynergyWindow);
   if (UiWindow_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
     menu->cursorIcon = RenderOutput_CreateFromResourceFar(
-        2, 0, menu->shortcutWindow, 0, result);
+        ICON_KIND_ITEM, 0, menu->shortcutWindow, 0, result);
     menu->cursorIcon->active = ICON_HIDDEN;
   }
   while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
@@ -663,7 +663,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
     wide = 0;
   if (gGameState.firstShortcut != 0) {
     UiWork_PushValueSlotFar(
-        gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK, 4);
+        gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK, MSG_ARG_ABILITY);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
       UiText_DrawStringAtOffsetFar(
@@ -683,7 +683,7 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
     wide = 0;
   if (gGameState.secondShortcut != 0) {
     UiWork_PushValueSlotFar(
-        gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK, 4);
+        gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK, MSG_ARG_ABILITY);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
       UiText_DrawStringAtOffsetFar(
@@ -812,7 +812,8 @@ void PsynergyMenu_CreateEntryGrid(void) {
   output = &menu->entryIcons[0];
   x = 96;
   do {
-    *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
+    *output++ = RenderOutput_CreateFromResourceFar(ICON_KIND_ABILITY, index,
+                                                   window, x, y);
     index++;
     x += 16;
   } while (index <= 7);
@@ -822,7 +823,8 @@ void PsynergyMenu_CreateEntryGrid(void) {
   output = &menu->entryIcons[8];
   x = 96;
   do {
-    *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
+    *output++ = RenderOutput_CreateFromResourceFar(ICON_KIND_ABILITY, index,
+                                                   window, x, y);
     index++;
     x += 16;
   } while (index <= 15);
@@ -854,7 +856,8 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   do {
     psynergyId = *p++;
     if (psynergyId != 0) {
-      Resource_LoadByModeIntoSlotFar(4, psynergyId, (u8)(*icons)->index, 0);
+      Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
+                                     (u8)(*icons)->index, 0);
     }
     icons++;
     remaining--;

@@ -460,7 +460,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       menu->paneOwner[1] = 0;
-      Resource_LoadByModeIntoSlotFar(2,
+      Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM,
                                      (menu->selectedItems[0] & ITEM_ID_MASK) |
                                          (result << INVENTORY_QUANTITY_SHIFT),
                                      (u8)menu->selectedItemIcon->index, 0);
@@ -935,8 +935,8 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
   firstY = 0xA8;
   firstIcons = &state->entryIcons[0];
   do {
-    *firstIcons++ =
-        RenderOutput_CreateFromResourceFar(2, firstSlot, window, 0xF8, firstY);
+    *firstIcons++ = RenderOutput_CreateFromResourceFar(
+        ICON_KIND_ITEM, firstSlot, window, 0xF8, firstY);
     firstSlot++;
   } while (firstSlot <= 7);
 
@@ -944,8 +944,8 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
   secondY = 0xA8;
   secondIcons = &state->entryIcons[8];
   do {
-    *secondIcons++ = RenderOutput_CreateFromResourceFar(2, secondSlot, window,
-                                                        0x100, secondY);
+    *secondIcons++ = RenderOutput_CreateFromResourceFar(
+        ICON_KIND_ITEM, secondSlot, window, 0x100, secondY);
     secondSlot++;
   } while (secondSlot <= 15);
 
@@ -954,7 +954,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
   remainingIcons = &state->entryIcons[16];
   do {
     *remainingIcons++ = RenderOutput_CreateFromResourceFar(
-        2, remainingSlot, window, 0x100, remainingY);
+        ICON_KIND_ITEM, remainingSlot, window, 0x100, remainingY);
     remainingSlot++;
   } while (remainingSlot <= 31);
 }
@@ -1074,8 +1074,8 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   if (UiWindow_UpdateOrCreate(&menu->itemWindow, 13, 3, 17, 10, 2))
     Menu_SpawnIconEntries(menu, menu->itemWindow);
   if (UiWindow_UpdateOrCreate(&menu->helpWindow, 13, 13, 17, 4, 2)) {
-    menu->selectedItemIcon =
-        RenderOutput_CreateFromResourceFar(2, 0, menu->helpWindow, 0, result);
+    menu->selectedItemIcon = RenderOutput_CreateFromResourceFar(
+        ICON_KIND_ITEM, 0, menu->helpWindow, 0, result);
     menu->selectedItemIcon->active = ICON_HIDDEN;
   }
   // The help text: L + A sorts, R shows the equipment.
@@ -1474,8 +1474,8 @@ s32 ItemMenu_CollectItems(struct BattleUnit *unit, u16 *items, s32 mode) {
 
 /// Loads each listed item's icon into its item icon sprite, the first 15
 /// entries of inventoryEntries, and hides the icons of empty entries. iconStyle
-/// 0 draws the list's icons; any other iconStyle the equipment view's (graphics
-/// kind 7).
+/// 0 draws the list's icons (ICON_KIND_ITEM); any other iconStyle the
+/// equipment view's (ICON_KIND_EQUIPMENT_ITEM).
 void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
   s32 remaining;
   u16 *entries;
@@ -1489,9 +1489,11 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
     itemId = *entries++;
     if (itemId != 0) {
       if (iconStyle == 0) {
-        Resource_LoadByModeIntoSlotFar(2, itemId, (u8)(*icons)->index, 0);
+        Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, itemId,
+                                       (u8)(*icons)->index, 0);
       } else {
-        Resource_LoadByModeIntoSlotFar(7, itemId, (u8)(*icons)->index, 0);
+        Resource_LoadByModeIntoSlotFar(ICON_KIND_EQUIPMENT_ITEM, itemId,
+                                       (u8)(*icons)->index, 0);
       }
     }
     icons++;
@@ -2346,7 +2348,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
     // editions pass it as the argument of "I have <number>."; Japanese draws
     // the number before its label.
 #if LANGUAGE != LANGUAGE_JAPANESE
-    UiWork_PushValueSlotFar(amount + 1, 5);
+    UiWork_PushValueSlotFar(amount + 1, MSG_ARG_NUMBER);
     UiText_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
 #else
     UiText_DrawNumberInWindowFar(amount + 1, 2, window, 0, row * 8);
@@ -2559,7 +2561,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 void ItemMenu_DrawItemHead(void) {
   struct InventoryMenuState *menu = gMenuWork;
 
-  Resource_LoadByModeIntoSlotFar(2, menu->selectedItems[0],
+  Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, menu->selectedItems[0],
                                  (u8)menu->selectedItemIcon->index, 0);
   menu->selectedItemIcon->active = ICON_SHOWN;
   menu->selectedItemIcon->x = 112;

@@ -2579,7 +2579,7 @@ static void Event_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 /// Reached by the first phase of Douse on the storm (ACTOR_STORM) while it
 /// holds the party in the air (FLAG_SCENE_TEMP_F0).
 static void Event_StartDousingStorm(void) {
-  ((struct BattleFxScene *)gEffectWork)->childOption = 1;
+  ((struct FieldFxScene *)gEffectWork)->childOption = 1;
 }
 
 /// Douse on the storm: the party comes down and the battle with what is in it

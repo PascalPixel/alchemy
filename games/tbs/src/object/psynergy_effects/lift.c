@@ -13,7 +13,7 @@
 /// It leaves the target raised and floating (motion flag bit 2), with its
 /// update set to ObjectGroup_ApplyRandomChildValues.
 void FieldFx_RunLiftOnTarget(s32 unused) {
-  struct BattleFxScene *work;
+  struct FieldFxScene *work;
   struct DispatchObject *caster;
   struct FieldActor *target;
   struct MotionObject *pair[2];
@@ -124,7 +124,7 @@ void FieldFx_UpdateRadialBurst(struct EffectSlot *slot) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct EffectVector pos;
   s32 state;
 

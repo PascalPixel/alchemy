@@ -1196,7 +1196,7 @@ VenusLighthouseAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct BattleFxScene *sceneWork = gEffectWork;
+  struct FieldFxScene *sceneWork = gEffectWork;
   s32 effectIndex;
 
   Engine_AudioPlayCue(SE_131);

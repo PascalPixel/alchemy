@@ -583,7 +583,7 @@ static void Event_StormGivesChase(void) {
 /// sets the Psynergy effect's child option (its meaning unknown).
 static void Event_DouseCastAtStorm(void) {
   u8 *state = gEffectWork;
-  ((struct BattleFxScene *)state)->childOption = 1;
+  ((struct FieldFxScene *)state)->childOption = 1;
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and

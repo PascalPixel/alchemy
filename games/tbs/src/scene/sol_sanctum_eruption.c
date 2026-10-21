@@ -1812,7 +1812,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   s32 effectIndex;
 
   Engine_AudioPlayCue(SE_292);

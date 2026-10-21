@@ -310,7 +310,7 @@ static void Event_SaveMovedPillarColumns(void) {
 static void Event_PrepareForce(void) {
   u8 *effectWork = gEffectWork;
 
-  ((struct BattleFxScene *)effectWork)->childMode = 1;
+  ((struct FieldFxScene *)effectWork)->childMode = 1;
 }
 
 /// Force on the target over the Board Walk: the obstacle spins down into place

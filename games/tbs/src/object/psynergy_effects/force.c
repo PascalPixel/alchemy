@@ -32,7 +32,7 @@ void FieldFx_RunForce(void) {
   struct FieldActor *projectile;
   struct FieldActor *copy;
   struct FieldActor *caster;
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct EffectSlot *slot;
   struct AnimationObject *sharedAnimation;
   void *event;

@@ -504,7 +504,7 @@ static void ItemLevel_ShowGlyphCaptions(void) {
 /// at it, this sets the effect's childMode, and Force's shot then leaves its
 /// target where it is (object/psynergy_effects/force.c).
 static void ItemLevel_EnableEffectChildMode(void) {
-  struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
+  struct FieldFxScene *effect = (struct FieldFxScene *)gEffectWork;
 
   effect->childMode = 1;
 }

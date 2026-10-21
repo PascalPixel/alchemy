@@ -21,7 +21,7 @@ void FieldFx_UpdateAllEffectSlots(void) { FieldFx_UpdateSceneSlots(); }
 void FieldFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
   struct MapScrollWork *map = *(gWorkSlot + 8);
-  struct BattleFxScene *work;
+  struct FieldFxScene *work;
   s32 running;
 
   running = ev->resolvingAction;
@@ -70,7 +70,7 @@ void FieldFx_SetupObjectPair(s32 userId, s32 targetId) {
   struct ScriptMotionObject *user;
   struct ScriptMotionObject *target;
   s32 dir;
-  struct BattleFxScene *work;
+  struct FieldFxScene *work;
 
   work = gEffectWork;
   work->firstObjectId = userId;
@@ -106,7 +106,7 @@ void FieldFx_SetupObjectPair(s32 userId, s32 targetId) {
 /// Stops the caster's per-frame hook and restores its colours (sprite param
 /// 0), then waits a frame.
 void FieldFx_StopCasterHook(void) {
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   struct ScriptMotionObject *user = work->mainObject;
 
   user->hook = NULL;
@@ -124,9 +124,9 @@ void FieldFx_StopCasterHook(void) {
 /// effect's work.
 void FieldFx_End(void) {
 #ifndef UBFIX
-  struct BattleFxScene **sceneCell;
+  struct FieldFxScene **sceneCell;
 #endif
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct FieldWork *runtime;
   struct MapScrollWork *map;
   struct EffectSlot *sceneObject;
@@ -139,7 +139,7 @@ void FieldFx_End(void) {
 #else
   // Indexing beyond the scalar global is undefined in C. Named slots add
   // 8 bytes to this function in the forced native EN build (0xf8 -> 0x100).
-  sceneCell = (struct BattleFxScene **)&gEffectWork;
+  sceneCell = (struct FieldFxScene **)&gEffectWork;
   scene = *sceneCell;
   runtime = *(struct FieldWork **)((u8 *)sceneCell - 116);
   map = *(struct MapScrollWork **)((u8 *)sceneCell - 192);
@@ -207,7 +207,7 @@ void EventObject_Initialize(void) {
   s32 ability;
   s32 announcedAbility;
   struct FieldActor *caster;
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   void *renderState;
 
   scene = *(void **)Ram_EffectWork;

@@ -68,7 +68,7 @@ void FieldFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 void FieldFx_SteerPushedTarget(s32 targetId) {
   struct EffectVector position;
   struct EffectVector beyond;
-  struct BattleFxScene *work;
+  struct FieldFxScene *work;
   struct FieldActor *user;
   struct FieldActor *target;
   struct FieldActor *pusher;
@@ -312,7 +312,7 @@ next_state:
 /// Abilities: Move (FIELD_KIND_MOVE).
 void FieldFx_RunMove(void) {
   UNUSED s32 work[3];
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   void *object;
 
   scene = gEffectWork;

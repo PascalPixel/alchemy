@@ -190,7 +190,7 @@ void FieldFx_RunWhirlwindOnTarget(s32 unused) { FieldFx_RunWhirlwind(); }
 /// to an effect colour and back, and gives the target its shrinking update;
 /// the orb is released at the end, the particles finish on their own.
 void FieldFx_RunWhirlwind(void) {
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *src = scene->mainObject;
   struct FieldActor *target = scene->child;
   struct EffectVector pos;

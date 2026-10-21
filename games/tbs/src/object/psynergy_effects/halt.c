@@ -14,7 +14,7 @@ void FieldFx_UpdateRadialCamera(struct EffectSlot *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct EffectVector pos;
   s8 *statePointer;
   s16 angle;
@@ -66,7 +66,7 @@ top:
 /// FieldFx_DispatchRequestKind for Halt on a target; sets the target's
 /// paused field.
 void FieldFx_RunHaltOnTarget(s32 unused) {
-  struct FieldActor *target = ((struct BattleFxScene *)gEffectWork)->child;
+  struct FieldActor *target = ((struct FieldFxScene *)gEffectWork)->child;
 
   target->paused = 1;
   FieldFx_RunHalt();
@@ -80,7 +80,7 @@ void FieldFx_RunHaltOnTarget(s32 unused) {
 ///
 /// Abilities: Halt (FIELD_KIND_HALT).
 void FieldFx_RunHalt(void) {
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct MotionObject *caster = scene->mainObject;
   struct MotionObject *orb;
   struct EffectSlot *slot;

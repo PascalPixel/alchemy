@@ -1133,7 +1133,7 @@ BabiLighthouse_FindActorAhead(struct FieldActor *actor) {
 /// Carry's first phase on the pillar on the Road to Babi Lighthouse sets the
 /// effect's childOption; what that changes is not known.
 static void BabiLighthouse_EnableChildOption(void) {
-  ((struct BattleFxScene *)gEffectWork)->childOption = 1;
+  ((struct FieldFxScene *)gEffectWork)->childOption = 1;
 }
 
 /// After Move or Carry on the pillar on the Road to Babi Lighthouse: in its

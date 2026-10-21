@@ -32,7 +32,7 @@ void _call_via_r3(s32, s32);
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
 /// also moves gGameState.pausedObject to the actor it stops.
 void FieldFx_Run(void) {
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct FieldWork *runtime;
   s32 kind;
   s32 targetId;
@@ -124,7 +124,7 @@ void FieldFx_Run(void) {
 /// Whirlwind, Catch) tell that a scene event decides what happens to the
 /// target. Halt also moves gGameState.pausedObject to the target.
 void FieldFx_DispatchRequestKind(void) {
-  struct BattleFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
+  struct FieldFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
   struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
   s32 kind = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
@@ -199,7 +199,7 @@ void FieldFx_DispatchRequestKind(void) {
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
 /// whose effect stays up through the after event, the conversation it reads.
 void FieldFx_ClearChildValueOnMismatch(void) {
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
 
   if (scene->fieldKind == FIELD_KIND_MIND_READ) {
     FieldFx_FinishSceneAndReleaseHeapBlock();
@@ -215,7 +215,7 @@ void FieldFx_ClearChildValueOnMismatch(void) {
 void FieldEvent_RunTypeHandler(void) {
   u32 kind;
 
-  kind = ((struct BattleFxScene *)gEffectWork)->fieldKind;
+  kind = ((struct FieldFxScene *)gEffectWork)->fieldKind;
   switch (kind) {
   case FIELD_KIND_REVEAL:
     ResetSceneTransitionEffect();
@@ -372,7 +372,7 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
 /// flag bit 2) and has no shadow; its creator releases it, or its script
 /// frees it.
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   struct ObjectRuntime *object;
 
   object = Object_CreateFar(kind, x, y, z);

@@ -298,8 +298,8 @@ void FieldFx_UpdateAllSlots(void) { FieldFx_UpdateSceneSlots(); }
 void FieldFx_InitializeSlots(void) {
   void *work;
 
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof(struct BattleFxScene));
-  Dma_Fill32(0, work, sizeof(struct BattleFxScene));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof(struct FieldFxScene));
+  Dma_Fill32(0, work, sizeof(struct FieldFxScene));
   // 3200 is SCHEDULER_KEY_MAIN_LOOP: the slots update once a frame.
   Scheduler_AddOrUpdateCallback(FieldFx_UpdateAllSlots, 3200);
 }
@@ -308,7 +308,7 @@ void FieldFx_InitializeSlots(void) {
 /// use and releases their heap block, gEffectWork with it. Then waits a
 /// frame. Pairs with FieldFx_InitializeSlots.
 void FieldFx_ClearActiveSlotsAndScheduleUpdates(void) {
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct EffectSlot *slot;
   s32 i;
 

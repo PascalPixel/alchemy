@@ -2838,7 +2838,7 @@ static void MercuryLighthouse_RideLift(void) {
 
 /// Mia casts Ply on the Ply target, moved onto the door.
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
-  struct BattleFxScene *effectWork;
+  struct FieldFxScene *effectWork;
   u8 flags;
 
   effectWork = gEffectWork;

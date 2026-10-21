@@ -418,7 +418,7 @@ static void AltmillerCave_StartReveal(void) {
 /// Reveal's light ends: the cave darkens again and AltmillerCaveDraught's rocks
 /// lose their colors.
 static void AltmillerCave_EndReveal(void) {
-  struct BattleFxScene *work = (struct BattleFxScene *)gEffectWork;
+  struct FieldFxScene *work = (struct FieldFxScene *)gEffectWork;
 
   if (Engine_GameFlagIsSet(FLAG_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
@@ -436,11 +436,11 @@ static void AltmillerCave_EndReveal(void) {
 /// Retreat's first phase: the Psynergy's first actor faces south, and its
 /// object is copied into a new one for the effect to use.
 static void AltmillerCave_BeginRetreat(void) {
-  struct BattleFxScene *work;
+  struct FieldFxScene *work;
   struct FieldActor *original;
   struct FieldActor *replacement;
 
-  work = (struct BattleFxScene *)gEffectWork;
+  work = (struct FieldFxScene *)gEffectWork;
   original = work->mainObject;
   Engine_ActorFaceDirection(work->firstObjectId, FACING_SOUTH, 0);
   Animation_ApplyChildValues((struct DispatchObject *)original, 0);
@@ -482,7 +482,7 @@ static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
 /// Frost's first phase on AltmillerCaveSquall's puddle: notes whether its place
 /// is blocked, which keeps it from freezing.
 static void AltmillerCave_CheckFrostTargetCollision(void) {
-  struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
+  struct FieldFxScene *effect = (struct FieldFxScene *)gEffectWork;
   struct FieldActor *target = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   struct FieldPosition position;
 
@@ -498,7 +498,7 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
 /// Frost on AltmillerCaveSquall's puddle, unless blocked: it freezes and its
 /// cell takes the frozen attributes kept at (76, 16).
 static void AltmillerCave_FreezePuddle(void) {
-  struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
+  struct FieldFxScene *effect = (struct FieldFxScene *)gEffectWork;
   struct FieldActor *puddle = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
@@ -2157,13 +2157,13 @@ static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
 /// The wall bursts: 24 pieces fly out from the ring's center, the wall's
 /// cells open to the passage, and the shaking calms.
 static void AltmillerCave_ReleaseWallBurst(void) {
-  struct BattleFxScene *work;
+  struct FieldFxScene *work;
   struct EffectVector position;
   struct EffectSlot *fragment;
   s32 fragmentIndex;
 
   FieldFx_InitializeSlots();
-  work = (struct BattleFxScene *)gEffectWork;
+  work = (struct FieldFxScene *)gEffectWork;
   Shop_SaveAndTintFieldPalette(0x202108);
   position.x = PIXELS(504);
   position.y = PIXELS(24);

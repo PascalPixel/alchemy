@@ -14,7 +14,7 @@
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct EffectSlot *slot;
   s32 scale;
   s32 remainingParticles;

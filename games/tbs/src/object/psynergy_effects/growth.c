@@ -57,7 +57,7 @@ struct BurstParticleVisualGroup {
 void FieldFx_RunGrowthOnTarget(s32 unused) {
   struct FieldActor *target;
 
-  target = ((struct BattleFxScene *)gEffectWork)->child;
+  target = ((struct FieldFxScene *)gEffectWork)->child;
   if (target != NULL) {
     FieldFx_SpawnBurstParticleField();
     ObjectDispatch_SelectAnimationFar(target, 2);
@@ -80,7 +80,7 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
 /// The objects (217) appear 2 or 3 frames apart and each lasts 60 frames
 /// (gFieldFx_BurstParticleObjectScript).
 void FieldFx_RunGrowth(void) {
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   struct BurstParticleVector pos;
   struct BurstParticleVector *p;
   s32 remainingObjects;
@@ -118,7 +118,7 @@ void FieldFx_RunGrowth(void) {
 /// flies at 1.5 pixels a frame and is freed on arrival; facing north, the
 /// points are 14 pixels further north.
 void FieldFx_SpawnBurstParticleField(void) {
-  struct BattleFxScene *work;
+  struct FieldFxScene *work;
   struct FieldActor *caster;
   s32 pos[3];
   s32 particleIndex;

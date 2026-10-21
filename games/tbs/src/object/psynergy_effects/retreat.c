@@ -54,7 +54,7 @@ void FieldFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   s32 state;
   u32 spread;
 
-  main = ((struct BattleFxScene *)gEffectWork)->mainObject;
+  main = ((struct FieldFxScene *)gEffectWork)->mainObject;
   state = slot->state;
 
   if (state == RETREAT_PARTICLE_AIM) {
@@ -106,7 +106,7 @@ void FieldFx_UpdateRadialLaunch(struct EffectSlot *slot) {
 /// Field_UsePsynergy or Field_UseItem) then leaves the scene. Called by
 /// FieldFx_Run and FieldFx_DispatchRequestKind.
 void FieldFx_RunRetreat(void) {
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *obj = scene->mainObject;
   struct EffectVector pos;
   struct EffectSlot *slot;
@@ -279,7 +279,7 @@ struct DescendingArcSprite {
 /// FieldFx_UpdatePairedArcSpawner, so arc is Avoid's caster.
 void FieldFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
   struct FieldActor *source = arc;
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *leader = scene->mainObject;
   struct FieldActor *objects[2];
   struct FieldActor *object;

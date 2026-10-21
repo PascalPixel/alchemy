@@ -163,7 +163,7 @@ enum HeapSlot {
   /// and the shop; each takes it on opening and releases it on closing. The
   /// save screen takes it for its sprite work (struct ShopRuntime).
   HEAP_SLOT_MENU = 55,
-  /// The Psynergy effect's work (struct BattleFxScene, gEffectWork). A field
+  /// The Psynergy effect's work (struct FieldFxScene, gEffectWork). A field
   /// Psynergy holds it from FieldFx_LoadActionEffectResources to
   /// FieldFx_End, a Djinni's joining from
   /// FieldFx_InitializeSlots to FieldFx_ClearActiveSlotsAndScheduleUpdates.

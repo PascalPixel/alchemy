@@ -27,8 +27,8 @@ struct Effect05Object {
   void (*callback)(union FieldObject *object); ///< per-frame update
 };
 
-/// The effect scene (struct BattleFxScene, gEffectWork) as Douse reads it;
-/// the notes give the BattleFxScene fields at the same offsets.
+/// The effect scene (struct FieldFxScene, gEffectWork) as Douse reads it;
+/// the notes give the FieldFxScene fields at the same offsets.
 struct Effect05State {
   s32 angle;             ///< 1/65536 turns: the way the caster faces
   s32 x, y, z;           ///< the ground under the orb's destination

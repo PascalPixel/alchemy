@@ -23,7 +23,7 @@ void FieldFx_RunCatchOnTarget(s32 unused) { FieldFx_RunCatch(); }
 /// FieldFx_Run and FieldFx_RunCatchOnTarget. Moves the effect scene's child
 /// to (-9, -9) when there is one, and releases object 215 at the end.
 void FieldFx_RunCatch(void) {
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct MotionObject *actor = scene->mainObject;
   struct MotionObject *child = scene->child;
   struct MotionObject *object;

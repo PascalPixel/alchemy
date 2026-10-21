@@ -19,7 +19,7 @@ void FieldFx_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldActor *copy;
   struct FieldActor *previous;
   struct AnimationObject *resource;
-  struct BattleFxScene *effectScene;
+  struct FieldFxScene *effectScene;
   struct FieldActor **cursor;
   struct FieldActor **list;
   struct EffectSlot *slot;
@@ -137,7 +137,7 @@ void FieldFx_RunMercuryDjinnCapture(s32 djinniId) {
 
     nextState = MERCURY_DROPLET_LAST_FALL;
     slotState = (s8 *)effectScene;
-    slotState += offsetof(struct BattleFxScene, slots) +
+    slotState += offsetof(struct FieldFxScene, slots) +
                  offsetof(struct EffectSlot, state);
     remaining = MERCURY_PARTICLE_MAX - 1;
     do {

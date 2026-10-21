@@ -132,14 +132,14 @@ void FieldFx_RunReveal(void) {
 /// (FieldEvent_RunTypeHandler) and before Mind Read starts its own colours.
 void ResetSceneTransitionEffect(void) {
 #ifdef UBFIX
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   struct DisplayTransitionState *scene = gDisplayTransition;
   struct FieldWork *state = (struct FieldWork *)gEventWork;
 #else
   // Named slots avoid stepping outside gEffectWork. They add 8 bytes to this
   // function in the forced native EN build (0xe8 -> 0xf0).
-  struct BattleFxScene **cell = &gEffectWork;
-  struct BattleFxScene *work = *cell;
+  struct FieldFxScene **cell = &gEffectWork;
+  struct FieldFxScene *work = *cell;
   struct DisplayTransitionState *scene =
       *(struct DisplayTransitionState **)((u8 *)cell - 0x64);
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);

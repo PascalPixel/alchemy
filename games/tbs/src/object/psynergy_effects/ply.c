@@ -23,7 +23,7 @@ void FieldFx_SwayParticle(union FieldObject *fieldObject) {
 /// each one's work holds its starting angle.
 void FieldFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct EffectVector pos;
   s16 remainingFrames;
   s32 decrementedTimer;
@@ -57,7 +57,7 @@ void FieldFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
 /// spark.
 void FieldFx_RunSparkEmitter(union FieldObject *fieldObject) {
   struct SparkObject *emitter = (struct SparkObject *)fieldObject;
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   s16 *phase;
   struct SparkObject *spark;
   s32 pos[3];
@@ -114,7 +114,7 @@ void FieldFx_RunPlyOnTarget(s32 unused) {
 /// shared sprite resource slot at the end and runs the effect scene's
 /// finishCallback.
 void FieldFx_RunPly(void) {
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->mainObject;
   struct FieldActor *object;
   struct AnimationObject *last;

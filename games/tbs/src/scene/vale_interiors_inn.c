@@ -1187,7 +1187,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
   struct FieldActor *child;
   struct AnimationObject *part;
   struct AnimationObject *sprite;
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {

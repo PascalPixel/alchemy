@@ -136,7 +136,7 @@ static __inline__ void FieldFx_UpdateSceneSlots(void) {
   struct EffectSlot *slot;
   s32 remainingSlots;
 
-  slot = ((struct BattleFxScene *)gEffectWork)->slots;
+  slot = ((struct FieldFxScene *)gEffectWork)->slots;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
@@ -257,7 +257,7 @@ FieldFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
 /// pixels. Carry's and Lift's no-target effects are made with it.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
-    struct BattleFxScene *work;                                                \
+    struct FieldFxScene *work;                                                 \
     struct MotionObject *obj;                                                  \
     struct MotionObject *pair[2];                                              \
     struct ScatterPosition pos;                                                \

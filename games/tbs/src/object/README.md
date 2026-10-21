@@ -69,7 +69,7 @@ Growth, 13 Catch, 14 Whirlwind and Gale, 15 Retreat, 16 Avoid.
 `unit/object/psynergy_effects.h` names them, and the effect scene keeps the
 one playing as `scene->fieldKind`.
 
-The **effect scene** is `struct BattleFxScene`, the work of the Psynergy
+The **effect scene** is `struct FieldFxScene`, the work of the Psynergy
 effect playing: the Psynergy, its caster and target, and its 24 effect
 slots. It's `HEAP_SLOT_FX`, reached as `gEffectWork`. An
 **effect slot** is a `struct EffectSlot`, one particle an effect moves and

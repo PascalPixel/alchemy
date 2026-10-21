@@ -87,7 +87,7 @@ void FieldEvent_ShowStatusMessage(void) {
 /// gGameState.avoidDistance and avoidByItem; the leader's steps count the
 /// distance down by their speed (object/step.c), 2,400 pixels in all.
 void FieldFx_RunAvoid(void) {
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct ArcEffectObject *object;
   struct AnimationObject *group;
   struct AnimationEntry *entry;

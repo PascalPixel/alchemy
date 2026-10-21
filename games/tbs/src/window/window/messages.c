@@ -63,9 +63,9 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
   delta = 0xffff;
 #endif
   // Operands are stored one above their value; adding 0xffff takes the one
-  // off in 16 bits. Code 14 has two operands and the codes of the next case
-  // one each. A one-operand code counts one halfword of capacity but writes
-  // two.
+  // off in 16 bits. Code 14, whose meaning is unknown, has two operands and
+  // the codes of the next case one each. A one-operand code counts one halfword
+  // of capacity but writes two.
   while ((value = decode(&reader)) != 0) {
     switch (value) {
     case 14:
@@ -82,14 +82,14 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
       value = decode(&reader) + delta;
 #endif
       break;
-    case 8:
-    case 9:
-    case 10:
+    case MSG_TEXT_COLOR:
+    case MSG_TEXT_EFFECT:
+    case MSG_LINE_SPACING:
     case 11:
     case 12:
-    case 15:
+    case MSG_WINDOW_EFFECT:
 #if defined(DECODE_EUROPEAN)
-    case 29:
+    case MSG_ARTICLE_CLASS:
 #endif
       capacity--;
       if (capacity <= 0)

@@ -132,23 +132,23 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       code = glyphCode;
       if (glyphCode == 0)
         break;
-      if (glyphCode <= 30) {
+      if (glyphCode <= TEXT_END_ALT) {
         switch (glyphCode) {
-        case 8:
+        case TEXT_COLOUR:
           work->colour = *text++;
           pens[1] = gUiText_ColourPens[work->colour & 15];
           break;
         // TEXT_COLOURS_RESET, TEXT_OUTLINE and TEXT_LINE_SPACING all reset the
         // colour here, and the last two leave their operand to be read as the
         // next code.
-        case 7:
-        case 9:
-        case 10:
+        case TEXT_COLOURS_RESET:
+        case TEXT_OUTLINE:
+        case TEXT_LINE_SPACING:
           work->colour = 15;
           pens[1] = gUiText_ColourPens[work->colour];
           break;
         // A new line is a space's width: tile text is one line.
-        case 3:
+        case TEXT_NEWLINE:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
           x += gUiText_GlyphWidths[0];
 #else
@@ -156,7 +156,7 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 #endif
           break;
         case 14:
-        case 15:
+        case TEXT_WINDOW_STATE:
         case 28:
           text++;
           // Skip the second operand too.

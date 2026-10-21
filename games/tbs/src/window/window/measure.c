@@ -403,7 +403,7 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       width = 0;
       pageHeights[page] += 15;
       break;
-    case 0:
+    case TEXT_END:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       lineSpacingCounts[line] = ++count;
 #else

@@ -304,8 +304,9 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
     if (code == 0)
       break;
 #endif
-    // Two entries are skipped after codes 14, 15 and 28, one after 11, 12, 17
-    // and 29 (29 only outside Japanese).
+    // Two entries are skipped after TEXT_WINDOW_STATE and codes 14 and 28, one
+    // after codes 11, 12, 17 and, outside Japanese, 29; what those codes do
+    // in decoded text is unknown.
     if (code <= TEXT_END_ALT) {
       switch (code) {
       case TEXT_COLOUR:
@@ -328,7 +329,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
         y += 15;
         break;
       case 14:
-      case 15:
+      case TEXT_WINDOW_STATE:
       case 28:
         text++;
         // Skip the second operand too.
@@ -450,15 +451,15 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
           y++;
           break;
         case 14:
-        case 15:
+        case TEXT_WINDOW_STATE:
         case 28:
           text++;
           // Skip the second operand too.
           // Fall through.
-        case 7:
-        case 8:
-        case 9:
-        case 10:
+        case TEXT_COLOURS_RESET:
+        case TEXT_COLOUR:
+        case TEXT_OUTLINE:
+        case TEXT_LINE_SPACING:
         case 11:
         case 12:
         case 17:

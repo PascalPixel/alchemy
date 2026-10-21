@@ -235,9 +235,12 @@ enum {
   /// Kept with its operand as TEXT_OUTLINE: the style of sprite text, 1
   /// outlined (UiText_RenderGlyphPair), 2 to 5 a motion (UiText_DrawGlyph).
   MSG_TEXT_EFFECT = 9,
+  MSG_LINE_SPACING = 10, ///< kept with its operand as TEXT_LINE_SPACING
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MSG_LOCALIZED_WORD = 13,
+  /// Kept with its operand as TEXT_WINDOW_STATE: the window effect to run.
+  MSG_WINDOW_EFFECT = 15,
   /// The name of the unit gGameState.selectedActor names.
   MSG_PROTAGONIST_NAME = 16,
   MSG_ACTOR_NAME = 17, ///< the name of the unit its operand names

@@ -31,7 +31,7 @@
 ///   Luna (SceneId_SolSanctumLunaSolRooms,
 ///   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
 ///
-/// The effects are the scene's own. Sixteen rocks thrown out in a ring
+/// The effects are the scene's own. Sixteen blue crystals thrown out in a ring
 /// (SolSanctumEruption_ThrowEruptionRing) become embers launched from a pool at
 /// a varying rate (SolSanctumEruption_StepEmbers and
 /// SolSanctumEruption_UpdateEmberFrequency, callbacks the first part adds and
@@ -119,9 +119,14 @@ enum SolSanctumEruptionCorner {
 };
 
 enum {
+  /// ★ Named from the game: "Could that be . . . the Wise One?!?"
+  /// (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_WISE_ONE = ACTOR_ALEX + 1,
-  ACTOR_FIRST_ROCK = ACTOR_WISE_ONE + 1,
-  ROCK_COUNT = 16
+  /// The sixteen crystals thrown out in a ring.
+  /// ★ Named from what the player sees: a blue crystal that bursts into
+  /// sparkles (its render)
+  ACTOR_FIRST_CRYSTAL = ACTOR_WISE_ONE + 1,
+  CRYSTAL_COUNT = 16
 };
 
 enum { OBJECT_ELEMENTAL_STAR = 22 };
@@ -142,8 +147,8 @@ const u32 *SolSanctumEruption_GetExits(void) {
 
 /// Returns Garet and Jenna, then the departure glow (ACTOR_TELEPORT_GLOW),
 /// Kraden, Saturos, Menardi, Felix masked and unmasked, Alex, the Wise One
-/// (ACTOR_WISE_ONE) and sixteen rocks (from ACTOR_FIRST_ROCK), all placed off
-/// the map until the cutscene moves them.
+/// (ACTOR_WISE_ONE) and sixteen crystals (from ACTOR_FIRST_CRYSTAL), all placed
+/// off the map until the cutscene moves them.
 const struct ScenePlacement *SolSanctumEruption_GetPlacements(void) {
   return gSolSanctumEruption_Placements;
 }
@@ -641,19 +646,20 @@ SolSanctumEruption_AlignEmberToHeading(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Launches sixteen rocks outward, then resets their actors for ember emission.
+/// Launches sixteen crystals outward, then resets their actors for ember
+/// emission.
 static void SolSanctumEruption_ThrowEruptionRing(void) {
   struct FieldActor *actor;
   struct FieldActor *spun;
-  u32 rockIndex;
+  u32 crystalIndex;
   s32 angle;
   struct AnimationObject *sprite;
   s32 offsetX;
   s32 offsetZ;
 
-  for (rockIndex = 16; rockIndex <= 31; rockIndex++) {
-    actor = Object_GetById(rockIndex);
-    Engine_ActorStop(rockIndex);
+  for (crystalIndex = 16; crystalIndex <= 31; crystalIndex++) {
+    actor = Object_GetById(crystalIndex);
+    Engine_ActorStop(crystalIndex);
     Engine_ActorSetSpriteFlags(actor, 0);
     Object_SetMode(actor, 2);
     actor->sprite->image.priority = 0;
@@ -667,10 +673,10 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     actor->z.fixed = PIXELS(132);
   }
   Engine_AudioPlayCue(SE_145);
-  for (rockIndex = 0; rockIndex <= 15; rockIndex++) {
-    spun = Object_GetById(rockIndex + 16);
+  for (crystalIndex = 0; crystalIndex <= 15; crystalIndex++) {
+    spun = Object_GetById(crystalIndex + 16);
     sprite = spun->sprite;
-    angle = rockIndex << 12;
+    angle = crystalIndex << 12;
     sprite->rotation = angle - 0x4000;
     offsetX = Iwram_MulQ16(Engine_MathCos(angle), PIXELS(256));
     offsetZ = Iwram_MulQ16(Engine_MathSin(angle), PIXELS(256));
@@ -678,10 +684,10 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
                              spun->z.fixed + offsetZ);
   }
   Engine_EventWait(20);
-  Engine_ActorWaitForMove(ACTOR_FIRST_ROCK);
-  for (rockIndex = 16; rockIndex <= 31; rockIndex++) {
-    actor = Object_GetById(rockIndex);
-    Engine_ActorStop(rockIndex);
+  Engine_ActorWaitForMove(ACTOR_FIRST_CRYSTAL);
+  for (crystalIndex = 16; crystalIndex <= 31; crystalIndex++) {
+    actor = Object_GetById(crystalIndex);
+    Engine_ActorStop(crystalIndex);
     actor->scaleX = Q16_ONE;
     actor->scaleY = Q16_ONE;
     actor->x.fixed = 0;
@@ -864,7 +870,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct FieldActor *star;
   struct AnimationObject *starSprite;
   u8 *iconPixels;
-  u8 rockIndex;
+  u8 crystalIndex;
   u32 frame;
   s32 flickerDelay;
 
@@ -879,8 +885,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ColorBufferInterpolate(40);
   Engine_EventWait(40);
   Engine_TaskRemoveCallback(SolSanctumEruption_StepEmbers);
-  for (rockIndex = 0; rockIndex < ROCK_COUNT; rockIndex++) {
-    Actor_SetPosition(ACTOR_FIRST_ROCK + rockIndex, 0, 0);
+  for (crystalIndex = 0; crystalIndex < CRYSTAL_COUNT; crystalIndex++) {
+    Actor_SetPosition(ACTOR_FIRST_CRYSTAL + crystalIndex, 0, 0);
   }
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
@@ -1594,7 +1600,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   struct AnimationObject *sprite;
 
   for (arcIndex = 0; arcIndex <= 15; arcIndex++)
-    Engine_ActorDestroy(arcIndex + ACTOR_FIRST_ROCK);
+    Engine_ActorDestroy(arcIndex + ACTOR_FIRST_CRYSTAL);
   switch (corner) {
   case CHAMBER_NORTHWEST:
     ColorBuffer_ApplyTarget(0x4039d2, 1);

@@ -169,19 +169,40 @@ STATIC_ASSERT(offsetof(struct SealScene, unused) == 0xc4);
 /// keep their own slots. Of the statues, four are pushed onto seals and two
 /// shine beams at the centre; the other two never move.
 enum SolSanctumStatueActor {
+  /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_NORTHWEST_STATUE,
+  /// ★ Named from the game: "two beams of light shot out from them"
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_LEFT_BEAM_STATUE,
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_NORTHEAST_STATUE,
+  /// ★ Named from the game: "two beams of light shot out from them"
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_RIGHT_BEAM_STATUE,
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_SOUTHWEST_STATUE,
   /// South of the left beam statue; no event moves it.
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_LEFT_STILL_STATUE,
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_SOUTHEAST_STATUE,
   /// South of the right beam statue; no event moves it.
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_RIGHT_STILL_STATUE,
+  /// ★ Named from the game: "and that other statue was here to... disarm the
+  /// trap." (MsgSolSanctumKradenYouFoundIt)
   ACTOR_CENTER_STATUE,
   /// Stands in the hole in the floor once the centre statue has dropped in.
+  /// ★ Named from the game: "And dropped the statue into it after that."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_MOVED_CENTER_STATUE
 };
 

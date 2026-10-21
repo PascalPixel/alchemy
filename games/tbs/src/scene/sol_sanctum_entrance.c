@@ -162,7 +162,7 @@ const u32 *SolSanctumEntrance_GetExits(void) {
 /// Selects the actors for the place and, in Sol Sanctum, the room. The first
 /// relief hall's entrances place Kraden and that room's eleven statues, the
 /// second relief hall's Kraden and the row of six; the rest of Sol Sanctum
-/// places Kraden and one statue (ACTOR_LONE_STATUE), and Sol Entrance its
+/// places Kraden and one statue (ACTOR_STATUE), and Sol Entrance its
 /// sentry.
 const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   struct ScenePlacement *table;
@@ -681,7 +681,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_HALL:
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_LONE_STATUE), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STATUE), 0);
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:

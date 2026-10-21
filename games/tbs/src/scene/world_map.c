@@ -631,8 +631,9 @@ static void Event_EnterBilibinBarricade(void) {
                          WORLD_MAP_TO_BILIBIN_BARRICADE_EAST);
 }
 
-/// As Event_EnterBilibinBarricade, for Kolima Bridge, entered from the north
-/// by WORLD_MAP_TO_KOLIMA_BRIDGE_WEST and from the south by
+/// The party enters Kolima Bridge from the world map. It works as
+/// Event_EnterBilibinBarricade does, entering from the north by
+/// WORLD_MAP_TO_KOLIMA_BRIDGE_WEST and from the south by
 /// WORLD_MAP_TO_KOLIMA_BRIDGE_EAST.
 static void Event_EnterKolimaBridge(void) {
   WorldMap_SelectExitByZ(PLACE_TRIGGER(ACTOR_PLACE_KOLIMA_BRIDGE),
@@ -2603,10 +2604,11 @@ static void Event_DouseMapStorm(void) {
   selectedActor->motionFlags = 2;
 }
 
-/// When the time in the air runs out: the party and the storm fly off, and the
-/// map reopens outside Suhalla, where the desert's storms also drop the party.
-/// Reached by the scene raising 99 as the timer runs out. Sets
-/// FLAG_ARRIVE_FALLING and sends the party to WORLD_MAP_FROM_SUHALLA.
+/// The storm drops the party outside Suhalla when its time in the air runs out.
+/// The party and the storm fly off, and the map reopens outside Suhalla, where
+/// the desert's storms also drop the party. Reached by the scene raising 99 as
+/// the timer runs out. Sets FLAG_ARRIVE_FALLING and sends the party to
+/// WORLD_MAP_FROM_SUHALLA.
 static void Event_StormDropsParty(void) {
   struct FieldActor *actor = Actor_Get(gGameState.selectedActor);
   struct FieldActor *other = Actor_Get(ACTOR_STORM);

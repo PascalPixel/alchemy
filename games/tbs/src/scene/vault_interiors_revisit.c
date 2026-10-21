@@ -19,11 +19,13 @@
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the house of a child
 ///   who wonders whether the thieves were from Lunpa at all, since Dodonpa's
 ///   henchmen never attacked.
-/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST and entrance 11, the
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST and
+/// VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS, the
 ///   inn: the innkeeper behind the counter, and the girl at the inn, as the
 ///   Bone's description calls her, who offers Bones left over from dinner. A
 ///   Bone also lies on the floor beside her. Trigger 8 leads to the inn's
-///   other room (entrance 12), where a cook works, and trigger 7 back.
+///   upstairs room (VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_FROM_INN), where a
+///   cook works, and trigger 7 back.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_EAST, the item shop, with a
 ///   couple who talk of Colosso.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTH, the weapon and armor
@@ -440,8 +442,12 @@ u32 gVaultInteriorsRevisit_Exits[] = {
                VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_NORTH),
     SCENE_EXIT(VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_NORTHWEST, VaultRevisit,
                VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_NORTHWEST),
-    SCENE_EXIT(11, VaultInteriorsRevisit, 11),
-    SCENE_EXIT(12, VaultInteriorsRevisit, 12),
+    SCENE_EXIT(VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_TO_INN,
+               VaultInteriorsRevisit,
+               VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(VAULT_INTERIORS_REVISIT_INN_TO_INN_UPSTAIRS,
+               VaultInteriorsRevisit,
+               VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_FROM_INN),
     SCENE_EXITS_END,
 };
 

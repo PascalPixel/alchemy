@@ -61,13 +61,14 @@ enum {
   WORLD_MAP_FROM_BILIBIN_CAVE_ENTRANCE = 35,
   WORLD_MAP_FROM_KOLIMA_EAST = 38,
   WORLD_MAP_FROM_IMIL_NORTH = 39,
-  WORLD_MAP_FROM_GOMA_CAVE_WATERWAY_2 = 40,
+  WORLD_MAP_FROM_GOMA_CAVE_BRIDGE = 40,
   WORLD_MAP_FROM_GONDOWAN_CAVE_2_SOUTH = 41,
   WORLD_MAP_FROM_SUHALLA_GATE_1_WEST = 42,
   WORLD_MAP_FROM_MOGALL_FOREST_3 = 43,
+  WORLD_MAP_FROM_VAULT_NORTH = 44,
   WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST = 46,
   WORLD_MAP_FROM_BILIBIN_BARRICADE_WEST = 47,
-  WORLD_MAP_FROM_BILIBIN_CAVE_1 = 48,
+  WORLD_MAP_FROM_BILIBIN_CAVE_ICE = 48,
   WORLD_MAP_FROM_WEST_LUNPA_CAVE = 49,
   WORLD_MAP_FROM_ALPINE_CROSSING_NORTH = 50,
   WORLD_MAP_FROM_ALPINE_CROSSING_WEST = 51,
@@ -126,14 +127,14 @@ enum {
   WORLD_MAP_TO_GATEWAY_CAVE = 33,
   WORLD_MAP_TO_LUNPA = 34,
   WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE = 35,
-  WORLD_MAP_TO_GOMA_CAVE_WATERWAY_2 = 40,
+  WORLD_MAP_TO_GOMA_CAVE_BRIDGE = 40,
   WORLD_MAP_TO_GONDOWAN_CAVE_2_SOUTH = 41,
   WORLD_MAP_TO_SUHALLA_GATE_1_EAST = 42,
   WORLD_MAP_TO_MOGALL_FOREST_3 = 43,
   WORLD_MAP_TO_VAULT_NORTH = 44,
   WORLD_MAP_TO_KOLIMA_BRIDGE_WEST = 46,
   WORLD_MAP_TO_BILIBIN_BARRICADE_EAST = 47,
-  WORLD_MAP_TO_BILIBIN_CAVE_1 = 48,
+  WORLD_MAP_TO_BILIBIN_CAVE_ICE = 48,
   WORLD_MAP_TO_WEST_LUNPA_CAVE = 49,
   WORLD_MAP_TO_ALPINE_CROSSING_NORTH = 50,
   WORLD_MAP_TO_ALPINE_CROSSING_WEST = 51,
@@ -237,7 +238,7 @@ enum {
   VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH = 7,
   VALE_GATE_FROM_VALE = 8,
   VALE_GATE_FROM_WORLD_MAP = 10,
-  VALE_GATE_FROM_GOMA_CAVE_WATERWAY_1 = 11,
+  VALE_GATE_FROM_GOMA_CAVE_STREAM = 11,
   VALE_GATE_FROM_SANCTUM = 12,
 };
 enum {
@@ -251,7 +252,7 @@ enum {
   VALE_GATE_TO_VALE = 8,
   VALE_GATE_TO_TITLE = 9,
   VALE_GATE_TO_WORLD_MAP = 10,
-  VALE_GATE_TO_GOMA_CAVE_WATERWAY_1 = 11,
+  VALE_GATE_TO_GOMA_CAVE_STREAM = 11,
   VALE_GATE_TO_BILIBIN = 40,
   VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST = 50,
 };
@@ -599,6 +600,7 @@ enum {
 };
 enum {
   VAULT_TO_WORLD_MAP_SOUTH = 1,
+  VAULT_TO_WORLD_MAP_NORTH = 2,
   VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST = 5,
   VAULT_TO_VAULT_INTERIORS_SOUTHEAST = 6,
   VAULT_TO_VAULT_INTERIORS_SOUTHWEST = 7,
@@ -608,6 +610,7 @@ enum {
   VAULT_TO_SANCTUM = 11,
   VAULT_TO_VAULT_JAIL = 12,
   VAULT_TO_VAULT_INTERIORS_WEST = 13,
+  VAULT_TO_VAULT_REVISIT = 14,
 };
 
 /// SceneId_VaultInteriors's entrances and exits.
@@ -618,7 +621,19 @@ enum {
   VAULT_INTERIORS_FROM_VAULT_EAST = 8,
   VAULT_INTERIORS_FROM_VAULT_NORTH_NORTHEAST = 9,
   VAULT_INTERIORS_FROM_VAULT_NORTHWEST = 10,
+  VAULT_INTERIORS_INN_FROM_INN_UPSTAIRS =
+      11, ///< ★ Named from what the player sees: Vault's inn, with the
+          ///< innkeeper behind the counter and stairs up (its render)
+  VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN =
+      12, ///< ★ Named from the game: "The guests upstairs"
+          ///< (MsgVaultTheGuestsUpstairsWerentInTheir)
   VAULT_INTERIORS_FROM_VAULT_WEST = 13,
+  VAULT_INTERIORS_CRATE_ROOM_FROM_LOFT =
+      14, ///< ★ Named from what the player sees: the room with a crate that
+          ///< Move pushes aside to reach the loft (its render)
+  VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM =
+      15, ///< ★ Named from the game: "I came into this loft"
+          ///< (MsgVaultVaultCutFree)
 };
 enum {
   VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST = 5,
@@ -627,7 +642,19 @@ enum {
   VAULT_INTERIORS_TO_VAULT_EAST = 8,
   VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST = 9,
   VAULT_INTERIORS_TO_VAULT_NORTHWEST = 10,
+  VAULT_INTERIORS_INN_UPSTAIRS_TO_INN =
+      11, ///< ★ Named from what the player sees: Vault's inn, with the
+          ///< innkeeper behind the counter and stairs up (its render)
+  VAULT_INTERIORS_INN_TO_INN_UPSTAIRS =
+      12, ///< ★ Named from the game: "The guests upstairs"
+          ///< (MsgVaultTheGuestsUpstairsWerentInTheir)
   VAULT_INTERIORS_TO_VAULT_WEST = 13,
+  VAULT_INTERIORS_LOFT_TO_CRATE_ROOM =
+      14, ///< ★ Named from what the player sees: the room with a crate that
+          ///< Move pushes aside to reach the loft (its render)
+  VAULT_INTERIORS_CRATE_ROOM_TO_LOFT =
+      15, ///< ★ Named from the game: "I came into this loft"
+          ///< (MsgVaultVaultCutFree)
   VAULT_INTERIORS_TO_SANCTUM = 16,
 };
 
@@ -645,6 +672,7 @@ enum {
 
 /// SceneId_VaultRevisit's entrances and exits.
 enum {
+  VAULT_REVISIT_FROM_VAULT = 1,
   VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTHEAST = 5,
   VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTH = 6,
   VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTHWEST = 7,
@@ -653,10 +681,12 @@ enum {
   VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_NORTHWEST = 10,
   VAULT_REVISIT_FROM_SANCTUM = 11,
   VAULT_REVISIT_FROM_VAULT_JAIL = 12,
-  VAULT_REVISIT_FROM_VAULT_CAVE_1 = 13,
-  VAULT_REVISIT_FROM_VAULT_CAVE_3 = 14,
+  VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE = 13,
+  VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH = 14,
 };
 enum {
+  VAULT_REVISIT_TO_WORLD_MAP_SOUTH = 1,
+  VAULT_REVISIT_TO_WORLD_MAP_NORTH = 2,
   VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST = 5,
   VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTH = 6,
   VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHWEST = 7,
@@ -665,8 +695,8 @@ enum {
   VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTHWEST = 10,
   VAULT_REVISIT_TO_SANCTUM = 11,
   VAULT_REVISIT_TO_VAULT_JAIL = 12,
-  VAULT_REVISIT_TO_VAULT_CAVE_1 = 13,
-  VAULT_REVISIT_TO_VAULT_CAVE_3 = 14,
+  VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE = 13,
+  VAULT_REVISIT_TO_VAULT_CAVE_MOUTH = 14,
 };
 
 /// SceneId_VaultInteriorsRevisit's entrances and exits.
@@ -677,6 +707,12 @@ enum {
   VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_EAST = 8,
   VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTH = 9,
   VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST = 10,
+  VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS =
+      11, ///< ★ Named from what the player sees: Vault's inn, with the
+          ///< innkeeper behind the counter and stairs up (its render)
+  VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_FROM_INN =
+      12, ///< ★ Named from what the player sees: the room of beds up the inn's
+          ///< stairs (its render)
 };
 enum {
   VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_SOUTHEAST = 5,
@@ -685,15 +721,21 @@ enum {
   VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_EAST = 8,
   VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_NORTH = 9,
   VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_NORTHWEST = 10,
+  VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_TO_INN =
+      11, ///< ★ Named from what the player sees: Vault's inn, with the
+          ///< innkeeper behind the counter and stairs up (its render)
+  VAULT_INTERIORS_REVISIT_INN_TO_INN_UPSTAIRS =
+      12, ///< ★ Named from what the player sees: the room of beds up the inn's
+          ///< stairs (its render)
 };
 
 /// SceneId_GomaCaveEntrance's entrances and exits.
 enum {
   GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
-  GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_WATERWAY_1 = 2,
+  GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_STREAM = 2,
 };
 enum {
-  GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_WATERWAY_1 = 1,
+  GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM = 1,
   GOMA_CAVE_ENTRANCE_TO_WORLD_MAP = 2,
 };
 
@@ -711,44 +753,44 @@ enum {
 
 /// SceneId_GomaCavePillar's entrances and exits.
 enum {
-  GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_WATERWAY_1_WEST = 1,
-  GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_WATERWAY_1_EAST = 2,
+  GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_WEST = 1,
+  GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST = 2,
   GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST = 3,
   GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST = 4,
   GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH = 5,
 };
 enum {
-  GOMA_CAVE_PILLAR_TO_GOMA_CAVE_WATERWAY_1_WEST = 1,
+  GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST = 1,
   GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST = 2,
   GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH = 3,
   GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST = 4,
-  GOMA_CAVE_PILLAR_TO_GOMA_CAVE_WATERWAY_1_EAST = 5,
+  GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST = 5,
 };
 
-/// SceneId_GomaCaveWaterway1's entrances and exits.
+/// SceneId_GomaCaveStream's entrances and exits.
 enum {
-  GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_ENTRANCE = 1,
-  GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_PILLAR_WEST = 2,
-  GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_PILLAR_EAST = 3,
-  GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_WATERWAY_2 = 4,
-  GOMA_CAVE_WATERWAY_1_FROM_VALE_GATE = 5,
+  GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE = 1,
+  GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_WEST = 2,
+  GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_EAST = 3,
+  GOMA_CAVE_STREAM_FROM_GOMA_CAVE_BRIDGE = 4,
+  GOMA_CAVE_STREAM_FROM_VALE_GATE = 5,
 };
 enum {
-  GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_ENTRANCE = 1,
-  GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_PILLAR_WEST = 2,
-  GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_PILLAR_EAST = 3,
-  GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_WATERWAY_2 = 4,
-  GOMA_CAVE_WATERWAY_1_TO_VALE_GATE = 5,
+  GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE = 1,
+  GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST = 2,
+  GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST = 3,
+  GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE = 4,
+  GOMA_CAVE_STREAM_TO_VALE_GATE = 5,
 };
 
-/// SceneId_GomaCaveWaterway2's entrances and exits.
+/// SceneId_GomaCaveBridge's entrances and exits.
 enum {
-  GOMA_CAVE_WATERWAY_2_FROM_GOMA_CAVE_WATERWAY_1 = 1,
-  GOMA_CAVE_WATERWAY_2_FROM_WORLD_MAP = 2,
+  GOMA_CAVE_BRIDGE_FROM_GOMA_CAVE_STREAM = 1,
+  GOMA_CAVE_BRIDGE_FROM_WORLD_MAP = 2,
 };
 enum {
-  GOMA_CAVE_WATERWAY_2_TO_GOMA_CAVE_WATERWAY_1 = 1,
-  GOMA_CAVE_WATERWAY_2_TO_WORLD_MAP = 2,
+  GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM = 1,
+  GOMA_CAVE_BRIDGE_TO_WORLD_MAP = 2,
 };
 
 /// SceneId_Bilibin's entrances and exits.
@@ -796,7 +838,12 @@ enum {
          ///< shop; through BILIBIN_TO_ITEM_SHOP
   BILIBIN_INTERIORS_INN = 6, ///< the room behind Bilibin's inn door; the room
                              ///< holds the inn; through BILIBIN_TO_INN
-  BILIBIN_INTERIORS_INN_NORTH = 8, ///< the room holds the inn;
+  BILIBIN_INTERIORS_INN_UPSTAIRS_FROM_INN =
+      7, ///< ★ Named from what the player sees: the rooms of beds and crates up
+         ///< the inn's stairs (its render)
+  BILIBIN_INTERIORS_INN_FROM_INN_UPSTAIRS =
+      8, ///< ★ Named from what the player sees: Bilibin's inn, with the
+         ///< restaurant beside its counter (its render)
 };
 enum {
   BILIBIN_INTERIORS_HOUSE_EAST_TO_BILIBIN = 1,
@@ -805,25 +852,210 @@ enum {
   BILIBIN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_BILIBIN = 4,
   BILIBIN_INTERIORS_ITEM_SHOP_TO_BILIBIN = 5,
   BILIBIN_INTERIORS_INN_TO_BILIBIN = 6,
+  BILIBIN_INTERIORS_INN_UPSTAIRS_TO_INN =
+      7, ///< ★ Named from what the player sees: Bilibin's inn, with the
+         ///< restaurant beside its counter (its render)
+  BILIBIN_INTERIORS_INN_TO_INN_UPSTAIRS =
+      8, ///< ★ Named from what the player sees: the rooms of beds and crates up
+         ///< the inn's stairs (its render)
 };
 
 /// SceneId_BilibinTreasury's entrances and exits.
 enum {
   BILIBIN_TREASURY_FROM_BILIBIN_SOUTH = 1,
+  BILIBIN_TREASURY_LOWER_FROM_UPPER =
+      2, ///< ★ Named from what the player sees: the small room at the foot of
+         ///< the ladder, entered from Bilibin's west edge (its render)
+  BILIBIN_TREASURY_UPPER_FROM_LOWER =
+      3, ///< ★ Named from what the player sees: the cave up the ladder with the
+         ///< golden statue and Gust (its render)
   BILIBIN_TREASURY_FROM_BILIBIN_NORTH = 4,
 };
 enum {
   BILIBIN_TREASURY_TO_BILIBIN_SOUTH = 1,
+  BILIBIN_TREASURY_LOWER_TO_UPPER =
+      2, ///< ★ Named from what the player sees: the cave up the ladder with the
+         ///< golden statue and Gust (its render)
+  BILIBIN_TREASURY_UPPER_TO_LOWER =
+      3, ///< ★ Named from what the player sees: the small room at the foot of
+         ///< the ladder, entered from Bilibin's west edge (its render)
   BILIBIN_TREASURY_TO_BILIBIN_NORTH = 4,
 };
 
 /// SceneId_McCoyPalace's entrances and exits.
 enum {
   MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST = 1,
+  MCCOY_PALACE_HALL_FROM_SOUTHWEST_LANDING =
+      2, ///< ★ Named from what the player sees: the entrance hall whose red
+         ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_HALL_FROM_SOUTHEAST_LANDING =
+      3, ///< ★ Named from what the player sees: the entrance hall whose red
+         ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_HALL_FROM_LADY_MCCOYS_ROOM_WEST =
+      4, ///< ★ Named from what the player sees: the entrance hall whose red
+         ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_HALL_FROM_LADY_MCCOYS_ROOM_EAST =
+      5, ///< ★ Named from what the player sees: the entrance hall whose red
+         ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_HALL_FROM_TREASURE_ROOM =
+      6, ///< ★ Named from what the player sees: the entrance hall whose red
+         ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_HALL_FROM_NORTHWEST_LANDING =
+      7, ///< ★ Named from what the player sees: the entrance hall whose red
+         ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_HALL_FROM_NORTHEAST_LANDING =
+      8, ///< ★ Named from what the player sees: the entrance hall whose red
+         ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_HALL_FROM_MCCOYS_ROOM =
+      9, ///< ★ Named from what the player sees: the entrance hall whose red
+         ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_HALL_WEST =
+      10, ///< ★ Named from the game: "This is Lady McCoy's room"
+          ///< (MsgBilibinThisIsLadyMccoysRoomSo)
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_HALL_EAST =
+      11, ///< ★ Named from the game: "This is Lady McCoy's room"
+          ///< (MsgBilibinThisIsLadyMccoysRoomSo)
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_WEST_BEDROOM =
+      12, ///< ★ Named from the game: "This is Lady McCoy's room"
+          ///< (MsgBilibinThisIsLadyMccoysRoomSo)
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_EAST_BEDROOM =
+      13, ///< ★ Named from the game: "This is Lady McCoy's room"
+          ///< (MsgBilibinThisIsLadyMccoysRoomSo)
+  MCCOY_PALACE_SOUTHWEST_LANDING_FROM_HALL =
+      14, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_SOUTHWEST_LANDING_FROM_SOUTHWEST_TOWER =
+      15, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_SOUTHEAST_LANDING_FROM_SOUTHEAST_TOWER =
+      16, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_SOUTHEAST_LANDING_FROM_HALL =
+      17, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_WEST_BEDROOM_FROM_LADY_MCCOYS_ROOM =
+      18, ///< ★ Named from what the player sees: the bedroom through the west
+          ///< door of Lady McCoy's room, with a bookcase (its render)
+  MCCOY_PALACE_EAST_BEDROOM_FROM_LADY_MCCOYS_ROOM =
+      19, ///< ★ Named from what the player sees: the bedroom through the east
+          ///< door, with a wardrobe and the woman with the silk nightgown (its
+          ///< render)
+  MCCOY_PALACE_NORTHEAST_LANDING_FROM_HALL =
+      20, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_NORTHEAST_LANDING_FROM_NORTHEAST_TOWER =
+      21, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_NORTHWEST_LANDING_FROM_HALL =
+      22, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_NORTHWEST_LANDING_FROM_NORTHWEST_TOWER =
+      23, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_NORTHWEST_TOWER_FROM_NORTHWEST_LANDING =
+      24, ///< ★ Named from what the player sees: the small eight-sided rooms up
+          ///< two flights from each corner of the hall (its render)
+  MCCOY_PALACE_NORTHEAST_TOWER_FROM_NORTHEAST_LANDING =
+      25, ///< ★ Named from what the player sees: the small eight-sided rooms up
+          ///< two flights from each corner of the hall (its render)
+  MCCOY_PALACE_SOUTHWEST_TOWER_FROM_SOUTHWEST_LANDING =
+      26, ///< ★ Named from what the player sees: the small eight-sided rooms up
+          ///< two flights from each corner of the hall (its render)
+  MCCOY_PALACE_SOUTHEAST_TOWER_FROM_SOUTHEAST_LANDING =
+      27, ///< ★ Named from what the player sees: the small eight-sided rooms up
+          ///< two flights from each corner of the hall (its render)
+  MCCOY_PALACE_TREASURE_ROOM_FROM_HALL =
+      28, ///< ★ Named from the game: "Bilibin's great treasures"
+          ///< (MsgBilibinDoThinkTheseBilibinsGreat)
   MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST = 29,
 };
 enum {
   MCCOY_PALACE_TO_MCCOY_PALACE_GROUNDS_WEST = 1,
+  MCCOY_PALACE_HALL_TO_SOUTHWEST_LANDING =
+      2, ///< ★ Named from what the player sees: the small stair rooms between
+         ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_HALL_TO_SOUTHEAST_LANDING =
+      3, ///< ★ Named from what the player sees: the small stair rooms between
+         ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_HALL_TO_LADY_MCCOYS_ROOM_WEST =
+      4, ///< ★ Named from the game: "This is Lady McCoy's room"
+         ///< (MsgBilibinThisIsLadyMccoysRoomSo)
+  MCCOY_PALACE_HALL_TO_LADY_MCCOYS_ROOM_EAST =
+      5, ///< ★ Named from the game: "This is Lady McCoy's room"
+         ///< (MsgBilibinThisIsLadyMccoysRoomSo)
+  MCCOY_PALACE_HALL_TO_TREASURE_ROOM =
+      6, ///< ★ Named from the game: "Bilibin's great treasures"
+         ///< (MsgBilibinDoThinkTheseBilibinsGreat)
+  MCCOY_PALACE_HALL_TO_NORTHWEST_LANDING =
+      7, ///< ★ Named from what the player sees: the small stair rooms between
+         ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_HALL_TO_NORTHEAST_LANDING =
+      8, ///< ★ Named from what the player sees: the small stair rooms between
+         ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_HALL_TO_MCCOYS_ROOM =
+      9, ///< ★ Named from what the player sees: the room behind McCoy's door
+         ///< where Lord McCoy sits (its render)
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_HALL_WEST =
+      10, ///< ★ Named from what the player sees: the entrance hall whose red
+          ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_HALL_EAST =
+      11, ///< ★ Named from what the player sees: the entrance hall whose red
+          ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_WEST_BEDROOM =
+      12, ///< ★ Named from what the player sees: the bedroom through the west
+          ///< door of Lady McCoy's room, with a bookcase (its render)
+  MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_EAST_BEDROOM =
+      13, ///< ★ Named from what the player sees: the bedroom through the east
+          ///< door, with a wardrobe and the woman with the silk nightgown (its
+          ///< render)
+  MCCOY_PALACE_SOUTHWEST_LANDING_TO_HALL =
+      14, ///< ★ Named from what the player sees: the entrance hall whose red
+          ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_SOUTHWEST_LANDING_TO_SOUTHWEST_TOWER =
+      15, ///< ★ Named from what the player sees: the small eight-sided rooms up
+          ///< two flights from each corner of the hall (its render)
+  MCCOY_PALACE_SOUTHEAST_LANDING_TO_SOUTHEAST_TOWER =
+      16, ///< ★ Named from what the player sees: the small eight-sided rooms up
+          ///< two flights from each corner of the hall (its render)
+  MCCOY_PALACE_SOUTHEAST_LANDING_TO_HALL =
+      17, ///< ★ Named from what the player sees: the entrance hall whose red
+          ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_WEST_BEDROOM_TO_LADY_MCCOYS_ROOM =
+      18, ///< ★ Named from the game: "This is Lady McCoy's room"
+          ///< (MsgBilibinThisIsLadyMccoysRoomSo)
+  MCCOY_PALACE_EAST_BEDROOM_TO_LADY_MCCOYS_ROOM =
+      19, ///< ★ Named from the game: "This is Lady McCoy's room"
+          ///< (MsgBilibinThisIsLadyMccoysRoomSo)
+  MCCOY_PALACE_NORTHEAST_LANDING_TO_HALL =
+      20, ///< ★ Named from what the player sees: the entrance hall whose red
+          ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_NORTHEAST_LANDING_TO_NORTHEAST_TOWER =
+      21, ///< ★ Named from what the player sees: the small eight-sided rooms up
+          ///< two flights from each corner of the hall (its render)
+  MCCOY_PALACE_NORTHWEST_LANDING_TO_HALL =
+      22, ///< ★ Named from what the player sees: the entrance hall whose red
+          ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_NORTHWEST_LANDING_TO_NORTHWEST_TOWER =
+      23, ///< ★ Named from what the player sees: the small eight-sided rooms up
+          ///< two flights from each corner of the hall (its render)
+  MCCOY_PALACE_NORTHWEST_TOWER_TO_NORTHWEST_LANDING =
+      24, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_NORTHEAST_TOWER_TO_NORTHEAST_LANDING =
+      25, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_SOUTHWEST_TOWER_TO_SOUTHWEST_LANDING =
+      26, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_SOUTHEAST_TOWER_TO_SOUTHEAST_LANDING =
+      27, ///< ★ Named from what the player sees: the small stair rooms between
+          ///< the hall's corner stairs and the rooms above (its render)
+  MCCOY_PALACE_TREASURE_ROOM_TO_HALL =
+      28, ///< ★ Named from what the player sees: the entrance hall whose red
+          ///< carpet leads to McCoy's door (its render)
+  MCCOY_PALACE_MCCOYS_ROOM_TO_HALL =
+      29, ///< ★ Named from what the player sees: the entrance hall whose red
+          ///< carpet leads to McCoy's door (its render)
 };
 
 /// SceneId_McCoyPalaceGrounds's entrances and exits.
@@ -1003,42 +1235,58 @@ enum {
   TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHEAST = 8,
 };
 
-/// SceneId_BilibinCave1's entrances and exits.
+/// SceneId_BilibinCaveIce's entrances and exits.
 enum {
-  BILIBIN_CAVE_1_FROM_BILIBIN_CAVE_2_WEST = 1,
-  BILIBIN_CAVE_1_FROM_BILIBIN_CAVE_2_EAST = 2,
-  BILIBIN_CAVE_1_FROM_WORLD_MAP = 3,
+  BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST = 1,
+  BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST = 2,
+  BILIBIN_CAVE_ICE_FROM_WORLD_MAP = 3,
+  BILIBIN_CAVE_ICE_FROM_CHESTS = 4,
+  BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE =
+      5, ///< ★ Named from what the player sees: the small nook beyond the north
+         ///< doorway that holds two chests (its render)
 };
 enum {
-  BILIBIN_CAVE_1_TO_BILIBIN_CAVE_2_WEST = 1,
-  BILIBIN_CAVE_1_TO_BILIBIN_CAVE_2_EAST = 2,
-  BILIBIN_CAVE_1_TO_WORLD_MAP = 3,
+  BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_WEST = 1,
+  BILIBIN_CAVE_ICE_TO_BILIBIN_CAVE_RAPIER_EAST = 2,
+  BILIBIN_CAVE_ICE_TO_WORLD_MAP = 3,
+  BILIBIN_CAVE_ICE_TO_CHESTS =
+      4, ///< ★ Named from what the player sees: the small nook beyond the north
+         ///< doorway that holds two chests (its render)
+  BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE = 5,
 };
 
-/// SceneId_BilibinCave2's entrances and exits.
+/// SceneId_BilibinCaveRapier's entrances and exits.
 enum {
-  BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_ENTRANCE_WEST = 1,
-  BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_ENTRANCE_EAST = 2,
-  BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_1_WEST = 3,
-  BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_1_EAST = 5,
+  BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST = 1,
+  BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST = 2,
+  BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_WEST = 3,
+  BILIBIN_CAVE_RAPIER_FROM_TORCHES = 4,
+  BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_EAST = 5,
+  BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER =
+      6, ///< ★ Named from what the player sees: the nook where a fire burns
+         ///< between two torches at the way on into the cave (its render)
 };
 enum {
-  BILIBIN_CAVE_2_TO_BILIBIN_CAVE_ENTRANCE_WEST = 1,
-  BILIBIN_CAVE_2_TO_BILIBIN_CAVE_ENTRANCE_EAST = 2,
-  BILIBIN_CAVE_2_TO_BILIBIN_CAVE_1_WEST = 3,
-  BILIBIN_CAVE_2_TO_BILIBIN_CAVE_1_EAST = 5,
+  BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_WEST = 1,
+  BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ENTRANCE_EAST = 2,
+  BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_WEST = 3,
+  BILIBIN_CAVE_RAPIER_TO_TORCHES =
+      4, ///< ★ Named from what the player sees: the nook where a fire burns
+         ///< between two torches at the way on into the cave (its render)
+  BILIBIN_CAVE_RAPIER_TO_BILIBIN_CAVE_ICE_EAST = 5,
+  BILIBIN_CAVE_RAPIER_TORCHES_TO_BILIBIN_CAVE_RAPIER = 6,
 };
 
 /// SceneId_BilibinCaveEntrance's entrances and exits.
 enum {
   BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
-  BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_2_SOUTH = 2,
-  BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_2_NORTH = 3,
+  BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH = 2,
+  BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_NORTH = 3,
 };
 enum {
   BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP = 1,
-  BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_2_SOUTH = 2,
-  BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_2_NORTH = 3,
+  BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH = 2,
+  BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH = 3,
 };
 
 /// SceneId_Imil's entrances and exits.
@@ -1733,50 +1981,126 @@ enum {
   VALE_CAVE_LOGS_SOUTH_TO_NORTH = 5,
 };
 
-/// SceneId_VaultCave1's entrances and exits.
+/// SceneId_VaultCavePassage's entrances and exits.
 enum {
-  VAULT_CAVE_1_FROM_VAULT_CAVE_3 = 1,
-  VAULT_CAVE_1_FROM_VAULT_CAVE_2_NORTHWEST = 2,
-  VAULT_CAVE_1_FROM_VAULT_CAVE_2_EAST = 6,
-  VAULT_CAVE_1_FROM_VAULT_CAVE_2_SOUTHEAST = 7,
-  VAULT_CAVE_1_FROM_VAULT_REVISIT = 10,
+  VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_MOUTH = 1,
+  VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
+  VAULT_CAVE_PASSAGE_NORTH_FROM_POOL_WEST = 3,
+  VAULT_CAVE_PASSAGE_NORTH_FROM_POOL_EAST = 4,
+  VAULT_CAVE_PASSAGE_POOL_FROM_NORTH_WEST =
+      5, ///< ★ Named from what the player sees: the room of water where the
+         ///< switch stands (its render)
+  VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST = 6,
+  VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST = 7,
+  VAULT_CAVE_PASSAGE_POOL_FROM_CHEST =
+      8, ///< ★ Named from what the player sees: the room of water where the
+         ///< switch stands (its render)
+  VAULT_CAVE_PASSAGE_CHEST_FROM_POOL =
+      9, ///< ★ Named from what the player sees: the room holding the cave's one
+         ///< chest (its render)
+  VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT = 10,
+  VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST =
+      11, ///< ★ Named from what the player sees: the ladder down from Vault's
+          ///< hidden passage (its render)
+  VAULT_CAVE_PASSAGE_CHEST_FROM_LADDER =
+      12, ///< ★ Named from what the player sees: the room holding the cave's
+          ///< one chest (its render)
+  VAULT_CAVE_PASSAGE_POOL_FROM_NORTH_EAST =
+      13, ///< ★ Named from what the player sees: the room of water where the
+          ///< switch stands (its render)
 };
 enum {
-  VAULT_CAVE_1_TO_VAULT_CAVE_3 = 1,
-  VAULT_CAVE_1_TO_VAULT_CAVE_2_NORTHWEST = 2,
-  VAULT_CAVE_1_TO_VAULT_CAVE_2_EAST = 6,
-  VAULT_CAVE_1_TO_VAULT_CAVE_2_SOUTHEAST = 7,
-  VAULT_CAVE_1_TO_VAULT_REVISIT = 10,
+  VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_MOUTH = 1,
+  VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
+  VAULT_CAVE_PASSAGE_NORTH_TO_POOL_WEST =
+      3, ///< ★ Named from what the player sees: the room of water where the
+         ///< switch stands (its render)
+  VAULT_CAVE_PASSAGE_NORTH_TO_POOL_EAST =
+      4, ///< ★ Named from what the player sees: the room of water where the
+         ///< switch stands (its render)
+  VAULT_CAVE_PASSAGE_POOL_TO_NORTH_WEST = 5,
+  VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_EAST = 6,
+  VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_SOUTHEAST = 7,
+  VAULT_CAVE_PASSAGE_POOL_TO_CHEST =
+      8, ///< ★ Named from what the player sees: the room holding the cave's one
+         ///< chest (its render)
+  VAULT_CAVE_PASSAGE_CHEST_TO_POOL =
+      9, ///< ★ Named from what the player sees: the room of water where the
+         ///< switch stands (its render)
+  VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT = 10,
+  VAULT_CAVE_PASSAGE_LADDER_TO_CHEST =
+      11, ///< ★ Named from what the player sees: the room holding the cave's
+          ///< one chest (its render)
+  VAULT_CAVE_PASSAGE_CHEST_TO_LADDER =
+      12, ///< ★ Named from what the player sees: the ladder down from Vault's
+          ///< hidden passage (its render)
+  VAULT_CAVE_PASSAGE_POOL_TO_NORTH_EAST = 13,
 };
 
-/// SceneId_VaultCave2's entrances and exits.
+/// SceneId_VaultCaveVambrace's entrances and exits.
 enum {
-  VAULT_CAVE_2_FROM_VAULT_CAVE_1_NORTH = 1,
-  VAULT_CAVE_2_FROM_VAULT_CAVE_3_NORTH = 2,
-  VAULT_CAVE_2_FROM_VAULT_CAVE_1_SOUTHWEST = 6,
-  VAULT_CAVE_2_FROM_VAULT_CAVE_3_SOUTH = 7,
-  VAULT_CAVE_2_FROM_VAULT_CAVE_1_SOUTH = 10,
+  VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH = 1,
+  VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH = 2,
+  VAULT_CAVE_VAMBRACE_NORTH_FROM_PUDDLES = 3,
+  VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST = 4,
+  VAULT_CAVE_VAMBRACE_WEST_FROM_NORTH = 5,
+  VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTHWEST = 6,
+  VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_SOUTH = 7,
+  VAULT_CAVE_VAMBRACE_PUDDLES_FROM_NORTH =
+      8, ///< ★ Named from what the player sees: the room of six puddles that
+         ///< Frost freezes, under falling objects (its render)
+  VAULT_CAVE_VAMBRACE_PUDDLES_FROM_SOUTH =
+      9, ///< ★ Named from what the player sees: the room of six puddles that
+         ///< Frost freezes, under falling objects (its render)
+  VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH = 10,
+  VAULT_CAVE_VAMBRACE_SOUTH_FROM_PUDDLES = 11,
+  VAULT_CAVE_VAMBRACE_CHEST_FROM_PUDDLES =
+      13, ///< ★ Named from what the player sees: the room behind the bush
+          ///< holding the Vambrace chest (its render)
+  VAULT_CAVE_VAMBRACE_PUDDLES_FROM_CHEST =
+      14, ///< ★ Named from what the player sees: the room of six puddles that
+          ///< Frost freezes, under falling objects (its render)
 };
 enum {
-  VAULT_CAVE_2_TO_VAULT_CAVE_1_NORTH = 1,
-  VAULT_CAVE_2_TO_VAULT_CAVE_3_NORTH = 2,
-  VAULT_CAVE_2_TO_VAULT_CAVE_1_SOUTHWEST = 6,
-  VAULT_CAVE_2_TO_VAULT_CAVE_3_SOUTH = 7,
-  VAULT_CAVE_2_TO_VAULT_CAVE_1_SOUTH = 10,
+  VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_NORTH = 1,
+  VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_NORTH = 2,
+  VAULT_CAVE_VAMBRACE_NORTH_TO_PUDDLES =
+      3, ///< ★ Named from what the player sees: the room of six puddles that
+         ///< Frost freezes, under falling objects (its render)
+  VAULT_CAVE_VAMBRACE_NORTH_TO_WEST = 4,
+  VAULT_CAVE_VAMBRACE_WEST_TO_NORTH = 5,
+  VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTHWEST = 6,
+  VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_SOUTH = 7,
+  VAULT_CAVE_VAMBRACE_PUDDLES_TO_NORTH = 8,
+  VAULT_CAVE_VAMBRACE_PUDDLES_TO_SOUTH = 9,
+  VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTH = 10,
+  VAULT_CAVE_VAMBRACE_SOUTH_TO_PUDDLES =
+      11, ///< ★ Named from what the player sees: the room of six puddles that
+          ///< Frost freezes, under falling objects (its render)
+  VAULT_CAVE_VAMBRACE_PUDDLES_TO_CHEST =
+      13, ///< ★ Named from what the player sees: the room behind the bush
+          ///< holding the Vambrace chest (its render)
+  VAULT_CAVE_VAMBRACE_CHEST_TO_PUDDLES =
+      14, ///< ★ Named from what the player sees: the room of six puddles that
+          ///< Frost freezes, under falling objects (its render)
 };
 
-/// SceneId_VaultCave3's entrances and exits.
+/// SceneId_VaultCaveMouth's entrances and exits.
 enum {
-  VAULT_CAVE_3_FROM_VAULT_REVISIT = 1,
-  VAULT_CAVE_3_FROM_VAULT_CAVE_1 = 2,
-  VAULT_CAVE_3_FROM_VAULT_CAVE_2_SOUTH = 3,
-  VAULT_CAVE_3_FROM_VAULT_CAVE_2_NORTH = 6,
+  VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT = 1,
+  VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_PASSAGE = 2,
+  VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_SOUTH = 3,
+  VAULT_CAVE_MOUTH_SOUTH_FROM_NORTH = 4,
+  VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH = 5,
+  VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH = 6,
 };
 enum {
-  VAULT_CAVE_3_TO_VAULT_REVISIT = 1,
-  VAULT_CAVE_3_TO_VAULT_CAVE_1 = 2,
-  VAULT_CAVE_3_TO_VAULT_CAVE_2_SOUTH = 3,
-  VAULT_CAVE_3_TO_VAULT_CAVE_2_NORTH = 6,
+  VAULT_CAVE_MOUTH_TO_VAULT_REVISIT = 1,
+  VAULT_CAVE_MOUTH_TO_VAULT_CAVE_PASSAGE = 2,
+  VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_SOUTH = 3,
+  VAULT_CAVE_MOUTH_SOUTH_TO_NORTH = 4,
+  VAULT_CAVE_MOUTH_NORTH_TO_SOUTH = 5,
+  VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH = 6,
 };
 
 /// SceneId_Kalay1's entrances and exits.

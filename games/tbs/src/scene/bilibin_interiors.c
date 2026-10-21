@@ -4,8 +4,8 @@
 /// (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, in bilibin.c) lead into
 /// its rooms, and each room's door leads back out to the door it was entered
 /// by. One room holds the weapon and armor shops, another the item shop, a
-/// third the inn with the restaurant beside it, whose inner door (exits 7 and
-/// 8) leads to one more room; three other buildings hold villagers.
+/// third the inn with the restaurant beside it, whose stairs (exits 7 and
+/// 8) lead up to its upstairs rooms; three other buildings hold villagers.
 /// BilibinInteriors_GetPlacements leaves out the actors of the rooms not in
 /// view.
 ///
@@ -401,8 +401,8 @@ struct SceneEntrance gBilibinInteriorsEntrances[] = {
     {BILIBIN_INTERIORS_INN, CONDITION_ALWAYS, 352, 0, 872, FACING_NORTH, 0, 0,
      640, 400, 896, 0},
     {7, CONDITION_ALWAYS, 656, 0, 696, FACING_WEST, 0, 432, 640, 848, 896, 0},
-    {BILIBIN_INTERIORS_INN_NORTH, CONDITION_ALWAYS, 344, 0, 696, FACING_EAST, 0,
-     0, 640, 400, 896, 0},
+    {BILIBIN_INTERIORS_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 344, 0, 696,
+     FACING_EAST, 0, 0, 640, 400, 896, 0},
     {SCENE_TABLE_END},
 };
 
@@ -419,8 +419,10 @@ u32 gBilibinInteriorsExits[] = {
     SCENE_EXIT(BILIBIN_INTERIORS_ITEM_SHOP_TO_BILIBIN, Bilibin,
                BILIBIN_FROM_ITEM_SHOP),
     SCENE_EXIT(BILIBIN_INTERIORS_INN_TO_BILIBIN, Bilibin, BILIBIN_FROM_INN),
-    SCENE_EXIT(7, BilibinInteriors, BILIBIN_INTERIORS_INN_NORTH),
-    SCENE_EXIT(8, BilibinInteriors, 7),
+    SCENE_EXIT(BILIBIN_INTERIORS_INN_UPSTAIRS_TO_INN, BilibinInteriors,
+               BILIBIN_INTERIORS_INN_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(BILIBIN_INTERIORS_INN_TO_INN_UPSTAIRS, BilibinInteriors,
+               BILIBIN_INTERIORS_INN_UPSTAIRS_FROM_INN),
     SCENE_EXITS_END,
 };
 

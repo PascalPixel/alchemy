@@ -53,10 +53,10 @@
 /// joined, and joins the party when spoken to (Event_GustJoins). A second
 /// statue (ACTOR_TREASURY_PILLAR) slides along one column, and
 /// Bilibin_UpdateTreasuryPillarCells keeps the two cells it can stand on in
-/// step. Arriving by entrance 3 or BILIBIN_TREASURY_FROM_BILIBIN_NORTH the
-/// leader starts 16 pixels above the floor; two exit regions
-/// (Bilibin_GetRegions) lead to its other entrance and back to Bilibin by the
-/// statue.
+/// step. Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
+/// BILIBIN_TREASURY_FROM_BILIBIN_NORTH the leader starts 16 pixels above the
+/// floor; two exit regions (Bilibin_GetRegions) lead down its west ladder to
+/// the lower room and back to Bilibin by the statue.
 ///
 /// The Bilibin Barricade (BilibinBarricade) is the road east to Kolima where
 /// McCoy's barricade stands, reached from the world map at either end. Its sign
@@ -798,8 +798,8 @@ static void Bilibin_UpdateRiverPillarCells(void) {
 }
 
 /// Sets up the Bilibin Treasury: its pillar's passage cells, and the leader
-/// arriving by entrance 3 or BILIBIN_TREASURY_FROM_BILIBIN_NORTH starts 16
-/// pixels above the floor.
+/// arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
+/// BILIBIN_TREASURY_FROM_BILIBIN_NORTH starts 16 pixels above the floor.
 static void Bilibin_SetUpTreasury(void) {
   struct FieldActor *leader;
 
@@ -1014,8 +1014,8 @@ u32 gBilibinExits[] = {
     SCENE_EXIT(BILIBIN_TO_BILIBIN_TREASURY_EAST, BilibinTreasury, BILIBIN_TREASURY_FROM_BILIBIN_NORTH),
     SCENE_EXITS(BilibinTreasury),
     SCENE_EXIT(BILIBIN_TREASURY_TO_BILIBIN_SOUTH, Bilibin, BILIBIN_FROM_BILIBIN_TREASURY_WEST),
-    SCENE_EXIT(2, BilibinTreasury, 3),
-    SCENE_EXIT(3, BilibinTreasury, 2),
+    SCENE_EXIT(BILIBIN_TREASURY_LOWER_TO_UPPER, BilibinTreasury, BILIBIN_TREASURY_UPPER_FROM_LOWER),
+    SCENE_EXIT(BILIBIN_TREASURY_UPPER_TO_LOWER, BilibinTreasury, BILIBIN_TREASURY_LOWER_FROM_UPPER),
     SCENE_EXIT(BILIBIN_TREASURY_TO_BILIBIN_NORTH, Bilibin, BILIBIN_FROM_BILIBIN_TREASURY_EAST),
     SCENE_EXITS(BilibinBarricade),
     SCENE_EXIT(BILIBIN_BARRICADE_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_BILIBIN_BARRICADE_EAST),

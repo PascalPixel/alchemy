@@ -1,35 +1,44 @@
 /// @file
 /// Vault Cave's overlay, which holds three rooms, each a scene of its own and
-/// all named Vault Cave (scenes 96 to 98, SceneId_VaultCave1 to 3, place group
-/// 31). The cave opens off Vault as the party finds it on its return
-/// (SceneId_VaultRevisit, scene 23), whose exits VAULT_REVISIT_TO_VAULT_CAVE_1
-/// and VAULT_REVISIT_TO_VAULT_CAVE_3 lead into the first and third rooms. No
-/// story flag is read here and no one speaks: the cave is a side trip of
-/// puzzles for Move, Frost and Whirlwind, and only "The door is tightly
-/// locked." and "Isaac flipped the switch." are shown.
+/// all named Vault Cave (scenes 96 to 98, SceneId_VaultCavePassage to 3, place
+/// group 31). The cave opens off Vault as the party finds it on its return
+/// (SceneId_VaultRevisit, scene 23), whose exits
+/// VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE and VAULT_REVISIT_TO_VAULT_CAVE_MOUTH
+/// lead in, through the hidden passage the dog shows and through a cave mouth
+/// in the town's northeast cliff. No story flag is read here and no one speaks:
+/// the cave is a side trip of puzzles for Move, Frost and Whirlwind, and only
+/// "The door is tightly locked." and "Isaac flipped the switch." are shown.
 ///
-/// - Vault Cave (scene 96, SceneId_VaultCave1), the way in.
-///   VAULT_CAVE_1_FROM_VAULT_REVISIT is the cave's mouth, where a region takes
-///   VAULT_CAVE_1_TO_VAULT_REVISIT back out to Vault
-///   (VAULT_REVISIT_FROM_VAULT_CAVE_1); Retreat also leads there
-///   (Scene_Initialize). Searching the switch flips it (Event_FlipSwitch,
-///   FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch turns, the cave rumbles and
-///   shakes for eight seconds, and its map changes as it fades
-///   (VaultCave_RunRumble). The change reaches the second room too: arriving
-///   in its first part (VAULT_CAVE_2_FROM_VAULT_CAVE_1_NORTH,
-///   VAULT_CAVE_2_FROM_VAULT_CAVE_3_NORTH and the room's own entrances 3 and
-///   4), Scene_Initialize draws it closed until the switch is flipped and
-///   opens its cells after. Arriving at the mouth clears the flag again, so
-///   the switch is reset each time the party comes in from Vault; arriving
-///   elsewhere in the room (VAULT_CAVE_1_FROM_VAULT_CAVE_2_EAST,
-///   VAULT_CAVE_1_FROM_VAULT_CAVE_2_SOUTHEAST and the room's own entrances 5,
-///   8 and 13) redraws the flipped switch and its changed cells. The room's
-///   chest is a mimic (search value type 5, battle 3).
-/// - Vault Cave (scene 97, SceneId_VaultCave2). In one part a pillar
+/// - Vault Cave (scene 96, SceneId_VaultCavePassage), the way in from the
+/// hidden passage.
+///   VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT is the foot of the ladder down from
+///   that passage, where a region takes VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT
+///   back out to Vault (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE); Retreat also
+///   leads there (Scene_Initialize). Searching the switch flips it
+///   (Event_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch turns, the
+///   cave rumbles and shakes for eight seconds, and its map changes as it fades
+///   (VaultCave_RunRumble). The change reaches SceneId_VaultCaveVambrace too:
+///   arriving in its northern room
+///   (VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH,
+///   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH,
+///   VAULT_CAVE_VAMBRACE_NORTH_FROM_PUDDLES and
+///   VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST), Scene_Initialize draws it closed
+///   until the switch is flipped and opens its cells after. Arriving down the
+///   ladder clears the flag again, so the switch is reset each time the party
+///   comes in from Vault; arriving in the pool room
+///   (VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST,
+///   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST,
+///   VAULT_CAVE_PASSAGE_POOL_FROM_NORTH_WEST,
+///   VAULT_CAVE_PASSAGE_POOL_FROM_CHEST and
+///   VAULT_CAVE_PASSAGE_POOL_FROM_NORTH_EAST) redraws the flipped switch and
+///   its changed cells. The room's chest is a mimic (search value type 5,
+///   battle 3).
+/// - Vault Cave (scene 97, SceneId_VaultCaveVambrace). In its southern room a
+/// pillar
 ///   (ACTOR_SOUTHERN_PILLAR) goes onto its switch by pushing
 ///   (Event_PushSouthernPillar) or Move (Event_MoveSouthernPillar); once it
 ///   rests there the puzzle chime plays and the switch opens the way
-///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In another, six objects
+///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In the puddle room, six objects
 ///   (ACTOR_FIRST_FALLING_OBJECT and the five after it) fall at random, one
 ///   every 64 frames, over six puddles (ACTOR_WEST_UPPER_PUDDLE to
 ///   ACTOR_FAR_EAST_PUDDLE) that Frost freezes. A frozen puddle changes its
@@ -41,15 +50,16 @@
 ///   set. Whirlwind blows away a bush (ACTOR_BUSH) for as long as the party
 ///   stays in the cave (FLAG_WHIRLWIND_USED, a place flag). A chest holds the
 ///   Vambrace.
-/// - Vault Cave (scene 98, SceneId_VaultCave3). Four objects
+/// - Vault Cave (scene 98, SceneId_VaultCaveMouth). In its northern room four
+/// objects
 ///   (ACTOR_FIRST_TIMED_FALLING_OBJECT and the three after it) fall on a fixed
 ///   schedule (gVaultCave_ScheduleFrames) while the party pushes or Moves a
 ///   pillar (ACTOR_NORTHERN_PILLAR) onto its switch
 ///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A falling object that lands on
 ///   that pillar marks it struck (FLAG_NORTH_PILLAR_STRUCK, SE_204), and a
 ///   struck pillar no longer opens the switch until the room is entered again.
-///   VAULT_CAVE_3_TO_VAULT_REVISIT leads out to Vault
-///   (VAULT_REVISIT_FROM_VAULT_CAVE_3).
+///   VAULT_CAVE_MOUTH_TO_VAULT_REVISIT leads out to Vault
+///   (VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH).
 ///
 /// Each room has a door that only says it is locked (Event_ShowLockedDoor).
 /// The pushes share VaultCave_PushPillarAhead, which moves the pillar the
@@ -101,8 +111,8 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source);
 
 #define TILE(position) ((position) / 0x100000)
 
-/// Scene flags. The six puddles of the second map keep their frozen state in
-/// six flags in a row, read by index as well.
+/// Scene flags. The six puddles of SceneId_VaultCaveVambrace keep their frozen
+/// state in six flags in a row, read by index as well.
 enum {
   FLAG_WEST_UPPER_FROZEN = FLAG_SCENE_TEMP_00,
   FLAG_WEST_LOWER_FROZEN = FLAG_SCENE_TEMP_01,
@@ -115,12 +125,13 @@ enum {
   FLAG_WHIRLWIND_USED = FLAG_SCENE_TEMP_00 + 0x100
 };
 
-/// The second room's actors (SceneId_VaultCave2), numbering the rows of
+/// The actors of SceneId_VaultCaveVambrace, numbering the rows of
 /// gVaultCavePlacements2.
-enum VaultCave2Actor {
+enum VaultCaveVambraceActor {
   /// A pillar (sprite 0x12b, as ACTOR_SOUTHERN_PILLAR's) two cells east of the
   /// southern switch, drawn underfoot when the party arrives by
-  /// VAULT_CAVE_2_FROM_VAULT_CAVE_1_SOUTH or the room's entrance 11.
+  /// VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH or
+  /// VAULT_CAVE_VAMBRACE_SOUTH_FROM_PUDDLES.
   ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// Pushed or Moved onto the southern switch, map cell (15, 54).
   ACTOR_SOUTHERN_PILLAR,
@@ -144,9 +155,9 @@ enum VaultCave2Actor {
   ACTOR_BUSH
 };
 
-/// The third room's actors (SceneId_VaultCave3), numbering the rows of
+/// The actors of SceneId_VaultCaveMouth, numbering the rows of
 /// gVaultCavePlacements3. The northern switch is map cell (16, 12).
-enum VaultCave3Actor {
+enum VaultCaveMouthActor {
   /// A pillar (sprite 0x12b) two cells east of the northern switch.
   ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// A pillar two cells south of the northern switch, which Move leaves where
@@ -162,13 +173,13 @@ enum VaultCave3Actor {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_VaultCave1) {
+  if (scene == (s32)&SceneId_VaultCavePassage) {
     return gVaultCaveEntrances1;
   }
-  if (scene == (s32)&SceneId_VaultCave2) {
+  if (scene == (s32)&SceneId_VaultCaveVambrace) {
     return gVaultCaveEntrances2;
   }
-  if (scene == (s32)&SceneId_VaultCave3) {
+  if (scene == (s32)&SceneId_VaultCaveMouth) {
     return gVaultCaveEntrances3;
   }
   return gVaultCaveEntrancesOther;
@@ -180,13 +191,13 @@ const struct SceneRegion *Scene_GetRegions(void) { return gVaultCaveRegions; }
 const u32 *Scene_GetExits(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_VaultCave1) {
+  if (scene == (s32)&SceneId_VaultCavePassage) {
     return gVaultCaveExits1;
   }
-  if (scene == (s32)&SceneId_VaultCave2) {
+  if (scene == (s32)&SceneId_VaultCaveVambrace) {
     return gVaultCaveExits2;
   }
-  if (scene == (s32)&SceneId_VaultCave3) {
+  if (scene == (s32)&SceneId_VaultCaveMouth) {
     return gVaultCaveExits3;
   }
   return gVaultCaveExitsOther;
@@ -196,13 +207,13 @@ const u32 *Scene_GetExits(void) {
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_VaultCave1) {
+  if (scene == (s32)&SceneId_VaultCavePassage) {
     return gVaultCavePlacements1;
   }
-  if (scene == (s32)&SceneId_VaultCave2) {
+  if (scene == (s32)&SceneId_VaultCaveVambrace) {
     return gVaultCavePlacements2;
   }
-  if (scene == (s32)&SceneId_VaultCave3) {
+  if (scene == (s32)&SceneId_VaultCaveMouth) {
     return gVaultCavePlacements3;
   }
   return gVaultCavePlacementsOther;
@@ -282,8 +293,8 @@ static void VaultCave_PushPillarAhead(void) {
 #endif
     return;
   }
-  // The third room's falling objects are never pushed; in the second room
-  // these slots hold falling objects too.
+  // SceneId_VaultCaveMouth's falling objects are never pushed; in
+  // SceneId_VaultCaveVambrace these slots hold falling objects too.
   for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
     if (pillar ==
         Object_GetById(fallingIndex + ACTOR_FIRST_TIMED_FALLING_OBJECT)) {
@@ -325,8 +336,9 @@ static void VaultCave_PushPillarAhead(void) {
   Object_SetMode(leader, 1);
 }
 
-/// In Vault Cave's second room, Whirlwind on ACTOR_BUSH blows it away for as
-/// long as the party stays in the cave (FLAG_WHIRLWIND_USED is a place flag).
+/// In VaultCaveVambrace's puddle room, Whirlwind on ACTOR_BUSH blows it away
+/// for as long as the party stays in the cave (FLAG_WHIRLWIND_USED is a place
+/// flag).
 static void Event_UseWhirlwind(void) {
   Engine_GameFlagSet(FLAG_WHIRLWIND_USED);
 }
@@ -341,13 +353,13 @@ static void Event_ShowLockedDoor(void) {
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_VaultCave1) {
+  if (scene == (s32)&SceneId_VaultCavePassage) {
     return gVaultCaveEvents1;
   }
-  if (scene == (s32)&SceneId_VaultCave2) {
+  if (scene == (s32)&SceneId_VaultCaveVambrace) {
     return gVaultCaveEvents2;
   }
-  if (scene == (s32)&SceneId_VaultCave3) {
+  if (scene == (s32)&SceneId_VaultCaveMouth) {
     return gVaultCaveEvents3;
   }
   return gVaultCaveEventsOther;
@@ -385,8 +397,8 @@ static inline void VaultCave_CompleteSouthernSwitch(void) {
   }
 }
 
-/// In Vault Cave's second room, pushing the southern pillar; once it rests on
-/// its switch, the puzzle chime plays and the switch opens the way.
+/// In VaultCaveVambrace's southern room, pushing the southern pillar; once it
+/// rests on its switch, the puzzle chime plays and the switch opens the way.
 static void Event_PushSouthernPillar(void) {
   if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_PushPillarAhead();
@@ -401,8 +413,8 @@ static void VaultCave_ApplySouthernSwitchCells(void) {
   Map_CopyCellAttributes(16, 52, 1, 1, 16, 53);
 }
 
-/// In Vault Cave's second room, Move on the southern pillar, with the same
-/// switch check.
+/// In VaultCaveVambrace's southern room, Move on the southern pillar, with the
+/// same switch check.
 static void Event_MoveSouthernPillar(void) {
   if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_CompleteSouthernSwitch();
@@ -454,26 +466,26 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
   }
 }
 
-/// In Vault Cave's third room, pushing the northern pillar; it opens its
+/// In VaultCaveMouth's northern room, pushing the northern pillar; it opens its
 /// switch only if no falling object has struck it.
 static void Event_PushNorthernPillar(void) {
   VaultCave_PushPillarAhead();
   VaultCave_CompleteNorthernSwitch();
 }
 
-/// In Vault Cave's third room, Move on ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH
-/// does nothing.
+/// In VaultCaveMouth's northern room, Move on
+/// ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH does nothing.
 static void Event_IgnoreMove(void) {}
 
-/// In Vault Cave's third room, Move on the northern pillar, with the same
-/// switch check.
+/// In VaultCaveMouth's northern room, Move on the northern pillar, with the
+/// same switch check.
 static void Event_MoveNorthernPillar(void) {
   VaultCave_CompleteNorthernSwitch();
 }
 
-/// In Vault Cave's second room, Frost on the upper western puddle freezes it
-/// and changes its map cell; arriving again re-freezes every puddle whose
-/// flag is set.
+/// In VaultCaveVambrace's puddle room, Frost on the upper western puddle
+/// freezes it and changes its map cell; arriving again re-freezes every puddle
+/// whose flag is set.
 static void Event_FreezeWestUpperPuddle(void) {
   // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
   // of r5 alone and changes the map-copy argument registers in native English.
@@ -490,8 +502,8 @@ static void Event_FreezeWestUpperPuddle(void) {
   Engine_GameFlagSet(FLAG_WEST_UPPER_FROZEN);
 }
 
-/// In Vault Cave's second room, Frost on the lower western puddle, as on the
-/// upper one.
+/// In VaultCaveVambrace's puddle room, Frost on the lower western puddle, as on
+/// the upper one.
 static void Event_FreezeWestLowerPuddle(void) {
   struct FieldActor *target = Object_GetById(ACTOR_WEST_LOWER_PUDDLE);
 
@@ -506,7 +518,7 @@ static void Event_FreezeWestLowerPuddle(void) {
   Engine_GameFlagSet(FLAG_WEST_LOWER_FROZEN);
 }
 
-/// In Vault Cave's second room, Frost on the inner lower western puddle.
+/// In VaultCaveVambrace's puddle room, Frost on the inner lower western puddle.
 static void Event_FreezeInnerWestLowerPuddle(void) {
   struct FieldActor *target = Object_GetById(ACTOR_INNER_WEST_LOWER_PUDDLE);
 
@@ -521,7 +533,7 @@ static void Event_FreezeInnerWestLowerPuddle(void) {
   Engine_GameFlagSet(FLAG_INNER_WEST_LOWER_FROZEN);
 }
 
-/// In Vault Cave's second room, Frost on the upper eastern puddle.
+/// In VaultCaveVambrace's puddle room, Frost on the upper eastern puddle.
 static void Event_FreezeEastUpperPuddle(void) {
   struct FieldActor *target = Object_GetById(ACTOR_EAST_UPPER_PUDDLE);
 
@@ -537,7 +549,7 @@ static void Event_FreezeEastUpperPuddle(void) {
   Engine_GameFlagSet(FLAG_EAST_UPPER_FROZEN);
 }
 
-/// In Vault Cave's second room, Frost on the lower eastern puddle.
+/// In VaultCaveVambrace's puddle room, Frost on the lower eastern puddle.
 static void Event_FreezeEastLowerPuddle(void) {
   struct FieldActor *target = Object_GetById(ACTOR_EAST_LOWER_PUDDLE);
 
@@ -553,7 +565,7 @@ static void Event_FreezeEastLowerPuddle(void) {
   Engine_GameFlagSet(FLAG_EAST_LOWER_FROZEN);
 }
 
-/// In Vault Cave's second room, Frost on the far eastern puddle.
+/// In VaultCaveVambrace's puddle room, Frost on the far eastern puddle.
 static void Event_FreezeFarEastPuddle(void) {
   struct FieldActor *target = Object_GetById(ACTOR_FAR_EAST_PUDDLE);
 
@@ -658,11 +670,11 @@ static void VaultCave_RunRumble(void) {
   Engine_EventEnd();
 }
 
-/// In Vault Cave's first room, searching the switch flips it.
+/// In VaultCavePassage's pool room, searching the switch flips it.
 /// "Isaac flipped the switch." The first time since the party came in from
 /// Vault, the switch turns, the cave rumbles and shakes for eight seconds and
 /// the map changes as it fades; FLAG_VAULT_CAVE_SWITCH_FLIPPED then keeps the
-/// change until the party comes in by the cave's mouth again.
+/// change until the party comes down the ladder from Vault again.
 static void Event_FlipSwitch(void) {
   s32 destinationRow;
   s32 destinationColumn;
@@ -909,15 +921,15 @@ static void VaultCave_StartTimedFalls(void) {
 }
 
 /// Arriving in any room of Vault Cave: restores the room's puzzles and actors,
-/// then sets the Retreat destination, the cave's mouth.
+/// then sets the Retreat destination, the foot of the ladder from Vault.
 s32 Scene_Initialize(void) {
   ((struct FieldWork *)gEventWork)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gGameState.scene == (s32)&SceneId_VaultCave1) {
+  if (gGameState.scene == (s32)&SceneId_VaultCavePassage) {
     switch (gGameState.entrance) {
     case 5:
-    case VAULT_CAVE_1_FROM_VAULT_CAVE_2_EAST:
-    case VAULT_CAVE_1_FROM_VAULT_CAVE_2_SOUTHEAST:
+    case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
+    case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST:
     case 8:
     case 13:
       if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
@@ -932,18 +944,18 @@ s32 Scene_Initialize(void) {
       Engine_MapRedraw();
       Engine_TaskWait(1);
       break;
-    case VAULT_CAVE_1_FROM_VAULT_REVISIT:
+    case VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT:
       Engine_GameFlagClear(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
       break;
     }
   }
-  if (gGameState.scene == (s32)&SceneId_VaultCave2) {
+  if (gGameState.scene == (s32)&SceneId_VaultCaveVambrace) {
     if (Engine_GameFlagIsSet(FLAG_WHIRLWIND_USED) == 0) {
       Object_GetById(ACTOR_BUSH)->scaleY = 0x18000;
     }
     switch (gGameState.entrance) {
-    case VAULT_CAVE_2_FROM_VAULT_CAVE_1_NORTH:
-    case VAULT_CAVE_2_FROM_VAULT_CAVE_3_NORTH:
+    case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:
+    case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH:
     case 3:
     case 4:
       if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
@@ -984,7 +996,7 @@ s32 Scene_Initialize(void) {
       FieldScheduler_AddCallback(VaultCave_UpdatePuddlePriorities,
                                  TASK_PRIORITY_SCENE);
       break;
-    case VAULT_CAVE_2_FROM_VAULT_CAVE_1_SOUTH:
+    case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH:
     case 11:
       if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplySouthernSwitchCells();
@@ -1001,7 +1013,7 @@ s32 Scene_Initialize(void) {
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SOUTHERN_PILLAR), 0);
     Object_GetById(ACTOR_SOUTHERN_PILLAR)->collisionFlags = 1;
   }
-  if (gGameState.scene == (s32)&SceneId_VaultCave3) {
+  if (gGameState.scene == (s32)&SceneId_VaultCaveMouth) {
     Engine_ActorSetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
     if (Engine_GameFlagIsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
       Engine_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 2);
@@ -1016,7 +1028,7 @@ s32 Scene_Initialize(void) {
         0x80;
     switch (gGameState.entrance) {
     case 5:
-    case VAULT_CAVE_3_FROM_VAULT_CAVE_2_NORTH:
+    case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
       VaultCave_StartTimedFalls();
       Object_GetById(ACTOR_FIRST_TIMED_FALLING_OBJECT)->collisionFlags = 2;
       Object_GetById(ACTOR_FIRST_TIMED_FALLING_OBJECT + 1)->collisionFlags = 2;
@@ -1032,9 +1044,10 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  // Retreat always returns to the first cave map's outer entrance.
-  gGameState.retreatEntrance = VAULT_CAVE_1_FROM_VAULT_REVISIT;
-  gGameState.retreatScene = (s32)&SceneId_VaultCave1;
+  // Retreat always returns to the foot of SceneId_VaultCavePassage's ladder
+  // from Vault.
+  gGameState.retreatEntrance = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
+  gGameState.retreatScene = (s32)&SceneId_VaultCavePassage;
   return 0;
 }
 
@@ -1069,35 +1082,35 @@ struct SceneEntrance gVaultCaveEntrancesOther[] = {
 
 struct SceneEntrance gVaultCaveEntrances1[] = {
     { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VAULT_CAVE_1_FROM_VAULT_CAVE_3, CONDITION_ALWAYS, 424, 0, 216, FACING_SOUTH, 0, 72, 8, 480, 320, 0 },
-    { VAULT_CAVE_1_FROM_VAULT_CAVE_2_NORTHWEST, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 72, 8, 480, 320, 0 },
+    { VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_MOUTH, CONDITION_ALWAYS, 424, 0, 216, FACING_SOUTH, 0, 72, 8, 480, 320, 0 },
+    { VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_NORTHWEST, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 72, 8, 480, 320, 0 },
     { 3, CONDITION_ALWAYS, 120, 0, 256, FACING_NORTH, 0, 72, 8, 480, 320, 0 },
     { 4, CONDITION_ALWAYS, 184, 0, 264, FACING_NORTH, 0, 72, 8, 480, 320, 0 },
     { 5, CONDITION_ALWAYS, 344, 0, 464, FACING_SOUTH, 0, 280, 360, 640, 640, 0 },
-    { VAULT_CAVE_1_FROM_VAULT_CAVE_2_EAST, CONDITION_ALWAYS, 488, 0, 488, FACING_SOUTH, 0, 280, 360, 640, 640, 0 },
-    { VAULT_CAVE_1_FROM_VAULT_CAVE_2_SOUTHEAST, CONDITION_ALWAYS, 584, 0, 608, FACING_SOUTH, 0, 280, 360, 640, 640, 0 },
+    { VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST, CONDITION_ALWAYS, 488, 0, 488, FACING_SOUTH, 0, 280, 360, 640, 640, 0 },
+    { VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST, CONDITION_ALWAYS, 584, 0, 608, FACING_SOUTH, 0, 280, 360, 640, 640, 0 },
     { 8, CONDITION_ALWAYS, 344, 0, 632, FACING_NORTH, 0, 280, 360, 640, 640, 0 },
     { 13, CONDITION_ALWAYS, 408, 0, 472, FACING_SOUTH, 0, 280, 360, 640, 640, 0 },
     { 9, CONDITION_ALWAYS, 88, 0, 704, FACING_SOUTH, 0, 40, 632, 352, 912, 0 },
     { 12, CONDITION_ALWAYS, 184, 0, 864, FACING_SOUTH, 0, 40, 632, 352, 912, 0 },
-    { VAULT_CAVE_1_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 456, 0, 800, FACING_SOUTH, 0, 336, 696, 576, 856, 0 },
+    { VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 456, 0, 800, FACING_SOUTH, 0, 336, 696, 576, 856, 0 },
     { 11, CONDITION_ALWAYS, 456, 0, 840, FACING_NORTH, 0, 336, 696, 576, 856, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gVaultCaveEntrances2[] = {
     { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VAULT_CAVE_2_FROM_VAULT_CAVE_1_NORTH, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 40, 8, 400, 328, 0 },
-    { VAULT_CAVE_2_FROM_VAULT_CAVE_3_NORTH, CONDITION_ALWAYS, 344, 0, 152, FACING_SOUTH, 0, 40, 8, 400, 328, 0 },
+    { VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 40, 8, 400, 328, 0 },
+    { VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH, CONDITION_ALWAYS, 344, 0, 152, FACING_SOUTH, 0, 40, 8, 400, 328, 0 },
     { 3, CONDITION_ALWAYS, 344, 0, 184, FACING_NORTH, 0, 40, 8, 400, 328, 0 },
     { 4, CONDITION_ALWAYS, 168, 0, 328, FACING_NORTH, 0, 40, 8, 400, 328, 0 },
     { 5, CONDITION_ALWAYS, 56, 0, 480, FACING_SOUTH, 0, 8, 408, 248, 656, 0 },
-    { VAULT_CAVE_2_FROM_VAULT_CAVE_1_SOUTHWEST, CONDITION_ALWAYS, 152, 0, 472, FACING_SOUTH, 0, 8, 408, 248, 656, 0 },
-    { VAULT_CAVE_2_FROM_VAULT_CAVE_3_SOUTH, CONDITION_ALWAYS, 120, 0, 576, FACING_SOUTH, 0, 8, 408, 248, 656, 0 },
+    { VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTHWEST, CONDITION_ALWAYS, 152, 0, 472, FACING_SOUTH, 0, 8, 408, 248, 656, 0 },
+    { VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_SOUTH, CONDITION_ALWAYS, 120, 0, 576, FACING_SOUTH, 0, 8, 408, 248, 656, 0 },
     { 8, CONDITION_ALWAYS, 344, 0, 456, FACING_SOUTH, 0, 280, 344, 544, 672, 0 },
     { 9, CONDITION_ALWAYS, 424, 0, 664, FACING_NORTH, 0, 280, 344, 544, 672, 0 },
     { 14, CONDITION_ALWAYS, 456, 0, 472, FACING_SOUTH, 0, 280, 344, 544, 672, 0 },
-    { VAULT_CAVE_2_FROM_VAULT_CAVE_1_SOUTH, CONDITION_ALWAYS, 200, 0, 776, FACING_SOUTH, 0, 104, 696, 344, 944, 0 },
+    { VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH, CONDITION_ALWAYS, 200, 0, 776, FACING_SOUTH, 0, 104, 696, 344, 944, 0 },
     { 11, CONDITION_ALWAYS, 264, 0, 808, FACING_SOUTH, 0, 104, 696, 344, 944, 0 },
     { 13, CONDITION_ALWAYS, 536, 0, 168, FACING_NORTH, 0, 416, 24, 656, 184, 0 },
     { SCENE_TABLE_END },
@@ -1105,17 +1118,17 @@ struct SceneEntrance gVaultCaveEntrances2[] = {
 
 struct SceneEntrance gVaultCaveEntrances3[] = {
     { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VAULT_CAVE_3_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 312, 0, 664, FACING_NORTH, 0, 200, 520, 440, 680, 0 },
-    { VAULT_CAVE_3_FROM_VAULT_CAVE_1, CONDITION_ALWAYS, 312, 0, 600, FACING_SOUTH, 0, 200, 520, 440, 680, 0 },
-    { VAULT_CAVE_3_FROM_VAULT_CAVE_2_SOUTH, CONDITION_ALWAYS, 88, 0, 568, FACING_SOUTH, 0, 8, 472, 248, 632, 0 },
+    { VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 312, 0, 664, FACING_NORTH, 0, 200, 520, 440, 680, 0 },
+    { VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_PASSAGE, CONDITION_ALWAYS, 312, 0, 600, FACING_SOUTH, 0, 200, 520, 440, 680, 0 },
+    { VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_SOUTH, CONDITION_ALWAYS, 88, 0, 568, FACING_SOUTH, 0, 8, 472, 248, 632, 0 },
     { 4, CONDITION_ALWAYS, 168, 0, 544, FACING_SOUTH, 0, 8, 472, 248, 632, 0 },
     { 5, CONDITION_ALWAYS, 248, 0, 336, FACING_NORTH, 0, 128, 40, 376, 384, 0 },
-    { VAULT_CAVE_3_FROM_VAULT_CAVE_2_NORTH, CONDITION_ALWAYS, 280, 0, 104, FACING_SOUTH, 0, 128, 40, 376, 384, 0 },
+    { VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH, CONDITION_ALWAYS, 280, 0, 104, FACING_SOUTH, 0, 128, 40, 376, 384, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneRegion gVaultCaveRegions[] = {
-    { 447, 47, 783, 463, 63, 799, -1, VAULT_CAVE_1_TO_VAULT_REVISIT },
+    { 447, 47, 783, 463, 63, 799, -1, VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT },
     { -1, 0, 0, 0, 0, 0, 0, 0 },
 };
 
@@ -1124,51 +1137,51 @@ u32 gVaultCaveExitsOther[] = {
 };
 
 u32 gVaultCaveExits1[] = {
-    SCENE_EXITS(VaultCave1),
-    SCENE_EXIT(VAULT_CAVE_1_TO_VAULT_CAVE_3, VaultCave3, VAULT_CAVE_3_FROM_VAULT_CAVE_1),
-    SCENE_EXIT(VAULT_CAVE_1_TO_VAULT_CAVE_2_NORTHWEST, VaultCave2, VAULT_CAVE_2_FROM_VAULT_CAVE_1_NORTH),
-    SCENE_EXIT(3, VaultCave1, 5),
-    SCENE_EXIT(4, VaultCave1, 13),
-    SCENE_EXIT(5, VaultCave1, 3),
-    SCENE_EXIT(VAULT_CAVE_1_TO_VAULT_CAVE_2_EAST, VaultCave2, VAULT_CAVE_2_FROM_VAULT_CAVE_1_SOUTHWEST),
-    SCENE_EXIT(VAULT_CAVE_1_TO_VAULT_CAVE_2_SOUTHEAST, VaultCave2, VAULT_CAVE_2_FROM_VAULT_CAVE_1_SOUTH),
-    SCENE_EXIT(8, VaultCave1, 9),
-    SCENE_EXIT(9, VaultCave1, 8),
-    SCENE_EXIT(VAULT_CAVE_1_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT_CAVE_1),
-    // A second exit 10, to this room's own entrance 11.
-    SCENE_EXIT(10, VaultCave1, 11),
-    SCENE_EXIT(11, VaultCave1, 12),
-    SCENE_EXIT(12, VaultCave1, 11),
-    SCENE_EXIT(13, VaultCave1, 4),
+    SCENE_EXITS(VaultCavePassage),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_MOUTH, VaultCaveMouth, VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_PASSAGE),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_NORTHWEST, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_NORTH_TO_POOL_WEST, VaultCavePassage, VAULT_CAVE_PASSAGE_POOL_FROM_NORTH_WEST),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_NORTH_TO_POOL_EAST, VaultCavePassage, VAULT_CAVE_PASSAGE_POOL_FROM_NORTH_EAST),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_POOL_TO_NORTH_WEST, VaultCavePassage, VAULT_CAVE_PASSAGE_NORTH_FROM_POOL_WEST),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_EAST, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTHWEST),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_SOUTHEAST, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_POOL_TO_CHEST, VaultCavePassage, VAULT_CAVE_PASSAGE_CHEST_FROM_POOL),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_CHEST_TO_POOL, VaultCavePassage, VAULT_CAVE_PASSAGE_POOL_FROM_CHEST),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE),
+    // A second exit 10, to VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST.
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT, VaultCavePassage, VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_LADDER_TO_CHEST, VaultCavePassage, VAULT_CAVE_PASSAGE_CHEST_FROM_LADDER),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_CHEST_TO_LADDER, VaultCavePassage, VAULT_CAVE_PASSAGE_LADDER_FROM_CHEST),
+    SCENE_EXIT(VAULT_CAVE_PASSAGE_POOL_TO_NORTH_EAST, VaultCavePassage, VAULT_CAVE_PASSAGE_NORTH_FROM_POOL_EAST),
     SCENE_EXITS_END,
 };
 
 u32 gVaultCaveExits2[] = {
-    SCENE_EXITS(VaultCave2),
-    SCENE_EXIT(VAULT_CAVE_2_TO_VAULT_CAVE_1_NORTH, VaultCave1, VAULT_CAVE_1_FROM_VAULT_CAVE_2_NORTHWEST),
-    SCENE_EXIT(VAULT_CAVE_2_TO_VAULT_CAVE_3_NORTH, VaultCave3, VAULT_CAVE_3_FROM_VAULT_CAVE_2_NORTH),
-    SCENE_EXIT(3, VaultCave2, 8),
-    SCENE_EXIT(4, VaultCave2, 5),
-    SCENE_EXIT(5, VaultCave2, 4),
-    SCENE_EXIT(VAULT_CAVE_2_TO_VAULT_CAVE_1_SOUTHWEST, VaultCave1, VAULT_CAVE_1_FROM_VAULT_CAVE_2_EAST),
-    SCENE_EXIT(VAULT_CAVE_2_TO_VAULT_CAVE_3_SOUTH, VaultCave3, VAULT_CAVE_3_FROM_VAULT_CAVE_2_SOUTH),
-    SCENE_EXIT(8, VaultCave2, 3),
-    SCENE_EXIT(9, VaultCave2, 11),
-    SCENE_EXIT(VAULT_CAVE_2_TO_VAULT_CAVE_1_SOUTH, VaultCave1, VAULT_CAVE_1_FROM_VAULT_CAVE_2_SOUTHEAST),
-    SCENE_EXIT(11, VaultCave2, 9),
-    SCENE_EXIT(13, VaultCave2, 13),
-    SCENE_EXIT(14, VaultCave2, 14),
+    SCENE_EXITS(VaultCaveVambrace),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_NORTH, VaultCavePassage, VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_NORTHWEST),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_NORTH, VaultCaveMouth, VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_NORTH_TO_PUDDLES, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_PUDDLES_FROM_NORTH),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_NORTH_TO_WEST, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_WEST_FROM_NORTH),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_WEST_TO_NORTH, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTHWEST, VaultCavePassage, VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_SOUTH, VaultCaveMouth, VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_SOUTH),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_PUDDLES_TO_NORTH, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_NORTH_FROM_PUDDLES),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_PUDDLES_TO_SOUTH, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_SOUTH_FROM_PUDDLES),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTH, VaultCavePassage, VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_SOUTH_TO_PUDDLES, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_PUDDLES_FROM_SOUTH),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_PUDDLES_TO_CHEST, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_CHEST_FROM_PUDDLES),
+    SCENE_EXIT(VAULT_CAVE_VAMBRACE_CHEST_TO_PUDDLES, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_PUDDLES_FROM_CHEST),
     SCENE_EXITS_END,
 };
 
 u32 gVaultCaveExits3[] = {
-    SCENE_EXITS(VaultCave3),
-    SCENE_EXIT(VAULT_CAVE_3_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT_CAVE_3),
-    SCENE_EXIT(VAULT_CAVE_3_TO_VAULT_CAVE_1, VaultCave1, VAULT_CAVE_1_FROM_VAULT_CAVE_3),
-    SCENE_EXIT(VAULT_CAVE_3_TO_VAULT_CAVE_2_SOUTH, VaultCave2, VAULT_CAVE_2_FROM_VAULT_CAVE_3_SOUTH),
-    SCENE_EXIT(4, VaultCave3, 5),
-    SCENE_EXIT(5, VaultCave3, 4),
-    SCENE_EXIT(VAULT_CAVE_3_TO_VAULT_CAVE_2_NORTH, VaultCave2, VAULT_CAVE_2_FROM_VAULT_CAVE_3_NORTH),
+    SCENE_EXITS(VaultCaveMouth),
+    SCENE_EXIT(VAULT_CAVE_MOUTH_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH),
+    SCENE_EXIT(VAULT_CAVE_MOUTH_TO_VAULT_CAVE_PASSAGE, VaultCavePassage, VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_MOUTH),
+    SCENE_EXIT(VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_SOUTH, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_SOUTH),
+    SCENE_EXIT(VAULT_CAVE_MOUTH_SOUTH_TO_NORTH, VaultCaveMouth, VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH),
+    SCENE_EXIT(VAULT_CAVE_MOUTH_NORTH_TO_SOUTH, VaultCaveMouth, VAULT_CAVE_MOUTH_SOUTH_FROM_NORTH),
+    SCENE_EXIT(VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH),
     SCENE_EXITS_END,
 };
 
@@ -1237,40 +1250,40 @@ struct SceneEvent gVaultCaveEventsOther[] = {
 };
 
 struct SceneEvent gVaultCaveEvents1[] = {
-    { 0x21, 1, CONDITION_ALWAYS, VAULT_CAVE_1_TO_VAULT_CAVE_3 },
-    { 0x31, 2, CONDITION_ALWAYS, VAULT_CAVE_1_TO_VAULT_CAVE_2_NORTHWEST },
+    { 0x21, 1, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_MOUTH },
+    { 0x31, 2, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_NORTHWEST },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { 0x31, 6, CONDITION_ALWAYS, VAULT_CAVE_1_TO_VAULT_CAVE_2_EAST },
-    { 0x31, 7, CONDITION_ALWAYS, VAULT_CAVE_1_TO_VAULT_CAVE_2_SOUTHEAST },
+    { 0x31, 6, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_EAST },
+    { 0x31, 7, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_SOUTHEAST },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, VAULT_CAVE_1_TO_VAULT_REVISIT },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FlipSwitch) },
     { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_1_CHEST, 0x500003 },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_PASSAGE_CHEST, 0x500003 },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gVaultCaveEvents2[] = {
-    { 0x21, 1, CONDITION_ALWAYS, VAULT_CAVE_2_TO_VAULT_CAVE_1_NORTH },
-    { 0x31, 2, CONDITION_ALWAYS, VAULT_CAVE_2_TO_VAULT_CAVE_3_NORTH },
+    { 0x21, 1, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_NORTH },
+    { 0x31, 2, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_NORTH },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { 0x21, 6, CONDITION_ALWAYS, VAULT_CAVE_2_TO_VAULT_CAVE_1_SOUTHWEST },
-    { 0x31, 7, CONDITION_ALWAYS, VAULT_CAVE_2_TO_VAULT_CAVE_3_SOUTH },
+    { 0x21, 6, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTHWEST },
+    { 0x31, 7, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_SOUTH },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
-    { 0x21, 10, CONDITION_ALWAYS, VAULT_CAVE_2_TO_VAULT_CAVE_1_SOUTH },
+    { 0x21, 10, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTH },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_2_CHEST, FIND_ITEM(ITEM_VAMBRACE) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_VAMBRACE_CHEST, FIND_ITEM(ITEM_VAMBRACE) },
     { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHERN_PILLAR, FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(Event_MoveSouthernPillar) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 60, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushSouthernPillar) },
@@ -1285,12 +1298,12 @@ struct SceneEvent gVaultCaveEvents2[] = {
 };
 
 struct SceneEvent gVaultCaveEvents3[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, VAULT_CAVE_3_TO_VAULT_REVISIT },
-    { 0x31, 2, CONDITION_ALWAYS, VAULT_CAVE_3_TO_VAULT_CAVE_1 },
-    { 0x21, 3, CONDITION_ALWAYS, VAULT_CAVE_3_TO_VAULT_CAVE_2_SOUTH },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_REVISIT },
+    { 0x31, 2, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_CAVE_PASSAGE },
+    { 0x21, 3, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_SOUTH },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { 0x21, 6, CONDITION_ALWAYS, VAULT_CAVE_3_TO_VAULT_CAVE_2_NORTH },
+    { 0x21, 6, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushNorthernPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHERN_PILLAR, FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(Event_MoveNorthernPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },

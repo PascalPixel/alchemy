@@ -218,8 +218,8 @@ such find, place by place.
 
 1. Find the place in `scenes.s`: its row gives the overlay's resource
    number, and the rows of `objects.tsv` that begin with that number name its
-   files (`vault.c` for Vault). Scenes that share an overlay (`GomaCaveWaterway1` and
-   `GomaCaveWaterway2`) share one file.
+   files (`vault.c` for Vault). Scenes that share an overlay (`GomaCaveStream` and
+   `GomaCaveBridge`) share one file.
 2. To find what someone says, search `games/tbs/text/en.po` for the line; its
    `msgctxt` is the message's linker name (`MsgVaultWelcomeToVaultTheTownAt`),
    which the scene uses as written.

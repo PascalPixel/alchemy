@@ -7,8 +7,8 @@
 /// rock the volcano threw (VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST), a
 /// child's house (VAULT_INTERIORS_FROM_VAULT_SOUTHEAST), the inn
 /// (VAULT_INTERIORS_FROM_VAULT_SOUTHWEST, with its guests' room upstairs at
-/// entrance 12), the item shop, an old couple's home too
-/// (VAULT_INTERIORS_FROM_VAULT_EAST), the weapon and armor shop
+/// VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN), the item shop, an old couple's home
+/// too (VAULT_INTERIORS_FROM_VAULT_EAST), the weapon and armor shop
 /// (VAULT_INTERIORS_FROM_VAULT_NORTH_NORTHEAST), the mayor's house
 /// (VAULT_INTERIORS_FROM_VAULT_NORTHWEST) and a room with a crate
 /// (VAULT_INTERIORS_FROM_VAULT_WEST). Behind the crate a way climbs to the
@@ -1419,10 +1419,10 @@ static void Event_FreeRooferAndConfrontThieves(void) {
 }
 
 /// At Vault's inn, the party leaves the guests' room for the floor below
-/// (entrance 11).
+/// (VAULT_INTERIORS_INN_FROM_INN_UPSTAIRS).
 ///
 /// Reached by stepping on cell code 7 before the thieves are jailed (after,
-/// the same cell is a plain exit); takes exit 11.
+/// the same cell is a plain exit); takes VAULT_INTERIORS_INN_UPSTAIRS_TO_INN.
 static void Event_LeaveGuestsRoom(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(11);
@@ -1431,7 +1431,8 @@ static void Event_LeaveGuestsRoom(void) {
 /// In Vault's room with the crate, the party climbs up into the inn's loft by
 /// the way behind the crate.
 ///
-/// Reached by stepping on cell code 26; takes exit 15 to the loft's entrance.
+/// Reached by stepping on cell code 26; takes
+/// VAULT_INTERIORS_CRATE_ROOM_TO_LOFT.
 static void Event_ClimbToLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
@@ -1443,7 +1444,8 @@ static void Event_ClimbToLoft(void) {
 /// Leaving the inn's loft in Vault before the thieves are confronted, the
 /// party hears the roofer groan. "Uhnn... Uhnn..."
 ///
-/// Reached by stepping on cell code 27 in the loft; takes exit 14 back down.
+/// Reached by stepping on cell code 27 in the loft; takes
+/// VAULT_INTERIORS_LOFT_TO_CRATE_ROOM back down.
 static void Event_LeaveLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
@@ -3726,11 +3728,11 @@ u32 gVaultInteriors_Exits[] = {
     SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_EAST, Vault, VAULT_FROM_VAULT_INTERIORS_EAST),
     SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST, Vault, VAULT_FROM_VAULT_INTERIORS_NORTH_NORTHEAST),
     SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_NORTHWEST, Vault, VAULT_FROM_VAULT_INTERIORS_NORTHWEST),
-    SCENE_EXIT(11, VaultInteriors, 11),
-    SCENE_EXIT(12, VaultInteriors, 12),
+    SCENE_EXIT(VAULT_INTERIORS_INN_UPSTAIRS_TO_INN, VaultInteriors, VAULT_INTERIORS_INN_FROM_INN_UPSTAIRS),
+    SCENE_EXIT(VAULT_INTERIORS_INN_TO_INN_UPSTAIRS, VaultInteriors, VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN),
     SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_WEST, Vault, VAULT_FROM_VAULT_INTERIORS_WEST),
-    SCENE_EXIT(14, VaultInteriors, 14),
-    SCENE_EXIT(15, VaultInteriors, 15),
+    SCENE_EXIT(VAULT_INTERIORS_LOFT_TO_CRATE_ROOM, VaultInteriors, VAULT_INTERIORS_CRATE_ROOM_FROM_LOFT),
+    SCENE_EXIT(VAULT_INTERIORS_CRATE_ROOM_TO_LOFT, VaultInteriors, VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM),
     SCENE_EXIT(VAULT_INTERIORS_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_INTERIORS),
     SCENE_EXITS_END,
 };

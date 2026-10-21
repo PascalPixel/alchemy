@@ -21,7 +21,7 @@ gBattle_LocationRules:
 	location SolSanctumLunaSolRooms, -1, 0x814, 0, 6
 	location GomaCavePond, -1, -1, 1, 9
 	location GomaCavePillar, -1, -1, 1, 10
-	location GomaCaveWaterway1, -1, -1, 1, 11
+	location GomaCaveStream, -1, -1, 1, 11
 	location KolimaTunnel, -1, -1, 1, 15
 	location KolimaForest1, -1, -1, 1, 16
 	location KolimaForest2, -1, -1, 1, 17
@@ -65,11 +65,11 @@ gBattle_LocationRules:
 	location TretTreeInteriors, 57, -1, 0, 24
 	location TretTreeInteriors, 58, -1, 0, 24
 	location TretTreeInteriors, 59, -1, 0, 24
-	location BilibinCave2, 5, -1, 1, 27
-	location BilibinCave2, 6, -1, 1, 27
-	location BilibinCave2, -1, -1, 1, 25
-	location BilibinCave1, 5, -1, 1, 28
-	location BilibinCave1, -1, -1, 0, 26
+	location BilibinCaveRapier, 5, -1, 1, 27
+	location BilibinCaveRapier, 6, -1, 1, 27
+	location BilibinCaveRapier, -1, -1, 1, 25
+	location BilibinCaveIce, 5, -1, 1, 28
+	location BilibinCaveIce, -1, -1, 0, 26
 	location MercuryLighthouseEntrance, 7, -1, 1, 31
 	location MercuryLighthouseEntrance, 8, -1, 1, 31
 	location MercuryLighthouseEntrance, 9, -1, 1, 31
@@ -123,9 +123,9 @@ gBattle_LocationRules:
 	location LamakanDesert1, -1, -1, 1, 50
 	location LamakanDesert2, -1, -1, 1, 51
 	location LamakanDesert3, -1, -1, 0, 52
-	location VaultCave1, -1, -1, 0, 60
-	location VaultCave2, -1, -1, 0, 61
-	location VaultCave3, -1, -1, 0, 61
+	location VaultCavePassage, -1, -1, 0, 60
+	location VaultCaveVambrace, -1, -1, 0, 61
+	location VaultCaveMouth, -1, -1, 0, 61
 	location ValeCaveKite, 1, -1, 0, 56
 	location ValeCaveKite, 2, -1, 0, 56
 	location ValeCaveKite, 3, -1, 0, 56

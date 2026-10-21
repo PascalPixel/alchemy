@@ -32,7 +32,7 @@
 ///
 /// Scene_Initialize blocks Retreat and puts everything back as these flags say:
 /// the stump where it landed, the pillars on their columns and the map cells
-/// that go with them. Exit 1 leads into Goma Cave (GomaCaveWaterway1, scene 28)
+/// that go with them. Exit 1 leads into Goma Cave (GomaCaveStream, scene 28)
 /// and exit 2 out to the world map.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
@@ -653,15 +653,15 @@ struct SceneEntrance gGomaCaveEntranceEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 197, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 96, 0, 440,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_WATERWAY_1, CONDITION_ALWAYS, 200, 0,
-     184, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_STREAM, CONDITION_ALWAYS, 200, 0, 184,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gGomaCaveEntranceExits[] = {
     SCENE_EXITS(GomaCaveEntrance),
-    SCENE_EXIT(GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_WATERWAY_1, GomaCaveWaterway1,
-               GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_ENTRANCE),
+    SCENE_EXIT(GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM, GomaCaveStream,
+               GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE),
     SCENE_EXIT(GOMA_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
                WORLD_MAP_FROM_GOMA_CAVE_ENTRANCE),
     SCENE_EXITS_END,

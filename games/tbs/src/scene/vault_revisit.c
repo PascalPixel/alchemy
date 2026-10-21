@@ -3,10 +3,10 @@
 /// reached Kalay, on the same map as Vault's first scene (vault.c). The world
 /// map still leads into that first scene, but once FLAG_REACHED_KALAY is set
 /// (entering Kalay sets it) its setup sends the party straight on here by its
-/// exit 14, to entrance 1 at the town's south edge whichever side it came
-/// from; Vault Sanctum, Vault Cave and the houses (vault_interiors_revisit.c)
-/// lead back here directly. This copy of the town replaces the first for the
-/// rest of the game.
+/// VAULT_TO_VAULT_REVISIT, to VAULT_REVISIT_FROM_VAULT at the town's south edge
+/// whichever side it came from; Vault Sanctum, Vault Cave and the houses
+/// (vault_interiors_revisit.c) lead back here directly. This copy of the town
+/// replaces the first for the rest of the game.
 ///
 /// Much has changed since the party left. The three thieves it caught here,
 /// who had stolen Hammet's Shaman's Rod, have broken out of jail; the bridge
@@ -32,12 +32,15 @@
 /// out), runs to a spot and jumps there three times
 /// (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c), and its thoughts then
 /// hint at a passage underground: Reveal shows the passage at that spot, and
-/// its trigger 40 leads down into Vault Cave (VAULT_REVISIT_TO_VAULT_CAVE_1).
-/// Trigger 41 is a second way into Vault Cave (VAULT_REVISIT_TO_VAULT_CAVE_3).
-/// A wooden box holds a Nut, and the well rumbles with water.
+/// its trigger 40 leads down into Vault Cave
+/// (VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE). Trigger 41 is a second way into Vault
+/// Cave (VAULT_REVISIT_TO_VAULT_CAVE_MOUTH). A wooden box holds a Nut, and the
+/// well rumbles with water.
 ///
-/// The town's other exits lead to the world map (exits 1 and 2), through six
-/// doors into the houses, shops and inn (SceneId_VaultInteriorsRevisit,
+/// The town's other exits lead to the world map
+/// (VAULT_REVISIT_TO_WORLD_MAP_SOUTH and VAULT_REVISIT_TO_WORLD_MAP_NORTH),
+/// through six doors into the houses, shops and inn
+/// (SceneId_VaultInteriorsRevisit,
 /// VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST to
 /// VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTHWEST), into Vault Sanctum
 /// (VAULT_REVISIT_TO_SANCTUM) and into the jail (VAULT_REVISIT_TO_VAULT_JAIL,
@@ -618,7 +621,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// FLAG_VAULT_DJINNI_CALLED_BY_BELL, so Sap is hidden again; while it is
 /// called and has not joined, it stands by the bell. Coming out of Vault
 /// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME, and
-/// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_1) clears
+/// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
 /// FLAG_EXIT_ARRIVAL_PENDING (0x120), so the leader's arrival animation does
 /// not play.
 s32 Scene_Initialize(void) {
@@ -664,7 +667,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
   if (gGameState.entrance == VAULT_REVISIT_FROM_SANCTUM)
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-  if (gGameState.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_1)
+  if (gGameState.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
     Engine_GameFlagClear(FLAG_EXIT_ARRIVAL_PENDING);
   return 0;
 }
@@ -760,17 +763,19 @@ struct SceneEntrance gVaultRevisit_Entrances[] = {
      -1, -1, -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT_JAIL, CONDITION_ALWAYS, 70, 0, 183, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
-    {VAULT_REVISIT_FROM_VAULT_CAVE_1, CONDITION_ALWAYS, 217, 0, 409,
+    {VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE, CONDITION_ALWAYS, 217, 0, 409,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VAULT_REVISIT_FROM_VAULT_CAVE_3, CONDITION_ALWAYS, 420, 0, 136,
+    {VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH, CONDITION_ALWAYS, 420, 0, 136,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gVaultRevisit_Exits[] = {
     SCENE_EXITS(VaultRevisit),
-    SCENE_EXIT(1, WorldMap, WORLD_MAP_FROM_VAULT_SOUTH),
-    SCENE_EXIT(2, WorldMap, 44),
+    SCENE_EXIT(VAULT_REVISIT_TO_WORLD_MAP_SOUTH, WorldMap,
+               WORLD_MAP_FROM_VAULT_SOUTH),
+    SCENE_EXIT(VAULT_REVISIT_TO_WORLD_MAP_NORTH, WorldMap,
+               WORLD_MAP_FROM_VAULT_NORTH),
     SCENE_EXIT(VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST,
                VaultInteriorsRevisit,
                VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST),
@@ -792,10 +797,10 @@ u32 gVaultRevisit_Exits[] = {
     SCENE_EXIT(VAULT_REVISIT_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_REVISIT),
     SCENE_EXIT(VAULT_REVISIT_TO_VAULT_JAIL, VaultJail,
                VAULT_JAIL_FROM_VAULT_REVISIT),
-    SCENE_EXIT(VAULT_REVISIT_TO_VAULT_CAVE_1, VaultCave1,
-               VAULT_CAVE_1_FROM_VAULT_REVISIT),
-    SCENE_EXIT(VAULT_REVISIT_TO_VAULT_CAVE_3, VaultCave3,
-               VAULT_CAVE_3_FROM_VAULT_REVISIT),
+    SCENE_EXIT(VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE, VaultCavePassage,
+               VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT),
+    SCENE_EXIT(VAULT_REVISIT_TO_VAULT_CAVE_MOUTH, VaultCaveMouth,
+               VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT),
     SCENE_EXITS_END,
 };
 
@@ -863,8 +868,8 @@ u16 gVaultRevisit_JailDoorCells[] = {
 struct SceneEvent gVaultRevisit_Events[] = {
     { EVENT_EXIT, 20, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 21, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 40, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_1 },
-    { EVENT_EXIT, 41, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_3 },
+    { EVENT_EXIT, 40, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
+    { EVENT_EXIT, 41, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGemOwnersHouse) },

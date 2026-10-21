@@ -43,8 +43,12 @@ extern char SceneId_VaultInteriorsRevisit;
 extern char SceneId_GomaCaveEntrance;
 extern char SceneId_GomaCavePond;
 extern char SceneId_GomaCavePillar;
-extern char SceneId_GomaCaveWaterway1;
-extern char SceneId_GomaCaveWaterway2;
+/// ★ Named from what the player sees: the Goma Cave room where a stream runs
+/// its whole length beside the path (its render)
+extern char SceneId_GomaCaveStream;
+/// ★ Named from what the player sees: Goma Cave's way out, where a wooden
+/// bridge crosses the river (its render)
+extern char SceneId_GomaCaveBridge;
 extern char SceneId_Bilibin;
 extern char SceneId_BilibinInteriors;
 extern char SceneId_BilibinTreasury;
@@ -62,8 +66,11 @@ extern char SceneId_KolimaForestFloodgate;
 extern char SceneId_KolimaForestTree;
 extern char SceneId_TretTreeInteriors;
 extern char SceneId_TretTreeBranch;
-extern char SceneId_BilibinCave1;
-extern char SceneId_BilibinCave2;
+/// ★ Named from what the player sees: the Bilibin Cave room of ice pillars that
+/// Frost, fires and torches freeze and melt (its render)
+extern char SceneId_BilibinCaveIce;
+/// ★ Named from the game: "Elven Rapier" (MsgItemName)
+extern char SceneId_BilibinCaveRapier;
 extern char SceneId_BilibinCaveEntrance;
 extern char SceneId_Imil;
 extern char SceneId_ImilInteriors;
@@ -116,9 +123,14 @@ extern char SceneId_ValeCaveKite;
 /// ★ Named from what the player sees: the cave whose three logs the party
 /// pushes (its render)
 extern char SceneId_ValeCaveLogs;
-extern char SceneId_VaultCave1;
-extern char SceneId_VaultCave2;
-extern char SceneId_VaultCave3;
+/// ★ Named from the game: "a passage leading"
+/// (MsgVaultCarefulSearchWillRevealPassage)
+extern char SceneId_VaultCavePassage;
+/// ★ Named from the game: "Vambrace" (MsgItemName)
+extern char SceneId_VaultCaveVambrace;
+/// ★ Named from what the player sees: the part of Vault Cave entered from the
+/// cave mouth in Vault's northeast cliff (its render)
+extern char SceneId_VaultCaveMouth;
 extern char SceneId_Kalay1;
 extern char SceneId_KalayInteriors1;
 extern char SceneId_KalaySanctum;

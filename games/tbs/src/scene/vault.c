@@ -45,7 +45,8 @@
 /// VAULT_TO_VAULT_INTERIORS_ exits), the jail (VAULT_TO_VAULT_JAIL) and the
 /// Vault Sanctum (VAULT_TO_SANCTUM), and the two gates to the world map. Once
 /// the party has reached Kalay (FLAG_REACHED_KALAY), Scene_Initialize sends it
-/// straight on to the later scene (exit 14, SceneId_VaultRevisit).
+/// straight on to the later scene (VAULT_TO_VAULT_REVISIT,
+/// SceneId_VaultRevisit).
 
 #include "game_state.h"
 #include "animspr.h"
@@ -1236,7 +1237,7 @@ struct SceneEntrance gVault_Entrances[] = {
 u32 gVault_Exits[] = {
     SCENE_EXITS(Vault),
     SCENE_EXIT(VAULT_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_VAULT_SOUTH),
-    SCENE_EXIT(2, WorldMap, 44),
+    SCENE_EXIT(VAULT_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_VAULT_NORTH),
     SCENE_EXIT(VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST, VaultInteriors,
                VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST),
     SCENE_EXIT(VAULT_TO_VAULT_INTERIORS_SOUTHEAST, VaultInteriors,
@@ -1253,7 +1254,7 @@ u32 gVault_Exits[] = {
     SCENE_EXIT(VAULT_TO_VAULT_JAIL, VaultJail, VAULT_JAIL_FROM_VAULT),
     SCENE_EXIT(VAULT_TO_VAULT_INTERIORS_WEST, VaultInteriors,
                VAULT_INTERIORS_FROM_VAULT_WEST),
-    SCENE_EXIT(14, VaultRevisit, 1),
+    SCENE_EXIT(VAULT_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT),
     SCENE_EXITS_END,
 };
 

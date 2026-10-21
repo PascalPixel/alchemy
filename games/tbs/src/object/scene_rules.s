@@ -329,11 +329,11 @@ gBattle_BackdropScenes:
 	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeak10, CrossboneIslePillarRooms1
 	backdrop InteriorBackdrop, VaultInteriors
 	backdrop GomaCaveBackdrop, GomaCaveEntrance
-	backdrop GomaCaveBackdrop, GomaCavePond, GomaCavePillar, GomaCaveWaterway1, KolimaTunnel
+	backdrop GomaCaveBackdrop, GomaCavePond, GomaCavePillar, GomaCaveStream, KolimaTunnel
 	backdrop KolimaForestBackdrop, KolimaForest1, KolimaForest2, KolimaForest3, KolimaForestFloodgate, KolimaForestTree
 	backdrop TretTreeBranchBackdrop, TretTreeBranch
 	backdrop TretTreeInteriorsBackdrop, TretTreeInteriors
-	backdrop GomaCaveBackdrop, BilibinCaveEntrance, BilibinCave2, BilibinCave1
+	backdrop GomaCaveBackdrop, BilibinCaveEntrance, BilibinCaveRapier, BilibinCaveIce
 	backdrop MercuryLighthouseBackdrop, MercuryLighthouseEntrance, MercuryLighthouse1, MercuryLighthouse2, MercuryLighthouse3, MercuryLighthouse4
 	backdrop MercuryLighthouseAerieBackdrop, MercuryLighthouseAerie1
 	backdrop ImilFuchinFallsBackdrop, FuchinFallsCave1, FuchinFallsCave2, FuchinFallsCave3, FuchinFallsCave4, FuchinFallsCave5, FuchinFallsCave6, CrossboneIsle3

@@ -33,6 +33,11 @@ STATIC_ASSERT(offsetof(struct SchedulerTask, mask) == 6);
 /// task is suspended, so no pass matches it.
 #define SCHEDULER_KEY_VBLANK 0x480
 #define SCHEDULER_KEY_MAIN_LOOP 0xc80
+/// An empty slot's order, sorted last.
+#define SCHEDULER_KEY_EMPTY 0xffff
+/// A removed task's order: its odd high byte matches no pass, and it sorts
+/// to the front of the table.
+#define SCHEDULER_KEY_REMOVED 0x7fff
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 

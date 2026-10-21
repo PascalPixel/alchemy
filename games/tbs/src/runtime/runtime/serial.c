@@ -435,7 +435,7 @@ receive_loop:
 
   // The console that clocks the transfers starts the next one, and restarts
   // timer 3 so its count reloads
-  if (tailState->mode == 8) {
+  if (tailState->mode == SERIAL_MODE_CLOCKING) {
     REG_TM3CNT_H = 0;
     REG_SIOCNT16 |= SIO_START;
     REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;

@@ -11,9 +11,9 @@ typedef s32 (*KeyCallbackFn)(void);
 // The task scheduler: up to 20 routines run each frame by WaitFrames or each
 // VBlank, kept sorted by their order value (see SCHEDULER_KEY_MAIN_LOOP).
 
-/// Empties the task table: every slot gets no routine, order 0xffff (sorted
-/// last) and no flags. Clears gSchedulerReady while it works and sets it at
-/// the end, so neither pass runs a half-cleared table. Called by
+/// Empties the task table: every slot gets no routine, order
+/// SCHEDULER_KEY_EMPTY and no flags. Clears gSchedulerReady while it works and
+/// sets it at the end, so neither pass runs a half-cleared table. Called by
 /// System_Initialize and by the battle, Lucky Dice and other modes that start
 /// from a clean table.
 void Scheduler_ResetTaskTable(void) {
@@ -25,7 +25,7 @@ void Scheduler_ResetTaskTable(void) {
   remaining = SCHEDULER_TBS_TASK_COUNT - 1;
   do {
     task->callback = 0;
-    task->state = 0xffff;
+    task->state = SCHEDULER_KEY_EMPTY;
     task->mask = 0;
     task++;
     remaining--;
@@ -42,8 +42,9 @@ UNUSED void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
 }
 
 /// Bubble-sorts the task table by order, highest first, so each pass runs its
-/// tasks from the highest order down; removed tasks (order 0x7fff) rise to the
-/// front. Called by Scheduler_AddOrUpdateCallback with interrupts disabled.
+/// tasks from the highest order down; removed tasks (SCHEDULER_KEY_REMOVED)
+/// rise to the front. Called by Scheduler_AddOrUpdateCallback with interrupts
+/// disabled.
 void Scheduler_SortTasks(void) {
   struct SchedulerTask saved;
   // DEAD: every pass sets task again; this initializer is the table's load
@@ -144,8 +145,8 @@ UNUSED void Scheduler_Idle(void) {}
 UNUSED void Scheduler_EmptyCallback(void) {}
 
 /// Unschedules the task running `callback`: clears its routine and gives it
-/// order 0x7fff, which no pass matches. Returns its old index, or -1. Called
-/// throughout the game when the work a task did is finished.
+/// order SCHEDULER_KEY_REMOVED, which no pass matches. Returns its old index,
+/// or -1. Called throughout the game when the work a task did is finished.
 s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
   struct SchedulerTask *task;
   u32 savedInterruptMaster;
@@ -158,7 +159,7 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
     if (task->callback == (u32)callback) {
       task->callback = 0;
-      task->state = 0x7fff;
+      task->state = SCHEDULER_KEY_REMOVED;
       result = i;
       break;
     }

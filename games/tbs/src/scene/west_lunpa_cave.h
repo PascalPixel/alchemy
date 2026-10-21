@@ -8,19 +8,9 @@
 #include "flags.h"
 #include "songs.h"
 
-enum CaveEntrance {
-  CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
-  CAVE_ENTRANCE_FROM_LUNPA = 2,
-  CAVE_ENTRANCE_THIRD = 3
-};
-
-enum CaveExit {
-  CAVE_EXIT_TO_WORLD_MAP = 1,
-  CAVE_EXIT_TO_LUNPA = 2,
-  CAVE_EXIT_BY_WAGON = 3
-};
-
-enum { WORLD_MAP_ENTRANCE_FROM_CAVE = 49, LUNPA_ENTRANCE_FROM_CAVE = 3 };
+// The cave's entrances and exits are in scene_links.h; no exit table leads
+// to this one.
+enum { CAVE_ENTRANCE_THIRD = 3 };
 
 enum CaveTrigger {
   TRIGGER_WORLD_MAP_PASSAGE = 1,

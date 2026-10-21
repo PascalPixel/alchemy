@@ -117,8 +117,9 @@ enum GomaCavePillarActor {
   /// Forge, a Mars Djinni, until it joins the party.
   /// ★ Named from the game: "Forge" (MsgDjinnName)
   ACTOR_FORGE,
-  /// The man who fought Forge and lost it. "Did you see something strange
-  /// over there? I fought it, but it fled."
+  /// The man who fought Forge and lost it, a man with golden-brown hair in
+  /// orange and red. "Did you see something strange over there? I fought it,
+  /// but it fled."
   ACTOR_WITNESS
 };
 
@@ -708,8 +709,8 @@ struct ScenePlacement gGomaCavePillar_Placements[] = {
     {SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(384), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {223, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {92, FLAG_DJINNI_0 + DJINNI_FORGE, ACTOR_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {134, FLAG_GOMA_CAVE_WITNESS_LEFT, ACTOR_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0},
+    {MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_FORGE, ACTOR_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {SPRITE_MAN_IN_ORANGE, FLAG_GOMA_CAVE_WITNESS_LEFT, ACTOR_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0},
     {SCENE_TABLE_END},
 };
 

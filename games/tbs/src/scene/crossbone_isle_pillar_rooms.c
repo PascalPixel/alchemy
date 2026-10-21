@@ -1,27 +1,31 @@
 /// @file
 /// Five of the side rooms of Crossbone Isle Cave, the cave beneath Crossbone
 /// Isle. Each opens off one of the nine rooms of its corridor
-/// (crossbone_isle.c) through two doors: the corridor room's east door leads
-/// to entrance 1 and its west door to entrance 2, and exits 1 and 2 lead back
-/// out the same way. Each is a pillar puzzle with four chests, and all five
-/// take the area name Crossbone Isle Cave. In the order the party meets them:
+/// (crossbone_isle.c) through two doors, east and west: the corridor room's
+/// east door leads in at the room's `_EAST` entrance
+/// (CROSSBONE_ISLE_PILLAR_ROOMS_1_FROM_CROSSBONE_ISLE_6_EAST in the first) and
+/// its west door at the `_WEST` one, and the exits of the same names lead back
+/// out. Each is a pillar puzzle with four chests, and all five take the area
+/// name Crossbone Isle Cave. In the order the party meets them:
 ///
 /// - CrossboneIslePillarRooms1 (scene 115), off the first corridor room:
 ///   walking into a pillar jumps two cells across it where the cells allow,
 ///   and otherwise pushes it (Event_JumpOrPushPillar).
-/// - CrossboneIslePillarRooms2 (scene 116), off the second: pillars to push.
-/// - CrossboneIslePillarRooms3 (scene 119), off the fifth: a switch
-///   (Event_FlipWaterSwitch) raises the water or drains it, and its seven
-///   pillars stand higher or lower with it; the water level lasts only while
-///   the party stays (FLAG_SCENE_TEMP_00, kept through a battle).
-/// - CrossboneIslePillarRooms4 (scene 121), off the seventh: four pillars that
-///   Move and Carry shift, and that settle and redraw their footprints after
-///   every push (Event_MovePillar), a ladder, and pillars to jump across.
-/// - CrossboneIslePillarRooms5 (scene 122), off the eighth: three pools that
-///   Frost freezes into pillars of ice. Frost on the third makes the pillar
-///   beside it rise and thaws a frozen second pool, and the third freezes only
-///   if the leader was not standing on it; a pillar moved with Move sinks into
-///   place at column 16.
+/// - CrossboneIslePillarRooms2 (scene 116), off the second corridor room:
+///   pillars to push.
+/// - CrossboneIslePillarRooms3 (scene 119), off the fifth corridor room: a
+///   switch (Event_FlipWaterSwitch) raises the water or drains it, and its
+///   seven pillars stand higher or lower with it; the water level lasts only
+///   while the party stays (FLAG_SCENE_TEMP_00, kept through a battle).
+/// - CrossboneIslePillarRooms4 (scene 121), off the seventh corridor room:
+///   four pillars that Move and Carry shift, and that settle and redraw their
+///   footprints after every push (Event_MovePillar), a ladder, and pillars to
+///   jump across.
+/// - CrossboneIslePillarRooms5 (scene 122), off the eighth corridor room:
+///   three pools that Frost freezes into pillars of ice. Frost on the third
+///   makes the pillar beside it rise and thaws a frozen second pool, and the
+///   third freezes only if the leader was not standing on it; a pillar moved
+///   with Move sinks into place at column 16.
 ///
 /// The other three side rooms are in crossbone_isle_platform_rooms.c, and the
 /// ninth room's in crossbone_isle.c.

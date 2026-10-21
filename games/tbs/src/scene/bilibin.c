@@ -33,8 +33,8 @@
 /// (SceneId_BilibinInteriors, bilibin_interiors.c) and the seventh into the
 /// Bilibin Sanctum. Coming back out of the Sanctum (BILIBIN_FROM_SANCTUM) the
 /// area name is not shown again. The other exits lead to the world map, to the
-/// garden of McCoy's Palace and, two ways, into the Treasury: past a bush at
-/// the west edge (ACTOR_BUSH, which has a Whirlwind row that runs nothing),
+/// garden of McCoy's Palace and, two ways, into the Treasury: past the ivy at
+/// the west edge (ACTOR_IVY, which has a Whirlwind row that runs nothing),
 /// gone when the party comes back out that way
 /// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); and from the cell a statue
 /// (ACTOR_VILLAGE_PILLAR) stands on, once Move or a push slides it aside.
@@ -144,9 +144,13 @@ static void Bilibin_UpdateTreasuryPillarCells(void);
 /// ACTOR_FIRST_PLACED. The ten villagers are named by what they say before the
 /// curse is lifted.
 enum BilibinActor {
-  /// A bush, sprite 0xf8, drawn half as tall again, at the west edge where the
-  /// way into the Treasury runs; its Whirlwind row runs nothing.
-  ACTOR_BUSH = ACTOR_FIRST_PLACED,
+  /// Ivy, sprite 0xf8 (Crossbone Isle's ivy), drawn half as tall again, at the
+  /// west edge where the way into the Treasury runs; its Whirlwind row runs
+  /// nothing.
+  /// ★ Named from what the player sees: leafy ivy against the cliff at the
+  /// village's west edge, the sprite of the ivy Whirlwind blows away (its
+  /// render)
+  ACTOR_IVY = ACTOR_FIRST_PLACED,
   ACTOR_TREE_MAN, ///< the man turned into a tree at the village entrance
   /// "Welcome to Bilibin! Please, just ignore that strange tree out front!"
   ACTOR_VILLAGER_WELCOME,
@@ -192,8 +196,13 @@ enum BilibinBarricadeActor {
   /// Jill's two friends, once the curse is lifted, east and west of her. With
   /// her they were the "Gang of Three".
   ACTOR_GANG_MEMBER_EAST,
+  /// ★ Named from the game: "I heard we were once called the Gang of Three."
+  /// (MsgBilibinIHeardWeWereOnceCalled)
   ACTOR_GANG_MEMBER_WEST,
-  ACTOR_JILL, ///< Jill herself, once the curse is lifted
+  /// Jill herself, once the curse is lifted.
+  /// ★ Named from the game: "Jill, are these the people who saved you?"
+  /// (MsgBilibinYoureGuy)
+  ACTOR_JILL,
   /// The invisible actor that stands where the middle tree lies pushed down and
   /// answers for it.
   ACTOR_FALLEN_TREE_STAND_IN = ACTOR_FIRST_PLACED + 8
@@ -204,7 +213,9 @@ enum BilibinBarricadeActor {
 enum BilibinTreasuryActor {
   /// A statue, moved with Move or pushed.
   ACTOR_TREASURY_PILLAR = ACTOR_FIRST_PLACED,
-  ACTOR_GUST ///< Gust, a Jupiter Djinni, placed until he has joined
+  /// Gust, a Jupiter Djinni, placed until he has joined.
+  /// ★ Named from the game: "Gust" (MsgDjinnName)
+  ACTOR_GUST
 };
 
 /// Counts frames between the river effects, one every 30 frames.
@@ -635,11 +646,11 @@ static void Bilibin_RestoreVillageActors(void) {
     Actor_SetPosition(ACTOR_FORMER_TREE_MAN, 0, 0);
   }
   // Apply arrival-specific changes after restoring the population.
-  actor = Actor_Get(ACTOR_BUSH);
+  actor = Actor_Get(ACTOR_IVY);
   actor->scaleY = 0x18000;
   entrance = gGameState.entrance;
   if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
-    Actor_SetPosition(ACTOR_BUSH, 0, 0);
+    Actor_SetPosition(ACTOR_IVY, 0, 0);
   } else if (entrance == BILIBIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
@@ -1155,7 +1166,7 @@ struct SceneEvent gBilibinEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_STRANGE_CREATURES, CONDITION_ALWAYS, MSGNO(MsgBilibinAsLongAsImOkayI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VILLAGE_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateVillagePillarCells) },
     { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, CONDITION_ALWAYS, 0 },
     { SEARCH(SEARCH_JAR), 100, 0xf50, FIND_ITEM(ITEM_HERB) },
     { SEARCH(SEARCH_JAR), 101, 0xf51, FIND_COINS(5) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectWell) },

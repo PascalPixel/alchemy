@@ -43,14 +43,23 @@ struct IntroSprite {
   s32 tile;
 };
 
+/// IntroWork.state, which the intro writes and nothing reads.
+enum IntroState {
+  INTRO_STATE_SCROLLING = 0, ///< the pictures scroll in
+  /// From frame 239, or a skip with A or START: the approach to the flash.
+  INTRO_STATE_APPROACH = 1,
+  /// Set from frame 281, which the loop never reaches: it ends at 280.
+  INTRO_STATE_AFTER_FLASH = 2
+};
+
 /// The title intro's state, in HEAP_SLOT_TITLE_INTRO.
 struct IntroWork {
   s32 backRows;  ///< rows of the far background copied in as it scrolls
   s32 frontRows; ///< rows of the near background copied in
   s32 frame;
   s32 tick;
-  s32 state;
-  s32 rise; ///< how far the sprites have risen
+  s32 state; ///< an enum IntroState
+  s32 rise;  ///< how far the sprites have risen
   union {
     struct OamShadow objects[120];
     struct {
@@ -253,7 +262,7 @@ void Title_LoadIntroBackgrounds(void) {
   work->frontRows = 0;
   work->tick = 0;
   work->rise = 0;
-  work->state = 0;
+  work->state = INTRO_STATE_SCROLLING;
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -317,7 +326,7 @@ s32 Title_ShowIntro(s32 prompt) {
   gCpuLoadDisplayEnabled = result;
   Title_LoadIntroBackgrounds();
   PaletteFade_Init();
-  PaletteFade_SetCurrent(2, 0);
+  PaletteFade_SetCurrent(RGB(2, 0, 0), PALETTE_HALVES_BOTH);
   // This screen supplies its own OAM list in VBlank. Keep the normal OAM
   // copy disabled until its sprite callback is removed at the white flash.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -338,7 +347,7 @@ s32 Title_ShowIntro(s32 prompt) {
     frame = work->frame;
     if (frame > 20 && frame < 239 &&
         (gKeysPressed & (KEY_A | KEY_START)) != 0) {
-      work->state = 1;
+      work->state = INTRO_STATE_APPROACH;
       work->frame = 239;
       frame = 239;
     }
@@ -391,12 +400,12 @@ s32 Title_ShowIntro(s32 prompt) {
         }
       }
       if (work->frame == 239)
-        work->state = 1;
+        work->state = INTRO_STATE_APPROACH;
     } else if (nextFrame == 281) {
       // The frame-280 branch below exits before these later states can run.
-      work->state = 2;
+      work->state = INTRO_STATE_AFTER_FLASH;
     } else if (nextFrame == 289) {
-      work->state = 0;
+      work->state = INTRO_STATE_SCROLLING;
     } else if (nextFrame == 280) {
       // Hide the background replacement behind white, and restore the
       // normal OAM uploader before drawing the title prompt.
@@ -739,11 +748,12 @@ void PaletteFade_Update(void) {
 
 /// Transforms 512 source colours into destination components (three
 /// per colour, each in the high bits of a halfword). `mode` picks the
-/// transform: a colour below 0x8000 fills every colour with it; 0x8000 takes
-/// that colour from source[0]; 0x10000 to 0x10007 are the whole-palette filters
-/// (plain, grey, sepia and the others); the TINT, BLEND and SPLIT flags carry
+/// transform: a colour below PALETTE_TRANSFORM_FROM_SOURCE fills every colour
+/// with it; PALETTE_TRANSFORM_FROM_SOURCE takes that colour from source[0];
+/// PALETTE_TRANSFORM_PLAIN to PALETTE_TRANSFORM_WARM2 are the whole-palette
+/// filters; the TINT, BLEND and SPLIT flags carry
 /// a colour in their low bits; anything else is the address of components to
-/// copy. paletteHalf 1 does only the background palettes, 2 only the sprites'.
+/// copy. `paletteHalf` is an enum PaletteHalf.
 /// Called by PaletteFade_Init and the palette fade's setters.
 void Palette_Transform(u32 mode, u16 *source, u16 *destination,
                        s32 paletteHalf) {
@@ -756,9 +766,9 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
 
   if (mode == PALETTE_TRANSFORM_FROM_SOURCE)
     mode = *source;
-  if (paletteHalf == 1) {
+  if (paletteHalf == PALETTE_HALF_BG) {
     colorCount = 256;
-  } else if (paletteHalf == 2) {
+  } else if (paletteHalf == PALETTE_HALF_OBJ) {
     destination += 768;
     source += 256;
     colorCount = 256;
@@ -992,7 +1002,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
       destination[colorIndex * 3 + 2] = (colorWork & 0x001f) << 10;
     }
   } else {
-    if (paletteHalf == 2)
+    if (paletteHalf == PALETTE_HALF_OBJ)
       mode += 0x600;
     Dma_Set((const void *)mode, destination,
             DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
@@ -1012,7 +1022,7 @@ void PaletteFade_Init(void) {
   Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(0x80),
           REG_DMA3);
   Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target,
-                    0);
+                    PALETTE_HALVES_BOTH);
   callbackPriority = SCHEDULER_KEY_MAIN_LOOP;
   Scheduler_AddOrUpdateCallback(PaletteFade_Update, callbackPriority);
 }

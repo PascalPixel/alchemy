@@ -99,4 +99,11 @@ enum PaletteTransform {
   PALETTE_TRANSFORM_SPLIT = 0x800000 ///< each colour unchanged
 };
 
+/// Which palettes Palette_Transform builds.
+enum PaletteHalf {
+  PALETTE_HALVES_BOTH = 0,
+  PALETTE_HALF_BG = 1,
+  PALETTE_HALF_OBJ = 2
+};
+
 #endif

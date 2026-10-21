@@ -407,7 +407,7 @@ void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
 /// flies in again; SANCTUM_SPARKLE_LAST_FLIGHT, which
 /// Shop_RunPartyMemberIconBurst sets as the burst ends, frees the slot on
 /// arrival.
-void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
+void Shop_UpdateBurstSparkle(struct EffectSlot *effect) {
   struct FixedPointPosition position;
   s8 *statePointer;
   s32 state;
@@ -508,7 +508,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   effect = shop->effects;
   do {
     EffectSlot_InitializeFar(effect, 0x11c, position.x, position.z);
-    EffectSlot_SetCallbackFar(effect, BattleFx_UpdateRadialMotion);
+    EffectSlot_SetCallbackFar(effect, Shop_UpdateBurstSparkle);
     EffectSlot_SetObjectModeFar(effect, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               (Random16() * 7) >> 16);

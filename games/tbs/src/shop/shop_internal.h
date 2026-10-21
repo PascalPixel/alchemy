@@ -88,7 +88,7 @@ enum ShopStockRow {
 };
 
 /// What a sparkle of the sanctum's burst is doing (EffectSlot.state,
-/// BattleFx_UpdateRadialMotion).
+/// Shop_UpdateBurstSparkle).
 enum SanctumSparkleState {
   /// Placed on a ring around the burst's centre and aimed inside it.
   SANCTUM_SPARKLE_START = 0,

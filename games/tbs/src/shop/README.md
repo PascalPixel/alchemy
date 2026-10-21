@@ -199,7 +199,7 @@ The work block's layout, `struct ShopRuntime`, is in
 | `EventTable_` | the stock rows |
 | `Sanctum_` | the sanctum's services |
 | `Inn_` | the inn |
-| `Battle_`, `BattleUnit_`, `BattleFx_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
+| `Battle_`, `BattleUnit_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
 
 ## Evidence and open questions
 

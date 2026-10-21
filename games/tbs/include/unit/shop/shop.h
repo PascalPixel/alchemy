@@ -84,7 +84,7 @@ s32 Sanctum_RunPartyService(void);
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind);
 void Shop_HiliteUnit(struct UiWindow *window, s32 selected);
 void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId);
-void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
+void Shop_UpdateBurstSparkle(struct EffectSlot *effect);
 void Shop_ResetEffects(void);
 void Shop_RunPartyMemberIconBurst(s32 member);
 

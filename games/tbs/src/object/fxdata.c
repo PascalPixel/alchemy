@@ -174,7 +174,7 @@ const u16 gColorBuffer_ChannelCurveContrast[32] = {
 /// sound 256 + voice as it types (FieldFx_GetResourceId), so the values
 /// step by 4. FieldFx_FindDefinition compares the first 130 and returns
 /// the last, never compared, as the default.
-const struct BattleEffectEntry gFieldFx_DefinitionTable[131] = {
+const struct FieldFxDefinition gFieldFx_DefinitionTable[131] = {
     {0, 16, 0x00},
     {1, 16, 0x00},
     {2, 16, 0x00},

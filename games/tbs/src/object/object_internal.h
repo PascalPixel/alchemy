@@ -98,7 +98,7 @@
 #include "sprite_ids.h"
 
 /// The speakers' definitions (fxdata.c), read by FieldFx_FindDefinition.
-extern struct BattleEffectEntry gFieldFx_DefinitionTable[];
+extern struct FieldFxDefinition gFieldFx_DefinitionTable[];
 
 /// The exit request whose destination is already in gGameState.scene and
 /// .entrance, so that Scene_TakeExit leaves them as they are. Random battles,

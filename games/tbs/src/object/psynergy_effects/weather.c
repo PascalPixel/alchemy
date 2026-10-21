@@ -70,7 +70,7 @@ void FieldFx_UpdateGroundParticles(void) {
 /// 0 stops the lightning.
 void FieldFx_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
-  struct BattleEffectBuffers *target =
+  struct ColorBuffer *target =
       gFieldBlendWork[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_FIELD_BLEND];
   s16 *timer = &work->timer;
 
@@ -457,7 +457,7 @@ void FieldFx_InitSparkles(void) {
 /// other lightning calls look up again. Vale's storm scenes call it.
 void FieldFx_StartLightning(void) {
   struct FieldBlendWork *work;
-  struct BattleEffectBuffers *buffers;
+  struct ColorBuffer *buffers;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND,
                                sizeof(struct FieldBlendWork));
@@ -506,7 +506,7 @@ void FieldFx_ResumeLightning(void) {
 /// (vale_eruption.c).
 void FieldFx_StartBufferBlend(s32 from, s32 to) {
   struct FieldBlendWork *work;
-  struct BattleEffectBuffers *buffers;
+  struct ColorBuffer *buffers;
   s16 *target;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND,

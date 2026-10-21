@@ -255,7 +255,7 @@ void EventObject_Initialize(void) {
 /// effects open with it, and FieldFx_FadeFromEffectColor fades back.
 void FieldFx_FadeToEffectColor(void) {
   u8 *scene;
-  struct BattleEffectBuffers *work;
+  struct ColorBuffer *work;
   s32 no;
 
   // Save the colours the buffer moves toward into the field work, 224

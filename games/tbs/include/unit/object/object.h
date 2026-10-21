@@ -5,7 +5,7 @@
 #include "effect_slot.h"
 
 struct ArcEffectObject;
-struct BattleEffectEntry;
+struct FieldFxDefinition;
 struct DescendingOrbitObject;
 struct DispatchObject;
 struct DisplayTransitionState;
@@ -270,7 +270,7 @@ void FadeOverlay_DrawMarks(void);
 void FieldFx_StartFadeOverlay(void *object);
 void FadeOverlay_Suspend(void);
 void FadeOverlay_Resume(void);
-struct BattleEffectEntry *FieldFx_FindDefinition(u32 id);
+struct FieldFxDefinition *FieldFx_FindDefinition(u32 id);
 s32 FieldFx_GetAnimationValue(s32 id);
 s32 FieldFx_GetResourceId(u32 id);
 s32 FieldFx_GetFlags(s32 id);

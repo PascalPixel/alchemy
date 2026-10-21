@@ -105,7 +105,7 @@ enum HeapSlot {
   /// gDisplayTransition): the window edges and dissolve of a scene change.
   HEAP_SLOT_TRANSITION = 31,
   /// The colour buffer (gPaletteBufferWork) that moves the BG and OBJ palettes
-  /// toward target colours: the struct BattleEffectBuffers
+  /// toward target colours: the struct ColorBuffer
   /// ColorBuffer_Initialize allocates on scene load, or the title
   /// intro's struct PaletteFade.
   HEAP_SLOT_PALETTE_BUFFER = 32,

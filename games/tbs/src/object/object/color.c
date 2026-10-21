@@ -39,7 +39,7 @@ void ColorBuffer_ComputeSteps(s16 *source, s16 *target, s16 *step, s32 frames) {
 /// ColorBuffer_Initialize as a scheduler callback; the menus clear
 /// and set FLAG_PALETTE_BLEND_HELD around it (menu/common.c).
 void ColorBuffer_Update(void) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteBufferWork;
   u16 *channelDelta = work->delta;
   s32 i;
 
@@ -368,7 +368,7 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
 /// and starts updating the palettes from it each frame. Called by
 /// Field_RunScene on scene load.
 void ColorBuffer_Initialize(void) {
-  struct BattleEffectBuffers *work;
+  struct ColorBuffer *work;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_PALETTE_BUFFER, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
@@ -392,7 +392,7 @@ void ColorBuffer_Release(void) {
 /// the scene transitions, the shop cursor, and scene overlays as
 /// Engine_ColorBufferApplyTarget.
 void ColorBuffer_SetTarget(s32 mode, s32 half) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteBufferWork;
 
   if (work != NULL) {
     ColorBuffer_Build(mode, work->palette, work->target, half);
@@ -403,7 +403,7 @@ void ColorBuffer_SetTarget(s32 mode, s32 half) {
 /// Reveal, the leader's steps (step.c), the transitions, and scene overlays
 /// as Engine_ColorBufferApplySource.
 void ColorBuffer_SetSource(s32 mode, s32 half) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteBufferWork;
 
   if (work != NULL) {
     ColorBuffer_Build(mode, work->palette, work->current, half);
@@ -413,7 +413,7 @@ void ColorBuffer_SetSource(s32 mode, s32 half) {
 /// Sets the buffer's source backdrop colour (BG colour 0 of its palette
 /// copy). Called by the transitions (transition.c).
 void ColorBuffer_SetBackdrop(u32 color) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteBufferWork;
 
   if (work != NULL) {
     work->palette[0] = color;
@@ -425,7 +425,7 @@ void ColorBuffer_SetBackdrop(u32 color) {
 /// ColorBuffer_SetTarget by the same callers, and by scene
 /// overlays as Engine_ColorBufferInterpolate.
 void ColorBuffer_StartInterpolation(s32 frames) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteBufferWork;
 
   if (work != NULL) {
     work->duration = frames;

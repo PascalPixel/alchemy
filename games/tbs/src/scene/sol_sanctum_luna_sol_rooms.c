@@ -1534,7 +1534,7 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
 /// FLAG_SCENE_TEMP_01 and clears _00 and _02.
 static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   struct FieldActor *leader;
-  struct BattleEffectBuffers *palette;
+  struct ColorBuffer *palette;
 
   Engine_EventBegin();
   // The screen opens all white on Isaac and Garet, then fades to the tint.

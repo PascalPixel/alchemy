@@ -754,7 +754,7 @@ static void TretPalette_UpdateSceneTint(void) {
   s32 blue;
   u32 color;
   struct FieldWork *fieldWork;
-  struct BattleEffectBuffers *paletteWork;
+  struct ColorBuffer *paletteWork;
 
   fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
   paletteWork = WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER);

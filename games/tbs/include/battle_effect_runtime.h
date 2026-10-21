@@ -2,8 +2,8 @@
 #define ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 
 /// @file
-/// The battle animation state, render objects and effect entries, and the
-/// palette buffer work.
+/// The speaker lookup's views of a field actor and its sprite, the speaker
+/// definitions, and the colour buffer's work slot.
 
 #include "unit/object/object.h"
 #include "object_lookup.h"
@@ -13,7 +13,7 @@
 
 /// An actor's animated sprite (struct AnimationObject), as far as the pointer
 /// to its sprite id.
-struct BattleAnimationState {
+struct FieldFxSpeakerSprite {
   u8 unk00[0x28]; ///< AnimationObject's fields before its layers
   /// AnimationObject.entries[0], its first layer, whose first halfword is the
   /// sprite id it shows (AnimationEntry.animId); null for none.
@@ -22,7 +22,7 @@ struct BattleAnimationState {
 
 /// A field actor as the speaker lookup reads it: its kind (1 for an animated
 /// sprite) and that sprite.
-struct BattleRenderObject {
+struct FieldFxSpeakerObject {
   u8 unk00[0x24];
   s32 unk24;
   u8 unk28[4];
@@ -33,13 +33,13 @@ struct BattleRenderObject {
   u8 unk3c[4];
   s32 unk40;
   u8 unk44[0x0c];
-  struct BattleAnimationState *animation; ///< ObjectRuntime.animation
+  struct FieldFxSpeakerSprite *animation; ///< ObjectRuntime.animation
   u8 kind; ///< ObjectRuntime.animationKind: 1 for one animated sprite
 };
 
 /// A speaker definition, a row of gFieldFx_DefinitionTable: a sprite, its
 /// voice (0xff for none) and the flags that choose its idle line.
-struct BattleEffectEntry {
+struct FieldFxDefinition {
   u16 id; ///< the sprite id
   /// The first of its four voice blip sounds, less 256: a message plays sound
   /// 256 + value as it types (FieldFx_GetResourceId); 0xff for none.
@@ -48,6 +48,6 @@ struct BattleEffectEntry {
 };
 
 /// The colour buffer, heap slot HEAP_SLOT_PALETTE_BUFFER under its own name.
-extern struct BattleEffectBuffers *gPaletteBufferWork;
+extern struct ColorBuffer *gPaletteBufferWork;
 
 #endif

@@ -131,11 +131,11 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
   // UB: slot 32 lies past scalar gEventWork. Its named load adds eight
   // bytes in the native EN trial (0x54 to 0x5c).
 #ifdef UBFIX
-  struct BattleEffectBuffers *paletteBuffers = gPaletteBufferWork;
+  struct ColorBuffer *paletteBuffers = gPaletteBufferWork;
   u8 *eventBytes = (u8 *)gEventWork;
 #else
   u32 *workCells = (u32 *)&gEventWork;
-  struct BattleEffectBuffers *paletteBuffers = (struct BattleEffectBuffers *)
+  struct ColorBuffer *paletteBuffers = (struct ColorBuffer *)
       workCells[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_EVENT];
   u8 *eventBytes = (u8 *)workCells[0];
 #endif

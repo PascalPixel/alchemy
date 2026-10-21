@@ -7,8 +7,8 @@
 /// Returns the speaker definition of sprite id from gFieldFx_DefinitionTable,
 /// or its last entry, the default, when there is none. The search stops after
 /// 0x82 entries, all but the table's last of its 131.
-struct BattleEffectEntry *FieldFx_FindDefinition(u32 id) {
-  struct BattleEffectEntry *entry = gFieldFx_DefinitionTable;
+struct FieldFxDefinition *FieldFx_FindDefinition(u32 id) {
+  struct FieldFxDefinition *entry = gFieldFx_DefinitionTable;
   u32 definitionIndex = 0;
 
   if (entry->id != id) {
@@ -27,7 +27,7 @@ struct BattleEffectEntry *FieldFx_FindDefinition(u32 id) {
 /// actor must exist: a NULL from ObjectTable_Get is read through. Called by
 /// FieldFx_GetFlags.
 s32 FieldFx_GetAnimationValue(s32 id) {
-  struct BattleRenderObject *object = ObjectTable_Get(id);
+  struct FieldFxSpeakerObject *object = ObjectTable_Get(id);
 
   if (object->kind != 1 || object->animation == NULL ||
       object->animation->value28 == NULL) {

@@ -28,8 +28,7 @@
 ///   returns them to the Tolbi Sanctum (TOLBI_INTERIORS_SANCTUM_NORTH); if
 ///   not, he rejoins them.
 /// - Gondowan Cave (GondowanCaveRiver and GondowanCave, scenes 157 and 158),
-/// the
-///   cave that, the soldiers say, no one gets through. Someone in Tolbi's
+///   the cave that, the soldiers say, no one gets through. Someone in Tolbi's
 ///   houses thinks the same (tolbi_interiors.c, Mind Read,
 ///   MsgTolbiInteriorsYoudThinkYouCouldGetThrough): `Not unless you can lift
 ///   boulders, at any rate.` Both ways in are in GondowanCave

@@ -35,9 +35,8 @@
 ///   Killer Ape beaten sets FLAG_NYUNPA_ENLIGHTENED: back at Fuchin Temple the
 ///   monks say that Nyunpa has reached enlightenment and passed away.
 /// - MogallForestSidePaths (scene 71), also named Mogall Forest: side paths
-/// that the
-///   three areas' exits lead into and back out of, some of them leading back
-///   into the scene itself; a Psynergy Stone lies there.
+///   that the three areas' exits lead into and back out of, some of them
+///   leading back into the scene itself; a Psynergy Stone lies there.
 ///
 /// One overlay serves all four scenes: MogallForest_GetEntrances,
 /// _GetPlacements and _GetEvents choose each scene's tables, and

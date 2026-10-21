@@ -16,13 +16,11 @@
 ///   be pushed, and a Nut circles until Catch takes it (0xfd7).
 ///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
 /// - Crossbone Isle Cave (CrossboneIsleCaveEntrance, scene 114), the cave's
-/// mouth, with
-///   only its two exits.
+///   mouth, with only its two exits.
 /// - Crossbone Isle Cave (CrossboneIsleFirstFloor to CrossboneIsleNinthFloor,
-/// scenes 126 to
-///   134), the nine floors the cave descends through, all on one map, each
-///   entered from the east (CORRIDOR_FROM_PREVIOUS_ROOM) and left to the west
-///   (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
+///   scenes 126 to 134), the nine floors the cave descends through, all on one
+///   map, each entered from the east (CORRIDOR_FROM_PREVIOUS_ROOM) and left to
+///   the west (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
 ///   scene_links.h names them room by room
 ///   (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE and
 ///   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR in the first).
@@ -39,10 +37,9 @@
 ///   is a mimic (0xef4). The side rooms of the first eight floors are in
 ///   crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
 /// - Crossbone Isle Cave (CrossboneIsleFloatingLogs, scene 123), the ninth
-/// floor's side
-///   room: twelve logs floating on green water, which drift with the leader
-///   standing on them until another log or the shore stops them, and hops from
-///   log to log, lead to its four chests.
+///   floor's side room: twelve logs floating on green water, which drift with
+///   the leader standing on them until another log or the shore stops them, and
+///   hops from log to log, lead to its four chests.
 /// - Crossbone Isle Cave (CrossboneIslePier, scene 124), the ledge past the
 ///   ninth floor where a wooden pier leads out to the Pirate Ship.
 /// - Pirate Ship (PirateShip, scene 125), at the end. Stepping on trigger
@@ -373,8 +370,9 @@ s32 Scene_Initialize(void) {
     Scene_FloatNut(ACTOR_ISLE_NUT);
     return 0;
   }
-  // The nine corridor rooms (CrossboneIsleFirstFloor to 14) share their door
-  // battle, sunk pillar and return entrance.
+  // The nine corridor rooms (CrossboneIsleFirstFloor to
+  // CrossboneIsleNinthFloor) share their door battle, sunk pillar and return
+  // entrance.
   first = (s32)&SceneId_CrossboneIsleFirstFloor;
   if (current == first) {
     if (FLAG_CHECK(0xef4) == 0) {
@@ -2061,7 +2059,7 @@ struct SceneEntrance gCrossboneIsleEntrances4[] = {
 struct SceneEntrance gCrossboneIsleEntrances5[] = {
     { PIRATE_SHIP_FROM_CROSSBONE_ISLE_PIER, CONDITION_ALWAYS, 312, 0, 656, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 216, 0, 544, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    // The nine corridor rooms (CrossboneIsleFirstFloor to 14) enter through this
+    // The nine corridor rooms (CrossboneIsleFirstFloor to CrossboneIsleNinthFloor) enter through this
     // shared tail, since every room numbers its entrances alike.
 
     { CORRIDOR_FROM_PREVIOUS_ROOM, CONDITION_ALWAYS, 840, 0, 176, FACING_WEST, 0, 432, 32, 880, 352, 0 },

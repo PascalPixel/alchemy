@@ -7,8 +7,7 @@
 /// scene and place flags.
 ///
 /// - Vale (scene 93, SceneId_ValeCaveMouth), the way in, a place group of its
-/// own
-///   (29). VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST and
+///   own (29). VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST and
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST lead back to Kraden's part of Vale
 ///   (SceneId_ValeKraden), whose VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST and
 ///   VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST lead here;
@@ -17,8 +16,7 @@
 ///   fades the room in from the backdrop and clears FLAG_SHOW_LOCATION_NAME:
 ///   entering a new place group sets that flag, but this is still Vale.
 /// - Vale Cave (scene 94, SceneId_ValeCaveKite), one map in three parts, each
-/// with
-///   its own entrances and camera box; walking south into a ledge's cells
+///   with its own entrances and camera box; walking south into a ledge's cells
 ///   hops the leader down it (Event_HopDownLedge). In the first part
 ///   (entrances 1 to 4) Reveal shows a hidden tile while it lasts
 ///   (Event_RevealHiddenTile). In Kite's part (entrances 5 to 7), coming near

@@ -4,9 +4,9 @@
 /// mayor of Vault tells the party to pass through on the way to Bilibin.
 ///
 /// - Goma Cave, scene 28, where a stream runs the length of the room. The party
-/// walks in from the Goma Cave Entrance
-///   (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at the bottom of the room.
-///   A stump answers Move: pushed to column 24, it spins in place, leaps away,
+///   walks in from the Goma Cave Entrance
+///   (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at the bottom of the room. A
+///   stump answers Move: pushed to column 24, it spins in place, leaps away,
 ///   lands with a shake and a ring of dust and lies flat underfoot, and the
 ///   cells where it lands change (FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED, a story
 ///   flag, so it stays there for good). A chest holds Power Bread. Exits lead
@@ -19,11 +19,10 @@
 ///   leads back in at GOMA_CAVE_STREAM_FROM_VALE_GATE, which arrives
 ///   without the place name. No exit leads to entrance 99.
 /// - Goma Cave, scene 29, the way out, where a wooden bridge crosses the river.
-/// It has no actors and only its two exits:
-///   back south into scene 28 (GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM)
-///   and out onto the world map (GOMA_CAVE_BRIDGE_TO_WORLD_MAP), toward
-///   Bilibin; the world map leads back in at
-///   GOMA_CAVE_BRIDGE_FROM_WORLD_MAP.
+///   It has no actors and only its two exits: back south into scene 28
+///   (GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM) and out onto the world map
+///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP), toward Bilibin; the world map leads back
+///   in at GOMA_CAVE_BRIDGE_FROM_WORLD_MAP.
 ///
 /// The getters give scene 29 its own tables; any other scene number takes
 /// scene 28's.

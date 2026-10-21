@@ -6,8 +6,8 @@
 /// The party comes here after the Suhalla Desert, and the three scenes are
 /// the pass in the order it is crossed:
 /// - Suhalla Gate (SuhallaGateCheckpoint, scene 169), the gate itself. The
-/// world map leads in from
-///   the south (SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) and from the east
+///   world map leads in from the south
+///   (SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) and from the east
 ///   (SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST), each way into its own part
 ///   of the map; beside the gate stands a house whose door
 ///   (SUHALLA_GATE_CHECKPOINT_TO_LUNPA_SUHALLA) leads into Gate to Suhalla, the
@@ -41,10 +41,10 @@
 ///   has questioned the guards, a defeat with no defeat point returns the
 ///   party to the house beside the gate.
 /// - Suhalla Gate (SuhallaGateDew, scene 170), beyond the passage, in a west
-/// part
-///   and an east part (SUHALLA_GATE_DEW_WEST_TO_EAST). Dew, a Mercury Djinni,
-///   waits here and fights when spoken to (Event_FightDjinni), and a chest
-///   holds a Mint. SUHALLA_GATE_DEW_TO_GATEWAY_CAVE leads into Gateway Cave.
+///   part and an east part (SUHALLA_GATE_DEW_WEST_TO_EAST). Dew, a Mercury
+///   Djinni, waits here and fights when spoken to (Event_FightDjinni), and a
+///   chest holds a Mint. SUHALLA_GATE_DEW_TO_GATEWAY_CAVE leads into Gateway
+///   Cave.
 /// - Gateway Cave (scene 171), entered by GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW;
 ///   GATEWAY_CAVE_TO_WORLD_MAP leads out onto the world map
 ///   (WORLD_MAP_FROM_GATEWAY_CAVE). Searching in it finds a Psynergy Stone,

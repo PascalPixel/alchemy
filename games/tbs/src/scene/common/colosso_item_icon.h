@@ -1,8 +1,8 @@
 /// @file
-/// Colosseum Final 1, 2 and 3, and three of Crossbone Isle Cave's side rooms
-/// (CrossboneIsleKeys to 3): an actor drawn as an item's menu icon,
-/// such as the two prizes at a finals match's arena or the keys in
-/// CrossboneIsleKeys.
+/// The three Colosseum finals matches, and three of Crossbone Isle Cave's side
+/// rooms (CrossboneIsleKeys, CrossboneIsleStatues and CrossboneIsleBane): an
+/// actor drawn as an item's menu icon, such as the two prizes at a finals
+/// match's arena or the keys in CrossboneIsleKeys.
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

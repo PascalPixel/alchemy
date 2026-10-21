@@ -28,11 +28,10 @@
 ///   if they wait any longer and leads the group off without him; he runs
 ///   after it.
 /// - Hammet Palace (HammetPalaceGrounds, scene 102), before the door of the
-/// palace, where
-///   two soldiers of Kalay stand guard; the palace's rooms are scene 103
-///   (hammet_palace.c). The first time the party comes, before Ivan has
-///   reported to Layana (FLAG_IVAN_REPORTED_TO_LAYANA), the guards turn them
-///   away, `This is Lord Hammet's palace. The lord is away.`, until they
+///   palace, where two soldiers of Kalay stand guard; the palace's rooms are
+///   scene 103 (hammet_palace.c). The first time the party comes, before Ivan
+///   has reported to Layana (FLAG_IVAN_REPORTED_TO_LAYANA), the guards turn
+///   them away, `This is Lord Hammet's palace. The lord is away.`, until they
 ///   recognize Ivan, who calls himself Lord Hammet's servant: he stayed in
 ///   Vault to look for Hammet's stolen rod, the Shaman's Rod, and recovered it.
 ///   Ivan learns that Hammet is still a prisoner in Lunpa, insists that his
@@ -59,15 +58,14 @@
 ///   guard stands turned east. KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE leads
 ///   into the Kalay Tunnel's cave (KalayTunnelCave).
 /// - Kalay Tunnel (KalayTunnelCave to KalayTunnelTreasureRoom, scenes 154 to
-/// 156), the
-///   passage to Hammet Palace and his treasure, which Layana opens to the party
-///   in thanks once Hammet is home (flag 0x915). The cave (KalayTunnelCave)
-///   joins the Kalay Tunnel Entrance to the passage (KalayTunnelPassage), and a
-///   chest holds an Apple. The passage opens with a window transition, its way
-///   through drawn open once flag 0x915 is set. The treasure room
-///   (KalayTunnelTreasureRoom) holds the puzzle: two pillars, pushed by walking
-///   into them or moved with Move, each open a passage step by step once far
-///   enough west (FLAG_TUNNEL_FIRST_PASSAGE_OPEN and
+///   156), the passage to Hammet Palace and his treasure, which Layana opens to
+///   the party in thanks once Hammet is home (flag 0x915). The cave
+///   (KalayTunnelCave) joins the Kalay Tunnel Entrance to the passage
+///   (KalayTunnelPassage), and a chest holds an Apple. The passage opens with a
+///   window transition, its way through drawn open once flag 0x915 is set. The
+///   treasure room (KalayTunnelTreasureRoom) holds the puzzle: two pillars,
+///   pushed by walking into them or moved with Move, each open a passage step
+///   by step once far enough west (FLAG_TUNNEL_FIRST_PASSAGE_OPEN and
 ///   FLAG_TUNNEL_SECOND_PASSAGE_OPEN, place flags, so the pillars are back once
 ///   the party leaves the tunnel's scenes); while a passage is closed,
 ///   particles stream from its pillar as it nears its place. The first passage

@@ -19,20 +19,18 @@
 ///   take the friends to cheer, and the guide sends Isaac back to the passage
 ///   (COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM).
 /// - COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH, `Lend a Hand`: Garet, Ivan
-/// and
-///   Mia in turn may use Psynergy on the stages. Frost freezes the target on
-///   the Scales of Justice's eastern pan so the scales stay tipped, Halt stops
-///   the Wall Wedge's operator and with him its pistons, Force knocks the block
-///   off the Moving Sidewalk so the belt no longer carries anyone back, Growth
-///   grows a plant into a shortcut, and Move shifts the weight onto the scales
-///   and the stones and the rock on the way. After Mia,
+///   and Mia in turn may use Psynergy on the stages. Frost freezes the target
+///   on the Scales of Justice's eastern pan so the scales stay tipped, Halt
+///   stops the Wall Wedge's operator and with him its pistons, Force knocks the
+///   block off the Moving Sidewalk so the belt no longer carries anyone back,
+///   Growth grows a plant into a shortcut, and Move shifts the weight onto the
+///   scales and the stones and the rock on the way. After Mia,
 ///   COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE starts the race.
 /// - COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND, the race against Navampa,
-/// who follows a recorded path, after
-///   the lettering `Match 3` and a count of three. At the arena the first to
-///   arrive takes the Claymore and the second the Hunter's Sword, and the
-///   battle is encounter table 72's fifth or sixth group, the Navampa with or
-///   without the Claymore.
+///   who follows a recorded path, after the lettering `Match 3` and a count of
+///   three. At the arena the first to arrive takes the Claymore and the second
+///   the Hunter's Sword, and the battle is encounter table 72's fifth or sixth
+///   group, the Navampa with or without the Claymore.
 ///
 /// Win or lose, the third match ends Colosso: entrances 4 and 5 set
 /// FLAG_COLOSSO_OVER, and a win also FLAG_WON_COLOSSO. In the scene that

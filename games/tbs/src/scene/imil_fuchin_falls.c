@@ -11,10 +11,9 @@
 ///   turning toward it as he goes, until a blocked cell or one too high stops
 ///   him.
 /// - Fuchin Falls Cave (FuchinFallsCaveEntrance to FuchinFallsCaveDragonStatue,
-/// scenes 62 to
-///   67), the waterfall grotto. Master Nyunpa of Fuchin Temple tells the
-///   party they must survive its test before he will tell them how to pass
-///   through Mogall Forest. The test ends at the chest of the Orb of Force
+///   scenes 62 to 67), the waterfall grotto. Master Nyunpa of Fuchin Temple
+///   tells the party they must survive its test before he will tell them how to
+///   pass through Mogall Forest. The test ends at the chest of the Orb of Force
 ///   (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), and back at the temple Nyunpa
 ///   names the power they have gained Ki (fuchin_temple.c). The way in and
 ///   out is FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_TEMPLE_GROUNDS, to

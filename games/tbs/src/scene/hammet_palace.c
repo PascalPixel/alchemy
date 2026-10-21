@@ -9,17 +9,16 @@
 /// rescue, and between them what she says follows the party's progress:
 ///
 /// - Ivan's report (HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS), when
-/// the guards at the
-///   door bring the party in (kalay.c). Layana had hoped Hammet came back
-///   with Ivan. The ransom was paid long ago, yet Dodonpa, Lunpa's leader and
-///   grandson of Lunpa the noble thief, still holds him, and Layana will not
-///   risk his life by sending her soldiers, nor let the party go, who have a
-///   quest of their own. Ivan presses her, and she tells of a prophecy, that
-///   Ivan would set out with warriors from Vale, and of an oath: Adepts at the
-///   south-western edge of the world once saved Hammet's life, and their
-///   Jupiter Adept gave him the Shaman's Rod and Ivan, asking him to use the
-///   rod to find something the party will need on their journey. She sends
-///   everyone back to their posts (FLAG_IVAN_REPORTED_TO_LAYANA).
+///   the guards at the door bring the party in (kalay.c). Layana had hoped
+///   Hammet came back with Ivan. The ransom was paid long ago, yet Dodonpa,
+///   Lunpa's leader and grandson of Lunpa the noble thief, still holds him, and
+///   Layana will not risk his life by sending her soldiers, nor let the party
+///   go, who have a quest of their own. Ivan presses her, and she tells of a
+///   prophecy, that Ivan would set out with warriors from Vale, and of an oath:
+///   Adepts at the south-western edge of the world once saved Hammet's life,
+///   and their Jupiter Adept gave him the Shaman's Rod and Ivan, asking him to
+///   use the rod to find something the party will need on their journey. She
+///   sends everyone back to their posts (FLAG_IVAN_REPORTED_TO_LAYANA).
 /// - Waiting for news. Until the party has heard in Lunpa that Hammet is held
 ///   there (place flag FLAG_PLACE_TEMP_21, set by kalay.c's scenes), Layana
 ///   says Dodonpa may have spies in Kalay. Afterwards she stands elsewhere in

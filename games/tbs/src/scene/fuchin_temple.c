@@ -4,10 +4,9 @@
 /// Master Hama meditates. Two scenes hold four places, by their area names:
 ///
 /// - Fuchin Temple (FuchinTempleGrounds, scene 60), outside the temple, reached
-/// from
-///   the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). Its monks read omens
-///   in the gems that fell from the sky and the blue lights in the north, and
-///   tell of Master Nyunpa, who is fasting to save the world by becoming
+///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). Its monks read
+///   omens in the gems that fell from the sky and the blue lights in the north,
+///   and tell of Master Nyunpa, who is fasting to save the world by becoming
 ///   enlightened. A visitor from Kolima asks whether the bridge is open again
 ///   (FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN), a traveling healer offers
 ///   the Sanctum's services, and a search finds a Psynergy Stone. The monk
@@ -56,19 +55,19 @@
 ///   talks of the boulders that overcame him. FUCHIN_TEMPLE_INTERIORS_TO_XIAN
 ///   leads out into Xian.
 /// - Lama Temple (FuchinTempleInteriors, by
-/// FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE), the room
-///   in which Master Hama meditates, entered from Lama Temple (LamaTemple). On
-///   the first visit (FuchinTemple_RunHamasRevealLesson) Hama greets Isaac and
-///   his Adept companions, whom she foresaw, and tells Ivan that he is a
-///   Jupiter Adept like her. She means to teach him Reveal, without which the
-///   party cannot find the oases of the Lamakan Desert, which Saturos and
-///   Menardi are crossing after blocking Silk Road. Feizhi bursts in, having
-///   sensed that Hsu is in great danger among the boulders in the mountains;
-///   seeing that her power has passed to Feizhi, Hama gives Ivan Reveal and
-///   hurries with her to Hsu's aid, and FLAG_XIAN_HEARD_HSU_TRAPPED is set.
-///   Until Hsu is rescued (FLAG_HSU_RESCUED) Hama and the monk in her room are
-///   away; afterwards they are back. FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE
-///   leads back into Lama Temple (LamaTemple).
+///   FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE), the room in which Master Hama
+///   meditates, entered from Lama Temple (LamaTemple). On the first visit
+///   (FuchinTemple_RunHamasRevealLesson) Hama greets Isaac and his Adept
+///   companions, whom she foresaw, and tells Ivan that he is a Jupiter Adept
+///   like her. She means to teach him Reveal, without which the party cannot
+///   find the oases of the Lamakan Desert, which Saturos and Menardi are
+///   crossing after blocking Silk Road. Feizhi bursts in, having sensed that
+///   Hsu is in great danger among the boulders in the mountains; seeing that
+///   her power has passed to Feizhi, Hama gives Ivan Reveal and hurries with
+///   her to Hsu's aid, and FLAG_XIAN_HEARD_HSU_TRAPPED is set. Until Hsu is
+///   rescued (FLAG_HSU_RESCUED) Hama and the monk in her room are away;
+///   afterwards they are back. FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE leads
+///   back into Lama Temple (LamaTemple).
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/fuchin_temple.h"

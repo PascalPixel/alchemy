@@ -428,28 +428,28 @@ void Battle_SelectSceneBackdrop(void) {
   gGameState.special = backdrop;
 }
 
-/// Chooses the battle backdrop for a world map terrain behavior (1 to 7; any
-/// other gives Sol Sanctum's) and sets gGameState.special. Called by
-/// Encounter_ResolveWorldMapZoneAndBackdrop.
+/// Chooses the battle backdrop for a world map terrain behavior (enum
+/// WorldMapTerrainBehavior; any other gives Sol Sanctum's) and sets
+/// gGameState.special. Called by Encounter_ResolveWorldMapZoneAndBackdrop.
 void Battle_SelectTerrainBackdrop(s32 behavior) {
   u16 backdrop;
 
   switch (behavior - 1) {
-  case 0:
+  case WORLD_MAP_TERRAIN_GRASSLAND - 1:
     backdrop = (u32)&ResourceId_GrasslandBackdrop;
     break;
-  case 1:
+  case WORLD_MAP_TERRAIN_FOREST - 1:
     backdrop = (u32)&ResourceId_ForestBackdrop;
     break;
-  case 2:
+  case WORLD_MAP_TERRAIN_DESERT - 1:
     backdrop = (u32)&ResourceId_DesertBackdrop;
     break;
-  case 3:
-  case 6:
+  case WORLD_MAP_TERRAIN_BEACH - 1:
+  case WORLD_MAP_TERRAIN_SHALLOWS - 1:
     backdrop = (u32)&ResourceId_BeachBackdrop;
     break;
-  case 4:
-  case 5:
+  case WORLD_MAP_TERRAIN_SNOWFIELD - 1:
+  case WORLD_MAP_TERRAIN_SNOW_FOREST - 1:
     backdrop = (u32)&ResourceId_SnowfieldBackdrop;
     break;
   default:

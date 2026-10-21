@@ -5,7 +5,7 @@
 #include "../object_internal.h"
 
 #ifndef UBFIX
-/// The map work in heap slot 8, seen as the halfwords of its view position:
+/// The map work in HEAP_SLOT_MAP, seen as the halfwords of its view position:
 /// the high halves are the view's x and z in whole pixels.
 struct FadeView {
   u8 unk00[228];
@@ -17,19 +17,19 @@ struct FadeView {
 /// (left and right of it), where the ground one or two cells south rises above
 /// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
 /// at the height of that ground. Registered as a scheduler callback by
-/// BattleFx_StartFadeOverlay; reads the work in heap slot 36 and queues the
-/// marks with Runtime_PushSlotEntry.
+/// BattleFx_StartFadeOverlay; reads the work in HEAP_SLOT_FADE_OVERLAY and
+/// queues the marks with Runtime_PushSlotEntry.
 void FadeOverlay_DrawMarks(void) {
-  struct FadeOverlayWork *work = WORK_SLOT(36);
+  struct FadeOverlayWork *work = WORK_SLOT(HEAP_SLOT_FADE_OVERLAY);
 #ifdef UBFIX
-  struct MapScrollWork *map = WORK_SLOT(8);
+  struct MapScrollWork *map = WORK_SLOT(HEAP_SLOT_MAP);
   s32 cameraX = map->viewX >> 16;
   s32 cameraZ = map->viewY >> 16;
 #else
   // UB: the legacy halfword overlay aliases the map's s32 coordinates.
   // Named-member high halves keep 0x1da bytes but change load scheduling
   // from .text+0x6cce in English; the actor's named fields match plainly.
-  s16 *camera = ((struct FadeView *)WORK_SLOT(8))->camera;
+  s16 *camera = ((struct FadeView *)WORK_SLOT(HEAP_SLOT_MAP))->camera;
   s32 cameraX = camera[1];
   s32 cameraZ = camera[3];
 #endif
@@ -104,26 +104,26 @@ void FadeOverlay_DrawMarks(void) {
 }
 
 /// Starts the fade overlay on object (the party leader when NULL): loads its
-/// solid tiles, sets the blending and draws it each frame. Allocates heap slot
-/// 36 for its work, borrows heap block 14 for the tiles (0x200 bytes of colour
-/// 1, VRAM cache block 94) and registers FadeOverlay_DrawMarks. Called by
-/// seven scene overlays (Venus and Mercury Lighthouses, Kalay, the tunnel
-/// ruins, Crossbone Isle, the ice room by Imil and Fuchin Falls); Crossbone
-/// Isle then switches it on and off by setting the work's actor. No ☀️ code
-/// stops it (FadeOverlay_Suspend has no named caller): the work and the
-/// callback last until the next scene change resets the heap and the task
-/// table (Game_Run).
+/// solid tiles, sets the blending and draws it each frame. Allocates
+/// HEAP_SLOT_FADE_OVERLAY for its work, borrows HEAP_SLOT_TILE_SCRATCH for the
+/// tiles (0x200 bytes of colour 1, VRAM cache block 94) and registers
+/// FadeOverlay_DrawMarks. Called by seven scene overlays (Venus and Mercury
+/// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
+/// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
+/// work's actor. No ☀️ code stops it (FadeOverlay_Suspend has no named caller):
+/// the work and the callback last until the next scene change resets the heap
+/// and the task table (Game_Run).
 void BattleFx_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;
   volatile u32 fill;
 
-  work = Runtime_AllocateBlock(36, sizeof(*work));
+  work = Runtime_AllocateBlock(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
   // Upload the solid sprite tiles before enabling the drawing callback.
-  tiles = Runtime_AllocateHeapBlock(14, 0x400);
+  tiles = Runtime_AllocateHeapBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
-  Runtime_ReleaseHeapBlock(14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   Scheduler_AddOrUpdateCallback(FadeOverlay_DrawMarks, 0xc80);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,

@@ -93,8 +93,8 @@ enum AnimationCommand {
 /// The engine's pool sizes, and the layer timer's step at normal speed.
 enum {
   RESOURCE_SLOT_COUNT = 8,     ///< ObjectSystemWork.slots
-  FIELD_OBJECT_COUNT = 64,     ///< gObjectSlots, heap slot 5
-  ANIMATION_OBJECT_COUNT = 64, ///< sprites and layer records, heap slots 4, 3
+  FIELD_OBJECT_COUNT = 64,     ///< gObjectSlots, HEAP_SLOT_OBJECT_POOL
+  ANIMATION_OBJECT_COUNT = 64, ///< sprites and layer records
   ANIMATION_LAYER_COUNT = 4,   ///< AnimationObject.entries
   /// Sixteenths of a frame taken off a layer's timer each frame: one frame.
   ANIMATION_NORMAL_STEP = 16

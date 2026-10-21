@@ -121,8 +121,8 @@ void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide) {
   struct ObjectRuntime *subject;
 
   subject = ObjectTable_Get(actor);
-  // The field work (slot 27, 0xccc bytes), looked up and not used.
-  Runtime_AllocateBlock(0x1B, 0xCCC);
+  // The field work, looked up and not used.
+  Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xCCC);
   if (subject != NULL) {
     Camera_MoveWithinMapBounds(subject->x, -1, subject->z, glide);
   }

@@ -36,6 +36,14 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
+/// gGameState.hazardMode: what advances the hazard count (Field_ProcessStep).
+enum HazardMode {
+  /// The distance the leader walks on MAP_CELL_HAZARD ground.
+  HAZARD_COUNT_ON_CELLS = 0,
+  /// One each frame the field loop runs; no ☀️ code sets it.
+  HAZARD_COUNT_FRAMES = 1
+};
+
 /// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
 /// low byte, which DisplayTransition_UpdateScanlineTable draws.
 enum WindowTransitionMode {

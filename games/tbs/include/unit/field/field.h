@@ -109,6 +109,24 @@ enum WorldMapCollision {
   WORLD_MAP_COLLISION_WALKABLE_LAST = 12
 };
 
+/// A world map terrain behaviour (gWorldMap_TerrainBehaviorTable,
+/// GetWorldMapTerrainBehavior): what its ground means for battles, named by
+/// the battle backdrop Battle_SelectTerrainBackdrop gives it.
+enum WorldMapTerrainBehavior {
+  WORLD_MAP_TERRAIN_NONE = 0,      ///< Sol Sanctum's backdrop
+  WORLD_MAP_TERRAIN_GRASSLAND = 1, ///< ResourceId_GrasslandBackdrop
+  /// ResourceId_ForestBackdrop; encounters take a region's forest zone.
+  WORLD_MAP_TERRAIN_FOREST = 2,
+  WORLD_MAP_TERRAIN_DESERT = 3,    ///< ResourceId_DesertBackdrop
+  WORLD_MAP_TERRAIN_BEACH = 4,     ///< ResourceId_BeachBackdrop
+  WORLD_MAP_TERRAIN_SNOWFIELD = 5, ///< ResourceId_SnowfieldBackdrop
+  /// ResourceId_SnowfieldBackdrop, for the snowfield's forest.
+  WORLD_MAP_TERRAIN_SNOW_FOREST = 6,
+  /// ResourceId_BeachBackdrop, for shallow water
+  /// (WORLD_MAP_COLLISION_SHALLOW_WATER).
+  WORLD_MAP_TERRAIN_SHALLOWS = 7
+};
+
 /// A map cell's terrain kind: the low four bits of its shape's first byte,
 /// which pick its height function from gMap_TerrainHeightFunctions. Samples
 /// are the shape's other bytes; x and y run 0 to 15 across the cell.

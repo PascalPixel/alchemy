@@ -409,13 +409,14 @@ void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
   }
 }
 
-/// Allocates and zeroes the 64 sprites and 64 animation layers (heap slots 4
-/// and 3, from EWRAM first in mode 3, the world map, and IWRAM first
-/// otherwise), loads the basic sprite palettes, loads the shadow tiles into
-/// VRAM cache entry 93 and puts the sprite tile uploader in RAM. Called by
-/// ObjectSystem_Initialize. Battle_RunEncounter (mode 4) takes both slots from
-/// EWRAM, at the same sizes, before it starts the object system, so in battle
-/// this gets those blocks back.
+/// Allocates and zeroes the 64 sprites and 64 animation layers
+/// (HEAP_SLOT_ANIMATION_SPRITES and HEAP_SLOT_ANIMATION_LAYERS, from EWRAM
+/// first in MODE_WORLD_MAP and IWRAM first otherwise), loads the basic sprite
+/// palettes, loads the shadow tiles into VRAM cache entry 93 and puts the
+/// sprite tile uploader in RAM. Called by ObjectSystem_Initialize.
+/// Battle_RunEncounter (MODE_BATTLE) takes both slots from EWRAM, at the same
+/// sizes, before it starts the object system, so in battle this gets those
+/// blocks back.
 void ObjectSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
@@ -425,15 +426,19 @@ void ObjectSystem_Configure(s32 mode) {
   // first; elsewhere from IWRAM first, though a battle has already taken
   // both from EWRAM.
   if (mode == 3) {
-    sprites = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT *
-                                           sizeof(struct AnimationObject));
-    layers = Runtime_AllocateBlock(3, ANIMATION_OBJECT_COUNT *
-                                          sizeof(struct AnimationEntry));
+    sprites = Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_SPRITES,
+                                    ANIMATION_OBJECT_COUNT *
+                                        sizeof(struct AnimationObject));
+    layers = Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_LAYERS,
+                                   ANIMATION_OBJECT_COUNT *
+                                       sizeof(struct AnimationEntry));
   } else {
-    sprites = Runtime_AllocateHeapBlock(4, ANIMATION_OBJECT_COUNT *
-                                               sizeof(struct AnimationObject));
-    layers = Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT *
-                                              sizeof(struct AnimationEntry));
+    sprites = Runtime_AllocateHeapBlock(HEAP_SLOT_ANIMATION_SPRITES,
+                                        ANIMATION_OBJECT_COUNT *
+                                            sizeof(struct AnimationObject));
+    layers = Runtime_AllocateHeapBlock(HEAP_SLOT_ANIMATION_LAYERS,
+                                       ANIMATION_OBJECT_COUNT *
+                                           sizeof(struct AnimationEntry));
   }
   // Load the sprites' basic colours, clear both pools, then load the shared
   // shadow (128 bytes: the two 8x8 tiles of a 16x8, 256-colour sprite) and

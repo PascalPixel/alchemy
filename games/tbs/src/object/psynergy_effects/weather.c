@@ -112,10 +112,10 @@ void FieldFx_UpdateLightning(void) {
   }
 }
 
-/// Starts the ground particles (FieldFx_UpdateGroundParticles) with sound 170:
+/// Starts the ground particles (FieldFx_UpdateGroundParticles) with SE_170:
 /// loads their tiles and puts 32 of them under the leader with staggered
-/// timers, drawn semi-transparent. Their work is heap block 29, which the
-/// motes and sparkles also take. SE_170 is queued
+/// timers, drawn semi-transparent. Their work is HEAP_SLOT_GROUND_PARTICLES,
+/// which the motes and sparkles also take. SE_170 is queued
 /// (BattleFx_SetQueuedSoundAndPlay), so it plays again wherever the queued
 /// sound is replayed, as after a Psynergy effect.
 void FieldFx_StartGroundParticles(void) {
@@ -128,17 +128,18 @@ void FieldFx_StartGroundParticles(void) {
   /* FAKEMATCH(temporary): words holds the fill's zero, the decode buffer and
    * each cell cursor, all in r6; as Dma_Fill32(0, work, ...), 4 of 93
    * instructions differ in tbs-en. */
-  work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
+  work = Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES,
+                               sizeof(struct GroundParticleWork));
   leader = ((struct MapScrollWork *)gMapWork[0])->origin;
   BattleFx_SetQueuedSoundAndPlay(SE_170);
   words = 0;
   particle = work->particles;
   Dma_Fill32((u32)words, work, sizeof(struct GroundParticleWork));
-  words = Runtime_AllocateBlock(14, 0x400);
+  words = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLz(gFieldFx_GroundParticleTiles, words);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
-  Runtime_ReleaseHeapBlock(14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++) {
     s32 x;
     s32 z;
@@ -177,8 +178,8 @@ union DustWord {
 /// screen. They freeze while FLAG_WEATHER_HELD is set. Nothing in ☀️ starts them
 /// (FieldMotes_Start has only its overlay veneer).
 void FieldMotes_Update(void) {
-  struct GroundParticleWork *work = WORK_SLOT(29);
-  struct MapScrollWork *map = WORK_SLOT(8);
+  struct GroundParticleWork *work = WORK_SLOT(HEAP_SLOT_GROUND_PARTICLES);
+  struct MapScrollWork *map = WORK_SLOT(HEAP_SLOT_MAP);
   u32 spawned = 0;
   u32 i;
   struct GroundParticle *mote = work->particles;
@@ -253,18 +254,18 @@ void FieldMotes_Start(void) {
   u32 size;
 
   size = 0x410;
-  work = Runtime_AllocateBlock(29, size);
+  work = Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES, size);
   mote = work->particles;
   /* FAKEMATCH(temporary): size reused for the cleared word keeps the zero in
    * r1, the register size was passed in; as Dma_Fill32(0, work, ...), 4 of
    * 83 instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
-  tiles = Runtime_AllocateBlock(14, 0x400);
+  tiles = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLz(gFieldFx_MoteTiles, tiles);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
-  Runtime_ReleaseHeapBlock(14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++) {
     s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
     /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
@@ -319,9 +320,9 @@ void FieldEffect_UpdateSparkles(void) {
   u32 b;
   u32 frames;
 
-  work = WORK_SLOT(29);
+  work = WORK_SLOT(HEAP_SLOT_GROUND_PARTICLES);
   spawned = 0;
-  map = WORK_SLOT(8);
+  map = WORK_SLOT(HEAP_SLOT_MAP);
   camera = &map->viewX;
   spawnX = 0;
   spawnZ = 0;
@@ -402,7 +403,8 @@ void FieldEffect_UpdateSparkles(void) {
 /// clears the 32 sparkles.
 void FieldEffect_InitSparkles(void) {
   u32 size = 0x410;
-  struct GroundParticleWork *work = Runtime_AllocateBlock(29, size);
+  struct GroundParticleWork *work =
+      Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES, size);
   struct GroundParticle *sparkle = work->particles;
   u8 *tiles;
   u32 i;
@@ -413,11 +415,11 @@ void FieldEffect_InitSparkles(void) {
    * instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
-  tiles = Runtime_AllocateBlock(14, 0x400);
+  tiles = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLz(gFieldFx_SparkleTiles, tiles);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x200, tiles);
-  Runtime_ReleaseHeapBlock(14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   clear = 0;
   do {

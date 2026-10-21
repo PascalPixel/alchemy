@@ -28,7 +28,8 @@ struct EffectObj {
 STATIC_ASSERT(sizeof(struct EffectObj) == 0x70);
 STATIC_ASSERT(offsetof(struct EffectObj, updateHook) == 0x6c);
 
-/// ObjectSystem_Initialize allocates 64 ObjectRuntime records in heap slot 5.
+/// ObjectSystem_Initialize allocates 64 ObjectRuntime records in
+/// HEAP_SLOT_OBJECT_POOL.
 #define EFFECT_OBJECT_COUNT 64
 #ifdef UBFIX
 #define EFFECT_OBJECT_POOL ((struct EffectObj *)gObjectSlots)
@@ -108,8 +109,8 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   u32 randomRadius;
 
   // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
-  // clearing its motion flags (bit 1 falls, bit 0 follows the terrain;
-  // field_obj.h) ends gravity, so it hangs at the top of its rise.
+  // clearing its motion flags (ACTOR_FALLS and ACTOR_FOLLOWS_TERRAIN) ends
+  // gravity, so it hangs at the top of its rise.
   if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
     emitter->flags = 0;
 
@@ -133,9 +134,9 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 /// first. Returns the picture's actor, or 0 without the actor or a free
 /// object. The picture is object 22, thrown up (velocityY 2 << 16, gravity
 /// 0x4000: it rises for 8 frames) while it grows to full size, its icon drawn
-/// through heap block 17, which is released again, and loaded into VRAM. The
-/// caller owns the picture: Field_SearchTile releases it once the find is
-/// told. Called by Field_SearchTile for coins and items found, and by
+/// through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and loaded into
+/// VRAM. The caller owns the picture: Field_SearchTile releases it once the
+/// find is told. Called by Field_SearchTile for coins and items found, and by
 /// BattleFx_PlayCueAndStartEmitterOnTarget.
 struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   struct EffectObj *picture;
@@ -202,15 +203,15 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
     picture->velocityY = 0x20000;
     picture->gravity = 0x4000;
 
-    // Draw the item's icon into heap block 17, then send it to the sprite's
-    // tiles: 128 bytes from offset 0x400 of the block.
-    iconBuffer = Runtime_AllocateHeapBlock(17, 0x608);
+    // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
+    // sprite's tiles: 128 bytes from offset 0x400 of the block.
+    iconBuffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Ui_PrepareTransferForItemFar(item);
 
     sprite->image.tile =
         VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
 
-    Runtime_ReleaseHeapBlock(17);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
     picture->updateHook = ItemDisplay_EmitSparkles;
   }
 
@@ -235,8 +236,8 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
     return;
 
   leader = ObjectTable_Get(gGameState.selectedActor);
-  // Up to 2 pixels a frame, gaining 1 a frame, in free flight (motion flags
-  // 0: no gravity, no terrain).
+  // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
+  // flags, so no gravity and no terrain.
   object->acceleration = 1 << 16;
   object->speedLimit = 2 << 16;
   object->flags = 0;
@@ -286,7 +287,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
 /// reset frees it).
 void BattleFx_StartEffectObject22(s32 item, s32 flags) {
   struct FieldActor *leader = ObjectTable_Get(gGameState.selectedActor);
-  void *iconBuffer = Runtime_AllocateHeapBlock(17, 0x608);
+  void *iconBuffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct EffectObj *object = (struct EffectObj *)Object_CreateFar(
       22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
 
@@ -301,7 +302,7 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
 
     Ui_PrepareTransferForItemFar(item);
     VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
-    Runtime_ReleaseHeapBlock(17);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)
       object->updateHook = ItemDisplay_EmitSparkles;
@@ -392,9 +393,9 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 
 /// Reveal: marks with sparkles the hidden things within 8 cells left or right
 /// and 5 up or down of the leader: map places 100 to 239 with no marker actor,
-/// whose search event (kind 3) gives an item, coins, a Psynergy stone or a
-/// mimic (types 0 to 3 and 5) and whose flag is not yet set. Each mark is an
-/// object 22 running gBattleFx_MarkerParticleScript. Called by Reveal's effect
+/// whose search event (EVENT_SEARCH) gives an item, coins, a Psynergy Stone
+/// or a mimic and whose flag is not yet set. Each mark is an object of sprite
+/// 22 running gBattleFx_MarkerParticleScript. Called by Reveal's effect
 /// (psynergy_effects/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
@@ -437,9 +438,9 @@ void FieldEffect_SpawnNearbyMarkers(void) {
         if (entry->trigger == id && (entry->control & 15) == EVENT_SEARCH) {
           switch (entry->value & 0xfff00000) {
           case 0:
-          case 0x100000:
-          case 0x200000:
-          case 0x300000:
+          case FIND_ITEM(0):
+          case FIND_COINS(0):
+          case FIND_PSYNERGY_STONE:
           case 0x500000:
             if (entry->condition != -1 &&
                 GameFlag_TestFar(entry->condition) == 0) {

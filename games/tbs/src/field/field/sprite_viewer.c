@@ -615,9 +615,9 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
 /// ring position, facing the way that position stands for.
 /// Despite its name it belongs to the sprite viewer, which schedules it; its
 /// ring is the placements in HEAP_SLOT_BATTLE and its sprites the pool in
-/// heap slot 4.
+/// HEAP_SLOT_ANIMATION_SPRITES.
 void Battle_PlaceActorsByFormationKind(void) {
-  struct AnimationObject *sprite = WORK_SLOT(4);
+  struct AnimationObject *sprite = WORK_SLOT(HEAP_SLOT_ANIMATION_SPRITES);
   u32 facingKind = sprite->entries[0]->kind;
   struct SpriteScale scale;
   struct SpritePlacement *facingPositions;

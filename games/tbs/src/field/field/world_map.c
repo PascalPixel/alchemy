@@ -36,8 +36,8 @@ struct WorldMapCell {
 ///
 /// Called by Map_UpdateCurrentTileBlock and Map_SetWindowCellTile (update
 /// 1) and by Map_PreloadCurrentTileBlock (update 0). Sets the quarter's entry
-/// in perspective->quarterTiles, and borrows heap slot 14 for the decoded
-/// tile.
+/// in perspective->quarterTiles, and borrows HEAP_SLOT_TILE_SCRATCH for the
+/// decoded tile.
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct PerspectiveWork *perspective = gMapWork[0];
   u32 *tileOffsets = perspective->tiles;
@@ -56,7 +56,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   if (update == 0 && tile == *shownQuarter)
     return 0;
   *shownQuarter = tile;
-  decodedTile = Runtime_AllocateHeapBlock(14, 0x400);
+  decodedTile = Runtime_AllocateHeapBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLz((u8 *)tileOffsets + tileOffsets[tile], decodedTile);
 
   // A tile is 16 by 16 cells of 4 bytes. Each layer's block buffer holds
@@ -93,7 +93,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
       screenTiles += 48;
     }
   }
-  Runtime_ReleaseHeapBlock(14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   return 1;
 }
 
@@ -197,7 +197,8 @@ s32 Map_InitializePerspectiveScene(void) {
   } while (0);
 
   camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  frameWork = Runtime_AllocateHeapBlock(7, sizeof(struct MapFrameWork));
+  frameWork = Runtime_AllocateHeapBlock(HEAP_SLOT_MAP_FRAME,
+                                        sizeof(struct MapFrameWork));
   cameraPosition = camera->pos;
   affinePages = frameWork->pages;
   farPlane = 0x1fe0000;
@@ -394,7 +395,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
 /// windowPending.
 void MapAnimation_ApplyAffineFrame(void) {
   struct MapAffinePair(*affinePages)[160] =
-      ((struct MapFrameWork *)WORK_SLOT(7))->pages;
+      ((struct MapFrameWork *)WORK_SLOT(HEAP_SLOT_MAP_FRAME))->pages;
   s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
   u32 *affineRegisters = (u32 *)&REG_BG2PA;
   struct PerspectiveWork *perspective = WORK_SLOT(HEAP_SLOT_MAP);
@@ -516,7 +517,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
 /// Transform_UpdateVertices from heap slot 46 into this frame's affine page.
 void WorldMap_UpdateView(void) {
   struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
-  struct MapFrameWork *frameWork = WORK_SLOT(7);
+  struct MapFrameWork *frameWork = WORK_SLOT(HEAP_SLOT_MAP_FRAME);
   struct PerspectiveWork *perspective = WORK_SLOT(HEAP_SLOT_MAP);
   s32 *cameraPosition = camera->pos;
   s32 *followedPosition = perspective->origin;
@@ -708,7 +709,7 @@ void MapAnimation_PresentFrame(void) {
 /// gDecodeBuffer, sets the window rows to 200 and 255 (BG mode 0) and sets
 /// gVBlankHook to MapAnimation_PresentFrame. Map_LoadAreaGraphics undoes it.
 void WorldMap_BeginStillView(void) {
-  struct MapFrameWork *frameWork = WORK_SLOT(7);
+  struct MapFrameWork *frameWork = WORK_SLOT(HEAP_SLOT_MAP_FRAME);
   struct PerspectiveWork *perspective = WORK_SLOT(HEAP_SLOT_MAP);
   s32 one = 1;
 

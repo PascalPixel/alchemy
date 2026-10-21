@@ -15,7 +15,7 @@ void ObjectMotion_SnapToTerrain(void *object) {
   actor->terrainHeight = terrainHeight;
 }
 
-/// The map's work (gMapWork[0], heap slot 8), seen as its marker list.
+/// The map's work (gMapWork[0], HEAP_SLOT_MAP), seen as its marker list.
 struct MarkerMap {
   u8 unk00[0x10];
   /// (column, row, id) triples, ended by 255, 255: a 16-pixel cell and the

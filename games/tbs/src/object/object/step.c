@@ -67,7 +67,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   work = WORK_SLOT(HEAP_SLOT_EVENT);
   leader = (struct ObjectRuntime *)work->actors[gGameState.selectedActor];
 
-  map = WORK_SLOT(8);
+  map = WORK_SLOT(HEAP_SLOT_MAP);
 
   if (leader == 0)
     return 0;
@@ -96,7 +96,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     tile = (u8 *)gMapBlocks + ((tileX + (tileY << 5)) << 2);
   } else {
     // Map cells are 16 pixels square, 128 to a row.
-    tile = (u8 *)map->layers[0].cells;
+    tile = (u8 *)map->layers[MAP_LAYER_GROUND].cells;
 
     fixedX = position.vector.x;
     if (fixedX < 0)
@@ -178,7 +178,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// leader flinches and characters who fall are listed in the field work.
 ///
 /// Called by Field_RunScene each frame while the party walks (in debug mode,
-/// flag 0x163, FLAG_DEBUG_STEPS_OFF, skips it), so the counts below advance
+/// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
 /// per frame. Sets work->action, input, battle, command and event
 /// (-1 when someone fell), work->currentTile and previousTile, walkingDistance,
 /// fallenOwners and survivorCount, and gGameState's hazard and Avoid counts.
@@ -187,7 +187,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
    * set keeps the load order and the 44-byte frame; as struct BattleUnit, 2
    * of 472 instructions differ in tbs-en. */
   struct FieldWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
-  struct MapState *map = WORK_SLOT(8);
+  struct MapState *map = WORK_SLOT(HEAP_SLOT_MAP);
   s32 leaderId = gGameState.selectedActor;
   struct ObjectRuntime *leader = (struct ObjectRuntime *)work->actors[leaderId];
   s16 previousHp[8];
@@ -223,7 +223,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
                                               (((z / 0x200000) & 31) << 5)];
   } else {
-    if ((u32)layer <= 2)
+    if ((u32)layer <= MAP_LAYER_OVERHEAD)
       tile = map->layers[layer].cells;
     else
       tile = (struct MapCell *)gMapCellBuffer;
@@ -242,7 +242,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     work->input = event;
 
   // Only while walking (not climbing) towards a target.
-  if (gGameState.movementMode == 0 && leader != NULL &&
+  if (gGameState.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
       leader->targetX != ACTOR_NO_TARGET) {
     // Encounters: the zone comes from the world map terrain, or from the
     // ground the leader stands on. FLAG_LURE_CAP doubles the speed the roll
@@ -286,7 +286,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     // frame walked on it adds the leader's speed limit in whole pixels, so
     // the count follows the distance walked there (the Lamakan Desert's
     // limit is 600).
-    if (gGameState.hazardMode == 0 && event == MAP_CELL_HAZARD) {
+    if (gGameState.hazardMode == HAZARD_COUNT_ON_CELLS &&
+        event == MAP_CELL_HAZARD) {
       if (work->previousTile->collisionCode == MAP_CELL_HAZARD)
         gGameState.hazardSteps += leader->speedLimit / 0x10000;
       else
@@ -307,11 +308,11 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     }
   }
 
-  // In hazard mode 1, which no ☀️ code sets, the count rises by one each call,
-  // that is each frame the field loop runs. Half way, object 209 is attached
-  // to the leader until removed (0x101, at sprite priority 1); at the limit
-  // it is removed (0x100) and the party takes the hazard's damage.
-  if (gGameState.hazardMode == 1) {
+  // With HAZARD_COUNT_FRAMES, which no ☀️ code sets, the count rises by one each
+  // call, that is each frame the field loop runs. Half way, object 209 is
+  // attached to the leader until removed (0x101, at sprite priority 1); at the
+  // limit it is removed (0x100) and the party takes the hazard's damage.
+  if (gGameState.hazardMode == HAZARD_COUNT_FRAMES) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
       BattleFx_ConfigureLinkedObject(leaderId, 0x101);
@@ -467,8 +468,8 @@ s32 BattleParty_ApplyStatusDamage(void) {
 /// Called by Field_RunScene around the handling of most requests, by the
 /// Djinni effect and by the world map scene; each call is paired with
 /// WorldMap_EndEvent. Changes the display transition state in
-/// heap slot 31 (0x1F, HEAP_SLOT_TRANSITION) only when it is running. Both
-/// allocations return the slot's block when it has one; with slot 31 free, the
+/// HEAP_SLOT_TRANSITION only when it is running. Both allocations return the
+/// slot's block when it has one; with that slot free, the
 /// world map takes a new, uncleared block there, kept until the scene ends,
 /// whose step is then leftover memory.
 void WorldMap_BeginEvent(void) {
@@ -477,7 +478,7 @@ void WorldMap_BeginEvent(void) {
 
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   if (work->mode == MODE_WORLD_MAP) {
-    transition = Runtime_AllocateBlock(0x1F, 0x540);
+    transition = Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, 0x540);
     if ((transition != NULL) && (transition->step != 0)) {
       transition->start = 0;
       transition->end = 0;

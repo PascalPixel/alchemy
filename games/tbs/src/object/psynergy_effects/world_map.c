@@ -436,7 +436,7 @@ void Map_UpdateWorldMapMarkers(void) {
 /// task stops before map graphics are restored, so neither uses the other's
 /// scratch storage. The picture argument is unused; the resource is fixed.
 void Map_ShowWorldMap(s32 picture) {
-  struct MapState *map = WORK_SLOT(8);
+  struct MapState *map = WORK_SLOT(HEAP_SLOT_MAP);
   struct FieldWork *field =
       Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);

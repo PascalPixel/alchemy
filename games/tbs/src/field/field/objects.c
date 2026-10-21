@@ -158,7 +158,7 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
 /// registers the per-frame updates. MODE_BATTLE moves objects with
 /// Object_UpdateAllMotion, which runs no scripts; MODE_WORLD_MAP and
 /// MODE_BATTLE use the fixed camera. Both blocks are heap slots, so a later
-/// call gets the same ones back. No code releases the object pool or
+/// call gets the same ones back. No code releases HEAP_SLOT_OBJECT_POOL or
 /// HEAP_SLOT_MENU_CONTROL by name, but Field_RunScene takes HEAP_SLOT_EVENT
 /// from EWRAM before them, so its release of that slot as it returns frees
 /// their memory too; Runtime_InitializeHeap clears the slots at the next
@@ -167,8 +167,8 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
 /// Called through ObjectSystem_InitializeFar by the field scene runner
 /// (object/object/run_scene.c) and the battle's encounter, and directly by
 /// the sprite viewer, each with its enum ObjectSystemMode. Allocates
-/// HEAP_SLOT_MENU_CONTROL for the ObjectSystemWork and heap slot 5 for the
-/// objects, and sets the sprite outline colours.
+/// HEAP_SLOT_MENU_CONTROL for the ObjectSystemWork and HEAP_SLOT_OBJECT_POOL
+/// for the objects, and sets the sprite outline colours.
 void ObjectSystem_Initialize(s32 controlMode) {
   struct ObjectSystemWork *objectSystem;
   struct ObjectRuntime *objectPool;
@@ -176,8 +176,8 @@ void ObjectSystem_Initialize(s32 controlMode) {
 
   objectSystem =
       Runtime_AllocateBlock(HEAP_SLOT_MENU_CONTROL, sizeof(*objectSystem));
-  objectPool =
-      Runtime_AllocateBlock(5, FIELD_OBJECT_COUNT * sizeof(*objectPool));
+  objectPool = Runtime_AllocateBlock(HEAP_SLOT_OBJECT_POOL,
+                                     FIELD_OBJECT_COUNT * sizeof(*objectPool));
   ObjectSystem_Configure(controlMode);
   Dma_Fill32Cell(fill, 0, objectPool, FIELD_OBJECT_COUNT * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, objectSystem, sizeof(*objectSystem));

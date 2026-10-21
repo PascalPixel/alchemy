@@ -100,7 +100,7 @@ s32 Field_RunScene(s32 entrance) {
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Scene_SetDefeatReturnPoint();
     gGameState.hazardLimit = 16;
-    gGameState.hazardMode = 0;
+    gGameState.hazardMode = HAZARD_COUNT_ON_CELLS;
     gGameState.hazardDamage = 1;
     gGameState.pausedObject = -1;
     gGameState.cloaked = 0;

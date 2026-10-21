@@ -6,7 +6,7 @@
 /// around Kraden's cottage, a run of Psynergy puzzles whose progress lives in
 /// scene and place flags.
 ///
-/// - Vale (scene 93, SceneId_ValeCaveMouth), the way in, a place group of its
+/// - Vale (SceneId_ValeCaveMouth), the way in, a place group of its
 ///   own (29). VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST and
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST lead back to Kraden's part of Vale
 ///   (SceneId_ValeKraden), whose VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST and
@@ -15,11 +15,14 @@
 ///   the exit sound first (Event_LeaveRoom). On arrival ValeCave_Initialize
 ///   fades the room in from the backdrop and clears FLAG_SHOW_LOCATION_NAME:
 ///   entering a new place group sets that flag, but this is still Vale.
-/// - Vale Cave (scene 94, SceneId_ValeCaveKite), one map in three parts, each
+/// - Vale Cave (SceneId_ValeCaveKite), one map in three parts, each
 ///   with its own entrances and camera box; walking south into a ledge's cells
 ///   hops the leader down it (Event_HopDownLedge). In the first part
-///   (entrances 1 to 4) Reveal shows a hidden tile while it lasts
-///   (Event_RevealHiddenTile). In Kite's part (entrances 5 to 7), coming near
+///   (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
+///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden tile while
+///   it lasts (Event_RevealHiddenTile). In Kite's part
+///   (VALE_CAVE_KITE_EAST_FROM_WEST to
+///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near
 ///   makes Kite hop away (Event_KiteRunsOff) and then run behind a ledge
 ///   (Event_KiteRunsBehindLedge, setting FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
 ///   from then on twelve trigger cells send it to the matching point on the
@@ -27,13 +30,14 @@
 ///   cannot be reached until Halt stops it. A stopped Kite can be talked to and
 ///   joins the party (Event_TalkToKite), setting FLAG_KITE, which removes it
 ///   from the placements. The room's chests hold the Halt Gem, which gives
-///   Halt, and a Nut. In the holes' part (entrances 8 to 10) two stacks of
+///   Halt, and a Nut. In the holes' part (VALE_CAVE_KITE_SOUTH_FROM_WEST to
+///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH) two stacks of
 ///   crates sink into holes in the floor once Move or a push leaves them over
 ///   one (FLAG_SCENE_TEMP_00 and _01), opening the way, and a log carries
 ///   the leader along the passage when walked into from the west or the east
 ///   (FLAG_VALE_CAVE_RIDING_LOG_EAST). Its exits lead back to the first room,
 ///   on to the third, and between its own parts.
-/// - Vale Cave (scene 95, SceneId_ValeCaveLogs), the inner room, with three
+/// - Vale Cave (SceneId_ValeCaveLogs), the inner room, with three
 ///   logs to push: one off a ledge (Event_PushLogOffLedge), one along the
 ///   ledge until it drops at its edge (Event_PushLogOverEdge) and one north
 ///   (Event_PushLogNorth), each clearing the cells it held. Its exits
@@ -84,9 +88,9 @@
 #include "songs.h"
 
 /// The way in's placements (gValeCave_Placements1), numbered from
-/// ACTOR_FIRST_PLACED: three stacks of crates (sprite 0xf1, the crates of the
-/// Bilibin Barricade in bilibin.c), then two logs (sprite 0xcf, as in Kolima
-/// Forest), none of which moves.
+/// ACTOR_FIRST_PLACED: three stacks of crates (drawn as the crates of the
+/// Bilibin Barricade in bilibin.c), then two logs (as in Kolima Forest), none
+/// of which moves.
 enum ValeCaveMouthActor {
   ACTOR_VALE_CAVE_MOUTH_FIRST_CRATES = ACTOR_FIRST_PLACED,
   ACTOR_VALE_CAVE_MOUTH_FIRST_LOG = ACTOR_FIRST_PLACED + 3,
@@ -98,13 +102,13 @@ enum ValeCaveMouthActor {
 enum ValeCaveKiteActor {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
   ACTOR_KITE = ACTOR_FIRST_PLACED,
-  /// The two stacks of crates (sprite 0xf1) in the holes' part, which sink
+  /// The two stacks of crates in the holes' part, which sink
   /// into their holes: the western under Move, the eastern under Move or a
   /// push.
   ACTOR_WEST_CRATES,
   ACTOR_EAST_CRATES,
   /// The log the leader rides along the holes' part's passage, from one end
-  /// to the other: sprite 0xed, the east-west log of Colosso's Lumber Water
+  /// to the other, drawn as the east-west log of Colosso's Lumber Water
   /// Crossing Area (colosseum_azart_match.c).
   ACTOR_RIDING_LOG,
   /// Two stacks of crates and two logs that stand in the first part.
@@ -116,13 +120,13 @@ enum ValeCaveKiteActor {
 
 /// The third room's placements (gValeCave_Placements3), numbered from
 /// ACTOR_FIRST_PLACED; its first row places Kite as the second room's does.
-/// Its three logs are pushed: sprite 0xcd runs north to south and 0xcf west
-/// to east, as in Kolima Forest.
+/// Its three logs are pushed, and lie as in Kolima Forest.
 enum ValeCaveLogsActor {
-  /// Sprite 0xcd, pushed off the ledge.
+  /// Lying north to south, pushed off the ledge.
   ACTOR_WEST_LOG = ACTOR_FIRST_PLACED + 1,
-  ACTOR_EAST_LOG, ///< sprite 0xcd, pushed along the ledge until it falls
-  ACTOR_SOUTH_LOG ///< sprite 0xcf, pushed north
+  ACTOR_EAST_LOG, ///< lying north to south, pushed along the ledge until it
+                  ///< falls
+  ACTOR_SOUTH_LOG ///< lying west to east, pushed north
 };
 
 #define OBJECT_SINK_FRAMES 68
@@ -160,10 +164,13 @@ static void ValeCave_ApplyEntryState(void);
 /// In Vale Cave's second room, talking to Kite once Halt has stopped it: Kite,
 /// a Jupiter Djinni, joins the party.
 ///
-/// Scene_TalkToActor selects this kind 7 event while Kite is the paused actor.
-/// Djinn_JoinParty gives Jupiter Djinni number 4, Kite, and sets FLAG_KITE, so
+/// Scene_TalkToActor selects this EVENT_TALK_HALTED event while Kite is the
+/// paused actor. Djinn_JoinParty gives the Jupiter Djinni Kite and sets
+/// FLAG_KITE, so
 /// neither room places Kite again.
-static void Event_TalkToKite(void) { Djinn_JoinParty(ACTOR_KITE, 3, 4); }
+static void Event_TalkToKite(void) {
+  Djinn_JoinParty(ACTOR_KITE, ELEMENT_JUPITER, 4);
+}
 
 /// Waits for an actor to land, bounded by a one-second timeout.
 static void ValeCave_WaitForActorLanding(struct FieldActor *actor) {
@@ -423,7 +430,7 @@ static s32 Event_HopDownLedge(s32 unusedArgument) {
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part.pixel,
                               landingPosition[2].part.pixel);
     Object_SetMode(leader, 6);
-    Engine_ActorSetSpriteFlags(leader, 1);
+    Engine_ActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
     Engine_EventEnd();
     return 1;
@@ -448,7 +455,8 @@ static void Event_KiteRunsOff(void) {
     Engine_CameraWaitForMove();
     Engine_EventWait(60);
     Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);
-    Actor_SetAttachedEffect(ACTOR_KITE, 0x102);
+    Actor_SetAttachedEffect(ACTOR_KITE,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ActorRunRepeatedMotion(ACTOR_KITE, 2);
     Engine_EventWait(20);
     Actor_SetSpeed(ACTOR_KITE, PIXELS(1), PIXELS(1) / 2);
@@ -480,7 +488,8 @@ static void Event_KiteRunsBehindLedge(void) {
       GameFlag_Set(FLAG_SCENE_TEMP_01);
       GameFlag_Set(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
       Engine_EventBegin();
-      Actor_SetAttachedEffect(ACTOR_KITE, 0x102);
+      Actor_SetAttachedEffect(ACTOR_KITE,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Engine_ActorRunRepeatedMotion(ACTOR_KITE, 2);
       Engine_EventWait(20);
       Actor_SetSpeed(ACTOR_KITE, PIXELS(2), PIXELS(1));
@@ -710,7 +719,8 @@ const struct SceneEvent *ValeCave_GetEvents(void) {
 s32 ValeCave_Initialize(void) {
   s32 *request = &gEventWork->startTransition;
 
-  *request = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  *request =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_ValeCaveMouth) {
     *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_TaskWait(1);
@@ -722,8 +732,8 @@ s32 ValeCave_Initialize(void) {
   return 0;
 }
 
-/// In Vale, the cave's way in (scene 93), each exit plays the exit sound
-/// before leaving.
+/// In Vale, the cave's way in (SceneId_ValeCaveMouth), each exit plays the exit
+/// sound before leaving.
 ///
 /// Reached by stepping on cell codes 1 to 3 in the first room; takes the exit
 /// of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST,
@@ -799,26 +809,27 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
 /// puzzles already solved.
 ///
 /// Called by ValeCave_Initialize. In Kite's part of the second room
-/// (entrances 5 to 7), while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE
-/// is set, it sets FLAG_SCENE_TEMP_00 (and _01 from entrance 5) and puts Kite
-/// back behind the ledge.
+/// (VALE_CAVE_KITE_EAST_FROM_WEST to VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST),
+/// while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE
+/// is set, it sets FLAG_SCENE_TEMP_00 (and _01 from
+/// VALE_CAVE_KITE_EAST_FROM_WEST) and puts Kite back behind the ledge.
 static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnRow20;
 
   // Each room reuses the temporary flags for its own puzzle state.
   if (gGameState.scene == (s32)&SceneId_ValeCaveKite) {
     switch (gGameState.entrance) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
+    case VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH:
+    case VALE_CAVE_KITE_WEST_FROM_EAST:
+    case VALE_CAVE_KITE_WEST_FROM_SOUTH:
+    case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST:
       Engine_ActorSetSpritePriority(ACTOR_SECOND_STANDING_LOG, 3);
       Engine_ActorSetSpritePriority(ACTOR_SECOND_STANDING_CRATES, 3);
       OverlayObject_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232), 223);
       break;
-    case 5:
-    case 6:
-    case 7:
+    case VALE_CAVE_KITE_EAST_FROM_WEST:
+    case VALE_CAVE_KITE_EAST_FROM_SOUTH:
+    case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST:
       if (Engine_GameFlagIsSet(FLAG_KITE) != 0) {
         break;
       }
@@ -826,7 +837,7 @@ static void ValeCave_ApplyEntryState(void) {
         break;
       }
       Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
-      if (gGameState.entrance == 5) {
+      if (gGameState.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
         Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
       }
       Engine_TaskWait(1);
@@ -837,9 +848,9 @@ static void ValeCave_ApplyEntryState(void) {
       Actor_SetPosition(ACTOR_KITE, PIXELS(792), PIXELS(280));
       Object_GetById(ACTOR_KITE)->update = VALE_CAVE_FACE_LEADER_CALLBACK;
       break;
-    case 8:
-    case 9:
-    case 10:
+    case VALE_CAVE_KITE_SOUTH_FROM_WEST:
+    case VALE_CAVE_KITE_SOUTH_FROM_EAST:
+    case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH:
       // The holes' part: the riding log's passage, and the holes already
       // filled.
       OverlayObject_CreateConfiguredObject(PIXELS(642), 0, PIXELS(552), 20);
@@ -855,9 +866,9 @@ static void ValeCave_ApplyEntryState(void) {
     }
   } else if (gGameState.scene == (s32)&SceneId_ValeCaveLogs) {
     switch (gGameState.entrance) {
-    case 1:
-    case 2:
-    case 3:
+    case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
+    case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:
+    case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:
       // Each log already pushed leaves open floor; else its footprint
       // blocks its cells again.
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
@@ -981,14 +992,14 @@ struct SceneEntrance gValeCave_Entrances1[] = {
 struct SceneEntrance gValeCave_Entrances2[] = {
     { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH, CONDITION_ALWAYS, 328, 0, 392, FACING_NORTH, 0, 48, 32, 544, 416, 0 },
-    { 2, CONDITION_ALWAYS, 312, 0, 160, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
-    { 3, CONDITION_ALWAYS, 120, 0, 120, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
+    { VALE_CAVE_KITE_WEST_FROM_EAST, CONDITION_ALWAYS, 312, 0, 160, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
+    { VALE_CAVE_KITE_WEST_FROM_SOUTH, CONDITION_ALWAYS, 120, 0, 120, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
     { VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST, CONDITION_ALWAYS, 504, 0, 136, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
-    { 5, CONDITION_ALWAYS, 792, 0, 360, FACING_NORTH, 0, 624, 16, 944, 384, 0 },
-    { 6, CONDITION_ALWAYS, 680, 0, 248, FACING_SOUTH, 0, 624, 16, 944, 384, 0 },
+    { VALE_CAVE_KITE_EAST_FROM_WEST, CONDITION_ALWAYS, 792, 0, 360, FACING_NORTH, 0, 624, 16, 944, 384, 0 },
+    { VALE_CAVE_KITE_EAST_FROM_SOUTH, CONDITION_ALWAYS, 680, 0, 248, FACING_SOUTH, 0, 624, 16, 944, 384, 0 },
     { VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST, CONDITION_ALWAYS, 904, 0, 232, FACING_SOUTH, 0, 624, 16, 944, 384, 0 },
-    { 8, CONDITION_ALWAYS, 408, 0, 872, FACING_NORTH, 0, 312, 472, 704, 896, 0 },
-    { 9, CONDITION_ALWAYS, 488, 0, 744, FACING_NORTH, 0, 312, 472, 704, 896, 0 },
+    { VALE_CAVE_KITE_SOUTH_FROM_WEST, CONDITION_ALWAYS, 408, 0, 872, FACING_NORTH, 0, 312, 472, 704, 896, 0 },
+    { VALE_CAVE_KITE_SOUTH_FROM_EAST, CONDITION_ALWAYS, 488, 0, 744, FACING_NORTH, 0, 312, 472, 704, 896, 0 },
     { VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH, CONDITION_ALWAYS, 632, 0, 552, FACING_SOUTH, 0, 312, 472, 704, 896, 0 },
     { SCENE_TABLE_END },
 };
@@ -996,10 +1007,10 @@ struct SceneEntrance gValeCave_Entrances2[] = {
 struct SceneEntrance gValeCave_Entrances3[] = {
     { 0, CONDITION_ALWAYS, 200, 0, 432, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST, CONDITION_ALWAYS, 200, 0, 432, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
-    { 2, CONDITION_ALWAYS, 344, 0, 120, FACING_SOUTH, 0, 64, 24, 416, 464, 0 },
+    { VALE_CAVE_LOGS_NORTH_FROM_SOUTH, CONDITION_ALWAYS, 344, 0, 120, FACING_SOUTH, 0, 64, 24, 416, 464, 0 },
     { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST, CONDITION_ALWAYS, 120, 0, 264, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
     { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH, CONDITION_ALWAYS, 536, 0, 776, FACING_NORTH, 0, 400, 440, 896, 800, 0 },
-    { 5, CONDITION_ALWAYS, 840, 0, 776, FACING_NORTH, 0, 400, 440, 896, 800, 0 },
+    { VALE_CAVE_LOGS_SOUTH_FROM_NORTH, CONDITION_ALWAYS, 840, 0, 776, FACING_NORTH, 0, 400, 440, 896, 800, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -1116,7 +1127,7 @@ struct SceneEvent gValeCave_Events2[] = {
     { EVENT_TOUCH, 54, FLAG_KITE, EVENT_SCRIPT(Event_KiteKeepsAway) },
     { EVENT_TOUCH, 55, FLAG_KITE, EVENT_SCRIPT(Event_KiteKeepsAway) },
     { EVENT_TOUCH, 56, FLAG_KITE, EVENT_SCRIPT(Event_KiteKeepsAway) },
-    { 0x7, ACTOR_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKite) },
+    { EVENT_TALK_HALTED, ACTOR_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKite) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenTile) },

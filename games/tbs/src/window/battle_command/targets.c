@@ -108,12 +108,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // UB: slot 57 is outside the scalar gBattleWork pointer. Named accesses
   // add 12 bytes here in EN; using gWorkSlot adds 16 bytes.
 #ifdef UBFIX
-  if (mode == 2 || mode == 4)
+  if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
     gLinkCountdownWork->targetSceneOffset = -2;
   else
     gLinkCountdownWork->targetSceneOffset = 16;
 #else
-  if (mode == 2 || mode == 4)
+  if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
     ((struct BattleMenuWork **)&gBattleWork)[48]->targetSceneOffset = -2;
   else
     ((struct BattleMenuWork **)&gBattleWork)[48]->targetSceneOffset = 16;
@@ -122,12 +122,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[i].flags = 0;
   // The candidates: the party, the acting unit alone, or the enemies.
   targetIndex = -1;
-  if (mode == 2) {
+  if (mode == TARGET_MODE_ALLIES) {
     for (i = 0; i <= 5 && battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       candidateIds[targetCount] = battle->partyUnits[i];
       targetCount++;
     }
-  } else if (mode == 4) {
+  } else if (mode == TARGET_MODE_SELF) {
     candidateIds[0] = (u16)selection;
     targetCount = 1;
   } else {
@@ -142,7 +142,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // Restorative actions prefer an ally who benefits from their effect.
   // Otherwise the cursor starts on the acting unit when it is a
   // candidate.
-  if (mode == 2) {
+  if (mode == TARGET_MODE_ALLIES) {
     if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
       found = 0;
       for (j = 0; j < targetCount; j++) {
@@ -194,14 +194,14 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
-         (GameFlag_TestFar(FLAG_LINK_BATTLE) && mode == 1 &&
+         (GameFlag_TestFar(FLAG_LINK_BATTLE) && mode == TARGET_MODE_FOES &&
           UnitGetFar(candidateIds[targetIndex])->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }
   // Aimed at enemies or itself, the cursor starts at the acting unit (at y
   // 128), stays two frames, then eases to the target.
-  if (mode != 2) {
+  if (mode != TARGET_MODE_ALLIES) {
     BattleMotion_ProjectConditionalPositionFar(
         selection, EffectPosition_Coordinates(&actorPosition));
     cursorTracks[0].flags = 8;
@@ -398,19 +398,19 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
             switch (System_GetLanguage()) {
-            case 1:
+            case CARTRIDGE_LANGUAGE_GERMAN:
               UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString,
                                         conditionWindow, 0, 0);
               break;
-            case 2:
+            case CARTRIDGE_LANGUAGE_FRENCH:
               UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
                                         conditionWindow, 0, 0);
               break;
-            case 3:
+            case CARTRIDGE_LANGUAGE_SPANISH:
               UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString,
                                         conditionWindow, 0, 0);
               break;
-            case 4:
+            case CARTRIDGE_LANGUAGE_ITALIAN:
               UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString,
                                         conditionWindow, 0, 0);
               break;

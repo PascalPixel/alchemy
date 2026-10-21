@@ -88,12 +88,14 @@ enum AbilityKind {
 /// applied by BattleTargetExec unless noted. Each is named for the abilities
 /// that have it (actions.tsv, with their English names and descriptions).
 /// ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are read by no code
-/// here, and no row has an effect between ABILITY_EFFECT_NONE and
-/// ABILITY_EFFECT_CURE_POISON. A stat
+/// here, and no row has ABILITY_EFFECT_RESTORE_HP or ABILITY_EFFECT_RESTORE_PP.
+/// A stat
 /// change whose name ends in `_2` moves its stat two stages, one without moves
 /// it one.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
+  ABILITY_EFFECT_RESTORE_HP = 1,         ///< restores HP (the item menu's use)
+  ABILITY_EFFECT_RESTORE_PP = 2,         ///< restores PP (the item menu's use)
   ABILITY_EFFECT_CURE_POISON = 3,        ///< Cure Poison, Antidote
   ABILITY_EFFECT_RESTORE = 4,            ///< Restore, Elixir
   ABILITY_EFFECT_REVIVE = 5,             ///< Revive, Water of Life: full HP
@@ -167,10 +169,27 @@ enum AbilityEffect {
   ABILITY_EFFECT_PSY_LEECH = 69           ///< Psy Leech
 };
 
+/// BattleAct.targetMode: whom an ability may target, from its user's view.
+/// The party's cursor (BattleTarget_RunSelection) shows the enemies for every
+/// mode but TARGET_MODE_ALLIES and TARGET_MODE_SELF. No row of actions.tsv has
+/// a mode between TARGET_MODE_ALLIES and TARGET_MODE_SELF or above it;
+/// BattlePlan_SetTargets would walk such a mode's range as it does
+/// TARGET_MODE_FOES'.
+enum TargetMode {
+  /// The ability takes one target, the aimed unit, whatever its range
+  /// (BattlePlan_SetTargets), and an enemy aims it at itself. The field
+  /// Psynergy and enemies' commands such as Threaten, Ally Search and Flee
+  /// have it.
+  TARGET_MODE_NONE = 0,
+  TARGET_MODE_FOES = 1,
+  TARGET_MODE_ALLIES = 2, ///< the user's side, the user included
+  TARGET_MODE_SELF = 4    ///< the user alone, whatever the range
+};
+
 /// An ability's definition, a row of gBattleAction_DefinitionTable: its
 /// targeting, ability kind, element, effect, range, PP cost and power.
 struct BattleAct {
-  u8 targetMode; ///< TARGET_MODE_NONE, _FOES, _ALLIES or _SELF
+  u8 targetMode; ///< enum TargetMode
   /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
   /// row | 3..0 ability kind (ABILITY_KIND_MASK).
   u8 flags;

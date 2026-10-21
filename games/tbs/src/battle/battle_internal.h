@@ -268,21 +268,6 @@ enum BattleCastKind {
   CAST_ENEMY = 2     ///< the element's streaks
 };
 
-// BattleAct.targetMode: whom an ability may target, from its user's view.
-// The party's cursor (BattleTarget_RunSelection) shows the enemies for every
-// mode but TARGET_MODE_ALLIES and TARGET_MODE_SELF. No row of actions.tsv has
-// a mode between TARGET_MODE_ALLIES and TARGET_MODE_SELF or above it;
-// BattlePlan_SetTargets would walk such a mode's range as it does
-// TARGET_MODE_FOES'.
-/// The ability takes one target, the aimed unit, whatever its range
-/// (BattlePlan_SetTargets), and an enemy aims it at itself. The field
-/// Psynergy and enemies' commands such as Threaten, Ally Search and Flee have
-/// it.
-#define TARGET_MODE_NONE 0
-#define TARGET_MODE_FOES 1
-#define TARGET_MODE_ALLIES 2 ///< the user's side, the user included
-#define TARGET_MODE_SELF 4   ///< the user alone, whatever the range
-
 /// BattleTarget_SelectForAction's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2

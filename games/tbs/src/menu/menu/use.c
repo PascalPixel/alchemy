@@ -229,10 +229,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     }
 
     // Then the ability's effect (enum AbilityEffect). The first two cases are
-    // an HP and a PP restore no ability has (actions.tsv), so they have no
-    // enumerator yet.
+    // an HP and a PP restore no ability has (actions.tsv).
     switch (effect->effect) {
-    case 1:
+    case ABILITY_EFFECT_RESTORE_HP:
       if (target->hp <= 0 || target->hp == target->maxHp) {
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
@@ -250,7 +249,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case 2:
+    case ABILITY_EFFECT_RESTORE_PP:
       if (target->pp == target->maxPp) {
         if (partyResultShown == 0)
           messageOffset = ITEM_USE_RESULT_PP_FULL;
@@ -376,10 +375,9 @@ void Ability_PlayUseAnimation(s32 action) {
     default:
       Audio_PlayCueReturnOne(MUS_091);
 
-    // The HP and PP restores no ability has (actions.tsv), which have no
-    // enumerator yet.
-    case 1:
-    case 2:
+    // The HP and PP restores no ability has (actions.tsv).
+    case ABILITY_EFFECT_RESTORE_HP:
+    case ABILITY_EFFECT_RESTORE_PP:
     case ABILITY_EFFECT_DRAIN_HP:
     case ABILITY_EFFECT_DRAIN_PP:
       return;

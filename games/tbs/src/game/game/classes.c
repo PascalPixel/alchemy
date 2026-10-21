@@ -64,8 +64,9 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   return 0;
 }
 
-/// Returns a unit's level in `element` (0 to 3). Called by the two status
-/// screens to show the element levels, and by Battle_IsReviveEffect.
+/// Returns a unit's level in `element` (0 to 3), and 0 for `ELEMENT_NONE`.
+/// Called by the two status screens to show the element levels, and by
+/// Battle_IsReviveEffect.
 s32 Unit_GetElementLevel(s32 owner, s32 element) {
   struct BattleUnit *unit = UnitGet(owner);
   s32 elementLevels[4];

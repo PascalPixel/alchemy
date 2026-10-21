@@ -156,7 +156,8 @@ same place. That's also why rows no item uses keep their places, with `?` or
 The label columns are the English edition's names from
 `games/tbs/text/en.po`, by the message each row's id reaches. An item's name
 is message 386 + id (`MsgItemName`), an enemy's 655 + id (`MsgEnemyName`),
-an ability's 819 + id (`MsgAbilityName`), and a Djinni's 1119 + its row
+an ability's 819 + id (`MsgAbilityName`) and its description 1338 + id
+(`MsgAbilityDescription`), and a Djinni's 1119 + its row
 (`MsgDjinnName`), which is also its ability, 300 + row. A row's id is its
 line number less two, since the header is line 1 and entry 0 is line 2:
 `Healing Ring` is on line 267 of `items.tsv`, so it's item 265 and its name

@@ -1,10 +1,10 @@
 /// @file
 /// Altin Peak, the mine below Altin that its villagers and the Alpine
-/// Crossing's signpost call Altin Mine: eleven scenes, AltinPeakFirstWaterBeast
-/// to AltinPeakWestExit (scenes 77 to 87), whose area name is Altin Peak,
-/// except that the international editions call AltinPeakSouthEntrance the
-/// Alpine Crossing when the party comes in from there
-/// (ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST and
+/// Crossing's signpost call Altin Mine: eleven scenes,
+/// SceneId_AltinPeakFirstWaterBeast to SceneId_AltinPeakWestExit, whose area
+/// name is Altin Peak, except that the international editions call
+/// AltinPeakSouthEntrance the Alpine Crossing when the party comes in from
+/// there (ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST and
 /// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST). Each scene is a room
 /// of the mine, and the getters pick each room's tables by gGameState.scene,
 /// all the rooms share one exit table, and Scene_Initialize calls the setup of
@@ -278,37 +278,37 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_AltinPeakFirstWaterBeast) {
-    return gAltinPeak_Entrances1;
+    return gAltinPeak_FirstWaterBeastEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakRailTunnel) {
-    return gAltinPeak_Entrances2;
+    return gAltinPeak_RailTunnelEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakSecondWaterBeast) {
-    return gAltinPeak_Entrances3;
+    return gAltinPeak_SecondWaterBeastEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakSouthEntrance) {
-    return gAltinPeak_Entrances4;
+    return gAltinPeak_SouthEntranceEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakThirdWaterBeast) {
-    return gAltinPeak_Entrances5;
+    return gAltinPeak_ThirdWaterBeastEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakPool) {
-    return gAltinPeak_Entrances6;
+    return gAltinPeak_PoolEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakSpritz) {
-    return gAltinPeak_Entrances7;
+    return gAltinPeak_SpritzEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakJunction) {
-    return gAltinPeak_Entrances8;
+    return gAltinPeak_JunctionEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakFallingRocks) {
-    return gAltinPeak_Entrances9;
+    return gAltinPeak_FallingRocksEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakHydrosStatue) {
-    return gAltinPeak_Entrances10;
+    return gAltinPeak_HydrosStatueEntrances;
   }
   if (scene == (s32)&SceneId_AltinPeakWestExit) {
-    return gAltinPeak_Entrances11;
+    return gAltinPeak_WestExitEntrances;
   }
   return gAltinPeak_EntrancesOther;
 }
@@ -318,10 +318,10 @@ const struct SceneRegion *Scene_GetRegions(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_AltinPeakFallingRocks) {
-    return gAltinPeak_Regions9;
+    return gAltinPeak_FallingRocksRegions;
   }
   if (scene == (s32)&SceneId_AltinPeakHydrosStatue) {
-    return gAltinPeak_Regions10;
+    return gAltinPeak_HydrosStatueRegions;
   }
   return 0;
 }
@@ -333,31 +333,31 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_AltinPeakFirstWaterBeast) {
-    return gAltinPeak_Placements1;
+    return gAltinPeak_FirstWaterBeastPlacements;
   }
   if (scene == (s32)&SceneId_AltinPeakSecondWaterBeast) {
-    return gAltinPeak_Placements3;
+    return gAltinPeak_SecondWaterBeastPlacements;
   }
   if (scene == (s32)&SceneId_AltinPeakThirdWaterBeast) {
-    return gAltinPeak_Placements5;
+    return gAltinPeak_ThirdWaterBeastPlacements;
   }
   if (scene == (s32)&SceneId_AltinPeakPool) {
-    return gAltinPeak_Placements6;
+    return gAltinPeak_PoolPlacements;
   }
   if (scene == (s32)&SceneId_AltinPeakSpritz) {
-    return gAltinPeak_Placements7;
+    return gAltinPeak_SpritzPlacements;
   }
   if (scene == (s32)&SceneId_AltinPeakJunction) {
-    return gAltinPeak_Placements8;
+    return gAltinPeak_JunctionPlacements;
   }
   if (scene == (s32)&SceneId_AltinPeakFallingRocks) {
-    return gAltinPeak_Placements9;
+    return gAltinPeak_FallingRocksPlacements;
   }
   if (scene == (s32)&SceneId_AltinPeakHydrosStatue) {
-    return gAltinPeak_Placements10;
+    return gAltinPeak_HydrosStatuePlacements;
   }
   if (scene == (s32)&SceneId_AltinPeakWestExit) {
-    return gAltinPeak_Placements11;
+    return gAltinPeak_WestExitPlacements;
   }
   return gAltinPeak_PlacementsOther;
 }
@@ -403,21 +403,21 @@ static void AltinPeak_RideCart(s32 log) {
 /// Talking to (or reading the mind of) a room's water beast starts its
 /// battle; afterwards the party returns to the room's battle entrance.
 static void AltinPeak_FightFirstWaterBeast(void) {
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakFirstWaterBeast,
                            ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(53, 2);
 }
 
 static void AltinPeak_FightSecondWaterBeast(void) {
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakSecondWaterBeast,
                            ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(53, 2);
 }
 
 static void AltinPeak_FightThirdWaterBeast(void) {
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakThirdWaterBeast,
                            ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(53, 2);
@@ -1121,30 +1121,30 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
   if (gGameState.scene == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
-      table = gAltinPeak_Events1Drained;
+      table = gAltinPeak_FirstWaterBeastEventsDrained;
     } else {
-      table = gAltinPeak_Events1;
+      table = gAltinPeak_FirstWaterBeastEvents;
     }
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakRailTunnel) {
-    table = gAltinPeak_Events2;
+    table = gAltinPeak_RailTunnelEvents;
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakSecondWaterBeast) {
-    table = gAltinPeak_Events3;
+    table = gAltinPeak_SecondWaterBeastEvents;
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakSouthEntrance) {
-    table = gAltinPeak_Events4;
+    table = gAltinPeak_SouthEntranceEvents;
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakThirdWaterBeast) {
-    table = gAltinPeak_Events5;
+    table = gAltinPeak_ThirdWaterBeastEvents;
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakPool) {
-    table = gAltinPeak_Events6;
+    table = gAltinPeak_PoolEvents;
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakSpritz) {
-    table = gAltinPeak_Events7;
+    table = gAltinPeak_SpritzEvents;
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakJunction) {
-    table = gAltinPeak_Events8;
+    table = gAltinPeak_JunctionEvents;
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakFallingRocks) {
-    table = gAltinPeak_Events9;
+    table = gAltinPeak_FallingRocksEvents;
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakHydrosStatue) {
-    table = gAltinPeak_Events10;
+    table = gAltinPeak_HydrosStatueEvents;
   } else if (gGameState.scene == (s32)&SceneId_AltinPeakWestExit) {
-    table = gAltinPeak_Events11;
+    table = gAltinPeak_WestExitEvents;
   } else {
     table = gAltinPeak_EventsOther;
   }
@@ -1625,12 +1625,13 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
   }
 }
 
-/// AltinPeakPool: arriving at entrance 2 the mine cart waits there; the frozen
-/// puddle, the water level and the switch are restored.
+/// AltinPeakPool: arriving by ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST the mine
+/// cart waits there; the frozen puddle, the water level and the switch are
+/// restored.
 static void AltinPeak_RestorePoolRoom(void) {
   struct FieldActor *pillar;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST) {
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_SetPosition(ACTOR_CART, PIXELS(358), PIXELS(104));
     }
@@ -1779,14 +1780,14 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
   }
 }
 
-/// AltinPeakWestExit: arriving at entrance 2 the pillar stands at its pushed
-/// place.
+/// AltinPeakWestExit: arriving by ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM
+/// the pillar stands at its pushed place.
 static void AltinPeak_RestoreWestExitRoom(void) {
   struct FieldActor *actor;
 
   actor = Actor_Get(ACTOR_WEST_EXIT_ROOM_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM) {
     Actor_SetPosition(ACTOR_WEST_EXIT_ROOM_PILLAR, PIXELS(184), PIXELS(328));
   }
 }
@@ -1809,12 +1810,12 @@ static void AltinPeak_DriftSpray(union FieldObject *object) {
   struct FieldActor *spray = &object->actor;
 
   switch (gAltinPeak_SprayDirection) {
-  case 0:
+  case FACING_EAST:
     spray->x.fixed +=
         (spray->timer << 12) +
         ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
     break;
-  case 0x8000:
+  case FACING_WEST:
     spray->x.fixed -=
         (spray->timer << 12) +
         ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
@@ -1822,10 +1823,10 @@ static void AltinPeak_DriftSpray(union FieldObject *object) {
   }
   if (spray->timer <= 3) {
     switch (gAltinPeak_SprayDirection) {
-    case 0:
+    case FACING_EAST:
       spray->x.fixed += PIXELS(1) / 2;
       break;
-    case 0x8000:
+    case FACING_WEST:
       spray->x.fixed -= PIXELS(1) / 2;
       break;
     }
@@ -1967,7 +1968,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   AltinPeak_DrainFirstWater();
   Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   Engine_CameraWaitForMove();
-  Event_LoadAreaScript(gAltinPeak_Events1Drained);
+  Event_LoadAreaScript(gAltinPeak_FirstWaterBeastEventsDrained);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Engine_EventEnd();
 }
@@ -2039,7 +2040,7 @@ static void AltinPeak_StartHydrosBattle(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorWaitForMove(ACTOR_STATUE);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakHydrosStatue,
                            ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(53, 3);
@@ -2386,6 +2387,15 @@ static void AltinPeak_AdvanceCart(struct FieldActor *object) {
   }
 }
 
+/// The collision codes that mark the mine cart's route, on map layer 2.
+enum AltinPeakCartCell {
+  ALTIN_PEAK_CART_COUNTDOWN = 96, ///< AltinPeak_StartCartCountdown
+  ALTIN_PEAK_CART_TURN_LEFT = 97,
+  ALTIN_PEAK_CART_TURN_RIGHT = 98,
+  /// The end of the route, where the leader jumps off.
+  ALTIN_PEAK_CART_STOP = 99
+};
+
 /// Rolls the mine cart the party leader rides: it sets off the first way it can
 /// roll, starting from heading (or its own facing for -1), follows the turns
 /// its route's cells mark until the end cell, and the leader jumps off.
@@ -2435,16 +2445,16 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   // The route cells select turns, a countdown cue, and the destination.
   for (;;) {
     switch (GetMapCellCollision(2, object->x.fixed, object->z.fixed)) {
-    case 98:
+    case ALTIN_PEAK_CART_TURN_RIGHT:
       AltinPeak_TurnCartRight(object);
       break;
-    case 97:
+    case ALTIN_PEAK_CART_TURN_LEFT:
       AltinPeak_TurnCartLeft(object);
       break;
-    case 96:
+    case ALTIN_PEAK_CART_COUNTDOWN:
       AltinPeak_StartCartCountdown(object);
       break;
-    case 99:
+    case ALTIN_PEAK_CART_STOP:
       goto arrived;
     }
     AltinPeak_AdvanceCart(object);
@@ -2653,7 +2663,7 @@ struct SceneEntrance gAltinPeak_EntrancesOther[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances1[] = {
+struct SceneEntrance gAltinPeak_FirstWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0},
     {98, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
@@ -2661,14 +2671,14 @@ struct SceneEntrance gAltinPeak_Entrances1[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances2[] = {
+struct SceneEntrance gAltinPeak_RailTunnelEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, 248, 0, 464, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST, CONDITION_ALWAYS, 56, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances3[] = {
+struct SceneEntrance gAltinPeak_SecondWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 664, 0, 380, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -2678,7 +2688,7 @@ struct SceneEntrance gAltinPeak_Entrances3[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances4[] = {
+struct SceneEntrance gAltinPeak_SouthEntranceEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN, CONDITION_ALWAYS, 248, 0, 498, FACING_NORTH, 0, 24, 0, 648, 560, 0},
     {2, CONDITION_ALWAYS, 119, 0, 108, FACING_SOUTH, 0, 24, 0, 648, 560, 0},
@@ -2690,7 +2700,7 @@ struct SceneEntrance gAltinPeak_Entrances4[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances5[] = {
+struct SceneEntrance gAltinPeak_ThirdWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {98, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
@@ -2698,7 +2708,7 @@ struct SceneEntrance gAltinPeak_Entrances5[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances6[] = {
+struct SceneEntrance gAltinPeak_PoolEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, 568, 0, 348, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {2, CONDITION_ALWAYS, 295, 0, 95, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
@@ -2709,7 +2719,7 @@ struct SceneEntrance gAltinPeak_Entrances6[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances7[] = {
+struct SceneEntrance gAltinPeak_SpritzEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION, CONDITION_ALWAYS, 72, 0, 502, FACING_NORTH, 0, 0, 0, 820, 568, 0},
     {ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 152, 0, 174, FACING_SOUTH, 0, 0, 0, 820, 568, 0},
@@ -2717,7 +2727,7 @@ struct SceneEntrance gAltinPeak_Entrances7[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances8[] = {
+struct SceneEntrance gAltinPeak_JunctionEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS, 392, 0, 116, FACING_SOUTH, 0, 0, 0, 830, 564, 0},
     {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_NORTH, CONDITION_ALWAYS, 40, 0, 116, FACING_NORTH, 0, 0, 0, 830, 564, 0},
@@ -2727,7 +2737,7 @@ struct SceneEntrance gAltinPeak_Entrances8[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances9[] = {
+struct SceneEntrance gAltinPeak_FallingRocksEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS, 361, 0, 309, FACING_NORTH, 0, 0, 0, 524, 816, 0},
     {2, CONDITION_ALWAYS, 89, 0, 749, FACING_NORTH, 0, 0, 0, 524, 816, 0},
@@ -2738,7 +2748,7 @@ struct SceneEntrance gAltinPeak_Entrances9[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances10[] = {
+struct SceneEntrance gAltinPeak_HydrosStatueEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
     {98, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
@@ -2746,7 +2756,7 @@ struct SceneEntrance gAltinPeak_Entrances10[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gAltinPeak_Entrances11[] = {
+struct SceneEntrance gAltinPeak_WestExitEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_WEST_EXIT_FROM_ALTIN_PEAK_JUNCTION, CONDITION_ALWAYS, 408, 0, 517, FACING_NORTH, 0, 0, 0, 540, 590, 0},
     {2, CONDITION_ALWAYS, 198, 0, 336, FACING_SOUTH, 0, 0, 0, 540, 590, 0},
@@ -2755,7 +2765,7 @@ struct SceneEntrance gAltinPeak_Entrances11[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneRegion gAltinPeak_Regions9[] = {
+struct SceneRegion gAltinPeak_FallingRocksRegions[] = {
 #if !TBS_PATCH_3
     {790, -106, 575, 794, -102, 579, CONDITION_ALWAYS, 6},
     {788, -108, 579, 796, -100, 587, CONDITION_ALWAYS, 6},
@@ -2765,7 +2775,7 @@ struct SceneRegion gAltinPeak_Regions9[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneRegion gAltinPeak_Regions10[] = {
+struct SceneRegion gAltinPeak_HydrosStatueRegions[] = {
 #if !TBS_PATCH_3
     {84, 38, 420, 92, 46, 428, CONDITION_ALWAYS, 1},
 #else
@@ -2832,7 +2842,7 @@ struct ScenePlacement gAltinPeak_PlacementsOther[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltinPeak_Placements1[] = {
+struct ScenePlacement gAltinPeak_FirstWaterBeastPlacements[] = {
     {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(152), 0, PIXELS(216), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(296), 0, PIXELS(216), FACING_SOUTH,
@@ -2842,7 +2852,7 @@ struct ScenePlacement gAltinPeak_Placements1[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltinPeak_Placements3[] = {
+struct ScenePlacement gAltinPeak_SecondWaterBeastPlacements[] = {
     {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(216), 0, PIXELS(312), FACING_EAST,
         TALK_KEEP_FACING, 0},
     {0xbe, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(248), 0, PIXELS(464), FACING_WEST,
@@ -2852,7 +2862,7 @@ struct ScenePlacement gAltinPeak_Placements3[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltinPeak_Placements5[] = {
+struct ScenePlacement gAltinPeak_ThirdWaterBeastPlacements[] = {
     {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(296), FACING_EAST,
         TALK_KEEP_FACING, 0},
     {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(408), 0, PIXELS(216), FACING_SOUTH,
@@ -2862,7 +2872,7 @@ struct ScenePlacement gAltinPeak_Placements5[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltinPeak_Placements6[] = {
+struct ScenePlacement gAltinPeak_PoolPlacements[] = {
     {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(712), 0, PIXELS(184), FACING_EAST,
         TALK_KEEP_FACING, 0},
     {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(696), 0, PIXELS(664), FACING_SOUTH,
@@ -2870,7 +2880,7 @@ struct ScenePlacement gAltinPeak_Placements6[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltinPeak_Placements7[] = {
+struct ScenePlacement gAltinPeak_SpritzPlacements[] = {
     {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(264), 0, PIXELS(408), FACING_EAST,
         TALK_KEEP_FACING, 0},
     {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(424), 0, PIXELS(424), FACING_SOUTH,
@@ -2887,13 +2897,13 @@ struct ScenePlacement gAltinPeak_Placements7[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltinPeak_Placements8[] = {
+struct ScenePlacement gAltinPeak_JunctionPlacements[] = {
     {0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(636), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltinPeak_Placements9[] = {
+struct ScenePlacement gAltinPeak_FallingRocksPlacements[] = {
     {0xc8, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(784), 0, PIXELS(80), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {0x120, CONDITION_ALWAYS, 7, PIXELS(784), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0},
@@ -2904,7 +2914,7 @@ struct ScenePlacement gAltinPeak_Placements9[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltinPeak_Placements10[] = {
+struct ScenePlacement gAltinPeak_HydrosStatuePlacements[] = {
     {0xc7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {0x120, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(88), FACING_SOUTH,
@@ -2915,7 +2925,7 @@ struct ScenePlacement gAltinPeak_Placements10[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltinPeak_Placements11[] = {
+struct ScenePlacement gAltinPeak_WestExitPlacements[] = {
     {0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(280), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {0xd3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(200), 0, PIXELS(328), FACING_SOUTH,
@@ -2927,7 +2937,7 @@ struct SceneEvent gAltinPeak_EventsOther[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events1[] = {
+struct SceneEvent gAltinPeak_FirstWaterBeastEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
     {EVENT_TOUCH, 10, FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowFirstBeastRoute)},
     {EVENT_TOUCH, 11, FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowSecondBeastRoute)},
@@ -2937,7 +2947,7 @@ struct SceneEvent gAltinPeak_Events1[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events1Drained[] = {
+struct SceneEvent gAltinPeak_FirstWaterBeastEventsDrained[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN,
         EVENT_SCRIPT(AltinPeak_FreezeFirstWaterBeastRoomPuddle)},
@@ -2945,13 +2955,13 @@ struct SceneEvent gAltinPeak_Events1Drained[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events2[] = {
+struct SceneEvent gAltinPeak_RailTunnelEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST},
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events3[] = {
+struct SceneEvent gAltinPeak_SecondWaterBeastEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
@@ -2964,14 +2974,15 @@ struct SceneEvent gAltinPeak_Events3[] = {
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {SCENE_EVENTS_END},
     // Unused: two rows past the end marker, which no lookup reaches: a second
-    // exit 3 and a chest on code 100 holding a Herb under flag 0xf05, the
-    // spot where the Cookie chest above already stands.
+    // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE exit and a chest on code
+    // 100 holding a Herb under flag 0xf05, the spot where the Cookie chest
+    // above already stands.
     {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
     {SEARCH(SEARCH_CHEST), 100, 0xf05, FIND_ITEM(ITEM_HERB)},
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events4[] = {
+struct SceneEvent gAltinPeak_SouthEntranceEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_POOL},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL},
@@ -2982,7 +2993,7 @@ struct SceneEvent gAltinPeak_Events4[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events5[] = {
+struct SceneEvent gAltinPeak_ThirdWaterBeastEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeThirdWaterBeastRoomPuddle)},
     {EVENT_TALK, ACTOR_THIRD_WATER_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightThirdWaterBeast)},
@@ -2997,7 +3008,7 @@ struct SceneEvent gAltinPeak_Events5[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events6[] = {
+struct SceneEvent gAltinPeak_PoolEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH},
@@ -3011,7 +3022,7 @@ struct SceneEvent gAltinPeak_Events6[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events7[] = {
+struct SceneEvent gAltinPeak_SpritzEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN},
@@ -3033,7 +3044,7 @@ struct SceneEvent gAltinPeak_Events7[] = {
 };
 // clang-format on
 
-struct SceneEvent gAltinPeak_Events8[] = {
+struct SceneEvent gAltinPeak_JunctionEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,
      ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH},
@@ -3049,7 +3060,7 @@ struct SceneEvent gAltinPeak_Events8[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events9[] = {
+struct SceneEvent gAltinPeak_FallingRocksEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
      ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3065,7 +3076,7 @@ struct SceneEvent gAltinPeak_Events9[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events10[] = {
+struct SceneEvent gAltinPeak_HydrosStatueEvents[] = {
     {EVENT_TOUCH, 10, FLAG_HYDROS_STATUES_DEFEATED,
      EVENT_SCRIPT(AltinPeak_StartHydrosBattle)},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_LIFTING_GEM,
@@ -3073,7 +3084,7 @@ struct SceneEvent gAltinPeak_Events10[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltinPeak_Events11[] = {
+struct SceneEvent gAltinPeak_WestExitEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
      ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,

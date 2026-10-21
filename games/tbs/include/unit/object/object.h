@@ -36,14 +36,6 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
-/// gGameState.hazardMode: what advances the hazard count (Field_ProcessStep).
-enum HazardMode {
-  /// The distance the leader walks on MAP_CELL_HAZARD ground.
-  HAZARD_COUNT_ON_CELLS = 0,
-  /// One each frame the field loop runs; no ☀️ code sets it.
-  HAZARD_COUNT_FRAMES = 1
-};
-
 /// Game_Run's mode: where the game starts.
 enum GameRunMode {
   GAME_RUN_TITLE = 0,      ///< the title screen, with a fresh game state

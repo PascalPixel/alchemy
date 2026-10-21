@@ -168,24 +168,6 @@
 /// the sync or transfer under way (link.c, round.c).
 #define LINK_MAX_MISSED_FRAMES 24
 
-/// The Djinn recovery list's two tables (Djinn_GetRecoveryTableFar): the
-/// party's and the link opponent's.
-#define DJINN_RECOVERY_PARTY 0
-#define DJINN_RECOVERY_OPPONENT 1
-
-/// DjinnRecoveryEntry.turns of a Djinni on standby. In battle it stays so
-/// until a Djinn command sets it again or a summon uses it
-/// (DJINN_RECOVERY_SUMMONED), both in
-/// BattleCommand_BuildPlan; an owner who does not fight has it set as the
-/// next battle starts, outside a link battle
-/// (BattleParty_ReconcileDjinnRecovery). DjinnRecovery_Tick counts down only
-/// positive turns.
-#define DJINN_RECOVERY_AFTER_BATTLE -1
-
-/// DjinnRecoveryEntry.turns of a standby Djinni a summon has just used, until
-/// the turn's end gives it its turn to recover (BattleUnit_ProcessTurnEnd).
-#define DJINN_RECOVERY_SUMMONED -2
-
 /// BattleWork.battleType, from the enemy formation
 /// (BattleFormation_BuildEnemyList): the random formations stand left to right
 /// in the order they were drawn, any other is laid out from the centre.

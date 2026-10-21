@@ -18,6 +18,14 @@ enum SceneVariant {
   SCENE_VARIANT_TOWN = 2
 };
 
+/// gGameState.hazardMode: what advances the hazard count (Field_ProcessStep).
+enum HazardMode {
+  /// The distance the leader walks on MAP_CELL_HAZARD ground.
+  HAZARD_COUNT_ON_CELLS = 0,
+  /// One each frame the field loop runs; no ☀️ code sets it.
+  HAZARD_COUNT_FRAMES = 1
+};
+
 /// gGameState.battleStart: how the next battle starts (Battle_SetStart); it is
 /// set back to BATTLE_START_NORMAL as the battle ends. Any start but that one
 /// stops the opening's first-strike and surprise rolls (Battle_RunEncounter).
@@ -137,8 +145,8 @@ struct GameState {
   /// every 16 pixels walked on it; the desert sets 25 percent every 600
   /// (Field_RunScene, LamakanDesert_Initialize).
   ///@{
-  s16 hazardLimit; ///< pixels walked on hazard cells (mode 0), or frames (1)
-  s16 hazardMode;  ///< 0 counts on hazard cells only; 1 counts every frame
+  s16 hazardLimit; ///< pixels walked on hazard cells, or frames, by hazardMode
+  s16 hazardMode;  ///< an enum HazardMode
   /// bits: 8 the amount is a percentage of maximum HP | 7..0 the amount
   s16 hazardDamage;
   s16 hazardSteps; ///< reset on entering a new scene group

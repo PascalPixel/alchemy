@@ -49,10 +49,10 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(BGCNT_WRAP);
-  // The Mars Djinni's long entrance (mode 6, 84 frames), over the user
-  // (anchor 2).
-  BattleFx_RunDjinniEntrance(effect, 6, work->effect->side, 2, &screenX,
-                             &screenY);
+  // The Mars Djinni's long entrance, 84 frames, over the user.
+  BattleFx_RunDjinniEntrance(effect, ELEMENT_MARS + DJINNI_ENTRANCE_LONG,
+                             work->effect->side, DJINNI_ANCHOR_OVER_USER,
+                             &screenX, &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   // Invisible until the fade-in; the canvas is shown 1.5 times its width.
@@ -161,8 +161,8 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Shows the extended Jupiter Djinni prelude (mode 7 of
-/// BattleFx_RunDjinniEntrance, 84 frames instead of 64) over the first
+/// Shows the long Jupiter Djinni prelude (BattleFx_RunDjinniEntrance with
+/// DJINNI_ENTRANCE_LONG, 84 frames instead of 64) over the first
 /// target, mirrored from the usual side; the Djinni's entrance is the whole
 /// effect.
 ///
@@ -175,8 +175,9 @@ void BattleFx_RunKite(struct BattleEffectArgument *effect) {
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  BattleFx_RunDjinniEntrance(effect, 7, work->effect->side ^ 1, 0, &originX,
-                             &originY);
+  BattleFx_RunDjinniEntrance(effect, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
+                             work->effect->side ^ 1, DJINNI_ANCHOR_OVER_TARGET,
+                             &originX, &originY);
   BattleFx_EndCanvasLayer();
 }
 

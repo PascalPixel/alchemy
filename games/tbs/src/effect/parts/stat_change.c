@@ -4,13 +4,32 @@
 
 #include "../effect_internal.h"
 
+/// The stat boosts' modes (BattleFx_RunStatBoost), each named for the effect
+/// that plays it.
+enum StatBoostMode {
+  STAT_BOOST_IMPACT,  ///< a dagger, in Mars colours
+  STAT_BOOST_GUARD,   ///< a shield, in Mars colours
+  STAT_BOOST_WARD,    ///< a shield, in Jupiter colours
+  STAT_BOOST_GRANITE, ///< a violet streak, in Venus colours
+  STAT_BOOST_ZEPHYR,  ///< a wisp, keeping the palette
+  STAT_BOOST_FLASH    ///< a violet streak, in Mars colours
+};
+
+/// The stat reductions' modes (BattleFx_RunStatReduction).
+enum StatReductionMode {
+  STAT_REDUCTION_DULL,   ///< a dagger, in the pink burst's colours
+  STAT_REDUCTION_IMPAIR, ///< a shield, in the glow orb's colours
+  STAT_REDUCTION_WEAKEN, ///< a shield, in the pink burst's colours
+  STAT_REDUCTION_UNUSED  ///< played as STAT_REDUCTION_WEAKEN; no effect uses it
+};
+
 /// Light swirls into each target and bursts, then a dagger appears in Mars
 /// colours.
 ///
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (BATTLE_FX_IMPACT);
 /// Forge (BATTLE_FX_IMPACT_210); none (BATTLE_FX_IMPACT_46).
 void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 0);
+  BattleFx_RunStatBoost(effect, STAT_BOOST_IMPACT);
 }
 /// Light swirls into each target and bursts, then a shield appears in Mars
 /// colours.
@@ -18,7 +37,7 @@ void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
 /// Abilities: Guard, Protect, Guardian, Protector (BATTLE_FX_GUARD); Corona
 /// (BATTLE_FX_GUARD_211).
 void BattleFx_RunGuard(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 1);
+  BattleFx_RunStatBoost(effect, STAT_BOOST_GUARD);
 }
 /// Light swirls into each target and bursts, then a shield appears in Jupiter
 /// colours.
@@ -26,28 +45,28 @@ void BattleFx_RunGuard(struct BattleEffectArgument *effect) {
 /// Abilities: Ward, Resist, Magic Shell, Magic Shield (BATTLE_FX_WARD); Breeze
 /// (BATTLE_FX_WARD_215).
 void BattleFx_RunWard(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 2);
+  BattleFx_RunStatBoost(effect, STAT_BOOST_WARD);
 }
 /// Light swirls into each target and bursts, then a violet streak appears in
 /// Venus colours.
 ///
 /// Abilities: Granite (BATTLE_FX_GRANITE).
 void BattleFx_RunGranite(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 3);
+  BattleFx_RunStatBoost(effect, STAT_BOOST_GRANITE);
 }
 /// Light swirls into each target and bursts, then a violet streak appears in
 /// Mars colours.
 ///
 /// Abilities: Flash (BATTLE_FX_FLASH).
 void BattleFx_RunFlash(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 5);
+  BattleFx_RunStatBoost(effect, STAT_BOOST_FLASH);
 }
 /// Light swirls into each target and bursts, then a wisp appears in the colours
 /// already loaded, as this is the one boost that keeps the palette.
 ///
 /// Abilities: Zephyr (BATTLE_FX_ZEPHYR).
 void BattleFx_RunZephyr(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatBoost(effect, 4);
+  BattleFx_RunStatBoost(effect, STAT_BOOST_ZEPHYR);
 }
 /// Where each picture sits in the sheet.
 enum StatBoostSheet {
@@ -75,11 +94,9 @@ enum StatBoostSheet {
 ///
 /// effect: the targets. With prelude 1, a Djinni appears first, sways and
 ///         rises.
-/// mode: the picture: 0 a dagger, 1 and 2 a shield, 3 and 5 a violet
-///       streak, 4 a wisp. The palette comes from the Venus Djinni in mode
-///       3, the Jupiter Djinni in mode 2, the Mars Djinni in modes 0, 1 and
-///       5; mode 4 keeps the palette. The Djinni is Venus in mode 3,
-///       Jupiter in modes 2 and 4, Mars otherwise.
+/// mode: the picture and its palette (enum StatBoostMode). The Djinni is
+///       Venus for Granite, Jupiter for Ward and Zephyr, Mars otherwise;
+///       its sheet lends the palette in every mode but Zephyr.
 void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -102,33 +119,34 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // Bring out the Djinni (its element: Venus 0, Jupiter 3, Mars 2); origin
+  // Bring out the Djinni of the mode's element; origin
   // receives where it appears, and x is scaled to the canvas, shown 1.25
   // times as wide.
   if (work->effect->prelude == 1) {
-    if (mode == 3)
-      BattleFx_RunDjinniEntrance(effect, 0, work->effect->side ^ 1, 1, &originX,
-                                 &originY);
-    else if (mode == 2 || mode == 4)
-      BattleFx_RunDjinniEntrance(effect, 3, work->effect->side ^ 1, 1, &originX,
-                                 &originY);
+    if (mode == STAT_BOOST_GRANITE)
+      BattleFx_RunDjinniEntrance(effect, ELEMENT_VENUS, work->effect->side ^ 1,
+                                 DJINNI_ANCHOR_TARGET_X, &originX, &originY);
+    else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
+      BattleFx_RunDjinniEntrance(effect, ELEMENT_JUPITER,
+                                 work->effect->side ^ 1, DJINNI_ANCHOR_TARGET_X,
+                                 &originX, &originY);
     else
-      BattleFx_RunDjinniEntrance(effect, 2, work->effect->side ^ 1, 1, &originX,
-                                 &originY);
+      BattleFx_RunDjinniEntrance(effect, ELEMENT_MARS, work->effect->side ^ 1,
+                                 DJINNI_ANCHOR_TARGET_X, &originX, &originY);
     originX = originX * 4 / 5;
   }
   REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
   // Pictures and palette: the flares, the burst, the mode's picture, then the
-  // Djinni, whose sheet also lends its palette in modes 0, 1, 2, 3 and 5.
+  // Djinni, whose sheet also lends its palette in every mode but Zephyr.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + STAT_BOOST_FLARES, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
                              work->sheet + STAT_BOOST_BURST, 1, 1);
-  if (mode == 3 || mode == 5) {
+  if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletStreakSheet,
                                work->sheet + STAT_BOOST_PICTURE, 1, 1);
-    if (mode == 3)
+    if (mode == STAT_BOOST_GRANITE)
       Iwram_CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet),
                       128);
@@ -136,32 +154,32 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       Iwram_CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
                       128);
-  } else if (mode == 4) {
+  } else if (mode == STAT_BOOST_ZEPHYR) {
     Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
                                work->sheet + STAT_BOOST_PICTURE, 1, 1);
   } else {
     void *palette;
 
-    if (mode == 0)
+    if (mode == STAT_BOOST_IMPACT)
       Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet,
                                  work->sheet + STAT_BOOST_PICTURE, 1, 0);
     else
       Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet,
                                  work->sheet + STAT_BOOST_PICTURE, 1, 0);
-    if (mode == 0)
+    if (mode == STAT_BOOST_IMPACT)
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
-    else if (mode == 2 || mode == 4)
+    else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
       palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
-    else if (mode == 1)
+    else if (mode == STAT_BOOST_GUARD)
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
-  if (mode == 3)
+  if (mode == STAT_BOOST_GRANITE)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
                                work->sheet + STAT_BOOST_DJINNI, 1, 0);
-  else if (mode == 2 || mode == 4)
+  else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
                                work->sheet + STAT_BOOST_DJINNI, 1, 0);
   else
@@ -252,19 +270,19 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 
       // Turn the flares and move them 2 pixels a frame towards the centre
       // (distance is half the distance in pixels, the root's 8.8 >> 9); flare
-      // i appears i frames after the target's turn starts. Mode 0 turns them
-      // by pitch, mode 1 not at all, mode 2 by yaw, the others by yaw and
-      // roll, 1/64 turn a frame.
+      // i appears i frames after the target's turn starts. Impact turns them
+      // by pitch, Guard not at all, Ward by yaw, the others by yaw and roll,
+      // 1/64 turn a frame.
       if (frame > member * 8) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
         draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, drawFlags,
                             COMPOSITE_ADDITIVE);
         draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-        if (mode == 0) {
+        if (mode == STAT_BOOST_IMPACT) {
           SceneTransform_ApplyPitch(-frame << 10);
-        } else if (mode == 1) {
-        } else if (mode == 2) {
+        } else if (mode == STAT_BOOST_GUARD) {
+        } else if (mode == STAT_BOOST_WARD) {
           SceneTransform_ApplyYaw(frame << 10);
         } else {
           SceneTransform_ApplyYaw(frame << 10);
@@ -315,7 +333,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       }
 
       // The mode's picture, from frame 80.
-      if (mode == 0) {
+      if (mode == STAT_BOOST_IMPACT) {
         // Seven 24x40 frames, 4 frames each.
         if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
           s32 cell = (frame - member * 8 - 80) / 4 % 7;
@@ -326,7 +344,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
                   screen.x - 12, screen.y - 20, 24, 40);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
-      } else if (mode == 3 || mode == 5) {
+      } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH) {
         // Six 32x64 frames, 4 frames each.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 4 % 6;
@@ -337,7 +355,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
                   screen.x - 16, screen.y - 32, 32, 64);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
-      } else if (mode == 4) {
+      } else if (mode == STAT_BOOST_ZEPHYR) {
         // 64x32 frames, 2 frames each, mirrored below into 64x64.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 2 % 6;
@@ -379,14 +397,14 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 // Blast (eruption.c).
 
 /// A dagger appears over each target and breaks into shards that fade through
-/// darker copies, in the pink burst's colours (style 0).
+/// darker copies, in the pink burst's colours.
 ///
 /// Abilities: Dull, Blunt (BATTLE_FX_DULL).
 void BattleFx_RunDull(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatReduction(effect, 0);
+  BattleFx_RunStatReduction(effect, STAT_REDUCTION_DULL);
 }
 /// A shield appears over each target and breaks into shards that fade through
-/// darker copies, in the glow orb's colours (style 1).
+/// darker copies, in the glow orb's colours.
 ///
 /// Abilities: Impair, Debilitate (BATTLE_FX_IMPAIR); none
 /// (BATTLE_FX_IMPAIR_47).
@@ -394,20 +412,20 @@ void BattleFx_RunDull(struct BattleEffectArgument *effect) {
 /// Meltdown's casting impact (CASTING_IMPACT_IMPACT_MELTDOWN) also ends by
 /// calling it.
 void BattleFx_RunImpair(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatReduction(effect, 1);
+  BattleFx_RunStatReduction(effect, STAT_REDUCTION_IMPAIR);
 }
 /// A shield appears over each target and breaks into fading shards, in the pink
-/// burst's colours (style 2).
+/// burst's colours.
 ///
 /// Abilities: Weaken, Enfeeble (BATTLE_FX_WEAKEN).
 void BattleFx_RunWeaken(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatReduction(effect, 2);
+  BattleFx_RunStatReduction(effect, STAT_REDUCTION_WEAKEN);
 }
-/// Breaks the shield picture into fading shards with style 3, which plays as
-/// style 2 does. No effect table entry reaches it.
+/// Breaks the shield picture into fading shards as Weaken does
+/// (STAT_REDUCTION_UNUSED). No effect table entry reaches it.
 UNUSED void
-BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
-  BattleFx_RunStatReduction(effect, 3);
+BattleFx_RunUnusedStatReduction(struct BattleEffectArgument *effect) {
+  BattleFx_RunStatReduction(effect, STAT_REDUCTION_UNUSED);
 }
 /// The shard picture in the sheet, followed by seven copies of it, each
 /// with its colour levels capped 7 lower than the one before.
@@ -416,19 +434,18 @@ BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
 #define STAT_REDUCTION_SHARDS 24       ///< shards drawn for each target
 #define STAT_REDUCTION_SLOTS 32        ///< particles reserved for each target
 
-/// A dagger (mode 0) or a shield (other modes) appears over each target, 4
+/// A dagger (Dull) or a shield (the others) appears over each target, 4
 /// frames apart, and then breaks into 24 shards that fly off and fade out
 /// through the darker copies. In each target's own frames the picture plays
 /// until about frame 24, then breaks with a sound; the shards darken from frame
 /// 29 and are gone after frame 60.
 ///
-/// Reached through Dull, Impair, Weaken and the unused mode 3 wrapper above.
+/// Reached through Dull, Impair, Weaken and the unused wrapper above.
 /// Copies the mode's palette over the first 128 bytes of BG palette RAM,
 /// writes REG_BG2PA and REG_BG2X.
 ///
 /// effect: the targets.
-/// mode: 0 the dagger and the pink burst palette, 1 the shield and the
-///       glow orb palette, 2 and 3 the shield and the pink burst palette.
+/// mode: the picture and its palette (enum StatReductionMode).
 void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -449,13 +466,13 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(0);
-  if (mode == 0)
+  if (mode == STAT_REDUCTION_DULL)
     Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 1);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet, work->sheet, 1, 1);
-  if (mode == 0)
+  if (mode == STAT_REDUCTION_DULL)
     paletteId = (s32)&ResourceId_PinkBurstSheet;
-  else if (mode == 1)
+  else if (mode == STAT_REDUCTION_IMPAIR)
     paletteId = (s32)&ResourceId_GlowOrbSheet;
   else
     paletteId = (s32)&ResourceId_PinkBurstSheet;
@@ -496,7 +513,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
 
     angle = Random16() & 0xffff;
     shard->x = 0;
-    if (mode == 0) {
+    if (mode == STAT_REDUCTION_DULL) {
       shard->y = ((i & 31) / 4 * 6 - 10) << 16;
       shard->z = (i % 4 * 2 - 2) << 16;
     } else {
@@ -542,7 +559,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
         EffectPosition_ProjectPoint(origin, &screen);
         x = screen.x + xOffset;
         y = screen.y;
-        if (mode == 0) {
+        if (mode == STAT_REDUCTION_DULL) {
           if (targetFrame <= 26)
             blitters[0](canvas, work->sheet + targetFrame / 4 % 7 * (24 * 40),
                         x - 12, y - 20, 24, 40);

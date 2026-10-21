@@ -64,8 +64,8 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   // djinnY.
   if (work->effect->prelude == 1)
     BattleFx_RunDjinniEntrance(effect, mode,
-                               work->effect->side ^ work->effect->prelude, 0,
-                               &djinnX, &djinnY);
+                               work->effect->side ^ work->effect->prelude,
+                               DJINNI_ANCHOR_OVER_TARGET, &djinnX, &djinnY);
   // work->sheet: the column's strip and the glow pictures (EarthWallSheet)
   // from 0, then the motes and the Djinni.
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);

@@ -43,9 +43,9 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  // A Mercury Djinni (mode 1) appears over the user (anchor 2).
-  BattleFx_RunDjinniEntrance(effect, 1, work->effect->side, 2, &screenX,
-                             &screenY);
+  // A Mercury Djinni appears over the user.
+  BattleFx_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
+                             DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
@@ -205,9 +205,9 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
-  // A Venus Djinni (mode 0) appears over the user (anchor 2).
-  BattleFx_RunDjinniEntrance(effect, 0, work->effect->side, 2, &screenX,
-                             &screenY);
+  // A Venus Djinni appears over the user.
+  BattleFx_RunDjinniEntrance(effect, ELEMENT_VENUS, work->effect->side,
+                             DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->side == 1)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,

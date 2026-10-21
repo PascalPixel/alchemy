@@ -160,8 +160,8 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   if (work->effect->prelude == 1)
-    BattleFx_RunDjinniEntrance(effect, 3, work->effect->side, 0, &originX,
-                               &originY);
+    BattleFx_RunDjinniEntrance(effect, ELEMENT_JUPITER, work->effect->side,
+                               DJINNI_ANCHOR_OVER_TARGET, &originX, &originY);
   REG_BG2PA = Q_8_8(1);
 
   // Setup. The rune, the flares at 0x1000 and the Djinni at 0x2000, in the

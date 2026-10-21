@@ -200,6 +200,17 @@ enum BattleFxKind {
   BATTLE_FX_KIND_COUNT = 408 ///< one more than the last kind
 };
 
+/// An effect's variant: the strength of the ability that plays it, from bits
+/// 12 and 13 of its row of actflags.tsv. Most abilities come in threes that
+/// share an effect, such as Quake, Earthquake and Quake Sphere, and a double
+/// or triple blow adds one or two. A runner that sets its own variants names
+/// them beside it.
+enum EffectVariant {
+  EFFECT_VARIANT_BASIC,    ///< Quake, Douse, Ply
+  EFFECT_VARIANT_STRONGER, ///< Earthquake, Drench, Ply Well
+  EFFECT_VARIANT_STRONGEST ///< Quake Sphere, Deluge, Pure Ply
+};
+
 /// The handlers by kind less one (effect_table.c); BattleFx_RunTableEffect
 /// calls the one an effect's kind selects.
 extern BattleFxHandler gBattleFx_EffectHandlers[];
@@ -437,7 +448,7 @@ void BattleFx_RunPly(struct BattleEffectArgument *effect);
 void BattleFx_RunWish(struct BattleEffectArgument *effect);
 void BattleFx_RunCure(struct BattleEffectArgument *effect);
 void BattleFx_RunCurePoison(struct BattleEffectArgument *effect);
-void BattleFx_RunHealingMotesMode4(struct BattleEffectArgument *effect);
+void BattleFx_RunUnusedRestoreMotes(struct BattleEffectArgument *effect);
 void BattleFx_RunTonic(struct BattleEffectArgument *effect);
 void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect);
 void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode);
@@ -453,7 +464,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode);
 void BattleFx_RunDull(struct BattleEffectArgument *effect);
 void BattleFx_RunImpair(struct BattleEffectArgument *effect);
 void BattleFx_RunWeaken(struct BattleEffectArgument *effect);
-void BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect);
+void BattleFx_RunUnusedStatReduction(struct BattleEffectArgument *effect);
 void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode);
 
 // flare.c
@@ -510,8 +521,9 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect);
 void BattleFx_RunBolt(struct BattleEffectArgument *effect);
 
 // projectiles.c
-void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
-                                s32 side, s32 anchor, s32 *outX, s32 *outY);
+void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect,
+                                s32 element, s32 side, s32 anchor, s32 *outX,
+                                s32 *outY);
 void BattleFx_RunSlash(struct BattleEffectArgument *effect);
 void BattleFx_RunShuriken(struct BattleEffectArgument *effect);
 void BattleFx_RunCrazyVoice(struct BattleEffectArgument *effect);

@@ -18,15 +18,14 @@
 /// PARTICLES 0 to 63 for the sparks and work->particles for the motes.
 ///
 /// effect: the user and the targets.
-/// mode: the Djinni: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter; 4 to 7 the same
-///       over 84 frames instead of 64.
+/// element: the Djinni's element, plus DJINNI_ENTRANCE_LONG for the 84-frame
+///          entrance instead of the 64-frame one.
 /// side: 1 mirrors the pictures.
-/// anchor: where the Djinni appears: 0 over the first target, 1 at the
-///         first target's x at depth 0, 2 over the user, 3 at the user's x
-///         at depth 0, 4 in the centre of the field.
+/// anchor: where the Djinni appears (enum DjinniEntranceAnchor).
 /// outX, outY: receive the Djinni's last screen position.
-void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
-                                s32 side, s32 anchor, s32 *outX, s32 *outY) {
+void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect,
+                                s32 element, s32 side, s32 anchor, s32 *outX,
+                                s32 *outY) {
   s32 center[3];
   s32 goal[3];
   s32 step[3];
@@ -52,20 +51,20 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
   BattleFx_BeginCanvasLayer(0);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  if (mode > 3) {
-    mode -= 4;
+  if (element > ELEMENT_JUPITER) {
+    element -= DJINNI_ENTRANCE_LONG;
     frameCount = 84;
   } else {
     frameCount = 64;
   }
-  switch (mode) {
-  case 0:
+  switch (element) {
+  case ELEMENT_VENUS:
     sheetId = (s32)&ResourceId_VenusDjinnSmallSheet;
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     sheetId = (s32)&ResourceId_MercuryDjinnSmallSheet;
     break;
-  case 2:
+  case ELEMENT_MARS:
     sheetId = (s32)&ResourceId_MarsDjinnSmallSheet;
     break;
   default:
@@ -109,22 +108,22 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
   // The centre moves from the user to the goal, 60 pixels up, over frames
   // 6 to 45.
   SET_VECTOR(center, user->x, 0, user->z);
-  // Every caller passes a literal anchor, 0, 1, 2 or 4 (Vine), so goal is
-  // always set before the interpolation starts; no caller passes 3.
+  // Every caller passes a literal anchor, so goal is always set before the
+  // interpolation starts; none passes DJINNI_ANCHOR_USER_X.
   switch (anchor) {
-  case 0:
+  case DJINNI_ANCHOR_OVER_TARGET:
     SET_VECTOR(goal, target->x, 0x3c0000, target->z);
     break;
-  case 1:
+  case DJINNI_ANCHOR_TARGET_X:
     SET_VECTOR(goal, target->x, 0x3c0000, 0);
     break;
-  case 2:
+  case DJINNI_ANCHOR_OVER_USER:
     SET_VECTOR(goal, user->x, 0x3c0000, user->z);
     break;
-  case 3:
+  case DJINNI_ANCHOR_USER_X:
     SET_VECTOR(goal, user->x, 0x3c0000, 0);
     break;
-  case 4:
+  case DJINNI_ANCHOR_CENTRE:
     SET_VECTOR(goal, 0, 0x3c0000, 0);
     break;
   }
@@ -444,8 +443,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   else
     BattleFx_BeginCanvasLayer(1);
   if (work->effect->prelude == 1)
-    BattleFx_RunDjinniEntrance(effect, 1, work->effect->side, 2, &screenX,
-                               &screenY);
+    BattleFx_RunDjinniEntrance(effect, ELEMENT_MERCURY, work->effect->side,
+                               DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
 
   // The main blitter, mirrored on side 1: brightest-wins for Cutting Edge,
   // additive for the others.

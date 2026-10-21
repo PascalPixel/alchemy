@@ -316,4 +316,17 @@ enum CanvasTransferMode {
     *(volatile s16 *)((u8 *)BG_CANVAS_MAP + (offset)) = pair;                  \
   }
 
+/// Added to BattleFx_RunDjinniEntrance's element for the long entrance: 84
+/// frames instead of 64, ending in a burst of motes.
+#define DJINNI_ENTRANCE_LONG NUM_ELEMENTS
+
+/// Where BattleFx_RunDjinniEntrance's Djinni appears.
+enum DjinniEntranceAnchor {
+  DJINNI_ANCHOR_OVER_TARGET, ///< over the first target
+  DJINNI_ANCHOR_TARGET_X,    ///< at the first target's x, at depth 0
+  DJINNI_ANCHOR_OVER_USER,   ///< over the user
+  DJINNI_ANCHOR_USER_X,      ///< at the user's x, at depth 0; no caller
+  DJINNI_ANCHOR_CENTRE       ///< in the centre of the field
+};
+
 #endif // ALCHEMY_EFFECT_INTERNAL_H

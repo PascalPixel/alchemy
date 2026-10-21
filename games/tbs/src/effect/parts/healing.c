@@ -16,6 +16,18 @@
 
 #define HEALING_DJINNI_CELLS 0x1000 ///< the djinni picture in the sheet
 
+/// The healing motes' modes (BattleFx_RunHealingMotes), each named for the
+/// first ability that plays it.
+enum HealingMotesMode {
+  HEALING_MODE_PLY,         ///< swirling sparkles, the canvas at its own width
+  HEALING_MODE_WISH,        ///< motes tumbling in from all around
+  HEALING_MODE_CURE,        ///< a ring of motes below each target
+  HEALING_MODE_CURE_POISON, ///< sparkles that go out one by one
+  HEALING_MODE_RESTORE,     ///< the same, turning on a second axis
+  HEALING_MODE_TONIC,       ///< played exactly as HEALING_MODE_RESTORE
+  HEALING_MODE_PSY_CRYSTAL  ///< motes in the Mars Djinni palette
+};
+
 /// Sparkles of light swirl around each target and close in on it, in the ice
 /// shard's or ice block's colours, with the canvas shown at its own width and
 /// centred on the first target.
@@ -23,7 +35,7 @@
 /// Abilities: Ply, Ply Well, Pure Ply, Herb, Nut, Vial, Potion, Soothing Water
 /// (BATTLE_FX_PLY); Fizz (BATTLE_FX_PLY_204).
 void BattleFx_RunPly(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 0);
+  BattleFx_RunHealingMotes(effect, HEALING_MODE_PLY);
 }
 /// Healing motes tumble in on each target from all around it.
 ///
@@ -31,7 +43,7 @@ void BattleFx_RunPly(struct BattleEffectArgument *effect) {
 /// (BATTLE_FX_WISH_44); Reflect (BATTLE_FX_WISH_45); Spritz
 /// (BATTLE_FX_WISH_206).
 void BattleFx_RunWish(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 1);
+  BattleFx_RunHealingMotes(effect, HEALING_MODE_WISH);
 }
 /// A ring of healing motes below each target closes in on it, in the blast
 /// sheet's colours.
@@ -39,42 +51,43 @@ void BattleFx_RunWish(struct BattleEffectArgument *effect) {
 /// Abilities: Cure, Cure Well, Potent Cure, Corn (BATTLE_FX_CURE); Worms
 /// (BATTLE_FX_CURE_352).
 void BattleFx_RunCure(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 2);
+  BattleFx_RunHealingMotes(effect, HEALING_MODE_CURE);
 }
 /// Sparkles twinkle around each target, four more a frame, and go out one by
 /// one instead of closing in.
 ///
 /// Abilities: Cure Poison, Restore, Antidote, Elixir (BATTLE_FX_CURE_POISON).
 ///
-/// Cure Poison and Antidote (variant 0) play mode 3; Restore and Elixir
-/// (variant 1) play mode 4, whose sparkles also turn on a second axis.
+/// Cure Poison and Antidote play HEALING_MODE_CURE_POISON; Restore and Elixir,
+/// the stronger variant, play HEALING_MODE_RESTORE, whose sparkles also turn
+/// on a second axis.
 void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
-  if (effect->variant == 0) {
-    BattleFx_RunHealingMotes(effect, 3);
+  if (effect->variant == EFFECT_VARIANT_BASIC) {
+    BattleFx_RunHealingMotes(effect, HEALING_MODE_CURE_POISON);
     return;
   }
-  BattleFx_RunHealingMotes(effect, 4);
+  BattleFx_RunHealingMotes(effect, HEALING_MODE_RESTORE);
 }
 
-/// Plays the healing motes in mode 4, the sparkles Cure Poison shows for
-/// variants other than 0 (Restore and Elixir). No effect table entry reaches
-/// this one.
-UNUSED void BattleFx_RunHealingMotesMode4(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 4);
+/// Plays the healing motes as Restore and Elixir show them
+/// (HEALING_MODE_RESTORE). No effect table entry reaches this one.
+UNUSED void
+BattleFx_RunUnusedRestoreMotes(struct BattleEffectArgument *effect) {
+  BattleFx_RunHealingMotes(effect, HEALING_MODE_RESTORE);
 }
 /// Sparkles twinkle around each target, turning on two axes, and go out one by
-/// one; the runner plays Tonic's mode 5 exactly as it plays mode 4.
+/// one; the runner plays HEALING_MODE_TONIC exactly as HEALING_MODE_RESTORE.
 ///
 /// Abilities: Tonic (BATTLE_FX_TONIC).
 void BattleFx_RunTonic(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 5);
+  BattleFx_RunHealingMotes(effect, HEALING_MODE_TONIC);
 }
 /// Healing motes gather around each target in the Mars Djinni palette; with a
 /// prelude, a Mars Djinni appears first.
 ///
 /// Abilities: Psy Crystal, Adept Ring, Ember (BATTLE_FX_PSY_CRYSTAL).
 void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
-  BattleFx_RunHealingMotes(effect, 6);
+  BattleFx_RunHealingMotes(effect, HEALING_MODE_PSY_CRYSTAL);
 }
 #define HEALING_MOTES 512 ///< motes in PARTICLES
 #define HEALING_SLOTS 64  ///< particles reserved for each target
@@ -88,26 +101,26 @@ void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
 /// every 8 frames, with the recovery sound on each target's 20th frame and a
 /// tint on its 36th.
 ///
-/// Called by the wrappers above: BattleFx_RunPly (mode 0), BattleFx_RunWish
-/// (1), BattleFx_RunCure (2), BattleFx_RunCurePoison (3 or 4),
-/// BattleFx_RunTonic (5) and BattleFx_RunPsyCrystal (6).
+/// Called by the wrappers above, each with its enum HealingMotesMode.
 ///
 /// Sets work->effect, overwrites PARTICLES 0 to 511 and the first 64 colours
 /// of the background palette, decodes into the battle sheet slot and
-/// work->sheet, and in mode 0 writes REG_BG2X and REG_BG2PA. After a djinni
-/// prelude it clears effect->variant, so the variant's mote count and
-/// resource fall back to variant 0's. The transfer callback it adds is
+/// work->sheet, and for Ply writes REG_BG2X and REG_BG2PA. After a djinni
+/// prelude it clears effect->variant, so the mote count and resource fall
+/// back to the basic variant's. The transfer callback it adds is
 /// removed again at the end, with the blitters and the canvas layer.
 ///
-/// effect: the targets. With prelude 1, a djinni (Mars in mode 6, Mercury
-///         otherwise) appears first, sways and rises. variant picks the
-///         motes per target (0: 32, 2: 128, others: 64) and, in modes 0,
-///         1, 3, 4 and 5, the resource (0: ice shard, others: ice block).
-/// mode: how the motes scatter and turn. Only mode 0 shows the canvas at
-///       its own width, centred on the first target. Modes 3, 4 and 5 put
-///       the motes out one by one instead of drawing them in; modes 0, 3,
-///       4 and 5 draw sparkle dots. Mode 6 takes the Mars resource, mode 2
-///       the blast resource.
+/// effect: the targets. With prelude 1, a djinni (Mars for Psy Crystal,
+///         Mercury otherwise) appears first, sways and rises. variant picks
+///         the motes per target (32 for the basic variant, 128 for the
+///         strongest, otherwise 64) and, in every mode but Cure and Psy
+///         Crystal, the resource (the ice shard for the basic variant, the
+///         ice block otherwise).
+/// mode: how the motes scatter and turn. Only Ply shows the canvas at its
+///       own width, centred on the first target. Cure Poison, Restore and
+///       Tonic put the motes out one by one instead of drawing them in;
+///       they and Ply draw sparkle dots. Psy Crystal takes the Mars
+///       resource, Cure the blast resource.
 void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   void **slots;
   void **cursor;
@@ -136,25 +149,25 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // Bring out the djinni, Mars (entrance mode 2) for mode 6 and Mercury (1)
-  // otherwise; origin receives where it ends. Modes 0 and 6 place it over
-  // the first target (anchor 0), the others at the first target's x at
-  // depth 0 (anchor 1).
+  // Bring out the djinni, Mars for Psy Crystal and Mercury otherwise; origin
+  // receives where it ends. Ply and Psy Crystal place it over the first
+  // target, the others at the first target's x at depth 0.
   if (work->effect->prelude == 1) {
-    s32 kind = mode == 6 ? 2 : 1;
+    s32 element =
+        mode == HEALING_MODE_PSY_CRYSTAL ? ELEMENT_MARS : ELEMENT_MERCURY;
 
-    if (mode == 6 || mode == 0)
-      BattleFx_RunDjinniEntrance(effect, kind, work->effect->side, 0, &originX,
-                                 &originY);
+    if (mode == HEALING_MODE_PSY_CRYSTAL || mode == HEALING_MODE_PLY)
+      BattleFx_RunDjinniEntrance(effect, element, work->effect->side,
+                                 DJINNI_ANCHOR_OVER_TARGET, &originX, &originY);
     else
-      BattleFx_RunDjinniEntrance(effect, kind, work->effect->side, 1, &originX,
-                                 &originY);
-    work->effect->variant = 0;
+      BattleFx_RunDjinniEntrance(effect, element, work->effect->side,
+                                 DJINNI_ANCHOR_TARGET_X, &originX, &originY);
+    work->effect->variant = EFFECT_VARIANT_BASIC;
   }
 
-  // Mode 0 shows the canvas at its own width, shifted so the first target
+  // Ply shows the canvas at its own width, shifted so the first target
   // is at its centre (64); the others keep it at double width.
-  if (mode == 0) {
+  if (mode == HEALING_MODE_PLY) {
     EffectPosition_ProjectScaledBattler(work->effect->actors[0], &base);
     canvasShiftX = 64 - base.x;
     REG_BG2X = canvasShiftX << 8;
@@ -167,12 +180,13 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   // Pictures, and the resource whose first 128 bytes are the palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work->sheet, 0, 0);
-  if (mode <= 1 || mode == 3 || mode == 4 || mode == 5) {
-    if (work->effect->variant == 0)
+  if (mode <= HEALING_MODE_WISH || mode == HEALING_MODE_CURE_POISON ||
+      mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {
+    if (work->effect->variant == EFFECT_VARIANT_BASIC)
       resource = Resource_GetTableEntry((s32)&ResourceId_IceShardSheet);
     else
       resource = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
-  } else if (mode == 6) {
+  } else if (mode == HEALING_MODE_PSY_CRYSTAL) {
     resource = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
   } else {
     resource = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
@@ -182,12 +196,12 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   // The djinni: 40x40 at the canvas's own width, the small 20x40 picture at
   // double width.
   if (doubleWidth == 0) {
-    if (mode == 6)
+    if (mode == HEALING_MODE_PSY_CRYSTAL)
       resource = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
       resource = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
   } else {
-    if (mode == 6)
+    if (mode == HEALING_MODE_PSY_CRYSTAL)
       resource = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet);
     else
       resource =
@@ -199,9 +213,9 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                                   draw = blit); // [0] maximum, [1] additive
 
   // Scatter the motes around the centre (16.16, relative to the point the
-  // frame loop centres on). Modes 3 to 5 end 16 frames sooner than the
-  // others, as their motes go out rather than travel in.
-  if (mode == 0 || mode == 6) {
+  // frame loop centres on). Cure Poison, Restore and Tonic end 16 frames sooner
+  // than the others, as their motes go out rather than travel in.
+  if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
     // x and z within 64 pixels, y 32 to 95 pixels up.
     for (i = 0; i != HEALING_MOTES; i++) {
       struct EffectStep *spark = &PARTICLES[i];
@@ -212,7 +226,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
       spark->variant = 0;
     }
     frameCount = work->effect->count * HEALING_STAGGER + 88;
-  } else if (mode == 1) {
+  } else if (mode == HEALING_MODE_WISH) {
     // All three within 64 pixels.
     for (i = 0; i != HEALING_MOTES; i++) {
       struct EffectStep *spark = &PARTICLES[i];
@@ -223,7 +237,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
       spark->variant = 0;
     }
     frameCount = work->effect->count * HEALING_STAGGER + 88;
-  } else if (mode == 2) {
+  } else if (mode == HEALING_MODE_CURE) {
     // A ring of radius 32 to 95 pixels, 50 pixels down. velocityY is set,
     // but the frame loop moves the motes only along the line to the centre.
     for (i = 0; i != HEALING_MOTES; i++) {
@@ -237,7 +251,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
       spark->variant = 0;
     }
     frameCount = work->effect->count * HEALING_STAGGER + 88;
-  } else if (mode == 3) {
+  } else if (mode == HEALING_MODE_CURE_POISON) {
     // x and z within 64 pixels, y within 32.
     for (i = 0; i != HEALING_MOTES; i++) {
       struct EffectStep *spark = &PARTICLES[i];
@@ -261,11 +275,12 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     frameCount = work->effect->count * HEALING_STAGGER + 72;
   }
 
-  // Motes for each target: 32 for variant 0, 128 for variant 2, else 64.
+  // Motes for each target: 32 for the basic variant, 128 for the strongest,
+  // else 64.
   motesPerTarget = 64;
-  if (work->effect->variant == 0)
+  if (work->effect->variant == EFFECT_VARIANT_BASIC)
     motesPerTarget = 32;
-  else if (work->effect->variant == 2)
+  else if (work->effect->variant == EFFECT_VARIANT_STRONGEST)
     motesPerTarget = 128;
   // Each transfer keeps 75% of every canvas pixel, so the motes leave
   // trails.
@@ -322,30 +337,31 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                                   HEALING_TINT_FRAMES);
 
       // From the target's start, its frame of reference turns 1/128 of a
-      // circle a frame. Mode 2 offsets the yaw by 40 frames a target where
-      // the others offset it by their start, and mode 1 does not offset it.
+      // circle a frame. Cure offsets the yaw by 40 frames a target where the
+      // others offset it by their start, and Wish does not offset it.
       if (frame > start) {
-        if (mode == 0 || mode == 6) {
+        if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
           SceneTransform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
-        } else if (mode == 1) {
+        } else if (mode == HEALING_MODE_WISH) {
           SceneTransform_ApplyPitch(frame << 9);
           SceneTransform_ApplyRoll(frame << 9);
-        } else if (mode == 2) {
+        } else if (mode == HEALING_MODE_CURE) {
           SceneTransform_ApplyYaw((frame - member * 40) << 9);
-        } else if (mode == 3) {
+        } else if (mode == HEALING_MODE_CURE_POISON) {
           SceneTransform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
         } else {
           SceneTransform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
           SceneTransform_ApplyPitch((frame - member * HEALING_STAGGER) << 9);
         }
 
-        // Four motes appear each frame; in modes 3, 4 and 5 mote i goes out at
-        // frame start + i / 2 + 32.
+        // Four motes appear each frame; for Cure Poison, Restore and Tonic mote
+        // i goes out at frame start + i / 2 + 32.
         for (i = 0; i != motesPerTarget; i++) {
           struct EffectStep *spark = &PARTICLES[member * HEALING_SLOTS + i];
           s32 endFrame;
 
-          if (mode == 3 || mode == 4 || mode == 5)
+          if (mode == HEALING_MODE_CURE_POISON ||
+              mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC)
             endFrame = start + i / 2 + 32;
           else
             endFrame = 0x10000;
@@ -361,19 +377,21 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
               s32 size;
 
               EffectPosition_ProjectPoint(spark, &screen);
-              if (mode == 0)
+              if (mode == HEALING_MODE_PLY)
                 screen.x += canvasShiftX;
               else
                 screen.x >>= 1;
               screen.y += 16;
 
-              // Size 3 to 1 over depths 314 to 634 (mode 0 cycles through 9
+              // Size 3 to 1 over depths 314 to 634 (Ply cycles through 9
               // sizes).
               CLAMP(screen.depth, 314, 634);
               size = 3 - (screen.depth - 314) / 128;
-              if (mode == 0)
+              if (mode == HEALING_MODE_PLY)
                 size = (i * 4 + frame) % 9;
-              if (mode == 0 || mode == 3 || mode == 4 || mode == 5) {
+              if (mode == HEALING_MODE_PLY ||
+                  mode == HEALING_MODE_CURE_POISON ||
+                  mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {
                 u8 *cell = work->sheet + gBattleFx_PuffCells[size];
                 u32 edge = gBattleFx_PuffSizes[size];
                 u32 half = edge >> 1;
@@ -385,9 +403,10 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                                  size);
               }
 
-              // Modes 0 to 2 and 6 draw the mote in; 3 to 5 leave it where
-              // it is until it goes out.
-              if (mode <= 2 || mode == 6) {
+              // Ply, Wish, Cure and Psy Crystal draw the mote in; the others
+              // leave it where it is until it goes out.
+              if (mode <= HEALING_MODE_CURE ||
+                  mode == HEALING_MODE_PSY_CRYSTAL) {
                 spark->x -= spark->x / distance;
                 spark->y -= spark->y / distance;
                 spark->z -= spark->z / distance;

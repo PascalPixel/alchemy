@@ -136,8 +136,9 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->prelude == 1)
-    BattleFx_RunDjinniEntrance(effect, 7, work->effect->side, 2, &screenX,
-                               &screenY);
+    BattleFx_RunDjinniEntrance(effect, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
+                               work->effect->side, DJINNI_ANCHOR_OVER_USER,
+                               &screenX, &screenY);
 
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 

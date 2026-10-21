@@ -245,8 +245,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Move on the Board Walk's two stone pillars does nothing.
 static void Event_IgnoreMove(void) {}
 
-/// Walking into a stone pillar in Colosseum Final 2 (trigger 21) pushes the
-/// obstacle immediately ahead of the selected actor.
+/// Walking into a stone pillar pushes it. In Colosseum Final 2, walking into
+/// one at trigger 21 pushes the obstacle immediately ahead of the selected
+/// actor.
 static void Event_PushPillar(void) {
   ColosseumSatrageMatch_PushAdjacentObstacle();
 }
@@ -400,8 +401,9 @@ static void Event_GrowPlant(void) {
   }
 }
 
-/// Walking south into the obstacle at trigger 30 in Colosseum Final 2 runs the
-/// rising-object sequence for the actor touching it.
+/// The selected actor jumps down off the ledge by an obstacle. Walking south
+/// into the obstacle at trigger 30 in Colosseum Final 2 plays the hop the field
+/// plays at any ledge (FieldActor_JumpDownLedge) for the actor touching it.
 static void Event_RunRisingSequence(void) {
   FieldActor_JumpDownLedge(gGameState.selectedActor, 6, 0);
 }
@@ -562,24 +564,28 @@ static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
   Map_CopyCellAttributes(13, 28, 4, 1, 18, cell);
 }
 
-/// The Board Walk's logs: walking into the western one from the east (trigger
-/// 24) or the west (25), or into the eastern one from the east (28) or the west
-/// (27), rolls it the way the leader walks.
+/// Walking west into the Board Walk's western log rolls it west. Walking into
+/// the western log from the east (trigger 24) or the west (25), or into the
+/// eastern one from the east (28) or the west (27), rolls it the way the leader
+/// walks.
 static void Event_RollWestLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_WEST, 29, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
+/// Walking east into the Board Walk's western log (trigger 25) rolls it east.
 static void Event_RollWestLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_WEST, 33, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
+/// Walking west into the Board Walk's eastern log (trigger 28) rolls it west.
 static void Event_RollEastLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_EAST, 45, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
+/// Walking east into the Board Walk's eastern log (trigger 27) rolls it east.
 static void Event_RollEastLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_EAST, 49, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();

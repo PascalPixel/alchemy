@@ -29,13 +29,13 @@ extern s32 gTunnelRuins_DouseSplashScript[];
 extern u16 gTunnelRuins_DoorOpenSteps[];
 extern u16 gTunnelRuins_DoorCloseSteps[];
 extern struct SceneEntrance gTunnelRuinsEntrancesOther[];
-extern struct SceneEntrance gTunnelRuinsEntrances1[];
-extern struct SceneEntrance gTunnelRuinsEntrances2[];
-extern struct SceneRegion gTunnelRuinsRegions2[];
+extern struct SceneEntrance gTunnelRuinsGreatStatueEntrances[];
+extern struct SceneEntrance gTunnelRuinsLadyStatuesEntrances[];
+extern struct SceneRegion gTunnelRuinsLadyStatuesRegions[];
 extern u32 gTunnelRuinsExits[];
-extern struct ScenePlacement gTunnelRuinsPlacements1[];
+extern struct ScenePlacement gTunnelRuinsGreatStatuePlacements[];
 extern struct ScenePlacement gTunnelRuinsPlacementsOther[];
-extern struct SceneEvent gTunnelRuinsEvents1[];
+extern struct SceneEvent gTunnelRuinsGreatStatueEvents[];
 extern struct SceneEvent gTunnelRuinsEventsOther[];
 
 #endif

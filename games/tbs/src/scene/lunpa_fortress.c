@@ -1,8 +1,8 @@
 /// @file
-/// Lunpa Fortress (LunpaFortressGroundFloor to 4, scenes 160 to 163), Dodonpa's
-/// fortress above Lunpa. All four scenes have the game's area name Lunpa
-/// Fortress: the first two are the fortress, the third and fourth the cave
-/// below it, where Hammet is held.
+/// Lunpa Fortress (SceneId_LunpaFortressGroundFloor to
+/// SceneId_LunpaFortressToadonpa), Dodonpa's fortress above Lunpa. All four
+/// scenes have the game's area name Lunpa Fortress: the first two are the
+/// fortress, the third and fourth the cave below it, where Hammet is held.
 ///
 /// Where it falls in the story: Dodonpa holds Master Hammet, the merchant lord
 /// of Kalay whose caravan Ivan traveled with, and keeps taking ransom from
@@ -14,19 +14,19 @@
 /// party arrives by decides which watchers run. Every return through the gates
 /// resets the fortress's puzzles and beaten guards.
 ///
-/// - LunpaFortressGroundFloor (scene 160), inside the fortress door
+/// - SceneId_LunpaFortressGroundFloor, inside the fortress door
 ///   (LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_GATES leads back out). An
 ///   entrance guard, two sentries, a guard to the north-east and a patrolling
 ///   guard keep watch. The people inside wonder where Dodonpa has gone, his men
-///   boast of the money Hammet brings, and a startled resident promises to
-///   keep quiet. Chests hold an Elixir, a Lucky Medal, a Mythril Circlet and
-///   100 coins, and a barrel a Vial.
+///   boast of the money Hammet brings, and a startled resident promises to keep
+///   quiet. Chests hold an Elixir, a Lucky Medal, a Mythril Circlet and 100
+///   coins, and a barrel a Vial.
 ///   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH and _NORTH
 ///   lead to LunpaFortressUpperFloor,
 ///   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE down to
 ///   LunpaFortressCave.
-/// - LunpaFortressUpperFloor (scene 161), where Donpa sleeps. A patrolling pair
-///   and a patrol to the east keep watch. Walking up to the west, east or hall
+/// - SceneId_LunpaFortressUpperFloor, where Donpa sleeps. A patrolling pair and
+///   a patrol to the east keep watch. Walking up to the west, east or hall
 ///   guard starts a battle with a Brigand, and walking up to three guards
 ///   together a battle with three (FLAG_LUNPA_FORTRESS_*_GUARD_BEATEN); beaten,
 ///   two of them send the party down to the cave for Hammet. The Cell Key hangs
@@ -35,7 +35,7 @@
 ///   Donpa lies asleep, worn out, beside his attendant, who tells how he
 ///   spoiled Dodonpa (place flag FLAG_PLACE_TEMP_13 once told); Dodonpa's
 ///   family and the women he brought here talk.
-/// - LunpaFortressCave (scene 162), the cave, whose ways are hidden. Whirlwind
+/// - SceneId_LunpaFortressCave, the cave, whose ways are hidden. Whirlwind
 ///   blows away what covers two switches and a passage
 ///   (FLAG_LUNPA_FORTRESS_*_UNCOVERED; FLAG_SCENE_TEMP_17 and _18 while the
 ///   switches are covered), the switches show in the wall only while Reveal
@@ -44,17 +44,17 @@
 ///   onto its hole, where it sinks (FLAG_LUNPA_FORTRESS_COLUMN_LOWERED).
 ///   LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST, _NORTH and
 ///   _NORTHWEST lead to LunpaFortressToadonpa.
-/// - LunpaFortressToadonpa (scene 163), deeper in the cave, where Hammet is
-///   held in a cell. A chest holds Power Bread. Walking into Hammet's cell
-///   (trigger 20, Event_FindHammet, FLAG_SCENE_TEMP_70) is the rescue: Hammet
-///   knows Ivan, Dodonpa arrives, gloats that Hammet is his money tree, pulls
-///   a lever and frees Toadonpa on them (FLAG_LUNPA_FORTRESS_TRAP_SEEN; a
-///   retry after a lost battle skips to the trap). The battle returns to
-///   FORTRESS4_ENTRANCE_AFTER_BATTLE, where Event_DonpaJudgesDodonpa follows:
-///   Toadonpa has fallen on Dodonpa, the party argues over his punishment
-///   until his father Donpa arrives, has him locked up and asks the party to
-///   leave as they came, since Dodonpa's men would free him; he has spread a
-///   rumor that the intruders failed and fled. It sets
+/// - SceneId_LunpaFortressToadonpa, deeper in the cave, where Hammet is held in
+///   a cell. A chest holds Power Bread. Walking into Hammet's cell (trigger 20,
+///   Event_FindHammet, FLAG_SCENE_TEMP_70) is the rescue: Hammet knows Ivan,
+///   Dodonpa arrives, gloats that Hammet is his money tree, pulls a lever and
+///   frees Toadonpa on them (FLAG_LUNPA_FORTRESS_TRAP_SEEN; a retry after a
+///   lost battle skips to the trap). The battle returns to
+///   LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE, where Event_DonpaJudgesDodonpa
+///   follows: Toadonpa has fallen on Dodonpa, the party argues over his
+///   punishment until his father Donpa arrives, has him locked up and asks the
+///   party to leave as they came, since Dodonpa's men would free him; he has
+///   spread a rumor that the intruders failed and fled. It sets
 ///   FLAG_LUNPA_TRADE_REOPENED, which changes all of Lunpa, and place flag
 ///   FLAG_PLACE_TEMP_01, and the party slips out with Hammet
 ///   (LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES, the gates'
@@ -102,108 +102,110 @@
 #include "item_ids.h"
 #include "objcmd.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "songs.h"
 
 /// LunpaFortressGroundFloor's people, numbered in the order of
-/// gLunpaFortressPlacements1 from ACTOR_FIRST_PLACED, past its first four rows
-/// (sprite 0x14, at the map's origin; see FIRST_ITEM_DISPLAY_ACTOR).
+/// gLunpaFortressGroundFloorPlacements from ACTOR_FIRST_PLACED, past its first
+/// four rows (in a chest's sprite, at the map's origin; see
+/// FIRST_ITEM_DISPLAY_ACTOR).
 enum {
-  FORTRESS1_ENTRANCE_GUARD = ACTOR_FIRST_PLACED + 4,
-  FORTRESS1_FIRST_SENTRY,
+  GROUND_FLOOR_ENTRANCE_GUARD = ACTOR_FIRST_PLACED + 4,
+  GROUND_FLOOR_FIRST_SENTRY,
   /// Wonders where Dodonpa has gone. "Where could Dodonpa be? He's not in his
   /// room, but he couldn't have left."
-  FORTRESS1_DODONPA_GOSSIP,
+  GROUND_FLOOR_DODONPA_GOSSIP,
   /// One of Dodonpa's men (the guards' sprite), feasting on Kalay's ransom.
   /// "Whee! Thanks to Hammet we can enjoy food and drink all day long!"
-  FORTRESS1_FEASTING_MAN,
+  GROUND_FLOOR_FEASTING_MAN,
   /// One of Dodonpa's men, drinking and boasting of Hammet. "He's a money tree
   /// for us, hic!"
-  FORTRESS1_BOASTING_MAN,
-  FORTRESS1_UPPER_HALL_GUARD,
-  FORTRESS1_PATROL_GUARD,
+  GROUND_FLOOR_BOASTING_MAN,
+  GROUND_FLOOR_UPPER_HALL_GUARD,
+  GROUND_FLOOR_PATROL_GUARD,
   /// Talks of Donpa's poor health. "Donpa is supposed to be old. I wonder
   /// what he's fighting with in the fortress."
-  FORTRESS1_DONPA_GOSSIP,
-  FORTRESS1_STARTLED_RESIDENT,
-  FORTRESS1_SECOND_SENTRY
+  GROUND_FLOOR_DONPA_GOSSIP,
+  GROUND_FLOOR_STARTLED_RESIDENT,
+  GROUND_FLOOR_SECOND_SENTRY
 };
 
 /// LunpaFortressUpperFloor's people and the Cell Key, numbered in the order of
-/// gLunpaFortressPlacements2 from ACTOR_FIRST_PLACED.
+/// gLunpaFortressUpperFloorPlacements from ACTOR_FIRST_PLACED.
 enum {
-  FORTRESS2_CELL_KEY = ACTOR_FIRST_PLACED,
-  FORTRESS2_FIRST_PATROL,
-  FORTRESS2_SECOND_PATROL,
-  FORTRESS2_HALL_GUARD,
+  UPPER_FLOOR_CELL_KEY = ACTOR_FIRST_PLACED,
+  UPPER_FLOOR_FIRST_PATROL,
+  UPPER_FLOOR_SECOND_PATROL,
+  UPPER_FLOOR_HALL_GUARD,
   /// The three guards who fight together.
-  FORTRESS2_GUARD_A,
-  FORTRESS2_GUARD_B,
-  FORTRESS2_GUARD_C,
-  FORTRESS2_WEST_GUARD,
-  FORTRESS2_EAST_GUARD,
-  FORTRESS2_HALL_PATROL,
+  UPPER_FLOOR_GUARD_A,
+  UPPER_FLOOR_GUARD_B,
+  UPPER_FLOOR_GUARD_C,
+  UPPER_FLOOR_WEST_GUARD,
+  UPPER_FLOOR_EAST_GUARD,
+  UPPER_FLOOR_HALL_PATROL,
   /// Dodonpa's wife, the "Mama" of his children, who LunpaFortressGroundFloor's
   /// people say is looking for him. "Do you know where Dodonpa is?"
-  FORTRESS2_DODONPAS_WIFE,
+  UPPER_FLOOR_DODONPAS_WIFE,
   /// Donpappa, Dodonpa's son, as he names himself to Mind Read: "When my
   /// Papa's gone, I, Donpappa, shall protect Lunpa myself."
-  FORTRESS2_DONPAPPA,
+  UPPER_FLOOR_DONPAPPA,
   /// Dodonpa's daughter. "Papa always gets friendly with the ladies when
   /// Mama's not lookin'."
-  FORTRESS2_DODONPAS_DAUGHTER,
+  UPPER_FLOOR_DODONPAS_DAUGHTER,
   /// Pities Donpappa. "Dodonpa's child is so well behaved, I can't believe
   /// he's his father's son!"
-  FORTRESS2_DONPAPPA_GOSSIP,
+  UPPER_FLOOR_DONPAPPA_GOSSIP,
   /// Fears for Donpa. "Poor, poor Donpa. Dodonpa's behavior is driving him
   /// into despair."
-  FORTRESS2_DONPA_WORRIER,
+  UPPER_FLOOR_DONPA_WORRIER,
   /// One of the women Dodonpa has brought to the fortress. "Nearly all of
   /// these women were brought here against their will, like me."
-  FORTRESS2_CAPTIVE_WOMAN,
-  FORTRESS2_DONPA,
-  FORTRESS2_ATTENDANT,
-  FORTRESS2_TONIC ///< Tonic, a Mercury Djinni, Donpa's reward
+  UPPER_FLOOR_CAPTIVE_WOMAN,
+  UPPER_FLOOR_DONPA,
+  UPPER_FLOOR_ATTENDANT,
+  UPPER_FLOOR_TONIC ///< Tonic, a Mercury Djinni, Donpa's reward
 };
 
 /// LunpaFortressCave's covers and crates, numbered in the order of
-/// gLunpaFortressPlacements3 from ACTOR_FIRST_PLACED.
+/// gLunpaFortressCavePlacements from ACTOR_FIRST_PLACED.
 enum {
-  FORTRESS3_FIRST_SWITCH_COVER = ACTOR_FIRST_PLACED,
-  FORTRESS3_PASSAGE_COVER,
-  FORTRESS3_SECOND_SWITCH_COVER,
-  /// An invisible actor (sprite 0x16) at (504, 168), its sprite hidden by
-  /// LunpaFortress_Initialize3; no event names it. XXX: what it stands in for
-  /// is not known.
-  FORTRESS3_INVISIBLE_ACTOR,
-  /// A stack of wooden crates (sprite 0xf1, the crates at the Bilibin
+  CAVE_FIRST_SWITCH_COVER = ACTOR_FIRST_PLACED,
+  CAVE_PASSAGE_COVER,
+  CAVE_SECOND_SWITCH_COVER,
+  /// An invisible actor at (504, 168), its sprite hidden by
+  /// LunpaFortress_InitializeCave; no event names it. XXX: what it stands in
+  /// for is not known.
+  CAVE_INVISIBLE_ACTOR,
+  /// A stack of wooden crates (the sprite of the crates at the Bilibin
   /// Barricade and on Tolbi Docks), pushed or moved with Move onto its hole.
-  FORTRESS3_CRATES
+  CAVE_CRATES
 };
 
 /// LunpaFortressToadonpa's people, numbered in the order of
-/// gLunpaFortressPlacements4 from ACTOR_FIRST_PLACED; its rows for Ivan, Mia
-/// and Garet keep the party's own slots.
+/// gLunpaFortressToadonpaPlacements from ACTOR_FIRST_PLACED; its rows for Ivan,
+/// Mia and Garet keep the party's own slots.
 enum {
-  /// Three invisible actors (sprite 0x16) at (56, 72), (136, 72) and (216, 72),
-  /// in line with the cell doors gLunpaFortressDoorCells4 lists third, second
-  /// and first. Scene_Initialize hides their sprites and lays them underfoot,
-  /// and no event names them. XXX: what they stand in for is not known.
-  FORTRESS4_WEST_INVISIBLE_ACTOR = ACTOR_FIRST_PLACED,
-  FORTRESS4_MIDDLE_INVISIBLE_ACTOR,
-  FORTRESS4_EAST_INVISIBLE_ACTOR,
-  FORTRESS4_TOADONPA,
-  FORTRESS4_HAMMET,
-  FORTRESS4_DODONPA,
-  FORTRESS4_DONPA,
-  /// Sprite 0x120, drawn underfoot with Toadonpa and moving with it.
-  FORTRESS4_TOADONPA_PART,
+  /// Three invisible actors at (56, 72), (136, 72) and (216, 72), in line with
+  /// the cell doors gLunpaFortressToadonpaDoorCells lists third, second and
+  /// first. Scene_Initialize hides their sprites and lays them underfoot, and
+  /// no event names them. XXX: what they stand in for is not known.
+  TOADONPA_WEST_INVISIBLE_ACTOR = ACTOR_FIRST_PLACED,
+  TOADONPA_MIDDLE_INVISIBLE_ACTOR,
+  TOADONPA_EAST_INVISIBLE_ACTOR,
+  TOADONPA_BOSS,
+  TOADONPA_HAMMET,
+  TOADONPA_DODONPA,
+  TOADONPA_DONPA,
+  /// A sprite drawn underfoot with Toadonpa and moving with it.
+  TOADONPA_BOSS_PART,
   /// One of Dodonpa's men, placed by Dodonpa's cell after Donpa's judgment.
   /// "The merchant from Kalay is in here somewhere." Read with Mind Read:
   /// "Actually, Dodonpa's in here, but only a few people know that."
-  FORTRESS4_CELL_GUARD,
-  /// An invisible actor (sprite 0x16) that stands before Dodonpa's cell after
-  /// Donpa's judgment; talking to it or reading its mind reaches Dodonpa.
-  FORTRESS4_DODONPA_STAND_IN
+  TOADONPA_CELL_GUARD,
+  /// An invisible actor that stands before Dodonpa's cell after Donpa's
+  /// judgment; talking to it or reading its mind reaches Dodonpa.
+  TOADONPA_DODONPA_STAND_IN
 };
 
 /// Triggers: the cell doors count from DOOR_TRIGGER_FIRST in each map, and a
@@ -214,7 +216,7 @@ enum {
   DOOR_TRIGGER_FIRST = 40,
   TRIGGER_PATROL_PAIR_SPOTTED = 91,
   TRIGGER_HALL_PATROL_SPOTTED,
-  TRIGGER_FORTRESS1_PATROL_SPOTTED,
+  TRIGGER_GROUND_FLOOR_PATROL_SPOTTED,
   TRIGGER_UPPER_HALL_SPOTTED,
   TRIGGER_ENTRANCE_GUARD_SPOTTED,
   TRIGGER_SENTRIES_SPOTTED
@@ -226,23 +228,16 @@ enum { REVEAL_SHOWN = 5, REVEAL_FADED = 4 };
 /// Where a party caught by a guard is sent: the Lunpa Fortress Gates.
 enum { EXIT_THROWN_OUT = 60 };
 
-/// Where the party comes back after the three guards' battle and after
-/// Toadonpa's.
-enum {
-  FORTRESS2_ENTRANCE_AFTER_BATTLE = 31,
-  FORTRESS4_ENTRANCE_AFTER_BATTLE = 4
-};
-
 /// What a guard close to the cloaked leader requests of Cloak.
 enum { CLOAK_NEAR_GUARD = 0x2000 | ABILITY_CLOAK };
 
 /// The first of the flags that remember which cell doors the Cell Key opened,
 /// per map: one for each door trigger from DOOR_TRIGGER_FIRST.
 enum {
-  FORTRESS4_DOOR_FLAG = 0x350,
-  FORTRESS3_DOOR_FLAG = 0x355,
-  FORTRESS2_DOOR_FLAG = 0x358,
-  FORTRESS1_DOOR_FLAG = 0x35a
+  TOADONPA_DOOR_FLAG = 0x350,
+  CAVE_DOOR_FLAG = 0x355,
+  UPPER_FLOOR_DOOR_FLAG = 0x358,
+  GROUND_FLOOR_DOOR_FLAG = 0x35a
 };
 
 /// The paired patrol's layer origin across: 136 pixels, in 16.16 fixed point.
@@ -259,13 +254,13 @@ static void LunpaFortress_ActOutIntruderDialogue(s32 actorId);
 static void LunpaFortress_ActOutWhosThereDialogue(s32 actorId);
 static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId);
 static void LunpaFortress_ActOutScoundrelDialogue(s32 actorId);
-static void LunpaFortress_Initialize1(void);
-static void LunpaFortress_Initialize2(void);
-static void LunpaFortress_Initialize3(void);
-static void LunpaFortress_RestoreDoors1(void);
-static void LunpaFortress_RestoreDoors2(void);
-static void LunpaFortress_RestoreDoors3(void);
-static void LunpaFortress_RestoreDoors4(void);
+static void LunpaFortress_InitializeGroundFloor(void);
+static void LunpaFortress_InitializeUpperFloor(void);
+static void LunpaFortress_InitializeCave(void);
+static void LunpaFortress_RestoreGroundFloorDoors(void);
+static void LunpaFortress_RestoreUpperFloorDoors(void);
+static void LunpaFortress_RestoreCaveDoors(void);
+static void LunpaFortress_RestoreToadonpaDoors(void);
 
 #include "common/object_staged_actor.h"
 
@@ -273,13 +268,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
-    return gLunpaFortressEntrances1;
+    return gLunpaFortressGroundFloorEntrances;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
-    return gLunpaFortressEntrances2;
+    return gLunpaFortressUpperFloorEntrances;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressCave) {
-    return gLunpaFortressEntrances3;
+    return gLunpaFortressCaveEntrances;
   }
   return gLunpaFortressEntrancesOther;
 }
@@ -290,11 +285,11 @@ const u32 *Scene_GetExits(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
-    return gLunpaFortressExits2;
+    return gLunpaFortressUpperFloorExits;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressCave ||
       sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
-    return gLunpaFortressExits3And4;
+    return gLunpaFortressCaveAndToadonpaExits;
   }
   return gLunpaFortressExitsOther;
 }
@@ -307,16 +302,16 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
     return gLunpaFortressPlacementsWestLunpaCave;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressCave) {
-    return gLunpaFortressPlacements3;
+    return gLunpaFortressCavePlacements;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
-    return gLunpaFortressPlacements2;
+    return gLunpaFortressUpperFloorPlacements;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
-    return gLunpaFortressPlacements1;
+    return gLunpaFortressGroundFloorPlacements;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
-    return gLunpaFortressPlacements4;
+    return gLunpaFortressToadonpaPlacements;
   }
   return gLunpaFortressPlacementsOther;
 }
@@ -326,13 +321,13 @@ const struct SceneEvent *Scene_GetEvents(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
-    return gLunpaFortressEvents1;
+    return gLunpaFortressGroundFloorEvents;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
-    return gLunpaFortressEvents2;
+    return gLunpaFortressUpperFloorEvents;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressCave) {
-    return gLunpaFortressEvents3;
+    return gLunpaFortressCaveEvents;
   }
   return gLunpaFortressEventsOther;
 }
@@ -344,7 +339,7 @@ static void LunpaFortress_LowerCrates(void) {
 
   Map_CopyCellAttributes(15, 20, 1, 1, 15, 22);
   Map_CopyCellAttributes(17, 23, 1, 3, 15, 23);
-  cratesActor = Object_GetById(FORTRESS3_CRATES);
+  cratesActor = Object_GetById(CAVE_CRATES);
   if (cratesActor != 0) {
     Engine_ActorSetSpriteFlags(cratesActor, 0);
     cratesActor->motionFlags = 0;
@@ -359,9 +354,9 @@ static void Event_PushCrates(void) { StagedActor_AdvancePair(); }
 /// LunpaFortressCave, trigger 50: the crates, pushed onto their hole, slide in
 /// and sink.
 static void Event_CratesSink(void) {
-  OBJ_SPEED(FORTRESS3_CRATES, 0x10000, 0x8000);
-  Actor_SetDestination(FORTRESS3_CRATES, 248, 376);
-  Engine_ActorWaitForMove(FORTRESS3_CRATES);
+  OBJ_SPEED(CAVE_CRATES, 0x10000, 0x8000);
+  Actor_SetDestination(CAVE_CRATES, 248, 376);
+  Engine_ActorWaitForMove(CAVE_CRATES);
   SE(SE_215);
   WAIT(60);
   LunpaFortress_LowerCrates();
@@ -373,14 +368,14 @@ static void Event_CratesSink(void) {
 static void Event_MoveCrates(void) {
   struct FieldActor *cratesActor;
 
-  cratesActor = Actor_Get(FORTRESS3_CRATES);
+  cratesActor = Actor_Get(CAVE_CRATES);
   if ((cratesActor->z.fixed >> 20) > 22) {
     Map_SetShake(0x40000, 0x40000, 0x10000);
     Map_SetShake(-1, -1, 0xe666);
     SE(SE_144);
     Map_CopyCellAttributes(15, 20, 1, 1, 15, 22);
     Map_CopyCellAttributes(17, 23, 1, 3, 15, 23);
-    cratesActor = Actor_Get(FORTRESS3_CRATES);
+    cratesActor = Actor_Get(CAVE_CRATES);
     if (cratesActor != NULL) {
       Engine_ActorSetSpriteFlags(cratesActor, 0);
       cratesActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -391,14 +386,14 @@ static void Event_MoveCrates(void) {
 
 /// The crates stay sunk in their hole.
 static void LunpaFortress_RestoreLoweredCrates(void) {
-  OBJ_POS_SET(FORTRESS3_CRATES, 248, 376);
+  OBJ_POS_SET(CAVE_CRATES, 248, 376);
   LunpaFortress_LowerCrates();
 }
 
 /// Draws one of LunpaFortressToadonpa's cell doors open.
-static void LunpaFortress_OpenDoor4(s32 doorIndex) {
-  s32 doorCellX = gLunpaFortressDoorCells4[doorIndex * 2];
-  s32 doorCellY = gLunpaFortressDoorCells4[doorIndex * 2 + 1];
+static void LunpaFortress_OpenToadonpaDoor(s32 doorIndex) {
+  s32 doorCellX = gLunpaFortressToadonpaDoorCells[doorIndex * 2];
+  s32 doorCellY = gLunpaFortressToadonpaDoorCells[doorIndex * 2 + 1];
 
   Map_CopyCells(0, 0x4d, 1, 3, doorCellX, doorCellY);
   Map_CopyCells(1, 0x4d, 1, 1, doorCellX + 1, doorCellY);
@@ -407,7 +402,7 @@ static void LunpaFortress_OpenDoor4(s32 doorIndex) {
 
 /// LunpaFortressToadonpa: facing a cell door with the Cell Key opens it with a
 /// rumble. After Donpa's judgment the fifth, Dodonpa's cell, stays shut.
-static void Event_UnlockDoor4(void) {
+static void Event_UnlockToadonpaDoor(void) {
   struct EventWork *fieldWork;
   s32 doorTrigger;
   s32 doorIndex;
@@ -417,24 +412,24 @@ static void Event_UnlockDoor4(void) {
     doorTrigger = fieldWork->touchedTrigger;
     doorIndex = doorTrigger - DOOR_TRIGGER_FIRST;
     if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) == 0 || doorIndex != 4) {
-      LunpaFortress_OpenDoor4(doorIndex);
+      LunpaFortress_OpenToadonpaDoor(doorIndex);
       SE(SE_GATE_MOVE);
       Map_SetShake(0x30000, 0x30000, 0x10000);
       Map_SetShake(-1, -1, 0xe666);
-      FLAG_SET(doorTrigger + (FORTRESS4_DOOR_FLAG - DOOR_TRIGGER_FIRST));
+      FLAG_SET(doorTrigger + (TOADONPA_DOOR_FLAG - DOOR_TRIGGER_FIRST));
     }
   }
 }
 
 /// Draws one of LunpaFortressCave's cell doors open and lets the party through;
 /// the middle door opens two cells.
-static void LunpaFortress_OpenDoor3(s32 doorIndex) {
+static void LunpaFortress_OpenCaveDoor(s32 doorIndex) {
   s32 doorCellX;
   s32 doorCellY;
   s32 collisionCellY;
 
-  doorCellX = gLunpaFortressDoorCells3[doorIndex * 2];
-  doorCellY = gLunpaFortressDoorCells3[doorIndex * 2 + 1];
+  doorCellX = gLunpaFortressCaveDoorCells[doorIndex * 2];
+  doorCellY = gLunpaFortressCaveDoorCells[doorIndex * 2 + 1];
   Map_CopyCells(0, 77, 1, 3, doorCellX, doorCellY);
   Map_CopyCells(1, 77, 1, 1, doorCellX + 1, doorCellY);
   collisionCellY = doorCellY - 44;
@@ -447,25 +442,25 @@ static void LunpaFortress_OpenDoor3(s32 doorIndex) {
 
 /// LunpaFortressCave: facing a cell door with the Cell Key opens it with a
 /// rumble.
-static void Event_UnlockDoor3(void) {
+static void Event_UnlockCaveDoor(void) {
   struct EventWork *fieldWork;
   s32 doorTrigger;
 
   fieldWork = gEventWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->touchedTrigger;
-    LunpaFortress_OpenDoor3(doorTrigger - DOOR_TRIGGER_FIRST);
+    LunpaFortress_OpenCaveDoor(doorTrigger - DOOR_TRIGGER_FIRST);
     SE(SE_GATE_MOVE);
     Map_SetShake(0x30000, 0x30000, 0x10000);
     Map_SetShake(-1, -1, 0xe666);
-    FLAG_SET(doorTrigger + (FORTRESS3_DOOR_FLAG - DOOR_TRIGGER_FIRST));
+    FLAG_SET(doorTrigger + (CAVE_DOOR_FLAG - DOOR_TRIGGER_FIRST));
   }
 }
 
 /// Draws one of LunpaFortressUpperFloor's cell doors open.
-static void LunpaFortress_OpenDoor2(s32 doorIndex) {
-  s32 doorCellX = gLunpaFortressDoorCells2[doorIndex * 2];
-  s32 doorCellY = gLunpaFortressDoorCells2[doorIndex * 2 + 1];
+static void LunpaFortress_OpenUpperFloorDoor(s32 doorIndex) {
+  s32 doorCellX = gLunpaFortressUpperFloorDoorCells[doorIndex * 2];
+  s32 doorCellY = gLunpaFortressUpperFloorDoorCells[doorIndex * 2 + 1];
 
   Map_CopyCells(0x37, 0x79, 1, 3, doorCellX, doorCellY);
   Map_CopyCells(0x38, 0x79, 1, 1, doorCellX + 1, doorCellY);
@@ -474,28 +469,28 @@ static void LunpaFortress_OpenDoor2(s32 doorIndex) {
 
 /// LunpaFortressUpperFloor: facing a cell door with the Cell Key opens it with
 /// a rumble.
-static void Event_UnlockDoor2(void) {
+static void Event_UnlockUpperFloorDoor(void) {
   struct EventWork *fieldWork;
   s32 doorTrigger;
 
   fieldWork = gEventWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->touchedTrigger;
-    LunpaFortress_OpenDoor2(doorTrigger - DOOR_TRIGGER_FIRST);
+    LunpaFortress_OpenUpperFloorDoor(doorTrigger - DOOR_TRIGGER_FIRST);
     SE(SE_GATE_MOVE);
     Map_SetShake(0x30000, 0x30000, 0x10000);
     Map_SetShake(-1, -1, 0xe666);
-    FLAG_SET(doorTrigger + (FORTRESS2_DOOR_FLAG - DOOR_TRIGGER_FIRST));
+    FLAG_SET(doorTrigger + (UPPER_FLOOR_DOOR_FLAG - DOOR_TRIGGER_FIRST));
   }
 }
 
 /// Draws one of LunpaFortressGroundFloor's cell doors open and lets the party
 /// through.
-static void LunpaFortress_OpenDoor1(s32 doorIndex) {
-  // BUG: the third door's trigger and flag (FORTRESS1_DOOR_FLAG + 2) ask for
-  // index 2, past the two doors gLunpaFortressDoorCells1 holds.
-  s32 doorCellX = gLunpaFortressDoorCells1[doorIndex * 2];
-  s32 doorCellY = gLunpaFortressDoorCells1[doorIndex * 2 + 1];
+static void LunpaFortress_OpenGroundFloorDoor(s32 doorIndex) {
+  // BUG: the third door's trigger and flag (GROUND_FLOOR_DOOR_FLAG + 2) ask for
+  // index 2, past the two doors gLunpaFortressGroundFloorDoorCells holds.
+  s32 doorCellX = gLunpaFortressGroundFloorDoorCells[doorIndex * 2];
+  s32 doorCellY = gLunpaFortressGroundFloorDoorCells[doorIndex * 2 + 1];
 
   Map_CopyCells(1, 0x50, 1, 3, doorCellX, doorCellY);
   Map_CopyCells(2, 0x50, 1, 1, doorCellX + 1, doorCellY);
@@ -505,18 +500,18 @@ static void LunpaFortress_OpenDoor1(s32 doorIndex) {
 
 /// LunpaFortressGroundFloor: facing a cell door with the Cell Key opens it with
 /// a rumble.
-static void Event_UnlockDoor1(void) {
+static void Event_UnlockGroundFloorDoor(void) {
   struct EventWork *fieldWork;
   s32 doorTrigger;
 
   fieldWork = gEventWork;
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->touchedTrigger;
-    LunpaFortress_OpenDoor1(doorTrigger - DOOR_TRIGGER_FIRST);
+    LunpaFortress_OpenGroundFloorDoor(doorTrigger - DOOR_TRIGGER_FIRST);
     SE(SE_GATE_MOVE);
     Map_SetShake(0x30000, 0x30000, 0x10000);
     Map_SetShake(-1, -1, 0xe666);
-    FLAG_SET(doorTrigger + (FORTRESS1_DOOR_FLAG - DOOR_TRIGGER_FIRST));
+    FLAG_SET(doorTrigger + (GROUND_FLOOR_DOOR_FLAG - DOOR_TRIGGER_FIRST));
   }
 }
 
@@ -536,8 +531,8 @@ static void Event_SearchSealedDoor(void) {
 
 /// The four actors from FIRST_ITEM_DISPLAY_ACTOR that the unused item pickups
 /// below show their items on, in a scene they do not name. XXX: likely
-/// LunpaFortressGroundFloor's first four rows (sprite 0x14, at the map's
-/// origin), because nothing else uses them.
+/// LunpaFortressGroundFloor's first four rows (in a chest's sprite, at the
+/// map's origin), because nothing else uses them.
 enum { FIRST_ITEM_DISPLAY_ACTOR = ACTOR_FIRST_PLACED };
 
 /// Unused: an Arctic Blade, a Masamune, a Silver Blade and a Shamshir set out
@@ -612,7 +607,7 @@ static void Event_TakeCellKey(void) {
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_PartyGiveItem(ITEM_CELL_KEY, 0);
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_CELL_KEY);
-  Engine_ActorSetPosition(FORTRESS2_CELL_KEY, 0, 0);
+  Engine_ActorSetPosition(UPPER_FLOOR_CELL_KEY, 0, 0);
 }
 /// Where the patrolling pair cannot see the leader: the west end of their
 /// corridor and the cells below its gap.
@@ -654,15 +649,16 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 #endif
 
 /// Every frame in LunpaFortressUpperFloor: the pair patrolling the west
-/// corridor. They stand still while flag 0x106 is set or Psynergy or an item is
-/// in use; otherwise they walk, with map layer 2 shaking and following the
-/// first. Close to a cloaked leader they request CLOAK_NEAR_GUARD; seeing an
-/// uncloaked leader, they raise TRIGGER_PATROL_PAIR_SPOTTED.
+/// corridor. They stand still while FLAG_MENU_OPEN is set or Psynergy or an
+/// item is in use; otherwise they walk, with MAP_LAYER_OVERHEAD shaking and
+/// following the first. Close to a cloaked leader they request
+/// CLOAK_NEAR_GUARD; seeing an uncloaked leader, they raise
+/// TRIGGER_PATROL_PAIR_SPOTTED.
 static void LunpaFortress_UpdatePairedGuardDetection(void) {
-  struct FieldActor *firstGuard = Actor_Get(FORTRESS2_FIRST_PATROL);
-  struct FieldActor *secondGuard = Actor_Get(FORTRESS2_SECOND_PATROL);
+  struct FieldActor *firstGuard = Actor_Get(UPPER_FLOOR_FIRST_PATROL);
+  struct FieldActor *secondGuard = Actor_Get(UPPER_FLOOR_SECOND_PATROL);
   struct MapLayerScroll *patrolLayer =
-      &((struct MapScrollWork *)gMapWork[0])->layers[2];
+      &((struct MapScrollWork *)gMapWork[0])->layers[MAP_LAYER_OVERHEAD];
 #ifdef UBFIX
   struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
 #else
@@ -688,23 +684,23 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
     }
     if (!LunpaFortress_IsLeaderInPatrolSafeZone()) {
       if (gGameState.cloaked != 0) {
-        if (LunpaFortress_IsLeaderNearGuard(FORTRESS2_FIRST_PATROL) &&
+        if (LunpaFortress_IsLeaderNearGuard(UPPER_FLOOR_FIRST_PATROL) &&
             gGameState.cloaked != 0) {
           SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), CLOAK_NEAR_GUARD);
           return;
         }
-        if (LunpaFortress_IsLeaderNearGuard(FORTRESS2_SECOND_PATROL) &&
+        if (LunpaFortress_IsLeaderNearGuard(UPPER_FLOOR_SECOND_PATROL) &&
             gGameState.cloaked != 0) {
           SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), CLOAK_NEAR_GUARD);
           return;
         }
       }
       if (gGameState.cloaked == 0) {
-        if (LunpaFortress_CanGuardSeeLeader(FORTRESS2_FIRST_PATROL)) {
+        if (LunpaFortress_CanGuardSeeLeader(UPPER_FLOOR_FIRST_PATROL)) {
           FLAG_SET(FLAG_SCENE_TEMP_15);
           FLAG_SET(FLAG_SCENE_TEMP_14);
         }
-        if (LunpaFortress_CanGuardSeeLeader(FORTRESS2_SECOND_PATROL)) {
+        if (LunpaFortress_CanGuardSeeLeader(UPPER_FLOOR_SECOND_PATROL)) {
           FLAG_SET(FLAG_SCENE_TEMP_15);
           FLAG_SET(FLAG_SCENE_TEMP_14);
         }
@@ -721,12 +717,12 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
 /// the first stops and stares, and the second throws the party out.
 static void Event_PatrolPairThrowsPartyOut(void) {
   EV_BEGIN();
-  Engine_ActorStop(FORTRESS2_FIRST_PATROL);
-  Engine_ActorSetDestinationOffset(FORTRESS2_FIRST_PATROL, 0, 0);
-  OBJ_MODE(FORTRESS2_FIRST_PATROL, 0);
-  OBJ_FACE(FORTRESS2_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorShowEmote(FORTRESS2_FIRST_PATROL, EMOTE_IN_FRONT, 0);
-  LunpaFortress_GuardThrowsPartyOut(FORTRESS2_SECOND_PATROL);
+  Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
+  Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
+  OBJ_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJ_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL, EMOTE_IN_FRONT, 0);
+  LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
   EV_END();
 }
 
@@ -734,7 +730,7 @@ static void Event_PatrolPairThrowsPartyOut(void) {
 /// where the guard passes without seeing the leader.
 static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  struct FieldActor *guard = Object_GetById(FORTRESS2_HALL_PATROL);
+  struct FieldActor *guard = Object_GetById(UPPER_FLOOR_HALL_PATROL);
   s32 leaderFixedX = leader->x.fixed;
   s32 guardFixedZ;
   s32 guardFixedX;
@@ -770,9 +766,9 @@ static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
 /// TRIGGER_HALL_PATROL_SPOTTED.
 static void LunpaFortress_UpdateHallGuardDetection(void) {
 
-  struct FieldActor *guard = Actor_Get(FORTRESS2_HALL_PATROL);
+  struct FieldActor *guard = Actor_Get(UPPER_FLOOR_HALL_PATROL);
   struct MapLayerScroll *patrolLayer =
-      &((struct MapScrollWork *)gMapWork[0])->layers[2];
+      &((struct MapScrollWork *)gMapWork[0])->layers[MAP_LAYER_OVERHEAD];
 #ifdef UBFIX
   struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
 #else
@@ -797,14 +793,14 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
       patrolLayer->phaseY = 0x2400000 - guard->z.fixed;
     }
     if (!LunpaFortress_IsLeaderPassingPatrollingGuard()) {
-      LunpaFortress_IsGuardNearViewCenter(FORTRESS2_HALL_PATROL);
-      if (LunpaFortress_IsLeaderNearGuard(FORTRESS2_HALL_PATROL) &&
+      LunpaFortress_IsGuardNearViewCenter(UPPER_FLOOR_HALL_PATROL);
+      if (LunpaFortress_IsLeaderNearGuard(UPPER_FLOOR_HALL_PATROL) &&
           gGameState.cloaked != 0) {
         SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), 0x2092);
         return;
       }
       if (gGameState.cloaked == 0) {
-        if (LunpaFortress_CanGuardSeeLeader(FORTRESS2_HALL_PATROL)) {
+        if (LunpaFortress_CanGuardSeeLeader(UPPER_FLOOR_HALL_PATROL)) {
           FLAG_SET(FLAG_SCENE_TEMP_15);
           FLAG_SET(FLAG_SCENE_TEMP_14);
         }
@@ -820,13 +816,13 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
 /// LunpaFortressUpperFloor, raised when the hall patrol spots the leader: it
 /// throws the party out.
 static void Event_HallPatrolThrowsPartyOut(void) {
-  LunpaFortress_GuardThrowsPartyOut(FORTRESS2_HALL_PATROL);
+  LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_HALL_PATROL);
   EV_END();
 }
 
 /// Where LunpaFortressGroundFloor's patrol cannot see the leader: three
 /// stretches of its rounds.
-static s32 LunpaFortress_IsLeaderInFortress1PatrolSafeZone(void) {
+static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 leaderTileZ = leader->z.fixed / 0x100000;
   s32 leaderTileX = leader->x.fixed / 0x100000;
@@ -845,12 +841,12 @@ static s32 LunpaFortress_IsLeaderInFortress1PatrolSafeZone(void) {
 
 /// Every frame in LunpaFortressGroundFloor: the patrolling guard, as
 /// LunpaFortress_UpdatePairedGuardDetection; seeing the leader, it raises
-/// TRIGGER_FORTRESS1_PATROL_SPOTTED.
-static void LunpaFortress_UpdateFortress1PatrolDetection(void) {
+/// TRIGGER_GROUND_FLOOR_PATROL_SPOTTED.
+static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
 
-  struct FieldActor *guard = Actor_Get(FORTRESS1_PATROL_GUARD);
+  struct FieldActor *guard = Actor_Get(GROUND_FLOOR_PATROL_GUARD);
   struct MapLayerScroll *patrolLayer =
-      &((struct MapScrollWork *)gMapWork[0])->layers[2];
+      &((struct MapScrollWork *)gMapWork[0])->layers[MAP_LAYER_OVERHEAD];
 #ifdef UBFIX
   struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
 #else
@@ -873,21 +869,21 @@ static void LunpaFortress_UpdateFortress1PatrolDetection(void) {
       patrolLayer->phaseX = 0x2f00000 - guard->x.fixed;
       patrolLayer->phaseY = 0x1f00000 - guard->z.fixed;
     }
-    if (!LunpaFortress_IsLeaderInFortress1PatrolSafeZone()) {
-      if (LunpaFortress_IsLeaderNearGuard(FORTRESS1_PATROL_GUARD) &&
+    if (!LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone()) {
+      if (LunpaFortress_IsLeaderNearGuard(GROUND_FLOOR_PATROL_GUARD) &&
           gGameState.cloaked != 0) {
         SetSceneValue(&PATROL_PSYNERGY_REQUEST(fieldWork), 0x2092);
         return;
       }
       if (gGameState.cloaked == 0) {
-        if (LunpaFortress_CanGuardSeeLeader(FORTRESS1_PATROL_GUARD)) {
+        if (LunpaFortress_CanGuardSeeLeader(GROUND_FLOOR_PATROL_GUARD)) {
           FLAG_SET(FLAG_SCENE_TEMP_15);
           FLAG_SET(FLAG_SCENE_TEMP_14);
         }
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_14)) {
         SetSceneValue(&PATROL_RAISED_TRIGGER(fieldWork),
-                      TRIGGER_FORTRESS1_PATROL_SPOTTED);
+                      TRIGGER_GROUND_FLOOR_PATROL_SPOTTED);
       }
     }
   }
@@ -895,8 +891,8 @@ static void LunpaFortress_UpdateFortress1PatrolDetection(void) {
 
 /// LunpaFortressGroundFloor, raised when the patrol spots the leader: it throws
 /// the party out.
-static void Event_Fortress1PatrolThrowsPartyOut(void) {
-  LunpaFortress_GuardThrowsPartyOut(FORTRESS1_PATROL_GUARD);
+static void Event_GroundFloorPatrolThrowsPartyOut(void) {
+  LunpaFortress_GuardThrowsPartyOut(GROUND_FLOOR_PATROL_GUARD);
   EV_END();
 }
 
@@ -923,7 +919,8 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
   if (FLAG_CHECK(FLAG_SCENE_TEMP_14) == 0) {
     if (LunpaFortress_IsLeaderOutsideUpperHall() == 0) {
       if (gGameState.cloaked == 0) {
-        if (LunpaFortress_CanGuardSeeLeader(FORTRESS1_UPPER_HALL_GUARD) != 0) {
+        if (LunpaFortress_CanGuardSeeLeader(GROUND_FLOOR_UPPER_HALL_GUARD) !=
+            0) {
           FLAG_SET(FLAG_SCENE_TEMP_15);
           FLAG_SET(FLAG_SCENE_TEMP_14);
         }
@@ -938,7 +935,7 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
 /// LunpaFortressGroundFloor, raised when the upper hall's guard spots the
 /// leader: he throws the party out.
 static void Event_UpperHallGuardThrowsPartyOut(void) {
-  LunpaFortress_GuardThrowsPartyOut(FORTRESS1_UPPER_HALL_GUARD);
+  LunpaFortress_GuardThrowsPartyOut(GROUND_FLOOR_UPPER_HALL_GUARD);
   EV_END();
 }
 
@@ -948,7 +945,7 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 
   struct EventWork *fieldWork = gEventWork;
 
-  if (LunpaFortress_CanGuardSeeLeader(FORTRESS1_ENTRANCE_GUARD) != 0 &&
+  if (LunpaFortress_CanGuardSeeLeader(GROUND_FLOOR_ENTRANCE_GUARD) != 0 &&
       gGameState.cloaked == 0) {
     s16 *raisedTrigger;
     s32 caughtTrigger;
@@ -968,7 +965,7 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
 
   fieldWork = gEventWork;
   if (FLAG_CHECK(FLAG_SCENE_TEMP_25) == 0) {
-    if (LunpaFortress_CanGuardSeeLeader(FORTRESS1_FIRST_SENTRY) != 0) {
+    if (LunpaFortress_CanGuardSeeLeader(GROUND_FLOOR_FIRST_SENTRY) != 0) {
       if (gGameState.cloaked == 0) {
         FLAG_SET(FLAG_SCENE_TEMP_25);
         Engine_TaskRemoveCallback(LunpaFortress_CheckFirstEntranceSentry);
@@ -986,7 +983,7 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
 
   fieldWork = gEventWork;
   if (FLAG_CHECK(FLAG_SCENE_TEMP_25) == 0) {
-    if (LunpaFortress_CanGuardSeeLeader(FORTRESS1_SECOND_SENTRY) != 0) {
+    if (LunpaFortress_CanGuardSeeLeader(GROUND_FLOOR_SECOND_SENTRY) != 0) {
       if (gGameState.cloaked == 0) {
         FLAG_SET(FLAG_SCENE_TEMP_25);
         Engine_TaskRemoveCallback(LunpaFortress_CheckSecondEntranceSentry);
@@ -1102,11 +1099,11 @@ static s32 LunpaFortress_IsGuardNearViewCenter(s32 actorId) {
 
 /// Every frame in LunpaFortressGroundFloor: walking into the second cell door's
 /// column with the Cell Key unlocks it.
-static void LunpaFortress_CheckDoorApproach1(void) {
+static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
 
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if (Engine_GameFlagIsSet(FORTRESS1_DOOR_FLAG + 1) == 0) {
+  if (Engine_GameFlagIsSet(GROUND_FLOOR_DOOR_FLAG + 1) == 0) {
     s32 playerX = leader->x.fixed / 0x100000;
     s32 playerZ = leader->z.fixed / 0x100000;
 
@@ -1115,18 +1112,18 @@ static void LunpaFortress_CheckDoorApproach1(void) {
       s32 doorTrigger = DOOR_TRIGGER_FIRST + 1;
 
       *touchedTrigger = doorTrigger;
-      Event_UnlockDoor1();
+      Event_UnlockGroundFloorDoor();
     }
   }
 }
 
 /// Every frame in LunpaFortressUpperFloor: walking east or west into the first
 /// cell door's column with the Cell Key unlocks it.
-static void LunpaFortress_CheckDoorApproach2(void) {
+static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
 
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if (Engine_GameFlagIsSet(FORTRESS2_DOOR_FLAG) == 0) {
+  if (Engine_GameFlagIsSet(UPPER_FLOOR_DOOR_FLAG) == 0) {
     s32 playerX = leader->x.fixed / 0x100000;
     s32 playerZ = leader->z.fixed / 0x100000;
 
@@ -1136,7 +1133,7 @@ static void LunpaFortress_CheckDoorApproach2(void) {
       s32 doorTrigger = DOOR_TRIGGER_FIRST;
 
       *touchedTrigger = doorTrigger;
-      Event_UnlockDoor2();
+      Event_UnlockUpperFloorDoor();
     }
   }
 }
@@ -1144,20 +1141,20 @@ static void LunpaFortress_CheckDoorApproach2(void) {
 /// Unused: the first patrol asks who the party is and sends them out.
 static void UNUSED LunpaFortress_FirstPatrolThrowsPartyOut(void) {
   EV_BEGIN();
-  Engine_ActorSetDestinationOffset(FORTRESS2_FIRST_PATROL, 0, 0);
-  Actor_SetBuiltinAction(FORTRESS2_FIRST_PATROL, ACTOR_ACTION_IDLE);
-  Engine_ActorStop(FORTRESS2_FIRST_PATROL);
-  OBJ_MODE(FORTRESS2_FIRST_PATROL, 0);
+  Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
+  Actor_SetBuiltinAction(UPPER_FLOOR_FIRST_PATROL, ACTOR_ACTION_IDLE);
+  Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
+  OBJ_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   {
     s32 challengeMessage = MsgLunpaWho2;
 
     MESSAGE_SET(challengeMessage);
-    MESSAGE_PUT(FORTRESS2_FIRST_PATROL, 0);
+    MESSAGE_PUT(UPPER_FLOOR_FIRST_PATROL, 0);
     Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
     MESSAGE_SET(challengeMessage + 1);
   }
-  MESSAGE_PUT(FORTRESS2_FIRST_PATROL, 0);
+  MESSAGE_PUT(UPPER_FLOOR_FIRST_PATROL, 0);
   Engine_EventRequestExit(EXIT_THROWN_OUT);
   Engine_EventCloseScreen();
   EV_END();
@@ -1293,12 +1290,13 @@ static void Event_FightWestGuard(void) {
 
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   SE(SE_MENU_CANCEL);
-  Engine_ActorShowEmote(FORTRESS2_WEST_GUARD, EMOTE_IN_FRONT, 60);
-  LunpaFortress_GuardChallengesParty(FORTRESS2_WEST_GUARD);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-  Battle_SetStart(3);
-  Engine_BattleFxSetWeightedResult(98, 2);
-  Engine_ActorSetPosition(FORTRESS2_WEST_GUARD, 0, 0);
+  Engine_ActorShowEmote(UPPER_FLOOR_WEST_GUARD, EMOTE_IN_FRONT, 60);
+  LunpaFortress_GuardChallengesParty(UPPER_FLOOR_WEST_GUARD);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  Battle_SetStart(BATTLE_START_SCENE);
+  Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 2);
+  Engine_ActorSetPosition(UPPER_FLOOR_WEST_GUARD, 0, 0);
   EV_END();
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
 }
@@ -1309,12 +1307,13 @@ static void Event_FightHallGuard(void) {
 
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   SE(SE_MENU_CANCEL);
-  Engine_ActorShowEmote(FORTRESS2_HALL_GUARD, EMOTE_IN_FRONT, 60);
-  LunpaFortress_GuardChallengesParty(FORTRESS2_HALL_GUARD);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-  Battle_SetStart(3);
-  Engine_BattleFxSetWeightedResult(98, 2);
-  Engine_ActorSetPosition(FORTRESS2_HALL_GUARD, 0, 0);
+  Engine_ActorShowEmote(UPPER_FLOOR_HALL_GUARD, EMOTE_IN_FRONT, 60);
+  LunpaFortress_GuardChallengesParty(UPPER_FLOOR_HALL_GUARD);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  Battle_SetStart(BATTLE_START_SCENE);
+  Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 2);
+  Engine_ActorSetPosition(UPPER_FLOOR_HALL_GUARD, 0, 0);
   EV_END();
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN);
 }
@@ -1326,59 +1325,61 @@ static void Event_FightThreeGuards(void) {
   s32 messageBase;
 
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
-  OBJ_MODE(FORTRESS2_GUARD_A, 1);
-  OBJ_MODE(FORTRESS2_GUARD_B, 1);
-  OBJ_MODE(FORTRESS2_GUARD_C, 1);
+  OBJ_MODE(UPPER_FLOOR_GUARD_A, 1);
+  OBJ_MODE(UPPER_FLOOR_GUARD_B, 1);
+  OBJ_MODE(UPPER_FLOOR_GUARD_C, 1);
   SE(SE_MENU_CANCEL);
-  OBJ_EMOTE(FORTRESS2_GUARD_A, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(UPPER_FLOOR_GUARD_A, EMOTE_IN_FRONT, 0);
   WAIT(30);
-  OBJ_FACE(FORTRESS2_GUARD_A, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(UPPER_FLOOR_GUARD_A, ACTOR_PARTY_LEADER, 0);
   messageBase = MsgLunpaWho3;
   MESSAGE_SET(messageBase);
-  MESSAGE_PUT(FORTRESS2_GUARD_A, 0);
-  OBJ_EMOTE(FORTRESS2_GUARD_B, EMOTE_IN_FRONT, 0);
-  OBJ_EMOTE(FORTRESS2_GUARD_C, EMOTE_IN_FRONT, 0);
-  OBJ_FACE(FORTRESS2_GUARD_B, ACTOR_PARTY_LEADER, 0);
-  OBJ_FACE(FORTRESS2_GUARD_C, ACTOR_PARTY_LEADER, 0);
-  OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS2_GUARD_B, 0);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_A, 0);
+  OBJ_EMOTE(UPPER_FLOOR_GUARD_B, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(UPPER_FLOOR_GUARD_C, EMOTE_IN_FRONT, 0);
+  OBJ_FACE(UPPER_FLOOR_GUARD_B, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(UPPER_FLOOR_GUARD_C, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(ACTOR_PARTY_LEADER, UPPER_FLOOR_GUARD_B, 0);
   WAIT(65);
-  OBJ_DIR(FORTRESS2_GUARD_B, FACING_SOUTH + FACING_STEP, 0);
-  OBJ_DIR(FORTRESS2_GUARD_C, FACING_NORTH + FACING_STEP, 0);
+  OBJ_DIR(UPPER_FLOOR_GUARD_B, FACING_SOUTH + FACING_STEP, 0);
+  OBJ_DIR(UPPER_FLOOR_GUARD_C, FACING_NORTH + FACING_STEP, 0);
   MESSAGE_SET((messageBase + 1));
-  MESSAGE_PUT(FORTRESS2_GUARD_B, 0);
-  Engine_ActorSetAnimationAndWait(FORTRESS2_GUARD_C, 3);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_B, 0);
+  Engine_ActorSetAnimationAndWait(UPPER_FLOOR_GUARD_C, 3);
   MESSAGE_SET((messageBase + 2));
-  MESSAGE_PUT(FORTRESS2_GUARD_C, 0);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_C, 0);
   MESSAGE_SET((messageBase + 3));
-  MESSAGE_PUT(FORTRESS2_GUARD_A, 0);
-  Engine_ActorRunRepeatedMotion(FORTRESS2_GUARD_B, 1);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_A, 0);
+  Engine_ActorRunRepeatedMotion(UPPER_FLOOR_GUARD_B, 1);
   MESSAGE_SET((messageBase + 4));
-  MESSAGE_PUT(FORTRESS2_GUARD_B, 0);
-  Engine_ActorSetAnimationAndWait(FORTRESS2_GUARD_C, 3);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_B, 0);
+  Engine_ActorSetAnimationAndWait(UPPER_FLOOR_GUARD_C, 3);
   MESSAGE_SET((messageBase + 5));
-  MESSAGE_PUT(FORTRESS2_GUARD_C, 0);
-  Engine_ActorSetAnimationAndWait(FORTRESS2_GUARD_C, 3);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_C, 0);
+  Engine_ActorSetAnimationAndWait(UPPER_FLOOR_GUARD_C, 3);
   WAIT(60);
-  OBJ_FACE(FORTRESS2_GUARD_B, ACTOR_PARTY_LEADER, 0);
-  OBJ_FACE(FORTRESS2_GUARD_C, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(UPPER_FLOOR_GUARD_B, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(UPPER_FLOOR_GUARD_C, ACTOR_PARTY_LEADER, 0);
   WAIT(70);
-  OBJ_WALK(FORTRESS2_GUARD_A, 672, 88);
-  Engine_ActorWaitForMove(FORTRESS2_GUARD_A);
+  OBJ_WALK(UPPER_FLOOR_GUARD_A, 672, 88);
+  Engine_ActorWaitForMove(UPPER_FLOOR_GUARD_A);
 #if TBS_PATCH_1
-  OBJ_FACE(FORTRESS2_GUARD_A, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(UPPER_FLOOR_GUARD_A, ACTOR_PARTY_LEADER, 0);
 #endif
-  Engine_ActorSetAnimationAndWait(FORTRESS2_GUARD_A, 3);
+  Engine_ActorSetAnimationAndWait(UPPER_FLOOR_GUARD_A, 3);
   WAIT(30);
   MESSAGE_SET((messageBase + 6));
-  MESSAGE_PUT(FORTRESS2_GUARD_A, 0);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-  Engine_EventSetNextDestination((s32)&SceneId_LunpaFortressUpperFloor,
-                                 FORTRESS2_ENTRANCE_AFTER_BATTLE);
-  Battle_SetStart(3);
-  Engine_BattleFxSetWeightedResult(98, 3);
-  OBJ_POS_SET(FORTRESS2_GUARD_A, 0, 0);
-  OBJ_POS_SET(FORTRESS2_GUARD_B, 0, 0);
-  OBJ_POS_SET(FORTRESS2_GUARD_C, 0, 0);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_A, 0);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  Engine_EventSetNextDestination(
+      (s32)&SceneId_LunpaFortressUpperFloor,
+      LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE);
+  Battle_SetStart(BATTLE_START_SCENE);
+  Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 3);
+  OBJ_POS_SET(UPPER_FLOOR_GUARD_A, 0, 0);
+  OBJ_POS_SET(UPPER_FLOOR_GUARD_B, 0, 0);
+  OBJ_POS_SET(UPPER_FLOOR_GUARD_C, 0, 0);
   EV_END();
   FLAG_SET(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
 }
@@ -1386,13 +1387,13 @@ static void Event_FightThreeGuards(void) {
 /// The three guards lie beaten where they fought.
 static void LunpaFortress_PlaceThreeBeatenGuards(void) {
   EV_BEGIN();
-  OBJ_POS_SET(FORTRESS2_GUARD_A, 688, 88);
-  OBJ_POS_SET(FORTRESS2_GUARD_B, 704, 88);
-  OBJ_POS_SET(FORTRESS2_GUARD_C, 720, 96);
-  OBJ_MODE(FORTRESS2_GUARD_A, 5);
-  OBJ_MODE(FORTRESS2_GUARD_B, 5);
-  OBJ_MODE(FORTRESS2_GUARD_C, 5);
-  OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS2_GUARD_B, 0);
+  OBJ_POS_SET(UPPER_FLOOR_GUARD_A, 688, 88);
+  OBJ_POS_SET(UPPER_FLOOR_GUARD_B, 704, 88);
+  OBJ_POS_SET(UPPER_FLOOR_GUARD_C, 720, 96);
+  OBJ_MODE(UPPER_FLOOR_GUARD_A, 5);
+  OBJ_MODE(UPPER_FLOOR_GUARD_B, 5);
+  OBJ_MODE(UPPER_FLOOR_GUARD_C, 5);
+  OBJ_FACE(ACTOR_PARTY_LEADER, UPPER_FLOOR_GUARD_B, 0);
   EV_END();
   Engine_EventOpenScreen();
 }
@@ -1403,12 +1404,13 @@ static void Event_FightEastGuard(void) {
 
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   SE(SE_MENU_CANCEL);
-  Engine_ActorShowEmote(FORTRESS2_EAST_GUARD, EMOTE_IN_FRONT, 60);
-  LunpaFortress_GuardChallengesParty(FORTRESS2_EAST_GUARD);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-  Battle_SetStart(3);
-  Engine_BattleFxSetWeightedResult(98, 2);
-  Engine_ActorSetPosition(FORTRESS2_EAST_GUARD, 0, 0);
+  Engine_ActorShowEmote(UPPER_FLOOR_EAST_GUARD, EMOTE_IN_FRONT, 60);
+  LunpaFortress_GuardChallengesParty(UPPER_FLOOR_EAST_GUARD);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  Battle_SetStart(BATTLE_START_SCENE);
+  Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 2);
+  Engine_ActorSetPosition(UPPER_FLOOR_EAST_GUARD, 0, 0);
   EV_END();
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
 }
@@ -1420,18 +1422,18 @@ static void Event_EntranceGuardThrowsPartyOut(void) {
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
-  OBJ_FACE(FORTRESS1_ENTRANCE_GUARD, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(GROUND_FLOOR_ENTRANCE_GUARD, ACTOR_PARTY_LEADER, 0);
   SE(SE_MENU_CANCEL);
-  Engine_ActorShowEmote(FORTRESS1_ENTRANCE_GUARD, EMOTE_IN_FRONT, 60);
+  Engine_ActorShowEmote(GROUND_FLOOR_ENTRANCE_GUARD, EMOTE_IN_FRONT, 60);
   {
     s32 challengeMessage = MsgLunpaWho2;
 
     MESSAGE_SET(challengeMessage);
-    MESSAGE_PUT(FORTRESS1_ENTRANCE_GUARD, 0);
+    MESSAGE_PUT(GROUND_FLOOR_ENTRANCE_GUARD, 0);
     Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 50);
     MESSAGE_SET(challengeMessage + 1);
   }
-  MESSAGE_PUT(FORTRESS1_ENTRANCE_GUARD, 0);
+  MESSAGE_PUT(GROUND_FLOOR_ENTRANCE_GUARD, 0);
   Engine_EventCloseScreen();
   WAIT(60);
   Engine_EventRequestExit(EXIT_THROWN_OUT);
@@ -1449,16 +1451,16 @@ static void Event_SentriesThrowPartyOut(void) {
   Actor_SetBuiltinAction(ACTOR_PARTY_LEADER, ACTOR_ACTION_IDLE);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   SE(SE_MENU_CANCEL);
-  OBJ_EMOTE(FORTRESS1_SECOND_SENTRY, EMOTE_IN_FRONT, 0);
-  OBJ_EMOTE(FORTRESS1_FIRST_SENTRY, EMOTE_IN_FRONT, 60);
-  OBJ_FACE(FORTRESS1_SECOND_SENTRY, ACTOR_PARTY_LEADER, 0);
-  OBJ_FACE(FORTRESS1_FIRST_SENTRY, ACTOR_PARTY_LEADER, 0);
+  OBJ_EMOTE(GROUND_FLOOR_SECOND_SENTRY, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(GROUND_FLOOR_FIRST_SENTRY, EMOTE_IN_FRONT, 60);
+  OBJ_FACE(GROUND_FLOOR_SECOND_SENTRY, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(GROUND_FLOOR_FIRST_SENTRY, ACTOR_PARTY_LEADER, 0);
   challengeMessage = MsgLunpaWho2;
   MESSAGE_SET(challengeMessage);
-  MESSAGE_PUT(FORTRESS1_FIRST_SENTRY, 0);
+  MESSAGE_PUT(GROUND_FLOOR_FIRST_SENTRY, 0);
   OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 30);
   MESSAGE_SET(challengeMessage + 1);
-  MESSAGE_PUT(FORTRESS1_FIRST_SENTRY, 0);
+  MESSAGE_PUT(GROUND_FLOOR_FIRST_SENTRY, 0);
   Engine_EventCloseScreen();
   WAIT(60);
   Engine_EventRequestExit(EXIT_THROWN_OUT);
@@ -1548,7 +1550,7 @@ static void Event_HideSwitches(void) {
 static void Event_BlowAwayFirstSwitchCover(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_17);
-  Engine_ActorSetPosition(FORTRESS3_FIRST_SWITCH_COVER, 0, 0);
+  Engine_ActorSetPosition(CAVE_FIRST_SWITCH_COVER, 0, 0);
 }
 
 /// LunpaFortressCave, Whirlwind on what covers the passage: it blows away and
@@ -1556,7 +1558,7 @@ static void Event_BlowAwayFirstSwitchCover(void) {
 static void Event_BlowAwayPassageCover(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED);
   LunpaFortress_OpenCoveredPassage();
-  Engine_ActorSetPosition(FORTRESS3_PASSAGE_COVER, 0, 0);
+  Engine_ActorSetPosition(CAVE_PASSAGE_COVER, 0, 0);
 }
 
 /// LunpaFortressCave, Whirlwind on what covers the second switch: it blows
@@ -1564,7 +1566,7 @@ static void Event_BlowAwayPassageCover(void) {
 static void Event_BlowAwaySecondSwitchCover(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_18);
-  Engine_ActorSetPosition(FORTRESS3_SECOND_SWITCH_COVER, 0, 0);
+  Engine_ActorSetPosition(CAVE_SECOND_SWITCH_COVER, 0, 0);
 }
 
 static void UNUSED LunpaFortress_DoNothingE(void) {}
@@ -1593,11 +1595,11 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
   OBJ_SPEED(GARET, 0xb333, 0x5999);
   OBJ_WALK(GARET, 448, 240);
   Engine_ActorWaitForMove(IVAN);
-  OBJ_FACE(IVAN, FORTRESS4_HAMMET, 0);
+  OBJ_FACE(IVAN, TOADONPA_HAMMET, 0);
   Engine_ActorWaitForMove(GARET);
   Engine_ActorWaitForMove(MIA);
-  OBJ_FACE(GARET, FORTRESS4_HAMMET, 0);
-  OBJ_FACE(MIA, FORTRESS4_HAMMET, 0);
+  OBJ_FACE(GARET, TOADONPA_HAMMET, 0);
+  OBJ_FACE(MIA, TOADONPA_HAMMET, 0);
   WAIT(15);
 }
 
@@ -1615,25 +1617,25 @@ static void LunpaFortress_ActivateLeverTrap(void) {
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 0);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT, 0);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT, 0);
-  OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT, 0);
   WAIT(60);
 }
 
 /// The camera finds Toadonpa, the monster Dodonpa has freed; it lumbers
 /// forward.
 static void LunpaFortress_RevealMonster(void) {
-  Engine_CameraMoveToActor(FORTRESS4_TOADONPA, 1);
+  Engine_CameraMoveToActor(TOADONPA_BOSS, 1);
   Engine_CameraWaitForMove();
   WAIT(60);
   MESSAGE_SET(MsgLunpaPrepareBecomeMonster);
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
-  OBJ_SPEED(FORTRESS4_TOADONPA, 0x10000, 0x8000);
-  OBJ_SPEED(FORTRESS4_TOADONPA_PART, 0x10000, 0x8000);
-  OBJ_WALK(FORTRESS4_TOADONPA, 472, 180);
-  OBJ_WALK(FORTRESS4_TOADONPA_PART, 472, 180);
-  Engine_CameraFollowActor(FORTRESS4_TOADONPA, 1);
-  Engine_ActorWaitForMove(FORTRESS4_TOADONPA);
-  OBJ_MODE(FORTRESS4_TOADONPA, 4);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
+  OBJ_SPEED(TOADONPA_BOSS, 0x10000, 0x8000);
+  OBJ_SPEED(TOADONPA_BOSS_PART, 0x10000, 0x8000);
+  OBJ_WALK(TOADONPA_BOSS, 472, 180);
+  OBJ_WALK(TOADONPA_BOSS_PART, 472, 180);
+  Engine_CameraFollowActor(TOADONPA_BOSS, 1);
+  Engine_ActorWaitForMove(TOADONPA_BOSS);
+  OBJ_MODE(TOADONPA_BOSS, 4);
   WAIT(30);
 }
 
@@ -1669,12 +1671,12 @@ static void Event_FindHammet(void) {
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_TRAP_SEEN) != 0) {
     OBJ_SPEED(ACTOR_PARTY_LEADER, 32768, 16384);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
-    OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_HAMMET, 0);
+    OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
     LunpaFortress_GatherPartyAroundHammet();
-    OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT, 60);
-    OBJ_DIR(FORTRESS4_HAMMET, FACING_WEST, 0);
-    Engine_ActorJump(FORTRESS4_HAMMET, 4, 0);
-    Engine_ActorSetSpriteFlags(Actor_Get(FORTRESS4_HAMMET), 1);
+    OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT, 60);
+    OBJ_DIR(TOADONPA_HAMMET, FACING_WEST, 0);
+    Engine_ActorJump(TOADONPA_HAMMET, 4, 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(TOADONPA_HAMMET), 1);
     WAIT(30);
     OBJ_SPEED(IVAN, 45875, 22937);
     OBJ_WALK(IVAN, 464, 192);
@@ -1685,21 +1687,21 @@ static void Event_FindHammet(void) {
     OBJ_DIR(GARET, FACING_SOUTH, 0);
     OBJ_DIR(MIA, FACING_SOUTH, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
-    OBJ_POS_SET(FORTRESS4_DODONPA, 456, 320);
+    OBJ_POS_SET(TOADONPA_DODONPA, 456, 320);
     Camera_SetSpeed(131072, 16384);
     messageBase = MsgLunpaBackMoreGuess;
     MESSAGE_SET(messageBase);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
-    OBJ_WALK(FORTRESS4_DODONPA, 458, 272);
-    Engine_ActorWaitForMove(FORTRESS4_DODONPA);
-    OBJ_DIR(FORTRESS4_DODONPA, FACING_SOUTH + FACING_STEP, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
+    OBJ_WALK(TOADONPA_DODONPA, 458, 272);
+    Engine_ActorWaitForMove(TOADONPA_DODONPA);
+    OBJ_DIR(TOADONPA_DODONPA, FACING_SOUTH + FACING_STEP, 0);
     WAIT(40);
-    Actor_SetDestinationOffset(FORTRESS4_DODONPA, -8, 8);
-    Engine_ActorWaitForMove(FORTRESS4_DODONPA);
+    Actor_SetDestinationOffset(TOADONPA_DODONPA, -8, 8);
+    Engine_ActorWaitForMove(TOADONPA_DODONPA);
     WAIT(60);
     SE(SE_155);
     Engine_MessageShowCentered(messageBase + 1, 1);
-    Actor_SetDestinationOffset(FORTRESS4_DODONPA, 8, -8);
+    Actor_SetDestinationOffset(TOADONPA_DODONPA, 8, -8);
     LunpaFortress_ActivateLeverTrap();
     WAIT(120);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1709,16 +1711,17 @@ static void Event_FindHammet(void) {
     WAIT(20);
     messageBase += 2;
     LunpaFortress_PositionPartyForMonster();
-    OBJ_FACE(FORTRESS4_DODONPA, ACTOR_PARTY_LEADER, 0);
+    OBJ_FACE(TOADONPA_DODONPA, ACTOR_PARTY_LEADER, 0);
     MESSAGE_SET(messageBase);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
     LunpaFortress_RevealMonster();
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     WAIT(1);
-    Battle_SetStart(3);
+    Battle_SetStart(BATTLE_START_SCENE);
     Engine_EventSetNextDestination((s32)&SceneId_LunpaFortressToadonpa,
-                                   FORTRESS4_ENTRANCE_AFTER_BATTLE);
-    Engine_BattleFxSetWeightedResult(98, 4);
+                                   LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
+    Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 4);
   } else {
     OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
     SE(MUS_017);
@@ -1726,17 +1729,17 @@ static void Event_FindHammet(void) {
     // Ivan recognizes Hammet before Dodonpa interrupts the reunion.
     messageBase = MsgLunpaTimeEat;
     MESSAGE_SET(messageBase);
-    MESSAGE_PUT(FORTRESS4_HAMMET, 0);
-    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, FORTRESS4_HAMMET, 0);
+    MESSAGE_PUT(TOADONPA_HAMMET, 0);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
     WAIT(140);
-    OBJ_DIR(FORTRESS4_HAMMET, FACING_WEST, 0);
-    Engine_ActorJump(FORTRESS4_HAMMET, 4, 0);
-    Engine_ActorSetSpriteFlags(Actor_Get(FORTRESS4_HAMMET), 1);
+    OBJ_DIR(TOADONPA_HAMMET, FACING_WEST, 0);
+    Engine_ActorJump(TOADONPA_HAMMET, 4, 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(TOADONPA_HAMMET), 1);
     MESSAGE_SET(messageBase + 1);
-    MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+    MESSAGE_PUT(TOADONPA_HAMMET, 0);
     OBJ_SPEED(ACTOR_PARTY_LEADER, 32768, 16384);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
-    OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_HAMMET, 0);
+    OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
     LunpaFortress_GatherPartyAroundHammet();
     OBJ_SPEED(IVAN, 45875, 22937);
     OBJ_WALK(IVAN, 464, 192);
@@ -1744,109 +1747,109 @@ static void Event_FindHammet(void) {
     WAIT(30);
     MESSAGE_SET(messageBase + 2);
     MESSAGE_PUT(IVAN, 0);
-    OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT, 0);
+    OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT, 0);
     WAIT(110);
     SE(MUS_060);
     MESSAGE_SET(messageBase + 3);
-    MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+    MESSAGE_PUT(TOADONPA_HAMMET, 0);
     WAIT(30);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     WAIT(20);
     OBJ_MODE(IVAN, ANIM_STAND);
-    Engine_ActorStartRepeatedMotion(FORTRESS4_HAMMET, 1);
+    Engine_ActorStartRepeatedMotion(TOADONPA_HAMMET, 1);
     WAIT(20);
-    OBJ_SPEED(FORTRESS4_HAMMET, 26214, 13107);
-    OBJ_WALK(FORTRESS4_HAMMET, 520, 208);
-    Engine_ActorWaitForMove(FORTRESS4_HAMMET);
-    OBJ_MODE(FORTRESS4_HAMMET, 1);
+    OBJ_SPEED(TOADONPA_HAMMET, 26214, 13107);
+    OBJ_WALK(TOADONPA_HAMMET, 520, 208);
+    Engine_ActorWaitForMove(TOADONPA_HAMMET);
+    OBJ_MODE(TOADONPA_HAMMET, 1);
     WAIT(20);
-    OBJ_DIR(FORTRESS4_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
+    OBJ_DIR(TOADONPA_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
     WAIT(30);
-    OBJ_DIR(FORTRESS4_HAMMET, FACING_SOUTH + FACING_STEP, 0);
+    OBJ_DIR(TOADONPA_HAMMET, FACING_SOUTH + FACING_STEP, 0);
     WAIT(30);
-    OBJ_FACE(FORTRESS4_HAMMET, IVAN, 0);
+    OBJ_FACE(TOADONPA_HAMMET, IVAN, 0);
     WAIT(20);
     MESSAGE_SET(messageBase + 4);
-    MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+    MESSAGE_PUT(TOADONPA_HAMMET, 0);
     WAIT(40);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     WAIT(20);
-    OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT | 8, 0);
+    OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | 8, 0);
     WAIT(120);
     MESSAGE_SET(messageBase + 5);
-    MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+    MESSAGE_PUT(TOADONPA_HAMMET, 0);
     WAIT(25);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     WAIT(30);
-    Engine_ActorSetAnimationAndWait(FORTRESS4_HAMMET, 3);
+    Engine_ActorSetAnimationAndWait(TOADONPA_HAMMET, 3);
     WAIT(40);
     OBJ_WALK(IVAN, 480, 200);
     Engine_ActorWaitForMove(IVAN);
-    Engine_ActorFaceEachOther(IVAN, FORTRESS4_HAMMET, 0);
+    Engine_ActorFaceEachOther(IVAN, TOADONPA_HAMMET, 0);
     WAIT(60);
     MESSAGE_SET(messageBase + 6);
     MESSAGE_PUT(IVAN, 0);
     WAIT(20);
-    OBJ_MODE(FORTRESS4_HAMMET, 4);
+    OBJ_MODE(TOADONPA_HAMMET, 4);
     WAIT(80);
     MESSAGE_SET(messageBase + 7);
-    MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+    MESSAGE_PUT(TOADONPA_HAMMET, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
-    OBJ_POS_SET(FORTRESS4_DODONPA, 456, 320);
+    OBJ_POS_SET(TOADONPA_DODONPA, 456, 320);
     SE(MUS_019);
     MESSAGE_SET(messageBase + 8);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
-    OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_DODONPA, 0);
-    OBJ_FACE(IVAN, FORTRESS4_DODONPA, 0);
-    OBJ_FACE(GARET, FORTRESS4_DODONPA, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
+    OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DODONPA, 0);
+    OBJ_FACE(IVAN, TOADONPA_DODONPA, 0);
+    OBJ_FACE(GARET, TOADONPA_DODONPA, 0);
     WAIT(5);
     OBJ_DIR(MIA, FACING_SOUTH, 0);
-    OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DODONPA, 0);
+    OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
     WAIT(30);
     SE(MUS_061);
     Camera_SetSpeed(131072, 16384);
-    Engine_CameraMoveToActor(FORTRESS4_DODONPA, 1);
+    Engine_CameraMoveToActor(TOADONPA_DODONPA, 1);
     Engine_CameraWaitForMove();
-    OBJ_SPEED(FORTRESS4_DODONPA, 52428, 26214);
-    OBJ_WALK(FORTRESS4_DODONPA, 456, 304);
-    Engine_CameraFollowActor(FORTRESS4_DODONPA, 1);
-    Engine_ActorWaitForMove(FORTRESS4_DODONPA);
+    OBJ_SPEED(TOADONPA_DODONPA, 52428, 26214);
+    OBJ_WALK(TOADONPA_DODONPA, 456, 304);
+    Engine_CameraFollowActor(TOADONPA_DODONPA, 1);
+    Engine_ActorWaitForMove(TOADONPA_DODONPA);
     Engine_CameraFollowActor(GARET, 1);
     OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
     OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 2, 0);
     OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 2, 0);
     OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 2, 0);
-    OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | 2, 0);
     WAIT(60);
-    OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DODONPA, 0);
-    Engine_ActorStartRepeatedMotion(FORTRESS4_HAMMET, 2);
+    OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
+    Engine_ActorStartRepeatedMotion(TOADONPA_HAMMET, 2);
     WAIT(60);
     MESSAGE_SET(messageBase + 9);
-    MESSAGE_PUT(FORTRESS4_HAMMET, 0);
-    OBJ_FACE(FORTRESS4_DODONPA, FORTRESS4_HAMMET, 0);
+    MESSAGE_PUT(TOADONPA_HAMMET, 0);
+    OBJ_FACE(TOADONPA_DODONPA, TOADONPA_HAMMET, 0);
     MESSAGE_SET(messageBase + 10);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
     WAIT(60);
-    OBJ_FACE(FORTRESS4_DODONPA, IVAN, 0);
+    OBJ_FACE(TOADONPA_DODONPA, IVAN, 0);
     WAIT(30);
     MESSAGE_SET(messageBase + 11);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
     Engine_ActorFaceEachOther(MIA, IVAN, 0);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
     WAIT(60);
-    OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_DODONPA, 0);
-    OBJ_FACE(IVAN, FORTRESS4_DODONPA, 0);
-    OBJ_FACE(GARET, FORTRESS4_DODONPA, 0);
-    OBJ_FACE(MIA, FORTRESS4_DODONPA, 0);
-    Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 1);
+    OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DODONPA, 0);
+    OBJ_FACE(IVAN, TOADONPA_DODONPA, 0);
+    OBJ_FACE(GARET, TOADONPA_DODONPA, 0);
+    OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
+    Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 1);
     WAIT(60);
     MESSAGE_SET(messageBase + 12);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
     OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 3, 0);
     WAIT(60);
-    OBJ_MODE(FORTRESS4_DODONPA, 4);
+    OBJ_MODE(TOADONPA_DODONPA, 4);
     MESSAGE_SET(messageBase + 13);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
     OBJ_WALK(GARET, 456, 248);
     Engine_ActorWaitForMove(GARET);
     OBJ_DIR(GARET, FACING_SOUTH, 0);
@@ -1858,76 +1861,77 @@ static void Event_FindHammet(void) {
     WAIT(10);
     MESSAGE_SET(messageBase + 15);
     MESSAGE_PUT(IVAN, 0);
-    OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT | 5, 0);
+    OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | 5, 0);
     WAIT(60);
     MESSAGE_SET(messageBase + 16);
-    MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+    MESSAGE_PUT(TOADONPA_HAMMET, 0);
     OBJ_WALK(MIA, 440, 216);
     Engine_ActorWaitForMove(MIA);
-    OBJ_FACE(MIA, FORTRESS4_DODONPA, 0);
+    OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
     Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
     WAIT(10);
     MESSAGE_SET(messageBase + 17);
     MESSAGE_PUT(MIA, 0);
-    OBJ_MODE(FORTRESS4_DODONPA, 4);
+    OBJ_MODE(TOADONPA_DODONPA, 4);
     MESSAGE_SET(messageBase + 18);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
     OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
     OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 2, 0);
     OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 2, 0);
     OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 2, 0);
-    OBJ_EMOTE(FORTRESS4_DODONPA, EMOTE_IN_FRONT | 8, 0);
+    OBJ_EMOTE(TOADONPA_DODONPA, EMOTE_IN_FRONT | 8, 0);
     WAIT(60);
     MESSAGE_SET(messageBase + 19);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
     WAIT(20);
     OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 3, 0);
     WAIT(60);
     MESSAGE_SET(messageBase + 20);
     MESSAGE_PUT(GARET, 0);
-    Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 1);
+    Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 1);
     WAIT(60);
     MESSAGE_SET(messageBase + 21);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
-    OBJ_WALK(FORTRESS4_DODONPA, 456, 280);
-    Engine_ActorWaitForMove(FORTRESS4_DODONPA);
-    OBJ_DIR(FORTRESS4_DODONPA, FACING_SOUTH + FACING_STEP, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
+    OBJ_WALK(TOADONPA_DODONPA, 456, 280);
+    Engine_ActorWaitForMove(TOADONPA_DODONPA);
+    OBJ_DIR(TOADONPA_DODONPA, FACING_SOUTH + FACING_STEP, 0);
     WAIT(80);
-    Actor_SetDestinationOffset(FORTRESS4_DODONPA, -8, 8);
-    Engine_ActorWaitForMove(FORTRESS4_DODONPA);
+    Actor_SetDestinationOffset(TOADONPA_DODONPA, -8, 8);
+    Engine_ActorWaitForMove(TOADONPA_DODONPA);
     WAIT(60);
     SE(SE_155);
     Engine_MessageShowCentered(MsgLunpaDodonpaPulledLever, 1);
-    Actor_SetDestinationOffset(FORTRESS4_DODONPA, 8, -8);
-    OBJ_FACE(FORTRESS4_DODONPA, FORTRESS4_TOADONPA, 0);
+    Actor_SetDestinationOffset(TOADONPA_DODONPA, 8, -8);
+    OBJ_FACE(TOADONPA_DODONPA, TOADONPA_BOSS, 0);
     LunpaFortress_ActivateLeverTrap();
     SE(MUS_052);
     MESSAGE_SET(messageBase + 23);
-    MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+    MESSAGE_PUT(TOADONPA_DODONPA, 0);
     WAIT(60);
-    OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_TOADONPA, 0);
-    OBJ_FACE(GARET, FORTRESS4_TOADONPA, 0);
-    OBJ_FACE(IVAN, FORTRESS4_TOADONPA, 0);
-    OBJ_FACE(MIA, FORTRESS4_TOADONPA, 0);
-    OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_TOADONPA, 0);
+    OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_BOSS, 0);
+    OBJ_FACE(GARET, TOADONPA_BOSS, 0);
+    OBJ_FACE(IVAN, TOADONPA_BOSS, 0);
+    OBJ_FACE(MIA, TOADONPA_BOSS, 0);
+    OBJ_FACE(TOADONPA_HAMMET, TOADONPA_BOSS, 0);
     LunpaFortress_PositionPartyForMonster();
     LunpaFortress_RevealMonster();
     FLAG_SET(FLAG_LUNPA_FORTRESS_TRAP_SEEN);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     WAIT(1);
-    Battle_SetStart(3);
+    Battle_SetStart(BATTLE_START_SCENE);
     Engine_EventSetNextDestination((s32)&SceneId_LunpaFortressToadonpa,
-                                   FORTRESS4_ENTRANCE_AFTER_BATTLE);
-    Engine_BattleFxSetWeightedResult(98, 4);
+                                   LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
+    Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 4);
   }
   EV_END();
 }
 
-/// LunpaFortressToadonpa, FORTRESS4_ENTRANCE_AFTER_BATTLE after the battle with
-/// Toadonpa: the monster has fallen on Dodonpa. The party may pull it off him;
-/// they argue over his punishment until his father Donpa arrives, who orders
-/// him locked up, thanks the party, and lets them leave with Hammet. Sets
-/// FLAG_LUNPA_TRADE_REOPENED.
+/// LunpaFortressToadonpa, LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE after the battle
+/// with Toadonpa: the monster has fallen on Dodonpa. The party may pull it off
+/// him; they argue over his punishment until his father Donpa arrives, who
+/// orders him locked up, thanks the party, and lets them leave with Hammet.
+/// Sets FLAG_LUNPA_TRADE_REOPENED.
 static void Event_DonpaJudgesDodonpa(void) {
   struct FieldActor *leader;
   s32 aftermathMessage;
@@ -1937,9 +1941,9 @@ static void Event_DonpaJudgesDodonpa(void) {
   FLAG_SET(FLAG_PLACE_TEMP_01);
   FLAG_SET(FLAG_LUNPA_TRADE_REOPENED);
   Map_CopyCells(16, 75, 7, 4, 26, 55);
-  LunpaFortress_OpenDoor4(4);
+  LunpaFortress_OpenToadonpaDoor(4);
   EV_BEGIN();
-  leader = Actor_Get(FORTRESS4_HAMMET);
+  leader = Actor_Get(TOADONPA_HAMMET);
   Engine_ActorSetSpriteFlags(leader, 1);
   OBJ_POS_SET(ACTOR_PARTY_LEADER, 456, 184);
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -1949,23 +1953,23 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_DIR(MIA, FACING_SOUTH, 0);
   OBJ_POS_SET(IVAN, 472, 184);
   OBJ_DIR(IVAN, FACING_SOUTH, 0);
-  OBJ_POS_SET(FORTRESS4_HAMMET, 520, 224);
-  OBJ_DIR(FORTRESS4_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
-  OBJ_POS_SET(FORTRESS4_TOADONPA, 448, 237);
-  OBJ_DIR(FORTRESS4_TOADONPA, FACING_WEST, 0);
-  OBJ_POS_SET(FORTRESS4_TOADONPA_PART, 448, 238);
-  Engine_ActorSetSpritePriority(FORTRESS4_TOADONPA_PART, 3);
-  OBJ_MODE(FORTRESS4_TOADONPA, 3);
-  OBJ_POS_SET(FORTRESS4_DODONPA, 458, 243);
-  OBJ_DIR(FORTRESS4_DODONPA, FACING_SOUTH, 0);
-  OBJ_MODE(FORTRESS4_DODONPA, 5);
+  OBJ_POS_SET(TOADONPA_HAMMET, 520, 224);
+  OBJ_DIR(TOADONPA_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
+  OBJ_POS_SET(TOADONPA_BOSS, 448, 237);
+  OBJ_DIR(TOADONPA_BOSS, FACING_WEST, 0);
+  OBJ_POS_SET(TOADONPA_BOSS_PART, 448, 238);
+  Engine_ActorSetSpritePriority(TOADONPA_BOSS_PART, 3);
+  OBJ_MODE(TOADONPA_BOSS, 3);
+  OBJ_POS_SET(TOADONPA_DODONPA, 458, 243);
+  OBJ_DIR(TOADONPA_DODONPA, FACING_SOUTH, 0);
+  OBJ_MODE(TOADONPA_DODONPA, 5);
   Engine_EventOpenScreen();
   WAIT(120);
 
   // The fallen monster has pinned Dodonpa; decide whether to help him.
   aftermathMessage = MsgLunpaUhnnGetOff;
   MESSAGE_SET(aftermathMessage);
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 60);
   MESSAGE_SET((aftermathMessage + 1));
   MESSAGE_PUT(GARET, 0);
@@ -1973,28 +1977,28 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 1);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 1);
   WAIT(60);
-  OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DODONPA, 0);
+  OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
   WAIT(60);
   MESSAGE_SET((aftermathMessage + 2));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
-  OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_HAMMET, 0);
-  OBJ_FACE(GARET, FORTRESS4_HAMMET, 0);
-  OBJ_FACE(IVAN, FORTRESS4_HAMMET, 0);
-  OBJ_FACE(MIA, FORTRESS4_HAMMET, 0);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
+  OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
+  OBJ_FACE(GARET, TOADONPA_HAMMET, 0);
+  OBJ_FACE(IVAN, TOADONPA_HAMMET, 0);
+  OBJ_FACE(MIA, TOADONPA_HAMMET, 0);
   WAIT(60);
-  OBJ_WALK(FORTRESS4_HAMMET, 512, 232);
-  OBJ_MODE(FORTRESS4_HAMMET, 4);
+  OBJ_WALK(TOADONPA_HAMMET, 512, 232);
+  OBJ_MODE(TOADONPA_HAMMET, 4);
   WAIT(60);
   MESSAGE_SET((aftermathMessage + 3));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
   WAIT(15);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 2);
+  Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 2);
   MESSAGE_SET((aftermathMessage + 4));
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
-  OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(IVAN, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(MIA, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(GARET, FORTRESS4_DODONPA, 0);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
+  OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DODONPA, 0);
+  OBJ_FACE(IVAN, TOADONPA_DODONPA, 0);
+  OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
+  OBJ_FACE(GARET, TOADONPA_DODONPA, 0);
   Engine_ActorStartRepeatedMotion(IVAN, 1);
   MESSAGE_SET((aftermathMessage + 5));
   MESSAGE_PUT(IVAN, 0);
@@ -2004,11 +2008,11 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_MODE(MIA, ANIM_STAND);
   MESSAGE_SET((aftermathMessage + 6));
   MESSAGE_PUT(MIA, 0);
-  OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT | 2, 65);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_HAMMET, 2);
+  OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | 2, 65);
+  Engine_ActorStartRepeatedMotion(TOADONPA_HAMMET, 2);
   WAIT(100);
   MESSAGE_SET((aftermathMessage + 7));
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
   OBJ_FACE(GARET, ACTOR_PARTY_LEADER, 0);
   WAIT(10);
   MESSAGE_SET((aftermathMessage + 8));
@@ -2024,40 +2028,40 @@ static void Event_DonpaJudgesDodonpa(void) {
     OBJ_MODE(IVAN, ANIM_NOD);
     OBJ_MODE(GARET, ANIM_NOD);
     OBJ_MODE(MIA, ANIM_NOD);
-    OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DODONPA, 0);
+    OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
     WAIT(60);
   } else {
     MESSAGE_SET((aftermathMessage + 11));
     MESSAGE_PUT(MIA, 0);
-    OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_HAMMET, 0);
-    OBJ_FACE(GARET, FORTRESS4_HAMMET, 0);
-    OBJ_FACE(IVAN, FORTRESS4_HAMMET, 0);
-    OBJ_FACE(MIA, FORTRESS4_HAMMET, 0);
+    OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
+    OBJ_FACE(GARET, TOADONPA_HAMMET, 0);
+    OBJ_FACE(IVAN, TOADONPA_HAMMET, 0);
+    OBJ_FACE(MIA, TOADONPA_HAMMET, 0);
     WAIT(20);
-    OBJ_FACE(FORTRESS4_HAMMET, ACTOR_PARTY_LEADER, 0);
+    OBJ_FACE(TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
     WAIT(60);
-    OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DODONPA, 0);
+    OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
     WAIT(80);
-    Engine_ActorSetAnimationAndWait(FORTRESS4_HAMMET, 3);
+    Engine_ActorSetAnimationAndWait(TOADONPA_HAMMET, 3);
     WAIT(30);
-    OBJ_FACE(FORTRESS4_HAMMET, ACTOR_PARTY_LEADER, 0);
+    OBJ_FACE(TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
     MESSAGE_SET((aftermathMessage + 12));
-    MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+    MESSAGE_PUT(TOADONPA_HAMMET, 0);
     WAIT(60);
-    OBJ_FACE(IVAN, FORTRESS4_HAMMET, 0);
-    OBJ_FACE(GARET, FORTRESS4_HAMMET, 0);
-    OBJ_FACE(MIA, FORTRESS4_HAMMET, 0);
-    OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_HAMMET, 0);
+    OBJ_FACE(IVAN, TOADONPA_HAMMET, 0);
+    OBJ_FACE(GARET, TOADONPA_HAMMET, 0);
+    OBJ_FACE(MIA, TOADONPA_HAMMET, 0);
+    OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
     OBJ_MODE(IVAN, ANIM_NOD);
     OBJ_MODE(GARET, ANIM_NOD);
     OBJ_MODE(MIA, ANIM_NOD);
     OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
     WAIT(80);
-    OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DODONPA, 0);
-    OBJ_FACE(IVAN, FORTRESS4_DODONPA, 0);
-    OBJ_FACE(GARET, FORTRESS4_DODONPA, 0);
-    OBJ_FACE(MIA, FORTRESS4_DODONPA, 0);
-    OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_DODONPA, 0);
+    OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
+    OBJ_FACE(IVAN, TOADONPA_DODONPA, 0);
+    OBJ_FACE(GARET, TOADONPA_DODONPA, 0);
+    OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
+    OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DODONPA, 0);
   }
   OBJ_SPEED(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   OBJ_SPEED(GARET, 0x8000, 0x4000);
@@ -2090,7 +2094,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_MODE(MIA, ANIM_NOD);
   WAIT(100);
   SE(SE_226);
-  OBJ_MODE(FORTRESS4_DODONPA, 7);
+  OBJ_MODE(TOADONPA_DODONPA, 7);
   // Move the party and both monster parts together to free Dodonpa.
   OBJ_SPEED(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -24, 0);
@@ -2100,10 +2104,10 @@ static void Event_DonpaJudgesDodonpa(void) {
   Actor_SetDestinationOffset(MIA, -24, 0);
   OBJ_SPEED(IVAN, 0x1999, 0xccc);
   Actor_SetDestinationOffset(IVAN, -24, 0);
-  OBJ_SPEED(FORTRESS4_TOADONPA, 0x1999, 0xccc);
-  OBJ_SPEED(FORTRESS4_TOADONPA_PART, 0x1999, 0xccc);
-  Actor_SetDestinationOffset(FORTRESS4_TOADONPA, -24, 0);
-  Actor_SetDestinationOffset(FORTRESS4_TOADONPA_PART, -24, 0);
+  OBJ_SPEED(TOADONPA_BOSS, 0x1999, 0xccc);
+  OBJ_SPEED(TOADONPA_BOSS_PART, 0x1999, 0xccc);
+  Actor_SetDestinationOffset(TOADONPA_BOSS, -24, 0);
+  Actor_SetDestinationOffset(TOADONPA_BOSS_PART, -24, 0);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   SE(SE_288);
   WAIT(60);
@@ -2149,33 +2153,33 @@ static void Event_DonpaJudgesDodonpa(void) {
   punishmentMessage = MsgLunpaAbleGet;
   MESSAGE_SET(punishmentMessage);
   MESSAGE_PUT(GARET, 0);
-  OBJ_MODE(FORTRESS4_DODONPA, 6);
+  OBJ_MODE(TOADONPA_DODONPA, 6);
   WAIT(120);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 2);
+  Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 2);
   WAIT(60);
-  OBJ_MODE(FORTRESS4_DODONPA, 7);
+  OBJ_MODE(TOADONPA_DODONPA, 7);
   MESSAGE_SET((punishmentMessage + 1));
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
   WAIT(20);
   Engine_ActorFaceEachOther(MIA, IVAN, 0);
   WAIT(10);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 80);
-  OBJ_FACE(MIA, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(IVAN, FORTRESS4_DODONPA, 0);
+  OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
+  OBJ_FACE(IVAN, TOADONPA_DODONPA, 0);
   MESSAGE_SET((punishmentMessage + 2));
   MESSAGE_PUT(MIA, 0);
-  OBJ_EMOTE(FORTRESS4_DODONPA, EMOTE_IN_FRONT | 2, 70);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 2);
+  OBJ_EMOTE(TOADONPA_DODONPA, EMOTE_IN_FRONT | 2, 70);
+  Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 2);
   WAIT(60);
-  OBJ_MODE(FORTRESS4_DODONPA, 5);
+  OBJ_MODE(TOADONPA_DODONPA, 5);
   WAIT(70);
   MESSAGE_SET((punishmentMessage + 3));
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
-  OBJ_MODE(FORTRESS4_DODONPA, 7);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
+  OBJ_MODE(TOADONPA_DODONPA, 7);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 8, 40);
   MESSAGE_SET((punishmentMessage + 4));
   MESSAGE_PUT(IVAN, 0);
-  Engine_ActorSetAnimationAndWait(FORTRESS4_HAMMET, 3);
+  Engine_ActorSetAnimationAndWait(TOADONPA_HAMMET, 3);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 3, 60);
   OBJ_WALK(GARET, 440, 208);
   Engine_ActorWaitForMove(GARET);
@@ -2186,7 +2190,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 0);
-  OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | 1, 0);
   WAIT(70);
   OBJ_FACE(GARET, IVAN, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 2, 75);
@@ -2194,22 +2198,22 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_MODE(GARET, ANIM_SHAKE_HEAD);
   MESSAGE_SET((punishmentMessage + 6));
   MESSAGE_PUT(GARET, 0);
-  OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | 1, 0);
   WAIT(60);
   MESSAGE_SET((punishmentMessage + 7));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
   OBJ_WALK(GARET, 448, 208);
   Engine_ActorWaitForMove(GARET);
   OBJ_MODE(GARET, ANIM_STAND);
-  OBJ_FACE(GARET, FORTRESS4_HAMMET, 0);
+  OBJ_FACE(GARET, TOADONPA_HAMMET, 0);
   MESSAGE_SET((punishmentMessage + 8));
   MESSAGE_PUT(GARET, 0);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_HAMMET, 1);
+  Engine_ActorStartRepeatedMotion(TOADONPA_HAMMET, 1);
   WAIT(60);
-  OBJ_FACE(GARET, FORTRESS4_HAMMET, 0);
+  OBJ_FACE(GARET, TOADONPA_HAMMET, 0);
   WAIT(60);
   MESSAGE_SET((punishmentMessage + 9));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
   OBJ_MODE(GARET, ANIM_SHAKE_HEAD);
   WAIT(60);
   MESSAGE_SET((punishmentMessage + 10));
@@ -2227,21 +2231,21 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_FACE(MIA, GARET, 0);
   MESSAGE_SET((punishmentMessage + 13));
   MESSAGE_PUT(MIA, 0);
-  OBJ_FACE(MIA, FORTRESS4_DODONPA, 0);
+  OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
   MESSAGE_SET((punishmentMessage + 14));
   MESSAGE_PUT(MIA, 0);
-  OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(IVAN, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(GARET, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(MIA, FORTRESS4_DODONPA, 0);
+  OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DODONPA, 0);
+  OBJ_FACE(IVAN, TOADONPA_DODONPA, 0);
+  OBJ_FACE(GARET, TOADONPA_DODONPA, 0);
+  OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
   WAIT(120);
-  OBJ_EMOTE(FORTRESS4_DODONPA, EMOTE_IN_FRONT | 2, 30);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 1);
+  OBJ_EMOTE(TOADONPA_DODONPA, EMOTE_IN_FRONT | 2, 30);
+  Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 1);
   WAIT(120);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_HAMMET, 1);
+  Engine_ActorStartRepeatedMotion(TOADONPA_HAMMET, 1);
   WAIT(60);
   MESSAGE_SET((punishmentMessage + 15));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 7, 110);
   OBJ_WALK(GARET, 456, 212);
   Engine_ActorWaitForMove(GARET);
@@ -2253,25 +2257,25 @@ static void Event_DonpaJudgesDodonpa(void) {
   Engine_ActorStartRepeatedMotion(IVAN, 1);
   MESSAGE_SET((punishmentMessage + 17));
   MESSAGE_PUT(IVAN, 0);
-  OBJ_FACE(GARET, FORTRESS4_DODONPA, 0);
+  OBJ_FACE(GARET, TOADONPA_DODONPA, 0);
   WAIT(80);
   OBJ_FACE(GARET, IVAN, 0);
   WAIT(60);
-  OBJ_FACE(GARET, FORTRESS4_DODONPA, 0);
+  OBJ_FACE(GARET, TOADONPA_DODONPA, 0);
   WAIT(30);
-  OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(MIA, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(FORTRESS4_DODONPA, FORTRESS4_DODONPA, 0);
-  OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DODONPA, 0);
+  OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DODONPA, 0);
+  OBJ_FACE(MIA, TOADONPA_DODONPA, 0);
+  OBJ_FACE(TOADONPA_DODONPA, TOADONPA_DODONPA, 0);
+  OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DODONPA, 0);
   WAIT(80);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   WAIT(30);
   MESSAGE_SET((punishmentMessage + 18));
   MESSAGE_PUT(GARET, 0);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 2);
+  Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 2);
   WAIT(70);
   MESSAGE_SET((punishmentMessage + 19));
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT, 60);
   MESSAGE_SET((punishmentMessage + 20));
   MESSAGE_PUT(MIA, 0);
@@ -2282,129 +2286,129 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_FACE(GARET, ACTOR_PARTY_LEADER, 0);
   OBJ_FACE(MIA, ACTOR_PARTY_LEADER, 0);
   OBJ_FACE(IVAN, ACTOR_PARTY_LEADER, 0);
-  OBJ_FACE(FORTRESS4_HAMMET, ACTOR_PARTY_LEADER, 0);
-  OBJ_POS_SET(FORTRESS4_DONPA, 456, 304);
-  OBJ_SPEED(FORTRESS4_DONPA, 0x8000, 0x4000);
+  OBJ_FACE(TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
+  OBJ_POS_SET(TOADONPA_DONPA, 456, 304);
+  OBJ_SPEED(TOADONPA_DONPA, 0x8000, 0x4000);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     SE(MUS_019);
     MESSAGE_SET((punishmentMessage + 22));
-    MESSAGE_PUT(FORTRESS4_DONPA, 0);
+    MESSAGE_PUT(TOADONPA_DONPA, 0);
   } else {
     SE(MUS_019);
     MESSAGE_SET((punishmentMessage + 23));
-    MESSAGE_PUT(FORTRESS4_DONPA, 0);
+    MESSAGE_PUT(TOADONPA_DONPA, 0);
   }
-  OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_DONPA, 0);
-  OBJ_FACE(GARET, FORTRESS4_DONPA, 0);
-  OBJ_FACE(MIA, FORTRESS4_DONPA, 0);
-  OBJ_FACE(IVAN, FORTRESS4_DONPA, 0);
-  OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DONPA, 0);
-  OBJ_FACE(FORTRESS4_DODONPA, FORTRESS4_DONPA, 0);
+  OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DONPA, 0);
+  OBJ_FACE(GARET, TOADONPA_DONPA, 0);
+  OBJ_FACE(MIA, TOADONPA_DONPA, 0);
+  OBJ_FACE(IVAN, TOADONPA_DONPA, 0);
+  OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DONPA, 0);
+  OBJ_FACE(TOADONPA_DODONPA, TOADONPA_DONPA, 0);
   Camera_MoveTo(0x1c80000, -1, 0xf00000, 1);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 1);
+  Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 1);
   WAIT(60);
   SE(MUS_008);
   // Donpa takes charge and orders his son to remain imprisoned.
   donpaMessage = MsgLunpaDad;
   MESSAGE_SET(donpaMessage);
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
-  OBJ_WALK(FORTRESS4_DONPA, 456, 280);
-  Engine_ActorWaitForMove(FORTRESS4_DONPA);
-  OBJ_WALK(FORTRESS4_DONPA, 440, 256);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
+  OBJ_WALK(TOADONPA_DONPA, 456, 280);
+  Engine_ActorWaitForMove(TOADONPA_DONPA);
+  OBJ_WALK(TOADONPA_DONPA, 440, 256);
   Camera_MoveTo(0x1c80000, -1, 0xe00000, 1);
   MESSAGE_SET((donpaMessage + 1));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  Engine_ActorWaitForMove(FORTRESS4_DONPA);
-  OBJ_DIR(FORTRESS4_DONPA, FACING_NORTH + FACING_STEP, 0);
-  OBJ_EMOTE(FORTRESS4_DODONPA, EMOTE_IN_FRONT | 2, 80);
-  OBJ_MODE(FORTRESS4_DONPA, 4);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  Engine_ActorWaitForMove(TOADONPA_DONPA);
+  OBJ_DIR(TOADONPA_DONPA, FACING_NORTH + FACING_STEP, 0);
+  OBJ_EMOTE(TOADONPA_DODONPA, EMOTE_IN_FRONT | 2, 80);
+  OBJ_MODE(TOADONPA_DONPA, 4);
   WAIT(89);
   MESSAGE_SET((donpaMessage + 2));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  Engine_ActorRunRepeatedMotion(FORTRESS4_DODONPA, 2);
-  Engine_ActorSetAnimationAndWait(FORTRESS4_DONPA, 3);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  Engine_ActorRunRepeatedMotion(TOADONPA_DODONPA, 2);
+  Engine_ActorSetAnimationAndWait(TOADONPA_DONPA, 3);
   MESSAGE_SET((donpaMessage + 3));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  OBJ_EMOTE(FORTRESS4_DODONPA, EMOTE_IN_FRONT, 80);
-  OBJ_MODE(FORTRESS4_DONPA, 4);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  OBJ_EMOTE(TOADONPA_DODONPA, EMOTE_IN_FRONT, 80);
+  OBJ_MODE(TOADONPA_DONPA, 4);
   WAIT(80);
-  OBJ_DIR(FORTRESS4_DONPA, FACING_SOUTHEAST + FACING_STEP, 0);
+  OBJ_DIR(TOADONPA_DONPA, FACING_SOUTHEAST + FACING_STEP, 0);
   WAIT(20);
   MESSAGE_SET((donpaMessage + 4));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 1);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 1);
   MESSAGE_SET((donpaMessage + 5));
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
   WAIT(30);
-  Engine_ActorSetAnimationAndWait(FORTRESS4_DONPA, 3);
-  OBJ_FACE(FORTRESS4_DONPA, FORTRESS4_DODONPA, 0);
+  Engine_ActorSetAnimationAndWait(TOADONPA_DONPA, 3);
+  OBJ_FACE(TOADONPA_DONPA, TOADONPA_DODONPA, 0);
   WAIT(20);
   MESSAGE_SET((donpaMessage + 6));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_DODONPA, 1);
-  OBJ_EMOTE(FORTRESS4_DODONPA, EMOTE_IN_FRONT | 2, 80);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  Engine_ActorStartRepeatedMotion(TOADONPA_DODONPA, 1);
+  OBJ_EMOTE(TOADONPA_DODONPA, EMOTE_IN_FRONT | 2, 80);
   MESSAGE_SET((donpaMessage + 7));
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
-  OBJ_EMOTE(FORTRESS4_DONPA, EMOTE_IN_FRONT | 3, 60);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
+  OBJ_EMOTE(TOADONPA_DONPA, EMOTE_IN_FRONT | 3, 60);
   MESSAGE_SET((donpaMessage + 8));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  Engine_ActorSetAnimationAndWait(FORTRESS4_DONPA, 3);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  Engine_ActorSetAnimationAndWait(TOADONPA_DONPA, 3);
   MESSAGE_SET((donpaMessage + 9));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
   WAIT(20);
-  Actor_SetAttachedEffect(FORTRESS4_DODONPA, EMOTE_IN_FRONT | 1);
+  Actor_SetAttachedEffect(TOADONPA_DODONPA, EMOTE_IN_FRONT | 1);
   WAIT(80);
-  Actor_SetAttachedEffect(FORTRESS4_DODONPA, 0);
-  OBJ_WALK(FORTRESS4_DONPA, 496, 240);
-  Engine_ActorWaitForMove(FORTRESS4_DONPA);
-  OBJ_FACE(FORTRESS4_DONPA, FORTRESS4_HAMMET, 0);
+  Actor_SetAttachedEffect(TOADONPA_DODONPA, 0);
+  OBJ_WALK(TOADONPA_DONPA, 496, 240);
+  Engine_ActorWaitForMove(TOADONPA_DONPA);
+  OBJ_FACE(TOADONPA_DONPA, TOADONPA_HAMMET, 0);
   WAIT(20);
-  OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DONPA, 0);
+  OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DONPA, 0);
   MESSAGE_SET((donpaMessage + 10));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_HAMMET, 1);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  Engine_ActorStartRepeatedMotion(TOADONPA_HAMMET, 1);
   MESSAGE_SET((donpaMessage + 11));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
   WAIT(40);
-  Engine_ActorSetAnimationAndWait(FORTRESS4_DONPA, 3);
+  Engine_ActorSetAnimationAndWait(TOADONPA_DONPA, 3);
   WAIT(20);
   MESSAGE_SET((donpaMessage + 12));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  OBJ_MODE(FORTRESS4_DONPA, 3);
-  OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT | 2, 60);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  OBJ_MODE(TOADONPA_DONPA, 3);
+  OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | 2, 60);
   MESSAGE_SET((donpaMessage + 13));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
-  OBJ_EMOTE(FORTRESS4_DONPA, EMOTE_IN_FRONT, 70);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
+  OBJ_EMOTE(TOADONPA_DONPA, EMOTE_IN_FRONT, 70);
   MESSAGE_SET((donpaMessage + 14));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  OBJ_MODE(FORTRESS4_HAMMET, 3);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  OBJ_MODE(TOADONPA_HAMMET, 3);
   WAIT(140);
-  OBJ_MODE(FORTRESS4_DONPA, 3);
+  OBJ_MODE(TOADONPA_DONPA, 3);
   WAIT(120);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, FORTRESS4_DONPA, 0);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, TOADONPA_DONPA, 0);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
   OBJ_MODE(IVAN, ANIM_NOD);
   OBJ_MODE(GARET, ANIM_NOD);
   OBJ_MODE(MIA, ANIM_NOD);
   WAIT(120);
-  OBJ_EMOTE(FORTRESS4_DONPA, EMOTE_IN_FRONT | 8, 180);
+  OBJ_EMOTE(TOADONPA_DONPA, EMOTE_IN_FRONT | 8, 180);
   MESSAGE_SET((donpaMessage + 15));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT | 1, 80);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT | 1, 80);
   MESSAGE_SET((donpaMessage + 16));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
   Engine_ActorFaceEachOther(MIA, IVAN, 0);
   WAIT(80);
-  OBJ_FACE(FORTRESS4_DONPA, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
   WAIT(60);
-  OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_DONPA, 0);
-  OBJ_FACE(GARET, FORTRESS4_DONPA, 0);
-  OBJ_FACE(IVAN, FORTRESS4_DONPA, 0);
-  OBJ_FACE(MIA, FORTRESS4_DONPA, 0);
+  OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DONPA, 0);
+  OBJ_FACE(GARET, TOADONPA_DONPA, 0);
+  OBJ_FACE(IVAN, TOADONPA_DONPA, 0);
+  OBJ_FACE(MIA, TOADONPA_DONPA, 0);
   WAIT(60);
   MESSAGE_SET((donpaMessage + 17));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 0);
@@ -2416,41 +2420,41 @@ static void Event_DonpaJudgesDodonpa(void) {
   WAIT(60);
   MESSAGE_SET((donpaMessage + 19));
   MESSAGE_PUT(IVAN, 0);
-  OBJ_FACE(FORTRESS4_DONPA, IVAN, 0);
+  OBJ_FACE(TOADONPA_DONPA, IVAN, 0);
   WAIT(20);
   MESSAGE_SET((donpaMessage + 20));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 0);
   WAIT(120);
-  OBJ_MODE(FORTRESS4_DONPA, 4);
+  OBJ_MODE(TOADONPA_DONPA, 4);
   WAIT(120);
   MESSAGE_SET((donpaMessage + 21));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  OBJ_EMOTE(FORTRESS4_DONPA, EMOTE_IN_FRONT | 2, 90);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  OBJ_EMOTE(TOADONPA_DONPA, EMOTE_IN_FRONT | 2, 90);
   MESSAGE_SET((donpaMessage + 22));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
   OBJ_MODE(IVAN, ANIM_NOD);
   OBJ_MODE(MIA, ANIM_NOD);
   OBJ_MODE(GARET, ANIM_NOD);
-  OBJ_MODE(FORTRESS4_HAMMET, 3);
+  OBJ_MODE(TOADONPA_HAMMET, 3);
   WAIT(80);
-  OBJ_MODE(FORTRESS4_DONPA, 4);
+  OBJ_MODE(TOADONPA_DONPA, 4);
   WAIT(120);
   MESSAGE_SET((donpaMessage + 23));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  OBJ_EMOTE(FORTRESS4_HAMMET, EMOTE_IN_FRONT, 60);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  OBJ_EMOTE(TOADONPA_HAMMET, EMOTE_IN_FRONT, 60);
   MESSAGE_SET((donpaMessage + 24));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
-  OBJ_FACE(FORTRESS4_DONPA, FORTRESS4_HAMMET, 0);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
+  OBJ_FACE(TOADONPA_DONPA, TOADONPA_HAMMET, 0);
   WAIT(20);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_DONPA, 1);
+  Engine_ActorStartRepeatedMotion(TOADONPA_DONPA, 1);
   WAIT(50);
   MESSAGE_SET((donpaMessage + 25));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJ_MODE(GARET, ANIM_NOD);
   WAIT(70);
   MESSAGE_SET((donpaMessage + 26));
@@ -2458,41 +2462,41 @@ static void Event_DonpaJudgesDodonpa(void) {
   OBJ_MODE(MIA, ANIM_NOD);
   MESSAGE_SET((donpaMessage + 27));
   MESSAGE_PUT(MIA, 0);
-  OBJ_FACE(FORTRESS4_DONPA, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorSetAnimationAndWait(FORTRESS4_DONPA, 3);
+  OBJ_FACE(TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorSetAnimationAndWait(TOADONPA_DONPA, 3);
   WAIT(20);
   MESSAGE_SET((donpaMessage + 28));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 90);
   MESSAGE_SET((donpaMessage + 29));
   MESSAGE_PUT(IVAN, 0);
-  OBJ_DIR(FORTRESS4_DONPA, FACING_SOUTH + FACING_STEP, 0);
+  OBJ_DIR(TOADONPA_DONPA, FACING_SOUTH + FACING_STEP, 0);
   WAIT(20);
   MESSAGE_SET((donpaMessage + 30));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  Engine_ActorStartRepeatedMotion(FORTRESS4_HAMMET, 1);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  Engine_ActorStartRepeatedMotion(TOADONPA_HAMMET, 1);
   WAIT(60);
   MESSAGE_SET((donpaMessage + 31));
-  MESSAGE_PUT(FORTRESS4_HAMMET, 0);
-  OBJ_FACE(FORTRESS4_DONPA, FORTRESS4_HAMMET, 0);
+  MESSAGE_PUT(TOADONPA_HAMMET, 0);
+  OBJ_FACE(TOADONPA_DONPA, TOADONPA_HAMMET, 0);
   WAIT(20);
-  Engine_ActorSetAnimationAndWait(FORTRESS4_DONPA, 3);
+  Engine_ActorSetAnimationAndWait(TOADONPA_DONPA, 3);
   WAIT(20);
   MESSAGE_SET((donpaMessage + 32));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 70);
   MESSAGE_SET((donpaMessage + 33));
   MESSAGE_PUT(GARET, 0);
-  OBJ_FACE(FORTRESS4_DONPA, ACTOR_PARTY_LEADER, 0);
+  OBJ_FACE(TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
   WAIT(30);
   MESSAGE_SET((donpaMessage + 34));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT, 80);
   MESSAGE_SET((donpaMessage + 35));
   MESSAGE_PUT(MIA, 0);
-  Engine_ActorSetAnimationAndWait(FORTRESS4_DONPA, 3);
+  Engine_ActorSetAnimationAndWait(TOADONPA_DONPA, 3);
   MESSAGE_SET((donpaMessage + 36));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
   OBJ_FACE(IVAN, ACTOR_PARTY_LEADER, 0);
   WAIT(30);
   OBJ_MODE(IVAN, ANIM_NOD);
@@ -2501,16 +2505,16 @@ static void Event_DonpaJudgesDodonpa(void) {
   MESSAGE_OPEN(IVAN, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     MESSAGE_SET((donpaMessage + 38));
-    MESSAGE_PUT(FORTRESS4_DONPA, 0);
+    MESSAGE_PUT(TOADONPA_DONPA, 0);
   }
   WAIT(30);
   OBJ_MODE(GARET, ANIM_NOD);
   OBJ_MODE(IVAN, ANIM_NOD);
   OBJ_MODE(MIA, ANIM_NOD);
   WAIT(100);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, FORTRESS4_HAMMET, 0);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, TOADONPA_HAMMET, 0);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
-  OBJ_MODE(FORTRESS4_HAMMET, 3);
+  OBJ_MODE(TOADONPA_HAMMET, 3);
   WAIT(100);
   // Rejoin the companions, then escort Hammet out of the fortress.
   OBJ_MODE(GARET, ANIM_WALK);
@@ -2535,57 +2539,58 @@ static void Event_DonpaJudgesDodonpa(void) {
   Engine_ActorWaitForMove(MIA);
   OBJ_POS_SET(MIA, 0, 0);
   WAIT(30);
-  OBJ_SPEED(FORTRESS4_HAMMET, 0x6666, 0x3333);
-  OBJ_WALK(FORTRESS4_HAMMET, 472, 184);
-  Engine_ActorWaitForMove(FORTRESS4_HAMMET);
-  OBJ_MODE(FORTRESS4_HAMMET, 1);
-  OBJ_DIR(FORTRESS4_HAMMET, FACING_SOUTHEAST + FACING_STEP, 0);
-  OBJ_FACE(FORTRESS4_DONPA, ACTOR_PARTY_LEADER, 0);
-  OBJ_MODE(FORTRESS4_DONPA, 3);
+  OBJ_SPEED(TOADONPA_HAMMET, 0x6666, 0x3333);
+  OBJ_WALK(TOADONPA_HAMMET, 472, 184);
+  Engine_ActorWaitForMove(TOADONPA_HAMMET);
+  OBJ_MODE(TOADONPA_HAMMET, 1);
+  OBJ_DIR(TOADONPA_HAMMET, FACING_SOUTHEAST + FACING_STEP, 0);
+  OBJ_FACE(TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
+  OBJ_MODE(TOADONPA_DONPA, 3);
   WAIT(20);
-  OBJ_FACE(FORTRESS4_DONPA, FORTRESS4_DODONPA, 0);
+  OBJ_FACE(TOADONPA_DONPA, TOADONPA_DODONPA, 0);
   WAIT(20);
   MESSAGE_SET((donpaMessage + 39));
-  MESSAGE_PUT(FORTRESS4_DONPA, 0);
-  Engine_ActorRunRepeatedMotion(FORTRESS4_DODONPA, 2);
+  MESSAGE_PUT(TOADONPA_DONPA, 0);
+  Engine_ActorRunRepeatedMotion(TOADONPA_DODONPA, 2);
   MESSAGE_SET((donpaMessage + 40));
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
   WAIT(30);
   OBJ_SPEED(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-  OBJ_SPEED(FORTRESS4_HAMMET, 0x10000, 0x8000);
+  OBJ_SPEED(TOADONPA_HAMMET, 0x10000, 0x8000);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
   OBJ_WALK(ACTOR_PARTY_LEADER, 480, 248);
   WAIT(40);
-  Engine_ActorSetSpritePriority(FORTRESS4_HAMMET, 0);
+  Engine_ActorSetSpritePriority(TOADONPA_HAMMET, 0);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
-  OBJ_WALK(FORTRESS4_HAMMET, 480, 216);
+  OBJ_WALK(TOADONPA_HAMMET, 480, 216);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  OBJ_FACE(ACTOR_PARTY_LEADER, FORTRESS4_DONPA, 0);
-  Engine_ActorWaitForMove(FORTRESS4_HAMMET);
-  OBJ_FACE(FORTRESS4_HAMMET, FORTRESS4_DONPA, 0);
-  OBJ_DIR(FORTRESS4_HAMMET, FACING_SOUTHEAST + FACING_STEP, 0);
+  OBJ_FACE(ACTOR_PARTY_LEADER, TOADONPA_DONPA, 0);
+  Engine_ActorWaitForMove(TOADONPA_HAMMET);
+  OBJ_FACE(TOADONPA_HAMMET, TOADONPA_DONPA, 0);
+  OBJ_DIR(TOADONPA_HAMMET, FACING_SOUTHEAST + FACING_STEP, 0);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
   WAIT(5);
-  OBJ_MODE(FORTRESS4_HAMMET, 3);
+  OBJ_MODE(TOADONPA_HAMMET, 3);
   WAIT(100);
-  OBJ_MODE(FORTRESS4_DONPA, 3);
+  OBJ_MODE(TOADONPA_DONPA, 3);
   WAIT(100);
-  OBJ_WALK(FORTRESS4_HAMMET, 480, 248);
+  OBJ_WALK(TOADONPA_HAMMET, 480, 248);
   OBJ_WALK(ACTOR_PARTY_LEADER, 456, 248);
-  Engine_ActorWaitForMove(FORTRESS4_HAMMET);
-  OBJ_WALK(FORTRESS4_HAMMET, 456, 248);
+  Engine_ActorWaitForMove(TOADONPA_HAMMET);
+  OBJ_WALK(TOADONPA_HAMMET, 456, 248);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   OBJ_WALK(ACTOR_PARTY_LEADER, 456, 360);
-  Engine_ActorWaitForMove(FORTRESS4_HAMMET);
-  OBJ_WALK(FORTRESS4_HAMMET, 456, 360);
+  Engine_ActorWaitForMove(TOADONPA_HAMMET);
+  OBJ_WALK(TOADONPA_HAMMET, 456, 360);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   OBJ_WALK(ACTOR_PARTY_LEADER, 352, 360);
-  Engine_ActorWaitForMove(FORTRESS4_HAMMET);
-  OBJ_WALK(FORTRESS4_HAMMET, 352, 360);
+  Engine_ActorWaitForMove(TOADONPA_HAMMET);
+  OBJ_WALK(TOADONPA_HAMMET, 352, 360);
   WAIT(20);
   SE(MUS_017);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Engine_EventCloseScreen();
   WAIT(1);
   WAIT(210);
@@ -2601,44 +2606,44 @@ static void Event_ReadSentrysThoughts(void) {
   switch (gLunpaFortressRandomPick) {
   case 0:
     MESSAGE_SET(MsgLunpaHammetGreatMerchant);
-    MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
+    MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
     break;
   case 1:
     MESSAGE_SET(MsgLunpaZZZ);
-    MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
+    MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
     break;
   case 2:
     MESSAGE_SET(MsgLunpaDodonpasOrdersAbsolute);
-    MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
+    MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
     break;
   case 3:
     MESSAGE_SET(MsgLunpaSighBadCouldnt);
-    MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
+    MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
     break;
   case 4:
     MESSAGE_SET(MsgLunpaStrangeSwearSomeone);
-    MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
+    MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
     break;
   case 6:
     MESSAGE_SET(MsgLunpaToldStandGuard);
-    MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
+    MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
     break;
   case 7:
     MESSAGE_SET(MsgLunpaWhoDisruptingSleep);
-    MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
+    MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
     break;
   case 5:
-    Engine_ActorFaceDirection(FORTRESS1_SECOND_SENTRY,
+    Engine_ActorFaceDirection(GROUND_FLOOR_SECOND_SENTRY,
                               FACING_NORTH + FACING_STEP, 0);
     WAIT(50);
-    Engine_ActorFaceDirection(FORTRESS1_SECOND_SENTRY,
+    Engine_ActorFaceDirection(GROUND_FLOOR_SECOND_SENTRY,
                               FACING_NORTHWEST + FACING_STEP, 0);
     WAIT(50);
-    Engine_ActorFaceDirection(FORTRESS1_SECOND_SENTRY,
+    Engine_ActorFaceDirection(GROUND_FLOOR_SECOND_SENTRY,
                               FACING_SOUTH + FACING_STEP, 0);
     WAIT(50);
     MESSAGE_SET(MsgLunpaTakeCareAnybody);
-    MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
+    MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
     break;
   }
 }
@@ -2649,22 +2654,22 @@ static void Event_TalkToSentry(void) {
 
   s32 messageBase;
 
-  OBJ_EMOTE(FORTRESS1_SECOND_SENTRY, EMOTE_IN_FRONT | 1, 30);
-  OBJ_DIR(FORTRESS1_SECOND_SENTRY, FACING_NORTH + FACING_STEP, 0);
+  OBJ_EMOTE(GROUND_FLOOR_SECOND_SENTRY, EMOTE_IN_FRONT | 1, 30);
+  OBJ_DIR(GROUND_FLOOR_SECOND_SENTRY, FACING_NORTH + FACING_STEP, 0);
   WAIT(50);
-  OBJ_DIR(FORTRESS1_SECOND_SENTRY, FACING_NORTHWEST + FACING_STEP, 0);
+  OBJ_DIR(GROUND_FLOOR_SECOND_SENTRY, FACING_NORTHWEST + FACING_STEP, 0);
   WAIT(50);
-  OBJ_DIR(FORTRESS1_SECOND_SENTRY, FACING_SOUTH + FACING_STEP, 0);
+  OBJ_DIR(GROUND_FLOOR_SECOND_SENTRY, FACING_SOUTH + FACING_STEP, 0);
   WAIT(50);
   messageBase = MsgLunpaLeftGuardHearsSomeone;
   MESSAGE_SET(messageBase);
-  MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
-  OBJ_MODE(FORTRESS1_SECOND_SENTRY, 4);
+  MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
+  OBJ_MODE(GROUND_FLOOR_SECOND_SENTRY, 4);
   WAIT(60);
-  OBJ_DIR(FORTRESS1_SECOND_SENTRY, FACING_NORTHWEST + FACING_STEP, 0);
+  OBJ_DIR(GROUND_FLOOR_SECOND_SENTRY, FACING_NORTHWEST + FACING_STEP, 0);
   WAIT(40);
   MESSAGE_SET(messageBase + 1);
-  MESSAGE_PUT(FORTRESS1_SECOND_SENTRY, 0);
+  MESSAGE_PUT(GROUND_FLOOR_SECOND_SENTRY, 0);
 }
 
 /// LunpaFortressUpperFloor: Donpa's attendant. Before the rescue the attendant
@@ -2678,56 +2683,56 @@ static void Event_TalkToAttendant(void) {
   EV_BEGIN();
   if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     MESSAGE_SET(MsgLunpaDonpaGrateful);
-    // XXX: likely a slip for FORTRESS2_ATTENDANT, because the line is the
+    // XXX: likely a slip for UPPER_FLOOR_ATTENDANT, because the line is the
     // attendant's and Dodonpa's wife stands at the far side of the fortress.
-    MESSAGE_PUT(FORTRESS2_DODONPAS_WIFE, 0);
+    MESSAGE_PUT(UPPER_FLOOR_DODONPAS_WIFE, 0);
     EV_END();
   } else {
     if (FLAG_CHECK(FLAG_PLACE_TEMP_13) != 0) {
       MESSAGE_SET(MsgLunpaMaybeDodonpasEyes);
-      MESSAGE_OPEN(FORTRESS2_ATTENDANT, 0);
+      MESSAGE_OPEN(UPPER_FLOOR_ATTENDANT, 0);
       EV_END();
     } else {
-      OBJ_EMOTE(FORTRESS2_ATTENDANT, EMOTE_IN_FRONT | 2, 30);
-      OBJ_FACE(FORTRESS2_ATTENDANT, ACTOR_PARTY_LEADER, 0);
+      OBJ_EMOTE(UPPER_FLOOR_ATTENDANT, EMOTE_IN_FRONT | 2, 30);
+      OBJ_FACE(UPPER_FLOOR_ATTENDANT, ACTOR_PARTY_LEADER, 0);
       whisperMessage = MsgLunpaShhhPleaseDont;
       MESSAGE_SET(whisperMessage);
-      MESSAGE_PUT(FORTRESS2_ATTENDANT, 0);
-      OBJ_FACE(FORTRESS2_ATTENDANT, FORTRESS2_DONPA, 0);
-      Engine_CameraMoveToActor(FORTRESS2_DONPA, 1);
+      MESSAGE_PUT(UPPER_FLOOR_ATTENDANT, 0);
+      OBJ_FACE(UPPER_FLOOR_ATTENDANT, UPPER_FLOOR_DONPA, 0);
+      Engine_CameraMoveToActor(UPPER_FLOOR_DONPA, 1);
       Engine_CameraWaitForMove();
       WAIT(60);
       Engine_CameraMoveToActor(ACTOR_PARTY_LEADER, 1);
       WAIT(20);
-      OBJ_EMOTE(FORTRESS2_ATTENDANT, EMOTE_IN_FRONT | 5, 60);
+      OBJ_EMOTE(UPPER_FLOOR_ATTENDANT, EMOTE_IN_FRONT | 5, 60);
       MESSAGE_SET(whisperMessage + 1);
-      MESSAGE_PUT(FORTRESS2_ATTENDANT, 0);
-      OBJ_EMOTE(FORTRESS2_ATTENDANT, EMOTE_IN_FRONT | 7, 60);
+      MESSAGE_PUT(UPPER_FLOOR_ATTENDANT, 0);
+      OBJ_EMOTE(UPPER_FLOOR_ATTENDANT, EMOTE_IN_FRONT | 7, 60);
       MESSAGE_SET(whisperMessage + 2);
-      MESSAGE_PUT(FORTRESS2_ATTENDANT, 0);
+      MESSAGE_PUT(UPPER_FLOOR_ATTENDANT, 0);
       WAIT(70);
-      OBJ_EMOTE(FORTRESS2_ATTENDANT, EMOTE_IN_FRONT, 60);
-      OBJ_FACE(FORTRESS2_ATTENDANT, ACTOR_PARTY_LEADER, 0);
+      OBJ_EMOTE(UPPER_FLOOR_ATTENDANT, EMOTE_IN_FRONT, 60);
+      OBJ_FACE(UPPER_FLOOR_ATTENDANT, ACTOR_PARTY_LEADER, 0);
       MESSAGE_SET(whisperMessage + 3);
-      MESSAGE_OPEN(FORTRESS2_ATTENDANT, 0);
+      MESSAGE_OPEN(UPPER_FLOOR_ATTENDANT, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
         MESSAGE_SET(whisperMessage + 4);
-        MESSAGE_OPEN(FORTRESS2_ATTENDANT, 0);
+        MESSAGE_OPEN(UPPER_FLOOR_ATTENDANT, 0);
       } else {
         MESSAGE_SET(whisperMessage + 5);
-        MESSAGE_OPEN(FORTRESS2_ATTENDANT, 0);
+        MESSAGE_OPEN(UPPER_FLOOR_ATTENDANT, 0);
       }
       WAIT(60);
-      OBJ_EMOTE(FORTRESS2_ATTENDANT, EMOTE_IN_FRONT | 5, 60);
+      OBJ_EMOTE(UPPER_FLOOR_ATTENDANT, EMOTE_IN_FRONT | 5, 60);
       familyMessage = MsgLunpaDonpaKnowsCoddled;
       MESSAGE_SET(familyMessage);
-      MESSAGE_OPEN(FORTRESS2_ATTENDANT, 0);
-      Engine_ActorRunRepeatedMotion(FORTRESS2_ATTENDANT, 1);
+      MESSAGE_OPEN(UPPER_FLOOR_ATTENDANT, 0);
+      Engine_ActorRunRepeatedMotion(UPPER_FLOOR_ATTENDANT, 1);
       MESSAGE_SET(familyMessage + 1);
-      MESSAGE_OPEN(FORTRESS2_ATTENDANT, 0);
-      Engine_ActorSetAnimationAndWait(FORTRESS2_ATTENDANT, 3);
+      MESSAGE_OPEN(UPPER_FLOOR_ATTENDANT, 0);
+      Engine_ActorSetAnimationAndWait(UPPER_FLOOR_ATTENDANT, 3);
       MESSAGE_SET(familyMessage + 2);
-      MESSAGE_OPEN(FORTRESS2_ATTENDANT, 0);
+      MESSAGE_OPEN(UPPER_FLOOR_ATTENDANT, 0);
       FLAG_SET(FLAG_PLACE_TEMP_13);
       EV_END();
     }
@@ -2738,10 +2743,10 @@ static void Event_TalkToAttendant(void) {
 static void Event_ReadAttendantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED)) {
     MESSAGE_SET(MsgLunpaDifficultDonpaRight);
-    MESSAGE_PUT(FORTRESS2_ATTENDANT, 0);
+    MESSAGE_PUT(UPPER_FLOOR_ATTENDANT, 0);
   } else {
     MESSAGE_SET(MsgLunpaSomeonePunishDodonpa);
-    MESSAGE_PUT(FORTRESS2_ATTENDANT, 0);
+    MESSAGE_PUT(UPPER_FLOOR_ATTENDANT, 0);
   }
 }
 
@@ -2749,10 +2754,10 @@ static void Event_ReadAttendantsThoughts(void) {
 static void Event_ReadDonpasThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED)) {
     MESSAGE_SET(MsgLunpaFatherStayAngry);
-    MESSAGE_PUT(FORTRESS2_DONPA, 0);
+    MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
   } else {
     MESSAGE_SET(MsgLunpaFatherSorryDodonpa);
-    MESSAGE_PUT(FORTRESS2_DONPA, 0);
+    MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
   }
 }
 
@@ -2767,93 +2772,93 @@ static void Event_TalkToDonpa(void) {
         FLAG_CHECK(FLAG_PLACE_TEMP_14) == 0) {
       rewardMessage = MsgLunpaThankHelpDodonpa;
       MESSAGE_SET(rewardMessage);
-      MESSAGE_PUT(FORTRESS2_DONPA, 0);
-      Engine_ActorRunRepeatedMotion(FORTRESS2_DONPA, 1);
+      MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
+      Engine_ActorRunRepeatedMotion(UPPER_FLOOR_DONPA, 1);
       WAIT(30);
-      OBJ_SPEED(FORTRESS2_DONPA, 6553, 3276);
-      Actor_SetDestinationOffset(FORTRESS2_DONPA, -4, 0);
-      Engine_ActorWaitForMove(FORTRESS2_DONPA);
-      OBJ_MODE(FORTRESS2_DONPA, 3);
+      OBJ_SPEED(UPPER_FLOOR_DONPA, 6553, 3276);
+      Actor_SetDestinationOffset(UPPER_FLOOR_DONPA, -4, 0);
+      Engine_ActorWaitForMove(UPPER_FLOOR_DONPA);
+      OBJ_MODE(UPPER_FLOOR_DONPA, 3);
       WAIT(60);
-      OBJ_SPEED(FORTRESS2_DONPA, 13107, 6553);
-      Actor_SetDestinationOffset(FORTRESS2_DONPA, -6, 0);
-      OBJ_FACE(FORTRESS2_DONPA, ACTOR_PARTY_LEADER, 0);
-      Engine_ActorWaitForMove(FORTRESS2_DONPA);
+      OBJ_SPEED(UPPER_FLOOR_DONPA, 13107, 6553);
+      Actor_SetDestinationOffset(UPPER_FLOOR_DONPA, -6, 0);
+      OBJ_FACE(UPPER_FLOOR_DONPA, ACTOR_PARTY_LEADER, 0);
+      Engine_ActorWaitForMove(UPPER_FLOOR_DONPA);
       MESSAGE_SET(rewardMessage + 1);
-      MESSAGE_PUT(FORTRESS2_DONPA, 0);
-      Engine_ActorRunRepeatedMotion(FORTRESS2_DONPA, 1);
-      OBJ_FACE(FORTRESS2_ATTENDANT, FORTRESS2_DONPA, 0);
+      MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
+      Engine_ActorRunRepeatedMotion(UPPER_FLOOR_DONPA, 1);
+      OBJ_FACE(UPPER_FLOOR_ATTENDANT, UPPER_FLOOR_DONPA, 0);
       MESSAGE_SET(rewardMessage + 2);
-      MESSAGE_PUT(FORTRESS2_DONPA, 0);
+      MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
       WAIT(70);
-      OBJ_MODE(FORTRESS2_ATTENDANT, 3);
+      OBJ_MODE(UPPER_FLOOR_ATTENDANT, 3);
       WAIT(60);
-      OBJ_SPEED(FORTRESS2_ATTENDANT, 26214, 13107);
-      OBJ_WALK(FORTRESS2_ATTENDANT, 880, 112);
-      Engine_ActorWaitForMove(FORTRESS2_ATTENDANT);
-      OBJ_DIR(FORTRESS2_ATTENDANT, FACING_NORTH + FACING_STEP, 0);
+      OBJ_SPEED(UPPER_FLOOR_ATTENDANT, 26214, 13107);
+      OBJ_WALK(UPPER_FLOOR_ATTENDANT, 880, 112);
+      Engine_ActorWaitForMove(UPPER_FLOOR_ATTENDANT);
+      OBJ_DIR(UPPER_FLOOR_ATTENDANT, FACING_NORTH + FACING_STEP, 0);
       MESSAGE_SET(rewardMessage + 3);
-      MESSAGE_PUT(FORTRESS2_DONPA, 0);
-      OBJ_MODE(FORTRESS2_DONPA, 3);
+      MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
+      OBJ_MODE(UPPER_FLOOR_DONPA, 3);
       WAIT(70);
-      Actor_SetDestinationOffset(FORTRESS2_DONPA, 8, 0);
-      Engine_ActorWaitForMove(FORTRESS2_DONPA);
-      OBJ_MODE(FORTRESS2_DONPA, 5);
+      Actor_SetDestinationOffset(UPPER_FLOOR_DONPA, 8, 0);
+      Engine_ActorWaitForMove(UPPER_FLOOR_DONPA);
+      OBJ_MODE(UPPER_FLOOR_DONPA, 5);
       MESSAGE_SET(rewardMessage + 4);
-      MESSAGE_PUT(FORTRESS2_DONPA, 0);
+      MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
       OBJ_WALK(ACTOR_PARTY_LEADER, 896, 120);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-      Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, FORTRESS2_ATTENDANT, 0);
+      Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, UPPER_FLOOR_ATTENDANT, 0);
       WAIT(60);
-      OBJ_MODE(FORTRESS2_ATTENDANT, 3);
+      OBJ_MODE(UPPER_FLOOR_ATTENDANT, 3);
       WAIT(30);
       FLAG_SET(FLAG_PLACE_TEMP_14);
     } else {
       MESSAGE_SET(MsgLunpaWellWorriedDodonpa);
-      MESSAGE_PUT(FORTRESS2_DONPA, 0);
+      MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
     }
   } else {
     MESSAGE_SET(MsgLunpaZZZZ);
-    MESSAGE_PUT(FORTRESS2_DONPA, 0);
+    MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
   }
 }
 
 /// LunpaFortressUpperFloor: talking to Tonic, a Mercury Djinni and Donpa's
 /// reward, it joins the party.
 static void Event_DjinniJoins(void) {
-  Engine_BattleFxRunPageEffectForSlot(FORTRESS2_TONIC, 1, 5);
+  Engine_BattleFxRunPageEffectForSlot(UPPER_FLOOR_TONIC, 1, 5);
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_REWARD_TAKEN);
 }
 
 /// LunpaFortressUpperFloor: the third of the beaten guards begs. "Owww! Hey!
 /// Don't hurt me again..."
 static void Event_TalkToBeatenGuardC(void) {
-  Engine_ActorRunRepeatedMotion(FORTRESS2_GUARD_C, 2);
+  Engine_ActorRunRepeatedMotion(UPPER_FLOOR_GUARD_C, 2);
   MESSAGE_SET(MsgLunpaOwwwDontHurt);
-  MESSAGE_PUT(FORTRESS2_GUARD_C, 0);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_C, 0);
 }
 
 /// LunpaFortressUpperFloor: the second of the beaten guards gives up, and
 /// Hammet is in the cave. "We give up!"
 static void Event_TalkToBeatenGuardB(void) {
-  Engine_ActorRunRepeatedMotion(FORTRESS2_GUARD_B, 2);
+  Engine_ActorRunRepeatedMotion(UPPER_FLOOR_GUARD_B, 2);
   MESSAGE_SET(MsgLunpaRightRightGive);
-  MESSAGE_PUT(FORTRESS2_GUARD_B, 0);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_B, 0);
 }
 
 /// LunpaFortressUpperFloor: the first of the beaten guards marvels at the
 /// party. "Who'd have thought they'd be so tough?"
 static void Event_TalkToBeatenGuardA(void) {
-  Engine_ActorRunRepeatedMotion(FORTRESS2_GUARD_A, 2);
+  Engine_ActorRunRepeatedMotion(UPPER_FLOOR_GUARD_A, 2);
   MESSAGE_SET(MsgLunpaGuysTougherThought);
-  MESSAGE_PUT(FORTRESS2_GUARD_A, 0);
+  MESSAGE_PUT(UPPER_FLOOR_GUARD_A, 0);
 }
 
 /// LunpaFortressUpperFloor: one of Dodonpa's family asks where he is. "Do you
 /// know where Dodonpa is?"
 static void Event_AskWhereDodonpaIs(void) {
   MESSAGE_SET(MsgLunpaKnowWhereDodonpa);
-  Engine_EventAskYesNo(FORTRESS2_DODONPAS_WIFE, 0);
+  Engine_EventAskYesNo(UPPER_FLOOR_DODONPAS_WIFE, 0);
 }
 
 /// LunpaFortressGroundFloor: a resident, startled the first time, asks whether
@@ -2865,38 +2870,38 @@ static void Event_TalkToStartledResident(void) {
 
   if (FLAG_CHECK(FLAG_SCENE_TEMP_26) != 0) {
     MESSAGE_SET(MsgLunpaWontTellAnyone);
-    MESSAGE_PUT(FORTRESS1_STARTLED_RESIDENT, 0);
+    MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
   } else {
     EV_BEGIN();
-    OBJ_FACE(FORTRESS1_STARTLED_RESIDENT, ACTOR_PARTY_LEADER, 0);
+    OBJ_FACE(GROUND_FLOOR_STARTLED_RESIDENT, ACTOR_PARTY_LEADER, 0);
     if (FLAG_CHECK(FLAG_SCENE_TEMP_27) == 0) {
-      Engine_ActorJump(FORTRESS1_STARTLED_RESIDENT, 4, 0);
-      Engine_ActorStop(FORTRESS1_STARTLED_RESIDENT);
-      Object_RefreshSelectorById(FORTRESS1_STARTLED_RESIDENT);
+      Engine_ActorJump(GROUND_FLOOR_STARTLED_RESIDENT, 4, 0);
+      Engine_ActorStop(GROUND_FLOOR_STARTLED_RESIDENT);
+      Object_RefreshSelectorById(GROUND_FLOOR_STARTLED_RESIDENT);
       WAIT(20);
       frightMessage = MsgLunpaWhWhWho;
       MESSAGE_SET(frightMessage);
-      MESSAGE_PUT(FORTRESS1_STARTLED_RESIDENT, 0);
-      OBJ_EMOTE(FORTRESS1_STARTLED_RESIDENT, EMOTE_IN_FRONT | 2, 30);
+      MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
+      OBJ_EMOTE(GROUND_FLOOR_STARTLED_RESIDENT, EMOTE_IN_FRONT | 2, 30);
       MESSAGE_SET(frightMessage + 1);
-      MESSAGE_PUT(FORTRESS1_STARTLED_RESIDENT, 0);
+      MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
       WAIT(30);
-      OBJ_MODE(FORTRESS1_STARTLED_RESIDENT, 4);
+      OBJ_MODE(GROUND_FLOOR_STARTLED_RESIDENT, 4);
       WAIT(30);
     }
     purposeMessage = MsgLunpaDontLookNearly;
     MESSAGE_SET(purposeMessage);
-    MESSAGE_PUT(FORTRESS1_STARTLED_RESIDENT, 0);
-    OBJ_EMOTE(FORTRESS1_STARTLED_RESIDENT, EMOTE_IN_FRONT | 1, 40);
+    MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
+    OBJ_EMOTE(GROUND_FLOOR_STARTLED_RESIDENT, EMOTE_IN_FRONT | 1, 40);
     MESSAGE_SET(purposeMessage + 1);
-    MESSAGE_OPEN(FORTRESS1_STARTLED_RESIDENT, 0);
+    MESSAGE_OPEN(GROUND_FLOOR_STARTLED_RESIDENT, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       MESSAGE_SET(purposeMessage + 2);
-      MESSAGE_OPEN(FORTRESS1_STARTLED_RESIDENT, 0);
+      MESSAGE_OPEN(GROUND_FLOOR_STARTLED_RESIDENT, 0);
       FLAG_SET(FLAG_SCENE_TEMP_26);
     } else {
       MESSAGE_SET(purposeMessage + 3);
-      MESSAGE_OPEN(FORTRESS1_STARTLED_RESIDENT, 0);
+      MESSAGE_OPEN(GROUND_FLOOR_STARTLED_RESIDENT, 0);
     }
     FLAG_SET(FLAG_SCENE_TEMP_27);
     EV_END();
@@ -2910,7 +2915,7 @@ static void Event_ReadStartledResidentsThoughts(void) {
 
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_26)) {
     MESSAGE_SET(MsgLunpaMaybeMerchantReason);
-    MESSAGE_PUT(FORTRESS1_STARTLED_RESIDENT, 0);
+    MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
   } else {
     s16 *psynergyRequest = &gEventWork->psynergyRequest;
 
@@ -2928,7 +2933,7 @@ static void Event_TalkToJailedDodonpa(void) {
   s32 pleaMessage = MsgLunpaWrongTurnOver;
 
   MESSAGE_SET(pleaMessage);
-  MESSAGE_PUT(SPEAKER_WINDOW_BELOW | FORTRESS4_DODONPA, 0);
+  MESSAGE_PUT(SPEAKER_WINDOW_BELOW | TOADONPA_DODONPA, 0);
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     Engine_MessageShowCentered(pleaMessage + 2, 1);
   }
@@ -2937,7 +2942,7 @@ static void Event_TalkToJailedDodonpa(void) {
 /// LunpaFortressToadonpa: Mind Read on the jailed Dodonpa.
 static void Event_ReadJailedDodonpasThoughts(void) {
   MESSAGE_SET(MsgLunpaCantBelieveWhen);
-  MESSAGE_PUT(FORTRESS4_DODONPA, 0);
+  MESSAGE_PUT(TOADONPA_DODONPA, 0);
 }
 
 /// Sets each scene up: a random pick for the guards' lines, the doors already
@@ -2949,32 +2954,33 @@ s32 Scene_Initialize(void) {
   gLunpaFortressRandomPick = (u32)Engine_RandomNext() * 7 >> 16;
   if (gGameState.scene == (s32)&SceneId_LunpaFortressGroundFloor) {
     Engine_MapSetWorkFlagBits9To11(0xe00);
-    LunpaFortress_Initialize1();
+    LunpaFortress_InitializeGroundFloor();
   }
   if (gGameState.scene == (s32)&SceneId_LunpaFortressUpperFloor)
-    LunpaFortress_Initialize2();
+    LunpaFortress_InitializeUpperFloor();
   if (gGameState.scene == (s32)&SceneId_LunpaFortressCave)
-    LunpaFortress_Initialize3();
+    LunpaFortress_InitializeCave();
   if (gGameState.scene == (s32)&SceneId_LunpaFortressToadonpa) {
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    Engine_ActorSetSpriteFlags(Actor_Get(FORTRESS4_HAMMET), 0);
-    OBJ_DIR(FORTRESS4_HAMMET, FACING_EAST, 0);
-    OBJ_MODE(FORTRESS4_HAMMET, 0);
-    LunpaFortress_RestoreDoors4();
-    sceneActor = Actor_Get(FORTRESS4_WEST_INVISIBLE_ACTOR);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    Engine_ActorSetSpriteFlags(Actor_Get(TOADONPA_HAMMET), 0);
+    OBJ_DIR(TOADONPA_HAMMET, FACING_EAST, 0);
+    OBJ_MODE(TOADONPA_HAMMET, 0);
+    LunpaFortress_RestoreToadonpaDoors();
+    sceneActor = Actor_Get(TOADONPA_WEST_INVISIBLE_ACTOR);
     if (sceneActor != 0)
       Engine_ActorSetSpriteFlags(sceneActor, 0);
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    sceneActor = Actor_Get(FORTRESS4_MIDDLE_INVISIBLE_ACTOR);
+    sceneActor = Actor_Get(TOADONPA_MIDDLE_INVISIBLE_ACTOR);
     if (sceneActor != 0)
       Engine_ActorSetSpriteFlags(sceneActor, 0);
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    sceneActor = Actor_Get(FORTRESS4_EAST_INVISIBLE_ACTOR);
+    sceneActor = Actor_Get(TOADONPA_EAST_INVISIBLE_ACTOR);
     if (sceneActor != 0)
       Engine_ActorSetSpriteFlags(sceneActor, 0);
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Engine_MapSetWorkFlagBits9To11(0xe00);
-    if (gGameState.entrance == FORTRESS4_ENTRANCE_AFTER_BATTLE) {
+    if (gGameState.entrance == LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE) {
       Engine_MapSetWorkFlagBits9To11(0xc00);
       Event_DonpaJudgesDodonpa();
     }
@@ -2982,16 +2988,16 @@ s32 Scene_Initialize(void) {
         LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST) {
       Engine_MapSetWorkFlagBits9To11(0xc00);
       if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        OBJ_POS_SET(FORTRESS4_HAMMET, 0, 0);
-        OBJ_POS_SET(FORTRESS4_CELL_GUARD, 432, 344);
-        OBJ_DIR(FORTRESS4_CELL_GUARD, FACING_SOUTH + FACING_STEP, 0);
-        OBJ_POS_SET(FORTRESS4_DODONPA, 456, 288);
-        OBJ_DIR(FORTRESS4_DODONPA, FACING_SOUTH + FACING_STEP, 0);
-        OBJ_POS_SET(FORTRESS4_DODONPA_STAND_IN, 456, 320);
-        Engine_ActorSetSpriteFlags(Actor_Get(FORTRESS4_DODONPA_STAND_IN), 0);
+        OBJ_POS_SET(TOADONPA_HAMMET, 0, 0);
+        OBJ_POS_SET(TOADONPA_CELL_GUARD, 432, 344);
+        OBJ_DIR(TOADONPA_CELL_GUARD, FACING_SOUTH + FACING_STEP, 0);
+        OBJ_POS_SET(TOADONPA_DODONPA, 456, 288);
+        OBJ_DIR(TOADONPA_DODONPA, FACING_SOUTH + FACING_STEP, 0);
+        OBJ_POS_SET(TOADONPA_DODONPA_STAND_IN, 456, 320);
+        Engine_ActorSetSpriteFlags(Actor_Get(TOADONPA_DODONPA_STAND_IN), 0);
       }
     }
-    sceneActor = Actor_Get(FORTRESS4_TOADONPA_PART);
+    sceneActor = Actor_Get(TOADONPA_BOSS_PART);
     if (sceneActor != 0)
       Engine_ActorSetSpriteFlags(sceneActor, 0);
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -3002,16 +3008,17 @@ s32 Scene_Initialize(void) {
 
 /// Sets LunpaFortressGroundFloor up by entrance: the guards that watch each
 /// part, and the cell doors already opened.
-static void LunpaFortress_Initialize1(void) {
-  LunpaFortress_RestoreDoors1();
+static void LunpaFortress_InitializeGroundFloor(void) {
+  LunpaFortress_RestoreGroundFloorDoors();
   switch (gGameState.entrance) {
-  case 2:
-  case 3:
-  case 4:
-  case 5:
-  case 6:
-  case 7:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  case LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_FROM_MAIN_HALL:
+  case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_ENTRANCE:
+  case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_NORTH_HALL:
+  case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_DINING_ROOM:
+  case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_NORTHEAST_HALL:
+  case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_EAST_HALL:
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Task_AddCallback(LunpaFortress_CheckEntranceGuard, TASK_PRIORITY_SCENE);
     Task_AddCallback(LunpaFortress_CheckFirstEntranceSentry,
                      TASK_PRIORITY_SCENE);
@@ -3019,70 +3026,76 @@ static void LunpaFortress_Initialize1(void) {
                      TASK_PRIORITY_SCENE);
     Engine_MapSetWorkFlagBits9To11(0xe00);
     break;
-  case 12:
-  case 19:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  case LUNPA_FORTRESS_GROUND_FLOOR_DINING_ROOM_FROM_MAIN_HALL:
+  case LUNPA_FORTRESS_GROUND_FLOOR_STOREROOM_FROM_NORTHEAST_HALL:
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Engine_MapSetWorkFlagBits9To11(0xc00);
     break;
-  case 16:
-  case 17:
-  case 18:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    Task_AddCallback(LunpaFortress_UpdateFortress1PatrolDetection,
+  case LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_MAIN_HALL:
+  case LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_NORTHEAST_HALL:
+  case LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_TREASURE_ROOM:
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+    Task_AddCallback(LunpaFortress_UpdateGroundFloorPatrolDetection,
                      TASK_PRIORITY_SCENE);
-    Task_AddCallback(LunpaFortress_CheckDoorApproach1, TASK_PRIORITY_SCENE);
+    Task_AddCallback(LunpaFortress_CheckGroundFloorDoorApproach,
+                     TASK_PRIORITY_SCENE);
     Engine_TaskWait(1);
     Engine_MapRedraw();
     Engine_TaskWait(1);
     Map_CopyCells(101, 9, 10, 8, 110, 9);
     Engine_MapSetWorkFlagBits9To11(0xe00);
     break;
-  case 13:
-  case 14:
-  case 15:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_MAIN_HALL:
+  case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_EAST_HALL:
+  case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_STOREROOM:
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Task_AddCallback(LunpaFortress_CheckUpperHallGuard, TASK_PRIORITY_SCENE);
     break;
   default:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Engine_MapSetWorkFlagBits9To11(0xe00);
     break;
   }
-  Engine_ActorSetChildValue(FORTRESS1_PATROL_GUARD, 1);
-  Engine_ActorSetChildValue(FORTRESS1_UPPER_HALL_GUARD, 1);
-  Engine_ActorSetChildValue(FORTRESS1_SECOND_SENTRY, 1);
-  Engine_ActorSetChildValue(FORTRESS1_ENTRANCE_GUARD, 1);
-  Engine_ActorSetChildValue(FORTRESS1_FIRST_SENTRY, 1);
+  Engine_ActorSetChildValue(GROUND_FLOOR_PATROL_GUARD, 1);
+  Engine_ActorSetChildValue(GROUND_FLOOR_UPPER_HALL_GUARD, 1);
+  Engine_ActorSetChildValue(GROUND_FLOOR_SECOND_SENTRY, 1);
+  Engine_ActorSetChildValue(GROUND_FLOOR_ENTRANCE_GUARD, 1);
+  Engine_ActorSetChildValue(GROUND_FLOOR_FIRST_SENTRY, 1);
   Engine_TaskWait(1);
 }
 
 /// Sets LunpaFortressUpperFloor up: beaten guards gone or lying where they
 /// fell, the Cell Key gone once taken, the patrols by entrance and Donpa's
 /// attendant by his reward's place.
-static void LunpaFortress_Initialize2(void) {
+static void LunpaFortress_InitializeUpperFloor(void) {
   struct FieldActor *keyActor;
 
-  LunpaFortress_RestoreDoors2();
-  Engine_ActorSetChildValue(FORTRESS2_FIRST_PATROL, 1);
-  Engine_ActorSetChildValue(FORTRESS2_SECOND_PATROL, 1);
-  Engine_ActorSetChildValue(FORTRESS2_HALL_PATROL, 1);
+  LunpaFortress_RestoreUpperFloorDoors();
+  Engine_ActorSetChildValue(UPPER_FLOOR_FIRST_PATROL, 1);
+  Engine_ActorSetChildValue(UPPER_FLOOR_SECOND_PATROL, 1);
+  Engine_ActorSetChildValue(UPPER_FLOOR_HALL_PATROL, 1);
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN)) {
-    OBJ_POS_SET(FORTRESS2_WEST_GUARD, 0, 0);
+    OBJ_POS_SET(UPPER_FLOOR_WEST_GUARD, 0, 0);
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN)) {
-    OBJ_POS_SET(FORTRESS2_HALL_GUARD, 0, 0);
+    OBJ_POS_SET(UPPER_FLOOR_HALL_GUARD, 0, 0);
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN)) {
-    OBJ_POS_SET(FORTRESS2_EAST_GUARD, 0, 0);
+    OBJ_POS_SET(UPPER_FLOOR_EAST_GUARD, 0, 0);
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_CELL_KEY)) {
-    OBJ_POS_SET(FORTRESS2_CELL_KEY, 0, 0);
+    OBJ_POS_SET(UPPER_FLOOR_CELL_KEY, 0, 0);
   }
   switch (gGameState.entrance) {
   case LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH:
-  case 2:
-  case 3:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  case LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_FROM_NORTH_HALL:
+  case LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_FROM_CENTRAL_HALL:
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Engine_MapSetWorkFlagBits9To11(0xe00);
     Task_AddCallback(LunpaFortress_UpdatePairedGuardDetection,
                      TASK_PRIORITY_SCENE);
@@ -3090,21 +3103,23 @@ static void LunpaFortress_Initialize2(void) {
     Engine_MapRedraw();
     Engine_TaskWait(1);
     break;
-  case 10:
-  case 13:
-  case 20:
-  case 23:
-  case 24:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  case LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_FROM_CENTRAL_HALL:
+  case LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_FROM_NORTH_HALL:
+  case LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_SOUTH_HALL:
+  case LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_FROM_DONPAS_ROOM:
+  case LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM:
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Engine_MapSetWorkFlagBits9To11(0xc00);
-    Engine_ActorSetSpriteFlags(Actor_Get(FORTRESS2_DONPA), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(UPPER_FLOOR_DONPA), 0);
     if (FLAG_CHECK(FLAG_PLACE_TEMP_14)) {
-      OBJ_POS_SET(FORTRESS2_ATTENDANT, 872, 120);
+      OBJ_POS_SET(UPPER_FLOOR_ATTENDANT, 872, 120);
     }
     break;
-  case 21:
-  case 22:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  case LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_FROM_CELL_KEY_ROOM:
+  case LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_FROM_SOUTH_HALL:
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Engine_MapSetWorkFlagBits9To11(0xe00);
     Task_AddCallback(LunpaFortress_UpdateHallGuardDetection,
                      TASK_PRIORITY_SCENE);
@@ -3112,57 +3127,61 @@ static void LunpaFortress_Initialize2(void) {
     Engine_MapRedraw();
     Engine_TaskWait(1);
     break;
-  case 11:
-  case 12:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_HALL:
+  case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_HALL:
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN)) {
       LunpaFortress_PlaceThreeBeatenGuards();
     }
     break;
-  case FORTRESS2_ENTRANCE_AFTER_BATTLE:
+  case LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE:
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, LUNPA_RETURN_TRANSITION_VARIANT);
     LunpaFortress_PlaceThreeBeatenGuards();
     break;
-  case 14:
-  case 15:
+  case LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_CENTRAL_HALL:
+  case LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_EAST_HALL:
   case LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_NORTH:
-    Task_AddCallback(LunpaFortress_CheckDoorApproach2, TASK_PRIORITY_SCENE);
+    Task_AddCallback(LunpaFortress_CheckUpperFloorDoorApproach,
+                     TASK_PRIORITY_SCENE);
     break;
   default:
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     Engine_MapSetWorkFlagBits9To11(0xe00);
     break;
   }
-  keyActor = Actor_Get(FORTRESS2_CELL_KEY);
-  Engine_ActorSetSpriteFlags(Actor_Get(FORTRESS2_CELL_KEY), 0);
-  Engine_ActorSetSpritePriority(FORTRESS2_CELL_KEY, 1);
+  keyActor = Actor_Get(UPPER_FLOOR_CELL_KEY);
+  Engine_ActorSetSpriteFlags(Actor_Get(UPPER_FLOOR_CELL_KEY), 0);
+  Engine_ActorSetSpritePriority(UPPER_FLOOR_CELL_KEY, 1);
   keyActor->scaleX = 0xc000;
   keyActor->scaleY = 0xc000;
 }
 
 /// Sets LunpaFortressCave up: the doors, the crates, the Whirlwind covers and
 /// the switches as the party left them.
-static void LunpaFortress_Initialize3(void) {
+static void LunpaFortress_InitializeCave(void) {
   struct FieldActor *sceneActor;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-  LunpaFortress_RestoreDoors3();
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  LunpaFortress_RestoreCaveDoors();
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED)) {
     LunpaFortress_RestoreLoweredCrates();
   }
   FLAG_SET(FLAG_SCENE_TEMP_17);
   FLAG_SET(FLAG_SCENE_TEMP_18);
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED)) {
-    OBJ_POS_SET(FORTRESS3_FIRST_SWITCH_COVER, 0, 0);
+    OBJ_POS_SET(CAVE_FIRST_SWITCH_COVER, 0, 0);
     Engine_GameFlagClear(FLAG_SCENE_TEMP_17);
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED)) {
-    OBJ_POS_SET(FORTRESS3_PASSAGE_COVER, 0, 0);
+    OBJ_POS_SET(CAVE_PASSAGE_COVER, 0, 0);
     LunpaFortress_OpenCoveredPassage();
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED)) {
-    OBJ_POS_SET(FORTRESS3_SECOND_SWITCH_COVER, 0, 0);
+    OBJ_POS_SET(CAVE_SECOND_SWITCH_COVER, 0, 0);
     Engine_GameFlagClear(FLAG_SCENE_TEMP_18);
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED)) {
@@ -3172,84 +3191,84 @@ static void LunpaFortress_Initialize3(void) {
     LunpaFortress_OpenSecondSwitchPassage();
   }
   EV_BEGIN();
-  sceneActor = Actor_Get(FORTRESS3_FIRST_SWITCH_COVER);
+  sceneActor = Actor_Get(CAVE_FIRST_SWITCH_COVER);
   if (sceneActor != 0) {
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  sceneActor = Actor_Get(FORTRESS3_PASSAGE_COVER);
+  sceneActor = Actor_Get(CAVE_PASSAGE_COVER);
   if (sceneActor != 0) {
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  sceneActor = Actor_Get(FORTRESS3_SECOND_SWITCH_COVER);
+  sceneActor = Actor_Get(CAVE_SECOND_SWITCH_COVER);
   if (sceneActor != 0) {
     sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  sceneActor = Actor_Get(FORTRESS3_INVISIBLE_ACTOR);
+  sceneActor = Actor_Get(CAVE_INVISIBLE_ACTOR);
   if (sceneActor != 0) {
     Engine_ActorSetSpriteFlags(sceneActor, 0);
   }
   sceneActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  sceneActor = Actor_Get(FORTRESS3_CRATES);
+  sceneActor = Actor_Get(CAVE_CRATES);
   if (sceneActor != 0) {
     sceneActor->collisionFlags |= 0x10;
   }
-  Engine_ActorSetSpriteFlags(Actor_Get(FORTRESS3_INVISIBLE_ACTOR), 0);
+  Engine_ActorSetSpriteFlags(Actor_Get(CAVE_INVISIBLE_ACTOR), 0);
   EV_END();
   Engine_MapSetWorkFlagBits9To11(0xe00);
 }
 
 /// LunpaFortressGroundFloor's opened cell doors stay open.
-static void LunpaFortress_RestoreDoors1(void) {
-  if (Engine_GameFlagIsSet(FORTRESS1_DOOR_FLAG)) {
-    LunpaFortress_OpenDoor1(0);
+static void LunpaFortress_RestoreGroundFloorDoors(void) {
+  if (Engine_GameFlagIsSet(GROUND_FLOOR_DOOR_FLAG)) {
+    LunpaFortress_OpenGroundFloorDoor(0);
   }
-  if (Engine_GameFlagIsSet(FORTRESS1_DOOR_FLAG + 1)) {
-    LunpaFortress_OpenDoor1(1);
+  if (Engine_GameFlagIsSet(GROUND_FLOOR_DOOR_FLAG + 1)) {
+    LunpaFortress_OpenGroundFloorDoor(1);
   }
-  if (Engine_GameFlagIsSet(FORTRESS1_DOOR_FLAG + 2)) {
-    LunpaFortress_OpenDoor1(2);
+  if (Engine_GameFlagIsSet(GROUND_FLOOR_DOOR_FLAG + 2)) {
+    LunpaFortress_OpenGroundFloorDoor(2);
   }
 }
 
 /// LunpaFortressUpperFloor's opened cell doors stay open.
-static void LunpaFortress_RestoreDoors2(void) {
-  if (Engine_GameFlagIsSet(FORTRESS2_DOOR_FLAG)) {
-    LunpaFortress_OpenDoor2(0);
+static void LunpaFortress_RestoreUpperFloorDoors(void) {
+  if (Engine_GameFlagIsSet(UPPER_FLOOR_DOOR_FLAG)) {
+    LunpaFortress_OpenUpperFloorDoor(0);
   }
-  if (Engine_GameFlagIsSet(FORTRESS2_DOOR_FLAG + 1)) {
-    LunpaFortress_OpenDoor2(1);
+  if (Engine_GameFlagIsSet(UPPER_FLOOR_DOOR_FLAG + 1)) {
+    LunpaFortress_OpenUpperFloorDoor(1);
   }
 }
 
 /// LunpaFortressCave's opened cell doors stay open.
-static void LunpaFortress_RestoreDoors3(void) {
-  if (Engine_GameFlagIsSet(FORTRESS3_DOOR_FLAG)) {
-    LunpaFortress_OpenDoor3(0);
+static void LunpaFortress_RestoreCaveDoors(void) {
+  if (Engine_GameFlagIsSet(CAVE_DOOR_FLAG)) {
+    LunpaFortress_OpenCaveDoor(0);
   }
-  if (Engine_GameFlagIsSet(FORTRESS3_DOOR_FLAG + 1)) {
-    LunpaFortress_OpenDoor3(1);
+  if (Engine_GameFlagIsSet(CAVE_DOOR_FLAG + 1)) {
+    LunpaFortress_OpenCaveDoor(1);
   }
-  if (Engine_GameFlagIsSet(FORTRESS3_DOOR_FLAG + 2)) {
-    LunpaFortress_OpenDoor3(2);
+  if (Engine_GameFlagIsSet(CAVE_DOOR_FLAG + 2)) {
+    LunpaFortress_OpenCaveDoor(2);
   }
 }
 
 /// LunpaFortressToadonpa's opened cell doors stay open.
-static void LunpaFortress_RestoreDoors4(void) {
-  if (Engine_GameFlagIsSet(FORTRESS4_DOOR_FLAG)) {
-    LunpaFortress_OpenDoor4(0);
+static void LunpaFortress_RestoreToadonpaDoors(void) {
+  if (Engine_GameFlagIsSet(TOADONPA_DOOR_FLAG)) {
+    LunpaFortress_OpenToadonpaDoor(0);
   }
-  if (Engine_GameFlagIsSet(FORTRESS4_DOOR_FLAG + 1)) {
-    LunpaFortress_OpenDoor4(1);
+  if (Engine_GameFlagIsSet(TOADONPA_DOOR_FLAG + 1)) {
+    LunpaFortress_OpenToadonpaDoor(1);
   }
-  if (Engine_GameFlagIsSet(FORTRESS4_DOOR_FLAG + 2)) {
-    LunpaFortress_OpenDoor4(2);
+  if (Engine_GameFlagIsSet(TOADONPA_DOOR_FLAG + 2)) {
+    LunpaFortress_OpenToadonpaDoor(2);
   }
-  if (Engine_GameFlagIsSet(FORTRESS4_DOOR_FLAG + 3)) {
-    LunpaFortress_OpenDoor4(3);
+  if (Engine_GameFlagIsSet(TOADONPA_DOOR_FLAG + 3)) {
+    LunpaFortress_OpenToadonpaDoor(3);
   }
-  if (Engine_GameFlagIsSet(FORTRESS4_DOOR_FLAG + 4)) {
-    LunpaFortress_OpenDoor4(4);
+  if (Engine_GameFlagIsSet(TOADONPA_DOOR_FLAG + 4)) {
+    LunpaFortress_OpenToadonpaDoor(4);
   }
 }
 
@@ -3316,7 +3335,7 @@ s32 gDonpaSleeps[] = {
     SC_END,
 };
 
-s32 gFortress1PatrolRoute[] = {
+s32 gGroundFloorPatrolRoute[] = {
     SC_SET(SW_ACCEL, 0x3333),
     SC_SET(SW_SPEED, 0x9999),
     SC_ARG(2),
@@ -3382,67 +3401,67 @@ s32 gHallPatrolRoute[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gLunpaFortressEntrances1[] = {
-    { 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLunpaFortressGroundFloorEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_GATES, CONDITION_ALWAYS, 160, 0, 168, FACING_NORTH, 0, 40, 24, 296, 280, 0 },
-    { 2, CONDITION_ALWAYS, 160, 0, 104, FACING_SOUTH, 0, 40, 24, 296, 280, 0 },
-    { 3, CONDITION_ALWAYS, 272, 0, 896, FACING_NORTH, 0, 24, 616, 536, 936, 0 },
-    { 4, CONDITION_ALWAYS, 376, 0, 896, FACING_NORTH, 0, 24, 616, 536, 936, 0 },
-    { 5, CONDITION_ALWAYS, 248, 0, 856, FACING_SOUTH, 0, 24, 616, 536, 936, 0 },
-    { 6, CONDITION_ALWAYS, 488, 0, 680, FACING_SOUTH, 0, 24, 616, 536, 936, 0 },
-    { 7, CONDITION_ALWAYS, 72, 0, 696, FACING_SOUTH, 0, 24, 616, 536, 936, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_FROM_MAIN_HALL, CONDITION_ALWAYS, 160, 0, 104, FACING_SOUTH, 0, 40, 24, 296, 280, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_ENTRANCE, CONDITION_ALWAYS, 272, 0, 896, FACING_NORTH, 0, 24, 616, 536, 936, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_NORTH_HALL, CONDITION_ALWAYS, 376, 0, 896, FACING_NORTH, 0, 24, 616, 536, 936, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_DINING_ROOM, CONDITION_ALWAYS, 248, 0, 856, FACING_SOUTH, 0, 24, 616, 536, 936, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_NORTHEAST_HALL, CONDITION_ALWAYS, 488, 0, 680, FACING_SOUTH, 0, 24, 616, 536, 936, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_EAST_HALL, CONDITION_ALWAYS, 72, 0, 696, FACING_SOUTH, 0, 24, 616, 536, 936, 0 },
     { LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH, CONDITION_ALWAYS, 96, 0, 856, FACING_SOUTH, 0, 24, 616, 536, 936, 0 },
-    { 9, CONDITION_ALWAYS, 376, 0, 184, FACING_SOUTH, 0, 328, 8, 568, 232, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_NORTH_HALL_FROM_MAIN_HALL, CONDITION_ALWAYS, 376, 0, 184, FACING_SOUTH, 0, 328, 8, 568, 232, 0 },
     { LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_NORTH, CONDITION_ALWAYS, 504, 0, 88, FACING_SOUTH, 0, 328, 8, 568, 232, 0 },
     { LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_CAVE, CONDITION_ALWAYS, 440, 0, 104, FACING_SOUTH, 0, 328, 8, 568, 232, 0 },
-    { 12, CONDITION_ALWAYS, 136, 0, 512, FACING_NORTH, 0, 40, 328, 280, 552, 0 },
-    { 13, CONDITION_ALWAYS, 888, 0, 280, FACING_NORTH, 0, 632, 40, 952, 328, 0 },
-    { 14, CONDITION_ALWAYS, 696, 0, 264, FACING_SOUTH, 0, 632, 40, 952, 328, 0 },
-    { 15, CONDITION_ALWAYS, 824, 0, 120, FACING_SOUTH, 0, 632, 40, 952, 328, 0 },
-    { 16, CONDITION_ALWAYS, 664, 0, 632, FACING_NORTH, 0, 616, 344, 936, 696, 0 },
-    { 17, CONDITION_ALWAYS, 888, 0, 520, FACING_NORTH, 0, 616, 344, 936, 696, 0 },
-    { 18, CONDITION_ALWAYS, 696, 0, 432, FACING_SOUTH, 0, 616, 344, 936, 696, 0 },
-    { 19, CONDITION_ALWAYS, 440, 0, 448, FACING_NORTH, 0, 320, 312, 560, 504, 0 },
-    { 20, CONDITION_ALWAYS, 696, 0, 824, FACING_NORTH, 0, 616, 744, 856, 952, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_DINING_ROOM_FROM_MAIN_HALL, CONDITION_ALWAYS, 136, 0, 512, FACING_NORTH, 0, 40, 328, 280, 552, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_MAIN_HALL, CONDITION_ALWAYS, 888, 0, 280, FACING_NORTH, 0, 632, 40, 952, 328, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_EAST_HALL, CONDITION_ALWAYS, 696, 0, 264, FACING_SOUTH, 0, 632, 40, 952, 328, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_STOREROOM, CONDITION_ALWAYS, 824, 0, 120, FACING_SOUTH, 0, 632, 40, 952, 328, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_MAIN_HALL, CONDITION_ALWAYS, 664, 0, 632, FACING_NORTH, 0, 616, 344, 936, 696, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_NORTHEAST_HALL, CONDITION_ALWAYS, 888, 0, 520, FACING_NORTH, 0, 616, 344, 936, 696, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_TREASURE_ROOM, CONDITION_ALWAYS, 696, 0, 432, FACING_SOUTH, 0, 616, 344, 936, 696, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_STOREROOM_FROM_NORTHEAST_HALL, CONDITION_ALWAYS, 440, 0, 448, FACING_NORTH, 0, 320, 312, 560, 504, 0 },
+    { LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_FROM_EAST_HALL, CONDITION_ALWAYS, 696, 0, 824, FACING_NORTH, 0, 616, 744, 856, 952, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gLunpaFortressEntrances2[] = {
-    { 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLunpaFortressUpperFloorEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH, CONDITION_ALWAYS, 136, 0, 392, FACING_SOUTH, 0, 40, 8, 308, 448, 0 },
-    { 2, CONDITION_ALWAYS, 136, 0, 80, FACING_SOUTH, 0, 40, 8, 308, 448, 0 },
-    { 3, CONDITION_ALWAYS, 264, 0, 416, FACING_SOUTH, 0, 40, 8, 308, 448, 0 },
-    { 4, CONDITION_ALWAYS, 376, 0, 232, FACING_NORTH, 0, 328, 8, 568, 272, 0 },
-    { 5, CONDITION_ALWAYS, 504, 0, 104, FACING_NORTH, 0, 328, 8, 568, 272, 0 },
-    { 6, CONDITION_ALWAYS, 376, 0, 176, FACING_SOUTH, 0, 328, 8, 568, 272, 0 },
-    { 7, CONDITION_ALWAYS, 408, 0, 456, FACING_NORTH, 0, 328, 272, 584, 512, 0 },
-    { 8, CONDITION_ALWAYS, 456, 0, 352, FACING_SOUTH, 0, 328, 272, 584, 512, 0 },
-    { 9, CONDITION_ALWAYS, 504, 0, 456, FACING_NORTH, 0, 328, 272, 584, 512, 0 },
-    { 10, CONDITION_ALWAYS, 136, 0, 640, FACING_NORTH, 0, 16, 472, 256, 688, 0 },
-    { 11, CONDITION_ALWAYS, 648, 0, 72, FACING_SOUTH, 0, 568, 16, 808, 176, 0 },
-    { 12, CONDITION_ALWAYS, 744, 0, 80, FACING_SOUTH, 0, 568, 16, 808, 176, 0 },
-    { 13, CONDITION_ALWAYS, 696, 0, 376, FACING_NORTH, 0, 576, 264, 816, 432, 0 },
-    { 14, CONDITION_ALWAYS, 200, 0, 848, FACING_SOUTH, 0, 152, 680, 424, 992, 0 },
-    { 15, CONDITION_ALWAYS, 264, 0, 776, FACING_SOUTH, 0, 152, 680, 424, 992, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_FROM_NORTH_HALL, CONDITION_ALWAYS, 136, 0, 80, FACING_SOUTH, 0, 40, 8, 308, 448, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 264, 0, 416, FACING_SOUTH, 0, 40, 8, 308, 448, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_FROM_WEST_HALL, CONDITION_ALWAYS, 376, 0, 232, FACING_NORTH, 0, 328, 8, 568, 272, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_FROM_GUARD_ROOM, CONDITION_ALWAYS, 504, 0, 104, FACING_NORTH, 0, 328, 8, 568, 272, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_FROM_WOMENS_ROOM, CONDITION_ALWAYS, 376, 0, 176, FACING_SOUTH, 0, 328, 8, 568, 272, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_FROM_WEST_HALL, CONDITION_ALWAYS, 408, 0, 456, FACING_NORTH, 0, 328, 272, 584, 512, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_FROM_FAMILY_ROOM, CONDITION_ALWAYS, 456, 0, 352, FACING_SOUTH, 0, 328, 272, 584, 512, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_FROM_CELL_KEY_ROOM, CONDITION_ALWAYS, 504, 0, 456, FACING_NORTH, 0, 328, 272, 584, 512, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 136, 0, 640, FACING_NORTH, 0, 16, 472, 256, 688, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_HALL, CONDITION_ALWAYS, 648, 0, 72, FACING_SOUTH, 0, 568, 16, 808, 176, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_HALL, CONDITION_ALWAYS, 744, 0, 80, FACING_SOUTH, 0, 568, 16, 808, 176, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_FROM_NORTH_HALL, CONDITION_ALWAYS, 696, 0, 376, FACING_NORTH, 0, 576, 264, 816, 432, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_CENTRAL_HALL, CONDITION_ALWAYS, 200, 0, 848, FACING_SOUTH, 0, 152, 680, 424, 992, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_EAST_HALL, CONDITION_ALWAYS, 264, 0, 776, FACING_SOUTH, 0, 152, 680, 424, 992, 0 },
     { LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_NORTH, CONDITION_ALWAYS, 376, 0, 824, FACING_SOUTH, 0, 152, 680, 424, 992, 0 },
-    { 17, CONDITION_ALWAYS, 536, 0, 696, FACING_NORTH, 0, 488, 584, 760, 896, 0 },
-    { 18, CONDITION_ALWAYS, 680, 0, 832, FACING_SOUTH, 0, 488, 584, 760, 896, 0 },
-    { 19, CONDITION_ALWAYS, 712, 0, 856, FACING_NORTH, 0, 488, 584, 760, 896, 0 },
-    { 20, CONDITION_ALWAYS, 912, 0, 192, FACING_NORTH, 0, 784, 24, 1024, 240, 0 },
-    { 21, CONDITION_ALWAYS, 840, 0, 664, FACING_NORTH, 0, 768, 440, 1008, 704, 0 },
-    { 22, CONDITION_ALWAYS, 952, 0, 528, FACING_SOUTH, 0, 768, 440, 1008, 704, 0 },
-    { 23, CONDITION_ALWAYS, 872, 0, 376, FACING_NORTH, 0, 768, 264, 1016, 432, 0 },
-    { 24, CONDITION_ALWAYS, 904, 0, 112, FACING_SOUTH, 0, 784, 24, 1024, 240, 0 },
-    { 30, CONDITION_ALWAYS, 408, 0, 456, FACING_NORTH, 0, 328, 272, 584, 512, 0 },
-    { 31, CONDITION_ALWAYS, 648, 0, 88, FACING_NORTH, 0, 568, 16, 808, 176, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_FROM_GUARD_ROOM, CONDITION_ALWAYS, 536, 0, 696, FACING_NORTH, 0, 488, 584, 760, 896, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_FROM_DONPAS_ROOM, CONDITION_ALWAYS, 680, 0, 832, FACING_SOUTH, 0, 488, 584, 760, 896, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_FROM_EAST_HALL, CONDITION_ALWAYS, 712, 0, 856, FACING_NORTH, 0, 488, 584, 760, 896, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_SOUTH_HALL, CONDITION_ALWAYS, 912, 0, 192, FACING_NORTH, 0, 784, 24, 1024, 240, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_FROM_CELL_KEY_ROOM, CONDITION_ALWAYS, 840, 0, 664, FACING_NORTH, 0, 768, 440, 1008, 704, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_FROM_SOUTH_HALL, CONDITION_ALWAYS, 952, 0, 528, FACING_SOUTH, 0, 768, 440, 1008, 704, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_FROM_DONPAS_ROOM, CONDITION_ALWAYS, 872, 0, 376, FACING_NORTH, 0, 768, 264, 1016, 432, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM, CONDITION_ALWAYS, 904, 0, 112, FACING_SOUTH, 0, 784, 24, 1024, 240, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_UNUSED, CONDITION_ALWAYS, 408, 0, 456, FACING_NORTH, 0, 328, 272, 584, 512, 0 },
+    { LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE, CONDITION_ALWAYS, 648, 0, 88, FACING_NORTH, 0, 568, 16, 808, 176, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gLunpaFortressEntrances3[] = {
-    { 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLunpaFortressCaveEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_GROUND_FLOOR, CONDITION_ALWAYS, 424, 0, 584, FACING_SOUTH, 0, 200, 488, 480, 648, 0 },
-    { 2, CONDITION_ALWAYS, 344, 0, 568, FACING_SOUTH, 0, 200, 488, 480, 648, 0 },
-    { 3, CONDITION_ALWAYS, 312, 0, 448, FACING_NORTH, 0, 8, 8, 568, 480, 0 },
+    { LUNPA_FORTRESS_CAVE_ENTRANCE_FROM_POOL, CONDITION_ALWAYS, 344, 0, 568, FACING_SOUTH, 0, 200, 488, 480, 648, 0 },
+    { LUNPA_FORTRESS_CAVE_POOL_FROM_ENTRANCE, CONDITION_ALWAYS, 312, 0, 448, FACING_NORTH, 0, 8, 8, 568, 480, 0 },
     { LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHEAST, CONDITION_ALWAYS, 440, 0, 296, FACING_SOUTH, 0, 8, 8, 568, 480, 0 },
     { LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTH, CONDITION_ALWAYS, 312, 0, 248, FACING_SOUTH, 0, 8, 8, 568, 480, 0 },
     { LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHWEST, CONDITION_ALWAYS, 104, 0, 184, FACING_SOUTH, 0, 8, 8, 568, 480, 0 },
@@ -3450,11 +3469,11 @@ struct SceneEntrance gLunpaFortressEntrances3[] = {
 };
 
 struct SceneEntrance gLunpaFortressEntrancesOther[] = {
-    { 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTH, CONDITION_ALWAYS, 56, 0, 328, FACING_NORTH, 0, 8, 8, 264, 424, 0 },
     { LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHEAST, CONDITION_ALWAYS, 184, 0, 368, FACING_NORTH, 0, 8, 8, 264, 424, 0 },
     { LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST, CONDITION_ALWAYS, 328, 0, 344, FACING_SOUTH, 0, 288, 32, 576, 432, 0 },
-    { 4, CONDITION_ALWAYS, 440, 0, 224, FACING_NORTH, 0, 288, 32, 576, 432, 0 },
+    { LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE, CONDITION_ALWAYS, 440, 0, 224, FACING_NORTH, 0, 288, 32, 576, 432, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -3490,7 +3509,7 @@ u32 gLunpaFortressExitsOther[] = {
     SCENE_EXITS_END,
 };
 
-u32 gLunpaFortressExits2[] = {
+u32 gLunpaFortressUpperFloorExits[] = {
     SCENE_EXITS(LunpaFortressUpperFloor),
     SCENE_EXIT(EXIT_THROWN_OUT, LunpaFortressGates, LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT),
     SCENE_EXIT(LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH, LunpaFortressGroundFloor, LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH),
@@ -3520,7 +3539,7 @@ u32 gLunpaFortressExits2[] = {
     SCENE_EXITS_END,
 };
 
-u32 gLunpaFortressExits3And4[] = {
+u32 gLunpaFortressCaveAndToadonpaExits[] = {
     SCENE_EXITS(LunpaFortressCave),
     SCENE_EXIT(LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR, LunpaFortressGroundFloor, LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_CAVE),
     SCENE_EXIT(LUNPA_FORTRESS_CAVE_ENTRANCE_TO_POOL, LunpaFortressCave, LUNPA_FORTRESS_CAVE_POOL_FROM_ENTRANCE),
@@ -3564,7 +3583,7 @@ struct ScenePlacement gLunpaFortressPlacementsWestLunpaCave[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gLunpaFortressPlacements1[] = {
+struct ScenePlacement gLunpaFortressGroundFloorPlacements[] = {
     { 0x14, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x14, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3585,7 +3604,7 @@ struct ScenePlacement gLunpaFortressPlacements1[] = {
         PIXELS(192), 0, PIXELS(432), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(808), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, (s32)gFortress1PatrolRoute,
+    { 0x85, CONDITION_ALWAYS, (s32)gGroundFloorPatrolRoute,
         PIXELS(736), 0, PIXELS(648), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(192), 0, PIXELS(464), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -3596,7 +3615,7 @@ struct ScenePlacement gLunpaFortressPlacements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gLunpaFortressPlacements2[] = {
+struct ScenePlacement gLunpaFortressUpperFloorPlacements[] = {
     { 0xf5, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(856), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x85, CONDITION_ALWAYS, (s32)gFirstPatrolRoute,
@@ -3633,12 +3652,12 @@ struct ScenePlacement gLunpaFortressPlacements2[] = {
         PIXELS(944), 0, PIXELS(122), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(904), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x5b, 0x49, ACTOR_STAND,
+    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_TONIC, ACTOR_STAND,
         PIXELS(872), 0, PIXELS(336), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gLunpaFortressPlacements3[] = {
+struct ScenePlacement gLunpaFortressCavePlacements[] = {
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(280), 0, PIXELS(576), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3652,7 +3671,7 @@ struct ScenePlacement gLunpaFortressPlacements3[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gLunpaFortressPlacements4[] = {
+struct ScenePlacement gLunpaFortressToadonpaPlacements[] = {
     { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3687,7 +3706,7 @@ struct SceneEvent gLunpaFortressNoEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gLunpaFortressEvents1[] = {
+struct SceneEvent gLunpaFortressGroundFloorEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_GATES },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_TO_MAIN_HALL },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_ENTRANCE },
@@ -3695,10 +3714,10 @@ struct SceneEvent gLunpaFortressEvents1[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_DINING_ROOM },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_NORTHEAST_HALL },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_EAST_HALL },
-    { 0x21, 8, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 8, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_NORTH_HALL_TO_MAIN_HALL },
-    { 0x21, 10, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_NORTH },
-    { 0x31, 11, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 10, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_NORTH },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 11, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_DINING_ROOM_TO_MAIN_HALL },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_TO_MAIN_HALL },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_TO_EAST_HALL },
@@ -3709,27 +3728,27 @@ struct SceneEvent gLunpaFortressEvents1[] = {
     { EVENT_EXIT, 19, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_STOREROOM_TO_NORTHEAST_HALL },
     { EVENT_EXIT, 20, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_HALL },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST, FORTRESS1_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockDoor1) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST, FORTRESS1_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockDoor1) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, FORTRESS1_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockDoor1) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 1, FORTRESS1_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockDoor1) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 2, FORTRESS1_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockDoor1) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 2, FORTRESS1_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockDoor1) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
+    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
     { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_24, EVENT_SCRIPT(Event_EntranceGuardThrowsPartyOut) },
     { EVENT_TOUCH, 51, FLAG_SCENE_TEMP_25, EVENT_SCRIPT(Event_SentriesThrowPartyOut) },
-    { EVENT_TALK, FORTRESS1_DONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaResting) },
-    { EVENT_TALK, FORTRESS1_DODONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaWhereIsDodonpa) },
-    { EVENT_TALK, FORTRESS1_FEASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetBuysDrink) },
-    { EVENT_TALK, FORTRESS1_BOASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetMoneyTree) },
-    { EVENT_TALK, FORTRESS1_STARTLED_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToStartledResident) },
-    { EVENT_TALK, FORTRESS1_SECOND_SENTRY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToSentry) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS1_DONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaWhoFoughtDonpa) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS1_DODONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaWifeSeeksDodonpa) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS1_FEASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaKalayBuysDrink) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS1_BOASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetKeepsEarnings) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS1_STARTLED_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadStartledResidentsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS1_SECOND_SENTRY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadSentrysThoughts) },
-    { EVENT_RAISED, TRIGGER_FORTRESS1_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_Fortress1PatrolThrowsPartyOut) },
+    { EVENT_TALK, GROUND_FLOOR_DONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaResting) },
+    { EVENT_TALK, GROUND_FLOOR_DODONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaWhereIsDodonpa) },
+    { EVENT_TALK, GROUND_FLOOR_FEASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetBuysDrink) },
+    { EVENT_TALK, GROUND_FLOOR_BOASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetMoneyTree) },
+    { EVENT_TALK, GROUND_FLOOR_STARTLED_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToStartledResident) },
+    { EVENT_TALK, GROUND_FLOOR_SECOND_SENTRY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToSentry) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_DONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaWhoFoughtDonpa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_DODONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaWifeSeeksDodonpa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_FEASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaKalayBuysDrink) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_BOASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetKeepsEarnings) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_STARTLED_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadStartledResidentsThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_SECOND_SENTRY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadSentrysThoughts) },
+    { EVENT_RAISED, TRIGGER_GROUND_FLOOR_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GroundFloorPatrolThrowsPartyOut) },
     { EVENT_RAISED, TRIGGER_UPPER_HALL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UpperHallGuardThrowsPartyOut) },
     { EVENT_RAISED, TRIGGER_ENTRANCE_GUARD_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EntranceGuardThrowsPartyOut) },
     { EVENT_RAISED, TRIGGER_SENTRIES_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SentriesThrowPartyOut) },
@@ -3741,8 +3760,8 @@ struct SceneEvent gLunpaFortressEvents1[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gLunpaFortressEvents2[] = {
-    { 0x31, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH },
+struct SceneEvent gLunpaFortressUpperFloorEvents[] = {
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_TO_NORTH_HALL },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_TO_CENTRAL_HALL },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_TO_WEST_HALL },
@@ -3757,7 +3776,7 @@ struct SceneEvent gLunpaFortressEvents2[] = {
     { EVENT_EXIT, 13, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_TO_NORTH_HALL },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_CENTRAL_HALL },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_EAST_HALL },
-    { 0x31, 16, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_NORTH },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 16, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_NORTH },
     { EVENT_EXIT, 17, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_TO_GUARD_ROOM },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_TO_DONPAS_ROOM },
     { EVENT_EXIT, 19, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_TO_EAST_HALL },
@@ -3771,103 +3790,103 @@ struct SceneEvent gLunpaFortressEvents2[] = {
     { EVENT_TOUCH, 32, FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN, EVENT_SCRIPT(Event_FightEastGuard) },
     { EVENT_TOUCH, 33, FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, EVENT_SCRIPT(Event_FightWestGuard) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST, FORTRESS2_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockDoor2) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, FORTRESS2_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockDoor2) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 1, FORTRESS2_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockDoor2) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), FORTRESS2_CELL_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeCellKey) },
-    { EVENT_TALK, FORTRESS2_CELL_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeCellKey) },
-    { EVENT_TALK, FORTRESS2_DODONPAS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhereDodonpaIs) },
-    { EVENT_TALK, FORTRESS2_DONPAPPA, CONDITION_ALWAYS, MSGNO(MsgLunpaChildMustGrowUp) },
-    { EVENT_TALK, FORTRESS2_DODONPAS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgLunpaPapaWatchesLadies) },
-    { EVENT_TALK, FORTRESS2_DONPAPPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaChildTooResponsible) },
-    { EVENT_TALK, FORTRESS2_DONPA_WORRIER, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaExhausted) },
-    { EVENT_TALK, FORTRESS2_CAPTIVE_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLunpaWomenWantHome) },
-    { EVENT_TALK, FORTRESS2_GUARD_A, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBeatenGuardA) },
-    { EVENT_TALK, FORTRESS2_GUARD_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBeatenGuardB) },
-    { EVENT_TALK, FORTRESS2_GUARD_C, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBeatenGuardC) },
-    { EVENT_TALK, FORTRESS2_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToAttendant) },
-    { EVENT_TALK, FORTRESS2_DONPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToDonpa) },
-    { EVENT_TALK, FORTRESS2_TONIC, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DjinniJoins) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_DODONPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaSuccessor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_DONPAPPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaProtectsFortress) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_DODONPAS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgLunpaDaughterWillNotMarryPapa) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_DONPAPPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaJudges) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_DONPA_WORRIER, CONDITION_ALWAYS, MSGNO(MsgLunpaFearWithoutDonpa) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_CAPTIVE_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHopeDonpaRecovers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_GUARD_A, CONDITION_ALWAYS, MSGNO(MsgLunpaShouldNotHaveFought) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_GUARD_B, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetInCave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_GUARD_C, CONDITION_ALWAYS, MSGNO(MsgLunpaHiddenDoorSwitch) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_DONPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadDonpasThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS2_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadAttendantsThoughts) },
+    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST, UPPER_FLOOR_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockUpperFloorDoor) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockUpperFloorDoor) },
+    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockUpperFloorDoor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), UPPER_FLOOR_CELL_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeCellKey) },
+    { EVENT_TALK, UPPER_FLOOR_CELL_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeCellKey) },
+    { EVENT_TALK, UPPER_FLOOR_DODONPAS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhereDodonpaIs) },
+    { EVENT_TALK, UPPER_FLOOR_DONPAPPA, CONDITION_ALWAYS, MSGNO(MsgLunpaChildMustGrowUp) },
+    { EVENT_TALK, UPPER_FLOOR_DODONPAS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgLunpaPapaWatchesLadies) },
+    { EVENT_TALK, UPPER_FLOOR_DONPAPPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaChildTooResponsible) },
+    { EVENT_TALK, UPPER_FLOOR_DONPA_WORRIER, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaExhausted) },
+    { EVENT_TALK, UPPER_FLOOR_CAPTIVE_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLunpaWomenWantHome) },
+    { EVENT_TALK, UPPER_FLOOR_GUARD_A, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBeatenGuardA) },
+    { EVENT_TALK, UPPER_FLOOR_GUARD_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBeatenGuardB) },
+    { EVENT_TALK, UPPER_FLOOR_GUARD_C, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBeatenGuardC) },
+    { EVENT_TALK, UPPER_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToAttendant) },
+    { EVENT_TALK, UPPER_FLOOR_DONPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToDonpa) },
+    { EVENT_TALK, UPPER_FLOOR_TONIC, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DjinniJoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DODONPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaSuccessor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DONPAPPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaProtectsFortress) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DODONPAS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgLunpaDaughterWillNotMarryPapa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DONPAPPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaJudges) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DONPA_WORRIER, CONDITION_ALWAYS, MSGNO(MsgLunpaFearWithoutDonpa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_CAPTIVE_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHopeDonpaRecovers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_GUARD_A, CONDITION_ALWAYS, MSGNO(MsgLunpaShouldNotHaveFought) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_GUARD_B, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetInCave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_GUARD_C, CONDITION_ALWAYS, MSGNO(MsgLunpaHiddenDoorSwitch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DONPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadDonpasThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadAttendantsThoughts) },
     { EVENT_RAISED, TRIGGER_PATROL_PAIR_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PatrolPairThrowsPartyOut) },
     { EVENT_RAISED, TRIGGER_HALL_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HallPatrolThrowsPartyOut) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gLunpaFortressEvents3[] = {
-    { 0x21, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR },
+struct SceneEvent gLunpaFortressCaveEvents[] = {
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_ENTRANCE_TO_POOL },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_POOL_TO_ENTRANCE },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTH },
-    { 0x31, 6, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 6, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_SEALED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchSealedDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST, FORTRESS3_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockDoor3) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, FORTRESS3_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockDoor3) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 2, FORTRESS3_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockDoor3) },
-    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 2, FORTRESS3_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockDoor3) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST, CAVE_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockCaveDoor) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, CAVE_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockCaveDoor) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockCaveDoor) },
+    { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockCaveDoor) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CratesSink) },
     { TOUCH_WALKING, 70, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushCrates) },
     { SEARCH(SEARCH_UNNAMED), 51, FLAG_SCENE_TEMP_18, EVENT_SCRIPT(Event_FlipSecondSwitch) },
     { SEARCH(SEARCH_UNNAMED), 52, FLAG_SCENE_TEMP_17, EVENT_SCRIPT(Event_FlipFirstSwitch) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, REVEAL_SHOWN), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealSwitches) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, REVEAL_FADED), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideSwitches) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), FORTRESS3_FIRST_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayFirstSwitchCover) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), FORTRESS3_PASSAGE_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayPassageCover) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), FORTRESS3_SECOND_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwaySecondSwitchCover) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), FORTRESS3_CRATES, FLAG_LUNPA_FORTRESS_COLUMN_LOWERED, EVENT_SCRIPT(Event_MoveCrates) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_FIRST_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayFirstSwitchCover) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_PASSAGE_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayPassageCover) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_SECOND_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwaySecondSwitchCover) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), CAVE_CRATES, FLAG_LUNPA_FORTRESS_COLUMN_LOWERED, EVENT_SCRIPT(Event_MoveCrates) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gLunpaFortressEventsOther[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHEAST },
-    { 0x21, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST, FORTRESS4_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockDoor4) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, FORTRESS4_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockDoor4) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 2, FORTRESS4_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockDoor4) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 3, FORTRESS4_DOOR_FLAG + 3, EVENT_SCRIPT(Event_UnlockDoor4) },
-    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 4, FORTRESS4_DOOR_FLAG + 4, EVENT_SCRIPT(Event_UnlockDoor4) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST, TOADONPA_DOOR_FLAG, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 1, TOADONPA_DOOR_FLAG + 1, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 2, TOADONPA_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 3, TOADONPA_DOOR_FLAG + 3, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
+    { TOUCH_FACING(FACING_NORTH), DOOR_TRIGGER_FIRST + 4, TOADONPA_DOOR_FLAG + 4, EVENT_SCRIPT(Event_UnlockToadonpaDoor) },
     { EVENT_TOUCH, 20, FLAG_SCENE_TEMP_70, EVENT_SCRIPT(Event_FindHammet) },
-    { EVENT_TALK, FORTRESS4_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetStillInside) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS4_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaDodonpaSecretlyInside) },
-    // XXX: these two rows give FORTRESS4_HAMMET Dodonpa's lines from his cell,
+    { EVENT_TALK, TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetStillInside) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaDodonpaSecretlyInside) },
+    // XXX: these two rows give TOADONPA_HAMMET Dodonpa's lines from his cell,
     // though Hammet has left the cave by the time Dodonpa is jailed; whether
     // the party can reach them is not known.
-    { EVENT_TALK, FORTRESS4_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS4_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
-    { EVENT_TALK, FORTRESS4_DODONPA_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToJailedDodonpa) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FORTRESS4_DODONPA_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadJailedDodonpasThoughts) },
+    { EVENT_TALK, TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
+    { EVENT_TALK, TOADONPA_DODONPA_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToJailedDodonpa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOADONPA_DODONPA_STAND_IN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadJailedDodonpasThoughts) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { SCENE_EVENTS_END },
 };
 
-u32 gLunpaFortressDoorCells4[] = {
+u32 gLunpaFortressToadonpaDoorCells[] = {
     13, 56, 8, 56, 3, 56, 28, 85,
     28, 65,
 };
 
-u32 gLunpaFortressDoorCells3[] = {
+u32 gLunpaFortressCaveDoorCells[] = {
     31, 61, 15, 57, 6, 61,
 };
 
-u32 gLunpaFortressDoorCells2[] = {
+u32 gLunpaFortressUpperFloorDoorCells[] = {
     16, 119, 16, 113,
 };
 
-u32 gLunpaFortressDoorCells1[] = {
+u32 gLunpaFortressGroundFloorDoorCells[] = {
     28, 72, 43, 92,
 };
 // clang-format on

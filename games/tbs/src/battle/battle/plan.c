@@ -90,8 +90,6 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
 #define DJINN_INDEX(v) ((v) & 255)
 /// The most targets a plan holds (BATTLE_TARGET_CAPACITY).
 #define TARGET_MAX 14
-/// The first Djinni's ability id: each element's 20 follow, Venus first.
-#define DJINN_FIRST_ABILITY 300
 /// Announces the action and plans its targets and effects.
 /// Returns 0 to stage the plan, PLAN_REPORTED when the action failed (its
 /// message shown), or PLAN_NO_ACTION.
@@ -516,7 +514,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, request->unitId);
         BattleEvPush(BATTLE_EVENT_ABILITY_NAME,
                      DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
-                         DJINN_INDEX(request->parameter) + DJINN_FIRST_ABILITY);
+                         DJINN_INDEX(request->parameter) +
+                         ABILITY_DJINNI_FIRST);
         BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
         BattleEvPush(BATTLE_EVENT_DRAW_STATUS, 0);
         BattleEvPush(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
@@ -790,5 +789,3 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   plan->command = request->command;
   return 0;
 }
-
-#undef DJINN_FIRST_ABILITY

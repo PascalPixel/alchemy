@@ -159,33 +159,33 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
 
       switch (effectId & OWNER_ACTION_ID_MASK) {
-      case 0x104: // Power Bread
+      case ABILITY_POWER_BREAD:
         target->baseHp += amount + randomAdjust;
         messageOffset = ITEM_USE_RESULT_MAX_HP_UP;
         changed = 1;
         break;
-      case 0x105: // Cookie
+      case ABILITY_COOKIE:
         target->basePp += amount + randomAdjust;
         messageOffset = ITEM_USE_RESULT_MAX_PP_UP;
         changed = 1;
         break;
-      case 0x108: // Mint
+      case ABILITY_MINT:
         target->baseAgility += amount + randomAdjust;
         messageOffset = ITEM_USE_RESULT_AGILITY_UP;
         changed = 1;
         break;
-      case 0x109: // Lucky Pepper
+      case ABILITY_LUCKY_PEPPER:
         target->baseLuck += amount;
         messageOffset = ITEM_USE_RESULT_LUCK_UP;
         changed = 1;
         break;
-      case 0x106: // Apple
+      case ABILITY_APPLE:
         target->baseAttack += amount + randomAdjust;
         UiWork_PushValueSlotFar(3, MSG_ARG_NUMBER);
         messageOffset = ITEM_USE_RESULT_ATTACK_UP;
         changed = 1;
         break;
-      case 0x107: // Hard Nut
+      case ABILITY_HARD_NUT:
         target->baseDefense += amount + randomAdjust;
         UiWork_PushValueSlotFar(4, MSG_ARG_NUMBER);
         messageOffset = ITEM_USE_RESULT_DEFENSE_UP;

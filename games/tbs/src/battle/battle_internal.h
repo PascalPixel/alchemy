@@ -56,6 +56,7 @@
 #include "heap_state.h"
 #include "flags.h"
 #include "ability_ids.h"
+#include "djinn_ids.h"
 #include "menu_list.h"
 #include "audio_engine_symbols.h"
 #include "ui.h"
@@ -184,9 +185,6 @@
 /// DjinnRecoveryEntry.turns of a standby Djinni a summon has just used, until
 /// the turn's end gives it its turn to recover (BattleUnit_ProcessTurnEnd).
 #define DJINN_RECOVERY_SUMMONED -2
-
-/// The Djinn of each element, numbered 0 to 19 (DjinnRecoveryEntry.index).
-#define DJINN_PER_ELEMENT 20
 
 /// BattleWork.battleType, from the enemy formation
 /// (BattleFormation_BuildEnemyList): the random formations stand left to right

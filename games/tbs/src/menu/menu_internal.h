@@ -71,6 +71,7 @@
 #include "flags.h"
 #include "unit/window/text_speed.h"
 #include "game/character_ids.h"
+#include "ability_ids.h"
 
 extern u8 IwramCopyWords[];
 

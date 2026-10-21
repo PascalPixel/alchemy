@@ -1009,9 +1009,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         djinn = backdrop->list.ids[ownerColumn][selectedRow];
       RenderOutput_RedrawSavedRectFar(menu->helpWindow);
       // DJINN_SELECT_ACTION's help: `<owner>'s`, the element icon and the
-      // Djinni's name, an ability name argument (its action, 300 + element * 20
-      // + number), then "What will you do?". Spanish, French and Italian put
-      // the icon first and the name in the one message.
+      // Djinni's name, an ability name argument (its action, from
+      // ABILITY_DJINNI_FIRST), then "What will you do?". Spanish, French and
+      // Italian put the icon first and the name in the one message.
       if (mode == DJINN_SELECT_ACTION) {
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN

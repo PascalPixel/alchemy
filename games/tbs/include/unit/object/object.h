@@ -36,6 +36,28 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
+/// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
+/// low byte, which DisplayTransition_UpdateScanlineTable draws.
+enum WindowTransitionMode {
+  WINDOW_TRANSITION_BARS = 0,   ///< a bar on each line, at random
+  WINDOW_TRANSITION_SHAPE = 1,  ///< a shape from gDisplayTransition_Shapes
+  WINDOW_TRANSITION_NOISE = 2,  ///< ragged lines from the left edge
+  WINDOW_TRANSITION_CIRCLE = 3, ///< a circle at the screen's centre
+  /// Alternate lines wiping in from the left and the right.
+  WINDOW_TRANSITION_INTERLACED_WIPE = 4,
+  /// As WINDOW_TRANSITION_LEADER with inside and outside swapped and the
+  /// progress run the other way; it flickers.
+  WINDOW_TRANSITION_LEADER_INVERSE = 7,
+  /// An ellipse around a point (the state's centre) whose outline ripples:
+  /// Reveal's.
+  WINDOW_TRANSITION_RIPPLE = 8,
+  /// An ellipse wider than tall around the party leader, 16 pixels above its
+  /// feet.
+  WINDOW_TRANSITION_LEADER = 9,
+  /// An ellipse a little taller than wide, 8 pixels above the leader's feet.
+  WINDOW_TRANSITION_LEADER_LOW = 77
+};
+
 void Scene_TakeExit(s32 exitKind);
 void Scene_ReturnFromBattle(s32 result);
 s32 BattleFx_GetResourceGroup(s32 scene);

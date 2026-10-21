@@ -40,7 +40,7 @@ s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
   z = object->z - cameraZ - object->y;
   *position++ = x / 0x10000;
   *position = z / 0x10000;
-  if ((object->animationKind & 15) == 1)
+  if ((object->animationKind & 15) == OBJECT_SPRITE_ONE)
     *position -=
         (s8)Resource_GetMetadataRecordFar(
             ((struct AnimationObject *)object->animation)->entries[0]->animId)
@@ -70,11 +70,12 @@ s32 Field_StartEncounterTransition(s32 unused) {
   AudioCommand_PlayFar(SE_288);
   AudioCommand_PlayFar(SE_147);
   if (work->mode == MODE_WORLD_MAP) {
-    // On the world map the flash colours BG palette colour 243 instead.
-    // The world map closes with transition 0x401 (style 4, variant 1), a
-    // field scene with 0x207 (TRANSITION_WINDOW, variant 7), both 16 frames.
+    // On the world map the flash colours BG palette colour 243 instead, and
+    // the screen closes on the flickering centre line (style 4, variant 1);
+    // a field scene closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
+    // 16 frames.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
-    DisplayTransition_Finish(0x401, 16);
+    DisplayTransition_Finish(SCENE_TRANSITION(4, 1), 16);
     work->transitionActive = 0;
     WaitFrames(16);
     // Step the white down by 2 a frame: 30 to 0 in 16 frames.
@@ -85,7 +86,9 @@ s32 Field_StartEncounterTransition(s32 unused) {
     }
   } else {
     Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
-    DisplayTransition_Finish(0x207, 16);
+    DisplayTransition_Finish(
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
+        16);
     work->transitionActive = 0;
     WaitFrames(16);
     for (i = 0; i < 16; i++) {
@@ -113,7 +116,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   zero = 0;
   param = 15;
 
-  // No shadow (sprite flag bit 0) as the leader leaves.
+  // No shadow as the leader leaves.
   context->flags = zero;
   effect->param = param;
   // Positions are 16.16 fixed point and tiles 16 pixels: keep the tile and

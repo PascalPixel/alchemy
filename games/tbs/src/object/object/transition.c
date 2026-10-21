@@ -48,7 +48,7 @@ struct TransitionSpan {
   u8 y1; ///< screen pixels: the right edge the run moves toward
 };
 
-/// One step of the shape window transition (mode 1), a row of
+/// One step of WINDOW_TRANSITION_SHAPE, a row of
 /// gDisplayTransition_Shapes chosen by the progress: the WININ and WINOUT
 /// values, swapped as the transition opens or closes, and three runs of lines
 /// written one after another from the top of the screen.
@@ -65,17 +65,12 @@ extern struct TransitionShape gDisplayTransition_Shapes[];
 /// the next page of window edges, WININ and WINOUT first and then a
 /// (left << 8 | right) pair for each of the 160 lines. Bit 5 of the value says
 /// whether the transition opens or closes; its low 5 bits are its progress.
-/// Modes: 0 random bars, 1 a shape from gDisplayTransition_Shapes, 2 random
-/// horizontal noise, 3 a circle at the screen's centre, 4 alternate lines
-/// wiping in from the left and the right, 7 and 9 an ellipse wider than tall
-/// around the party leader (7 flickers), 8 a wobbling ellipse around a point,
-/// 77 an ellipse a little taller than wide, centred 8 pixels lower on the
-/// leader.
+/// The mode is an enum WindowTransitionMode.
 ///
 /// A scheduler callback (priority 0xc80), added with
 /// BattleFx_StartWindowHBlankDma; it removes both and stops DMA 0 when a
 /// transition with no next mode ends. Writes the hidden page of the
-/// transition state (heap slot 31) and then flips state->page.
+/// transition state (HEAP_SLOT_TRANSITION) and then flips state->page.
 void DisplayTransition_UpdateScanlineTable(void) {
   struct DisplayTransitionState *state;
   struct TransitionSpan *span;
@@ -86,10 +81,10 @@ void DisplayTransition_UpdateScanlineTable(void) {
   // UB: viewX is a scalar, so indexing its address cannot reach viewY.
   // Direct named members grow the English function from 0x90c to 0x914
   // bytes. Modern code reads the actual members below.
-  s32 *view7;
-  s32 *view8;
-  s32 *view9;
-  s32 *view77;
+  s32 *viewInverse;
+  s32 *viewRipple;
+  s32 *viewLeader;
+  s32 *viewInverse7;
 #endif
   struct ObjectRuntime *obj;
   u32 i;
@@ -167,7 +162,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
   // to cover the screen inside the windows instead. Several modes fold the
   // progress when bit 5 is set, so that closing runs their table backwards.
   switch (state->mode) {
-  case 0:
+  case WINDOW_TRANSITION_BARS:
     *scanlineData++ = 0x7f7f;
     *scanlineData++ = 1;
     value = state->value;
@@ -186,7 +181,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
     }
     break;
 
-  case 1:
+  case WINDOW_TRANSITION_SHAPE:
     value = state->value;
     shape = &gDisplayTransition_Shapes[value & 31];
     if (value & 32) {
@@ -227,7 +222,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
     }
     break;
 
-  case 2:
+  case WINDOW_TRANSITION_NOISE:
     value = state->value - 1;
     if (value & 32) {
       *scanlineData++ = 1;
@@ -249,7 +244,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
     }
     break;
 
-  case 3: {
+  case WINDOW_TRANSITION_CIRCLE: {
 #ifdef UBFIX
     // Closing writes four header halfwords, then 160 pairs: its last write
     // crosses the 322-halfword page. Keep that write into the following page
@@ -312,7 +307,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
     break;
   }
 
-  case 4:
+  case WINDOW_TRANSITION_INTERLACED_WIPE:
     value = state->value;
     if (value & 32) {
       *scanlineData++ = 1;
@@ -332,26 +327,26 @@ void DisplayTransition_UpdateScanlineTable(void) {
     }
     break;
 
-  case 7: {
+  case WINDOW_TRANSITION_LEADER_INVERSE: {
     s32 ax;
 
 #ifdef UBFIX
     ax = map->viewX & 0xffff0000;
     cameraY = map->viewY & 0xffff0000;
 #else
-    view7 = &map->viewX;
-    ax = view7[0] & 0xffff0000;
-    cameraY = view7[1] & 0xffff0000;
+    viewInverse = &map->viewX;
+    ax = viewInverse[0] & 0xffff0000;
+    cameraY = viewInverse[1] & 0xffff0000;
 #endif
     // Centred on the leader's place on screen, 16 pixels above its feet.
     obj = ObjectTable_Get(gGameState.selectedActor);
     centerX = (obj->x - ax) / 0x10000;
     centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 16;
-    // The frame counter is read here, where mode 8 forms its index, and the
-    // value is not used.
+    // The frame counter is read here, where WINDOW_TRANSITION_RIPPLE forms
+    // its index, and the value is not used.
     gFrameCount;
-    // Mode 7 writes the two masks and folds the progress the other way round
-    // from mode 9.
+    // This mode writes the two masks and folds the progress the other way
+    // round from WINDOW_TRANSITION_LEADER.
     *scanlineData++ = state->active;
     *scanlineData++ = state->mask;
     value = state->value;
@@ -391,14 +386,14 @@ void DisplayTransition_UpdateScanlineTable(void) {
     }
     break;
   }
-  case 8:
+  case WINDOW_TRANSITION_RIPPLE:
 #ifdef UBFIX
     cameraX = map->viewX & 0xffff0000;
     cameraY8 = map->viewY & 0xffff0000;
 #else
-    view8 = &map->viewX;
-    cameraX = view8[0] & 0xffff0000;
-    cameraY8 = view8[1] & 0xffff0000;
+    viewRipple = &map->viewX;
+    cameraX = viewRipple[0] & 0xffff0000;
+    cameraY8 = viewRipple[1] & 0xffff0000;
 #endif
     // Centred on state->centreX and centreY; each line's edges move out by
     // gDisplayTransition_EdgeOffsets, indexed two entries a line and one a
@@ -450,21 +445,22 @@ void DisplayTransition_UpdateScanlineTable(void) {
     }
     break;
 
-  case 9: {
+  case WINDOW_TRANSITION_LEADER: {
     s32 ax;
 
 #ifdef UBFIX
     ax = map->viewX & 0xffff0000;
     cameraY = map->viewY & 0xffff0000;
 #else
-    view9 = &map->viewX;
-    ax = view9[0] & 0xffff0000;
-    cameraY = view9[1] & 0xffff0000;
+    viewLeader = &map->viewX;
+    ax = viewLeader[0] & 0xffff0000;
+    cameraY = viewLeader[1] & 0xffff0000;
 #endif
     obj = ObjectTable_Get(gGameState.selectedActor);
     centerX = (obj->x - ax) / 0x10000;
     centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 16;
-    // As in mode 7, the frame counter is read and not used.
+    // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
+    // not used.
     gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -499,22 +495,24 @@ void DisplayTransition_UpdateScanlineTable(void) {
     }
     break;
   }
-  case 77: {
+  case WINDOW_TRANSITION_LEADER_LOW: {
     s32 ax;
 
 #ifdef UBFIX
     ax = map->viewX & 0xffff0000;
     cameraY = map->viewY & 0xffff0000;
 #else
-    view77 = &map->viewX;
-    ax = view77[0] & 0xffff0000;
-    cameraY = view77[1] & 0xffff0000;
+    viewInverse7 = &map->viewX;
+    ax = viewInverse7[0] & 0xffff0000;
+    cameraY = viewInverse7[1] & 0xffff0000;
 #endif
     obj = ObjectTable_Get(gGameState.selectedActor);
     centerX = (obj->x - ax) / 0x10000;
-    // Centred 8 pixels above the leader's feet, not 16 as in modes 7 and 9.
+    // Centred 8 pixels above the leader's feet, not 16 as in
+    // WINDOW_TRANSITION_LEADER.
     centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 8;
-    // As in mode 7, the frame counter is read and not used.
+    // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
+    // not used.
     gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -559,14 +557,14 @@ void DisplayTransition_UpdateScanlineTable(void) {
 /// Starts window transition mode at value 0, with no duration: the caller
 /// moves it.
 ///
-/// Called by Reveal's effect (mode 8) and, through
+/// Called by Reveal's effect (WINDOW_TRANSITION_RIPPLE) and, through
 /// DisplayTransition_InitializeBattleEffectStateFar, by three scenes (Altmiller
 /// Cave, Tret Tree's branch and Babi's palace). Allocates and clears the
-/// transition state in heap slot 31 and adds both window callbacks; mask
-/// 0x3f3f shows every layer in both windows.
+/// transition state in HEAP_SLOT_TRANSITION and adds both window callbacks;
+/// mask 0x3f3f shows every layer in both windows.
 void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   struct DisplayTransitionState *state =
-      Runtime_AllocateBlock(31, sizeof(*state));
+      Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, sizeof(*state));
 
   Dma_Fill32(0, state, sizeof(*state));
   state->mode = mode;
@@ -586,29 +584,31 @@ void DisplayTransition_SuspendCallbacks(void) {
   Scheduler_SuspendTasks(&BattleFx_StartWindowHBlankDma);
 }
 
-/// Allocates the display transition state (heap block 31) and clears it.
+/// Allocates the display transition state (HEAP_SLOT_TRANSITION) and clears
+/// it.
 ///
 /// Called by DisplayTransition_Start and DisplayTransition_Finish for every
 /// kind but the two fades.
 struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
   struct DisplayTransitionState *state;
 
-  state = Runtime_AllocateBlock(31, sizeof(*state));
+  state = Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   return state;
 }
 
-/// Fades the screen in over frames frames. mode's high byte chooses how: 0
-/// from black, 1 from the backdrop colour, 2 a window transition (its low
-/// byte the mode), 3 a dissolve, 4 opening from the centre line (a non-zero
-/// low byte flickers). It returns after one frame while the fade runs on: a
-/// caller that must wait for it, as Field_RunScene does, waits itself.
+/// Fades the screen in over frames frames. mode's high byte is its enum
+/// SceneTransitionStyle: from black, from the backdrop colour, a window
+/// transition (its low byte an enum WindowTransitionMode), a dissolve (3) or
+/// opening from the centre line (4, which a non-zero low byte makes flicker).
+/// It returns after one frame while the fade runs on: a caller that must wait
+/// for it, as Field_RunScene does, waits itself.
 ///
 /// Called by Field_RunScene to fade a scene in with work->transition and
 /// work->transitionFrames, and by Event_StartScreenTransition for scene
-/// scripts. Kinds 2 to 4 add a scheduler callback (and kind 4 the HBlank
-/// handler, IRQ 1) that runs the transition; every kind ORs the map's display
-/// bits into DISPCNT through the I/O write queue.
+/// scripts. Every style but the fades adds a scheduler callback (and the
+/// centre line the HBlank handler, IRQ 1) that runs the transition; every kind
+/// ORs the map's display bits into DISPCNT through the I/O write queue.
 void DisplayTransition_Start(s32 mode, s32 frames) {
   struct DisplayTransitionWindow *display;
   s32 variant;
@@ -618,12 +618,12 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
   display = gMapWork[0];
   variant = mode & 0xff;
   switch (transitionKind) {
-  case 0:
+  case TRANSITION_FADE:
     Fade_ToBlack(0);
     Fade_FromBlack(frames);
     WaitFrames(1);
     break;
-  case 1:
+  case TRANSITION_BACKDROP_FADE:
     BattleFx_ApplyColorToSourceBuffer(0x8000, PLTT_BACKDROP);
     BattleFx_StartBufferInterpolation(frames);
     WaitFrames(1);
@@ -633,7 +633,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     return;
   // The window, dissolve and centre-line kinds open from value 0 (closed) to
   // 32 (open), or for the centre line from 80 to 0, over frames frames.
-  case 2: {
+  case TRANSITION_WINDOW: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
     state->mode = variant;
@@ -701,10 +701,12 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
 /// it in.
 ///
 /// Called by Field_RunScene as a scene ends, by Field_StartEncounterTransition
-/// before a battle (kinds 0x401 and 0x207), and by Event_FinishScreenTransition
-/// for scene scripts. The window and dissolve kinds run from value 32 to 64,
-/// the centre line from 0 to 80. Like DisplayTransition_Start it does not
-/// wait for the fade: Field_RunScene waits transitionFrames after it.
+/// before a battle (the flickering centre line, and the
+/// WINDOW_TRANSITION_LEADER_INVERSE window), and by
+/// Event_FinishScreenTransition for scene scripts. The window and dissolve
+/// kinds run from value 32 to 64, the centre line from 0 to 80. Like
+/// DisplayTransition_Start it does not wait for the fade: Field_RunScene waits
+/// transitionFrames after it.
 void DisplayTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
   s32 transitionKind;
@@ -712,15 +714,15 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
   transitionKind = (mode >> 8) & 0xff;
   variant = mode & 0xff;
   switch (transitionKind) {
-  case 0:
+  case TRANSITION_FADE:
     Fade_FromBlack(0);
     Fade_ToBlack(frames);
     break;
-  case 1:
+  case TRANSITION_BACKDROP_FADE:
     BattleFx_ApplyColorToTargetBuffer(0x8000, 0);
     BattleFx_StartBufferInterpolation(frames);
     break;
-  case 2: {
+  case TRANSITION_WINDOW: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
     state->mode = variant;
@@ -799,8 +801,8 @@ void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
 /// and sets the two lines where the screen switches between shown and blank.
 ///
 /// A scheduler callback added by DisplayTransition_Start and
-/// DisplayTransition_Finish for kind 4, variant 0; when its run ends it removes
-/// itself and the HBlank handler.
+/// DisplayTransition_Finish for the centre line with variant 0; when its run
+/// ends it removes itself and the HBlank handler.
 void DisplayTransition_Update(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   struct DisplayTransitionWindow *display =
@@ -840,7 +842,7 @@ void DisplayTransition_Update(void) {
 
 /// As DisplayTransition_Update, but the lines flicker every other frame.
 ///
-/// The kind 4 callback for a non-zero variant.
+/// The centre line's callback for a non-zero variant.
 void DisplayTransition_UpdateFromCentre(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   struct DisplayTransitionWindow *window =
@@ -880,13 +882,25 @@ void DisplayTransition_UpdateFromCentre(void) {
 }
 
 /// The HBlank interrupt of the centre-line transition: switches the display
-/// to mode 2 (nothing shown) at the first line and back to mode 0 at the
-/// second.
+/// to DISPCNT_MODE_2 (nothing shown) at the first line and back to mode 0 at
+/// the second.
 ///
 /// Installed as IRQ handler 1 (IRQ_HBLANK) by DisplayTransition_Start and
-/// DisplayTransition_Finish for kind 4, so it runs after every line and reads
-/// the line from REG_VCOUNT. Phases: 0 waits for a line on screen, 1 for
-/// whichever edge line comes first, 2 and 3 for the other one; 9 is done.
+/// DisplayTransition_Finish for the centre line, so it runs after every line
+/// and reads the line from REG_VCOUNT, waiting through enum
+/// DisplayTransitionIrqPhase.
+/// The centre line's HBlank handler's phases (irqPhase).
+enum DisplayTransitionIrqPhase {
+  DISPLAY_TRANSITION_IRQ_WAIT_SCREEN = 0, ///< waits for a line on screen
+  /// Waits for whichever edge line comes first.
+  DISPLAY_TRANSITION_IRQ_WAIT_EITHER = 1,
+  /// The first line has passed: waits for the second.
+  DISPLAY_TRANSITION_IRQ_WAIT_SECOND = 2,
+  /// The second line has passed: waits for the first.
+  DISPLAY_TRANSITION_IRQ_WAIT_FIRST = 3,
+  DISPLAY_TRANSITION_IRQ_DONE = 9
+};
+
 void DisplayTransition_UpdateScanline(void) {
   u32 scanline;
   struct DisplayTransitionWindow *state;
@@ -898,19 +912,19 @@ void DisplayTransition_UpdateScanline(void) {
   // shrinks the English function from 0xd2 to 0xba bytes.
 again:
   switch (state->irqPhase) {
-  case 3:
+  case DISPLAY_TRANSITION_IRQ_WAIT_FIRST:
     if (scanline >= state->irqFirstLine) {
       REG_DISPCNT = (REG_DISPCNT & 0xfff8) | DISPCNT_MODE_2;
-      state->irqPhase = 9;
+      state->irqPhase = DISPLAY_TRANSITION_IRQ_DONE;
     }
     break;
-  case 2:
+  case DISPLAY_TRANSITION_IRQ_WAIT_SECOND:
     if (scanline >= state->irqSecondLine) {
       REG_DISPCNT &= 0xfff8;
-      state->irqPhase = 9;
+      state->irqPhase = DISPLAY_TRANSITION_IRQ_DONE;
     }
     break;
-  case 1:
+  case DISPLAY_TRANSITION_IRQ_WAIT_EITHER:
     if (scanline >= state->irqFirstLine) {
       REG_DISPCNT = (REG_DISPCNT & 0xfff8) | DISPCNT_MODE_2;
       state->irqPhase++;
@@ -918,13 +932,13 @@ again:
     }
     if (scanline >= state->irqSecondLine) {
       REG_DISPCNT &= 0xfff8;
-      state->irqPhase = 3;
+      state->irqPhase = DISPLAY_TRANSITION_IRQ_WAIT_FIRST;
       goto again;
     }
     break;
-  case 0:
+  case DISPLAY_TRANSITION_IRQ_WAIT_SCREEN:
     if (scanline <= 158) {
-      state->irqPhase = 1;
+      state->irqPhase = DISPLAY_TRANSITION_IRQ_WAIT_EITHER;
       goto again;
     }
     break;
@@ -940,7 +954,7 @@ again:
 /// value's two pixels, so over fewer than 32 frames some values, and their
 /// pixels, are skipped, and over more some repeat.
 ///
-/// The dissolve's scheduler callback (kind 3 of DisplayTransition_Start and
+/// The dissolve's scheduler callback (from DisplayTransition_Start and
 /// DisplayTransition_Finish, and DisplayTransition_InitializeState). Queues the
 /// changed tile into character block 0 each frame.
 void DisplayTransition_UpdateFrame(void) {
@@ -1017,7 +1031,7 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
 void DisplayTransition_InitializeState(s32 value) {
   struct DisplayTransitionState *state;
 
-  state = Runtime_AllocateBlock(0x1f, sizeof(*state));
+  state = Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   DisplayTransition_FillTilemapAndSolidTile(0);
   state->mode = value;

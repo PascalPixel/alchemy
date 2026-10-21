@@ -100,8 +100,7 @@ enum {
   ACTOR_TRET = ACTOR_FIRST_PLACED,
   /// Draws nothing the render shows beyond Tret's face.
   /// ★ Named from the game: "We can't let Tret die like this!" (MsgTretMmmmm)
-  ACTOR_SECOND_TRET,
-  SPRITE_TRET_FACE = 0x37
+  ACTOR_SECOND_TRET
 };
 
 /// The speaker of a message; every speaker in this scene has
@@ -1308,7 +1307,7 @@ struct ScenePlacement gTretTreeInteriorsPlacements[] = {
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x37, CONDITION_ALWAYS, 7,
+    { SPRITE_TRET, CONDITION_ALWAYS, 7,
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x47, CONDITION_ALWAYS, 7,
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_KEEP_FACING, 0 },

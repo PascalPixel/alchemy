@@ -1,5 +1,5 @@
 /// @file
-/// Vault's houses, shops and inn (scene 24, a row with no SceneId_ name; the
+/// Vault's houses, shops and inn (SceneId_VaultInteriorsRevisit; the
 /// area names call it Vault) as the party finds them once it has reached
 /// Kalay. They replace the first visit's interiors (vault_interiors.c) as
 /// Vault's revisit scene (vault_revisit.c) replaces the town: each of its six
@@ -377,7 +377,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Opens the room through a window transition. Entering the house at
 /// VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST sets its owner on the
 /// floor and copies a block of cells; entering the inn
-/// (VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST or entrance 11)
+/// (VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST, or from upstairs by
+/// VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS)
 /// places the floor Bone beside the girl and starts
 /// Vault_UpdateBoneProximityFlag.
 s32 Scene_Initialize(void) {
@@ -395,7 +396,7 @@ s32 Scene_Initialize(void) {
     Object_GetById(ACTOR_GEM_OWNER)->y.fixed = clearedState;
     Object_GetById(ACTOR_GEM_OWNER)->terrainHeight = clearedState;
   } else if (entrance == VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST ||
-             entrance == 11) {
+             entrance == VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS) {
     // Show the Bone lying in the room, and track whether the leader stands
     // beside it (FLAG_SCENE_TEMP_50).
     Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
@@ -423,8 +424,10 @@ struct SceneEntrance gVaultInteriorsRevisit_Entrances[] = {
      492, FACING_NORTH, 0, 16, 288, 256, 512, 0},
     {VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST, CONDITION_ALWAYS,
      416, 0, 526, FACING_NORTH, 0, 320, 288, 592, 544, 0},
-    {11, CONDITION_ALWAYS, 744, 0, 640, FACING_SOUTH, 0, 432, 576, 800, 800, 0},
-    {12, CONDITION_ALWAYS, 358, 0, 632, FACING_SOUTH, 0, 32, 576, 400, 776, 0},
+    {VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 744, 0,
+     640, FACING_SOUTH, 0, 432, 576, 800, 800, 0},
+    {VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 358, 0,
+     632, FACING_SOUTH, 0, 32, 576, 400, 776, 0},
     {SCENE_TABLE_END},
 };
 

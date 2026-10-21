@@ -98,7 +98,9 @@
 /// attacks, the second after the battle.
 enum {
   ACTOR_TRET = ACTOR_FIRST_PLACED,
-  ACTOR_TRET_SPEAKER,
+  /// Draws nothing the render shows beyond Tret's face.
+  /// ★ Named from the game: "We can't let Tret die like this!" (MsgTretMmmmm)
+  ACTOR_SECOND_TRET,
   SPRITE_TRET_FACE = 0x37
 };
 
@@ -325,7 +327,7 @@ static void Event_FightTret(void) {
   EV_BEGIN();
   SE(MUS_017);
   MESSAGE_SET(MsgTretHmHrooom);
-  Engine_EventShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
+  Engine_EventShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   SE(MUS_029);
   OBJ_SPEED(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   OBJ_SPEED(GARET, 0x10000, 0x8000);
@@ -468,7 +470,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Engine_TaskWait(80);
   // Tret comes to: "Oh... Mmmmm... What has happened to me?"
   MESSAGE_SET(MsgTretMmmmm);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
@@ -481,23 +483,23 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   WAIT(60);
   SE(MUS_021);
   TretTreeInteriors_PlayGesture(4);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 0);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 80);
-  Event_ShowMessage(SPEAKER(ACTOR_TRET_SPEAKER), 0);
+  Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
   WAIT(40);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
   OBJ_MODE(GARET, ANIM_NOD);
   OBJ_MODE(MIA, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   WAIT(20);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   TretTreeInteriors_PlayGesture(0);
   WAIT(40);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(GARET,
@@ -517,7 +519,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Event_ShowMessageAndWait(SPEAKER(IVAN), 0, 20);
   TretTreeInteriors_PlayGesture(0);
   WAIT(40);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 10);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
@@ -528,7 +530,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   TretTreeInteriors_PlayGesture(4);
   // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
   // not the time to fool around!"
-  Event_OpenMessage(SPEAKER(ACTOR_TRET_SPEAKER), 0);
+  Event_OpenMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
   OBJ_DIR(GARET, FACING_NORTHEAST, 0);
   OBJ_DIR(IVAN, FACING_NORTHWEST, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
@@ -543,8 +545,8 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   WAIT(20);
   TretTreeInteriors_PlayGesture(4);
   MESSAGE_SET(MsgTretTurnedPeopleKolima);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 10);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TretTreeInteriors_PlayGesture(0);
   WAIT(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
@@ -579,9 +581,9 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   // "I can't do it... My power no longer reaches Kolima..." His face sinks
   // away on "People of Kolima... Forgive me...", and the party resolve to
   // heal him.
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 10);
+  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TretTreeInteriors_PlayGesture(0);
-  Event_ShowMessage(SPEAKER(ACTOR_TRET_SPEAKER), 0);
+  Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_RunActionScriptAndWait(ACTOR_TRET, gTretTreeInteriors_ActionTable1);
   WAIT(40);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 2, 60);
@@ -663,18 +665,18 @@ s32 TretTreeInteriors_EnterRoom(void) {
   tret->motionFlags = 0;
   tret->y.fixed = -PIXELS(10);
   {
-    struct FieldActor *tretSpeaker = Object_GetById(ACTOR_TRET_SPEAKER);
+    struct FieldActor *tretSpeaker = Object_GetById(ACTOR_SECOND_TRET);
 
     tretSpeaker->motionFlags = 0;
     tretSpeaker->y.fixed = -PIXELS(10);
   }
-  Engine_ActorSetChildValue(ACTOR_TRET_SPEAKER, 15);
+  Engine_ActorSetChildValue(ACTOR_SECOND_TRET, 15);
   TretTreeInteriors_PlayGesture(0);
   if (gGameState.entrance != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateSceneTint,
                                TASK_PRIORITY_SCENE);
   if (FLAG_CHECK(FLAG_TRET_DEFEATED)) {
-    Engine_ActorSetPosition(ACTOR_TRET_SPEAKER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_SECOND_TRET, 0, 0);
     Engine_ActorSetPosition(ACTOR_TRET, 0, 0);
   }
   if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))

@@ -56,7 +56,10 @@
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed actor; its
 /// placement is gone once its flag (FLAG_DJINNI_0 + DJINNI_BREEZE) is set.
-enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED };
+enum {
+  /// ★ Named from the game: "Breeze" (MsgDjinnName)
+  ACTOR_BREEZE = ACTOR_FIRST_PLACED
+};
 
 /// Starts the scanline-dependent BG3 scroll callbacks.
 static void TretTreeBranch_StartBg3Split(void);

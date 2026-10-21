@@ -203,11 +203,12 @@ enum ColosseumSatrageMatchActor {
   /// Knocked down onto the Board Walk by Force on FORCE_TARGET.
   FALLING_OBSTACLE = BOARD_WALK_FIRST_PLATFORM + 4,
   /// "The operator of the lifts", as the shifting floor stage's attendant
-  /// calls him.
+  /// calls him: a young man with fair hair.
   LIFT_OPERATOR,
   RIDING_LOG_NORTH, ///< the Log-Rolling Stage's two logs
   RIDING_LOG_SOUTH,
-  GUIDE, ///< explains the second finals match
+  GUIDE, ///< a soldier who explains the second finals match
+  /// The stages' attendants, young men with fair hair in white tunics.
   MINI_MAZE_ATTENDANT,
   SHIFTING_FLOOR_ATTENDANT,
   LOG_ROLLING_ATTENDANT,

@@ -155,11 +155,13 @@ enum {
   /// FIRST_PISTON + PISTON_COUNT + n.
   FIRST_PISTON = 18,
   LAST_PISTON = 22,
+  /// A young man with fair hair who works the Wall Wedge.
   WALL_OPERATOR = 28,
   GROWTH_PLANT = 29,
   SIDEWALK_BLOCK = 30,
   LONG_LOG = 31, ///< the log-rolling area's long log
-  GUIDE = 32,    ///< explains the third finals match
+  GUIDE = 32,    ///< a soldier who explains the third finals match
+  /// The stages' attendants, young men with fair hair in white tunics.
   SCALES_ATTENDANT = 33,
   STEPPING_STONE_ATTENDANT = 34,
   WALL_WEDGE_ATTENDANT = 35,

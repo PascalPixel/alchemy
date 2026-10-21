@@ -153,10 +153,12 @@ enum {
   PIPE_WEST = 13, ///< the Pipeworks' two pipes, a kind of scale
   PIPE_EAST = 14,
   GROWTH_PLANT = 15,
-  BRIDGE_OPERATOR = 16, ///< works the Broken Bridge
+  /// A young man with fair hair who works the Broken Bridge.
+  BRIDGE_OPERATOR = 16,
   LOG_NORTH_SOUTH = 17, ///< the Lumber Water Crossing Area's two logs
   LOG_EAST_WEST = 18,
-  GUIDE = 19, ///< explains the finals
+  GUIDE = 19, ///< a soldier who explains the finals
+  /// The stages' attendants, young men with fair hair in white tunics.
   ROCK_ATTENDANT = 20,
   PIPEWORKS_ATTENDANT = 21,
   BRIDGE_ATTENDANT = 22,

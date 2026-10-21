@@ -63,7 +63,9 @@ enum XianInteriorsActor {
   ACTOR_VILLAGER_MULBERRY = ACTOR_FIRST_PLACED,
   /// In the same room. "Farm work is very hard. Warriors have no idea how hard
   /// it is."
-  ACTOR_FARMER,
+  /// ★ Named from the game: "Farm work is very hard."
+  /// (MsgXianInteriorsFarmWorkIsVeryHardWarriors)
+  ACTOR_FARM_WORKER,
   /// In the room at XIAN_INTERIORS_HSUS_HOUSE. "Xian silk is sent on Silk Road
   /// to Tolbi."
   ACTOR_VILLAGER_SILK_ROAD,
@@ -76,9 +78,16 @@ enum XianInteriorsActor {
   /// In the same room. "There is a mine in Altin. There is lots of steel and
   /// lots of gems."
   ACTOR_VILLAGER_ALTIN_MINE,
+  /// ★ Named from the game: "it is not strange to sell weapons in Xian."
+  /// (MsgXianXianHasMartialArtsBut)
   ACTOR_XIAN_WEAPON_MERCHANT,
+  /// ★ Named from the game: "We should sell armor to kung fu masters, as
+  /// well." (MsgXianInteriorsWeShouldSellArmorToKung)
   ACTOR_XIAN_ARMOR_MERCHANT,
+  /// ★ Named from the game: "Use my goods to recover your strength."
+  /// (MsgXianInteriorsYouLoseStrengthInHeatUse)
   ACTOR_XIAN_ITEM_MERCHANT,
+  /// ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   ACTOR_XIAN_INNKEEPER,
   /// Walks about the inn's second room. "Normally, many merchants come to the
   /// village, but they have not come yet."
@@ -102,7 +111,17 @@ enum {
 /// has heard of Hsu, as its dialogue shows them: Master Feh says Feizhi's
 /// prediction came true, Feizhi welcomes the party, and Hsu was injured on his
 /// way from Lama Temple.
-enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
+enum {
+  /// ★ Named from the game: "You warriors should visit Master Feh's school."
+  /// (MsgXianYouWarriorsShouldVisitMasterFehs)
+  ACTOR_FEH = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Feizhi's prediction came true."
+  /// (MsgXianInteriorsFeizhisPredictionCameTrueNowI)
+  ACTOR_FEIZHI,
+  /// ★ Named from the game: "Hsu was trapped under the rocks"
+  /// (MsgXianInteriorsHsuWasTrappedUnderTheRocks)
+  ACTOR_HSU
+};
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -389,7 +408,7 @@ struct SceneEvent gXianInteriors_Events[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, XIAN_INTERIORS_TO_XIAN_WEST },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS },
     { EVENT_TALK, ACTOR_VILLAGER_MULBERRY, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsTheMulberryHarvestIsOverNow) },
-    { EVENT_TALK, ACTOR_FARMER, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFarmWorkIsVeryHardWarriors) },
+    { EVENT_TALK, ACTOR_FARM_WORKER, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFarmWorkIsVeryHardWarriors) },
     { EVENT_TALK, ACTOR_VILLAGER_SILK_ROAD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsXianSilkIsSentOnSilk) },
     { EVENT_TALK, ACTOR_VILLAGER_TOLBI, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsSilkRoadEndsInTolbiIt) },
     { EVENT_TALK, ACTOR_VILLAGER_ALTIN_ROAD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFollowSilkRoadWhenYouSee) },
@@ -401,7 +420,7 @@ struct SceneEvent gXianInteriors_Events[] = {
     { EVENT_TALK, ACTOR_VILLAGER_AWAITING_MERCHANTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsNormallyManyMerchantsComeToThe) },
     { EVENT_TALK, ACTOR_COOK, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsAllThePeopleWhoCameTo) },
     { EVENT_TALK, ACTOR_VILLAGER_MULBERRY, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
-    { EVENT_TALK, ACTOR_FARMER, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMerchantsBringUsCoinsTheyMust) },
+    { EVENT_TALK, ACTOR_FARM_WORKER, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMerchantsBringUsCoinsTheyMust) },
     { EVENT_TALK, ACTOR_VILLAGER_SILK_ROAD, CONDITION_ALWAYS, EVENT_SCRIPT(XianInteriors_AskAboutSilkRoad) },
     { EVENT_TALK, ACTOR_VILLAGER_TOLBI, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsNoneCanPassThroughLamakanThis) },
     { EVENT_TALK, ACTOR_VILLAGER_ALTIN_ROAD, CONDITION_ALWAYS, EVENT_SCRIPT(XianInteriors_AskAboutAltinMonsters) },
@@ -413,7 +432,7 @@ struct SceneEvent gXianInteriors_Events[] = {
     { EVENT_TALK, ACTOR_VILLAGER_AWAITING_MERCHANTS, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsWhenLamakanDesertBurnsItIs) },
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsHotFoodIsGoodForCrossing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MULBERRY, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsSoonMasterHammetWillComeHe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARMER, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFarmWorkIsHardOnThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARM_WORKER, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsFarmWorkIsHardOnThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SILK_ROAD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsSilkRoadIsFullOfSilk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TOLBI, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsMerchantsSayTolbiIsVeryBeautiful) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ALTIN_ROAD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsAltinHasManyMenAllScary) },
@@ -425,7 +444,7 @@ struct SceneEvent gXianInteriors_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_AWAITING_MERCHANTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsWhenManyMerchantsComeMyBusiness) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianInteriorsThereAreFewerTravelersSoFewer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MULBERRY, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsWhyDoesMasterHammetNotCome) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARMER, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMerchantsSellSilkItIsLike) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARM_WORKER, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsMerchantsSellSilkItIsLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SILK_ROAD, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsFeizhiSaidTheDesertBecameEvil) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TOLBI, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsTheDesertWasVeryHotNow) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ALTIN_ROAD, CONDITION_ALWAYS, MSGNO(MsgXianInteriorsTheVillageIsFloodedBecauseOf) },

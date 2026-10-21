@@ -117,16 +117,27 @@ enum XianActor {
   /// "This is the mulberry orchard."
   ACTOR_VILLAGER_MULBERRY_ORCHARD,
   /// Feizhi, as at Alpine Crossing: looking for someone to take her west.
+  /// ★ Named from the game: "You must be glad, Feizhi." (MsgMountainHsuOkay)
   ACTOR_FEIZHI,
   /// Carries water along the street. "You made me spill my water!"
-  ACTOR_WATER_CARRIER,
+  /// ★ Named from the game: "I must carry water every day."
+  /// (MsgXianIMustCarryWaterEveryDay)
+  ACTOR_VILLAGER_CARRYING_WATER,
   /// The tree the student strikes; it jumps when hit.
+  /// ★ Named from the game: "The tree jumped on its own!"
+  /// (MsgXianWhaWhaHappened)
   ACTOR_TRAINING_TREE,
   /// The spilled water, which Frost freezes.
-  ACTOR_PUDDLE,
+  /// ★ Named from the game: "You made me spill my water!"
+  /// (MsgXianDoingMadeMeSpillMy)
+  ACTOR_SPILLED_WATER,
   /// Force's mark on the training tree.
+  /// ★ Named from what the player sees: nothing of its own, a blank actor on
+  /// the bare trunk the student strikes (its render)
   ACTOR_FORCE_TARGET,
-  ACTOR_MIST, ///< Mist, a Mercury Djinni
+  /// Mist, a Mercury Djinni.
+  /// ★ Named from the game: "Mist" (MsgDjinnName)
+  ACTOR_MIST,
   /// The first of three actors kept below the others.
   ACTOR_FIRST_DECORATION
 };
@@ -148,9 +159,11 @@ static void Xian_MistJoins(void) {
 static void Xian_UpdateFrozenPuddleLayer(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader->y.part.pixel > 31) {
-    Object_GetById(ACTOR_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(ACTOR_SPILLED_WATER)->priorityFlags |=
+        ACTOR_PRIORITY_UNDERFOOT;
   } else {
-    Object_GetById(ACTOR_PUDDLE)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(ACTOR_SPILLED_WATER)->priorityFlags &=
+        ~ACTOR_PRIORITY_UNDERFOOT;
   }
 }
 
@@ -319,29 +332,29 @@ static void Xian_TalkToWaterCarrier(void) {
   s32 scaleY;
   s32 scaleX;
 
-  puddle = Object_GetById(ACTOR_PUDDLE);
+  puddle = Object_GetById(ACTOR_SPILLED_WATER);
   Engine_EventBegin();
   leaderMustStepAside = 0;
-  carrier = Actor_Get(ACTOR_WATER_CARRIER);
+  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->update = NULL;
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) != 0 ||
-      (Object_GetById(ACTOR_WATER_CARRIER)->x.fixed >> 20) <= 19) {
-    carrier = Actor_Get(ACTOR_WATER_CARRIER);
+      (Object_GetById(ACTOR_VILLAGER_CARRYING_WATER)->x.fixed >> 20) <= 19) {
+    carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
     savedFacing = carrier->facing;
-    Actor_FaceActor(ACTOR_WATER_CARRIER, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_VILLAGER_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgXianNowMustGetWaterAgain);
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
       gEventWork->message++;
-      Event_ShowMessage(ACTOR_WATER_CARRIER, 0);
-      Object_GetById(ACTOR_WATER_CARRIER)->timer = 0;
-      carrier = Object_GetById(ACTOR_WATER_CARRIER);
+      Event_ShowMessage(ACTOR_VILLAGER_CARRYING_WATER, 0);
+      Object_GetById(ACTOR_VILLAGER_CARRYING_WATER)->timer = 0;
+      carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
       carrier->facing = savedFacing;
     } else {
-      Event_ShowMessage(ACTOR_WATER_CARRIER, 0);
-      Actor_FaceDirection(ACTOR_WATER_CARRIER, FACING_WEST, 20);
+      Event_ShowMessage(ACTOR_VILLAGER_CARRYING_WATER, 0);
+      Actor_FaceDirection(ACTOR_VILLAGER_CARRYING_WATER, FACING_WEST, 20);
     }
-    carrier = Actor_Get(ACTOR_WATER_CARRIER);
+    carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
     carrier->update = XIAN_WATER_CARRIER_UPDATE;
     Engine_EventEnd();
     return;
@@ -351,50 +364,50 @@ static void Xian_TalkToWaterCarrier(void) {
       (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 29 &&
       (Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) != 26) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_WATER_CARRIER, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_VILLAGER_CARRYING_WATER, 0);
     Engine_EventWait(5);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    carrier = Actor_Get(ACTOR_WATER_CARRIER);
+    carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
     if (leader->x.fixed < carrier->x.fixed) {
       Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      carrier = Object_GetById(ACTOR_WATER_CARRIER);
+      carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
       Actor_WalkTo(ACTOR_PARTY_LEADER, ((carrier->x.fixed >> 20) << 4) - 8,
                    232);
       leaderMustStepAside = 1;
     } else {
       Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      carrier = Object_GetById(ACTOR_WATER_CARRIER);
+      carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
       Actor_WalkTo(ACTOR_PARTY_LEADER, ((carrier->x.fixed >> 20) << 4) + 24,
                    232);
     }
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   }
-  carrier = Actor_Get(ACTOR_WATER_CARRIER);
+  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->targetX = ACTOR_NO_TARGET;
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->targetY = ACTOR_NO_TARGET;
-  carrier = Actor_Get(ACTOR_WATER_CARRIER);
+  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->targetZ = ACTOR_NO_TARGET;
-  Actor_SetBuiltinAction(ACTOR_WATER_CARRIER, ACTOR_ACTION_IDLE);
-  Engine_ActorSetAnimation(ACTOR_WATER_CARRIER, ANIM_STAND);
-  Engine_ActorRunRepeatedMotion(ACTOR_WATER_CARRIER, 2);
+  Actor_SetBuiltinAction(ACTOR_VILLAGER_CARRYING_WATER, ACTOR_ACTION_IDLE);
+  Engine_ActorSetAnimation(ACTOR_VILLAGER_CARRYING_WATER, ANIM_STAND);
+  Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_CARRYING_WATER, 2);
   Engine_EventWait(10);
   Event_PlayCue(SE_228);
   // Copy the wet terrain cell and grow the puddle into view.
   puddle->scaleX = 0x4ccc;
   puddle->scaleY = 0x4ccc;
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   carrierX = carrier->x.fixed;
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   carrierCellZ = carrier->z.fixed >> 20;
-  Actor_SetPosition(ACTOR_PUDDLE, ((carrierX >> 20) << 20) + PIXELS(8),
+  Actor_SetPosition(ACTOR_SPILLED_WATER, ((carrierX >> 20) << 20) + PIXELS(8),
                     (carrierCellZ << 20) + PIXELS(8));
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   carrierColumnX = carrier->x.fixed;
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   Map_CopyCellAttributes(16, 16, 1, 1, carrierColumnX >> 20,
                          carrier->z.fixed >> 20);
-  Engine_ActorSetSpritePriority(ACTOR_PUDDLE, 2);
+  Engine_ActorSetSpritePriority(ACTOR_SPILLED_WATER, 2);
   puddle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   do {
     Engine_TaskWait(3);
@@ -404,14 +417,14 @@ static void Xian_TalkToWaterCarrier(void) {
     scaleX += 0x1999;
     puddle->scaleX = scaleX;
   } while (scaleX <= 0xffff);
-  Actor_ShowEmote(ACTOR_WATER_CARRIER, EMOTE_IN_FRONT | 5, 70);
-  Actor_FaceActor(ACTOR_WATER_CARRIER, ACTOR_PARTY_LEADER, 0);
+  Actor_ShowEmote(ACTOR_VILLAGER_CARRYING_WATER, EMOTE_IN_FRONT | 5, 70);
+  Actor_FaceActor(ACTOR_VILLAGER_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_WATER_CARRIER, EMOTE_IN_FRONT | 3, 0);
-  Engine_ActorStartRepeatedMotion(ACTOR_WATER_CARRIER, 2);
+  Actor_ShowEmote(ACTOR_VILLAGER_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
+  Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_CARRYING_WATER, 2);
   Engine_EventWait(70);
   Engine_EventSetMessage(MsgXianDoingMadeMeSpillMy);
-  Event_ShowMessageAndWait(ACTOR_WATER_CARRIER, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_VILLAGER_CARRYING_WATER, 0, 20);
   BattleFx_PlayQueuedSound();
   if ((Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) == 26 &&
       (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20) > 13) {
@@ -427,13 +440,14 @@ static void Xian_TalkToWaterCarrier(void) {
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
-  Actor_SetSpeed(ACTOR_WATER_CARRIER, 0xcccc, 0x6666);
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  Actor_SetSpeed(ACTOR_VILLAGER_CARRYING_WATER, 0xcccc, 0x6666);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   if ((carrier->z.fixed >> 20) != 14) {
-    carrier = Actor_Get(ACTOR_WATER_CARRIER);
-    Actor_WalkToAndWait(ACTOR_WATER_CARRIER, carrier->x.part.pixel, 232);
+    carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+    Actor_WalkToAndWait(ACTOR_VILLAGER_CARRYING_WATER, carrier->x.part.pixel,
+                        232);
   }
-  Actor_WalkToAndWait(ACTOR_WATER_CARRIER, 280, 232);
+  Actor_WalkToAndWait(ACTOR_VILLAGER_CARRYING_WATER, 280, 232);
   GameFlag_Set(FLAG_SCENE_TEMP_00);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventEnd();
@@ -444,7 +458,7 @@ static void Xian_TalkToWaterCarrier(void) {
 static void Xian_UpdatePuddlePriority(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if ((leader->z.fixed >> 20) <= 13)
-    Engine_ActorSetSpritePriority(ACTOR_PUDDLE, 1);
+    Engine_ActorSetSpritePriority(ACTOR_SPILLED_WATER, 1);
 }
 
 /// Frost freezes the spilled water: the puddle turns to ice the leader can
@@ -455,16 +469,17 @@ static void Xian_FreezeSpilledWater(void) {
   s32 puddleX;
 
   Engine_EventBegin();
-  Object_GetById(ACTOR_PUDDLE)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  Object_GetById(ACTOR_SPILLED_WATER)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   stationaryMotionFlags = 0;
-  Object_GetById(ACTOR_PUDDLE)->motionFlags = stationaryMotionFlags;
-  puddle = Object_GetById(ACTOR_PUDDLE);
+  Object_GetById(ACTOR_SPILLED_WATER)->motionFlags = stationaryMotionFlags;
+  puddle = Object_GetById(ACTOR_SPILLED_WATER);
   puddleX = puddle->x.fixed;
-  puddle = Object_GetById(ACTOR_PUDDLE);
+  puddle = Object_GetById(ACTOR_SPILLED_WATER);
   Map_CopyCellAttributes(3, 17, 1, 1, (puddleX >> 20), (puddle->z.fixed >> 20));
   FieldScheduler_AddCallback(Xian_UpdateFrozenPuddleLayer, TASK_PRIORITY_SCENE);
   GameFlag_Set(FLAG_SCENE_TEMP_01);
-  Engine_ActorSetSpritePriority(ACTOR_PUDDLE, 2);
+  Engine_ActorSetSpritePriority(ACTOR_SPILLED_WATER, 2);
   Engine_EventEnd();
 }
 
@@ -707,33 +722,33 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   struct FieldActor *carrier;
 
   Engine_EventBegin();
-  Actor_SetBuiltinAction(ACTOR_WATER_CARRIER, ACTOR_ACTION_IDLE);
-  carrier = Actor_Get(ACTOR_WATER_CARRIER);
+  Actor_SetBuiltinAction(ACTOR_VILLAGER_CARRYING_WATER, ACTOR_ACTION_IDLE);
+  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->update = 0;
-  carrier = Actor_Get(ACTOR_WATER_CARRIER);
+  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->targetX = ACTOR_NO_TARGET;
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->targetZ = ACTOR_NO_TARGET;
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->velocityX = 0;
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->velocityZ = 0;
-  carrier = Object_GetById(ACTOR_WATER_CARRIER);
+  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->speed = 0;
-  carrier = Actor_Get(ACTOR_WATER_CARRIER);
+  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->acceleration = 0;
-  Actor_ShowEmote(ACTOR_WATER_CARRIER, EMOTE_IN_FRONT | 3, 0);
-  Engine_ActorStartRepeatedMotion(ACTOR_WATER_CARRIER, 2);
+  Actor_ShowEmote(ACTOR_VILLAGER_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
+  Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_CARRYING_WATER, 2);
   Engine_EventWait(60);
-  Actor_SetSpeed(ACTOR_WATER_CARRIER, 0x18000, 0xc000);
+  Actor_SetSpeed(ACTOR_VILLAGER_CARRYING_WATER, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-  Actor_WalkTo(ACTOR_WATER_CARRIER, 280, 232);
+  Actor_WalkTo(ACTOR_VILLAGER_CARRYING_WATER, 280, 232);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 232);
-  Engine_ActorWaitForMove(ACTOR_WATER_CARRIER);
+  Engine_ActorWaitForMove(ACTOR_VILLAGER_CARRYING_WATER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
-  Actor_SetActionScript(ACTOR_WATER_CARRIER, gXian_WaterCarrierRoute);
-  carrier = Actor_Get(ACTOR_WATER_CARRIER);
+  Actor_SetActionScript(ACTOR_VILLAGER_CARRYING_WATER, gXian_WaterCarrierRoute);
+  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
   carrier->update = XIAN_WATER_CARRIER_UPDATE;
   Engine_EventEnd();
 }
@@ -788,18 +803,20 @@ s32 Xian_Initialize(void) {
   }
   // Restore the frozen puddle and callbacks when re-entering the village.
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01)) {
-    Engine_ActorSetAnimation(ACTOR_PUDDLE, ANIM_PUDDLE_FROZEN);
+    Engine_ActorSetAnimation(ACTOR_SPILLED_WATER, ANIM_PUDDLE_FROZEN);
     {
-      s32 puddleX = Object_GetById(ACTOR_PUDDLE)->x.fixed;
+      s32 puddleX = Object_GetById(ACTOR_SPILLED_WATER)->x.fixed;
 
-      Engine_MapCopyCellAttributes(3, 17, 1, 1, puddleX >> 20,
-                                   Object_GetById(ACTOR_PUDDLE)->z.fixed >> 20);
+      Engine_MapCopyCellAttributes(
+          3, 17, 1, 1, puddleX >> 20,
+          Object_GetById(ACTOR_SPILLED_WATER)->z.fixed >> 20);
     }
     FieldScheduler_AddCallback(Xian_UpdateFrozenPuddleLayer,
                                TASK_PRIORITY_SCENE);
   }
-  Engine_ActorSetChildValue(ACTOR_WATER_CARRIER, 2);
-  Object_GetById(ACTOR_WATER_CARRIER)->update = XIAN_WATER_CARRIER_UPDATE;
+  Engine_ActorSetChildValue(ACTOR_VILLAGER_CARRYING_WATER, 2);
+  Object_GetById(ACTOR_VILLAGER_CARRYING_WATER)->update =
+      XIAN_WATER_CARRIER_UPDATE;
   actor = Object_GetById(ACTOR_TRAINING_TREE);
   actor->motionFlags = 0;
   actor->y.fixed = PIXELS(16);
@@ -1029,7 +1046,7 @@ struct SceneEvent gXian_Events[] = {
     { EVENT_TALK, ACTOR_VILLAGER_DISASTERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianDisastersFromTheSkyManyMany) },
     { EVENT_TALK, ACTOR_VILLAGER_MULBERRY_ORCHARD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsTheMulberryOrchardWhen) },
     { EVENT_TALK, ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_TalkToFeizhi) },
-    { EVENT_TALK, ACTOR_WATER_CARRIER, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_TalkToWaterCarrier) },
+    { EVENT_TALK, ACTOR_VILLAGER_CARRYING_WATER, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_TalkToWaterCarrier) },
     { EVENT_TALK, ACTOR_VILLAGER_WELCOME, CONDITION_ALWAYS, MSGNO(MsgXianXianIsAPeacefulVillageBut) },
     { EVENT_TALK, ACTOR_VILLAGER_YOUNG_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgXianThereWasARockslideOnSilk) },
     { EVENT_TALK, ACTOR_VILLAGER_KINU, CONDITION_ALWAYS, MSGNO(MsgXianIWentToHelpMoveBoulders) },
@@ -1039,8 +1056,8 @@ struct SceneEvent gXian_Events[] = {
     { EVENT_TALK, ACTOR_KUNG_FU_STUDENT, CONDITION_ALWAYS, MSGNO(MsgXianAltinWasFloodedWithWaterBut) },
     { EVENT_TALK, ACTOR_VILLAGER_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianWeClearedTheRocksFromSilk) },
     { EVENT_TALK, ACTOR_VILLAGER_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianManyStrangeThingsHappenedAllAt) },
-    { (1u << 28) | PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_UpdatePuddlePriority) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_FreezeSpilledWater) },
+    { (1u << 28) | PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPILLED_WATER, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_UpdatePuddlePriority) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPILLED_WATER, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_FreezeSpilledWater) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_StrikeTrainingTreeWithForce) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOME, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheseChildrenMustHaveComeTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouYoungWarriorsLookStrongBut) },
@@ -1052,7 +1069,7 @@ struct SceneEvent gXian_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DISASTERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMasterFehSaidYahAndThen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MULBERRY_ORCHARD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheOrchardGivesTheVillageLife) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianGoingWestAloneIsVeryDangerous) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WATER_CARRIER, CONDITION_ALWAYS, MSGNO(MsgXianIMustCarryWaterEveryDay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CARRYING_WATER, CONDITION_ALWAYS, MSGNO(MsgXianIMustCarryWaterEveryDay) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOME, CONDITION_ALWAYS, MSGNO(MsgXianHsuWasCaughtUnderABoulder) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YOUNG_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgXianTheRocksThereWereVeryHard) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_KINU, CONDITION_ALWAYS, MSGNO(MsgXianSomePeopleDidNotCarryRocks) },

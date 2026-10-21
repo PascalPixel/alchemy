@@ -109,8 +109,8 @@ s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
 
-/// The scene's one placement row, the ship's lookout. "Ship's course...
-/// Clear!"
+/// The scene's one placement row, the ship's lookout, a man in a blue
+/// bandana (SPRITE_MAN_IN_BLUE_BANDANA). "Ship's course... Clear!"
 enum TolbiShipMastActor { ACTOR_LOOKOUT = ACTOR_FIRST_PLACED };
 
 /// The first attack's actors (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK),
@@ -135,8 +135,8 @@ enum TolbiShipMastFirstAttackActor {
 /// TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK, then from
 /// gTolbiShipMast_LandingObjects.
 enum TolbiShipMastEnsembleActor {
-  /// The first of seven birds, all of one sprite (graphics/sprite/spr_155.png,
-  /// a white bird in three wing poses), that flutter and bob about the mast
+  /// The first of seven birds, all of one sprite (SPRITE_SEAGULL, a
+  /// white bird in three wing poses), that flutter and bob about the mast
   /// (TolbiShipMast_SwayActor). One swoops at the lookout at the second attack,
   /// they scatter as the third attack's monster comes, and they fly off just
   /// before "Land ho!".
@@ -1028,7 +1028,7 @@ u32 gTolbiShipMast_Exits[] = {
 };
 
 struct ScenePlacement gTolbiShipMast_Placements[] = {
-    { 0x91, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1046,21 +1046,21 @@ struct ScenePlacement gTolbiShipMast_StagingObjects[] = {
 };
 
 struct ScenePlacement gTolbiShipMast_EnsembleObjects[] = {
-    { 0x9b, CONDITION_ALWAYS, 7,
+    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
         PIXELS(144), 0, PIXELS(169), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9b, CONDITION_ALWAYS, 7,
+    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
         PIXELS(134), 0, PIXELS(189), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9b, CONDITION_ALWAYS, 7,
+    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
         PIXELS(124), 0, PIXELS(209), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9b, CONDITION_ALWAYS, 7,
+    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
         PIXELS(129), 0, PIXELS(174), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9b, CONDITION_ALWAYS, 7,
+    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
         PIXELS(139), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9b, CONDITION_ALWAYS, 7,
+    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
         PIXELS(149), 0, PIXELS(204), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9b, CONDITION_ALWAYS, 7,
+    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
         PIXELS(154), 0, PIXELS(194), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x42, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(182), 0, PIXELS(420), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

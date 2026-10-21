@@ -189,24 +189,33 @@ enum TolbiShipDeckActor {
   ACTOR_FIRST_OAR = ACTOR_FIRST_STROKE_OAR + 4,
 
   // At Kalay: gTolbiShipDeckPlacements, then gTolbiShipDeckPlacementsWaiting.
-  /// The crewman, who hid the captain's anchor charm on the mast and denies
+  /// The crewman, a man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA), who
+  /// hid the captain's anchor charm on the mast and denies
   /// everything. "I didn't do anything..."
   KALAY_CREWMAN = ACTOR_FIRST_OAR + 8,
-  /// One of the crew, who answers the tour guide beside him: "I told you, we're
+  /// One of the crew, a man in a yellow bandana (SPRITE_MAN_IN_YELLOW_BANDANA),
+  /// who answers the tour guide beside him: "I told you, we're
   /// leaving soon. We'll set sail when our replacement arrives!" When the ship
   /// leaves he calls "Preparations... Ready!"
   KALAY_CREW_MEMBER,
+  /// The captain, an old man with a white beard in green
+  /// (SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN).
   KALAY_CAPTAIN,
+  /// Kaja, a bald man with a beard (SPRITE_BALD_MAN_WITH_BEARD).
   KALAY_KAJA,
-  /// The tour group's guide, with the sprite of the Tolbi Docks. Mind Read: "I
+  /// The tour group's guide, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK)
+  /// as on the Tolbi Docks. Mind Read: "I
   /// just hope we don't have to refund their money at the end of the trip."
   KALAY_TOUR_GUIDE,
-  /// Three of the tour group's passengers, named by what they say first. "I
-  /// wonder what's going on. We've been waiting an awfully long time."
+  /// Three of the tour group's passengers, named by what they say first: a
+  /// chef (SPRITE_CHEF), "I wonder what's going on. We've been waiting an
+  /// awfully long time."
   KALAY_PASSENGER_WAITING_LONG,
-  /// "I wonder if I'm the only one here who's going to Tolbi to see Colosso..."
+  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN). "I wonder if I'm
+  /// the only one here who's going to Tolbi to see Colosso..."
   KALAY_PASSENGER_SEEING_COLOSSO,
-  /// "The Karagol is like a humongous lake, surrounded by land."
+  /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN). "The Karagol is like a
+  /// humongous lake, surrounded by land."
   KALAY_PASSENGER_KARAGOL,
 
   // At sea: gTolbiShipDeck_CrewScript after the oars, then each cutscene's
@@ -262,7 +271,8 @@ enum TolbiShipDeckActor {
 
   // At Tolbi: gTolbiShipDeckPlacementsArrived.
   ARRIVED_KAJA = ACTOR_FIRST_OAR + 8, ///< "You lookin' for Sean and Ouranos?"
-  /// "Are you headed for Colosso, too?" Mind Read: "I'm just going to hang out
+  /// A man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA). "Are you headed for
+  /// Colosso, too?" Mind Read: "I'm just going to hang out
   /// in Tolbi and enjoy myself for a while."
   ARRIVED_ASKS_ABOUT_COLOSSO,
   /// With KALAY_CREW_MEMBER's sprite: "This group that came on our last voyage
@@ -270,8 +280,12 @@ enum TolbiShipDeckActor {
   ARRIVED_CREW_MEMBER,
   /// The first of the nine passengers who could promise to row, in the order of
   /// each seat's group of flags (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS and the
-  /// others) and of gTolbiShipDeckRowerStrokes. The ninth is an old man: "You
-  /// make an old man row the ship".
+  /// others) and of gTolbiShipDeckRowerStrokes: the tour group's two guides,
+  /// the
+  /// chef, the young woman in green, the bald, muscular man, the woman with a
+  /// sword, the young man with brown hair, the woman with fair hair and an old
+  /// man with a cane (SPRITE_OLD_MAN_WITH_CANE): "You make an old man row the
+  /// ship".
   ARRIVED_FIRST_PASSENGER,
   /// An invisible actor the camera follows as the rowers come up.
   ARRIVED_CAMERA_TARGET = ARRIVED_FIRST_PASSENGER + 9
@@ -3171,7 +3185,7 @@ const struct ScenePlacement gTolbiShipDeckPlacements[] = {
         PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x91, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(266), 0, PIXELS(703), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
@@ -3207,21 +3221,21 @@ const struct ScenePlacement gTolbiShipDeckPlacementsWaiting[] = {
         PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x91, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(183), 0, PIXELS(720), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x92, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(256), 0, PIXELS(712), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(198), 0, PIXELS(706), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MAN_WITH_BEARD, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(172), 0, PIXELS(706), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(248), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x84, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEF, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(230), 0, PIXELS(602), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x94, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(236), 0, PIXELS(621), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(182), 0, PIXELS(556), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
@@ -3283,19 +3297,19 @@ const struct ScenePlacement gTolbiShipDeckPlacementsAtSea[] = {
 };
 
 const struct ScenePlacement gTolbiShipDeck_CrewScript[] = {
-    { 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MAN_WITH_BEARD, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(192), 0, PIXELS(512), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x43, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(634), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x42, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(212), 0, PIXELS(521), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x92, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
 const struct ScenePlacement gTolbiShipDeck_ClosingCrewScript[] = {
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3357,13 +3371,13 @@ const struct ScenePlacement gTolbiShipDeck_CrewScriptE[] = {
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MAN_WITH_BEARD, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x43, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(178), 0, PIXELS(642), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x42, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(182), 0, PIXELS(534), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x92, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xc2, CONDITION_ALWAYS, 7,
         PIXELS(216), 0, PIXELS(540), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3397,29 +3411,29 @@ const struct ScenePlacement gTolbiShipDeckPlacementsArrived[] = {
         PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MAN_WITH_BEARD, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(188), 0, PIXELS(512), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x91, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(162), 0, PIXELS(634), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x92, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(162), 0, PIXELS(676), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x84, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEF, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x94, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_SWORD, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },

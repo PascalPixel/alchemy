@@ -213,7 +213,7 @@ void FieldFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
 /// One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
 /// high from 60 to 180, falling from 180 to 240, low elsewhere.
 s32 FieldFx_HueChannelRamp(s32 angle, s32 low, s32 high) {
-  angle = Fixed_Remainder(angle, 360 << 16);
+  angle = FixedPoint_Remainder(angle, 360 << 16);
   if (angle < 60 << 16)
     return Iwram_RatioMulQ14(60 << 16, Iwram_MulQ16(high, angle));
   if (angle >= 60 << 16 && angle < 180 << 16)
@@ -224,7 +224,7 @@ s32 FieldFx_HueChannelRamp(s32 angle, s32 low, s32 high) {
 }
 
 /// The 16.16 remainder of value divided by divisor (0 for a zero divisor).
-s32 Fixed_Remainder(s32 value, s32 divisor) {
+s32 FixedPoint_Remainder(s32 value, s32 divisor) {
   s32 quot;
 
   if (divisor == 0)

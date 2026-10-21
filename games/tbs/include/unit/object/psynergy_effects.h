@@ -321,7 +321,7 @@ void FieldFx_ArmBg0HBlankDma(void);
 void FieldFx_AdvanceHueCycle(void);
 void FieldFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b);
 s32 FieldFx_HueChannelRamp(s32 angle, s32 low, s32 high);
-s32 Fixed_Remainder(s32 value, s32 divisor);
+s32 FixedPoint_Remainder(s32 value, s32 divisor);
 void FieldFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject);
 void Ui_FillBank15PaletteGrey(void);
 void Ui_SetBank15PaletteAndClearRenderMode(void);

@@ -1,22 +1,22 @@
 /// @file
-/// Vale (scene 7, a row the scene table leaves unnamed): the insides of the
+/// Vale (SceneId_ValeInteriorsShops): the insides of the
 /// village's houses and shops, all on one map. Each room is an entrance with a
 /// camera box of its own, named for the door it is entered by
 /// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST and the rest), and its door takes the
-/// exit of the same number back out: four open onto the village (Vale, scene
-/// 4), and four onto the part of Vale with the Psynergy Stone
-/// (SceneId_ValeGate, scene 5), as the exits' names say. Garet's family lives
-/// in the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_EAST: his
-/// grandfather the mayor, his grandmother and his parents. Jenna's grandparents
-/// live in the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, and the
-/// one entered from VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST holds the item,
-/// weapon and armor shops, each opened across its counter. The placements and
-/// events follow the story:
+/// exit of the same number back out: four open onto the village (SceneId_Vale),
+/// and four onto the part of Vale with the Psynergy Stone (SceneId_ValeGate),
+/// as the exits' names say. Garet's family lives in the room entered from
+/// VALE_INTERIORS_SHOPS_FROM_VALE_EAST: his grandfather the mayor, his
+/// grandmother and his parents. Jenna's grandparents live in the room entered
+/// from VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, and the one entered from
+/// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST holds the item, weapon and armor
+/// shops, each opened across its counter. The placements and events follow the
+/// story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   ValeInteriorsShops_Initialize removes every resident and flashes the
 ///   lightning outside, and the doors out to the village lead into the
-///   storm's map (Vale, scene 3) instead (ValeInteriorsShops_GetExits). The
+///   storm's map (SceneId_ValeStorm) instead (ValeInteriorsShops_GetExits). The
 ///   jars and the barrel are empty, and six more bookcases than by day can be
 ///   read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -278,7 +278,8 @@ static void ValeInteriorsShops_RequestWindowExit(s32 exitId) {
 
 // The rooms' doors: stepping on a door's cell, whose collision code is its
 // exit's number, takes that exit back out, in every table. On the stormy night
-// the exits to Vale (scene 4) lead to the storm's map (scene 3) instead.
+// the exits to SceneId_Vale lead to the storm's map (SceneId_ValeStorm)
+// instead.
 
 /// Leaves the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_WEST, where
 /// ACTOR_VILLAGER_DREAMS_OF_LEAVING wanders.

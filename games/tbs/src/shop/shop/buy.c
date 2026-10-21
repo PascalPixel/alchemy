@@ -40,18 +40,19 @@ s32 Shop_SelectBuy(void) {
   s16 *stockIds;
 
   shop->itemWindow = 0;
-  shop->moneyWindow =
-      UiWindow_CreateFar(30 - SHOP_MONEY_WIDTH, 7, SHOP_MONEY_WIDTH, 4, 2);
+  shop->moneyWindow = UiWindow_CreateFar(
+      30 - SHOP_MONEY_WIDTH, 7, SHOP_MONEY_WIDTH, 4, UI_WINDOW_INSTANT);
   Shop_DrawMoney();
-  priceWindow = UiWindow_CreateFar(0, 8, SHOP_PRICE_WIDTH, 4, 2);
+  priceWindow =
+      UiWindow_CreateFar(0, 8, SHOP_PRICE_WIDTH, 4, UI_WINDOW_INSTANT);
 
 next_page:
   // Browse stock first; recipient and quantity selection follow confirmation.
   selectionIndex = selected;
-  stockWindow = UiWindow_CreateFar(0, 12, 30, 4, 2);
-  shop->cursor.anchor->active = 18;
+  stockWindow = UiWindow_CreateFar(0, 12, 30, 4, UI_WINDOW_INSTANT);
+  shop->cursor.anchor->active = UI_SPRITE_HOP_DOWN_LEFT;
   shop->mode = 12;
-  messageWindow = UiWindow_CreateFar(0, 17, 30, 3, 2);
+  messageWindow = UiWindow_CreateFar(0, 17, 30, 3, UI_WINDOW_INSTANT);
   redraw = 1;
 
   while (1) {
@@ -67,7 +68,8 @@ next_page:
       Shop_DrawStock(stockWindow, selectionIndex);
       Shop_DrawMsg(messageWindow, itemId + MsgItemPlainName);
       RenderOutput_RedrawSavedRectFar(priceWindow);
-      Shop_DrawItemPrice(priceWindow, itemId, stockDefinition->price, 0);
+      Shop_DrawItemPrice(priceWindow, itemId, stockDefinition->price,
+                         SHOP_PRICE_KIND_BUY);
     }
     if ((gKeysPressed & KEY_A) != 0) {
       selected = selectionIndex;
@@ -129,11 +131,11 @@ next_page:
   unitId = 0;
   repromptRecipient = 0;
   selectionIndex = 0;
-  partyWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
-  shop->cursor.anchor->active = 4;
+  partyWindow = UiWindow_CreateFar(0, 14, 13, 3, UI_WINDOW_INSTANT);
+  shop->cursor.anchor->active = UI_SPRITE_WOBBLE;
   shop->mode = 12;
   PsynergyMenu_InitializeEntryObjectsFar(partyWindow, 2, 0, 8, 0);
-  itemWindow = UiWindow_CreateFar(16, 11, 14, 9, 2);
+  itemWindow = UiWindow_CreateFar(16, 11, 14, 9, UI_WINDOW_INSTANT);
   redraw = 1;
 
   while (1) {
@@ -150,7 +152,7 @@ next_page:
       Shop_PlaceCursor(partyWindow, selectionIndex * 24 - 12, 0);
       shop->mode = 3;
       Shop_DrawParty(partyWindow, selectionIndex, shop->selectedItem);
-      if (Item_GetEquipmentGroupFar(shop->selectedItem) == 0)
+      if (Item_GetEquipmentGroupFar(shop->selectedItem) == SHOP_TYPE_ITEMS)
         Shop_DrawUnitItem(itemWindow, unitId, shop->selectedItem);
       else
         Shop_DrawEquipComparison(itemWindow, unitId, shop->selectedItem);
@@ -161,8 +163,8 @@ next_page:
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
-        UiWork_PushValueSlotFar(unitId, 1);
-        UiWork_PushValueSlotFar(shop->selectedItem, 2);
+        UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+        UiWork_PushValueSlotFar(shop->selectedItem, MSG_ARG_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
           UiMessage_ShowAndWait(MsgPackFull);
         else
@@ -177,7 +179,7 @@ next_page:
         break;
       }
       if (Item_IsCompatibleWithOwnerFar(unitId, shop->selectedItem) == 0) {
-        UiWork_PushValueSlotFar(unitId, 1);
+        UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
         UiMessage_ShowAndWait(MsgCannotEquipStillWant);
         if (UiMessage_ShowChoice(0) != 0) {
           repromptRecipient = 1;
@@ -265,7 +267,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
                                     216, -16);
       zero = 0;
       icon->kind = zero;
-      icon->active = 17;
+      icon->active = UI_SPRITE_HOP_UP;
       icon->animStep = zero;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
@@ -290,7 +292,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
             RenderOutput_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
         icon->sentinel = 252;
         if (stockIndex == selected) {
-          icon->active = 9;
+          icon->active = UI_SPRITE_SWELL;
           highlightFrame = 10;
           icon->animStep = highlightFrame;
           icon->sentinel = 253;
@@ -325,8 +327,9 @@ void Shop_DrawMoney(void) {
 }
 
 /// Draws the item's name and below it its price. With a price of 0 it says
-/// instead that the shop does not buy it (`priceKind` 1) or that it is not
-/// broken (2). Called by the buy, sell and repair lists.
+/// instead that the shop does not buy it (SHOP_PRICE_KIND_SELL) or
+/// that it is not broken (SHOP_PRICE_KIND_REPAIR). Called by the buy, sell and
+/// repair lists.
 void Shop_DrawItemPrice(struct UiWindow *window, s32 itemId, s32 price,
                         s32 priceKind) {
   // A structured switch with early returns reduced the English native extent
@@ -353,9 +356,9 @@ draw:
   if (price != 0)
     goto show_price;
   switch (priceKind) {
-  case 1:
+  case SHOP_PRICE_KIND_SELL:
     goto cannot_buy;
-  case 2:
+  case SHOP_PRICE_KIND_REPAIR:
     UiText_DrawCharacterAtOffsetFar(MsgNotBroken, window, SHOP_ITEM_NOTE_X, 8);
     break;
   default:
@@ -509,7 +512,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
       UiWork_PushValueSlotFar(
           (*(u16 *)(unitBytes + quantityOffset) >> INVENTORY_QUANTITY_SHIFT) +
               1,
-          5);
+          MSG_ARG_NUMBER);
       UiText_DrawCharacterAtOffsetFar(MsgYouHave, window, 0, 0);
     } else {
       UiText_DrawCharacterAtOffsetFar(MsgShopNoneInStock, window, 0, 0);
@@ -629,7 +632,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   maximum -= minimum;
   selectedQuantity = -1;
   quantityIndex = 0;
-  window = UiWindow_CreateFar(7, 4, 23, 3, 2);
+  window = UiWindow_CreateFar(7, 4, 23, 3, UI_WINDOW_INSTANT);
   if (window != 0) {
     resourceSlot = Resource_FindFreeEntry();
     if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
@@ -760,7 +763,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
       return 0;
   }
 
-  UiWork_PushValueSlotFar(unitId, 1);
+  UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
   UiMessage_ShowAndWait(MsgEquipNowPrompt);
   if (UiMessage_ShowChoice(0) != 0)
     return 0;

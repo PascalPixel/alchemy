@@ -51,10 +51,10 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
   if (creditCost > gGameState.shopCredit)
     return;
   shop->selectedItem = ITEM_GAME_TICKET;
-  UiWork_PushValueSlotFar(ITEM_GAME_TICKET, 2);
+  UiWork_PushValueSlotFar(ITEM_GAME_TICKET, MSG_ARG_ITEM);
   messageBase = MsgTokenGift;
   UiMessage_ShowAndRestoreState(messageBase);
-  UiWork_PushValueSlotFar(shop->selectedItem, 2);
+  UiWork_PushValueSlotFar(shop->selectedItem, MSG_ARG_ITEM);
   UiMessage_ShowAndRestoreState(messageBase + 1);
 
   while (1) {
@@ -74,8 +74,8 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
-        UiWork_PushValueSlotFar(unitId, 1);
-        UiWork_PushValueSlotFar(shop->selectedItem, 2);
+        UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+        UiWork_PushValueSlotFar(shop->selectedItem, MSG_ARG_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
           UiMessage_ShowAndWait(MsgPackFull);
         else
@@ -117,10 +117,10 @@ enum {
   SHOP_STOCK_ITEM_COUNT = 24,    ///< ordinary items a row holds
   SHOP_STOCK_ARTIFACTS = 24,     ///< the first artifact's column
   SHOP_STOCK_ARTIFACT_COUNT = 8, ///< artifacts a row holds
-  /// The shop's type: 0 items, 1 weapons, 2 armor (Item_GetEquipmentGroup).
+  /// The shop's type (enum ShopType).
   SHOP_STOCK_TYPE = 32,
   SHOP_STOCK_COLUMNS = 33,
-  /// Rows, by the stock row a scene passes to Shop_Run; row 0 is empty and
+  /// Rows, by the stock row a scene passes to Shop_Run; SHOP_STOCK_ROW_EMPTY
   /// stands in for a row out of range.
   SHOP_STOCK_ROWS = 35
 };
@@ -367,9 +367,8 @@ s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
   return count;
 }
 
-/// Returns the shop's type from the last column of its stock row: 0 items,
-/// 1 weapons, 2 armor, as Item_GetEquipmentGroup sorts items. Called by
-/// Shop_Run.
+/// Returns the shop's type from the last column of its stock row (enum
+/// ShopType). Called by Shop_Run.
 s32 EventTable_GetRowType(s32 stockRow) {
   return sStockTable[stockRow][SHOP_STOCK_TYPE];
 }

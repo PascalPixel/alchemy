@@ -15,10 +15,11 @@ s32 Shop_PickUnit(void) {
   s32 redraw = 1;
   s32 unitId = 0;
 
-  shop->moneyWindow = UiWindow_CreateFar(0, 9, SHOP_MONEY_WINDOW_WIDTH, 4, 2);
+  shop->moneyWindow =
+      UiWindow_CreateFar(0, 9, SHOP_MONEY_WINDOW_WIDTH, 4, UI_WINDOW_INSTANT);
   Shop_DrawMoney();
-  shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, 2);
-  listWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
+  shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, UI_WINDOW_INSTANT);
+  listWindow = UiWindow_CreateFar(0, 14, 13, 3, UI_WINDOW_INSTANT);
   shop->cursor.anchor->active = 4;
   shop->mode = 12;
   PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, 0);
@@ -99,11 +100,12 @@ s32 Shop_SelectSell(s32 unitId) {
   shop = gMenuWork;
   unit = UnitGetFar(unitId);
   inventoryCount = 1;
-  priceWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
+  priceWindow =
+      UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, UI_WINDOW_INSTANT);
   slot = 0;
 
   for (;;) {
-    descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
+    descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, UI_WINDOW_INSTANT);
     shop->cursor.anchor->active = 18;
     shop->mode = 12;
     redraw = 1;
@@ -120,7 +122,8 @@ s32 Shop_SelectSell(s32 unitId) {
         Shop_PlaceCursor(window, x, slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
         shop->mode = 3;
         Shop_DrawItemPrice(priceWindow, itemId,
-                           Shop_SalePrice(unit->inventory[slot]), 1);
+                           Shop_SalePrice(unit->inventory[slot]),
+                           SHOP_PRICE_KIND_SELL);
         Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
       }
 
@@ -290,13 +293,13 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   }
   total = Shop_SalePrice(unit->inventory[slot]) * count;
   if (total == 0) {
-    UiWork_PushValueSlotFar(itemId, 2);
+    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
     UiMessage_ShowAndRestoreState(MsgWeDoNotBuy);
     return;
   }
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
       (item->flags & ITEM_CANNOT_UNEQUIP)) {
-    UiWork_PushValueSlotFar(itemId, 2);
+    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
     UiMessage_ShowAndRestoreState(MsgCannotSellEquipped);
     return;
   }
@@ -310,8 +313,8 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     message = MsgRareSellOffer;
   else
     message = MsgSellOffer;
-  UiWork_PushValueSlotFar(itemId, 2);
-  UiWork_PushValueSlotFar(total, 5);
+  UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+  UiWork_PushValueSlotFar(total, MSG_ARG_NUMBER);
   UiMessage_ShowAndRestoreState(message);
   if (UiMessage_ShowChoice(0) != 0) {
     if (rare || sellingReplacedItem)

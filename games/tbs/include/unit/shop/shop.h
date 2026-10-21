@@ -40,6 +40,13 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected);
 void Shop_DrawMoney(void);
 void Shop_DrawItemPrice(struct UiWindow *window, s32 itemId, s32 price,
                         s32 priceKind);
+/// What Shop_DrawItemPrice says below an item whose price is 0.
+enum ShopPriceKind {
+  SHOP_PRICE_KIND_BUY = 0,   ///< buying: the price, even when it is 0
+  SHOP_PRICE_KIND_SELL = 1,  ///< selling: the shop does not buy it
+  SHOP_PRICE_KIND_REPAIR = 2 ///< repairing: it is not broken
+};
+
 void Shop_DrawMsg(struct UiWindow *window, s32 message);
 void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId);
 void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId);

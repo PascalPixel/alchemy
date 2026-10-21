@@ -23,11 +23,11 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
 
   Shop_InitializeCursorWork();
   shop = gMenuWork;
-  shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, 2);
-  partyWindow = UiWindow_CreateFar(0, 14, 13, 3, 2);
+  shop->itemWindow = UiWindow_CreateFar(16, 12, 14, 8, UI_WINDOW_INSTANT);
+  partyWindow = UiWindow_CreateFar(0, 14, 13, 3, UI_WINDOW_INSTANT);
   cursorAnchor = RenderOutput_CreateFar(shop->cursorIcon, 0x40000000,
                                         partyWindow, 0, result);
-  cursorAnchor->active = 4;
+  cursorAnchor->active = UI_SPRITE_WOBBLE;
   cursorAnchor->kind = result;
   ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
@@ -56,7 +56,7 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
       AudioCommand_PlayFar(SE_MENU_CONFIRM);
       itemSlot = Shop_SelectUse(unitId);
       if (itemSlot == -1) {
-        shop->cursor.anchor->active = 4;
+        shop->cursor.anchor->active = UI_SPRITE_WOBBLE;
         shop->mode = 12;
         redraw = 1;
         continue;
@@ -149,10 +149,10 @@ s32 Shop_SelectUse(s32 unitId) {
   inventoryCount = 1;
   selectionResult = 0;
   redraw = 1;
-  priceWindow =
-      UiWindow_CreateFar(SHOP_USE_WINDOW_X, 8, SHOP_USE_WINDOW_WIDTH, 4, 2);
-  descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
-  shop->cursor.anchor->active = 18;
+  priceWindow = UiWindow_CreateFar(SHOP_USE_WINDOW_X, 8, SHOP_USE_WINDOW_WIDTH,
+                                   4, UI_WINDOW_INSTANT);
+  descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, UI_WINDOW_INSTANT);
+  shop->cursor.anchor->active = UI_SPRITE_HOP_DOWN_LEFT;
   shop->mode = 12;
   slot = 0;
 

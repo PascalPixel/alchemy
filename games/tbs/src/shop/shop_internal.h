@@ -52,13 +52,45 @@
 #include "heap_state.h"
 #include "flags.h"
 
-/// What the player chose at a shop's counter, in the order of its menu
-/// (messages 48 to 51), held in shop->partyAction while it runs.
+/// What the player chose at a shop's counter, in the order of its menu's
+/// Buy, Sell, Artifacts and Repair, held in shop->partyAction while it runs.
 enum ShopAction {
   SHOP_ACTION_BUY,
   SHOP_ACTION_SELL,
   SHOP_ACTION_ARTIFACTS,
   SHOP_ACTION_REPAIR
+};
+
+/// A shop's type, the last column of its stock row: the equipment group it
+/// sells, as Item_GetEquipmentGroup sorts items. It picks the artifacts the
+/// shop lists and which of the keepers' lines it says.
+enum ShopType {
+  SHOP_TYPE_ITEMS = 0,   ///< an item shop: anything not weapons or armor
+  SHOP_TYPE_WEAPONS = 1, ///< a weapon shop
+  SHOP_TYPE_ARMOR = 2 ///< an armor shop: armor, shields, helms, boots, shirts
+};
+
+/// The stock rows the shop code itself names; each town scene names its own
+/// shops' rows where it opens them.
+enum ShopStockRow {
+  SHOP_STOCK_ROW_EMPTY = 0,        ///< sells nothing; stands in for a bad row
+  SHOP_STOCK_ROW_VALE_WEAPONS = 1, ///< Vale's weapon shop
+  SHOP_STOCK_ROW_VALE_ARMOR = 2,   ///< Vale's armor shop
+  /// Xian's weapon, armor and item shops, the warriors' shops, which greet
+  /// the party with lines of their own (ShopRuntime.warriorShop).
+  SHOP_STOCK_ROW_XIAN_WEAPONS = 16,
+  SHOP_STOCK_ROW_XIAN_ARMOR = 17,
+  SHOP_STOCK_ROW_XIAN_ITEMS = 18
+};
+
+/// What a sparkle of the sanctum's burst is doing (EffectSlot.state,
+/// BattleFx_UpdateRadialMotion).
+enum SanctumSparkleState {
+  /// Placed on a ring around the burst's centre and aimed inside it.
+  SANCTUM_SPARKLE_START = 0,
+  SANCTUM_SPARKLE_FLYING = 1, ///< flying in; starts again on arrival
+  /// Set as the burst ends: freed on arrival.
+  SANCTUM_SPARKLE_LAST_FLIGHT = 2
 };
 
 /// What the sanctum does for one party member; each kind picks the member's

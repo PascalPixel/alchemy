@@ -45,12 +45,13 @@ s32 Shop_SelectRepair(s32 unitId) {
   shop = gMenuWork;
   unit = UnitGetFar(unitId);
   inventoryCount = 1;
-  priceWindow = UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, 2);
+  priceWindow =
+      UiWindow_CreateFar(SHOP_LIST_X, 8, SHOP_LIST_WIDTH, 4, UI_WINDOW_INSTANT);
   slot = 0;
 
   for (;;) {
-    descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, 2);
-    shop->cursor.anchor->active = 18;
+    descriptionWindow = UiWindow_CreateFar(0, 5, 30, 3, UI_WINDOW_INSTANT);
+    shop->cursor.anchor->active = UI_SPRITE_HOP_DOWN_LEFT;
     shop->mode = 12;
     redraw = 1;
 
@@ -67,7 +68,8 @@ s32 Shop_SelectRepair(s32 unitId) {
         Shop_PlaceCursor(window, x, y);
         shop->mode = 3;
         repairCost = Shop_RepairPrice(unit->inventory[slot]);
-        Shop_DrawItemPrice(priceWindow, itemId, repairCost, 2);
+        Shop_DrawItemPrice(priceWindow, itemId, repairCost,
+                           SHOP_PRICE_KIND_REPAIR);
         Shop_DrawMsg(descriptionWindow, itemId + MsgItemPlainName);
       }
       if ((gKeysPressed & KEY_A) != 0) {
@@ -146,18 +148,18 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
 
   useType = item->useType;
   if (useType != ITEM_USE_MAY_BREAK) {
-    UiWork_PushValueSlotFar(itemId, 2);
+    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
     UiMessage_ShowAndRestoreState(MsgCannotRepairKind);
     return;
   }
   if (!(unit->inventory[slot] & INVENTORY_BROKEN)) {
-    UiWork_PushValueSlotFar(itemId, 2);
+    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
     UiMessage_ShowAndRestoreState(MsgNotDamaged);
     return;
   }
   // useType is ITEM_USE_MAY_BREAK here, so this tests ITEM_CANNOT_UNEQUIP.
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) && (useType & item->flags)) {
-    UiWork_PushValueSlotFar(itemId, 2);
+    UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
     UiMessage_ShowAndRestoreState(MsgCursedWontComeOff);
     return;
   }
@@ -165,8 +167,8 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     UiMessage_ShowAndRestoreState(MsgNotEnoughMoney);
     return;
   }
-  UiWork_PushValueSlotFar(itemId, 2);
-  UiWork_PushValueSlotFar(repairCost, 5);
+  UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
+  UiWork_PushValueSlotFar(repairCost, MSG_ARG_NUMBER);
   messageBase = MsgShopRepairConfirm;
   UiMessage_ShowAndRestoreState(messageBase);
   if (UiMessage_ShowChoice(0) != 0) {
@@ -177,7 +179,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   savedEntry = unit->inventory[slot];
   unit->inventory[slot] = 0;
   Shop_DrawUnitGrid(shop->itemWindow, unitId);
-  UiWork_PushValueSlotFar(itemId, 2);
+  UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
   UiMessage_ShowAndRestoreState(messageBase + 2);
   UiWork_FinalizePendingCoreFar();
   // The hammer blows are 110 frames apart; the item stays hidden throughout,
@@ -197,7 +199,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   Party_AdjustCoinsFar(-repairCost);
   Shop_DrawMoney();
   Shop_DrawUnitGrid(shop->itemWindow, unitId);
-  UiWork_PushValueSlotFar(itemId, 2);
+  UiWork_PushValueSlotFar(itemId, MSG_ARG_ITEM);
   UiMessage_ShowAndRestoreState(messageBase + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);

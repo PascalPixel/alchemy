@@ -19,9 +19,8 @@ s32 Shop_ListAvailableArtifacts(void) {
   count = 0;
   itemId = 0;
   stockItems = shop->stockItemIds;
-  // The shop's type is the equipment group it sells (Item_GetEquipmentGroup:
-  // 0 items, 1 weapons, 2 armor). Every 9-bit id is tried, past the 324 rows
-  // of items.tsv too.
+  // The shop's type is the equipment group it sells (enum ShopType). Every
+  // 9-bit id is tried, past the 324 rows of items.tsv too.
   do {
     equipmentGroup = shop->shopType;
     if (equipmentGroup == Item_GetEquipmentGroupFar(itemId) &&
@@ -99,11 +98,11 @@ void Shop_ReleaseCursorWork(void) {
 }
 
 /// Runs a shop: the shopkeeper's welcome, then buy, sell, artifacts and repair
-/// until the player leaves. `stockRow` picks the row of sStockTable (0 for a
-/// row out of range) and `keeperId` the object whose portrait the messages
-/// show. Seeds the row's artifacts on the first visit and holds the work block
-/// while it runs. Called by the town scenes' shopkeepers through SHOP.S, and
-/// by the debug shop. Returns 0.
+/// until the player leaves. `stockRow` picks the row of sStockTable
+/// (SHOP_STOCK_ROW_EMPTY for a row out of range) and `keeperId` the object
+/// whose portrait the messages show. Seeds the row's artifacts on the first
+/// visit and holds the work block while it runs. Called by the town scenes'
+/// shopkeepers through SHOP.S, and by the debug shop. Returns 0.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
   struct RenderOutput *anchor;
@@ -111,18 +110,18 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   s32 action = 0;
 
   if (stockRow >= EventTable_GetRowLimit() || stockRow < 0)
-    stockRow = 0;
+    stockRow = SHOP_STOCK_ROW_EMPTY;
   // Seed this location's artifact stock before creating the shop UI.
   EventTable_ApplyRowAbilities(stockRow);
   Shop_InitializeCursorWork();
   shop = gMenuWork;
   shop->shopType = EventTable_GetRowType(stockRow);
-  // Stock rows 16 to 18 are the warriors' shops, which greet differently.
-  if (stockRow == 16)
+  // Xian's shops are the warriors' shops, which greet differently.
+  if (stockRow == SHOP_STOCK_ROW_XIAN_WEAPONS)
     shop->warriorShop = 1;
-  if (stockRow == 17)
+  if (stockRow == SHOP_STOCK_ROW_XIAN_ARMOR)
     shop->warriorShop = 1;
-  if (stockRow == 18)
+  if (stockRow == SHOP_STOCK_ROW_XIAN_ITEMS)
     shop->warriorShop = 1;
   shop->keeperResource =
       ((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(
@@ -134,9 +133,9 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   // there is no portrait.
   window = UiWindow_CreateWithSideObjectFar(shop->keeperResource, 0, 0, 0);
   if (window == 0)
-    window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
+    window = UiWindow_CreateFar(-5, 0, 5, 5, UI_WINDOW_INSTANT);
   anchor = RenderOutput_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
-  anchor->active = 1;
+  anchor->active = UI_SPRITE_STILL;
   anchor->kind = 0;
   // The hand waits off the left edge until a screen places it
   ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -175,11 +174,11 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   return 0;
 }
 
-// The debug shop sells stock row 1 outside Japan and row 2 in Japan.
+// The debug shop sells Vale's weapons outside Japan and its armor in Japan.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define SHOP_DEBUG_STOCK_ROW 1
+#define SHOP_DEBUG_STOCK_ROW SHOP_STOCK_ROW_VALE_WEAPONS
 #else
-#define SHOP_DEBUG_STOCK_ROW 2
+#define SHOP_DEBUG_STOCK_ROW SHOP_STOCK_ROW_VALE_ARMOR
 #endif
 
 /// Opens the debug shop with 200000 coins, the ticket counter at its cap,
@@ -232,9 +231,9 @@ void UiMessage_ShowAndWait(s32 messageId) {
 
   UiWork_FinalizePendingCoreFar();
   shopType = shop->shopType;
-  if (shopType == 2)
+  if (shopType == SHOP_TYPE_ARMOR)
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
-  if (shopType == 0)
+  if (shopType == SHOP_TYPE_ITEMS)
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
   // A warriors' shop adds its distance on top of its type's
   if ((s8)shop->warriorShop != 0)
@@ -263,17 +262,17 @@ void UiMessage_ShowAndRestoreState(s32 messageId) {
   resolvedMessage = messageId;
   portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
   shopType = shop->shopType;
-  if (shopType == 2) {
+  if (shopType == SHOP_TYPE_ARMOR) {
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
   }
-  if (shopType == 0) {
+  if (shopType == SHOP_TYPE_ITEMS) {
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
   }
   warriorShop = shop->warriorShop;
   if (warriorShop != 0) {
     resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
   }
-  (*cursorSlot)->active = 13;
+  (*cursorSlot)->active = UI_SPRITE_HIDDEN;
   UiWork_FinalizePendingCoreFar();
   UiText_OpenMessageWindowFar(resolvedMessage, 5, 0,
                               (portraitResource << 0x10) | 0x22);

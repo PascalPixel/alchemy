@@ -145,10 +145,10 @@ s32 Shop_ConfirmAct(s32 unitId) {
   // edge, and failing that one on screen with side object 2
   listWindow = UiWindow_CreateWithSideObjectFar(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {
-    listWindow = UiWindow_CreateFar(-5, 0, 5, 5, 2);
+    listWindow = UiWindow_CreateFar(-5, 0, 5, 5, UI_WINDOW_INSTANT);
   }
   if (listWindow == 0) {
-    listWindow = UiWindow_CreateFar(0, 0, 5, 5, 2);
+    listWindow = UiWindow_CreateFar(0, 0, 5, 5, UI_WINDOW_INSTANT);
     SideObject_CreateFar(2, 0, 0, listWindow, -4, -4);
   }
 
@@ -160,7 +160,8 @@ s32 Shop_ConfirmAct(s32 unitId) {
   shop->cursor.anchor = cursorAnchor;
   UiMessage_ShowResolvedAndWait(MsgSanctumWelcome);
 
-  shop->moneyWindow = UiWindow_CreateFar(16, 11, SHOP_MONEY_WINDOW_WIDTH, 4, 2);
+  shop->moneyWindow =
+      UiWindow_CreateFar(16, 11, SHOP_MONEY_WINDOW_WIDTH, 4, UI_WINDOW_INSTANT);
   Shop_DrawMoney();
 
   for (;;) {
@@ -215,13 +216,14 @@ s32 Sanctum_RunPartyService(void) {
   serviceKind = shop->partyAction;
   UiMessage_ShowResolvedAndWait(MsgWhoToRevive);
 
-  listWindow = UiWindow_CreateFar(1, 12, 13, 3, 2);
-  shop->cursor.anchor->active = 4;
+  listWindow = UiWindow_CreateFar(1, 12, 13, 3, UI_WINDOW_INSTANT);
+  shop->cursor.anchor->active = UI_SPRITE_WOBBLE;
   // redraw is 1 here: the hand's first move to a member takes one frame
   shop->mode = redraw;
   PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, 0);
-  priceWindow = UiWindow_CreateFar(SANCTUM_PRICE_WINDOW_X, 16,
-                                   SANCTUM_PRICE_WINDOW_WIDTH, 3, 2);
+  priceWindow =
+      UiWindow_CreateFar(SANCTUM_PRICE_WINDOW_X, 16, SANCTUM_PRICE_WINDOW_WIDTH,
+                         3, UI_WINDOW_INSTANT);
 
   memberIndex = 0;
   unitId = 0;
@@ -266,8 +268,8 @@ s32 Sanctum_RunPartyService(void) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
         continue;
       }
-      UiWork_PushValueSlotFar(unitId, 1);
-      UiWork_PushValueSlotFar(donation, 5);
+      UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
+      UiWork_PushValueSlotFar(donation, MSG_ARG_NUMBER);
       messageBase = MsgReviveDonation;
       UiMessage_ShowResolvedAndWait(messageBase);
       if (UiMessage_ShowChoiceVariant(0) != 0) {
@@ -281,7 +283,7 @@ s32 Sanctum_RunPartyService(void) {
         chooseAgain = 1;
         continue;
       }
-      UiWork_PushValueSlotFar(unitId, 1);
+      UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
       UiMessage_ShowResolvedAndWait(messageBase + 3);
       UiWork_FinalizePendingCoreFar();
       // Apply the cure and animation before collecting the donation.
@@ -289,7 +291,7 @@ s32 Sanctum_RunPartyService(void) {
       Shop_RunPartyMemberIconBurst(memberIndex);
       Party_AdjustCoinsFar(-donation);
       Shop_DrawMoney();
-      UiWork_PushValueSlotFar(unitId, 1);
+      UiWork_PushValueSlotFar(unitId, MSG_ARG_ACTOR);
       UiMessage_ShowResolvedAndWait(messageBase + 4);
       if (Shop_CountUnits() != 0) {
         chooseAgain = 1;
@@ -393,15 +395,16 @@ void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
       serviceOrMessage = MsgNoHealingNeeded;
     }
     serviceOrMessage = Shop_MsgByMode(serviceOrMessage);
-    UiWork_PushValueSlotFar(donation, 5);
+    UiWork_PushValueSlotFar(donation, MSG_ARG_NUMBER);
     UiText_DrawResourceFar(serviceOrMessage, target, 0, 0);
   }
 }
 
-/// Steps one sparkle of the sanctum's burst, its slot's callback. State 0
-/// places it at a random point 40 pixels from the burst's centre and aims it
-/// at a random point 4 pixels from it; state 1 waits for it to arrive and
-/// goes back to 0, so it flies in again; state 2, which
+/// Steps one sparkle of the sanctum's burst, its slot's callback.
+/// SANCTUM_SPARKLE_START places it at a random point 40 pixels from the burst's
+/// centre and aims it at a random point 4 pixels from it;
+/// SANCTUM_SPARKLE_FLYING waits for it to arrive and starts it again, so it
+/// flies in again; SANCTUM_SPARKLE_LAST_FLIGHT, which
 /// Shop_RunPartyMemberIconBurst sets as the burst ends, frees the slot on
 /// arrival.
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
@@ -412,7 +415,7 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
 
   statePointer = &effect->state;
   state = *statePointer;
-  if (state == 0) {
+  if (state == SANCTUM_SPARKLE_START) {
     position.x = effect->originX;
     position.z = effect->originZ;
     Vector_AddPolarOffset(0x280000, Random16(), &position);
@@ -427,11 +430,11 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
     effect->acceleration = 0x6666;
     effect->limitTurnStep = state;
     *statePointer = *statePointer + 1;
-  } else if (state == 1) {
+  } else if (state == SANCTUM_SPARKLE_FLYING) {
     targetPending = EffectSlot_HasPendingTargetFar(effect);
     if (targetPending == 0)
       *statePointer = targetPending;
-  } else if (state == 2) {
+  } else if (state == SANCTUM_SPARKLE_LAST_FLIGHT) {
     if (EffectSlot_HasPendingTargetFar(effect) == 0)
       BattleFx_ClearOwnedSlotFar(effect);
   }
@@ -463,10 +466,10 @@ void Shop_ResetEffects(void) {
 /// waits for the sound driver (AudioCommand_WaitForStateByteClear) before
 /// freeing its sparkles.
 static const s8 sSanctumServiceCues[4] = {
-    0x52, // revive: MUS_082
-    0x54, // cure poison: MUS_084
-    0x58, // exorcise: MUS_088
-    0x57, // remove a curse: MUS_087
+    [SANCTUM_SERVICE_REVIVE] = MUS_082,
+    [SANCTUM_SERVICE_CURE_POISON] = MUS_084,
+    [SANCTUM_SERVICE_EXORCISE] = MUS_088,
+    [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_087,
 };
 
 /// Plays the service's burst on party member `member` (an index into the
@@ -487,14 +490,13 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
 
   shop = gMenuWork;
   savedCursorMode = shop->cursor.anchor->active;
-  shop->burstMember = 0xff;
-  shop->cursor.anchor->active = 13;
+  shop->burstMember = -1;
+  shop->cursor.anchor->active = UI_SPRITE_HIDDEN;
   AudioCommand_PlayFar(sSanctumServiceCues[shop->partyAction]);
   Shop_SaveAndTintFieldPalette(0x00202108);
   AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
-  // 0xc80 is SCHEDULER_KEY_MAIN_LOOP
-  callbackPriority = 0xc80;
+  callbackPriority = SCHEDULER_KEY_MAIN_LOOP;
   Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackPriority);
 
   // The burst's centre, in 16.16 pixels: 12 above the member's icon
@@ -523,7 +525,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   // Let active particles finish, then release remaining slots and restore UI.
   AudioCommand_WaitForStateByteClear();
   {
-    u8 activeMode = 2;
+    u8 activeMode = SANCTUM_SPARKLE_LAST_FLIGHT;
     u8 *entry = (u8 *)&shop->effects[0].state;
     for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
       if (*(s8 *)(entry + 5) != 0) {

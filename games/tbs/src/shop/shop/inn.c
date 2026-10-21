@@ -64,10 +64,11 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
       UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
 
   roomPrice = Inn_RoomPrice(innId);
-  UiWork_PushValueSlotFar(roomPrice, 5);
+  UiWork_PushValueSlotFar(roomPrice, MSG_ARG_NUMBER);
   messageBase = MsgInnWelcome;
   UiMessage_ShowAndWait(messageBase);
-  state->window = UiWindow_CreateFar(0, 16, SHOP_MONEY_WINDOW_WIDTH, 4, 2);
+  state->window =
+      UiWindow_CreateFar(0, 16, SHOP_MONEY_WINDOW_WIDTH, 4, UI_WINDOW_INSTANT);
   Shop_DrawMoney();
 
   if (UiMessage_ShowChoice(0) != 0) {

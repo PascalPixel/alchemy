@@ -1541,17 +1541,19 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   if (mode == 1)
     panelStyle = STATUS_PANEL_LOWER_ONLY;
   switch (Item_GetDirectFar(inventoryEntry & ITEM_ID_MASK)->type) {
-  case 0: // usable items
+  case ITEM_TYPE_NONE: // usable items
     Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, panelStyle);
     break;
-  case 1: // weapons
-  case 2: // armor
-  case 3: // shields, gloves and armlets
-  case 4: // helmets
-  case 5: // boots
-  case 7: // no item has type 7 (items.tsv)
-  case 8: // rings
-  case 9: // shirts
+  case ITEM_TYPE_WEAPON:
+  case ITEM_TYPE_ARMOR:
+  case ITEM_TYPE_SHIELD:
+  case ITEM_TYPE_HELM:
+  case ITEM_TYPE_BOOTS:
+  // An item type between ITEM_TYPE_PSYNERGY and ITEM_TYPE_RING that no item
+  // has (items.tsv), so it has no enumerator.
+  case 7:
+  case ITEM_TYPE_RING:
+  case ITEM_TYPE_SHIRT:
     if (owner == target) {
       panelStyle |= STATUS_PANEL_EQUIP;
       Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, panelStyle);
@@ -1583,7 +1585,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       MemFree((void *)owner);
     }
     break;
-  case 6: // Psynergy items
+  case ITEM_TYPE_PSYNERGY:
     if (target == owner) {
       panelStyle |= STATUS_PANEL_LEARN;
       Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, panelStyle);
@@ -2208,7 +2210,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
   }
   // Each of its effects.
   for (i = 0; i < 4; i++) {
-    if (def->effects[i].kind == 0)
+    if (def->effects[i].kind == ITEM_EFFECT_NONE)
       continue;
     amount = def->effects[i].amount;
     switch (def->effects[i].kind) {
@@ -2220,23 +2222,20 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
     case ITEM_EFFECT_ADD_PP_REGEN:
     case ITEM_EFFECT_ADD_AGILITY:
     case ITEM_EFFECT_ADD_LUCK:
-    case 26: // Turns
+    case ITEM_EFFECT_ADD_TURNS:
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
       break;
-    // Power (15 to 18) and Resist (19 to 22) of the four elements, after
-    // the element's icon.
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-    case 20:
-    case 21:
-    case 22:
+    // Power and Resist in each of the four elements, after the element's
+    // icon.
+    case ITEM_EFFECT_ADD_VENUS_POWER ... ITEM_EFFECT_ADD_JUPITER_RESIST:
       UiWindow_SetTilemapEntryFar(
-          window, (u8)((def->effects[i].kind - 15) % 4) + 1, 0, row, 2);
+          window,
+          (u8)((def->effects[i].kind - ITEM_EFFECT_ADD_VENUS_POWER) %
+               NUM_ELEMENTS) +
+              1,
+          0, row, 2);
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 8, row * 8);
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
@@ -2276,9 +2275,9 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
       UiText_DrawCharacterAtOffsetFar(MsgEffectRateSuffix, window, 72, row * 8);
 #endif
       break;
-    case 23: // "Critical Hits increase"
-    case 25: // "The curse can be removed"
-    case 27: // "Boosts monster encounters"
+    case ITEM_EFFECT_ADD_UNLEASH_CHANCE: // "Critical Hits increase"
+    case ITEM_EFFECT_25:                 // "The curse can be removed"
+    case ITEM_EFFECT_LURE:               // "Boosts monster encounters"
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
       break;
@@ -2290,7 +2289,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
     UiText_DrawCharacterAtOffsetFar(MsgItemCursed, window, 0, row * 8);
     row++;
   }
-  if (def->useType == 3) { // bestows Psynergy
+  if (def->useType == ITEM_USE_TEACHES) {
     UiText_DrawCharacterAtOffsetFar(MsgBestowsPsynergy, window, 0, row * 8);
     bestowsPsynergy = 1;
     row++;
@@ -2298,7 +2297,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
   // "Number of Uses" and what using it costs, except for items that cost
   // nothing and Hermes' Water (ITEM_USE_EMPTIES); a Psynergy item has no
   // heading and no line.
-  if (def->useType != 4 && def->useType != 0) {
+  if (def->useType != ITEM_USE_EMPTIES && def->useType != 0) {
     if (!bestowsPsynergy) {
       UiText_DrawCharacterAtOffsetFar(MsgUsesHeading, window, 16, row * 8);
       row++;
@@ -2306,11 +2305,11 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
     switch (def->useType) {
     case 0:
       break;
-    case 1: // used up
+    case ITEM_USE_CONSUMED:
       UiText_DrawCharacterAtOffsetFar(MsgSingleUse, window, 0, row * 8);
       row++;
       break;
-    case 2: { // may break
+    case ITEM_USE_MAY_BREAK: {
       s32 m;
 
       // Two lines each: "It's broken, so" / "it can't be used", or "It might
@@ -2358,7 +2357,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
   // Nothing written yet: rare, important, or nothing known.
   hasEffects = 0;
   if (row == 0) {
-    if (def->flags & 4) { // rare
+    if (def->flags & ITEM_RARE) {
       UiText_DrawCharacterAtOffsetFar(MsgRareItem, window, 0, 0);
       hasEffects = 1;
     }

@@ -79,62 +79,73 @@ enum {
 };
 
 /// The actors of both scenes, numbered by the rows of each scene's placement
-/// tables. The villagers are named by what they say before Venus Lighthouse.
+/// tables. The people are named by what they say before Venus Lighthouse and by
+/// what their sprites show.
 enum LaliveroInteriorsActor {
   // The houses, the shops and the Sanctum (LaliveroShops).
-  /// In the house at LALIVERO_SHOPS_FROM_LALIVERO_WEST. "Of course I
-  /// have seen Sheba's power... It's incredible!"
+  /// A young man with brown hair in a purple shirt, in the house at
+  /// LALIVERO_SHOPS_FROM_LALIVERO_WEST. "Of course I have seen Sheba's power...
+  /// It's incredible!"
   /// ★ Named from the game: "Of course I have seen"
   /// (MsgLaliveroInteriorsOfCourseIHaveSeenActor)
   ACTOR_VILLAGER_SAW_SHEBAS_POWER = ACTOR_FIRST_PLACED,
-  /// In the same house. "There are some who do not believe Sheba has any
-  /// powers... Doubting Sheba? That is foolish!"
+  /// A woman with fair hair, in the same house. "There are some who do not
+  /// believe Sheba has any powers... Doubting Sheba? That is foolish!"
   /// ★ Named from the game: "That is foolish!"
   /// (MsgLaliveroInteriorsThereAreSomeWhoDoNot)
-  ACTOR_VILLAGER_DEFENDING_SHEBA,
-  /// In the house at LALIVERO_SHOPS_FROM_LALIVERO_SOUTHEAST. "Could Faran
-  /// have tricked us all?"
+  ACTOR_WOMAN_DEFENDING_SHEBA,
+  /// A man in a white turban, in the house at
+  /// LALIVERO_SHOPS_FROM_LALIVERO_SOUTHEAST. "Could Faran have tricked us all?"
+  /// ★ Named from the game: "Could Faran have tricked us all?"
+  /// (MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll)
   ACTOR_VILLAGER_DOUBTING_FARAN,
-  /// In the same house. "If Sheba can't use her powers in a time like this,
-  /// they're useless!"
+  /// A woman in a green dress, in the same house. "If Sheba can't use her
+  /// powers in a time like this, they're useless!"
   /// ★ Named from the game: "use her powers in a time like this, they're
   /// useless!" (MsgLaliveroInteriorsIfActorCantUseHerPowers)
-  ACTOR_VILLAGER_DOUBTING_SHEBA,
-  /// Upstairs in the item shop at
-  /// LALIVERO_SHOPS_FROM_LALIVERO_NORTH. "Sheba came flying to the ruins
-  /// like a shooting star."
+  ACTOR_WOMAN_DOUBTING_SHEBA,
+  /// An old man with a cane, upstairs in the item shop at
+  /// LALIVERO_SHOPS_FROM_LALIVERO_NORTH. "Sheba came flying to the ruins like a
+  /// shooting star."
   /// ★ Named from the game: "came flying to the ruins like a shooting star."
   /// (MsgLaliveroInteriorsActorCameFlyingToTheRuins)
-  ACTOR_VILLAGER_SHOOTING_STAR,
-  /// In the same room. "Even Sheba couldn't have escaped six of them..."
+  ACTOR_OLD_MAN_SHOOTING_STAR,
+  /// An old woman, in the same room. "Even Sheba couldn't have escaped six of
+  /// them..."
   /// ★ Named from the game: "couldn't have escaped six of them..."
   /// (MsgLaliveroInteriorsEvenActorCouldntHaveEscapedSix)
-  ACTOR_VILLAGER_SIX_OF_THEM,
-  /// In the house at LALIVERO_SHOPS_FROM_LALIVERO_NORTHWEST. "They say a
-  /// man named Iodem is coming from Tolbi. I guess he plans to make us do even
-  /// more work!"
+  ACTOR_OLD_WOMAN_SIX_OF_THEM,
+  /// A bald, muscular man, in the house at
+  /// LALIVERO_SHOPS_FROM_LALIVERO_NORTHWEST. "They say a man named Iodem is
+  /// coming from Tolbi. I guess he plans to make us do even more work!"
+  /// ★ Named from the game: "I guess he plans to make us do even more work!"
+  /// (MsgLaliveroInteriorsTheySayAManNamedIodem)
   ACTOR_WORKER,
-  /// Upstairs in that house, posed in animation 6. "No one's
-  /// called me, so maybe I'll take a nap..."; after Venus Lighthouse, Mind Read
-  /// hears "I'm worried that we won't get paid now that the construction has
-  /// ended."
+  /// A bald, muscular man upstairs in that house, posed in animation 6. "No
+  /// one's called me, so maybe I'll take a nap..."; after Venus Lighthouse,
+  /// Mind Read hears "I'm worried that we won't get paid now that the
+  /// construction has ended."
+  /// ★ Named from the game: "No one's called me, so maybe I'll take a nap..."
+  /// (MsgLaliveroInteriorsNoOnesCalledMeSoMaybe)
   ACTOR_NAPPING_WORKER,
-  /// In the house at LALIVERO_SHOPS_FROM_LALIVERO_NORTHWEST. "Sheba said
-  /// the cave at the ruins leads to the southeast."
+  /// A strongman, in the house at LALIVERO_SHOPS_FROM_LALIVERO_NORTHWEST.
+  /// "Sheba said the cave at the ruins leads to the southeast."
   /// ★ Named from the game: "said the cave at the ruins leads to the
   /// southeast." (MsgLaliveroInteriorsActorSaidTheCaveAtThe)
-  ACTOR_VILLAGER_RUINS_CAVE,
-  /// Walks about the room upstairs in that house. "The ruins that form the
-  /// lighthouse foundation are riddled with caves."
-  ACTOR_VILLAGER_RUINS_RIDDLE,
+  ACTOR_STRONGMAN_RUINS_CAVE,
+  /// A strongman who walks about the room upstairs in that house. "The ruins
+  /// that form the lighthouse foundation are riddled with caves."
+  /// ★ Named from the game: "The ruins that form the lighthouse foundation are
+  /// riddled with caves." (MsgLaliveroInteriorsTheRuinsThatFormTheLighthouse)
+  ACTOR_STRONGMAN_RUINS_RIDDLE,
   /// ★ Named from what the player sees: the man behind the counter of the
   /// shop hung with swords and shields (its render)
   ACTOR_WEAPON_MERCHANT,
   /// ★ Named from what the player sees: the second man behind the counter of
   /// the shop hung with swords and shields (its render)
   ACTOR_ARMOR_MERCHANT,
-  /// ★ Named from what the player sees: the man behind the counter of the
-  /// shop stacked with barrels and jars (its render)
+  /// ★ Named from what the player sees: the young woman with a ponytail behind
+  /// the counter of the shop stacked with barrels and jars (its render)
   ACTOR_ITEM_MERCHANT,
   /// The Sanctum's healer.
   /// ★ Named from what the player sees: the bearded man behind the Sanctum's
@@ -147,14 +158,17 @@ enum LaliveroInteriorsActor {
   /// ★ Named from the game: "His wife seems very calm, considering."
   /// (MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering)
   ACTOR_FARANS_WIFE = ACTOR_FIRST_PLACED,
-  /// Faran's child, younger than Sheba. "I just know that Father will save my
-  /// elder sister, Sheba."
-  /// ★ Named from the game: "I just know that Father will save my elder
-  /// sister" (MsgLaliveroInteriorsIJustKnowThatFatherWill)
-  ACTOR_FARANS_CHILD,
-  /// A villager worried for Sheba. "His wife seems very calm, considering.";
-  /// Mind Read hears "When someone like Sheba is kidnapped, it worries us all!"
-  ACTOR_WORRIED_VILLAGER,
+  /// Faran's son, a small boy with fair hair, younger than Sheba. "I just know
+  /// that Father will save my elder sister, Sheba."
+  /// ★ Named from the game: "I just know that Father will save my elder sister"
+  /// (MsgLaliveroInteriorsIJustKnowThatFatherWill)
+  ACTOR_FARANS_SON,
+  /// A young woman with long brown hair, worried for Sheba. "His wife seems
+  /// very calm, considering."; Mind Read hears "When someone like Sheba is
+  /// kidnapped, it worries us all!"
+  /// ★ Named from the game: "Deep down, she must be worried about"
+  /// (MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering)
+  ACTOR_WORRIED_YOUNG_WOMAN,
   /// Placed off the map before Venus Lighthouse.
   /// ★ Named from the game: "Faran followed"
   /// (MsgLaliveroFaranFollowedActorImSureHell)
@@ -163,15 +177,20 @@ enum LaliveroInteriorsActor {
   /// ★ Named from the game: "Iodem of Tolbi"
   /// (MsgLaliveroIodemOfTolbiDoesntSeemToo)
   ACTOR_IODEM,
+  /// A man with dark hair.
   /// ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   ACTOR_INNKEEPER,
-  /// Works about the inn, too worried about Sheba to keep her mind on it.
+  /// A woman in a pink dress and a white apron who works about the inn, too
+  /// worried about Sheba to keep her mind on it.
   /// ★ Named from the game: "Working like this keeps my mind occupied."
   /// (MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind)
   ACTOR_INN_WORKER,
-  /// Walks about the hall upstairs in the inn. After Venus Lighthouse:
-  /// "Fishing is so difficult nowadays because the ocean is so rough. We have
-  /// little to cook when we can't fish."
+  /// A young man with brown hair in a purple shirt who walks about the hall
+  /// upstairs in the inn. After Venus Lighthouse: "Fishing is so difficult
+  /// nowadays because the ocean is so rough. We have little to cook when we
+  /// can't fish."
+  /// ★ Named from the game: "We have little to cook when we can't fish."
+  /// (MsgLaliveroInteriorsFishingIsSoDifficultNowadaysBecause)
   ACTOR_COOK
 };
 
@@ -185,7 +204,7 @@ enum { FLAG_INN_WORKER_APOLOGIZED = FLAG_PLACE_TEMP_00 };
 #define ACTOR_BEHIND_COUNTER 4
 
 /// LaliveroFaransHouse: the inn worker sighs between chores.
-static s32 Maid_Sigh(struct ScriptInterpreter *interpreter) {
+static s32 InnWorker_Sigh(struct ScriptInterpreter *interpreter) {
   Actor_SetAttachedEffect(ACTOR_INN_WORKER, EMOTE_IN_FRONT | 2);
   return 0;
 }
@@ -282,15 +301,15 @@ static void TalkToItemMerchant(s32 keeper) {
 
 /// Lalivero Sanctum: the healer offers the Sanctum's services across the
 /// counter; otherwise small talk of Babi's lighthouse.
-static void TalkToPriest(s32 priest) {
+static void TalkToHealer(s32 healer) {
   if (Leader_GetSide() == FACING_NORTH) {
-    Shop_ConfirmAct(priest);
+    Shop_ConfirmAct(healer);
   } else if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
     Engine_EventSetMessage(MsgLaliveroBabiLighthouseStruck);
-    Engine_EventShowMessage(priest, 0);
+    Engine_EventShowMessage(healer, 0);
   } else {
     Engine_EventSetMessage(MsgLaliveroBabiIsntBuilding);
-    Engine_EventShowMessage(priest, 0);
+    Engine_EventShowMessage(healer, 0);
   }
 }
 
@@ -312,7 +331,7 @@ static void TalkToInnkeeper(s32 innkeeper) {
 /// stops her chores to apologize: worry for Sheba keeps her from concentrating.
 /// A leader standing west of her steps aside to the south before she starts
 /// again.
-static void TalkToMaid(void) {
+static void TalkToInnWorker(void) {
   s16 side;
 
   side = Leader_GetSide();
@@ -341,7 +360,7 @@ static void TalkToMaid(void) {
     Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Engine_EventWait(20);
   }
-  Actor_SetActionScript(ACTOR_INN_WORKER, gLaliveroMaidChores);
+  Actor_SetActionScript(ACTOR_INN_WORKER, gLaliveroInnWorkerChores);
   Engine_EventEnd();
 }
 
@@ -843,7 +862,7 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     if (Engine_GameFlagIsSet(FLAG_INN_WORKER_APOLOGIZED) != 0) {
-      Actor_SetActionScript(ACTOR_INN_WORKER, gLaliveroMaidChores);
+      Actor_SetActionScript(ACTOR_INN_WORKER, gLaliveroInnWorkerChores);
     }
     if (gGameState.entrance ==
         LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE) {
@@ -859,7 +878,7 @@ s32 Scene_Initialize(void) {
 
 /// The inn worker's chores once she has apologized: she paces between two
 /// spots, turning to each side, and sighs now and then.
-s32 gLaliveroMaidChores[] = {
+s32 gLaliveroInnWorkerChores[] = {
     SC_SET(SW_COLLISION, 129),
     SC_SET(SW_SPEED, 0x26666),
     SC_SET(SW_ACCEL, 0x13333),
@@ -882,7 +901,7 @@ s32 gLaliveroMaidChores[] = {
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
     SC_ARG(3),
     SC_WAIT(20),
-    SC_CALL(Maid_Sigh),
+    SC_CALL(InnWorker_Sigh),
     SC_WAIT(30),
     SC_ARG(2),
     SC_MOVE(PIXELS(168), 0, PIXELS(300)),
@@ -1074,29 +1093,29 @@ struct SceneEvent gLaliveroEvents[] = {
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
     { EVENT_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOfCourseIHaveSeenActor) },
-    { EVENT_TALK, ACTOR_VILLAGER_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThereAreSomeWhoDoNot) },
+    { EVENT_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThereAreSomeWhoDoNot) },
     { EVENT_TALK, ACTOR_VILLAGER_DOUBTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll) },
-    { EVENT_TALK, ACTOR_VILLAGER_DOUBTING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfActorCantUseHerPowers) },
-    { EVENT_TALK, ACTOR_VILLAGER_SHOOTING_STAR, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorCameFlyingToTheRuins) },
-    { EVENT_TALK, ACTOR_VILLAGER_SIX_OF_THEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsEvenActorCouldntHaveEscapedSix) },
+    { EVENT_TALK, ACTOR_WOMAN_DOUBTING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfActorCantUseHerPowers) },
+    { EVENT_TALK, ACTOR_OLD_MAN_SHOOTING_STAR, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorCameFlyingToTheRuins) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_SIX_OF_THEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsEvenActorCouldntHaveEscapedSix) },
     { EVENT_TALK, ACTOR_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheySayAManNamedIodem) },
     { EVENT_TALK, ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsNoOnesCalledMeSoMaybe) },
-    { EVENT_TALK, ACTOR_VILLAGER_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorSaidTheCaveAtThe) },
-    { EVENT_TALK, ACTOR_VILLAGER_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheRuinsThatFormTheLighthouse) },
+    { EVENT_TALK, ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorSaidTheCaveAtThe) },
+    { EVENT_TALK, ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheRuinsThatFormTheLighthouse) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorIfThePowerThatYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorIsTheSaviorOfLalivero) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorIsTheSaviorOfLalivero) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DOUBTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsALegendarySaviorWillAppearIn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DOUBTING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIdLikeToBelieveInActor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SHOOTING_STAR, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsEvenThoughSheFellOutOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SIX_OF_THEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfSomethingHappensToActorWhat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_DOUBTING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIdLikeToBelieveInActor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_SHOOTING_STAR, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsEvenThoughSheFellOutOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_SIX_OF_THEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfSomethingHappensToActorWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhenIodemGetsHereHesGoing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsBeenSoLongSinceI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIWonderHowActorKnewAbout) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThoseCavesAreTooDangerousFor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIWonderHowActorKnewAbout) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThoseCavesAreTooDangerousFor) },
     { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToWeaponMerchant) },
     { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToArmorMerchant) },
     { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToPriest) },
+    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheLaliveransAreATimidPeople) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsICantRescueActorIfI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfAnythingHappensToActorIll) },
@@ -1121,29 +1140,29 @@ struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
     { EVENT_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheContinentBrokeApartAroundThe) },
-    { EVENT_TALK, ACTOR_VILLAGER_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhatHappenedToThoseLivingOn) },
+    { EVENT_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhatHappenedToThoseLivingOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIShudderToThinkWhatWould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWereLuckyThatWeLiveNorth) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWereLuckyThatWeLiveNorth) },
     { EVENT_TALK, ACTOR_VILLAGER_DOUBTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsEveryoneSaysThatActorIsOkay) },
-    { EVENT_TALK, ACTOR_VILLAGER_DOUBTING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIRealizedHowThoughtlessIWas) },
+    { EVENT_TALK, ACTOR_WOMAN_DOUBTING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIRealizedHowThoughtlessIWas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DOUBTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIfSheIsIndeedTheChild) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DOUBTING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeWantToBelieveInSomething) },
-    { EVENT_TALK, ACTOR_VILLAGER_SHOOTING_STAR, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorShouldBeFineSheWas) },
-    { EVENT_TALK, ACTOR_VILLAGER_SIX_OF_THEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorWillWakeWhenTheBeacon) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SHOOTING_STAR, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSeeingActorDiveMustHaveBeen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SIX_OF_THEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsICantWaitUntilActorIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_DOUBTING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeWantToBelieveInSomething) },
+    { EVENT_TALK, ACTOR_OLD_MAN_SHOOTING_STAR, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorShouldBeFineSheWas) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_SIX_OF_THEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsActorWillWakeWhenTheBeacon) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_SHOOTING_STAR, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSeeingActorDiveMustHaveBeen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_SIX_OF_THEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsICantWaitUntilActorIs) },
     { EVENT_TALK, ACTOR_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsBabiLighthouseCrumbledWhenAllThe) },
     { EVENT_TALK, ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIAlwaysWantedABreakBut) },
-    { EVENT_TALK, ACTOR_VILLAGER_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSoTheRuinsReallyAreConnected) },
-    { EVENT_TALK, ACTOR_VILLAGER_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouFinallySolvedTheMysteryOf) },
+    { EVENT_TALK, ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSoTheRuinsReallyAreConnected) },
+    { EVENT_TALK, ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouFinallySolvedTheMysteryOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWillTheyContinueOnOrQuit) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NAPPING_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsImWorriedThatWeWontGet) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeCantPossiblyDigAHole) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheMysteryOfTheRuinsShould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_CAVE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeCantPossiblyDigAHole) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_RUINS_RIDDLE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheMysteryOfTheRuinsShould) },
     { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToWeaponMerchant) },
     { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToArmorMerchant) },
     { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToPriest) },
+    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsNoOneCouldPossiblySwimIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhenWillTheOceanBeCalm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheChampaArePeopleFromA) },
@@ -1168,13 +1187,13 @@ struct SceneEvent gFaranHouseEvents[] = {
     { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
     { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveBuilding) },
     { EVENT_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeReceivedActorFromTheSky) },
-    { EVENT_TALK, ACTOR_FARANS_CHILD, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustKnowThatFatherWill) },
-    { EVENT_TALK, ACTOR_WORRIED_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering) },
+    { EVENT_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustKnowThatFatherWill) },
+    { EVENT_TALK, ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsItsSoPainfulToEvenThink) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_CHILD, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
-    { EVENT_TALK, ACTOR_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(TalkToMaid) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(TalkToMaid) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
+    { EVENT_TALK, ACTOR_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(TalkToInnWorker) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INN_WORKER, FLAG_INN_WORKER_APOLOGIZED, EVENT_SCRIPT(TalkToInnWorker) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToInnkeeper) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind) },
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeMustObeyTolbiThatsWhat) },
@@ -1203,13 +1222,13 @@ struct SceneEvent gFaranHouseEventsAfterLighthouse[] = {
     { EVENT_TALK, ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(TalkToIodem) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, MSGNO(MsgLaliveroInteriorsIMustExplainTheirPromiseTo) },
     { EVENT_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFaranSaysKnowingHerPowersActor) },
-    { EVENT_TALK, ACTOR_FARANS_CHILD, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouAreLeavingAfterAllArent) },
-    { EVENT_TALK, ACTOR_WORRIED_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheySayTheLighthouseCrumbledDown) },
+    { EVENT_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouAreLeavingAfterAllArent) },
+    { EVENT_TALK, ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheySayTheLighthouseCrumbledDown) },
     { EVENT_TALK, ACTOR_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsYouWillFindJennaSomedayFarewell) },
     { EVENT_TALK, ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIsaacThatBoatBelongsToYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIDontNeedFameOrFortune) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_CHILD, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyWontAnyoneStopIsaacAnd) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTolbiIsToBeBlamedFor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhyWontAnyoneStopIsaacAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTolbiIsToBeBlamedFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsSoThereAreSomePeopleLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsPleaseUseThatShipToFind) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToInnkeeper) },

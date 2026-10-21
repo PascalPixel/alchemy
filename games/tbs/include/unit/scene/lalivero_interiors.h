@@ -11,7 +11,7 @@ const u32 *LaliveroInteriors_GetExits(void);
 const struct ScenePlacement *LaliveroInteriors_GetPlacements(void);
 const struct SceneEvent *LaliveroInteriors_GetEvents(void);
 s32 Scene_Initialize(void);
-extern s32 gLaliveroMaidChores[];
+extern s32 gLaliveroInnWorkerChores[];
 extern struct SceneEntrance gLaliveroEntrances[];
 extern struct SceneRegion gLaliveroSanctumRegions[];
 extern struct SceneRegion gLaliveroRegions[];

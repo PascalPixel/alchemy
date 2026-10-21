@@ -31,9 +31,9 @@ struct MapAffinePair {
   struct MapAffineLine bg2, bg3;
 };
 
-/// The world map's frame work in heap slot 7: the scanline terms and two pages
-/// of per-line affine parameters, one built while the other is shown. The
-/// world map's setup takes the slot; the next scene change frees it.
+/// The world map's frame work in HEAP_SLOT_MAP_FRAME: the scanline terms and
+/// two pages of per-line affine parameters, one built while the other is shown.
+/// The world map's setup takes the slot; the next scene change frees it.
 struct MapFrameWork {
   struct MapScanline scanlines[160];
   struct MapAffinePair pages[2][160];

@@ -42,7 +42,7 @@ struct WorkspaceWork {
   struct RenderOutput *icon[6];
 };
 
-/// The option screen's work, heap slot 20 under its own name.
+/// The option screen's work, HEAP_SLOT_OPTIONS under its own name.
 extern struct WorkspaceWork *gSelectionWork;
 
 #endif

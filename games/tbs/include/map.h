@@ -85,7 +85,7 @@ enum MapLayerIndex {
   MAP_LAYER_COUNT = 3
 };
 
-/// The map work in heap slot 8 (struct MapScrollWork), seen as its tile
+/// The map work in HEAP_SLOT_MAP (struct MapScrollWork), seen as its tile
 /// animation channels, blend script and layers' cells.
 struct MapState {
   u8 unk000[0x14]; ///< MapScrollWork's origin, shake and script
@@ -137,8 +137,8 @@ extern u8 gMapCollision[];
 /// pool's blocks can reach these bytes.
 extern u8 gBgTileBuffer[];
 
-/// Heap slot 7 under its own name, which no code reads; the world map keeps
-/// its struct MapFrameWork in the slot.
+/// HEAP_SLOT_MAP_FRAME under its own name, which no code reads; the world map
+/// keeps its struct MapFrameWork in the slot.
 extern u8 *gMapAnimationPages;
 
 #endif

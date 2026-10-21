@@ -6,6 +6,7 @@
 
 #include "types.h"
 #include "version.h"
+#include "heap_state.h"
 
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
@@ -43,12 +44,12 @@
 #endif
 
 // Work pointers in the gWorkSlot table.
-#define Ram_MapWork ((void **)&gWorkSlot[8])
-#define Ram_CameraWork ((void **)&gWorkSlot[12])
-#define Ram_EventWork ((void **)&gWorkSlot[27])
-#define Ram_DisplayWork ((void **)&gWorkSlot[31])
-#define Ram_ActorEffectWork ((void **)&gWorkSlot[36])
-#define Ram_Disp ((void **)&gWorkSlot[42])
+#define Ram_MapWork ((void **)&gWorkSlot[HEAP_SLOT_MAP])
+#define Ram_CameraWork ((void **)&gWorkSlot[HEAP_SLOT_CAMERA])
+#define Ram_EventWork ((void **)&gWorkSlot[HEAP_SLOT_EVENT])
+#define Ram_DisplayWork ((void **)&gWorkSlot[HEAP_SLOT_TRANSITION])
+#define Ram_ActorEffectWork ((void **)&gWorkSlot[HEAP_SLOT_FADE_OVERLAY])
+#define Ram_Disp ((void **)&gWorkSlot[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 #define Ram_EffectWork ((void **)&gWorkSlot[56])
 
 #define Ram_SceneMapStateOffset FIXED_OFFSET(0xc, gFieldBlendWork, gEventWork)

@@ -17,11 +17,14 @@ extern void *gMapWork[];
 extern void *gMenuWork;
 
 // Read work slots in gWorkSlot order through their own names.
-extern void *gFieldBlendWork[];                           ///< From slot 30
-extern struct DisplayTransitionState *gDisplayTransition; ///< Slot 31
-/// Slot 42, which holds the battle's entry transition timer in frames.
+/// HEAP_SLOT_FIELD_BLEND onwards.
+extern void *gFieldBlendWork[];
+/// HEAP_SLOT_TRANSITION under its own name.
+extern struct DisplayTransitionState *gDisplayTransition;
+/// HEAP_SLOT_BATTLE_ENTRY_TIMER: the battle's entry transition timer in frames.
 extern s32 *gDisp;
-extern void *gEffectWork; ///< Slot 56: points to a scene-specific structure
+/// HEAP_SLOT_FX: points to a scene-specific structure.
+extern void *gEffectWork;
 
 // EWRAM buffers
 /// The map's cells at 0x02010000, 128 by 128 words: 64 KB, so while a map is

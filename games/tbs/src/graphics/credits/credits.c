@@ -48,8 +48,6 @@
 /// shadow below the eighth.
 #define CREDITS_BUFFER_BYTES 0x900
 #define CREDITS_RASTER_STRIDE 256
-/// The heap slot the backdrop decoder is copied into for each load.
-#define CREDITS_DECODER_HEAP_SLOT 49
 /// OAM entries 0 to 23: the opaque strips above and below the text.
 #define CREDITS_BORDER_SPRITES 24
 /// The whole OAM: the borders, 96 text sprites and 8 parked off screen.
@@ -126,7 +124,7 @@ const u32 gDisplayScroll_SlideResources[] = {
 /// resource clears that half; the second half offsets its palette indices.
 /// Called by DisplayScroll_RunSlideshow for each picture. A backdrop resource
 /// is its 128 colours (256 bytes) and then its packed tiles. The decoder
-/// runs from a copy in heap slot CREDITS_DECODER_HEAP_SLOT, released before
+/// runs from a copy in HEAP_SLOT_TEMP_RENDERER, released before
 /// returning; the colours reach palette RAM at the next VBlank, through the
 /// I/O write queue.
 void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
@@ -151,11 +149,11 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   }
   // Offset every pixel into the selected palette half so both backdrops
   // can remain visible throughout a crossfade.
-  RamCode_LoadSlot(CREDITS_DECODER_HEAP_SLOT, BattleEffect_Expand,
+  RamCode_LoadSlot(HEAP_SLOT_TEMP_RENDERER, BattleEffect_Expand,
                    BattleEffect_ExpandCodeSize);
-  ((PackedDecoder)gWorkSlot[CREDITS_DECODER_HEAP_SLOT])(
+  ((PackedDecoder)gWorkSlot[HEAP_SLOT_TEMP_RENDERER])(
       resourceData + 256, tileDestination, paletteOffset);
-  Runtime_ReleaseHeapBlock(CREDITS_DECODER_HEAP_SLOT);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TEMP_RENDERER);
 
   // Queue palette RAM writes for VBlank rather than transferring colours
   // during the active display.

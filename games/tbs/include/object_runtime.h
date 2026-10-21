@@ -9,12 +9,12 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// One of the 64 field objects in the object pool (heap slot 5): its script,
-/// position, motion toward a target, animation and update callback.
+/// One of the 64 field objects in the object pool (HEAP_SLOT_OBJECT_POOL): its
+/// script, position, motion toward a target, animation and update callback.
 ///
 /// ObjectSystem_Initialize takes the pool with the object system's work
-/// (heap slot 6), so it lives until the next scene change. struct FieldActor
-/// is the same 0x70 bytes as scenes see them.
+/// (HEAP_SLOT_MENU_CONTROL), so it lives until the next scene change. struct
+/// FieldActor is the same 0x70 bytes as scenes see them.
 struct ObjectRuntime {
   s32 *script; ///< the object script it runs; null when the object is free
   s16 step;    ///< the script cursor, in words

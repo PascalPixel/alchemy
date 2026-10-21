@@ -43,7 +43,7 @@ struct IntroSprite {
   s32 tile;
 };
 
-/// The title intro's state, in heap slot 43.
+/// The title intro's state, in HEAP_SLOT_TITLE_INTRO.
 struct IntroWork {
   s32 backRows;  ///< rows of the far background copied in as it scrolls
   s32 frontRows; ///< rows of the near background copied in
@@ -121,7 +121,7 @@ void Title_UpdateIntroSprites(void) {
   s32 y;
   s32 stripY;
 
-  work = WORK_SLOT(43);
+  work = WORK_SLOT(HEAP_SLOT_TITLE_INTRO);
   spriteCount = 0;
   if (gDebugPaused == 0) {
     if ((++work->tick & 3) == 0)
@@ -183,7 +183,7 @@ void Title_LoadIntroBackgrounds(void) {
   u16 tileIndex;
   s32 blankTile;
 
-  work = WORK_SLOT(43);
+  work = WORK_SLOT(HEAP_SLOT_TITLE_INTRO);
   REG_DISPCNT = 0;
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
   Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);
@@ -308,7 +308,7 @@ s32 Title_ShowIntro(s32 prompt) {
   result = 0;
   blankTile = 0x1ff;
   savedCpuLoadDisplay = gCpuLoadDisplayEnabled;
-  work = Runtime_AllocateHeapBlock(43, 224);
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_TITLE_INTRO, 224);
   DebugText_Clear();
   VramCache_Reset();
   WaitFrames(1);
@@ -433,7 +433,7 @@ s32 Title_ShowIntro(s32 prompt) {
   Ui_LoadWindowGraphics();
   DebugText_Clear();
   if (prompt != 0) {
-    u8 *buffer = Runtime_AllocateBlock(14, 0x400);
+    u8 *buffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
     struct IntroSprite *sprite = work->area.prompt.sprites;
 
     Resource_DecodeByteLz(gTitle_PromptTiles, buffer);
@@ -447,7 +447,7 @@ s32 Title_ShowIntro(s32 prompt) {
       *spriteWords++ = 0x40004000;
       *spriteWords = vramBlock;
     }
-    Runtime_ReleaseHeapBlock(14);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   }
   Fade_FromWhite(30);
   Fade_Wait();
@@ -500,7 +500,7 @@ s32 Title_ShowIntro(s32 prompt) {
     WaitFrames(1);
   }
   gCpuLoadDisplayEnabled = savedCpuLoadDisplay;
-  Runtime_ReleaseHeapBlock(43);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TITLE_INTRO);
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0;
   WaitFrames(1);

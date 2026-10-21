@@ -39,8 +39,8 @@ STATIC_ASSERT(sizeof(struct FontGlyph) == (2 + FONT_GLYPH_ROWS * 2));
 extern const struct FontGlyph gUiText_Glyphs[];
 
 /// The buffers an icon (command, item, Psynergy or condition) or a portrait is
-/// decoded through, in heap slot 17 for one build: UiIcon_Decode unpacks
-/// encoded into input, then expands input into tiles.
+/// decoded through, in HEAP_SLOT_GLYPH_TRANSFER for one build: UiIcon_Decode
+/// unpacks encoded into input, then expands input into tiles.
 typedef struct {
   /// The icon unpacked by Tile_Decompress4bpp; a 256-colour command icon
   /// (ResourceId_CommandIcons) is unpacked here by Resource_DecodeByteLz and

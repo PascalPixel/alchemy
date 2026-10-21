@@ -23,7 +23,7 @@ struct MapLayerScroll {
 
 /// The field map's work: the followed position, screen shake, tile
 /// animations, blend script, view and its bounds, and three scrolling layers.
-/// Heap slot 8 (HEAP_SLOT_MAP): Map_LoadLayeredScene takes and clears it as a
+/// HEAP_SLOT_MAP: Map_LoadLayeredScene takes and clears it as a
 /// field scene with a layered map starts, and the next scene change frees it.
 struct MapScrollWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels;

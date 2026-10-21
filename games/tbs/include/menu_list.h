@@ -96,10 +96,10 @@ struct MenuPoint {
   s32 y; ///< screen pixels
 };
 
-/// The battle command menus' work, heap slot 57 (0x104 bytes), reached as
-/// gLinkCountdownWork. Battle_CollectPartyCommands allocates it each round; it
-/// holds the icons beside the command window, the camera slide, the cursor
-/// each list remembers, the link battle's timer, the Djinn tutorial's
+/// The battle command menus' work, HEAP_SLOT_BATTLE_COMMANDS (0x104 bytes),
+/// reached as gLinkCountdownWork. Battle_CollectPartyCommands allocates it each
+/// round; it holds the icons beside the command window, the camera slide, the
+/// cursor each list remembers, the link battle's timer, the Djinn tutorial's
 /// key presses and what each command has spent.
 struct BattleMenuWork {
   /// The sprites UpdateLinkSessionCountdown draws each frame: the chosen

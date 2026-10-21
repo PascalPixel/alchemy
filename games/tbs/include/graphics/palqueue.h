@@ -19,8 +19,8 @@ struct PaletteSnapshot {
   u16 colors[16]; ///< the run's colours as saved when the cycle was added
 };
 
-/// The palette cycling queue (heap slot 28): four cycles and how many are in
-/// use.
+/// The palette cycling queue (HEAP_SLOT_PALETTE_CYCLES): four cycles and how
+/// many are in use.
 struct PaletteSnapshotWork {
   struct PaletteSnapshot entries[4];
   /// Cycles in use, 0 to 4; PaletteQueue_StepCycles masks four to none.

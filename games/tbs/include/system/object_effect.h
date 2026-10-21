@@ -21,8 +21,8 @@ struct FadeOverlayWork {
 
 STATIC_ASSERT(sizeof(struct FadeOverlayWork) == 28);
 
-/// Work slot 36: the fade overlay's work from BattleFx_StartFadeOverlay until
-/// the next scene change.
+/// HEAP_SLOT_FADE_OVERLAY: the fade overlay's work from
+/// BattleFx_StartFadeOverlay until the next scene change.
 extern struct FadeOverlayWork *gActorEffectWork;
 
 #define FIELD_WEATHER_PARTICLE_COUNT 32 ///< GroundParticleWork.particles
@@ -57,7 +57,7 @@ struct GroundParticle {
 STATIC_ASSERT(offsetof(struct GroundParticle, posX) == 0x0c);
 STATIC_ASSERT(sizeof(struct GroundParticle) == 0x20);
 
-/// Work slot 29 while ground particles, motes or sparkles run.
+/// HEAP_SLOT_GROUND_PARTICLES while ground particles, motes or sparkles run.
 struct GroundParticleWork {
   s32 entry;    ///< Resource entry holding the effect's tiles.
   s32 tileBase; ///< Their first tile in VRAM.
@@ -68,7 +68,7 @@ struct GroundParticleWork {
 
 STATIC_ASSERT(sizeof(struct GroundParticleWork) == 0x410);
 
-/// Work slot 29: the running ground particles, motes or sparkles.
+/// HEAP_SLOT_GROUND_PARTICLES: the running ground particles, motes or sparkles.
 extern struct GroundParticleWork *gParticleWork;
 
 #endif

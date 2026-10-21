@@ -52,8 +52,8 @@ STATIC_ASSERT(sizeof(struct BattleDisplayOffset) == 8);
 STATIC_ASSERT(sizeof(struct BattleDisplayWork) == 12);
 STATIC_ASSERT(offsetof(struct BattleDisplayWork, marked) == 8);
 
-/// The battle message display, in heap slot 37, which Battle_RunEncounter
-/// takes and zeroes for the battle.
+/// The battle message display, in HEAP_SLOT_BATTLE_DISPLAY, which
+/// Battle_RunEncounter takes and zeroes for the battle.
 extern struct BattleDisplayWork *gBattleDisplayWork;
 
 /// The battle event queue and the state of its playback: the phase, the event

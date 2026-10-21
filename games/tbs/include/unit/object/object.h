@@ -75,8 +75,6 @@ struct EffectDescriptor {
 //--------------------------------------------------------------------------
 #define MARKER_MAX 10
 
-#define MODE_WORLD_MAP 3 ///< the world map
-
 s32 Party_RemapCharacterIdByFlags(s32 character);
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood);
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot);

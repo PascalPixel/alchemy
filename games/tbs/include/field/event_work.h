@@ -35,7 +35,7 @@ struct EventWork {
   s16 raisedTrigger;     ///< a raised event for Scene_RunRaisedEvent
   u8 unk184[0x18];       ///< FieldWork's fallen characters and item slot
   s16 blockedSteps;      ///< frames the leader has pushed against something
-  s16 mode;              ///< MODE_WORLD_MAP (3) on the world map
+  s16 mode;              ///< an enum ObjectSystemMode
   u8 encounterGroups[8]; ///< encounter zone for each kind of ground
   s32 encounterBias;     ///< randomized distance adjustment between battles
   s32 encounterThreshold; ///< encounter steps before a battle

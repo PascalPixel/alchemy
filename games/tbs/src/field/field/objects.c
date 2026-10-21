@@ -164,10 +164,10 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
 /// scene change.
 ///
 /// Called through ObjectSystem_InitializeFar by the field scene runner
-/// (object/object/run_scene.c: 2 for a layered map, MODE_WORLD_MAP for the
-/// world map) and the battle's encounter (4), and directly by the sprite
-/// viewer (2). Allocates heap slot 6 for the ObjectSystemWork and slot 5 for
-/// the objects, and sets the sprite outline colours.
+/// (object/object/run_scene.c) and the battle's encounter, and directly by
+/// the sprite viewer, each with its enum ObjectSystemMode. Allocates heap slot
+/// 6 for the ObjectSystemWork and slot 5 for the objects, and sets the sprite
+/// outline colours.
 void ObjectSystem_Initialize(s32 controlMode) {
   struct ObjectSystemWork *objectSystem;
   struct ObjectRuntime *objectPool;
@@ -181,11 +181,11 @@ void ObjectSystem_Initialize(s32 controlMode) {
   Dma_Fill32Cell(fill, 0, objectSystem, sizeof(*objectSystem));
   // The scheduler runs higher orders first: the objects move (0xc8a) before
   // the camera follows them (0xc80).
-  if (controlMode == 4)
+  if (controlMode == MODE_BATTLE)
     Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
   else
     Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
-  if (controlMode >= 3 && controlMode <= 4) {
+  if (controlMode >= MODE_WORLD_MAP && controlMode <= MODE_BATTLE) {
     Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
   } else {
     Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);

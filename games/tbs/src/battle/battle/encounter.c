@@ -111,7 +111,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   battle->background = Event_GetSpecialValueFar();
   Runtime_AllocateBlock(4, 0xe00);
   Runtime_AllocateBlock(3, 0x600);
-  ObjectSystem_InitializeFar(4);
+  ObjectSystem_InitializeFar(MODE_BATTLE);
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0)
     UiWork_InitializeFar(1);
   else

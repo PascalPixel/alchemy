@@ -380,13 +380,13 @@ returns to the moving view.
 ## How the field fits with the rest of the game
 
 The object system is set up by whoever needs it. The field scene runner
-(`object/object/run_scene.c`) starts it in mode 2 for a layered map and in
-`MODE_WORLD_MAP` (3) for the world map, the battle's encounter in mode 4,
-and the debug sprite viewer in mode 2. Layered maps use the scrolling camera
-(`ObjectSystem_UpdateCamera`), and modes 3 and 4 the fixed camera
-(`ObjectSystem_UpdateCameraFixed`), which projects 3D points onto the
-screen. The scheduler runs the object update before the camera, so objects
-move before the camera follows them.
+(`object/object/run_scene.c`) starts it in `MODE_LAYERED_MAP` for a town or a
+dungeon and in `MODE_WORLD_MAP` for the world map, the battle's encounter in
+`MODE_BATTLE`, and the debug sprite viewer in `MODE_LAYERED_MAP`. Layered
+maps use the scrolling camera (`ObjectSystem_UpdateCamera`), and the world
+map and battles the fixed camera (`ObjectSystem_UpdateCameraFixed`), which
+projects 3D points onto the screen. The scheduler runs the object update
+before the camera, so objects move before the camera follows them.
 
 The battle effects, the Psynergy effects and the menus place their own
 sprites through the engine (`Object_ApplyProjectedPlacementFar`). A menu

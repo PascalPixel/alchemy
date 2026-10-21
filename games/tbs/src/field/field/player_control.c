@@ -48,7 +48,7 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 /// Handles a shortcut key's assignment: its top two bits choose what it
 /// requests (0 Psynergy, 1 an item) and the low 14 bits which one. With
 /// FLAG_MENUS_RAISE_EVENT set it raises FIELD_EVENT_MENUS_RAISED instead, as
-/// the menus do then; on the world map (mode 3) R raises
+/// the menus do then; on the world map R raises
 /// FIELD_EVENT_WORLD_MAP_PICTURE and L FIELD_EVENT_WORLD_MAP_ZOOM. Returns the
 /// request id, the assignment's low 14 bits, even when it raised an event
 /// instead; a shortcut with nothing assigned returns 0, as no key pressed does.
@@ -63,7 +63,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 
   if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
     Field_StoreHalfword(&fieldWork->event, FIELD_EVENT_MENUS_RAISED);
-  } else if (fieldWork->mode == 3) {
+  } else if (fieldWork->mode == MODE_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
       Field_StoreHalfword(&fieldWork->event,
                           (u16)FIELD_EVENT_WORLD_MAP_PICTURE);

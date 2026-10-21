@@ -54,9 +54,8 @@ s32 Field_RunScene(s32 entrance) {
     mode = MODE_WORLD_MAP;
     Encounter_SelectSceneZones(0);
   } else {
-    // Mode 2: a layered field map.
     Map_LoadLayeredSceneFar(gGameState.map);
-    mode = 2;
+    mode = MODE_LAYERED_MAP;
     Encounter_SelectSceneZones(1);
   }
   work->mode = mode;

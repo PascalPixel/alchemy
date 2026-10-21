@@ -127,7 +127,7 @@ struct FieldWork {
   /// Frames the leader has pushed against something, counted by the player
   /// controls; touch events and push tiles need more than 12.
   s16 blockedSteps;
-  s16 mode;               ///< MODE_WORLD_MAP (3) on the world map
+  s16 mode;               ///< an enum ObjectSystemMode
   u8 encounterGroups[8];  ///< encounter zone for each kind of ground
   s32 encounterBias;      ///< randomized distance adjustment between battles
   s32 encounterThreshold; ///< encounter steps before a battle; 0x100000

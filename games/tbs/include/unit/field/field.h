@@ -18,6 +18,18 @@ struct ScriptObjectRuntime;
 struct ScriptOperands;
 struct WorldPosition;
 
+/// How the object system runs (ObjectSystem_Initialize): which camera follows
+/// the objects and which update moves them.
+enum ObjectSystemMode {
+  /// A town, a dungeon or the sprite viewer: the scrolling camera.
+  MODE_LAYERED_MAP = 2,
+  /// The world map: the fixed camera, which projects 3D points onto the
+  /// screen.
+  MODE_WORLD_MAP = 3,
+  /// A battle: the fixed camera, and the battle's own motion update.
+  MODE_BATTLE = 4
+};
+
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,

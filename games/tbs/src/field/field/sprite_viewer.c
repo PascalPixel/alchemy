@@ -112,7 +112,7 @@ restart:
   ring = Runtime_AllocateBlock(HEAP_SLOT_BATTLE,
                                UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   VramCache_Reset();
-  ObjectSystem_Initialize(2);
+  ObjectSystem_Initialize(MODE_LAYERED_MAP);
   // With no map loaded, the map cell buffer holds layer 0's frames; a
   // two-part sprite (draw kind 20) puts its second part in the actor
   // sprite buffer, as resource slot 1.

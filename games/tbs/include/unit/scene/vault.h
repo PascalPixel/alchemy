@@ -14,7 +14,7 @@ extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
 extern const s32 *gEffectScripts[];
-extern s32 gVault_VillagerWantingTheRoofFixedRoute[];
+extern s32 gVault_WomanWantingTheRoofFixedRoute[];
 extern s32 gVault_BoyRoundTheWellRoute[];
 extern s32 gVault_GirlRoundTheWellRoute[];
 extern struct SceneEntrance gVault_Entrances[];

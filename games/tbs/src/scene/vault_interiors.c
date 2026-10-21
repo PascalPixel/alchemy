@@ -5,7 +5,7 @@
 /// entrance with a camera box of its own, and Vault's doors lead to the
 /// entrances named for them (vault.c): the house of a man keeping a sparkling
 /// rock the volcano threw (VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST), a
-/// child's house (VAULT_INTERIORS_FROM_VAULT_SOUTHEAST), the inn
+/// boy's house (VAULT_INTERIORS_FROM_VAULT_SOUTHEAST), the inn
 /// (VAULT_INTERIORS_FROM_VAULT_SOUTHWEST, with its guests' room upstairs at
 /// VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN), the item shop, an old couple's home
 /// too (VAULT_INTERIORS_FROM_VAULT_EAST), the weapon and armor shop
@@ -127,41 +127,49 @@ enum VaultInteriorsRaisedEvent {
 /// gVaultInteriors_Placements' rows from ACTOR_FIRST_PLACED; Garet's and Ivan's
 /// rows take their own slots.
 enum {
-  /// A sparkling rock was blown here from the volcano.
+  /// A young man, to whose house a sparkling rock was blown from the volcano.
   /// ★ Named from the game: "I kept worrying that they would take my gem."
   /// (MsgVaultICanSleepWellNowThat)
   ACTOR_GEM_OWNER = 8,
+  /// A woman with fair hair.
   /// ★ Named from the game: "My husband says my cat ate the treasure"
   /// (MsgVaultMyHusbandSaysMyCatAte)
   ACTOR_GEM_OWNERS_WIFE = 9,
-  /// Distrusts the man next door. "My neighbor creeps me out."
+  /// A burly grey-haired man who distrusts the man next door. "My neighbor
+  /// creeps me out."
   /// ★ Named from the game: "Maybe my neighbor is the thief..."
   /// (MsgVaultHeyMaybeMyNeighborIsThe)
   ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR = 10,
-  /// Asks about travel. "Hey, mister! Is it fun to see strange new places?"
-  ACTOR_CHILD = 11,
-  /// Wonders what was stolen. "Is it just me, or am I missing something?"
+  /// A small boy who asks about travel.
+  /// ★ Named from the game: "Hey, mister! Is it fun to see strange new places?"
+  /// (MsgVaultMisterFunSeeStrangeNew)
+  ACTOR_BOY_ASKING_ABOUT_TRAVEL = 11,
+  /// An old man with a cane who wonders what was stolen.
+  /// ★ Named from the game: "Is it just me, or am I missing something?"
+  /// (MsgVaultJustMeOrAmMissing)
   ACTOR_GRANDPA = 12,
-  /// Says Grandpa keeps wondering if anything was stolen.
+  /// An old woman, who says Grandpa keeps wondering if anything was stolen.
   /// ★ Named from the game: "You never bought me anything worth stealing!"
   /// (MsgVaultYouNeverBoughtMeAnythingWorth)
   ACTOR_GRANDPAS_WIFE = 13,
-  /// "I could help Ivan if I were just a little older."
+  /// A small boy. "I could help Ivan if I were just a little older."
   /// ★ Named from the game: "if I were just a little older."
   /// (MsgVaultICouldHelpIvanIfI)
-  ACTOR_CHILD_WISHING_TO_BE_OLDER = 14,
-  /// Tells the party Ivan's secret once it helps him.
+  ACTOR_BOY_WISHING_TO_BE_OLDER = 14,
+  /// A little girl who tells the party Ivan's secret once it helps him.
   /// ★ Named from the game: "I'll tell you a secret..."
   /// (MsgVaultSinceYoureHelpingIvanIllTell)
-  ACTOR_VILLAGER_TELLING_A_SECRET = 15,
-  /// Ivan's host.
+  ACTOR_GIRL_TELLING_A_SECRET = 15,
+  /// Ivan's host, an old man with white hair.
   /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
   /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
   ACTOR_MAYOR = 16,
+  /// A woman in a green dress.
   /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
   /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
   ACTOR_MAYORS_WIFE = 17,
-  /// The girl at the inn, as the Bone's description calls her. "I have a lot
+  /// The girl at the inn, as the Bone's description calls her, a young woman
+  /// with fair hair. "I have a lot
   /// of leftover bones from dinner."
   /// ★ Named from the game: "A bone from the girl at the inn"
   /// (MsgItemPlainName)
@@ -175,9 +183,11 @@ enum {
   /// ★ Named from what the player sees: the shopkeeper behind a counter of
   /// jars and sacks (its render)
   ACTOR_ITEM_MERCHANT = 21,
-  /// Works at the inn. "The guests upstairs weren't in their room during the
-  /// eruption."
+  /// A burly grey-haired man who works at the inn.
+  /// ★ Named from the game: "The guests upstairs weren't in their room during
+  /// the eruption." (MsgVaultTheGuestsUpstairsWerentInTheir)
   ACTOR_INN_STAFF = 22,
+  /// A woman in an apron behind the inn's counter.
   /// ★ Named from the game: "Everyone thinks our guests are the thieves"
   /// (MsgVaultEveryoneThinksOurGuestsThieves)
   ACTOR_INNKEEPER = 23,
@@ -214,7 +224,7 @@ enum {
 /// battle), where the thieves hid the stolen goods, numbering
 /// gVaultInteriors_LoftPlacements' rows from ACTOR_FIRST_PLACED.
 enum {
-  /// vault.c's ACTOR_VILLAGER_FIXING_THE_ROOF, tied up while fixing the roof.
+  /// vault.c's ACTOR_YOUNG_MAN_FIXING_THE_ROOF, tied up while fixing the roof.
   /// ★ Named from the game: "When I came to, I was all tied up."
   /// (MsgVaultVaultCutFree)
   ACTOR_TIED_UP_VILLAGER = 8,
@@ -232,13 +242,14 @@ enum {
   /// ★ Named from the game: "These are the thieves, Mayor..."
   /// (MsgVaultSeeThatsHappened)
   ACTOR_SECOND_THIEF = 12,
-  /// Comes up with the mayor and helps tie the thieves up. "What should we do
-  /// with them?"
+  /// A strongman who comes up with the mayor and helps tie the thieves up.
+  /// ★ Named from the game: "What should we do with them?"
+  /// (MsgVaultSeeThatsHappened)
   ACTOR_LOFT_ESCORT = 13,
-  /// Comes up with the mayor and opens the chests.
+  /// A strongman who comes up with the mayor and opens the chests.
   /// ★ Named from the game: "Mayor, we found another chest over here"
   /// (MsgVaultYouIsaacRightWontForget)
-  ACTOR_VILLAGER_OPENING_THE_CHESTS = 14,
+  ACTOR_STRONGMAN_OPENING_THE_CHESTS = 14,
   /// ★ Named from the game: "but the chest was empty."
   /// (MsgVaultButChestWasEmpty)
   ACTOR_FIRST_CHEST = 15,
@@ -554,29 +565,30 @@ static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
   Engine_EventShowMessage(x, 0);
 }
 
-/// In a house of Vault, the child asks about travel.
+/// In a house of Vault, the small boy asks about travel.
 /// "Hey, mister! Is it fun to see strange new places?"
 ///
-/// Reached by talking to the child (ACTOR_CHILD) before the thieves are jailed.
-static void Event_ChildAsksAboutTravel(void) {
+/// Reached by talking to the boy (ACTOR_BOY_ASKING_ABOUT_TRAVEL) before the
+/// thieves are jailed.
+static void Event_BoyAsksAboutTravel(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultMisterFunSeeStrangeNew);
-  Engine_ActorSetAnimation(ACTOR_CHILD, ANIM_STAND);
-  VaultInteriors_AskYesNoAndShowReply(ACTOR_CHILD);
+  Engine_ActorSetAnimation(ACTOR_BOY_ASKING_ABOUT_TRAVEL, ANIM_STAND);
+  VaultInteriors_AskYesNoAndShowReply(ACTOR_BOY_ASKING_ABOUT_TRAVEL);
   Engine_EventEnd();
 }
 
-/// At the mayor's in Vault, a villager offers to tell Ivan's secret.
+/// At the mayor's in Vault, a little girl offers to tell Ivan's secret.
 /// "Ivan has great powers. Wouldn't you like to know what they are?"
 ///
-/// Reached by talking to ACTOR_VILLAGER_TELLING_A_SECRET until
+/// Reached by talking to ACTOR_GIRL_TELLING_A_SECRET until
 /// FLAG_VAULT_IVAN_JOINED_ROD_SEARCH is set; then the row after it tells the
 /// secret: Ivan can talk with animals.
 static void Event_OfferIvansSecret(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultIvanHasGreatPowersWouldnt);
-  VaultInteriors_AskYesNoAndShowReply(ACTOR_VILLAGER_TELLING_A_SECRET);
-  Actor_FaceDirection(ACTOR_VILLAGER_TELLING_A_SECRET, FACING_WEST, 0);
+  VaultInteriors_AskYesNoAndShowReply(ACTOR_GIRL_TELLING_A_SECRET);
+  Actor_FaceDirection(ACTOR_GIRL_TELLING_A_SECRET, FACING_WEST, 0);
   Engine_EventEnd();
 }
 
@@ -800,7 +812,7 @@ static void Event_SuspectedThiefDodges(void) {
 ///
 /// Reached by talking to the villager suspecting the neighbor
 /// (ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR) after the thieves are jailed; the
-/// child and ACTOR_CHILD_WISHING_TO_BE_OLDER below are reached the same way.
+/// boy and ACTOR_BOY_WISHING_TO_BE_OLDER below are reached the same way.
 static void Event_AskWhetherThievesCameFromLunpa(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultDidThoseThievesComeFrom);
@@ -808,12 +820,12 @@ static void Event_AskWhetherThievesCameFromLunpa(void) {
   Engine_EventEnd();
 }
 
-/// In a house of Vault after the thieves are jailed, the child says Father
+/// In a house of Vault after the thieves are jailed, the boy says Father
 /// worries about the prisoners from Lunpa.
-static void Event_ChildWorriesAboutFather(void) {
+static void Event_BoyWorriesAboutFather(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultMyFatherWorriedAboutThose);
-  VaultInteriors_StandAndShowMessage(ACTOR_CHILD);
+  VaultInteriors_StandAndShowMessage(ACTOR_BOY_ASKING_ABOUT_TRAVEL);
   Engine_EventEnd();
 }
 
@@ -822,7 +834,7 @@ static void Event_ChildWorriesAboutFather(void) {
 static void Event_AskAboutDefeatingThieves(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultHeardDefeatedThoseThieves);
-  VaultInteriors_AskYesNoAndShowReply(ACTOR_CHILD_WISHING_TO_BE_OLDER);
+  VaultInteriors_AskYesNoAndShowReply(ACTOR_BOY_WISHING_TO_BE_OLDER);
   Engine_EventEnd();
 }
 
@@ -929,16 +941,16 @@ static void Event_ReadMindOnRock(void) {
   Engine_EventEnd();
 }
 
-/// In a house of Vault, Mind Read on the child: what is the outside world
+/// In a house of Vault, Mind Read on the boy: what is the outside world
 /// like, or Father looks sad.
-static void Event_ReadChildMind(void) {
+static void Event_ReadBoysMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Engine_EventSetMessage(MsgVaultWonderOutsideWorldLike);
   } else {
     Engine_EventSetMessage(MsgVaultFatherLooksSadWorryingLike);
   }
-  Vault_ShowThought(ACTOR_CHILD);
+  Vault_ShowThought(ACTOR_BOY_ASKING_ABOUT_TRAVEL);
   Engine_EventEnd();
 }
 
@@ -2552,20 +2564,20 @@ static void VaultInteriors_DefeatThieves(void) {
   VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_SetSpeed(ACTOR_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_VILLAGER_OPENING_THE_CHESTS, PIXELS(4) / 5,
+  Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
                  PIXELS(2) / 5);
   Actor_SetPosition(ACTOR_LOFT_MAYOR, PIXELS(744), PIXELS(408));
   Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 768, 408);
   VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_THIEF_LEADER, 30);
   Actor_SetPosition(ACTOR_LOFT_ESCORT, PIXELS(744), PIXELS(408));
   Actor_WalkToAndWait(ACTOR_LOFT_ESCORT, 768, 408);
-  Actor_SetPosition(ACTOR_VILLAGER_OPENING_THE_CHESTS, PIXELS(744),
+  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(744),
                     PIXELS(408));
-  Actor_WalkTo(ACTOR_VILLAGER_OPENING_THE_CHESTS, 784, 400);
+  Actor_WalkTo(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 784, 400);
   Actor_WalkToAndWait(ACTOR_LOFT_ESCORT, 776, 424);
-  Engine_ActorWaitForMove(ACTOR_VILLAGER_OPENING_THE_CHESTS);
+  Engine_ActorWaitForMove(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
   Actor_FaceActor(ACTOR_LOFT_ESCORT, ACTOR_THIEF_LEADER, 0);
-  VaultInteriors_FaceActorAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                   ACTOR_THIEF_LEADER, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
   Actor_FaceActor(GARET, ACTOR_LOFT_MAYOR, 0);
@@ -2583,30 +2595,30 @@ static void VaultInteriors_DefeatThieves(void) {
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_ESCORT, 20);
   VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 30);
   VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR,
-                                      ACTOR_VILLAGER_OPENING_THE_CHESTS, 20);
+                                      ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
   VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 30);
   VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_THIEF_LEADER, 20);
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   Engine_ActorSetAnimation(ACTOR_LOFT_ESCORT, ANIM_NOD);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                       ANIM_NOD, 20);
   VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_ESCORT,
-                                      ACTOR_VILLAGER_OPENING_THE_CHESTS, 20);
+                                      ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
   Engine_ActorSetAnimation(ACTOR_LOFT_ESCORT, ANIM_NOD);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                       ANIM_NOD, 20);
-  Actor_WalkTo(ACTOR_VILLAGER_OPENING_THE_CHESTS, 792, 392);
+  Actor_WalkTo(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 792, 392);
   Actor_WalkToAndWait(ACTOR_LOFT_ESCORT, 784, 400);
   Actor_FaceActor(ACTOR_LOFT_ESCORT, ACTOR_SECOND_THIEF, 0);
-  Engine_ActorWaitForMove(ACTOR_VILLAGER_OPENING_THE_CHESTS);
-  VaultInteriors_FaceActorAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  Engine_ActorWaitForMove(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
+  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                   ACTOR_FIRST_THIEF, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_LOFT_ESCORT, 1);
   Engine_EventWait(20);
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_ESCORT, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                       ANIM_SHAKE_HEAD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS, 30);
+  VaultInteriors_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 30);
   VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_ESCORT, ACTOR_PARTY_LEADER,
                                       20);
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_ESCORT, 20);
@@ -2667,13 +2679,13 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   actor = Object_GetById(ACTOR_SECOND_THIEF);
   Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_LOFT_ESCORT, PIXELS(768), PIXELS(408));
-  Actor_SetPosition(ACTOR_VILLAGER_OPENING_THE_CHESTS, PIXELS(768),
+  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(768),
                     PIXELS(424));
   Actor_MoveToAndWait(ACTOR_LOFT_MAYOR, 784, 424);
   Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(808), PIXELS(408));
   Actor_FaceActor(ACTOR_LOFT_ESCORT, ACTOR_LOFT_MAYOR, 0);
   Actor_FaceActor(ACTOR_TIED_UP_VILLAGER, ACTOR_LOFT_MAYOR, 0);
-  Actor_FaceActor(ACTOR_VILLAGER_OPENING_THE_CHESTS, ACTOR_THIEF_LEADER, 0);
+  Actor_FaceActor(ACTOR_STRONGMAN_OPENING_THE_CHESTS, ACTOR_THIEF_LEADER, 0);
   Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_THIEF_LEADER, 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
   Actor_SetPosition(GARET, PIXELS(808), PIXELS(440));
@@ -2706,7 +2718,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Actor_SetSpeed(ACTOR_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(ACTOR_LOFT_ESCORT, 746, 408);
   Actor_FaceDirection(ACTOR_LOFT_MAYOR, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                       FACING_NORTHWEST + FACING_STEP, 0);
   Actor_SetActionScript(ACTOR_FIRST_THIEF, gVaultInteriors_VaultScriptB);
   Engine_EventWait(20);
@@ -2721,19 +2733,19 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_EventWait(40);
   // The mayor and the villager opening the chests thank the party.
   Actor_SetSpeed(ACTOR_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_VILLAGER_OPENING_THE_CHESTS, PIXELS(4) / 5,
+  Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
                  PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 784, 408);
   Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 0);
-  Actor_WalkToAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS, 768, 408);
-  VaultInteriors_FaceActorAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  Actor_WalkToAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 768, 408);
+  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                   ACTOR_PARTY_LEADER, 20);
   VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                       ANIM_NOD, 20);
-  Actor_FaceDirection(ACTOR_VILLAGER_OPENING_THE_CHESTS, FACING_SOUTHEAST, 10);
-  VaultInteriors_ShowMessageAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS, 20);
+  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS, FACING_SOUTHEAST, 10);
+  VaultInteriors_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
   VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 50);
   VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, IVAN, 50);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
@@ -2743,11 +2755,11 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 50);
   // "Let's take a look at what they stole." The two go round to the chests.
-  Engine_ActorFaceEachOther(ACTOR_LOFT_MAYOR, ACTOR_VILLAGER_OPENING_THE_CHESTS,
-                            0);
+  Engine_ActorFaceEachOther(ACTOR_LOFT_MAYOR,
+                            ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0);
   VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Actor_SetActionScript(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  Actor_SetActionScript(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                         gVaultInteriors_VaultScriptC);
   Engine_EventWait(50);
   Actor_SetActionScript(ACTOR_LOFT_MAYOR, gVaultInteriors_VaultScriptD);
@@ -2761,10 +2773,10 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Actor_WalkToAndWait(GARET, 808, 456);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
   Engine_EventWait(100);
-  VaultInteriors_FaceActorAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                   ACTOR_LOFT_MAYOR, 60);
   VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR,
-                                  ACTOR_VILLAGER_OPENING_THE_CHESTS, 40);
+                                  ACTOR_STRONGMAN_OPENING_THE_CHESTS, 40);
   VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 40);
   Actor_FaceDirection(ACTOR_LOFT_MAYOR, FACING_EAST, 0);
   Engine_EventWait(20);
@@ -2783,20 +2795,21 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIM_WALK);
   Actor_SetPosition(ACTOR_FOUND_URN, 0, 0);
   gEventWork->message++;
-  Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_OPENING_THE_CHESTS, 1);
-  VaultInteriors_ShowMessageAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 1);
+  VaultInteriors_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
   VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 40);
   VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR,
-                                  ACTOR_VILLAGER_OPENING_THE_CHESTS, 20);
+                                  ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
   VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 30);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VILLAGER_OPENING_THE_CHESTS, 0);
-  VaultInteriors_FaceActorAndWait(GARET, ACTOR_VILLAGER_OPENING_THE_CHESTS, 40);
-  Actor_FaceDirection(ACTOR_VILLAGER_OPENING_THE_CHESTS, FACING_EAST, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0);
+  VaultInteriors_FaceActorAndWait(GARET, ACTOR_STRONGMAN_OPENING_THE_CHESTS,
+                                  40);
+  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS, FACING_EAST, 0);
   Engine_EventWait(40);
   // The villager opening the chests opens the second: the gold statue stolen
   // from the Sanctum.
-  Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_OPENING_THE_CHESTS, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 2);
   Event_PlayCue(SE_124);
   Engine_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIM_SHAKE_HEAD);
   Object_GetById(ACTOR_FOUND_STATUE)->motionFlags = 0;
@@ -2818,30 +2831,30 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                       ANIM_NOD, 50);
   VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 20);
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 30);
   // The villager opening the chests finds another chest; the mayor asks whether
   // it is what Ivan was looking for, and he can return to Master Hammet.
-  Actor_FaceDirection(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                       FACING_NORTH + FACING_STEP, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_VILLAGER_OPENING_THE_CHESTS, EMOTE_IN_FRONT | 0, 0);
+  Actor_ShowEmote(ACTOR_STRONGMAN_OPENING_THE_CHESTS, EMOTE_IN_FRONT | 0, 0);
   Engine_EventWait(60);
-  Actor_WalkToAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS, 856, 376);
+  Actor_WalkToAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 856, 376);
   Engine_EventWait(20);
-  VaultInteriors_FaceActorAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                                   ACTOR_LOFT_MAYOR, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS, 20);
-  Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_VILLAGER_OPENING_THE_CHESTS, 0);
+  VaultInteriors_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
+  Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 0, 0);
   Engine_EventWait(60);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_VILLAGER_OPENING_THE_CHESTS, 30);
+  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_STRONGMAN_OPENING_THE_CHESTS, 30);
   VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR, IVAN, 20);
   VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   Event_ShowMessage(ACTOR_LOFT_MAYOR, 0);
-  Actor_FaceDirection(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                       FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(30);
   VaultInteriors_FaceActorAndWait(IVAN, ACTOR_LOFT_MAYOR, 20);
@@ -2925,12 +2938,12 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 30);
   VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR,
-                                      ACTOR_VILLAGER_OPENING_THE_CHESTS, 20);
+                                      ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
   VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
   // The mayor and the villager opening the chests leave down the ladder.
-  Actor_WalkToAndWait(ACTOR_VILLAGER_OPENING_THE_CHESTS, 856, 408);
+  Actor_WalkToAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 856, 408);
   Actor_SetActionScript(ACTOR_LOFT_MAYOR, gVaultInteriors_VaultScriptE);
-  Actor_SetActionScript(ACTOR_VILLAGER_OPENING_THE_CHESTS,
+  Actor_SetActionScript(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                         gVaultInteriors_VaultScriptE);
   Actor_WalkTo(GARET, 792, 456);
   Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2941,7 +2954,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Actor_FaceDirection(IVAN, FACING_NORTH + FACING_STEP, 0);
   Object_RefreshSelectorById(ACTOR_LOFT_MAYOR);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
-  temporaryActor = Object_GetById(ACTOR_VILLAGER_OPENING_THE_CHESTS);
+  temporaryActor = Object_GetById(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
   {
     u8 *pauseFlag = &temporaryActor->paused;
     u8 paused = 1;
@@ -2952,7 +2965,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   temporaryActor->targetY = ACTOR_NO_TARGET;
   temporaryActor->targetZ = ACTOR_NO_TARGET;
   Actor_ShowEmote(ACTOR_LOFT_MAYOR, EMOTE_IN_FRONT | 0, 0);
-  Engine_ActorSetAnimation(ACTOR_VILLAGER_OPENING_THE_CHESTS, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_STRONGMAN_OPENING_THE_CHESTS, ANIM_STAND);
   Engine_EventWait(50);
   Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 0);
   Actor_WalkToAndWait(GARET, 808, 440);
@@ -2964,9 +2977,9 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   VaultInteriors_FaceActorAndWait(GARET, ACTOR_LOFT_MAYOR, 20);
   VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIM_NOD, 20);
   Actor_WalkTo(ACTOR_LOFT_MAYOR, 744, 408);
-  Actor_WalkTo(ACTOR_VILLAGER_OPENING_THE_CHESTS, 744, 408);
+  Actor_WalkTo(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 744, 408);
   Engine_ActorWaitForMove(ACTOR_LOFT_MAYOR);
-  Engine_ActorWaitForMove(ACTOR_VILLAGER_OPENING_THE_CHESTS);
+  Engine_ActorWaitForMove(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
   Engine_EventWait(30);
   // Alone, Garet tries to cheer Ivan up; Ivan only wants to rescue Hammet,
   // but has seen the two's mission in their minds and won't ask their help.
@@ -3096,7 +3109,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, 0, 0);
   Actor_SetPosition(ACTOR_LOFT_MAYOR, 0, 0);
   Actor_SetPosition(ACTOR_LOFT_ESCORT, 0, 0);
-  Actor_SetPosition(ACTOR_VILLAGER_OPENING_THE_CHESTS, 0, 0);
+  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0, 0);
   Actor_SetPosition(ACTOR_THIEF_LEADER, 0, 0);
   Actor_SetPosition(ACTOR_FIRST_THIEF, 0, 0);
   Actor_SetPosition(ACTOR_SECOND_THIEF, 0, 0);
@@ -3873,41 +3886,41 @@ struct ScenePlacement gVaultInteriors_Placements[] = {
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(376), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6c, 0x0, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(160), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6a, 0x0, 3,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, 3,
         PIXELS(152), 0, PIXELS(72), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x65, 0x0, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, ACTOR_STAND,
         PIXELS(456), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6b, 0x0, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_FAIR_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(368), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x67, 0x0, ACTOR_WANDER,
+    { SPRITE_OLD_MAN_WITH_CANE, 0x0, ACTOR_WANDER,
         PIXELS(744), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6f, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, 0x0, ACTOR_STAND,
         PIXELS(752), 0, PIXELS(128), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6b, 0x0, ACTOR_STAND,
+    { SPRITE_BOY_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(496), 0, PIXELS(416), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x66, 0x0, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, 0x0, ACTOR_STAND,
         PIXELS(512), 0, PIXELS(416), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x75, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, ACTOR_STAND,
         PIXELS(536), 0, PIXELS(451), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x73, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, ACTOR_STAND,
         PIXELS(416), 0, PIXELS(464), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0x0, ACTOR_WANDER,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(536), 0, PIXELS(672), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x7c, 0x0, ACTOR_STAND,
+    { SPRITE_BALD_MAN_IN_RED, 0x0, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x7d, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x76, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PONYTAIL, 0x0, ACTOR_STAND,
         PIXELS(632), 0, PIXELS(136), FACING_SOUTH, 3, 0 },
-    { 0x65, 0x0, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, ACTOR_STAND,
         PIXELS(664), 0, PIXELS(632), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x80, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_STAND,
         PIXELS(696), 0, PIXELS(696), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x3f, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
+    { SPRITE_MAN_WITH_LONG_DARK_HAIR, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(696), FACING_EAST, 3, 0 },
-    { 0x40, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
+    { SPRITE_FIGURE_IN_PURPLE, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xdf, 0x0, ACTOR_STAND,
         PIXELS(692), 0, PIXELS(411), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3919,19 +3932,19 @@ struct ScenePlacement gVaultInteriors_LoftPlacements[] = {
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(376), 0, PIXELS(392), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(160), 0, PIXELS(136), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x75, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(504), 0, PIXELS(456), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x3f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_LONG_DARK_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(696), FACING_EAST, 3, 0 },
-    { 0x40, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FIGURE_IN_PURPLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x40, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FIGURE_IN_PURPLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_CHEST, 0x0, ACTOR_STAND,
         PIXELS(872), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3977,13 +3990,13 @@ struct SceneEvent gVaultInteriors_Events[] = {
     { EVENT_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
     { EVENT_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutRocks) },
     { EVENT_TALK, ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultMyNeighborCreepsMeOutHe) },
-    { EVENT_TALK, ACTOR_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ChildAsksAboutTravel) },
+    { EVENT_TALK, ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyAsksAboutTravel) },
     { EVENT_TALK, ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutMissingThings) },
     { EVENT_TALK, ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultEverSinceTheEruptionGrandpaKeeps) },
-    { EVENT_TALK, ACTOR_CHILD_WISHING_TO_BE_OLDER, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, MSGNO(MsgVaultICouldHelpIvanIfI) },
-    { EVENT_TALK, ACTOR_CHILD_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultYoureHelpingIvanYouDontLook) },
-    { EVENT_TALK, ACTOR_VILLAGER_TELLING_A_SECRET, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, EVENT_SCRIPT(Event_OfferIvansSecret) },
-    { EVENT_TALK, ACTOR_VILLAGER_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultSinceYoureHelpingIvanIllTell) },
+    { EVENT_TALK, ACTOR_BOY_WISHING_TO_BE_OLDER, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, MSGNO(MsgVaultICouldHelpIvanIfI) },
+    { EVENT_TALK, ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultYoureHelpingIvanYouDontLook) },
+    { EVENT_TALK, ACTOR_GIRL_TELLING_A_SECRET, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, EVENT_SCRIPT(Event_OfferIvansSecret) },
+    { EVENT_TALK, ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultSinceYoureHelpingIvanIllTell) },
     { EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MayorAsksHelpForIvan) },
     { EVENT_TALK, ACTOR_MAYORS_WIFE, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, MSGNO(MsgVaultMyHusbandTheMayorCantBelieve) },
     { EVENT_TALK, ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultReallyYoureGoingToHelpIvan) },
@@ -4004,11 +4017,11 @@ struct SceneEvent gVaultInteriors_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultTheOtherSparklingRocksAllCrumbled) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnRock) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultHeyMaybeMyNeighborIsThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadChildMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoysMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnThieves) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultYouNeverBoughtMeAnythingWorth) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultTheseGuysLookReliableIGuess) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatSortOfThing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultTheseGuysLookReliableIGuess) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatSortOfThing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMayorMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMaybeTheyllFindOurStolenFamily) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
@@ -4055,11 +4068,11 @@ struct SceneEvent gVaultInteriors_EventsAfterThieves[] = {
     { EVENT_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultICanSleepWellNowThat) },
     { EVENT_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutRocks) },
     { EVENT_TALK, ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherThievesCameFromLunpa) },
-    { EVENT_TALK, ACTOR_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ChildWorriesAboutFather) },
+    { EVENT_TALK, ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyWorriesAboutFather) },
     { EVENT_TALK, ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutMissingThings) },
     { EVENT_TALK, ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultJustAsIThoughtNothingWas) },
-    { EVENT_TALK, ACTOR_CHILD_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutDefeatingThieves) },
-    { EVENT_TALK, ACTOR_VILLAGER_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIvanLearnedALotByTalking) },
+    { EVENT_TALK, ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutDefeatingThieves) },
+    { EVENT_TALK, ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIvanLearnedALotByTalking) },
     { EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MayorGivesWaterOfLife) },
     { EVENT_TALK, ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultYoureThePersonWhoGotOur) },
     { EVENT_TALK, ACTOR_GIRL_AT_THE_INN, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
@@ -4071,11 +4084,11 @@ struct SceneEvent gVaultInteriors_EventsAfterThieves[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultEverybodysAfterMyRockTheyWant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnRock) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultTheReasonLunpaTurnedBadIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadChildMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoysMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnThieves) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadSomethingWorth) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultWhenIGrowUpIWant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadWingsLike) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultWhenIGrowUpIWant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadWingsLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMayorMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultImSoRelievedNowThatWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },

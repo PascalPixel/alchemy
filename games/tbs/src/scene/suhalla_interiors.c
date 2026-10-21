@@ -214,10 +214,11 @@ static void Event_TalkToHealer(s32 actorId) {
   }
 }
 
-/// In Suhalla after Babi's audience, a traveler the storms blew back asks
-/// whether the party was blown here on the way to Babi Lighthouse: yes, and
-/// the traveler means to give up and follow the northern mountain back to
-/// Tolbi; no, and tells of setting out to open a business at the lighthouse.
+/// A traveler the storms blew back asks whether the party was blown here too.
+/// That's in Suhalla after Babi's audience, and the question is whether the
+/// party was on the way to Babi Lighthouse: yes, and the traveler means to give
+/// up and follow the northern mountain back to Tolbi; no, and tells of setting
+/// out to open a business at the lighthouse.
 static void Event_AskIfBlownHere(s32 actorId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
   Engine_EventSetMessage(question);

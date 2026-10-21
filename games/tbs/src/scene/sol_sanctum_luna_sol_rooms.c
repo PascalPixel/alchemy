@@ -1,10 +1,10 @@
 /// @file
 /// Sol Sanctum (SolSanctumLunaSolRooms, scene 11), the rooms of Sol and Luna at
 /// the heart of the sanctum, reached from scene 16 (sol_sanctum_entrance.c) by
-/// its exit 16. Kraden has led Isaac, Garet and Jenna this far looking for the
-/// hidden passage Saturos and Menardi spoke of; here he finds what he came for,
-/// and from here the floor opens on the way up to the Elemental Star Room. Its
-/// scenes follow the story:
+/// SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS. Kraden has led Isaac,
+/// Garet and Jenna this far looking for the hidden passage Saturos and Menardi
+/// spoke of; here he finds what he came for, and from here the floor opens on
+/// the way up to the Elemental Star Room. Its scenes follow the story:
 ///
 /// - Arriving (cell code 11, Event_KradenFindsHeartOfSanctum), Kraden runs to
 ///   the symbol on the floor: `This is it! We've found it!`, the mark of the
@@ -39,14 +39,15 @@
 ///   see that the floor's symbol has changed from Sol to Luna
 ///   (FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN). Searching the symbol (cell code 20)
 ///   then opens the floor (FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN), and Isaac,
-///   then Kraden, rise through it to the Elemental Star Room (scene 17, exit
-///   7).
+///   then Kraden, rise through it to the Elemental Star Room (scene 17,
+///   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM).
 /// - After the eruption (FLAG_SOL_SANCTUM_ERUPTED), the Wise One, the floating
 ///   rock that held back the volcano (sol_sanctum_eruption.c), sends Isaac and
 ///   Garet out of the collapsing Elemental Star Room to these rooms in a white
-///   flash (entrance 8). Garet asks `Did that floating eye thing save us?`, the
-///   rooms shake, and the two set off for the way out
-///   (FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN). From then on the rooms rumble.
+///   flash (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION). Garet asks
+///   `Did that floating eye thing save us?`, the rooms shake, and the two set
+///   off for the way out (FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN). From then on
+///   the rooms rumble.
 ///
 /// The rooms' colours follow the party. Crossing cell code 13 or 14 fades them
 /// to a tint or back to plain colours: until all four quarters are lit, code 14
@@ -60,8 +61,10 @@
 /// timer of its own, that the trap adds and removes. Entrance 6's scene
 /// (SolSanctumLunaSolRooms_AnimateSavedStatueLights) flashes the quarters lit
 /// since and has Kraden urge Isaac on, but scene 12 leads to it only from a
-/// branch that cannot run. Exit 1 leads back to scene 16 and exit 2 into scene
-/// 12; the scenes take exits 3 to 5 back to scene 12 and exit 7 up to scene 17.
+/// branch that cannot run. SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ENTRANCE_1
+/// leads back to scene 16 and
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM up to scene
+/// 17; exit 2 leads into scene 12, and the scenes take exits 3 to 5 back to it.
 
 #include "game_state.h"
 #include "unit/scene/sol_sanctum_luna_sol_rooms.h"
@@ -123,8 +126,8 @@ const u32 *SolSanctumLunaSolRooms_GetExits(void) {
   return gSolSanctumLunaSolRoomsExits;
 }
 
-/// Returns the eight statues, four in each room (actors 8 to 15, the sprite of
-/// scene 12's statues), Kraden (actor 16), Jenna and Garet, all always placed.
+/// Returns the eight statues, four in each room, Kraden, Jenna and Garet, all
+/// always placed.
 const struct ScenePlacement *SolSanctumLunaSolRooms_GetPlacements(void) {
   return gSolSanctumLunaSolRoomsPlacements;
 }
@@ -1151,8 +1154,9 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
 /// it change. The floor opens, and Isaac, then Kraden ("Wait for me, Isaac...
 /// I'm on my way!"), rise through it. Does nothing until
 /// FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN is set. Sets
-/// FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN the first time and takes exit 7, to
-/// the Elemental Star Room (scene 17, entrance 10).
+/// FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN the first time and takes
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, to the
+/// Elemental Star Room (scene 17).
 static void Event_RiseToElementalStarRoom(void) {
   struct FieldActor *actor;
   s32 frame;
@@ -1208,7 +1212,7 @@ static void Event_RiseToElementalStarRoom(void) {
       Map_ClearLayerEntryFlag(10);
       Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
     }
-    Object_LinkPair(16, 0, 30);
+    Object_LinkPair(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 30);
     Engine_ActorSetAnimation(ACTOR_KRADEN, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
@@ -1314,7 +1318,8 @@ static void Event_RiseToElementalStarRoom(void) {
 /// copies each lit quarter into its FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the
 /// disarmed trap's flash at entrance 4, the trap at entrance 5 (then darkening
 /// the four quarters), the newly lit quarters at entrance 6, and the arrival
-/// after the Wise One's rescue at entrance 8 until
+/// after the Wise One's rescue at
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION until
 /// FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN is set. Otherwise it redraws the
 /// quarters, pictures, floor and open way up from the story flags, and after
 /// the eruption the rooms rumble.
@@ -1489,8 +1494,9 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
 /// of the collapsing Elemental Star Room, and they appear here in a white
 /// flash, bewildered, as the rooms shake. Garet: "Did that floating eye thing
 /// save us?" A stronger tremor throws them aside, and they set off: "Let's get
-/// out of here..." Called by SolSanctumLunaSolRooms_Initialize at entrance 8
-/// until FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN is set; the caller sets it. Sets
+/// out of here..." Called by SolSanctumLunaSolRooms_Initialize at
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION until
+/// FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN is set; the caller sets it. Sets
 /// FLAG_SCENE_TEMP_01 and clears _00 and _02.
 static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   struct FieldActor *leader;
@@ -1592,9 +1598,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_EventEnd();
 }
 
-/// Sol Sanctum: talking to Kraden (actor 16) in the Luna room. "Let me know
-/// what you find" once Isaac has agreed to look farther up the passage,
-/// otherwise "Just wait over there."
+/// Sol Sanctum: talking to Kraden in the Luna room. "Let me know what you find"
+/// once Isaac has agreed to look farther up the passage, otherwise "Just wait
+/// over there."
 static void Event_TalkToKraden(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN) != 0) {
@@ -1635,7 +1641,7 @@ u32 gSolSanctumLunaSolRoomsExits[] = {
     SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM,
                SolSanctumElementalStarRoom,
                SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
-    SCENE_EXIT_TO_BATTLE(10, 1),
+    SCENE_EXIT_TO_BATTLE(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SCENE_510, 1),
     SCENE_EXITS_END,
 };
 
@@ -1668,7 +1674,8 @@ struct ScenePlacement gSolSanctumLunaSolRoomsPlacements[] = {
 // clang-format on
 
 struct SceneEvent gSolSanctumLunaSolRoomsEvents[] = {
-    {EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKraden)},
+    {EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TalkToKraden)},
     {EVENT_TOUCH, 14, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_UpdateRoomTintInverse)},
     {EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UpdateRoomTint)},
@@ -1680,7 +1687,8 @@ struct SceneEvent gSolSanctumLunaSolRoomsEvents[] = {
      EVENT_SCRIPT(Event_RiseToElementalStarRoom)},
     {EVENT_TOUCH, 8, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_KradenSeesLunaPictureChange)},
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+     SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ENTRANCE_1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {EVENT_TOUCH, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_KradenFindsHeartOfSanctum)},

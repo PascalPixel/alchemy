@@ -4,9 +4,10 @@
 /// which Isaac, Garet, Jenna and Kraden explore together.
 ///
 /// It places nobody and holds no event of its own: its only rows are its two
-/// exits, and they are the passage's two ends. Exit 1 leads to scene 16's
-/// entrance 5 and exit 2 to its entrance 1; scene 16's exits 5 and 1 come back
-/// in at entrances 1 and 2. Its setup is the one it shares with scene 14
+/// exits, the passage's two ends, which both lead back to scene 16
+/// (SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_EAST and
+/// SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_WEST), and the party comes
+/// back in through the same doors. Its setup is the one it shares with scene 14
 /// (sol_sanctum_maze.c), SolSanctumRooms_Initialize: once Mt. Aleph has erupted
 /// (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes.
 
@@ -74,7 +75,9 @@ struct ScenePlacement gSolSanctumCorridorPlacements[] = {
 };
 
 struct SceneEvent gSolSanctumCorridorEvents[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+     SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_EAST},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS,
+     SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_WEST},
     {SCENE_EVENTS_END},
 };

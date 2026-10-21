@@ -44,6 +44,41 @@ void Engine_AudioPlayCue(s32 cue);
 #define DEBUG_ITEM_ROW_STEP 10  ///< Right and Left move ten numbers.
 #define DEBUG_ITEM_PAGE_STEP 30 ///< R and L move thirty.
 
+/// The placed actors, numbered in the order of gMenuTest_Placements after its
+/// four party rows, which keep their characters' ids. Each is drawn with the
+/// sprite of someone or something in the game and named for it; what talking
+/// to each does is in gMenuTest_Events.
+enum MenuTestActor {
+  /// Kraden's sprite, 0x1e (ACTOR_KRADEN in sol_sanctum_elemental_star_room.c);
+  /// opens the picker a full party drops an item with.
+  ACTOR_KRADEN = ACTOR_FIRST_PLACED,
+  /// Dora's sprite, 0x1f (vale_eruption.c). `You got a Djinni!`
+  ACTOR_DORA,
+  /// Saturos's sprite, 0x20 (sol_sanctum_elemental_star_room.c).
+  /// `The body is being torn apart.`
+  ACTOR_SATUROS,
+  /// Menardi's sprite, 0x21 (sol_sanctum_elemental_star_room.c).
+  /// `You got treasure!`
+  ACTOR_MENARDI,
+  /// The sprite of Vale's armor shopkeeper, 0x7d (vale_interiors1.c); opens
+  /// the debug shop.
+  ACTOR_ARMOR_SHOPKEEPER,
+  /// Dora's sprite again: the sanctum's service menu, in French a Nut, and in
+  /// Spanish and Italian `That IS dangerous!`
+  ACTOR_SECOND_DORA,
+  /// Saturos's sprite again. "Kyle... Will they be able to stop the Boulder?"
+  ACTOR_SECOND_SATUROS,
+  /// The ivy's sprite, 0xf8 ("trapped in the ivy", goma_cave_entrance.c);
+  /// opens the icon browser, and takes Whirlwind, Force and Catch.
+  ACTOR_IVY,
+  /// Felix's sprite, 0x23 (sol_sanctum_elemental_star_room.c); a shop message
+  /// browser, or in Japanese the character selector.
+  ACTOR_FELIX,
+  /// Felix's sprite again: a shop message browser, or in Japanese the item
+  /// browser.
+  ACTOR_SECOND_FELIX
+};
+
 /// Recalculates the four heroes after a debug inventory or stat change.
 /// Preserve the original Isaac, Garet, Mia, Ivan order.
 static __inline__ void DebugMenu_RecalculateParty(void) {
@@ -115,9 +150,10 @@ end:
   Engine_DebugFinalizeWindow(window, 2);
 }
 
-// The shop message browsers, run by talking to actors 16 and 17 while the
-// leader faces a given way (gMenuTest_Events). Each runs for the weapon
-// shop's 43 messages; the Sanctum's count is its own, also 43.
+// The shop message browsers, run by talking to ACTOR_FELIX and
+// ACTOR_SECOND_FELIX while the leader faces a given way (gMenuTest_Events).
+// Each runs for the weapon shop's 43 messages; the Sanctum's count is its own,
+// also 43.
 static void DebugMenu_BrowseWeaponShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgWeaponShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
@@ -157,7 +193,8 @@ static void DebugMenu_BrowseWarriorItemShopMessages(void) {
 #if TBS_PATCH_2
 /// Sets the event's message twice, so the second, MsgValeComeOnHurry, is the
 /// one shown, with no speaker (actor -1), and waits until it closes. Talking
-/// to actor 17 while facing south, in German, Spanish, French and Italian.
+/// to ACTOR_SECOND_FELIX while facing south, in German, Spanish, French and
+/// Italian.
 static void DebugMenu_RunMessageTest(void) {
   Engine_EventSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
   Engine_EventSetMessage(MSGNO(MsgValeComeOnHurry));
@@ -166,8 +203,8 @@ static void DebugMenu_RunMessageTest(void) {
 #endif
 
 /// Runs the shop test's preset inventory, money and ailment setup. Talking
-/// to actor 12: the debug shop, with 200000 coins, broken equipment and
-/// afflicted members (Battle_ApplyPresetItemsAndFlags).
+/// to ACTOR_ARMOR_SHOPKEEPER: the debug shop, with 200000 coins, broken
+/// equipment and afflicted members (Battle_ApplyPresetItemsAndFlags).
 static void DebugMenu_RunPresetShop(void) {
   Battle_ApplyPresetItemsAndFlags(1);
 }
@@ -175,21 +212,21 @@ static void DebugMenu_RunPresetShop(void) {
 UNUSED static void DebugMenu_NoOp(void) {}
 
 /// Opens the shop inventory selector and discards its selected owner and slot.
-/// Talking to actor 8: the picker a full party drops an item with.
+/// Talking to ACTOR_KRADEN: the picker a full party drops an item with.
 static void DebugMenu_TestItemSelection(void) {
   s32 selectedOwner;
   s32 selectedSlot;
   Shop_PickUnitItem(&selectedOwner, &selectedSlot);
 }
 
-/// Talking to Mia (actor 3): the name entry screen for Isaac.
+/// Talking to Mia: the name entry screen for Isaac.
 static void DebugMenu_EditIsaacName(void) { NameEntry_EditOwnerName(ISAAC); }
 
 /// Leaves the test actor unchanged when targeted by Psynergy. The event for
-/// Whirlwind, Force and Catch cast at actor 15.
+/// Whirlwind, Force and Catch cast at ACTOR_IVY.
 static void DebugMenu_IgnorePsynergy(void) {}
 
-/// Keeps Force from moving actor 15: run at phase 1 of Force cast at it, this
+/// Keeps Force from moving ACTOR_IVY: run at phase 1 of Force cast at it, this
 /// sets the effect's childMode, and Force's shot then leaves its target where
 /// it is (object/psynergy_effects/force.c).
 static void DebugMenu_EnableEffectChildMode(void) {
@@ -198,7 +235,7 @@ static void DebugMenu_EnableEffectChildMode(void) {
 
 #if TBS_PATCH_3
 /// Gives a Nut through the ordinary party gift and full-inventory dialogue.
-/// Talking to actor 13 in French only.
+/// Talking to ACTOR_SECOND_DORA in French only.
 UNUSED static void DebugMenu_GiveItemToParty(void) {
   PartyInventory_GiveItem(ITEM_NUT, 0);
 }
@@ -207,8 +244,8 @@ UNUSED static void DebugMenu_GiveItemToParty(void) {
 s32 MenuTest_GetEvents(void) { return (s32)gMenuTest_Events; }
 
 /// Levels the four heroes to the current debug target, then raises it by ten.
-/// Talking to Garet (actor 1): `You went up a level!`, then Isaac, Garet, Mia
-/// and Ivan are levelled up to 10 the first time, 20 the next, and so on.
+/// Talking to Garet: `You went up a level!`, then Isaac, Garet, Mia and Ivan
+/// are levelled up to 10 the first time, 20 the next, and so on.
 /// Unit_LevelUpTo only raises a level, and entering the room has already set
 /// them to 30 (Isaac to 50 outside Japanese), so the first talks change
 /// nothing.
@@ -226,9 +263,9 @@ static void DebugMenu_RaisePartyLevels(void) {
 }
 
 /// Attempts each consumable grant in order, including calls after a bag fills.
-/// Talking to Ivan (actor 2): `You got an item!`. The numbered items are 180
-/// the Herb, 183 the Potion, 186 the Psy Crystal, 192 the Cookie and 236 the
-/// Sacred Feather (MsgItemName + the number).
+/// Talking to Ivan: `You got an item!`. The numbered items are 180 the Herb,
+/// 183 the Potion, 186 the Psy Crystal, 192 the Cookie and 236 the Sacred
+/// Feather (MsgItemName + the number).
 static void DebugMenu_GiveConsumableTestStock(void) {
   // A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
   // retain the individual calls and their original insertion order.
@@ -428,7 +465,7 @@ static void DebugMenu_GiveConsumableTestStock(void) {
 }
 
 /// Runs the Japanese buffer loop, then grants and sets test Djinn. Talking to
-/// actor 9: `You got a Djinni!`, then Isaac takes the first seven Venus
+/// ACTOR_DORA: `You got a Djinni!`, then Isaac takes the first seven Venus
 /// Djinn, Garet seven Mars, Mia seven Mercury and Ivan six Jupiter, each set.
 /// XXX: likely a text-buffer benchmark, because the Japanese loop fills a
 /// local buffer sixteen times with 32 to 47 letters and nothing reads it.
@@ -514,7 +551,7 @@ static void DebugMenu_GivePartyDjinn(void) {
 }
 
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
-/// Talking to actor 10: `The body is being torn apart.` Isaac is poisoned
+/// Talking to ACTOR_SATUROS: `The body is being torn apart.` Isaac is poisoned
 /// (poison 1) and haunted, Garet given deadly poison (2). Garet's restraint
 /// is set to 1 too, but the closing UnitCalc clears the curse bits again
 /// unless he wears cursed equipment (game/game/units.c).
@@ -544,9 +581,9 @@ static void DebugMenu_DamageAndAfflictParty(void) {
 }
 
 /// Adds the test equipment in each owner's original inventory order. Talking
-/// to Jenna (actor 5): `You got sturdy equipment!`, then weapons and armor
-/// for each of the four, item numbers 9 (the Gaia Blade) to 171 (the
-/// Glittering Tiara); MsgItemName + the number names each.
+/// to Jenna: `You got sturdy equipment!`, then weapons and armor for each of
+/// the four, item numbers 9 (the Gaia Blade) to 171 (the Glittering Tiara);
+/// MsgItemName + the number names each.
 static void DebugMenu_GiveEquipmentTestStock(void) {
   UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
   Inventory_AddItem(ISAAC, 85);
@@ -587,8 +624,8 @@ static void DebugMenu_GiveEquipmentTestStock(void) {
 }
 
 /// Browses item definitions and gives the selected item while party bags allow
-/// it. Talking to actor 17 in Japanese (DebugMenu_OpenItemBrowser). Unlike
-/// the level room's browser it stops on every number, iconless ones too.
+/// it. Talking to ACTOR_SECOND_FELIX in Japanese (DebugMenu_OpenItemBrowser).
+/// Unlike the level room's browser it stops on every number, iconless ones too.
 static void DebugMenu_SelectItem(void) {
   struct UiWindow *window;
   struct UiWindow *details;
@@ -685,10 +722,10 @@ static void DebugMenu_SelectItem(void) {
 UNUSED static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
 
 /// Adds the original treasure test stock, retaining duplicate tickets and
-/// medals. Talking to actor 11: `You got treasure!`. Among the numbered items
-/// are 0xc8 to 0xcc and 0xcf (Orb of Force, Douse Drop, Frost Jewel, Lifting
-/// Gem, Halt Gem, Catch Beads), the four Elemental Stars 0xdc to 0xdf and the
-/// Mythril Bag 0xe0 (MsgItemName + the number).
+/// medals. Talking to ACTOR_MENARDI: `You got treasure!`. Among the numbered
+/// items are 0xc8 to 0xcc and 0xcf (Orb of Force, Douse Drop, Frost Jewel,
+/// Lifting Gem, Halt Gem, Catch Beads), the four Elemental Stars 0xdc to 0xdf
+/// and the Mythril Bag 0xe0 (MsgItemName + the number).
 static void DebugMenu_GiveTreasureTestStock(void) {
   // Sharing the duplicate grants through a counted loop shrinks this function
   // from 0x194 to 0x120; retain the original calls.
@@ -747,8 +784,8 @@ static void DebugMenu_GiveTreasureTestStock(void) {
 /// member is below 30 (Isaac 50 outside Japanese).
 s32 CommandTable_ConfigureCommandList(void) {
   // Assemble the test party before adding stock and setting levels: Jenna
-  // (5) leaves, Garet, Mia and Ivan join.
-  Party_RemoveActiveOwner(5);
+  // leaves, Garet, Mia and Ivan join.
+  Party_RemoveActiveOwner(JENNA);
   Party_AddActiveOwner(GARET);
   Party_AddActiveOwner(MIA);
   Party_AddActiveOwner(IVAN);
@@ -785,11 +822,11 @@ s32 CommandTable_ConfigureCommandList(void) {
 }
 
 /// Returns the icon browser's status to the event dispatcher. Talking to
-/// actor 15.
+/// ACTOR_IVY.
 static s32 DebugMenu_OpenIconBrowser(void) { return DebugMenu_BrowseIcons(); }
 
 #if !TBS_PATCH_1
-/// Returns the Japanese character selector's status. Talking to actor 16 in
+/// Returns the Japanese character selector's status. Talking to ACTOR_FELIX in
 /// Japanese: the party member chooser, whose choice nothing uses.
 static s32 DebugMenu_SelectCharacter(void) {
   return Menu_OpenCharacterSelector();
@@ -798,8 +835,9 @@ static s32 DebugMenu_SelectCharacter(void) {
 
 #if !TBS_PATCH_3
 /// Forwards the selected owner and shop confirmation status. Talking to
-/// actor 13 in Japanese, English and German: the sanctum's service menu, with
-/// actor 13 as its keeper, since Scene_TalkToActor passes the actor's id.
+/// ACTOR_SECOND_DORA in Japanese, English and German: the sanctum's service
+/// menu, with ACTOR_SECOND_DORA as its keeper, since Scene_TalkToActor passes
+/// the actor's id.
 static s32 DebugMenu_ConfirmShopAction(s32 unitId) {
   return Shop_ConfirmAct(unitId);
 }
@@ -867,68 +905,76 @@ struct ScenePlacement gMenuTest_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-/// Who runs what: Garet (1) levels, Jenna (5) equipment, Ivan (2) consumables,
-/// Mia (3) Isaac's name, and the placed actors from 8 on, numbered in
-/// gMenuTest_Placements' order after the four party rows. Outside Japanese,
-/// actors 16 and 17 run a different browser for each way the leader faces
-/// (bits 15..12 of the control: 0xc north, 0x8 west, 0x0 east, 0x4 south); in
-/// Japanese they open the character selector and the item browser.
+/// Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia
+/// Isaac's name, and the placed actors (enum MenuTestActor) the rest. Outside
+/// Japanese, ACTOR_FELIX and ACTOR_SECOND_FELIX run a different browser for
+/// each way the leader faces (bits 15..12 of the control: 0xc north, 0x8 west,
+/// 0x0 east, 0x4 south); in Japanese they open the character selector and the
+/// item browser.
 struct SceneEvent gMenuTest_Events[] = {
-    {EVENT_TALK, 1, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_RaisePartyLevels)},
-    {EVENT_TALK, 5, CONDITION_ALWAYS,
+    {EVENT_TALK, GARET, CONDITION_ALWAYS,
+     EVENT_SCRIPT(DebugMenu_RaisePartyLevels)},
+    {EVENT_TALK, JENNA, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_GiveEquipmentTestStock)},
-    {EVENT_TALK, 2, CONDITION_ALWAYS,
+    {EVENT_TALK, IVAN, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_GiveConsumableTestStock)},
-    {EVENT_TALK, 3, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_EditIsaacName)},
-    {EVENT_TALK, 8, CONDITION_ALWAYS,
+    {EVENT_TALK, MIA, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_EditIsaacName)},
+    {EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_TestItemSelection)},
-    {EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_GivePartyDjinn)},
-    {EVENT_TALK, 10, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS,
+     EVENT_SCRIPT(DebugMenu_GivePartyDjinn)},
+    {EVENT_TALK, ACTOR_SATUROS, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_DamageAndAfflictParty)},
-    {EVENT_TALK, 11, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_MENARDI, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_GiveTreasureTestStock)},
-    {EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_RunPresetShop)},
+    {EVENT_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT_SCRIPT(DebugMenu_RunPresetShop)},
 #if TBS_PATCH_3 && !TBS_PATCH_4
-    {EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_GiveItemToParty)},
+    {EVENT_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
+     EVENT_SCRIPT(DebugMenu_GiveItemToParty)},
 #elif TBS_PATCH_4
-    {EVENT_TALK, 13, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
      MSGNO(MsgTolbiTolbiShipThenTheyAreDangerous)},
 #else
-    {EVENT_TALK, 13, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_ConfirmShopAction)},
 #endif
-    {EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeKyleAbleStop)},
-    {EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_OpenIconBrowser)},
+    {EVENT_TALK, ACTOR_SECOND_SATUROS, CONDITION_ALWAYS,
+     MSGNO(MsgValeKyleAbleStop)},
+    {EVENT_TALK, ACTOR_IVY, CONDITION_ALWAYS,
+     EVENT_SCRIPT(DebugMenu_OpenIconBrowser)},
 #if !TBS_PATCH_1
-    {EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_SelectCharacter)},
-    {EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_OpenItemBrowser)},
+    {EVENT_TALK, ACTOR_FELIX, CONDITION_ALWAYS,
+     EVENT_SCRIPT(DebugMenu_SelectCharacter)},
+    {EVENT_TALK, ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
+     EVENT_SCRIPT(DebugMenu_OpenItemBrowser)},
 #else
-    {0xc400, 16, CONDITION_ALWAYS,
+    {0xc400, ACTOR_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_BrowseWeaponShopMessages)},
-    {0x8400, 16, CONDITION_ALWAYS,
+    {0x8400, ACTOR_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_BrowseArmorShopMessages)},
-    {0x400, 16, CONDITION_ALWAYS,
+    {0x400, ACTOR_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_BrowseItemShopMessages)},
-    {0x4400, 16, CONDITION_ALWAYS,
+    {0x4400, ACTOR_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_BrowseSanctumMessages)},
-    {0xc400, 17, CONDITION_ALWAYS,
+    {0xc400, ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_BrowseWarriorShopMessages)},
-    {0x8400, 17, CONDITION_ALWAYS,
+    {0x8400, ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_BrowseWarriorArmorShopMessages)},
-    {0x400, 17, CONDITION_ALWAYS,
+    {0x400, ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_BrowseWarriorItemShopMessages)},
 #if TBS_PATCH_2
-    {0x4400, 17, CONDITION_ALWAYS, EVENT_SCRIPT(DebugMenu_RunMessageTest)},
+    {0x4400, ACTOR_SECOND_FELIX, CONDITION_ALWAYS,
+     EVENT_SCRIPT(DebugMenu_RunMessageTest)},
 #endif
 #endif
-    {PSYNERGY_ON_ACTOR(0x4e), 15, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_IgnorePsynergy)},
-    {PSYNERGY_ON_ACTOR(0x8e), 15, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_IVY, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_IgnorePsynergy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), 15, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_IVY, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_IgnorePsynergy)},
-    // Force (0x8e) at actor 15, phase 1 (bits 30..28).
-    {0x10008e15, 15, CONDITION_ALWAYS,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, 1), ACTOR_IVY, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_EnableEffectChildMode)},
     {SCENE_EVENTS_END},
 };

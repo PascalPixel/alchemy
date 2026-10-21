@@ -1,18 +1,21 @@
 /// @file
 /// Vale (scene 7, a row the scene table leaves unnamed): the insides of the
 /// village's houses and shops, all on one map. Each room is an entrance with a
-/// camera box of its own, and its door (cell code n in room n) takes exit n
-/// back out: rooms 1, 2, 5 and 6 open onto the village (Vale, scene 4), and
-/// rooms 3, 4, 7 and 8 onto the part of Vale with the Psynergy Stone
-/// (SceneId_ValeGate, scene 5). Garet's family lives in room 6: his
-/// grandfather the mayor, his grandmother and his parents. Jenna's
-/// grandparents (actors 12 and 13) live in room 2, and room 4 holds the item,
-/// weapon and armor shops, each opened across its counter. The placements
-/// and events follow the story:
+/// camera box of its own, named for the door it is entered by
+/// (VALE_INTERIORS_1_FROM_VALE_WEST and the rest), and its door takes the exit
+/// of the same number back out: four open onto the village (Vale, scene 4),
+/// and four onto the part of Vale with the Psynergy Stone (SceneId_ValeGate,
+/// scene 5), as the exits' names say. Garet's family lives in the room
+/// entered from VALE_INTERIORS_1_FROM_VALE_EAST: his grandfather the mayor,
+/// his grandmother and his parents. Jenna's grandparents live in the room
+/// entered from VALE_INTERIORS_1_FROM_VALE_NORTH, and the one entered from
+/// VALE_INTERIORS_1_FROM_VALE_GATE_WEST holds the item, weapon and armor
+/// shops, each opened across its counter. The placements and events follow
+/// the story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   ValeInteriors1_Initialize removes every resident and flashes the
-///   lightning outside, and the doors of rooms 1, 2, 5 and 6 lead into the
+///   lightning outside, and the doors out to the village lead into the
 ///   storm's map (Vale, scene 3) instead (ValeInteriors1_GetExits). The jars
 ///   and the barrel are empty, and six more bookcases than by day can be read,
 ///   a notebook called "Study of Alchemy" among them.
@@ -22,8 +25,8 @@
 ///   Smoke Bomb, each found once.
 /// - After the party has left Vale (FLAG_PARTY_LEFT_VALE), Jenna having been
 ///   taken on Mt. Aleph. Her grandmother lies sick in bed (Initialize, from
-///   entrance 2), the villagers talk of the quest and of Felix, and the item
-///   shopkeeper gives Isaac a Herb as a farewell gift
+///   VALE_INTERIORS_1_FROM_VALE_NORTH), the villagers talk of the quest and of
+///   Felix, and the item shopkeeper gives Isaac a Herb as a farewell gift
 ///   (FLAG_VALE_FAREWELL_HERB_RECEIVED).
 /// - Back from Kalay (FLAG_REACHED_KALAY), with Ivan and Mia in the party. The
 ///   first time the party enters Garet's house, Event_GaretComesHome plays
@@ -59,26 +62,48 @@
 #include "flags.h"
 #include "songs.h"
 
+/// The placed actors, numbered in the order of the placement tables, which
+/// all place them alike; gValeInteriors1_PlacementsAfterKalay adds Garet, Ivan
+/// and Mia, who keep their characters' ids, and the drifting sprites. The
+/// villagers' notes quote what they say on the day the story begins.
 enum ValeInteriors1Actor {
   /// Garet's grandfather, the mayor ("your grandpa's the mayor", vale.c).
   /// "Isaac, please take care of my grandson, Garet."
-  ACTOR_GARETS_GRANDFATHER = 8,
+  ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED,
   /// Garet's grandmother. "Grandma! What's the matter? Are you choking?"
-  ACTOR_GARETS_GRANDMOTHER = 9,
+  ACTOR_GARETS_GRANDMOTHER,
   /// Garet's father.
   /// "I'm proud of you, Garet. My own son...on such an important quest!"
-  ACTOR_GARETS_FATHER = 10,
+  ACTOR_GARETS_FATHER,
   /// Garet's mother. "As mothers, Dora and I will always worry about you."
-  ACTOR_GARETS_MOTHER = 11,
+  ACTOR_GARETS_MOTHER,
+  /// Jenna's grandfather. "My granddaughter, Jenna, is finally happy
+  /// again..."
+  ACTOR_JENNAS_GRANDFATHER,
   /// Jenna's grandmother. "Please return my precious granddaughter, Jenna,
-  /// to me." Once Jenna is taken, actor 14 says she "grew sick with despair",
-  /// and she lies in bed.
-  ACTOR_JENNAS_GRANDMOTHER = 13,
-  ACTOR_ITEM_SHOPKEEPER = 20,
-  ACTOR_WEAPON_SHOPKEEPER = 21,
-  ACTOR_ARMOR_SHOPKEEPER = 22,
+  /// to me." Once Jenna is taken, ACTOR_VILLAGER_SPITTING_IMAGE says she
+  /// "grew sick with despair", and she lies in bed.
+  ACTOR_JENNAS_GRANDMOTHER,
+  /// In Jenna's grandparents' house. "Jenna is the spitting image of her
+  /// mother, whom we lost that day..."
+  ACTOR_VILLAGER_SPITTING_IMAGE,
+  /// "So Kraden came to Vale to study Mt. Aleph, right?"
+  ACTOR_VILLAGER_KRADENS_STUDIES,
+  /// "If there are visitors in town, we can't use our Psynergy."
+  ACTOR_VILLAGER_VISITORS_IN_TOWN,
+  /// "Do you ever dream of seeing the world outside the village?"
+  ACTOR_VILLAGER_DREAMS_OF_LEAVING,
+  /// "Few people outside of Vale possess the power of Psynergy. That's why
+  /// we need permission to leave the village..."
+  ACTOR_VILLAGER_PERMISSION_TO_LEAVE,
+  /// "I hear old man Kraden's got some visitors. Let's go use our Psynergy
+  /// to scare 'em!"
+  ACTOR_VILLAGER_SCARE_VISITORS,
+  ACTOR_ITEM_SHOPKEEPER,
+  ACTOR_WEAPON_SHOPKEEPER,
+  ACTOR_ARMOR_SHOPKEEPER,
   /// Three sprites drifting up from Garet's sleeping grandfather.
-  ACTOR_FIRST_DRIFTING_SPRITE = 23
+  ACTOR_FIRST_DRIFTING_SPRITE
 };
 
 // Forward declarations.
@@ -151,24 +176,28 @@ const struct SceneEvent *ValeInteriors1_GetEvents(void) {
 /// In a house of Vale on the day the story begins, a villager asks whether
 /// Isaac knew why Kraden came to Vale. He came to study Mt. Aleph.
 ///
-/// Reached by talking to actor 15 on the day the story begins.
+/// Reached by talking to ACTOR_VILLAGER_KRADENS_STUDIES on the day the story
+/// begins.
 static void Event_AskAboutKradensStudies(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeKradenCameToStudyMt);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 6);
-  Engine_EventAskYesNo(15, 0);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_VILLAGER_KRADENS_STUDIES,
+                            6);
+  Engine_EventAskYesNo(ACTOR_VILLAGER_KRADENS_STUDIES, 0);
   Engine_EventEnd();
 }
 
 /// In a house of Vale on the day the story begins, a villager asks Isaac to
 /// help scare Kraden's visitors with Psynergy.
 ///
-/// Reached by talking to actor 19 on the day the story begins.
+/// Reached by talking to ACTOR_VILLAGER_SCARE_VISITORS on the day the story
+/// begins.
 static void Event_AskToScareVisitors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeLetsScareKradensVisitors);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 19, 6);
-  Engine_EventAskYesNo(19, 0);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_VILLAGER_SCARE_VISITORS,
+                            6);
+  Engine_EventAskYesNo(ACTOR_VILLAGER_SCARE_VISITORS, 0);
   Engine_EventEnd();
 }
 
@@ -203,18 +232,19 @@ static void ValeInteriors1_GiveFarewellHerb(void) {
 /// In a house of Vale after the party has left, a villager tells of the
 /// culprits' strange powers and asks about them.
 ///
-/// Reached by talking to actor 16 after the party has left Vale.
+/// Reached by talking to ACTOR_VILLAGER_VISITORS_IN_TOWN after the party has
+/// left Vale.
 static void Event_AskAboutCulpritsPowers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeTheCulpritsHadStrangePowers);
-  Engine_EventAskYesNo(16, 0);
+  Engine_EventAskYesNo(ACTOR_VILLAGER_VISITORS_IN_TOWN, 0);
   Engine_EventEnd();
 }
 
 /// In Garet's house in Vale, back from Kalay, Garet's father asks whether
 /// Isaac heard them talking about Dora.
 ///
-/// Reached by talking to Garet's father (actor 10) after Kalay.
+/// Reached by talking to Garet's father after Kalay.
 static void Event_AskAboutDora(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDidYouHearAboutDora);
@@ -225,7 +255,7 @@ static void Event_AskAboutDora(void) {
 /// In Garet's house in Vale, back from Kalay, Garet's mother hopes the
 /// travelers did not get sick on the way.
 ///
-/// Reached by talking to Garet's mother (actor 11) after Kalay.
+/// Reached by talking to Garet's mother after Kalay.
 static void Event_WorryAboutTravelersHealth(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeHopeDidntGet);
@@ -246,44 +276,63 @@ static void ValeInteriors1_RequestWindowExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-// The rooms' doors: stepping on cell code n, in every table, takes room n's
-// exit n back out into Vale. On the stormy night, doors 1, 2, 5 and 6 lead to
-// the storm's map (scene 3) instead of Vale (scene 4).
+// The rooms' doors: stepping on a door's cell, whose collision code is its
+// exit's number, takes that exit back out, in every table. On the stormy night
+// the exits to Vale (scene 4) lead to the storm's map (scene 3) instead.
 
-/// Leaving room 1 of Vale's houses, for Vale (scene 4, entrance 10).
-static void Event_LeaveByDoor1(void) { ValeInteriors1_RequestWindowExit(1); }
+/// Leaves the room entered from VALE_INTERIORS_1_FROM_VALE_WEST, where
+/// ACTOR_VILLAGER_DREAMS_OF_LEAVING wanders.
+static void Event_LeaveToValeWest(void) {
+  ValeInteriors1_RequestWindowExit(VALE_INTERIORS_1_TO_VALE_WEST);
+}
 
-/// Leaving Jenna's grandparents' house, for Vale (scene 4, entrance 9).
-static void Event_LeaveByDoor2(void) { ValeInteriors1_RequestWindowExit(2); }
+/// Leaves Jenna's grandparents' house.
+static void Event_LeaveToValeNorth(void) {
+  ValeInteriors1_RequestWindowExit(VALE_INTERIORS_1_TO_VALE_NORTH);
+}
 
-/// Leaving room 3 of Vale's houses, for SceneId_ValeGate (scene 5, entrance
-/// 3).
-static void Event_LeaveByDoor3(void) { ValeInteriors1_RequestWindowExit(3); }
+/// Leaves the room entered from VALE_INTERIORS_1_FROM_VALE_GATE_NORTH, which
+/// no placement table puts anyone in.
+static void Event_LeaveToValeGateWest(void) {
+  ValeInteriors1_RequestWindowExit(VALE_INTERIORS_1_TO_VALE_GATE_WEST);
+}
 
-/// Leaving Vale's shops, for SceneId_ValeGate (scene 5, entrance 5).
-static void Event_LeaveByDoor4(void) { ValeInteriors1_RequestWindowExit(4); }
+/// Leaves Vale's shops.
+static void Event_LeaveToValeGateSouth(void) {
+  ValeInteriors1_RequestWindowExit(VALE_INTERIORS_1_TO_VALE_GATE_SOUTH);
+}
 
-/// Leaving room 5 of Vale's houses, for Vale (scene 4, entrance 7).
-static void Event_LeaveByDoor5(void) { ValeInteriors1_RequestWindowExit(5); }
+/// Leaves the room entered from VALE_INTERIORS_1_FROM_VALE_SOUTH, where
+/// ACTOR_VILLAGER_KRADENS_STUDIES and ACTOR_VILLAGER_VISITORS_IN_TOWN stand.
+static void Event_LeaveToValeSouth(void) {
+  ValeInteriors1_RequestWindowExit(VALE_INTERIORS_1_TO_VALE_SOUTH);
+}
 
-/// Leaving Garet's house, for Vale (scene 4, entrance 6).
-static void Event_LeaveByDoor6(void) { ValeInteriors1_RequestWindowExit(6); }
+/// Leaves Garet's house.
+static void Event_LeaveToValeEast(void) {
+  ValeInteriors1_RequestWindowExit(VALE_INTERIORS_1_TO_VALE_EAST);
+}
 
-/// Leaving room 7 of Vale's houses, for SceneId_ValeGate (scene 5, entrance
-/// 4).
-static void Event_LeaveByDoor7(void) { ValeInteriors1_RequestWindowExit(7); }
+/// Leaves the room entered from VALE_INTERIORS_1_FROM_VALE_GATE_SOUTH, where
+/// ACTOR_VILLAGER_SCARE_VISITORS stands.
+static void Event_LeaveToValeGateEast(void) {
+  ValeInteriors1_RequestWindowExit(VALE_INTERIORS_1_TO_VALE_GATE_EAST);
+}
 
-/// Leaving room 8 of Vale's houses, for SceneId_ValeGate (scene 5, entrance
-/// 1).
-static void Event_LeaveByDoor8(void) { ValeInteriors1_RequestWindowExit(8); }
+/// Leaves the room entered from VALE_INTERIORS_1_FROM_VALE_GATE_EAST, where
+/// ACTOR_VILLAGER_PERMISSION_TO_LEAVE stands.
+static void Event_LeaveToValeGateNorth(void) {
+  ValeInteriors1_RequestWindowExit(VALE_INTERIORS_1_TO_VALE_GATE_NORTH);
+}
 
 /// Arriving in a house of Vale: on the stormy night the residents are gone and
 /// lightning flashes outside; back from Kalay, entering Garet's house the first
 /// time plays his homecoming.
 ///
-/// The scene's initialize entry. Runs Event_GaretComesHome from entrance 6
-/// after Kalay until FLAG_GARET_CAME_HOME is set. From entrance 2, once the
-/// party has left Vale, Jenna's grandmother lies sick in bed.
+/// The scene's initialize entry. Runs Event_GaretComesHome from
+/// VALE_INTERIORS_1_FROM_VALE_EAST after Kalay until FLAG_GARET_CAME_HOME is
+/// set. From VALE_INTERIORS_1_FROM_VALE_NORTH, once the party has left Vale,
+/// Jenna's grandmother lies sick in bed.
 s32 ValeInteriors1_Initialize(void) {
   struct FieldActor *actor;
   struct EventWork **eventSlot = &gEventWork;
@@ -291,21 +340,21 @@ s32 ValeInteriors1_Initialize(void) {
   (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    Engine_ActorSetPosition(8, 0, 0);
-    Engine_ActorSetPosition(9, 0, 0);
-    Engine_ActorSetPosition(10, 0, 0);
-    Engine_ActorSetPosition(11, 0, 0);
-    Engine_ActorSetPosition(12, 0, 0);
-    Engine_ActorSetPosition(13, 0, 0);
-    Engine_ActorSetPosition(14, 0, 0);
-    Engine_ActorSetPosition(15, 0, 0);
-    Engine_ActorSetPosition(16, 0, 0);
-    Engine_ActorSetPosition(17, 0, 0);
-    Engine_ActorSetPosition(18, 0, 0);
-    Engine_ActorSetPosition(19, 0, 0);
-    Engine_ActorSetPosition(20, 0, 0);
-    Engine_ActorSetPosition(21, 0, 0);
-    Engine_ActorSetPosition(22, 0, 0);
+    Engine_ActorSetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_GARETS_GRANDMOTHER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_GARETS_FATHER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_GARETS_MOTHER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_JENNAS_GRANDFATHER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_VILLAGER_SPITTING_IMAGE, 0, 0);
+    Engine_ActorSetPosition(ACTOR_VILLAGER_KRADENS_STUDIES, 0, 0);
+    Engine_ActorSetPosition(ACTOR_VILLAGER_VISITORS_IN_TOWN, 0, 0);
+    Engine_ActorSetPosition(ACTOR_VILLAGER_DREAMS_OF_LEAVING, 0, 0);
+    Engine_ActorSetPosition(ACTOR_VILLAGER_PERMISSION_TO_LEAVE, 0, 0);
+    Engine_ActorSetPosition(ACTOR_VILLAGER_SCARE_VISITORS, 0, 0);
+    Engine_ActorSetPosition(ACTOR_ITEM_SHOPKEEPER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_WEAPON_SHOPKEEPER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_ARMOR_SHOPKEEPER, 0, 0);
     FieldFx_StartLightning();
     (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_SceneMapStateOffset))
         ->loud = 1;
@@ -341,9 +390,9 @@ s32 ValeInteriors1_Initialize(void) {
 /// In Vale's shops, opens the weapon shop across the counter, or the
 /// shopkeeper speaks.
 ///
-/// Reached by talking to the weapon shopkeeper (actor 21) in every table but
-/// the stormy night's. Facing north, across the counter, opens shop 1; else
-/// the shopkeeper's line follows the story.
+/// Reached by talking to the weapon shopkeeper in every table but the stormy
+/// night's. Facing north, across the counter, opens shop 1; else the
+/// shopkeeper's line follows the story.
 static void Event_TalkToWeaponShopkeeper(void) {
   struct FieldActor *leader;
 
@@ -372,8 +421,8 @@ static void Event_TalkToWeaponShopkeeper(void) {
 /// In Vale's shops, opens the armor shop across the counter, or the shopkeeper
 /// speaks.
 ///
-/// Reached by talking to the armor shopkeeper (actor 22) in every table but
-/// the stormy night's; opens shop 2 when facing north.
+/// Reached by talking to the armor shopkeeper in every table but the stormy
+/// night's; opens shop 2 when facing north.
 static void Event_TalkToArmorShopkeeper(void) {
   struct FieldActor *actor;
 
@@ -399,9 +448,9 @@ static void Event_TalkToArmorShopkeeper(void) {
 /// In Vale's shops, opens the item shop across the counter, or the shopkeeper
 /// speaks.
 ///
-/// Reached by talking to the item shopkeeper (actor 20) in every table but
-/// the stormy night's; opens shop 3 when facing north. After the party has
-/// left and before Kalay, ValeInteriors1_GiveFarewellHerb speaks instead.
+/// Reached by talking to the item shopkeeper in every table but the stormy
+/// night's; opens shop 3 when facing north. After the party has left and
+/// before Kalay, ValeInteriors1_GiveFarewellHerb speaks instead.
 static void Event_TalkToItemShopkeeper(void) {
   struct FieldActor *actor;
 
@@ -448,9 +497,10 @@ static inline void ValeInteriors1_PlayRepeatedAnimationAndWait(s32 actorId,
 /// them to look after him, and his father tells them to enjoy their stay; the
 /// three walk back into Isaac, and the father is left pacing.
 ///
-/// Called by ValeInteriors1_Initialize from entrance 6 after Kalay, until
-/// FLAG_GARET_CAME_HOME is set; sets it. Adds and removes the callback
-/// ValeInteriors1_SpawnDriftingSprite, and leaves the father pacing.
+/// Called by ValeInteriors1_Initialize from VALE_INTERIORS_1_FROM_VALE_EAST
+/// after Kalay, until FLAG_GARET_CAME_HOME is set; sets it. Adds and removes
+/// the callback ValeInteriors1_SpawnDriftingSprite, and leaves the father
+/// pacing.
 static void Event_GaretComesHome(void) {
   struct FieldActor *driftingSprite;
   struct FieldActor *actor;
@@ -1038,14 +1088,14 @@ struct ScenePlacement gValeInteriors1_PlacementsAfterKalay[] = {
 };
 
 struct SceneEvent gValeInteriors1_StormEvents[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor1) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor2) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor3) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor4) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor5) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor6) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor7) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor8) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeWest) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeNorth) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateWest) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateSouth) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeSouth) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeEast) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateEast) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateNorth) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
     { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
@@ -1071,25 +1121,25 @@ struct SceneEvent gValeInteriors1_Events[] = {
     { EVENT_TALK, ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIHearKradenHasGuestsAgain) },
     { EVENT_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeGaretHasGrownQuiteStrongIn) },
     { EVENT_TALK, ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeYouAndGaretAreOlderNow) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeMyGranddaughterJennaIsFinallyHappy) },
+    { EVENT_TALK, ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeMyGranddaughterJennaIsFinallyHappy) },
     { EVENT_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIHopeYouTwoWontBe) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeJennaIsTheSpittingImageOf) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutKradensStudies) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeIfThereAreVisitorsInTown) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeDoYouEverDreamOfSeeing) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeFewPeopleOutsideOfValePossess) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskToScareVisitors) },
+    { EVENT_TALK, ACTOR_VILLAGER_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeJennaIsTheSpittingImageOf) },
+    { EVENT_TALK, ACTOR_VILLAGER_KRADENS_STUDIES, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutKradensStudies) },
+    { EVENT_TALK, ACTOR_VILLAGER_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeIfThereAreVisitorsInTown) },
+    { EVENT_TALK, ACTOR_VILLAGER_DREAMS_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeDoYouEverDreamOfSeeing) },
+    { EVENT_TALK, ACTOR_VILLAGER_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeFewPeopleOutsideOfValePossess) },
+    { EVENT_TALK, ACTOR_VILLAGER_SCARE_VISITORS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskToScareVisitors) },
     { EVENT_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
     { EVENT_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
     { EVENT_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor1) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor2) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor3) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor4) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor5) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor6) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor7) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor8) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeWest) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeNorth) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateWest) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateSouth) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeSouth) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeEast) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateEast) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateNorth) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
     { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
@@ -1109,14 +1159,14 @@ struct SceneEvent gValeInteriors1_EventsAfterLeaving[] = {
     { EVENT_TALK, ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeReceivingAQuestDirectlyFromThe) },
     { EVENT_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeImProudOfYouGaretMy) },
     { EVENT_TALK, ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeAsMothersDoraAndIWill) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIHeardThatJennaBrotherFelix) },
+    { EVENT_TALK, ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeIHeardThatJennaBrotherFelix) },
     { EVENT_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValePleaseReturnMyPreciousGranddaughterJenna) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeAfterJennaWasTakenGrandmotherGrew) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeItsBecauseKradenWasStudyingAlchemy) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutCulpritsPowers) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeImSoJealousOfYouBeing) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeOnceYouLeaveTownTakeCare) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeIHadNoIdeaThatSuch) },
+    { EVENT_TALK, ACTOR_VILLAGER_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeAfterJennaWasTakenGrandmotherGrew) },
+    { EVENT_TALK, ACTOR_VILLAGER_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeItsBecauseKradenWasStudyingAlchemy) },
+    { EVENT_TALK, ACTOR_VILLAGER_VISITORS_IN_TOWN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutCulpritsPowers) },
+    { EVENT_TALK, ACTOR_VILLAGER_DREAMS_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeImSoJealousOfYouBeing) },
+    { EVENT_TALK, ACTOR_VILLAGER_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeOnceYouLeaveTownTakeCare) },
+    { EVENT_TALK, ACTOR_VILLAGER_SCARE_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeIHadNoIdeaThatSuch) },
     { EVENT_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
     { EVENT_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
     { EVENT_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
@@ -1127,22 +1177,22 @@ struct SceneEvent gValeInteriors1_EventsAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeTheWiseOneChoseGaretHimself) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeOnceGaretLeavesIWontBe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIAmConcernedForGaretBut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeFelixInheritedHisFathersSkillWith) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeFelixInheritedHisFathersSkillWith) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeJennaAnytimeYouFaceDangerJust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeWhyWouldFelixTakeHisSister) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeWeAlmostLostTheTownOver) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeIdLikeToBelieveThatOnly) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeIfOnlyIdGoneToSol) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeValesLawsStateThatYouCannot) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeIWishIWereTheOne) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor1) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor2) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor3) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor4) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor5) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor6) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor7) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor8) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeWhyWouldFelixTakeHisSister) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeWeAlmostLostTheTownOver) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeIdLikeToBelieveThatOnly) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DREAMS_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeIfOnlyIdGoneToSol) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeValesLawsStateThatYouCannot) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SCARE_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeIWishIWereTheOne) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeWest) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeNorth) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateWest) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateSouth) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeSouth) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeEast) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateEast) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateNorth) },
     { SEARCH(SEARCH_BARREL), 100, FLAG_VALE_INTERIORS_1_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_JAR), 101, FLAG_VALE_INTERIORS_1_JAR_6_COINS, FIND_COINS(6) },
     { SEARCH(SEARCH_JAR), 102, FLAG_VALE_INTERIORS_1_JAR_2_COINS, FIND_COINS(2) },
@@ -1162,14 +1212,14 @@ struct SceneEvent gValeInteriors1_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeThatIvanSeemsToBeA) },
     { EVENT_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutDora) },
     { EVENT_TALK, ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WorryAboutTravelersHealth) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeOhSoYouStillHaventRescued) },
+    { EVENT_TALK, ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeOhSoYouStillHaventRescued) },
     { EVENT_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIGetOverColdsQuicklyBut) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeAColdIsGoingAroundI) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeWhatWasThatAlchemyThatKraden) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeEarthquakesStillStrikeOnceInA) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeTheMountainIsApparentlyStillCasting) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeTheNorthwestFaceOfMtAleph) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeTheGreatHealersAreTooAfraid) },
+    { EVENT_TALK, ACTOR_VILLAGER_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeAColdIsGoingAroundI) },
+    { EVENT_TALK, ACTOR_VILLAGER_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeWhatWasThatAlchemyThatKraden) },
+    { EVENT_TALK, ACTOR_VILLAGER_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeEarthquakesStillStrikeOnceInA) },
+    { EVENT_TALK, ACTOR_VILLAGER_DREAMS_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeTheMountainIsApparentlyStillCasting) },
+    { EVENT_TALK, ACTOR_VILLAGER_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeTheNorthwestFaceOfMtAleph) },
+    { EVENT_TALK, ACTOR_VILLAGER_SCARE_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeTheGreatHealersAreTooAfraid) },
     { EVENT_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
     { EVENT_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
     { EVENT_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
@@ -1181,22 +1231,22 @@ struct SceneEvent gValeInteriors1_EventsAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeIWishICouldLearnThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER, FLAG_VALE_FAREWELL_HERB_RECEIVED, MSGNO(MsgValeWhatHappenedToJennaHaventYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeIGaveHimAFarewellGift) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeWillIEverSeeJennaAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeWillIEverSeeJennaAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeDoraSaysItsJustACold) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeIKnowThatThereAreAlways) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeEvenIfTheEruptionHadNo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeEveryTimeTheGroundShakesI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeIfThePsynergyStonesInThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheLavaLookedLike) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeTheHealersAreSupposedToGuard) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor1) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor2) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor3) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor4) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor5) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor6) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor7) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor8) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeIKnowThatThereAreAlways) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_KRADENS_STUDIES, CONDITION_ALWAYS, MSGNO(MsgValeEvenIfTheEruptionHadNo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_VISITORS_IN_TOWN, CONDITION_ALWAYS, MSGNO(MsgValeEveryTimeTheGroundShakesI) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DREAMS_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeIfThePsynergyStonesInThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheLavaLookedLike) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SCARE_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeTheHealersAreSupposedToGuard) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeWest) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeNorth) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateWest) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateSouth) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeSouth) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeEast) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateEast) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateNorth) },
     { SEARCH(SEARCH_BARREL), 100, FLAG_VALE_INTERIORS_1_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_JAR), 101, FLAG_VALE_INTERIORS_1_JAR_6_COINS, FIND_COINS(6) },
     { SEARCH(SEARCH_JAR), 102, FLAG_VALE_INTERIORS_1_JAR_2_COINS, FIND_COINS(2) },

@@ -17,6 +17,16 @@
 #include "battle_unit.h"
 #include "flags.h"
 
+/// The placed actors, numbered in the order of gTestRooms_Placements: Djinni 0
+/// of each element, which TestRooms_GiveDjinniForTesting gives, placed while
+/// its flag (FLAG_DJINNI_0 + element * 20) is clear.
+enum TestRoomsActor {
+  ACTOR_FLINT = ACTOR_FIRST_PLACED, ///< Venus, "Flint" (MsgDjinnName)
+  ACTOR_FIZZ,                       ///< Mercury, "Fizz"
+  ACTOR_FORGE,                      ///< Mars, "Forge"
+  ACTOR_GUST                        ///< Jupiter, "Gust"
+};
+
 u8 *TestRooms_GetEntrances(void) { return (u8 *)gTestRooms_Entrances; }
 
 /// The room has no exit regions: its regions entry returns none.
@@ -24,9 +34,9 @@ s32 SceneData_ReturnZero(void) { return 0; }
 
 u8 *TestRooms_GetExits(void) { return (u8 *)gTestRooms_Exits; }
 
-/// Places one Djinni of each element in the test room: actors 8 to 11,
-/// Flint, Fizz, Forge and Gust, each placed while its caught flag (the
-/// placement's condition) is clear.
+/// Places one Djinni of each element in the test room, Flint, Fizz, Forge and
+/// Gust, each placed while its caught flag (the placement's condition) is
+/// clear.
 u8 *TestRooms_GetPlacements(void) { return (u8 *)gTestRooms_Placements; }
 
 /// Grants the first Djinni of an element, then clears its found flag for
@@ -41,22 +51,22 @@ static __inline__ void TestRooms_GiveDjinniForTesting(s32 actorId,
 }
 
 static void TestRooms_ReceiveFlint(void) {
-  TestRooms_GiveDjinniForTesting(8, ELEMENT_VENUS);
+  TestRooms_GiveDjinniForTesting(ACTOR_FLINT, ELEMENT_VENUS);
 }
 
 static void TestRooms_ReceiveFizz(void) {
-  TestRooms_GiveDjinniForTesting(9, ELEMENT_MERCURY);
+  TestRooms_GiveDjinniForTesting(ACTOR_FIZZ, ELEMENT_MERCURY);
 }
 
 static void TestRooms_ReceiveForge(void) {
-  TestRooms_GiveDjinniForTesting(10, ELEMENT_MARS);
+  TestRooms_GiveDjinniForTesting(ACTOR_FORGE, ELEMENT_MARS);
 }
 
 static void TestRooms_ReceiveGust(void) {
-  TestRooms_GiveDjinniForTesting(11, ELEMENT_JUPITER);
+  TestRooms_GiveDjinniForTesting(ACTOR_GUST, ELEMENT_JUPITER);
 }
 
-/// The room's events: talking to Djinni actor 8, 9, 10 or 11 gives that
+/// The room's events: talking to Flint, Fizz, Forge or Gust gives that
 /// Djinni.
 u8 *TestRooms_GetEvents(void) { return (u8 *)gTestRooms_Events; }
 
@@ -101,9 +111,13 @@ struct ScenePlacement gTestRooms_Placements[] = {
 };
 
 struct SceneEvent gTestRooms_Events[] = {
-    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(TestRooms_ReceiveFlint)},
-    {EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(TestRooms_ReceiveFizz)},
-    {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(TestRooms_ReceiveForge)},
-    {EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(TestRooms_ReceiveGust)},
+    {EVENT_TALK, ACTOR_FLINT, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TestRooms_ReceiveFlint)},
+    {EVENT_TALK, ACTOR_FIZZ, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TestRooms_ReceiveFizz)},
+    {EVENT_TALK, ACTOR_FORGE, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TestRooms_ReceiveForge)},
+    {EVENT_TALK, ACTOR_GUST, CONDITION_ALWAYS,
+     EVENT_SCRIPT(TestRooms_ReceiveGust)},
     {SCENE_EVENTS_END},
 };

@@ -8,28 +8,34 @@
 /// order:
 ///
 /// - Crossbone Isle (CrossboneIsle, scene 113), the island itself, reached
-///   from the world map (its exit 75; exit 1 leads back to it). Whirlwind
-///   blows four ivies away for good (four flags from
-///   FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the first also opening a cell),
-///   Growth grows four plants so they can be crossed, for this visit only
-///   (FLAG_SCENE_TEMP_40 to _43), two pillars can be pushed, and a Nut circles
-///   until Catch takes it (0xfd7). Exit 2 leads down into the cave.
+///   from the world map (WORLD_MAP_TO_CROSSBONE_ISLE;
+///   CROSSBONE_ISLE_TO_WORLD_MAP leads back to it). Whirlwind blows four ivies
+///   away for good (four flags from FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY,
+///   the first also opening a cell), Growth grows four plants so they can be
+///   crossed, for this visit only (FLAG_SCENE_TEMP_40 to _43), two pillars can
+///   be pushed, and a Nut circles until Catch takes it (0xfd7).
+///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_2 leads down into the cave.
 /// - Crossbone Isle Cave (CrossboneIsle2, scene 114), the cave's mouth, with
 ///   only its two exits.
 /// - Crossbone Isle Cave (CrossboneIsle6 to CrossboneIsle14, scenes 126 to
-///   134), nine rooms in a row on one map, entered from the east (entrance 1)
-///   and left to the west (exit 2). Each has two doors in its north wall into
-///   a side room of its own. The first time the party walks into the east door
-///   (Event_OpenEastDoor), the monsters behind it attack: encounter table 63
-///   for the first four rooms and 84 for the next five, one group per room.
-///   Back from the battle (entrance 5) the door opens and the party walks
-///   through, and from then on it simply opens (one flag per room from
-///   FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED); the west door always opens.
-///   Between the doors stands a pillar that, pushed or moved with Move to
-///   column 40, sinks into the floor and opens the corridor (one flag per room
-///   from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the first room a chest
-///   is a mimic (0xef4). The side rooms of the first eight rooms are in
-///   crossbone_isle_pillar_rooms.c and crossbone_isle_platform_rooms.c.
+///   134), nine rooms in a row on one map, each entered from the east
+///   (CORRIDOR_FROM_PREVIOUS_ROOM) and left to the west
+///   (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
+///   scene_links.h names them room by room
+///   (CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_2 and
+///   CROSSBONE_ISLE_6_TO_CROSSBONE_ISLE_7 in the first). Each has two doors in
+///   its north wall into a side room of its own. The first time the party
+///   walks into the east door (Event_OpenEastDoor), the monsters behind it
+///   attack: encounter table 63 for the first four rooms and 84 for the next
+///   five, one group per room. Back from the battle (ENTRANCE_AFTER_BATTLE) the
+///   door opens and the party walks through, and from then on it simply opens
+///   (one flag per room from FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED); the
+///   west door always opens. Between the doors stands a pillar that, pushed or
+///   moved with Move to column 40, sinks into the floor and opens the corridor
+///   (one flag per room from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the
+///   first room a chest is a mimic (0xef4). The side rooms of the first eight
+///   rooms are in crossbone_isle_pillar_rooms.c and
+///   crossbone_isle_platform_rooms.c.
 /// - Crossbone Isle Cave (CrossboneIsle3, scene 123), the ninth room's side
 ///   room: twelve pillars that slide with the leader standing on them until
 ///   another pillar or the wall stops them, and hops from pillar to pillar,
@@ -38,9 +44,9 @@
 ///   ninth room to the Pirate Ship.
 /// - Pirate Ship (PirateShip, scene 125), at the end. Stepping on trigger
 ///   10 (Event_FightDeadbeard) sets off the battle with Deadbeard, encounter
-///   table 84's sixth group; when the party comes back (entrance 5)
-///   FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set and a chest with the Demon
-///   Mail appears. A second chest is a mimic (0xef7).
+///   table 84's sixth group; when the party comes back
+///   (ENTRANCE_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set and
+///   a chest with the Demon Mail appears. A second chest is a mimic (0xef7).
 ///
 /// Scene_Initialize restores each scene as its flags say: the ivy and plants on
 /// the island, the sliding pillars' footprints, the corridor's sunk pillars and
@@ -82,6 +88,74 @@
 #include "flags.h"
 #include "songs.h"
 #include "event.h"
+
+/// Crossbone Isle's placed actors, numbered in the order of
+/// gCrossboneIslePlacements1.
+enum CrossboneIsleActor {
+  /// The Nut that circles over the island until Catch takes it (0xfd7).
+  ACTOR_ISLE_NUT = ACTOR_FIRST_PLACED,
+  /// The two pillars a push moves (Event_PushIslePillar), sprite 0xcf.
+  ACTOR_FIRST_ISLE_PILLAR,
+  /// The four plants Growth grows (sprite 0xee), crossable once grown for the
+  /// rest of the visit (FLAG_SCENE_TEMP_40 to _43).
+  ACTOR_FIRST_PLANT = ACTOR_FIRST_ISLE_PILLAR + 2,
+  /// The ivy Whirlwind blows away (sprite 0xf8), one flag each from
+  /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY. Only three rows place one: the
+  /// fourth ivy's event and CrossboneIsle_RestoreIvy name ACTOR_FIRST_IVY + 3,
+  /// which the table leaves unplaced.
+  ACTOR_FIRST_IVY = ACTOR_FIRST_PLANT + 4
+};
+
+/// The twelve sliding pillars of the ninth corridor room's side room
+/// (CrossboneIsle3), numbered in the order of gCrossboneIslePlacements3, from
+/// the first to the twelfth, with their sprites. Those with sprite 0xec are
+/// three cells wide and slide north and south; those with 0xed are three cells
+/// tall and slide east and west.
+enum CrossboneIsle3Actor {
+  ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED, ///< 0xec
+  ACTOR_SECOND_PILLAR,                     ///< 0xec
+  ACTOR_THIRD_PILLAR,                      ///< 0xec
+  ACTOR_FOURTH_PILLAR,                     ///< 0xed
+  ACTOR_FIFTH_PILLAR,                      ///< 0xed
+  ACTOR_SIXTH_PILLAR,                      ///< 0xed
+  ACTOR_SEVENTH_PILLAR,                    ///< 0xed
+  ACTOR_EIGHTH_PILLAR,                     ///< 0xed
+  ACTOR_NINTH_PILLAR,                      ///< 0xed
+  ACTOR_TENTH_PILLAR,                      ///< 0xec
+  ACTOR_ELEVENTH_PILLAR,                   ///< 0xec
+  ACTOR_TWELFTH_PILLAR                     ///< 0xed
+};
+
+/// The corridor rooms' one placed actor (gCrossboneIslePlacements6To14): the
+/// pillar between the doors that sinks into the floor at column 40.
+enum CrossboneIsleCorridorActor { ACTOR_CORRIDOR_PILLAR = ACTOR_FIRST_PLACED };
+
+/// The corridor rooms' entrances, which every room numbers alike, so the code
+/// they share names them here; scene_links.h names each room's own
+/// (CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_2 to
+/// CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_PILLAR_ROOMS_1_WEST in the first).
+enum {
+  /// At the east end, from the room before (the cave's mouth, CrossboneIsle2,
+  /// for the first).
+  CORRIDOR_FROM_PREVIOUS_ROOM = 1,
+  /// At the west end, from the room after (CrossboneIsle4 for the last).
+  CORRIDOR_FROM_NEXT_ROOM = 2,
+  CORRIDOR_FROM_SIDE_ROOM_EAST = 3, ///< out of the side room by the east door
+  CORRIDOR_FROM_SIDE_ROOM_WEST = 4  ///< out of the side room by the west door
+};
+
+/// The corridor rooms' exits, numbered as their entrances.
+enum {
+  CORRIDOR_TO_PREVIOUS_ROOM = 1,
+  CORRIDOR_TO_NEXT_ROOM = 2,
+  CORRIDOR_TO_SIDE_ROOM_EAST = 3, ///< the east door (Event_OpenEastDoor)
+  CORRIDOR_TO_SIDE_ROOM_WEST = 4  ///< the west door (Event_OpenWestDoor)
+};
+
+/// The entrance a battle returns the party to: in a corridor room after the
+/// monsters behind its east door (Event_OpenEastDoor), and on the Pirate Ship
+/// after Deadbeard (Event_FightDeadbeard).
+enum { ENTRANCE_AFTER_BATTLE = 5 };
 
 static void CrossboneIsle_RestoreSunkPillar(void);
 static void CrossboneIsle_OpenEastDoorAfterBattle(void);
@@ -165,11 +239,12 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
 }
 
 /// Stepping on trigger 10 on the Pirate Ship: Deadbeard attacks (encounter
-/// table 84's sixth group), and the party comes back to the ship's entrance 5.
+/// table 84's sixth group), and the party comes back to the ship at
+/// ENTRANCE_AFTER_BATTLE.
 static void Event_FightDeadbeard(void) {
 
   EV_BEGIN();
-  Event_SetNextDestination(gGameState.scene, 5);
+  Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
   Battle_SetStart(3);
   Field_RequestBattleFromEncounterTable(84, 5);
   EV_END();
@@ -199,7 +274,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Catch on the Nut circling on Crossbone Isle: the party gets it (0xfd7).
 static void Event_CatchNut(void) {
   EV_BEGIN();
-  Engine_ActorSetPosition(8, 0, 0);
+  Engine_ActorSetPosition(ACTOR_ISLE_NUT, 0, 0);
   Engine_GameFlagSet(0xfd7);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
@@ -231,7 +306,7 @@ s32 Scene_Initialize(void) {
       MapObject_SetPosition(101, PIXELS(216), PIXELS(648));
     }
     if (gGameState.scene == scene) {
-      if (gGameState.entrance != 5) {
+      if (gGameState.entrance != ENTRANCE_AFTER_BATTLE) {
         if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED) == 0) {
           return 0;
         }
@@ -245,11 +320,11 @@ s32 Scene_Initialize(void) {
   current = gGameState.scene;
   if (current == (s32)&SceneId_CrossboneIsle) {
     CrossboneIsle_RestoreIvy();
-    Actor_Get(8)->targetX = PIXELS(129);
-    FieldScene_RedrawActorFootprint(9);
-    FieldScene_RedrawActorFootprint(10);
+    Actor_Get(ACTOR_ISLE_NUT)->targetX = PIXELS(129);
+    FieldScene_RedrawActorFootprint(ACTOR_FIRST_ISLE_PILLAR);
+    FieldScene_RedrawActorFootprint(ACTOR_FIRST_ISLE_PILLAR + 1);
     if (FLAG_CHECK(FLAG_SCENE_TEMP_40) != 0) {
-      actor = Actor_Get(11);
+      actor = Actor_Get(ACTOR_FIRST_PLANT);
       if (actor != 0) {
         actor->collisionFlags = 0;
         Object_SetMode(actor, 4);
@@ -258,7 +333,7 @@ s32 Scene_Initialize(void) {
       Field_SetMapCellCollision(0, PIXELS(304), PIXELS(368), 253);
     }
     if (FLAG_CHECK(FLAG_SCENE_TEMP_41) != 0) {
-      actor = Actor_Get(12);
+      actor = Actor_Get(ACTOR_FIRST_PLANT + 1);
       if (actor != 0) {
         actor->collisionFlags = 0;
         Object_SetMode(actor, 4);
@@ -267,7 +342,7 @@ s32 Scene_Initialize(void) {
       Field_SetMapCellCollision(0, PIXELS(80), PIXELS(368), 253);
     }
     if (FLAG_CHECK(FLAG_SCENE_TEMP_42) != 0) {
-      actor = Actor_Get(13);
+      actor = Actor_Get(ACTOR_FIRST_PLANT + 2);
       if (actor != 0) {
         actor->collisionFlags = 0;
         Object_SetMode(actor, 4);
@@ -276,7 +351,7 @@ s32 Scene_Initialize(void) {
       Field_SetMapCellCollision(0, PIXELS(96), PIXELS(336), 253);
     }
     if (FLAG_CHECK(FLAG_SCENE_TEMP_43) != 0) {
-      actor = Actor_Get(14);
+      actor = Actor_Get(ACTOR_FIRST_PLANT + 3);
       if (actor != 0) {
         actor->collisionFlags = 0;
         Object_SetMode(actor, 4);
@@ -288,7 +363,7 @@ s32 Scene_Initialize(void) {
     if (FLAG_CHECK(0xfd7) != 0) {
       return 0;
     }
-    Scene_FloatNut(8);
+    Scene_FloatNut(ACTOR_ISLE_NUT);
     return 0;
   }
   // The nine corridor rooms (CrossboneIsle6 to 14) share their door battle,
@@ -304,7 +379,7 @@ s32 Scene_Initialize(void) {
   if (current >= first) {
     if (current <= (s32)&SceneId_CrossboneIsle14) {
       CrossboneIsle_RestoreSunkPillar();
-      if (gGameState.entrance == 5) {
+      if (gGameState.entrance == ENTRANCE_AFTER_BATTLE) {
         CrossboneIsle_OpenEastDoorAfterBattle();
       }
     }
@@ -318,20 +393,20 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
   struct FieldActor *actor;
   s32 cleared;
 
-  actor = Actor_Get(8);
+  actor = Actor_Get(ACTOR_CORRIDOR_PILLAR);
   cleared =
       FLAG_CHECK((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                       (s32)&SceneId_CrossboneIsle6)));
   if (cleared != 0) {
-    OBJ_POS_SET(8, 650, 168);
+    OBJ_POS_SET(ACTOR_CORRIDOR_PILLAR, 650, 168);
     actor->y.fixed = -PIXELS(32);
-    Engine_ActorSetSpriteFlags(Actor_Get(8), 0);
-    Engine_ActorSetSpritePriority(8, 3);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_CORRIDOR_PILLAR), 0);
+    Engine_ActorSetSpritePriority(ACTOR_CORRIDOR_PILLAR, 3);
     actor->motionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Map_CopyCellAttributes(42, 10, 1, 1, 40, 10);
   } else {
-    Object_GetById(8)->motionFlags = cleared;
+    Object_GetById(ACTOR_CORRIDOR_PILLAR)->motionFlags = cleared;
   }
 }
 
@@ -345,7 +420,7 @@ static void Event_MovePillar(void) {
   struct GameState *state;
   s32 column;
 
-  pillar = Object_GetById(8);
+  pillar = Object_GetById(ACTOR_CORRIDOR_PILLAR);
   column = pillar->x.fixed >> 20;
   if (column != 40) {
     return;
@@ -367,12 +442,12 @@ static void Event_MovePillar(void) {
   pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 
   WAIT(8);
-  CrossboneIsle_SpawnPillarMovedBurst(8);
+  CrossboneIsle_SpawnPillarMovedBurst(ACTOR_CORRIDOR_PILLAR);
   Engine_AudioPlayCue(SE_136);
   WAIT(40);
 
-  Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
-  Engine_ActorSetSpritePriority(8, 3);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CORRIDOR_PILLAR), 0);
+  Engine_ActorSetSpritePriority(ACTOR_CORRIDOR_PILLAR, 3);
 
   pillar->motionFlags = 0;
   pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -402,19 +477,19 @@ static void Event_PushPillar(void) {
 static void Event_OpenWestDoor(void) {
   Engine_MapAnimateCells(gCrossboneIsle_EntranceCells, 37, 7);
   Engine_AudioPlayCue(SE_183);
-  Engine_EventRequestExit(4);
+  Engine_EventRequestExit(CORRIDOR_TO_SIDE_ROOM_WEST);
 }
 
 /// Walking north into a corridor room's east door in Crossbone Isle Cave
 /// (trigger 3): the first time, the monsters behind it attack, and the party
-/// comes back to entrance 5; once they are beaten, the door opens onto the
-/// side room.
+/// comes back at ENTRANCE_AFTER_BATTLE; once they are beaten, the door opens
+/// onto the side room.
 static void Event_OpenEastDoor(void) {
   if (Engine_GameFlagIsSet(gGameState.scene +
                            (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
                             (s32)&SceneId_CrossboneIsle6)) == 0) {
     EV_BEGIN();
-    Event_SetNextDestination(gGameState.scene, 5);
+    Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
     Battle_SetStart(3);
     // The first four rooms use encounter table 63; the next five use 84.
     switch (gGameState.scene - (s32)&SceneId_CrossboneIsle6) {
@@ -450,12 +525,12 @@ static void Event_OpenEastDoor(void) {
   } else {
     Engine_MapAnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
     Engine_AudioPlayCue(SE_183);
-    Engine_EventRequestExit(3);
+    Engine_EventRequestExit(CORRIDOR_TO_SIDE_ROOM_EAST);
   }
 }
 
-/// Back from the battle at a corridor room's east door (entrance 5): the door
-/// opens, and the party walks through.
+/// Back from the battle at a corridor room's east door
+/// (ENTRANCE_AFTER_BATTLE): the door opens, and the party walks through.
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   EV_BEGIN();
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -466,16 +541,16 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   WAIT(30);
   Map_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
-  Engine_EventRequestExit(3);
+  Engine_EventRequestExit(CORRIDOR_TO_SIDE_ROOM_EAST);
   EV_END();
 }
 
-/// Growth on Crossbone Isle's first plant (actor 11): it grows, and its cell
-/// can be crossed.
-static void Event_GrowPlant11(s32 actorId) {
+/// Growth on Crossbone Isle's first plant: it grows, and its cell can be
+/// crossed.
+static void Event_GrowFirstPlant(s32 actorId) {
   s32 fixedX = PIXELS(304);
   s32 fixedZ = PIXELS(368);
-  struct FieldActor *actor = Object_GetById(11);
+  struct FieldActor *actor = Object_GetById(ACTOR_FIRST_PLANT);
 
   if (actor != 0) {
     actor->collisionFlags = 0;
@@ -485,11 +560,11 @@ static void Event_GrowPlant11(s32 actorId) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_40);
 }
 
-/// Growth on Crossbone Isle's second plant (actor 12).
-static void Event_GrowPlant12(s32 actorId) {
+/// Growth on Crossbone Isle's second plant.
+static void Event_GrowSecondPlant(s32 actorId) {
   s32 fixedX = PIXELS(80);
   s32 fixedZ = PIXELS(368);
-  struct FieldActor *actor = Object_GetById(12);
+  struct FieldActor *actor = Object_GetById(ACTOR_FIRST_PLANT + 1);
 
   if (actor != 0) {
     actor->collisionFlags = 0;
@@ -499,11 +574,11 @@ static void Event_GrowPlant12(s32 actorId) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_41);
 }
 
-/// Growth on Crossbone Isle's third plant (actor 13).
-static void Event_GrowPlant13(s32 actorId) {
+/// Growth on Crossbone Isle's third plant.
+static void Event_GrowThirdPlant(s32 actorId) {
   s32 fixedX = PIXELS(96);
   s32 fixedZ = PIXELS(336);
-  struct FieldActor *actor = Object_GetById(13);
+  struct FieldActor *actor = Object_GetById(ACTOR_FIRST_PLANT + 2);
 
   if (actor != 0) {
     actor->collisionFlags = 0;
@@ -513,13 +588,13 @@ static void Event_GrowPlant13(s32 actorId) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_42);
 }
 
-/// Growth on Crossbone Isle's fourth plant (actor 14), which opens two cells.
-static void Event_GrowPlant14(s32 actorId) {
+/// Growth on Crossbone Isle's fourth plant, which opens two cells.
+static void Event_GrowFourthPlant(s32 actorId) {
   s32 fixedX = PIXELS(144);
   s32 fixedZ = PIXELS(320);
   s32 secondFixedX = PIXELS(752);
   s32 secondFixedZ = PIXELS(320);
-  struct FieldActor *actor = Object_GetById(14);
+  struct FieldActor *actor = Object_GetById(ACTOR_FIRST_PLANT + 3);
 
   if (actor != 0) {
     actor->collisionFlags = 0;
@@ -530,9 +605,9 @@ static void Event_GrowPlant14(s32 actorId) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_43);
 }
 
-/// Whirlwind on Crossbone Isle's first ivy (actor 15): it is blown away for
-/// good, and its cell opens.
-static void Event_BlowAwayIvy15(void) {
+/// Whirlwind on Crossbone Isle's first ivy: it is blown away for good, and
+/// its cell opens.
+static void Event_BlowAwayFirstIvy(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY);
   {
 
@@ -540,18 +615,18 @@ static void Event_BlowAwayIvy15(void) {
   }
 }
 
-/// Whirlwind on Crossbone Isle's second ivy (actor 16).
-static void Event_BlowAwayIvy16(void) {
+/// Whirlwind on Crossbone Isle's second ivy.
+static void Event_BlowAwaySecondIvy(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
 
-/// Whirlwind on Crossbone Isle's third ivy (actor 17).
-static void Event_BlowAwayIvy17(void) {
+/// Whirlwind on Crossbone Isle's third ivy.
+static void Event_BlowAwayThirdIvy(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2);
 }
 
-/// Whirlwind on Crossbone Isle's fourth ivy (actor 18).
-static void Event_BlowAwayIvy18(void) {
+/// Whirlwind on Crossbone Isle's fourth ivy.
+static void Event_BlowAwayFourthIvy(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }
 
@@ -561,27 +636,27 @@ static void CrossboneIsle_RestoreIvy(void) {
 
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
-    OBJ_POS_SET(15, 968, 968);
+    OBJ_POS_SET(ACTOR_FIRST_IVY, 968, 968);
   } else {
-    actor = Actor_Get(15);
+    actor = Actor_Get(ACTOR_FIRST_IVY);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
-    OBJ_POS_SET(16, 968, 968);
+    OBJ_POS_SET(ACTOR_FIRST_IVY + 1, 968, 968);
   } else {
-    actor = Actor_Get(16);
+    actor = Actor_Get(ACTOR_FIRST_IVY + 1);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
-    OBJ_POS_SET(17, 968, 968);
+    OBJ_POS_SET(ACTOR_FIRST_IVY + 2, 968, 968);
   } else {
-    actor = Actor_Get(17);
+    actor = Actor_Get(ACTOR_FIRST_IVY + 2);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
-    OBJ_POS_SET(18, 968, 968);
+    OBJ_POS_SET(ACTOR_FIRST_IVY + 3, 968, 968);
   } else {
-    actor = Actor_Get(18);
+    actor = Actor_Get(ACTOR_FIRST_IVY + 3);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
 }
@@ -698,18 +773,18 @@ static void CrossboneIsle_AnimateTouchedPillar(int actorId) {
 
 /// Draws all twelve pillar footprints in Crossbone Isle Cave (CrossboneIsle3).
 static void CrossboneIsle_DrawPillarPuzzleFootprints(void) {
-  CrossboneIsle_DrawHorizontalPillarFootprint(8, 17, 30, 21);
-  CrossboneIsle_DrawHorizontalPillarFootprint(10, 17, 31, 22);
-  CrossboneIsle_DrawVerticalPillarFootprint(11, 20, 30, 23);
-  CrossboneIsle_DrawVerticalPillarFootprint(12, 21, 30, 24);
-  CrossboneIsle_DrawVerticalPillarFootprint(13, 22, 30, 25);
-  CrossboneIsle_DrawVerticalPillarFootprint(15, 23, 30, 26);
-  CrossboneIsle_DrawHorizontalPillarFootprint(17, 0, 30, 31);
-  CrossboneIsle_DrawHorizontalPillarFootprint(18, 0, 31, 32);
-  CrossboneIsle_DrawHorizontalPillarFootprint(9, 0, 32, 33);
-  CrossboneIsle_DrawVerticalPillarFootprint(19, 4, 30, 34);
-  CrossboneIsle_DrawVerticalPillarFootprint(14, 5, 30, 35);
-  CrossboneIsle_DrawVerticalPillarFootprint(16, 6, 30, 36);
+  CrossboneIsle_DrawHorizontalPillarFootprint(ACTOR_FIRST_PILLAR, 17, 30, 21);
+  CrossboneIsle_DrawHorizontalPillarFootprint(ACTOR_THIRD_PILLAR, 17, 31, 22);
+  CrossboneIsle_DrawVerticalPillarFootprint(ACTOR_FOURTH_PILLAR, 20, 30, 23);
+  CrossboneIsle_DrawVerticalPillarFootprint(ACTOR_FIFTH_PILLAR, 21, 30, 24);
+  CrossboneIsle_DrawVerticalPillarFootprint(ACTOR_SIXTH_PILLAR, 22, 30, 25);
+  CrossboneIsle_DrawVerticalPillarFootprint(ACTOR_EIGHTH_PILLAR, 23, 30, 26);
+  CrossboneIsle_DrawHorizontalPillarFootprint(ACTOR_TENTH_PILLAR, 0, 30, 31);
+  CrossboneIsle_DrawHorizontalPillarFootprint(ACTOR_ELEVENTH_PILLAR, 0, 31, 32);
+  CrossboneIsle_DrawHorizontalPillarFootprint(ACTOR_SECOND_PILLAR, 0, 32, 33);
+  CrossboneIsle_DrawVerticalPillarFootprint(ACTOR_TWELFTH_PILLAR, 4, 30, 34);
+  CrossboneIsle_DrawVerticalPillarFootprint(ACTOR_SEVENTH_PILLAR, 5, 30, 35);
+  CrossboneIsle_DrawVerticalPillarFootprint(ACTOR_NINTH_PILLAR, 6, 30, 36);
 }
 
 // Crossbone Isle Cave (CrossboneIsle3), the ninth room's side room: its twelve
@@ -718,60 +793,64 @@ static void CrossboneIsle_DrawPillarPuzzleFootprints(void) {
 // on it until another pillar or the wall stops it; walking against a pillar's
 // edge hops the leader 32 pixels if the landing is clear.
 
-/// Stepping onto pillar 8.
-static void Event_StepOnPillar8(void) { CrossboneIsle_AnimateTouchedPillar(8); }
-
-/// Stepping onto pillar 10.
-static void Event_StepOnPillar10(void) {
-  CrossboneIsle_AnimateTouchedPillar(10);
+/// Stepping onto the first pillar.
+static void Event_StepOnFirstPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_FIRST_PILLAR);
 }
 
-/// Stepping onto pillar 11.
-static void Event_StepOnPillar11(void) {
-  CrossboneIsle_AnimateTouchedPillar(11);
+/// Stepping onto the third pillar.
+static void Event_StepOnThirdPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_THIRD_PILLAR);
 }
 
-/// Stepping onto pillar 12.
-static void Event_StepOnPillar12(void) {
-  CrossboneIsle_AnimateTouchedPillar(12);
+/// Stepping onto the fourth pillar.
+static void Event_StepOnFourthPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_FOURTH_PILLAR);
 }
 
-/// Stepping onto pillar 13.
-static void Event_StepOnPillar13(void) {
-  CrossboneIsle_AnimateTouchedPillar(13);
+/// Stepping onto the fifth pillar.
+static void Event_StepOnFifthPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_FIFTH_PILLAR);
 }
 
-/// Stepping onto pillar 15.
-static void Event_StepOnPillar15(void) {
-  CrossboneIsle_AnimateTouchedPillar(15);
+/// Stepping onto the sixth pillar.
+static void Event_StepOnSixthPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_SIXTH_PILLAR);
 }
 
-/// Stepping onto pillar 17.
-static void Event_StepOnPillar17(void) {
-  CrossboneIsle_AnimateTouchedPillar(17);
+/// Stepping onto the eighth pillar.
+static void Event_StepOnEighthPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_EIGHTH_PILLAR);
 }
 
-/// Stepping onto pillar 18.
-static void Event_StepOnPillar18(void) {
-  CrossboneIsle_AnimateTouchedPillar(18);
+/// Stepping onto the tenth pillar.
+static void Event_StepOnTenthPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_TENTH_PILLAR);
 }
 
-/// Stepping onto pillar 9.
-static void Event_StepOnPillar9(void) { CrossboneIsle_AnimateTouchedPillar(9); }
-
-/// Stepping onto pillar 19.
-static void Event_StepOnPillar19(void) {
-  CrossboneIsle_AnimateTouchedPillar(19);
+/// Stepping onto the eleventh pillar.
+static void Event_StepOnEleventhPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_ELEVENTH_PILLAR);
 }
 
-/// Stepping onto pillar 14.
-static void Event_StepOnPillar14(void) {
-  CrossboneIsle_AnimateTouchedPillar(14);
+/// Stepping onto the second pillar.
+static void Event_StepOnSecondPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_SECOND_PILLAR);
 }
 
-/// Stepping onto pillar 16.
-static void Event_StepOnPillar16(void) {
-  CrossboneIsle_AnimateTouchedPillar(16);
+/// Stepping onto the twelfth pillar.
+static void Event_StepOnTwelfthPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_TWELFTH_PILLAR);
+}
+
+/// Stepping onto the seventh pillar.
+static void Event_StepOnSeventhPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_SEVENTH_PILLAR);
+}
+
+/// Stepping onto the ninth pillar.
+static void Event_StepOnNinthPillar(void) {
+  CrossboneIsle_AnimateTouchedPillar(ACTOR_NINTH_PILLAR);
 }
 
 /// Tests a step, then moves the leader with the pillar-pushing animation.
@@ -872,44 +951,44 @@ static s32 Event_HopEast(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Walking north onto pillar 8.
-static void Event_SlidePillar8North(void) {
-  s32 actorX = Object_GetById(8)->x.fixed >> 20;
-  s32 actorZ = Object_GetById(8)->z.fixed >> 20;
-  s32 actor12X = Object_GetById(12)->x.fixed >> 20;
-  s32 actor15X = Object_GetById(15)->x.fixed >> 20;
+/// Walking north onto the first pillar.
+static void Event_SlideFirstPillarNorth(void) {
+  s32 actorX = Object_GetById(ACTOR_FIRST_PILLAR)->x.fixed >> 20;
+  s32 actorZ = Object_GetById(ACTOR_FIRST_PILLAR)->z.fixed >> 20;
+  s32 fifthPillarColumn = Object_GetById(ACTOR_FIFTH_PILLAR)->x.fixed >> 20;
+  s32 eighthPillarColumn = Object_GetById(ACTOR_EIGHTH_PILLAR)->x.fixed >> 20;
 
   if (actorZ == 19) {
-    if (actor12X == 24) {
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, -80);
-    } else if (actor15X == 24) {
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, -112);
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, -32);
+    if (fifthPillarColumn == 24) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, -80);
+    } else if (eighthPillarColumn == 24) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, -112);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, -32);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, -80);
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, -112);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, -80);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, -112);
     }
   } else if (actorZ == 14) {
-    if (actor12X == 24) {
+    if (fifthPillarColumn == 24) {
       return;
     }
-    if (actor15X == 24) {
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, -64);
+    if (eighthPillarColumn == 24) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, -64);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, -112);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, -112);
     }
   } else if (actorZ == 10) {
-    if (actor15X == 24) {
+    if (eighthPillarColumn == 24) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(8, 0, -48);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, -48);
   } else {
     Event_HopNorth();
     return;
   }
   Engine_TaskWait(2);
   {
-    s32 routeEndZ = Object_GetById(8)->z.fixed >> 20;
+    s32 routeEndZ = Object_GetById(ACTOR_FIRST_PILLAR)->z.fixed >> 20;
     s32 routeX = actorX - 1;
 
     Map_CopyCellAttributes(routeX, actorZ, 3, 1, routeX, routeEndZ);
@@ -947,464 +1026,465 @@ CrossboneIsle_RedrawVerticalPillarRoute(s32 actorId, s32 column, s32 row) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking south onto pillar 8.
-static void Event_SlidePillar8South(void) {
-  s32 column = Object_GetById(8)->x.fixed >> 20;
-  s32 row = Object_GetById(8)->z.fixed >> 20;
-  s32 pillar12Column = Object_GetById(12)->x.fixed >> 20;
+/// Walking south onto the first pillar.
+static void Event_SlideFirstPillarSouth(void) {
+  s32 column = Object_GetById(ACTOR_FIRST_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_FIRST_PILLAR)->z.fixed >> 20;
+  s32 fifthPillarColumn = Object_GetById(ACTOR_FIFTH_PILLAR)->x.fixed >> 20;
 
   if (row == 7) {
-    if (pillar12Column == 24) {
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, 48);
+    if (fifthPillarColumn == 24) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, 48);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, 80);
-      CrossboneIsle_MoveSelectedActorAndPillar(8, 0, 112);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, 80);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, 112);
     }
   } else if (row == 10) {
-    if (pillar12Column == 24) {
+    if (fifthPillarColumn == 24) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(8, 0, 144);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, 144);
   } else if (row == 14) {
-    CrossboneIsle_MoveSelectedActorAndPillar(8, 0, 80);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIRST_PILLAR, 0, 80);
   } else {
     return;
   }
-  CrossboneIsle_RedrawHorizontalPillarRoute(8, column, row);
+  CrossboneIsle_RedrawHorizontalPillarRoute(ACTOR_FIRST_PILLAR, column, row);
 }
 
-/// Walking north onto pillar 10.
-static void Event_SlidePillar10North(void) {
-  s32 column = Object_GetById(10)->x.fixed >> 20;
-  s32 row = Object_GetById(10)->z.fixed >> 20;
-  s32 pillar13Column = Object_GetById(13)->x.fixed >> 20;
-  s32 pillar15Column = Object_GetById(15)->x.fixed >> 20;
+/// Walking north onto the third pillar.
+static void Event_SlideThirdPillarNorth(void) {
+  s32 column = Object_GetById(ACTOR_THIRD_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_THIRD_PILLAR)->z.fixed >> 20;
+  s32 sixthPillarColumn = Object_GetById(ACTOR_SIXTH_PILLAR)->x.fixed >> 20;
+  s32 eighthPillarColumn = Object_GetById(ACTOR_EIGHTH_PILLAR)->x.fixed >> 20;
 
   if (row == 18) {
-    if (pillar15Column >= 31 && pillar15Column <= 33) {
-      CrossboneIsle_MoveSelectedActorAndPillar(10, 0, -128);
-    } else if (pillar13Column >= 31 && pillar13Column <= 33) {
-      CrossboneIsle_MoveSelectedActorAndPillar(10, 0, -128);
+    if (eighthPillarColumn >= 31 && eighthPillarColumn <= 33) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_THIRD_PILLAR, 0, -128);
+    } else if (sixthPillarColumn >= 31 && sixthPillarColumn <= 33) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_THIRD_PILLAR, 0, -128);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(10, 0, -112);
-      CrossboneIsle_MoveSelectedActorAndPillar(10, 0, -64);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_THIRD_PILLAR, 0, -112);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_THIRD_PILLAR, 0, -64);
     }
   } else if (row == 10) {
-    if (pillar15Column >= 31 && pillar15Column <= 33) {
+    if (eighthPillarColumn >= 31 && eighthPillarColumn <= 33) {
       return;
     }
-    if (pillar13Column >= 31 && pillar13Column <= 33) {
+    if (sixthPillarColumn >= 31 && sixthPillarColumn <= 33) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(10, 0, -48);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_THIRD_PILLAR, 0, -48);
   } else if (row == 7) {
     return;
   }
-  CrossboneIsle_RedrawHorizontalPillarRoute(10, column, row);
+  CrossboneIsle_RedrawHorizontalPillarRoute(ACTOR_THIRD_PILLAR, column, row);
 }
 
-/// Walking south onto pillar 10.
-static void Event_SlidePillar10South(void) {
-  s32 column = Object_GetById(10)->x.fixed >> 20;
-  s32 row = Object_GetById(10)->z.fixed >> 20;
+/// Walking south onto the third pillar.
+static void Event_SlideThirdPillarSouth(void) {
+  s32 column = Object_GetById(ACTOR_THIRD_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_THIRD_PILLAR)->z.fixed >> 20;
 
   if (row != 18) {
     if (row == 10) {
-      CrossboneIsle_MoveSelectedActorAndPillar(10, 0, 128);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_THIRD_PILLAR, 0, 128);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(10, 0, 112);
-      CrossboneIsle_MoveSelectedActorAndPillar(10, 0, 64);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_THIRD_PILLAR, 0, 112);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_THIRD_PILLAR, 0, 64);
     }
-    CrossboneIsle_RedrawHorizontalPillarRoute(10, column, row);
+    CrossboneIsle_RedrawHorizontalPillarRoute(ACTOR_THIRD_PILLAR, column, row);
   }
 }
 
-/// Walking west onto pillar 11.
-static void Event_SlidePillar11West(void) {
-  s32 column = Object_GetById(11)->x.fixed >> 20;
-  s32 row = Object_GetById(11)->z.fixed >> 20;
+/// Walking west onto the fourth pillar.
+static void Event_SlideFourthPillarWest(void) {
+  s32 column = Object_GetById(ACTOR_FOURTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_FOURTH_PILLAR)->z.fixed >> 20;
 
   if (column != 30) {
     if (column == 34) {
-      if ((Object_GetById(10)->z.fixed >> 20) == 18) {
+      if ((Object_GetById(ACTOR_THIRD_PILLAR)->z.fixed >> 20) == 18) {
         return;
       }
-      CrossboneIsle_MoveSelectedActorAndPillar(11, -64, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FOURTH_PILLAR, -64, 0);
     } else if (column == 36) {
-      if ((Object_GetById(10)->z.fixed >> 20) == 18) {
-        CrossboneIsle_MoveSelectedActorAndPillar(11, -32, 0);
+      if ((Object_GetById(ACTOR_THIRD_PILLAR)->z.fixed >> 20) == 18) {
+        CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FOURTH_PILLAR, -32, 0);
       } else {
-        CrossboneIsle_MoveSelectedActorAndPillar(11, -96, 0);
+        CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FOURTH_PILLAR, -96, 0);
       }
     }
-    CrossboneIsle_RedrawVerticalPillarRoute(11, column, row);
+    CrossboneIsle_RedrawVerticalPillarRoute(ACTOR_FOURTH_PILLAR, column, row);
   }
 }
 
-/// Walking east onto pillar 11.
-static void Event_SlidePillar11East(void) {
-  s32 column = Object_GetById(11)->x.fixed >> 20;
-  s32 row = Object_GetById(11)->z.fixed >> 20;
+/// Walking east onto the fourth pillar.
+static void Event_SlideFourthPillarEast(void) {
+  s32 column = Object_GetById(ACTOR_FOURTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_FOURTH_PILLAR)->z.fixed >> 20;
 
   if (column != 36) {
     if (column == 30) {
-      if ((Object_GetById(10)->z.fixed >> 20) == 18) {
+      if ((Object_GetById(ACTOR_THIRD_PILLAR)->z.fixed >> 20) == 18) {
         return;
       }
-      CrossboneIsle_MoveSelectedActorAndPillar(11, 96, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FOURTH_PILLAR, 96, 0);
     } else if (column == 34) {
-      CrossboneIsle_MoveSelectedActorAndPillar(11, 32, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FOURTH_PILLAR, 32, 0);
     }
-    CrossboneIsle_RedrawVerticalPillarRoute(11, column, row);
+    CrossboneIsle_RedrawVerticalPillarRoute(ACTOR_FOURTH_PILLAR, column, row);
   }
 }
 
-/// Walking west onto pillar 12.
-static void Event_SlidePillar12West(void) {
-  s32 column = Object_GetById(12)->x.fixed >> 20;
-  s32 row = Object_GetById(12)->z.fixed >> 20;
+/// Walking west onto the fifth pillar.
+static void Event_SlideFifthPillarWest(void) {
+  s32 column = Object_GetById(ACTOR_FIFTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_FIFTH_PILLAR)->z.fixed >> 20;
 
   if (column == 36) {
-    CrossboneIsle_MoveSelectedActorAndPillar(12, -96, 0);
-    CrossboneIsle_MoveSelectedActorAndPillar(12, -96, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIFTH_PILLAR, -96, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIFTH_PILLAR, -96, 0);
   } else if (column == 34) {
-    CrossboneIsle_MoveSelectedActorAndPillar(12, -96, 0);
-    CrossboneIsle_MoveSelectedActorAndPillar(12, -64, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIFTH_PILLAR, -96, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIFTH_PILLAR, -64, 0);
   } else if (column == 24) {
     return;
   }
-  CrossboneIsle_RedrawVerticalPillarRoute(12, column, row);
+  CrossboneIsle_RedrawVerticalPillarRoute(ACTOR_FIFTH_PILLAR, column, row);
 }
 
-/// Walking east onto pillar 12.
-static void Event_SlidePillar12East(void) {
-  s32 column = Object_GetById(12)->x.fixed >> 20;
-  s32 row = Object_GetById(12)->z.fixed >> 20;
+/// Walking east onto the fifth pillar.
+static void Event_SlideFifthPillarEast(void) {
+  s32 column = Object_GetById(ACTOR_FIFTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_FIFTH_PILLAR)->z.fixed >> 20;
 
   if (column == 24) {
-    CrossboneIsle_MoveSelectedActorAndPillar(12, 96, 0);
-    CrossboneIsle_MoveSelectedActorAndPillar(12, 96, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIFTH_PILLAR, 96, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIFTH_PILLAR, 96, 0);
   } else if (column == 34) {
-    CrossboneIsle_MoveSelectedActorAndPillar(12, 32, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_FIFTH_PILLAR, 32, 0);
   } else if (column == 36) {
     return;
   }
-  CrossboneIsle_RedrawVerticalPillarRoute(12, column, row);
+  CrossboneIsle_RedrawVerticalPillarRoute(ACTOR_FIFTH_PILLAR, column, row);
 }
 
-/// Walking west onto pillar 13.
-static void Event_SlidePillar13West(void) {
-  s32 column = Object_GetById(13)->x.fixed >> 20;
-  s32 row = Object_GetById(13)->z.fixed >> 20;
-  s32 pillar10Row = Object_GetById(10)->z.fixed >> 20;
-  s32 pillar15Column = Object_GetById(15)->x.fixed >> 20;
+/// Walking west onto the sixth pillar.
+static void Event_SlideSixthPillarWest(void) {
+  s32 column = Object_GetById(ACTOR_SIXTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_SIXTH_PILLAR)->z.fixed >> 20;
+  s32 thirdPillarRow = Object_GetById(ACTOR_THIRD_PILLAR)->z.fixed >> 20;
+  s32 eighthPillarColumn = Object_GetById(ACTOR_EIGHTH_PILLAR)->x.fixed >> 20;
 
   if (column == 36) {
-    if (pillar15Column == 34) {
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -16, 0);
-    } else if (pillar10Row == 7) {
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -32, 0);
-    } else if (pillar15Column == 30) {
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -80, 0);
+    if (eighthPillarColumn == 34) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -16, 0);
+    } else if (thirdPillarRow == 7) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -32, 0);
+    } else if (eighthPillarColumn == 30) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -80, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -96, 0);
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -80, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -96, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -80, 0);
     }
   } else if (column == 35) {
-    if (pillar15Column == 34) {
+    if (eighthPillarColumn == 34) {
       return;
     }
-    if (pillar10Row == 7) {
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -16, 0);
-    } else if (pillar15Column == 30) {
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -64, 0);
+    if (thirdPillarRow == 7) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -16, 0);
+    } else if (eighthPillarColumn == 30) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -64, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -80, 0);
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -80, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -80, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -80, 0);
     }
   } else if (column == 34) {
-    if (pillar10Row == 7) {
+    if (thirdPillarRow == 7) {
       return;
     }
-    if (pillar15Column == 30) {
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -48, 0);
+    if (eighthPillarColumn == 30) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -48, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(13, -144, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -144, 0);
     }
   } else if (column == 31) {
-    if (pillar15Column == 30) {
+    if (eighthPillarColumn == 30) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(13, -96, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, -96, 0);
   } else if (column == 25) {
     return;
   }
-  CrossboneIsle_RedrawVerticalPillarRoute(13, column, row);
+  CrossboneIsle_RedrawVerticalPillarRoute(ACTOR_SIXTH_PILLAR, column, row);
 }
 
-/// Walking east onto pillar 13.
-static void Event_SlidePillar13East(void) {
-  s32 column = Object_GetById(13)->x.fixed >> 20;
-  s32 row = Object_GetById(13)->z.fixed >> 20;
+/// Walking east onto the sixth pillar.
+static void Event_SlideSixthPillarEast(void) {
+  s32 column = Object_GetById(ACTOR_SIXTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_SIXTH_PILLAR)->z.fixed >> 20;
 
-  Object_GetById(15);
+  Object_GetById(ACTOR_EIGHTH_PILLAR);
   if (column == 25) {
-    CrossboneIsle_MoveSelectedActorAndPillar(13, 96, 0);
-    CrossboneIsle_MoveSelectedActorAndPillar(13, 80, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, 96, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, 80, 0);
   } else if (column == 31) {
-    CrossboneIsle_MoveSelectedActorAndPillar(13, 80, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, 80, 0);
   } else if (column == 34) {
-    CrossboneIsle_MoveSelectedActorAndPillar(13, 32, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, 32, 0);
   } else if (column == 35) {
-    CrossboneIsle_MoveSelectedActorAndPillar(13, 16, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SIXTH_PILLAR, 16, 0);
   } else if (column == 36) {
     return;
   }
-  CrossboneIsle_RedrawVerticalPillarRoute(13, column, row);
+  CrossboneIsle_RedrawVerticalPillarRoute(ACTOR_SIXTH_PILLAR, column, row);
 }
 
-/// Walking west onto pillar 15.
-static void Event_SlidePillar15West(void) {
-  s32 column = Object_GetById(15)->x.fixed >> 20;
-  s32 row = Object_GetById(15)->z.fixed >> 20;
-  s32 pillar8Row = Object_GetById(8)->z.fixed >> 20;
-  s32 pillar10Row = Object_GetById(10)->z.fixed >> 20;
+/// Walking west onto the eighth pillar.
+static void Event_SlideEighthPillarWest(void) {
+  s32 column = Object_GetById(ACTOR_EIGHTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_EIGHTH_PILLAR)->z.fixed >> 20;
+  s32 firstPillarRow = Object_GetById(ACTOR_FIRST_PILLAR)->z.fixed >> 20;
+  s32 thirdPillarRow = Object_GetById(ACTOR_THIRD_PILLAR)->z.fixed >> 20;
 
   if (column == 35) {
-    if (pillar10Row == 7) {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, -16, 0);
-    } else if (pillar8Row == 7) {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, -112, 0);
+    if (thirdPillarRow == 7) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, -16, 0);
+    } else if (firstPillarRow == 7) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, -112, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, -96, 0);
-      CrossboneIsle_MoveSelectedActorAndPillar(15, -80, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, -96, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, -80, 0);
     }
   } else if (column == 34) {
-    if (pillar10Row == 7) {
+    if (thirdPillarRow == 7) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(15, -96, 0);
-    CrossboneIsle_MoveSelectedActorAndPillar(15, -64, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, -96, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, -64, 0);
   } else if (column == 33) {
-    CrossboneIsle_MoveSelectedActorAndPillar(15, -144, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, -144, 0);
   } else if (column == 31) {
-    CrossboneIsle_MoveSelectedActorAndPillar(15, -80, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, -80, 0);
   } else if (column == 30) {
-    CrossboneIsle_MoveSelectedActorAndPillar(15, -96, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, -96, 0);
   } else if (column == 24) {
     return;
   }
-  CrossboneIsle_RedrawVerticalPillarRoute(15, column, row);
+  CrossboneIsle_RedrawVerticalPillarRoute(ACTOR_EIGHTH_PILLAR, column, row);
 }
 
-/// Walking east onto pillar 15.
-static void Event_SlidePillar15East(void) {
-  s32 column = Object_GetById(15)->x.fixed >> 20;
-  s32 row = Object_GetById(15)->z.fixed >> 20;
-  s32 pillar10Row = Object_GetById(10)->z.fixed >> 20;
-  s32 pillar13Column = Object_GetById(13)->x.fixed >> 20;
+/// Walking east onto the eighth pillar.
+static void Event_SlideEighthPillarEast(void) {
+  s32 column = Object_GetById(ACTOR_EIGHTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_EIGHTH_PILLAR)->z.fixed >> 20;
+  s32 thirdPillarRow = Object_GetById(ACTOR_THIRD_PILLAR)->z.fixed >> 20;
+  s32 sixthPillarColumn = Object_GetById(ACTOR_SIXTH_PILLAR)->x.fixed >> 20;
 
   if (column == 24) {
-    if (pillar10Row == 7 || pillar13Column == 31) {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 96, 0);
-    } else if (pillar13Column == 34) {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 64, 0);
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 80, 0);
-    } else if (pillar13Column == 35) {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 80, 0);
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 80, 0);
+    if (thirdPillarRow == 7 || sixthPillarColumn == 31) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 96, 0);
+    } else if (sixthPillarColumn == 34) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 64, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 80, 0);
+    } else if (sixthPillarColumn == 35) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 80, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 80, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 80, 0);
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 96, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 80, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 96, 0);
     }
-  } else if (column == 30 || pillar13Column == 31) {
-    if (pillar10Row == 7) {
+  } else if (column == 30 || sixthPillarColumn == 31) {
+    if (thirdPillarRow == 7) {
       return;
     }
-    if (pillar13Column == 34) {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 48, 0);
-    } else if (pillar13Column == 35) {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 64, 0);
+    if (sixthPillarColumn == 34) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 48, 0);
+    } else if (sixthPillarColumn == 35) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 64, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 80, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 80, 0);
     }
   } else if (column == 33) {
-    if (pillar13Column == 34) {
+    if (sixthPillarColumn == 34) {
       return;
     }
-    if (pillar13Column == 35) {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 16, 0);
+    if (sixthPillarColumn == 35) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 16, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(15, 32, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 32, 0);
     }
   } else if (column == 34) {
-    CrossboneIsle_MoveSelectedActorAndPillar(15, 16, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_EIGHTH_PILLAR, 16, 0);
   } else if (column == 35) {
     return;
   }
-  CrossboneIsle_RedrawVerticalPillarRoute(15, column, row);
+  CrossboneIsle_RedrawVerticalPillarRoute(ACTOR_EIGHTH_PILLAR, column, row);
 }
 
-/// Walking north onto pillar 17.
-static void Event_SlidePillar17North(void) {
-  s32 column = Object_GetById(17)->x.fixed >> 20;
-  s32 row = Object_GetById(17)->z.fixed >> 20;
-  s32 pillar19Column = Object_GetById(19)->x.fixed >> 20;
+/// Walking north onto the tenth pillar.
+static void Event_SlideTenthPillarNorth(void) {
+  s32 column = Object_GetById(ACTOR_TENTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_TENTH_PILLAR)->z.fixed >> 20;
+  s32 twelfthPillarColumn = Object_GetById(ACTOR_TWELFTH_PILLAR)->x.fixed >> 20;
 
   if (row == 19) {
-    if (pillar19Column >= 3 && pillar19Column <= 5) {
-      CrossboneIsle_MoveSelectedActorAndPillar(17, 0, -16);
+    if (twelfthPillarColumn >= 3 && twelfthPillarColumn <= 5) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TENTH_PILLAR, 0, -16);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(17, 0, -64);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TENTH_PILLAR, 0, -64);
     }
   } else if (row == 18) {
-    if (pillar19Column >= 3 && pillar19Column <= 5) {
+    if (twelfthPillarColumn >= 3 && twelfthPillarColumn <= 5) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(17, 0, -48);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TENTH_PILLAR, 0, -48);
   } else if (row == 15) {
     return;
   }
-  CrossboneIsle_RedrawHorizontalPillarRoute(17, column, row);
+  CrossboneIsle_RedrawHorizontalPillarRoute(ACTOR_TENTH_PILLAR, column, row);
 }
 
-/// Walking south onto pillar 17.
-static void Event_SlidePillar17South(void) {
-  s32 column = Object_GetById(17)->x.fixed >> 20;
-  s32 row = Object_GetById(17)->z.fixed >> 20;
+/// Walking south onto the tenth pillar.
+static void Event_SlideTenthPillarSouth(void) {
+  s32 column = Object_GetById(ACTOR_TENTH_PILLAR)->x.fixed >> 20;
+  s32 row = Object_GetById(ACTOR_TENTH_PILLAR)->z.fixed >> 20;
 
   if (row == 15) {
-    CrossboneIsle_MoveSelectedActorAndPillar(17, 0, 64);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TENTH_PILLAR, 0, 64);
   } else if (row == 18) {
-    CrossboneIsle_MoveSelectedActorAndPillar(17, 0, 16);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TENTH_PILLAR, 0, 16);
   } else if (row == 19) {
     return;
   }
-  CrossboneIsle_RedrawHorizontalPillarRoute(17, column, row);
+  CrossboneIsle_RedrawHorizontalPillarRoute(ACTOR_TENTH_PILLAR, column, row);
 }
 
 /// These three columns form the crossing lane for the vertical pillars.
 #define IS_IN_PILLAR_CROSSING_COLUMNS(x) ((x) >= 6 && (x) <= 8)
 
-/// Walking north onto pillar 18.
-static void Event_SlidePillar18North(void) {
+/// Walking north onto the eleventh pillar.
+static void Event_SlideEleventhPillarNorth(void) {
   s32 column;
   s32 row;
-  s32 pillar19Column;
-  s32 pillar14Column;
-  s32 pillar16Column;
+  s32 twelfthPillarColumn;
+  s32 seventhPillarColumn;
+  s32 ninthPillarColumn;
 
-  column = Object_GetById(18)->x.fixed >> 20;
-  row = Object_GetById(18)->z.fixed >> 20;
-  pillar19Column = Object_GetById(19)->x.fixed >> 20;
-  pillar14Column = Object_GetById(14)->x.fixed >> 20;
-  pillar16Column = Object_GetById(16)->x.fixed >> 20;
+  column = Object_GetById(ACTOR_ELEVENTH_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_ELEVENTH_PILLAR)->z.fixed >> 20;
+  twelfthPillarColumn = Object_GetById(ACTOR_TWELFTH_PILLAR)->x.fixed >> 20;
+  seventhPillarColumn = Object_GetById(ACTOR_SEVENTH_PILLAR)->x.fixed >> 20;
+  ninthPillarColumn = Object_GetById(ACTOR_NINTH_PILLAR)->x.fixed >> 20;
   if (row == 19) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar19Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -16);
-    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar14Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -64);
-    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -112);
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(twelfthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -16);
+    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(seventhPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -64);
+    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -112);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -64);
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -96);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -64);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -96);
     }
   } else if (row == 18) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar19Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(twelfthPillarColumn)) {
       return;
     }
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar14Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -48);
-    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -96);
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(seventhPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -48);
+    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -96);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -144);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -144);
     }
   } else if (row == 15) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar14Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(seventhPillarColumn)) {
       return;
     }
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -48);
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -48);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -96);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -96);
     }
   } else if (row == 14) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar14Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(seventhPillarColumn)) {
       return;
     }
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -32);
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -32);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -80);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -80);
     }
   } else if (row == 12) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -48);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -48);
   } else if (row == 11) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(18, 0, -32);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, -32);
   } else if (row == 9) {
     return;
   }
   Engine_TaskWait(2);
   Engine_MapCopyCellAttributes(column - 1, row, 3, 1, column - 1,
-                               Object_GetById(18)->z.fixed >> 20);
+                               Object_GetById(ACTOR_ELEVENTH_PILLAR)->z.fixed >>
+                                   20);
   Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
 #undef IS_IN_PILLAR_CROSSING_COLUMNS
 
-/// Walking south onto pillar 18.
-static void Event_SlidePillar18South(void) {
+/// Walking south onto the eleventh pillar.
+static void Event_SlideEleventhPillarSouth(void) {
   s32 column;
   s32 row;
-  s32 companion19Column;
-  s32 companion14Column;
+  s32 twelfthPillarColumn;
+  s32 seventhPillarColumn;
 
-  column = Object_GetById(18)->x.fixed >> 20;
-  row = Object_GetById(18)->z.fixed >> 20;
-  companion19Column = Object_GetById(19)->x.fixed >> 20;
-  companion14Column = Object_GetById(14)->x.fixed >> 20;
+  column = Object_GetById(ACTOR_ELEVENTH_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_ELEVENTH_PILLAR)->z.fixed >> 20;
+  twelfthPillarColumn = Object_GetById(ACTOR_TWELFTH_PILLAR)->x.fixed >> 20;
+  seventhPillarColumn = Object_GetById(ACTOR_SEVENTH_PILLAR)->x.fixed >> 20;
 
   if (row == 9) {
-    if ((u32)(companion14Column - 6) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 32);
-    } else if ((u32)(companion19Column - 6) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 80);
+    if ((u32)(seventhPillarColumn - 6) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 32);
+    } else if ((u32)(twelfthPillarColumn - 6) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 80);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 64);
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 96);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 64);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 96);
     }
   } else if (row == 11) {
-    if ((u32)(companion14Column - 6) <= 2) {
+    if ((u32)(seventhPillarColumn - 6) <= 2) {
       return;
     }
-    if ((u32)(companion19Column - 6) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 48);
+    if ((u32)(twelfthPillarColumn - 6) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 48);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 128);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 128);
     }
   } else if (row == 12) {
-    if ((u32)(companion19Column - 6) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 32);
+    if ((u32)(twelfthPillarColumn - 6) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 32);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 112);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 112);
     }
   } else if (row == 14) {
-    if ((u32)(companion19Column - 6) <= 2) {
+    if ((u32)(twelfthPillarColumn - 6) <= 2) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 80);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 80);
   } else if (row == 15) {
-    CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 64);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 64);
   } else if (row == 18) {
-    CrossboneIsle_MoveSelectedActorAndPillar(18, 0, 16);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_ELEVENTH_PILLAR, 0, 16);
   } else if (row == 19) {
     return;
   }
@@ -1412,311 +1492,316 @@ static void Event_SlidePillar18South(void) {
   Engine_TaskWait(2);
 
   Engine_MapCopyCellAttributes(column - 1, row, 3, 1, column - 1,
-                               Object_GetById(18)->z.fixed >> 20);
+                               Object_GetById(ACTOR_ELEVENTH_PILLAR)->z.fixed >>
+                                   20);
   Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
 #undef IS_IN_PILLAR_CROSSING_COLUMNS
 #define IS_IN_PILLAR_CROSSING_COLUMNS(x) ((x) >= 9 && (x) <= 11)
 
-/// Walking north onto pillar 9.
-static void Event_SlidePillar9North(void) {
+/// Walking north onto the second pillar.
+static void Event_SlideSecondPillarNorth(void) {
   s32 column;
   s32 row;
-  s32 pillar19Column;
-  s32 pillar14Column;
-  s32 pillar16Column;
+  s32 twelfthPillarColumn;
+  s32 seventhPillarColumn;
+  s32 ninthPillarColumn;
 
-  column = Object_GetById(9)->x.fixed >> 20;
-  row = Object_GetById(9)->z.fixed >> 20;
-  pillar19Column = Object_GetById(19)->x.fixed >> 20;
-  pillar14Column = Object_GetById(14)->x.fixed >> 20;
-  pillar16Column = Object_GetById(16)->x.fixed >> 20;
+  column = Object_GetById(ACTOR_SECOND_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >> 20;
+  twelfthPillarColumn = Object_GetById(ACTOR_TWELFTH_PILLAR)->x.fixed >> 20;
+  seventhPillarColumn = Object_GetById(ACTOR_SEVENTH_PILLAR)->x.fixed >> 20;
+  ninthPillarColumn = Object_GetById(ACTOR_NINTH_PILLAR)->x.fixed >> 20;
   if (row == 19) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar19Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -16);
-    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar14Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -64);
-    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -112);
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(twelfthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -16);
+    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(seventhPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -64);
+    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -112);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -80);
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -96);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -80);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -96);
     }
   } else if (row == 18) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar19Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(twelfthPillarColumn)) {
       return;
     }
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar14Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -48);
-    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -96);
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(seventhPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -48);
+    } else if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -96);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -96);
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -64);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -96);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -64);
     }
   } else if (row == 15) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar14Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(seventhPillarColumn)) {
       return;
     }
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -48);
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -48);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -112);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -112);
     }
   } else if (row == 14) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar14Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(seventhPillarColumn)) {
       return;
     }
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -32);
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -32);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -96);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -96);
     }
   } else if (row == 12) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -64);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -64);
   } else if (row == 11) {
-    if (IS_IN_PILLAR_CROSSING_COLUMNS(pillar16Column)) {
+    if (IS_IN_PILLAR_CROSSING_COLUMNS(ninthPillarColumn)) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(9, 0, -48);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, -48);
   } else if ((u32)row <= 9) {
     return;
   }
   Engine_TaskWait(2);
   Engine_MapCopyCellAttributes(column - 1, row, 3, 1, column - 1,
-                               Object_GetById(9)->z.fixed >> 20);
+                               Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >>
+                                   20);
   Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
 #undef IS_IN_PILLAR_CROSSING_COLUMNS
 
-/// Walking south onto pillar 9.
-static void Event_SlidePillar9South(void) {
+/// Walking south onto the second pillar.
+static void Event_SlideSecondPillarSouth(void) {
   s32 column;
   s32 row;
-  s32 companion19Column;
-  s32 companion14Column;
-  s32 companion16Column;
+  s32 twelfthPillarColumn;
+  s32 seventhPillarColumn;
+  s32 ninthPillarColumn;
 
-  column = Object_GetById(9)->x.fixed >> 20;
-  row = Object_GetById(9)->z.fixed >> 20;
-  companion19Column = Object_GetById(19)->x.fixed >> 20;
-  companion14Column = Object_GetById(14)->x.fixed >> 20;
-  companion16Column = Object_GetById(16)->x.fixed >> 20;
+  column = Object_GetById(ACTOR_SECOND_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >> 20;
+  twelfthPillarColumn = Object_GetById(ACTOR_TWELFTH_PILLAR)->x.fixed >> 20;
+  seventhPillarColumn = Object_GetById(ACTOR_SEVENTH_PILLAR)->x.fixed >> 20;
+  ninthPillarColumn = Object_GetById(ACTOR_NINTH_PILLAR)->x.fixed >> 20;
 
   if (row == 8) {
-    if ((u32)(companion16Column - 9) <= 2) {
+    if ((u32)(ninthPillarColumn - 9) <= 2) {
       return;
     }
-    if ((u32)(companion14Column - 9) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 48);
+    if ((u32)(seventhPillarColumn - 9) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 48);
     } else {
-      if ((u32)(companion19Column - 9) > 2) {
-        CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 80);
+      if ((u32)(twelfthPillarColumn - 9) > 2) {
+        CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 80);
       }
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 96);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 96);
     }
   } else if (row == 11) {
-    if ((u32)(companion14Column - 9) <= 2) {
+    if ((u32)(seventhPillarColumn - 9) <= 2) {
       return;
     }
-    if ((u32)(companion19Column - 9) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 48);
+    if ((u32)(twelfthPillarColumn - 9) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 48);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 128);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 128);
     }
   } else if (row == 12) {
-    if ((u32)(companion14Column - 9) <= 2) {
+    if ((u32)(seventhPillarColumn - 9) <= 2) {
       return;
     }
-    if ((u32)(companion19Column - 9) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 32);
+    if ((u32)(twelfthPillarColumn - 9) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 32);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 112);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 112);
     }
   } else if (row == 14) {
-    if ((u32)(companion19Column - 9) <= 2) {
+    if ((u32)(twelfthPillarColumn - 9) <= 2) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 80);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 80);
   } else if (row == 15) {
-    CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 64);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 64);
   } else if (row == 18) {
-    CrossboneIsle_MoveSelectedActorAndPillar(9, 0, 16);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SECOND_PILLAR, 0, 16);
   }
 
   Engine_TaskWait(2);
 
   Engine_MapCopyCellAttributes(column - 1, row, 3, 1, column - 1,
-                               Object_GetById(9)->z.fixed >> 20);
+                               Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >>
+                                   20);
   Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-/// Walking west onto pillar 19.
-static void Event_SlidePillar19West(void) {
+/// Walking west onto the twelfth pillar.
+static void Event_SlideTwelfthPillarWest(void) {
   s32 column;
   s32 row;
-  s32 pillar17Row;
-  s32 pillar18Row;
-  s32 pillar9Row;
+  s32 tenthPillarRow;
+  s32 eleventhPillarRow;
+  s32 secondPillarRow;
 
-  column = Object_GetById(19)->x.fixed >> 20;
-  row = Object_GetById(19)->z.fixed >> 20;
-  pillar17Row = Object_GetById(17)->z.fixed >> 20;
-  pillar18Row = Object_GetById(18)->z.fixed >> 20;
-  pillar9Row = Object_GetById(9)->z.fixed >> 20;
+  column = Object_GetById(ACTOR_TWELFTH_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_TWELFTH_PILLAR)->z.fixed >> 20;
+  tenthPillarRow = Object_GetById(ACTOR_TENTH_PILLAR)->z.fixed >> 20;
+  eleventhPillarRow = Object_GetById(ACTOR_ELEVENTH_PILLAR)->z.fixed >> 20;
+  secondPillarRow = Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >> 20;
   if (column == 3) {
     return;
   }
   if (column == 13) {
-    if (pillar9Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -16, 0);
-    } else if (pillar18Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -64, 0);
-    } else if (pillar17Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -112, 0);
+    if (secondPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -16, 0);
+    } else if (eleventhPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -64, 0);
+    } else if (tenthPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -112, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -112, 0);
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -48, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -112, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -48, 0);
     }
   } else if (column == 6) {
-    if (pillar17Row == 15) {
+    if (tenthPillarRow == 15) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(19, -48, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -48, 0);
   } else if (column == 5) {
-    CrossboneIsle_MoveSelectedActorAndPillar(19, -32, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -32, 0);
   } else if (column == 8) {
-    if (pillar18Row == 15) {
+    if (eleventhPillarRow == 15) {
       return;
     }
-    if (pillar17Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -32, 0);
+    if (tenthPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -32, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -80, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -80, 0);
     }
   } else if (column == 9) {
-    if (pillar18Row == 15) {
+    if (eleventhPillarRow == 15) {
       return;
     }
-    if (pillar17Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -48, 0);
+    if (tenthPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -48, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -96, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -96, 0);
     }
   } else if (column == 12) {
-    if (pillar9Row == 15) {
+    if (secondPillarRow == 15) {
       return;
     }
-    if (pillar18Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -48, 0);
-    } else if (pillar17Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -96, 0);
+    if (eleventhPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -48, 0);
+    } else if (tenthPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -96, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, -144, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, -144, 0);
     }
   }
   Engine_TaskWait(2);
-  Engine_MapCopyCellAttributes(column, row - 1, 1, 3,
-                               Object_GetById(19)->x.fixed >> 20, row - 1);
+  Engine_MapCopyCellAttributes(
+      column, row - 1, 1, 3,
+      Object_GetById(ACTOR_TWELFTH_PILLAR)->x.fixed >> 20, row - 1);
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking east onto pillar 19.
-static void Event_SlidePillar19East(void) {
+/// Walking east onto the twelfth pillar.
+static void Event_SlideTwelfthPillarEast(void) {
   s32 column;
   s32 row;
-  s32 pillar18Row;
-  s32 pillar9Row;
+  s32 eleventhPillarRow;
+  s32 secondPillarRow;
 
-  column = Object_GetById(19)->x.fixed >> 20;
-  row = Object_GetById(19)->z.fixed >> 20;
-  pillar18Row = Object_GetById(18)->z.fixed >> 20;
-  pillar9Row = Object_GetById(9)->z.fixed >> 20;
+  column = Object_GetById(ACTOR_TWELFTH_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_TWELFTH_PILLAR)->z.fixed >> 20;
+  eleventhPillarRow = Object_GetById(ACTOR_ELEVENTH_PILLAR)->z.fixed >> 20;
+  secondPillarRow = Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >> 20;
   if (column == 3) {
-    if (pillar18Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, 32, 0);
-    } else if (pillar9Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, 80, 0);
+    if (eleventhPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 32, 0);
+    } else if (secondPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 80, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, 112, 0);
-      CrossboneIsle_MoveSelectedActorAndPillar(19, 48, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 112, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 48, 0);
     }
   } else if (column == 5) {
-    if (pillar18Row == 15) {
+    if (eleventhPillarRow == 15) {
       return;
     }
-    if (pillar9Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, 48, 0);
+    if (secondPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 48, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, 128, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 128, 0);
     }
   } else if (column == 6) {
-    if (pillar9Row == 15) {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, 32, 0);
+    if (secondPillarRow == 15) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 32, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(19, 112, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 112, 0);
     }
   } else if (column == 8) {
-    if (pillar9Row == 15) {
+    if (secondPillarRow == 15) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(19, 80, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 80, 0);
   } else if (column == 9) {
-    CrossboneIsle_MoveSelectedActorAndPillar(19, 64, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 64, 0);
   } else if (column == 12) {
-    CrossboneIsle_MoveSelectedActorAndPillar(19, 16, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_TWELFTH_PILLAR, 16, 0);
   }
   Engine_TaskWait(2);
-  Engine_MapCopyCellAttributes(column, row - 1, 1, 3,
-                               Object_GetById(19)->x.fixed >> 20, row - 1);
+  Engine_MapCopyCellAttributes(
+      column, row - 1, 1, 3,
+      Object_GetById(ACTOR_TWELFTH_PILLAR)->x.fixed >> 20, row - 1);
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking west onto pillar 14.
-static void Event_SlidePillar14West(void) {
+/// Walking west onto the seventh pillar.
+static void Event_SlideSeventhPillarWest(void) {
   s32 column;
   s32 row;
-  s32 companion18Row;
-  s32 companion9Row;
+  s32 eleventhPillarRow;
+  s32 secondPillarRow;
   s32 footprintRow;
 
-  column = Object_GetById(14)->x.fixed >> 20;
-  row = Object_GetById(14)->z.fixed >> 20;
-  companion18Row = Object_GetById(18)->z.fixed >> 20;
-  companion9Row = Object_GetById(9)->z.fixed >> 20;
+  column = Object_GetById(ACTOR_SEVENTH_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_SEVENTH_PILLAR)->z.fixed >> 20;
+  eleventhPillarRow = Object_GetById(ACTOR_ELEVENTH_PILLAR)->z.fixed >> 20;
+  secondPillarRow = Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >> 20;
 
   if (column == 13) {
-    if ((u32)(companion9Row - 12) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(14, -16, 0);
-    } else if ((u32)(companion18Row - 12) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(14, -64, 0);
+    if ((u32)(secondPillarRow - 12) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, -16, 0);
+    } else if ((u32)(eleventhPillarRow - 12) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, -64, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(14, -112, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, -112, 0);
     }
   } else if (column == 12) {
-    if ((u32)(companion9Row - 12) <= 2) {
+    if ((u32)(secondPillarRow - 12) <= 2) {
       return;
     }
-    if ((u32)(companion18Row - 12) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(14, -48, 0);
+    if ((u32)(eleventhPillarRow - 12) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, -48, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(14, -96, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, -96, 0);
     }
   } else if (column == 9) {
-    if ((u32)(companion18Row - 12) <= 2) {
+    if ((u32)(eleventhPillarRow - 12) <= 2) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(14, -48, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, -48, 0);
   } else if (column == 8) {
-    if ((u32)(companion18Row - 12) <= 2) {
+    if ((u32)(eleventhPillarRow - 12) <= 2) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(14, -32, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, -32, 0);
   } else if (column == 6) {
     return;
   }
@@ -1724,44 +1809,45 @@ static void Event_SlidePillar14West(void) {
   Engine_TaskWait(2);
 
   footprintRow = row - 1;
-  Engine_MapCopyCellAttributes(column, footprintRow, 1, 3,
-                               Object_GetById(14)->x.fixed >> 20, footprintRow);
+  Engine_MapCopyCellAttributes(
+      column, footprintRow, 1, 3,
+      Object_GetById(ACTOR_SEVENTH_PILLAR)->x.fixed >> 20, footprintRow);
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking east onto pillar 14.
-static void Event_SlidePillar14East(void) {
+/// Walking east onto the seventh pillar.
+static void Event_SlideSeventhPillarEast(void) {
   s32 column;
   s32 row;
-  s32 companion18Row;
-  s32 companion9Row;
+  s32 eleventhPillarRow;
+  s32 secondPillarRow;
   s32 footprintRow;
 
-  column = Object_GetById(14)->x.fixed >> 20;
-  row = Object_GetById(14)->z.fixed >> 20;
-  companion18Row = Object_GetById(18)->z.fixed >> 20;
-  companion9Row = Object_GetById(9)->z.fixed >> 20;
+  column = Object_GetById(ACTOR_SEVENTH_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_SEVENTH_PILLAR)->z.fixed >> 20;
+  eleventhPillarRow = Object_GetById(ACTOR_ELEVENTH_PILLAR)->z.fixed >> 20;
+  secondPillarRow = Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >> 20;
 
   if (column == 6) {
-    if ((u32)(companion9Row - 12) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(14, 32, 0);
-    } else if ((u32)(companion18Row - 12) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(14, 64, 0);
+    if ((u32)(secondPillarRow - 12) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, 32, 0);
+    } else if ((u32)(eleventhPillarRow - 12) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, 64, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(14, 112, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, 112, 0);
     }
   } else if (column == 8) {
-    if ((u32)(companion9Row - 12) <= 2) {
+    if ((u32)(secondPillarRow - 12) <= 2) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(14, 80, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, 80, 0);
   } else if (column == 9) {
-    if ((u32)(companion9Row - 12) <= 2) {
+    if ((u32)(secondPillarRow - 12) <= 2) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(14, 64, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, 64, 0);
   } else if (column == 12) {
-    CrossboneIsle_MoveSelectedActorAndPillar(14, 16, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_SEVENTH_PILLAR, 16, 0);
   } else if (column == 13) {
     return;
   }
@@ -1769,48 +1855,49 @@ static void Event_SlidePillar14East(void) {
   Engine_TaskWait(2);
 
   footprintRow = row - 1;
-  Engine_MapCopyCellAttributes(column, footprintRow, 1, 3,
-                               Object_GetById(14)->x.fixed >> 20, footprintRow);
+  Engine_MapCopyCellAttributes(
+      column, footprintRow, 1, 3,
+      Object_GetById(ACTOR_SEVENTH_PILLAR)->x.fixed >> 20, footprintRow);
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking west onto pillar 16.
-static void Event_SlidePillar16West(void) {
+/// Walking west onto the ninth pillar.
+static void Event_SlideNinthPillarWest(void) {
   s32 column;
   s32 row;
-  s32 companion18Row;
-  s32 companion9Row;
+  s32 eleventhPillarRow;
+  s32 secondPillarRow;
   s32 footprintRow;
 
-  column = Object_GetById(16)->x.fixed >> 20;
-  row = Object_GetById(16)->z.fixed >> 20;
-  companion18Row = Object_GetById(18)->z.fixed >> 20;
-  companion9Row = Object_GetById(9)->z.fixed >> 20;
+  column = Object_GetById(ACTOR_NINTH_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_NINTH_PILLAR)->z.fixed >> 20;
+  eleventhPillarRow = Object_GetById(ACTOR_ELEVENTH_PILLAR)->z.fixed >> 20;
+  secondPillarRow = Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >> 20;
 
   if (column == 13) {
-    if ((u32)(companion9Row - 9) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(16, -16, 0);
-    } else if ((u32)(companion18Row - 9) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(16, -64, 0);
+    if ((u32)(secondPillarRow - 9) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, -16, 0);
+    } else if ((u32)(eleventhPillarRow - 9) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, -64, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(16, -112, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, -112, 0);
     }
   } else if (column == 12) {
-    if ((u32)(companion9Row - 9) <= 2) {
+    if ((u32)(secondPillarRow - 9) <= 2) {
       return;
     }
-    if ((u32)(companion18Row - 9) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(16, -48, 0);
+    if ((u32)(eleventhPillarRow - 9) <= 2) {
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, -48, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(16, -96, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, -96, 0);
     }
   } else if (column == 9) {
-    if ((u32)(companion18Row - 9) <= 2) {
+    if ((u32)(eleventhPillarRow - 9) <= 2) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(16, -48, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, -48, 0);
   } else if (column == 8) {
-    CrossboneIsle_MoveSelectedActorAndPillar(16, -32, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, -32, 0);
   } else if (column == 6) {
     return;
   }
@@ -1818,44 +1905,46 @@ static void Event_SlidePillar16West(void) {
   Engine_TaskWait(2);
 
   footprintRow = row - 1;
-  Engine_MapCopyCellAttributes(column, footprintRow, 1, 3,
-                               Object_GetById(16)->x.fixed >> 20, footprintRow);
+  Engine_MapCopyCellAttributes(
+      column, footprintRow, 1, 3,
+      Object_GetById(ACTOR_NINTH_PILLAR)->x.fixed >> 20, footprintRow);
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking east onto pillar 16.
-static void Event_SlidePillar16East(void) {
+/// Walking east onto the ninth pillar.
+static void Event_SlideNinthPillarEast(void) {
   s32 column;
   s32 row;
   s32 companionRow;
 
-  column = Object_GetById(16)->x.fixed >> 20;
-  row = Object_GetById(16)->z.fixed >> 20;
-  companionRow = Object_GetById(9)->z.fixed >> 20;
+  column = Object_GetById(ACTOR_NINTH_PILLAR)->x.fixed >> 20;
+  row = Object_GetById(ACTOR_NINTH_PILLAR)->z.fixed >> 20;
+  companionRow = Object_GetById(ACTOR_SECOND_PILLAR)->z.fixed >> 20;
 
   if (column == 6) {
     if ((u32)(companionRow - 9) <= 2) {
-      CrossboneIsle_MoveSelectedActorAndPillar(16, 32, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, 32, 0);
     } else {
-      CrossboneIsle_MoveSelectedActorAndPillar(16, 112, 0);
+      CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, 112, 0);
     }
   } else if (column == 8) {
     if ((u32)(companionRow - 9) <= 2) {
       return;
     }
-    CrossboneIsle_MoveSelectedActorAndPillar(16, 80, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, 80, 0);
   } else if (column == 9) {
-    CrossboneIsle_MoveSelectedActorAndPillar(16, 64, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, 64, 0);
   } else if (column == 12) {
-    CrossboneIsle_MoveSelectedActorAndPillar(16, 16, 0);
+    CrossboneIsle_MoveSelectedActorAndPillar(ACTOR_NINTH_PILLAR, 16, 0);
   } else if (column == 13) {
     return;
   }
 
   Engine_TaskWait(2);
 
-  Engine_MapCopyCellAttributes(column, row - 1, 1, 3,
-                               Object_GetById(16)->x.fixed >> 20, row - 1);
+  Engine_MapCopyCellAttributes(
+      column, row - 1, 1, 3, Object_GetById(ACTOR_NINTH_PILLAR)->x.fixed >> 20,
+      row - 1);
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
@@ -1963,15 +2052,15 @@ struct SceneEntrance gCrossboneIsleEntrances4[] = {
 
 struct SceneEntrance gCrossboneIsleEntrances5[] = {
     { PIRATE_SHIP_FROM_CROSSBONE_ISLE_4, CONDITION_ALWAYS, 312, 0, 656, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { 5, CONDITION_ALWAYS, 216, 0, 544, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 216, 0, 544, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     // The nine corridor rooms (CrossboneIsle6 to 14) enter through this
-    // shared tail.
+    // shared tail, since every room numbers its entrances alike.
 
-    { PIRATE_SHIP_FROM_CROSSBONE_ISLE_4, CONDITION_ALWAYS, 840, 0, 176, FACING_WEST, 0, 432, 32, 880, 352, 0 },
-    { 2, CONDITION_ALWAYS, 488, 0, 176, FACING_EAST, 0, 432, 32, 880, 352, 0 },
-    { 3, CONDITION_ALWAYS, 712, 0, 152, FACING_SOUTH, 0, 432, 32, 880, 352, 0 },
-    { 4, CONDITION_ALWAYS, 600, 0, 152, FACING_SOUTH, 0, 432, 32, 880, 352, 0 },
-    { 5, CONDITION_ALWAYS, 712, 0, 152, FACING_NORTH, 0, 432, 32, 880, 352, 0 },
+    { CORRIDOR_FROM_PREVIOUS_ROOM, CONDITION_ALWAYS, 840, 0, 176, FACING_WEST, 0, 432, 32, 880, 352, 0 },
+    { CORRIDOR_FROM_NEXT_ROOM, CONDITION_ALWAYS, 488, 0, 176, FACING_EAST, 0, 432, 32, 880, 352, 0 },
+    { CORRIDOR_FROM_SIDE_ROOM_EAST, CONDITION_ALWAYS, 712, 0, 152, FACING_SOUTH, 0, 432, 32, 880, 352, 0 },
+    { CORRIDOR_FROM_SIDE_ROOM_WEST, CONDITION_ALWAYS, 600, 0, 152, FACING_SOUTH, 0, 432, 32, 880, 352, 0 },
+    { ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 712, 0, 152, FACING_NORTH, 0, 432, 32, 880, 352, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -2101,34 +2190,34 @@ struct ScenePlacement gCrossboneIslePlacements6To14[] = {
 };
 
 struct SceneEvent gCrossboneIsleEventsOther[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, CORRIDOR_TO_PREVIOUS_ROOM },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, CORRIDOR_TO_NEXT_ROOM },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenEastDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenWestDoor) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CORRIDOR_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillar) },
     { SEARCH(SEARCH_CHEST), 100, 0xef4, 0x500004 },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gCrossboneIsleEvents2[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_2_TO_CROSSBONE_ISLE },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_2_TO_CROSSBONE_ISLE_6 },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gCrossboneIsleEvents1[] = {
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 8, 0xfd7, EVENT_SCRIPT(Event_CatchNut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 11, FLAG_SCENE_TEMP_40, EVENT_SCRIPT(Event_GrowPlant11) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 12, FLAG_SCENE_TEMP_41, EVENT_SCRIPT(Event_GrowPlant12) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 13, FLAG_SCENE_TEMP_42, EVENT_SCRIPT(Event_GrowPlant13) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 14, FLAG_SCENE_TEMP_43, EVENT_SCRIPT(Event_GrowPlant14) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayIvy15) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 16, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT_SCRIPT(Event_BlowAwayIvy16) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT_SCRIPT(Event_BlowAwayIvy17) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 18, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT_SCRIPT(Event_BlowAwayIvy18) },
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ISLE_NUT, 0xfd7, EVENT_SCRIPT(Event_CatchNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT, FLAG_SCENE_TEMP_40, EVENT_SCRIPT(Event_GrowFirstPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 1, FLAG_SCENE_TEMP_41, EVENT_SCRIPT(Event_GrowSecondPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 2, FLAG_SCENE_TEMP_42, EVENT_SCRIPT(Event_GrowThirdPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 3, FLAG_SCENE_TEMP_43, EVENT_SCRIPT(Event_GrowFourthPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayFirstIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 1, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT_SCRIPT(Event_BlowAwaySecondIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 2, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 3, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT_SCRIPT(Event_BlowAwayFourthIvy) },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_WORLD_MAP },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_2 },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIslePillar) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIslePillar) },
     { 0x8413, 100, 0xec0, FIND_COINS(1) },
@@ -2141,72 +2230,72 @@ struct SceneEvent gCrossboneIsleEvents1[] = {
 };
 
 struct SceneEvent gCrossboneIsleEvents3[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_3_TO_CROSSBONE_ISLE_14_EAST },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_3_TO_CROSSBONE_ISLE_14_WEST },
     { TOUCH_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
     { TOUCH_WALKING_INTO(FACING_EAST), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 42, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 43, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar8North) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar8South) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideFirstPillarNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideFirstPillarSouth) },
     { TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
     { TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar10North) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar10South) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideThirdPillarNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideThirdPillarSouth) },
     { TOUCH_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
     { TOUCH_WALKING_INTO(FACING_WEST), 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar11West) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar11East) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideFourthPillarWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideFourthPillarEast) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar12West) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar12East) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideFifthPillarWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideFifthPillarEast) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar13West) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar13East) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideSixthPillarWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideSixthPillarEast) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar15West) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar15East) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideEighthPillarWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideEighthPillarEast) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar17North) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar17South) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideTenthPillarNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideTenthPillarSouth) },
     { TOUCH_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
     { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar18North) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar18South) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideEleventhPillarNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideEleventhPillarSouth) },
     { TOUCH_WALKING_INTO(FACING_EAST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
     { TOUCH_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar9North) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar9South) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideSecondPillarNorth) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideSecondPillarSouth) },
     { TOUCH_WALKING_INTO(FACING_EAST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
     { TOUCH_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar19West) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar19East) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideTwelfthPillarWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideTwelfthPillarEast) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar14West) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar14East) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideSeventhPillarWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideSeventhPillarEast) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar16West) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlidePillar16East) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideNinthPillarWest) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SlideNinthPillarEast) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopNorth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
-    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar8) },
-    { EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar10) },
-    { EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar11) },
-    { EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar12) },
-    { EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar13) },
-    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar15) },
-    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar17) },
-    { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar18) },
-    { EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar9) },
-    { EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar19) },
-    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar14) },
-    { EVENT_TOUCH, 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnPillar16) },
+    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnFirstPillar) },
+    { EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnThirdPillar) },
+    { EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnFourthPillar) },
+    { EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnFifthPillar) },
+    { EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnSixthPillar) },
+    { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnEighthPillar) },
+    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnTenthPillar) },
+    { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnEleventhPillar) },
+    { EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnSecondPillar) },
+    { EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnTwelfthPillar) },
+    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnSeventhPillar) },
+    { EVENT_TOUCH, 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnNinthPillar) },
     { SEARCH(SEARCH_CHEST), 100, 0xee2, FIND_COINS(999) },
     { SEARCH(SEARCH_CHEST), 101, 0xee3, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { SEARCH(SEARCH_CHEST), 102, 0xee4, FIND_ITEM(ITEM_MURAMASA) },
@@ -2216,13 +2305,13 @@ struct SceneEvent gCrossboneIsleEvents3[] = {
 // clang-format on
 
 struct SceneEvent gCrossboneIsleEvents4[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_4_TO_CROSSBONE_ISLE_14},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_4_TO_PIRATE_SHIP},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gCrossboneIsleEvents5[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, PIRATE_SHIP_TO_CROSSBONE_ISLE_4},
     {EVENT_TOUCH, 10, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
      EVENT_SCRIPT(Event_FightDeadbeard)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS,

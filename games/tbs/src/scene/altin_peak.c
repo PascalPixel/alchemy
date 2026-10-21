@@ -3,12 +3,13 @@
 /// Crossing's signpost call Altin Mine: eleven scenes, AltinPeak1 to
 /// AltinPeak11 (scenes 77 to 87), whose area name is Altin Peak, except that
 /// the international editions call AltinPeak4 the Alpine Crossing when the
-/// party comes in from there (its entrances 6 and 7). Each scene is a room of
-/// the mine, numbered here as its scene id is (room 1 is AltinPeak1). The
-/// getters pick each room's tables by gGameState.scene, all the rooms share
-/// one exit table, and Scene_Initialize calls the setup of the room being
-/// entered (AltinPeak_RestoreRoom1 and so on), which puts back what the party
-/// has already done there.
+/// party comes in from there (ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST and
+/// ALTIN_PEAK_4_FROM_ALPINE_CROSSING_EAST). Each scene is a room of the mine,
+/// numbered here as its scene id is (room 1 is AltinPeak1). The getters pick
+/// each room's tables by gGameState.scene, all the rooms share one exit
+/// table, and Scene_Initialize calls the setup of the room being entered
+/// (AltinPeak_RestoreRoom1 and so on), which puts back what the party has
+/// already done there.
 ///
 /// The party comes down from Altin, by doorways into rooms 1, 4, 7 and 8,
 /// while boulders block Silk Road; the villagers say a passage at the bottom
@@ -19,14 +20,15 @@
 /// the wide puddle with Frost and hops across, and stepping near it again
 /// (touch 11) it hops back and settles down to spit. Talking to a beast, or
 /// reading its mind, starts its battle, and the party comes back to the room
-/// by entrance 99, where the room's setup runs a drain: the water layer sinks
-/// and flickers away (AltinPeak_DrainFirstWater and the two after it), and
-/// FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN remember the three drains,
-/// which Altin's code reads to lower the water in the village too. Back from
-/// the first battle, in room 1, the party finds the Frost Jewel before the
-/// water drains, and from then on Frost freezes the mine's puddles into ice
-/// pillars to stand on (scene flags keep them frozen only within one visit).
-/// Room 4's water stands until the second drain and room 6's until the third.
+/// by ENTRANCE_AFTER_BATTLE, where the room's setup runs a drain: the water
+/// layer sinks and flickers away (AltinPeak_DrainFirstWater and the two after
+/// it), and FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN remember the three
+/// drains, which Altin's code reads to lower the water in the village too.
+/// Back from the first battle, in room 1, the party finds the Frost Jewel
+/// before the water drains, and from then on Frost freezes the mine's puddles
+/// into ice pillars to stand on (scene flags keep them frozen only within one
+/// visit). Room 4's water stands until the second drain and room 6's until the
+/// third.
 ///
 /// The rooms between are built from a few mechanisms: logs the party rides
 /// (talking to one, AltinPeak_RollLog), which roll along the turns their
@@ -50,8 +52,9 @@
 /// and a chest behind it holds the Lifting Gem. Its Lift is what frees Hsu at
 /// the Alpine Crossing (alpine_crossing_lama_temple.c), and in the mine the
 /// boulders of rooms 3, 8 and 11 have Lift rows that run nothing of their own.
-/// Room 4 opens onto the Alpine Crossing (its exits 6 and 7, the Crossing's
-/// entrances 4 and 5) and room 11 onto the world map.
+/// Room 4 opens onto the Alpine Crossing (ALTIN_PEAK_4_TO_ALPINE_CROSSING_WEST
+/// and ALTIN_PEAK_4_TO_ALPINE_CROSSING_EAST) and room 11 onto the world map
+/// (ALTIN_PEAK_11_TO_WORLD_MAP).
 
 #include "script.h"
 #include "version.h"
@@ -170,12 +173,16 @@ enum {
 enum { ACTOR_ROOM8_BOULDER = 8 };
 
 /// Room 9: the boulder that falls and its shadow, the rock that topples as it
-/// comes down, and the actor Force is cast on.
+/// comes down, the actor Force is cast on, and the sign.
 enum {
   ACTOR_FALLING_BOULDER = 8,
   ACTOR_BOULDER_SHADOW = 9,
   ACTOR_TOPPLING_ROCK = 10,
-  ACTOR_WALL = 11
+  ACTOR_WALL = 11,
+  /// The falling-rock sign, drawn with the sprite of Lalivero's sign and the
+  /// Kolima Forest floodgate's (0x112); it is read by searching cell code 12
+  /// (AltinPeak_ReadFallingRockSign).
+  ACTOR_FALLING_ROCK_SIGN = 12
 };
 
 /// Room 10: the guardian statue and its shadow.
@@ -1293,7 +1300,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_CameraSetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
   Engine_CameraMoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   Engine_CameraWaitForMove();
-  FieldObject_SetTargetAndCallback(10,
+  FieldObject_SetTargetAndCallback(ACTOR_ROOM1_BEAST,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                    gAltinPeak_FaceLeaderScript);
   Engine_GameFlagSet(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN);
@@ -1530,7 +1537,8 @@ static void AltinPeak_RestoreRoom3(void) {
 }
 
 /// Room 4: its water is up until the second drain. Arriving from the Alpine
-/// Crossing, at entrance 6 or 7, shows no place name.
+/// Crossing, at ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST or _EAST, shows no place
+/// name.
 static void AltinPeak_RestoreRoom4(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
     ((struct MapScrollWork *)gMapWork[0])->flags &= ~0x200;
@@ -1538,8 +1546,11 @@ static void AltinPeak_RestoreRoom4(void) {
     Map_CopyCellAttributes(52, 42, 1, 1, 53, 42);
   }
   {
-    // Entrances 6 and 7, from the Alpine Crossing.
-    if ((u32)(((u16)gGameState.entrance - 6) << 16) <= 0x10000) {
+    // Either entrance from the Alpine Crossing: _EAST is the number after
+    // ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST.
+    if ((u32)(((u16)gGameState.entrance -
+               ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST)
+              << 16) <= 0x10000) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
   }
@@ -1660,8 +1671,8 @@ static void AltinPeak_RestoreRoom7(void) {
 }
 
 /// Room 9: the boulder is put away; once the rockfall is over the rock lies
-/// toppled and the rubble fills the bottom of the path. Arriving at entrance
-/// 6, the leader starts 88 pixels down.
+/// toppled and the rubble fills the bottom of the path. Arriving from room 10
+/// (ALTIN_PEAK_9_FROM_ALTIN_PEAK_10), the leader starts 88 pixels down.
 static void AltinPeak_RestoreRoom9(void) {
   struct FieldActor *actor;
 
@@ -1673,8 +1684,8 @@ static void AltinPeak_RestoreRoom9(void) {
   actor->scaleX = 9 * Q16_ONE / 10;
   actor->scaleY = 3 * Q16_ONE / 5;
   actor->sprite->rotation = 0x8000;
-  Object_GetById(12)->motionFlags = 0;
-  Object_GetById(12)->y.fixed = -PIXELS(28);
+  Object_GetById(ACTOR_FALLING_ROCK_SIGN)->motionFlags = 0;
+  Object_GetById(ACTOR_FALLING_ROCK_SIGN)->y.fixed = -PIXELS(28);
   if (GameFlag_IsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     actor->x.fixed += PIXELS(14);
     actor->y.fixed += -PIXELS(8);
@@ -1686,7 +1697,7 @@ static void AltinPeak_RestoreRoom9(void) {
     Engine_MapRedraw();
     Engine_TaskWait(1);
   }
-  if (gGameState.entrance == 6 &&
+  if (gGameState.entrance == ALTIN_PEAK_9_FROM_ALTIN_PEAK_10 &&
       !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
     Engine_EventBegin();
     Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(88);
@@ -1718,7 +1729,7 @@ static void AltinPeak_RestoreRoom10(void) {
     Object_GetById(ACTOR_STATUE_SHADOW)->collisionFlags = statuesDefeated;
   }
   entrance = gGameState.entrance;
-  if (entrance == 1 || entrance == 98) {
+  if (entrance == ALTIN_PEAK_10_FROM_ALTIN_PEAK_9 || entrance == 98) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       Engine_EventBegin();
@@ -2601,7 +2612,7 @@ struct SceneEntrance gAltinPeak_Entrances1[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_1_FROM_ALTIN, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0},
     {98, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
-    {99, CONDITION_ALWAYS, 104, 0, 232, FACING_SOUTH, 0, 0, 56, 506, 530, 0},
+    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 104, 0, 232, FACING_SOUTH, 0, 0, 56, 506, 530, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2618,7 +2629,7 @@ struct SceneEntrance gAltinPeak_Entrances3[] = {
     {2, CONDITION_ALWAYS, 664, 0, 380, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {3, CONDITION_ALWAYS, 904, 0, 214, FACING_NORTH, 0, 842, 40, 1016, 248, 0},
     {98, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {99, CONDITION_ALWAYS, 320, 0, 472, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 320, 0, 472, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2638,7 +2649,7 @@ struct SceneEntrance gAltinPeak_Entrances5[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_5_FROM_ALTIN_PEAK_6, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {98, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
-    {99, CONDITION_ALWAYS, 747, 0, 258, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
+    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 747, 0, 258, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2686,7 +2697,7 @@ struct SceneEntrance gAltinPeak_Entrances10[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_10_FROM_ALTIN_PEAK_9, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
     {98, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
-    {99, CONDITION_ALWAYS, 328, 0, 118, FACING_NORTH, 0, 0, 0, 448, 524, 0},
+    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 328, 0, 118, FACING_NORTH, 0, 0, 0, 448, 524, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2872,7 +2883,7 @@ struct SceneEvent gAltinPeak_EventsOther[] = {
 };
 
 struct SceneEvent gAltinPeak_Events1[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_1_TO_ALTIN},
     {EVENT_TOUCH, 10, FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowFirstBeastRoute)},
     {EVENT_TOUCH, 11, FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowSecondBeastRoute)},
     {EVENT_TALK, ACTOR_ROOM1_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightRoom1Beast)},
@@ -2882,7 +2893,7 @@ struct SceneEvent gAltinPeak_Events1[] = {
 };
 
 struct SceneEvent gAltinPeak_Events1Drained[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_1_TO_ALTIN},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM1_PUDDLE, FLAG_PUDDLE_FROZEN,
         EVENT_SCRIPT(AltinPeak_FreezeRoom1Puddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM1_WIDE_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeRoom1WidePuddle)},
@@ -2890,13 +2901,13 @@ struct SceneEvent gAltinPeak_Events1Drained[] = {
 };
 
 struct SceneEvent gAltinPeak_Events2[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_2_TO_ALTIN_PEAK_4},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_2_TO_ALTIN_PEAK_3},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gAltinPeak_Events3[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_3_TO_ALTIN_PEAK_2},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {EVENT_TALK, ACTOR_LOG, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideLog)},
@@ -2914,18 +2925,18 @@ struct SceneEvent gAltinPeak_Events3[] = {
 };
 
 struct SceneEvent gAltinPeak_Events4[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALTIN},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALTIN_PEAK_2},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
-    {EVENT_EXIT, 6, CONDITION_ALWAYS, 6},
-    {EVENT_EXIT, 7, CONDITION_ALWAYS, 7},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALTIN_PEAK_6},
+    {EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALPINE_CROSSING_WEST},
+    {EVENT_EXIT, 7, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALPINE_CROSSING_EAST},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gAltinPeak_Events5[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_5_TO_ALTIN_PEAK_6},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM5_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeRoom5Puddle)},
     {EVENT_TALK, ACTOR_ROOM5_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightRoom5Beast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_ROOM5_BEAST, CONDITION_ALWAYS,
@@ -2940,12 +2951,12 @@ struct SceneEvent gAltinPeak_Events5[] = {
 };
 
 struct SceneEvent gAltinPeak_Events6[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_6_TO_ALTIN_PEAK_4},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
-    {EVENT_EXIT, 6, CONDITION_ALWAYS, 6},
+    {EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_6_TO_ALTIN_PEAK_5},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM6_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeRoom6Puddle)},
     {EVENT_TALK, ACTOR_LOG, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideLog)},
     {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom6Switch)},
@@ -2954,9 +2965,9 @@ struct SceneEvent gAltinPeak_Events6[] = {
 };
 
 struct SceneEvent gAltinPeak_Events7[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_7_TO_ALTIN_PEAK_8},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_7_TO_ALTIN_PEAK_9},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_7_TO_ALTIN},
     {SEARCH(SEARCH_CHEST), 101, FLAG_ALTIN_PEAK_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL)},
     {EVENT_TALK, ACTOR_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_TalkToDjinni)},
     {EVENT_TALK, ACTOR_LOG, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideLog)},
@@ -2976,11 +2987,11 @@ struct SceneEvent gAltinPeak_Events7[] = {
 // clang-format on
 
 struct SceneEvent gAltinPeak_Events8[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN_PEAK_7},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN_PEAK_9_WEST},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN_PEAK_11},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN_PEAK_9_EAST},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_LUCKY_MEDAL,
      FIND_ITEM(ITEM_LUCKY_MEDAL)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_ROOM8_BOULDER, CONDITION_ALWAYS, 0},
@@ -2988,11 +2999,11 @@ struct SceneEvent gAltinPeak_Events8[] = {
 };
 
 struct SceneEvent gAltinPeak_Events9[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_9_TO_ALTIN_PEAK_7},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_9_TO_ALTIN_PEAK_8_SOUTH},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_9_TO_ALTIN_PEAK_8_NORTH},
     {SEARCH(SEARCH_UNNAMED), 12, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltinPeak_ReadFallingRockSign)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_WALL,
@@ -3009,10 +3020,10 @@ struct SceneEvent gAltinPeak_Events10[] = {
 };
 
 struct SceneEvent gAltinPeak_Events11[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_11_TO_ALTIN_PEAK_8},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_11_TO_WORLD_MAP},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_ROOM11_BOULDER, CONDITION_ALWAYS,
      0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM11_PILLAR, CONDITION_ALWAYS, 0},

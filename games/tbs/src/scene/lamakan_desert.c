@@ -1,10 +1,10 @@
 /// @file
-/// Lamakan Desert (LamakanDesertEast to LamakanDesertCave, scenes 89 to 92),
-/// the "evil desert" in which Xian's people say Lama Temple lies. All four maps
-/// are Lamakan Desert in the game's area names, and they share one event table.
-/// The monks of Lama Temple warn the party before it sets out: the "evil
-/// desert" is hotter than the sun, the heat at its maximum does tremendous
-/// damage, and Reveal finds the oases.
+/// Lamakan Desert (SceneId_LamakanDesertEast to SceneId_LamakanDesertCave), the
+/// "evil desert" in which Xian's people say Lama Temple lies. All four maps are
+/// Lamakan Desert in the game's area names, and they share one event table. The
+/// monks of Lama Temple warn the party before it sets out: the "evil desert" is
+/// hotter than the sun, the heat at its maximum does tremendous damage, and
+/// Reveal finds the oases.
 ///
 /// Heat. LamakanDesert_Initialize sets a limit of 600 steps on every map and,
 /// on all but LamakanDesertCave, starts the heat gauge, a bar at the top of the
@@ -87,6 +87,7 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "item_ids.h"
 
 static void HeatGauge_SetHeld(u16 held);
@@ -111,16 +112,16 @@ enum {
 /// Manticore, then the LamakanDesertEast and LamakanDesertManticore one pit and
 /// LamakanDesertSmog all four pits and Smog; LamakanDesertCave places none.
 enum {
-  MANTICORE = 8, ///< sprite 0xc3; talking to it starts its battle
-  /// The first of the Ant Lions' pits Reveal shows, up to LAST_PIT (sprite
-  /// 0xc1).
-  FIRST_PIT = 9,
-  LAST_PIT = 12,
-  SMOG = 13 ///< Smog, a Jupiter Djinni
+  MANTICORE = ACTOR_FIRST_PLACED, ///< talking to it starts its battle
+  /// The first of the Ant Lions' pits Reveal shows, up to LAST_PIT.
+  FIRST_PIT = MANTICORE + 1,
+  LAST_PIT = FIRST_PIT + 3,
+  SMOG = LAST_PIT + 1 ///< Smog, a Jupiter Djinni
 };
 
-/// The battles with the Manticore (slot 5) and the Ant Lions (slot 4) come from
-/// encounter zone 53.
+/// The encounter zone of the scripted battles of Mogall Forest, Altin Peak and
+/// Lamakan Desert, whose last two slots hold the battles with the Ant Lions and
+/// the Manticore.
 enum { LAMAKAN_ENCOUNTERS = 53 };
 
 #define NULL ((void *)0)
@@ -130,7 +131,10 @@ enum { LAMAKAN_ENCOUNTERS = 53 };
 
 /// LamakanDesertSmog: talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
-static void TalkToSmog(void) { Djinn_JoinParty(SMOG, 3, 3); }
+static void TalkToSmog(void) {
+  Djinn_JoinParty(SMOG, ELEMENT_JUPITER,
+                  DJINNI_SMOG - DJINN_PER_ELEMENT * ELEMENT_JUPITER);
+}
 
 #include "common/object_waitdown.h"
 
@@ -175,16 +179,16 @@ const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_LamakanDesertEast) {
-    return gLamakanDesertEntrances1;
+    return gLamakanDesertEastEntrances;
   }
   if (scene == (s32)&SceneId_LamakanDesertSmog) {
-    return gLamakanDesertEntrances2;
+    return gLamakanDesertSmogEntrances;
   }
   if (scene == (s32)&SceneId_LamakanDesertManticore) {
-    return gLamakanDesertEntrances3;
+    return gLamakanDesertManticoreEntrances;
   }
   if (scene == (s32)&SceneId_LamakanDesertCave) {
-    return gLamakanDesertEntrances4;
+    return gLamakanDesertCaveEntrances;
   }
   return gLamakanDesertEntrancesOther;
 }
@@ -208,13 +212,13 @@ const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
     }
   }
   if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
-    return gLamakanDesertPlacements1;
+    return gLamakanDesertEastPlacements;
   }
   if (gGameState.scene == (s32)&SceneId_LamakanDesertSmog) {
-    return gLamakanDesertPlacements2;
+    return gLamakanDesertSmogPlacements;
   }
   if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
-    return gLamakanDesertPlacements3;
+    return gLamakanDesertManticorePlacements;
   }
   return gLamakanDesertPlacementsOther;
 }
@@ -239,10 +243,10 @@ const struct SceneEvent *LamakanDesert_GetEvents(void) {
   return gLamakanDesertEvents;
 }
 
-/// Lamakan Desert, as Reveal wears off (phase 4) and on every entry: the pits,
-/// the Manticore and Smog vanish under the sand again (cells 70, 68 or 69, 99
-/// over the saved patches), the chests and Psynergy Stones hide and the heat
-/// haze shimmers.
+/// Lamakan Desert, as Reveal wears off and on every entry: the pits, the
+/// Manticore and Smog vanish under the sand again (cells 70, 68 or 69, 99 over
+/// the saved patches), the chests and Psynergy Stones hide and the heat haze
+/// shimmers.
 // Native event return forms: see MATCHING.md.
 #ifdef UBFIX
 static void Reveal_HideSecrets(void) {
@@ -311,9 +315,9 @@ static s32 Reveal_HideSecrets(void) {
   }
 }
 
-/// Lamakan Desert, casting Reveal (phase 5): the saved patches of sand come
-/// back, the pits, the Manticore and Smog stand where they are, the chests and
-/// Psynergy Stones show and the haze stops.
+/// Lamakan Desert, casting Reveal: the saved patches of sand come back, the
+/// pits, the Manticore and Smog stand where they are, the chests and Psynergy
+/// Stones show and the haze stops.
 #ifdef UBFIX
 static void Reveal_ShowSecrets(void) {
 #else
@@ -388,7 +392,7 @@ static void FightManticore(void) {
   Engine_ActorRunRepeatedMotion(MANTICORE, 2);
   Event_SetNextDestination((s32)&SceneId_LamakanDesertManticore,
                            LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Field_RequestBattleFromEncounterTable(LAMAKAN_ENCOUNTERS, 5);
 }
 
@@ -605,7 +609,7 @@ static void CollapseFromHeat(void) {
   Event_PlayCue(SE_288);
   Event_PlayCue(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
   *(u16 *)(work + 0xcba) = frames;
   HeatGauge_SetHeld(0);
@@ -888,7 +892,8 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   } else {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
-    FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers, 0xc80);
+    FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers,
+                               TASK_PRIORITY_SCENE);
     if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
       Map_CopyCells(22, 7, 4, 2, 64, 126);
       Map_CopyCells(8, 10, 4, 2, 68, 126);
@@ -932,9 +937,9 @@ static UNUSED void Manticore_UnusedReturn(void) {
   Engine_ActorSetAnimation(MANTICORE, 2);
 }
 
-/// Every frame: draws the heat gauge. It sits 8 pixels lower while held,
-/// slides away while flag 0x104 is set, its bar shrinks as the heat grows,
-/// and its colors turn redder (flickering greener past 60 of 120).
+/// Every frame: draws the heat gauge. It sits 8 pixels lower while held, slides
+/// away while FLAG_FIELD_HANDLING_REQUESTS is set, its bar shrinks as the heat
+/// grows, and its colors turn redder (flickering greener past 60 of 120).
 static void HeatGauge_Draw(void) {
   u8 *buffer;
   s32 tile;
@@ -1144,27 +1149,27 @@ const s32 *gEffectScripts[] = {
 };
 
 struct SceneEntrance gLamakanDesertEntrancesOther[] = {
-    { 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, 0, 0, 0, 0, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gLamakanDesertEntrances1[] = {
-    { 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLamakanDesertEastEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { LAMAKAN_DESERT_EAST_FROM_WORLD_MAP, CONDITION_ALWAYS, 984, 0, 952, FACING_WEST, 0, 0, 0, 1016, 1016, 0 },
     { LAMAKAN_DESERT_EAST_FROM_LAMAKAN_DESERT_SMOG, CONDITION_ALWAYS, 400, 0, 24, FACING_SOUTH, 0, 0, 0, 1016, 1016, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gLamakanDesertEntrances2[] = {
-    { 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLamakanDesertSmogEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_EAST, CONDITION_ALWAYS, 912, 0, 1000, FACING_NORTH, 0, 0, 0, 1016, 1016, 0 },
     { LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_MANTICORE, CONDITION_ALWAYS, 24, 0, 584, FACING_EAST, 0, 0, 0, 1016, 1016, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gLamakanDesertEntrances3[] = {
-    { 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLamakanDesertManticoreEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_SMOG, CONDITION_ALWAYS, 1511, 0, 104, FACING_WEST, 0, 0, 8, 1528, 504, 0 },
     { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST, CONDITION_ALWAYS, 727, 0, 104, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
     { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_SOUTH, CONDITION_ALWAYS, 599, 0, 296, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
@@ -1173,8 +1178,8 @@ struct SceneEntrance gLamakanDesertEntrances3[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gLamakanDesertEntrances4[] = {
-    { 0, CONDITION_ALWAYS, 424, 0, 824, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gLamakanDesertCaveEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 424, 0, 824, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_SOUTH, CONDITION_ALWAYS, 424, 0, 968, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
     { LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_EAST, CONDITION_ALWAYS, 552, 0, 776, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
     { LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_WEST, CONDITION_ALWAYS, 440, 0, 312, FACING_NORTH, 0, 32, 16, 496, 320, 0 },
@@ -1206,7 +1211,7 @@ struct ScenePlacement gLamakanDesertPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gLamakanDesertPlacements1[] = {
+struct ScenePlacement gLamakanDesertEastPlacements[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1214,7 +1219,7 @@ struct ScenePlacement gLamakanDesertPlacements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gLamakanDesertPlacements2[] = {
+struct ScenePlacement gLamakanDesertSmogPlacements[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1225,12 +1230,12 @@ struct ScenePlacement gLamakanDesertPlacements2[] = {
         PIXELS(144), 0, PIXELS(380), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(576), 0, PIXELS(716), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x5d, 0x6f, ACTOR_STAND,
+    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_SMOG, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gLamakanDesertPlacements3[] = {
+struct ScenePlacement gLamakanDesertManticorePlacements[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1238,6 +1243,10 @@ struct ScenePlacement gLamakanDesertPlacements3[] = {
     { SCENE_TABLE_END },
 };
 
+/// The four scenes' one event table. Its exit rows keep their numbers: each
+/// takes the exit of that number in whichever scene the party is in, which is a
+/// different way out in each (LAMAKAN_DESERT_EAST_TO_WORLD_MAP,
+/// LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST and the others).
 struct SceneEvent gLamakanDesertEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },

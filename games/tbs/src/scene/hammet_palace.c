@@ -1,14 +1,15 @@
 /// @file
 /// Hammet Palace (HammetPalace, scene 103), the rooms of Lord Hammet's palace
 /// in Kalay. The scene before its door, also Hammet Palace in the game's area
-/// names, is kalay.c's Kalay2.
+/// names, is kalay.c's HammetPalaceGrounds.
 ///
 /// Hammet, the merchant who founded Kalay, has been held in Lunpa since soon
 /// after Mt. Aleph erupted, and his wife, Lady Layana, keeps the palace. Two
 /// scripted scenes in the room where she stands frame the party's part in his
 /// rescue, and between them what she says follows the party's progress:
 ///
-/// - Ivan's report (HAMMET_PALACE_FROM_KALAY_2_EAST), when the guards at the
+/// - Ivan's report (HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS), when
+/// the guards at the
 ///   door bring the party in (kalay.c). Layana had hoped Hammet came back
 ///   with Ivan. The ransom was paid long ago, yet Dodonpa, Lunpa's leader and
 ///   grandson of Lunpa the noble thief, still holds him, and Layana will not
@@ -36,17 +37,18 @@
 ///   Afterwards Hammet repeats it, Layana and the palace's people speak of
 ///   keeping his return secret, and they tell of the door to the underground
 ///   passage, where Hammet keeps his treasure, opened for the party in thanks:
-///   entering by entrance 10 or HAMMET_PALACE_FROM_KALAY_TUNNEL_3 with flag
-///   0x915 set draws it open.
+///   entering by entrance 10 or HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM
+///   with flag 0x915 set draws it open.
 ///
 /// The people of the palace (ACTOR_TOWNSFOLK_WORRIER to ACTOR_SILK_TRADE_ASKER)
 /// have one line before Hammet is free and another after. Walking north into
 /// a door (triggers 2, 3, 4 and 14) opens it; the other exits join the rooms
-/// plainly. HAMMET_PALACE_TO_KALAY_2_WEST leads out to the front of the palace
-/// (KALAY_2_FROM_HAMMET_PALACE), and HAMMET_PALACE_TO_KALAY_TUNNEL_3 down into
-/// the Kalay Tunnel (KALAY_TUNNEL_3_FROM_HAMMET_PALACE). Searching finds a
-/// turban, the symbol of Kalay's soldiers, and two books, `Business and You`
-/// and `The Good Host`; a chest holds a Water Jacket and a barrel a Nut.
+/// plainly. HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS leads out to the front of
+/// the palace (HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE), and
+/// HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM down into the Kalay Tunnel
+/// (KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE). Searching finds a turban,
+/// the symbol of Kalay's soldiers, and two books, `Business and You` and `The
+/// Good Host`; a chest holds a Water Jacket and a barrel a Nut.
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/hammet_palace.h"
@@ -241,8 +243,9 @@ s32 Scene_Initialize(void) {
 /// stands beside her once he is free, and his homecoming plays the first time;
 /// before that she stands elsewhere once the party has heard of him in Lunpa
 /// (FLAG_PLACE_TEMP_21). By the door to the underground passage (entrance 10
-/// and HAMMET_PALACE_FROM_KALAY_TUNNEL_3) the door is drawn open once flag
-/// 0x915 is set. HAMMET_PALACE_FROM_KALAY_2_EAST is Ivan's report.
+/// and HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open
+/// once flag 0x915 is set. HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS
+/// is Ivan's report.
 static void HammetPalace_SetUpEntrance(void) {
   struct FieldActor *actor;
   s32 facing;
@@ -275,7 +278,7 @@ static void HammetPalace_SetUpEntrance(void) {
     break;
 
   case 10:
-  case HAMMET_PALACE_FROM_KALAY_TUNNEL_3:
+  case HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM:
     if (Engine_GameFlagIsSet(0x915) != 0) {
       Map_CopyCellsTo(58, 70, 54, 70, 4, 3);
       {
@@ -286,7 +289,7 @@ static void HammetPalace_SetUpEntrance(void) {
     }
     break;
 
-  case HAMMET_PALACE_FROM_KALAY_2_EAST:
+  case HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS:
     Engine_ActorSetPosition(ACTOR_HAMMET, 0, 0);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       HammetPalace_IvanReportsToLayana();
@@ -977,7 +980,7 @@ struct SceneEntrance gHammetPalaceEntrancesOther[] = {
 
 struct SceneEntrance gHammetPalaceEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {HAMMET_PALACE_FROM_KALAY_2_WEST, CONDITION_ALWAYS, 240, 0, 648,
+    {HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS, CONDITION_ALWAYS, 240, 0, 648,
      FACING_NORTH, 0, 45, 360, 440, 680, 0},
     {2, CONDITION_ALWAYS, 88, 0, 552, FACING_SOUTH, 0, 45, 360, 440, 680, 0},
     {3, CONDITION_ALWAYS, 392, 0, 552, FACING_SOUTH, 0, 45, 360, 440, 680, 0},
@@ -988,34 +991,47 @@ struct SceneEntrance gHammetPalaceEntrances[] = {
     {8, CONDITION_ALWAYS, 448, 0, 112, FACING_SOUTH, 0, 380, 20, 755, 290, 0},
     {9, CONDITION_ALWAYS, 864, 0, 576, FACING_NORTH, 0, 750, 370, 985, 635, 0},
     {10, CONDITION_ALWAYS, 928, 0, 224, FACING_WEST, 0, 800, 20, 1040, 250, 0},
-    {HAMMET_PALACE_FROM_KALAY_TUNNEL_3, CONDITION_ALWAYS, 904, 0, 72,
-     FACING_SOUTH, 0, 800, 20, 1040, 250, 0},
+    {HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM, CONDITION_ALWAYS, 904, 0,
+     72, FACING_SOUTH, 0, 800, 20, 1040, 250, 0},
     {12, CONDITION_ALWAYS, 616, 0, 824, FACING_NORTH, 0, 465, 640, 705, 875, 0},
     {13, CONDITION_ALWAYS, 128, 0, 808, FACING_EAST, 0, 20, 730, 260, 890, 0},
     {14, CONDITION_ALWAYS, 168, 0, 808, FACING_SOUTH, 0, 20, 730, 260, 890, 0},
-    {HAMMET_PALACE_FROM_KALAY_2_EAST, CONDITION_ALWAYS, 864, 0, 576,
-     FACING_NORTH, 0, 750, 370, 985, 635, 0},
+    {HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS, CONDITION_ALWAYS,
+     864, 0, 576, FACING_NORTH, 0, 750, 370, 985, 635, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gHammetPalaceExits[] = {
     SCENE_EXITS(HammetPalace),
-    SCENE_EXIT(HAMMET_PALACE_TO_KALAY_2_WEST, Kalay2,
-               KALAY_2_FROM_HAMMET_PALACE),
-    SCENE_EXIT(2, HammetPalace, 6),
-    SCENE_EXIT(3, HammetPalace, 7),
-    SCENE_EXIT(4, HammetPalace, 9),
-    SCENE_EXIT(5, HammetPalace, 13),
-    SCENE_EXIT(6, HammetPalace, 2),
-    SCENE_EXIT(7, HammetPalace, 3),
-    SCENE_EXIT(8, HammetPalace, 10),
-    SCENE_EXIT(9, HammetPalace, 4),
-    SCENE_EXIT(10, HammetPalace, 8),
-    SCENE_EXIT(HAMMET_PALACE_TO_KALAY_TUNNEL_3, KalayTunnel3,
-               KALAY_TUNNEL_3_FROM_HAMMET_PALACE),
-    SCENE_EXIT(12, HammetPalace, 14),
-    SCENE_EXIT(13, HammetPalace, 5),
-    SCENE_EXIT(14, HammetPalace, 12),
+    SCENE_EXIT(HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS, HammetPalaceGrounds,
+               HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE),
+    SCENE_EXIT(HAMMET_PALACE_ENTRANCE_HALL_TO_WEST_WING, HammetPalace,
+               HAMMET_PALACE_WEST_WING_FROM_ENTRANCE_HALL),
+    SCENE_EXIT(HAMMET_PALACE_ENTRANCE_HALL_TO_EAST_WING, HammetPalace,
+               HAMMET_PALACE_EAST_WING_FROM_ENTRANCE_HALL),
+    SCENE_EXIT(HAMMET_PALACE_ENTRANCE_HALL_TO_THRONE_ROOM, HammetPalace,
+               HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL),
+    SCENE_EXIT(HAMMET_PALACE_ENTRANCE_HALL_TO_LANDING, HammetPalace,
+               HAMMET_PALACE_LANDING_FROM_ENTRANCE_HALL),
+    SCENE_EXIT(HAMMET_PALACE_WEST_WING_TO_ENTRANCE_HALL, HammetPalace,
+               HAMMET_PALACE_ENTRANCE_HALL_FROM_WEST_WING),
+    SCENE_EXIT(HAMMET_PALACE_EAST_WING_TO_ENTRANCE_HALL, HammetPalace,
+               HAMMET_PALACE_ENTRANCE_HALL_FROM_EAST_WING),
+    SCENE_EXIT(HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR, HammetPalace,
+               HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING),
+    SCENE_EXIT(HAMMET_PALACE_THRONE_ROOM_TO_ENTRANCE_HALL, HammetPalace,
+               HAMMET_PALACE_ENTRANCE_HALL_FROM_THRONE_ROOM),
+    SCENE_EXIT(HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING, HammetPalace,
+               HAMMET_PALACE_EAST_WING_FROM_PASSAGE_DOOR),
+    SCENE_EXIT(HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM,
+               KalayTunnelTreasureRoom,
+               KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE),
+    SCENE_EXIT(HAMMET_PALACE_BEDROOM_TO_LANDING, HammetPalace,
+               HAMMET_PALACE_LANDING_FROM_BEDROOM),
+    SCENE_EXIT(HAMMET_PALACE_LANDING_TO_ENTRANCE_HALL, HammetPalace,
+               HAMMET_PALACE_ENTRANCE_HALL_FROM_LANDING),
+    SCENE_EXIT(HAMMET_PALACE_LANDING_TO_BEDROOM, HammetPalace,
+               HAMMET_PALACE_BEDROOM_FROM_LANDING),
     SCENE_EXITS_END,
 };
 
@@ -1057,7 +1073,7 @@ struct SceneEvent gHammetPalaceEventsOther[] = {
 };
 
 struct SceneEvent gHammetPalaceEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, HAMMET_PALACE_TO_KALAY_2_WEST },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
@@ -1067,7 +1083,7 @@ struct SceneEvent gHammetPalaceEvents[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { 0x31, 11, CONDITION_ALWAYS, HAMMET_PALACE_TO_KALAY_TUNNEL_3 },
+    { 0x31, 11, CONDITION_ALWAYS, HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },

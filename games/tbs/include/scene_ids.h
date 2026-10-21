@@ -192,16 +192,23 @@ extern char SceneId_VaultCaveVambrace;
 /// ★ Named from what the player sees: the part of Vault Cave entered from the
 /// cave mouth in Vault's northeast cliff (its render)
 extern char SceneId_VaultCaveMouth;
-extern char SceneId_Kalay1;
-extern char SceneId_KalayInteriors1;
+/// ★ Named from its area name: Kalay
+extern char SceneId_Kalay;
+/// ★ Named from what the player sees: Kalay's houses, its weapon and armor
+/// shops and its inn with the guest rooms below (its render)
+extern char SceneId_KalayInteriors;
 extern char SceneId_KalaySanctum;
-extern char SceneId_Kalay2;
+/// ★ Named from what the player sees: the front of Hammet Palace, where two
+/// soldiers guard the door above the stairs from town (its render)
+extern char SceneId_HammetPalaceGrounds;
 extern char SceneId_HammetPalace;
 extern char SceneId_Lunpa;
 extern char SceneId_LunpaSuhalla;
 extern char SceneId_WestLunpaCave;
 extern char SceneId_KalayDocks;
-extern char SceneId_KalayTolbiDocks2;
+/// ★ Named from what the player sees: the rooms of the dock buildings at Kalay
+/// Docks and Tolbi Docks, where boarding tickets are sold (its render)
+extern char SceneId_KalayTolbiDocksInteriors;
 extern char SceneId_TolbiShipDeck;
 extern char SceneId_TolbiShipMast;
 extern char SceneId_TolbiShipInteriors;
@@ -247,9 +254,14 @@ extern char SceneId_AltmillerCave5;
 extern char SceneId_AltmillerCave6;
 extern char SceneId_GondowanPassage;
 extern char SceneId_KalayTunnelEntrance;
-extern char SceneId_KalayTunnel1;
-extern char SceneId_KalayTunnel2;
-extern char SceneId_KalayTunnel3;
+/// ★ Named from the game: "the cave up ahead" (MsgKalayDoWantGoCaveUp)
+extern char SceneId_KalayTunnelCave;
+/// ★ Named from the game: "underground passage"
+/// (MsgHammetPalaceILeftTheDoorToThe)
+extern char SceneId_KalayTunnelPassage;
+/// ★ Named from the game: "Hammet's treasure room"
+/// (MsgHammetPalaceTheKeyToTheSecretPassage)
+extern char SceneId_KalayTunnelTreasureRoom;
 extern char SceneId_GondowanCave1;
 extern char SceneId_GondowanCave2;
 extern char SceneId_LunpaFortressGates;

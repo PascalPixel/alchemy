@@ -1,7 +1,7 @@
 /// @file
 /// Inside Kalay: the houses and the inn, and the Kalay Sanctum.
 ///
-/// - Kalay (KalayInteriors1, scene 100), one map holding every house and the
+/// - Kalay (KalayInteriors, scene 100), one map holding every house and the
 ///   inn, each entered from its own door in the town (kalay.c) at an entrance
 ///   of its own, and left by the matching exit. Entrances 9 to 15 and 17 are
 ///   the inn's rooms and take the inn's placements and events; every other
@@ -22,7 +22,7 @@
 ///   searches.
 /// - Kalay Sanctum (KalaySanctum, scene 101), whose priest offers the
 ///   Sanctum's services when spoken to across the counter. Its exit leads
-///   back into the town (KALAY_1_FROM_KALAY_SANCTUM).
+///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -126,7 +126,7 @@ static void KalayInteriors_ApplyRoomState(void);
 const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_KalayInteriors1) {
+  if (scene == (s32)&SceneId_KalayInteriors) {
     return gKalayInteriors_HouseEntrances;
   }
   if (scene == (s32)&SceneId_KalaySanctum) {
@@ -144,7 +144,7 @@ const u32 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
 const struct ScenePlacement *KalayInteriors_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_KalayInteriors1) {
+  if (scene == (s32)&SceneId_KalayInteriors) {
     s32 entrance = gGameState.entrance;
     struct ScenePlacement *table;
 
@@ -176,7 +176,7 @@ const struct ScenePlacement *KalayInteriors_GetPlacements(void) {
 const struct SceneEvent *KalayInteriors_GetEvents(void) {
   s32 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_KalayInteriors1) {
+  if (scene == (s32)&SceneId_KalayInteriors) {
     s32 entrance = gGameState.entrance;
 
     switch (entrance) {
@@ -326,7 +326,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
 /// Sets the opening transition and restores room-specific actors and tiles.
 s32 KalayInteriors_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  if (gGameState.scene == (s32)&SceneId_KalayInteriors1) {
+  if (gGameState.scene == (s32)&SceneId_KalayInteriors) {
     KalayInteriors_ApplyRoomState();
   }
   return 0;
@@ -334,13 +334,13 @@ s32 KalayInteriors_Initialize(void) {
 
 /// Once the Colosso tour has left, its guests are gone from Kalay's inn, and
 /// two people from the houses. Entering by
-/// KALAY_INTERIORS_1_FROM_KALAY_1_NORTHEAST instead redraws a rectangle of
+/// KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER instead redraws a rectangle of
 /// cells.
 static void KalayInteriors_ApplyRoomState(void) {
   s16 entrance = gGameState.entrance;
 
   switch (entrance) {
-  case KALAY_INTERIORS_1_FROM_KALAY_1_NORTHEAST: {
+  case KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER: {
     Map_CopyCellsTo(30, 14, 30, 16, 4, 2);
     return;
   }
@@ -382,25 +382,25 @@ struct SceneEntrance gKalayInteriors_NoEntrances[] = {
 
 struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {KALAY_INTERIORS_1_FROM_KALAY_1_NORTHWEST, CONDITION_ALWAYS, 144, 0, 192,
+    {KALAY_INTERIORS_HOUSE_NORTHWEST, CONDITION_ALWAYS, 144, 0, 192,
      FACING_NORTH, 0, 5, 45, 245, 230, 0},
-    {KALAY_INTERIORS_1_FROM_KALAY_1_NORTH, CONDITION_ALWAYS, 400, 0, 192,
+    {KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER, CONDITION_ALWAYS, 400, 0, 192,
      FACING_NORTH, 0, 255, 45, 485, 230, 0},
-    {KALAY_INTERIORS_1_FROM_KALAY_1_NORTHEAST, CONDITION_ALWAYS, 624, 0, 240,
+    {KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER, CONDITION_ALWAYS, 624, 0, 240,
      FACING_NORTH, 0, 500, 45, 735, 275, 0},
-    {KALAY_INTERIORS_1_FROM_KALAY_1_WEST, CONDITION_ALWAYS, 128, 0, 432,
+    {KALAY_INTERIORS_HOUSE_SOUTHEAST, CONDITION_ALWAYS, 128, 0, 432,
      FACING_NORTH, 0, 35, 290, 275, 468, 0},
-    {KALAY_INTERIORS_1_FROM_KALAY_1_WEST_NORTHWEST, CONDITION_ALWAYS, 384, 0,
-     384, FACING_NORTH, 0, 305, 255, 545, 485, 0},
-    {KALAY_INTERIORS_1_FROM_KALAY_1_SOUTH_SOUTHEAST, CONDITION_ALWAYS, 464, 0,
-     448, FACING_NORTH, 0, 305, 255, 545, 485, 0},
-    {KALAY_INTERIORS_1_FROM_KALAY_1_EAST_SOUTHEAST, CONDITION_ALWAYS, 720, 0,
-     496, FACING_NORTH, 0, 630, 305, 875, 535, 0},
-    {KALAY_INTERIORS_1_FROM_KALAY_1_EAST, CONDITION_ALWAYS, 800, 0, 440,
+    {KALAY_INTERIORS_WEAPON_SHOP_COUNTER, CONDITION_ALWAYS, 384, 0, 384,
+     FACING_NORTH, 0, 305, 255, 545, 485, 0},
+    {KALAY_INTERIORS_WEAPON_SHOP, CONDITION_ALWAYS, 464, 0, 448, FACING_NORTH,
+     0, 305, 255, 545, 485, 0},
+    {KALAY_INTERIORS_ARMOR_SHOP, CONDITION_ALWAYS, 720, 0, 496, FACING_NORTH, 0,
+     630, 305, 875, 535, 0},
+    {KALAY_INTERIORS_ARMOR_SHOP_COUNTER, CONDITION_ALWAYS, 800, 0, 440,
      FACING_NORTH, 0, 630, 305, 875, 535, 0},
     {9, CONDITION_ALWAYS, 48, 0, 640, FACING_NORTH, 0, 0, 495, 305, 775, 0},
-    {KALAY_INTERIORS_1_FROM_KALAY_1_SOUTH_SOUTHWEST, CONDITION_ALWAYS, 224, 0,
-     736, FACING_NORTH, 0, 0, 495, 305, 775, 0},
+    {KALAY_INTERIORS_INN, CONDITION_ALWAYS, 224, 0, 736, FACING_NORTH, 0, 0,
+     495, 305, 775, 0},
     {11, CONDITION_ALWAYS, 408, 0, 616, FACING_SOUTH, 0, 355, 525, 690, 710, 0},
     {12, CONDITION_ALWAYS, 552, 0, 648, FACING_SOUTH, 0, 355, 525, 690, 710, 0},
     {13, CONDITION_ALWAYS, 632, 0, 648, FACING_SOUTH, 0, 355, 525, 690, 710, 0},
@@ -415,44 +415,61 @@ struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
 
 struct SceneEntrance gKalayInteriors_SanctumEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {KALAY_SANCTUM_FROM_KALAY_1, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0,
+    {KALAY_SANCTUM_FROM_KALAY, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0,
      110, 35, 390, 345, 0},
     {2, CONDITION_ALWAYS, 248, 0, 128, FACING_SOUTH, 0, 110, 35, 390, 345, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gKalayInteriors_Exits[] = {
-    SCENE_EXITS(KalayInteriors1),
-    SCENE_EXIT(KALAY_INTERIORS_1_TO_KALAY_1_NORTHWEST, Kalay1,
-               KALAY_1_FROM_KALAY_INTERIORS_1_NORTHWEST),
-    SCENE_EXIT(KALAY_INTERIORS_1_TO_KALAY_1_NORTH, Kalay1,
-               KALAY_1_FROM_KALAY_INTERIORS_1_NORTH),
-    SCENE_EXIT(KALAY_INTERIORS_1_TO_KALAY_1_NORTHEAST, Kalay1,
-               KALAY_1_FROM_KALAY_INTERIORS_1_NORTHEAST),
-    SCENE_EXIT(KALAY_INTERIORS_1_TO_KALAY_1_WEST, Kalay1,
-               KALAY_1_FROM_KALAY_INTERIORS_1_WEST),
-    SCENE_EXIT(KALAY_INTERIORS_1_TO_KALAY_1_WEST_NORTHWEST, Kalay1,
-               KALAY_1_FROM_KALAY_INTERIORS_1_WEST_NORTHWEST),
-    SCENE_EXIT(KALAY_INTERIORS_1_TO_KALAY_1_SOUTH_SOUTHEAST, Kalay1,
-               KALAY_1_FROM_KALAY_INTERIORS_1_SOUTH_SOUTHEAST),
-    SCENE_EXIT(KALAY_INTERIORS_1_TO_KALAY_1_EAST_SOUTHEAST, Kalay1,
-               KALAY_1_FROM_KALAY_INTERIORS_1_EAST_SOUTHEAST),
-    SCENE_EXIT(KALAY_INTERIORS_1_TO_KALAY_1_EAST, Kalay1,
-               KALAY_1_FROM_KALAY_INTERIORS_1_EAST),
-    SCENE_EXIT(9, KalayInteriors1, 11),
-    SCENE_EXIT(KALAY_INTERIORS_1_TO_KALAY_1_SOUTH_SOUTHWEST, Kalay1,
-               KALAY_1_FROM_KALAY_INTERIORS_1_SOUTH_SOUTHWEST),
-    SCENE_EXIT(11, KalayInteriors1, 9),
-    SCENE_EXIT(12, KalayInteriors1, 17),
-    SCENE_EXIT(13, KalayInteriors1, 18),
-    SCENE_EXIT(14, KalayInteriors1, 19),
-    SCENE_EXIT(15, KalayInteriors1, 16),
-    SCENE_EXIT(16, KalayInteriors1, 15),
-    SCENE_EXIT(17, KalayInteriors1, 12),
-    SCENE_EXIT(18, KalayInteriors1, 13),
-    SCENE_EXIT(19, KalayInteriors1, 14),
+    SCENE_EXITS(KalayInteriors),
+    SCENE_EXIT(KALAY_INTERIORS_HOUSE_NORTHWEST_TO_KALAY, Kalay,
+               KALAY_FROM_HOUSE_NORTHWEST),
+    SCENE_EXIT(KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER_TO_KALAY, Kalay,
+               KALAY_FROM_HOUSE_NORTHEAST_UPPER),
+    SCENE_EXIT(KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER_TO_KALAY, Kalay,
+               KALAY_FROM_HOUSE_NORTHEAST_LOWER),
+    SCENE_EXIT(KALAY_INTERIORS_HOUSE_SOUTHEAST_TO_KALAY, Kalay,
+               KALAY_FROM_HOUSE_SOUTHEAST),
+    SCENE_EXIT(KALAY_INTERIORS_WEAPON_SHOP_COUNTER_TO_KALAY, Kalay,
+               KALAY_FROM_WEAPON_SHOP_COUNTER),
+    SCENE_EXIT(KALAY_INTERIORS_WEAPON_SHOP_TO_KALAY, Kalay,
+               KALAY_FROM_WEAPON_SHOP),
+    SCENE_EXIT(KALAY_INTERIORS_ARMOR_SHOP_TO_KALAY, Kalay,
+               KALAY_FROM_ARMOR_SHOP),
+    SCENE_EXIT(KALAY_INTERIORS_ARMOR_SHOP_COUNTER_TO_KALAY, Kalay,
+               KALAY_FROM_ARMOR_SHOP_COUNTER),
+    SCENE_EXIT(KALAY_INTERIORS_INN_TO_INN_CORRIDOR, KalayInteriors,
+               KALAY_INTERIORS_INN_CORRIDOR_FROM_INN),
+    SCENE_EXIT(KALAY_INTERIORS_INN_TO_KALAY, Kalay, KALAY_FROM_INN),
+    SCENE_EXIT(KALAY_INTERIORS_INN_CORRIDOR_TO_INN, KalayInteriors,
+               KALAY_INTERIORS_INN_FROM_INN_CORRIDOR),
+    SCENE_EXIT(KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHWEST,
+               KalayInteriors,
+               KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR),
+    SCENE_EXIT(KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHEAST,
+               KalayInteriors,
+               KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_CORRIDOR),
+    SCENE_EXIT(KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHWEST,
+               KalayInteriors,
+               KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_CORRIDOR),
+    SCENE_EXIT(KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHEAST,
+               KalayInteriors,
+               KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_CORRIDOR),
+    SCENE_EXIT(KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_TO_INN_CORRIDOR,
+               KalayInteriors,
+               KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST),
+    SCENE_EXIT(KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_TO_INN_CORRIDOR,
+               KalayInteriors,
+               KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST),
+    SCENE_EXIT(KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_CORRIDOR,
+               KalayInteriors,
+               KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST),
+    SCENE_EXIT(KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_TO_INN_CORRIDOR,
+               KalayInteriors,
+               KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST),
     SCENE_EXITS(KalaySanctum),
-    SCENE_EXIT(KALAY_SANCTUM_TO_KALAY_1, Kalay1, KALAY_1_FROM_KALAY_SANCTUM),
+    SCENE_EXIT(KALAY_SANCTUM_TO_KALAY, Kalay, KALAY_FROM_KALAY_SANCTUM),
     SCENE_EXITS_END,
 };
 
@@ -530,14 +547,14 @@ struct SceneEvent gKalayInteriors_NoEvents[] = {
 /// A bare flag as a condition holds while that flag is clear: these lines are
 /// spoken before the Colosso tour leaves, the next ones after.
 struct SceneEvent gKalayInteriors_HouseEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_NORTHWEST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_NORTH },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_NORTHEAST },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_WEST },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_WEST_NORTHWEST },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_SOUTH_SOUTHEAST },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_EAST_SOUTHEAST },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_EAST },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_INTERIORS_HOUSE_NORTHWEST_TO_KALAY },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER_TO_KALAY },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER_TO_KALAY },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_INTERIORS_HOUSE_SOUTHEAST_TO_KALAY },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, KALAY_INTERIORS_WEAPON_SHOP_COUNTER_TO_KALAY },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, KALAY_INTERIORS_WEAPON_SHOP_TO_KALAY },
+    { EVENT_EXIT, 7, CONDITION_ALWAYS, KALAY_INTERIORS_ARMOR_SHOP_TO_KALAY },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, KALAY_INTERIORS_ARMOR_SHOP_COUNTER_TO_KALAY },
     { TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
@@ -583,7 +600,7 @@ struct SceneEvent gKalayInteriors_HouseEvents[] = {
 
 struct SceneEvent gKalayInteriors_InnEvents[] = {
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_SOUTH_SOUTHWEST },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, KALAY_INTERIORS_INN_TO_KALAY },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
@@ -632,7 +649,7 @@ struct SceneEvent gKalayInteriors_InnEvents[] = {
 };
 
 struct SceneEvent gKalayInteriors_SanctumEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_SANCTUM_TO_KALAY_1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_SANCTUM_TO_KALAY },
     { EVENT_TALK, ACTOR_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
     { SCENE_EVENTS_END },

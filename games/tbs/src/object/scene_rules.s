@@ -235,7 +235,7 @@ gScene_AreaNameRules:
 	scene_name LunpaSuhalla, 10, 52
 	group_name 34, -1, 53
 	group_name 35, -1, 54
-	scene_name KalayTolbiDocks2, 2, 55
+	scene_name KalayTolbiDocksInteriors, 2, 55
 	group_name 36, -1, 56
 	group_name 37, -1, 57
 	group_name 38, -1, 58
@@ -314,7 +314,7 @@ gParty_PairResolveRules:
 	return_to Altin, -1, Sanctum, 29
 	return_to LamaTemple, -1, LamaTemple, 5
 	return_to VaultRevisit, -1, Sanctum, 11
-	return_to Kalay1, -1, KalaySanctum, 2
+	return_to Kalay, -1, KalaySanctum, 2
 	return_to Lunpa, 3, LunpaSuhalla, 11
 	return_to Tolbi, -1, TolbiInteriors, 30
 	return_to Suhalla, -1, SuhallaInteriors, 6

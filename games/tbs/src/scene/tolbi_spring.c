@@ -3,8 +3,8 @@
 /// town; neither has a story event.
 ///
 /// - Tolbi (TolbiSpring1, scene 137), the rooms of Lucky Dice and Lucky
-///   Wheels; TOLBI_SPRING_1_TO_TOLBI and exit 2 lead back into Tolbi (scene
-///   135). The Lucky Dice attendant asks ten coins for each level of the
+///   Wheels; TOLBI_SPRING_1_LUCKY_DICE_TO_TOLBI and exit 2 lead back into Tolbi
+///   (scene 135). The Lucky Dice attendant asks ten coins for each level of the
 ///   party's average level: the coin total is saved in the scene state and the
 ///   party goes to the Lucky Dice game, which returns to
 ///   TOLBI_SPRING_1_AFTER_OFFER_LUCKY_DICE, where the setup has the attendant
@@ -1451,8 +1451,8 @@ const u32 gTolbiSpring_Exits[] = {
     SCENE_EXIT_IF(TOLBI_SPRING_2_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING_2,
                   0xffffffff),
     SCENE_EXITS(TolbiSpring1),
-    SCENE_EXIT_IF(TOLBI_SPRING_1_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING_1,
-                  0xffffffff),
+    SCENE_EXIT_IF(TOLBI_SPRING_1_LUCKY_DICE_TO_TOLBI, Tolbi,
+                  TOLBI_FROM_LUCKY_DICE, 0xffffffff),
     SCENE_EXIT_IF(2, Tolbi, TOLBI_FROM_HOUSE_NORTHEAST, 0xffffffff),
     SCENE_EXITS_END,
 };
@@ -1531,7 +1531,7 @@ const struct ScenePlacement gTolbiSpringPlacementsOther[] = {
 };
 
 const struct SceneEvent gTolbiSpringEventsOther[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SPRING_1_TO_TOLBI },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SPRING_1_LUCKY_DICE_TO_TOLBI },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_TALK, TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TalkToWheelsAttendant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },

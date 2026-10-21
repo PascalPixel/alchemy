@@ -1,12 +1,13 @@
 /// @file
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
 /// Karagol Sea, in three scenes that share one overlay: KalayDocks
-/// (scene 107), KalayTolbiDocks2 (scene 108) and TolbiDocks (scene 112).
-/// The getters pick each scene's tables by gGameState.scene, and three story
-/// flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the ship
-/// has made its crossing (set on the world map, WorldMap_CompleteTransfer);
-/// FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the Colosso Tour's group has left
-/// Kalay; and FLAG_COLOSSO_OVER, whether the Colosso finals have been fought.
+/// (scene 107), KalayTolbiDocksInteriors (scene 108) and TolbiDocks (scene
+/// 112). The getters pick each scene's tables by gGameState.scene, and three
+/// story flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the
+/// ship has made its crossing (set on the world map,
+/// WorldMap_CompleteTransfer); FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the
+/// Colosso Tour's group has left Kalay; and FLAG_COLOSSO_OVER, whether the
+/// Colosso finals have been fought.
 ///
 /// Kalay Docks (KalayDocks) is where the party's road to Tolbi ends:
 /// Silk Road is blocked, so everyone bound for Tolbi and its Colosso must cross
@@ -32,13 +33,13 @@
 /// the ship (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship, scene 109)
 /// and through a door (trigger 10) into the building beside them.
 ///
-/// That building (KalayTolbiDocks2) has a room at each dock: entered from Kalay
-/// Docks (KALAY_TOLBI_DOCKS_2_FROM_KALAY_DOCKS) it is Kalay Docks, from Tolbi
-/// Docks (KALAY_TOLBI_DOCKS_2_FROM_TOLBI_DOCKS) it is Tolbi Docks. In the
-/// Kalay room a man sells the boarding ticket, 600 coins for the four of them
-/// (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has sailed, when he says
-/// it will not leave again for the monsters at sea; in the Tolbi room no
-/// tickets are sold at all, the sea being too dangerous.
+/// That building (KalayTolbiDocksInteriors) has a room at each dock: entered
+/// from Kalay Docks (KALAY_TOLBI_DOCKS_INTERIORS_FROM_KALAY_DOCKS) it is Kalay
+/// Docks, from Tolbi Docks (KALAY_TOLBI_DOCKS_INTERIORS_FROM_TOLBI_DOCKS) it is
+/// Tolbi Docks. In the Kalay room a man sells the boarding ticket, 600 coins
+/// for the four of them (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has
+/// sailed, when he says it will not leave again for the monsters at sea; in the
+/// Tolbi room no tickets are sold at all, the sea being too dangerous.
 ///
 /// Tolbi Docks (TolbiDocks) is where the ship lands after the crossing,
 /// on which the party helped the crew fight off the Kraken. Stepping off
@@ -205,7 +206,7 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
   if (scene == (s32)&SceneId_TolbiDocks) {
     return gKalayTolbiDocks_TolbiEntrances;
   }
-  if (scene == (s32)&SceneId_KalayTolbiDocks2) {
+  if (scene == (s32)&SceneId_KalayTolbiDocksInteriors) {
     return gKalayTolbiDocks_InteriorEntrances;
   }
   return gKalayTolbiDocks_NoEntrances;
@@ -238,7 +239,7 @@ const struct ScenePlacement *KalayTolbiDocks_GetPlacements(void) {
     return gKalayTolbiDocks_TolbiPlacements;
   }
 
-  if (scene == (s32)&SceneId_KalayTolbiDocks2) {
+  if (scene == (s32)&SceneId_KalayTolbiDocksInteriors) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_InteriorPlacementsStranded;
     }
@@ -284,7 +285,7 @@ const struct SceneEvent *KalayTolbiDocks_GetEvents(void) {
     return gKalayTolbiDocks_TolbiEvents;
   }
 
-  if (scene == (s32)&SceneId_KalayTolbiDocks2) {
+  if (scene == (s32)&SceneId_KalayTolbiDocksInteriors) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_InteriorEventsStranded;
     }
@@ -577,8 +578,8 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
 
 /// Kalay Docks or Tolbi Docks: walking north into the door (trigger 10) of the
 /// building beside them, the door opens and the leader walks in by
-/// TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_2, which in Kalay Docks is
-/// KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_2 by the same number.
+/// TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS, which in Kalay Docks is
+/// KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS by the same number.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Engine_EventBegin();
   Event_PlayCue(SE_DOOR_OPEN);
@@ -594,7 +595,7 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
     }
   }
   Engine_EventWait(16);
-  Engine_EventRequestExit(TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_2);
+  Engine_EventRequestExit(TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS);
   Engine_EventEnd();
 }
 
@@ -610,7 +611,7 @@ s32 KalayTolbiDocks_Initialize(void) {
     KalayTolbiDocks_PrepareKalayDocks();
   } else if (gGameState.scene == (s32)&SceneId_TolbiDocks) {
     KalayTolbiDocks_PrepareTolbiDocks();
-  } else if (gGameState.scene == (s32)&SceneId_KalayTolbiDocks2) {
+  } else if (gGameState.scene == (s32)&SceneId_KalayTolbiDocksInteriors) {
     KalayTolbiDocks_PrepareInterior();
   }
   return 0;
@@ -652,7 +653,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   if (GameFlag_IsSet(FLAG_COLOSSO_OVER)) {
     Engine_ActorSetChildValue(ACTOR_SECOND_TOUR_GUIDE, 2);
   }
-  if (gGameState.entrance == TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_2) {
+  if (gGameState.entrance == TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
   if (gGameState.entrance == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
@@ -1052,8 +1053,8 @@ struct SceneEntrance gKalayTolbiDocks_KalayEntrances[] = {
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {KALAY_DOCKS_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS, 72, 0, 1304,
      FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {KALAY_DOCKS_FROM_KALAY_TOLBI_DOCKS_2, CONDITION_ALWAYS, 304, 0, 1416,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {KALAY_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS, CONDITION_ALWAYS, 304, 0,
+     1416, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KALAY_DOCKS_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 296, 0, 1048,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
@@ -1065,8 +1066,8 @@ struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
      FACING_WEST, 0, 0, 0, 448, 432, 0},
     {TOLBI_DOCKS_FROM_WORLD_MAP, CONDITION_ALWAYS, 24, 0, 232, FACING_EAST, 0,
      0, 0, 448, 432, 0},
-    {TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_2, CONDITION_ALWAYS, 240, 0, 216,
-     FACING_SOUTH, 0, 0, 0, 448, 432, 0},
+    {TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS, CONDITION_ALWAYS, 240, 0,
+     216, FACING_SOUTH, 0, 0, 0, 448, 432, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1074,10 +1075,10 @@ struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
 /// from.
 struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[] = {
     {0, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {KALAY_TOLBI_DOCKS_2_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 96, 0, 248,
+    {KALAY_TOLBI_DOCKS_INTERIORS_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 96, 0, 248,
      FACING_NORTH, 0, 32, 32, 272, 272, 0},
-    {KALAY_TOLBI_DOCKS_2_FROM_TOLBI_DOCKS, CONDITION_ALWAYS, 384, 0, 248,
-     FACING_NORTH, 0, 320, 32, 560, 272, 0},
+    {KALAY_TOLBI_DOCKS_INTERIORS_FROM_TOLBI_DOCKS, CONDITION_ALWAYS, 384, 0,
+     248, FACING_NORTH, 0, 320, 32, 560, 272, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1089,21 +1090,23 @@ u32 gKalayTolbiDocks_Exits[] = {
                WORLD_MAP_FROM_KALAY_DOCKS_EAST),
     SCENE_EXIT(KALAY_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
                TOLBI_SHIP_DECK_FROM_KALAY_DOCKS),
-    SCENE_EXIT(KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_2, KalayTolbiDocks2,
-               KALAY_TOLBI_DOCKS_2_FROM_KALAY_DOCKS),
+    SCENE_EXIT(KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS,
+               KalayTolbiDocksInteriors,
+               KALAY_TOLBI_DOCKS_INTERIORS_FROM_KALAY_DOCKS),
     SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_NORTH, WorldMap,
                WORLD_MAP_FROM_KALAY_DOCKS_WEST),
     SCENE_EXITS(TolbiDocks),
     SCENE_EXIT(TOLBI_DOCKS_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TOLBI_DOCKS),
     SCENE_EXIT(TOLBI_DOCKS_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
                TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
-    SCENE_EXIT(TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_2, KalayTolbiDocks2,
-               KALAY_TOLBI_DOCKS_2_FROM_TOLBI_DOCKS),
-    SCENE_EXITS(KalayTolbiDocks2),
-    SCENE_EXIT(KALAY_TOLBI_DOCKS_2_TO_KALAY_DOCKS, KalayDocks,
-               KALAY_DOCKS_FROM_KALAY_TOLBI_DOCKS_2),
-    SCENE_EXIT(KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS, TolbiDocks,
-               TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_2),
+    SCENE_EXIT(TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS,
+               KalayTolbiDocksInteriors,
+               KALAY_TOLBI_DOCKS_INTERIORS_FROM_TOLBI_DOCKS),
+    SCENE_EXITS(KalayTolbiDocksInteriors),
+    SCENE_EXIT(KALAY_TOLBI_DOCKS_INTERIORS_TO_KALAY_DOCKS, KalayDocks,
+               KALAY_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS),
+    SCENE_EXIT(KALAY_TOLBI_DOCKS_INTERIORS_TO_TOLBI_DOCKS, TolbiDocks,
+               TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS),
     SCENE_EXITS_END,
 };
 
@@ -1346,8 +1349,8 @@ struct SceneEvent gKalayTolbiDocks_TolbiEventsStranded[] = {
 };
 
 struct SceneEvent gKalayTolbiDocks_InteriorEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_KALAY_DOCKS },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_INTERIORS_TO_KALAY_DOCKS },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_INTERIORS_TO_TOLBI_DOCKS },
     { EVENT_TALK, ACTOR_TICKET_SELLER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToTicketSeller) },
     { EVENT_TALK, ACTOR_VILLAGER_AWAITING_REPLACEMENT_SHIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHmmmThatsStrangeIsntTheReplacement) },
     { EVENT_TALK, ACTOR_VILLAGER_EXCITED_FOR_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOnceWeveCrossedTheKaragolWell) },
@@ -1365,8 +1368,8 @@ struct SceneEvent gKalayTolbiDocks_InteriorEvents[] = {
 };
 
 struct SceneEvent gKalayTolbiDocks_InteriorEventsShipGone[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_KALAY_DOCKS },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_INTERIORS_TO_KALAY_DOCKS },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_INTERIORS_TO_TOLBI_DOCKS },
     { EVENT_TALK, ACTOR_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
     { EVENT_TALK, ACTOR_TOLBI_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImSorryButWeJustCant) },
@@ -1379,8 +1382,8 @@ struct SceneEvent gKalayTolbiDocks_InteriorEventsShipGone[] = {
 };
 
 struct SceneEvent gKalayTolbiDocks_InteriorEventsStranded[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_KALAY_DOCKS },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_INTERIORS_TO_KALAY_DOCKS },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_INTERIORS_TO_TOLBI_DOCKS },
     { EVENT_TALK, ACTOR_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
     { EVENT_TALK, ACTOR_TOLBI_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImStuckIWantToCross) },

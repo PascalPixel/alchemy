@@ -2,17 +2,17 @@
 /// Tolbi-bound Ship (TolbiShipInteriors, scene 111), below its decks: one of
 /// the ship's three scenes on its voyage from Kalay to Tolbi, told in
 /// tolbi_ship_deck.c. The scene is four rooms, each a camera box of the
-/// entrance table: the passengers' hold (entrances 1, 2, 11 and 30), a side
-/// room (TOLBI_SHIP_INTERIORS_FROM_TOLBI_SHIP_DECK_2), the rowing deck where
-/// the oarsmen row (4, 12, 15 to 20, TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP, 23
-/// and 24) and the captain's cabin (5, 10, 13, 14 and 22). Three exits lead up
-/// to the deck, TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK from the hold,
-/// TOLBI_SHIP_INTERIORS_TO_TOLBI_SHIP_DECK_2 from the side room and
-/// TOLBI_SHIP_INTERIORS_HOUSE_2_TO_TOLBI_SHIP_DECK from the cabin, and exits 2
-/// and 4 join the hold and the rowing deck. The placements and events are
-/// chosen by the room and the voyage's stage; most of the voyage's cutscenes
-/// play here, at entrances 10 to 24, through the shared operations of
-/// TolbiShipInteriors_RunSceneCommand. In story order:
+/// entrance table: the passengers' hold (entrances 1, 2, 11 and 30), the cargo
+/// hold (TOLBI_SHIP_INTERIORS_CARGO_HOLD_FROM_TOLBI_SHIP_DECK), the rowing deck
+/// where the oarsmen row (4, 12, 15 to 20, TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP,
+/// 23 and 24) and the captain's cabin (5, 10, 13, 14 and 22). Three exits lead
+/// up to the deck, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK from
+/// the hold, TOLBI_SHIP_INTERIORS_CARGO_HOLD_TO_TOLBI_SHIP_DECK from the cargo
+/// hold and TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK from the
+/// cabin, and exits 2 and 4 join the hold and the rowing deck. The placements
+/// and events are chosen by the room and the voyage's stage; most of the
+/// voyage's cutscenes play here, at entrances 10 to 24, through the shared
+/// operations of TolbiShipInteriors_RunSceneCommand. In story order:
 ///
 /// - At Kalay, while the ship waits for its replacement from Tolbi. Once the
 ///   tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking into
@@ -64,8 +64,8 @@
 /// - Entrance 30, where a defeat at sea returns: it clears the voyage's flags
 ///   from FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT to _KRAKEN_DEFEATED and
 ///   the rowers chosen, sets flag 0x902 and leads up to the deck
-///   (TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK), so the voyage starts
-///   over.
+///   (TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK), so the voyage
+///   starts over.
 ///
 /// A travelling healer opens a Sanctum in the hold. At Tolbi
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the cabin and the hold have their own
@@ -2412,7 +2412,8 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
         FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
     TolbiShipInteriors_RunSceneCommand(SHIP_CLEAR_ROWING_SELECTIONS, 0, 0);
     Engine_GameFlagSet(0x902);
-    Engine_EventRequestExit(TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK);
+    Engine_EventRequestExit(
+        TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK);
     break;
   }
   return 0;
@@ -2883,7 +2884,8 @@ static void TolbiShipInteriors_AskAboutMonsters(void) {
   Engine_EventSetMessage(MsgTolbiShipMonsters);
   Event_ShowMessageAndWait(CABIN_CAPTAIN, 0, 20);
   TolbiShipInteriors_RunSceneCommand(
-      SHIP_CLOSE_SCENE, TOLBI_SHIP_INTERIORS_HOUSE_3_TO_TOLBI_SHIP_DECK, 0);
+      SHIP_CLOSE_SCENE,
+      TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK_SEA_MONSTERS, 0);
 }
 
 /// Announces the ship's next turn and returns control to the rowing deck.
@@ -2897,7 +2899,8 @@ static void TolbiShipInteriors_AnnounceTurn(void) {
   TolbiShipInteriors_Say(CABIN_CAPTAIN);
   Actor_FaceDirection(CABIN_CAPTAIN, 0xd000, 40);
   TolbiShipInteriors_RunSceneCommand(
-      SHIP_CLOSE_SCENE, TOLBI_SHIP_INTERIORS_HOUSE_4_TO_TOLBI_SHIP_DECK, 0);
+      SHIP_CLOSE_SCENE,
+      TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD, 0);
 }
 
 /// Stages the first monster encounter with the original rowers.
@@ -4307,15 +4310,15 @@ struct SceneEntrance gTolbiShipInteriors_EntrancesOther[] = {
     {SCENE_TABLE_END},
 };
 
-/// The hold (entrances 1, 2, 11 and 30), a side room
-/// (TOLBI_SHIP_INTERIORS_FROM_TOLBI_SHIP_DECK_2), the rowing deck (4, 12, 15
-/// to 20, TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP, 23 and 24) and the cabin (5,
-/// 10, 13, 14 and 22).
+/// The passengers' hold (entrances 1, 2, 11 and 30), the cargo hold
+/// (TOLBI_SHIP_INTERIORS_CARGO_HOLD_FROM_TOLBI_SHIP_DECK), the rowing deck (4,
+/// 12, 15 to 20, TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP, 23 and 24) and the cabin
+/// (5, 10, 13, 14 and 22).
 struct SceneEntrance gTolbiShipInteriors_Entrances[] = {
     {1, CONDITION_ALWAYS, 152, 0, 584, FACING_NORTH, 0, 30, 380, 270, 620, 0},
     {2, CONDITION_ALWAYS, 160, 0, 552, FACING_EAST, 0, 30, 380, 270, 620, 0},
-    {TOLBI_SHIP_INTERIORS_FROM_TOLBI_SHIP_DECK_2, CONDITION_ALWAYS, 120, 0, 136,
-     FACING_WEST, 0, 25, 80, 265, 350, 0},
+    {TOLBI_SHIP_INTERIORS_CARGO_HOLD_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS,
+     120, 0, 136, FACING_WEST, 0, 25, 80, 265, 350, 0},
     {4, CONDITION_ALWAYS, 408, 0, 136, FACING_WEST, 0, 315, 80, 555, 410, 0},
     {5, CONDITION_ALWAYS, 440, 0, 728, FACING_NORTH, 0, 315, 500, 555, 765, 0},
     {10, CONDITION_ALWAYS, 440, 0, 728, FACING_NORTH, 0, 315, 500, 555, 765, 0},
@@ -4340,26 +4343,52 @@ struct SceneEntrance gTolbiShipInteriors_Entrances[] = {
 
 u32 gTolbiShipInteriors_Exits[] = {
     SCENE_EXITS(TolbiShipInteriors),
-    SCENE_EXIT(TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK, TolbiShipDeck, 1),
-    SCENE_EXIT(2, TolbiShipInteriors, 4),
-    SCENE_EXIT(TOLBI_SHIP_INTERIORS_TO_TOLBI_SHIP_DECK_2, TolbiShipDeck,
-               TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_2),
-    SCENE_EXIT(4, TolbiShipInteriors, 2),
-    SCENE_EXIT(TOLBI_SHIP_INTERIORS_HOUSE_2_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
-               3),
-    SCENE_EXIT(10, TolbiShipDeck, 10),
-    SCENE_EXIT(11, TolbiShipInteriors, 11),
-    SCENE_EXIT(12, TolbiShipInteriors, 12),
-    SCENE_EXIT(13, WorldMap, 65),
-    SCENE_EXIT(TOLBI_SHIP_INTERIORS_HOUSE_3_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
-               11),
-    SCENE_EXIT(TOLBI_SHIP_INTERIORS_HOUSE_4_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
-               12),
-    SCENE_EXIT(16, WorldMap, 66),
-    SCENE_EXIT(17, WorldMap, 67),
-    SCENE_EXIT(18, WorldMap, 68),
-    SCENE_EXIT(19, TolbiShipDeck, 15),
-    SCENE_EXIT(20, WorldMap, 69),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK,
+               TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK,
+               TolbiShipInteriors,
+               TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_CARGO_HOLD_TO_TOLBI_SHIP_DECK,
+               TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CARGO_HOLD),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD,
+               TolbiShipInteriors,
+               TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_ROWING_DECK),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK,
+               TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY,
+               TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY),
+    SCENE_EXIT(
+        TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_PASSENGER_HOLD_CALL_TO_OARS,
+        TolbiShipInteriors,
+        TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_CABIN_CALL_TO_OARS),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING,
+               TolbiShipInteriors,
+               TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING),
+    SCENE_EXIT(
+        TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_FIRST_ATTACK,
+        WorldMap, WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK),
+    SCENE_EXIT(
+        TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK_SEA_MONSTERS,
+        TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_SEA_MONSTERS),
+    SCENE_EXIT(
+        TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD,
+        TolbiShipDeck,
+        TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD),
+    SCENE_EXIT(
+        TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_SECOND_ATTACK,
+        WorldMap, WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK),
+    SCENE_EXIT(
+        TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_THIRD_ATTACK,
+        WorldMap, WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_KRAKEN,
+               WorldMap, WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_KRAKEN,
+               TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN),
+    SCENE_EXIT(TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_LAND,
+               WorldMap, WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_LAND),
     SCENE_EXIT(TOLBI_SHIP_INTERIORS_TO_WORLD_MAP, WorldMap,
                WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS),
     SCENE_EXITS_END,
@@ -4577,16 +4606,16 @@ struct ScenePlacement gTolbiShipInteriors_ThirdAttackMonsters[] = {
     { SCENE_TABLE_END },
 };
 
-/// The side room, and the cutscenes.
+/// The cargo hold, and the cutscenes.
 struct SceneEvent gTolbiShipInteriors_EventsOther[] = {
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_TO_TOLBI_SHIP_DECK_2 },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CARGO_HOLD_TO_TOLBI_SHIP_DECK },
     { SEARCH(SEARCH_BARREL), 100, 0xf92, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
 
 /// The hold while the ship waits at Kalay, and after it reaches Tolbi.
 struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_TOUCH, 11, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, EVENT_SCRIPT(TolbiShipInteriors_WatchWarriorsStormOff) },
     { EVENT_TALK, HOLD_WARRIOR, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToWaitingWarrior) },
@@ -4615,7 +4644,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
 
 /// The hold at sea: talking to a passenger asks them to row.
 struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_TALK, SEA_HOLD_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIsThisCruelOrdealPartOf) },
@@ -4652,7 +4681,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
 
 /// The hold while the ship waits off the island.
 struct SceneEvent gTolbiShipInteriors_HoldEventsAtIsland[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_TALK, SEA_HOLD_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsInAPerfectWorldThereWouldnt) },
@@ -4681,7 +4710,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEventsAtIsland[] = {
 /// The cabin, from the wait at Kalay until the ship reaches Tolbi. The Anchor
 /// Charm is given back to the captain here.
 struct SceneEvent gTolbiShipInteriors_CabinEvents[] = {
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_HOUSE_2_TO_TOLBI_SHIP_DECK },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK },
     { EVENT_TALK, CABIN_CAPTAIN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToCaptain) },
     { EVENT_TALK, CABIN_CREWMAN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToCabinCrewman) },
     { EVENT_TALK, CABIN_KAJA, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsIWonderIfThereAreAny) },
@@ -4708,7 +4737,7 @@ struct SceneEvent gTolbiShipInteriors_CabinEvents[] = {
 
 /// The cabin while the ship waits off the island.
 struct SceneEvent gTolbiShipInteriors_CabinEventsAtIsland[] = {
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_HOUSE_2_TO_TOLBI_SHIP_DECK },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK },
     { EVENT_TALK, CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMayHaveTakenTheWrong) },
     { EVENT_TALK, CABIN_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereLookingIntoTheShipsPosition) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImReallySurprisedThatThereIs) },
@@ -4719,7 +4748,7 @@ struct SceneEvent gTolbiShipInteriors_CabinEventsAtIsland[] = {
 
 /// The cabin once the ship has reached Tolbi.
 struct SceneEvent gTolbiShipInteriors_CabinEventsArrived[] = {
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_HOUSE_2_TO_TOLBI_SHIP_DECK },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK },
     { EVENT_TALK, CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeeOurShipSurvivedAnAttack) },
     { SEARCH(SEARCH_JAR), 102, 0xf94, FIND_ITEM(ITEM_NUT) },

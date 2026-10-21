@@ -4,8 +4,8 @@
 /// the ship's three scenes on its voyage from Kalay to Tolbi, told in
 /// tolbi_ship_deck.c. The party climbs up by the deck's ladder
 /// (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK) and climbs down again by touch cell
-/// 10 and the region of TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SOUTH (the deck's
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SOUTH); entrances 10 to 14 are the
+/// 10 and the region of TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK (the deck's
+/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST); entrances 10 to 14 are the
 /// voyage's cutscenes here, each leading on into the next. In story order:
 ///
 /// - At Kalay, while the ship waits for its replacement: the captain's anchor
@@ -37,11 +37,11 @@
 ///   chosen to row (gTolbiShipMast_PassengerRowValues) decide where the ship
 ///   comes in: those at the first and third seats less those at the second and
 ///   fourth, and a balance of exactly 11 takes
-///   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH, to the deck's
-///   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH, off course to the island; any
-///   other takes exit 14, to the deck's entrance 17 and Tolbi. Once the rowers
-///   have switched sides at the island the balance is the opposite, so the ship
-///   comes in to Tolbi.
+///   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, to the deck's
+///   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, off course to the island;
+///   any other takes exit 14, to the deck's entrance 17 and Tolbi. Once the
+///   rowers have switched sides at the island the balance is the opposite, so
+///   the ship comes in to Tolbi.
 ///
 /// While the ship is under way (rowing, or at sea after the first attack,
 /// and neither at the island nor at Tolbi) the setup makes the view sway. At
@@ -796,11 +796,11 @@ static void TolbiShipMast_AnnounceLand(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   // The rowing balance picks where the ship comes in: exactly 11 takes
-  // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH, off course to the island.
+  // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
   gGameState.savedScene = (s32)&SceneId_TolbiShipInteriors;
   gGameState.savedEntrance = 2;
   if (TolbiShipMast_GetRowingBalance() == 11) {
-    Engine_EventRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH);
+    Engine_EventRequestExit(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
   } else {
     Engine_EventRequestExit(14);
   }
@@ -984,13 +984,13 @@ struct SceneRegion gTolbiShipMast_Regions[] = {
 
 u32 gTolbiShipMast_Exits[] = {
     SCENE_EXITS(TolbiShipMast),
-    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SOUTH, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SOUTH),
-    SCENE_EXIT(10, TolbiShipInteriors, 10),
-    SCENE_EXIT(11, TolbiShipInteriors, 13),
-    SCENE_EXIT(12, TolbiShipDeck, 13),
-    SCENE_EXIT(13, TolbiShipDeck, 14),
-    SCENE_EXIT(14, TolbiShipDeck, 17),
-    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_INTERIORS_CAST_OFF, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_MAST_CAST_OFF),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_INTERIORS_MONSTERS, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_MAST_MONSTERS),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_CREW_ATTACKED, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_CREW_ATTACKED),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_MONSTER_LANDS, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_MONSTER_LANDS),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED),
+    SCENE_EXIT(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE),
     SCENE_EXITS_END,
 };
 

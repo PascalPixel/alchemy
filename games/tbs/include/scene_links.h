@@ -42,8 +42,8 @@ enum {
   WORLD_MAP_FROM_ALTIN = 16,
   WORLD_MAP_FROM_LAMA_TEMPLE = 17,
   WORLD_MAP_FROM_LAMAKAN_DESERT_EAST = 18,
-  WORLD_MAP_FROM_KALAY_1_WEST = 19,
-  WORLD_MAP_FROM_KALAY_1_EAST = 20,
+  WORLD_MAP_FROM_KALAY_WEST = 19,
+  WORLD_MAP_FROM_KALAY_EAST = 20,
   WORLD_MAP_FROM_KALAY_DOCKS_EAST = 21,
   WORLD_MAP_FROM_TOLBI_DOCKS = 22,
   WORLD_MAP_FROM_TOLBI = 23,
@@ -80,8 +80,15 @@ enum {
   WORLD_MAP_FROM_LALIVERO_WEST = 59,
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_NORTH = 60,
   WORLD_MAP_FROM_VENUS_LIGHTHOUSE_ENTRY_WEST = 61,
+  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK = 65,
+  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK = 66,
+  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK = 67,
+  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_KRAKEN = 68,
+  WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_LAND = 69,
+  WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI = 70,
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH = 71,
   WORLD_MAP_FROM_CLEAR = 72,
+  WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE = 74,
   WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS = 75,
   WORLD_MAP_FROM_CROSSBONE_ISLE = 76,
   WORLD_MAP_MERCURY_LIGHTHOUSE_LIT =
@@ -111,7 +118,7 @@ enum {
   WORLD_MAP_TO_ALTIN = 16,
   WORLD_MAP_TO_LAMA_TEMPLE = 17,
   WORLD_MAP_TO_LAMAKAN_DESERT_EAST = 18,
-  WORLD_MAP_TO_KALAY_1_EAST = 20,
+  WORLD_MAP_TO_KALAY_EAST = 20,
   WORLD_MAP_TO_KALAY_DOCKS_EAST = 21,
   WORLD_MAP_TO_TOLBI_DOCKS = 22,
   WORLD_MAP_TO_TOLBI = 23,
@@ -2730,91 +2737,239 @@ enum {
   VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH = 6,
 };
 
-/// SceneId_Kalay1's entrances and exits.
+/// SceneId_Kalay's entrances and exits.
 enum {
-  KALAY_1_FROM_KALAY_INTERIORS_1_NORTHWEST = 1,
-  KALAY_1_FROM_KALAY_INTERIORS_1_NORTH = 2,
-  KALAY_1_FROM_KALAY_INTERIORS_1_NORTHEAST = 3,
-  KALAY_1_FROM_KALAY_INTERIORS_1_WEST = 4,
-  KALAY_1_FROM_KALAY_INTERIORS_1_SOUTH_SOUTHEAST = 5,
-  KALAY_1_FROM_KALAY_INTERIORS_1_EAST_SOUTHEAST = 6,
-  KALAY_1_FROM_KALAY_INTERIORS_1_SOUTH_SOUTHWEST = 7,
-  KALAY_1_FROM_KALAY_SANCTUM = 8,
-  KALAY_1_FROM_WORLD_MAP = 9,
-  KALAY_1_FROM_KALAY_2 = 11,
-  KALAY_1_FROM_KALAY_INTERIORS_1_WEST_NORTHWEST = 12,
-  KALAY_1_FROM_KALAY_INTERIORS_1_EAST = 13,
-  KALAY_1_FROM_KALAY_TUNNEL_3 = 14,
+  KALAY_FROM_HOUSE_NORTHWEST = 1,
+  KALAY_FROM_HOUSE_NORTHEAST_UPPER = 2,
+  KALAY_FROM_HOUSE_NORTHEAST_LOWER = 3,
+  KALAY_FROM_HOUSE_SOUTHEAST = 4,
+  KALAY_FROM_WEAPON_SHOP = 5,
+  KALAY_FROM_ARMOR_SHOP = 6,
+  KALAY_FROM_INN = 7,
+  KALAY_FROM_KALAY_SANCTUM = 8,
+  KALAY_FROM_WORLD_MAP = 9,
+  KALAY_FROM_HAMMET_PALACE_GROUNDS = 11,
+  KALAY_FROM_WEAPON_SHOP_COUNTER = 12,
+  KALAY_FROM_ARMOR_SHOP_COUNTER = 13,
+  KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM = 14,
 };
 enum {
-  KALAY_1_TO_KALAY_INTERIORS_1_NORTHWEST = 1,
-  KALAY_1_TO_KALAY_INTERIORS_1_NORTH = 2,
-  KALAY_1_TO_KALAY_INTERIORS_1_NORTHEAST = 3,
-  KALAY_1_TO_KALAY_INTERIORS_1_WEST = 4,
-  KALAY_1_TO_KALAY_INTERIORS_1_SOUTH_SOUTHEAST = 5,
-  KALAY_1_TO_KALAY_INTERIORS_1_EAST_SOUTHEAST = 6,
-  KALAY_1_TO_KALAY_INTERIORS_1_SOUTH_SOUTHWEST = 7,
-  KALAY_1_TO_KALAY_SANCTUM = 8,
-  KALAY_1_TO_WORLD_MAP = 9,
-  KALAY_1_TO_WORLD_MAP_WEST = 10,
-  KALAY_1_TO_KALAY_2 = 11,
-  KALAY_1_TO_KALAY_INTERIORS_1_WEST_NORTHWEST = 12,
-  KALAY_1_TO_KALAY_INTERIORS_1_EAST = 13,
-  KALAY_1_TO_KALAY_TUNNEL_3 = 14,
+  KALAY_TO_HOUSE_NORTHWEST = 1,
+  KALAY_TO_HOUSE_NORTHEAST_UPPER =
+      2, ///< ★ Named from what the player sees: the upper door of the
+         ///< two-storey house in the town's north-east, on its terrace (its
+         ///< render)
+  KALAY_TO_HOUSE_NORTHEAST_LOWER =
+      3, ///< ★ Named from what the player sees: the ground-floor door of the
+         ///< two-storey house in the town's north-east (its render)
+  KALAY_TO_HOUSE_SOUTHEAST = 4,
+  KALAY_TO_WEAPON_SHOP =
+      5, ///< ★ Named from what the player sees: the building with the sword
+         ///< sign and the weapon seller's counter (its render)
+  KALAY_TO_ARMOR_SHOP =
+      6, ///< ★ Named from what the player sees: the building with the armor
+         ///< seller's counter and shields on its inner walls (its render)
+  KALAY_TO_INN = 7, ///< ★ Named from what the player sees: the building under
+                    ///< the INN sign (its render)
+  KALAY_TO_KALAY_SANCTUM = 8,
+  KALAY_TO_WORLD_MAP = 9,
+  KALAY_TO_WORLD_MAP_WEST = 10,
+  KALAY_TO_HAMMET_PALACE_GROUNDS = 11,
+  KALAY_TO_WEAPON_SHOP_COUNTER =
+      12, ///< ★ Named from what the player sees: the arched doorway behind the
+          ///< weapon seller's counter (its render)
+  KALAY_TO_ARMOR_SHOP_COUNTER =
+      13, ///< ★ Named from what the player sees: the arched doorway behind the
+          ///< armor seller's counter (its render)
+  KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM = 14,
 };
 
-/// SceneId_KalayInteriors1's entrances and exits.
+/// SceneId_KalayInteriors's entrances and exits.
 enum {
-  KALAY_INTERIORS_1_FROM_KALAY_1_NORTHWEST = 1,
-  KALAY_INTERIORS_1_FROM_KALAY_1_NORTH = 2,
-  KALAY_INTERIORS_1_FROM_KALAY_1_NORTHEAST = 3,
-  KALAY_INTERIORS_1_FROM_KALAY_1_WEST = 4,
-  KALAY_INTERIORS_1_FROM_KALAY_1_WEST_NORTHWEST = 5,
-  KALAY_INTERIORS_1_FROM_KALAY_1_SOUTH_SOUTHEAST = 6,
-  KALAY_INTERIORS_1_FROM_KALAY_1_EAST_SOUTHEAST = 7,
-  KALAY_INTERIORS_1_FROM_KALAY_1_EAST = 8,
-  KALAY_INTERIORS_1_FROM_KALAY_1_SOUTH_SOUTHWEST = 10,
+  KALAY_INTERIORS_HOUSE_NORTHWEST = 1,
+  KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER = 2,
+  KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER = 3,
+  KALAY_INTERIORS_HOUSE_SOUTHEAST = 4,
+  KALAY_INTERIORS_WEAPON_SHOP_COUNTER = 5,
+  KALAY_INTERIORS_WEAPON_SHOP = 6,
+  KALAY_INTERIORS_ARMOR_SHOP = 7,
+  KALAY_INTERIORS_ARMOR_SHOP_COUNTER = 8,
+  KALAY_INTERIORS_INN_FROM_INN_CORRIDOR =
+      9, ///< ★ Named from what the player sees: the inn's room with its
+         ///< counter, dining tables and stairs (its render)
+  KALAY_INTERIORS_INN = 10,
+  KALAY_INTERIORS_INN_CORRIDOR_FROM_INN =
+      11, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST =
+      12, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST =
+      13, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST =
+      14, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  KALAY_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST =
+      15, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_CORRIDOR =
+      16, ///< ★ Named from what the player sees: the guest room through the
+          ///< east opening on the inn corridor's south side (its render)
+  KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR =
+      17, ///< ★ Named from what the player sees: the guest room behind the west
+          ///< door in the inn corridor's north wall (its render)
+  KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_CORRIDOR =
+      18, ///< ★ Named from what the player sees: the guest room behind the east
+          ///< door in the inn corridor's north wall (its render)
+  KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_CORRIDOR =
+      19, ///< ★ Named from what the player sees: the guest room through the
+          ///< west opening on the inn corridor's south side (its render)
 };
 enum {
-  KALAY_INTERIORS_1_TO_KALAY_1_NORTHWEST = 1,
-  KALAY_INTERIORS_1_TO_KALAY_1_NORTH = 2,
-  KALAY_INTERIORS_1_TO_KALAY_1_NORTHEAST = 3,
-  KALAY_INTERIORS_1_TO_KALAY_1_WEST = 4,
-  KALAY_INTERIORS_1_TO_KALAY_1_WEST_NORTHWEST = 5,
-  KALAY_INTERIORS_1_TO_KALAY_1_SOUTH_SOUTHEAST = 6,
-  KALAY_INTERIORS_1_TO_KALAY_1_EAST_SOUTHEAST = 7,
-  KALAY_INTERIORS_1_TO_KALAY_1_EAST = 8,
-  KALAY_INTERIORS_1_TO_KALAY_1_SOUTH_SOUTHWEST = 10,
+  KALAY_INTERIORS_HOUSE_NORTHWEST_TO_KALAY = 1,
+  KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER_TO_KALAY = 2,
+  KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER_TO_KALAY = 3,
+  KALAY_INTERIORS_HOUSE_SOUTHEAST_TO_KALAY = 4,
+  KALAY_INTERIORS_WEAPON_SHOP_COUNTER_TO_KALAY = 5,
+  KALAY_INTERIORS_WEAPON_SHOP_TO_KALAY = 6,
+  KALAY_INTERIORS_ARMOR_SHOP_TO_KALAY = 7,
+  KALAY_INTERIORS_ARMOR_SHOP_COUNTER_TO_KALAY = 8,
+  KALAY_INTERIORS_INN_TO_INN_CORRIDOR =
+      9, ///< ★ Named from what the player sees: the corridor at the foot of the
+         ///< inn's stairs, lined with guest-room doors (its render)
+  KALAY_INTERIORS_INN_TO_KALAY = 10,
+  KALAY_INTERIORS_INN_CORRIDOR_TO_INN =
+      11, ///< ★ Named from what the player sees: the inn's room with its
+          ///< counter, dining tables and stairs (its render)
+  KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHWEST =
+      12, ///< ★ Named from what the player sees: the guest room behind the west
+          ///< door in the inn corridor's north wall (its render)
+  KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHEAST =
+      13, ///< ★ Named from what the player sees: the guest room behind the east
+          ///< door in the inn corridor's north wall (its render)
+  KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHWEST =
+      14, ///< ★ Named from what the player sees: the guest room through the
+          ///< west opening on the inn corridor's south side (its render)
+  KALAY_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHEAST =
+      15, ///< ★ Named from what the player sees: the guest room through the
+          ///< east opening on the inn corridor's south side (its render)
+  KALAY_INTERIORS_GUEST_ROOM_SOUTHEAST_TO_INN_CORRIDOR =
+      16, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_TO_INN_CORRIDOR =
+      17, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_CORRIDOR =
+      18, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  KALAY_INTERIORS_GUEST_ROOM_SOUTHWEST_TO_INN_CORRIDOR =
+      19, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
 };
 
 /// SceneId_KalaySanctum's entrances and exits.
 enum {
-  KALAY_SANCTUM_FROM_KALAY_1 = 1,
+  KALAY_SANCTUM_FROM_KALAY = 1,
 };
 enum {
-  KALAY_SANCTUM_TO_KALAY_1 = 1,
+  KALAY_SANCTUM_TO_KALAY = 1,
 };
 
-/// SceneId_Kalay2's entrances and exits.
+/// SceneId_HammetPalaceGrounds's entrances and exits.
 enum {
-  KALAY_2_FROM_KALAY_1 = 1,
-  KALAY_2_FROM_HAMMET_PALACE = 2,
+  HAMMET_PALACE_GROUNDS_FROM_KALAY = 1,
+  HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE = 2,
 };
 enum {
-  KALAY_2_TO_KALAY_1 = 1,
-  KALAY_2_TO_HAMMET_PALACE = 2,
-  KALAY_2_TO_HAMMET_PALACE_EAST = 5,
+  HAMMET_PALACE_GROUNDS_TO_KALAY = 1,
+  HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE = 2,
+  HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_THRONE_ROOM = 5,
 };
 
 /// SceneId_HammetPalace's entrances and exits.
 enum {
-  HAMMET_PALACE_FROM_KALAY_2_WEST = 1,
-  HAMMET_PALACE_FROM_KALAY_TUNNEL_3 = 11,
-  HAMMET_PALACE_FROM_KALAY_2_EAST = 20,
+  HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS = 1,
+  HAMMET_PALACE_ENTRANCE_HALL_FROM_WEST_WING =
+      2, ///< ★ Named from what the player sees: the hall inside the front door,
+         ///< with a red carpet and two fountains (its render)
+  HAMMET_PALACE_ENTRANCE_HALL_FROM_EAST_WING =
+      3, ///< ★ Named from what the player sees: the hall inside the front door,
+         ///< with a red carpet and two fountains (its render)
+  HAMMET_PALACE_ENTRANCE_HALL_FROM_THRONE_ROOM =
+      4, ///< ★ Named from what the player sees: the hall inside the front door,
+         ///< with a red carpet and two fountains (its render)
+  HAMMET_PALACE_ENTRANCE_HALL_FROM_LANDING =
+      5, ///< ★ Named from what the player sees: the hall inside the front door,
+         ///< with a red carpet and two fountains (its render)
+  HAMMET_PALACE_WEST_WING_FROM_ENTRANCE_HALL =
+      6, ///< ★ Named from what the player sees: the sitting room and bedroom
+         ///< beyond the hall's west door (its render)
+  HAMMET_PALACE_EAST_WING_FROM_ENTRANCE_HALL =
+      7, ///< ★ Named from what the player sees: the bedroom, kitchen and stairs
+         ///< beyond the hall's east door (its render)
+  HAMMET_PALACE_EAST_WING_FROM_PASSAGE_DOOR =
+      8, ///< ★ Named from what the player sees: the bedroom, kitchen and stairs
+         ///< beyond the hall's east door (its render)
+  HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL =
+      9, ///< ★ Named from what the player sees: the room with two thrones on a
+         ///< red dais where Layana sits (its render)
+  HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING =
+      10, ///< ★ Named from the game: "underground passage"
+          ///< (MsgHammetPalaceILeftTheDoorToThe)
+  HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM = 11,
+  HAMMET_PALACE_BEDROOM_FROM_LANDING =
+      12, ///< ★ Named from what the player sees: the room of two beds and a
+          ///< round table off the landing (its render)
+  HAMMET_PALACE_LANDING_FROM_ENTRANCE_HALL =
+      13, ///< ★ Named from what the player sees: the small room at the other
+          ///< end of the hall's stairs, with one door (its render)
+  HAMMET_PALACE_LANDING_FROM_BEDROOM =
+      14, ///< ★ Named from what the player sees: the small room at the other
+          ///< end of the hall's stairs, with one door (its render)
+  HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS =
+      20, ///< ★ Named from what the player sees: the room with two thrones on a
+          ///< red dais where Layana sits (its render)
 };
 enum {
-  HAMMET_PALACE_TO_KALAY_2_WEST = 1,
-  HAMMET_PALACE_TO_KALAY_TUNNEL_3 = 11,
+  HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS = 1,
+  HAMMET_PALACE_ENTRANCE_HALL_TO_WEST_WING =
+      2, ///< ★ Named from what the player sees: the sitting room and bedroom
+         ///< beyond the hall's west door (its render)
+  HAMMET_PALACE_ENTRANCE_HALL_TO_EAST_WING =
+      3, ///< ★ Named from what the player sees: the bedroom, kitchen and stairs
+         ///< beyond the hall's east door (its render)
+  HAMMET_PALACE_ENTRANCE_HALL_TO_THRONE_ROOM =
+      4, ///< ★ Named from what the player sees: the room with two thrones on a
+         ///< red dais where Layana sits (its render)
+  HAMMET_PALACE_ENTRANCE_HALL_TO_LANDING =
+      5, ///< ★ Named from what the player sees: the small room at the other end
+         ///< of the hall's stairs, with one door (its render)
+  HAMMET_PALACE_WEST_WING_TO_ENTRANCE_HALL =
+      6, ///< ★ Named from what the player sees: the hall inside the front door,
+         ///< with a red carpet and two fountains (its render)
+  HAMMET_PALACE_EAST_WING_TO_ENTRANCE_HALL =
+      7, ///< ★ Named from what the player sees: the hall inside the front door,
+         ///< with a red carpet and two fountains (its render)
+  HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR =
+      8, ///< ★ Named from the game: "underground passage"
+         ///< (MsgHammetPalaceILeftTheDoorToThe)
+  HAMMET_PALACE_THRONE_ROOM_TO_ENTRANCE_HALL =
+      9, ///< ★ Named from what the player sees: the hall inside the front door,
+         ///< with a red carpet and two fountains (its render)
+  HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING =
+      10, ///< ★ Named from what the player sees: the bedroom, kitchen and
+          ///< stairs beyond the hall's east door (its render)
+  HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM = 11,
+  HAMMET_PALACE_BEDROOM_TO_LANDING =
+      12, ///< ★ Named from what the player sees: the small room at the other
+          ///< end of the hall's stairs, with one door (its render)
+  HAMMET_PALACE_LANDING_TO_ENTRANCE_HALL =
+      13, ///< ★ Named from what the player sees: the hall inside the front
+          ///< door, with a red carpet and two fountains (its render)
+  HAMMET_PALACE_LANDING_TO_BEDROOM =
+      14, ///< ★ Named from what the player sees: the room of two beds and a
+          ///< round table off the landing (its render)
 };
 
 /// SceneId_Lunpa's entrances and exits.
@@ -2867,64 +3022,175 @@ enum {
 enum {
   KALAY_DOCKS_FROM_WORLD_MAP_SOUTH = 1,
   KALAY_DOCKS_FROM_TOLBI_SHIP_DECK = 2,
-  KALAY_DOCKS_FROM_KALAY_TOLBI_DOCKS_2 = 3,
+  KALAY_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS = 3,
   KALAY_DOCKS_FROM_WORLD_MAP_NORTH = 4,
 };
 enum {
   KALAY_DOCKS_TO_WORLD_MAP_SOUTH = 1,
   KALAY_DOCKS_TO_TOLBI_SHIP_DECK = 2,
-  KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_2 = 3,
+  KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS = 3,
   KALAY_DOCKS_TO_WORLD_MAP_NORTH = 4,
 };
 
-/// SceneId_KalayTolbiDocks2's entrances and exits.
+/// SceneId_KalayTolbiDocksInteriors's entrances and exits.
 enum {
-  KALAY_TOLBI_DOCKS_2_FROM_KALAY_DOCKS = 1,
-  KALAY_TOLBI_DOCKS_2_FROM_TOLBI_DOCKS = 2,
+  KALAY_TOLBI_DOCKS_INTERIORS_FROM_KALAY_DOCKS = 1,
+  KALAY_TOLBI_DOCKS_INTERIORS_FROM_TOLBI_DOCKS = 2,
 };
 enum {
-  KALAY_TOLBI_DOCKS_2_TO_KALAY_DOCKS = 1,
-  KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS = 2,
+  KALAY_TOLBI_DOCKS_INTERIORS_TO_KALAY_DOCKS = 1,
+  KALAY_TOLBI_DOCKS_INTERIORS_TO_TOLBI_DOCKS = 2,
 };
 
 /// SceneId_TolbiShipDeck's entrances and exits.
 enum {
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_2 = 2,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SOUTH = 4,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD = 1,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CARGO_HOLD = 2,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN = 3,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST = 4,
   TOLBI_SHIP_DECK_FROM_KALAY_DOCKS = 5,
   TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS = 6,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY = 10,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_SEA_MONSTERS = 11,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD = 12,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_CREW_ATTACKED = 13,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_MONSTER_LANDS = 14,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN = 15,
   TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE =
       16, ///< TolbiShipDeck_JumpIntoKrakenBattle
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED = 17,
   TOLBI_SHIP_DECK_FROM_WORLD_MAP = 18,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH = 19,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE = 19,
 };
 enum {
-  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS = 2,
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD = 1,
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CARGO_HOLD = 2,
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN = 3,
   TOLBI_SHIP_DECK_TO_KALAY_DOCKS = 4,
   TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST = 5,
   TOLBI_SHIP_DECK_TO_TOLBI_DOCKS = 6,
+  TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE =
+      7, ///< ★ Named from its area name: Crossbone Isle
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR =
+      10, ///< ★ Named from the game: "Ship's course... Clear!"
+          ///< (MsgTolbiShipShipsCourseClear)
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_TURN = 11,
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_FIRST_ATTACK = 12,
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SECOND_ATTACK = 13,
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_THIRD_ATTACK = 14,
+  TOLBI_SHIP_DECK_TO_WORLD_MAP_REACH_TOLBI =
+      15, ///< ★ Named from what the player sees: the ship coming in to Tolbi at
+          ///< the end of the crossing (its render)
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_ISLAND = 16,
+  TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SWITCH_TEAMS = 17,
 };
 
 /// SceneId_TolbiShipMast's entrances and exits.
 enum {
   TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK = 1,
+  TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR = 10,
 };
 enum {
-  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SOUTH = 1,
-  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH = 15,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK = 1,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_INTERIORS_CAST_OFF = 10,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_INTERIORS_MONSTERS = 11,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_CREW_ATTACKED = 12,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_MONSTER_LANDS = 13,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED = 14,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE = 15,
 };
 
 /// SceneId_TolbiShipInteriors's entrances and exits.
 enum {
-  TOLBI_SHIP_INTERIORS_FROM_TOLBI_SHIP_DECK_2 = 3,
+  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK =
+      1, ///< ★ Named from what the player sees: the room below deck where the
+         ///< tour's passengers sit round a green rug (its render)
+  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_ROWING_DECK =
+      2, ///< ★ Named from what the player sees: the room below deck where the
+         ///< tour's passengers sit round a green rug (its render)
+  TOLBI_SHIP_INTERIORS_CARGO_HOLD_FROM_TOLBI_SHIP_DECK =
+      3, ///< ★ Named from what the player sees: the room below deck stacked
+         ///< with crates, barrels and fruit baskets (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD =
+      4, ///< ★ Named from what the player sees: the oarsmen rowing in rows to a
+         ///< drummer's beat (its render)
+  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK =
+      5, ///< ★ Named from what the player sees: the room where the captain
+         ///< stands by the ship's wheel (its render)
+  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_MAST_CAST_OFF =
+      10, ///< ★ Named from what the player sees: the room where the captain
+          ///< stands by the ship's wheel (its render)
+  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_CABIN_CALL_TO_OARS = 11,
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING =
+      12, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
+          ///< a drummer's beat (its render)
+  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_MAST_MONSTERS =
+      13, ///< ★ Named from what the player sees: the room where the captain
+          ///< stands by the ship's wheel (its render)
+  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_TURN =
+      14, ///< ★ Named from what the player sees: the room where the captain
+          ///< stands by the ship's wheel (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK =
+      15, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
+          ///< a drummer's beat (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK =
+      17, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
+          ///< a drummer's beat (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK =
+      19, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
+          ///< a drummer's beat (its render)
   TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP = 21,
+  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_ISLAND =
+      22, ///< ★ Named from what the player sees: the room where the captain
+          ///< stands by the ship's wheel (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS =
+      24, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
+          ///< a drummer's beat (its render)
 };
 enum {
-  TOLBI_SHIP_INTERIORS_HOUSE_TO_TOLBI_SHIP_DECK = 1,
-  TOLBI_SHIP_INTERIORS_TO_TOLBI_SHIP_DECK_2 = 3,
-  TOLBI_SHIP_INTERIORS_HOUSE_2_TO_TOLBI_SHIP_DECK = 5,
-  TOLBI_SHIP_INTERIORS_HOUSE_3_TO_TOLBI_SHIP_DECK = 14,
-  TOLBI_SHIP_INTERIORS_HOUSE_4_TO_TOLBI_SHIP_DECK = 15,
+  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK = 1,
+  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK =
+      2, ///< ★ Named from what the player sees: the oarsmen rowing in rows to a
+         ///< drummer's beat (its render)
+  TOLBI_SHIP_INTERIORS_CARGO_HOLD_TO_TOLBI_SHIP_DECK = 3,
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD =
+      4, ///< ★ Named from what the player sees: the room below deck where the
+         ///< tour's passengers sit round a green rug (its render)
+  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK = 5,
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY =
+      10, ///< ★ Named from the game: "Preparations... Ready!"
+          ///< (MsgTolbiShipPreparationsReady)
+  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_PASSENGER_HOLD_CALL_TO_OARS =
+      11, ///< ★ Named from what the player sees: the room below deck where the
+          ///< tour's passengers sit round a green rug (its render)
+  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING =
+      12, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
+          ///< a drummer's beat (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_FIRST_ATTACK =
+      13, ///< ★ Named from what the player sees: the ship sailing across the
+          ///< world map until the first monster attack (its render)
+  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK_SEA_MONSTERS =
+      14, ///< ★ Named from the game: "Sea monsters!"
+          ///< (MsgTolbiShipAyeCaptainSeaMonsters)
+  TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD =
+      15, ///< ★ Named from the game: "It's no use. It's too late!"
+          ///< (MsgTolbiShipNoUseLate)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_SECOND_ATTACK =
+      16, ///< ★ Named from what the player sees: the ship sailing across the
+          ///< world map until the second monster attack (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_THIRD_ATTACK =
+      17, ///< ★ Named from what the player sees: the ship sailing across the
+          ///< world map until the third monster attack (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_KRAKEN =
+      18, ///< ★ Named from what the player sees: the ship sailing across the
+          ///< world map until the Kraken comes aboard (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_KRAKEN =
+      19, ///< ★ Named from what the player sees: the stairs up to the deck
+          ///< while the Kraken is aboard, where the party jumps into the battle
+          ///< (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_LAND =
+      20, ///< ★ Named from what the player sees: the ship sailing across the
+          ///< world map until land is sighted (its render)
   TOLBI_SHIP_INTERIORS_TO_WORLD_MAP = 21,
 };
 
@@ -2932,12 +3198,12 @@ enum {
 enum {
   TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK = 1,
   TOLBI_DOCKS_FROM_WORLD_MAP = 2,
-  TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_2 = 3,
+  TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS = 3,
 };
 enum {
   TOLBI_DOCKS_TO_WORLD_MAP = 1,
   TOLBI_DOCKS_TO_TOLBI_SHIP_DECK = 2,
-  TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_2 = 3,
+  TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS = 3,
 };
 
 /// SceneId_CrossboneIsle's entrances and exits.
@@ -3198,7 +3464,7 @@ enum {
 enum {
   TOLBI_FROM_HOUSE_SOUTH = 1,
   TOLBI_FROM_HOUSE_NORTHWEST = 2,
-  TOLBI_FROM_RESTAURANT = 3,
+  TOLBI_FROM_INN = 3,
   TOLBI_FROM_TOLBI_INTERIORS_EAST = 4,
   TOLBI_FROM_HOUSE_NORTHEAST = 5,
   TOLBI_FROM_HOUSE_EAST = 6,
@@ -3208,13 +3474,16 @@ enum {
   TOLBI_FROM_TOLBI_INTERIORS_WEST = 10,
   TOLBI_FROM_BABI_PALACE_2 = 11,
   TOLBI_FROM_COLOSSEUM_ENTRANCE = 12,
-  TOLBI_FROM_TOLBI_SPRING_1 = 13,
+  TOLBI_FROM_LUCKY_DICE = 13,
   TOLBI_FROM_TOLBI_SPRING_2 = 20,
 };
 enum {
   TOLBI_TO_HOUSE_SOUTH = 1,
   TOLBI_TO_HOUSE_NORTHWEST = 2,
-  TOLBI_TO_RESTAURANT = 3,
+  TOLBI_TO_INN = 3,          ///< ★ Named from the game: "Inn Full"
+                             ///< (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
+  TOLBI_TO_LUCKY_WHEELS = 4, ///< ★ Named from the game: "Lucky Wheels"
+                             ///< (MsgTolbiLuckyWheelsRulesPullLever)
   TOLBI_TO_HOUSE_NORTHEAST = 5,
   TOLBI_TO_HOUSE_EAST = 6,
   TOLBI_TO_WEAPON_AND_ARMOR_SHOP = 7,
@@ -3223,6 +3492,8 @@ enum {
   TOLBI_TO_BABI_PALACE_2 = 10,
   TOLBI_TO_COLOSSEUM_ENTRANCE = 11,
   TOLBI_TO_WORLD_MAP = 12,
+  TOLBI_TO_LUCKY_DICE = 13, ///< ★ Named from the game: "Lucky Dice"
+                            ///< (MsgTolbiSpringLuckyDiceThrowTheDiceOn)
   TOLBI_TO_TOLBI_SPRING_2 = 30,
 };
 
@@ -3247,15 +3518,45 @@ enum {
   TOLBI_INTERIORS_SANCTUM =
       8, ///< the room behind Tolbi's sanctum door; the
          ///< room holds the sanctum; through TOLBI_TO_SANCTUM
-  TOLBI_INTERIORS_RESTAURANT =
-      9, ///< the room behind Tolbi's restaurant door; the room holds the
-         ///< restaurant; through TOLBI_TO_RESTAURANT
-  TOLBI_INTERIORS_RESTAURANT_NORTH = 10, ///< the room holds the restaurant;
-  TOLBI_INTERIORS_SANCTUM_NORTH = 30,    ///< the room holds the sanctum;
+  TOLBI_INTERIORS_INN =
+      9, ///< the room behind Tolbi's inn door; through TOLBI_TO_INN
+  TOLBI_INTERIORS_INN_FROM_INN_CORRIDOR =
+      10, ///< ★ Named from the game: "Inn Full"
+          ///< (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
+  TOLBI_INTERIORS_INN_CORRIDOR_FROM_INN =
+      11, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST =
+      12, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST =
+      13, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST =
+      14, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST =
+      15, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_CORRIDOR =
+      16, ///< ★ Named from what the player sees: the guest room through the
+          ///< east opening on the corridor's south side, where stranded
+          ///< passengers argue (its render)
+  TOLBI_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_CORRIDOR =
+      17, ///< ★ Named from what the player sees: the guest room through the
+          ///< west opening on the inn corridor's south side (its render)
+  TOLBI_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR =
+      18, ///< ★ Named from what the player sees: the guest room behind the west
+          ///< door in the inn corridor's north wall (its render)
+  TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_CORRIDOR =
+      19, ///< ★ Named from what the player sees: the guest room behind the east
+          ///< door in the corridor's north wall, where a woman hides a Lucky
+          ///< Medal (its render)
+  TOLBI_INTERIORS_SANCTUM_NORTH = 30, ///< the room holds the sanctum;
 };
 enum {
   TOLBI_INTERIORS_HOUSE_NORTHWEST_TO_TOLBI = 1,
-  TOLBI_INTERIORS_RESTAURANT_TO_TOLBI = 2,
+  TOLBI_INTERIORS_INN_TO_TOLBI = 2,
   TOLBI_INTERIORS_TO_TOLBI_EAST = 3,
   TOLBI_INTERIORS_HOUSE_NORTHEAST_TO_TOLBI = 4,
   TOLBI_INTERIORS_HOUSE_EAST_TO_TOLBI = 5,
@@ -3263,16 +3564,50 @@ enum {
   TOLBI_INTERIORS_HOUSE_SOUTHWEST_TO_TOLBI = 7,
   TOLBI_INTERIORS_SANCTUM_TO_TOLBI = 8,
   TOLBI_INTERIORS_TO_TOLBI_WEST = 9,
+  TOLBI_INTERIORS_INN_TO_INN_CORRIDOR =
+      10, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  TOLBI_INTERIORS_INN_CORRIDOR_TO_INN =
+      11, ///< ★ Named from the game: "Inn Full"
+          ///< (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
+  TOLBI_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHWEST =
+      12, ///< ★ Named from what the player sees: the guest room through the
+          ///< west opening on the inn corridor's south side (its render)
+  TOLBI_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHEAST =
+      13, ///< ★ Named from what the player sees: the guest room through the
+          ///< east opening on the corridor's south side, where stranded
+          ///< passengers argue (its render)
+  TOLBI_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHWEST =
+      14, ///< ★ Named from what the player sees: the guest room behind the west
+          ///< door in the inn corridor's north wall (its render)
+  TOLBI_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHEAST =
+      15, ///< ★ Named from what the player sees: the guest room behind the east
+          ///< door in the corridor's north wall, where a woman hides a Lucky
+          ///< Medal (its render)
+  TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_TO_INN_CORRIDOR =
+      16, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  TOLBI_INTERIORS_GUEST_ROOM_SOUTHWEST_TO_INN_CORRIDOR =
+      17, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  TOLBI_INTERIORS_GUEST_ROOM_NORTHWEST_TO_INN_CORRIDOR =
+      18, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
+  TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_CORRIDOR =
+      19, ///< ★ Named from what the player sees: the corridor at the foot of
+          ///< the inn's stairs, lined with guest-room doors (its render)
 };
 
 /// SceneId_TolbiSpring1's entrances and exits.
 enum {
+  TOLBI_SPRING_1_LUCKY_DICE_FROM_TOLBI = 10,
+  TOLBI_SPRING_1_LUCKY_WHEELS_FROM_TOLBI = 11,
   TOLBI_SPRING_1_AFTER_OFFER_LUCKY_WHEELS =
       12,                                     ///< TolbiSpring_OfferLuckyWheels
   TOLBI_SPRING_1_AFTER_OFFER_LUCKY_DICE = 13, ///< TolbiSpring_OfferLuckyDice
 };
 enum {
-  TOLBI_SPRING_1_TO_TOLBI = 1,
+  TOLBI_SPRING_1_LUCKY_DICE_TO_TOLBI = 1,
 };
 
 /// SceneId_BabiPalace1's entrances and exits.
@@ -3440,50 +3775,64 @@ enum {
 
 /// SceneId_KalayTunnelEntrance's entrances and exits.
 enum {
-  KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_1 = 1,
+  KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_CAVE = 1,
   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH = 2,
   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH = 10,
 };
 enum {
-  KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_1 = 1,
+  KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE = 1,
   KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH = 2,
   KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH = 10,
 };
 
-/// SceneId_KalayTunnel1's entrances and exits.
+/// SceneId_KalayTunnelCave's entrances and exits.
 enum {
-  KALAY_TUNNEL_1_FROM_KALAY_TUNNEL_2 = 1,
-  KALAY_TUNNEL_1_FROM_KALAY_TUNNEL_ENTRANCE = 2,
+  KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_PASSAGE = 1,
+  KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_ENTRANCE = 2,
 };
 enum {
-  KALAY_TUNNEL_1_TO_KALAY_TUNNEL_2 = 1,
-  KALAY_TUNNEL_1_TO_KALAY_TUNNEL_ENTRANCE = 2,
-};
-
-/// SceneId_KalayTunnel2's entrances and exits.
-enum {
-  KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_WEST = 1,
-  KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_EAST = 2,
-  KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_1 = 5,
-};
-enum {
-  KALAY_TUNNEL_2_TO_KALAY_TUNNEL_3_WEST = 1,
-  KALAY_TUNNEL_2_TO_KALAY_TUNNEL_3_EAST = 2,
-  KALAY_TUNNEL_2_TO_KALAY_TUNNEL_1 = 5,
+  KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE = 1,
+  KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE = 2,
 };
 
-/// SceneId_KalayTunnel3's entrances and exits.
+/// SceneId_KalayTunnelPassage's entrances and exits.
 enum {
-  KALAY_TUNNEL_3_FROM_HAMMET_PALACE = 1,
-  KALAY_TUNNEL_3_FROM_KALAY_TUNNEL_2_WEST = 2,
-  KALAY_TUNNEL_3_FROM_KALAY_TUNNEL_2_EAST = 3,
-  KALAY_TUNNEL_3_FROM_KALAY_1 = 4,
+  KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
+  KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
+  KALAY_TUNNEL_PASSAGE_CORRIDOR_FROM_NORTHEAST_ROOM =
+      3, ///< ★ Named from what the player sees: the long brick corridor beside
+         ///< the water channel (its render)
+  KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_FROM_CORRIDOR =
+      4, ///< ★ Named from what the player sees: the small room with two
+         ///< stairways, apart from the corridor, where the cave comes in (its
+         ///< render)
+  KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_CAVE = 5,
 };
 enum {
-  KALAY_TUNNEL_3_TO_HAMMET_PALACE = 1,
-  KALAY_TUNNEL_3_TO_KALAY_TUNNEL_2_WEST = 2,
-  KALAY_TUNNEL_3_TO_KALAY_TUNNEL_2_EAST = 3,
-  KALAY_TUNNEL_3_TO_KALAY_1 = 4,
+  KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST = 1,
+  KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST = 2,
+  KALAY_TUNNEL_PASSAGE_CORRIDOR_TO_NORTHEAST_ROOM =
+      3, ///< ★ Named from what the player sees: the small room with two
+         ///< stairways, apart from the corridor, where the cave comes in (its
+         ///< render)
+  KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_CORRIDOR =
+      4, ///< ★ Named from what the player sees: the long brick corridor beside
+         ///< the water channel (its render)
+  KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE = 5,
+};
+
+/// SceneId_KalayTunnelTreasureRoom's entrances and exits.
+enum {
+  KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE = 1,
+  KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST = 2,
+  KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST = 3,
+  KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY = 4,
+};
+enum {
+  KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE = 1,
+  KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST = 2,
+  KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST = 3,
+  KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY = 4,
 };
 
 /// SceneId_GondowanCave1's entrances and exits.

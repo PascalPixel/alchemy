@@ -20,9 +20,9 @@
 ///   TOLBI_SHIP_DECK_FROM_KALAY_DOCKS, and TOLBI_SHIP_DECK_TO_KALAY_DOCKS leads
 ///   back. Walking into one of the ways below deck (touch cells 1 to 3, the two
 ///   doors and the hatch) leads below by the exits of the same numbers (exit 1,
-///   TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS and exit 3), and the ladder up the
-///   mast by TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST. The ship is waiting for its
-///   replacement from Tolbi. Once the tour group has left Kalay
+///   TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CARGO_HOLD and exit 3), and the
+///   ladder up the mast by TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST. The ship is
+///   waiting for its replacement from Tolbi. Once the tour group has left Kalay
 ///   (FLAG_KALAY_COLOSSO_TOUR_LEFT) the passengers on deck grow impatient, and
 ///   walking up to the crew (touch cell 10) plays the captain, Kaja, the deck's
 ///   fighter, and a crewman talking over the delay: the captain will sail
@@ -51,11 +51,11 @@
 /// - Off course: the lookout's call of land on the mast leads either to
 ///   entrance 17, where land is sighted and the ship comes in to Tolbi, or, by
 ///   how the passengers chosen to row pull (tolbi_ship_mast.c), to
-///   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH, where the coast proves not to
-///   be Tolbi's and the crew head for an island to get their bearings. At
-///   anchor off it (the island is Crossbone Isle, scene 113, reached across the
-///   world map by exit 7) Sean asks the party to scout it for the tour group
-///   (FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED); back aboard at
+///   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, where the coast proves
+///   not to be Tolbi's and the crew head for an island to get their bearings.
+///   At anchor off it (the island is Crossbone Isle, scene 113, reached across
+///   the world map by exit 7) Sean asks the party to scout it for the tour
+///   group (FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED); back aboard at
 ///   TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS, the crew have found the course to Tolbi,
 ///   the rowers below switch sides, and the ship sails on, to entrance 17 this
 ///   time.
@@ -1181,7 +1181,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_RestOars();
   }
   switch (gGameState.entrance) {
-  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SOUTH:
+  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST:
     Object_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority = 1;
     break;
   case 10:
@@ -1221,7 +1221,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
       TolbiShipDeck_RowersDisembark();
     }
     return;
-  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH:
+  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE:
     TolbiShipDeck_SightIsland();
     return;
   }
@@ -2594,7 +2594,7 @@ static void TolbiShipDeck_Turn(s32 a, s32 b) {
   Engine_ActorFaceDirection(a, b, 10);
 }
 
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH, after the lookout's call:
+/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, after the lookout's call:
 /// Ouranos thinks they have reached Tolbi, but Kaja sees the coast is not
 /// Tolbi's and the ship is off course, and the crew head for an island to get
 /// their bearings before Kaja goes below. Exit 16 leads on below decks, toward
@@ -3032,10 +3032,10 @@ const s32 gTolbiShipDeck_LeadActionsC[] = {
 const struct SceneEntrance gTolbiShipDeckEntrances[] = {
     {0, CONDITION_ALWAYS, 179, 0, 653, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 216, 0, 600, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_2, CONDITION_ALWAYS, 232, 0, 664,
-     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_CARGO_HOLD, CONDITION_ALWAYS,
+     232, 0, 664, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {3, CONDITION_ALWAYS, 216, 0, 808, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SOUTH, CONDITION_ALWAYS, 216, 4, 648,
+    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST, CONDITION_ALWAYS, 216, 4, 648,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 312, -4, 656,
      FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -3052,8 +3052,8 @@ const struct SceneEntrance gTolbiShipDeckEntrances[] = {
     {17, CONDITION_ALWAYS, 216, 0, 540, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_WORLD_MAP, CONDITION_ALWAYS, 196, 0, 652,
      FACING_SOUTH, 0, 65, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH, CONDITION_ALWAYS, 212, 0, 521,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, CONDITION_ALWAYS, 212, 0,
+     521, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -3065,21 +3065,21 @@ const struct SceneRegion gTolbiShipDeckRegions[] = {
 
 const u32 gTolbiShipDeckExits[] = {
     SCENE_EXITS(TolbiShipDeck),
-    SCENE_EXIT(1, TolbiShipInteriors, 1),
-    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_FROM_TOLBI_SHIP_DECK_2),
-    SCENE_EXIT(3, TolbiShipInteriors, 5),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_PASSENGER_HOLD, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CARGO_HOLD, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CARGO_HOLD_FROM_TOLBI_SHIP_DECK),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK),
     SCENE_EXIT(TOLBI_SHIP_DECK_TO_KALAY_DOCKS, KalayDocks, KALAY_DOCKS_FROM_TOLBI_SHIP_DECK),
     SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST, TolbiShipMast, TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK),
     SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_DOCKS, TolbiDocks, TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK),
-    SCENE_EXIT(7, WorldMap, 74),
-    SCENE_EXIT(10, TolbiShipMast, 10),
-    SCENE_EXIT(11, TolbiShipInteriors, 14),
-    SCENE_EXIT(12, TolbiShipInteriors, 15),
-    SCENE_EXIT(13, TolbiShipInteriors, 17),
-    SCENE_EXIT(14, TolbiShipInteriors, 19),
-    SCENE_EXIT(15, WorldMap, 70),
-    SCENE_EXIT(16, TolbiShipInteriors, 22),
-    SCENE_EXIT(17, TolbiShipInteriors, 24),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE, WorldMap, WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR, TolbiShipMast, TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_TURN, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_TURN),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_FIRST_ATTACK, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SECOND_ATTACK, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_THIRD_ATTACK, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_WORLD_MAP_REACH_TOLBI, WorldMap, WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_ISLAND, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_ISLAND),
+    SCENE_EXIT(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SWITCH_TEAMS, TolbiShipInteriors, TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS),
     SCENE_EXITS_END,
 };
 

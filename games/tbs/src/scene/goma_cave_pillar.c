@@ -91,14 +91,23 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
 /// The room's actors, numbered in the order of gGomaCavePillar_Placements.
 enum GomaCavePillarActor {
-  ACTOR_WEST_PILLAR = ACTOR_FIRST_PLACED, ///< slides between two places
-  ACTOR_STUMP,       ///< pushed over the edge into the room below
-  ACTOR_EAST_PILLAR, ///< sinks into the floor in its place
+  /// Slides between two places.
+  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
+  ACTOR_WEST_PILLAR = ACTOR_FIRST_PLACED,
+  /// Pushed over the edge into the room below.
+  /// ★ Named from the game: "You want to move the stump, right?"
+  /// (MsgGomaNoUsePsynergy)
+  ACTOR_STUMP,
+  /// Sinks into the floor in its place.
+  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
+  ACTOR_EAST_PILLAR,
   /// Sprite 223, kept in the room's corner until the stump teeters at the
   /// edge, then shown blended there until the stump has fallen. XXX: what the
   /// player sees is not known; a render of the fall would settle it.
   ACTOR_STUMP_FALL_SPRITE,
-  ACTOR_FORGE, ///< Forge, a Mars Djinni, until it joins the party
+  /// Forge, a Mars Djinni, until it joins the party.
+  /// ★ Named from the game: "Forge" (MsgDjinnName)
+  ACTOR_FORGE,
   /// The man who fought Forge and lost it. "Did you see something strange
   /// over there? I fought it, but it fled."
   ACTOR_WITNESS

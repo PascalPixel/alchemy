@@ -401,44 +401,59 @@ half, and its reference point (`REG_BG2X`) is 20.8. On the wide canvas, which
 `BG2` stretches to twice its width, a point x pixels across the screen is at x / 2
 on the canvas.
 
-### Pictures and colours
+### How does an effect store and draw its pictures?
 
-An effect loads its pictures by resource id. `ResourceId_FirePillarSheetB` is an
-entry in the resource directory (`games/tbs/src/system/resource/directory.s`)
-that points at `BattleFx_FirePillarSheetB`. That label is defined in
-`games/tbs/src/graphics/battle_fx/battlefx.s` or in a file of its own beside
-it, and its data is built from an indexed PNG beside it (`fire_pillar_b.png`,
-with a `.tsv` part list where the picture has one). The build packs the PNG and
-its palette into the game.
+When Isaac casts Quake, three pillars of brown rock push up out of the ground
+one after another, throw the targets standing on them into the air and sink
+back. All three are drawn from one picture, `rock_wall.png`, and the effect
+shows a little more or a little less of it each frame.
 
-Each runner decodes its pictures at fixed offsets in `work->sheet`, and a sheet
-is laid out the way its runner reads it, with the frames of an animation one
-under the next. Dragon Cloud ([`dragon_cloud.c`](parts/dragon_cloud.c)) reads
-`fire_pillar_b.png` as five 24 by 48 frames of its flame, from rising to
-falling, with the 24 by 39 picture of its trail below them. Curse's
-`flame_column.png` ([`target_motes.c`](parts/target_motes.c)) holds nine 16 by
-12 frames of a small flame and, under them, the white candle `BattleFx_RunCurse`
-stands at each target's feet. Quake's `rock_wall.png`
-([`quake.c`](parts/quake.c)) is the body of one of its rock pillars, which
-Quake caps with a strip of ground cut from the battle's own background.
+![Isaac casts Quake at Ivan: three pillars of brown rock capped with grey ground rise one after another under Ivan, Garet and Mia, throw Ivan and Garet high into the air and sink back into the floor, and each of them flashes white as they land.](https://alchemy.pascalpixel.com/abilities/quake.gif)
+![A tall column of craggy brown rock with ragged edges, the picture every one of Quake's pillars is drawn from.](../graphics/battle_fx/rock_wall.png)
 
-![Five frames of Dragon Cloud's flame stacked one under the next, and the smaller picture of its trail at the bottom.](../graphics/battle_fx/fire_pillar_b.png)
-![Nine frames of a small orange flame stacked one above the next, over the white candle it burns on.](../graphics/battle_fx/flame_column.png)
-![A column of brown rock, the body of one of Quake's pillars.](../graphics/battle_fx/rock_wall.png)
-![The top half of a burst of light, with blue rays fanning out from a white centre at its lower left.](../graphics/battle_fx/blue_burst.png)
+The picture is an indexed PNG in [`graphics/battle_fx`](../graphics/battle_fx),
+40 by 96 pixels in 64 colours. The build's `ags-graphics` turns it into two
+files beside it: `rock_wall.gbapal`, those 64 colours as the hardware stores
+them, and `rock_wall.bitmap.lz`, the pixels row after row at one byte each,
+LZ-packed. `rock_wall.s` joins them, palette first, under the label
+`BattleFx_RockWallSheet`, and the resource directory
+(`games/tbs/src/system/resource/directory.s`) lists that label in its
+`BattleFx` group, which is what gives it the id `ResourceId_RockWallSheet`.
+Effects never name a picture's label; they ask for it by id.
 
-Since pixel values are levels, a picture drawn with additive or brightest-wins
-compositing needs its levels in the same ramp as the canvas palette the effect
-loads, and that palette needn't be the picture's own. The rushing strikes
-([`rushing_strike.c`](parts/rushing_strike.c)) load `blue_burst.png` with its
-blue palette and then copy their mode's palette over it, so Bone Charge draws
-the burst in the colours of `fire_pillar_b.png`, Brute Force in the ice
-block's, Onslaught in the pink burst's and Headbutt in the blast's. A fade draws
-from darker copies of a picture, built before the first frame, like the last
-nine copies of Dragon Cloud's trail. A symmetric picture is drawn on one side
-of its centre line and then mirrored: the blue burst is only the burst's top
-half, drawn again upside down beneath itself, and Gaia's wall is only its left
-half.
+`BattleFx_RunQuake` ([`quake.c`](parts/quake.c)) loads it with
+`Resource_LoadAndDecompress`, passing `skipPalette` and `copyPalette` as 1: the
+palette at the front of the resource goes into the first 64 colours of
+background palette RAM (`BG_PLTT`), the colours `BG2` shows the canvas in, and
+the pixels unpack into `work->sheet` at `QUAKE_WALL_CELLS`. A sheet has no
+layout of its own. Each runner puts its pictures at the offsets it reads them
+from, and Quake leaves the start of its sheet for the 40 by 16 strip of ground
+it cuts from the battle's own background, the grey cap on each pillar. Where a
+picture is an animation, its PNG stacks the frames one under the next, so
+frame n of a w by h picture starts n × w × h bytes in, as Dragon Cloud's
+five 24 by 48 frames of flame do in `fire_pillar_b.png`.
+
+Each frame, for every pillar that's standing, Quake calls its blitter twice.
+The first call draws the top `height` rows of the rock with their top edge at
+`112 - height`, and the second draws the 16 rows of ground just above them.
+`height` follows the absolute value of a sine, so the pillar seems to rise out
+of the floor and sink again, though all that changes is how much of the
+picture is shown. The blitter is a transparent one (`COMPOSITE_TRANSPARENT`),
+which skips level 0 around the rock's ragged edges, and the transfer clears
+the canvas once it's copied (`CANVAS_COPY_AND_CLEAR`), so every frame starts
+from nothing.
+
+A pixel in a sheet is a level, an index into whatever palette the effect has
+loaded, so nothing ties a picture to its own colours. The rushing strikes
+([`rushing_strike.c`](parts/rushing_strike.c)) load one burst picture and then
+copy another sheet's palette over it, so Bone Charge, Brute Force, Onslaught
+and Headbutt draw the same burst in four colourings. For the same reason a
+picture drawn with additive or brightest-wins compositing needs its levels in
+the ramp of the palette the effect loads, and a fade draws from darker copies
+of a picture built before the first frame, like the last nine copies of Dragon
+Cloud's trail. A symmetric picture is stored as one side and mirrored: the
+rushing strikes' burst is only its top half, drawn again upside down beneath
+itself, and Gaia's wall is only its left half.
 
 ## Effect families
 

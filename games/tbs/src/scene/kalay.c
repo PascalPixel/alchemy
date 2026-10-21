@@ -498,8 +498,9 @@ static void Kalay_AskAboutCaveAccess(void) {
   }
 }
 
-/// In the Kalay Tunnel (KalayTunnelTreasureRoom), once Hammet is home, a man
-/// asks whether Layana was too hard on the party when she told them to leave.
+/// A man asks whether Layana was too hard on the party. He's in the Kalay
+/// Tunnel (KalayTunnelTreasureRoom) once Hammet is home, and means the time she
+/// told the party to leave.
 static void Kalay_TalkAboutLayana(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayLayanaWasVeryHardOn);
@@ -2084,9 +2085,9 @@ static void Kalay_PushTunnelPillar(void) {
   }
 }
 
-/// In the Kalay Tunnel (KalayTunnelTreasureRoom), once a statue is pushed far
-/// enough west, its passage opens step by step, and the first raises the puddle
-/// for Frost.
+/// Each statue's passage opens once the statue is pushed far enough west. In
+/// the Kalay Tunnel (KalayTunnelTreasureRoom) the passage opens step by step,
+/// and the first one raises the puddle for Frost.
 static void Kalay_UpdateTunnelPassages(void) {
   struct FieldActor *firstPillar;
   struct FieldActor *secondPillar;
@@ -2251,8 +2252,8 @@ static void Kalay_UpdateTunnelParticle(struct ScriptInterpreter *interpreter) {
 #endif
 }
 
-/// In the Kalay Tunnel (KalayTunnelTreasureRoom), particles stream from each
-/// statue as it nears its place, while its passage is closed.
+/// Particles stream from each statue as it nears its place. That's in the Kalay
+/// Tunnel (KalayTunnelTreasureRoom), while the statue's passage is closed.
 static void Kalay_UpdateTunnelEmitters(void) {
   struct FieldActor *firstEmitter;
   struct FieldActor *secondEmitter;
@@ -2342,8 +2343,9 @@ static void Kalay_UpdateNutOrbit(void) {
                         ((u32)(Engine_RandomNext() << 9) >> 16) + 0x400;
 }
 
-/// Frost on the puddle in the Kalay Tunnel (KalayTunnelTreasureRoom) sinks it
-/// into the floor, clearing its cells, until the scene is entered again.
+/// Frost on the puddle in the Kalay Tunnel sinks it into the floor. The puddle
+/// is in KalayTunnelTreasureRoom; sinking it clears its cells, and it stays
+/// sunk until the scene is entered again.
 static void Kalay_FreezePuddle(void) {
   struct FieldActor *effect = Object_GetById(ACTOR_PUDDLE);
 

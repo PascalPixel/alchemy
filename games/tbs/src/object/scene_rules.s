@@ -91,10 +91,10 @@ gScene_InteractionRuleTable:
 	group_cue 17, -1, 0x881, 26
 	group_cue 17, -1, -1, 2
 	group_cue 18, -1, -1, 24
-	scene_cue MercuryLighthouseAerie1, -1, -1, 22
+	scene_cue MercuryLighthouseAerie, -1, -1, 22
 	group_cue 19, -1, 0x881, 22
 	group_cue 19, -1, -1, 27
-	scene_cue FuchinTemple2, 3, -1, 60
+	scene_cue FuchinTempleInteriors, 3, -1, 60
 	group_cue 20, -1, -1, 5
 	group_cue 21, -1, -1, 28
 	group_cue 22, -1, -1, 21
@@ -208,10 +208,10 @@ gScene_AreaNameRules:
 	scene_name ImilInteriors, 7, 30
 	group_name 17, -1, 31
 	group_name 18, -1, 32
-	scene_name MercuryLighthouseAerie1, -1, 33
+	scene_name MercuryLighthouseAerie, -1, 33
 	group_name 19, -1, 34
-	scene_name FuchinTemple2, 2, 35
-	scene_name FuchinTemple2, 3, 36
+	scene_name FuchinTempleInteriors, 2, 35
+	scene_name FuchinTempleInteriors, 3, 36
 	group_name 20, -1, 37
 	group_name 21, -1, 38
 	group_name 22, -1, 39
@@ -309,7 +309,7 @@ gParty_PairResolveRules:
 	return_to Bilibin, -1, Sanctum, 35
 	return_to Kolima, -1, Kolima, 12
 	return_to Imil, -1, ImilInteriors, 7
-	return_to FuchinTemple1, -1, FuchinTemple1, 5
+	return_to FuchinTempleGrounds, -1, FuchinTempleGrounds, 5
 	return_to Xian, -1, Sanctum, 32
 	return_to Altin, -1, Sanctum, 29
 	return_to LamaTemple, -1, LamaTemple, 5
@@ -334,9 +334,9 @@ gBattle_BackdropScenes:
 	backdrop TretTreeBranchBackdrop, TretTreeBranch
 	backdrop TretTreeInteriorsBackdrop, TretTreeInteriors
 	backdrop GomaCaveBackdrop, BilibinCaveEntrance, BilibinCaveRapier, BilibinCaveIce
-	backdrop MercuryLighthouseBackdrop, MercuryLighthouseEntrance, MercuryLighthouse1, MercuryLighthouse2, MercuryLighthouse3, MercuryLighthouse4
-	backdrop MercuryLighthouseAerieBackdrop, MercuryLighthouseAerie1
-	backdrop ImilFuchinFallsBackdrop, FuchinFallsCave1, FuchinFallsCave2, FuchinFallsCave3, FuchinFallsCave4, FuchinFallsCave5, FuchinFallsCave6, CrossboneIsle3
+	backdrop MercuryLighthouseBackdrop, MercuryLighthouseEntrance, MercuryLighthouseLower, MercuryLighthouseMiddle, MercuryLighthouseUpper, MercuryLighthouseExterior
+	backdrop MercuryLighthouseAerieBackdrop, MercuryLighthouseAerie
+	backdrop ImilFuchinFallsBackdrop, FuchinFallsCaveEntrance, FuchinFallsCaveZephyr, FuchinFallsCaveDragonsEye, FuchinFallsCaveArcticBlade, FuchinFallsCaveOrbOfForce, FuchinFallsCaveDragonStatue, CrossboneIsle3
 	backdrop MogallForestBackdrop, MogallForestSign, MogallForestQuartz, MogallForestKillerApe
 	backdrop AltinPeakBackdrop, AltinPeak1, AltinPeak2, AltinPeak3, AltinPeak4, AltinPeak5, AltinPeak6, AltinPeak7, AltinPeak8, AltinPeak9, AltinPeak11
 	backdrop LamakanDesertBackdrop, LamakanDesert1, LamakanDesert2, LamakanDesert3

@@ -48,7 +48,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->savedShakeDecay = map->shakeDecay;
   if (gGameState.map == (s32)&SceneId_MercuryLighthouseEntrance)
     work->lit = 1;
-  if (gGameState.map == (s32)&SceneId_MercuryLighthouse2)
+  if (gGameState.map == (s32)&SceneId_MercuryLighthouseMiddle)
     work->lit = 1;
   BattleFx_SetupObjectPair(gGameState.selectedActor, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0

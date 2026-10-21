@@ -76,37 +76,37 @@ gBattle_LocationRules:
 	location MercuryLighthouseEntrance, 10, -1, 1, 31
 	location MercuryLighthouseEntrance, 11, -1, 1, 31
 	location MercuryLighthouseEntrance, 12, -1, 1, 31
-	location MercuryLighthouse1, 1, -1, 0, 31
-	location MercuryLighthouse1, 2, -1, 0, 31
-	location MercuryLighthouse1, 3, -1, 0, 31
+	location MercuryLighthouseLower, 1, -1, 0, 31
+	location MercuryLighthouseLower, 2, -1, 0, 31
+	location MercuryLighthouseLower, 3, -1, 0, 31
 	location MercuryLighthouseEntrance, 19, -1, 1, 31
 	location MercuryLighthouseEntrance, 20, -1, 1, 31
 	location MercuryLighthouseEntrance, 16, -1, 1, 31
 	location MercuryLighthouseEntrance, 17, -1, 1, 31
 	location MercuryLighthouseEntrance, 18, -1, 1, 31
-	location MercuryLighthouse1, 5, -1, 1, 32
-	location MercuryLighthouse1, 6, -1, 1, 32
-	location MercuryLighthouse2, 3, -1, 0, 32
-	location MercuryLighthouse2, 4, -1, 0, 32
-	location MercuryLighthouse1, 11, -1, 1, 32
-	location MercuryLighthouse1, 7, -1, 1, 32
-	location MercuryLighthouse1, 8, -1, 1, 32
-	location MercuryLighthouse3, 1, -1, 1, 33
-	location MercuryLighthouse3, 2, -1, 1, 33
-	location MercuryLighthouse3, 3, -1, 1, 33
-	location MercuryLighthouse2, 10, -1, 1, 33
-	location MercuryLighthouse2, 5, -1, 1, 33
-	location MercuryLighthouse2, 6, -1, 1, 33
-	location MercuryLighthouse4, 1, -1, 1, 34
-	location MercuryLighthouse4, 2, -1, 1, 34
-	location MercuryLighthouse3, 12, -1, 1, 34
-	location MercuryLighthouse3, 13, -1, 1, 34
-	location MercuryLighthouse4, 3, -1, 1, 35
-	location MercuryLighthouse4, 4, -1, 1, 35
-	location FuchinFallsCave1, -1, -1, 0, 39
-	location FuchinFallsCave2, -1, -1, 0, 39
-	location FuchinFallsCave3, -1, -1, 1, 40
-	location FuchinFallsCave6, -1, -1, 0, 41
+	location MercuryLighthouseLower, 5, -1, 1, 32
+	location MercuryLighthouseLower, 6, -1, 1, 32
+	location MercuryLighthouseMiddle, 3, -1, 0, 32
+	location MercuryLighthouseMiddle, 4, -1, 0, 32
+	location MercuryLighthouseLower, 11, -1, 1, 32
+	location MercuryLighthouseLower, 7, -1, 1, 32
+	location MercuryLighthouseLower, 8, -1, 1, 32
+	location MercuryLighthouseUpper, 1, -1, 1, 33
+	location MercuryLighthouseUpper, 2, -1, 1, 33
+	location MercuryLighthouseUpper, 3, -1, 1, 33
+	location MercuryLighthouseMiddle, 10, -1, 1, 33
+	location MercuryLighthouseMiddle, 5, -1, 1, 33
+	location MercuryLighthouseMiddle, 6, -1, 1, 33
+	location MercuryLighthouseExterior, 1, -1, 1, 34
+	location MercuryLighthouseExterior, 2, -1, 1, 34
+	location MercuryLighthouseUpper, 12, -1, 1, 34
+	location MercuryLighthouseUpper, 13, -1, 1, 34
+	location MercuryLighthouseExterior, 3, -1, 1, 35
+	location MercuryLighthouseExterior, 4, -1, 1, 35
+	location FuchinFallsCaveEntrance, -1, -1, 0, 39
+	location FuchinFallsCaveZephyr, -1, -1, 0, 39
+	location FuchinFallsCaveDragonsEye, -1, -1, 1, 40
+	location FuchinFallsCaveDragonStatue, -1, -1, 0, 41
 	location MogallForestSign, -1, -1, 1, 42
 	location MogallForestQuartz, -1, -1, 1, 43
 	location MogallForestKillerApe, -1, -1, 1, 44

@@ -34,12 +34,13 @@
 /// thoughts until Hsu is freed (FLAG_HSU_RESCUED), and advice for the desert
 /// after. A traveling healer offers the Sanctum's services across his counter.
 /// Walking north into the sliding door (LamaTemple_EnterHamasRoom) leads into
-/// Hama's room, in FuchinTemple2 (FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE, in
-/// fuchin_temple.c): there Hama teaches Ivan Reveal for crossing the desert,
-/// and Feizhi, who came through the mine, bursts in to say that Hsu is trapped
-/// by the boulders in the mountains; Hama hurries to his aid, and the party may
-/// follow (FLAG_XIAN_HEARD_HSU_TRAPPED, set as the lesson ends). Coming back
-/// out of the room (LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_2) the area name is not
+/// Hama's room, in FuchinTempleInteriors
+/// (FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE, in fuchin_temple.c): there Hama
+/// teaches Ivan Reveal for crossing the desert, and Feizhi, who came through
+/// the mine, bursts in to say that Hsu is trapped by the boulders in the
+/// mountains; Hama hurries to his aid, and the party may follow
+/// (FLAG_XIAN_HEARD_HSU_TRAPPED, set as the lesson ends). Coming back out of
+/// the room (LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS) the area name is not
 /// shown again. Writing on a wall hints at Reveal, which shows a passage behind
 /// a false wall (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
 /// wall back when Reveal wears off and on entry, the wall cell's own attributes
@@ -251,7 +252,7 @@ static void LamaTemple_TalkToChiMonk(void) {
 
 /// In Lama Temple, walking north into the door of Hama's room slides it open
 /// and walks the party leader through, into the room
-/// (LAMA_TEMPLE_TO_FUCHIN_TEMPLE_2).
+/// (LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS).
 static void LamaTemple_EnterHamasRoom(void) {
   Event_PlayCue(SE_188);
   Map_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
@@ -261,7 +262,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   Engine_EventWait(16);
-  Engine_EventRequestExit(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_2);
+  Engine_EventRequestExit(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS);
 }
 
 /// Hama's farewell, once the party has freed Hsu and been brought back to Lama
@@ -877,7 +878,7 @@ s32 Scene_Initialize(void) {
       Engine_ActorFaceDirection(ACTOR_CHI_MONK, FACING_EAST, 0);
     }
     entrance = gGameState.entrance;
-    if (entrance == LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_2) {
+    if (entrance == LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     } else if (entrance == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
                !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
@@ -1029,7 +1030,7 @@ struct SceneEntrance gLamaTemple_Entrances[] = {
     {0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {LAMA_TEMPLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
-    {LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_2, CONDITION_ALWAYS, 136, 0, 168,
+    {LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS, CONDITION_ALWAYS, 136, 0, 168,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {LAMA_TEMPLE_FROM_ALPINE_CROSSING, CONDITION_ALWAYS, 144, 0, 200,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -1055,8 +1056,8 @@ struct SceneEntrance gAlpineCrossing_Entrances[] = {
 u32 gAlpineCrossingLamaTemple_Exits[] = {
     SCENE_EXITS(LamaTemple),
     SCENE_EXIT(LAMA_TEMPLE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMA_TEMPLE),
-    SCENE_EXIT(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_2, FuchinTemple2,
-               FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE),
+    SCENE_EXIT(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS, FuchinTempleInteriors,
+               FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE),
     SCENE_EXITS(AlpineCrossing),
     SCENE_EXIT(ALPINE_CROSSING_TO_WORLD_MAP_EAST, WorldMap,
                WORLD_MAP_FROM_ALPINE_CROSSING_EAST),

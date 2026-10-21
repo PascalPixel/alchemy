@@ -115,7 +115,7 @@ casting Ply on the lift's statue. In the game, Alex and Saturos simply warp
 over to the lift and ride it down, and nothing calls the cast.
 
 The same overlay serves a whole scene nobody visits. Scene 59,
-`SceneId_UnusedMercuryLighthouseAerie2`, loads the aerie's code and map, but
+`SceneId_UnusedMercuryLighthouseAerieCopy`, loads the aerie's code and map, but
 its setup does nothing for it, and no exit, table or code leads there. The
 debug scene list's label for it, the message `MsgDebugCategoryName` shows for
 each scene, is `MTO07NG`, after `MTO06` for the aerie itself. The `NG` is how

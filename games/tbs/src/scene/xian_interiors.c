@@ -20,17 +20,17 @@
 /// the cooks are making and what lies about, such as a kimono for the inn's
 /// guests; a barrel holds an Elixir and a jar a Sleep Bomb.
 ///
-/// The room behind Master Feh's school (XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2) is
-/// reached only from the school (FUCHIN_TEMPLE_2_TO_HOUSE, in fuchin_temple.c)
-/// and has its own tables. Once Xian has heard of Hsu, Master Feh, Feizhi and
-/// Hsu are there, Hsu in his pose (animation 6). Master Feh says Feizhi's
-/// prediction came true, Hsu says he was injured on his way from Lama Temple,
-/// and Mind Read hears that he knew help would come, however he was freed. If
-/// the party helped free him (FLAG_HSU_RESCUED_WITHOUT_PARTY clear), Feizhi
-/// thanks it and Master Hama, and her thoughts praise the party's power as well
-/// as Hama's; otherwise she thanks Master Hama alone, and her thoughts are glad
-/// some of Hama's power passed to her. Arriving here clears
-/// FLAG_SHOW_LOCATION_NAME.
+/// The room behind Master Feh's school
+/// (XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) is reached only from the
+/// school (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE, in fuchin_temple.c) and has its
+/// own tables. Once Xian has heard of Hsu, Master Feh, Feizhi and Hsu are
+/// there, Hsu in his pose (animation 6). Master Feh says Feizhi's prediction
+/// came true, Hsu says he was injured on his way from Lama Temple, and Mind
+/// Read hears that he knew help would come, however he was freed. If the party
+/// helped free him (FLAG_HSU_RESCUED_WITHOUT_PARTY clear), Feizhi thanks it and
+/// Master Hama, and her thoughts praise the party's power as well as Hama's;
+/// otherwise she thanks Master Hama alone, and her thoughts are glad some of
+/// Hama's power passed to her. Arriving here clears FLAG_SHOW_LOCATION_NAME.
 
 #include "game_state.h"
 #include "unit/scene/xian_interiors.h"
@@ -98,10 +98,10 @@ enum {
 };
 
 /// The actors placed in the room behind Master Feh's school
-/// (XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2), where they stand once Xian has heard
-/// of Hsu, as its dialogue shows them: Master Feh says Feizhi's prediction came
-/// true, Feizhi welcomes the party, and Hsu was injured on his way from Lama
-/// Temple.
+/// (XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS), where they stand once Xian
+/// has heard of Hsu, as its dialogue shows them: Master Feh says Feizhi's
+/// prediction came true, Feizhi welcomes the party, and Hsu was injured on his
+/// way from Lama Temple.
 enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
 
 #include "common/effect_create.h"
@@ -122,7 +122,7 @@ const u32 *XianInteriors_GetExits(void) { return gXianInteriors_Exits; }
 /// other room shares one table, whose condition 0 SceneTable_Prepare replaces
 /// with whether each actor stands inside the view bounds of the room entered.
 const struct ScenePlacement *XianInteriors_GetPlacements(void) {
-  if (gGameState.entrance == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2) {
+  if (gGameState.entrance == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) {
     return gXianInteriors_SchoolRoomPlacements;
   }
   SceneTable_Prepare(gXianInteriors_Placements);
@@ -247,7 +247,7 @@ static void XianInteriors_FeizhiThanksParty(void) {
 
 /// The room behind the school has its own events.
 const struct SceneEvent *XianInteriors_GetEvents(void) {
-  if (gGameState.entrance == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2) {
+  if (gGameState.entrance == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) {
     return gXianInteriors_SchoolRoomEvents;
   }
   return gXianInteriors_Events;
@@ -270,7 +270,7 @@ s32 XianInteriors_Initialize(void) {
   } else if (entrance == XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP) {
     OverlayObject_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568), 20);
     OverlayObject_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568), 20);
-  } else if (entrance == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2) {
+  } else if (entrance == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     Engine_ActorSetAnimation(ACTOR_HSU, 6);
   }
@@ -313,7 +313,7 @@ struct SceneEntrance gXianInteriors_Entrances[] = {
      FACING_NORTH, 0, 352, 496, 656, 720, 0},
     {XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS, CONDITION_ALWAYS, 120, 0, 360,
      FACING_EAST, 0, 48, 288, 336, 496, 0},
-    {XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2, CONDITION_ALWAYS, 120, 0, 696,
+    {XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS, CONDITION_ALWAYS, 120, 0, 696,
      FACING_NORTH, 0, 64, 544, 304, 744, 0},
     {SCENE_TABLE_END},
 };
@@ -333,8 +333,8 @@ u32 gXianInteriors_Exits[] = {
                XIAN_FROM_XIAN_INTERIORS_WEST),
     SCENE_EXIT(XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS, XianInteriors,
                XIAN_INTERIORS_INN_GUEST_ROOMS_FROM_INN),
-    SCENE_EXIT(XIAN_INTERIORS_TO_FUCHIN_TEMPLE_2, FuchinTemple2,
-               FUCHIN_TEMPLE_2_FROM_HOUSE),
+    SCENE_EXIT(XIAN_INTERIORS_TO_FUCHIN_TEMPLE_INTERIORS, FuchinTempleInteriors,
+               FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE),
     SCENE_EXITS_END,
 };
 

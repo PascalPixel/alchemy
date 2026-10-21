@@ -33,9 +33,9 @@ enum {
   WORLD_MAP_FROM_KOLIMA_WEST = 7,
   WORLD_MAP_FROM_KOLIMA_FOREST_ENTRANCE = 8,
   WORLD_MAP_FROM_IMIL_SOUTH = 9,
-  WORLD_MAP_FROM_MERCURY_LIGHTHOUSE_4_EAST = 10,
+  WORLD_MAP_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
   WORLD_MAP_FROM_KOLIMA_BRIDGE_EAST = 11,
-  WORLD_MAP_FROM_FUCHIN_TEMPLE_1 = 12,
+  WORLD_MAP_FROM_FUCHIN_TEMPLE_GROUNDS = 12,
   WORLD_MAP_FROM_MOGALL_FOREST_SIGN = 13,
   WORLD_MAP_FROM_XIAN = 14,
   WORLD_MAP_FROM_ALPINE_CROSSING_EAST = 15,
@@ -102,9 +102,9 @@ enum {
   WORLD_MAP_TO_KOLIMA_WEST = 7,
   WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE = 8,
   WORLD_MAP_TO_IMIL_SOUTH = 9,
-  WORLD_MAP_TO_MERCURY_LIGHTHOUSE_4_EAST = 10,
+  WORLD_MAP_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
   WORLD_MAP_TO_KOLIMA_BRIDGE_EAST = 11,
-  WORLD_MAP_TO_FUCHIN_TEMPLE_1 = 12,
+  WORLD_MAP_TO_FUCHIN_TEMPLE_GROUNDS = 12,
   WORLD_MAP_TO_MOGALL_FOREST_SIGN = 13,
   WORLD_MAP_TO_XIAN = 14,
   WORLD_MAP_TO_ALPINE_CROSSING_EAST = 15,
@@ -1415,7 +1415,7 @@ enum {
 };
 enum {
   IMIL_TO_HOUSE_SOUTHWEST = 1,
-  IMIL_TO_IMIL_INTERIORS_2 = 2,
+  IMIL_TO_INN = 2,
   IMIL_TO_HOUSE_WEST = 3,
   IMIL_TO_HOUSE_NORTHEAST = 4,
   IMIL_TO_IMIL_INTERIORS_EAST = 5,
@@ -1436,8 +1436,14 @@ enum {
   IMIL_INTERIORS_HOUSE_NORTHEAST =
       4, ///< the room behind Imil's house northeast door; through
          ///< IMIL_TO_HOUSE_NORTHEAST
-  IMIL_INTERIORS_FROM_IMIL_SOUTH_SOUTHWEST = 5,
+  IMIL_INTERIORS_INN = 5,
+  IMIL_INTERIORS_INN_UPSTAIRS_FROM_INN =
+      6, ///< ★ Named from what the player sees: the room up the inn's stairs,
+         ///< with barrels (its render)
   IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST = 7,
+  IMIL_INTERIORS_INN_FROM_INN_UPSTAIRS =
+      8, ///< ★ Named from what the player sees: Imil's inn, its innkeeper
+         ///< behind the counter (its render)
 };
 enum {
   IMIL_INTERIORS_HOUSE_WEST_TO_IMIL = 1,
@@ -1445,7 +1451,13 @@ enum {
   IMIL_INTERIORS_TO_IMIL_EAST = 3,
   IMIL_INTERIORS_TO_IMIL = 4,
   IMIL_INTERIORS_TO_IMIL_SOUTH_SOUTHWEST = 5,
+  IMIL_INTERIORS_INN_UPSTAIRS_TO_INN =
+      6, ///< ★ Named from what the player sees: Imil's inn, its innkeeper
+         ///< behind the counter (its render)
   IMIL_INTERIORS_TO_IMIL_EAST_NORTHEAST = 7,
+  IMIL_INTERIORS_INN_TO_INN_UPSTAIRS =
+      8, ///< ★ Named from what the player sees: the room up the inn's stairs,
+         ///< with barrels (its render)
 };
 
 /// SceneId_ImilFallsCave's entrances and exits.
@@ -1458,221 +1470,499 @@ enum {
 
 /// SceneId_MercuryLighthouseEntrance's entrances and exits.
 enum {
-  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_4 = 1,
-  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_1_5 = 6,
-  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_1_WEST = 11,
-  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_1_WEST_NORTHWEST = 12,
-  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_1_4 = 14,
-  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_1_EAST_NORTHEAST = 15,
-  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_1_6 = 25,
+  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
+  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_FROM_GODDESS =
+      2, ///< ★ Named from what the player sees: the hall inside the door, lined
+         ///< with six statues, where the Lizard Man blocks Mia (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_HALL =
+      3, ///< ★ Named from the game: "He who honors the heart of the goddess"
+         ///< (MsgMercuryWhoHonorsHeart)
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_POOLS_WEST =
+      4, ///< ★ Named from the game: "He who honors the heart of the goddess"
+         ///< (MsgMercuryWhoHonorsHeart)
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_POOLS_EAST =
+      5, ///< ★ Named from the game: "He who honors the heart of the goddess"
+         ///< (MsgMercuryWhoHonorsHeart)
+  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE = 6,
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_FROM_WEST_WATERFALLS =
+      7, ///< ★ Named from what the player sees: the long room of two pools fed
+         ///< by spouts (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_FROM_GODDESS_EAST =
+      8, ///< ★ Named from what the player sees: the long room of two pools fed
+         ///< by spouts (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_FROM_GODDESS_WEST =
+      9, ///< ★ Named from what the player sees: the long room of two pools fed
+         ///< by spouts (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_FROM_EAST_WATERFALLS =
+      10, ///< ★ Named from what the player sees: the long room of two pools fed
+          ///< by spouts (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST = 11,
+  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST = 12,
+  MERCURY_LIGHTHOUSE_ENTRANCE_DRY_POOL_FROM_CHEST_POOL =
+      13, ///< ★ Named from what the player sees: the room whose spout and pool
+          ///< are dry until the pipes upstairs run (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST = 14,
+  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST = 15,
+  MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_POOL_FROM_DRY_POOL =
+      16, ///< ★ Named from what the player sees: the pool room with a chest on
+          ///< its ledge (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_POOLS =
+      17, ///< ★ Named from what the player sees: the western of the two rooms
+          ///< of three waterfalls (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_EAST_WATERFALLS =
+      18, ///< ★ Named from what the player sees: the western of the two rooms
+          ///< of three waterfalls (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_TWIN_POOLS =
+      19, ///< ★ Named from what the player sees: the eastern of the two rooms
+          ///< of three waterfalls, with a chest (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_WEST_WATERFALLS =
+      20, ///< ★ Named from what the player sees: the eastern of the two rooms
+          ///< of three waterfalls, with a chest (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE = 25,
 };
 enum {
-  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_4 = 1,
-  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_1_WEST = 10,
-  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_1_WEST_NORTHWEST = 11,
-  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_1_SOUTHWEST = 12,
-  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_1_EAST_NORTHEAST = 13,
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
+  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_TO_GODDESS =
+      2, ///< ★ Named from the game: "He who honors the heart of the goddess"
+         ///< (MsgMercuryWhoHonorsHeart)
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_HALL =
+      3, ///< ★ Named from what the player sees: the hall inside the door, lined
+         ///< with six statues, where the Lizard Man blocks Mia (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_POOLS_WEST =
+      4, ///< ★ Named from what the player sees: the long room of two pools fed
+         ///< by spouts (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_POOLS_EAST =
+      5, ///< ★ Named from what the player sees: the long room of two pools fed
+         ///< by spouts (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_TO_WEST_WATERFALLS =
+      6, ///< ★ Named from what the player sees: the western of the two rooms of
+         ///< three waterfalls (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_TO_GODDESS_WEST =
+      7, ///< ★ Named from the game: "He who honors the heart of the goddess"
+         ///< (MsgMercuryWhoHonorsHeart)
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_TO_GODDESS_EAST =
+      8, ///< ★ Named from the game: "He who honors the heart of the goddess"
+         ///< (MsgMercuryWhoHonorsHeart)
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_TO_EAST_WATERFALLS =
+      9, ///< ★ Named from what the player sees: the eastern of the two rooms of
+         ///< three waterfalls, with a chest (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST = 10,
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST = 11,
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTHWEST = 12,
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST = 13,
+  MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_WEST_WATERFALLS =
+      14, ///< ★ Named from what the player sees: the western of the two rooms
+          ///< of three waterfalls (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_EAST_WATERFALLS =
+      15, ///< ★ Named from what the player sees: the eastern of the two rooms
+          ///< of three waterfalls, with a chest (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_TWIN_POOLS =
+      16, ///< ★ Named from what the player sees: the long room of two pools fed
+          ///< by spouts (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_POOL_TO_DRY_POOL =
+      17, ///< ★ Named from what the player sees: the room whose spout and pool
+          ///< are dry until the pipes upstairs run (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_TWIN_POOLS =
+      18, ///< ★ Named from what the player sees: the long room of two pools fed
+          ///< by spouts (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_DRY_POOL_TO_CHEST_POOL =
+      19, ///< ★ Named from what the player sees: the pool room with a chest on
+          ///< its ledge (its render)
 };
 
-/// SceneId_MercuryLighthouse1's entrances and exits.
+/// SceneId_MercuryLighthouseLower's entrances and exits.
 enum {
-  MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
-  MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
-  MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST = 4,
-  MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_2_SOUTH = 6,
-  MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_SOUTHWEST = 7,
-  MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_3 = 8,
-  MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_2_NORTH = 11,
+  MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
+  MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
+  MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE =
+      3, ///< ★ Named from what the player sees: the large pool crossed on
+         ///< rising water pillars (its render)
+  MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST = 4,
+  MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE =
+      5, ///< ★ Named from what the player sees: the room with three waterfalls
+         ///< over a grating (its render)
+  MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH = 6,
+  MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_SOUTHWEST = 7,
+  MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_UPPER = 8,
+  MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL =
+      9, ///< ★ Named from what the player sees: the room where a statue blocks
+         ///< Mia until Move pushes it aside (its render)
+  MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS =
+      10, ///< ★ Named from what the player sees: the room where a statue blocks
+          ///< Mia until Move pushes it aside (its render)
+  MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH = 11,
+  MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE = 15,
 };
 enum {
-  MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
-  MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
-  MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST = 4,
-  MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_ENTRANCE_4 = 5,
-  MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_3 = 6,
-  MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_2_NORTH = 7,
-  MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_ENTRANCE_5 = 8,
-  MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_2_SOUTH = 12,
-  MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_ENTRANCE_6 = 13,
-};
-
-/// SceneId_MercuryLighthouse2's entrances and exits.
-enum {
-  MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_1_SOUTH = 1,
-  MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_1_NORTH = 3,
-  MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_3_WEST_NORTHWEST = 5,
-  MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_4 = 6,
-  MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_3_NORTHEAST = 7,
-  MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_3_EAST_NORTHEAST = 8,
-  MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_3_NORTH_NORTHEAST = 9,
-  MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_3_NORTHWEST = 10,
-};
-enum {
-  MERCURY_LIGHTHOUSE_2_TO_MERCURY_LIGHTHOUSE_1_NORTH = 1,
-  MERCURY_LIGHTHOUSE_2_TO_MERCURY_LIGHTHOUSE_3_WEST_NORTHWEST = 3,
-  MERCURY_LIGHTHOUSE_2_TO_MERCURY_LIGHTHOUSE_4 = 4,
-  MERCURY_LIGHTHOUSE_2_TO_MERCURY_LIGHTHOUSE_3_NORTHWEST = 5,
-  MERCURY_LIGHTHOUSE_2_TO_MERCURY_LIGHTHOUSE_1_SOUTH = 6,
-  MERCURY_LIGHTHOUSE_2_TO_MERCURY_LIGHTHOUSE_3_NORTHEAST = 8,
-  MERCURY_LIGHTHOUSE_2_TO_MERCURY_LIGHTHOUSE_3_EAST_NORTHEAST = 9,
-  MERCURY_LIGHTHOUSE_2_TO_MERCURY_LIGHTHOUSE_3_NORTH_NORTHEAST = 10,
-};
-
-/// SceneId_MercuryLighthouse3's entrances and exits.
-enum {
-  MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_2_WEST_NORTHWEST = 1,
-  MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_2_NORTH_NORTHEAST = 2,
-  MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_2_NORTHWEST = 3,
-  MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_2_NORTHEAST = 5,
-  MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_2_EAST_NORTHEAST = 6,
-  MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_1 = 7,
-  MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_4_EAST = 10,
-  MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_4_WEST = 12,
-};
-enum {
-  MERCURY_LIGHTHOUSE_3_TO_MERCURY_LIGHTHOUSE_2_WEST_NORTHWEST = 1,
-  MERCURY_LIGHTHOUSE_3_TO_MERCURY_LIGHTHOUSE_2_NORTH_NORTHEAST = 2,
-  MERCURY_LIGHTHOUSE_3_TO_MERCURY_LIGHTHOUSE_2_NORTHWEST = 3,
-  MERCURY_LIGHTHOUSE_3_TO_MERCURY_LIGHTHOUSE_2_NORTHEAST = 5,
-  MERCURY_LIGHTHOUSE_3_TO_MERCURY_LIGHTHOUSE_2_EAST_NORTHEAST = 6,
-  MERCURY_LIGHTHOUSE_3_TO_MERCURY_LIGHTHOUSE_1 = 7,
-  MERCURY_LIGHTHOUSE_3_TO_MERCURY_LIGHTHOUSE_4_EAST = 10,
-  MERCURY_LIGHTHOUSE_3_TO_MERCURY_LIGHTHOUSE_4_WEST = 12,
+  MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
+  MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
+  MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE =
+      3, ///< ★ Named from what the player sees: the room where a statue blocks
+         ///< Mia until Move pushes it aside (its render)
+  MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST =
+      4, ///< ★ Named from what the player sees: the one-way way down to the
+         ///< eastern doors of the room the pipe fills (its render)
+  MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST =
+      5, ///< ★ Named from what the player sees: the one-way way down to the
+         ///< eastern doors of the room the pipe fills (its render)
+  MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER = 6,
+  MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH = 7,
+  MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE =
+      8, ///< ★ Named from what the player sees: the hole the leader drops
+         ///< through to the ground floor (its render)
+  MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL =
+      9, ///< ★ Named from what the player sees: the large pool crossed on
+         ///< rising water pillars (its render)
+  MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS =
+      10, ///< ★ Named from what the player sees: the room with three waterfalls
+          ///< over a grating (its render)
+  MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_TO_STATUE =
+      11, ///< ★ Named from what the player sees: the room where a statue blocks
+          ///< Mia until Move pushes it aside (its render)
+  MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH = 12,
+  MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE =
+      13, ///< ★ Named from what the player sees: the pipes whose water carries
+          ///< the party down to the ground floor and back (its render)
 };
 
-/// SceneId_MercuryLighthouse4's entrances and exits.
+/// SceneId_MercuryLighthouseMiddle's entrances and exits.
 enum {
-  MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_2 = 1,
-  MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_3_SOUTH = 2,
-  MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_3_NORTH = 3,
-  MERCURY_LIGHTHOUSE_4_FROM_WORLD_MAP = 11,
-  MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_ENTRANCE = 12,
-  MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_AERIE_1 = 15,
+  MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH = 1,
+  MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE =
+      2, ///< ★ Named from what the player sees: the large maze of pipes with a
+         ///< chest (its render)
+  MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTH = 3,
+  MERCURY_LIGHTHOUSE_MIDDLE_GATE_FROM_PIPES =
+      4, ///< ★ Named from what the player sees: the room whose gate a statue on
+         ///< the floor switch holds open (its render)
+  MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST = 5,
+  MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR = 6,
+  MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST = 7,
+  MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST = 8,
+  MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST = 9,
+  MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST = 10,
 };
 enum {
-  MERCURY_LIGHTHOUSE_4_TO_MERCURY_LIGHTHOUSE_2 = 1,
-  MERCURY_LIGHTHOUSE_4_TO_MERCURY_LIGHTHOUSE_3_SOUTH = 2,
-  MERCURY_LIGHTHOUSE_4_TO_MERCURY_LIGHTHOUSE_3_NORTH = 3,
-  MERCURY_LIGHTHOUSE_4_TO_WORLD_MAP_EAST = 6,
-  MERCURY_LIGHTHOUSE_4_TO_MERCURY_LIGHTHOUSE_ENTRANCE = 7,
-  MERCURY_LIGHTHOUSE_4_TO_WORLD_MAP_WEST = 8,
-  MERCURY_LIGHTHOUSE_4_TO_MERCURY_LIGHTHOUSE_AERIE_1 = 9,
+  MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_NORTH = 1,
+  MERCURY_LIGHTHOUSE_MIDDLE_GATE_TO_PIPES =
+      2, ///< ★ Named from what the player sees: the large maze of pipes with a
+         ///< chest (its render)
+  MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST = 3,
+  MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR = 4,
+  MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST = 5,
+  MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTH = 6,
+  MERCURY_LIGHTHOUSE_MIDDLE_PIPES_TO_GATE =
+      7, ///< ★ Named from what the player sees: the room whose gate a statue on
+         ///< the floor switch holds open (its render)
+  MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST = 8,
+  MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST = 9,
+  MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST = 10,
 };
 
-/// SceneId_MercuryLighthouseAerie1's entrances and exits.
+/// SceneId_MercuryLighthouseUpper's entrances and exits.
 enum {
-  MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT =
+  MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST = 1,
+  MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
+  MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST = 3,
+  MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_FROM_STAIR_GATE =
+      4, ///< ★ Named from what the player sees: the room where five pillars
+         ///< stand in a row along the north wall (its render)
+  MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST = 5,
+  MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST = 6,
+  MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER = 7,
+  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_FIVE_PILLARS =
+      8, ///< ★ Named from what the player sees: the room of three doors, a gate
+         ///< and the floor switch the fallen statue is set on (its render)
+  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_STONE_DOORS =
+      9, ///< ★ Named from what the player sees: the room of three doors, a gate
+         ///< and the floor switch the fallen statue is set on (its render)
+  MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
+  MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS =
+      11, ///< ★ Named from what the player sees: the room with a gap in the
+          ///< floor that one more pillar is pushed into (its render)
+  MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_WEST = 12,
+  MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_FROM_GAP =
+      13, ///< ★ Named from what the player sees: the long hall with a wall of
+          ///< waterfalls (its render)
+  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE =
+      14, ///< ★ Named from what the player sees: the room of three stone doors
+          ///< and the statue that slides off its ledge (its render)
+  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_STONE_DOORS_STATUE_FALLS =
+      15, ///< ★ Named from what the player sees: the room of three doors, a
+          ///< gate and the floor switch the fallen statue is set on (its
+          ///< render)
+  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE_STATUE_FALLS =
+      16, ///< ★ Named from what the player sees: the room of three stone doors
+          ///< and the statue that slides off its ledge (its render)
+};
+enum {
+  MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST = 1,
+  MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
+  MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST = 3,
+  MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_TO_STAIR_GATE =
+      4, ///< ★ Named from what the player sees: the room of three doors, a gate
+         ///< and the floor switch the fallen statue is set on (its render)
+  MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST = 5,
+  MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST = 6,
+  MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_LOWER = 7,
+  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_TO_STONE_DOORS =
+      8, ///< ★ Named from what the player sees: the room of three stone doors
+         ///< and the statue that slides off its ledge (its render)
+  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_TO_FIVE_PILLARS =
+      9, ///< ★ Named from what the player sees: the room where five pillars
+         ///< stand in a row along the north wall (its render)
+  MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
+  MERCURY_LIGHTHOUSE_UPPER_GAP_TO_WATERFALLS =
+      11, ///< ★ Named from what the player sees: the long hall with a wall of
+          ///< waterfalls (its render)
+  MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST = 12,
+  MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP =
+      13, ///< ★ Named from what the player sees: the room with a gap in the
+          ///< floor that one more pillar is pushed into (its render)
+  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_STAIR_GATE =
+      14, ///< ★ Named from what the player sees: the room of three doors, a
+          ///< gate and the floor switch the fallen statue is set on (its
+          ///< render)
+  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_STAIR_GATE_STATUE_FALLS =
+      15, ///< ★ Named from what the player sees: the view cutting to the room
+          ///< below as the statue falls and lands (its render)
+  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_TO_STONE_DOORS_STATUE_FALLS =
+      16, ///< ★ Named from what the player sees: the view cutting to the room
+          ///< below as the statue falls and lands (its render)
+};
+
+/// SceneId_MercuryLighthouseExterior's entrances and exits.
+enum {
+  MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_MIDDLE = 1,
+  MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
+  MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST = 3,
+  MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_WALKWAY_FROM_WATERFALL =
+      4, ///< ★ Named from what the player sees: the higher of the two walkways
+         ///< up the outside, leading to the waterfall (its render)
+  MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_WALKWAY =
+      10, ///< ★ Named from what the player sees: the waterfall whose statue Ply
+          ///< stops to open the way up (its render)
+  MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP = 11,
+  MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_ENTRANCE = 12,
+  MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE = 15,
+};
+enum {
+  MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE = 1,
+  MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
+  MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_EAST = 3,
+  MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_WALKWAY_TO_WATERFALL =
+      4, ///< ★ Named from what the player sees: the waterfall whose statue Ply
+         ///< stops to open the way up (its render)
+  MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_WALKWAY =
+      5, ///< ★ Named from what the player sees: the higher of the two walkways
+         ///< up the outside, leading to the waterfall (its render)
+  MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_EAST = 6,
+  MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE = 7,
+  MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT =
+      8, ///< ★ Named from what the player sees: the first rise up the
+         ///< waterfall, shown from the world map as the lighthouse is lit (its
+         ///< render)
+  MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE = 9,
+};
+
+/// SceneId_MercuryLighthouseAerie's entrances and exits.
+enum {
+  MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT =
       1, ///< the world map sends the party here after its lighthouse cut
-  MERCURY_LIGHTHOUSE_AERIE_1_AFTER_CONFRONT_SATUROS =
+  MERCURY_LIGHTHOUSE_AERIE_AFTER_CONFRONT_SATUROS =
       2, ///< MercuryLighthouseAerie_ConfrontSaturos
-  MERCURY_LIGHTHOUSE_AERIE_1_FROM_MERCURY_LIGHTHOUSE_4 = 5,
+  MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR = 5,
 };
 enum {
-  MERCURY_LIGHTHOUSE_AERIE_1_TO_MERCURY_LIGHTHOUSE_4 = 1,
-};
-
-/// SceneId_FuchinTemple1's entrances and exits.
-enum {
-  FUCHIN_TEMPLE_1_FROM_WORLD_MAP = 1,
-  FUCHIN_TEMPLE_1_FROM_FUCHIN_TEMPLE_2 = 2,
-  FUCHIN_TEMPLE_1_FROM_FUCHIN_FALLS_CAVE_1 = 3,
-};
-enum {
-  FUCHIN_TEMPLE_1_TO_WORLD_MAP = 1,
-  FUCHIN_TEMPLE_1_TO_FUCHIN_TEMPLE_2 = 2,
-  FUCHIN_TEMPLE_1_TO_FUCHIN_FALLS_CAVE_1 = 3,
+  MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
 };
 
-/// SceneId_FuchinTemple2's entrances and exits.
+/// SceneId_FuchinTempleGrounds's entrances and exits.
 enum {
-  FUCHIN_TEMPLE_2_FROM_FUCHIN_TEMPLE_1 = 1,
-  FUCHIN_TEMPLE_2_FROM_XIAN = 2,
-  FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE = 3,
-  FUCHIN_TEMPLE_2_FROM_HOUSE = 4,
+  FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP = 1,
+  FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_TEMPLE_INTERIORS = 2,
+  FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
 };
 enum {
-  FUCHIN_TEMPLE_2_TO_FUCHIN_TEMPLE_1 = 1,
-  FUCHIN_TEMPLE_2_TO_XIAN = 2,
-  FUCHIN_TEMPLE_2_TO_LAMA_TEMPLE = 3,
-  FUCHIN_TEMPLE_2_TO_HOUSE = 4,
+  FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP = 1,
+  FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS = 2,
+  FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 3,
 };
 
-/// SceneId_FuchinFallsCave1's entrances and exits.
+/// SceneId_FuchinTempleInteriors's entrances and exits.
 enum {
-  FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_TEMPLE_1 = 1,
-  FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_FALLS_CAVE_2 = 2,
-  FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_FALLS_CAVE_4 = 3,
-  FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_FALLS_CAVE_3 = 6,
-  FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_FALLS_CAVE_6_WEST = 7,
-  FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_FALLS_CAVE_6_EAST = 8,
+  FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS = 1,
+  FUCHIN_TEMPLE_INTERIORS_FROM_XIAN = 2,
+  FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE = 3,
+  FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE = 4,
 };
 enum {
-  FUCHIN_FALLS_CAVE_1_TO_FUCHIN_TEMPLE_1 = 1,
-  FUCHIN_FALLS_CAVE_1_TO_FUCHIN_FALLS_CAVE_2 = 2,
-  FUCHIN_FALLS_CAVE_1_TO_FUCHIN_FALLS_CAVE_4 = 3,
-  FUCHIN_FALLS_CAVE_1_TO_FUCHIN_FALLS_CAVE_3 = 6,
-  FUCHIN_FALLS_CAVE_1_TO_FUCHIN_FALLS_CAVE_6_WEST = 7,
-  FUCHIN_FALLS_CAVE_1_TO_FUCHIN_FALLS_CAVE_6_EAST = 8,
+  FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS = 1,
+  FUCHIN_TEMPLE_INTERIORS_TO_XIAN = 2,
+  FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE = 3,
+  FUCHIN_TEMPLE_INTERIORS_TO_HOUSE = 4,
 };
 
-/// SceneId_FuchinFallsCave2's entrances and exits.
+/// SceneId_FuchinFallsCaveEntrance's entrances and exits.
 enum {
-  FUCHIN_FALLS_CAVE_2_FROM_FUCHIN_FALLS_CAVE_3 = 1,
-  FUCHIN_FALLS_CAVE_2_FROM_FUCHIN_FALLS_CAVE_1 = 2,
+  FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_TEMPLE_GROUNDS = 1,
+  FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR = 2,
+  FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ARCTIC_BLADE = 3,
+  FUCHIN_FALLS_CAVE_ENTRANCE_SOUTH_HALF_FROM_NORTH_HALF =
+      4, ///< ★ Named from what the player sees: the cave's southern part by its
+         ///< mouth, a pool crossed on floating logs (its render)
+  FUCHIN_FALLS_CAVE_ENTRANCE_NORTH_HALF_FROM_SOUTH_HALF =
+      5, ///< ★ Named from what the player sees: the cave's northern part,
+         ///< stumps standing in the water (its render)
+  FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 6,
+  FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 7,
+  FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 8,
 };
 enum {
-  FUCHIN_FALLS_CAVE_2_TO_FUCHIN_FALLS_CAVE_3 = 1,
-  FUCHIN_FALLS_CAVE_2_TO_FUCHIN_FALLS_CAVE_1 = 2,
-};
-
-/// SceneId_FuchinFallsCave3's entrances and exits.
-enum {
-  FUCHIN_FALLS_CAVE_3_FROM_FUCHIN_FALLS_CAVE_6 = 2,
-  FUCHIN_FALLS_CAVE_3_FROM_FUCHIN_FALLS_CAVE_1 = 4,
-  FUCHIN_FALLS_CAVE_3_FROM_FUCHIN_FALLS_CAVE_2 = 5,
-};
-enum {
-  FUCHIN_FALLS_CAVE_3_TO_FUCHIN_FALLS_CAVE_6 = 2,
-  FUCHIN_FALLS_CAVE_3_TO_FUCHIN_FALLS_CAVE_1 = 4,
-  FUCHIN_FALLS_CAVE_3_TO_FUCHIN_FALLS_CAVE_2 = 5,
-};
-
-/// SceneId_FuchinFallsCave4's entrances and exits.
-enum {
-  FUCHIN_FALLS_CAVE_4_FROM_FUCHIN_FALLS_CAVE_6 = 1,
-  FUCHIN_FALLS_CAVE_4_FROM_FUCHIN_FALLS_CAVE_1 = 4,
-};
-enum {
-  FUCHIN_FALLS_CAVE_4_TO_FUCHIN_FALLS_CAVE_6 = 1,
-  FUCHIN_FALLS_CAVE_4_TO_FUCHIN_FALLS_CAVE_1 = 4,
+  FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_TEMPLE_GROUNDS = 1,
+  FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_ZEPHYR = 2,
+  FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_ARCTIC_BLADE = 3,
+  FUCHIN_FALLS_CAVE_ENTRANCE_SOUTH_HALF_TO_NORTH_HALF =
+      4, ///< ★ Named from what the player sees: the cave's northern part,
+         ///< stumps standing in the water (its render)
+  FUCHIN_FALLS_CAVE_ENTRANCE_NORTH_HALF_TO_SOUTH_HALF =
+      5, ///< ★ Named from what the player sees: the cave's southern part by its
+         ///< mouth, a pool crossed on floating logs (its render)
+  FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 6,
+  FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 7,
+  FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 8,
 };
 
-/// SceneId_FuchinFallsCave5's entrances and exits.
+/// SceneId_FuchinFallsCaveZephyr's entrances and exits.
 enum {
-  FUCHIN_FALLS_CAVE_5_FROM_FUCHIN_FALLS_CAVE_6_WEST = 3,
-  FUCHIN_FALLS_CAVE_5_FROM_FUCHIN_FALLS_CAVE_6_EAST = 4,
+  FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 1,
+  FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 2,
 };
 enum {
-  FUCHIN_FALLS_CAVE_5_TO_FUCHIN_FALLS_CAVE_6_WEST = 3,
-  FUCHIN_FALLS_CAVE_5_TO_FUCHIN_FALLS_CAVE_6_EAST = 4,
+  FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 1,
+  FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 2,
 };
 
-/// SceneId_FuchinFallsCave6's entrances and exits.
+/// SceneId_FuchinFallsCaveDragonsEye's entrances and exits.
 enum {
-  FUCHIN_FALLS_CAVE_6_FROM_FUCHIN_FALLS_CAVE_5_EAST = 1,
-  FUCHIN_FALLS_CAVE_6_FROM_FUCHIN_FALLS_CAVE_5_WEST = 2,
-  FUCHIN_FALLS_CAVE_6_FROM_FUCHIN_FALLS_CAVE_4 = 3,
-  FUCHIN_FALLS_CAVE_6_FROM_FUCHIN_FALLS_CAVE_3 = 10,
-  FUCHIN_FALLS_CAVE_6_FROM_FUCHIN_FALLS_CAVE_1_NORTH = 11,
-  FUCHIN_FALLS_CAVE_6_FROM_FUCHIN_FALLS_CAVE_1_SOUTH = 12,
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_PEDESTAL_FROM_LOGS =
+      1, ///< ★ Named from what the player sees: the round chamber where the
+         ///< Dragon's Eye sits on its pedestal (its render)
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 2,
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_FROM_PEDESTAL =
+      3, ///< ★ Named from what the player sees: the pool crossed on floating
+         ///< logs before the eye's chamber (its render)
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 4,
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR = 5,
 };
 enum {
-  FUCHIN_FALLS_CAVE_6_TO_FUCHIN_FALLS_CAVE_5_WEST = 1,
-  FUCHIN_FALLS_CAVE_6_TO_FUCHIN_FALLS_CAVE_5_EAST = 2,
-  FUCHIN_FALLS_CAVE_6_TO_FUCHIN_FALLS_CAVE_4 = 3,
-  FUCHIN_FALLS_CAVE_6_TO_FUCHIN_FALLS_CAVE_3 = 10,
-  FUCHIN_FALLS_CAVE_6_TO_FUCHIN_FALLS_CAVE_1_NORTH = 11,
-  FUCHIN_FALLS_CAVE_6_TO_FUCHIN_FALLS_CAVE_1_SOUTH = 12,
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_PEDESTAL_TO_LOGS =
+      1, ///< ★ Named from what the player sees: the pool crossed on floating
+         ///< logs before the eye's chamber (its render)
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 2,
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_PEDESTAL =
+      3, ///< ★ Named from what the player sees: the round chamber where the
+         ///< Dragon's Eye sits on its pedestal (its render)
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 4,
+  FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ZEPHYR = 5,
+};
+
+/// SceneId_FuchinFallsCaveArcticBlade's entrances and exits.
+enum {
+  FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 1,
+  FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_FROM_SOUTH_HALF =
+      2, ///< ★ Named from what the player sees: the northern part, a log pool
+         ///< with the chest on its ledge (its render)
+  FUCHIN_FALLS_CAVE_ARCTIC_BLADE_SOUTH_HALF_FROM_NORTH_HALF =
+      3, ///< ★ Named from what the player sees: the southern part, entered from
+         ///< the cave's mouth (its render)
+  FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE = 4,
+};
+enum {
+  FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE = 1,
+  FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_TO_SOUTH_HALF =
+      2, ///< ★ Named from what the player sees: the southern part, entered from
+         ///< the cave's mouth (its render)
+  FUCHIN_FALLS_CAVE_ARCTIC_BLADE_SOUTH_HALF_TO_NORTH_HALF =
+      3, ///< ★ Named from what the player sees: the northern part, a log pool
+         ///< with the chest on its ledge (its render)
+  FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_ENTRANCE = 4,
+};
+
+/// SceneId_FuchinFallsCaveOrbOfForce's entrances and exits.
+enum {
+  FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_FROM_SOUTH_HALF =
+      1, ///< ★ Named from what the player sees: the small chamber holding the
+         ///< Orb of Force's chest (its render)
+  FUCHIN_FALLS_CAVE_ORB_OF_FORCE_SOUTH_HALF_FROM_NORTH_HALF =
+      2, ///< ★ Named from what the player sees: the winding passage with the Ki
+         ///< inscription (its render)
+  FUCHIN_FALLS_CAVE_ORB_OF_FORCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 3,
+  FUCHIN_FALLS_CAVE_ORB_OF_FORCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 4,
+};
+enum {
+  FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_TO_SOUTH_HALF =
+      1, ///< ★ Named from what the player sees: the winding passage with the Ki
+         ///< inscription (its render)
+  FUCHIN_FALLS_CAVE_ORB_OF_FORCE_SOUTH_HALF_TO_NORTH_HALF =
+      2, ///< ★ Named from what the player sees: the small chamber holding the
+         ///< Orb of Force's chest (its render)
+  FUCHIN_FALLS_CAVE_ORB_OF_FORCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST = 3,
+  FUCHIN_FALLS_CAVE_ORB_OF_FORCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST = 4,
+};
+
+/// SceneId_FuchinFallsCaveDragonStatue's entrances and exits.
+enum {
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST = 1,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST = 2,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ARCTIC_BLADE = 3,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_WEST =
+      4, ///< ★ Named from what the player sees: the dark northern half where
+         ///< the dragon statue stands (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE =
+      5, ///< ★ Named from what the player sees: the dark northern half where
+         ///< the dragon statue stands (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST =
+      6, ///< ★ Named from what the player sees: the dark northern half where
+         ///< the dragon statue stands (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_FROM_NORTH_HALF_WEST =
+      7, ///< ★ Named from what the player sees: the southern half, below the
+         ///< statue's ledge (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_FROM_NORTH_HALF_MIDDLE =
+      8, ///< ★ Named from what the player sees: the southern half, below the
+         ///< statue's ledge (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_FROM_NORTH_HALF_EAST =
+      9, ///< ★ Named from what the player sees: the southern half, below the
+         ///< statue's ledge (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 10,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE_EAST = 11,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ENTRANCE_WEST = 12,
+};
+enum {
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST = 1,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST = 2,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ARCTIC_BLADE = 3,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_TO_SOUTH_HALF_WEST =
+      4, ///< ★ Named from what the player sees: the southern half, below the
+         ///< statue's ledge (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_TO_SOUTH_HALF_MIDDLE =
+      5, ///< ★ Named from what the player sees: the southern half, below the
+         ///< statue's ledge (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_TO_SOUTH_HALF_EAST =
+      6, ///< ★ Named from what the player sees: the southern half, below the
+         ///< statue's ledge (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_TO_NORTH_HALF_WEST =
+      7, ///< ★ Named from what the player sees: the dark northern half where
+         ///< the dragon statue stands (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_TO_NORTH_HALF_MIDDLE =
+      8, ///< ★ Named from what the player sees: the dark northern half where
+         ///< the dragon statue stands (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_SOUTH_HALF_TO_NORTH_HALF_EAST =
+      9, ///< ★ Named from what the player sees: the dark northern half where
+         ///< the dragon statue stands (its render)
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE = 10,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ENTRANCE_EAST = 11,
+  FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ENTRANCE_WEST = 12,
 };
 
 /// SceneId_MogallForestSign's entrances and exits.
@@ -1907,7 +2197,7 @@ enum {
   XIAN_FROM_XIAN_INTERIORS_EAST = 7,
   XIAN_FROM_XIAN_INTERIORS_SOUTH = 8,
   XIAN_FROM_XIAN_INTERIORS_WEST = 9,
-  XIAN_FROM_FUCHIN_TEMPLE_2 = 10,
+  XIAN_FROM_FUCHIN_TEMPLE_INTERIORS = 10,
   XIAN_FROM_SANCTUM_WEST = 11,
 };
 enum {
@@ -1917,7 +2207,7 @@ enum {
   XIAN_TO_INN = 4,
   XIAN_TO_WEAPON_AND_ARMOR_SHOP = 5,
   XIAN_TO_SANCTUM = 6,
-  XIAN_TO_FUCHIN_TEMPLE_2 = 7,
+  XIAN_TO_FUCHIN_TEMPLE_INTERIORS = 7,
   XIAN_TO_WORLD_MAP = 8,
 };
 
@@ -1936,9 +2226,9 @@ enum {
       6, ///< the room behind Xian's weapon and armor shop door; the room holds
          ///< the weapon and armor shop; through XIAN_TO_WEAPON_AND_ARMOR_SHOP
   XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS = 7, ///< the room holds the inn;
-  XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2 =
-      8, ///< the room behind FuchinTemple2's house door; through
-         ///< FUCHIN_TEMPLE_2_TO_HOUSE
+  XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS =
+      8, ///< the room behind FuchinTempleInteriors's house door; through
+         ///< FUCHIN_TEMPLE_INTERIORS_TO_HOUSE
 };
 enum {
   XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_XIAN = 1,
@@ -1950,7 +2240,7 @@ enum {
   XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS =
       7, ///< ★ Named from what the player sees: the small rooms behind the
          ///< inn's front room, with a bed (its render)
-  XIAN_INTERIORS_TO_FUCHIN_TEMPLE_2 = 8,
+  XIAN_INTERIORS_TO_FUCHIN_TEMPLE_INTERIORS = 8,
 };
 
 /// SceneId_AlpineCrossing's entrances and exits.
@@ -2145,12 +2435,12 @@ enum {
 /// SceneId_LamaTemple's entrances and exits.
 enum {
   LAMA_TEMPLE_FROM_WORLD_MAP = 1,
-  LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_2 = 2,
+  LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS = 2,
   LAMA_TEMPLE_FROM_ALPINE_CROSSING = 3,
 };
 enum {
   LAMA_TEMPLE_TO_WORLD_MAP = 1,
-  LAMA_TEMPLE_TO_FUCHIN_TEMPLE_2 = 2,
+  LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS = 2,
 };
 
 /// SceneId_LamakanDesert1's entrances and exits.

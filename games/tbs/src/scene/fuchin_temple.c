@@ -3,46 +3,48 @@
 /// overlay: Master Feh's school in Xian and the room in Lama Temple where
 /// Master Hama meditates. Two scenes hold four places, by their area names:
 ///
-/// - Fuchin Temple (FuchinTemple1, scene 60), outside the temple, reached from
-///   the world map (FUCHIN_TEMPLE_1_FROM_WORLD_MAP). Its monks read omens in
-///   the gems that fell from the sky and the blue lights in the north, and tell
-///   of Master Nyunpa, who is fasting to save the world by becoming
+/// - Fuchin Temple (FuchinTempleGrounds, scene 60), outside the temple, reached
+/// from
+///   the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). Its monks read omens
+///   in the gems that fell from the sky and the blue lights in the north, and
+///   tell of Master Nyunpa, who is fasting to save the world by becoming
 ///   enlightened. A visitor from Kolima asks whether the bridge is open again
 ///   (FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN), a traveling healer offers
 ///   the Sanctum's services, and a search finds a Psynergy Stone. The monk
 ///   beneath the falls guards the waterfall grotto: once Nyunpa has set the
 ///   test (FLAG_NYUNPA_TEST_ACCEPTED), he leaps aside
 ///   (FLAG_FUCHIN_FALLS_GROTTO_OPENED) and the party enters Fuchin Falls Cave
-///   (FUCHIN_TEMPLE_1_TO_FUCHIN_FALLS_CAVE_1). Coming back out with the Orb of
-///   Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), Isaac is sent on to Nyunpa
-///   (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST). The temple door leads inside
-///   (FUCHIN_TEMPLE_1_TO_FUCHIN_TEMPLE_2).
-/// - Fuchin Temple (FuchinTemple2, scene 61, by
-///   FUCHIN_TEMPLE_2_FROM_FUCHIN_TEMPLE_1 or the default entrance), inside,
-///   where Nyunpa meditates and does not answer. When the party reads his mind
-///   (Event_NyunpaOffersTest), he hears them, reads their minds in turn,
-///   guesses that they are following someone, warns them that no ordinary man
-///   can cross Mogall Forest and offers the test of the grotto; after a refusal
-///   (FLAG_NYUNPA_TEST_DECLINED), talking to him asks again. Back from the
-///   grotto with the Orb, Scene_Initialize plays his lesson
+///   (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE). Coming back out
+///   with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), Isaac is
+///   sent on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST). The temple
+///   door leads inside (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS).
+/// - Fuchin Temple (FuchinTempleInteriors, scene 61, by
+///   FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS or the default
+///   entrance), inside, where Nyunpa meditates and does not answer. When the
+///   party reads his mind (Event_NyunpaOffersTest), he hears them, reads their
+///   minds in turn, guesses that they are following someone, warns them that no
+///   ordinary man can cross Mogall Forest and offers the test of the grotto;
+///   after a refusal (FLAG_NYUNPA_TEST_DECLINED), talking to him asks again.
+///   Back from the grotto with the Orb, Scene_Initialize plays his lesson
 ///   (FuchinTemple_NyunpaTeachesKi): the power the monks call Ki, "force" in
 ///   the western world, will make the monsters hiding in the forest show
 ///   themselves (FLAG_NYUNPA_TAUGHT_FORCE). Once the party has been to Mogall
 ///   Forest, Nyunpa has died, enlightened (FLAG_NYUNPA_ENLIGHTENED, set there):
 ///   he no longer answers, the monks grieve, and Mind Read hears his last wish,
 ///   that Isaac bring peace to the world.
-/// - Xian (FuchinTemple2, by FUCHIN_TEMPLE_2_FROM_XIAN and
-///   FUCHIN_TEMPLE_2_FROM_HOUSE), Master Feh's kung fu school; the area-name
-///   rules give the name Xian only at FUCHIN_TEMPLE_2_FROM_XIAN, and
-///   Scene_Initialize hides the name at both. A student promises to take the
-///   party to Feh if the tree by the line falls to Chi. Force from the line
-///   fells it (Event_ForceTree): the first time, the students run for Feh, and
-///   Feizhi, Feh's daughter, storms out with him. Since gems fell from the sky
-///   and one hit her she has had visions, and she is sure that Hsu, who has not
-///   come back from Lama Temple, is in danger; Feh will not believe her, and
-///   she leaves alone to find him (FLAG_FEIZHI_WENT_TO_HSU), which unlocks the
-///   door she came out of (FUCHIN_TEMPLE_2_TO_HOUSE). Feh asks to see Isaac's
-///   Chi (FLAG_FEH_WAITS_TO_SEE_CHI, or FLAG_FEH_CHI_DEMONSTRATION_DECLINED if
+/// - Xian (FuchinTempleInteriors, by FUCHIN_TEMPLE_INTERIORS_FROM_XIAN and
+///   FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE), Master Feh's kung fu school; the
+///   area-name rules give the name Xian only at
+///   FUCHIN_TEMPLE_INTERIORS_FROM_XIAN, and Scene_Initialize hides the name at
+///   both. A student promises to take the party to Feh if the tree by the line
+///   falls to Chi. Force from the line fells it (Event_ForceTree): the first
+///   time, the students run for Feh, and Feizhi, Feh's daughter, storms out
+///   with him. Since gems fell from the sky and one hit her she has had
+///   visions, and she is sure that Hsu, who has not come back from Lama Temple,
+///   is in danger; Feh will not believe her, and she leaves alone to find him
+///   (FLAG_FEIZHI_WENT_TO_HSU), which unlocks the door she came out of
+///   (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE). Feh asks to see Isaac's Chi
+///   (FLAG_FEH_WAITS_TO_SEE_CHI, or FLAG_FEH_CHI_DEMONSTRATION_DECLINED if
 ///   Isaac twice says no); when he sees the tree fall from the line, he knows
 ///   it is not Chi, which he learned from Master Hama of Lama Temple, but
 ///   Fuchin's Ki, which releases the mind's energy as Chi releases the body's
@@ -51,9 +53,10 @@
 ///   Chi from the line. Each of these flags picks the students' lines and Feh's
 ///   place; once Hsu is known to be trapped (FLAG_XIAN_HEARD_HSU_TRAPPED),
 ///   Scene_GetPlacements removes the tree and two students, and the school
-///   talks of the boulders that overcame him. FUCHIN_TEMPLE_2_TO_XIAN leads out
-///   into Xian.
-/// - Lama Temple (FuchinTemple2, by FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE), the room
+///   talks of the boulders that overcame him. FUCHIN_TEMPLE_INTERIORS_TO_XIAN
+///   leads out into Xian.
+/// - Lama Temple (FuchinTempleInteriors, by
+/// FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE), the room
 ///   in which Master Hama meditates, entered from Lama Temple (LamaTemple). On
 ///   the first visit (FuchinTemple_RunHamasRevealLesson) Hama greets Isaac and
 ///   his Adept companions, whom she foresaw, and tells Ivan that he is a
@@ -64,8 +67,8 @@
 ///   seeing that her power has passed to Feizhi, Hama gives Ivan Reveal and
 ///   hurries with her to Hsu's aid, and FLAG_XIAN_HEARD_HSU_TRAPPED is set.
 ///   Until Hsu is rescued (FLAG_HSU_RESCUED) Hama and the monk in her room are
-///   away; afterwards they are back. FUCHIN_TEMPLE_2_TO_LAMA_TEMPLE leads back
-///   into Lama Temple (LamaTemple).
+///   away; afterwards they are back. FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE
+///   leads back into Lama Temple (LamaTemple).
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/fuchin_temple.h"
@@ -105,8 +108,8 @@
 #define FLAG_NYUNPA_TEST_DECLINED 0x300
 #define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
 
-/// The placed actors outside Fuchin Temple (FuchinTemple1), numbered in the
-/// order of gFuchinTemplePlacements1.
+/// The placed actors outside Fuchin Temple (FuchinTempleGrounds), numbered in
+/// the order of gFuchinTemplePlacements1.
 enum FuchinTempleOutsideActor {
   /// The visitor from Kolima. "How did you get here? Is the bridge open
   /// again?"
@@ -127,8 +130,8 @@ enum FuchinTempleOutsideActor {
 };
 
 /// The placed actors inside Fuchin Temple and in Master Feh's school in Xian
-/// (FuchinTemple2), numbered in the order of gFuchinTemplePlacements: Nyunpa,
-/// Feh's students, Feizhi and Feh, and the training tree.
+/// (FuchinTempleInteriors), numbered in the order of gFuchinTemplePlacements:
+/// Nyunpa, Feh's students, Feizhi and Feh, and the training tree.
 enum FuchinTempleInsideActor {
   ACTOR_NYUNPA = ACTOR_FIRST_PLACED,
   /// By the school's door. "This is Master Feh's school... You came to
@@ -160,10 +163,10 @@ enum FuchinTempleInsideActor {
   ACTOR_TRAINING_TREE_TARGET ///< where Force strikes the tree
 };
 
-/// The placed actors in Master Hama's room in Lama Temple (FuchinTemple2 by
-/// FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE), numbered in the order of
-/// gFuchinTemplePlacementsFromLamaTemple; Garet, Ivan and Mia, placed first,
-/// keep their own slots.
+/// The placed actors in Master Hama's room in Lama Temple
+/// (FuchinTempleInteriors by FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE),
+/// numbered in the order of gFuchinTemplePlacementsFromLamaTemple; Garet, Ivan
+/// and Mia, placed first, keep their own slots.
 enum HamasRoomActor {
   ACTOR_HAMA = ACTOR_FIRST_PLACED,
   /// A monk in Hama's room. "Master Hama is meditating. Please be extremely
@@ -212,7 +215,7 @@ static s32 FuchinTemple_FaceLeader(union FieldObject *object) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_FuchinTemple1) {
+  if (scene == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleEntrances1;
   }
   return gFuchinTempleEntrancesOther;
@@ -224,10 +227,10 @@ const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 
 /// Selects the room's actors and applies the post-lesson placement changes.
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (gGameState.scene == (s32)&SceneId_FuchinTemple1) {
+  if (gGameState.scene == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTemplePlacements1;
   }
-  if (gGameState.entrance == FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE) {
+  if (gGameState.entrance == FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
     return gFuchinTemplePlacementsFromLamaTemple;
   }
   // Once Hsu is known to be trapped, the tree and two students are gone, and
@@ -251,10 +254,10 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 /// Talking to the visitor from Kolima at Fuchin Temple
-/// (FuchinTemple1): he asks how the party got here. "How did you get here? Is
-/// the bridge open again?" Yes cheers him ("Then I can go home to Kolima now?")
-/// and is remembered; no means the party came through the forest. Later talks
-/// go on to the tale of the forest.
+/// (FuchinTempleGrounds): he asks how the party got here. "How did you get
+/// here? Is the bridge open again?" Yes cheers him ("Then I can go home to
+/// Kolima now?") and is remembered; no means the party came through the forest.
+/// Later talks go on to the tale of the forest.
 static void Event_VisitorAsksAboutBridge(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgXianHowDidGetHereBridge);
@@ -271,11 +274,11 @@ static void Event_VisitorAsksAboutBridge(void) {
   EV_END();
 }
 
-/// Talking to the monk (ACTOR_ADMIRING_MONK) at Fuchin Temple (FuchinTemple1):
-/// he speaks of the one seeking enlightenment, with up to two more questions.
-/// "Isn't it noble of him to try to save the world by becoming enlightened?"
-/// Once Nyunpa is gone, "Now, he truly is beyond the world's concerns. Is he
-/// watching over us?"
+/// Talking to the monk (ACTOR_ADMIRING_MONK) at Fuchin Temple
+/// (FuchinTempleGrounds): he speaks of the one seeking enlightenment, with up
+/// to two more questions. "Isn't it noble of him to try to save the world by
+/// becoming enlightened?" Once Nyunpa is gone, "Now, he truly is beyond the
+/// world's concerns. Is he watching over us?"
 static void Event_MonkSpeaksOfNyunpa(void) {
 
   EV_BEGIN();
@@ -298,8 +301,8 @@ static void Event_MonkSpeaksOfNyunpa(void) {
   }
 }
 
-/// Talking to the monk beneath the falls at Fuchin Temple (FuchinTemple1) once
-/// Nyunpa has set the test (FLAG_NYUNPA_TEST_ACCEPTED): he lets the party
+/// Talking to the monk beneath the falls at Fuchin Temple (FuchinTempleGrounds)
+/// once Nyunpa has set the test (FLAG_NYUNPA_TEST_ACCEPTED): he lets the party
 /// pass (FLAG_FUCHIN_FALLS_GROTTO_OPENED). "I have already heard of your test
 /// from Master Nyunpa. You may enter." He leaps aside, and the way into the
 /// waterfall grotto opens.
@@ -342,10 +345,10 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   EV_END();
 }
 
-/// Coming back out of the grotto at Fuchin Temple (FuchinTemple1, trigger 5)
-/// with the Orb of Force, Isaac is sent on to Nyunpa and the way back is open
-/// again. "Young master, did you complete the test?" Then
-/// "Master Nyunpa is waiting for you... Proceed to the temple."
+/// Coming back out of the grotto at Fuchin Temple (FuchinTempleGrounds, trigger
+/// 5) with the Orb of Force, Isaac is sent on to Nyunpa and the way back is
+/// open again. "Young master, did you complete the test?" Then "Master Nyunpa
+/// is waiting for you... Proceed to the temple."
 static void Event_MonkAsksWhetherTestIsDone(void) {
   EV_BEGIN();
   Engine_GameFlagSet(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST);
@@ -370,10 +373,10 @@ static void Event_MonkAsksWhetherTestIsDone(void) {
   EV_END();
 }
 
-/// Reading Nyunpa's mind inside Fuchin Temple (FuchinTemple2), or talking to
-/// him after a refusal: he hears the party, reads their minds in turn, guesses
-/// that they are following someone, warns of Mogall Forest and offers the test
-/// of the grotto. "Mmmm... Who is that? Who speaks to my mind?"
+/// Reading Nyunpa's mind inside Fuchin Temple (FuchinTempleInteriors), or
+/// talking to him after a refusal: he hears the party, reads their minds in
+/// turn, guesses that they are following someone, warns of Mogall Forest and
+/// offers the test of the grotto. "Mmmm... Who is that? Who speaks to my mind?"
 /// Accepting it (FLAG_NYUNPA_TEST_ACCEPTED), he sends Isaac to the monk beneath
 /// the falls; refusing is remembered (FLAG_NYUNPA_TEST_DECLINED), and the next
 /// talk asks again.
@@ -1416,7 +1419,8 @@ static void Event_StudentAsksAboutAltin(void) {
 
 /// Walking north into the door Feh and Feizhi came out of, in Master Feh's
 /// school in Xian (trigger 3): it is locked until Feizhi has left; then it
-/// opens and Isaac walks through (FUCHIN_TEMPLE_2_TO_HOUSE). "It is locked."
+/// opens and Isaac walks through (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE). "It is
+/// locked."
 static void Event_OpenLockedDoor(void) {
   EV_BEGIN();
   if (FLAG_CHECK(FLAG_FEIZHI_WENT_TO_HSU) == 0 &&
@@ -1430,14 +1434,14 @@ static void Event_OpenLockedDoor(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 306, 248);
     OBJ_WALK(ACTOR_PARTY_LEADER, 304, 216);
     WAIT(20);
-    Engine_EventRequestExit(FUCHIN_TEMPLE_2_TO_HOUSE);
+    Engine_EventRequestExit(FUCHIN_TEMPLE_INTERIORS_TO_HOUSE);
     EV_END();
   }
 }
 
-/// Talking to the healer at Fuchin Temple (FuchinTemple1): across the counter
-/// from the south, the Sanctum's services; from elsewhere, a word on the
-/// healer's travels. "I'm traveling around the world to spread good will."
+/// Talking to the healer at Fuchin Temple (FuchinTempleGrounds): across the
+/// counter from the south, the Sanctum's services; from elsewhere, a word on
+/// the healer's travels. "I'm traveling around the world to spread good will."
 static void Event_TalkToHealer(void) {
   struct FieldActor *leader;
   u32 facing;
@@ -1469,10 +1473,10 @@ static void Event_ReadNyunpasLastWish(void) {
 
 /// Selects the outdoor, school, or lesson event table.
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (gGameState.scene == (s32)&SceneId_FuchinTemple1) {
+  if (gGameState.scene == (s32)&SceneId_FuchinTempleGrounds) {
     return gFuchinTempleEvents1;
   }
-  if (gGameState.entrance == FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE) {
+  if (gGameState.entrance == FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
     return gFuchinTempleEventsFromLamaTemple;
   }
   return gFuchinTempleEvents;
@@ -1536,8 +1540,8 @@ static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
 }
 
 /// Stepping into the waterfall grotto's entrance at Fuchin Temple
-/// (FuchinTemple1, trigger 3): spray falls over Isaac as the screen fades, and
-/// he enters Fuchin Falls Cave.
+/// (FuchinTempleGrounds, trigger 3): spray falls over Isaac as the screen
+/// fades, and he enters Fuchin Falls Cave.
 static void Event_EnterWaterfallGrotto(void) {
   struct FieldActor *leader;
   SchedulerCallback particleTask;
@@ -1558,19 +1562,20 @@ static void Event_EnterWaterfallGrotto(void) {
   Engine_ActorSetSpriteFlags(leader, 0);
   Scheduler_RemoveCallback(particleTask);
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(FUCHIN_TEMPLE_1_TO_FUCHIN_FALLS_CAVE_1);
+  Engine_EventRequestExit(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
   EV_END();
 }
 
-/// Stepping south onto trigger 1 inside Fuchin Temple (FuchinTemple2): the
-/// party leaves by FUCHIN_TEMPLE_2_TO_FUCHIN_TEMPLE_1, out to FuchinTemple1.
+/// Stepping south onto trigger 1 inside Fuchin Temple (FuchinTempleInteriors):
+/// the party leaves by FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS, out to
+/// FuchinTempleGrounds.
 static void Event_LeaveTemple(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(FUCHIN_TEMPLE_2_TO_FUCHIN_TEMPLE_1);
+  Engine_EventRequestExit(FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS);
 }
 
-/// Walking north into the temple door at Fuchin Temple (FuchinTemple1, trigger
-/// 2): it opens, and Isaac walks inside, where Nyunpa meditates.
+/// Walking north into the temple door at Fuchin Temple (FuchinTempleGrounds,
+/// trigger 2): it opens, and Isaac walks inside, where Nyunpa meditates.
 static void Event_EnterTemple(void) {
   EV_BEGIN();
   SE(SE_188);
@@ -1581,7 +1586,7 @@ static void Event_EnterTemple(void) {
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   WAIT(16);
-  Engine_EventRequestExit(FUCHIN_TEMPLE_1_TO_FUCHIN_TEMPLE_2);
+  Engine_EventRequestExit(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS);
   EV_END();
 }
 
@@ -2251,15 +2256,16 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
 /// Inside Fuchin Temple, Nyunpa meditates, or teaches Ki after the test; in
 /// Master Feh's school in Xian the tree and students stand as the story left
 /// them; in Lama Temple, Hama teaches Reveal on the first visit and is away
-/// until Hsu is rescued. At Fuchin Temple (FuchinTemple1) the monk beneath the
-/// falls stands where the story left him.
+/// until Hsu is rescued. At Fuchin Temple (FuchinTempleGrounds) the monk
+/// beneath the falls stands where the story left him.
 s32 Scene_Initialize(void) {
   struct FieldActor *trainingTree;
   s32 heardHsuTrapped;
 
-  if (gGameState.scene == (s32)&SceneId_FuchinTemple2) {
+  if (gGameState.scene == (s32)&SceneId_FuchinTempleInteriors) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    if (gGameState.entrance == FUCHIN_TEMPLE_2_FROM_FUCHIN_TEMPLE_1) {
+    if (gGameState.entrance ==
+        FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (Engine_GameFlagIsSet(FLAG_NYUNPA_ENLIGHTENED)) {
         OBJ_MODE(ACTOR_NYUNPA, 6);
       } else {
@@ -2270,8 +2276,8 @@ s32 Scene_Initialize(void) {
           FuchinTemple_NyunpaTeachesKi();
         }
       }
-    } else if (gGameState.entrance == FUCHIN_TEMPLE_2_FROM_XIAN ||
-               gGameState.entrance == FUCHIN_TEMPLE_2_FROM_HOUSE) {
+    } else if (gGameState.entrance == FUCHIN_TEMPLE_INTERIORS_FROM_XIAN ||
+               gGameState.entrance == FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
       heardHsuTrapped = Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED);
       if (heardHsuTrapped == 0) {
@@ -2312,7 +2318,8 @@ s32 Scene_Initialize(void) {
       OverlayObject_PrepareObject(0x1300000, 0x180000, 0xe00000, 223);
       OBJ_MODE(ACTOR_KICKING_STUDENT, 5);
       OBJ_MODE(ACTOR_PUNCHING_STUDENT, 5);
-    } else if (gGameState.entrance == FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE) {
+    } else if (gGameState.entrance ==
+               FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
       if (!Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
         FuchinTemple_RunHamasRevealLesson();
@@ -2324,7 +2331,8 @@ s32 Scene_Initialize(void) {
   } else {
     BattleFx_SetQueuedSoundAndPlay(SE_170);
     Object_GetById(ACTOR_FALLS_MONK)->collisionFlags |= 16;
-    if (gGameState.entrance == FUCHIN_TEMPLE_1_FROM_FUCHIN_FALLS_CAVE_1 &&
+    if (gGameState.entrance ==
+            FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE &&
         Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
         !Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST)) {
       Map_CopyCellAttributes(10, 84, 1, 1, 10, 24);
@@ -2522,45 +2530,49 @@ u16 gFuchinTemple_CellStepsC[] = {
 
 struct SceneEntrance gFuchinTempleEntrances1[] = {
     {0, CONDITION_ALWAYS, 296, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {FUCHIN_TEMPLE_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 296, 0, 504,
+    {FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP, CONDITION_ALWAYS, 296, 0, 504,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {FUCHIN_TEMPLE_1_FROM_FUCHIN_TEMPLE_2, CONDITION_ALWAYS, 296, 0, 304,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {FUCHIN_TEMPLE_1_FROM_FUCHIN_FALLS_CAVE_1, CONDITION_ALWAYS, 168, 0, 360,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_TEMPLE_INTERIORS, CONDITION_ALWAYS, 296,
+     0, 304, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE, CONDITION_ALWAYS,
+     168, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {5, CONDITION_ALWAYS, 232, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gFuchinTempleEntrancesOther[] = {
     {0, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {FUCHIN_TEMPLE_2_FROM_FUCHIN_TEMPLE_1, CONDITION_ALWAYS, 168, 0, 552,
-     FACING_NORTH, 0, 48, 384, 288, 576, 0},
-    {FUCHIN_TEMPLE_2_FROM_XIAN, CONDITION_ALWAYS, 256, 0, 264, FACING_NORTH, 0,
-     48, 80, 368, 288, 0},
-    {FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE, CONDITION_ALWAYS, 472, 0, 552,
+    {FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS, CONDITION_ALWAYS, 168,
+     0, 552, FACING_NORTH, 0, 48, 384, 288, 576, 0},
+    {FUCHIN_TEMPLE_INTERIORS_FROM_XIAN, CONDITION_ALWAYS, 256, 0, 264,
+     FACING_NORTH, 0, 48, 80, 368, 288, 0},
+    {FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE, CONDITION_ALWAYS, 472, 0, 552,
      FACING_NORTH, 0, 352, 384, 592, 576, 0},
-    {FUCHIN_TEMPLE_2_FROM_HOUSE, CONDITION_ALWAYS, 304, 0, 248, FACING_SOUTH, 0,
-     48, 80, 368, 288, 0},
+    {FUCHIN_TEMPLE_INTERIORS_FROM_HOUSE, CONDITION_ALWAYS, 304, 0, 248,
+     FACING_SOUTH, 0, 48, 80, 368, 288, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gFuchinTempleExits[] = {
-    SCENE_EXITS(FuchinTemple1),
-    SCENE_EXIT(FUCHIN_TEMPLE_1_TO_WORLD_MAP, WorldMap,
-               WORLD_MAP_FROM_FUCHIN_TEMPLE_1),
-    SCENE_EXIT(FUCHIN_TEMPLE_1_TO_FUCHIN_TEMPLE_2, FuchinTemple2,
-               FUCHIN_TEMPLE_2_FROM_FUCHIN_TEMPLE_1),
-    SCENE_EXIT(FUCHIN_TEMPLE_1_TO_FUCHIN_FALLS_CAVE_1, FuchinFallsCave1,
-               FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_TEMPLE_1),
-    SCENE_EXITS(FuchinTemple2),
-    SCENE_EXIT(FUCHIN_TEMPLE_2_TO_FUCHIN_TEMPLE_1, FuchinTemple1,
-               FUCHIN_TEMPLE_1_FROM_FUCHIN_TEMPLE_2),
-    SCENE_EXIT(FUCHIN_TEMPLE_2_TO_XIAN, Xian, XIAN_FROM_FUCHIN_TEMPLE_2),
-    SCENE_EXIT(FUCHIN_TEMPLE_2_TO_LAMA_TEMPLE, LamaTemple,
-               LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_2),
-    SCENE_EXIT(FUCHIN_TEMPLE_2_TO_HOUSE, XianInteriors,
-               XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2),
+    SCENE_EXITS(FuchinTempleGrounds),
+    SCENE_EXIT(FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_FUCHIN_TEMPLE_GROUNDS),
+    SCENE_EXIT(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS,
+               FuchinTempleInteriors,
+               FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS),
+    SCENE_EXIT(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE,
+               FuchinFallsCaveEntrance,
+               FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_TEMPLE_GROUNDS),
+    SCENE_EXITS(FuchinTempleInteriors),
+    SCENE_EXIT(FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS,
+               FuchinTempleGrounds,
+               FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_TEMPLE_INTERIORS),
+    SCENE_EXIT(FUCHIN_TEMPLE_INTERIORS_TO_XIAN, Xian,
+               XIAN_FROM_FUCHIN_TEMPLE_INTERIORS),
+    SCENE_EXIT(FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE, LamaTemple,
+               LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS),
+    SCENE_EXIT(FUCHIN_TEMPLE_INTERIORS_TO_HOUSE, XianInteriors,
+               XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS),
     SCENE_EXITS_END,
 };
 
@@ -2633,7 +2645,7 @@ struct ScenePlacement gFuchinTemplePlacementsFromLamaTemple[] = {
 };
 
 struct SceneEvent gFuchinTempleEvents1[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, FUCHIN_TEMPLE_1_TO_WORLD_MAP },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterTemple) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWaterfallGrotto) },
     { EVENT_TOUCH, 5, FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST, EVENT_SCRIPT(Event_MonkAsksWhetherTestIsDone) },
@@ -2674,7 +2686,7 @@ struct SceneEvent gFuchinTempleEvents1[] = {
 
 struct SceneEvent gFuchinTempleEvents[] = {
     { TOUCH_FACING(FACING_SOUTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTemple) },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, FUCHIN_TEMPLE_2_TO_XIAN },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, FUCHIN_TEMPLE_INTERIORS_TO_XIAN },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenLockedDoor) },
     { EVENT_TALK, ACTOR_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTemple) },
     { EVENT_TALK, ACTOR_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE), MSGNO(MsgFuchinTempleUseThisEnergyToFindThe) },
@@ -2767,7 +2779,7 @@ struct SceneEvent gFuchinTempleEvents[] = {
 };
 
 struct SceneEvent gFuchinTempleEventsFromLamaTemple[] = {
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, FUCHIN_TEMPLE_2_TO_LAMA_TEMPLE },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE },
     { EVENT_TALK, ACTOR_HAMAS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterHamaIsMeditatingAskingFor) },
     { EVENT_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheFutureHoldsManyHardshipsBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMAS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDoNotThinkMasterHama) },

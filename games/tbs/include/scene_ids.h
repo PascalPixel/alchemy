@@ -82,20 +82,45 @@ extern char SceneId_Imil;
 extern char SceneId_ImilInteriors;
 extern char SceneId_ImilFallsCave;
 extern char SceneId_MercuryLighthouseEntrance;
-extern char SceneId_MercuryLighthouse1;
-extern char SceneId_MercuryLighthouse2;
-extern char SceneId_MercuryLighthouse3;
-extern char SceneId_MercuryLighthouse4;
-extern char SceneId_MercuryLighthouseAerie1;
-extern char SceneId_UnusedMercuryLighthouseAerie2;
-extern char SceneId_FuchinTemple1;
-extern char SceneId_FuchinTemple2;
-extern char SceneId_FuchinFallsCave1;
-extern char SceneId_FuchinFallsCave2;
-extern char SceneId_FuchinFallsCave3;
-extern char SceneId_FuchinFallsCave4;
-extern char SceneId_FuchinFallsCave5;
-extern char SceneId_FuchinFallsCave6;
+/// ★ Named from what the player sees: the first rooms of the climb above the
+/// ground floor, the pool of water pillars and the pipes, where Mia joins (its
+/// render)
+extern char SceneId_MercuryLighthouseLower;
+/// ★ Named from what the player sees: the middle of the climb, with the gate
+/// held open by a statue, the pipe maze and Sleet's room (its render)
+extern char SceneId_MercuryLighthouseMiddle;
+/// ★ Named from what the player sees: the top of the climb inside, with the
+/// waterfall halls, the five pillars and the stone doors (its render)
+extern char SceneId_MercuryLighthouseUpper;
+/// ★ Named from what the player sees: the lighthouse from outside, its foot in
+/// the water with the door and fountain, and the walkways up to the waterfall
+/// (its render)
+extern char SceneId_MercuryLighthouseExterior;
+/// ★ Named from its area name: Lighthouse Aerie
+extern char SceneId_MercuryLighthouseAerie;
+/// ★ Named from what the player sees: the same aerie as the one in use, empty,
+/// its platforms not lowered (its render)
+extern char SceneId_UnusedMercuryLighthouseAerieCopy;
+/// ★ Named from what the player sees: outside the temple, its monks and the
+/// stepped waterfall with the grotto beneath (its render)
+extern char SceneId_FuchinTempleGrounds;
+/// ★ Named from what the player sees: the rooms inside, Nyunpa's hall, Feh's
+/// school in Xian and Hama's room in Lama Temple (its render)
+extern char SceneId_FuchinTempleInteriors;
+/// ★ Named from what the player sees: the cave's mouth and only way in and out,
+/// a log pool and stumps in the water (its render)
+extern char SceneId_FuchinFallsCaveEntrance;
+/// ★ Named from the game: "Zephyr" (MsgDjinnName)
+extern char SceneId_FuchinFallsCaveZephyr;
+/// ★ Named from the game: "Dragon's Eye" (MsgItemName)
+extern char SceneId_FuchinFallsCaveDragonsEye;
+/// ★ Named from the game: "Arctic Blade" (MsgItemName)
+extern char SceneId_FuchinFallsCaveArcticBlade;
+/// ★ Named from the game: "Orb of Force" (MsgItemName)
+extern char SceneId_FuchinFallsCaveOrbOfForce;
+/// ★ Named from the game: "It's a statue of an eyeless dragon."
+/// (MsgFuchinEyelessDragon)
+extern char SceneId_FuchinFallsCaveDragonStatue;
 /// ★ Named from the game: "The broken sign reads:" (MsgMogallForestBrokenSign)
 extern char SceneId_MogallForestSign;
 /// ★ Named from the game: "Quartz" (MsgDjinnName)

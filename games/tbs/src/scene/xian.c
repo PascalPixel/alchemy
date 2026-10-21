@@ -3,7 +3,8 @@
 /// which sends its silk along Silk Road to Tolbi and where martial arts are
 /// taught at Master Feh's school. Its houses, shops and inn are
 /// xian_interiors.c; the school itself is a room of the Fuchin Temple overlay
-/// (FuchinTemple2, which XIAN_TO_FUCHIN_TEMPLE_2 leads into; fuchin_temple.c).
+/// (FuchinTempleInteriors, which XIAN_TO_FUCHIN_TEMPLE_INTERIORS leads into;
+/// fuchin_temple.c).
 ///
 /// The village's talk turns on FLAG_XIAN_HEARD_HSU_TRAPPED, which Master
 /// Hama's Reveal lesson at Lama Temple sets: every villager's talk and Mind
@@ -42,11 +43,11 @@
 ///
 /// A jar holds a Lucky Medal. Five doors lead into the houses, shops and inn
 /// (scene 73, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP), XIAN_TO_SANCTUM
-/// into Xian Sanctum, its sliding door playing SE_188, XIAN_TO_FUCHIN_TEMPLE_2
-/// into Master Feh's school, and XIAN_TO_WORLD_MAP out to the world map.
-/// Coming back from the school (XIAN_FROM_FUCHIN_TEMPLE_2) or the Sanctum
-/// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_LOCATION_NAME, so the name is not
-/// shown again.
+/// into Xian Sanctum, its sliding door playing SE_188,
+/// XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school, and
+/// XIAN_TO_WORLD_MAP out to the world map. Coming back from the school
+/// (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum (XIAN_FROM_SANCTUM_WEST)
+/// clears FLAG_SHOW_LOCATION_NAME, so the name is not shown again.
 
 #include "game_state.h"
 #include "unit/import.h"
@@ -624,7 +625,7 @@ static void Xian_WalkThroughExit(s32 exitId) {
 /// Walking north into one of Xian's doors: it opens and the party goes in.
 /// Each door's trigger is the number of the exit it leads by: five lead into
 /// the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188) and
-/// XIAN_TO_FUCHIN_TEMPLE_2 into Master Feh's school.
+/// XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
   struct EventWork *event = gEventWork;
 
@@ -655,7 +656,7 @@ static void Xian_OpenDoorAndLeave(void) {
     Engine_AudioPlayCue(SE_188);
     Engine_MapAnimateCells(gXian_DoorSteps4, 69, 11);
     break;
-  case XIAN_TO_FUCHIN_TEMPLE_2:
+  case XIAN_TO_FUCHIN_TEMPLE_INTERIORS:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps5, 83, 7);
     break;
@@ -751,9 +752,9 @@ s32 Xian_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   BattleFx_SetQueuedSoundAndPlay(SE_169);
-  // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_2) or the Sanctum
+  // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum
   // (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name is not shown.
-  if (gGameState.entrance >= XIAN_FROM_FUCHIN_TEMPLE_2) {
+  if (gGameState.entrance >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
   if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
@@ -940,8 +941,8 @@ struct SceneEntrance gXian_Entrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {XIAN_FROM_XIAN_INTERIORS_WEST, CONDITION_ALWAYS, 216, 0, 184, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
-    {XIAN_FROM_FUCHIN_TEMPLE_2, CONDITION_ALWAYS, 392, 0, 184, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
+    {XIAN_FROM_FUCHIN_TEMPLE_INTERIORS, CONDITION_ALWAYS, 392, 0, 184,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {XIAN_FROM_SANCTUM_WEST, CONDITION_ALWAYS, 176, 0, 216, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
     {SCENE_TABLE_END},
@@ -957,8 +958,8 @@ u32 gXian_Exits[] = {
     SCENE_EXIT(XIAN_TO_WEAPON_AND_ARMOR_SHOP, XianInteriors,
                XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP),
     SCENE_EXIT(XIAN_TO_SANCTUM, Sanctum, SANCTUM_FROM_XIAN),
-    SCENE_EXIT(XIAN_TO_FUCHIN_TEMPLE_2, FuchinTemple2,
-               FUCHIN_TEMPLE_2_FROM_XIAN),
+    SCENE_EXIT(XIAN_TO_FUCHIN_TEMPLE_INTERIORS, FuchinTempleInteriors,
+               FUCHIN_TEMPLE_INTERIORS_FROM_XIAN),
     SCENE_EXIT(XIAN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_XIAN),
     SCENE_EXITS_END,
 };

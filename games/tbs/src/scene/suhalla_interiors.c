@@ -41,7 +41,8 @@
 /// Gate later depends on FLAG_IODEM_MET_WOUNDED_SOLDIERS.
 ///
 /// Searching the ovens finds a Smoke Bomb, once (flag 0xfb0), and shows what
-/// is cooking.
+/// is cooking, except at the Smoke Bomb's oven: its find always answers first,
+/// so the cactus steak line there is unused.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -653,6 +654,7 @@ struct SceneEvent gSuhallaInteriorsEvents[] = {
     { EVENT_TALK, ACTOR_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheHolyChildActorWillSave) },
     { SEARCH(SEARCH_OVEN), 100, 0xfb0, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    // Unused: this oven's item row answers first (see the scenes README).
     { SEARCH(SEARCH_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },
     { SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsHesMakingMulukhiyaSoupItTastes)) },
     { SCENE_EVENTS_END },
@@ -696,6 +698,7 @@ struct SceneEvent gSuhallaInteriorsEventsAfterAudience[] = {
     { EVENT_TALK, ACTOR_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIShudderToThinkSandstormsWill) },
     { SEARCH(SEARCH_OVEN), 100, 0xfb0, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    // Unused: this oven's item row answers first (see the scenes README).
     { SEARCH(SEARCH_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },
     { SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsHesMakingMulukhiyaSoupItTastes)) },
     { SCENE_EVENTS_END },

@@ -14,8 +14,10 @@
 ///   has left (FLAG_KALAY_COLOSSO_TOUR_LEFT), its guests are gone from the
 ///   inn, two people are gone from the houses, one of whom was about to join
 ///   it, and those who stay say so. Searching the ovens shows what the cooks
-///   are making; the oven with roasted eggplant first gives a Smoke Bomb (its
-///   find comes first in the table, under the same trigger), and barrels hold
+///   are making, except that the oven with roasted eggplant gives a Smoke
+///   Bomb: its find comes first in the table under the same trigger, and a
+///   named search ignores its condition, so it answers every time and the
+///   eggplant line is unused. Barrels hold
 ///   11 coins and an Elixir. The inn's table and the houses' both carry these
 ///   searches.
 /// - Kalay Sanctum (KalaySanctum, scene 101), whose priest offers the
@@ -572,6 +574,7 @@ struct SceneEvent gKalayInteriors_HouseEvents[] = {
     { SEARCH(SEARCH_BARREL), 102, 0xf85, FIND_ITEM(ITEM_ELIXIR) },
     { SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsShesToastingSomeBreadItSmells)) },
     { SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingCurryItsSpicyScent)) },
+    // Unused: this oven's item row answers first (see the scenes README).
     { SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingRoastedEggplantWithCheese)) },
     { SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsAKalaySaladWithCucumber)) },
     { SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsPicklesWithGarlicThePickle)) },
@@ -621,6 +624,7 @@ struct SceneEvent gKalayInteriors_InnEvents[] = {
     { SEARCH(SEARCH_BARREL), 102, 0xf85, FIND_ITEM(ITEM_ELIXIR) },
     { SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsShesToastingSomeBreadItSmells)) },
     { SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingCurryItsSpicyScent)) },
+    // Unused: this oven's item row answers first (see the scenes README).
     { SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingRoastedEggplantWithCheese)) },
     { SEARCH(SEARCH_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsAKalaySaladWithCucumber)) },
     { SEARCH(SEARCH_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsPicklesWithGarlicThePickle)) },

@@ -57,8 +57,8 @@
 ///   will join Isaac's quest to protect the world. They promise to protect
 ///   Imil themselves, as members of the Mercury Clan, and she leaves the
 ///   village in their hands, Megan and Justin. Searching finds an Empty
-///   Bottle, a Sleep Bomb and Lucky Pepper, the last first from the oven with
-///   the stew.
+///   Bottle, a Sleep Bomb and Lucky Pepper, the last from the oven with the
+///   stew, whose find always answers first, so the stew's line is unused.
 
 #include "script.h"
 #include "animspr.h"
@@ -1863,6 +1863,7 @@ struct SceneEvent gImil_InteriorEvents[] = {
     { SEARCH(SEARCH_BARREL), 101, 0xf62, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_OVEN), 102, 0xf63, FIND_ITEM(ITEM_LUCKY_PEPPER) },
     { SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItLooksLikePorridgeItIs)) },
+    // Unused: this oven's item row answers first (see the scenes README).
     { SEARCH(SEARCH_OVEN), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItsSomeHotStewItWarms)) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, IMIL_INTERIORS_HOUSE_WEST_TO_IMIL },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_WEST_SOUTHWEST },

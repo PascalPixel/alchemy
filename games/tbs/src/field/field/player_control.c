@@ -342,7 +342,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       collision |= 1;
 
     push_objects:
-      // Push the movable objects (collisionFlags bit 1) just ahead 4 pixels
+      // Push the movable objects (ACTOR_PUSHABLE) just ahead 4 pixels
       // further, when they have room; any other solid object there blocks the
       // step (bit 1 of collision). Pushing slows the player down.
       contact.x = object->x;
@@ -356,7 +356,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         radius = object->radius - 2;
         if (pushedObject->script == 0)
           continue;
-        if ((pushedObject->collisionFlags & 1) == 0)
+        if ((pushedObject->collisionFlags & ACTOR_SOLID) == 0)
           continue;
         if (pushedObject == object)
           continue;
@@ -366,7 +366,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         // A movable object that is not paused slides a quarter pixel away from
         // the player, if no solid object is there and the ground 10 pixels on,
         // straight and 22.5 degrees either side, is clear.
-        if ((pushedObject->collisionFlags & 2) != 0 &&
+        if ((pushedObject->collisionFlags & ACTOR_PUSHABLE) != 0 &&
             pushedObject->movementState == 0) {
           direction =
               ArcTan2(pushedObject->z - object->z, pushedObject->x - object->x);

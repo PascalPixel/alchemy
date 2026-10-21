@@ -265,7 +265,7 @@ void Object_UpdateAllThumb(void) {
         // pixels above the ground. Unless bit 4 is set, a climb or drop also
         // slows it, by three times the change (at most half its
         // acceleration).
-        if ((object->motionFlags & 1) != 0) {
+        if ((object->motionFlags & ACTOR_FOLLOWS_TERRAIN) != 0) {
           velocityX = x + object->velocityX;
           velocityZ = z + object->velocityZ;
           ground =
@@ -279,7 +279,8 @@ void Object_UpdateAllThumb(void) {
           if (velocityY > maxTerrainChange)
             velocityY = maxTerrainChange;
           velocityY *= 3;
-          if (velocityY != 0 && (object->motionFlags & 0x10) == 0) {
+          if (velocityY != 0 &&
+              (object->motionFlags & ACTOR_KEEPS_SPEED_ON_SLOPES) == 0) {
             dx = object->velocityX;
             dy = object->velocityY;
             dz = object->velocityZ;
@@ -298,7 +299,7 @@ void Object_UpdateAllThumb(void) {
         }
 
         // Gravity, and a bounce that loses energy on landing.
-        if ((object->motionFlags & 2) != 0) {
+        if ((object->motionFlags & ACTOR_FALLS) != 0) {
           ground = object->terrainHeight;
           if (y > ground) {
             object->velocityY -= object->gravity;
@@ -313,14 +314,15 @@ void Object_UpdateAllThumb(void) {
           }
         }
 
-        // Float: bob up and down on a triangle wave (bit 3 makes it bigger).
-        // The phase runs over 64 frames, each table entry held for two. The
-        // first 32 frames' velocities sum to 128 * gravity / 64, so the
-        // object rises and falls by about 2 * gravity pixels, or 8 * gravity
-        // with bit 3 (2 and 8 pixels at the default gravity of 1.0).
-        if ((object->motionFlags & 4) != 0) {
+        // Float: bob up and down on a triangle wave (ACTOR_FLOATS_HIGH makes it
+        // bigger). The phase runs over 64 frames, each table entry held for
+        // two. The first 32 frames' velocities sum to 128 * gravity / 64, so
+        // the object rises and falls by about 2 * gravity pixels, or 8 *
+        // gravity with ACTOR_FLOATS_HIGH (2 and 8 pixels at the default gravity
+        // of 1.0).
+        if ((object->motionFlags & ACTOR_FLOATS) != 0) {
           phase = (object->vertical.phase & 0x3f);
-          if ((object->motionFlags & 8) != 0)
+          if ((object->motionFlags & ACTOR_FLOATS_HIGH) != 0)
             object->velocityY =
                 gScriptObject_CycleTable[phase >> 1] * object->gravity / 16;
           else
@@ -335,10 +337,10 @@ void Object_UpdateAllThumb(void) {
     y += object->velocityY;
     z += object->velocityZ;
 
-    // An object with collision bit 7 does not move into a solid one (bit 0);
-    // count the refusals. A refused object keeps last frame's position and
+    // An object with ACTOR_BLOCKED_BY_SOLID does not move into an ACTOR_SOLID
+    // one; count the refusals. A refused object keeps last frame's position and
     // skips arrival and turning; SC_SYNC stops waiting for it after 60.
-    if ((object->collisionFlags & 0x80) != 0) {
+    if ((object->collisionFlags & ACTOR_BLOCKED_BY_SOLID) != 0) {
       SET_VECTOR(pos, x, y, z);
       if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, pos) !=
           0) {
@@ -611,7 +613,7 @@ void Object_UpdateAllMotion(void) {
         }
       }
       // Gravity, and a bounce that loses energy on landing.
-      if (object->motionFlags & 2) {
+      if (object->motionFlags & ACTOR_FALLS) {
         if (y > object->terrainHeight) {
           object->velocityY -= object->gravity;
         } else if (object->velocityY < 0) {

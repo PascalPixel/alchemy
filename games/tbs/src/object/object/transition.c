@@ -651,7 +651,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->step = 0;
     return;
   }
-  case 3: {
+  case TRANSITION_DISSOLVE: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
     state->mode = variant;
@@ -667,7 +667,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->step = 0;
     return;
   }
-  case 4: {
+  case TRANSITION_CENTRE_LINE: {
     struct DisplayTransitionState *state;
 
     display = gMapWork[0];
@@ -738,7 +738,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     state->step = 0;
     break;
   }
-  case 3: {
+  case TRANSITION_DISSOLVE: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
     state->mode = variant;
@@ -752,7 +752,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     state->step = 0;
     break;
   }
-  case 4: {
+  case TRANSITION_CENTRE_LINE: {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
     if (variant == 0) {

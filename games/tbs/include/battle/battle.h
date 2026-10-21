@@ -179,7 +179,7 @@ extern u8 gElementGlow_StarSizes[];
 extern s32 gElementGlow_RingFrameOffsets[];
 /// The highlighted units' BLDY lightening: 15 down to 0 once, then the second
 /// sixteen (a pulse up to 8 and back) over and over.
-extern s8 gBattleFx_HighlightBlendRamp[];
+extern s8 gBattlePresentation_HighlightBlendRamp[];
 /// The 104 encounter zones (encounter.tsv), read as struct EncounterZone rows.
 extern u16 gEncounter_EnemyGroupTable[];
 extern s16 gFieldFx_GroundParticleFrames[];

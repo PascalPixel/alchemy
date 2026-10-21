@@ -78,8 +78,8 @@ gElementGlow_StarSizes:
 gElementGlow_RingFrameOffsets:
 	.4byte 0x4e, 0x44e, 0x84e, 0xc4e
 	.4byte 0, 10, 20, 0
-	.global BattleFx_CharacterIdMapCopy
-BattleFx_CharacterIdMapCopy:
+	.global gBattle_CharacterIdMapCopy
+gBattle_CharacterIdMapCopy:
 	.2byte 18, 56
 	.2byte 1, 1
 	.2byte 19, 57
@@ -89,8 +89,8 @@ BattleFx_CharacterIdMapCopy:
 	.2byte 5, 5
 	.2byte 6, 6
 	.2byte -1, -1
-	.global BattleFx_ActorKindIdMapCopy
-BattleFx_ActorKindIdMapCopy:
+	.global gBattle_ActorKindIdMapCopy
+gBattle_ActorKindIdMapCopy:
 	.2byte 93, 0
 	.2byte 90, 1
 	.2byte 92, 2

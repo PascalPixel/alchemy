@@ -593,7 +593,7 @@ void BattlePresentation_ClearAllActorRecordModes(void) {
 }
 
 /// Lightens the opaque sprites, the highlighted units, by the next step of
-/// gBattleFx_HighlightBlendRamp.
+/// gBattlePresentation_HighlightBlendRamp.
 /// The ramp's first sixteen steps play once, then its second sixteen over
 /// and over. Runs each frame as a scheduler callback in the VBlank pass
 /// (order 0x480), added by BattlePresentation_SetActorModes while
@@ -608,7 +608,7 @@ void Graphics_AdvancePaletteCycle(void) {
   if (battle != NULL && battle->highlightMode != HIGHLIGHT_OFF) {
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
     REG_BLDALPHA = BLEND_ALPHA(16, 0);
-    blendRamp = gBattleFx_HighlightBlendRamp;
+    blendRamp = gBattlePresentation_HighlightBlendRamp;
     REG_BLDY = blendRamp[battle->highlightStep];
     // From step 15 on, the next step stays in 16 to 31.
     rampIndex = battle->highlightStep;

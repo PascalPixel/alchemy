@@ -135,7 +135,7 @@ struct BattleWork {
   s32 brightness;    ///< the backdrop's brightness, 16.16, 0x10000 full
   u16 background;    ///< the battle background's id
   u8 unk64a[4];      ///< not named by TBS code
-  u16 highlightStep; ///< index into gBattleFx_HighlightBlendRamp
+  u16 highlightStep; ///< index into gBattlePresentation_HighlightBlendRamp
   u16 highlightMode; ///< nonzero while the units are highlighted
   u8 unk652[2];      ///< not named by TBS code
   /// The action being carried out, as BattleCommand_BuildPlan lays it out.

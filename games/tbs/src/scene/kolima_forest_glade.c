@@ -1,10 +1,11 @@
 /// @file
-/// Kolima Forest (KolimaForestGlade, scene 41), the second of the forest's
-/// five maps, on the party's way to Tret between scenes 40 and 42. Three logs
-/// lie in the grass to be rolled by walking into them, and a Nut floats out of
-/// reach until Catch pulls it in (FLAG_KOLIMA_FOREST_NUT_CAUGHT). Until Tret
-/// lifts the curse (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the
-/// forest redder, darker colours.
+/// Kolima Forest (SceneId_KolimaForestGlade), the second of the forest's
+/// five maps, on the party's way to Tret between SceneId_KolimaForestEntrance
+/// and SceneId_KolimaForestCliff. Three logs lie in the grass to be rolled by
+/// walking into them, and a Nut floats out of reach until Catch pulls it in
+/// (FLAG_KOLIMA_FOREST_NUT_CAUGHT). Until Tret lifts the curse
+/// (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the forest redder,
+/// darker colours.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -33,19 +34,25 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
-/// Actors 8 to 10 are the logs; 11 is the Nut.
-enum { NUT = 11 };
+/// Kolima Forest's actors, numbering the rows of gKolimaForestGlade_Placements.
+enum KolimaForestGladeActor {
+  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED, ///< the three logs
+  ACTOR_NUT = ACTOR_FIRST_LOG +
+      3 ///< the Nut that floats until Catch pulls it in
+};
 
 #include "common/object_staged_actor.h"
 
-/// Where the party enters, from scenes 40 and 42.
+/// Where the party enters, from SceneId_KolimaForestEntrance and
+/// SceneId_KolimaForestCliff.
 const struct SceneEntrance *KolimaForestGlade_GetEntrances(void) {
   return gKolimaForestGlade_Entrances;
 }
 
 const struct SceneRegion *KolimaForestGlade_GetRegions(void) { return 0; }
 
-/// The ways on into the forest (scene 42) and back (scene 40).
+/// The ways on into the forest (SceneId_KolimaForestCliff) and back
+/// (SceneId_KolimaForestEntrance).
 const u32 *KolimaForestGlade_GetExits(void) { return gKolimaForestGlade_Exits; }
 
 /// The three logs and the Nut.
@@ -53,8 +60,8 @@ const struct ScenePlacement *KolimaForestGlade_GetPlacements(void) {
   return gKolimaForestGlade_Placements;
 }
 
-/// Kolima Forest (scene 41), walking into a log: it rolls ahead until
-/// something stops it.
+/// Kolima Forest (SceneId_KolimaForestGlade), walking into a log: it rolls
+/// ahead until something stops it.
 static void KolimaForestGlade_PushLog(void) {
   struct StagedActorProbe result;
   Engine_EventBegin();
@@ -63,11 +70,11 @@ static void KolimaForestGlade_PushLog(void) {
   Engine_EventEnd();
 }
 
-/// Kolima Forest (scene 41), Catch on the floating Nut (until
+/// Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut (until
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
   Engine_EventBegin();
-  Engine_ActorSetPosition(NUT, 0, 0);
+  Engine_ActorSetPosition(ACTOR_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
@@ -85,11 +92,11 @@ s32 KolimaForestGlade_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
-    Scene_FloatNut(NUT);
+    Scene_FloatNut(ACTOR_NUT);
   }
-  FieldScene_RedrawActorFootprint(8);
-  FieldScene_RedrawActorFootprint(9);
-  FieldScene_RedrawActorFootprint(10);
+  FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG);
+  FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
+  FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG + 2);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(11);
   }
@@ -132,7 +139,8 @@ struct SceneEntrance gKolimaForestGlade_Entrances[] = {
     { SCENE_TABLE_END },
 };
 
-/// Exit 1 on into the forest (scene 42), exit 2 back (scene 40).
+/// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF on into the forest, and
+/// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE back.
 u32 gKolimaForestGlade_Exits[] = {
     SCENE_EXITS(KolimaForestGlade),
     SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
@@ -167,7 +175,7 @@ struct SceneEvent gKolimaForestGlade_Events[] = {
      KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestGlade_PushLog)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
      EVENT_SCRIPT(KolimaForestGlade_CatchNut)},
     {SCENE_EVENTS_END},
 };

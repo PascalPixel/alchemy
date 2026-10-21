@@ -145,11 +145,10 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    // The stat items, whose ability kind has no enumerator yet (enum
-    // AbilityKind). The stat rises by power, less one a quarter of the time and
-    // plus one a quarter of the time (a roll of 0 to 3: 0 gives -1, 1 gives +1,
-    // 2 and 3 give 0); Luck rises by power alone.
-    case 9:
+    // The stat items. The stat rises by power, less one a quarter of the time
+    // and plus one a quarter of the time (a roll of 0 to 3: 0 gives -1, 1 gives
+    // +1, 2 and 3 give 0); Luck rises by power alone.
+    case ABILITY_KIND_NO_POWER:
       randomAdjust = (Random16() * 4) >> 16;
       if (randomAdjust == 0) {
         randomAdjust = -1;
@@ -223,7 +222,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_KIND_ATTACK_MULTIPLIED:
     case ABILITY_KIND_DAMAGE:
     case ABILITY_KIND_UNLEASHED_DAMAGE:
-    case 7:
+    case ABILITY_KIND_EFFECT_ONLY:
     case ABILITY_KIND_SUMMON:
     case ABILITY_KIND_PP_DAMAGE:
       break;

@@ -515,7 +515,7 @@ The battle code calls the formulas by their far-call names, which
 | `BattleAtkCalc` | `Battle_CalcAttackDamage` | Attack less Defense (never below 0) plus twice the ability's power, the whole sum halved, then scaled by the element multiplier at half strength |
 | `BattlePowerCalc` | `Battle_CalcPsynergyPower` | the ability's power times the element multiplier |
 | `BattleRecoveryCalc` | `Battle_CalcRecovery` | the ability's power times the multiplier for the healer's Power |
-| `BattleHitCheck` | `BattleFx_RollSuccess` | whether an added effect takes hold: its base rate, the element levels, Luck and weakness |
+| `BattleHitCheck` | `Battle_RollEffectSuccess` | whether an added effect takes hold: its base rate, the element levels, Luck and weakness |
 | `RollWeaponUnleashFar` | `RollWeaponUnleash` | whether the weapon unleashes |
 
 ## What does an added effect do?
@@ -530,14 +530,14 @@ each target, and its case comments give each effect's detail.
 
 ### Does it land?
 
-First `BattleHitCheck` (`BattleFx_RollSuccess`, in
+First `BattleHitCheck` (`Battle_RollEffectSuccess`, in
 [`../game/game/battle_calc.c`](../game/game/battle_calc.c)) rolls whether the
 effect takes hold. It fails at once when there's nothing for it to do: a
 revival on a unit still standing, Cure Poison on one that isn't poisoned,
 Restore or Tonic on a unit with nothing to cure, a curse on a unit whose
 countdown is already at its last turn. Otherwise the chance starts from the
 effect's base rate (Sleep 45 percent, Taint 55, Condemn's instant death 20
-and so on, in `BattleFx_GetBaseSuccessRate`), gains 3 for each element level
+and so on, in `Battle_GetEffectBaseSuccessRate`), gains 3 for each element level
 the caster is ahead of the target (nothing for an effect with no element,
 since `Unit_GetElementLevel` gives every unit level 0 there), loses 3 for
 every two points of the target's Luck, and gains 25 when the effect is one of

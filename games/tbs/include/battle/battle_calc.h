@@ -12,7 +12,7 @@
 // target to 5 for the farthest: BattleTargetExec scales an amount by the entry
 // and divides by 100, so an ability spread over a group weakens step by step.
 // gHitTable instead scales the effect's chance, through BattleHitCheck.
-/// The share of an effect's chance to land (BattleFx_RollSuccess's
+/// The share of an effect's chance to land (Battle_RollEffectSuccess's
 /// successScale): 100, 60, then 30.
 extern u8 gHitTable[];
 /// PP loss (ABILITY_KIND_PP_DAMAGE), Crazy Voice's and Psy Drain's: 100, 50,

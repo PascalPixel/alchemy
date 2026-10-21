@@ -51,7 +51,7 @@ FarCall_GameTable:
 	export RollWeaponUnleashFar, RollWeaponUnleash
 	export Party_RemoveActiveOwnerFar, Party_RemoveActiveOwner
 	export Item_GetEquippedElementFar, Item_GetEquippedElement
-	export BattleHitCheck, BattleFx_RollSuccess
+	export BattleHitCheck, Battle_RollEffectSuccess
 	export BattleAtkCalc, Battle_CalcAttackDamage
 	export BattlePowerCalc, Battle_CalcPsynergyPower
 	export BattleRecoveryCalc, Battle_CalcRecovery

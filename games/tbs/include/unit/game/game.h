@@ -123,11 +123,11 @@ s32 Battle_CalcRecovery(s32 power, s32 elementPower, s32 powerMultiplier);
 s32 Item_GetEquippedElement(s32 owner);
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit);
 s32 RollWeaponUnleash(struct BattleUnit *owner);
-s32 BattleFx_GetBaseSuccessRate(s32 effectId);
+s32 Battle_GetEffectBaseSuccessRate(s32 effectId);
 s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId);
 s32 Battle_IsReviveEffect(s32 effectId);
-s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
-                         s32 effectId, s32 successScale);
+s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
+                             s32 effectId, s32 successScale);
 
 const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index);
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);

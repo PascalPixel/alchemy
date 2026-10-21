@@ -155,7 +155,7 @@ These turn up all over the game.
     struct reference; written as member stores, the loop's registers are
     allocated differently (Crossbone Isle's `Event_MovePillar`, 100 of 265
     instructions in tbs-en);
-  - `*(u8 *)&unit->field` in `BattleFx_RollSuccess`
+  - `*(u8 *)&unit->field` in `Battle_RollEffectSuccess`
     ([`game/game/battle_calc.c`](game/game/battle_calc.c)), where each zero
     test written as `unit->field` merges with a neighbour's into one halfword
     or word load (sleep and psySeal; delusion, confusion and charm; haunt and

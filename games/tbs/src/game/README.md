@@ -127,7 +127,7 @@ function here can be known by two names, its own and its far-call one.
 | `Character_`, `Class_`, `Enemy_`, `Summon_`, `SummonDefinition_`, `BattleAction_` | one entry of a definition table |
 | `GameFlag_` | the game flags |
 | `Djinn_`, `DjinnRecovery_` | the Djinn, and their standby lists |
-| `Battle_`, `BattleRandom`, `BattleTarget_`, `BattleFx_` | battle arithmetic the battle folder calls |
+| `Battle_`, `BattleRandom`, `BattleTarget_` | battle arithmetic the battle folder calls |
 | `BattleUnitSet` | filling an enemy unit at the start of a battle |
 | `Runtime_` | two engine helpers that live here: a byte copy and the build stamp |
 

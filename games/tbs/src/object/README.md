@@ -164,6 +164,8 @@ the exit `EXIT_NONE`, so the next pass of the loop leaves the scene.
 The battle runs as a scene of its own, and the field scene is loaded again
 afterwards with the party where it was.
 
+![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
+
 The saved actors, with their parallel arrays of slots, animations, sprite
 flags and priorities, form `ObjectTableSnapshot` in
 [`object_runtime.h`](../../include/object_runtime.h). It keeps up to 32
@@ -253,6 +255,8 @@ plays the effect itself. XXX: on a Psynergy event that bit falls inside the
 ability's number (`PSYNERGY_ON_ACTOR`), so whether it's a flag of its own or
 part of the ability is open.
 
+![Isaac casts Move at a stone pillar in Vale: `Move` shows, the field turns blue-green as a hand appears over the pillar, and the hand pushes it one step to the right before the colours come back.](https://alchemy.pascalpixel.com/abilities/move.gif)
+
 The effect that plays is the one for the ability's field kind.
 [`psynergy_effects/dispatch.c`](psynergy_effects/dispatch.c) runs that field
 kind's handler: `BattleFx_Run` when the Psynergy is cast with no target, and
@@ -286,6 +290,8 @@ it; holding L or R puts it on the party's current place. The place nearest the
 cursor gets a blinking frame and its name in a window, and A or B closes the
 screen. In the German, French, Spanish and Italian releases the cursor also
 glides onto the nearest place when the player lets go of the pad.
+
+![On the world map, R brings up the still picture of the whole world, a hand on the party's place beside a `Present location` window; the hand moves right and up across the map, sits back on the party's place while L is held, and A closes the picture.](https://alchemy.pascalpixel.com/guides/object/world-map-picture.gif)
 
 In code, R on the world map raises `FIELD_EVENT_WORLD_MAP_PICTURE`, and the
 scene loop calls `Map_ShowWorldMap`. It decodes the picture into

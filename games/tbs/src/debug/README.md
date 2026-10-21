@@ -88,6 +88,8 @@ plays the element's capture effect and hands Djinni 0 of that element to the
 member with the fewest Djinn. Then the room clears the flag again, so the
 Djinni is back the next time the party walks in.
 
+![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)
+
 ### The level room
 
 The room's actors are numbered from 8: 8 is the item browser, 9 the icon

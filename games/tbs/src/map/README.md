@@ -68,6 +68,8 @@ grave, books and well that every map searches with the same lines, the
 desert's hazardous sand, and the ledges, climbing spots and jumps that
 `Field_RunPushTileEvent` acts on when the leader pushes against them.
 
+![One screen of Goma Cave, and beside it the same screen with its ground cells drawn over it, each raised by its height as the actors standing on it are: white edges where the ground steps up or down run along the rock rims around the dark floor, the cells of the two doorways that lead on are yellow with the scene's own codes, and a wall cell at the right edge is red.](https://alchemy.pascalpixel.com/guides/map/cells.png)
+
 A **layer** is one of the map's three backgrounds, each a window onto the
 cell grid. A **plane** is one byte, or one halfword (two bytes), per cell
 over the whole 128 by 128 grid, written as a table whose first line describes
@@ -146,6 +148,8 @@ grid. Each layer's origin picks the cell its window starts at, so a map lays
 its layers out side by side or one above another in the grid: map 000's three
 layers start at tiles 0, 60 and 120 across, and Venus Lighthouse's entrance
 puts its layers at (0, 0), (64, 0) and (0, 68).
+
+![The whole 128 by 128 cell grid of Goma Cave's map at half size, each cell drawn from its block: the ground layer's window at the top left holds the cave floor and its pool, the middle layer's below it the rock walls around a dark floor, and the overhead layer's at the top right only the glows of the torches, and the rest of the grid is empty.](https://alchemy.pascalpixel.com/guides/map/grid.png)
 
 Layer 0 shows on `BG3`, layer 1 on `BG2` and layer 2 on `BG1`, and `BG0` stays free
 for the windows. A layer's priority byte is also its switch: a layer with

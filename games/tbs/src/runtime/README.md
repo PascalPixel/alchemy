@@ -164,12 +164,16 @@ debug display and counts the frames that lead to sleep. Then it halts the CPU
 until VBlank (`swi 2`, the BIOS's Halt), releases the scratch block and
 updates key repeat.
 
+![One frame of Vale with each of its nine sprite list entries outlined in its own colour, and beside it the same entries with the backgrounds hidden: the stone pillar is one tall sprite, and each villager a square sprite with a small one for its shadow.](https://alchemy.pascalpixel.com/guides/runtime/oam.png)
+
 The game's sleep mode lives in that loop. Holding only L and R for three
 seconds, or with idle sleep switched on (`gIdleSleepEnabled`) touching no key
 for three minutes, turns the screen white for a second and then stops the
 console (`swi 3`, the BIOS's Stop) until L and R are pressed again. On
 waking, the screen is put back and the game waits ten frames before carrying
 on. Nothing sleeps while `gSleepDisabled` is set.
+
+![Isaac stands at the Sanctum's door in Vale while only L and R are held, and after three seconds the whole screen turns white, the moment before the console stops.](https://alchemy.pascalpixel.com/guides/runtime/sleep.gif)
 
 A key held down first repeats after 19 frames and then every 6
 (`INPUT_KEY_REPEAT_FIRST` and `INPUT_KEY_REPEAT_NEXT`), which is what lets a

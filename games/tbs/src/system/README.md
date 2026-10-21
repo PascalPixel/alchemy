@@ -73,6 +73,8 @@ on screen is built from, and the maps that say which tile goes where:
   hands out as 512 blocks of 64 bytes
   (`games/tbs/src/runtime/runtime/vram_cache.c`).
 
+![Vale's video memory drawn as tiles, each in the palette the maps or the sprite list give it and grey where nothing on screen names it: the four 16 KB background character blocks, the first with the window font and Vale's trees, the second its grass, cliffs and water, the last two its thatched roofs and houses; beside them the sprites' 32 KB, nearly empty but for the frames on screen; and below, the 256 background colours and the 256 sprite colours.](https://alchemy.pascalpixel.com/guides/system/vram.png)
+
 ## Why the program is cut into banks
 
 The main image, the part of the program the processor runs straight from the
@@ -126,6 +128,8 @@ EWRAM) when its scene loads. There are 96 of them, each a resource of its own,
 listed in the scene table (`field/scenes.s`). Some places share one (the three
 `VaultCave` scenes all load the same overlay), and the title screen and a few
 other screens that are mostly menus are overlays too.
+
+![Isaac walks from Vale into the Sanctum while, beside the screen, the overlay area's 32 KB is drawn a grey pixel to a byte: Vale's overlay fills it, and as the screen fades the Sanctum's is unpacked over it in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
 
 An overlay runs from EWRAM, 96 MB below the ROM, out of any `bl`'s reach, so
 every call it makes into the main image has to load an address into a

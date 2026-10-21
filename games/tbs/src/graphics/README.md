@@ -137,6 +137,8 @@ from tiles in the second with colours 128 to 255. A backdrop has 128 colours,
 and `Graphics_LoadCharacterBlockAndPalette` adds 128 to every pixel it unpacks
 into the second half, so the same picture works in either.
 
+![The credits halfway through their first crossfade, taken apart: `BG3` alone holds the next backdrop, a stone hall lit by torches; `BG2` alone holds the stormy Vale it replaces; the sprites alone are the staff names between two black bars; and the screen shows the two backdrops blended with the names over them.](https://alchemy.pascalpixel.com/guides/graphics/credits-layers.png)
+
 `DisplayScroll_RunSlideshow` loads each backdrop into the half that isn't
 showing, then steps the blend weights between `BG2` and `BG3` over 16 steps of 4
 frames, and holds. The halves swap roles from one backdrop to the next, so a
@@ -145,6 +147,8 @@ through the I/O write queue at the next VBlank, and the tiles are unpacked by
 `BattleEffect_Expand`, copied into heap slot 49 for each load and released
 again. Every fourth frame both backdrops drift one pixel to the right; a
 picture is as wide as its map, 256 pixels, so it wraps around without a seam.
+
+![The staff names scroll up over a backdrop of Vale's houses in the rain, which fades into a stone hall lit by torches while the names keep moving.](https://alchemy.pascalpixel.com/guides/graphics/credits.gif)
 
 ### The scrolling names
 

@@ -66,6 +66,8 @@ asks for when there's nobody to talk to and nothing to search.
 [Field objects](src/object/README.md) goes through the loop, the requests and
 how random battles are rolled from the steps the party takes.
 
+![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
+
 ## Why does every place have its own code?
 
 Every town and dungeon is a scene, and every scene is an overlay: its own code,
@@ -82,6 +84,8 @@ from the menu doesn't push anything by itself: the menu closes, and the field
 asks the scene whether it has an event for Move on whatever the leader is
 facing. Whether a pillar slides or stays put is the scene's code, and the
 Psynergy's effect is played around it.
+
+![Isaac opens the menu beside a stone pillar in Vale and picks Psynergy, himself and then Move; the menu closes, `Move` shows, the field turns blue-green as a hand appears over the pillar, and it pushes the pillar one step to the right.](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
 
 A scene doesn't tidy up after itself either. A pushed pillar or an opened door
 is kept in a flag the game clears the next time the party enters, so a room's

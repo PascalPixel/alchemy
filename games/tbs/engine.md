@@ -43,6 +43,8 @@ keeps that in less than two kilobytes of fast RAM, so `WaitFrames` moves a deep
 caller's stack aside before it runs the frame, and puts it back afterwards.
 That way the tasks always start from the same place, with the same room.
 
+![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
+
 ## Why is the program cut into banks?
 
 The code the console runs straight from the cartridge is cut into banks, one
@@ -61,6 +63,8 @@ order, and the main program reaches the overlay through six entries at its
 start. Those two tables are the only places they meet.
 [System](src/system/README.md) has the memory map, the banks and the
 overlays.
+
+![Isaac walks from Vale into the Sanctum while, beside the screen, the 32 KB the overlays are unpacked into is drawn a grey pixel to a byte: Vale's code and tables fill it, and as the screen fades the Sanctum's overlay is unpacked over them in a different pattern.](https://alchemy.pascalpixel.com/guides/system/overlay.gif)
 
 ## What does a sound number mean?
 
@@ -81,3 +85,5 @@ for levels and for browsing items, icons and letters, and one full of shop and
 message tests. Each is an ordinary scene, built like any town, so they're
 also the shortest way to see how a scene is put together.
 [Debug rooms](src/debug/README.md) goes through them.
+
+![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)

@@ -11,11 +11,11 @@
 /// BattleObj.scale and MotionObject scales are 16.16 fixed point.
 #define SCALE_ONE 0x10000
 
-/// BattleObj.effect as a battle object is made: sprite 0x1fe, which
+/// BattleObj.effect as a battle object is made: the sprite
 /// BattleActor_SpawnObjectsForList adds as a layer of every one-part body
-/// (0x1ff on a body 32 pixels wide). Its 64 by 64 picture
+/// (NARROW_EFFECT_SPRITE on a body 32 pixels wide). Its 64 by 64 picture
 /// (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse along its
-/// bottom edge, 0x1ff's a 16 by 3 one.
+/// bottom edge, NARROW_EFFECT_SPRITE's a 16 by 3 one.
 /// XXX: likely the unit's shadow on the ground rather than an effect, because
 /// of that picture, because adding it also clears the sprite's own shadow
 /// (AnimationObject.flags bit 0), and because
@@ -45,8 +45,9 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   // Positions are 16.16 fixed point; y is the battlefield's depth.
   fixedX = x * 65536;
   fixedZ = y * 65536;
-  // Kind 15 skips FieldObject_Create's sprite creation. Battle sprites are
-  // attached later by BattleActor_SpawnObjectsForList.
+  // The id 0xf000 has no sprite kind of enum ObjectCreateKind, so
+  // FieldObject_Create makes no sprite; BattleActor_SpawnObjectsForList
+  // attaches the battle sprites later.
   object = (struct MotionObject *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = UnitGetFar(unitId);
   palette = 0;
@@ -55,8 +56,8 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   // The sprite: an enemy's from its class (classIndex 0), a party member's
   // by character. An enemy whose sprite went into its own slots takes the
   // slot's sprite and palette 0, else its class's sprite and palette; a
-  // character fighting on the enemy side (a link opponent, unit id 8 or
-  // above) takes palette 1.
+  // character fighting on the enemy side (a link opponent, a unit id above
+  // ALLY_MAX) takes palette 1.
   if (unit->classIndex == 0) {
     sprite = BattleClass_GetSprite(unit->classId);
     if (registeredSprite == 0)

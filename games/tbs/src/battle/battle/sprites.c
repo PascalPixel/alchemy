@@ -154,20 +154,27 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
 }
 
 // gResource_SlotAssignments: each entry is a weapon's item id in the low nine
-// bits and its kind above them; the list ends with -1. By the rows of
-// items.tsv the kinds are 0 Long Sword to Muramasa (items 1 to 11), 1 Machete
-// to Bandit's Sword (15 to 27), 2 Battle Axe to Demon Axe (31 to 38), 3 Mace
-// to Wicked Mace (43 to 50), 4 Wooden Stick to Shaman's Rod (55 to 65 but 58
-// and 61), and 5 the Blessed Ankh and Angelic Ankh (58 and 61); each class's
-// table of weapon sprites has one entry a kind, then one for
-// WEAPON_KIND_NONE.
+// bits and its kind above them; the list ends with -1. Each class's table of
+// weapon sprites has one entry a kind.
 #define WEAPON_ITEM_MASK 0x1ff
 #define WEAPON_KIND_SHIFT 9
-#define WEAPON_KIND_NONE 6
 
-/// Returns the kind (0 to 5) of the weapon whose item id is itemId, which
-/// picks a party member's weapon sprite, or WEAPON_KIND_NONE for an item the
-/// list lacks. Called by BattleUnit_LookupWeaponValueByClass.
+/// The kinds of weapon a party member's attack shows, by the rows of
+/// items.tsv gResource_SlotAssignments lists for each.
+enum BattleWeaponKind {
+  WEAPON_KIND_LONG_SWORD,  ///< Long Sword to Muramasa
+  WEAPON_KIND_LIGHT_BLADE, ///< Machete to Bandit's Sword
+  WEAPON_KIND_AXE,         ///< Battle Axe to Demon Axe
+  WEAPON_KIND_MACE,        ///< Mace to Wicked Mace
+  /// Wooden Stick to Shaman's Rod, but the two ankhs among them.
+  WEAPON_KIND_STAFF,
+  WEAPON_KIND_ANKH, ///< the Blessed Ankh and Angelic Ankh
+  WEAPON_KIND_NONE  ///< an item the list lacks
+};
+
+/// Returns the kind (enum BattleWeaponKind) of the weapon whose item id is
+/// itemId, which picks a party member's weapon sprite. Called by
+/// BattleUnit_LookupWeaponValueByClass.
 s32 BattleUnit_GetWeaponKind(s32 itemId) {
   /// gResource_SlotAssignments seen as volatile, for the FAKEMATCH below.
   struct SlotAssignmentView {
@@ -199,7 +206,7 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 }
 
 /// Returns the weapon sprite a party member's attack shows for the kind of
-/// weapon they have equipped (gBattleUnit_WeaponAnimsClass*), or 0 for no
+/// weapon they have equipped (gBattleUnit_WeaponAnims tables), or 0 for no
 /// weapon, for Felix, or for a unit that is no party member. Called by
 /// BattleObjMake, which keeps it in BattleObj.overlay for
 /// BattleActor_SpawnObjectsForList to add as a layer of the body sprite.
@@ -218,21 +225,21 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
         BattleUnit_GetWeaponKind(unit->inventory[slot] & WEAPON_ITEM_MASK);
     switch (unit->classId) {
     case ISAAC:
-      weaponSprite = gBattleUnit_WeaponAnimsClass0[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimsIsaac[weaponKind];
       break;
     case GARET:
-      weaponSprite = gBattleUnit_WeaponAnimsClass1[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimsGaret[weaponKind];
       break;
     case IVAN:
-      weaponSprite = gBattleUnit_WeaponAnimsClass2[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimsIvan[weaponKind];
       break;
     case MIA:
-      weaponSprite = gBattleUnit_WeaponAnimsClass3[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimsMia[weaponKind];
       break;
     case FELIX:
       break;
     case JENNA:
-      weaponSprite = gBattleUnit_WeaponAnimsClass5[weaponKind];
+      weaponSprite = gBattleUnit_WeaponAnimsJenna[weaponKind];
       break;
     }
   }

@@ -48,7 +48,7 @@ enum BattleCommand {
   CMD_ABILITY = 4, ///< an enemy's ability
   CMD_DJINN = 5,
   CMD_SUMMON = 6,
-  CMD_DEFEND2 = 7, ///< an enemy's Total Defense (effect 47)
+  CMD_DEFEND2 = 7, ///< an enemy's Total Defense (ABILITY_EFFECT_TOTAL_DEFENSE)
   CMD_NONE = 8,    ///< nothing this turn
   CMD_FLEE = 99
 };

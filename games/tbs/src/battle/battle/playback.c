@@ -322,11 +322,12 @@ void BattleEvent_Playback(void) {
       events->timer = 0;
     } else if (events->phase == PLAY_FELLED) {
       // A fallen enemy. Its timer runs: with the Djinn bonus first, from
-      // FELLED_FLASH, 30 frames cycling colour modes 1 to 5 every 8 frames,
-      // with the defeat sound numbered one before its own; then from 0: grey
-      // (mode 6) and its own defeat sound, out of the lists at 4, and from 5
-      // the dissolve, four steps a frame, until its tiles are cleared and its
-      // object released.
+      // FELLED_FLASH, 30 frames cycling the colour modes SPRITE_COLOR_GRB to
+      // SPRITE_COLOR_BRG every 8 frames,
+      // with the defeat sound numbered one before its own; then from 0:
+      // SPRITE_COLOR_GREY and its own defeat sound, out of the lists at 4, and
+      // from 5 the dissolve, four steps a frame, until its tiles are cleared
+      // and its object released.
       if (events->timer == 0 || events->timer >= FELLED_FLASH) {
         s32 colorMode = SPRITE_COLOR_GREY;
 
@@ -352,7 +353,7 @@ void BattleEvent_Playback(void) {
             AudioCommand_PlayFar(SE_146 + kind);
         }
         if (events->timer >= FELLED_FLASH)
-          colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + 1;
+          colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
         // Recolour every layer's first entry and redraw its frame (255).
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
           struct AnimationObject *record;

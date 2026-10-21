@@ -609,7 +609,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   // No class has fallen yet (6), and the enemy units start cleared.
   enemyClasses[enemyCount] = 0;
   battle->firstDefeated = 6;
-  battle->defeatState = 0;
+  battle->defeatState = DEFEAT_ONE;
   for (memberOrEnemyIndex = FIRST_ENEMY_UNIT;
        memberOrEnemyIndex < FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE;
        memberOrEnemyIndex++)

@@ -132,15 +132,6 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
-/// gGameState.battleStart of a battle the party cannot run from: a Mimic's
-/// (object/object/events.c) and the travelers' fight in Vale
-/// (ValeGate_FightTravelers, scene/vale_gate.c). The command menu itself
-/// refuses to run, with MsgNoTimeToRun ("This is no time to be running
-/// away!"), in modes 3 and 4 (the battles a scene starts, and link
-/// battles) and once the party is challenged
-/// (UiText_ShowLocalizedMessageAndWait, window/battle_command/link_timer.c).
-#define BATTLE_START_NO_ESCAPE 2
-
 /// Rolls whether the party gets away. The chance, in hundredths of a
 /// percent, is 5000 plus 2000 for each attempt that failed, plus 500 times
 /// the party's average level, less 500 times the enemies' average level. A

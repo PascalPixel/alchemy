@@ -119,21 +119,22 @@ extern s16 gBattleFx_TargetRangeByMode[];
 /// A lone SC_FREE: an object that has arrived frees itself
 /// (BattleFx_SetCallbackWhenTargetUnset).
 extern const s32 gBattleFx_UntargetedObjectScript[];
-/// BattleMotion_ApplyVariantMotion's knockback by variant 0 to 7: 16.16 pixels
-/// a frame gained each frame, 1 but 8 for variant 4.
+/// The knockback's speed gained each frame by variant (enum BattleKnockback),
+/// 16.16 pixels a frame: 1, but 8 for KNOCKBACK_HURL.
 extern s32 gBattleMotion_VariantAcceleration[];
 /// The knockback's reach by variant, in percent of the unit's distance from
-/// the centre: 140 to 200, 100 for variants 6 and 7.
+/// the centre: 140 to 200, 100 for KNOCKBACK_BOUNCE and KNOCKBACK_JOLT.
 extern s32 gBattleMotion_VariantDistancePercent[];
-/// The knockback's top speed by variant, 16.16 pixels a frame: 4 but 20 for
-/// variant 4.
+/// The knockback's top speed by variant, 16.16 pixels a frame: 4, but 20 for
+/// KNOCKBACK_HURL.
 extern s32 gBattleMotion_VariantSpeedLimit[];
 /// The knockback's hop by variant, 16.16 pixels a frame upward: 2 to 10.
 extern s32 gBattleMotion_VariantVelocityY[];
 /// A fixed formation's places by order, as offsets from the middle place:
 /// 0, -1, 1, -2, 2 and so on out to 4.
 extern s8 gBattleParty_CenterOrderOffsets[];
-/// Round-end effects go to the party (1), then the enemies (2).
+/// Round-end effects go to the party (BATTLE_SIDE_PARTY), then the enemies
+/// (BATTLE_SIDE_ENEMIES).
 extern const struct BattleGroupOrder gBattleParty_RoundEndGroupOrder;
 /// A lone SC_END: a battle unit's object script, which BattleObjMake starts.
 extern const s32 gBattlePres_ActorObjectScript[];
@@ -146,15 +147,16 @@ extern const u8 gBattlePres_CurtainTiles[];
 /// time into the curtain's first tile.
 extern const u8 gBattlePres_TileVariants[];
 /// Garet's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
-extern u16 gBattleUnit_WeaponAnimsClass1[];
+extern u16 gBattleUnit_WeaponAnimsGaret[];
 /// Ivan's weapon sprite by weapon kind.
-extern u16 gBattleUnit_WeaponAnimsClass2[];
+extern u16 gBattleUnit_WeaponAnimsIvan[];
 /// Mia's weapon sprite by weapon kind.
-extern u16 gBattleUnit_WeaponAnimsClass3[];
-/// Jenna's weapon sprite by weapon kind; Felix (4) draws none.
-extern u16 gBattleUnit_WeaponAnimsClass5[];
+extern u16 gBattleUnit_WeaponAnimsMia[];
+/// Jenna's weapon sprite by weapon kind; Felix draws none.
+extern u16 gBattleUnit_WeaponAnimsJenna[];
 /// The size of BitDecoder_DecodeImage, which BattleBackground_Load copies to
-/// heap slot 49; constants.ld defines it as an address equal to the size.
+/// HEAP_SLOT_TEMP_RENDERER; constants.ld defines it as an address equal to the
+/// size.
 extern u8 BitDecoder_Size[];
 /// The extra matrix the battle camera's projection applies first while
 /// commands are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words.
@@ -184,17 +186,19 @@ extern s16 gFieldFx_GroundParticleFrames[];
 /// The ground particles' 16 by 16 tiles, packed (Resource_DecodeByteLz).
 extern const u8 gFieldFx_GroundParticleTiles[];
 #ifndef OWN_gBattleBgFxWork
-/// Work slot 22: Mind Read's wave work while its effect runs.
+/// The HEAP_SLOT_MIND_READ work slot: Mind Read's wave work while its effect
+/// runs.
 extern struct WaveFxWork *gBattleBgFxWork;
 #endif
 #ifndef OWN_gBattleFxWork
-/// Work slots 39 to 41 (HEAP_SLOT_BATTLE_EFFECT, then the canvas and sheet):
+/// The work slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sheet:
 /// the running battle effect's BattleEffectWork first.
 extern void *gBattleFxWork[];
 #endif
 #ifndef OWN_gBattleOwnerStates
-/// Work slot 54: the six enemy battle units, BATTLE_UNIT_SIZE bytes each, that
-/// UnitGet returns for unit ids 128 to 133 during a battle.
+/// The HEAP_SLOT_LINK_OWNER_STATES work slot: the six enemy battle units,
+/// BATTLE_UNIT_SIZE bytes each, that UnitGet returns for unit ids 128 to 133
+/// during a battle.
 extern u8 *gBattleOwnerStates;
 #endif
 #ifndef OWN_gRandomSeed
@@ -203,7 +207,7 @@ extern u8 *gBattleOwnerStates;
 extern u32 gRandomSeed;
 #endif
 #ifndef OWN_gTransitionWork
-/// Work slot 44 (HEAP_SLOT_BATTLE_BACKGROUND) as the camera's turn work:
+/// The HEAP_SLOT_BATTLE_BACKGROUND work slot as the camera's turn work:
 /// staging.c, auto_battle.c and round.c set its yaw for each action, and
 /// background.c reads the same slot as struct BattleBackgroundView.
 extern struct BattlePresentationTransition *gTransitionWork;
@@ -217,7 +221,7 @@ extern const u8 gObjectMotion_LinkedActionScript[];
 extern const s16 gParty_PairResolveRules[];
 extern const s32 gBattleFx_RisingPulseScript[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
-extern u16 gBattleUnit_WeaponAnimsClass0[];
+extern u16 gBattleUnit_WeaponAnimsIsaac[];
 /// The 20 enemy classes whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
 extern u16 gBattleFormation_LevelMatchedEnemies[];

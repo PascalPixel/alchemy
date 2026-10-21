@@ -226,7 +226,7 @@ struct BattleUnit {
   /// Power and resistance before equipment and stages: an enemy's from its
   /// element preset, a character's from its element levels
   /// (Unit_CalcBaseElements).
-  struct BattleElementStats baseElement[4];
+  struct BattleElementStats baseElement[NUM_ELEMENTS];
   s16 maxHp; ///< 0 to 1999 for a character, 9999 for an enemy (UnitCalc)
   s16 maxPp; ///< 0 to 1999 for a character, 9999 for an enemy (UnitCalc)
   s16 hp;    ///< current HP, 0 when downed
@@ -246,7 +246,7 @@ struct BattleUnit {
   u8 unk046[2]; ///< Not named by any TBS code.
   /// Power and resistance in each element, 0 to 200, after equipment, a
   /// summon's boost and Resistance stages (UnitCalc).
-  struct BattleElementStats element[4];
+  struct BattleElementStats element[NUM_ELEMENTS];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's (Unit_RefreshPsynergy). An empty entry is 0.
   struct OwnerActionSlot actionSlots[32];
@@ -255,12 +255,14 @@ struct BattleUnit {
   u16 inventory[15];
   u8 unk0f6[2]; ///< Not named by any TBS code.
   /// The Djinn held, one bit per Djinni (by its index) in each element's word.
-  u32 djinnAvailable[4];
+  u32 djinnAvailable[NUM_ELEMENTS];
   /// The Djinn set, one bit per Djinni; only these add their stat bonuses.
-  u32 djinnActive[4];
-  u8 djinnOwnedCounts[4];  ///< the Djinn held in each element, at most 10
-  u8 djinnActiveCounts[4]; ///< the Djinn set in each element; the class's
-                           ///< element levels are read from these
+  u32 djinnActive[NUM_ELEMENTS];
+  u8 djinnOwnedCounts[NUM_ELEMENTS];  ///< the Djinn held in each element, at
+                                      ///< most 10
+  u8 djinnActiveCounts[NUM_ELEMENTS]; ///< the Djinn set in each element; the
+                                      ///< class's element levels are read from
+                                      ///< these
   /// Copied from the enemy's definition, where it is 0 in every row. During
   /// a battle the enemy's action choice keeps its place in its action list
   /// here (BattleCommand_SelectAutomatic).
@@ -283,8 +285,8 @@ struct BattleUnit {
   /// rises to that many (BattleUnit_ProcessTurnEnd), and n adds
   /// (n * n + n) * 5 power (UnitCalc). Cleared at the battle's start, on
   /// going down and by Break.
-  s8 elementLevels[4];
-  /// The curse. bits: 3 item effect 25 (UnitCalc clears it again with bit 0)
+  s8 elementLevels[NUM_ELEMENTS];
+  /// The curse. bits: 3 ITEM_EFFECT_25 (UnitCalc clears it again with bit 0)
   /// | 2 keeps bit 0 | 1 cursed item equipped | 0 bound. UnitCalc rebuilds
   /// bits 1 and 0 from the equipment. A bound unit loses one action in four,
   /// except Defend (BattleCommand_BuildPlan); any bit set shows the curse in

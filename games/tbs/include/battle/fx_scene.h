@@ -29,7 +29,7 @@ struct ArcEffectObject {
 
 /// The work of a Psynergy effect scene: its caster and target, where it takes
 /// place, the map state it restores and its 24 effect slots.
-/// It is heap slot 56 (HEAP_SLOT_FX, read as gEffectWork), cleared when
+/// It is the HEAP_SLOT_FX work slot, read as gEffectWork, cleared when
 /// allocated: BattleFx_LoadActionEffectResources takes it for a Psynergy or
 /// item use, and BattleFx_InitializeSlots for the Djinn joining effects and
 /// Altmiller Cave's scene. The effect's end releases it.

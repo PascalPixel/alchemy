@@ -17,14 +17,6 @@
 #define ENCOUNTER_PARTY_LOST -1
 #define ENCOUNTER_FLED 999
 
-// BattleWork.defeatState: whether the last enemy fell alone, or with others
-// before it; 3 when a party member's action ended the battle with a single
-// defeat. The messages are "has been downed!" and "'s party goes down!",
-// MsgDowned plus the state; state 3 shows neither.
-#define DEFEAT_ONE 0
-#define DEFEAT_SEVERAL 1
-#define DEFEAT_BY_PARTY_MEMBER 3
-
 /// The six enemy units, BATTLE_UNIT_SIZE bytes each: the
 /// HEAP_SLOT_LINK_OWNER_STATES work slot, gBattleOwnerStates, which UnitGet
 /// reads for unit ids 128 to 133 while it is allocated (game/game/units.c). The
@@ -47,9 +39,9 @@
 /// DebugBattle_RunMenu. Allocates the battle's work slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the display and
 /// others), sets FLAG_IN_BATTLE, and on its way out resets the party's
-/// battle state, sets gGameState.battleStart back to 0 and releases heap
-/// block 10. A broken link also sets flag FLAG_PLACE_TEMP_E8, which the link
-/// lobby reads (LinkLobby_RunRoundResult).
+/// battle state, sets gGameState.battleStart back to BATTLE_START_NORMAL and
+/// releases heap block 10. A broken link also sets flag FLAG_PLACE_TEMP_E8,
+/// which the link lobby reads (LinkLobby_RunRoundResult).
 s32 Battle_RunEncounter(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
@@ -135,7 +127,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   // agree; the opponent's party size is the enemy count.
   if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
     battle->twoSided = 1;
-    Battle_SetStart(4);
+    Battle_SetStart(BATTLE_START_LINK);
   }
   if (battle->twoSided != 0) {
     /* FAKEMATCH(one-pass): the seed's store in a one-pass block, which keeps
@@ -196,9 +188,9 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattlePresentation_InitializeWorkAndResetState();
   BattleBackground_Load(BATTLE_BACKGROUND_FLAT, battle->background, 0);
   // The camera on the centre at 190 percent, until the opening sets its own
-  // zoom (BattlePres_RunEntryTransition). With the background in mode 1,
-  // BattleCamera_SetRange builds no plane page; it sets at most BG1's
-  // horizontal scroll from the camera's yaw.
+  // zoom (BattlePres_RunEntryTransition). With the background
+  // BATTLE_BACKGROUND_FLAT, BattleCamera_SetRange builds no plane page; it sets
+  // at most BG1's horizontal scroll from the camera's yaw.
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
   BattlePres_SetupTransitionScene(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
@@ -213,7 +205,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   battle->encounterMode = BATTLE_ENCOUNTER_NORMAL;
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0) {
     battle->encounterMode = BATTLE_ENCOUNTER_PARTY_FIRST;
-  } else if (gGameState.battleStart == 0) {
+  } else if (gGameState.battleStart == BATTLE_START_NORMAL) {
     if ((BattleRandomFar() & 15) == 0)
       battle->encounterMode = BATTLE_ENCOUNTER_PARTY_FIRST;
     else if ((BattleRandomFar() & 31) == 0)
@@ -385,7 +377,7 @@ finished:
   BattleParty_ResetActiveRuntimeFields();
   Battle_ReservedNoOpF674();
   DjinnRecovery_Tick();
-  Battle_SetStart(0);
+  Battle_SetStart(BATTLE_START_NORMAL);
   Scheduler_RemoveCallback(BattleActor_UpdateSpritePriorities);
   Runtime_ReleaseHeapBlock10();
   return result;

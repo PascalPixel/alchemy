@@ -246,10 +246,10 @@ void DebugBattle_ViewMessages(void) {
 #define DJINN_TUTORIAL_ENCOUNTER 28
 
 /// Debug: the battle test menu, which never returns. Without Down held it
-/// fights encounter 257 again and again with auto battle on. Holding Down at
-/// the start opens the chooser: Right and Left step the encounter, Up and
-/// Down by ten, R and L pick the party preset, Start opens the message
-/// viewer and A fights; B marks every later battle with start mode 5.
+/// fights DEBUG_FIRST_ENCOUNTER again and again with auto battle on. Holding
+/// Down at the start opens the chooser: Right and Left step the encounter, Up
+/// and Down by ten, R and L pick the party preset, Start opens the message
+/// viewer and A fights; B marks every later battle BATTLE_START_DEBUG.
 /// Holding Down when A is pressed makes it a link battle. Exported as
 /// DebugBattle_RunMenuFar; nothing in the source calls it. Sets
 /// FLAG_DEBUG_BATTLE and, as chosen, FLAG_AUTO_BATTLE, FLAG_LINK_BATTLE and
@@ -296,12 +296,9 @@ restart:
           DebugBattle_ViewMessages();
         if (gKeysRepeat & KEY_SELECT)
           Battle_ReservedNoOp2A08();
-        // No code tests start mode 5 by value: like any nonzero mode it only
-        // stops the opening's first-strike and surprise rolls
-        // (Battle_RunEncounter), and it still lets the party run.
         if ((gKeysRepeat & KEY_B) || startModeSet) {
           startModeSet = 1;
-          Battle_SetStart(5);
+          Battle_SetStart(BATTLE_START_DEBUG);
         }
         if (preset != loadedPreset) {
           GameState_InitDefaultsFar();

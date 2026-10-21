@@ -388,8 +388,8 @@ s32 Battle_ProcessRoundEnd(void) {
     // child takes the enemies first, so both consoles go through the
     // parent's units first and show the same messages in the same order.
     if (battle->twoSided != 0 && battle->linkSide != 0) {
-      order.group[0] = 2;
-      order.group[1] = 1;
+      order.group[0] = BATTLE_SIDE_ENEMIES;
+      order.group[1] = BATTLE_SIDE_PARTY;
     }
     groupList = order.group;
     for (group = 0; group <= 1; group++) {

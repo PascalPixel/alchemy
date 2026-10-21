@@ -7,20 +7,20 @@ gBattleParty_CenterOrderOffsets:
 	.byte 0, -1, 1, -2, 2, -3, 3, -4, 4
 	.balign 4
 @ Weapon motions by class.
-	.global gBattleUnit_WeaponAnimsClass0
-gBattleUnit_WeaponAnimsClass0:
+	.global gBattleUnit_WeaponAnimsIsaac
+gBattleUnit_WeaponAnimsIsaac:
 	.2byte 0x140, 0x14e, 0x146, 0x147, 0x140, 0x140, 0x140
-	.global gBattleUnit_WeaponAnimsClass1
-gBattleUnit_WeaponAnimsClass1:
+	.global gBattleUnit_WeaponAnimsGaret
+gBattleUnit_WeaponAnimsGaret:
 	.2byte 0x149, 0x149, 0x148, 0x141, 0x141, 0x141, 0x141
-	.global gBattleUnit_WeaponAnimsClass2
-gBattleUnit_WeaponAnimsClass2:
+	.global gBattleUnit_WeaponAnimsIvan
+gBattleUnit_WeaponAnimsIvan:
 	.2byte 0x14b, 0x14b, 0x14b, 0x14b, 0x142, 0x14a, 0x142
-	.global gBattleUnit_WeaponAnimsClass3
-gBattleUnit_WeaponAnimsClass3:
+	.global gBattleUnit_WeaponAnimsMia
+gBattleUnit_WeaponAnimsMia:
 	.2byte 0x143, 0x143, 0x14d, 0x14d, 0x14c, 0x143, 0x143
-	.global gBattleUnit_WeaponAnimsClass5
-gBattleUnit_WeaponAnimsClass5:
+	.global gBattleUnit_WeaponAnimsJenna
+gBattleUnit_WeaponAnimsJenna:
 	.2byte 0x150, 0x150, 0x145, 0x145, 0x145, 0x145, 0x145
 	.global gBattlePlacement_StepPairs
 gBattlePlacement_StepPairs:

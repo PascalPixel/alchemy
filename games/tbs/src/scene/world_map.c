@@ -170,52 +170,107 @@ enum { CONTACT_LAST_ACTOR = 65, CONTACT_TRIGGER_BASE = 100 };
 enum WorldMapActor {
   /// The Venus Djinni: Flint, bobbing on the map until the party meets him,
   /// and later Vine.
+  /// ★ Named from the game: "The Venus Djinni" (MsgVenusDjinnJoined)
   ACTOR_VENUS_DJINNI = ACTOR_FIRST_PLACED,
-  ACTOR_MARS_DJINNI,    ///< Corona
-  ACTOR_MERCURY_DJINNI, ///< Hail
+  /// Corona.
+  /// ★ Named from the game: "The Mars Djinni" (MsgVenusDjinnJoined)
+  ACTOR_MARS_DJINNI,
+  /// Hail.
+  /// ★ Named from the game: "The Mercury Djinni" (MsgVenusDjinnJoined)
+  ACTOR_MERCURY_DJINNI,
+  /// Vale, whose exit leads to the town gate (SceneId_ValeGate).
+  /// ★ Named from the game: "Why's everyone hanging around the town gate?"
+  /// (MsgValeWhysEveryoneHanging)
   ACTOR_PLACE_VALE_GATE,
+  /// ★ Named from its area name: Vault
   ACTOR_PLACE_VAULT,
+  /// ★ Named from its area name: Altin
   ACTOR_PLACE_ALTIN,
+  /// ★ Named from its area name: Suhalla
   ACTOR_PLACE_SUHALLA,
+  /// ★ Named from its area name: Lunpa
   ACTOR_PLACE_LUNPA,
+  /// ★ Named from its area name: Kalay Docks
   ACTOR_PLACE_KALAY_DOCKS,
+  /// ★ Named from its area name: Tolbi Docks
   ACTOR_PLACE_TOLBI_DOCKS,
+  /// ★ Named from its area name: Imil
   ACTOR_PLACE_IMIL,
+  /// ★ Named from its area name: Kolima
   ACTOR_PLACE_KOLIMA,
+  /// ★ Named from its area name: Xian
   ACTOR_PLACE_XIAN,
+  /// ★ Named from its area name: Lama Temple
   ACTOR_PLACE_LAMA_TEMPLE,
+  /// ★ Named from its area name: Fuchin Temple
   ACTOR_PLACE_FUCHIN_TEMPLE,
+  /// ★ Named from its area name: Bilibin
   ACTOR_PLACE_BILIBIN,
+  /// ★ Named from its area name: Kalay
   ACTOR_PLACE_KALAY,
+  /// ★ Named from its area name: Lalivero
   ACTOR_PLACE_LALIVERO,
+  /// ★ Named from its area name: Tolbi
   ACTOR_PLACE_TOLBI,
+  /// ★ Named from its area name: Mercury Lighthouse
   ACTOR_PLACE_MERCURY_LIGHTHOUSE,
   /// After two rows that no event answers.
+  /// ★ Named from its area name: Bilibin Barricade
   ACTOR_PLACE_BILIBIN_BARRICADE = ACTOR_PLACE_MERCURY_LIGHTHOUSE + 3,
+  /// ★ Named from its area name: Road to Babi Lighthouse
   ACTOR_PLACE_ROAD_TO_BABI_LIGHTHOUSE,
+  /// ★ Named from its area name: Goma Cave Entrance
   ACTOR_PLACE_GOMA_CAVE_ENTRANCE,
-  ACTOR_PLACE_GOMA_CAVE_WATERWAY,
+  /// Goma Cave's way out, where a wooden bridge crosses the river
+  /// (SceneId_GomaCaveBridge).
+  /// ★ Named from its area name: Goma Cave
+  ACTOR_PLACE_GOMA_CAVE_BRIDGE,
+  /// ★ Named from its area name: Altmiller Cave
   ACTOR_PLACE_ALTMILLER_CAVE,
+  /// ★ Named from its area name: Gondowan Cave
   ACTOR_PLACE_GONDOWAN_CAVE_NORTH,
+  /// ★ Named from its area name: Gondowan Cave
   ACTOR_PLACE_GONDOWAN_CAVE_SOUTH,
+  /// The way into Mogall Forest where the Killer Ape waits
+  /// (SceneId_MogallForestKillerApe).
+  /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
   ACTOR_PLACE_MOGALL_FOREST_KILLER_APE,
+  /// ★ Named from its area name: Gateway Cave
   ACTOR_PLACE_GATEWAY_CAVE,
+  /// ★ Named from its area name: Bilibin Cave Entrance
   ACTOR_PLACE_BILIBIN_CAVE_ENTRANCE,
+  /// ★ Named from its area name: Bilibin Cave
   ACTOR_PLACE_BILIBIN_CAVE,
+  /// ★ Named from its area name: West Lunpa Cave
   ACTOR_PLACE_WEST_LUNPA_CAVE,
+  /// ★ Named from its area name: Altin Peak
   ACTOR_PLACE_ALTIN_PEAK,
+  /// ★ Named from its area name: Lamakan Desert
   ACTOR_PLACE_LAMAKAN_DESERT_CAVE,
+  /// ★ Named from its area name: Kolima Forest
   ACTOR_PLACE_KOLIMA_FOREST,
+  /// The way into Mogall Forest by its broken sign (SceneId_MogallForestSign).
+  /// ★ Named from the game: "The broken sign reads:"
+  /// (MsgMogallForestBrokenSign)
   ACTOR_PLACE_MOGALL_FOREST_SIGN,
+  /// ★ Named from its area name: Kalay Tunnel Entrance
   ACTOR_PLACE_KALAY_TUNNEL_ENTRANCE,
   /// After three rows that no code refers to.
+  /// ★ Named from its area name: Kolima Bridge
   ACTOR_PLACE_KOLIMA_BRIDGE = ACTOR_PLACE_KALAY_TUNNEL_ENTRANCE + 4,
+  /// ★ Named from its area name: Gondowan Passage
   ACTOR_PLACE_GONDOWAN_PASSAGE,
   /// The Tolbi-bound Ship at anchor off the island, after one row that no
   /// code refers to.
+  /// ★ Named from its area name: Tolbi-bound Ship
   ACTOR_TOLBI_SHIP = ACTOR_PLACE_GONDOWAN_PASSAGE + 2,
-  ACTOR_STORM, ///< the storm that lifts the party, as the Suhalla Desert's do
-  ACTOR_IODEM  ///< placed by the coast once he has handed over the Black Orb
+  /// The storm that lifts the party, as the Suhalla Desert's do.
+  /// ★ Named from what the player sees: a white whirlwind spinning on the map,
+  /// drawn as the Suhalla Desert's sandstorms (its render)
+  ACTOR_STORM,
+  /// Placed by the coast once he has handed over the Black Orb.
+  /// ★ Named from the game: "Iodem, Iodem!" (MsgTolbiIodemIodem)
+  ACTOR_IODEM
 };
 
 /// The trigger raised by touching a place's actor.
@@ -232,6 +287,8 @@ enum WorldMapCaravanActor {
   /// been destroyed..."
   ACTOR_CARAVAN_MAN,
   /// The caravan's four wagons, in the sprite of Bunza's wagon.
+  /// ★ Named from what the player sees: four covered wagons, each drawn by a
+  /// horse (its render)
   ACTOR_CARAVAN_FIRST_WAGON,
   /// What the falling rock is held above as it drops
   /// (WorldMap_UpdateTransferredActorLanding); it grows from a tenth of its
@@ -249,11 +306,17 @@ enum WorldMapCaravanActor {
 /// WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI and
 /// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS), shown on its way across the Karagol
 /// Sea.
-enum { ACTOR_CROSSING_SHIP = ACTOR_FIRST_PLACED };
+enum {
+  /// ★ Named from its area name: Tolbi-bound Ship
+  ACTOR_CROSSING_SHIP = ACTOR_FIRST_PLACED
+};
 
 /// Bunza's wagon at Kalay (gWorldMapPlacementsFromKalayTunnelEntranceSouth),
 /// after Kalay's and the Kalay Tunnel Entrance's place actors.
-enum { ACTOR_KALAY_WAGON = ACTOR_FIRST_PLACED + 2 };
+enum {
+  /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
+  ACTOR_KALAY_WAGON = ACTOR_FIRST_PLACED + 2
+};
 
 /// The one actor of gWorldMapPlacementsFromClear, before the ending. It sails
 /// east trailing a wake (WorldMap_SpawnIslandWake) until the map leads into
@@ -274,6 +337,7 @@ enum WorldMapEndingActor {
   /// Felix, in his sprite as at Mercury Lighthouse (0x23,
   /// mercury_lighthouse_aerie.c), shown with Sheba as Jenna and Kraden call
   /// their names.
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX
 };
 
@@ -826,8 +890,13 @@ s32 WorldMap_Initialize(void) {
 /// Bunza's wagon, then, after Lunpa's and West Lunpa Cave's place actors,
 /// Bunza and Hammet.
 enum {
+  /// Bunza's wagon.
+  /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
   ACTOR_WAGON = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Then what should we do, Bunza?" (MsgLunpaBunza)
   ACTOR_BUNZA = ACTOR_FIRST_PLACED + 3,
+  /// ★ Named from the game: "Master Hammet!"
+  /// (MsgWorldMapWeCantStayAnotherMinute)
   ACTOR_HAMMET
 };
 
@@ -3540,7 +3609,7 @@ struct SceneEvent gWorldMapEvents[] = {
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_VALE_GATE), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_GATE },
     { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterVault) },
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
-    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GOMA_CAVE_WATERWAY), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GOMA_CAVE_BRIDGE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_BILIBIN), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN },
     { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_BILIBIN_BARRICADE), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterBilibinBarricade) },
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_KOLIMA), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_WEST },

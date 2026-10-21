@@ -13,7 +13,8 @@ typedef s32 (*GlyphRoutine)(struct UiWindow *, u32, u32, u32, const u8 *);
 /// Draws a character of a window's text with its top-left corner at pixel
 /// (x, y) of the window's interior and returns how far the text advances. A
 /// text canvas window draws it into the canvas; other windows show it as a
-/// sprite carried by the window. mode 1 shows the next-page arrow instead.
+/// sprite carried by the window. GLYPH_DRAW_PAGE_ARROW shows the next-page
+/// arrow instead.
 /// A sprite glyph takes a render output and its four tiles from the glyph
 /// sheet (UiRenderWork.glyphTiles, four for each output); with no output free
 /// nothing is drawn and it returns 0. The sprite stays until its window is
@@ -75,7 +76,8 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     width = UI_SPRITE_SPACE_WIDTH;
   } else {
     // Other windows show each glyph as a 16x16 sprite, animated by the text
-    // style (UiRenderWork.outline 2 to 5) or, in mode 1, as the page arrow.
+    // style (the motions of enum TextStyle) or, with GLYPH_DRAW_PAGE_ARROW, as
+    // the page arrow.
     u32 tiles[32];
     struct RenderOutput *output;
     struct CursorSprite *sprite;
@@ -88,7 +90,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     index = (output - work->outputs) * 4;
     output->active = UI_SPRITE_STILL;
     output->kind = 0;
-    if (mode == 1) {
+    if (mode == GLYPH_DRAW_PAGE_ARROW) {
       width = 1;
       output->active = UI_SPRITE_PAGE_ARROW;
     } else {
@@ -201,9 +203,10 @@ STATIC_ASSERT(offsetof(struct SpriteOutput, attr) ==
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 
 /// Puts a character into a window's tilemap as a tile at tile (x, y) of its
-/// interior. mode 1 shows the next-page arrow sprite in the window's corner
-/// instead. The code is the tile's number in palette 15, so only codes up to
-/// 0xff are drawn; a place beyond the bottom or right frame is ignored.
+/// interior. GLYPH_DRAW_PAGE_ARROW shows the next-page arrow sprite in the
+/// window's corner instead. The code is the tile's number in palette 15, so
+/// only codes up to 0xff are drawn; a place beyond the bottom or right frame is
+/// ignored.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
   void *work = gWindowWork[0];
   u8 *base = work;
@@ -218,7 +221,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     return;
   if (x > (win->width - 2))
     return;
-  if (mode == 1) {
+  if (mode == GLYPH_DRAW_PAGE_ARROW) {
     s32 column;
     work = RenderOutput_AcquireFree();
     if (work == NULL)
@@ -284,7 +287,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     return;
   if (x > (win->width - 2))
     return;
-  if (mode == 1) {
+  if (mode == GLYPH_DRAW_PAGE_ARROW) {
     s32 column;
     u16 left;
     out = (struct SpriteOutput *)RenderOutput_AcquireFree();

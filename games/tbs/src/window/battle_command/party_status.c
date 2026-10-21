@@ -9,7 +9,7 @@
 // the summon lists do.
 #ifdef UBFIX
 #define PARTY_STATUS_PUT_DIGIT(window, glyph, x, y)                            \
-  UiWindow_PutGlyph(window, glyph, x, y, 0)
+  UiWindow_PutGlyph(window, glyph, x, y, GLYPH_DRAW_CHARACTER)
 #else
 #define PARTY_STATUS_PUT_DIGIT(window, glyph, x, y)                            \
   UiWindow_PutGlyph(window, glyph, x, y)

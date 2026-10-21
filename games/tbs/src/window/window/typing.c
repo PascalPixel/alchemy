@@ -180,7 +180,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         if (UiText_CheckTextDismissed(channel) == 0) {
           // Until the button: show the next-page arrow in the bottom-right
           // corner. Outside Japanese, a window with no size (as
-          // UiText_ShowCenteredMessage opens with mode 0) shows none.
+          // UiText_ShowCenteredMessage opens with CENTERED_MESSAGE_BARE) shows
+          // none.
           struct UiWindow *pane = channel->work;
 
 #if TBS_PATCH_1
@@ -192,7 +193,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
             break;
 #endif
           UiText_DrawGlyph(pane, 1, pane->width * 4 - 8, pane->height * 8 - 16,
-                           1);
+                           GLYPH_DRAW_PAGE_ARROW);
           work->pageArrowShown = 1;
           break;
         }
@@ -384,7 +385,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
       }
 #endif
 #endif
-      glyphWidth = UiText_DrawGlyph(channel->work, code, pixelX, pixelY, 0);
+      glyphWidth = UiText_DrawGlyph(channel->work, code, pixelX, pixelY,
+                                    GLYPH_DRAW_CHARACTER);
       channel->glyphDelay = gUiText_SpeedDelays[gGameState.messageSpeed];
       if (glyphWidth != 0) {
         // The speaker's voice blip (speakerVoiceSound, the first of four

@@ -177,6 +177,20 @@ enum CommandIcon {
   COMMAND_ICON_BRONZE = 48
 };
 
+/// What UiText_DrawGlyph and UiWindow_PutGlyph draw.
+enum GlyphDrawMode {
+  GLYPH_DRAW_CHARACTER = 0, ///< the character given
+  GLYPH_DRAW_PAGE_ARROW = 1 ///< the next-page arrow, in the window's corner
+};
+
+/// The window UiText_ShowCenteredMessage shows its message in.
+enum CenteredMessageMode {
+  /// No frame or size: it opens and closes at once.
+  CENTERED_MESSAGE_BARE = 0,
+  /// A zooming window sized to the message, waited for as it closes.
+  CENTERED_MESSAGE_WINDOW = 1
+};
+
 /// The system menu's entries, as Menu_RunWorkspaceSelectionLoop returns them
 /// (counted from Save your quest even when only Change settings shows).
 enum SystemMenuEntry {

@@ -72,7 +72,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     entries[writePosition] = 0x0a;
     writePosition = (writePosition + 1) & 0x1ff;
   }
-  // A name's leading article class (code 29, MSG_ARTICLE_CLASS, and its
+  // A name's leading article class (MSG_ARTICLE_CLASS and its
   // operand) is never copied.
 #if (LANGUAGE == LANGUAGE_SPANISH)
   if (count == 0 || count == 4) {

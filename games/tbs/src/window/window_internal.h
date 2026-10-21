@@ -189,6 +189,12 @@ enum {
 #define TEXT_CODE_VOICED (1 << TEXT_CODE_MARK_SHIFT)
 #define TEXT_CODE_SEMIVOICED (2 << TEXT_CODE_MARK_SHIFT)
 
+/// Which selection icon records SelectionScreen_FindFreeIcon looks in.
+enum SelectionIconGroup {
+  SELECTION_ICON_ROW = 0,   ///< the seven icons of the row
+  SELECTION_ICON_CHOSEN = 1 ///< the five icons already chosen; any nonzero
+};
+
 /// The style of sprite text (UiRenderWork.outline, set by TEXT_OUTLINE): its
 /// glyphs outlined, or a motion of the glyph sprites (UiText_DrawGlyph).
 enum TextStyle {

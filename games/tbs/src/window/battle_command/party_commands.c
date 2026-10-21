@@ -513,8 +513,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
             UiWindow_SetTilemapEntry(commandWindow, j + 20481,
                                      n * 2 + BATTLE_SUMMON_ELEMENT_COLUMN, 0,
                                      0);
-            UiWindow_PutGlyph(commandWindow, summon->djinnRequired[j] + 48,
-                              n * 2 + BATTLE_SUMMON_COST_COLUMN, 0, 0);
+            UiWindow_PutGlyph(commandWindow, summon->djinnRequired[j] + '0',
+                              n * 2 + BATTLE_SUMMON_COST_COLUMN, 0,
+                              GLYPH_DRAW_CHARACTER);
             n++;
           }
         }

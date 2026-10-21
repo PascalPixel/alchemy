@@ -117,7 +117,7 @@ void MenuSelection_BuildEntries(u32 unused) {
     s32 base = screen->bases[entryIndex];
     u32 kind = screen->kinds[entryIndex];
 
-    node = SelectionScreen_FindFreeIcon(0);
+    node = SelectionScreen_FindFreeIcon(SELECTION_ICON_ROW);
     if (node == 0)
       break;
     SelectionScreen_SetupIcon(kind, base, node, 0);
@@ -167,13 +167,13 @@ void MenuSelection_BuildEntries(u32 unused) {
 /// far-call table (system/far_call/WINDOW.S).
 void UiWork_ReservedNoOp(void) {}
 
-/// Returns a free selection icon record: one of the seven row icons (kind
-/// ICON_KIND_NONE) or of the five chosen icons (otherwise), or NULL.
+/// Returns a free selection icon record of `kind` (enum SelectionIconGroup),
+/// or NULL.
 struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind) {
   struct SelectionScreen *state = gResQueueWork;
   s32 i;
 
-  if (kind != ICON_KIND_NONE) {
+  if (kind != SELECTION_ICON_ROW) {
     for (i = 0; i != 5; i++) {
       if (state->records[i + 9].kind == ICON_KIND_NONE)
         return &state->records[i + 9];
@@ -981,7 +981,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     entryIndex = screen->top + SELECTION_ROWS;
     base = screen->bases[entryIndex];
     kind = screen->kinds[entryIndex];
-    node = SelectionScreen_FindFreeIcon(0);
+    node = SelectionScreen_FindFreeIcon(SELECTION_ICON_ROW);
     if (node == NULL)
       return;
     SelectionScreen_SetupIcon(kind, base, node, 0);
@@ -1022,7 +1022,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     entryIndex = screen->top;
     base = screen->bases[entryIndex];
     kind = screen->kinds[entryIndex];
-    node = SelectionScreen_FindFreeIcon(0);
+    node = SelectionScreen_FindFreeIcon(SELECTION_ICON_ROW);
     if (node == NULL)
       return;
     SelectionScreen_SetupIcon(kind, base, node, 0);
@@ -1065,7 +1065,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
 /// Loads the icon of an entry of kind mode (ICON_KIND_COMMAND,
 /// ICON_KIND_YES_NO, ICON_KIND_ITEM, ICON_KIND_ABILITY or
 /// ICON_KIND_TABLE_ENTRY) into a free sprite tile slot and returns it, or -1.
-/// Items show their count above one and their equipped and broken marks (0x1a).
+/// Items show their count above one and their equipped and broken marks.
 /// The caller frees the slot.
 s32 Resource_LoadByMode(s32 mode, s32 value) {
   s32 output;
@@ -1080,7 +1080,8 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
     result = Resource_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
-    UiIcon_CopyResourceToSlot(value, 0x1a, result);
+    UiIcon_CopyResourceToSlot(
+        value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN, result);
     break;
   case ICON_KIND_TABLE_ENTRY:
     result = Resource_FindFreeEntry();
@@ -1097,8 +1098,8 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
 
 /// Loads the icon of an entry of kind mode into sprite tile slot result (a free
 /// slot when -1) and returns the slot, or -1 when none was free. An item's icon
-/// has its count above one and its equipped, broken and artifact marks (0x3a),
-/// ICON_KIND_EQUIPMENT_ITEM the same without the broken mark (0x2a). For a
+/// has its count above one and its equipped, broken and artifact marks,
+/// ICON_KIND_EQUIPMENT_ITEM the same without the broken mark. For a
 /// command option is the frame drawn under the icon; for Psynergy, whether the
 /// icon frame is drawn.
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
@@ -1117,10 +1118,14 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     Ui_BuildPairedPatternsToSlot(value, option, &result, &output, 1);
     break;
   case ICON_KIND_ITEM:
-    UiIcon_CopyResourceToSlot(value, 58, result);
+    UiIcon_CopyResourceToSlot(value,
+                              ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED |
+                                  ICON_BROKEN | ICON_ARTIFACT,
+                              result);
     break;
   case ICON_KIND_EQUIPMENT_ITEM:
-    UiIcon_CopyResourceToSlot(value, 42, result);
+    UiIcon_CopyResourceToSlot(
+        value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_ARTIFACT, result);
     break;
   case ICON_KIND_ABILITY:
     Ability_LoadGlyph(value, option, &result, &output, 1);
@@ -1252,7 +1257,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   screen->unk39a = 0;
   screen->cursorIndex |= 0x80;
   WaitFrames(2);
-  other = SelectionScreen_FindFreeIcon(1);
+  other = SelectionScreen_FindFreeIcon(SELECTION_ICON_CHOSEN);
   other->kind = node->kind;
   other->message = node->message;
   other->base = node->base;

@@ -346,9 +346,8 @@ void UiWork_FinalizePendingCore(void) {
 }
 
 /// Shows a message centred across the screen and in its top 15 rows (yOffset
-/// tiles lower) and waits until it is typed out, then closes it. With mode 0
-/// the window has no frame or size and opens and closes at once; otherwise it
-/// is a zooming window sized to the message, and this waits for it to close.
+/// tiles lower) and waits until it is typed out, then closes it, in the window
+/// mode (enum CenteredMessageMode) gives.
 /// The speaker's voice blips are reset afterwards.
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
   struct UiRenderWork *render;
@@ -371,8 +370,9 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
                                  (u32 *)&height);
     x = (30 - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
-    // Flags 2 is UI_WINDOW_INSTANT; mode is 0 in the second branch.
-    if (mode != 0)
+    // Flags 2 is UI_WINDOW_INSTANT; mode is CENTERED_MESSAGE_BARE in the second
+    // branch.
+    if (mode != CENTERED_MESSAGE_BARE)
       messageWindow = UiWindow_Create(x, y, width, height, 0);
     else {
       messageWindow = UiWindow_Create(x, y, 0, 0, 2);
@@ -384,7 +384,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
     else {
       while (UiWork_IsComplete() == 0)
         WaitFrames(1);
-      if (mode != 0) {
+      if (mode != CENTERED_MESSAGE_BARE) {
         UiWork_Finalize(messageWindow, 0);
         while (UiWork_IsIdle(messageWindow) == 0)
           WaitFrames(1);
@@ -512,13 +512,14 @@ UNUSED s32 UiText_DecodeSymbol(struct TextReader *reader) {
   return code;
 }
 
-/// Marks both portrait slots free (999). Only the field's setup calls it.
+/// Marks both portrait slots free (UI_PALETTE_SLOT_FREE). Only the field's
+/// setup calls it.
 void UiWork_ClearPortraitSlots(void) {
   struct UiRenderWork *work = UI_WORK;
   s32 index = 0;
 
   do {
-    work->resourceIds[index] = 999;
+    work->resourceIds[index] = UI_PALETTE_SLOT_FREE;
     index++;
   } while (index != 2);
 }

@@ -93,9 +93,9 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 }
 
 // The layers ItemIcon_Compose draws over an item's icon. Callers combine them:
-// 0x1a (count above one, equipped, broken) in Resource_LoadByMode, 0x3a (those
-// and the artifact mark) and 0x2a (0x3a without the broken mark) for
-// Resource_LoadByModeIntoSlot's kinds 2 and 7.
+// the count above one, equipped and broken in Resource_LoadByMode; those and
+// the artifact mark for Resource_LoadByModeIntoSlot's ICON_KIND_ITEM, and all
+// but the broken mark for its ICON_KIND_EQUIPMENT_ITEM.
 #define ICON_FRAME 1
 #define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
 #define ICON_COUNT 4           ///< the count, always

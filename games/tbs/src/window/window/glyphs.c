@@ -382,7 +382,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
         text++;
       }
 #endif
-      x += UiText_DrawGlyph(window, code, x, y, 0);
+      x += UiText_DrawGlyph(window, code, x, y, GLYPH_DRAW_CHARACTER);
     }
   }
 }
@@ -470,7 +470,7 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
           break;
         }
       } else {
-        UiWindow_PutGlyph(window, code, x, y, 0);
+        UiWindow_PutGlyph(window, code, x, y, GLYPH_DRAW_CHARACTER);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;

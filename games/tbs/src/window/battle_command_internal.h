@@ -208,9 +208,9 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define BATTLE_ITEM_WINDOW_WIDTH 15
 #endif
 
-// The password level menu (Menu_SelectResourceLayout, mode 1): its heading
-// window ("Password Selection") and, outside the Japanese edition, the
-// explanation window under it.
+// The password level menu (Menu_SelectResourceLayout,
+// RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
+// and, outside the Japanese edition, the explanation window under it.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define RESOURCE_MODE0_WINDOW_X 7
@@ -234,9 +234,9 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define RESOURCE_MODE1_WINDOW_WIDTH 25
 #endif
 
-// The transfer method menu (Menu_SelectResourceLayout, mode 0): its heading
-// window ("Transfer Method"), the heading's x in it in pixels, and the help
-// window.
+// The transfer method menu (Menu_SelectResourceLayout,
+// RESOURCE_LAYOUT_TRANSFER_METHOD): its heading window ("Transfer Method"), the
+// heading's x in it in pixels, and the help window.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN)
 #define TRANSFER_METHOD_WINDOW_X 6
 #define TRANSFER_METHOD_WINDOW_WIDTH 18

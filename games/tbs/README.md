@@ -160,7 +160,7 @@ The last scene is the Lemurian ship,
 [lemurian_ship.c](src/scene/lemurian_ship.c), at the edge of Lalivero, where
 Babi's ship lies under the water.
 
-![Babi's ship as the scene first draws it, a pale shape lying under the water](https://alchemy.pascalpixel.com/places/scene-188/map-0.png)
+![Babi's ship as the scene first draws it, a pale shape lying under the water](https://alchemy.pascalpixel.com/places/lemurian-ship/map-0.png)
 
 The Black Orb raises it, the party talks over the journey and boards, the ship
 sails east as curtains close, and the scene leaves for the title by

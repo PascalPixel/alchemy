@@ -417,7 +417,7 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
           BATTLE_SIDE_ENEMIES, presentation.effect.actors);
       presentation.effect.actors[presentation.effect.count] =
           BATTLE_UNIT_LIST_END;
-      BattleActor_SpawnObjectsForList(presentation.effect.actors, 0);
+      BattleObj_SpawnObjectsForList(presentation.effect.actors, 0);
       BattleFx_RunShatteringOpeningFar(&presentation.effect);
       BattlePresentation_SetupTransitionScene(0, 0, 0, 100);
       *timer = start;
@@ -435,7 +435,7 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     visibleCount =
         BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)visibleUnits);
     visibleUnitIds[visibleCount] = BATTLE_UNIT_LIST_END;
-    BattleActor_SpawnObjectsForList(visibleUnits, 0);
+    BattleObj_SpawnObjectsForList(visibleUnits, 0);
     visibleCount =
         BattleParty_ListActorIds(BATTLE_SIDE_PARTY, (u16 *)visibleUnits);
     for (index = 0; index != visibleCount; index++)

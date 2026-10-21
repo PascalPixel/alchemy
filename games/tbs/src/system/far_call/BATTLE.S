@@ -6,7 +6,7 @@
 FarCall_BattleTable:
 	export DebugBattle_RunMenuFar, DebugBattle_RunMenu
 	overlay_veneer BattlePresentation_RunMosaicFadeOut
-	export BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList
+	export BattleObj_SpawnObjectsForListFar, BattleObj_SpawnObjectsForList
 	overlay_veneer Graphics_FadeAlphaOut
 	overlay_veneer Graphics_FadeAlphaIn
 	export BattlePresentation_SetupTransitionSceneFar, BattlePresentation_SetupTransitionScene
@@ -39,7 +39,7 @@ FarCall_BattleTable:
 	export BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette
 	export DjinnRecovery_TickTwentyFar, DjinnRecovery_TickTwenty
 	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
-	export BattleActor_CommitPlacementFar, BattleObjPut
+	export BattleObjPutFar, BattleObjPut
 	overlay_veneer ReleaseBattleObjectRecords
 	export BattlePresentation_WaitForPromptAtFar, BattlePresentation_WaitForPromptAt
 	export BattleParty_CountStandbyDjinnFar, BattleParty_CountStandbyDjinn

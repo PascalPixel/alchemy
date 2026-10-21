@@ -1,5 +1,5 @@
 // Near miss, differ 6 of 290 (one row moved), from The Broken Seal's
-// BattleActor_SpawnObjectsForList (games/tbs/src/battle/battle/objects.c):
+// BattleObj_SpawnObjectsForList (games/tbs/src/battle/battle/objects.c):
 // this game releases the unlisted places only when asked (the third
 // argument), skips a fading actor, has seven two-part sprites, sets the
 // body's palette before its priority and has a sprite record with its scale

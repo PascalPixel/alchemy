@@ -103,7 +103,7 @@ for its `struct BattleObj`, `object` for that object's `struct MotionObject`,
 | --- | --- |
 | `Battle_` | the battle as a whole: `Battle_RunEncounter`, the round's end, the spoils |
 | `BattleParty_` | the unit lists: who's in the battle and who's still standing |
-| `BattleObj`, `BattleActor_` | the battle objects |
+| `BattleObj_`, `BattleObjGet`, `BattleObjMake`, `BattleObjPut` | the battle objects |
 | `BattleMotion_` | their movements |
 | `BattlePresentation_` | what the battle shows: the staging, the opening transition, the camera and the palettes |
 | `BattleCommand_` | choosing an action and planning it |

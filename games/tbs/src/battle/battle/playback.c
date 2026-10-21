@@ -180,7 +180,7 @@ void BattleEvent_Playback(void) {
             UiWork_ClearValueNameTablesFar();
             break;
           case BATTLE_EVENT_REMOVE_UNIT:
-            BattleActor_DestroyTemporaryObject(
+            BattleObj_DestroyTemporaryObject(
                 events->queue.operands[eventIndex]);
             break;
           // The hit's sound, then the damage pose and PLAY_HIT's flashes.
@@ -202,7 +202,7 @@ void BattleEvent_Playback(void) {
 
             events->actorId = events->queue.operands[eventIndex];
             BattleEnemy_RecordDefeat(events->actorId, events->flags);
-            BattleActor_ResetRuntimeFields(events->actorId);
+            BattleObj_ResetRuntimeFields(events->actorId);
             unit = UnitGetFar(events->actorId);
             for (recordIndex = 0;
                  (record = GetMotionRecord(
@@ -379,7 +379,7 @@ void BattleEvent_Playback(void) {
         return;
       }
       if (events->timer == 4) {
-        BattleActor_RemoveFromLists(events->actorId);
+        BattleObj_RemoveFromLists(events->actorId);
         events->timer++;
         return;
       }

@@ -4,7 +4,7 @@
 /// games/tbs/src/system/far_call/BATTLE.S.
 
 void DebugBattle_RunMenuFar(void);
-void BattleActor_SpawnObjectsForListFar(s16 *list, s32 refresh);
+void BattleObj_SpawnObjectsForListFar(s16 *list, s32 refresh);
 void BattlePresentation_SetupTransitionSceneFar(s32 x, s32 depth, s32 y,
                                                 s32 zoom);
 void BattlePresentation_SetupTransitionAtPairMidpointFar(s32 a, s32 b,
@@ -36,7 +36,7 @@ s32 BattleMotion_GetSlotPaletteFar(s32 id);
 s32 DjinnRecovery_TickTwentyFar(void);
 s32 DebugParty_LoadPresetFar(s32 preset);
 /// Far call to BattleObjPut.
-void BattleActor_CommitPlacementFar(void);
+void BattleObjPutFar(void);
 #ifdef UBFIX
 void BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 #else

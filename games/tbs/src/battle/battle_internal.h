@@ -176,7 +176,7 @@
 
 /// The two battle sprites drawn in two parts: the sprite after each is its
 /// second part, which SummonSlot_RegisterActorSprites loads into further
-/// enemy sprite slots and BattleActor_SpawnObjectsForList shows as the
+/// enemy sprite slots and BattleObj_SpawnObjectsForList shows as the
 /// object's second record.
 #define SPRITE_WITH_SECOND_PART_A                                              \
   476 ///< the Kraken's (ENEMY_KRAKEN, sprites.tsv)

@@ -109,7 +109,7 @@ s32 EnemyUpdate(void);
 #endif
 void BattleUnit_RefreshPlacement(void);
 s32 BattlePlacement_ContainsId(s16 *list, s32 place);
-void BattleActor_UpdateSpritePriorities(void);
+void BattleObj_UpdateSpritePriorities(void);
 #ifdef UBFIX
 void BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject);
 #else
@@ -126,7 +126,7 @@ void BattlePresentation_SetActorModeAndAction(s32 unitId);
 s32 BattlePresentation_SetActorModeAndAction(s32 unitId);
 #endif
 void ReleaseBattleObjectRecords(s32 unitId);
-void BattleActor_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses);
+void BattleObj_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses);
 struct BattleObj *BattleObjGet(s32 unitId);
 void ResetMotionRecordGroup(void *recordGroup);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
@@ -166,7 +166,7 @@ s32 BattleUnit_GetEffectHeight(s32 unitId);
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries);
 s32 BattlePresentation_RunAction(struct BattleActionRecord *action);
-s32 BattleObject_IsValidId(u32 unitId);
+s32 BattleObj_IsValidId(u32 unitId);
 s32 BattleEscape_PlayRun(struct BattleActionRecord *action);
 s32 BattlePresentation_ShowDefendMessage(
     const struct BattleActionRecord *action);
@@ -223,14 +223,14 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 palette);
 s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
 
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1);
-void BattleActor_RemoveFromLists(s32 unitId);
+void BattleObj_RemoveFromLists(s32 unitId);
 void BattleMotion_ShowDowned(s32 unitId);
 s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit);
 s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action);
 #ifdef UBFIX
-void BattleActor_ResetRuntimeFields(s32 unitId);
+void BattleObj_ResetRuntimeFields(s32 unitId);
 #else
-s32 BattleActor_ResetRuntimeFields(s32 unitId);
+s32 BattleObj_ResetRuntimeFields(s32 unitId);
 #endif
 #ifdef UBFIX
 void BattlePresentation_WaitForAdvance(void);
@@ -244,9 +244,9 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y);
 #endif
 void BattleEv_MarkDisplay(void);
 #ifdef UBFIX
-void BattleActor_DestroyTemporaryObject(s32 unitId);
+void BattleObj_DestroyTemporaryObject(s32 unitId);
 #else
-s32 BattleActor_DestroyTemporaryObject(s32 unitId);
+s32 BattleObj_DestroyTemporaryObject(s32 unitId);
 #endif
 void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand);
 #ifdef UBFIX

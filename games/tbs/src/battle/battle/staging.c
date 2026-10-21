@@ -236,7 +236,7 @@ s32 BattlePresentation_RunEscape(struct BattlePlan *plan) {
     event[1] = BATTLE_UNIT_LIST_END;
     BattleMotion_SetupEscapeObject(event[0]);
     WaitFrames(8);
-    BattleActor_RemoveFromLists(plan->actorId);
+    BattleObj_RemoveFromLists(plan->actorId);
     BattleObj_MarkForRelease(plan->actorId);
   } else {
     UiText_ShowMessageAndWaitCoreFar(MsgNoEscape);
@@ -359,7 +359,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
       }
     }
     units[kept] = BATTLE_UNIT_LIST_END;
-    BattleActor_SpawnObjectsForList(units, 0);
+    BattleObj_SpawnObjectsForList(units, 0);
     for (n = 0; n < plan->targetCount; n++)
       units[n] = plan->targetIds[n];
     units[n] = BATTLE_UNIT_LIST_END;
@@ -576,7 +576,7 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
       criticalPair[0] = work.effect.actor;
       criticalPair[1] = work.effect.firstTarget;
       criticalPair[2] = BATTLE_UNIT_LIST_END;
-      BattleActor_SpawnObjectsForList(criticalPair, 0);
+      BattleObj_SpawnObjectsForList(criticalPair, 0);
     }
 
     // The effect starts 8 frames before the run up ends, at least one frame
@@ -1027,12 +1027,12 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
 /// Called when a unit leaves the battle: by BattlePresentation_RunEscape (an
 /// enemy that gets away), BattleMotion_ShowDowned and PLAY_FELLED in
 /// BattleEvent_Playback (a fallen enemy), and
-/// BattleActor_DestroyTemporaryObject. Sets the unit's side to
+/// BattleObj_DestroyTemporaryObject. Sets the unit's side to
 /// BATTLE_UNIT_ABSENT and its list entry to BATTLE_UNIT_REMOVED, releases its
 /// name letter (BattleEnemy_ReleaseNameLetter), and ends its actions this
 /// round (unitId BATTLE_UNIT_LIST_END). A unit in neither list only has its
 /// side changed.
-void BattleActor_RemoveFromLists(s32 unitId) {
+void BattleObj_RemoveFromLists(s32 unitId) {
   struct BattleWork *battle;
   s32 partyIndex;
   u32 enemyOrActionIndex;
@@ -1114,7 +1114,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
       recordCount++;
     }
     WaitFrames(4);
-    BattleActor_RemoveFromLists(unitId);
+    BattleObj_RemoveFromLists(unitId);
     // The whole dissolve, over 32 frames.
     Map_RenderAllAnimatedTileFramesFar((u8 **)records, recordCount);
     BattleObj_MarkForRelease(unitId);

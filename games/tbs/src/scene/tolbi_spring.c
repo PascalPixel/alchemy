@@ -1382,7 +1382,8 @@ const u32 gTolbiSpring_Exits[] = {
     SCENE_EXIT_IF(TOLBI_SPRING_2_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING_2,
                   0xffffffff),
     SCENE_EXITS(TolbiSpring1),
-    SCENE_EXIT_IF(1, Tolbi, TOLBI_FROM_TOLBI_SPRING_1, 0xffffffff),
+    SCENE_EXIT_IF(TOLBI_SPRING_1_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING_1,
+                  0xffffffff),
     SCENE_EXIT_IF(2, Tolbi, TOLBI_FROM_HOUSE_NORTHEAST, 0xffffffff),
     SCENE_EXITS_END,
 };

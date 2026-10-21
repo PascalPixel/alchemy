@@ -917,8 +917,10 @@ u32 gLaliveroExits[] = {
     SCENE_EXIT(9, LaliveroInteriors1, 9),
     SCENE_EXIT(10, LaliveroInteriors1, 2),
     SCENE_EXIT(11, LaliveroInteriors1, 10),
-    SCENE_EXIT(20, WorldMap, WORLD_MAP_FROM_LALIVERO_EAST),
-    SCENE_EXIT(21, WorldMap, WORLD_MAP_FROM_LALIVERO_WEST),
+    SCENE_EXIT(LALIVERO_TO_WORLD_MAP_EAST, WorldMap,
+               WORLD_MAP_FROM_LALIVERO_EAST),
+    SCENE_EXIT(LALIVERO_TO_WORLD_MAP_WEST, WorldMap,
+               WORLD_MAP_FROM_LALIVERO_WEST),
     SCENE_EXITS_END,
 };
 

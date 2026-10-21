@@ -491,7 +491,7 @@ struct SceneEntrance gValeEruption_Entrances[] = {
 
 u32 gValeEruption_Exits[] = {
     SCENE_EXITS(ValeEruption),
-    SCENE_EXIT(VALE_ERUPTION_TO_SANCTUM, Sanctum, 20),
+    SCENE_EXIT(VALE_ERUPTION_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE_ERUPTION),
     SCENE_EXITS_END,
 };
 

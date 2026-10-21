@@ -465,8 +465,9 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST opens into
-/// the house of the man whose precious stone a cat ate.
+/// The door of the gem owner's house opens and the party walks in.
+/// It's VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST, into the house of
+/// the man whose precious stone a cat ate.
 static void Event_EnterGemOwnersHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_GemOwnersHouseDoorCells, 56, 19);
@@ -474,8 +475,9 @@ static void Event_EnterGemOwnersHouse(void) {
                         VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST);
 }
 
-/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTH opens into the
-/// house of the child who doubts the thieves were from Lunpa.
+/// The door of a child's home opens and the party walks in.
+/// It's VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTH, into the house of the
+/// child who doubts the thieves were from Lunpa.
 static void Event_EnterChildsHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_ChildsHouseDoorCells, 50, 18);
@@ -492,8 +494,9 @@ static void Event_EnterInn(void) {
                         VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHWEST);
 }
 
-/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_EAST opens into the
-/// item shop, where the couple who talk of Colosso also stand. The leader is
+/// The item shop's door opens and the party walks in.
+/// It's VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_EAST, into the item shop,
+/// where the couple who talk of Colosso also stand. The leader is
 /// drawn at sprite priority 3 as he walks in, as at the weapon and armor shop
 /// and the jail, and the collision of the doorway, a column of three cells at
 /// (23, 12), is replaced so he can pass.
@@ -510,8 +513,9 @@ static void Event_EnterItemShop(void) {
                         VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_EAST);
 }
 
-/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTH opens into the
-/// weapon and armor shop, drawn like the item shop's.
+/// The weapon and armor shop's door opens and the party walks in.
+/// It's VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTH, drawn like the item
+/// shop's.
 static void Event_EnterWeaponAndArmorShop(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -540,7 +544,8 @@ static void Event_EnterMayorsHouse(void) {
 #include "item_ids.h"
 #include "objcmd.h"
 
-/// The jail door opens and the party walks in, drawn behind the doorway, to
+/// The jail door opens and the party walks in.
+/// It's drawn behind the doorway as it goes in, to
 /// VAULT_JAIL_FROM_VAULT_REVISIT, where the lone prisoner sits.
 static void Event_EnterJail(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -648,10 +653,11 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 #endif
 }
 
-/// On arrival: restores the collision block of touch triggers 1 and 2, creates
-/// configured object 223 at (128, 420) and copies a 3-by-3 block of cells from
-/// (45, 41) to (8, 45), which vault.c does not (XXX: what the copy shows is not
-/// known), and hooks the two children round the well to
+/// Sets up Vault as the party finds it after reaching Kalay.
+/// On arrival it restores the collision block of touch triggers 1 and 2,
+/// creates configured object 223 at (128, 420) and copies a 3-by-3 block of
+/// cells from (45, 41) to (8, 45), which vault.c does not (XXX: what the copy
+/// shows is not known), and hooks the two children round the well to
 /// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
 /// shown it. Coming in from the world map (entrances 0 to 2) before Sap has
 /// joined clears FLAG_VAULT_DJINNI_CALLED_BY_BELL, so Sap is hidden again;

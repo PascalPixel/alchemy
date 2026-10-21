@@ -84,37 +84,34 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
   return 1;
 }
 
-/// Starts an actor's action script: 1 to 4 the fixed action scripts, 5 follow
-/// the linked object, 6 face the leader, 7 reset. Any other value is itself
-/// the script to run. In scripts.s, action 1's script only ends, and 2 to 4
-/// wander about where the actor stands (SC_WANDER_HOME): 2 and 3 at the same
-/// speed, within 16 and 8 pixels, and 4 within 6 pixels at its own speed
+/// Starts an actor's action script: an enum ActorBehavior, or any other value
+/// as the script to run itself. The built-in scripts are in scripts.s
 /// (field.h). Reached from a placement's behavior column (object/actors.c),
 /// from Scene_TalkToActor after a talk (object/events.c), from the actor
 /// commands and from Lalivero's interiors (Engine_ActorSetActionCallback).
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
-  switch ((action - 1)) {
-  case 0:
+  switch (action) {
+  case ACTOR_STAND:
     action = (s32)gObjectMotion_ActionKind1Script;
     break;
-  case 1:
+  case ACTOR_WANDER:
     action = (s32)gObjectMotion_ActionKind2Script;
     break;
-  case 2:
+  case ACTOR_WANDER_NEAR:
     action = (s32)gObjectMotion_ActionKind3Script;
     break;
-  case 3:
+  case ACTOR_WANDER_CLOSE:
     action = (s32)gObjectMotion_ActionKind4Script;
     break;
-  case 4:
+  case ACTOR_FOLLOW_LINKED:
     action = (s32)gObjectMotion_MoveTowardTargetScript;
     break;
-  case 5:
+  case ACTOR_FACE_LEADER:
     object->linkedObject =
         (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
     action = (s32)gObjectMotion_TurnTowardLinkedScript;
     break;
-  case 6:
+  case ACTOR_RESET_ACTION:
     action = (s32)gObjectMotion_ResetActionScript;
     break;
   default:

@@ -170,8 +170,8 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
 UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk event of actor id, or 0: for the actor stopped with Halt
-/// (gGameState.pausedObject), its kind 7 event if it has one, the event for
-/// talking to it while it is stopped (Crossbone Isle's Bane has one).
+/// (gGameState.pausedObject), its EVENT_TALK_HALTED event if it has one, the
+/// event for talking to it while it is stopped (Crossbone Isle's Bane has one).
 ///
 /// Called by Field_RunScene for the A button, to choose between talking and
 /// searching, and by the field Psynergy dispatch, which Halts only an actor
@@ -181,7 +181,8 @@ s32 Scene_FindActorTalkEvent(s32 id) {
   s32 pausedActor = gGameState.pausedObject;
 
   if (pausedActor == id) {
-    struct EffectDescriptor *pausedEvent = Scene_FindEvent(7, pausedActor);
+    struct EffectDescriptor *pausedEvent =
+        Scene_FindEvent(EVENT_TALK_HALTED, pausedActor);
 
     if (pausedEvent != 0) {
       return (s32)pausedEvent;
@@ -192,8 +193,8 @@ s32 Scene_FindActorTalkEvent(s32 id) {
 
 /// Talks to actor id: shows its event's message or calls its event function,
 /// with the actor stopped and turned as its placement says. For the actor
-/// stopped with Halt, its kind 7 event comes first; without one, a talk event
-/// that is a function gives one of two lines at random instead, from
+/// stopped with Halt, its EVENT_TALK_HALTED event comes first; without one, a
+/// talk event that is a function gives one of two lines at random instead, from
 /// MsgPonderEllipsis on (dots spoken with pauses). Returns 0 when an event ran,
 /// -1 when there was none or such a line stood in for it; Field_RunScene
 /// ignores the result.

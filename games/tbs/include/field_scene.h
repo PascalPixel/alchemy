@@ -116,7 +116,7 @@ struct ScenePlacement {
   /// Djinn_ResolvePendingEvent sets after a lost or fled Djinni battle: the
   /// Djinni stays hidden until the scene is entered normally again.
   s16 condition;
-  /// A built-in action (enum ActorBehavior, 1 to 7) or an action script, for
+  /// A built-in action (enum ActorBehavior) or an action script, for
   /// ObjectMotion_SetActionCallback.
   s32 behavior;
   s32 x;         ///< 16.16 fixed-point pixels
@@ -131,13 +131,16 @@ STATIC_ASSERT(sizeof(struct ScenePlacement) == 24);
 STATIC_ASSERT(offsetof(struct ScenePlacement, talkFacing) == 22);
 
 /// The built-in actions a placement's behavior can name, which
-/// ObjectMotion_SetActionCallback turns into scripts: 1 stands, 2 to 4 wander,
-/// 5 follows the linked object, 6 faces the leader, 7 resets.
+/// ObjectMotion_SetActionCallback turns into scripts.
 enum ActorBehavior {
   ACTOR_STAND = 1, ///< its script only ends
-  /// Wanders about where it stands (SC_WANDER_HOME); 3 and 4 do so at their
-  /// own speed and range.
-  ACTOR_WANDER = 2
+  /// Wanders about where it stands (SC_WANDER_HOME), within 16 pixels.
+  ACTOR_WANDER = 2,
+  ACTOR_WANDER_NEAR = 3,   ///< as ACTOR_WANDER, within 8 pixels
+  ACTOR_WANDER_CLOSE = 4,  ///< within 6 pixels, at its own speed
+  ACTOR_FOLLOW_LINKED = 5, ///< moves toward the linked object
+  ACTOR_FACE_LEADER = 6,   ///< links to the leader and turns toward it
+  ACTOR_RESET_ACTION = 7   ///< gObjectMotion_ResetActionScript
 };
 
 /// How a placed actor turns when the leader talks to it (Scene_TalkToActor).

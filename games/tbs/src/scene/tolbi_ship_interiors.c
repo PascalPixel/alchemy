@@ -4616,7 +4616,7 @@ struct SceneEvent gTolbiShipInteriors_EventsOther[] = {
 /// The hold while the ship waits at Kalay, and after it reaches Tolbi.
 struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK },
     { EVENT_TOUCH, 11, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, EVENT_SCRIPT(TolbiShipInteriors_WatchWarriorsStormOff) },
     { EVENT_TALK, HOLD_WARRIOR, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToWaitingWarrior) },
     { EVENT_TALK, HOLD_TICKET_GRUMBLER, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsApparentlyWeCantTakeSilkRoad) },
@@ -4645,7 +4645,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
 /// The hold at sea: talking to a passenger asks them to row.
 struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK },
     { EVENT_TALK, SEA_HOLD_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIsThisCruelOrdealPartOf) },
     { EVENT_TALK, SEA_HOLD_HEAD_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_AskHeadGuideToRow) },
@@ -4682,7 +4682,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
 /// The hold while the ship waits off the island.
 struct SceneEvent gTolbiShipInteriors_HoldEventsAtIsland[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK },
     { EVENT_TALK, SEA_HOLD_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SEA_HOLD_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsInAPerfectWorldThereWouldnt) },
     { EVENT_TALK, SEA_HOLD_HEAD_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouCantGoOntoTheIsland) },
@@ -4756,7 +4756,7 @@ struct SceneEvent gTolbiShipInteriors_CabinEventsArrived[] = {
 };
 
 struct SceneEvent gTolbiShipInteriors_RowingDeckEvents[] = {
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD },
     { EVENT_TALK, ROWING_CREWMAN, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipInteriorsWeCanLeaveAsSoonAs) },
     { EVENT_TALK, ROWING_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIveBeenSailingForManyYears) },
     { EVENT_TALK, ROWING_DRUMMER, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipInteriorsEveryoneRowsInTimeWithThis) },
@@ -4840,7 +4840,7 @@ struct SceneEvent gTolbiShipInteriors_RowingDeckEventsMonstersAboard[] = {
 
 /// The rowing deck while the Kraken rocks the ship.
 struct SceneEvent gTolbiShipInteriors_RowingDeckEventsKrakenAboard[] = {
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 19 },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_TOLBI_SHIP_DECK_KRAKEN },
     { EVENT_TALK, ROWING_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImagineTheSizeOfThatBeast) },
     { EVENT_TALK, ROWING_DRUMMER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsHowCanTheseSeaMonstersKeep) },
     { EVENT_TALK, ROWING_FIRST_OARSMAN + 3, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsJudgingFromKajasReactionItMust) },
@@ -4878,7 +4878,7 @@ struct SceneEvent gTolbiShipInteriors_RowingDeckEventsKrakenAboard[] = {
 
 /// The rowing deck once the ship has reached Tolbi.
 struct SceneEvent gTolbiShipInteriors_RowingDeckEventsArrived[] = {
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD },
     { EVENT_TALK, ROWING_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWillBe) },
     { EVENT_TALK, ROWING_DRUMMER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouFolksReallyFoughtWell) },
     { EVENT_TALK, ROWING_FIRST_OARSMAN + 4, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsALotOfOarsmenWereInjured) },

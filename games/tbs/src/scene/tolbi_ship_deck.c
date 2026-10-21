@@ -3453,7 +3453,7 @@ const struct SceneEvent gTolbiShipDeckEventsAtIsland[] = {
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelowWhileFacingWest) },
 #endif
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, 7 },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE },
     { EVENT_TALK, SEA_CREW_MEMBER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckKajaAndTheCaptainAreProfessionals) },
     { EVENT_TALK, SEA_SEAN, FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED, EVENT_SCRIPT(TolbiShipDeck_OfferToScoutIsland) },
     { EVENT_TALK, SEA_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckTheresNoTellingWhatKindOf) },

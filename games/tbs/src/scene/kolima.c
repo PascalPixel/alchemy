@@ -1838,9 +1838,9 @@ struct ScenePlacement gKolimaPlacements3[] = {
 /// after, the healer, Granite and two jars. Exits 1 and 2 keep their numbers,
 /// since each scene's exit table gives them its own doors.
 struct SceneEvent gKolimaEvents[] = {
-    { EVENT_EXIT, 99, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 99, CONDITION_ALWAYS, KOLIMA_TO_WORLD_MAP },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KOLIMA_TO_WORLD_MAP },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KOLIMA_TO_WORLD_MAP_EAST },
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },

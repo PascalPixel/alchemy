@@ -4,9 +4,9 @@
 
 #include "../object_internal.h"
 
-/// The object system's work (struct ObjectSystemWork, gMenuCtrlWork in heap
-/// slot 6), seen as the flag that suspends sprite projection while the menu
-/// opens.
+/// The object system's work (struct ObjectSystemWork, gMenuCtrlWork in
+/// HEAP_SLOT_MENU_CONTROL), seen as the flag that suspends sprite projection
+/// while the menu opens.
 struct MenuCtrl {
   u8 unk00[4];
   /// ObjectSystemWork's suspended: while nonzero, sprites not held are not
@@ -16,7 +16,7 @@ struct MenuCtrl {
 
 /// Runs the current field scene, which the party entered by entrance, until it
 /// leaves; returns the exit kind it left by, for Scene_TakeExit, or EXIT_NONE
-/// (999) when the next scene is already in gGameState: a random battle, a
+/// when the next scene is already in gGameState: a random battle, a
 /// party that fell outside battle, Retreat or an event's destination. Sets the
 /// scene up (map, actors, encounters, return points), runs its initialization,
 /// fades it in, then runs the field loop: the party walks (Field_ProcessStep
@@ -24,8 +24,8 @@ struct MenuCtrl {
 /// until none is left.
 ///
 /// Called from Game_Run's main loop for every field scene, which
-/// passes the result to Scene_TakeExit. Allocates the field work in heap slot
-/// 27 (HEAP_SLOT_EVENT), cleared, and frees it on the way out, with every
+/// passes the result to Scene_TakeExit. Allocates the field work in
+/// HEAP_SLOT_EVENT, cleared, and frees it on the way out, with every
 /// block the scene took after it from the same pool; sets gGameState's default,
 /// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the scene
 /// has started, FLAG_KEEP_PARTY_POSITION.
@@ -37,7 +37,7 @@ s32 Field_RunScene(s32 entrance) {
   s32 code;
 
   // Set up the scene.
-  work = Runtime_AllocateBlock(27, sizeof(struct FieldWork));
+  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearBitFar(FLAG_IN_BATTLE);
   gGameState.defaultScene = gGameState.scene;
@@ -79,10 +79,9 @@ s32 Field_RunScene(s32 entrance) {
   Field_PlaceMapMarkers();
   BattleEffect_InitializeBuffers();
   BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
-  // The default fade is from the backdrop colour over 16 frames
-  // (SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0)); the scene's initialization
-  // may choose another.
-  work->transition = 0x100;
+  // The default fade is from the backdrop colour over 16 frames; the scene's
+  // initialization may choose another.
+  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 16;
   work->transitionActive = 0;
   // Field_ProcessStep scales the leader's speed by this (16.16) into the
@@ -359,16 +358,15 @@ s32 Field_RunScene(s32 entrance) {
         }
       }
 
-      // Hand the leader back to the player, as climbing (mode 1), carried
-      // through the air (mode 2, which Suhalla Desert's storms and the world
-      // map's airborne travel set: only a key check runs), on the world map
-      // or walking, and step until the next request.
+      // Hand the leader back to the player, as climbing, carried through the
+      // air (only a key check runs), on the world map or walking, and step
+      // until the next request.
       GameFlag_ClearBitFar(FLAG_FIELD_HANDLING_REQUESTS);
       actor = work->actors[gGameState.selectedActor];
       if (actor != NULL) {
-        if (gGameState.movementMode == 2)
+        if (gGameState.movementMode == LEADER_MOVEMENT_AIRBORNE)
           ObjectDispatch_StartKeyCheckFar((struct DispatchObject *)actor);
-        else if (gGameState.movementMode == 1)
+        else if (gGameState.movementMode == LEADER_MOVEMENT_CLIMB)
           ObjectDispatch_StartMoveByKeysFar((struct DispatchObject *)actor);
         else if (work->mode == MODE_WORLD_MAP)
           ObjectDispatch_StartWorldMapControlFar(
@@ -379,7 +377,6 @@ s32 Field_RunScene(s32 entrance) {
       do {
         WaitFrames(1);
         actor = work->actors[gGameState.selectedActor];
-        // In debug mode, flag 0x163 turns step processing off.
         if (gDebugMode == 0 || GameFlag_TestFar(FLAG_DEBUG_STEPS_OFF) == 0)
           Field_ProcessStep(actor->terrainId, actor->x.fixed, actor->y.fixed,
                             actor->z.fixed);
@@ -393,7 +390,7 @@ done:
     work->transitionActive = 0;
     WaitFrames(work->transitionFrames);
   }
-  Runtime_ReleaseHeapBlock(27);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_EVENT);
   return result;
 }
 
@@ -445,7 +442,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
                             (((probePosition.vector.z / 0x200000) & 31) << 5))
                            << 2);
     } else {
-      // Layer 0's cells, MapState's layers[0].cells at 0x130.
+      // MAP_LAYER_GROUND's cells, MapState's layers[0].cells at 0x130.
       cells = *(u8 **)(mapBytes + 0x130);
       cell = cells + (((probePosition.vector.x / 0x100000) +
                        ((probePosition.vector.z / 0x100000) << 7))

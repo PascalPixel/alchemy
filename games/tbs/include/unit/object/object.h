@@ -25,6 +25,17 @@ struct SparkObject;
 struct UiWindow;
 union FieldObject;
 
+/// gGameState.movementMode: how the scene loop hands the party leader back to
+/// the player (Field_RunScene).
+enum LeaderMovementMode {
+  /// Walking: the pad moves the leader, on the world map or a layered map.
+  LEADER_MOVEMENT_WALK = 0,
+  LEADER_MOVEMENT_CLIMB = 1, ///< on a climbable wall, moved 8 pixels a step
+  /// Carried through the air (Suhalla Desert's storms, the world map's
+  /// airborne travel): only the configured keys are checked.
+  LEADER_MOVEMENT_AIRBORNE = 2
+};
+
 void Scene_TakeExit(s32 exitKind);
 void Scene_ReturnFromBattle(s32 result);
 s32 BattleFx_GetResourceGroup(s32 scene);

@@ -35,16 +35,16 @@ struct UiSpriteViewerLayer {
 /// A debug sprite viewer, which never returns. It shows a sprite (with up to
 /// three more animation layers) once for each of its facings, in a ring.
 /// Start with the direction pad moves the ring; otherwise up and down choose
-/// a layer and left and right what to edit: 0 the animation, 1 the sprite
-/// number (ten at a time with Start), 2 the priority, 3 the draw parameter,
-/// changed with L and R. A restarts the animation, or in the other modes
-/// turns a layer on or off. Pressing Start toggles the shadows; B turns the
-/// ring when it is rebuilt with Start held. Select starts over; it passes
-/// a far-call resource set (the alternate one unless B is held) to
+/// a layer and left and right what to edit (enum UiSpriteViewerEditMode): the
+/// animation, the sprite number (ten at a time with Start), the priority or
+/// the draw parameter, changed with L and R. A restarts the animation, or in
+/// the other modes turns a layer on or off. Pressing Start toggles the shadows;
+/// B turns the ring when it is rebuilt with Start held. Select starts over; it
+/// passes a far-call resource set (the alternate one unless B is held) to
 /// RuntimeDispatch_ReturnZero, a stub that ignores it.
 ///
 /// It has a bare veneer in the field far-call table, and no caller names it.
-/// Takes heap slot 9 for the ring of ten positions and runs
+/// Takes HEAP_SLOT_BATTLE for the ring of ten positions and runs
 /// Battle_PlaceActorsByFormationKind each frame to draw the copies.
 void Ui_RunIconMonitor(void) {
   struct UiSpriteViewerLayer layers[ANIMATION_LAYER_COUNT];
@@ -114,21 +114,21 @@ restart:
   VramCache_Reset();
   ObjectSystem_Initialize(MODE_LAYERED_MAP);
   // With no map loaded, the map cell buffer holds layer 0's frames; a
-  // two-part sprite (draw kind 20) puts its second part in the actor
+  // two-part sprite (ANIM_FACING_TWO_PART) puts its second part in the actor
   // sprite buffer, as resource slot 1.
   ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, layers[0].spriteId, 0);
   spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
-  if (spriteMetadata->drawKind == 20) {
+  if (spriteMetadata->drawKind == ANIM_FACING_TWO_PART) {
     ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, layers[0].spriteId + 1,
                       0);
   }
 
-  // Ten copies of the sprite; for a sprite of draw kind 20 every other copy
+  // Ten copies of the sprite; for a two-part sprite every other copy
   // shows its second part, number + 1, from resource slot 1.
   for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
     spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
     spriteWork.resourceOffset = 0;
-    if (spriteMetadata->drawKind == 20 && (i & 1) != 0) {
+    if (spriteMetadata->drawKind == ANIM_FACING_TWO_PART && (i & 1) != 0) {
       spriteWork.resourceOffset = 1;
     }
     spriteWork.sprite =
@@ -204,7 +204,7 @@ next:
       }
     }
 
-    // A press of Start also toggles the shadows (sprite flag bit 0) of the
+    // A press of Start also toggles the shadows (SPRITE_FLAG_SHADOW) of the
     // ten copies.
     if ((gKeysPressed & KEY_START) != 0) {
       sprites = gSpriteObjects;
@@ -216,7 +216,7 @@ next:
     }
 
     switch (editMode) {
-    // Mode 0, the animation: layer 1 follows layer 0's and is not edited on
+    // The animation: layer 1 follows layer 0's and is not edited on
     // its own; 0 to 99.
     case UI_SPRITE_VIEWER_EDIT_ANIMATION:
       if (selectedLayer == 1) {
@@ -246,7 +246,7 @@ next:
       }
       goto next;
 
-    // Mode 1, the sprite number: one sprite with an image at a time, or ten
+    // The sprite number: one sprite with an image at a time, or ten
     // with Start held.
     case UI_SPRITE_VIEWER_EDIT_SPRITE:
       changed = 0;
@@ -286,7 +286,7 @@ next:
       }
       goto next;
 
-    // Mode 2, the layer's draw priority, 0 to 3 and wrapping.
+    // The layer's draw priority, 0 to 3 and wrapping.
     case UI_SPRITE_VIEWER_EDIT_PRIORITY:
       changed = 0;
       if ((*repeatedKeys & KEY_L) != 0) {
@@ -311,21 +311,21 @@ next:
       }
       goto next;
 
-    // Mode 3, the draw parameter (SpriteColorMode), 0 to 15 and wrapping;
-    // 15, hidden, is the value ObjectGroup_SetChildValueUnlessFifteen leaves
-    // alone.
+    // The draw parameter (SpriteColorMode), 0 to 15 and wrapping;
+    // SPRITE_COLOR_HIDDEN is the value ObjectGroup_SetChildValueUnlessFifteen
+    // leaves alone.
     case UI_SPRITE_VIEWER_EDIT_COLOR:
       changed = 0;
       if ((*repeatedKeys & KEY_L) != 0) {
         layers[selectedLayer].colorMode--;
         if (layers[selectedLayer].colorMode < 0) {
-          layers[selectedLayer].colorMode = 15;
+          layers[selectedLayer].colorMode = SPRITE_COLOR_HIDDEN;
         }
         changed = 1;
       }
       if ((*repeatedKeys & KEY_R) != 0) {
         layers[selectedLayer].colorMode++;
-        if (layers[selectedLayer].colorMode > 15) {
+        if (layers[selectedLayer].colorMode > SPRITE_COLOR_HIDDEN) {
           layers[selectedLayer].colorMode = 0;
         }
         changed = 1;
@@ -343,9 +343,9 @@ next:
       break;
     }
 
-    // A, in mode 0: restart the selected layer's animation (layer 0 also
-    // restarts layer 1, which follows it). In the other modes: show or hide
-    // the layer; layer 0 is always shown.
+    // A, editing the animation: restart the selected layer's animation (layer 0
+    // also restarts layer 1, which follows it). In the other modes: show or
+    // hide the layer; layer 0 is always shown.
     if ((*repeatedKeys & KEY_A) != 0) {
       if (editMode == UI_SPRITE_VIEWER_EDIT_ANIMATION) {
         if (selectedLayer != 1) {
@@ -415,8 +415,9 @@ s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
-/// pairs for kind 20), 56 pixels out (40 for kind 20). B held turns the ring.
-/// Called by Ui_RunIconMonitor when it starts and while Start moves the ring.
+/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part sprite). B
+/// held turns the ring. Called by Ui_RunIconMonitor when it starts and while
+/// Start moves the ring.
 void Map_BuildProbeRing(s32 centerX, s32 centerY,
                         struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;
@@ -436,7 +437,7 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
   // a quarter of a turn; 0x380000 is 56 pixels. Unused positions of the ten
   // are skipped.
   switch ((u32)facingKind) {
-  case 3:
+  case ANIM_FACING_THREE_FRAMES:
     for (facingIndex = 0; facingIndex < 6; facingIndex++) {
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
@@ -451,10 +452,10 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
-  case 5:
-  case 8:
-  case 44:
-  case 88:
+  case ANIM_FACING_FIVE_FRAMES:
+  case ANIM_FACING_EIGHT_FRAMES:
+  case ANIM_FACING_EIGHT_NO_TABLE:
+  case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
     for (facingIndex = 0; facingIndex < 8; facingIndex++) {
       angle = (u32)angle << 16;
       positions->x = centerX << 16;
@@ -469,8 +470,8 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
-  case 4:
-  case 6:
+  case ANIM_FACING_FOUR_FRAMES:
+  case ANIM_FACING_SIX_FRAMES:
     for (facingIndex = 0; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
          facingIndex++) {
       angle = (u32)angle << 16;
@@ -484,9 +485,9 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (s16)(angle + 0x1999);
     }
     break;
-  // Draw kind 20: two places 40 pixels out, a quarter turn round and then
+  // Two places 40 pixels out, a quarter turn round and then
   // opposite it, each holding both of the sprite's parts.
-  case 20:
+  case ANIM_FACING_TWO_PART:
     initialHeading = angle;
     angle = (s16)(initialHeading + 0x4000);
     facingIndex = 0;
@@ -613,8 +614,8 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
 /// Each frame in the sprite viewer: places each copy of the sprite at its
 /// ring position, facing the way that position stands for.
 /// Despite its name it belongs to the sprite viewer, which schedules it; its
-/// ring is the placements in heap slot 9 (HEAP_SLOT_BATTLE) and its sprites
-/// the pool in heap slot 4.
+/// ring is the placements in HEAP_SLOT_BATTLE and its sprites the pool in
+/// heap slot 4.
 void Battle_PlaceActorsByFormationKind(void) {
   struct AnimationObject *sprite = WORK_SLOT(4);
   u32 facingKind = sprite->entries[0]->kind;
@@ -630,28 +631,28 @@ void Battle_PlaceActorsByFormationKind(void) {
   facingPositions = WORK_SLOT(HEAP_SLOT_BATTLE);
 
   switch (facingKind) {
-  case 3:
+  case ANIM_FACING_THREE_FRAMES:
     angle = 0;
     step = 0x2aaa;
     count = 6;
     break;
-  case 5:
-  case 8:
-  case 44:
-  case 88:
+  case ANIM_FACING_FIVE_FRAMES:
+  case ANIM_FACING_EIGHT_FRAMES:
+  case ANIM_FACING_EIGHT_NO_TABLE:
+  case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
     angle = 0;
     step = 0x2000;
     count = 8;
     break;
-  case 4:
-  case 6:
+  case ANIM_FACING_FOUR_FRAMES:
+  case ANIM_FACING_SIX_FRAMES:
     angle = 0;
     step = 0x1999;
     count = 10;
     break;
   // The two parts at each place face the same way; the second place faces
   // half a turn from the first.
-  case 20:
+  case ANIM_FACING_TWO_PART:
     angle = 0;
     step = 0;
     pairedFacingStep = 0x8000;

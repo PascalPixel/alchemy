@@ -4,7 +4,7 @@
 
 #include "../field_internal.h"
 
-// What differs by edition. On the world map (mode 3), L and R raise their
+// What differs by edition. On the world map, L and R raise their
 // fixed events while held in the Japanese release, and once for each press
 // from the English one on. The world map's probes for a step reach 8 pixels in
 // Japan and 7 from the English release on.
@@ -29,6 +29,12 @@
 #define WORLD_MAP_ACCELERATION 0x4000
 #define WORLD_MAP_FAST_SPEED 0x40000 ///< 4, while L repeats
 
+/// What a shortcut key's assignment requests: its top two bits.
+enum FieldShortcutKind {
+  FIELD_SHORTCUT_PSYNERGY = 0, ///< fieldWork->command, an ability
+  FIELD_SHORTCUT_ITEM = 1      ///< fieldWork->item
+};
+
 /// Stores value in a halfword of the event work.
 static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
   // XXX: why the stores go through a helper rather than plain assignment;
@@ -47,7 +53,7 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 }
 
 /// Handles a shortcut key's assignment: its top two bits choose what it
-/// requests (0 Psynergy, 1 an item) and the low 14 bits which one. With
+/// requests (enum FieldShortcutKind) and the low 14 bits which one. With
 /// FLAG_MENUS_RAISE_EVENT set it raises FIELD_EVENT_MENUS_RAISED instead, as
 /// the menus do then; on the world map R raises
 /// FIELD_EVENT_WORLD_MAP_PICTURE and L FIELD_EVENT_WORLD_MAP_ZOOM. Returns the
@@ -73,10 +79,10 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
     }
   } else {
     switch (assignmentKind) {
-    case 0:
+    case FIELD_SHORTCUT_PSYNERGY:
       Field_StoreHalfword(&fieldWork->command, requestId);
       break;
-    case 1:
+    case FIELD_SHORTCUT_ITEM:
       Field_StoreHalfword(&fieldWork->item, requestId);
       break;
     }
@@ -469,7 +475,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       object->action--;
   }
 
-  // Leave a footprint (object kind 25) every 18 walking or 12 running
+  // Leave a footprint every 18 walking or 12 running
   // frames on maps that show them, alternating left and right; action
   // counts down the frames to the next one.
   footprintAngle = (u16)angle;
@@ -477,20 +483,21 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       object->action == 0 && collision == 0) {
     struct ObjectRuntime *effect;
 
-    effect = FieldObject_Create(25, object->x, object->y, object->z);
+    effect = FieldObject_Create(FIELD_SPRITE_FOOTPRINT, object->x, object->y,
+                                object->z);
     if (effect != 0) {
       struct AnimationObject *animation;
 
       // collision is 0 here: the footprint takes no motion flags (it stays
       // where it is laid) and its sprite no shadow. It lasts 120 frames,
-      // sorts underfoot (priority flag 2), draws at OAM priority 3, under
+      // sorts underfoot, draws at OAM priority 3, under
       // any map layer of priority 0 to 2, and lies rotated a quarter turn
       // from the heading.
       effect->terrainHeight = object->terrainHeight;
       animation = effect->animation;
       ObjectDispatch_Initialize((struct DispatchObject *)effect,
                                 gWorldMap_FootprintActions);
-      effect->priorityFlags = 2;
+      effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       effect->flags = collision;
       if (animation != 0) {
         AnimationObjects_SelectAnimation(animation, 1);
@@ -790,24 +797,26 @@ update_object:
     yawStep = targetCameraYaw - perspective->yaw;
   perspective->yaw += yawStep;
 
-  if (object->animationKind == 1) {
+  if (object->animationKind == OBJECT_SPRITE_ONE) {
     playerSprite = object->animation;
     terrainCollision = GetWorldMapCollision((struct WorldPosition *)&object->x);
-    // On collision 9 the sprite's second layer is drawn (priority 1) and its
+    // In a forest the sprite's second layer is drawn (priority 1) and its
     // shadow is not; elsewhere that layer takes priority 9, and a layer above
     // 3 is not drawn.
-    if (terrainCollision == 9) {
+    if (terrainCollision == WORLD_MAP_COLLISION_FOREST) {
       playerSprite->entries[1]->priority = 1;
       playerSprite->flags = 0;
     } else {
       playerSprite->entries[1]->priority = 9;
-      playerSprite->flags = 1;
+      playerSprite->flags = SPRITE_FLAG_SHADOW;
     }
-    // In shallow water a ripple (object kind 24) follows every 10 frames of
+    // In shallow water a ripple follows every 10 frames of
     // walking: it lasts 30 frames, takes no motion flags, and its sprite,
-    // with no shadow, is drawn semi-transparent (OAM mode 1) at priority 2.
-    if (terrainCollision == 6 && object->action == 0 && collision == 0) {
-      ripple = FieldObject_Create(24, object->x, object->y, object->z);
+    // with no shadow, is drawn semi-transparent at priority 2.
+    if (terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&
+        object->action == 0 && collision == 0) {
+      ripple = FieldObject_Create(FIELD_SPRITE_RIPPLE, object->x, object->y,
+                                  object->z);
       if (ripple != 0) {
         rippleSprite = ripple->animation;
         ObjectDispatch_Initialize((struct DispatchObject *)ripple,

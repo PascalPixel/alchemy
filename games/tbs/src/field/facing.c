@@ -2,47 +2,46 @@
 #include "types.h"
 #include "objcmd.h"
 
-/// Facing tables: for each animation kind, the frame to draw for each sector
-/// of the facing angle. Sprite_ComposeAnimationFrame adds the low three bits
-/// to the animation's base frame, and bit 7 (0x80) mirrors the sprite.
-/// Kinds 1, 2 and 22 have eight sectors, 3 and 5 sixteen, 4 and 6 sixty-four;
-/// kinds 8 and 88 have eight sectors centred on the eight compass directions.
-/// Kind 20 uses kind 2's table. Kind 1's table has 16 entries, but a 16-bit
-/// angle shifted down 13 reads only the first eight. Sectors count from angle
+/// Facing tables: for each enum AnimationFacingKind, the frame to draw for
+/// each sector of the facing angle. Sprite_ComposeAnimationFrame adds the low
+/// three bits to the animation's base frame, and bit 7 (0x80) mirrors the
+/// sprite. ANIM_FACING_TWO_PART uses ANIM_FACING_FRONT_BACK's table.
+/// gAnimationFacing_OneFrame has 16 entries, but a 16-bit angle shifted down
+/// 13 reads only the first eight. Sectors count from angle
 /// 0, which faces right; 0x4000 faces down the screen (gWorldMap_KeyHeadings).
 // clang-format off
-const u8 gAnimationFacing_Kind1[16] = {
+const u8 gAnimationFacing_OneFrame[16] = {
     0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
     0x80, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x80,
 };
 
-const u8 gAnimationFacing_Kind22[8] = {
+const u8 gAnimationFacing_FrontBackSwapped[8] = {
     0x80, 0x80, 0x00, 0x00, 0x01, 0x01, 0x81, 0x81,
 };
 
-const u8 gAnimationFacing_Kind2[8] = {
+const u8 gAnimationFacing_FrontBack[8] = {
     0x00, 0x00, 0x80, 0x80, 0x01, 0x01, 0x81, 0x81,
 };
 
-const u8 gAnimationFacing_Kind3[16] = {
+const u8 gAnimationFacing_ThreeFrames[16] = {
     0x01, 0x01, 0x00, 0x00, 0x80, 0x80, 0x81, 0x81,
     0x81, 0x81, 0x82, 0x82, 0x02, 0x02, 0x02, 0x01,
 };
 
-const u8 gAnimationFacing_Kind5[16] = {
+const u8 gAnimationFacing_FiveFrames[16] = {
     0x01, 0x00, 0x00, 0x03, 0x03, 0x80, 0x80, 0x81,
     0x81, 0x82, 0x82, 0x04, 0x04, 0x02, 0x02, 0x01,
 };
 
-const u8 gAnimationFacing_Kind8[8] = {
+const u8 gAnimationFacing_EightFrames[8] = {
     0x02, 0x01, 0x00, 0x07, 0x06, 0x05, 0x04, 0x03,
 };
 
-const u8 gAnimationFacing_Kind88[8] = {
+const u8 gAnimationFacing_EightFramesMirrored[8] = {
     0x01, 0x00, 0x03, 0x85, 0x86, 0x87, 0x04, 0x02,
 };
 
-const u8 gAnimationFacing_Kind4[64] = {
+const u8 gAnimationFacing_FourFrames[64] = {
     0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
@@ -53,7 +52,7 @@ const u8 gAnimationFacing_Kind4[64] = {
     0x03, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
 };
 
-const u8 gAnimationFacing_Kind6[64] = {
+const u8 gAnimationFacing_SixFrames[64] = {
     0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04,
     0x04, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,

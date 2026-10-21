@@ -27,11 +27,7 @@ void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
 /// Unpacks the staged block data into gMapBlocks. Byte 1 of the staged buffer
 /// (Ram_MapCellBuffer) is the method, and the
 /// 16-bit data follows from byte 2. size counts the method byte too (an even
-/// size means no data). Methods:
-///   0: copy as it is
-///   1: all the high bytes, then all the low bytes; each value is XORed with
-///      the one before
-///   2: each value is XORed with the one before
+/// size means no data). The methods are enum MapBlockPacking.
 ///
 /// Called by Map_LoadLayeredScene with the size Resource_DecodeType01
 /// returns; the packed stream is decoded to Ram_MapCellBuffer + 1 so that
@@ -47,11 +43,11 @@ void Tilemap_DecodeStagedBuffer(s32 size) {
   wordCount = (size - 1) / 2;
   if (size & 1) {
     switch (((u8 *)gMapCellBuffer)[1]) {
-    case 0:
+    case MAP_BLOCKS_RAW:
       for (i = 0; i < wordCount; i++)
         *destinationWords++ = *sourceWords++;
       break;
-    case 1: {
+    case MAP_BLOCKS_SPLIT_DELTA: {
       u32 previousWord = 0;
       u8 *highBytes = Ram_MapCellBuffer + 2;
       u8 *lowBytes = highBytes + wordCount;
@@ -63,7 +59,7 @@ void Tilemap_DecodeStagedBuffer(s32 size) {
       }
       break;
     }
-    case 2: {
+    case MAP_BLOCKS_DELTA: {
       s32 previousWord = 0;
 
       for (i = 0; i < wordCount; i++) {
@@ -315,7 +311,8 @@ s32 Map_LoadLayeredScene(s32 index) {
     layerSource++;
     mapLayer++;
   }
-  // Layers 0 to 2 show on BG3, BG2 and BG1, a layer only where its priority
+  // The ground, middle and overhead layers show on BG3, BG2 and BG1, a
+  // layer only where its priority
   // is not zero. Each BGCNT takes the priority as it is, its char block from
   // the header and screen blocks 5, 6 and 7.
   work->flags = DISPCNT_OBJ_ON;
@@ -577,7 +574,7 @@ void Map_UpdateLayerScroll(void) {
       else
         Map_RenderMetatileRow(layerIndex, x, y);
     }
-    // Layer 0 scrolls BG3, layer 2 BG1.
+    // MAP_LAYER_GROUND scrolls BG3, MAP_LAYER_OVERHEAD BG1.
     gBgScroll[3 - layerIndex].x = baseX >> 16;
     gBgScroll[3 - layerIndex].y = baseY >> 16;
     layer->x = baseX;

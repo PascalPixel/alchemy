@@ -109,6 +109,22 @@ enum {
   FIELD_VIEW_HEIGHT = 160 * Q16_ONE   ///< the screen's height
 };
 
+/// Sprite ids the field's own code creates objects of.
+enum {
+  FIELD_SPRITE_RIPPLE = 24,   ///< the ripple behind the leader in shallow water
+  FIELD_SPRITE_FOOTPRINT = 25 ///< a footprint, on maps that show them
+};
+
+/// How a layered map's block data is packed: the method byte
+/// Tilemap_DecodeStagedBuffer reads before the halfwords.
+enum MapBlockPacking {
+  MAP_BLOCKS_RAW = 0, ///< copied as it is
+  /// All the high bytes, then all the low bytes; each value is XORed with
+  /// the one before.
+  MAP_BLOCKS_SPLIT_DELTA = 1,
+  MAP_BLOCKS_DELTA = 2 ///< each value is XORed with the one before
+};
+
 /// A movement target coordinate that is not set.
 #define TARGET_UNSET ((s32)0x80000000)
 

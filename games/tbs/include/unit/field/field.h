@@ -30,6 +30,82 @@ enum ObjectSystemMode {
   MODE_BATTLE = 4
 };
 
+/// AnimationEntry.kind: the facing table a layer's frames follow
+/// (Sprite_ComposeAnimationFrame, facing.c). Each cuts the facing angle into
+/// sectors and gives each sector a frame and whether it is mirrored.
+enum AnimationFacingKind {
+  /// The script's own frame whatever the facing; zero also marks a free
+  /// layer record.
+  ANIM_FACING_NONE = 0,
+  ANIM_FACING_ONE_FRAME = 1,    ///< 8 sectors: one frame, mirrored to the left
+  ANIM_FACING_FRONT_BACK = 2,   ///< 8 sectors: a front and a back frame
+  ANIM_FACING_THREE_FRAMES = 3, ///< 16 sectors: front, side and back
+  ANIM_FACING_FOUR_FRAMES = 4,  ///< 64 sectors
+  ANIM_FACING_FIVE_FRAMES = 5,  ///< 16 sectors
+  ANIM_FACING_SIX_FRAMES = 6,   ///< 64 sectors
+  /// 8 sectors centred on the compass directions, a frame for each.
+  ANIM_FACING_EIGHT_FRAMES = 8,
+  /// ANIM_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
+  /// second the next sprite id (the sprite viewer).
+  ANIM_FACING_TWO_PART = 20,
+  /// As ANIM_FACING_FRONT_BACK, with the front frame mirrored the other way.
+  ANIM_FACING_FRONT_BACK_SWAPPED = 22,
+  /// Ringed as eight facings by the sprite viewer, but with no facing table:
+  /// Sprite_ComposeAnimationFrame draws it as ANIM_FACING_NONE.
+  /// XXX: likely an older eight-direction kind, because the viewer still
+  /// lists it; a sprite of this kind would settle it.
+  ANIM_FACING_EIGHT_NO_TABLE = 44,
+  /// As ANIM_FACING_EIGHT_FRAMES, with three of the frames mirrored.
+  ANIM_FACING_EIGHT_FRAMES_MIRRORED = 88
+};
+
+/// AnimationEntry.mode, from the metadata's frameCodec: how a layer's frames
+/// are stored. Any other value is raw, for the frame decoder.
+enum SpriteFrameCodec {
+  SPRITE_FRAME_RAW = 0,
+  SPRITE_FRAME_TYPE01 = 1, ///< Resource_DecodeType01's format
+  SPRITE_FRAME_LZ = 3      ///< LZ-compressed
+};
+
+/// AnimationObject.flags.
+enum AnimationObjectFlag {
+  SPRITE_FLAG_SHADOW = 1 << 0, ///< its shadow is drawn; set when created
+  /// Drawn as an outline, in ObjectSystemWork's edge and fill colours.
+  SPRITE_FLAG_OUTLINED = 1 << 1
+};
+
+/// ObjectRuntime.animationKind (DispatchObject.kind), its low four bits: what
+/// the object's animation pointer holds.
+enum ObjectSpriteKind {
+  OBJECT_SPRITE_NONE = 0, ///< nothing drawn
+  OBJECT_SPRITE_ONE = 1,  ///< one sprite
+  OBJECT_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
+};
+
+/// FieldObject_Create's id / 4096: what sprites the object is made with.
+enum ObjectCreateKind {
+  OBJECT_CREATE_ONE_SPRITE = 0, ///< the id's sprite (OBJECT_SPRITE_ONE)
+  /// The sprites of the id and id + 1 (OBJECT_SPRITE_GROUP).
+  OBJECT_CREATE_GROUP = 2
+};
+
+/// The world map's collision values (GetWorldMapCollision), 1 to 15; each
+/// indexes a row of gWorldMap_TerrainBehaviorTable. Values not named here
+/// are walkable or not only by their range.
+enum WorldMapCollision {
+  /// The party walks only on WORLD_MAP_COLLISION_WALKABLE_FIRST to
+  /// WORLD_MAP_COLLISION_WALKABLE_LAST (CheckWorldMapWalkable).
+  WORLD_MAP_COLLISION_WALKABLE_FIRST = 5,
+  /// Shallow water: a ripple follows the leader as it walks.
+  WORLD_MAP_COLLISION_SHALLOW_WATER = 6,
+  /// Where neither collision layer has a value.
+  WORLD_MAP_COLLISION_DEFAULT = 7,
+  /// Forest: the leader's sprite shows its second layer and no shadow, and
+  /// encounters take a region's forest zone.
+  WORLD_MAP_COLLISION_FOREST = 9,
+  WORLD_MAP_COLLISION_WALKABLE_LAST = 12
+};
+
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,

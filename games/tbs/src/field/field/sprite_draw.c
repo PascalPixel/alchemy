@@ -149,36 +149,37 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   select_direction:
     // The facing table of the layer's kind gives an offset from the base
     // frame (low three bits) and whether to mirror it (bit 7).
-    // The facing is cut into 8 (kinds 1, 2, 20, 22, 8 and 88), 16 (3, 5) or
-    // 64 (4, 6) sectors; kinds 8 and 88 centre theirs on the directions.
     switch (layer->kind) {
-    case 1:
-      facing = gAnimationFacing_Kind1[dir >> 13];
+    case ANIM_FACING_ONE_FRAME:
+      facing = gAnimationFacing_OneFrame[dir >> 13];
       break;
-    case 2:
-    case 20:
-      facing = gAnimationFacing_Kind2[dir >> 13];
+    case ANIM_FACING_FRONT_BACK:
+    case ANIM_FACING_TWO_PART:
+      facing = gAnimationFacing_FrontBack[dir >> 13];
       break;
-    case 22:
-      facing = gAnimationFacing_Kind22[dir >> 13];
+    case ANIM_FACING_FRONT_BACK_SWAPPED:
+      facing = gAnimationFacing_FrontBackSwapped[dir >> 13];
       break;
-    case 3:
-      facing = gAnimationFacing_Kind3[dir >> 12];
+    case ANIM_FACING_THREE_FRAMES:
+      facing = gAnimationFacing_ThreeFrames[dir >> 12];
       break;
-    case 4:
-      facing = gAnimationFacing_Kind4[dir >> 10];
+    case ANIM_FACING_FOUR_FRAMES:
+      facing = gAnimationFacing_FourFrames[dir >> 10];
       break;
-    case 5:
-      facing = gAnimationFacing_Kind5[dir >> 12];
+    case ANIM_FACING_FIVE_FRAMES:
+      facing = gAnimationFacing_FiveFrames[dir >> 12];
       break;
-    case 6:
-      facing = gAnimationFacing_Kind6[dir >> 10];
+    case ANIM_FACING_SIX_FRAMES:
+      facing = gAnimationFacing_SixFrames[dir >> 10];
       break;
-    case 8:
-      facing = gAnimationFacing_Kind8[((u32)(dir << 16) + 0x10000000) >> 29];
+    case ANIM_FACING_EIGHT_FRAMES:
+      facing =
+          gAnimationFacing_EightFrames[((u32)(dir << 16) + 0x10000000) >> 29];
       break;
-    case 88:
-      facing = gAnimationFacing_Kind88[((u32)(dir << 16) + 0x10000000) >> 29];
+    case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
+      facing = gAnimationFacing_EightFramesMirrored[((u32)(dir << 16) +
+                                                     0x10000000) >>
+                                                    29];
       break;
     default:
       facing = 0;
@@ -239,15 +240,14 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
     }
     drawCount++;
 
-    // Draw the layers in that order. A layer's frames are stored by its
-    // codec: 1 is the type-01 format, 3 LZ (unpacked first, or drawn
-    // through a scratch buffer when the layer has a draw parameter), and
-    // anything else raw for the decoder.
+    // Draw the layers in that order, each by its codec. LZ frames are
+    // unpacked first, or drawn through a scratch buffer when the layer has a
+    // draw parameter.
     for (i = 0; i < drawCount; i++) {
       layer = obj->entries[*(u8 *)&drawOrder[i]];
-      if (layer->mode == 1) {
+      if (layer->mode == SPRITE_FRAME_TYPE01) {
         Resource_DecodeType01(layer->frames[layer->frame], pixels);
-      } else if (layer->mode == 3) {
+      } else if (layer->mode == SPRITE_FRAME_LZ) {
         if (layer->param != 0) {
           unpacked = MemAlloc(0x400);
           decodeFrame(
@@ -267,7 +267,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
 
     // Outline: a pixel whose four neighbours are all drawn becomes the fill
     // colour, and any other drawn pixel the edge colour.
-    if ((obj->flags & 2) != 0) {
+    if ((obj->flags & SPRITE_FLAG_OUTLINED) != 0) {
       u8 *inside;
       u8 edge;
       u8 fill;
@@ -448,7 +448,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
   }
   // Queue the shadow at ground height before the raised image.
   y = ((screenY - groundHeight) >> 16) - shadowHalfHeight;
-  if (sprite->flags & 1) {
+  if (sprite->flags & SPRITE_FLAG_SHADOW) {
     if (y < 160) {
       part = &sprite->shadow;
       part->affine = affine;
@@ -576,7 +576,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       }
       // Project the ground point separately so jumping does not lift the
       // shadow.
-      if (sprite->flags & 1) {
+      if (sprite->flags & SPRITE_FLAG_SHADOW) {
         struct AnimationSpritePart *shadow;
 
         SET_VECTOR(ground, point[0], 0, point[2]);
@@ -604,7 +604,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
 }
 
 /// Sets the colour mode (SpriteColorMode) of each of a sprite's layers to
-/// value, except layers drawn hidden (SPRITE_COLOR_HIDDEN, 15), and marks the
+/// value, except layers drawn hidden (SPRITE_COLOR_HIDDEN), and marks the
 /// sprite for redrawing. The sprite's first count layers must all be present:
 /// it does not test them for null.
 /// Called by Animation_ApplyChildValues and, as
@@ -620,7 +620,7 @@ void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value) {
       u32 remaining = count;
       do {
         struct AnimationEntry *layer = *entry++;
-        if (layer->param != 15)
+        if (layer->param != SPRITE_COLOR_HIDDEN)
           layer->param = value;
         remaining--;
       } while (remaining != 0);

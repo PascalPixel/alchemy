@@ -32,8 +32,9 @@ struct ObjectCameraObject {
   /// 0 priority from cell
   u8 flags;
   u8 unk24[0x2c];
-  void *sprite; ///< a sprite, or for kind 2 an array of four sprite pointers
-  u8 kind;      ///< 1: one sprite, 2: up to four
+  /// A sprite, or for OBJECT_SPRITE_GROUP an array of four sprite pointers.
+  void *sprite;
+  u8 kind; ///< enum ObjectSpriteKind in its low four bits
   u8 unk55[7];
   u8 held; ///< nonzero keeps the sprite and its VRAM off screen or suspended
   u8 unk5d[0x13];
@@ -124,10 +125,10 @@ void ObjectSystem_UpdateCamera(void) {
     // given up.
     if (object->x != 0 || object->z != 0) {
       kind = object->kind & 15;
-      if (kind == 0)
+      if (kind == OBJECT_SPRITE_NONE)
         continue;
-      // This camera places single sprites only; groups (kind 2) are left.
-      if (kind != 1)
+      // This camera places single sprites only; groups are left.
+      if (kind != OBJECT_SPRITE_ONE)
         continue;
       // While a menu has sprite projection suspended, only held objects are
       // drawn.
@@ -150,7 +151,7 @@ void ObjectSystem_UpdateCamera(void) {
         // row holds 128 of them.
         tile = &((struct ObjectCameraTile *)mapWork->layers[object->layer]
                      .cells)[(object->x >> 20) + ((object->z >> 20) << 7)];
-        if (object->flags & 1) {
+        if (object->flags & ACTOR_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {
             sprite->image.priority = priority;
@@ -166,15 +167,15 @@ void ObjectSystem_UpdateCamera(void) {
         drawPosition.height = object->y;
         drawPosition.y = dz;
         drawPosition.groundHeight = object->height;
-        // Bits 1 and 2 move the point 320 pixels up or down the map with its
-        // height and ground height, so the sprite and shadow stay where they
-        // are on screen; only the draw slot changes, which
-        // Render_ApplyProjectedPlacement takes from the point's y before its
-        // height is taken off. Bit 1 (ACTOR_PRIORITY_UNDERFOOT, which
-        // footprints take) moves the slot 160 back, and an object at most 220
-        // pixels up crosses that function's 100-pixel line into slot 1; bit 2
-        // moves it 160 on.
-        if (object->flags & 2) {
+        // ACTOR_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up or
+        // down the map with its height and ground height, so the sprite and
+        // shadow stay where they are on screen; only the draw slot changes,
+        // which Render_ApplyProjectedPlacement takes from the point's y
+        // before its height is taken off. ACTOR_PRIORITY_UNDERFOOT, which
+        // footprints take, moves the slot 160 back, and an object at most 220
+        // pixels up crosses that function's 100-pixel line into its lowest
+        // slot; bit 2 moves it 160 on.
+        if (object->flags & ACTOR_PRIORITY_UNDERFOOT) {
           drawPosition.height += 0xfec00000; // -320 pixels
           drawPosition.y += 0xfec00000;
           drawPosition.groundHeight += 0xfec00000;
@@ -198,7 +199,7 @@ void ObjectSystem_UpdateCamera(void) {
       }
     } else {
       kind = object->kind & 15;
-      if (kind == 1) {
+      if (kind == OBJECT_SPRITE_ONE) {
         sprite = object->sprite;
         if (object->held == 0 && !sprite->retainCacheEntry) {
           VramCache_ReleaseVram(sprite->slot);
@@ -215,10 +216,10 @@ UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
 /// Each frame, with the fixed camera: places every object's sprite, from the
 /// 64th object down, facing them by the angle from the eye to the target.
-/// While battle commands are chosen (flag 363, set by
+/// While battle commands are chosen (FLAG_CHOOSING_COMMANDS, set by
 /// BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0
-/// scale. ObjectSystem_Initialize schedules it (order 0xc80) for modes 3 (the
-/// world map) and 4 (battle); ObjectSystem_SuspendProjectionAndShowSprites
+/// scale. ObjectSystem_Initialize schedules it (order 0xc80) for MODE_WORLD_MAP
+/// and MODE_BATTLE; ObjectSystem_SuspendProjectionAndShowSprites
 /// suspends it. Resets the system's used count.
 void ObjectSystem_UpdateCameraFixed(void) {
   s32 i;
@@ -283,7 +284,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
       continue;
     kind = object->kind & 15;
     switch (kind) {
-    case 1:
+    case OBJECT_SPRITE_ONE:
       objectPosition = &object->x;
       scale[0] = object->scaleX;
       scale[1] = object->scaleY;
@@ -295,7 +296,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
       Render_PlaceProjectedSprite(sprite, objectPosition, scale,
                                   object->angle + angle, object->layer);
       break;
-    case 2:
+    case OBJECT_SPRITE_GROUP:
       groupScale[0] = object->scaleX;
       groupScale[1] = object->scaleY;
       if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
@@ -312,7 +313,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
                                       object->angle + angle, object->layer);
       }
       break;
-    case 0:
+    case OBJECT_SPRITE_NONE:
       break;
     }
   }

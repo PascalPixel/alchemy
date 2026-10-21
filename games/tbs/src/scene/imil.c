@@ -348,9 +348,9 @@ static void Imil_GreetVisitor(void) {
   Engine_EventEnd();
 }
 
-/// The strongman in Imil who keeps in shape stops his exercises, turns to the
-/// leader and goes back to counting; once Saturos is beaten, he wonders what he
-/// trained so hard for.
+/// The strongman who keeps in shape pauses his exercises to talk. He stops,
+/// turns to the leader and goes back to counting; once Saturos is beaten, he
+/// wonders what he trained so hard for.
 static void Imil_TalkToStrongmanKeepingInShape(void) {
   Engine_EventBegin();
 
@@ -462,10 +462,11 @@ static void Imil_AskAboutRestaurantMenu(void) {
   Engine_EventEnd();
 }
 
-/// Mia's second apprentice, in the Imil Sanctum until Saturos is beaten, asks
-/// whether the party has visited the old couple, where Mia went
-/// (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE, and FLAG_IMIL_MIA_SENT_FOR); once Mia
-/// has joined the party, she says everyone counts on her.
+/// Mia's second apprentice asks whether the party has visited the old couple.
+/// The apprentice is in the Imil Sanctum until Saturos is beaten, and the old
+/// couple's house is where Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE, and
+/// FLAG_IMIL_MIA_SENT_FOR); once Mia has joined the party, the apprentice says
+/// everyone counts on her.
 static void Imil_TalkToSecondApprentice(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -493,8 +494,8 @@ static void Imil_ReadSecondApprenticeMind(void) {
   Engine_EventEnd();
 }
 
-/// The old woman of the old couple's house, after Mia's healing and until
-/// Saturos is beaten, asks what happened at the lighthouse.
+/// The old woman of the old couple asks what happened at the lighthouse. She's
+/// in their house after Mia's healing and until Saturos is beaten.
 static void Imil_TalkToOldWoman(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilHappenedInLighthouseNortheast));
@@ -727,9 +728,9 @@ static void Imil_TalkToInnkeeper(void) {
   }
 }
 
-/// Across the counter of the Imil Sanctum, the leader facing north, Mia's
-/// apprentice offers the Sanctum, the first time saying he can act as healer;
-/// otherwise he talks of Mia.
+/// Mia's apprentice offers the Sanctum's services across its counter. He does
+/// so when the leader faces north across the counter of the Imil Sanctum, the
+/// first time saying he can act as healer; otherwise he talks of Mia.
 static void Imil_TalkToApprentice(void) {
   struct FieldActor *leader;
 

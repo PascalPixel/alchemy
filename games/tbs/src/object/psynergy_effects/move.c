@@ -193,9 +193,9 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       }
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
           cellZ == (beyond.z & MOVE_CELL_MASK)) {
-        // The caster can be pushed only onto terrain kind 0.
+        // The caster can be pushed only onto flat ground.
         if (Map_GetCellAttributeLowNibbleFar(user->terrainId, beyond.x,
-                                             beyond.z) != 0) {
+                                             beyond.z) != TERRAIN_FLAT) {
           ObjectDispatch_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
             AudioCommand_PlayFar(SE_MENU_ERROR);

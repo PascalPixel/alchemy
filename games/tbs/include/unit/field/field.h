@@ -106,6 +106,44 @@ enum WorldMapCollision {
   WORLD_MAP_COLLISION_WALKABLE_LAST = 12
 };
 
+/// A map cell's terrain kind: the low four bits of its shape's first byte,
+/// which pick its height function from gMap_TerrainHeightFunctions. Samples
+/// are the shape's other bytes; x and y run 0 to 15 across the cell.
+enum TerrainKind {
+  TERRAIN_FLAT = 0,    ///< the first sample everywhere
+  TERRAIN_SLOPE_X = 1, ///< from the first sample at x 0 towards the second
+  TERRAIN_SLOPE_Y = 2, ///< from the first sample at y 0 towards the second
+  /// A step across the diagonal x + y = 15, the higher sample on it.
+  TERRAIN_STEP_SUM_DIAGONAL = 3,
+  /// A step across the diagonal x = y, the higher sample on it.
+  TERRAIN_STEP_DIFFERENCE_DIAGONAL = 4,
+  /// Three samples, bending on the diagonal x + y = 15.
+  TERRAIN_BEND_SUM_DIAGONAL = 5,
+  /// Three samples, bending on the diagonal x = y.
+  TERRAIN_BEND_DIFFERENCE_DIAGONAL = 6,
+  /// A raised or sunken rounded square (gCurve_LerpWeightTable).
+  TERRAIN_ROUNDED_SQUARE = 7,
+  TERRAIN_STEP_X = 8,  ///< the first sample for x below 8, then the second
+  TERRAIN_STEP_Y = 9,  ///< the first sample for y below 8, then the second
+  TERRAIN_BEND_X = 10, ///< three samples along x, bending at the middle
+  TERRAIN_BEND_Y = 11, ///< three samples along y, read unsigned
+  /// The sample gCurve_SampleIndexTable picks for each pixel.
+  TERRAIN_SAMPLE_TABLE = 12,
+  /// As TERRAIN_SAMPLE_TABLE, mirrored left to right.
+  TERRAIN_SAMPLE_TABLE_MIRRORED = 13,
+  TERRAIN_FLAT_B = 14, ///< as TERRAIN_FLAT
+  TERRAIN_FLAT_C = 15, ///< as TERRAIN_FLAT
+  TERRAIN_KIND_COUNT = 16
+};
+
+/// What Map_CheckObjectStep says of a step to a position.
+enum MapStepCheck {
+  MAP_STEP_TOO_LOW = -1, ///< the ground there is more than 12 pixels lower
+  MAP_STEP_OPEN = 0,     ///< the object can step there
+  MAP_STEP_TOO_HIGH = 1, ///< the ground there is more than 8 pixels higher
+  MAP_STEP_WALL = 2      ///< the cell there is a wall (MAP_CELL_WALL)
+};
+
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir);
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,

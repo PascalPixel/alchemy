@@ -41,17 +41,17 @@ s32 Field_TryJumpForward(void) {
   pos = &position;
 again:
   // The middle of the tile in front, then of the tile beyond. The tile
-  // jumped over may be a wall (2) or a drop (-1), but not ground more than
-  // 8 pixels higher (1); the landing must be within a step's height (0).
+  // jumped over may be a wall or a drop, but not ground too high; the landing
+  // must be open.
   SET_POSITION(pos, (leader->x & 0xfff00000) + 0x80000, leader->y,
                (leader->z & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x100000, angle, pos);
-  if (Map_CheckObjectStepFar(leader, pos) == 1)
+  if (Map_CheckObjectStepFar(leader, pos) == MAP_STEP_TOO_HIGH)
     return -1;
   SET_POSITION(pos, (leader->x & 0xfff00000) + 0x80000, leader->y,
                (leader->z & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x200000, angle, pos);
-  if (Map_CheckObjectStepFar(leader, pos) == 0) {
+  if (Map_CheckObjectStepFar(leader, pos) == MAP_STEP_OPEN) {
     // Suspend terrain following and the shadow (sprite flag bit 0) while
     // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
     // motion and sprite flags after landing, before returning field control.

@@ -262,28 +262,28 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
     if (gDebugMode != 0 && (gKeysHeld & KEY_L)) {
       heading = angle;
     } else {
-      if (Map_CheckObjectStep(object, &position) == 0) {
+      if (Map_CheckObjectStep(object, &position) == MAP_STEP_OPEN) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
-        if (Map_CheckObjectStep(object, &testPosition) == 0) {
+        if (Map_CheckObjectStep(object, &testPosition) == MAP_STEP_OPEN) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
-          if (Map_CheckObjectStep(object, &testPosition) == 0) {
+          if (Map_CheckObjectStep(object, &testPosition) == MAP_STEP_OPEN) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
             Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
-            if (Map_CheckObjectStep(object, &testPosition) == 0) {
+            if (Map_CheckObjectStep(object, &testPosition) == MAP_STEP_OPEN) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
               Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000,
                                     &testPosition);
-              if (Map_CheckObjectStep(object, &testPosition) == 0) {
+              if (Map_CheckObjectStep(object, &testPosition) == MAP_STEP_OPEN) {
                 heading = angle;
                 goto push_objects;
               }
@@ -308,31 +308,31 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         position.y = object->y;
         position.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading, &position);
-        if (Map_CheckObjectStep(object, &position) != 0)
+        if (Map_CheckObjectStep(object, &position) != MAP_STEP_OPEN)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
-        if (Map_CheckObjectStep(object, &testPosition) != 0)
+        if (Map_CheckObjectStep(object, &testPosition) != MAP_STEP_OPEN)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
-        if (Map_CheckObjectStep(object, &testPosition) != 0)
+        if (Map_CheckObjectStep(object, &testPosition) != MAP_STEP_OPEN)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
-        if (Map_CheckObjectStep(object, &testPosition) != 0)
+        if (Map_CheckObjectStep(object, &testPosition) != MAP_STEP_OPEN)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
-        if (Map_CheckObjectStep(object, &testPosition) == 0)
+        if (Map_CheckObjectStep(object, &testPosition) == MAP_STEP_OPEN)
           goto push_objects;
       }
       // Nothing passed: the step is the object's own position.
@@ -382,20 +382,24 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
             testPosition.y = pushedObject->y;
             testPosition.z = pushedObject->z;
             Vector_AddPolarOffset(0xa0000, direction, &testPosition);
-            if (Map_CheckObjectStep(pushedObject, &testPosition) == 0) {
+            if (Map_CheckObjectStep(pushedObject, &testPosition) ==
+                MAP_STEP_OPEN) {
               testPosition.x = pushedObject->x;
               testPosition.y = pushedObject->y;
               testPosition.z = pushedObject->z;
               Vector_AddPolarOffset(0xa0000, direction + 0x1000, &testPosition);
               // The same probe is tested twice.
-              if (Map_CheckObjectStep(pushedObject, &testPosition) == 0 &&
-                  Map_CheckObjectStep(pushedObject, &testPosition) == 0) {
+              if (Map_CheckObjectStep(pushedObject, &testPosition) ==
+                      MAP_STEP_OPEN &&
+                  Map_CheckObjectStep(pushedObject, &testPosition) ==
+                      MAP_STEP_OPEN) {
                 testPosition.x = pushedObject->x;
                 testPosition.y = pushedObject->y;
                 testPosition.z = pushedObject->z;
                 Vector_AddPolarOffset(0xa0000, direction - 0x1000,
                                       &testPosition);
-                if (Map_CheckObjectStep(pushedObject, &testPosition) == 0) {
+                if (Map_CheckObjectStep(pushedObject, &testPosition) ==
+                    MAP_STEP_OPEN) {
                   Vector_AddPolarOffset(
                       0x4000, direction,
                       (struct FieldPosition *)&pushedObject->x);

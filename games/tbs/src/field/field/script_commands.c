@@ -606,7 +606,7 @@ retry:
     if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
                                   (s32 *)&candidatePosition) != 0 ||
         Map_CheckObjectStep((struct ObjectRuntime *)object,
-                            &candidatePosition) != 0)
+                            &candidatePosition) != MAP_STEP_OPEN)
       goto retry;
     // Probes 8 pixels past the point, ahead and at 45 degrees (0x2000)
     // either side.
@@ -623,18 +623,19 @@ retry:
     Vector_AddPolarOffset(
         travelDistance, heading + SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
 #ifdef BUGFIX
-    if (aheadBlocked != 0 || Map_CheckObjectStep((struct ObjectRuntime *)object,
-                                                 &probePosition) != 0)
+    if (aheadBlocked != 0 ||
+        Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
+            MAP_STEP_OPEN)
 #else
     if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
-        0)
+        MAP_STEP_OPEN)
 #endif
       goto retry;
     SET_POSITION(&probePosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(
         travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
     if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
-        0)
+        MAP_STEP_OPEN)
       goto retry;
     // The retry gotos stay: as for (;;) with continue, loop.c hoists the two
     // positions' addresses, which the native recomputes each try.
@@ -712,7 +713,7 @@ s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
       SET_POSITION(&candidatePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object,
-                              &candidatePosition) != 0)
+                              &candidatePosition) != MAP_STEP_OPEN)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
@@ -720,33 +721,33 @@ s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading, &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
-          0)
+          MAP_STEP_OPEN)
         goto roam;
       SET_POSITION(&probePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance,
                             heading + SCRIPT_WANDER_DIAGONAL_ANGLE,
                             &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
-          0)
+          MAP_STEP_OPEN)
         goto roam;
       SET_POSITION(&probePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance,
                             heading - SCRIPT_WANDER_DIAGONAL_ANGLE,
                             &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
-          0)
+          MAP_STEP_OPEN)
         goto roam;
       SET_POSITION(&probePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance, heading + SCRIPT_WANDER_SIDE_ANGLE,
                             &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
-          0)
+          MAP_STEP_OPEN)
         goto roam;
       SET_POSITION(&probePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance, heading - SCRIPT_WANDER_SIDE_ANGLE,
                             &probePosition);
       if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
-          0)
+          MAP_STEP_OPEN)
         goto roam;
       dx = candidatePosition.x / 0x10000 - object->homeX;
       dz = candidatePosition.z / 0x10000 - object->homeZ;
@@ -778,7 +779,7 @@ back:
     SET_POSITION(&candidatePosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
     if (Map_CheckObjectStep((struct ObjectRuntime *)object,
-                            &candidatePosition) != 0)
+                            &candidatePosition) != MAP_STEP_OPEN)
       goto back;
     object->flags59 &= ~2;
     Object_SetMoveTarget((struct ObjectRuntime *)object, candidatePosition.x,

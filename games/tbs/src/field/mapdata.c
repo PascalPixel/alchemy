@@ -7,27 +7,27 @@
 #include "field.h"
 #include "types.h"
 
-/// Terrain height functions, chosen by the low four bits of a cell's first
-/// collision byte and called with (the remaining samples, x within the cell,
-/// y within the cell). Each reads only the arguments it needs. Read by
-/// Map_GetTerrainHeight and Map_CheckObjectStep (terrain.c).
-const TerrainHeightFn gMap_TerrainHeightFunctions[16] = {
-    Curve_GetFirstSampleA,
-    Curve_LerpTwoSamples,
-    Curve_LerpTwoSamplesB,
-    Curve_StepAtSummedPosition,
-    Curve_StepAtDifferencePosition,
-    Curve_LerpThreeSamplesByRatio,
-    Curve_LerpThreeSamplesAtDifference,
-    Curve_LerpTwoSamplesByTable,
-    Curve_StepAtHalf,
-    Curve_StepAtHalfB,
-    Curve_LerpThreeSamplesAtHalf,
-    Curve_LerpThreeSamplesAtHalfB,
-    Curve_LookupSampleByTable,
-    Curve_LookupSampleByTableReversed,
-    Curve_GetFirstSampleB,
-    Curve_GetFirstSampleC,
+/// Terrain height functions, by enum TerrainKind, called with (the remaining
+/// samples, x within the cell, y within the cell). Each reads only the
+/// arguments it needs. Read by Map_GetTerrainHeight and Map_CheckObjectStep
+/// (terrain.c).
+const TerrainHeightFn gMap_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
+    [TERRAIN_FLAT] = Curve_GetFirstSampleA,
+    [TERRAIN_SLOPE_X] = Curve_LerpTwoSamples,
+    [TERRAIN_SLOPE_Y] = Curve_LerpTwoSamplesB,
+    [TERRAIN_STEP_SUM_DIAGONAL] = Curve_StepAtSummedPosition,
+    [TERRAIN_STEP_DIFFERENCE_DIAGONAL] = Curve_StepAtDifferencePosition,
+    [TERRAIN_BEND_SUM_DIAGONAL] = Curve_LerpThreeSamplesByRatio,
+    [TERRAIN_BEND_DIFFERENCE_DIAGONAL] = Curve_LerpThreeSamplesAtDifference,
+    [TERRAIN_ROUNDED_SQUARE] = Curve_LerpTwoSamplesByTable,
+    [TERRAIN_STEP_X] = Curve_StepAtHalf,
+    [TERRAIN_STEP_Y] = Curve_StepAtHalfB,
+    [TERRAIN_BEND_X] = Curve_LerpThreeSamplesAtHalf,
+    [TERRAIN_BEND_Y] = Curve_LerpThreeSamplesAtHalfB,
+    [TERRAIN_SAMPLE_TABLE] = Curve_LookupSampleByTable,
+    [TERRAIN_SAMPLE_TABLE_MIRRORED] = Curve_LookupSampleByTableReversed,
+    [TERRAIN_FLAT_B] = Curve_GetFirstSampleB,
+    [TERRAIN_FLAT_C] = Curve_GetFirstSampleC,
 };
 
 /// World map terrain behaviour, indexed by the collision value plus 0x10 when

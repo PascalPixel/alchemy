@@ -163,7 +163,7 @@ void FieldFx_RunForce(void) {
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, scene->angle, &pos);
     if (Map_CheckObjectStepFar((struct ObjectRuntime *)target,
-                               (struct FieldPosition *)&pos) == 0 &&
+                               (struct FieldPosition *)&pos) == MAP_STEP_OPEN &&
         ScriptObject_CheckOverlapFar((struct ScriptObjectEntry *)target,
                                      (s32 *)&pos) == 0) {
       target->acceleration = 1 << 16;

@@ -123,11 +123,17 @@ enum SanctumActor {
   /// good... Never for evil!"
   ACTOR_EAST_HEALER,
   // The quest (gSanctum_PlacementD).
-  ACTOR_DORA, ///< Isaac's mother
+  /// Isaac's mother.
+  /// ★ Named from the game: "Please, call me Dora."
+  /// (MsgValeAsStubbornAsYourFather)
+  ACTOR_DORA,
   /// The Mayor, Garet's grandfather, as the Great Healer calls him: "That is
   /// all, Mayor."
   ACTOR_GARETS_GRANDFATHER,
-  ACTOR_WISE_ONE,          ///< appears to the Great Healer
+  /// Appears to the Great Healer.
+  /// ★ Named from the game: "It must be the Wise One, guardian of the Elemental
+  /// Stars." (MsgSanctumWeHadIdeaTrueSanctum)
+  ACTOR_WISE_ONE,
   ACTOR_HEALER_AFTERIMAGE, ///< a copy of the Great Healer for its afterimages
   // Vault Sanctum and Bilibin Sanctum (gSanctum_PlacementC).
   /// The other person of the Sanctum, in the western healer's sprite, who

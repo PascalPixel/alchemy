@@ -2457,8 +2457,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   s32 receiverCount;
   s32 ownerCount;
   struct InventoryMenuState *menu = gMenuWork;
-  // 1 KB of HEAP_SLOT_TILE_SCRATCH to draw the dial's digits in, released before
-  // returning.
+  // 1 KB of HEAP_SLOT_TILE_SCRATCH to draw the dial's digits in, released
+  // before returning.
   void *tiles = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   struct UiWindow *window;
   struct RenderOutput *rightDial;

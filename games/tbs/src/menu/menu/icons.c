@@ -42,8 +42,8 @@ void Menu_ResetTwoResourceEntries(void) {
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
 /// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 0x608
-/// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again. Returns the slot's first
-/// sprite tile (VramCache_Reload).
+/// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again. Returns the
+/// slot's first sprite tile (VramCache_Reload).
 s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 decodedResource;
   s32 selectedSlot;

@@ -235,9 +235,9 @@ void AffineEffect_UpdateFrame(void) {
 }
 
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
-/// The work (struct ResourceMenuWork, 152 bytes) lives in HEAP_SLOT_ICON_MENU until
-/// Menu_EndResourceSelection frees it; it is returned, and also reached as
-/// gMenuSelectWork. Every command icon menu starts here.
+/// The work (struct ResourceMenuWork, 152 bytes) lives in HEAP_SLOT_ICON_MENU
+/// until Menu_EndResourceSelection frees it; it is returned, and also reached
+/// as gMenuSelectWork. Every command icon menu starts here.
 void *AffineEffect_InitializeWork(void) {
   // The matching allocation size is the complete six-entry work block.
   void *work;

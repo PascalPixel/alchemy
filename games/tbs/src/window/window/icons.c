@@ -4,11 +4,11 @@
 
 #include "../window_internal.h"
 
-// The builders that load an icon into VRAM take HEAP_SLOT_GLYPH_TRANSFER (gGlyphWork) for
-// the build and free it before returning; ItemIcon_Compose and the
-// Ui_PrepareTransfer functions draw into the slot their caller holds. An icon
-// is 2 by 2 tiles, 16x16 pixels: 0x80 bytes of sprite tiles in its VRAM cache
-// entry (a portrait, UiGlyph_LoadEntryWithPalette's, is 4 by 4).
+// The builders that load an icon into VRAM take HEAP_SLOT_GLYPH_TRANSFER
+// (gGlyphWork) for the build and free it before returning; ItemIcon_Compose and
+// the Ui_PrepareTransfer functions draw into the slot their caller holds. An
+// icon is 2 by 2 tiles, 16x16 pixels: 0x80 bytes of sprite tiles in its VRAM
+// cache entry (a portrait, UiGlyph_LoadEntryWithPalette's, is 4 by 4).
 
 /// Returns how many item icons the icon table holds; UiIcon_BuildItemIconTiles
 /// draws icon 0 for a number past them.
@@ -32,7 +32,8 @@ void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
                                   s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
 
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER,
+                                   sizeof(GlyphTransfer));
   work->encoded = gUiIcon_FramePointerTable[frameIcon];
   work->width = 2;
   work->height = 2;
@@ -66,7 +67,8 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   s32 overlay;
 
   overlay = 0;
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER,
+                                   sizeof(GlyphTransfer));
 
   if (glyph >= UiIcon_CountItemIcons())
     glyph = 0;
@@ -188,7 +190,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
 s32 UiIcon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   GlyphTransfer *work;
 
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER,
+                                   sizeof(GlyphTransfer));
   ItemIcon_Compose(inventoryCode, layers);
   VramCache_Load(cacheSlot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
@@ -200,7 +203,8 @@ s32 UiIcon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
 s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 cacheSlot) {
   GlyphTransfer *work;
 
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER,
+                                   sizeof(GlyphTransfer));
   Ui_PrepareTransferFromTableEntry(icon);
   VramCache_Load(cacheSlot, 0x80, work->tiles);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
@@ -277,7 +281,8 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   GlyphTransfer *work;
   s32 overlay;
 
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER,
+                                   sizeof(GlyphTransfer));
   overlay = 0;
 
   if (glyph >= UiIcon_CountPsynergyIcons())
@@ -325,7 +330,8 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   u8 *encodedEntry;
   u32 index;
 
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER,
+                                   sizeof(GlyphTransfer));
   offsets = Resource_GetTableEntry((s32)&ResourceId_Icons);
   // A number below 128 is the entry itself; the other speakers' portraits,
   // numbered from 128 (Localization_LookupEntryId), are entries 16 on.

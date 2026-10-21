@@ -51,8 +51,9 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 /// party's row. In a link battle both consoles first wait for each other
 /// ("VSST" in the link signature), publish "EDVS" when done, and wait for
 /// the partner to finish ("Waiting for opponent's input."). Its work,
-/// BattleMenuWork (gLinkCountdownWork), lives in HEAP_SLOT_BATTLE_COMMANDS until it
-/// returns. BattlePres_BuildUnitEntries calls it (battle/battle/round.c).
+/// BattleMenuWork (gLinkCountdownWork), lives in HEAP_SLOT_BATTLE_COMMANDS
+/// until it returns. BattlePres_BuildUnitEntries calls it
+/// (battle/battle/round.c).
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                 u16 *actors, s32 commandCount) {
   struct BattleMenuWork *state;

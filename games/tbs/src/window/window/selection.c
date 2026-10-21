@@ -14,8 +14,9 @@ struct GlyphCursor {
 
 /// Allocates and resets the selection screen: the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
-/// The work is HEAP_SLOT_SELECTION (gResQueueWork), which Resource_ResetOwnerEntries
-/// frees; the hand's picture takes a VRAM cache entry for that long.
+/// The work is HEAP_SLOT_SELECTION (gResQueueWork), which
+/// Resource_ResetOwnerEntries frees; the hand's picture takes a VRAM cache
+/// entry for that long.
 void UiGlyph_ResetWorkState(void) {
   struct SelectionScreen *work;
   struct SelectionSprite *visual;
@@ -23,7 +24,8 @@ void UiGlyph_ResetWorkState(void) {
   s32 i;
   u16 clear = 0;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_SELECTION, sizeof(struct SelectionScreen));
+  work = Runtime_AllocateBlock(HEAP_SLOT_SELECTION,
+                               sizeof(struct SelectionScreen));
   work->head = NULL;
   work->path = NULL;
   work->window = NULL;
@@ -1355,7 +1357,8 @@ void SelectionScreen_LoadLargeIcon(void) {
   if (selected->kind != ICON_KIND_COMMAND && selected->kind != ICON_KIND_YES_NO)
     return;
 
-  buffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  buffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER,
+                                     sizeof(GlyphTransfer));
   transfer = &state->records[15];
   resourceId = selected->base;
   // The resource starts with a halfword offset per command icon.

@@ -70,7 +70,7 @@ for one). A scene is one object: it has no parts.
 ## Prefixes
 
 A scene's functions are `<Place>_` (`Vault_`, `VaultRevisit_`,
-`ColossoLog_`) and say what the player sees, from the English release's names
+`ColosseumFinal3_`) and say what the player sees, from the English release's names
 and text; an unknown keeps a placeholder. The shared helpers take their
 family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
 `StagedActor_`, `Effect_`); some still carry older descriptive names

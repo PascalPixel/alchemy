@@ -36,15 +36,15 @@
 /// waiting at the colosseum (BabiPalace_PassOnBabisWord), and one thanks the
 /// party once for saving him (BabiPalace_ThankForSavingBabi). Inside, the
 /// attendant offers a rest before the match (BabiPalace_OfferRest). A lost
-/// match brings the party back here by entrance 98 (colosso_river.c,
-/// colosso_wall.c): its HP and PP are made full, Garet, Ivan and Mia rejoin
+/// match brings the party back here by entrance 98 (colosseum_final1.c,
+/// colosseum_final2.c): its HP and PP are made full, Garet, Ivan and Mia rejoin
 /// and the inventory Colosso held is returned
 /// (BabiPalace_RestorePartyAndInventory), and the leader wakes from what his
 /// friends call a dream of fighting in the finals
 /// (BabiPalace_WakeFromFinalsDream), free to go back and try again.
 ///
 /// The third match, won or lost, ends Colosso and brings the party back by
-/// entrance 99 (colosso_log.c): the leader wakes long after the finals, and
+/// entrance 99 (colosseum_final3.c): the leader wakes long after the finals, and
 /// Babi wants to see him (BabiPalace_WakeAfterFinals). Coming into Babi's
 /// room (entrance 33) the first time plays BabiPalace_MeetBabiAfterColosso
 /// (FLAG_BABI_SPOKE_AFTER_COLOSSO): Babi praises the party's fighting, and

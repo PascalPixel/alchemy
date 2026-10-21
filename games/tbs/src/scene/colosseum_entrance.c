@@ -58,7 +58,7 @@
 ///   (entrances 67 and 68); after the second (entrance 31,
 ///   FLAG_COLOSSO_SECOND_MATCH_WON) they lead him east again, and the same
 ///   passages now go to Colosseum Final 3. The finals stages and their races
-///   are in colosso_river.c, colosso_wall.c and colosso_log.c.
+///   are in colosseum_final1.c, colosseum_final2.c and colosseum_final3.c.
 ///
 /// The three scenes share one exit table, a run of exits for each scene, and
 /// the Colosseum's exits are how its arrivals chain into one another and into

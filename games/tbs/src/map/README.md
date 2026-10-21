@@ -263,7 +263,7 @@ spot on the ground (`struct ColossoRaceWork`). Every frame the
 rival steps to the next point, mirrored across the finish (it starts opposite
 Isaac), turning at most a sixteenth of a turn at a time, and at the end it
 walks to the finish. The River course runs path A, the Wall course path B and
-the Log course path C (`Colosso_StartRival`, `ColossoWall_StartRivalPath`).
+the Log course path C (`Colosso_StartRival`, `ColosseumFinal2_StartRivalPath`).
 The race code still has a recording mode, which writes down where an actor
 stands every frame and then plays it back with the rival. The Colosso
 lettering, which differs by edition, is placed after the paths.

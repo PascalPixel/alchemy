@@ -7,14 +7,14 @@
 /// Ivan and Mia help from the stages. The stages, by their attendants'
 /// names, are the Rock Challenge, the Pipeworks, the Broken Bridge and the
 /// Lumber Water Crossing Area. Isaac comes here three times, each time at its
-/// own entrance, and ColossoRiver_Initialize blocks Retreat and sets up the
+/// own entrance, and ColosseumFinal1_Initialize blocks Retreat and sets up the
 /// visit that entrance stands for after restoring the stages from the group's
 /// flags (FLAG_PLACE_TEMP_01 to FLAG_PLACE_TEMP_03 and the rock's column in
 /// byte flag 0x310), so that what the friends changed stays changed for the
 /// race.
 ///
 /// - Entrance 3, the tour, from the Colosseum's east passage. The guide
-///   (ColossoRiver_ExplainFinalsRules) tells the party that warriors enter
+///   (ColosseumFinal1_ExplainFinalsRules) tells the party that warriors enter
 ///   without their own equipment and race through the stages to the arena,
 ///   where the first to arrive takes the better of two prizes and keeps it for
 ///   the next match, and he pans over the stages if asked. Each stage's
@@ -53,7 +53,7 @@
 #include "scene_ids.h"
 #include "vram_tab.h"
 #include "unit/import.h"
-#include "unit/scene/colosso_river.h"
+#include "unit/scene/colosseum_final1.h"
 #include "unit/scene/common/colosso_solo.h"
 #include "unit/scene/common/colosso_marker.h"
 #include "unit/scene/common/colosso_setup.h"
@@ -106,27 +106,29 @@
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared. Each use is tagged.
 #ifdef UBFIX
-#define COLOSSO_RIVER_FACE_DIRECTION Engine_ActorFaceDirection
-#define COLOSSO_RIVER_PLACE_STAGED_PAIR ColossoRiver_MoveActorPairByOffset
-#define COLOSSO_RIVER_SELECT_MODE_BLOCK ColossoRiver_SelectPresentationScript
-#define COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES Scene_GiveAndEquipItem
+#define COLOSSEUM_FINAL_1_FACE_DIRECTION Engine_ActorFaceDirection
+#define COLOSSEUM_FINAL_1_PLACE_STAGED_PAIR                                    \
+  ColosseumFinal1_MoveActorPairByOffset
+#define COLOSSEUM_FINAL_1_SELECT_MODE_BLOCK                                    \
+  ColosseumFinal1_SelectPresentationScript
+#define COLOSSEUM_FINAL_1_APPLY_MATCHING_SLOT_VALUES Scene_GiveAndEquipItem
 #else
-#define COLOSSO_RIVER_FACE_DIRECTION ((s32 (*)())Engine_ActorFaceDirection)
-#define COLOSSO_RIVER_PLACE_STAGED_PAIR                                        \
-  ((s32 (*)())ColossoRiver_MoveActorPairByOffset)
-#define COLOSSO_RIVER_SELECT_MODE_BLOCK                                        \
-  ((s32 (*)())ColossoRiver_SelectPresentationScript)
-#define COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES                               \
+#define COLOSSEUM_FINAL_1_FACE_DIRECTION ((s32 (*)())Engine_ActorFaceDirection)
+#define COLOSSEUM_FINAL_1_PLACE_STAGED_PAIR                                    \
+  ((s32 (*)())ColosseumFinal1_MoveActorPairByOffset)
+#define COLOSSEUM_FINAL_1_SELECT_MODE_BLOCK                                    \
+  ((s32 (*)())ColosseumFinal1_SelectPresentationScript)
+#define COLOSSEUM_FINAL_1_APPLY_MATCHING_SLOT_VALUES                           \
   ((s32 (*)(s32, s32))Scene_GiveAndEquipItem)
 #endif
 
-static void ColossoRiver_ExplainFinalsRules(s32 guide);
-static void ColossoRiver_ShowRoundIntroduction(s32 round);
-static void ColossoRiver_ShowMatchResult(s32 result);
-static void ColossoRiver_NoOp(void);
-static void ColossoRiver_WaitForStageReady(void);
-static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem);
-static void ColossoRiver_PushObjectAhead(void);
+static void ColosseumFinal1_ExplainFinalsRules(s32 guide);
+static void ColosseumFinal1_ShowRoundIntroduction(s32 round);
+static void ColosseumFinal1_ShowMatchResult(s32 result);
+static void ColosseumFinal1_NoOp(void);
+static void ColosseumFinal1_WaitForStageReady(void);
+static s32 ColosseumFinal1_CollectFinishItem(s32 firstItem, s32 secondItem);
+static void ColosseumFinal1_PushObjectAhead(void);
 
 typedef void (*SceneTask)(void);
 
@@ -155,21 +157,21 @@ enum {
   PRIZE_B = 25
 };
 
-const struct SceneEntrance *ColossoRiver_GetEntrances(void) {
-  return gColossoRiver_Entrances;
+const struct SceneEntrance *ColosseumFinal1_GetEntrances(void) {
+  return gColosseumFinal1_Entrances;
 }
 
-const struct SceneRegion *ColossoRiver_GetRegions(void) { return 0; }
+const struct SceneRegion *ColosseumFinal1_GetRegions(void) { return 0; }
 
-const u32 *ColossoRiver_GetExits(void) { return gColossoRiver_Exits; }
+const u32 *ColosseumFinal1_GetExits(void) { return gColosseumFinal1_Exits; }
 
-const struct ScenePlacement *ColossoRiver_GetPlacements(void) {
-  return gColossoRiver_Placements;
+const struct ScenePlacement *ColosseumFinal1_GetPlacements(void) {
+  return gColosseumFinal1_Placements;
 }
 
 /// Advances the bridge animation and its walkable collision cells.
-static void ColossoRiver_UpdateBrokenBridge(void) {
-  switch ((u32)gColossoRiver_Countdown) {
+static void ColosseumFinal1_UpdateBrokenBridge(void) {
+  switch ((u32)gColosseumFinal1_Countdown) {
   case 66:
     Engine_MapCopyCellsLayered(92, 31, 2, 2, 50, 38);
     Engine_MapCopyCellsLayered(92, 31, 2, 2, 54, 38);
@@ -191,42 +193,42 @@ static void ColossoRiver_UpdateBrokenBridge(void) {
     Engine_MapCopyCellsLayered(92, 29, 2, 2, 54, 38);
     Engine_ActorSetAnimation(BRIDGE_OPERATOR, 12);
     Map_CopyCellAttributes(50, 24, 6, 1, 50, 12);
-    gColossoRiver_Countdown = 120;
+    gColosseumFinal1_Countdown = 120;
     break;
   }
-  gColossoRiver_Countdown--;
+  gColosseumFinal1_Countdown--;
 }
 
 /// Stops the bridge task and restores its closed frame.
-static void ColossoRiver_ResetBrokenBridge(void) {
+static void ColosseumFinal1_ResetBrokenBridge(void) {
   SceneTask task;
 
-  gColossoRiver_Countdown = 0;
-  task = ColossoRiver_UpdateBrokenBridge;
+  gColosseumFinal1_Countdown = 0;
+  task = ColosseumFinal1_UpdateBrokenBridge;
   Engine_TaskRemoveCallback(task);
   task();
 }
 
 /// Starts the bridge's repeating opening sequence.
-static void ColossoRiver_StartBrokenBridge(void) {
-  gColossoRiver_Countdown = 66;
-  FieldScheduler_AddCallback(ColossoRiver_UpdateBrokenBridge, 0xC80);
+static void ColosseumFinal1_StartBrokenBridge(void) {
+  gColosseumFinal1_Countdown = 66;
+  FieldScheduler_AddCallback(ColosseumFinal1_UpdateBrokenBridge, 0xC80);
 }
 
 /// Waits for the crossing window, bounded by one bridge cycle.
-static void ColossoRiver_WaitForBridgeOpening(void) {
+static void ColosseumFinal1_WaitForBridgeOpening(void) {
   s32 i;
 
   Engine_TaskWait(10);
   i = 0;
-  if (gColossoRiver_Countdown != 22) {
+  if (gColosseumFinal1_Countdown != 22) {
     do {
       Engine_TaskWait(1);
       i++;
       if (i > 119) {
         break;
       }
-    } while (gColossoRiver_Countdown != 22);
+    } while (gColosseumFinal1_Countdown != 22);
   }
 }
 
@@ -268,7 +270,7 @@ static void Event_SettleRocks(void) {
 /// Walking into a rock in the Rock Challenge pushes it one cell.
 static void Event_PushRock(void) {
 
-  ColossoRiver_PushObjectAhead();
+  ColosseumFinal1_PushObjectAhead();
   Event_SettleRocks();
 }
 
@@ -312,7 +314,7 @@ static void Event_DousePipe(void) {
 }
 
 /// Moves the leader and a stage object together between cell centers.
-static void ColossoRiver_MoveActorPairByOffset(s32 actorId, s32 dx, s32 dz) {
+static void ColosseumFinal1_MoveActorPairByOffset(s32 actorId, s32 dx, s32 dz) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   s32 x;
@@ -364,7 +366,7 @@ static void Event_RollLogNorthSouth(void) {
     offset = 48;
   }
   Map_CopyCellAttributes(67, 8, 3, 1, 64, row);
-  ColossoRiver_MoveActorPairByOffset(LOG_NORTH_SOUTH, 0, offset);
+  ColosseumFinal1_MoveActorPairByOffset(LOG_NORTH_SOUTH, 0, offset);
   actor = Object_GetById(LOG_NORTH_SOUTH);
   row = actor->z.fixed >> 20;
   Map_CopyCellAttributes(64, 24, 3, 1, 64, row);
@@ -407,14 +409,14 @@ static void Event_RollLogEastWest(void) {
     offset = -offset;
   }
   Map_CopyCellAttributes(72, 9, 1, 3, column, 9);
-  ColossoRiver_MoveActorPairByOffset(LOG_EAST_WEST, offset, 0);
+  ColosseumFinal1_MoveActorPairByOffset(LOG_EAST_WEST, offset, 0);
   actor = Object_GetById(LOG_EAST_WEST);
   column = actor->x.fixed >> 20;
   Map_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 
 /// Runs the five frames that show water entering the Pipeworks channel.
-static inline void ColossoRiver_AnimatePipeworksWater(void) {
+static inline void ColosseumFinal1_AnimatePipeworksWater(void) {
   Map_CopyCells(96, 29, 1, 3, 34, 38);
   Engine_EventWait(3);
   Map_CopyCells(97, 29, 1, 3, 34, 38);
@@ -474,7 +476,7 @@ static void Event_PushPipeworksBlock(void) {
     Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Camera_MoveTo(PIXELS(552), -1, PIXELS(200), 1);
     Engine_CameraWaitForMove();
-    ColossoRiver_AnimatePipeworksWater();
+    ColosseumFinal1_AnimatePipeworksWater();
     Engine_EventWait(15);
     Engine_EventEnd();
     return;
@@ -490,7 +492,7 @@ static void Event_PushPipeworksBlock(void) {
   actor->speed = PIXELS(4) / 5;
   Engine_ObjectSetPosition(actor, actor->x.fixed, PIXELS(8), actor->z.fixed);
   Object_SetMode(actor, 3);
-  ColossoRiver_AnimatePipeworksWater();
+  ColosseumFinal1_AnimatePipeworksWater();
   actor = Object_GetById(PIPE_EAST);
   actor->motionFlags = none;
   actor->acceleration = PIXELS(2) / 5;
@@ -502,7 +504,9 @@ static void Event_PushPipeworksBlock(void) {
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-UNUSED static void ColossoRiver_SetCourseFlag(void) { Engine_GameFlagSet(768); }
+UNUSED static void ColosseumFinal1_SetCourseFlag(void) {
+  Engine_GameFlagSet(768);
+}
 
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
 /// Shield if first, the Padded Gloves if second), and he and Azart face off and
@@ -515,10 +519,10 @@ static void Event_ReachArena(void) {
   s32 base;
 
   base = 0;
-  ColossoRiver_NoOp();
+  ColosseumFinal1_NoOp();
   Engine_EventBegin();
-  approach = ColossoRiver_CollectFinishItem(120, 127);
-  ColossoRiver_WaitForStageReady();
+  approach = ColosseumFinal1_CollectFinishItem(120, 127);
+  ColosseumFinal1_WaitForStageReady();
   n = 9;
   do {
     Object_RefreshSelectorById(OPPONENT);
@@ -561,13 +565,13 @@ static void Event_PushRockOrCheckAhead(void) {
   }
 }
 
-const struct SceneEvent *ColossoRiver_GetEvents(void) {
-  return gColossoRiver_Events;
+const struct SceneEvent *ColosseumFinal1_GetEvents(void) {
+  return gColosseumFinal1_Events;
 }
 
 /// Back from the battle (entrance 4 or 5): Isaac and Azart stand in the arena
 /// as the result is shown.
-static void ColossoRiver_RestoreMatchResult(s32 result) {
+static void ColosseumFinal1_RestoreMatchResult(s32 result) {
 
   Engine_ActorDestroy(PRIZE_A);
   Engine_ActorDestroy(PRIZE_B);
@@ -586,12 +590,12 @@ static void ColossoRiver_RestoreMatchResult(s32 result) {
   }
   Engine_TaskWait(1);
   Camera_MoveTo(PIXELS(1304), 0, PIXELS(128), 0);
-  ColossoRiver_ShowMatchResult(result);
+  ColosseumFinal1_ShowMatchResult(result);
   Engine_EventEnd();
 }
 
 /// Marks actors standing in the stages' finish terrain.
-static void ColossoRiver_MarkFinishTerrain(s32 actor) {
+static void ColosseumFinal1_MarkFinishTerrain(s32 actor) {
   struct FieldActor *target;
   s32 column;
   s32 row;
@@ -609,7 +613,7 @@ static void ColossoRiver_MarkFinishTerrain(s32 actor) {
 /// Sets up Colosseum Final 1: restores the stages as they were left, then by
 /// the arrival: the race (1), the friends' turns to lend a hand (2), the
 /// guide's tour (3), or the match won (4) or lost (5).
-s32 ColossoRiver_Initialize(void) {
+s32 ColosseumFinal1_Initialize(void) {
   struct FieldActor *actor;
   s32 hit;
   s32 x;
@@ -635,7 +639,7 @@ s32 ColossoRiver_Initialize(void) {
   actor->motionFlags = 0;
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
-  FieldScheduler_AddCallback(ColossoRiver_UpdateBrokenBridge, 0xc80);
+  FieldScheduler_AddCallback(ColosseumFinal1_UpdateBrokenBridge, 0xc80);
   actor = Object_GetById(GROWTH_PLANT);
   actor->terrainId = 1;
   zero = 0;
@@ -689,10 +693,10 @@ s32 ColossoRiver_Initialize(void) {
       Engine_AudioPlayCue(MUS_017);
       Colosso_ControlCharacterAlone(0);
       Colosso_PlaceFriendsAtCheeringSpots();
-      ColossoRiver_MarkFinishTerrain(1);
-      ColossoRiver_MarkFinishTerrain(2);
-      ColossoRiver_MarkFinishTerrain(3);
-      ColossoRiver_ShowRoundIntroduction(1);
+      ColosseumFinal1_MarkFinishTerrain(1);
+      ColosseumFinal1_MarkFinishTerrain(2);
+      ColosseumFinal1_MarkFinishTerrain(3);
+      ColosseumFinal1_ShowRoundIntroduction(1);
     }
     Object_LinkObjectAndSetCallback(1, 0);
     Object_LinkObjectAndSetCallback(2, 0);
@@ -706,21 +710,21 @@ s32 ColossoRiver_Initialize(void) {
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
       Colosso_ControlCharacterAlone(1);
-      ColossoRiver_ShowRoundIntroduction(0);
+      ColosseumFinal1_ShowRoundIntroduction(0);
     }
     break;
   case 3:
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      ColossoRiver_ExplainFinalsRules(GUIDE);
+      ColosseumFinal1_ExplainFinalsRules(GUIDE);
       Colosso_ClearCheeringSpots();
     }
     break;
   case 4:
-    ColossoRiver_RestoreMatchResult(1);
+    ColosseumFinal1_RestoreMatchResult(1);
     Engine_EventRequestExit(COLOSSEUM_FINAL_1_TO_COLOSSEUM_EAST);
     break;
   case 5:
-    ColossoRiver_RestoreMatchResult(-1);
+    ColosseumFinal1_RestoreMatchResult(-1);
     Engine_EventRequestExit(COLOSSEUM_FINAL_1_TO_BABI_PALACE_1);
     break;
   }
@@ -730,7 +734,7 @@ s32 ColossoRiver_Initialize(void) {
 /// The tour of Colosseum Final 1 (entrance 3): the guide shows the party the
 /// site of the first finals match, the race through the stages to the arena,
 /// the prizes there, and that the companions choose where to cheer from.
-static void ColossoRiver_ExplainFinalsRules(s32 guide) {
+static void ColosseumFinal1_ExplainFinalsRules(s32 guide) {
   struct FieldActor *actor;
   s32 x;
   s32 z;
@@ -893,18 +897,18 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Colosso_WalkActorToAndStand(0, 296, 152);
       Colosso_WalkActorToAndStand(0, 312, 152);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
-      ColossoRiver_PushObjectAhead();
+      ColosseumFinal1_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
-      ColossoRiver_PushObjectAhead();
+      ColosseumFinal1_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 184);
       Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 192);
       Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 200);
       Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 15);
-      ColossoRiver_PushObjectAhead();
+      ColosseumFinal1_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
-      ColossoRiver_PushObjectAhead();
+      ColosseumFinal1_PushObjectAhead();
       OverlayObject_ResetMotionFields(0);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
       Engine_EventShowMessage(scene, 0);
@@ -922,8 +926,8 @@ static void Event_TalkToRockAttendant(s32 scene) {
 }
 
 /// Moves a Pipeworks actor with the speed used throughout its demonstration.
-static inline void ColossoRiver_SetPipeHeight(struct FieldActor *actor,
-                                              s32 height) {
+static inline void ColosseumFinal1_SetPipeHeight(struct FieldActor *actor,
+                                                 s32 height) {
   actor->motionFlags = 0;
   actor->acceleration = PIXELS(2) / 5;
   actor->speed = PIXELS(4) / 5;
@@ -961,15 +965,15 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
       Colosso_HidePointer();
       Engine_TaskWait(2);
       first = Object_GetById(PIPE_WEST);
-      ColossoRiver_SetPipeHeight(first, PIXELS(8));
+      ColosseumFinal1_SetPipeHeight(first, PIXELS(8));
       second = Object_GetById(PIPE_EAST);
-      ColossoRiver_SetPipeHeight(second, PIXELS(32));
+      ColosseumFinal1_SetPipeHeight(second, PIXELS(32));
       FieldObject_WaitForMove(second);
       Engine_EventWait(45);
       first = Object_GetById(PIPE_WEST);
-      ColossoRiver_SetPipeHeight(first, PIXELS(24));
+      ColosseumFinal1_SetPipeHeight(first, PIXELS(24));
       second = Actor_Get(PIPE_EAST);
-      ColossoRiver_SetPipeHeight(second, 0);
+      ColosseumFinal1_SetPipeHeight(second, 0);
       FieldObject_WaitForMove(second);
       Engine_EventWait(15);
       Engine_EventShowMessage(attendant, 0);
@@ -1006,20 +1010,20 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
     path = Colosso_GreetAtStage(scene, 3);
     if (path == 0) {
       Engine_EventSetMessage(MsgColossoTheyCallBrokenBridge);
-      ColossoRiver_ResetBrokenBridge();
+      ColosseumFinal1_ResetBrokenBridge();
       Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       Camera_MoveTo(PIXELS(840), -1, PIXELS(216), 1);
       Engine_CameraWaitForMove();
       Event_ShowMessage(scene, 0);
-      ColossoRiver_StartBrokenBridge();
+      ColosseumFinal1_StartBrokenBridge();
       Engine_EventWait(60);
       Event_ShowMessage(scene, 0);
       Colosso_FadeInCompetitor(0, 736, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 99 instructions
        * differ in tbs-en. */
-      COLOSSO_RIVER_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
-      ColossoRiver_WaitForBridgeOpening();
+      COLOSSEUM_FINAL_1_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
+      ColosseumFinal1_WaitForBridgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
       Engine_EventWait(30);
@@ -1072,7 +1076,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r0 last; as a direct call, 1 of 167 instructions differ
      * in tbs-en. */
-    COLOSSO_RIVER_PLACE_STAGED_PAIR(LOG_EAST_WEST, 160, 0);
+    COLOSSEUM_FINAL_1_PLACE_STAGED_PAIR(LOG_EAST_WEST, 160, 0);
     Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(10);
@@ -1114,7 +1118,7 @@ static __inline__ void AdvanceMessage(s32 amount) {
 #include "common/colosso_task.h"
 
 /// Selects a presentation script and resets its playback state.
-static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
+static void ColosseumFinal1_SelectPresentationScript(u32 mode, u32 param) {
   const s16 *script;
 
   gColosso_LetteringMode = mode;
@@ -1122,18 +1126,18 @@ static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
 
   FieldScheduler_AddCallback(Colosso_UpdateLettering, 0xc80);
 
-  script = gColossoRiver_RoundSpans;
+  script = gColosseumFinal1_RoundSpans;
   if (mode == 2) {
-    script = gColossoRiver_ModeRecordTwo;
+    script = gColosseumFinal1_ModeRecordTwo;
   }
   if (mode == 4) {
-    script = gColossoRiver_ModeRecordFour;
+    script = gColosseumFinal1_ModeRecordFour;
   }
   if (mode == 3) {
     if (param != 0) {
-      script = gColossoRiver_SpanB;
+      script = gColosseumFinal1_SpanB;
     } else {
-      script = gColossoRiver_SpanA;
+      script = gColosseumFinal1_SpanA;
     }
   }
 
@@ -1146,7 +1150,7 @@ static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
 
 /// The lettering a visit opens with: `Lend a Hand` for the friends' turns
 /// (round 0), or for the race `Match 1`, then 3, 2, 1 and `Go!`.
-static void ColossoRiver_ShowRoundIntroduction(s32 round) {
+static void ColosseumFinal1_ShowRoundIntroduction(s32 round) {
   if (round == 0) {
     Engine_EventBegin();
     Engine_EventOpenScreen();
@@ -1154,7 +1158,7 @@ static void ColossoRiver_ShowRoundIntroduction(s32 round) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_089);
     Colosso_LoadLettering(0);
-    ColossoRiver_SelectPresentationScript(1, 0);
+    ColosseumFinal1_SelectPresentationScript(1, 0);
     Engine_EventWait(120);
     Engine_EventEnd();
   } else {
@@ -1162,29 +1166,29 @@ static void ColossoRiver_ShowRoundIntroduction(s32 round) {
     Engine_EventBegin();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    gColossoRiver_RoundSpans[15] = round * 60;
+    gColosseumFinal1_RoundSpans[15] = round * 60;
     Engine_EventWait(30);
     Engine_AudioPlayCue(round + 90);
     Colosso_LoadLettering(round);
-    ColossoRiver_SelectPresentationScript(1, 0);
+    ColosseumFinal1_SelectPresentationScript(1, 0);
     Engine_EventWait(120);
     while (AudioCommand_GetStateByte() != 0) {
       Engine_TaskWait(1);
     }
     Engine_AudioPlayCue(SE_289);
     Colosso_LoadLettering(5);
-    ColossoRiver_SelectPresentationScript(2, 0);
+    ColosseumFinal1_SelectPresentationScript(2, 0);
     Engine_AudioPlayCue(SE_236);
     Engine_EventWait(60);
-    ColossoRiver_SelectPresentationScript(2, 1);
+    ColosseumFinal1_SelectPresentationScript(2, 1);
     Engine_AudioPlayCue(SE_236);
     Engine_EventWait(60);
     Colosso_LoadLettering(6);
-    ColossoRiver_SelectPresentationScript(2, 0);
+    ColosseumFinal1_SelectPresentationScript(2, 0);
     Engine_AudioPlayCue(SE_236);
     Engine_EventWait(60);
     Colosso_LoadLettering(7);
-    ColossoRiver_SelectPresentationScript(4, 0);
+    ColosseumFinal1_SelectPresentationScript(4, 0);
     Engine_AudioPlayCue(SE_237);
     Audio_PlayCueFromEventWork();
     Engine_EventEnd();
@@ -1194,15 +1198,16 @@ static void ColossoRiver_ShowRoundIntroduction(s32 round) {
 
 /// The result: `Won` or `Lose` in large lettering with its fanfare, then the
 /// screen closes.
-static void ColossoRiver_ShowMatchResult(s32 result) {
+static void ColosseumFinal1_ShowMatchResult(s32 result) {
 
   s32 kind;
 
   Engine_AudioPlayCue(SE_247);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  gColossoRiver_SpanA[13] = result * 60;
-  STORE_CONST(gColossoRiver_SpanB[13]) = (result < 0 ? -result : result) * 60;
+  gColosseumFinal1_SpanA[13] = result * 60;
+  STORE_CONST(gColosseumFinal1_SpanB[13]) =
+      (result < 0 ? -result : result) * 60;
   if (result < 0) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_086);
@@ -1210,7 +1215,7 @@ static void ColossoRiver_ShowMatchResult(s32 result) {
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
      * differ in tbs-en. */
-    COLOSSO_RIVER_SELECT_MODE_BLOCK(3, 1);
+    COLOSSEUM_FINAL_1_SELECT_MODE_BLOCK(3, 1);
     Engine_EventWait(-result * 60 + 60);
     kind = 0;
   } else {
@@ -1219,7 +1224,7 @@ static void ColossoRiver_ShowMatchResult(s32 result) {
     Colosso_LoadLettering(4);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
-    COLOSSO_RIVER_SELECT_MODE_BLOCK(3, 0);
+    COLOSSEUM_FINAL_1_SELECT_MODE_BLOCK(3, 0);
     Engine_EventWait(result * 60 + 60);
     kind = 8;
   }
@@ -1251,10 +1256,10 @@ UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   }
 }
 
-static void ColossoRiver_NoOp(void) {}
+static void ColosseumFinal1_NoOp(void) {}
 
 /// Marks the shared stage state ready for the waiting event.
-UNUSED static void ColossoRiver_MarkStageReady(void) {
+UNUSED static void ColosseumFinal1_MarkStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
   u16 nine = 9;
 
@@ -1262,7 +1267,7 @@ UNUSED static void ColossoRiver_MarkStageReady(void) {
 }
 
 /// Waits until the stage's setup task reports readiness.
-static void ColossoRiver_WaitForStageReady(void) {
+static void ColosseumFinal1_WaitForStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
 
   while (*ready != 9) {
@@ -1271,7 +1276,7 @@ static void ColossoRiver_WaitForStageReady(void) {
 }
 
 /// Occasionally spawns an animated effect around the finish item.
-static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
+static void ColosseumFinal1_SpawnRandomEffect(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   s32 position[3];
   u32 chance;
@@ -1299,7 +1304,7 @@ static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
     if (effect != 0) {
       effect->motionFlags = 0;
       Engine_ActorSetSpriteFlags(effect, 0);
-      Engine_ObjectSetScript(effect, gColossoRiver_ScriptA);
+      Engine_ObjectSetScript(effect, gColosseumFinal1_ScriptA);
       Object_SetMode(effect, 1);
       Object_SetMode(effect, 0);
     }
@@ -1307,22 +1312,22 @@ static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
 }
 
 /// Presents the collected item above its collector and signals completion.
-static s32
-ColossoRiver_PlaceFinishItemAboveActor(struct ScriptInterpreter *interpreter) {
+static s32 ColosseumFinal1_PlaceFinishItemAboveActor(
+    struct ScriptInterpreter *interpreter) {
   struct FieldActor *collector = (struct FieldActor *)interpreter;
   struct FieldActor *itemActor = Object_GetById(collector->timer);
 
   Engine_ObjectSetPosition(itemActor, collector->x.fixed,
                            collector->y.fixed + PIXELS(36), collector->z.fixed);
   itemActor->motionFlags = 0;
-  Engine_ObjectSetScript(itemActor, gColossoRiver_ScriptB);
+  Engine_ObjectSetScript(itemActor, gColosseumFinal1_ScriptB);
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   collector->timer = 0;
   return 0;
 }
 
 /// Moves to the selected finish item and presents it to the party.
-static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
+static s32 ColosseumFinal1_CollectFinishItem(s32 firstItem, s32 secondItem) {
 
   struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
   struct FieldActor *actor;
@@ -1357,7 +1362,7 @@ static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
 
   Engine_ObjectSetPosition(actor, x, 0, z);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_11);
-  Engine_ObjectSetScript(actor, gColossoRiver_ApproachScript);
+  Engine_ObjectSetScript(actor, gColosseumFinal1_ApproachScript);
 
   while (*pendingItemActor != 0) {
     Engine_TaskWait(1);
@@ -1367,12 +1372,12 @@ static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
      * differ in tbs-en. */
-    COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES(0, firstItem);
+    COLOSSEUM_FINAL_1_APPLY_MATCHING_SLOT_VALUES(0, firstItem);
     UiWork_PushValueSlot(firstItem, 2);
   } else {
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
-    COLOSSO_RIVER_APPLY_MATCHING_SLOT_VALUES(0, secondItem);
+    COLOSSEUM_FINAL_1_APPLY_MATCHING_SLOT_VALUES(0, secondItem);
     UiWork_PushValueSlot(secondItem, 2);
   }
 
@@ -1389,7 +1394,7 @@ static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
 #include "common/object_findslot.h"
 
 /// Checks the next cell and pushes its object one step if clear.
-static void ColossoRiver_PushObjectAhead(void) {
+static void ColosseumFinal1_PushObjectAhead(void) {
 
   struct FieldActor *subject;
   struct FieldActor *target;
@@ -1405,7 +1410,7 @@ static void ColossoRiver_PushObjectAhead(void) {
 
   direction = subject->facing >> 12;
 
-  packedStep = gColossoRiver_DirectionSteps[direction];
+  packedStep = gColosseumFinal1_DirectionSteps[direction];
   position.x = subject->x.fixed + (packedStep & 0xffff0000);
   position.y = subject->y.fixed;
   packedStep <<= 16;
@@ -1416,7 +1421,7 @@ static void ColossoRiver_PushObjectAhead(void) {
     return;
   }
 
-  packedStep = gColossoRiver_DirectionSteps[direction];
+  packedStep = gColosseumFinal1_DirectionSteps[direction];
   position.x = target->x.fixed + (packedStep & 0xffff0000);
   position.y = target->y.fixed;
   packedStep <<= 16;
@@ -1439,7 +1444,7 @@ static void ColossoRiver_PushObjectAhead(void) {
   target->terrainId = 2;
   zero = 0;
 
-  packedStep = gColossoRiver_DirectionSteps[direction];
+  packedStep = gColosseumFinal1_DirectionSteps[direction];
   position.x = target->x.fixed + (packedStep & 0xffff0000);
   position.y = target->y.fixed;
   packedStep <<= 16;
@@ -1483,13 +1488,13 @@ const u8 gColosso_LetteringPaletteOffsets[] = {
 #endif
 };
 
-const s16 gColossoRiver_ModeRecordTwo[] = {
+const s16 gColosseumFinal1_ModeRecordTwo[] = {
     0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 30, 0x2000, 0,
     30, 0x7fff, 30, -1,
 };
 
-const s16 gColossoRiver_SpanB[] = {
+const s16 gColosseumFinal1_SpanB[] = {
     0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
     6, 0x7fff, 6, 0x1000, 240, 6, 0x7fff, 6,
@@ -1502,15 +1507,15 @@ const s16 gColossoRiver_SpanB[] = {
 
 char gHexDigits[20] = "0123456789ABCDEF";
 
-s32 gColossoRiver_ScriptA[] = {
+s32 gColosseumFinal1_ScriptA[] = {
     SC_ADD(SW_Y, -PIXELS(1) / 4),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_FREE,
 };
 
-s32 gColossoRiver_ScriptB[] = {
-    SC_SET(SW_HOOK, (s32)ColossoRiver_SpawnRandomEffect),
+s32 gColosseumFinal1_ScriptB[] = {
+    SC_SET(SW_HOOK, (s32)ColosseumFinal1_SpawnRandomEffect),
     SC_LABEL(1),
     SC_WAIT(10),
     SC_SET(SW_SCALE_X, (11 * Q16_ONE) / 8),
@@ -1547,7 +1552,7 @@ s32 gColossoRiver_ScriptB[] = {
 /// Pixel steps by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
 
-u32 gColossoRiver_DirectionSteps[] = {
+u32 gColosseumFinal1_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
     DIRECTION_STEP(16, 0),
     DIRECTION_STEP(16, 0),
@@ -1566,13 +1571,13 @@ u32 gColossoRiver_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
 };
 
-struct SceneEntrance gColossoRiver_Entrances[] = {
+struct SceneEntrance gColosseumFinal1_Entrances[] = {
     { 0, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-u32 gColossoRiver_Exits[] = {
+u32 gColosseumFinal1_Exits[] = {
     SCENE_EXITS(ColosseumFinal1),
     SCENE_EXIT(10, ColosseumFinal1, 1),
     SCENE_EXIT(COLOSSEUM_FINAL_1_TO_COLOSSEUM_WEST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST),
@@ -1581,7 +1586,7 @@ u32 gColossoRiver_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gColossoRiver_Placements[] = {
+struct ScenePlacement gColosseumFinal1_Placements[] = {
     { 0x0, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1629,9 +1634,9 @@ struct ScenePlacement gColossoRiver_Placements[] = {
     { SCENE_TABLE_END },
 };
 
-s32 gColossoRiver_Countdown = 0;
+s32 gColosseumFinal1_Countdown = 0;
 
-struct SceneEvent gColossoRiver_Events[] = {
+struct SceneEvent gColosseumFinal1_Events[] = {
     { TOUCH_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockOrCheckAhead) },
     { TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
     { TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
@@ -1665,7 +1670,7 @@ struct SceneEvent gColossoRiver_Events[] = {
 
 s16 gColosso_LetteringSlot = -1;
 
-s16 gColossoRiver_RoundSpans[] = {
+s16 gColosseumFinal1_RoundSpans[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     0x4000, -188, 2048, 0x1000, 256, 1, 0x2000, 16,
 #else
@@ -1675,7 +1680,7 @@ s16 gColossoRiver_RoundSpans[] = {
     0x3000, 2048, 20, 0x7fff, 60, -1,
 };
 
-s16 gColossoRiver_ModeRecordFour[] = {
+s16 gColosseumFinal1_ModeRecordFour[] = {
 #if LANGUAGE == LANGUAGE_FRENCH
     0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 384,
     6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 512,
@@ -1706,7 +1711,7 @@ s16 gColossoRiver_ModeRecordFour[] = {
 #endif
 };
 
-s16 gColossoRiver_SpanA[] = {
+s16 gColosseumFinal1_SpanA[] = {
     0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
     6, 0x7fff, 6, 0x1000, 272, 6, 0x7fff, 6,
@@ -1725,7 +1730,7 @@ s32 gColosso_RivalFinishScript[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(6),
-    SC_CALL(ColossoRiver_PlaceFinishItemAboveActor),
+    SC_CALL(ColosseumFinal1_PlaceFinishItemAboveActor),
     SC_WAIT(3),
     SC_ARG(10),
     SC_WAIT(150),
@@ -1734,12 +1739,12 @@ s32 gColosso_RivalFinishScript[] = {
     SC_END,
 };
 
-s32 gColossoRiver_ApproachScript[] = {
+s32 gColosseumFinal1_ApproachScript[] = {
     SC_ARG(2),
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(6),
-    SC_CALL(ColossoRiver_PlaceFinishItemAboveActor),
+    SC_CALL(ColosseumFinal1_PlaceFinishItemAboveActor),
     SC_WAIT(3),
     SC_ARG(28),
     SC_WAIT(150),

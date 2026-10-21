@@ -127,7 +127,7 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
 
 /// The casting impacts, by effect kind less 100: each is named for the first
 /// ability whose gBattle_ActionFlags entry selects it; the four no ability
-/// selects keep their numbers.
+/// selects are named UNUSED_ and for the effect they hand off to.
 ///
 /// The trailing comments give each impact's own animation, drawn over the
 /// target after the orb and sparks. Most animations use the 64 particles at
@@ -152,25 +152,25 @@ enum CastingImpact {
   CASTING_IMPACT_IMPACT_LIFE_NOURISH,  ///< motes fly back to the caster
   CASTING_IMPACT_IMPACT_AQUA_SOCK,     ///< a blue flame column falls onto the
                                        ///< target
-  CASTING_IMPACT_IMPACT_15,            ///< hands off
-  CASTING_IMPACT_IMPACT_FROST_BITE,    ///< ice chips converge on the target
-  CASTING_IMPACT_IMPACT_17,            ///< hands off
-  CASTING_IMPACT_IMPACT_LIFE_LEECH,    ///< motes fly back to the caster
-  CASTING_IMPACT_IMPACT_PSY_LEECH,     ///< motes fly back to the caster
-  CASTING_IMPACT_IMPACT_BROIL,         ///< ember streaks spread sideways
-  CASTING_IMPACT_IMPACT_MELTDOWN,      ///< nothing; hands to the stat reduction
-  CASTING_IMPACT_IMPACT_HEAT_MIRAGE,   ///< also Heat Flash; smoke
-  CASTING_IMPACT_IMPACT_BARRAGE,       ///< flash bursts rise from the target
-  CASTING_IMPACT_IMPACT_24,            ///< hands off
-  CASTING_IMPACT_IMPACT_ACID_BATH,     ///< smoke
-  CASTING_IMPACT_IMPACT_26,            ///< hands off
-  CASTING_IMPACT_IMPACT_STUN_VOLTAGE,  ///< two bolts strike among glints
-  CASTING_IMPACT_IMPACT_BLINDING_SMOG, ///< smoke
-  CASTING_IMPACT_IMPACT_MURK,          ///< smoke
-  CASTING_IMPACT_IMPACT_CYCLONE_SLASH, ///< a tornado stands over the target
-  CASTING_IMPACT_IMPACT_PSYPHON_SEAL,  ///< a rune opens over the target
-  CASTING_IMPACT_IMPACT_ASURA,         ///< a beast scrolls across and breaks
-  CASTING_IMPACT_IMPACT_FORCIBLE_ARM,  ///< a flame falls diagonally
+  CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS, ///< hands off
+  CASTING_IMPACT_IMPACT_FROST_BITE,       ///< ice chips converge on the target
+  CASTING_IMPACT_IMPACT_UNUSED_GATHERING, ///< hands off
+  CASTING_IMPACT_IMPACT_LIFE_LEECH,       ///< motes fly back to the caster
+  CASTING_IMPACT_IMPACT_PSY_LEECH,        ///< motes fly back to the caster
+  CASTING_IMPACT_IMPACT_BROIL,            ///< ember streaks spread sideways
+  CASTING_IMPACT_IMPACT_MELTDOWN,    ///< nothing; hands to the stat reduction
+  CASTING_IMPACT_IMPACT_HEAT_MIRAGE, ///< also Heat Flash; smoke
+  CASTING_IMPACT_IMPACT_BARRAGE,     ///< flash bursts rise from the target
+  CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME, ///< hands off
+  CASTING_IMPACT_IMPACT_ACID_BATH,           ///< smoke
+  CASTING_IMPACT_IMPACT_UNUSED_COMETS,       ///< hands off
+  CASTING_IMPACT_IMPACT_STUN_VOLTAGE,        ///< two bolts strike among glints
+  CASTING_IMPACT_IMPACT_BLINDING_SMOG,       ///< smoke
+  CASTING_IMPACT_IMPACT_MURK,                ///< smoke
+  CASTING_IMPACT_IMPACT_CYCLONE_SLASH,  ///< a tornado stands over the target
+  CASTING_IMPACT_IMPACT_PSYPHON_SEAL,   ///< a rune opens over the target
+  CASTING_IMPACT_IMPACT_ASURA,          ///< a beast scrolls across and breaks
+  CASTING_IMPACT_IMPACT_FORCIBLE_ARM,   ///< a flame falls diagonally
   CASTING_IMPACT_IMPACT_TRUNCHEON_FIST, ///< a flame falls diagonally
   CASTING_IMPACT_IMPACT_SEVERE_BLOW,    ///< hands off
 };
@@ -218,9 +218,11 @@ enum CastingImpact {
 /// (CASTING_IMPACT_IMPACT_PSYPHON_SEAL); Asura (CASTING_IMPACT_IMPACT_ASURA);
 /// Forcible Arm (CASTING_IMPACT_IMPACT_FORCIBLE_ARM); Truncheon Fist
 /// (CASTING_IMPACT_IMPACT_TRUNCHEON_FIST); Severe Blow
-/// (CASTING_IMPACT_IMPACT_SEVERE_BLOW); none (CASTING_IMPACT_IMPACT_15); none
-/// (CASTING_IMPACT_IMPACT_17); none (CASTING_IMPACT_IMPACT_24); none
-/// (CASTING_IMPACT_IMPACT_26).
+/// (CASTING_IMPACT_IMPACT_SEVERE_BLOW); none
+/// (CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS); none
+/// (CASTING_IMPACT_IMPACT_UNUSED_GATHERING); none
+/// (CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME); none
+/// (CASTING_IMPACT_IMPACT_UNUSED_COMETS).
 ///
 /// Called only by BattleFx_DispatchByIdRange (positions.c), for effect kinds
 /// 100 to 135. The phases, the hand-offs and the particle ranges are in the
@@ -231,7 +233,8 @@ enum CastingImpact {
 /// impacts; it releases all of them before it returns, or hands them on.
 ///
 /// mode: the impact, an enum CastingImpact (the effect kind less 100). The
-///       tests on mode 100 never hold, as the dispatcher passes 0 to 35.
+///       tests on mode 100 never hold, as the dispatcher passes only
+///       CastingImpact values.
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   void **slot;
@@ -371,9 +374,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     break;
   case CASTING_IMPACT_IMPACT_MIST:
   case CASTING_IMPACT_IMPACT_AQUA_SOCK:
-  case CASTING_IMPACT_IMPACT_15:
+  case CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS:
   case CASTING_IMPACT_IMPACT_FROST_BITE:
-  case CASTING_IMPACT_IMPACT_17:
+  case CASTING_IMPACT_IMPACT_UNUSED_GATHERING:
   case CASTING_IMPACT_IMPACT_LIFE_LEECH:
   case CASTING_IMPACT_IMPACT_PSY_LEECH:
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
@@ -386,7 +389,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   case CASTING_IMPACT_IMPACT_MELTDOWN:
   case CASTING_IMPACT_IMPACT_HEAT_MIRAGE:
   case CASTING_IMPACT_IMPACT_BARRAGE:
-  case CASTING_IMPACT_IMPACT_24:
+  case CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME:
   case CASTING_IMPACT_IMPACT_ACID_BATH:
   case CASTING_IMPACT_IMPACT_TRUNCHEON_FIST:
   case CASTING_IMPACT_IMPACT_SEVERE_BLOW:
@@ -396,7 +399,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     break;
   case CASTING_IMPACT_IMPACT_SMOG:
   case CASTING_IMPACT_IMPACT_SQUALL:
-  case CASTING_IMPACT_IMPACT_26:
+  case CASTING_IMPACT_IMPACT_UNUSED_COMETS:
   case CASTING_IMPACT_IMPACT_STUN_VOLTAGE:
   case CASTING_IMPACT_IMPACT_BLINDING_SMOG:
   case CASTING_IMPACT_IMPACT_MURK:
@@ -567,36 +570,39 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       REG_BG2X = (96 - targetScreen->x) << 8;
     }
   }
-  // Impacts 15, 17, 24 and 26 clear the canvas and hand off to another
-  // effect without giving the caster its motion back: 15 to projectile
-  // volley 9, 24 to Mystic Flame's orbs and 26 to projectile volley 8; 17
-  // ends here.
-  if (mode == CASTING_IMPACT_IMPACT_15 || mode == CASTING_IMPACT_IMPACT_17 ||
-      mode == CASTING_IMPACT_IMPACT_24 || mode == CASTING_IMPACT_IMPACT_26) {
+  // The four unused impacts clear the canvas and hand off to another effect
+  // without giving the caster its motion back: the ice chips to Blizzard's
+  // volley, the Mystic Flame one to Mystic Flame's orbs and the comets to
+  // PROJECTILE_VOLLEY_IMPACT_COMETS; the gathering ends here.
+  if (mode == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS ||
+      mode == CASTING_IMPACT_IMPACT_UNUSED_GATHERING ||
+      mode == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME ||
+      mode == CASTING_IMPACT_IMPACT_UNUSED_COMETS) {
     CastingImpact_EndPrelude(work, canvas);
-    ObjectDispatch_SelectAnimationFar(casterActor, 3);
-    if (mode == CASTING_IMPACT_IMPACT_15) {
-      BattleFx_RunProjectileVolley(effect, 9);
+    ObjectDispatch_SelectAnimationFar(casterActor, POSE_CAST);
+    if (mode == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS) {
+      BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_BLIZZARD);
     }
-    if (mode == CASTING_IMPACT_IMPACT_24) {
+    if (mode == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME) {
       BattleFx_RunMysticFlame(effect);
     }
-    if (mode != CASTING_IMPACT_IMPACT_26) {
+    if (mode != CASTING_IMPACT_IMPACT_UNUSED_COMETS) {
       return;
     }
-    BattleFx_RunProjectileVolley(effect, 8);
+    BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_IMPACT_COMETS);
     return;
   }
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)casterActor, 16);
   SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
   casterActor->verticalMotionStrength = savedVerticalStrength;
-  // Impact 35 (Severe Blow), with the caster's motion back, clears the
-  // canvas and hands off to BattleFx_RunSparkGroups, mode 2, with variant 3.
+  // Severe Blow, with the caster's motion back, clears the canvas and hands
+  // off to BattleFx_RunSparkGroups' rising sparks, with
+  // SPARK_GROUPS_SEVERE_BLOW.
   if (mode == CASTING_IMPACT_IMPACT_SEVERE_BLOW) {
     CastingImpact_EndPrelude(work, canvas);
-    effect->variant = 3;
-    BattleFx_RunSparkGroups(effect, 2);
+    effect->variant = SPARK_GROUPS_SEVERE_BLOW;
+    BattleFx_RunSparkGroups(effect, SPARK_GROUPS_RISING);
     return;
   }
 
@@ -1363,8 +1369,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    // Djinni impacts 0 to 7: fly to the target in six frames.
-    if (mode <= 7) {
+    // From Bane to Sap the Djinni flies to the target in six frames.
+    if (mode <= CASTING_IMPACT_IMPACT_SAP) {
       if (frame <= 5) {
         EffectPosition_ProjectPoint(position, &projected);
         projected.x /= 2;

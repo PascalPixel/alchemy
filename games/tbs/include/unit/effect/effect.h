@@ -186,7 +186,7 @@ enum BattleFxKind {
   BATTLE_FX_OUTER_SPACE = 384,
   BATTLE_FX_DRAGON_DRIVER = 385,
   BATTLE_FX_DRAIN_FANG = 386,
-  BATTLE_FX_SPARK_APPROACH_VARIANT3 = 387, ///< no ability uses it
+  BATTLE_FX_SEVERE_BLOW_LEAP = 387, ///< no ability uses it
   BATTLE_FX_THRASH = 388,
   BATTLE_FX_RECOVERY = 389,
   BATTLE_FX_FIRE_BLESSING = 400,
@@ -647,7 +647,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect);
 
 // thrash.c
 void BattleFx_RunThrash(struct BattleEffectArgument *effect);
-void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect);
+void BattleFx_RunSevereBlowLeap(struct BattleEffectArgument *effect);
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect);
 void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect);
 void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode);

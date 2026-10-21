@@ -8,6 +8,14 @@
 /// two more Ram_MapCellBuffer.
 #define FLASHING_STRIKE_PICTURE_BYTES (120 * 120)
 
+/// The flashing strike's modes (BattleFx_RunFlashingStrike): which two
+/// RevealMask resources it shows.
+enum FlashingStrikeMode {
+  FLASHING_STRIKE_UNUSED,       ///< RevealMaskE and F; nothing passes it
+  FLASHING_STRIKE_QUICK_STRIKE, ///< RevealMaskC and D, with a hop
+  FLASHING_STRIKE_VORPAL_SLASH  ///< RevealMaskA and B
+};
+
 /// The user leaps high at the first target, then a burst of 32 sparks rises
 /// beneath it.
 ///
@@ -15,27 +23,27 @@
 ///
 /// The leap takes the user three quarters of the way in 24 steps, starting up
 /// at 12.2 pixels a frame (16.16); after 29 frames the spark group plays with
-/// effect->variant set to 4, overriding the ability's own.
+/// effect->variant set to SPARK_GROUPS_THRASH, overriding the ability's own.
 void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0xc3333);
   WaitFrames(29);
-  effect->variant = 4;
-  BattleFx_RunSparkGroups(effect, 2);
+  effect->variant = SPARK_GROUPS_THRASH;
+  BattleFx_RunSparkGroups(effect, SPARK_GROUPS_RISING);
 }
 
 /// The user leaps at the first target, then a burst of 340 sparks rises
 /// beneath it and the canvas flashes.
 ///
-/// Abilities: none (BATTLE_FX_SPARK_APPROACH_VARIANT3).
+/// Abilities: none (BATTLE_FX_SEVERE_BLOW_LEAP).
 ///
 /// A lower leap than Thrash's (7.2 pixels a frame up), and the spark group
-/// after 12 frames with effect->variant set to 3, overriding the ability's
-/// own.
-void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
+/// after 12 frames with effect->variant set to SPARK_GROUPS_SEVERE_BLOW,
+/// overriding the ability's own.
+void BattleFx_RunSevereBlowLeap(struct BattleEffectArgument *effect) {
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0x73333);
   WaitFrames(12);
-  effect->variant = 3;
-  BattleFx_RunSparkGroups(effect, 2);
+  effect->variant = SPARK_GROUPS_SEVERE_BLOW;
+  BattleFx_RunSparkGroups(effect, SPARK_GROUPS_RISING);
 }
 
 /// The user leaps at the first target, four pictures flash across the effect
@@ -43,7 +51,7 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
 ///
 /// Abilities: Quick Strike (BATTLE_FX_QUICK_STRIKE).
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
-  BattleFx_RunFlashingStrike(effect, 1);
+  BattleFx_RunFlashingStrike(effect, FLASHING_STRIKE_QUICK_STRIKE);
 }
 
 /// The user steps up to the first target, four pictures flash across the
@@ -51,11 +59,11 @@ void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
 ///
 /// Abilities: Vorpal Slash (BATTLE_FX_VORPAL_SLASH).
 void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect) {
-  BattleFx_RunFlashingStrike(effect, 2);
+  BattleFx_RunFlashingStrike(effect, FLASHING_STRIKE_VORPAL_SLASH);
 }
 
-/// Plays a flashing strike, the runner of BattleFx_RunQuickStrike (mode 1)
-/// and BattleFx_RunVorpalSlash (mode 2); nothing passes mode 0.
+/// Plays a flashing strike, the runner of BattleFx_RunQuickStrike and
+/// BattleFx_RunVorpalSlash; nothing passes FLASHING_STRIKE_UNUSED.
 ///
 /// The user steps up to the first target over 16 frames. Then four 120x120
 /// pictures show for four frames each (mirrored when effect->side is 1), the
@@ -66,8 +74,8 @@ void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect) {
 /// Opens and closes the canvas layer; the pictures take work->imageStorage
 /// and the start of Ram_MapCellBuffer.
 ///
-/// mode: picks the pictures (RevealMaskE and F for 0, C and D for 1, A and B
-/// for 2); mode 1 also makes the step a hop.
+/// mode: picks the pictures (enum FlashingStrikeMode); Quick Strike also
+///       makes the step a hop.
 void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   struct BattleEffectWork *work;
@@ -83,12 +91,12 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
 
   // Each resource holds two pictures: the first fills work->imageStorage, up
   // to the particles, and the second the start of Ram_MapCellBuffer.
-  if (mode == 0) {
+  if (mode == FLASHING_STRIKE_UNUSED) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, Ram_MapCellBuffer,
                                1, 1);
-  } else if (mode == 1) {
+  } else if (mode == FLASHING_STRIKE_QUICK_STRIKE) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->imageStorage,
                                1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, Ram_MapCellBuffer,
@@ -103,7 +111,7 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
 
   // The step: three quarters of the way in 16 steps, a hop of 8 pixels a
   // frame up for Quick Strike.
-  if (mode == 1)
+  if (mode == FLASHING_STRIKE_QUICK_STRIKE)
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16,
                                    0x80000);
   else

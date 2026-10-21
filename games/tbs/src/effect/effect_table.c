@@ -358,11 +358,11 @@ u8 gPlasma_Counts[] = {1, 3, 7};
 /// The spark groups, by variant: the SPARK_GROUPS_ columns.
 u16 gPlasma_Shapes[][5] = {
     // sparks per burst, bursts, each burst's offset across
-    {128, 1, 16, 0, 0},   // variant 0
-    {255, 1, 16, 0, 0},   // variant 1
-    {192, 3, 0, 24, 48},  // variant 2
-    {340, 1, 16, 24, 48}, // variant 3
-    {32, 1, 16, 0, 0},    // variant 4
+    [EFFECT_VARIANT_BASIC] = {128, 1, 16, 0, 0},
+    [EFFECT_VARIANT_STRONGER] = {255, 1, 16, 0, 0},
+    [EFFECT_VARIANT_STRONGEST] = {192, 3, 0, 24, 48},
+    [SPARK_GROUPS_SEVERE_BLOW] = {340, 1, 16, 24, 48},
+    [SPARK_GROUPS_THRASH] = {32, 1, 16, 0, 0},
 };
 /// The flash picture for each three frames at the end of a flash's life.
 u8 gPlasma_FlashCells[] = FLASH_FADE_CELLS;
@@ -613,8 +613,7 @@ BattleFxHandler gBattleFx_EffectHandlers[BATTLE_FX_KIND_COUNT - 1] = {
         BattleFx_RunDragonDriver, // tiamat.c: Dragon Driver
     [BATTLE_FX_DRAIN_FANG - 1] =
         BattleFx_RunDrainFang, // target_strike.c: Drain Fang
-    [BATTLE_FX_SPARK_APPROACH_VARIANT3 - 1] =
-        BattleFx_RunSparkApproachVariant3,       // thrash.c
+    [BATTLE_FX_SEVERE_BLOW_LEAP - 1] = BattleFx_RunSevereBlowLeap, // thrash.c
     [BATTLE_FX_THRASH - 1] = BattleFx_RunThrash, // thrash.c: Thrash
     [BATTLE_FX_RECOVERY - 1] =
         BattleFx_RunRecovery, // mirrored_wall.c: Recovery
@@ -821,24 +820,24 @@ u8 gBolt_GlintModes[] = {2, 2, 3};
 
 // projectiles.c: Projectile volley modes and picture cells.
 
-/// Comet picture heights, by comet kind.
+/// Comet picture heights, by comet (enum ProjectileVolleyComet).
 u8 gProjectiles_CometHeights[] = {24, 36, 48};
 /// Each projectile volley mode, by the PROJECTILE_VOLLEY_ columns
 /// (projectiles.c).
 u8 gProjectiles_Modes[][5] = {
     // PROJECTILE_VOLLEY_: SHOTS, STEPS, STAGGER, DELAY, SPARKS
-    {6, 10, 3, 32, 4},  // mode 0
-    {4, 10, 5, 32, 8},  // mode 1
-    {10, 32, 3, 32, 4}, // mode 2
-    {5, 10, 5, 32, 4},  // mode 3
-    {10, 10, 1, 32, 4}, // mode 4
-    {1, 5, 0, 32, 80},  // mode 5
-    {7, 8, 2, 32, 40},  // mode 6
-    {30, 24, 1, 32, 4}, // mode 7
-    {6, 2, 3, 32, 4},   // mode 8
-    {60, 10, 1, 32, 4}, // mode 9
-    {60, 10, 1, 32, 4}, // mode 10
-    {10, 10, 1, 32, 4}, // mode 11
+    [PROJECTILE_VOLLEY_SLASH] = {6, 10, 3, 32, 4},
+    [PROJECTILE_VOLLEY_SHURIKEN] = {4, 10, 5, 32, 8},
+    [PROJECTILE_VOLLEY_CRAZY_VOICE] = {10, 32, 3, 32, 4},
+    [PROJECTILE_VOLLEY_WING_FLUTTER] = {5, 10, 5, 32, 4},
+    [PROJECTILE_VOLLEY_WING_BEAT] = {10, 10, 1, 32, 4},
+    [PROJECTILE_VOLLEY_CUTTING_EDGE] = {1, 5, 0, 32, 80},
+    [PROJECTILE_VOLLEY_HEAT_WAVE] = {7, 8, 2, 32, 40},
+    [PROJECTILE_VOLLEY_SLEET] = {30, 24, 1, 32, 4},
+    [PROJECTILE_VOLLEY_IMPACT_COMETS] = {6, 2, 3, 32, 4},
+    [PROJECTILE_VOLLEY_BLIZZARD] = {60, 10, 1, 32, 4},
+    [PROJECTILE_VOLLEY_ICE_BLESSING] = {60, 10, 1, 32, 4},
+    [PROJECTILE_VOLLEY_WING_STROKE] = {10, 10, 1, 32, 4},
 };
 // Hit flash pictures, by step (flash frame / 2).
 u8 gProjectiles_FlashWidths[] = {12, 18, 24, 30, 36, 39, 40};

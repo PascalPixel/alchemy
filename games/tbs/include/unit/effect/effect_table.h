@@ -171,6 +171,13 @@ enum {
   SPARK_GROUPS_BURSTS, ///< bursts, 8 frames apart
   SPARK_GROUPS_OFFSET  ///< burst i's offset across, in pixels, at [2 + i]
 };
+/// The spark groups' variants past the three strengths of Blast and
+/// Dynamite (enum EffectVariant), which their callers set before the run.
+enum {
+  SPARK_GROUPS_SEVERE_BLOW = 3, ///< 340 sparks and a flash: Severe Blow's
+                                ///< impact and BattleFx_RunSevereBlowLeap
+  SPARK_GROUPS_THRASH           ///< 32 sparks: Thrash
+};
 extern u16 gPlasma_Shapes[][5];
 
 extern u8 gPlasma_FlashCells[];
@@ -273,7 +280,32 @@ extern u16 gGrowth_ThornPuffCells[];
 extern u8 gBolt_Counts[][4];
 extern u8 gBolt_GlintFlips[];
 extern u8 gBolt_GlintModes[];
+/// The volley's comets, its CometSheet resources: Slash, Wind Slash and Sonic
+/// Slash fire the one their variant picks.
+enum ProjectileVolleyComet {
+  PROJECTILE_VOLLEY_COMET_A, ///< CometSheetA
+  PROJECTILE_VOLLEY_COMET_B, ///< CometSheetB
+  PROJECTILE_VOLLEY_COMET_C  ///< CometSheetC, also Cutting Edge's
+};
 extern u8 gProjectiles_CometHeights[];
+/// The projectile volley's modes (BattleFx_RunProjectileVolley), each named
+/// for the effect that fires it; the casting impacts fire two of them.
+enum ProjectileVolleyMode {
+  PROJECTILE_VOLLEY_SLASH,         ///< comets, picked by the variant
+  PROJECTILE_VOLLEY_SHURIKEN,      ///< spinning shurikens
+  PROJECTILE_VOLLEY_CRAZY_VOICE,   ///< bouncing pellets
+  PROJECTILE_VOLLEY_WING_FLUTTER,  ///< yellow sparks
+  PROJECTILE_VOLLEY_WING_BEAT,     ///< small yellow sparks
+  PROJECTILE_VOLLEY_CUTTING_EDGE,  ///< one large comet in ice colours
+  PROJECTILE_VOLLEY_HEAT_WAVE,     ///< fireballs trailing embers
+  PROJECTILE_VOLLEY_SLEET,         ///< ice chips falling from high above
+  PROJECTILE_VOLLEY_IMPACT_COMETS, ///< comets, after
+                                   ///< CASTING_IMPACT_IMPACT_UNUSED_COMETS
+  PROJECTILE_VOLLEY_BLIZZARD,      ///< scattered ice chips; also after
+                                   ///< CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS
+  PROJECTILE_VOLLEY_ICE_BLESSING,  ///< ice chips streaming one a frame
+  PROJECTILE_VOLLEY_WING_STROKE    ///< large yellow sparks, spread up and down
+};
 extern u8 gProjectiles_Modes[][5];
 extern u8 gProjectiles_FlashWidths[];
 extern u8 gProjectiles_FlashHeights[];

@@ -269,42 +269,42 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect,
 ///
 /// Abilities: Slash, Wind Slash, Sonic Slash (BATTLE_FX_SLASH).
 void BattleFx_RunSlash(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 0);
+  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_SLASH);
 }
 /// Four spinning shurikens fly at each target, five frames apart, and vanish
 /// once past it.
 ///
 /// Abilities: Shuriken (BATTLE_FX_SHURIKEN).
 void BattleFx_RunShuriken(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 1);
+  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_SHURIKEN);
 }
 /// Ten pellets fly slowly at each target and bounce off it, up or down at
 /// random.
 ///
 /// Abilities: Crazy Voice (BATTLE_FX_CRAZY_VOICE).
 void BattleFx_RunCrazyVoice(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 2);
+  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_CRAZY_VOICE);
 }
 /// Five yellow sparks fly level at each target, five frames apart.
 ///
 /// Abilities: Wing Flutter (BATTLE_FX_WING_FLUTTER).
 void BattleFx_RunWingFlutter(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 3);
+  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_WING_FLUTTER);
 }
 /// Ten large yellow sparks stream level at each target, one a frame, spread up
 /// and down.
 ///
 /// Abilities: Wing Stroke (BATTLE_FX_WING_STROKE).
 void BattleFx_RunWingStroke(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 11);
+  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_WING_STROKE);
 }
 /// Ten small yellow sparks stream level at each target, one a frame.
 ///
 /// Abilities: Wing Beat (BATTLE_FX_WING_BEAT).
 void BattleFx_RunWingBeat(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 4);
+  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_WING_BEAT);
 }
-/// Puts the user into its action pose (2) and fires the volley in this mode
+/// Puts the user into its leap pose and fires the volley in this mode
 /// while its animation runs fast.
 ///
 /// Called by Cutting Edge, Heat Wave and Blizzard. Leaves the user in its
@@ -314,7 +314,7 @@ BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
   struct DispatchObject *user;
 
   user = (struct DispatchObject *)GetBattleObjectSlotFar(effect->actor)->object;
-  ObjectDispatch_SelectAnimationFar(user, 2);
+  ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
   ObjectDispatch_SetAnimationSpeedFar(user,
                                       PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleFx_RunProjectileVolley(effect, mode);
@@ -327,14 +327,14 @@ BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
 ///
 /// Abilities: Cutting Edge (BATTLE_FX_CUTTING_EDGE).
 void BattleFx_RunCuttingEdge(struct BattleEffectArgument *effect) {
-  BattleFx_RunVolleyWithAction(effect, 5);
+  BattleFx_RunVolleyWithAction(effect, PROJECTILE_VOLLEY_CUTTING_EDGE);
 }
 /// From the user's action pose, seven fireballs trailing embers fly at each
 /// target, two frames apart, each bursting into 40 sparks.
 ///
 /// Abilities: Heat Wave (BATTLE_FX_HEAT_WAVE).
 void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
-  BattleFx_RunVolleyWithAction(effect, 6);
+  BattleFx_RunVolleyWithAction(effect, PROJECTILE_VOLLEY_HEAT_WAVE);
 }
 /// Thirty ice chips fall from high above the user onto each target, without
 /// shaking the screen or knocking the target back; the battle shows the damage
@@ -342,21 +342,21 @@ void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
 ///
 /// Abilities: Sleet (BATTLE_FX_SLEET).
 void BattleFx_RunSleet(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 7);
+  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_SLEET);
 }
 /// Sixty ice chips stream at each target, one a frame, without knocking it
 /// back.
 ///
 /// Abilities: Ice Blessing (BATTLE_FX_ICE_BLESSING).
 void BattleFx_RunIceBlessing(struct BattleEffectArgument *effect) {
-  BattleFx_RunProjectileVolley(effect, 10);
+  BattleFx_RunProjectileVolley(effect, PROJECTILE_VOLLEY_ICE_BLESSING);
 }
 /// From the user's action pose, sixty ice chips stream at each target, one a
 /// frame, scattered up and down, without knocking it back.
 ///
 /// Abilities: Blizzard (BATTLE_FX_BLIZZARD).
 void BattleFx_RunBlizzard(struct BattleEffectArgument *effect) {
-  BattleFx_RunVolleyWithAction(effect, 9);
+  BattleFx_RunVolleyWithAction(effect, PROJECTILE_VOLLEY_BLIZZARD);
 }
 
 /// PARTICLES holds the hit flashes from 0, the sparks from 100 and the
@@ -388,20 +388,21 @@ enum VolleyField {
 /// Shots fly from the user to each target and burst into a flash and sparks
 /// when they pass it. The hit sound plays at most once every 8 frames.
 ///
-/// Called by the eleven wrappers above, and by casting impacts 15 (mode 9)
-/// and 26 (mode 8, which no wrapper uses) once their prelude ends. With more
-/// than 63 shots in all it fires at the first target only, writing
-/// work->effect->count. Writes REG_BLDCNT in mode 1 and the first 128 bytes
-/// of BG palette RAM in modes 2 and 5; sets work->shakeFrames on each hit
-/// but in mode 7. The second blitter is built and freed for each picture that
-/// needs it.
+/// Called by the eleven wrappers above, and by two unused casting impacts
+/// once their prelude ends: CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS fires
+/// Blizzard's volley, CASTING_IMPACT_IMPACT_UNUSED_COMETS
+/// PROJECTILE_VOLLEY_IMPACT_COMETS, which no wrapper uses. With more than 63
+/// shots in all it fires at the first target only, writing
+/// work->effect->count. Writes REG_BLDCNT for Shuriken and the first 128
+/// bytes of BG palette RAM for Crazy Voice and Cutting Edge; sets
+/// work->shakeFrames on each hit but for Sleet. The second blitter is built and
+/// freed for each picture that needs it.
 ///
-/// effect: the user and the targets. variant picks the comet in mode 0
-///         (mode 5 always uses comet 2, mode 8 comet 0); with prelude 1 a
-///         Mercury Djinni enters first.
-/// mode: the shot and its flight (0 to 11): 0, 5 and 8 comets (5 in the
-///       ice palette), 1 shurikens, 2 bouncing pellets, 3, 4 and 11
-///       yellow sparks, 6 fireballs with trails, 7, 9 and 10 ice chips.
+/// effect: the user and the targets. variant picks Slash's comet (Cutting
+///         Edge always fires PROJECTILE_VOLLEY_COMET_C, the impact's comets
+///         PROJECTILE_VOLLEY_COMET_A); with prelude 1 a Mercury Djinni
+///         enters first.
+/// mode: the shot and its flight (enum ProjectileVolleyMode).
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                   s32 mode) {
   struct EffectPosition position;
@@ -419,7 +420,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   u8 *sheet;
   s32 soundCooldown;
   s32 total;
-  s32 kind;
+  s32 comet;
   s32 shots;
   s32 steps;
   struct MotionObject *user;
@@ -435,10 +436,10 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   soundCooldown = 0;
   work->effect = effect;
-  kind = effect->variant;
+  comet = effect->variant;
   // The canvas's BG priority: 0 for Ice Blessing, 1 for the others. A
   // Djinni prelude then opens the layer again at priority 0.
-  if (mode == 10)
+  if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
     BattleFx_BeginCanvasLayer(0);
   else
     BattleFx_BeginCanvasLayer(1);
@@ -448,7 +449,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 
   // The main blitter, mirrored on side 1: brightest-wins for Cutting Edge,
   // additive for the others.
-  if (mode == 5) {
+  if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
     if (work->effect->side == 1)
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
@@ -468,16 +469,18 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   // The shot pictures, and how long each mode's trails last: comets keep
   // three quarters of each level a frame, shurikens none, the rest half.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (mode == 0 || mode == 5 || mode == 8) {
-    if (mode == 5)
-      kind = 2;
-    if (mode == 8)
-      kind = 0;
-    if (kind == 0)
+  if (mode == PROJECTILE_VOLLEY_SLASH ||
+      mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
+      mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
+    if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
+      comet = PROJECTILE_VOLLEY_COMET_C;
+    if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS)
+      comet = PROJECTILE_VOLLEY_COMET_A;
+    if (comet == PROJECTILE_VOLLEY_COMET_A)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetA,
                                  work->sheet + PROJECTILE_VOLLEY_COMET_CELLS, 1,
                                  1);
-    else if (kind == 1)
+    else if (comet == PROJECTILE_VOLLEY_COMET_B)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB,
                                  work->sheet + PROJECTILE_VOLLEY_COMET_CELLS, 1,
                                  1);
@@ -486,34 +489,36 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                  work->sheet + PROJECTILE_VOLLEY_COMET_CELLS, 1,
                                  1);
     // The ice palette is copied twice, before and after the streaks load.
-    if (mode == 5) {
+    if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       Iwram_CopyWords((void *)BG_PLTT, pal, 128);
     }
     Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet,
                                work->sheet + PROJECTILE_VOLLEY_STREAK_CELLS, 1,
                                0);
-    if (mode == 5) {
+    if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       Iwram_CopyWords((void *)BG_PLTT, pal, 128);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  } else if (mode == 1) {
+  } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
     Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work->sheet, 1,
                                1);
     REG_BLDCNT = 0;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  } else if (mode == 2) {
+  } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_CometSheetA), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
                                work->sheet, 0, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
-  } else if (mode == 3 || mode == 4 || mode == 11) {
+  } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
+             mode == PROJECTILE_VOLLEY_WING_BEAT ||
+             mode == PROJECTILE_VOLLEY_WING_STROKE) {
     Resource_LoadAndDecompress((s32)&ResourceId_YellowSparkSheet, work->sheet,
                                1, 1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
-  } else if (mode == 6) {
+  } else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
     Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, work->sheet, 1,
                                1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
@@ -547,13 +552,13 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     // Cutting Edge, at a random height near the target for the others.
     //
     // Heights above the feet, in pixels, h being the battler's table height
-    // (BattleUnit_GetEffectHeightFar): a shot starts at 58 to 73 for Sleet
-    // (mode 7), h / 2 for modes 5, 6 and 10, h / 2 - 15 to h / 2 + 16 for
-    // modes 3, 4 and 9, h / 2 - 31 to h / 2 + 32 for mode 11, and h for the
-    // rest. It aims at -12 to 51 above the target for Sleet, 22 to 29 for
-    // mode 8, 1 to 64 for Blizzard (mode 9), 4 to 35 for Ice Blessing
-    // (mode 10), h / 2 to h / 2 + 15 for Heat Wave (mode 6) and h - 15 to h
-    // for modes 0 to 2.
+    // (BattleUnit_GetEffectHeightFar): a shot starts at 58 to 73 for Sleet,
+    // h / 2 for Cutting Edge, Heat Wave and Ice Blessing, h / 2 - 15 to
+    // h / 2 + 16 for Wing Flutter, Wing Beat and Blizzard, h / 2 - 31 to
+    // h / 2 + 32 for Wing Stroke, and h for the rest. It aims at -12 to 51
+    // above the target for Sleet, 22 to 29 for the impact's comets, 1 to 64
+    // for Blizzard, 4 to 35 for Ice Blessing, h / 2 to h / 2 + 15 for Heat
+    // Wave and h - 15 to h for Slash, Shuriken and Crazy Voice.
 
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       struct MotionObject *target =
@@ -564,43 +569,45 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         struct EffectStep *shot = &work->particles[i * shots + j];
 
         shot->x = user->x;
-        if (mode == 7)
+        if (mode == PROJECTILE_VOLLEY_SLEET)
           shot->y = user->y + ((Random16() & 15) << 16) + 0x3a0000;
-        else if (mode == 10)
+        else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
           shot->y = user->y + height / 2;
-        else if (mode == 6)
+        else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
           shot->y = user->y + height / 2;
-        else if (mode == 9)
+        else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
           shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
-        else if ((u32)(mode - 3) <= 1)
+        else if ((u32)(mode - PROJECTILE_VOLLEY_WING_FLUTTER) <= 1)
           shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
-        else if (mode == 11)
+        else if (mode == PROJECTILE_VOLLEY_WING_STROKE)
           shot->y = user->y + height / 2 + ((32 - (Random16() & 63)) << 16);
-        else if (mode == 5)
+        else if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
           shot->y = user->y + height / 2;
         else
           shot->y = user->y + height;
         shot->z = user->z;
         shot->velocityX = (target->x - shot->x) / steps;
-        if (mode == 7)
+        if (mode == PROJECTILE_VOLLEY_SLEET)
           shot->velocityY =
               (s32)(target->y + ((Random16() & 63) << 16) - shot->y - 0xc0000) /
               steps;
-        else if (mode == 8)
+        else if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS)
           shot->velocityY =
               (s32)(target->y + ((Random16() & 7) << 16) - shot->y + 0x160000) /
               steps;
-        else if (mode == 9)
+        else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
           shot->velocityY =
               (s32)(target->y + ((64 - (Random16() & 63)) << 16) - shot->y) /
               steps;
-        else if (mode == 10)
+        else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
           shot->velocityY =
               (s32)(target->y + ((Random16() & 31) << 16) - shot->y + 0x40000) /
               steps;
-        else if ((u32)(mode - 3) <= 1 || mode == 11 || mode == 5)
+        else if ((u32)(mode - PROJECTILE_VOLLEY_WING_FLUTTER) <= 1 ||
+                 mode == PROJECTILE_VOLLEY_WING_STROKE ||
+                 mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
           shot->velocityY = 0;
-        else if (mode == 6)
+        else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
           shot->velocityY = (s32)(target->y + targetHeight / 2 +
                                   ((Random16() & 15) << 16) - shot->y) /
                             steps;
@@ -617,7 +624,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       PARTICLES[i].variant = 0;
     // Every shot's flight, then 16 frames (32 for fireballs) for the last
     // hits to fade.
-    if (mode == 6)
+    if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
       total = work->effect->count * delay + shots * stagger + 32;
     else
       total = work->effect->count * delay + shots * stagger + 16;
@@ -631,15 +638,15 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       // Sleet; Cutting Edge shows it on its first hit instead.
       if (soundCooldown > 0)
         soundCooldown--;
-      if (mode == 6) {
+      if (mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
         if (frame == 4)
           AudioCommand_PlayFar(SE_136);
         if (frame == 32)
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      } else if (mode == 7) {
+      } else if (mode == PROJECTILE_VOLLEY_SLEET) {
         if (frame == 48)
           EFFECT_SHOW_DAMAGE(SE_133);
-      } else if (mode != 5) {
+      } else if (mode != PROJECTILE_VOLLEY_CUTTING_EDGE) {
         if (frame == 16)
           EFFECT_SHOW_DAMAGE(SE_133);
       }
@@ -690,7 +697,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             shot->x += shot->velocityX;
             shot->y += shot->velocityY;
             shot->z += shot->velocityZ;
-            if (mode == 6) {
+            if (mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
               // Leave two trail particles behind the fireball, drifting up to
               // 4 pixels a frame each way and living 32 to 39 frames.
               trailsOrShift = 0;
@@ -741,16 +748,17 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 struct EffectStep *flash = &PARTICLES[index];
 
                 shot->variant = 1;
-                if (mode == 5) {
+                if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
                   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-                } else if (mode != 6 && soundCooldown == 0) {
+                } else if (mode != PROJECTILE_VOLLEY_HEAT_WAVE &&
+                           soundCooldown == 0) {
                   soundCooldown = 8;
                   AudioCommand_PlayFar(SE_132);
                 }
                 // The hit: the shot's flash starts where it was drawn, the
                 // screen shakes (but for Sleet), the target flashes and,
                 // but for the ice chips, recoils.
-                if (mode == 2) {
+                if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
                   // Pellets bounce back, up or down at random, gaining 2 to 4
                   // pixels a frame of vertical speed.
                   s32 kick = ((Random16() & 31) + 32) << 12;
@@ -763,13 +771,15 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 }
                 flash->variant = 1;
                 SET_POSITION(flash, screenPosition->x, screenPosition->y, 0);
-                if (mode != 7)
+                if (mode != PROJECTILE_VOLLEY_SLEET)
                   work->shakeFrames = 2;
                 ObjectGroup_UpdateMembers(work->effect->actors[i],
                                           SPRITE_COLOR_WHITE, POSE_DAMAGE, i,
                                           8);
-                if (mode != 7 && mode != 9 && mode != 10) {
-                  if (mode == 5)
+                if (mode != PROJECTILE_VOLLEY_SLEET &&
+                    mode != PROJECTILE_VOLLEY_BLIZZARD &&
+                    mode != PROJECTILE_VOLLEY_ICE_BLESSING) {
+                  if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
                     BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
                                                        4);
                   else
@@ -779,7 +789,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 // Sparks: the mode's count, in the first free slots from 100,
                 // living 16 to 23 frames, at up to 4 pixels a frame each way;
                 // Cutting Edge's fly twice as fast.
-                trailsOrShift = mode == 5 ? 12 : 11;
+                trailsOrShift =
+                    mode == PROJECTILE_VOLLEY_CUTTING_EDGE ? 12 : 11;
                 for (k = PROJECTILE_VOLLEY_FIRST_SPARK;
                      k != PROJECTILE_VOLLEY_FIRST_TRAIL; k++) {
                   struct EffectStep *particle = &PARTICLES[k];
@@ -802,7 +813,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             }
           drawShot:
             // Draw the shot, hit or not.
-            if (mode == 0 || mode == 5 || mode == 8) {
+            if (mode == PROJECTILE_VOLLEY_SLASH ||
+                mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
+                mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
               // The picture holds the top half; the bottom half is drawn
               // flipped.
               if (work->effect->side == 1)
@@ -815,8 +828,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16,
-                  screenPosition->y - gProjectiles_CometHeights[kind], 32,
-                  gProjectiles_CometHeights[kind]);
+                  screenPosition->y - gProjectiles_CometHeights[comet], 32,
+                  gProjectiles_CometHeights[comet]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
               if (work->effect->side == 1)
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -829,28 +842,30 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_CELLS,
                   screenPosition->x - 16, screenPosition->y, 32,
-                  gProjectiles_CometHeights[kind]);
+                  gProjectiles_CometHeights[comet]);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-            } else if (mode == 1) {
+            } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               // Shurikens vanish once past their target.
               if (ABS(shot->x) <= ABS(target->x))
                 draw[0](canvas, work->sheet + frame % 6 * (32 * 24),
                         screenPosition->x - 16, screenPosition->y - 12, 32, 24);
-            } else if (mode == 7 || mode == 9 || mode == 10) {
+            } else if (mode == PROJECTILE_VOLLEY_SLEET ||
+                       mode == PROJECTILE_VOLLEY_BLIZZARD ||
+                       mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
               s32 cell = j & 3;
               draw[0](canvas, work->sheet + gProjectiles_PelletOffsets[cell],
                       screenPosition->x - 4, screenPosition->y - 4, 8, 8);
-            } else if (mode == 2) {
+            } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
               draw[0](canvas, work->sheet + j % 6 * (8 * 16),
                       screenPosition->x - 4, screenPosition->y - 8, 8, 16);
-            } else if (mode == 3) {
+            } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
               draw[0](canvas,
                       work->sheet + PROJECTILE_VOLLEY_MEDIUM_SPARK_CELLS,
                       screenPosition->x - 9, screenPosition->y - 7, 18, 13);
-            } else if (mode == 4) {
+            } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
               draw[0](canvas, work->sheet, screenPosition->x - 6,
                       screenPosition->y - 4, 12, 8);
-            } else if (mode == 11) {
+            } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
               draw[0](canvas, work->sheet + PROJECTILE_VOLLEY_LARGE_SPARK_CELLS,
                       screenPosition->x - 15, screenPosition->y - 12, 29, 23);
             } else {
@@ -864,7 +879,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       // Hit flashes, 12 frames: half a picture, drawn again flipped for the
       // other half (odd flashes use the pictures turned on their side). A
       // flash's z counts its frames, stepping the picture every 2.
-      if (mode == 0 || mode == 5 || mode == 8) {
+      if (mode == PROJECTILE_VOLLEY_SLASH ||
+          mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
+          mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
         for (i = 0; i != work->effect->count * shots; i++) {
           struct EffectStep *flash = &PARTICLES[i];
 
@@ -986,16 +1003,16 @@ UNUSED void BattleFx_InitializeRisingObject(s32 id) {
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
   Object_SetMoveTargetFar((struct ObjectRuntime *)object, slot->anchorX, 0,
                           slot->anchorZ);
-  ObjectDispatch_SelectAnimationFar(object, 1);
+  ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
 }
 
 /// Moves a battler 80% of the way to another one over a number of frames,
-/// in its action pose. The speed is that distance over the frames; the
+/// in its leap pose. The speed is that distance over the frames; the
 /// distance is taken in 1/256 pixels so its square fits in 32 bits.
 ///
 /// Called by BattleFx_RunRushingStrike. Sets the battler's acceleration,
 /// speed limit and gravity, turns it to face its motion, starts it moving on
-/// the ground towards that point and selects its animation 2.
+/// the ground towards that point and selects POSE_LEAP.
 void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);
@@ -1025,7 +1042,7 @@ void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   object->autoFaceMotion = 1;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
   Object_SetMoveTargetFar((struct ObjectRuntime *)object, x, 0, z);
-  ObjectDispatch_SelectAnimationFar(object, 2);
+  ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
 }
 
 #undef PROJECTILE_VOLLEY_ANIMATION_STEP_FAST

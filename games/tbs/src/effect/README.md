@@ -787,7 +787,7 @@ A handler's name comes from the abilities that reach its effect kind, read from
 is named from what it draws, and the blitter's words from the fragments it
 joins. The three handlers no ability reaches, `BattleFx_RunOrbitingSpirals` in
 `planet_diver.c`, `BattleFx_RunTriangleStrike` in `bind.c` and
-`BattleFx_RunSparkApproachVariant3` in `thrash.c`, are named from what they
+`BattleFx_RunSevereBlowLeap` in `thrash.c`, are named from what they
 draw.
 
 Some things are still open. Nothing found so far reaches those three handlers'

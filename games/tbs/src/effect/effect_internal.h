@@ -329,4 +329,12 @@ enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_CENTRE       ///< in the centre of the field
 };
 
+/// Where BattleFx_RunSparkGroups' bursts go off.
+enum SparkGroupsMode {
+  SPARK_GROUPS_NOVA,     ///< at (60, 48); the damage shows on frame 24
+  SPARK_GROUPS_DYNAMITE, ///< at (60, 64), orange; the damage shows on frame 2
+  SPARK_GROUPS_RISING    ///< below the user, in the LightningBolt colours, the
+                         ///< sparks rising; the damage shows on frame 2
+};
+
 #endif // ALCHEMY_EFFECT_INTERNAL_H

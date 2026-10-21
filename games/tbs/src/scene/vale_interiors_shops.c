@@ -919,7 +919,8 @@ s32 gValeInteriorsShops_DriftingSpriteScript[] = {
 };
 
 struct SceneEntrance gValeInteriorsShops_Entrances[] = {
-    {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {VALE_INTERIORS_SHOPS_FROM_VALE_WEST, CONDITION_ALWAYS, 96, 0, 222,
      FACING_NORTH, 0, 4, 4, 244, 292, 0},
     {VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, CONDITION_ALWAYS, 337, 0, 199,

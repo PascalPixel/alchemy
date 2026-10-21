@@ -412,7 +412,8 @@ s32 Scene_Initialize(void) {
 #include "common/vault_itemobj.h"
 
 struct SceneEntrance gVaultInteriorsRevisit_Entrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, CONDITION_ALWAYS,
      192, 0, 220, FACING_NORTH, 0, 32, 0, 272, 240, 0},
     {VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, CONDITION_ALWAYS, 432, 0,

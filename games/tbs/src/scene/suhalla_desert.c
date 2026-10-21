@@ -759,7 +759,7 @@ s32 Scene_Initialize(void) {
   } else {
     Engine_AudioPlayCue(SE_288);
   }
-  if (gGameState.entrance == 0) {
+  if (gGameState.entrance == ENTRANCE_DEFAULT) {
     map->flags &= ~DISPCNT_BG1_ON;
   }
   return 0;
@@ -898,7 +898,8 @@ s32 gSuhallaDesertFourthStormScript[] = {
 };
 
 struct SceneEntrance gSuhallaDesertEntrancesOther[] = {
-    {0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 

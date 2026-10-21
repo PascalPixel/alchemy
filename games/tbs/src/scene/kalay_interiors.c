@@ -380,12 +380,14 @@ static void KalayInteriors_ApplyRoomState(void) {
 }
 
 struct SceneEntrance gKalayInteriors_NoEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {KALAY_INTERIORS_HOUSE_NORTHWEST, CONDITION_ALWAYS, 144, 0, 192,
      FACING_NORTH, 0, 5, 45, 245, 230, 0},
     {KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER, CONDITION_ALWAYS, 400, 0, 192,
@@ -428,7 +430,8 @@ struct SceneEntrance gKalayInteriors_HouseEntrances[] = {
 };
 
 struct SceneEntrance gKalayInteriors_SanctumEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {KALAY_SANCTUM_FROM_KALAY, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0,
      110, 35, 390, 345, 0},
     {2, CONDITION_ALWAYS, 248, 0, 128, FACING_SOUTH, 0, 110, 35, 390, 345, 0},

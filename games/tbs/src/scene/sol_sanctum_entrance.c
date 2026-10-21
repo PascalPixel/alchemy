@@ -1246,12 +1246,14 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
 }
 
 struct SceneEntrance gSolSanctumEntranceEntrancesOther[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSolSanctumEntranceEntrances2[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SOL_ENTRANCE_FROM_VALE, CONDITION_ALWAYS, 80, 0, 288, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
     {SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS, CONDITION_ALWAYS, 120, 0, 112,
@@ -1260,7 +1262,8 @@ struct SceneEntrance gSolSanctumEntranceEntrances2[] = {
 };
 
 struct SceneEntrance gSolSanctumEntranceEntrances1[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST, CONDITION_ALWAYS, 280,
      0, 472, FACING_NORTH, 0, 5, 0, 555, 510, 0},
     {SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_HALL, CONDITION_ALWAYS,

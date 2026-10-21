@@ -653,7 +653,8 @@ s32 gGomaCaveEntranceTallIvyScript[] = {
 };
 
 struct SceneEntrance gGomaCaveEntranceEntrances[] = {
-    {0, CONDITION_ALWAYS, 192, 0, 197, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 192, 0, 197, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 96, 0, 440,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_STREAM, CONDITION_ALWAYS, 200, 0, 184,

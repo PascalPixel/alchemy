@@ -518,7 +518,8 @@ s32 gTolbiInteriorsSquashStretch[] = {
 };
 
 struct SceneEntrance gTolbiInteriorsEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {TOLBI_INTERIORS_HOUSE_NORTHEAST, CONDITION_ALWAYS, 160, 0, 216,
      FACING_NORTH, 0, 0, 0, 256, 256, 0},
     {TOLBI_INTERIORS_HOUSE_NORTHWEST, CONDITION_ALWAYS, 336, 0, 200,

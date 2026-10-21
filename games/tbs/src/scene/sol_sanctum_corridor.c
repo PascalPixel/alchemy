@@ -53,7 +53,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 #include "common/sol_sanctum_init_zoom.h"
 
 struct SceneEntrance gSolSanctumCorridorEntrances[] = {
-    {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST, CONDITION_ALWAYS, 727,
      0, 92, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST, CONDITION_ALWAYS, 56,

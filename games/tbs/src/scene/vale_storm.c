@@ -284,7 +284,7 @@ UNUSED static void ValeStorm_UnusedOpenSanctumDoor(void) {
 
 /// In Vale on the stormy night, stepping on cell code 2 requests exit 1, the
 /// one number the exit table leaves out; Scene_TakeExit therefore falls back to
-/// the first exit's scene, Vale's SceneId_ValeGate, at entrance 0.
+/// the first exit's scene, Vale's SceneId_ValeGate, at ENTRANCE_DEFAULT.
 static void Event_LeaveByMissingExit(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
@@ -3117,7 +3117,8 @@ s32 gValeStorm_BoulderRiseScript[] = {
 };
 
 struct SceneEntrance gValeStorm_Entrances[] = {
-    {0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {1, CONDITION_ALWAYS, 257, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_STORM_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 27, 0, 621,

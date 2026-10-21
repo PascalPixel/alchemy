@@ -1040,7 +1040,8 @@ u16 gLamaTemple_DoorCloseCells[] = {
 };
 
 struct SceneEntrance gLamaTemple_Entrances[] = {
-    {0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
+     -1, -1, 0},
     {LAMA_TEMPLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
     {LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS, CONDITION_ALWAYS, 136, 0, 168,
@@ -1052,7 +1053,8 @@ struct SceneEntrance gLamaTemple_Entrances[] = {
 };
 
 struct SceneEntrance gAlpineCrossing_Entrances[] = {
-    {0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
+     -1, -1, 0},
     {ALPINE_CROSSING_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 496, 0, 216,
      FACING_WEST, 0, 16, 32, 520, 416, 0},
     {ALPINE_CROSSING_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 384, 0, 72,

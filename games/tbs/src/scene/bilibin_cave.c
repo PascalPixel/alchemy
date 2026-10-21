@@ -561,12 +561,14 @@ s32 gBilibinCave_ClearSpriteScript[] = {
 };
 
 struct SceneEntrance gBilibinCaveEntrancesOther[] = {
-    {0, CONDITION_ALWAYS, 72, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 72, 0, 488, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinCaveEntrances3[] = {
-    {0, CONDITION_ALWAYS, 372, 0, 272, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 372, 0, 272, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 99, 0, 447,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH, CONDITION_ALWAYS,
@@ -577,7 +579,8 @@ struct SceneEntrance gBilibinCaveEntrances3[] = {
 };
 
 struct SceneEntrance gBilibinCaveEntrances2[] = {
-    {0, CONDITION_ALWAYS, 864, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 864, 0, 168, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST, CONDITION_ALWAYS, 312,
      0, 756, FACING_NORTH, 0, 40, 60, 630, 840, 0},
     {BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST, CONDITION_ALWAYS, 472,
@@ -594,7 +597,8 @@ struct SceneEntrance gBilibinCaveEntrances2[] = {
 };
 
 struct SceneEntrance gBilibinCaveEntrances1[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 300, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 300, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST, CONDITION_ALWAYS, 120, 0,
      472, FACING_NORTH, 0, 60, 60, 790, 600, 0},
     {BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST, CONDITION_ALWAYS, 312, 0,

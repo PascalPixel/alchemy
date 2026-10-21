@@ -2304,7 +2304,8 @@ s32 gSolSanctumElementalStarRoom_PresentItemScript[] = {
 };
 
 struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[] = {
-    {0, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 

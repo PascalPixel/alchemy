@@ -1385,8 +1385,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     // The cues: the damage shows on frame 3 with no sound of its own (a cue
     // of -1 is never played), the heavy impact sounds on frame 4, frame 6
     // gives some impacts a reaction and a shake, and the target flashes on
-    // frames 6 and 14. Of the reactions (gBattleMotion_Variant*), motion 4
-    // is the fastest knockback, 3 the highest hop and 1 a short knockback.
+    // frames 6 and 14.
     if (frame == 3) {
       EFFECT_SHOW_DAMAGE(-1);
     }
@@ -1402,16 +1401,19 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
           mode == CASTING_IMPACT_IMPACT_PSY_LEECH ||
           mode == CASTING_IMPACT_IMPACT_BARRAGE ||
           mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST || mode == 100) {
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                           KNOCKBACK_HURL);
         work->shakeFrames = 8;
       } else if (mode == CASTING_IMPACT_IMPACT_BROIL ||
                  mode == CASTING_IMPACT_IMPACT_AQUA_SOCK ||
                  mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM) {
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                           KNOCKBACK_HOP);
         work->shakeFrames = 2;
       } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH ||
                  mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                           KNOCKBACK_LAUNCH);
         work->shakeFrames = 8;
       }
     }

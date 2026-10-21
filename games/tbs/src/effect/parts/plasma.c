@@ -158,7 +158,8 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
       // Two frames after the sparks the targets recoil, their motion first.
       if (frame == start + 4) {
         EFFECT_FOR_EACH_TARGET(k, work->effect) {
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[k], 1);
+          BattleMotion_ApplyVariantMotionFar(work->effect->actors[k],
+                                             KNOCKBACK_HOP);
           ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, k, 8);
         }
@@ -468,7 +469,8 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
         if (frame == start + 6) {
           ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, j, 10);
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 4);
+          BattleMotion_ApplyVariantMotionFar(work->effect->actors[j],
+                                             KNOCKBACK_HURL);
         }
       }
     }

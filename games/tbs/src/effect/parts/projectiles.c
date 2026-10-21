@@ -781,10 +781,10 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                     mode != PROJECTILE_VOLLEY_ICE_BLESSING) {
                   if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
                     BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                                       4);
+                                                       KNOCKBACK_HURL);
                   else
                     BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
-                                                       5);
+                                                       KNOCKBACK_SKID);
                 }
                 // Sparks: the mode's count, in the first free slots from 100,
                 // living 16 to 23 frames, at up to 4 pixels a frame each way;

@@ -73,7 +73,8 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
     if (frame == 10) {
       work->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_212);
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
+      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                         KNOCKBACK_NUDGE);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 8);
     }

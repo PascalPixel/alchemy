@@ -218,7 +218,8 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
                                        work->effect->actors[0], 16, 0);
       if (frame == total - 32) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                           KNOCKBACK_HURL);
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {

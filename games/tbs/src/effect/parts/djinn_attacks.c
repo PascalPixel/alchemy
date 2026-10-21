@@ -160,8 +160,8 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
       for (i = 0; i != MERCURY_FLAMES; i++) {
         // Fire a flame from the Djinni on each launch frame; 6 frames later,
         // a frame after it shatters, the targets flash white in their damage
-        // pose for 6 frames and play motion 6. velocityX keeps the launch x,
-        // which nothing reads.
+        // pose for 6 frames and take KNOCKBACK_BOUNCE. velocityX keeps the
+        // launch x, which nothing reads.
         if (frame == gDjinnAttacks_LaunchFrames[i]) {
           struct EffectStep *shot = &work->particles[i];
 
@@ -175,7 +175,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
         }
         if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
-            EFFECT_STRIKE_TARGET(work->effect, j, 6, 6);
+            EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -298,7 +298,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
           AudioCommand_PlayFar(SE_133);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
-            EFFECT_STRIKE_TARGET(work->effect, j, 6, 6);
+            EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
           }
         }
       }
@@ -442,7 +442,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
             AudioCommand_PlayFar(SE_133);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
-            EFFECT_STRIKE_TARGET(work->effect, j, 6, 6);
+            EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
           }
         }
         column->y -= 12;
@@ -648,7 +648,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
     // Every target is hit on frame 38, flashing for 16 frames.
     if (frame == 38) {
       EFFECT_FOR_EACH_TARGET(index, work->effect) {
-        EFFECT_STRIKE_TARGET(work->effect, index, 16, 6);
+        EFFECT_STRIKE_TARGET(work->effect, index, 16, KNOCKBACK_BOUNCE);
       }
     }
     Camera_ApplyShake(8, 8);

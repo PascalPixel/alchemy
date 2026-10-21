@@ -255,16 +255,15 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
           Iwram_FillWords(canvas, CANVAS_BYTES, 0x2f2f2f2f);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 4);
-        // Motion 4 is the fastest knockback; motion 7 a hop, up at 5.5
-        // pixels a frame, back to the target's own place
-        // (gBattleMotion_Variant*).
         if (i == bursts - 1) {
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+          BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                             KNOCKBACK_HURL);
           work->shakeFrames = 8;
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         } else {
           if (i & 1)
-            BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 7);
+            BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                               KNOCKBACK_JOLT);
           work->shakeFrames = 4;
           AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         }

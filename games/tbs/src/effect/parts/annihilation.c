@@ -162,10 +162,11 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       }
       EFFECT_RELEASE_BLITTERS();
     }
-    // The strike throws the target back with motion 4, the fastest of the
-    // knockbacks (gBattleMotion_Variant*), and shakes the screen 4 frames.
+    // The strike throws the target back with KNOCKBACK_HURL and shakes the
+    // screen 4 frames.
     if (frame == 8) {
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                         KNOCKBACK_HURL);
       work->shakeFrames = 4;
     }
     // The target glows red on frames 6 and 14.

@@ -358,7 +358,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
             ObjectGroup_UpdateMembers(work->effect->actors[i],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
           }
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                             KNOCKBACK_HURL);
         }
         i += 1;
       }

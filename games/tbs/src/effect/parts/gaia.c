@@ -344,7 +344,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
             ObjectGroup_UpdateMembers(work->effect->actors[i],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 6);
           if ((frame & 3) == 0)
-            BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 5);
+            BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                               KNOCKBACK_SKID);
         }
       }
     }

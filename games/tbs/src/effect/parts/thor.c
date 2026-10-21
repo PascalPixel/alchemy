@@ -461,7 +461,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         EFFECT_FOR_EACH_TARGET(i, work->effect) {
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, i, 8);
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                             KNOCKBACK_HURL);
         }
       }
       // Frames 80 to 143: thirty violet bolts, 2 frames apart, each shown
@@ -498,7 +499,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
                 ObjectGroup_UpdateMembers(work->effect->actors[j],
                                           gThor_TargetPalettes[Random16() & 3],
                                           POSE_DAMAGE, j, 4);
-                BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 4);
+                BattleMotion_ApplyVariantMotionFar(work->effect->actors[j],
+                                                   KNOCKBACK_HURL);
               }
             }
           }

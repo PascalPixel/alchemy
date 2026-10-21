@@ -261,7 +261,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       // The strike: every target recoils and flashes white, and the screen
       // shakes.
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                           KNOCKBACK_HURL);
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   -1, i, 8);
       }

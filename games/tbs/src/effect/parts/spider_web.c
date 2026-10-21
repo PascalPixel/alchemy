@@ -110,7 +110,8 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 8) {
       if (mode == SWIRL_SWIPE_POISON_BEAT) {
         EFFECT_SHOW_DAMAGE(SE_133);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                           KNOCKBACK_HOP);
       } else {
         AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,

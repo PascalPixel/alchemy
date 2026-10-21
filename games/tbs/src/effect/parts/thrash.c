@@ -142,7 +142,8 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 20) {
       work->shakeFrames = 8;
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                         KNOCKBACK_HURL);
     }
     Camera_ApplyShake(16, 16);
     EFFECT_END_FRAME(work);

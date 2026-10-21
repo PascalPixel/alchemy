@@ -373,7 +373,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, member,
                                         8);
               BattleMotion_ApplyVariantMotionFar(work->effect->actors[member],
-                                                 1);
+                                                 KNOCKBACK_HOP);
             }
           }
         }

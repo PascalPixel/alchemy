@@ -313,7 +313,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           // first half of its group of 16.
           if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
             work->shakeFrames = 8;
-            EFFECT_STRIKE_TARGET(work->effect, 0, 12, 4);
+            EFFECT_STRIKE_TARGET(work->effect, 0, 12, KNOCKBACK_HURL);
             for (i = 0; i != 512; i++)
               TARGET_STRIKE_SPARKS[i].variant = (Random16() & 15) + 15;
           } else {

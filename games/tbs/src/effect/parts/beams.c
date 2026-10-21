@@ -177,7 +177,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 32; frame++) {
     // On frame 5 the battle shows the damage, with the heavy impact if the
     // user's class is flagged in the summon table and SE_133 otherwise. On
-    // frame 4 the target plays motion 0.
+    // frame 4 the target takes KNOCKBACK_NUDGE.
     if (frame == 5) {
       if (Summon_IsEntrySecondaryFlaggedFar(unit->classId))
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -185,7 +185,8 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
         EFFECT_SHOW_DAMAGE(SE_133);
     }
     if (frame == 4)
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
+      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                         KNOCKBACK_NUDGE);
     // The picture plays from the user, to its left on side 0 and its right
     // on side 1: the wave's six 48x16 cells backwards and the arc's six
     // 48x72 cells, two frames each; the beam image grows through its six
@@ -476,7 +477,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     if (frame == 5)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 4)
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
+      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                         KNOCKBACK_NUDGE);
     EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
     screenPosition.y += 16;
     // The rings: two frames each of the two star burst cells, then of the

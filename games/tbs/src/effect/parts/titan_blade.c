@@ -370,7 +370,8 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 16);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 7);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                           KNOCKBACK_JOLT);
       }
     }
 

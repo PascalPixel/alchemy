@@ -161,11 +161,8 @@ enum CanvasTransferMode {
    Transform_SetLookAt((camera)->eye, (camera)->pos))
 
 /// Strikes target `i`: it flashes white in its damage pose for `frames`
-/// frames, counted by actor timer `i`, and is knocked back by battle motion
-/// variant `motion` (BattleMotion_ApplyVariantMotionFar). The variants are
-/// the columns of gBattleMotion_Variant* (battle/battle_vars.s); 4, the
-/// hardest, drives the target out to twice its anchor x at up to 20 pixels a
-/// frame.
+/// frames, counted by actor timer `i`, and is knocked back by `motion`, an enum
+/// BattleKnockback (BattleMotion_ApplyVariantMotionFar).
 #define EFFECT_STRIKE_TARGET(effect, i, frames, motion)                        \
   (ObjectGroup_UpdateMembers((effect)->actors[i], SPRITE_COLOR_WHITE,          \
                              POSE_DAMAGE, i, frames),                          \

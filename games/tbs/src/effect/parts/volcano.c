@@ -172,7 +172,8 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
           EFFECT_FOR_EACH_TARGET(i, work->effect) {
             ObjectGroup_UpdateMembers(work->effect->actors[i],
                                       SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 8);
-            BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 1);
+            BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                               KNOCKBACK_HOP);
           }
         }
       }

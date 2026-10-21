@@ -91,7 +91,8 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
       if (frame == start + 4) {
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 6);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                           KNOCKBACK_BOUNCE);
       }
 
       // The bolt (24 wide) grows 64 pixels a frame and stops at 104; it is

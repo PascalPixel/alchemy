@@ -138,7 +138,8 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 16);
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);
+      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                         KNOCKBACK_LAUNCH);
     }
 
     // Waves rise along the bottom, 4 pixels a frame up to 32, drifting
@@ -340,7 +341,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
             work->shakeFrames = 8;
             rock->variant = 0;
             AudioCommand_PlayFar(SE_HEAVY_IMPACT);
-            EFFECT_STRIKE_TARGET(work->effect, 0, 4, 4);
+            EFFECT_STRIKE_TARGET(work->effect, 0, 4, KNOCKBACK_HURL);
           }
         }
       }

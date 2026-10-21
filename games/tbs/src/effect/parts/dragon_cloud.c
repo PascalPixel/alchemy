@@ -230,7 +230,8 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
+      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                         KNOCKBACK_HOP);
     }
     // After the strike the embers rise and fall back under a gravity of 1/8
     // pixel a frame per frame (0x2000), undamped, until they drop below the

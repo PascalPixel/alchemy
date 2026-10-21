@@ -13,7 +13,8 @@
 #define STREAKS_VALUE(mode, n) gStreaks_Records[(mode)][(n)]
 #define STREAKS_ANIMATE 0 ///< nonzero: the streak cycles through three images
 #define STREAKS_HIT 1     ///< nonzero: play the hit sound and flash the target
-#define STREAKS_MOTION 2  ///< the target's recoil motion on the hit (-1: none)
+#define STREAKS_MOTION                                                         \
+  2 ///< the target's knockback on the hit (enum BattleKnockback, -1: none)
 /// nonzero: the struck target trembles from side to side
 #define STREAKS_SHAKE 3
 

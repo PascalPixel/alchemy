@@ -262,7 +262,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
         if (frame == start + 6) {
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                             KNOCKBACK_HURL);
         }
       }
       col++;

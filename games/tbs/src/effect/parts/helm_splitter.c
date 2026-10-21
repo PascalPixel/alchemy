@@ -134,7 +134,8 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 8);
-      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 6);
+      BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
+                                         KNOCKBACK_BOUNCE);
       work->shakeFrames = 4;
       for (i = 0; i != HELM_SPLITTER_SPARKS; i++) {
         s32 force = (Random16() & 63) + 256;

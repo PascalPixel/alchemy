@@ -192,13 +192,14 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // The hits, one target a frame from frame 6; Blast's targets also recoil
-    // (battle motion 2).
+    // (KNOCKBACK_LEAP).
     if (mode == ERUPTION_BLAST) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i + 6) {
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, i, 10);
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 2);
+          BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                             KNOCKBACK_LEAP);
         }
       }
     } else {

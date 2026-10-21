@@ -391,8 +391,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         // motes from 16 pixels above its projected point (x halved for the wide
         // canvas), each already four frames along its path, and plays its hit
         // reaction. A mote flies up to 2 pixels a frame across and from 6 up
-        // to 2 down, for 8 to 23 frames; motion 1 is a hop of 6 pixels a frame
-        // and a knock back to 1.4 times its spot's x (gBattleMotion_Variant*).
+        // to 2 down, for 8 to 23 frames.
         if (hit[i] == 0) {
           EffectPosition_ProjectBattler(work->effect->actors[i], &unit);
           if (unit.x > rowX) {
@@ -414,7 +413,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
               burst->variant = (Random16() & 15) + 8;
               k++;
             } while (k != 32);
-            BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 1);
+            BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                               KNOCKBACK_HOP);
             AudioCommand_PlayFar(SE_HEAVY_IMPACT);
           }
         }

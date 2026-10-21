@@ -144,7 +144,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
               work->effect->actors[i % work->effect->count], SPRITE_COLOR_WHITE,
               POSE_DAMAGE, i % work->effect->count, 4);
           BattleMotion_ApplyVariantMotionFar(
-              work->effect->actors[i % work->effect->count], 0);
+              work->effect->actors[i % work->effect->count], KNOCKBACK_NUDGE);
           work->shakeFrames = 4;
           AudioCommand_PlayFar(SE_132);
         }
@@ -305,7 +305,8 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
         if (frame == i * 8 + j * 3 + 16) {
           ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, j, 4);
-          BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
+          BattleMotion_ApplyVariantMotionFar(work->effect->actors[j],
+                                             KNOCKBACK_BOUNCE);
         }
       }
     }

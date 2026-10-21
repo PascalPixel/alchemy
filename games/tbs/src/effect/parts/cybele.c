@@ -160,7 +160,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
       AudioCommand_PlayFar(SE_GATE_MOVE);
       EFFECT_FOR_EACH_TARGET(i, work->effect)
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                           KNOCKBACK_BOUNCE);
     }
     if (frame == 72)
       AudioCommand_PlayFar(SE_136);

@@ -559,13 +559,12 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
       }
     }
     // Target i flashes and reels on frame 16i + 8, as its column lands.
-    // Motion 2 is a hop of 7 pixels a frame and a knock back to 1.5 times its
-    // spot's x (gBattleMotion_Variant*).
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 16 + 8) {
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 8);
-        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 2);
+        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
+                                           KNOCKBACK_LEAP);
       }
     }
     for (i = 0; i != NEPTUNE_PARTICLES; i++) {

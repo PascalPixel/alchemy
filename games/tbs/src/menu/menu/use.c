@@ -20,7 +20,7 @@ void Item_UseNoOpCallback(void) {}
 /// plain power (BattleEffect_ApplyToTargets with fixedScale 1). When the action
 /// changed something, an item that is used up (ITEM_USE_CONSUMED) loses one
 /// from its stack and the menu's list is rebuilt, and Hermes' Water
-/// (ITEM_USE_EMPTIES, item 0xb8) becomes an Empty Bottle (0xb9). Returns 0, or
+/// (ITEM_USE_EMPTIES) becomes an Empty Bottle. Returns 0, or
 /// -1 when nothing changed; the result message is left in the work's
 /// messageOffset. Called by ItemMenu_Use.
 s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
@@ -38,13 +38,13 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
                                           ownerId, targetId, 1);
   if (useResult != -1) {
     item = Item_GetDirectFar(unit->inventory[slot]);
-    if (item->useType == 1) {
+    if (item->useType == ITEM_USE_CONSUMED) {
       Inventory_RemoveFar(ownerId, slot);
       menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
-    if (item->useType == 4) {
-      if (itemId == 0xb8)
-        itemId = 0xb9;
+    if (item->useType == ITEM_USE_EMPTIES) {
+      if (itemId == ITEM_HERMES_WATER)
+        itemId = ITEM_EMPTY_BOTTLE;
       unit->inventory[slot] = itemId;
     }
     useResult = 0;
@@ -92,26 +92,22 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   /* FAKEMATCH(dead): a test that is never true (partyResultShown is still
    * 0), which emits nothing but loads effect->range ahead of the loop's count
    * guard; without it, 21 of 485 instructions differ in tbs-en. */
-  if (effect->range == 0xff && partyResultShown != 0)
-    messageOffset = 3;
+  if (effect->range == ABILITY_RANGE_ALL && partyResultShown != 0)
+    messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
 
   // A party-wide action keeps the first useful message while visiting targets.
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
-    if (effect->range == 0xff) {
+    if (effect->range == ABILITY_RANGE_ALL) {
       targetId = menu->ownerIds[targetIndex];
       target = UnitGetFar(targetId);
     }
 
-    // The ability's kind (flags bits 3..0). The result messages, counted from
-    // MsgItemUseResult: 0 all HP recovered, 1 some, 2 none, 3 everyone's, 4 HP
-    // already full; 5 all PP recovered, 6 some, 7 PP already full, 8
-    // everyone's; 10 and 11 poison purged or none; 12 and 13 revived or not
-    // down; 16 to 21 a stat raised.
+    // The ability kind first; the result messages are enum ItemUseResult.
     amount = effect->power;
-    switch (effect->flags & 0xf) {
-    case BATTLE_DAMAGE_HP_HEAL:
+    switch (effect->flags & ABILITY_KIND_MASK) {
+    case ABILITY_KIND_HEAL_HP:
       if (fixedScale == 0) {
-        if (effect->element != 4) {
+        if (effect->element != ELEMENT_NONE) {
           s32 elementIndex;
 
           caster = UnitGetFar(sourceId);
@@ -124,34 +120,35 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
       if (target->hp <= 0) {
         if (partyResultShown == 0)
-          messageOffset = 2;
+          messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
       } else {
         if (target->hp == target->maxHp) {
           if (partyResultShown == 0)
-            messageOffset = 4;
+            messageOffset = ITEM_USE_RESULT_HP_FULL;
         } else {
           target->hp += amount;
           if (target->hp > target->maxHp) {
             amount -= target->hp - target->maxHp;
             target->hp = target->maxHp;
             if (partyResultShown == 0)
-              messageOffset = 0;
+              messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
           } else if (partyResultShown == 0) {
-            messageOffset = 1;
+            messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
           }
           UnitRatioFar(targetId);
           changed = 1;
-          if (effect->range == 0xff) {
+          if (effect->range == ABILITY_RANGE_ALL) {
             partyResultShown = 1;
-            messageOffset = 3;
+            messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
           }
         }
       }
       break;
 
-    // Kind 9: the stat items. The stat rises by power, less one a quarter of
-    // the time and plus one a quarter of the time (a roll of 0 to 3: 0 gives
-    // -1, 1 gives +1, 2 and 3 give 0); Luck rises by power alone.
+    // The stat items, whose ability kind has no enumerator yet (enum
+    // AbilityKind). The stat rises by power, less one a quarter of the time and
+    // plus one a quarter of the time (a roll of 0 to 3: 0 gives -1, 1 gives +1,
+    // 2 and 3 give 0); Luck rises by power alone.
     case 9:
       randomAdjust = (Random16() * 4) >> 16;
       if (randomAdjust == 0) {
@@ -165,87 +162,89 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       switch (effectId & OWNER_ACTION_ID_MASK) {
       case 0x104: // Power Bread
         target->baseHp += amount + randomAdjust;
-        messageOffset = 0x10;
+        messageOffset = ITEM_USE_RESULT_MAX_HP_UP;
         changed = 1;
         break;
       case 0x105: // Cookie
         target->basePp += amount + randomAdjust;
-        messageOffset = 0x11;
+        messageOffset = ITEM_USE_RESULT_MAX_PP_UP;
         changed = 1;
         break;
       case 0x108: // Mint
         target->baseAgility += amount + randomAdjust;
-        messageOffset = 0x12;
+        messageOffset = ITEM_USE_RESULT_AGILITY_UP;
         changed = 1;
         break;
       case 0x109: // Lucky Pepper
         target->baseLuck += amount;
-        messageOffset = 0x13;
+        messageOffset = ITEM_USE_RESULT_LUCK_UP;
         changed = 1;
         break;
       case 0x106: // Apple
         target->baseAttack += amount + randomAdjust;
-        UiWork_PushValueSlotFar(3, 5);
-        messageOffset = 0x14;
+        UiWork_PushValueSlotFar(3, MSG_ARG_NUMBER);
+        messageOffset = ITEM_USE_RESULT_ATTACK_UP;
         changed = 1;
         break;
       case 0x107: // Hard Nut
         target->baseDefense += amount + randomAdjust;
-        UiWork_PushValueSlotFar(4, 5);
-        messageOffset = 0x15;
+        UiWork_PushValueSlotFar(4, MSG_ARG_NUMBER);
+        messageOffset = ITEM_USE_RESULT_DEFENSE_UP;
         changed = 1;
         break;
       }
       break;
 
-    case BATTLE_DAMAGE_PP_HEAL:
+    case ABILITY_KIND_HEAL_PP:
       if (target->pp == target->maxPp) {
         if (partyResultShown == 0)
-          messageOffset = 7;
+          messageOffset = ITEM_USE_RESULT_PP_FULL;
       } else {
         target->pp += amount;
         if (target->pp > target->maxPp) {
           amount -= target->pp - target->maxPp;
           target->pp = target->maxPp;
           if (partyResultShown == 0)
-            messageOffset = 5;
+            messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
-          messageOffset = 6;
+          messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
         UnitRatioFar(targetId);
         changed = 1;
-        if (effect->range == 0xff) {
+        if (effect->range == ABILITY_RANGE_ALL) {
           partyResultShown = 1;
-          messageOffset = 8;
+          messageOffset = ITEM_USE_RESULT_PARTY_PP_RECOVERED;
         }
       }
       break;
 
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
+    case ABILITY_KIND_EFFECT:
+    case ABILITY_KIND_ATTACK:
+    case ABILITY_KIND_ATTACK_MULTIPLIED:
+    case ABILITY_KIND_DAMAGE:
+    case ABILITY_KIND_UNLEASHED_DAMAGE:
     case 7:
-    case 8:
-    case 10:
+    case ABILITY_KIND_SUMMON:
+    case ABILITY_KIND_PP_DAMAGE:
       break;
     }
 
-    // Then the ability's effect (enum AbilityEffect).
+    // Then the ability's effect (enum AbilityEffect). The first two cases are
+    // an HP and a PP restore no ability has (actions.tsv), so they have no
+    // enumerator yet.
     switch (effect->effect) {
     case 1:
       if (target->hp <= 0 || target->hp == target->maxHp) {
         if (partyResultShown == 0)
-          messageOffset = 2;
+          messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
       } else {
         target->hp += amount;
         if (target->hp > target->maxHp) {
           target->hp = target->maxHp;
           if (partyResultShown == 0)
-            messageOffset = 0;
+            messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
-          messageOffset = 1;
+          messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
         }
         UnitRatioFar(targetId);
         changed = 1;
@@ -255,15 +254,15 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case 2:
       if (target->pp == target->maxPp) {
         if (partyResultShown == 0)
-          messageOffset = 7;
+          messageOffset = ITEM_USE_RESULT_PP_FULL;
       } else {
         target->pp += amount;
         if (target->pp > target->maxPp) {
           target->pp = target->maxPp;
           if (partyResultShown == 0)
-            messageOffset = 5;
+            messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
-          messageOffset = 6;
+          messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
         UnitRatioFar(targetId);
         changed = 1;
@@ -276,9 +275,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         UnitRatioFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
-          messageOffset = 0xc;
+          messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xd;
+        messageOffset = ITEM_USE_RESULT_NOT_DOWN;
       }
       break;
 
@@ -290,9 +289,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         target->hp = target->maxHp / 2;
         UnitRatioFar(targetId);
         if (partyResultShown == 0)
-          messageOffset = 0xc;
+          messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xd;
+        messageOffset = ITEM_USE_RESULT_NOT_DOWN;
       }
       break;
 
@@ -301,9 +300,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         target->hp = target->maxHp * 7 / 10;
         UnitRatioFar(targetId);
         if (partyResultShown == 0)
-          messageOffset = 0xc;
+          messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xd;
+        messageOffset = ITEM_USE_RESULT_NOT_DOWN;
       }
       break;
 
@@ -312,14 +311,14 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         target->poison = 0;
         changed = 1;
         if (partyResultShown == 0)
-          messageOffset = 0xa;
+          messageOffset = ITEM_USE_RESULT_POISON_PURGED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xb;
+        messageOffset = ITEM_USE_RESULT_NOT_POISONED;
       }
       break;
     }
 
-    if (effect->range != 0xff)
+    if (effect->range != ABILITY_RANGE_ALL)
       break;
   }
 
@@ -342,72 +341,48 @@ void Item_PlayUseAnimation(u32 item) {
 }
 
 /// Plays the sound of action used from the menu, and returns at once: no
-/// animation is drawn and nothing waits. HP and PP healing (kinds 1 and 11)
-/// play SE_RECOVERY, kind 1 twice; otherwise Revive's effect plays MUS_082,
-/// Cure Poison's MUS_084, effects 1, 2, 31 and 32 nothing, and every other
-/// effect, the stat items' 0 among them, MUS_091. Called after a successful
-/// use by Item_PlayUseAnimation (for ItemMenu_Use) and by the Psynergy screen.
+/// animation is drawn and nothing waits. HP and PP healing
+/// (ABILITY_KIND_HEAL_HP and ABILITY_KIND_HEAL_PP) play SE_RECOVERY, HP healing
+/// twice; otherwise Revive's effect plays MUS_082, Cure Poison's MUS_084,
+/// Drain, Psy Drain and the unused HP and PP restores nothing, and every other
+/// effect, ABILITY_EFFECT_NONE of the stat items among them, MUS_091. Called
+/// after a successful use by Item_PlayUseAnimation (for ItemMenu_Use) and by
+/// the Psynergy screen.
 void Ability_PlayUseAnimation(s32 action) {
   s32 animationType;
   u32 targetType;
   struct BattleAct *actionDefinition;
 
   actionDefinition = BattleActGet(action);
-  animationType = 0xf & actionDefinition->flags;
+  animationType = ABILITY_KIND_MASK & actionDefinition->flags;
   switch (animationType) {
-  case 1:
+  case ABILITY_KIND_HEAL_HP:
     // XXX: with no break the recovery sound is started twice; whether that
     // was meant would show only in the sound driver's handling of a cue
     // started again in the same frame.
     Audio_PlayCueReturnOne(SE_RECOVERY);
     // Fall through.
-  case 11:
+  case ABILITY_KIND_HEAL_PP:
     Audio_PlayCueReturnOne(SE_RECOVERY);
     return;
   default:
-    // The effect less one: effect 0 wraps to the u32 maximum, which takes
-    // the default case.
-    targetType = actionDefinition->effect - 1;
+    targetType = actionDefinition->effect;
     switch (targetType) {
-    case 4:
+    case ABILITY_EFFECT_REVIVE:
       Audio_PlayCueReturnOne(MUS_082);
       return;
-    case 2:
+    case ABILITY_EFFECT_CURE_POISON:
       Audio_PlayCueReturnOne(MUS_084);
       return;
     default:
-    case 3:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-    case 20:
-    case 21:
-    case 22:
-    case 23:
-    case 24:
-    case 25:
-    case 26:
-    case 27:
-    case 28:
-    case 29:
       Audio_PlayCueReturnOne(MUS_091);
 
-    case 0:
+    // The HP and PP restores no ability has (actions.tsv), which have no
+    // enumerator yet.
     case 1:
-    case 30:
-    case 31:
+    case 2:
+    case ABILITY_EFFECT_DRAIN_HP:
+    case ABILITY_EFFECT_DRAIN_PP:
       return;
     }
     break;

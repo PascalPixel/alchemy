@@ -98,6 +98,35 @@ s32 _call_via_r3(void *, void *, s32, void *);
 /// reaches every member.
 #define MENU_TARGET_WHOLE_PARTY 9
 
+/// The result of using an item or Psynergy from the menu: its message,
+/// counted from MsgItemUseResult (BattleEffect_ApplyToTargets).
+enum ItemUseResult {
+  ITEM_USE_RESULT_HP_FULLY_RECOVERED = 0, ///< "You recovered all HP!"
+  ITEM_USE_RESULT_HP_RECOVERED = 1,       ///< "You recovered HP!"
+  ITEM_USE_RESULT_HP_NOT_RECOVERED = 2,   ///< "You couldn't recover HP."
+  ITEM_USE_RESULT_PARTY_HP_RECOVERED = 3, ///< "Everyone recovered HP!"
+  ITEM_USE_RESULT_HP_FULL = 4,            ///< "Your HP is maxed out!"
+  ITEM_USE_RESULT_PP_FULLY_RECOVERED = 5, ///< "You recovered all PP!"
+  ITEM_USE_RESULT_PP_RECOVERED = 6,       ///< "You recovered some PP!"
+  ITEM_USE_RESULT_PP_FULL = 7,            ///< "Your PP is maxed out!"
+  ITEM_USE_RESULT_PARTY_PP_RECOVERED = 8, ///< "Everyone recovered PP!"
+  /// A second "Your PP is maxed out!", which no use chooses.
+  ITEM_USE_RESULT_PP_FULL_UNUSED = 9,
+  ITEM_USE_RESULT_POISON_PURGED = 10, ///< "The poison was purged!"
+  ITEM_USE_RESULT_NOT_POISONED = 11,  ///< "You're not poisoned."
+  ITEM_USE_RESULT_REVIVED = 12,       ///< "You were revived!"
+  ITEM_USE_RESULT_NOT_DOWN = 13,      ///< "You're not down."
+  /// "The curse was removed." and "You are not cursed.", which no use chooses.
+  ITEM_USE_RESULT_CURSE_REMOVED = 14,
+  ITEM_USE_RESULT_NOT_CURSED = 15,
+  ITEM_USE_RESULT_MAX_HP_UP = 16,  ///< "Your maximum HP increased!"
+  ITEM_USE_RESULT_MAX_PP_UP = 17,  ///< "Your maximum PP increased!"
+  ITEM_USE_RESULT_AGILITY_UP = 18, ///< "Your Agility increased!"
+  ITEM_USE_RESULT_LUCK_UP = 19,    ///< "Your Luck increased!"
+  ITEM_USE_RESULT_ATTACK_UP = 20,  ///< "Your Attack increased!"
+  ITEM_USE_RESULT_DEFENSE_UP = 21  ///< "Your Defense increased!"
+};
+
 /// The bytes of the menu work, heap block HEAP_SLOT_MENU. Each screen's run
 /// function takes the block as it opens and releases it as it closes.
 #define MENU_WORK_SIZE 0xa70

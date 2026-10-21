@@ -802,7 +802,8 @@ void Cgb_UpdateChannels(void) {
       // NR51 routes each channel to the left and right speakers
       REG_NR51 = (REG_NR51 & ~note->channelBits) | note->panBits;
       if (channel == CGB_CHANNEL_WAVE) {
-        // CGB_CHANNEL_WAVE has no envelope: its level maps to an NR32 volume code
+        // CGB_CHANNEL_WAVE has no envelope: its level maps to an NR32 volume
+        // code
         *volumeEnvelopeRegister = gSound_Cgb3LevelCodes[note->level];
         if (note->trigger & 0x80) {
           *sweepOrWaveControl = 0x80;
@@ -814,9 +815,10 @@ void Cgb_UpdateChannels(void) {
         envelopeControl &= 0xf;
         *volumeEnvelopeRegister = (note->level << 4) + envelopeControl;
         *triggerRegister = note->trigger | 0x80;
-        // XXX: CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit 3 is set
-        // (a falling sweep, or 8 alone, no sweep); why is not known. How the
-        // hardware starts a rising sweep, tested on a console, would say.
+        // XXX: CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit
+        // 3 is set (a falling sweep, or 8 alone, no sweep); why is not known.
+        // How the hardware starts a rising sweep, tested on a console, would
+        // say.
         if (channel == CGB_CHANNEL_SQUARE_1 && !(*sweepOrWaveControl & 8))
           *triggerRegister = note->trigger | 0x80;
       }

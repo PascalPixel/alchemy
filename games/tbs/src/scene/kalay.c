@@ -6,14 +6,18 @@
 ///   and Tolbi to the west. Its founder Lord Hammet is away, and the people
 ///   pass on rumours that thieves have captured him; his wife, Lady Layana,
 ///   speaks little of it. Eight doors (triggers 1 to 8) open into the houses,
-///   the inn and the Kalay Sanctum (kalay_interiors.c), and exits 12 and 13
-///   into two more of the houses; exit 11 leads to Hammet Palace, and
-///   triggers 9 and 10 out to the world map (its entrances 20 and 19). The
-///   weapon, armor and item sellers open their shops only when spoken to
-///   across the counter. A Nut circles in the air until Catch pulls it in
-///   (FLAG_KALAY_TOWN_NUT_CAUGHT), and a pillar at the north edge, which Move
-///   pushes aside, covers the way down into the Kalay Tunnel (exit 14);
-///   coming up from it (entrance 14) finds the pillar moved.
+///   the inn and the Kalay Sanctum (kalay_interiors.c), and
+///   KALAY_1_TO_KALAY_INTERIORS_1_WEST_NORTHWEST and
+///   KALAY_1_TO_KALAY_INTERIORS_1_EAST into two more of the houses;
+///   KALAY_1_TO_KALAY_2 leads to Hammet Palace, and triggers 9 and 10 out to
+///   the world map (KALAY_1_TO_WORLD_MAP and KALAY_1_TO_WORLD_MAP_WEST, to its
+///   WORLD_MAP_FROM_KALAY_1_EAST and WORLD_MAP_FROM_KALAY_1_WEST). The weapon,
+///   armor and item sellers open their shops only when spoken to across the
+///   counter. A Nut circles in the air until Catch pulls it in
+///   (FLAG_KALAY_TOWN_NUT_CAUGHT), and a pillar at the north edge
+///   (ACTOR_TOWN_PILLAR), which Move pushes aside, covers the way down into the
+///   Kalay Tunnel (KALAY_1_TO_KALAY_TUNNEL_3); coming up from it
+///   (KALAY_1_FROM_KALAY_TUNNEL_3) finds the pillar moved.
 ///
 ///   Once the party has heard of the Colosso tour at the inn
 ///   (FLAG_KALAY_HEARD_OF_COLOSSO_TOUR), leaving town plays the tour group's
@@ -29,48 +33,51 @@
 ///   reported to Layana (FLAG_IVAN_REPORTED_TO_LAYANA), the guards turn them
 ///   away, `This is Lord Hammet's palace. The lord is away.`, until they
 ///   recognize Ivan, who calls himself Lord Hammet's servant: he stayed in
-///   Vault to look for Hammet's stolen rod, the Shaman's Rod, and recovered
-///   it. Ivan learns that Hammet is still a prisoner in Lunpa, insists that
-///   his friends hear everything, and the guards take everyone in to Lady
-///   Layana (exit 5, the palace's entrance 20). Afterwards they say the
-///   soldiers of Kalay will rescue Hammet themselves, as Layana asked.
-///   Walking into the door (trigger 2) opens it into the palace (exit 2);
-///   exit 1 leads back to town.
+///   Vault to look for Hammet's stolen rod, the Shaman's Rod, and recovered it.
+///   Ivan learns that Hammet is still a prisoner in Lunpa, insists that his
+///   friends hear everything, and the guards take everyone in to Lady Layana
+///   (KALAY_2_TO_HAMMET_PALACE_EAST, to HAMMET_PALACE_FROM_KALAY_2_EAST).
+///   Afterwards they say the soldiers of Kalay will rescue Hammet themselves,
+///   as Layana asked. Walking into the door (trigger 2) opens it into the
+///   palace (KALAY_2_TO_HAMMET_PALACE); KALAY_2_TO_KALAY_1 leads back to town.
 /// - Kalay Tunnel Entrance (KalayTunnelEntrance, scene 153), outside the town
-/// (the world
-///   map's exit 60 leads in at entrance 2). A guard bars `the cave up ahead`
-///   by Hammet and Layana's command, and a Nut floats here until Catch takes
-///   it (flag 0xfd6). After the party has freed Hammet from Lunpa, Bunza, a
-///   Kalay merchant, brings him home in his wagon, and the party with him if
-///   they ride along (entrance 10). Hammet tells them of this entrance, an
-///   underground passage to Hammet Palace kept in case Dodonpa's henchmen are
-///   in Kalay, and asks Bunza to take the party round through the town so
-///   that the passage stays secret. The guard opens it, Hammet goes in, and
-///   the party rides off (exit 10, the world map's entrance 71). Once flag
-///   0x915 is set the guard stands turned east. Exit 1 leads into the Kalay
-///   Tunnel (scene 154).
+///   (the world map's WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE leads in at
+///   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH). A guard (ACTOR_TUNNEL_GUARD)
+///   bars `the cave up ahead` by Hammet and Layana's command, and a Nut floats
+///   here until Catch takes it (flag 0xfd6). After the party has freed Hammet
+///   from Lunpa, Bunza, a Kalay merchant, brings him home in his wagon, and the
+///   party with him if they ride along
+///   (KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH). Hammet tells them of this
+///   entrance, an underground passage to Hammet Palace kept in case Dodonpa's
+///   henchmen are in Kalay, and asks Bunza to take the party round through the
+///   town so that the passage stays secret. The guard opens it, Hammet goes in,
+///   and the party rides off (KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH, to
+///   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH). Once flag 0x915 is set the
+///   guard stands turned east. KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_1 leads
+///   into the Kalay Tunnel (scene 154).
 /// - Kalay Tunnel (KalayTunnel1 to KalayTunnel3, scenes 154 to 156), the
-/// passage to
-///   Hammet Palace and his treasure, which Layana opens to the party in thanks
-///   once Hammet is home (flag 0x915). Scene 154 joins the Kalay Tunnel
-///   Entrance to scene 155, and a chest holds an Apple. Scene 155 opens with a
-///   window transition, its way through drawn open once flag 0x915 is set.
-///   Scene 156 holds the puzzle: two pillars, pushed by walking into them or
-///   moved with Move, each open a passage step by step once far enough west
-///   (FLAG_TUNNEL_FIRST_PASSAGE_OPEN and FLAG_TUNNEL_SECOND_PASSAGE_OPEN,
-///   place flags, so the pillars are back once the party leaves the tunnel's
-///   scenes); while a passage is closed, particles stream from its pillar as it
-///   nears its place. The first passage raises a target that Frost sinks into
-///   the floor, freeing its cells; that is a temporary flag, so the target
-///   stands again on each entry. Scorch, a Mars Djinni, joins the party when
-///   spoken to, without a battle, and five chests hold Spirit Gloves, a Sleep
-///   Bomb, a Lucky Medal, 200 coins and a Potion. Once flag 0x915 is set a man
-///   waits here, thinking `The things beyond these doors belong to you all.`
-///   The fade overlay (object/object/fade_overlay.c) follows the leader
-///   through scene 156 unless he comes down from the town (entrance 4);
-///   triggers 10 and 11 stop and restart it, and 18 and 19 fix and free his
-///   depth priority. Exit 1 leads into Hammet Palace (its entrance 11), exit
-///   4 up into the town (entrance 14).
+///   passage to Hammet Palace and his treasure, which Layana opens to the party
+///   in thanks once Hammet is home (flag 0x915). Scene 154 joins the Kalay
+///   Tunnel Entrance to scene 155, and a chest holds an Apple. Scene 155 opens
+///   with a window transition, its way through drawn open once flag 0x915 is
+///   set. Scene 156 holds the puzzle: two pillars, pushed by walking into them
+///   or moved with Move, each open a passage step by step once far enough west
+///   (FLAG_TUNNEL_FIRST_PASSAGE_OPEN and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, place
+///   flags, so the pillars are back once the party leaves the tunnel's scenes);
+///   while a passage is closed, particles stream from its pillar as it nears
+///   its place. The first passage raises a puddle (ACTOR_PUDDLE) that
+///   Frost freezes and sinks into the floor, freeing its cells; that is a
+///   temporary flag, so the puddle stands again on each entry. Scorch, a Mars
+///   Djinni, joins the party when spoken to, without a battle, and five chests
+///   hold Spirit Gloves, a Sleep Bomb, a Lucky Medal, 200 coins and a Potion.
+///   Once flag 0x915 is set a man (ACTOR_WAITING_MAN) waits here, thinking `The
+///   things beyond these doors belong to you all.` The fade overlay
+///   (object/object/fade_overlay.c) follows the leader through scene 156 unless
+///   he comes down from the town (KALAY_TUNNEL_3_FROM_KALAY_1); triggers 10 and
+///   11 stop and restart it, and 18 and 19 fix and free his depth priority.
+///   KALAY_TUNNEL_3_TO_HAMMET_PALACE leads into Hammet Palace
+///   (HAMMET_PALACE_FROM_KALAY_TUNNEL_3), KALAY_TUNNEL_3_TO_KALAY_1 up into the
+///   town (KALAY_1_FROM_KALAY_TUNNEL_3).
 ///
 /// Every scene sets FLAG_REACHED_KALAY on entry. Kalay and Hammet Palace's
 /// front also catch the palace's story up with Lunpa's: hearing in Lunpa that
@@ -128,39 +135,109 @@
 
 enum { KALAY_CALLBACK_PRIORITY = 3200 };
 
-/// Kalay's scenes share actor numbers; each is named in the scene it is
-/// proved.
-enum KalayActor {
-  // Kalay (Kalay1)
-  ACTOR_LATE_TOURIST = 14, ///< the one the tour guides are missing
-  ACTOR_TOLBI_EMIGRANT = 19,
-  ACTOR_HEAD_GUIDE = 20, ///< the Colosso tour's guides
-  ACTOR_SECOND_GUIDE = 21,
-  ACTOR_WEAPON_MERCHANT = 22,
-  ACTOR_ARMOR_MERCHANT = 23,
-  ACTOR_ITEM_MERCHANT = 24,
-  ACTOR_TOWN_NUT = 26,
-  // Hammet Palace, before its door (Kalay2)
-  ACTOR_PALACE_GUARD = 8,
-  ACTOR_SECOND_PALACE_GUARD = 9,
-  // Kalay Tunnel Entrance (KalayTunnelEntrance)
-  ACTOR_TUNNEL_GUARD = 8,
-  ACTOR_WAGON = 9, ///< Bunza's
-  ACTOR_HAMMET = 10,
-  ACTOR_BUNZA = 11,
-  ACTOR_TUNNEL_ENTRANCE_NUT = 12,
-  // Kalay Tunnel (KalayTunnel3)
-  ACTOR_FIRST_PILLAR = 8, ///< the blocks that open the two passages
-  ACTOR_SECOND_PILLAR = 9,
-  ACTOR_FROST_TARGET = 11,
-  ACTOR_SCORCH = 12 ///< a Mars Djinni
+/// Kalay's actors (Kalay1), numbering the rows of gKalay_TownPlacements from
+/// ACTOR_FIRST_PLACED, then the tour group, which
+/// Kalay_WatchTourGroupDeparture places after them
+/// (gKalay_TourGroupPlacements).
+enum KalayTownActor {
+  /// The two soldiers of Kalay (sprite 0x99) at the town's entrance from the
+  /// world map. "Welcome to Kalay! You may enter, so long as you do not
+  /// disrupt the peace."
+  ACTOR_WELCOMING_SOLDIER = ACTOR_FIRST_PLACED,
+  /// "We soldiers protect the peace in Kalay with our lives."
+  ACTOR_PEACEKEEPING_SOLDIER,
+  /// "Lord Hammet, the founder of Kalay, is a great merchant."
+  ACTOR_VILLAGER_GREAT_MERCHANT,
+  /// "Lord Hammet is still out with his caravans on business."
+  ACTOR_VILLAGER_CARAVANS,
+  /// "The bridge to the north was destroyed by lava."
+  ACTOR_VILLAGER_BRIDGE,
+  /// "I heard a rumor that there's trouble in Lamakan Desert."
+  ACTOR_VILLAGER_LAMAKAN,
+  /// The tourist the guides are missing, who stands in town until then and
+  /// takes his place again after: "Kalay sits at a great crossroads."
+  ACTOR_LATE_TOURIST,
+  /// "The guests at the inn are tourists on their way to see Colosso."; Mind
+  /// Read: "I should have saved my money. Then I'd be on that tour, too."
+  ACTOR_WOULD_BE_TOURIST,
+  /// "I hear Colosso is incredible. I'd love to see such a huge carnival.";
+  /// Mind Read: "Maybe when I'm older, I'll even get to go fight in
+  /// Colosso!"
+  ACTOR_CHILD,
+  /// "A huge mountain north of the river erupted violently. I think it was
+  /// called Mt. Aleph."
+  ACTOR_VILLAGER_MT_ALEPH,
+  /// "Lord Hammet's knack for business is the reason Kalay has flourished."
+  ACTOR_VILLAGER_HAMMETS_KNACK,
+  /// Came to Kalay from Tolbi, afraid of Babi (Kalay_TalkAboutLeavingHome).
+  ACTOR_TOLBI_EMIGRANT,
+  /// The Colosso tour's guides (sprite 0xab), who stand in town and lead the
+  /// tour off when it leaves. "OK... Follow me, and stay in line!"
+  ACTOR_HEAD_GUIDE,
+  ACTOR_SECOND_GUIDE, ///< "Oh, dear..."
+  ACTOR_WEAPON_MERCHANT,
+  ACTOR_ARMOR_MERCHANT,
+  ACTOR_ITEM_MERCHANT,
+  /// The pillar (sprite 0xcb, as the Kalay Tunnel's) that Move pushes aside
+  /// from the way down into the Kalay Tunnel.
+  ACTOR_TOWN_PILLAR,
+  ACTOR_TOWN_NUT, ///< circles in the air until Catch pulls it in
+  /// The tour group, ACTOR_FIRST_TOURIST and the six after it, then
+  /// ACTOR_OURANOS. Their first lines, in row order: "Why are we stopping at
+  /// a place like this?", "Yeah! We have to hurry, or we'll be late for
+  /// Colosso!", "I hear there was a landslide on the road to Tolbi.", "Come
+  /// on! Why aren't we leaving yet?", "That won't do at all!", "Late for
+  /// Colosso? We can't have that!" and "But if anyone is missing, we're the
+  /// one's who'll miss out."
+  ACTOR_FIRST_TOURIST,
+  /// The tourist the one beside him calls Ouranos: "It's just a shame a man
+  /// like you can't ride on a boat, Ouranos." "Right when we're leaving, they
+  /// tell us we have to ride a boat?"
+  ACTOR_OURANOS = ACTOR_FIRST_TOURIST + 7
+};
+
+/// Hammet Palace's front (Kalay2), numbering gKalay_HammetPalacePlacements,
+/// whose first row places the party's Ivan.
+enum KalayPalaceActor {
+  /// The soldiers of Kalay before the palace door. "This is Lord Hammet's
+  /// palace. The lord is away."
+  ACTOR_PALACE_GUARD = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_PALACE_GUARD
+};
+
+/// The Kalay Tunnel Entrance (KalayTunnelEntrance), numbering
+/// gKalay_TunnelEntrancePlacements after its rows for Garet, Ivan and Mia.
+enum KalayTunnelEntranceActor {
+  /// "Do you want to go to the cave up ahead?"
+  ACTOR_TUNNEL_GUARD = ACTOR_FIRST_PLACED,
+  ACTOR_WAGON, ///< Bunza's
+  ACTOR_HAMMET,
+  ACTOR_BUNZA,
+  ACTOR_TUNNEL_ENTRANCE_NUT ///< floats here until Catch takes it
+};
+
+/// The Kalay Tunnel's scene 156 (KalayTunnel3), numbering
+/// gKalay_TunnelPlacements.
+enum KalayTunnelActor {
+  /// The pillars (sprite 0xcb) that open the two passages.
+  ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_PILLAR,
+  /// A man (sprite 0x44, as ACTOR_BUNZA's) who waits here once flag 0x915 is
+  /// set. "Layana was very hard on all of you, wasn't she?" XXX: likely Bunza,
+  /// because every other scene places sprite 0x44 beside Hammet as Bunza
+  /// (SPRITE_BUNZA in west_lunpa_cave.h); the text never names him here.
+  ACTOR_WAITING_MAN,
+  /// Sprite 0xe3, the puddle that Frost freezes into an ice pillar in
+  /// bilibin_cave.c.
+  ACTOR_PUDDLE,
+  ACTOR_SCORCH ///< a Mars Djinni
 };
 
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
 /// passages (place flags) while the party stays in the tunnel's scenes.
 enum KalayTunnelFlag {
   FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00, ///< the fade overlay
-  FLAG_TUNNEL_FROST_TARGET_FROZEN = FLAG_SCENE_TEMP_01,
+  FLAG_TUNNEL_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// Each pillar's particles have started their sound.
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
@@ -366,7 +443,7 @@ static void Kalay_AskAboutCaveAccess(void) {
 static void Kalay_TalkAboutLayana(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayLayanaWasVeryHardOn);
-  Engine_EventAskYesNo(10, 0);
+  Engine_EventAskYesNo(ACTOR_WAITING_MAN, 0);
   Engine_EventEnd();
 }
 
@@ -483,7 +560,7 @@ static void Kalay_EnterPalace(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   Engine_EventWait(10);
-  Engine_EventRequestExit(2);
+  Engine_EventRequestExit(KALAY_2_TO_HAMMET_PALACE);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();
@@ -516,14 +593,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
       GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
     Event_CallWithLastActiveObjectId(gKalay_TourGroupPlacements);
     Actor_SetPosition(ACTOR_HEAD_GUIDE, PIXELS(252), PIXELS(272));
-    Actor_SetPosition(27, PIXELS(284), PIXELS(264));
-    Actor_SetPosition(28, PIXELS(284), PIXELS(280));
-    Actor_SetPosition(29, PIXELS(300), PIXELS(264));
-    Actor_SetPosition(30, PIXELS(300), PIXELS(280));
-    Actor_SetPosition(32, PIXELS(316), PIXELS(264));
-    Actor_SetPosition(31, PIXELS(316), PIXELS(280));
-    Actor_SetPosition(33, PIXELS(332), PIXELS(264));
-    Actor_SetPosition(34, PIXELS(332), PIXELS(280));
+    Actor_SetPosition(ACTOR_FIRST_TOURIST, PIXELS(284), PIXELS(264));
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 1, PIXELS(284), PIXELS(280));
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 2, PIXELS(300), PIXELS(264));
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 3, PIXELS(300), PIXELS(280));
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 5, PIXELS(316), PIXELS(264));
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 4, PIXELS(316), PIXELS(280));
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 6, PIXELS(332), PIXELS(264));
+    Actor_SetPosition(ACTOR_OURANOS, PIXELS(332), PIXELS(280));
     Actor_SetPosition(ACTOR_SECOND_GUIDE, PIXELS(364), PIXELS(272));
     Event_PlayCue(MUS_017);
     Ui_SetMessageVoiceFromActor(ACTOR_HEAD_GUIDE);
@@ -540,24 +617,24 @@ static void Kalay_WatchTourGroupDeparture(void) {
     }
     // Stagger the speeds so the group arrives in rows.
     Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(11) / 10, PIXELS(11) / 20);
-    Actor_SetSpeed(27, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(28, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(29, PIXELS(9) / 10, PIXELS(9) / 20);
-    Actor_SetSpeed(30, PIXELS(9) / 10, PIXELS(9) / 20);
-    Actor_SetSpeed(32, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(31, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(33, PIXELS(7) / 10, PIXELS(7) / 20);
-    Actor_SetSpeed(34, PIXELS(7) / 10, PIXELS(7) / 20);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 1, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 2, PIXELS(9) / 10, PIXELS(9) / 20);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 3, PIXELS(9) / 10, PIXELS(9) / 20);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 5, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 4, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 6, PIXELS(7) / 10, PIXELS(7) / 20);
+    Actor_SetSpeed(ACTOR_OURANOS, PIXELS(7) / 10, PIXELS(7) / 20);
     Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(3) / 5, PIXELS(3) / 10);
     Actor_SetActionScript(ACTOR_HEAD_GUIDE, gKalay_TourGroupWalkScript);
-    Actor_SetActionScript(27, gKalay_TourGroupWalkScript);
-    Actor_SetActionScript(28, gKalay_TourGroupWalkScript);
-    Actor_SetActionScript(29, gKalay_TourGroupWalkScript);
-    Actor_SetActionScript(30, gKalay_TourGroupWalkScript);
-    Actor_SetActionScript(32, gKalay_TourGroupWalkScript);
-    Actor_SetActionScript(31, gKalay_TourGroupWalkScript);
-    Actor_SetActionScript(33, gKalay_TourGroupWalkScript);
-    Actor_SetActionScript(34, gKalay_TourGroupWalkScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST, gKalay_TourGroupWalkScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 1, gKalay_TourGroupWalkScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 2, gKalay_TourGroupWalkScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 3, gKalay_TourGroupWalkScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 5, gKalay_TourGroupWalkScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 4, gKalay_TourGroupWalkScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 6, gKalay_TourGroupWalkScript);
+    Actor_SetActionScript(ACTOR_OURANOS, gKalay_TourGroupWalkScript);
     last = Actor_Get(ACTOR_SECOND_GUIDE);
     last->timer = 0;
     Actor_SetActionScript(ACTOR_SECOND_GUIDE, gKalay_TourGroupWalkScript);
@@ -568,28 +645,32 @@ static void Kalay_WatchTourGroupDeparture(void) {
       Engine_TaskWait(1);
     } while (last->timer == 0);
     Engine_EventWait(40);
-    Engine_ActorRunRepeatedMotion(27, 2);
-    Actor_FaceDirection(27, FACING_SOUTH + FACING_STEP, 20);
+    Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST, 2);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH + FACING_STEP, 20);
     Engine_EventSetMessage(MsgKalayWhyWeStoppingAtPlace);
-    Event_ShowMessageAndWait(27, 0, 10);
-    Engine_ActorRunRepeatedMotion(28, 2);
-    Actor_FaceDirection(28, FACING_NORTHWEST + FACING_STEP, 10);
-    Engine_ActorSetAnimation(28, ANIM_NOD);
-    Event_ShowMessageAndWait(28, 0, 10);
-    Actor_SetAttachedEffect(32, EMOTE_IN_FRONT | 2);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST, 0, 10);
+    Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 1, 2);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTHWEST + FACING_STEP,
+                        10);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
+    Actor_SetAttachedEffect(ACTOR_FIRST_TOURIST + 5, EMOTE_IN_FRONT | 2);
     Engine_EventWait(40);
-    Event_ShowMessageAndWait(32, 0, 10);
-    Actor_ShowEmote(31, EMOTE_IN_FRONT, 40);
-    Actor_FaceDirection(31, FACING_NORTHWEST + FACING_STEP, 10);
-    Event_ShowMessageAndWait(31, 0, 10);
-    Actor_FaceDirection(31, FACING_WEST, 10);
-    Engine_ActorRunRepeatedMotion(31, 2);
-    Engine_ActorSetAnimation(31, ANIM_SHAKE_HEAD);
-    Event_ShowMessageAndWait(31, 0, 10);
-    Actor_FaceDirection(31, FACING_NORTHWEST + FACING_STEP, 0);
-    Actor_FaceDirection(32, FACING_SOUTH + FACING_STEP, 20);
-    Engine_ActorSetAnimation(31, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(32, ANIM_NOD);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 5, 0, 10);
+    Actor_ShowEmote(ACTOR_FIRST_TOURIST + 4, EMOTE_IN_FRONT, 40);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTHWEST + FACING_STEP,
+                        10);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 10);
+    Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 4, 2);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTHWEST + FACING_STEP,
+                        0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH + FACING_STEP,
+                        20);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 4, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 5, ANIM_NOD);
     Engine_ActorRunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
     Actor_SetAttachedEffect(ACTOR_HEAD_GUIDE, EMOTE_IN_FRONT | 2);
     Engine_EventWait(40);
@@ -601,10 +682,10 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Engine_EventWait(1);
     headBack = Actor_Get(ACTOR_HEAD_GUIDE);
     headBack->steeringFlags |= ACTOR_FACES_MOTION;
-    Actor_FaceDirection(27, FACING_WEST, 0);
-    Actor_FaceDirection(28, FACING_WEST, 0);
-    Actor_FaceDirection(32, FACING_WEST, 0);
-    Actor_FaceDirection(31, FACING_WEST, 20);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
     Engine_EventWait(20);
     headAgain = Actor_Get(ACTOR_HEAD_GUIDE);
@@ -616,14 +697,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 180, 272);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
-    Actor_ShowEmote(34, EMOTE_IN_FRONT | 5, 0);
-    Engine_ActorRunRepeatedMotion(34, 1);
-    Engine_ActorSetAnimationAndWait(34, ANIM_NOD);
-    Event_ShowMessageAndWait(34, 0, 10);
-    Engine_ActorRunRepeatedMotion(33, 1);
-    Event_ShowMessageAndWait(33, 0, 10);
-    Engine_ActorSetAnimation(33, ANIM_SHAKE_HEAD);
-    Event_ShowMessageAndWait(33, 0, 10);
+    Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | 5, 0);
+    Engine_ActorRunRepeatedMotion(ACTOR_OURANOS, 1);
+    Engine_ActorSetAnimationAndWait(ACTOR_OURANOS, ANIM_NOD);
+    Event_ShowMessageAndWait(ACTOR_OURANOS, 0, 10);
+    Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 6, 1);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_SECOND_GUIDE, 2);
     Actor_ShowEmote(ACTOR_SECOND_GUIDE, EMOTE_IN_FRONT | 2, 0);
     Event_ShowMessageAndWait(ACTOR_SECOND_GUIDE, 0, 10);
@@ -685,33 +766,36 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 178, 272);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
     Engine_EventWait(240);
-    Engine_ActorStop(27);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST);
     Engine_TaskWait(1);
-    Actor_FaceDirection(27, FACING_WEST, 10);
-    Actor_ShowEmote(27, EMOTE_IN_FRONT | 1, 60);
-    Event_ShowMessageAndWait(27, 0, 10);
-    Kalay_StartTouristFidgeting(27);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 10);
+    Actor_ShowEmote(ACTOR_FIRST_TOURIST, EMOTE_IN_FRONT | 1, 60);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST, 0, 10);
+    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST);
     Engine_EventWait(80);
-    Engine_ActorStop(28);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 1);
     Engine_TaskWait(1);
-    Actor_FaceDirection(28, FACING_NORTH + FACING_STEP, 20);
-    Engine_ActorRunRepeatedMotion(28, 2);
-    Event_ShowMessageAndWait(28, 0, 10);
-    Kalay_StartTouristFidgeting(28);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTH + FACING_STEP,
+                        20);
+    Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 1, 2);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
+    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 1);
     Engine_EventWait(160);
-    Engine_ActorStop(32);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 5);
     Engine_TaskWait(1);
-    Actor_FaceDirection(32, FACING_SOUTH + FACING_STEP, 10);
-    Actor_ShowEmote(32, EMOTE_IN_FRONT | 1, 60);
-    Event_ShowMessageAndWait(32, 0, 10);
-    Kalay_StartTouristFidgeting(32);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH + FACING_STEP,
+                        10);
+    Actor_ShowEmote(ACTOR_FIRST_TOURIST + 5, EMOTE_IN_FRONT | 1, 60);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 5, 0, 10);
+    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 5);
     Engine_EventWait(80);
-    Engine_ActorStop(30);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 3);
     Engine_TaskWait(1);
-    Actor_FaceDirection(30, FACING_NORTHWEST + FACING_STEP, 10);
-    Engine_ActorRunRepeatedMotion(30, 1);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 3, FACING_NORTHWEST + FACING_STEP,
+                        10);
+    Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 3, 1);
     Engine_EventSetMessage(message + 6);
-    Event_ShowMessageAndWait(30, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 3, 0, 10);
     Scheduler_RemoveCallback(Kalay_AlternateGuidesPacing);
     Engine_ActorStop(ACTOR_HEAD_GUIDE);
     Engine_ActorStop(ACTOR_SECOND_GUIDE);
@@ -724,77 +808,80 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_SetActionScript(ACTOR_HEAD_GUIDE, gKalay_HeadGuideStopScript);
     Actor_SetActionScript(ACTOR_SECOND_GUIDE, gKalay_SecondGuideStopScript);
-    Engine_ActorStop(29);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 2);
     Engine_TaskWait(1);
-    Actor_FaceDirection(29, FACING_SOUTH + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 2, FACING_SOUTH + FACING_STEP,
+                        10);
     message += 5;
-    Engine_ActorRunRepeatedMotion(29, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 2, 2);
     Engine_EventSetMessage(message);
-    Event_ShowMessageAndWait(29, 0, 20);
-    Kalay_StartTouristFidgeting(29);
-    Kalay_StartTouristFidgeting(30);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 2, 0, 20);
+    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 2);
+    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 3);
     do {
       Engine_TaskWait(1);
     } while (Actor_Get(ACTOR_HEAD_GUIDE)->timer == 0 ||
              Actor_Get(ACTOR_SECOND_GUIDE)->timer != 1);
     Actor_SetActionScript(ACTOR_HEAD_GUIDE, gKalay_HeadGuideReturnScript);
     Actor_SetActionScript(ACTOR_SECOND_GUIDE, gKalay_SecondGuideReturnScript);
-    Engine_ActorStop(31);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 4);
     Engine_TaskWait(1);
-    Actor_FaceDirection(31, FACING_SOUTH + FACING_STEP, 10);
-    Engine_ActorRunRepeatedMotion(31, 1);
-    Engine_ActorSetAnimationAndWait(31, ANIM_SHAKE_HEAD);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_SOUTH + FACING_STEP,
+                        10);
+    Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 4, 1);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
     message = MsgKalayDecideEnteringColosso;
     Engine_EventSetMessage(message);
-    Event_ShowMessageAndWait(31, 0, 10);
-    Kalay_StartTouristFidgeting(31);
-    Engine_ActorStop(34);
-    Engine_ActorStop(33);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
+    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 4);
+    Engine_ActorStop(ACTOR_OURANOS);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 6);
     Engine_TaskWait(1);
-    Actor_ShowEmote(34, EMOTE_IN_FRONT | 5, 40);
-    Actor_ShowEmote(33, EMOTE_IN_FRONT | 5, 60);
-    Actor_FaceDirection(34, FACING_NORTHWEST + FACING_STEP, 10);
-    Actor_FaceDirection(33, FACING_SOUTH + FACING_STEP, 10);
+    Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | 5, 40);
+    Actor_ShowEmote(ACTOR_FIRST_TOURIST + 6, EMOTE_IN_FRONT | 5, 60);
+    Actor_FaceDirection(ACTOR_OURANOS, FACING_NORTHWEST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_SOUTH + FACING_STEP,
+                        10);
     message += 3;
-    Engine_ActorSetAnimationAndWait(34, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_OURANOS, ANIM_SHAKE_HEAD);
     Engine_EventSetMessage(message);
-    Event_ShowMessageAndWait(34, 0, 10);
-    Engine_ActorRunRepeatedMotion(33, 1);
-    Engine_ActorSetAnimation(33, ANIM_SHAKE_HEAD);
-    Event_ShowMessageAndWait(33, 0, 10);
-    Actor_ShowEmote(34, EMOTE_IN_FRONT | 2, 60);
+    Event_ShowMessageAndWait(ACTOR_OURANOS, 0, 10);
+    Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 6, 1);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
+    Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | 2, 60);
     Actor_ShowEmote(ACTOR_HEAD_GUIDE, EMOTE_IN_FRONT | 3, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
     Engine_EventSetMessage(MsgKalayThatsWeCantWaitAny);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
-    Engine_ActorStop(27);
-    Engine_ActorStop(28);
-    Engine_ActorStop(29);
-    Engine_ActorStop(30);
-    Engine_ActorStop(32);
-    Engine_ActorStop(31);
-    Engine_ActorStop(33);
-    Engine_ActorStop(34);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 1);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 2);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 3);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 5);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 4);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 6);
+    Engine_ActorStop(ACTOR_OURANOS);
     Engine_ActorStop(ACTOR_HEAD_GUIDE);
     Engine_ActorStop(ACTOR_SECOND_GUIDE);
     Engine_TaskWait(1);
-    Engine_ActorJump(27, 2, 0);
-    Engine_ActorJump(28, 2, 0);
-    Engine_ActorJump(29, 2, 0);
-    Engine_ActorJump(30, 2, 0);
-    Engine_ActorJump(32, 2, 0);
-    Engine_ActorJump(31, 2, 0);
-    Engine_ActorJump(33, 2, 0);
-    Engine_ActorJump(34, 2, 0);
+    Engine_ActorJump(ACTOR_FIRST_TOURIST, 2, 0);
+    Engine_ActorJump(ACTOR_FIRST_TOURIST + 1, 2, 0);
+    Engine_ActorJump(ACTOR_FIRST_TOURIST + 2, 2, 0);
+    Engine_ActorJump(ACTOR_FIRST_TOURIST + 3, 2, 0);
+    Engine_ActorJump(ACTOR_FIRST_TOURIST + 5, 2, 0);
+    Engine_ActorJump(ACTOR_FIRST_TOURIST + 4, 2, 0);
+    Engine_ActorJump(ACTOR_FIRST_TOURIST + 6, 2, 0);
+    Engine_ActorJump(ACTOR_OURANOS, 2, 0);
     Engine_ActorJump(ACTOR_SECOND_GUIDE, 2, 40);
-    Actor_FaceDirection(27, FACING_WEST, 0);
-    Actor_FaceDirection(28, FACING_WEST, 0);
-    Actor_FaceDirection(29, FACING_WEST, 0);
-    Actor_FaceDirection(30, FACING_WEST, 0);
-    Actor_FaceDirection(32, FACING_WEST, 0);
-    Actor_FaceDirection(31, FACING_WEST, 0);
-    Actor_FaceDirection(33, FACING_WEST, 0);
-    Actor_FaceDirection(34, FACING_WEST, 40);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 2, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 3, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_OURANOS, FACING_WEST, 40);
     Engine_ActorJump(ACTOR_SECOND_GUIDE, 4, 40);
     Event_ShowMessageAndWait(ACTOR_SECOND_GUIDE, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_HEAD_GUIDE, 1);
@@ -803,84 +890,87 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_ShowMessageAndWait(ACTOR_SECOND_GUIDE, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
-    Actor_ShowEmote(27, EMOTE_IN_FRONT | 2, 40);
-    Engine_ActorStartRepeatedMotion(27, 1);
-    Event_ShowMessageAndWait(27, 0, 10);
-    Actor_ShowEmote(28, EMOTE_IN_FRONT | 2, 40);
-    Event_ShowMessageAndWait(28, 0, 10);
+    Actor_ShowEmote(ACTOR_FIRST_TOURIST, EMOTE_IN_FRONT | 2, 40);
+    Engine_ActorStartRepeatedMotion(ACTOR_FIRST_TOURIST, 1);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST, 0, 10);
+    Actor_ShowEmote(ACTOR_FIRST_TOURIST + 1, EMOTE_IN_FRONT | 2, 40);
+    Event_ShowMessageAndWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_SHAKE_HEAD);
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_NOD);
     Event_ShowMessageAndWait(ACTOR_SECOND_GUIDE, 0, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
-    Actor_FaceDirection(27, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(28, FACING_NORTHWEST + FACING_STEP, 4);
-    Actor_FaceDirection(29, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(30, FACING_NORTHWEST + FACING_STEP, 4);
-    Actor_FaceDirection(32, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(31, FACING_NORTHWEST + FACING_STEP, 4);
-    Actor_FaceDirection(33, FACING_SOUTH + FACING_STEP, 0);
-    Actor_FaceDirection(34, FACING_NORTHWEST + FACING_STEP, 4);
-    Engine_ActorSetAnimation(27, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(28, ANIM_NOD);
-    Engine_ActorSetAnimation(29, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(30, ANIM_NOD);
-    Engine_ActorSetAnimation(32, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(31, ANIM_NOD);
-    Engine_ActorSetAnimation(33, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(34, ANIM_NOD);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTHWEST + FACING_STEP,
+                        4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 2, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 3, FACING_NORTHWEST + FACING_STEP,
+                        4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_NORTHWEST + FACING_STEP,
+                        4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_OURANOS, FACING_NORTHWEST + FACING_STEP, 4);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 1, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 2, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 3, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 5, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 4, ANIM_NOD);
+    Engine_ActorSetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_OURANOS, ANIM_NOD);
     Engine_ActorJump(ACTOR_HEAD_GUIDE, 2, 40);
     Event_ShowMessageAndWait(ACTOR_HEAD_GUIDE, 0, 10);
-    Actor_FaceDirection(27, FACING_WEST, 0);
-    Actor_FaceDirection(28, FACING_WEST, 4);
-    Actor_FaceDirection(29, FACING_WEST, 0);
-    Actor_FaceDirection(30, FACING_WEST, 4);
-    Actor_FaceDirection(32, FACING_WEST, 0);
-    Actor_FaceDirection(31, FACING_WEST, 4);
-    Actor_FaceDirection(33, FACING_WEST, 0);
-    Actor_FaceDirection(34, FACING_WEST, 4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_WEST, 4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 2, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 3, FACING_WEST, 4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 4);
+    Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_OURANOS, FACING_WEST, 4);
     Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(11) / 10, PIXELS(11) / 20);
-    Actor_SetSpeed(27, PIXELS(21) / 20, PIXELS(21) / 40);
-    Actor_SetSpeed(28, PIXELS(21) / 20, PIXELS(21) / 40);
-    Actor_SetSpeed(29, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(30, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(32, PIXELS(19) / 20, PIXELS(19) / 40);
-    Actor_SetSpeed(31, PIXELS(19) / 20, PIXELS(19) / 40);
-    Actor_SetSpeed(33, PIXELS(9) / 10, PIXELS(9) / 20);
-    Actor_SetSpeed(34, PIXELS(9) / 10, PIXELS(9) / 20);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST, PIXELS(21) / 20, PIXELS(21) / 40);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 1, PIXELS(21) / 20, PIXELS(21) / 40);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 2, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 3, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 5, PIXELS(19) / 20, PIXELS(19) / 40);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 4, PIXELS(19) / 20, PIXELS(19) / 40);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 6, PIXELS(9) / 10, PIXELS(9) / 20);
+    Actor_SetSpeed(ACTOR_OURANOS, PIXELS(9) / 10, PIXELS(9) / 20);
     Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(17) / 20, PIXELS(17) / 40);
-    Engine_ActorSetSpritePriority(27, 1);
-    Engine_ActorSetSpritePriority(28, 1);
-    Engine_ActorSetSpritePriority(29, 1);
-    Engine_ActorSetSpritePriority(30, 1);
-    Engine_ActorSetSpritePriority(32, 1);
-    Engine_ActorSetSpritePriority(31, 1);
-    Engine_ActorSetSpritePriority(33, 1);
-    Engine_ActorSetSpritePriority(34, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_TOURIST, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_TOURIST + 1, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_TOURIST + 2, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_TOURIST + 3, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_TOURIST + 5, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_TOURIST + 4, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_TOURIST + 6, 1);
+    Engine_ActorSetSpritePriority(ACTOR_OURANOS, 1);
     Engine_ActorSetSpritePriority(ACTOR_HEAD_GUIDE, 1);
     Engine_ActorSetSpritePriority(ACTOR_SECOND_GUIDE, 1);
-    Engine_ActorStop(27);
-    Engine_ActorStop(28);
-    Engine_ActorStop(29);
-    Engine_ActorStop(30);
-    Engine_ActorStop(32);
-    Engine_ActorStop(31);
-    Engine_ActorStop(33);
-    Engine_ActorStop(34);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 1);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 2);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 3);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 5);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 4);
+    Engine_ActorStop(ACTOR_FIRST_TOURIST + 6);
+    Engine_ActorStop(ACTOR_OURANOS);
     Engine_ActorStop(ACTOR_HEAD_GUIDE);
     Engine_ActorStop(ACTOR_SECOND_GUIDE);
     Engine_TaskWait(1);
     // Send the group onward, then bring in the missing tourist.
     Actor_SetActionScript(ACTOR_HEAD_GUIDE, gKalay_TourGroupLeaveScript);
-    Actor_SetActionScript(27, gKalay_TourGroupLeaveScript);
-    Actor_SetActionScript(28, gKalay_TourGroupLeaveScript);
-    Actor_SetActionScript(29, gKalay_TourGroupLeaveScript);
-    Actor_SetActionScript(30, gKalay_TourGroupLeaveScript);
-    Actor_SetActionScript(32, gKalay_TourGroupLeaveScript);
-    Actor_SetActionScript(31, gKalay_TourGroupLeaveScript);
-    Actor_SetActionScript(33, gKalay_TourGroupLeaveScript);
-    Actor_SetActionScript(34, gKalay_TourGroupLeaveScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST, gKalay_TourGroupLeaveScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 1, gKalay_TourGroupLeaveScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 2, gKalay_TourGroupLeaveScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 3, gKalay_TourGroupLeaveScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 5, gKalay_TourGroupLeaveScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 4, gKalay_TourGroupLeaveScript);
+    Actor_SetActionScript(ACTOR_FIRST_TOURIST + 6, gKalay_TourGroupLeaveScript);
+    Actor_SetActionScript(ACTOR_OURANOS, gKalay_TourGroupLeaveScript);
     closing = Actor_Get(ACTOR_SECOND_GUIDE);
     closing->timer = 0;
     Actor_SetActionScript(ACTOR_SECOND_GUIDE, gKalay_TourGroupLeaveScript);
@@ -924,14 +1014,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetPosition(ACTOR_SECOND_GUIDE, PIXELS(464), PIXELS(416));
     lastEnd = Actor_Get(ACTOR_SECOND_GUIDE);
     lastEnd->facing = FACING_SOUTH + FACING_STEP;
-    Engine_ActorDestroy(27);
-    Engine_ActorDestroy(28);
-    Engine_ActorDestroy(29);
-    Engine_ActorDestroy(30);
-    Engine_ActorDestroy(31);
-    Engine_ActorDestroy(32);
-    Engine_ActorDestroy(33);
-    Engine_ActorDestroy(34);
+    Engine_ActorDestroy(ACTOR_FIRST_TOURIST);
+    Engine_ActorDestroy(ACTOR_FIRST_TOURIST + 1);
+    Engine_ActorDestroy(ACTOR_FIRST_TOURIST + 2);
+    Engine_ActorDestroy(ACTOR_FIRST_TOURIST + 3);
+    Engine_ActorDestroy(ACTOR_FIRST_TOURIST + 4);
+    Engine_ActorDestroy(ACTOR_FIRST_TOURIST + 5);
+    Engine_ActorDestroy(ACTOR_FIRST_TOURIST + 6);
+    Engine_ActorDestroy(ACTOR_OURANOS);
     Event_PlayCue(MUS_017);
     if (work->touchedTrigger == 9) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
@@ -1032,9 +1122,9 @@ s32 Kalay_Initialize(void) {
 /// Sets up Kalay. Having heard in Lunpa that Hammet is held there sets place
 /// flag FLAG_PLACE_TEMP_21; once Hammet is free (FLAG_LUNPA_TRADE_REOPENED) the
 /// palace's flags 0x912 to 0x915 are set too, so its earlier scenes count as
-/// seen and the passage is open. Coming up from the Kalay Tunnel (entrance 14)
-/// finds its pillar moved aside, and until it is caught the Nut circles in the
-/// air.
+/// seen and the passage is open. Coming up from the Kalay Tunnel
+/// (KALAY_1_FROM_KALAY_TUNNEL_3) finds its pillar moved aside, and until it is
+/// caught the Nut circles in the air.
 static void Kalay_PrepareTown(void) {
   OrbitingSceneObject *nut;
   s32 found;
@@ -1050,8 +1140,8 @@ static void Kalay_PrepareTown(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
   }
-  if (gGameState.entrance == 14) {
-    Actor_SetPosition(25, PIXELS(424), PIXELS(88));
+  if (gGameState.entrance == KALAY_1_FROM_KALAY_TUNNEL_3) {
+    Actor_SetPosition(ACTOR_TOWN_PILLAR, PIXELS(424), PIXELS(88));
   }
   Engine_ActorSetChildValue(ACTOR_SECOND_GUIDE, 2);
   found = Engine_GameFlagIsSet(FLAG_KALAY_TOWN_NUT_CAUGHT);
@@ -1102,7 +1192,8 @@ static void Kalay_PrepareHammetPalace(void) {
 
 /// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance): the Nut floats
 /// until caught, the guard turns east once flag 0x915 opens the passage, and
-/// arriving by entrance 10 brings Hammet home in Bunza's wagon.
+/// arriving by KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH brings Hammet home in
+/// Bunza's wagon.
 static void Kalay_PrepareTunnelEntrance(void) {
   struct FieldActor *guard;
 
@@ -1113,14 +1204,16 @@ static void Kalay_PrepareTunnelEntrance(void) {
     guard = Object_GetById(ACTOR_TUNNEL_GUARD);
     guard->facing = 0;
   }
-  if (gGameState.entrance == 10) {
+  if (gGameState.entrance == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
     Kalay_HammetReturnsToPalace();
   }
 }
 
 /// Sets up the Kalay Tunnel's scene 155 (KalayTunnel2): it opens with a window
 /// transition, its way through is drawn open once flag 0x915 is set, and
-/// entrances 1 to 3 start sound 170.
+/// arriving from scene 156 (KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_WEST and
+/// KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_EAST) or by the scene's own entrance 3
+/// starts SE_170.
 static void Kalay_StartWindowTransition(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(0x915) != 0) {
@@ -1138,9 +1231,10 @@ static void Kalay_StartWindowTransition(void) {
 }
 
 /// Sets up the Kalay Tunnel's scene 156 (KalayTunnel3): the fade overlay
-/// follows the leader unless he came down from the town (entrance 4); the
-/// pushed pillars, the frozen target and the opened passages are restored, and
-/// once flag 0x915 is set the man waits here and some of the cells are redrawn.
+/// follows the leader unless he came down from the town
+/// (KALAY_TUNNEL_3_FROM_KALAY_1); the pushed pillars, the frozen puddle and the
+/// opened passages are restored, and once flag 0x915 is set the man waits here
+/// and some of the cells are redrawn.
 static void Kalay_PrepareTunnel(void) {
 #if TBS_PATCH_1
   s32 resumedScene;
@@ -1178,7 +1272,7 @@ static void Kalay_PrepareTunnel(void) {
 #endif
   } else {
     GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
-    if (gGameState.entrance == 4) {
+    if (gGameState.entrance == KALAY_TUNNEL_3_FROM_KALAY_1) {
       ((struct FadeOverlayWork *)workSlots[9])->actor = NULL;
       GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     }
@@ -1202,21 +1296,21 @@ static void Kalay_PrepareTunnel(void) {
     }
     effectWork->actor = (struct FieldActor *)trackingValue;
 #endif
-  } else if (gGameState.entrance == 4) {
+  } else if (gGameState.entrance == KALAY_TUNNEL_3_FROM_KALAY_1) {
     ((struct FadeOverlayWork *)workSlots[9])->actor = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 #endif
   if (GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_FROST_TARGET, PIXELS(150), PIXELS(728));
-    if (GameFlag_IsSet(FLAG_TUNNEL_FROST_TARGET_FROZEN) != 0) {
-      Actor_Get(ACTOR_FROST_TARGET);
+    Actor_SetPosition(ACTOR_PUDDLE, PIXELS(150), PIXELS(728));
+    if (GameFlag_IsSet(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
+      Actor_Get(ACTOR_PUDDLE);
       column = 9;
-      Engine_ActorSetAnimation(ACTOR_FROST_TARGET, 5);
+      Engine_ActorSetAnimation(ACTOR_PUDDLE, 5);
       Map_CopyCellAttributes(0, 0, 1, 1, column, 14);
       Map_CopyCellAttributes(0, 0, 1, 1, column, 45);
       {
-        u8 *p = &Object_GetById(ACTOR_FROST_TARGET)->priorityFlags;
+        u8 *p = &Object_GetById(ACTOR_PUDDLE)->priorityFlags;
         s32 v = ACTOR_PRIORITY_UNDERFOOT;
 
         v |= *p;
@@ -1231,8 +1325,8 @@ static void Kalay_PrepareTunnel(void) {
   FieldScheduler_AddCallback(Kalay_UpdateTunnelEmitters,
                              KALAY_CALLBACK_PRIORITY);
   if (GameFlag_IsSet(0x915) != 0) {
-    Actor_SetPosition(10, PIXELS(426), PIXELS(730));
-    actor = Actor_Get(10);
+    Actor_SetPosition(ACTOR_WAITING_MAN, PIXELS(426), PIXELS(730));
+    actor = Actor_Get(ACTOR_WAITING_MAN);
     {
       u16 shown = 0x5000;
 
@@ -1276,8 +1370,8 @@ static void Kalay_PrepareTunnel(void) {
     Map_CopyCellAttributes(0, 1, 1, 1, 7, 44);
   } else {
     switch (gGameState.entrance) {
-    case 1:
-    case 2:
+    case KALAY_TUNNEL_3_FROM_HAMMET_PALACE:
+    case KALAY_TUNNEL_3_FROM_KALAY_TUNNEL_2_WEST:
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
@@ -1307,8 +1401,8 @@ static void Kalay_PrepareTunnel(void) {
     Map_CopyCellAttributes(37, 13, 10, 12, 37, 43);
   } else {
     switch (gGameState.entrance) {
-    case 3:
-    case 4:
+    case KALAY_TUNNEL_3_FROM_KALAY_TUNNEL_2_EAST:
+    case KALAY_TUNNEL_3_FROM_KALAY_1:
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
@@ -1317,14 +1411,14 @@ static void Kalay_PrepareTunnel(void) {
 
 /// All eight tourists in Kalay start fidgeting.
 static void Kalay_StartTouristsFidgeting(void) {
-  Kalay_StartTouristFidgeting(27);
-  Kalay_StartTouristFidgeting(28);
-  Kalay_StartTouristFidgeting(29);
-  Kalay_StartTouristFidgeting(30);
-  Kalay_StartTouristFidgeting(32);
-  Kalay_StartTouristFidgeting(31);
-  Kalay_StartTouristFidgeting(33);
-  Kalay_StartTouristFidgeting(34);
+  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST);
+  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 1);
+  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 2);
+  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 3);
+  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 5);
+  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 4);
+  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 6);
+  Kalay_StartTouristFidgeting(ACTOR_OURANOS);
 }
 
 /// A tourist starts fidgeting after a random pause.
@@ -1388,8 +1482,8 @@ static void Kalay_AlternateGuidesPacing(void) {
 /// Before the door of Hammet Palace (Kalay2), the first time the party comes:
 /// the guards turn the party away until they recognize Ivan, tanned and grown,
 /// and learn that he does not know Hammet is a prisoner in Lunpa. Ivan insists
-/// his friends hear everything, and the guards open the door and take the
-/// party in to Lady Layana (exit 5).
+/// his friends hear everything, and the guards open the door and take the party
+/// in to Lady Layana (KALAY_2_TO_HAMMET_PALACE_EAST).
 static void Kalay_IvanMeetsPalaceGuards(void) {
   struct FieldActor *actor;
 
@@ -1565,16 +1659,16 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(5);
+  Engine_EventRequestExit(KALAY_2_TO_HAMMET_PALACE_EAST);
   Engine_EventEnd();
 }
 
-/// Arriving at the Kalay Tunnel Entrance by entrance 10, after the party has
-/// freed Hammet from Lunpa: Hammet comes home with the party in the wagon of
-/// Bunza, a Kalay merchant. Hammet explains the underground passage to the
-/// palace and asks Bunza to take the party round through the town, so the
-/// passage stays secret; the guard opens it, Hammet goes in and the party
-/// rides off.
+/// Arriving at the Kalay Tunnel Entrance by
+/// KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH, after the party has freed Hammet
+/// from Lunpa: Hammet comes home with the party in the wagon of Bunza, a Kalay
+/// merchant. Hammet explains the underground passage to the palace and asks
+/// Bunza to take the party round through the town, so the passage stays secret;
+/// the guard opens it, Hammet goes in and the party rides off.
 static void Kalay_HammetReturnsToPalace(void) {
   u8 *leaderPhase;
   u32 random;
@@ -1861,7 +1955,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(10);
+  Engine_EventRequestExit(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH);
   Engine_EventEnd();
 }
 
@@ -1920,7 +2014,7 @@ static void Kalay_PushTunnelPillar(void) {
 }
 
 /// In the Kalay Tunnel (KalayTunnel3), once a pillar is pushed far enough west,
-/// its passage opens step by step, and the first raises the target for Frost.
+/// its passage opens step by step, and the first raises the puddle for Frost.
 static void Kalay_UpdateTunnelPassages(void) {
   struct FieldActor *firstPillar;
   struct FieldActor *secondPillar;
@@ -1938,7 +2032,7 @@ static void Kalay_UpdateTunnelPassages(void) {
   if (firstPassageOpen != 0) {
   } else if ((firstPillar->x.fixed >> 19) > 29) {
   } else {
-    frostEffect = Object_GetById(ACTOR_FROST_TARGET);
+    frostEffect = Object_GetById(ACTOR_PUDDLE);
     Engine_EventBegin();
     Map_CopyCellAttributes(7, 44, 1, 1, firstPassageOpen, 1);
     i = 67;
@@ -1957,8 +2051,8 @@ static void Kalay_UpdateTunnelPassages(void) {
     Engine_EventWait(40);
     frostEffect->scaleX = Q16_ONE / 10;
     frostEffect->scaleY = Q16_ONE / 10;
-    Actor_SetPosition(ACTOR_FROST_TARGET, PIXELS(150), PIXELS(728));
-    Actor_SetActionScript(ACTOR_FROST_TARGET, gKalay_FrostGrowScript);
+    Actor_SetPosition(ACTOR_PUDDLE, PIXELS(150), PIXELS(728));
+    Actor_SetActionScript(ACTOR_PUDDLE, gKalay_FrostGrowScript);
     height = 1;
     Map_CopyCellsTo(67, 64, 71, 44, height, span);
     Map_CopyCellsTo(67, 64, 72, 44, height, span);
@@ -2176,10 +2270,10 @@ static void Kalay_UpdateNutOrbit(void) {
                         ((u32)(Engine_RandomNext() << 9) >> 16) + 0x400;
 }
 
-/// Frost on the target in the Kalay Tunnel (KalayTunnel3) sinks it into the
+/// Frost on the puddle in the Kalay Tunnel (KalayTunnel3) sinks it into the
 /// floor, clearing its cells, until the scene is entered again.
-static void Kalay_FreezeFrostTarget(void) {
-  struct FieldActor *effect = Object_GetById(ACTOR_FROST_TARGET);
+static void Kalay_FreezePuddle(void) {
+  struct FieldActor *effect = Object_GetById(ACTOR_PUDDLE);
 
   Map_CopyCellAttributes(0, 0, 1, 1, 9, 14);
   Map_CopyCellAttributes(0, 0, 1, 1, 9, 45);
@@ -2188,7 +2282,7 @@ static void Kalay_FreezeFrostTarget(void) {
     effect->y.fixed -= PIXELS(32);
     effect->priorityFlags = 2;
   }
-  Engine_GameFlagSet(FLAG_TUNNEL_FROST_TARGET_FROZEN);
+  Engine_GameFlagSet(FLAG_TUNNEL_PUDDLE_FROZEN);
 }
 
 // Shared source, included in link order.
@@ -2642,49 +2736,49 @@ struct SceneEvent gKalay_TownEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_OpenDoorAndExit) },
-    { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
-    { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
-    { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
+    { EVENT_EXIT, 11, CONDITION_ALWAYS, KALAY_1_TO_KALAY_2 },
+    { EVENT_EXIT, 12, CONDITION_ALWAYS, KALAY_1_TO_KALAY_INTERIORS_1_WEST_NORTHWEST },
+    { EVENT_EXIT, 13, CONDITION_ALWAYS, KALAY_1_TO_KALAY_INTERIORS_1_EAST },
+    { EVENT_EXIT, 14, CONDITION_ALWAYS, KALAY_1_TO_KALAY_TUNNEL_3 },
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayWelcomeInPeace) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersProtectPeace) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayHammetGenerousMerchant) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayHammetOnJourney) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayNorthernBridgeRebuilt) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayLamakanTrouble) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKalayElderTownNews) },
-    { EVENT_TALK, 15, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInnFestivalTourists) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKalayFormerInnFestivalTourists) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKalayChildWantsFestival) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKalayTraderTownNews) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKalayHammetBusinessSkill) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLeavingHome) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCapturedRumor) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgKalayHammetWentNorth) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToWeaponMerchant) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToArmorMerchant) },
-    { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToItemMerchant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorHonestEyes) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayGuardsJudgeVisitors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayHammetPeaceAndLiberty) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCanBeRash) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersWentToVault) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayStrangeEvents) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKalayElderThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKalayWishSavedForFestival) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKalayChildFestivalDream) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKalayTraderThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKalayHammetValuesTrust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKalayTrustAgainstForce) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKalayLunpaNorthOfVault) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgKalayRumorsHideTruth) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgKalayWishBetterWeapons) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgKalayWeaponsHaveSoul) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgKalayPalaceWaterSupply) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 25, CONDITION_ALWAYS, 0 },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, FLAG_KALAY_TOWN_NUT_CAUGHT, EVENT_SCRIPT(Kalay_CatchTownNut) },
+    { EVENT_TALK, ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWelcomeInPeace) },
+    { EVENT_TALK, ACTOR_PEACEKEEPING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersProtectPeace) },
+    { EVENT_TALK, ACTOR_VILLAGER_GREAT_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetGenerousMerchant) },
+    { EVENT_TALK, ACTOR_VILLAGER_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetOnJourney) },
+    { EVENT_TALK, ACTOR_VILLAGER_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalayNorthernBridgeRebuilt) },
+    { EVENT_TALK, ACTOR_VILLAGER_LAMAKAN, CONDITION_ALWAYS, MSGNO(MsgKalayLamakanTrouble) },
+    { EVENT_TALK, ACTOR_LATE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayElderTownNews) },
+    { EVENT_TALK, ACTOR_WOULD_BE_TOURIST, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInnFestivalTourists) },
+    { EVENT_TALK, ACTOR_WOULD_BE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayFormerInnFestivalTourists) },
+    { EVENT_TALK, ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgKalayChildWantsFestival) },
+    { EVENT_TALK, ACTOR_VILLAGER_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderTownNews) },
+    { EVENT_TALK, ACTOR_VILLAGER_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetBusinessSkill) },
+    { EVENT_TALK, ACTOR_TOLBI_EMIGRANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLeavingHome) },
+    { EVENT_TALK, ACTOR_HEAD_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCapturedRumor) },
+    { EVENT_TALK, ACTOR_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetWentNorth) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToItemMerchant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorHonestEyes) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PEACEKEEPING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayGuardsJudgeVisitors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GREAT_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetPeaceAndLiberty) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCanBeRash) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersWentToVault) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LAMAKAN, CONDITION_ALWAYS, MSGNO(MsgKalayStrangeEvents) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LATE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayElderThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOULD_BE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayWishSavedForFestival) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgKalayChildFestivalDream) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetValuesTrust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_EMIGRANT, CONDITION_ALWAYS, MSGNO(MsgKalayTrustAgainstForce) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEAD_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayLunpaNorthOfVault) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayRumorsHideTruth) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayWishBetterWeapons) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayWeaponsHaveSoul) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayPalaceWaterSupply) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TOWN_PILLAR, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_TOWN_NUT, FLAG_KALAY_TOWN_NUT_CAUGHT, EVENT_SCRIPT(Kalay_CatchTownNut) },
     { SEARCH(SEARCH_JAR), 100, 0xf81, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_JAR), 101, 0xf82, FIND_ITEM(ITEM_VIAL) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_SearchWell) },
@@ -2692,61 +2786,61 @@ struct SceneEvent gKalay_TownEvents[] = {
 };
 
 struct SceneEvent gKalay_HammetPalaceEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_2_TO_KALAY_1 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnterPalace) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersHandleAffairs) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersRescueHammet) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayPrayForHammetSafety) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorsWillSaveHammet) },
+    { EVENT_TALK, ACTOR_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersHandleAffairs) },
+    { EVENT_TALK, ACTOR_SECOND_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersRescueHammet) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayPrayForHammetSafety) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorsWillSaveHammet) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalay_TunnelEntranceEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_AskAboutCaveAccess) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayPassageClosedByOrders) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 12, 0xfd6, EVENT_SCRIPT(Kalay_CatchTunnelEntranceNut) },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_1 },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH },
+    { EVENT_TALK, ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_AskAboutCaveAccess) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayPassageClosedByOrders) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_TUNNEL_ENTRANCE_NUT, 0xfd6, EVENT_SCRIPT(Kalay_CatchTunnelEntranceNut) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalay_Events4[] = {
-    { 0x31, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { 0x31, 1, CONDITION_ALWAYS, KALAY_TUNNEL_1_TO_KALAY_TUNNEL_2 },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_1_TO_KALAY_TUNNEL_ENTRANCE },
     { SEARCH(SEARCH_CHEST), 100, 0xf22, FIND_ITEM(ITEM_APPLE) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalay_Events5[] = {
-    { 0x31, 1, CONDITION_ALWAYS, 1 },
-    { 0x31, 2, CONDITION_ALWAYS, 2 },
+    { 0x31, 1, CONDITION_ALWAYS, KALAY_TUNNEL_2_TO_KALAY_TUNNEL_3_WEST },
+    { 0x31, 2, CONDITION_ALWAYS, KALAY_TUNNEL_2_TO_KALAY_TUNNEL_3_EAST },
     { 0x21, 3, CONDITION_ALWAYS, 3 },
     { 0x31, 4, CONDITION_ALWAYS, 4 },
-    { 0x21, 5, CONDITION_ALWAYS, 5 },
+    { 0x21, 5, CONDITION_ALWAYS, KALAY_TUNNEL_2_TO_KALAY_TUNNEL_1 },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalay_TunnelEvents[] = {
-    { 0x21, 1, CONDITION_ALWAYS, 1 },
-    { 0x21, 2, CONDITION_ALWAYS, 2 },
-    { 0x21, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLayana) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTreasureBeyondDoors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_TUNNEL_FIRST_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_TUNNEL_SECOND_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
+    { 0x21, 1, CONDITION_ALWAYS, KALAY_TUNNEL_3_TO_HAMMET_PALACE },
+    { 0x21, 2, CONDITION_ALWAYS, KALAY_TUNNEL_3_TO_KALAY_TUNNEL_2_WEST },
+    { 0x21, 3, CONDITION_ALWAYS, KALAY_TUNNEL_3_TO_KALAY_TUNNEL_2_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_TUNNEL_3_TO_KALAY_1 },
+    { EVENT_TALK, ACTOR_WAITING_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLayana) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_MAN, CONDITION_ALWAYS, MSGNO(MsgKalayTreasureBeyondDoors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, FLAG_TUNNEL_FIRST_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, FLAG_TUNNEL_SECOND_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FLAG_TUNNEL_FROST_TARGET_FROZEN, EVENT_SCRIPT(Kalay_FreezeFrostTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_TUNNEL_PUDDLE_FROZEN, EVENT_SCRIPT(Kalay_FreezePuddle) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StopTrackingLeader) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StartTrackingLeader) },
     { EVENT_TOUCH, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_DisableLeaderAutomaticPriority) },
     { EVENT_TOUCH, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_EnableLeaderAutomaticPriority) },
     { SEARCH(SEARCH_CHEST), 100, 0xf1c, FIND_ITEM(ITEM_SPIRIT_GLOVES) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_RecruitScorch) },
+    { EVENT_TALK, ACTOR_SCORCH, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_RecruitScorch) },
     { SEARCH(SEARCH_CHEST), 102, 0xf1e, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_CHEST), 103, 0xf1f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_CHEST), 104, 0xf20, FIND_COINS(200) },

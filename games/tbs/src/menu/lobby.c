@@ -110,6 +110,55 @@
 // 6 the most linked battles won in a row (the wall board), 7 those won in a
 // row now.
 
+/// The placed actors, numbering the rows of gLinkLobbyPlacements and
+/// gLinkLobbyBattlePlacements, which list the same people in the same order;
+/// the rows of Garet, Ivan, Mia and Jenna take those characters' own ids.
+enum LinkLobbyActor {
+  /// The attendant, who arranges every battle; ACTOR_GREETER calls her the
+  /// girl at the counter. "Please speak to me when you want to fight in a
+  /// battle."
+  ACTOR_ATTENDANT = ACTOR_FIRST_PLACED,
+  /// Reports the linked battles won, and answers for ACTOR_DEBUG_HELPER. "I
+  /// will tell you your total wins when you finish the linked finals."
+  ACTOR_LINKED_WINS_TELLER,
+  /// Opens a Sanctum's services (LinkLobby_OpenSanctum); sprite 0x79, the
+  /// healer of every Sanctum in sanctum.c.
+  ACTOR_HEALER,
+  /// "Welcome to Battle Arena, where people craving battle meet!"
+  ACTOR_GREETER,
+  /// "I am a traveling warrior. I came here to become stronger..."
+  ACTOR_TRAVELING_WARRIOR,
+  /// "Up to three allies can fight in Linked Battle finals."
+  ACTOR_FINALS_VISITOR,
+  /// "Is this the Battle Arena the old man spoke of?"
+  ACTOR_OLD_MANS_ARENA_VISITOR,
+  /// Loads a debug party (LinkLobby_ChooseDebugPartyPreset). "Choose your
+  /// parameters here."
+  ACTOR_DEBUG_HELPER,
+  /// Explains the linked finals' limit of three allies, then "You can change
+  /// the order of your party in the status screen."
+  ACTOR_PARTY_ORDER_VISITOR,
+  /// "In the linked finals, you can't delay after your opponent selects a
+  /// move."
+  ACTOR_COMMAND_TIME_VISITOR,
+  /// "To use Summon quickly, Djinn must be on standby."
+  ACTOR_SUMMON_VISITOR,
+  /// "Do you put Djinn on standby before a battle, or do you set them?"
+  ACTOR_SET_DJINN_VISITOR,
+  /// "Remove Djinn you rarely use so you can summon quickly."
+  ACTOR_STANDBY_DJINN_VISITOR,
+  /// "Monster Battle rules say you all must fight as a team against a
+  /// monster."
+  ACTOR_MONSTER_RULES_VISITOR,
+  /// Reports the most Monster Battles won in a row. "I'll be counting your
+  /// victories!"
+  ACTOR_MONSTER_WINS_TELLER,
+  /// "All the warriors are impressive, so I get edgy before battles begin."
+  ACTOR_EDGY_VISITOR,
+  /// "I could enter, but I'd just get hurt if I did... That'd be stupid."
+  ACTOR_WARY_VISITOR
+};
+
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 // clang-format off
@@ -282,7 +331,7 @@ static s32 LinkLobby_PollPeerReady(void) {
   result = 1;
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
-  if (Object_GetById(0)->z.fixed > 0xe00000) {
+  if (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed > 0xe00000) {
     Engine_GameFlagClear(FLAG_PLACE_TEMP_04);
   }
   // While raised event 2 (the lost link) waits, skip the partner tracking.
@@ -370,7 +419,7 @@ static s32 LinkLobby_PromptToParticipate(void) {
   }
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLobbyWantParticipatePlease);
-  Engine_EventOpenMessage(8, 0);
+  Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
   Engine_TaskWait(5);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
   Engine_EventEnd();
@@ -391,7 +440,7 @@ static s32 LinkLobby_ReportDisconnection(void) {
   Engine_EventBegin();
   work->raisedTrigger = 0;
   Engine_EventSetMessage(MsgLobbyLinkDisconnected);
-  Engine_EventOpenMessage(8, 0);
+  Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_05);
   Engine_EventEnd();
 #ifdef UBFIX
@@ -848,32 +897,32 @@ static s32 LinkLobby_EnterBattle(void) {
     Engine_TaskWait(8);
     Map_SetLayerEntryFlag(5);
     if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
-      Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
+      Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
       Engine_EventSetMessage(MsgLobbyGoodLuck);
-      Engine_EventOpenMessage(8, 0);
+      Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       Engine_TaskWait(45);
-      Actor_SetSpeed(0, 0x10000, 0x8000);
-      Engine_ActorWalkTo(0, 216, 184);
-      Engine_ActorWaitForMove(0);
-      Engine_ActorWalkTo(0, 216, 168);
-      Engine_ActorWaitForMove(0);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+      Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 216, 184);
+      Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+      Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 216, 168);
+      Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     } else {
       // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
       // the parties are exchanged, then a half.
-      Actor_SetSpeed(0, 0x10000, 0x8000);
-      Engine_ActorWalkTo(0, 216, 200);
-      Engine_ActorWaitForMove(0);
-      Actor_SetSpeed(0, 0x1999, 0xccc);
-      Engine_ActorWalkTo(0, 216, 168);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+      Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 216, 200);
+      Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
+      Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 216, 168);
       // A failed exchange: walk back out and return to the lobby, reporting
       // the link lost (event 2).
       if (LinkLobby_ExchangePartyRecords() < 0) {
-        Actor_SetSpeed(0, 0x10000, 0x8000);
-        Engine_ActorWalkTo(0, 216, 200);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+        Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 216, 200);
         Map_ClearLayerEntryFlag(5);
         Engine_TaskWait(8);
         Map_SetLayerEntryFlag(5);
-        Engine_ActorWaitForMove(0);
+        Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         Runtime_ReleaseHeapBlock(54);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
@@ -889,8 +938,8 @@ static s32 LinkLobby_EnterBattle(void) {
         Engine_EventEnd();
         return LOBBY_NO_RESULT;
       }
-      Actor_SetSpeed(0, 0x8000, 0x4000);
-      Engine_ActorWaitForMove(0);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+      Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     }
     if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
       Event_SetNextDestination((s32)&SceneId_LinkLobby, 8);
@@ -924,12 +973,12 @@ static s32 LinkLobby_EnterBattle(void) {
 #endif
 }
 
-/// Talk event 8, the attendant: arranges a battle. With no partner, offers a
+/// Talking to ACTOR_ATTENDANT, who arranges a battle. With no partner, offers a
 /// monster battle. With one, calls off a monster battle in waiting, then asks
-/// the player to apply or to accept the partner's request; a yes is
-/// published as slot 1. Agreeing sets FLAG_SCENE_TEMP_02, and for a linked
-/// battle FLAG_LINK_BATTLE and FLAG_LINK_BATTLE_ARRANGED. The original
-/// handler's return value is ignored.
+/// the player to apply or to accept the partner's request; a yes is published
+/// as slot 1. Agreeing sets FLAG_SCENE_TEMP_02, and for a linked battle
+/// FLAG_LINK_BATTLE and FLAG_LINK_BATTLE_ARRANGED. The original handler's
+/// return value is ignored.
 static s32 LinkLobby_ChooseBattleMode(void) {
   // Returns no value: r0 is whatever the last call left.
 
@@ -943,7 +992,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
   // +6 asks the player to wait for an opponent.
   messageBase = MsgLobbyPleaseSpeakWhen;
   Engine_EventBegin();
-  Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
+  Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
   // Look for the partner's signature twice, a frame apart.
   if (LinkLobby_PeerSlotMatches(0) == 0) {
     Engine_TaskWait(1);
@@ -953,7 +1002,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
     LinkLobby_InitializeSerial();
     if (!GameFlag_IsSet(FLAG_MONSTER_BATTLE)) {
       Engine_EventSetMessage(messageBase + 5);
-      Engine_EventOpenMessage(8, 0);
+      Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       answer = Engine_EventChooseYesNo(0, 0);
       // Yes (0) starts a monster series: byte flag 1000 and the series'
       // victories (tally 3) start at 0.
@@ -981,7 +1030,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
     if (GameFlag_IsSet(FLAG_MONSTER_BATTLE)) {
       LinkLobby_WriteSlotValue(0);
       Engine_EventSetMessage(MsgLobbyOpponentArrived);
-      Engine_EventOpenMessage(8, 0);
+      Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       Engine_GameFlagClear(FLAG_SCENE_TEMP_02);
       Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
     }
@@ -995,11 +1044,11 @@ static s32 LinkLobby_ChooseBattleMode(void) {
     message:
       Engine_EventSetMessage(messageId);
     open_message:
-      Engine_EventOpenMessage(8, 0);
+      Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
     } else if (!Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) &&
                !GameFlag_IsSet(FLAG_PLACE_TEMP_00)) {
       Engine_EventSetMessage(messageBase);
-      Engine_EventOpenMessage(8, 0);
+      Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       Engine_GameFlagSet(FLAG_PLACE_TEMP_00);
     } else {
       Engine_GameFlagSet(FLAG_PLACE_TEMP_00);
@@ -1008,7 +1057,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
       } else {
         Engine_EventSetMessage(messageBase + 1);
       }
-      Engine_EventOpenMessage(8, 0);
+      Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
         // Yes, and the partner is still there; else the link is lost.
         if (LinkLobby_PeerSlotMatches(0)) {
@@ -1027,7 +1076,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
         }
       } else {
         Engine_EventSetMessage(messageBase);
-        Engine_EventOpenMessage(8, 0);
+        Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       }
     }
   }
@@ -1037,12 +1086,12 @@ static s32 LinkLobby_ChooseBattleMode(void) {
 #endif
 }
 
-/// Talk event 9: reports the linked battles won, the total when the leader
-/// faces north and those won in a row otherwise; before the first, the line
-/// says it will tell them later. Like the original handler, it never ends
-/// its event (no Engine_EventEnd) and returns nothing.
+/// Talking to ACTOR_LINKED_WINS_TELLER, who reports the linked battles won, the
+/// total when the leader faces north and those won in a row otherwise; before
+/// the first, the line says it will tell them later. Like the original handler,
+/// it never ends its event (no Engine_EventEnd) and returns nothing.
 static s32 LinkLobby_ReportWinTallies(s32 actor) {
-  u32 facing = Object_GetById(0)->facing;
+  u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
   u16 *tally;
   s32 messageBase;
 
@@ -1079,10 +1128,10 @@ static s32 LinkLobby_ReportWinTallies(s32 actor) {
   return 0;
 #endif
 }
-/// Talk event 15, a debug helper: Left and Right choose a preset number from
-/// 0 up, A loads it (DebugParty_LoadPreset) and B cancels. Actor 9 replies:
-/// one line for a cancel, one for a preset past the table's end (the loader's
-/// nonzero result), one for a loaded party.
+/// Talking to ACTOR_DEBUG_HELPER: Left and Right choose a preset number from 0
+/// up, A loads it (DebugParty_LoadPreset) and B cancels.
+/// ACTOR_LINKED_WINS_TELLER replies: one line for a cancel, one for a preset
+/// past the table's end (the loader's nonzero result), one for a loaded party.
 static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
   struct UiWindow *window;
   s32 presetIndex;
@@ -1126,13 +1175,13 @@ static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
   }
   if (presetIndex < 0) {
     Engine_EventSetMessage(MsgLobbyTease);
-    Engine_EventShowMessage(9, 0);
+    Engine_EventShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   } else if (loadResult != 0) {
     Engine_EventSetMessage(MsgLobbyNoParameterAsk);
-    Engine_EventShowMessage(9, 0);
+    Engine_EventShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   } else {
     Engine_EventSetMessage(MsgLobbySettingsMadeRest);
-    Engine_EventShowMessage(9, 0);
+    Engine_EventShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
   }
   Engine_TaskWait(10);
   Engine_EventEnd();
@@ -1141,7 +1190,8 @@ static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
 #endif
 }
 
-/// Talk event 10: the actor serves as a Sanctum's priest (Engine_SanctumOpen).
+/// Talking to ACTOR_HEALER, who serves as a Sanctum's healer
+/// (Engine_SanctumOpen).
 static s32 LinkLobby_OpenSanctum(s32 actorId) {
   Engine_EventBegin();
   Engine_SanctumOpen(actorId);
@@ -1181,11 +1231,11 @@ static s32 LinkLobby_PartyContains(s32 ownerId) {
 /// UNUSED: the original empty lobby callback.
 UNUSED static void State_NoOp(void) {}
 
-/// Talk events 1, 2, 3 and 5: Garet, Ivan, Mia or Jenna speaks of the last
-/// linked battle (place flags FLAG_PLACE_TEMP_04 and FLAG_PLACE_TEMP_05) and
-/// whether they fought in it, or else of whether Isaac and they are in the
-/// battle party. Each message family holds one line per character, at actor -
-/// 1; Felix's holds "?".
+/// Talking to Garet, Ivan, Mia or Jenna, who speaks of the last linked battle
+/// (place flags FLAG_PLACE_TEMP_04 and FLAG_PLACE_TEMP_05) and whether they
+/// fought in it, or else of whether Isaac and they are in the battle party.
+/// Each message family holds one line per character, at actor - 1; Felix's
+/// holds "?".
 static s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = LinkLobby_PartyContains(0);
@@ -1225,7 +1275,7 @@ static s32 LinkLobby_TalkByProgress(s32 actor) {
 }
 
 /// Touch event 1, the way out: stops the link, loads sound preset 2 and goes
-/// back to the file select screen (its entrance 1).
+/// back to the file select screen (its entrance CLEAR_FROM_SANCTUM).
 static s32 LinkLobby_LeaveArena(void) {
   SerialRuntime_RemoveIrqHandlers();
   Sound_LoadPresetParameters(2);
@@ -1238,25 +1288,26 @@ static s32 LinkLobby_LeaveArena(void) {
 // The handlers below are s32 and return no value: r0 is whatever
 // Engine_EventEnd left.
 
-/// Talk events 12 to 14, three visitors: a traveling warrior, one who
-/// explains the linked finals, and one who wonders whether this is the old
-/// man's Battle Arena. Each says their first line unless a linked battle has
-/// ended since the leader last walked south of z 224 (place flag
-/// FLAG_PLACE_TEMP_04), then their second after a win or their third after a
-/// loss (FLAG_PLACE_TEMP_05).
-static s32 LinkLobby_TalkToAttendant(s32 actor) {
+/// Talking to one of three visitors: ACTOR_TRAVELING_WARRIOR,
+/// ACTOR_FINALS_VISITOR, who explains the linked finals, and
+/// ACTOR_OLD_MANS_ARENA_VISITOR, who wonders whether this is the old man's
+/// Battle Arena. Each says their first line unless a linked battle has ended
+/// since the leader last walked south of z 224 (place flag FLAG_PLACE_TEMP_04),
+/// then their second after a win or their third after a loss
+/// (FLAG_PLACE_TEMP_05).
+static s32 LinkLobby_TalkToVisitor(s32 actor) {
   s32 message;
   s32 step = 0;
 
   Engine_EventBegin();
   switch (actor) {
-  case 12:
+  case ACTOR_TRAVELING_WARRIOR:
     message = MsgLobbyTravelingWarrior;
     break;
-  case 13:
+  case ACTOR_FINALS_VISITOR:
     message = MsgLobbyThreeAlliesFight;
     break;
-  case 14:
+  case ACTOR_OLD_MANS_ARENA_VISITOR:
   default:
     message = MsgLobbyBattleArenaOld;
     break;
@@ -1272,9 +1323,9 @@ static s32 LinkLobby_TalkToAttendant(s32 actor) {
 #endif
 }
 
-/// Talk event 16: alternates, by FLAG_SCENE_TEMP_04, between the linked
-/// finals' limit of three allies (worded for the party's size) and how to
-/// change the party's order.
+/// Talking to ACTOR_PARTY_ORDER_VISITOR, who alternates, by FLAG_SCENE_TEMP_04,
+/// between the linked finals' limit of three allies (worded for the party's
+/// size) and how to change the party's order.
 static s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   s32 message;
 
@@ -1298,8 +1349,8 @@ static s32 LinkLobby_ExplainPartyOrder(s32 actor) {
 #endif
 }
 
-/// Talk event 22: reports the most monster battles won in a row (tally 2),
-/// or before any, that the speaker will count them.
+/// Talking to ACTOR_MONSTER_WINS_TELLER, who reports the most monster battles
+/// won in a row (tally 2), or before any, that the speaker will count them.
 static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
   struct GameState *state;
 
@@ -1389,10 +1440,11 @@ static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
 /// The overlay's initialize entry, run on every arrival: settles the battle
 /// that brought the party here and restarts the lobby's polling. Entrance 8
 /// is a monster battle won, 9 one lost, 10 a linked battle won (or broken
-/// off, flag 1000) and 11 one lost; any other entrance (the file select
-/// screen uses 1) restarts the link. Updates gGameState.linkTallies,
-/// saves after linked battles and new monster records, and restores the
-/// party's HP, PP and Djinn unless a monster series goes on. Returns 0.
+/// off, flag 1000) and 11 one lost; any other entrance (LINK_LOBBY_FROM_CLEAR,
+/// from the file select screen) restarts the link. Updates
+/// gGameState.linkTallies, saves after linked battles and new monster records,
+/// and restores the party's HP, PP and Djinn unless a monster series goes on.
+/// Returns 0.
 s32 LinkLobby_RunRoundResult(void) {
   s32 i;
   u32 score;
@@ -1455,9 +1507,9 @@ s32 LinkLobby_RunRoundResult(void) {
     } else {
       FieldGameFlag_SetByte(1000, v + 1);
     }
-    Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
+    Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
     Engine_EventSetMessage(MsgLobbyNotBadNextMonster + messageOffset);
-    Engine_EventOpenMessage(8, 0);
+    Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       if (wins > 90) {
         wins = 90;
@@ -1472,11 +1524,11 @@ s32 LinkLobby_RunRoundResult(void) {
       if (gGameState.linkTallies[2] < score) {
         gGameState.linkTallies[2] = score;
         Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
-        Engine_EventOpenMessage(8, 0);
+        Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
         LinkLobby_SaveMonsterBattleResults();
       } else {
         Engine_EventSetMessage(MsgLobbyWonNumberBattle);
-        Engine_EventOpenMessage(8, 0);
+        Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       }
       LinkLobby_WriteSlotValue(0);
     }
@@ -1490,7 +1542,7 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(5);
-    Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
+    Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
     /* FAKEMATCH(temporary): score holds the tally's address, then the tally;
      * as gGameState.linkTallies[3] read at both uses, 19 of 393 instructions
      * differ in tbs-en. */
@@ -1500,11 +1552,11 @@ s32 LinkLobby_RunRoundResult(void) {
     if (gGameState.linkTallies[2] < score) {
       gGameState.linkTallies[2] = score;
       Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
-      Engine_EventOpenMessage(8, 0);
+      Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       LinkLobby_SaveMonsterBattleResults();
     } else {
       Engine_EventSetMessage(MsgLobbyWonNumberBattleTold);
-      Engine_EventOpenMessage(8, 0);
+      Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
     }
     gGameState.linkTallies[3] = 0;
     Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
@@ -1578,9 +1630,9 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_EventBegin();
       Engine_EventOpenScreen();
       Engine_EventWaitForScreen();
-      Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
+      Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
       Engine_EventSetMessage(MsgLobbyNoteCantUse);
-      Engine_EventShowMessage(8, 0);
+      Engine_EventShowMessage(ACTOR_ATTENDANT, 0);
       Engine_EventEnd();
     }
     gGameState.idleSleepEnabled = 0;
@@ -1606,15 +1658,15 @@ u8 gLinkLobby_SlotColumns[] = {
     0, 1, 1, 1, 1, 0, 0, 0,
 };
 
-/// Where the party appears: 1 from the file select screen, 8 and 9 after a
-/// monster battle won or lost, 10 and 11 after a linked one
+/// Where the party appears: LINK_LOBBY_FROM_CLEAR from the file select screen,
+/// 8 and 9 after a monster battle won or lost, 10 and 11 after a linked one
 /// (LinkLobby_EnterBattle).
 struct SceneEntrance gLinkLobbyEntrances[] = {
     { 11, CONDITION_ALWAYS, 128, 0, 164, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { 10, CONDITION_ALWAYS, 352, 0, 148, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { 8, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
     { 9, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
-    { 1, CONDITION_ALWAYS, 216, 0, 288, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
+    { LINK_LOBBY_FROM_CLEAR, CONDITION_ALWAYS, 216, 0, 288, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { 0, CONDITION_ALWAYS, 216, 0, 208, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
@@ -1717,35 +1769,47 @@ struct ScenePlacement gLinkLobbyBattlePlacements[] = {
 // clang-format on
 
 struct SceneEvent gLinkLobbyEvents[] = {
-    {EVENT_TALK, 1, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkByProgress)},
-    {EVENT_TALK, 2, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkByProgress)},
-    {EVENT_TALK, 3, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkByProgress)},
-    {EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkByProgress)},
-    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_ChooseBattleMode)},
-    {EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_ReportWinTallies)},
-    {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_OpenSanctum)},
-    {EVENT_TALK, 11, CONDITION_ALWAYS,
+    {EVENT_TALK, GARET, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LinkLobby_TalkByProgress)},
+    {EVENT_TALK, IVAN, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LinkLobby_TalkByProgress)},
+    {EVENT_TALK, MIA, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkByProgress)},
+    {EVENT_TALK, JENNA, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LinkLobby_TalkByProgress)},
+    {EVENT_TALK, ACTOR_ATTENDANT, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LinkLobby_ChooseBattleMode)},
+    {EVENT_TALK, ACTOR_LINKED_WINS_TELLER, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LinkLobby_ReportWinTallies)},
+    {EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LinkLobby_OpenSanctum)},
+    {EVENT_TALK, ACTOR_GREETER, CONDITION_ALWAYS,
      MSGNO(MsgFieldWelcomeToBattleArenaWherePeople)},
-    {EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkToAttendant)},
-    {EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkToAttendant)},
-    {EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_TalkToAttendant)},
-    {EVENT_TALK, 15, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_TRAVELING_WARRIOR, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LinkLobby_TalkToVisitor)},
+    {EVENT_TALK, ACTOR_FINALS_VISITOR, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LinkLobby_TalkToVisitor)},
+    {EVENT_TALK, ACTOR_OLD_MANS_ARENA_VISITOR, CONDITION_ALWAYS,
+     EVENT_SCRIPT(LinkLobby_TalkToVisitor)},
+    {EVENT_TALK, ACTOR_DEBUG_HELPER, CONDITION_ALWAYS,
      EVENT_SCRIPT(LinkLobby_ChooseDebugPartyPreset)},
-    {EVENT_TALK, 16, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(LinkLobby_ExplainPartyOrder)},
-    {EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgFieldInTheLinkedFinalsYouCant)},
-    {EVENT_TALK, 18, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgFieldInTheLinkedFinalsYouCant)},
+    {EVENT_TALK, ACTOR_SUMMON_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldToUseSummonQuicklyDjinnMust)},
-    {EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgFieldDoYouPutDjinnOnStandby)},
-    {EVENT_TALK, 20, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_SET_DJINN_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgFieldDoYouPutDjinnOnStandby)},
+    {EVENT_TALK, ACTOR_STANDBY_DJINN_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldRemoveDjinnYouRarelyUseSo)},
-    {EVENT_TALK, 21, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_MONSTER_RULES_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldMonsterBattleRulesSayYouAll)},
-    {EVENT_TALK, 22, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_MONSTER_WINS_TELLER, CONDITION_ALWAYS,
      EVENT_SCRIPT(LinkLobby_ReportMonsterRecord)},
-    {EVENT_TALK, 23, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_EDGY_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldAllTheWarriorsAreImpressiveSo)},
-    {EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgFieldICouldEnterButIdJust)},
+    {EVENT_TALK, ACTOR_WARY_VISITOR, CONDITION_ALWAYS,
+     MSGNO(MsgFieldICouldEnterButIdJust)},
     {EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_EnterBattle)},
     {EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(LinkLobby_LeaveArena)},
     {EVENT_RAISED, 1, CONDITION_ALWAYS,

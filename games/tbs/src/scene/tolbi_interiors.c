@@ -1,19 +1,22 @@
 /// @file
 /// The buildings of Tolbi (TolbiInteriors, scene 136): its houses, inns and
 /// shops, which the area names call Tolbi, and Tolbi Sanctum, as the same
-/// scene is named at entrances 8 and 30.
+/// scene is named at TOLBI_INTERIORS_SANCTUM and TOLBI_INTERIORS_SANCTUM_NORTH.
 ///
-/// - Tolbi, the rooms behind the town's doors 1 to 3 and 5 to 8 (scene 135's
-///   exits of those numbers lead in, and this scene's exits 1 to 9 lead back
-///   out). During the festival one household lines up beds and becomes a
-///   makeshift inn, visitors have rented another house, and the weapon,
-///   armor and item shops (shops 26 to 28) open across their counters. The
-///   inn behind door 3 is full, `Inn Full / No Vacancies`; its exits 10 and 11
-///   join it to the part of the inn whose doors and exits (12 to 19) lead into
-///   four guest rooms.
-/// - Tolbi Sanctum, behind door 9 (entrance 8), whose priest opens the
-///   sanctum across the counter. Entrance 30 is where a defeat returns the
-///   party while Iodem waits at Gondowan Passage.
+/// - Tolbi, the rooms behind the town's doors, which Tolbi's exits
+///   TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_HOUSE_SOUTHWEST lead into; this scene's
+///   exits TOLBI_INTERIORS_HOUSE_NORTHWEST_TO_TOLBI to
+///   TOLBI_INTERIORS_TO_TOLBI_WEST lead back out. During the festival one
+///   household lines up beds and becomes a makeshift inn, visitors have
+///   rented another house, and the weapon, armor and item shops
+///   (TOLBI_INTERIORS_WEAPON_SHOP, TOLBI_INTERIORS_ARMOR_SHOP and
+///   TOLBI_INTERIORS_ITEM_SHOP) open across their counters. The inn behind
+///   TOLBI_TO_RESTAURANT is full, `Inn Full / No Vacancies`; its exits 10 and
+///   11 join it to the part of the inn whose doors and exits (12 to 19) lead
+///   into four guest rooms.
+/// - Tolbi Sanctum, behind TOLBI_TO_SANCTUM (TOLBI_INTERIORS_SANCTUM), whose
+///   priest opens the sanctum across the counter. TOLBI_INTERIORS_SANCTUM_NORTH
+///   is where a defeat returns the party while Iodem waits at Gondowan Passage.
 ///
 /// The rooms' talk follows Colosso in the same three stages as the town, each
 /// with its own event table (TolbiInteriors_SelectEvents) and, after
@@ -29,17 +32,17 @@
 /// rooms (TolbiInteriors_ApplyEntryState). In one guest room (entrance 19) a
 /// woman finds something on the floor, starts at the sight of the party and
 /// hides it behind the trash pile (TolbiInteriors_WatchWomanHideMedal,
-/// FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN): a Lucky Medal, which the party can
-/// then take from that barrel (FLAG_TOLBI_INTERIORS_MEDAL_TAKEN), after which
-/// she greets them, startled, and Mind Read hears her hope its owner will not
-/// ask for it back. In another (entrance 16) stranded passengers argue that
-/// the captain will not sail although they agreed to do whatever it takes
-/// (TolbiInteriors_WatchPassengersArgue, a place flag). A man who rode the
-/// ship from Kalay with the party greets it as `the would-be warrior`, and he
-/// and actor 36 leave once the party has watched the passengers confront the
-/// tour guide on the Tolbi docks (FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN).
-/// Barrels hold a Vial and a Lucky Medal, and searching the ovens shows what
-/// is cooking.
+/// FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN): a Lucky Medal, which the party can then
+/// take from that barrel (FLAG_TOLBI_INTERIORS_MEDAL_TAKEN), after which she
+/// greets them, startled, and Mind Read hears her hope its owner will not ask
+/// for it back. In another (entrance 16) stranded passengers argue that the
+/// captain will not sail although they agreed to do whatever it takes
+/// (TolbiInteriors_WatchPassengersArgue, a place flag). A man who rode the ship
+/// from Kalay with the party greets it as `the would-be warrior`, and he and
+/// TOLBI_INTERIORS_COLOSSO_FAN leave once the party has watched the passengers
+/// confront the tour guide on the Tolbi docks
+/// (FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN). Barrels hold a Vial and a Lucky
+/// Medal, and searching the ovens shows what is cooking.
 
 #include "game_state.h"
 #include "unit/scene/tolbi_interiors.h"
@@ -275,8 +278,8 @@ static void TolbiInteriors_WatchPassengersArgue(void) {
 /// new attributes, two of the passengers are drawn at a fixed priority, the
 /// medal woman stands where she hid the medal, the two short scenes play once
 /// each on their entrances, and the passenger who rode the ship with the party
-/// and actor 36 have left once the party has seen the tour guide on the Tolbi
-/// docks tell a passenger his ticket was refunded.
+/// and TOLBI_INTERIORS_COLOSSO_FAN have left once the party has seen the tour
+/// guide on the Tolbi docks tell a passenger his ticket was refunded.
 s32 TolbiInteriors_ApplyEntryState(void) {
   s32 clearedPriorityFlags;
   struct FieldActor *actor;
@@ -314,14 +317,15 @@ s32 TolbiInteriors_ApplyEntryState(void) {
     // Once the docks' confrontation (the refund) is seen, these two have left.
     if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN) != 0) {
       Engine_ActorSetPosition(TOLBI_INTERIORS_FELLOW_PASSENGER, 0, 0);
-      Engine_ActorSetPosition(36, 0, 0);
+      Engine_ActorSetPosition(TOLBI_INTERIORS_COLOSSO_FAN, 0, 0);
     }
   }
   return 0;
 }
 
 /// In Tolbi, the item shopkeeper: from across the counter (the leader facing
-/// west) opens shop 28; from elsewhere talks about the finals.
+/// west) opens TOLBI_INTERIORS_ITEM_SHOP; from elsewhere talks about the
+/// finals.
 static void TolbiInteriors_TalkToItemShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
@@ -692,15 +696,15 @@ struct ScenePlacement gTolbiInteriorsPlacementsAfterColosso[] = {
 };
 
 struct SceneEvent gTolbiInteriorsEventsFestival[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_NORTHWEST_TO_TOLBI },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_INTERIORS_RESTAURANT_TO_TOLBI },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, TOLBI_INTERIORS_TO_TOLBI_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_NORTHEAST_TO_TOLBI },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_EAST_TO_TOLBI },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, TOLBI_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_TOLBI },
+    { EVENT_EXIT, 7, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_SOUTHWEST_TO_TOLBI },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, TOLBI_INTERIORS_SANCTUM_TO_TOLBI },
+    { EVENT_EXIT, 9, CONDITION_ALWAYS, TOLBI_INTERIORS_TO_TOLBI_WEST },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
@@ -711,52 +715,52 @@ struct SceneEvent gTolbiInteriorsEventsFestival[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_EnterDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
     { EVENT_EXIT, 19, CONDITION_ALWAYS, 19 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiIsPackedWithTouristsDuring) },
+    { EVENT_TALK, TOLBI_INTERIORS_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiIsPackedWithTouristsDuring) },
     { EVENT_TALK, TOLBI_INTERIORS_HOST, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToHost) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICouldntSleepAtAllLast) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrowdsAtTheColosseumMade) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWePaidGoodMoneyToRent) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIReallyWantToSeeColosso) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWahhhIWantToSeeColosso) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfTheyReallyCant) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiWasntAtColossoAccordingTo) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereGoingToMakeSomeMoney) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsUsingThe) },
+    { EVENT_TALK, TOLBI_INTERIORS_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICouldntSleepAtAllLast) },
+    { EVENT_TALK, TOLBI_INTERIORS_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrowdsAtTheColosseumMade) },
+    { EVENT_TALK, TOLBI_INTERIORS_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWePaidGoodMoneyToRent) },
+    { EVENT_TALK, TOLBI_INTERIORS_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIReallyWantToSeeColosso) },
+    { EVENT_TALK, TOLBI_INTERIORS_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWahhhIWantToSeeColosso) },
+    { EVENT_TALK, TOLBI_INTERIORS_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfTheyReallyCant) },
+    { EVENT_TALK, TOLBI_INTERIORS_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiWasntAtColossoAccordingTo) },
+    { EVENT_TALK, TOLBI_INTERIORS_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereGoingToMakeSomeMoney) },
+    { EVENT_TALK, TOLBI_INTERIORS_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsUsingThe) },
     { EVENT_TALK, TOLBI_INTERIORS_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToWeaponShopkeeper) },
     { EVENT_TALK, TOLBI_INTERIORS_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToItemShopkeeper) },
     { EVENT_TALK, TOLBI_INTERIORS_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToArmorShopkeeper) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereFullyBookedWithReservationsDuring) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsTheBusiestTimeOf) },
-    { EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereSoBusyRunningTheInn) },
+    { EVENT_TALK, TOLBI_INTERIORS_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereFullyBookedWithReservationsDuring) },
+    { EVENT_TALK, TOLBI_INTERIORS_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsTheBusiestTimeOf) },
+    { EVENT_TALK, TOLBI_INTERIORS_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWereSoBusyRunningTheInn) },
     { EVENT_TALK, TOLBI_INTERIORS_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsATourGroupCameFromKalay) },
     { EVENT_TALK, TOLBI_INTERIORS_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeArentGoingToGetTo) },
     { EVENT_TALK, TOLBI_INTERIORS_WAITER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImNotVeryInterestedInColosso) },
-    { EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOhNoWeBarelyMadeIt) },
-    { EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWedGottenHereJustA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceColossoStartsWereGoingTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsTooLateToStartLooking) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfICouldHaveSleptLast) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhUhCrowdsAreADefinite) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeGetToStayHereUntil) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasStubbornISaidIm) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIKeepOnCryingButDaddy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeThatBabisSoldiersAre) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeBabiLovesColossoBut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeJustTakesACutOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNamingTheLighthouseHeBuiltAfter) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGuessINeverWouldHave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheyHaveSomeNiceThingsFor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiChoosesColossosVictorsToBe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTourGroupIsFeelingCramped) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeCantHandleTooManyMore) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToGoToThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentEnoughBedsForThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheInnkeeperToldMeToCook) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHaveAHeadacheJustThinking) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenThoughICantEnterColosso) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWeCouldHaveEnteredColosso) },
+    { EVENT_TALK, TOLBI_INTERIORS_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOhNoWeBarelyMadeIt) },
+    { EVENT_TALK, TOLBI_INTERIORS_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWedGottenHereJustA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceColossoStartsWereGoingTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsTooLateToStartLooking) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfICouldHaveSleptLast) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhUhCrowdsAreADefinite) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeGetToStayHereUntil) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasStubbornISaidIm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIKeepOnCryingButDaddy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeThatBabisSoldiersAre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsStrangeBabiLovesColossoBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeJustTakesACutOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNamingTheLighthouseHeBuiltAfter) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGuessINeverWouldHave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_ITEM_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheyHaveSomeNiceThingsFor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiChoosesColossosVictorsToBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTourGroupIsFeelingCramped) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeCantHandleTooManyMore) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToGoToThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentEnoughBedsForThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheInnkeeperToldMeToCook) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_WAITER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHaveAHeadacheJustThinking) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenThoughICantEnterColosso) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfWeCouldHaveEnteredColosso) },
     { EVENT_TALK, TOLBI_INTERIORS_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToPriest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderHowTheTryoutsAre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_PRIEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderHowTheTryoutsAre) },
     { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_VIAL_BARREL, 0xf9a, FIND_ITEM(ITEM_VIAL) },
     { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_MEDAL_BARREL, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
@@ -767,15 +771,15 @@ struct SceneEvent gTolbiInteriorsEventsFestival[] = {
 };
 
 struct SceneEvent gTolbiInteriorsEventsFinalsDay[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_NORTHWEST_TO_TOLBI },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_INTERIORS_RESTAURANT_TO_TOLBI },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, TOLBI_INTERIORS_TO_TOLBI_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_NORTHEAST_TO_TOLBI },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_EAST_TO_TOLBI },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, TOLBI_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_TOLBI },
+    { EVENT_EXIT, 7, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_SOUTHWEST_TO_TOLBI },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, TOLBI_INTERIORS_SANCTUM_TO_TOLBI },
+    { EVENT_EXIT, 9, CONDITION_ALWAYS, TOLBI_INTERIORS_TO_TOLBI_WEST },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
@@ -786,57 +790,57 @@ struct SceneEvent gTolbiInteriorsEventsFinalsDay[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_EnterDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
     { EVENT_EXIT, 19, CONDITION_ALWAYS, 19 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoHasAlreadyReachedThe) },
+    { EVENT_TALK, TOLBI_INTERIORS_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoHasAlreadyReachedThe) },
     { EVENT_TALK, TOLBI_INTERIORS_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheFestivalScheduleWasDelayedFor) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatsStrangeIWonderWhatHappened) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIJustSawBabiTheTowns) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHereIAmInTolbiFor) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToWatchTheFinals) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHoorayWereGoingToColossoNow) },
+    { EVENT_TALK, TOLBI_INTERIORS_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatsStrangeIWonderWhatHappened) },
+    { EVENT_TALK, TOLBI_INTERIORS_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIJustSawBabiTheTowns) },
+    { EVENT_TALK, TOLBI_INTERIORS_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHereIAmInTolbiFor) },
+    { EVENT_TALK, TOLBI_INTERIORS_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGoingToWatchTheFinals) },
+    { EVENT_TALK, TOLBI_INTERIORS_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHoorayWereGoingToColossoNow) },
 #if TBS_PATCH_4
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_AskWhetherBabiWasMissing) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiDecidedShowUpForFinals) },
+    { EVENT_TALK, TOLBI_INTERIORS_SOLDIER_WATCHER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_AskWhetherBabiWasMissing) },
+    { EVENT_TALK, TOLBI_INTERIORS_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiDecidedShowUpForFinals) },
 #else
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWellIGuessSoSinceHes) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhThenTheyFoundHimIn) },
+    { EVENT_TALK, TOLBI_INTERIORS_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWellIGuessSoSinceHes) },
+    { EVENT_TALK, TOLBI_INTERIORS_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHuhThenTheyFoundHimIn) },
 #endif
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiApparentlyHasSomeReasonFor) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsSearchingFor) },
+    { EVENT_TALK, TOLBI_INTERIORS_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiApparentlyHasSomeReasonFor) },
+    { EVENT_TALK, TOLBI_INTERIORS_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardBabiIsSearchingFor) },
     { EVENT_TALK, TOLBI_INTERIORS_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToWeaponShopkeeper) },
     { EVENT_TALK, TOLBI_INTERIORS_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToItemShopkeeper) },
     { EVENT_TALK, TOLBI_INTERIORS_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToArmorShopkeeper) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheFinalsBeginEveryoneTries) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThisYearImNotLettingAnyone) },
-    { EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWifeHasACloseEye) },
+    { EVENT_TALK, TOLBI_INTERIORS_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheFinalsBeginEveryoneTries) },
+    { EVENT_TALK, TOLBI_INTERIORS_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThisYearImNotLettingAnyone) },
+    { EVENT_TALK, TOLBI_INTERIORS_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWifeHasACloseEye) },
     { EVENT_TALK, TOLBI_INTERIORS_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHmmIThoughtAllMenLoved) },
     { EVENT_TALK, TOLBI_INTERIORS_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheMomentIHearTheFinals) },
     { EVENT_TALK, TOLBI_INTERIORS_WAITER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoIsEndingSoonIts) },
-    { EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheColossoFinalsAreStartingSoon) },
-    { EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeIllDoSomeResearchOn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsAreWeMakingMoreMoneyNow) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoTheyDidExtendTheFestival) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICantAffordToStayHere) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheAirInTheColosseumIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfSomebodyElseWouldWatchThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsAlreadyAtTheFinals) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceWeDidntGetToSee) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoWhatWereBabisSoldiersDoing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeWatchingTheTrialsIsToo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBeforeHeStartedTheLighthouseBabi) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiHasBeenMakingStrangeReferences) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAllBuyWeaponsAnd) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouCouldSayTheWarriorsIn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomFindsOutIWent) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImTheOneWhoReallyWants) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThingsSettleDownImSure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfTheMasterSlipsOutThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeWomenAreTheOnlyOnes) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHasntTheMasterGoneToColosso) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIDontHaveAnyParticularInterest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWantToSeeTheFinals) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTrialBattlesWerentQuiteLike) },
+    { EVENT_TALK, TOLBI_INTERIORS_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheColossoFinalsAreStartingSoon) },
+    { EVENT_TALK, TOLBI_INTERIORS_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeIllDoSomeResearchOn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsAreWeMakingMoreMoneyNow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoTheyDidExtendTheFestival) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SLEEPLESS_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsICantAffordToStayHere) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_CROWD_SICK_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheAirInTheColosseumIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_HOUSE_TENANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfSomebodyElseWouldWatchThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoIsAlreadyAtTheFinals) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceWeDidntGetToSee) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoWhatWereBabisSoldiersDoing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeWatchingTheTrialsIsToo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBeforeHeStartedTheLighthouseBabi) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsBabiHasBeenMakingStrangeReferences) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAllBuyWeaponsAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_ITEM_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouCouldSayTheWarriorsIn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomFindsOutIWent) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImTheOneWhoReallyWants) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThingsSettleDownImSure) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfTheMasterSlipsOutThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_MEDAL_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeWomenAreTheOnlyOnes) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHasntTheMasterGoneToColosso) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_WAITER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIDontHaveAnyParticularInterest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWantToSeeTheFinals) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTrialBattlesWerentQuiteLike) },
     { EVENT_TALK, TOLBI_INTERIORS_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToPriest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfYoureNotInterestedInThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_PRIEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfYoureNotInterestedInThe) },
     { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_VIAL_BARREL, 0xf9a, FIND_ITEM(ITEM_VIAL) },
     { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_MEDAL_BARREL, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },
@@ -847,15 +851,15 @@ struct SceneEvent gTolbiInteriorsEventsFinalsDay[] = {
 };
 
 struct SceneEvent gTolbiInteriorsEventsAfterColosso[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_NORTHWEST_TO_TOLBI },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_INTERIORS_RESTAURANT_TO_TOLBI },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, TOLBI_INTERIORS_TO_TOLBI_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_NORTHEAST_TO_TOLBI },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_EAST_TO_TOLBI },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, TOLBI_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_TOLBI },
+    { EVENT_EXIT, 7, CONDITION_ALWAYS, TOLBI_INTERIORS_HOUSE_SOUTHWEST_TO_TOLBI },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, TOLBI_INTERIORS_SANCTUM_TO_TOLBI },
+    { EVENT_EXIT, 9, CONDITION_ALWAYS, TOLBI_INTERIORS_TO_TOLBI_WEST },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
@@ -866,62 +870,62 @@ struct SceneEvent gTolbiInteriorsEventsAfterColosso[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_EnterDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
     { EVENT_EXIT, 19, CONDITION_ALWAYS, 19 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNowThatColossoIsOverWeve) },
+    { EVENT_TALK, TOLBI_INTERIORS_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNowThatColossoIsOverWeve) },
     { EVENT_TALK, TOLBI_INTERIORS_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsWeHadALotOfGuests) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIRentedMyHouseToA) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAreAllInA) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasSoMovedByThis) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatLittleGuyJumpedStraightInto) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidYouKnowMtAlephErupted) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeAlephsEruptionCausedThoseSea) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsSaidTheyWouldRush) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereWontBeManyCustomersUntil) },
+    { EVENT_TALK, TOLBI_INTERIORS_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIRentedMyHouseToA) },
+    { EVENT_TALK, TOLBI_INTERIORS_CAVE_RUMOR_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheTouristsAreAllInA) },
+    { EVENT_TALK, TOLBI_INTERIORS_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWasSoMovedByThis) },
+    { EVENT_TALK, TOLBI_INTERIORS_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatLittleGuyJumpedStraightInto) },
+    { EVENT_TALK, TOLBI_INTERIORS_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidYouKnowMtAlephErupted) },
+    { EVENT_TALK, TOLBI_INTERIORS_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsMaybeAlephsEruptionCausedThoseSea) },
+    { EVENT_TALK, TOLBI_INTERIORS_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsSaidTheyWouldRush) },
+    { EVENT_TALK, TOLBI_INTERIORS_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereWontBeManyCustomersUntil) },
     { EVENT_TALK, TOLBI_INTERIORS_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToWeaponShopkeeper) },
     { EVENT_TALK, TOLBI_INTERIORS_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToItemShopkeeper) },
     { EVENT_TALK, TOLBI_INTERIORS_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToArmorShopkeeper) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIThoughtWedHaveSomeFree) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSpectatorsFromTheEastCant) },
-    { EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsBusyAllDayEveryDay) },
+    { EVENT_TALK, TOLBI_INTERIORS_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIThoughtWedHaveSomeFree) },
+    { EVENT_TALK, TOLBI_INTERIORS_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSpectatorsFromTheEastCant) },
+    { EVENT_TALK, TOLBI_INTERIORS_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItsBusyAllDayEveryDay) },
     { EVENT_TALK, TOLBI_INTERIORS_MEDAL_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToMedalWoman) },
     { EVENT_TALK, TOLBI_INTERIORS_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToChef) },
     { EVENT_TALK, TOLBI_INTERIORS_WAITER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToWaiter) },
-    { EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWentToThePortBut) },
-    { EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoHasEndedButWeStill) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSighMakingTheBedsHasWorn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIdLoveAVacationButWhere) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheShipsStartSailingAgain) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardOfACaveThat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsWhoFoughtInThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDaringAndBraveryAreNiceAnd) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSparklingStonesThatRainedFrom) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIllBetTheMonstersWereFrightened) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItBothersMeABitThat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentManyMerchantsAtThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenWithoutTheShipsICould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidAllTheWarriorsWhoFought) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGonnaWatchTheFinalsNext) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceTheShipsArentSailingThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeeHeeItsGreatTheInns) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEveryoneIsWorkingOnBabiLighthouse) },
+    { EVENT_TALK, TOLBI_INTERIORS_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWentToThePortBut) },
+    { EVENT_TALK, TOLBI_INTERIORS_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsColossoHasEndedButWeStill) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSighMakingTheBedsHasWorn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_HOST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIdLoveAVacationButWhere) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceTheShipsStartSailingAgain) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_CAVE_RUMOR_GUEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIHeardOfACaveThat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_FINALS_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheWarriorsWhoFoughtInThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDaringAndBraveryAreNiceAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SOLDIER_WATCHER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheSparklingStonesThatRainedFrom) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_BABI_SKEPTIC, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIllBetTheMonstersWereFrightened) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsItBothersMeABitThat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_TRAVELING_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThereArentManyMerchantsAtThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEvenWithoutTheShipsICould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_ITEM_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsDidAllTheWarriorsWhoFought) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImGonnaWatchTheFinalsNext) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_INN_MASTER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSinceTheShipsArentSailingThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_INN_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeeHeeItsGreatTheInns) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsEveryoneIsWorkingOnBabiLighthouse) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_MEDAL_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_ReadMedalWomanMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsGrrrIDidntGetToSee) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeyChefSoWhatIfYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsITriedGoingToTheEastern) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoudThinkYouCouldGetThrough) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_CHEF, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsGrrrIDidntGetToSee) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_WAITER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsHeyChefSoWhatIfYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsITriedGoingToTheEastern) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_SECOND_LATE_ENTRANT, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoudThinkYouCouldGetThrough) },
     { EVENT_TALK, TOLBI_INTERIORS_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToPriest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouAllGotToSeeColosso) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_PRIEST, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouAllGotToSeeColosso) },
     { EVENT_TALK, TOLBI_INTERIORS_ANGRY_PASSENGER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToAngryPassenger) },
-    { EVENT_TALK, 32, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThisGuyGetsMadTheres) },
-    { EVENT_TALK, 33, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfThisReallyIs) },
-    { EVENT_TALK, 34, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiGetsSoBoringOnceThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoureSayingIfWeRowWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrewIsSayingThatIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImSickOfStayingAtThis) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomHadJustBoughtMe) },
+    { EVENT_TALK, TOLBI_INTERIORS_PASSENGER_WIFE, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThisGuyGetsMadTheres) },
+    { EVENT_TALK, TOLBI_INTERIORS_THIRD_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfThisReallyIs) },
+    { EVENT_TALK, TOLBI_INTERIORS_BORED_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiGetsSoBoringOnceThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_ANGRY_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoureSayingIfWeRowWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_PASSENGER_WIFE, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrewIsSayingThatIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_THIRD_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImSickOfStayingAtThis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_BORED_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomHadJustBoughtMe) },
     { EVENT_TALK, TOLBI_INTERIORS_FELLOW_PASSENGER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToFellowPassenger) },
-    { EVENT_TALK, 36, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGotToSeeColossoSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatVoyageAcrossTheSeaWas) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNoMatterWhatHappensImComing) },
+    { EVENT_TALK, TOLBI_INTERIORS_COLOSSO_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGotToSeeColossoSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_FELLOW_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatVoyageAcrossTheSeaWas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_INTERIORS_COLOSSO_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNoMatterWhatHappensImComing) },
     { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_VIAL_BARREL, 0xf9a, FIND_ITEM(ITEM_VIAL) },
     { SEARCH(SEARCH_BARREL), TOLBI_INTERIORS_MEDAL_BARREL, 0xf9b, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_OVEN), TOLBI_INTERIORS_PIZZA_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)) },

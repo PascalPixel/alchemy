@@ -1,5 +1,6 @@
 /// @file
-/// The initialization that two rooms of Sol Sanctum share, scenes 14 and 15.
+/// The initialization that two rooms of Sol Sanctum share,
+/// SceneId_SolSanctumMaze and SceneId_SolSanctumCorridor.
 #include "types.h"
 #include "field_obj.h"
 #include "songs.h"

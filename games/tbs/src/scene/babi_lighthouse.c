@@ -99,29 +99,52 @@
 #include "item_ids.h"
 
 /// BabiLighthouseStoneDoor, before the stone door: the door's two halves,
-/// Iodem, the man who saw the kidnappers go through, two more onlookers and
+/// Iodem, the man who saw the kidnappers go through, two more people and
 /// Faran.
 enum {
+  /// ★ Named from what the player sees: the left half of a dark stone door
+  /// (its render)
   ACTOR_LEFT_DOOR = 8,
+  /// ★ Named from what the player sees: the right half of the stone door (its
+  /// render)
   ACTOR_RIGHT_DOOR = 9,
+  /// ★ Named from the game: "I will trust Iodem once more..."
+  /// (MsgBabiLighthouseIfYouCanOpenThisDoor)
   ACTOR_IODEM = 10,
+  /// ★ Named from the game: "When I saw them, they had already gone through to
+  /// the other side." (MsgBabiLighthouseWhenISawThemTheyHad)
   ACTOR_WITNESS = 11,
-  ACTOR_FIRST_ONLOOKER = 12,
-  ACTOR_SECOND_ONLOOKER = 13,
+  /// ★ Named from the game: "There is no way this door will open."
+  /// (MsgBabiLighthouseIAmSorryButNotEven)
+  ACTOR_DOUBTING_THE_DOOR = 12,
+  /// ★ Named from the game: "her life may be in danger..."
+  /// (MsgBabiLighthouseThisIsAllAHugeWaste)
+  ACTOR_WORRIED_FOR_SHEBA = 13,
+  /// ★ Named from the game: "There were strange folk going to the ruins...
+  /// Faran followed them." (MsgBabiLighthouseThereWereStrangeFolkGoingTo)
   ACTOR_FARAN = 14
 };
 
 /// BabiLighthouseLuff's Djinni, Luff.
-enum { ACTOR_DJINNI = 8 };
+enum {
+  /// ★ Named from the game: "Luff" (MsgDjinnName)
+  ACTOR_DJINNI = 8
+};
 
-/// The Entry (BabiLighthouseEntry): the two pillars on the ledges, the sprout
+/// The Entry (BabiLighthouseEntry): the two pillars on the ledges, the plant
 /// for Growth and the four men the kidnappers knocked down on their way in,
 /// each named by what he says. The pillars have the sprite of the pillars Move
 /// or a push shifts in Venus Lighthouse.
 enum {
+  /// ★ Named from what the player sees: a stone pillar with a glowing yellow
+  /// cap on the left ledge (its render)
   ACTOR_LEFT_PILLAR = 8,
+  /// ★ Named from what the player sees: the same capped pillar on the right
+  /// ledge (its render)
   ACTOR_RIGHT_PILLAR = 9,
-  ACTOR_SPROUT = 10,
+  /// ★ Named from what the player sees: a small green plant, SPRITE_SPROUT (its
+  /// render)
+  ACTOR_PLANT = 10,
   /// "They were terrible! We were absolutely no match for them."
   ACTOR_FALLEN_MAN_NO_MATCH = 11,
   /// "Only two of those six ever attacked anyone..."
@@ -144,6 +167,8 @@ enum {
   ACTOR_WORKER_ODD_PLACE = 10,
   /// "Cutting these stones and stacking them on the ruins isn't easy."
   ACTOR_WORKER_CUTTING_STONES = 11,
+  /// ★ Named from what the player sees: a short grey stone pillar carved with a
+  /// spiral (its render)
   ACTOR_ROAD_PILLAR = 12
 };
 
@@ -483,43 +508,43 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   // The witnesses try the stone door and disagree about who passed through it.
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_ONLOOKER, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_DOUBTING_THE_DOOR, 2);
   Engine_EventWait(40);
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_ONLOOKER, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_DOUBTING_THE_DOOR, 2);
   Engine_EventWait(40);
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_ONLOOKER, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_DOUBTING_THE_DOOR, 2);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 2, 50);
-  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 2, 50);
+  Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_EAST, 0);
   Engine_EventWait(25);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT | 7, 40);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | 7, 40);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT | 1, 75);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | 1, 75);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 60);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_SOUTH, 0);
   Engine_EventWait(20);
@@ -614,18 +639,18 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 50);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
   Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_SECOND_ONLOOKER, 0x14ccc, 0xa666);
-  Actor_WalkByAndWait(ACTOR_SECOND_ONLOOKER, 0, 16);
+  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, 0x14ccc, 0xa666);
+  Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 0, 16);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
-  Actor_SetSpeed(ACTOR_FIRST_ONLOOKER, 0x14ccc, 0xa666);
-  Actor_WalkByAndWait(ACTOR_FIRST_ONLOOKER, 0, 16);
+  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 0x14ccc, 0xa666);
+  Actor_WalkByAndWait(ACTOR_DOUBTING_THE_DOOR, 0, 16);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 7, 50);
-  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 7, 50);
+  Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Engine_EventWait(30);
@@ -660,27 +685,28 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_EventWait(40);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorFaceEachOther(ACTOR_FIRST_ONLOOKER, ACTOR_SECOND_ONLOOKER, 50);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ONLOOKER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_NOD);
+  Engine_ActorFaceEachOther(ACTOR_DOUBTING_THE_DOOR, ACTOR_WORRIED_FOR_SHEBA,
+                            50);
+  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_SOUTH, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ONLOOKER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_SetSpeed(ACTOR_FIRST_ONLOOKER, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_SECOND_ONLOOKER, 0x10000, 0x8000);
-  Actor_WalkBy(ACTOR_FIRST_ONLOOKER, 32, 0);
-  Actor_WalkByAndWait(ACTOR_SECOND_ONLOOKER, 32, 0);
-  Actor_WalkBy(ACTOR_FIRST_ONLOOKER, 0, 16);
-  Actor_WalkByAndWait(ACTOR_SECOND_ONLOOKER, 16, 0);
-  Actor_WalkTo(ACTOR_SECOND_ONLOOKER, 344, 312);
-  Actor_WalkToAndWait(ACTOR_FIRST_ONLOOKER, 344, 336);
-  Engine_ActorSetAnimation(ACTOR_SECOND_ONLOOKER, ANIM_STAND);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, 0x10000, 0x8000);
+  Actor_WalkBy(ACTOR_DOUBTING_THE_DOOR, 32, 0);
+  Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 32, 0);
+  Actor_WalkBy(ACTOR_DOUBTING_THE_DOOR, 0, 16);
+  Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 16, 0);
+  Actor_WalkTo(ACTOR_WORRIED_FOR_SHEBA, 344, 312);
+  Actor_WalkToAndWait(ACTOR_DOUBTING_THE_DOOR, 344, 336);
+  Engine_ActorSetAnimation(ACTOR_WORRIED_FOR_SHEBA, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_EventWait(20);
@@ -736,30 +762,32 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ActorJump(ACTOR_IODEM, 4, 30);
   Engine_EventWait(10);
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 40);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTHWEST + FACING_STEP,
+                      0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTHWEST + FACING_STEP,
+                      0);
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT | 2, 40);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | 2, 40);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 1, 50);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 1, 50);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_EventWait(25);
-  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -792,14 +820,14 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_SOUTH, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ONLOOKER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Engine_EventWait(30);
@@ -816,26 +844,28 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTHWEST + FACING_STEP,
+                      0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTHWEST + FACING_STEP,
+                      0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_EventWait(30);
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 70);
   Camera_MoveTo(PIXELS(280), -1, PIXELS(312), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 2, 40);
-  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 2, 40);
+  Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(30);
@@ -863,8 +893,8 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_OpenMessage(ACTOR_FARAN, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -970,8 +1000,10 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTHWEST + FACING_STEP,
+                      0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTHWEST + FACING_STEP,
+                      0);
   Engine_EventWait(30);
   Engine_EventEnd();
 }
@@ -1292,8 +1324,8 @@ s32 BabiLighthouse_SetupScene(void) {
     actor = Object_GetById(ACTOR_RIGHT_PILLAR);
     actor->y.fixed = Object_GetById(ACTOR_RIGHT_PILLAR)->terrainHeight;
     if (GameFlag_IsSet(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
-      Engine_ActorSetAnimation(ACTOR_SPROUT, 4);
-      Object_GetById(ACTOR_SPROUT)->collisionFlags = 0xfe;
+      Engine_ActorSetAnimation(ACTOR_PLANT, 4);
+      Object_GetById(ACTOR_PLANT)->collisionFlags = 0xfe;
       BabiLighthouse_OpenGrowthPassage();
     }
     // Their script waits stagger the four fallen men's first animations.
@@ -1387,22 +1419,22 @@ s32 BabiLighthouse_SetupScene(void) {
     if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED) == 0) {
       Actor_SetPosition(ACTOR_IODEM, -PIXELS(64), -PIXELS(64));
       Actor_SetPosition(ACTOR_WITNESS, PIXELS(280), PIXELS(296));
-      Actor_SetPosition(ACTOR_FIRST_ONLOOKER, PIXELS(312), PIXELS(248));
-      Actor_SetPosition(ACTOR_SECOND_ONLOOKER, PIXELS(296), PIXELS(248));
+      Actor_SetPosition(ACTOR_DOUBTING_THE_DOOR, PIXELS(312), PIXELS(248));
+      Actor_SetPosition(ACTOR_WORRIED_FOR_SHEBA, PIXELS(296), PIXELS(248));
       Actor_SetPosition(ACTOR_FARAN, PIXELS(320), PIXELS(296));
       Actor_FaceDirection(ACTOR_WITNESS, FACING_EAST, 0);
-      Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTH, 0);
-      Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTH, 0);
+      Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH, 0);
+      Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTH, 0);
       Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
       Engine_EventWait(5);
     } else if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) != 0) {
       Actor_SetPosition(ACTOR_IODEM, PIXELS(312), PIXELS(312));
       Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP,
-                          0);
-      Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP,
-                          0);
+      Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR,
+                          FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA,
+                          FACING_NORTHWEST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
       Engine_EventWait(5);
     }
@@ -1764,7 +1796,7 @@ struct SceneEvent gBabiLighthouse_EntryEvents[] = {
         MSGNO(MsgBabiLighthouseNoneOfThemHadAnyTorches)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_GROWTH_PASSAGE_OPEN, EVENT_SCRIPT(BabiLighthouse_OpenGrowthPassage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_PLANT, FLAG_GROWTH_PASSAGE_OPEN, EVENT_SCRIPT(BabiLighthouse_OpenGrowthPassage)},
     {SCENE_EVENTS_END},
 };
 
@@ -1798,28 +1830,28 @@ struct SceneEvent gBabiLighthouse_StoneDoorEvents[] = {
     {EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_OpenTruthDoor)},
     {EVENT_TALK, ACTOR_IODEM, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIAmCountingOnYouIsaac)},
     {EVENT_TALK, ACTOR_WITNESS, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseWhenISawThemTheyHad)},
-    {EVENT_TALK, ACTOR_FIRST_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIAmSorryButNotEven)},
-    {EVENT_TALK, ACTOR_SECOND_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisAllStartedWhenActorWas)},
+    {EVENT_TALK, ACTOR_DOUBTING_THE_DOOR, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIAmSorryButNotEven)},
+    {EVENT_TALK, ACTOR_WORRIED_FOR_SHEBA, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisAllStartedWhenActorWas)},
     {EVENT_TALK, ACTOR_FARAN, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIfYouCanOpenThisDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIDoNotMeanToDoubt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN,
         MSGNO(MsgBabiLighthouseNobodyThinksTheDoorCanBe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOUBTING_THE_DOOR, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN,
         MSGNO(MsgBabiLighthouseIDontKnowWhatTheyreWaiting)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisIsAllAHugeWaste)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_FOR_SHEBA, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisIsAllAHugeWaste)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIHopeTheyCanOpenThe)},
     {EVENT_TALK, ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIBegOfYouIsaacPlease)},
     {EVENT_TALK, ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseICantBelieveThisDoorActually)},
-    {EVENT_TALK, ACTOR_FIRST_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseItTakesGreatCourageToContinue)},
-    {EVENT_TALK, ACTOR_SECOND_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseImVeryInterestedInWhatLies)},
+    {EVENT_TALK, ACTOR_DOUBTING_THE_DOOR, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseItTakesGreatCourageToContinue)},
+    {EVENT_TALK, ACTOR_WORRIED_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseImVeryInterestedInWhatLies)},
     {EVENT_TALK, ACTOR_FARAN, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIAmNotAfraidOfDanger)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIfAnythingHappensToActorTolbi)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIfThisDoorOpensMaybeWe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_ONLOOKER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOUBTING_THE_DOOR, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIBetTheMonstersAroundHere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_ONLOOKER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_FOR_SHEBA, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseThisIsABigWasteOf)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIDontWantToHinderActors)},

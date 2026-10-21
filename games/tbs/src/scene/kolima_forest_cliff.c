@@ -1,10 +1,11 @@
 /// @file
-/// Kolima Forest (KolimaForestCliff, scene 42), the third of the forest's five
-/// maps, between scenes 41 and 43. Of its three logs, rolled by walking into
-/// them, the one pushed west to the water's edge tips into the river and floats
-/// there, cells the party can cross to the far side, and from the bank the
-/// leader can hop east (trigger 11, KolimaForest_HopEast). The forest keeps its
-/// cursed colours until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED).
+/// Kolima Forest (SceneId_KolimaForestCliff), the third of the forest's five
+/// maps, between SceneId_KolimaForestGlade and SceneId_KolimaForestFloodgate.
+/// Of its three logs, rolled by walking into them, the one pushed west to the
+/// water's edge tips into the river and floats there, cells the party can cross
+/// to the far side, and from the bank the leader can hop east (trigger 11,
+/// KolimaForest_HopEast). The forest keeps its cursed colours until Tret lifts
+/// the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// FLAG_SCENE_TEMP_01: the log is in the river, until the party next comes in.
 
@@ -36,8 +37,9 @@
 #include "field_scene.h"
 #include "songs.h"
 
-/// Actors 8 to 10 are the logs; 10 is the one that can reach the river.
-enum { RIVER_LOG = 10 };
+/// The three logs are the first placed actors; the third is the one that can
+/// reach the river.
+enum { RIVER_LOG = ACTOR_FIRST_PLACED + 2 };
 
 #include "common/object_staged_actor.h"
 
@@ -54,10 +56,10 @@ const struct ScenePlacement *KolimaForestCliff_GetPlacements(void) {
   return gKolimaForestCliffPlacements;
 }
 
-/// Kolima Forest (scene 42), walking into a log: it rolls ahead until
-/// something stops it. The river log, stopped at the bank (cell column 12),
-/// tips over with a splash and floats in the water; its cells become ground
-/// the party can cross (sets FLAG_SCENE_TEMP_01).
+/// Kolima Forest (SceneId_KolimaForestCliff), walking into a log: it rolls
+/// ahead until something stops it. The river log, stopped at the bank (cell
+/// column 12), tips over with a splash and floats in the water; its cells
+/// become ground the party can cross (sets FLAG_SCENE_TEMP_01).
 static void KolimaForestCliff_PushLog(void) {
   struct StagedActorProbe result;
   Engine_EventBegin();
@@ -94,7 +96,8 @@ const struct SceneEvent *KolimaForestCliff_GetEvents(void) {
 s32 KolimaForestCliff_Initialize(void) {
   struct EventWork *work = gEventWork;
 
-  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldScene_RedrawActorFootprint(RIVER_LOG);
 
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
@@ -142,13 +145,14 @@ s32 gStagedActor_FootprintBounds[] = {
 };
 
 struct SceneEntrance gKolimaForestCliffEntrances[] = {
-    { 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE, CONDITION_ALWAYS, 320, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_FLOODGATE, CONDITION_ALWAYS, 480, 0, 104, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-/// Exit 1 on into the forest (scene 43), exit 2 back (scene 41).
+/// On into the forest (SceneId_KolimaForestFloodgate) and back
+/// (SceneId_KolimaForestGlade).
 u32 gKolimaForestCliffExits[] = {
     SCENE_EXITS(KolimaForestCliff),
     SCENE_EXIT(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF),

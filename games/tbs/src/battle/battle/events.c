@@ -1,18 +1,19 @@
 /// @file
 /// Battle events: a downed unit's reset, waiting for the player, and the
 /// event queue, filled by BattleEvPush and played at once by
-/// BattleEv_DispatchQueued.
+/// BattleEvent_DispatchQueued.
 // Part of battle.c.
 
 #include "../battle_internal.h"
 
 /// Clears every ailment and stat change of a unit that goes down, recalculates
 /// its stats and rebuilds its status icons.
-/// Reached through the BATTLE_EVENT_DEFEAT event, from BattleEv_DispatchQueued
-/// and BattleEvent_Playback. Clears the unit's element levels, poison, stat
-/// stages and their turns, every status, its equipment bonuses, ready,
-/// immobile and challenge; UnitCalcFar then recomputes its stats, and
-/// BattleUnit_BuildStatusFlags its battle object's status flags.
+/// Reached through the BATTLE_EVENT_DEFEAT event, from
+/// BattleEvent_DispatchQueued and BattleEvent_Playback. Clears the unit's
+/// element levels, poison, stat stages and their turns, every status, its
+/// equipment bonuses, ready, immobile and challenge; UnitCalcFar then
+/// recomputes its stats, and BattleUnit_BuildStatusFlags its battle object's
+/// status flags.
 #ifdef UBFIX
 void BattleObj_ResetRuntimeFields(s32 unitId) {
 #else
@@ -87,7 +88,7 @@ struct AdvanceSprite {
 /// Called after a message by BattlePresentation_DispatchAction and the
 /// staging runners, BattleCommand_BuildPlan (a flight),
 /// BattleIntro_AnnounceEncounter, the round's end (turn_end.c), and
-/// BattleEv_DispatchQueued for each BATTLE_EVENT_MESSAGE. Waits for the
+/// BattleEvent_DispatchQueued for each BATTLE_EVENT_MESSAGE. Waits for the
 /// message window first. Takes a 128-byte VRAM cache entry for the arrow's
 /// tiles and frees it; each frame queues the WINOUT writes, sets REG_BLDALPHA
 /// and pushes the arrow sprite.
@@ -196,12 +197,12 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
 /// Sets gBattleDisplayWork->marked, which the next message reads, as
 /// BATTLE_EVENT_MARK does.
 /// Called by BattleCommand_BuildPlan between a weapon's two unleash messages.
-void BattleEv_MarkDisplay(void) { gBattleDisplayWork->marked = 1; }
+void BattleEvent_MarkDisplay(void) { gBattleDisplayWork->marked = 1; }
 
 /// Takes an enemy out of the battle at once (one that leaves rather than
 /// falls): its HP to 0, out of the lists, and its object released.
 /// Reached through the BATTLE_EVENT_REMOVE_UNIT event, which BattleTargetExec
-/// queues for a self-destructing actor, from BattleEv_DispatchQueued and
+/// queues for a self-destructing actor, from BattleEvent_DispatchQueued and
 /// BattleEvent_Playback. A party unit is left as it is. Clears the battle
 /// object's object and active and releases its dispatch object.
 #ifdef UBFIX
@@ -230,10 +231,11 @@ s32 BattleObj_DestroyTemporaryObject(s32 unitId) {
 
 /// The BATTLE_EVENT_DJINN_BONUS event: grants the Djinn bonus for the rest of
 /// the action. Its operand is ignored.
-/// Called for the event by BattleEv_DispatchQueued and BattleEvent_Playback;
+/// Called for the event by BattleEvent_DispatchQueued and BattleEvent_Playback;
 /// BattleTargetExec queues it. Sets EVENT_FLAG_DJINN_BONUS in runtime->flags,
-/// which BattleEventRuntime_Reset clears.
-void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand) {
+/// which BattleEvent_Reset clears.
+void BattleEvent_GrantDjinnBonus(struct BattleEventState *runtime,
+                                 u32 operand) {
   runtime->flags |= EVENT_FLAG_DJINN_BONUS;
 }
 
@@ -244,11 +246,11 @@ void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand) {
 /// (a blocked cast, a dodge, a broken item, a plan's targets one by one),
 /// BattleCommand_BuildPlan's debug defeat, and the turn's end (turn_end.c).
 /// Each message, flash and fall waits its frames here. Ends with
-/// BattleEventRuntime_Reset.
+/// BattleEvent_Reset.
 #ifdef UBFIX
-void BattleEv_DispatchQueued(void) {
+void BattleEvent_DispatchQueued(void) {
 #else
-u32 BattleEv_DispatchQueued(void) {
+u32 BattleEvent_DispatchQueued(void) {
 #endif
   struct BattleEventState *runtime = &gBattleWork->events;
   struct BattleEventQueue *queue = &runtime->queue;
@@ -261,7 +263,7 @@ u32 BattleEv_DispatchQueued(void) {
     if (opcode <= BATTLE_EVENT_DJINN_BONUS)
       switch (opcode) {
       case BATTLE_EVENT_DJINN_BONUS:
-        BattleEv_GrantDjinnBonus(runtime, queue->operands[eventIndex]);
+        BattleEvent_GrantDjinnBonus(runtime, queue->operands[eventIndex]);
         break;
       case BATTLE_EVENT_REMOVE_UNIT:
         BattleObj_DestroyTemporaryObject(queue->operands[eventIndex]);
@@ -320,7 +322,7 @@ u32 BattleEv_DispatchQueued(void) {
         break;
       }
   }
-  BattleEventRuntime_Reset();
+  BattleEvent_Reset();
 }
 
 /// Queues one battle event (enum BattleEventOpcode) with its operand, and
@@ -329,8 +331,8 @@ u32 BattleEv_DispatchQueued(void) {
 /// step of an outcome, and by staging.c, plan.c and turn_end.c. Appends to
 /// gBattleWork->events.queue with no test against BATTLE_EVENT_CAPACITY: a
 /// caller must keep one target's events, or one queue played at once, within
-/// it. The queue is emptied by BattleEventRuntime_Reset, by
-/// BattleEventRuntime_SchedulePhase and before each target
+/// it. The queue is emptied by BattleEvent_Reset, by
+/// BattleEvent_SchedulePhase and before each target
 /// BattleEvent_Playback resolves.
 u32 BattleEvPush(u32 opcode, u32 operand) {
   struct BattleEventQueue *queue = &gBattleWork->events.queue;

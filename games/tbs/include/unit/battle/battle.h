@@ -242,17 +242,17 @@ void BattlePresentation_WaitForPromptAt(s32 x, s32 y);
 #else
 s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y);
 #endif
-void BattleEv_MarkDisplay(void);
+void BattleEvent_MarkDisplay(void);
 #ifdef UBFIX
 void BattleObj_DestroyTemporaryObject(s32 unitId);
 #else
 s32 BattleObj_DestroyTemporaryObject(s32 unitId);
 #endif
-void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand);
+void BattleEvent_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand);
 #ifdef UBFIX
-void BattleEv_DispatchQueued(void);
+void BattleEvent_DispatchQueued(void);
 #else
-u32 BattleEv_DispatchQueued(void);
+u32 BattleEvent_DispatchQueued(void);
 #endif
 u32 BattleEvPush(u32 opcode, u32 operand);
 s32 BattleEffectDeadCheck(s32 effect);
@@ -270,14 +270,14 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
                                   s32 retry);
 #endif
 void Dma_StopAllThenRunHook(void);
-void BattleEventRuntime_BeginPhase(s32 cue);
-s32 BattleEventRuntime_SchedulePhase(s32 frames);
+void BattleEvent_BeginPhase(s32 cue);
+s32 BattleEvent_SchedulePhase(s32 frames);
 void BattleEvent_Playback(void);
-void BattleEventRuntime_Reset(void);
+void BattleEvent_Reset(void);
 #ifdef UBFIX
-void BattleEventRuntime_WaitForReady(void);
+void BattleEvent_WaitForReady(void);
 #else
-s32 BattleEventRuntime_WaitForReady(void);
+s32 BattleEvent_WaitForReady(void);
 #endif
 u32 BattleParty_IsUnitListed(u32 unitId);
 s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts);

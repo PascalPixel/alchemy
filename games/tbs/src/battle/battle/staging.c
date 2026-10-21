@@ -342,7 +342,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     } else {
       BattleEvPush(BATTLE_EVENT_MESSAGE, MsgCastLacksPp);
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     BattlePresentation_RestorePalette();
   } else {
     // Only the target side's units stay on the field (with the actor, unless
@@ -402,7 +402,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
       BattleFx_DispatchByIdRangeFar(&work.effect);
     else
       BattleFx_RunTableEffectFar(&work.effect);
-    BattleEventRuntime_WaitForReady();
+    BattleEvent_WaitForReady();
   }
 
   // Everyone back: the faded units fade in over 16 frames and every record
@@ -431,7 +431,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
 /// plays its events; with no target, only waits for the player.
 /// Called by BattlePresentation_DispatchAction for PLAN_SHOW_MESSAGES, an
 /// action with no animation: each target's BattleTargetExec is played at
-/// once by BattleEv_DispatchQueued.
+/// once by BattleEvent_DispatchQueued.
 #ifdef UBFIX
 void BattlePresentation_RunActorEntries(struct BattlePlan *plan, s32 unused) {
 #else
@@ -445,7 +445,7 @@ s32 BattlePresentation_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   } else {
     for (targetIndex = 0; targetIndex < plan->targetCount; targetIndex++) {
       BattleTargetExec(plan, targetIndex);
-      BattleEv_DispatchQueued();
+      BattleEvent_DispatchQueued();
     }
   }
   WaitFrames(1);
@@ -558,7 +558,7 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
     WaitFrames(10);
     BattleEvPush(BATTLE_EVENT_UNIT_NAME, plan->targetIds[0]);
     BattleEvPush(BATTLE_EVENT_MESSAGE, MsgNimblyDodgesBlow);
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     ObjMotRst(work.effect.actors[0]);
   } else {
     // A hit. A critical hit plays the effect's critical version, with only the
@@ -606,7 +606,7 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
       else
         BattleFx_RunTableEffectFar(&work.effect);
     }
-    BattleEventRuntime_WaitForReady();
+    BattleEvent_WaitForReady();
     // After a critical hit every unit is shown again and the zoom ends.
     if (critical != 0) {
       transition->flag = 0;
@@ -689,7 +689,7 @@ UNUSED s32 BattlePresentation_RunPlainAttack(struct BattlePlan *input,
     ObjMotRst(savedInput->targetIds[0]);
   } else {
     BattleFx_DispatchByIdRangeFar(&work.effect);
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     ObjMotRst(savedInput->targetIds[0]);
   }
   ObjMotRst(work.effect.actor);
@@ -785,7 +785,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
   } else {
     WaitFrames(60);
   }
-  BattleEventRuntime_WaitForReady();
+  BattleEvent_WaitForReady();
   ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.count;
        targetOrFadeIndex++)
@@ -819,7 +819,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
                    unit->inventory[selection->parameter]);
       BattleEvPush(BATTLE_EVENT_MESSAGE, MsgUsedItemBroke);
       Inventory_BreakFar(selection->unitId, selection->parameter);
-      BattleEv_DispatchQueued();
+      BattleEvent_DispatchQueued();
     }
   } else if (itemDefinition->useType == ITEM_USE_EMPTIES) {
     // Hermes' Water becomes one Empty Bottle, the slot's other bits dropped;
@@ -965,7 +965,7 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     } else {
       BattleEvPush(BATTLE_EVENT_MESSAGE, MsgCastLacksPp);
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     BattlePresentation_RestorePalette();
   } else {
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
@@ -977,7 +977,7 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     } else {
       BattlePresentation_RestorePalette();
     }
-    BattleEventRuntime_WaitForReady();
+    BattleEvent_WaitForReady();
     ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
     for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
       ObjMotRst(work.effect.actors[targetIndex]);
@@ -988,9 +988,9 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 /// Flashes unit id as it is hit: puts it in its damage pose and switches its
 /// sprites between white and their own colours twice, two frames each, its
 /// status panel highlighted.
-/// Called for BATTLE_EVENT_HIT by BattleEv_DispatchQueued (BattleEvent_Playback
-/// flashes over frames itself). Waits 8 frames and redraws the party's status
-/// at the end.
+/// Called for BATTLE_EVENT_HIT by BattleEvent_DispatchQueued
+/// (BattleEvent_Playback flashes over frames itself). Waits 8 frames and
+/// redraws the party's status at the end.
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   u16 selection[2];
   u16 *selected;
@@ -1082,7 +1082,7 @@ removed:
 /// Shows a downed unit: a party member lies down, an enemy keeps its damage
 /// pose, turns grey, leaves the lists after four frames and dissolves a dot
 /// at a time.
-/// Called for BATTLE_EVENT_DEFEAT by BattleEv_DispatchQueued; PLAY_FELLED in
+/// Called for BATTLE_EVENT_DEFEAT by BattleEvent_DispatchQueued; PLAY_FELLED in
 /// BattleEvent_Playback is its counterpart over frames. An enemy's object is
 /// marked for release.
 void BattleMotion_ShowDowned(s32 unitId) {

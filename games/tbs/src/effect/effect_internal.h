@@ -156,9 +156,9 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Lets the battle show the damage: resumes its paused playback, which plays
 /// hitSound (an SE_ id; 0 keeps the one already queued) as the targets react.
-/// It acts only while the playback is idle (BattleEventRuntime_BeginPhase),
+/// It acts only while the playback is idle (BattleEvent_BeginPhase),
 /// so a second use while the damage is showing changes nothing.
-#define EFFECT_SHOW_DAMAGE(hitSound) BattleEventRuntime_BeginPhaseFar(hitSound)
+#define EFFECT_SHOW_DAMAGE(hitSound) BattleEvent_BeginPhaseFar(hitSound)
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1).

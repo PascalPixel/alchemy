@@ -84,7 +84,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void *GetMotionRecordFar(void *object, s32 index);
 void Render_ResetTransformState(void);
 void ResourceObject_ReleaseFar(void *object);
-void Func_081180e8(s32 phase); // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase); // ☀️ BattleEvent_BeginPhaseFar
 void BattleFxKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,

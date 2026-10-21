@@ -108,7 +108,7 @@ for its `struct BattleObj`, `object` for that object's `struct MotionObject`,
 | `BattlePresentation_` | what the battle shows: the staging, the opening transition, the camera and the palettes |
 | `BattleCommand_` | choosing an action and planning it |
 | `BattleTarget_` | choosing targets |
-| `BattleEvent_`, `BattleEv_`, `BattleEventRuntime_` | the event queue and its playback |
+| `BattleEvent_` | the event queue and its playback |
 | `BattleUnit_` | one unit's battle state: its guard, its weapon sprite, its status icons and the counters that tick at the end of its turn |
 | `BattleFormation_`, `BattleEnemy_` | the enemy groups, and each enemy's level, name letter, defeat and coins |
 | `BattleClass_` | an enemy class's row of the battle sprite table |
@@ -165,7 +165,7 @@ items and level ups at the end. Each round goes like this:
    shown there. It queues battle events (the message's arguments, the
    message, the hit, the downed unit), which `BattleEvent_Playback`
    (`playback.c`) plays over frames while the effect runs, or
-   `BattleEv_DispatchQueued` ([`battle/events.c`](battle/events.c)) plays at
+   `BattleEvent_DispatchQueued` ([`battle/events.c`](battle/events.c)) plays at
    once.
 5. **The turn ends, and then the round** (`turn_end.c`): stat changes and
    statuses count down, Djinn recover, poison takes a tenth of a unit's
@@ -652,12 +652,12 @@ routine the scheduler runs every frame however deep the waiting goes (see
 [Runtime](../runtime/README.md)). `BattlePresentation_DispatchAction`
 ([`battle/staging.c`](battle/staging.c)) schedules `BattleEvent_Playback`
 ([`battle/playback.c`](battle/playback.c)), runs the effect, then waits in
-`BattleEventRuntime_WaitForReady` until playback is done.
+`BattleEvent_WaitForReady` until playback is done.
 
 Playback stays idle until the effect says the blow has landed. Most effects
 call `EFFECT_SHOW_DAMAGE(hitSound)` on that frame (56 of the 66 effect parts
 do), which starts playback with the hit's sound; a sound of 0 keeps the one
-already set, `SE_HEAVY_IMPACT` after `BattleEventRuntime_Reset`. If an effect
+already set, `SE_HEAVY_IMPACT` after `BattleEvent_Reset`. If an effect
 never calls it, the wait after the effect starts playback instead. From then on,
 once a frame, the task works through the targets one at a time. It runs
 `BattleTargetExec` for the next target, which changes the target's HP,
@@ -671,7 +671,7 @@ message, then the flinch, the defeat, the status redraw, a sound. They go in
 the order the player sees them, and a message's arguments always come before it,
 because the message takes them from the window system's argument table when
 it's decoded. The same queue can also be played straight through, without
-frames between events, by `BattleEv_DispatchQueued`. That's how the battle
+frames between events, by `BattleEvent_DispatchQueued`. That's how the battle
 shows outcomes outside an effect, such as a cast that's sealed or short of PP
 (`staging.c`).
 
@@ -691,10 +691,10 @@ Making them all `void` isn't free, because the return type can change which
 register the return address comes back through. A function's result travels
 in r0, and alchemy-gcc's `pop {r1}; bx r1` leaves r0 alone where
 `pop {r0}; bx r0` doesn't. So the matching build keeps the declared type
-wherever the `void` form changes the assembly; `BattleEventRuntime_Reset` is
+wherever the `void` form changes the assembly; `BattleEvent_Reset` is
 `void` in every build. With `UBFIX`, which the modern build turns on, the
-rest are declared `void` too, `BattleTargetExec`, `BattleEv_DispatchQueued`
-and `BattleEventRuntime_WaitForReady` among them.
+rest are declared `void` too, `BattleTargetExec`, `BattleEvent_DispatchQueued`
+and `BattleEvent_WaitForReady` among them.
 
 ### One sprite, three structs
 

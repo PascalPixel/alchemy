@@ -148,7 +148,7 @@ void BattleObj_UpdateSpritePriorities(void) {
 
 /// Builds the status icon bits of unit id's ailments into its battle
 /// object's activeConditions, which BattleStatusIcon_Cycle shows. Called
-/// wherever a unit's statuses may have changed: BattleEv_DispatchQueued,
+/// wherever a unit's statuses may have changed: BattleEvent_DispatchQueued,
 /// BattleEvent_Playback, Battle_ProcessRoundEnd, BattleObj_ResetRuntimeFields
 /// and BattleObj_SpawnObjectsForList.
 #ifdef UBFIX
@@ -292,7 +292,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
 /// timer step of 14 to 17 by the unit id's low two bits (16 is normal
 /// speed). XXX: likely so that units side by side do not animate in step,
 /// because the step follows nothing but the unit id. Called by
-/// BattleObj_SpawnObjectsForList, BattleEv_DispatchQueued,
+/// BattleObj_SpawnObjectsForList, BattleEvent_DispatchQueued,
 /// BattleEvent_Playback and Battle_ProcessRoundEnd.
 #ifdef UBFIX
 void BattlePresentation_SetActorModeAndAction(s32 unitId) {

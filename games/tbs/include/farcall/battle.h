@@ -28,7 +28,7 @@ s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
 void Camera_ConfigureSceneFar(s32 pos);
 void *GetMotionRecordFar(struct MotionObject *object, s32 record_index);
 void BattlePresentation_SetActorModesFar(u16 *actors, s32 mode);
-void BattleEventRuntime_BeginPhaseFar(s32 cue);
+void BattleEvent_BeginPhaseFar(s32 cue);
 s32 Graphics_ScaleRgb555ClampedFar(u16 *source, u16 *destination, s32 scale,
                                    s32 count);
 s32 DjinnRecovery_TickFar(void);

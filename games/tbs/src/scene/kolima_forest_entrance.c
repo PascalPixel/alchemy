@@ -401,7 +401,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_TaskWait(60);
   gFallingEffectWidth = 0;
   gFallingEffectOffset = 0x800000;
-  gFallingEffectState = 1;
+  gFallingEffectState = KOLIMA_DUST_CLOSING;
   FieldScheduler_AddCallback(Kolima_UpdateCurseDust, TASK_PRIORITY_SCENE);
   Engine_EventWait(180);
   Event_PlayCue(MUS_021);
@@ -413,7 +413,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(60);
   KolimaForestEntrance_ShowMessageAndWait(IVAN, 20);
-  gFallingEffectState = 2;
+  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(GARET, 1);
@@ -436,7 +436,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   } else {
     gEventWork->message += 1;
   }
-  gFallingEffectState = 3;
+  gFallingEffectState = KOLIMA_DUST_DRIFTING;
   Object_GetById(0)->priorityFlags &= 254;
   Object_GetById(GARET)->priorityFlags &= 254;
   Object_GetById(IVAN)->priorityFlags &= 254;
@@ -468,10 +468,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_ActorSetSpritePriority(GARET_BARRIER, 2);
   Actor_SetPosition(GARET_BARRIER, PIXELS(227), PIXELS(580));
   Actor_SetActionScript(GARET_BARRIER, growBarrierAction);
-  if (gFallingEffectState != 0) {
+  if (gFallingEffectState != KOLIMA_DUST_CENTRED) {
     do {
       Engine_TaskWait(1);
-    } while (gFallingEffectState != 0);
+    } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
   }
   Engine_EventWait(300);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
@@ -691,7 +691,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_TaskWait(60);
   gFallingEffectWidth = 0;
   gFallingEffectOffset = 0x800000;
-  gFallingEffectState = 1;
+  gFallingEffectState = KOLIMA_DUST_CLOSING;
   FieldScheduler_AddCallback(Kolima_UpdateCurseDust, TASK_PRIORITY_SCENE);
   Engine_EventWait(80);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -715,7 +715,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_ActorSetSpritePriority(GARET, 3);
   Engine_ActorSetSpritePriority(IVAN, 3);
   Engine_ActorSetSpritePriority(MIA, 3);
-  gFallingEffectState = 2;
+  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
   Event_PlayCue(SE_220);
   Actor_SetPosition(LEADER_BARRIER, PIXELS(253), PIXELS(603));
   growBarrierAction = gKolimaForestEntrance_BarrierGrowAction;
@@ -729,10 +729,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetPosition(GARET_BARRIER, PIXELS(227), PIXELS(580));
   Actor_SetActionScript(GARET_BARRIER, growBarrierAction);
   Engine_EventWait(120);
-  gFallingEffectState = 3;
+  gFallingEffectState = KOLIMA_DUST_DRIFTING;
   do {
     Engine_TaskWait(1);
-  } while (gFallingEffectState != 0);
+  } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
   KolimaForestEntrance_ShowMessageAndWait(TRET, 80);
   KolimaForestEntrance_ShowMessageAndWait(LAUREL, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);

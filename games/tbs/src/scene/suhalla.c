@@ -55,14 +55,6 @@
 
 // FLAG_SCENE_TEMP_01: Growth has made the sprout grow.
 
-/// Arriving by this entrance also marks Babi's audience as held. The entrance
-/// table does not list it and no exit of the game leads to it. XXX: likely a
-/// debug start into the story after the audience, because Babi's Palace
-/// (BABI_PALACE_AFTER_BABI_SAVED, BABI_PALACE_AFTER_COLOSSO) and Suhalla's
-/// buildings (SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE) have entrances that set
-/// story flags the same way.
-enum { ENTRANCE_90 = 90 };
-
 /// Suhalla's people and its sprout, numbering the rows of both placement
 /// tables from ACTOR_FIRST_PLACED: gSuhallaPlacementsLater places the same
 /// people, by sprite, in the same rows. Each note gives what they say before
@@ -202,12 +194,12 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 /// Sets Suhalla up as the party enters: the screen opens with the backdrop
 /// fade, and the sprout is drawn grown if Growth was used on it before a
-/// return that keeps the party's position. Entrance 90 sets
+/// return that keeps the party's position. SUHALLA_AFTER_BABI_AUDIENCE sets
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
-  if (gGameState.entrance == ENTRANCE_90) {
+  if (gGameState.entrance == SUHALLA_AFTER_BABI_AUDIENCE) {
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   }
 

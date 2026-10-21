@@ -327,7 +327,8 @@ static void LamaTemple_RunHamasFarewell(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
     Engine_ActorStartRepeatedMotion(GARET, 2);
-    Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
+    Actor_SetAttachedEffect(GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Actor_FaceDirection(GARET, FACING_WEST, 20);
     Event_ShowMessageAndWait(GARET, 0, 20);
@@ -547,7 +548,8 @@ static void AlpineCrossing_FeizhiArrives(void) {
     Actor_FaceDirection(ACTOR_FEIZHI, FACING_WEST, 20);
     Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_FEIZHI, 2);
-    Actor_SetAttachedEffect(ACTOR_FEIZHI, EMOTE_IN_FRONT | 2);
+    Actor_SetAttachedEffect(ACTOR_FEIZHI,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
 
@@ -630,7 +632,8 @@ static void AlpineCrossing_HamaReachesHsu(void) {
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_FEIZHI, 2);
-  Actor_SetAttachedEffect(ACTOR_FEIZHI, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_FEIZHI,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorSetAnimation(ACTOR_HSU, ANIM_HSU_STRUGGLE);
@@ -646,12 +649,14 @@ static void AlpineCrossing_HamaReachesHsu(void) {
 static void AlpineCrossing_LiftBoulder(void) {
 
   Engine_EventBegin();
-  Actor_SetAttachedEffect(ACTOR_HAMA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_HAMA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorStartRepeatedMotion(ACTOR_HAMA, 2);
   Engine_EventWait(60);
   Engine_EventSetMessage(MsgMountainIsaacDidLiftBoulder);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  Actor_SetAttachedEffect(ACTOR_FEIZHI, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_FEIZHI,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorJump(ACTOR_FEIZHI, 4, 0);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);

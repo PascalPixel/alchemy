@@ -618,7 +618,8 @@ static void Event_AudienceWithMcCoy(void) {
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
-    Engine_ActorSetAttachedEffect(ACTOR_CAPTAIN, EMOTE_IN_FRONT | 2);
+    Engine_ActorSetAttachedEffect(ACTOR_CAPTAIN, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 10);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
@@ -670,7 +671,8 @@ static void Event_AudienceWithMcCoy(void) {
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
-    Engine_ActorSetAttachedEffect(ACTOR_CAPTAIN, EMOTE_IN_FRONT | 2);
+    Engine_ActorSetAttachedEffect(ACTOR_CAPTAIN, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 20);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 40);
@@ -883,7 +885,8 @@ accepted:
   Engine_EventWait(40);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 80);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
-  Actor_SetAttachedEffect(ACTOR_CAPTAIN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_CAPTAIN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
@@ -904,10 +907,13 @@ accepted:
   Engine_ActorWaitForMove(ACTOR_BARRICADE_KEY);
   Engine_ActorSetPosition(ACTOR_BARRICADE_KEY, 0, 0);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
-  Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
-  Engine_ActorSetAttachedEffect(IVAN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ActorSetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                          ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
@@ -1042,7 +1048,8 @@ static void Event_CaptainHintsAtBarricade(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
-  Actor_SetAttachedEffect(ACTOR_CAPTAIN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_CAPTAIN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 1);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);

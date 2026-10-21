@@ -260,14 +260,18 @@ const struct SceneEvent *LamakanDesert_GetEvents(void) {
   return gLamakanDesertEvents;
 }
 
-/// Lamakan Desert, as Reveal wears off and on every entry: the pits, the
-/// Manticore and Smog vanish under the sand again (cells 70, 68 or 69, 99 over
-/// the saved patches), the chests and Psynergy Stones hide and the heat haze
-/// shimmers.
 // Native event return forms: see MATCHING.md.
 #ifdef UBFIX
+/// Reveal wears off, and the desert's secrets sink under the sand again. It
+/// also runs on every entry to Lamakan Desert: the pits, the Manticore and Smog
+/// vanish under the sand (cells 70, 68 or 69, 99 over the saved patches), the
+/// chests and Psynergy Stones hide and the heat haze shimmers.
 static void Reveal_HideSecrets(void) {
 #else
+/// Reveal wears off, and the desert's secrets sink under the sand again. It
+/// also runs on every entry to Lamakan Desert: the pits, the Manticore and Smog
+/// vanish under the sand (cells 70, 68 or 69, 99 over the saved patches), the
+/// chests and Psynergy Stones hide and the heat haze shimmers.
 static s32 Reveal_HideSecrets(void) {
 #endif
   s32 mapObjectId;
@@ -332,12 +336,15 @@ static s32 Reveal_HideSecrets(void) {
   }
 }
 
-/// Lamakan Desert, casting Reveal: the saved patches of sand come back, the
-/// pits, the Manticore and Smog stand where they are, the chests and Psynergy
-/// Stones show and the haze stops.
 #ifdef UBFIX
+/// Casting Reveal uncovers what the desert's sand hides. In Lamakan Desert, the
+/// saved patches of sand come back, the pits, the Manticore and Smog stand
+/// where they are, the chests and Psynergy Stones show and the haze stops.
 static void Reveal_ShowSecrets(void) {
 #else
+/// Casting Reveal uncovers what the desert's sand hides. In Lamakan Desert, the
+/// saved patches of sand come back, the pits, the Manticore and Smog stand
+/// where they are, the chests and Psynergy Stones show and the haze stops.
 static s32 Reveal_ShowSecrets(void) {
 #endif
   s32 i;
@@ -403,8 +410,9 @@ static s32 Reveal_ShowSecrets(void) {
   }
 }
 
-/// LamakanDesertManticore: talking to the Manticore starts its battle,
-/// which returns the party to LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
+/// The party fights the Manticore. In LamakanDesertManticore, talking to the
+/// Manticore starts its battle, which returns the party to
+/// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
 static void FightManticore(void) {
   Engine_ActorRunRepeatedMotion(MANTICORE, 2);
   Event_SetNextDestination((s32)&SceneId_LamakanDesertManticore,
@@ -414,9 +422,10 @@ static void FightManticore(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 5);
 }
 
-/// Lamakan Desert, raised trigger 1, 2 or 3 as the heat gauge passes a
-/// quarter, a half and three quarters: Garet, Ivan or Mia, picked at random
-/// (three tries for one who has not spoken yet), complains about the heat.
+/// Garet, Ivan or Mia complains about the heat. In Lamakan Desert this is
+/// raised trigger 1, 2 or 3 as the heat gauge passes a quarter, a half and
+/// three quarters, and the one who speaks is picked at random (three tries for
+/// one who has not spoken yet).
 static void ComplainAboutHeat(s32 mark) {
   s32 tries;
   s32 quarter;

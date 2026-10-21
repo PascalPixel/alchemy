@@ -426,6 +426,7 @@ test-devtools: devtools
 
 progress: devtools
 	$(DEVTOOLS) progress
+	$(DEVTOOLS) progress --humanity
 
 # Before landing on main: all twelve editions, the current-GCC build, both
 # test suites, then the measurement the pre-push hook sends for CI (C3).

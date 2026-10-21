@@ -57,8 +57,10 @@
 
 /// Arriving by this entrance also marks Babi's audience as held. The entrance
 /// table does not list it and no exit of the game leads to it. XXX: likely a
-/// debug start into the story after the audience, because Babi's Palace and
-/// the Tolbi docks have entrances 90 and 91 that set story flags the same way.
+/// debug start into the story after the audience, because Babi's Palace
+/// (BABI_PALACE_AFTER_BABI_SAVED, BABI_PALACE_AFTER_COLOSSO) and Suhalla's
+/// buildings (SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE) have entrances that set
+/// story flags the same way.
 enum { ENTRANCE_90 = 90 };
 
 /// Suhalla's people and its sprout, numbering the rows of both placement

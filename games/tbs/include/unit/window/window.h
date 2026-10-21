@@ -136,6 +136,7 @@ enum {
 /// The kinds of message argument (UiWork_PushValueSlot), which the message
 /// codes such as {argument_item_name} read.
 enum {
+  MSG_ARG_NONE = 0, ///< an empty place in the argument table
   MSG_ARG_ACTOR = 1,
   MSG_ARG_ITEM = 2,
   MSG_ARG_CLASS = 3,

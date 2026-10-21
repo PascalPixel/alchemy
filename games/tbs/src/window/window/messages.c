@@ -225,14 +225,14 @@ void UiWork_ClearValueNameTables(void) {
 
   do {
     work->values[no] = 0;
-    work->names[no] = 0;
+    work->names[no] = MSG_ARG_NONE;
     no++;
   } while (no != UI_ARGUMENT_SLOT_COUNT);
 }
 
 /// Adds a message argument of kind (MSG_ARG_) with value to the first free
 /// place of the argument table; when all eight are in use it is dropped.
-/// Kind 0 denotes an empty slot. Callers push a message's arguments before
+/// MSG_ARG_NONE marks an empty place. Callers push a message's arguments before
 /// decoding it. The decoder reads each argument code's value from the first
 /// slot of its kind (UiText_LookupArgument); told to clear, it removes each
 /// as it reads it, so arguments of one kind are taken in the order they were
@@ -243,7 +243,7 @@ void UiWork_PushValueSlot(u32 value, u32 kind) {
   u32 limit = UI_ARGUMENT_SLOT_COUNT;
 
   do {
-    if (work->names[no] == 0) {
+    if (work->names[no] == MSG_ARG_NONE) {
       work->values[no] = value;
       work->names[no] = kind;
       break;
@@ -266,7 +266,7 @@ u32 UiText_LookupArgument(u32 kind, u32 clear) {
       value = work->values[i];
       if (clear != 0) {
         work->values[i] = 0;
-        work->names[i] = 0;
+        work->names[i] = MSG_ARG_NONE;
       }
       break;
     }

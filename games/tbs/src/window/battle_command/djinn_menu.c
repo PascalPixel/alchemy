@@ -204,7 +204,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             UiWork_PushValueSlot(
                 (s32)((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                       DJINN_ENTRY_RECOVERY_SHIFT),
-                5);
+                MSG_ARG_NUMBER);
             BATTLE_MENU_MESSAGE_COPY((s32)(((selectedDjinn & 0xf00) >> 8) * 20 +
                                            (selectedDjinn & 0xff)) +
                                          MsgDjinnEffect,
@@ -370,7 +370,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           UiWork_ClearValueNameTables();
           UiWork_PushValueSlot((s32)((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT),
-                               5);
+                               MSG_ARG_NUMBER);
           UiText_CopyMessageString(MsgBattleDjinnRecovering, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
           UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);

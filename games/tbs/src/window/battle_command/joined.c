@@ -147,8 +147,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     // The message's arguments: the member (MSG_ARG_ACTOR) and the Djinni's
     // name, ability 300 + 20 * element + djinn (MSG_ARG_ABILITY).
-    UiWork_PushValueSlot(member, 1);
-    UiWork_PushValueSlot(element * 20 + djinn + 300, 4);
+    UiWork_PushValueSlot(member, MSG_ARG_ACTOR);
+    UiWork_PushValueSlot(element * 20 + djinn + 300, MSG_ARG_ABILITY);
 
     text = UiText_BuildRenderEntriesMode1(element + MsgVenusDjinnJoined);
 
@@ -208,7 +208,7 @@ void Party_ShowJoinedMessage(s32 member) {
     *p = palette | 0xe000;
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;
-    UiWork_PushValueSlot(member, 1);
+    UiWork_PushValueSlot(member, MSG_ARG_ACTOR);
     JOINED_QUEUE_TEXT(window, UiText_BuildRenderEntriesMode1(MsgJoinedParty),
                       36, 2, 0);
     AudioCommand_PlayFar(MUS_081);
@@ -274,8 +274,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     ((struct UiRenderWork *)work)->speakerVoiceSound = zero;
     ((struct UiRenderWork *)work)->speakerVoiceCountdown = zero;
 
-    UiWork_PushValueSlot(first, 1);
-    UiWork_PushValueSlot(second, 1);
+    UiWork_PushValueSlot(first, MSG_ARG_ACTOR);
+    UiWork_PushValueSlot(second, MSG_ARG_ACTOR);
 
     JOINED_QUEUE_TEXT(window,
                       UiText_BuildRenderEntriesMode1(MsgPairJoinedParty), 68, 2,

@@ -955,8 +955,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       }
     }
   }
-  // Mode 1: keep the first Djinni highlighted, dim the rest of its column
-  // (palette 6), and label each column's header with what choosing it does.
+  // DJINN_SELECT_ACTION: keep the first Djinni highlighted, dim the rest of its
+  // column (palette 6), and label each column's header with what choosing it
+  // does.
   if (mode == DJINN_SELECT_ACTION) {
     s32 fromX;
     s32 fromY;
@@ -1007,10 +1008,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (selectedRow != -1)
         djinn = backdrop->list.ids[ownerColumn][selectedRow];
       RenderOutput_RedrawSavedRectFar(menu->helpWindow);
-      // Mode 1's help: `<owner>'s`, the element icon and the Djinni's name,
-      // an ability name argument (its action, 300 + element * 20 + number),
-      // then "What will you do?". Spanish, French and Italian put the icon
-      // first and the name in the one message.
+      // DJINN_SELECT_ACTION's help: `<owner>'s`, the element icon and the
+      // Djinni's name, an ability name argument (its action, 300 + element * 20
+      // + number), then "What will you do?". Spanish, French and Italian put
+      // the icon first and the name in the one message.
       if (mode == DJINN_SELECT_ACTION) {
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
@@ -1336,8 +1337,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       }
     }
-    // Mode 0's R: put the Djinni on standby or set it at once, unless it is
-    // recovering.
+    // DJINN_SELECT_DJINNI's R: put the Djinni on standby or set it at once,
+    // unless it is recovering.
     if (mode == DJINN_SELECT_DJINNI && (pressed & KEY_R)) {
       if (selectedRow == -1) {
         AudioCommand_PlayFar(SE_MENU_ERROR);

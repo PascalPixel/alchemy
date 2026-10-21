@@ -332,14 +332,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           menuResult = 1;
           break;
         }
-        // 1: choose a member to use it on; 2: use it on the whole party now;
-        // 0 or -1: close the menu and use it from the field.
         result =
             Item_ClassifyUseMode(menu->paneOwner[0], menu->selectedItems[0]);
-        if (result == 1) {
+        if (result == ITEM_USE_MODE_CHOOSE_MEMBER) {
           state = ITEM_STEP_USE;
         }
-        if (result == 2) {
+        if (result == ITEM_USE_MODE_WHOLE_PARTY) {
           ItemMenu_Use();
           RenderOutput_ClearListFar(menu->infoWindow);
           InventoryMenu_ShowModalMessage(menu->messageOffset + MsgItemUseResult,
@@ -353,7 +351,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_DrawIcons(menu->items, 0);
           state = ITEM_STEP_OWNER;
         }
-        if (result == -1 || result == 0) {
+        if (result == ITEM_USE_MODE_UNUSABLE ||
+            result == ITEM_USE_MODE_FROM_FIELD) {
           done = 1;
           *ownerOut = menu->paneOwner[0];
           *targetOut = menu->paneOwner[1];
@@ -388,9 +387,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       UiText_DrawCharacterAtOffsetFar(MsgUseOnWhom, menu->messageWindow, 16,
                                       16);
 #if TBS_PATCH_1
-      if (ItemMenu_SelectTarget(0) != -1) {
+      if (ItemMenu_SelectTarget(ITEM_TARGET_USE) != -1) {
 #else
-      chosen = ItemMenu_SelectTarget(0);
+      chosen = ItemMenu_SelectTarget(ITEM_TARGET_USE);
       if (chosen != -1) {
 #endif
         command = 0;
@@ -429,11 +428,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       UiText_DrawCharacterAtOffsetFar(MsgGiveToWhom, menu->messageWindow, 16,
                                       16);
 #if TBS_PATCH_1
-      giveTarget = ItemMenu_SelectTarget(1);
+      giveTarget = ItemMenu_SelectTarget(ITEM_TARGET_GIVE);
       state = ITEM_STEP_GIVE;
       if (giveTarget == -1) {
 #else
-      chosen = ItemMenu_SelectTarget(1);
+      chosen = ItemMenu_SelectTarget(ITEM_TARGET_GIVE);
       state = ITEM_STEP_GIVE;
       if (chosen == -1) {
 #endif
@@ -1174,12 +1173,13 @@ void ItemMenu_OpenCategory(s32 ownerId) {
   ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
 
-/// Chooses the party member to use (mode 0) or give (mode 1) the selected item
-/// to. Using shows each member's status as the cursor passes; giving shows each
-/// member's items, how many of this item they already hold, or that they would
-/// have to trade, and the equipment preview. The party members who can equip
-/// the item move while the cursor is up. Returns the chosen member's id, or -1
-/// when the player backs out; giving cannot choose the item's owner.
+/// Chooses the party member to use or give the selected item (enum
+/// ItemTargetMode) to. Using shows each member's status as the cursor passes;
+/// giving shows each member's items, how many of this item they already hold,
+/// or that they would have to trade, and the equipment preview. The party
+/// members who can equip the item move while the cursor is up. Returns the
+/// chosen member's id, or -1 when the player backs out; giving cannot choose
+/// the item's owner.
 s32 ItemMenu_SelectTarget(s32 mode) {
 
   struct InventoryMenuState *menu;
@@ -1218,7 +1218,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       targetMarker->oam.x = targetMarker->x =
           ((menu->mainWindow->x + ownerIndex * 3) << 3) - 2;
       // Giving: the member's items and how many of this one they hold.
-      if (mode == 1) {
+      if (mode == ITEM_TARGET_GIVE) {
         ItemMenu_RefreshOwner(menu->ownerIds[ownerIndex], 1);
         UiWindow_DrawDividerLineFar(window, 0, 9, 16, 9);
         UiWindow_ClearInteriorTilesFar((void *)window, 0, 72, 120, 80);
@@ -1258,7 +1258,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
                                   menu->ownerIds[ownerIndex]);
       }
       // Using: the member's status, and the item's name once.
-      if (mode == 0) {
+      if (mode == ITEM_TARGET_USE) {
         if (ItemMenu_IsSpecial(menu->selectedItems[0] & ITEM_ID_MASK))
           Menu_DrawOwnerStatusPanel(menu->statusWindow,
                                     menu->ownerIds[ownerIndex],
@@ -1281,7 +1281,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     UiMenu_PositionCursor(ownerIndex * 24 - 10, 16);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
-      if (mode == 1 && ownerIndex == menu->paneIndex[0]) {
+      if (mode == ITEM_TARGET_GIVE && ownerIndex == menu->paneIndex[0]) {
         AudioCommand_PlayFar(SE_MENU_ERROR);
         continue;
       }
@@ -1889,7 +1889,8 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_AVAILABLE;
   }
 
-  if (Item_ClassifyUseMode(menu->paneOwner[0], menu->selectedItems[0]) != -1)
+  if (Item_ClassifyUseMode(menu->paneOwner[0], menu->selectedItems[0]) !=
+      ITEM_USE_MODE_UNUSABLE)
     commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
   else
     commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_DISABLED;
@@ -1977,25 +1978,19 @@ void ItemMenu_DrawCommands(const s8 *commandStates, struct UiWindow *window) {
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
 }
 
-/// Says how ownerId can use inventoryEntry from the item menu:
-/// 0  the item works on the field (BattleFx_HasTriggerFar), or its action is
-///    usable neither in the field nor in battle, and is used once the menu
-///    closes;
-/// 1  usable in the field: choose a party member to use it on;
-/// 2  usable in the field on the whole party at once (range 0xff);
-/// -1 it cannot be used here: it has no action, it is equipment the owner
-///    cannot wear or of use type 3, or its action is usable only in battle.
-/// Usable items always qualify; equipment only when the owner can wear it.
+/// Says how ownerId can use inventoryEntry from the item menu (enum
+/// ItemUseMode). Usable items always qualify; equipment only when the owner
+/// can wear it.
 s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   s32 itemId = inventoryEntry;
   struct ItemDefinition *itemDefinition;
-  s32 result = -1;
+  s32 result = ITEM_USE_MODE_UNUSABLE;
 
   itemId &= ITEM_ID_MASK;
   itemDefinition = Item_GetDirectFar(itemId);
 
   if (BattleFx_HasTriggerFar(itemId) != 0) {
-    return 0;
+    return ITEM_USE_MODE_FROM_FIELD;
   }
 
   {
@@ -2003,25 +1998,27 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
         BattleActGet(itemDefinition->actionId & OWNER_ACTION_ID_MASK);
 
     if (itemDefinition->actionId != 0) {
-      if (itemDefinition->type != 0) { // equipment
-        if (itemDefinition->useType != 3) {
+      if (itemDefinition->type != ITEM_TYPE_NONE) {
+        if (itemDefinition->useType != ITEM_USE_TEACHES) {
           if (Item_CanOwnerEquip(ownerId, itemId) != 0) {
-            result = 1;
+            result = ITEM_USE_MODE_CHOOSE_MEMBER;
           }
         }
       } else {
-        result = 1;
+        result = ITEM_USE_MODE_CHOOSE_MEMBER;
       }
 
-      if (result == 1) {
+      if (result == ITEM_USE_MODE_CHOOSE_MEMBER) {
         s32 mask = ACTION_USABLE_IN_BATTLE;
         u8 flags = action->flags;
 
         if ((flags & ACTION_USABLE_IN_FIELD) != 0) {
           u8 range = action->range;
-          result = (range == 0xff) ? 2 : 1;
+          result = (range == ABILITY_RANGE_ALL) ? ITEM_USE_MODE_WHOLE_PARTY
+                                                : ITEM_USE_MODE_CHOOSE_MEMBER;
         } else {
-          result = (flags & mask) ? -1 : 0;
+          result = (flags & mask) ? ITEM_USE_MODE_UNUSABLE
+                                  : ITEM_USE_MODE_FROM_FIELD;
         }
       }
     }
@@ -2030,7 +2027,7 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   return result;
 }
 
-/// After the selected item is used: an item of use type 2 (ITEM_USE_MAY_BREAK)
+/// After the selected item is used: an item that may break (ITEM_USE_MAY_BREAK)
 /// breaks one time in eight, with the break sound and "It broke!" in the info
 /// window. Called only after a successful use on a chosen member.
 void ItemMenu_TryBreak(void) {

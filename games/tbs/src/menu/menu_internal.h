@@ -155,6 +155,25 @@ enum PsynergyListMode {
   PSYNERGY_LIST_FIELD = 2
 };
 
+/// How the item menu can use an item (Item_ClassifyUseMode).
+enum ItemUseMode {
+  /// It cannot be used here: it has no action, it is equipment the owner
+  /// cannot wear or that teaches Psynergy, or its action is usable only in
+  /// battle.
+  ITEM_USE_MODE_UNUSABLE = -1,
+  /// It works on the field (BattleFx_HasTriggerFar), or its action is usable
+  /// neither in the field nor in battle, and is used once the menu closes.
+  ITEM_USE_MODE_FROM_FIELD = 0,
+  ITEM_USE_MODE_CHOOSE_MEMBER = 1, ///< choose a party member to use it on
+  ITEM_USE_MODE_WHOLE_PARTY = 2 ///< ABILITY_RANGE_ALL: the whole party at once
+};
+
+/// Whom ItemMenu_SelectTarget chooses.
+enum ItemTargetMode {
+  ITEM_TARGET_USE = 0, ///< the member to use the item on
+  ITEM_TARGET_GIVE = 1 ///< the member to give it to
+};
+
 /// The bytes of the menu work, heap block HEAP_SLOT_MENU. Each screen's run
 /// function takes the block as it opens and releases it as it closes.
 #define MENU_WORK_SIZE 0xa70
@@ -167,7 +186,7 @@ enum PsynergyListMode {
 enum StatusPanelKind {
   STATUS_PANEL_EXPERIENCE = 0, ///< class, HP, PP and experience
   /// Stats if the item were equipped, or removed when equipPreview is set.
-  /// Kind 3 draws the same.
+  /// STATUS_PANEL_EQUIP + 1 draws the same.
   STATUS_PANEL_EQUIP = 2,
   STATUS_PANEL_LEARN = 4, ///< the Psynergy a Psynergy item teaches
   STATUS_PANEL_CLASS = 6, ///< class, HP and PP

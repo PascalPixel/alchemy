@@ -357,11 +357,12 @@ s32 DjinnMenu_ShowCurrentList(void) {
   RenderOutput_RedrawSavedRectFar(window);
   UiWindow_DrawDividerLineFar(window, 0, 11, 28, 11);
   UiText_DrawResourceFar(MsgCurrentDjinn, menu->helpWindow, -96, 132);
-  for (element = 0; element < 4; element++) {
+  for (element = 0; element < NUM_ELEMENTS; element++) {
     for (djinn = 0; djinn < 7; djinn++) {
-      s32 id = element * 20 + djinn;
+      s32 id = element * DJINN_PER_ELEMENT + djinn;
 
-      // Game flags 48 on: one per Djinni found, 20 to an element. Each name
+      // FLAG_DJINNI_0 on: one per Djinni found, DJINN_PER_ELEMENT to an
+      // element. Each name
       // follows its element's icon: window tile 1 + element in palette 1
       // (0x1000).
       if (GameFlag_TestFar(FLAG_DJINNI_0 + id)) {

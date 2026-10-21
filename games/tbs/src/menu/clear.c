@@ -1383,8 +1383,8 @@ u32 gClear_PasswordFlags[] = {
     0x9510941, 0x8d108b3, 0x868081e,
 };
 
-/// The eight Psynergy items, Orb of Force to Catch Beads (items 200 to 207,
-/// as halfwords in pairs), which Silver and Bronze record in byte 8.
+/// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS (as
+/// halfwords in pairs), which Silver and Bronze record in byte 8.
 u32 gClear_PasswordKeyItems[] = {
     0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
 };

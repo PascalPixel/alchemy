@@ -283,8 +283,9 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
   }
 }
 
-/// On the Moving Sidewalk Stage's belt (touch 11), until FLAG_PLACE_TEMP_63 is
-/// set, the belt carries the controlled actor and the camera west.
+/// The Moving Sidewalk Stage's belt carries the party west. It's touch 11, and
+/// until FLAG_PLACE_TEMP_63 is set the belt carries the controlled actor and
+/// the camera west.
 static void Event_RideMovingSidewalk(void) {
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
@@ -540,10 +541,10 @@ static s32 ColosseumNavampaMatch_CheckLongLogPath(s32 x, s32 z) {
   return 0;
 }
 
-/// Walking into the log-rolling area's long log (trigger 23) rolls it, with the
-/// leader, the way the pad is held until something stops it; at the east end it
-/// drops into place and the path is made (FLAG_PLACE_TEMP_69). Away from the
-/// log, a stone ahead is pushed instead.
+/// The long log carries the leader until something stops it. Walking into the
+/// log-rolling area's long log (trigger 23) rolls it, with the leader, the way
+/// the pad is held; at the east end it drops into place and the path is made
+/// (FLAG_PLACE_TEMP_69). Away from the log, a stone ahead is pushed instead.
 static void Event_RollLongLog(void) {
   struct FieldActor *rider;
   struct FieldActor *log;

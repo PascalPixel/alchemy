@@ -75,14 +75,20 @@
 /// ACTOR_FIRST_PLACED.
 enum {
   ACTOR_TRET = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Oh! Laurel, you were given powers, too?"
+  /// (MsgKolimaWasIndeedAngryPeopleHad)
   ACTOR_LAUREL,
   ACTOR_TRET_AUXILIARY,
   ACTOR_LAUREL_AUXILIARY,
   /// An invisible actor on Tret's spot that answers for him:
   /// talking to it, Mind Read on it and Hermes' Water used on it reach Tret.
+  /// ★ Named from the game: "The Water of Hermes seeped into Tret."
+  /// (MsgKolimaWaterHermesSeepedIntoTret)
   ACTOR_TRET_STAND_IN,
   /// The invisible actor on Laurel's spot that answers for her when she is
   /// talked to or her mind is read.
+  /// ★ Named from the game: "I am sorry to have worried you so, Laurel."
+  /// (MsgKolimaFeelGreatPowerSpreadingThrough)
   ACTOR_LAUREL_STAND_IN,
   /// Tret's wrathful side, which speaks with a portrait. "I control all in
   /// Tret's realm!"

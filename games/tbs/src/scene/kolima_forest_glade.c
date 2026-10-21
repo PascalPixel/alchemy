@@ -36,8 +36,12 @@
 
 /// Kolima Forest's actors, numbering the rows of gKolimaForestGlade_Placements.
 enum KolimaForestGladeActor {
-  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED, ///< the three logs
+  /// The three logs.
+  /// ★ Named from what the player sees: logs lying on the forest grass among
+  /// the stumps (its render)
+  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// The Nut that floats until Catch pulls it in.
+  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_NUT = ACTOR_FIRST_LOG + 3
 };
 

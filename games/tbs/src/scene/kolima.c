@@ -19,8 +19,8 @@
 ///
 ///   Until the curse is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
 ///   Kolima_GetPlacements gives the nine villagers (ACTOR_FIRST_VILLAGER to
-///   ACTOR_LAST_VILLAGER) tree sprites that stand still, glints twinkle on the
-///   ground (ACTOR_FIRST_GLINT and the three after it, and five more that
+///   ACTOR_LAST_VILLAGER) tree sprites that stand still, sparkles twinkle on
+///   the ground (ACTOR_FIRST_SPARKLE and the three after it, and five more that
 ///   Kolima_Initialize places), and the villagers answer only Mind Read, with
 ///   the thoughts of people stuck as trees. Afterwards they are people again
 ///   and talk of the curse, the holy tree and McCoy's money, and the healer
@@ -114,8 +114,9 @@ enum KolimaActor {
   ACTOR_VILLAGER_MCCOYS_MONEY,
   /// "Who would try to use the holy tree to build a palace, anyway?"
   ACTOR_VILLAGER_HOLY_TREE_PALACE,
-  /// "I didn't mind being a tree... Water never tasted so good!"
-  ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE,
+  /// ★ Named from the game: "I didn't mind being a tree... Water never tasted
+  /// so good!" (MsgKolimaIDidntMindBeingATree)
+  ACTOR_VILLAGER_DID_NOT_MIND_BEING_A_TREE,
   /// "Yawn... Trees are so... sleepy..."; as a tree, "If I can't move, then
   /// Mom can't make me go to bed!"
   ACTOR_VILLAGER_SLEEPY_TREES,
@@ -124,18 +125,29 @@ enum KolimaActor {
   ACTOR_HEALER,
   /// Tret's wrathful side, unseen while the curse falls. "Hroom!"
   ACTOR_TRET,
-  ACTOR_LAUREL, ///< unseen while the curse falls
+  /// Unseen while the curse falls.
+  /// ★ Named from the game: "We are not the only ones who will die, Laurel."
+  /// (MsgKolimaWatchOutItsHappeningAgain)
+  ACTOR_LAUREL,
   /// The fields of Psynergy that rise over the party while the curse falls
   /// ("You know what those fields were?"), each set where its character
   /// stands in Kolima_WitnessForestCurse; Mia's only with her in the party.
   ACTOR_LEADERS_PSYNERGY_FIELD,
+  /// ★ Named from the game: "You know what those fields were?"
+  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_IVANS_PSYNERGY_FIELD,
+  /// ★ Named from the game: "You know what those fields were?"
+  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_MIAS_PSYNERGY_FIELD,
+  /// ★ Named from the game: "You know what those fields were?"
+  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_GARETS_PSYNERGY_FIELD,
-  /// The four glints on the ground while the curse lasts
+  /// The four sparkles on the ground while the curse lasts
   /// (gKolima_EntryActions).
-  ACTOR_FIRST_GLINT,
-  ACTOR_GRANITE = ACTOR_FIRST_GLINT + 4, ///< placed until Granite has joined
+  /// ★ Named from the game: "I turned into a tree right when the sparkles
+  /// fell from the sky." (MsgKolimaITurnedIntoATreeRight)
+  ACTOR_FIRST_SPARKLE,
+  ACTOR_GRANITE = ACTOR_FIRST_SPARKLE + 4, ///< placed until Granite has joined
   ACTOR_FIRST_VILLAGER = ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS,
   ACTOR_LAST_VILLAGER = ACTOR_HEALER
 };
@@ -159,7 +171,7 @@ static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Each frame of a glint on Kolima's ground: its timer runs on at random, and
+/// Each frame of a sparkle on Kolima's ground: its timer runs on at random, and
 /// it shows its bright frame (7) past 1000 and its dim one (10) before; at
 /// 1200 the timer starts over.
 static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
@@ -181,7 +193,7 @@ static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
 
 /// While the curse lasts, gives Kolima's nine villagers (placement rows 3 to
 /// 11, ACTOR_FIRST_VILLAGER to ACTOR_LAST_VILLAGER) tree sprites, 105 or, for
-/// rows 9 and 10 (ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE and
+/// rows 9 and 10 (ACTOR_VILLAGER_DID_NOT_MIND_BEING_A_TREE and
 /// ACTOR_VILLAGER_SLEEPY_TREES), 110; they stand still and keep their facing
 /// when spoken to.
 static void
@@ -450,12 +462,12 @@ static void Kolima_ShowBridgeCollapse(void) {
 
 /// Sets up whichever scene is entered: Kolima Bridge as the curse and the
 /// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
-/// transition, and Kolima itself. There the four glints twinkle, the
+/// transition, and Kolima itself. There the four sparkles twinkle, the
 /// villagers stand as trees while the curse lasts (and three cells around
 /// (14, 8) take the attributes of cell (13, 9)), and the first entry from the
 /// world map plays Kolima_WitnessForestCurse. Once that has been seen, here or
 /// in Kolima Forest, Garet, Ivan and Mia, the two voices and the domes are
-/// taken away and five more glints are placed.
+/// taken away and five more sparkles are placed.
 s32 Kolima_Initialize(void) {
   s16 scene;
   u32 actor;
@@ -473,16 +485,16 @@ s32 Kolima_Initialize(void) {
     return 0;
   }
 
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT + 1), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT + 2), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT + 3), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_SPARKLE), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_SPARKLE + 1), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_SPARKLE + 2), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_SPARKLE + 3), 0);
 
   table = gKolima_EntryActions;
-  Actor_SetActionScript(ACTOR_FIRST_GLINT, table);
-  Actor_SetActionScript(ACTOR_FIRST_GLINT + 1, table);
-  Actor_SetActionScript(ACTOR_FIRST_GLINT + 2, table);
-  Actor_SetActionScript(ACTOR_FIRST_GLINT + 3, table);
+  Actor_SetActionScript(ACTOR_FIRST_SPARKLE, table);
+  Actor_SetActionScript(ACTOR_FIRST_SPARKLE + 1, table);
+  Actor_SetActionScript(ACTOR_FIRST_SPARKLE + 2, table);
+  Actor_SetActionScript(ACTOR_FIRST_SPARKLE + 3, table);
 
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     for (actor = ACTOR_FIRST_VILLAGER; actor <= ACTOR_LAST_VILLAGER; actor++) {
@@ -1655,7 +1667,7 @@ s32 gKolima_ProtectiveFieldShrinkActions[] = {
     SC_END,
 };
 
-/// The glints on Kolima's ground: three quarters of their size, passed
+/// The sparkles on Kolima's ground: three quarters of their size, passed
 /// through, twinkling at random (Kolima_UpdateTimedAppearance).
 s32 gKolima_EntryActions[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
@@ -1758,7 +1770,7 @@ struct ScenePlacement gKolimaTunnelPlacements[] = {
 
 /// Kolima's people: Garet, Ivan and Mia for the curse, the nine villagers,
 /// Tret's and Laurel's voices and the four domes until the curse has been seen
-/// (FLAG_KOLIMA_CURSE_WITNESSED), four glints while it lasts, and Granite until
+/// (FLAG_KOLIMA_CURSE_WITNESSED), four sparkles while it lasts, and Granite until
 /// it joins (its Djinni flag, 0x31).
 struct ScenePlacement gKolimaPlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1810,7 +1822,7 @@ struct ScenePlacement gKolimaPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-/// Five more glints, placed by Kolima_Initialize once the curse has been seen
+/// Five more sparkles, placed by Kolima_Initialize once the curse has been seen
 /// and kept while it lasts.
 struct ScenePlacement gKolima_EntryScript[] = {
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
@@ -1860,7 +1872,7 @@ struct SceneEvent gKolimaEvents[] = {
     { EVENT_TALK, ACTOR_VILLAGER_SPARKLES_FELL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaITurnedIntoATreeRight) },
     { EVENT_TALK, ACTOR_VILLAGER_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaDontBlameTheVillagersForBeing) },
     { EVENT_TALK, ACTOR_VILLAGER_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWhoWouldTryToUseThe) },
-    { EVENT_TALK, ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
+    { EVENT_TALK, ACTOR_VILLAGER_DID_NOT_MIND_BEING_A_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
     { EVENT_TALK, ACTOR_VILLAGER_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
     { EVENT_TALK, ACTOR_HEALER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(Kolima_TalkToHealer) },
     { EVENT_TALK, ACTOR_GRANITE, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_GraniteJoins) },
@@ -1870,7 +1882,7 @@ struct SceneEvent gKolimaEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SPARKLES_FELL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfThoseSparklesStartFallingAgain) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIveBeenPoorAllMyLife) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaItsNotCalledTheHolyTree) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfWeWereAllTreesThered) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DID_NOT_MIND_BEING_A_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfWeWereAllTreesThered) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaNobodyYellsAtYouWhenYoure) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfTheHolyTreeAloneCaused) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICouldSpeakIdTell) },
@@ -1879,7 +1891,7 @@ struct SceneEvent gKolimaEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SPARKLES_FELL, CONDITION_ALWAYS, MSGNO(MsgKolimaBeingUnableToMoveIsSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MCCOYS_MONEY, CONDITION_ALWAYS, MSGNO(MsgKolimaIAmOldIveLivedA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HOLY_TREE_PALACE, CONDITION_ALWAYS, MSGNO(MsgKolimaItsTheSacredTreesCurseWhy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE, CONDITION_ALWAYS, MSGNO(MsgKolimaTheWaterAtMyFeetHuh) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DID_NOT_MIND_BEING_A_TREE, CONDITION_ALWAYS, MSGNO(MsgKolimaTheWaterAtMyFeetHuh) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SLEEPY_TREES, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICantMoveThenMom) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKolimaMaybeIfIMeditateHarderIll) },
     { SEARCH(SEARCH_JAR), 100, 0xf57, FIND_ITEM(ITEM_APPLE) },

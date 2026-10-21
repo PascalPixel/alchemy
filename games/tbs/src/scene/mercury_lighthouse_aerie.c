@@ -111,10 +111,16 @@ enum MercuryLighthouseAerieActor {
   /// ★ Named from what the player sees: round white platforms below the lift's
   /// statue (its render)
   ACTOR_LIFT_PLATFORM_2,
+  /// ★ Named from the game: "Kraden!" (MsgMercuryLighthouseAlreadyLit)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED + 12,
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX,
+  /// ★ Named from the game: "Oh, Saturos..." (MsgMercuryLighthouseAlreadyLit)
   ACTOR_SATUROS,
+  /// ★ Named from the game: "Menardi... Wait!"
+  /// (MsgMercuryLighthouseAlreadyLit)
   ACTOR_MENARDI,
+  /// ★ Named from the game: "Alex!" (MsgMercuryGot)
   ACTOR_ALEX
 };
 
@@ -1878,15 +1884,15 @@ struct ScenePlacement gMercuryLighthouseAeriePlacements[] = {
         PIXELS(136), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(168), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1e, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { SPRITE_KRADEN, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(152), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x23, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { SPRITE_FELIX, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(160), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x20, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SATUROS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x21, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { SPRITE_MENARDI, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(200), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x2b, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ALEX, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_EAST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

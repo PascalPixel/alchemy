@@ -125,6 +125,7 @@
 /// get past (his scripted battle fights him as "Lizard Man"); the Ply target is
 /// the invisible actor Ply is cast on.
 enum MercuryLighthouseEntranceActor {
+  /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
   ACTOR_LIZARD_MAN = ACTOR_FIRST_PLACED,
   /// Six statues line the way to the doorway: three on its west side (x 88),
   /// then three on its east (x 184).

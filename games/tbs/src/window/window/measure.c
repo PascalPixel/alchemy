@@ -448,6 +448,15 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     }
   }
 done:
+  // Under Mind Read the pages measure 2 pixels wider in Japanese, English,
+  // Spanish and Italian, a set no patch level selects: TBS_PATCH_2 drops
+  // Mind Read's padding from the first-page measure, UiWindow_FitOnScreen and
+  // the pen (typing.c) in German, French, Spanish and Italian alike.
+  // XXX: likely Spanish and Italian put the widening back here rather than
+  // keeping an older copy, because this function has the French outline
+  // reset at a page break (TBS_PATCH_3) too. Why only here is unknown; a
+  // Spanish or Italian recording of a Mind Read message over several pages
+  // would show whether the wider window was meant.
 #if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_FRENCH)
   if (work->mode != 0)
     maxWidth += 2;

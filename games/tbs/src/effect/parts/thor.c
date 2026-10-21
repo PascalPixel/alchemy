@@ -379,8 +379,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
   BattleFx_SetupBlendedDisplay();
   BattleFx_SelectLivingTargets(work->effect);
-  // Nine objects of resource 0x173, the formation (formation 0 of
-  // BattleFx_PlaceFormationObjects), released at the end.
+  // Nine objects of resource 0x173, the formation (SUMMON_FORMATION_THOR),
+  // released at the end.
   BattleFx_SpawnObjects(9, 0x173, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
                              1, 0);

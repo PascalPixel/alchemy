@@ -232,10 +232,11 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
 ///
 /// Runs each frame as a scheduler callback added by BattleFx_RunFire
 /// (fire.c) and BattleFx_RunFroth (vortices.c), which remove it before they
-/// return. Each of them moves cameraPhase from 0 to 1 at the end of its own
-/// frame. On phase 1 the callback turns the whole delta and clears the phase;
-/// otherwise it turns half the delta and moves the phase from 0 to 2 or from
-/// 2 back to 0, and a phase of 2 is one the effects leave unmarked. Changes
+/// return. Each of them moves cameraPhase from CAMERA_PHASE_IDLE to
+/// CAMERA_PHASE_FRAME_DONE at the end of its own frame. Then the callback
+/// turns the whole delta and clears the phase; otherwise it turns half the
+/// delta and moves the phase between CAMERA_PHASE_IDLE and
+/// CAMERA_PHASE_HALF_TURNED, which the effects leave unmarked. Changes
 /// the camera slot's yaw and work->cameraPhase.
 /// XXX: likely to keep the turn smooth when an effect frame runs long,
 /// because every frame still turns at least half the delta; a run with a
@@ -248,15 +249,15 @@ void Camera_ApplyPhasedDelta(void) {
   struct BattleCamera *camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   s32 *phase = &work->cameraPhase;
 
-  if (*phase == 1) {
+  if (*phase == CAMERA_PHASE_FRAME_DONE) {
     camera->yaw += work->cameraDelta;
-    *phase = 0;
+    *phase = CAMERA_PHASE_IDLE;
   } else {
     camera->yaw += work->cameraDelta / 2;
-    if (*phase == 2)
-      *phase = 0;
+    if (*phase == CAMERA_PHASE_HALF_TURNED)
+      *phase = CAMERA_PHASE_IDLE;
     else
-      *phase = 2;
+      *phase = CAMERA_PHASE_HALF_TURNED;
   }
 }
 

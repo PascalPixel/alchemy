@@ -397,19 +397,19 @@ u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 u8 gTargetMotes_GlintFlips[] = GLINT_FLIPS;
 
 /// The effect handlers, indexed by effect kind minus one, which
-/// BattleFx_RunTableEffect calls; kind 0 is no effect, for which it only
-/// clears effect->variant.
+/// BattleFx_RunTableEffect calls; BATTLE_FX_NONE is no effect, for which it
+/// only clears effect->variant.
 ///
 /// Each handler is named for the first ability, by ability id, whose entry in
 /// gBattle_ActionFlags (battle/actflags.tsv) selects its kind, with that
-/// ability's English name (MsgAbilityName + id): kind 1 is Quake, Earthquake
-/// and Quake Sphere, so BattleFx_RunQuake. A handler several kinds share takes
-/// the name of its lowest kind's first ability, and a name another handler has
-/// already taken passes to the next ability (kind 15 is BattleFx_RunNova, as
-/// its first ability is a second Blast). Kinds that no ability uses keep
-/// descriptive names. Each row gives the kind's name, the part of effect.c
-/// that defines its handler and its first ability; the handler's own comment
-/// there lists every ability that reaches it.
+/// ability's English name (MsgAbilityName + id): BATTLE_FX_QUAKE is Quake,
+/// Earthquake and Quake Sphere, so BattleFx_RunQuake. A handler several kinds
+/// share takes the name of its lowest kind's first ability, and a name another
+/// handler has already taken passes to the next ability (BATTLE_FX_NOVA is
+/// BattleFx_RunNova, as its first ability is a second Blast). Kinds that no
+/// ability uses keep descriptive names. Each row gives the kind's name, the
+/// part of effect.c that defines its handler and its first ability; the
+/// handler's own comment there lists every ability that reaches it.
 BattleFxHandler gBattleFx_EffectHandlers[BATTLE_FX_KIND_COUNT - 1] = {
     [BATTLE_FX_QUAKE - 1] = BattleFx_RunQuake,         // quake.c: Quake
     [BATTLE_FX_SPIRE - 1] = BattleFx_RunSpire,         // spire.c: Spire
@@ -991,10 +991,10 @@ s8 gHelmSplitter_CellBiasY[] = {2, 3, 3, 3, 4, 14, 29};
 
 // helm_splitter.c: Object formation coordinates and impact burst cells.
 
-// The offsets of BattleFx_PlaceFormationObjects' formations 1 to 3 in
-// pixels, one axis at a time: twelve in rows of 1, 3, 4 and 4; eight in rows
-// of 3, 2 and 3; eight drawn at 1.25 times their size. Formation 0, a 3x3
-// grid, needs no table.
+// The offsets of BattleFx_PlaceFormationObjects' formations in pixels, one
+// axis at a time: Nereid's twelve in rows of 1, 3, 4 and 4; Cybele's eight in
+// rows of 3, 2 and 3; Tiamat's eight drawn at 1.25 times their size. Thor's,
+// a 3x3 grid, needs no table.
 u8 gHelmSplitter_TwelveX[] = {52, 25, 57, 89, 7, 39, 71, 103, 21, 53, 85, 117};
 u8 gHelmSplitter_TwelveZ[] = {0, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96};
 u8 gHelmSplitter_RightEightX[] = {0, 32, 64, 16, 48, 0, 32, 64};

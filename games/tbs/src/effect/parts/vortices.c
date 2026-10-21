@@ -86,7 +86,7 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
     SET_POSITION(seat, object->x, 0, object->z);
   }
   work->cameraDelta = 0;
-  work->cameraPhase = 0;
+  work->cameraPhase = CAMERA_PHASE_IDLE;
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
   // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
@@ -162,8 +162,8 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
     Camera_ApplyShake(work->effect->variant * 2 + 2,
                       work->effect->variant * 2 + 2);
     // Tell Camera_ApplyPhasedDelta a frame has ended.
-    if (work->cameraPhase == 0)
-      work->cameraPhase = 1;
+    if (work->cameraPhase == CAMERA_PHASE_IDLE)
+      work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
     EFFECT_END_FRAME(work);
   }
 

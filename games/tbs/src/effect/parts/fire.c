@@ -80,7 +80,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   }
 
   work->cameraDelta = 0;
-  work->cameraPhase = 0;
+  work->cameraPhase = CAMERA_PHASE_IDLE;
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
   // Each transfer keeps three quarters of every level, for long trails.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
@@ -186,8 +186,8 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
     }
 
     // Tell Camera_ApplyPhasedDelta a frame has passed.
-    if (work->cameraPhase == 0)
-      work->cameraPhase = 1;
+    if (work->cameraPhase == CAMERA_PHASE_IDLE)
+      work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
     Camera_ApplyShake(8, 8);
     EFFECT_END_FRAME(work);
   }

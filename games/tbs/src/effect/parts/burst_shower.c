@@ -96,18 +96,15 @@ void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
 /// Called by the seven wrappers above, six blessings and Deadly Gas. Each
 /// burst is one of work->particles, its variant counting the frames it has
 /// lived (-1 when free). Writes REG_BLDALPHA, the first 64 BG colours (all but
-/// modes 5 and 7), REG_BLDCNT in the grey mode and REG_BG2PA in the lightning
-/// mode; sets work->shakeFrames on each hit.
+/// the lightning and the faces), REG_BLDCNT in the grey mode and REG_BG2PA in
+/// the lightning mode; sets work->shakeFrames on each hit.
 ///
 /// effect: the user and the targets.
-/// mode: the burst and its palette: 0 flash bursts, 1 in the ice block
-///       palette, 2 in the water spray palette, 3 pink and fired from 16
-///       pixels higher, 4 in the Mars Djinni's palette from 28 pixels in
-///       front, 6 grey (the targets turn solid black and stay so), 7 demon
-///       faces from 16 pixels in front. Mode 5 fires no bursts: a violet
-///       lightning bolt stands between the user and the targets, on a
-///       canvas shown at three times its width. No effect kind in the
-///       effect table uses mode 1.
+/// mode: the burst and its palette (enum BurstShowerMode). The grey mode turns
+///       the targets solid black and keeps them so. BURST_SHOWER_MODE_LIGHTNING
+///       fires no bursts: a violet lightning bolt stands between the user and
+///       the targets, on a canvas shown at three times its width. No effect
+///       kind in the effect table uses BURST_SHOWER_MODE_ICE.
 void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   u32 *slots;
   struct BattleEffectWork *work;
@@ -257,9 +254,9 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    // Mode 5 draws the lightning from the user, stepping through its three
-    // 72x62 pictures every 3 frames (0x1200 bytes apart); the others fire one
-    // burst a frame for 48 frames at a random point near a target.
+    // The lightning mode draws the lightning from the user, stepping through
+    // its three 72x62 pictures every 3 frames (0x1200 bytes apart); the others
+    // fire one burst a frame for 48 frames at a random point near a target.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       if (work->effect->side == 1) {
         draw[0](canvas,

@@ -31,8 +31,8 @@
 /// of three per side. work->particles holds 16 flashes a column and PARTICLES
 /// 340 sparks a column.
 ///
-/// Leaves effect->variant at 1, and the user in its action pose with its
-/// animation back at the usual speed.
+/// Leaves effect->variant at EFFECT_VARIANT_STRONGER, and the user in its
+/// action pose with its animation back at the usual speed.
 void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -56,9 +56,9 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleFx_FetchRectangleBlitters(work->effect->side, blit);
-  // The user takes its action pose and animates fast until the end: an
+  // The user takes its leap pose and animates fast until the end: an
   // animation step of 48, three times the usual 16.
-  ObjectDispatch_SelectAnimationFar(user, 2);
+  ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)user, 48);
 
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,

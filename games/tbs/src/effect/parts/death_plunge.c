@@ -80,7 +80,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   targetHeight = BattleUnit_GetEffectHeightFar(work->effect->actors[0]);
   ObjectDispatch_StartIdleFar((struct DispatchObject *)user);
   Object_SetMoveTargetFar((struct ObjectRuntime *)user, x, 0, z);
-  ObjectDispatch_SelectAnimationFar(user, 2);
+  ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
   user->snapToTarget = 1;
   user->autoFaceMotion = 1;
   user->acceleration = 2 << 16;
@@ -680,8 +680,8 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
                       0x20000);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, 0x7fff7fff);
   AudioCommand_PlayFar(SE_212);
-  ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE, 3, 0,
-                            30);
+  ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
+                            POSE_CAST, 0, 30);
 
   for (frame = 0; frame != SHATTERING_OPENING_FRAMES; frame++) {
     // Frame loop. The cues: the shatter sound three times by frame 3, the
@@ -691,7 +691,7 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
     if (frame == 3)
       AudioCommand_PlayFar(SE_212);
     if (frame == 28)
-      ObjectGroup_UpdateMembers(work->effect->actors[0], -1, 3, -1, 0);
+      ObjectGroup_UpdateMembers(work->effect->actors[0], -1, POSE_CAST, -1, 0);
     if (frame == 32)
       AudioCommand_PlayFar(SE_149);
     if (frame == 5)

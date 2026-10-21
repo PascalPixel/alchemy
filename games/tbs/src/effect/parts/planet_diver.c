@@ -136,7 +136,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       actor->snapToTarget = 0;
       Object_SetMoveTargetFar((struct ObjectRuntime *)actor, actor->x * 3, 0,
                               actor->z);
-      ObjectDispatch_SelectAnimationFar(actor, 2);
+      ObjectDispatch_SelectAnimationFar(actor, POSE_LEAP);
       // A 4-frame shake: frame is 4 here.
       work->shakeFrames = frame;
       AudioCommand_PlayFar(SE_136);

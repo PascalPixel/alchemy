@@ -313,10 +313,11 @@ void BattleFx_RunSoothingStar(struct BattleEffectArgument *effect) {
 /// background palette; the healing mode opens the canvas layer with BG
 /// control 0 and the drifting mode with 1.
 ///
-/// mode 0: orange motes that stay close to the user; each target plays the
-///         recovery sound and glows (a healing effect).
-/// mode 1: motes on the earth palette that drift across towards the far side
-///         of the field; each target flinches (an attack).
+/// mode: MOTE_FOUNTAIN_FOUNTAIN_HEALING throws orange motes that stay close to
+///       the user, and each target plays the recovery sound and glows (a
+///       healing effect); MOTE_FOUNTAIN_DRIFTING throws motes on the earth
+///       palette that drift across towards the far side of the field, and
+///       each target flinches (an attack).
 void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   s32 worldPoint[3];
   struct EffectPosition position;
@@ -404,8 +405,8 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
         // Damped by 62/64 a frame, with a slight lift (y grows upwards) of
         // 1/64 pixel a frame each frame.
         EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
-        // Mode 1 pushes every mote towards the other side of the field, 1/8
-        // pixel a frame faster each frame.
+        // The drifting mode pushes every mote towards the other side of the
+        // field, 1/8 pixel a frame faster each frame.
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x < 0)
             mote->velocityX += 0x2000;

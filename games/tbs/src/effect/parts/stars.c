@@ -62,7 +62,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  ObjectDispatch_SelectAnimationFar(caster, 2);
+  ObjectDispatch_SelectAnimationFar(caster, POSE_LEAP);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   // Trails keep 75% of each pixel a frame.

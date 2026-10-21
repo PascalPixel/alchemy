@@ -987,8 +987,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 ///
 /// Nothing calls it; ObjMotRst (battle/motion.c) sets the same motion without
 /// the hop. Sets the battler's motion object to move at up to 8 pixels a frame,
-/// jumping at 4 pixels a frame under the usual gravity, and selects its
-/// animation 1.
+/// jumping at 4 pixels a frame under the usual gravity, and selects
+/// POSE_STANDING.
 UNUSED void BattleFx_InitializeRisingObject(s32 id) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct MotionObject *object = slot->object;

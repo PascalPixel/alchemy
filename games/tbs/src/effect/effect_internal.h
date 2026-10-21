@@ -140,9 +140,9 @@ enum CanvasTransferMode {
 #define EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas)                       \
   ((work) = *(cursor)++, (canvas) = *(cursor))
 
-/// Lets EFFECT_SLOT(slots, s) reach any slot: an earlier one such as the
-/// camera (slot 12, against the effect's 39) sits at a negative index that is
-/// still inside gWorkSlot.
+/// Lets EFFECT_SLOT(slots, s) reach any slot: an earlier one such as
+/// HEAP_SLOT_CAMERA, before HEAP_SLOT_BATTLE_EFFECT, sits at a negative index
+/// that is still inside gWorkSlot.
 #define EFFECT_GET_SLOTS(slots, cursor, work, canvas)                          \
   ((slots) = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT], (cursor) = (slots),          \
    EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas))
@@ -361,5 +361,14 @@ enum SummonFormation {
 /// The axis a swirling spark, mote or star turns about, which its index & 3
 /// picks.
 enum SpinAxis { SPIN_YAW, SPIN_PITCH, SPIN_ROLL, SPIN_PITCH_AND_ROLL };
+
+/// work->cameraPhase, which Camera_ApplyPhasedDelta and the effects that
+/// turn the camera through it (Fire, Froth) pass between them.
+enum CameraPhase {
+  CAMERA_PHASE_IDLE,       ///< nothing marked since the last turn
+  CAMERA_PHASE_FRAME_DONE, ///< the effect has finished a frame: turn the whole
+                           ///< delta
+  CAMERA_PHASE_HALF_TURNED ///< half a delta turned on an unmarked frame
+};
 
 #endif // ALCHEMY_EFFECT_INTERNAL_H

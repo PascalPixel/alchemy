@@ -6,8 +6,9 @@
 /// who teaches in Vale, looking for the hidden passage that two strangers,
 /// Saturos and Menardi, spoke of. Kraden has found the Luna and Sol rooms
 /// (scene 11) and waits there, sending the party to look farther up the
-/// passage; this room opens off them (its exit 1, their entrance 2), and its
-/// exit 2 leads into a room with a Psynergy Stone (scene 13).
+/// passage; this room opens off them (its exit 1, their entrance 2), and
+/// SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE leads into a room with a
+/// Psynergy Stone (scene 13).
 ///
 /// Eight statues stand here around a ninth in the centre. Four can be pushed,
 /// or moved with Move, onto seals in the floor; two others, pushed in front
@@ -157,10 +158,11 @@ struct SealScene {
 
 STATIC_ASSERT(offsetof(struct SealScene, unused) == 0xc4);
 
-/// The placed actors: Kraden, who stays out of sight until his two visits,
-/// the eight statues, and the centre statue in its two places. Of the
-/// statues, four are pushed onto seals and two shine beams at the centre; the
-/// other two never move.
+/// The placed actors, numbered in the order of gSolSanctumStatue_Placements:
+/// Kraden, who stays out of sight until his two visits, the eight statues, and
+/// the centre statue in its two places; Jenna and Garet, placed after them,
+/// keep their own slots. Of the statues, four are pushed onto seals and two
+/// shine beams at the centre; the other two never move.
 enum SolSanctumStatueActor {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   ACTOR_NORTHWEST_STATUE,
@@ -168,8 +170,13 @@ enum SolSanctumStatueActor {
   ACTOR_NORTHEAST_STATUE,
   ACTOR_RIGHT_BEAM_STATUE,
   ACTOR_SOUTHWEST_STATUE,
-  ACTOR_SOUTHEAST_STATUE = ACTOR_FIRST_PLACED + 7,
-  ACTOR_CENTER_STATUE = ACTOR_FIRST_PLACED + 9,
+  /// South of the left beam statue; no event moves it.
+  ACTOR_LEFT_STILL_STATUE,
+  ACTOR_SOUTHEAST_STATUE,
+  /// South of the right beam statue; no event moves it.
+  ACTOR_RIGHT_STILL_STATUE,
+  ACTOR_CENTER_STATUE,
+  /// Stands in the hole in the floor once the centre statue has dropped in.
   ACTOR_MOVED_CENTER_STATUE
 };
 
@@ -191,8 +198,8 @@ const struct SceneRegion *SolSanctumStatue_GetRegions(void) { return NULL; }
 
 const u32 *SolSanctumStatue_GetExits(void) { return gSolSanctumStatue_Exits; }
 
-/// Returns Kraden (actor 8), the eight statues (9 to 16), the centre statue
-/// (17) and its moved copy (18), then Jenna and Garet.
+/// Returns Kraden, the eight statues, the centre statue and its moved copy
+/// (ACTOR_KRADEN to ACTOR_MOVED_CENTER_STATUE), then Jenna and Garet.
 const struct ScenePlacement *SolSanctumStatue_GetPlacements(void) {
   return gSolSanctumStatue_Placements;
 }
@@ -943,8 +950,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
 }
 
 /// Moving the northwest statue with Move: on its seal, the seal opens.
-/// Reached by Move on actor 9 until FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN is
-/// set.
+/// Reached by Move on ACTOR_NORTHWEST_STATUE until
+/// FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN is set.
 static void Event_NorthwestStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_NORTHWEST_STATUE, 31, 9) != 0) {
     SolSanctumStatue_OpenNorthwestSeal();
@@ -952,8 +959,8 @@ static void Event_NorthwestStatueMoved(void) {
 }
 
 /// Moving the northeast statue with Move: on its seal, the seal opens.
-/// Reached by Move on actor 11 until FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN is
-/// set.
+/// Reached by Move on ACTOR_NORTHEAST_STATUE until
+/// FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN is set.
 static void Event_NortheastStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_NORTHEAST_STATUE, 40, 9) != 0) {
     SolSanctumStatue_OpenNortheastSeal();
@@ -961,8 +968,8 @@ static void Event_NortheastStatueMoved(void) {
 }
 
 /// Moving the southwest statue with Move: on its seal, the seal opens.
-/// Reached by Move on actor 13 until FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN is
-/// set.
+/// Reached by Move on ACTOR_SOUTHWEST_STATUE until
+/// FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN is set.
 static void Event_SouthwestStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_SOUTHWEST_STATUE, 31, 12) != 0) {
     SolSanctumStatue_OpenSouthwestSeal();
@@ -970,8 +977,8 @@ static void Event_SouthwestStatueMoved(void) {
 }
 
 /// Moving the southeast statue with Move: on its seal, the seal opens.
-/// Reached by Move on actor 15 until FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN is
-/// set.
+/// Reached by Move on ACTOR_SOUTHEAST_STATUE until
+/// FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN is set.
 static void Event_SoutheastStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_SOUTHEAST_STATUE, 40, 12) != 0) {
     SolSanctumStatue_OpenSoutheastSeal();
@@ -979,8 +986,8 @@ static void Event_SoutheastStatueMoved(void) {
 }
 
 /// Moving the left beam statue with Move: its cell is freed, and in front of
-/// the centre it shines its beam. Reached by Move on actor 10 until
-/// FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
+/// the centre it shines its beam. Reached by Move on ACTOR_LEFT_BEAM_STATUE
+/// until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void Event_LeftBeamStatueMoved(void) {
   Field_SetMapCellCollision(2, PIXELS(208), PIXELS(112), 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_LEFT_BEAM_STATUE, 14, 7) != 0) {
@@ -989,7 +996,7 @@ static void Event_LeftBeamStatueMoved(void) {
 }
 
 /// Moving the right beam statue with Move: as the left one. Reached by Move on
-/// actor 12 until FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING is set.
+/// ACTOR_RIGHT_BEAM_STATUE until FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING is set.
 static void Event_RightBeamStatueMoved(void) {
   Field_SetMapCellCollision(2, PIXELS(352), PIXELS(112), 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_RIGHT_BEAM_STATUE, 21, 7) != 0) {
@@ -998,8 +1005,8 @@ static void Event_RightBeamStatueMoved(void) {
 }
 
 /// Starting Move beside the centre statue: its cells are blocked while the
-/// leader stands in their row. Reached by the first phase of Move on actor 17
-/// until FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set.
+/// leader stands in their row. Reached by the first phase of Move on
+/// ACTOR_CENTER_STATUE until FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set.
 static void Event_BlockCenterTriggerCells(void) {
   struct FieldActor *leaderPosition;
   s32 column;
@@ -1017,8 +1024,8 @@ static void Event_BlockCenterTriggerCells(void) {
 }
 
 /// Starting Move beside the left beam statue: its cell is blocked while the
-/// leader stands beside it. Reached by the first phase of Move on actor 10
-/// until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
+/// leader stands beside it. Reached by the first phase of Move on
+/// ACTOR_LEFT_BEAM_STATUE until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void Event_BlockLeftTriggerCell(void) {
   s32 column = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20;
@@ -1028,7 +1035,8 @@ static void Event_BlockLeftTriggerCell(void) {
   }
 }
 
-/// Starting Move beside the right beam statue: as the left one, on actor 12.
+/// Starting Move beside the right beam statue: as the left one, on
+/// ACTOR_RIGHT_BEAM_STATUE.
 static void Event_BlockRightTriggerCell(void) {
   s32 column = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20;
@@ -1040,11 +1048,11 @@ static void Event_BlockRightTriggerCell(void) {
 
 /// Moving the centre statue with Move, or a beam completing the pair: with
 /// both beams shining the statue slides into the opened floor and the room
-/// shakes. "Something clicked!" Reached by Move on actor 17 until
+/// shakes. "Something clicked!" Reached by Move on ACTOR_CENTER_STATUE until
 /// FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set, and called by
 /// SolSanctumStatue_OpenCentralHole. Sets FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
-/// and FLAG_SOL_SANCTUM_ALL_SEALS_OPEN when the four seals are open; actor 18
-/// takes the statue's place in the hole.
+/// and FLAG_SOL_SANCTUM_ALL_SEALS_OPEN when the four seals are open;
+/// ACTOR_MOVED_CENTER_STATUE takes the statue's place in the hole.
 static void Event_CenterStatueMoved(void) {
   struct FieldActor *statue;
   struct FieldActor *leader;
@@ -1068,8 +1076,8 @@ static void Event_CenterStatueMoved(void) {
       if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
           Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
-        // The statue slides south into the hole; actor 18 stands in for it
-        // there and the room shakes hard, then settles.
+        // The statue slides south into the hole; ACTOR_MOVED_CENTER_STATUE
+        // stands in for it there and the room shakes hard, then settles.
         Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
         Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
         Engine_CameraWaitForMove();
@@ -1656,7 +1664,7 @@ u32 gSolSanctumStatue_Exits[] = {
     SCENE_EXIT(4, SolSanctumLunaSolRooms, 5),
     SCENE_EXIT(5, SolSanctumLunaSolRooms, 6),
     SCENE_EXIT(6, SolSanctumLunaSolRooms, 7),
-    SCENE_EXIT_TO_BATTLE(10, 1),
+    SCENE_EXIT_TO_BATTLE(SOL_SANCTUM_STATUE_TO_SCENE_510, 1),
     SCENE_EXITS_END,
 };
 
@@ -1694,18 +1702,23 @@ struct ScenePlacement gSolSanctumStatue_Placements[] = {
 
 struct SceneEvent gSolSanctumStatue_Events[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS,
+     SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE},
     {TOUCH_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_CheckAheadFacingNorth)},
     {TOUCH_WALKING, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_CheckAheadFacingSouth)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHWEST_STATUE,
+     FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(Event_NorthwestStatueMoved)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHEAST_STATUE,
+     FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(Event_NortheastStatueMoved)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHWEST_STATUE,
+     FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(Event_SouthwestStatueMoved)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHEAST_STATUE,
+     FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(Event_SoutheastStatueMoved)},
     {TOUCH_WALKING_INTO(FACING_EAST), 5, FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(Event_PushNorthwestStatue)},
@@ -1715,15 +1728,17 @@ struct SceneEvent gSolSanctumStatue_Events[] = {
      EVENT_SCRIPT(Event_PushSouthwestStatue)},
     {TOUCH_WALKING_INTO(FACING_WEST), 8, FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(Event_PushSoutheastStatue)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 10,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), ACTOR_LEFT_BEAM_STATUE,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(Event_BlockLeftTriggerCell)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_BEAM_STATUE,
+     FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(Event_LeftBeamStatueMoved)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 12,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), ACTOR_RIGHT_BEAM_STATUE,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(Event_BlockRightTriggerCell)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_BEAM_STATUE,
+     FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(Event_RightBeamStatueMoved)},
     {TOUCH_WALKING_INTO(FACING_EAST), 20, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(Event_PushLeftBeamStatueEast)},
@@ -1745,10 +1760,11 @@ struct SceneEvent gSolSanctumStatue_Events[] = {
      EVENT_SCRIPT(Event_PushRightBeamStatueNorth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 29, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(Event_PushRightBeamStatueNorth)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 17,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), ACTOR_CENTER_STATUE,
      FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(Event_BlockCenterTriggerCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CENTER_STATUE,
+     FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(Event_CenterStatueMoved)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 32, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(Event_PushCenterStatueNorth)},

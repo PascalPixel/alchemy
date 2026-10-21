@@ -1,11 +1,12 @@
 /// @file
 /// Tolbi-bound Ship (TolbiShipMast, scene 110), the top of its mast, the
-/// Crow's Nest, where the ship's lookout (actor 8) keeps watch: one of the
-/// ship's three scenes on its voyage from Kalay to Tolbi, told in
-/// tolbi_ship_deck.c. The party climbs up by the deck's ladder (entrance 1)
-/// and climbs down again by touch cell 10 and the region of exit 1 (the deck's
-/// entrance 4); entrances 10 to 14 are the voyage's cutscenes here, each
-/// leading on into the next. In story order:
+/// Crow's Nest, where the ship's lookout (ACTOR_LOOKOUT) keeps watch: one of
+/// the ship's three scenes on its voyage from Kalay to Tolbi, told in
+/// tolbi_ship_deck.c. The party climbs up by the deck's ladder
+/// (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK) and climbs down again by touch cell
+/// 10 and the region of TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SOUTH (the deck's
+/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SOUTH); entrances 10 to 14 are the
+/// voyage's cutscenes here, each leading on into the next. In story order:
 ///
 /// - At Kalay, while the ship waits for its replacement: the captain's anchor
 ///   charm, gone from his cabin, lies up here. Searching for it (search code
@@ -16,25 +17,31 @@
 ///   Read on the lookout has him wonder whether the party has worked out that
 ///   he hid it ("I wonder if they figured out I was the one who hid the
 ///   anchor"), and he leaves the monsters to Kaja's crew and the party.
-///   Once the charm is back, the setup moves him to his lookout spot. XXX: the
-///   crewman on deck and actor 10 in the hold also think they hid it.
+///   Once the charm is back, the setup moves him to his lookout spot. The
+///   crewman on deck at Kalay (KALAY_CREWMAN, tolbi_ship_deck.c) and in the
+///   captain's cabin (CABIN_CREWMAN, tolbi_ship_interiors.c) says he hid it
+///   too. XXX: likely the lookout is that crewman, because he says the same
+///   and stands on the mast only once the charm is back.
 /// - Under sail: entrance 10, from the deck, has him scan both sides and call
 ///   the course clear, then leads below to the cast-off; the first time the
 ///   leader is moved out of view, on later departures he stands by. The
-///   attacks: entrance 11, "Avast! Monsters sighted!", as four monsters close
-///   in on a rotating approach (FLAG_TOLBI_SHIP_MONSTERS_SIGHTED, which plays
-///   the monsters' theme); 12, "Monsters!", for the second; 13, two more
-///   landing, for the third, each leading below or to the deck. During these
+///   attacks: entrance 11, "Avast! Monsters sighted!", as three monsters appear
+///   where a sparkle twinkles and close in
+///   (FLAG_TOLBI_SHIP_MONSTERS_SIGHTED, which plays the monsters' theme); 12,
+///   Sean's "Monsters!", for the second; 13, a monster dropping in beside the
+///   lookout, for the third, each leading below or to the deck. During these
 ///   the scene a defeat returns to (gGameState.savedScene) is set to the
 ///   interiors' entrance 30, which starts the voyage over.
-/// - Land: entrance 14, where seven actors drift past and away before "Land
-///   ho!". The rowing values of the passengers chosen to row
-///   (gTolbiShipMast_PassengerRowValues) decide where the ship comes in: those
-///   at the first and third seats less those at the second and fourth, and a
-///   balance of exactly 11 takes exit 15, to the deck's entrance 19, off
-///   course to the island; any other takes exit 14, to entrance 17 and Tolbi.
-///   Once the rowers have switched sides at the island the balance is the
-///   opposite, so the ship comes in to Tolbi.
+/// - Land: entrance 14, where the seven birds (ACTOR_FIRST_BIRD) flutter
+///   about and fly away before "Land ho!". The rowing values of the passengers
+///   chosen to row (gTolbiShipMast_PassengerRowValues) decide where the ship
+///   comes in: those at the first and third seats less those at the second and
+///   fourth, and a balance of exactly 11 takes
+///   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH, to the deck's
+///   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_NORTH, off course to the island; any
+///   other takes exit 14, to the deck's entrance 17 and Tolbi. Once the rowers
+///   have switched sides at the island the balance is the opposite, so the ship
+///   comes in to Tolbi.
 ///
 /// While the ship is under way (rowing, or at sea after the first attack,
 /// and neither at the island nor at Tolbi) the setup makes the view sway. At
@@ -94,6 +101,49 @@ s32 gTolbiShipMast_SwayUnused __attribute__((section(".bss")));
 s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
+
+/// The scene's one placement row, the ship's lookout. "Ship's course...
+/// Clear!"
+enum TolbiShipMastActor { ACTOR_LOOKOUT = ACTOR_FIRST_PLACED };
+
+/// The first attack's actors (entrance 11), placed after the lookout from
+/// gTolbiShipMast_StagingObjects.
+enum TolbiShipMastFirstAttackActor {
+  /// A sparkle, sprite 0x11e (graphics/sprite/spr_286.png, a four-pointed
+  /// sparkle in eight shrinking frames), placed nowhere else. It turns, swells
+  /// for 10 frames and shrinks for 24 (gTolbiShipMast_FollowCameraActions)
+  /// where the monsters then appear.
+  ACTOR_SPARKLE = ACTOR_LOOKOUT + 1,
+  /// The first of three monsters, all sprite 0xbd, the sprite of the first
+  /// attack's monsters below decks (gTolbiShipInteriors_FirstAttackMonsters).
+  /// They grow from half size as they close in. "Monsters sighted!"
+  ACTOR_FIRST_SIGHTED_MONSTER
+};
+
+/// The actors of the later cutscenes (entrances 12 to 14), placed after the
+/// lookout from gTolbiShipMast_EnsembleObjects and, at entrance 13, then from
+/// gTolbiShipMast_LandingObjects.
+enum TolbiShipMastEnsembleActor {
+  /// The first of seven birds, all sprite 0x9b (graphics/sprite/spr_155.png, a
+  /// white bird in three wing poses), that flutter and bob about the mast
+  /// (TolbiShipMast_SwayActor). One swoops at the lookout at the second
+  /// attack, they scatter as the third attack's monster comes, and they fly
+  /// off just before "Land ho!".
+  ACTOR_FIRST_BIRD = ACTOR_LOOKOUT + 1,
+  /// Sprite 0x42, Sean's in the hold (HOLD_SEAN, tolbi_ship_interiors.c) and
+  /// on deck (SEA_SEAN, tolbi_ship_deck.c). He cries "Monsters!" at the second
+  /// attack.
+  ACTOR_SEAN = ACTOR_FIRST_BIRD + 7,
+  /// Sprite 0xc5, the sprite of the third attack's monster below decks
+  /// (gTolbiShipInteriors_ThirdAttackMonsters); it drops in beside the
+  /// lookout.
+  ACTOR_LANDING_MONSTER,
+  /// Sprite 0x16, which kolima_forest_tree.c and vale_storm.c place as an
+  /// invisible actor. It grows from a tenth of its size where
+  /// ACTOR_LANDING_MONSTER drops, then follows it away. XXX: likely the
+  /// monster's shadow, because it grows before the monster falls onto it.
+  ACTOR_LANDING_SPOT
+};
 
 /// Keeps the effect actor relative to the saved camera origin and rotates it.
 static s32
@@ -247,7 +297,8 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 
 /// The mast's setup: sways the view while the ship is under way, puts the
 /// lookout to his spot once the charm is back, and plays what the entrance
-/// calls for: the climb up from the deck (1) or a cutscene (10 to 14).
+/// calls for: the climb up from the deck (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK)
+/// or a cutscene (entrances 10 to 14).
 s32 TolbiShipMast_Initialize(void) {
   struct FieldActor *leader;
 
@@ -263,11 +314,11 @@ s32 TolbiShipMast_Initialize(void) {
   }
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
-    Actor_SetPosition(8, PIXELS(164), PIXELS(328));
+    Actor_SetPosition(ACTOR_LOOKOUT, PIXELS(164), PIXELS(328));
   }
   // The ship's scripted entrances resume their matching lookout scenes.
   switch (gGameState.entrance) {
-  case 1:
+  case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       Engine_EventBegin();
@@ -347,23 +398,23 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Actor_SetSpeed(8, PIXELS(1), PIXELS(1) / 2);
-  Actor_WalkToAndWait(8, 164, 321);
-  Actor_FaceDirection(8, FACING_NORTH + FACING_STEP, 40);
-  Actor_FaceDirection(8, FACING_NORTHWEST + FACING_STEP, 40);
-  Actor_FaceDirection(8, FACING_NORTH + FACING_STEP, 40);
-  Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_WalkToAndWait(8, 164, 334);
-  Engine_ActorJump(8, 4, 40);
-  Engine_ActorStartRepeatedMotion(8, 2);
+  Actor_SetSpeed(ACTOR_LOOKOUT, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 321);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 334);
+  Engine_ActorJump(ACTOR_LOOKOUT, 4, 40);
+  Engine_ActorStartRepeatedMotion(ACTOR_LOOKOUT, 2);
   Engine_EventSetMessage(MsgTolbiShipShipsCourseClear);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_LOOKOUT, 0, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(10);
 }
 
-/// On the mast at entrance 11, the first attack: four monsters close in and
+/// On the mast at entrance 11, the first attack: three monsters close in and
 /// the lookout cries out. "Avast!"
 static void TolbiShipMast_RunAvastScene(void) {
   s32 *placement = ((struct MapScrollWork *)gMapWork[0])->origin;
@@ -379,69 +430,72 @@ static void TolbiShipMast_RunAvastScene(void) {
   Engine_TaskWait(1);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
-  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
   event = (struct EventWork **)(gMapWork + (HEAP_SLOT_EVENT - HEAP_SLOT_MAP));
   (*event)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  // Save the camera origin before the rotating approach effect begins.
+  // Save the camera origin before the sparkle begins to turn.
   Engine_EventWait(20);
   gTolbiShipMast_CameraOrigin[0] = *placement++;
   gTolbiShipMast_CameraOrigin[1] = *placement;
-  Actor_SetPosition(9, PIXELS(80), PIXELS(210));
+  Actor_SetPosition(ACTOR_SPARKLE, PIXELS(80), PIXELS(210));
   x = PIXELS(80);
-  Object_GetById(9)->motionFlags = zero;
+  Object_GetById(ACTOR_SPARKLE)->motionFlags = zero;
   gTolbiShipMast_CameraCenter[0] = x;
   gTolbiShipMast_CameraCenter[1] = zero;
-  Actor_SetActionScript(9, gTolbiShipMast_FollowCameraActions);
+  Actor_SetActionScript(ACTOR_SPARKLE, gTolbiShipMast_FollowCameraActions);
   Engine_EventWait(20);
   Engine_AudioPlayCue(MUS_029);
   Engine_GameFlagSet(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
-  Engine_ActorStop(8);
+  Engine_ActorStop(ACTOR_LOOKOUT);
   Engine_TaskWait(1);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
-  Engine_ActorFaceDirection(8, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT, 0);
+  Engine_ActorFaceDirection(ACTOR_LOOKOUT, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventSetMessage(MsgTolbiShipAvast);
-  Engine_EventShowMessageAndWait(8, 0, 10);
-  // Three trailing actors grow from half scale while converging on the mast.
-  Actor_SetPosition(10, x, PIXELS(210));
-  Actor_SetPosition(11, x, PIXELS(210));
-  Engine_ActorSetPosition(12, x, PIXELS(210));
-  Engine_ActorSetSpritePriority(10, 3);
-  Engine_ActorSetSpritePriority(11, 3);
-  Engine_ActorSetSpritePriority(12, 3);
-  Engine_ActorSetChildValue(10, 3);
-  Engine_ActorSetChildValue(11, 3);
-  Engine_ActorSetChildValue(12, 3);
-  // Grow the three trailing actors as they approach the lookout.
-  actor = Object_GetById(10);
+  Engine_EventShowMessageAndWait(ACTOR_LOOKOUT, 0, 10);
+  // The three monsters appear where the sparkle turned.
+  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER, x, PIXELS(210));
+  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 1, x, PIXELS(210));
+  Engine_ActorSetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 2, x, PIXELS(210));
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER, 3);
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 1, 3);
+  Engine_ActorSetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3);
+  Engine_ActorSetChildValue(ACTOR_FIRST_SIGHTED_MONSTER, 3);
+  Engine_ActorSetChildValue(ACTOR_FIRST_SIGHTED_MONSTER + 1, 3);
+  Engine_ActorSetChildValue(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3);
+  // Grow the three monsters from half size as they close in on the lookout.
+  actor = Object_GetById(ACTOR_FIRST_SIGHTED_MONSTER);
   scale = Q16_ONE / 2;
   update = TolbiShipMast_GrowActorScale;
   actor->scaleY = scale;
   actor->scaleX = scale;
   actor->update = update;
-  actor = Object_GetById(11);
+  actor = Object_GetById(ACTOR_FIRST_SIGHTED_MONSTER + 1);
   actor->scaleY = scale;
   actor->scaleX = scale;
   actor->update = update;
-  actor = Object_GetById(12);
+  actor = Object_GetById(ACTOR_FIRST_SIGHTED_MONSTER + 2);
   actor->scaleY = scale;
   actor->scaleX = scale;
   actor->update = update;
   Engine_TaskWait(1);
-  Actor_SetSpeed(10, 13 * PIXELS(1) / 25, 13 * PIXELS(1) / 50);
-  Actor_SetSpeed(11, 9 * PIXELS(1) / 20, 9 * PIXELS(1) / 40);
-  Actor_SetSpeed(12, 3 * PIXELS(1) / 5, 3 * PIXELS(1) / 10);
-  Actor_SetDestination(10, 128, 345);
-  Actor_SetDestination(11, 136, 330);
-  Engine_ActorSetDestination(12, 156, 340);
+  Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER, 13 * PIXELS(1) / 25,
+                 13 * PIXELS(1) / 50);
+  Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER + 1, 9 * PIXELS(1) / 20,
+                 9 * PIXELS(1) / 40);
+  Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3 * PIXELS(1) / 5,
+                 3 * PIXELS(1) / 10);
+  Actor_SetDestination(ACTOR_FIRST_SIGHTED_MONSTER, 128, 345);
+  Actor_SetDestination(ACTOR_FIRST_SIGHTED_MONSTER + 1, 136, 330);
+  Engine_ActorSetDestination(ACTOR_FIRST_SIGHTED_MONSTER + 2, 156, 340);
   Engine_EventWait(60);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Actor_WalkToAndWait(8, 164, 344);
-  Engine_ActorJump(8, 4, 10);
-  Engine_ActorJump(8, 6, 40);
-  Engine_ActorStartRepeatedMotion(8, 3);
-  Engine_EventShowMessageAndWait(8, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_LOOKOUT, 2);
+  Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
+  Engine_ActorJump(ACTOR_LOOKOUT, 4, 10);
+  Engine_ActorJump(ACTOR_LOOKOUT, 6, 40);
+  Engine_ActorStartRepeatedMotion(ACTOR_LOOKOUT, 3);
+  Engine_EventShowMessageAndWait(ACTOR_LOOKOUT, 0, 20);
   (*event)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
@@ -449,7 +503,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   Engine_EventEnd();
 }
 
-/// Clears the movement left by a drifting script before its staged approach.
+/// Clears the movement left by a bird's drifting script before it swoops.
 static inline void TolbiShipMast_StopDriftingActor(struct FieldActor *actor) {
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
@@ -458,60 +512,60 @@ static inline void TolbiShipMast_StopDriftingActor(struct FieldActor *actor) {
   actor->riseBaseY = 0;
 }
 
-/// Gives each of the seven approaching actors its own random drift and bob.
+/// Gives each of the seven birds its own random drift and bob.
 static inline void TolbiShipMast_InitializeDriftingGroup(void) {
-  TolbiShipMast_InitializeDriftingActor(9);
-  TolbiShipMast_InitializeDriftingActor(10);
-  TolbiShipMast_InitializeDriftingActor(11);
-  TolbiShipMast_InitializeDriftingActor(12);
-  TolbiShipMast_InitializeDriftingActor(13);
-  TolbiShipMast_InitializeDriftingActor(14);
-  TolbiShipMast_InitializeDriftingActor(15);
+  TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD);
+  TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD + 1);
+  TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD + 2);
+  TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD + 3);
+  TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD + 4);
+  TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD + 5);
+  TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD + 6);
 }
 
-/// Stops the drifting actions and gives the group its departure walking speed.
+/// Stops the birds' drifting actions and gives them their speed to fly off.
 static inline void TolbiShipMast_PrepareGroupDeparture(void) {
-  Engine_ActorStop(9);
-  Engine_ActorStop(10);
-  Engine_ActorStop(11);
-  Engine_ActorStop(12);
-  Engine_ActorStop(13);
-  Engine_ActorStop(14);
-  Engine_ActorStop(15);
-  Actor_SetSpeed(9, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(10, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(11, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(12, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(13, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(14, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(15, PIXELS(3), 3 * PIXELS(1) / 2);
+  Engine_ActorStop(ACTOR_FIRST_BIRD);
+  Engine_ActorStop(ACTOR_FIRST_BIRD + 1);
+  Engine_ActorStop(ACTOR_FIRST_BIRD + 2);
+  Engine_ActorStop(ACTOR_FIRST_BIRD + 3);
+  Engine_ActorStop(ACTOR_FIRST_BIRD + 4);
+  Engine_ActorStop(ACTOR_FIRST_BIRD + 5);
+  Engine_ActorStop(ACTOR_FIRST_BIRD + 6);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 1, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 2, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 3, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 4, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 5, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 6, PIXELS(3), 3 * PIXELS(1) / 2);
 }
 
-/// On the mast at entrance 12, the second attack: actor 9's approach repeats
-/// before the lookout reports monsters.
+/// On the mast at entrance 12, the second attack: a bird swoops at the lookout
+/// twice, and Sean cries out. "Monsters!"
 static void TolbiShipMast_ShowMonsters(void) {
   struct FieldActor *approachingActor;
   struct FieldActor *leader;
 
   Engine_EventBegin();
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(leader, 0);
   Engine_TaskWait(1);
   Event_CallWithLastActiveObjectId(gTolbiShipMast_EnsembleObjects);
   Engine_TaskWait(1);
   TolbiShipMast_InitializeDriftingGroup();
-  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(120);
-  // Repeat the foreground approach while the rest of the group keeps drifting.
-  approachingActor = Object_GetById(9);
-  Engine_ActorStop(9);
+  // The first bird swoops at the lookout twice while the rest keep drifting.
+  approachingActor = Object_GetById(ACTOR_FIRST_BIRD);
+  Engine_ActorStop(ACTOR_FIRST_BIRD);
   TolbiShipMast_StopDriftingActor(approachingActor);
   Engine_EventWait(20);
-  Actor_SetSpeed(9, PIXELS(8), PIXELS(4));
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(8), PIXELS(4));
   FieldObject_SetPosition(approachingActor, PIXELS(164), PIXELS(144),
                           PIXELS(321));
   FieldObject_WaitForMove(approachingActor);
@@ -522,23 +576,23 @@ static void TolbiShipMast_ShowMonsters(void) {
                           PIXELS(321));
   FieldObject_WaitForMove(approachingActor);
   FieldObject_SetPosition(approachingActor, PIXELS(144), 0, PIXELS(169));
-  Engine_ActorStop(8);
+  Engine_ActorStop(ACTOR_LOOKOUT);
   Engine_TaskWait(1);
-  Actor_FaceDirection(8, FACING_WEST, 0);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | 3, 60);
-  Actor_SetSpeed(9, PIXELS(2), PIXELS(1));
-  TolbiShipMast_InitializeDriftingActor(9);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | 3, 60);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(2), PIXELS(1));
+  TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD);
   Engine_EventWait(20);
-  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
   Engine_EventWait(120);
-  Engine_ActorStop(9);
+  Engine_ActorStop(ACTOR_FIRST_BIRD);
   TolbiShipMast_StopDriftingActor(approachingActor);
   Engine_EventWait(20);
-  Actor_SetSpeed(9, PIXELS(8), PIXELS(4));
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(8), PIXELS(4));
   FieldObject_SetPosition(approachingActor, PIXELS(164), PIXELS(144),
                           PIXELS(321));
   FieldObject_WaitForMove(approachingActor);
-  Actor_SetSpeed(9, PIXELS(5), 5 * PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(5), 5 * PIXELS(1) / 2);
   FieldObject_SetPosition(approachingActor, PIXELS(164), PIXELS(104),
                           PIXELS(321));
   FieldObject_WaitForMove(approachingActor);
@@ -552,23 +606,23 @@ static void TolbiShipMast_ShowMonsters(void) {
                           PIXELS(321));
   FieldObject_WaitForMove(approachingActor);
   Engine_ObjectSetPosition(approachingActor, PIXELS(144), 0, PIXELS(169));
-  Engine_ActorStop(8);
+  Engine_ActorStop(ACTOR_LOOKOUT);
   Engine_TaskWait(1);
-  Actor_FaceDirection(8, FACING_WEST, 0);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | 3, 60);
-  Actor_SetSpeed(9, PIXELS(2), PIXELS(1));
-  TolbiShipMast_InitializeDriftingActor(9);
-  // The lookout recognizes the approaching group and reports monsters.
-  Engine_ActorJump(8, 4, 20);
-  Engine_ActorJump(8, 6, 40);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | 3, 60);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(2), PIXELS(1));
+  TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD);
+  // The lookout jumps, the monsters' theme plays, and Sean cries out.
+  Engine_ActorJump(ACTOR_LOOKOUT, 4, 20);
+  Engine_ActorJump(ACTOR_LOOKOUT, 6, 40);
   Event_PlayCue(MUS_029);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Engine_EventSetMessage(MsgTolbiShipMonsters2);
-  Event_ShowMessageAndWait(16, 0, 20);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
-  Actor_WalkToAndWait(8, 164, 344);
+  Event_ShowMessageAndWait(ACTOR_SEAN, 0, 20);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT, 0);
+  Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
   Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_LOOKOUT, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(12);
@@ -598,8 +652,8 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   Actor_SetActionScript(actorId, gTolbiShipMast_DriftActions);
 }
 
-/// On the mast at entrance 13, the third attack: the drifting group moves
-/// aside, then the two landing actors are staged.
+/// On the mast at entrance 13, the third attack: the birds scatter, then
+/// ACTOR_LANDING_MONSTER drops in beside the lookout.
 static void TolbiShipMast_RunLandingSequence(void) {
   u32 frame;
   struct FieldActor *actor;
@@ -613,56 +667,58 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Event_CallWithLastActiveObjectId(gTolbiShipMast_LandingObjects);
   Engine_TaskWait(1);
   TolbiShipMast_InitializeDriftingGroup();
-  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(300);
   Event_PlayCue(SE_147);
   Engine_EventWait(100);
-  // Clear the approaching group from the foreground before the landing reveal.
+  // The birds fly off before the monster lands.
   TolbiShipMast_PrepareGroupDeparture();
-  Actor_SetDestination(9, 0, 100);
-  Actor_SetDestination(10, 60, 100);
-  Actor_SetDestination(11, 120, 100);
-  Actor_SetDestination(12, 180, 100);
-  Actor_SetDestination(13, 240, 100);
-  Actor_SetDestination(14, 320, 100);
-  Actor_SetDestination(15, 380, 100);
+  Actor_SetDestination(ACTOR_FIRST_BIRD, 0, 100);
+  Actor_SetDestination(ACTOR_FIRST_BIRD + 1, 60, 100);
+  Actor_SetDestination(ACTOR_FIRST_BIRD + 2, 120, 100);
+  Actor_SetDestination(ACTOR_FIRST_BIRD + 3, 180, 100);
+  Actor_SetDestination(ACTOR_FIRST_BIRD + 4, 240, 100);
+  Actor_SetDestination(ACTOR_FIRST_BIRD + 5, 320, 100);
+  Actor_SetDestination(ACTOR_FIRST_BIRD + 6, 380, 100);
   Engine_EventWait(40);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | 1, 0);
   Engine_EventWait(20);
-  Actor_SetPosition(9, 0, 0);
-  Actor_SetPosition(10, 0, 0);
-  Actor_SetPosition(11, 0, 0);
-  Actor_SetPosition(12, 0, 0);
-  Actor_SetPosition(13, 0, 0);
-  Actor_SetPosition(14, 0, 0);
-  Actor_SetPosition(15, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_BIRD, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_BIRD + 1, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_BIRD + 2, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_BIRD + 3, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_BIRD + 4, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_BIRD + 5, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_BIRD + 6, 0, 0);
   Engine_EventWait(100);
-  // Grow the first landing actor into view, then drop the second beside it.
-  actor = Object_GetById(18);
+  // ACTOR_LANDING_SPOT grows where the monster will land, then
+  // ACTOR_LANDING_MONSTER drops onto it.
+  actor = Object_GetById(ACTOR_LANDING_SPOT);
   actor->scaleX = Q16_ONE / 10;
   actor->scaleY = Q16_ONE / 10;
-  Actor_SetPosition(18, PIXELS(172), PIXELS(340));
-  Engine_ActorStop(8);
+  Actor_SetPosition(ACTOR_LANDING_SPOT, PIXELS(172), PIXELS(340));
+  Engine_ActorStop(ACTOR_LOOKOUT);
   Engine_TaskWait(1);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ActorRunRepeatedMotion(ACTOR_LOOKOUT, 1);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTHEAST + FACING_STEP, 0);
   Event_PlayCue(MUS_029);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
-  // Grow actor 18 over 32 frames before staging actor 17 beside it.
+  // ACTOR_LANDING_SPOT grows for 32 frames before ACTOR_LANDING_MONSTER is
+  // placed above it.
   for (frame = 0; frame < 32; frame++) {
     actor->scaleX += Q16_ONE / 20;
     actor->scaleY += Q16_ONE / 20;
     Engine_TaskWait(1);
   }
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | 1, 60);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Actor_WalkToAndWait(8, 168, 340);
-  Actor_WalkToAndWait(8, 200, 340);
-  Actor_FaceDirection(8, FACING_WEST, 0);
-  actor = Object_GetById(17);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | 1, 60);
+  Engine_ActorRunRepeatedMotion(ACTOR_LOOKOUT, 2);
+  Actor_WalkToAndWait(ACTOR_LOOKOUT, 168, 340);
+  Actor_WalkToAndWait(ACTOR_LOOKOUT, 200, 340);
+  Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);
+  actor = Object_GetById(ACTOR_LANDING_MONSTER);
   actor->scaleX = 23 * Q16_ONE / 20;
   actor->scaleY = 23 * Q16_ONE / 20;
   actor->x.fixed = PIXELS(172);
@@ -672,23 +728,24 @@ static void TolbiShipMast_RunLandingSequence(void) {
   actor->bounce = 2 * Q16_ONE / 5;
   actor->gravity = PIXELS(3);
   Engine_EventWait(20);
-  Engine_ActorJump(8, 6, 20);
+  Engine_ActorJump(ACTOR_LOOKOUT, 6, 20);
   Event_PlayCue(SE_147);
   Engine_EventWait(20);
-  Actor_SetActionScript(8, gTolbiShipMast_WaveActions);
+  Actor_SetActionScript(ACTOR_LOOKOUT, gTolbiShipMast_WaveActions);
   Engine_EventWait(80);
-  // Let the landing actor bounce, then move both actors out of the shot.
-  Engine_ActorSetSpritePriority(17, 1);
-  Actor_SetSpeed(17, PIXELS(1), PIXELS(1) / 2);
+  // Let the monster bounce, then move it and its landing spot out of the
+  // shot.
+  Engine_ActorSetSpritePriority(ACTOR_LANDING_MONSTER, 1);
+  Actor_SetSpeed(ACTOR_LANDING_MONSTER, PIXELS(1), PIXELS(1) / 2);
   actor->bounce = Q16_ONE / 10;
   actor->gravity = 7 * PIXELS(1) / 10;
   Event_PlayCue(SE_HIGH_JUMP);
   actor->velocityY = PIXELS(8);
-  Actor_SetDestination(17, 132, 360);
-  Actor_SetDestination(18, 132, 360);
+  Actor_SetDestination(ACTOR_LANDING_MONSTER, 132, 360);
+  Actor_SetDestination(ACTOR_LANDING_SPOT, 132, 360);
   Engine_EventWait(40);
-  Actor_SetPosition(17, 0, 0);
-  actor = Object_GetById(8);
+  Actor_SetPosition(ACTOR_LANDING_MONSTER, 0, 0);
+  actor = Object_GetById(ACTOR_LOOKOUT);
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
   actor->facing = FACING_SOUTH + FACING_STEP;
@@ -700,7 +757,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Engine_EventEnd();
 }
 
-/// On the mast at entrance 14: the seven actors walk away, then the lookout
+/// On the mast at entrance 14: the seven birds fly off, then the lookout
 /// announces land, and the rowing balance chooses the exit.
 static void TolbiShipMast_AnnounceLand(void) {
   Engine_EventBegin();
@@ -709,37 +766,37 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_CallWithLastActiveObjectId(gTolbiShipMast_EnsembleObjects);
   Engine_TaskWait(1);
   TolbiShipMast_InitializeDriftingGroup();
-  Actor_SetActionScript(8, gTolbiShipMast_LookoutActions);
+  Actor_SetActionScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(400);
-  // Each actor takes its own departure path while shrinking out of view.
+  // Each bird takes its own way off while shrinking out of view.
   TolbiShipMast_PrepareGroupDeparture();
-  Actor_SetActionScript(9, gTolbiShipMast_EnsembleWalk9);
-  Actor_SetActionScript(10, gTolbiShipMast_EnsembleWalk10);
-  Actor_SetActionScript(11, gTolbiShipMast_EnsembleWalk11);
-  Actor_SetActionScript(12, gTolbiShipMast_EnsembleWalk12);
-  Actor_SetActionScript(13, gTolbiShipMast_EnsembleWalk13);
-  Actor_SetActionScript(14, gTolbiShipMast_EnsembleWalk14);
-  Actor_SetActionScript(15, gTolbiShipMast_EnsembleWalk15);
+  Actor_SetActionScript(ACTOR_FIRST_BIRD, gTolbiShipMast_BirdDeparture0);
+  Actor_SetActionScript(ACTOR_FIRST_BIRD + 1, gTolbiShipMast_BirdDeparture1);
+  Actor_SetActionScript(ACTOR_FIRST_BIRD + 2, gTolbiShipMast_BirdDeparture2);
+  Actor_SetActionScript(ACTOR_FIRST_BIRD + 3, gTolbiShipMast_BirdDeparture3);
+  Actor_SetActionScript(ACTOR_FIRST_BIRD + 4, gTolbiShipMast_BirdDeparture4);
+  Actor_SetActionScript(ACTOR_FIRST_BIRD + 5, gTolbiShipMast_BirdDeparture5);
+  Actor_SetActionScript(ACTOR_FIRST_BIRD + 6, gTolbiShipMast_BirdDeparture6);
   Engine_EventWait(40);
-  Engine_ActorStartRepeatedMotion(8, 3);
-  Actor_SetAttachedEffect(8, 258);
+  Engine_ActorStartRepeatedMotion(ACTOR_LOOKOUT, 3);
+  Actor_SetAttachedEffect(ACTOR_LOOKOUT, 258);
   Engine_EventWait(120);
-  Engine_ActorStartRepeatedMotion(8, 1);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT, 60);
-  Actor_SetSpeed(8, PIXELS(1), PIXELS(1) / 2);
-  Actor_WalkToAndWait(8, 164, 344);
-  Engine_ActorJump(8, 4, 10);
-  Engine_ActorJump(8, 6, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_LOOKOUT, 1);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT, 60);
+  Actor_SetSpeed(ACTOR_LOOKOUT, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
+  Engine_ActorJump(ACTOR_LOOKOUT, 4, 10);
+  Engine_ActorJump(ACTOR_LOOKOUT, 6, 20);
   Engine_EventSetMessage(MsgTolbiShipLandHo);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_LOOKOUT, 0, 20);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  // The rowing balance picks where the ship comes in: exactly 11 takes exit
-  // 15, off course to the island.
+  // The rowing balance picks where the ship comes in: exactly 11 takes
+  // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH, off course to the island.
   gGameState.savedScene = (s32)&SceneId_TolbiShipInteriors;
   gGameState.savedEntrance = 2;
   if (TolbiShipMast_GetRowingBalance() == 11) {
@@ -849,7 +906,7 @@ s32 gTolbiShipMast_WaveActions[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gTolbiShipMast_EnsembleWalk9[] = {
+s32 gTolbiShipMast_BirdDeparture0[] = {
     SC_MOVE(PIXELS(72), 0, PIXELS(216)),
     SC_SYNC,
     SC_MOVE(PIXELS(152), 0, PIXELS(196)),
@@ -857,7 +914,7 @@ s32 gTolbiShipMast_EnsembleWalk9[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_EnsembleWalk10[] = {
+s32 gTolbiShipMast_BirdDeparture1[] = {
     SC_MOVE(PIXELS(132), 0, PIXELS(242)),
     SC_SYNC,
     SC_MOVE(PIXELS(152), 0, PIXELS(196)),
@@ -865,7 +922,7 @@ s32 gTolbiShipMast_EnsembleWalk10[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_EnsembleWalk11[] = {
+s32 gTolbiShipMast_BirdDeparture2[] = {
     SC_MOVE(PIXELS(88), 0, PIXELS(166)),
     SC_SYNC,
     SC_MOVE(PIXELS(152), 0, PIXELS(196)),
@@ -873,7 +930,7 @@ s32 gTolbiShipMast_EnsembleWalk11[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_EnsembleWalk12[] = {
+s32 gTolbiShipMast_BirdDeparture3[] = {
     SC_MOVE(PIXELS(220), 0, PIXELS(134)),
     SC_SYNC,
     SC_MOVE(PIXELS(152), 0, PIXELS(196)),
@@ -881,7 +938,7 @@ s32 gTolbiShipMast_EnsembleWalk12[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_EnsembleWalk13[] = {
+s32 gTolbiShipMast_BirdDeparture4[] = {
     SC_MOVE(PIXELS(264), 0, PIXELS(228)),
     SC_SYNC,
     SC_MOVE(PIXELS(152), 0, PIXELS(196)),
@@ -889,7 +946,7 @@ s32 gTolbiShipMast_EnsembleWalk13[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_EnsembleWalk14[] = {
+s32 gTolbiShipMast_BirdDeparture5[] = {
     SC_MOVE(PIXELS(282), 0, PIXELS(168)),
     SC_SYNC,
     SC_MOVE(PIXELS(152), 0, PIXELS(196)),
@@ -898,7 +955,7 @@ s32 gTolbiShipMast_EnsembleWalk14[] = {
 };
 
 // clang-format off
-u32 gTolbiShipMast_EnsembleWalk15[] = {
+u32 gTolbiShipMast_BirdDeparture6[] = {
     SC_MOVE(PIXELS(154), 0, PIXELS(135)),
     SC_SYNC,
     SC_MOVE(PIXELS(152), 0, PIXELS(196)),
@@ -985,18 +1042,18 @@ struct ScenePlacement gTolbiShipMast_LandingObjects[] = {
 
 struct SceneEvent gTolbiShipMast_Events[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipMast_ClimbDownLadder) },
-    { EVENT_TALK, 8, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
-    { EVENT_TALK, 8, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandMonstersUnknown) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipSeaTooVast) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandTreasures) },
+    { EVENT_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
+    { EVENT_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
+    { EVENT_TALK, ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandMonstersUnknown) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipSeaTooVast) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandTreasures) },
     { SEARCH(SEARCH_UNNAMED), 11, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT_SCRIPT(TolbiShipMast_FindAnchorCharm) },
     { SCENE_EVENTS_END },
 };
 
-/// Each passenger's rowing value, in the order of their actors in the hold
-/// from 8.
+/// Each passenger's rowing value, in the order of enum TolbiShipPassenger
+/// (tolbi_ship_interiors.c).
 u32 gTolbiShipMast_PassengerRowValues[] = {
     7, 5, 8, 4, 9, 12, 6, 3,
     0,

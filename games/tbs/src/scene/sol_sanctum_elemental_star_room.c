@@ -6,18 +6,18 @@
 /// stars at his cottage, had been there; here the two take the stars, and Jenna
 /// and Kraden with them.
 ///
-/// - Arriving (entrance 10) the first time
-///   (SolSanctumElementalStarRoom_EnterStarRoom), Isaac appears in a glow,
-///   Garet and Jenna step out of him, and Kraden follows: `They really exist...
-///   The Elemental Stars exist!` He explains the four elements, earth, water,
-///   fire and wind, and the stars that hold their purified essence, shows each
-///   pedestal in turn, the Venus, Mercury, Mars and Jupiter Stars, and speaks
-///   of the Wisdom Stone and the power of a single gem. The floor is too
-///   slippery for him, so Jenna has Isaac and Garet fetch the stars, and Kraden
-///   gives them four Mythril Bags he brought from his cottage
-///   (FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED). Walking north into cell code 1,
-///   back the way they came, has Kraden call them back: `There aren't any
-///   Elemental Stars out there!`
+/// - Arriving (SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS)
+///   the first time (SolSanctumElementalStarRoom_EnterStarRoom), Isaac appears
+///   in a glow, Garet and Jenna step out of him, and Kraden follows: `They
+///   really exist... The Elemental Stars exist!` He explains the four
+///   elements, earth, water, fire and wind, and the stars that hold their
+///   purified essence, shows each pedestal in turn, the Venus, Mercury, Mars
+///   and Jupiter Stars, and speaks of the Wisdom Stone and the power of a
+///   single gem. The floor is too slippery for him, so Jenna has Isaac and
+///   Garet fetch the stars, and Kraden gives them four Mythril Bags he brought
+///   from his cottage (FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED). Walking north
+///   into cell code 1, back the way they came, has Kraden call them back:
+///   `There aren't any Elemental Stars out there!`
 /// - Searching a pedestal (cell codes 2 to 5) flashes and shakes the room and
 ///   opens new crossings between the pedestals, and the star goes into a
 ///   Mythril Bag. The Venus Star (FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) and the
@@ -34,9 +34,9 @@
 ///   From then on the captors stand round Jenna and Kraden, and each has a word
 ///   about the last star when spoken to.
 /// - Searching the Mars Star's pedestal, the last, bags it, and the room quakes
-///   until the scene cuts to the chamber's collapse (Event_TakeMarsStar, exit 2
-///   to scene 18, sol_sanctum_eruption.c), which sets
-///   FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED.
+///   until the scene cuts to the chamber's collapse (Event_TakeMarsStar, by
+///   SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION to scene 18,
+///   sol_sanctum_eruption.c), which sets FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED.
 ///
 /// Each pedestal's search row lasts until its own flag is set, so a star is
 /// taken once. On every entry SolSanctumElementalStarRoom_Initialize redraws
@@ -100,6 +100,9 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void);
 static void SolSanctumElementalStarRoom_AnimateAlexTeleport(void);
 
+/// The placed actors, numbered in the order of
+/// gSolSanctumElementalStarRoom_Placements; Garet and Jenna, placed first,
+/// keep their own slots.
 enum StarRoomActor {
   ACTOR_TELEPORT_GLOW = ACTOR_FIRST_PLACED,
   ACTOR_KRADEN,
@@ -107,7 +110,11 @@ enum StarRoomActor {
   ACTOR_MENARDI,
   ACTOR_FELIX_MASKED,
   ACTOR_FELIX,
-  ACTOR_ALEX
+  ACTOR_ALEX,
+  /// The first of the ten lights that float about the room, all sprite 0x11f
+  /// (SolSanctum_StartFloatingLights).
+  ACTOR_FIRST_FLOATING_LIGHT,
+  ACTOR_LAST_FLOATING_LIGHT = ACTOR_FIRST_FLOATING_LIGHT + 9
 };
 
 #define NULL ((void *)0)
@@ -640,7 +647,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     SolSanctumElementalStarRoom_SkipMessages(1);
   }
-  BattlePres_RunActionThenWaitIfModeZero(9, 0, 20);
+  BattlePres_RunActionThenWaitIfModeZero(ACTOR_KRADEN, 0, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_CameraMoveTo(PIXELS(477), -1, PIXELS(334), 0);
@@ -1189,7 +1196,8 @@ static void SolSanctumElementalStarRoom_LineUpFollowers(void) {
 
 /// Elemental Star Room: searching the Mars Star's pedestal (cell code 5), until
 /// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED is set. Isaac bags the last star, and
-/// the room quakes until the scene cuts away by exit 2 to the chamber's
+/// the room quakes until the scene cuts away by
+/// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION to the chamber's
 /// collapse (scene 18).
 static void Event_TakeMarsStar(void) {
   u8 pass;
@@ -1366,8 +1374,9 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
 /// Elemental Star Room, the first arrival: Isaac appears, Garet and Jenna step
 /// out, Kraden follows, explains the Elemental Stars at the four pedestals, and
 /// gives out the Mythril Bags. Called by SolSanctumElementalStarRoom_Initialize
-/// at entrance 10 until FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED is set, which it
-/// sets; clears FLAG_SHOW_LOCATION_NAME.
+/// at SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS until
+/// FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED is set, which it sets; clears
+/// FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   u16 i;
   u8 *leaderMotion;
@@ -2030,19 +2039,21 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 /// Sets up the Elemental Star Room: Retreat is blocked, the floating lights
 /// start, the crossings of each bagged star are redrawn, Kraden and Jenna stand
 /// where the explanation left them, the captors line up once Alex holds the
-/// stars, and the first arrival at entrance 10 plays its scene.
+/// stars, and the first arrival by
+/// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS plays its
+/// scene.
 s32 SolSanctumElementalStarRoom_Initialize(void) {
   s32 ringActor;
 
   Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
   // Retreat does not work here (flag 0x144).
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-  ringActor = 15;
+  ringActor = ACTOR_FIRST_FLOATING_LIGHT;
   do {
     Object_GetById(ringActor)->collisionFlags = 0;
     Engine_ActorSetSpritePriority(ringActor++, 1);
-  } while ((u32)ringActor <= 24);
-  SolSanctum_StartFloatingLights(15, 16);
+  } while ((u32)ringActor <= ACTOR_LAST_FLOATING_LIGHT);
+  SolSanctum_StartFloatingLights(ACTOR_FIRST_FLOATING_LIGHT, 16);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
     Actor_SetPosition(ACTOR_KRADEN, PIXELS(456), PIXELS(360));
     Actor_SetPosition(JENNA, PIXELS(440), PIXELS(346));
@@ -2333,17 +2344,17 @@ struct ScenePlacement gSolSanctumElementalStarRoom_Placements[] = {
 };
 
 struct SceneEvent gSolSanctumElementalStarRoom_Events[] = {
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKraden) },
-    { EVENT_TALK, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToJenna) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToSaturos) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMenardi) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToFelix) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToAlex) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgSolSanctumKradenIAmResponsible) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToJenna) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgSolSanctumSaturosBringTheFinalStar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMenardi) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSolSanctumAlexOnlyOneLeft) },
+    { EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKraden) },
+    { EVENT_TALK, JENNA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToJenna) },
+    { EVENT_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToSaturos) },
+    { EVENT_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMenardi) },
+    { EVENT_TALK, ACTOR_FELIX, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToFelix) },
+    { EVENT_TALK, ACTOR_ALEX, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToAlex) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KRADEN, CONDITION_ALWAYS, MSGNO(MsgSolSanctumKradenIAmResponsible) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), JENNA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToJenna) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgSolSanctumSaturosBringTheFinalStar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MENARDI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMenardi) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ALEX, CONDITION_ALWAYS, MSGNO(MsgSolSanctumAlexOnlyOneLeft) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_KradenStopsPartyLeaving) },
     { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },

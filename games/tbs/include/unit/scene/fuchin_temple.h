@@ -29,10 +29,10 @@ extern struct SceneEntrance gFuchinTempleEntrancesOther[];
 extern u32 gFuchinTempleExits[];
 extern struct ScenePlacement gFuchinTemplePlacements1[];
 extern struct ScenePlacement gFuchinTemplePlacements[];
-extern struct ScenePlacement gFuchinTemplePlacementsEntrance3[];
+extern struct ScenePlacement gFuchinTemplePlacementsFromLamaTemple[];
 extern struct SceneEvent gFuchinTempleEvents1[];
 extern struct SceneEvent gFuchinTempleEvents[];
-extern struct SceneEvent gFuchinTempleEventsEntrance3[];
+extern struct SceneEvent gFuchinTempleEventsFromLamaTemple[];
 extern s32 gFuchinTemple_ShotScript[];
 
 #endif

@@ -28,7 +28,7 @@
 /// ripple, which Reveal stops while it shows the scene. Arriving by entrance
 /// 99, which the entrance table does not list, first gives the leader the
 /// Black Orb (XXX: what arrives that way is not known). Stepping back on cell
-/// code 1 (LeaveTheShip) takes exit 1, back to Lalivero (LaliveroInteriors2,
+/// code 1 (LeaveTheShip) takes exit 1, back to Lalivero (LaliveroFaransHouse,
 /// scene 180, entrance 31).
 
 #include "script.h"
@@ -976,15 +976,15 @@ s16 gRippleSine[256] = {
 
 struct SceneEntrance gLemurianShipEntrances[] = {
     {0, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {LEMURIAN_SHIP_FROM_LALIVERO_INTERIORS_2, CONDITION_ALWAYS, 312, 0, 296,
+    {LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE, CONDITION_ALWAYS, 312, 0, 296,
      FACING_NORTH, 0, -1, -1, -1, 328, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gLemurianShipExits[] = {
     SCENE_EXITS(LemurianShip),
-    SCENE_EXIT(LEMURIAN_SHIP_TO_LALIVERO_INTERIORS_2, LaliveroInteriors2,
-               LALIVERO_INTERIORS_2_FROM_LEMURIAN_SHIP),
+    SCENE_EXIT(LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE, LaliveroFaransHouse,
+               LALIVERO_FARANS_HOUSE_FROM_LEMURIAN_SHIP),
     SCENE_EXITS_END,
 };
 

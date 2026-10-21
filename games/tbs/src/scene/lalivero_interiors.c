@@ -11,21 +11,23 @@
 /// "after" tables: the people speak of the rough seas since the beacon was lit
 /// and of the search for Sheba, who fell from the lighthouse into the sea.
 ///
-/// - LaliveroInteriors1 (scene 179): the houses, three shops and the Sanctum,
+/// - LaliveroShops (scene 179): the houses, three shops and the Sanctum,
 ///   whose area name is Lalivero Sanctum by
-///   LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTHEAST and ENTRANCE_SANCTUM. The
+///   LALIVERO_SHOPS_FROM_LALIVERO_NORTHEAST and LALIVERO_SHOPS_SANCTUM. The
 ///   weapon, armor and item merchants trade across their counters and the
 ///   priest offers the Sanctum's services; entering the Sanctum by
-///   ENTRANCE_SANCTUM makes it the place a defeated party wakes. Barrels hold a
-///   Lucky Medal and an Antidote. The doors lead back out into Lalivero
+///   LALIVERO_SHOPS_SANCTUM makes it the place a defeated party wakes. Barrels
+///   hold a Lucky Medal and an Antidote. The doors lead back out into Lalivero
 ///   (lalivero.c, scene 178).
-/// - LaliveroInteriors2 (scene 180): Faran's house, the inn, and the way out to
+/// - LaliveroFaransHouse (scene 180): Faran's house, the inn, and the way out
+/// to
 ///   the edge of town where Babi's ship lies
-///   (LALIVERO_INTERIORS_2_TO_LEMURIAN_SHIP, to
-///   LEMURIAN_SHIP_FROM_LALIVERO_INTERIORS_2). Before Venus Lighthouse, Faran's
-///   household waits for news, and a maid too worried about Sheba to work
-///   apologizes once (FLAG_MAID_APOLOGIZED) and goes back to her chores. Back
-///   from the lighthouse, ENTRANCE_REPORT_TO_FARAN runs the report
+///   (LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP, to
+///   LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE). Before Venus Lighthouse,
+///   Faran's household waits for news, and a maid too worried about Sheba to
+///   work apologizes once (FLAG_MAID_APOLOGIZED) and goes back to her chores.
+///   Back from the lighthouse,
+///   LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE runs the report
 ///   (ReportToFaran): Faran and Iodem have found no sign of Sheba; the party
 ///   tells what became of Jenna and the others, in one of two versions by
 ///   whether they saw the ship from the lighthouse
@@ -66,11 +68,7 @@
 static void TellFaranAboutJenna(void);
 
 enum {
-  /// Stepping into the sanctum makes it where a defeated party wakes.
-  ENTRANCE_SANCTUM = 12,
   ENTRANCE_FROM_AERIE = 90,
-  /// Back from Venus Lighthouse: the party is led straight to Faran.
-  ENTRANCE_REPORT_TO_FARAN = 99
 };
 
 /// The shops' stock rows, whose type column in sStockTable says they sell
@@ -85,38 +83,38 @@ enum {
 /// The actors of both scenes, numbered by the rows of each scene's placement
 /// tables. The villagers are named by what they say before Venus Lighthouse.
 enum LaliveroInteriorsActor {
-  // The houses, the shops and the Sanctum (LaliveroInteriors1).
-  /// In the house at LALIVERO_INTERIORS_1_FROM_LALIVERO_WEST. "Of course I
+  // The houses, the shops and the Sanctum (LaliveroShops).
+  /// In the house at LALIVERO_SHOPS_FROM_LALIVERO_WEST. "Of course I
   /// have seen Sheba's power... It's incredible!"
   ACTOR_VILLAGER_SAW_SHEBAS_POWER = ACTOR_FIRST_PLACED,
   /// In the same house. "There are some who do not believe Sheba has any
   /// powers... Doubting Sheba? That is foolish!"
   ACTOR_VILLAGER_DEFENDING_SHEBA,
-  /// In the house at LALIVERO_INTERIORS_1_FROM_LALIVERO_SOUTHEAST. "Could Faran
+  /// In the house at LALIVERO_SHOPS_FROM_LALIVERO_SOUTHEAST. "Could Faran
   /// have tricked us all?"
   ACTOR_VILLAGER_DOUBTING_FARAN,
   /// In the same house. "If Sheba can't use her powers in a time like this,
   /// they're useless!"
   ACTOR_VILLAGER_DOUBTING_SHEBA,
-  /// In the room reached from the house at
-  /// LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTH. "Sheba came flying to the ruins
+  /// Upstairs in the item shop at
+  /// LALIVERO_SHOPS_FROM_LALIVERO_NORTH. "Sheba came flying to the ruins
   /// like a shooting star."
   ACTOR_VILLAGER_SHOOTING_STAR,
   /// In the same room. "Even Sheba couldn't have escaped six of them..."
   ACTOR_VILLAGER_SIX_CAPTORS,
-  /// In the house at LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTHWEST. "They say a
+  /// In the house at LALIVERO_SHOPS_FROM_LALIVERO_NORTHWEST. "They say a
   /// man named Iodem is coming from Tolbi. I guess he plans to make us do even
   /// more work!"
   ACTOR_WORKER,
-  /// In the room reached from that house, posed in animation 6. "No one's
+  /// Upstairs in that house, posed in animation 6. "No one's
   /// called me, so maybe I'll take a nap..."; after Venus Lighthouse, Mind Read
   /// hears "I'm worried that we won't get paid now that the construction has
   /// ended."
   ACTOR_NAPPING_WORKER,
-  /// In the house at LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTHWEST. "Sheba said
+  /// In the house at LALIVERO_SHOPS_FROM_LALIVERO_NORTHWEST. "Sheba said
   /// the cave at the ruins leads to the southeast."
   ACTOR_VILLAGER_RUINS_CAVE,
-  /// Walks about the room reached from that house. "The ruins that form the
+  /// Walks about the room upstairs in that house. "The ruins that form the
   /// lighthouse foundation are riddled with caves."
   ACTOR_VILLAGER_RUINS_RIDDLE,
   ACTOR_WEAPON_MERCHANT,
@@ -124,7 +122,7 @@ enum LaliveroInteriorsActor {
   ACTOR_ITEM_MERCHANT,
   ACTOR_PRIEST,
 
-  // Faran's house and the inn (LaliveroInteriors2).
+  // Faran's house and the inn (LaliveroFaransHouse).
   /// Faran's wife, who raised Sheba. "We received Sheba from the sky and
   /// raised her lovingly... I know Faran will rescue that child."
   ACTOR_FARANS_WIFE = ACTOR_FIRST_PLACED,
@@ -138,7 +136,7 @@ enum LaliveroInteriorsActor {
   ACTOR_IODEM, ///< placed off the map before Venus Lighthouse
   ACTOR_INNKEEPER,
   ACTOR_MAID,
-  /// Walks about the room reached through the inn. After Venus Lighthouse:
+  /// Walks about the hall upstairs in the inn. After Venus Lighthouse:
   /// "Fishing is so difficult nowadays because the ocean is so rough. We have
   /// little to cook when we can't fish."
   ACTOR_COOK
@@ -152,7 +150,7 @@ enum { FLAG_MAID_APOLOGIZED = 0x300 };
 /// party talks across it.
 #define ACTOR_BEHIND_COUNTER 4
 
-/// LaliveroInteriors2: the maid sighs between chores.
+/// LaliveroFaransHouse: the maid sighs between chores.
 static s32 Maid_Sigh(struct ScriptInterpreter *interpreter) {
   Actor_SetAttachedEffect(ACTOR_MAID, EMOTE_IN_FRONT | 2);
   return 0;
@@ -163,7 +161,7 @@ const struct SceneEntrance *LaliveroInteriors_GetEntrances(void) {
 }
 
 const struct SceneRegion *LaliveroInteriors_GetRegions(void) {
-  if (gGameState.scene == (s32)&SceneId_LaliveroInteriors1) {
+  if (gGameState.scene == (s32)&SceneId_LaliveroShops) {
     return gLaliveroSanctumRegions;
   }
   return gLaliveroRegions;
@@ -173,7 +171,7 @@ const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroExits; }
 
 /// The people of each scene; Faran's house fills up after Venus Lighthouse.
 const struct ScenePlacement *LaliveroInteriors_GetPlacements(void) {
-  if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
+  if (gGameState.scene == (s32)&SceneId_LaliveroFaransHouse) {
     // Faran's house and the inn.
     if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
       return gFaranHousePlacementsAfterLighthouse;
@@ -190,7 +188,7 @@ static inline u16 Leader_GetSide(void) {
   return (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 }
 
-/// Lalivero (LaliveroInteriors1): across the counter, the weapon shop; from
+/// Lalivero (LaliveroShops): across the counter, the weapon shop; from
 /// elsewhere, before Venus Lighthouse, they ask whether the party has heard
 /// that Sheba was taken hostage and Faran went after her, and after it tell of
 /// the rough sea.
@@ -220,7 +218,7 @@ static void TalkToWeaponMerchant(s32 keeper) {
   }
 }
 
-/// Lalivero (LaliveroInteriors1): the armor shop across the counter; otherwise
+/// Lalivero (LaliveroShops): the armor shop across the counter; otherwise
 /// small talk.
 static void TalkToArmorMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
@@ -234,7 +232,7 @@ static void TalkToArmorMerchant(s32 keeper) {
   }
 }
 
-/// Lalivero (LaliveroInteriors1): the item shop across the counter; otherwise
+/// Lalivero (LaliveroShops): the item shop across the counter; otherwise
 /// small talk.
 static void TalkToItemMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
@@ -262,7 +260,7 @@ static void TalkToPriest(s32 priest) {
   }
 }
 
-/// Lalivero (LaliveroInteriors2), the inn: a room for the night across the
+/// Lalivero (LaliveroFaransHouse), the inn: a room for the night across the
 /// counter; otherwise small talk.
 static void TalkToInnkeeper(s32 innkeeper) {
   if (Leader_GetSide() == FACING_NORTH) {
@@ -276,7 +274,7 @@ static void TalkToInnkeeper(s32 innkeeper) {
   }
 }
 
-/// Lalivero (LaliveroInteriors2), before Venus Lighthouse: the maid stops her
+/// Lalivero (LaliveroFaransHouse), before Venus Lighthouse: the maid stops her
 /// chores to apologize: worry for Sheba keeps her from concentrating. A leader
 /// standing west of her steps aside to the south before she starts again.
 static void TalkToMaid(void) {
@@ -312,7 +310,7 @@ static void TalkToMaid(void) {
   Engine_EventEnd();
 }
 
-/// Lalivero (LaliveroInteriors2), trigger 51 in Faran's house after the
+/// Lalivero (LaliveroFaransHouse), trigger 51 in Faran's house after the
 /// report: the camera finds Iodem, who asks the party to wait for him outside.
 static void IodemCallsOut(void) {
 
@@ -333,7 +331,7 @@ static void IodemCallsOut(void) {
   Engine_EventEnd();
 }
 
-/// Lalivero (LaliveroInteriors2): Iodem, talked to before he has given the
+/// Lalivero (LaliveroFaransHouse): Iodem, talked to before he has given the
 /// Black Orb, repeats his request.
 static void TalkToIodem(void) {
 
@@ -355,7 +353,7 @@ static void LeaveBuilding(void) {
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
 const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
-  if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
+  if (gGameState.scene == (s32)&SceneId_LaliveroFaransHouse) {
     if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
       return gFaranHouseEventsAfterLighthouse;
     }
@@ -367,7 +365,8 @@ const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
   return gLaliveroEvents;
 }
 
-/// Lalivero (LaliveroInteriors2), ENTRANCE_REPORT_TO_FARAN back from Venus
+/// Lalivero (LaliveroFaransHouse),
+/// LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE back from Venus
 /// Lighthouse: the party reports to Faran and Iodem. No sign of Sheba, nor of
 /// Jenna and the others; Faran's faith that Sheba lived, what an Adept is, and
 /// a farewell as the party sets out to search for Jenna.
@@ -781,7 +780,7 @@ s32 Scene_Initialize(void) {
   }
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   scene = gGameState.scene;
-  if (scene == (s32)&SceneId_LaliveroInteriors1) {
+  if (scene == (s32)&SceneId_LaliveroShops) {
     // The shops and the sanctum.
     actor = Object_GetById(ACTOR_ITEM_MERCHANT);
     actor->priorityFlags = 0;
@@ -797,12 +796,12 @@ s32 Scene_Initialize(void) {
     actor->sprite->image.priority = 2;
     Engine_ActorSetAnimation(ACTOR_NAPPING_WORKER, 6);
     entrance = gGameState.entrance;
-    if (entrance == ENTRANCE_SANCTUM) {
+    if (entrance == LALIVERO_SHOPS_SANCTUM) {
       gGameState.savedScene = scene;
       gGameState.savedEntrance = entrance;
     }
   }
-  if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
+  if (gGameState.scene == (s32)&SceneId_LaliveroFaransHouse) {
     actor = Object_GetById(ACTOR_INNKEEPER);
     actor->collisionFlags |= ACTOR_BEHIND_COUNTER;
     actor->priorityFlags = 0;
@@ -810,12 +809,13 @@ s32 Scene_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_MAID_APOLOGIZED) != 0) {
       Actor_SetActionScript(ACTOR_MAID, gLaliveroMaidChores);
     }
-    if (gGameState.entrance == ENTRANCE_REPORT_TO_FARAN) {
+    if (gGameState.entrance ==
+        LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE) {
       ReportToFaran();
       // Iodem and Faran stay, with behavior 6 as in their later placements.
       Engine_ActorSetActionCallback(Object_GetById(ACTOR_IODEM), 6);
       Engine_ActorSetActionCallback(Object_GetById(ACTOR_FARAN), 6);
-      gGameState.entrance = LALIVERO_INTERIORS_2_FROM_LALIVERO_SOUTHWEST;
+      gGameState.entrance = LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTHWEST;
     }
   }
   return 0;
@@ -858,31 +858,31 @@ s32 gLaliveroMaidChores[] = {
 };
 
 struct SceneEntrance gLaliveroEntrances[] = {
-    {LALIVERO_INTERIORS_1_FROM_LALIVERO_WEST, CONDITION_ALWAYS, 144, 0, 168,
+    {LALIVERO_SHOPS_FROM_LALIVERO_WEST, CONDITION_ALWAYS, 144, 0, 168,
      FACING_NORTH, 0, 0, 8, 240, 192, 0},
-    {LALIVERO_INTERIORS_1_FROM_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, 400, 0,
-     168, FACING_NORTH, 0, 256, 8, 496, 192, 0},
+    {LALIVERO_SHOPS_FROM_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, 400, 0, 168,
+     FACING_NORTH, 0, 256, 8, 496, 192, 0},
     {3, CONDITION_ALWAYS, 648, 0, 72, FACING_NORTH, 0, 488, 8, 728, 184, 0},
-    {LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTH, CONDITION_ALWAYS, 128, 0, 472,
+    {LALIVERO_SHOPS_FROM_LALIVERO_NORTH, CONDITION_ALWAYS, 128, 0, 472,
      FACING_NORTH, 0, 0, 216, 240, 488, 0},
     {5, CONDITION_ALWAYS, 136, 0, 296, FACING_SOUTH, 0, 0, 216, 240, 488, 0},
-    {LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 368, 0,
-     472, FACING_NORTH, 0, 240, 216, 480, 488, 0},
+    {LALIVERO_SHOPS_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 368, 0, 472,
+     FACING_NORTH, 0, 240, 216, 480, 488, 0},
     {7, CONDITION_ALWAYS, 392, 0, 296, FACING_SOUTH, 0, 240, 216, 480, 488, 0},
     {8, CONDITION_ALWAYS, 648, 0, 280, FACING_NORTH, 0, 480, 216, 720, 488, 0},
-    {LALIVERO_INTERIORS_1_FROM_LALIVERO_SOUTH, CONDITION_ALWAYS, 96, 0, 680,
+    {LALIVERO_SHOPS_FROM_LALIVERO_SOUTH, CONDITION_ALWAYS, 96, 0, 680,
      FACING_NORTH, 0, 8, 520, 312, 696, 0},
-    {LALIVERO_INTERIORS_1_FROM_LALIVERO_EAST_SOUTHEAST, CONDITION_ALWAYS, 200,
-     0, 600, FACING_SOUTH, 0, 8, 520, 312, 696, 0},
-    {LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 432, 0,
-     728, FACING_NORTH, 0, 312, 520, 552, 744, 0},
-    {ENTRANCE_SANCTUM, CONDITION_ALWAYS, 432, 0, 630, FACING_NORTH, 0, 312, 520,
-     552, 744, 0},
-    {LALIVERO_INTERIORS_2_FROM_LALIVERO_SOUTHWEST, CONDITION_ALWAYS, 96, 0, 168,
-     FACING_NORTH, 0, 8, 8, 312, 192, 0},
-    {LALIVERO_INTERIORS_2_FROM_LALIVERO_SOUTH, CONDITION_ALWAYS, 216, 0, 88,
+    {LALIVERO_SHOPS_FROM_LALIVERO_EAST_SOUTHEAST, CONDITION_ALWAYS, 200, 0, 600,
+     FACING_SOUTH, 0, 8, 520, 312, 696, 0},
+    {LALIVERO_SHOPS_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 432, 0, 728,
+     FACING_NORTH, 0, 312, 520, 552, 744, 0},
+    {LALIVERO_SHOPS_SANCTUM, CONDITION_ALWAYS, 432, 0, 630, FACING_NORTH, 0,
+     312, 520, 552, 744, 0},
+    {LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTHWEST, CONDITION_ALWAYS, 96, 0,
+     168, FACING_NORTH, 0, 8, 8, 312, 192, 0},
+    {LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTH, CONDITION_ALWAYS, 216, 0, 88,
      FACING_SOUTH, 0, 8, 8, 312, 192, 0},
-    {LALIVERO_INTERIORS_2_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 224, 0,
+    {LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 224, 0,
      392, FACING_NORTH, 0, 8, 232, 312, 416, 0},
     {24, CONDITION_ALWAYS, 88, 0, 312, FACING_SOUTH, 0, 8, 232, 312, 416, 0},
     {25, CONDITION_ALWAYS, 384, 0, 368, FACING_NORTH, 0, 320, 240, 632, 400, 0},
@@ -890,12 +890,12 @@ struct SceneEntrance gLaliveroEntrances[] = {
     {27, CONDITION_ALWAYS, 504, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
     {28, CONDITION_ALWAYS, 472, 0, 72, FACING_SOUTH, 0, 344, 8, 584, 168, 0},
     {29, CONDITION_ALWAYS, 744, 0, 72, FACING_SOUTH, 0, 632, 8, 872, 168, 0},
-    {LALIVERO_INTERIORS_2_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 832, 0,
+    {LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 832, 0,
      872, FACING_NORTH, 0, 280, 504, 912, 896, 0},
-    {LALIVERO_INTERIORS_2_FROM_LEMURIAN_SHIP, CONDITION_ALWAYS, 464, 0, 832,
+    {LALIVERO_FARANS_HOUSE_FROM_LEMURIAN_SHIP, CONDITION_ALWAYS, 464, 0, 832,
      FACING_SOUTH, 0, 280, 504, 912, 896, 0},
-    {ENTRANCE_REPORT_TO_FARAN, CONDITION_ALWAYS, 96, 0, 168, FACING_NORTH, 0, 8,
-     8, 312, 192, 0},
+    {LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE, CONDITION_ALWAYS, 96, 0,
+     168, FACING_NORTH, 0, 8, 8, 312, 192, 0},
     {SCENE_TABLE_END},
 };
 
@@ -911,30 +911,30 @@ struct SceneRegion gLaliveroRegions[] = {
 };
 
 u32 gLaliveroExits[] = {
-    SCENE_EXITS(LaliveroInteriors1),
-    SCENE_EXIT(LALIVERO_INTERIORS_1_TO_LALIVERO_WEST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_1_WEST),
-    SCENE_EXIT(LALIVERO_INTERIORS_1_TO_LALIVERO_SOUTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_1_SOUTHEAST),
-    SCENE_EXIT(3, LaliveroInteriors1, 5),
-    SCENE_EXIT(LALIVERO_INTERIORS_1_TO_LALIVERO_NORTH, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_1_NORTH),
-    SCENE_EXIT(5, LaliveroInteriors1, 3),
-    SCENE_EXIT(LALIVERO_INTERIORS_1_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_1_NORTHWEST),
-    SCENE_EXIT(7, LaliveroInteriors1, 8),
-    SCENE_EXIT(8, LaliveroInteriors1, 7),
-    SCENE_EXIT(LALIVERO_INTERIORS_1_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_1_SOUTH),
-    SCENE_EXIT(LALIVERO_INTERIORS_1_TO_LALIVERO_EAST_SOUTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_1_EAST_SOUTHEAST),
-    SCENE_EXIT(LALIVERO_INTERIORS_1_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_1_NORTHEAST),
-    SCENE_EXITS(LaliveroInteriors2),
-    SCENE_EXIT(LALIVERO_INTERIORS_2_TO_LALIVERO_SOUTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_2_SOUTHWEST),
-    SCENE_EXIT(LALIVERO_INTERIORS_2_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_2_SOUTH),
-    SCENE_EXIT(LALIVERO_INTERIORS_2_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_2_NORTHEAST),
-    SCENE_EXIT(24, LaliveroInteriors2, 25),
-    SCENE_EXIT(25, LaliveroInteriors2, 24),
-    SCENE_EXIT(26, LaliveroInteriors2, 28),
-    SCENE_EXIT(27, LaliveroInteriors2, 29),
-    SCENE_EXIT(28, LaliveroInteriors2, 26),
-    SCENE_EXIT(29, LaliveroInteriors2, 27),
-    SCENE_EXIT(LALIVERO_INTERIORS_2_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_INTERIORS_2_NORTHWEST),
-    SCENE_EXIT(LALIVERO_INTERIORS_2_TO_LEMURIAN_SHIP, LemurianShip, LEMURIAN_SHIP_FROM_LALIVERO_INTERIORS_2),
+    SCENE_EXITS(LaliveroShops),
+    SCENE_EXIT(LALIVERO_SHOPS_TO_LALIVERO_WEST, Lalivero, LALIVERO_FROM_LALIVERO_SHOPS_WEST),
+    SCENE_EXIT(LALIVERO_SHOPS_TO_LALIVERO_SOUTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_SHOPS_SOUTHEAST),
+    SCENE_EXIT(LALIVERO_SHOPS_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP, LaliveroShops, LALIVERO_SHOPS_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS),
+    SCENE_EXIT(LALIVERO_SHOPS_TO_LALIVERO_NORTH, Lalivero, LALIVERO_FROM_LALIVERO_SHOPS_NORTH),
+    SCENE_EXIT(LALIVERO_SHOPS_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS, LaliveroShops, LALIVERO_SHOPS_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP),
+    SCENE_EXIT(LALIVERO_SHOPS_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_SHOPS_NORTHWEST),
+    SCENE_EXIT(LALIVERO_SHOPS_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS, LaliveroShops, LALIVERO_SHOPS_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE),
+    SCENE_EXIT(LALIVERO_SHOPS_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE, LaliveroShops, LALIVERO_SHOPS_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS),
+    SCENE_EXIT(LALIVERO_SHOPS_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_LALIVERO_SHOPS_SOUTH),
+    SCENE_EXIT(LALIVERO_SHOPS_TO_LALIVERO_EAST_SOUTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_SHOPS_EAST_SOUTHEAST),
+    SCENE_EXIT(LALIVERO_SHOPS_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_SHOPS_NORTHEAST),
+    SCENE_EXITS(LaliveroFaransHouse),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LALIVERO_SOUTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_FARANS_HOUSE_SOUTHWEST),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LALIVERO_SOUTH, Lalivero, LALIVERO_FROM_LALIVERO_FARANS_HOUSE_SOUTH),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LALIVERO_NORTHEAST, Lalivero, LALIVERO_FROM_LALIVERO_FARANS_HOUSE_NORTHEAST),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_TO_INN_CORRIDOR, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_INN),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_INN, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_FROM_INN_CORRIDOR),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_GUEST_ROOM_WEST, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_FROM_INN_CORRIDOR),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_GUEST_ROOM_EAST, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_FROM_INN_CORRIDOR),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_TO_INN_CORRIDOR, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_WEST),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_TO_INN_CORRIDOR, LaliveroFaransHouse, LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_EAST),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LALIVERO_NORTHWEST, Lalivero, LALIVERO_FROM_LALIVERO_FARANS_HOUSE_NORTHWEST),
+    SCENE_EXIT(LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP, LemurianShip, LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE),
     SCENE_EXITS_END,
 };
 

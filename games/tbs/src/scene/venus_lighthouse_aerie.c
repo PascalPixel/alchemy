@@ -12,7 +12,7 @@
 /// her because they cannot enter Jupiter Lighthouse without a Wind Adept.
 /// Felix has sent Jenna and the others ahead to the dock at Idejima. In story
 /// order:
-/// - The arrival (entrance 1, from VenusLighthouse5;
+/// - The arrival (entrance 1, from VenusLighthouseFourthFloor;
 ///   VenusLighthouseAerie_OverhearSaturosAndMenardi). A pillar carries the
 ///   leader up, and the party overhears Saturos and Menardi about to light the
 ///   beacon and Felix demanding that they free Sheba as they promised. They
@@ -48,12 +48,14 @@
 /// - Sheba's fall (entrance 4, VenusLighthouseAerie_StageShebasFall). The
 ///   foundations crumble, Sheba lets go, and Felix leaps after her. The party
 ///   resolves to find Jenna and the others at Idejima, but a long search finds
-///   no sign of Jenna, and the party is taken to Lalivero (exit 2, scene 180's
-///   entrance 99) with FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE set.
+///   no sign of Jenna, and the party is taken to Lalivero
+///   (AERIE_EXIT_AFTER_SHEBAS_FALL, to
+///   LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE) with
+///   FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE set.
 ///
 /// A lost battle brings the party to entrance 9, which gives the Shaman's Rod
-/// back to whoever carried it and leaves for Lalivero Sanctum (exit 9, scene
-/// 179's entrance 12).
+/// back to whoever carried it and leaves for Lalivero Sanctum
+/// (AERIE_EXIT_AFTER_DEFEAT, to LALIVERO_SHOPS_SANCTUM).
 
 #include "script.h"
 #include "game_state.h"
@@ -745,9 +747,9 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
 /// Lighthouse, they promise not to harm her for the Shaman's Rod, Felix
 /// carries it over, they will not let her go, and the first battle begins. It
 /// sets FLAG_SHAMANS_ROD_OWNER plus the member who carried the rod, and 0x350
-/// as the battle starts (XXX: VenusLighthouse2 uses 0x350, in the same place
-/// group, for its Psynergy Stone; nothing here reads it, so what it marks is
-/// not known).
+/// as the battle starts (XXX: VenusLighthouseFirstFloor uses 0x350, in the same
+/// place group, for its Psynergy Stone; nothing here reads it, so what it marks
+/// is not known).
 static void Event_ConfrontSaturosAndMenardi(void) {
   s32 rodOwner;
   struct FieldActor *object;
@@ -1273,8 +1275,8 @@ static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
 /// lit, Saturos throws the Venus Star into the lighthouse, its light restores
 /// Saturos and Menardi, Felix leaves with Sheba, and the two fuse. Refills the
 /// PP of the party's Adepts whose lighthouses are lit, starts the second
-/// battle and sets 0x351 (XXX: VenusLighthouse5's Psynergy Stone flag, as 0x350
-/// is in Event_ConfrontSaturosAndMenardi).
+/// battle and sets 0x351 (XXX: VenusLighthouseFourthFloor's Psynergy Stone
+/// flag, as 0x350 is in Event_ConfrontSaturosAndMenardi).
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct EffectOptions menardiBurst;
   s32 velocity[3];
@@ -3306,8 +3308,9 @@ u32 gVenusLighthouseAerieExits[] = {
     SCENE_EXITS(VenusLighthouseAerie),
     SCENE_EXIT(AERIE_EXIT_TO_WORLD_MAP, WorldMap,
                WORLD_MAP_ENTRANCE_FROM_AERIE),
-    SCENE_EXIT(AERIE_EXIT_AFTER_SHEBAS_FALL, LaliveroInteriors2, 99),
-    SCENE_EXIT(AERIE_EXIT_AFTER_DEFEAT, LaliveroInteriors1, 12),
+    SCENE_EXIT(AERIE_EXIT_AFTER_SHEBAS_FALL, LaliveroFaransHouse,
+               LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE),
+    SCENE_EXIT(AERIE_EXIT_AFTER_DEFEAT, LaliveroShops, LALIVERO_SHOPS_SANCTUM),
     SCENE_EXITS_END,
 };
 

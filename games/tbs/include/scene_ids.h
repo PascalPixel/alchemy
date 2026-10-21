@@ -351,19 +351,34 @@ extern char SceneId_TunnelRuinsGreatStatue;
 /// ★ Named from what the player sees: five coloured statues of a woman standing
 /// before a door (its render)
 extern char SceneId_TunnelRuinsLadyStatues;
-extern char SceneId_BabiLighthouse1;
-extern char SceneId_BabiLighthouse2;
+/// ★ Named from the game: "stone door" (MsgBabiYoureSureTheyWentThrough)
+extern char SceneId_BabiLighthouseStoneDoor;
+/// ★ Named from the game: "Luff" (MsgDjinnName)
+extern char SceneId_BabiLighthouseLuff;
 extern char SceneId_BabiLighthouseEntry;
 extern char SceneId_RoadToBabiLighthouse;
 extern char SceneId_Lalivero;
-extern char SceneId_LaliveroInteriors1;
-extern char SceneId_LaliveroInteriors2;
+/// ★ Named from what the player sees: Lalivero's weapon and armor shop, item
+/// shop and Sanctum, with three houses (its render)
+extern char SceneId_LaliveroShops;
+/// ★ Named from the game: "Faran's house" (MsgLaliveroPleaseWaitForMeOutside)
+extern char SceneId_LaliveroFaransHouse;
 extern char SceneId_VenusLighthouseEntry;
-extern char SceneId_VenusLighthouse1;
-extern char SceneId_VenusLighthouse2;
-extern char SceneId_VenusLighthouse3;
-extern char SceneId_VenusLighthouse4;
-extern char SceneId_VenusLighthouse5;
+/// ★ Named from what the player sees: the floor the front door opens onto, with
+/// the great statue and the reliefs (its render)
+extern char SceneId_VenusLighthouseGroundFloor;
+/// ★ Named from what the player sees: the first floor of the climb, where the
+/// Tunnel Ruins come up (its render)
+extern char SceneId_VenusLighthouseFirstFloor;
+/// ★ Named from what the player sees: the second floor of the climb, with the
+/// sparkling passage and the gate (its render)
+extern char SceneId_VenusLighthouseSecondFloor;
+/// ★ Named from what the player sees: the third floor of the climb, with three
+/// sparkling passages and three pillar sockets (its render)
+extern char SceneId_VenusLighthouseThirdFloor;
+/// ★ Named from what the player sees: the fourth floor of the climb, below the
+/// Lighthouse Aerie (its render)
+extern char SceneId_VenusLighthouseFourthFloor;
 extern char SceneId_VenusLighthouseAerie;
 extern char SceneId_LemurianShip;
 /// ★ Named from its area name: Tolbi Spring

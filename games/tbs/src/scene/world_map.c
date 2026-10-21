@@ -33,7 +33,8 @@
 ///   erupted, asks to come along, joins whatever the answer, teaches how Djinn
 ///   are set and put on standby (FLAG_DJINN_TUTORIAL and its two parts), and
 ///   a tutorial battle follows.
-/// - Vault, the first time (touching ACTOR_PLACE_VAULT): entrance 64 plays
+/// - Vault, the first time (touching ACTOR_PLACE_VAULT):
+/// WORLD_MAP_HAMMETS_CARAVAN_LEAVES plays
 ///   Hammet's caravan leaving Vault for Kalay. Hammet, the merchant of Kalay
 ///   whose rod was stolen, blames Ivan, his servant, whom he leaves behind;
 ///   the bridge south is destroyed, so the caravan heads north for Lunpa. It
@@ -68,9 +69,10 @@
 ///   (entrance 73) a sparkling transition sends it on to Sheba's fall
 ///   (WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE).
 /// - The ending: once the cleared game is saved (menu/clear.c),
-///   WORLD_MAP_FROM_CLEAR leads to entrance 80, where Jenna and Kraden, adrift
-///   on an island since the Venus beacon was lit, wonder about Felix, Jenna's
-///   brother, and Isaac, until Alex shows them that Felix and Sheba are alive.
+///   WORLD_MAP_FROM_CLEAR leads to WORLD_MAP_JENNA_AND_KRADEN_ADRIFT, where
+///   Jenna and Kraden, adrift on an island since the Venus beacon was lit,
+///   wonder about Felix, Jenna's brother, and Isaac, until Alex shows them that
+///   Felix and Sheba are alive.
 ///
 /// Entrance 78 is where a defeat returns after Iodem hands over the Black Orb
 /// (WorldMap_RunBlackOrbScene stores it as gGameState.savedEntrance). It
@@ -219,8 +221,8 @@ enum WorldMapActor {
 #define PLACE_TRIGGER(actor) (CONTACT_TRIGGER_BASE + (actor))
 
 /// The actors of Hammet's caravan leaving Vault (gWorldMapPlacements64,
-/// entrance 64), numbered from ACTOR_FIRST_PLACED; Garet's row takes his own
-/// actor.
+/// WORLD_MAP_HAMMETS_CARAVAN_LEAVES), numbered from ACTOR_FIRST_PLACED; Garet's
+/// row takes his own actor.
 enum WorldMapCaravanActor {
   /// Hammet, in his sprite (0x31, as ACTOR_HAMMET's out of West Lunpa Cave).
   /// "We can't stay another minute in a dangerous place like this."
@@ -658,25 +660,27 @@ static void WorldMap_UpdateLocationContacts(void) {
 }
 
 /// Touching Vault's actor: the first time, until FLAG_GUARDS_SUSPECT_KALAY is
-/// set, the world map's entrance 64 plays Hammet's caravan leaving (exit 101);
-/// later it is Vault's door (WORLD_MAP_TO_VAULT_SOUTH).
+/// set, WORLD_MAP_HAMMETS_CARAVAN_LEAVES plays Hammet's caravan leaving
+/// (WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES); later it is Vault's door
+/// (WORLD_MAP_TO_VAULT_SOUTH).
 static void Event_EnterVault(void) {
   if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
-    Engine_EventRequestExit(101);
+    Engine_EventRequestExit(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
   } else {
     Engine_AudioPlayCue(SE_MAP_EXIT);
     Engine_EventRequestExit(WORLD_MAP_TO_VAULT_SOUTH);
   }
 }
 
-/// Walking east from the island back aboard the Tolbi-bound Ship (exit 74, to
+/// Walking east from the island back aboard the Tolbi-bound Ship
+/// (WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE, to
 /// TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS).
 /// Reached by walking east into cell code 74 while the ship lies at anchor off
 /// the island (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void Event_ReturnToTolbiShip(void) {
 
   Engine_EventBegin();
-  Engine_EventRequestExit(74);
+  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
 }
 
 /// Restores the map's state and runs the sequence its arrival entrance
@@ -896,8 +900,8 @@ static void WorldMap_BoardBunzasWagon(void) {
 /// been destroyed, he leaves Ivan behind, blaming him for the stolen rod, and
 /// the caravan heads north for Lunpa. Then the party goes on into Vault
 /// (WORLD_MAP_TO_VAULT_SOUTH).
-/// Called by WorldMap_Initialize at entrance 64 until FLAG_GUARDS_SUSPECT_KALAY
-/// is set; sets it.
+/// Called by WorldMap_Initialize at WORLD_MAP_HAMMETS_CARAVAN_LEAVES until
+/// FLAG_GUARDS_SUSPECT_KALAY is set; sets it.
 static void WorldMap_ShowHammetsCaravan(void) {
   struct FieldActor *actor;
   struct FieldActor *spriteActor;
@@ -1240,9 +1244,10 @@ static void WorldMap_UpdateTransferredActorLanding(void) {
 }
 
 /// A leg of the Tolbi-bound Ship's crossing: the ship sails out of Kalay
-/// Docks, and exit 102 leads up to the lookout on the mast for the first
-/// monster attack (TolbiShipMast's entrance 11, tolbi_ship_mast.c).
-/// Called by WorldMap_Initialize at entrance 65; sets FLAG_TOLBI_SHIP_ROWING.
+/// Docks, and WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK leads up to the lookout
+/// on the mast for the first monster attack
+/// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, tolbi_ship_mast.c). Called by
+/// WorldMap_Initialize at entrance 65; sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailToFirstMonsterAttack(void) {
   struct FieldActor *actor;
 
@@ -1260,13 +1265,14 @@ static void WorldMap_SailToFirstMonsterAttack(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_EventRequestExit(102);
+  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK);
   Engine_EventEnd();
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: the ship sails on, and exit 103
-/// leads up to the lookout on the mast for the second monster attack
-/// (TolbiShipMast's entrance 12).
+/// A leg of the Tolbi-bound Ship's crossing: the ship sails on, and
+/// WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK leads up to the lookout on the
+/// mast for the second monster attack
+/// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK).
 /// Called by WorldMap_Initialize at entrance 66; sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailToSecondMonsterAttack(void) {
   struct FieldActor *actor;
@@ -1291,13 +1297,14 @@ static void WorldMap_SailToSecondMonsterAttack(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_EventRequestExit(103);
+  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK);
   Engine_EventEnd();
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: the ship sails on, and exit 104
-/// leads up to the lookout on the mast for the third monster attack
-/// (TolbiShipMast's entrance 13).
+/// A leg of the Tolbi-bound Ship's crossing: the ship sails on, and
+/// WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK leads up to the lookout on the
+/// mast for the third monster attack
+/// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK).
 /// Called by WorldMap_Initialize at entrance 67; sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailToThirdMonsterAttack(void) {
   struct FieldActor *actor;
@@ -1322,7 +1329,7 @@ static void WorldMap_SailToThirdMonsterAttack(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_EventRequestExit(104);
+  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK);
   Engine_EventEnd();
 }
 
@@ -1357,9 +1364,10 @@ static void WorldMap_TransferToTolbiShipInteriors(void) {
 
 /// The last leg of the Tolbi-bound Ship's crossing: the ship sails west,
 /// veering north when the rowers' balance (WorldMap_GetRowingBalance) is the
-/// one that takes it off course to the island, and exit 106 leads up to the
-/// lookout on the mast as he sights land (TolbiShipMast's entrance 14).
-/// Called by WorldMap_Initialize at entrance 69; sets FLAG_TOLBI_SHIP_ROWING.
+/// one that takes it off course to the island, and
+/// WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO leads up to the lookout on the mast as
+/// he sights land (TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO). Called by
+/// WorldMap_Initialize at entrance 69; sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailUntilLandSighted(void) {
   struct FieldActor *actor;
 
@@ -1387,7 +1395,7 @@ static void WorldMap_SailUntilLandSighted(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_EventRequestExit(106);
+  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO);
   Engine_EventEnd();
 }
 
@@ -2249,7 +2257,7 @@ static void WorldMap_UpdateTransitionEffect(void) {
 /// A leg of the Tolbi-bound Ship's crossing: out of the ship's interior
 /// (TOLBI_SHIP_INTERIORS_TO_WORLD_MAP) the ship sails north to its anchorage
 /// off the island, where ACTOR_TOLBI_SHIP stands, and the party goes back into
-/// it (exit 110, to the interior's entrance 23).
+/// it (WORLD_MAP_TO_TOLBI_SHIP_INTERIORS_ROWING_DECK_ISLAND).
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS.
 static void WorldMap_SailTolbiShipToIsland(void) {
 
@@ -2286,7 +2294,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   Engine_EventWait(40);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(110);
+  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_INTERIORS_ROWING_DECK_ISLAND);
 }
 
 /// The rowers' balance, as TolbiShipMast_GetRowingBalance (tolbi_ship_mast.c)
@@ -2367,7 +2375,7 @@ static void WorldMap_SpawnIslandWake(void) {
 }
 
 /// Sails ACTOR_DRIFTING_ISLAND east with its wake before the ending, then
-/// leaves for it (exit 111, to the world map's entrance 80).
+/// leaves for it (WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT).
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_CLEAR, once the cleared game
 /// is saved (menu/clear.c).
 static void WorldMap_RunOpeningRise(void) {
@@ -2402,7 +2410,7 @@ static void WorldMap_RunOpeningRise(void) {
   PLTT_BACKDROP = 0x7fff;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(111);
+  Engine_EventRequestExit(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
 }
 
 /// Rotates the traveler and counts down to the raised travel event.
@@ -3110,7 +3118,8 @@ struct SceneEntrance gWorldMapEntrances[] = {
 u32 gWorldMapExits[] = {
     SCENE_EXITS(WorldMap),
     SCENE_EXIT(WORLD_MAP_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_WORLD_MAP),
-    SCENE_EXIT(2, WorldMap, WORLD_MAP_FROM_TITLE),
+    SCENE_EXIT(WORLD_MAP_TO_WORLD_MAP_FROM_TITLE, WorldMap,
+               WORLD_MAP_FROM_TITLE),
     SCENE_EXIT(WORLD_MAP_TO_VAULT_SOUTH, Vault, VAULT_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_GOMA_CAVE_ENTRANCE, GomaCaveEntrance,
                GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP),
@@ -3138,7 +3147,8 @@ u32 gWorldMapExits[] = {
                LAMA_TEMPLE_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_LAMAKAN_DESERT_EAST, LamakanDesertEast,
                LAMAKAN_DESERT_EAST_FROM_WORLD_MAP),
-    SCENE_EXIT(19, WorldMap, WORLD_MAP_FROM_KALAY_WEST),
+    SCENE_EXIT(WORLD_MAP_TO_WORLD_MAP_FROM_KALAY_WEST, WorldMap,
+               WORLD_MAP_FROM_KALAY_WEST),
     SCENE_EXIT(WORLD_MAP_TO_KALAY_EAST, Kalay, KALAY_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_KALAY_DOCKS_EAST, KalayDocks,
                KALAY_DOCKS_FROM_WORLD_MAP_SOUTH),
@@ -3177,7 +3187,8 @@ u32 gWorldMapExits[] = {
     SCENE_EXIT(WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE, MogallForestKillerApe,
                MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_VAULT_NORTH, Vault, VAULT_FROM_WORLD_MAP_NORTH),
-    SCENE_EXIT(45, BilibinCaveEntrance, BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP),
+    SCENE_EXIT(WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE_NORTHEAST,
+               BilibinCaveEntrance, BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_KOLIMA_BRIDGE_WEST, KolimaBridge,
                KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_BILIBIN_BARRICADE_EAST, BilibinBarricade,
@@ -3206,25 +3217,35 @@ u32 gWorldMapExits[] = {
                KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST, VenusLighthouseEntry,
                VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_EAST),
-    SCENE_EXIT(74, TolbiShipDeck, TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE, TolbiShipDeck,
+               TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS),
     SCENE_EXIT(WORLD_MAP_TO_CROSSBONE_ISLE, CrossboneIsle,
                CROSSBONE_ISLE_FROM_WORLD_MAP),
-    SCENE_EXIT(100, WorldMap, WORLD_MAP_FROM_VALE_GATE),
-    SCENE_EXIT(101, WorldMap, 64),
-    SCENE_EXIT(102, TolbiShipMast, 11),
-    SCENE_EXIT(103, TolbiShipMast, 12),
-    SCENE_EXIT(104, TolbiShipMast, 13),
+    SCENE_EXIT(WORLD_MAP_TO_WORLD_MAP_FROM_VALE_GATE, WorldMap,
+               WORLD_MAP_FROM_VALE_GATE),
+    SCENE_EXIT(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES, WorldMap,
+               WORLD_MAP_HAMMETS_CARAVAN_LEAVES),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK, TolbiShipMast,
+               TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK, TolbiShipMast,
+               TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK, TolbiShipMast,
+               TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK),
     SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_INTERIORS, TolbiShipInteriors,
                TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP),
-    SCENE_EXIT(106, TolbiShipMast, 14),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO, TolbiShipMast,
+               TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO),
     SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_DECK, TolbiShipDeck,
                TOLBI_SHIP_DECK_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH, KalayTunnelEntrance,
                KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE, VenusLighthouseAerie,
                VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP),
-    SCENE_EXIT(110, TolbiShipInteriors, 23),
-    SCENE_EXIT(111, WorldMap, 80),
+    SCENE_EXIT(WORLD_MAP_TO_TOLBI_SHIP_INTERIORS_ROWING_DECK_ISLAND,
+               TolbiShipInteriors,
+               TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND),
+    SCENE_EXIT(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT, WorldMap,
+               WORLD_MAP_JENNA_AND_KRADEN_ADRIFT),
     SCENE_EXIT(WORLD_MAP_TO_LUNPA_SUHALLA, LunpaSuhalla,
                LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT),
     SCENE_EXITS_END,

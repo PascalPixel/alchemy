@@ -82,6 +82,7 @@ enum {
   WORLD_MAP_FROM_LALIVERO_WEST = 59,
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_NORTH = 60,
   WORLD_MAP_FROM_VENUS_LIGHTHOUSE_ENTRY_WEST = 61,
+  WORLD_MAP_HAMMETS_CARAVAN_LEAVES = 64,
   WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK = 65,
   WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK = 66,
   WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK = 67,
@@ -93,6 +94,7 @@ enum {
   WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE = 74,
   WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS = 75,
   WORLD_MAP_FROM_CROSSBONE_ISLE = 76,
+  WORLD_MAP_JENNA_AND_KRADEN_ADRIFT = 80,
   WORLD_MAP_MERCURY_LIGHTHOUSE_LIT =
       90, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition
           ///< here in Mercury Lighthouse's colours, then sends the party to the
@@ -104,6 +106,7 @@ enum {
 };
 enum {
   WORLD_MAP_TO_VALE_GATE = 1,
+  WORLD_MAP_TO_WORLD_MAP_FROM_TITLE = 2,
   WORLD_MAP_TO_VAULT_SOUTH = 3,
   WORLD_MAP_TO_GOMA_CAVE_ENTRANCE = 4,
   WORLD_MAP_TO_BILIBIN = 5,
@@ -120,6 +123,7 @@ enum {
   WORLD_MAP_TO_ALTIN = 16,
   WORLD_MAP_TO_LAMA_TEMPLE = 17,
   WORLD_MAP_TO_LAMAKAN_DESERT_EAST = 18,
+  WORLD_MAP_TO_WORLD_MAP_FROM_KALAY_WEST = 19,
   WORLD_MAP_TO_KALAY_EAST = 20,
   WORLD_MAP_TO_KALAY_DOCKS_EAST = 21,
   WORLD_MAP_TO_TOLBI_DOCKS = 22,
@@ -141,6 +145,7 @@ enum {
   WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST = 42,
   WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE = 43,
   WORLD_MAP_TO_VAULT_NORTH = 44,
+  WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE_NORTHEAST = 45,
   WORLD_MAP_TO_KOLIMA_BRIDGE_WEST = 46,
   WORLD_MAP_TO_BILIBIN_BARRICADE_EAST = 47,
   WORLD_MAP_TO_BILIBIN_CAVE_ICE = 48,
@@ -155,11 +160,26 @@ enum {
   WORLD_MAP_TO_LALIVERO_WEST = 59,
   WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE = 60,
   WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST = 61,
-  WORLD_MAP_TO_CROSSBONE_ISLE = 75,
+  WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE =
+      74, ///< ★ Named from its area name: Crossbone Isle
+  WORLD_MAP_TO_CROSSBONE_ISLE =
+      75, ///< ★ Named from its area name: Crossbone Isle
+  WORLD_MAP_TO_WORLD_MAP_FROM_VALE_GATE = 100,
+  WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES =
+      101, ///< ★ Named from what the player sees: Hammet's caravan leaving
+           ///< Vault for Kalay (its render)
+  WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK = 102,
+  WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK = 103,
+  WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK = 104,
   WORLD_MAP_TO_TOLBI_SHIP_INTERIORS = 105,
+  WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO = 106,
   WORLD_MAP_TO_TOLBI_SHIP_DECK = 107,
   WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH = 108,
   WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE = 109,
+  WORLD_MAP_TO_TOLBI_SHIP_INTERIORS_ROWING_DECK_ISLAND = 110,
+  WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT =
+      111, ///< ★ Named from what the player sees: Jenna and Kraden adrift on an
+           ///< island in the ending (its render)
   WORLD_MAP_TO_LUNPA_SUHALLA = 112,
 };
 
@@ -3091,6 +3111,10 @@ enum {
 enum {
   TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK = 1,
   TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR = 10,
+  TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK = 11,
+  TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK = 12,
+  TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK = 13,
+  TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO = 14,
 };
 enum {
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK = 1,
@@ -3145,6 +3169,7 @@ enum {
   TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_ISLAND =
       22, ///< ★ Named from what the player sees: the room where the captain
           ///< stands by the ship's wheel (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_WORLD_MAP_ISLAND = 23,
   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS =
       24, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
@@ -4717,7 +4742,7 @@ enum {
 
 /// SceneId_TunnelRuinsGreatStatue's entrances and exits.
 enum {
-  TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_1 = 1,
+  TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR = 1,
   TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS =
       2, ///< ★ Named from the game: "The statue seems to speak to your soul..."
          ///< (MsgTunnelRuinsStatueSeemsSpeakYourSoul)
@@ -4765,7 +4790,7 @@ enum {
   TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST = 18,
 };
 enum {
-  TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_1 = 1,
+  TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR = 1,
   TUNNEL_RUINS_GREAT_STATUE_STATUE_TO_FIRST_PILLARS =
       2, ///< ★ Named from what the player sees: the first room on the way with
          ///< a pair of stone pillars to push (its render)
@@ -4830,7 +4855,7 @@ enum {
   TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH = 13,
   TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST = 14,
   TUNNEL_RUINS_LADY_STATUES_TREE_DOOR_SOUTH = 15,
-  TUNNEL_RUINS_LADY_STATUES_FROM_VENUS_LIGHTHOUSE_2 = 16,
+  TUNNEL_RUINS_LADY_STATUES_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR = 16,
   TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST = 17,
 };
 enum {
@@ -4867,49 +4892,133 @@ enum {
   TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_EAST =
       13, ///< ★ Named from what the player sees: the room of five coloured
           ///< statues of a woman before a door (its render)
-  TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_2 = 14,
+  TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR = 14,
   TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST = 15,
   TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH = 16,
   TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_NORTH = 17,
 };
 
-/// SceneId_BabiLighthouse1's entrances and exits.
+/// SceneId_BabiLighthouseStoneDoor's entrances and exits.
 enum {
-  BABI_LIGHTHOUSE_1_FROM_TUNNEL_RUINS_GREAT_STATUE = 1,
-  BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_WEST = 2,
-  BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_EAST = 3,
+  BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE = 1,
+  BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_WEST = 2,
+  BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST = 3,
 };
 enum {
-  BABI_LIGHTHOUSE_1_TO_TUNNEL_RUINS_GREAT_STATUE = 1,
-  BABI_LIGHTHOUSE_1_TO_BABI_LIGHTHOUSE_2_WEST = 2,
+  BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE = 1,
+  BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST = 2,
 };
 
-/// SceneId_BabiLighthouse2's entrances and exits.
+/// SceneId_BabiLighthouseLuff's entrances and exits.
 enum {
-  BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_ENTRY_EAST = 7,
-  BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST = 9,
-  BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_1 = 10,
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_WEST_STAIRS =
+      1, ///< ★ Named from what the player sees: the tall room of two arches and
+         ///< a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_EAST_STAIRS =
+      2, ///< ★ Named from what the player sees: the tall room of two arches and
+         ///< a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_LOCKED_DOOR_ROOM =
+      3, ///< ★ Named from what the player sees: the tall room of two arches and
+         ///< a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_STAIRS =
+      4, ///< ★ Named from what the player sees: the brick room entered by the
+         ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_WEST_STAIRS =
+      5, ///< ★ Named from what the player sees: the brick room entered by the
+         ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_SOUTH_ROOM_EAST_STAIRS =
+      6, ///< ★ Named from what the player sees: the brick room entered by the
+         ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_EAST = 7,
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_FROM_EAST_ROOM_STAIRS =
+      8, ///< ★ Named from what the player sees: the brick room entered by the
+         ///< Entry's west door, with three stones in its pits (its render)
+  BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_ENTRY_WEST = 9,
+  BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST = 10,
+  BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM =
+      11, ///< ★ Named from what the player sees: the small room with a locked
+          ///< door and the arch on to the stone door (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_RISE_EAST =
+      12, ///< ★ Named from what the player sees: the brick room entered by the
+          ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_RISE =
+      13, ///< ★ Named from what the player sees: the tall room of two arches
+          ///< and a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_RISE_SOUTHWEST =
+      14, ///< ★ Named from what the player sees: the brick room entered by the
+          ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_SOUTH =
+      15, ///< ★ Named from what the player sees: the tall room of two arches
+          ///< and a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_RISE_NORTHWEST =
+      16, ///< ★ Named from what the player sees: the brick room entered by the
+          ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH =
+      17, ///< ★ Named from what the player sees: the tall room of two arches
+          ///< and a narrow passage south (its render)
 };
 enum {
-  BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_ENTRY_EAST = 2,
-  BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST = 6,
-  BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_1_EAST = 17,
-  BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_1_WEST = 18,
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STAIRS =
+      1, ///< ★ Named from what the player sees: the brick room entered by the
+         ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_EAST = 2,
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STAIRS =
+      3, ///< ★ Named from what the player sees: the brick room entered by the
+         ///< Entry's west door, with three stones in its pits (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_WEST_STAIRS =
+      4, ///< ★ Named from what the player sees: the tall room of two arches and
+         ///< a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_EAST_STAIRS =
+      5, ///< ★ Named from what the player sees: the tall room of two arches and
+         ///< a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_WEST = 6,
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_WEST_STAIRS =
+      7, ///< ★ Named from what the player sees: the brick room entered by the
+         ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_EAST_ROOM_EAST_STAIRS =
+      8, ///< ★ Named from what the player sees: the brick room entered by the
+         ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_TO_LOCKED_DOOR_ROOM =
+      9, ///< ★ Named from what the player sees: the small room with a locked
+         ///< door and the arch on to the stone door (its render)
+  BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_TO_SOUTH_ROOM =
+      10, ///< ★ Named from what the player sees: the tall room of two arches
+          ///< and a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_EAST =
+      11, ///< ★ Named from what the player sees: the brick room entered by the
+          ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_RISE =
+      12, ///< ★ Named from what the player sees: the tall room of two arches
+          ///< and a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_SOUTHWEST =
+      13, ///< ★ Named from what the player sees: the brick room entered by the
+          ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH =
+      14, ///< ★ Named from what the player sees: the tall room of two arches
+          ///< and a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_NORTHWEST =
+      15, ///< ★ Named from what the player sees: the brick room entered by the
+          ///< Entry's east door, where Luff waits on a ledge (its render)
+  BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH =
+      16, ///< ★ Named from what the player sees: the tall room of two arches
+          ///< and a narrow passage south (its render)
+  BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_EAST = 17,
+  BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_WEST = 18,
 };
 
 /// SceneId_BabiLighthouseEntry's entrances and exits.
 enum {
   BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE = 1,
-  BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_WEST = 2,
-  BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_EAST = 3,
+  BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_WEST = 2,
+  BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_LUFF_EAST = 3,
   BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_WEST = 4,
   BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH = 5,
   BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
 };
 enum {
   BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE = 1,
-  BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_2_EAST = 2,
-  BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_2_WEST = 3,
+  BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST = 2,
+  BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST = 3,
   BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST = 4,
   BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_SOUTH = 5,
   BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
@@ -4927,174 +5036,648 @@ enum {
 
 /// SceneId_Lalivero's entrances and exits.
 enum {
-  LALIVERO_FROM_LALIVERO_INTERIORS_2_NORTHWEST = 1,
-  LALIVERO_FROM_LALIVERO_INTERIORS_1_WEST = 2,
-  LALIVERO_FROM_LALIVERO_INTERIORS_2_NORTHEAST = 3,
-  LALIVERO_FROM_LALIVERO_INTERIORS_1_NORTHWEST = 4,
-  LALIVERO_FROM_LALIVERO_INTERIORS_1_NORTH = 5,
-  LALIVERO_FROM_LALIVERO_INTERIORS_1_NORTHEAST = 6,
-  LALIVERO_FROM_LALIVERO_INTERIORS_2_SOUTHWEST = 7,
-  LALIVERO_FROM_LALIVERO_INTERIORS_2_SOUTH = 8,
-  LALIVERO_FROM_LALIVERO_INTERIORS_1_SOUTH = 9,
-  LALIVERO_FROM_LALIVERO_INTERIORS_1_SOUTHEAST = 10,
-  LALIVERO_FROM_LALIVERO_INTERIORS_1_EAST_SOUTHEAST = 11,
+  LALIVERO_FROM_LALIVERO_FARANS_HOUSE_NORTHWEST = 1,
+  LALIVERO_FROM_LALIVERO_SHOPS_WEST = 2,
+  LALIVERO_FROM_LALIVERO_FARANS_HOUSE_NORTHEAST = 3,
+  LALIVERO_FROM_LALIVERO_SHOPS_NORTHWEST = 4,
+  LALIVERO_FROM_LALIVERO_SHOPS_NORTH = 5,
+  LALIVERO_FROM_LALIVERO_SHOPS_NORTHEAST = 6,
+  LALIVERO_FROM_LALIVERO_FARANS_HOUSE_SOUTHWEST = 7,
+  LALIVERO_FROM_LALIVERO_FARANS_HOUSE_SOUTH = 8,
+  LALIVERO_FROM_LALIVERO_SHOPS_SOUTH = 9,
+  LALIVERO_FROM_LALIVERO_SHOPS_SOUTHEAST = 10,
+  LALIVERO_FROM_LALIVERO_SHOPS_EAST_SOUTHEAST = 11,
   LALIVERO_FROM_WORLD_MAP_EAST = 20,
   LALIVERO_FROM_WORLD_MAP_WEST = 21,
 };
 enum {
-  LALIVERO_TO_LALIVERO_INTERIORS_2_NORTHWEST = 1,
-  LALIVERO_TO_LALIVERO_INTERIORS_1_WEST = 2,
-  LALIVERO_TO_LALIVERO_INTERIORS_2_NORTHEAST = 3,
-  LALIVERO_TO_LALIVERO_INTERIORS_1_NORTHWEST = 4,
-  LALIVERO_TO_LALIVERO_INTERIORS_1_NORTH = 5,
-  LALIVERO_TO_LALIVERO_INTERIORS_1_NORTHEAST = 6,
-  LALIVERO_TO_LALIVERO_INTERIORS_2_SOUTHWEST = 7,
-  LALIVERO_TO_LALIVERO_INTERIORS_2_SOUTH = 8,
-  LALIVERO_TO_LALIVERO_INTERIORS_1_SOUTH = 9,
-  LALIVERO_TO_LALIVERO_INTERIORS_1_SOUTHEAST = 10,
-  LALIVERO_TO_LALIVERO_INTERIORS_1_EAST_SOUTHEAST = 11,
+  LALIVERO_TO_LALIVERO_FARANS_HOUSE_NORTHWEST = 1,
+  LALIVERO_TO_LALIVERO_SHOPS_WEST = 2,
+  LALIVERO_TO_LALIVERO_FARANS_HOUSE_NORTHEAST = 3,
+  LALIVERO_TO_LALIVERO_SHOPS_NORTHWEST = 4,
+  LALIVERO_TO_LALIVERO_SHOPS_NORTH = 5,
+  LALIVERO_TO_LALIVERO_SHOPS_NORTHEAST = 6,
+  LALIVERO_TO_LALIVERO_FARANS_HOUSE_SOUTHWEST = 7,
+  LALIVERO_TO_LALIVERO_FARANS_HOUSE_SOUTH = 8,
+  LALIVERO_TO_LALIVERO_SHOPS_SOUTH = 9,
+  LALIVERO_TO_LALIVERO_SHOPS_SOUTHEAST = 10,
+  LALIVERO_TO_LALIVERO_SHOPS_EAST_SOUTHEAST = 11,
   LALIVERO_TO_WORLD_MAP_EAST = 20,
   LALIVERO_TO_WORLD_MAP_WEST = 21,
 };
 
-/// SceneId_LaliveroInteriors1's entrances and exits.
+/// SceneId_LaliveroShops's entrances and exits.
 enum {
-  LALIVERO_INTERIORS_1_FROM_LALIVERO_WEST = 1,
-  LALIVERO_INTERIORS_1_FROM_LALIVERO_SOUTHEAST = 2,
-  LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTH = 4,
-  LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTHWEST = 6,
-  LALIVERO_INTERIORS_1_FROM_LALIVERO_SOUTH = 9,
-  LALIVERO_INTERIORS_1_FROM_LALIVERO_EAST_SOUTHEAST = 10,
-  LALIVERO_INTERIORS_1_FROM_LALIVERO_NORTHEAST = 11,
+  LALIVERO_SHOPS_FROM_LALIVERO_WEST = 1,
+  LALIVERO_SHOPS_FROM_LALIVERO_SOUTHEAST = 2,
+  LALIVERO_SHOPS_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP =
+      3, ///< ★ Named from what the player sees: the room up the item shop's
+         ///< stairs (its render)
+  LALIVERO_SHOPS_FROM_LALIVERO_NORTH = 4,
+  LALIVERO_SHOPS_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS =
+      5, ///< ★ Named from what the player sees: the room behind Lalivero's
+         ///< north door where a merchant sells items across a counter (its
+         ///< render)
+  LALIVERO_SHOPS_FROM_LALIVERO_NORTHWEST = 6,
+  LALIVERO_SHOPS_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS =
+      7, ///< ★ Named from what the player sees: the house behind Lalivero's
+         ///< northwest door (its render)
+  LALIVERO_SHOPS_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE =
+      8, ///< ★ Named from what the player sees: the room up that house's
+         ///< stairs, where a worker naps (its render)
+  LALIVERO_SHOPS_FROM_LALIVERO_SOUTH = 9,
+  LALIVERO_SHOPS_FROM_LALIVERO_EAST_SOUTHEAST = 10,
+  LALIVERO_SHOPS_FROM_LALIVERO_NORTHEAST = 11,
+  LALIVERO_SHOPS_SANCTUM =
+      12, ///< stepping in makes the sanctum where a defeated party wakes
 };
 enum {
-  LALIVERO_INTERIORS_1_TO_LALIVERO_WEST = 1,
-  LALIVERO_INTERIORS_1_TO_LALIVERO_SOUTHEAST = 2,
-  LALIVERO_INTERIORS_1_TO_LALIVERO_NORTH = 4,
-  LALIVERO_INTERIORS_1_TO_LALIVERO_NORTHWEST = 6,
-  LALIVERO_INTERIORS_1_TO_LALIVERO_SOUTH = 9,
-  LALIVERO_INTERIORS_1_TO_LALIVERO_EAST_SOUTHEAST = 10,
-  LALIVERO_INTERIORS_1_TO_LALIVERO_NORTHEAST = 11,
+  LALIVERO_SHOPS_TO_LALIVERO_WEST = 1,
+  LALIVERO_SHOPS_TO_LALIVERO_SOUTHEAST = 2,
+  LALIVERO_SHOPS_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP =
+      3, ///< ★ Named from what the player sees: the room behind Lalivero's
+         ///< north door where a merchant sells items across a counter (its
+         ///< render)
+  LALIVERO_SHOPS_TO_LALIVERO_NORTH = 4,
+  LALIVERO_SHOPS_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS =
+      5, ///< ★ Named from what the player sees: the room up the item shop's
+         ///< stairs (its render)
+  LALIVERO_SHOPS_TO_LALIVERO_NORTHWEST = 6,
+  LALIVERO_SHOPS_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS =
+      7, ///< ★ Named from what the player sees: the room up that house's
+         ///< stairs, where a worker naps (its render)
+  LALIVERO_SHOPS_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE =
+      8, ///< ★ Named from what the player sees: the house behind Lalivero's
+         ///< northwest door (its render)
+  LALIVERO_SHOPS_TO_LALIVERO_SOUTH = 9,
+  LALIVERO_SHOPS_TO_LALIVERO_EAST_SOUTHEAST = 10,
+  LALIVERO_SHOPS_TO_LALIVERO_NORTHEAST = 11,
 };
 
-/// SceneId_LaliveroInteriors2's entrances and exits.
+/// SceneId_LaliveroFaransHouse's entrances and exits.
 enum {
-  LALIVERO_INTERIORS_2_FROM_LALIVERO_SOUTHWEST = 21,
-  LALIVERO_INTERIORS_2_FROM_LALIVERO_SOUTH = 22,
-  LALIVERO_INTERIORS_2_FROM_LALIVERO_NORTHEAST = 23,
-  LALIVERO_INTERIORS_2_FROM_LALIVERO_NORTHWEST = 30,
-  LALIVERO_INTERIORS_2_FROM_LEMURIAN_SHIP = 31,
+  LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTHWEST = 21,
+  LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTH = 22,
+  LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHEAST = 23,
+  LALIVERO_FARANS_HOUSE_INN_FROM_INN_CORRIDOR =
+      24, ///< ★ Named from what the player sees: the room where an innkeeper
+          ///< offers a room for the night across a counter (its render)
+  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_INN =
+      25, ///< ★ Named from what the player sees: the hall at the top of the
+          ///< inn's stairs, with two bedroom doors (its render)
+  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_WEST =
+      26, ///< ★ Named from what the player sees: the hall at the top of the
+          ///< inn's stairs, with two bedroom doors (its render)
+  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_EAST =
+      27, ///< ★ Named from what the player sees: the hall at the top of the
+          ///< inn's stairs, with two bedroom doors (its render)
+  LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_FROM_INN_CORRIDOR =
+      28, ///< ★ Named from what the player sees: a bedroom off the inn's
+          ///< upstairs hall (its render)
+  LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_FROM_INN_CORRIDOR =
+      29, ///< ★ Named from what the player sees: a bedroom off the inn's
+          ///< upstairs hall (its render)
+  LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHWEST = 30,
+  LALIVERO_FARANS_HOUSE_FROM_LEMURIAN_SHIP = 31,
+  LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE =
+      99, ///< back from Venus Lighthouse, the party is led straight to Faran
 };
 enum {
-  LALIVERO_INTERIORS_2_TO_LALIVERO_SOUTHWEST = 21,
-  LALIVERO_INTERIORS_2_TO_LALIVERO_SOUTH = 22,
-  LALIVERO_INTERIORS_2_TO_LALIVERO_NORTHEAST = 23,
-  LALIVERO_INTERIORS_2_TO_LALIVERO_NORTHWEST = 30,
-  LALIVERO_INTERIORS_2_TO_LEMURIAN_SHIP = 31,
+  LALIVERO_FARANS_HOUSE_TO_LALIVERO_SOUTHWEST = 21,
+  LALIVERO_FARANS_HOUSE_TO_LALIVERO_SOUTH = 22,
+  LALIVERO_FARANS_HOUSE_TO_LALIVERO_NORTHEAST = 23,
+  LALIVERO_FARANS_HOUSE_INN_TO_INN_CORRIDOR =
+      24, ///< ★ Named from what the player sees: the hall at the top of the
+          ///< inn's stairs, with two bedroom doors (its render)
+  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_INN =
+      25, ///< ★ Named from what the player sees: the room where an innkeeper
+          ///< offers a room for the night across a counter (its render)
+  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_GUEST_ROOM_WEST =
+      26, ///< ★ Named from what the player sees: a bedroom off the inn's
+          ///< upstairs hall (its render)
+  LALIVERO_FARANS_HOUSE_INN_CORRIDOR_TO_GUEST_ROOM_EAST =
+      27, ///< ★ Named from what the player sees: a bedroom off the inn's
+          ///< upstairs hall (its render)
+  LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_TO_INN_CORRIDOR =
+      28, ///< ★ Named from what the player sees: the hall at the top of the
+          ///< inn's stairs, with two bedroom doors (its render)
+  LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_TO_INN_CORRIDOR =
+      29, ///< ★ Named from what the player sees: the hall at the top of the
+          ///< inn's stairs, with two bedroom doors (its render)
+  LALIVERO_FARANS_HOUSE_TO_LALIVERO_NORTHWEST = 30,
+  LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP = 31,
 };
 
 /// SceneId_VenusLighthouseEntry's entrances and exits.
 enum {
   VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_WEST = 1,
-  VENUS_LIGHTHOUSE_ENTRY_FROM_VENUS_LIGHTHOUSE_1 = 2,
+  VENUS_LIGHTHOUSE_ENTRY_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR = 2,
   VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_EAST = 3,
 };
 enum {
   VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST = 1,
-  VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_1 = 2,
+  VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR = 2,
   VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST = 3,
 };
 
-/// SceneId_VenusLighthouse1's entrances and exits.
+/// SceneId_VenusLighthouseGroundFloor's entrances and exits.
 enum {
-  VENUS_LIGHTHOUSE_1_FROM_VENUS_LIGHTHOUSE_ENTRY = 1,
-  VENUS_LIGHTHOUSE_1_FROM_VENUS_LIGHTHOUSE_2 = 23,
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY = 1,
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_HALL_FROM_RELIEFS =
+      2, ///< ★ Named from what the player sees: the hall of four statues behind
+         ///< the front door (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_FRONT_HALL =
+      3, ///< ★ Named from what the player sees: the room of golden reliefs and
+         ///< a tree emblem on the floor (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_EAST =
+      4, ///< ★ Named from what the player sees: the room of golden reliefs and
+         ///< a tree emblem on the floor (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_WEST =
+      5, ///< ★ Named from what the player sees: the room of golden reliefs and
+         ///< a tree emblem on the floor (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_PILLARS =
+      6, ///< ★ Named from what the player sees: the room of golden reliefs and
+         ///< a tree emblem on the floor (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_RELIEFS =
+      7, ///< ★ Named from what the player sees: the room of spiral-marked stone
+         ///< pillars (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_CARRY_STONE =
+      8, ///< ★ Named from what the player sees: the room of spiral-marked stone
+         ///< pillars (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_FLOOR_SWITCH =
+      9, ///< ★ Named from what the player sees: the room of spiral-marked stone
+         ///< pillars (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_NORTH =
+      10, ///< ★ Named from what the player sees: the room of spiral-marked
+          ///< stone pillars (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_WEST =
+      11, ///< ★ Named from what the player sees: the room of spiral-marked
+          ///< stone pillars (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_PILLARS_NORTH =
+      12, ///< ★ Named from what the player sees: the room with five statues in
+          ///< a row (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_PILLARS_WEST =
+      13, ///< ★ Named from what the player sees: the room with five statues in
+          ///< a row (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_STAIRWELL =
+      14, ///< ★ Named from what the player sees: the room with five statues in
+          ///< a row (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_FLOOR_SWITCH =
+      20, ///< ★ Named from what the player sees: the room of the great statue
+          ///< that speaks to Isaac (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_STAIRWELL =
+      21, ///< ★ Named from what the player sees: the room of the great statue
+          ///< that speaks to Isaac (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS =
+      22, ///< ★ Named from what the player sees: the room with a statue, a
+          ///< floor switch and a ledge (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR = 23,
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STAIRWELL_FROM_STATUE_ROW =
+      24, ///< ★ Named from what the player sees: the narrow room of two stacked
+          ///< arches (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STAIRWELL_FROM_GREAT_STATUE =
+      25, ///< ★ Named from what the player sees: the narrow room of two stacked
+          ///< arches (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_GREAT_STATUE =
+      26, ///< ★ Named from what the player sees: the room with a statue, a
+          ///< floor switch and a ledge (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_RELIEFS_WEST =
+      30, ///< ★ Named from the game: "Carry Stone" (MsgItemName)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_RELIEFS_EAST =
+      31, ///< ★ Named from the game: "Carry Stone" (MsgItemName)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_FROM_PILLARS =
+      32, ///< ★ Named from the game: "Carry Stone" (MsgItemName)
 };
 enum {
-  VENUS_LIGHTHOUSE_1_TO_VENUS_LIGHTHOUSE_ENTRY = 1,
-  VENUS_LIGHTHOUSE_1_TO_VENUS_LIGHTHOUSE_2 = 23,
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY = 1,
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_HALL_TO_RELIEFS =
+      2, ///< ★ Named from what the player sees: the room of golden reliefs and
+         ///< a tree emblem on the floor (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_HALL =
+      3, ///< ★ Named from what the player sees: the hall of four statues behind
+         ///< the front door (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST =
+      4, ///< ★ Named from the game: "Carry Stone" (MsgItemName)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_WEST =
+      5, ///< ★ Named from the game: "Carry Stone" (MsgItemName)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_PILLARS =
+      6, ///< ★ Named from what the player sees: the room of spiral-marked stone
+         ///< pillars (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_RELIEFS =
+      7, ///< ★ Named from what the player sees: the room of golden reliefs and
+         ///< a tree emblem on the floor (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_CARRY_STONE =
+      8, ///< ★ Named from the game: "Carry Stone" (MsgItemName)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_FLOOR_SWITCH =
+      9, ///< ★ Named from what the player sees: the room with a statue, a floor
+         ///< switch and a ledge (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_NORTH =
+      10, ///< ★ Named from what the player sees: the room with five statues in
+          ///< a row (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_TO_STATUE_ROW_WEST =
+      11, ///< ★ Named from what the player sees: the room with five statues in
+          ///< a row (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_NORTH =
+      12, ///< ★ Named from what the player sees: the room of spiral-marked
+          ///< stone pillars (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_WEST =
+      13, ///< ★ Named from what the player sees: the room of spiral-marked
+          ///< stone pillars (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_STAIRWELL =
+      14, ///< ★ Named from what the player sees: the narrow room of two stacked
+          ///< arches (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH =
+      20, ///< ★ Named from what the player sees: the room with a statue, a
+          ///< floor switch and a ledge (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_STAIRWELL =
+      21, ///< ★ Named from what the player sees: the narrow room of two stacked
+          ///< arches (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS =
+      22, ///< ★ Named from what the player sees: the room of spiral-marked
+          ///< stone pillars (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR = 23,
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STAIRWELL_TO_STATUE_ROW =
+      24, ///< ★ Named from what the player sees: the room with five statues in
+          ///< a row (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STAIRWELL_TO_GREAT_STATUE =
+      25, ///< ★ Named from what the player sees: the room of the great statue
+          ///< that speaks to Isaac (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE =
+      26, ///< ★ Named from what the player sees: the room of the great statue
+          ///< that speaks to Isaac (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST =
+      30, ///< ★ Named from what the player sees: the room of golden reliefs and
+          ///< a tree emblem on the floor (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST =
+      31, ///< ★ Named from what the player sees: the room of golden reliefs and
+          ///< a tree emblem on the floor (its render)
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS =
+      32, ///< ★ Named from what the player sees: the room of spiral-marked
+          ///< stone pillars (its render)
 };
 
-/// SceneId_VenusLighthouse2's entrances and exits.
+/// SceneId_VenusLighthouseFirstFloor's entrances and exits.
 enum {
-  VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_SOUTH = 3,
-  VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_WEST = 8,
-  VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_NORTH = 12,
-  VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_1 = 16,
-  VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_LADY_STATUES = 18,
-  VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_EAST = 21,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_LOWER_ROOM =
+      1, ///< ★ Named from what the player sees: the room of a golden floor that
+         ///< carries the party south, and a hole (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_GAP =
+      2, ///< ★ Named from what the player sees: the room of a golden floor that
+         ///< carries the party south, and a hole (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH = 3,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_THUNDER_CROWN =
+      4, ///< ★ Named from what the player sees: the room of a golden floor that
+         ///< carries the party south, and a hole (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_FROM_DRIFTING_FLOOR =
+      5, ///< ★ Named from the game: "Thunder Crown" (MsgItemName)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_FROM_LADDERS =
+      6, ///< ★ Named from the game: "Thunder Crown" (MsgItemName)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_FROM_LADDERS =
+      7, ///< ★ Named from what the player sees: the room of three stone pillars
+         ///< in a row (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST = 8,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_DRIFTING_FLOOR =
+      9, ///< ★ Named from what the player sees: the room where two pillars
+         ///< stand by a gap (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_LADDERS =
+      10, ///< ★ Named from what the player sees: the room where two pillars
+          ///< stand by a gap (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_GAP =
+      11, ///< ★ Named from what the player sees: the large room of ladders and
+          ///< grates (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH = 12,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_THUNDER_CROWN =
+      13, ///< ★ Named from what the player sees: the large room of ladders and
+          ///< grates (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PILLARS =
+      14, ///< ★ Named from what the player sees: the large room of ladders and
+          ///< grates (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PSYNERGY_STONE =
+      15, ///< ★ Named from what the player sees: the large room of ladders and
+          ///< grates (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR = 16,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_FROM_LADDERS =
+      17, ///< ★ Named from the game: "Psynergy Stone" (MsgGotPsynergyStone)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES = 18,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR =
+      19, ///< ★ Named from what the player sees: the small room below the hole
+          ///< (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR_HOLE =
+      20, ///< ★ Named from what the player sees: the small room below the hole
+          ///< (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST = 21,
 };
 enum {
-  VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_3_NORTH = 3,
-  VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_3_EAST = 8,
-  VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_3_WEST = 12,
-  VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_1 = 16,
-  VENUS_LIGHTHOUSE_2_TO_TUNNEL_RUINS_LADY_STATUES = 18,
-  VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_3_SOUTH = 21,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM =
+      1, ///< ★ Named from what the player sees: the small room below the hole
+         ///< (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_GAP =
+      2, ///< ★ Named from what the player sees: the room where two pillars
+         ///< stand by a gap (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH = 3,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_THUNDER_CROWN =
+      4, ///< ★ Named from the game: "Thunder Crown" (MsgItemName)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_DRIFTING_FLOOR =
+      5, ///< ★ Named from what the player sees: the room of a golden floor that
+         ///< carries the party south, and a hole (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_THUNDER_CROWN_TO_LADDERS =
+      6, ///< ★ Named from what the player sees: the large room of ladders and
+         ///< grates (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_TO_LADDERS =
+      7, ///< ★ Named from what the player sees: the large room of ladders and
+         ///< grates (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST = 8,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_DRIFTING_FLOOR =
+      9, ///< ★ Named from what the player sees: the room of a golden floor that
+         ///< carries the party south, and a hole (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_TO_LADDERS =
+      10, ///< ★ Named from what the player sees: the large room of ladders and
+          ///< grates (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_GAP =
+      11, ///< ★ Named from what the player sees: the room where two pillars
+          ///< stand by a gap (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST = 12,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_THUNDER_CROWN =
+      13, ///< ★ Named from the game: "Thunder Crown" (MsgItemName)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PILLARS =
+      14, ///< ★ Named from what the player sees: the room of three stone
+          ///< pillars in a row (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_TO_PSYNERGY_STONE =
+      15, ///< ★ Named from the game: "Psynergy Stone" (MsgGotPsynergyStone)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR = 16,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS =
+      17, ///< ★ Named from what the player sees: the large room of ladders and
+          ///< grates (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES = 18,
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR =
+      19, ///< ★ Named from what the player sees: the room of a golden floor
+          ///< that carries the party south, and a hole (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE =
+      20, ///< ★ Named from what the player sees: the small room below the hole
+          ///< (its render)
+  VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH = 21,
 };
 
-/// SceneId_VenusLighthouse3's entrances and exits.
+/// SceneId_VenusLighthouseSecondFloor's entrances and exits.
 enum {
-  VENUS_LIGHTHOUSE_3_FROM_VENUS_LIGHTHOUSE_2_NORTH = 1,
-  VENUS_LIGHTHOUSE_3_FROM_VENUS_LIGHTHOUSE_2_EAST = 4,
-  VENUS_LIGHTHOUSE_3_FROM_VENUS_LIGHTHOUSE_4 = 6,
-  VENUS_LIGHTHOUSE_3_FROM_VENUS_LIGHTHOUSE_2_WEST = 7,
-  VENUS_LIGHTHOUSE_3_FROM_VENUS_LIGHTHOUSE_2_SOUTH = 11,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH = 1,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT =
+      2, ///< ★ Named from what the player sees: the passage the party walks
+         ///< into and leaves in a trail of sparks (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_FROM_SPARKLING_PASSAGE =
+      3, ///< ★ Named from what the player sees: the room of stone posts over a
+         ///< pit, with ladders (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST = 4,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_FROM_GATE =
+      5, ///< ★ Named from what the player sees: the room of stone posts over a
+         ///< pit, with ladders (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR = 6,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST = 7,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE =
+      8, ///< ★ Named from what the player sees: the room of the floor switch
+         ///< that slides a wall aside (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_WALL_SWITCH =
+      9, ///< ★ Named from what the player sees: the room of the gate a pillar
+         ///< in its socket opens, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_PILLAR_PIT =
+      10, ///< ★ Named from what the player sees: the room of the gate a pillar
+          ///< in its socket opens, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH = 11,
 };
 enum {
-  VENUS_LIGHTHOUSE_3_TO_VENUS_LIGHTHOUSE_2_SOUTH = 1,
-  VENUS_LIGHTHOUSE_3_TO_VENUS_LIGHTHOUSE_2_WEST = 4,
-  VENUS_LIGHTHOUSE_3_TO_VENUS_LIGHTHOUSE_4 = 6,
-  VENUS_LIGHTHOUSE_3_TO_VENUS_LIGHTHOUSE_2_NORTH = 7,
-  VENUS_LIGHTHOUSE_3_TO_VENUS_LIGHTHOUSE_2_EAST = 11,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH = 1,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_TO_PILLAR_PIT =
+      2, ///< ★ Named from what the player sees: the room of stone posts over a
+         ///< pit, with ladders (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_SPARKLING_PASSAGE =
+      3, ///< ★ Named from what the player sees: the passage the party walks
+         ///< into and leaves in a trail of sparks (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST = 4,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_PILLAR_PIT_TO_GATE =
+      5, ///< ★ Named from what the player sees: the room of the gate a pillar
+         ///< in its socket opens, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR = 6,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH = 7,
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE =
+      8, ///< ★ Named from what the player sees: the room of the gate a pillar
+         ///< in its socket opens, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH =
+      9, ///< ★ Named from what the player sees: the room of the floor switch
+         ///< that slides a wall aside (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT =
+      10, ///< ★ Named from what the player sees: the room of stone posts over a
+          ///< pit, with ladders (its render)
+  VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST = 11,
 };
 
-/// SceneId_VenusLighthouse4's entrances and exits.
+/// SceneId_VenusLighthouseThirdFloor's entrances and exits.
 enum {
-  VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_5_WEST_NORTHWEST = 1,
-  VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_5_NORTH_NORTHEAST = 7,
-  VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_5_NORTH_NORTHWEST = 10,
-  VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_5_NORTHEAST = 12,
-  VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_5_SOUTHWEST = 13,
-  VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_3 = 17,
-  VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_5_NORTHWEST = 19,
-  VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_5_EAST_NORTHEAST = 20,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST =
+      1,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_FROM_SPARKLING_PASSAGES =
+      2, ///< ★ Named from what the player sees: the small room at the top of
+         ///< the floor's west side (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_FROM_SPARKLING_PASSAGES =
+      3, ///< ★ Named from the game: "Dragon Scales" (MsgItemName)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_NORTHWEST_ROOM =
+      4, ///< ★ Named from what the player sees: the room of golden falls hiding
+         ///< two sparkling passages (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRAGON_SCALES =
+      5, ///< ★ Named from what the player sees: the room of golden falls hiding
+         ///< two sparkling passages (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRIFTING_FLOOR =
+      6, ///< ★ Named from what the player sees: the room of golden falls hiding
+         ///< two sparkling passages (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST =
+      7,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_FROM_DRIFTING_FLOOR =
+      8, ///< ★ Named from what the player sees: the narrow room at the bottom
+         ///< of the floor's west side (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SPARKLING_PASSAGES =
+      9, ///< ★ Named from what the player sees: the large room of a golden
+         ///< floor that carries the party south (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST =
+      10,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SOUTHWEST_ROOM =
+      11, ///< ★ Named from what the player sees: the large room of a golden
+          ///< floor that carries the party south (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST =
+      12,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST =
+      13,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS =
+      14, ///< ★ Named from what the player sees: the large room of a golden
+          ///< floor that carries the party south (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR =
+      15, ///< ★ Named from what the player sees: the room where three pillars
+          ///< sink into sockets, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM =
+      16, ///< ★ Named from what the player sees: the room where three pillars
+          ///< sink into sockets, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR = 17,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_FROM_PILLAR_SOCKETS =
+      18, ///< ★ Named from what the player sees: the small room where the
+          ///< stairs from below arrive (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST =
+      19,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST =
+      20,
 };
 enum {
-  VENUS_LIGHTHOUSE_4_TO_VENUS_LIGHTHOUSE_5_WEST_NORTHWEST = 1,
-  VENUS_LIGHTHOUSE_4_TO_VENUS_LIGHTHOUSE_5_NORTH_NORTHEAST = 7,
-  VENUS_LIGHTHOUSE_4_TO_VENUS_LIGHTHOUSE_5_NORTH_NORTHWEST = 10,
-  VENUS_LIGHTHOUSE_4_TO_VENUS_LIGHTHOUSE_5_NORTHEAST = 12,
-  VENUS_LIGHTHOUSE_4_TO_VENUS_LIGHTHOUSE_5_SOUTHWEST = 13,
-  VENUS_LIGHTHOUSE_4_TO_VENUS_LIGHTHOUSE_3 = 17,
-  VENUS_LIGHTHOUSE_4_TO_VENUS_LIGHTHOUSE_5_NORTHWEST = 19,
-  VENUS_LIGHTHOUSE_4_TO_VENUS_LIGHTHOUSE_5_EAST_NORTHEAST = 20,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_WEST_NORTHWEST =
+      1,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST_ROOM_TO_SPARKLING_PASSAGES =
+      2, ///< ★ Named from what the player sees: the room of golden falls hiding
+         ///< two sparkling passages (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_DRAGON_SCALES_TO_SPARKLING_PASSAGES =
+      3, ///< ★ Named from what the player sees: the room of golden falls hiding
+         ///< two sparkling passages (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_NORTHWEST_ROOM =
+      4, ///< ★ Named from what the player sees: the small room at the top of
+         ///< the floor's west side (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRAGON_SCALES =
+      5, ///< ★ Named from the game: "Dragon Scales" (MsgItemName)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_TO_DRIFTING_FLOOR =
+      6, ///< ★ Named from what the player sees: the large room of a golden
+         ///< floor that carries the party south (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHEAST =
+      7,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST_ROOM_TO_DRIFTING_FLOOR =
+      8, ///< ★ Named from what the player sees: the large room of a golden
+         ///< floor that carries the party south (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SPARKLING_PASSAGES =
+      9, ///< ★ Named from what the player sees: the room of golden falls hiding
+         ///< two sparkling passages (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTH_NORTHWEST =
+      10,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SOUTHWEST_ROOM =
+      11, ///< ★ Named from what the player sees: the narrow room at the bottom
+          ///< of the floor's west side (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHEAST = 12,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST = 13,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_PILLAR_SOCKETS =
+      14, ///< ★ Named from what the player sees: the room where three pillars
+          ///< sink into sockets, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_DRIFTING_FLOOR =
+      15, ///< ★ Named from what the player sees: the large room of a golden
+          ///< floor that carries the party south (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM =
+      16, ///< ★ Named from what the player sees: the small room where the
+          ///< stairs from below arrive (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR = 17,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS =
+      18, ///< ★ Named from what the player sees: the room where three pillars
+          ///< sink into sockets, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST = 19,
+  VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST =
+      20,
 };
 
-/// SceneId_VenusLighthouse5's entrances and exits.
+/// SceneId_VenusLighthouseFourthFloor's entrances and exits.
 enum {
-  VENUS_LIGHTHOUSE_5_FROM_VENUS_LIGHTHOUSE_4_WEST_NORTHWEST = 1,
-  VENUS_LIGHTHOUSE_5_FROM_VENUS_LIGHTHOUSE_4_NORTH_NORTHWEST = 4,
-  VENUS_LIGHTHOUSE_5_FROM_VENUS_LIGHTHOUSE_4_NORTH_NORTHEAST = 5,
-  VENUS_LIGHTHOUSE_5_FROM_VENUS_LIGHTHOUSE_4_NORTHEAST = 7,
-  VENUS_LIGHTHOUSE_5_FROM_VENUS_LIGHTHOUSE_4_SOUTHWEST = 9,
-  VENUS_LIGHTHOUSE_5_FROM_VENUS_LIGHTHOUSE_4_NORTHWEST = 18,
-  VENUS_LIGHTHOUSE_5_FROM_VENUS_LIGHTHOUSE_4_EAST_NORTHEAST = 19,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST =
+      1,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES =
+      2, ///< ★ Named from what the player sees: the room of spiral pillars set
+         ///< on platforms that rise or sink (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLARS =
+      3, ///< ★ Named from what the player sees: the large room of the west and
+         ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST =
+      4,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST =
+      5,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE =
+      6, ///< ★ Named from what the player sees: the large room of the west and
+         ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST = 7,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLAR_SOCKETS_EAST =
+      8, ///< ★ Named from what the player sees: the large room of the west and
+         ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST = 9,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_GAIA_BLADE_WEST =
+      10, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_GAIA_BLADE_EAST =
+      11, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLAR_SOCKETS_SOUTH =
+      12, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_WEST =
+      13, ///< ★ Named from the game: "Gaia Blade" (MsgItemName)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_EAST =
+      14, ///< ★ Named from the game: "Gaia Blade" (MsgItemName)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_SOUTH =
+      15, ///< ★ Named from what the player sees: the room where four pillars
+          ///< sink into sockets, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_EAST =
+      16, ///< ★ Named from what the player sees: the room where four pillars
+          ///< sink into sockets, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_FROM_WALL_SWITCHES =
+      17, ///< ★ Named from the game: "Psynergy Stone" (MsgGotPsynergyStone)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST =
+      18,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST =
+      19,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING =
+      20, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
 };
 enum {
-  VENUS_LIGHTHOUSE_5_TO_VENUS_LIGHTHOUSE_4_WEST_NORTHWEST = 1,
-  VENUS_LIGHTHOUSE_5_TO_VENUS_LIGHTHOUSE_4_NORTH_NORTHWEST = 4,
-  VENUS_LIGHTHOUSE_5_TO_VENUS_LIGHTHOUSE_4_NORTH_NORTHEAST = 5,
-  VENUS_LIGHTHOUSE_5_TO_VENUS_LIGHTHOUSE_4_NORTHEAST = 7,
-  VENUS_LIGHTHOUSE_5_TO_VENUS_LIGHTHOUSE_4_SOUTHWEST = 9,
-  VENUS_LIGHTHOUSE_5_TO_VENUS_LIGHTHOUSE_4_NORTHWEST = 18,
-  VENUS_LIGHTHOUSE_5_TO_VENUS_LIGHTHOUSE_4_EAST_NORTHEAST = 19,
-  VENUS_LIGHTHOUSE_5_TO_VENUS_LIGHTHOUSE_AERIE = 21,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST =
+      1,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_TO_WALL_SWITCHES =
+      2, ///< ★ Named from what the player sees: the large room of the west and
+         ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLARS =
+      3, ///< ★ Named from what the player sees: the room of spiral pillars set
+         ///< on platforms that rise or sink (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST =
+      4,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST =
+      5,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PSYNERGY_STONE =
+      6, ///< ★ Named from the game: "Psynergy Stone" (MsgGotPsynergyStone)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHEAST = 7,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_EAST =
+      8, ///< ★ Named from what the player sees: the room where four pillars
+         ///< sink into sockets, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_SOUTHWEST = 9,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_WEST =
+      10, ///< ★ Named from the game: "Gaia Blade" (MsgItemName)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_GAIA_BLADE_EAST =
+      11, ///< ★ Named from the game: "Gaia Blade" (MsgItemName)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_TO_PILLAR_SOCKETS_SOUTH =
+      12, ///< ★ Named from what the player sees: the room where four pillars
+          ///< sink into sockets, with a statue and a locked door (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_WEST =
+      13, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_TO_WALL_SWITCHES_EAST =
+      14, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH =
+      15, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST =
+      16, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES =
+      17, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST = 18,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST =
+      19,
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING =
+      20, ///< ★ Named from what the player sees: the large room of the west and
+          ///< east floor switches and the rising platform (its render)
+  VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE = 21,
 };
 
 /// SceneId_VenusLighthouseAerie's entrances and exits.
 enum {
-  VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_5 = 1,
+  VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR = 1,
   VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP = 4,
   VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT =
       93, ///< the world map sends the party back here after its lighthouse cut
@@ -5102,10 +5685,10 @@ enum {
 
 /// SceneId_LemurianShip's entrances and exits.
 enum {
-  LEMURIAN_SHIP_FROM_LALIVERO_INTERIORS_2 = 1,
+  LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE = 1,
 };
 enum {
-  LEMURIAN_SHIP_TO_LALIVERO_INTERIORS_2 = 1,
+  LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE = 1,
 };
 
 /// SceneId_TolbiSpring's entrances and exits.

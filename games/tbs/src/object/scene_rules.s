@@ -275,10 +275,10 @@ gScene_AreaNameRules:
 	scene_name BabiLighthouseEntry, -1, 86
 	scene_name RoadToBabiLighthouse, -1, 87
 	group_name 54, -1, 88
-	scene_name LaliveroInteriors1, 11, 89
-	scene_name LaliveroInteriors1, 12, 89
+	scene_name LaliveroShops, 11, 89
+	scene_name LaliveroShops, 12, 89
 	group_name 55, -1, 90
-	scene_name VenusLighthouse1, -1, 91
+	scene_name VenusLighthouseGroundFloor, -1, 91
 	group_name 56, -1, 92
 	scene_name VenusLighthouseAerie, -1, 93
 	group_name 57, -1, 94
@@ -318,7 +318,7 @@ gParty_PairResolveRules:
 	return_to Lunpa, 3, LunpaSuhalla, 11
 	return_to Tolbi, -1, TolbiInteriors, 30
 	return_to Suhalla, -1, SuhallaInteriors, 6
-	return_to Lalivero, -1, LaliveroInteriors1, 12
+	return_to Lalivero, -1, LaliveroShops, 12
 	return_to LinkLobby, -1, LinkLobby, 1
 	.2byte -1, -1, -1, -1	@ end
 
@@ -350,10 +350,10 @@ gBattle_BackdropScenes:
 	backdrop PirateShipBackdrop, PirateShip
 	backdrop SuhallaGateBackdrop, SuhallaGateCheckpoint, SuhallaGateDew
 	backdrop GomaCaveBackdrop, GatewayCave
-	backdrop BabiLighthouseBackdrop, BabiLighthouseEntry, BabiLighthouse2, BabiLighthouse1, CrossboneIsleBane
+	backdrop BabiLighthouseBackdrop, BabiLighthouseEntry, BabiLighthouseLuff, BabiLighthouseStoneDoor, CrossboneIsleBane
 	backdrop TunnelRuinsBackdrop, TunnelRuinsGreatStatue, TunnelRuinsLadyStatues
-	backdrop InteriorBackdrop, Lalivero, LaliveroInteriors1, LaliveroInteriors2
-	backdrop VenusLighthouseBackdrop, VenusLighthouse1, VenusLighthouse2, VenusLighthouse3, VenusLighthouse4, VenusLighthouse5
+	backdrop InteriorBackdrop, Lalivero, LaliveroShops, LaliveroFaransHouse
+	backdrop VenusLighthouseBackdrop, VenusLighthouseGroundFloor, VenusLighthouseFirstFloor, VenusLighthouseSecondFloor, VenusLighthouseThirdFloor, VenusLighthouseFourthFloor
 	backdrop VenusLighthouseAerieBackdrop, VenusLighthouseAerie
 	backdrop GomaCaveBackdrop
 	.4byte 0	@ end

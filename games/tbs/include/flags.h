@@ -229,7 +229,7 @@
 // Babi Lighthouse
 /// Arrival through room 2's entrance 10 changes its tiles and collision;
 /// entrances 10 and 11 restore those changes on later visits.
-#define FLAG_BABI_LIGHTHOUSE_ROOM2_ENTRANCE_10_USED 0x980
+#define FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR 0x980
 /// The stone door that Reveal's switch opens stands open.
 #define FLAG_BABI_LIGHTHOUSE_DOOR_OPEN 0x985
 /// Iodem and Faran have asked the party to follow Sheba's kidnappers.

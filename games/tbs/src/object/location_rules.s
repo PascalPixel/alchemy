@@ -165,20 +165,20 @@ gBattle_LocationRules:
 	location GatewayCave, 1, -1, 1, 87
 	location GatewayCave, 2, -1, 1, 87
 	location GatewayCave, -1, -1, 1, 88
-	location VenusLighthouse1, 20, -1, 1, 90
-	location VenusLighthouse1, 21, -1, 1, 90
-	location VenusLighthouse1, 22, -1, 1, 90
-	location VenusLighthouse1, 23, -1, 1, 90
-	location VenusLighthouse1, 24, -1, 1, 90
-	location VenusLighthouse1, 25, -1, 1, 90
-	location VenusLighthouse1, 26, -1, 1, 90
-	location VenusLighthouse1, 30, -1, 1, 90
-	location VenusLighthouse1, 31, -1, 1, 90
-	location VenusLighthouse1, 32, -1, 1, 90
-	location VenusLighthouse1, -1, -1, 1, 89
+	location VenusLighthouseGroundFloor, 20, -1, 1, 90
+	location VenusLighthouseGroundFloor, 21, -1, 1, 90
+	location VenusLighthouseGroundFloor, 22, -1, 1, 90
+	location VenusLighthouseGroundFloor, 23, -1, 1, 90
+	location VenusLighthouseGroundFloor, 24, -1, 1, 90
+	location VenusLighthouseGroundFloor, 25, -1, 1, 90
+	location VenusLighthouseGroundFloor, 26, -1, 1, 90
+	location VenusLighthouseGroundFloor, 30, -1, 1, 90
+	location VenusLighthouseGroundFloor, 31, -1, 1, 90
+	location VenusLighthouseGroundFloor, 32, -1, 1, 90
+	location VenusLighthouseGroundFloor, -1, -1, 1, 89
 	location BabiLighthouseEntry, -1, -1, 1, 91
-	location BabiLighthouse2, -1, -1, 1, 91
-	location BabiLighthouse1, -1, -1, 1, 91
+	location BabiLighthouseLuff, -1, -1, 1, 91
+	location BabiLighthouseStoneDoor, -1, -1, 1, 91
 	location TunnelRuinsLadyStatues, 1, -1, 1, 91
 	location TunnelRuinsLadyStatues, 2, -1, 1, 91
 	location TunnelRuinsLadyStatues, 3, -1, 1, 91
@@ -200,12 +200,12 @@ gBattle_LocationRules:
 	location TunnelRuinsLadyStatues, 15, -1, 1, 93
 	location TunnelRuinsLadyStatues, 16, -1, 1, 93
 	location TunnelRuinsLadyStatues, 17, -1, 1, 93
-	location VenusLighthouse2, 19, -1, 1, 95
-	location VenusLighthouse2, 20, -1, 1, 95
-	location VenusLighthouse2, -1, -1, 0, 94
-	location VenusLighthouse3, 9, -1, 0, 95
-	location VenusLighthouse3, 10, -1, 0, 95
-	location VenusLighthouse3, -1, -1, 1, 95
-	location VenusLighthouse4, -1, -1, 0, 96
-	location VenusLighthouse5, -1, -1, 0, 97
+	location VenusLighthouseFirstFloor, 19, -1, 1, 95
+	location VenusLighthouseFirstFloor, 20, -1, 1, 95
+	location VenusLighthouseFirstFloor, -1, -1, 0, 94
+	location VenusLighthouseSecondFloor, 9, -1, 0, 95
+	location VenusLighthouseSecondFloor, 10, -1, 0, 95
+	location VenusLighthouseSecondFloor, -1, -1, 1, 95
+	location VenusLighthouseThirdFloor, -1, -1, 0, 96
+	location VenusLighthouseFourthFloor, -1, -1, 0, 97
 	.2byte -1, -1, 0, 0	@ end

@@ -275,7 +275,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
                                     24);
       zero = 0;
       icon->kind = zero;
-      icon->active = 15;
+      icon->active = UI_SPRITE_HOP_DOWN_2;
       icon->animStep = zero;
     }
     pageSlot = 0;

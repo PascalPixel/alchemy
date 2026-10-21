@@ -89,8 +89,8 @@ object's place in the link order is in `games/tbs/objects.tsv`, from the
   turn in the battle event queue (`BattleEvPush`). It may be a message, a
   name or number the message needs, a unit flinching or going down, or a
   sound.
-- **pose**: how a battle object stands: standing, taking damage, held or down
-  (`POSE_*`, set with `ObjectDispatch_SelectAnimationFar`).
+- **pose**: how a battle object stands: standing, leaping, casting, taking
+  damage, held or down (`POSE_*`, set with `ObjectDispatch_SelectAnimationFar`).
 
 The same locals carry the same names in every part: `battle` or `work` for
 `gBattleWork`, `unitId`, `unit` for its `struct BattleUnit`, `battleObject`
@@ -175,12 +175,13 @@ items and level ups at the end. Each round goes like this:
 ![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
 
 An enemy picks one of the eight abilities in its row of
-`games/tbs/src/game/enemies.tsv` by its `action_strategy`. Strategies 0 to 2
-weight the eight evenly, falling by 6 a place, or falling steeply from 113
-to 5 (`gBattleCommand_SelectionWeights`); 3 and 4 remember their place in
-the list from one turn to the next. A choice it can't make (too little PP, a
-seal, nobody worth aiming at) is drawn again, and after 18 tries the enemy
-defends.
+`games/tbs/src/game/enemies.tsv` by its `action_strategy`
+(`enum EnemyActionStrategy`). The first three weight the eight evenly,
+falling by 6 a place, or falling steeply from 113 to 5
+(`gBattleCommand_SelectionWeights`); `ACTION_STRATEGY_RANDOM_START` and
+`ACTION_STRATEGY_IN_ORDER` remember their place in the list from one turn to
+the next. A choice it can't make (too little PP, a seal, nobody worth aiming
+at) is drawn again, and after 18 tries the enemy defends.
 
 An enemy that picks an ability whose added effect is Defend, Total Defense or
 Flee never uses that ability at all. `BattleCommand_SelectAutomatic` turns the
@@ -241,50 +242,50 @@ it's the multiplier in tenths: Flint's 16 makes the blow 1.6 times as hard.
 It's the number that tells the battle which formula to use: whether the
 ability hurts, heals, strikes like an Attack or takes PP. `BattleTargetExec`
 ([`battle/target_exec.c`](battle/target_exec.c)) switches on it for each
-target, once the added effect has been rolled. Quake's ability kind, 5
-(`ABILITY_KIND_DAMAGE`), is plain damage from the power and the element, and
+target, once the added effect has been rolled. Quake's ability kind,
+`ABILITY_KIND_DAMAGE`, is plain damage from the power and the element, and
 most of the Psynergy that hurts has it, Avalanche among them.
 
 | Ability kind | What the target takes | What the power is |
 | --- | --- | --- |
-| 1 `ABILITY_KIND_HEAL_HP`: Cure, Ply, Herb | HP back, from the power and the healer's Power in the element (`BattleRecoveryCalc`) | the HP healed at Power 100 |
-| 2 `ABILITY_KIND_EFFECT`: Sleep, Impair, Restore, Drain | its added effect; most have a power of 0 and do nothing else, and Drain and a few others also do damage from the power and the element, but only when the effect lands | the damage at an even match |
-| 3 `ABILITY_KIND_ATTACK`: Attack, Ragnarok | a blow, the actor's Attack against the target's Defense, with the power added (`BattleAtkCalc`) | damage added to a plain blow |
-| 4 `ABILITY_KIND_ATTACK_MULTIPLIED`: Flint, Quick Strike | a plain blow (`BattleAtkCalc`) times the power, in tenths | the blow's multiplier, in tenths |
-| 5 `ABILITY_KIND_DAMAGE`: Quake, Avalanche | damage from the power, scaled by the caster's Power against the target's Resist (`BattlePowerCalc`) | the damage at an even match |
-| 6 `ABILITY_KIND_UNLEASHED_DAMAGE`: Fire Blessing, War Cry | as for 5, falling off faster with distance: 100, 50, then 30 percent | the damage at an even match |
-| 8 `ABILITY_KIND_SUMMON`: Ramses, Judgment | as for 5, once a share of the target's maximum HP is added to the power (3 percent for each Djinni the summon uses, so 3 to 12), falling off by its own table: 100, 70, then 40 percent | the damage at an even match, before that share |
-| 10 `ABILITY_KIND_PP_DAMAGE`: Crazy Voice | as for 5, taken from PP, falling off as kind 6 does and with no random added | the PP lost at an even match |
-| 11 `ABILITY_KIND_HEAL_PP`: Psy Crystal, Adept Ring | PP back, as for 1 (Ember is ability kind 11 too, but its power is 0: its PP comes from its added effect) | the PP restored at Power 100 |
+| `ABILITY_KIND_HEAL_HP`: Cure, Ply, Herb | HP back, from the power and the healer's Power in the element (`BattleRecoveryCalc`) | the HP healed at Power 100 |
+| `ABILITY_KIND_EFFECT`: Sleep, Impair, Restore, Drain | its added effect; most have a power of 0 and do nothing else, and Drain and a few others also do damage from the power and the element, but only when the effect lands | the damage at an even match |
+| `ABILITY_KIND_ATTACK`: Attack, Ragnarok | a blow, the actor's Attack against the target's Defense, with the power added (`BattleAtkCalc`) | damage added to a plain blow |
+| `ABILITY_KIND_ATTACK_MULTIPLIED`: Flint, Quick Strike | a plain blow (`BattleAtkCalc`) times the power, in tenths | the blow's multiplier, in tenths |
+| `ABILITY_KIND_DAMAGE`: Quake, Avalanche | damage from the power, scaled by the caster's Power against the target's Resist (`BattlePowerCalc`) | the damage at an even match |
+| `ABILITY_KIND_UNLEASHED_DAMAGE`: Fire Blessing, War Cry | as for `ABILITY_KIND_DAMAGE`, falling off faster with distance: 100, 50, then 30 percent | the damage at an even match |
+| `ABILITY_KIND_SUMMON`: Ramses, Judgment | as for `ABILITY_KIND_DAMAGE`, once a share of the target's maximum HP is added to the power (3 percent for each Djinni the summon uses, so 3 to 12), falling off by its own table: 100, 70, then 40 percent | the damage at an even match, before that share |
+| `ABILITY_KIND_PP_DAMAGE`: Crazy Voice | as for `ABILITY_KIND_DAMAGE`, taken from PP, falling off as `ABILITY_KIND_UNLEASHED_DAMAGE` does and with no random added | the PP lost at an even match |
+| `ABILITY_KIND_HEAL_PP`: Psy Crystal, Adept Ring | PP back, as for `ABILITY_KIND_HEAL_HP` (Ember has this ability kind too, but its power is 0: its PP comes from its added effect) | the PP restored at Power 100 |
 
 HP healing, attacks and HP damage then add a random 0 to 3; an added effect's
 damage, PP damage and PP healing don't. Three ability kinds apply no power at
-all, and `enum AbilityKind` gives them no name: 0, which only the 128 unused
-rows named `?` have (row 0, Nothing, is a 5); 7, for Granite, Flash and Kite,
-whose added effect is all they do; and 9, for the field Psynergy, Defend,
-Total Defense, Stand Ready, Flee, the enemies' commands such as Threaten and
-Ally Search, and the stat-raising items: Power Bread, Cookie, Apple, Hard Nut,
-Mint and Lucky Pepper.
+all: `ABILITY_KIND_BLANK`, which only the 128 unused rows named `?` have (row
+0, Nothing, is `ABILITY_KIND_DAMAGE`); `ABILITY_KIND_EFFECT_ONLY`, for Granite,
+Flash and Kite, whose added effect is all they do; and `ABILITY_KIND_NO_POWER`,
+for the field Psynergy, Defend, Total Defense, Stand Ready, Flee, the enemies'
+commands such as Threaten and Ally Search, and the stat-raising items: Power
+Bread, Cookie, Apple, Hard Nut, Mint and Lucky Pepper.
 
 The other ability kinds have nothing to apply when the power is 0, either.
-`BattleTargetExec` skips the damage or healing of an ability of kind 1, 2, 5,
-6, 8, 10 or 11 with no power, so all it does is its added effect. An attack
-only adds its power to the blow, so Attack itself, whose power is 0, still
-strikes.
+`BattleTargetExec` skips the damage or healing of an ability of any other
+kind but the two attacks when it has no power, so all it does is its added
+effect. An attack only adds its power to the blow, so Attack itself, whose
+power is 0, still strikes.
 
-Ability kind 6 belongs to the enemies' Blessings, Deadly Gas, Sonic Wave,
-Shriek, War Cry, howls and Wing Beats, and it's why most of them are announced
-as `<unit> unleashes <ability>!`
+`ABILITY_KIND_UNLEASHED_DAMAGE` belongs to the enemies' Blessings, Deadly Gas,
+Sonic Wave, Shriek, War Cry, howls and Wing Beats, and it's why most of them
+are announced as `<unit> unleashes <ability>!`
 ([below](#which-effect-plays-and-how-is-it-staged)). A weapon's unleash is
 something else: it replaces Attack with an ability of the weapon's own, and
-nearly all of those are attacks of ability kind 3.
+nearly all of those are attacks of `ABILITY_KIND_ATTACK`.
 
 ### How does a command become an ability id?
 
 `BattleCommand_BuildPlan` ([`battle/plan.c`](battle/plan.c)) works it out
 from the command the player or the enemy chose:
 
-- **Attack** (`CMD_ATTACK`) is ability 1, unless the equipped weapon
+- **Attack** (`CMD_ATTACK`) is `ABILITY_ATTACK`, unless the equipped weapon
   unleashes (`RollWeaponUnleashFar`). Then the weapon's row of `items.tsv`
   gives the ability in `unleash_action`, at a chance of `unleash_chance`
   times 5 percent plus the equipment's unleash bonus.
@@ -329,8 +330,8 @@ from the aimed place. A downed unit still holds its place, so it still counts
 as a step. If nobody in range is left, the actor defends instead
 (`<unit> is defending!`).
 
-Avalanche (ability 166) has a range of 3: the aimed foe and two places on either
-side, five in all, where Quake's range of 2 reaches three.
+Avalanche has a range of 3: the aimed foe and two places on either side,
+five in all, where Quake's range of 2 reaches three.
 
 ![Isaac casts Avalanche at Ivan, Garet and Mia: the ground swells under them, a narrow wall of rock rises with rocks tumbling up it and widens until it fills the screen, and Ivan takes 203 damage, Garet 160 and Mia 120.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
 
@@ -345,9 +346,9 @@ tables in `battle_calc.s`. The figures are percentages:
 
 | Steps from the aimed unit | 0 | 1 | 2 | 3 | 4 | 5 |
 | --- | --- | --- | --- | --- | --- | --- |
-| Psynergy damage and HP and PP healing (ability kinds 5, 1 and 11) | 100 | 80 | 60 | 40 | 20 | 10 |
-| Summon damage (ability kind 8) | 100 | 70 | 40 | 30 | 20 | 10 |
-| An enemy's unleashed damage, an added effect's damage and PP damage (ability kinds 6, 2 and 10) | 100 | 50 | 30 | 10 | 10 | 10 |
+| Psynergy damage and HP and PP healing (`ABILITY_KIND_DAMAGE`, `ABILITY_KIND_HEAL_HP`, `ABILITY_KIND_HEAL_PP`) | 100 | 80 | 60 | 40 | 20 | 10 |
+| Summon damage (`ABILITY_KIND_SUMMON`) | 100 | 70 | 40 | 30 | 20 | 10 |
+| An enemy's unleashed damage, an added effect's damage and PP damage (`ABILITY_KIND_UNLEASHED_DAMAGE`, `ABILITY_KIND_EFFECT`, `ABILITY_KIND_PP_DAMAGE`) | 100 | 50 | 30 | 10 | 10 | 10 |
 | The added effect's chance | 100 | 60 | 30 | 30 | 30 | 30 |
 
 ### How does the element change the amount?
@@ -380,7 +381,8 @@ of gains 10, 30, 60 or 100 Power for one to four Djinn, and the player reads
 `<unit>'s Earth Power rises by <amount>!` or its Water, Fire or Wind twin
 (`BattleUnit_ProcessTurnEnd`). Everything stays between 0 and 200.
 
-For an attack and for ability kinds 5, 6 and 8, the damage message tells the
+For an attack and for `ABILITY_KIND_DAMAGE`, `ABILITY_KIND_UNLEASHED_DAMAGE`
+and `ABILITY_KIND_SUMMON`, the damage message tells the
 player how the element fared. It goes by the target's base Resist, before
 equipment and stages (`baseElement`): `<unit> takes <damage> damage.` when
 the ability's element is the one the target resists best, `damage!!!` when
@@ -395,7 +397,7 @@ chance of its item (`BattleEnemy_RecordDefeat`).
 
 ### How much do Avalanche, Cure and Ragnarok do?
 
-Avalanche has a power of 160 and ability kind 5. At an even match the
+Avalanche has a power of 160 and `ABILITY_KIND_DAMAGE`. At an even match the
 multiplier is 1, so `BattlePowerCalc` gives 160: the aimed foe takes 160 to
 163 once the random 0 to 3 is added, a foe one place away 128 to 131, and one
 two places away 96 to 99. With a 20-point lead, Isaac's Venus Power at 120
@@ -407,7 +409,7 @@ aimed one (`REDUCE_BY_GUARD`). Ivan's 203 in the recording is about a quarter
 more than the even match's 160, which puts Isaac's Venus Power there 50 to 55
 ahead of Ivan's Venus Resist.
 
-Cure, ability 90, has a power of 70 and ability kind 1. A healer with 100
+Cure has a power of 70 and `ABILITY_KIND_HEAL_HP`. A healer with 100
 Venus Power restores 70 to 73 HP, and one with 120 restores 83 to 86, the
 multiplier then being 307 in 256ths. Neither goes past the target's maximum
 HP, where the message becomes `<unit>'s HP is fully restored!`. The Healing
@@ -420,8 +422,8 @@ Power 100.
 Ivan recovers 99 HP in the recording, so Isaac's Venus Power there is
 between 138 and 142.
 
-Ragnarok, ability 192, is Psynergy that strikes as an attack: ability kind 3
-with a power of 35. Take an actor with Attack 100 against a Defense of 60, at
+Ragnarok is Psynergy that strikes as an attack: `ABILITY_KIND_ATTACK` with a
+power of 35. Take an actor with Attack 100 against a Defense of 60, at
 an even match. A plain attack, whose power is 0, deals half of Attack less
 Defense, 20, so 20 to 23 with the random. Ragnarok adds twice its power
 before the halving, so it adds its 35 in full: 55 to 58. The element works at
@@ -431,8 +433,8 @@ where it adds 10 percent to Avalanche. Because it costs PP, it's staged as a cas
 
 ![Isaac casts Ragnarok at Ivan: a huge flaming sword swings down onto him and bursts into a blaze of light, and Ivan takes 127 damage.](https://alchemy.pascalpixel.com/abilities/ragnarok.gif)
 
-Flint, Venus's first Djinni (ability 300), multiplies the same blow instead:
-ability kind 4 with a power of 16, so the plain 20 becomes 32, and 32 to 35
+Flint, Venus's first Djinni, multiplies the same blow instead:
+`ABILITY_KIND_ATTACK_MULTIPLIED` with a power of 16, so the plain 20 becomes 32, and 32 to 35
 with the random.
 
 However weak the actor and however strong the Defense or the guard, a blow
@@ -458,7 +460,7 @@ much again, but no ability has any of them.
 ### Which effect plays, and how is it staged?
 
 `actflags.tsv` picks the animation. Avalanche's `effect` there is `0x2003`:
-the last three digits, `003`, are the effect kind, 3 (`BATTLE_FX_GAIA`), and
+the last three digits, `003`, are the effect kind, `BATTLE_FX_GAIA`, and
 the `2` in front of them is the variant. `BattleFx_RunGaia`
 ([`../effect/parts/gaia.c`](../effect/parts/gaia.c)) plays variant 2 as its
 widest wall of rock, the one Grand Gaia has too. Cure's effect kind is
@@ -469,8 +471,8 @@ the rest of that number, the variants and every effect family.
 Before the effect plays, the battle sets the stage: where the camera turns,
 who stays on the field, and whether the actor runs up or stands and casts.
 `actstat.tsv` can choose that staging (`enum BattlePlanStaging` in
-`battle_internal.h`). Avalanche's row is 9, `PLAN_SHOW_FULL_SCREEN`, which only
-seven abilities have: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide,
+`battle_internal.h`). Avalanche's row is `PLAN_SHOW_FULL_SCREEN`, which only seven
+abilities have: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide,
 Avalanche and the summon Procne. `BattlePresentation_RunUnitTransition`
 ([`battle/staging.c`](battle/staging.c)) stages them. The camera turns, and
 the actor raises its hand and glows in its element while the units of the
@@ -478,10 +480,10 @@ side that isn't targeted fade out. Then only the actor and the target side's
 units stay on the field while the effect plays and the events run, and at the
 end everyone fades back in.
 
-Flint's row is 2, `PLAN_SHOW_ATTACK`, as are most weapon unleashes' and
+Flint's row is `PLAN_SHOW_ATTACK`, as are most weapon unleashes' and
 several Djinn's: the actor runs up and strikes. Seven weapon unleashes, such
-as Blizzard and Titan Blade, have 8, `PLAN_SHOW_ENEMY_CAST`, despite its name.
-Most rows are 0, and then the plan decides. An ability that costs PP, or Psy
+as Blizzard and Titan Blade, have `PLAN_SHOW_ENEMY_CAST`, despite its name.
+Most rows give no staging, and then the plan decides. An ability that costs PP, or Psy
 Drain, is a cast (`PLAN_SHOW_CAST`), as Quake, Cure and Ragnarok are. Another
 with an effect to draw is a cast too, or `PLAN_SHOW_ENEMY_CAST` for an enemy,
 and one with nothing to draw shows only its messages (`PLAN_SHOW_MESSAGES`).
@@ -497,7 +499,8 @@ The announcement comes from the command, before any of this:
 user keeps, such as a weapon or a ring, and
 `<unit>'s <weapon> lets out a howl!` followed by the ability's name for a
 weapon's unleash. An enemy's ability is `<unit> uses <ability>!`, or
-`<unit> unleashes <ability>!` for ability kind 6, and a few moves have
+`<unit> unleashes <ability>!` for `ABILITY_KIND_UNLEASHED_DAMAGE`, and a few
+moves have
 wordings of their own, such as Sonic Wave's `<unit> emits ultrasonic waves!`
 and the howls' `<unit> lets out a <ability>!`.
 
@@ -547,8 +550,7 @@ or no effect at all, always works on the aimed target, though the distance
 table still scales it for its neighbours; levels, Luck and weaknesses don't
 change those. Luff gets three tries.
 
-When the effect of an ability of kind 2 (`ABILITY_KIND_EFFECT`) fails, its
-target takes no damage either, and the player reads
+When the effect of an `ABILITY_KIND_EFFECT` ability fails, its target takes no damage either, and the player reads
 `But it has no effect on <unit>!` (`MsgNoEffect`).
 
 Three effects are rolled earlier, as the plan is built (`plan.c`): a double
@@ -562,7 +564,7 @@ Once an effect has landed, a few of them change the damage step before it
 runs. Torch's attack counts only half the target's Defense, and Severe Blow
 and Thrash leave the target 1 HP at most. Condemn and the other instant
 deaths skip the damage altogether, Dynamite and Mortal Blow take their user
-out of the battle, and Psy Drain becomes PP damage (ability kind 10), or
+out of the battle, and Psy Drain becomes PP damage (`ABILITY_KIND_PP_DAMAGE`), or
 misses a target with no PP. Ground holds a target only while it still has an
 action waiting in the round's list: `BattlePresentation_DispatchAction` clears
 each entry as it plays it, so a target that has already acted is left alone,
@@ -708,9 +710,9 @@ field casts to the view its prototype names.
 - There are 519 abilities, ids 0 to 518. The plan reads `actflags.tsv` only
   for those ids, and `actstat.tsv`, a row shorter, up to 517.
 - A plan reaches at most 14 targets (`TARGET_MAX`, `plan.c`).
-- Party unit ids are 0 to 7 and enemy unit ids start at 128. The party fights
-  four at a time and six enemies at most (128 to 133), three on each side in
-  a link battle (`PARTY_BATTLE_SIZE`, `ENEMY_BATTLE_SIZE`,
+- Party unit ids run to `ALLY_MAX` and enemy unit ids start at
+  `FIRST_ENEMY_UNIT`. The party fights four at a time and six enemies at most,
+  three on each side in a link battle (`PARTY_BATTLE_SIZE`, `ENEMY_BATTLE_SIZE`,
   `LINK_PARTY_SIZE`).
 - `formatn.tsv` has 380 enemy groups, each up to five kinds of enemy with the
   least and most of each (`member0` to `member4`, `minimum0` to `minimum4`,

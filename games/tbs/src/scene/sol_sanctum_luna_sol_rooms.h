@@ -9,8 +9,8 @@
 /// gSolSanctumLunaSolRoomsPlacements; Jenna and Garet, its last rows, keep
 /// their characters' ids.
 enum SolSanctumLunaSolRoomsActor {
-  /// Eight statues, four in each room, with the sprite of scene 12's statues
-  /// (0xc9, sol_sanctum_statue.c).
+  /// Eight statues, four in each room, with the sprite of
+  /// SceneId_SolSanctumStatue's statues (sol_sanctum_statue.c).
   ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_KRADEN = ACTOR_FIRST_STATUE + 8
 };

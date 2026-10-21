@@ -1,6 +1,7 @@
 /// @file
-/// Sol Sanctum (SolSanctumLunaSolRooms, scene 11), the rooms of Sol and Luna at
-/// the heart of the sanctum, reached from scene 16 (sol_sanctum_entrance.c) by
+/// Sol Sanctum (SceneId_SolSanctumLunaSolRooms), the rooms of Sol and Luna at
+/// the heart of the sanctum, reached from SceneId_SolSanctumReliefs
+/// (sol_sanctum_entrance.c) by
 /// SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS. Kraden has led Isaac,
 /// Garet and Jenna this far looking for the hidden passage Saturos and Menardi
 /// spoke of; here he finds what he came for, and from here the floor opens on
@@ -20,26 +21,32 @@
 ///   (FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN; agreeing sets
 ///   FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN, which changes what he says
 ///   when spoken to). He waits by the picture from then on.
-/// - The statue puzzle of scene 12 (sol_sanctum_statue.c), which opens off
-///   these rooms by exit 2, lights one quarter of each of the two pictures here
+/// - The statue puzzle of SceneId_SolSanctumStatue (sol_sanctum_statue.c),
+///   which opens off these rooms by
+///   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE, lights one quarter of
+///   each of the two pictures here
 ///   for each statue pushed into its place
 ///   (FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN to _SOUTHEAST_SEAL_OPEN), and cuts
 ///   back here to Kraden twice. Before its trap is disarmed, the first statue
-///   in place springs it (entrance 5, SolSanctumLunaSolRooms_SpringTrap): the
+///   in place springs it
+///   (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_SPRUNG,
+///   SolSanctumLunaSolRooms_SpringTrap): the
 ///   quarter's light flashes, lights fall through the Luna room, Kraden cries
 ///   `Stop!!! You're about to make a big mistake!`, and every quarter goes dark
 ///   again (FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN). Once the centre statue has
 ///   dropped into the floor, the next statue in place only flashes its light,
-///   and Kraden runs off to see what Isaac has found (entrance 4,
+///   and Kraden runs off to see what Isaac has found
+///   (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED,
 ///   FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG). Each scene ends by taking the party
-///   back to scene 12.
+///   back to SceneId_SolSanctumStatue.
 /// - With all four quarters lit, walking up to Kraden (cell code 8) has him see
 ///   that the picture of Luna has changed to Sol
 ///   (FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED), and crossing cell code 13 has him
 ///   see that the floor's symbol has changed from Sol to Luna
 ///   (FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN). Searching the symbol (cell code 20)
 ///   then opens the floor (FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN), and Isaac,
-///   then Kraden, rise through it to the Elemental Star Room (scene 17,
+///   then Kraden, rise through it to the Elemental Star Room
+///   (SceneId_SolSanctumElementalStarRoom,
 ///   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM).
 /// - After the eruption (FLAG_SOL_SANCTUM_ERUPTED), the Wise One, the floating
 ///   rock that held back the volcano (sol_sanctum_eruption.c), sends Isaac and
@@ -58,13 +65,18 @@
 /// quarter into its FLAG_SOL_SANCTUM_*_LIGHT_SHOWN and redraws the pictures,
 /// the floor and the open way up from the story flags, unless an entrance's own
 /// scene draws them. The falling lights are four callbacks, each with a random
-/// timer of its own, that the trap adds and removes. Entrance 6's scene
+/// timer of its own, that the trap adds and removes. The scene of
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN
 /// (SolSanctumLunaSolRooms_AnimateSavedStatueLights) flashes the quarters lit
-/// since and has Kraden urge Isaac on, but scene 12 leads to it only from a
-/// branch that cannot run. SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS
-/// leads back to scene 16 and
-/// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM up to scene
-/// 17; exit 2 leads into scene 12, and the scenes take exits 3 to 5 back to it.
+/// since and has Kraden urge Isaac on, but SceneId_SolSanctumStatue leads to it
+/// only from a branch that cannot run.
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS leads back to
+/// SceneId_SolSanctumReliefs and
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM up to
+/// SceneId_SolSanctumElementalStarRoom;
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE leads into
+/// SceneId_SolSanctumStatue, and the scenes take the exits named for them back
+/// to it.
 
 #include "game_state.h"
 #include "unit/scene/sol_sanctum_luna_sol_rooms.h"
@@ -400,7 +412,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 20);
     // Garet: "Kraden? What's the matter?" Kraden: "We're so close..." The
     // three wonder at turning back from the heart of the sanctum.
-    Engine_EventShowMessage(1, 0);
+    Engine_EventShowMessage(GARET, 0);
     Engine_EventWait(60);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
     Engine_EventWait(40);
@@ -446,7 +458,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     // delighted: "Good! It's decided. Let's move ahead!"
     Engine_EventSetMessage(MsgSolSanctumPutWayDont);
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(JENNA, 4);
+    Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA,
                                               6);
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
@@ -456,7 +468,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 30);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimation(GARET, ANIM_NOD);
-    Engine_ActorSetAnimationAndWait(JENNA, 3);
+    Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
@@ -480,7 +492,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     }
     Engine_ActorWaitForMove(GARET);
     Engine_ActorSetPosition(GARET, 0, 0);
-    Engine_ActorSetAnimation(JENNA, 2);
+    Engine_ActorSetAnimation(JENNA, ANIM_WALK);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Engine_ActorSetDestination(JENNA, leader->x.part.pixel,
@@ -488,7 +500,6 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     }
     Engine_ActorWaitForMove(JENNA);
     Engine_ActorSetPosition(JENNA, 0, 0);
-    // Retreat does not work here (flag 0x144).
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     Engine_GameFlagSet(FLAG_SOL_SANCTUM_FOUND);
     Engine_EventEnd();
@@ -800,9 +811,10 @@ static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
   }
 }
 
-/// Opens on Kraden in the Luna room with its first tint, as a flash crosses
-/// it. Shared by the three scenes that play on arriving from scene 12's statue
-/// puzzle. Sets FLAG_SCENE_TEMP_01 and clears _00 and _02.
+/// Opens on Kraden in the Luna room with its first tint, as a flash crosses it.
+/// Shared by the three scenes that play on arriving from
+/// SceneId_SolSanctumStatue's statue puzzle. Sets FLAG_SCENE_TEMP_01 and clears
+/// _00 and _02.
 static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   Camera_MoveTo(-1, -1, -1, 0);
   Map_CopyCellsTo(30, 43, 32, 40, 8, 3);
@@ -832,13 +844,16 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   Engine_ColorBufferInterpolate(24);
 }
 
-/// Sol Sanctum, the first statue placed in scene 12 after the centre statue
-/// has dropped into the floor, disarming the trap: the quarter's light flashes
-/// ever faster around Kraden in the Luna room. "What's happening?" "Isaac
-/// must have found something!" He runs off to see. Called by
-/// SolSanctumLunaSolRooms_Initialize at entrance 4 until
+/// Sol Sanctum, the first statue placed in SceneId_SolSanctumStatue after the
+/// centre statue has dropped into the floor, disarming the trap: the quarter's
+/// light flashes ever faster around Kraden in the Luna room. "What's
+/// happening?" "Isaac must have found something!" He runs off to see. Called by
+/// SolSanctumLunaSolRooms_Initialize at
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED until
 /// FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG is set, which it sets; the flag marks
-/// this scene, not the trap. Takes exit 3, back to scene 12 at entrance 3.
+/// this scene, not the trap. Takes
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED back to
+/// SceneId_SolSanctumStatue.
 static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   s32 twelveFrameFlashes;
   s32 eightFrameFlashes;
@@ -886,16 +901,19 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG);
-  Engine_EventRequestExit(3);
+  Engine_EventRequestExit(
+      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED);
 }
 
-/// Sol Sanctum, the first statue placed in scene 12 before the trap is
-/// disarmed: the quarter's light flashes and lights fall through the Luna room
-/// while Kraden cries "Stop!!! You're about to make a big mistake!" Called by
-/// SolSanctumLunaSolRooms_Initialize at entrance 5 until
+/// Sol Sanctum, the first statue placed in SceneId_SolSanctumStatue before the
+/// trap is disarmed: the quarter's light flashes and lights fall through the
+/// Luna room while Kraden cries "Stop!!! You're about to make a big mistake!"
+/// Called by SolSanctumLunaSolRooms_Initialize at
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_SPRUNG until
 /// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set; the caller then sets it and
-/// darkens all four quarters. Takes exit 4, back to scene 12 at entrance 4,
-/// where Kraden explains the trap.
+/// darkens all four quarters. Takes
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_SPRUNG back to
+/// SceneId_SolSanctumStatue, where Kraden explains the trap.
 static void SolSanctumLunaSolRooms_SpringTrap(void) {
   s32 flash;
   Engine_EventBegin();
@@ -931,11 +949,14 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
       (((u32)Engine_RandomNext() * 60) >> 16) + 20;
   gSolSanctumLunaSolRooms_FlashState = 0;
   // Run the falling lights independently while the quarters keep flashing.
-  Task_AddCallback(SolSanctumLunaSolRooms_UpdateFirstFallingLight, 3200);
-  Task_AddCallback(SolSanctumLunaSolRooms_UpdateSecondFallingLight, 3200);
-  Task_AddCallback(SolSanctumLunaSolRooms_UpdateThirdFallingLight, 3200);
+  Task_AddCallback(SolSanctumLunaSolRooms_UpdateFirstFallingLight,
+                   TASK_PRIORITY_SCENE);
+  Task_AddCallback(SolSanctumLunaSolRooms_UpdateSecondFallingLight,
+                   TASK_PRIORITY_SCENE);
+  Task_AddCallback(SolSanctumLunaSolRooms_UpdateThirdFallingLight,
+                   TASK_PRIORITY_SCENE);
   FieldScheduler_AddCallback(SolSanctumLunaSolRooms_UpdateFourthFallingLight,
-                             3200);
+                             TASK_PRIORITY_SCENE);
   for (flash = 0; flash != 6; flash++) {
     SolSanctumLunaSolRooms_FlashCurrentStatueLights(5);
   }
@@ -964,17 +985,21 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   gEventWork->transitionFrames = 32;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(4);
+  Engine_EventRequestExit(
+      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_SPRUNG);
 }
 
 /// Sol Sanctum: the quarters lit since the room last showed them flash ever
 /// faster in the Luna room, and Kraden, once: "You found it, Isaac." Called by
-/// SolSanctumLunaSolRooms_Initialize at entrance 6 once
-/// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set; scene 12 leads there only from
-/// a branch that cannot run (its exit 5). Toggles each lit quarter's
-/// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; Kraden speaks until the caller sets
-/// FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT. Takes exit 5, back to scene 12 at
-/// entrance 5.
+/// SolSanctumLunaSolRooms_Initialize at
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN once
+/// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set; SceneId_SolSanctumStatue leads
+/// there only from a branch that cannot run
+/// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN). Toggles
+/// each lit quarter's FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; Kraden speaks until the
+/// caller sets FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT. Takes
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN back to
+/// SceneId_SolSanctumStatue.
 static void SolSanctumLunaSolRooms_AnimateSavedStatueLights(void) {
   s32 speaker;
   s32 twelveFrameFlashes;
@@ -1054,7 +1079,8 @@ static void SolSanctumLunaSolRooms_AnimateSavedStatueLights(void) {
   gEventWork->transitionFrames = 32;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(5);
+  Engine_EventRequestExit(
+      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN);
 }
 
 /// Sol Sanctum: walking up to Kraden in the Luna room (cell code 8) once all
@@ -1156,7 +1182,7 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
 /// FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN is set. Sets
 /// FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN the first time and takes
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, to the
-/// Elemental Star Room (scene 17).
+/// Elemental Star Room (SceneId_SolSanctumElementalStarRoom).
 static void Event_RiseToElementalStarRoom(void) {
   struct FieldActor *actor;
   s32 frame;
@@ -1298,7 +1324,8 @@ static void Event_RiseToElementalStarRoom(void) {
     } while (frame != 60);
     Engine_ActorSetPosition(ACTOR_KRADEN, 0, 0);
     Engine_EventWait(80);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
     gEventWork->transitionFrames = 24;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
@@ -1314,11 +1341,14 @@ static void Event_RiseToElementalStarRoom(void) {
 /// Sets up Sol Sanctum's rooms of Sol and Luna and plays the scene this
 /// entrance calls for. Called by Field_RunScene once the actors exist. Blocks
 /// Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the way up opens,
-/// before the eruption; sets FLAG_SCENE_TEMP_00 on an ordinary entrance;
-/// copies each lit quarter into its FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the
-/// disarmed trap's flash at entrance 4, the trap at entrance 5 (then darkening
-/// the four quarters), the newly lit quarters at entrance 6, and the arrival
-/// after the Wise One's rescue at
+/// before the eruption; sets FLAG_SCENE_TEMP_00 on an ordinary entrance; copies
+/// each lit quarter into its FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the disarmed
+/// trap's flash at
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED, the trap
+/// at SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_SPRUNG (then
+/// darkening the four quarters), the newly lit quarters at
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN, and the
+/// arrival after the Wise One's rescue at
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION until
 /// FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN is set. Otherwise it redraws the
 /// quarters, pictures, floor and open way up from the story flags, and after
@@ -1328,12 +1358,12 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   s32 anyLightLit;
 
   Engine_TaskWait(1);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   playedEntrySequence = 0;
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FOUND) != 0 &&
       Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) == 0 &&
       Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
-    // Retreat does not work here (flag 0x144).
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   }
   Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
@@ -1353,14 +1383,17 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(120));
     }
   }
-  // Play the one-time scene this entrance comes back from scene 12 for.
-  if (gGameState.entrance == 4) {
+  // Play the one-time scene this entrance comes back from
+  // SceneId_SolSanctumStatue for.
+  if (gGameState.entrance ==
+      SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG) == 0) {
       SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed();
       Engine_GameFlagSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG);
       playedEntrySequence = 1;
     }
-  } else if (gGameState.entrance == 5) {
+  } else if (gGameState.entrance ==
+             SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_SPRUNG) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
       SolSanctumLunaSolRooms_SpringTrap();
       Engine_GameFlagSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN);
@@ -1370,7 +1403,8 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       Engine_GameFlagClear(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
       playedEntrySequence = 1;
     }
-  } else if (gGameState.entrance == 6) {
+  } else if (gGameState.entrance ==
+             SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN) {
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) != 0) {
       SolSanctumLunaSolRooms_AnimateSavedStatueLights();
       Engine_GameFlagSet(FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT);
@@ -1513,8 +1547,8 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_TaskWait(1);
   Actor_SetPosition(GARET, PIXELS(280), PIXELS(134));
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  // This event reads its work slots from one address: slot 32, the palette
-  // buffer work, is reached from the event work's slot. As gEventWork and
+  // This event reads its work slots from one address: HEAP_SLOT_PALETTE_BUFFER
+  // is reached from HEAP_SLOT_EVENT's slot. As gEventWork and
   // gPaletteBufferWork they would load two.
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 1;
   Engine_EventOpenScreen();
@@ -1593,7 +1627,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 16;
   Engine_EventEnd();
 }
@@ -1614,15 +1648,22 @@ static void Event_TalkToKraden(void) {
 }
 
 struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[] = {
-    {0, CONDITION_ALWAYS, 288, 0, 157, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 288, 0, 157, FACING_SOUTH, 0, 0, 0,
+     752, 496, 0},
     {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS, CONDITION_ALWAYS, 55,
      0, 477, FACING_NORTH, 0, 0, 0, 752, 496, 0},
-    {2, CONDITION_ALWAYS, 647, 0, 327, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
-    {3, CONDITION_ALWAYS, 287, 0, 218, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
-    {4, CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
-    {5, CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
-    {6, CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
-    {7, CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
+    {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE, CONDITION_ALWAYS, 647,
+     0, 327, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
+    {SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED, CONDITION_ALWAYS, 287, 0, 218,
+     FACING_SOUTH, 0, 0, 0, 752, 496, 0},
+    {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED,
+     CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
+    {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_SPRUNG,
+     CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
+    {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN,
+     CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
+    {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_UNUSED,
+     CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
     {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION, CONDITION_ALWAYS,
      297, 0, 119, FACING_NORTHWEST, 0, 0, 0, 752, 496, 0},
     {SCENE_TABLE_END},
@@ -1700,7 +1741,8 @@ struct SceneEvent gSolSanctumLunaSolRoomsEvents[] = {
      EVENT_SCRIPT(Event_KradenSeesLunaPictureChange)},
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS},
-    {0x21, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 2, CONDITION_ALWAYS,
+     SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE},
     {EVENT_TOUCH, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_KradenFindsHeartOfSanctum)},
     {EVENT_TOUCH, 9, CONDITION_ALWAYS,

@@ -53,16 +53,16 @@ FarCall_ObjectTable:
 	export Event_SetMessageIdFar, Event_SetMessageId
 	export UiText_OpenMessageAtObjectFar, UiText_OpenMessageAtObject
 	export FieldEvent_ShowMessageAndWaitFar, FieldEvent_ShowMessageAndWait
-	export BattlePresentation_RunActionThenWaitIfModeZeroFar, BattlePresentation_RunActionThenWaitIfModeZero
+	export FieldEvent_ShowMessageThenWaitFar, FieldEvent_ShowMessageThenWait
 	export FieldEvent_AskYesNoAndShowResponseFar, FieldEvent_AskYesNoAndShowResponse
-	overlay_veneer BattleEventRuntime_EmptyCallback
+	overlay_veneer FieldEvent_EmptyCallback
 	overlay_veneer Event_ShowSpeakerMessage
 	overlay_veneer ObjectTable_CallRefreshHook
 	overlay_veneer Event_ShowMessageAtPosition
 	export ObjectMotion_ArmCallbackFar, ObjectMotion_ArmCallback
 	overlay_veneer Object_ResetTargetAndSetMode1
 	overlay_veneer ObjectTable_RunIfActive
-	export Battle_ShowPairedUnitWorkAndWaitFar, Battle_ShowPairedUnitWorkAndWait
+	export FieldEvent_ShowTwoMessagesAndWaitFar, FieldEvent_ShowTwoMessagesAndWait
 	export Ui_SetMessageVoiceFromActorFar, Ui_SetMessageVoiceFromActor
 	export ObjectMotion_SetActionVariantFar, ObjectMotion_SetActionVariant
 	export FieldFx_SpawnLinkedFar, FieldFx_SpawnLinked
@@ -156,8 +156,8 @@ FarCall_ObjectTable:
 	overlay_veneer FieldFx_StartItemBreak
 	overlay_veneer FieldFx_SnapScaleToFull
 	overlay_veneer UpdateRisingParticleBurst
-	export BattleParty_ApplyDrainFar, BattleParty_ApplyDrain
-	overlay_veneer BattleParty_ApplyHealthDelta
+	export Party_AddPpFar, Party_AddPp
+	overlay_veneer Party_AddHp
 	overlay_veneer ResourceTable_CountFreeBlocks
 	export Menu_AskYesNoFar, Menu_AskYesNo
 	overlay_veneer Encounter_GetEnemyGroupAtSlot

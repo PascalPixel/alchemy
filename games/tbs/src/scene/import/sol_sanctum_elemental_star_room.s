@@ -67,7 +67,7 @@
 	.set import.Engine_EventSetMessage, 1
 	.set import.Engine_EventOpenMessage, 1
 	.set import.Engine_EventShowMessage, 1
-	.set import.BattlePresentation_RunActionThenWaitIfModeZero, 1
+	.set import.FieldEvent_ShowMessageThenWait, 1
 	.set import.Engine_EventAskYesNo, 1
 	.set import.Engine_ActorFaceDirection, 1
 	.set import.Engine_ActorSetSpritePriority, 1

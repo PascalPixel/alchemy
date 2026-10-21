@@ -297,8 +297,7 @@ void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags) {
 
 /// The event command "show message and wait": shows the message, then waits
 /// wait frames.
-void BattlePresentation_RunActionThenWaitIfModeZero(s32 actor, s32 flags,
-                                                    s32 wait) {
+void FieldEvent_ShowMessageThenWait(s32 actor, s32 flags, s32 wait) {
   FieldEvent_ShowMessageAndWait(actor, flags);
   FieldEvent_WaitFrames(wait);
 }
@@ -328,7 +327,7 @@ s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags) {
   return answer;
 }
 
-void BattleEventRuntime_EmptyCallback(void) {}
+void FieldEvent_EmptyCallback(void) {}
 
 /// A speaker-message entry point retained by its overlay veneer, with no
 /// current scene caller. Records the speaker, waits for the message unless
@@ -453,11 +452,11 @@ void ObjectTable_RunIfActive(s32 actor) {
 /// The event command "show two messages and wait": two actors speak at once,
 /// each message at its own (x, y) with its portrait at (portraitX, portraitY),
 /// all in tiles. Waits for A, B, L or R, then closes both.
-void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
-                                      s32 firstPortraitX, s32 firstPortraitY,
-                                      s32 second, s32 secondX, s32 secondY,
-                                      s32 secondPortraitX,
-                                      s32 secondPortraitY) {
+void FieldEvent_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
+                                       s32 firstPortraitX, s32 firstPortraitY,
+                                       s32 second, s32 secondX, s32 secondY,
+                                       s32 secondPortraitX,
+                                       s32 secondPortraitY) {
   struct FieldWork *field = (struct FieldWork *)gEventWork;
   s32 firstSprite = ObjectTable_ReadActiveValue(first);
   s32 secondSprite = ObjectTable_ReadActiveValue(second);

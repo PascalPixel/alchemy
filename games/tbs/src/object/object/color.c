@@ -91,9 +91,9 @@ void ColorBuffer_Update(void) {
 }
 
 // Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
-extern u16 gBattlePalette_ChannelCurve[];
-extern u16 gBattlePalette_ChannelCurveLight[];
-extern u16 gBattlePalette_ChannelCurveContrast[];
+extern u16 gColorBuffer_ChannelCurve[];
+extern u16 gColorBuffer_ChannelCurveLight[];
+extern u16 gColorBuffer_ChannelCurveContrast[];
 
 /// Builds colours for the colour buffer from the palette src into dst, which
 /// holds each colour as B, G and R channels shifted up 10 bits. mode below
@@ -165,9 +165,9 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
           green = 28;
         if (blue > 28)
           blue = 28;
-        *dst++ = gBattlePalette_ChannelCurveLight[blue];
-        *dst++ = gBattlePalette_ChannelCurveLight[green];
-        *dst++ = gBattlePalette_ChannelCurveLight[red];
+        *dst++ = gColorBuffer_ChannelCurveLight[blue];
+        *dst++ = gColorBuffer_ChannelCurveLight[green];
+        *dst++ = gColorBuffer_ChannelCurveLight[red];
       }
       break;
     case PALETTE_TRANSFORM_WARM: // half R + 10, two thirds G + 8, B - 7 (black
@@ -187,9 +187,9 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
           green = ColorBuffer_ClampChannel(green);
           blue = ColorBuffer_ClampChannel(blue);
         }
-        *dst++ = gBattlePalette_ChannelCurveContrast[blue];
-        *dst++ = gBattlePalette_ChannelCurveLight[green];
-        *dst++ = gBattlePalette_ChannelCurve[red];
+        *dst++ = gColorBuffer_ChannelCurveContrast[blue];
+        *dst++ = gColorBuffer_ChannelCurveLight[green];
+        *dst++ = gColorBuffer_ChannelCurve[red];
       }
       break;
     case PALETTE_TRANSFORM_MUTED: // narrow the range, G and B + 2
@@ -215,9 +215,9 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = ColorBuffer_ClampChannel(red);
         green = ColorBuffer_ClampChannel(green);
         blue = ColorBuffer_ClampChannel(blue);
-        *dst++ = gBattlePalette_ChannelCurve[blue];
-        *dst++ = gBattlePalette_ChannelCurve[green];
-        *dst++ = gBattlePalette_ChannelCurve[red];
+        *dst++ = gColorBuffer_ChannelCurve[blue];
+        *dst++ = gColorBuffer_ChannelCurve[green];
+        *dst++ = gColorBuffer_ChannelCurve[red];
       }
       break;
     case PALETTE_TRANSFORM_PALE: // half of each, plus the mean
@@ -235,9 +235,9 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = ColorBuffer_ClampChannel(red);
         green = ColorBuffer_ClampChannel(green);
         blue = ColorBuffer_ClampChannel(blue);
-        dst[0] = gBattlePalette_ChannelCurveContrast[blue];
-        dst[1] = gBattlePalette_ChannelCurveContrast[green];
-        dst[2] = gBattlePalette_ChannelCurveContrast[red];
+        dst[0] = gColorBuffer_ChannelCurveContrast[blue];
+        dst[1] = gColorBuffer_ChannelCurveContrast[green];
+        dst[2] = gColorBuffer_ChannelCurveContrast[red];
         dst += 3;
       }
       break;
@@ -252,9 +252,9 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = ColorBuffer_ClampChannel(red);
         green -= green / 3;
         blue -= blue / 3;
-        dst[0] = gBattlePalette_ChannelCurve[blue];
-        dst[1] = gBattlePalette_ChannelCurve[green];
-        dst[2] = gBattlePalette_ChannelCurveLight[red];
+        dst[0] = gColorBuffer_ChannelCurve[blue];
+        dst[1] = gColorBuffer_ChannelCurve[green];
+        dst[2] = gColorBuffer_ChannelCurveLight[red];
         dst += 3;
       }
       break;
@@ -272,9 +272,9 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = ColorBuffer_ClampChannel(red);
         green = ColorBuffer_ClampChannel(green);
         blue = ColorBuffer_ClampChannel(blue);
-        dst[0] = gBattlePalette_ChannelCurveContrast[blue];
-        dst[1] = gBattlePalette_ChannelCurveLight[green];
-        dst[2] = gBattlePalette_ChannelCurve[red];
+        dst[0] = gColorBuffer_ChannelCurveContrast[blue];
+        dst[1] = gColorBuffer_ChannelCurveLight[green];
+        dst[2] = gColorBuffer_ChannelCurve[red];
         dst += 3;
       }
       break;
@@ -342,9 +342,9 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
       blendedRed = ColorBuffer_ClampChannel((u32)blendedRed >> 16);
       blendedGreen = ColorBuffer_ClampChannel((u32)blendedGreen >> 16);
       blendedBlue = ColorBuffer_ClampChannel((u32)blendedBlue >> 16);
-      *dst++ = gBattlePalette_ChannelCurve[blendedBlue];
-      *dst++ = gBattlePalette_ChannelCurve[blendedGreen];
-      *dst++ = gBattlePalette_ChannelCurve[blendedRed];
+      *dst++ = gColorBuffer_ChannelCurve[blendedBlue];
+      *dst++ = gColorBuffer_ChannelCurve[blendedGreen];
+      *dst++ = gColorBuffer_ChannelCurve[blendedRed];
     }
   } else if (mode & PALETTE_TRANSFORM_SPLIT) {
     // The colours unchanged, as the default transform writes them.

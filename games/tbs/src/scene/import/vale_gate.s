@@ -75,7 +75,7 @@
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_PsynergyBegin, 1
 	.set import.FieldFx_End, 1
-	.set import.BattleParty_ApplyDrain, 1
+	.set import.Party_AddPp, 1
 	.set import.Object_LinkObjectAndSetCallback, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

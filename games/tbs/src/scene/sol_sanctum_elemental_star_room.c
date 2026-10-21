@@ -665,7 +665,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     SolSanctumElementalStarRoom_SkipMessages(1);
   }
-  BattlePresentation_RunActionThenWaitIfModeZero(ACTOR_KRADEN, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_CameraMoveTo(PIXELS(477), -1, PIXELS(334), 0);

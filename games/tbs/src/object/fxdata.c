@@ -15,7 +15,7 @@
 // gFieldFx_PulseScales, gFieldFx_CyclePatternWords and
 // gFieldFx_RandomChildValues, graphics.h's gDisplayTransition_NoiseWidths and
 // gDisplayTransition_EdgeOffsets, field.h's gObjectGroup_BlinkChildValues and
-// object.c's three gBattlePalette_ChannelCurve tables. All are defined const
+// object.c's three gColorBuffer_ChannelCurve tables. All are defined const
 // all the same: in rom_main_04 .data follows scripts.o, and these tables would
 // move. So this file includes none of those headers.
 
@@ -148,21 +148,21 @@ const u8 gDisplayTransition_DitherTable[64] = {
 /// bits, so 31 is 0x7c00. All three darken the middle tones: 16 becomes
 /// about 11.4 here (0x2dc3), 12.4 in the Light curve, 12.5 in the Contrast
 /// curve, which also reaches 31 already at 25.
-const u16 gBattlePalette_ChannelCurve[32] = {
+const u16 gColorBuffer_ChannelCurve[32] = {
     0x0000, 0x020c, 0x042f, 0x066b, 0x08c0, 0x0b2f, 0x0db9, 0x105f,
     0x1322, 0x1603, 0x1903, 0x1c22, 0x1f63, 0x22c5, 0x264b, 0x29f4,
     0x2dc3, 0x31b9, 0x35d7, 0x3a1d, 0x3e8e, 0x432b, 0x47f6, 0x4cee,
     0x5217, 0x5772, 0x5d00, 0x62c3, 0x68bc, 0x6eed, 0x7559, 0x7c00,
 };
 
-const u16 gBattlePalette_ChannelCurveLight[32] = {
+const u16 gColorBuffer_ChannelCurveLight[32] = {
     0x0000, 0x0265, 0x04df, 0x076e, 0x0a14, 0x0cd1, 0x0fa5, 0x1291,
     0x1596, 0x18b4, 0x1bec, 0x1f3f, 0x22ac, 0x2636, 0x29dc, 0x2da0,
     0x3182, 0x3583, 0x39a3, 0x3de3, 0x4245, 0x46c9, 0x4b70, 0x503a,
     0x5529, 0x5a3d, 0x5f78, 0x64da, 0x6a65, 0x7019, 0x75f7, 0x7c00,
 };
 
-const u16 gBattlePalette_ChannelCurveContrast[32] = {
+const u16 gColorBuffer_ChannelCurveContrast[32] = {
     0x0000, 0x0168, 0x02f7, 0x04b1, 0x0699, 0x08b2, 0x0b01, 0x0d8a,
     0x1052, 0x135d, 0x16b0, 0x1a52, 0x1e48, 0x2298, 0x274a, 0x2c65,
     0x31f0, 0x37f5, 0x3e7c, 0x458e, 0x4d37, 0x5580, 0x5e77, 0x6826,

@@ -53,14 +53,14 @@ void Object_SetTargetAndCallbackFar(u32 objectId, s32 targetId,
 void Event_SetMessageIdFar(s32 value);
 struct UiWindow *UiText_OpenMessageAtObjectFar(s32 arg, s32 unused);
 void FieldEvent_ShowMessageAndWaitFar(s32 action, s32 flag);
-void BattlePresentation_RunActionThenWaitIfModeZeroFar(s32 first, s32 second,
-                                                       s32 value);
+void FieldEvent_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
 s32 FieldEvent_AskYesNoAndShowResponseFar(s32 objectId, s32 actionId);
 void ObjectMotion_ArmCallbackFar(s32 objectId, s32 angle, s32 wait);
-void Battle_ShowPairedUnitWorkAndWaitFar(s32 first, s32 first_x, s32 first_y,
-                                         s32 first_arg, s32 first_extra,
-                                         s32 second, s32 second_x, s32 second_y,
-                                         s32 second_arg, s32 second_extra);
+void FieldEvent_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
+                                          s32 first_arg, s32 first_extra,
+                                          s32 second, s32 second_x,
+                                          s32 second_y, s32 second_arg,
+                                          s32 second_extra);
 void Ui_SetMessageVoiceFromActorFar(s32 arg0);
 void ObjectMotion_SetActionVariantFar(s32 objectId, s32 priority);
 void FieldFx_SpawnLinkedFar(s32 id, s32 mode, s32 wait);
@@ -131,7 +131,7 @@ struct AnimationObject *
 Sprite_ShareVramCacheFar(struct AnimationObject *sourceSprite,
                          struct AnimationObject *sharedSprite);
 s16 Event_GetSpecialValueFar(void);
-void BattleParty_ApplyDrainFar(s32 amount, s32 unused);
+void Party_AddPpFar(s32 amount, s32 unused);
 s32 Menu_AskYesNoFar(s32 value);
 void Audio_PlayCueFromEventWorkFar(void);
 void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);

@@ -275,11 +275,11 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     if (accumulatedDistance > 0xffff) {
       amount = accumulatedDistance / 0x10000;
       work->walkingDistance = accumulatedDistance & 0xffff;
-      BattleParty_ApplyDrain(amount, 0);
+      Party_AddPp(amount, 0);
       if (DjinnRecovery_TickFar())
         AudioCommand_PlayFar(SE_139);
       Event_ClearInvalidPackedValues();
-      partyHurt = BattleParty_ApplyStatusDamage();
+      partyHurt = Party_ApplyPoisonDamage();
     }
 
     // Hazardous ground: entering it starts the count half way; then each
@@ -326,7 +326,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
     amount = gGameState.hazardDamage;
     gGameState.hazardSteps = 0;
-    BattleParty_ApplyHealthDelta(-(amount & 255), amount & 0x100);
+    Party_AddHp(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
 
@@ -362,8 +362,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 ///
 /// Called by Field_ProcessStep as the party walks, by Field_SearchTile for a
 /// Psynergy stone (999, all PP), and by the Vale home scene through
-/// BattleParty_ApplyDrainFar.
-void BattleParty_ApplyDrain(s32 amount, s32 unused) {
+/// Party_AddPpFar.
+void Party_AddPp(s32 amount, s32 unused) {
   s32 partyCount = Party_CountActiveOwnersFar();
   s32 partyIndex;
 
@@ -382,7 +382,7 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused) {
 /// maximum HP.
 ///
 /// Called by Field_ProcessStep for hazardous ground.
-void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
+void Party_AddHp(s32 amount, s32 percent) {
   s32 partyCount;
   s32 partyIndex;
   s32 hpDelta;
@@ -425,7 +425,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
 /// non-zero result as the party being hurt.
 ///
 /// Called by Field_ProcessStep at each tick of the distance walked.
-s32 BattleParty_ApplyStatusDamage(void) {
+s32 Party_ApplyPoisonDamage(void) {
   s32 worstPoison = 0;
   s32 partyCount = Party_CountActiveOwnersFar();
   s32 partyIndex;

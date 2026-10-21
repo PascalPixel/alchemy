@@ -163,18 +163,18 @@ s32 ObjectTable_ReadActiveValue(s32 actor);
 s32 ObjectTable_FindActiveByValue(s32 sprite);
 struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused);
 void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags);
-void BattlePresentation_RunActionThenWaitIfModeZero(s32 actor, s32 flags,
-                                                    s32 wait);
+void FieldEvent_ShowMessageThenWait(s32 actor, s32 flags, s32 wait);
 s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags);
-void BattleEventRuntime_EmptyCallback(void);
+void FieldEvent_EmptyCallback(void);
 void Event_ShowSpeakerMessage(s32 speaker);
 void ObjectTable_CallRefreshHook(s32 unused0, s32 unused1, s32 x, s32 y);
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 void ObjectTable_RunIfActive(s32 actor);
-void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
-                                      s32 firstPortraitX, s32 firstPortraitY,
-                                      s32 second, s32 secondX, s32 secondY,
-                                      s32 secondPortraitX, s32 secondPortraitY);
+void FieldEvent_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
+                                       s32 firstPortraitX, s32 firstPortraitY,
+                                       s32 second, s32 secondX, s32 secondY,
+                                       s32 secondPortraitX,
+                                       s32 secondPortraitY);
 void Ui_SetMessageVoiceFromActor(s32 actor);
 
 void Camera_FollowActor(s32 actor, s32 keepPosition);

@@ -464,7 +464,7 @@ static void Event_UsePsynergyStone(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeCheckedThePsynergyStone, 1);
   Engine_AudioPlayCue(SE_RECOVERY);
-  BattleParty_ApplyDrain(999, 0);
+  Party_AddPp(999, 0);
   Engine_EventWait(10);
   Engine_MessageShowCentered(MsgValePartyPpRestored, 1);
   UiWork_FinalizePendingCore();

@@ -188,7 +188,8 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
 /// Touch trigger 11, the pool's heart: the column of light appears over the
 /// leader if it is not there, and grows a stage with each pair of sparks, half
 /// a second apart, up to three lights. The column's cell is where a sinking
-/// leader comes back to; flag 0x161 is set while the leader has lights.
+/// leader comes back to; FLAG_NO_ENCOUNTERS_IN_PLACE is set while the leader
+/// has lights.
 void MercuryLighthouse_ChargeLights(void) {
   struct MercuryLighthouseLights *state;
   struct FieldActor *leader;
@@ -364,7 +365,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   Object_SetMode(actor, 6);
   Engine_TaskWait(2);
   if (to->collisionCode != state->terrainCode)
-    Engine_ActorSetSpriteFlags(actor, 1);
+    Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   else
     Engine_AudioPlayCue(SE_215);
   Engine_TaskWait(1);
@@ -383,7 +384,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
     Engine_TaskWait(1);
     actor->x.fixed = state->targetX;
     actor->z.fixed = state->targetZ;
-    Engine_ActorSetSpriteFlags(actor, 1);
+    Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   }
   state->sparkTimer = 0;
   Engine_EventEnd();

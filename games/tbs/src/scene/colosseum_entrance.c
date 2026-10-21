@@ -132,33 +132,48 @@ static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
 /// the first two. They are named by what they say during the trials, except
 /// where the finals day says more about who they are.
 enum ColosseumEntranceActor {
-  /// Talks of the heats. "They're holding the preliminary Colosso heats right
-  /// now."
+  /// A young man with brown hair in a purple shirt who talks of the heats.
+  /// "They're holding the preliminary Colosso heats right now."
+  /// ★ Named from the game: "They're holding the preliminary Colosso heats
+  /// right now." (MsgColosseumEntranceTheyreHoldingThePreliminaryColossoHeats)
   ACTOR_VILLAGER_PRELIMINARY_HEATS = ACTOR_FIRST_PLACED,
-  /// Cannot get into the packed colosseum. "Sigh... The colosseum is packed
-  /// with people. I'll never get in there."
-  ACTOR_VILLAGER_CANNOT_GET_IN,
-  /// Asks whether the party hopes to get in (Event_DiscussSeating). "Are you
-  /// hoping to get in to see Colosso now?"
+  /// A woman with fair hair who cannot get into the packed colosseum. "Sigh...
+  /// The colosseum is packed with people. I'll never get in there."
+  /// ★ Named from the game: "I'll never get in there."
+  /// (MsgColosseumEntranceSighTheColosseumIsPackedWith)
+  ACTOR_WOMAN_CANNOT_GET_IN,
+  /// A burly grey-haired man who asks whether the party hopes to get in
+  /// (Event_DiscussSeating). "Are you hoping to get in to see Colosso now?"
+  /// ★ Named from the game: "Are you hoping to get in to see Colosso now?"
+  /// (MsgColosseumHopingGetInSeeColosso)
   ACTOR_VILLAGER_SEATING,
-  /// Talks of winning at the Lucky Guess. "If you hit it big in the Lucky
-  /// Guess, you can win a pretty penny."
-  ACTOR_VILLAGER_PRETTY_PENNY,
-  /// Has bet on the Lucky Guess for years. "I've been betting on the Lucky
-  /// Guess for many years, but I've never won."
+  /// A woman in a green dress who talks of winning at the Lucky Guess. "If you
+  /// hit it big in the Lucky Guess, you can win a pretty penny."
+  /// ★ Named from the game: "you can win a pretty penny."
+  /// (MsgColosseumEntranceIfYouHitItBigIn)
+  ACTOR_WOMAN_PRETTY_PENNY,
+  /// An old man with a cane who has bet on the Lucky Guess for years. "I've
+  /// been betting on the Lucky Guess for many years, but I've never won."
   /// ★ Named from the game: "I've been betting on the Lucky Guess for many
   /// years" (MsgColosseumEntranceIveBeenBettingOnTheLucky)
-  ACTOR_VILLAGER_BETTING_FOR_YEARS,
-  /// Walks about before the finals day. "Colosso's Lucky Guess makes the
-  /// battles in the colosseum better."; on the finals day, "I want to watch
-  /// the finals from a good spot, but it costs too much!"
-  ACTOR_VILLAGER_GOOD_SPOT,
-  /// One of the scalpers. During the trials he bets: "I want to win big, so I
-  /// put it all on a warrior no one else has picked."; on the finals day he is
-  /// busy with a customer, and Mind Read hears "I'm going to be in trouble if I
-  /// get stuck with any unsold seats..."
+  ACTOR_OLD_MAN_BETTING_FOR_YEARS,
+  /// An old woman who walks about before the finals day. "Colosso's Lucky Guess
+  /// makes the battles in the colosseum better."; on the finals day, "I want to
+  /// watch the finals from a good spot, but it costs too much!"
+  /// ★ Named from the game: "I want to watch the finals from a good spot"
+  /// (MsgColosseumWantWatchFinalsFromGood)
+  ACTOR_OLD_WOMAN_GOOD_SPOT,
+  /// A strongman, one of the scalpers. During the trials he bets: "I want to
+  /// win big, so I put it all on a warrior no one else has picked."; on the
+  /// finals day he is busy with a customer, and Mind Read hears "I'm going to
+  /// be in trouble if I get stuck with any unsold seats..."
+  /// ★ Named from the game: "I'm going to be in trouble if I get stuck with any
+  /// unsold seats..." (MsgColosseumEntranceImGoingToBeInTrouble)
   ACTOR_SCALPER,
-  /// The Lucky Guess man. "Do you know what the Lucky Guess is?"
+  /// The Lucky Guess man, in a green cap and carrying a pack. "Do you know what
+  /// the Lucky Guess is?"
+  /// ★ Named from the game: "Do you know what the Lucky Guess is?"
+  /// (MsgColosseumDoKnowLuckyGuess)
   ACTOR_LUCKY_GUESS_MAN = ACTOR_FIRST_PLACED + 8,
   /// The four soldiers at the gates on the finals day (SPRITE_SOLDIER, as in
   /// the waiting room), gColosseumEntrancePlacementsFinalsDay only. The
@@ -176,19 +191,28 @@ enum ColosseumStandsActor {
   /// ★ Named from what the player sees: the other torch on its stand (its
   /// render)
   ACTOR_STANDS_EAST_TORCH,
-  /// Cheers on a small warrior. "Go for it! That's it! I'm cheering for you,
-  /// little guy!"
+  /// A young man with brown hair in a purple shirt who cheers on a small
+  /// warrior. "Go for it! That's it! I'm cheering for you, little guy!"
+  /// ★ Named from the game: "I'm cheering for you, little guy!"
+  /// (MsgColosseumEntranceGoForItThatsItIm)
   ACTOR_SPECTATOR_CHEERING = ACTOR_FIRST_PLACED + 5,
-  /// Is excited by the trials. "Watching the trials makes me really excited.
-  /// The battles are incredible!"
+  /// A woman with fair hair, excited by the trials. "Watching the trials makes
+  /// me really excited. The battles are incredible!"
+  /// ★ Named from the game: "Watching the trials makes me really excited."
+  /// (MsgColosseumEntranceWatchingTheTrialsMakesMeReally)
   ACTOR_SPECTATOR_EXCITED,
-  /// Is taken with the warriors. "Watching such proud, skilled warriors in
-  /// battle is so enchanting."
+  /// A burly grey-haired man, taken with the warriors. "Watching such proud,
+  /// skilled warriors in battle is so enchanting."
+  /// ★ Named from the game: "Watching such proud, skilled warriors in battle is
+  /// so enchanting." (MsgColosseumEntranceWatchingSuchProudSkilledWarriorsIn)
   ACTOR_SPECTATOR_ENCHANTED,
-  /// Has waited a year for Colosso. "I've waited a whole year to see Colosso.
-  /// I can't wait for the finals!"
+  /// A woman in a green dress who has waited a year for Colosso. "I've waited a
+  /// whole year to see Colosso. I can't wait for the finals!"
+  /// ★ Named from the game: "I've waited a whole year to see Colosso."
+  /// (MsgColosseumEntranceIveWaitedAWholeYearTo)
   ACTOR_SPECTATOR_WAITED_A_YEAR,
-  /// The attendant by the trials, who shows the party two warriors' trials.
+  /// The attendant by the trials, a bald, muscular man, who shows the party two
+  /// warriors' trials.
   /// ★ Named from the game: "That warrior cleared this trial"
   /// (MsgColosseumHavePerfectTechniquesLikeThose)
   ACTOR_TRIAL_ATTENDANT
@@ -201,23 +225,28 @@ enum ColosseumTrialActor {
   /// ★ Named from what the player sees: six lit torches on stands around the
   /// trial ground (its render)
   ACTOR_GROUNDS_FIRST_TORCH = ACTOR_FIRST_PLACED,
-  /// Five warriors, 14 to 18, in the finalists' sprite (0x3e); two of them
-  /// take the trials the party is shown.
+  /// Five warriors, 14 to 18, in the finalists' sprite
+  /// (SPRITE_WARRIOR_IN_GOLDEN_HELMET); two of them take the trials the party
+  /// is shown.
   /// ★ Named from the game: "That warrior failed his trial"
   /// (MsgColosseumHaveMakeThroughCountlessMatches)
   ACTOR_FIRST_TRIAL_WARRIOR = ACTOR_FIRST_PLACED + 6,
   /// The warrior the party first watches, of whom the attendant then says
   /// "That warrior failed his trial, so he's disqualified here."
+  /// ★ Named from the game: "That warrior failed his trial"
+  /// (MsgColosseumHaveMakeThroughCountlessMatches)
   ACTOR_FAILING_WARRIOR = ACTOR_FIRST_TRIAL_WARRIOR + 2,
   /// The warrior the party watches second, of whom the attendant then says
   /// "That warrior cleared this trial, but I doubt he'll make the finals."
+  /// ★ Named from the game: "That warrior cleared this trial"
+  /// (MsgColosseumHavePerfectTechniquesLikeThose)
   ACTOR_CLEARING_WARRIOR,
-  /// Two people (sprite 0xa5, drawn mirrored) who take animation 5 when the
-  /// warrior fails and 6 when he clears the trial. XXX: who they are is
-  /// unknown; no text names them.
-  /// ★ Named from what the player sees: two people in white, each raising a
-  /// red flag beside the trial (its render)
-  ACTOR_FIRST_PERSON_WITH_A_RED_FLAG = ACTOR_FIRST_PLACED + 11,
+  /// Two young men with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, drawn
+  /// mirrored) who take animation 5 when the warrior fails and 6 when he clears
+  /// the trial. XXX: who they are is unknown; no text names them.
+  /// ★ Named from what the player sees: two young men with fair hair in white
+  /// tunics, each raising a red flag beside the trial (its render)
+  ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG = ACTOR_FIRST_PLACED + 11,
   /// A capped pillar (SPRITE_CAPPED_PILLAR) the clearing warrior heaves up and
   /// drops.
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
@@ -370,9 +399,10 @@ const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
   return gColosseumEntranceEventsOther;
 }
 
-/// At the Colosseum Entrance: during the trials, a man asks whether the party
-/// hopes to get in to see Colosso; on the finals day (FLAG_BABI_SAVED) the
-/// colosseum is already full, and only the scalpers have seats.
+/// At the Colosseum Entrance: during the trials, a burly grey-haired man asks
+/// whether the party hopes to get in to see Colosso; on the finals day
+/// (FLAG_BABI_SAVED) the colosseum is already full, and only the scalpers have
+/// seats.
 static void Event_DiscussSeating(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
@@ -385,24 +415,24 @@ static void Event_DiscussSeating(void) {
   Engine_EventEnd();
 }
 
-/// At the Colosseum Entrance: the Lucky Guess makes the battles better; on the
-/// finals day, a good spot costs too much.
+/// At the Colosseum Entrance, an old woman: the Lucky Guess makes the battles
+/// better; on the finals day, a good spot costs too much.
 static void Event_DiscussLuckyGuessSeats(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
-    Engine_ActorShowEmote(ACTOR_VILLAGER_GOOD_SPOT, 258, 40);
+    Engine_ActorShowEmote(ACTOR_OLD_WOMAN_GOOD_SPOT, 258, 40);
     Engine_EventSetMessage(MsgColosseumWantWatchFinalsFromGood);
-    Engine_EventShowMessage(ACTOR_VILLAGER_GOOD_SPOT, 0);
+    Engine_EventShowMessage(ACTOR_OLD_WOMAN_GOOD_SPOT, 0);
   } else {
     Engine_EventSetMessage(MsgColosseumColossosLuckyGuessMakesBattles);
-    Engine_EventShowMessage(ACTOR_VILLAGER_GOOD_SPOT, 0);
+    Engine_EventShowMessage(ACTOR_OLD_WOMAN_GOOD_SPOT, 0);
   }
   Engine_EventEnd();
 }
 
-/// At the Colosseum Entrance: a bettor put it all on a warrior no one picked;
-/// on the finals day a scalper, busy with a customer, asks if the party wants
-/// seats.
+/// At the Colosseum Entrance: a strongman, betting, put it all on a warrior no
+/// one picked; on the finals day a scalper, busy with a customer, asks if the
+/// party wants seats.
 static void Event_DiscussLuckyGuessWinnings(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
@@ -1029,9 +1059,9 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, 0);
   actor = Object_GetById(ACTOR_TRIAL_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG);
+  actor = Object_GetById(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG);
   actor->scaleX = -Q16_ONE;
-  actor = Object_GetById(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG + 1);
+  actor = Object_GetById(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1);
   actor->scaleX = -Q16_ONE;
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1093,8 +1123,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_FAILING_WARRIOR, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG, 5);
-  Engine_ActorSetAnimation(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG + 1, 5);
+  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG, 5);
+  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1, 5);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_FAILING_WARRIOR, facing, 20);
   Engine_ActorSetAnimation(ACTOR_FAILING_WARRIOR, 8);
@@ -1109,8 +1139,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_SetSpeed(ACTOR_FAILING_WARRIOR, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 162, 916);
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 162, 890);
-  Engine_ActorSetAnimation(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG, 1);
-  Engine_ActorSetAnimation(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG + 1, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1, 1);
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 863);
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 796);
   Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
@@ -1175,9 +1205,9 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, 0);
   actor = Object_GetById(ACTOR_TRIAL_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG);
+  actor = Object_GetById(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG);
   actor->scaleX = -Q16_ONE;
-  actor = Object_GetById(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG + 1);
+  actor = Object_GetById(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1);
   actor->scaleX = -Q16_ONE;
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1238,8 +1268,8 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
     trialEffect->y.fixed += -PIXELS(3) / 10;
     Engine_TaskWait(4);
   }
-  Engine_ActorSetAnimation(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG, 6);
-  Engine_ActorSetAnimation(ACTOR_FIRST_PERSON_WITH_A_RED_FLAG + 1, 6);
+  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG, 6);
+  Engine_ActorSetAnimation(ACTOR_FIRST_YOUNG_MAN_WITH_A_RED_FLAG + 1, 6);
   Engine_EventWait(60);
   Actor_SetAttachedEffect(ACTOR_CLEARING_WARRIOR, 0x100);
   Engine_ActorStop(ACTOR_CLEARING_WARRIOR);
@@ -2392,31 +2422,31 @@ struct SceneEvent gColosseumEntranceEvents[] = {
     { EVENT_TALK, ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceTheyreHoldingThePreliminaryColossoHeats) },
     { EVENT_TALK, ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheFinalsAreFinallyHereI) },
     { EVENT_TALK, ACTOR_VILLAGER_PRELIMINARY_HEATS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceColossoIsOverAndTheColosseum) },
-    { EVENT_TALK, ACTOR_VILLAGER_CANNOT_GET_IN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceSighTheColosseumIsPackedWith) },
-    { EVENT_TALK, ACTOR_VILLAGER_CANNOT_GET_IN, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceIHeardBabiHasPickedSome) },
-    { EVENT_TALK, ACTOR_VILLAGER_CANNOT_GET_IN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheColosseumIsClosedUntilNext) },
+    { EVENT_TALK, ACTOR_WOMAN_CANNOT_GET_IN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceSighTheColosseumIsPackedWith) },
+    { EVENT_TALK, ACTOR_WOMAN_CANNOT_GET_IN, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceIHeardBabiHasPickedSome) },
+    { EVENT_TALK, ACTOR_WOMAN_CANNOT_GET_IN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheColosseumIsClosedUntilNext) },
     { EVENT_TALK, ACTOR_VILLAGER_SEATING, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DiscussSeating) },
-    { EVENT_TALK, ACTOR_VILLAGER_PRETTY_PENNY, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIfYouHitItBigIn) },
-    { EVENT_TALK, ACTOR_VILLAGER_PRETTY_PENNY, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAWarriorNamedIsaacWasSelected) },
-    { EVENT_TALK, ACTOR_VILLAGER_BETTING_FOR_YEARS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIveBeenBettingOnTheLucky) },
-    { EVENT_TALK, ACTOR_VILLAGER_BETTING_FOR_YEARS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceHavingAWarriorWhoWasntIn) },
-    { EVENT_TALK, ACTOR_VILLAGER_GOOD_SPOT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DiscussLuckyGuessSeats) },
+    { EVENT_TALK, ACTOR_WOMAN_PRETTY_PENNY, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIfYouHitItBigIn) },
+    { EVENT_TALK, ACTOR_WOMAN_PRETTY_PENNY, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAWarriorNamedIsaacWasSelected) },
+    { EVENT_TALK, ACTOR_OLD_MAN_BETTING_FOR_YEARS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIveBeenBettingOnTheLucky) },
+    { EVENT_TALK, ACTOR_OLD_MAN_BETTING_FOR_YEARS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceHavingAWarriorWhoWasntIn) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_GOOD_SPOT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DiscussLuckyGuessSeats) },
     { EVENT_TALK, ACTOR_SCALPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DiscussLuckyGuessWinnings) },
     { EVENT_TALK, ACTOR_LUCKY_GUESS_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OfferLuckyGuess) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIWonderWhichWarriorWillBe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRELIMINARY_HEATS, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheRealBattlesAreAboutTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRELIMINARY_HEATS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhenTheColosseumGatesFinallyShut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CANNOT_GET_IN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceHavingToArriveSoEarlyJust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CANNOT_GET_IN, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheWarriorNamedIsaacIsSure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CANNOT_GET_IN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheFightingAtThisYearsColosso) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_CANNOT_GET_IN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceHavingToArriveSoEarlyJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_CANNOT_GET_IN, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheWarriorNamedIsaacIsSure) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_CANNOT_GET_IN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheFightingAtThisYearsColosso) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SEATING, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceThereAreSoManyPeopleWho) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SEATING, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceOfCourseItsTheRichWho) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRETTY_PENNY, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceImGoingToPickTheBiggest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRETTY_PENNY, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceThereCanBeUpsetsInThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BETTING_FOR_YEARS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceImFeelingConfidentThisTimeIm) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BETTING_FOR_YEARS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhatKindOfWarriorIsThat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GOOD_SPOT, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceEveryoneKeepsRiskingMoreAndMore) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GOOD_SPOT, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceMaybeIWillBuyASeat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_PRETTY_PENNY, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceImGoingToPickTheBiggest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_PRETTY_PENNY, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceThereCanBeUpsetsInThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_BETTING_FOR_YEARS, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceImFeelingConfidentThisTimeIm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_BETTING_FOR_YEARS, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhatKindOfWarriorIsThat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_GOOD_SPOT, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceEveryoneKeepsRiskingMoreAndMore) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_GOOD_SPOT, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceMaybeIWillBuyASeat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCALPER, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceEveryYearIGoAfterA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCALPER, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceImGoingToBeInTrouble) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_GUESS_MAN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceOnceTheTrialsAreOverIts) },

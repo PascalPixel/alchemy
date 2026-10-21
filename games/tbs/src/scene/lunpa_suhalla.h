@@ -32,24 +32,71 @@ enum InteriorTrigger {
   TRIGGER_SECOND_OVEN
 };
 
+/// The placed actors of Lunpa's houses, shops, inn and temple, numbered in the
+/// order of gInteriorPlacements. Two villagers live in each of the three homes,
+/// named by what they say while the town is sealed.
 enum InteriorActor {
-  ACTOR_FIRST_HOME_RESIDENT_A = ACTOR_FIRST_PLACED,
-  ACTOR_FIRST_HOME_RESIDENT_B,
-  ACTOR_SECOND_HOME_RESIDENT_A,
-  ACTOR_SECOND_HOME_RESIDENT_B,
-  ACTOR_THIRD_HOME_RESIDENT_A,
-  ACTOR_THIRD_HOME_RESIDENT_B,
+  /// In the first home.
+  /// ★ Named from the game: "My late grandfather traveled the continent with
+  /// Lunpa." (MsgLunpaInteriorsFirstHomeASealed)
+  ACTOR_VILLAGER_LATE_GRANDFATHER = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "We may live in Lunpa, but we'll never work for
+  /// Dodonpa." (MsgLunpaInteriorsFirstHomeBSealed)
+  ACTOR_VILLAGER_NEVER_WORKING_FOR_DODONPA,
+  /// In the second home.
+  /// ★ Named from the game: "The fortress was built during Donpa's rule."
+  /// (MsgLunpaInteriorsSecondHomeASealed)
+  ACTOR_VILLAGER_ON_DONPAS_FORTRESS,
+  /// ★ Named from the game: "The inn's chef is the only one in town who can
+  /// enter the fortress." (MsgLunpaInteriorsSecondHomeBSealed)
+  ACTOR_VILLAGER_ON_THE_INNS_CHEF,
+  /// In the third home.
+  /// ★ Named from the game: "Lunpa passed away long ago, when the world was hit
+  /// by a huge flood." (MsgLunpaInteriorsThirdHomeASealed)
+  ACTOR_VILLAGER_ON_LUNPAS_DEATH,
+  /// ★ Named from the game: "Lunpa was caught in the great flood while
+  /// traveling with someone named Babi." (MsgLunpaInteriorsThirdHomeBSealed)
+  ACTOR_VILLAGER_ON_THE_GREAT_FLOOD,
+  /// ★ Named from the game: "The weapons and armor vendors are looking
+  /// desperate." (MsgLunpaItemMerchantReopened)
   ACTOR_WEAPON_MERCHANT,
+  /// ★ Named from the game: "I'll sell you as much armor as you like, once the
+  /// village is reopened." (MsgLunpaArmorMerchantSealed)
   ACTOR_ARMOR_MERCHANT,
+  /// ★ Named from what the player sees: the merchant behind the item shop's
+  /// counter (its render)
   ACTOR_ITEM_MERCHANT,
+  /// ★ Named from the game: "Do you want rest in our inn?"
+  /// (MsgLunpaInnkeeperOffersRoom)
   ACTOR_INNKEEPER,
-  ACTOR_INN_CLERK,
+  /// At the inn, beside the innkeeper.
+  /// ★ Named from the game: "Are you Donpa's guest?"
+  /// (MsgLunpaInnClerkAsksAboutGuest)
+  ACTOR_VILLAGER_ASKING_FOR_DONPAS_GUEST,
+  /// ★ Named from the game: "He told me to air out the guest-room bedding and
+  /// change the sheets." (MsgLunpaInteriorsInnWorkerReopened)
   ACTOR_INN_WORKER,
+  /// ★ Named from the game: "The inn's chef is the only one in town who can
+  /// enter the fortress." (MsgLunpaInteriorsSecondHomeBSealed)
   ACTOR_CHEF,
-  ACTOR_TEMPLE_PRIEST,
-  ACTOR_TRAVELING_PRIEST,
+  /// Behind the temple's altar; across it, the Sanctum's services
+  /// (Event_TalkToHealer).
+  /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
+  ACTOR_HEALER,
+  /// In the Healer's sprite, in the house by Suhalla Gate.
+  /// ★ Named from the game: "I have been traveling the lands spreading good
+  /// will." (MsgLunpaTravelingPriest)
+  ACTOR_TRAVELING_HEALER,
+  /// SPRITE_BLANK on the counter before each merchant, so that talking across
+  /// it reaches the merchant's event.
+  /// ★ Named from what the player sees: the counter before the weapon merchant
+  /// (its render)
   ACTOR_WEAPON_COUNTER,
+  /// ★ Named from what the player sees: the counter before the armor merchant
+  /// (its render)
   ACTOR_ARMOR_COUNTER,
+  /// ★ Named from what the player sees: the counter before the item merchant
+  /// (its render)
   ACTOR_ITEM_COUNTER
 };
 
@@ -61,7 +108,7 @@ enum InteriorSprite {
   SPRITE_TOWNSPERSON_E = 0x6f,
   SPRITE_ITEM_MERCHANT = 0x76,
   SPRITE_INNKEEPER = 0x77,
-  SPRITE_PRIEST = 0x7a,
+  SPRITE_HEALER = 0x7a,
   SPRITE_WEAPON_MERCHANT = 0x7c,
   SPRITE_ARMOR_MERCHANT = 0x7d,
   SPRITE_TOWNSPERSON_F = 0x80,

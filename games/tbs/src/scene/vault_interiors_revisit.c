@@ -2,29 +2,35 @@
 /// Vault's houses, shops and inn (scene 24, a row with no SceneId_ name; the
 /// area names call it Vault) as the party finds them once it has reached
 /// Kalay. They replace the first visit's interiors (vault_interiors.c) as
-/// Vault's revisit scene (vault_revisit.c) replaces the town: each of its
-/// doors 5 to 10 leads to the entrance of the same number here, and each room
-/// leads back out to it.
+/// Vault's revisit scene (vault_revisit.c) replaces the town: each of its six
+/// house doors, VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST and the
+/// rest, leads to the entrance here named for the same door, and each room
+/// leads back out through it.
 ///
 /// The thieves the party caught have broken out of jail, and the talk is of
 /// them and of Colosso, the festival about to begin in Tolbi: a villager heard
 /// the prisoners say they wanted to break out before it began. The rooms, by
 /// entrance:
-/// - 5, the house of a man whose precious stone, he says, a cat ate; his wife
-///   thought she saw the cat paw it, and does not believe him. Arriving here
-///   sets him on the floor and copies a 4-by-3 block of cells from (0, 120)
-///   to (8, 67) (XXX: what they show is not known).
-/// - 6, the house of a child who wonders whether the thieves were from Lunpa
-///   at all, since Dodonpa's henchmen never attacked.
-/// - 7 and 11, the inn: the innkeeper behind the counter, and the girl at the
-///   inn, as the Bone's description calls her, who offers Bones left over
-///   from dinner. A Bone also lies on the floor beside her. Trigger 8 leads to
-///   the inn's other room (entrance 12), where a cook works, and trigger 7
-///   back.
-/// - 8, the item shop, with a couple who talk of Colosso.
-/// - 9, the weapon and armor shops.
-/// - 10, the mayor's house. The mayor welcomes Isaac back and tells him the
-///   thieves have escaped (FLAG_WELCOMED_BACK, a place flag, and
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, the house of a man
+///   whose precious stone, he says, a cat ate; his wife thought she saw the
+///   cat paw it, and does not believe him. Arriving here sets him on the floor
+///   and copies a 4-by-3 block of cells from (0, 120) to (8, 67) (XXX: what
+///   they show is not known).
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the house of a child
+///   who wonders whether the thieves were from Lunpa at all, since Dodonpa's
+///   henchmen never attacked.
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST and entrance 11, the
+///   inn: the innkeeper behind the counter, and the girl at the inn, as the
+///   Bone's description calls her, who offers Bones left over from dinner. A
+///   Bone also lies on the floor beside her. Trigger 8 leads to the inn's
+///   other room (entrance 12), where a cook works, and trigger 7 back.
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_EAST, the item shop, with a
+///   couple who talk of Colosso.
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTH, the weapon and armor
+///   shops.
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST, the mayor's house.
+///   The mayor welcomes Isaac back and tells him the thieves have escaped
+///   (FLAG_WELCOMED_BACK, a place flag, and
 ///   FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES); a Mind Read on him before that
 ///   plays the welcome first. His wife says the family urn the thieves stole is
 ///   on display.
@@ -68,22 +74,36 @@
 #include "item_ids.h"
 #include "flags.h"
 
-/// The townspeople, named by what they say on the party's return.
+/// The townspeople, numbering the placement rows from ACTOR_FIRST_PLACED and
+/// named by what they say on the party's return.
 enum {
-  ACTOR_GEM_OWNER = 8, ///< a cat ate his precious stone
-  ACTOR_GEM_OWNERS_WIFE = 9,
-  ACTOR_CHILD = 11,           ///< a child. "Daddy hasn't been paying attention"
-  ACTOR_COLOSSO_HUSBAND = 12, ///< would like to see Colosso once more
-  ACTOR_COLOSSO_WIFE = 13,
-  ACTOR_MAYOR = 16, ///< "our mayor", as the villagers call him
-  ACTOR_MAYORS_WIFE = 17,
-  ACTOR_COOK = 23, ///< in the inn's other room; did some cooking
+  ACTOR_GEM_OWNER = ACTOR_FIRST_PLACED, ///< a cat ate his precious stone
+  ACTOR_GEM_OWNERS_WIFE,
+  /// In the child's house. "The prisoners said they wanted to break out of
+  /// jail before Colosso began."
+  ACTOR_VILLAGER_HEARD_PRISONERS,
+  ACTOR_CHILD,           ///< a child. "Daddy hasn't been paying attention"
+  ACTOR_COLOSSO_HUSBAND, ///< would like to see Colosso once more
+  ACTOR_COLOSSO_WIFE,
+  /// In the mayor's house. "Those thieves! You go to all that trouble
+  /// catching them, and then we let them get away."
+  ACTOR_VILLAGER_LET_THIEVES_GO,
+  /// In the mayor's house. "I hear that a big festival is about to start in
+  /// some faraway town."
+  ACTOR_VILLAGER_CURIOUS_ABOUT_FESTIVAL,
+  ACTOR_MAYOR, ///< "our mayor", as the villagers call him
+  ACTOR_MAYORS_WIFE,
   /// The girl at the inn, as the Bone's description calls her.
-  ACTOR_VAULT_BONE_GIVER = 18,
-  ACTOR_VAULT_WEAPON_MERCHANT = 19,
-  ACTOR_VAULT_ARMOR_MERCHANT = 20,
-  ACTOR_VAULT_ITEM_MERCHANT = 21,
-  ACTOR_VAULT_INNKEEPER = 22,
+  ACTOR_VAULT_BONE_GIVER,
+  ACTOR_VAULT_WEAPON_MERCHANT,
+  ACTOR_VAULT_ARMOR_MERCHANT,
+  ACTOR_VAULT_ITEM_MERCHANT,
+  ACTOR_VAULT_INNKEEPER,
+  ACTOR_COOK ///< in the inn's other room; did some cooking
+};
+
+/// The stock and inn numbers the counters open.
+enum {
   VAULT_WEAPON_STOCK = 4,
   VAULT_ARMOR_STOCK = 5,
   VAULT_ITEM_STOCK = 6,
@@ -129,15 +149,17 @@ static inline void VaultInteriorsRevisit_FaceAndSpeak(s32 actor, s32 message) {
   VaultInteriorsRevisit_ShowStandingActorDialogue(actor);
 }
 
-/// In the house behind door 5, the wife thought she saw the cat paw the
-/// gemstone on the table, and then the treasure was gone.
+/// In the house at VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, the
+/// wife thought she saw the cat paw the gemstone on the table, and then the
+/// treasure was gone.
 static void Event_WifeSawCatTakeGem(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_GEM_OWNERS_WIFE,
                                      MsgVaultThoughtSawCatGetUp);
 }
 
-/// In the house behind door 6, the child points out Dodonpa's henchmen never
-/// attacked: maybe the thieves weren't from Lunpa after all.
+/// In the house at VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the
+/// child points out Dodonpa's henchmen never attacked: maybe the thieves
+/// weren't from Lunpa after all.
 static void Event_ChildDoubtsThievesWereFromLunpa(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_CHILD,
                                      MsgVaultDodonpasHenchmenNeverAttackedUs);
@@ -154,7 +176,7 @@ static void Event_HusbandLongsForColosso(void) {
 /// escaped from jail, and Vault feared they would come after him. Asked
 /// whether the party has run into them, a yes and a no get different warnings.
 /// Sets FLAG_WELCOMED_BACK, after which the mayor only warns of their revenge,
-/// and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES (0x868).
+/// and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 static void Event_WelcomeIsaacBack(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
@@ -346,9 +368,11 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultInteriorsRevisit_Events;
 }
 
-/// Opens the room through a window transition. Entering the house behind door
-/// 5 sets its owner on the floor and copies a block of cells; entering the inn
-/// (entrance 7 or 11) places the floor Bone beside the girl and starts
+/// Opens the room through a window transition. Entering the house at
+/// VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST sets its owner on the
+/// floor and copies a block of cells; entering the inn
+/// (VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST or entrance 11)
+/// places the floor Bone beside the girl and starts
 /// Vault_UpdateBoneProximityFlag.
 s32 Scene_Initialize(void) {
   s32 entrance;
@@ -357,14 +381,15 @@ s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   entrance = gGameState.entrance;
 
-  if (entrance == 5) {
-    // Restore the lowered actor and replacement cells in this room.
+  if (entrance == VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST) {
+    // Set the gem owner back on the floor and copy in the replacement cells.
     Map_CopyCellsTo(0, 120, 8, 67, 4, 3);
     clearedState = 0;
-    Object_GetById(8)->motionFlags = clearedState;
-    Object_GetById(8)->y.fixed = clearedState;
-    Object_GetById(8)->terrainHeight = clearedState;
-  } else if (entrance == 7 || entrance == 11) {
+    Object_GetById(ACTOR_GEM_OWNER)->motionFlags = clearedState;
+    Object_GetById(ACTOR_GEM_OWNER)->y.fixed = clearedState;
+    Object_GetById(ACTOR_GEM_OWNER)->terrainHeight = clearedState;
+  } else if (entrance == VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST ||
+             entrance == 11) {
     // Show the Bone lying in the room, and track whether the leader stands
     // beside it (FLAG_SCENE_TEMP_50).
     Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
@@ -454,25 +479,25 @@ struct ScenePlacement gVaultInteriorsRevisit_Placements[] = {
 };
 
 struct SceneEvent gVaultInteriorsRevisit_Events[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 5 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 6 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 8 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 9 },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, 10 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_SOUTHEAST },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_SOUTH },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_SOUTHWEST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_EAST },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_NORTH },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_NORTHWEST },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 12 },
     { EVENT_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultWaahACatAteMyPrecious) },
     { EVENT_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WifeSawCatTakeGem) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultThePrisonersSaidTheyWantedTo) },
+    { EVENT_TALK, ACTOR_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultThePrisonersSaidTheyWantedTo) },
     { EVENT_TALK, ACTOR_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ChildDoubtsThievesWereFromLunpa) },
     { EVENT_TALK, ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HusbandLongsForColosso) },
     { EVENT_TALK, ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
     { EVENT_TALK, ACTOR_MAYOR, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_WelcomeIsaacBack) },
     { EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnOfThievesRevenge) },
     { EVENT_TALK, ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultIHearThatABigFestival) },
+    { EVENT_TALK, ACTOR_VILLAGER_LET_THIEVES_GO, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
+    { EVENT_TALK, ACTOR_VILLAGER_CURIOUS_ABOUT_FESTIVAL, CONDITION_ALWAYS, MSGNO(MsgVaultIHearThatABigFestival) },
     { EVENT_TALK, ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
     { EVENT_TALK, ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
     { EVENT_TALK, ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
@@ -482,15 +507,15 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { EVENT_TALK, ACTOR_VAULT_BONE_GIVER, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgVaultWheneverMyWifeUsedToGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultLatelyMyHusbandsBeenGoingOn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_ReadMindAndWelcomeIsaacBack) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAYOR, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_ReadMindAndWelcomeIsaacBack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgVaultAsLongAsWeStayAlert) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultWellBeSecuringItInA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVaultItsJustEmbarrassingThatWeLet) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgVaultILoveFestivalsIllBetColosso) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LET_THIEVES_GO, CONDITION_ALWAYS, MSGNO(MsgVaultItsJustEmbarrassingThatWeLet) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CURIOUS_ABOUT_FESTIVAL, CONDITION_ALWAYS, MSGNO(MsgVaultILoveFestivalsIllBetColosso) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultJustImagineHowTerribleItWould) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultItsAGoodThingThatGiant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },

@@ -11,31 +11,34 @@
 /// Kalay Docks (KalayDocks) is where the party's road to Tolbi ends:
 /// Silk Road is blocked, so everyone bound for Tolbi and its Colosso must cross
 /// the Karagol Sea by ship, and the tickets are dear. The first time the party
-/// walks in from the world map (entrance 1, FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL)
-/// KalayTolbiDocks_GaretSeesTheKaragol plays: Garet runs to the water ("So
-/// this is the ocean Kraden was talking about!"), a man tells him the Karagol
-/// is surrounded by land and no true ocean, and Garet means to see a real one
-/// someday. Until the tour's group has left Kalay, the ship is open to look
-/// around and the man at its plank (ACTOR_TICKET_TAKER) checks no tickets;
-/// afterwards he stands in the way and asks for one, takes it if the party has
-/// bought it (FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) and lets the party aboard,
-/// and then offers to let it ashore again until it boards
+/// walks in from the world map (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH,
+/// FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) KalayTolbiDocks_GaretSeesTheKaragol
+/// plays: Garet runs to the water ("So this is the ocean Kraden was talking
+/// about!"), a man tells him the Karagol is surrounded by land and no true
+/// ocean, and Garet means to see a real one someday. Until the tour's group
+/// has left Kalay, the ship is open to look around and the man at its plank
+/// (ACTOR_TICKET_TAKER) checks no tickets; afterwards he stands in the way and
+/// asks for one, takes it if the party has bought it
+/// (FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) and lets the party aboard, and then
+/// offers to let it ashore again until it boards
 /// (FLAG_KALAY_DOCKS_WENT_ASHORE, cleared each time the party comes back off
-/// the ship by entrance 2). A father (ACTOR_WORRIED_FATHER) asks the party to
-/// tell his daughter in Tolbi that her mother cannot afford the tickets
-/// (FLAG_KALAY_DOCKS_CARRYING_MESSAGE). Ground, a Venus Djinni (ACTOR_GROUND),
-/// waits on the docks until it joins. Once the ship has crossed, the travellers
-/// are gone and the dock hands wait for a ship that has not returned. The docks
-/// lead to the world map (exits 1 and 4), onto the ship (exit 2, the
-/// Tolbi-bound Ship, scene 109) and through a door (trigger 10) into the
-/// building beside them.
+/// the ship by KALAY_DOCKS_FROM_TOLBI_SHIP_DECK). A father
+/// (ACTOR_WORRIED_FATHER) asks the party to tell his daughter in Tolbi that
+/// her mother cannot afford the tickets (FLAG_KALAY_DOCKS_CARRYING_MESSAGE).
+/// Ground, a Venus Djinni (ACTOR_GROUND), waits on the docks until it joins.
+/// Once the ship has crossed, the travellers are gone and the dock hands wait
+/// for a ship that has not returned. The docks lead to the world map
+/// (KALAY_DOCKS_TO_WORLD_MAP_SOUTH and KALAY_DOCKS_TO_WORLD_MAP_NORTH), onto
+/// the ship (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship, scene 109)
+/// and through a door (trigger 10) into the building beside them.
 ///
 /// That building (KalayTolbiDocks2) has a room at each dock: entered from Kalay
-/// Docks (entrance 1) it is Kalay Docks, from Tolbi Docks (entrance 2) it is
-/// Tolbi Docks. In the Kalay room a man sells the boarding ticket, 600 coins
-/// for the four of them (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has
-/// sailed, when he says it will not leave again for the monsters at sea; in
-/// the Tolbi room no tickets are sold at all, the sea being too dangerous.
+/// Docks (KALAY_TOLBI_DOCKS_2_FROM_KALAY_DOCKS) it is Kalay Docks, from Tolbi
+/// Docks (KALAY_TOLBI_DOCKS_2_FROM_TOLBI_DOCKS) it is Tolbi Docks. In the
+/// Kalay room a man sells the boarding ticket, 600 coins for the four of them
+/// (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has sailed, when he says
+/// it will not leave again for the monsters at sea; in the Tolbi room no
+/// tickets are sold at all, the sea being too dangerous.
 ///
 /// Tolbi Docks (TolbiDocks) is where the ship lands after the crossing,
 /// on which the party helped the crew fight off the Kraken. Stepping off
@@ -45,13 +48,14 @@
 /// "Everyone knows that Kaja was the one who killed the Kraken!" Kaja is the
 /// sea dog whose crew the party helped against the monsters. The father's
 /// daughter (ACTOR_WAITING_DAUGHTER) watches the sea for her parents and takes
-/// his message (FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED). Two blocks slide along the
-/// pier under Move, a chest holds a Potion and a box 35 coins, and the docks
-/// lead to the world map toward Tolbi (exit 1), back onto the ship (exit 2) and
-/// into the building (trigger 10). After Colosso the Colosso Tour's passengers
-/// are stranded here, the ships not sailing, and the first time the party comes
-/// (trigger 50, FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN) it watches them demand to
-/// be taken home and the tour guide's hired bodyguard knock the angriest flat;
+/// his message (FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED). Two stacks of crates
+/// slide along the pier under Move, a chest holds a Potion and a box 35 coins,
+/// and the docks lead to the world map toward Tolbi (TOLBI_DOCKS_TO_WORLD_MAP),
+/// back onto the ship (TOLBI_DOCKS_TO_TOLBI_SHIP_DECK) and into the building
+/// (trigger 10). After Colosso the Colosso Tour's passengers are stranded
+/// here, the ships not sailing, and the first time the party comes (trigger
+/// 50, FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN) it watches them demand to be taken
+/// home and the tour guide's hired bodyguard knock the angriest flat;
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them.
 
 #include "game_state.h"
@@ -87,34 +91,103 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// The three scenes share actor numbers; each is named in the scene where its
-/// part is played.
-enum KalayTolbiDocksActor {
-  // Kalay Docks
-  ACTOR_WORRIED_FATHER = 11, ///< his daughter waits on the Tolbi Docks
+/// Kalay Docks' people, numbering the rows of gKalayTolbiDocks_KalayPlacements
+/// from ACTOR_FIRST_PLACED; Garet's row takes his own actor slot. Once the
+/// ship has crossed (gKalayTolbiDocks_KalayPlacementsShipGone) the first four
+/// stand off the map.
+enum KalayDocksActor {
+  /// "Do you want to go to Tolbi?" He walks over to tell Garet the Karagol is
+  /// no real ocean.
+  ACTOR_VILLAGER_ASKING_ABOUT_TOLBI = ACTOR_FIRST_PLACED,
+  /// "We can't take Silk Road, so everyone's in a pickle."
+  ACTOR_VILLAGER_IN_A_PICKLE,
+  /// "You can't take Silk Road much further than this." XXX: likely the
+  /// waiting daughter's mother, because Mind Read finds "My daughter left
+  /// Tolbi to meet us at the docks."
+  ACTOR_VILLAGER_SILK_ROAD_ENDS,
+  ACTOR_WORRIED_FATHER, ///< his daughter waits on the Tolbi Docks
   /// Takes the tickets at the ship's plank. "Tickets, please."
-  ACTOR_TICKET_TAKER = 12,
-  ACTOR_DOCK_WORKER = 13,
-  ACTOR_GROUND = 14, ///< Ground, a Venus Djinni, placed until it joins
-  // Tolbi Docks, after the crossing
-  ACTOR_ARRIVALS_GREETER = 8, ///< hears of the party's scary trip
-  ACTOR_WAITING_DAUGHTER = 11,
-  ACTOR_FIRST_BLOCK = 14, ///< the two blocks Move pushes
-  ACTOR_SECOND_BLOCK = 15,
-  /// Tolbi Docks, once the Colosso Tour's passengers are stranded there
-  ACTOR_ANGRY_PASSENGER = 10,
-  ACTOR_STRANDED_PASSENGER = 11,
-  ACTOR_TOUR_GUIDE = 13, ///< refunded the angry passenger's ticket
-  ACTOR_BODYGUARD = 16,  ///< hired by the tour guides
-  /// The building's Kalay room
-  ACTOR_TICKET_SELLER = 8
+  ACTOR_TICKET_TAKER,
+  ACTOR_DOCK_WORKER, ///< "I'm glad I only work on the docks"
+  ACTOR_GROUND       ///< Ground, a Venus Djinni, placed until it joins
+};
+
+/// Tolbi Docks' people after the crossing, numbering the rows of
+/// gKalayTolbiDocks_TolbiPlacements from ACTOR_FIRST_PLACED.
+enum TolbiDocksActor {
+  /// Hears of the party's scary trip; after Colosso, "There are many here who
+  /// want to return to Kalay since Colosso is over."
+  ACTOR_ARRIVALS_GREETER = ACTOR_FIRST_PLACED,
+  /// "Sigh... I think we're done sailing for a while."; after Colosso,
+  /// "Hanging around here like this and staring out at the sea is boring!"
+  ACTOR_VILLAGER_DONE_SAILING,
+  /// "The tourists look a little upset. Did they get seasick?"
+  ACTOR_VILLAGER_ASKING_IF_SEASICK,
+  ACTOR_WAITING_DAUGHTER,
+  /// "If you're going to Tolbi, keep heading west. It's not too far."
+  ACTOR_VILLAGER_POINTING_WEST,
+  /// "It's been quite some time since the Colosso Tour passengers left for
+  /// Tolbi."
+  ACTOR_VILLAGER_TOUR_LONG_GONE,
+  /// The two stacks of wooden crates Move pushes along the pier: sprite 0xf1,
+  /// the crates of the Bilibin Barricade (bilibin.c).
+  ACTOR_FIRST_CRATES,
+  ACTOR_SECOND_CRATES
+};
+
+/// Tolbi Docks once the Colosso Tour's passengers are stranded there: the rows
+/// of gKalayTolbiDocks_TolbiPlacementsStranded that hold other people than
+/// gKalayTolbiDocks_TolbiPlacements. The arrivals greeter, the villager done
+/// sailing and the crates keep their rows.
+enum TolbiDocksStrandedActor {
+  /// "To heck with you! I'm staying right here until the ship leaves!"
+  ACTOR_ANGRY_PASSENGER = ACTOR_FIRST_PLACED + 2,
+  /// "Sigh. I wonder when we'll be able to return to Kalay."
+  ACTOR_STRANDED_PASSENGER,
+  /// The other guide, sprite 0xab as the tour guide's: "it's not our fault
+  /// the ship won't sail, so we can't offer any refunds."
+  ACTOR_SECOND_TOUR_GUIDE,
+  ACTOR_TOUR_GUIDE, ///< refunded the angry passenger's ticket
+  ACTOR_BODYGUARD = ACTOR_FIRST_PLACED + 8, ///< hired by the tour guides
+  /// "Sigh. If I knew it would turn out like this, we wouldn't have come."
+  ACTOR_REGRETFUL_PASSENGER
+};
+
+/// The building's people, numbering the rows of
+/// gKalayTolbiDocks_InteriorPlacements from ACTOR_FIRST_PLACED: the Kalay
+/// room's three, then the Tolbi room's. Once the ship has crossed
+/// (gKalayTolbiDocks_InteriorPlacementsShipGone) the Kalay room's two
+/// travellers stand off the map.
+enum KalayTolbiDocksInteriorActor {
+  ACTOR_TICKET_SELLER = ACTOR_FIRST_PLACED, ///< in the Kalay room
+  /// "Hmmm, that's strange. Isn't the replacement ship here yet?"
+  ACTOR_VILLAGER_AWAITING_REPLACEMENT_SHIP,
+  /// "Once we've crossed the Karagol, we'll reach Tolbi. Ohh, I'm excited."
+  ACTOR_VILLAGER_EXCITED_FOR_TOLBI,
+  /// Sells no tickets in the Tolbi room. "I'm sorry, but we just can't sell
+  /// any tickets right now."
+  ACTOR_TOLBI_TICKET_SELLER,
+  /// "We rented out our house for Colosso, and now the ship's not launching!"
+  ACTOR_VILLAGER_RENTED_OUT_HOUSE,
+  /// "We rented out our house. If the ship won't sail, where will we sleep?"
+  ACTOR_VILLAGER_NOWHERE_TO_SLEEP
+};
+
+/// The building after Colosso (gKalayTolbiDocks_InteriorPlacementsStranded):
+/// the Tolbi room's last two rows hold other people.
+enum KalayTolbiDocksInteriorStrandedActor {
+  /// "Yeah...the ship's not going anywhere for now. Some rich guy was here
+  /// throwing money around, but they still said no."
+  ACTOR_VILLAGER_SHIP_GOING_NOWHERE = ACTOR_FIRST_PLACED + 4,
+  /// "The Karagol Sea looks so calm from here. How can it be dangerous?"
+  ACTOR_VILLAGER_SEA_LOOKS_CALM
 };
 
 static void KalayTolbiDocks_PrepareKalayDocks(void);
 static void KalayTolbiDocks_PrepareTolbiDocks(void);
 static void KalayTolbiDocks_PrepareInterior(void);
-static void KalayTolbiDocks_UpdateBlockCells(void);
-static void KalayTolbiDocks_SettleBlock(s32 actorId);
+static void KalayTolbiDocks_UpdateCrateCells(void);
+static void KalayTolbiDocks_SettleCrates(s32 actorId);
 static void KalayTolbiDocks_GaretSeesTheKaragol(void);
 
 /// Kalay Docks: talking to Ground, a Venus Djinni, makes it join the party.
@@ -179,9 +252,9 @@ const struct ScenePlacement *KalayTolbiDocks_GetPlacements(void) {
 }
 
 /// Tolbi Docks, stepping off the ship (trigger 20, until
-/// FLAG_TOLBI_DOCKS_ARRIVALS_GREETED, which coming off the ship by entrance
-/// 1 clears): the leader walks a few steps and a man on the docks hurries over
-/// to stand beside the party.
+/// FLAG_TOLBI_DOCKS_ARRIVALS_GREETED, which coming off the ship by
+/// TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK clears): the leader walks a few steps and
+/// a man on the docks hurries over to stand beside the party.
 static void KalayTolbiDocks_GreetArrivals(void) {
   Engine_EventBegin();
   GameFlag_Set(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
@@ -230,7 +303,7 @@ const struct SceneEvent *KalayTolbiDocks_GetEvents(void) {
 static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayWantGoToTolbi);
-  Engine_EventAskYesNo(8, 0);
+  Engine_EventAskYesNo(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, 0);
   Engine_EventEnd();
 }
 
@@ -262,7 +335,7 @@ static void KalayTolbiDocks_TalkToWorriedFather(void) {
 /// is finished.
 static void KalayTolbiDocks_RemindBoardShip(void) {
 #if !TBS_PATCH_3
-  ((void)Object_GetById(0));
+  ((void)Object_GetById(ACTOR_PARTY_LEADER));
   Engine_EventBegin();
 #endif
   if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
@@ -455,7 +528,7 @@ static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
 static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayTouristsLookUpset);
-  Engine_EventAskYesNo(10, 0);
+  Engine_EventAskYesNo(ACTOR_VILLAGER_ASKING_IF_SEASICK, 0);
   Engine_EventEnd();
 }
 
@@ -503,7 +576,9 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
 }
 
 /// Kalay Docks or Tolbi Docks: walking north into the door (trigger 10) of the
-/// building beside them, the door opens and the leader walks in by exit 3.
+/// building beside them, the door opens and the leader walks in by
+/// TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_2, which in Kalay Docks is
+/// KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_2 by the same number.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Engine_EventBegin();
   Event_PlayCue(SE_DOOR_OPEN);
@@ -546,13 +621,13 @@ s32 KalayTolbiDocks_Initialize(void) {
 /// tour's group has left Kalay the ticket taker stands at the ship's plank
 /// until the party goes ashore.
 static void KalayTolbiDocks_PrepareKalayDocks(void) {
-  if (gGameState.entrance == 1) {
+  if (gGameState.entrance == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
       GameFlag_Set(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL);
       KalayTolbiDocks_GaretSeesTheKaragol();
     }
   }
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_KALAY_DOCKS_WENT_ASHORE);
     }
@@ -565,7 +640,7 @@ static void KalayTolbiDocks_PrepareKalayDocks(void) {
   }
 }
 
-/// On Tolbi Docks the two blocks settle into the pier's cells. The
+/// On Tolbi Docks the two stacks of crates settle into the pier's cells. The
 /// passenger who met the party stays beside the ship, and after the
 /// confrontation the guide, the bodyguard and the two passengers keep where it
 /// left them, the angry one still lying on the ground.
@@ -573,14 +648,14 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   struct FieldActor *actor;
   u8 zero;
 
-  KalayTolbiDocks_UpdateBlockCells();
+  KalayTolbiDocks_UpdateCrateCells();
   if (GameFlag_IsSet(FLAG_COLOSSO_OVER)) {
-    Engine_ActorSetChildValue(12, 2);
+    Engine_ActorSetChildValue(ACTOR_SECOND_TOUR_GUIDE, 2);
   }
-  if (gGameState.entrance == 3) {
+  if (gGameState.entrance == TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_2) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
-  if (gGameState.entrance == 1) {
+  if (gGameState.entrance == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
     Engine_GameFlagClear(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   }
   if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED)) {
@@ -621,25 +696,25 @@ static void KalayTolbiDocks_PrepareInterior(void) {
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
 }
 
-/// Tolbi Docks, after Move pushes either block: the pier's cells under both are
-/// rebuilt.
-static void KalayTolbiDocks_UpdateBlockCells(void) {
-  s32 blockColumn;
-  s32 otherBlockColumn;
+/// Tolbi Docks, after Move pushes either stack of crates: the pier's cells
+/// under both are rebuilt.
+static void KalayTolbiDocks_UpdateCrateCells(void) {
+  s32 firstCratesColumn;
+  s32 secondCratesColumn;
 
-  blockColumn = Object_GetById(ACTOR_FIRST_BLOCK)->x.fixed >> 20;
-  otherBlockColumn = Object_GetById(ACTOR_SECOND_BLOCK)->x.fixed >> 20;
+  firstCratesColumn = Object_GetById(ACTOR_FIRST_CRATES)->x.fixed >> 20;
+  secondCratesColumn = Object_GetById(ACTOR_SECOND_CRATES)->x.fixed >> 20;
 
   Map_CopyCellAttributes(5, 12, 5, 1, 5, 11);
-  Map_CopyCellAttributes(1, 0, 1, 1, otherBlockColumn, 11);
-  Map_CopyCellAttributes(1, 0, 1, 1, blockColumn, 11);
+  Map_CopyCellAttributes(1, 0, 1, 1, secondCratesColumn, 11);
+  Map_CopyCellAttributes(1, 0, 1, 1, firstCratesColumn, 11);
 
-  KalayTolbiDocks_SettleBlock(ACTOR_FIRST_BLOCK);
-  KalayTolbiDocks_SettleBlock(ACTOR_SECOND_BLOCK);
+  KalayTolbiDocks_SettleCrates(ACTOR_FIRST_CRATES);
+  KalayTolbiDocks_SettleCrates(ACTOR_SECOND_CRATES);
 }
 
-/// Stops a dock block's idle motion and sets its sprite priority.
-static void KalayTolbiDocks_SettleBlock(s32 actorId) {
+/// Stops a stack of crates' idle motion and sets its sprite priority.
+static void KalayTolbiDocks_SettleCrates(s32 actorId) {
   struct FieldActor *actor = Object_GetById(actorId);
 
   Engine_ActorSetSpriteFlags(Object_GetById(actorId), 0);
@@ -648,24 +723,27 @@ static void KalayTolbiDocks_SettleBlock(s32 actorId) {
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Kalay Docks, the first entry from the world map (entrance 1, until
+/// Kalay Docks, the first entry from the world map
+/// (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, until
 /// FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL): Garet runs to the edge of the docks and
 /// marvels at the sea. "Incredible! So this is the ocean Kraden was talking
 /// about!" Kraden is the scholar who has told Garet of the ocean. The man who
-/// asks travellers about Tolbi (actor 8) walks over, shaking his head: the
-/// Karagol is surrounded by land, so it is not a real ocean. Garet means to see
-/// a real one someday, nods with the leader and rejoins the party.
+/// asks travellers about Tolbi (ACTOR_VILLAGER_ASKING_ABOUT_TOLBI) walks over,
+/// shaking his head: the Karagol is surrounded by land, so it is not a real
+/// ocean. Garet means to see a real one someday, nods with the leader and
+/// rejoins the party.
 static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   struct FieldActor *actor;
 
   Engine_EventBegin();
   Battle_ResetEffectCounter();
-  Actor_SetPosition(8, PIXELS(328), PIXELS(1424));
-  Object_GetById(8)->paused = 1;
+  Actor_SetPosition(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, PIXELS(328),
+                    PIXELS(1424));
+  Object_GetById(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI)->paused = 1;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  FieldMotion_LaunchFromFocusedObject(1, -16, 0, 0x8000);
+  FieldMotion_LaunchFromFocusedObject(GARET, -16, 0, FACING_WEST);
   Engine_ActorWaitForMove(GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Engine_EventWait(20);
@@ -685,17 +763,18 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Camera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT, 50);
-  Actor_SetSpeed(8, 0x13333, 0x9999);
-  Actor_WalkToAndWait(8, 264, 1424);
-  Actor_FaceDirection(8, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, EMOTE_IN_FRONT, 50);
+  Actor_SetSpeed(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, 0x13333, 0x9999);
+  Actor_WalkToAndWait(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, 264, 1424);
+  Actor_FaceDirection(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, FACING_WEST, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Engine_EventWait(20);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(8, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI,
+                                  ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, 0);
   Engine_EventWait(20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
   Engine_EventWait(30);
@@ -709,7 +788,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_WalkToAndWait(GARET, 264, 1464);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, FACING_SOUTH, 0);
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
@@ -720,16 +799,16 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
   // Garet rejoins the leader and the man wanders again from where he stands.
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
   Engine_EventWait(20);
-  Object_GetById(8)->paused = 0;
-  Actor_SetBuiltinAction(8, 2);
-  actor = Object_GetById(8);
+  Object_GetById(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI)->paused = 0;
+  Actor_SetBuiltinAction(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, 2);
+  actor = Object_GetById(ACTOR_VILLAGER_ASKING_ABOUT_TOLBI);
   {
     s32 pixelX = actor->x.fixed / 0x10000;
 
@@ -967,8 +1046,6 @@ struct SceneEntrance gKalayTolbiDocks_NoEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// Kalay Docks: 1 and 4 from the world map, 2 off the ship, 3 from the
-/// building.
 struct SceneEntrance gKalayTolbiDocks_KalayEntrances[] = {
     {0, CONDITION_ALWAYS, 248, 0, 1368, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 288, 0, 1464,
@@ -982,7 +1059,6 @@ struct SceneEntrance gKalayTolbiDocks_KalayEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// Tolbi Docks: 1 off the ship, 2 from the world map, 3 from the building.
 struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
     {0, CONDITION_ALWAYS, 392, 0, 296, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS, 408, 0, 296,
@@ -994,7 +1070,8 @@ struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// The building: 1 into its Kalay room, 2 into its Tolbi room.
+/// The building's entrances, each into the room at the dock it is entered
+/// from.
 struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[] = {
     {0, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {KALAY_TOLBI_DOCKS_2_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 96, 0, 248,
@@ -1172,16 +1249,16 @@ struct SceneEvent gKalayTolbiDocks_NoEvents[] = {
 };
 
 struct SceneEvent gKalayTolbiDocks_KalayEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutTolbiCrossing) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeCantTakeSilkRoadSo) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCantTakeSilkRoadMuch) },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_NORTH },
+    { EVENT_TALK, ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutTolbiCrossing) },
+    { EVENT_TALK, ACTOR_VILLAGER_IN_A_PICKLE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeCantTakeSilkRoadSo) },
+    { EVENT_TALK, ACTOR_VILLAGER_SILK_ROAD_ENDS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCantTakeSilkRoadMuch) },
     { EVENT_TALK, ACTOR_WORRIED_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWorriedFather) },
-    { EVENT_TALK, 12, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTodayThereAreSupposedToBe) },
-    { EVENT_TALK, 13, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTheShipWillBeOpenUntil) },
+    { EVENT_TALK, ACTOR_TICKET_TAKER, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTodayThereAreSupposedToBe) },
+    { EVENT_TALK, ACTOR_DOCK_WORKER, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTheShipWillBeOpenUntil) },
     { 0x400, ACTOR_TICKET_TAKER, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT_SCRIPT(KalayTolbiDocks_TalkToTicketTaker) },
     { 0x8400, ACTOR_TICKET_TAKER, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT_SCRIPT(KalayTolbiDocks_TalkToTicketTaker) },
 #if !TBS_PATCH_3
@@ -1190,128 +1267,128 @@ struct SceneEvent gKalayTolbiDocks_KalayEvents[] = {
     { 0xc400, ACTOR_TICKET_TAKER, IF_FLAG_SET(FLAG_KALAY_DOCKS_WENT_ASHORE), EVENT_SCRIPT(KalayTolbiDocks_RemindBoardShip) },
 #endif
     { EVENT_TALK, ACTOR_DOCK_WORKER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToDockWorker) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWithSilkRoadClosedEveryoneWill) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksICantBelieveHowExpensiveTickets) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellIsntThisGreatWeCant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeveSpentAYearPlanningThis) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTheCaptainsInAGoodMood) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTheCaptainsInAGoodMoodThats) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSilkRoadIsBlockedSoThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheReplacementShipHasntArrivedSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWithSilkRoadClosedEveryoneWill) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IN_A_PICKLE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksICantBelieveHowExpensiveTickets) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SILK_ROAD_ENDS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellIsntThisGreatWeCant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_FATHER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeveSpentAYearPlanningThis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TICKET_TAKER, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTheCaptainsInAGoodMood) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOCK_WORKER, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTheCaptainsInAGoodMoodThats) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TICKET_TAKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSilkRoadIsBlockedSoThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheReplacementShipHasntArrivedSo) },
     { EVENT_TALK, ACTOR_GROUND, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_GroundJoins) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalayTolbiDocks_KalayEventsShipGone[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipHasntReturnedSoWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOhHoHoWithoutAShip) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImGladIOnlyWorkOn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfMonstersGotEveryone) },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_NORTH },
+    { EVENT_TALK, ACTOR_TICKET_TAKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipHasntReturnedSoWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TICKET_TAKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOhHoHoWithoutAShip) },
+    { EVENT_TALK, ACTOR_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImGladIOnlyWorkOn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfMonstersGotEveryone) },
     { EVENT_TALK, ACTOR_GROUND, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_GroundJoins) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalayTolbiDocks_TolbiEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
     { EVENT_TOUCH, 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED, EVENT_SCRIPT(KalayTolbiDocks_GreetArrivals) },
     { EVENT_TALK, ACTOR_ARRIVALS_GREETER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutRoughCrossing) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIThinkWereDoneSailing) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutSeasickTourists) },
+    { EVENT_TALK, ACTOR_VILLAGER_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIThinkWereDoneSailing) },
+    { EVENT_TALK, ACTOR_VILLAGER_ASKING_IF_SEASICK, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutSeasickTourists) },
     { EVENT_TALK, ACTOR_WAITING_DAUGHTER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWaitingDaughter) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfYoureGoingToTolbiKeep) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksItsBeenQuiteSomeTimeSince) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED), MSGNO(MsgKalayTolbiDocksItWasAHardCrossingVery) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40b, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWaitingDaughter) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAfterSeeingTheLooksOnThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGetTheFeelingThatIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCrossedTheSeaJustFor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGuessWeWontBeSeeing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIThinkThatMissingShipMust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateBlockCells) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateBlockCells) },
+    { EVENT_TALK, ACTOR_VILLAGER_POINTING_WEST, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfYoureGoingToTolbiKeep) },
+    { EVENT_TALK, ACTOR_VILLAGER_TOUR_LONG_GONE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksItsBeenQuiteSomeTimeSince) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_DAUGHTER, IF_FLAG_SET(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED), MSGNO(MsgKalayTolbiDocksItWasAHardCrossingVery) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WAITING_DAUGHTER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWaitingDaughter) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_IF_SEASICK, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAfterSeeingTheLooksOnThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_POINTING_WEST, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGetTheFeelingThatIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TOUR_LONG_GONE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCrossedTheSeaJustFor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARRIVALS_GREETER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGuessWeWontBeSeeing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIThinkThatMissingShipMust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
     { SEARCH(SEARCH_CHEST), 100, 0xf96, FIND_ITEM(ITEM_POTION) },
     { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf95, FIND_COINS(35) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalayTolbiDocks_TolbiEventsStranded[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
     { EVENT_TOUCH, 50, FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN, EVENT_SCRIPT(KalayTolbiDocks_PassengersConfrontTourGuide) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThereAreManyHereWhoWant) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHangingAroundHereLikeThisAnd) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfBothTheCaptainAndKaja) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfKajaAndTheOthersSay) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTourGroupsShouldTakeCareOf) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksToHeckWithYouImStaying) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIWonderWhenWellBe) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellBeCountingOnYouIf) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsWereStuckHere) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIfIKnewItWould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfTheydJustLetTheShip) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfImGoingToBeStuck) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksGrrrWhyDontYouGetUp) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsYoureHereWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThisTourWasntWellOrganizedThats) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfGrandmaIsDoing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateBlockCells) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateBlockCells) },
+    { EVENT_TALK, ACTOR_ARRIVALS_GREETER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThereAreManyHereWhoWant) },
+    { EVENT_TALK, ACTOR_VILLAGER_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHangingAroundHereLikeThisAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARRIVALS_GREETER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfBothTheCaptainAndKaja) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfKajaAndTheOthersSay) },
+    { EVENT_TALK, ACTOR_SECOND_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTourGroupsShouldTakeCareOf) },
+    { EVENT_TALK, ACTOR_ANGRY_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksToHeckWithYouImStaying) },
+    { EVENT_TALK, ACTOR_STRANDED_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIWonderWhenWellBe) },
+    { EVENT_TALK, ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellBeCountingOnYouIf) },
+    { EVENT_TALK, ACTOR_BODYGUARD, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsWereStuckHere) },
+    { EVENT_TALK, ACTOR_REGRETFUL_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIfIKnewItWould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfTheydJustLetTheShip) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ANGRY_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfImGoingToBeStuck) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRANDED_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksGrrrWhyDontYouGetUp) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsYoureHereWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BODYGUARD, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThisTourWasntWellOrganizedThats) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_REGRETFUL_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfGrandmaIsDoing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_UpdateCrateCells) },
     { SEARCH(SEARCH_CHEST), 100, 0xf96, FIND_ITEM(ITEM_POTION) },
     { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf95, FIND_COINS(35) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalayTolbiDocks_InteriorEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_KALAY_DOCKS },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS },
     { EVENT_TALK, ACTOR_TICKET_SELLER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToTicketSeller) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHmmmThatsStrangeIsntTheReplacement) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOnceWeveCrossedTheKaragolWell) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_KALAY_DOCKS_TICKET_BOUGHT, MSGNO(MsgKalayTolbiDocksIFeelSortOfBadThat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfYouveAlreadyBoughtYourTicket) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontLeaveHereTill) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksLetsGetGoingImNotGetting) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImSorryButWeJustCant) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseFor) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighWeCouldHaveMadeLots) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksMaybeWellStayHereUntilThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAreWeSupposedToSleepOn) },
+    { EVENT_TALK, ACTOR_VILLAGER_AWAITING_REPLACEMENT_SHIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHmmmThatsStrangeIsntTheReplacement) },
+    { EVENT_TALK, ACTOR_VILLAGER_EXCITED_FOR_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOnceWeveCrossedTheKaragolWell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TICKET_SELLER, FLAG_KALAY_DOCKS_TICKET_BOUGHT, MSGNO(MsgKalayTolbiDocksIFeelSortOfBadThat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfYouveAlreadyBoughtYourTicket) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_AWAITING_REPLACEMENT_SHIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontLeaveHereTill) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_EXCITED_FOR_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksLetsGetGoingImNotGetting) },
+    { EVENT_TALK, ACTOR_TOLBI_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImSorryButWeJustCant) },
+    { EVENT_TALK, ACTOR_VILLAGER_RENTED_OUT_HOUSE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseFor) },
+    { EVENT_TALK, ACTOR_VILLAGER_NOWHERE_TO_SLEEP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighWeCouldHaveMadeLots) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RENTED_OUT_HOUSE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksMaybeWellStayHereUntilThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_NOWHERE_TO_SLEEP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAreWeSupposedToSleepOn) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalayTolbiDocks_InteriorEventsShipGone[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImSorryButWeJustCant) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseFor) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighWeCouldHaveMadeLots) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksMaybeWellStayHereUntilThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAreWeSupposedToSleepOn) },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_KALAY_DOCKS },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS },
+    { EVENT_TALK, ACTOR_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
+    { EVENT_TALK, ACTOR_TOLBI_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImSorryButWeJustCant) },
+    { EVENT_TALK, ACTOR_VILLAGER_RENTED_OUT_HOUSE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseFor) },
+    { EVENT_TALK, ACTOR_VILLAGER_NOWHERE_TO_SLEEP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeRentedOutOurHouseIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighWeCouldHaveMadeLots) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RENTED_OUT_HOUSE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksMaybeWellStayHereUntilThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_NOWHERE_TO_SLEEP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAreWeSupposedToSleepOn) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gKalayTolbiDocks_InteriorEventsStranded[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImStuckIWantToCross) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYeahTheShipsNotGoingAnywhere) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheKaragolSeaLooksSoCalm) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeveGotPassengersButNobodysSailing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheCaptainMustBeAStubborn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheMarineBlueKaragolSeaIs) },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_KALAY_DOCKS },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS },
+    { EVENT_TALK, ACTOR_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAhhhImBoredWhenAreWe) },
+    { EVENT_TALK, ACTOR_TOLBI_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImStuckIWantToCross) },
+    { EVENT_TALK, ACTOR_VILLAGER_SHIP_GOING_NOWHERE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYeahTheShipsNotGoingAnywhere) },
+    { EVENT_TALK, ACTOR_VILLAGER_SEA_LOOKS_CALM, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheKaragolSeaLooksSoCalm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_TICKET_SELLER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeveGotPassengersButNobodysSailing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SHIP_GOING_NOWHERE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheCaptainMustBeAStubborn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SEA_LOOKS_CALM, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheMarineBlueKaragolSeaIs) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

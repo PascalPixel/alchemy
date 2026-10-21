@@ -5,7 +5,7 @@
 ///
 /// - Kolima (Kolima, scene 36), the village of lumberjacks, to which Lord
 ///   McCoy has barricaded the road from Bilibin since the trouble began. The
-///   party's first entry from the world map (entrance 1) plays
+///   party's first entry from the world map (KOLIMA_FROM_WORLD_MAP) plays
 ///   Kolima_WitnessForestCurse, unless the party has already seen it in Kolima
 ///   Forest (FLAG_KOLIMA_CURSE_WITNESSED): every villager has been turned into
 ///   a tree, sparkles fall from the sky and press the party down until domes
@@ -18,30 +18,34 @@
 ///   resolves to try, and the story moves on to Kolima Forest.
 ///
 ///   Until the curse is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
-///   Kolima_GetPlacements gives the nine villagers (actors 8 to 16) tree
-///   sprites that stand still, glints twinkle on the ground (actors 23 to 26,
-///   and five more that Kolima_Initialize places), and the villagers answer
-///   only Mind Read, with the thoughts of people stuck as trees. Afterwards
-///   they are people again and talk of the curse, the holy tree and McCoy's
-///   money, and the healer among them (actor 16) offers the Sanctum's services
-///   across his counter. Granite, a Venus Djinni (actor 27), waits in the
-///   village and joins when spoken to. Five doorways (triggers 5 to 9) lead
-///   into the houses and shops (scene 37), exits 1 and 2 to the world map and
-///   exit 10 into Kolima Tunnel.
+///   Kolima_GetPlacements gives the nine villagers (ACTOR_FIRST_VILLAGER to
+///   ACTOR_LAST_VILLAGER) tree sprites that stand still, glints twinkle on the
+///   ground (ACTOR_FIRST_GLINT and the three after it, and five more that
+///   Kolima_Initialize places), and the villagers answer only Mind Read, with
+///   the thoughts of people stuck as trees. Afterwards they are people again
+///   and talk of the curse, the holy tree and McCoy's money, and the healer
+///   among them (ACTOR_HEALER) offers the Sanctum's services across his
+///   counter. Granite, a Venus Djinni (ACTOR_GRANITE), waits in the village
+///   and joins when spoken to. Five doorways (triggers 5 to 9) lead into the
+///   houses and shops (scene 37), KOLIMA_TO_WORLD_MAP and
+///   KOLIMA_TO_WORLD_MAP_EAST to the world map and KOLIMA_TO_KOLIMA_TUNNEL
+///   into Kolima Tunnel.
 /// - Kolima Tunnel (KolimaTunnel, scene 38), a passage with no one in it from
-/// one of
-///   the houses (scene 37, entrance 9) to the village (entrance 8). It shares
-///   the village's event table, whose exits 1 and 2 are its two ways out, and
-///   that table's two jars, an Apple and an Herb, are in one of the two maps.
+///   one of the houses (KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL) to the village
+///   (KOLIMA_FROM_KOLIMA_TUNNEL). It shares the village's event table, whose
+///   exits KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
+///   numbers, its two ways out (KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and
+///   KOLIMA_TUNNEL_TO_KOLIMA), and that table's two jars, an Apple and an
+///   Herb, are in one of the two maps.
 /// - Kolima Bridge (KolimaBridge, scene 39), "the grand bridge across the
-/// river" and
-///   "the pride of Kolima" to the village's armor seller, with the world map at
-///   both ends. A villager stands beside it, a tree while the curse lasts
-///   (actor 9) and a man afterwards (actor 8), who says that for a while he
-///   thought no one would ever cross it again. The first time the party then
-///   steps onto the bridge (trigger 10), Kolima_ShowBridgeCollapse plays: he
-///   asks whether they are going to cross, waves them on, and the bridge falls
-///   apart in front of the leader (FLAG_KOLIMA_BRIDGE_COLLAPSED).
+///   river" and "the pride of Kolima" to the village's armor seller, with the
+///   world map at both ends. A villager stands beside it, a tree while the
+///   curse lasts (ACTOR_BRIDGE_VILLAGER_AS_TREE) and a man afterwards
+///   (ACTOR_BRIDGE_VILLAGER), who says that for a while he thought no one
+///   would ever cross it again. The first time the party then steps onto the
+///   bridge (trigger 10), Kolima_ShowBridgeCollapse plays: he asks whether
+///   they are going to cross, waves them on, and the bridge falls apart in
+///   front of the leader (FLAG_KOLIMA_BRIDGE_COLLAPSED).
 ///   Kolima_RestoreBridgeState draws it broken on every later visit, and an
 ///   object on the world map changes with the same flag.
 
@@ -89,15 +93,59 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames);
 static void Kolima_SpawnCurseSparkle(void);
 static void Kolima_RestoreBridgeState(void);
 
-/// Actors of Kolima (Kolima). Garet, Ivan and Mia stand in their own slots
-/// for the curse; the placement rows after them start at actor 8, the nine
-/// villagers (8 to 16), then the two voices, the four domes (19 to 22) and the
-/// four glints (23 to 26).
-enum {
+/// Actors of Kolima (Kolima), numbering the rows of gKolimaPlacements1 from
+/// ACTOR_FIRST_PLACED: Garet, Ivan and Mia, who stand by for the curse, take
+/// their own actor slots. The nine villagers are named by what they say once
+/// the curse is lifted.
+enum KolimaActor {
+  /// "This is Kolima, village of lumberjacks! I'll shout it out loud!"
+  ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS = ACTOR_FIRST_PLACED,
+  /// "We rely on the forests so much, and yet we hurt the sacred tree..."; as
+  /// a tree, "How could anyone turn a girl as beautiful as me into a tree?"
+  /// Ivan reads her mind in Kolima_WitnessForestCurse.
+  ACTOR_VILLAGER_RELYING_ON_FORESTS,
+  /// "You know, being a tree gives you a lot of time to think."
+  ACTOR_VILLAGER_TIME_TO_THINK,
+  /// "I turned into a tree right when the sparkles fell from the sky."
+  ACTOR_VILLAGER_SPARKLES_FELL,
+  /// "Don't blame the villagers for being tempted by McCoy's money..."; as a
+  /// tree, "I am old; I've lived a full life."
+  ACTOR_VILLAGER_MCCOYS_MONEY,
+  /// "Who would try to use the holy tree to build a palace, anyway?"
+  ACTOR_VILLAGER_HOLY_TREE_PALACE,
+  /// "I didn't mind being a tree... Water never tasted so good!"
+  ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE,
+  /// "Yawn... Trees are so... sleepy..."; as a tree, "If I can't move, then
+  /// Mom can't make me go to bed!"
+  ACTOR_VILLAGER_SLEEPY_TREES,
+  /// Opens the Sanctum's services across his counter (Engine_SanctumOpen);
+  /// as a tree, "Maybe if I meditate harder, I'll turn back into a man..."
+  ACTOR_HEALER,
   /// Tret's wrathful side, unseen while the curse falls. "Hroom!"
-  TRET = 17,
-  LAUREL = 18,
-  GRANITE = 27 ///< placed until Granite has joined
+  ACTOR_TRET,
+  ACTOR_LAUREL, ///< unseen while the curse falls
+  /// The fields of Psynergy that rise over the party while the curse falls
+  /// ("You know what those fields were?"), each set where its character
+  /// stands in Kolima_WitnessForestCurse; Mia's only with her in the party.
+  ACTOR_LEADERS_PSYNERGY_FIELD,
+  ACTOR_IVANS_PSYNERGY_FIELD,
+  ACTOR_MIAS_PSYNERGY_FIELD,
+  ACTOR_GARETS_PSYNERGY_FIELD,
+  /// The four glints on the ground while the curse lasts
+  /// (gKolima_EntryActions).
+  ACTOR_FIRST_GLINT,
+  ACTOR_GRANITE = ACTOR_FIRST_GLINT + 4, ///< placed until Granite has joined
+  ACTOR_FIRST_VILLAGER = ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS,
+  ACTOR_LAST_VILLAGER = ACTOR_HEALER
+};
+
+/// Kolima Bridge's villager, numbering the rows of gKolimaPlacements3 from
+/// ACTOR_FIRST_PLACED: the same villager as a man and as a tree, in the same
+/// place.
+enum KolimaBridgeActor {
+  /// "For a while, I thought no one would ever cross this bridge again."
+  ACTOR_BRIDGE_VILLAGER = ACTOR_FIRST_PLACED,
+  ACTOR_BRIDGE_VILLAGER_AS_TREE ///< while the curse lasts
 };
 
 /// Applies the deferred pose change requested by the falling-effect script.
@@ -131,8 +179,10 @@ static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
 }
 
 /// While the curse lasts, gives Kolima's nine villagers (placement rows 3 to
-/// 11, actors 8 to 16) tree sprites, 105 or, for rows 9 and 10, 110; they
-/// stand still and keep their facing when spoken to.
+/// 11, ACTOR_FIRST_VILLAGER to ACTOR_LAST_VILLAGER) tree sprites, 105 or, for
+/// rows 9 and 10 (ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE and
+/// ACTOR_VILLAGER_SLEEPY_TREES), 110; they stand still and keep their facing
+/// when spoken to.
 static void
 Kolima_InitializeCursedVillagers(struct ScenePlacement *placements) {
   struct ScenePlacement *villager = &placements[3];
@@ -188,7 +238,8 @@ const struct SceneEntrance *Kolima_GetEntrances(void) {
   return gKolimaEntrances;
 }
 
-/// Only Kolima Tunnel has regions: its two ways out, exits 1 and 2.
+/// Only Kolima Tunnel has regions: its two ways out,
+/// KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and KOLIMA_TUNNEL_TO_KOLIMA.
 const struct SceneRegion *Kolima_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_KolimaTunnel) {
     return gKolimaRegions2;
@@ -219,26 +270,26 @@ const struct ScenePlacement *Kolima_GetPlacements(void) {
   return gKolimaPlacements;
 }
 
-/// Kolima, once the curse is lifted: talking to the healer (actor 16) across
-/// his counter (facing north) opens the Sanctum's services; from any other
-/// side he asks whether the holy tree's rage was the only cause of the curse,
-/// and either answer agrees that something changed when the gems fell.
+/// Kolima, once the curse is lifted: talking to the healer (ACTOR_HEALER)
+/// across his counter (facing north) opens the Sanctum's services; from any
+/// other side he asks whether the holy tree's rage was the only cause of the
+/// curse, and either answer agrees that something changed when the gems fell.
 static void Kolima_TalkToHealer(void) {
-  struct FieldActor *leader = Object_GetById(0);
+  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 facing = leader->facing;
   Engine_EventBegin();
   if (FACING_IS_NORTH(facing)) {
-    Engine_SanctumOpen(16);
+    Engine_SanctumOpen(ACTOR_HEALER);
   } else {
     Engine_EventSetMessage(MsgKolimaToldHolyTrees);
-    Engine_EventAskYesNo(16, 0);
+    Engine_EventAskYesNo(ACTOR_HEALER, 0);
   }
   Engine_EventEnd();
 }
 
 /// Kolima: talking to Granite, a Venus Djinni, makes it join the party.
 static void Kolima_GraniteJoins(void) {
-  Djinn_JoinParty(GRANITE, ELEMENT_VENUS, 1);
+  Djinn_JoinParty(ACTOR_GRANITE, ELEMENT_VENUS, 1);
 }
 
 /// Selects Kolima Bridge's events, or the table Kolima and Kolima Tunnel share.
@@ -252,7 +303,7 @@ const struct SceneEvent *Kolima_GetEvents(void) {
 /// Walks the leader north through a door of Kolima into the exit of the same
 /// number.
 static void Kolima_WalkThroughExit(s32 exitId) {
-  Object_GetById(0)->motionFlags = 0;
+  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
@@ -289,11 +340,11 @@ static void Kolima_EnterDoor(void) {
     y = 12;
     break;
   case 9:
-    Object_GetById(0)->motionFlags = 0;
+    Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
     gEventWork->transitionFrames = 16;
-    Engine_EventRequestExit(9);
+    Engine_EventRequestExit(KOLIMA_TO_KOLIMA_INTERIORS_WEST);
     Engine_EventEnd();
     return;
   }
@@ -303,12 +354,13 @@ static void Kolima_EnterDoor(void) {
 }
 
 /// Kolima Bridge, the first time the party steps onto it (trigger 10, until
-/// FLAG_KOLIMA_BRIDGE_COLLAPSED): the villager beside it (actor 8) asks
-/// whether they are going to cross, and at the leader's nod says "Go right
-/// ahead!" and hops aside. The bridge then falls apart in front of the leader
-/// in four ever quicker steps of map cells, ten pieces scatter and drop, the
-/// screen shakes and the leader jumps back. From then on the villager keeps
-/// turning to face the leader. Sets FLAG_KOLIMA_BRIDGE_COLLAPSED.
+/// FLAG_KOLIMA_BRIDGE_COLLAPSED): the villager beside it
+/// (ACTOR_BRIDGE_VILLAGER) asks whether they are going to cross, and at the
+/// leader's nod says "Go right ahead!" and hops aside. The bridge then falls
+/// apart in front of the leader in four ever quicker steps of map cells, ten
+/// pieces scatter and drop, the screen shakes and the leader jumps back. From
+/// then on the villager keeps turning to face the leader. Sets
+/// FLAG_KOLIMA_BRIDGE_COLLAPSED.
 static void Kolima_ShowBridgeCollapse(void) {
   u32 debrisIndex;
 
@@ -317,10 +369,10 @@ static void Kolima_ShowBridgeCollapse(void) {
   Camera_MoveTo(PIXELS(168), 0, PIXELS(246), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT, 40);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Actor_ShowEmote(ACTOR_BRIDGE_VILLAGER, EMOTE_IN_FRONT, 40);
+  Engine_ActorRunRepeatedMotion(ACTOR_BRIDGE_VILLAGER, 2);
   Engine_EventSetMessage(MsgKolimaGoingCrossBridge);
-  Engine_EventShowMessage(8, 0);
+  Engine_EventShowMessage(ACTOR_BRIDGE_VILLAGER, 0);
   Engine_CameraSetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   Camera_MoveTo(PIXELS(168), 0, PIXELS(234), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -328,18 +380,18 @@ static void Kolima_ShowBridgeCollapse(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(8, 3);
-  Engine_EventShowMessage(8, 0);
-  Actor_FaceDirection(8, FACING_WEST + FACING_STEP, 20);
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Engine_ActorSetAnimation(ACTOR_BRIDGE_VILLAGER, 3);
+  Engine_EventShowMessage(ACTOR_BRIDGE_VILLAGER, 0);
+  Actor_FaceDirection(ACTOR_BRIDGE_VILLAGER, FACING_WEST + FACING_STEP, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_BRIDGE_VILLAGER, 1);
   Engine_EventWait(20);
-  Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetSpeed(8, PIXELS(2), PIXELS(1));
-  Engine_ActorJump(8, 2, 0);
-  Engine_ObjectMotionSetPositionAndCommit(8, 224, 197);
+  Object_GetById(ACTOR_BRIDGE_VILLAGER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetSpeed(ACTOR_BRIDGE_VILLAGER, PIXELS(2), PIXELS(1));
+  Engine_ActorJump(ACTOR_BRIDGE_VILLAGER, 2, 0);
+  Engine_ObjectMotionSetPositionAndCommit(ACTOR_BRIDGE_VILLAGER, 224, 197);
   Engine_AudioPlayCue(SE_176);
   Engine_EventWait(10);
-  Engine_ObjectMotionSetPositionAndCommit(8, 234, 200);
+  Engine_ObjectMotionSetPositionAndCommit(ACTOR_BRIDGE_VILLAGER, 234, 200);
   Engine_EventWait(10);
   Engine_AudioPlayCue(SE_198);
   Engine_EventWait(30);
@@ -385,8 +437,9 @@ static void Kolima_ShowBridgeCollapse(void) {
   Engine_EventWait(20);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // From now on the villager turns to keep facing the leader.
-  FieldObject_SetTargetAndCallback(
-      8, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gKolima_FaceLeaderScript);
+  FieldObject_SetTargetAndCallback(ACTOR_BRIDGE_VILLAGER,
+                                   ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gKolima_FaceLeaderScript);
   Engine_EventWait(60);
   Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
   Engine_GameFlagSet(FLAG_KOLIMA_BRIDGE_COLLAPSED);
@@ -418,19 +471,19 @@ s32 Kolima_Initialize(void) {
     return 0;
   }
 
-  Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(24), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(25), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT + 1), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT + 2), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT + 3), 0);
 
   table = gKolima_EntryActions;
-  Actor_SetActionScript(23, table);
-  Actor_SetActionScript(24, table);
-  Actor_SetActionScript(25, table);
-  Actor_SetActionScript(26, table);
+  Actor_SetActionScript(ACTOR_FIRST_GLINT, table);
+  Actor_SetActionScript(ACTOR_FIRST_GLINT + 1, table);
+  Actor_SetActionScript(ACTOR_FIRST_GLINT + 2, table);
+  Actor_SetActionScript(ACTOR_FIRST_GLINT + 3, table);
 
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    for (actor = 8; actor <= 16; actor++) {
+    for (actor = ACTOR_FIRST_VILLAGER; actor <= ACTOR_LAST_VILLAGER; actor++) {
       Engine_ActorSetSpriteFlags(Object_GetById(actor), 0);
     }
     Map_CopyCellAttributes(13, 9, 1, 1, 13, 8);
@@ -439,7 +492,7 @@ s32 Kolima_Initialize(void) {
   }
 
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
-    if (gGameState.entrance == KOLIMA_TUNNEL_FROM_KOLIMA_INTERIORS) {
+    if (gGameState.entrance == KOLIMA_FROM_WORLD_MAP) {
       Kolima_WitnessForestCurse();
     }
   }
@@ -448,12 +501,12 @@ s32 Kolima_Initialize(void) {
     Engine_ActorDestroy(GARET);
     Engine_ActorDestroy(IVAN);
     Engine_ActorDestroy(MIA);
-    Engine_ActorDestroy(TRET);
-    Engine_ActorDestroy(LAUREL);
-    Engine_ActorDestroy(19);
-    Engine_ActorDestroy(20);
-    Engine_ActorDestroy(21);
-    Engine_ActorDestroy(22);
+    Engine_ActorDestroy(ACTOR_TRET);
+    Engine_ActorDestroy(ACTOR_LAUREL);
+    Engine_ActorDestroy(ACTOR_LEADERS_PSYNERGY_FIELD);
+    Engine_ActorDestroy(ACTOR_IVANS_PSYNERGY_FIELD);
+    Engine_ActorDestroy(ACTOR_MIAS_PSYNERGY_FIELD);
+    Engine_ActorDestroy(ACTOR_GARETS_PSYNERGY_FIELD);
     Event_CallWithLastActiveObjectId(gKolima_EntryScript);
   }
 
@@ -477,10 +530,10 @@ static __inline__ void Kolima_SetProtectiveFieldHeight(s32 actorId,
 
 /// Makes the four domes flicker, two on even frames and two on odd.
 static void Kolima_AlternateProtectiveFieldHeights(void) {
-  Kolima_SetProtectiveFieldHeight(19, 0);
-  Kolima_SetProtectiveFieldHeight(20, 1);
-  Kolima_SetProtectiveFieldHeight(21, 0);
-  Kolima_SetProtectiveFieldHeight(22, 1);
+  Kolima_SetProtectiveFieldHeight(ACTOR_LEADERS_PSYNERGY_FIELD, 0);
+  Kolima_SetProtectiveFieldHeight(ACTOR_IVANS_PSYNERGY_FIELD, 1);
+  Kolima_SetProtectiveFieldHeight(ACTOR_MIAS_PSYNERGY_FIELD, 0);
+  Kolima_SetProtectiveFieldHeight(ACTOR_GARETS_PSYNERGY_FIELD, 1);
 }
 
 /// Begins Mind Read on one of Kolima's villagers turned into a tree.
@@ -507,7 +560,7 @@ static __inline__ void Kolima_NodTogether(void) {
   Engine_ActorSetAnimationAndWait(IVAN, 3);
 }
 
-/// Kolima, the first entry from the world map (entrance 1), until
+/// Kolima, the first entry from the world map (KOLIMA_FROM_WORLD_MAP), until
 /// FLAG_KOLIMA_CURSE_WITNESSED: the party sees the curse fall. The leader,
 /// Garet and Ivan, with Mia if she has joined, walk into a silent village.
 /// Ivan reads a tree's mind ("This tree...was a person"), Garet sees that
@@ -541,13 +594,13 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_EventBegin();
   partyLayout = &gKolima_MiaInParty;
   *partyLayout = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
-  actor = Object_GetById(19);
+  actor = Object_GetById(ACTOR_LEADERS_PSYNERGY_FIELD);
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(20);
+  actor = Object_GetById(ACTOR_IVANS_PSYNERGY_FIELD);
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(21);
+  actor = Object_GetById(ACTOR_MIAS_PSYNERGY_FIELD);
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(22);
+  actor = Object_GetById(ACTOR_GARETS_PSYNERGY_FIELD);
   Engine_ActorSetSpriteFlags(actor, 0);
   Camera_MoveTo(PIXELS(104), -1, PIXELS(256), 0);
   Engine_MapRedraw();
@@ -559,11 +612,11 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 121, 238);
   Actor_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
     Actor_SetPosition(GARET, actor->x.fixed, actor->z.fixed);
   }
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
     Actor_SetPosition(IVAN, actor->x.fixed, actor->z.fixed);
   }
@@ -571,13 +624,13 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetActionScript(IVAN, gKolima_ActionTable2);
   if (*partyLayout != 0) {
     Actor_SetSpeed(MIA, PIXELS(3) / 5, PIXELS(3) / 10);
-    actor = Object_GetById(0);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
       Actor_SetPosition(MIA, actor->x.fixed, actor->z.fixed);
     }
     Actor_SetActionScript(MIA, gKolima_ActionTable3);
   }
-  Object_RefreshSelectorById(2);
+  Object_RefreshSelectorById(IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   Actor_FaceDirection(IVAN, FACING_NORTHEAST, 20);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
@@ -627,7 +680,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(IVAN, FACING_EAST, 0);
   Engine_EventWait(20);
   // Mind Read reveals that the trees are the missing villagers.
-  Kolima_ReadVillagerThoughts(IVAN, 9);
+  Kolima_ReadVillagerThoughts(IVAN, ACTOR_VILLAGER_RELYING_ON_FORESTS);
   Engine_EventWait(40);
   Kolima_FinishReadingThoughts();
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 40);
@@ -750,43 +803,43 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_EventWait(20);
   if (gKolima_MiaInParty != 0) {
     stagingValue = 128;
-    actor = Object_GetById(3);
+    actor = Object_GetById(MIA);
     actor->velocityY = (stagingValue << 10);
     Engine_EventWait(10);
     Actor_SetSpeed(MIA, (stagingValue << 10), (stagingValue << 10));
     Actor_SetDestinationOffset(MIA, -2, 0);
     Actor_SetActionScript(MIA, gKolima_PartyRestoreScaleActions);
-    actor = Object_GetById(3);
+    actor = Object_GetById(MIA);
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ActorSetAnimation(MIA, 19);
     Engine_EventWait(10);
   }
   stagingValue = 128;
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   actor->velocityY = (stagingValue << 10);
   Engine_EventWait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, (stagingValue << 10),
                  (stagingValue << 10));
   restoreScaleActions = gKolima_PartyRestoreScaleActions;
   Actor_SetActionScript(ACTOR_PARTY_LEADER, restoreScaleActions);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
   Engine_EventWait(20);
-  actor = Object_GetById(1);
+  actor = Object_GetById(GARET);
   actor->velocityY = (stagingValue << 10);
   Engine_EventWait(10);
   Actor_SetSpeed(GARET, (stagingValue << 10), (stagingValue << 10));
   Actor_SetActionScript(GARET, restoreScaleActions);
-  actor = Object_GetById(1);
+  actor = Object_GetById(GARET);
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ActorSetAnimation(GARET, 19);
   Engine_EventWait(40);
-  actor = Object_GetById(2);
+  actor = Object_GetById(IVAN);
   actor->velocityY = (stagingValue << 10);
   Engine_EventWait(10);
   Actor_SetActionScript(IVAN, restoreScaleActions);
-  actor = Object_GetById(2);
+  actor = Object_GetById(IVAN);
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ActorSetAnimation(IVAN, 19);
   gKolima_EffectActive = 0;
@@ -838,10 +891,10 @@ static void Kolima_WitnessForestCurse(void) {
   }
   sceneState = (s32 *)&gFallingEffectState;
   *sceneState = 3;
-  Object_GetById(0)->priorityFlags &= 254;
-  Object_GetById(1)->priorityFlags &= 254;
-  Object_GetById(2)->priorityFlags &= 254;
-  Object_GetById(3)->priorityFlags &= 254;
+  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &= 254;
+  Object_GetById(GARET)->priorityFlags &= 254;
+  Object_GetById(IVAN)->priorityFlags &= 254;
+  Object_GetById(MIA)->priorityFlags &= 254;
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetSpritePriority(GARET, 3);
   Engine_ActorSetSpritePriority(IVAN, 3);
@@ -850,25 +903,25 @@ static void Kolima_WitnessForestCurse(void) {
   gKolima_PendingPose = stagingValue;
   FieldScheduler_AddCallback(Kolima_AlternateProtectiveFieldHeights, 0xc80);
   Event_PlayCue(SE_220);
-  Object_GetById(19)->priorityFlags &= 254;
-  Engine_ActorSetSpritePriority(19, 2);
-  Actor_SetPosition(19, PIXELS(120), PIXELS(248));
+  Object_GetById(ACTOR_LEADERS_PSYNERGY_FIELD)->priorityFlags &= 254;
+  Engine_ActorSetSpritePriority(ACTOR_LEADERS_PSYNERGY_FIELD, 2);
+  Actor_SetPosition(ACTOR_LEADERS_PSYNERGY_FIELD, PIXELS(120), PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
-  Actor_SetActionScript(19, growFieldActions);
-  Object_GetById(20)->priorityFlags &= 254;
-  Engine_ActorSetSpritePriority(20, 2);
-  Actor_SetPosition(20, PIXELS(100), PIXELS(274));
-  Actor_SetActionScript(20, growFieldActions);
+  Actor_SetActionScript(ACTOR_LEADERS_PSYNERGY_FIELD, growFieldActions);
+  Object_GetById(ACTOR_IVANS_PSYNERGY_FIELD)->priorityFlags &= 254;
+  Engine_ActorSetSpritePriority(ACTOR_IVANS_PSYNERGY_FIELD, 2);
+  Actor_SetPosition(ACTOR_IVANS_PSYNERGY_FIELD, PIXELS(100), PIXELS(274));
+  Actor_SetActionScript(ACTOR_IVANS_PSYNERGY_FIELD, growFieldActions);
   if (gKolima_MiaInParty != 0) {
-    Object_GetById(21)->priorityFlags &= 254;
-    Engine_ActorSetSpritePriority(21, 2);
-    Actor_SetPosition(21, PIXELS(74), PIXELS(254));
-    Actor_SetActionScript(21, growFieldActions);
+    Object_GetById(ACTOR_MIAS_PSYNERGY_FIELD)->priorityFlags &= 254;
+    Engine_ActorSetSpritePriority(ACTOR_MIAS_PSYNERGY_FIELD, 2);
+    Actor_SetPosition(ACTOR_MIAS_PSYNERGY_FIELD, PIXELS(74), PIXELS(254));
+    Actor_SetActionScript(ACTOR_MIAS_PSYNERGY_FIELD, growFieldActions);
   }
-  Object_GetById(22)->priorityFlags &= 254;
-  Engine_ActorSetSpritePriority(22, 2);
-  Actor_SetPosition(22, PIXELS(94), PIXELS(225));
-  Actor_SetActionScript(22, growFieldActions);
+  Object_GetById(ACTOR_GARETS_PSYNERGY_FIELD)->priorityFlags &= 254;
+  Engine_ActorSetSpritePriority(ACTOR_GARETS_PSYNERGY_FIELD, 2);
+  Actor_SetPosition(ACTOR_GARETS_PSYNERGY_FIELD, PIXELS(94), PIXELS(225));
+  Actor_SetActionScript(ACTOR_GARETS_PSYNERGY_FIELD, growFieldActions);
   if (*sceneState != 0) {
     do {
       Engine_TaskWait(1);
@@ -881,28 +934,28 @@ static void Kolima_WitnessForestCurse(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
-  Engine_ActorStop(19);
-  Engine_ActorStop(20);
+  Engine_ActorStop(ACTOR_LEADERS_PSYNERGY_FIELD);
+  Engine_ActorStop(ACTOR_IVANS_PSYNERGY_FIELD);
   if (gKolima_MiaInParty != 0) {
-    Engine_ActorStop(21);
+    Engine_ActorStop(ACTOR_MIAS_PSYNERGY_FIELD);
   }
-  Engine_ActorStop(22);
+  Engine_ActorStop(ACTOR_GARETS_PSYNERGY_FIELD);
   Engine_TaskWait(1);
   shrinkFieldActions = gKolima_ProtectiveFieldShrinkActions;
-  Actor_SetActionScript(19, shrinkFieldActions);
-  Actor_SetActionScript(20, shrinkFieldActions);
+  Actor_SetActionScript(ACTOR_LEADERS_PSYNERGY_FIELD, shrinkFieldActions);
+  Actor_SetActionScript(ACTOR_IVANS_PSYNERGY_FIELD, shrinkFieldActions);
   if (gKolima_MiaInParty != 0) {
-    Actor_SetActionScript(21, shrinkFieldActions);
+    Actor_SetActionScript(ACTOR_MIAS_PSYNERGY_FIELD, shrinkFieldActions);
   }
-  Actor_RunActionScriptAndWait(22, shrinkFieldActions);
+  Actor_RunActionScriptAndWait(ACTOR_GARETS_PSYNERGY_FIELD, shrinkFieldActions);
   Engine_EventWait(80);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
   Event_OpenMessage(GARET, 0);
-  Actor_SetPosition(17, PIXELS(87), PIXELS(139));
-  Actor_SetPosition(18, PIXELS(87), PIXELS(139));
+  Actor_SetPosition(ACTOR_TRET, PIXELS(87), PIXELS(139));
+  Actor_SetPosition(ACTOR_LAUREL, PIXELS(87), PIXELS(139));
   Engine_TaskWait(1);
-  if (Engine_EventChooseYesNo(17, 0) == 1) {
+  if (Engine_EventChooseYesNo(ACTOR_TRET, 0) == 1) {
     gEventWork->message++;
   }
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -925,8 +978,8 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Engine_EventWait(40);
   Engine_ActorSetSpritePriority(GARET, 2);
-  Object_GetById(1)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  actor = Object_GetById(1);
+  Object_GetById(GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  actor = Object_GetById(GARET);
   Engine_ActorSetSpriteFlags(actor, 1);
   Engine_ActorJump(GARET, 6, 0);
   Engine_ActorSetAnimation(GARET, 1);
@@ -955,8 +1008,8 @@ static void Kolima_WitnessForestCurse(void) {
     Engine_ActorRunRepeatedMotion(MIA, 2);
     Engine_EventWait(80);
     Engine_ActorSetSpritePriority(MIA, 2);
-    Object_GetById(3)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-    actor = Object_GetById(3);
+    Object_GetById(MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+    actor = Object_GetById(MIA);
     Engine_ActorSetSpriteFlags(actor, 1);
     Engine_ActorJump(MIA, 4, 0);
     Actor_SetDestinationOffset(MIA, -2, 0);
@@ -981,8 +1034,8 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_EventWait(20);
   stagingValue = 1;
   Engine_ActorSetSpritePriority(IVAN, 2);
-  Object_GetById(2)->priorityFlags |= stagingValue;
-  actor = Object_GetById(2);
+  Object_GetById(IVAN)->priorityFlags |= stagingValue;
+  actor = Object_GetById(IVAN);
   Engine_ActorSetSpriteFlags(actor, 1);
   Engine_ActorJump(IVAN, 4, 0);
   Engine_ActorSetAnimation(IVAN, 1);
@@ -990,8 +1043,8 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(10);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  Object_GetById(0)->priorityFlags |= stagingValue;
-  actor = Object_GetById(0);
+  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= stagingValue;
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(actor, 1);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1111,56 +1164,56 @@ static void Kolima_WitnessForestCurse(void) {
   if (gKolima_MiaInParty != 0) {
     Kolima_FaceActorAndWait(MIA, FACING_NORTH, 10);
   }
-  Object_GetById(0)->priorityFlags &= 254;
-  Object_GetById(1)->priorityFlags &= 254;
-  Object_GetById(2)->priorityFlags &= 254;
-  Object_GetById(3)->priorityFlags &= 254;
+  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &= 254;
+  Object_GetById(GARET)->priorityFlags &= 254;
+  Object_GetById(IVAN)->priorityFlags &= 254;
+  Object_GetById(MIA)->priorityFlags &= 254;
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetSpritePriority(GARET, 3);
   Engine_ActorSetSpritePriority(IVAN, 3);
   Engine_ActorSetSpritePriority(MIA, 3);
   *secondCurtainState = 2;
   Event_PlayCue(SE_220);
-  Actor_SetPosition(19, PIXELS(120), PIXELS(248));
+  Actor_SetPosition(ACTOR_LEADERS_PSYNERGY_FIELD, PIXELS(120), PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
-  Actor_SetActionScript(19, growFieldActions);
-  Actor_SetPosition(20, PIXELS(100), PIXELS(274));
-  Actor_SetActionScript(20, growFieldActions);
+  Actor_SetActionScript(ACTOR_LEADERS_PSYNERGY_FIELD, growFieldActions);
+  Actor_SetPosition(ACTOR_IVANS_PSYNERGY_FIELD, PIXELS(100), PIXELS(274));
+  Actor_SetActionScript(ACTOR_IVANS_PSYNERGY_FIELD, growFieldActions);
   if (gKolima_MiaInParty != 0) {
-    Actor_SetPosition(21, PIXELS(74), PIXELS(254));
-    Actor_SetActionScript(21, growFieldActions);
+    Actor_SetPosition(ACTOR_MIAS_PSYNERGY_FIELD, PIXELS(74), PIXELS(254));
+    Actor_SetActionScript(ACTOR_MIAS_PSYNERGY_FIELD, growFieldActions);
   }
-  Actor_SetPosition(22, PIXELS(94), PIXELS(225));
-  Actor_SetActionScript(22, growFieldActions);
+  Actor_SetPosition(ACTOR_GARETS_PSYNERGY_FIELD, PIXELS(94), PIXELS(225));
+  Actor_SetActionScript(ACTOR_GARETS_PSYNERGY_FIELD, growFieldActions);
   Engine_EventWait(120);
   *secondCurtainState = 3;
   do {
     Engine_TaskWait(1);
   } while (gFallingEffectState != 0);
   // Tret and Laurel, unseen, wonder at the party's immunity to the glamour.
-  Kolima_ShowMessageAndWait(TRET, 80);
-  Kolima_ShowMessageAndWait(LAUREL, 20);
+  Kolima_ShowMessageAndWait(ACTOR_TRET, 80);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
   Engine_EventWait(60);
-  Kolima_ShowMessageAndWait(LAUREL, 20);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
   Kolima_NodTogether();
-  Kolima_ShowMessageAndWait(LAUREL, 10);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Kolima_NodTogether();
-  Kolima_ShowMessageAndWait(LAUREL, 10);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
   Engine_EventWait(40);
-  Kolima_ShowMessageAndWait(TRET, 10);
+  Kolima_ShowMessageAndWait(ACTOR_TRET, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(MIA, FACING_EAST, 0);
   Kolima_FaceActorAndWait(IVAN, FACING_NORTH, 40);
-  Kolima_ShowMessageAndWait(LAUREL, 10);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(IVAN, 0x102);
@@ -1169,12 +1222,12 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, FACING_NORTH, 80);
-  Kolima_ShowMessageAndWait(LAUREL, 10);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, 0, 40);
-  Kolima_ShowMessageAndWait(TRET, 10);
+  Kolima_ShowMessageAndWait(ACTOR_TRET, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -1184,14 +1237,14 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorSetAnimation(MIA, 4);
   Engine_ActorSetAnimationAndWait(IVAN, 4);
   Engine_EventWait(60);
-  Kolima_ShowMessageAndWait(LAUREL, 10);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Kolima_NodTogether();
-  Kolima_ShowMessageAndWait(LAUREL, 20);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, 0, 20);
-  Kolima_ShowMessageAndWait(LAUREL, 10);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
@@ -1200,56 +1253,56 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Kolima_ShowMessageAndWait(LAUREL, 20);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, 0, 20);
-  Kolima_ShowMessageAndWait(TRET, 20);
+  Kolima_ShowMessageAndWait(ACTOR_TRET, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(MIA, 0x102);
   Actor_SetAttachedEffect(IVAN, 0x102);
   Engine_EventWait(40);
-  Kolima_ShowMessageAndWait(LAUREL, 10);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, FACING_NORTH, 10);
-  Kolima_ShowMessageAndWait(LAUREL, 10);
+  Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Kolima_NodTogether();
   Engine_EventWait(60);
   // Laurel's and Tret's last words; then the party decides whether to help.
-  Event_ShowMessage(LAUREL, 0);
-  Event_ShowMessage(TRET, 0);
+  Event_ShowMessage(ACTOR_LAUREL, 0);
+  Event_ShowMessage(ACTOR_TRET, 0);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_EventWait(80);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(80);
-  Engine_ActorStop(19);
-  Engine_ActorStop(20);
+  Engine_ActorStop(ACTOR_LEADERS_PSYNERGY_FIELD);
+  Engine_ActorStop(ACTOR_IVANS_PSYNERGY_FIELD);
   sceneState = &gKolima_MiaInParty;
-  Engine_ActorStop(21);
-  Engine_ActorStop(22);
+  Engine_ActorStop(ACTOR_MIAS_PSYNERGY_FIELD);
+  Engine_ActorStop(ACTOR_GARETS_PSYNERGY_FIELD);
   Engine_TaskWait(1);
   shrinkFieldActions = gKolima_ProtectiveFieldShrinkActions;
-  Actor_SetActionScript(19, shrinkFieldActions);
-  Actor_SetActionScript(20, shrinkFieldActions);
+  Actor_SetActionScript(ACTOR_LEADERS_PSYNERGY_FIELD, shrinkFieldActions);
+  Actor_SetActionScript(ACTOR_IVANS_PSYNERGY_FIELD, shrinkFieldActions);
   if (*sceneState != 0) {
-    Actor_SetActionScript(21, shrinkFieldActions);
+    Actor_SetActionScript(ACTOR_MIAS_PSYNERGY_FIELD, shrinkFieldActions);
   }
-  Actor_RunActionScriptAndWait(22, shrinkFieldActions);
+  Actor_RunActionScriptAndWait(ACTOR_GARETS_PSYNERGY_FIELD, shrinkFieldActions);
   Engine_EventWait(20);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Engine_ActorSetSpritePriority(GARET, 2);
   Engine_ActorSetSpritePriority(IVAN, 2);
   stagingValue = 1;
   Engine_ActorSetSpritePriority(MIA, 2);
-  Object_GetById(0)->priorityFlags |= stagingValue;
-  Object_GetById(1)->priorityFlags |= stagingValue;
-  Object_GetById(2)->priorityFlags |= stagingValue;
-  Object_GetById(3)->priorityFlags |= stagingValue;
+  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= stagingValue;
+  Object_GetById(GARET)->priorityFlags |= stagingValue;
+  Object_GetById(IVAN)->priorityFlags |= stagingValue;
+  Object_GetById(MIA)->priorityFlags |= stagingValue;
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Kolima_FaceActorAndWait(IVAN, FACING_NORTHEAST, 10);
   Event_OpenMessage(IVAN, 0);
@@ -1386,24 +1439,24 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Engine_ActorSetAnimation(GARET, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
     Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
   Engine_ActorSetAnimation(IVAN, 2);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
     Actor_SetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorWaitForMove(IVAN);
   Actor_SetPosition(IVAN, 0, 0);
-  Actor_SetPosition(17, 0, 0);
-  Actor_SetPosition(18, 0, 0);
+  Actor_SetPosition(ACTOR_TRET, 0, 0);
+  Actor_SetPosition(ACTOR_LAUREL, 0, 0);
   if (gKolima_MiaInParty != 0) {
     Engine_ActorSetAnimation(MIA, 2);
-    actor = Object_GetById(0);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
       Actor_SetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
     }
@@ -1501,22 +1554,23 @@ s32 gKolima_MiaInParty __attribute__((section(".bss")));
 s32 gKolima_EffectActive __attribute__((section(".bss")));
 
 /// Sets up Kolima Bridge. While the curse lasts, the villager as a man
-/// (actor 8) is put out of sight, leaving him a tree (actor 9), and the row of
-/// cells at (9, 18) takes the attributes of the row above it; afterwards the
-/// tree is put out of sight instead. Once the bridge has fallen
-/// (FLAG_KOLIMA_BRIDGE_COLLAPSED), it is drawn broken and its cells changed to
-/// match. XXX: the row likely closes the bridge while the curse lasts, because
-/// the bridge's one event (trigger 10) needs the man who is a tree until then.
+/// (ACTOR_BRIDGE_VILLAGER) is put out of sight, leaving him a tree
+/// (ACTOR_BRIDGE_VILLAGER_AS_TREE), and the row of cells at (9, 18) takes the
+/// attributes of the row above it; afterwards the tree is put out of sight
+/// instead. Once the bridge has fallen (FLAG_KOLIMA_BRIDGE_COLLAPSED), it is
+/// drawn broken and its cells changed to match. XXX: the row likely closes the
+/// bridge while the curse lasts, because the bridge's one event (trigger 10)
+/// needs the man who is a tree until then.
 static void Kolima_RestoreBridgeState(void) {
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    Engine_ActorSetPosition(8, 0, 0);
+    Engine_ActorSetPosition(ACTOR_BRIDGE_VILLAGER, 0, 0);
     {
       Map_CopyCellAttributes(9, 17, 5, 1, 9, 18);
     }
     Engine_MapRedraw();
     Engine_TaskWait(1);
   } else {
-    Engine_ActorSetPosition(9, 0, 0);
+    Engine_ActorSetPosition(ACTOR_BRIDGE_VILLAGER_AS_TREE, 0, 0);
   }
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_COLLAPSED) != 0) {
     {
@@ -1625,8 +1679,8 @@ u16 gKolima_DoorCells[] = {
     MAP_CELL_STEPS_END,
 };
 
-/// Kolima's entrances: 1 from the world map, 3 to 7 from the houses' doors, 8
-/// from Kolima Tunnel.
+/// Kolima's entrances. No exit leads to entrances 2, 10 and 12; entrance 10
+/// puts the party where KOLIMA_FROM_WORLD_MAP does.
 struct SceneEntrance gKolimaEntrances[] = {
     {0, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KOLIMA_FROM_WORLD_MAP, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1,
@@ -1767,8 +1821,9 @@ struct ScenePlacement gKolima_EntryScript[] = {
     { SCENE_TABLE_END },
 };
 
-/// Kolima Bridge's villager, as a man (actor 8) and as a tree (actor 9), in
-/// the same place; Kolima_RestoreBridgeState puts one of them out of sight.
+/// Kolima Bridge's villager, as a man (ACTOR_BRIDGE_VILLAGER) and as a tree
+/// (ACTOR_BRIDGE_VILLAGER_AS_TREE), in the same place;
+/// Kolima_RestoreBridgeState puts one of them out of sight.
 struct ScenePlacement gKolimaPlacements3[] = {
     { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, 3, 0 },
@@ -1779,7 +1834,8 @@ struct ScenePlacement gKolimaPlacements3[] = {
 
 /// The events Kolima and Kolima Tunnel share: the exits and doorways, the
 /// villagers' words once the curse is lifted and their thoughts before and
-/// after, the healer, Granite and two jars.
+/// after, the healer, Granite and two jars. Exits 1 and 2 keep their numbers,
+/// since each scene's exit table gives them its own doors.
 struct SceneEvent gKolimaEvents[] = {
     { EVENT_EXIT, 99, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
@@ -1789,35 +1845,35 @@ struct SceneEvent gKolimaEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { EVENT_TALK, 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
-    { EVENT_TALK, 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWeRelyOnTheForestsSo) },
-    { EVENT_TALK, 10, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYouKnowBeingATreeGives) },
-    { EVENT_TALK, 11, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaITurnedIntoATreeRight) },
-    { EVENT_TALK, 12, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaDontBlameTheVillagersForBeing) },
-    { EVENT_TALK, 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWhoWouldTryToUseThe) },
-    { EVENT_TALK, 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
-    { EVENT_TALK, 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
-    { EVENT_TALK, 16, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(Kolima_TalkToHealer) },
-    { EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_GraniteJoins) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaForAWhileIThoughtId) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaTheForestTreesAreAliveJust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIWonderIfIdLiveLonger) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfThoseSparklesStartFallingAgain) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIveBeenPoorAllMyLife) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaItsNotCalledTheHolyTree) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfWeWereAllTreesThered) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaNobodyYellsAtYouWhenYoure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfTheHolyTreeAloneCaused) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICouldSpeakIdTell) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKolimaHowCouldAnyoneTurnAGirl) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKolimaThisIsADreamItHas) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKolimaBeingUnableToMoveIsSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKolimaIAmOldIveLivedA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKolimaItsTheSacredTreesCurseWhy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKolimaTheWaterAtMyFeetHuh) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICantMoveThenMom) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKolimaMaybeIfIMeditateHarderIll) },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, KOLIMA_TO_KOLIMA_TUNNEL },
+    { EVENT_TALK, ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
+    { EVENT_TALK, ACTOR_VILLAGER_RELYING_ON_FORESTS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWeRelyOnTheForestsSo) },
+    { EVENT_TALK, ACTOR_VILLAGER_TIME_TO_THINK, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYouKnowBeingATreeGives) },
+    { EVENT_TALK, ACTOR_VILLAGER_SPARKLES_FELL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaITurnedIntoATreeRight) },
+    { EVENT_TALK, ACTOR_VILLAGER_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaDontBlameTheVillagersForBeing) },
+    { EVENT_TALK, ACTOR_VILLAGER_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWhoWouldTryToUseThe) },
+    { EVENT_TALK, ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
+    { EVENT_TALK, ACTOR_VILLAGER_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
+    { EVENT_TALK, ACTOR_HEALER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(Kolima_TalkToHealer) },
+    { EVENT_TALK, ACTOR_GRANITE, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_GraniteJoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaForAWhileIThoughtId) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RELYING_ON_FORESTS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaTheForestTreesAreAliveJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TIME_TO_THINK, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIWonderIfIdLiveLonger) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SPARKLES_FELL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfThoseSparklesStartFallingAgain) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIveBeenPoorAllMyLife) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaItsNotCalledTheHolyTree) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfWeWereAllTreesThered) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaNobodyYellsAtYouWhenYoure) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfTheHolyTreeAloneCaused) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICouldSpeakIdTell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RELYING_ON_FORESTS, CONDITION_ALWAYS, MSGNO(MsgKolimaHowCouldAnyoneTurnAGirl) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TIME_TO_THINK, CONDITION_ALWAYS, MSGNO(MsgKolimaThisIsADreamItHas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SPARKLES_FELL, CONDITION_ALWAYS, MSGNO(MsgKolimaBeingUnableToMoveIsSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MCCOYS_MONEY, CONDITION_ALWAYS, MSGNO(MsgKolimaIAmOldIveLivedA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HOLY_TREE_PALACE, CONDITION_ALWAYS, MSGNO(MsgKolimaItsTheSacredTreesCurseWhy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE, CONDITION_ALWAYS, MSGNO(MsgKolimaTheWaterAtMyFeetHuh) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SLEEPY_TREES, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICantMoveThenMom) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKolimaMaybeIfIMeditateHarderIll) },
     { SEARCH(SEARCH_JAR), 100, 0xf57, FIND_ITEM(ITEM_APPLE) },
     { SEARCH(SEARCH_JAR), 101, 0xf58, FIND_ITEM(ITEM_HERB) },
     { SCENE_EVENTS_END },
@@ -1825,11 +1881,11 @@ struct SceneEvent gKolimaEvents[] = {
 
 /// Kolima Bridge's events: its two ends, the bridge's fall and the villager.
 struct SceneEvent gKolimaEvents3[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH },
     { EVENT_TOUCH, 10, FLAG_KOLIMA_BRIDGE_COLLAPSED, EVENT_SCRIPT(Kolima_ShowBridgeCollapse) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKolimaForAWhileIThoughtNo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKolimaYouWouldntUnderstandButItsTruly) },
+    { EVENT_TALK, ACTOR_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaForAWhileIThoughtNo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaYouWouldntUnderstandButItsTruly) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

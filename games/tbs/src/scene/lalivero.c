@@ -77,43 +77,59 @@ enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
 /// people in the same rows, then the sign and the Black Orb; its rows for
 /// Garet, Ivan and Mia take their own actor ids (Event_SpawnObjectTable).
 enum LaliveroActor {
-  /// Tolbi's soldiers, lying beaten in the street on the first visit.
-  /// "Uhhnn... We were taken by surprise..."; later "Ha ha! I thought they
-  /// had done me in for sure, but I'm all better now."
+  /// Tolbi's soldiers, lying beaten in the street on the first visit. "Uhhnn...
+  /// We were taken by surprise..."; later "Ha ha! I thought they had done me in
+  /// for sure, but I'm all better now."
+  /// ★ Named from what the player sees: a soldier in a helmet lying in the
+  /// street (its render)
   ACTOR_WEST_SOLDIER = ACTOR_FIRST_PLACED,
-  ACTOR_EAST_SOLDIER, ///< "They were terrible! We were no match..."
-  /// Sobs for Sheba (gLaliveroMournerSobs). "Ohh... They took Sheba and
-  /// headed for the ruins."
+  /// "They were terrible! We were no match..."
+  /// ★ Named from what the player sees: a second soldier lying in the street
+  /// (its render)
+  ACTOR_EAST_SOLDIER,
+  /// A young man with brown hair who sobs for Sheba (gLaliveroMournerSobs).
+  /// "Ohh... They took Sheba and headed for the ruins."
   /// ★ Named from the game: "Ohh... They took"
   /// (MsgLaliveroOhhTheyTookShebaHeaded)
   ACTOR_VILLAGER_THEY_TOOK_SHEBA,
-  /// "Sheba is our only hope. If something happens to her, Lalivero is
-  /// finished."; later asks whether the party is leaving Lalivero.
+  /// A woman with fair hair. "Sheba is our only hope. If something happens to
+  /// her, Lalivero is finished."; later asks whether the party is leaving
+  /// Lalivero.
   /// ★ Named from the game: "is our only hope."
   /// (MsgLaliveroActorIsOurOnlyHopeIf)
-  ACTOR_VILLAGER_OUR_ONLY_HOPE,
-  /// "This all happened because Tolbi took Sheba away from us..."
+  ACTOR_WOMAN_OUR_ONLY_HOPE,
+  /// A man in a white turban. "This all happened because Tolbi took Sheba away
+  /// from us..."
   /// ★ Named from the game: "This all happened because Tolbi took"
   /// (MsgLaliveroThisAllHappenedBecauseTolbiTook)
   ACTOR_VILLAGER_BLAMING_TOLBI,
-  /// "Faran followed Sheba. I'm sure he'll rescue her."
+  /// A woman in a green dress. "Faran followed Sheba. I'm sure he'll rescue
+  /// her."
   /// ★ Named from the game: "I'm sure he'll rescue her."
   /// (MsgLaliveroFaranFollowedActorImSureHell)
-  ACTOR_VILLAGER_TRUSTING_FARAN,
-  /// "The rumbling at the ruins must have been a warning..."
-  ACTOR_VILLAGER_RUMBLING_WARNING,
-  /// "There was an earthquake at the ruins before this happened."
-  ACTOR_VILLAGER_EARLIER_EARTHQUAKE,
-  /// "If I were bigger, I would have saved Sheba myself!"
+  ACTOR_WOMAN_TRUSTING_FARAN,
+  /// An old man with a cane.
+  /// ★ Named from the game: "The rumbling at the ruins must have been a
+  /// warning..." (MsgLaliveroTheRumblingAtTheRuinsMust)
+  ACTOR_OLD_MAN_RUMBLING_WARNING,
+  /// An old woman.
+  /// ★ Named from the game: "There was an earthquake at the ruins before this
+  /// happened." (MsgLaliveroThereWasAnEarthquakeAtThe)
+  ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE,
+  /// A small boy with fair hair. "If I were bigger, I would have saved Sheba
+  /// myself!"
   /// ★ Named from the game: "If I were bigger, I would have saved"
   /// (MsgLaliveroIfIWereBiggerIWould)
-  ACTOR_VILLAGER_IF_I_WERE_BIGGER,
-  /// "I bet Sheba can use her powers to escape them."
+  ACTOR_BOY_IF_I_WERE_BIGGER,
+  /// A little girl with orange pigtails. "I bet Sheba can use her powers to
+  /// escape them."
   /// ★ Named from the game: "can use her powers to escape them."
   /// (MsgLaliveroIBetActorCanUseHer)
-  ACTOR_VILLAGER_SHEBAS_POWERS,
-  /// Keeps the door to Babi's ship. "Babi's most precious belonging is kept
-  /// here. No one may enter!"
+  ACTOR_GIRL_SHEBAS_POWERS,
+  /// A soldier who keeps the door to Babi's ship. "Babi's most precious
+  /// belonging is kept here. No one may enter!"
+  /// ★ Named from the game: "Babi's most precious belonging is kept here. No
+  /// one may enter!" (MsgLaliveroBabisMostPreciousBelongingIsKept)
   ACTOR_WHARF_GUARD,
   /// Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing
   /// and Suhalla Gate. Here they stand in animation 3, block nothing and no
@@ -129,6 +145,8 @@ enum LaliveroActor {
   /// ★ Named from the game: "Torch" (MsgDjinnName)
   ACTOR_TORCH,
   /// Placed after Venus Lighthouse. "No trespassing. Danger beyond this point."
+  /// ★ Named from the game: "No trespassing. Danger beyond this point."
+  /// (MsgLaliveroNoTrespassingDangerBeyondThisPoint)
   ACTOR_NORTH_EXIT_SIGN,
   /// The orb Iodem holds out, drawn from its item icon.
   /// ★ Named from the game: "Black Orb" (MsgItemName)
@@ -168,8 +186,8 @@ const struct ScenePlacement *Lalivero_GetPlacements(void) {
   return gLaliveroPlacements;
 }
 
-/// Lalivero, the first visit: the villager mourning Sheba stops sobbing to
-/// say she was taken to the ruins, faces north again and goes back to sobbing.
+/// Lalivero, the first visit: the young man mourning Sheba stops sobbing to say
+/// she was taken to the ruins, faces north again and goes back to sobbing.
 static void TalkToMourner(s32 actor) {
   void Actor_FaceDirection();
 
@@ -186,9 +204,9 @@ static void TalkToMourner(s32 actor) {
   Actor_SetActionScript(actor, gLaliveroMournerSobs);
 }
 
-/// Lalivero, after Venus Lighthouse: a villager asks whether the party is
-/// leaving Lalivero, and wishes it well either way.
-static void TalkToVillagerAskingIfLeaving(s32 actor) {
+/// Lalivero, after Venus Lighthouse: the woman with fair hair asks whether the
+/// party is leaving Lalivero, and wishes it well either way.
+static void TalkToWomanAskingIfLeaving(s32 actor) {
   s32 message = MsgLaliveroLeavingLalivero;
   Engine_EventSetMessage(message);
   Engine_EventOpenMessage(actor, 0);
@@ -887,16 +905,16 @@ s32 Lalivero_Initialize(void) {
          gGameState.entrance == LALIVERO_FROM_WORLD_MAP_WEST) &&
         !GameFlag_IsSet(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
-      // The two villagers who wander nearest the soldiers stay put during the
-      // cutscene.
-      object = (union FieldObject *)Actor_Get(ACTOR_VILLAGER_OUR_ONLY_HOPE);
+      // The woman and the girl who wander nearest the soldiers stay put during
+      // the cutscene.
+      object = (union FieldObject *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
       object->actor.paused = 1;
-      object = (union FieldObject *)Actor_Get(ACTOR_VILLAGER_SHEBAS_POWERS);
+      object = (union FieldObject *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
       object->actor.paused = 1;
       WatchWoundedSoldiers();
-      object = (union FieldObject *)Actor_Get(ACTOR_VILLAGER_OUR_ONLY_HOPE);
+      object = (union FieldObject *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
       object->actor.paused = 0;
-      object = (union FieldObject *)Actor_Get(ACTOR_VILLAGER_SHEBAS_POWERS);
+      object = (union FieldObject *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
       object->actor.paused = 0;
     }
   }
@@ -1110,24 +1128,24 @@ struct SceneEvent gLaliveroEvents[] = {
     { EVENT_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroUhhnnWeWereTakenBySurprise) },
     { EVENT_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyWereTerribleWeWereNo) },
     { EVENT_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToMourner) },
-    { EVENT_TALK, ACTOR_VILLAGER_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorIsOurOnlyHopeIf) },
+    { EVENT_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorIsOurOnlyHopeIf) },
     { EVENT_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisAllHappenedBecauseTolbiTook) },
-    { EVENT_TALK, ACTOR_VILLAGER_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranFollowedActorImSureHell) },
-    { EVENT_TALK, ACTOR_VILLAGER_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheRumblingAtTheRuinsMust) },
-    { EVENT_TALK, ACTOR_VILLAGER_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroThereWasAnEarthquakeAtThe) },
-    { EVENT_TALK, ACTOR_VILLAGER_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfIWereBiggerIWould) },
-    { EVENT_TALK, ACTOR_VILLAGER_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroIBetActorCanUseHer) },
+    { EVENT_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranFollowedActorImSureHell) },
+    { EVENT_TALK, ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheRumblingAtTheRuinsMust) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroThereWasAnEarthquakeAtThe) },
+    { EVENT_TALK, ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfIWereBiggerIWould) },
+    { EVENT_TALK, ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroIBetActorCanUseHer) },
     { EVENT_TALK, ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroBabisMostPreciousBelongingIsKept) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfOnlyTheyDidntHaveActor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyUsedFireOnUsThats) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroCursesWeCouldntStopActorAnd) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhatDoTheyPlanToDo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhatDoTheyPlanToDo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroWeNeverShouldHaveLetTolbi) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranStillDoesNotReturnWhat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroWeHaveSeenManyOmensOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheStonesWeStackedForThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroITriedToStepInFront) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyAllHaveALessonComing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranStillDoesNotReturnWhat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroWeHaveSeenManyOmensOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheStonesWeStackedForThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroITriedToStepInFront) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyAllHaveALessonComing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWonderWhatBabisMostPrecious) },
     { EVENT_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToTorch) },
     { SEARCH(SEARCH_JAR), 100, 0xfb6, FIND_ITEM(ITEM_WATER_OF_LIFE) },
@@ -1155,25 +1173,25 @@ struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
     { EVENT_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },
     { EVENT_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWillNeverLetMyGuard) },
     { EVENT_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },
-    { EVENT_TALK, ACTOR_VILLAGER_OUR_ONLY_HOPE, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToVillagerAskingIfLeaving) },
+    { EVENT_TALK, ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToWomanAskingIfLeaving) },
     { EVENT_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroISawTheBeaconOfVenus) },
-    { EVENT_TALK, ACTOR_VILLAGER_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheExplosionInTheVenusRuins) },
-    { EVENT_TALK, ACTOR_VILLAGER_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroThePeninsulaBehindVenusLighthouseIs) },
-    { EVENT_TALK, ACTOR_VILLAGER_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroICantBelieveYouEscapedVenus) },
-    { EVENT_TALK, ACTOR_VILLAGER_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfYouDefeatedThatEvilBunch) },
-    { EVENT_TALK, ACTOR_VILLAGER_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorJumpedIntoTheOceanFrom) },
+    { EVENT_TALK, ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheExplosionInTheVenusRuins) },
+    { EVENT_TALK, ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroThePeninsulaBehindVenusLighthouseIs) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroICantBelieveYouEscapedVenus) },
+    { EVENT_TALK, ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfYouDefeatedThatEvilBunch) },
+    { EVENT_TALK, ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorJumpedIntoTheOceanFrom) },
     { EVENT_TALK, ACTOR_NORTH_EXIT_SIGN, CONDITION_ALWAYS, MSGNO(MsgLaliveroNoTrespassingDangerBeyondThisPoint) },
     { EVENT_TALK, ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroApparentlyAShipHasBeenDocked) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIAmAllHealedNowBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWantedToBeAPart) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfActorUsedHerGreatPowers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroAfterEverythingThatsHappenedLaliveroNo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroAfterEverythingThatsHappenedLaliveroNo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroVenusLighthouseHasBeenTheSymbol) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroIodemOfTolbiDoesntSeemToo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheOceanIsSoRoughSince) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroVenusLighthouseIsStillStandingStrong) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroYouMustBeGreatWarriorsTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorWouldBeFineEvenAfter) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroIodemOfTolbiDoesntSeemToo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_RUMBLING_WARNING, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheOceanIsSoRoughSince) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgLaliveroVenusLighthouseIsStillStandingStrong) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_IF_I_WERE_BIGGER, CONDITION_ALWAYS, MSGNO(MsgLaliveroYouMustBeGreatWarriorsTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SHEBAS_POWERS, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorWouldBeFineEvenAfter) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisSureSeemsLikeAStrange) },
     { EVENT_TALK, ACTOR_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToTorch) },
     { SEARCH(SEARCH_JAR), 100, 0xfb6, FIND_ITEM(ITEM_WATER_OF_LIFE) },

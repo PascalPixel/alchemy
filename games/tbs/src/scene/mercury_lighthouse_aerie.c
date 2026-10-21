@@ -1736,7 +1736,8 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
 /// A beacon spark's update: it swings round the flame it is linked to, its
 /// angle (its timer, in 1/65536 turns) stepping back each frame; its speed
 /// holds the swing's radius in pixels, less 28.
-static void SceneEffect_UpdateArcPosition(union FieldObject *fieldObject) {
+static void
+MercuryLighthouseAerie_UpdateBeaconSpark(union FieldObject *fieldObject) {
   struct FieldActor *spark = &fieldObject->actor;
   struct FieldActor *flame;
   u16 angle;
@@ -1802,7 +1803,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   spark->timer = angle;
   spark->work = tick;
   spark->linkedObject = beacon;
-  spark->update = SceneEffect_UpdateArcPosition;
+  spark->update = MercuryLighthouseAerie_UpdateBeaconSpark;
   spark->speed = (Engine_MathSin((height & 0xfffff) >> 4) * 24) >> 16;
   sprite->flags = 0;
   sprite->image.priority = beacon->sprite->image.priority;

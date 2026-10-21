@@ -74,7 +74,7 @@ A scene's functions are `<Place>_` (`Vault_`, `VaultRevisit_`,
 and text; an unknown keeps a placeholder. The shared helpers take their
 family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
 `StagedActor_`, and `FieldFx_` for the field effects); some still carry older
-descriptive names (`SceneActor_`, `SceneEffect_`, `OverlayObject_`, `FieldScene_`) until the
+descriptive names (`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the
 scenes that call them are renamed with them.
 
 The spellings some sites keep to match (fields reached through `offsetof`,
@@ -308,6 +308,6 @@ English text. Overlay numbers are their rows of the resource directory.
 Still unknown:
 
 - XXX: many functions in `common/` keep older descriptive names
-  (`SceneActor_`, `SceneEffect_`, `OverlayObject_`, `FieldScene_`) until the
+  (`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the
   scenes that call them are renamed with them.
 - XXX: sounds without a proven name keep their numbers (`SE_188`).

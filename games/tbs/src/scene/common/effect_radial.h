@@ -8,7 +8,7 @@
 /// Burst nine particles out from the actor in a ring (the ninth on the first),
 /// flung a third further east and west, slowing as they go
 /// (FieldFx_AdvanceMotion).
-static void SceneEffect_SpawnNineRadialEffects(s32 actor) {
+static void FieldFx_SpawnNineRadialEffects(s32 actor) {
   struct FieldActor *object;
   struct Vector3 vec;
   struct EffectOptions params;

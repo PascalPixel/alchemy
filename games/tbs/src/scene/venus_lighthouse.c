@@ -2023,7 +2023,7 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
                            pillar->z.fixed);
   Engine_ActorWaitForMove(pillarId);
   Engine_AudioPlayCue(SE_188);
-  SceneEffect_SpawnNineRadialEffects(pillarId);
+  FieldFx_SpawnNineRadialEffects(pillarId);
   Engine_EventWait(30);
 }
 

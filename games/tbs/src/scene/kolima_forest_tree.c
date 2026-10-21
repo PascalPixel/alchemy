@@ -1093,6 +1093,6 @@ struct SceneEvent gKolimaForestTreeEvents[] = {
 
 s32 gKolimaForestTreeEffectScript[] = {
     SC_ADD(SW_SCALE_X, Q16_ONE / 10),
-    SC_CALL(SceneEffect_AdvanceAngleUntilIdle),
+    SC_CALL(FieldFx_StretchUntilArrived),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

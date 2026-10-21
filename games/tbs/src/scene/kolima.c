@@ -1920,7 +1920,7 @@ struct SceneEvent gKolimaBridgeEvents[] = {
 // clang-format on
 
 s32 gKolima_Object26Script[] = {
-    SC_CALL(SceneEffect_AdvanceAngleUntilIdle),
+    SC_CALL(FieldFx_StretchUntilArrived),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

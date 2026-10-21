@@ -7,7 +7,7 @@
 
 /// The Nut's callback, each frame: it sways up to two pixels either side of its
 /// spot and dips up to two pixels below it, at a random pace.
-static s32 SceneEffect_UpdateOrbitPosition(s32 *p) {
+static s32 Scene_UpdateFloatingNut(s32 *p) {
   s16 *q = (s16 *)p[20];
   s32 a, b;
   s32 d = Engine_MathSin(p[12]) * 2;
@@ -58,6 +58,6 @@ void Scene_FloatNut(s32 id) {
   actor->orbitAngle = zero;
   actor->orbitCenterY = actor->y;
   actor->active = 1;
-  actor->callback = (u32)SceneEffect_UpdateOrbitPosition;
+  actor->callback = (u32)Scene_UpdateFloatingNut;
   actor->state = zero;
 }

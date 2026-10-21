@@ -8,8 +8,7 @@
 
 /// An object script call: widen the object by 0x1eb8 (about 0.12) a frame, and
 /// release it once it has reached its destination.
-static s32
-SceneEffect_AdvanceAngleUntilIdle(struct ScriptInterpreter *interpreter) {
+static s32 FieldFx_StretchUntilArrived(struct ScriptInterpreter *interpreter) {
   struct FieldActor *streak = (struct FieldActor *)interpreter;
   streak->scaleX += 0x1eb8;
   if (streak->targetX == ACTOR_NO_TARGET &&

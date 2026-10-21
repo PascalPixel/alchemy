@@ -750,7 +750,7 @@ s32 gMercuryLighthouseEntrance_RiseScript[] = {
 };
 
 s32 gMercuryLighthouse_SparkScript[] = {
-    SC_CALL(SceneEffect_AdvanceAnchoredRiseFrame),
+    SC_CALL(MercuryLighthouse_AdvanceAnchoredRiseFrame),
     SC_FREE,
 };
 

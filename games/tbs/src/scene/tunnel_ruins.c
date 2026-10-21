@@ -1075,7 +1075,7 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
 
   Engine_ActorWaitForMove(actorId);
   Engine_AudioPlayCue(SE_188);
-  SceneEffect_SpawnNineRadialEffects(actorId);
+  FieldFx_SpawnNineRadialEffects(actorId);
   WAIT(30);
 }
 

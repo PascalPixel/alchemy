@@ -13,7 +13,8 @@
 ///   away for good (four flags from FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY,
 ///   the first also opening a cell), Growth grows four plants so they can be
 ///   crossed, for this visit only (FLAG_SCENE_TEMP_40 to _43), two pillars can
-///   be pushed, and a Nut circles until Catch takes it (0xfd7).
+///   be pushed, and a Nut circles until Catch takes it
+///   (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 ///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
 /// - Crossbone Isle Cave (SceneId_CrossboneIsleCaveEntrance), the cave's
 ///   mouth, with only its two exits.
@@ -35,7 +36,8 @@
 ///   Between the doors stands a pillar that, pushed or moved with Move to
 ///   column 40, sinks into the floor and opens the corridor (one flag per room
 ///   from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the first floor a chest
-///   is a mimic (0xef4). The side rooms of the first eight floors are in
+///   is a mimic (FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN once beaten). The
+///   side rooms of the first eight floors are in
 ///   crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
 /// - Crossbone Isle Cave (SceneId_CrossboneIsleFloatingLogs), the ninth
 ///   floor's side room: twelve logs floating on green water, which drift with
@@ -47,7 +49,8 @@
 ///   10 (Event_FightDeadbeard) sets off the battle with Deadbeard, encounter
 ///   table 84's sixth group; when the party comes back
 ///   (ENTRANCE_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set and
-///   a chest with the Demon Mail appears. A second chest is a mimic (0xef7).
+///   a chest with the Demon Mail appears. A second chest is a mimic
+///   (FLAG_PIRATE_SHIP_MIMIC_BEATEN once beaten).
 ///
 /// Scene_Initialize restores each scene as its flags say: the ivy and plants on
 /// the island, the sliding pillars' footprints, the corridor's sunk pillars and
@@ -93,7 +96,8 @@
 /// Crossbone Isle's placed actors, numbered in the order of
 /// gCrossboneIslePlacements1.
 enum CrossboneIsleActor {
-  /// The Nut that circles over the island until Catch takes it (0xfd7).
+  /// The Nut that circles over the island until Catch takes it
+  /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
   ACTOR_ISLE_NUT = ACTOR_FIRST_PLACED,
   /// The two pillars a push moves (Event_PushIslePillar).
   ACTOR_FIRST_ISLE_PILLAR,
@@ -275,11 +279,12 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gCrossboneIsleEventsOther;
 }
 
-/// Catch on the Nut circling on Crossbone Isle: the party gets it (0xfd7).
+/// Catch on the Nut circling on Crossbone Isle: the party gets it
+/// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 static void Event_CatchNut(void) {
   EV_BEGIN();
   Engine_ActorSetPosition(ACTOR_ISLE_NUT, 0, 0);
-  Engine_GameFlagSet(0xfd7);
+  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
   EV_END();
@@ -306,7 +311,7 @@ s32 Scene_Initialize(void) {
     return 0;
   }
   if (scene == (s32)&SceneId_PirateShip) {
-    if (FLAG_CHECK(0xef7) == 0) {
+    if (FLAG_CHECK(FLAG_PIRATE_SHIP_MIMIC_BEATEN) == 0) {
       Map_CopyCellAttributes(0, 3, 1, 1, 13, 40);
       Map_CopyCellAttributes(0, 2, 1, 1, 15, 40);
       MapObject_SetPosition(101, PIXELS(216), PIXELS(648));
@@ -366,7 +371,7 @@ s32 Scene_Initialize(void) {
       Field_SetMapCellCollision(0, PIXELS(144), PIXELS(320), 253);
       Field_SetMapCellCollision(0, PIXELS(752), PIXELS(320), 253);
     }
-    if (FLAG_CHECK(0xfd7) != 0) {
+    if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_NUT_CAUGHT) != 0) {
       return 0;
     }
     Scene_FloatNut(ACTOR_ISLE_NUT);
@@ -377,7 +382,7 @@ s32 Scene_Initialize(void) {
   // entrance.
   first = (s32)&SceneId_CrossboneIsleFirstFloor;
   if (current == first) {
-    if (FLAG_CHECK(0xef4) == 0) {
+    if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
       Map_CopyCellAttributes(0, 0, 1, 1, 37, 10);
       MapObject_SetPosition(100, PIXELS(600), PIXELS(168));
     }
@@ -2140,7 +2145,7 @@ struct ScenePlacement gCrossboneIslePlacementsOther[] = {
 };
 
 struct ScenePlacement gCrossboneIslePlacements1[] = {
-    { 0x16, 0xfd7, 7,
+    { 0x16, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, 7,
         PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xcf, CONDITION_ALWAYS, 7,
         PIXELS(144), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -2204,7 +2209,7 @@ struct SceneEvent gCrossboneIsleEventsOther[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenWestDoor) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CORRIDOR_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillar) },
-    { SEARCH(SEARCH_CHEST), 100, 0xef4, FIND_MIMIC | 4 },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN, FIND_MIMIC | 4 },
     { SCENE_EVENTS_END },
 };
 
@@ -2215,7 +2220,7 @@ struct SceneEvent gCrossboneIsleEvents2[] = {
 };
 
 struct SceneEvent gCrossboneIsleEvents1[] = {
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ISLE_NUT, 0xfd7, EVENT_SCRIPT(Event_CatchNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ISLE_NUT, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchNut) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT, FLAG_SCENE_TEMP_40, EVENT_SCRIPT(Event_GrowFirstPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 1, FLAG_SCENE_TEMP_41, EVENT_SCRIPT(Event_GrowSecondPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 2, FLAG_SCENE_TEMP_42, EVENT_SCRIPT(Event_GrowThirdPlant) },
@@ -2325,7 +2330,8 @@ struct SceneEvent gCrossboneIsleEvents5[] = {
      EVENT_SCRIPT(Event_FightDeadbeard)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_HopSouth)},
-    {SEARCH(SEARCH_CHEST), 100, 0xee6, FIND_ITEM(ITEM_DEMON_MAIL)},
-    {SEARCH(SEARCH_CHEST), 101, 0xef7, FIND_MIMIC | 7},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_PIRATE_SHIP_DEMON_MAIL,
+     FIND_ITEM(ITEM_DEMON_MAIL)},
+    {SEARCH(SEARCH_CHEST), 101, FLAG_PIRATE_SHIP_MIMIC_BEATEN, FIND_MIMIC | 7},
     {SCENE_EVENTS_END},
 };

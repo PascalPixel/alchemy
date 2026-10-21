@@ -1878,14 +1878,12 @@ static void ValeGate_UpdateSmallRockPalette(void) {
 /// Arriving by VALE_GATE_DEBUG_STORY_PRESET: sets a preset of story flags,
 /// which differs by edition, and leaves by VALE_GATE_TO_BILIBIN.
 ///
-/// Called by ValeGate_Initialize. Sets FLAG_NO_ENCOUNTERS and flag 0x16d; from
-/// the third patch the whole story up to Kalay, before it FLAG_TRET_DEFEATED
-/// and FLAG_KOLIMA_CURSE_LIFTED.
+/// Called by ValeGate_Initialize. Sets FLAG_NO_ENCOUNTERS and
+/// FLAG_DEBUG_BATTLE_KEYS; from the third patch the whole story up to Kalay,
+/// before it FLAG_TRET_DEFEATED and FLAG_KOLIMA_CURSE_LIFTED.
 static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_NO_ENCOUNTERS);
-  // XXX: flag 0x16d gates the battle debug key R (plan.c), and the Colosseum
-  // sets it as Mia takes Jenna's place; a third use would say what it means.
-  Engine_GameFlagSet(0x16d);
+  Engine_GameFlagSet(FLAG_DEBUG_BATTLE_KEYS);
 #if TBS_PATCH_3
   Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_FELL);
   Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_FELL);

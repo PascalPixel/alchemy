@@ -40,9 +40,10 @@
 /// (FLAG_IODEM_AT_BABI_LIGHTHOUSE); what he says in the desert and at Suhalla
 /// Gate later depends on FLAG_IODEM_MET_WOUNDED_SOLDIERS.
 ///
-/// Searching the ovens finds a Smoke Bomb, once (flag 0xfb0), and shows what
-/// is cooking, except at the Smoke Bomb's oven: its find always answers first,
-/// so the cactus steak line there is unused.
+/// Searching the ovens finds a Smoke Bomb, once
+/// (FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB), and shows what is cooking, except
+/// at the Smoke Bomb's oven: its find always answers first, so the cactus steak
+/// line there is unused.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -659,7 +660,7 @@ struct SceneEvent gSuhallaInteriorsEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets) },
     { EVENT_TALK, ACTOR_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheHolyChildActorWillSave) },
-    { SEARCH(SEARCH_OVEN), 100, 0xfb0, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_OVEN), 100, FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     // Unused: this oven's item row answers first (see the scenes README).
     { SEARCH(SEARCH_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },
     { SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsHesMakingMulukhiyaSoupItTastes)) },
@@ -703,7 +704,7 @@ struct SceneEvent gSuhallaInteriorsEventsAfterAudience[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenThatCycloneThrewUsInto) },
     { EVENT_TALK, ACTOR_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIShudderToThinkSandstormsWill) },
-    { SEARCH(SEARCH_OVEN), 100, 0xfb0, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_OVEN), 100, FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     // Unused: this oven's item row answers first (see the scenes README).
     { SEARCH(SEARCH_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },
     { SEARCH(SEARCH_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsHesMakingMulukhiyaSoupItTastes)) },

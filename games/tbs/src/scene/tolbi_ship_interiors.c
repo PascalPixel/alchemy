@@ -83,9 +83,9 @@
 /// - TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT, where a defeat at sea
 ///   returns: it clears the voyage's flags from
 ///   FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT to _KRAKEN_DEFEATED and the
-///   rowers chosen, sets flag 0x902 and leads up to the deck
-///   (TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK), so the voyage
-///   starts over.
+///   rowers chosen, sets FLAG_TOLBI_SHIP_DEFEATED_AT_SEA and leads up to the
+///   deck (TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK), so the
+///   voyage starts over.
 ///
 /// A travelling healer opens a Sanctum in the hold. At Tolbi
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the cabin and the hold have their own
@@ -2437,7 +2437,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
         SHIP_CLEAR_FLAG_RANGE, FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT,
         FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
     TolbiShipInteriors_RunSceneCommand(SHIP_CLEAR_ROWING_SELECTIONS, 0, 0);
-    Engine_GameFlagSet(0x902);
+    Engine_GameFlagSet(FLAG_TOLBI_SHIP_DEFEATED_AT_SEA);
     Engine_EventRequestExit(
         TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK);
     break;

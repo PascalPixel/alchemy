@@ -134,17 +134,6 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 /// EXIT_NONE's value: Retreat writes its destination itself.
 #define EXIT_RETREAT 999
 
-/// Play the kind's usual effect. Field_UsePsynergy sets it for each use and
-/// clears it when the after event has trigger bit 0x400 and plays its own; the
-/// before event's script may clear it too.
-#define FLAG_PSYNERGY_EFFECT 0x140
-/// Aim the effect at the actor ahead (BattleFx_DispatchRequestKind) rather
-/// than run the kind's untargeted body (BattleFx_Run, where Halt still stops
-/// the nearest actor when it has a talk event, and Force and Reveal run their
-/// phase 5 event). Field_UsePsynergy keeps it set only when a scene event
-/// applies to what the leader faces.
-#define FLAG_PSYNERGY_TARGET 0x141
-
 /// The control word of a Psynergy event (EVENT_PSYNERGY) in the given phase, as
 /// BattleFx_FindMatchingEvent compares it (bits 30..28 phase | 3..0 kind). The
 /// phases are listed in field_scene.h, above EVENT_PSYNERGY_ON_ACTOR.

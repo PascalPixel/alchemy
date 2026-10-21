@@ -15,6 +15,13 @@
 /// DJINNI_FLINT's flag, set once it is caught; each Djinni's is FLAG_DJINNI_0
 /// plus its DjinniId.
 #define FLAG_DJINNI_0 48
+/// FLAG_DJINNI_0's hiding flag; each Djinni's is this plus its DjinniId, the
+/// 80 flags after the Djinn's own. Djinn_ResolvePendingEvent sets it after a
+/// lost or fled Djinni battle, and the Djinni's actor stays away until the
+/// scene is entered normally again, which clears it.
+/// ★ Named from the game: "It must be hiding somewhere again"
+/// (MsgVaultHmmmItMustBeHidingSomewhere)
+#define FLAG_DJINNI_HIDING_0 128
 /// The next scene change is silent: the scene loader clears it in place of
 /// playing SE_288, once. The world map sets it after its lighthouse
 /// transition.
@@ -58,6 +65,16 @@
 #define FLAG_IN_TOWN 0x123
 /// Set before an action on the field; still set afterwards, nothing came of it
 /// and the game says so. "But nothing happens." An event that acts clears it.
+/// Play the kind's usual effect. Field_UsePsynergy sets it for each use and
+/// clears it when the after event has trigger bit 0x400 and plays its own; the
+/// before event's script may clear it too.
+#define FLAG_PSYNERGY_EFFECT 0x140
+/// Aim the effect at the actor ahead (BattleFx_DispatchRequestKind) rather
+/// than run the kind's untargeted body (BattleFx_Run, where Halt still stops
+/// the nearest actor when it has a talk event, and Force and Reveal run their
+/// PSYNERGY_PHASE_EFFECT_ACTS event). Field_UsePsynergy keeps it set only when
+/// a scene event applies to what the leader faces.
+#define FLAG_PSYNERGY_TARGET 0x141
 #define FLAG_NOTHING_HAPPENS 0x142
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
 /// Retreat is blocked, from Psynergy or an item. It "does not work here".
@@ -87,6 +104,13 @@
 /// it, and every normal scene entrance (not a return keeping the party's
 /// position) clears it.
 #define FLAG_LINK_BATTLE 0x16c
+/// In debug mode, with it set, holding R as an action is planned defeats every
+/// enemy, and R with Select the party (BattleCommand_BuildPlan); that is its
+/// only reader. Vale Gate's debug story preset sets it, and so do the
+/// Colosseum's escorts as they swap Mia in for Jenna. XXX: likely a debug
+/// switch at the Colosseum too, because Jenna is never in the party there in
+/// normal play; a reader outside the debug keys would say otherwise.
+#define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// Set, the highest of these picks the tint a field Psynergy effect fades
 /// toward, gBattleFx_TargetColors[n], in place of the frame counter's pick
 /// (BattleEffect_InitializeSharedScene).
@@ -290,6 +314,9 @@
 #define FLAG_COLOSSO_CLEARED_TRIAL_SEEN 0x8a4 ///< a warrior cleared his trial
 #define FLAG_COLOSSO_FIRST_MATCH_WON 0x90e
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
+/// The officials have taken the party into the Colosseum on the finals day.
+/// XXX: no code of this game reads it; a reader would say what it changes.
+#define FLAG_COLOSSEUM_FINALS_ENTERED 0x93f
 // Also FLAG_COLOSSO_OVER: the colosseum is closed until next year.
 // Also FLAG_BABI_SAVED: the trials are over, the finals day.
 
@@ -298,18 +325,26 @@
 #define FLAG_KALAY_HEARD_OF_COLOSSO_TOUR 0x910
 #define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911 ///< the tour group has left town
 #define FLAG_KALAY_TOWN_NUT_CAUGHT 0x916   ///< the Nut circling in the town
+/// The Nut floating at the Kalay Tunnel Entrance is caught.
+#define FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT 0xfd6
 
 // Imil
 /// Mia's second apprentice told the party Mia went to the old couple's house.
 #define FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE 0x82a
 /// Mia healed the old man, and the party saw the Mercury Lighthouse lit.
 #define FLAG_IMIL_MET_MIA 0x82b
+/// The old couple have sent for Mia: the old man moaned for help and his wife
+/// hurried off to fetch her, or her apprentice told the party where she went.
+#define FLAG_IMIL_MIA_SENT_FOR 0x82c
 /// Her apprentice told the party she can act as its healer in the sanctum.
 #define FLAG_IMIL_APPRENTICE_OFFERED_HEALING 0x82d
 #define FLAG_IMIL_MIA_SAID_FAREWELL 0x82e ///< to her two apprentices
 
 // Fuchin Falls
 /// The Dragon's Eye is set in the dragon statue, which opened the hidden path.
+/// The Dragon's Eye is taken from where it lies in Fuchin Falls Cave's third
+/// room.
+#define FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND 0xf13
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET 0x820
 
 // Kalay and Tolbi docks
@@ -338,6 +373,12 @@
 // Lamakan Desert
 /// The Manticore, on the third map, is beaten.
 #define FLAG_LAMAKAN_MANTICORE_BEATEN 0x90a
+// The desert's chests, set once each is opened.
+#define FLAG_LAMAKAN_DESERT_VULCAN_AXE 0xf7b
+#define FLAG_LAMAKAN_DESERT_LUCKY_PEPPER 0xf7c
+#define FLAG_LAMAKAN_DESERT_777_COINS 0xf7d
+#define FLAG_LAMAKAN_DESERT_POTION 0xf7e
+#define FLAG_LAMAKAN_DESERT_MINT 0xf7f
 
 // Lalivero
 /// The party is back from Venus Lighthouse, by the aerie's exit.
@@ -389,6 +430,11 @@
 #define FLAG_LUNPA_FORTRESS_BARREL_VIAL 0xfa6
 #define FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD 0xfa7
 #define FLAG_LUNPA_FORTRESS_CELL_KEY 0xf2e ///< caught or taken from its hook
+/// Unused: the four swords LunpaFortress's unused pickups give, each once.
+#define FLAG_LUNPA_FORTRESS_ARCTIC_BLADE 0xf2a
+#define FLAG_LUNPA_FORTRESS_MASAMUNE 0xf2b
+#define FLAG_LUNPA_FORTRESS_SILVER_BLADE 0xf2c
+#define FLAG_LUNPA_FORTRESS_SHAMSHIR 0xf2d
 
 // McCoy's Palace in Bilibin (McCoyPalace and McCoyPalaceGrounds)
 /// The gate guards have let the party into the palace.
@@ -428,6 +474,9 @@
 /// Saturos is beaten at Mercury Lighthouse: the Hermes fountain at its foot
 /// flows again.
 #define FLAG_SATUROS_BEATEN_AT_MERCURY 0x881
+#define FLAG_MERCURY_LIGHTHOUSE_PSYNERGY_ARMOR 0xf65 ///< the entrance's chest
+/// The mimic in the entrance's other chest is beaten.
+#define FLAG_MERCURY_LIGHTHOUSE_MIMIC_BEATEN 0xef0
 
 // Mogall Forest
 #define FLAG_MOGALL_FOREST_FIRST_APE_SEEN 0x89c ///< an ape hides on arrival
@@ -441,6 +490,8 @@
 /// Iodem has found the wounded soldiers in a house in Suhalla and asked for
 /// Sheba.
 #define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
+/// The Smoke Bomb in one of the houses' ovens is found.
+#define FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB 0xfb0
 
 // Suhalla Gate
 #define FLAG_SUHALLA_GATE_SOLDIER_VANISHED 0x897 ///< after his last words
@@ -455,6 +506,11 @@
 /// Iodem warned of a sandstorm. "A sandstorm!"
 #define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6
 #define FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED 0x9b7
+// The desert's chests, set once each is opened or its mimic beaten.
+#define FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET 0xfb1
+#define FLAG_SUHALLA_DESERT_LUCKY_MEDAL 0xfb2
+#define FLAG_SUHALLA_DESERT_COOKIE 0xfb3
+#define FLAG_SUHALLA_DESERT_MIMIC_BEATEN 0xef6
 // Tolbi
 #define FLAG_TOLBI_CORN_GIVEN 0x8bf    ///< the snack vendor gave away her corn
 #define FLAG_TOLBI_SEARCHERS_MET 0x8c0 ///< the soldiers asked about Babi
@@ -496,6 +552,10 @@
 #define FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS 0x990
 /// The ship reached Tolbi. "The ship has arrived safely"
 #define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e
+/// The party lost a battle at sea and is back in the passenger hold, where the
+/// voyage starts over. XXX: no code of this game reads it; a reader would say
+/// what it changes.
+#define FLAG_TOLBI_SHIP_DEFEATED_AT_SEA 0x902
 // Tunnel Ruins
 #define FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY 0x970
 #define FLAG_TUNNEL_RUINS_PILLAR_A_SUNK 0x971
@@ -503,6 +563,9 @@
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST 0x974
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST 0x975
 #define FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN 0x984
+/// The party has entered TunnelRuinsLadyStatues' room of four walkways. XXX:
+/// no code of this game reads it; a reader would say what it records.
+#define FLAG_TUNNEL_RUINS_WALKWAYS_ENTERED 0x973
 #define FLAG_TUNNEL_RUINS_ORACLES_ROBE 0xf32 ///< a chest in the second scene
 #define FLAG_TUNNEL_RUINS_ASURAS_ARMOR 0xf33 ///< a chest in the second scene
 // Vale
@@ -512,6 +575,7 @@
 /// Set whenever Kalay is entered; Vale's villagers then talk of the party's
 /// journey.
 #define FLAG_REACHED_KALAY 0x87a
+#define FLAG_VALE_NUT_CAUGHT 0xfd0 ///< Catch took the Nut floating in Vale
 
 // Vale, Kraden's cottage
 /// Kraden wondered aloud about the strangers
@@ -679,6 +743,10 @@
 #define FLAG_IVAN_REPORTED_TO_LAYANA 0x912 ///< that Hammet is still in Lunpa
 #define FLAG_LAYANA_SCOLDED_LUNPA_VISIT 0x913
 #define FLAG_HAMMET_HOMECOMING_SEEN 0x914
+/// The Kalay Tunnel, the passage under the palace to Hammet's treasure, is open
+/// to the party: Layana opens it in thanks once Hammet is home, and Kalay's
+/// scenes set it whenever FLAG_LUNPA_TRADE_REOPENED is set.
+#define FLAG_KALAY_TUNNEL_OPEN 0x915
 
 // Fuchin Temple and Master Feh's school
 /// Nyunpa is enlightened, beyond words: he has passed away.
@@ -712,6 +780,14 @@
 #define FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED 0x8c8
 #define FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED 0x8d2
 #define FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1 ///< on the Pirate Ship
+#define FLAG_CROSSBONE_ISLE_NUT_CAUGHT                                         \
+  0xfd7 ///< the Nut circling over the island
+/// CrossboneIsleBane's chest, carried on its second pillar: a Demon Axe.
+#define FLAG_CROSSBONE_ISLE_DEMON_AXE 0xed9
+/// The mimic in CrossboneIsleFirstFloor's chest is beaten.
+#define FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN 0xef4
+#define FLAG_PIRATE_SHIP_DEMON_MAIL 0xee6   ///< the chest after Deadbeard
+#define FLAG_PIRATE_SHIP_MIMIC_BEATEN 0xef7 ///< the other chest's mimic
 // CrossboneIsleStatues keeps FLAG_SCENE_TEMP_20 set while one of its
 // pursuers is after the leader.
 

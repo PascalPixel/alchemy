@@ -233,8 +233,8 @@ void FieldObject_PlaceSceneActors(void) {
 ///
 /// After a won battle the first call leaves the event pending and the second
 /// makes the Djinni join the party, 40 frames in (Djinn_JoinParty).
-/// Otherwise the first call sets flag 128 + the Djinni's number
-/// (FLAG_DJINNI_0 + 80 + it), which hides the Djinni's actor until the scene
+/// Otherwise the first call sets the Djinni's FLAG_DJINNI_HIDING_0 flag, which
+/// hides the Djinni's actor until the scene
 /// is entered normally again (object/actors.c), and drops the event. A mimic
 /// chest's event (kind 0x1000, object/events.c) sets the chest's flag when
 /// the battle ended with exactly one enemy defeated, and is dropped.
@@ -252,7 +252,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
       // Won: the event waits for the call once the scene is shown.
       if (st->sceneChangeReason > 0 && st->sceneChangeReason != 999)
         return;
-      // 300 + n less 172 is 128 + n, the Djinni's hiding flag.
+      // DJINNI_0 + n less 172 is FLAG_DJINNI_HIDING_0 + n.
       GameFlag_SetBitFar(flag - 172);
       *pending = kind;
     } else if (kind == 0x1000) {

@@ -1422,8 +1422,7 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// there to BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE. The scene's
 /// initialization. Entering the room of four walkways
 /// (TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHWEST and the three after it) sets
-/// flag 0x973. XXX: no other code of the game reads flag 0x973; a reader
-/// elsewhere would say what it records.
+/// FLAG_TUNNEL_RUINS_WALKWAYS_ENTERED.
 s32 TunnelRuins_Initialize(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1650,7 +1649,7 @@ s32 TunnelRuins_Initialize(void) {
         Map_CopyCells(10, 30, 1, 2, 16, 30);
       if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
         Map_CopyCells(10, 30, 1, 2, 22, 30);
-      FLAG_SET(0x973);
+      FLAG_SET(FLAG_TUNNEL_RUINS_WALKWAYS_ENTERED);
       break;
     case TUNNEL_RUINS_LADY_STATUES_FALSE_STATUE_WEST:
       Map_CopyCellAttributes(8, 49, 1, 1, 8, 113);

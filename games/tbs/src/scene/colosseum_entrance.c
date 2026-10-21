@@ -771,7 +771,7 @@ static void Event_CrowdRecognizesIsaac(void) {
   }
 
   Engine_EventRequestExit(COLOSSEUM_ENTRANCE_TO_COLOSSEUM);
-  Engine_GameFlagSet(0x93f);
+  Engine_GameFlagSet(FLAG_COLOSSEUM_FINALS_ENTERED);
   Engine_EventEnd();
 }
 
@@ -1578,7 +1578,7 @@ static void ColosseumEntrance_EscortToEastExit(void) {
   struct FieldActor *escort;
 
   if (GameFlag_IsSet(JENNA) != 0) {
-    GameFlag_Set(0x16d);
+    GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
     Party_RemoveActiveOwner(JENNA);
     Party_AddActiveOwner(MIA);
   }
@@ -1736,7 +1736,7 @@ static void ColosseumEntrance_EscortToWestExit(void) {
   struct FieldActor *escort;
 
   if (GameFlag_IsSet(JENNA) != 0) {
-    GameFlag_Set(0x16d);
+    GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
     Party_RemoveActiveOwner(JENNA);
     Party_AddActiveOwner(MIA);
   }

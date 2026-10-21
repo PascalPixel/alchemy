@@ -136,7 +136,7 @@ enum CrossboneIsleBaneActor {
   /// The chest on top of the second pillar, in the sprite of McCoy's Palace's
   /// chests, holding the Demon Axe: it follows the pillar until the pillar
   /// reaches the ladder, where the chest's search marker 107 takes its place,
-  /// and it is drawn open once the chest's flag 0xed9 is set.
+  /// and it is drawn open once FLAG_CROSSBONE_ISLE_DEMON_AXE is set.
   ACTOR_SECOND_PILLAR_CHEST,
   ACTOR_BANE ///< Bane, a Venus Djinni, until it is caught
 };
@@ -1339,7 +1339,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   FieldScheduler_AddCallback(CrossboneIsleKeys_UpdatePillarPriorities,
                              TASK_PRIORITY_SCENE);
   MapObject_SetPosition(107, 0, 0);
-  if (FLAG_CHECK(0xed9) != 0) {
+  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
     OBJ_MODE(ACTOR_SECOND_PILLAR_CHEST, 2);
   }
   Event_UpdateFirstPillarTerrain();
@@ -1665,7 +1665,8 @@ struct SceneEvent gCrossboneIsleBaneEvents[] = {
     {SEARCH(SEARCH_CHEST), 104, 0xed6, FIND_COINS(666)},
     {SEARCH(SEARCH_CHEST), 105, 0xed7, FIND_ITEM(ITEM_WATER_OF_LIFE)},
     {SEARCH(SEARCH_CHEST), 106, 0xed8, FIND_ITEM(ITEM_ELIXIR)},
-    {SEARCH(SEARCH_CHEST), 107, 0xed9, FIND_ITEM(ITEM_DEMON_AXE)},
+    {SEARCH(SEARCH_CHEST), 107, FLAG_CROSSBONE_ISLE_DEMON_AXE,
+     FIND_ITEM(ITEM_DEMON_AXE)},
     {SCENE_EVENTS_END},
 };
 

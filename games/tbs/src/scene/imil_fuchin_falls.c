@@ -45,7 +45,8 @@
 ///   (FIND_MIMIC); the fourth room's chest holds an Arctic Blade, and the Ki
 ///   room's the Orb of Force. Arriving in the third room by
 ///   FUCHIN_FALLS_CAVE_DRAGONS_EYE_PEDESTAL_FROM_LOGS before the Dragon's Eye
-///   is taken (flag 0xf13) shows it, and searching there takes it.
+///   is taken (FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) shows it, and searching
+///   there takes it.
 ///
 ///   The dragon statue's room is dark until the eye is set: entering its
 ///   northern half (its first six entrances, up to
@@ -1347,7 +1348,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
 
   ImilFuchinFalls_RebuildLogRoom();
   if (gGameState.scene == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
-    if (!GameFlag_IsSet(0xf13) &&
+    if (!GameFlag_IsSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) &&
         gGameState.entrance ==
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_PEDESTAL_FROM_LOGS) {
       ImilFuchinFalls_PlaceDragonsEye();
@@ -1485,7 +1486,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
 }
 
 /// Searching where the Dragon's Eye lies, in Fuchin Falls Cave's third room
-/// (trigger 30), gives it to the party (flag 0xf13).
+/// (trigger 30), gives it to the party (FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND).
 static void Fuchin_CollectDragonsEye(void) {
   Engine_EventBegin();
 
@@ -1494,7 +1495,7 @@ static void Fuchin_CollectDragonsEye(void) {
   }
 
   Engine_PartyGiveItem(ITEM_DRAGONS_EYE, 0);
-  Engine_GameFlagSet(0xF13);
+  Engine_GameFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND);
 
   if (gImilFuchinFalls_DragonsEye != NULL) {
     Engine_ObjectDispatchRelease(gImilFuchinFalls_DragonsEye);
@@ -2138,7 +2139,7 @@ struct SceneEvent gImilFuchinFalls_ThirdRoomEvents[] = {
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 3, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_PEDESTAL },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ENTRANCE },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ZEPHYR },
-    { SEARCH(SEARCH_UNNAMED), 30, 0xf13, EVENT_SCRIPT(Fuchin_CollectDragonsEye) },
+    { SEARCH(SEARCH_UNNAMED), 30, FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND, EVENT_SCRIPT(Fuchin_CollectDragonsEye) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

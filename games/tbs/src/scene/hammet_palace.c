@@ -38,8 +38,8 @@
 ///   they tell of the door to the underground passage, where Hammet keeps his
 ///   treasure, opened for the party in thanks: entering by
 ///   HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
-///   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM with flag 0x915 set draws it
-///   open.
+///   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM with FLAG_KALAY_TUNNEL_OPEN
+///   set draws it open.
 ///
 /// The people of the palace (ACTOR_TOWNSFOLK_WORRIER to ACTOR_SILK_TRADE_ASKER)
 /// have one line before Hammet is free and another after. Walking north into
@@ -247,8 +247,8 @@ s32 Scene_Initialize(void) {
 /// (FLAG_PLACE_TEMP_21). By the door to the underground passage
 /// (HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING and
 /// HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open once
-/// flag 0x915 is set. HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS is
-/// Ivan's report.
+/// FLAG_KALAY_TUNNEL_OPEN is set.
+/// HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS is Ivan's report.
 static void HammetPalace_SetUpEntrance(void) {
   struct FieldActor *actor;
   s32 facing;
@@ -282,7 +282,7 @@ static void HammetPalace_SetUpEntrance(void) {
 
   case HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING:
   case HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM:
-    if (Engine_GameFlagIsSet(0x915) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KALAY_TUNNEL_OPEN) != 0) {
       Map_CopyCellsTo(58, 70, 54, 70, 4, 3);
       {
         Map_CopyCellAttributes(55, 9, 2, 1, 55, 8);

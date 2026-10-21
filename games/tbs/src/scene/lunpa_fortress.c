@@ -536,33 +536,33 @@ static void Event_SearchSealedDoor(void) {
 enum { FIRST_ITEM_DISPLAY_ACTOR = ACTOR_FIRST_PLACED };
 
 /// Unused: an Arctic Blade, a Masamune, a Silver Blade and a Shamshir set out
-/// on the four item display actors, each taken once, with flags 0xf2a to
-/// 0xf2d.
+/// on the four item display actors, each taken once, with
+/// FLAG_LUNPA_FORTRESS_ARCTIC_BLADE to FLAG_LUNPA_FORTRESS_SHAMSHIR.
 static void UNUSED LunpaFortress_TryCollectArcticBlade(void) {
   if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR,
                                             ITEM_ARCTIC_BLADE) != 0) {
-    Engine_GameFlagSet(0xf2a);
+    Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_ARCTIC_BLADE);
   }
 }
 
 static void UNUSED LunpaFortress_TryCollectMasamune(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 1, 7) !=
-      0) {
-    Engine_GameFlagSet(0xf2b);
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 1,
+                                            ITEM_MASAMUNE) != 0) {
+    Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_MASAMUNE);
   }
 }
 
 static void UNUSED LunpaFortress_TryCollectSilverBlade(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 2, 6) !=
-      0) {
-    Engine_GameFlagSet(0xf2c);
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 2,
+                                            ITEM_SILVER_BLADE) != 0) {
+    Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SILVER_BLADE);
   }
 }
 
 static void UNUSED LunpaFortress_TryCollectShamshir(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 3, 5) !=
-      0) {
-    Engine_GameFlagSet(0xf2d);
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 3,
+                                            ITEM_SHAMSHIR) != 0) {
+    Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SHAMSHIR);
   }
 }
 

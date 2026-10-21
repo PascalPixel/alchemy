@@ -29,8 +29,8 @@
 /// fidgets on a timer while Forge joins the party; once it has, the timer
 /// raises TRIGGER_FORGE_JOINED, and the man is amazed and walks away for good
 /// (FLAG_GOMA_CAVE_WITNESS_LEFT). After a loss or an escape Forge hides until
-/// the room is entered again (flag 0xa8, Forge's flag + 80), and the man says
-/// `Hmmm... It must be hiding somewhere again...`.
+/// the room is entered again (FLAG_DJINNI_HIDING_0 + DJINNI_FORGE), and the man
+/// says `Hmmm... It must be hiding somewhere again...`.
 ///
 /// Two ways lead back to the first room
 /// (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST and
@@ -704,9 +704,9 @@ struct SceneEvent gGomaCavePillar_Events[] = {
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_PushEastPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpGapWest) },
     { EVENT_TALK, ACTOR_FORGE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FightForge) },
-    { EVENT_TALK, ACTOR_WITNESS, 0xa8, MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
+    { EVENT_TALK, ACTOR_WITNESS, FLAG_DJINNI_HIDING_0 + DJINNI_FORGE, MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
     { EVENT_TALK, ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultHmmmItMustBeHidingSomewhere) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, 0xa8, MSGNO(MsgVaultItJustWhackedMeInThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, FLAG_DJINNI_HIDING_0 + DJINNI_FORGE, MSGNO(MsgVaultItJustWhackedMeInThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultIKnowitsKindItllBeBack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveWestPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_STUMP_FELL, EVENT_SCRIPT(Event_PushStumpOver) },

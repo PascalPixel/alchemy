@@ -112,9 +112,9 @@ struct ScenePlacement {
   /// actor slot, and -1 ends the table.
   s16 sprite;
   /// -1 always, a flag | 0x1000 set, else the flag clear. Off the world map,
-  /// a Djinni's flag (48 to 127) also needs flag + 80 clear, which
-  /// Djinn_ResolvePendingEvent sets after a lost or fled Djinni battle: the
-  /// Djinni stays hidden until the scene is entered normally again.
+  /// a Djinni's flag (from FLAG_DJINNI_0) also needs its FLAG_DJINNI_HIDING_0
+  /// flag clear: the Djinni stays hidden until the scene is entered normally
+  /// again.
   s16 condition;
   /// A built-in action (enum ActorBehavior) or an action script, for
   /// ObjectMotion_SetActionCallback.

@@ -148,7 +148,7 @@ u32 gKolimaForestGlade_Exits[] = {
     SCENE_EXITS_END,
 };
 
-/// Until the third patch the Nut's placement tested flag 0xfd0, not the flag
+/// Until the third patch the Nut's placement tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
 /// catching it sets.
 struct ScenePlacement gKolimaForestGlade_Placements[] = {
     { 0xcd, CONDITION_ALWAYS, 7,
@@ -158,7 +158,7 @@ struct ScenePlacement gKolimaForestGlade_Placements[] = {
     { 0xcd, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(336), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #if !TBS_PATCH_3
-    { 0x16, 0xfd0, 7,
+    { 0x16, FLAG_VALE_NUT_CAUGHT, 7,
         PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #else
     { 0x16, FLAG_KOLIMA_FOREST_NUT_CAUGHT, 7,

@@ -142,9 +142,6 @@ enum {
   FLAG_LIZARD_MAN_STEPPED_ASIDE = FLAG_SCENE_TEMP_05
 };
 
-/// The chests: Psynergy Armor, and a chest whose find kind is 5.
-enum { FLAG_CHEST_PSYNERGY_ARMOR = 0xf65, FLAG_CHEST_MIMIC = 0xef0 };
-
 // Forward declarations.
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void);
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
@@ -945,8 +942,8 @@ struct SceneEvent gMercuryLighthouseEntrance_Events[] = {
     { SEARCH(SEARCH_UNNAMED), 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouseEntrance_ReadHeartInscription) },
     { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_PLY_TARGET, FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED, EVENT_SCRIPT(MercuryLighthouseEntrance_ActivateWithPly) },
     { PSYNERGY_IN_AREA(0x95, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_CHEST_PSYNERGY_ARMOR, FIND_ITEM(ITEM_PSYNERGY_ARMOR) },
-    { SEARCH(SEARCH_CHEST), 101, FLAG_CHEST_MIMIC, FIND_MIMIC },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_MERCURY_LIGHTHOUSE_PSYNERGY_ARMOR, FIND_ITEM(ITEM_PSYNERGY_ARMOR) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_MERCURY_LIGHTHOUSE_MIMIC_BEATEN, FIND_MIMIC },
     { SCENE_EVENTS_END },
 };
 

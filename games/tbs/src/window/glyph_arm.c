@@ -339,7 +339,7 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
       // A later right frame tile extends that span.
       if (foundLeftEdge == 0) {
         switch (tile) {
-        case 0xf010: // top-left corner
+        case UI_TILE_FRAME_TOP_LEFT:
           left = tileColumn * 8;
           right = left + 8;
           topLeft = left + 1;
@@ -348,7 +348,7 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
           bottomRight = right;
           foundLeftEdge++;
           break;
-        case 0xf013: // bottom-left corner
+        case UI_TILE_FRAME_BOTTOM_LEFT:
           left = tileColumn * 8;
           right = left + 8;
           topLeft = left;
@@ -357,13 +357,13 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
           bottomRight = left + 7;
           foundLeftEdge++;
           break;
-        // Outside Japanese the left edge meeting a divider (0xf01a) counts as
-        // a side too. XXX: what tile 7 is (taken as either side) is not
+        // Outside Japanese the left edge meeting a divider counts as a side
+        // too. XXX: what window tile 7 (taken as either side) is, is not
         // known; the window tiles' picture would show it.
         case 0xf007:
-        case 0xf016: // left side
+        case UI_TILE_FRAME_LEFT:
 #if LANGUAGE != LANGUAGE_JAPANESE
-        case 0xf01a:
+        case UI_TILE_FRAME_LEFT_TEE:
 #endif
           left = tileColumn * 8;
           right = left + 8;
@@ -375,20 +375,20 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
         }
       } else {
         switch (tile) {
-        case 0xf012: // top-right corner
+        case UI_TILE_FRAME_TOP_RIGHT:
           right = tileColumn * 8 + 8;
           topRight = tileColumn * 8 + 7;
           bottomRight = right;
           break;
-        case 0xf015: // bottom-right corner
+        case UI_TILE_FRAME_BOTTOM_RIGHT:
           right = tileColumn * 8 + 8;
           topRight = right;
           bottomRight = tileColumn * 8 + 7;
           break;
         case 0xf007:
-        case 0xf017: // right side
+        case UI_TILE_FRAME_RIGHT:
 #if LANGUAGE != LANGUAGE_JAPANESE
-        case 0xf01b:
+        case UI_TILE_FRAME_RIGHT_TEE:
 #endif
           bottomRight = tileColumn * 8 + 8;
           right = bottomRight;

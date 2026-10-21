@@ -10,13 +10,13 @@
 ///   leaving by them goes back out). Doors join the inn to its two guest
 ///   rooms, and a ladder to its loft.
 /// - Suhalla Sanctum, behind the village's wide door (SUHALLA_TO_SANCTUM, to
-///   SUHALLA_INTERIORS_SANCTUM), whose priest offers the sanctum's services.
+///   SUHALLA_INTERIORS_SANCTUM), whose Healer offers the sanctum's services.
 ///
 /// The rooms' people and talk come in two sets, chosen by whether Babi has
 /// held his audience after Colosso (FLAG_BABI_SPOKE_AFTER_COLOSSO). Before
 /// it, Suhalla talks of Lalivero across the Nol River, under Tolbi's rule and
 /// out of reach, and of the travelers the sandstorms will send its inn once
-/// Tolbi's festival ends. The shopkeeper, the innkeeper and the priest serve
+/// Tolbi's festival ends. The merchant, the innkeeper and the Healer serve
 /// the party across their counters and otherwise chat by the same flag.
 ///
 /// At that audience Babi sent the party to Venus Lighthouse with Iodem, who
@@ -62,16 +62,20 @@
 
 /// The actors, numbering the rows of gSuhallaInteriorsPlacements and of
 /// gSuhallaInteriorsPlacementsAfterAudience from ACTOR_FIRST_PLACED; the two
-/// tables agree up to ACTOR_PRIEST. Where an actor's talk changes after
+/// tables agree up to ACTOR_HEALER. Where an actor's talk changes after
 /// Babi's audience, the note quotes it before.
 enum SuhallaInteriorsActor {
   /// The child of the man who aids anyone in trouble. "My father loves people
   /// so much, he can't help but aid anyone in trouble."
-  ACTOR_HELPFUL_FATHERS_CHILD = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "I guess I'm just my father's child!"
+  /// (MsgSuhallaInteriorsWhenISeePeopleInTrouble)
+  ACTOR_FATHERS_CHILD = ACTOR_FIRST_PLACED,
   /// The man who aids anyone in trouble, in whose house the wounded soldiers
   /// lie after the audience. "Let me know if you have any problems. I'll do
   /// anything I can to help."
-  ACTOR_HELPFUL_FATHER,
+  /// ★ Named from the game: "I want to help people so badly, I can't sit idly
+  /// by!" (MsgSuhallaInteriorsIWantToHelpPeopleSo)
+  ACTOR_FATHER_WHO_WANTS_TO_HELP,
   /// "Tolbi probably ignores small villages like Suhalla, doesn't it?" After
   /// the audience: "Do not approach the large cyclones in the middle of the
   /// Suhalla."
@@ -79,8 +83,14 @@ enum SuhallaInteriorsActor {
   /// In the old woman's sprite (as in vale_gate.c). "If you head east across
   /// Suhalla, Lalivero is so close you can see it across the Nol River..."
   /// After the audience she half remembers a saying about the death storms.
+  /// ★ Named from what the player sees: a white-haired old woman in a dark
+  /// dress (its render)
   ACTOR_OLD_WOMAN,
-  ACTOR_SHOPKEEPER,
+  /// ★ Named from the game: "Ours is the only store in Suhalla."
+  /// (MsgSuhallaOursOnlyStore)
+  ACTOR_MERCHANT,
+  /// Opens the inn across its counter (Event_TalkToInnkeeper).
+  /// ★ Named from the game: "Innkeeper" (MsgDebugGlyphName)
   ACTOR_INNKEEPER,
   /// A woman at the inn, in the sprite of Kalay's innkeeper's wife. "I wonder
   /// if any customers can get through those sandstorms..."
@@ -88,17 +98,28 @@ enum SuhallaInteriorsActor {
   /// Travelers the sandstorms blew back, out of sight until the audience. "We
   /// went into the Suhalla to go build the lighthouse, but the storms caught
   /// us."
-  ACTOR_LIGHTHOUSE_BUILDER,
+  /// ★ Named from the game: "We went into the Suhalla to go build the
+  /// lighthouse" (MsgSuhallaInteriorsWeWentIntoTheSuhallaTo)
+  ACTOR_LIGHTHOUSE_WORKER,
   /// "The sandstorms are so bad, we've given up trying to reach Babi
   /// Lighthouse."
-  ACTOR_SECOND_LIGHTHOUSE_BUILDER,
+  /// ★ Named from the game: "We went into the Suhalla to go build the
+  /// lighthouse" (MsgSuhallaInteriorsWeWentIntoTheSuhallaTo)
+  ACTOR_SECOND_LIGHTHOUSE_WORKER,
   /// "I set out for Babi Lighthouse to open a business there, but then I was
   /// blown back here again!"
   ACTOR_STRANDED_TRAVELER,
-  ACTOR_PRIEST, ///< keeps Suhalla Sanctum
+  /// Keeps Suhalla Sanctum (Event_TalkToHealer).
+  /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
+  ACTOR_HEALER,
+  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM,
   /// The wounded soldiers, lying in the beds of a house after Babi's audience.
+  /// ★ Named from the game: "These old soldiers must rest until their wounds
+  /// heal." (MsgSuhallaInteriorsTheseOldSoldiersMustRestUntil)
   ACTOR_SOLDIER_SOUTH,
+  /// ★ Named from the game: "These old soldiers must rest until their wounds
+  /// heal." (MsgSuhallaInteriorsTheseOldSoldiersMustRestUntil)
   ACTOR_SOLDIER_NORTH
 };
 
@@ -123,11 +144,11 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSuhallaInteriorsPlacements;
 }
 
-/// Suhalla's shopkeeper. Spoken to facing north, across the counter, the
-/// shopkeeper opens the shop; otherwise says Suhalla's is the only store, or,
+/// Suhalla's merchant. Spoken to facing north, across the counter, the
+/// merchant opens the shop; otherwise says Suhalla's is the only store, or,
 /// after Babi's audience, asks whether the party is surprised to find so few
 /// shops.
-static void Event_TalkToShopkeeper(s32 actorId) {
+static void Event_TalkToMerchant(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Engine_ShopOpen(SHOP_SUHALLA, actorId);
@@ -164,11 +185,11 @@ static void Event_TalkToInnkeeper(s32 actorId) {
   }
 }
 
-/// Suhalla Sanctum's priest. Spoken to facing north, across the counter, the
-/// priest offers the sanctum's services; otherwise talks of Lalivero under
+/// Suhalla Sanctum's Healer. Spoken to facing north, across the counter, the
+/// Healer offers the sanctum's services; otherwise talks of Lalivero under
 /// Tolbi's rule, or, after Babi's audience, wonders why there are so many
 /// sandstorms.
-static void Event_TalkToPriest(s32 actorId) {
+static void Event_TalkToHealer(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Engine_ShopConfirmAct(actorId);
@@ -494,7 +515,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSuhallaInteriorsEvents;
 }
 
-/// Sets Suhalla's buildings up as the party enters: the shopkeeper and
+/// Sets Suhalla's buildings up as the party enters: the merchant and
 /// innkeeper behind their counters, and the two wounded soldiers lying in their
 /// beds. SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE sets
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
@@ -506,7 +527,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gEventWork->transitionFrames = 24;
   // Nearer to talk to, across their counters.
-  Object_GetById(ACTOR_SHOPKEEPER)->collisionFlags |= 4;
+  Object_GetById(ACTOR_MERCHANT)->collisionFlags |= 4;
   Object_GetById(ACTOR_INNKEEPER)->collisionFlags |= 4;
   // Each soldier lies a quarter turn over, with no shadow.
   actor = Object_GetById(ACTOR_SOLDIER_SOUTH);
@@ -644,22 +665,22 @@ struct SceneEvent gSuhallaInteriorsEvents[] = {
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
     { EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
     { EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
-    { EVENT_TALK, ACTOR_HELPFUL_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsMyFatherLovesPeopleSoMuch) },
-    { EVENT_TALK, ACTOR_HELPFUL_FATHER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsLetMeKnowIfYouHave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HELPFUL_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenISeePeopleInTrouble) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HELPFUL_FATHER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIWantToHelpPeopleSo) },
+    { EVENT_TALK, ACTOR_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsMyFatherLovesPeopleSoMuch) },
+    { EVENT_TALK, ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsLetMeKnowIfYouHave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenISeePeopleInTrouble) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIWantToHelpPeopleSo) },
     { EVENT_TALK, ACTOR_VILLAGER_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTolbiProbablyIgnoresSmallVillagesLike) },
     { EVENT_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIfYouHeadEastAcrossSuhalla) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsSuhallaIsADesertVillageI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsGoodThingItsNotEasyTo) },
-    { EVENT_TALK, ACTOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToShopkeeper) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsAVillageThisSmallCantSupport) },
+    { EVENT_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMerchant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsAVillageThisSmallCantSupport) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { EVENT_TALK, ACTOR_INN_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIWonderIfAnyCustomersCan) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsOnceTheFestivalEndsTheTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets) },
-    { EVENT_TALK, ACTOR_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToPriest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheHolyChildActorWillSave) },
+    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheHolyChildActorWillSave) },
     { SEARCH(SEARCH_OVEN), 100, FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     // Unused: this oven's item row answers first (see the scenes README).
     { SEARCH(SEARCH_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },
@@ -678,32 +699,32 @@ struct SceneEvent gSuhallaInteriorsEventsAfterAudience[] = {
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
     { EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
     { EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
-    { EVENT_TALK, ACTOR_HELPFUL_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheWoundedAreSleepingSoDont) },
-    { EVENT_TALK, ACTOR_HELPFUL_FATHER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIAmAmazedTheseSoldiersSurvived) },
+    { EVENT_TALK, ACTOR_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheWoundedAreSleepingSoDont) },
+    { EVENT_TALK, ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIAmAmazedTheseSoldiersSurvived) },
     { EVENT_TALK, ACTOR_SOLDIER_SOUTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhyWereTheyHeadedTowardEastern) },
     { EVENT_TALK, ACTOR_SOLDIER_NORTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhereIsActorWhatHasHappened) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HELPFUL_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheseOldSoldiersMustRestUntil) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HELPFUL_FATHER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhoCouldHaveDoneThisTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheseOldSoldiersMustRestUntil) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhoCouldHaveDoneThisTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_SOUTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsAColumnOfWaterShotUp) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_NORTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsActorWasNotFarBehindUs) },
     { EVENT_TALK, ACTOR_VILLAGER_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsDoNotApproachTheLargeCyclones) },
     { EVENT_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsDeathStormsHuhThereWasA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsOnceYouGetSweptUpIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsYeWhoSeekSomethingAboutEyes) },
-    { EVENT_TALK, ACTOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToShopkeeper) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWeveHadMoreCustomersLatelyBecause) },
+    { EVENT_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMerchant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWeveHadMoreCustomersLatelyBecause) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { EVENT_TALK, ACTOR_INN_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsItWillTakeTimeForThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheSandstormsAreSendingCustomersOur) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsPleaseGreatSandstormsSendUsMore) },
-    { EVENT_TALK, ACTOR_LIGHTHOUSE_BUILDER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWeWentIntoTheSuhallaTo) },
-    { EVENT_TALK, ACTOR_SECOND_LIGHTHOUSE_BUILDER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheSandstormsAreSoBadWeve) },
+    { EVENT_TALK, ACTOR_LIGHTHOUSE_WORKER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWeWentIntoTheSuhallaTo) },
+    { EVENT_TALK, ACTOR_SECOND_LIGHTHOUSE_WORKER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheSandstormsAreSoBadWeve) },
     { EVENT_TALK, ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIfBlownHere) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LIGHTHOUSE_BUILDER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsEvenIfWeCantGoIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_LIGHTHOUSE_BUILDER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsSoShallWeGiveUpOn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LIGHTHOUSE_WORKER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsEvenIfWeCantGoIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_LIGHTHOUSE_WORKER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsSoShallWeGiveUpOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenThatCycloneThrewUsInto) },
-    { EVENT_TALK, ACTOR_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToPriest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIShudderToThinkSandstormsWill) },
+    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIShudderToThinkSandstormsWill) },
     { SEARCH(SEARCH_OVEN), 100, FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     // Unused: this oven's item row answers first (see the scenes README).
     { SEARCH(SEARCH_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },

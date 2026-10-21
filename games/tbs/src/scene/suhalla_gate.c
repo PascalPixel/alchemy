@@ -103,9 +103,12 @@ enum SuhallaGateCheckpointActor {
   ACTOR_EAST_GUARD, ///< "Do you want to go to Babi Lighthouse?"
   /// After Babi's audience, the soldier east of the gate who tells of the
   /// attack on Venus Lighthouse and vanishes.
+  /// ★ Named from what the player sees: a wounded soldier lying east of the
+  /// gate, who flickers and vanishes (its render)
   ACTOR_VANISHING_SOLDIER,
   /// After Babi's audience, out of sight until Event_IodemQuestionsGuards
   /// brings him out of the party.
+  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM
 };
 
@@ -114,8 +117,12 @@ enum SuhallaGateCheckpointActor {
 enum SuhallaGateDewActor {
   /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
   /// drawn in the frame Scene_Initialize gives it.
+  /// ★ Named from what the player sees: small green sprouts on the grassy
+  /// ledges (its render)
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
-  ACTOR_DEW = ACTOR_FIRST_SPROUT + 5 ///< Dew, a Mercury Djinni
+  /// A Mercury Djinni.
+  /// ★ Named from the game: "Dew" (MsgDjinnName)
+  ACTOR_DEW = ACTOR_FIRST_SPROUT + 5
 };
 
 /// Suhalla Gate's second scene (SceneId_SuhallaGateDew): talking to Dew, a

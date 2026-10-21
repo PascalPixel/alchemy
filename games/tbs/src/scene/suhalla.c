@@ -71,7 +71,9 @@ enum SuhallaActor {
   /// Distrusts Angara for taking Sheba as a hostage. "We Gondowans will never
   /// trust anyone from Angara!"; later "Soldiers from Tolbi were caught in the
   /// sandstorms, and nearly all perished!"
-  ACTOR_VILLAGER_DISTRUSTING_ANGARA,
+  /// ★ Named from the game: "We Gondowans will never trust anyone from
+  /// Angara!" (MsgSuhallaWeGondowansWillNeverTrustAnyone)
+  ACTOR_VILLAGER_NEVER_TRUSTING_ANGARA,
   /// Placed off the map until Babi's audience, then one of those the
   /// sandstorms have brought here. "We were brought here by the sandstorms."
   ACTOR_VILLAGER_BROUGHT_BY_SANDSTORMS,
@@ -89,7 +91,10 @@ enum SuhallaActor {
   /// Worries about the storms. "The sandstorms suddenly increased..."; later
   /// "Those soldiers kept mumbling about monsters..."
   ACTOR_VILLAGER_SANDSTORMS_INCREASED,
-  ACTOR_SPROUT ///< at 72, 144; Growth grows it (Event_GrowSprout)
+  /// At 72, 144; Growth grows it (Event_GrowSprout).
+  /// ★ Named from what the player sees: a small green sprout in the sand by the
+  /// inn (its render)
+  ACTOR_SPROUT
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -320,14 +325,14 @@ struct SceneEvent gSuhallaEvents[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
     { EVENT_TALK, ACTOR_VILLAGER_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
     { EVENT_TALK, ACTOR_VILLAGER_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIfGoingToLalivero) },
-    { EVENT_TALK, ACTOR_VILLAGER_DISTRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
+    { EVENT_TALK, ACTOR_VILLAGER_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
     { EVENT_TALK, ACTOR_VILLAGER_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaItHasBeenSaidForAges) },
     { EVENT_TALK, ACTOR_VILLAGER_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaYouCantGetToSouthernGondowan) },
     { EVENT_TALK, ACTOR_VILLAGER_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheWorkersSayTherereHugeFestivals) },
     { EVENT_TALK, ACTOR_VILLAGER_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSandstormsSuddenlyIncreasedIHope) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSuhallaHasLongBeenKnown) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgSuhallaThePeopleOfLaliveroHaveBeen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DISTRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheRulerOfTolbiTookA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheRulerOfTolbiTookA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaIKnowTheDesertSpiritsWill) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaSouthernGondowanIsGuardedByThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TOLBI_FESTIVALS, CONDITION_ALWAYS, MSGNO(MsgSuhallaIveHeardThatTolbisColossoIs) },
@@ -350,7 +355,7 @@ struct SceneEvent gSuhallaEventsLater[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
     { EVENT_TALK, ACTOR_VILLAGER_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWelcomeToSuhallaIBetThe) },
     { EVENT_TALK, ACTOR_VILLAGER_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheDesertIsEnvelopedInSandstorms) },
-    { EVENT_TALK, ACTOR_VILLAGER_DISTRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },
+    { EVENT_TALK, ACTOR_VILLAGER_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },
     { EVENT_TALK, ACTOR_VILLAGER_BROUGHT_BY_SANDSTORMS, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeWereBroughtHereByThe) },
     { EVENT_TALK, ACTOR_VILLAGER_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisSandstormIsTheFaultOf) },
     { EVENT_TALK, ACTOR_VILLAGER_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIfBroughtBySandstorm) },
@@ -358,7 +363,7 @@ struct SceneEvent gSuhallaEventsLater[] = {
     { EVENT_TALK, ACTOR_VILLAGER_SANDSTORMS_INCREASED, CONDITION_ALWAYS, MSGNO(MsgSuhallaThoseSoldiersKeptMumblingAboutMonsters) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaIBetTheseWarriorsWereBrought) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgSuhallaIWonderWhyThereAreSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DISTRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSoldiersFromTolbiWereCollapsing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheSoldiersFromTolbiWereCollapsing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BROUGHT_BY_SANDSTORMS, CONDITION_ALWAYS, MSGNO(MsgSuhallaAfterYouGetSwallowedByA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DESERT_SPIRITS, CONDITION_ALWAYS, MSGNO(MsgSuhallaLatelyAllTheSandstormsHaveBeen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SOUTHERN_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaIfYouFightTheStormsYoull) },

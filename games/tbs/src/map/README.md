@@ -181,7 +181,7 @@ no slot.
 A cell whose block is 4,095, the highest a cell can name, is a placeholder. As the map is
 converted, each placeholder is given a fresh block number, counting up
 from 0 in map order; the ROM also keeps an unused C version of that numbering,
-`Tilemap_NumberPlaceholderBlocks`. XXX: what fills those blocks isn't known.
+`TileMap_NumberPlaceholderBlocks`. XXX: what fills those blocks isn't known.
 
 ## How the build makes a map
 
@@ -198,7 +198,7 @@ which just puts the encodings of the files it lists one after another, here
 the three planes.
 
 The blocks are written as `delta0`, `delta1` or `delta2`: halfwords behind a
-byte that says how they were stored, which `Tilemap_DecodeStagedBuffer`
+byte that says how they were stored, which `TileMap_DecodeStagedBuffer`
 undoes. With method 0 they're stored as they are. Method 2 XORs each with the
 one before it, and method 1 does the same but stores all the high bytes first
 and then all the low bytes. Each map's `map.s` names the method its stream

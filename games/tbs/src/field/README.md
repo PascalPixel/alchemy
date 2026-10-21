@@ -123,7 +123,7 @@ to, since that's how other folders call them:
 | `ObjectSystem_`, `ObjectDispatch_`, `FieldObject_`, `Object_` | keeping and moving objects |
 | `Script_` | object script commands |
 | `Field_` | the configured keys |
-| `Map_`, `Tilemap_` | the layered maps and their cells; `TileMap_DrawRowsFromRam` is spelled after `TileMap_DrawRows`, the routine it runs |
+| `Map_`, `TileMap_` | the layered maps and their cells, and the tile maps built from them |
 | `WorldMap_` | the world map |
 | `GetWorldMap`, `CheckWorldMap` | the ground under a point on the world map; `GetMapCellCollision`, `SetMapCellCollision` and `CheckMapPositionCellOccupied` ask the same of a layered map |
 | `MapAnimation_`, `DisplayBlend_`, `PaletteQueue_` | the timed map effects: tile animation, the blend script and palette cycles |
@@ -425,4 +425,4 @@ Still unknown:
   table.
 - XXX: why placeholder blocks are given numbers of their own as the
   map is converted (`Tile_ConvertMap`, and the unused
-  `Tilemap_NumberPlaceholderBlocks` that does the same in C).
+  `TileMap_NumberPlaceholderBlocks` that does the same in C).

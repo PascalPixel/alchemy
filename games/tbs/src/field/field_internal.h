@@ -116,7 +116,7 @@ enum {
 };
 
 /// How a layered map's block data is packed: the method byte
-/// Tilemap_DecodeStagedBuffer reads before the halfwords.
+/// TileMap_DecodeStagedBuffer reads before the halfwords.
 enum MapBlockPacking {
   MAP_BLOCKS_RAW = 0, ///< copied as it is
   /// All the high bytes, then all the low bytes; each value is XORed with

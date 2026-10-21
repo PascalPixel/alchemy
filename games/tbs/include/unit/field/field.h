@@ -389,9 +389,9 @@ s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter);
 s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter);
 
 void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount);
-void Tilemap_DecodeStagedBuffer(s32 size);
-void Tilemap_NumberPlaceholderBlocks(void);
-void Tilemap_ConvertBuffer(void);
+void TileMap_DecodeStagedBuffer(s32 size);
+void TileMap_NumberPlaceholderBlocks(void);
+void TileMap_ConvertBuffer(void);
 s32 Map_LoadLayeredScene(s32 index);
 void Map_CenterOnFollowedPoint(void);
 void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY);

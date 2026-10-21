@@ -46,7 +46,8 @@ void BattleFx_RunGrowth(struct BattleEffectArgument *effect) {
 ///
 /// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_FX_PUNJI).
 ///
-/// Punji Strike's row of actflags.tsv gives variant 1, as Punji Trap's does,
+/// Punji Strike's row of actflags.tsv gives the stronger variant, as Punji
+/// Trap's does,
 /// so no ability plays BATTLE_FX_PUNJI's strongest variant.
 void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
   BattleFx_RunGrowingColumns(effect, GROWING_COLUMNS_PILLARS);

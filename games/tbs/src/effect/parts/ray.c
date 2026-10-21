@@ -17,10 +17,10 @@
 /// The targets flash white 4 frames apart from frame 4. Writes REG_BG2PA and
 /// REG_BG2X, sets work->shakeFrames over the first 16 frames.
 ///
-/// effect: the targets. variant 2 shows the canvas at double width;
-///         variant 0 draws every bolt with the maximum blend, the others
-///         alternate it with additive. The variant also sets the sparks
-///         each bolt throws a frame (gRay_Sparks).
+/// effect: the targets. Destruct Ray shows the canvas at double width; Ray
+///         draws every bolt with the maximum blend, the others alternate it
+///         with additive. The variant also sets the sparks each bolt throws
+///         a frame (gRay_Sparks).
 void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -43,7 +43,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   // Destruct Ray stretches the canvas across the screen; the others show it
   // at its own width over the targets' half (on side 1, moved 128 pixels).
   // BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the targets.
-  if (work->effect->variant == 2)
+  if (work->effect->variant == EFFECT_VARIANT_STRONGEST)
     REG_BG2PA = Q_8_8(0.5);
   else
     REG_BG2PA = Q_8_8(1);
@@ -56,7 +56,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + RAY_CELLS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (work->effect->variant == 2) {
+  if (work->effect->variant == EFFECT_VARIANT_STRONGEST) {
     if (work->effect->side == 1)
       REG_BG2X = -0x1000;
     else
@@ -106,7 +106,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
         angle = ((frame << 11) + 0x4000) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
         y = -(((Trig_Cos(angle) * 8)) >> 16) - 8;
-        if (work->effect->variant == 0)
+        if (work->effect->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * LIGHTNING_BOLT_CELL_BYTES +
                       RAY_CELLS,

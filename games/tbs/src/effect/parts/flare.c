@@ -15,9 +15,9 @@
 /// REG_BLDCNT and REG_BLDALPHA, and ends with the blitter freed, the transfer
 /// callback removed and the canvas layer closed.
 ///
-/// effect: the targets. variant 1 (Flare Wall) adds a second flame 16 pixels
-///         above each one, variant 2 (Flare Storm) a third 32 pixels above
-///         (and longer trails).
+/// effect: the targets. Flare Wall, the stronger variant, adds a second flame
+///         16 pixels above each one, and Flare Storm, the strongest, a third
+///         32 pixels above (and longer trails).
 void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   u32 *slots;
   u32 *cursor;
@@ -82,7 +82,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
 
   // Trails keep half of each level, or three quarters for Flare Storm.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (work->effect->variant == 2) {
+  if (work->effect->variant == EFFECT_VARIANT_STRONGEST) {
     work->transferValue = 75;
   } else {
     work->transferValue = 50;
@@ -118,7 +118,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
              flame->y + gBattleFx_PuffArcCellBiasY[cell], width,
              gBattleFx_PuffArcCellHeights[cell]);
 #endif
-        if (work->effect->variant != 0) {
+        if (work->effect->variant != EFFECT_VARIANT_BASIC) {
 #ifdef UBFIX
           width = gBattleFx_PuffArcCellWidths[cell];
           draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],
@@ -132,7 +132,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
                gBattleFx_PuffArcCellHeights[cell]);
 #endif
         }
-        if (work->effect->variant == 2) {
+        if (work->effect->variant == EFFECT_VARIANT_STRONGEST) {
 #ifdef UBFIX
           width = gBattleFx_PuffArcCellWidths[cell];
           draw(canvas, work->sheet + gBattleFx_PuffArcCells[cell],

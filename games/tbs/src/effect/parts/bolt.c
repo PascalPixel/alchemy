@@ -134,7 +134,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
 
       // Glints for 22 frames: at random spots above the foot, flipped at
       // random, in the variant's blend (gBolt_GlintModes: brightest-wins,
-      // or additive at variant 2); the higher a glint, the narrower the band
+      // or additive for Blue Bolt); the higher a glint, the narrower the band
       // it may fall in across.
       if (frame >= start + 2 && frame < start + 24) {
         for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_GLINTS];

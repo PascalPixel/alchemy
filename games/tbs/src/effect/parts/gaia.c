@@ -23,9 +23,9 @@
 /// Its centre is at canvas x 64 + wallX. The rocks are 11 animation objects,
 /// moved by particles[10] to particles[20].
 ///
-/// effect: the targets; variant 0 to 2 widens the wall: 0 for Gaia and
-///         Rockfall, 1 for Mother Gaia and Rockslide, 2 for Grand Gaia and
-///         Avalanche.
+/// effect: the targets; the variant widens the wall: narrowest for Gaia and
+///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
+///         Gaia and Avalanche.
 void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
@@ -54,15 +54,15 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
 
   // The higher the variant, the wider the wall: BG2 stretches the canvas 1.25
   // or 1.5 times, or twice as BattleFx_BeginCanvasLayer left it.
-  if (work->effect->variant == 0)
+  if (work->effect->variant == EFFECT_VARIANT_BASIC)
     REG_BG2PA = Q_8_8(0.8);
-  else if (work->effect->variant == 1)
+  else if (work->effect->variant == EFFECT_VARIANT_STRONGER)
     REG_BG2PA = Q_8_8(1.0 / 1.5);
   if (work->effect->side == 1) {
     wallX = 8;
-    if (work->effect->variant == 0)
+    if (work->effect->variant == EFFECT_VARIANT_BASIC)
       rockX = 40;
-    else if (work->effect->variant == 1)
+    else if (work->effect->variant == EFFECT_VARIANT_STRONGER)
       rockX = 36;
     else
       rockX = 40;
@@ -318,9 +318,9 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
             } else {
               if (frame > 87) {
                 rock->z = (Random16() & 7) + 8;
-                if (work->effect->variant == 0)
+                if (work->effect->variant == EFFECT_VARIANT_BASIC)
                   rock->x = Random16() % 96 + 42;
-                else if (work->effect->variant == 1)
+                else if (work->effect->variant == EFFECT_VARIANT_STRONGER)
                   rock->x = Random16() % 112 + 34;
                 else
                   rock->x = Random16() % 160 + 10;

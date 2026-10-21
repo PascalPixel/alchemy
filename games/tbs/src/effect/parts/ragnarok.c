@@ -49,9 +49,9 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
 
   user = GetBattleObjectSlotFar(effect->actor)->object;
-  // XXX: why the variant is forced to 1, as nothing in the effect or the
-  // battle reads it afterwards; the Lost Age's Ragnarok may show.
-  effect->variant = 1;
+  // XXX: why the variant is forced to the stronger one, as nothing in the
+  // effect or the battle reads it afterwards; the Lost Age's Ragnarok may show.
+  effect->variant = EFFECT_VARIANT_STRONGER;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

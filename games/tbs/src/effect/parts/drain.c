@@ -139,8 +139,8 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 /// first 32 of each 128 are moved and drawn. A negative variant marks a mote
 /// that has gone out.
 ///
-/// effect: the targets; variant 0 (Drain) takes the ice block palette, any
-///         other (Psy Drain's 1) the blast palette.
+/// effect: the targets; Drain's basic variant takes the ice block palette,
+///         any stronger one (Psy Drain's) the blast palette.
 void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -160,7 +160,7 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
-  if (effect->variant == 0)
+  if (effect->variant == EFFECT_VARIANT_BASIC)
     alternate = 0;
   else
     alternate = 1;

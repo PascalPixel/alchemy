@@ -81,16 +81,16 @@ u8 gBattleFx_GlintCellHeights[] = {31, 31, 31, 21, 21, 24};
 /// Ice, by variant: shards and frames (ICE_SHARD_COUNT, ICE_FRAMES).
 u8 gFalling_IceCounts[][2] = {
     // shards, frames
-    {16, 46}, // variant 0
-    {20, 52}, // variant 1
-    {32, 80}, // variant 2
+    [EFFECT_VARIANT_BASIC] = {16, 46},     // Ice
+    [EFFECT_VARIANT_STRONGER] = {20, 52},  // Ice Horn
+    [EFFECT_VARIANT_STRONGEST] = {32, 80}, // Ice Missile
 };
 /// Douse, by variant: the FALLING_BOLT_ columns.
 u8 gFalling_Counts[][4] = {
     // bolts, sparks per bolt, spacing, frames
-    {6, 8, 32, 80},  // variant 0
-    {8, 16, 24, 80}, // variant 1
-    {32, 4, 8, 80},  // variant 2
+    [EFFECT_VARIANT_BASIC] = {6, 8, 32, 80},     // Douse
+    [EFFECT_VARIANT_STRONGER] = {8, 16, 24, 80}, // Drench
+    [EFFECT_VARIANT_STRONGEST] = {32, 4, 8, 80}, // Deluge
 };
 
 // streaks.c: Falling streak timing and motion records.
@@ -315,18 +315,18 @@ s32 gNereid_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 /// Froth, by variant: motes and frames.
 u8 gVortices_Counts[][2] = {
     // motes (at most FROTH_MOTES, vortices.c), frames
-    {6, 140},  // variant 0
-    {12, 160}, // variant 1
-    {30, 200}, // variant 2
+    [EFFECT_VARIANT_BASIC] = {6, 140},      // Froth
+    [EFFECT_VARIANT_STRONGER] = {12, 160},  // Froth Sphere
+    [EFFECT_VARIANT_STRONGEST] = {30, 200}, // Froth Spiral
 };
 /// Whirlwind, by variant: the WHIRLWIND_ columns. The sway is in pixels each
 /// way; the shake is Camera_ApplyShake's horizontal range, the vertical
 /// twice that.
 u8 gVortices_Shapes[][3] = {
     // tornadoes, sway, screen shake
-    {1, 16, 2}, // variant 0
-    {2, 24, 2}, // variant 1
-    {4, 32, 4}, // variant 2
+    [EFFECT_VARIANT_BASIC] = {1, 16, 2},     // Whirlwind, Gale
+    [EFFECT_VARIANT_STRONGER] = {2, 24, 2},  // Tornado, Typhoon
+    [EFFECT_VARIANT_STRONGEST] = {4, 32, 4}, // Tempest, Hurricane
 };
 
 // prism.c: Crystal counts and picture cells.
@@ -340,9 +340,9 @@ u8 gPrism_ShardStarts[][2] = {
 /// Prism, by variant: crystals and frames.
 u8 gPrism_Counts[][2] = {
     // crystals, frames
-    {1, 110},  // variant 0
-    {4, 134},  // variant 1
-    {12, 166}, // variant 2
+    [EFFECT_VARIANT_BASIC] = {1, 110},      // Prism
+    [EFFECT_VARIANT_STRONGER] = {4, 134},   // Hail Prism
+    [EFFECT_VARIANT_STRONGEST] = {12, 166}, // Freeze Prism
 };
 // The twelve shard pictures.
 u8 gPrism_ShardWidths[] = {5, 10, 11, 14, 12, 11, 19, 18, 23, 12, 22, 22};
@@ -355,9 +355,9 @@ s32 gPrism_ShardOffsets[] = {0,   70,   170,  247,  429,  597,
 /// Plasma, by variant: sparks per pillar and shake frames.
 u16 gPlasma_Sparks[][2] = {
     // sparks per pillar, shake frames
-    {384, 2}, // variant 0
-    {256, 3}, // variant 1
-    {192, 4}, // variant 2
+    [EFFECT_VARIANT_BASIC] = {384, 2},     // Plasma, Thunderclap
+    [EFFECT_VARIANT_STRONGER] = {256, 3},  // Shine Plasma, Thunderbolt
+    [EFFECT_VARIANT_STRONGEST] = {192, 4}, // Spark Plasma, Thunderstorm
 };
 /// Each pillar's canvas x, seven for each side.
 u8 gPlasma_Columns[][7] = {
@@ -824,15 +824,15 @@ u16 gGrowth_ThornPuffCells[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
 /// Bolt, by variant: sparks each bolt throws, glints a frame around each
 /// target, how far the glints spread, and bolts drawn over each other.
 u8 gBolt_Counts[][4] = {
-    {16, 0, 15, 1},
-    {32, 3, 31, 1},
-    {128, 5, 48, 3},
+    [EFFECT_VARIANT_BASIC] = {16, 0, 15, 1},      // Bolt
+    [EFFECT_VARIANT_STRONGER] = {32, 3, 31, 1},   // Flash Bolt
+    [EFFECT_VARIANT_STRONGEST] = {128, 5, 48, 3}, // Blue Bolt
 };
 // The flips a glint may be drawn in, and its blend by variant.
 u8 gBolt_GlintFlips[] = GLINT_FLIPS;
-/// The glints' blend mode by variant: the brighter pixel wins for variants 0
-/// and 1, and variant 2 adds the glint to the canvas.
-u8 gBolt_GlintModes[] = {2, 2, 3};
+/// The glints' blend mode by variant: the brighter pixel wins for Bolt and
+/// Flash Bolt, and Blue Bolt adds the glint to the canvas.
+u8 gBolt_GlintModes[] = {COMPOSITE_MAX, COMPOSITE_MAX, COMPOSITE_ADDITIVE};
 
 // projectiles.c: Projectile volley modes and picture cells.
 

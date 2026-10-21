@@ -47,8 +47,8 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// The canvas shows only inside a slanted band of window 0, so the shards
 /// stream out of the sky above the targets. effect->variant picks the size of
 /// the volley from gFalling_IceCounts (shards and frames: 16 for 46 frames
-/// for Ice, 20 for 52 for Ice Horn, 32 for 80 for Ice Missile); variant 1
-/// leaves longer trails and variant 2 draws additively. effect->side is 1
+/// for Ice, 20 for 52 for Ice Horn, 32 for 80 for Ice Missile); Ice Horn
+/// leaves longer trails and Ice Missile draws additively. effect->side is 1
 /// when the targets are the party, 0 when they are enemies.
 void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   void **slots;
@@ -134,9 +134,9 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
                                 EFFECT_CALLBACK_ORDER);
-  // Trails: variant 1 keeps 75% of each pixel a frame, the others 50%.
+  // Trails: Ice Horn keeps 75% of each pixel a frame, the others 50%.
   work->transferMode = CANVAS_COPY_AND_FADE;
-  if (work->effect->variant == 1)
+  if (work->effect->variant == EFFECT_VARIANT_STRONGER)
     work->transferValue = 75;
   else
     work->transferValue = 50;
@@ -160,8 +160,8 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        draw[work->effect->variant == 2 ? 1 : 0](canvas, work->sheet, x, y, 32,
-                                                 32);
+        draw[work->effect->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
+            canvas, work->sheet, x, y, 32, 32);
         if (shard->y <= FALLING_LAND_Y) { // above y 80
           if (work->effect->side == 0)
             shard->x -= 64;
@@ -189,7 +189,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
         // 1 to 5, three frames each (0x400 bytes a picture); frame 15 ends
         // it.
         if (shard->variant >= 1 && shard->variant <= 14) {
-          draw[work->effect->variant == 2 ? 1 : 0](
+          draw[work->effect->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
               canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
               32, 32);
         }
@@ -221,7 +221,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
           s32 x = puff->x / 8 - (gBattleFx_PuffSizes[image] >> 1);
           s32 y = puff->y / 8 - (gBattleFx_PuffSizes[image] >> 1);
 
-          draw[work->effect->variant == 2 ? 1 : 0](
+          draw[work->effect->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
               canvas, sparkles + gBattleFx_PuffCells[image], x, y,
               gBattleFx_PuffSizes[image], gBattleFx_PuffSizes[image]);
         }
@@ -348,9 +348,9 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
                                 EFFECT_CALLBACK_ORDER);
   // Douse clears the canvas every frame; Drench keeps half of each pixel and
   // Deluge three quarters, for trails.
-  if (work->effect->variant == 0) {
+  if (work->effect->variant == EFFECT_VARIANT_BASIC) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  } else if (work->effect->variant == 1) {
+  } else if (work->effect->variant == EFFECT_VARIANT_STRONGER) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
@@ -402,7 +402,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
             spark->x = (x + 12) << 16;
             spark->y = y << 16;
             spark->velocityX = ((Random16() & 255) - 128) << 9;
-            if (work->effect->variant == 2)
+            if (work->effect->variant == EFFECT_VARIANT_STRONGEST)
               spark->velocityY = ((Random16() & 0x1ff) - 0x180) << 10;
             else
               spark->velocityY = ((Random16() & 255) - 255) << 10;

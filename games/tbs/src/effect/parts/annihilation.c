@@ -86,7 +86,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == 8)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (work->effect->variant != 0 && frame == 8)
+    if (work->effect->variant != EFFECT_VARIANT_BASIC && frame == 8)
       AudioCommand_PlayFar(SE_212);
     EffectPosition_ProjectScaledBattler(work->effect->actor, &position);
     // The fire streak, one picture a frame in front of the user, drawn
@@ -121,7 +121,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       if (step > 2)
         step = 2;
       // Each strip holds three 40x80 pictures.
-      if (work->effect->variant == 0)
+      if (work->effect->variant == EFFECT_VARIANT_BASIC)
         strip = 0;
       else
         strip = 3 * (40 * 80);

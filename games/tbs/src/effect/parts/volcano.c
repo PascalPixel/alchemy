@@ -26,14 +26,16 @@
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
 /// Storm (BATTLE_FX_VOLCANO).
 ///
-/// The battle shows the damage on frame 16. Variant 0 is red, 2 orange; variant
-/// 2 also swings the camera round over the first 64 frames.
+/// The battle shows the damage on frame 16. Volcano and Lava Shower are red,
+/// Pyroclasm and Magma Storm orange, and those two also swing the camera round
+/// over the first 64 frames.
 ///
 /// work->particles 0 to 3 are the pillars' feet, battle positions in 16.16;
 /// only gVolcano_Counts' first one, two or four are drawn.
 /// Sets REG_BLDALPHA, loads the red or orange palette into the first 64
-/// background colours (variant 1 keeps the fire pillar sheet's), turns the
-/// camera's yaw (variant 2) and sets work->shakeFrames at each eruption.
+/// background colours (Eruption and Molten Bath keep the fire pillar sheet's),
+/// turns the camera's yaw (the strongest variant) and sets work->shakeFrames
+/// at each eruption.
 void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -58,10 +60,10 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (work->effect->variant == 0)
+  if (work->effect->variant == EFFECT_VARIANT_BASIC)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_RedPaletteB), 128);
-  else if (work->effect->variant == 2)
+  else if (work->effect->variant == EFFECT_VARIANT_STRONGEST)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
@@ -93,7 +95,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     camera = gCameraWork;
-    if (work->effect->variant == 2 && frame < 64) {
+    if (work->effect->variant == EFFECT_VARIANT_STRONGEST && frame < 64) {
       if (work->effect->side == 0)
         camera->yaw = camera->yaw + 192;
       else

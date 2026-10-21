@@ -15,14 +15,14 @@
 /// Abilities: Prism, Hail Prism, Freeze Prism (BATTLE_FX_PRISM).
 ///
 /// effect->variant picks the volley from gPrism_Counts (crystals and frames: 1
-/// in 110, 4 in 134, 12 in 166); with variant 2 the camera also swings round
+/// in 110, 4 in 134, 12 in 166); for Freeze Prism the camera also swings round
 /// for the first 104 frames. The crystals are particles[]: z is 1 once
 /// shattered, variant is the frame it starts to fall. The shards are 16 per
 /// crystal in PARTICLES: z is how fast it spins.
 ///
 /// Positions are canvas pixels in 16.16. Loads the crystal palette into the
 /// first 64 background colours and sets REG_BLDALPHA, the camera's yaw
-/// (variant 2) and work->shakeFrames, and flashes the targets at each
+/// (Freeze Prism) and work->shakeFrames, and flashes the targets at each
 /// shatter.
 void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   BlitterPair draw;
@@ -76,7 +76,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != gPrism_Counts[work->effect->variant][PRISM_FRAMES];
        frame++) {
-    if (work->effect->variant == 2 && frame <= 103) {
+    if (work->effect->variant == EFFECT_VARIANT_STRONGEST && frame <= 103) {
       // Swing the camera round, slowing from frame 96: 192/65536 turn a
       // frame, 19296/65536 in all, under a third of a turn.
       struct BattleCamera *camera = gCameraWork;
@@ -163,9 +163,9 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
         }
       }
     }
-    // Shake ranges 4 by 8, 6 by 12 and 8 by 16 pixels by variant. Variant 1's
-    // are not powers of two, so Camera_ApplyShake's masks (range - 1) leave
-    // gaps in its offsets.
+    // Shake ranges 4 by 8, 6 by 12 and 8 by 16 pixels by variant. Hail
+    // Prism's are not powers of two, so Camera_ApplyShake's masks (range - 1)
+    // leave gaps in its offsets.
     Camera_ApplyShake(work->effect->variant * 2 + 4,
                       work->effect->variant * 4 + 8);
     EFFECT_END_FRAME(work);

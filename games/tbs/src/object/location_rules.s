@@ -23,9 +23,9 @@ gBattle_LocationRules:
 	location GomaCavePillar, -1, -1, 1, 10
 	location GomaCaveStream, -1, -1, 1, 11
 	location KolimaTunnel, -1, -1, 1, 15
-	location KolimaForest1, -1, -1, 1, 16
-	location KolimaForest2, -1, -1, 1, 17
-	location KolimaForest3, -1, -1, 0, 18
+	location KolimaForestEntrance, -1, -1, 1, 16
+	location KolimaForestGlade, -1, -1, 1, 17
+	location KolimaForestCliff, -1, -1, 0, 18
 	location KolimaForestTree, -1, -1, 1, 19
 	location TretTreeBranch, 1, -1, 1, 20
 	location TretTreeBranch, 2, -1, 1, 20
@@ -107,9 +107,9 @@ gBattle_LocationRules:
 	location FuchinFallsCave2, -1, -1, 0, 39
 	location FuchinFallsCave3, -1, -1, 1, 40
 	location FuchinFallsCave6, -1, -1, 0, 41
-	location MogallForest1, -1, -1, 1, 42
-	location MogallForest2, -1, -1, 1, 43
-	location MogallForest3, -1, -1, 1, 44
+	location MogallForestSign, -1, -1, 1, 42
+	location MogallForestQuartz, -1, -1, 1, 43
+	location MogallForestKillerApe, -1, -1, 1, 44
 	location AltinPeak2, -1, -1, 0, 47
 	location AltinPeak3, -1, -1, 1, 47
 	location AltinPeak4, -1, -1, 1, 47

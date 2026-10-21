@@ -26,7 +26,7 @@
 ///
 /// Until the curse is lifted the forest keeps its cursed colours
 /// (KolimaPalette_Curse). Retreat from here always leads back to the forest's
-/// way in (scene 40, KOLIMA_FOREST_1_FROM_WORLD_MAP), and the way back,
+/// way in (scene 40, KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP), and the way back,
 /// KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the Floodgate
 /// Switch's map (scene 43).
 
@@ -730,8 +730,8 @@ s32 KolimaForestTree_Initialize(void) {
   Engine_TaskWait(1);
   Engine_ActorSetChildValue(ACTOR_TRETS_WRATHFUL_SIDE, 15);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  gGameState.retreatScene = (s32)&SceneId_KolimaForest1;
-  gGameState.retreatEntrance = KOLIMA_FOREST_1_FROM_WORLD_MAP;
+  gGameState.retreatScene = (s32)&SceneId_KolimaForestEntrance;
+  gGameState.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);
   Object_GetById(ACTOR_TRET)->radius = 6;

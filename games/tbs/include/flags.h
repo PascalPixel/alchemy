@@ -309,7 +309,8 @@
 #define FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN 0x8ab
 #define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
 // Kolima
-/// The party has seen the curse fall, in Kolima or in SceneId_KolimaForest1.
+/// The party has seen the curse fall, in Kolima or in
+/// SceneId_KolimaForestEntrance.
 #define FLAG_KOLIMA_CURSE_WITNESSED 0x843
 /// Kolima's bridge fell as the party crossed it.
 #define FLAG_KOLIMA_BRIDGE_COLLAPSED 0x847

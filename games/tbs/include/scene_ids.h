@@ -59,9 +59,15 @@ extern char SceneId_Kolima;
 extern char SceneId_KolimaInteriors;
 extern char SceneId_KolimaTunnel;
 extern char SceneId_KolimaBridge;
-extern char SceneId_KolimaForest1;
-extern char SceneId_KolimaForest2;
-extern char SceneId_KolimaForest3;
+/// ★ Named from what the player sees: the way into Kolima Forest from the world
+/// map, a river crossed on log bridges (its render)
+extern char SceneId_KolimaForestEntrance;
+/// ★ Named from what the player sees: the one forest map with no water, an open
+/// grassy glade ringed by trees (its render)
+extern char SceneId_KolimaForestGlade;
+/// ★ Named from what the player sees: a cliff ridge runs along the whole north
+/// of the map, a river down its west (its render)
+extern char SceneId_KolimaForestCliff;
 extern char SceneId_KolimaForestFloodgate;
 extern char SceneId_KolimaForestTree;
 extern char SceneId_TretTreeInteriors;
@@ -90,10 +96,15 @@ extern char SceneId_FuchinFallsCave3;
 extern char SceneId_FuchinFallsCave4;
 extern char SceneId_FuchinFallsCave5;
 extern char SceneId_FuchinFallsCave6;
-extern char SceneId_MogallForest1;
-extern char SceneId_MogallForest2;
-extern char SceneId_MogallForest3;
-extern char SceneId_MogallForest4;
+/// ★ Named from the game: "The broken sign reads:" (MsgMogallForestBrokenSign)
+extern char SceneId_MogallForestSign;
+/// ★ Named from the game: "Quartz" (MsgDjinnName)
+extern char SceneId_MogallForestQuartz;
+/// ★ Named from the game: "Killer Ape" (MsgEnemyName)
+extern char SceneId_MogallForestKillerApe;
+/// ★ Named from what the player sees: small identical clearings the wrong turns
+/// lead into, whose far sides lead back in (its render)
+extern char SceneId_MogallForestSidePaths;
 extern char SceneId_Xian;
 extern char SceneId_XianInteriors;
 extern char SceneId_AlpineCrossing;

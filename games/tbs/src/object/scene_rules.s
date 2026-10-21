@@ -330,14 +330,14 @@ gBattle_BackdropScenes:
 	backdrop InteriorBackdrop, VaultInteriors
 	backdrop GomaCaveBackdrop, GomaCaveEntrance
 	backdrop GomaCaveBackdrop, GomaCavePond, GomaCavePillar, GomaCaveStream, KolimaTunnel
-	backdrop KolimaForestBackdrop, KolimaForest1, KolimaForest2, KolimaForest3, KolimaForestFloodgate, KolimaForestTree
+	backdrop KolimaForestBackdrop, KolimaForestEntrance, KolimaForestGlade, KolimaForestCliff, KolimaForestFloodgate, KolimaForestTree
 	backdrop TretTreeBranchBackdrop, TretTreeBranch
 	backdrop TretTreeInteriorsBackdrop, TretTreeInteriors
 	backdrop GomaCaveBackdrop, BilibinCaveEntrance, BilibinCaveRapier, BilibinCaveIce
 	backdrop MercuryLighthouseBackdrop, MercuryLighthouseEntrance, MercuryLighthouse1, MercuryLighthouse2, MercuryLighthouse3, MercuryLighthouse4
 	backdrop MercuryLighthouseAerieBackdrop, MercuryLighthouseAerie1
 	backdrop ImilFuchinFallsBackdrop, FuchinFallsCave1, FuchinFallsCave2, FuchinFallsCave3, FuchinFallsCave4, FuchinFallsCave5, FuchinFallsCave6, CrossboneIsle3
-	backdrop MogallForestBackdrop, MogallForest1, MogallForest2, MogallForest3
+	backdrop MogallForestBackdrop, MogallForestSign, MogallForestQuartz, MogallForestKillerApe
 	backdrop AltinPeakBackdrop, AltinPeak1, AltinPeak2, AltinPeak3, AltinPeak4, AltinPeak5, AltinPeak6, AltinPeak7, AltinPeak8, AltinPeak9, AltinPeak11
 	backdrop LamakanDesertBackdrop, LamakanDesert1, LamakanDesert2, LamakanDesert3
 	backdrop TolbiShipDeckBackdrop, TolbiShipDeck, TolbiShipMast

@@ -31,12 +31,12 @@ enum {
   WORLD_MAP_FROM_BILIBIN = 5,
   WORLD_MAP_FROM_BILIBIN_BARRICADE_EAST = 6,
   WORLD_MAP_FROM_KOLIMA_WEST = 7,
-  WORLD_MAP_FROM_KOLIMA_FOREST_1 = 8,
+  WORLD_MAP_FROM_KOLIMA_FOREST_ENTRANCE = 8,
   WORLD_MAP_FROM_IMIL_SOUTH = 9,
   WORLD_MAP_FROM_MERCURY_LIGHTHOUSE_4_EAST = 10,
   WORLD_MAP_FROM_KOLIMA_BRIDGE_EAST = 11,
   WORLD_MAP_FROM_FUCHIN_TEMPLE_1 = 12,
-  WORLD_MAP_FROM_MOGALL_FOREST_1 = 13,
+  WORLD_MAP_FROM_MOGALL_FOREST_SIGN = 13,
   WORLD_MAP_FROM_XIAN = 14,
   WORLD_MAP_FROM_ALPINE_CROSSING_EAST = 15,
   WORLD_MAP_FROM_ALTIN = 16,
@@ -64,7 +64,7 @@ enum {
   WORLD_MAP_FROM_GOMA_CAVE_BRIDGE = 40,
   WORLD_MAP_FROM_GONDOWAN_CAVE_2_SOUTH = 41,
   WORLD_MAP_FROM_SUHALLA_GATE_1_WEST = 42,
-  WORLD_MAP_FROM_MOGALL_FOREST_3 = 43,
+  WORLD_MAP_FROM_MOGALL_FOREST_KILLER_APE = 43,
   WORLD_MAP_FROM_VAULT_NORTH = 44,
   WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST = 46,
   WORLD_MAP_FROM_BILIBIN_BARRICADE_WEST = 47,
@@ -100,12 +100,12 @@ enum {
   WORLD_MAP_TO_BILIBIN = 5,
   WORLD_MAP_TO_BILIBIN_BARRICADE_WEST = 6,
   WORLD_MAP_TO_KOLIMA_WEST = 7,
-  WORLD_MAP_TO_KOLIMA_FOREST_1 = 8,
+  WORLD_MAP_TO_KOLIMA_FOREST_ENTRANCE = 8,
   WORLD_MAP_TO_IMIL_SOUTH = 9,
   WORLD_MAP_TO_MERCURY_LIGHTHOUSE_4_EAST = 10,
   WORLD_MAP_TO_KOLIMA_BRIDGE_EAST = 11,
   WORLD_MAP_TO_FUCHIN_TEMPLE_1 = 12,
-  WORLD_MAP_TO_MOGALL_FOREST_1 = 13,
+  WORLD_MAP_TO_MOGALL_FOREST_SIGN = 13,
   WORLD_MAP_TO_XIAN = 14,
   WORLD_MAP_TO_ALPINE_CROSSING_EAST = 15,
   WORLD_MAP_TO_ALTIN = 16,
@@ -130,7 +130,7 @@ enum {
   WORLD_MAP_TO_GOMA_CAVE_BRIDGE = 40,
   WORLD_MAP_TO_GONDOWAN_CAVE_2_SOUTH = 41,
   WORLD_MAP_TO_SUHALLA_GATE_1_EAST = 42,
-  WORLD_MAP_TO_MOGALL_FOREST_3 = 43,
+  WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE = 43,
   WORLD_MAP_TO_VAULT_NORTH = 44,
   WORLD_MAP_TO_KOLIMA_BRIDGE_WEST = 46,
   WORLD_MAP_TO_BILIBIN_BARRICADE_EAST = 47,
@@ -1082,39 +1082,100 @@ enum {
 /// SceneId_Kolima's entrances and exits.
 enum {
   KOLIMA_FROM_WORLD_MAP = 1,
-  KOLIMA_FROM_KOLIMA_INTERIORS_NORTHWEST = 3,
-  KOLIMA_FROM_KOLIMA_INTERIORS_SOUTHWEST = 4,
-  KOLIMA_FROM_KOLIMA_INTERIORS_SOUTH = 5,
-  KOLIMA_FROM_KOLIMA_INTERIORS_EAST = 6,
-  KOLIMA_FROM_KOLIMA_INTERIORS_SOUTHEAST = 7,
+  KOLIMA_FROM_INN = 3,
+  KOLIMA_FROM_ITEM_SHOP = 4,
+  KOLIMA_FROM_HOUSE_SOUTH = 5,
+  KOLIMA_FROM_WEAPON_AND_ARMOR_SHOP = 6,
+  KOLIMA_FROM_HOUSE_NORTH = 7,
   KOLIMA_FROM_KOLIMA_TUNNEL = 8,
 };
 enum {
   KOLIMA_TO_WORLD_MAP = 1,
   KOLIMA_TO_WORLD_MAP_EAST = 2,
-  KOLIMA_TO_KOLIMA_INTERIORS_SOUTH = 5,
-  KOLIMA_TO_KOLIMA_INTERIORS_EAST = 6,
-  KOLIMA_TO_KOLIMA_INTERIORS_SOUTHEAST = 7,
-  KOLIMA_TO_KOLIMA_INTERIORS_4 = 8,
-  KOLIMA_TO_KOLIMA_INTERIORS_WEST = 9,
+  KOLIMA_TO_INN = 5,
+  KOLIMA_TO_ITEM_SHOP = 6,
+  KOLIMA_TO_HOUSE_SOUTH = 7,
+  KOLIMA_TO_WEAPON_AND_ARMOR_SHOP = 8,
+  KOLIMA_TO_HOUSE_NORTH = 9,
   KOLIMA_TO_KOLIMA_TUNNEL = 10,
 };
 
 /// SceneId_KolimaInteriors's entrances and exits.
 enum {
-  KOLIMA_INTERIORS_FROM_KOLIMA_NORTHWEST = 3,
-  KOLIMA_INTERIORS_FROM_KOLIMA_NORTHEAST = 4,
-  KOLIMA_INTERIORS_FROM_KOLIMA_SOUTHWEST = 7,
-  KOLIMA_INTERIORS_FROM_KOLIMA_WEST = 8,
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP =
+      1, ///< ★ Named from what the player sees: the room up the shop's stair, a
+         ///< bookcase and two villagers (its render)
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR =
+      2, ///< ★ Named from what the player sees: the room up the shop's stair, a
+         ///< bookcase and two villagers (its render)
+  KOLIMA_INTERIORS_ITEM_SHOP_FROM_KOLIMA =
+      3, ///< ★ Named from what the player sees: the room behind the item sign,
+         ///< the item seller at her counter (its render)
+  KOLIMA_INTERIORS_INN_FROM_KOLIMA =
+      4, ///< ★ Named from what the player sees: the room behind the INN sign on
+         ///< the village's northwest tree, the innkeeper at his counter (its
+         ///< render)
+  KOLIMA_INTERIORS_INN_FROM_INN_SECOND_FLOOR =
+      5, ///< ★ Named from what the player sees: the room behind the INN sign on
+         ///< the village's northwest tree, the innkeeper at his counter (its
+         ///< render)
+  KOLIMA_INTERIORS_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR =
+      6, ///< ★ Named from what the player sees: the top room of the inn's tree,
+         ///< a bed and a stranded merchant (its render)
+  KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_SOUTH =
+      7, ///< ★ Named from what the player sees: the house of the father with a
+         ///< secret, a storeroom with a ladder behind it (its render)
+  KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_NORTH =
+      8, ///< ★ Named from what the player sees: the house of the father with a
+         ///< secret, a storeroom with a ladder behind it (its render)
   KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL = 9,
-  KOLIMA_INTERIORS_FROM_KOLIMA_SOUTHEAST = 10,
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA =
+      10, ///< ★ Named from what the player sees: the weapon and armor sellers
+          ///< side by side at one counter (its render)
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
+      11, ///< ★ Named from what the player sees: the weapon and armor sellers
+          ///< side by side at one counter (its render)
+  KOLIMA_INTERIORS_INN_SECOND_FLOOR_FROM_INN =
+      12, ///< ★ Named from what the player sees: the room up the inn's stair, a
+          ///< bed and a lumberjack staying the night (its render)
+  KOLIMA_INTERIORS_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR =
+      13, ///< ★ Named from what the player sees: the room up the inn's stair, a
+          ///< bed and a lumberjack staying the night (its render)
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
+      14, ///< ★ Named from what the player sees: the top room of the shop's
+          ///< tree, a lumberjack and his two children (its render)
 };
 enum {
-  KOLIMA_INTERIORS_TO_KOLIMA_NORTHWEST = 3,
-  KOLIMA_INTERIORS_TO_KOLIMA_NORTHEAST = 4,
-  KOLIMA_INTERIORS_TO_KOLIMA_SOUTHWEST = 7,
-  KOLIMA_INTERIORS_TO_KOLIMA_WEST = 8,
-  KOLIMA_INTERIORS_TO_KOLIMA_EAST = 9,
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP =
+      1, ///< ★ Named from what the player sees: the weapon and armor sellers
+         ///< side by side at one counter (its render)
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR =
+      2, ///< ★ Named from what the player sees: the top room of the shop's
+         ///< tree, a lumberjack and his two children (its render)
+  KOLIMA_INTERIORS_ITEM_SHOP_TO_KOLIMA = 3,
+  KOLIMA_INTERIORS_INN_TO_KOLIMA = 4,
+  KOLIMA_INTERIORS_INN_TO_INN_SECOND_FLOOR =
+      5, ///< ★ Named from what the player sees: the room up the inn's stair, a
+         ///< bed and a lumberjack staying the night (its render)
+  KOLIMA_INTERIORS_INN_THIRD_FLOOR_TO_INN_SECOND_FLOOR =
+      6, ///< ★ Named from what the player sees: the room up the inn's stair, a
+         ///< bed and a lumberjack staying the night (its render)
+  KOLIMA_INTERIORS_HOUSE_TO_KOLIMA_SOUTH = 7,
+  KOLIMA_INTERIORS_HOUSE_TO_KOLIMA_NORTH = 8,
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_KOLIMA = 9,
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
+      10, ///< ★ Named from what the player sees: the room up the shop's stair,
+          ///< a bookcase and two villagers (its render)
+  KOLIMA_INTERIORS_INN_SECOND_FLOOR_TO_INN =
+      11, ///< ★ Named from what the player sees: the room behind the INN sign
+          ///< on the village's northwest tree, the innkeeper at his counter
+          ///< (its render)
+  KOLIMA_INTERIORS_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR =
+      12, ///< ★ Named from what the player sees: the top room of the inn's
+          ///< tree, a bed and a stranded merchant (its render)
+  KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR =
+      13, ///< ★ Named from what the player sees: the room up the shop's stair,
+          ///< a bookcase and two villagers (its render)
   KOLIMA_INTERIORS_TO_KOLIMA_TUNNEL = 14,
 };
 
@@ -1138,43 +1199,43 @@ enum {
   KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH = 2,
 };
 
-/// SceneId_KolimaForest1's entrances and exits.
+/// SceneId_KolimaForestEntrance's entrances and exits.
 enum {
-  KOLIMA_FOREST_1_FROM_KOLIMA_FOREST_2 = 2,
-  KOLIMA_FOREST_1_FROM_WORLD_MAP = 4,
+  KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE = 2,
+  KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP = 4,
 };
 enum {
-  KOLIMA_FOREST_1_TO_KOLIMA_FOREST_2 = 1,
-  KOLIMA_FOREST_1_TO_WORLD_MAP = 4,
-};
-
-/// SceneId_KolimaForest2's entrances and exits.
-enum {
-  KOLIMA_FOREST_2_FROM_KOLIMA_FOREST_1 = 1,
-  KOLIMA_FOREST_2_FROM_KOLIMA_FOREST_3 = 2,
-};
-enum {
-  KOLIMA_FOREST_2_TO_KOLIMA_FOREST_3 = 1,
-  KOLIMA_FOREST_2_TO_KOLIMA_FOREST_1 = 2,
+  KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE = 1,
+  KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP = 4,
 };
 
-/// SceneId_KolimaForest3's entrances and exits.
+/// SceneId_KolimaForestGlade's entrances and exits.
 enum {
-  KOLIMA_FOREST_3_FROM_KOLIMA_FOREST_2 = 1,
-  KOLIMA_FOREST_3_FROM_KOLIMA_FOREST_FLOODGATE = 2,
+  KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE = 1,
+  KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF = 2,
 };
 enum {
-  KOLIMA_FOREST_3_TO_KOLIMA_FOREST_FLOODGATE = 1,
-  KOLIMA_FOREST_3_TO_KOLIMA_FOREST_2 = 2,
+  KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF = 1,
+  KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE = 2,
+};
+
+/// SceneId_KolimaForestCliff's entrances and exits.
+enum {
+  KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE = 1,
+  KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_FLOODGATE = 2,
+};
+enum {
+  KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE = 1,
+  KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE = 2,
 };
 
 /// SceneId_KolimaForestFloodgate's entrances and exits.
 enum {
-  KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_3 = 1,
+  KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF = 1,
   KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE = 2,
 };
 enum {
-  KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_3 = 1,
+  KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_CLIFF = 1,
   KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE = 2,
 };
 
@@ -1199,18 +1260,70 @@ enum {
   TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH = 7,
   TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST = 8,
   TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
+  TRET_TREE_INTERIORS_ENTRANCE_FROM_SECOND_FLOOR =
+      11, ///< ★ Named from what the player sees: the room entered from Kolima
+          ///< Forest through the door at Tret's foot (its render)
+  TRET_TREE_INTERIORS_SECOND_FLOOR_FROM_ENTRANCE =
+      12, ///< ★ Named from what the player sees: the webbed room one floor
+          ///< above the entrance, reached up a vine (its render)
+  TRET_TREE_INTERIORS_THIRD_FLOOR_FROM_FOURTH_FLOOR =
+      13, ///< ★ Named from what the player sees: the webbed room with a chest
+          ///< and a Psynergy Stone, one floor higher (its render)
+  TRET_TREE_INTERIORS_FOURTH_FLOOR_FROM_THIRD_FLOOR =
+      14, ///< ★ Named from what the player sees: the bare room above, reached
+          ///< up a vine (its render)
+  TRET_TREE_INTERIORS_TRET_FROM_ENTRANCE =
+      15, ///< ★ Named from what the player sees: the lowest room, where Tret's
+          ///< face looks out of the wall (its render)
+  TRET_TREE_INTERIORS_ENTRANCE_FROM_TRET =
+      16, ///< ★ Named from what the player sees: the room entered from Kolima
+          ///< Forest through the door at Tret's foot (its render)
   TRET_TREE_INTERIORS_AFTER_FIGHT_TRET = 19, ///< Event_FightTret
 };
 enum {
   TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE = 1,
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST = 3,
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH = 4,
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTHEAST = 5,
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTHWEST = 6,
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH = 7,
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST = 8,
-  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
+  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST =
+      2, ///< ★ Named from what the player sees: the lowest room, where Tret's
+         ///< face looks out of the wall (its render)
+  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST =
+      3, ///< ★ Named from what the player sees: the lowest room, where Tret's
+         ///< face looks out of the wall (its render)
+  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH =
+      4, ///< ★ Named from what the player sees: the lowest room, where Tret's
+         ///< face looks out of the wall (its render)
+  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTHEAST =
+      5, ///< ★ Named from what the player sees: the lowest room, where Tret's
+         ///< face looks out of the wall (its render)
+  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTHWEST =
+      6, ///< ★ Named from what the player sees: the lowest room, where Tret's
+         ///< face looks out of the wall (its render)
+  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH =
+      7, ///< ★ Named from what the player sees: the lowest room, where Tret's
+         ///< face looks out of the wall (its render)
+  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST =
+      8, ///< ★ Named from what the player sees: the lowest room, where Tret's
+         ///< face looks out of the wall (its render)
+  TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST =
+      9, ///< ★ Named from what the player sees: the lowest room, where Tret's
+         ///< face looks out of the wall (its render)
+  TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR =
+      10, ///< ★ Named from what the player sees: the webbed room one floor
+          ///< above the entrance, reached up a vine (its render)
+  TRET_TREE_INTERIORS_SECOND_FLOOR_TO_ENTRANCE =
+      11, ///< ★ Named from what the player sees: the room entered from Kolima
+          ///< Forest through the door at Tret's foot (its render)
+  TRET_TREE_INTERIORS_THIRD_FLOOR_TO_FOURTH_FLOOR =
+      12, ///< ★ Named from what the player sees: the bare room above, reached
+          ///< up a vine (its render)
+  TRET_TREE_INTERIORS_FOURTH_FLOOR_TO_THIRD_FLOOR =
+      13, ///< ★ Named from what the player sees: the webbed room with a chest
+          ///< and a Psynergy Stone, one floor higher (its render)
+  TRET_TREE_INTERIORS_TRET_TO_ENTRANCE =
+      14, ///< ★ Named from what the player sees: the room entered from Kolima
+          ///< Forest through the door at Tret's foot (its render)
+  TRET_TREE_INTERIORS_ENTRANCE_TO_TRET =
+      15, ///< ★ Named from what the player sees: the lowest room, where Tret's
+          ///< face looks out of the wall (its render)
 };
 
 /// SceneId_TretTreeBranch's entrances and exits.
@@ -1562,81 +1675,235 @@ enum {
   FUCHIN_FALLS_CAVE_6_TO_FUCHIN_FALLS_CAVE_1_SOUTH = 12,
 };
 
-/// SceneId_MogallForest1's entrances and exits.
+/// SceneId_MogallForestSign's entrances and exits.
 enum {
-  MOGALL_FOREST_1_FROM_WORLD_MAP = 1,
-  MOGALL_FOREST_1_FROM_MOGALL_FOREST_4_WEST = 2,
-  MOGALL_FOREST_1_FROM_MOGALL_FOREST_4_NORTH = 3,
-  MOGALL_FOREST_1_FROM_MOGALL_FOREST_4_EAST = 8,
-  MOGALL_FOREST_1_FROM_MOGALL_FOREST_2 = 9,
+  MOGALL_FOREST_SIGN_FROM_WORLD_MAP = 1,
+  MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST = 2,
+  MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
+  MOGALL_FOREST_SIGN_ENTRANCE_FROM_SOUTHWEST_CLEARING =
+      4, ///< ★ Named from what the player sees: the clearing entered from the
+         ///< world map, with the broken sign and a hollow stump (its render)
+  MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_FROM_ENTRANCE =
+      5, ///< ★ Named from what the player sees: the clearing of only trees
+         ///< south of the entrance, on the way to the river (its render)
+  MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_FROM_RIVER =
+      6, ///< ★ Named from what the player sees: the clearing of only trees
+         ///< south of the entrance, on the way to the river (its render)
+  MOGALL_FOREST_SIGN_RIVER_FROM_SOUTHWEST_CLEARING =
+      7, ///< ★ Named from what the player sees: the large clearing with the
+         ///< river, its logs and the Nut floating over the water (its render)
+  MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST = 8,
+  MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ = 9,
 };
 enum {
-  MOGALL_FOREST_1_TO_WORLD_MAP = 1,
-  MOGALL_FOREST_1_TO_MOGALL_FOREST_4_WEST = 2,
-  MOGALL_FOREST_1_TO_MOGALL_FOREST_4_NORTH = 3,
-  MOGALL_FOREST_1_TO_MOGALL_FOREST_4_EAST = 8,
-  MOGALL_FOREST_1_TO_MOGALL_FOREST_2 = 9,
+  MOGALL_FOREST_SIGN_TO_WORLD_MAP = 1,
+  MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_WEST = 2,
+  MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
+  MOGALL_FOREST_SIGN_ENTRANCE_TO_SOUTHWEST_CLEARING =
+      4, ///< ★ Named from what the player sees: the clearing of only trees
+         ///< south of the entrance, on the way to the river (its render)
+  MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_TO_ENTRANCE =
+      5, ///< ★ Named from what the player sees: the clearing entered from the
+         ///< world map, with the broken sign and a hollow stump (its render)
+  MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_TO_RIVER =
+      6, ///< ★ Named from what the player sees: the large clearing with the
+         ///< river, its logs and the Nut floating over the water (its render)
+  MOGALL_FOREST_SIGN_RIVER_TO_SOUTHWEST_CLEARING =
+      7, ///< ★ Named from what the player sees: the clearing of only trees
+         ///< south of the entrance, on the way to the river (its render)
+  MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_EAST = 8,
+  MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_QUARTZ = 9,
 };
 
-/// SceneId_MogallForest2's entrances and exits.
+/// SceneId_MogallForestQuartz's entrances and exits.
 enum {
-  MOGALL_FOREST_2_FROM_MOGALL_FOREST_1 = 1,
-  MOGALL_FOREST_2_FROM_MOGALL_FOREST_4_NORTH = 3,
-  MOGALL_FOREST_2_FROM_MOGALL_FOREST_3 = 11,
-  MOGALL_FOREST_2_FROM_MOGALL_FOREST_4_SOUTH = 12,
+  MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIGN = 1,
+  MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_FROM_STUMPS =
+      2, ///< ★ Named from what the player sees: the clearing of only trees
+         ///< entered from the forest's first area (its render)
+  MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
+  MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING =
+      4, ///< ★ Named from what the player sees: the clearing with two great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND =
+      5, ///< ★ Named from what the player sees: the clearing with two great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING =
+      6, ///< ★ Named from what the player sees: the clearing with two great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_FROM_STUMPS =
+      7, ///< ★ Named from what the player sees: the clearing of only trees east
+         ///< of the stumps (its render)
+  MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_FROM_RIVER =
+      8, ///< ★ Named from what the player sees: the clearing of only trees east
+         ///< of the stumps (its render)
+  MOGALL_FOREST_QUARTZ_POND_FROM_STUMPS =
+      9, ///< ★ Named from what the player sees: a pond round an island holding
+         ///< a chest, reached on a log (its render)
+  MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING =
+      10, ///< ★ Named from what the player sees: the large clearing with the
+          ///< river, logs, a rock and Quartz (its render)
+  MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE = 11,
+  MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH = 12,
 };
 enum {
-  MOGALL_FOREST_2_TO_MOGALL_FOREST_1 = 1,
-  MOGALL_FOREST_2_TO_MOGALL_FOREST_4_NORTH = 3,
-  MOGALL_FOREST_2_TO_MOGALL_FOREST_3 = 11,
-  MOGALL_FOREST_2_TO_MOGALL_FOREST_4_SOUTH = 12,
+  MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIGN = 1,
+  MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_TO_STUMPS =
+      2, ///< ★ Named from what the player sees: the clearing with two great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_NORTH = 3,
+  MOGALL_FOREST_QUARTZ_STUMPS_TO_NORTHWEST_CLEARING =
+      4, ///< ★ Named from what the player sees: the clearing of only trees
+         ///< entered from the forest's first area (its render)
+  MOGALL_FOREST_QUARTZ_STUMPS_TO_POND =
+      5, ///< ★ Named from what the player sees: a pond round an island holding
+         ///< a chest, reached on a log (its render)
+  MOGALL_FOREST_QUARTZ_STUMPS_TO_NORTHEAST_CLEARING =
+      6, ///< ★ Named from what the player sees: the clearing of only trees east
+         ///< of the stumps (its render)
+  MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_TO_STUMPS =
+      7, ///< ★ Named from what the player sees: the clearing with two great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_TO_RIVER =
+      8, ///< ★ Named from what the player sees: the large clearing with the
+         ///< river, logs, a rock and Quartz (its render)
+  MOGALL_FOREST_QUARTZ_POND_TO_STUMPS =
+      9, ///< ★ Named from what the player sees: the clearing with two great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_QUARTZ_RIVER_TO_NORTHEAST_CLEARING =
+      10, ///< ★ Named from what the player sees: the clearing of only trees
+          ///< east of the stumps (its render)
+  MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_KILLER_APE = 11,
+  MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_SOUTH = 12,
 };
 
-/// SceneId_MogallForest3's entrances and exits.
+/// SceneId_MogallForestKillerApe's entrances and exits.
 enum {
-  MOGALL_FOREST_3_FROM_MOGALL_FOREST_2 = 2,
-  MOGALL_FOREST_3_FROM_MOGALL_FOREST_4_NORTH = 3,
-  MOGALL_FOREST_3_FROM_MOGALL_FOREST_4_EAST = 9,
-  MOGALL_FOREST_3_FROM_MOGALL_FOREST_4_SOUTH = 10,
-  MOGALL_FOREST_3_FROM_WORLD_MAP = 13,
-  MOGALL_FOREST_3_AFTER_KILLER_APE_ATTACKS =
+  MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_FROM_STUMPS =
+      1, ///< ★ Named from what the player sees: the clearing of only trees
+         ///< entered from the forest's second area (its render)
+  MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_QUARTZ = 2,
+  MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST = 3,
+  MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST =
+      4, ///< ★ Named from what the player sees: the clearing with three great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_KILLER_APE_STUMPS_FROM_NORTHWEST_CLEARING =
+      5, ///< ★ Named from what the player sees: the clearing with three great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER =
+      6, ///< ★ Named from what the player sees: the clearing with three great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS =
+      7, ///< ★ Named from what the player sees: the clearing whose chest lies
+         ///< behind a stream, a log and a rock (its render)
+  MOGALL_FOREST_KILLER_APE_RIVER_FROM_STUMPS =
+      8, ///< ★ Named from what the player sees: the large clearing ringed by
+         ///< the river, with logs to roll in and a rock (its render)
+  MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_EAST = 9,
+  MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH = 10,
+  MOGALL_FOREST_KILLER_APE_RIVER_FROM_BRIDGES =
+      11, ///< ★ Named from what the player sees: the large clearing ringed by
+          ///< the river, with logs to roll in and a rock (its render)
+  MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER =
+      12, ///< ★ Named from what the player sees: the clearing whose river is
+          ///< crossed by two log bridges, by the way out to the world map (its
+          ///< render)
+  MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP = 13,
+  MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS =
       15, ///< MogallForest_KillerApeAttacks
 };
 enum {
-  MOGALL_FOREST_3_TO_MOGALL_FOREST_2 = 2,
-  MOGALL_FOREST_3_TO_MOGALL_FOREST_4_WEST = 3,
-  MOGALL_FOREST_3_TO_MOGALL_FOREST_4_NORTH = 9,
-  MOGALL_FOREST_3_TO_MOGALL_FOREST_4_SOUTH = 10,
-  MOGALL_FOREST_3_TO_WORLD_MAP = 13,
+  MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_TO_STUMPS =
+      1, ///< ★ Named from what the player sees: the clearing with three great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_QUARTZ = 2,
+  MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_WEST = 3,
+  MOGALL_FOREST_KILLER_APE_STUMPS_TO_CHEST =
+      4, ///< ★ Named from what the player sees: the clearing whose chest lies
+         ///< behind a stream, a log and a rock (its render)
+  MOGALL_FOREST_KILLER_APE_STUMPS_TO_NORTHWEST_CLEARING =
+      5, ///< ★ Named from what the player sees: the clearing of only trees
+         ///< entered from the forest's second area (its render)
+  MOGALL_FOREST_KILLER_APE_STUMPS_TO_RIVER =
+      6, ///< ★ Named from what the player sees: the large clearing ringed by
+         ///< the river, with logs to roll in and a rock (its render)
+  MOGALL_FOREST_KILLER_APE_CHEST_TO_STUMPS =
+      7, ///< ★ Named from what the player sees: the clearing with three great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_KILLER_APE_RIVER_TO_STUMPS =
+      8, ///< ★ Named from what the player sees: the clearing with three great
+         ///< hollow stumps (its render)
+  MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_EAST = 9,
+  MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_SOUTH = 10,
+  MOGALL_FOREST_KILLER_APE_RIVER_TO_BRIDGES =
+      11, ///< ★ Named from what the player sees: the clearing whose river is
+          ///< crossed by two log bridges, by the way out to the world map (its
+          ///< render)
+  MOGALL_FOREST_KILLER_APE_BRIDGES_TO_RIVER =
+      12, ///< ★ Named from what the player sees: the large clearing ringed by
+          ///< the river, with logs to roll in and a rock (its render)
+  MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP = 13,
 };
 
-/// SceneId_MogallForest4's entrances and exits.
+/// SceneId_MogallForestSidePaths's entrances and exits.
 enum {
-  MOGALL_FOREST_4_FROM_MOGALL_FOREST_1_NORTH = 1,
-  MOGALL_FOREST_4_FROM_MOGALL_FOREST_1_WEST = 2,
-  MOGALL_FOREST_4_FROM_MOGALL_FOREST_2_WEST = 3,
-  MOGALL_FOREST_4_FROM_MOGALL_FOREST_2_EAST = 4,
-  MOGALL_FOREST_4_FROM_MOGALL_FOREST_3_WEST = 5,
-  MOGALL_FOREST_4_FROM_MOGALL_FOREST_3_NORTH = 6,
-  MOGALL_FOREST_4_FROM_MOGALL_FOREST_3_EAST = 7,
-  MOGALL_FOREST_4_FROM_MOGALL_FOREST_1_SOUTH = 8,
+  MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_NORTH = 1,
+  MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_WEST = 2,
+  MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_QUARTZ_NORTH = 3,
+  MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_QUARTZ_SOUTH = 4,
+  MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_WEST = 5,
+  MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_EAST = 6,
+  MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_SOUTH = 7,
+  MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_EAST = 8,
+  MOGALL_FOREST_SIDE_PATHS_NORTH_CLEARING_EAST = 9,
+  MOGALL_FOREST_SIDE_PATHS_WEST_CLEARING_WEST = 10,
 };
 enum {
-  MOGALL_FOREST_4_TO_MOGALL_FOREST_1_NORTH = 1,
-  MOGALL_FOREST_4_TO_MOGALL_FOREST_1_WEST = 2,
-  MOGALL_FOREST_4_TO_MOGALL_FOREST_2_WEST = 3,
-  MOGALL_FOREST_4_TO_MOGALL_FOREST_2_EAST = 4,
-  MOGALL_FOREST_4_TO_MOGALL_FOREST_3_WEST = 5,
-  MOGALL_FOREST_4_TO_MOGALL_FOREST_3_NORTH = 6,
-  MOGALL_FOREST_4_TO_MOGALL_FOREST_3_EAST = 7,
-  MOGALL_FOREST_4_TO_MOGALL_FOREST_1_SOUTH = 8,
+  MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_NORTH = 1,
+  MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_WEST = 2,
+  MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_QUARTZ_NORTH = 3,
+  MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_QUARTZ_SOUTH = 4,
+  MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_WEST = 5,
+  MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_EAST = 6,
+  MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_SOUTH = 7,
+  MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_EAST = 8,
+  MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_WEST =
+      11, ///< ★ Named from what the player sees: the northernmost of the
+          ///< side-path clearings (its render)
+  MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_EAST =
+      12, ///< ★ Named from what the player sees: the westernmost of the
+          ///< side-path clearings (its render)
+  MOGALL_FOREST_SIDE_PATHS_TO_CENTER_CLEARING =
+      13, ///< ★ Named from what the player sees: the middle one of the
+          ///< side-path clearings (its render)
+  MOGALL_FOREST_SIDE_PATHS_TO_EAST_CLEARING =
+      14, ///< ★ Named from what the player sees: the easternmost of the
+          ///< side-path clearings (its render)
+  MOGALL_FOREST_SIDE_PATHS_TO_SOUTHWEST_CLEARING =
+      15, ///< ★ Named from what the player sees: the southwestern of the
+          ///< side-path clearings (its render)
+  MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_NORTHWEST =
+      16, ///< ★ Named from what the player sees: the southern side-path
+          ///< clearing, the one with two doors on its west side (its render)
+  MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_SOUTHWEST =
+      17, ///< ★ Named from what the player sees: the southern side-path
+          ///< clearing, the one with two doors on its west side (its render)
+  MOGALL_FOREST_SIDE_PATHS_TO_SOUTHEAST_CLEARING =
+      18, ///< ★ Named from what the player sees: the southeastern of the
+          ///< side-path clearings (its render)
+  MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_EAST =
+      19, ///< ★ Named from what the player sees: the northernmost of the
+          ///< side-path clearings (its render)
+  MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_WEST =
+      20, ///< ★ Named from what the player sees: the westernmost of the
+          ///< side-path clearings (its render)
 };
 
 /// SceneId_Xian's entrances and exits.
 enum {
   XIAN_FROM_HOUSE = 1,
   XIAN_FROM_WEAPON_AND_ARMOR_SHOP = 5,
-  XIAN_FROM_SANCTUM_EAST = 6,
+  XIAN_FROM_HSUS_HOUSE = 6,
   XIAN_FROM_XIAN_INTERIORS_EAST = 7,
   XIAN_FROM_XIAN_INTERIORS_SOUTH = 8,
   XIAN_FROM_XIAN_INTERIORS_WEST = 9,
@@ -1662,20 +1929,28 @@ enum {
       2, ///< the room holds the hsus house; through XIAN_TO_HSUS_HOUSE
   XIAN_INTERIORS_FROM_XIAN_EAST = 3,
   XIAN_INTERIORS_INN_SOUTH = 4, ///< the room holds the inn; through XIAN_TO_INN
+  XIAN_INTERIORS_INN_GUEST_ROOMS_FROM_INN =
+      5, ///< ★ Named from what the player sees: the small rooms behind the
+         ///< inn's front room, with a bed (its render)
   XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP =
       6, ///< the room behind Xian's weapon and armor shop door; the room holds
          ///< the weapon and armor shop; through XIAN_TO_WEAPON_AND_ARMOR_SHOP
-  XIAN_INTERIORS_INN_NORTH = 7, ///< the room holds the inn;
+  XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS = 7, ///< the room holds the inn;
   XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2 =
       8, ///< the room behind FuchinTemple2's house door; through
          ///< FUCHIN_TEMPLE_2_TO_HOUSE
 };
 enum {
   XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_XIAN = 1,
+  XIAN_INTERIORS_HSUS_HOUSE_TO_XIAN = 2,
   XIAN_INTERIORS_TO_XIAN_EAST = 3,
   XIAN_INTERIORS_TO_XIAN_SOUTH = 4,
+  XIAN_INTERIORS_INN_GUEST_ROOMS_TO_INN = 5,
   XIAN_INTERIORS_TO_XIAN_WEST = 6,
-  XIAN_INTERIORS_HOUSE_TO_FUCHIN_TEMPLE_2 = 8,
+  XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS =
+      7, ///< ★ Named from what the player sees: the small rooms behind the
+         ///< inn's front room, with a bed (its render)
+  XIAN_INTERIORS_TO_FUCHIN_TEMPLE_2 = 8,
 };
 
 /// SceneId_AlpineCrossing's entrances and exits.

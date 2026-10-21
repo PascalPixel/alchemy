@@ -749,21 +749,21 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 390	text	games/tbs/src/scene/entry/kolima_interiors
 390	text	games/tbs/src/scene/kolima_interiors
 390	text	games/tbs/src/scene/import/kolima_interiors
-391	text	games/tbs/src/scene/entry/kolima_forest1
-391	text	games/tbs/src/scene/kolima_forest1
-391	text	games/tbs/src/scene/import/kolima_forest1
+391	text	games/tbs/src/scene/entry/kolima_forest_entrance
+391	text	games/tbs/src/scene/kolima_forest_entrance
+391	text	games/tbs/src/scene/import/kolima_forest_entrance
 391	text	libgcc.a:_call_via_rX
-391	bss	games/tbs/src/scene/kolima_forest1	.bss
-392	text	games/tbs/src/scene/entry/kolima_forest2
-392	text	games/tbs/src/scene/kolima_forest2
-392	text	games/tbs/src/scene/import/kolima_forest2
+391	bss	games/tbs/src/scene/kolima_forest_entrance	.bss
+392	text	games/tbs/src/scene/entry/kolima_forest_glade
+392	text	games/tbs/src/scene/kolima_forest_glade
+392	text	games/tbs/src/scene/import/kolima_forest_glade
 392	text	libgcc.a:_call_via_rX
-392	bss	games/tbs/src/scene/kolima_forest2	.bss
-393	text	games/tbs/src/scene/entry/kolima_forest3
-393	text	games/tbs/src/scene/kolima_forest3
-393	text	games/tbs/src/scene/import/kolima_forest3
+392	bss	games/tbs/src/scene/kolima_forest_glade	.bss
+393	text	games/tbs/src/scene/entry/kolima_forest_cliff
+393	text	games/tbs/src/scene/kolima_forest_cliff
+393	text	games/tbs/src/scene/import/kolima_forest_cliff
 393	text	libgcc.a:_call_via_rX
-393	bss	games/tbs/src/scene/kolima_forest3	.bss
+393	bss	games/tbs/src/scene/kolima_forest_cliff	.bss
 394	text	games/tbs/src/scene/entry/kolima_forest_floodgate
 394	text	games/tbs/src/scene/kolima_forest_floodgate
 394	text	games/tbs/src/scene/import/kolima_forest_floodgate

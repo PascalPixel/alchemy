@@ -5,8 +5,9 @@
 /// Each of Xian's doors leads to a room here, and each room leads back out to
 /// its door. XIAN_INTERIORS_HOUSE, XIAN_INTERIORS_HSUS_HOUSE and
 /// XIAN_INTERIORS_FROM_XIAN_EAST are villagers' houses;
-/// XIAN_INTERIORS_INN_SOUTH opens into the inn, where exit 7 leads on into its
-/// second room (entrance 5) and exit 5 back to XIAN_INTERIORS_INN_NORTH; and
+/// XIAN_INTERIORS_INN_SOUTH opens into the inn, where
+/// XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS leads on into its guest rooms and
+/// XIAN_INTERIORS_INN_GUEST_ROOMS_TO_INN back; and
 /// XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP opens into the weapon, armor and item
 /// shops. As in the village, every line has a row for each side of
 /// FLAG_XIAN_HEARD_HSU_TRAPPED: before, the villagers talk of silk, Silk Road
@@ -254,7 +255,7 @@ const struct SceneEvent *XianInteriors_GetEvents(void) {
 
 /// Opens the room through a window transition and creates its configured
 /// objects (kind 20): one in the inn (XIAN_INTERIORS_INN_SOUTH and
-/// XIAN_INTERIORS_INN_NORTH), two in the shops
+/// XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS), two in the shops
 /// (XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP). In the room behind the school, it
 /// clears FLAG_SHOW_LOCATION_NAME and Hsu takes his pose.
 s32 XianInteriors_Initialize(void) {
@@ -264,7 +265,7 @@ s32 XianInteriors_Initialize(void) {
   entrance = gGameState.entrance;
   // Restore the ambient effects shared by connected interior entrances.
   if (entrance == XIAN_INTERIORS_INN_SOUTH ||
-      entrance == XIAN_INTERIORS_INN_NORTH) {
+      entrance == XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS) {
     OverlayObject_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417), 20);
   } else if (entrance == XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP) {
     OverlayObject_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568), 20);
@@ -310,8 +311,8 @@ struct SceneEntrance gXianInteriors_Entrances[] = {
     {5, CONDITION_ALWAYS, 472, 0, 360, FACING_EAST, 0, 384, 288, 672, 496, 0},
     {XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, 512, 0, 696,
      FACING_NORTH, 0, 352, 496, 656, 720, 0},
-    {XIAN_INTERIORS_INN_NORTH, CONDITION_ALWAYS, 120, 0, 360, FACING_EAST, 0,
-     48, 288, 336, 496, 0},
+    {XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS, CONDITION_ALWAYS, 120, 0, 360,
+     FACING_EAST, 0, 48, 288, 336, 496, 0},
     {XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2, CONDITION_ALWAYS, 120, 0, 696,
      FACING_NORTH, 0, 64, 544, 304, 744, 0},
     {SCENE_TABLE_END},
@@ -321,16 +322,18 @@ u32 gXianInteriors_Exits[] = {
     SCENE_EXITS(XianInteriors),
     SCENE_EXIT(XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_XIAN, Xian,
                XIAN_FROM_WEAPON_AND_ARMOR_SHOP),
-    SCENE_EXIT(2, Xian, XIAN_FROM_SANCTUM_EAST),
+    SCENE_EXIT(XIAN_INTERIORS_HSUS_HOUSE_TO_XIAN, Xian, XIAN_FROM_HSUS_HOUSE),
     SCENE_EXIT(XIAN_INTERIORS_TO_XIAN_EAST, Xian,
                XIAN_FROM_XIAN_INTERIORS_EAST),
     SCENE_EXIT(XIAN_INTERIORS_TO_XIAN_SOUTH, Xian,
                XIAN_FROM_XIAN_INTERIORS_SOUTH),
-    SCENE_EXIT(5, XianInteriors, XIAN_INTERIORS_INN_NORTH),
+    SCENE_EXIT(XIAN_INTERIORS_INN_GUEST_ROOMS_TO_INN, XianInteriors,
+               XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS),
     SCENE_EXIT(XIAN_INTERIORS_TO_XIAN_WEST, Xian,
                XIAN_FROM_XIAN_INTERIORS_WEST),
-    SCENE_EXIT(7, XianInteriors, 5),
-    SCENE_EXIT(XIAN_INTERIORS_HOUSE_TO_FUCHIN_TEMPLE_2, FuchinTemple2,
+    SCENE_EXIT(XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS, XianInteriors,
+               XIAN_INTERIORS_INN_GUEST_ROOMS_FROM_INN),
+    SCENE_EXIT(XIAN_INTERIORS_TO_FUCHIN_TEMPLE_2, FuchinTemple2,
                FUCHIN_TEMPLE_2_FROM_HOUSE),
     SCENE_EXITS_END,
 };

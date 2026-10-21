@@ -51,10 +51,25 @@ object's place in the link order is in `games/tbs/objects.tsv`, from the
   an enemy's special move. Each is a row of `games/tbs/src/game/actions.tsv`
   (`struct BattleAct`, read with `BattleActGet`) and the same row of
   `actflags.tsv`; both name the row in their `ability` column.
-- **kind**: a number from 0 to 15 that picks the formula an ability's targets
-  take: an attack, Psynergy damage, healing and so on. A byte is eight bits,
-  eight on-or-off switches, and the kind is the low four bits of the
-  ability's `flags` byte (`ABILITY_KIND_MASK`, `enum AbilityKind`).
+- **ability kind**: the part of an ability's row that chooses the formula its
+  targets go through: an attack, Psynergy damage, healing and so on
+  ([below](#what-is-an-ability-kind)). It's the last hex digit of the
+  ability's `flags` as `actions.tsv` writes them, the byte's low four bits
+  (`ABILITY_KIND_MASK`, `enum AbilityKind`). The **effect kind** is a
+  different number, in `actflags.tsv`, that picks the animation
+  (`enum BattleFxKind`, in [Battle effects](../effect/README.md)).
+- **power**: how strong an ability is, the `power` column of `actions.tsv`:
+  Quake's is 12 and Avalanche's 160. What it counts depends on the ability
+  kind ([below](#what-is-an-abilitys-power)). A unit's **Power** and
+  **Resist**, capitalized as the status screen writes them, are a different
+  pair of numbers, one pair for each element (`BattleUnit.element`).
+- **added effect**: what an ability does besides its damage or healing, such
+  as Sleep's sleep or Impact's raised Attack: the `effect` column of
+  `actions.tsv` (`enum AbilityEffect`,
+  [below](#what-does-an-added-effect-do)).
+- **element level**: the Lv the status screen shows under each element icon
+  (`Unit_GetElementLevel`). A character's Power and Resist start from it, and
+  the gap between two units' levels moves the chance of an added effect.
 - **place** and **place code**: where a unit stands in its side's line-up
   (`BattleWork.partyUnits` or `enemyIds`). A command aims at a place code: the
   place plus `PLACE_PARTY` for the party or `PLACE_ENEMY` for the enemies.
@@ -180,88 +195,292 @@ works in a battle the party can't run from (`BATTLE_START_NO_ESCAPE`).
 
 ## How an ability resolves
 
-Whatever the player picks in the menu, the battle turns it into an ability id: Attack
-is ability 1, Quake 3, Flint 300. The id is a row number, the same row in
-every ability table, so any move can be followed from the menu to the damage
-it does by reading its rows. Quake, for example, is row 3 of
-`games/tbs/src/game/actions.tsv`. It aims at foes (`target_mode` 1), strikes
-with Venus (`element` 0), reaches the aimed enemy and one either side
-(`range` 2), costs 4 PP and has a `power` of 12. Its `flags` say it can be used in battle (the top bit) and, in the low four
-bits, that it's kind 5, Psynergy damage; `actions.tsv` writes them as `0x85`.
+[Battle](../../battle.md) follows Isaac's Quake through a turn. Underneath,
+whatever the player picks becomes an ability id (Attack is ability 1, Quake 3,
+Cure 90, Flint 300), and the id picks a row in each of three tables:
+`games/tbs/src/game/actions.tsv` (`struct BattleAct`) says what the ability
+does, `actflags.tsv` (`gBattle_ActionFlags`) picks the animation, and
+`actstat.tsv` (`gBattle_ActionStatus`) can choose how the battle shows it.
 
-1. **The command picks the id** (`BattleCommand_BuildPlan`, `plan.c`):
-   - **Attack** (`CMD_ATTACK`) is ability 1, unless the equipped weapon
-     unleashes (`RollWeaponUnleashFar`). Then the weapon's row of `items.tsv`
-     gives the ability in `unleash_action`, at a chance of `unleash_chance`
-     times 5 percent plus the equipment's unleash bonus.
-   - **Psynergy** (`CMD_PSYNERGY`) is the ability chosen in the menu. Its
-     `pp_cost` is paid here, and only when the cast goes ahead: a sealed
-     caster, or one short of PP, pays nothing.
-   - **Djinn** (`CMD_DJINN`): `Djinn_GetAbilityIdFar(element, index)` reads
-     the Djinni's row of `games/tbs/src/game/djinn.tsv` (20 rows to an
-     element, Venus first) and returns its `ability` column, which is
-     300 + 20 × element + index. Only a set Djinni is unleashed, and it then
-     goes on standby. One on standby is set again instead, and one still
-     recovering says so.
-   - **Items** (`CMD_ITEM`): the item's row of
-     `games/tbs/src/game/items.tsv` gives the ability in `action_id`. An item
-     with none (0), or a broken one, makes the user defend. Its `use_type`
-     says what using it costs: 1 one is used up, 2 it may break, 4 it leaves
-     an Empty Bottle (`ITEM_USE_` in `battle_internal.h`); 3 is an item that
-     teaches its ability while it's equipped (`../game/game/levels.c`).
-   - **Summons** (`CMD_SUMMON`): the summon's row of
-     `games/tbs/src/game/summons.tsv` gives the ability, once enough Djinn of
-     each element are on standby. The plan then marks the Djinn it uses.
-   - **Enemies** (`CMD_ABILITY`) use one of `action0` to `action7` in their
-     row of `games/tbs/src/game/enemies.tsv`, chosen by `enemy_ai.c` as
-     described above.
-2. **The plan reads the ability's rows.** `BattleActGet` returns its row of
-   `actions.tsv` as a `struct BattleAct`: the `element` it strikes with (4
-   for none; Attack takes the weapon's, and an enemy's attack its own), the
-   `effect` that may add a second or third blow or a critical hit, its
-   `range` and its `power`. A `range` of 1 is the aimed unit alone, each step
-   more adds one unit on either side, and 255 reaches the whole side. The
-   ability's row of `actflags.tsv` (`gBattle_ActionFlags`) chooses the effect
-   drawn (`../effect`), and `actstat.tsv` (`gBattle_ActionStatus`) how the
-   outcome is staged.
-3. **Each target takes it** in `BattleTargetExec` (`target_exec.c`). First
-   the ability's added `effect` is rolled (`BattleHitCheck`), and then its
-   kind picks the formula:
+In `actions.tsv`, Quake's row reads `target_mode` 1 (`TARGET_MODE_FOES`),
+`element` 0 (`ELEMENT_VENUS`), `range` 2, `pp_cost` 4 and `power` 12. Its
+`flags` are written `0x85`, which is `0x80` plus 5: the `0x80`
+(`ACTION_USABLE_IN_BATTLE`) lets it be used in battle, and the 5 is its
+ability kind. Those two numbers, the power and the ability kind, decide what
+each target takes.
 
-   | Kind | Amount |
-   | --- | --- |
-   | 3 attack | `BattleAtkCalc(attack, defense, power, element bonus)` |
-   | 4 multiplied attack | `BattleAtkCalc(attack, defense, 0, element bonus) * power / 10` |
-   | 5 damage, 6 unleashed damage, 8 summon | `BattlePowerCalc(power, element bonus, 256)`; a summon first adds 3 percent of the target's maximum HP to the power for each Djinni it costs, so 3 to 12 percent |
-   | 2 effect | `BattlePowerCalc` as above, only when the effect lands |
-   | 10 PP damage | `BattlePowerCalc` as above, taken from PP |
-   | 1 heal HP, 11 heal PP | `BattleRecoveryCalc` from the healer's element power |
+### What is an ability's power?
 
-   Kinds 0, 7 and 9 apply no power at all. Kind 0 is only the 128 unused
-   rows named `?` (row 0, Nothing, is kind 5). Kind 7 is Granite, Flash and
-   Kite, whose effect is all they do. Kind 9 covers the field Psynergy,
-   Defend, Total Defense, Stand Ready, Flee, the enemies' commands, and the
-   stat-raising items: Power Bread, Cookie, Apple, Hard Nut, Mint and Lucky
-   Pepper.
+It's the number in the ability's row that says how strong it is. It's only
+where the arithmetic starts, though: the caster's and the target's own numbers
+move the result from there. Those are Power and Resist. Every unit has one of
+each in every element, and the status screen lists them under the four
+element icons (`BattleUnit.element`, drawn by `../menu/menu/status.c`, and in
+battle by `../window/battle_command/status.c`). It's an even match when the
+caster's Power in the ability's element equals the target's Resist in it.
 
-The element bonus is the actor's power in the ability's element less the
-target's resistance to it, with an item's user always counted at power 100.
-A miss makes the blow's multiplier 0, and a double or triple blow makes it 2
-or 3. Attacks, HP healing and Psynergy, unleash and summon damage then add a
-random 0 to 3, and a guarding target takes half the damage (Defend, Granite)
-or a tenth (Total Defense, Flash).
+What the power counts depends on the ability kind. For damage, it's what the
+aimed target takes at an even match, before a random 0 to 3 is added: Quake's
+12 is 12 to 15 damage. For healing, it's the HP restored by a healer with 100
+Power in the element, where healing is neither boosted nor cut. For Psynergy
+that strikes like an Attack, such as Ragnarok, it's damage added to a plain
+blow, and for an ability that multiplies the blow, such as the Djinni Flint,
+it's the multiplier in tenths: Flint's 16 makes the blow 1.6 times as hard.
 
-Everything except an attack falls off with the target's distance from the
-aimed one, in steps of one unit, using the tables in `battle_calc.s`. An
-ability that reaches the whole side treats every target as the aimed one.
-The figures are percentages:
+### What is an ability kind?
+
+It's the number that tells the battle which formula to use: whether the
+ability hurts, heals, strikes like an Attack or takes PP. `BattleTargetExec`
+([`battle/target_exec.c`](battle/target_exec.c)) switches on it for each
+target, once the added effect has been rolled. Quake's ability kind, 5
+(`ABILITY_KIND_DAMAGE`), is plain damage from the power and the element, and
+most of the Psynergy that hurts has it, Avalanche among them.
+
+| Ability kind | What the target takes | What the power is |
+| --- | --- | --- |
+| 1 `ABILITY_KIND_HEAL_HP`: Cure, Ply, Herb | HP back, from the power and the healer's Power in the element (`BattleRecoveryCalc`) | the HP healed at Power 100 |
+| 2 `ABILITY_KIND_EFFECT`: Sleep, Impair, Restore, Drain | its added effect; most have a power of 0 and do nothing else, and Drain and a few others also do damage from the power and the element, but only when the effect lands | the damage at an even match |
+| 3 `ABILITY_KIND_ATTACK`: Attack, Ragnarok | a blow, the actor's Attack against the target's Defense, with the power added (`BattleAtkCalc`) | damage added to a plain blow |
+| 4 `ABILITY_KIND_ATTACK_MULTIPLIED`: Flint, Quick Strike | a plain blow (`BattleAtkCalc`) times the power, in tenths | the blow's multiplier, in tenths |
+| 5 `ABILITY_KIND_DAMAGE`: Quake, Avalanche | damage from the power, scaled by the caster's Power against the target's Resist (`BattlePowerCalc`) | the damage at an even match |
+| 6 `ABILITY_KIND_UNLEASHED_DAMAGE`: Fire Blessing, War Cry | as for 5, falling off faster with distance: 100, 50, then 30 percent | the damage at an even match |
+| 8 `ABILITY_KIND_SUMMON`: Ramses, Judgment | as for 5, once a share of the target's maximum HP is added to the power (3 percent for each Djinni the summon uses, so 3 to 12), falling off by its own table: 100, 70, then 40 percent | the damage at an even match, before that share |
+| 10 `ABILITY_KIND_PP_DAMAGE`: Crazy Voice | as for 5, taken from PP, falling off as kind 6 does and with no random added | the PP lost at an even match |
+| 11 `ABILITY_KIND_HEAL_PP`: Psy Crystal, Adept Ring | PP back, as for 1 (Ember is ability kind 11 too, but its power is 0: its PP comes from its added effect) | the PP restored at Power 100 |
+
+HP healing, attacks and HP damage then add a random 0 to 3; an added effect's
+damage, PP damage and PP healing don't. Three ability kinds apply no power at
+all, and `enum AbilityKind` gives them no name: 0, which only the 128 unused
+rows named `?` have (row 0, Nothing, is a 5); 7, for Granite, Flash and Kite,
+whose added effect is all they do; and 9, for the field Psynergy, Defend,
+Total Defense, Stand Ready, Flee, the enemies' commands such as Threaten and
+Ally Search, and the stat-raising items: Power Bread, Cookie, Apple, Hard Nut,
+Mint and Lucky Pepper.
+
+Ability kind 6 belongs to the enemies' Blessings, Deadly Gas, Sonic Wave,
+Shriek, War Cry, howls and Wing Beats, and it's why most of them are announced
+as `<unit> unleashes <ability>!`
+([below](#which-effect-plays-and-how-is-it-staged)). A weapon's unleash is
+something else: it replaces Attack with an ability of the weapon's own, and
+nearly all of those are attacks of ability kind 3.
+
+### How does a command become an ability id?
+
+`BattleCommand_BuildPlan` ([`battle/plan.c`](battle/plan.c)) works it out
+from the command the player or the enemy chose:
+
+- **Attack** (`CMD_ATTACK`) is ability 1, unless the equipped weapon
+  unleashes (`RollWeaponUnleashFar`). Then the weapon's row of `items.tsv`
+  gives the ability in `unleash_action`, at a chance of `unleash_chance`
+  times 5 percent plus the equipment's unleash bonus.
+- **Psynergy** (`CMD_PSYNERGY`) is the ability chosen in the menu. Its
+  `pp_cost` is paid here, and only when the cast goes ahead: a sealed caster,
+  or one short of PP, pays nothing.
+- **Djinn** (`CMD_DJINN`): `Djinn_GetAbilityIdFar(element, index)` reads the
+  Djinni's row of `games/tbs/src/game/djinn.tsv` (20 rows to an element,
+  Venus first) and returns its `ability` column, which is
+  300 + 20 × element + index. Only a set Djinni is unleashed, and it then
+  goes on standby. One on standby is set again instead, and one still
+  recovering says so.
+- **Items** (`CMD_ITEM`): the item's row of `games/tbs/src/game/items.tsv`
+  gives the ability in `action_id`. An item with none (0), or a broken one,
+  makes the user defend. Its `use_type` says what using it costs: 1
+  (`ITEM_USE_CONSUMED`) uses one up, 2 (`ITEM_USE_MAY_BREAK`) breaks it one
+  time in eight, and 4 (`ITEM_USE_EMPTIES`) leaves an Empty Bottle. 3
+  (`ITEM_USE_TEACHES`) marks equipment that teaches its ability while it's
+  worn (`../game/game/levels.c`).
+- **Summons** (`CMD_SUMMON`): the summon's row of
+  `games/tbs/src/game/summons.tsv` gives the ability, once enough Djinn of
+  each element are on standby. The plan then marks the Djinn it uses.
+- **Enemies** (`CMD_ABILITY`) use one of `action0` to `action7` in their row
+  of `games/tbs/src/game/enemies.tsv`, chosen by `enemy_ai.c` as described
+  above.
+
+The plan takes the element an ability strikes with from its row's `element`
+(4, `ELEMENT_NONE`, is none), except that a plain Attack strikes with the
+weapon's element, and an enemy's attack with its own.
+
+### How far does an ability reach?
+
+When the player aims an ability, a cursor sits on the aimed unit and smaller
+markers on the others its range covers (`BattleTarget_RunSelection`,
+`../window/battle_command/targets.c`). The range counts places in the side's
+line-up: 1 is the aimed unit alone, each step more adds a place on either
+side, and 255 (`ABILITY_RANGE_ALL`) is the whole side, with every target
+treated as the aimed one. `BattlePlan_SetTargets` (`plan.c`) walks those
+places in order, passing over a place whose unit has left the battle and a
+downed unit unless the ability revives, and keeps each target's distance
+from the aimed place. A downed unit still holds its place, so it still counts
+as a step. If nobody in range is left, the actor defends instead
+(`<unit> is defending!`).
+
+Avalanche (ability 166) has a range of 3: the aimed foe and two places on either
+side, five in all, where Quake's range of 2 reaches three.
+
+![Isaac casts Avalanche at Ivan, Garet and Mia: the ground swells under them, a narrow wall of rock rises with rocks tumbling up it and widens until it fills the screen, and Ivan takes 203 damage, Garet 160 and Mia 120.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
+
+Like the Quake recording in [Battle](../../battle.md), this one turns the
+ability on Isaac's own companions. Isaac aims at Ivan, with nobody on Ivan's
+other side, so Avalanche catches Garet one place along and Mia two, where
+Quake stopped at Garet. Ivan takes 203 damage, Garet 160 and Mia 120, and
+160 and 120 are 80 and 60 percent of about 200, as they'd be if the three had
+much the same Venus Resist. Everything but an attack
+falls off like that with the target's distance from the aimed one, by the
+tables in `battle_calc.s`. The figures are percentages:
 
 | Steps from the aimed unit | 0 | 1 | 2 | 3 | 4 | 5 |
 | --- | --- | --- | --- | --- | --- | --- |
-| Psynergy damage (kind 5), HP and PP healing (1, 11) | 100 | 80 | 60 | 40 | 20 | 10 |
-| Summon damage (8) | 100 | 70 | 40 | 30 | 20 | 10 |
-| Unleashed damage (6), effect damage (2), PP damage (10) | 100 | 50 | 30 | 10 | 10 | 10 |
+| Psynergy damage and HP and PP healing (ability kinds 5, 1 and 11) | 100 | 80 | 60 | 40 | 20 | 10 |
+| Summon damage (ability kind 8) | 100 | 70 | 40 | 30 | 20 | 10 |
+| An enemy's unleashed damage, an added effect's damage and PP damage (ability kinds 6, 2 and 10) | 100 | 50 | 30 | 10 | 10 | 10 |
 | The added effect's chance | 100 | 60 | 30 | 30 | 30 | 30 |
+
+### How does the element change the amount?
+
+The element bonus is the actor's Power in the ability's element less the
+target's Resist in it. An item's user always counts as Power 100, whatever
+the item (the `CMD_ITEM` test in `BattleTargetExec`). The element multiplier
+(`Battle_GetElementMultiplier`, read from the five points of
+`gElement_PowerResistCurve` in `../game/element_curve.s`) turns the bonus into
+the number the damage is multiplied by. It's 1 at an even match and moves half
+a percent for every point of bonus, from 0 at 200 points behind to 2 at 200
+ahead. Attacks feel the element at half strength, from 0.5 to 1.5. Healing
+goes by the healer's own Power instead, with no Resist in it: one percent more
+or less for each point above or below 100, from nothing at 0 to double at 200.
+An ability with no element heals as if at 100. The game counts these
+multipliers in 256ths, so 1 is 256 (`FULL_RATE`), and every result rounds
+down.
+
+A character's Power and Resist start from its element level in each element
+(`Unit_CalcBaseElements`, `../game/game/classes.c`):
+`gElement_PowerResistByLevel` runs from Power 75 and Resist 85 at level 0 to
+150 and 165 at level 15. An enemy's come from its element preset
+(`gEnemy_ElementPresetTable`). `UnitCalc` adds the equipment's Power and
+Resist, 20 Resist in every element for each stage of Resistance that Ward or
+Resist has raised (or Weaken or Enfeeble lowered), and a summon's
+boost: at the end of the summoner's turn, the element it spent the most Djinn
+of gains 10, 30, 60 or 100 Power for one to four Djinn, and the player reads
+`<unit>'s Earth Power rises by <amount>!` or its Water, Fire or Wind twin
+(`BattleUnit_ProcessTurnEnd`). Everything stays between 0 and 200.
+
+For an attack and for ability kinds 5, 6 and 8, the damage message tells the
+player how the element fared. It goes by the target's base Resist, before
+equipment and stages (`baseElement`): `<unit> takes <damage> damage.` when
+the ability's element is the one the target resists best, `damage!!!` when
+it's the one it resists worst, and `damage!` otherwise, and a target that
+resists all four alike gets `!!!`. Garet's line ends `!!!` in the Avalanche
+recording, so there's no element he resists less than Venus.
+
+A Djinni that strikes the element a target resists worst may also earn the
+Djinn bonus: at a chance of the user's Power less the target's Resist, plus
+30 percent, an enemy it fells gives more coins and experience and a better
+chance of its item (`BattleEnemy_RecordDefeat`).
+
+### How much do Avalanche, Cure and Ragnarok do?
+
+Avalanche has a power of 160 and ability kind 5. At an even match the
+multiplier is 1, so `BattlePowerCalc` gives 160: the aimed foe takes 160 to
+163 once the random 0 to 3 is added, a foe one place away 128 to 131, and one
+two places away 96 to 99. With a 20-point lead, Isaac's Venus Power at 120
+against a Venus Resist of 100, the multiplier is about 1.1 (281 in 256ths:
+256, plus 1.28 for each of the 20 points, rounded down), and the aimed foe
+takes 175 to 178, then 140 to 143 and 105 to 108. A
+foe that's defending takes half of that after the random, 87 to 89 for the
+aimed one (`REDUCE_BY_GUARD`). Ivan's 203 in the recording is about a quarter
+more than the even match's 160, which puts Isaac's Venus Power there 50 to 55
+ahead of Ivan's Venus Resist.
+
+Cure, ability 90, has a power of 70 and ability kind 1. A healer with 100
+Venus Power restores 70 to 73 HP, and one with 120 restores 83 to 86, the
+multiplier then being 307 in 256ths. Neither goes past the target's maximum
+HP, where the message becomes `<unit>'s HP is fully restored!`. The Healing
+Ring uses the same row (its `action_id` in `items.tsv` is 90), and from the
+ring it's always 70 to 73, whoever holds it, because an item's user counts as
+Power 100.
+
+![Isaac casts Cure on Ivan beside him: a ring of light rises from the ground round Ivan and closes in, Ivan flashes white, and he recovers 99 HP.](https://alchemy.pascalpixel.com/abilities/cure.gif)
+
+Ivan recovers 99 HP in the recording, so Isaac's Venus Power there is
+between 138 and 142.
+
+Ragnarok, ability 192, is Psynergy that strikes as an attack: ability kind 3
+with a power of 35. Take an actor with Attack 100 against a Defense of 60, at
+an even match. A plain attack, whose power is 0, deals half of Attack less
+Defense, 20, so 20 to 23 with the random. Ragnarok adds twice its power
+before the halving, so it adds its 35 in full: 55 to 58. The element works at
+half strength in an attack, so a 20-point lead in Venus adds about 5 percent,
+where it adds 10 percent to Avalanche. Because it costs PP, it's staged as a cast
+(`Ability_IsPsynergy`), not as a run-up and a blow.
+
+![Isaac casts Ragnarok at Ivan: a huge flaming sword swings down onto him and bursts into a blaze of light, and Ivan takes 127 damage.](https://alchemy.pascalpixel.com/abilities/ragnarok.gif)
+
+Flint, Venus's first Djinni (ability 300), multiplies the same blow instead:
+ability kind 4 with a power of 16, so the plain 20 becomes 32, and 32 to 35
+with the random.
+
+A plain Attack has rolls of its own, made as the plan is built. It misses one
+time in 32, and a deluded attacker misses about three times in five as well
+(153 in 256); the player then reads `<unit> nimbly dodges the blow!`. A target
+that can't act (asleep, stunned, charmed, held by Ground, or down) is never
+missed. A critical hit comes one time in 32, or failing that at half the
+percentage the equipment adds to its unleash chance, and adds a quarter to the
+damage, then the target's level divided by 5, plus 6.
+
+An ability's added effect can make it strike twice or three times instead, on
+every target at once: about three times in five (153 in 256) for Gust, Rapid
+Smash, Slice and Sonic Smash, and one time in four for Flying Attack, Double
+Fang, Twin Beaks and Swift Strike. Sonic Smash and Swift Strike are the ones
+that strike three times. The code also has added effects for a double or
+triple blow one time in eight, and for an ability's own critical hit, half as
+much again, but no ability has any of them.
+
+### Which effect plays, and how is it staged?
+
+`actflags.tsv` picks the animation. Avalanche's `effect` there is `0x2003`:
+the last three digits, `003`, are the effect kind, 3 (`BATTLE_FX_GAIA`), and
+the `2` in front of them is the variant. `BattleFx_RunGaia`
+([`../effect/parts/gaia.c`](../effect/parts/gaia.c)) plays variant 2 as its
+widest wall of rock, the one Grand Gaia has too. Cure's effect kind is
+`BATTLE_FX_CURE` and Ragnarok's `BATTLE_FX_RAGNAROK`.
+[Battle effects](../effect/README.md#how-a-move-picks-its-effect) explains
+the rest of that number, the variants and every effect family.
+
+Before the effect plays, the battle sets the stage: where the camera turns,
+who stays on the field, and whether the actor runs up or stands and casts.
+`actstat.tsv` can choose that staging (`enum BattlePlanStaging` in
+`battle_internal.h`). Avalanche's row is 9, `PLAN_SHOW_FULL_SCREEN`, which only
+seven abilities have: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide,
+Avalanche and the summon Procne. `BattlePresentation_RunUnitTransition`
+([`battle/staging.c`](battle/staging.c)) stages them. The camera turns, and
+the actor raises its hand and glows in its element while the units of the
+side that isn't targeted fade out. Then only the actor and the target side's
+units stay on the field while the effect plays and the events run, and at the
+end everyone fades back in.
+
+Flint's row is 2, `PLAN_SHOW_ATTACK`, as are most weapon unleashes' and
+several Djinn's: the actor runs up and strikes. Seven weapon unleashes, such
+as Blizzard and Titan Blade, have 8, `PLAN_SHOW_ENEMY_CAST`, despite its name.
+Most rows are 0, and then the plan decides. An ability that costs PP, or Psy
+Drain, is a cast (`PLAN_SHOW_CAST`), as Quake, Cure and Ragnarok are. Another
+with an effect to draw is a cast too, or `PLAN_SHOW_ENEMY_CAST` for an enemy,
+and one with nothing to draw shows only its messages (`PLAN_SHOW_MESSAGES`).
+Using an item has staging of its own (`PLAN_SHOW_ITEM`), unless the item's
+ability is a summon or full-screen.
+
+The announcement comes from the command, before any of this:
+`<unit> attacks!` for a plain Attack (`MsgActorAttacks`),
+`<unit> casts <ability>!` for Psynergy (`MsgActorCasts`),
+`<unit> unleashes <ability>!` for a Djinni (`MsgActorUnleashesDjinn`),
+`<unit> summons <ability>!` for a summon (`MsgActorSummons`),
+`<unit> uses <item>!` for an item, or `<unit> raises the <item>!` for one the
+user keeps, such as a weapon or a ring, and
+`<unit>'s <weapon> lets out a howl!` followed by the ability's name for a
+weapon's unleash. An enemy's ability is `<unit> uses <ability>!`, or
+`<unit> unleashes <ability>!` for ability kind 6, and a few moves have
+wordings of their own, such as Sonic Wave's `<unit> emits ultrasonic waves!`
+and the howls' `<unit> lets out a <ability>!`.
+
+### Where are the formulas?
 
 The battle code calls the formulas by their far-call names, which
 `games/tbs/src/system/far_call/GAME.S` exports for the functions in
@@ -269,37 +488,119 @@ The battle code calls the formulas by their far-call names, which
 
 | Called as | Function | What it works out |
 | --- | --- | --- |
-| `BattleAtkCalc` | `Battle_CalcAttackDamage` | Attack less Defense (never below 0) plus twice the power, the whole sum halved, then scaled by the element multiplier at half strength |
-| `BattlePowerCalc` | `Battle_CalcPsynergyPower` | the power times the element multiplier |
-| `BattleRecoveryCalc` | `Battle_CalcRecovery` | the power times the multiplier for the healer's element power |
-| `BattleHitCheck` | `BattleFx_RollSuccess` | whether an effect takes hold: its base rate, the element lead, luck and weakness |
+| `BattleAtkCalc` | `Battle_CalcAttackDamage` | Attack less Defense (never below 0) plus twice the ability's power, the whole sum halved, then scaled by the element multiplier at half strength |
+| `BattlePowerCalc` | `Battle_CalcPsynergyPower` | the ability's power times the element multiplier |
+| `BattleRecoveryCalc` | `Battle_CalcRecovery` | the ability's power times the multiplier for the healer's Power |
+| `BattleHitCheck` | `BattleFx_RollSuccess` | whether an added effect takes hold: its base rate, the element levels, Luck and weakness |
 | `RollWeaponUnleashFar` | `RollWeaponUnleash` | whether the weapon unleashes |
 
-The element multiplier (`Battle_GetElementMultiplier`) is where elements
-matter. An even match is 1. Each point the actor's power is ahead of the
-target's resistance adds half a percent, up to 2 at 200 points ahead, and
-each point behind takes half a percent off, down to 0 at 200 behind. Attacks
-feel the element at half strength, from 0.5 to 1.5. Healing goes by the
-healer's own element power instead: one percent more or less for each point
-above or below 100, from nothing at 0 to double at 200. An item, or an
-ability with no element, heals as if at 100.
+## What does an added effect do?
 
-An added effect's chance starts from its base rate (Sleep 45 percent, Poison
-55, Condemn's instant death 20 and so on, in `BattleFx_GetBaseSuccessRate`),
-gains 3 for each element level the caster is ahead of the target, loses 3
-for every two points of the target's luck, and gains 25 against a weakness.
-The distance table above then scales it. Quartz and Dew revive at a fixed 60
-and 90 percent, and an effect with no rate of its own always works; levels,
-luck and weaknesses don't change those. Luff gets three tries.
+Besides its damage or healing, an ability can carry one added effect: Sleep
+puts its target to sleep, Impact raises an ally's Attack, Drain hands the HP
+it took back to its caster. It's the `effect` column of `actions.tsv`
+(`enum AbilityEffect` in
+[`battle_unit.h`](../../include/battle/battle_unit.h), whose notes name the
+abilities that have each one). `BattleTargetExec` handles it in four steps for
+each target, and its case comments give each effect's detail.
 
-A plain attack can miss: one time in 32, and a deluded attacker also misses
-153 times in 256. A target that can't act (asleep, stunned, charmed, held by
-Ground, or down) is never missed. A critical hit comes one time in 32, or
-else at the equipment's unleash bonus in 200ths, and adds a quarter to the
-damage, then the target's level divided by 5, plus 6. An ability whose effect
-is a critical hit lands one somewhere between 1 time in 64 and 1 in 4, for
-half as much again before the same addition. An ability's double or triple
-blow comes 153, 32 or 64 times in 256, depending on its effect.
+### Does it land?
+
+First `BattleHitCheck` (`BattleFx_RollSuccess`, in
+[`../game/game/battle_calc.c`](../game/game/battle_calc.c)) rolls whether the
+effect takes hold. It fails at once when there's nothing for it to do: a
+revival on a unit still standing, Cure Poison on one that isn't poisoned,
+Restore or Tonic on a unit with nothing to cure, a curse on a unit whose
+countdown is already at its last turn. Otherwise the chance starts from the
+effect's base rate (Sleep 45 percent, Taint 55, Condemn's instant death 20
+and so on, in `BattleFx_GetBaseSuccessRate`), gains 3 for each element level
+the caster is ahead of the target, loses 3 for every two points of the
+target's Luck, and gains 25 when the effect is one of the three weaknesses
+the target's class lists, or an enemy's `weak_effect0` to `weak_effect2` in
+`enemies.tsv`.
+The distance table above then scales it, so a Sleep with a 60 percent chance
+on the aimed foe has 36 on its neighbours. Quartz and Dew revive at a fixed 60
+and 90 percent, and an effect with no rate of its own, such as a raised stat
+or no effect at all, always works on the aimed target, though the distance
+table still scales it for its neighbours; levels, Luck and weaknesses don't
+change those. Luff gets three tries.
+
+Three effects are rolled earlier, as the plan is built (`plan.c`): a double
+or triple blow, an ability's critical hit, and Annihilation's instant death,
+which rolls at full rate whatever the distance so that its effect can show
+whether it landed.
+
+### Which effects change the blow?
+
+Once an effect has landed, a few of them change the damage step before it
+runs. Torch's attack counts only half the target's Defense, and Severe Blow
+and Thrash leave the target 1 HP at most. Condemn and the other instant
+deaths skip the damage altogether, Dynamite and Mortal Blow take their user
+out of the battle, and Psy Drain becomes PP damage (ability kind 10), or
+misses a target with no PP. Ground holds a target only while it still has an
+action waiting in the round's list: `BattlePresentation_DispatchAction` clears
+each entry as it plays it, so a target that has already acted is left alone,
+and the player reads `But it has no effect on <unit>!`.
+
+An enemy's Ally Search, Search for Help and Speed Surge are handled before the
+damage, too. Ally Search and Search for Help bring a new enemy into an empty place when a
+free unit id and room among the enemy sprites allow it (`<unit> appears!!`),
+and otherwise the player reads `But no one came!`. Speed Surge splits the
+enemy instead (`It split off into <unit>!`), or reads `It failed to divide!`.
+
+### What does it do once it lands?
+
+After the damage or healing, the effect applies if it landed and the target is
+still standing. A revival needs the target down instead, and a drain still
+works on a target its own damage has just felled (`BattleEffectDeadCheck`).
+
+Stat changes move Attack, Defense or Resistance a stage or two, between -4 and
+4, for seven turns. A stage is an eighth of Attack or Defense, or 20 Resist in
+every element, and the number in the message is how far the stat really
+moved, so a stat already at its limit shows 0. Zephyr and Vine set Agility
+outright instead, doubled or halved, for five turns.
+
+The statuses that Delude, Confuse, Charm, Paralyze and Sleep cause last seven
+turns and may wear off sooner, and so does Bind's seal on Psynergy. Luff's
+seal lasts two turns that never end early. Taint's poison does nothing to a
+unit that's already poisoned, and the deadly poison of the ability Poison
+replaces plain poison but does nothing to a unit that has it already. Curse
+calls the Grim Reaper, who takes the target when the seven-turn countdown
+runs out, and each later curse brings it a turn closer.
+
+Cure Poison and Antidote clear poison. Restore and Elixir clear delusion,
+stun, sleep, the Psynergy seal and the Grim Reaper's countdown, but not poison
+or an evil spirit. Tonic clears all of those, poison and the evil spirit
+included, but it doesn't clear confusion or charm any more than Restore does:
+those wear off on their own or end when the unit goes down. XXX: likely an
+oversight, because the roll that decides whether Restore or Tonic lands
+counts confusion and charm, so either can land on a unit whose only trouble is
+one of those and change nothing. Revive and the Water of Life bring a downed
+unit back with all its HP, Quartz with half and Dew with 80 percent. Fizz and
+Spritz heal 60 and 30 percent of the maximum HP, and Ember 7 percent of the
+maximum PP.
+
+Drain gives its caster all the HP the target lost, Sap half, Psy Drain the PP
+it took, and Psy Leech a tenth of the damage as PP, as far as the target has
+it. Defend and Granite halve the damage the target takes for the rest of the
+round, and Total Defense and Flash cut it to a tenth; the message
+(`A protective aura encircles <unit>!`) shows either way, but a guard is never
+lowered. Break undoes every raised stat stage, and the summon boost too, and
+the player reads `<unit>'s strength returns to normal!`. Kite lets the target
+act twice next turn, Ground costs it its next action, and Contain, Threaten
+and Tremble do nothing beyond their announcement. Haunt sets an evil spirit
+on the target (`An evil spirit grips <unit>!`), which comes into play when the
+haunted unit acts.
+
+### What happens after each target is hit?
+
+Two more rolls follow. Damage wakes a sleeping target one time in four,
+unless it fell asleep this turn (`<unit> wakes from slumber!`). And when the
+actor is haunted, one time in four the evil spirit takes a quarter of the
+damage the actor has just dealt that target, at least 1. The shares add up
+across the targets (`BattlePlan.hauntDamage`), and at the end of its turn the
+actor takes them all, as `A curse does <damage> damage to <unit>!`
+(`BattleUnit_ProcessTurnEnd`).
 
 ## Why it works this way
 

@@ -1,5 +1,8 @@
 # The Broken Seal
 
+In The Broken Seal, Isaac and Garet leave their village, Vale, to chase the
+stolen Elemental Stars, and the game ends as Venus Lighthouse's beacon is lit.
+
 ![The Broken Seal's title screen: the sun rises over Mt. Aleph and the Golden Sun logo comes up](https://alchemy.pascalpixel.com/story/title.gif)
 
 ## One village, two ways
@@ -77,12 +80,11 @@ way between two places has a name like these, in
 - [Places](https://alchemy.pascalpixel.com/tbs/places): every town and dungeon
   in story order, who stands where, and what happens when the player talks to
   someone or searches a spot.
-- [Abilities](https://alchemy.pascalpixel.com/tbs/abilities): every ability in
-  battle, from Psynergy and Djinn to items and enemy attacks, with a recording
-  of each cast beside the code that draws it.
 - [Battle](https://alchemy.pascalpixel.com/tbs/battle): how a battle runs from
-  the first menu to the spoils, how damage and healing are worked out, and how
-  the effects are drawn.
+  the first menu to the spoils, how
+  [an ability's damage and healing](src/battle/README.md#how-an-ability-resolves)
+  are worked out, and how [the effects](src/effect/README.md) of Psynergy,
+  Djinn, summons, items and enemy attacks are drawn.
 - [World](https://alchemy.pascalpixel.com/tbs/world): walking around towns,
   dungeons and the world map, talking to people, and pushing things with
   Psynergy.

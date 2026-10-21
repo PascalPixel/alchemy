@@ -10,7 +10,7 @@
 // fewer digits.
 //
 // The highlight over a row of the Djinn list, in tiles.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define DJINN_CURSOR_WIDTH 6
 #else
 #define DJINN_CURSOR_WIDTH 5
@@ -24,7 +24,7 @@
 
 // The stat preview's columns; an arrow stands at x (in tiles) or, in the
 // international editions, at the pixel column iconX the preview sets.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_DIGITS 3
 #define DJINN_PREVIEW_CURRENT_X 48
 #define DJINN_PREVIEW_MAX_X 80
@@ -1129,7 +1129,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (selectedRow != -1) {
         UiText_DrawCharacterAtOffsetFar(MsgUnleashEffect, menu->listWindow, 0,
                                         80);
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
         UiWindow_ClearInteriorTilesFar(menu->listWindow, 0, 96, 224, 104);
         UiText_DrawCharacterAtOffsetFar(
             DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) + MsgDjinnEffect,
@@ -1788,7 +1788,7 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
 
     if (page == 0) {
       s32 column;
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
       s32 iconX;
 #endif
       s32 px;
@@ -1810,7 +1810,7 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
         UiWindow_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030,
                                     column + i * 2 + 1, y + 5, 0);
       }
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
       iconX = x * 8 + 70;
 #endif
       if (unit->hp != originalUnit->hp) {

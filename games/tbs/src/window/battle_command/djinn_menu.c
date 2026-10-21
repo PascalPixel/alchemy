@@ -6,7 +6,7 @@
 
 // A recovering Djinni's turns left: its digits and their x in the list, in
 // pixels.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define TURNS_DIGITS 1
 #define TURNS_X 48
 #else

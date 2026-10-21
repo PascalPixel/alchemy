@@ -9,7 +9,7 @@
 // The status panel's name and ailment column starts further left in the
 // international editions, whose ailment labels are longer, and so does
 // "Can't equip" (MsgCannotEquip).
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_PANEL_TEXT_X 32
 #define STATUS_PANEL_CANNOT_EQUIP_X 0
 #else
@@ -831,7 +831,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   }
   RenderOutput_RedrawSavedRectFar(window);
   RenderOutput_ClearListFar((void *)window);
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
   if (y == -1)
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
   else
@@ -1225,7 +1225,7 @@ void UiText_DrawWorkValueWithLabel(struct UiWindow *window) {
   UiText_DrawNumberAtOffsetFar(gGameState.coins, 7, window, 8, 0);
   UiText_DrawCharacterAtOffsetFar(MsgCoinsLabel, window, 64, 0);
   // Only the Japanese editions draw a vertical divider at tile column 12.
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
   UiWindow_DrawDividerLineFar(window, 12, 0, 12, 2);
 #endif
 }

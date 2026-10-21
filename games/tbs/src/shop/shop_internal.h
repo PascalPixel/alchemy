@@ -125,7 +125,7 @@ enum {
 // Outside Japan the coins window is a tile wider, and every counter's item
 // description (Shop_DrawMsg, buy.c) is drawn as tiles
 // (UiText_DrawCharacterAtOffsetFar) rather than into a text canvas.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_MONEY_WINDOW_WIDTH 12
 #define SHOP_DRAW_MESSAGE UiText_DrawCharacterAtOffsetFar
 #else
@@ -147,7 +147,7 @@ enum {
 
 // The item picker's small window (item_picker.c): two tiles wider, and two
 // further left, outside Japan.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_USE_WINDOW_X 14
 #define SHOP_USE_WINDOW_WIDTH 16
 #else
@@ -157,7 +157,7 @@ enum {
 
 // The x of the note below an item's name, in pixels: buy.c and
 // item_picker.c both draw it.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_ITEM_NOTE_X 0
 #else
 #define SHOP_ITEM_NOTE_X 8

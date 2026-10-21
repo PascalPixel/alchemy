@@ -202,7 +202,7 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
                                           u32 packed);
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags);
 void UiWork_ProcessAll(void);
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 s32 UiText_RenderGlyphPair(s32 code, u32 *out);
 #else
 s32 UiText_RenderGlyphPair(u32 code, u32 *out);

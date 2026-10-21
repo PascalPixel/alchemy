@@ -55,7 +55,7 @@
 // reserve 320 is unknown: nothing in this file writes or reads past 260 in
 // them. ⚓️'s Password Entry buffer, which takes these passwords, is the
 // place to compare.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define CLEAR_PASSWORD_BUFFER_SIZE 320
 #else
 #define CLEAR_PASSWORD_BUFFER_SIZE 260
@@ -104,7 +104,7 @@
 #define CLEAR_HELP_WINDOW_WIDTH 10
 #endif
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define CLEAR_PAGE_LABEL_X 80
 #else
 #define CLEAR_PAGE_LABEL_X 0

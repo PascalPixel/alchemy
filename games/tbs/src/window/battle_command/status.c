@@ -4,7 +4,7 @@
 
 #include "../battle_command_internal.h"
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define OWNER_STATUS_TEXT_MAX 0x80
 #define OWNER_STATUS_VALUE_X 184
 #else

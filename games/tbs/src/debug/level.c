@@ -37,7 +37,7 @@
 // browser's details window is 28 tiles wide rather than 13, and its
 // MsgItemPlainName line is drawn as tiles (UiText_DrawCharacterAtOffset)
 // rather than into the window's canvas (UiText_DrawResource).
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_DEBUG_DETAILS_WIDTH 28
 #define ITEM_DEBUG_DRAW_ITEM_NAME UiText_DrawCharacterAtOffset
 #else
@@ -483,7 +483,7 @@ static void ItemLevel_RunMotionTest(void) {
 }
 #endif
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// Displays the three character-set caption rows in a debug window. Force cast
 /// at ACTOR_GLYPH_BROWSER, outside Japanese. The window is left open.
 static void ItemLevel_ShowGlyphCaptions(void) {

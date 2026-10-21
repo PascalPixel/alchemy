@@ -6,7 +6,7 @@
 
 // The window work's byte that marks a message window busy; it moved when the
 // international editions grew the work.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define WINDOW_WORK_MESSAGE_BUSY 0x12f8
 #else
 #define WINDOW_WORK_MESSAGE_BUSY 0x1188

@@ -70,7 +70,7 @@ UNUSED void Runtime_IdleForever(void) {
   }
 }
 
-#if TBS_PATCH_4
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 
 enum CartridgeLanguage {
   CARTRIDGE_LANGUAGE_ENGLISH,

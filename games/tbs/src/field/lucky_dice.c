@@ -185,7 +185,6 @@ struct LuckyDiceSprites {
   struct UiWindow *helpWindow;     ///< the Throw and Quit buttons
 };
 
-#include "version.h"
 #include "keystate.h"
 #include "../graphics/lucky_dice/tables.h"
 
@@ -548,7 +547,7 @@ void LuckyDice_Run(void) {
         } else {
           resetDice = 1;
           state = LUCKY_DICE_AIM;
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
           window = UiWindow_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
           sprites->helpWindow = window;
           UiText_DrawCharacterAtOffsetFar(MsgLuckyDiceThrow, window, 0, 0);

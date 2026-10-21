@@ -176,7 +176,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 }
 
 // The debug shop sells stock row 1 outside Japan and row 2 in Japan.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_DEBUG_STOCK_ROW 1
 #else
 #define SHOP_DEBUG_STOCK_ROW 2

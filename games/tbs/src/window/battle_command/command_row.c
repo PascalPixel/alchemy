@@ -17,7 +17,7 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
 
 // The tile column where a member's command row ends and its name window
 // begins.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define WINDOW_X 22
 #else
 #define WINDOW_X 23

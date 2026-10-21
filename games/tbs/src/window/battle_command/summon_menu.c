@@ -6,7 +6,7 @@
 
 // The tile column of a summon's first Djinn cost in the list: its element
 // icon, the count after it, two tiles for each element it needs.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define SUMMON_COST_X 13
 #else
 #define SUMMON_COST_X 10

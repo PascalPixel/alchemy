@@ -23,7 +23,7 @@
 #endif
 
 // The longest status help text, in characters.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_HELP_TEXT_MAX 0x80
 #else
 #define STATUS_HELP_TEXT_MAX 0x40
@@ -31,7 +31,7 @@
 
 // The stat column of the status page's top rows: three digits from 200 or
 // four from 192, both ending at pixel 224.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_STAT_DIGITS 3
 #define STATUS_STAT_X 200
 #else
@@ -40,14 +40,14 @@
 #endif
 
 // Items to a page of the equipment page's list.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_EQUIP_PAGE_SIZE 5
 #else
 #define STATUS_EQUIP_PAGE_SIZE 6
 #endif
 
 // The hand cursor on the Psynergy page.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_PSYNERGY_CURSOR_X 55
 #define STATUS_PSYNERGY_CURSOR_Y 60
 #else
@@ -56,7 +56,7 @@
 #endif
 
 // The highlight over the equipment window's four slot rows.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_EQUIP_SLOT_X 1
 #define STATUS_EQUIP_SLOT_WIDTH 12
 #else
@@ -66,7 +66,7 @@
 
 // The equipment page's item list: its page icons, the item names, and the
 // Attack and Defense figures.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_PAGE_ICONS_X 119
 #define SHOP_ITEM_NAME_X 128
 #define SHOP_STAT_X 80
@@ -83,7 +83,7 @@
 #endif
 
 // The equipment window, and the equipped items' names in it.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_EQUIP_WINDOW_WIDTH 15
 #define STATUS_EQUIPPED_NAME_X 8
 #else

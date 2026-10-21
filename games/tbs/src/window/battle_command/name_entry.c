@@ -147,7 +147,7 @@ void Resource_CopyFixedBlockA(s32 slot) {
 #define NAME_MAX_LETTERS 5
 #define NAME_MAX_BYTES 14 ///< stored name bytes, excluding its terminator
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// Puts the string `str` into the UI's text entries and returns its width in
 /// pixels. It overwrites the start of the decoded text ring
 /// (UiRenderWork.entries), so any message decoded there is lost; the name

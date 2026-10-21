@@ -512,7 +512,7 @@ s32 Menu_SelectTopEntry(s32 selection) {
   return result;
 }
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ANIMATE_ENTRIES_ROW 7
 #else
 #define ANIMATE_ENTRIES_ROW 5
@@ -599,7 +599,7 @@ s32 Menu_SelectSaveSlotAction(void) {
   return result;
 }
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define MODE_LABEL_X 18
 #define MODE_LABEL_RIGHT 144
 #else
@@ -658,7 +658,7 @@ void Menu_DrawModeLabel(void) {
   }
 }
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define PASSWORD_HELP_X 16
 #else
 #define PASSWORD_HELP_X 0
@@ -760,7 +760,7 @@ s32 Menu_SelectResourceLayout(s32 mode) {
     upper = &work->upperWindow;
     *upper = window;
     UiText_DrawResource(message, window, 0, 4);
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
     window = UiWindow_Create(RESOURCE_MODE1_WINDOW_X, 4,
                              RESOURCE_MODE1_WINDOW_WIDTH, 12, 2);
     work->lowerWindow = window;
@@ -888,7 +888,7 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 }
 
 // Name window width for each edition
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define PAIR_WIDTH 7
 #elif (LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN)
 #define PAIR_WIDTH 10

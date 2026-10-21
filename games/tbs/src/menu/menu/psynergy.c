@@ -13,7 +13,7 @@
 #endif
 
 // The highlight over the Psynergy list's rows.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define PSYNERGY_DETAIL_ROW_X 0
 #define PSYNERGY_DETAIL_ROW_WIDTH 15
 #else
@@ -22,7 +22,7 @@
 #endif
 
 // The Psynergy list's page icons, "PP" label, names and hand cursor.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define PSYNERGY_PAGE_ICONS_X 112
 #define PSYNERGY_PP_LABEL_X 96
 #define PSYNERGY_NAME_X 16

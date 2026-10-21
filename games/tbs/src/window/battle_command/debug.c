@@ -437,7 +437,7 @@ s32 DebugMenu_BrowseIcons(void) {
   return 0;
 }
 
-#if !TBS_PATCH_2
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
 #define DEBUG_GLYPH_NAME MsgDebugGlyphName
 #elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
 #define DEBUG_GLYPH_NAME MsgEnd

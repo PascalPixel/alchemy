@@ -805,7 +805,7 @@ void SaveMenu_DrawFileSummary(struct UiWindow *window,
     UiText_DrawNumberAtOffset(summary->level, 2, window, 80, y);
     UiText_DrawCharacterAtOffset(summary->classId + MsgClassName, window, 0,
                                  16);
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
     // Coins on the third row, then "Play Time:" and the time.
     y = 32;
     UiText_DrawNumberInWindow(summary->coins, 6, window, 24, y);

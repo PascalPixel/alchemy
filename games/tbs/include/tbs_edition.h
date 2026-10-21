@@ -20,7 +20,7 @@
 // 256. With it change the debug menus' columns, two icon menus' widths, and
 // the first enemy name suffix's character code (65 in Japanese, which has 26
 // suffixes; 49 in the others, which have 9).
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define RENDER_DIRTY_OFFSET 0xF33
 #define RENDER_MODE_OFFSET 0xF34
 #define RENDER_BUSY_OFFSET 0x1189
@@ -112,7 +112,7 @@
 #else
 #define TICKET_COUNTER_WINDOW_X 19
 #define TICKET_COUNTER_WIDTH 11
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define TICKET_COUNTER_X 0
 #else
 #define TICKET_COUNTER_X 24
@@ -122,7 +122,7 @@
 // The menus' layout: the shop's sell and repair price window, the help line
 // under the item and Psynergy menus, and the Status menu's switch help, page
 // rows and row count, which the localized editions widen or rearrange.
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define SHOP_LIST_X 16
 #define SHOP_LIST_WIDTH 14
 #define HELP_TEXT_X 16
@@ -146,7 +146,7 @@
 #endif
 
 // The shop's buying screen: the coins and price windows' widths.
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define SHOP_MONEY_WIDTH 11
 #define SHOP_PRICE_WIDTH 14
 #elif (LANGUAGE == LANGUAGE_GERMAN)
@@ -167,7 +167,7 @@
 #endif
 
 // The options screen's layout: its window, sliders, icons and setting columns.
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define OPTION_WINDOW_X 2
 #define OPTION_WINDOW_WIDTH 26
 #define OPTION_SLIDER_X 100
@@ -210,7 +210,7 @@
 #endif
 
 // The reel game's help window, and the VRAM its jackpot and title tiles use.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define REEL_HELP_WINDOW_X 2
 #define REEL_HELP_WINDOW_WIDTH 26
 #define REEL_JACKPOT_TILES 0x06016e00
@@ -226,7 +226,7 @@
 
 // The reel game's prompt windows (stop, all held, start, hold, release),
 // placed and sized for each language's words.
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define REEL_STOP_X 23
 #define REEL_STOP_WIDTH 7
 #elif (LANGUAGE == LANGUAGE_SPANISH)
@@ -290,7 +290,7 @@
 
 // The first area name message, for the place name shown on entering a new
 // place (UiTimedNotice_Create).
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define RENDER_RESOURCE_BASE 0x9D4
 #elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||       \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
@@ -300,7 +300,7 @@
 #endif
 
 // The Status menu's Psynergy list: its range icon tiles, rows and columns.
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define RANGE_ICON_TILE 0xf200
 #define LIST_FIRST_ROW 1
 #define LIST_ICONS_X 86

@@ -116,13 +116,13 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 // and Agility), and how many leading characters of the 11-character number
 // text the stats skip: 7 leaves four digits, 8 three. The help line under
 // them ("R: Psynergy Gained") is placed in pixels.
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_VITALS_X 4
 #else
 #define DJINN_PREVIEW_VITALS_X 5
 #endif
 
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_STAT_DIGIT_OFFSET 7
 #define DJINN_PREVIEW_STAT_X 4
 #else
@@ -130,7 +130,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define DJINN_PREVIEW_STAT_X 6
 #endif
 
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_HELP_X 40
 #else
 #define DJINN_PREVIEW_HELP_X 24
@@ -153,7 +153,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #endif
 
 // The summon list's window.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define SUMMON_MENU_WINDOW_X 13
 #define SUMMON_MENU_WINDOW_WIDTH 17
 #else
@@ -163,7 +163,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 
 // While a member's commands are chosen (Battle_CollectPartyCommands): the
 // screen x of the member's portrait sprite, in pixels.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_CLASS_ICON_X 0
 #else
 #define BATTLE_CLASS_ICON_X 4
@@ -178,7 +178,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 
 // The screen x of the chosen command's icon, in pixels, while the summon
 // list is open.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_SUMMON_ICON_X 80
 #else
 #define BATTLE_SUMMON_ICON_X 104
@@ -186,13 +186,13 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 
 // The chosen summon's window, and the columns of its first Djinn cost: the
 // element icon, then the count.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_SUMMON_WINDOW_WIDTH 17
 #else
 #define BATTLE_SUMMON_WINDOW_WIDTH 14
 #endif
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_SUMMON_ELEMENT_COLUMN 13
 #define BATTLE_SUMMON_COST_COLUMN 14
 #else
@@ -251,7 +251,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define TRANSFER_METHOD_WINDOW_WIDTH 13
 #endif
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define TRANSFER_METHOD_LABEL_X 2
 #else
 #define TRANSFER_METHOD_LABEL_X 0
@@ -273,13 +273,13 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 // (icons 0x11 to 0x14) and of the Sanctum's services (icons 0x19 to 0x1c).
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define ENTRY11_COMMAND_LABEL_WIDTH 8
-#elif TBS_PATCH_1
+#elif LANGUAGE != LANGUAGE_JAPANESE
 #define ENTRY11_COMMAND_LABEL_WIDTH 7
 #else
 #define ENTRY11_COMMAND_LABEL_WIDTH 6
 #endif
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ENTRY19_COMMAND_LABEL_WIDTH 10
 #else
 #define ENTRY19_COMMAND_LABEL_WIDTH 8
@@ -302,7 +302,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 // them: the Japanese edition decodes the message (UiText_DecodeMessage), the
 // others copy its text (UiText_CopyMessageString). The callers' buffers hold
 // 64 halfwords either way.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_MENU_MESSAGE_CAPACITY 52
 #define BATTLE_MENU_MESSAGE_COPY UiText_CopyMessageString
 #else

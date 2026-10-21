@@ -10,7 +10,7 @@
 //
 // The x of the small message windows "Dropped it.", "You were cursed!" and
 // "Removed".
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_MODAL_SHORT_X 14
 #define ITEM_MODAL_REMOVED_X 14
 #else
@@ -30,27 +30,27 @@
 #define ITEM_TRADED_X 15
 #endif
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_TRADE_PROMPT_X 0
 #else
 #define ITEM_TRADE_PROMPT_X 16
 #endif
 
 // The x of the command grid's middle column.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_COMMAND_TEXT_X 32
 #else
 #define ITEM_COMMAND_TEXT_X 40
 #endif
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_QUANTITY_WINDOW_WIDTH 30
 #else
 #define ITEM_QUANTITY_WINDOW_WIDTH 13
 #endif
 
 // The hand cursor and the "How many?" question of the quantity chooser.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_GIVE_CURSOR_X 128
 #define ITEM_GIVE_ASK_X 32
 #define ITEM_GIVE_ASK_Y 0
@@ -60,14 +60,14 @@
 #define ITEM_GIVE_ASK_Y 32
 #endif
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_DROP_QUESTION_X 0
 #else
 #define ITEM_DROP_QUESTION_X 8
 #endif
 
 // The item list's icon column and name column.
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_LIST_PAGE_ICONS_X 116
 #define ITEM_LIST_NAME_X 24
 #else
@@ -579,7 +579,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if (transferFailed == 0) {
         menu->paneOwner[0] = menu->paneOwner[1];
         menu->selectedItems[0] &= ITEM_ID_MASK;
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
         ItemMenu_SetMessageWindowHeight6();
 #endif
         RenderOutput_RedrawSavedRectFar(menu->messageWindow);
@@ -723,7 +723,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Unit_RefreshPsynergyFar(menu->paneOwner[0]);
         Unit_RefreshPsynergyFar(menu->paneOwner[1]);
         ItemMenu_SetMessageWindowHeight5();
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
         ItemMenu_SetMessageWindowHeight6();
         ItemMenu_HidePageIcons();
 #endif
@@ -974,7 +974,7 @@ void ItemMenu_HideAllIcons(void) {
   }
 }
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// Hides the item icons in the first column of the five-wide item grid.
 void ItemMenu_HidePageIcons(void) {
   struct InventoryMenuState *menu = gMenuWork;
@@ -1649,7 +1649,7 @@ s32 Inventory_RemoveFirstUnflagged(s32 ownerId) {
   return result;
 }
 
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
 
 /// Returns the x of the item command cursor on column and row of the command
 /// grid (three commands to a row), or 0 when column or row is outside 0 to 2.
@@ -1697,7 +1697,7 @@ s32 ItemMenu_ChooseCommand(void) {
   s32 commandIndex;
   s32 redraw;
   s8 *commandStates;
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
   s32 cursorX;
   s32 cursorY;
 #endif
@@ -1759,7 +1759,7 @@ s32 ItemMenu_ChooseCommand(void) {
     row = (s8)(lastCommand / 3);
     commandIndex = row * 3 + column;
   }
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
   cursorX = ItemMenu_CommandCursorX(column, row);
   cursorY = ItemMenu_CommandCursorY(column, row);
   UiMenu_SlideCursor(cursorX, cursorY);
@@ -1796,7 +1796,7 @@ s32 ItemMenu_ChooseCommand(void) {
                                   STATUS_PANEL_EXPERIENCE);
       }
     }
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
     cursorX = ItemMenu_CommandCursorX(column, row);
     cursorY = ItemMenu_CommandCursorY(column, row);
     UiMenu_PositionCursor(cursorX, cursorY);
@@ -2151,7 +2151,7 @@ s32 Menu_SelectQuantity(s32 value) {
     menu->flags = one;
 #endif
   }
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
   UiWindow_DrawFrameFar(13, 0, 17, 10);
 #endif
 
@@ -2659,7 +2659,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
             2) <= 1) {
     selection = 1;
   } else {
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
     UiText_DrawCharacterAtOffsetFar(MsgYes, window, 24, 24);
     UiText_DrawCharacterAtOffsetFar(MsgYes + 1, window, 72, 24);
     UiWindow_ClearInteriorTilesFar((void *)window, 16, 16, 96, 24);
@@ -2688,7 +2688,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         selection = 1;
         break;
       }
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
       UiMenu_PositionCursor(selection * 48 + 110, 32);
       if (gKeysRepeat & KEY_LEFT) {
 #else
@@ -2699,7 +2699,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         changed = 1;
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       }
-#if TBS_PATCH_1
+#if LANGUAGE != LANGUAGE_JAPANESE
       if (gKeysRepeat & KEY_RIGHT) {
 #else
       if (gKeysRepeat & KEY_DOWN) {

@@ -99,6 +99,7 @@
 enum CrossboneIsleActor {
   /// The Nut that circles over the island until Catch takes it
   /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
+  /// ★ Named from the game: "Nut" (MsgItemName), the item Event_CatchNut gives
   ACTOR_ISLE_NUT = ACTOR_FIRST_PLACED,
   /// The two logs a push rolls (Event_PushIsleLog).
   /// ★ Named from what the player sees: two logs lying on the island's
@@ -106,11 +107,15 @@ enum CrossboneIsleActor {
   ACTOR_FIRST_ISLE_LOG,
   /// The four plants Growth grows, crossable once grown for the
   /// rest of the visit (FLAG_SCENE_TEMP_40 to _43).
+  /// ★ Named from what the player sees: small sprouts on the cliff ledges
+  /// (its render)
   ACTOR_FIRST_PLANT = ACTOR_FIRST_ISLE_LOG + 2,
   /// The ivy Whirlwind blows away, one flag each from
   /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY. Only three rows place one: the
   /// fourth ivy's event and CrossboneIsle_RestoreIvy name ACTOR_FIRST_IVY + 3,
   /// which the table leaves unplaced.
+  /// ★ Named from what the player sees: leafy ivy growing against the cliffs
+  /// (its render)
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLANT + 4
 };
 
@@ -123,22 +128,50 @@ enum CrossboneIsleFloatingLogsActor {
   /// ★ Named from what the player sees: yellow logs floating on green water
   /// (its render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED, ///< three cells wide
-  ACTOR_SECOND_LOG,                     ///< three cells wide
-  ACTOR_THIRD_LOG,                      ///< three cells wide
-  ACTOR_FOURTH_LOG,                     ///< three cells tall
-  ACTOR_FIFTH_LOG,                      ///< three cells tall
-  ACTOR_SIXTH_LOG,                      ///< three cells tall
-  ACTOR_SEVENTH_LOG,                    ///< three cells tall
-  ACTOR_EIGHTH_LOG,                     ///< three cells tall
-  ACTOR_NINTH_LOG,                      ///< three cells tall
-  ACTOR_TENTH_LOG,                      ///< three cells wide
-  ACTOR_ELEVENTH_LOG,                   ///< three cells wide
-  ACTOR_TWELFTH_LOG                     ///< three cells tall
+  /// Three cells wide. ★ Named from what the player sees: a yellow log lying
+  /// east-west in the west pool, at its south shore (its render)
+  ACTOR_SECOND_LOG,
+  /// Three cells wide. ★ Named from what the player sees: a yellow log lying
+  /// east-west in the east pool, south of its middle (its render)
+  ACTOR_THIRD_LOG,
+  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
+  /// north-south in the east pool, by its east wall (its render)
+  ACTOR_FOURTH_LOG,
+  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
+  /// north-south in the middle of the east pool (its render)
+  ACTOR_FIFTH_LOG,
+  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
+  /// north-south in the east pool, at its north-east corner (its render)
+  ACTOR_SIXTH_LOG,
+  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
+  /// north-south in the west pool, by its east wall (its render)
+  ACTOR_SEVENTH_LOG,
+  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
+  /// north-south in the east pool, at its north-west corner (its render)
+  ACTOR_EIGHTH_LOG,
+  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
+  /// north-south in the west pool, by its east wall, at its north end (its
+  /// render)
+  ACTOR_NINTH_LOG,
+  /// Three cells wide. ★ Named from what the player sees: a yellow log lying
+  /// east-west in the west pool, at its south-west corner (its render)
+  ACTOR_TENTH_LOG,
+  /// Three cells wide. ★ Named from what the player sees: a yellow log lying
+  /// east-west in the west pool, at its south shore (its render)
+  ACTOR_ELEVENTH_LOG,
+  /// Three cells tall. ★ Named from what the player sees: a yellow log lying
+  /// north-south in the west pool, by its east wall, at its south end (its
+  /// render)
+  ACTOR_TWELFTH_LOG
 };
 
-/// The corridor rooms' one placed actor (gCrossboneIslePlacements6To14): the
-/// pillar between the doors that sinks into the floor at column 40.
-enum CrossboneIsleCorridorActor { ACTOR_CORRIDOR_PILLAR = ACTOR_FIRST_PLACED };
+/// The corridor rooms' one placed actor (gCrossboneIslePlacements6To14).
+enum CrossboneIsleCorridorActor {
+  /// The pillar between the doors that sinks into the floor at column 40.
+  /// ★ Named from what the player sees: a stone pillar between the two doors in
+  /// the north wall (its render)
+  ACTOR_SINKING_PILLAR = ACTOR_FIRST_PLACED
+};
 
 /// The corridor rooms' entrances, which every room numbers alike, so the code
 /// they share names them here; scene_links.h names each room's own
@@ -411,20 +444,20 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
   struct FieldActor *actor;
   s32 cleared;
 
-  actor = Actor_Get(ACTOR_CORRIDOR_PILLAR);
+  actor = Actor_Get(ACTOR_SINKING_PILLAR);
   cleared =
       FLAG_CHECK((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                       (s32)&SceneId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
-    OBJ_POS_SET(ACTOR_CORRIDOR_PILLAR, 650, 168);
+    OBJ_POS_SET(ACTOR_SINKING_PILLAR, 650, 168);
     actor->y.fixed = -PIXELS(32);
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_CORRIDOR_PILLAR), 0);
-    Engine_ActorSetSpritePriority(ACTOR_CORRIDOR_PILLAR, 3);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SINKING_PILLAR), 0);
+    Engine_ActorSetSpritePriority(ACTOR_SINKING_PILLAR, 3);
     actor->motionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Map_CopyCellAttributes(42, 10, 1, 1, 40, 10);
   } else {
-    Object_GetById(ACTOR_CORRIDOR_PILLAR)->motionFlags = cleared;
+    Object_GetById(ACTOR_SINKING_PILLAR)->motionFlags = cleared;
   }
 }
 
@@ -438,7 +471,7 @@ static void Event_MovePillar(void) {
   struct GameState *state;
   s32 column;
 
-  pillar = Object_GetById(ACTOR_CORRIDOR_PILLAR);
+  pillar = Object_GetById(ACTOR_SINKING_PILLAR);
   column = pillar->x.fixed >> 20;
   if (column != 40) {
     return;
@@ -460,12 +493,12 @@ static void Event_MovePillar(void) {
   pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 
   WAIT(8);
-  CrossboneIsle_SpawnPillarMovedBurst(ACTOR_CORRIDOR_PILLAR);
+  CrossboneIsle_SpawnPillarMovedBurst(ACTOR_SINKING_PILLAR);
   Engine_AudioPlayCue(SE_136);
   WAIT(40);
 
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CORRIDOR_PILLAR), 0);
-  Engine_ActorSetSpritePriority(ACTOR_CORRIDOR_PILLAR, 3);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SINKING_PILLAR), 0);
+  Engine_ActorSetSpritePriority(ACTOR_SINKING_PILLAR, 3);
 
   pillar->motionFlags = 0;
   pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -2221,7 +2254,7 @@ struct SceneEvent gCrossboneIsleEventsOther[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenEastDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenWestDoor) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CORRIDOR_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillar) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN, FIND_MIMIC | 4 },
     { SCENE_EVENTS_END },
 };

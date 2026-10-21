@@ -113,7 +113,7 @@ for its `struct BattleObj`, `object` for that object's `struct MotionObject`,
 | `BattleFormation_`, `BattleEnemy_` | the enemy groups, and each enemy's level, name letter, defeat and coins |
 | `BattleClass_` | an enemy class's row of the battle sprite table |
 | `BattleEscape_` | running away |
-| `BattleFx_` | the star field and a unit's elemental glow, as in `../effect` |
+| `ElementGlow_` | a unit's elemental glow: the star field and the other glows (`star_field.c`) |
 | `LinkBattle_` | link battles |
 | `BattleSpoils_` | the items the enemies leave, ranked so the best are kept and handed out first |
 | `BattleSummon_` | which summons the party's standby Djinn make available |

@@ -309,7 +309,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
 /// Projects the point above unit id where its effects play (its class's
 /// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
 /// height is scaled by the sprite's projected scale. Returns 0. Called by
-/// BattleFx_PlayUnitElementEffect, and through its far stub by
+/// ElementGlow_Play, and through its far stub by
 /// EffectPosition_ProjectScaledBattler and SelectionScreen_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObjGet(unitId)->object;

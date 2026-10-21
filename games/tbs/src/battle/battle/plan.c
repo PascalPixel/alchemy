@@ -523,8 +523,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
                                           POSE_CAST);
         ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObjGet(request->unitId)->object, 32);
-        BattleFx_PlayUnitElementEffect(
-            request->unitId, DJINN_ELEMENT(request->parameter), GLOW_BURST, 0);
+        ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
+                         GLOW_BURST, 0);
         BattleEventRuntime_WaitForReady();
         return PLAN_NO_ACTION;
       }

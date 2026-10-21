@@ -78,7 +78,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
 /// fade 0x80 restores the saved palette, another nonzero fade takes that
 /// much from each colour channel, and 0 leaves the palette alone;
 /// BATTLE_BACKGROUND_FLAT queues BATTLE_BG1CNT for BG1. Called with
-/// BATTLE_BACKGROUND_FLAT by BattleFx_PlayUnitElementEffect and the effects'
+/// BATTLE_BACKGROUND_FLAT by ElementGlow_Play and the effects'
 /// canvas layers (canvas.c), and with BATTLE_BACKGROUND_PLANE by
 /// BattlePresentation_DispatchAction and Battle_ProcessRoundEnd. Sets
 /// BattleBackgroundView.mode (enum BattleBackgroundMode), adds

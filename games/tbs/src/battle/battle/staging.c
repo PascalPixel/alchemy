@@ -327,8 +327,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   }
   // The sound of a cast, as the caster raises its hand.
   AudioCommand_PlayFar(SE_CAST);
-  BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element,
-                                 GLOW_STAR_FIELD, 0);
+  ElementGlow_Play(work.effect.actor, plan->element, GLOW_STAR_FIELD, 0);
   if (mode & TRANSITION_HIDE_ACTOR)
     BattlePresentation_SetActorRecordMode(actor, ACTOR_SEMI_TRANSPARENT);
   for (i = 0; i != 16; i++) {
@@ -939,11 +938,9 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   AudioCommand_PlayFar(SE_CAST);
   if (mode & CAST_ENEMY)
-    BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element,
-                                   GLOW_STREAKS, 0);
+    ElementGlow_Play(work.effect.actor, plan->element, GLOW_STREAKS, 0);
   else if (!isDjinni)
-    BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element,
-                                   GLOW_STAR_FIELD, 0);
+    ElementGlow_Play(work.effect.actor, plan->element, GLOW_STAR_FIELD, 0);
   if (plan->targetIds[0] <= ALLY_MAX)
     work.effect.side = EFFECT_SIDE_PARTY;
   else

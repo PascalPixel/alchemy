@@ -171,12 +171,12 @@ extern const u8 gFieldFx_QuadrantModes[];
 extern const s32 gFieldFx_TargetColors[];
 /// Where SparkWork.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
-extern s32 gBattleFx_StarWorkOffsets[];
+extern s32 gElementGlow_StarWorkOffsets[];
 /// The spark's width and height in pixels by life left: 1 to 4, 4 from three.
-extern u8 gBattleFx_StarSizes[];
+extern u8 gElementGlow_StarSizes[];
 /// Where SparkWork.sheet holds the ring's four 32 by 32 frames: byte offsets,
 /// 0x400 apart.
-extern s32 gBattleFx_RingFrameOffsets[];
+extern s32 gElementGlow_RingFrameOffsets[];
 /// The highlighted units' BLDY lightening: 15 down to 0 once, then the second
 /// sixteen (a pulse up to 8 and back) over and over.
 extern s8 gBattleFx_HighlightBlendRamp[];
@@ -294,7 +294,7 @@ enum BattleActorMode { ACTOR_OPAQUE, ACTOR_SEMI_TRANSPARENT };
 /// whether the selected units are highlighted, every other unit faded.
 enum BattleHighlight { HIGHLIGHT_OFF, HIGHLIGHT_SELECTED };
 
-/// The glows BattleFx_PlayUnitElementEffect plays about a unit in its element.
+/// The glows ElementGlow_Play plays about a unit in its element.
 enum BattleElementGlow {
   /// The star field gathering on the unit while the background darkens: a
   /// cast.

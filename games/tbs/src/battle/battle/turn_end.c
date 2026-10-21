@@ -364,7 +364,7 @@ s32 Battle_ProcessRoundEnd(void) {
             DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
                                     expiredEntry->index);
             UnitCalcFar(unitId);
-            BattleFx_PlayUnitElementEffect(unitId, element, GLOW_BURST, 0);
+            ElementGlow_Play(unitId, element, GLOW_BURST, 0);
             BattleEventRuntime_WaitForReady();
           }
         } else {
@@ -648,8 +648,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
             (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
         // The pillar of each element whose power rose, its strength the most
         // Djinn of one element the summon used, less one.
-        BattleFx_PlayUnitElementEffect(unitId, i, GLOW_PILLAR,
-                                       mostOfOneElement - 1);
+        ElementGlow_Play(unitId, i, GLOW_PILLAR, mostOfOneElement - 1);
         BattleEventRuntime_WaitForReady();
       }
     }

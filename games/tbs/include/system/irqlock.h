@@ -27,7 +27,7 @@
 
 /// Restores IME from saved.
 /* FAKEMATCH(one-pass): the wrapper; as *(ime) = (saved), 2 and 6 instructions
- * differ in BattleFx_PlayUnitElementEffect and BattleFx_RunJudgment, all six ☀️
+ * differ in ElementGlow_Play and BattleFx_RunJudgment, all six ☀️
  * editions. */
 #define IME_RESTORE(ime, saved)                                                \
   do {                                                                         \

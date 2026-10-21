@@ -67,15 +67,15 @@ gBattleParty_RoundEndGroupOrder:
 	.4byte 0x10000, 0x0, 0x0, 0x0
 	.4byte 0x10000, 0x0, 0x0, 0x0
 @ Star workspace positions.
-	.global gBattleFx_StarWorkOffsets
-gBattleFx_StarWorkOffsets:
+	.global gElementGlow_StarWorkOffsets
+gElementGlow_StarWorkOffsets:
 	.4byte 0, 1, 5, 14, 30, 46, 62
-	.global gBattleFx_StarSizes
-gBattleFx_StarSizes:
+	.global gElementGlow_StarSizes
+gElementGlow_StarSizes:
 	.byte 1, 2, 3, 4, 4, 4, 4
 	.balign 4
-	.global gBattleFx_RingFrameOffsets
-gBattleFx_RingFrameOffsets:
+	.global gElementGlow_RingFrameOffsets
+gElementGlow_RingFrameOffsets:
 	.4byte 0x4e, 0x44e, 0x84e, 0xc4e
 	.4byte 0, 10, 20, 0
 	.global BattleFx_CharacterIdMapCopy

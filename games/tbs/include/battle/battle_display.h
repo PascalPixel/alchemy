@@ -55,7 +55,7 @@ struct BattlePresentationTransition {
 /// A presentation step's stack work: the effect command it builds and runs,
 /// and the targets' sprite colour modes saved beside it. The
 /// BattlePresentation_Run functions of staging.c and auto_battle.c,
-/// BattlePresentation_RunEntryTransition and BattleFx_PlayUnitElementEffect
+/// BattlePresentation_RunEntryTransition and ElementGlow_Play
 /// keep one as a local.
 struct BattlePresentationWork {
   struct BattleEffectArgument effect;

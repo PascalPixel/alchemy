@@ -1,4 +1,4 @@
-// Draft, differ 8 of 298: ☀️'s BattlePres_RunPsynergyCast
+// Draft, differ 8 of 298: ☀️'s BattlePresentation_RunPsynergyCast
 // (games/tbs/src/battle/battle/ staging.c), ported: turns the camera to the
 // caster (across the field or reversed when the plan's flags say so), raises
 // the caster's hand with its element's glow, then either fails ("But the

@@ -51,7 +51,7 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Battle_ResetEffectCounter, 1
-	.set import.BattleFx_SetQueuedSoundAndPlay, 1
+	.set import.Field_EndBusyAndReveal, 1
+	.set import.FieldFx_SetQueuedSoundAndPlay, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

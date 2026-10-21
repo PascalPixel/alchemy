@@ -1377,11 +1377,11 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     switch (gGameState.entrance) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:
-      BattleFx_StartFadeOverlay(0);
+      FieldFx_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
       break;
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
-      BattleFx_StartFadeOverlay(0);
+      FieldFx_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
       value = *(s32 *)(gWorkSlot + 36);
       ((struct FadeOverlayWork *)value)->actor = NULL;
@@ -1500,7 +1500,7 @@ static void Fuchin_CollectDragonsEye(void) {
   Engine_EventBegin();
 
   if (gImilFuchinFalls_DragonsEye != NULL) {
-    Engine_RunRisingObjectSequence(gImilFuchinFalls_DragonsEye, 3);
+    Engine_ItemShowPicture(gImilFuchinFalls_DragonsEye, 3);
   }
 
   Engine_PartyGiveItem(ITEM_DRAGONS_EYE, 0);
@@ -1619,7 +1619,7 @@ static void Fuchin_LightDragonWithEye(void) {
   Engine_AudioPlayCue(MUS_019);
   Engine_AudioPlayCue(SE_182);
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
 
   for (pass = 0; pass < 4; pass++) {
     Engine_ColorBufferApplyTarget(0x204318, 1);
@@ -1703,7 +1703,7 @@ static void Fuchin_SearchDragonStatue(void) {
 /// When Reveal ends in Fuchin Falls Cave's dragon statue room, before the eye
 /// is set, the room goes dark again.
 static void Fuchin_EndRevealLighting(void) {
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct DisplayTransitionState *transition;
 
   if (gGameState.entrance <=

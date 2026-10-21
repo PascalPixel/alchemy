@@ -44,7 +44,7 @@ void ObjMotRst(s32 unitId) {
 
 /// Sends unitId running off its side of the battlefield, three times
 /// as far out as its spot, with a hop, in POSE_STANDING. Called by
-/// BattleEscape_PlayRun and BattlePres_RunEscape.
+/// BattleEscape_PlayRun and BattlePresentation_RunEscape.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObj *battleObject;
   struct MotionObject *object;
@@ -108,8 +108,8 @@ void BattleMotion_SetObjectPosition(struct BattleObj *battleObject) {
 }
 
 /// Sends unitId hopping out to one and a half times its spot's
-/// distance from the centre. Called by BattlePres_RunAttack and
-/// BattlePres_RunPlainAttack.
+/// distance from the centre. Called by BattlePresentation_RunAttack and
+/// BattlePresentation_RunPlainAttack.
 void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   u32 scaledX;
   struct BattleObj *battleObject;
@@ -185,9 +185,9 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
 /// Sends unit actorId three quarters of the way to unit targetId, arriving
 /// in travelDivisor frames at a steady speed, leaping up at initialVelocityY
 /// (16.16 pixels a frame), in POSE_LEAP.
-/// Called by BattlePres_RunAttack, BattlePres_RunPlainAttack and
-/// BattlePres_RunApproachAction, and through its far stub by the Bind,
-/// burst scene, Annihilation, target motes and Thrash effects.
+/// Called by BattlePresentation_RunAttack, BattlePresentation_RunPlainAttack
+/// and BattlePresentation_RunApproachAction, and through its far stub by the
+/// Bind, burst scene, Annihilation, target motes and Thrash effects.
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
   struct BattleObj *actorSlot = BattleObjGet(actorId);
@@ -309,7 +309,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
 /// Projects the point above unit id where its effects play (its class's
 /// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
 /// height is scaled by the sprite's projected scale. Returns 0. Called by
-/// BattleFx_PlayUnitElementEffect, and through its far stub by
+/// ElementGlow_Play, and through its far stub by
 /// EffectPosition_ProjectScaledBattler and SelectionScreen_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObjGet(unitId)->object;

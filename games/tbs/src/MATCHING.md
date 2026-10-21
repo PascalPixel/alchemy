@@ -155,7 +155,7 @@ These turn up all over the game.
     struct reference; written as member stores, the loop's registers are
     allocated differently (Crossbone Isle's `Event_MovePillar`, 100 of 265
     instructions in tbs-en);
-  - `*(u8 *)&unit->field` in `BattleFx_RollSuccess`
+  - `*(u8 *)&unit->field` in `Battle_RollEffectSuccess`
     ([`game/game/battle_calc.c`](game/game/battle_calc.c)), where each zero
     test written as `unit->field` merges with a neighbour's into one halfword
     or word load (sleep and psySeal; delusion, confusion and charm; haunt and
@@ -167,7 +167,7 @@ These turn up all over the game.
 - A value can be reached through a view of another type. That is undefined
   behaviour, marked `// UB:`, with the declared access behind `UBFIX`:
   - a pointer read or stored as an integer: `*(s32 *)&metadata->frames`,
-    which keeps the zero load ahead of it (`AnimationObject_Allocate`); the
+    which keeps the zero load ahead of it (`Animation_AllocateLayer`); the
     `u32` views of `gMapWork[0]` (`SceneActor_MoveAndRedraw`) and of
     `gEventWork` (`TolbiShipDeck_SightLand`, where the word may alias the
     halfword facing stores before it and so stays after them); the update
@@ -260,7 +260,7 @@ each keeps its spelling until it is.
   `WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER)` (`TretPalette_UpdateSceneTint`,
   `SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue`), or
   `*(gWorkSlot + HEAP_SLOT_PALETTE_BUFFER)`
-  (`BattleEffect_InitializeSharedScene`). It's also reached from a
+  (`FieldFx_FadeToEffectColor`). It's also reached from a
   neighbouring slot, as in Menus below: as
   `gFieldBlendWork[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_FIELD_BLEND]`
   (`FieldFx_UpdateLightning`), or as

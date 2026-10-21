@@ -1187,7 +1187,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
   struct FieldActor *child;
   struct AnimationObject *part;
   struct AnimationObject *sprite;
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
@@ -1220,7 +1220,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
     struct FieldActor *effectActor = pair[0];
     struct AnimationObject *effectSprite = effectActor->sprite;
 
-    effectActor->update = Effect_AnimateVerticalNegative;
+    effectActor->update = FieldFx_AnimateVerticalNegative;
     effectSprite->image.priority = 2;
   }
   {
@@ -1228,7 +1228,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
     struct AnimationObject *effectSprite = effectActor->sprite;
 
     effectSprite->image.priority = 2;
-    effectActor->update = Effect_AnimateVerticalPositive;
+    effectActor->update = FieldFx_AnimateVerticalPositive;
     effectActor->priorityFlags = 2;
   }
 }
@@ -1256,7 +1256,7 @@ static void ValeInteriorsInn_DemonstrateCatch(void) {
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
 }
 
 s32 gValeInteriorsInn_LeaveHouseScript[] = {

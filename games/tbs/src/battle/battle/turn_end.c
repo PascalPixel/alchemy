@@ -343,8 +343,8 @@ s32 Battle_ProcessRoundEnd(void) {
           s32 element;
 
           if (BattleObjGet(unitId) != 0) {
-            BattleEventRuntime_Reset();
-            BattleEventRuntime_SchedulePhase(30);
+            BattleEvent_Reset();
+            BattleEvent_SchedulePhase(30);
             BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
             // The Djinni's own ability, which names it (ABILITY_DJINNI_FIRST).
             BattleEvPush(BATTLE_EVENT_ABILITY_NAME,
@@ -364,8 +364,8 @@ s32 Battle_ProcessRoundEnd(void) {
             DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
                                     expiredEntry->index);
             UnitCalcFar(unitId);
-            BattleFx_PlayUnitElementEffect(unitId, element, GLOW_BURST, 0);
-            BattleEventRuntime_WaitForReady();
+            ElementGlow_Play(unitId, element, GLOW_BURST, 0);
+            BattleEvent_WaitForReady();
           }
         } else {
           expiredEntry++;
@@ -486,14 +486,14 @@ s32 Battle_ProcessRoundEnd(void) {
         if (BattleUnit_TickStun(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          BattlePres_SetActorModeAndAction(unitId);
+          BattlePresentation_SetActorModeAndAction(unitId);
           UiText_ShowMessageAndWaitCoreFar(MsgCureStun);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickSleep(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          BattlePres_SetActorModeAndAction(unitId);
+          BattlePresentation_SetActorModeAndAction(unitId);
           UiText_ShowMessageAndWaitCoreFar(MsgWakes);
           BattlePresentation_WaitForAdvance();
         }
@@ -526,7 +526,7 @@ s32 Battle_ProcessRoundEnd(void) {
 /// Called by BattlePresentation_DispatchAction after every action, with the
 /// action's plan. Changes the side's Djinn recovery list, the actor's
 /// elementLevels, HP and grimReaper, and works out its stats again (UnitCalc);
-/// the messages are queued and played at once (BattleEv_DispatchQueued).
+/// the messages are queued and played at once (BattleEvent_DispatchQueued).
 #ifdef UBFIX
 void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
 #else
@@ -633,8 +633,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       s32 gain = unit->element[i].power - before->element[i].power;
 
       if (gain > 0) {
-        BattleEventRuntime_Reset();
-        BattleEventRuntime_SchedulePhase(25);
+        BattleEvent_Reset();
+        BattleEvent_SchedulePhase(25);
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
         BattleEvPush(BATTLE_EVENT_NUMBER, gain);
         BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
@@ -648,9 +648,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
             (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
         // The pillar of each element whose power rose, its strength the most
         // Djinn of one element the summon used, less one.
-        BattleFx_PlayUnitElementEffect(unitId, i, GLOW_PILLAR,
-                                       mostOfOneElement - 1);
-        BattleEventRuntime_WaitForReady();
+        ElementGlow_Play(unitId, i, GLOW_PILLAR, mostOfOneElement - 1);
+        BattleEvent_WaitForReady();
       }
     }
     MemFree(before);
@@ -660,7 +659,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   // then the Grim Reaper's countdown.
   if (battleContinues != 0) {
     s8 *poison;
-    BattleEventRuntime_Reset();
+    BattleEvent_Reset();
     if (plan->hauntDamage != 0) {
       BattleEvPush(BATTLE_EVENT_HIT, unitId);
       BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
@@ -680,8 +679,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
-    BattleEv_DispatchQueued();
-    BattleEventRuntime_Reset();
+    BattleEvent_DispatchQueued();
+    BattleEvent_Reset();
     poison = &unit->poison;
     // A tenth of the maximum HP, a fifth for deadly poison (POISON_DEADLY).
     if (*poison != 0) {
@@ -712,8 +711,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
       }
     }
-    BattleEv_DispatchQueued();
-    BattleEventRuntime_Reset();
+    BattleEvent_DispatchQueued();
+    BattleEvent_Reset();
     // At 0 the Reaper takes far more HP than any unit has. The downed
     // message is MsgGoesDown or MsgStrengthExhausted, three either side of
     // MsgReaperCalls (see Matching on message offsets).
@@ -731,7 +730,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         }
       }
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
   }
   UnitCalcFar(unitId);
 }

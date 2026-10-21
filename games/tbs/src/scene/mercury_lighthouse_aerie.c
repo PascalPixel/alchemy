@@ -1528,27 +1528,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       x = left->x.fixed;
       x += r;
       x += -0xc0000;
-      Effect_Spawn(x,
-                   left->y.fixed +
-                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       -0x100000,
-                   left->z.fixed, 0, 0x40000, 0,
-                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                   effectOptions);
+      FieldFx_Spawn(x,
+                    left->y.fixed +
+                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                        -0x100000,
+                    left->z.fixed, 0, 0x40000, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    effectOptions);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x += -0xc0000;
-      Effect_Spawn(x,
-                   right->y.fixed +
-                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       -0x100000,
-                   right->z.fixed, 0, 0x40000, 0,
-                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                   effectOptions);
+      FieldFx_Spawn(x,
+                    right->y.fixed +
+                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                        -0x100000,
+                    right->z.fixed, 0, 0x40000, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    effectOptions);
     }
   }
   Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
@@ -1583,27 +1583,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       x = left->x.fixed;
       x += r;
       x += -0xc0000;
-      Effect_Spawn(x,
-                   left->y.fixed +
-                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       0x200000,
-                   left->z.fixed, 0, -0x40000, 0,
-                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                   effectOptions);
+      FieldFx_Spawn(x,
+                    left->y.fixed +
+                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                        0x200000,
+                    left->z.fixed, 0, -0x40000, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    effectOptions);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x += -0xc0000;
-      Effect_Spawn(x,
-                   right->y.fixed +
-                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       0x200000,
-                   right->z.fixed, 0, -0x40000, 0,
-                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                   effectOptions);
+      FieldFx_Spawn(x,
+                    right->y.fixed +
+                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                        0x200000,
+                    right->z.fixed, 0, -0x40000, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    effectOptions);
     }
     if (i == 20) {
       Actor_SetChildValue(ACTOR_SATUROS, 0x100);
@@ -1730,13 +1730,14 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
 }
 
 /// A beacon spark's update: it swings round the flame it is linked to, its
 /// angle (its timer, in 1/65536 turns) stepping back each frame; its speed
 /// holds the swing's radius in pixels, less 28.
-static void SceneEffect_UpdateArcPosition(union FieldObject *fieldObject) {
+static void
+MercuryLighthouseAerie_UpdateBeaconSpark(union FieldObject *fieldObject) {
   struct FieldActor *spark = &fieldObject->actor;
   struct FieldActor *flame;
   u16 angle;
@@ -1802,7 +1803,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   spark->timer = angle;
   spark->work = tick;
   spark->linkedObject = beacon;
-  spark->update = SceneEffect_UpdateArcPosition;
+  spark->update = MercuryLighthouseAerie_UpdateBeaconSpark;
   spark->speed = (Engine_MathSin((height & 0xfffff) >> 4) * 24) >> 16;
   sprite->flags = 0;
   sprite->image.priority = beacon->sprite->image.priority;

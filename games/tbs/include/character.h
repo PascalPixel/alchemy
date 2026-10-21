@@ -18,7 +18,7 @@ struct CharacterDefinition {
   u8 unk00[0x50]; ///< Twenty words in chars.tsv; not named by any TBS code.
   /// The growth curves: each stat at levels 0, 20, 40, 60, 80 and 100. A
   /// level up adds a twentieth of the step around the new level, with a
-  /// random part; level 1 adds the first point (Owner_LevelUp).
+  /// random part; level 1 adds the first point (Unit_LevelUp).
   ///@{
   s16 hp[6];
   s16 pp[6];
@@ -157,11 +157,11 @@ struct EnemyDefinition {
 };
 
 /// A level up's result: the level reached and the gain in each stat. The
-/// caller provides it; Owner_LevelUp fills it, and
+/// caller provides it; Unit_LevelUp fills it, and
 /// Battle_AwardSpoils reports each gain that is not zero.
 struct LevelUpResult {
   s16 level; ///< the level reached; the old level when it was already 99
-  /// Always 0xffff: Owner_LevelUp stores no ability here, and the spoils find
+  /// Always 0xffff: Unit_LevelUp stores no ability here, and the spoils find
   /// a new one by comparing the unit's actions with a copy taken before.
   u16 ability;
   /// The gain in each base stat; the spoils read them as signed.

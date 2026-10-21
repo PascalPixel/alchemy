@@ -95,7 +95,7 @@ BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
 /// djinnBonus nonzero, the rolls above) and rolls the item: 1 in
 /// 2^(itemChance - 1), two powers likelier with the bonus. An item not yet
 /// among the four kept replaces the lowest ranked, if it ranks higher.
-/// Called as each enemy falls by BattleEv_DispatchQueued and
+/// Called as each enemy falls by BattleEvent_DispatchQueued and
 /// BattleEvent_Playback.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct BattleUnit *unit;

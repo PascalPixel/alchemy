@@ -1,4 +1,4 @@
-// Draft, differ 2 of 130: The Broken Seal's MenuSelection_BuildEntries
+// Draft, differ 2 of 130: The Broken Seal's SelectionScreen_BuildEntries
 // unchanged, the screen being the heap slot menuWork. The native loads the
 // halfword 100 from the pool (ldr r3) before it builds the offset of baseX
 // (movs r1, #192); sched2 takes the offset first, the same one-slot load

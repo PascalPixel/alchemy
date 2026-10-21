@@ -435,7 +435,7 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
   Engine_EventBegin();
 
   emitterHandle =
-      BattleFx_PlayCueAndStartEmitterOnTarget(0, chestActorId, itemId);
+      FieldFx_PlayCueAndStartEmitterOnTarget(0, chestActorId, itemId);
 
   if (Engine_PartyGiveItem(itemId, 0) != -1) {
     Engine_ActorSetAnimation(chestActorId, 2);

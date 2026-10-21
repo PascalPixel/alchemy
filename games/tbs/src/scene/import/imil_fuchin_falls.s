@@ -49,10 +49,10 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Engine_RunRisingObjectSequence, 1
+	.set import.Engine_ItemShowPicture, 1
 	.set import.Engine_ActorLookup, 1
-	.set import.BattleFx_StartFadeOverlay, 1
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.FieldFx_StartFadeOverlay, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Engine_AudioPlayCue, 1

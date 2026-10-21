@@ -151,7 +151,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       if (frame <= 63)
         camera->yaw += 0x100;
     }
-    BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+    BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
     if (frame <= 17) {
       s32 cell = frame / 3;
 

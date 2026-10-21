@@ -6,16 +6,16 @@
 
 /// A Venus Djinni joins the party: it hops twice, spins and leaps, then
 /// shrinks away; the leader turns to the camera and plays animation 28 while
-/// 24 particles rise round it (BattleFx_UpdateRadialSpread). Then 24 motes
+/// 24 particles rise round it (FieldFx_UpdateRadialSpread). Then 24 motes
 /// spiral down onto the leader from 120 pixels above
-/// (BattleFx_UpdateDescendingOrbitObject) and 8 sparks burst from the leader.
+/// (FieldFx_UpdateDescendingOrbitObject) and 8 sparks burst from the leader.
 /// Called by Djinn_JoinParty for a Venus Djinni, which then clears the
 /// Djinni's actor slot. Uses all 24 effect slots, tints the field palette green
 /// and fades it back at the end.
-void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
+void FieldFx_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
-  struct BattleFxScene *effectScene;
+  struct FieldFxScene *effectScene;
   struct EffectSlot *slot;
   s8 *slotState;
   s32 remaining;
@@ -27,7 +27,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   if (djinni == NULL)
     return;
 
-  BattleFx_InitializeSlots();
+  FieldFx_InitializeSlots();
   effectScene = gEffectWork;
   // Tint the screen green: PALETTE_TRANSFORM_TINT | RGB(4, 16, 4), the form
   // mercury.c spells out for its blue.
@@ -41,12 +41,12 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   ObjectMotion_Launch(djinniId, 4, 15);
   // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
   WaitFrames(30);
-  djinni->callback = BattleFx_AdvanceSpinAngle;
+  djinni->callback = FieldFx_AdvanceSpinAngle;
   AudioCommand_PlayFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 8, 22);
   AudioCommand_PlayFar(SE_140);
   Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
-  djinni->callback = BattleFx_ShrinkObjectAndDestroyFast;
+  djinni->callback = FieldFx_ShrinkObjectAndDestroyFast;
   ObjectDispatch_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
@@ -67,7 +67,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   remaining = 23;
   do {
     EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(slot, BattleFx_UpdateRadialSpread);
+    EffectSlot_SetCallback(slot, FieldFx_UpdateRadialSpread);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               SPRITE_COLOR_GREEN_TINT);
@@ -87,7 +87,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
 
     nextState = VENUS_PARTICLE_LAST_RISE;
     slotState = (s8 *)effectScene;
-    slotState += offsetof(struct BattleFxScene, slots) +
+    slotState += offsetof(struct FieldFxScene, slots) +
                  offsetof(struct EffectSlot, state);
     remaining = 23;
     do {
@@ -116,7 +116,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
       djinni->scaleX = scale;
       djinni->timer = 100;
       djinni->angle = (remaining << 16) / 24;
-      djinni->callback = BattleFx_UpdateDescendingOrbitObject;
+      djinni->callback = FieldFx_UpdateDescendingOrbitObject;
       djinni->mode = 0;
       ObjectDispatch_SelectAnimationFar(djinni, 7);
       Animation_ApplyChildValuesFar((struct DispatchObject *)djinni,
@@ -152,12 +152,12 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
                                   SPRITE_COLOR_GREEN_TINT);
     djinni->lifetime = 8;
     ObjectDispatch_InitializeFar((struct DispatchObject *)djinni,
-                                 gBattleFx_CommonParticleScript);
+                                 gFieldFx_CommonParticleScript);
   }
 
   WaitFrames(15);
   Shop_RestoreFieldPaletteFar();
-  BattleFx_ClearActiveSlotsAndScheduleUpdates();
+  FieldFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
 /// Effect slot callback of a Mercury Djinni's droplets: each falls from 100
@@ -165,9 +165,9 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
 /// to 20 pixels over the leader, at 3 to 6 pixels a frame, and
 /// where it lands splashes 12 pixels in a random direction, at half size,
 /// with SE_143. It then falls again 6 frames later, until
-/// BattleFx_RunMercuryDjinnCapture sets MERCURY_DROPLET_LAST_FALL: its next
+/// FieldFx_RunMercuryDjinnCapture sets MERCURY_DROPLET_LAST_FALL: its next
 /// splash is its last (enum MercuryDropletState).
-void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
+void FieldFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   struct ObjectRuntime *source;
   struct EffectVector position;
   s8 *statePointer;
@@ -218,13 +218,13 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
       effect->callbackDelay = 6;
     }
   } else if (state == MERCURY_DROPLET_DONE) {
-    BattleFx_ClearOwnedSlot(effect);
+    FieldFx_ClearOwnedSlot(effect);
   }
 }
 
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to. Set on the Mercury Djinni's afterimages by
-/// BattleFx_RunMercuryDjinnCapture.
-void BattleFx_HalveDistanceToTarget(union FieldObject *fieldObject) {
-  BattleFx_MoveAfterimageHalfway(fieldObject);
+/// FieldFx_RunMercuryDjinnCapture.
+void FieldFx_HalveDistanceToTarget(union FieldObject *fieldObject) {
+  FieldFx_MoveAfterimageHalfway(fieldObject);
 }

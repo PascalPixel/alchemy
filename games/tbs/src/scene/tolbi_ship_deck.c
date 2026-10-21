@@ -932,7 +932,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 
   if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     Engine_EventBegin();
-    Battle_ResetEffectCounter();
+    Field_EndBusyAndReveal();
     Actor_FaceActor(ACTOR_PARTY_LEADER, KALAY_CREWMAN, 10);
     Camera_SetSpeed(0x19999, 0x3333);
     Camera_MoveTo(PIXELS(190), -1, PIXELS(708), 1);
@@ -1050,7 +1050,7 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Engine_EventBegin();
-      Battle_ResetEffectCounter();
+      Field_EndBusyAndReveal();
       TolbiShipDeck_ConfrontCrewman();
       Actor_SetSpeed(KALAY_CREWMAN, 0x6666, 0x3333);
       Object_GetById(KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1095,7 +1095,7 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
   if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Engine_EventBegin();
-      Battle_ResetEffectCounter();
+      Field_EndBusyAndReveal();
       TolbiShipDeck_ConfrontCrewman();
       Actor_SetSpeed(KALAY_CREWMAN, 0x6666, 0x3333);
       Object_GetById(KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;

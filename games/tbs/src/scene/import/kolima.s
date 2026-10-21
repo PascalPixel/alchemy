@@ -65,7 +65,7 @@
 	.set import.Engine_PsynergyBegin, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
-	.set import.BattleEffect_CleanupSceneObjects, 1
+	.set import.FieldFx_End, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.Djinn_JoinParty, 1

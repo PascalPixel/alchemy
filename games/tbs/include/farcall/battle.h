@@ -4,9 +4,11 @@
 /// games/tbs/src/system/far_call/BATTLE.S.
 
 void DebugBattle_RunMenuFar(void);
-void BattleActor_SpawnObjectsForListFar(s16 *list, s32 refresh);
-void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 zoom);
-void BattlePres_SetupTransitionAtPairMidpointFar(s32 a, s32 b, s32 zoom);
+void BattleObj_SpawnObjectsForListFar(s16 *list, s32 refresh);
+void BattlePresentation_SetupTransitionSceneFar(s32 x, s32 depth, s32 y,
+                                                s32 zoom);
+void BattlePresentation_SetupTransitionAtPairMidpointFar(s32 a, s32 b,
+                                                         s32 zoom);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 value, s32 fade);
 void BattleBackground_LoadFar(s32 mode, s32 resource, s32 level);
 void BattlePresentation_SetPaletteLevelFar(s32 unused, s32 level);
@@ -25,8 +27,8 @@ s32 BattleMotion_ProjectConditionalPositionFar(s32 id, s32 *projected);
 s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
 void Camera_ConfigureSceneFar(s32 pos);
 void *GetMotionRecordFar(struct MotionObject *object, s32 record_index);
-void BattlePres_SetActorModesFar(u16 *actors, s32 mode);
-void BattleEventRuntime_BeginPhaseFar(s32 cue);
+void BattlePresentation_SetActorModesFar(u16 *actors, s32 mode);
+void BattleEvent_BeginPhaseFar(s32 cue);
 s32 Graphics_ScaleRgb555ClampedFar(u16 *source, u16 *destination, s32 scale,
                                    s32 count);
 s32 DjinnRecovery_TickFar(void);
@@ -34,7 +36,7 @@ s32 BattleMotion_GetSlotPaletteFar(s32 id);
 s32 DjinnRecovery_TickTwentyFar(void);
 s32 DebugParty_LoadPresetFar(s32 preset);
 /// Far call to BattleObjPut.
-void BattleActor_CommitPlacementFar(void);
+void BattleObjPutFar(void);
 #ifdef UBFIX
 void BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
 #else

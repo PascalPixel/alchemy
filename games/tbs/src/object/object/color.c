@@ -11,10 +11,9 @@
 
 /// Sets each of the 1344 colour channels of step to the amount to add each
 /// frame for source to reach target in frames frames; with frames 0 or less
-/// step is left as it was. Called by BattleFx_StartBufferInterpolation and by
+/// step is left as it was. Called by ColorBuffer_StartInterpolation and by
 /// the weather effects (psynergy_effects/weather.c).
-void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
-                                 s32 frames) {
+void ColorBuffer_ComputeSteps(s16 *source, s16 *target, s16 *step, s32 frames) {
   s32 remainingChannels;
   s32 sourceChannel;
   s32 targetChannel;
@@ -37,10 +36,10 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
 /// one step toward its target, packs it into RGB555 and queues it for the BG
 /// and OBJ palettes. The packed colours are double-buffered: work->page names
 /// the page the queued DMA reads, and the other is written. Registered by
-/// BattleEffect_InitializeBuffers as a scheduler callback; the menus clear
+/// ColorBuffer_Initialize as a scheduler callback; the menus clear
 /// and set FLAG_PALETTE_BLEND_HELD around it (menu/common.c).
-void BattlePalette_UpdateBlend(void) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+void ColorBuffer_Update(void) {
+  struct ColorBuffer *work = gPaletteBufferWork;
   u16 *channelDelta = work->delta;
   s32 i;
 
@@ -92,9 +91,9 @@ void BattlePalette_UpdateBlend(void) {
 }
 
 // Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
-extern u16 gBattlePalette_ChannelCurve[];
-extern u16 gBattlePalette_ChannelCurveLight[];
-extern u16 gBattlePalette_ChannelCurveContrast[];
+extern u16 gColorBuffer_ChannelCurve[];
+extern u16 gColorBuffer_ChannelCurveLight[];
+extern u16 gColorBuffer_ChannelCurveContrast[];
 
 /// Builds colours for the colour buffer from the palette src into dst, which
 /// holds each colour as B, G and R channels shifted up 10 bits. mode below
@@ -102,9 +101,9 @@ extern u16 gBattlePalette_ChannelCurveContrast[];
 /// colour; the other PALETTE_TRANSFORM_* values transform each colour; any
 /// other value is the address of a ready buffer to copy. half: 0 for all 448
 /// colours, 1 for the BG's 224, 2 for the OBJ's 224. Called by the
-/// ApplyColorTo functions below, BattleEffect_InitializeBuffers and the
+/// ApplyColorTo functions below, ColorBuffer_Initialize and the
 /// weather effects (psynergy_effects/weather.c).
-void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
+void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;
   s32 red;
@@ -166,9 +165,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
           green = 28;
         if (blue > 28)
           blue = 28;
-        *dst++ = gBattlePalette_ChannelCurveLight[blue];
-        *dst++ = gBattlePalette_ChannelCurveLight[green];
-        *dst++ = gBattlePalette_ChannelCurveLight[red];
+        *dst++ = gColorBuffer_ChannelCurveLight[blue];
+        *dst++ = gColorBuffer_ChannelCurveLight[green];
+        *dst++ = gColorBuffer_ChannelCurveLight[red];
       }
       break;
     case PALETTE_TRANSFORM_WARM: // half R + 10, two thirds G + 8, B - 7 (black
@@ -184,13 +183,13 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
           red += 10;
           green += 8;
           blue -= 7;
-          red = BattleFx_ClampRgb555Channel(red);
-          green = BattleFx_ClampRgb555Channel(green);
-          blue = BattleFx_ClampRgb555Channel(blue);
+          red = ColorBuffer_ClampChannel(red);
+          green = ColorBuffer_ClampChannel(green);
+          blue = ColorBuffer_ClampChannel(blue);
         }
-        *dst++ = gBattlePalette_ChannelCurveContrast[blue];
-        *dst++ = gBattlePalette_ChannelCurveLight[green];
-        *dst++ = gBattlePalette_ChannelCurve[red];
+        *dst++ = gColorBuffer_ChannelCurveContrast[blue];
+        *dst++ = gColorBuffer_ChannelCurveLight[green];
+        *dst++ = gColorBuffer_ChannelCurve[red];
       }
       break;
     case PALETTE_TRANSFORM_MUTED: // narrow the range, G and B + 2
@@ -213,12 +212,12 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
           blue = 26;
         green += 2;
         blue += 2;
-        red = BattleFx_ClampRgb555Channel(red);
-        green = BattleFx_ClampRgb555Channel(green);
-        blue = BattleFx_ClampRgb555Channel(blue);
-        *dst++ = gBattlePalette_ChannelCurve[blue];
-        *dst++ = gBattlePalette_ChannelCurve[green];
-        *dst++ = gBattlePalette_ChannelCurve[red];
+        red = ColorBuffer_ClampChannel(red);
+        green = ColorBuffer_ClampChannel(green);
+        blue = ColorBuffer_ClampChannel(blue);
+        *dst++ = gColorBuffer_ChannelCurve[blue];
+        *dst++ = gColorBuffer_ChannelCurve[green];
+        *dst++ = gColorBuffer_ChannelCurve[red];
       }
       break;
     case PALETTE_TRANSFORM_PALE: // half of each, plus the mean
@@ -229,16 +228,16 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = color & 31;
         green = (color >> 5) & 31;
         blue = (color >> 10) & 31;
-        mean = BattleFx_ClampRgb555Channel((red + green + blue) / 3);
+        mean = ColorBuffer_ClampChannel((red + green + blue) / 3);
         red = (red >> 1) + mean;
         green = (green >> 1) + mean;
         blue = (blue >> 1) + mean;
-        red = BattleFx_ClampRgb555Channel(red);
-        green = BattleFx_ClampRgb555Channel(green);
-        blue = BattleFx_ClampRgb555Channel(blue);
-        dst[0] = gBattlePalette_ChannelCurveContrast[blue];
-        dst[1] = gBattlePalette_ChannelCurveContrast[green];
-        dst[2] = gBattlePalette_ChannelCurveContrast[red];
+        red = ColorBuffer_ClampChannel(red);
+        green = ColorBuffer_ClampChannel(green);
+        blue = ColorBuffer_ClampChannel(blue);
+        dst[0] = gColorBuffer_ChannelCurveContrast[blue];
+        dst[1] = gColorBuffer_ChannelCurveContrast[green];
+        dst[2] = gColorBuffer_ChannelCurveContrast[red];
         dst += 3;
       }
       break;
@@ -250,12 +249,12 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         green = (color >> 5) & 31;
         blue = (color >> 10) & 31;
         red += ((green >> 3) + (blue >> 3));
-        red = BattleFx_ClampRgb555Channel(red);
+        red = ColorBuffer_ClampChannel(red);
         green -= green / 3;
         blue -= blue / 3;
-        dst[0] = gBattlePalette_ChannelCurve[blue];
-        dst[1] = gBattlePalette_ChannelCurve[green];
-        dst[2] = gBattlePalette_ChannelCurveLight[red];
+        dst[0] = gColorBuffer_ChannelCurve[blue];
+        dst[1] = gColorBuffer_ChannelCurve[green];
+        dst[2] = gColorBuffer_ChannelCurveLight[red];
         dst += 3;
       }
       break;
@@ -270,12 +269,12 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         red += 6;
         green += 4;
         blue -= 6;
-        red = BattleFx_ClampRgb555Channel(red);
-        green = BattleFx_ClampRgb555Channel(green);
-        blue = BattleFx_ClampRgb555Channel(blue);
-        dst[0] = gBattlePalette_ChannelCurveContrast[blue];
-        dst[1] = gBattlePalette_ChannelCurveLight[green];
-        dst[2] = gBattlePalette_ChannelCurve[red];
+        red = ColorBuffer_ClampChannel(red);
+        green = ColorBuffer_ClampChannel(green);
+        blue = ColorBuffer_ClampChannel(blue);
+        dst[0] = gColorBuffer_ChannelCurveContrast[blue];
+        dst[1] = gColorBuffer_ChannelCurveLight[green];
+        dst[2] = gColorBuffer_ChannelCurve[red];
         dst += 3;
       }
       break;
@@ -308,9 +307,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       red = color * tintRed;
       green = color * tintGreen;
       blue = color * tintBlue;
-      red = BattleFx_ClampRgb555Component(red);
-      green = BattleFx_ClampRgb555Component(green);
-      blue = BattleFx_ClampRgb555Component(blue);
+      red = ColorBuffer_ClampShiftedChannel(red);
+      green = ColorBuffer_ClampShiftedChannel(green);
+      blue = ColorBuffer_ClampShiftedChannel(blue);
       dst[0] = blue;
       dst[1] = green;
       dst[2] = red;
@@ -340,12 +339,12 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
                                   (s32)(tintGreen << 16) >> 4);
       blendedBlue = Iwram_MulQ16(((color * tintBlue) >> 4) << 16,
                                  (s32)(tintBlue << 16) >> 4);
-      blendedRed = BattleFx_ClampRgb555Channel((u32)blendedRed >> 16);
-      blendedGreen = BattleFx_ClampRgb555Channel((u32)blendedGreen >> 16);
-      blendedBlue = BattleFx_ClampRgb555Channel((u32)blendedBlue >> 16);
-      *dst++ = gBattlePalette_ChannelCurve[blendedBlue];
-      *dst++ = gBattlePalette_ChannelCurve[blendedGreen];
-      *dst++ = gBattlePalette_ChannelCurve[blendedRed];
+      blendedRed = ColorBuffer_ClampChannel((u32)blendedRed >> 16);
+      blendedGreen = ColorBuffer_ClampChannel((u32)blendedGreen >> 16);
+      blendedBlue = ColorBuffer_ClampChannel((u32)blendedBlue >> 16);
+      *dst++ = gColorBuffer_ChannelCurve[blendedBlue];
+      *dst++ = gColorBuffer_ChannelCurve[blendedGreen];
+      *dst++ = gColorBuffer_ChannelCurve[blendedRed];
     }
   } else if (mode & PALETTE_TRANSFORM_SPLIT) {
     // The colours unchanged, as the default transform writes them.
@@ -368,8 +367,8 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
 /// Sets up the colour buffer (gPaletteBufferWork) from the BG and OBJ palettes
 /// and starts updating the palettes from it each frame. Called by
 /// Field_RunScene on scene load.
-void BattleEffect_InitializeBuffers(void) {
-  struct BattleEffectBuffers *work;
+void ColorBuffer_Initialize(void) {
+  struct ColorBuffer *work;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_PALETTE_BUFFER, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
@@ -377,44 +376,44 @@ void BattleEffect_InitializeBuffers(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
           (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
-  BattleFx_BuildBuffer(PALETTE_TRANSFORM_PLAIN, work->palette, work->target, 0);
-  Scheduler_AddOrUpdateCallback(BattlePalette_UpdateBlend, 0xc8f);
+  ColorBuffer_Build(PALETTE_TRANSFORM_PLAIN, work->palette, work->target, 0);
+  Scheduler_AddOrUpdateCallback(ColorBuffer_Update, 0xc8f);
 }
 
 /// Stops the colour buffer and frees it. Reached only through a bare far-call
 /// veneer; no ☀️ code names it.
-void BattlePalette_StopBlendAndReleaseBuffer(void) {
-  Scheduler_RemoveCallback(&BattlePalette_UpdateBlend);
+void ColorBuffer_Release(void) {
+  Scheduler_RemoveCallback(&ColorBuffer_Update);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_PALETTE_BUFFER);
 }
 
-/// Sets the colours the buffer moves toward (see BattleFx_BuildBuffer); does
+/// Sets the colours the buffer moves toward (see ColorBuffer_Build); does
 /// nothing without a colour buffer. Called by the field Psynergy effects,
 /// the scene transitions, the shop cursor, and scene overlays as
 /// Engine_ColorBufferApplyTarget.
-void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+void ColorBuffer_SetTarget(s32 mode, s32 half) {
+  struct ColorBuffer *work = gPaletteBufferWork;
 
   if (work != NULL) {
-    BattleFx_BuildBuffer(mode, work->palette, work->target, half);
+    ColorBuffer_Build(mode, work->palette, work->target, half);
   }
 }
 
-/// Sets the colours the buffer shows now (see BattleFx_BuildBuffer). Called by
+/// Sets the colours the buffer shows now (see ColorBuffer_Build). Called by
 /// Reveal, the leader's steps (step.c), the transitions, and scene overlays
 /// as Engine_ColorBufferApplySource.
-void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+void ColorBuffer_SetSource(s32 mode, s32 half) {
+  struct ColorBuffer *work = gPaletteBufferWork;
 
   if (work != NULL) {
-    BattleFx_BuildBuffer(mode, work->palette, work->current, half);
+    ColorBuffer_Build(mode, work->palette, work->current, half);
   }
 }
 
 /// Sets the buffer's source backdrop colour (BG colour 0 of its palette
 /// copy). Called by the transitions (transition.c).
-void BattleFx_SetPrimaryBufferValue(u32 color) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+void ColorBuffer_SetBackdrop(u32 color) {
+  struct ColorBuffer *work = gPaletteBufferWork;
 
   if (work != NULL) {
     work->palette[0] = color;
@@ -423,21 +422,20 @@ void BattleFx_SetPrimaryBufferValue(u32 color) {
 
 /// Starts moving the shown colours to the target colours over frames frames:
 /// sets work->duration, clears work->step and fills work->delta. Called after
-/// BattleFx_ApplyColorToTargetBuffer by the same callers, and by scene
+/// ColorBuffer_SetTarget by the same callers, and by scene
 /// overlays as Engine_ColorBufferInterpolate.
-void BattleFx_StartBufferInterpolation(s32 frames) {
-  struct BattleEffectBuffers *work = gPaletteBufferWork;
+void ColorBuffer_StartInterpolation(s32 frames) {
+  struct ColorBuffer *work = gPaletteBufferWork;
 
   if (work != NULL) {
     work->duration = frames;
     work->step = 0;
-    BattleFx_InterpolateBuffers(work->current, work->target, work->delta,
-                                frames);
+    ColorBuffer_ComputeSteps(work->current, work->target, work->delta, frames);
   }
 }
 
 /// Clamps a 5-bit colour channel to 0 to 31.
-s32 BattleFx_ClampRgb555Channel(s32 value) {
+s32 ColorBuffer_ClampChannel(s32 value) {
   if (value > 31)
     return 31;
   if (value < 0)
@@ -446,7 +444,7 @@ s32 BattleFx_ClampRgb555Channel(s32 value) {
 }
 
 /// Clamps a colour channel shifted up 10 bits to at most 31 << 10.
-s32 BattleFx_ClampRgb555Component(s32 value) {
+s32 ColorBuffer_ClampShiftedChannel(s32 value) {
   // 31744 is 31 << 10.
   if (value > 31744)
     value = 31744;

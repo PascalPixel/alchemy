@@ -145,12 +145,12 @@ static void Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
 #else
 static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
 #endif
-static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject);
-static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter);
-static void Effect_UpdateParticlePosition(struct FieldActor *particle,
-                                          s32 distance, s32 angle);
+static void Vale_ConfigureSpawnedParticle(union FieldObject *fieldObject);
+static void Vale_SpawnRisingDustBurst(struct FieldActor *emitter);
+static void Vale_UpdateParticlePosition(struct FieldActor *particle,
+                                        s32 distance, s32 angle);
 static void Event_SettleMovedPillar(void);
-static void Effect_PlayStepSound(void);
+static void Vale_PlayStepSound(void);
 static void Vale_SynchronizeAlephGuardPause(void);
 static void Vale_AdjustPillarPriorityForLeaderHeight(void);
 static void Vale_FlashActorAndSpawnEffects(struct FieldActor *actor);
@@ -1562,7 +1562,7 @@ s32 Vale_Initialize(void) {
       }
     }
 #endif
-    BattleFx_SetQueuedSoundAndPlay(SE_170);
+    FieldFx_SetQueuedSoundAndPlay(SE_170);
     Engine_MapRedraw();
     Engine_TaskWait(1);
   }
@@ -2046,7 +2046,7 @@ static void Event_MendingTheRoof(void) {
   moveHand->y.fixed = PIXELS(208);
   moveHand->z.fixed = PIXELS(584);
   moveHand->facing = 0x8000;
-  moveHand->update = Effect_ConfigureSpawnedParticle;
+  moveHand->update = Vale_ConfigureSpawnedParticle;
   Engine_EventWait(4);
   Actor_SetSpeed(ACTOR_OPENING_MOVE_HAND, PIXELS(2), PIXELS(2));
   FieldObject_SetPosition(moveHand, PIXELS(408), PIXELS(208), PIXELS(584));
@@ -2068,7 +2068,7 @@ static void Event_MendingTheRoof(void) {
   Actor_SetChildValue(ACTOR_OPENING_PILLAR, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  Effect_SpawnRisingDustBurst(moveHand);
+  Vale_SpawnRisingDustBurst(moveHand);
   Scene_EndCutscenePsynergy();
 
   // Finish the reunion conversation after the repair effects settle.
@@ -2291,7 +2291,7 @@ static void Event_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
   Scene_BeginCutscenePsynergy();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
-  FieldScheduler_AddCallback(Effect_PlayStepSound, 3200);
+  FieldScheduler_AddCallback(Vale_PlayStepSound, 3200);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
     Engine_TaskWait(1);
@@ -2313,7 +2313,7 @@ static void Event_RoofMended(void) {
     record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
   }
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Scheduler_RemoveCallback(Effect_PlayStepSound);
+  Scheduler_RemoveCallback(Vale_PlayStepSound);
   Scheduler_RemoveCallback(callbackA);
   Scheduler_RemoveCallback(callbackB);
   Engine_TaskWait(1);
@@ -2335,7 +2335,7 @@ static void Event_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
-  Task_AddCallback(Effect_PlayStepSound, 3200);
+  Task_AddCallback(Vale_PlayStepSound, 3200);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
     Engine_TaskWait(1);
@@ -2356,7 +2356,7 @@ static void Event_RoofMended(void) {
     record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
   }
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Scheduler_RemoveCallback(Effect_PlayStepSound);
+  Scheduler_RemoveCallback(Vale_PlayStepSound);
   Scheduler_RemoveCallback(callbackC);
   Scheduler_RemoveCallback(callbackD);
   Engine_TaskWait(1);
@@ -2379,7 +2379,7 @@ static void Event_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
-  Task_AddCallback(Effect_PlayStepSound, 3200);
+  Task_AddCallback(Vale_PlayStepSound, 3200);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
     Engine_TaskWait(1);
@@ -2400,7 +2400,7 @@ static void Event_RoofMended(void) {
     record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
   }
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Scheduler_RemoveCallback(Effect_PlayStepSound);
+  Scheduler_RemoveCallback(Vale_PlayStepSound);
   Scheduler_RemoveCallback(callbackE);
   Scheduler_RemoveCallback(callbackF);
   Engine_TaskWait(1);
@@ -2942,7 +2942,7 @@ static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
 }
 
 /// Emits one dust particle below the moving source actor.
-static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
+static void Vale_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
   struct FieldActor *source = &fieldObject->actor;
   s32 spawnPosition[3];
   s32 randomDistance;
@@ -2975,7 +2975,7 @@ static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
 
 /// Shrinks and raises the emitter, scatters dust, then clears its motion
 /// targets.
-static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter) {
+static void Vale_SpawnRisingDustBurst(struct FieldActor *emitter) {
   s32 frameCountdown;
 
   Engine_AudioPlayCue(SE_CAST);
@@ -3006,9 +3006,9 @@ static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter) {
 
       particle->velocityY = Engine_RandomNext() - Engine_RandomNext();
 
-      Effect_UpdateParticlePosition(
-          particle, ((Engine_RandomNext() * 3) << 3) + PIXELS(8),
-          Engine_RandomNext());
+      Vale_UpdateParticlePosition(particle,
+                                  ((Engine_RandomNext() * 3) << 3) + PIXELS(8),
+                                  Engine_RandomNext());
     }
   }
 
@@ -3025,8 +3025,8 @@ static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter) {
 
 /// Moves a particle outward in the horizontal plane without changing its
 /// height.
-static void Effect_UpdateParticlePosition(struct FieldActor *particle,
-                                          s32 distance, s32 angle) {
+static void Vale_UpdateParticlePosition(struct FieldActor *particle,
+                                        s32 distance, s32 angle) {
   s32 position[3];
   if (particle != 0) {
     SET_VECTOR(position, particle->x.fixed, particle->y.fixed,
@@ -3079,7 +3079,7 @@ static void Event_SettleMovedPillar(void) {
   }
 }
 
-static void Effect_PlayStepSound(void) {
+static void Vale_PlayStepSound(void) {
   if ((*(u32 *)&gFrameCount & 15) == 0)
     Engine_AudioPlayCue(SE_131);
 }

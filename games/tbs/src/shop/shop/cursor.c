@@ -131,11 +131,11 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
   // UB: slot 32 lies past scalar gEventWork. Its named load adds eight
   // bytes in the native EN trial (0x54 to 0x5c).
 #ifdef UBFIX
-  struct BattleEffectBuffers *paletteBuffers = gPaletteBufferWork;
+  struct ColorBuffer *paletteBuffers = gPaletteBufferWork;
   u8 *eventBytes = (u8 *)gEventWork;
 #else
   u32 *workCells = (u32 *)&gEventWork;
-  struct BattleEffectBuffers *paletteBuffers = (struct BattleEffectBuffers *)
+  struct ColorBuffer *paletteBuffers = (struct ColorBuffer *)
       workCells[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_EVENT];
   u8 *eventBytes = (u8 *)workCells[0];
 #endif
@@ -145,16 +145,16 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0, REG_DMA3);
-  BattleFx_ApplyColorToTargetBufferFar(layer, 1);
-  BattleFx_StartBufferInterpolationFar(16);
+  ColorBuffer_SetTargetFar(layer, 1);
+  ColorBuffer_StartInterpolationFar(16);
 }
 
 /// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
 /// frames. Called when the sanctum, Djinn capture or Altmiller wall effect
 /// ends.
 void Shop_RestoreFieldPalette(void) {
-  BattleFx_ApplyColorToTargetBufferFar((s32)gEventWork + 0x236, 1);
-  BattleFx_StartBufferInterpolationFar(0x10);
+  ColorBuffer_SetTargetFar((s32)gEventWork + 0x236, 1);
+  ColorBuffer_StartInterpolationFar(0x10);
 }
 
 /// Moves the cursor from its saved position toward its target, in a straight

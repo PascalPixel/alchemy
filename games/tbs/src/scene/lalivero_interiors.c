@@ -337,7 +337,7 @@ static void TalkToInnWorker(void) {
   side = Leader_GetSide();
   GameFlag_Set(FLAG_INN_WORKER_APOLOGIZED);
   Engine_EventBegin();
-  Engine_ResetSceneEffectCounter();
+  Engine_FieldEndBusyAndReveal();
   Engine_EventSetMessage(MsgLaliveroImSorry);
   Engine_EventWait(50);
   Actor_ShowEmote(ACTOR_INN_WORKER, EMOTE_IN_FRONT | 2, 50);
@@ -370,7 +370,7 @@ static void IodemCallsOut(void) {
 
   Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
   Engine_EventBegin();
-  Engine_ResetSceneEffectCounter();
+  Engine_FieldEndBusyAndReveal();
   Engine_EventWait(10);
   Engine_CameraMoveTo(PIXELS(120), -1, PIXELS(96), 1);
   Engine_CameraWaitForMove();

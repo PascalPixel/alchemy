@@ -53,7 +53,7 @@ s32 Field_CountRequests(void) {
 /// Returns the collision code of the map cell 16 pixels ahead of the party
 /// leader (a world map block on the world map), or 0 without a leader.
 ///
-/// Called by Field_FindItemEvent and BattleFx_FindMatchingEvent (items.c),
+/// Called by Field_FindItemEvent and FieldFx_FindMatchingEvent (items.c),
 /// which match an item or Psynergy event to the tile the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
@@ -275,11 +275,11 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     if (accumulatedDistance > 0xffff) {
       amount = accumulatedDistance / 0x10000;
       work->walkingDistance = accumulatedDistance & 0xffff;
-      BattleParty_ApplyDrain(amount, 0);
+      Party_AddPp(amount, 0);
       if (DjinnRecovery_TickFar())
         AudioCommand_PlayFar(SE_139);
       Event_ClearInvalidPackedValues();
-      partyHurt = BattleParty_ApplyStatusDamage();
+      partyHurt = Party_ApplyPoisonDamage();
     }
 
     // Hazardous ground: entering it starts the count half way; then each
@@ -316,17 +316,17 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (gGameState.hazardMode == HAZARD_COUNT_FRAMES) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
-      BattleFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ATTACH);
+      FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                  ATTACHED_EFFECT_ATTACH);
     if (gGameState.hazardSteps == gGameState.hazardLimit)
-      BattleFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_REMOVE);
+      FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                  ATTACHED_EFFECT_REMOVE);
   }
   if (gGameState.hazardSteps >= gGameState.hazardLimit) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
     amount = gGameState.hazardDamage;
     gGameState.hazardSteps = 0;
-    BattleParty_ApplyHealthDelta(-(amount & 255), amount & 0x100);
+    Party_AddHp(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
 
@@ -338,8 +338,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     work->fallenCount = 0;
     work->survivorCount = 0;
     leader->velocityY = 0x40000;
-    BattleFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                 ATTACHED_EFFECT_ONCE);
+    FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
       unitVitals = UnitGetFar(gGameState.activeOwners[i]);
@@ -362,8 +362,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 ///
 /// Called by Field_ProcessStep as the party walks, by Field_SearchTile for a
 /// Psynergy stone (999, all PP), and by the Vale home scene through
-/// BattleParty_ApplyDrainFar.
-void BattleParty_ApplyDrain(s32 amount, s32 unused) {
+/// Party_AddPpFar.
+void Party_AddPp(s32 amount, s32 unused) {
   s32 partyCount = Party_CountActiveOwnersFar();
   s32 partyIndex;
 
@@ -382,7 +382,7 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused) {
 /// maximum HP.
 ///
 /// Called by Field_ProcessStep for hazardous ground.
-void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
+void Party_AddHp(s32 amount, s32 percent) {
   s32 partyCount;
   s32 partyIndex;
   s32 hpDelta;
@@ -390,8 +390,8 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
 
   // Damage of more than 10 plays the heavier impact sound.
   if (amount < 0) {
-    BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
-    BattleFx_StartBufferInterpolation(4);
+    ColorBuffer_SetSource(0x1ff, 0);
+    ColorBuffer_StartInterpolation(4);
     if (amount < -10)
       AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     else
@@ -425,7 +425,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
 /// non-zero result as the party being hurt.
 ///
 /// Called by Field_ProcessStep at each tick of the distance walked.
-s32 BattleParty_ApplyStatusDamage(void) {
+s32 Party_ApplyPoisonDamage(void) {
   s32 worstPoison = 0;
   s32 partyCount = Party_CountActiveOwnersFar();
   s32 partyIndex;
@@ -457,8 +457,8 @@ s32 BattleParty_ApplyStatusDamage(void) {
   }
 
   if (worstPoison != 0) {
-    BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
-    BattleFx_StartBufferInterpolation(4);
+    ColorBuffer_SetSource(0x1ff, 0);
+    ColorBuffer_StartInterpolation(4);
     AudioCommand_PlayFar(SE_133);
   }
 

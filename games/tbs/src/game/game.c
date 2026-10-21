@@ -14,7 +14,7 @@
 ///   Units           units.c: UnitGet, UnitCalc, GameState_InitDefaults
 ///   Items           inventory.c: Inventory_AddItem, Inventory_Equip,
 ///                   PartyInventory_Add
-///   Levels          levels.c: Unit_RefreshPsynergy, Owner_LevelUp
+///   Levels          levels.c: Unit_RefreshPsynergy, Unit_LevelUp
 ///   Flags           flags.c: GameFlag_Test, GameFlag_SetBit
 ///   Enemies, party  party.c: BattleUnitSet, Party_AddActiveOwner,
 ///                   Party_AdjustCoins

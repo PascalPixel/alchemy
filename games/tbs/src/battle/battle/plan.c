@@ -217,7 +217,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   // A fresh plan, and the debug defeat
   //----------------------------------------------------------------------
   selectedTargetId = Battle_GetTaggedSlotValue(request->target);
-  BattleEventRuntime_Reset();
+  BattleEvent_Reset();
   plan->hauntDamage = 0;
   plan->actorId = request->unitId;
   plan->targetCount = 0;
@@ -253,7 +253,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         BattleEvPush(BATTLE_EVENT_DEFEAT, id);
       }
     }
-    BattleEv_DispatchQueued();
+    BattleEvent_DispatchQueued();
     return PLAN_NO_ACTION;
   }
 
@@ -325,7 +325,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       UiWork_PushValueSlotFar(Inventory_GetEquippedItemFar(actor, EQUIP_WEAPON),
                               VALUE_ITEM_NAME);
       UiText_ShowMessageAndWaitCoreFar(MsgWeaponHowls);
-      BattleEv_MarkDisplay();
+      BattleEvent_MarkDisplay();
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
       UiText_ShowMessageAndWaitCoreFar(MsgWeaponHowls + 1);
     }
@@ -365,7 +365,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     struct ItemDefinition *item;
 
     // A slot of -1: an earlier command this round used the item up
-    // (BattlePres_RunItem).
+    // (BattlePresentation_RunItem).
     if (request->parameter < 0) {
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiText_ShowMessageAndWaitCoreFar(MsgItemAlreadyUsed);
@@ -500,15 +500,15 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       if (Djinn_IsReadyFar(request->unitId, DJINN_ELEMENT(request->parameter),
                            DJINN_INDEX(request->parameter))) {
         BattleActGet(abilityId);
-        BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
+        BattlePresentation_SetActorModes(0, HIGHLIGHT_OFF);
         Djinn_ActivateFar(request->unitId, DJINN_ELEMENT(request->parameter),
                           DJINN_INDEX(request->parameter));
         DjinnRecovery_RemoveFar(request->unitId,
                                 DJINN_ELEMENT(request->parameter),
                                 DJINN_INDEX(request->parameter));
         UnitCalcFar(request->unitId);
-        BattleEventRuntime_Reset();
-        BattleEventRuntime_SchedulePhase(30);
+        BattleEvent_Reset();
+        BattleEvent_SchedulePhase(30);
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, request->unitId);
         BattleEvPush(BATTLE_EVENT_ABILITY_NAME,
                      DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
@@ -523,9 +523,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
                                           POSE_CAST);
         ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObjGet(request->unitId)->object, 32);
-        BattleFx_PlayUnitElementEffect(
-            request->unitId, DJINN_ELEMENT(request->parameter), GLOW_BURST, 0);
-        BattleEventRuntime_WaitForReady();
+        ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
+                         GLOW_BURST, 0);
+        BattleEvent_WaitForReady();
         return PLAN_NO_ACTION;
       }
       // Recovering.

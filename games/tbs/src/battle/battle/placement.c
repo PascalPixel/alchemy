@@ -12,14 +12,14 @@
 #define SCALE_ONE 0x10000
 
 /// BattleObj.effect as a battle object is made: the sprite
-/// BattleActor_SpawnObjectsForList adds as a layer of every one-part body
+/// BattleObj_SpawnObjectsForList adds as a layer of every one-part body
 /// (NARROW_EFFECT_SPRITE on a body 32 pixels wide). Its 64 by 64 picture
 /// (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse along its
 /// bottom edge, NARROW_EFFECT_SPRITE's a 16 by 3 one.
 /// XXX: likely the unit's shadow on the ground rather than an effect, because
 /// of that picture, because adding it also clears the sprite's own shadow
 /// (AnimationObject.flags bit 0), and because
-/// BattleActor_UpdateSpritePriorities changes the layer's priority while the
+/// BattleObj_UpdateSpritePriorities changes the layer's priority while the
 /// unit is off the ground.
 #define BATTLE_OBJ_NO_EFFECT 0x1fe
 
@@ -27,9 +27,10 @@
 /// pixels: its sprite (an enemy's from its class, sharing the slot it
 /// already holds; a party member's battle sprite), palette, size and weapon
 /// sprite, turned to face the centre, and starts its motion script
-/// (gBattlePres_ActorObjectScript). Called by BattleUnit_RefreshPlacement
-/// and by BattleTargetExec for an enemy that joins. Fills in actor, creates
-/// a field object for it and, for an enemy, claims its sprite slots.
+/// (gBattlePresentation_ActorObjectScript). Called by
+/// BattleUnit_RefreshPlacement and by BattleTargetExec for an enemy that joins.
+/// Fills in actor, creates a field object for it and, for an enemy, claims its
+/// sprite slots.
 void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
@@ -46,7 +47,7 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   fixedX = x * 65536;
   fixedZ = y * 65536;
   // The id 0xf000 has no sprite kind of enum ObjectCreateKind, so
-  // FieldObject_Create makes no sprite; BattleActor_SpawnObjectsForList
+  // FieldObject_Create makes no sprite; BattleObj_SpawnObjectsForList
   // attaches the battle sprites later.
   object = (struct MotionObject *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = UnitGetFar(unitId);
@@ -275,7 +276,7 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
     object->scaleY = SCALE_ONE;
   }
   ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                               gBattlePres_ActorObjectScript);
+                               gBattlePresentation_ActorObjectScript);
 }
 
 /// Reads the battlefield position of party place index from
@@ -446,7 +447,7 @@ void BattleUnit_RefreshPlacement(void) {
 }
 
 /// Returns 1 if the unit at place is in list. Called by
-/// BattleActor_SpawnObjectsForList to find the objects to release.
+/// BattleObj_SpawnObjectsForList to find the objects to release.
 /// @param list unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
 /// @param place 0 to 7 a party unit id, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {

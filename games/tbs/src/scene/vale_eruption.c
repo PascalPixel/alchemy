@@ -150,7 +150,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_WalkToAndWait(ACTOR_GARETS_BROTHER, 256, 500);
   Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   // A lightning flash, then the screen opens on the villagers below.
-  BattleFx_StartBufferBlend(0x10003, 0x10006);
+  FieldFx_StartBufferBlend(0x10003, 0x10006);
   FieldFx_LastLightning();
   Engine_TaskWait(60);
   Camera_MoveTo(PIXELS(256), -1, PIXELS(612), 0);

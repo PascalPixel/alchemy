@@ -7,14 +7,14 @@
 /// Effect slot callback (enum OutAndBackState): the particle heads for a point
 /// 40 to 70 pixels from where it appeared, then for a point 4 pixels round 8
 /// pixels above the effect's position on screen, and is freed on arrival. Set
-/// on the 16 particles of BattleEffect_RunFallbackObjectTransition. They fly
+/// on the 16 particles of FieldFx_RunHalt. They fly
 /// out straight at up to 4 pixels a frame and come back turning at most 1/16
 /// turn a frame.
-void BattleFx_UpdateRadialCamera(struct EffectSlot *effect) {
+void FieldFx_UpdateRadialCamera(struct EffectSlot *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct EffectVector pos;
   s8 *statePointer;
   s16 angle;
@@ -58,29 +58,29 @@ top:
   }
   if (state == OUT_AND_BACK_FLYING_BACK &&
       EffectSlot_HasPendingTarget(effect) == 0)
-    BattleFx_ClearOwnedSlot(effect);
+    FieldFx_ClearOwnedSlot(effect);
 }
 
 /// Pauses the target (scene->child) and runs
-/// BattleEffect_RunFallbackObjectTransition. Called by BattleFx_Run and
-/// BattleFx_DispatchRequestKind for Halt on a target; sets the target's
+/// FieldFx_RunHalt. Called by FieldFx_Run and
+/// FieldFx_DispatchRequestKind for Halt on a target; sets the target's
 /// paused field.
-void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
-  struct FieldActor *target = ((struct BattleFxScene *)gEffectWork)->child;
+void FieldFx_RunHaltOnTarget(s32 unused) {
+  struct FieldActor *target = ((struct FieldFxScene *)gEffectWork)->child;
 
   target->paused = 1;
-  BattleEffect_RunFallbackObjectTransition();
+  FieldFx_RunHalt();
 }
 
 /// Throws an object from the caster to the effect's position over 10 frames
 /// and scatters it into 16 particles. Halt's visible effect: called by
-/// BattleFx_Run when no target with a talk event is near, and through
-/// BattleFx_MarkChildAndRunFallbackTransition otherwise. Fills effect slots 0
+/// FieldFx_Run when no target with a talk event is near, and through
+/// FieldFx_RunHaltOnTarget otherwise. Fills effect slots 0
 /// to 15 and sets scene->y to the caster's height.
 ///
 /// Abilities: Halt (FIELD_KIND_HALT).
-void BattleEffect_RunFallbackObjectTransition(void) {
-  struct BattleFxScene *scene = gEffectWork;
+void FieldFx_RunHalt(void) {
+  struct FieldFxScene *scene = gEffectWork;
   struct MotionObject *caster = scene->mainObject;
   struct MotionObject *orb;
   struct EffectSlot *slot;
@@ -98,7 +98,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     return;
 
   // From 16 pixels above the caster to 8 pixels above the effect's position.
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   from.x = caster->x;
   from.y = caster->y + (16 << 16);
   from.z = caster->z;
@@ -113,7 +113,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     SET_POSITION(orb, from.x + (to.x - from.x) * step / 10,
                  from.y + (to.y - from.y) * step / 10,
                  from.z + (to.z - from.z) * step / 10);
-    scale = BattleFx_Interpolate(0x10000, 0x4000, step); // from 0.25 to full
+    scale = FieldFx_Interpolate(0x10000, 0x4000, step); // from 0.25 to full
     orb->scaleX = scale;
     orb->scaleY = scale;
     WaitFrames(1);
@@ -144,7 +144,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     Camera_WorldToScreen((struct EffectVector *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
     EffectSlot_Initialize(slot, SPRITE_SPARKLE, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, BattleFx_UpdateRadialCamera);
+    EffectSlot_SetCallback(slot, FieldFx_UpdateRadialCamera);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, SPRITE_COLOR_WHITE);
     slot++;
   }
@@ -156,28 +156,28 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   ObjectDispatch_ReleaseFar((struct DispatchObject *)orb);
   WaitFrames(4);
   WaitFrames(30);
-  BattleFx_PrepareBufferInterpolation();
+  FieldFx_FadeFromEffectColor();
 }
 
 /// Per-frame update of a paused object: gives its sprite one of the table's
-/// eight params at random. BattleEffect_PauseObject sets it, and
-/// BattleFx_ResumeObject looks for it to know the object was paused this way.
-void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
+/// eight params at random. FieldFx_PauseObject sets it, and
+/// FieldFx_ResumeObject looks for it to know the object was paused this way.
+void FieldFx_UpdatePausedObject(union FieldObject *fieldObject) {
   void *object = (void *)fieldObject;
-  s8 *table = gBattleFx_RandomChildValues;
+  s8 *table = gFieldFx_RandomChildValues;
   s32 random = Random16();
   Animation_ApplyChildValuesFar(object, table[(u32)(random * 8) >> 16]);
 }
 
 /// Pauses object id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gGameState. Called by BattleFx_Run and
-/// BattleFx_DispatchRequestKind for Halt, which then record the id in
+/// first animation's param in gGameState. Called by FieldFx_Run and
+/// FieldFx_DispatchRequestKind for Halt, which then record the id in
 /// gGameState.pausedObject, and by the Colosso scenes to stop their operators.
 /// Sets gGameState.pausedUpdate and pausedPose, the object's update and paused
 /// fields, and stops its animation. gGameState keeps one object's state, so
 /// Halt resumes the one it stopped before it stops another; the paused
 /// object flickers through random sprite params meanwhile.
-void BattleEffect_PauseObject(s32 actorId) {
+void FieldFx_PauseObject(s32 actorId) {
   struct FieldActor *object;
   struct AnimationEntry *entry;
 
@@ -191,22 +191,22 @@ void BattleEffect_PauseObject(s32 actorId) {
         gGameState.pausedPose = entry->param;
       }
     }
-    object->update = BattleEffect_SetRandomTableValueOnObject;
+    object->update = FieldFx_UpdatePausedObject;
     object->paused = 1;
     ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 0);
   }
 }
 
 /// Resumes object id with the update and param kept by
-/// BattleEffect_PauseObject. Called for gGameState.pausedObject by BattleFx_Run
-/// and BattleFx_DispatchRequestKind before Halt stops another object, and by
+/// FieldFx_PauseObject. Called for gGameState.pausedObject by FieldFx_Run
+/// and FieldFx_DispatchRequestKind before Halt stops another object, and by
 /// Scene_TalkToActor after talking to the paused actor. Clears
 /// gGameState.pausedUpdate and the object's paused field, and restarts its
 /// animation at speed 16.
-void BattleFx_ResumeObject(s32 actorId) {
+void FieldFx_ResumeObject(s32 actorId) {
   struct FieldActor *object = ObjectTable_Get(actorId);
   if (object != 0) {
-    if (object->update == BattleEffect_SetRandomTableValueOnObject) {
+    if (object->update == FieldFx_UpdatePausedObject) {
       struct GameState *state = &gGameState;
       object->update = (void (*)(union FieldObject *))state->pausedUpdate;
       state->pausedUpdate = 0;
@@ -219,11 +219,11 @@ void BattleFx_ResumeObject(s32 actorId) {
 }
 
 /// Returns id, or -1 (no target) when actor id's sprite has flags 0xff in
-/// gBattleFx_DefinitionTable (BattleFx_GetFlags): the 20 rows before the
-/// default. Called by BattleFx_Run on the nearest Halt target, so Halt does
+/// gFieldFx_DefinitionTable (FieldFx_GetFlags): the 20 rows before the
+/// default. Called by FieldFx_Run on the nearest Halt target, so Halt does
 /// not stop those actors; an unlisted sprite takes the default row's flags 0.
-s32 BattleFx_FilterObjectIdByFlags(s32 id) {
-  if (BattleFx_GetFlags(id) == 0xff)
+s32 FieldFx_FilterObjectIdByFlags(s32 id) {
+  if (FieldFx_GetFlags(id) == 0xff)
     return -1;
   return id;
 }

@@ -562,8 +562,8 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
     options.startScaleX = 0xcccc;
     options.startScaleY = 0xcccc;
     options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, sparkFrame,
-                 sparkFrame, 0x880001, &options);
+    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, sparkFrame,
+                  sparkFrame, 0x880001, &options);
   }
   return 1;
 }
@@ -583,7 +583,7 @@ static void Event_StormGivesChase(void) {
 /// sets the Psynergy effect's child option (its meaning unknown).
 static void Event_DouseCastAtStorm(void) {
   u8 *state = gEffectWork;
-  ((struct BattleFxScene *)state)->childOption = 1;
+  ((struct FieldFxScene *)state)->childOption = 1;
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and

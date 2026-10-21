@@ -18,7 +18,7 @@ extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 /// `primaryElement` and second `secondaryElement`, from the 4 by 4 table.
 /// Called by Class_Determine.
 s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
-  return gOwner_FourColumnValues[(primaryElement * 4) + secondaryElement];
+  return gClass_SeriesByElements[(primaryElement * 4) + secondaryElement];
 }
 
 /// Writes ten times each element level to `output`: an enemy's from its

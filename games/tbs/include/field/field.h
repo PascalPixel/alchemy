@@ -123,14 +123,14 @@ extern s16 gAltinPeak_PaletteHold;
 extern s16 gAltinPeak_PaletteStep;
 /// One of a ledge jump's dust puffs (FieldFx_SpawnBurstParticle): SC_WAIT(1)
 /// looped 38 times, then SC_FREE.
-extern const u8 gBattleFx_BurstParticleScriptA[];
+extern const u8 gFieldFx_BurstParticleScriptA[];
 /// The other dust puff: the same, looped 18 times.
-extern const u8 gBattleFx_BurstParticleScriptB[];
+extern const u8 gFieldFx_BurstParticleScriptB[];
 extern u32 gWorldMap_GraphicsResources[][6];
 /// SC_WAIT(40), then SC_FREE: the one-off attached effect that ends by itself
-/// (BattleFx_ConfigureLinkedObject, ATTACHED_EFFECT_ONCE).
+/// (FieldFx_ConfigureLinkedObject, ATTACHED_EFFECT_ONCE).
 extern const u8 gObjectMotion_WaitScript[];
-/// The sparkles' 16 by 16 tiles, packed (FieldEffect_InitSparkles).
+/// The sparkles' 16 by 16 tiles, packed (FieldFx_InitSparkles).
 extern const u8 gFieldFx_SparkleTiles[];
 extern const u8 gField_TileMessageOffsets[];
 /// The motes of light's 16 by 16 tiles, packed (FieldMotes_Start).
@@ -296,5 +296,39 @@ void Object_Destroy(struct DispatchObject *work);
 #endif
 void ScenePlacement_ClipToView(struct ScenePlacement *placements);
 void SceneTable_Prepare(struct ScenePlacement *placements);
+
+// The field effects' scripts and tables (object/fxdata.c, scripts.s and
+// arcspark.s).
+extern u16 gFieldFx_CyclePatternWords[];
+extern s8 gFieldFx_RandomChildValues[];
+/// The 32 by 16 spark of Avoid's falling arcs (spark_b), 4 bits a pixel;
+/// FieldFx_RunAvoid loads it.
+extern const u8 gFieldFx_ArcSparkTiles[];
+extern const s32 gFieldFx_BurstParticleObjectScript[];
+/// The emote bubble's script (FieldFx_SpawnLinked): eight 2-frame steps of
+/// squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames still,
+/// then SC_FREE.
+extern const s32 gFieldFx_LinkedObjectScript[];
+extern const s32 gFieldFx_MarkerParticleScript[];
+extern const s32 gFieldFx_ParticleEmitterScript[];
+extern const s32 gFieldFx_ParticleScript[];
+extern u32 gFieldFx_PulseScales[];
+extern const s32 gFieldFx_SourceHoldScript[];
+extern s16 gFieldFx_TargetRangeByMode[];
+/// A lone SC_FREE: an object that has arrived frees itself
+/// (FieldFx_SetCallbackWhenTargetUnset).
+extern const s32 gFieldFx_UntargetedObjectScript[];
+/// The 32 by 16 spark a field Psynergy effect's particles draw (spark_a), 4
+/// bits a pixel; FieldFx_LoadActionEffectResources loads it.
+extern const u8 gFieldFx_SparkTiles[];
+extern const u8 gFieldFx_QuadrantModes[];
+/// The eight tints (PALETTE_TRANSFORM_TINT and an RGB555 colour) a field
+/// Psynergy effect fades the palettes toward, picked by the frame counter or
+/// by the FLAG_PSYNERGY_TINT flags (FieldFx_FadeToEffectColor).
+extern const s32 gFieldFx_TargetColors[];
+extern s16 gFieldFx_GroundParticleFrames[];
+/// The ground particles' 16 by 16 tiles, packed (Resource_DecodeByteLz).
+extern const u8 gFieldFx_GroundParticleTiles[];
+extern const s32 gFieldFx_RisingPulseScript[];
 
 #endif

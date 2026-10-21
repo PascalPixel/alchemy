@@ -16,8 +16,8 @@ enum BattleEncounterAdvantage {
   BATTLE_ENCOUNTER_PARTY_FIRST = 1,
   /// 1 in 32 of the rest: in the first round the party chooses no commands,
   /// and at most 2 to 5 enemies, drawn at random, act once each
-  /// (BattlePres_BuildOpponentEntries). A failed escape sets it for the rest
-  /// of its round.
+  /// (BattlePresentation_BuildOpponentEntries). A failed escape sets it for the
+  /// rest of its round.
   BATTLE_ENCOUNTER_ENEMIES_FIRST = 2
 };
 

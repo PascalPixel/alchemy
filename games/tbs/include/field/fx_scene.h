@@ -2,8 +2,8 @@
 #define ALCHEMY_FX_SCENE_H
 
 /// @file
-/// BattleFxScene, the work of a battle or field Psynergy effect scene, and its
-/// arc objects.
+/// FieldFxScene, the work of a field Psynergy effect scene, and its arc
+/// objects.
 
 #include "types.h"
 #include "static_assert.h"
@@ -30,10 +30,10 @@ struct ArcEffectObject {
 /// The work of a Psynergy effect scene: its caster and target, where it takes
 /// place, the map state it restores and its 24 effect slots.
 /// It is the HEAP_SLOT_FX work slot, read as gEffectWork, cleared when
-/// allocated: BattleFx_LoadActionEffectResources takes it for a Psynergy or
-/// item use, and BattleFx_InitializeSlots for the Djinn joining effects and
+/// allocated: FieldFx_LoadActionEffectResources takes it for a Psynergy or
+/// item use, and FieldFx_InitializeSlots for the Djinn joining effects and
 /// Altmiller Cave's scene. The effect's end releases it.
-struct BattleFxScene {
+struct FieldFxScene {
   s32 angle;          ///< 1/65536 turns
   s32 x;              ///< 16.16 fixed-point pixels
   s32 y;              ///< 16.16 fixed-point pixels
@@ -82,19 +82,19 @@ struct BattleFxScene {
   u8 unk71d[3];    ///< not named by TBS code
 };
 
-STATIC_ASSERT(sizeof(struct BattleFxScene) == 0x720);
-STATIC_ASSERT(offsetof(struct BattleFxScene, mainObject) == 0x10);
-STATIC_ASSERT(offsetof(struct BattleFxScene, action) == 0x1c);
-STATIC_ASSERT(offsetof(struct BattleFxScene, savedCallback) == 0x38);
-STATIC_ASSERT(offsetof(struct BattleFxScene, tileSlot) == 0x46);
-STATIC_ASSERT(offsetof(struct BattleFxScene, savedShakeX) == 0x4c);
-STATIC_ASSERT(offsetof(struct BattleFxScene, slots) == 0x58);
-STATIC_ASSERT(offsetof(struct BattleFxScene, arcTileSlot) == 0x71a);
-STATIC_ASSERT(offsetof(struct BattleFxScene, messageMode) == 0x71c);
+STATIC_ASSERT(sizeof(struct FieldFxScene) == 0x720);
+STATIC_ASSERT(offsetof(struct FieldFxScene, mainObject) == 0x10);
+STATIC_ASSERT(offsetof(struct FieldFxScene, action) == 0x1c);
+STATIC_ASSERT(offsetof(struct FieldFxScene, savedCallback) == 0x38);
+STATIC_ASSERT(offsetof(struct FieldFxScene, tileSlot) == 0x46);
+STATIC_ASSERT(offsetof(struct FieldFxScene, savedShakeX) == 0x4c);
+STATIC_ASSERT(offsetof(struct FieldFxScene, slots) == 0x58);
+STATIC_ASSERT(offsetof(struct FieldFxScene, arcTileSlot) == 0x71a);
+STATIC_ASSERT(offsetof(struct FieldFxScene, messageMode) == 0x71c);
 
 /// Returns the value step tenths of the way from `from` to `to`; the Psynergy
 /// effects that use it step from 0 to 10, one a frame.
-static __inline__ s32 BattleFx_Interpolate(s32 to, s32 from, s32 step) {
+static __inline__ s32 FieldFx_Interpolate(s32 to, s32 from, s32 step) {
   return from + (to - from) * step / 10;
 }
 

@@ -30,6 +30,6 @@
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferApplySource, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

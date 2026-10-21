@@ -13,7 +13,7 @@
 /// DisplayTransition_Finish and DisplayTransition_InitializeBattleEffectState
 /// add for a window transition, and DisplayTransition_UpdateScanlineTable
 /// removes when it ends.
-void BattleFx_StartWindowHBlankDma(void) {
+void FieldFx_StartWindowHBlankDma(void) {
   struct DisplayTransitionState *work = gDisplayTransition;
   u16 *scanlineData = work->pages[work->page];
   volatile u16 *dma0 = REG_DMA0;
@@ -68,7 +68,7 @@ extern struct TransitionShape gDisplayTransition_Shapes[];
 /// The mode is an enum WindowTransitionMode.
 ///
 /// A scheduler callback (priority 0xc80), added with
-/// BattleFx_StartWindowHBlankDma; it removes both and stops DMA 0 when a
+/// FieldFx_StartWindowHBlankDma; it removes both and stops DMA 0 when a
 /// transition with no next mode ends. Writes the hidden page of the
 /// transition state (HEAP_SLOT_TRANSITION) and then flips state->page.
 void DisplayTransition_UpdateScanlineTable(void) {
@@ -129,7 +129,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
           REG_DISPCNT &= ~(DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
         }
         Scheduler_RemoveCallback(
-            (SchedulerCallback)BattleFx_StartWindowHBlankDma);
+            (SchedulerCallback)FieldFx_StartWindowHBlankDma);
         Scheduler_RemoveCallback(
             (SchedulerCallback)DisplayTransition_UpdateScanlineTable);
         {
@@ -572,7 +572,7 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   state->mask = 0x3f3f;
   state->active = 1;
   Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
-  Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
+  Scheduler_AddOrUpdateCallback(FieldFx_StartWindowHBlankDma, 0x480);
 }
 
 /// Suspends the window transition's two callbacks.
@@ -581,7 +581,7 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
 /// marked UNUSED; a caller through a table or ⚓️'s twin would settle it.
 void DisplayTransition_SuspendCallbacks(void) {
   Scheduler_SuspendTasks(&DisplayTransition_UpdateScanlineTable);
-  Scheduler_SuspendTasks(&BattleFx_StartWindowHBlankDma);
+  Scheduler_SuspendTasks(&FieldFx_StartWindowHBlankDma);
 }
 
 /// Allocates the display transition state (HEAP_SLOT_TRANSITION) and clears
@@ -624,12 +624,12 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     WaitFrames(1);
     break;
   case TRANSITION_BACKDROP_FADE:
-    BattleFx_ApplyColorToSourceBuffer(0x8000, PLTT_BACKDROP);
-    BattleFx_StartBufferInterpolation(frames);
+    ColorBuffer_SetSource(0x8000, PLTT_BACKDROP);
+    ColorBuffer_StartInterpolation(frames);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
-    BattleFx_SetPrimaryBufferValue(0);
+    ColorBuffer_SetBackdrop(0);
     return;
   // The window, dissolve and centre-line kinds open from value 0 (closed) to
   // 32 (open), or for the centre line from 80 to 0, over frames frames.
@@ -641,7 +641,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->mask = 63;
     state->active = 1;
     Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
-    Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(FieldFx_StartWindowHBlankDma, 0x480);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
@@ -719,8 +719,8 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     Fade_ToBlack(frames);
     break;
   case TRANSITION_BACKDROP_FADE:
-    BattleFx_ApplyColorToTargetBuffer(0x8000, 0);
-    BattleFx_StartBufferInterpolation(frames);
+    ColorBuffer_SetTarget(0x8000, 0);
+    ColorBuffer_StartInterpolation(frames);
     break;
   case TRANSITION_WINDOW: {
     struct DisplayTransitionState *state =
@@ -730,7 +730,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     state->mask = 63;
     state->active = 1;
     Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
-    Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
+    Scheduler_AddOrUpdateCallback(FieldFx_StartWindowHBlankDma, 0x480);
     WaitFrames(1);
     state->start = 32;
     state->end = 64;

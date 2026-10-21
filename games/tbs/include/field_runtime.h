@@ -88,7 +88,7 @@ enum FieldEventCode {
   /// R on the world map: the picture of the whole world (Map_ShowWorldMap).
   FIELD_EVENT_WORLD_MAP_PICTURE = -888,
   /// L on the world map: the view zooms out while L is held
-  /// (BattleFx_RunVisibilityTransition).
+  /// (FieldFx_RunVisibilityTransition).
   FIELD_EVENT_WORLD_MAP_ZOOM = -889
 };
 
@@ -171,7 +171,7 @@ struct FieldWork {
   s16 nameWidth;      ///< width of the name window (0: the default)
   s8 resolvingAction; ///< set while Psynergy takes effect
   s8 castStarted;     ///< set once a cast has been announced
-  s16 queuedSound;    ///< a sound BattleFx_PlayQueuedSound plays; -1 for none
+  s16 queuedSound;    ///< a sound FieldFx_PlayQueuedSound plays; -1 for none
 };
 
 STATIC_ASSERT(sizeof(struct FieldWork) == 0xccc);

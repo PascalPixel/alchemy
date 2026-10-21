@@ -48,7 +48,7 @@ extern char ResourceId_StarCrossSheet; // directory row 0x13b
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void);               // ☀️ BattleFx_EndCanvasLayer
 void BattleFx_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
-void Func_081180e8(s32 phase);          // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);          // ☀️ BattleEvent_BeginPhaseFar
 s32 BattleFx_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleFx_BuildBlitter
 void Audio_PlayCue(s32 cue);
 

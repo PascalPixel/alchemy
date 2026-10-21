@@ -3,7 +3,7 @@
 /// Far-call interfaces; their ordered jump stubs live in
 /// games/tbs/src/system/far_call/SHOP.S.
 
-s32 Battle_ApplyPresetItemsAndFlagsFar(s32 unused);
+s32 Shop_OpenDebugShopFar(s32 unused);
 s32 Shop_RunFar(s32 row, s32 keeper_id);
 s32 Shop_ConfirmActFar(s32 unitId);
 s32 Inn_CheckInFar(s32 mode, s32 objectId);

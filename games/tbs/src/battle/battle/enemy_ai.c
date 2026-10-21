@@ -21,7 +21,7 @@ struct BattleAutomaticState {
 /// choice that cannot be made (too little PP, sealed, a forbidden escape, no
 /// worthwhile target) picks again; after 18 tries the enemy defends.
 /// Called with retry 0 for each enemy as the round is built
-/// (BattlePres_BuildOpponentEntries), and with retry 1 at its turn
+/// (BattlePresentation_BuildOpponentEntries), and with retry 1 at its turn
 /// (BattlePresentation_DispatchAction). Writes request's command, parameter,
 /// target and range; ACTION_STRATEGY_RANDOM_START and
 /// ACTION_STRATEGY_IN_ORDER advance the place remembered in

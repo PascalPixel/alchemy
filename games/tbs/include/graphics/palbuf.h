@@ -39,9 +39,9 @@ STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x3000);
 /// The colour buffer (HEAP_SLOT_PALETTE_BUFFER) that fades the BG and OBJ
 /// palettes: the source palette, the shown and target colour channels, their
 /// per-frame steps, and two pages of packed RGB555 colours queued each frame.
-/// Field_RunScene allocates it on scene load (BattleEffect_InitializeBuffers),
+/// Field_RunScene allocates it on scene load (ColorBuffer_Initialize),
 /// and gPaletteBufferWork reads it.
-struct BattleEffectBuffers {
+struct ColorBuffer {
   /// The source palette, RGB555: 224 BG colours, then 224 OBJ colours;
   /// palette[0] is the backdrop.
   u16 palette[0x1c0];
@@ -58,12 +58,12 @@ struct BattleEffectBuffers {
   u8 padding2a03; ///< never named
 };
 
-STATIC_ASSERT(sizeof(struct BattleEffectBuffers) == 0x2a04);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, current) == 0x380);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, target) == 0xe00);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, delta) == 0x1880);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, packed) == 0x2300);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, page) == 0x2a00);
+STATIC_ASSERT(sizeof(struct ColorBuffer) == 0x2a04);
+STATIC_ASSERT(offsetof(struct ColorBuffer, current) == 0x380);
+STATIC_ASSERT(offsetof(struct ColorBuffer, target) == 0xe00);
+STATIC_ASSERT(offsetof(struct ColorBuffer, delta) == 0x1880);
+STATIC_ASSERT(offsetof(struct ColorBuffer, packed) == 0x2300);
+STATIC_ASSERT(offsetof(struct ColorBuffer, page) == 0x2a00);
 
 extern u16 gPalette_ChannelCurve[32];
 extern u16 gPalette_ChannelCurveLight[32];

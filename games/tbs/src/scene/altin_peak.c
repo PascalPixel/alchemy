@@ -446,7 +446,7 @@ static void AltinPeak_RideCart(s32 log) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   logActor = Object_GetById(ACTOR_CART);
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_JUMP);
   Engine_EventWait(10);
@@ -472,7 +472,7 @@ static void AltinPeak_RideCart(s32 log) {
   Engine_AudioPlayCue(SE_159);
   AltinPeak_RollCart(log, 0);
   Engine_TaskWait(20);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
 }
 
 /// Talking to (or reading the mind of) a room's water beast starts its
@@ -786,7 +786,7 @@ static void AltinPeak_FlipSecondWaterBeastRoomSwitch(void) {
   Engine_AudioPlayCue(SE_125);
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
   Engine_TaskWait(20);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -810,7 +810,7 @@ static void AltinPeak_FlipThirdWaterBeastRoomSwitch(void) {
   Engine_AudioPlayCue(SE_125);
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
   Engine_TaskWait(20);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -829,7 +829,7 @@ static void AltinPeak_FlipPoolRoomSwitch(void) {
     GameFlag_Set(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH);
   }
   Engine_TaskWait(20);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -848,7 +848,7 @@ static void AltinPeak_FlipSpritzRoomSwitch(void) {
     GameFlag_Set(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH);
   }
   Engine_TaskWait(20);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -1951,7 +1951,7 @@ static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing) {
   SET_VECTOR(gAltinPeak_SprayOrigin, x, y, z);
   gAltinPeak_SprayDirection = facing;
 
-  BattleFx_SetQueuedSoundAndPlay(SE_170);
+  FieldFx_SetQueuedSoundAndPlay(SE_170);
   FieldScheduler_AddCallback(AltinPeak_SpawnSpray, TASK_PRIORITY_SCENE);
 }
 
@@ -2017,7 +2017,7 @@ static void AltinPeak_BeastFreezesSecondPuddle(void) {
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
   Engine_PsynergyLowerHands();
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
   Engine_AudioPlayCue(SE_288);
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
 }

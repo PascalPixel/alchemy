@@ -41,6 +41,6 @@
 	.set import.Engine_LeaderCheckAhead, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

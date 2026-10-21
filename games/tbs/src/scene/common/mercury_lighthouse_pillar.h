@@ -31,8 +31,8 @@
 // removes the column.
 
 /// Raises the spark while its scale follows a half-sine pulse.
-static s32
-SceneEffect_AdvanceAnchoredRiseFrame(struct ScriptInterpreter *interpreter) {
+static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(
+    struct ScriptInterpreter *interpreter) {
   struct FieldActor *effect = (struct FieldActor *)interpreter;
   struct FieldActor *anchor = effect->linkedObject;
   s16 step = ++effect->timer;

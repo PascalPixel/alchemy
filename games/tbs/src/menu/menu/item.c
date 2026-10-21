@@ -304,7 +304,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     // Choose what to do with it. An item that starts an effect on the field
-    // (BattleFx_HasTriggerFar) closes the menu and is returned to the caller;
+    // (FieldFx_HasTriggerFar) closes the menu and is returned to the caller;
     // other usable items are used here.
     case ITEM_STEP_COMMAND:
       command = ItemMenu_ChooseCommand();
@@ -313,8 +313,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->completionFlag = 1;
       }
       if (command == ITEM_COMMAND_USE) {
-        if (BattleFx_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) !=
-            0) {
+        if (FieldFx_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) != 0) {
           done = 1;
           // The international editions report target 0 (command is
           // ITEM_COMMAND_USE here) and the bare item id; the Japanese ones the
@@ -1920,7 +1919,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     }
   }
 
-  if (BattleFx_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) != 0)
+  if (FieldFx_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) != 0)
     commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
 
   if (menu->partyCount <= 1)
@@ -1987,7 +1986,7 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   itemId &= ITEM_ID_MASK;
   itemDefinition = Item_GetDirectFar(itemId);
 
-  if (BattleFx_HasTriggerFar(itemId) != 0) {
+  if (FieldFx_HasTriggerFar(itemId) != 0) {
     return ITEM_USE_MODE_FROM_FIELD;
   }
 

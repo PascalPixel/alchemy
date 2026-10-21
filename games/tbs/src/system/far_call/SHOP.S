@@ -4,7 +4,7 @@
 #include "stub.inc"
 	.global FarCall_ShopTable
 FarCall_ShopTable:
-	export Battle_ApplyPresetItemsAndFlagsFar, Battle_ApplyPresetItemsAndFlags
+	export Shop_OpenDebugShopFar, Shop_OpenDebugShop
 	export Shop_RunFar, Shop_Run
 	export Shop_ConfirmActFar, Shop_ConfirmAct
 	export Inn_CheckInFar, Inn_CheckIn

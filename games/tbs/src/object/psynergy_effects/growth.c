@@ -57,9 +57,9 @@ struct BurstParticleVisualGroup {
 void FieldFx_RunGrowthOnTarget(s32 unused) {
   struct FieldActor *target;
 
-  target = ((struct BattleFxScene *)gEffectWork)->child;
+  target = ((struct FieldFxScene *)gEffectWork)->child;
   if (target != NULL) {
-    BattleEffect_SpawnBurstParticleField();
+    FieldFx_SpawnBurstParticleField();
     ObjectDispatch_SelectAnimationFar(target, 2);
     target->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
@@ -67,7 +67,7 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
     WaitFrames(10);
     AudioCommand_PlayFar(SE_RECOVERY);
     WaitFrames(40);
-    BattleFx_PrepareBufferInterpolation();
+    FieldFx_FadeFromEffectColor();
   }
 }
 
@@ -78,14 +78,14 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
 /// Abilities: Growth (FIELD_KIND_GROWTH).
 ///
 /// The objects (217) appear 2 or 3 frames apart and each lasts 60 frames
-/// (gBattleFx_BurstParticleObjectScript).
+/// (gFieldFx_BurstParticleObjectScript).
 void FieldFx_RunGrowth(void) {
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   struct BurstParticleVector pos;
   struct BurstParticleVector *p;
   s32 remainingObjects;
 
-  BattleEffect_SpawnBurstParticleField();
+  FieldFx_SpawnBurstParticleField();
   AudioCommand_PlayFar(SE_HEAVY_IMPACT);
   p = &pos;
   remainingObjects = GROWTH_FALL_LAST;
@@ -102,14 +102,14 @@ void FieldFx_RunGrowth(void) {
         GROWTH_FALL_OBJECT, p->values[0], p->values[1], p->values[2]);
     if (particle != 0) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
-                                   gBattleFx_BurstParticleObjectScript);
+                                   gFieldFx_BurstParticleObjectScript);
       particle->motionFlags = ACTOR_FALLS;
     }
     WaitFrames(((Random16() * 2) >> 16) + 2);
     remainingObjects--;
   } while (remainingObjects >= 0);
   WaitFrames(30);
-  BattleFx_PrepareBufferInterpolation();
+  FieldFx_FadeFromEffectColor();
 }
 
 /// Sends 24 particles, one every 2 frames, from in front of the caster to
@@ -117,15 +117,15 @@ void FieldFx_RunGrowth(void) {
 /// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise. Each
 /// flies at 1.5 pixels a frame and is freed on arrival; facing north, the
 /// points are 14 pixels further north.
-void BattleEffect_SpawnBurstParticleField(void) {
-  struct BattleFxScene *work;
+void FieldFx_SpawnBurstParticleField(void) {
+  struct FieldFxScene *work;
   struct FieldActor *caster;
   s32 pos[3];
   s32 particleIndex;
 
   work = gEffectWork;
   caster = work->mainObject;
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
 
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
        particleIndex++) {
@@ -170,7 +170,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
                                     SPRITE_COLOR_GREEN_TINT);
       ObjectDispatch_SelectAnimationFar(particle, 7);
       ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
-                                   gBattleFx_CommonParticleScript + 1);
+                                   gFieldFx_CommonParticleScript + 1);
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)particle,
                                             1);
 

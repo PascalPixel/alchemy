@@ -322,7 +322,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
   s32 message;
   s32 choice;
 
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   UiWork_PushValueSlot(competitor, MSG_ARG_NUMBER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_ColosseumAzartMatch) {

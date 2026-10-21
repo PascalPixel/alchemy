@@ -26,7 +26,7 @@ FarCall_GameTable:
 	export GameState_InitDefaultsFar, GameState_InitDefaults
 	overlay_veneer Unit_CheckLevelUp
 	overlay_veneer Party_InitCharacters
-	overlay_veneer Owner_LevelNoOp
+	overlay_veneer Unit_LevelNoOp
 	export Unit_TryLevelUpFar, Unit_TryLevelUp
 	export GameFlag_TestFar, GameFlag_Test
 	export GameFlag_SetBitFar, GameFlag_SetBit
@@ -51,7 +51,7 @@ FarCall_GameTable:
 	export RollWeaponUnleashFar, RollWeaponUnleash
 	export Party_RemoveActiveOwnerFar, Party_RemoveActiveOwner
 	export Item_GetEquippedElementFar, Item_GetEquippedElement
-	export BattleHitCheck, BattleFx_RollSuccess
+	export BattleHitCheck, Battle_RollEffectSuccess
 	export BattleAtkCalc, Battle_CalcAttackDamage
 	export BattlePowerCalc, Battle_CalcPsynergyPower
 	export BattleRecoveryCalc, Battle_CalcRecovery
@@ -84,7 +84,7 @@ FarCall_GameTable:
 	export Party_RestorePpOfLitElementsFar, Party_RestorePpOfLitElements
 	export Party_BeginChildhoodFar, Party_BeginChildhood
 	export Party_EndChildhoodFar, Party_EndChildhood
-	overlay_veneer Owner_RatioNoOp
+	overlay_veneer Unit_RatioNoOp
 	export Djinn_AddToLeastLoadedOwnerFar, Djinn_AddToLeastLoadedOwner
 	export Party_SumDjinnCountsFar, Party_SumDjinnCounts
 	export Party_AdjustShopCreditFar, Party_AdjustShopCredit

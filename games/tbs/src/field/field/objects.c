@@ -579,8 +579,8 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
 void ObjectSystem_SuspendProjectionAndShowSprites(void) {
   Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
   Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
-  BattleFx_ApplyColorToTargetBufferFar(0x10000, 1);
-  BattleFx_StartBufferInterpolationFar(1);
+  ColorBuffer_SetTargetFar(0x10000, 1);
+  ColorBuffer_StartInterpolationFar(1);
   WaitFrames(1);
   REG_DISPCNT =
       (REG_DISPCNT & ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) |

@@ -156,12 +156,13 @@
 static void MercuryLighthouse_OpenGateWithMovedPillar(void);
 static void MercuryLighthouse_OpenStairGateWithMovedPillar(void);
 static void MercuryLighthouse_SyncCrossingStatueFlags(void);
-static void SceneEffect_SpawnParticleRowsAndDrawTiles(void);
+static void MercuryLighthouse_SpawnParticleRowsAndDrawTiles(void);
 static void MercuryLighthouse_OpenThreeStepStair(void);
-static void SceneEffect_SpawnParticleEveryFourthFrame(void);
-static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z);
-static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z);
-static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle);
+static void MercuryLighthouse_SpawnParticleEveryFourthFrame(void);
+static void MercuryLighthouse_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z);
+static void MercuryLighthouse_SpawnWithRandomOffset(s32 x, s32 y, s32 z);
+static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
+                                                   s32 angle);
 static void MercuryLighthouse_RideLift(void);
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void);
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
@@ -523,7 +524,7 @@ static void MercuryLighthouse_MoveChannelPillars(void) {
         SceneActor_MoveAndRedraw(probe);
         Engine_EventWait(20);
         Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
-        SceneEffect_SpawnRandomizedBurst(0x2d60000, 0, 0xb40000, 0x8000);
+        MercuryLighthouse_SpawnRandomizedBurst(0x2d60000, 0, 0xb40000, 0x8000);
         GameFlag_Set(FLAG_PIPE_1_JOINED);
       } else {
         s32 cellCount = 1;
@@ -541,7 +542,8 @@ static void MercuryLighthouse_MoveChannelPillars(void) {
         Engine_EventWait(10);
         if (GameFlag_IsSet(FLAG_PIPE_1_JOINED)) {
           Map_CopyCellsTo(118, 9, 104, 13, 1, 1);
-          SceneEffect_SpawnRandomizedBurst(0x2840000, 0, 0xd20000, 0x4000);
+          MercuryLighthouse_SpawnRandomizedBurst(0x2840000, 0, 0xd20000,
+                                                 0x4000);
         }
         GameFlag_Set(FLAG_PIPE_2_JOINED);
       } else {
@@ -579,7 +581,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
 
   eventWork = gEventWork;
   Engine_EventBegin();
-  FieldScheduler_AddCallback(SceneEffect_SpawnParticleEveryFourthFrame,
+  FieldScheduler_AddCallback(MercuryLighthouse_SpawnParticleEveryFourthFrame,
                              TASK_PRIORITY_SCENE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -601,7 +603,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   }
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  Engine_TaskRemoveCallback(SceneEffect_SpawnParticleEveryFourthFrame);
+  Engine_TaskRemoveCallback(MercuryLighthouse_SpawnParticleEveryFourthFrame);
   Engine_EventEnd();
 }
 
@@ -757,7 +759,7 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
 
 /// Emits the scheduled spray at the fountain's fixed position.
 static void MercuryLighthouse_SprayAtFountain(void) {
-  SceneEffect_SpawnRandomEveryFourFrames(0x2b20000, 0, 0x2480000);
+  MercuryLighthouse_SpawnRandomEveryFourFrames(0x2b20000, 0, 0x2480000);
 }
 
 /// Opens the fountain row by row and starts its continuous spray.
@@ -800,13 +802,13 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
         negativeIndex = -particleIndex;
         randomZ = Random_Next();
         velocityZ = ((u32)(randomZ << 3) >> 16) * 0x3333 - 0xcccc;
-        Effect_Spawn(particleX, 0, 0x2480000, velocityX, 0, velocityZ, 0x90000,
-                     effectOptions);
+        FieldFx_Spawn(particleX, 0, 0x2480000, velocityX, 0, velocityZ, 0x90000,
+                      effectOptions);
         Engine_EventWait(1);
       } else {
         negativeIndex = -particleIndex;
       }
-      SceneEffect_SpawnRandomEveryFourFrames(
+      MercuryLighthouse_SpawnRandomEveryFourFrames(
           (MERCURY_LIGHTHOUSE_OFFSET_FIXED(negativeIndex - rowOffset) +
            0x2d80000),
           0, 0x2480000);
@@ -853,8 +855,8 @@ static void MercuryLighthouse_StopFountainSpray(void) {
         particleZ = ((0x248 - ((u32)((random << 2) + random) >> 16)) & 0xffff)
                     << 16;
         particleX = (offsetX - (row << 19)) + 0x2d80000;
-        Effect_Spawn(particleX, 0, particleZ, -0x4000, 0, 0, 0x90000,
-                     effectOptions);
+        FieldFx_Spawn(particleX, 0, particleZ, -0x4000, 0, 0, 0x90000,
+                      effectOptions);
         Engine_EventWait(1);
       }
       particleIndex++;
@@ -886,7 +888,7 @@ static void MercuryLighthouse_MoveStairAndFountainPillars(void) {
         SceneActor_MoveAndRedraw(probe);
         Engine_EventWait(30);
         Engine_AudioPlayCue(SE_211);
-        SceneEffect_SpawnParticleRowsAndDrawTiles();
+        MercuryLighthouse_SpawnParticleRowsAndDrawTiles();
         Map_CopyCellsTo(76, 60, 74, 38, 3, 1);
         Map_CopyCellsTo(77, 60, 76, 38, 2, 1);
         Map_CopyCellsTo(75, 58, 86, 41, 1, 3);
@@ -1047,23 +1049,23 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
     for (particleIndex = 0; particleIndex <= 7; particleIndex++) {
       if (particleIndex & 1) {
         if (side == 0) {
-          Effect_Spawn(0x3180000, 0,
-                       0x2c00000 + (row * 16 + particleIndex) * 0x10000,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
-                       0x90000, effectOptions);
+          FieldFx_Spawn(
+              0x3180000, 0, 0x2c00000 + (row * 16 + particleIndex) * 0x10000,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0x90000,
+              effectOptions);
         } else if (side == 1) {
-          Effect_Spawn(0x3200000 + (row * 16 + particleIndex) * 0x10000, 0,
-                       0x2ea0000,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
-                       0x90000, effectOptions);
+          FieldFx_Spawn(
+              0x3200000 + (row * 16 + particleIndex) * 0x10000, 0, 0x2ea0000,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0x90000,
+              effectOptions);
         } else {
-          Effect_Spawn(0x32c0000 + (row * 16 + particleIndex) * -0x10000, 0,
-                       0x2ca0000,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
-                       0x90000, effectOptions);
+          FieldFx_Spawn(
+              0x32c0000 + (row * 16 + particleIndex) * -0x10000, 0, 0x2ca0000,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0x90000,
+              effectOptions);
         }
         Engine_EventWait(1);
       }
@@ -1097,19 +1099,19 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
         if (side == 0) {
-          Effect_Spawn((0x319 - (((u32)Engine_RandomNext() * 5) >> 16)) << 16,
-                       0, (((row << 2) + particleIndex) << 17) + 0x02b70000, 0,
-                       side, 0x4000, 0x90000, &options);
+          FieldFx_Spawn((0x319 - (((u32)Engine_RandomNext() * 5) >> 16)) << 16,
+                        0, (((row << 2) + particleIndex) << 17) + 0x02b70000, 0,
+                        side, 0x4000, 0x90000, &options);
         } else if (side == 1) {
-          Effect_Spawn((((row << 2) + particleIndex) << 17) + 0x03120000, 0,
-                       ((((u32)Engine_RandomNext() * 5) >> 16) << 16) +
-                           0x2e80000,
-                       0x4000, 0, 0, 0x90000, &options);
+          FieldFx_Spawn((((row << 2) + particleIndex) << 17) + 0x03120000, 0,
+                        ((((u32)Engine_RandomNext() * 5) >> 16) << 16) +
+                            0x2e80000,
+                        0x4000, 0, 0, 0x90000, &options);
         } else {
-          Effect_Spawn(0x3380000 - (particleIndex << 17) - (row << 19), 0,
-                       ((((u32)Engine_RandomNext() * 5) >> 16) << 16) +
-                           0x2c80000,
-                       0x4000, 0, 0, 0x90000, &options);
+          FieldFx_Spawn(0x3380000 - (particleIndex << 17) - (row << 19), 0,
+                        ((((u32)Engine_RandomNext() * 5) >> 16) << 16) +
+                            0x2c80000,
+                        0x4000, 0, 0, 0x90000, &options);
         }
         Engine_EventWait(1);
       }
@@ -1170,7 +1172,8 @@ static void MercuryLighthouse_SprayAboveStatue(void) {
   s32 particleY = pillar->y.fixed + (((random << 2) >> 16) << 16);
   s32 particleZ = pillar->z.fixed;
 
-  SceneEffect_SpawnRandomEveryFourFrames(pillar->x.fixed, particleY, particleZ);
+  MercuryLighthouse_SpawnRandomEveryFourFrames(pillar->x.fixed, particleY,
+                                               particleZ);
 }
 
 /// The slide scripts start the sparkles as the statue sets off.
@@ -1730,8 +1733,8 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   effectOptions->script = gMercuryLighthouse_SparkBurstScript;
   for (frame = 0; frame <= 47; frame++) {
     if (frame <= 31)
-      SceneEffect_SpawnWithRandomOffset(actor->x.fixed, actor->y.fixed,
-                                        actor->z.fixed);
+      MercuryLighthouse_SpawnWithRandomOffset(actor->x.fixed, actor->y.fixed,
+                                              actor->z.fixed);
     if (frame & 1) {
       Engine_AudioPlayCue(SE_246);
       particleX = actor->x.fixed +
@@ -1739,8 +1742,8 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
       particleY = actor->y.fixed +
                   ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + -0x100000;
       riseSpeed = ((((u32)Engine_RandomNext() << 2) >> 16) << 15) + 0x8000;
-      Effect_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, 0,
-                   0x330000, effectOptions);
+      FieldFx_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, 0,
+                    0x330000, effectOptions);
     }
     actor->y.fixed += frame * 0x1999;
     actor->targetY = actor->y.fixed;
@@ -1798,7 +1801,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     z >>= 16;
     z <<= 16;
     z += 0x880000;
-    Effect_Spawn(particleX, 0, z, 0, 0, 0, 0x330001, effectOptions);
+    FieldFx_Spawn(particleX, 0, z, 0, 0, 0, 0x330001, effectOptions);
     Engine_EventWait(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
@@ -1824,7 +1827,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     z += 0x980000;
     random = Engine_RandomNext();
     particleSpeed = -((random * 10 >> 16) * 0x3333) - 0x3333;
-    Effect_Spawn(particleX, 0, z, 0, 0, particleSpeed, 0x330001, effectOptions);
+    FieldFx_Spawn(particleX, 0, z, 0, 0, particleSpeed, 0x330001,
+                  effectOptions);
     Engine_EventWait(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
@@ -1852,9 +1856,10 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
       particleVelocityX =
           (0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16)) - 0x6664;
       particleSpeed = 0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16);
-      Effect_Spawn(particleX, 0,
-                   ((-((u32)particleIndex >> 1) - rowOffset) << 16) + 0xc00000,
-                   particleVelocityX, 0, particleSpeed, 0xd0001, effectOptions);
+      FieldFx_Spawn(particleX, 0,
+                    ((-((u32)particleIndex >> 1) - rowOffset) << 16) + 0xc00000,
+                    particleVelocityX, 0, particleSpeed, 0xd0001,
+                    effectOptions);
       particleIndex = (particleIndex + 1);
       Engine_EventWait(2);
     } while ((u32)particleIndex <= 31);
@@ -1863,7 +1868,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Engine_AudioPlayCue(SE_289);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   Engine_EventWait(30);
   // After Saturos the leader goes alone; the first time Mia leads the party.
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -2048,14 +2053,14 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
     Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-    FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
+    FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, -1);
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
     Engine_EventWait(60);
     Engine_EventRequestExit(
         MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE);
   } else {
-    FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
+    FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, -1);
   }
   Engine_EventEnd();
 }
@@ -2063,7 +2068,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
 #include "common/mercury_lighthouse_arrive.h"
 
 /// Reveals the stair's map rows with particles along their edges.
-static void SceneEffect_SpawnParticleRowsAndDrawTiles(void) {
+static void MercuryLighthouse_SpawnParticleRowsAndDrawTiles(void) {
   struct EffectOptions options;
   u32 particleIndex, row;
 
@@ -2079,9 +2084,9 @@ static void SceneEffect_SpawnParticleRowsAndDrawTiles(void) {
         s32 velocityZ =
             (((u32)Engine_RandomNext() << 3) >> 16) * 0x3333 + 0xffff3334;
 
-        Effect_Spawn(0x690000, 0,
-                     ((-particleIndex - (row << 4)) << 16) + 0x2200000,
-                     velocityX, 0, velocityZ, 0x90000, &options);
+        FieldFx_Spawn(0x690000, 0,
+                      ((-particleIndex - (row << 4)) << 16) + 0x2200000,
+                      velocityX, 0, velocityZ, 0x90000, &options);
         Engine_EventWait(1);
       }
     }
@@ -2108,13 +2113,13 @@ static void MercuryLighthouse_OpenThreeStepStair(void) {
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if (particleIndex & 1) {
         if (particleIndex & 2) {
-          Effect_Spawn((105 - (((u32)Engine_RandomNext() * 5) >> 16)) << 16, 0,
-                       offsetZ - (row << 19) + 0x22e0000, 0, 0, -0x4000,
-                       0x90000, effectOptions);
+          FieldFx_Spawn((105 - (((u32)Engine_RandomNext() * 5) >> 16)) << 16, 0,
+                        offsetZ - (row << 19) + 0x22e0000, 0, 0, -0x4000,
+                        0x90000, effectOptions);
         } else {
-          Effect_Spawn((((row << 2) + particleIndex) << 17) + 0xb70000, 0,
-                       (0x26c - (((u32)Engine_RandomNext() * 5) >> 16)) << 16,
-                       0x4000, 0, 0, 0x90000, effectOptions);
+          FieldFx_Spawn((((row << 2) + particleIndex) << 17) + 0xb70000, 0,
+                        (0x26c - (((u32)Engine_RandomNext() * 5) >> 16)) << 16,
+                        0x4000, 0, 0, 0x90000, effectOptions);
         }
         Engine_EventWait(1);
       }
@@ -2126,7 +2131,7 @@ static void MercuryLighthouse_OpenThreeStepStair(void) {
 }
 
 /// Emits particles around the leader once every four frames.
-static void SceneEffect_SpawnParticleEveryFourthFrame(void) {
+static void MercuryLighthouse_SpawnParticleEveryFourthFrame(void) {
   struct EffectOptions options;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 framePhase = gFrameCount & 3;
@@ -2144,14 +2149,14 @@ static void SceneEffect_SpawnParticleEveryFourthFrame(void) {
       s32 velocityY =
           (((u32)Engine_RandomNext() << 3) >> 16) * 0x3333 + 0xffff3334;
 
-      Effect_Spawn(leader->x.fixed, y, leader->z.fixed, velocityX, velocityY,
-                   framePhase, 0x90000, &options);
+      FieldFx_Spawn(leader->x.fixed, y, leader->z.fixed, velocityX, velocityY,
+                    framePhase, 0x90000, &options);
     }
   }
 }
 
 /// Emits particles at a fixed point once every four frames.
-static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z) {
+static void MercuryLighthouse_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
   s32 framePhase = gFrameCount & 3;
 
@@ -2167,14 +2172,14 @@ static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z) {
       s32 velocityY =
           (((u32)Engine_RandomNext() << 3) >> 16) * 0x3333 + 0xffff3334;
 
-      Effect_Spawn(x, y, z, velocityX, velocityY, framePhase, 0x90000,
-                   &options);
+      FieldFx_Spawn(x, y, z, velocityX, velocityY, framePhase, 0x90000,
+                    &options);
     }
   }
 }
 
 /// Emits a stationary particle near the supplied position.
-static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z) {
+static void MercuryLighthouse_SpawnWithRandomOffset(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
 
   options.palette = 7;
@@ -2187,12 +2192,13 @@ static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z) {
     s32 particleZ =
         z + ((((u32)Engine_RandomNext() << 3) >> 16) << 16) + 0xfffc0000;
 
-    Effect_Spawn(particleX, y, particleZ, 0, 0, 0, 0xb0000, &options);
+    FieldFx_Spawn(particleX, y, particleZ, 0, 0, 0, 0xb0000, &options);
   }
 }
 
 /// Emits a short burst with velocities spreading along the supplied angle.
-static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
+static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
+                                                   s32 angle) {
   struct EffectOptions options;
   s32 velocity[3];
   u32 particleIndex;
@@ -2215,8 +2221,8 @@ static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
         s32 particleZ =
             z + ((6 - (((u32)Engine_RandomNext() * 6) >> 16)) << 16);
 
-        Effect_Spawn(particleX, y, particleZ, velocity[0], velocity[1],
-                     velocity[2], 0x90000, &options);
+        FieldFx_Spawn(particleX, y, particleZ, velocity[0], velocity[1],
+                      velocity[2], 0x90000, &options);
       }
     }
     Engine_TaskWait(2);
@@ -2244,7 +2250,7 @@ s32 MercuryLighthouse_Initialize(void) {
   }
   MercuryLighthouse_RestoreLights(
       21, (struct MercuryLighthouseLights *)gSceneState);
-  BattleFx_StartFadeOverlay(0);
+  FieldFx_StartFadeOverlay(0);
   if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
                                TASK_PRIORITY_SCENE);
@@ -2261,7 +2267,7 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     case MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE:
       SetEffectRecordMode(Object_GetById(ACTOR_PARTY_LEADER), 1);
@@ -2411,7 +2417,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_WEST:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER:
     case MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_FIVE_PILLARS:
@@ -2540,7 +2546,7 @@ s32 MercuryLighthouse_Initialize(void) {
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
         break;
       MercuryLighthouse_ArriveWithSparks();
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       ColorBuffer_ApplySource(128 << 9, 0);
       Engine_ColorBufferApplyTarget(0x10003, 1);
       Engine_ColorBufferInterpolate(30);
@@ -2832,7 +2838,7 @@ static void MercuryLighthouse_RideLift(void) {
 
 /// Mia casts Ply on the Ply target, moved onto the door.
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
-  struct BattleFxScene *effectWork;
+  struct FieldFxScene *effectWork;
   u8 flags;
 
   effectWork = gEffectWork;
@@ -2936,7 +2942,7 @@ s32 gMercuryLighthouse_RiseScript[] = {
 };
 
 s32 gMercuryLighthouse_SparkScript[] = {
-    SC_CALL(SceneEffect_AdvanceAnchoredRiseFrame),
+    SC_CALL(MercuryLighthouse_AdvanceAnchoredRiseFrame),
     SC_FREE,
 };
 

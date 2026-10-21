@@ -251,18 +251,18 @@ static void BabiLighthouse_LandWithParticles(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
-  options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
+  options.update = (void (*)(union FieldObject *))FieldFx_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   for (particle = 0; particle < 17; particle++) {
     SET_VECTOR(velocity, Engine_MathCos(particle << 12), 0,
                Engine_MathSin(particle << 12));
     velocity[0] += velocity[0] / 2;
-    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocity[0],
-                 velocity[1], velocity[2],
-                 EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                     EFFECT_USE_PALETTE | 1,
-                 &options);
+    FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                  velocity[0], velocity[1], velocity[2],
+                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                      EFFECT_USE_PALETTE | 1,
+                  &options);
   }
   Engine_AudioPlayCue(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
@@ -419,7 +419,7 @@ static void BabiLighthouse_ClimbDownOrAdvancePair(void) {
 /// Raises the leader, then closes the screen before a room transition.
 static void BabiLighthouse_RiseAndCloseScreen(void) {
   Camera_MoveTo(-1, -1, -1, 0);
-  FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
+  FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
 }
@@ -496,7 +496,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
   GameFlag_Set(FLAG_IODEM_AT_BABI_LIGHTHOUSE);
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiYoureSureTheyWentThrough);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 352);
@@ -757,7 +757,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   // Everyone reacts to the opened door before trying to follow the party.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiTheDoor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 312);
@@ -1133,7 +1133,7 @@ BabiLighthouse_FindActorAhead(struct FieldActor *actor) {
 /// Carry's first phase on the pillar on the Road to Babi Lighthouse sets the
 /// effect's childOption; what that changes is not known.
 static void BabiLighthouse_EnableChildOption(void) {
-  ((struct BattleFxScene *)gEffectWork)->childOption = 1;
+  ((struct FieldFxScene *)gEffectWork)->childOption = 1;
 }
 
 /// After Move or Carry on the pillar on the Road to Babi Lighthouse: in its

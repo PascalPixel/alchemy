@@ -80,12 +80,11 @@ screen at a time, used over and over as the text scrolls.
 | `PaletteFade_`, `Palette_` | the palette fade, and `Palette_Transform`, which builds its colours |
 | `DisplayScroll_` | the credits |
 | `Graphics_` | tile memory and palettes, as the engine names them elsewhere |
-| `Tile_`, `TileMap_`, `BitDecoder_`, `Render_`, `Text_` | the handwritten decoders |
+| `Tile_`, `TileMap_`, `BitDecoder_`, `Render_`, `Text_` | the handwritten decoders, among them `Tile_ExpandSlide`, which unpacks the credits slides |
+| `Vector_` | `Vector_DotProduct`, the 16.16 dot product beside `Tile_ExpandSlide` in `tile/dot_product.s`, which nothing calls |
 
-A few routines here carry another folder's prefix. The two ARM routines in
-`tile/dot_product.s` are `BattleEffect_DotProduct`, which nothing calls, and
-`BattleEffect_Expand`, which only the credits use, and
-`UiText_LookupMessageArm` sits beside `Text_DecodeSymbol`.
+`UiText_LookupMessageArm` carries the text window's prefix, though it sits
+beside `Text_DecodeSymbol`.
 
 ## The title and the logos
 
@@ -144,7 +143,7 @@ showing, then steps the blend weights between `BG2` and `BG3` over 16 steps of 4
 frames, and holds. The halves swap roles from one backdrop to the next, so a
 backdrop is never loaded while it's being shown. The colours go to palette RAM
 through the I/O write queue at the next VBlank, and the tiles are unpacked by
-`BattleEffect_Expand`, copied into heap slot 49 for each load and released
+`Tile_ExpandSlide`, copied into heap slot 49 for each load and released
 again. Every fourth frame both backdrops drift one pixel to the right; a
 picture is as wide as its map, 256 pixels, so it wraps around without a seam.
 

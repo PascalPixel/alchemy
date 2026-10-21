@@ -665,7 +665,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     SolSanctumElementalStarRoom_SkipMessages(1);
   }
-  BattlePres_RunActionThenWaitIfModeZero(ACTOR_KRADEN, 0, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_CameraMoveTo(PIXELS(477), -1, PIXELS(334), 0);
@@ -2167,7 +2167,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   Engine_VramLoad(sprite->slot, 128, glyph->tiles);
   Engine_HeapRelease(17);
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
-  Engine_RunRisingObjectSequence(actor, 3);
+  Engine_ItemShowPicture(actor, 3);
   Inventory_Discard(owner, slot);
   Inventory_AddItem(owner, item);
   Engine_ObjectDispatchRelease(actor);
@@ -2229,14 +2229,14 @@ static void SolSanctumElementalStarRoom_AnimateAlexTeleport(void) {
       x = alex->x.fixed;
       x += xOffset;
       x += -PIXELS(12);
-      Effect_Spawn(x,
-                   alex->y.fixed +
-                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       PIXELS(32),
-                   alex->z.fixed, 0, -PIXELS(4), 0,
-                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                   effectOptions);
+      FieldFx_Spawn(x,
+                    alex->y.fixed +
+                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                        PIXELS(32),
+                    alex->z.fixed, 0, -PIXELS(4), 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    effectOptions);
     }
     if (frame == 20)
       Engine_ActorSetChildValue(ACTOR_ALEX, 0x100);

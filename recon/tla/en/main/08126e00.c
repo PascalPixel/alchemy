@@ -1,4 +1,4 @@
-// Draft of Func_08126e00, The Broken Seal's BattleFx_UpdateStarField
+// Draft of Func_08126e00, The Broken Seal's ElementGlow_UpdateStarField
 // (games/tbs/src/battle/battle.c): differ 14 of 267 (tla-en, 2026-10-15),
 // ported with The Lost Age's heap slots: the work at 92, the canvas at 96,
 // the blitters at 104 and 188. The work's layout is the twin's. Two

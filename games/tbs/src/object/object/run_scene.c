@@ -77,8 +77,8 @@ s32 Field_RunScene(s32 entrance) {
     Map_CenterOnFollowedPointFar();
   }
   Field_PlaceMapMarkers();
-  BattleEffect_InitializeBuffers();
-  BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
+  ColorBuffer_Initialize();
+  ColorBuffer_SetTarget(0x10000, 0);
   // The default fade is from the backdrop colour over 16 frames; the scene's
   // initialization may choose another.
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -209,7 +209,7 @@ s32 Field_RunScene(s32 entrance) {
             Map_ShowWorldMap((s32)&ResourceId_WorldMapPicture);
           } else if (work->event == FIELD_EVENT_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
-            BattleFx_RunVisibilityTransition();
+            FieldFx_RunVisibilityTransition();
           } else {
             Scene_RunRaisedEvent(work->event);
           }
@@ -324,7 +324,7 @@ s32 Field_RunScene(s32 entrance) {
             // As for the main menu above.
             work->event = FIELD_EVENT_MENUS_RAISED;
           } else {
-            Battle_ResetEffectCounter();
+            Field_EndBusyAndReveal();
             UiTimedNotice_CloseIfActiveFar();
             gGameState.returnCue = AudioCommand_GetSecondaryStateByteFar();
             if (GameFlag_TestFar(FLAG_IN_BATTLE_ARENA) == 0) {

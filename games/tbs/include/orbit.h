@@ -69,7 +69,7 @@ typedef struct OrbitingSceneObject {
   u8 visible;
   u8 padding62[10];
   /// FieldActor's update hook; Scene_FloatNut sets
-  /// SceneEffect_UpdateOrbitPosition.
+  /// Scene_UpdateFloatingNut.
   u32 callback;
 } OrbitingSceneObject;
 

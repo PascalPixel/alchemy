@@ -1,6 +1,6 @@
 // Draft, differ 47 of 94: count random sparks around a position through the
 // overlay's spawn (Func_020000b8), written from the listing (its ☀️ twin by
-// shape, mercury_lighthouse.c's SceneEffect_SpawnRandomizedBurst, is a
+// shape, mercury_lighthouse.c's MercuryLighthouse_SpawnRandomizedBurst, is a
 // different function). Left: allocation. The native keeps velocityX in r8,
 // built in place (mov r8, r0; ands through r3; add r8, -8; lsls through r3),
 // the mask 15 in sl and the position in fp, and leaves count on the stack; the

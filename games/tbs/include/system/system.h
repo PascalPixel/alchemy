@@ -105,7 +105,7 @@ extern u8 IwramSoundPresetCode[];
 extern u32 gFlash_Handler0;
 #endif
 /// HEAP_SLOT_ANIMATION_LAYERS: the animation layer records (struct
-/// AnimationEntry) that AnimationObject_Allocate takes from.
+/// AnimationEntry) that Animation_AllocateLayer takes from.
 extern struct AnimationEntry *gAnimationObjects[];
 /// Where the debug text writes next on its 32 by 20 screen in BG0.
 extern u16 *gDebugTextCursor;

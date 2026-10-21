@@ -5,6 +5,6 @@
 
 union FieldObject;
 
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
+void FieldFx_UpdateMotionScaleAndSpin(union FieldObject *object);
 
 #endif

@@ -192,8 +192,8 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
 
 /// Returns the base chance, in percent, of effect `effectId`. A negative
 /// value is a fixed chance that elements and luck do not change; effects not
-/// listed always work (-100). Called by BattleFx_RollSuccess.
-s32 BattleFx_GetBaseSuccessRate(s32 effectId) {
+/// listed always work (-100). Called by Battle_RollEffectSuccess.
+s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   s32 fixedChance;
   u32 effectIndex;
 
@@ -248,7 +248,7 @@ s32 BattleFx_GetBaseSuccessRate(s32 effectId) {
 
 /// Returns 1 when the unit is weak to effect `effectId`: one of three listed
 /// for its enemy kind (EnemyDefinition.unk48) or class
-/// (ClassDefinition.unk50). Called by BattleFx_RollSuccess.
+/// (ClassDefinition.unk50). Called by Battle_RollEffectSuccess.
 s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
   const u8 *weakEffects;
   s32 weaknessIndex;
@@ -272,7 +272,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
 
 /// Returns 1 for the revive effects (Revive, Quartz, Dew), which only work on
 /// a downed unit. Called by the battle's targeting, which lets them aim at
-/// downed members, and by BattleFx_RollSuccess.
+/// downed members, and by Battle_RollEffectSuccess.
 s32 Battle_IsReviveEffect(s32 effectId) {
   if ((effectId == ABILITY_EFFECT_REVIVE) ||
       (effectId == ABILITY_EFFECT_REVIVE_HALF) ||
@@ -292,8 +292,8 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 /// time in 100. Luff gets three tries.
 /// Reached through GAME.S as BattleHitCheck, which BattleTargetExec and the
 /// battle plan call for each target of an ability with an effect.
-s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
-                         s32 effectId, s32 successScale) {
+s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
+                             s32 effectId, s32 successScale) {
   // Restore's psySeal and confusion reads and Cure All's haunt read go
   // through the byte view; as unit fields, each zero test merges with its
   // neighbour's into one halfword or word load.
@@ -352,7 +352,7 @@ action4_done:
 
   // A positive base rate is adjusted by the element levels, the target's luck
   // and its weaknesses; 0 or a negative one is a fixed chance.
-  score = BattleFx_GetBaseSuccessRate(effectId);
+  score = Battle_GetEffectBaseSuccessRate(effectId);
   if (score > 0) {
     s32 difference = Unit_GetElementLevel(caster, resistanceCategory) -
                      Unit_GetElementLevel(target, resistanceCategory) -

@@ -212,7 +212,7 @@ UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
 /// for more than LINK_MAX_MISSED_FRAMES frames or the signatures never meet.
 /// Called by BattlePresentation_BuildActions. Writes the first eight bytes
 /// of gSerialTransfer.payload.
-s32 BattlePres_WaitSync(void) {
+s32 BattlePresentation_WaitSync(void) {
   struct BattleWork *work = gBattleWork;
   u16 *peer;
   u16 *signature;
@@ -260,7 +260,7 @@ s32 BattlePres_WaitSync(void) {
 /// disagree; 0 once in step, or outside a link battle. Called by
 /// Battle_RunEncounter. Writes the first sixteen bytes of
 /// gSerialTransfer.payload.
-s32 BattlePres_SyncTurn(void) {
+s32 BattlePresentation_SyncTurn(void) {
   struct BattleWork *work = gBattleWork;
   u16 *peer;
   u16 *signature;
@@ -392,8 +392,9 @@ s32 BattleParty_AssignMemberSlots(void) {
 }
 
 /// Clears the first 16 bytes of the link transfer's payload, the eight
-/// signature halfwords BattlePres_WaitSync and BattlePres_SyncTurn write.
-/// Called by Battle_RunEncounter on each way out of the battle but fleeing.
+/// signature halfwords BattlePresentation_WaitSync and
+/// BattlePresentation_SyncTurn write. Called by Battle_RunEncounter on each way
+/// out of the battle but fleeing.
 s32 Battle_ClearSerialTransferPayload(void) {
   return Iwram_ClearWords(gSerialTransfer.payload, 16);
 }

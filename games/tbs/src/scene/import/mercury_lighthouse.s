@@ -86,14 +86,14 @@
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_ActorLookup, 1
-	.set import.BattleFx_StartFadeOverlay, 1
+	.set import.FieldFx_StartFadeOverlay, 1
 	.set import.Engine_PsynergyPlayEffect, 1
 	.set import.Engine_PsynergyBegin, 1
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Engine_ActorWalkByAndWait, 1
-	.set import.BattleFx_SetQueuedSoundAndPlay, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_SetQueuedSoundAndPlay, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

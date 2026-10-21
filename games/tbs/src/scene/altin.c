@@ -809,7 +809,7 @@ static void Village_ApplyWaterLevel(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
     Engine_ActorDestroy(ACTOR_WATER_BEAST);
   } else {
-    BattleFx_SetQueuedSoundAndPlay(SE_170);
+    FieldFx_SetQueuedSoundAndPlay(SE_170);
     Actor_SetChildValue(ACTOR_WATER_BEAST, 2);
     Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_BEAST_SPIT);
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
@@ -948,7 +948,7 @@ static void Village_ScareOffBeast(void) {
   Engine_EventWait(30);
   Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
   // The spitting stops: its sound and its spray end.
-  BattleFx_SetQueuedSoundAndPlay(-1);
+  FieldFx_SetQueuedSoundAndPlay(-1);
   Engine_TaskRemoveCallback(Beast_SpawnSpray);
   Engine_EventWait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WATER_BEAST, 0);

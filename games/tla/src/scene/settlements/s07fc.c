@@ -5,7 +5,7 @@ u32 Random16Far(void);
 
 /// Moves the object around its orbit's centre (words 14 and 15) and steps the
 /// angle by a random amount.
-// As ☀️'s SceneEffect_UpdateOrbitPosition does.
+// As ☀️'s Scene_UpdateFloatingNut does.
 s32 Func_020007fc(s32 *p) {
   s16 *q = (s16 *)p[20];
   s32 a, b;

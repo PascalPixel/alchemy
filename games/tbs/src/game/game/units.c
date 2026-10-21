@@ -738,7 +738,7 @@ void Party_RestorePpOfLitElements(void) {
 }
 
 /// Unused: reserved entry; keeps its place in the far-call table.
-UNUSED void Owner_RatioNoOp(void) {}
+UNUSED void Unit_RatioNoOp(void) {}
 
 /// Recomputes the HP and PP gauges of `owner` from its current HP and PP, so
 /// that UnitCalc keeps the same fractions. Called after anything that writes
@@ -765,7 +765,7 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
 }
 
 /// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
-/// gauges. Called by BattleActor_DestroyTemporaryObject.
+/// gauges. Called by BattleObj_DestroyTemporaryObject.
 void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   s32 clamped;
 

@@ -1,4 +1,4 @@
-// Draft: ☀️'s BattlePres_RunItem (games/tbs/src/battle/battle/staging.c),
+// Draft: ☀️'s BattlePresentation_RunItem (games/tbs/src/battle/battle/staging.c),
 // ported: plays an item's use, the camera turned to the user's side, the user
 // raising the item and, for an item with an effect, the screen dimming while
 // the effect plays with the events; then spends the item as its use type

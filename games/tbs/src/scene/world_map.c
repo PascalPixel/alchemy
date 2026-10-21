@@ -983,7 +983,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
 
   actor = Object_GetById(ACTOR_FALLING_ROCK);
   Engine_EventBegin();
-  BattleFx_ScheduleRatioTransition(5 * Q16_ONE / 4, 1);
+  FieldFx_ScheduleRatioTransition(5 * Q16_ONE / 4, 1);
   Engine_TaskWait(4);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1520,7 +1520,7 @@ static void WorldMap_CompleteTransfer(void) {
 /// _PART_B to choose the menu's two lessons.
 static void WorldMap_ShowDjinnTutorial(void) {
   WorldMap_EndEvent();
-  BattleFx_ScheduleRatioTransition(Q16_ONE, 6);
+  FieldFx_ScheduleRatioTransition(Q16_ONE, 6);
   Event_WaitForZoomTransition();
   WorldMap_BeginEvent();
   Engine_ActorRunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
@@ -1580,7 +1580,7 @@ static void Event_MeetFlint(void) {
     Event_SetMessage(MsgWorldMapOh);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     WorldMap_EndEvent();
-    BattleFx_ScheduleRatioTransition(6 * Q16_ONE / 5, 6);
+    FieldFx_ScheduleRatioTransition(6 * Q16_ONE / 5, 6);
     Event_WaitForZoomTransition();
     WorldMap_BeginEvent();
     djinni->motionFlags = 2;
@@ -1613,7 +1613,7 @@ static void Event_MeetFlint(void) {
         WorldMap_CreateLinkedEffects(djinni);
       Task_Wait(1);
     }
-    BattleEffect_CleanupSceneObjects();
+    FieldFx_End();
     Engine_ObjectSetPartPalettes(djinni, 0);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1850,7 +1850,7 @@ static void WorldMap_RunBlackOrbScene(void) {
                                  0, 10);
   Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   WorldMap_EndEvent();
-  BattleFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 10);
+  FieldFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 10);
   Engine_CameraSetSpeed(PIXELS(8), PIXELS(1));
   Engine_CameraMoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
   Engine_CameraWaitForMove();
@@ -1897,7 +1897,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_ActorFaceDirection(gWorldMapTriggerActor,
                             FACING_SOUTHEAST + FACING_STEP, 0);
   WorldMap_EndEvent();
-  BattleFx_ScheduleRatioTransition(Q16_ONE, 10);
+  FieldFx_ScheduleRatioTransition(Q16_ONE, 10);
   Engine_EventWait(20);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
   Engine_GameFlagSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE);
@@ -2017,7 +2017,7 @@ static void Event_UseBlackOrb(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Begin();
   WorldMap_EndEvent();
-  BattleFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 6);
+  FieldFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 6);
   Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Camera_MoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2131,7 +2131,7 @@ static void Event_UseBlackOrb(void) {
   Actor_WaitForMove(gWorldMapTriggerActor);
   Actor_SetPosition(gWorldMapTriggerActor, 0, 0);
   WorldMap_EndEvent();
-  BattleFx_ScheduleRatioTransition(Q16_ONE, 6);
+  FieldFx_ScheduleRatioTransition(Q16_ONE, 6);
   Event_Wait(20);
   WorldMap_RestoreGatewayCaveExit();
   Engine_ActorDestroy(gWorldMapTriggerActor);
@@ -2158,13 +2158,13 @@ u16 gWorldMapBlend;
 static void WorldMap_ShowEndingScene(void) {
   PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   Engine_EventBegin();
-  BattleFx_ScheduleRatioTransition(Q16_ONE, 0x12c);
+  FieldFx_ScheduleRatioTransition(Q16_ONE, 0x12c);
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ActorSetAnimation(JENNA, 19);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 5);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
-  BattleFx_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
+  FieldFx_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
   gEventWork->transitionFrames = 16;
@@ -2370,7 +2370,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
     actor->facing = value;
   }
   Engine_TaskWait(1);
-  BattleFx_ScheduleRatioTransition(6 * Q16_ONE / 5, 1);
+  FieldFx_ScheduleRatioTransition(6 * Q16_ONE / 5, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
   Engine_TaskWait(1);
@@ -2480,7 +2480,7 @@ static void WorldMap_RunOpeningRise(void) {
   actor = Object_GetById(ACTOR_DRIFTING_ISLAND);
   Engine_EventWait(60);
   Engine_EventBegin();
-  BattleFx_ScheduleRatioTransition(3 * Q16_ONE / 5, 1);
+  FieldFx_ScheduleRatioTransition(3 * Q16_ONE / 5, 1);
   actor->scaleX = 6 * Q16_ONE / 5;
   actor->scaleY = 6 * Q16_ONE / 5;
   Engine_CameraFollowActor(ACTOR_DRIFTING_ISLAND, 1);
@@ -2499,7 +2499,7 @@ static void WorldMap_RunOpeningRise(void) {
   gEventWork->transitionFrames = 32;
   Engine_EventOpenScreen();
   Engine_EventWait(120);
-  BattleFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 0x12c);
+  FieldFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 0x12c);
   Engine_EventWait(0x10e);
   gEventWork->transitionFrames = 16;
   PLTT_BACKDROP = 0x7fff;
@@ -2579,7 +2579,7 @@ static void Event_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 /// Reached by the first phase of Douse on the storm (ACTOR_STORM) while it
 /// holds the party in the air (FLAG_SCENE_TEMP_F0).
 static void Event_StartDousingStorm(void) {
-  ((struct BattleFxScene *)gEffectWork)->childOption = 1;
+  ((struct FieldFxScene *)gEffectWork)->childOption = 1;
 }
 
 /// Douse on the storm: the party comes down and the battle with what is in it

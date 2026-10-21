@@ -1,4 +1,4 @@
-// Draft, differ 4 of 78: Func_0811ddd8 is ☀️'s BattlePres_BuildTargetList
+// Draft, differ 4 of 78: Func_0811ddd8 is ☀️'s BattlePresentation_BuildTargetList
 // (games/tbs/src/battle/battle/staging.c) with ⚓️'s added test that the
 // target is in the battle (BattleParty_IsUnitListed); void, as its callers
 // load r0 before r1 for it. Left: the opening, the plan's copy into r6 one

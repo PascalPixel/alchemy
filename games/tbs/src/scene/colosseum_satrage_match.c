@@ -310,7 +310,7 @@ static void Event_SaveMovedPillarColumns(void) {
 static void Event_PrepareForce(void) {
   u8 *effectWork = gEffectWork;
 
-  ((struct BattleFxScene *)effectWork)->childMode = 1;
+  ((struct FieldFxScene *)effectWork)->childMode = 1;
 }
 
 /// Force on the target over the Board Walk: the obstacle spins down into place
@@ -403,7 +403,7 @@ static void Event_GrowPlant(void) {
 /// Walking south into the obstacle at trigger 30 in Colosseum Final 2 runs the
 /// rising-object sequence for the actor touching it.
 static void Event_RunRisingSequence(void) {
-  FieldBattleFx_RunRisingObjectSequence(gGameState.selectedActor, 6, 0);
+  FieldActor_JumpDownLedge(gGameState.selectedActor, 6, 0);
 }
 
 /// Walking west into the obstacle at trigger 30 in Colosseum Final 2 only
@@ -749,7 +749,7 @@ static void ColosseumSatrageMatch_WaitForPlatformCrossingPhase(void) {
 /// Halt on the shifting floor's lift operator: the lifts stop and leave a
 /// crossing (FLAG_PLACE_TEMP_34).
 static void Event_HaltLifts(void) {
-  BattleEffect_PauseObject(LIFT_OPERATOR);
+  FieldFx_PauseObject(LIFT_OPERATOR);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_34);
 
   if (gColosseumSatrageMatch_LiftPhase != 0) {
@@ -962,7 +962,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       Map_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
     Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
-    BattleEffect_PauseObject(LIFT_OPERATOR);
+    FieldFx_PauseObject(LIFT_OPERATOR);
   } else {
     for (platformId = COLOSSEUM_SATRAGE_MATCH_FIRST_PLATFORM;
          platformId <= COLOSSEUM_SATRAGE_MATCH_LAST_PLATFORM; platformId++) {
@@ -1297,7 +1297,7 @@ static void Event_TalkToWallAttendant(s32 attendant) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 488, 248);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
-    FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
+    FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
     Engine_CameraMoveTo(PIXELS(536), -1, PIXELS(160), 1);
     Engine_EventShowMessage(attendant, 0);
     Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);

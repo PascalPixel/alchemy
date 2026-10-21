@@ -120,7 +120,7 @@ struct Object {
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to, on all three axes.
 static inline void
-BattleFx_MoveAfterimageHalfway(union FieldObject *fieldObject) {
+FieldFx_MoveAfterimageHalfway(union FieldObject *fieldObject) {
   struct FieldActor *afterimage = (struct FieldActor *)fieldObject;
   struct FieldActor *target = afterimage->linkedObject;
 
@@ -130,13 +130,13 @@ BattleFx_MoveAfterimageHalfway(union FieldObject *fieldObject) {
 }
 
 /// Runs the update of each of the 24 effect slots. The scheduler callbacks
-/// BattleFx_UpdateAllEffectSlots (setup.c) and BattleFx_UpdateAllSlots
+/// FieldFx_UpdateAllEffectSlots (setup.c) and FieldFx_UpdateAllSlots
 /// (djinni.c) run it once a frame.
 static __inline__ void FieldFx_UpdateSceneSlots(void) {
   struct EffectSlot *slot;
   s32 remainingSlots;
 
-  slot = ((struct BattleFxScene *)gEffectWork)->slots;
+  slot = ((struct FieldFxScene *)gEffectWork)->slots;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
@@ -147,7 +147,7 @@ static __inline__ void FieldFx_UpdateSceneSlots(void) {
 
 /// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
 /// signed, as the bytes read them (FieldActor's own types change the code).
-/// A Venus Djinni's falling motes (BattleFx_UpdateDescendingOrbitObject).
+/// A Venus Djinni's falling motes (FieldFx_UpdateDescendingOrbitObject).
 struct DescendingOrbitObject {
   u8 unk00[8];
   s32 x; ///< 16.16 fixed-point pixels
@@ -235,7 +235,7 @@ struct ItemBreakFragmentObject {
 /// under a gravity of 0.1 pixel a frame, each frame, and is freed after 12
 /// frames.
 static inline void
-BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
+FieldFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
   // Spawn and choose its position at the call site: combining the spawn here
   // moves the kind load after the coordinate loads in the native English build.
   if (fragment != NULL) {
@@ -244,7 +244,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
     ObjectDispatch_SelectAnimationFar(fragment, 0);
     fragment->lifetime = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)fragment,
-                                 gBattleFx_CommonParticleScript);
+                                 gFieldFx_CommonParticleScript);
   }
 }
 
@@ -257,7 +257,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
 /// pixels. Carry's and Lift's no-target effects are made with it.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
-    struct BattleFxScene *work;                                                \
+    struct FieldFxScene *work;                                                 \
     struct MotionObject *obj;                                                  \
     struct MotionObject *pair[2];                                              \
     struct ScatterPosition pos;                                                \
@@ -266,7 +266,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
     s32 dist;                                                                  \
                                                                                \
     work = gEffectWork;                                                        \
-    BattleEffect_InitializeSharedScene();                                      \
+    FieldFx_FadeToEffectColor();                                               \
     pos.x = work->x;                                                           \
     pos.y = work->y + 0x100000;                                                \
     pos.z = work->z;                                                           \
@@ -292,7 +292,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
                                                 pos.z);                        \
       if (obj != 0) {                                                          \
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj,             \
-                                     gBattleFx_FragmentScript);                \
+                                     gFieldFx_FragmentScript);                 \
         obj->speedLimit = Random16() + 0x20000;                                \
         obj->acceleration = 0x20000;                                           \
         obj->motionFlags = 0;                                                  \
@@ -304,7 +304,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
                                                                                \
     ObjectDispatch_ReleaseFar((struct DispatchObject *)pair[0]);               \
     ObjectDispatch_ReleaseFar((struct DispatchObject *)pair[1]);               \
-    BattleFx_PrepareBufferInterpolation();                                     \
+    FieldFx_FadeFromEffectColor();                                             \
   }
 
 #define ABOVE (16 << 16) ///< 16 pixels up
@@ -336,8 +336,8 @@ struct SparkObject {
 };
 
 /// The states of an effect slot particle that flies out and back: Halt's,
-/// Force's and Move's (BattleFx_UpdateRadialCamera, BattleFx_UpdateRadialBurst,
-/// BattleFx_UpdateOrbitAndReturn). EffectSlot_SetCallback starts it at the
+/// Force's and Move's (FieldFx_UpdateRadialCamera, FieldFx_UpdateRadialBurst,
+/// FieldFx_UpdateOrbitAndReturn). EffectSlot_SetCallback starts it at the
 /// first; each takes the next.
 enum OutAndBackState {
   OUT_AND_BACK_AIM_OUT = 0,    ///< picks the point it flies out to
@@ -347,7 +347,7 @@ enum OutAndBackState {
 };
 
 /// The states of a Venus Djinni's rising particle
-/// (BattleFx_UpdateRadialSpread), which BattleFx_RunVenusDjinnCapture moves on
+/// (FieldFx_UpdateRadialSpread), which FieldFx_RunVenusDjinnCapture moves on
 /// to VENUS_PARTICLE_LAST_RISE.
 enum VenusParticleState {
   VENUS_PARTICLE_AIM = 0,      ///< starts round the leader, aimed up the screen
@@ -356,7 +356,7 @@ enum VenusParticleState {
 };
 
 /// The states of a Mercury Djinni's droplet
-/// (BattleFx_UpdateRandomTargetParticle), which BattleFx_RunMercuryDjinnCapture
+/// (FieldFx_UpdateRandomTargetParticle), which FieldFx_RunMercuryDjinnCapture
 /// moves on to MERCURY_DROPLET_LAST_FALL.
 enum MercuryDropletState {
   MERCURY_DROPLET_AIM = 0, ///< placed above the leader, aimed at a spot by it
@@ -368,7 +368,7 @@ enum MercuryDropletState {
 };
 
 /// The states of a Mars Djinni's spark
-/// (BattleEffect_UpdatePhasedRadialParticle), which Djinn_RunMarsJoinEffect
+/// (FieldFx_UpdatePhasedRadialParticle), which Djinn_RunMarsJoinEffect
 /// moves on to MARS_SPARK_STOPPING and then MARS_SPARK_LEAVING.
 enum MarsSparkState {
   MARS_SPARK_AIM = 0,    ///< aimed 120 pixels up the screen from its origin

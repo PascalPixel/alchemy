@@ -52,7 +52,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 /// ("VSST" in the link signature), publish "EDVS" when done, and wait for
 /// the partner to finish ("Waiting for opponent's input."). Its work,
 /// BattleMenuWork (gLinkCountdownWork), lives in HEAP_SLOT_BATTLE_COMMANDS
-/// until it returns. BattlePres_BuildUnitEntries calls it
+/// until it returns. BattlePresentation_BuildUnitEntries calls it
 /// (battle/battle/round.c).
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                 u16 *actors, s32 commandCount) {
@@ -84,7 +84,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
     u16 data[2];
     data[0] = 0xff;
     BattleLayout_HighlightPartyPanels(data);
-    BattlePres_SetActorModesFar(data, 1);
+    BattlePresentation_SetActorModesFar(data, 1);
   }
 
   // Set up the shared command UI before the optional link handshake: VRAM
@@ -283,7 +283,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       // battle and highlighted in the party status window.
       signatureHeader[0] = (u16)actorId;
       signatureHeader[1] = 255;
-      BattlePres_SetActorModesFar(signatureHeader, 1);
+      BattlePresentation_SetActorModesFar(signatureHeader, 1);
       BattleLayout_HighlightPartyPanels(signatureHeader);
       WaitFrames(1);
       mode = Menu_RunCommandRow(COMMAND_ROW_MEMBER);
@@ -301,7 +301,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         MemFree(block);
         continue;
       }
-      BattlePres_SetActorModesFar(signatureHeader, 0);
+      BattlePresentation_SetActorModesFar(signatureHeader, 0);
       // B: back to the member before, or from the first to the party's row.
       if (mode == -1) {
         if (commandIndex == 0) {

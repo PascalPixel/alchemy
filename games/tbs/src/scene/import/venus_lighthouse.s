@@ -74,18 +74,18 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.BattleFx_StartFadeOverlay, 1
+	.set import.FieldFx_StartFadeOverlay, 1
 	.ifdef TBS_EDITION_ES
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.endif
 	.ifdef TBS_EDITION_FR
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.endif
 	.ifdef TBS_EDITION_IT
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.endif
 	.set import.Engine_ActorWalkByAndWait, 1
-	.set import.BattleFx_SetQueuedSoundAndPlay, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_SetQueuedSoundAndPlay, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -53,18 +53,18 @@ void Object_SetTargetAndCallbackFar(u32 objectId, s32 targetId,
 void Event_SetMessageIdFar(s32 value);
 struct UiWindow *UiText_OpenMessageAtObjectFar(s32 arg, s32 unused);
 void FieldEvent_ShowMessageAndWaitFar(s32 action, s32 flag);
-void BattlePres_RunActionThenWaitIfModeZeroFar(s32 first, s32 second,
-                                               s32 value);
+void FieldEvent_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
 s32 FieldEvent_AskYesNoAndShowResponseFar(s32 objectId, s32 actionId);
 void ObjectMotion_ArmCallbackFar(s32 objectId, s32 angle, s32 wait);
-void Battle_ShowPairedUnitWorkAndWaitFar(s32 first, s32 first_x, s32 first_y,
-                                         s32 first_arg, s32 first_extra,
-                                         s32 second, s32 second_x, s32 second_y,
-                                         s32 second_arg, s32 second_extra);
+void FieldEvent_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
+                                          s32 first_arg, s32 first_extra,
+                                          s32 second, s32 second_x,
+                                          s32 second_y, s32 second_arg,
+                                          s32 second_extra);
 void Ui_SetMessageVoiceFromActorFar(s32 arg0);
 void ObjectMotion_SetActionVariantFar(s32 objectId, s32 priority);
-void BattleFx_SpawnLinkedFar(s32 id, s32 mode, s32 wait);
-void BattleFx_ConfigureLinkedObjectFar(s32 id, s32 flags);
+void FieldFx_SpawnLinkedFar(s32 id, s32 mode, s32 wait);
+void FieldFx_ConfigureLinkedObjectFar(s32 id, s32 flags);
 void ObjectVisual_CopyAttributesFar(u32 targetId, u32 sourceId);
 void Camera_FollowActorFar(s32 id, s32 flag);
 void Camera_SetSpeedParametersFar(s32 first, s32 second);
@@ -93,12 +93,12 @@ void FieldFx_StartLightningFar(void);
 void FieldFx_StopLightningFar(void);
 void FieldFx_LastLightningFar(void);
 void FieldFx_ResumeLightningFar(void);
-void BattleFx_StartBufferBlendFar(s32 from, s32 to);
-void FieldEffect_InitSparklesFar(void);
+void FieldFx_StartBufferBlendFar(s32 from, s32 to);
+void FieldFx_InitSparklesFar(void);
 void DisplayTransition_InitializeBattleEffectStateFar(s32 mode);
-void BattleFx_ApplyColorToTargetBufferFar(s32 mode, s32 half);
-void BattleFx_ApplyColorToSourceBufferFar(s32 mode, s32 half);
-void BattleFx_StartBufferInterpolationFar(s32 frames);
+void ColorBuffer_SetTargetFar(s32 mode, s32 half);
+void ColorBuffer_SetSourceFar(s32 mode, s32 half);
+void ColorBuffer_StartInterpolationFar(s32 frames);
 void Event_StartScreenTransitionFar(void);
 void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
@@ -106,33 +106,32 @@ void DisplayScroll_InitializeHBlankDmaFar(s32 mode, s32 freqX, s32 stepX,
                                           s32 ampX, s32 freqY, s32 stepY,
                                           s32 ampY);
 void DisplayScroll_DisarmHBlankDmaFar(void);
-s32 BattleFx_PlayCueAndStartEmitterOnTargetFar(s32 effect, s32 target,
-                                               s32 mode);
-void EffectRuntime_RunRisingObjectSequenceFar(void *object, s32 flags);
-void BattleFx_StartEffectObject22Far(s32 value, s32 flags);
+s32 FieldFx_PlayCueAndStartEmitterOnTargetFar(s32 effect, s32 target, s32 mode);
+void ItemDisplay_ShowPictureFar(void *object, s32 flags);
+void FieldFx_StartEffectObject22Far(s32 value, s32 flags);
 void Marker_SetActorPositionFar(s32 id, s32 x, s32 y);
 void Marker_MoveLeaderAwayFar(void);
 void WorldMap_BeginEventFar(void);
 void WorldMap_EndEventFar(void);
 void *ObjectTable_GetFar(u32 index);
-void BattleFx_StartFadeOverlayFar(void *object);
+void FieldFx_StartFadeOverlayFar(void *object);
 void Field_DispatchTypeHandlerFar(s32 kind);
-void BattleFx_LoadActionEffectResourcesFar(s32 abilityId, s32 mode);
-void BattleFx_SetupObjectPairFar(s32 user_id, s32 targetId);
-void EffectRuntime_StopCurrentObjectFar(void);
-void BattleEffect_CleanupSceneObjectsFar(void);
+void FieldFx_LoadActionEffectResourcesFar(s32 abilityId, s32 mode);
+void FieldFx_SetupObjectPairFar(s32 user_id, s32 targetId);
+void FieldFx_StopCasterHookFar(void);
+void FieldFx_EndFar(void);
 void EventObject_InitializeFar(void);
-void Battle_ResetEffectCounterFar(void);
+void Field_EndBusyAndRevealFar(void);
 void RunSceneTransitionEffectFar(s32 x, s32 y);
-void BattleFx_FinishSceneAndReleaseHeapBlockFar(void);
+void FieldFx_FinishSceneAndReleaseHeapBlockFar(void);
 void Ui_SetBank15PaletteAndClearRenderModeFar(void);
-s32 BattleFx_HasMatchingEvent5Far(s32 group);
-u32 BattleFx_HasTriggerFar(u16 item);
+s32 FieldFx_HasMatchingEvent5Far(s32 group);
+u32 FieldFx_HasTriggerFar(u16 item);
 struct AnimationObject *
 Sprite_ShareVramCacheFar(struct AnimationObject *sourceSprite,
                          struct AnimationObject *sharedSprite);
 s16 Event_GetSpecialValueFar(void);
-void BattleParty_ApplyDrainFar(s32 amount, s32 unused);
+void Party_AddPpFar(s32 amount, s32 unused);
 s32 Menu_AskYesNoFar(s32 value);
 void Audio_PlayCueFromEventWorkFar(void);
 void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);
@@ -144,29 +143,29 @@ void EffectSlot_SetCallbackFar(struct EffectSlot *effect,
                                EffectCallback callback);
 void EffectSlot_InitializeFar(struct EffectSlot *effect, s32 kind, s32 x,
                               s32 z);
-void BattleFx_ClearOwnedSlotFar(struct EffectSlot *slot);
+void FieldFx_ClearOwnedSlotFar(struct EffectSlot *slot);
 void Camera_WorldToScreenFar(struct EffectVector *position);
-s32 BattleFx_GetResourceIdFar(u32 id);
+s32 FieldFx_GetResourceIdFar(u32 id);
 void Event_ClearInvalidPackedValuesFar(void);
-void BattleFx_InitializeSlotsFar(void);
-void BattleFx_ClearActiveSlotsAndScheduleUpdatesFar(void);
+void FieldFx_InitializeSlotsFar(void);
+void FieldFx_ClearActiveSlotsAndScheduleUpdatesFar(void);
 void Motion_LaunchFromFocusedObjectFar(u32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void ObjectMotion_OffsetPositionAndResetFar(u32 objectId, s32 x_offset,
                                             s32 z_offset);
 void ObjectMotion_CommitPositionAndActivateFar(u32 objectId, s32 x_offset,
                                                s32 z_offset);
 void Object_LinkObjectAndSetCallbackFar(u32 objectId, u32 linked_object_id);
-void BattleEffect_PauseObjectFar(s32 id);
+void FieldFx_PauseObjectFar(s32 id);
 /// Far call to ObjectTable_Snapshot.
 void SaveState_CaptureObjectTableFar(void);
 void ObjectTable_RestoreFar(void);
-void BattleFx_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
+void FieldFx_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 void Event_WaitForZoomTransitionFar(void);
 s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
 void ObjectMotion_SetActionCallbackFar(struct ObjectRuntime *object, s32 kind);
-void BattleFx_SetQueuedSoundAndPlayFar(s32 sound_id);
-void BattleFx_PlayQueuedSoundFar(void);
+void FieldFx_SetQueuedSoundAndPlayFar(s32 sound_id);
+void FieldFx_PlayQueuedSoundFar(void);
 s32 Party_RemapCharacterIdIfEnabledFar(s32 arg0, s32 arg1);
 #if TBS_PATCH_2
-void BattleFx_ClearRandomParticlesFar(void);
+void FieldFx_ClearRandomParticlesFar(void);
 #endif

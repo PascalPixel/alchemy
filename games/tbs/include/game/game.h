@@ -42,7 +42,7 @@ extern u32 gCharacter_LevelExpTable[];
 extern s16 gDjinn_ElementSprites[];
 /// The class series by a character's strongest and second element, a 4 by 4
 /// table read as [strongest * 4 + second] (Class_GetSeries).
-extern s32 gOwner_FourColumnValues[];
+extern s32 gClass_SeriesByElements[];
 /// The 80 Djinn, 20 of each element in element order (djinn.tsv).
 extern const struct DjinnDefinition gDjinn_DefinitionTable[];
 /// Pairs of an element difference (power less resistance) and what it adds to

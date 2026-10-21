@@ -121,13 +121,13 @@ function here can be known by two names, its own and its far-call one.
 
 | Prefix | What it acts on |
 | --- | --- |
-| `Unit_`, `UnitGet`, `UnitCalc`, `UnitRatio`, `Owner_` | one unit: stats, HP and PP, Psynergy, levels, elements |
+| `Unit_`, `UnitGet`, `UnitCalc`, `UnitRatio` | one unit: stats, HP and PP, Psynergy, levels, elements |
 | `Party_`, `GameState_`, `Game_` | the party and the game state |
 | `Item_`, `Inventory_`, `PartyInventory_`, `InventorySnapshot_`, `ItemCounter_`, `Equipment_` | items: one unit's inventory, the party's, the snapshot the Colosso takes, and the rare item counters that limit what the shops sell |
 | `Character_`, `Class_`, `Enemy_`, `Summon_`, `SummonDefinition_`, `BattleAction_` | one entry of a definition table |
 | `GameFlag_` | the game flags |
 | `Djinn_`, `DjinnRecovery_` | the Djinn, and their standby lists |
-| `Battle_`, `BattleRandom`, `BattleTarget_`, `BattleFx_` | battle arithmetic the battle folder calls |
+| `Battle_`, `BattleRandom`, `BattleTarget_` | battle arithmetic the battle folder calls |
 | `BattleUnitSet` | filling an enemy unit at the start of a battle |
 | `Runtime_` | two engine helpers that live here: a byte copy and the build stamp |
 

@@ -32,7 +32,7 @@ void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
 /// Called by Map_LoadLayeredScene with the size Resource_DecodeType01
 /// returns; the packed stream is decoded to Ram_MapCellBuffer + 1 so that
 /// its method byte lands at byte 1 and the halfwords at byte 2 are aligned.
-void Tilemap_DecodeStagedBuffer(s32 size) {
+void TileMap_DecodeStagedBuffer(s32 size) {
   u16 *destinationWords;
   u16 *sourceWords;
   s32 wordCount;
@@ -78,7 +78,7 @@ typedef void (*TilemapConvertFn)(void *dst, const void *src, const void *saved);
 /// Unused: gives each map cell whose block number is 0xfff (a placeholder) a
 /// number of its own, counting up from 0 in map order.
 /// Nothing calls it.
-UNUSED void Tilemap_NumberPlaceholderBlocks(void) {
+UNUSED void TileMap_NumberPlaceholderBlocks(void) {
   u32 *cell = (u32 *)gMapCellBuffer;
   u32 remaining = 128 << 7;
   u32 mask = 0xfff;
@@ -109,7 +109,7 @@ UNUSED void Tilemap_NumberPlaceholderBlocks(void) {
 /// copied to a buffer from the alternate pool; the buffer and the routine's
 /// RAM copy are freed when done. Called by Map_LoadLayeredScene once the cell
 /// planes are decoded.
-void Tilemap_ConvertBuffer(void) {
+void TileMap_ConvertBuffer(void) {
   u8 *savedCells;
   TilemapConvertFn convertMap;
   u32 savedBytes;
@@ -244,13 +244,13 @@ s32 Map_LoadLayeredScene(s32 index) {
   // The header's offsets count from the header itself. The blocks are
   // staged in the cell buffer, which the cell planes then overwrite.
   encodedData = (u8 *)sceneHeader + sceneHeader->tiles;
-  Tilemap_DecodeStagedBuffer(
+  TileMap_DecodeStagedBuffer(
       Resource_DecodeType01(encodedData, Ram_MapCellBuffer + 1));
   encodedData = (u8 *)sceneHeader + sceneHeader->collision;
   Resource_DecodeType01(encodedData, Ram_MapCollision);
   encodedData = (u8 *)sceneHeader + sceneHeader->tilemap;
   Resource_DecodeType01(encodedData, Ram_MapCellBuffer);
-  Tilemap_ConvertBuffer();
+  TileMap_ConvertBuffer();
   // The tile animation and blend scripts are optional (offset 0), and decode
   // into the space after the shapes in Ram_MapCollision.
   if (sceneHeader->animation != 0) {

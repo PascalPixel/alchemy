@@ -310,8 +310,8 @@ ValeCave_SinkObjectWithParticles(s32 actorId, s32 baseX, s32 baseZ,
     s32 particleX = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + baseX;
     s32 particleZ = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + baseZ;
 
-    Effect_Spawn(particleX, 0, particleZ, 0, 0, 0,
-                 EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, particleOptions);
+    FieldFx_Spawn(particleX, 0, particleZ, 0, 0, 0,
+                  EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, particleOptions);
     Object_GetById(actorId)->y.fixed -= OBJECT_SINK_STEP;
     Engine_EventWait(1);
   }

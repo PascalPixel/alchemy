@@ -80,7 +80,7 @@ void IoWriteQueue_ClearBits32(u32 address, u32 value);
 /// Like IO_WRITE_QUEUE_PUSH, but keeps IME's address in the caller's ime
 /// variable while disabling and restoring interrupts.
 /* FAKEMATCH(temporary): count_ as in IO_WRITE_QUEUE_PUSH; as q->count, its
- * users BattleFx_PlayUnitElementEffect and BattleFx_RunJudgment differ. */
+ * users ElementGlow_Play and BattleFx_RunJudgment differ. */
 #define IO_WRITE_QUEUE_PUSH_IME(ime, address, value, control)                  \
   {                                                                            \
     struct IoWriteQueue *q;                                                    \

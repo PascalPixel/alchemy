@@ -12,21 +12,22 @@ struct Spark {
 };
 
 /// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
-/// in the HEAP_SLOT_BATTLE_EFFECT work slot from BattleFx_InitializeStarField
-/// to Graphics_ResetVramBlockAndReleaseHeapBlocks, the 45 frames of a cast's
-/// glow (BattleFx_PlayUnitElementEffect, GLOW_STAR_FIELD).
-/// BattleFx_UpdateStarField draws from it, BattleFx_UploadStarField reads its
-/// ready flag, and BattleFx_PlayUnitElementEffect writes its canvas origin.
+/// in the HEAP_SLOT_BATTLE_EFFECT work slot from
+/// ElementGlow_InitializeStarField to
+/// Graphics_ResetVramBlockAndReleaseHeapBlocks, the 45 frames of a cast's glow
+/// (ElementGlow_Play, GLOW_STAR_FIELD). ElementGlow_UpdateStarField draws from
+/// it, ElementGlow_UploadStarField reads its ready flag, and ElementGlow_Play
+/// writes its canvas origin.
 struct SparkWork {
   /// The blue ring sheet's pictures, decoded: the sparks' sizes at
-  /// gBattleFx_StarWorkOffsets, the rings' frames at
-  /// gBattleFx_RingFrameOffsets.
+  /// gElementGlow_StarWorkOffsets, the rings' frames at
+  /// gElementGlow_RingFrameOffsets.
   u8 sheet[0x11c0];
   struct Spark sparks[16];
   struct Ring rings[3];
   s32 frames; ///< frames drawn; new sparks start only in the first 25
-  s32 ready;  ///< 1 when a drawn frame waits for BattleFx_UploadStarField
-  /// Where BG2 shows the 128 by 128 canvas: BattleFx_PlayUnitElementEffect
+  s32 ready;  ///< 1 when a drawn frame waits for ElementGlow_UploadStarField
+  /// Where BG2 shows the 128 by 128 canvas: ElementGlow_Play
   /// keeps it on the unit, as an effect's tracked canvas would be.
   struct BattleCanvasOrigin canvasOrigin;
 };
@@ -43,14 +44,14 @@ typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
 // each spark falls towards the centre and is drawn smaller as its life runs
 // out, a spent one starts again on a ring of random radius during the first
 // 25 frames, and the three rings move outward through four frames. Sets
-// SparkWork.ready for BattleFx_UploadStarField. Runs each frame as a
-// scheduler callback added by BattleFx_InitializeStarField.
+// SparkWork.ready for ElementGlow_UploadStarField. Runs each frame as a
+// scheduler callback added by ElementGlow_InitializeStarField.
 // UB: the scheduler invokes a void callback. Plain void changes the native
 // return register from r1 to r0 in tbs-en; matching builds keep the old type.
 #ifdef UBFIX
-void BattleFx_UpdateStarField(void) {
+void ElementGlow_UpdateStarField(void) {
 #else
-s32 BattleFx_UpdateStarField(void) {
+s32 ElementGlow_UpdateStarField(void) {
 #endif
   s32 ringIndex;
   s32 frame;
@@ -109,7 +110,7 @@ s32 BattleFx_UpdateStarField(void) {
       }
       life = spark->life;
     }
-    // A spent spark starts again, as BattleFx_InitializeStarField starts
+    // A spent spark starts again, as ElementGlow_InitializeStarField starts
     // them, while the field is young.
     if (life == 0 && work->frames <= 24) {
       angle = Random16();
@@ -137,8 +138,8 @@ s32 BattleFx_UpdateStarField(void) {
         frame = 0;
       else if (frame > 6)
         frame = 6;
-      size = gBattleFx_StarSizes[frame];
-      draw(canvas, (u8 *)work + gBattleFx_StarWorkOffsets[frame],
+      size = gElementGlow_StarSizes[frame];
+      draw(canvas, (u8 *)work + gElementGlow_StarWorkOffsets[frame],
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }
@@ -153,8 +154,8 @@ s32 BattleFx_UpdateStarField(void) {
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
-      draw(canvas, (u8 *)work + gBattleFx_RingFrameOffsets[phase], ringX + 48,
-           ringY + 48, 32, 32);
+      draw(canvas, (u8 *)work + gElementGlow_RingFrameOffsets[phase],
+           ringX + 48, ringY + 48, 32, 32);
     }
   }
   work->frames++;
@@ -164,13 +165,13 @@ s32 BattleFx_UpdateStarField(void) {
 // Copies the canvas, once a frame is drawn, to BG2's tiles in character block
 // 1 through ColorBuffer_BackupAndScaleThreeQuarters, and clears
 // SparkWork.ready. Runs each frame as a scheduler callback added by
-// BattleFx_InitializeStarField. UB: the scheduler invokes a void callback.
+// ElementGlow_InitializeStarField. UB: the scheduler invokes a void callback.
 // Plain void changes the native return register from r1 to r0 in tbs-en;
 // matching builds keep the old type.
 #ifdef UBFIX
-void BattleFx_UploadStarField(void) {
+void ElementGlow_UploadStarField(void) {
 #else
-u32 BattleFx_UploadStarField(void) {
+u32 ElementGlow_UploadStarField(void) {
 #endif
   void *source = gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   struct SparkWork *work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
@@ -186,11 +187,13 @@ u32 BattleFx_UploadStarField(void) {
 // The two callbacks as the scheduler takes them: cast to SchedulerCallback
 // where the native types return a value.
 #ifdef UBFIX
-#define STAR_FIELD_UPDATE_CALLBACK BattleFx_UpdateStarField
-#define STAR_FIELD_UPLOAD_CALLBACK BattleFx_UploadStarField
+#define STAR_FIELD_UPDATE_CALLBACK ElementGlow_UpdateStarField
+#define STAR_FIELD_UPLOAD_CALLBACK ElementGlow_UploadStarField
 #else
-#define STAR_FIELD_UPDATE_CALLBACK ((SchedulerCallback)BattleFx_UpdateStarField)
-#define STAR_FIELD_UPLOAD_CALLBACK ((SchedulerCallback)BattleFx_UploadStarField)
+#define STAR_FIELD_UPDATE_CALLBACK                                             \
+  ((SchedulerCallback)ElementGlow_UpdateStarField)
+#define STAR_FIELD_UPLOAD_CALLBACK                                             \
+  ((SchedulerCallback)ElementGlow_UploadStarField)
 #endif
 
 /// Starts a star field of the element mode (0 to 3, enum Element order):
@@ -199,12 +202,12 @@ u32 BattleFx_UploadStarField(void) {
 /// 128 by 128 canvas (HEAP_SLOT_BATTLE_CANVAS), decodes the blue ring sheet
 /// into the work, loads the element's 64 colours over the first of BG palette
 /// RAM, sets BG2's affine parameters to no zoom, loads both blitters and adds
-/// BattleFx_UpdateStarField and BattleFx_UploadStarField. Also sets
+/// ElementGlow_UpdateStarField and ElementGlow_UploadStarField. Also sets
 /// BattleBackgroundView.mode to BATTLE_BACKGROUND_FLAT. Called by
-/// BattleFx_PlayUnitElementEffect; Graphics_ResetVramBlockAndReleaseHeapBlocks
+/// ElementGlow_Play; Graphics_ResetVramBlockAndReleaseHeapBlocks
 /// undoes it. Returns the upload callback's task index (-1 when the task table
 /// is full), which the caller does not read.
-s32 BattleFx_InitializeStarField(s32 element) {
+s32 ElementGlow_InitializeStarField(s32 element) {
   struct SparkWork *work;
   struct Spark *spark;
   struct Ring *ring;
@@ -294,15 +297,15 @@ s32 BattleFx_InitializeStarField(s32 element) {
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(Q_8_8(1), &REG_BG2PD);
-  BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
-  BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+  BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+  BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
   Scheduler_AddOrUpdateCallback(STAR_FIELD_UPDATE_CALLBACK, 0xc80);
   return Scheduler_AddOrUpdateCallback(STAR_FIELD_UPLOAD_CALLBACK, 0xc80);
 }
 
 /// Ends a star field: clears BG2's tiles in character block 1, frees its
 /// blitters, canvas and work, turns BG2 off and removes both callbacks.
-/// Called by BattleFx_PlayUnitElementEffect once the field has played.
+/// Called by ElementGlow_Play once the field has played.
 /// Returns Scheduler_RemoveCallback's result, which the caller does not
 /// read.
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused) {
@@ -321,7 +324,7 @@ s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused) {
 /// scale (16.16, at most 1), and returns 0.
 /// Called to darken the background's palette by
 /// BattlePresentation_SetPaletteLevel, BattleBackground_Load,
-/// BattleFx_PlayUnitElementEffect, the item staging (staging.c) and the
+/// ElementGlow_Play, the item staging (staging.c) and the
 /// effects' canvas (canvas.c).
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
@@ -363,15 +366,14 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 /// Plays a glow of the element about a unit, and returns when it is over.
 /// The glow is mode (enum BattleElementGlow), GLOW_PILLAR at strength
 /// variant. Called with GLOW_STAR_FIELD by
-/// BattlePresentation_RunUnitTransition and BattlePres_RunPsynergyCast, with
-/// GLOW_STREAKS by the latter, with GLOW_PILLAR by BattleUnit_ProcessTurnEnd
-/// and with GLOW_BURST by Battle_ProcessRoundEnd and BattleCommand_BuildPlan.
-/// Every glow first puts the background in BATTLE_BACKGROUND_FLAT and opens
-/// window 0 over lines 16 to 135, with BG2 blended over the other layers;
-/// GLOW_STAR_FIELD leaves the background's palette and BattleWork.brightness
-/// darkened.
-void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
-                                    s32 variant) {
+/// BattlePresentation_RunUnitTransition and BattlePresentation_RunPsynergyCast,
+/// with GLOW_STREAKS by the latter, with GLOW_PILLAR by
+/// BattleUnit_ProcessTurnEnd and with GLOW_BURST by Battle_ProcessRoundEnd and
+/// BattleCommand_BuildPlan. Every glow first puts the background in
+/// BATTLE_BACKGROUND_FLAT and opens window 0 over lines 16 to 135, with BG2
+/// blended over the other layers; GLOW_STAR_FIELD leaves the background's
+/// palette and BattleWork.brightness darkened.
+void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   /* FAKEMATCH(dead): an unused array for the frame's 40 bytes; without it, 2
    * of 249 instructions differ in tbs-en. */
   UNUSED s32 spare[10];
@@ -411,7 +413,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
     // frame for its first 25 and keeping BG2's canvas centred on the unit
     // (its origin queued to BG2X and BG2Y with interrupts off).
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, 16));
-    BattleFx_InitializeStarField(element);
+    ElementGlow_InitializeStarField(element);
     for (frame = 0, projectedPosition = &position; frame <= 44; frame++) {
       brightness = &battle->brightness;
       ime = &REG_IME;
@@ -474,15 +476,15 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
 }
 
 /// Copies the background's saved palette back undarkened, as the star field
-/// of BattleFx_PlayUnitElementEffect leaves it dark.
+/// of ElementGlow_Play leaves it dark.
 /// Called by BattlePresentation_RunUnitTransition and
-/// BattlePres_RunPsynergyCast once the effect has played.
-void BattlePres_RestorePalette(void) {
+/// BattlePresentation_RunPsynergyCast once the effect has played.
+void BattlePresentation_RestorePalette(void) {
   BattlePresentation_SetPaletteLevel(0, 0);
 }
 
-/// Removes the VCount interrupt's handler, as BattlePres_RunEntryTransition
-/// installs one; nothing calls it.
+/// Removes the VCount interrupt's handler, as
+/// BattlePresentation_RunEntryTransition installs one; nothing calls it.
 void Runtime_RemoveIrqHandlerSlot2(void) {
   Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
 }

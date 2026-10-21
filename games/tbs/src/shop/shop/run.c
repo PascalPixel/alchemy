@@ -53,7 +53,7 @@ void Shop_InitializeCursorWork(void) {
   s32 resourceSlot;
 
   shop = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, sizeof(struct ShopRuntime));
-  Battle_ResetEffectCounterFar();
+  Field_EndBusyAndRevealFar();
   Dma_Fill32(0, shop, sizeof(struct ShopRuntime));
   // The hand cursor's glides take 12 frames until a screen changes it
   shop->mode = 12;
@@ -184,7 +184,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 /// Opens the debug shop with 200000 coins, the ticket counter at its cap,
 /// broken equipment for repairs and poisoned or haunted members for the
 /// sanctum. Called by DebugMenu_RunPresetShop.
-s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
+s32 Shop_OpenDebugShop(s32 unused) {
   gGameState.coins = 200000;
   gGameState.shopGifts = 28;
   Inventory_EquipFar(
@@ -225,7 +225,7 @@ void UiMessage_ShowAndWait(s32 messageId) {
   // A shared message-resolution inline added four bytes to each dialogue caller
   // in the English native build; both callers retain their direct resolution.
   struct ShopRuntime *shop = gMenuWork;
-  s32 portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
+  s32 portraitResource = FieldFx_GetResourceIdFar(shop->keeperResource);
   s32 resolvedMessage = messageId;
   s8 shopType;
 
@@ -260,7 +260,7 @@ void UiMessage_ShowAndRestoreState(s32 messageId) {
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->active;
   resolvedMessage = messageId;
-  portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
+  portraitResource = FieldFx_GetResourceIdFar(shop->keeperResource);
   shopType = shop->shopType;
   if (shopType == SHOP_TYPE_ARMOR) {
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;

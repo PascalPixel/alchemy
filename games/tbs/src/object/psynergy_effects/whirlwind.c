@@ -44,7 +44,7 @@ struct WhirlwindOrbit {
 
 /// Per-frame update of a particle: moves by its velocity, slowing its x and z
 /// velocity a little, and changes its scale and spin. Assigned by
-/// BattleFx_SpawnRadialParticleRing for Carry's landing particles.
+/// FieldFx_SpawnRadialParticleRing for Carry's landing particles.
 void FieldFx_UpdateParticleMotionAndScale(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
 
@@ -60,9 +60,9 @@ void FieldFx_UpdateParticleMotionAndScale(union FieldObject *object) {
 
 /// Spawns 17 particles that spread from origin in a flat ring, their x
 /// velocity 1.5 times their z velocity, so the ring is wider than deep as the
-/// field is drawn. Carry's BattleFx_SteerLiftedTarget spawns it where it sets
+/// field is drawn. Carry's FieldFx_SteerLiftedTarget spawns it where it sets
 /// its load down.
-void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
+void FieldFx_SpawnRadialParticleRing(struct MotionObject *origin) {
   struct EffectOptions opt;
   s32 vel[3];
   s32 vz;
@@ -80,19 +80,19 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
     vel[1] = 0;
     vz = Trig_Sin(angle);
     vel[2] = vz;
-    Effect_SpawnResident(origin->x, origin->y, origin->z, vel[0], vel[1], vz,
-                         0x01090001, &opt);
+    FieldFx_SpawnResident(origin->x, origin->y, origin->z, vel[0], vel[1], vz,
+                          0x01090001, &opt);
     i++;
   } while (i <= WHIRLWIND_RADIAL_DIRECTIONS);
 }
 
 /// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame,
 /// now and then turning sharply; after 101 frames it hands over to the
-/// common particle script. BattleFx_CircleAnchor switches a particle to it.
+/// common particle script. FieldFx_CircleAnchor switches a particle to it.
 /// While it wanders, the engine's own motion lifts the particle (the velocity
-/// and gravity BattleFx_CircleAnchor gave it); this only moves it across the
+/// and gravity FieldFx_CircleAnchor gave it); this only moves it across the
 /// ground.
-void BattleFx_WanderAroundAnchor(union FieldObject *fieldObject) {
+void FieldFx_WanderAroundAnchor(union FieldObject *fieldObject) {
   struct WhirlwindOrbit *effect = (struct WhirlwindOrbit *)fieldObject;
   s32 len;
   s32 angle;
@@ -118,13 +118,13 @@ void BattleFx_WanderAroundAnchor(union FieldObject *fieldObject) {
   }
   if (++effect->timer == WHIRLWIND_WANDER_FRAMES)
     ObjectDispatch_InitializeFar((struct DispatchObject *)effect,
-                                 gBattleFx_CommonParticleScript);
+                                 gFieldFx_CommonParticleScript);
 }
 
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
-/// starts to wander (BattleFx_WanderAroundAnchor). FieldFx_RunWhirlwind gives
+/// starts to wander (FieldFx_WanderAroundAnchor). FieldFx_RunWhirlwind gives
 /// it to each of the 16 particles it spawns round the orb.
-void BattleFx_CircleAnchor(union FieldObject *fieldObject) {
+void FieldFx_CircleAnchor(union FieldObject *fieldObject) {
   struct WhirlwindOrbit *effect = (struct WhirlwindOrbit *)fieldObject;
   struct WhirlwindOrbit *anchor;
   s32 angle;
@@ -143,7 +143,7 @@ void BattleFx_CircleAnchor(union FieldObject *fieldObject) {
   if (++effect->timer == WHIRLWIND_ORBIT_FRAMES) {
     // The engine integrates height after this callback. Supply upward speed
     // and gravity here; the wandering callback only changes x and z.
-    effect->update = BattleFx_WanderAroundAnchor;
+    effect->update = FieldFx_WanderAroundAnchor;
     effect->timer = 0;
     effect->pause = 0;
     effect->gravity = 0x1999;
@@ -156,7 +156,7 @@ void BattleFx_CircleAnchor(union FieldObject *fieldObject) {
 /// moves it to the origin, stops it and removes the update.
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
-void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
+void FieldFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   struct MotionObject *obj = (struct MotionObject *)fieldObject;
   s32 scale;
 
@@ -174,7 +174,7 @@ void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
 ///
 /// Abilities: Whirlwind, Gale (FIELD_KIND_WHIRLWIND).
 ///
-/// BattleFx_DispatchRequestKind passes an argument this adapter ignores; the
+/// FieldFx_DispatchRequestKind passes an argument this adapter ignores; the
 /// shared runner reads scene->child instead.
 void FieldFx_RunWhirlwindOnTarget(s32 unused) { FieldFx_RunWhirlwind(); }
 
@@ -186,11 +186,11 @@ void FieldFx_RunWhirlwindOnTarget(s32 unused) { FieldFx_RunWhirlwind(); }
 /// Without scene->enabled the target shrinks, and 16 particles appear round the
 /// orb, one every 6 frames, and circle it.
 ///
-/// Called by BattleFx_Run and FieldFx_RunWhirlwindOnTarget. Fades the palettes
+/// Called by FieldFx_Run and FieldFx_RunWhirlwindOnTarget. Fades the palettes
 /// to an effect colour and back, and gives the target its shrinking update;
 /// the orb is released at the end, the particles finish on their own.
 void FieldFx_RunWhirlwind(void) {
-  struct BattleFxScene *scene = gEffectWork;
+  struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *src = scene->mainObject;
   struct FieldActor *target = scene->child;
   struct EffectVector pos;
@@ -213,7 +213,7 @@ void FieldFx_RunWhirlwind(void) {
   if (ball == 0) {
     return;
   }
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   ObjectDispatch_SelectAnimationFar(ball, 2);
   do {
     s32 scale;
@@ -231,11 +231,11 @@ void FieldFx_RunWhirlwind(void) {
   ball->scaleY = 0x14ccc; // 1.3 high
   AudioCommand_PlayFar(SE_163);
   WaitFrames(20);
-  // Cleared by BattleFx_DispatchRequestKind: cast on a target a scene event
+  // Cleared by FieldFx_DispatchRequestKind: cast on a target a scene event
   // names, the target is blown away.
   if (scene->enabled == 0) {
     if (target != 0)
-      target->update = BattleFx_ShrinkObjectScaleUntilHalf;
+      target->update = FieldFx_ShrinkObjectScaleUntilHalf;
 
     // Particles from 4 pixels above the orb, each 0.8 pixel higher, 3 to 8
     // pixels away.
@@ -250,7 +250,7 @@ void FieldFx_RunWhirlwind(void) {
       Vector_AddPolarOffset(dist, Random16(), &pos);
       particle = (struct FieldActor *)Object_Spawn(0xf9, pos.x, pos.y, pos.z);
       if (particle != 0) {
-        particle->update = BattleFx_CircleAnchor;
+        particle->update = FieldFx_CircleAnchor;
         particle->linkedObject = ball;
         particle->timer = 0;
         particle->work = 0;
@@ -269,5 +269,5 @@ void FieldFx_RunWhirlwind(void) {
   // Every particle has left its orbit by now. Its wandering callback no
   // longer reads the anchor, so the orb can be released independently.
   ObjectDispatch_ReleaseFar((struct DispatchObject *)ball);
-  BattleFx_PrepareBufferInterpolation();
+  FieldFx_FadeFromEffectColor();
 }

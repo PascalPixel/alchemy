@@ -9,21 +9,22 @@
 /// Battle_RunEncounter as the battle is set up, by
 /// BattlePresentation_DispatchAction, BattlePresentation_RunUnitTransition,
 /// the auto battle and BattleTargetExec after a call for help, and through
-/// the far stub BattleActor_CommitPlacementFar by BattleFx_RunParticleStreams.
+/// the far stub BattleObjPutFar by BattleFx_RunParticleStreams.
 void BattleObjPut(void) {
   s16 unitIds[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
-  BattleActor_SpawnObjectsForList(unitIds, 1);
+  BattleObj_SpawnObjectsForList(unitIds, 1);
 }
 
 /// Readies the sprite of every unit in the battle (releasing those of units
-/// that left), keeping their modes and motions. Called by BattlePres_RunAttack.
+/// that left), keeping their modes and motions. Called by
+/// BattlePresentation_RunAttack.
 void BattleParty_ListAllUnitsAndSubmit(void) {
   s16 unitIds[14];
 
   BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
-  BattleActor_SpawnObjectsForList(unitIds, 0);
+  BattleObj_SpawnObjectsForList(unitIds, 0);
 }
 
 /// Returns the palette of unit id's battle object. Called by
@@ -209,7 +210,7 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 /// weapon they have equipped (gBattleUnit_WeaponAnims tables), or 0 for no
 /// weapon, for Felix, or for a unit that is no party member. Called by
 /// BattleObjMake, which keeps it in BattleObj.overlay for
-/// BattleActor_SpawnObjectsForList to add as a layer of the body sprite.
+/// BattleObj_SpawnObjectsForList to add as a layer of the body sprite.
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
   struct BattleUnit *unit;
   s32 slot;

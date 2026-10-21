@@ -20,12 +20,12 @@ void Dma_StopAllThenRunHook(void) {
 
 /// Starts playback of the plan's targets when the effect's blow lands.
 /// Reached as EFFECT_SHOW_DAMAGE(hitSound), through
-/// BattleEventRuntime_BeginPhaseFar, from the effects (see the folder README).
+/// BattleEvent_BeginPhaseFar, from the effects (see the folder README).
 /// Only while playback is idle: sets the phase to
 /// BATTLE_PLAYBACK_RESOLVE_TARGET, and a nonzero cue to pendingCue; a later
 /// call before the reset does nothing.
 /// @param cue the hit's sound (an SE_ id); zero keeps the one set
-void BattleEventRuntime_BeginPhase(s32 cue) {
+void BattleEvent_BeginPhase(s32 cue) {
   struct BattleEventState *events;
 
   events = &gBattleWork->events;
@@ -42,13 +42,13 @@ void BattleEventRuntime_BeginPhase(s32 cue) {
 /// Called before a Djinni is set (BattleCommand_BuildPlan) and for the Djinn
 /// the round's and a turn's end show (Battle_ProcessRoundEnd,
 /// BattleUnit_ProcessTurnEnd), each followed by
-/// BattleEventRuntime_WaitForReady. Sets the phase to BATTLE_PLAYBACK_DISPATCH
+/// BattleEvent_WaitForReady. Sets the phase to BATTLE_PLAYBACK_DISPATCH
 /// and gBattleWork->plan's targetCount to 0, so playback goes to
 /// BATTLE_PLAYBACK_READY once the queue is played; adds BattleEvent_Playback as
 /// a scheduler callback and returns its task index (-1 when the task table
 /// is full), which no caller reads.
 /// @param frames the delay before the first event
-s32 BattleEventRuntime_SchedulePhase(s32 frames) {
+s32 BattleEvent_SchedulePhase(s32 frames) {
   struct BattleEventState *events;
 
   events = &gBattleWork->events;
@@ -78,12 +78,12 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
 /// BattleTargetExec, then plays the events it queued over the frames that
 /// follow, until every target is done.
 /// Runs each frame as a scheduler callback (main-loop order 0xc80), added by
-/// the staging runners in staging.c and by BattleEventRuntime_SchedulePhase,
-/// and removed by BattleEventRuntime_WaitForReady. Idle until
-/// BattleEventRuntime_BeginPhase or the wait starts it. Advances
+/// the staging runners in staging.c and by BattleEvent_SchedulePhase,
+/// and removed by BattleEvent_WaitForReady. Idle until
+/// BattleEvent_BeginPhase or the wait starts it. Advances
 /// gBattleWork->events (phase, eventIndex, timer, queue.targetIndex, actorId,
 /// displaySource, displayEntry, flags); plays the sounds, message arguments,
-/// messages, flashes, falls and redraws as BattleEv_DispatchQueued does,
+/// messages, flashes, falls and redraws as BattleEvent_DispatchQueued does,
 /// without waiting. Each pass of its loop handles one phase; a phase that has
 /// to wait for a later frame returns.
 void BattleEvent_Playback(void) {
@@ -138,8 +138,8 @@ void BattleEvent_Playback(void) {
             AudioCommand_PlayFar(events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_DJINN_BONUS:
-            BattleEv_GrantDjinnBonus(events,
-                                     events->queue.operands[eventIndex]);
+            BattleEvent_GrantDjinnBonus(events,
+                                        events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_UNIT_NAME:
             UiWork_PushValueSlotFar(events->queue.operands[eventIndex],
@@ -180,7 +180,7 @@ void BattleEvent_Playback(void) {
             UiWork_ClearValueNameTablesFar();
             break;
           case BATTLE_EVENT_REMOVE_UNIT:
-            BattleActor_DestroyTemporaryObject(
+            BattleObj_DestroyTemporaryObject(
                 events->queue.operands[eventIndex]);
             break;
           // The hit's sound, then the damage pose and PLAY_HIT's flashes.
@@ -202,7 +202,7 @@ void BattleEvent_Playback(void) {
 
             events->actorId = events->queue.operands[eventIndex];
             BattleEnemy_RecordDefeat(events->actorId, events->flags);
-            BattleActor_ResetRuntimeFields(events->actorId);
+            BattleObj_ResetRuntimeFields(events->actorId);
             unit = UnitGetFar(events->actorId);
             for (recordIndex = 0;
                  (record = GetMotionRecord(
@@ -232,7 +232,7 @@ void BattleEvent_Playback(void) {
             BattleMotion_SetRecordChildValues(
                 slot->object, BattleMotion_GetSlotPalette(
                                   events->queue.operands[eventIndex]));
-            BattlePres_SetActorModeAndAction(
+            BattlePresentation_SetActorModeAndAction(
                 events->queue.operands[eventIndex]);
             break;
           }
@@ -263,10 +263,10 @@ void BattleEvent_Playback(void) {
       // ticks, a held advance key does too. The arrow is an 8 by 16,
       // 256-colour sprite (attribute 0 0xa000, which unlike that function's
       // is not semi-transparent) cycling eight frames of
-      // gBattlePres_AdvanceArrowTiles, one every four frames, in the VRAM
-      // cache entry BattleWork.promptSlot.
+      // gBattlePresentation_AdvanceArrowTiles, one every four frames, in the
+      // VRAM cache entry BattleWork.promptSlot.
       struct BattlePromptSprite *prompt = &events->displayEntry;
-      u8 *arrowTiles = gBattlePres_AdvanceArrowTiles;
+      u8 *arrowTiles = gBattlePresentation_AdvanceArrowTiles;
       s32 frameTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
       struct BattleDisplayWork *display = gBattleDisplayWork;
       struct UiWindow *window = display->window;
@@ -379,7 +379,7 @@ void BattleEvent_Playback(void) {
         return;
       }
       if (events->timer == 4) {
-        BattleActor_RemoveFromLists(events->actorId);
+        BattleObj_RemoveFromLists(events->actorId);
         events->timer++;
         return;
       }
@@ -434,12 +434,12 @@ void BattleEvent_Playback(void) {
 
 /// Stops playback and empties the event queue.
 /// Called when an action is planned (BattleCommand_BuildPlan), after a queue
-/// is played (BattleEv_DispatchQueued, BattleEventRuntime_WaitForReady), and
+/// is played (BattleEvent_DispatchQueued, BattleEvent_WaitForReady), and
 /// before playback is scheduled (BattleCommand_BuildPlan, turn_end.c). Sets
 /// gBattleWork->events' phase to BATTLE_PLAYBACK_IDLE, clears the queue, the
 /// event index, the timer, the target index and the flags (the Djinn bonus),
 /// and sets the hit sound back to SE_HEAVY_IMPACT.
-void BattleEventRuntime_Reset(void) {
+void BattleEvent_Reset(void) {
   struct BattleEventState *events;
 
   events = &gBattleWork->events;
@@ -458,9 +458,9 @@ void BattleEventRuntime_Reset(void) {
 /// Djinn's effect by BattleCommand_BuildPlan and turn_end.c. Playback still
 /// idle (the effect never called EFFECT_SHOW_DAMAGE) is started here.
 #ifdef UBFIX
-void BattleEventRuntime_WaitForReady(void) {
+void BattleEvent_WaitForReady(void) {
 #else
-s32 BattleEventRuntime_WaitForReady(void) {
+s32 BattleEvent_WaitForReady(void) {
 #endif
   s32 state;
   struct BattleEventState *events;
@@ -477,7 +477,7 @@ s32 BattleEventRuntime_WaitForReady(void) {
     } while (events->phase != BATTLE_PLAYBACK_READY);
   }
   Scheduler_RemoveCallback(BattleEvent_Playback);
-  BattleEventRuntime_Reset();
+  BattleEvent_Reset();
 }
 
 #undef FELLED_FLASH_FRAMES

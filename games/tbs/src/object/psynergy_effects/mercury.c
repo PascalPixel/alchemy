@@ -10,16 +10,16 @@
 /// bounces twice and hops three times ever higher, then rises 120 pixels out
 /// of sight trailing eight afterimages. The leader turns to the camera and
 /// plays animation 28 while 24 droplets rain round it, one a frame
-/// (BattleFx_UpdateRandomTargetParticle); then the colours return. Called
+/// (FieldFx_UpdateRandomTargetParticle); then the colours return. Called
 /// by Djinn_JoinParty for a Mercury Djinni, which then clears the Djinni's
 /// actor slot; the Djinni's object and its afterimages are released here.
-/// Uses all 24 effect slots (BattleFx_InitializeSlots).
-void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
+/// Uses all 24 effect slots (FieldFx_InitializeSlots).
+void FieldFx_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldActor *djinni;
   struct FieldActor *copy;
   struct FieldActor *previous;
   struct AnimationObject *resource;
-  struct BattleFxScene *effectScene;
+  struct FieldFxScene *effectScene;
   struct FieldActor **cursor;
   struct FieldActor **list;
   struct EffectSlot *slot;
@@ -35,7 +35,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
     return;
 
   // Tint the screen blue (red 4, green 4, blue 16).
-  BattleFx_InitializeSlots();
+  FieldFx_InitializeSlots();
   effectScene = gEffectWork;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TRANSFORM_TINT | RGB(4, 4, 16));
   WaitFrames(30);
@@ -73,7 +73,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
       copy->motionFlags = 0;
       copy->priorityFlags = 2;
       copy->steeringFlags |= 1;
-      copy->update = BattleFx_HalveDistanceToTarget;
+      copy->update = FieldFx_HalveDistanceToTarget;
       copy->facing = djinni->facing;
       Animation_ApplyChildValuesFar((struct DispatchObject *)copy,
                                     SPRITE_COLOR_BLUE_TINT);
@@ -109,7 +109,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   WaitFrames(20);
 
   // The droplets (object 240), one a frame, from where the Djinni was on
-  // screen (BattleFx_UpdateRandomTargetParticle moves them).
+  // screen (FieldFx_UpdateRandomTargetParticle moves them).
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
   position.z = djinni->z.fixed;
@@ -119,7 +119,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   remaining = MERCURY_PARTICLE_MAX - 1;
   do {
     EffectSlot_Initialize(slot, 240, position.x, position.z);
-    EffectSlot_SetCallback(slot, BattleFx_UpdateRandomTargetParticle);
+    EffectSlot_SetCallback(slot, FieldFx_UpdateRandomTargetParticle);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               SPRITE_COLOR_BLUE_TINT);
@@ -137,7 +137,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
 
     nextState = MERCURY_DROPLET_LAST_FALL;
     slotState = (s8 *)effectScene;
-    slotState += offsetof(struct BattleFxScene, slots) +
+    slotState += offsetof(struct FieldFxScene, slots) +
                  offsetof(struct EffectSlot, state);
     remaining = MERCURY_PARTICLE_MAX - 1;
     do {
@@ -151,7 +151,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   // Restore the colours.
   WaitFrames(50);
   Shop_RestoreFieldPaletteFar();
-  BattleFx_ClearActiveSlotsAndScheduleUpdates();
+  FieldFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
 #undef MERCURY_PARTICLE_MAX

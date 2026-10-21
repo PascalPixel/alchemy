@@ -19,8 +19,6 @@ struct EffectSlot;
 struct ObjectRuntime;
 struct SceneAreaNameRule;
 
-extern u16 gBattleFx_CyclePatternWords[];
-extern s8 gBattleFx_RandomChildValues[];
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
 extern const s8 gBattlePlacement_StepPairs[];
@@ -41,7 +39,6 @@ struct ArcParticle;
 struct BattleAct;
 struct BattleActionRecord;
 struct BattleEffectArgument;
-struct BattleEffectEntry;
 struct BattleEventState;
 struct BattleGroupOrder;
 struct BattleLocationRule;
@@ -101,24 +98,6 @@ extern u8 gAnimation_ChildPaletteCycle[];
 /// weighted action strategy (enum EnemyActionStrategy, battle_internal.h):
 /// even, falling by 6, or falling steeply from 113 to 5.
 extern u8 gBattleCommand_SelectionWeights[3][8];
-/// The 32 by 16 spark of Avoid's falling arcs (spark_b), 4 bits a pixel;
-/// FieldFx_RunAvoid loads it.
-extern const u8 gBattleFx_ArcSparkTiles[];
-extern const s32 gBattleFx_BurstParticleObjectScript[];
-extern struct BattleEffectEntry gBattleFx_DefinitionTable[];
-/// The emote bubble's script (BattleFx_SpawnLinked): eight 2-frame steps of
-/// squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames still,
-/// then SC_FREE.
-extern const s32 gBattleFx_LinkedObjectScript[];
-extern const s32 gBattleFx_MarkerParticleScript[];
-extern const s32 gBattleFx_ParticleEmitterScript[];
-extern const s32 gBattleFx_ParticleScript[];
-extern u32 gBattleFx_PulseScales[];
-extern const s32 gBattleFx_SourceHoldScript[];
-extern s16 gBattleFx_TargetRangeByMode[];
-/// A lone SC_FREE: an object that has arrived frees itself
-/// (BattleFx_SetCallbackWhenTargetUnset).
-extern const s32 gBattleFx_UntargetedObjectScript[];
 /// The knockback's speed gained each frame by variant (enum BattleKnockback),
 /// 16.16 pixels a frame: 1, but 8 for KNOCKBACK_HURL.
 extern s32 gBattleMotion_VariantAcceleration[];
@@ -137,15 +116,15 @@ extern s8 gBattleParty_CenterOrderOffsets[];
 /// (BATTLE_SIDE_ENEMIES).
 extern const struct BattleGroupOrder gBattleParty_RoundEndGroupOrder;
 /// A lone SC_END: a battle unit's object script, which BattleObjMake starts.
-extern const s32 gBattlePres_ActorObjectScript[];
+extern const s32 gBattlePresentation_ActorObjectScript[];
 /// The advance arrow beside a battle message: eight 128-byte frames of a
 /// 256-colour sprite, one every four frames.
-extern u8 gBattlePres_AdvanceArrowTiles[];
+extern u8 gBattlePresentation_AdvanceArrowTiles[];
 /// The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each.
-extern const u8 gBattlePres_CurtainTiles[];
+extern const u8 gBattlePresentation_CurtainTiles[];
 /// Eight curtain tiles, 32 bytes each, of which the transition copies one at a
 /// time into the curtain's first tile.
-extern const u8 gBattlePres_TileVariants[];
+extern const u8 gBattlePresentation_TileVariants[];
 /// Garet's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimsGaret[];
 /// Ivan's weapon sprite by weapon kind.
@@ -161,30 +140,19 @@ extern u8 BitDecoder_Size[];
 /// The extra matrix the battle camera's projection applies first while
 /// commands are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words.
 extern u8 gCamera_FlagTransformWork[];
-/// The 32 by 16 spark a field Psynergy effect's particles draw (spark_a), 4
-/// bits a pixel; BattleFx_LoadActionEffectResources loads it.
-extern const u8 gBattleFx_SparkTiles[];
-extern const u8 gBattleFx_QuadrantModes[];
-/// The eight tints (PALETTE_TRANSFORM_TINT and an RGB555 colour) a field
-/// Psynergy effect fades the palettes toward, picked by the frame counter or
-/// by the FLAG_PSYNERGY_TINT flags (BattleEffect_InitializeSharedScene).
-extern const s32 gBattleFx_TargetColors[];
 /// Where SparkWork.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
-extern s32 gBattleFx_StarWorkOffsets[];
+extern s32 gElementGlow_StarWorkOffsets[];
 /// The spark's width and height in pixels by life left: 1 to 4, 4 from three.
-extern u8 gBattleFx_StarSizes[];
+extern u8 gElementGlow_StarSizes[];
 /// Where SparkWork.sheet holds the ring's four 32 by 32 frames: byte offsets,
 /// 0x400 apart.
-extern s32 gBattleFx_RingFrameOffsets[];
+extern s32 gElementGlow_RingFrameOffsets[];
 /// The highlighted units' BLDY lightening: 15 down to 0 once, then the second
 /// sixteen (a pulse up to 8 and back) over and over.
-extern s8 gBattleFx_HighlightBlendRamp[];
+extern s8 gBattlePresentation_HighlightBlendRamp[];
 /// The 104 encounter zones (encounter.tsv), read as struct EncounterZone rows.
 extern u16 gEncounter_EnemyGroupTable[];
-extern s16 gFieldFx_GroundParticleFrames[];
-/// The ground particles' 16 by 16 tiles, packed (Resource_DecodeByteLz).
-extern const u8 gFieldFx_GroundParticleTiles[];
 #ifndef OWN_gBattleBgFxWork
 /// The HEAP_SLOT_MIND_READ work slot: Mind Read's wave work while its effect
 /// runs.
@@ -219,7 +187,6 @@ extern const u8 gObjectMotion_LinkedActionScript[];
 /// scene, return entrance} rows, ended by scene -1
 /// (Scene_SetDefeatReturnPoint).
 extern const s16 gParty_PairResolveRules[];
-extern const s32 gBattleFx_RisingPulseScript[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimsIsaac[];
 /// The 20 enemy classes whose defeated flags a monster battle clears before it
@@ -285,15 +252,16 @@ enum BattlePose {
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose
 };
 
-/// A battle unit's sprites' OBJ mode, as BattlePres_SetActorRecordMode sets
-/// it: faded units are semi-transparent, and the battle's blends act on them.
+/// A battle unit's sprites' OBJ mode, as BattlePresentation_SetActorRecordMode
+/// sets it: faded units are semi-transparent, and the battle's blends act on
+/// them.
 enum BattleActorMode { ACTOR_OPAQUE, ACTOR_SEMI_TRANSPARENT };
 
-/// BattlePres_SetActorModes' mode, kept in BattleWork.highlightMode: whether
-/// the selected units are highlighted, every other unit faded.
+/// BattlePresentation_SetActorModes' mode, kept in BattleWork.highlightMode:
+/// whether the selected units are highlighted, every other unit faded.
 enum BattleHighlight { HIGHLIGHT_OFF, HIGHLIGHT_SELECTED };
 
-/// The glows BattleFx_PlayUnitElementEffect plays about a unit in its element.
+/// The glows ElementGlow_Play plays about a unit in its element.
 enum BattleElementGlow {
   /// The star field gathering on the unit while the background darkens: a
   /// cast.

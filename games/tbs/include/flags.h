@@ -80,8 +80,8 @@
 /// clears it when the after event has trigger bit 0x400 and plays its own; the
 /// before event's script may clear it too.
 #define FLAG_PSYNERGY_EFFECT 0x140
-/// Aim the effect at the actor ahead (BattleFx_DispatchRequestKind) rather
-/// than run the kind's untargeted body (BattleFx_Run, where Halt still stops
+/// Aim the effect at the actor ahead (FieldFx_DispatchRequestKind) rather
+/// than run the kind's untargeted body (FieldFx_Run, where Halt still stops
 /// the nearest actor when it has a talk event, and Force and Reveal run their
 /// PSYNERGY_PHASE_EFFECT_ACTS event). Field_UsePsynergy keeps it set only when
 /// a scene event applies to what the leader faces.
@@ -129,8 +129,8 @@
 /// normal play; a reader outside the debug keys would say otherwise.
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// Set, the highest of these picks the tint a field Psynergy effect fades
-/// toward, gBattleFx_TargetColors[n], in place of the frame counter's pick
-/// (BattleEffect_InitializeSharedScene).
+/// toward, gFieldFx_TargetColors[n], in place of the frame counter's pick
+/// (FieldFx_FadeToEffectColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// In debug mode, each step beeps (SE_135) while fewer than 136 of the 512
 /// resource blocks are free.
@@ -175,7 +175,7 @@
 #define FLAG_IN_BATTLE_ARENA 0x17e
 /// With it set, holding B on the field walks the leader at 4 pixels a frame
 /// (FieldObject_UpdatePlayerControl). No ☀️ code sets it.
-/// Holds the field's palette blend still (BattlePalette_UpdateBlend), while a
+/// Holds the field's palette blend still (ColorBuffer_Update), while a
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_PALETTE_BLEND_HELD 0x152
 /// Holds the field's weather still, its particles and its next burst, while a

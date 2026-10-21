@@ -41,7 +41,7 @@ struct CursorSlot {
 /// chosen with A, or -1 when cancelled or when the link battle's time runs
 /// out. While it runs, the battle scene slides (targetSceneOffset of
 /// BattleMenuWork: -2 for the party, 16 for the enemies) and the covered
-/// units are marked (BattlePres_SetActorModesFar). The Djinn tutorial
+/// units are marked (BattlePresentation_SetActorModesFar). The Djinn tutorial
 /// presses A every 60 frames.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
@@ -337,7 +337,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           cursorTracks[i].index = 6;
       }
       spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
-      BattlePres_SetActorModesFar(spreadActorIds, 1);
+      BattlePresentation_SetActorModesFar(spreadActorIds, 1);
       // A party member (units 0 to 7): the window of what the action does,
       // placed by the member's tile column (anchor) and kept on screen.
       if (candidateIds[targetIndex] <= 7) {
@@ -784,7 +784,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (conditionWindow != 0)
     UiWork_Finalize(conditionWindow, 1);
   UiWork_Finalize(window, 1);
-  BattlePres_SetActorModesFar(candidateIds, 0);
+  BattlePresentation_SetActorModesFar(candidateIds, 0);
   gLinkCountdownWork->targetSceneOffset = 0;
   WaitFrames(1);
   return targetIndex;

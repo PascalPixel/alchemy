@@ -67,7 +67,7 @@
 	.set import.Camera_GetEventObject, 1
 	.set import.Engine_EventRequestExit, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
-	.set import.Effect_SoundAndFlash, 1
+	.set import.FieldFx_StartGroundParticles, 1
 	.set import.FieldFx_StartLightning, 1
 	.set import.FieldFx_StopLightning, 1
 	.set import.FieldFx_LastLightning, 1
@@ -77,8 +77,8 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_PsynergyBegin, 1
-	.set import.BattleEffect_CleanupSceneObjects, 1
-	.set import.BattleFx_SetQueuedSoundAndPlay, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_End, 1
+	.set import.FieldFx_SetQueuedSoundAndPlay, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

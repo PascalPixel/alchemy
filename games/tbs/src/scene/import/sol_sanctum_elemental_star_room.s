@@ -67,7 +67,7 @@
 	.set import.Engine_EventSetMessage, 1
 	.set import.Engine_EventOpenMessage, 1
 	.set import.Engine_EventShowMessage, 1
-	.set import.BattlePres_RunActionThenWaitIfModeZero, 1
+	.set import.FieldEvent_ShowMessageThenWait, 1
 	.set import.Engine_EventAskYesNo, 1
 	.set import.Engine_ActorFaceDirection, 1
 	.set import.Engine_ActorSetSpritePriority, 1
@@ -85,7 +85,7 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Engine_RunRisingObjectSequence, 1
+	.set import.Engine_ItemShowPicture, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Shop_PickUnitItem, 1
 	.set import.Engine_AudioPlayCue, 1

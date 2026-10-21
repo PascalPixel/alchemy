@@ -186,7 +186,7 @@ s32 BattleEscape_CheckSuccess(void) {
 /// (CMD_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
 /// Returns how many actions there are, or -1 if the menu gave up. Called by
 /// BattlePresentation_BuildActions. Fills entries.
-s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
+s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries) {
   // Two lists, freed before the return; the allocator rounds them up to 20
   // and 12 bytes: up to eight choosers and the up to four members with their
   // end mark.
@@ -244,7 +244,8 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
 /// by surprise, only two to five enemies act, once each. Returns how many
 /// actions there are. Called by BattlePresentation_BuildActions outside a
 /// link battle. Fills entries.
-s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
+s32 BattlePresentation_BuildOpponentEntries(
+    struct BattleActionRecord *entries) {
   u16 unitIds[14];
   s32 entryCount = 0;
   struct BattleWork *battle = gBattleWork;
@@ -414,7 +415,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
 
   // Sends the header, then this console's actions. Both transfers share one
   // timeout of LINK_TRANSFER_TIMEOUT frames.
-  s32 BattleLink_SendActions(void) {
+  s32 LinkBattle_SendActions(void) {
     s32 timeout;
     s32 disconnected;
     s32 status = SerialRuntime_BeginSend(state, LINK_PACKET_BYTES);
@@ -455,7 +456,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
 
   // Receives the header, then the other console's actions after ours. A
   // transfer that grows past its expected size, or ends short of it, fails.
-  s32 BattleLink_ReceiveActions(void) {
+  s32 LinkBattle_ReceiveActions(void) {
     // gSerialReceivedSize changes under the serial interrupt and is volatile
     // (serial_runtime.h), so every read here loads it again.
     s32 timeout;
@@ -530,15 +531,15 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       IRQ_LOCK(saved);
       gBattleRandomSeed = state->seed = gRandomSeed;
       IRQ_UNLOCK(saved);
-      if (BattleLink_SendActions() < 0 || BattleLink_ReceiveActions() < 0)
+      if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
         goto fail;
       result = state->count;
     } else {
-      if (BattleLink_ReceiveActions() < 0)
+      if (LinkBattle_ReceiveActions() < 0)
         goto fail;
       result = state->count;
       state->count = count;
-      if (BattleLink_SendActions() < 0 || BattleRandomFar() != state->check)
+      if (LinkBattle_SendActions() < 0 || BattleRandomFar() != state->check)
         goto fail;
       gBattleRandomSeed = state->seed;
     }
@@ -557,7 +558,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   }
 
 fail:
-  BattleLink_ResetTransferState();
+  LinkBattle_ResetTransferState();
   SerialRuntime_RemoveIrqHandlers();
   MemFree(state);
   return -1;
@@ -658,7 +659,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
 
   // The party's commands (none when the enemies strike first).
   if (*encounterMode != BATTLE_ENCOUNTER_ENEMIES_FIRST) {
-    count = BattlePres_BuildUnitEntries(actions);
+    count = BattlePresentation_BuildUnitEntries(actions);
     if (count < 0)
       goto finish;
     // A failed escape turns the round into one the enemies began.
@@ -673,7 +674,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   // A link battle syncs even after a failed exchange, before giving up.
   if (gBattleWork->twoSided != 0) {
     received = BattlePresentation_AppendLinkedActions(actions, count);
-    if (BattlePres_WaitSync() < 0) {
+    if (BattlePresentation_WaitSync() < 0) {
       count = -1;
       goto finish;
     }
@@ -683,7 +684,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
       goto finish;
     }
   } else {
-    count += BattlePres_BuildOpponentEntries(actions + count);
+    count += BattlePresentation_BuildOpponentEntries(actions + count);
   }
 
   // Sort by priority, and raise the guards of Defend and Total Defense at
@@ -755,7 +756,7 @@ s32 Battle_FindTaggedSlotByValue(u32 unitId) {
 
 /// Turns the camera while L or R is held (a second copy). Nothing in the
 /// source calls it.
-DEFINE_ADJUST_CAMERA(BattlePres_AdjustCameraByShoulderKeysAlt)
+DEFINE_ADJUST_CAMERA(BattlePresentation_AdjustCameraByShoulderKeysAlt)
 
 /// Does nothing; Battle_RunEncounter calls it at the start of each round.
 void Battle_ReservedNoOp9B2C(void) {}

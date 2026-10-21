@@ -15,7 +15,7 @@ void Shop_StepCursor(void);
 void Shop_InitializeCursorWork(void);
 void Shop_ReleaseCursorWork(void);
 s32 Shop_Run(s32 stockRow, s32 keeperId);
-s32 Battle_ApplyPresetItemsAndFlags(s32 unused);
+s32 Shop_OpenDebugShop(s32 unused);
 void AudioCommand_WaitForStateByteClear(void);
 void UiMessage_ShowAndWait(s32 messageId);
 void UiMessage_ShowAndRestoreState(s32 messageId);
@@ -84,7 +84,7 @@ s32 Sanctum_RunPartyService(void);
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind);
 void Shop_HiliteUnit(struct UiWindow *window, s32 selected);
 void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId);
-void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
+void Shop_UpdateBurstSparkle(struct EffectSlot *effect);
 void Shop_ResetEffects(void);
 void Shop_RunPartyMemberIconBurst(s32 member);
 

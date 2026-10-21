@@ -9,12 +9,12 @@
 /// the leader, who turns to the camera and plays animation 28. Called by
 /// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's actor
 /// slot; the Djinni's object is released here. Uses all 24 effect slots
-/// (BattleFx_InitializeSlots), tints the field palette and fades it back at
+/// (FieldFx_InitializeSlots), tints the field palette and fades it back at
 /// the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct EffectSlot *slot;
   s32 scale;
   s32 remainingParticles;
@@ -22,7 +22,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   djinni = (struct MotionObject *)Object_GetById(djinniId);
   if (djinni == NULL)
     return;
-  BattleFx_InitializeSlots();
+  FieldFx_InitializeSlots();
   scene = gEffectWork;
   // Tint the screen yellow: PALETTE_TRANSFORM_TINT | RGB(12, 12, 4).
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
@@ -36,7 +36,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 
   // Spin, then leap high.
   AudioCommand_PlayFar(SE_140);
-  djinni->update = BattleFx_AdvanceSpinAngle;
+  djinni->update = FieldFx_AdvanceSpinAngle;
   WaitFrames(40);
   AudioCommand_PlayFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 12, 22);
@@ -53,7 +53,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   // One a frame, each with a random sprite param of 0 to 6.
   do {
     EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(slot, BattleFx_RunAngledApproachPhases);
+    EffectSlot_SetCallback(slot, FieldFx_RunAngledApproachPhases);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               (Random16() * 7) >> 16);
@@ -75,11 +75,11 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   AudioCommand_PlayFar(SE_164);
   WaitFrames(100);
   Shop_RestoreFieldPaletteFar();
-  BattleFx_ClearActiveSlotsAndScheduleUpdates();
+  FieldFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
 /// A spinning object: its angle, and at 0x64 the frames its spin has been
-/// speeding up for (BattleFx_AdvanceAngleWithRamp), read signed.
+/// speeding up for (FieldFx_AdvanceAngleWithRamp), read signed.
 struct RampedSpinObject {
   u8 unk00[6];
   u16 angle;
@@ -88,11 +88,11 @@ struct RampedSpinObject {
 };
 
 /// Per-frame update: makes an object pulse, switching its scale between the
-/// two values of gBattleFx_PulseScales every 4 frames. The Mars Djinni's
+/// two values of gFieldFx_PulseScales every 4 frames. The Mars Djinni's
 /// joining sets it on the leader, and clears it to end the pulse.
-void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject) {
+void FieldFx_SetObjectAlternatingWords(union FieldObject *fieldObject) {
   u8 *object = (u8 *)fieldObject;
-  u32 *table = gBattleFx_PulseScales;
+  u32 *table = gFieldFx_PulseScales;
   u32 index = ((u32)gFrameTick >> 2) & 1;
   u32 scale = table[index];
   ((struct MotionObject *)object)->scaleX = scale;
@@ -103,7 +103,7 @@ void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject) {
 /// just over 1/8 (0x2040), 0x50 more each frame for 52 frames. The caller
 /// zeroes the frame count first (FieldActor.timer), as the Mars Djinni's
 /// joining does.
-void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
+void FieldFx_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
   void *obj = (void *)fieldObject;
   struct RampedSpinObject *spin = obj;
   u32 step;
@@ -117,14 +117,14 @@ void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
 
 /// Spins and shrinks an object by 0x1c0 a frame, then releases it: 119 frames
 /// from full size. The Mars Djinni's joining shrinks the Djinni away with it.
-DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
+DEFINE_SHRINK_AND_DESTROY(FieldFx_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 
 /// Effect slot callback of a Mars Djinni's sparks (enum MarsSparkState): the
 /// spark flies 120 pixels up the screen (give or take 3/32 turn) from its
 /// origin at up to 5 pixels a frame and starts over, until it stops where it
 /// arrives, hidden; 40 frames later it swarms to points within 4 pixels of
 /// one 20 pixels over the leader, until it is freed once it arrives.
-void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
+void FieldFx_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   struct Object *owner;
   struct EffectVector position;
   s32 state;
@@ -193,6 +193,6 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
       effect->state--;
   } else if (state == MARS_SPARK_LEAVING) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
-      BattleFx_ClearOwnedSlot(effect);
+      FieldFx_ClearOwnedSlot(effect);
   }
 }

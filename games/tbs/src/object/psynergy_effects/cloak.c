@@ -139,8 +139,8 @@ void FieldFx_ResumeCloakCheck(void) {
 ///
 /// Hidden, the leader is drawn as an outline only (SPRITE_FLAG_OUTLINED, no
 /// shadow), and while gGameState.cloaked is set no random battles come
-/// (Encounter_SelectEnemyGroup). Called by BattleFx_Run and
-/// BattleFx_DispatchRequestKind.
+/// (Encounter_SelectEnemyGroup). Called by FieldFx_Run and
+/// FieldFx_DispatchRequestKind.
 void FieldFx_StartCloak(void) {
   struct FieldWork *field = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);

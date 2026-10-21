@@ -1,4 +1,4 @@
-// Draft of Func_08127068, The Broken Seal's BattleFx_InitializeStarField
+// Draft of Func_08127068, The Broken Seal's ElementGlow_InitializeStarField
 // (games/tbs/src/battle/battle.c): differ 12 of 255 (tla-en, 2026-10-15),
 // ported with The Lost Age's heap slots (work 92, canvas 96, blitters 104
 // and 188) and packed blitter loader: Func_08138048(slot, mode << 4 | flags)

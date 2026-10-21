@@ -201,7 +201,7 @@ s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
 void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
                                           s32 step);
 void ObjectSystem_Configure(s32 mode);
-struct AnimationEntry *AnimationObject_Allocate(s32 id);
+struct AnimationEntry *Animation_AllocateLayer(s32 id);
 void ResourceMetadata_ClearRecord(struct AnimationEntry *record);
 struct AnimationObject *ResourceObject_Create(s32 id);
 void ResourceObject_Release(struct AnimationObject *sprite);
@@ -389,9 +389,9 @@ s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter);
 s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter);
 
 void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount);
-void Tilemap_DecodeStagedBuffer(s32 size);
-void Tilemap_NumberPlaceholderBlocks(void);
-void Tilemap_ConvertBuffer(void);
+void TileMap_DecodeStagedBuffer(s32 size);
+void TileMap_NumberPlaceholderBlocks(void);
+void TileMap_ConvertBuffer(void);
 s32 Map_LoadLayeredScene(s32 index);
 void Map_CenterOnFollowedPoint(void);
 void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY);

@@ -85,7 +85,7 @@ void BattleFx_EndCanvasLayer(void);                  // ☀️ BattleFx_EndCanva
 void BattleFx_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void);                  // ☀️ ObjectGroup_TickMemberTimers
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
-void Func_081180e8(s32 phase);             // ☀️ BattleEventRuntime_BeginPhaseFar
+void Func_081180e8(s32 phase);             // ☀️ BattleEvent_BeginPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 void BattleFx_FetchRectangleBlitters(
     s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters

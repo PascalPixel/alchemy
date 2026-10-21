@@ -58,7 +58,7 @@ FarCall_WindowTable:
 	overlay_veneer Menu_WaitForSelectionInput
 	overlay_veneer UiTextResource_NoOpCallbackBank
 	overlay_veneer UiTextResource_NoOpCallback1
-	overlay_veneer MenuSelection_BuildEntries
+	overlay_veneer SelectionScreen_BuildEntries
 	overlay_veneer UiWork_ReservedNoOp
 	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
 	export UiText_ShowMessageAndWaitCoreFar, UiText_ShowMessageAndWaitCore

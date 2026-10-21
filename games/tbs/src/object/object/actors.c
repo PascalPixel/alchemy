@@ -80,7 +80,7 @@ extern const struct ScenePlacement gField_DefaultPlacements[2];
 /// do).
 ///
 /// Called by ObjectTable_ResetForObject (the leader, then the scene's table),
-/// BattleEffect_ClearAllObjects and Event_CallWithLastActiveObjectId. Records
+/// ObjectTable_Respawn and Event_CallWithLastActiveObjectId. Records
 /// the table in work->tables and each actor in work->actors.
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   struct FieldWork *work;
@@ -308,7 +308,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
 /// when the last slot is occupied. Earlier holes are not reused by this append
 /// scan.
 ///
-/// Called by BattleEffect_ClearAllObjects and Event_CallWithLastActiveObjectId
+/// Called by ObjectTable_Respawn and Event_CallWithLastActiveObjectId
 /// to choose where Event_SpawnObjectTable starts.
 s32 ObjectTable_FindLastActiveId(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -382,9 +382,9 @@ void Scene_AssignViewFlags(struct ScenePlacement *entry) {
 /// to either side, 200 pixels north or 100 pixels south. Actors at (0, 0) stay.
 ///
 /// Called on the world map before an effect plays, by Field_UsePsynergy and
-/// Djinn_JoinParty; empties the slots it frees. BattleEffect_ClearAllObjects
+/// Djinn_JoinParty; empties the slots it frees. ObjectTable_Respawn
 /// brings the actors back afterwards.
-void BattleEffect_ClearOutOfBoundsObjects(void) {
+void ObjectTable_ClearOutOfBounds(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *camera;
   s32 centerX;
@@ -446,7 +446,7 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
 /// Called on the world map after an effect, by Field_UsePsynergy and
 /// Djinn_JoinParty. Clears work->tables 1 to 3 before the table is spawned
 /// again.
-void BattleEffect_ClearAllObjects(void) {
+void ObjectTable_Respawn(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct ScenePlacement *placements;
   s32 slotIndex;
@@ -455,7 +455,7 @@ void BattleEffect_ClearAllObjects(void) {
     struct FieldActor *actor = work->actors[ACTOR_FIRST_PLACED + slotIndex];
 
     if (actor != 0) {
-      // As in BattleEffect_ClearOutOfBoundsObjects: free the sprite and its
+      // As in ObjectTable_ClearOutOfBounds: free the sprite and its
       // VRAM cache entry with the actor.
       actor->spriteStorageKind = OBJECT_SPRITE_ONE;
       actor->sprite->retainCacheEntry = 0;

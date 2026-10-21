@@ -45,7 +45,7 @@
 	.set import.Engine_EventRequestExit, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.set import.Motion_LaunchFromFocusedObject, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
 	.set import.AudioCommand_WaitForStateByteClear, 1

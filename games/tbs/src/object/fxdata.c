@@ -10,12 +10,12 @@
 // Their readers declare them in battle.h, field.h, graphics.h, scroll.h and
 // object_effect_scripts.h, and object.c declares the colour curves. Some
 // readers declare their table without const: battle.h's
-// gBattleFx_TargetRangeByMode, gAnimation_ChildPaletteCycle,
-// gBattleFx_DefinitionTable, gFieldFx_GroundParticleFrames,
-// gBattleFx_PulseScales, gBattleFx_CyclePatternWords and
-// gBattleFx_RandomChildValues, graphics.h's gDisplayTransition_NoiseWidths and
+// gFieldFx_TargetRangeByMode, gAnimation_ChildPaletteCycle,
+// gFieldFx_DefinitionTable, gFieldFx_GroundParticleFrames,
+// gFieldFx_PulseScales, gFieldFx_CyclePatternWords and
+// gFieldFx_RandomChildValues, graphics.h's gDisplayTransition_NoiseWidths and
 // gDisplayTransition_EdgeOffsets, field.h's gObjectGroup_BlinkChildValues and
-// object.c's three gBattlePalette_ChannelCurve tables. All are defined const
+// object.c's three gColorBuffer_ChannelCurve tables. All are defined const
 // all the same: in rom_main_04 .data follows scripts.o, and these tables would
 // move. So this file includes none of those headers.
 
@@ -35,7 +35,7 @@ const u8 gField_TileMessageOffsets[6] = {
 /// for a target: 16 pixels for Ply, Frost, Lift, Carry and Growth, 32 for
 /// Mind Read, Move, Whirlwind, Douse and Halt, 48 for Force and Catch.
 // clang-format off
-const s16 gBattleFx_TargetRangeByMode[25] = {
+const s16 gFieldFx_TargetRangeByMode[25] = {
     3, 16,
     6, 16,
     7, 16,
@@ -56,7 +56,7 @@ const s16 gBattleFx_TargetRangeByMode[25] = {
 const u8 gAnimation_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
 /// Grows from half size to full size, a step every 2 frames.
-const s32 gBattleFx_ParticleEmitterScript[] = {
+const s32 gFieldFx_ParticleEmitterScript[] = {
     SC_SET(SW_SCALE_X, 0x8000),
     SC_SET(SW_SCALE_Y, 0x8000),
     SC_WAIT(2),
@@ -76,7 +76,7 @@ const s32 gBattleFx_ParticleEmitterScript[] = {
 
 /// Pulses twice, to 1.5 times full size (0x18000), then rests, over and
 /// over: the found item's picture held over the leader (object/field_fx.c).
-const s32 gBattleFx_RisingPulseScript[] = {
+const s32 gFieldFx_RisingPulseScript[] = {
     SC_WAIT(10),
     SC_SET(SW_SCALE_X, 0x16000),
     SC_SET(SW_SCALE_Y, 0x16000),
@@ -109,7 +109,7 @@ const s32 gBattleFx_RisingPulseScript[] = {
 
 /// Sinks a quarter pixel a frame (y, the height, less 0x4000) for 60 frames,
 /// then disappears.
-const s32 gBattleFx_ParticleScript[] = {
+const s32 gFieldFx_ParticleScript[] = {
     SC_ADD(SW_Y, -0x4000),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
@@ -118,7 +118,7 @@ const s32 gBattleFx_ParticleScript[] = {
 
 /// A Reveal marker: stays while Field_IsRevealActive returns nonzero (SC_CALL
 /// runs it again each frame), and frees itself once Reveal ends.
-const s32 gBattleFx_MarkerParticleScript[] = {
+const s32 gFieldFx_MarkerParticleScript[] = {
     SC_CALL(Field_IsRevealActive),
     SC_FREE,
 };
@@ -148,21 +148,21 @@ const u8 gDisplayTransition_DitherTable[64] = {
 /// bits, so 31 is 0x7c00. All three darken the middle tones: 16 becomes
 /// about 11.4 here (0x2dc3), 12.4 in the Light curve, 12.5 in the Contrast
 /// curve, which also reaches 31 already at 25.
-const u16 gBattlePalette_ChannelCurve[32] = {
+const u16 gColorBuffer_ChannelCurve[32] = {
     0x0000, 0x020c, 0x042f, 0x066b, 0x08c0, 0x0b2f, 0x0db9, 0x105f,
     0x1322, 0x1603, 0x1903, 0x1c22, 0x1f63, 0x22c5, 0x264b, 0x29f4,
     0x2dc3, 0x31b9, 0x35d7, 0x3a1d, 0x3e8e, 0x432b, 0x47f6, 0x4cee,
     0x5217, 0x5772, 0x5d00, 0x62c3, 0x68bc, 0x6eed, 0x7559, 0x7c00,
 };
 
-const u16 gBattlePalette_ChannelCurveLight[32] = {
+const u16 gColorBuffer_ChannelCurveLight[32] = {
     0x0000, 0x0265, 0x04df, 0x076e, 0x0a14, 0x0cd1, 0x0fa5, 0x1291,
     0x1596, 0x18b4, 0x1bec, 0x1f3f, 0x22ac, 0x2636, 0x29dc, 0x2da0,
     0x3182, 0x3583, 0x39a3, 0x3de3, 0x4245, 0x46c9, 0x4b70, 0x503a,
     0x5529, 0x5a3d, 0x5f78, 0x64da, 0x6a65, 0x7019, 0x75f7, 0x7c00,
 };
 
-const u16 gBattlePalette_ChannelCurveContrast[32] = {
+const u16 gColorBuffer_ChannelCurveContrast[32] = {
     0x0000, 0x0168, 0x02f7, 0x04b1, 0x0699, 0x08b2, 0x0b01, 0x0d8a,
     0x1052, 0x135d, 0x16b0, 0x1a52, 0x1e48, 0x2298, 0x274a, 0x2c65,
     0x31f0, 0x37f5, 0x3e7c, 0x458e, 0x4d37, 0x5580, 0x5e77, 0x6826,
@@ -171,10 +171,10 @@ const u16 gBattlePalette_ChannelCurveContrast[32] = {
 
 /// Speaker definitions: {sprite, voice (0xff for none), idle line flags}.
 /// The voice is the first of four blip sounds less 256: a message plays
-/// sound 256 + voice as it types (BattleFx_GetResourceId), so the values
-/// step by 4. BattleFx_FindDefinition compares the first 130 and returns
+/// sound 256 + voice as it types (FieldFx_GetResourceId), so the values
+/// step by 4. FieldFx_FindDefinition compares the first 130 and returns
 /// the last, never compared, as the default.
-const struct BattleEffectEntry gBattleFx_DefinitionTable[131] = {
+const struct FieldFxDefinition gFieldFx_DefinitionTable[131] = {
     {0, 16, 0x00},
     {1, 16, 0x00},
     {2, 16, 0x00},
@@ -460,13 +460,13 @@ const struct SparkleFrame gFieldFx_SparkleFrames[32] = {
 };
 
 /// Two scales that alternate ((gFrameTick >> 2) & 1): full size and 0.97 of
-/// it (BattleFx_SetObjectAlternatingWords, jupiter.c); nothing reads the
+/// it (FieldFx_SetObjectAlternatingWords, jupiter.c); nothing reads the
 /// third word.
-const u32 gBattleFx_PulseScales[3] = {0x10000, 0xf851, 16};
+const u32 gFieldFx_PulseScales[3] = {0x10000, 0xf851, 16};
 
 /// [0] only frees the actor, +1 waits for it to arrive and frees it; +3 is
-/// gBattleFx_SourceHoldScript, which follows.
-const s32 gBattleFx_CommonParticleScript[] = {
+/// gFieldFx_SourceHoldScript, which follows.
+const s32 gFieldFx_CommonParticleScript[] = {
     SC_FREE,
     SC_SYNC,
     SC_FREE,
@@ -475,7 +475,7 @@ const s32 gBattleFx_CommonParticleScript[] = {
 /// Faces the linked object every frame, forever: the caster holding its
 /// target while Move, Carry or Lift has it (each gives the caster its target
 /// first).
-const s32 gBattleFx_SourceHoldScript[] = {
+const s32 gFieldFx_SourceHoldScript[] = {
     SC_FACE_LINK,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -483,7 +483,7 @@ const s32 gBattleFx_SourceHoldScript[] = {
 
 /// A shard or particle: waits to arrive, slows to 1/16 pixel a frame, and
 /// frees itself 10 frames later.
-const s32 gBattleFx_FragmentScript[] = {
+const s32 gFieldFx_FragmentScript[] = {
     SC_SYNC,
     SC_SET(SW_SPEED, 0x1000),
     SC_ARG(0),
@@ -495,7 +495,7 @@ const s32 gBattleFx_FragmentScript[] = {
 /// +Control Pad; 0xffff for none (Input_GetDpadAngle, move.c). Opposite
 /// directions cancel, and a diagonal gives none, so Move pushes only along
 /// the four directions.
-const u16 gBattleFx_CyclePatternWords[16] = {
+const u16 gFieldFx_CyclePatternWords[16] = {
     0xffff, 0x0000, 0x8000, 0xffff,
     0xc000, 0xffff, 0xffff, 0xc000,
     0x4000, 0xffff, 0xffff, 0x4000,
@@ -504,46 +504,46 @@ const u16 gBattleFx_CyclePatternWords[16] = {
 
 /// Move's hand animation by the quarter turns from its side of the target to
 /// the push (move.c): 3 toward its side, 2 away from it, 1 either way across.
-const u8 gBattleFx_QuadrantModes[4] = {3, 1, 2, 1};
+const u8 gFieldFx_QuadrantModes[4] = {3, 1, 2, 1};
 
 /// Waits 60 frames and frees the object. Word +4 is
-/// gBattleFx_HeavyImpactScript.
-const s32 gBattleFx_BurstParticleObjectScript[] = {
+/// gFieldFx_HeavyImpactScript.
+const s32 gFieldFx_BurstParticleObjectScript[] = {
     SC_WAIT(60),
     SC_FREE,
 };
 
-/// The same four bytes as gBattleFx_QuadrantModes; nothing reads them.
+/// The same four bytes as gFieldFx_QuadrantModes; nothing reads them.
 const u8 gUnused_BattleFxBytes[4] = {3, 1, 2, 1};
 
 /// Waits to arrive, sets off SpawnHeavyImpactEffect (lift.c) and frees the
 /// object.
-const s32 gBattleFx_HeavyImpactScript[] = {
+const s32 gFieldFx_HeavyImpactScript[] = {
     SC_SYNC,
     SC_CALL(SpawnHeavyImpactEffect),
     SC_FREE,
 };
 
 /// The three scripts of gEffectScripts.
-const s32 gBattleFx_ShortEffectScript[] = {
+const s32 gFieldFx_ShortEffectScript[] = {
     SC_WAIT(24),
     SC_FREE,
 };
 
-const s32 gBattleFx_MediumEffectScript[] = {
+const s32 gFieldFx_MediumEffectScript[] = {
     SC_WAIT(46),
     SC_FREE,
 };
 
-const s32 gBattleFx_LongEffectScript[] = {
+const s32 gFieldFx_LongEffectScript[] = {
     SC_WAIT(128),
     SC_FREE,
 };
 
 /// The sprite params a paused object flickers through at random
-/// (BattleEffect_SetRandomTableValueOnObject, halt.c): 0 twice as often as
+/// (FieldFx_UpdatePausedObject, halt.c): 0 twice as often as
 /// each of 1 to 6.
-const s8 gBattleFx_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
+const s8 gFieldFx_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 
 /// The world map markers' blend weight in sixteenths, against the picture's
 /// 16 less it ((gFrameCount >> 1) & 31, Map_UpdateWorldMapMarkers): solid

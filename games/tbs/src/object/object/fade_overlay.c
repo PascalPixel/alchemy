@@ -17,7 +17,7 @@ struct FadeView {
 /// (left and right of it), where the ground one or two cells south rises above
 /// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
 /// at the height of that ground. Registered as a scheduler callback by
-/// BattleFx_StartFadeOverlay; reads the work in HEAP_SLOT_FADE_OVERLAY and
+/// FieldFx_StartFadeOverlay; reads the work in HEAP_SLOT_FADE_OVERLAY and
 /// queues the marks with Runtime_PushSlotEntry.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = WORK_SLOT(HEAP_SLOT_FADE_OVERLAY);
@@ -54,7 +54,7 @@ void FadeOverlay_DrawMarks(void) {
   z = actor->z.fixed;
   terrainFloor = actor->terrainHeight >> 16;
   terrainLayer = actor->terrainId;
-  // The first tile of the solid block BattleFx_StartFadeOverlay loaded (VRAM
+  // The first tile of the solid block FieldFx_StartFadeOverlay loaded (VRAM
   // cache block 94; tiles are 32 bytes).
   tile = gVramBlockCache[94].offset >> 5;
   // The left cell, 8 pixels left of the actor. The ground is read one and two
@@ -113,7 +113,7 @@ void FadeOverlay_DrawMarks(void) {
 /// work's actor. No ☀️ code stops it (FadeOverlay_Suspend has no named caller):
 /// the work and the callback last until the next scene change resets the heap
 /// and the task table (Game_Run).
-void BattleFx_StartFadeOverlay(void *object) {
+void FieldFx_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;
   volatile u32 fill;

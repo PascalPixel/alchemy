@@ -496,7 +496,7 @@ static void Event_WarnBeforeLeaving(void) {
 /// choices take SANCTUM_TO_CLEAR,
 /// to SceneId_Clear.
 static void Event_LeaveAfterRefusing(void) {
-  struct BattleEffectBuffers *paletteWork;
+  struct ColorBuffer *paletteWork;
 
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);

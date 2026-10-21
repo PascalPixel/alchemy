@@ -93,11 +93,11 @@
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ActorLookup, 1
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.Engine_EventClearInvalidPackedValues, 1
 	.set import.Object_LinkObjectAndSetCallback, 1
-	.set import.BattleEffect_PauseObject, 1
+	.set import.FieldFx_PauseObject, 1
 	.set import.Menu_OpenCharacterSelector, 1
 	.set import.Engine_AudioPlayCue, 1
 	.set import.AudioCommand_GetStateByte, 1

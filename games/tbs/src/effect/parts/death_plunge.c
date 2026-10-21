@@ -349,12 +349,12 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
 /// flashes.
 ///
 /// Called through BattleFx_RunElementPillarFar by
-/// BattleFx_PlayUnitElementEffect (GLOW_PILLAR) and four times in a row, one
-/// for each element, by BattlePres_RunUnitAction. Allocates and frees its
-/// own work, canvas and sheet slots; loads the element's colours over the
+/// ElementGlow_Play (GLOW_PILLAR) and four times in a row, one
+/// for each element, by BattlePresentation_RunUnitAction. Allocates and frees
+/// its own work, canvas and sheet slots; loads the element's colours over the
 /// first 64 of the background palette, fills PARTICLES 0 to 127 and moves
 /// BG2X with the unit. Increments effect->variant in place, so
-/// BattlePres_RunUnitAction's four calls draw ever larger motes.
+/// BattlePresentation_RunUnitAction's four calls draw ever larger motes.
 ///
 /// effect->kind    : the element (enum Element), which picks the palette:
 ///                   Venus yellow, Mercury blue, Mars red, others Jupiter
@@ -543,13 +543,14 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
 /// backdrop's colours, and from frame 51 32 flashes rise. Runs for 128 frames.
 ///
 /// Called through BattleFx_RunShatteringOpeningFar by
-/// BattlePres_RunEntryTransition, as a battle opens. Allocates and frees its
-/// own work, canvas and sheet slots; sets up BG2 as the canvas itself, as
-/// BattleFx_BeginCanvasLayer would; draws the disc in Ram_MapCellBuffer and
-/// copies it over 0x7800 bytes of BG character block 2; writes background
-/// colours 1 to 63 and palettes 6 to 13; reloads the battle backdrop on BG1 on
-/// frame 5, and on its way out restores gBgScroll[1], starts the battle's
-/// palette fade to BATTLE_BACKGROUND_PLANE and queues a DISPCNT without BG1.
+/// BattlePresentation_RunEntryTransition, as a battle opens. Allocates and
+/// frees its own work, canvas and sheet slots; sets up BG2 as the canvas
+/// itself, as BattleFx_BeginCanvasLayer would; draws the disc in
+/// Ram_MapCellBuffer and copies it over 0x7800 bytes of BG character block 2;
+/// writes background colours 1 to 63 and palettes 6 to 13; reloads the battle
+/// backdrop on BG1 on frame 5, and on its way out restores gBgScroll[1], starts
+/// the battle's palette fade to BATTLE_BACKGROUND_PLANE and queues a DISPCNT
+/// without BG1.
 ///
 /// effect : only effect->actors[0], the unit that flashes, is read.
 void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
@@ -606,7 +607,7 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
                BGCNT_SCREEN_BASE(7);
   // Aim the camera at the field's centre at 100% zoom, lining the backdrop's
   // perspective plane up with it.
-  BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
   view->secondMode = BATTLE_BACKGROUND_NONE;
   EFFECT_SET_CANVAS_AFFINE();
   EFFECT_SET_BATTLE_WINDOWS();
@@ -929,7 +930,7 @@ struct Streak {
 /// over the unit while the first target flashes.
 ///
 /// Called through BattleFx_RunElementBurstFar by
-/// BattleFx_PlayUnitElementEffect (GLOW_BURST). Allocates and frees its own
+/// ElementGlow_Play (GLOW_BURST). Allocates and frees its own
 /// work, canvas and sheet slots; loads the element's colours over the first
 /// 64 of the background palette, fills PARTICLES 0 to 127 and
 /// work->particles, and moves BG2X with the unit.
@@ -1140,7 +1141,7 @@ void BattleFx_DrawStreaks(void) {
 /// schedules BattleFx_DrawStreaks with a canvas that darkens each frame.
 ///
 /// Called through BattleFx_StartElementStreaksFar by
-/// BattleFx_PlayUnitElementEffect (GLOW_STREAKS), which keeps the canvas on
+/// ElementGlow_Play (GLOW_STREAKS), which keeps the canvas on
 /// its unit and ends the burst with BattleFx_EndElementStreaks. Allocates
 /// the work and canvas slots, which the end frees; loads the element's
 /// colours over the first 64 of the background palette; adds
@@ -1195,7 +1196,7 @@ void BattleFx_StartElementStreaks(s32 element) {
 /// canvas in VRAM and frees the work and the canvas.
 ///
 /// Called through BattleFx_EndElementStreaksFar by
-/// BattleFx_PlayUnitElementEffect. Unlike BattleFx_EndCanvasLayer it leaves
+/// ElementGlow_Play. Unlike BattleFx_EndCanvasLayer it leaves
 /// BG2's settings and the backdrop's colours as they are.
 void BattleFx_EndElementStreaks(void) {
   Scheduler_RemoveCallback(BattleFx_DrawStreaks);

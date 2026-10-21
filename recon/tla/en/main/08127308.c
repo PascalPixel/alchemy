@@ -1,4 +1,4 @@
-// Draft of Func_08127308, The Broken Seal's BattleFx_PlayUnitElementEffect
+// Draft of Func_08127308, The Broken Seal's ElementGlow_Play
 // (games/tbs/src/battle/battle.c): differ 36 of 280 (tla-en, 2026-10-15).
 // The Lost Age reads the battle work once (slot 36) and keeps it on the
 // stack, scales the palette with ColorBuffer_Scale, and in mode 1 sends the

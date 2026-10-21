@@ -4,11 +4,11 @@
 
 #include "../object_internal.h"
 
-/// Returns the speaker definition of sprite id from gBattleFx_DefinitionTable,
+/// Returns the speaker definition of sprite id from gFieldFx_DefinitionTable,
 /// or its last entry, the default, when there is none. The search stops after
 /// 0x82 entries, all but the table's last of its 131.
-struct BattleEffectEntry *BattleFx_FindDefinition(u32 id) {
-  struct BattleEffectEntry *entry = gBattleFx_DefinitionTable;
+struct FieldFxDefinition *FieldFx_FindDefinition(u32 id) {
+  struct FieldFxDefinition *entry = gFieldFx_DefinitionTable;
   u32 definitionIndex = 0;
 
   if (entry->id != id) {
@@ -25,9 +25,9 @@ struct BattleEffectEntry *BattleFx_FindDefinition(u32 id) {
 /// Returns the sprite id stored by a live actor's animated sprite, or 0 when
 /// that actor has no animated sprite or its sprite-id pointer is absent. The
 /// actor must exist: a NULL from ObjectTable_Get is read through. Called by
-/// BattleFx_GetFlags.
-s32 BattleFx_GetAnimationValue(s32 id) {
-  struct BattleRenderObject *object = ObjectTable_Get(id);
+/// FieldFx_GetFlags.
+s32 FieldFx_GetAnimationValue(s32 id) {
+  struct FieldFxSpeakerObject *object = ObjectTable_Get(id);
 
   if (object->kind != 1 || object->animation == NULL ||
       object->animation->value28 == NULL) {
@@ -42,11 +42,11 @@ s32 BattleFx_GetAnimationValue(s32 id) {
 /// takes it in the high half of its last argument and
 /// Ui_SetMessageVoiceFromActor as the window's speakerVoiceSound
 /// (psynergy_effects/messages.c); the shops ask it for their keepers.
-s32 BattleFx_GetResourceId(u32 id) {
+s32 FieldFx_GetResourceId(u32 id) {
   u8 portraitId;
 
   if (gGameState.speech == 0 ||
-      (portraitId = BattleFx_FindDefinition(id)->value) == 0xFF) {
+      (portraitId = FieldFx_FindDefinition(id)->value) == 0xFF) {
     return 0;
   }
   return portraitId + 0x100;
@@ -54,9 +54,9 @@ s32 BattleFx_GetResourceId(u32 id) {
 
 /// Returns the definition flags of actor id's sprite, which choose its line
 /// when it has nothing to say: Scene_TalkToActor picks a Halted actor's pair
-/// of lines with them, and Halt cast with no scene event (BattleFx_Run) stops
+/// of lines with them, and Halt cast with no scene event (FieldFx_Run) stops
 /// nothing when the nearest actor's flags are 0xff
-/// (BattleFx_FilterObjectIdByFlags).
-s32 BattleFx_GetFlags(s32 id) {
-  return BattleFx_FindDefinition(BattleFx_GetAnimationValue(id))->flags;
+/// (FieldFx_FilterObjectIdByFlags).
+s32 FieldFx_GetFlags(s32 id) {
+  return FieldFx_FindDefinition(FieldFx_GetAnimationValue(id))->flags;
 }

@@ -20,7 +20,7 @@ void FieldFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
   frame = ++arc->timer;
   if (frame > 31) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)arc,
-                                 gBattleFx_CommonParticleScript);
+                                 gFieldFx_CommonParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);
@@ -43,7 +43,7 @@ void FieldFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   frame = ++arc->timer;
   if (frame > 31) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)arc,
-                                 gBattleFx_CommonParticleScript);
+                                 gFieldFx_CommonParticleScript);
     return;
   }
   scale = Trig_Sin(frame << 10);
@@ -90,10 +90,10 @@ struct ArcSprite {
 /// down); they follow it for 32 frames, then free themselves. They draw
 /// with the effect's spark tiles, so they need the effect's work; the
 /// casting hooks below spawn them every 16 frames, and
-/// BattleEffect_CleanupSceneObjects waits for the last to end (at most 30
+/// FieldFx_End waits for the last to end (at most 30
 /// frames).
-void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
-  struct BattleFxScene *scene = gEffectWork;
+void FieldFx_SpawnScaledArcObjects(struct FieldActor *linked) {
+  struct FieldFxScene *scene = gEffectWork;
   struct FieldActor *source = scene->mainObject;
   struct FieldActor *arcs[2];
   struct FieldActor *arc;
@@ -139,7 +139,7 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
 /// frames and spawns the swelling arcs on it every 16. EventObject_Initialize
 /// gives it to the caster as a cast starts with a flash (scene->visible).
-void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
+void FieldFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 2) != 0) {
     Animation_ApplyChildValuesFar((struct DispatchObject *)actor,
@@ -149,7 +149,7 @@ void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
                                   SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
-    BattleFx_SpawnScaledArcObjects(actor);
+    FieldFx_SpawnScaledArcObjects(actor);
   }
 }
 
@@ -165,6 +165,6 @@ void FieldFx_CycleObjectValueByCounter(union FieldObject *fieldObject) {
     Animation_ApplyChildValuesFar((struct DispatchObject *)actor, colorIndex);
   }
   if ((gFrameCount & 15) == 0) {
-    BattleFx_SpawnScaledArcObjects(actor);
+    FieldFx_SpawnScaledArcObjects(actor);
   }
 }

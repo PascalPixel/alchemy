@@ -10,9 +10,8 @@
 void FieldFx_RunForceOnTarget(s32 unused) { FieldFx_RunForce(); }
 
 /// Writes the position 16 pixels above the actor.
-static __inline__ void
-BattleFx_GetPositionAboveActor(struct FieldActor *obj,
-                               struct EffectVector *pos) {
+static __inline__ void FieldFx_GetPositionAboveActor(struct FieldActor *obj,
+                                                     struct EffectVector *pos) {
   SET_POSITION(pos, obj->x.fixed, obj->y.fixed + ABOVE, obj->z.fixed);
 }
 
@@ -22,8 +21,8 @@ BattleFx_GetPositionAboveActor(struct FieldActor *obj,
 /// Abilities: Force (FIELD_KIND_FORCE).
 ///
 /// The shot is object 215, the hand of Move and Carry, flying at 4 pixels a
-/// frame; where it lands it makes a heavy impact (gBattleFx_HeavyImpactScript,
-/// SpawnHeavyImpactEffect). Called by BattleFx_Run, and through
+/// frame; where it lands it makes a heavy impact (gFieldFx_HeavyImpactScript,
+/// SpawnHeavyImpactEffect). Called by FieldFx_Run, and through
 /// FieldFx_RunForceOnTarget.
 void FieldFx_RunForce(void) {
   struct FieldActor *target;
@@ -33,7 +32,7 @@ void FieldFx_RunForce(void) {
   struct FieldActor *projectile;
   struct FieldActor *copy;
   struct FieldActor *caster;
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct EffectSlot *slot;
   struct AnimationObject *sharedAnimation;
   void *event;
@@ -43,17 +42,17 @@ void FieldFx_RunForce(void) {
 
   scene = gEffectWork;
   target = scene->child;
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   AudioCommand_PlayFar(SE_130);
   slot = scene->slots;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.
   for (i = 0; i <= 11; i++) {
     caster = scene->mainObject;
-    BattleFx_GetPositionAboveActor(caster, &pos);
+    FieldFx_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
     EffectSlot_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
+    EffectSlot_SetCallback(slot, FieldFx_UpdateRadialBurst);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               SPRITE_COLOR_BLUE_TINT);
@@ -72,7 +71,7 @@ void FieldFx_RunForce(void) {
   Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
   projectile = (struct FieldActor *)Object_Spawn(0xd7, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
-    BattleFx_PrepareBufferInterpolation();
+    FieldFx_FadeFromEffectColor();
     return;
   }
   projectile->scaleY = 0x4000;
@@ -120,7 +119,7 @@ void FieldFx_RunForce(void) {
   // Destination: 56 pixels in front of the caster with scene->enabled set
   // (no scene event named the target), otherwise the effect's position.
   // The shot's script waits to arrive and makes the impact
-  // (gBattleFx_BurstParticleObjectScript + 4 is gBattleFx_HeavyImpactScript);
+  // (gFieldFx_BurstParticleObjectScript + 4 is gFieldFx_HeavyImpactScript);
   // each afterimage follows 3 frames apart and is freed on arrival.
   if (scene->enabled != 0) {
     caster = scene->mainObject;
@@ -136,7 +135,7 @@ void FieldFx_RunForce(void) {
   Object_SetMoveTargetFar((struct ObjectRuntime *)projectile, pos.x, pos.y,
                           pos.z);
   ObjectDispatch_InitializeFar((struct DispatchObject *)projectile,
-                               gBattleFx_BurstParticleObjectScript + 4);
+                               gFieldFx_BurstParticleObjectScript + 4);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
@@ -144,7 +143,7 @@ void FieldFx_RunForce(void) {
       Object_SetMoveTargetFar((struct ObjectRuntime *)copy, pos.x, pos.y,
                               pos.z);
       ObjectDispatch_InitializeFar((struct DispatchObject *)copy,
-                                   gBattleFx_CommonParticleScript + 1);
+                                   gFieldFx_CommonParticleScript + 1);
     }
   }
 
@@ -177,12 +176,12 @@ void FieldFx_RunForce(void) {
   }
 
   // Run the map's event for it, if there is one.
-  event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
-                                     FIELD_KIND_FORCE, &eventTarget);
+  event = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                    FIELD_KIND_FORCE, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   WaitFrames(10);
-  BattleFx_PrepareBufferInterpolation();
+  FieldFx_FadeFromEffectColor();
   WaitFrames(20);
   // 96 (0x60), the VRAM cache's entry count, means no entry to free.
   if (resourceSlot != 96)

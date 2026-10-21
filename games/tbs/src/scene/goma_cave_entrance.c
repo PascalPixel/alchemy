@@ -169,7 +169,7 @@ static void Event_PushWestPillar(void) {
   WAIT(20);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_MoveWestPillar();
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   EV_END();
 }
 
@@ -200,7 +200,7 @@ s32 Scene_Initialize(void) {
 
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   WAIT(10);
-  BattleFx_SetQueuedSoundAndPlay(SE_170);
+  FieldFx_SetQueuedSoundAndPlay(SE_170);
   OBJ_MODE(11, 2);
   Object_GetById(11)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
@@ -255,7 +255,7 @@ static void Event_IvanRejoins(void) {
   struct FieldActor *leader;
 
 #if TBS_PATCH_1
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
 #endif
   EV_BEGIN();
   WAIT(30);
@@ -346,7 +346,7 @@ static void Event_IvanRejoins(void) {
     OBJ_MODE(IVAN, ANIM_STAND);
     WAIT(20);
 #if TBS_PATCH_1
-    BattleFx_PlayQueuedSound();
+    FieldFx_PlayQueuedSound();
 #endif
     OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
     OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 60);
@@ -482,8 +482,8 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   u8 *effectWork;
 
   effectWork = gEffectWork;
-  BattleFx_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
-  BattleFx_SetupObjectPair(IVAN, STUMP_IVY);
+  FieldFx_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
+  FieldFx_SetupObjectPair(IVAN, STUMP_IVY);
   {
     u8 *f = (u8 *)((s32)effectWork + 0x71c);
     s32 t = 8;
@@ -493,7 +493,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   }
   EventObject_Initialize();
   Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET);
-  EffectRuntime_StopCurrentObject();
+  FieldFx_StopCasterHook();
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
@@ -544,8 +544,8 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
     SET_POSITION(v, Engine_MathCos(i << 12), 0, Engine_MathSin(i << 12));
     v->x -= v->x / 4;
     v->z -= v->z / 2;
-    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, v->x, v->y,
-                 v->z, 0, NULL);
+    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, v->x, v->y,
+                  v->z, 0, NULL);
   }
   actor->velocityY = 0x50000;
   Engine_ActorSetDestination(id, 139, 196);
@@ -565,8 +565,8 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
   p->startScaleY = 0xcccc;
   p->targetScaleX = 0x18000;
   p->targetScaleY = 0x13333;
-  Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
-               0x1c0000, p);
+  FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
+                0x1c0000, p);
   Engine_AudioPlayCue(SE_CAST);
   OBJ_MODE(id, 3);
   Engine_MapWaitWorkValuesBelow256();

@@ -5,23 +5,23 @@
 #include "../psynergy_effects_internal.h"
 
 /// Scheduler callback: updates the 24 effect slots.
-void BattleFx_UpdateAllEffectSlots(void) { FieldFx_UpdateSceneSlots(); }
+void FieldFx_UpdateAllEffectSlots(void) { FieldFx_UpdateSceneSlots(); }
 
 /// Prepares the work of the Psynergy effect for ability (HEAP_SLOT_FX) and
 /// loads its spark tiles. Called again while an effect resolves, it only
 /// switches the ability.
 ///
 /// Field_UsePsynergy and the item uses (object/items.c) call it before an
-/// effect and BattleEffect_CleanupSceneObjects after it, which releases the
+/// effect and FieldFx_End after it, which releases the
 /// work, the spark tiles' resource entry and the scheduler callback started
 /// here. Goma Cave Entrance calls it too, for Ivan's Whirlwind on the
 /// stump's ivy.
-/// The caster is the leader, with no target until BattleFx_SetupObjectPair
+/// The caster is the leader, with no target until FieldFx_SetupObjectPair
 /// names one.
-void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
+void FieldFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
   struct MapScrollWork *map = *(gWorkSlot + 8);
-  struct BattleFxScene *work;
+  struct FieldFxScene *work;
   s32 running;
 
   running = ev->resolvingAction;
@@ -50,15 +50,15 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
     work->lit = 1;
   if (gGameState.map == (s32)&SceneId_MercuryLighthouseMiddle)
     work->lit = 1;
-  BattleFx_SetupObjectPair(gGameState.selectedActor, -1);
+  FieldFx_SetupObjectPair(gGameState.selectedActor, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
-  // here) until BattleEffect_CleanupSceneObjects lets it run again.
+  // here) until FieldFx_End lets it run again.
   if (work->fieldKind != FIELD_KIND_REVEAL)
     ev->effectTimerRunning = running;
   work->tileSlot = Resource_FindFreeEntry();
-  VramCache_Load((s16)work->tileSlot, 256, gBattleFx_SparkTiles);
+  VramCache_Load((s16)work->tileSlot, 256, gFieldFx_SparkTiles);
   // 0xc80 is SCHEDULER_KEY_MAIN_LOOP: the slots update once a frame.
-  Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldFx_UpdateAllEffectSlots, 0xc80);
 }
 
 /// Records the caster and the target of an effect. With no target, the effect
@@ -66,11 +66,11 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
 /// quarter turn). work->angle becomes that facing, the way the effects aim.
 /// A target's update hook, script and first sprite's param are saved, for
 /// the effects that take it over to restore.
-void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
+void FieldFx_SetupObjectPair(s32 userId, s32 targetId) {
   struct ScriptMotionObject *user;
   struct ScriptMotionObject *target;
   s32 dir;
-  struct BattleFxScene *work;
+  struct FieldFxScene *work;
 
   work = gEffectWork;
   work->firstObjectId = userId;
@@ -105,8 +105,8 @@ void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
 
 /// Stops the caster's per-frame hook and restores its colours (sprite param
 /// 0), then waits a frame.
-void EffectRuntime_StopCurrentObject(void) {
-  struct BattleFxScene *work = gEffectWork;
+void FieldFx_StopCasterHook(void) {
+  struct FieldFxScene *work = gEffectWork;
   struct ScriptMotionObject *user = work->mainObject;
 
   user->hook = NULL;
@@ -122,11 +122,11 @@ void EffectRuntime_StopCurrentObject(void) {
 /// swelling arcs to end, stops the slot callback, releases the effect's
 /// tiles, restores the map's shake, plays the queued sound and releases the
 /// effect's work.
-void BattleEffect_CleanupSceneObjects(void) {
+void FieldFx_End(void) {
 #ifndef UBFIX
-  struct BattleFxScene **sceneCell;
+  struct FieldFxScene **sceneCell;
 #endif
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   struct FieldWork *runtime;
   struct MapScrollWork *map;
   struct EffectSlot *sceneObject;
@@ -139,7 +139,7 @@ void BattleEffect_CleanupSceneObjects(void) {
 #else
   // Indexing beyond the scalar global is undefined in C. Named slots add
   // 8 bytes to this function in the forced native EN build (0xf8 -> 0x100).
-  sceneCell = (struct BattleFxScene **)&gEffectWork;
+  sceneCell = (struct FieldFxScene **)&gEffectWork;
   scene = *sceneCell;
   runtime = *(struct FieldWork **)((u8 *)sceneCell - 116);
   map = *(struct MapScrollWork **)((u8 *)sceneCell - 192);
@@ -147,7 +147,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   for (remaining = 0; remaining < 24; remaining++) {
     sceneObject = &scene->slots[remaining];
     if (sceneObject->active != 0)
-      BattleFx_ClearOwnedSlot(sceneObject);
+      FieldFx_ClearOwnedSlot(sceneObject);
   }
 
   // While Field_UsePsynergy resolves an effect (resolvingAction), a cleanup
@@ -183,14 +183,14 @@ void BattleEffect_CleanupSceneObjects(void) {
     } while (active != 0 && waited <= 29);
 
     runtime->castStarted = 0;
-    Scheduler_RemoveCallback(BattleFx_UpdateAllEffectSlots);
+    Scheduler_RemoveCallback(FieldFx_UpdateAllEffectSlots);
     Resource_ResetEntry((s16)scene->tileSlot);
     map->shakeX = scene->savedShakeX;
     map->shakeY = scene->savedShakeY;
     map->shakeDecay = scene->savedShakeDecay;
     if (scene->fieldKind != FIELD_KIND_REVEAL)
       runtime->effectTimerRunning = 1;
-    BattleFx_PlayQueuedSound();
+    FieldFx_PlayQueuedSound();
     Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);
   }
 }
@@ -200,14 +200,14 @@ void BattleEffect_CleanupSceneObjects(void) {
 /// it is quiet, the ability's name is shown while every other object stands
 /// still. With flag 0x140 the caster's colours keep cycling and it
 /// takes pose 21; otherwise the caster's hook stops. Sets the field work's
-/// castStarted, which BattleEffect_CleanupSceneObjects clears. Called by
+/// castStarted, which FieldFx_End clears. Called by
 /// Field_UsePsynergy and Goma Cave Entrance once the effect's caster and
 /// target are set up.
 void EventObject_Initialize(void) {
   s32 ability;
   s32 announcedAbility;
   struct FieldActor *caster;
-  struct BattleFxScene *scene;
+  struct FieldFxScene *scene;
   void *renderState;
 
   scene = *(void **)Ram_EffectWork;
@@ -222,7 +222,7 @@ void EventObject_Initialize(void) {
   SET_VELOCITY(caster, 0, 0, 0);
   if (scene->visible != 0) {
     AudioCommand_PlayFar(SE_212);
-    caster->update = BattleFx_FlickerObjectAndTick;
+    caster->update = FieldFx_FlickerObjectAndTick;
   }
   if (scene->active != 0) {
     ObjectGroup_SetActionForOthers((struct ObjectRuntime *)caster, 1, 0);
@@ -244,18 +244,18 @@ void EventObject_Initialize(void) {
     }
     ObjectDispatch_SelectAnimationFar(caster, 0x15);
   } else {
-    EffectRuntime_StopCurrentObject();
+    FieldFx_StopCasterHook();
   }
   ((struct FieldWork *)renderState)->castStarted = 1;
 }
 
 /// Saves the palettes for the effect and fades them toward one of the eight
-/// effect colours (gBattleFx_TargetColors), picked by the frame counter or
+/// effect colours (gFieldFx_TargetColors), picked by the frame counter or
 /// forced by flags 0x148 to 0x14f, over 8 frames. Most field Psynergy
-/// effects open with it, and BattleFx_PrepareBufferInterpolation fades back.
-void BattleEffect_InitializeSharedScene(void) {
+/// effects open with it, and FieldFx_FadeFromEffectColor fades back.
+void FieldFx_FadeToEffectColor(void) {
   u8 *scene;
-  struct BattleEffectBuffers *work;
+  struct ColorBuffer *work;
   s32 no;
 
   // Save the colours the buffer moves toward into the field work, 224
@@ -292,26 +292,26 @@ void BattleEffect_InitializeSharedScene(void) {
     no = 6;
   if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(7)))
     no = 7;
-  BattleFx_ApplyColorToTargetBuffer(gBattleFx_TargetColors[no], 1);
-  BattleFx_StartBufferInterpolation(8);
+  ColorBuffer_SetTarget(gFieldFx_TargetColors[no], 1);
+  ColorBuffer_StartInterpolation(8);
 }
 
 /// Fades the palettes back from an effect's colours to the saved ones over 8
 /// frames; while Reveal is active the BG half fades to Reveal's grey
 /// instead (PALETTE_TRANSFORM_GREY, 0x10001).
-void BattleFx_PrepareBufferInterpolation(void) {
+void FieldFx_FadeFromEffectColor(void) {
   s32 savedPalettes;
   u8 *field;
 
   field = (u8 *)gEventWork;
   savedPalettes = (s32)(field + 0x236);
-  BattleFx_ApplyColorToTargetBuffer(savedPalettes, 2);
+  ColorBuffer_SetTarget(savedPalettes, 2);
   if (((struct FieldWork *)field)->revealActive != 0) {
-    BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
+    ColorBuffer_SetTarget(0x10001, 1);
   } else {
-    BattleFx_ApplyColorToTargetBuffer(savedPalettes, 1);
+    ColorBuffer_SetTarget(savedPalettes, 1);
   }
-  BattleFx_StartBufferInterpolation(8);
+  ColorBuffer_StartInterpolation(8);
 }
 
 /// Converts a world position (16.16 pixels) to the screen: x and z receive

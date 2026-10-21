@@ -1,5 +1,5 @@
 // Draft, differ 6 of 193: the enemies' actions for the round, ☀️'s
-// BattlePres_BuildOpponentEntries (games/tbs/src/battle/battle.c) with ⚓️'s
+// BattlePresentation_BuildOpponentEntries (games/tbs/src/battle/battle.c) with ⚓️'s
 // changes: each action records its index, and an enemy acting several times
 // a turn acts later by steps (four actions: 5/6, 4/6, then 1/2 of its
 // Agility; three: 3/4, then 1/2; otherwise 1/2). Left: instruction order

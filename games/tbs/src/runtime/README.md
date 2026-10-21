@@ -119,7 +119,7 @@ renaming one of them touches other folders too.
 | `NumberText_`, `DebugText_` | number text and the debug text screen |
 | `ColorBuffer_` | shading a buffer of pixels, keeping a copy |
 | `SaveState_` | saving |
-| `SerialRuntime_`, `SerialTest_`, `BattleLink_` | the link cable |
+| `SerialRuntime_`, `SerialTest_`, `LinkBattle_` | the link cable |
 | `RuntimeDispatch_` | empty far-call exports nothing calls |
 | `Resource_`, `Palette_`, `Ui_`, `Sound_` | resources, palettes, the interface and sound, whose main code lives in other folders |
 

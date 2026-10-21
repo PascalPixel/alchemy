@@ -69,7 +69,7 @@ Growth, 13 Catch, 14 Whirlwind and Gale, 15 Retreat, 16 Avoid.
 `unit/object/psynergy_effects.h` names them, and the effect scene keeps the
 one playing as `scene->fieldKind`.
 
-The **effect scene** is `struct BattleFxScene`, the work of the Psynergy
+The **effect scene** is `struct FieldFxScene`, the work of the Psynergy
 effect playing: the Psynergy, its caster and target, and its 24 effect
 slots. It's `HEAP_SLOT_FX`, reached as `gEffectWork`. An
 **effect slot** is a `struct EffectSlot`, one particle an effect moves and
@@ -97,19 +97,19 @@ Functions are named for what they act on:
 | `Event_`, `FieldEvent_` | the commands scene scripts run |
 | `Object_`, `ObjectMotion_`, `ObjectTable_` | actors, their motion and the actor table |
 | `Marker_` | the map's markers |
+| `ItemDisplay_` | a found item's picture, held up over the party leader |
 | `Camera_` | the event camera |
 | `Djinn_` | Djinn joining the party and the hop before a Djinni battle |
 | `DisplayTransition_` | the window transitions and dissolves between scenes |
 | `WorldMap_` | starting and ending an event or menu on the world map |
 | `EffectSlot_` | effect slots |
-| `FieldFx_` | field Psynergy effects; a kind's runner is named for its Psynergy (`FieldFx_RunCatch`) |
+| `FieldFx_` | field effects: the Psynergy effects, where a kind's runner is named for its Psynergy (`FieldFx_RunCatch`), and the small effects scenes spawn (`FieldFx_Spawn`) |
+| `ColorBuffer_` | the colour buffer, which moves the palettes toward target colours |
 | `ReelGame_`, `LzPack_` | the slot machine, and the LZ packer beside it |
-| `BattleFx_`, `BattleEffect_` | older names on field Psynergy code |
 
-Other functions keep the prefixes of the engine's other families. The
-`BattleFx_` and `BattleEffect_` names here are shared with other folders or
-with The Lost Age's copies of this code, so they stay until a rename across
-all of them.
+Other functions keep the prefixes of the engine's other families. The Lost
+Age's copies of this code still carry the older `BattleFx_` and
+`BattleEffect_` names.
 
 Some things are reached by more than one spelling, because each site keeps
 the one that compiles to the original bytes: the field work, the effect
@@ -184,7 +184,7 @@ once. An event's value is the scene's event to run, or one the loop handles
 itself (`enum FieldEventCode`): `FIELD_EVENT_PARTY_FELL` when characters fell
 to poison or hazardous ground, `FIELD_EVENT_WORLD_MAP_PICTURE` to show the
 world map picture (`Map_ShowWorldMap`), and `FIELD_EVENT_WORLD_MAP_ZOOM` for
-`BattleFx_RunVisibilityTransition`, which zooms the world map view out while
+`FieldFx_RunVisibilityTransition`, which zooms the world map view out while
 L is held.
 
 This shape is why scene code can be written as straight-line cutscenes. A
@@ -261,8 +261,8 @@ part of the ability is open.
 
 The effect that plays is the one for the ability's field kind.
 [`psynergy_effects/dispatch.c`](psynergy_effects/dispatch.c) runs that field
-kind's handler: `BattleFx_Run` when the Psynergy is cast with no target, and
-`BattleFx_DispatchRequestKind` when a scene event names the target. Each field
+kind's handler: `FieldFx_Run` when the Psynergy is cast with no target, and
+`FieldFx_DispatchRequestKind` when a scene event names the target. Each field
 kind's effect is the part named for it, such as `psynergy_effects/reveal.c`.
 A part's entry points name the abilities that reach them in the same reach
 line the [battle effects](../effect/README.md) use, a paragraph of its own
@@ -373,8 +373,6 @@ Still unknown:
 - XXX: the request fields' names (`descriptor` for talking, `command` for
   Psynergy, `input` for a pushed tile) say less than their handlers do; they
   are shared with other folders and wait for a rename.
-- XXX: the `BattleFx_` and `BattleEffect_` names on field Psynergy code are
-  older than the `FieldFx_` prefix and wait for a rename across folders.
 - XXX: nothing in the scenes calls the `Event_ShowSpeakerMessage` and
   `Event_ShowMessageAtPosition` entry points. Their position limits resemble
   pixels, but their window service takes tiles; a caller establishing the

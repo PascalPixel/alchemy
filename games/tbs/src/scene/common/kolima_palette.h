@@ -17,7 +17,7 @@
 // for the scene where the curse lifts.
 
 // Forward declarations.
-static u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
+static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj);
 static void KolimaPalette_SaveFirst(void);
 static void KolimaPalette_SaveSecond(void);
 static void KolimaPalette_Capture(void);
@@ -32,7 +32,7 @@ void KolimaPalette_Curse(s32 strength) {
   for (i = 0; i < 224; i++) {
     if ((i < 17 || i > 23) && (i < 193 || i > 200)) {
       u16 *pal = (u16 *)(0x5000000 + i * 2);
-      *pal = SceneEffect_AdjustColorChannels(*pal, strength);
+      *pal = KolimaPalette_AdjustColorChannels(*pal, strength);
     }
   }
   KolimaPalette_Capture();
@@ -42,7 +42,7 @@ void KolimaPalette_Curse(s32 strength) {
 
 /// One cursed colour: red gains a 4 * adj'th of itself (up to 31), and green
 /// and blue lose an adj'th.
-static u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj) {
+static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj) {
   s16 green = ((color >> 5) & 31);
   s16 red = (color & 31);
   s16 blue = ((color >> 10) & 31);

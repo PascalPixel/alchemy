@@ -36,7 +36,7 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
 /// (FieldFx_RunReveal). The time counts only while effectTimerRunning is
 /// set, so menus and other effects pause it. It asks every frame until
 /// ResetSceneTransitionEffect removes it.
-void FieldEffect_WatchLeaderDistance(void) {
+void FieldFx_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct ObjectRuntime *actor;
   s16 *timer;
@@ -75,8 +75,8 @@ void FieldEffect_WatchLeaderDistance(void) {
 /// The transition is WINDOW_TRANSITION_RIPPLE, a wobbling circle round the
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
 /// 600 frames of its own time, or until the leader leaves its circle
-/// (FieldEffect_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
-/// Called by BattleFx_Run and BattleFx_DispatchRequestKind.
+/// (FieldFx_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
+/// Called by FieldFx_Run and FieldFx_DispatchRequestKind.
 void FieldFx_RunReveal(void) {
   struct FieldWork *field;
   struct DisplayTransitionState *transition;
@@ -94,16 +94,16 @@ void FieldFx_RunReveal(void) {
   transition->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TRANSFORM_PLAIN, 0x10000) the BG half
   // turns grey (PALETTE_TRANSFORM_GREY, 0x10001) in one frame.
-  BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
-  BattleFx_StartBufferInterpolation(1);
+  ColorBuffer_SetSource(0x10000, 0);
+  ColorBuffer_SetTarget(0x10001, 1);
+  ColorBuffer_StartInterpolation(1);
   // Not in the English release.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
   field->revealActive = 0;
 #endif
   WaitFrames(1);
-  event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
-                                     FIELD_KIND_REVEAL, &eventTarget);
+  event = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                    FIELD_KIND_REVEAL, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   AudioCommand_PlayFar(SE_131);
@@ -115,14 +115,14 @@ void FieldFx_RunReveal(void) {
   field->revealCenterY = transition->centreY / 0x10000;
   field->revealFrames = 600;
   field->effectTimerRunning = 1;
-  FieldEffect_SpawnNearbyMarkers();
+  FieldFx_SpawnNearbyMarkers();
   frame = 0;
   do {
     WaitFrames(1);
     transition->value = frame;
     frame++;
   } while (frame <= 18);
-  Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldFx_WatchLeaderDistance, 0xc80);
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
@@ -132,14 +132,14 @@ void FieldFx_RunReveal(void) {
 /// (FieldEvent_RunTypeHandler) and before Mind Read starts its own colours.
 void ResetSceneTransitionEffect(void) {
 #ifdef UBFIX
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   struct DisplayTransitionState *scene = gDisplayTransition;
   struct FieldWork *state = (struct FieldWork *)gEventWork;
 #else
   // Named slots avoid stepping outside gEffectWork. They add 8 bytes to this
   // function in the forced native EN build (0xe8 -> 0xf0).
-  struct BattleFxScene **cell = &gEffectWork;
-  struct BattleFxScene *work = *cell;
+  struct FieldFxScene **cell = &gEffectWork;
+  struct FieldFxScene *work = *cell;
   struct DisplayTransitionState *scene =
       *(struct DisplayTransitionState **)((u8 *)cell - 0x64);
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);
@@ -150,22 +150,22 @@ void ResetSceneTransitionEffect(void) {
 
   if (state->revealActive != 0) {
     AudioCommand_PlayFar(SE_SCENE_TRANSITION);
-    Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
+    Scheduler_RemoveCallback(FieldFx_WatchLeaderDistance);
 
     zero = 0;
     state->revealActive = zero;
     state->revealFrames = zero;
     ObjectDispatch_ApplyValueToKind200Children(0);
 
-    BattleFx_ApplyColorToTargetBuffer(PALETTE_TRANSFORM_PLAIN, 1);
-    BattleFx_StartBufferInterpolation(1);
-    BattleFx_ApplyColorToSourceBuffer(0, 0);
-    BattleFx_ApplyColorToTargetBuffer(PALETTE_TRANSFORM_PLAIN, 0);
-    BattleFx_StartBufferInterpolation(30);
+    ColorBuffer_SetTarget(PALETTE_TRANSFORM_PLAIN, 1);
+    ColorBuffer_StartInterpolation(1);
+    ColorBuffer_SetSource(0, 0);
+    ColorBuffer_SetTarget(PALETTE_TRANSFORM_PLAIN, 0);
+    ColorBuffer_StartInterpolation(30);
     WaitFrames(1);
 
-    event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
-                                       FIELD_KIND_REVEAL, &eventTarget);
+    event = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
+                                      FIELD_KIND_REVEAL, &eventTarget);
     if (event != NULL)
       Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
 

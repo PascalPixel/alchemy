@@ -357,7 +357,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
                       0x20000);
-  BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   WaitFrames(1);
   // Show it: 14/16 of the canvas over all below, inside both windows.
@@ -432,7 +432,7 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
                       0x20000);
-  BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   WaitFrames(1);
 

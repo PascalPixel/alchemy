@@ -98,15 +98,15 @@ enum HeapSlot {
   /// GroundParticleWork).
   HEAP_SLOT_GROUND_PARTICLES = 29,
   /// The field's colour blend work (gFieldBlendWork): the struct
-  /// FieldBlendWork the storm's lightning and BattleFx_StartBufferBlend
+  /// FieldBlendWork the storm's lightning and FieldFx_StartBufferBlend
   /// allocate.
   HEAP_SLOT_FIELD_BLEND = 30,
   /// The display transition (struct DisplayTransitionState,
   /// gDisplayTransition): the window edges and dissolve of a scene change.
   HEAP_SLOT_TRANSITION = 31,
   /// The colour buffer (gPaletteBufferWork) that moves the BG and OBJ palettes
-  /// toward target colours: the struct BattleEffectBuffers
-  /// BattleEffect_InitializeBuffers allocates on scene load, or the title
+  /// toward target colours: the struct ColorBuffer
+  /// ColorBuffer_Initialize allocates on scene load, or the title
   /// intro's struct PaletteFade.
   HEAP_SLOT_PALETTE_BUFFER = 32,
   /// The floating lights of Sol Sanctum's Elemental Star room (struct
@@ -163,10 +163,10 @@ enum HeapSlot {
   /// and the shop; each takes it on opening and releases it on closing. The
   /// save screen takes it for its sprite work (struct ShopRuntime).
   HEAP_SLOT_MENU = 55,
-  /// The Psynergy effect's work (struct BattleFxScene, gEffectWork). A field
-  /// Psynergy holds it from BattleFx_LoadActionEffectResources to
-  /// BattleEffect_CleanupSceneObjects, a Djinni's joining from
-  /// BattleFx_InitializeSlots to BattleFx_ClearActiveSlotsAndScheduleUpdates.
+  /// The Psynergy effect's work (struct FieldFxScene, gEffectWork). A field
+  /// Psynergy holds it from FieldFx_LoadActionEffectResources to
+  /// FieldFx_End, a Djinni's joining from
+  /// FieldFx_InitializeSlots to FieldFx_ClearActiveSlotsAndScheduleUpdates.
   HEAP_SLOT_FX = 56,
   /// The battle command menus' work (struct BattleMenuWork).
   HEAP_SLOT_BATTLE_COMMANDS = 57,

@@ -19,7 +19,7 @@
 /// in DISPCNT_MODE_1 with every layer off; the four BGxCNT are put back as they
 /// were. It draws four random numbers a frame, which only advances the
 /// sequence. Returns 0.
-s32 BattlePres_RunMosaicFadeOut(void) {
+s32 BattlePresentation_RunMosaicFadeOut(void) {
   /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
    * stored and loaded again as in the ROM; without volatile, 28 of 90
    * instructions differ in tbs-en. */
@@ -130,7 +130,7 @@ void BattlePresentation_BuildTilemap(void *tilemap) {
 /// 0x4ff), added by BattleBackground_Load and
 /// BattlePresentation_ConfigurePaletteFade; BattleCamera_SetRange builds the
 /// pages.
-void BattlePres_UpdateHBlankScroll(void) {
+void BattlePresentation_UpdateHBlankScroll(void) {
   struct BattleAffineHdma *scanlines;
   u16 *line;
 
@@ -146,7 +146,7 @@ void BattlePres_UpdateHBlankScroll(void) {
   }
 }
 
-/// Copies one of eight curtain tiles from gBattlePres_TileVariants into
+/// Copies one of eight curtain tiles from gBattlePresentation_TileVariants into
 /// CURTAIN_TILE(0), a new one every four frames while the transition timer
 /// (gDisp) runs from 1 to 32.
 /// XXX: no code in TBS names it; a scheduler or table entry that reaches it
@@ -154,19 +154,19 @@ void BattlePres_UpdateHBlankScroll(void) {
 void BattlePresentation_UploadTileVariant(void) {
   u32 variant = *gDisp - 1;
   if (variant <= 31)
-    Dma_Set(gBattlePres_TileVariants + (variant >> 2) * 32, CURTAIN_TILE(0),
-            DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(gBattlePresentation_TileVariants + (variant >> 2) * 32,
+            CURTAIN_TILE(0), DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 /// Advances the curtain opening by a frame: scrolls BG0 from 32 pixels to 0
 /// over frames 20 to 52, and over frames 0 to 80 turns the camera round to
 /// YAW_PARTY_TURN and zooms it from 180 to 100 percent.
 /// Runs each frame as a scheduler callback added by
-/// BattlePres_RunEntryTransition, which removes it once the encounter is
-/// announced. Advances the timer in gDisp's slot
+/// BattlePresentation_RunEntryTransition, which removes it once the encounter
+/// is announced. Advances the timer in gDisp's slot
 /// (HEAP_SLOT_BATTLE_ENTRY_TIMER), and writes gBgScroll[0].y and the camera's
 /// yaw.
-void BattlePres_AdvanceTransitionTimer(void) {
+void BattlePresentation_AdvanceTransitionTimer(void) {
   s32 scroll;
   struct BattleCamera *camera;
   u32 *timer;
@@ -189,19 +189,19 @@ void BattlePres_AdvanceTransitionTimer(void) {
     camera->yaw = 45 * frame * 8 + 0xaf80;
   next = (*timer = *timer + 1);
   if (next <= 0x50U) {
-    BattlePres_SetupTransitionScene(0, 0, 0, 0xb4 - next);
+    BattlePresentation_SetupTransitionScene(0, 0, 0, 0xb4 - next);
     return;
   }
-  BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
+  BattlePresentation_SetupTransitionScene(0, 0, 0, 0x64);
 }
 
 /// Draws a frame of the curtain opening on BG1: over 80 frames a row moves up
 /// from row 13 to row 4 and its vertically flipped twin down to row 20, the
 /// row's tile stepping through CURTAIN_TILE(1) to (8), the last one clear.
 /// Runs each frame as a scheduler callback added by
-/// BattlePres_RunEntryTransition, reading the frame from gDisp's timer;
+/// BattlePresentation_RunEntryTransition, reading the frame from gDisp's timer;
 /// writes BG1's map in screen block 12.
-void BattlePres_DrawTransitionRows(void) {
+void BattlePresentation_DrawTransitionRows(void) {
   u32 column;
   s32 transitionFrame;
   s32 alignedFrame;
@@ -249,7 +249,7 @@ void BattlePres_DrawTransitionRows(void) {
 
 /// Clears REG_BG0VOFS, so that BG0's scroll applies only above the line the
 /// interrupt fires on.
-/// Installed by BattlePres_RunEntryTransition as the VCount interrupt's
+/// Installed by BattlePresentation_RunEntryTransition as the VCount interrupt's
 /// handler at line 32, while gBgScroll[0].y holds BG0 scrolled.
 void Graphics_ClearBg0Vofs(void) {
   u32 zero = 0;
@@ -271,7 +271,7 @@ struct DisplayRegisters {
 /// it; leaves BG1 on BATTLE_BG1CNT, BG0's priority lowered by 2 again,
 /// REG_DISPCNT showing BG0, BG2 and the sprites, and no VCount handler. The
 /// storm also sets BattleWork.background to the aerie's storm backdrop.
-void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
+void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
   volatile u32 fill;
   struct BattlePresentationWork presentation;
   u16 unitIds[14];
@@ -297,19 +297,19 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     {
       volatile u32 *dma;
 
-      Dma_Set(gBattlePres_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
-              REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 32, CURTAIN_TILE(2), DMA_COPY_WORDS(8),
-              REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 64, CURTAIN_TILE(3), DMA_COPY_WORDS(8),
-              REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 96, CURTAIN_TILE(4), DMA_COPY_WORDS(8),
-              REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 128, CURTAIN_TILE(5),
+      Dma_Set(gBattlePresentation_CurtainTiles, CURTAIN_TILE(1),
               DMA_COPY_WORDS(8), REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 160, CURTAIN_TILE(6),
+      Dma_Set(gBattlePresentation_CurtainTiles + 32, CURTAIN_TILE(2),
               DMA_COPY_WORDS(8), REG_DMA3);
-      Dma_Set(gBattlePres_CurtainTiles + 192, CURTAIN_TILE(7),
+      Dma_Set(gBattlePresentation_CurtainTiles + 64, CURTAIN_TILE(3),
+              DMA_COPY_WORDS(8), REG_DMA3);
+      Dma_Set(gBattlePresentation_CurtainTiles + 96, CURTAIN_TILE(4),
+              DMA_COPY_WORDS(8), REG_DMA3);
+      Dma_Set(gBattlePresentation_CurtainTiles + 128, CURTAIN_TILE(5),
+              DMA_COPY_WORDS(8), REG_DMA3);
+      Dma_Set(gBattlePresentation_CurtainTiles + 160, CURTAIN_TILE(6),
+              DMA_COPY_WORDS(8), REG_DMA3);
+      Dma_Set(gBattlePresentation_CurtainTiles + 192, CURTAIN_TILE(7),
               DMA_COPY_WORDS(8), REG_DMA3);
       dma = REG_DMA3;
       /* FAKEMATCH(barrier): REG_DISPCNT reached from DMA3's address through an
@@ -362,10 +362,12 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       // and the encounter is announced.
       // The timer in the main-loop pass (3200 is 0xc80), the rows in the
       // VBlank pass (0x480).
-      BattlePres_SetupTransitionScene(0, 0, 0, 180);
+      BattlePresentation_SetupTransitionScene(0, 0, 0, 180);
       *timer = start;
-      Scheduler_AddOrUpdateCallback(BattlePres_AdvanceTransitionTimer, 3200);
-      Scheduler_AddOrUpdateCallback(BattlePres_DrawTransitionRows, 0x480);
+      Scheduler_AddOrUpdateCallback(BattlePresentation_AdvanceTransitionTimer,
+                                    3200);
+      Scheduler_AddOrUpdateCallback(BattlePresentation_DrawTransitionRows,
+                                    0x480);
       Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);
       gBgScroll[0].y = 32;
       WaitFrames(1);
@@ -377,8 +379,8 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
       IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
       BattleIntro_AnnounceEncounter(enemyCount);
-      Scheduler_RemoveCallback(BattlePres_AdvanceTransitionTimer);
-      Scheduler_RemoveCallback(BattlePres_DrawTransitionRows);
+      Scheduler_RemoveCallback(BattlePresentation_AdvanceTransitionTimer);
+      Scheduler_RemoveCallback(BattlePresentation_DrawTransitionRows);
       gBgScroll[0].y = start;
       Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
     }
@@ -415,9 +417,9 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
           BATTLE_SIDE_ENEMIES, presentation.effect.actors);
       presentation.effect.actors[presentation.effect.count] =
           BATTLE_UNIT_LIST_END;
-      BattleActor_SpawnObjectsForList(presentation.effect.actors, 0);
+      BattleObj_SpawnObjectsForList(presentation.effect.actors, 0);
       BattleFx_RunShatteringOpeningFar(&presentation.effect);
-      BattlePres_SetupTransitionScene(0, 0, 0, 100);
+      BattlePresentation_SetupTransitionScene(0, 0, 0, 100);
       *timer = start;
     }
     Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);
@@ -433,18 +435,18 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     visibleCount =
         BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)visibleUnits);
     visibleUnitIds[visibleCount] = BATTLE_UNIT_LIST_END;
-    BattleActor_SpawnObjectsForList(visibleUnits, 0);
+    BattleObj_SpawnObjectsForList(visibleUnits, 0);
     visibleCount =
         BattleParty_ListActorIds(BATTLE_SIDE_PARTY, (u16 *)visibleUnits);
     for (index = 0; index != visibleCount; index++)
-      BattlePres_SetActorRecordMode(visibleUnits[index],
-                                    ACTOR_SEMI_TRANSPARENT);
+      BattlePresentation_SetActorRecordMode(visibleUnits[index],
+                                            ACTOR_SEMI_TRANSPARENT);
     for (index = 0; index != 16; index++) {
       REG_BLDALPHA = BLEND_ALPHA(index, 16);
       WaitFrames(1);
     }
     for (index = 0; index != visibleCount; index++)
-      BattlePres_SetActorRecordMode(visibleUnits[index], ACTOR_OPAQUE);
+      BattlePresentation_SetActorRecordMode(visibleUnits[index], ACTOR_OPAQUE);
     BattleIntro_AnnounceEncounter(enemyCount);
     gBgScroll[0].y = 0;
     WaitFrames(1);

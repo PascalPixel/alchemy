@@ -44,7 +44,7 @@ s32 Party_ListActiveOwnersFar(s16 *owners);
 s32 RollWeaponUnleashFar(struct BattleUnit *owner);
 s32 Party_RemoveActiveOwnerFar(s32 value);
 s32 Item_GetEquippedElementFar(s32 id);
-/// Far call to BattleFx_RollSuccess.
+/// Far call to Battle_RollEffectSuccess.
 s32 BattleHitCheck(s32 caster, s32 target, s32 resistance_category,
                    s32 effect_id, s32 success_scale);
 /// Far call to Battle_CalcAttackDamage.

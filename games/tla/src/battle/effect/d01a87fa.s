@@ -1,5 +1,5 @@
 	.section .rodata
-@ A copy of The Broken Seal's gBattlePalette_ChannelCurveContrast
+@ A copy of The Broken Seal's gColorBuffer_ChannelCurveContrast
 	.global Data_081a87fa
 Data_081a87fa:
 	.2byte 0x0000, 0x0168, 0x02f7, 0x04b1, 0x0699, 0x08b2, 0x0b01, 0x0d8a

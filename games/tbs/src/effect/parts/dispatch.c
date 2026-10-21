@@ -102,11 +102,11 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
 /// canvas, runs the entry of gBattleFx_EffectHandlers for its kind,
 /// and frees them again.
 ///
-/// Called through BattleFx_RunTableEffectFar by BattlePres_RunAttack,
-/// BattlePres_RunItem, BattlePres_RunPsynergyCast and
+/// Called through BattleFx_RunTableEffectFar by BattlePresentation_RunAttack,
+/// BattlePresentation_RunItem, BattlePresentation_RunPsynergyCast and
 /// BattlePresentation_RunUnitTransition (battle/staging.c, the last when the
 /// plan sets neither STAGING_SCENE nor STAGING_BY_ID_RANGE), and by
-/// BattlePres_RunUnitAction (battle/auto_battle.c).
+/// BattlePresentation_RunUnitAction (battle/auto_battle.c).
 ///
 /// Sets work->effect before the handler runs, which every handler and
 /// callback reads the effect through. BATTLE_FX_NONE is no effect and only
@@ -184,7 +184,7 @@ void BattleFx_BuildWindowEdgeTable(void) {
 /// Called by the summon scenes (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Judgment, Boreas, Thor) and the particle streams
 /// as they open. Spawns the
-/// objects through BattleActor_SpawnObjectsForListFar.
+/// objects through BattleObj_SpawnObjectsForListFar.
 void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect) {
   s16 list[14];
   s32 count;
@@ -205,7 +205,7 @@ void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect) {
     }
   }
   list[count] = 0xff; // the end of the list
-  BattleActor_SpawnObjectsForListFar(list, 0);
+  BattleObj_SpawnObjectsForListFar(list, 0);
 }
 
 /// Shows the BG1 battle background behind a cleared canvas: clears the canvas

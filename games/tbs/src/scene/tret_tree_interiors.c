@@ -754,7 +754,7 @@ static void TretPalette_UpdateSceneTint(void) {
   s32 blue;
   u32 color;
   struct FieldWork *fieldWork;
-  struct BattleEffectBuffers *paletteWork;
+  struct ColorBuffer *paletteWork;
 
   fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
   paletteWork = WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER);
@@ -1028,7 +1028,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   // Spread particles around the leader while the landing effect finishes.
   particleOptions = &options;
   particleOptions->palette = 7;
-  particleOptions->update = Effect_AdvanceMotion;
+  particleOptions->update = FieldFx_AdvanceMotion;
   particleOptions->startScaleX = 0xcccc;
   particleOptions->startScaleY = 0xcccc;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
@@ -1040,11 +1040,11 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
     particleVelocity->z = velocityZ;
     velocityX += velocityX / 2;
     particleVelocity->x = velocityX;
-    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocityX,
-                 particleVelocity->y, velocityZ,
-                 EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                     EFFECT_USE_PALETTE | 1,
-                 particleOptions);
+    FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocityX,
+                  particleVelocity->y, velocityZ,
+                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                      EFFECT_USE_PALETTE | 1,
+                  particleOptions);
   }
   SE(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,

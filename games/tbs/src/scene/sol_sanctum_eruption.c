@@ -631,7 +631,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 s32 SolSanctumEruption_Initialize(void) {
   if (gGameState.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
-    FieldEffect_InitSparkles();
+    FieldFx_InitSparkles();
     SolSanctumEruption_PlayHostageScene();
   }
   return 0;
@@ -1307,7 +1307,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     Engine_VramLoad(starSprite->slot, 128, iconPixels + 0x400);
     Engine_HeapRelease(17);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
-    Engine_RunRisingObjectSequence(star, 3);
+    Engine_ItemShowPicture(star, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
   }
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
@@ -1812,7 +1812,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct BattleFxScene *work = gEffectWork;
+  struct FieldFxScene *work = gEffectWork;
   s32 effectIndex;
 
   Engine_AudioPlayCue(SE_292);
@@ -1841,7 +1841,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
       }
     }
   }
-  pair[0]->update = Effect_AnimateVerticalNegative;
+  pair[0]->update = FieldFx_AnimateVerticalNegative;
   pair[0]->sprite->image.priority =
       Object_GetById(ACTOR_WISE_ONE)->sprite->image.priority;
   {
@@ -1849,7 +1849,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
     struct FieldActor *risingEffect = pair[1];
 
     risingEffect->sprite->image.priority = wiseOne->sprite->image.priority;
-    risingEffect->update = Effect_AnimateVerticalPositive;
+    risingEffect->update = FieldFx_AnimateVerticalPositive;
     risingEffect->priorityFlags = 2;
   }
 }

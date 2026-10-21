@@ -205,10 +205,8 @@ static void DebugMenu_RunMessageTest(void) {
 
 /// Runs the shop test's preset inventory, money and ailment setup. Talking
 /// to ACTOR_ARMOR_SHOPKEEPER: the debug shop, with 200000 coins, broken
-/// equipment and afflicted members (Battle_ApplyPresetItemsAndFlags).
-static void DebugMenu_RunPresetShop(void) {
-  Battle_ApplyPresetItemsAndFlags(1);
-}
+/// equipment and afflicted members (Shop_OpenDebugShop).
+static void DebugMenu_RunPresetShop(void) { Shop_OpenDebugShop(1); }
 
 /// Unused: an empty function nothing calls.
 UNUSED static void DebugMenu_NoOp(void) {}
@@ -232,7 +230,7 @@ static void DebugMenu_IgnorePsynergy(void) {}
 /// sets the effect's childMode, and Force's shot then leaves its target where
 /// it is (object/psynergy_effects/force.c).
 static void DebugMenu_EnableEffectChildMode(void) {
-  ((struct BattleFxScene *)gEffectWork)->childMode = 1;
+  ((struct FieldFxScene *)gEffectWork)->childMode = 1;
 }
 
 #if TBS_PATCH_3

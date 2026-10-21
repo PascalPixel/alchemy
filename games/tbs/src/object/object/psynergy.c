@@ -94,12 +94,12 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Find the scene's events, and choose how the effect plays. The before
   // event runs before the two flags are read, so its script can change them.
-  before = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_CAST),
-                                      abilityGroup, &target);
-  after = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_AFTER_CAST),
+  before = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_CAST),
                                      abilityGroup, &target);
-  during = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
-                                      abilityGroup, &target);
+  after = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_AFTER_CAST),
+                                    abilityGroup, &target);
+  during = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                     abilityGroup, &target);
   target = -1;
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
@@ -116,46 +116,46 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Play the effect.
   if (work->mode == MODE_WORLD_MAP)
-    BattleEffect_ClearOutOfBoundsObjects();
-  BattleFx_LoadActionEffectResources(abilityId, 0);
+    ObjectTable_ClearOutOfBounds();
+  FieldFx_LoadActionEffectResources(abilityId, 0);
   work->resolvingAction = 1;
-  BattleFx_SetupObjectPair(gGameState.selectedActor, target);
+  FieldFx_SetupObjectPair(gGameState.selectedActor, target);
   EventObject_Initialize();
 
   Field_RunEventAction(before, userId, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT)) {
     if (GameFlag_TestFar(FLAG_PSYNERGY_TARGET))
-      BattleFx_DispatchRequestKind();
+      FieldFx_DispatchRequestKind();
     else
-      BattleFx_Run();
+      FieldFx_Run();
   }
-  EffectRuntime_StopCurrentObject();
+  FieldFx_StopCasterHook();
   Field_RunEventAction(after, userId, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT))
-    BattleFx_ClearChildValueOnMismatch();
+    FieldFx_ClearChildValueOnMismatch();
   GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
   work->resolvingAction = 0;
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
   if (work->mode == MODE_WORLD_MAP)
-    BattleEffect_ClearAllObjects();
+    ObjectTable_Respawn();
   return 0;
 }
 
 /// Returns whether the scene has a Psynergy event, in any phase, for
 /// Psynergy of group and what the leader faces. Exported as
-/// BattleFx_HasMatchingEvent5Far, which no ☀️ code names.
-s32 BattleFx_HasMatchingEvent5(s32 group) {
+/// FieldFx_HasMatchingEvent5Far, which no ☀️ code names.
+s32 FieldFx_HasMatchingEvent5(s32 group) {
   s32 target;
   s32 eventAddress =
-      (s32)BattleFx_FindMatchingEvent(PSYNERGY_EV_ANY, (u16)group, &target);
+      (s32)FieldFx_FindMatchingEvent(PSYNERGY_EV_ANY, (u16)group, &target);
   return (u32)((-eventAddress) | eventAddress) >> 31;
 }
 
 /// Returns whether the scene has an event for item and what the leader faces.
-/// Called by the item menu (menu/item.c) through BattleFx_HasTriggerFar: such
+/// Called by the item menu (menu/item.c) through FieldFx_HasTriggerFar: such
 /// an item closes the menu and is used on the field.
-u32 BattleFx_HasTrigger(u16 item) {
+u32 FieldFx_HasTrigger(u16 item) {
   s32 eventAddress;
 
   eventAddress = Field_FindItemEvent(item);

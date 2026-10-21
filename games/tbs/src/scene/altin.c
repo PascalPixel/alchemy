@@ -31,12 +31,13 @@
 /// sound and its spray running from Village_ApplyWaterLevel, until the party
 /// steps near it (Village_ScareOffBeast): it stops, cries out and hops away
 /// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (touches 2 to
-/// 9, Village_EnterDoor) lead into AltinInteriors and into the Altin Sanctum,
-/// whose wide door is redrawn by hand; coming back out of the Sanctum (entrance
-/// 3) the area name is not shown again. Three doorways (touches 10 to 12,
-/// Village_WalkThroughDoorway) and exit 13 lead into the mine, to Altin Peak's
-/// AltinPeak1, AltinPeak4, AltinPeak8 and AltinPeak7. A pillar that Move pushes
-/// to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
+/// 9, Village_EnterDoor, each leaving by the exit of its number) lead into
+/// AltinInteriors and into the Altin Sanctum (ALTIN_TO_SANCTUM), whose wide
+/// door is redrawn by hand; coming back out of the Sanctum (ALTIN_FROM_SANCTUM)
+/// the area name is not shown again. Three doorways (touches 10 to 12,
+/// Village_WalkThroughDoorway) and the exit ALTIN_TO_ALTIN_PEAK_7 lead into the
+/// mine, to Altin Peak's AltinPeak1, AltinPeak4, AltinPeak8 and AltinPeak7. A
+/// pillar that Move pushes to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
 ///
 /// Inside (AltinInteriors), two families shelter in the inn's Room One and Room
 /// Two, as the game calls them, until the first and the second drop send them
@@ -85,42 +86,65 @@
 #define SCENE_ALTIN_VILLAGE ((s32)&SceneId_Altin)
 #define SCENE_ALTIN_HOUSES ((s32)&SceneId_AltinInteriors)
 
-/// The village's actors.
+/// The village's actors, numbering the rows of gAltinVillage_Placements.
+/// Villagers without a scene of their own are named by what they say before
+/// the hydros statues are beaten.
 enum AltinVillageActor {
-  ACTOR_GREETING_VILLAGER = 8,
-  ACTOR_CURIOUS_VILLAGER = 9,
-  ACTOR_THIRSTY_VILLAGER = 14,
+  ACTOR_GREETING_VILLAGER = ACTOR_FIRST_PLACED, ///< Village_AskAboutFirstVisit
+  ACTOR_CURIOUS_VILLAGER,                       ///< Village_AskAboutHydros
+  /// "How horrible! My house is totally coated in monster spit."
+  ACTOR_VILLAGER_COATED_HOUSE,
+  /// "Even the mine is submerged. No one can enter it."
+  ACTOR_VILLAGER_SUBMERGED_MINE,
+  /// "If we could just destroy the monsters, all the water should drain
+  /// away."
+  ACTOR_VILLAGER_DESTROY_MONSTERS,
+  /// "Altin always used to run short on water. Now we're all flooded in."
+  ACTOR_VILLAGER_WATER_LUCK,
+  ACTOR_THIRSTY_VILLAGER, ///< Village_TalkToThirstyVillager
   /// Villagers who come back as the water recedes.
-  ACTOR_RETURNING_VILLAGER_A = 15,
-  ACTOR_RETURNING_VILLAGER_B = 16,
-  ACTOR_RETURNING_VILLAGER_C = 17,
-  ACTOR_WATER_BEAST = 18,
-  ACTOR_MOVABLE_PILLAR = 19,
+  ACTOR_RETURNING_VILLAGER_A,
+  ACTOR_RETURNING_VILLAGER_B,
+  ACTOR_RETURNING_VILLAGER_C,
+  ACTOR_WATER_BEAST,
+  ACTOR_MOVABLE_PILLAR,
   /// The armor and item sellers, waiting outside while their shops are
   /// under water.
-  ACTOR_FLOODED_ARMOR_SELLER = 20,
-  ACTOR_FLOODED_ITEM_SELLER = 21,
+  ACTOR_FLOODED_ARMOR_SELLER,
+  ACTOR_FLOODED_ITEM_SELLER,
   /// Three ground sprites drawn under the party.
-  ACTOR_FIRST_GROUND_SPRITE = 22,
-  ACTOR_SECOND_GROUND_SPRITE = 23,
-  ACTOR_THIRD_GROUND_SPRITE = 24
+  ACTOR_FIRST_GROUND_SPRITE,
+  ACTOR_SECOND_GROUND_SPRITE,
+  ACTOR_THIRD_GROUND_SPRITE
 };
 
-/// The houses' actors.
+/// The houses' actors, numbering the rows of gAltinHouses_Placements, named as
+/// the village's are.
 enum AltinHouseActor {
   /// The family sheltering in the inn's Room One until the first drop.
-  ACTOR_ROOM_ONE_GUEST = 8,
-  ACTOR_ROOM_ONE_SECOND_GUEST = 9,
+  ACTOR_ROOM_ONE_GUEST = ACTOR_FIRST_PLACED,
+  ACTOR_ROOM_ONE_SECOND_GUEST,
   /// The family in Room Two, until the second drop.
-  ACTOR_ROOM_TWO_GUEST = 10,
-  ACTOR_ROOM_TWO_SECOND_GUEST = 11,
-  ACTOR_KISSING_VILLAGER = 14,
-  ACTOR_WEAPON_SELLER = 15,
-  ACTOR_ITEM_SELLER = 16,
-  ACTOR_ARMOR_SELLER = 17,
-  ACTOR_INNKEEPER = 18,
-  ACTOR_COOK = 20,
-  ACTOR_MINE_WORKER = 21
+  ACTOR_ROOM_TWO_GUEST,
+  ACTOR_ROOM_TWO_SECOND_GUEST,
+  /// "I didn't want to leave my hometown... That's why I came back." He and
+  /// ACTOR_VILLAGER_NO_PLACE_LIKE_HOME are the kissing villager's "Mom and
+  /// Pop", who have been acting weird since the ruins were found: his
+  /// thoughts won't give up a spot at the end of the mine's easternmost
+  /// passage, and hers say "My husband's sense for finding treasure has never
+  /// failed."
+  ACTOR_VILLAGER_HOMETOWN,
+  /// "I heard someone killed the water beasts. That's why I came back."
+  ACTOR_VILLAGER_NO_PLACE_LIKE_HOME,
+  ACTOR_KISSING_VILLAGER,
+  ACTOR_WEAPON_SELLER,
+  ACTOR_ITEM_SELLER,
+  ACTOR_ARMOR_SELLER,
+  ACTOR_INNKEEPER,
+  /// "I'd give anything for someone to return Altin to its former glory."
+  ACTOR_VILLAGER_FORMER_GLORY,
+  ACTOR_COOK,
+  ACTOR_MINE_WORKER
 };
 
 /// The village's water level, set on entry from the mine's drain flags.
@@ -137,15 +161,14 @@ enum {
   INN_ALTIN = 6
 };
 
+/// The doors of the village, by their index in gAltinVillage_Doors.
 enum {
-  /// Coming out of the Sanctum (its exit 40).
-  ENTRANCE_FROM_SANCTUM = 3,
   /// The door triggers are numbered from 2 in the village's event table, and
   /// each takes the exit of its own number.
   FIRST_DOOR_TRIGGER = 2,
-  /// The Sanctum's door, trigger 3 and exit 3 (the Sanctum's entrance 29).
-  DOOR_SANCTUM = 1,
-  DOOR_STRAIGHT_IN = 6
+  /// The Sanctum's door, which leads to SANCTUM_FROM_ALTIN.
+  DOOR_SANCTUM = ALTIN_TO_SANCTUM - FIRST_DOOR_TRIGGER,
+  DOOR_STRAIGHT_IN = ALTIN_TO_ALTIN_INTERIORS_EAST - FIRST_DOOR_TRIGGER
 };
 
 enum { SPRITE_SPRAY = 222, ANIM_BEAST_SPIT = 3 };
@@ -204,17 +227,21 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   s32 scene = gGameState.scene;
   if (scene == SCENE_ALTIN_VILLAGE) {
     if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED)) {
-      gAltinVillage_Placements[5].talkFacing = TALK_FACE_PARTY;
-      gAltinVillage_Placements[6].talkFacing = TALK_FACE_PARTY;
+      gAltinVillage_Placements[ACTOR_VILLAGER_WATER_LUCK - ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACE_PARTY;
+      gAltinVillage_Placements[ACTOR_THIRSTY_VILLAGER - ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACE_PARTY;
     }
     return gAltinVillage_Placements;
   }
   if (scene == SCENE_ALTIN_HOUSES) {
     if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN))
-      gAltinHouses_Placements[1].talkFacing = TALK_FACE_PARTY_AND_BACK;
+      gAltinHouses_Placements[ACTOR_ROOM_ONE_SECOND_GUEST - ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACE_PARTY_AND_BACK;
     if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
         Engine_GameFlagIsSet(FLAG_ALTIN_MINE_THIRD_DRAIN))
-      gAltinHouses_Placements[3].talkFacing = TALK_FACE_PARTY_AND_BACK;
+      gAltinHouses_Placements[ACTOR_ROOM_TWO_SECOND_GUEST - ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACE_PARTY_AND_BACK;
     FieldScene_PrepareActors(gAltinHouses_Placements);
     return gAltinHouses_Placements;
   }
@@ -512,9 +539,9 @@ static void Village_EnterDoor(void) {
     Engine_EventWait(4);
   } else {
     Event_PlayCue(SE_DOOR_OPEN);
-    // XXX: the fourth door (exit 5) also redraws two cells at (8, 17), far
-    // from it; what they show would settle why.
-    if (doorIndex == 3) {
+    // XXX: the fourth door (ALTIN_TO_ALTIN_INTERIORS_NORTH) also redraws two
+    // cells at (8, 17), far from it; what they show would settle why.
+    if (doorIndex == ALTIN_TO_ALTIN_INTERIORS_NORTH - FIRST_DOOR_TRIGGER) {
       Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
     Map_AnimateCells(gAltinVillage_Doors[doorIndex].steps, column, row);
@@ -702,7 +729,7 @@ static void Village_ApplyWaterLevel(void) {
     Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_BEAST_SPIT);
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
   }
-  if (gGameState.entrance == ENTRANCE_FROM_SANCTUM) {
+  if (gGameState.entrance == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   Map_CopyCellAttributes(0, 33, 4, 3, 20, 41);
@@ -1070,8 +1097,8 @@ struct SceneEvent gAltinVillage_Events[] = {
     {TOUCH_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
     {TOUCH_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
     {TOUCH_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
-    {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 13, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_7},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_TO_WORLD_MAP},
     {TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
@@ -1092,14 +1119,14 @@ struct SceneEvent gAltinVillage_Events[] = {
     {EVENT_TALK, ACTOR_GREETING_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgAltinThankYouSoMuchForDefeating)},
     {EVENT_TALK, ACTOR_CURIOUS_VILLAGER, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowCanThoseCreaturesSpitUp)},
     {EVENT_TALK, ACTOR_CURIOUS_VILLAGER, CONDITION_ALWAYS, EVENT_SCRIPT(Village_AskAboutHydros)},
-    {EVENT_TALK, 10, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowHorribleMyHouseIsTotally)},
-    {EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAltinOnceTheMineOpensAgainWell)},
-    {EVENT_TALK, 11, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinEvenTheMineIsSubmergedNo)},
-    {EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAltinTheyAlreadyStartedMiningTheUpper)},
-    {EVENT_TALK, 12, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIfWeCouldJustDestroyThe)},
-    {EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAltinTheWaterDrainedOutOfThe)},
-    {EVENT_TALK, 13, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinAltinAlwaysUsedToRunShort)},
-    {EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAltinThankGoodnessTheVillageIsFree)},
+    {EVENT_TALK, ACTOR_VILLAGER_COATED_HOUSE, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowHorribleMyHouseIsTotally)},
+    {EVENT_TALK, ACTOR_VILLAGER_COATED_HOUSE, CONDITION_ALWAYS, MSGNO(MsgAltinOnceTheMineOpensAgainWell)},
+    {EVENT_TALK, ACTOR_VILLAGER_SUBMERGED_MINE, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinEvenTheMineIsSubmergedNo)},
+    {EVENT_TALK, ACTOR_VILLAGER_SUBMERGED_MINE, CONDITION_ALWAYS, MSGNO(MsgAltinTheyAlreadyStartedMiningTheUpper)},
+    {EVENT_TALK, ACTOR_VILLAGER_DESTROY_MONSTERS, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIfWeCouldJustDestroyThe)},
+    {EVENT_TALK, ACTOR_VILLAGER_DESTROY_MONSTERS, CONDITION_ALWAYS, MSGNO(MsgAltinTheWaterDrainedOutOfThe)},
+    {EVENT_TALK, ACTOR_VILLAGER_WATER_LUCK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinAltinAlwaysUsedToRunShort)},
+    {EVENT_TALK, ACTOR_VILLAGER_WATER_LUCK, CONDITION_ALWAYS, MSGNO(MsgAltinThankGoodnessTheVillageIsFree)},
     {EVENT_TALK, ACTOR_THIRSTY_VILLAGER, CONDITION_ALWAYS, EVENT_SCRIPT(Village_TalkToThirstyVillager)},
     {EVENT_TALK, ACTOR_RETURNING_VILLAGER_A, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheWatersAroundHereHaveSubsided)},
     {EVENT_TALK, ACTOR_RETURNING_VILLAGER_A, CONDITION_ALWAYS, MSGNO(MsgAltinTheVillageWentRightBackTo)},
@@ -1116,19 +1143,19 @@ struct SceneEvent gAltinVillage_Events[] = {
         MSGNO(MsgAltinItsAlmostLikeTheyreTurningThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CURIOUS_VILLAGER, CONDITION_ALWAYS,
         MSGNO(MsgAltinIWasAfraidMoreWaterWould)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinImGladISavedMyVery)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_COATED_HOUSE, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinImGladISavedMyVery)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_COATED_HOUSE, CONDITION_ALWAYS,
         MSGNO(MsgAltinIHopeAltinMineWillThrive)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SUBMERGED_MINE, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinEvenTheToughestOfMinersCant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SUBMERGED_MINE, CONDITION_ALWAYS,
         MSGNO(MsgAltinTheWaterSeepedIntoTheMine)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DESTROY_MONSTERS, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinIfTheWaterBeastsContinueTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DESTROY_MONSTERS, CONDITION_ALWAYS,
         MSGNO(MsgAltinItsSoHumidInsideThatCave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinWaterIsNiceButNotWhen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WATER_LUCK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinWaterIsNiceButNotWhen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WATER_LUCK, CONDITION_ALWAYS,
         MSGNO(MsgAltinThatStrangeChamberInTheMines)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRSTY_VILLAGER, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinUghTheMonstersSpewedOutAll)},
@@ -1154,13 +1181,13 @@ struct SceneEvent gAltinVillage_Events[] = {
 };
 
 struct SceneEvent gAltinHouses_Events[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
-    {EVENT_EXIT, 6, CONDITION_ALWAYS, 6},
-    {EVENT_EXIT, 7, CONDITION_ALWAYS, 7},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTHWEST},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTH},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTHEAST},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_WEST},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_SOUTHEAST},
+    {EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_EAST},
+    {EVENT_EXIT, 7, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST},
     {EVENT_EXIT, 8, CONDITION_ALWAYS, 8},
     {EVENT_EXIT, 9, CONDITION_ALWAYS, 9},
     {EVENT_TALK, ACTOR_ROOM_ONE_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoMatterWhatHappensIdNever)},
@@ -1175,18 +1202,18 @@ struct SceneEvent gAltinHouses_Events[] = {
     {EVENT_TALK, ACTOR_ROOM_TWO_SECOND_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinItsBeenALongTimeSince)},
     {EVENT_TALK, ACTOR_ROOM_TWO_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinDontBeTooHarshOnThose)},
     {EVENT_TALK, ACTOR_ROOM_TWO_SECOND_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIfOnlyTheyHadLeftA)},
-    {EVENT_TALK, 12, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIDidntWantToLeaveMy)},
-    {EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAltinReallyAncientRuinsAtTheBottom)},
-    {EVENT_TALK, 13, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIHeardSomeoneKilledTheWater)},
-    {EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAltinThereProbablyIsntMuchTreasureIn)},
+    {EVENT_TALK, ACTOR_VILLAGER_HOMETOWN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIDidntWantToLeaveMy)},
+    {EVENT_TALK, ACTOR_VILLAGER_HOMETOWN, CONDITION_ALWAYS, MSGNO(MsgAltinReallyAncientRuinsAtTheBottom)},
+    {EVENT_TALK, ACTOR_VILLAGER_NO_PLACE_LIKE_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIHeardSomeoneKilledTheWater)},
+    {EVENT_TALK, ACTOR_VILLAGER_NO_PLACE_LIKE_HOME, CONDITION_ALWAYS, MSGNO(MsgAltinThereProbablyIsntMuchTreasureIn)},
     {EVENT_TALK, ACTOR_KISSING_VILLAGER, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(Houses_AskAboutMonsters)},
     {EVENT_TALK, ACTOR_KISSING_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgAltinSomethingsWrongWithMomAndPop)},
     {EVENT_TALK, ACTOR_WEAPON_SELLER, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_TalkToWeaponSeller)},
     {EVENT_TALK, ACTOR_ARMOR_SELLER, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToArmorSeller)},
     {EVENT_TALK, ACTOR_ITEM_SELLER, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToItemSeller)},
     {EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_TalkToInnkeeper)},
-    {EVENT_TALK, 19, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIdGiveAnythingForSomeoneTo)},
-    {EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAltinThereIsAnEndlessDesertWest)},
+    {EVENT_TALK, ACTOR_VILLAGER_FORMER_GLORY, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIdGiveAnythingForSomeoneTo)},
+    {EVENT_TALK, ACTOR_VILLAGER_FORMER_GLORY, CONDITION_ALWAYS, MSGNO(MsgAltinThereIsAnEndlessDesertWest)},
     {EVENT_TALK, ACTOR_COOK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinICameFromXianICook)},
     {EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgAltinWestOfTheMountainsIsVery)},
     {EVENT_TALK, ACTOR_MINE_WORKER, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoneOfUsCanGoHome)},
@@ -1212,12 +1239,12 @@ struct SceneEvent gAltinHouses_Events[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_TWO_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinImJustGladToGetMy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_TWO_SECOND_GUEST, CONDITION_ALWAYS,
         MSGNO(MsgAltinHowCanITrulyBeHappy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheBottomOfTheMineThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HOMETOWN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheBottomOfTheMineThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HOMETOWN, CONDITION_ALWAYS,
         MSGNO(MsgAltinCripesAncientRuinsDownInThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_NO_PLACE_LIKE_HOME, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinMyHusbandsSenseForFindingTreasure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_NO_PLACE_LIKE_HOME, CONDITION_ALWAYS,
         MSGNO(MsgAltinIHadNoIdeaThereWere)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KISSING_VILLAGER, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinMomAndPopKnowSomethingAbout)},
@@ -1237,8 +1264,8 @@ struct SceneEvent gAltinHouses_Events[] = {
         MSGNO(MsgAltinWellComeThroughThisAllRight)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
         MSGNO(MsgAltinIThinkThatTempleWasCalled)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIKnowTheyDontLookSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FORMER_GLORY, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIKnowTheyDontLookSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FORMER_GLORY, CONDITION_ALWAYS,
         MSGNO(MsgAltinYouWontBeAbleToGo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIBecameACookAfterI)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS,

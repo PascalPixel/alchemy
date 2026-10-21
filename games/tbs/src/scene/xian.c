@@ -1,9 +1,9 @@
 /// @file
 /// Xian (scene 72), the village of kinu, silk, reached through Mogall Forest,
 /// which sends its silk along Silk Road to Tolbi and where martial arts are
-/// taught at Master Feh's school. Its
-/// houses, shops and inn are xian_interiors.c; the school itself is a room of
-/// the Fuchin Temple overlay (FuchinTemple2's entrance 2, fuchin_temple.c).
+/// taught at Master Feh's school. Its houses, shops and inn are
+/// xian_interiors.c; the school itself is a room of the Fuchin Temple overlay
+/// (FuchinTemple2, which XIAN_TO_FUCHIN_TEMPLE_2 leads into; fuchin_temple.c).
 ///
 /// The village's talk turns on FLAG_XIAN_HEARD_HSU_TRAPPED, which Master
 /// Hama's Reveal lesson at Lama Temple sets: every villager's talk and Mind
@@ -19,8 +19,9 @@
 /// After, the villagers say that Hsu, Master Feh's apprentice, was trapped
 /// under a boulder in a rockslide on Silk Road, that everyone went to clear
 /// the rocks, and that young warriors saved Altin. Xian_Initialize then also
-/// turns villager 13 west and stands the kung fu student where his strike
-/// leaves him, and Xian_GetPlacements turns villager 15 to face the party.
+/// turns ACTOR_VILLAGER_SILK_CLOTHES west and stands the kung fu student where
+/// his strike leaves him, and Xian_GetPlacements turns
+/// ACTOR_VILLAGER_DISASTERS to face the party.
 ///
 /// Two small scenes run on scene flags, which last until the party next
 /// enters a scene other than by returning from a battle:
@@ -30,8 +31,8 @@
 ///   the leader over it (Xian_JumpOverSpilledWater), and she walks back for
 ///   more. Frost freezes the puddle (FLAG_SCENE_TEMP_01) into ice that can be
 ///   stood on. A leader who stands in her way for two seconds makes her raise
-///   trigger 200 (Xian_WatchWaterCarrierPath), and both walk back to the
-///   start of her round.
+///   XIAN_TRIGGER_CARRIER_BLOCKED (Xian_WatchWaterCarrierPath), and both walk
+///   back to the start of her round.
 /// - the kung fu student shows his strike on the tree before him once
 ///   (FLAG_SCENE_TEMP_02), and Force on the tree makes it jump on its own, to
 ///   his surprise (FLAG_SCENE_TEMP_03 picks his second line).
@@ -39,11 +40,13 @@
 /// Mist, a Mercury Djinni, waits in the village until she joins, which she
 /// does when spoken to.
 ///
-/// A jar holds a Lucky Medal. Doors 1 to 5 lead into the houses, shops and
-/// inn (scene 73), door 6 into Xian Sanctum, its sliding door playing SE_188,
-/// door 7 into Master Feh's school, and trigger 8 out to the world map.
-/// Coming back from the school (entrance 10) or the Sanctum (entrance 11)
-/// clears FLAG_SHOW_LOCATION_NAME, so the name is not shown again.
+/// A jar holds a Lucky Medal. Five doors lead into the houses, shops and inn
+/// (scene 73, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP), XIAN_TO_SANCTUM
+/// into Xian Sanctum, its sliding door playing SE_188, XIAN_TO_FUCHIN_TEMPLE_2
+/// into Master Feh's school, and XIAN_TO_WORLD_MAP out to the world map.
+/// Coming back from the school (XIAN_FROM_FUCHIN_TEMPLE_2) or the Sanctum
+/// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_LOCATION_NAME, so the name is not
+/// shown again.
 
 #include "game_state.h"
 #include "unit/import.h"
@@ -89,12 +92,30 @@
 //   FLAG_SCENE_TEMP_02  the kung fu student has shown his strike on the tree
 //   FLAG_SCENE_TEMP_03  Force has made the tree jump once
 
-/// The actors, numbered from the placements (the first placed is actor 8).
-enum {
+/// The actors, numbering the rows of gXian_Placements. Each villager is named
+/// by what they talk of before Xian hears of Hsu.
+enum XianActor {
+  /// "This is Xian. Travelers are welcome here!"
+  ACTOR_VILLAGER_WELCOME = ACTOR_FIRST_PLACED,
+  /// "Young warriors, very gallant! You came through Mogall Forest?"
+  /// (Xian_AskAboutYoungWarriors)
+  ACTOR_VILLAGER_YOUNG_WARRIORS,
+  /// "Xian is the village of kinu. Kinu means silk."
+  ACTOR_VILLAGER_KINU,
+  /// "Martial arts are very popular in Xian."
+  ACTOR_VILLAGER_MARTIAL_ARTS,
+  /// "You warriors should visit Master Feh's school. You will be surprised!"
+  ACTOR_VILLAGER_FEHS_SCHOOL,
+  /// "My clothes are not silk. Silk is very expensive."
+  ACTOR_VILLAGER_SILK_CLOTHES,
   /// Strikes the tree before him with a shout. "Hoo-whaaa... Hachaaa!"
-  ACTOR_KUNG_FU_STUDENT = 14,
+  ACTOR_KUNG_FU_STUDENT,
+  /// "Disasters from the sky... Many, many thieves..."
+  ACTOR_VILLAGER_DISASTERS,
+  /// "This is the mulberry orchard."
+  ACTOR_VILLAGER_MULBERRY_ORCHARD,
   /// Feizhi, as at Alpine Crossing: looking for someone to take her west.
-  ACTOR_FEIZHI = 17,
+  ACTOR_FEIZHI,
   /// Carries water along the street. "You made me spill my water!"
   ACTOR_WATER_CARRIER,
   /// The tree the student strikes; it jumps when hit.
@@ -258,20 +279,23 @@ const struct SceneRegion *Xian_GetRegions(void) { return NULL; }
 
 const u32 *Xian_GetExits(void) { return gXian_Exits; }
 
-/// Once Xian has heard Hsu is trapped, actor 15 turns to face the party.
+/// Once Xian has heard Hsu is trapped, ACTOR_VILLAGER_DISASTERS turns to face
+/// the party.
 const struct ScenePlacement *Xian_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0)
-    gXian_Placements[7].talkFacing = TALK_FACE_PARTY;
+    gXian_Placements[ACTOR_VILLAGER_DISASTERS - ACTOR_FIRST_PLACED].talkFacing =
+        TALK_FACE_PARTY;
   return gXian_Placements;
 }
 
-/// Villager 9 asks about the young warriors' way here, before Xian hears of
-/// Hsu. "Young warriors, very gallant! You came through Mogall Forest?" A yes
-/// earns respect; a no is a lie, since Silk Road from Altin is blocked.
+/// A villager, ACTOR_VILLAGER_YOUNG_WARRIORS, asks about the young warriors'
+/// way here, before Xian hears of Hsu. "Young warriors, very gallant! You came
+/// through Mogall Forest?" A yes earns respect; a no is a lie, since Silk Road
+/// from Altin is blocked.
 static void Xian_AskAboutYoungWarriors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianYoungWarriorsVeryGallantCame);
-  Engine_EventAskYesNo(9, 0);
+  Engine_EventAskYesNo(ACTOR_VILLAGER_YOUNG_WARRIORS, 0);
   Engine_EventEnd();
 }
 
@@ -582,11 +606,12 @@ static void Xian_JumpOverSpilledWater(void) {
   }
 }
 
-/// Walks the leader through a doorway and leaves by its exit.
+/// Walks the leader through a doorway and leaves by its exit; through the
+/// Sanctum's door the leader walks straight in, without centering on it.
 static void Xian_WalkThroughExit(s32 exitId) {
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  if (exitId == 6) {
+  if (exitId == XIAN_TO_SANCTUM) {
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
@@ -597,39 +622,40 @@ static void Xian_WalkThroughExit(s32 exitId) {
 }
 
 /// Walking north into one of Xian's doors: it opens and the party goes in.
-/// Doors 1 to 5 lead into the houses, shops and inn, door 6 into Xian
-/// Sanctum (SE_188) and door 7 into Master Feh's school.
+/// Each door's trigger is the number of the exit it leads by: five lead into
+/// the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188) and
+/// XIAN_TO_FUCHIN_TEMPLE_2 into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
   struct EventWork *event = gEventWork;
 
   Engine_EventBegin();
 
   switch (event->touchedTrigger) {
-  case 1:
+  case XIAN_TO_HOUSE:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps1, 81, 18);
     break;
-  case 2:
+  case XIAN_TO_HSUS_HOUSE:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps2, 83, 11);
     break;
-  case 3:
+  case XIAN_TO_XIAN_INTERIORS_EAST:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps2, 86, 11);
     break;
-  case 4:
+  case XIAN_TO_INN:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps3, 84, 24);
     break;
-  case 5:
+  case XIAN_TO_WEAPON_AND_ARMOR_SHOP:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps3, 72, 7);
     break;
-  case 6:
+  case XIAN_TO_SANCTUM:
     Engine_AudioPlayCue(SE_188);
     Engine_MapAnimateCells(gXian_DoorSteps4, 69, 11);
     break;
-  case 7:
+  case XIAN_TO_FUCHIN_TEMPLE_2:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gXian_DoorSteps5, 83, 7);
     break;
@@ -725,11 +751,13 @@ s32 Xian_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   BattleFx_SetQueuedSoundAndPlay(SE_169);
-  if (gGameState.entrance > 9) {
+  // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_2) or the Sanctum
+  // (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name is not shown.
+  if (gGameState.entrance >= XIAN_FROM_FUCHIN_TEMPLE_2) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
   if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
-    Actor_FaceDirection(13, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_VILLAGER_SILK_CLOTHES, FACING_WEST, 0);
     Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
     Engine_ActorFaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
     if (Engine_GameFlagIsSet(FLAG_FEIZHI_WENT_TO_HSU)) {
@@ -984,54 +1012,54 @@ struct SceneEvent gXian_Events[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_OpenDoorAndLeave) },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, XIAN_TO_WORLD_MAP },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 21, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 2, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 3, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
-    { EVENT_TALK, 8, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsXianTravelersAreWelcome) },
-    { EVENT_TALK, 9, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_AskAboutYoungWarriors) },
-    { EVENT_TALK, 10, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianXianIsTheVillageOfKinu) },
-    { EVENT_TALK, 11, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMartialArtsAreVeryPopularIn) },
-    { EVENT_TALK, 12, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouWarriorsShouldVisitMasterFehs) },
-    { EVENT_TALK, 13, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMyClothesAreNotSilkSilk) },
+    { EVENT_TALK, ACTOR_VILLAGER_WELCOME, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsXianTravelersAreWelcome) },
+    { EVENT_TALK, ACTOR_VILLAGER_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_AskAboutYoungWarriors) },
+    { EVENT_TALK, ACTOR_VILLAGER_KINU, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianXianIsTheVillageOfKinu) },
+    { EVENT_TALK, ACTOR_VILLAGER_MARTIAL_ARTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMartialArtsAreVeryPopularIn) },
+    { EVENT_TALK, ACTOR_VILLAGER_FEHS_SCHOOL, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouWarriorsShouldVisitMasterFehs) },
+    { EVENT_TALK, ACTOR_VILLAGER_SILK_CLOTHES, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMyClothesAreNotSilkSilk) },
     { EVENT_TALK, ACTOR_KUNG_FU_STUDENT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_TalkToKungFuStudent) },
-    { EVENT_TALK, 15, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianDisastersFromTheSkyManyMany) },
-    { EVENT_TALK, 16, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsTheMulberryOrchardWhen) },
+    { EVENT_TALK, ACTOR_VILLAGER_DISASTERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianDisastersFromTheSkyManyMany) },
+    { EVENT_TALK, ACTOR_VILLAGER_MULBERRY_ORCHARD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsTheMulberryOrchardWhen) },
     { EVENT_TALK, ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_TalkToFeizhi) },
     { EVENT_TALK, ACTOR_WATER_CARRIER, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_TalkToWaterCarrier) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgXianXianIsAPeacefulVillageBut) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgXianThereWasARockslideOnSilk) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgXianIWentToHelpMoveBoulders) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgXianThePeopleWhoClearedTheRockslide) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgXianHsuIsVeryGoodAtKung) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgXianThePeopleOfXianLoveTheir) },
+    { EVENT_TALK, ACTOR_VILLAGER_WELCOME, CONDITION_ALWAYS, MSGNO(MsgXianXianIsAPeacefulVillageBut) },
+    { EVENT_TALK, ACTOR_VILLAGER_YOUNG_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgXianThereWasARockslideOnSilk) },
+    { EVENT_TALK, ACTOR_VILLAGER_KINU, CONDITION_ALWAYS, MSGNO(MsgXianIWentToHelpMoveBoulders) },
+    { EVENT_TALK, ACTOR_VILLAGER_MARTIAL_ARTS, CONDITION_ALWAYS, MSGNO(MsgXianThePeopleWhoClearedTheRockslide) },
+    { EVENT_TALK, ACTOR_VILLAGER_FEHS_SCHOOL, CONDITION_ALWAYS, MSGNO(MsgXianHsuIsVeryGoodAtKung) },
+    { EVENT_TALK, ACTOR_VILLAGER_SILK_CLOTHES, CONDITION_ALWAYS, MSGNO(MsgXianThePeopleOfXianLoveTheir) },
     { EVENT_TALK, ACTOR_KUNG_FU_STUDENT, CONDITION_ALWAYS, MSGNO(MsgXianAltinWasFloodedWithWaterBut) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgXianWeClearedTheRocksFromSilk) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgXianManyStrangeThingsHappenedAllAt) },
+    { EVENT_TALK, ACTOR_VILLAGER_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianWeClearedTheRocksFromSilk) },
+    { EVENT_TALK, ACTOR_VILLAGER_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianManyStrangeThingsHappenedAllAt) },
     { (1u << 28) | PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_UpdatePuddlePriority) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_FreezeSpilledWater) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_StrikeTrainingTreeWithForce) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheseChildrenMustHaveComeTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouYoungWarriorsLookStrongBut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianIHopeManyPeopleComeTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianFightingWithKicksAndPunchesIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMasterFehsSchoolIsTrainingIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianSilkIsShinyAndSmoothIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOME, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheseChildrenMustHaveComeTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouYoungWarriorsLookStrongBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_KINU, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianIHopeManyPeopleComeTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MARTIAL_ARTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianFightingWithKicksAndPunchesIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEHS_SCHOOL, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMasterFehsSchoolIsTrainingIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SILK_CLOTHES, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianSilkIsShinyAndSmoothIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KUNG_FU_STUDENT, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianBreakingTreesWithMyHandHurts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMasterFehSaidYahAndThen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheOrchardGivesTheVillageLife) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DISASTERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMasterFehSaidYahAndThen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MULBERRY_ORCHARD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheOrchardGivesTheVillageLife) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianGoingWestAloneIsVeryDangerous) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WATER_CARRIER, CONDITION_ALWAYS, MSGNO(MsgXianIMustCarryWaterEveryDay) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgXianHsuWasCaughtUnderABoulder) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgXianTheRocksThereWereVeryHard) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgXianSomePeopleDidNotCarryRocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgXianSandIsTheColorOfThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgXianHsuIsStrongHeadedHeWould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgXianEveryoneStaysInXianTheyDo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOME, CONDITION_ALWAYS, MSGNO(MsgXianHsuWasCaughtUnderABoulder) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YOUNG_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgXianTheRocksThereWereVeryHard) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_KINU, CONDITION_ALWAYS, MSGNO(MsgXianSomePeopleDidNotCarryRocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MARTIAL_ARTS, CONDITION_ALWAYS, MSGNO(MsgXianSandIsTheColorOfThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEHS_SCHOOL, CONDITION_ALWAYS, MSGNO(MsgXianHsuIsStrongHeadedHeWould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SILK_CLOTHES, CONDITION_ALWAYS, MSGNO(MsgXianEveryoneStaysInXianTheyDo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KUNG_FU_STUDENT, CONDITION_ALWAYS, MSGNO(MsgXianThisWarriorSavedAltinVillageNo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgXianItIsBadForXianIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgXianIWasHappyToSeeGems) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianItIsBadForXianIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianIWasHappyToSeeGems) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
     { SEARCH(SEARCH_JAR), 101, FLAG_XIAN_LUCKY_MEDAL_JAR, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EVENT_TALK, ACTOR_MIST, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_MistJoins) },

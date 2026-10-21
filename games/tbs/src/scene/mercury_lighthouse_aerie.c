@@ -5,33 +5,37 @@
 /// and Kraden and carry the Elemental Stars; they come too late to stop the
 /// beacon being lit.
 ///
-/// - The first arrival (entrance 1, MercuryLighthouseAerie_PartyArrives): the
-///   Adepts of the lit element regain their PP, the aerie shakes, and in a
-///   flash the party stands at the top. Touching cell code 5
-///   (MercuryLighthouseAerie_ConfrontSaturos), Garet sees `It's too late! The
-///   lighthouse has already been lit!` Mia learns that the party came from Vale
-///   to recover the Elemental Stars, and that Vale protected Sol Sanctum as her
-///   clan protects the lighthouse; Jenna calls out, and Felix, Menardi and
-///   Saturos face the party. Saturos sends Menardi on to the next lighthouse
-///   with Jenna, Kraden and Felix, and fights the party alone (encounter table
-///   36, slot 2), the light of Mercury weakening his Psynergy.
-/// - Back from the battle (entrance 2, MercuryLighthouseAerie_AlexAppears):
-///   `Isaac, we got him!` Alex, the apprentice Mia lost, appears and explains
-///   that Saturos, aligned with Mars, the clan of fire, had his power bound by
-///   the lighthouse's water, which lent Mia, of the Mercury Clan like Alex,
-///   endless Psynergy; he was only stalling until Saturos recovered. Saturos
-///   rises, Alex asks whether the party still holds the Mars Star, and the two
-///   warp over to the lift and ride it down. Mia means to go with the party,
-///   since with the lighthouse lit the fountain will run over with healing
-///   water again (FLAG_MERCURY_AERIE_CONFRONTATION_DONE, and
+/// - The first arrival (MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT,
+///   MercuryLighthouseAerie_PartyArrives): the Adepts of the lit element
+///   regain their PP, the aerie shakes, and in a flash the party stands at the
+///   top. Touching cell code 5 (MercuryLighthouseAerie_ConfrontSaturos), Garet
+///   sees `It's too late! The lighthouse has already been lit!` Mia learns that
+///   the party came from Vale to recover the Elemental Stars, and that Vale
+///   protected Sol Sanctum as her clan protects the lighthouse; Jenna calls
+///   out, and Felix, Menardi and Saturos face the party. Saturos sends Menardi
+///   on to the next lighthouse with Jenna, Kraden and Felix, and fights the
+///   party alone (encounter table 36, slot 2), the light of Mercury weakening
+///   his Psynergy.
+/// - Back from the battle (MERCURY_LIGHTHOUSE_AERIE_1_AFTER_CONFRONT_SATUROS,
+///   MercuryLighthouseAerie_AlexAppears): `Isaac, we got him!` Alex, the
+///   apprentice Mia lost, appears and explains that Saturos, aligned with
+///   Mars, the clan of fire, had his power bound by the lighthouse's water,
+///   which lent Mia, of the Mercury Clan like Alex, endless Psynergy; he was
+///   only stalling until Saturos recovered. Saturos rises, Alex asks whether
+///   the party still holds the Mars Star, and the two warp over to the lift
+///   and ride it down. Mia means to go with the party, since with the
+///   lighthouse lit the fountain will run over with healing water again
+///   (FLAG_MERCURY_AERIE_CONFRONTATION_DONE, and
 ///   FLAG_SATUROS_BEATEN_AT_MERCURY, which Imil, Bilibin and the lighthouse
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
 ///   from one to the next (cell codes 10 and 11); the lift leads down to
 ///   Mercury Lighthouse's scene 57 (MercuryLighthouse4, mercury_lighthouse.c),
-///   arriving at its entrance 15 by the Fountain of Healing: cell code 6
-///   calls it up, cell code 12 rides it down (exit 1), and arriving by it
-///   (entrance 5) leaves it up. A Psynergy Stone can be found here.
+///   arriving at MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_AERIE_1 by the
+///   Fountain of Healing: cell code 6 calls it up, cell code 12 rides it down
+///   (MERCURY_LIGHTHOUSE_AERIE_1_TO_MERCURY_LIGHTHOUSE_4), and arriving by it
+///   (MERCURY_LIGHTHOUSE_AERIE_1_FROM_MERCURY_LIGHTHOUSE_4) leaves it up. A
+///   Psynergy Stone can be found here.
 ///
 /// Every arrival sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
 /// regain PP faster. On the aerie Retreat is blocked, the beacon's flame
@@ -85,7 +89,13 @@
 /// "Alex!"). Saturos is fought as encounter table 36, slot 2.
 enum MercuryLighthouseAerieActor {
   ACTOR_BEACON_FLAME = ACTOR_FIRST_PLACED, ///< flickers and sheds sparks
+  /// A statue, sprite 0xe0 as the lighthouse's statues all are, standing on
+  /// the lift; it rides up and down with it.
   ACTOR_LIFT_STATUE,
+  /// Four more statues (sprite 0xe0) flank the beacon, two on each side of it;
+  /// the two east of it, ACTOR_FIRST_BEACON_STATUE + 2 and + 3, are drawn
+  /// mirrored.
+  ACTOR_FIRST_BEACON_STATUE,
   ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6, ///< six, sprite 0xf2
   /// The two platforms that stand on the lift and go up and down with it.
   ACTOR_LIFT_PLATFORM_1 = ACTOR_FIRST_PLATFORM + 3,
@@ -131,14 +141,16 @@ const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
 
 const struct SceneRegion *MercuryLighthouseAerie_GetRegions(void) { return 0; }
 
-/// Returns the one exit: the lift down to scene 57's entrance 15, by the
-/// Fountain of Healing.
+/// Returns the one exit: the lift down to scene 57's
+/// MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_AERIE_1, by the Fountain of
+/// Healing.
 const u32 *MercuryLighthouseAerie_GetExits(void) {
   return gMercuryLighthouseAerieExits;
 }
 
-/// Returns the actors; only the first arrival (entrance 1) places Jenna,
-/// Kraden, Felix and Menardi.
+/// Returns the actors; only the first arrival
+/// (MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT) places Jenna, Kraden, Felix
+/// and Menardi.
 const struct ScenePlacement *MercuryLighthouseAerie_GetPlacements(void) {
   if (gGameState.entrance != MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT) {
     Engine_GameFlagSet(FLAG_HOSTAGES_GONE);
@@ -151,9 +163,12 @@ const struct SceneEvent *MercuryLighthouseAerie_GetEvents(void) {
 }
 
 /// Sets up the Lighthouse Aerie: the beacon flickers and the six platforms
-/// sit 50 pixels down; the first arrival (entrance 1) plays the party's
-/// arrival, the return from the battle with Saturos (entrance 2) Alex's scene,
-/// and arriving by the lift (entrance 5) leaves the lift up.
+/// sit 50 pixels down; the first arrival
+/// (MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT) plays the party's arrival, the
+/// return from the battle with Saturos
+/// (MERCURY_LIGHTHOUSE_AERIE_1_AFTER_CONFRONT_SATUROS) Alex's scene, and
+/// arriving by the lift (MERCURY_LIGHTHOUSE_AERIE_1_FROM_MERCURY_LIGHTHOUSE_4)
+/// leaves the lift up.
 s32 MercuryLighthouseAerie_Initialize(void) {
   u32 i;
   s32 actor;
@@ -176,10 +191,10 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     Engine_ActorSetSpritePriority(ACTOR_ALEX, 1);
     Engine_ActorSetSpritePriority(ACTOR_BEACON_FLAME, 1);
     Engine_ActorSetSpritePriority(ACTOR_LIFT_STATUE, 1);
-    Engine_ActorSetSpritePriority(10, 1);
-    Engine_ActorSetSpritePriority(11, 1);
-    Engine_ActorSetSpritePriority(12, 1);
-    Engine_ActorSetSpritePriority(13, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 1, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 2, 1);
+    Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 3, 1);
     for (i = ACTOR_FIRST_PLATFORM; i < ACTOR_FIRST_PLATFORM + 6; i++) {
       Engine_ActorSetSpritePriority(i, 1);
       Object_GetById(i)->motionFlags = 4;
@@ -192,12 +207,15 @@ s32 MercuryLighthouseAerie_Initialize(void) {
       obj->motionFlags = 0;
     }
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_LIFT_STATUE), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
-    Object_GetById(12)->scaleX = -0x10000;
-    Object_GetById(13)->scaleX = -0x10000;
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE + 1),
+                               0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE + 2),
+                               0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3),
+                               0);
+    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -0x10000;
+    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -0x10000;
     if (gGameState.entrance == MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT) {
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
@@ -227,10 +245,10 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   return 0;
 }
 
-/// Lighthouse Aerie, entrance 1, unless returning after a battle: the Adepts of
-/// the lit element regain their PP; the aerie shakes, the camera pans across
-/// and in a flash the party stands at the top. Isaac shakes his head and the
-/// others gather on him.
+/// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT unless
+/// returning after a battle: the Adepts of the lit element regain their PP;
+/// the aerie shakes, the camera pans across and in a flash the party stands at
+/// the top. Isaac shakes his head and the others gather on him.
 static void MercuryLighthouseAerie_PartyArrives(void) {
   struct FieldActor *leader;
 
@@ -848,12 +866,13 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_EventEnd();
 }
 
-/// Lighthouse Aerie, entrance 2, back from the battle, unless returning after
-/// another: Saturos is beaten, but not for long. "Isaac, we got him!" Alex
-/// appears and explains that the lighthouse bound Saturos' fire Psynergy and
-/// lent Mia endless power. Saturos stands again; the two warp over to the lift
-/// and ride it down, and the party regroups on the leader. Sets
-/// FLAG_MERCURY_AERIE_CONFRONTATION_DONE and FLAG_SATUROS_BEATEN_AT_MERCURY.
+/// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_1_AFTER_CONFRONT_SATUROS, back
+/// from the battle, unless returning after another: Saturos is beaten, but not
+/// for long. "Isaac, we got him!" Alex appears and explains that the
+/// lighthouse bound Saturos' fire Psynergy and lent Mia endless power. Saturos
+/// stands again; the two warp over to the lift and ride it down, and the party
+/// regroups on the leader. Sets FLAG_MERCURY_AERIE_CONFRONTATION_DONE and
+/// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
   Engine_EventBegin();
@@ -1427,7 +1446,8 @@ static void MercuryLighthouseAerie_CallLift(void) {
 }
 
 /// Lighthouse Aerie: touching cell code 12. The leader steps onto the lift and
-/// rides it down (exit 1) to scene 57's entrance 15, by the Fountain of
+/// rides it down to scene 57, arriving at
+/// MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_AERIE_1 by the Fountain of
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
   Engine_EventBegin();
@@ -1772,9 +1792,12 @@ const s32 *gEffectScripts[] = {
 
 struct SceneEntrance gMercuryLighthouseAerieEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 8, 0, 8, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
-    {2, CONDITION_ALWAYS, 8, 0, 8, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
-    {5, CONDITION_ALWAYS, 504, 0, 152, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
+    {MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT, CONDITION_ALWAYS, 8, 0, 8,
+     FACING_SOUTH, 0, 0, 0, 608, 424, 0},
+    {MERCURY_LIGHTHOUSE_AERIE_1_AFTER_CONFRONT_SATUROS, CONDITION_ALWAYS, 8, 0,
+     8, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
+    {MERCURY_LIGHTHOUSE_AERIE_1_FROM_MERCURY_LIGHTHOUSE_4, CONDITION_ALWAYS,
+     504, 0, 152, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
     {51, CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
     {SCENE_TABLE_END},
 };

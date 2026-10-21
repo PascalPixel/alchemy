@@ -607,8 +607,8 @@ static void UNUSED LunpaFortress_DoNothingC(void) {}
 
 static void UNUSED LunpaFortress_DoNothingD(void) {}
 
-/// LunpaFortressUpperFloor: Catch on the Cell Key hanging there, or talking to
-/// it, and the leader steps up and takes it.
+/// LunpaFortressUpperFloor: the leader steps up and takes the Cell Key. Catch
+/// on the key hanging there, or talking to it, starts this.
 static void Event_TakeCellKey(void) {
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 264, 792);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -2610,9 +2610,9 @@ static void Event_DonpaJudgesDodonpa(void) {
   EV_END();
 }
 
-/// LunpaFortressGroundFloor: Mind Read on the second sentry, one of eight
-/// thoughts, chosen at random when the scene was entered; in one he looks
-/// around first.
+/// LunpaFortressGroundFloor: Mind Read on the second sentry reads his thoughts.
+/// He has one of eight thoughts, chosen at random when the scene was entered;
+/// in one he looks around first.
 static void Event_ReadSentrysThoughts(void) {
 
   switch (gLunpaFortressRandomPick) {
@@ -2873,9 +2873,9 @@ static void Event_AskWhereDodonpaIs(void) {
   Engine_EventAskYesNo(UPPER_FLOOR_DODONPAS_WIFE, 0);
 }
 
-/// LunpaFortressGroundFloor: a bent old man, startled the first time, asks
-/// whether the party sneaked in in search of something; on yes, promises to
-/// keep quiet. "Wh-Wh-Who goes there!"
+/// LunpaFortressGroundFloor: a bent old man asks whether the party sneaked in.
+/// He's startled the first time, and wants to know whether it came in search of
+/// something; on yes, he promises to keep quiet. "Wh-Wh-Who goes there!"
 static void Event_TalkToStartledOldMan(void) {
   s32 frightMessage;
   s32 purposeMessage;

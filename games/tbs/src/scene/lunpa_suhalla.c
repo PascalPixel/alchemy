@@ -1,5 +1,5 @@
 /// @file
-/// The buildings of Lunpa (LunpaSuhalla, scene 105), one scene whose area name
+/// The buildings of Lunpa (SceneId_LunpaSuhalla), one scene whose area name
 /// follows the door the party comes in by: Lunpa for the homes, the shops and
 /// the inn (ROOM_FIRST_HOME to ROOM_INN, ROOM_STOREROOM and ROOM_NINTH), Lunpa
 /// Temple (ROOM_TEMPLE and ROOM_TEMPLE_SECOND_ENTRANCE) and Gate to Suhalla

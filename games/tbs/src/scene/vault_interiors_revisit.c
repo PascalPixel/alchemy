@@ -96,7 +96,7 @@ enum {
   ACTOR_MAYOR, ///< "our mayor", as the villagers call him
   ACTOR_MAYORS_WIFE,
   /// The girl at the inn, as the Bone's description calls her.
-  ACTOR_VAULT_BONE_GIVER,
+  ACTOR_BONE_GIVER,
   ACTOR_VAULT_WEAPON_MERCHANT,
   ACTOR_VAULT_ARMOR_MERCHANT,
   ACTOR_VAULT_ITEM_MERCHANT,
@@ -225,27 +225,27 @@ static void Event_UnusedOfferLeftoverBones(void) {
 /// leader not standing beside the floor Bone.
 static void Event_OfferBones(void) {
   Engine_EventBegin();
-  Engine_ActorFaceEachOther(ACTOR_VAULT_BONE_GIVER, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorFaceEachOther(ACTOR_BONE_GIVER, ACTOR_PARTY_LEADER, 0);
   if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
-    Event_OpenMessage(ACTOR_VAULT_BONE_GIVER, 0);
+    Event_OpenMessage(ACTOR_BONE_GIVER, 0);
   } else {
     Engine_EventSetMessage(MsgVaultWantMoreBones);
-    Event_OpenMessage(ACTOR_VAULT_BONE_GIVER, 0);
+    Event_OpenMessage(ACTOR_BONE_GIVER, 0);
   }
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     // Show the offer before checking whether the party can carry the gift.
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
+    Event_ShowMessage(ACTOR_BONE_GIVER, 0);
     Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(ACTOR_VAULT_BONE_GIVER, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_BONE_GIVER, 2);
     Engine_EventWait(20);
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
-      Engine_ActorSetAnimationAndWait(ACTOR_VAULT_BONE_GIVER, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(ACTOR_BONE_GIVER, ANIM_SHAKE_HEAD);
       Engine_EventWait(20);
       Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
-      Event_ShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
+      Event_ShowMessage(ACTOR_BONE_GIVER, 0);
     } else {
       Engine_ItemShowFound(ITEM_BONE, 3);
       Engine_PartyGiveItem(ITEM_BONE, 0);
@@ -255,11 +255,11 @@ static void Event_OfferBones(void) {
     // Declining selects the following line and the actor's response pose.
     gEventWork->message++;
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_VAULT_BONE_GIVER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_BONE_GIVER, ANIM_NOD);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
+    Event_ShowMessage(ACTOR_BONE_GIVER, 0);
   }
-  Actor_FaceDirection(ACTOR_VAULT_BONE_GIVER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_BONE_GIVER, FACING_SOUTH, 0);
   Engine_EventEnd();
 }
 
@@ -365,7 +365,7 @@ static void Event_ReadBoneGiverMind(void) {
   } else {
     Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
   }
-  Engine_EventShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
+  Engine_EventShowMessage(ACTOR_BONE_GIVER, 0);
   Engine_EventEnd();
 }
 
@@ -519,7 +519,7 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
     // Unused: the row above always answers the cook first.
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedOfferLeftoverBones) },
-    { EVENT_TALK, ACTOR_VAULT_BONE_GIVER, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
+    { EVENT_TALK, ACTOR_BONE_GIVER, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
@@ -536,7 +536,7 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_BONE_GIVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BONE_GIVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
     { SEARCH(SEARCH_JAR), 100, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
     { SEARCH(SEARCH_BARREL), 101, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },

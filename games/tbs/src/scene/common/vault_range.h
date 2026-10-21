@@ -4,10 +4,10 @@
 #include "types.h"
 #include "field_obj.h"
 
-/// Stops the actor (paused, mode 1) when the target is nearer than range pixels
-/// and lies ahead of it, within a sixteenth of a turn either side of its
+/// Stops the actor (paused, standing) when the target is nearer than range
+/// pixels and lies ahead of it, within a sixteenth of a turn either side of its
 /// heading; force stops it regardless. Returns 1 when it stopped. A target out
-/// of range sets it walking again (mode 2).
+/// of range sets it walking again.
 s32 Vault_StopIfFacingNear(struct FieldActor *actor, struct FieldActor *target,
                            s32 range, s32 force) {
   s32 result = 0;
@@ -25,12 +25,12 @@ s32 Vault_StopIfFacingNear(struct FieldActor *actor, struct FieldActor *target,
     u32 facing = actor->facing & 0xf000;
     if (forward == facing || right == facing || left == facing || force != 0) {
       actor->paused = 1;
-      Object_SetMode(actor, 1);
+      Object_SetMode(actor, ANIM_STAND);
       result = 1;
     }
   } else {
     actor->paused = 0;
-    Object_SetMode(actor, 2);
+    Object_SetMode(actor, ANIM_WALK);
   }
   return result;
 }

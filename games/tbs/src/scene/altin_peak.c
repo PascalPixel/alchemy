@@ -475,8 +475,9 @@ static void AltinPeak_RideCart(s32 log) {
   FieldFx_PlayQueuedSound();
 }
 
-/// Talking to (or reading the mind of) a room's water beast starts its
-/// battle; afterwards the party returns to the room's battle entrance.
+/// The party fights the first water beast. Talking to (or reading the mind of)
+/// a room's water beast starts its battle; afterwards the party returns to the
+/// room's battle entrance.
 static void AltinPeak_FightFirstWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakFirstWaterBeast,
@@ -485,6 +486,8 @@ static void AltinPeak_FightFirstWaterBeast(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
+/// The party fights the second water beast. It starts and ends as the first
+/// one's does, from its own room.
 static void AltinPeak_FightSecondWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakSecondWaterBeast,
@@ -493,6 +496,8 @@ static void AltinPeak_FightSecondWaterBeast(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
+/// The party fights the third water beast. It starts and ends as the first
+/// one's does, from its own room.
 static void AltinPeak_FightThirdWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakThirdWaterBeast,

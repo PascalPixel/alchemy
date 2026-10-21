@@ -20,9 +20,9 @@
 /// After, the villagers say that Hsu, Master Feh's apprentice, was trapped
 /// under a boulder in a rockslide on Silk Road, that everyone went to clear
 /// the rocks, and that young warriors saved Altin. Xian_Initialize then also
-/// turns ACTOR_VILLAGER_SILK_CLOTHES west and stands the kung fu student where
-/// his strike leaves him, and Xian_GetPlacements turns
-/// ACTOR_VILLAGER_DISASTERS to face the party.
+/// turns ACTOR_BOY_ON_SILK_CLOTHES west and stands the kung fu student where
+/// her strike leaves her, and Xian_GetPlacements turns
+/// ACTOR_MUSCULAR_MAN_ON_DISASTERS to face the party.
 ///
 /// Two small scenes run on scene flags, which last until the party next
 /// enters a scene other than by returning from a battle:
@@ -34,9 +34,9 @@
 ///   stood on. A leader who stands in her way for two seconds makes her raise
 ///   XIAN_TRIGGER_CARRIER_BLOCKED (Xian_WatchWaterCarrierPath), and both walk
 ///   back to the start of her round.
-/// - the kung fu student shows his strike on the tree before him once
-///   (FLAG_SCENE_TEMP_02), and Force on the tree makes it jump on its own, to
-///   his surprise (FLAG_SCENE_TEMP_03 picks his second line).
+/// - the kung fu student, a little girl, shows her strike on the tree before
+///   her once (FLAG_SCENE_TEMP_02), and Force on the tree makes it jump on its
+///   own, to her surprise (FLAG_SCENE_TEMP_03 picks her second line).
 ///
 /// Mist, a Mercury Djinni, waits in the village until she joins, which she
 /// does when spoken to.
@@ -91,38 +91,55 @@
 // Xian's temporary flags:
 //   FLAG_SCENE_TEMP_00  the water carrier has spilled her water
 //   FLAG_SCENE_TEMP_01  the spilled water is frozen
-//   FLAG_SCENE_TEMP_02  the kung fu student has shown his strike on the tree
+//   FLAG_SCENE_TEMP_02  the kung fu student has shown her strike on the tree
 //   FLAG_SCENE_TEMP_03  Force has made the tree jump once
 
-/// The actors, numbering the rows of gXian_Placements. Each villager is named
-/// by what they talk of before Xian hears of Hsu.
+/// The actors, numbering the rows of gXian_Placements. Each person is named by
+/// what their sprite shows and what they talk of before Xian hears of Hsu.
 enum XianActor {
-  /// "This is Xian. Travelers are welcome here!"
-  ACTOR_VILLAGER_WELCOME = ACTOR_FIRST_PLACED,
-  /// "Young warriors, very gallant! You came through Mogall Forest?"
-  /// (Xian_AskAboutYoungWarriors)
-  ACTOR_VILLAGER_YOUNG_WARRIORS,
-  /// "Xian is the village of kinu. Kinu means silk."
-  ACTOR_VILLAGER_KINU,
-  /// "Martial arts are very popular in Xian."
-  ACTOR_VILLAGER_MARTIAL_ARTS,
-  /// "You warriors should visit Master Feh's school. You will be surprised!"
-  ACTOR_VILLAGER_FEHS_SCHOOL,
-  /// "My clothes are not silk. Silk is very expensive."
-  ACTOR_VILLAGER_SILK_CLOTHES,
-  /// Strikes the tree before him with a shout. "Hoo-whaaa... Hachaaa!"
+  /// A young man in a blue jacket.
+  /// ★ Named from the game: "This is Xian. Travelers are welcome here!"
+  /// (MsgXianThisIsXianTravelersAreWelcome)
+  ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS = ACTOR_FIRST_PLACED,
+  /// A young woman (Xian_AskAboutYoungWarriors).
+  /// ★ Named from the game: "Young warriors, very gallant! You came through
+  /// Mogall Forest?" (MsgXianYoungWarriorsVeryGallantCame)
+  ACTOR_WOMAN_ON_YOUNG_WARRIORS,
+  /// A man with a topknot.
+  /// ★ Named from the game: "Xian is the village of kinu. Kinu means silk."
+  /// (MsgXianXianIsTheVillageOfKinu)
+  ACTOR_MAN_ON_KINU,
+  /// An old man.
+  /// ★ Named from the game: "Martial arts are very popular in Xian."
+  /// (MsgXianMartialArtsAreVeryPopularIn)
+  ACTOR_OLD_MAN_ON_MARTIAL_ARTS,
+  /// An old woman with a cane.
+  /// ★ Named from the game: "You warriors should visit Master Feh's school. You
+  /// will be surprised!" (MsgXianYouWarriorsShouldVisitMasterFehs)
+  ACTOR_OLD_WOMAN_ON_FEHS_SCHOOL,
+  /// A small boy.
+  /// ★ Named from the game: "My clothes are not silk. Silk is very expensive."
+  /// (MsgXianMyClothesAreNotSilkSilk)
+  ACTOR_BOY_ON_SILK_CLOTHES,
+  /// A little girl who strikes the tree before her with a shout.
+  /// ★ Named from the game: "Hoo-whaaa... Hachaaa!" (MsgXianHooWhaaaHachaaa)
   ACTOR_KUNG_FU_STUDENT,
-  /// "Disasters from the sky... Many, many thieves..."
-  ACTOR_VILLAGER_DISASTERS,
-  /// "This is the mulberry orchard."
-  ACTOR_VILLAGER_MULBERRY_ORCHARD,
+  /// A bare-chested, muscular man.
+  /// ★ Named from the game: "Disasters from the sky... Many, many thieves..."
+  /// (MsgXianDisastersFromTheSkyManyMany)
+  ACTOR_MUSCULAR_MAN_ON_DISASTERS,
+  /// A young woman.
+  /// ★ Named from the game: "This is the mulberry orchard."
+  /// (MsgXianThisIsTheMulberryOrchardWhen)
+  ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD,
   /// Feizhi, as at Alpine Crossing: looking for someone to take her west.
   /// ★ Named from the game: "You must be glad, Feizhi." (MsgMountainHsuOkay)
   ACTOR_FEIZHI,
-  /// Carries water along the street. "You made me spill my water!"
+  /// A young woman who carries water along the street. "You made me spill my
+  /// water!"
   /// ★ Named from the game: "I must carry water every day."
   /// (MsgXianIMustCarryWaterEveryDay)
-  ACTOR_VILLAGER_CARRYING_WATER,
+  ACTOR_WOMAN_CARRYING_WATER,
   /// The tree the student strikes; it jumps when hit.
   /// ★ Named from the game: "The tree jumped on its own!"
   /// (MsgXianWhaWhaHappened)
@@ -294,23 +311,23 @@ const struct SceneRegion *Xian_GetRegions(void) { return NULL; }
 
 const u32 *Xian_GetExits(void) { return gXian_Exits; }
 
-/// Once Xian has heard Hsu is trapped, ACTOR_VILLAGER_DISASTERS turns to face
-/// the party.
+/// Once Xian has heard Hsu is trapped, ACTOR_MUSCULAR_MAN_ON_DISASTERS turns to
+/// face the party.
 const struct ScenePlacement *Xian_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0)
-    gXian_Placements[ACTOR_VILLAGER_DISASTERS - ACTOR_FIRST_PLACED].talkFacing =
-        TALK_FACE_PARTY;
+    gXian_Placements[ACTOR_MUSCULAR_MAN_ON_DISASTERS - ACTOR_FIRST_PLACED]
+        .talkFacing = TALK_FACE_PARTY;
   return gXian_Placements;
 }
 
-/// A villager, ACTOR_VILLAGER_YOUNG_WARRIORS, asks about the young warriors'
+/// A villager, ACTOR_WOMAN_ON_YOUNG_WARRIORS, asks about the young warriors'
 /// way here, before Xian hears of Hsu. "Young warriors, very gallant! You came
 /// through Mogall Forest?" A yes earns respect; a no is a lie, since Silk Road
 /// from Altin is blocked.
 static void Xian_AskAboutYoungWarriors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianYoungWarriorsVeryGallantCame);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_YOUNG_WARRIORS, 0);
+  Engine_EventAskYesNo(ACTOR_WOMAN_ON_YOUNG_WARRIORS, 0);
   Engine_EventEnd();
 }
 
@@ -335,26 +352,26 @@ static void Xian_TalkToWaterCarrier(void) {
   puddle = Object_GetById(ACTOR_SPILLED_WATER);
   Engine_EventBegin();
   leaderMustStepAside = 0;
-  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = NULL;
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) != 0 ||
-      (Object_GetById(ACTOR_VILLAGER_CARRYING_WATER)->x.fixed >> 20) <= 19) {
-    carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+      (Object_GetById(ACTOR_WOMAN_CARRYING_WATER)->x.fixed >> 20) <= 19) {
+    carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
     savedFacing = carrier->facing;
-    Actor_FaceActor(ACTOR_VILLAGER_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgXianNowMustGetWaterAgain);
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
       gEventWork->message++;
-      Event_ShowMessage(ACTOR_VILLAGER_CARRYING_WATER, 0);
-      Object_GetById(ACTOR_VILLAGER_CARRYING_WATER)->timer = 0;
-      carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+      Event_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
+      Object_GetById(ACTOR_WOMAN_CARRYING_WATER)->timer = 0;
+      carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
       carrier->facing = savedFacing;
     } else {
-      Event_ShowMessage(ACTOR_VILLAGER_CARRYING_WATER, 0);
-      Actor_FaceDirection(ACTOR_VILLAGER_CARRYING_WATER, FACING_WEST, 20);
+      Event_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
+      Actor_FaceDirection(ACTOR_WOMAN_CARRYING_WATER, FACING_WEST, 20);
     }
-    carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+    carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
     carrier->update = XIAN_WATER_CARRIER_UPDATE;
     Engine_EventEnd();
     return;
@@ -364,47 +381,47 @@ static void Xian_TalkToWaterCarrier(void) {
       (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 29 &&
       (Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) != 26) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_VILLAGER_CARRYING_WATER, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER, 0);
     Engine_EventWait(5);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+    carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
     if (leader->x.fixed < carrier->x.fixed) {
       Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+      carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
       Actor_WalkTo(ACTOR_PARTY_LEADER, ((carrier->x.fixed >> 20) << 4) - 8,
                    232);
       leaderMustStepAside = 1;
     } else {
       Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+      carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
       Actor_WalkTo(ACTOR_PARTY_LEADER, ((carrier->x.fixed >> 20) << 4) + 24,
                    232);
     }
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   }
-  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->targetX = ACTOR_NO_TARGET;
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrier->targetY = ACTOR_NO_TARGET;
-  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->targetZ = ACTOR_NO_TARGET;
-  Actor_SetBuiltinAction(ACTOR_VILLAGER_CARRYING_WATER, ACTOR_ACTION_IDLE);
-  Engine_ActorSetAnimation(ACTOR_VILLAGER_CARRYING_WATER, ANIM_STAND);
-  Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_CARRYING_WATER, 2);
+  Actor_SetBuiltinAction(ACTOR_WOMAN_CARRYING_WATER, ACTOR_ACTION_IDLE);
+  Engine_ActorSetAnimation(ACTOR_WOMAN_CARRYING_WATER, ANIM_STAND);
+  Engine_ActorRunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Engine_EventWait(10);
   Event_PlayCue(SE_228);
   // Copy the wet terrain cell and grow the puddle into view.
   puddle->scaleX = 0x4ccc;
   puddle->scaleY = 0x4ccc;
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrierX = carrier->x.fixed;
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrierCellZ = carrier->z.fixed >> 20;
   Actor_SetPosition(ACTOR_SPILLED_WATER, ((carrierX >> 20) << 20) + PIXELS(8),
                     (carrierCellZ << 20) + PIXELS(8));
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrierColumnX = carrier->x.fixed;
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   Map_CopyCellAttributes(16, 16, 1, 1, carrierColumnX >> 20,
                          carrier->z.fixed >> 20);
   Engine_ActorSetSpritePriority(ACTOR_SPILLED_WATER, 2);
@@ -417,14 +434,14 @@ static void Xian_TalkToWaterCarrier(void) {
     scaleX += 0x1999;
     puddle->scaleX = scaleX;
   } while (scaleX <= 0xffff);
-  Actor_ShowEmote(ACTOR_VILLAGER_CARRYING_WATER, EMOTE_IN_FRONT | 5, 70);
-  Actor_FaceActor(ACTOR_VILLAGER_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
+  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | 5, 70);
+  Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_VILLAGER_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
-  Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_CARRYING_WATER, 2);
+  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
+  Engine_ActorStartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Engine_EventWait(70);
   Engine_EventSetMessage(MsgXianDoingMadeMeSpillMy);
-  Event_ShowMessageAndWait(ACTOR_VILLAGER_CARRYING_WATER, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
   BattleFx_PlayQueuedSound();
   if ((Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) == 26 &&
       (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20) > 13) {
@@ -440,14 +457,13 @@ static void Xian_TalkToWaterCarrier(void) {
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
-  Actor_SetSpeed(ACTOR_VILLAGER_CARRYING_WATER, 0xcccc, 0x6666);
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0xcccc, 0x6666);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   if ((carrier->z.fixed >> 20) != 14) {
-    carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
-    Actor_WalkToAndWait(ACTOR_VILLAGER_CARRYING_WATER, carrier->x.part.pixel,
-                        232);
+    carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
+    Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER, carrier->x.part.pixel, 232);
   }
-  Actor_WalkToAndWait(ACTOR_VILLAGER_CARRYING_WATER, 280, 232);
+  Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
   GameFlag_Set(FLAG_SCENE_TEMP_00);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventEnd();
@@ -722,33 +738,33 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   struct FieldActor *carrier;
 
   Engine_EventBegin();
-  Actor_SetBuiltinAction(ACTOR_VILLAGER_CARRYING_WATER, ACTOR_ACTION_IDLE);
-  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+  Actor_SetBuiltinAction(ACTOR_WOMAN_CARRYING_WATER, ACTOR_ACTION_IDLE);
+  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = 0;
-  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->targetX = ACTOR_NO_TARGET;
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrier->targetZ = ACTOR_NO_TARGET;
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrier->velocityX = 0;
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrier->velocityZ = 0;
-  carrier = Object_GetById(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Object_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrier->speed = 0;
-  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->acceleration = 0;
-  Actor_ShowEmote(ACTOR_VILLAGER_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
-  Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_CARRYING_WATER, 2);
+  Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | 3, 0);
+  Engine_ActorStartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Engine_EventWait(60);
-  Actor_SetSpeed(ACTOR_VILLAGER_CARRYING_WATER, 0x18000, 0xc000);
+  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-  Actor_WalkTo(ACTOR_VILLAGER_CARRYING_WATER, 280, 232);
+  Actor_WalkTo(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 232);
-  Engine_ActorWaitForMove(ACTOR_VILLAGER_CARRYING_WATER);
+  Engine_ActorWaitForMove(ACTOR_WOMAN_CARRYING_WATER);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
-  Actor_SetActionScript(ACTOR_VILLAGER_CARRYING_WATER, gXian_WaterCarrierRoute);
-  carrier = Actor_Get(ACTOR_VILLAGER_CARRYING_WATER);
+  Actor_SetActionScript(ACTOR_WOMAN_CARRYING_WATER, gXian_WaterCarrierRoute);
+  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrier->update = XIAN_WATER_CARRIER_UPDATE;
   Engine_EventEnd();
 }
@@ -774,7 +790,7 @@ s32 Xian_Initialize(void) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
   if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
-    Actor_FaceDirection(ACTOR_VILLAGER_SILK_CLOTHES, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_BOY_ON_SILK_CLOTHES, FACING_WEST, 0);
     Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
     Engine_ActorFaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
     if (Engine_GameFlagIsSet(FLAG_FEIZHI_WENT_TO_HSU)) {
@@ -814,8 +830,8 @@ s32 Xian_Initialize(void) {
     FieldScheduler_AddCallback(Xian_UpdateFrozenPuddleLayer,
                                TASK_PRIORITY_SCENE);
   }
-  Engine_ActorSetChildValue(ACTOR_VILLAGER_CARRYING_WATER, 2);
-  Object_GetById(ACTOR_VILLAGER_CARRYING_WATER)->update =
+  Engine_ActorSetChildValue(ACTOR_WOMAN_CARRYING_WATER, 2);
+  Object_GetById(ACTOR_WOMAN_CARRYING_WATER)->update =
       XIAN_WATER_CARRIER_UPDATE;
   actor = Object_GetById(ACTOR_TRAINING_TREE);
   actor->motionFlags = 0;
@@ -984,27 +1000,27 @@ u32 gXian_Exits[] = {
 
 // clang-format off
 struct ScenePlacement gXian_Placements[] = {
-    { 0x9c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_IN_BLUE_JACKET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(448), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x9f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
-    { 0xa0, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(420), 0, PIXELS(304), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xa4, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(144), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xa6, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(200), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0xa8, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(184), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xa9, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_GIRL_IN_PINK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(192), 0, PIXELS(312), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xaa, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MUSCULAR_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(428), 0, PIXELS(432), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x9f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(440), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x27, IF_FLAG_SET(FLAG_FEIZHI_WENT_TO_HSU), ACTOR_STAND,
+    { SPRITE_FEIZHI, IF_FLAG_SET(FLAG_FEIZHI_WENT_TO_HSU), ACTOR_STAND,
         PIXELS(368), 0, PIXELS(496), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
-    { 0x9f, CONDITION_ALWAYS, (s32)gXian_WaterCarrierRoute,
+    { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gXian_WaterCarrierRoute,
         PIXELS(280), 0, PIXELS(232), FACING_WEST, TALK_KEEP_FACING, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
@@ -1036,49 +1052,49 @@ struct SceneEvent gXian_Events[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 21, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 2, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 3, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_JumpOverSpilledWater) },
-    { EVENT_TALK, ACTOR_VILLAGER_WELCOME, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsXianTravelersAreWelcome) },
-    { EVENT_TALK, ACTOR_VILLAGER_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_AskAboutYoungWarriors) },
-    { EVENT_TALK, ACTOR_VILLAGER_KINU, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianXianIsTheVillageOfKinu) },
-    { EVENT_TALK, ACTOR_VILLAGER_MARTIAL_ARTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMartialArtsAreVeryPopularIn) },
-    { EVENT_TALK, ACTOR_VILLAGER_FEHS_SCHOOL, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouWarriorsShouldVisitMasterFehs) },
-    { EVENT_TALK, ACTOR_VILLAGER_SILK_CLOTHES, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMyClothesAreNotSilkSilk) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsXianTravelersAreWelcome) },
+    { EVENT_TALK, ACTOR_WOMAN_ON_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_AskAboutYoungWarriors) },
+    { EVENT_TALK, ACTOR_MAN_ON_KINU, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianXianIsTheVillageOfKinu) },
+    { EVENT_TALK, ACTOR_OLD_MAN_ON_MARTIAL_ARTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMartialArtsAreVeryPopularIn) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_ON_FEHS_SCHOOL, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouWarriorsShouldVisitMasterFehs) },
+    { EVENT_TALK, ACTOR_BOY_ON_SILK_CLOTHES, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMyClothesAreNotSilkSilk) },
     { EVENT_TALK, ACTOR_KUNG_FU_STUDENT, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_TalkToKungFuStudent) },
-    { EVENT_TALK, ACTOR_VILLAGER_DISASTERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianDisastersFromTheSkyManyMany) },
-    { EVENT_TALK, ACTOR_VILLAGER_MULBERRY_ORCHARD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsTheMulberryOrchardWhen) },
+    { EVENT_TALK, ACTOR_MUSCULAR_MAN_ON_DISASTERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianDisastersFromTheSkyManyMany) },
+    { EVENT_TALK, ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsTheMulberryOrchardWhen) },
     { EVENT_TALK, ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(Xian_TalkToFeizhi) },
-    { EVENT_TALK, ACTOR_VILLAGER_CARRYING_WATER, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_TalkToWaterCarrier) },
-    { EVENT_TALK, ACTOR_VILLAGER_WELCOME, CONDITION_ALWAYS, MSGNO(MsgXianXianIsAPeacefulVillageBut) },
-    { EVENT_TALK, ACTOR_VILLAGER_YOUNG_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgXianThereWasARockslideOnSilk) },
-    { EVENT_TALK, ACTOR_VILLAGER_KINU, CONDITION_ALWAYS, MSGNO(MsgXianIWentToHelpMoveBoulders) },
-    { EVENT_TALK, ACTOR_VILLAGER_MARTIAL_ARTS, CONDITION_ALWAYS, MSGNO(MsgXianThePeopleWhoClearedTheRockslide) },
-    { EVENT_TALK, ACTOR_VILLAGER_FEHS_SCHOOL, CONDITION_ALWAYS, MSGNO(MsgXianHsuIsVeryGoodAtKung) },
-    { EVENT_TALK, ACTOR_VILLAGER_SILK_CLOTHES, CONDITION_ALWAYS, MSGNO(MsgXianThePeopleOfXianLoveTheir) },
+    { EVENT_TALK, ACTOR_WOMAN_CARRYING_WATER, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_TalkToWaterCarrier) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgXianXianIsAPeacefulVillageBut) },
+    { EVENT_TALK, ACTOR_WOMAN_ON_YOUNG_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgXianThereWasARockslideOnSilk) },
+    { EVENT_TALK, ACTOR_MAN_ON_KINU, CONDITION_ALWAYS, MSGNO(MsgXianIWentToHelpMoveBoulders) },
+    { EVENT_TALK, ACTOR_OLD_MAN_ON_MARTIAL_ARTS, CONDITION_ALWAYS, MSGNO(MsgXianThePeopleWhoClearedTheRockslide) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_ON_FEHS_SCHOOL, CONDITION_ALWAYS, MSGNO(MsgXianHsuIsVeryGoodAtKung) },
+    { EVENT_TALK, ACTOR_BOY_ON_SILK_CLOTHES, CONDITION_ALWAYS, MSGNO(MsgXianThePeopleOfXianLoveTheir) },
     { EVENT_TALK, ACTOR_KUNG_FU_STUDENT, CONDITION_ALWAYS, MSGNO(MsgXianAltinWasFloodedWithWaterBut) },
-    { EVENT_TALK, ACTOR_VILLAGER_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianWeClearedTheRocksFromSilk) },
-    { EVENT_TALK, ACTOR_VILLAGER_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianManyStrangeThingsHappenedAllAt) },
+    { EVENT_TALK, ACTOR_MUSCULAR_MAN_ON_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianWeClearedTheRocksFromSilk) },
+    { EVENT_TALK, ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianManyStrangeThingsHappenedAllAt) },
     { (1u << 28) | PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPILLED_WATER, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_UpdatePuddlePriority) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPILLED_WATER, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Xian_FreezeSpilledWater) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_StrikeTrainingTreeWithForce) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOME, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheseChildrenMustHaveComeTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouYoungWarriorsLookStrongBut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_KINU, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianIHopeManyPeopleComeTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MARTIAL_ARTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianFightingWithKicksAndPunchesIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEHS_SCHOOL, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMasterFehsSchoolIsTrainingIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SILK_CLOTHES, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianSilkIsShinyAndSmoothIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheseChildrenMustHaveComeTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianYouYoungWarriorsLookStrongBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_KINU, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianIHopeManyPeopleComeTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_MARTIAL_ARTS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianFightingWithKicksAndPunchesIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_FEHS_SCHOOL, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMasterFehsSchoolIsTrainingIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_SILK_CLOTHES, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianSilkIsShinyAndSmoothIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KUNG_FU_STUDENT, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianBreakingTreesWithMyHandHurts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DISASTERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMasterFehSaidYahAndThen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MULBERRY_ORCHARD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheOrchardGivesTheVillageLife) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MUSCULAR_MAN_ON_DISASTERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianMasterFehSaidYahAndThen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianTheOrchardGivesTheVillageLife) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianGoingWestAloneIsVeryDangerous) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CARRYING_WATER, CONDITION_ALWAYS, MSGNO(MsgXianIMustCarryWaterEveryDay) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOME, CONDITION_ALWAYS, MSGNO(MsgXianHsuWasCaughtUnderABoulder) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YOUNG_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgXianTheRocksThereWereVeryHard) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_KINU, CONDITION_ALWAYS, MSGNO(MsgXianSomePeopleDidNotCarryRocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MARTIAL_ARTS, CONDITION_ALWAYS, MSGNO(MsgXianSandIsTheColorOfThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEHS_SCHOOL, CONDITION_ALWAYS, MSGNO(MsgXianHsuIsStrongHeadedHeWould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SILK_CLOTHES, CONDITION_ALWAYS, MSGNO(MsgXianEveryoneStaysInXianTheyDo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_CARRYING_WATER, CONDITION_ALWAYS, MSGNO(MsgXianIMustCarryWaterEveryDay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgXianHsuWasCaughtUnderABoulder) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_YOUNG_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgXianTheRocksThereWereVeryHard) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_KINU, CONDITION_ALWAYS, MSGNO(MsgXianSomePeopleDidNotCarryRocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_MARTIAL_ARTS, CONDITION_ALWAYS, MSGNO(MsgXianSandIsTheColorOfThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_FEHS_SCHOOL, CONDITION_ALWAYS, MSGNO(MsgXianHsuIsStrongHeadedHeWould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_SILK_CLOTHES, CONDITION_ALWAYS, MSGNO(MsgXianEveryoneStaysInXianTheyDo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KUNG_FU_STUDENT, CONDITION_ALWAYS, MSGNO(MsgXianThisWarriorSavedAltinVillageNo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianItIsBadForXianIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianIWasHappyToSeeGems) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MUSCULAR_MAN_ON_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianItIsBadForXianIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianIWasHappyToSeeGems) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
     { SEARCH(SEARCH_JAR), 101, FLAG_XIAN_LUCKY_MEDAL_JAR, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EVENT_TALK, ACTOR_MIST, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_MistJoins) },

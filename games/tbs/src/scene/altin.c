@@ -1,7 +1,7 @@
 /// @file
 /// Altin, the mining village north of the Alpine Crossing, in two scenes that
-/// share this overlay and the area name Altin: Altin (scene 75), the village
-/// outdoors, and AltinInteriors (scene 76), inside its houses, shops and inn.
+/// share this overlay and the area name Altin: SceneId_Altin, the village
+/// outdoors, and SceneId_AltinInteriors, inside its houses, shops and inn.
 /// The getters pick each scene's tables by gGameState.scene, both share one
 /// exit table, and a third, empty set of tables serves any other scene.
 ///
@@ -970,8 +970,10 @@ struct SceneEntrance gAltinHouses_Entrances[] = {
      FACING_NORTH, 0, 635, 280, 845, 556, 0},
     {ALTIN_INTERIORS_FROM_ALTIN_SOUTHWEST, CONDITION_ALWAYS, 80, 0, 864,
      FACING_NORTH, 0, 16, 638, 432, 912, 0},
-    {8, CONDITION_ALWAYS, 68, 0, 728, FACING_SOUTH, 0, 16, 638, 432, 912, 0},
-    {9, CONDITION_ALWAYS, 690, 0, 732, FACING_SOUTH, 0, 480, 626, 896, 882, 0},
+    {ALTIN_FROM_ALTIN_INTERIORS_EAST, CONDITION_ALWAYS, 68, 0, 728,
+     FACING_SOUTH, 0, 16, 638, 432, 912, 0},
+    {ALTIN_FROM_ALTIN_INTERIORS_WEST, CONDITION_ALWAYS, 690, 0, 732,
+     FACING_SOUTH, 0, 480, 626, 896, 882, 0},
     {SCENE_TABLE_END},
 };
 

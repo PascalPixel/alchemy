@@ -154,11 +154,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette);
 /// The one actor placed for entrance 75, which travels north to exit 110.
 #define ACTOR 8
 
-enum {
-  CONTACT_LAST_ACTOR = 65,
-  CONTACT_TRIGGER_BASE = 100,
-  FLAG_CONTACT_BLOCKED = 0x104
-};
+enum { CONTACT_LAST_ACTOR = 65, CONTACT_TRIGGER_BASE = 100 };
 
 /// The Djinn met on the world map. The Venus Djinni's actor is Flint, bobbing
 /// on the map until the party meets him, and later Vine; the Mars Djinni is
@@ -537,7 +533,7 @@ static void WorldMap_UpdateLocationContacts(void) {
                   ? leader->z.fixed - actor->z.fixed
                   : actor->z.fixed - leader->z.fixed) <
             reach &&
-        Engine_GameFlagIsSet(FLAG_CONTACT_BLOCKED) == 0) {
+        Engine_GameFlagIsSet(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
       work->touchedTrigger = i + CONTACT_TRIGGER_BASE;
     }
   }

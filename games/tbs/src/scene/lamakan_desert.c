@@ -950,7 +950,7 @@ static void HeatGauge_Draw(void) {
   tile = gVramBlockCache[(*(s16 *)&gLamakanDesert_SandVramSlot)].offset >> 5;
   if ((*(s16 *)&gLamakanDesert_SandPhase) != 0) {
     gHeatGaugeSlide = 2;
-  } else if (Engine_GameFlagIsSet(0x104) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
     if (gHeatGaugeSlide > 0) {
       gHeatGaugeSlide--;
     }

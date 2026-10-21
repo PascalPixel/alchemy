@@ -147,10 +147,8 @@ s32 Field_RunScene(s32 entrance) {
     }
 
     for (;;) {
-      // Flag 0x104 stays set while requests are handled and is cleared while
-      // the party walks (the Colosso wall scene tests it). Note where the
-      // leader is, for the requests to use.
-      GameFlag_SetBitFar(0x104);
+      // Note where the leader is, for the requests to use.
+      GameFlag_SetBitFar(FLAG_FIELD_HANDLING_REQUESTS);
       actor = work->actors[gGameState.selectedActor];
       ObjectDispatch_StartIdleFar((struct DispatchObject *)actor);
       gGameState.x = actor->x.fixed;
@@ -365,7 +363,7 @@ s32 Field_RunScene(s32 entrance) {
       // through the air (mode 2, which Suhalla Desert's storms and the world
       // map's airborne travel set: only a key check runs), on the world map
       // or walking, and step until the next request.
-      GameFlag_ClearBitFar(0x104);
+      GameFlag_ClearBitFar(FLAG_FIELD_HANDLING_REQUESTS);
       actor = work->actors[gGameState.selectedActor];
       if (actor != NULL) {
         if (gGameState.movementMode == 2)

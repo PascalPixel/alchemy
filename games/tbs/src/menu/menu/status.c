@@ -298,11 +298,11 @@ s32 CharacterMenu_SelectOwner(s32 slot) {
   cursor->active = ICON_SHOWN;
   cursor->animStep = 0;
   RenderOutput_RedrawSavedRectFar(menu->ownerWindow);
-  // Game flag 0x172 is set while a link battle is arranged in the Battle
-  // Arena, in which only the first three members fight
+  // FLAG_LINK_BATTLE_ARRANGED is set while a link battle is arranged in the
+  // Battle Arena, in which only the first three members fight
   // (LinkLobby_PartyContains); the divider falls between the third and
   // fourth figures, which stand three tiles apart.
-  if (GameFlag_TestFar(0x172))
+  if (GameFlag_TestFar(FLAG_LINK_BATTLE_ARRANGED))
     UiWindow_DrawDividerLineFar(menu->ownerWindow, 9, 1, 9, 3);
   if (index == -1)
     menu->ownerIndex[slot] = 0;

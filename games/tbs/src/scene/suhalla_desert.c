@@ -491,7 +491,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
   Engine_ActorSetSpriteFlags(actor, 0);
   actor->spriteStorageKind ^= 1;
   // Flag 0x104 stops the chase.
-  if (Engine_GameFlagIsSet(0x104)) {
+  if (Engine_GameFlagIsSet(FLAG_FIELD_HANDLING_REQUESTS)) {
     actor->targetX = ACTOR_NO_TARGET;
     actor->targetY = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;

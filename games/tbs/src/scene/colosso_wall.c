@@ -601,7 +601,7 @@ static void ColossoWall_UpdateMovingPlatforms(void) {
         continue;
       }
     }
-    if (GameFlag_IsSet(0x104) != 0) {
+    if (GameFlag_IsSet(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
       riderZ = platform->z.fixed;
     } else {
       riderZ = rider->z.fixed;
@@ -648,7 +648,7 @@ static void ColossoWall_UpdateMovingPlatforms(void) {
   }
   gColossoWall_LiftTimer++;
   if ((u32)gColossoWall_LiftTimer >= COLOSSO_WALL_PLATFORM_CYCLE_FRAMES) {
-    if (GameFlag_IsSet(0x104) == 0) {
+    if (GameFlag_IsSet(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
       gColossoWall_LiftTimer = 0;
     }
   }
@@ -669,7 +669,7 @@ static void ColossoWall_ResetMovingPlatforms(void) {
 /// Starts the moving-platform task and releases its pause flag.
 static void ColossoWall_StartMovingPlatforms(void) {
   FieldScheduler_AddCallback(ColossoWall_UpdateMovingPlatforms, 0xC85);
-  Engine_GameFlagClear(0x104);
+  Engine_GameFlagClear(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
 /// Waits for the demonstration's crossing phase, with a ten-second timeout.

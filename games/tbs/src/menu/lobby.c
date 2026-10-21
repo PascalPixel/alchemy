@@ -85,7 +85,8 @@
 // FLAG_SCENE_TEMP_05: the link was lost, and the attendant has yet to say so.
 // FLAG_SCENE_TEMP_F0 + n: character n is in the battle party, set on every
 //   arrival (LinkLobby_RunRoundResult).
-// 0x172: a linked battle has been arranged (with FLAG_LINK_BATTLE): only the
+// FLAG_LINK_BATTLE_ARRANGED: a linked battle has been arranged (with
+// FLAG_LINK_BATTLE): only the
 //   first three members take part (LinkLobby_PartyContains).
 // The place flags it uses (flags.h):
 // FLAG_PLACE_TEMP_00: the attendant has explained once; talking again offers to
@@ -927,8 +928,8 @@ static s32 LinkLobby_EnterBattle(void) {
 /// monster battle. With one, calls off a monster battle in waiting, then asks
 /// the player to apply or to accept the partner's request; a yes is
 /// published as slot 1. Agreeing sets FLAG_SCENE_TEMP_02, and for a linked
-/// battle FLAG_LINK_BATTLE and flag 0x172. The original handler's return
-/// value is ignored.
+/// battle FLAG_LINK_BATTLE and FLAG_LINK_BATTLE_ARRANGED. The original
+/// handler's return value is ignored.
 static s32 LinkLobby_ChooseBattleMode(void) {
   // Returns no value: r0 is whatever the last call left.
 
@@ -959,7 +960,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
       if (answer == 0) {
         FieldGameFlag_SetByte(1000, 0);
         Engine_GameFlagSet(FLAG_MONSTER_BATTLE);
-        Engine_GameFlagClear(0x172);
+        Engine_GameFlagClear(FLAG_LINK_BATTLE_ARRANGED);
         Engine_GameFlagClear(FLAG_LINK_BATTLE);
         Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
         messageId = messageBase + 7;
@@ -1012,7 +1013,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
         // Yes, and the partner is still there; else the link is lost.
         if (LinkLobby_PeerSlotMatches(0)) {
           Engine_GameFlagSet(FLAG_LINK_BATTLE);
-          Engine_GameFlagSet(0x172);
+          Engine_GameFlagSet(FLAG_LINK_BATTLE_ARRANGED);
           if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01)) {
             Engine_EventSetMessage(messageBase + 3);
           } else {
@@ -1151,8 +1152,8 @@ static s32 LinkLobby_OpenSanctum(s32 actorId) {
 }
 
 /// Returns 1 when character ownerId is among the party's first three members
-/// while a linked battle is arranged (flag 0x172), or its first four
-/// otherwise; 0 when not.
+/// while a linked battle is arranged (FLAG_LINK_BATTLE_ARRANGED), or its first
+/// four otherwise; 0 when not.
 static s32 LinkLobby_PartyContains(s32 ownerId) {
   s32 count;
   s32 ownerLimit;
@@ -1160,7 +1161,7 @@ static s32 LinkLobby_PartyContains(s32 ownerId) {
 
   count = Party_CountActiveOwners();
   ownerLimit = 3;
-  if (Engine_GameFlagIsSet(0x172) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_LINK_BATTLE_ARRANGED) == 0) {
     ownerLimit = 4;
   }
   if (count > ownerLimit) {
@@ -1566,12 +1567,12 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_04);
     Engine_GameFlagClear(FLAG_PLACE_TEMP_05);
     Engine_EventEnd();
-    // Arriving from the file select screen: start the link, clear flag 0x172
-    // and reset the monster level. Idle sleep is turned off here, with a note
-    // when it was on.
+    // Arriving from the file select screen: start the link, clear
+    // FLAG_LINK_BATTLE_ARRANGED and reset the monster level. Idle sleep is
+    // turned off here, with a note when it was on.
   } else {
     SerialRuntime_Initialize();
-    Engine_GameFlagClear(0x172);
+    Engine_GameFlagClear(FLAG_LINK_BATTLE_ARRANGED);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     if (gGameState.idleSleepEnabled != 0) {
       Engine_EventBegin();

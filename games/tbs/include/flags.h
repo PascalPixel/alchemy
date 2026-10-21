@@ -19,6 +19,10 @@
 #define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
 /// Set as a battle starts, cleared as a field scene starts.
 #define FLAG_IN_BATTLE 0x103
+/// Set while the field loop handles its requests, and cleared while the party
+/// walks (Field_RunScene); the deserts' heat gauges and the Colosso's wall
+/// test it.
+#define FLAG_FIELD_HANDLING_REQUESTS 0x104
 /// Set while the field menu is open; scenes hold their moving actors still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or the pause menu, or pressing a shortcut,
@@ -87,6 +91,9 @@
 /// step 27; both, step 28 (DjinnMenu_Open).
 #define FLAG_DJINN_TUTORIAL_PART_A 0x16f
 #define FLAG_DJINN_TUTORIAL_PART_B 0x171
+/// A linked battle has been arranged in the link lobby, with FLAG_LINK_BATTLE:
+/// only the first three party members take part.
+#define FLAG_LINK_BATTLE_ARRANGED 0x172
 /// The link lobby's battle against a monster when no opponent is linked:
 /// formations matched to the party's level, and no spoils.
 #define FLAG_MONSTER_BATTLE 0x173

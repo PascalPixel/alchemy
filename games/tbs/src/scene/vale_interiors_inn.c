@@ -204,10 +204,12 @@ enum ValeInteriorsInnScholarActor {
 /// Vale's place flags this scene keeps while the party is in Vale.
 enum ValeInteriorsInnPlaceFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
+  /// ★ Named from the game: "You came back, huh?" (MsgValeCameBack2)
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = 0x300,
   /// Back from Kalay, ACTOR_VILLAGER_ISAAC_HAS_GROWN remarked how much Isaac
   /// has
   /// grown.
+  /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN = 0x301
 };
 

@@ -164,7 +164,13 @@ enum AlpineCrossingActor {
 
 /// Alpine Crossing's Psynergy puzzles, kept while the party stays.
 enum {
+  /// Frost has frozen the puddle into an ice pillar.
+  /// ★ Named from what the player sees: a small puddle of water on the path
+  /// below the cliffs (its render)
   FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
+  /// Growth has grown the sprout into a vine the party can climb.
+  /// ★ Named from what the player sees: a small sprout at the foot of a cliff
+  /// (its render)
   FLAG_SPROUT_GROWN = FLAG_SCENE_TEMP_01
 };
 

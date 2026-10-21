@@ -201,8 +201,14 @@ enum AltinHouseActor {
 
 /// The village's water level, set on entry from the mine's drain flags.
 enum {
+  /// ★ Named from the game: "The guests in Room One moved back home when the
+  /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
   FLAG_WATER_DROPPED_ONCE = FLAG_SCENE_TEMP_40,
+  /// ★ Named from the game: "The guests in Room Two also went home after the
+  /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
   FLAG_WATER_DROPPED_TWICE = FLAG_SCENE_TEMP_41,
+  /// ★ Named from the game: "Thank goodness the water has receded."
+  /// (MsgAltinThankGoodnessWaterHasReceded)
   FLAG_WATER_DRAINED = FLAG_SCENE_TEMP_42
 };
 

@@ -116,9 +116,13 @@
 // enters another place group, and other places use the numbers for their own.
 
 // A room's floor switch has been flipped from its first position.
+/// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH 0x323
+/// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH 0x325
+/// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH 0x326
+/// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH 0x327
 
 static void AltinPeak_RunBoulderChase(s32 boulderDelay);
@@ -264,13 +268,21 @@ enum {
 /// one visit to a room, across its battles.
 enum {
   /// Frost has frozen the room's first puddle.
+  /// ★ Named from what the player sees: a small puddle of water on the mine's
+  /// floor (its render)
   FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
   /// Frost has frozen AltinPeakFirstWaterBeast's second puddle or
   /// AltinPeakSpritz's second.
+  /// ★ Named from what the player sees: a small puddle of water on the mine's
+  /// floor (its render)
   FLAG_SECOND_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// Frost has frozen AltinPeakSpritz's third puddle.
+  /// ★ Named from what the player sees: a small puddle of water on the mine's
+  /// floor (its render)
   FLAG_THIRD_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
   /// Garet has come out to look at AltinPeakFallingRocks's falling-rock sign.
+  /// ★ Named from the game: "Watch for falling rocks!"
+  /// (MsgAltinWatchFallingRocks)
   FLAG_GARET_WATCHING_ROCKS = FLAG_SCENE_TEMP_05
 };
 

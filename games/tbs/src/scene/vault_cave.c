@@ -112,14 +112,31 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source);
 /// Scene flags. The six puddles of SceneId_VaultCaveVambrace keep their frozen
 /// state in six flags in a row, read by index as well.
 enum {
+  /// The upper western puddle, the first of the six.
+  /// ★ Named from what the player sees: six puddles of water in the floor of
+  /// the puddle room, under the falling drops (its render)
   FLAG_WEST_UPPER_FROZEN = FLAG_SCENE_TEMP_00,
+  /// ★ Named from what the player sees: the western puddle of the lower row
+  /// (its render)
   FLAG_WEST_LOWER_FROZEN = FLAG_SCENE_TEMP_01,
+  /// ★ Named from what the player sees: the lower row's puddle just east of
+  /// the western one (its render)
   FLAG_INNER_WEST_LOWER_FROZEN = FLAG_SCENE_TEMP_02,
+  /// ★ Named from what the player sees: the eastern puddle of the upper row
+  /// (its render)
   FLAG_EAST_UPPER_FROZEN = FLAG_SCENE_TEMP_03,
+  /// ★ Named from what the player sees: the eastern puddle of the lower row
+  /// (its render)
   FLAG_EAST_LOWER_FROZEN = FLAG_SCENE_TEMP_04,
+  /// ★ Named from what the player sees: the easternmost puddle, between the
+  /// rows (its render)
   FLAG_FAR_EAST_FROZEN = FLAG_SCENE_TEMP_05,
   /// A water drop struck the northern pillar before it reached its switch.
+  /// ★ Named from what the player sees: the pillar the leader pushes toward
+  /// its switch in the northern room of SceneId_VaultCaveMouth (its render)
   FLAG_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
+  /// Whirlwind has blown the bush away.
+  /// ★ Named from the game: "Whirlwind" (MsgAbilityName)
   FLAG_WHIRLWIND_USED = FLAG_SCENE_TEMP_00 + 0x100
 };
 
@@ -1287,7 +1304,7 @@ struct SceneEvent gVaultCaveEvents1[] = {
     { EVENT_EXIT, 13, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_POOL_TO_NORTH_EAST },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FlipSwitch) },
     { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_PASSAGE_CHEST, FIND_MIMIC | 3 },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_PASSAGE_MIMIC_BEATEN, FIND_MIMIC | 3 },
     { SCENE_EVENTS_END },
 };
 

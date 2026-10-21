@@ -83,9 +83,18 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
-#define FLAG_GOMA_CAVE_STUMP_FELL 0x300 ///< pushed over into the room below
-#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301 ///< sunk into its place
-#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302 ///< one step east of its start
+/// The stump has been pushed over into the room below.
+/// ★ Named from what the player sees: a tree stump standing on a ledge (its
+/// render)
+#define FLAG_GOMA_CAVE_STUMP_FELL 0x300
+/// The east stone pillar has sunk into its place.
+/// ★ Named from what the player sees: a stone pillar on the room's east side
+/// (its render)
+#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301
+/// The west stone pillar stands one step east of its start.
+/// ★ Named from what the player sees: a stone pillar at the head of the room's
+/// west passage (its render)
+#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 

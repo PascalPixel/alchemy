@@ -137,10 +137,20 @@ enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
 /// townspeople have already said. A Mind Read before someone has spoken plays
 /// the conversation first.
 enum {
+  /// ★ Named from the game: "Hey, it's that warrior guy!"
+  /// (MsgVaultWarriorGuy)
   FLAG_WARRIOR_GUY_GREETED = FLAG_SCENE_TEMP_00 + 0x100,
+  /// ★ Named from the game: "You're the warriors who captured the thieves"
+  /// (MsgVaultWarriorsWhoCaptured)
   FLAG_WELCOMING_VILLAGER_RECOGNIZED_PARTY = FLAG_SCENE_TEMP_00 + 0x105,
+  /// ★ Named from the game: "You're all really strong"
+  /// (MsgVaultTalkingMayorStrong)
   FLAG_PARTY_PRAISED = FLAG_SCENE_TEMP_00 + 0x106,
+  /// ★ Named from the game: "I'm so glad you came back to Vault!"
+  /// (MsgVaultWarriorGuy)
   FLAG_BOY_ROUND_THE_WELL_SPOKE = FLAG_SCENE_TEMP_00 + 0x107,
+  /// ★ Named from the game: "did you guys check out the jail?"
+  /// (MsgVaultGuysCheckJail)
   FLAG_ASKED_ABOUT_JAIL = FLAG_SCENE_TEMP_00 + 0x108
 };
 

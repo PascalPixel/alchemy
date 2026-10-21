@@ -249,6 +249,8 @@ enum {
 
 /// The attendant has led the party to the beds; talking again sends the
 /// attendant back.
+/// ★ Named from the game: "We have just enough extra beds in this room for
+/// everybody." (MsgTolbiWeHaveJustEnoughExtra)
 enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
 /// After a night in the palace's beds: the party's HP and PP are full,

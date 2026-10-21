@@ -42,7 +42,7 @@
 ///   them Hammet has fled to Lunpa; the tied-up villager explains it is named
 ///   after Lunpa, a noble thief, and the thieves add that Donpa's son, Dodonpa,
 ///   is evil. They ask to be let go and attack
-///   (Event_FreeRooferAndConfrontThieves, FLAG_VAULT_THIEVES_CONFRONTED, slot 5
+///   (Event_FreeRooferAndConfrontThieves, FLAG_VAULT_THIEVES_ATTACKED, slot 5
 ///   of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT). A loss returns to
 ///   VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES, where they gloat that the
 ///   party will stay as their hostages and warn them to keep quiet if they want
@@ -200,6 +200,7 @@ enum {
 enum {
   /// Set while the two suspects run from the party, until the party steps
   /// aside to talk it over.
+  /// ★ Named from the game: "Don't let him near me!" (MsgVaultWant)
   FLAG_SUSPECTS_FLEEING = 0x300
 };
 
@@ -1278,7 +1279,7 @@ static void VaultInteriors_IvanJoinsRodSearch(void) {
 ///
 /// Reached by talking to the tied-up villager (ACTOR_TIED_UP_VILLAGER) in the
 /// loft; the loft's setup replays the thieves' part through
-/// VaultInteriors_ConfrontThievesAgain once FLAG_VAULT_THIEVES_CONFRONTED is
+/// VaultInteriors_ConfrontThievesAgain once FLAG_VAULT_THIEVES_ATTACKED is
 /// set. Sets that flag and starts the battle (encounter 12, 5): a win returns
 /// to VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED, a loss to
 /// VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES.
@@ -1486,7 +1487,7 @@ static void Event_FreeRooferAndConfrontThieves(void) {
   VaultInteriors_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_SHAKE_HEAD, 20);
   Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
   // Preserve the return destinations before requesting the thieves' encounter.
-  GameFlag_Set(FLAG_VAULT_THIEVES_CONFRONTED);
+  GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   base = (s32)&SceneId_VaultInteriors;
@@ -1528,7 +1529,7 @@ static void Event_ClimbToLoft(void) {
 static void Event_LeaveLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
-  if (GameFlag_IsSet(FLAG_VAULT_THIEVES_CONFRONTED) == 0) {
+  if (GameFlag_IsSet(FLAG_VAULT_THIEVES_ATTACKED) == 0) {
     Engine_EventBegin();
     Engine_EventSetMessage(MsgVaultUhnnUhnn);
     Event_ShowMessage(ACTOR_TIED_UP_VILLAGER, 0);
@@ -2193,7 +2194,7 @@ s32 Scene_Initialize(void) {
       break;
     }
     Engine_ActorSetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(824), PIXELS(456));
-    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_CONFRONTED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_ATTACKED) != 0) {
       VaultInteriors_ConfrontThievesAgain();
       Engine_EventEnd();
       break;
@@ -2317,7 +2318,7 @@ static void VaultInteriors_LoseToThieves(void) {
 /// won't go away, will they? They're back!"
 ///
 /// Called by Scene_Initialize at VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM once
-/// FLAG_VAULT_THIEVES_CONFRONTED is set. Starts the same battle as
+/// FLAG_VAULT_THIEVES_ATTACKED is set. Starts the same battle as
 /// Event_FreeRooferAndConfrontThieves.
 static void VaultInteriors_ConfrontThievesAgain(void) {
 
@@ -3904,9 +3905,9 @@ struct ScenePlacement gVaultInteriors_Placements[] = {
         PIXELS(664), 0, PIXELS(632), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x80, 0x0, ACTOR_STAND,
         PIXELS(696), 0, PIXELS(696), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x3f, FLAG_VAULT_THIEVES_CONFRONTED, ACTOR_STAND,
+    { 0x3f, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(696), FACING_EAST, 3, 0 },
-    { 0x40, FLAG_VAULT_THIEVES_CONFRONTED, ACTOR_STAND,
+    { 0x40, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xdf, 0x0, ACTOR_STAND,
         PIXELS(692), 0, PIXELS(411), FACING_SOUTH, TALK_KEEP_FACING, 0 },

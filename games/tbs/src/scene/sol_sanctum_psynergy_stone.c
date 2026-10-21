@@ -37,6 +37,7 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
+/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
 
 const struct SceneEntrance *Scene_GetEntrances(void) {

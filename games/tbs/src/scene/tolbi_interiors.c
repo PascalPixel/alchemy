@@ -43,7 +43,7 @@
 /// from Kalay with the party greets it as `the would-be warrior`, and he and
 /// TOLBI_INTERIORS_COLOSSO_FAN leave once the party has watched the passengers
 /// confront the tour guide on the Tolbi docks
-/// (FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN). Barrels hold a Vial and a Lucky
+/// (FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED). Barrels hold a Vial and a Lucky
 /// Medal, and searching the ovens shows what is cooking.
 
 #include "game_state.h"
@@ -64,6 +64,8 @@
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
 /// The stranded passengers' argument has played.
+/// ★ Named from the game: "He won't sail the ship"
+/// (MsgTolbiHeWontSailShipEven)
 #define FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN 0x300
 
 #if !TBS_PATCH_1
@@ -326,7 +328,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
       }
     }
     // Once the docks' confrontation (the refund) is seen, these two have left.
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) != 0) {
       Engine_ActorSetPosition(TOLBI_INTERIORS_FELLOW_PASSENGER, 0, 0);
       Engine_ActorSetPosition(TOLBI_INTERIORS_COLOSSO_FAN, 0, 0);
     }
@@ -422,8 +424,8 @@ static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
   if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_TAKEN) == 0) {
     TolbiInteriors_AskYesNo(MsgTolbiHeeHeeLook, speaker);
   } else {
-    if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_MISSED) == 0) {
-      GameFlag_Set(FLAG_TOLBI_INTERIORS_MEDAL_MISSED);
+    if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO) == 0) {
+      GameFlag_Set(FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO);
       Engine_EventSetMessage(MsgTolbiHello);
       Event_ShowMessage(speaker, 0);
       Engine_EventWait(10);
@@ -439,7 +441,7 @@ static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
 /// In Tolbi, Mind Read on the medal woman gives the hiding place away.
 static void TolbiInteriors_ReadMedalWomanMind(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_INTERIORS_MEDAL_MISSED) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO) == 0) {
     Engine_EventSetMessage(MsgTolbiHehHehSheJustHid);
   } else {
     Engine_EventSetMessage(MsgTolbiThingFoundDefinitelySameAs);

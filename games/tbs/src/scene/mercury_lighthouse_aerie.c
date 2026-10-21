@@ -25,7 +25,7 @@
 ///   the party still holds the Mars Star, and the two warp over to the lift
 ///   and ride it down. Mia means to go with the party, since with the
 ///   lighthouse lit the fountain will run over with healing water again
-///   (FLAG_MERCURY_AERIE_CONFRONTATION_DONE, and
+///   (FLAG_MERCURY_AERIE_ALEX_APPEARED, and
 ///   FLAG_SATUROS_BEATEN_AT_MERCURY, which Imil, Bilibin and the lighthouse
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
@@ -121,14 +121,23 @@ enum MercuryLighthouseAerieActor {
 /// Scene flags, kept while the party stays on the aerie.
 enum {
   /// The leader stands on a platform, which has dipped under the weight.
+  /// ★ Named from what the player sees: the round platforms floating in the
+  /// sky beside the aerie, which bob under the leader (its render)
   FLAG_ON_PLATFORM = FLAG_SCENE_TEMP_50,
+  /// ★ Named from what the player sees: the lift rising to the aerie with a
+  /// statue on it (its render)
   FLAG_LIFT_UP = FLAG_SCENE_TEMP_00 + 0x51,
   /// Set on every arrival but the first: Jenna, Kraden, Felix and Menardi
   /// are placed only before it.
+  /// ★ Named from the game: "leave our hostages"
+  /// (MsgMercuryLighthouseAlreadyLit)
   FLAG_HOSTAGES_GONE = FLAG_SCENE_TEMP_00 + 0x53
 };
 
-enum { FLAG_PSYNERGY_STONE = 0x350 };
+enum {
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
+  FLAG_PSYNERGY_STONE = 0x350
+};
 
 static void MercuryLighthouseAerie_PartyArrives(void);
 static void MercuryLighthouseAerie_SettlePlatforms(void);
@@ -888,7 +897,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// for long. "Isaac, we got him!" Alex appears and explains that the
 /// lighthouse bound Saturos' fire Psynergy and lent Mia endless power. Saturos
 /// stands again; the two warp over to the lift and ride it down, and the party
-/// regroups on the leader. Sets FLAG_MERCURY_AERIE_CONFRONTATION_DONE and
+/// regroups on the leader. Sets FLAG_MERCURY_AERIE_ALEX_APPEARED and
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
@@ -1430,7 +1439,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Map_CopyCellsTo(4, 0x46, 4, 0x4A, 5, 4);
-  GameFlag_Set(FLAG_MERCURY_AERIE_CONFRONTATION_DONE);
+  GameFlag_Set(FLAG_MERCURY_AERIE_ALEX_APPEARED);
   GameFlag_Set(FLAG_SATUROS_BEATEN_AT_MERCURY);
   Engine_EventEnd();
 }
@@ -1884,7 +1893,7 @@ struct ScenePlacement gMercuryLighthouseAeriePlacements[] = {
 // clang-format on
 
 struct SceneEvent gMercuryLighthouseAerieEvents[] = {
-    {EVENT_TOUCH, 5, FLAG_MERCURY_AERIE_CONFRONTATION_DONE,
+    {EVENT_TOUCH, 5, FLAG_MERCURY_AERIE_ALEX_APPEARED,
      EVENT_SCRIPT(MercuryLighthouseAerie_ConfrontSaturos)},
     {EVENT_TOUCH, 6, FLAG_LIFT_UP,
      EVENT_SCRIPT(MercuryLighthouseAerie_CallLift)},

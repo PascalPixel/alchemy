@@ -137,11 +137,16 @@
 // The floor switches have slid the walls aside.
 #define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
 #define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
+/// ★ Named from what the player sees: the floor switch on the east side of
+/// the fourth floor (its render)
 #define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
 // The gates the sunken pillars opened: one pillar, three pillars (and which of
 // two sets of sockets they sank into) and the pillar room's four.
 #define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_A 0x302
+/// The second set of sockets.
+/// ★ Named from what the player sees: the square sockets in the third floor
+/// that the pillars sink into (its render)
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
 #define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN 0x304
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308

@@ -163,6 +163,7 @@ enum ValeCaveLogsActor {
 #define FIRST_DJINNI_ROUTE_TRIGGER 45
 
 /// The flag of Kite, set once it is caught.
+/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_KITE (FLAG_DJINNI_0 + DJINNI_KITE)
 
 // The cave's scene flags:
@@ -176,8 +177,11 @@ enum ValeCaveLogsActor {
 // The cave's place flags. The second and third rooms are one place group, so
 // these last while the party goes between them; the first room is another.
 /// The riding log of the second room is at the eastern end of its passage.
+/// ★ Named from what the player sees: the log floating in the holes' part
+/// of the second room, which carries the leader along it (its render)
 #define FLAG_VALE_CAVE_RIDING_LOG_EAST 0x301
 /// Kite has run behind the ledge and keeps to its far side.
+/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE 0x302
 
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);

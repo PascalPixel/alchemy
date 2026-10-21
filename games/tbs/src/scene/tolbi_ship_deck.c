@@ -5,8 +5,9 @@
 /// the mast (tolbi_ship_mast.c, SceneId_TolbiShipMast) and below decks
 /// (tolbi_ship_interiors.c, SceneId_TolbiShipInteriors). The deck's placements
 /// and events follow the voyage's stage, read from its flags: at Kalay, at sea
-/// once the first attack is fought off (FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED),
-/// while the oars move (FLAG_TOLBI_SHIP_ROWING), at anchor off the island
+/// once the first attack is fought off
+/// (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF), while the oars move
+/// (FLAG_TOLBI_SHIP_ROWING), at anchor off the island
 /// (FLAG_TOLBI_SHIP_AT_ISLAND) and at Tolbi (FLAG_TOLBI_SHIP_REACHED_TOLBI).
 /// The setup draws the deck for that stage (the cells as under way, at anchor),
 /// rocks it and scrolls the sea while under sail, sets the oars rowing, and
@@ -33,7 +34,7 @@
 ///   below ("Not if I have anything to say about it."),
 ///   FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY. Coming up to the door he took
 ///   (touch cells 11 and 12) brings him out denying everything
-///   (FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED); Mind Read shows he hid the charm on
+///   (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT); Mind Read shows he hid the charm on
 ///   top of the mast. Below decks the captain then refuses to sail without it,
 ///   and once it is given back (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) the
 ///   passengers who promised to row stand on deck.
@@ -116,7 +117,9 @@
 
 /// "There's a huge sea monster on the ship!": the deck shakes until the
 /// Kraken is defeated (set in tolbi_ship_interiors.c).
-#define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
+/// ★ Named from the game: "there's a huge sea monster on the ship!"
+/// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
+#define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK 0x302
 
 // Defined below, in the order of the ROM.
 static void TolbiShipDeck_ConfrontCrewman(void);
@@ -735,7 +738,7 @@ const struct ScenePlacement *TolbiShipDeck_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING))
     return gTolbiShipDeckPlacementsRowing;
   afterFirstAttack =
-      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED);
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF);
   if (afterFirstAttack != 0)
     return gTolbiShipDeckPlacementsAtSea;
   if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
@@ -759,7 +762,7 @@ const struct SceneEvent *TolbiShipDeck_GetEvents(void) {
     return gTolbiShipDeckEventsArrived;
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND))
     return gTolbiShipDeckEventsAtIsland;
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED))
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF))
     return gTolbiShipDeckEventsAtSea;
   return gTolbiShipDeckEvents;
 }
@@ -1138,7 +1141,7 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   Engine_EventSetMessage(MsgTolbiShipDidntDoAnything);
   Event_ShowMessageAndWait(KALAY_CREWMAN, 0, 20);
   Engine_ActorShowEmote(KALAY_CREWMAN, 0x102, 0);
-  GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED);
+  GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT);
 }
 
 /// Sets up the scene on entry: clears FLAG_NOT_ON_MAP, sets the transition,
@@ -1190,7 +1193,8 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     sSeaScroll[1] = 0x200000;
     sSeaSpeed[1] = 0x13333;
     FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, TASK_PRIORITY_SCENE);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) !=
+             0) {
     TolbiShipDeck_CopyUnderwayCells();
     sSeaScroll[1] = flag;
     sSeaSpeed[1] = flag;
@@ -1204,7 +1208,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     Object_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority = 1;
     break;
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY:
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       TolbiShipDeck_DepartWithParty();
     } else {
       TolbiShipDeck_DepartFromKalay();
@@ -1250,7 +1254,8 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_SetUpAtAnchor();
   } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
     TolbiShipDeck_SetUpAfterKraken();
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) !=
+             0) {
     TolbiShipDeck_SetUpUnderSail();
   } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     TolbiShipDeck_PlacePassengersAgreedToRow();
@@ -1289,7 +1294,7 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
     Actor_SetActionScript(KALAY_TOUR_GUIDE, gTolbiShipDeck_RandomActorActions);
     Engine_ActorSetPosition(KALAY_CAPTAIN, 0, 0);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0) {
       Actor_SetPosition(KALAY_CREWMAN, PIXELS(246), PIXELS(512));
       Object_GetById(KALAY_CREWMAN)->facing = flag;
     }
@@ -1994,7 +1999,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
-  GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ABOARD);
+  GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
   Engine_EventEnd();
 }
 
@@ -3430,9 +3435,9 @@ const struct SceneEvent gTolbiShipDeckEvents[] = {
 #endif
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_KALAY_DOCKS },
-    { EVENT_TALK, KALAY_CREWMAN, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, MSGNO(MsgTolbiShipDeckThereAreALotOfPassengers) },
+    { EVENT_TALK, KALAY_CREWMAN, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, MSGNO(MsgTolbiShipDeckThereAreALotOfPassengers) },
     { EVENT_TALK, KALAY_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckOhAtTheRiskOfSounding) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), KALAY_CREWMAN, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, MSGNO(MsgTolbiShipDeckTheReplacementShipFromTolbiShould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), KALAY_CREWMAN, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, MSGNO(MsgTolbiShipDeckTheReplacementShipFromTolbiShould) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), KALAY_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIHidTheAnchorCharmNo) },
     { EVENT_TALK, KALAY_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckWeApologizeForAnyTroubleThat) },
     { EVENT_TALK, KALAY_CREW_MEMBER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_TalkToCrewMember) },
@@ -3463,8 +3468,8 @@ const struct SceneEvent gTolbiShipDeckEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), KALAY_PASSENGER_KARAGOL, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckThoseGuysSeemPrettySureOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), KALAY_PASSENGER_KARAGOL, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckUsHelpWithTheRowingGet) },
     { EVENT_TOUCH, 10, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT_SCRIPT(TolbiShipDeck_WatchCrewDecideToSail) },
-    { EVENT_TOUCH, 11, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromEast) },
-    { EVENT_TOUCH, 12, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromWest) },
+    { EVENT_TOUCH, 11, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromEast) },
+    { EVENT_TOUCH, 12, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromWest) },
     { SCENE_EVENTS_END },
 };
 

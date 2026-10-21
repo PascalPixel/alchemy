@@ -74,6 +74,9 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
+/// CrossboneIsleBane's third stone pillar has come down to two cells high or
+/// less.
+/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED 0x300
 
 #if TBS_PATCH_1

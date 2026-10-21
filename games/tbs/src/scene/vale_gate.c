@@ -107,9 +107,12 @@
 
 // Vale's place flags, kept while the party stays in Vale's scenes.
 /// Back from Kalay, a villager has welcomed Isaac home.
+/// ★ Named from the game: "You came back home, huh?" (MsgValeYouCameBackHome)
 #define FLAG_VALE_WELCOMED_HOME 0x302
 /// Back from Kalay, the villager searching for the Psynergy Stone has told
 /// Isaac it is gone.
+/// ★ Named from the game: "Where'd that Psynergy Stone go? It's gone!"
+/// (MsgValeThePsynergyStoneIsGone)
 #define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD 0x306
 
 /// Each placement table numbers its own rows from ACTOR_FIRST_PLACED, Garet
@@ -800,25 +803,25 @@ static void Event_LeaveThroughTownGate(void) {
 /// In Vale, Whirlwind blows ACTOR_FIRST_IVY away.
 ///
 /// Reached by Whirlwind on it by day, until it is gone; sets
-/// FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED.
+/// FLAG_VALE_FIRST_IVY_BLOWN_AWAY.
 static void Event_BlowAwayFirstIvy(void) {
-  Engine_GameFlagSet((FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED));
+  Engine_GameFlagSet((FLAG_VALE_FIRST_IVY_BLOWN_AWAY));
 }
 
 /// In Vale, Whirlwind blows ACTOR_SECOND_IVY away.
 ///
 /// Reached by Whirlwind on it by day, until it is gone; sets
-/// FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED.
+/// FLAG_VALE_SECOND_IVY_BLOWN_AWAY.
 static void Event_BlowAwaySecondIvy(void) {
-  Engine_GameFlagSet((FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED));
+  Engine_GameFlagSet((FLAG_VALE_SECOND_IVY_BLOWN_AWAY));
 }
 
 /// In Vale, Whirlwind blows ACTOR_THIRD_IVY away.
 ///
 /// Reached by Whirlwind on it by day, until it is gone; sets
-/// FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED.
+/// FLAG_VALE_THIRD_IVY_BLOWN_AWAY.
 static void Event_BlowAwayThirdIvy(void) {
-  Engine_GameFlagSet((FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED));
+  Engine_GameFlagSet((FLAG_VALE_THIRD_IVY_BLOWN_AWAY));
 }
 
 /// Arriving in this part of Vale: hides the ivy Whirlwind has blown away, runs
@@ -838,13 +841,13 @@ s32 ValeGate_Initialize(void) {
   s32 flag;
   s32 verticalScale;
 
-  if (Engine_GameFlagIsSet((FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED)) != 0) {
+  if (Engine_GameFlagIsSet((FLAG_VALE_FIRST_IVY_BLOWN_AWAY)) != 0) {
     Engine_ActorSetPosition(ACTOR_FIRST_IVY, 0, 0);
   }
-  if (Engine_GameFlagIsSet((FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED)) != 0) {
+  if (Engine_GameFlagIsSet((FLAG_VALE_SECOND_IVY_BLOWN_AWAY)) != 0) {
     Engine_ActorSetPosition(ACTOR_SECOND_IVY, 0, 0);
   }
-  if (Engine_GameFlagIsSet((FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED)) != 0) {
+  if (Engine_GameFlagIsSet((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
     Engine_ActorSetPosition(ACTOR_THIRD_IVY, 0, 0);
   }
   switch (gGameState.entrance) {
@@ -1945,9 +1948,9 @@ static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN);
   Engine_GameFlagSet(FLAG_VALE_STORM_GARET_LEFT);
   Engine_GameFlagSet(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN);
-  Engine_GameFlagSet(FLAG_VALE_ANGRY_VILLAGER_ARGUED);
+  Engine_GameFlagSet(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
   Engine_GameFlagSet(FLAG_MET_SATUROS_AND_MENARDI);
-  Engine_GameFlagSet(FLAG_OVERHEARD_KRADEN);
+  Engine_GameFlagSet(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
   Engine_GameFlagSet(FLAG_SANCTUM_VISIT_PLANNED);
   Engine_GameFlagSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_ENTERED);
@@ -1956,7 +1959,7 @@ static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_INNER_STATUES_SEEN);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_FOUND);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
@@ -1965,7 +1968,7 @@ static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
@@ -2494,9 +2497,9 @@ struct SceneEvent gValeGate_Events[] = {
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughTownGate) },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, VALE_GATE_TO_VALE },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, VALE_GATE_TO_GOMA_CAVE_STREAM },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_BlowAwayFirstIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_BlowAwaySecondIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT_SCRIPT(Event_BlowAwayFirstIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT_SCRIPT(Event_BlowAwaySecondIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
     { SEARCH(SEARCH_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UsePsynergyStone) },
     { SCENE_EVENTS_END },
 };
@@ -2557,9 +2560,9 @@ struct SceneEvent gValeGate_EventsAfterLeaving[] = {
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughTownGate) },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, VALE_GATE_TO_VALE },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, VALE_GATE_TO_GOMA_CAVE_STREAM },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_BlowAwayFirstIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_BlowAwaySecondIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT_SCRIPT(Event_BlowAwayFirstIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT_SCRIPT(Event_BlowAwaySecondIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
     { SEARCH(SEARCH_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UsePsynergyStone) },
     { SCENE_EVENTS_END },
 };
@@ -2598,9 +2601,9 @@ struct SceneEvent gValeGate_EventsAfterKalay[] = {
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughTownGate) },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, VALE_GATE_TO_VALE },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, VALE_GATE_TO_GOMA_CAVE_STREAM },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_BlowAwayFirstIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_BlowAwaySecondIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT_SCRIPT(Event_BlowAwayFirstIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT_SCRIPT(Event_BlowAwaySecondIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
     { SEARCH(SEARCH_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UsePsynergyStone) },
     { SCENE_EVENTS_END },
 };

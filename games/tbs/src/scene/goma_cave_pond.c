@@ -38,6 +38,8 @@
 // enters another place group, and other places use the numbers for their own.
 
 /// The stump has been pushed over into the room below (goma_cave_pillar.c).
+/// ★ Named from what the player sees: a tree stump standing on a ledge in the
+/// room above (its render)
 #define FLAG_GOMA_CAVE_STUMP_FELL 0x300
 
 /// The stump the party pushes over in the room above, lying in this room.

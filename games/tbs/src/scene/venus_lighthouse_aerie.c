@@ -124,6 +124,7 @@
 
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
 /// handed over before the aerie's first battle; a defeat gives it back.
+/// ★ Named from the game: "Shaman's Rod" (MsgItemName)
 #define FLAG_SHAMANS_ROD_OWNER 0x345
 
 static void Event_SteadyPillars(void);

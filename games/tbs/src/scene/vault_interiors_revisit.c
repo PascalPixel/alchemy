@@ -138,6 +138,8 @@ enum {
 };
 
 /// Set once the mayor has told Isaac the thieves escaped from jail.
+/// ★ Named from the game: "You've come back to Vault!"
+/// (MsgVaultIsaacYouveComeBackVault)
 enum { FLAG_WELCOMED_BACK = FLAG_SCENE_TEMP_00 + 0x100 };
 
 // Shared scene routines stay in their linked order.

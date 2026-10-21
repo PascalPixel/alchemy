@@ -180,8 +180,11 @@ enum ImilInteriorsActor {
 enum ImilTownFlag {
   /// Which map layer the leader walks on, from where he stands: the first near
   /// the middle of the village, the second elsewhere.
-  FLAG_IMIL_CENTRE_LAYER = FLAG_SCENE_TEMP_00,
+  FLAG_IMIL_MIDDLE_LAYER = FLAG_SCENE_TEMP_00,
   FLAG_IMIL_OUTER_LAYER = FLAG_SCENE_TEMP_01,
+  /// Move has pushed the snowman to its place, for the rest of the visit.
+  /// ★ Named from what the player sees: a snowman in a red hat and green scarf
+  /// (its render)
   FLAG_IMIL_SNOWMAN_MOVED = FLAG_SCENE_TEMP_03
 };
 
@@ -755,7 +758,7 @@ s32 Imil_Initialize(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ActorSetAnimation(ACTOR_VILLAGER_KEEPING_IN_SHAPE, 9);
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
-      Engine_GameFlagClear(FLAG_IMIL_CENTRE_LAYER);
+      Engine_GameFlagClear(FLAG_IMIL_MIDDLE_LAYER);
       Engine_GameFlagClear(FLAG_IMIL_OUTER_LAYER);
     }
     leader->timer = 0;
@@ -1209,7 +1212,7 @@ static void Imil_UpdateMapLayerByLeaderPosition(void) {
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   x = actor->x.fixed;
   column = x >> 19;
-  zoneFlag = FLAG_IMIL_CENTRE_LAYER;
+  zoneFlag = FLAG_IMIL_MIDDLE_LAYER;
   otherZoneFlag = FLAG_IMIL_OUTER_LAYER;
   if ((u32)(column - 24) <= 7 ||
       ((u32)((actor->z.fixed >> 19) - 36) <= 9 && (u32)(column - 22) <= 9)) {
@@ -1818,7 +1821,7 @@ struct ScenePlacement gImil_InteriorPlacements[] = {
 struct SceneEvent gImil_TownEvents[] = {
     { EVENT_EXIT, 60, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_SOUTH },
     { EVENT_EXIT, 61, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_NORTH },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SNOWMAN, FLAG_IMIL_CENTRE_LAYER, EVENT_SCRIPT(Imil_PlaceMovedSnowman) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SNOWMAN, FLAG_IMIL_MIDDLE_LAYER, EVENT_SCRIPT(Imil_PlaceMovedSnowman) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },

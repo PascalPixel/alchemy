@@ -113,11 +113,17 @@
 /// Storms doused in the first and second scenes, one flag per storm from the
 /// first; each storm stays away once doused.
 enum {
+  /// The first scene's storms, five from this one.
+  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_FIRST_SCENE_STORM_DOUSED = 0x301,
+  /// The second scene's storms, five from this one.
+  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SECOND_SCENE_STORM_DOUSED = 0x311,
   /// A storm has risen: the sand haze stays faded in.
+  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_STORMS_RISEN = 0x340,
   /// The Psynergy Stone has been found, a place flag.
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_SUHALLA_DESERT_PSYNERGY_STONE = FLAG_PLACE_TEMP_51
 };
 

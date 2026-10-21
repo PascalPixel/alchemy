@@ -197,16 +197,28 @@ enum StormNightActor {
 /// Vale's place flags this scene keeps while the party is in Vale.
 enum StormNightPlaceFlag {
   /// The villager at the river tried to go for help and could not.
+  /// ★ Named from the game: "I'll go!" (MsgValeIllGo)
   FLAG_VALE_STORM_VILLAGER_TRIED_TO_GO = 0x305,
   /// Garet has said once that they cannot get around a fallen rock.
+  /// ★ Named from the game: "We can't get around this rock!"
+  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH = 0x30c,
-  /// Kyle has greeted Isaac at the river. "Oh, Isaac..."
+  /// Kyle has greeted Isaac at the river.
+  /// ★ Named from the game: "Oh," (MsgValeOh)
   FLAG_VALE_STORM_KYLE_GREETED_ISAAC = 0x30d,
   /// The party has passed each rock's spot since coming to Vale, so its event
   /// does not play again.
+  /// ★ Named from the game: "We can't get around this rock!"
+  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_FIRST_ROCK_PASSED = 0x310,
+  /// ★ Named from the game: "We can't get around this rock!"
+  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_SECOND_ROCK_PASSED = 0x311,
+  /// ★ Named from the game: "We can't get around this rock!"
+  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_THIRD_ROCK_PASSED = 0x312,
+  /// ★ Named from the game: "We can't get around this rock!"
+  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_FOURTH_ROCK_PASSED = 0x313
 };
 

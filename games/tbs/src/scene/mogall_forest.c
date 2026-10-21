@@ -222,31 +222,61 @@ enum MogallForestKillerApeActor {
 /// Kept until the party leaves the forest: each ape once it has come out
 /// (or, for two, moved on to a second hiding place) and each rolled log.
 enum {
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_FIRST_AREA_NORTH_APE_OUT = 0x300,
+  /// The ape that leaps at the leader instead of pointing the way.
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_FIRST_AREA_ATTACKING_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_FIRST_AREA_EAST_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_SECOND_AREA_NORTH_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_SECOND_AREA_EAST_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_SECOND_AREA_SOUTH_APE_MOVED,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_SECOND_AREA_SOUTH_APE_OUT,
+  /// The ape that leaps at the leader instead of pointing the way.
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_THIRD_AREA_ATTACKING_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_THIRD_AREA_MIDDLE_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_THIRD_AREA_WEST_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_THIRD_AREA_EAST_APE_MOVED,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_THIRD_AREA_EAST_APE_OUT,
+  /// ★ Named from what the player sees: a log pushed over the grass rolls into
+  /// the river and lies across it (its render)
   FLAG_FIRST_AREA_LOG_ROLLED = 0x310,
+  /// ★ Named from what the player sees: the second area's log rolled into the
+  /// river (its render)
   FLAG_SECOND_AREA_LOG_ROLLED,
+  /// ★ Named from what the player sees: the third area's first log rolled into
+  /// the river (its render)
   FLAG_THIRD_AREA_FIRST_LOG_ROLLED,
+  /// ★ Named from what the player sees: the third area's second log rolled
+  /// into the river (its render)
   FLAG_THIRD_AREA_SECOND_LOG_ROLLED,
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_PSYNERGY_STONE = 0x350
 };
 
 /// Scene flag, kept while the party stays in the area.
-enum { FLAG_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_00 + 0x14 };
+enum {
+  /// ★ Named from what the player sees: the rock beside the log, moved with
+  /// Move (its render)
+  FLAG_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_00 + 0x14
+};
 
 enum {
+  /// ★ Named from the game: "Nut" (MsgItemName)
   FLAG_NUT_CAUGHT = 0xfd4,
+  /// ★ Named from the game: "Apple" (MsgItemName)
   FLAG_CHEST_APPLE = 0xf1b,
+  /// ★ Named from the game: "Elven Shirt" (MsgItemName)
   FLAG_CHEST_ELVEN_SHIRT = 0xf1a
 };
 

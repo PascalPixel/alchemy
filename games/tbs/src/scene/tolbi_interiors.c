@@ -1,5 +1,5 @@
 /// @file
-/// The buildings of Tolbi (TolbiInteriors, scene 136): its houses, inns and
+/// The buildings of Tolbi (SceneId_TolbiInteriors): its houses, inns and
 /// shops, which the area names call Tolbi, and Tolbi Sanctum, as the same
 /// scene is named at TOLBI_INTERIORS_SANCTUM and TOLBI_INTERIORS_SANCTUM_NORTH.
 ///
@@ -11,9 +11,11 @@
 ///   rented another house, and the weapon, armor and item shops
 ///   (TOLBI_INTERIORS_WEAPON_SHOP, TOLBI_INTERIORS_ARMOR_SHOP and
 ///   TOLBI_INTERIORS_ITEM_SHOP) open across their counters. The inn behind
-///   TOLBI_TO_INN is full, `Inn Full / No Vacancies`; its exits 10 and
-///   11 join it to the part of the inn whose doors and exits (12 to 19) lead
-///   into four guest rooms.
+///   TOLBI_TO_INN is full, `Inn Full / No Vacancies`;
+///   TOLBI_INTERIORS_INN_TO_INN_CORRIDOR and
+///   TOLBI_INTERIORS_INN_CORRIDOR_TO_INN join it to the inn's corridor, whose
+///   doors lead into four guest rooms
+///   (TOLBI_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHWEST and the rest).
 /// - Tolbi Sanctum, behind TOLBI_TO_SANCTUM (TOLBI_INTERIORS_SANCTUM), whose
 ///   priest opens the sanctum across the counter. TOLBI_INTERIORS_SANCTUM_NORTH
 ///   is where a defeat returns the party while Iodem waits at Gondowan Passage.
@@ -29,13 +31,13 @@
 /// made it to Tolbi with the party's help.
 ///
 /// After Colosso two short scripted scenes play, each once, on entering their
-/// rooms (TolbiInteriors_ApplyEntryState). In one guest room (entrance 19) a
+/// rooms (TolbiInteriors_ApplyEntryState). In the northeast guest room a
 /// woman finds something on the floor, starts at the sight of the party and
 /// hides it behind the trash pile (TolbiInteriors_WatchWomanHideMedal,
 /// FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN): a Lucky Medal, which the party can then
 /// take from that barrel (FLAG_TOLBI_INTERIORS_MEDAL_TAKEN), after which she
 /// greets them, startled, and Mind Read hears her hope its owner will not ask
-/// for it back. In another (entrance 16) stranded passengers argue that the
+/// for it back. In the southeast one stranded passengers argue that the
 /// captain will not sail although they agreed to do whatever it takes
 /// (TolbiInteriors_WatchPassengersArgue, a place flag). A man who rode the ship
 /// from Kalay with the party greets it as `the would-be warrior`, and he and
@@ -174,7 +176,8 @@ static void TolbiInteriors_EnterDoor(void) {
   Engine_EventRequestExit(*trigger);
 }
 
-/// In Tolbi after Colosso, entering the guest room of entrance 19: a woman
+/// In Tolbi after Colosso, entering the northeast guest room
+/// (TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_CORRIDOR): a woman
 /// finds something on the floor, is startled to see the party and hides it in
 /// the barrel behind the trash pile. "Hey, what's this?" The thing is a Lucky
 /// Medal, found later in that barrel.
@@ -245,7 +248,8 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Engine_EventEnd();
 }
 
-/// In Tolbi after Colosso, entering the guest room of entrance 16: three
+/// In Tolbi after Colosso, entering the southeast guest room
+/// (TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_CORRIDOR): three
 /// stranded passengers argue about the captain, who won't sail the ship. "He
 /// won't sail the ship, even though we agreed to do whatever it takes?"
 static void TolbiInteriors_WatchPassengersArgue(void) {
@@ -303,14 +307,16 @@ s32 TolbiInteriors_ApplyEntryState(void) {
       Actor_FaceDirection(TOLBI_INTERIORS_MEDAL_WOMAN, FACING_WEST, 0);
     }
     // Each short scene plays once, only when entering its room.
-    if (gGameState.entrance == 19) {
+    if (gGameState.entrance ==
+        TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_CORRIDOR) {
       if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) == 0) {
         Engine_GameFlagSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN);
         Engine_EventOpenScreen();
         TolbiInteriors_WatchWomanHideMedal();
       }
     }
-    if (gGameState.entrance == 16) {
+    if (gGameState.entrance ==
+        TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_CORRIDOR) {
       if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN) == 0) {
         Engine_GameFlagSet(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN);
         Engine_EventOpenScreen();
@@ -529,23 +535,31 @@ struct SceneEntrance gTolbiInteriorsEntrances[] = {
      536, 304, 800, 0},
     {TOLBI_INTERIORS_INN_FROM_INN_CORRIDOR, CONDITION_ALWAYS, 56, 0, 608,
      FACING_NORTH, 0, 0, 536, 304, 800, 0},
-    {11, CONDITION_ALWAYS, 464, 0, 624, FACING_SOUTH, 0, 320, 568, 616,
+    {TOLBI_INTERIORS_INN_CORRIDOR_FROM_INN, CONDITION_ALWAYS, 464, 0, 624,
+     FACING_SOUTH, 0, 320, 568, 616, TOLBI_INTERIORS_INN_CAMERA_MAX_Z, 0},
+    {TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST, CONDITION_ALWAYS,
+     392, 0, 728, FACING_NORTH, 0, 320, 568, 616,
      TOLBI_INTERIORS_INN_CAMERA_MAX_Z, 0},
-    {12, CONDITION_ALWAYS, 392, 0, 728, FACING_NORTH, 0, 320, 568, 616,
+    {TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST, CONDITION_ALWAYS,
+     536, 0, 728, FACING_NORTH, 0, 320, 568, 616,
      TOLBI_INTERIORS_INN_CAMERA_MAX_Z, 0},
-    {13, CONDITION_ALWAYS, 536, 0, 728, FACING_NORTH, 0, 320, 568, 616,
+    {TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST, CONDITION_ALWAYS,
+     392, 0, 680, FACING_SOUTH, 0, 320, 568, 616,
      TOLBI_INTERIORS_INN_CAMERA_MAX_Z, 0},
-    {14, CONDITION_ALWAYS, 392, 0, 680, FACING_SOUTH, 0, 320, 568, 616,
+    {TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST, CONDITION_ALWAYS,
+     536, 0, 680, FACING_SOUTH, 0, 320, 568, 616,
      TOLBI_INTERIORS_INN_CAMERA_MAX_Z, 0},
-    {15, CONDITION_ALWAYS, 536, 0, 680, FACING_SOUTH, 0, 320, 568, 616,
-     TOLBI_INTERIORS_INN_CAMERA_MAX_Z, 0},
-    {16, CONDITION_ALWAYS, 808, 0, 664, FACING_SOUTH, 0, 704, 608,
+    {TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     808, 0, 664, FACING_SOUTH, 0, 704, 608,
      TOLBI_INTERIORS_EAST_ROOM_CAMERA_MAX_X, 768, 0},
-    {17, CONDITION_ALWAYS, 840, 0, 824, FACING_SOUTH, 0, 704, 768,
+    {TOLBI_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     840, 0, 824, FACING_SOUTH, 0, 704, 768,
      TOLBI_INTERIORS_EAST_ROOM_CAMERA_MAX_X, 928, 0},
-    {18, CONDITION_ALWAYS, 440, 0, 920, FACING_NORTH, 0, 288, 768, 528,
+    {TOLBI_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     440, 0, 920, FACING_NORTH, 0, 288, 768, 528,
      TOLBI_INTERIORS_SOUTH_ROOM_CAMERA_MAX_Z, 0},
-    {19, CONDITION_ALWAYS, 584, 0, 920, FACING_NORTH, 0, 496, 768, 736,
+    {TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     584, 0, 920, FACING_NORTH, 0, 496, 768, 736,
      TOLBI_INTERIORS_SOUTH_ROOM_CAMERA_MAX_Z, 0},
 
     {TOLBI_INTERIORS_SANCTUM_NORTH, CONDITION_ALWAYS, 824, 0, 352, FACING_NORTH,

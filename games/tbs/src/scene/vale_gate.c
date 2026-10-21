@@ -33,7 +33,7 @@
 ///   accepted the Wise One's quest in the Vale Sanctum (sanctum.c).
 ///   Event_DepartForQuest restores the party's HP and PP and plays the village
 ///   seeing them off at the town gate: Garet's sister gives a Herb, and his
-///   sibling the Catch Beads that Aunty Dora sent, for Dora herself does not
+///   brother the Catch Beads that Aunty Dora sent, for Dora herself does not
 ///   come. VALE_GATE_TO_WORLD_MAP leads out to the world map.
 /// - After the party has left (FLAG_PARTY_LEFT_VALE), the villagers point the
 ///   way to Vault and talk of the eruption, whose sparkles they take for
@@ -118,8 +118,14 @@
 enum ValeGateActor {
   /// Ivy, drawn half as tall again: the sprite of the ivy that holds the stump
   /// in goma_cave_entrance.c ("It looks like it's trapped in the ivy.").
+  /// ★ Named from what the player sees: a clump of green ivy against the cliff
+  /// (its render)
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: a clump of green ivy against the cliff
+  /// (its render)
   ACTOR_SECOND_IVY,
+  /// ★ Named from what the player sees: a clump of green ivy against the cliff
+  /// (its render)
   ACTOR_THIRD_IVY
 };
 
@@ -136,6 +142,8 @@ enum ValeGateDayActor {
   /// powerful Adept... I'm so proud of him."
   ACTOR_OLD_WOMAN,
   /// "Well, if it isn't Isaac. It's just another quiet day in Vale."
+  /// ★ Named from the game: "It's just another quiet day in Vale."
+  /// (MsgValeQuietDay)
   ACTOR_VILLAGER_QUIET_DAY,
   /// "Kraden had visitors when I dropped by his place this morning."
   ACTOR_VILLAGER_KRADENS_VISITORS,
@@ -147,14 +155,20 @@ enum ValeGateDayActor {
   ACTOR_SECOND_CHILD,
   /// Shakes the ground with his Psynergy (Event_DemonstratePsynergy). "Hey,
   /// Isaac, have I shown you my new ability?"
+  /// ★ Named from the game: "have I shown you my new ability?"
+  /// (MsgValeShownNewAbility)
   ACTOR_VILLAGER_SHOWING_PSYNERGY,
   /// "If your Psynergy runs low, just walk around. You'll recover it slowly."
   ACTOR_VILLAGER_WALK_TO_RECOVER,
   /// An invisible actor (as in gondowan_cave.c), out of sight until the party
   /// has left; then it stands on the large Psynergy Stone that fell on the hut,
   /// for the hut's owner to turn to.
+  /// ★ Named from the game: "That large Psynergy Stone fell right on top of the
+  /// hut." (MsgValeTheStoneFellOnThe)
   ACTOR_FALLEN_STONE_SPOT = ACTOR_FIRST_PLACED + 13,
   /// "Isaac! Have you remembered to meditate on Mt. Aleph daily?"
+  /// ★ Named from the game: "Have you remembered to meditate on Mt. Aleph
+  /// daily?" (MsgValeMeditateOnMtAlephDaily)
   ACTOR_VILLAGER_ASKING_ABOUT_MEDITATION = ACTOR_FIRST_PLACED + 15,
   /// "You had a very difficult time three years ago, didn't you?"
   ACTOR_VILLAGER_RECALLING_STORM,
@@ -167,6 +181,8 @@ enum ValeGateDayActor {
 enum ValeGateStormActor {
   /// The same villager as ACTOR_CURIOUS_VILLAGER: "Huh? Are you...asking me
   /// if I can use Psynergy, Isaac?"
+  /// ★ Named from the game: "Did you see anything interesting on your trip"
+  /// (MsgValeAnythingInterestingOnYourTrip)
   ACTOR_STORM_CURIOUS_VILLAGER = ACTOR_FIRST_PLACED + 3,
   /// "You expect an old woman like me to use Psynergy?"
   ACTOR_STORM_OLD_WOMAN,
@@ -174,10 +190,15 @@ enum ValeGateStormActor {
   ACTOR_STORM_ROCK_DEFLECTING_VILLAGER,
   /// "Oh! Little Felix has fallen into the river? That must be why Jenna
   /// looked so upset."
+  /// ★ Named from the game: "has fallen into the river?"
+  /// (MsgValeFelixFellInRiver)
   ACTOR_STORM_VILLAGER_HEARING_OF_FELIX,
   /// Lifts ACTOR_STORM_SMALL_ROCK (Event_DemonstrateLevitation). "I have some
   /// Psynergy left."
-  ACTOR_STORM_LEVITATING_VILLAGER,
+  /// ★ Named from what the player sees: he holds a small rock up in the air
+  /// with his Psynergy, "See?" (its render)
+  ACTOR_STORM_ROCK_LIFTING_VILLAGER,
+  /// ★ Named from the game: "went off that way!" (MsgValeWentOffWay)
   ACTOR_STORM_VILLAGER_WHO_SAW_JENNA, ///< "Jenna went off that way!"
   /// The two Garet's grandfather sends to aid the elders. "We can't let the
   /// Mt. Aleph Boulder destroy our village."
@@ -187,6 +208,8 @@ enum ValeGateStormActor {
   /// vale_interiors_shops.c's). "Go aid the elders!"
   ACTOR_STORM_GARETS_GRANDFATHER,
   /// The storm's rock sprite at three tenths of its size.
+  /// ★ Named from what the player sees: a small rock floating beside the
+  /// villager who lifts it (its render)
   ACTOR_STORM_SMALL_ROCK,
   /// An invisible actor on ACTOR_STORM_SMALL_ROCK's spot at three fifths of its
   /// size. XXX: nothing here moves or reads it after the setup; what it marks
@@ -198,9 +221,13 @@ enum ValeGateStormActor {
   /// The two travelers who survived Sol Sanctum, Saturos and Menardi by their
   /// sprites (as in vale_kraden.c). "Only the two of us survived..."
   ACTOR_FIRST_TRAVELER,
+  /// ★ Named from the game: "Only the two of us survived"
+  /// (MsgValeOnlyTwoSurvived)
   ACTOR_SECOND_TRAVELER,
   /// Garet as a child, who follows Isaac through the night. "Isaac! Wait!"
+  /// ★ Named from the game: "Garet (child)" (MsgDebugGlyphName)
   ACTOR_STORM_GARET,
+  /// ★ Named from the game: "Jenna" (MsgCharacterName)
   ACTOR_STORM_JENNA ///< "Garet, Isaac... You came to help me?"
 };
 
@@ -208,12 +235,16 @@ enum ValeGateStormActor {
 enum ValeGateFarewellActor {
   /// The same child as ACTOR_FIRST_CHILD, at the top of the path. "What,
   /// didn't you hear? Isaac and Garet are leaving Vale on a journey."
+  /// ★ Named from the game: "are leaving Vale on a journey"
+  /// (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_FIRST_CHILD = ACTOR_FIRST_PLACED + 3,
   /// The same child as ACTOR_SECOND_CHILD: "Why's everyone hanging around the
   /// town gate?"
   ACTOR_FAREWELL_SECOND_CHILD,
   /// The Great Healer, by his sprite (as in vale_eruption.c and sanctum.c). "We
   /// are counting on you, Isaac. Oh, and you, too, Garet."
+  /// ★ Named from the game: "What is it, Great Healer?"
+  /// (MsgSanctumWeHadIdeaTrueSanctum), said to the same sprite in the Sanctum
   ACTOR_FAREWELL_GREAT_HEALER,
   ACTOR_FAREWELL_VILLAGER_AWAITING_DORA, ///< "Hmm... Dora is very late..."
   /// Garet's grandfather. "They can't keep standing around here like this, or
@@ -222,13 +253,18 @@ enum ValeGateFarewellActor {
   /// Garet's sister, who gives the Herb. "I know not to drink stagnant water,
   /// Sis!", Garet answers her.
   ACTOR_FAREWELL_GARETS_SISTER,
-  /// Garet's sibling, by the sprite of vale.c's ACTOR_GARETS_SIBLING, who
+  /// Garet's brother, by the sprite of vale.c's ACTOR_GARETS_BROTHER, who
   /// brings the Catch Beads: "Aunty Dora asked me to give this to you, Isaac."
   /// Of Garet: "He's a pig! He'll eat anything that's not tied down!"
-  ACTOR_FAREWELL_GARETS_SIBLING,
+  /// ★ Named from the game: "Aunty Dora asked me" (MsgValeWhysEveryoneHanging)
+  ACTOR_FAREWELL_GARETS_BROTHER,
   /// "As Garet's mother, I know how Dora must be feeling."
+  /// ★ Named from the game: "I know how Dora must be feeling"
+  /// (MsgValeWhysEveryoneHanging)
   ACTOR_FAREWELL_GARETS_MOTHER,
   /// Garet's father, by his sprite (vale_interiors_shops.c's).
+  /// ★ Named from the game: "My own son" (MsgValeImProudOfYouGaretMy), what the
+  /// same sprite says in vale_interiors_shops.c
   ACTOR_FAREWELL_GARETS_FATHER,
   /// The rest of the crowd at the gate, ten who only nod and jump.
   ACTOR_FAREWELL_FIRST_CROWD_VILLAGER,
@@ -244,19 +280,29 @@ enum ValeGateFarewellActor {
 /// Back from Kalay (gValeGate_PlacementsAfterKalay).
 enum ValeGateAfterKalayActor {
   /// "Hey, if it isn't Isaac! You came back home, huh?"
+  /// ★ Named from the game: "You came back home, huh?" (MsgValeYouCameBackHome)
   ACTOR_AFTER_KALAY_WELCOMING_VILLAGER = ACTOR_FIRST_PLACED + 3,
   /// "Oh, Isaac! You came back sooner than I thought!"
+  /// ★ Named from the game: "You came back sooner than I thought!"
+  /// (MsgValeCameBackSooner)
   ACTOR_AFTER_KALAY_VILLAGER_BACK_SOONER,
   /// "It looks like you made some friends in your travels, Isaac."
+  /// ★ Named from the game: "made some friends in your travels"
+  /// (MsgValeMadeFriendsOnJourney)
   ACTOR_AFTER_KALAY_VILLAGER_NEW_FRIENDS,
   /// "The river in town grew so hot after Mt. Aleph erupted."
   ACTOR_AFTER_KALAY_VILLAGER_HOT_RIVER,
   /// The same villager as ACTOR_CURIOUS_VILLAGER: "Did you see anything
   /// interesting on your trip, Isaac?"
+  /// ★ Named from the game: "Did you see anything interesting on your trip"
+  /// (MsgValeAnythingInterestingOnYourTrip)
   ACTOR_AFTER_KALAY_CURIOUS_VILLAGER,
+  /// ★ Named from the game: "How have you been!" (MsgValeReturnHowHaveYouBeen),
+  /// the woman of ACTOR_STORM_OLD_WOMAN
   ACTOR_AFTER_KALAY_OLD_WOMAN, ///< "Oh, my! Isaac! How have you been!"
   /// The same child as ACTOR_FIRST_CHILD: "Welcome back, Isaac! It's good to
   /// have you home!"
+  /// ★ Named from the game: "It's good to have you home!" (MsgValeWelcomeHome)
   ACTOR_AFTER_KALAY_FIRST_CHILD,
   /// The same child as ACTOR_SECOND_CHILD: "I see you made many friends on
   /// your journey."
@@ -535,7 +581,7 @@ static void Event_TalkAboutFallenStone(void) {
 /// In Vale on the stormy night, a villager with some Psynergy left lifts a
 /// small rock (ACTOR_STORM_SMALL_ROCK) into the air.
 ///
-/// Reached by talking to ACTOR_STORM_LEVITATING_VILLAGER on the stormy night.
+/// Reached by talking to ACTOR_STORM_ROCK_LIFTING_VILLAGER on the stormy night.
 /// Adds and removes the callbacks ValeGate_UpdateLevitatingVillagerPsynergy and
 /// ValeGate_UpdateSmallRockPalette.
 static void Event_DemonstrateLevitation(void) {
@@ -545,19 +591,19 @@ static void Event_DemonstrateLevitation(void) {
 
   Engine_EventBegin();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 82, 760);
-  Engine_ActorFaceEachOther(ACTOR_STORM_LEVITATING_VILLAGER, ACTOR_PARTY_LEADER,
-                            30);
+  Engine_ActorFaceEachOther(ACTOR_STORM_ROCK_LIFTING_VILLAGER,
+                            ACTOR_PARTY_LEADER, 30);
   Engine_EventSetMessage(MsgValeIHaveSomePsynergyLeft);
-  Event_SayThenWait(ACTOR_STORM_LEVITATING_VILLAGER, 20);
-  ValeGate_FaceDirectionAndWait(ACTOR_STORM_LEVITATING_VILLAGER,
+  Event_SayThenWait(ACTOR_STORM_ROCK_LIFTING_VILLAGER, 20);
+  ValeGate_FaceDirectionAndWait(ACTOR_STORM_ROCK_LIFTING_VILLAGER,
                                 FACING_NORTHWEST, 20);
-  Actor_SetAttachedEffect(ACTOR_STORM_LEVITATING_VILLAGER, 0x102);
+  Actor_SetAttachedEffect(ACTOR_STORM_ROCK_LIFTING_VILLAGER, 0x102);
   Engine_EventWait(20);
   // Charge the caster's display, then start both palette updates.
   Scene_BeginCutscenePsynergy();
   for (i = 0; i < 40; i++) {
     ValeGate_FlashPsynergyPalette(
-        Object_GetById(ACTOR_STORM_LEVITATING_VILLAGER));
+        Object_GetById(ACTOR_STORM_ROCK_LIFTING_VILLAGER));
     Engine_TaskWait(1);
   }
   FieldScheduler_AddOrUpdateCallback(ValeGate_UpdateLevitatingVillagerPsynergy,
@@ -578,13 +624,13 @@ static void Event_DemonstrateLevitation(void) {
   Scheduler_RemoveCallback(ValeGate_UpdateSmallRockPalette);
   Engine_TaskWait(1);
   Event_PlayCue(SE_161);
-  Actor_SetChildValue(ACTOR_STORM_LEVITATING_VILLAGER, 0);
+  Actor_SetChildValue(ACTOR_STORM_ROCK_LIFTING_VILLAGER, 0);
   Actor_SetChildValue(ACTOR_STORM_SMALL_ROCK, 0);
   Engine_EventWait(40);
   Scene_EndCutscenePsynergy();
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_LEVITATING_VILLAGER,
-                            30);
-  Event_ShowMessage(ACTOR_STORM_LEVITATING_VILLAGER, 0);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER,
+                            ACTOR_STORM_ROCK_LIFTING_VILLAGER, 30);
+  Event_ShowMessage(ACTOR_STORM_ROCK_LIFTING_VILLAGER, 0);
   Engine_EventEnd();
 }
 
@@ -1392,7 +1438,7 @@ static void Event_DepartForQuest(void) {
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Engine_ActorSetSpritePriority(GARET, 1);
-  Engine_ActorSetSpritePriority(ACTOR_FAREWELL_GARETS_SIBLING, 1);
+  Engine_ActorSetSpritePriority(ACTOR_FAREWELL_GARETS_BROTHER, 1);
   Engine_ActorSetSpritePriority(ACTOR_FAREWELL_GARETS_SISTER, 1);
   Engine_ActorSetSpritePriority(ACTOR_FAREWELL_GARETS_GRANDFATHER, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(208), PIXELS(814));
@@ -1585,18 +1631,18 @@ static void Event_DepartForQuest(void) {
   Engine_PartyGiveItem(ITEM_HERB, 0);
   Actor_WalkToAndWait(ACTOR_FAREWELL_GARETS_SISTER, 264, 800);
   Actor_FaceDirection(ACTOR_FAREWELL_GARETS_SISTER, FACING_SOUTHWEST, 0);
-  // Garet protests he knows that, Sis; his sibling says he will eat anything,
+  // Garet protests he knows that, Sis; his brother says he will eat anything,
   // and Garet jumps.
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
   ValeGate_FaceDirectionAndWait(GARET, FACING_NORTHEAST + FACING_STEP, 10);
   Event_SayThenWait(GARET, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FAREWELL_GARETS_SIBLING,
+  Engine_ActorSetAnimationAndWait(ACTOR_FAREWELL_GARETS_BROTHER,
                                   ANIM_SHAKE_HEAD);
-  Event_SayThenWait(ACTOR_FAREWELL_GARETS_SIBLING, 10);
+  Event_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 10);
   Engine_ActorFaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 20);
   ObjectMotion_Launch(GARET, 4, 60);
-  // Dora is very late, a villager says. Everyone wonders; Garet's sibling
+  // Dora is very late, a villager says. Everyone wonders; Garet's brother
   // remembers.
   Engine_ActorRunRepeatedMotion(ACTOR_FAREWELL_VILLAGER_AWAITING_DORA, 2);
   Engine_EventWait(20);
@@ -1605,24 +1651,24 @@ static void Event_DepartForQuest(void) {
   Event_SayThenWait(ACTOR_FAREWELL_VILLAGER_AWAITING_DORA, 60);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(ACTOR_FAREWELL_GARETS_SISTER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_SIBLING, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_BROTHER, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(ACTOR_FAREWELL_GARETS_MOTHER, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(ACTOR_FAREWELL_GARETS_FATHER, EMOTE_IN_FRONT | 2, 80);
-  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_SIBLING, EMOTE_IN_FRONT | 0, 0);
-  Event_SayThenWait(ACTOR_FAREWELL_GARETS_SIBLING, 60);
-  // The sibling brings the Catch Beads Aunty Dora sent for Isaac; Isaac and
+  Actor_ShowEmote(ACTOR_FAREWELL_GARETS_BROTHER, EMOTE_IN_FRONT | 0, 0);
+  Event_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 60);
+  // Garet's brother brings the Catch Beads Aunty Dora sent for Isaac; Isaac and
   // Garet turn to follow.
   Object_LinkObjectAndSetCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_FAREWELL_GARETS_SIBLING);
-  Object_LinkObjectAndSetCallback(GARET, ACTOR_FAREWELL_GARETS_SIBLING);
-  Actor_WalkToAndWait(ACTOR_FAREWELL_GARETS_SIBLING, 216, 800);
-  Actor_FaceDirection(ACTOR_FAREWELL_GARETS_SIBLING, FACING_SOUTH, 0);
-  Event_SayThenWait(ACTOR_FAREWELL_GARETS_SIBLING, 60);
+                                  ACTOR_FAREWELL_GARETS_BROTHER);
+  Object_LinkObjectAndSetCallback(GARET, ACTOR_FAREWELL_GARETS_BROTHER);
+  Actor_WalkToAndWait(ACTOR_FAREWELL_GARETS_BROTHER, 216, 800);
+  Actor_FaceDirection(ACTOR_FAREWELL_GARETS_BROTHER, FACING_SOUTH, 0);
+  Event_SayThenWait(ACTOR_FAREWELL_GARETS_BROTHER, 60);
   Engine_PartyGiveItem(ITEM_CATCH_BEADS, 0);
   Engine_ActorStop(ACTOR_PARTY_LEADER);
   Engine_ActorStop(GARET);
-  Actor_WalkToAndWait(ACTOR_FAREWELL_GARETS_SIBLING, 272, 816);
-  Actor_FaceDirection(ACTOR_FAREWELL_GARETS_SIBLING, FACING_WEST, 0);
+  Actor_WalkToAndWait(ACTOR_FAREWELL_GARETS_BROTHER, 272, 816);
+  Actor_FaceDirection(ACTOR_FAREWELL_GARETS_BROTHER, FACING_WEST, 0);
   // Garet thinks they are all set; his sister says think again, it must be hard
   // for Dora.
   Engine_ActorRunRepeatedMotion(GARET, 2);
@@ -1650,7 +1696,7 @@ static void Event_DepartForQuest(void) {
   Engine_EventShowMessage(ACTOR_FAREWELL_GARETS_MOTHER, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_FAREWELL_GARETS_SISTER, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_FAREWELL_GARETS_FATHER, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_FAREWELL_GARETS_SIBLING, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_NOD);
   Engine_EventWait(10);
   Engine_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_FAREWELL_GARETS_MOTHER, ANIM_NOD);
@@ -1679,7 +1725,7 @@ static void Event_DepartForQuest(void) {
   // The crowd nods in three waves, then all jump together: "Farewell!"
   Engine_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_FAREWELL_VILLAGER_AWAITING_DORA, ANIM_NOD);
-  Engine_ActorSetAnimation(ACTOR_FAREWELL_GARETS_SIBLING, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_FAREWELL_GARETS_BROTHER, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6, ANIM_NOD);
@@ -1702,7 +1748,7 @@ static void Event_DepartForQuest(void) {
   Engine_EventWait(80);
   ObjectMotion_Launch(ACTOR_FAREWELL_FIRST_CHILD, 4, 0);
   ObjectMotion_Launch(ACTOR_FAREWELL_VILLAGER_AWAITING_DORA, 4, 0);
-  ObjectMotion_Launch(ACTOR_FAREWELL_GARETS_SIBLING, 4, 0);
+  ObjectMotion_Launch(ACTOR_FAREWELL_GARETS_BROTHER, 4, 0);
   ObjectMotion_Launch(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER, 4, 0);
   ObjectMotion_Launch(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3, 4, 0);
   ObjectMotion_Launch(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6, 4, 0);
@@ -1856,7 +1902,7 @@ static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
 /// A callback Event_DemonstrateLevitation adds while the villager lifts.
 static void ValeGate_UpdateLevitatingVillagerPsynergy(void) {
   ValeGate_CyclePsynergyPaletteAndSpawnEffects(
-      Object_GetById(ACTOR_STORM_LEVITATING_VILLAGER));
+      Object_GetById(ACTOR_STORM_ROCK_LIFTING_VILLAGER));
 }
 
 /// Updates the demonstrating villager's Psynergy display.
@@ -2460,7 +2506,7 @@ struct SceneEvent gValeGate_StormEvents[] = {
     { EVENT_TALK, ACTOR_STORM_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgValeOldWomanCannotUsePsynergy) },
     { EVENT_TALK, ACTOR_STORM_ROCK_DEFLECTING_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgValeExhaustedFromFallingRocks) },
     { EVENT_TALK, ACTOR_STORM_VILLAGER_HEARING_OF_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeFelixFellInRiver) },
-    { EVENT_TALK, ACTOR_STORM_LEVITATING_VILLAGER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DemonstrateLevitation) },
+    { EVENT_TALK, ACTOR_STORM_ROCK_LIFTING_VILLAGER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DemonstrateLevitation) },
     { EVENT_TALK, ACTOR_STORM_VILLAGER_WHO_SAW_JENNA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutHelping) },
     { EVENT_TALK, ACTOR_STORM_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeRaceAgainstTime) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenNorthwestDoor) },

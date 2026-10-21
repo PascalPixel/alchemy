@@ -93,8 +93,14 @@
 /// Bilibin Barricade in bilibin.c), then two logs (as in Kolima Forest), none
 /// of which moves.
 enum ValeCaveMouthActor {
+  /// ★ Named from what the player sees: three wooden crates stacked by the
+  /// cave's mouth (its render)
   ACTOR_VALE_CAVE_MOUTH_FIRST_CRATES = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: two logs lying west to east beside the
+  /// crates (its render)
   ACTOR_VALE_CAVE_MOUTH_FIRST_LOG = ACTOR_FIRST_PLACED + 3,
+  /// ★ Named from what the player sees: two logs lying west to east beside the
+  /// crates (its render)
   ACTOR_VALE_CAVE_MOUTH_SECOND_LOG
 };
 
@@ -102,20 +108,35 @@ enum ValeCaveMouthActor {
 /// ACTOR_FIRST_PLACED.
 enum ValeCaveKiteActor {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
+  /// ★ Named from the game: "Kite" (MsgDjinnName)
   ACTOR_KITE = ACTOR_FIRST_PLACED,
   /// The two stacks of crates in the holes' part, which sink
   /// into their holes: the western under Move, the eastern under Move or a
   /// push.
+  /// ★ Named from what the player sees: a stack of wooden crates beside the
+  /// water (its render)
   ACTOR_WEST_CRATES,
+  /// ★ Named from what the player sees: a stack of wooden crates beside the
+  /// water (its render)
   ACTOR_EAST_CRATES,
   /// The log the leader rides along the holes' part's passage, from one end
   /// to the other, drawn as the east-west log of Colosso's Lumber Water
   /// Crossing Area (colosseum_azart_match.c).
+  /// ★ Named from what the player sees: a yellow log floating in the water (its
+  /// render)
   ACTOR_RIDING_LOG,
   /// Two stacks of crates and two logs that stand in the first part.
+  /// ★ Named from what the player sees: two stacks of wooden crates by the
+  /// room's east door (its render)
   ACTOR_FIRST_STANDING_CRATES,
+  /// ★ Named from what the player sees: two stacks of wooden crates by the
+  /// room's east door (its render)
   ACTOR_SECOND_STANDING_CRATES,
+  /// ★ Named from what the player sees: two logs lying west to east beside the
+  /// crates (its render)
   ACTOR_FIRST_STANDING_LOG,
+  /// ★ Named from what the player sees: two logs lying west to east beside the
+  /// crates (its render)
   ACTOR_SECOND_STANDING_LOG
 };
 
@@ -124,15 +145,21 @@ enum ValeCaveKiteActor {
 /// Its three logs are pushed, and lie as in Kolima Forest.
 enum ValeCaveLogsActor {
   /// Lying north to south, pushed off the ledge.
+  /// ★ Named from what the player sees: a log lying north to south west of the
+  /// water (its render)
   ACTOR_WEST_LOG = ACTOR_FIRST_PLACED + 1,
+  /// ★ Named from what the player sees: a log lying north to south east of the
+  /// water (its render)
   ACTOR_EAST_LOG, ///< lying north to south, pushed along the ledge until it
                   ///< falls
+  /// ★ Named from what the player sees: a log lying west to east south of the
+  /// water (its render)
   ACTOR_SOUTH_LOG ///< lying west to east, pushed north
 };
 
 #define OBJECT_SINK_FRAMES 68
 #define OBJECT_SINK_STEP 0x8000
-#define ACTOR_LANDING_TIMEOUT 60
+#define LANDING_WAIT_FRAMES 60
 #define FIRST_DJINNI_ROUTE_TRIGGER 45
 
 /// The flag of Kite, set once it is caught.
@@ -173,7 +200,7 @@ static void Event_TalkToKite(void) {
 
 /// Waits for an actor to land, bounded by a one-second timeout.
 static void ValeCave_WaitForActorLanding(struct FieldActor *actor) {
-  s32 framesRemaining = ACTOR_LANDING_TIMEOUT;
+  s32 framesRemaining = LANDING_WAIT_FRAMES;
 
   while (framesRemaining != 0) {
     Engine_TaskWait(1);

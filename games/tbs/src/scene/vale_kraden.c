@@ -95,16 +95,25 @@ enum ValeKradenActor {
   /// and the stormy night's events have no row for it.
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,
   /// The west rock. "It's a huge rock that Isaac's strength can't even budge."
+  /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   ACTOR_WEST_ROCK,
+  /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   ACTOR_EAST_ROCK,
   /// Lies by the broken fence on the stormy night. "Rockslide...destroyed
   /// fence... Monsters everywhere..."
   ACTOR_ROCKSLIDE_SURVIVOR,
   /// By day, younger than Isaac. "Do you hear those awful growls coming from
   /// the other side of this fence?"
-  ACTOR_FENCE_ONLOOKER,
+  /// ★ Named from the game: "I can't stop wondering what lies beyond this
+  /// fence." (MsgValeWonderBeyondFence)
+  ACTOR_VILLAGER_BY_THE_FENCE,
+  /// ★ Named from the game: "from you, Kraden?" (MsgValeKradenOhIsaac)
   ACTOR_KRADEN,
+  /// ★ Named from the game: "Saturos and Menardi were their names"
+  /// (MsgValeKradenOhIsaac)
   ACTOR_SATUROS,
+  /// ★ Named from the game: "Saturos and Menardi were their names"
+  /// (MsgValeKradenOhIsaac)
   ACTOR_MENARDI,
   /// After Kalay. "You must have so many memories of this cottage, don't you?"
   ACTOR_COTTAGE_VISITOR
@@ -169,30 +178,30 @@ static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
 /// the growls beyond it; once the party has left Vale, he means to climb it
 /// someday.
 ///
-/// Reached by talking to the onlooker at the fence (ACTOR_FENCE_ONLOOKER) in
-/// the day's events.
+/// Reached by talking to the villager by the fence
+/// (ACTOR_VILLAGER_BY_THE_FENCE) in the day's events.
 static void Event_TalkToFenceOnlooker(void) {
   s32 message;
 
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_EventSetMessage(MsgValeIllClimbTheFenceSomeday);
-    Event_ShowMessage(ACTOR_FENCE_ONLOOKER, 0);
+    Event_ShowMessage(ACTOR_VILLAGER_BY_THE_FENCE, 0);
   } else {
     message = MsgValeHearAwfulGrowls;
     Engine_EventSetMessage(message);
-    Actor_FaceActor(ACTOR_FENCE_ONLOOKER, ACTOR_PARTY_LEADER, 10);
-    Engine_ActorRunRepeatedMotion(ACTOR_FENCE_ONLOOKER, 2);
+    Actor_FaceActor(ACTOR_VILLAGER_BY_THE_FENCE, ACTOR_PARTY_LEADER, 10);
+    Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_BY_THE_FENCE, 2);
     Engine_EventWait(6);
-    Event_OpenMessage(ACTOR_FENCE_ONLOOKER, 0);
+    Event_OpenMessage(ACTOR_VILLAGER_BY_THE_FENCE, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventSetMessage(message + 1);
     } else {
       Engine_EventSetMessage(message + 2);
     }
-    Engine_ActorStartRepeatedMotion(ACTOR_FENCE_ONLOOKER, 3);
-    Event_ShowMessage(ACTOR_FENCE_ONLOOKER, 0);
-    Actor_FaceDirection(ACTOR_FENCE_ONLOOKER, FACING_NORTH, 10);
+    Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_BY_THE_FENCE, 3);
+    Event_ShowMessage(ACTOR_VILLAGER_BY_THE_FENCE, 0);
+    Actor_FaceDirection(ACTOR_VILLAGER_BY_THE_FENCE, FACING_NORTH, 10);
   }
   Engine_EventEnd();
 }
@@ -893,7 +902,7 @@ s32 ValeKraden_Initialize(void) {
     Effect_SoundAndFlash();
     FieldFx_StartLightning();
     Engine_EventBegin();
-    Engine_ActorSetPosition(ACTOR_FENCE_ONLOOKER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_VILLAGER_BY_THE_FENCE, 0, 0);
     Engine_ActorSetPosition(ACTOR_KRADEN, 0, 0);
     Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
     Engine_ActorSetPosition(ACTOR_MENARDI, 0, 0);
@@ -1218,10 +1227,10 @@ struct ScenePlacement gValeKraden_Placements[] = {
 
 struct SceneEvent gValeKraden_Events[] = {
     { EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_KradenPlansSanctumVisit) },
-    { EVENT_TALK, ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToFenceOnlooker) },
+    { EVENT_TALK, ACTOR_VILLAGER_BY_THE_FENCE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToFenceOnlooker) },
     { EVENT_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
     { EVENT_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, MSGNO(MsgValeLeaveBeforeWeChangeMinds) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeCuriousBeyondFence) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeCuriousBeyondFence) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_NORTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_SOUTH },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCottage) },
@@ -1253,9 +1262,9 @@ struct SceneEvent gValeKraden_EventsAfterKalay[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCottage) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST },
-    { EVENT_TALK, ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
+    { EVENT_TALK, ACTOR_VILLAGER_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
     { EVENT_TALK, ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToCottageVisitor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, MSGNO(MsgValeLonelyWithoutKraden) },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FENCE_BOULDER, CONDITION_ALWAYS, 0 },
 #if TBS_PATCH_3

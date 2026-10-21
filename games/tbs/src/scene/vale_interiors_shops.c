@@ -26,7 +26,7 @@
 /// - After the party has left Vale (FLAG_PARTY_LEFT_VALE), Jenna having been
 ///   taken on Mt. Aleph. Her grandmother lies sick in bed (Initialize, from
 ///   VALE_INTERIORS_SHOPS_FROM_VALE_NORTH), the villagers talk of the quest and
-///   of Felix, and the item shopkeeper gives Isaac a Herb as a farewell gift
+///   of Felix, and the item merchant gives Isaac a Herb as a farewell gift
 ///   (FLAG_VALE_FAREWELL_HERB_RECEIVED).
 /// - Back from Kalay (FLAG_REACHED_KALAY), with Ivan and Mia in the party. The
 ///   first time the party enters Garet's house, Event_GaretComesHome plays
@@ -74,11 +74,15 @@ enum ValeInteriorsShopsActor {
   ACTOR_GARETS_GRANDMOTHER,
   /// Garet's father.
   /// "I'm proud of you, Garet. My own son...on such an important quest!"
+  /// ★ Named from the game: "My own son" (MsgValeImProudOfYouGaretMy)
   ACTOR_GARETS_FATHER,
   /// Garet's mother. "As mothers, Dora and I will always worry about you."
+  /// ★ Named from the game: "he is my son" (MsgValeIAmConcernedForGaretBut)
   ACTOR_GARETS_MOTHER,
   /// Jenna's grandfather. "My granddaughter, Jenna, is finally happy
   /// again..."
+  /// ★ Named from the game: "My granddaughter,"
+  /// (MsgValeMyGranddaughterJennaIsFinallyHappy)
   ACTOR_JENNAS_GRANDFATHER,
   /// Jenna's grandmother. "Please return my precious granddaughter, Jenna,
   /// to me." Once Jenna is taken, ACTOR_VILLAGER_SPITTING_IMAGE says she
@@ -86,6 +90,8 @@ enum ValeInteriorsShopsActor {
   ACTOR_JENNAS_GRANDMOTHER,
   /// In Jenna's grandparents' house. "Jenna is the spitting image of her
   /// mother, whom we lost that day..."
+  /// ★ Named from the game: "is the spitting image of her mother"
+  /// (MsgValeJennaIsTheSpittingImageOf)
   ACTOR_VILLAGER_SPITTING_IMAGE,
   /// "So Kraden came to Vale to study Mt. Aleph, right?"
   ACTOR_VILLAGER_KRADENS_STUDIES,
@@ -99,9 +105,15 @@ enum ValeInteriorsShopsActor {
   /// "I hear old man Kraden's got some visitors. Let's go use our Psynergy
   /// to scare 'em!"
   ACTOR_VILLAGER_SCARE_VISITORS,
-  ACTOR_ITEM_SHOPKEEPER,
-  ACTOR_WEAPON_SHOPKEEPER,
-  ACTOR_ARMOR_SHOPKEEPER,
+  /// ★ Named from what the player sees: the man who opens the item shop across
+  /// its counter, beneath the shelves of jars (its render)
+  ACTOR_ITEM_MERCHANT,
+  /// ★ Named from the game: "Good weapons aren't just sharp."
+  /// (MsgValeGoodWeaponsDrawOutStrength)
+  ACTOR_WEAPON_MERCHANT,
+  /// ★ Named from the game: "Good armor isn't just sturdy."
+  /// (MsgValeGoodArmorDrawsOutStrength)
+  ACTOR_ARMOR_MERCHANT,
   /// Three sprites drifting up from Garet's sleeping grandfather.
   ACTOR_FIRST_DRIFTING_SPRITE
 };
@@ -201,12 +213,12 @@ static void Event_AskToScareVisitors(void) {
   Engine_EventEnd();
 }
 
-/// In Vale's shops after the party has left Vale, the item shopkeeper gives
+/// In Vale's shops after the party has left Vale, the item merchant gives
 /// Isaac a Herb as a farewell gift, and afterwards urges him to save Jenna.
 ///
 /// Called by Event_TalkToItemShopkeeper away from the counter, after the party
 /// has left and before Kalay. Gives the Herb and sets
-/// FLAG_VALE_FAREWELL_HERB_RECEIVED once; afterwards the shopkeeper turns to
+/// FLAG_VALE_FAREWELL_HERB_RECEIVED once; afterwards the merchant turns to
 /// watch the leader.
 static void ValeInteriorsShops_GiveFarewellHerb(void) {
   s32 gift;
@@ -214,14 +226,14 @@ static void ValeInteriorsShops_GiveFarewellHerb(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
     Engine_EventSetMessage(MsgValeYouMustSaveJenna);
-    Event_ShowMessage(ACTOR_ITEM_SHOPKEEPER, 0);
+    Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
     FieldObject_SetTargetAndCallback(
-        ACTOR_ITEM_SHOPKEEPER, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+        ACTOR_ITEM_MERCHANT, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
         gValeInteriorsShops_FaceTargetScript);
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     Engine_EventSetMessage(gift);
-    Event_ShowMessageAndWait(ACTOR_ITEM_SHOPKEEPER, 0, 20);
+    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0, 20);
     Engine_MessageShowCentered((gift + 1), 1);
     Engine_PartyGiveItem(ITEM_HERB, 0);
     GameFlag_Set(FLAG_VALE_FAREWELL_HERB_RECEIVED);
@@ -355,9 +367,9 @@ s32 ValeInteriorsShops_Initialize(void) {
     Engine_ActorSetPosition(ACTOR_VILLAGER_DREAMS_OF_LEAVING, 0, 0);
     Engine_ActorSetPosition(ACTOR_VILLAGER_PERMISSION_TO_LEAVE, 0, 0);
     Engine_ActorSetPosition(ACTOR_VILLAGER_SCARE_VISITORS, 0, 0);
-    Engine_ActorSetPosition(ACTOR_ITEM_SHOPKEEPER, 0, 0);
-    Engine_ActorSetPosition(ACTOR_WEAPON_SHOPKEEPER, 0, 0);
-    Engine_ActorSetPosition(ACTOR_ARMOR_SHOPKEEPER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_ITEM_MERCHANT, 0, 0);
+    Engine_ActorSetPosition(ACTOR_WEAPON_MERCHANT, 0, 0);
+    Engine_ActorSetPosition(ACTOR_ARMOR_MERCHANT, 0, 0);
     FieldFx_StartLightning();
     (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_SceneMapStateOffset))
         ->loud = 1;
@@ -391,47 +403,47 @@ s32 ValeInteriorsShops_Initialize(void) {
 }
 
 /// In Vale's shops, opens the weapon shop across the counter, or the
-/// shopkeeper speaks.
+/// merchant speaks.
 ///
-/// Reached by talking to the weapon shopkeeper in every table but the stormy
+/// Reached by talking to the weapon merchant in every table but the stormy
 /// night's. Facing north, across the counter, opens shop 1; else the
-/// shopkeeper's line follows the story.
+/// merchant's line follows the story.
 static void Event_TalkToWeaponShopkeeper(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   if (FACING_IS_NORTH(leader->facing)) {
-    Engine_ShopOpen(1, ACTOR_WEAPON_SHOPKEEPER);
+    Engine_ShopOpen(1, ACTOR_WEAPON_MERCHANT);
     return;
   }
 
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     Engine_EventSetMessage(MsgValeYouCameBack);
-    Engine_EventAskYesNo(ACTOR_WEAPON_SHOPKEEPER, 0);
+    Engine_EventAskYesNo(ACTOR_WEAPON_MERCHANT, 0);
   } else {
     if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
       Engine_EventSetMessage(MsgValeValeFeelsEmpty);
     } else {
       Engine_EventSetMessage(MsgValeGoodWeaponsDrawOutStrength);
     }
-    Engine_EventShowMessage(ACTOR_WEAPON_SHOPKEEPER, 0);
+    Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
   }
   Engine_EventEnd();
 }
 
-/// In Vale's shops, opens the armor shop across the counter, or the shopkeeper
+/// In Vale's shops, opens the armor shop across the counter, or the merchant
 /// speaks.
 ///
-/// Reached by talking to the armor shopkeeper in every table but the stormy
+/// Reached by talking to the armor merchant in every table but the stormy
 /// night's; opens shop 2 when facing north.
 static void Event_TalkToArmorShopkeeper(void) {
   struct FieldActor *actor;
 
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(actor->facing)) {
-    Engine_ShopOpen(2, ACTOR_ARMOR_SHOPKEEPER);
+    Engine_ShopOpen(2, ACTOR_ARMOR_MERCHANT);
   } else {
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
@@ -443,15 +455,15 @@ static void Event_TalkToArmorShopkeeper(void) {
         Engine_EventSetMessage(MsgValeGoodArmorDrawsOutStrength);
       }
     }
-    Engine_EventShowMessage(ACTOR_ARMOR_SHOPKEEPER, 0);
+    Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     Engine_EventEnd();
   }
 }
 
-/// In Vale's shops, opens the item shop across the counter, or the shopkeeper
+/// In Vale's shops, opens the item shop across the counter, or the merchant
 /// speaks.
 ///
-/// Reached by talking to the item shopkeeper in every table but the stormy
+/// Reached by talking to the item merchant in every table but the stormy
 /// night's; opens shop 3 when facing north. After the party has left and
 /// before Kalay, ValeInteriorsShops_GiveFarewellHerb speaks instead.
 static void Event_TalkToItemShopkeeper(void) {
@@ -459,12 +471,12 @@ static void Event_TalkToItemShopkeeper(void) {
 
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_IS_NORTH(actor->facing)) {
-    Engine_ShopOpen(3, ACTOR_ITEM_SHOPKEEPER);
+    Engine_ShopOpen(3, ACTOR_ITEM_MERCHANT);
   } else {
     if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
       Engine_EventBegin();
       Engine_EventSetMessage(MsgValeWhenDidYouComeBack);
-      Engine_EventShowMessage(ACTOR_ITEM_SHOPKEEPER, 0);
+      Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
       Engine_EventEnd();
     } else {
       if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
@@ -472,7 +484,7 @@ static void Event_TalkToItemShopkeeper(void) {
       } else {
         Engine_EventBegin();
         Engine_EventSetMessage(MsgValeAWiseManFleesWhen);
-        Engine_EventShowMessage(ACTOR_ITEM_SHOPKEEPER, 0);
+        Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
       }
     }
@@ -1139,9 +1151,9 @@ struct SceneEvent gValeInteriorsShops_Events[] = {
     { EVENT_TALK, ACTOR_VILLAGER_DREAMS_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeDoYouEverDreamOfSeeing) },
     { EVENT_TALK, ACTOR_VILLAGER_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeFewPeopleOutsideOfValePossess) },
     { EVENT_TALK, ACTOR_VILLAGER_SCARE_VISITORS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskToScareVisitors) },
-    { EVENT_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
-    { EVENT_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
-    { EVENT_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeWest) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeNorth) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateWest) },
@@ -1177,12 +1189,12 @@ struct SceneEvent gValeInteriorsShops_EventsAfterLeaving[] = {
     { EVENT_TALK, ACTOR_VILLAGER_DREAMS_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeImSoJealousOfYouBeing) },
     { EVENT_TALK, ACTOR_VILLAGER_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeOnceYouLeaveTownTakeCare) },
     { EVENT_TALK, ACTOR_VILLAGER_SCARE_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeIHadNoIdeaThatSuch) },
-    { EVENT_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
-    { EVENT_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
-    { EVENT_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeIsaacYoureGoingOnADifficult) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeIfYouFaceAnyHardshipIn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeSoIfThatWasFelixWho) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIsaacYoureGoingOnADifficult) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIfYouFaceAnyHardshipIn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeSoIfThatWasFelixWho) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeItsHardLettingMyPreciousGaret) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeTheWiseOneChoseGaretHimself) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeOnceGaretLeavesIWontBe) },
@@ -1230,17 +1242,17 @@ struct SceneEvent gValeInteriorsShops_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_VILLAGER_DREAMS_OF_LEAVING, CONDITION_ALWAYS, MSGNO(MsgValeTheMountainIsApparentlyStillCasting) },
     { EVENT_TALK, ACTOR_VILLAGER_PERMISSION_TO_LEAVE, CONDITION_ALWAYS, MSGNO(MsgValeTheNorthwestFaceOfMtAleph) },
     { EVENT_TALK, ACTOR_VILLAGER_SCARE_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeTheGreatHealersAreTooAfraid) },
-    { EVENT_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
-    { EVENT_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
-    { EVENT_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeItMustBeNiceToBe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeHisNewFriendsAreAllSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeItWasntTooSmartToTalk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeGaretSeemsToHaveGrownUp) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeWeveSeenManyMonstersLatelyAnd) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeIWishICouldLearnThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER, FLAG_VALE_FAREWELL_HERB_RECEIVED, MSGNO(MsgValeWhatHappenedToJennaHaventYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeIGaveHimAFarewellGift) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeWeveSeenManyMonstersLatelyAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIWishICouldLearnThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, FLAG_VALE_FAREWELL_HERB_RECEIVED, MSGNO(MsgValeWhatHappenedToJennaHaventYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgValeIGaveHimAFarewellGift) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeWillIEverSeeJennaAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeDoraSaysItsJustACold) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SPITTING_IMAGE, CONDITION_ALWAYS, MSGNO(MsgValeIKnowThatThereAreAlways) },

@@ -139,7 +139,9 @@ enum StormNightActor {
   /// Boulder has passed he tries to go for help and cannot. "I... I'll go!",
   /// then "It's no use. I can't move..."
   ACTOR_EXHAUSTED_VILLAGER = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Dora, hurry!" (MsgValeDoraHurryBoulder)
   ACTOR_DORA,
+  /// ★ Named from the game: "Let me help you, Kyle!" (MsgValeKyleAbleStop)
   ACTOR_KYLE,
   /// Eight huge rocks that Isaac "can't even budge": ACTOR_FIRST_ROCK to
   /// ACTOR_FIRST_ROCK + 3 fall across the paths (Event_FirstRockFalls to
@@ -148,17 +150,23 @@ enum StormNightActor {
   /// and + 7 lie there only once the Boulder has passed down the river
   /// (ValeStorm_ShowBoulderSweepingDownriver).
   ACTOR_FIRST_ROCK,
+  /// ★ Named from the game: "The Mt. Aleph Boulder is going to fall!"
+  /// (MsgValeWake)
   ACTOR_BOULDER = ACTOR_FIRST_PLACED + 11, ///< drawn at twice its size
   /// Runs out of his house and shoves Isaac. "Huh? Isaac?"
+  /// ★ Named from the game: "Sorry to shove you like that." (MsgValeHuh)
   ACTOR_SHOVING_VILLAGER,
   /// The things Garet struggles to save. "If a rock hits me now, I'll lose
   /// both my chest and my life."
   ACTOR_GARETS_CHEST,
+  /// ★ Named from the game: "Garet (child)" (MsgDebugGlyphName)
   ACTOR_GARET, ///< the young Garet's sprite, 0x13
+  /// ★ Named from the game: "Felix (child)" (MsgDebugGlyphName)
   ACTOR_FELIX, ///< in the river
   /// The pair at the river whom Jenna calls "Mom! Dad!". "Hang on, Felix!
   /// Help is on the way!"
   ACTOR_JENNAS_PARENT_A,
+  /// ★ Named from the game: "Mom! Dad!" (MsgValeMomDadBack)
   ACTOR_JENNAS_PARENT_B, ///< "Don't let go, Felix!"
   ACTOR_JENNA,           ///< "Oh no! My brother!"
   ACTOR_BOULDER_GLOW,    ///< the light around the Boulder as it rolls
@@ -180,7 +188,9 @@ enum StormNightActor {
   /// The invisible actor on ACTOR_ELDER_WEST's spot that speaks for that elder,
   /// the elders' second line. "It's too heavy! We can't hold it for long!"
   ACTOR_ELDER_WEST_STAND_IN,
+  /// ★ Named from the game: "Go aid the elders!" (MsgValeGoAidElders)
   ACTOR_ELDER_EAST, ///< east of ACTOR_ELDER_WEST, and drawn as that elder is
+  /// ★ Named from the game: "Go aid the elders!" (MsgValeGoAidElders)
   ACTOR_ELDER_WEST
 };
 

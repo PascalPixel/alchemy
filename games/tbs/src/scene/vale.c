@@ -170,11 +170,15 @@ enum ValeActor {
   ACTOR_VILLAGER_ALEPHS_PURITY,
   /// "I'm jealous of you, Garet, because your grandpa's the mayor."
   /// (Event_TalkAboutTheMayorAndTremors)
+  /// ★ Named from the game: "I'm jealous of you,"
+  /// (MsgValeYourGrandpaIsTheMayor)
   ACTOR_VILLAGER_JEALOUS_OF_GARET,
   /// "This place looks just like it did three years ago... after the
   /// storm..."
   ACTOR_VILLAGER_REMEMBERING_THE_STORM,
   /// "Isaac, watch out! Don't get too close to the river!"
+  /// ★ Named from the game: "Don't get too close to the river!"
+  /// (MsgValeIsaacWatchOutDontGetToo)
   ACTOR_VILLAGER_BY_THE_RIVER,
   /// "Vale must remain hidden. Psynergy's secrets mustn't fall into the wrong
   /// hands."
@@ -191,12 +195,19 @@ enum ValeActor {
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PUPPY + 3,
   /// "You're in trouble now, Garet... Your sister's really mad!"; after the
   /// party has left, "Please take care of my brother, Isaac."
-  ACTOR_GARETS_SIBLING,
+  /// ★ Named from the game: "Please take care of my brother"
+  /// (MsgValePleaseTakeCareOfMyBrother), said by a boy in a green shirt and
+  /// shorts (its render)
+  ACTOR_GARETS_BROTHER,
   /// SPRITE_STONE_PILLAR, as Goma Cave's pillars: pushed (Event_PushPillar) or
   /// moved
   /// with Move, its column kept in FLAG_PLACE_TEMP_14 to _16
   /// (Event_SettleMovedPillar).
+  /// ★ Named from what the player sees: a stone pillar of brown rock standing
+  /// below the cliff north of the village (its render)
   ACTOR_PILLAR,
+  /// ★ Named from the game: "your mother, Dora, has been crying"
+  /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA, ///< Isaac's mother
   /// Jumps out to warn Isaac off the sacred peak, then keeps watching him
   /// (Event_WarnAgainstSneakingUpMtAleph). "Mt. Aleph is a sacred peak. It is
@@ -207,6 +218,7 @@ enum ValeActor {
   ACTOR_FIRST_BOARD,
   ACTOR_SECOND_BOARD,
   ACTOR_THIRD_BOARD,
+  /// ★ Named from the game: "Nut" (MsgItemName), the item Catch takes
   ACTOR_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
 };
 
@@ -215,15 +227,20 @@ enum ValeActor {
 enum ValeAfterKalayActor {
   /// Garet's sister. "Ah! It's been a while... You're back?"
   /// (Event_GaretMeetsHisSister)
+  /// ★ Named from the game: "Thanks, Sis." (MsgValeAh), Garet answering her
   ACTOR_GARETS_SISTER_AFTER_KALAY = ACTOR_FIRST_PLACED,
   /// "I will do my best to show everyone that I am strong enough to protect
   /// our family and Vale." (Event_GaretAsksToProtectFamily)
-  ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  /// ★ Named from the game: "Please take care of my brother"
+  /// (MsgValePleaseTakeCareOfMyBrother)
+  ACTOR_GARETS_BROTHER_AFTER_KALAY,
   /// "Is Jenna back yet?" (Event_AskWhetherJennaHasReturned); the villager of
   /// ACTOR_VILLAGER_REMEMBERING_THE_STORM.
+  /// ★ Named from the game: "Is back yet?" (MsgValeIsJennaBackYet)
   ACTOR_VILLAGER_ASKING_FOR_JENNA,
   /// "I still remember when Felix and I used to play here...*Sniff*"; the
   /// villager of ACTOR_VILLAGER_BY_THE_RIVER.
+  /// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
   ACTOR_VILLAGER_REMEMBERING_FELIX,
   /// Three sprites of water, CrossboneIsleFloodgate's water sprite 0xd6. Only
   /// Event_UnusedWaterBurstsByTheRiver shows them: during a
@@ -241,7 +258,10 @@ enum ValeAfterKalayActor {
   /// "I wonder why we haven't seen any travelers since the eruption..."
   /// (Event_AskAboutTheLackOfTravelers)
   ACTOR_VILLAGER_MISSING_TRAVELERS,
+  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_NUT_AFTER_KALAY,
+  /// ★ Named from what the player sees: a stone pillar of brown rock standing
+  /// below the cliff north of the village (its render)
   ACTOR_PILLAR_AFTER_KALAY ///< the pillar of ACTOR_PILLAR
 };
 
@@ -250,7 +270,11 @@ enum ValeAfterKalayActor {
 enum ValeOpeningActor {
   ACTOR_OPENING_VILLAGER = ACTOR_FIRST_PLACED, ///< meets Jenna on her way
   /// The pillar of ACTOR_PILLAR, which Garet trains his Psynergy on.
+  /// ★ Named from what the player sees: a stone pillar of brown rock standing
+  /// below the cliff north of the village (its render)
   ACTOR_OPENING_PILLAR,
+  /// ★ Named from the game: "your mother, Dora, has been crying"
+  /// (MsgValeDoraHasBeenCrying)
   ACTOR_OPENING_DORA,        ///< calls up to Isaac on the roof
   ACTOR_OPENING_FIRST_BOARD, ///< the boards on the roof, sprite 0xce
   ACTOR_OPENING_SECOND_BOARD,
@@ -1602,7 +1626,7 @@ static void Event_GaretMeetsHisSister(void) {
 }
 
 /// Back from Kalay, Garet asks one of his family in Vale
-/// (ACTOR_GARETS_SIBLING_AFTER_KALAY) to protect it while he is gone; sets
+/// (ACTOR_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone; sets
 /// group flag FLAG_PLACE_TEMP_04. "WHATEVER YOU DO, you must protect the family
 /// while I'm gone."
 static void Event_GaretAsksToProtectFamily(void) {
@@ -1620,43 +1644,43 @@ static void Event_GaretAsksToProtectFamily(void) {
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
   Engine_EventSetMessage(MsgValeHowHaveYouBeen);
   Event_ShowMessage(GARET, 0);
-  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_SIBLING_AFTER_KALAY, 2);
-  Actor_ShowEmote(ACTOR_GARETS_SIBLING_AFTER_KALAY, EMOTE_IN_FRONT | 0, 0);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
+  Actor_ShowEmote(ACTOR_GARETS_BROTHER_AFTER_KALAY, EMOTE_IN_FRONT | 0, 0);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                       FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                       FACING_SOUTH + FACING_STEP, 10);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                       FACING_SOUTHEAST + FACING_STEP, 40);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_SIBLING_AFTER_KALAY, 1);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 1);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                       FACING_SOUTH + FACING_STEP, 10);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                                   ANIM_SHAKE_HEAD);
-  Event_ShowMessage(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0);
+  Event_ShowMessage(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_SIBLING_AFTER_KALAY, 2);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 20);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -1668,8 +1692,8 @@ static void Event_GaretAsksToProtectFamily(void) {
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 10);
   Engine_EventSetMessage(MsgValeEverProtectFamily);
   Event_ShowMessage(GARET, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 20);
@@ -3464,7 +3488,7 @@ struct SceneEvent gVale_Events[] = {
     { EVENT_TALK, ACTOR_VILLAGER_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeValeMustRemainHiddenPsynergysSecrets) },
     { EVENT_TALK, ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
     { EVENT_TALK, ACTOR_GARETS_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ArgueWithGaretsSister) },
-    { EVENT_TALK, ACTOR_GARETS_SIBLING, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
+    { EVENT_TALK, ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
     { EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DoraFretsAboutTheRoof) },
     { EVENT_TALK, ACTOR_VILLAGER_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
@@ -3505,11 +3529,11 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
     { EVENT_TALK, ACTOR_VILLAGER_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeTheMayorWasTooKindTo) },
     { EVENT_TALK, ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
     { EVENT_TALK, ACTOR_GARETS_SISTER, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreSoLuckyGaret) },
-    { EVENT_TALK, ACTOR_GARETS_SIBLING, CONDITION_ALWAYS, MSGNO(MsgValePleaseTakeCareOfMyBrother) },
+    { EVENT_TALK, ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValePleaseTakeCareOfMyBrother) },
     { EVENT_TALK, ACTOR_VILLAGER_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SISTER, CONDITION_ALWAYS, MSGNO(MsgValeGeeIWishICouldSee) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SIBLING, CONDITION_ALWAYS, MSGNO(MsgValeMyBrothersStrengthIsHisBest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValeMyBrothersStrengthIsHisBest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeImGladThatFelixIsAlive) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeFelixWasAGoodPersonI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, MSGNO(MsgValePoorKradenWasTakenToSome) },
@@ -3549,8 +3573,8 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
 struct SceneEvent gVale_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_GARETS_SISTER_AFTER_KALAY, FLAG_PLACE_TEMP_03, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
     { EVENT_TALK, ACTOR_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICanTellJustByLooking) },
-    { EVENT_TALK, ACTOR_GARETS_SIBLING_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
-    { EVENT_TALK, ACTOR_GARETS_SIBLING_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
+    { EVENT_TALK, ACTOR_GARETS_BROTHER_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
+    { EVENT_TALK, ACTOR_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
     { EVENT_TALK, ACTOR_VILLAGER_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
     { EVENT_TALK, ACTOR_VILLAGER_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
     { EVENT_TALK, ACTOR_VILLAGER_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeIUsedToPlayHere) },
@@ -3560,8 +3584,8 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_VILLAGER_MISSING_TRAVELERS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GARETS_SISTER_AFTER_KALAY, FLAG_PLACE_TEMP_03, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreWorkingSoHard) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GARETS_SIBLING_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SIBLING_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GARETS_BROTHER_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_VILLAGER_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeFelixMustBeProtectingJennaIm) },

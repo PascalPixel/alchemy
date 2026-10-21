@@ -1189,7 +1189,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
 #else
 #endif
   // 55 is HEAP_SLOT_MENU, spriteWork's block.
-  Runtime_ReleaseHeapBlock(55);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
   PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   WaitFrames(1);
 done:

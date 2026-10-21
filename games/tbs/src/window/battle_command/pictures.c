@@ -8,16 +8,16 @@ extern const u8 *gRenderResource_PairSourceTable[];
 
 /// Decompresses picture `picture` of gRenderResource_PairSourceTable, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
-/// bytes, into VRAM slot `slot`, through a 1 KB staging block in heap slot 14.
+/// bytes, into VRAM slot `slot`, through a 1 KB staging block in HEAP_SLOT_TILE_SCRATCH.
 /// The heap block is not freed when `slot` is not a valid VRAM slot.
 void RenderResource_LoadPair(s32 picture, s32 slot) {
-  void *stagingBuffer = Runtime_AllocateBlock(14, 0x400);
+  void *stagingBuffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   const u8 *resource = gRenderResource_PairSourceTable[picture];
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Resource_DecodeByteLz(resource, stagingBuffer);
     VramCache_Load(slot, 0x200, stagingBuffer);
-    Runtime_ReleaseHeapBlock(14);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   }
 }
 
@@ -70,7 +70,7 @@ void RenderOutput_BobPair(struct RenderOutput *obj) {
 /// when `remap` is nonzero.
 void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap) {
   s32 size = 1024;
-  void *buffer = Runtime_AllocateBlock(14, size);
+  void *buffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, size);
   u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
@@ -79,7 +79,7 @@ void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap) {
     if (remap != 0)
       Runtime_RemapBytesByTableFar(buffer, 768);
     VramCache_Load(slot, size, buffer);
-    Runtime_ReleaseHeapBlock(14);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   }
 }
 
@@ -333,7 +333,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 
 /// Builds icon `resource` (0 to 31) of gUiIcon_MiscIconPointers, the table
 /// the condition icons come from (Ui_PrepareTransferFromTableEntry), in a
-/// transfer block taken from heap slot 17, reloads VRAM cache entry
+/// transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry
 /// `index` with it and returns the entry's first tile. The heap block is
 /// released before it returns. The status screen loads its condition icons
 /// this way, by condition kind (1 to 18).
@@ -341,25 +341,25 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
-  work = Runtime_AllocateBlock(17, sizeof(*work));
+  work = Runtime_AllocateBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   Ui_PrepareTransferFromTableEntry(resource);
   result = VramCache_Reload(index, (s32)work->tiles);
-  Runtime_ReleaseHeapBlock(0x11);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
 /// Builds the icon of inventory item `resource` (style 0x1a) in a transfer
-/// block taken from heap slot 17, reloads VRAM cache entry `index` with it
+/// block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it
 /// and returns the entry's first tile. The heap block is released before it
 /// returns. The battle item list and the chosen item's window use it.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
-  work = Runtime_AllocateBlock(17, sizeof(*work));
+  work = Runtime_AllocateBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   ItemIcon_Compose(resource, 0x1a);
   result = VramCache_Reload(index, (s32)work->tiles);
-  Runtime_ReleaseHeapBlock(0x11);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -373,11 +373,11 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
-  work = Runtime_AllocateBlock(17, sizeof(*work));
+  work = Runtime_AllocateBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   slot = index;
   Ability_LoadGlyph(resource, 0, &slot, &tile, 1);
   result = VramCache_Reload(index, (s32)work->tiles);
-  Runtime_ReleaseHeapBlock(0x11);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -451,13 +451,13 @@ struct UiWindow *Link_CreateCountdownLabelWindow(void) {
 }
 
 /// Decodes command icon `icon` (ResourceId_CommandIcons, 1 KB of 256-colour
-/// pixels) in a block taken from heap slot 17, reloads VRAM cache entry
+/// pixels) in a block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry
 /// `slotIndex` with it and returns the entry's first tile. The heap block is
 /// released before it returns. The command row and the chosen command's
 /// icon use it.
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
-      Runtime_AllocateHeapBlock(0x11, sizeof(GlyphTransfer));
+      Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
   u8 **encoded = &buffer->encoded;
   void *target = (void *)((u32)offsetTable + offsetTable[icon]);
@@ -466,7 +466,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   *encoded = target;
   Resource_DecodeByteLz(target, buffer);
   result = VramCache_Reload(slotIndex, (s32)buffer);
-  Runtime_ReleaseHeapBlock(0x11);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -475,7 +475,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
 /// row's icons share `palette`: each colour index first met takes the next
 /// BG palette entry, which gets that index's OBJ palette colour. Past 64
 /// entries every new index takes entry 64, whose colour is not set here.
-/// Heap slot 17 holds the decoded icon and a 1 KB MemAlloc block the
+/// HEAP_SLOT_GLYPH_TRANSFER holds the decoded icon and a 1 KB MemAlloc block the
 /// remapped pixels; both are freed before it returns.
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
                               s32 tile) {
@@ -487,7 +487,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   s32 i;
   u32 index;
 
-  decoded = Runtime_AllocateHeapBlock(17, sizeof(*decoded));
+  decoded = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*decoded));
   font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
   decoded->encoded = font + ((u16 *)font)[glyph];
   Resource_DecodeByteLz(decoded->encoded, decoded);
@@ -507,7 +507,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   }
   Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * 64, DMA_COPY32(256), REG_DMA3);
   MemFree(remapped);
-  Runtime_ReleaseHeapBlock(17);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 /// Loads the command row's icon `index` as command icon `icon`: as BG1 tiles

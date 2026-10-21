@@ -51,7 +51,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 /// party's row. In a link battle both consoles first wait for each other
 /// ("VSST" in the link signature), publish "EDVS" when done, and wait for
 /// the partner to finish ("Waiting for opponent's input."). Its work,
-/// BattleMenuWork (gLinkCountdownWork), lives in heap slot 57 until it
+/// BattleMenuWork (gLinkCountdownWork), lives in HEAP_SLOT_BATTLE_COMMANDS until it
 /// returns. BattlePres_BuildUnitEntries calls it (battle/battle/round.c).
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                 u16 *actors, s32 commandCount) {
@@ -95,7 +95,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
   smallIconSlot = VramCache_AllocEntry(512);
-  state = Runtime_AllocateBlock(57, 260);
+  state = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_COMMANDS, 260);
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
   Link_DrawShiftedTilePair(0x06006680);
@@ -832,6 +832,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
     }
   }
   Camera_ConfigureSceneFar(0);
-  Runtime_ReleaseHeapBlock(57);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_COMMANDS);
   return commandCount;
 }

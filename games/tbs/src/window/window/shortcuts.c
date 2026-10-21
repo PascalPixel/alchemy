@@ -315,7 +315,7 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 /// window far-call table.
 void Menu_RunSelectionHook(void) { Debug_SelectAbilityPair(); }
 
-/// The work block of heap slot 19 (gSelectionWorkspace): two VRAM cache
+/// The work block of HEAP_SLOT_SELECTION_WORKSPACE (gSelectionWorkspace): two VRAM cache
 /// entries with their flags and a window, among fields nothing here uses. Only
 /// the two unused functions below touch it.
 struct SelectionWorkspace {
@@ -332,19 +332,19 @@ struct SelectionWorkspace {
   u8 unkff8[12];
 };
 
-/// Allocates the work block of heap slot 19 and clears its two flags.
+/// Allocates the work block of HEAP_SLOT_SELECTION_WORKSPACE and clears its two flags.
 /// Nothing calls it.
 UNUSED void Menu_AllocateSelectionWorkspace(void) {
   struct SelectionWorkspace *work;
   u32 zero;
 
-  work = Runtime_AllocateBlock(0x13, 0x1004);
+  work = Runtime_AllocateBlock(HEAP_SLOT_SELECTION_WORKSPACE, 0x1004);
   zero = 0;
   work->firstActive = zero;
   work->secondActive = zero;
 }
 
-/// Closes the window of heap slot 19's work block, frees the VRAM cache
+/// Closes the window of HEAP_SLOT_SELECTION_WORKSPACE's work block, frees the VRAM cache
 /// entries its flags mark and frees the block.
 /// Nothing calls it.
 UNUSED void Menu_ReleaseSelectionWorkspace(void) {
@@ -361,5 +361,5 @@ UNUSED void Menu_ReleaseSelectionWorkspace(void) {
   if (state->secondActive != 0) {
     Resource_ResetEntry(state->secondResource);
   }
-  Runtime_ReleaseHeapBlock(0x13);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_SELECTION_WORKSPACE);
 }

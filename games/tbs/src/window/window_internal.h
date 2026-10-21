@@ -216,9 +216,9 @@ enum TextStyle {
 /// UiText_DecodeMessage call when the block is empty.
 #define TEXT_WORK_BLOCK 50
 
-/// Heap slot 17's pointer, kept in IWRAM (system/iwram.s, after gWindowWork
-/// and gPartyStatusWork): the glyph transfer work icons are built in. Each
-/// icon builder allocates the slot for its build and frees it after.
+/// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after
+/// gWindowWork and gPartyStatusWork): the glyph transfer work icons are built
+/// in. Each icon builder allocates the slot for its build and frees it after.
 extern GlyphTransfer *gGlyphWork;
 
 /// Each message context bank's Huffman models and their offsets, which the

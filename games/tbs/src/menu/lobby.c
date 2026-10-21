@@ -45,6 +45,7 @@
 #include "flags.h"
 #include "global_cells.h"
 #include "songs.h"
+#include "heap_state.h"
 
 // Link transfers use three unit records followed by one recovery-table record.
 /// The bytes sent for each member: a BattleUnit (BATTLE_UNIT_SIZE, 0x14c)
@@ -78,7 +79,8 @@
 // FLAG_SCENE_TEMP_00: the attendant has asked the player to take part; every
 //   300th call of LinkLobby_PromptToParticipate clears it, to ask again.
 // FLAG_SCENE_TEMP_01: the linked partner has asked for a battle: its
-//   signature matches, and its state is slot 1 (asked) or 2 (in the circle).
+//   signature matches, and its state is LOBBY_SLOT_ASKED or
+//   LOBBY_SLOT_IN_CIRCLE.
 // FLAG_SCENE_TEMP_02: the player has agreed to a battle.
 // FLAG_SCENE_TEMP_03: the party is on its way into the battle.
 // FLAG_SCENE_TEMP_04: the attendant's next explanation is the party order.
@@ -103,12 +105,6 @@
 // (Battle_RunEncounter). In a
 //   monster series, byte flag 1000 (flags 1000 to 1007) instead counts the
 //   victories, 0 to 2, towards a stronger monster.
-//
-// gGameState.linkTallies, as this file keeps them: 0 monster battles won,
-// 1 monster battles lost, 2 the most monster battles won in a row, 3 those
-// won in the current series, 4 linked battles won, 5 linked battles lost,
-// 6 the most linked battles won in a row (the wall board), 7 those won in a
-// row now.
 
 /// The placed actors, numbering the rows of gLinkLobbyPlacements and
 /// gLinkLobbyBattlePlacements, which list the same people in the same order;
@@ -159,19 +155,50 @@ enum LinkLobbyActor {
   ACTOR_WARY_VISITOR
 };
 
+/// The words of gLinkLobby_SlotValues, by slot: the signature, then the state
+/// a console publishes.
+enum LinkLobbySlot {
+  LOBBY_SLOT_SIGNATURE = 0,
+  LOBBY_SLOT_ASKED = 1,     ///< has asked for a battle
+  LOBBY_SLOT_IN_CIRCLE = 2, ///< stands in the circle
+  LOBBY_SLOT_UNUSED = 3,
+  LOBBY_SLOT_IDLE = 4,
+  /// Replaces the signature when no partner answers the attendant and during
+  /// a monster series.
+  LOBBY_SLOT_ALONE = 5
+};
+
+/// The lobby's raised events (EventWork.raisedTrigger).
+enum LinkLobbyRaisedEvent {
+  LOBBY_EVENT_NONE = 0,
+  LOBBY_EVENT_PROMPT = 1,      ///< LinkLobby_PromptToParticipate
+  LOBBY_EVENT_DISCONNECTED = 2 ///< LinkLobby_ReportDisconnection
+};
+
+/// gGameState.linkTallies, as the lobby keeps them.
+enum LinkTally {
+  LINK_TALLY_MONSTER_WINS = 0,
+  LINK_TALLY_MONSTER_LOSSES = 1,
+  LINK_TALLY_MONSTER_BEST_STREAK = 2, ///< the most won in a row
+  LINK_TALLY_MONSTER_STREAK = 3,      ///< those won in the current series
+  LINK_TALLY_LINKED_WINS = 4,
+  LINK_TALLY_LINKED_LOSSES = 5,
+  /// The most linked battles won in a row, on the wall board.
+  LINK_TALLY_LINKED_BEST_STREAK = 6,
+  LINK_TALLY_LINKED_STREAK = 7 ///< those won in a row now
+};
+
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 // clang-format off
 /// The words the lobby publishes in its link payload, by slot; the partner
-/// compares them with its own (LinkLobby_PeerSlotMatches). Slot 0 is this
-/// game's signature, in column 0 (gLinkLobby_SlotColumns); slots 1 to 4 are
-/// its state, in column 1: 1 has asked for a battle, 2 is in the circle, 3 is
-/// unused and 4 is idle. Slot 5 replaces the signature when no partner
-/// answers the attendant and during a monster series. In English and French
-/// it equals slot 0; elsewhere it is slot 0's letters reversed, which the
-/// partner's slot 0 test does not match. XXX: likely meant to hide this
+/// compares them with its own (LinkLobby_PeerSlotMatches), by enum
+/// LinkLobbySlot. The signature is in the first column (gLinkLobby_SlotColumns),
+/// the states in the second. In English and French LOBBY_SLOT_ALONE equals the
+/// signature; elsewhere it is the signature's letters reversed, which the
+/// partner's signature test does not match. XXX: likely meant to hide this
 /// console from partners meanwhile, because each return to linking writes
-/// slot 0 back.
+/// the signature back.
 const s32 gLinkLobby_SlotValues[] = {
 #if (LANGUAGE == LANGUAGE_GERMAN)
     PEER_TAG('C', 'S', 'G', 'G'), PEER_TAG('3', '0', '1', '2'),
@@ -315,8 +342,8 @@ static void LinkLobby_WriteSlotValue(s32 slot) {
 #ifdef UBFIX
 /// The scheduler callback that watches the partner each frame in the lobby.
 /// It forgets the partner after LOBBY_PEER_WAIT_FRAMES without a link, keeps
-/// FLAG_SCENE_TEMP_01 current, raises event 1 (LinkLobby_PromptToParticipate)
-/// once both sides agree and event 2 (LinkLobby_ReportDisconnection) when the
+/// FLAG_SCENE_TEMP_01 current, raises LOBBY_EVENT_PROMPT once both
+/// sides agree and LOBBY_EVENT_DISCONNECTED when the
 /// link is lost while a battle is being arranged. LinkLobby_RunRoundResult
 /// schedules it on every arrival; LinkLobby_EnterBattle removes it.
 static void LinkLobby_PollPeerReady(void) {
@@ -334,9 +361,9 @@ static s32 LinkLobby_PollPeerReady(void) {
   if (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed > 0xe00000) {
     Engine_GameFlagClear(FLAG_PLACE_TEMP_04);
   }
-  // While raised event 2 (the lost link) waits, skip the partner tracking.
-  if (work->raisedTrigger != 2) {
-    LinkLobby_PeerSlotMatches(0);
+  // While LOBBY_EVENT_DISCONNECTED waits, skip the partner tracking.
+  if (work->raisedTrigger != LOBBY_EVENT_DISCONNECTED) {
+    LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE);
     if (!Engine_GameFlagIsSet(FLAG_PLACE_TEMP_03)) {
       // Without a link for 26 frames, clear every console's received payload
       // and go idle.
@@ -345,7 +372,7 @@ static s32 LinkLobby_PollPeerReady(void) {
           Iwram_ClearWords(&gLinkPeerSignatures[i], 20);
         }
         sLinkLobbyWaitFrames = 0;
-        LinkLobby_WriteSlotValue(4);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
       }
     } else {
       sLinkLobbyWaitFrames = 0;
@@ -353,11 +380,12 @@ static s32 LinkLobby_PollPeerReady(void) {
     // While linked: has the partner asked for a battle, or stepped into the
     // circle?
     if (sLinkLobbyWaitFrames == 0) {
-      if (LinkLobby_PeerSlotMatches(0) &&
-          (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
+      if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
+          (LinkLobby_PeerSlotMatches(LOBBY_SLOT_ASKED) ||
+           LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
         Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
         if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02)) {
-          work->raisedTrigger = 1;
+          work->raisedTrigger = LOBBY_EVENT_PROMPT;
         }
         result = 1;
       } else {
@@ -368,23 +396,24 @@ static s32 LinkLobby_PollPeerReady(void) {
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) &&
         Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) &&
         !Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00)) {
-      work->raisedTrigger = 1;
+      work->raisedTrigger = LOBBY_EVENT_PROMPT;
     }
   }
   // The 25th frame without a link while a linked battle is being arranged:
   // report the link lost.
   if ((GameFlag_IsSet(FLAG_SCENE_TEMP_01) ||
        GameFlag_IsSet(FLAG_SCENE_TEMP_02)) &&
-      !GameFlag_IsSet(FLAG_MONSTER_BATTLE) && !LinkLobby_PeerSlotMatches(0) &&
+      !GameFlag_IsSet(FLAG_MONSTER_BATTLE) &&
+      !LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
       sLinkLobbyWaitFrames > 24) {
-    work->raisedTrigger = 2;
+    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
     GameFlag_Set(FLAG_SCENE_TEMP_05);
     GameFlag_Clear(FLAG_SCENE_TEMP_01);
     GameFlag_Clear(FLAG_SCENE_TEMP_02);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_05)) {
-    work->raisedTrigger = 2;
+    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
   }
 #ifdef UBFIX
   (void)result;
@@ -397,7 +426,7 @@ static s32 LinkLobby_PollPeerReady(void) {
 /// cleared on every arrival.
 u32 gLinkLobbyCallFrames;
 
-/// Raised event 1: the attendant asks the player into the circle once both
+/// LOBBY_EVENT_PROMPT: the attendant asks the player into the circle once both
 /// consoles agree, and again after 300 calls. The line is "If you want to
 /// participate, please step into the circle!". Returns the flag's value when
 /// FLAG_SCENE_TEMP_03 or _00 is set and nothing is shown; the path that
@@ -428,17 +457,18 @@ static s32 LinkLobby_PromptToParticipate(void) {
 #endif
 }
 
-/// Raised event 2: the attendant says the link was disconnected. Publishes
-/// slot 4 (idle) and clears the raised trigger and FLAG_SCENE_TEMP_00, _03
-/// and _05. The original handler has no defined return value.
+/// LOBBY_EVENT_DISCONNECTED: the attendant says the link was disconnected.
+/// Publishes LOBBY_SLOT_IDLE and clears the raised trigger and
+/// FLAG_SCENE_TEMP_00, _03 and _05. The original handler has no defined return
+/// value.
 static s32 LinkLobby_ReportDisconnection(void) {
   struct EventWork *work = gEventWork;
 
-  LinkLobby_WriteSlotValue(4);
+  LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_03);
   Engine_EventBegin();
-  work->raisedTrigger = 0;
+  work->raisedTrigger = LOBBY_EVENT_NONE;
   Engine_EventSetMessage(MsgLobbyLinkDisconnected);
   Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_05);
@@ -819,14 +849,14 @@ check:
 
 /// Touch event 10, the circle: starts the battle. A monster battle starts at
 /// once. A linked one needs the attendant's call (FLAG_SCENE_TEMP_00) and no
-/// lost link waiting to be reported (FLAG_SCENE_TEMP_05); it publishes slot 2
-/// and waits for the partner to step in, giving up when the partner
-/// withdraws, the link is lost, or the partner neither asks nor stands in the
-/// circle for LOBBY_PEER_WAIT_FRAMES. The leader then walks in while the
-/// parties are exchanged; a failed exchange walks back, restarts the lobby's
-/// polling and raises event 2. Sets where the battle returns to (entrances 8
-/// and 9 for a monster battle, 10 and 11 for a linked one) and requests it. The
-/// original returns have no defined status.
+/// lost link waiting to be reported (FLAG_SCENE_TEMP_05); it publishes
+/// LOBBY_SLOT_IN_CIRCLE and waits for the partner to step in, giving up when
+/// the partner withdraws, the link is lost, or the partner neither asks nor
+/// stands in the circle for LOBBY_PEER_WAIT_FRAMES. The leader then walks in
+/// while the parties are exchanged; a failed exchange walks back, restarts the
+/// lobby's polling and raises LOBBY_EVENT_DISCONNECTED. Sets where the battle
+/// returns to (entrances 8 and 9 for a monster battle, 10 and 11 for a linked
+/// one) and requests it. The original returns have no defined status.
 static s32 LinkLobby_EnterBattle(void) {
   struct EventWork *work;
   s32 failed;
@@ -852,28 +882,29 @@ static s32 LinkLobby_EnterBattle(void) {
       return LOBBY_NO_RESULT;
     Engine_EventBegin();
     Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
-    LinkLobby_WriteSlotValue(2);
-    if (!LinkLobby_PeerSlotMatches(2))
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
+    if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
       window = UiText_OpenMessageWindow(MsgLobbyAwaitingOpponent, 5, 4, 1);
-    while (!LinkLobby_PeerSlotMatches(2)) {
+    while (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
       Engine_TaskWait(1);
       cancelEntry = 0;
       if (!Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01))
         cancelEntry = 1;
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05))
         cancelEntry = 1;
-      if (!LinkLobby_PeerSlotMatches(2) && !LinkLobby_PeerSlotMatches(1)) {
+      if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE) &&
+          !LinkLobby_PeerSlotMatches(LOBBY_SLOT_ASKED)) {
         if (++missedFrames > LOBBY_PEER_WAIT_FRAMES)
           cancelEntry = 1;
       } else {
         missedFrames = 0;
       }
       if (cancelEntry) {
-        work->raisedTrigger = 2;
+        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         Engine_GameFlagSet(FLAG_SCENE_TEMP_05);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_01);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_02);
-        LinkLobby_WriteSlotValue(4);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
         failed = 1;
         Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
         break;
@@ -885,12 +916,12 @@ static s32 LinkLobby_EnterBattle(void) {
   }
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
-    // Heap slot 54 is gBattleOwnerStates, the battle's enemy units
-    // (LINK_OWNER_STATES_SIZE, battle/battle/encounter.c). While it is
+    // HEAP_SLOT_LINK_OWNER_STATES is gBattleOwnerStates, the battle's enemy
+    // units (LINK_OWNER_STATES_SIZE, battle/battle/encounter.c). While it is
     // allocated, the exchange below receives the partner's members and Djinn
     // into units 0x80 to 0x83. The copy to gActorSpriteSlots (gMapCellBuffer
     // + 0x8000) hands them to Battle_RunEncounter, which copies them back.
-    savedWork = Runtime_AllocateBlock(54, 0x7c8);
+    savedWork = Runtime_AllocateBlock(HEAP_SLOT_LINK_OWNER_STATES, 0x7c8);
     Engine_TaskRemoveCallback((SchedulerCallback)LinkLobby_PollPeerReady);
     // Run the map's tile animation channel 5 for eight frames.
     Map_ClearLayerEntryFlag(5);
@@ -915,7 +946,7 @@ static s32 LinkLobby_EnterBattle(void) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
       Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 216, 168);
       // A failed exchange: walk back out and return to the lobby, reporting
-      // the link lost (event 2).
+      // the link lost (LOBBY_EVENT_DISCONNECTED).
       if (LinkLobby_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
         Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 216, 200);
@@ -923,9 +954,9 @@ static s32 LinkLobby_EnterBattle(void) {
         Engine_TaskWait(8);
         Map_SetLayerEntryFlag(5);
         Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-        Runtime_ReleaseHeapBlock(54);
-        LinkLobby_WriteSlotValue(0);
-        LinkLobby_WriteSlotValue(4);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_LINK_OWNER_STATES);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
         FieldScheduler_AddCallback((SchedulerCallback)LinkLobby_PollPeerReady,
                                    0xc80);
         Scheduler_SetTaskFlags((SchedulerCallback)LinkLobby_PollPeerReady, 1);
@@ -934,7 +965,7 @@ static s32 LinkLobby_EnterBattle(void) {
         Engine_GameFlagClear(FLAG_PLACE_TEMP_03);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_03);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
-        work->raisedTrigger = 2;
+        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         Engine_EventEnd();
         return LOBBY_NO_RESULT;
       }
@@ -965,7 +996,7 @@ static s32 LinkLobby_EnterBattle(void) {
       i++;
       *destination++ = *source++;
     } while (i <= 0x7c7);
-    Runtime_ReleaseHeapBlock(54);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_LINK_OWNER_STATES);
   }
   Engine_EventEnd();
 #ifdef UBFIX
@@ -976,9 +1007,9 @@ static s32 LinkLobby_EnterBattle(void) {
 /// Talking to ACTOR_ATTENDANT, who arranges a battle. With no partner, offers a
 /// monster battle. With one, calls off a monster battle in waiting, then asks
 /// the player to apply or to accept the partner's request; a yes is published
-/// as slot 1. Agreeing sets FLAG_SCENE_TEMP_02, and for a linked battle
-/// FLAG_LINK_BATTLE and FLAG_LINK_BATTLE_ARRANGED. The original handler's
-/// return value is ignored.
+/// as LOBBY_SLOT_ASKED. Agreeing sets FLAG_SCENE_TEMP_02, and for a linked
+/// battle FLAG_LINK_BATTLE and FLAG_LINK_BATTLE_ARRANGED. The original
+/// handler's return value is ignored.
 static s32 LinkLobby_ChooseBattleMode(void) {
   // Returns no value: r0 is whatever the last call left.
 
@@ -994,11 +1025,11 @@ static s32 LinkLobby_ChooseBattleMode(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
   // Look for the partner's signature twice, a frame apart.
-  if (LinkLobby_PeerSlotMatches(0) == 0) {
+  if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
     Engine_TaskWait(1);
   }
-  if (LinkLobby_PeerSlotMatches(0) == 0) {
-    LinkLobby_WriteSlotValue(5);
+  if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     LinkLobby_InitializeSerial();
     if (!GameFlag_IsSet(FLAG_MONSTER_BATTLE)) {
       Engine_EventSetMessage(messageBase + 5);
@@ -1013,12 +1044,12 @@ static s32 LinkLobby_ChooseBattleMode(void) {
         Engine_GameFlagClear(FLAG_LINK_BATTLE);
         Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
         messageId = messageBase + 7;
-        gGameState.linkTallies[3] = answer;
+        gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
       }
       Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
       Engine_GameFlagSet(FLAG_LINK_BATTLE);
-      LinkLobby_WriteSlotValue(0);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       messageId = messageBase + 6;
       goto message;
     } else {
@@ -1028,7 +1059,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
   } else {
     // A partner arrived while a monster battle waited: call it off.
     if (GameFlag_IsSet(FLAG_MONSTER_BATTLE)) {
-      LinkLobby_WriteSlotValue(0);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       Engine_EventSetMessage(MsgLobbyOpponentArrived);
       Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       Engine_GameFlagClear(FLAG_SCENE_TEMP_02);
@@ -1060,7 +1091,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
       Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
         // Yes, and the partner is still there; else the link is lost.
-        if (LinkLobby_PeerSlotMatches(0)) {
+        if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
           Engine_GameFlagSet(FLAG_LINK_BATTLE);
           Engine_GameFlagSet(FLAG_LINK_BATTLE_ARRANGED);
           if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01)) {
@@ -1068,7 +1099,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
           } else {
             Engine_EventSetMessage(messageBase + 4);
           }
-          LinkLobby_WriteSlotValue(1);
+          LinkLobby_WriteSlotValue(LOBBY_SLOT_ASKED);
           Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
           goto open_message;
         } else {
@@ -1101,7 +1132,7 @@ static s32 LinkLobby_ReportWinTallies(s32 actor) {
   // northeast.
   if ((facing - 0xa001) <= 0x3ffe) {
     messageBase = MsgLobbyLooksLikeFirst;
-    tally = &gGameState.linkTallies[4];
+    tally = &gGameState.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*tally != 0) {
       UiWork_ClearValueNameTables();
       UiText_DrawQuantity(*tally, 5);
@@ -1113,7 +1144,7 @@ static s32 LinkLobby_ReportWinTallies(s32 actor) {
     }
   } else {
     messageBase = MsgLobbyLooksLikeFirstTime;
-    tally = &gGameState.linkTallies[7];
+    tally = &gGameState.linkTallies[LINK_TALLY_LINKED_STREAK];
     if (*tally != 0) {
       UiWork_ClearValueNameTables();
       UiText_DrawQuantity(*tally, 5);
@@ -1357,8 +1388,8 @@ static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
   Engine_EventBegin();
   state = &gGameState;
   Engine_ActorFaceActor(actorId, state->selectedActor, 0);
-  if (state->linkTallies[2] != 0) {
-    UiText_DrawQuantity(state->linkTallies[2], 5);
+  if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
+    UiText_DrawQuantity(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK], 5);
     Engine_EventSetMessage(MsgLobbyWonNumberConsecutive);
   } else {
     Engine_EventSetMessage(MsgLobbyCantWaitSee);
@@ -1455,9 +1486,10 @@ s32 LinkLobby_RunRoundResult(void) {
   sLinkLobbyWaitFrames = 0;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Sound_LoadPresetParameters(2);
-  LinkLobby_DrawThreeDigitValue(gGameState.linkTallies[6]);
+  LinkLobby_DrawThreeDigitValue(
+      gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   Map_CopyCellAttributes(11, 11, 1, 1, 13, 10);
-  LinkLobby_WriteSlotValue(4);
+  LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   Engine_TaskWait(1);
   Map_SetLayerEntryFlag(5);
 
@@ -1487,9 +1519,9 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventBegin();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    LinkLobby_WriteSlotValue(5);
-    gGameState.linkTallies[0]++;
-    gGameState.linkTallies[3]++;
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
+    gGameState.linkTallies[LINK_TALLY_MONSTER_WINS]++;
+    gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
     // The offer has two lines a level (FLAG_MONSTER_BATTLE_WINS, -1 when a
     // series starts), the even line capped at 14. Byte flag 1000 counts the
     // victories 0 to 2; the third raises the level and takes the next, odd
@@ -1519,10 +1551,10 @@ s32 LinkLobby_RunRoundResult(void) {
       // No: the series ends, and a new record (tally 2) is saved.
       Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
-      UiText_DrawQuantity(gGameState.linkTallies[3], 5);
-      score = gGameState.linkTallies[3];
-      if (gGameState.linkTallies[2] < score) {
-        gGameState.linkTallies[2] = score;
+      UiText_DrawQuantity(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
+      score = gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
+      if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] < score) {
+        gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] = score;
         Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
         Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
         LinkLobby_SaveMonsterBattleResults();
@@ -1530,27 +1562,27 @@ s32 LinkLobby_RunRoundResult(void) {
         Engine_EventSetMessage(MsgLobbyWonNumberBattle);
         Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       }
-      LinkLobby_WriteSlotValue(0);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     }
     Engine_EventEnd();
     // Entrance 9, a monster battle lost: the series ends, and a new record
     // is saved.
   } else if (gGameState.entrance == 9) {
 
-    gGameState.linkTallies[1]++;
+    gGameState.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     Engine_EventBegin();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    LinkLobby_WriteSlotValue(5);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
     /* FAKEMATCH(temporary): score holds the tally's address, then the tally;
-     * as gGameState.linkTallies[3] read at both uses, 19 of 393 instructions
-     * differ in tbs-en. */
-    score = (u32)&gGameState.linkTallies[3];
+     * as gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK] read at both uses,
+     * 19 of 393 instructions differ in tbs-en. */
+    score = (u32)&gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
     UiText_DrawQuantity(*(u16 *)score, 5);
     score = *(u16 *)score;
-    if (gGameState.linkTallies[2] < score) {
-      gGameState.linkTallies[2] = score;
+    if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] < score) {
+      gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] = score;
       Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
       Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       LinkLobby_SaveMonsterBattleResults();
@@ -1558,10 +1590,10 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_EventSetMessage(MsgLobbyWonNumberBattleTold);
       Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
     }
-    gGameState.linkTallies[3] = 0;
+    gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
     Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
-    LinkLobby_WriteSlotValue(0);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     Engine_EventEnd();
     // Entrance 10, a linked battle won: count the win and the run; a longer
     // run is the board's new record. Saved.
@@ -1571,27 +1603,28 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventBegin();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    LinkLobby_WriteSlotValue(0);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
     // The battle broke off instead (Battle_RunEncounter set flag 1000):
     // report the link lost and restart it.
     if (GameFlag_IsSet(1000)) {
       eventWork = gEventWork;
       Engine_GameFlagClear(1000);
-      eventWork->raisedTrigger = 2;
+      eventWork->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
       Engine_GameFlagClear(FLAG_PLACE_TEMP_04);
       Engine_TaskWait(20);
       LinkLobby_InitializeSerial();
-      LinkLobby_WriteSlotValue(0);
-      LinkLobby_WriteSlotValue(4);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
     } else {
-      gGameState.linkTallies[4]++;
-      v = gGameState.linkTallies[7] + 1;
-      gGameState.linkTallies[7] = v;
+      gGameState.linkTallies[LINK_TALLY_LINKED_WINS]++;
+      v = gGameState.linkTallies[LINK_TALLY_LINKED_STREAK] + 1;
+      gGameState.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
       /* FAKEMATCH(temporary): score holds the record's address, as in the
-       * other branches; as gGameState.linkTallies[6] at each use, 4 of 393
-       * instructions differ in tbs-en. */
-      score = (u32)&gGameState.linkTallies[6];
+       * other branches; as
+       * gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] at each use, 4 of
+       * 393 instructions differ in tbs-en. */
+      score = (u32)&gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK];
       if (*(u16 *)score < (u16)v) {
         *(u16 *)score = v;
       }
@@ -1609,11 +1642,11 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventBegin();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    LinkLobby_WriteSlotValue(0);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
     if ((v = Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) == 0) {
-      gGameState.linkTallies[5]++;
-      gGameState.linkTallies[7] = v;
+      gGameState.linkTallies[LINK_TALLY_LINKED_LOSSES]++;
+      gGameState.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
       LinkLobby_SaveBattleResults();
     }
     Engine_GameFlagSet(FLAG_PLACE_TEMP_04);
@@ -1637,8 +1670,8 @@ s32 LinkLobby_RunRoundResult(void) {
     }
     gGameState.idleSleepEnabled = 0;
     gIdleSleepEnabled = 0;
-    LinkLobby_WriteSlotValue(0);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   // Resume polling and restore the party unless continuing a monster run.
   callback = (SchedulerCallback)LinkLobby_PollPeerReady;

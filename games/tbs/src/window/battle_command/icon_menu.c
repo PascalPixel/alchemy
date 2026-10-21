@@ -235,20 +235,20 @@ void AffineEffect_UpdateFrame(void) {
 }
 
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
-/// The work (struct ResourceMenuWork, 152 bytes) lives in heap slot 58 until
+/// The work (struct ResourceMenuWork, 152 bytes) lives in HEAP_SLOT_ICON_MENU until
 /// Menu_EndResourceSelection frees it; it is returned, and also reached as
 /// gMenuSelectWork. Every command icon menu starts here.
 void *AffineEffect_InitializeWork(void) {
   // The matching allocation size is the complete six-entry work block.
   void *work;
-  work = Runtime_AllocateBlock(58, 152);
+  work = Runtime_AllocateBlock(HEAP_SLOT_ICON_MENU, 152);
   Dma_Fill32(0, work, 152);
   Scheduler_AddOrUpdateCallback(AffineEffect_UpdateFrame, 0xc76);
   return work;
 }
 
 /// Stops the icon pulse, closes the label window and releases each loaded icon
-/// before freeing the resource-menu state (heap slot 58, 0x3a), then waits a
+/// before freeing the resource-menu state (HEAP_SLOT_ICON_MENU), then waits a
 /// frame.
 void Menu_EndResourceSelection(void) {
   struct UiWindow *labelWindow;
@@ -264,7 +264,7 @@ void Menu_EndResourceSelection(void) {
   for (i = 0; i < work->count; i++) {
     Resource_ResetEntry(work->entries[i].slot);
   }
-  Runtime_ReleaseHeapBlock(0x3A);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_ICON_MENU);
   WaitFrames(1U);
 }
 

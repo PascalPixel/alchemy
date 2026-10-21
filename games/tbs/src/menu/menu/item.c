@@ -2457,9 +2457,9 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   s32 receiverCount;
   s32 ownerCount;
   struct InventoryMenuState *menu = gMenuWork;
-  // 1 KB of heap slot 14 to draw the dial's digits in, released before
+  // 1 KB of HEAP_SLOT_TILE_SCRATCH to draw the dial's digits in, released before
   // returning.
-  void *tiles = Runtime_AllocateBlock(14, 0x400);
+  void *tiles = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   struct UiWindow *window;
   struct RenderOutput *rightDial;
 
@@ -2546,7 +2546,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   }
   RenderOutput_RedrawSavedRectFar(window);
   RenderOutput_ClearListFar((void *)window);
-  Runtime_ReleaseHeapBlock(14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   menu->selectedItemIcon->active = ICON_HIDDEN;
   if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
     quantity = -1;

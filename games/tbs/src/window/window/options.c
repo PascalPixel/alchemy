@@ -307,14 +307,14 @@ void OptionMenu_AnimateCursors(void) {
 
 /// Allocates the option screen's work block, copies the settings into it with
 /// how many values each takes, and starts its per-frame callback.
-/// The copy lets cancelling discard the edits. The block is heap slot 20
+/// The copy lets cancelling discard the edits. The block is HEAP_SLOT_OPTIONS
 /// (gSelectionWork), which OptionMenu_Release frees. The rows: 0 the window
 /// hue (24 values), 1 its brightness (15), 2 the message speed (3), 3 speech
 /// (2) and 4 auto-sleep (2).
 void OptionMenu_InitializeWork(void) {
   struct WorkspaceWork *work;
 
-  work = Runtime_AllocateBlock(20, 0x628);
+  work = Runtime_AllocateBlock(HEAP_SLOT_OPTIONS, 0x628);
   Dma_Fill32(0, work, 0x628);
   work->option[0] = gGameState.paletteGlow[0];
   work->optionCount[0] = 24;
@@ -333,7 +333,7 @@ void OptionMenu_InitializeWork(void) {
 /// The callback goes first, since it reads the work block.
 void OptionMenu_Release(void) {
   Scheduler_RemoveCallback(OptionMenu_AnimateCursors);
-  Runtime_ReleaseHeapBlock(0x14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_OPTIONS);
 }
 
 #define SLIDER_PALETTE 14 ///< the sprite palette of the hue slider's ends
@@ -665,7 +665,7 @@ void SystemMenu_AnimateCursor(void) {
 /// main loop's pass.
 void SystemMenu_Initialize(void) {
   void *work;
-  work = Runtime_AllocateBlock(20, 0x628);
+  work = Runtime_AllocateBlock(HEAP_SLOT_OPTIONS, 0x628);
   Dma_Fill32(0, work, 0x628);
   Scheduler_AddOrUpdateCallback(SystemMenu_AnimateCursor, 3200);
 }
@@ -674,7 +674,7 @@ void SystemMenu_Initialize(void) {
 /// The callback goes first, since it reads the work block.
 void SystemMenu_Release(void) {
   Scheduler_RemoveCallback(&SystemMenu_AnimateCursor);
-  Runtime_ReleaseHeapBlock(0x14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_OPTIONS);
 }
 
 /// Opens the system menu's window with its entries (Save your quest, Sleep,

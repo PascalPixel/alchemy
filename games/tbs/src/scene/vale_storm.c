@@ -20,11 +20,11 @@
 ///   (Event_FirstRockFalls to Event_FourthRockFalls). Each rock's _FELL flag
 ///   puts it back on later visits, blocking the cells it covers, and its
 ///   _PASSED flag keeps the fall from replaying. The first time Isaac tries
-///   the door of VALE_STORM_TO_VALE_INTERIORS_1, a villager running for the
-///   plaza bursts out and shoves him (FLAG_VALE_STORM_BUMPED_INTO_VILLAGER).
-///   Garet is struggling to save his chest of valuables
-///   (FLAG_VALE_STORM_HEARD_GARET once Isaac has heard him); talking to him or
-///   walking off past him brings him along (a third way,
+///   the door of VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH, a villager running
+///   for the plaza bursts out and shoves him
+///   (FLAG_VALE_STORM_BUMPED_INTO_VILLAGER). Garet is struggling to save his
+///   chest of valuables (FLAG_VALE_STORM_HEARD_GARET once Isaac has heard him);
+///   talking to him or walking off past him brings him along (a third way,
 ///   Event_UnusedGaretJoinsIsaac, never plays), and either way the chest is
 ///   left behind (FLAG_VALE_STORM_GARET_JOINED). With Garet along, the first
 ///   fallen rock has him say they must find another way, and the path north has
@@ -59,13 +59,13 @@
 /// joins, and the people at the river at their stage of the scene. Every way
 /// out leaves through Vale_RequestBackdropExit (common/vale.h), which stops the
 /// lightning first, and each door plays its opening cells before it. The doors
-/// lead into Garet's house and the other houses of SceneId_ValeInteriors1 and
-/// into Isaac's house and the rest of SceneId_ValeInteriors2; the paths lead
-/// to the part of Vale around Kraden's cottage (SceneId_ValeKraden) and to the
-/// gathered villagers (SceneId_ValeGate). gValeStorm_Exits gives each exit's
-/// destination. FLAG_SCENE_TEMP_05 and _06 record the two doors left open, and
-/// FLAG_SCENE_TEMP_10 the upper path, whose collision cells are swapped while
-/// the leader is on it.
+/// lead into Garet's house and the other houses of SceneId_ValeInteriorsShops
+/// and into Isaac's house and the rest of SceneId_ValeInteriorsInn; the paths
+/// lead to the part of Vale around Kraden's cottage (SceneId_ValeKraden) and to
+/// the gathered villagers (SceneId_ValeGate). gValeStorm_Exits gives each
+/// exit's destination. FLAG_SCENE_TEMP_05 and _06 record the two doors left
+/// open, and FLAG_SCENE_TEMP_10 the upper path, whose collision cells are
+/// swapped while the leader is on it.
 
 #include "script.h"
 #include "game_state.h"
@@ -202,7 +202,7 @@ enum StormNightPlaceFlag {
 // - FLAG_SCENE_TEMP_05: the door of Isaac's house, from which Dora and Isaac
 //   came, stands open.
 // - FLAG_SCENE_TEMP_06: the villager has run out of the door of
-//   VALE_STORM_TO_VALE_INTERIORS_1, leaving it open.
+//   VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH, leaving it open.
 // - FLAG_SCENE_TEMP_10: the leader is on the upper path, whose collision cells
 //   are swapped until the leader steps off it.
 
@@ -228,7 +228,7 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
 #include "common/object_pulse.h"
 
 /// Returns where the party appears; entrance 15 is where Dora and Isaac come
-/// out of the door of their house, from SceneId_ValeInteriors2's exit 21.
+/// out of the door of their house, from SceneId_ValeInteriorsInn's exit 21.
 const struct SceneEntrance *ValeStorm_GetEntrances(void) {
   return gValeStorm_Entrances;
 }
@@ -262,18 +262,20 @@ static void Event_ClearPathCellOverride(void) {
 
 #include "common/vale.h"
 
-/// Unused: on the stormy night, a door opens and the leader goes into a house
-/// of Vale.
+/// Unused: on the stormy night, the Sanctum's door opens and the leader goes
+/// into a house of Vale.
 ///
-/// It takes VALE_STORM_TO_VALE_INTERIORS_1_WEST_3 (SceneId_ValeInteriors1, at
-/// VALE_INTERIORS_1_FROM_VALE_WEST, the house exits 9 and 10 lead to as
-/// well). No event row names it, and nothing else takes that exit.
-UNUSED static void ValeStorm_UnusedOpenDoorToValeInteriors1West3(void) {
+/// It takes VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR
+/// (SceneId_ValeInteriorsShops, at VALE_INTERIORS_SHOPS_FROM_VALE_WEST, the
+/// house exits 9 and 10 lead to as well). No event row names it, and nothing
+/// else takes that exit.
+UNUSED static void ValeStorm_UnusedOpenSanctumDoor(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_1_WEST_3);
+  Vale_RequestBackdropExit(
+      VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR);
 }
 
 /// In Vale on the stormy night, stepping on cell code 2 requests exit 1, which
@@ -316,23 +318,23 @@ static void Event_LeaveToValeGate(void) {
 
 /// In Vale on the stormy night, opens the door of Garet's house and goes in.
 /// Reached by walking north into cell code 6; arrives at
-/// VALE_INTERIORS_1_FROM_VALE_EAST, the house where Garet's family lives.
-static void Event_LeaveToValeInteriors1East(void) {
+/// VALE_INTERIORS_SHOPS_FROM_VALE_EAST, the house where Garet's family lives.
+static void Event_LeaveToValeInteriorsShopsEast(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps1, 54, 32);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 406, 727);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_1_EAST);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_SHOPS_EAST);
 }
 
 /// In Vale on the stormy night, Isaac's first time at the door of
-/// VALE_STORM_TO_VALE_INTERIORS_1: a villager runs out and shoves him;
-/// afterwards the door opens as usual. "Huh? Isaac?"
-/// Reached by walking north into cell code 7. The shove plays until
+/// VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH: a villager runs out and shoves
+/// him; afterwards the door opens as usual. "Huh? Isaac?" Reached by walking
+/// north into cell code 7. The shove plays until
 /// FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or FLAG_VALE_STORM_SECOND_ROCK_FELL is
 /// set, and sets FLAG_SCENE_TEMP_06; otherwise goes into a house of Vale
-/// (SceneId_ValeInteriors1, at VALE_INTERIORS_1_FROM_VALE_SOUTH).
-static void Event_LeaveToValeInteriors1(void) {
+/// (SceneId_ValeInteriorsShops, at VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
+static void Event_LeaveToValeInteriorsShops(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_06) == 0) {
     Event_PlayCue(SE_DOOR_OPEN);
     Map_AnimateCells(gValeStorm_CellSteps2, 45, 39);
@@ -344,16 +346,16 @@ static void Event_LeaveToValeInteriors1(void) {
   } else {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
     Engine_EventWait(3);
-    Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_1);
+    Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH);
   }
 }
 
 /// In Vale on the stormy night, goes back into Isaac's house through the door
 /// he and Dora came out of, opening it unless they left it open.
 /// Reached by walking north into cell code 8; takes exit 7, to
-/// VALE_INTERIORS_2_FROM_VALE in SceneId_ValeInteriors2, where Vale's
-/// VALE_TO_VALE_INTERIORS_2 leads by day.
-static void Event_LeaveToValeInteriors2(void) {
+/// VALE_INTERIORS_INN_FROM_VALE in SceneId_ValeInteriorsInn, where Vale's
+/// VALE_TO_VALE_INTERIORS_INN leads by day.
+static void Event_LeaveToValeInteriorsInn(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05) == 0) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gValeStorm_CellSteps1, 50, 44);
@@ -365,20 +367,20 @@ static void Event_LeaveToValeInteriors2(void) {
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into cell code 9; arrives in a house of Vale at
-/// VALE_INTERIORS_1_FROM_VALE_NORTH.
-static void Event_LeaveToValeInteriors1North(void) {
+/// VALE_INTERIORS_SHOPS_FROM_VALE_NORTH.
+static void Event_LeaveToValeInteriorsShopsNorth(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps2, 49, 69);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_1_NORTH);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_SHOPS_NORTH);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into cell code 10; takes exit 9, to
-/// VALE_INTERIORS_1_FROM_VALE_WEST in SceneId_ValeInteriors1, where Vale's
-/// VALE_TO_VALE_INTERIORS_1_WEST leads by day.
-static void Event_LeaveToValeInteriors1West(void) {
+/// VALE_INTERIORS_SHOPS_FROM_VALE_WEST in SceneId_ValeInteriorsShops, where
+/// Vale's VALE_TO_VALE_INTERIORS_SHOPS_WEST leads by day.
+static void Event_LeaveToValeInteriorsShopsWest(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps3, 52, 76);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 374, 1238);
@@ -387,11 +389,11 @@ static void Event_LeaveToValeInteriors1West(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in, to the room
-/// Event_LeaveToValeInteriors1West leads to.
+/// Event_LeaveToValeInteriorsShopsWest leads to.
 /// Reached by walking north into cell code 11; takes exit 10, which also
-/// arrives at VALE_INTERIORS_1_FROM_VALE_WEST. The leader walks to the spot
-/// Event_LeaveToValeInteriors2West walks him to.
-static void Event_LeaveToValeInteriors1West2(void) {
+/// arrives at VALE_INTERIORS_SHOPS_FROM_VALE_WEST. The leader walks to the spot
+/// Event_LeaveToValeInteriorsInnWest walks him to.
+static void Event_LeaveToValeInteriorsShopsWestBySecondDoor(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
@@ -401,24 +403,24 @@ static void Event_LeaveToValeInteriors1West2(void) {
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into cell code 12; arrives in another part of Vale
-/// at VALE_INTERIORS_2_FROM_VALE_STORM_WEST.
-static void Event_LeaveToValeInteriors2West(void) {
+/// at VALE_INTERIORS_INN_FROM_VALE_STORM_WEST.
+static void Event_LeaveToValeInteriorsInnWest(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_2_WEST);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_INN_WEST);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into cell code 13; arrives in another part of Vale
-/// at VALE_INTERIORS_2_FROM_VALE_STORM_EAST.
-static void Event_LeaveToValeInteriors2East(void) {
+/// at VALE_INTERIORS_INN_FROM_VALE_STORM_EAST.
+static void Event_LeaveToValeInteriorsInnEast(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 1182);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_2_EAST);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_INN_EAST);
 }
 
 /// Arriving in Vale on the stormy night: restores the fallen rocks, the river
@@ -1048,11 +1050,10 @@ static void ValeStorm_ApplyFourthRockCollision(void) {
   Map_CopyCellAttributes(28, 22, 1, 1, 27, 72);
 }
 
-/// Stops the leader at the door of VALE_STORM_TO_VALE_INTERIORS_1 for the first
-/// villager conversation.
-/// The villager runs out of the door, knocks Isaac back and runs off to the
-/// plaza. "Huh? Isaac?" Called by Event_LeaveToValeInteriors1. Sets
-/// FLAG_VALE_STORM_BUMPED_INTO_VILLAGER.
+/// Stops the leader at the door of VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH for
+/// the first villager conversation. The villager runs out of the door, knocks
+/// Isaac back and runs off to the plaza. "Huh? Isaac?" Called by
+/// Event_LeaveToValeInteriorsShops. Sets FLAG_VALE_STORM_BUMPED_INTO_VILLAGER.
 static void ValeStorm_BumpIntoVillager(void) {
   s32 message;
 
@@ -3107,9 +3108,9 @@ struct SceneEntrance gValeStorm_Entrances[] = {
     {9, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {11, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_2, CONDITION_ALWAYS, 101, 0, 1216,
+    {VALE_STORM_FROM_VALE_INTERIORS_INN_WEST, CONDITION_ALWAYS, 101, 0, 1216,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_INTERIORS_2_WEST, CONDITION_ALWAYS, 146, 0, 1193,
+    {VALE_STORM_FROM_VALE_INTERIORS_INN_EAST, CONDITION_ALWAYS, 146, 0, 1193,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {15, CONDITION_ALWAYS, 335, 0, 908, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {16, CONDITION_ALWAYS, 181, 0, 1273, FACING_NORTHEAST, 0, -1, -1, -1, -1,
@@ -3124,22 +3125,26 @@ u32 gValeStorm_Exits[] = {
                VALE_KRADEN_FROM_VALE_NORTH),
     SCENE_EXIT(VALE_STORM_TO_VALE_KRADEN_SOUTH, ValeKraden,
                VALE_KRADEN_FROM_VALE_SOUTH),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_1_EAST, ValeInteriors1,
-               VALE_INTERIORS_1_FROM_VALE_EAST),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_1, ValeInteriors1,
-               VALE_INTERIORS_1_FROM_VALE_SOUTH),
-    SCENE_EXIT(7, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_1_NORTH, ValeInteriors1,
-               VALE_INTERIORS_1_FROM_VALE_NORTH),
-    SCENE_EXIT(9, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_WEST),
-    SCENE_EXIT(10, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_WEST),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_1_WEST_3, ValeInteriors1,
-               VALE_INTERIORS_1_FROM_VALE_WEST),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_2_WEST, ValeInteriors2,
-               VALE_INTERIORS_2_FROM_VALE_STORM_WEST),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_2_EAST, ValeInteriors2,
-               VALE_INTERIORS_2_FROM_VALE_STORM_EAST),
-    SCENE_EXIT(20, ValeStorm, 16),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_SHOPS_EAST, ValeInteriorsShops,
+               VALE_INTERIORS_SHOPS_FROM_VALE_EAST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH, ValeInteriorsShops,
+               VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_INN_ISAACS_HOUSE, ValeInteriorsInn,
+               VALE_INTERIORS_INN_FROM_VALE),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_SHOPS_NORTH, ValeInteriorsShops,
+               VALE_INTERIORS_SHOPS_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST, ValeInteriorsShops,
+               VALE_INTERIORS_SHOPS_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR,
+               ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR,
+               ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_INN_WEST, ValeInteriorsInn,
+               VALE_INTERIORS_INN_FROM_VALE_STORM_WEST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_INN_EAST, ValeInteriorsInn,
+               VALE_INTERIORS_INN_FROM_VALE_STORM_EAST),
+    SCENE_EXIT(VALE_STORM_TO_BOULDER_PASSED, ValeStorm,
+               VALE_STORM_FROM_BOULDER_PASSED),
     SCENE_EXITS_END,
 };
 
@@ -3213,21 +3218,21 @@ struct SceneEvent gValeStorm_Events[] = {
      EVENT_SCRIPT(Event_LeaveToValeKradenSouth)},
     {EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGate)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_LeaveToValeInteriors1East)},
+     EVENT_SCRIPT(Event_LeaveToValeInteriorsShopsEast)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_LeaveToValeInteriors1)},
+     EVENT_SCRIPT(Event_LeaveToValeInteriorsShops)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_LeaveToValeInteriors2)},
+     EVENT_SCRIPT(Event_LeaveToValeInteriorsInn)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_LeaveToValeInteriors1North)},
+     EVENT_SCRIPT(Event_LeaveToValeInteriorsShopsNorth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_LeaveToValeInteriors1West)},
+     EVENT_SCRIPT(Event_LeaveToValeInteriorsShopsWest)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_LeaveToValeInteriors1West2)},
+     EVENT_SCRIPT(Event_LeaveToValeInteriorsShopsWestBySecondDoor)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_LeaveToValeInteriors2West)},
+     EVENT_SCRIPT(Event_LeaveToValeInteriorsInnWest)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_LeaveToValeInteriors2East)},
+     EVENT_SCRIPT(Event_LeaveToValeInteriorsInnEast)},
     {EVENT_TALK, ACTOR_GARET, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_TalkToGaret)},
     {EVENT_TALK, ACTOR_KYLE, CONDITION_ALWAYS,

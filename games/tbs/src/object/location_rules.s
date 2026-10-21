@@ -11,13 +11,13 @@
 	.global gBattle_LocationRules
 gBattle_LocationRules:
 	location SolSanctumCorridor, -1, 0x814, 1, 1
-	location SolSanctumEntrance1, 1, 0x814, 0, 2
-	location SolSanctumEntrance1, 2, 0x814, 0, 2
-	location SolSanctumEntrance1, 3, 0x814, 1, 3
-	location SolSanctumEntrance1, 6, 0x814, 1, 3
-	location SolSanctumEntrance1, 7, 0x814, 1, 3
+	location SolSanctumReliefs, 1, 0x814, 0, 2
+	location SolSanctumReliefs, 2, 0x814, 0, 2
+	location SolSanctumReliefs, 3, 0x814, 1, 3
+	location SolSanctumReliefs, 6, 0x814, 1, 3
+	location SolSanctumReliefs, 7, 0x814, 1, 3
 	location SolSanctumMaze, -1, 0x814, 1, 4
-	location SolSanctumEntrance1, 10, 0x814, 1, 5
+	location SolSanctumReliefs, 10, 0x814, 1, 5
 	location SolSanctumLunaSolRooms, -1, 0x814, 0, 6
 	location GomaCavePond, -1, -1, 1, 9
 	location GomaCavePillar, -1, -1, 1, 10
@@ -126,18 +126,18 @@ gBattle_LocationRules:
 	location VaultCave1, -1, -1, 0, 60
 	location VaultCave2, -1, -1, 0, 61
 	location VaultCave3, -1, -1, 0, 61
-	location ValeCave2, 1, -1, 0, 56
-	location ValeCave2, 2, -1, 0, 56
-	location ValeCave2, 3, -1, 0, 56
-	location ValeCave2, 4, -1, 0, 56
-	location ValeCave2, 8, -1, 0, 57
-	location ValeCave2, 9, -1, 0, 57
-	location ValeCave2, 10, -1, 0, 57
-	location ValeCave3, 1, -1, 0, 58
-	location ValeCave3, 2, -1, 0, 58
-	location ValeCave3, 3, -1, 0, 58
-	location ValeCave3, 4, -1, 1, 59
-	location ValeCave3, 5, -1, 1, 59
+	location ValeCaveKite, 1, -1, 0, 56
+	location ValeCaveKite, 2, -1, 0, 56
+	location ValeCaveKite, 3, -1, 0, 56
+	location ValeCaveKite, 4, -1, 0, 56
+	location ValeCaveKite, 8, -1, 0, 57
+	location ValeCaveKite, 9, -1, 0, 57
+	location ValeCaveKite, 10, -1, 0, 57
+	location ValeCaveLogs, 1, -1, 0, 58
+	location ValeCaveLogs, 2, -1, 0, 58
+	location ValeCaveLogs, 3, -1, 0, 58
+	location ValeCaveLogs, 4, -1, 1, 59
+	location ValeCaveLogs, 5, -1, 1, 59
 	location AltmillerCave1, -1, -1, 1, 66
 	location AltmillerCave2, -1, -1, 1, 67
 	location AltmillerCave3, -1, -1, 1, 68

@@ -5,8 +5,8 @@
 ///
 /// It places nobody and holds no event of its own: its only rows are its two
 /// exits, the passage's two ends, which both lead back to scene 16
-/// (SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_EAST and
-/// SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_WEST), and the party comes
+/// (SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST and
+/// SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST), and the party comes
 /// back in through the same doors. Its setup is the one it shares with scene 14
 /// (sol_sanctum_maze.c), SolSanctumRooms_Initialize: once Mt. Aleph has erupted
 /// (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes.
@@ -52,21 +52,21 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 struct SceneEntrance gSolSanctumCorridorEntrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_EAST, CONDITION_ALWAYS,
-     727, 0, 92, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_WEST, CONDITION_ALWAYS,
-     56, 0, 616, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST, CONDITION_ALWAYS, 727,
+     0, 92, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST, CONDITION_ALWAYS, 56,
+     0, 616, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumCorridorExits[] = {
     SCENE_EXITS(SolSanctumCorridor),
-    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_EAST,
-               SolSanctumEntrance1,
-               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_EAST),
-    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_WEST,
-               SolSanctumEntrance1,
-               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_WEST),
+    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST,
+               SolSanctumReliefs,
+               SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_EAST),
+    SCENE_EXIT(SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST,
+               SolSanctumReliefs,
+               SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST),
     SCENE_EXITS_END,
 };
 
@@ -76,8 +76,8 @@ struct ScenePlacement gSolSanctumCorridorPlacements[] = {
 
 struct SceneEvent gSolSanctumCorridorEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
-     SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_EAST},
+     SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,
-     SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_WEST},
+     SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST},
     {SCENE_EVENTS_END},
 };

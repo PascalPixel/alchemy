@@ -56,7 +56,7 @@
 ///
 /// Entrances 97 to 99 are in no entrance table and no exit leads to them: 97
 /// replays the strangers' departure, 98 sets FLAG_CHILDHOOD and takes
-/// VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST into Vale (scene 8), and 99 sets a
+/// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST into Vale (scene 8), and 99 sets a
 /// preset of story flags and takes VALE_GATE_TO_BILIBIN
 /// (ValeGate_SetProgressFlagsAndExit).
 
@@ -182,7 +182,7 @@ enum ValeGateStormActor {
   ACTOR_STORM_FIRST_AIDE,
   ACTOR_STORM_SECOND_AIDE, ///< "Let's go help the elders."
   /// Garet's grandfather, the mayor ("Grandpa!", Garet calls him; his sprite,
-  /// 0x75, is vale_interiors1.c's). "Go aid the elders!"
+  /// 0x75, is vale_interiors_shops.c's). "Go aid the elders!"
   ACTOR_STORM_GARETS_GRANDFATHER,
   /// The storm's rock sprite (0xc8) at three tenths of its size.
   ACTOR_STORM_SMALL_ROCK,
@@ -227,7 +227,7 @@ enum ValeGateFarewellActor {
   ACTOR_FAREWELL_GARETS_SIBLING,
   /// "As Garet's mother, I know how Dora must be feeling."
   ACTOR_FAREWELL_GARETS_MOTHER,
-  /// Garet's father, by his sprite (0x36, vale_interiors1.c's).
+  /// Garet's father, by his sprite (0x36, vale_interiors_shops.c's).
   ACTOR_FAREWELL_GARETS_FATHER,
   /// The rest of the crowd at the gate, ten who only nod and jump.
   ACTOR_FAREWELL_FIRST_CROWD_VILLAGER,
@@ -667,14 +667,14 @@ static inline void Event_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
 // part of Vale (scene 8).
 
 /// In Vale, opens the northwest door, into a house (scene 7,
-/// VALE_INTERIORS_1_FROM_VALE_GATE_EAST).
+/// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_EAST).
 static void Event_OpenNorthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(44, 7, 248, 279);
-  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_1_EAST);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_SHOPS_EAST);
 }
 
 /// In Vale back from Kalay, opens the northeast doorway in two stages and
-/// walks inside (Vale, scene 8, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHEAST).
+/// walks inside (Vale, scene 8, VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST).
 ///
 /// Reached by walking north into cell code 2 after Kalay; the other tables
 /// have no door 2.
@@ -687,42 +687,42 @@ static void Event_OpenNortheastDoor(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
-  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_2_NORTH);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_INN_NORTH);
 }
 
 /// In Vale, enters through the western door of the middle row of houses
-/// (scene 7, VALE_INTERIORS_1_FROM_VALE_GATE_NORTH).
+/// (scene 7, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH).
 static void Event_OpenCentralWestDoor(void) {
   Event_OpenDoorAndWalkThrough(43, 15, 230, 407);
-  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_1_NORTH);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_SHOPS_NORTH);
 }
 
 /// In Vale, enters through the eastern door of the middle row of houses
-/// (scene 7, VALE_INTERIORS_1_FROM_VALE_GATE_SOUTH).
+/// (scene 7, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_SOUTH).
 static void Event_OpenCentralEastDoor(void) {
   Event_OpenDoorAndWalkThrough(52, 18, 374, 419);
-  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_1_SOUTH);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_SHOPS_SOUTH);
 }
 
 /// In Vale, opens the southwest door, into Vale's shops (scene 7,
-/// VALE_INTERIORS_1_FROM_VALE_GATE_WEST).
+/// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST).
 static void Event_OpenSouthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(41, 32, 200, 546);
-  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_1_WEST);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_SHOPS_WEST);
 }
 
 /// In Vale, opens the door at the west edge, into another part of Vale (scene
-/// 8, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHWEST).
+/// 8, VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHWEST).
 static void Event_OpenWestEdgeDoor(void) {
   Event_OpenDoorAndWalkThrough(35, 36, 102, 611);
-  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_2_NORTHWEST);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_INN_NORTHWEST);
 }
 
 /// In Vale, opens the southeast door, into another part of Vale (scene 8,
-/// VALE_INTERIORS_2_FROM_VALE_GATE_WEST).
+/// VALE_INTERIORS_INN_FROM_VALE_GATE_WEST).
 static void Event_OpenSoutheastDoor(void) {
   Event_OpenDoorAndWalkThrough(51, 39, 358, 670);
-  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_2_SOUTH);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTH);
 }
 
 /// In Vale on the stormy night, leaves by the west passage, back to the
@@ -776,7 +776,7 @@ static void Event_BlowAwayThirdIvy(void) {
 /// the storm, the farewell or the village after Kalay.
 ///
 /// The scene's initialize entry. Entrance 98 sets FLAG_CHILDHOOD and takes
-/// VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST; VALE_GATE_FROM_SANCTUM runs
+/// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST; VALE_GATE_FROM_SANCTUM runs
 /// Event_DepartForQuest; entrance 19 (and 97) Event_TravelersLeaveAfterBattle;
 /// on the stormy night, once Garet has gone after Isaac
 /// (FLAG_VALE_STORM_GARET_LEFT), Event_MeetSurvivingTravelers. Once the boys
@@ -799,7 +799,7 @@ s32 ValeGate_Initialize(void) {
   switch (gGameState.entrance) {
   case 98:
     Engine_GameFlagSet(FLAG_CHILDHOOD);
-    Engine_EventRequestExit(VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST);
+    Engine_EventRequestExit(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST);
     return 0;
   case 99:
     ValeGate_SetProgressFlagsAndExit();
@@ -2191,13 +2191,13 @@ s32 gValeGate_StormGaretStepActions[] = {
 
 struct SceneEntrance gValeGate_Entrances[] = {
     { 0, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_GATE_FROM_VALE_INTERIORS_1_NORTH, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_GATE_FROM_VALE_INTERIORS_2_NORTH, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_GATE_FROM_VALE_INTERIORS_1_WEST, CONDITION_ALWAYS, 230, 0, 423, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_GATE_FROM_VALE_INTERIORS_1_EAST, CONDITION_ALWAYS, 374, 0, 435, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_GATE_FROM_VALE_INTERIORS_1_SOUTH, CONDITION_ALWAYS, 200, 0, 562, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_GATE_FROM_VALE_INTERIORS_2_WEST, CONDITION_ALWAYS, 102, 0, 627, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_GATE_FROM_VALE_INTERIORS_2_SOUTH, CONDITION_ALWAYS, 358, 0, 678, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_SHOPS_NORTH, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_SHOPS_WEST, CONDITION_ALWAYS, 230, 0, 423, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_SHOPS_EAST, CONDITION_ALWAYS, 374, 0, 435, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_SHOPS_SOUTH, CONDITION_ALWAYS, 200, 0, 562, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_INN_WEST, CONDITION_ALWAYS, 102, 0, 627, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH, CONDITION_ALWAYS, 358, 0, 678, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_VALE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_WORLD_MAP, CONDITION_ALWAYS, 217, 0, 843, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_GOMA_CAVE_WATERWAY_1, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -2209,18 +2209,18 @@ struct SceneEntrance gValeGate_Entrances[] = {
 
 u32 gValeGate_Exits[] = {
     SCENE_EXITS(ValeGate),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_EAST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_EAST),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_NORTH, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHEAST),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_NORTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_NORTH),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_SOUTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_SOUTH),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_WEST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_WEST),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_NORTHWEST, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHWEST),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_SOUTH, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_WEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_SHOPS_EAST, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_EAST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_INN_NORTH, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_SHOPS_NORTH, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_SHOPS_SOUTH, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_SOUTH),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_SHOPS_WEST, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_INN_NORTHWEST, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHWEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTH, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_GATE_WEST),
     SCENE_EXIT(VALE_GATE_TO_VALE, Vale, VALE_FROM_VALE_GATE),
     SCENE_EXIT(VALE_GATE_TO_TITLE, Title, TITLE_FROM_VALE_GATE),
     SCENE_EXIT(VALE_GATE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_VALE_GATE),
     SCENE_EXIT(VALE_GATE_TO_GOMA_CAVE_WATERWAY_1, GomaCaveWaterway1, GOMA_CAVE_WATERWAY_1_FROM_VALE_GATE),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST),
 #if !TBS_PATCH_3
     SCENE_EXIT(VALE_GATE_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
 #else
@@ -2231,13 +2231,13 @@ u32 gValeGate_Exits[] = {
 
 u32 gValeGate_StormExits[] = {
     SCENE_EXITS(ValeGate),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_EAST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_EAST),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_NORTH, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHEAST),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_NORTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_NORTH),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_SOUTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_SOUTH),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_WEST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_WEST),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_NORTHWEST, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHWEST),
-    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_SOUTH, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_WEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_SHOPS_EAST, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_EAST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_INN_NORTH, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_SHOPS_NORTH, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_SHOPS_SOUTH, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_SOUTH),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_SHOPS_WEST, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_INN_NORTHWEST, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHWEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTH, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_GATE_WEST),
     SCENE_EXIT(VALE_GATE_TO_VALE, ValeStorm, VALE_STORM_FROM_VALE_GATE),
     SCENE_EXIT(VALE_GATE_TO_TITLE, Title, TITLE_FROM_VALE_GATE),
     SCENE_EXITS_END,

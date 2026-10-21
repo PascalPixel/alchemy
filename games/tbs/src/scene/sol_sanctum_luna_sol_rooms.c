@@ -1,7 +1,7 @@
 /// @file
 /// Sol Sanctum (SolSanctumLunaSolRooms, scene 11), the rooms of Sol and Luna at
 /// the heart of the sanctum, reached from scene 16 (sol_sanctum_entrance.c) by
-/// SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS. Kraden has led Isaac,
+/// SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS. Kraden has led Isaac,
 /// Garet and Jenna this far looking for the hidden passage Saturos and Menardi
 /// spoke of; here he finds what he came for, and from here the floor opens on
 /// the way up to the Elemental Star Room. Its scenes follow the story:
@@ -61,7 +61,7 @@
 /// timer of its own, that the trap adds and removes. Entrance 6's scene
 /// (SolSanctumLunaSolRooms_AnimateSavedStatueLights) flashes the quarters lit
 /// since and has Kraden urge Isaac on, but scene 12 leads to it only from a
-/// branch that cannot run. SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ENTRANCE_1
+/// branch that cannot run. SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS
 /// leads back to scene 16 and
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM up to scene
 /// 17; exit 2 leads into scene 12, and the scenes take exits 3 to 5 back to it.
@@ -1615,8 +1615,8 @@ static void Event_TalkToKraden(void) {
 
 struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[] = {
     {0, CONDITION_ALWAYS, 288, 0, 157, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
-    {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ENTRANCE_1, CONDITION_ALWAYS,
-     55, 0, 477, FACING_NORTH, 0, 0, 0, 752, 496, 0},
+    {SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS, CONDITION_ALWAYS, 55,
+     0, 477, FACING_NORTH, 0, 0, 0, 752, 496, 0},
     {2, CONDITION_ALWAYS, 647, 0, 327, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
     {3, CONDITION_ALWAYS, 287, 0, 218, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
     {4, CONDITION_ALWAYS, 576, 0, 8, FACING_SOUTH, 0, 0, 0, 752, 496, 0},
@@ -1630,18 +1630,29 @@ struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[] = {
 
 u32 gSolSanctumLunaSolRoomsExits[] = {
     SCENE_EXITS(SolSanctumLunaSolRooms),
-    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ENTRANCE_1,
-               SolSanctumEntrance1,
-               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
-    SCENE_EXIT(2, SolSanctumStatue, 1),
-    SCENE_EXIT(3, SolSanctumStatue, 3),
-    SCENE_EXIT(4, SolSanctumStatue, 4),
-    SCENE_EXIT(5, SolSanctumStatue, 5),
-    SCENE_EXIT(6, SolSanctumStatue, 6),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS,
+               SolSanctumReliefs,
+               SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE,
+               SolSanctumStatue,
+               SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
+    SCENE_EXIT(
+        SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED,
+        SolSanctumStatue,
+        SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_SPRUNG,
+               SolSanctumStatue,
+               SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN,
+               SolSanctumStatue,
+               SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN),
+    SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_UNUSED,
+               SolSanctumStatue,
+               SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED),
     SCENE_EXIT(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM,
                SolSanctumElementalStarRoom,
                SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS),
-    SCENE_EXIT_TO_BATTLE(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SCENE_510, 1),
+    SCENE_EXIT_TO_BATTLE(SOL_SANCTUM_LUNA_SOL_ROOMS_TO_BATTLE, 1),
     SCENE_EXITS_END,
 };
 
@@ -1688,7 +1699,7 @@ struct SceneEvent gSolSanctumLunaSolRoomsEvents[] = {
     {EVENT_TOUCH, 8, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_KradenSeesLunaPictureChange)},
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
-     SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ENTRANCE_1},
+     SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {EVENT_TOUCH, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_KradenFindsHeartOfSanctum)},

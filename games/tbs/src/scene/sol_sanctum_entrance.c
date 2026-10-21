@@ -9,7 +9,7 @@
 /// - Sol Entrance (SolEntrance, scene 19), the mountainside before the
 ///   sanctum's door, reached from Vale (VALE_TO_SOL_ENTRANCE). Walking north
 ///   into the door opens it and the leader walks in (Event_OpenDoorAndEnter,
-///   SOL_ENTRANCE_TO_SOL_SANCTUM_ENTRANCE_1); searching another door finds it
+///   SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS); searching another door finds it
 ///   "tightly locked". Retreat does not work here. Once Mt. Aleph has erupted
 ///   (FLAG_SOL_SANCTUM_ERUPTED), the ground rumbles now and then, and the way
 ///   down leads to Vale during the eruption (scene 10, vale_eruption.c) until
@@ -20,12 +20,12 @@
 ///   and warns everyone away while Mt. Aleph is active (with Mind Read: "How
 ///   can the Great Healer treat me like this...?"), and three cells across the
 ///   path change with him.
-/// - Sol Sanctum (SolSanctumEntrance1, scene 16), the rooms inside the door.
+/// - Sol Sanctum (SolSanctumReliefs, scene 16), the rooms inside the door.
 ///   The first time the party comes in through the door
-///   (SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE, which is also the Retreat
+///   (SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, which is also the Retreat
 ///   point), Kraden gathers everyone: "This is the entrance to Sol Sanctum.
 ///   This is your first time here, right?" (FLAG_SOL_SANCTUM_ENTERED). The
-///   first time it enters the room of entrances 11 to 13, Kraden looks round
+///   first time it enters the hall of the first relief, Kraden looks round
 ///   and recalls that the strangers spoke of a hidden passage leading deeper
 ///   into the sanctum, which a sanctum built in honour of the sun ought to
 ///   have; Garet asks whether to help him, and either way the four stay
@@ -33,24 +33,24 @@
 ///   statues can be pushed a cell east or west. A minotaur relief (cell code
 ///   20) has a hole where its left eye should be; the Small Jewel from this
 ///   map's chest set in it opens a passage (FLAG_SOL_SANCTUM_FIRST_GEM_PLACED).
-///   The first time the party enters the room of entrances 14 to 16, Kraden
+///   The first time the party enters the hall of the second relief, Kraden
 ///   sees a row of six statues out of reach and asks Isaac to try his Psynergy
 ///   (FLAG_SOL_SANCTUM_INNER_STATUES_SEEN); each can be pushed a cell either
 ///   way. The second relief is there (cell code 21), and the second Small
 ///   Jewel, from the chest in scene 14 (sol_sanctum_maze.c), opens a doorway in
-///   it (FLAG_SOL_SANCTUM_SECOND_GEM_PLACED). The room of entrances 14 to 16 is
-///   reached from scene 14 (SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST)
+///   it (FLAG_SOL_SANCTUM_SECOND_GEM_PLACED). The hall of the second relief is
+///   reached from scene 14 (SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST)
 ///   and from scene 11
-///   (SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS).
-///   SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST and _EAST lead to the
-///   passage of scene 15, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST and
-///   _EAST to scene 14, SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE back out to Sol
-///   Entrance and SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS on to
+///   (SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS).
+///   SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST and _EAST lead to the
+///   passage of scene 15, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST and
+///   _EAST to scene 14, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE back out to Sol
+///   Entrance and SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS on to
 ///   scene 11, where Kraden finds what he came for; the others lead between its
 ///   own rooms. After the eruption its rooms rumble and shake as Isaac and
 ///   Garet make their way out.
 ///
-/// Scene 16 is one map, but the rooms of entrances 11 to 13 and 14 to 16 have
+/// Scene 16 is one map, but the halls of the two reliefs have
 /// tables of their own: SolSanctumEntrance_GetPlacements and _GetEvents choose
 /// them by the entrance the party came in at, so a room's statues and their
 /// events exist only while the party is in it. Each statue's column is kept in
@@ -143,7 +143,7 @@ const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   if (scene == (s32)&SceneId_SolEntrance) {
     return gSolSanctumEntranceEntrances2;
   }
-  if (scene == (s32)&SceneId_SolSanctumEntrance1) {
+  if (scene == (s32)&SceneId_SolSanctumReliefs) {
     return gSolSanctumEntranceEntrances1;
   }
   return gSolSanctumEntranceEntrancesOther;
@@ -163,7 +163,7 @@ const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   struct ScenePlacement *table;
   s32 firstStatueRoomEntrance = 11;
 
-  if (gGameState.scene == (s32)&SceneId_SolSanctumEntrance1) {
+  if (gGameState.scene == (s32)&SceneId_SolSanctumReliefs) {
     if (gGameState.entrance >= firstStatueRoomEntrance) {
       if (gGameState.entrance > 13) {
         if (gGameState.entrance <= 16) {
@@ -191,7 +191,7 @@ const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_SolEntrance) {
     return gSolSanctumEntranceEvents2;
   }
-  if (gGameState.scene == (s32)&SceneId_SolSanctumEntrance1) {
+  if (gGameState.scene == (s32)&SceneId_SolSanctumReliefs) {
     if (gGameState.entrance >= firstStatueRoomEntrance) {
       if (gGameState.entrance > 13) {
         if (gGameState.entrance <= 16) {
@@ -207,8 +207,8 @@ const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
 }
 
 /// Sol Entrance: walking north into the sanctum's door (cell code 2) slides it
-/// open, and the leader walks in. Takes SOL_ENTRANCE_TO_SOL_SANCTUM_ENTRANCE_1,
-/// into Sol Sanctum at SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE.
+/// open, and the leader walks in. Takes SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS,
+/// into Sol Sanctum at SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
 static void Event_OpenDoorAndEnter(void) {
   s32 width;
   s32 height;
@@ -232,7 +232,7 @@ static void Event_OpenDoorAndEnter(void) {
   Engine_EventWait(10);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(SOL_ENTRANCE_TO_SOL_SANCTUM_ENTRANCE_1);
+  Engine_EventRequestExit(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
   Engine_EventEnd();
 }
 
@@ -576,9 +576,9 @@ static void Event_PushStatue(void) {
         Event_WestStatueMoved();
         Event_EastStatueMoved();
         break;
-      case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST:
+      case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
       case 15:
-      case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
+      case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
         Event_RowStatue1Moved();
         Event_RowStatue2Moved();
         Event_RowStatue3Moved();
@@ -598,7 +598,7 @@ s32 SolSanctumEntrance_Initialize(void) {
 
   if (scene == (s32)&SceneId_SolEntrance) {
     SolSanctumEntrance_ApplyEntryState();
-  } else if (scene == (s32)&SceneId_SolSanctumEntrance1) {
+  } else if (scene == (s32)&SceneId_SolSanctumReliefs) {
     SolSanctumEntrance_RestoreInteriorState();
   }
   return 0;
@@ -635,9 +635,9 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 }
 
 /// Sets up Sol Sanctum (scene 16): after the eruption its rooms rumble and
-/// shake. SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_WEST and entrance 2
+/// shake. SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST and entrance 2
 /// show the first relief's passage once it is open;
-/// SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE, the way in, makes itself the
+/// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, the way in, makes itself the
 /// Retreat point and plays Kraden's welcome until FLAG_SOL_SANCTUM_ENTERED is
 /// set. In the room of entrances 11 to 13 Kraden's talk of the hidden passage
 /// plays until FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, and the two statues go
@@ -656,7 +656,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 
   entrance = gGameState.entrance;
   switch (entrance) {
-  case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_WEST:
+  case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case 2:
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
       Map_CopyCellsTo(1, 109, 4, 81, 1, 1);
@@ -671,9 +671,9 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_LONE_STATUE), 0);
     break;
 
-  case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE:
-    gGameState.retreatScene = (s32)&SceneId_SolSanctumEntrance1;
-    gGameState.retreatEntrance = SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE;
+  case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
+    gGameState.retreatScene = (s32)&SceneId_SolSanctumReliefs;
+    gGameState.retreatEntrance = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
     break;
@@ -705,9 +705,9 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
       Actor_SetPosition(ACTOR_EAST_STATUE, PIXELS(1848), PIXELS(136));
     break;
 
-  case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST:
+  case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
   case 15:
-  case SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
+  case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
     // Restore the row of statues and the second gem's doorway.
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_1), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_2), 0);
@@ -734,7 +734,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 /// party's first time here. "This is the entrance to Sol Sanctum." Yes: "Take a
 /// good look at it." No: "I doubt that..." Called by
 /// SolSanctumEntrance_RestoreInteriorState at
-/// SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE until FLAG_SOL_SANCTUM_ENTERED is
+/// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE until FLAG_SOL_SANCTUM_ENTERED is
 /// set, which it sets; clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct FieldActor *leader;
@@ -1235,24 +1235,24 @@ struct SceneEntrance gSolSanctumEntranceEntrances2[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SOL_ENTRANCE_FROM_VALE, CONDITION_ALWAYS, 80, 0, 288, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
-    {SOL_ENTRANCE_FROM_SOL_SANCTUM_ENTRANCE_1, CONDITION_ALWAYS, 120, 0, 112,
+    {SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS, CONDITION_ALWAYS, 120, 0, 112,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSolSanctumEntranceEntrances1[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_WEST, CONDITION_ALWAYS,
-     280, 0, 472, FACING_NORTH, 0, 5, 0, 555, 510, 0},
+    {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST, CONDITION_ALWAYS, 280,
+     0, 472, FACING_NORTH, 0, 5, 0, 555, 510, 0},
     {2, CONDITION_ALWAYS, 72, 0, 56, FACING_SOUTH, 0, 5, 0, 555, 510, 0},
     {3, CONDITION_ALWAYS, 744, 0, 152, FACING_NORTH, 0, 620, 0, 860, 195, 0},
     {4, CONDITION_ALWAYS, 696, 0, 568, FACING_NORTH, 0, 575, 265, 815, 610, 0},
-    {SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_EAST, CONDITION_ALWAYS,
-     696, 0, 328, FACING_SOUTH, 0, 575, 265, 815, 610, 0},
+    {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_EAST, CONDITION_ALWAYS, 696,
+     0, 328, FACING_SOUTH, 0, 575, 265, 815, 610, 0},
     {6, CONDITION_ALWAYS, 984, 0, 152, FACING_NORTH, 0, 860, 0, 1100, 195, 0},
-    {SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_WEST, CONDITION_ALWAYS, 984,
-     0, 56, FACING_SOUTH, 0, 860, 0, 1100, 195, 0},
-    {SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 1224, 0, 184,
+    {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_WEST, CONDITION_ALWAYS, 984, 0,
+     56, FACING_SOUTH, 0, 860, 0, 1100, 195, 0},
+    {SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 1224, 0, 184,
      FACING_NORTH, 0, 1100, 20, 1340, 220, 0},
     {9, CONDITION_ALWAYS, 1224, 0, 104, FACING_SOUTH, 0, 1100, 20, 1340, 220,
      0},
@@ -1264,11 +1264,11 @@ struct SceneEntrance gSolSanctumEntranceEntrances1[] = {
      0},
     {13, CONDITION_ALWAYS, 1832, 0, 136, FACING_SOUTH, 0, 1455, 0, 1890, 310,
      0},
-    {SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST, CONDITION_ALWAYS, 1768,
-     0, 568, FACING_NORTH, 0, 1540, 440, 1995, 600, 0},
+    {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST, CONDITION_ALWAYS, 1768, 0,
+     568, FACING_NORTH, 0, 1540, 440, 1995, 600, 0},
     {15, CONDITION_ALWAYS, 1672, 0, 520, FACING_SOUTH, 0, 1540, 440, 1995, 600,
      0},
-    {SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS, CONDITION_ALWAYS,
+    {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS, CONDITION_ALWAYS,
      1928, 0, 520, FACING_SOUTH, 0, 1540, 440, 1995, 600, 0},
     {SCENE_TABLE_END},
 };
@@ -1284,36 +1284,60 @@ u32 gSolSanctumEntrance_Exits[] = {
                   VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_PARTY_LEFT_VALE),
     SCENE_EXIT_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
                   EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_ENTRANCE_TO_SOL_SANCTUM_ENTRANCE_1, SolSanctumEntrance1,
-                  SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE, EXIT_FLAG_NONE),
-    SCENE_EXITS(SolSanctumEntrance1),
+    SCENE_EXIT_IF(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, SolSanctumReliefs,
+                  SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, EXIT_FLAG_NONE),
+    SCENE_EXITS(SolSanctumReliefs),
     SCENE_EXIT_IF(
-        SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST, SolSanctumCorridor,
-        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_WEST, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, SolSanctumEntrance1, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(3, SolSanctumEntrance1, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(4, SolSanctumEntrance1, 9, EXIT_FLAG_NONE),
+        SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST, SolSanctumCorridor,
+        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST, EXIT_FLAG_NONE),
     SCENE_EXIT_IF(
-        SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_EAST, SolSanctumCorridor,
-        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_EAST, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(6, SolSanctumEntrance1, 13, EXIT_FLAG_NONE),
+        SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_HALL, SolSanctumReliefs,
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_FROM_CHEST_ROOM, EXIT_FLAG_NONE),
     SCENE_EXIT_IF(
-        SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST, SolSanctumMaze,
-        SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_SOUTH, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE, SolEntrance,
-                  SOL_ENTRANCE_FROM_SOL_SANCTUM_ENTRANCE_1, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(9, SolSanctumEntrance1, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(10, SolSanctumEntrance1, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(11, SolSanctumEntrance1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(12, SolSanctumEntrance1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(13, SolSanctumEntrance1, 6, EXIT_FLAG_NONE),
+        SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_HALL, SolSanctumReliefs,
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_FROM_STATUE_NOOK, EXIT_FLAG_NONE),
     SCENE_EXIT_IF(
-        SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_EAST, SolSanctumMaze,
-        SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_NORTH, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(15, SolSanctumEntrance1, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS,
+        SOL_SANCTUM_RELIEFS_POOL_ROOM_TO_ENTRANCE_HALL, SolSanctumReliefs,
+        SOL_SANCTUM_RELIEFS_ENTRANCE_HALL_FROM_POOL_ROOM, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(
+        SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST, SolSanctumCorridor,
+        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_STAIRWAY_ROOM_TO_FIRST_RELIEF_HALL,
+                  SolSanctumReliefs,
+                  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_FROM_STAIRWAY_ROOM,
+                  EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST, SolSanctumMaze,
+                  SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH,
+                  EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE, SolEntrance,
+                  SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(
+        SOL_SANCTUM_RELIEFS_ENTRANCE_HALL_TO_POOL_ROOM, SolSanctumReliefs,
+        SOL_SANCTUM_RELIEFS_POOL_ROOM_FROM_ENTRANCE_HALL, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_LOOP_CORRIDOR_TO_SECOND_RELIEF_HALL,
+                  SolSanctumReliefs,
+                  SOL_SANCTUM_RELIEFS_SECOND_RELIEF_HALL_FROM_LOOP_CORRIDOR,
+                  EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_TO_CHEST_ROOM, SolSanctumReliefs,
+        SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_HALL, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_TO_STATUE_NOOK, SolSanctumReliefs,
+        SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_HALL, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_TO_STAIRWAY_ROOM,
+                  SolSanctumReliefs,
+                  SOL_SANCTUM_RELIEFS_STAIRWAY_ROOM_FROM_FIRST_RELIEF_HALL,
+                  EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST, SolSanctumMaze,
+                  SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH,
+                  EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_SECOND_RELIEF_HALL_TO_LOOP_CORRIDOR,
+                  SolSanctumReliefs,
+                  SOL_SANCTUM_RELIEFS_LOOP_CORRIDOR_FROM_SECOND_RELIEF_HALL,
+                  EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS,
                   SolSanctumLunaSolRooms,
-                  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ENTRANCE_1,
+                  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS,
                   EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
@@ -1409,22 +1433,22 @@ struct SceneEvent gSolSanctumEntranceEvents2[] = {
 };
 
 struct SceneEvent gSolSanctumEntranceEvents1[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_EAST },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { 0x21, 7, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE },
+    { 0x21, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_EAST },
+    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
     { SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
     { USE_ITEM(ITEM_SMALL_JEWEL), 0x414, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetFirstSmallJewel) },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectFirstMinotaurRelief) },
@@ -1432,22 +1456,22 @@ struct SceneEvent gSolSanctumEntranceEvents1[] = {
 };
 
 struct SceneEvent gSolSanctumEntranceEvents1Entrances11To13[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_EAST },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { 0x21, 7, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE },
+    { 0x21, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_EAST },
+    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_STATUE, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_WestStatueMoved) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_STATUE, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_EastStatueMoved) },
     { TOUCH_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStatue) },
@@ -1457,22 +1481,22 @@ struct SceneEvent gSolSanctumEntranceEvents1Entrances11To13[] = {
 };
 
 struct SceneEvent gSolSanctumEntranceEvents1Entrances14To16[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_EAST },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { 0x21, 7, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE },
+    { 0x21, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_EAST },
+    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue1Moved) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue2Moved) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue3Moved) },

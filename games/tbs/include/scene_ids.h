@@ -16,8 +16,12 @@ extern char SceneId_ValeStorm;
 extern char SceneId_Vale;
 extern char SceneId_ValeGate;
 extern char SceneId_ValeKraden;
-extern char SceneId_ValeInteriors1;
-extern char SceneId_ValeInteriors2;
+/// ★ Named from what the player sees: Vale's item shop and its weapon and armor
+/// shop, with Garet's house and Jenna's grandparents' house (its render)
+extern char SceneId_ValeInteriorsShops;
+/// ★ Named from what the player sees: Vale's inn and its upstairs guest room,
+/// with Isaac's house and Kraden's cottage (its render)
+extern char SceneId_ValeInteriorsInn;
 extern char SceneId_Sanctum;
 extern char SceneId_ValeEruption;
 extern char SceneId_SolSanctumLunaSolRooms;
@@ -25,7 +29,9 @@ extern char SceneId_SolSanctumStatue;
 extern char SceneId_SolSanctumPsynergyStone;
 extern char SceneId_SolSanctumMaze;
 extern char SceneId_SolSanctumCorridor;
-extern char SceneId_SolSanctumEntrance1;
+/// ★ Named from what the player sees: the hall of the two minotaur reliefs that
+/// take the Small Jewels (its render)
+extern char SceneId_SolSanctumReliefs;
 extern char SceneId_SolSanctumElementalStarRoom;
 extern char SceneId_SolSanctumEruption;
 extern char SceneId_SolEntrance;
@@ -102,9 +108,14 @@ extern char SceneId_LamakanDesert1;
 extern char SceneId_LamakanDesert2;
 extern char SceneId_LamakanDesert3;
 extern char SceneId_LamakanDesert4;
-extern char SceneId_ValeCave1;
-extern char SceneId_ValeCave2;
-extern char SceneId_ValeCave3;
+/// ★ Named from what the player sees: the clearing at the cave's mouth above
+/// Vale (its render)
+extern char SceneId_ValeCaveMouth;
+/// ★ Named from the game: "Kite" (MsgDjinnName)
+extern char SceneId_ValeCaveKite;
+/// ★ Named from what the player sees: the cave whose three logs the party
+/// pushes (its render)
+extern char SceneId_ValeCaveLogs;
 extern char SceneId_VaultCave1;
 extern char SceneId_VaultCave2;
 extern char SceneId_VaultCave3;

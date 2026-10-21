@@ -6,15 +6,18 @@
 /// around Kraden's cottage, a run of Psynergy puzzles whose progress lives in
 /// scene and place flags.
 ///
-/// - Vale (scene 93, SceneId_ValeCave1), the way in, a place group of its own
-///   (29). VALE_CAVE_1_TO_VALE_KRADEN_WEST and VALE_CAVE_1_TO_VALE_KRADEN_EAST
-///   lead back to Kraden's part of Vale (SceneId_ValeKraden), whose
-///   VALE_KRADEN_TO_VALE_CAVE_1_WEST and VALE_KRADEN_TO_VALE_CAVE_1_EAST lead
-///   here; VALE_CAVE_1_TO_VALE_CAVE_2 goes on into the cave. Each exit plays
+/// - Vale (scene 93, SceneId_ValeCaveMouth), the way in, a place group of its
+/// own
+///   (29). VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST and
+///   VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST lead back to Kraden's part of Vale
+///   (SceneId_ValeKraden), whose VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST and
+///   VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST lead here;
+///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each exit plays
 ///   the exit sound first (Event_LeaveRoom). On arrival ValeCave_Initialize
 ///   fades the room in from the backdrop and clears FLAG_SHOW_LOCATION_NAME:
 ///   entering a new place group sets that flag, but this is still Vale.
-/// - Vale Cave (scene 94, SceneId_ValeCave2), one map in three parts, each with
+/// - Vale Cave (scene 94, SceneId_ValeCaveKite), one map in three parts, each
+/// with
 ///   its own entrances and camera box; walking south into a ledge's cells
 ///   hops the leader down it (Event_HopDownLedge). In the first part
 ///   (entrances 1 to 4) Reveal shows a hidden tile while it lasts
@@ -32,13 +35,13 @@
 ///   the leader along the passage when walked into from the west or the east
 ///   (FLAG_VALE_CAVE_RIDING_LOG_EAST). Its exits lead back to the first room,
 ///   on to the third, and between its own parts.
-/// - Vale Cave (scene 95, SceneId_ValeCave3), the inner room, with three
+/// - Vale Cave (scene 95, SceneId_ValeCaveLogs), the inner room, with three
 ///   logs to push: one off a ledge (Event_PushLogOffLedge), one along the
 ///   ledge until it drops at its edge (Event_PushLogOverEdge) and one north
 ///   (Event_PushLogNorth), each clearing the cells it held. Its exits
 ///   lead back into the second room and between its own parts.
 ///
-/// The second and third rooms are one place group (30), so their place flags
+/// Vale Cave's two rooms are one place group (30), so their place flags
 /// (0x301, 0x302) last while the party goes between them. On every arrival
 /// ValeCave_ApplyEntryState rebuilds the cells of each puzzle already solved
 /// and, once Kite has run behind its ledge, puts it back there.
@@ -86,15 +89,15 @@
 /// ACTOR_FIRST_PLACED: three stacks of crates (sprite 0xf1, the crates of the
 /// Bilibin Barricade in bilibin.c), then two logs (sprite 0xcf, as in Kolima
 /// Forest), none of which moves.
-enum ValeCave1Actor {
-  ACTOR_VALE_CAVE_1_FIRST_CRATES = ACTOR_FIRST_PLACED,
-  ACTOR_VALE_CAVE_1_FIRST_LOG = ACTOR_FIRST_PLACED + 3,
-  ACTOR_VALE_CAVE_1_SECOND_LOG
+enum ValeCaveMouthActor {
+  ACTOR_VALE_CAVE_MOUTH_FIRST_CRATES = ACTOR_FIRST_PLACED,
+  ACTOR_VALE_CAVE_MOUTH_FIRST_LOG = ACTOR_FIRST_PLACED + 3,
+  ACTOR_VALE_CAVE_MOUTH_SECOND_LOG
 };
 
 /// The second room's placements (gValeCave_Placements2), numbered from
 /// ACTOR_FIRST_PLACED.
-enum ValeCave2Actor {
+enum ValeCaveKiteActor {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
   ACTOR_KITE = ACTOR_FIRST_PLACED,
   /// The two stacks of crates (sprite 0xf1) in the holes' part, which sink
@@ -117,7 +120,7 @@ enum ValeCave2Actor {
 /// ACTOR_FIRST_PLACED; its first row places Kite as the second room's does.
 /// Its three logs are pushed: sprite 0xcd runs north to south and 0xcf west
 /// to east, as in Kolima Forest.
-enum ValeCave3Actor {
+enum ValeCaveLogsActor {
   /// Sprite 0xcd, pushed off the ledge.
   ACTOR_WEST_LOG = ACTOR_FIRST_PLACED + 1,
   ACTOR_EAST_LOG, ///< sprite 0xcd, pushed along the ledge until it falls
@@ -212,13 +215,13 @@ static s32 ValeCave_FaceActorTowardLeader(union FieldObject *fieldObject) {
 const struct SceneEntrance *ValeCave_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_ValeCave1) {
+  if (scene == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_Entrances1;
   }
-  if (scene == (s32)&SceneId_ValeCave2) {
+  if (scene == (s32)&SceneId_ValeCaveKite) {
     return gValeCave_Entrances2;
   }
-  if (scene == (s32)&SceneId_ValeCave3) {
+  if (scene == (s32)&SceneId_ValeCaveLogs) {
     return gValeCave_Entrances3;
   }
   return gValeCave_EntrancesOther;
@@ -233,13 +236,13 @@ const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
 const struct ScenePlacement *ValeCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_ValeCave1) {
+  if (scene == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_Placements1;
   }
-  if (scene == (s32)&SceneId_ValeCave2) {
+  if (scene == (s32)&SceneId_ValeCaveKite) {
     return gValeCave_Placements2;
   }
-  if (scene == (s32)&SceneId_ValeCave3) {
+  if (scene == (s32)&SceneId_ValeCaveLogs) {
     return gValeCave_Placements3;
   }
   return gValeCave_Placements1;
@@ -688,13 +691,13 @@ static void Event_PushLogNorth(void) {
 const struct SceneEvent *ValeCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_ValeCave1) {
+  if (scene == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_Events1;
   }
-  if (scene == (s32)&SceneId_ValeCave2) {
+  if (scene == (s32)&SceneId_ValeCaveKite) {
     return gValeCave_Events2;
   }
-  if (scene == (s32)&SceneId_ValeCave3) {
+  if (scene == (s32)&SceneId_ValeCaveLogs) {
     return gValeCave_Events3;
   }
   return gValeCave_EventsOther;
@@ -710,11 +713,11 @@ s32 ValeCave_Initialize(void) {
   s32 *request = &gEventWork->startTransition;
 
   *request = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gGameState.scene == (s32)&SceneId_ValeCave1) {
+  if (gGameState.scene == (s32)&SceneId_ValeCaveMouth) {
     *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_TaskWait(1);
-    Engine_ActorSetSpritePriority(ACTOR_VALE_CAVE_1_FIRST_LOG, 3);
-    Engine_ActorSetSpritePriority(ACTOR_VALE_CAVE_1_SECOND_LOG, 3);
+    Engine_ActorSetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
+    Engine_ActorSetSpritePriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
   ValeCave_ApplyEntryState();
@@ -725,8 +728,8 @@ s32 ValeCave_Initialize(void) {
 /// before leaving.
 ///
 /// Reached by stepping on cell codes 1 to 3 in the first room; takes the exit
-/// of the same number (VALE_CAVE_1_TO_VALE_KRADEN_WEST,
-/// VALE_CAVE_1_TO_VALE_CAVE_2 or VALE_CAVE_1_TO_VALE_KRADEN_EAST).
+/// of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST,
+/// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST).
 static void Event_LeaveRoom(void) {
   s32 exitId = gEventWork->touchedTrigger;
 
@@ -805,7 +808,7 @@ static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnRow20;
 
   // Each room reuses the temporary flags for its own puzzle state.
-  if (gGameState.scene == (s32)&SceneId_ValeCave2) {
+  if (gGameState.scene == (s32)&SceneId_ValeCaveKite) {
     switch (gGameState.entrance) {
     case 1:
     case 2:
@@ -852,7 +855,7 @@ static void ValeCave_ApplyEntryState(void) {
       }
       break;
     }
-  } else if (gGameState.scene == (s32)&SceneId_ValeCave3) {
+  } else if (gGameState.scene == (s32)&SceneId_ValeCaveLogs) {
     switch (gGameState.entrance) {
     case 1:
     case 2:
@@ -971,59 +974,59 @@ struct SceneEntrance gValeCave_EntrancesOther[] = {
 
 struct SceneEntrance gValeCave_Entrances1[] = {
     { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
-    { VALE_CAVE_1_FROM_VALE_KRADEN_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
-    { VALE_CAVE_1_FROM_VALE_CAVE_2, CONDITION_ALWAYS, 136, 0, 184, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
-    { VALE_CAVE_1_FROM_VALE_KRADEN_EAST, CONDITION_ALWAYS, 136, 0, 376, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
+    { VALE_CAVE_MOUTH_FROM_VALE_KRADEN_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
+    { VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE, CONDITION_ALWAYS, 136, 0, 184, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
+    { VALE_CAVE_MOUTH_FROM_VALE_KRADEN_EAST, CONDITION_ALWAYS, 136, 0, 376, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gValeCave_Entrances2[] = {
     { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_CAVE_2_FROM_VALE_CAVE_1, CONDITION_ALWAYS, 328, 0, 392, FACING_NORTH, 0, 48, 32, 544, 416, 0 },
+    { VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH, CONDITION_ALWAYS, 328, 0, 392, FACING_NORTH, 0, 48, 32, 544, 416, 0 },
     { 2, CONDITION_ALWAYS, 312, 0, 160, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
     { 3, CONDITION_ALWAYS, 120, 0, 120, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
-    { VALE_CAVE_2_FROM_VALE_CAVE_3_WEST, CONDITION_ALWAYS, 504, 0, 136, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
+    { VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST, CONDITION_ALWAYS, 504, 0, 136, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
     { 5, CONDITION_ALWAYS, 792, 0, 360, FACING_NORTH, 0, 624, 16, 944, 384, 0 },
     { 6, CONDITION_ALWAYS, 680, 0, 248, FACING_SOUTH, 0, 624, 16, 944, 384, 0 },
-    { VALE_CAVE_2_FROM_VALE_CAVE_3_EAST, CONDITION_ALWAYS, 904, 0, 232, FACING_SOUTH, 0, 624, 16, 944, 384, 0 },
+    { VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST, CONDITION_ALWAYS, 904, 0, 232, FACING_SOUTH, 0, 624, 16, 944, 384, 0 },
     { 8, CONDITION_ALWAYS, 408, 0, 872, FACING_NORTH, 0, 312, 472, 704, 896, 0 },
     { 9, CONDITION_ALWAYS, 488, 0, 744, FACING_NORTH, 0, 312, 472, 704, 896, 0 },
-    { VALE_CAVE_2_FROM_VALE_CAVE_3_SOUTH, CONDITION_ALWAYS, 632, 0, 552, FACING_SOUTH, 0, 312, 472, 704, 896, 0 },
+    { VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH, CONDITION_ALWAYS, 632, 0, 552, FACING_SOUTH, 0, 312, 472, 704, 896, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gValeCave_Entrances3[] = {
     { 0, CONDITION_ALWAYS, 200, 0, 432, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_CAVE_3_FROM_VALE_CAVE_2_WEST, CONDITION_ALWAYS, 200, 0, 432, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
+    { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST, CONDITION_ALWAYS, 200, 0, 432, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
     { 2, CONDITION_ALWAYS, 344, 0, 120, FACING_SOUTH, 0, 64, 24, 416, 464, 0 },
-    { VALE_CAVE_3_FROM_VALE_CAVE_2_NORTH, CONDITION_ALWAYS, 120, 0, 264, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
-    { VALE_CAVE_3_FROM_VALE_CAVE_2_SOUTH, CONDITION_ALWAYS, 536, 0, 776, FACING_NORTH, 0, 400, 440, 896, 800, 0 },
+    { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST, CONDITION_ALWAYS, 120, 0, 264, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
+    { VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH, CONDITION_ALWAYS, 536, 0, 776, FACING_NORTH, 0, 400, 440, 896, 800, 0 },
     { 5, CONDITION_ALWAYS, 840, 0, 776, FACING_NORTH, 0, 400, 440, 896, 800, 0 },
     { SCENE_TABLE_END },
 };
 
 u32 gValeCave_Exits[] = {
-    SCENE_EXITS(ValeCave1),
-    SCENE_EXIT(VALE_CAVE_1_TO_VALE_KRADEN_WEST, ValeKraden, VALE_KRADEN_FROM_VALE_CAVE_1_WEST),
-    SCENE_EXIT(VALE_CAVE_1_TO_VALE_CAVE_2, ValeCave2, VALE_CAVE_2_FROM_VALE_CAVE_1),
-    SCENE_EXIT(VALE_CAVE_1_TO_VALE_KRADEN_EAST, ValeKraden, VALE_KRADEN_FROM_VALE_CAVE_1_EAST),
-    SCENE_EXITS(ValeCave2),
-    SCENE_EXIT(VALE_CAVE_2_TO_VALE_CAVE_1, ValeCave1, VALE_CAVE_1_FROM_VALE_CAVE_2),
-    SCENE_EXIT(2, ValeCave2, 5),
-    SCENE_EXIT(3, ValeCave2, 8),
-    SCENE_EXIT(VALE_CAVE_2_TO_VALE_CAVE_3_WEST, ValeCave3, VALE_CAVE_3_FROM_VALE_CAVE_2_WEST),
-    SCENE_EXIT(5, ValeCave2, 2),
-    SCENE_EXIT(6, ValeCave2, 9),
-    SCENE_EXIT(VALE_CAVE_2_TO_VALE_CAVE_3_EAST, ValeCave3, VALE_CAVE_3_FROM_VALE_CAVE_2_NORTH),
-    SCENE_EXIT(8, ValeCave2, 3),
-    SCENE_EXIT(9, ValeCave2, 6),
-    SCENE_EXIT(VALE_CAVE_2_TO_VALE_CAVE_3_SOUTH, ValeCave3, VALE_CAVE_3_FROM_VALE_CAVE_2_SOUTH),
-    SCENE_EXITS(ValeCave3),
-    SCENE_EXIT(VALE_CAVE_3_TO_VALE_CAVE_2_WEST, ValeCave2, VALE_CAVE_2_FROM_VALE_CAVE_3_WEST),
-    SCENE_EXIT(2, ValeCave3, 5),
-    SCENE_EXIT(VALE_CAVE_3_TO_VALE_CAVE_2_NORTH, ValeCave2, VALE_CAVE_2_FROM_VALE_CAVE_3_EAST),
-    SCENE_EXIT(VALE_CAVE_3_TO_VALE_CAVE_2_SOUTH, ValeCave2, VALE_CAVE_2_FROM_VALE_CAVE_3_SOUTH),
-    SCENE_EXIT(5, ValeCave3, 2),
+    SCENE_EXITS(ValeCaveMouth),
+    SCENE_EXIT(VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST, ValeKraden, VALE_KRADEN_FROM_VALE_CAVE_MOUTH_WEST),
+    SCENE_EXIT(VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH),
+    SCENE_EXIT(VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST, ValeKraden, VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST),
+    SCENE_EXITS(ValeCaveKite),
+    SCENE_EXIT(VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH, ValeCaveMouth, VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE),
+    SCENE_EXIT(VALE_CAVE_KITE_WEST_TO_EAST, ValeCaveKite, VALE_CAVE_KITE_EAST_FROM_WEST),
+    SCENE_EXIT(VALE_CAVE_KITE_WEST_TO_SOUTH, ValeCaveKite, VALE_CAVE_KITE_SOUTH_FROM_WEST),
+    SCENE_EXIT(VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST, ValeCaveLogs, VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST),
+    SCENE_EXIT(VALE_CAVE_KITE_EAST_TO_WEST, ValeCaveKite, VALE_CAVE_KITE_WEST_FROM_EAST),
+    SCENE_EXIT(VALE_CAVE_KITE_EAST_TO_SOUTH, ValeCaveKite, VALE_CAVE_KITE_SOUTH_FROM_EAST),
+    SCENE_EXIT(VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST, ValeCaveLogs, VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST),
+    SCENE_EXIT(VALE_CAVE_KITE_SOUTH_TO_WEST, ValeCaveKite, VALE_CAVE_KITE_WEST_FROM_SOUTH),
+    SCENE_EXIT(VALE_CAVE_KITE_SOUTH_TO_EAST, ValeCaveKite, VALE_CAVE_KITE_EAST_FROM_SOUTH),
+    SCENE_EXIT(VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH, ValeCaveLogs, VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH),
+    SCENE_EXITS(ValeCaveLogs),
+    SCENE_EXIT(VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST),
+    SCENE_EXIT(VALE_CAVE_LOGS_NORTH_TO_SOUTH, ValeCaveLogs, VALE_CAVE_LOGS_SOUTH_FROM_NORTH),
+    SCENE_EXIT(VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST),
+    SCENE_EXIT(VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH),
+    SCENE_EXIT(VALE_CAVE_LOGS_SOUTH_TO_NORTH, ValeCaveLogs, VALE_CAVE_LOGS_NORTH_FROM_SOUTH),
     SCENE_EXITS_END,
 };
 
@@ -1085,16 +1088,16 @@ struct SceneEvent gValeCave_Events1[] = {
 };
 
 struct SceneEvent gValeCave_Events2[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_2_TO_VALE_CAVE_1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_2_TO_VALE_CAVE_3_WEST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, VALE_CAVE_2_TO_VALE_CAVE_3_EAST },
+    { EVENT_EXIT, 7, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, VALE_CAVE_2_TO_VALE_CAVE_3_SOUTH },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH },
     { TOUCH_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RideLogEast) },
     { TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RideLogWest) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopDownLedge) },
@@ -1128,10 +1131,10 @@ struct SceneEvent gValeCave_Events2[] = {
 // clang-format on
 
 struct SceneEvent gValeCave_Events3[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_3_TO_VALE_CAVE_2_WEST},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_3_TO_VALE_CAVE_2_NORTH},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_3_TO_VALE_CAVE_2_SOUTH},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_PushLogOverEdge)},

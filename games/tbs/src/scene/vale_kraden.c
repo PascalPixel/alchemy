@@ -32,23 +32,23 @@
 ///   Talking to Kraden plays Event_KradenPlansSanctumVisit: Garet brings up
 ///   Saturos and Menardi, and Kraden talks the three into a secret look at Sol
 ///   Sanctum on the forbidden mountain, then goes in to prepare, and
-///   VALE_KRADEN_TO_VALE_INTERIORS_2_2 takes the party into the cottage (scene
-///   8, VALE_INTERIORS_2_FROM_VALE_KRADEN_2). Coming back out by
-///   VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH, Kraden joins them for Mt. Aleph
-///   (Event_KradenSetsOff, FLAG_SANCTUM_VISIT_PLANNED); from then on he and the
-///   strangers are gone. A child at the fence hears growls beyond it, and a jar
-///   holds an Elixir.
+///   VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG takes the party into the
+///   cottage (scene 8, VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG). Coming
+///   back out by VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH, Kraden joins them
+///   for Mt. Aleph (Event_KradenSetsOff, FLAG_SANCTUM_VISIT_PLANNED); from then
+///   on he and the strangers are gone. A child at the fence hears growls beyond
+///   it, and a jar holds an Elixir.
 /// - After the party has left Vale (FLAG_PARTY_LEFT_VALE) the child means to
 ///   climb the fence one day, and after Kalay (FLAG_REACHED_KALAY) a villager
 ///   visits the empty cottage, missing Kraden.
 ///
 /// By day the cottage's gate (Event_EnterCottage) leads into the cottage
-/// (VALE_KRADEN_TO_VALE_INTERIORS_2_NORTH, to scene 8's
-/// VALE_INTERIORS_2_FROM_VALE_KRADEN_NORTH), VALE_KRADEN_TO_VALE_NORTH and
+/// (VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH, to scene 8's
+/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_NORTH), VALE_KRADEN_TO_VALE_NORTH and
 /// VALE_KRADEN_TO_VALE_SOUTH go down into the village (Vale, scene 4) and
-/// VALE_KRADEN_TO_VALE_CAVE_1_WEST and VALE_KRADEN_TO_VALE_CAVE_1_EAST into
-/// Vale Cave's way in (scene 93). Coming back from it by
-/// VALE_KRADEN_FROM_VALE_CAVE_1_EAST clears FLAG_SHOW_LOCATION_NAME, so the
+/// VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST and VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST
+/// into Vale Cave's way in (scene 93). Coming back from it by
+/// VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST clears FLAG_SHOW_LOCATION_NAME, so the
 /// place name is not shown again. The jar's row finds nothing on the stormy
 /// night, and after Kalay it is there only from the third patch on.
 
@@ -200,9 +200,10 @@ static void Event_TalkToFenceOnlooker(void) {
 ///
 /// Reached by talking to Kraden in the day's events, until
 /// FLAG_SANCTUM_VISIT_PLANNED is set. Ends by taking
-/// VALE_KRADEN_TO_VALE_INTERIORS_2_2 into the cottage (scene 8,
-/// VALE_INTERIORS_2_FROM_VALE_KRADEN_2); the party comes back by
-/// VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH, where Event_KradenSetsOff goes on.
+/// VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG into the cottage (scene 8,
+/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG); the party comes back by
+/// VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH, where Event_KradenSetsOff goes
+/// on.
 static void Event_KradenPlansSanctumVisit(void) {
   struct FieldActor *leader;
   s32 x, z;
@@ -435,7 +436,7 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
     // Kraden opens his gate and goes in to prepare; the screen closes and the
-    // party follows him through VALE_KRADEN_TO_VALE_INTERIORS_2_2.
+    // party follows him through VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG.
     Event_PlayCue(SE_DOOR_OPEN);
     Map_AnimateCells(gValeKraden_GateCells, 43, 8);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -447,16 +448,16 @@ static void Event_KradenPlansSanctumVisit(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Engine_EventRequestExit(VALE_KRADEN_TO_VALE_INTERIORS_2_2);
+    Engine_EventRequestExit(VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG);
     Engine_EventEnd();
   }
 }
 
 /// In Vale, back out of Kraden's cottage by
-/// VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH: Kraden comes out ready, and
+/// VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH: Kraden comes out ready, and
 /// everyone joins Isaac for Mt. Aleph. "This is our best bet."
 ///
-/// Called by ValeKraden_Initialize on VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH
+/// Called by ValeKraden_Initialize on VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH
 /// unless the party keeps its position. Sets FLAG_SANCTUM_VISIT_PLANNED and
 /// FLAG_SCENE_TEMP_42 (the gate stays open), and removes Kraden, Garet, Jenna,
 /// Saturos and Menardi.
@@ -530,14 +531,14 @@ static void Event_KradenSetsOff(void) {
 /// it open.
 ///
 /// Reached by walking north into cell code 3, by day and after Kalay; takes
-/// VALE_KRADEN_TO_VALE_INTERIORS_2_NORTH into the cottage.
+/// VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH into the cottage.
 static void Event_EnterCottage(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_42) == 0) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gValeKraden_GateCells, 43, 8);
   }
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 229, 217);
-  Engine_EventRequestExit(VALE_KRADEN_TO_VALE_INTERIORS_2_NORTH);
+  Engine_EventRequestExit(VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH);
 }
 
 /// In Vale on the way to Kraden's cottage, walking past the two strangers:
@@ -868,7 +869,7 @@ static void Event_OverhearKraden(void) {
 /// starts the lightning, removes the day's people, lays the survivor by the
 /// fence (unless FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the
 /// rockslide covers. By day it removes the rocks and Garet, runs
-/// Event_KradenSetsOff from VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH, removes
+/// Event_KradenSetsOff from VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH, removes
 /// Kraden and the strangers once FLAG_SANCTUM_VISIT_PLANNED is set, and places
 /// the cottage visitor after Kalay. Clears FLAG_SCENE_TEMP_42 when the party
 /// keeps its position.
@@ -877,7 +878,7 @@ s32 ValeKraden_Initialize(void) {
   s32 debrisRow;
 
   if (gGameState.entrance == 5 ||
-      gGameState.entrance == VALE_KRADEN_FROM_VALE_CAVE_1_EAST) {
+      gGameState.entrance == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -928,7 +929,7 @@ s32 ValeKraden_Initialize(void) {
     Engine_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gGameState.entrance == VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH) {
+      if (gGameState.entrance == VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH) {
         Event_KradenSetsOff();
       }
     }
@@ -1150,13 +1151,13 @@ struct SceneEntrance gValeKraden_Entrances[] = {
      -1, -1, -1, -1, 0},
     {VALE_KRADEN_FROM_VALE_SOUTH, CONDITION_ALWAYS, 454, 0, 443, FACING_WEST, 0,
      -1, -1, -1, -1, 0},
-    {VALE_KRADEN_FROM_VALE_INTERIORS_2_NORTH, CONDITION_ALWAYS, 229, 0, 233,
+    {VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH, CONDITION_ALWAYS, 229, 0, 233,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_KRADEN_FROM_VALE_CAVE_1_WEST, CONDITION_ALWAYS, 72, 0, 80,
+    {VALE_KRADEN_FROM_VALE_CAVE_MOUTH_WEST, CONDITION_ALWAYS, 72, 0, 80,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_KRADEN_FROM_VALE_CAVE_1_EAST, CONDITION_ALWAYS, 104, 0, 104,
+    {VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST, CONDITION_ALWAYS, 104, 0, 104,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH, CONDITION_ALWAYS, 232, 0, 264,
+    {VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH, CONDITION_ALWAYS, 232, 0, 264,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
@@ -1165,18 +1166,18 @@ u32 gValeKraden_Exits[] = {
     SCENE_EXITS(ValeKraden),
     SCENE_EXIT(VALE_KRADEN_TO_VALE_NORTH, Vale, VALE_FROM_VALE_KRADEN_NORTH),
     SCENE_EXIT(VALE_KRADEN_TO_VALE_SOUTH, Vale, VALE_FROM_VALE_KRADEN_SOUTH),
-    SCENE_EXIT(VALE_KRADEN_TO_VALE_INTERIORS_2_NORTH, ValeInteriors2,
-               VALE_INTERIORS_2_FROM_VALE_KRADEN_NORTH),
-    SCENE_EXIT(VALE_KRADEN_TO_VALE_CAVE_1_WEST, ValeCave1,
-               VALE_CAVE_1_FROM_VALE_KRADEN_WEST),
-    SCENE_EXIT(VALE_KRADEN_TO_VALE_CAVE_1_EAST, ValeCave1,
-               VALE_CAVE_1_FROM_VALE_KRADEN_EAST),
+    SCENE_EXIT(VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH, ValeInteriorsInn,
+               VALE_INTERIORS_INN_FROM_VALE_KRADEN_NORTH),
+    SCENE_EXIT(VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST, ValeCaveMouth,
+               VALE_CAVE_MOUTH_FROM_VALE_KRADEN_WEST),
+    SCENE_EXIT(VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST, ValeCaveMouth,
+               VALE_CAVE_MOUTH_FROM_VALE_KRADEN_EAST),
     SCENE_EXIT(VALE_KRADEN_TO_VALE_STORM_NORTH, ValeStorm,
                VALE_STORM_FROM_VALE_KRADEN_NORTH),
     SCENE_EXIT(VALE_KRADEN_TO_VALE_STORM_SOUTH, ValeStorm,
                VALE_STORM_FROM_VALE_KRADEN_SOUTH),
-    SCENE_EXIT(VALE_KRADEN_TO_VALE_INTERIORS_2_2, ValeInteriors2,
-               VALE_INTERIORS_2_FROM_VALE_KRADEN_2),
+    SCENE_EXIT(VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG, ValeInteriorsInn,
+               VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG),
     SCENE_EXITS_END,
 };
 
@@ -1216,8 +1217,8 @@ struct SceneEvent gValeKraden_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_NORTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_SOUTH },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCottage) },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_1_WEST },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_1_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OverhearKraden) },
     { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetSaturosAndMenardi) },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FENCE_BOULDER, CONDITION_ALWAYS, 0 },
@@ -1242,8 +1243,8 @@ struct SceneEvent gValeKraden_EventsAfterKalay[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_NORTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_SOUTH },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCottage) },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_1_WEST },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_1_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST },
     { EVENT_TALK, ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
     { EVENT_TALK, ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToCottageVisitor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },

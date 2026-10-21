@@ -60,7 +60,8 @@ enum MenuTestActor {
   /// Menardi's sprite, 0x21 (sol_sanctum_elemental_star_room.c).
   /// `You got treasure!`
   ACTOR_MENARDI,
-  /// The sprite of Vale's armor shopkeeper, 0x7d (vale_interiors1.c); opens
+  /// The sprite of Vale's armor shopkeeper, 0x7d (vale_interiors_shops.c);
+  /// opens
   /// the debug shop.
   ACTOR_ARMOR_SHOPKEEPER,
   /// Dora's sprite again: the sanctum's service menu, in French a Nut, and in

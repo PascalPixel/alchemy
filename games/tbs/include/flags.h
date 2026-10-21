@@ -262,7 +262,7 @@
 #define FLAG_BABI_PALACE_CLOAK_BALL 0xf31  ///< lent by Babi after Colosso
 #define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f ///< in a barrel
 /// A jar in the scholars' room, which is drawn on Vale's map
-/// (vale_interiors2.c).
+/// (vale_interiors_inn.c).
 #define FLAG_BABI_PALACE_HARD_NUT 0xf9e
 // Bilibin
 #define FLAG_BILIBIN_JILL_RESCUED 0x848 ///< Jill, a tree, pulled from the river
@@ -580,11 +580,11 @@
 /// Back from Kalay, Garet surprised his family at home.
 #define FLAG_GARET_CAME_HOME 0x81d
 // The houses' containers, set once each is searched (not on the stormy night)
-#define FLAG_VALE_INTERIORS_1_BARREL_ANTIDOTE 0xf42
-#define FLAG_VALE_INTERIORS_1_JAR_6_COINS 0xf43
-#define FLAG_VALE_INTERIORS_1_JAR_2_COINS 0xf44
-#define FLAG_VALE_INTERIORS_1_JAR_SMOKE_BOMB 0xf45
-#define FLAG_VALE_INTERIORS_1_JAR_3_COINS 0xf46
+#define FLAG_VALE_INTERIORS_SHOPS_BARREL_ANTIDOTE 0xf42
+#define FLAG_VALE_INTERIORS_SHOPS_JAR_6_COINS 0xf43
+#define FLAG_VALE_INTERIORS_SHOPS_JAR_2_COINS 0xf44
+#define FLAG_VALE_INTERIORS_SHOPS_JAR_SMOKE_BOMB 0xf45
+#define FLAG_VALE_INTERIORS_SHOPS_JAR_3_COINS 0xf46
 
 // Vale during the eruption
 /// Isaac and Garet followed the elders into the sanctum. They came down

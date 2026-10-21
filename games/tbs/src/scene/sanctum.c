@@ -111,7 +111,8 @@ enum SanctumActor {
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
   // Vale Sanctum (gSanctum_PlacementB, and gSanctum_PlacementD at the quest).
   /// The western of Vale Sanctum's two other healers (sprite 0x7a), as Mind
-  /// Read hears a villager in vale_interiors1.c call the Sanctum's people: "The
+  /// Read hears a villager in vale_interiors_shops.c call the Sanctum's people:
+  /// "The
   /// healers are supposed to guard Sol Sanctum." Before the quest: "Our
   /// Psynergy was given to us by the sacred power of Mt. Aleph."
   ACTOR_WEST_HEALER,
@@ -2230,7 +2231,7 @@ u32 gSanctum_Exits[] = {
     SCENE_EXIT(SANCTUM_TO_VALE, Vale, VALE_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_VAULT, Vault, VAULT_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_SANCTUM),
-    SCENE_EXIT(20, Sanctum, 21),
+    SCENE_EXIT(SANCTUM_TO_QUEST_RESTART, Sanctum, SANCTUM_FROM_QUEST_RESTART),
     SCENE_EXIT(SANCTUM_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_ALTIN, Altin, ALTIN_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_BILIBIN, Bilibin, BILIBIN_FROM_SANCTUM),

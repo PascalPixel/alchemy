@@ -5,7 +5,7 @@
 /// with two guards and a well, and BabiPalace1 (scene 138), the palace
 /// itself, a set of rooms joined by doors (BabiPalace_LeaveThroughDoor). From
 /// the palace one door leads into a room of Babi's scholars
-/// (BABI_PALACE_1_TO_VALE_INTERIORS_2, which vale_interiors2.c holds) and
+/// (BABI_PALACE_1_TO_VALE_INTERIORS_INN, which vale_interiors_inn.c holds) and
 /// another into the Colosseum Tunnel (BABI_PALACE_1_TO_COLOSSEUM_TUNNEL).
 /// Each scene has three sets of placements and events, chosen by the story
 /// (Scene_GetPlacements, Scene_GetEvents): before Babi is saved, during the
@@ -2446,7 +2446,7 @@ s32 BabiPalace_ApplyEntryState(void) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
   if (gGameState.scene != (s32)&SceneId_BabiPalace2) {
-    if (gGameState.entrance == BABI_PALACE_1_FROM_VALE_INTERIORS_2) {
+    if (gGameState.entrance == BABI_PALACE_1_FROM_VALE_INTERIORS_INN) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
     if (GameFlag_IsSet(FLAG_COLOSSO_OVER)) {
@@ -2536,7 +2536,7 @@ struct SceneEntrance gBabiPalace_EntrancesOther[] = {
     { 8, CONDITION_ALWAYS, 72, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
     { 9, CONDITION_ALWAYS, 440, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
     { 10, CONDITION_ALWAYS, 72, 0, 968, FACING_EAST, 0, 0, 864, 240, 1024, 0 },
-    { BABI_PALACE_1_FROM_VALE_INTERIORS_2, CONDITION_ALWAYS, 168, 0, 936, FACING_SOUTH, 0, 0, 864, 240, 1024, 0 },
+    { BABI_PALACE_1_FROM_VALE_INTERIORS_INN, CONDITION_ALWAYS, 168, 0, 936, FACING_SOUTH, 0, 0, 864, 240, 1024, 0 },
     { 12, CONDITION_ALWAYS, 424, 0, 680, FACING_WEST, 0, 328, 600, 568, 760, 0 },
     { BABI_PALACE_1_FROM_COLOSSEUM_TUNNEL, CONDITION_ALWAYS, 472, 0, 696, FACING_SOUTH, 0, 328, 600, 568, 760, 0 },
     { 16, CONDITION_ALWAYS, 408, 0, 824, FACING_EAST, 0, 320, 728, 560, 888, 0 },
@@ -2593,7 +2593,7 @@ u32 gBabiPalace_Exits[] = {
     SCENE_EXIT(8, BabiPalace1, 6),
     SCENE_EXIT(9, BabiPalace1, 7),
     SCENE_EXIT(10, BabiPalace1, 26),
-    SCENE_EXIT(BABI_PALACE_1_TO_VALE_INTERIORS_2, ValeInteriors2, VALE_INTERIORS_2_FROM_BABI_PALACE_1),
+    SCENE_EXIT(BABI_PALACE_1_TO_VALE_INTERIORS_INN, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_BABI_PALACE_1),
     SCENE_EXIT(12, BabiPalace1, 27),
     SCENE_EXIT(BABI_PALACE_1_TO_COLOSSEUM_TUNNEL, ColosseumTunnel, COLOSSEUM_TUNNEL_FROM_BABI_PALACE_1),
     SCENE_EXIT(16, BabiPalace1, 34),
@@ -2749,7 +2749,7 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_1_TO_VALE_INTERIORS_2 },
+    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_1_TO_VALE_INTERIORS_INN },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { 0x31, 13, CONDITION_ALWAYS, BABI_PALACE_1_TO_COLOSSEUM_TUNNEL },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
@@ -2828,7 +2828,7 @@ struct SceneEvent gBabiPalace_EventsColosso[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_1_TO_VALE_INTERIORS_2 },
+    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_1_TO_VALE_INTERIORS_INN },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { 0x31, 13, CONDITION_ALWAYS, BABI_PALACE_1_TO_COLOSSEUM_TUNNEL },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
@@ -2894,7 +2894,7 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_1_TO_VALE_INTERIORS_2 },
+    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_1_TO_VALE_INTERIORS_INN },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { 0x31, 13, CONDITION_ALWAYS, BABI_PALACE_1_TO_COLOSSEUM_TUNNEL },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },

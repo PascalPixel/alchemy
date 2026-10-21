@@ -4,12 +4,12 @@
 /// Lighthouse whose switch shows only under Reveal, after the group that took
 /// Sheba (babi_lighthouse.c), and the ruins lead on to Venus Lighthouse; Babi's
 /// scholars in Tolbi speak of an extremely long tunnel beneath the ruins at the
-/// site of Babi Lighthouse, whose end no one has reached (vale_interiors2.c).
-/// Both scenes share the setup, which works room by room, one case for each
-/// room's entrances, and the walking events (hops across gaps, jumps off ledges
-/// and steps), keyed on the cell codes under the leader. In both, the retreat
-/// point is set and a fade overlay follows the leader in the rooms that need it
-/// (TunnelRuins_UpdateTrackedActor).
+/// site of Babi Lighthouse, whose end no one has reached
+/// (vale_interiors_inn.c). Both scenes share the setup, which works room by
+/// room, one case for each room's entrances, and the walking events (hops
+/// across gaps, jumps off ledges and steps), keyed on the cell codes under the
+/// leader. In both, the retreat point is set and a fade overlay follows the
+/// leader in the rooms that need it (TunnelRuins_UpdateTrackedActor).
 ///
 /// - Tunnel Ruins (TunnelRuins1, scene 172), entered from Babi Lighthouse
 ///   (BabiLighthouse1, scene 174) at TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1,

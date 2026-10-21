@@ -7,7 +7,8 @@
 /// from Kalay (FLAG_REACHED_KALAY); VALE_FROM_TITLE has a set of its own. In
 /// story order:
 ///
-/// - The day the story begins, three years after the storm (vale_interiors2.c),
+/// - The day the story begins, three years after the storm
+/// (vale_interiors_inn.c),
 ///   which took Jenna's family and Isaac's father, Kyle. The game opens at
 ///   VALE_FROM_TITLE with Event_MendingTheRoof: under the caption "Three years
 ///   later...", Isaac is mending the roof of his house while Dora, his mother,
@@ -40,7 +41,7 @@
 ///   gone (FLAG_PLACE_TEMP_04), a villager asks whether Jenna is back
 ///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
 ///   about the lack of travellers since the eruption (FLAG_PLACE_TEMP_07).
-///   Isaac's house opens again: Dora lies ill inside (vale_interiors2.c).
+///   Isaac's house opens again: Dora lies ill inside (vale_interiors_inn.c).
 ///
 /// In every set: a Nut to catch with Catch (its flag 0xfd0; ACTOR_NUT, or
 /// ACTOR_NUT_AFTER_KALAY), a pillar to push or Move, whose column the setup
@@ -51,12 +52,12 @@
 /// VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol Entrance (scene 19),
 /// VALE_TO_VALE_GATE to ValeGate (scene 5), VALE_TO_VALE_KRADEN_NORTH and
 /// VALE_TO_VALE_KRADEN_SOUTH to ValeKraden (scene 6), the doors
-/// VALE_TO_VALE_INTERIORS_1_EAST, VALE_TO_VALE_INTERIORS_1,
-/// VALE_TO_VALE_INTERIORS_1_NORTH, VALE_TO_VALE_INTERIORS_1_WEST and exit 10
-/// into the houses (ValeInteriors1, scene 7, vale_interiors1.c),
-/// VALE_TO_VALE_INTERIORS_2 into Isaac's house (scene 8) and VALE_TO_SANCTUM
-/// into Vale Sanctum (scene 9). Two scenes no table reaches remain:
-/// Event_UnusedRoofMended, a copy of the roof's end, and
+/// VALE_TO_VALE_INTERIORS_SHOPS_EAST, VALE_TO_VALE_INTERIORS_SHOPS_SOUTH,
+/// VALE_TO_VALE_INTERIORS_SHOPS_NORTH, VALE_TO_VALE_INTERIORS_SHOPS_WEST and
+/// exit 10 into the houses (ValeInteriorsShops, scene 7,
+/// vale_interiors_shops.c), VALE_TO_VALE_INTERIORS_INN into Isaac's house
+/// (scene 8) and VALE_TO_SANCTUM into Vale Sanctum (scene 9). Two scenes no
+/// table reaches remain: Event_UnusedRoofMended, a copy of the roof's end, and
 /// Event_UnusedWaterBurstsByTheRiver, which sets group flag
 /// FLAG_PLACE_TEMP_05. FLAG_SCENE_TEMP_41 pauses the villager who watches Isaac
 /// while a menu is open. The TBS_PATCH_4 editions also set Dora's sprite
@@ -486,27 +487,27 @@ static void Event_TakeExitToValeGate(void) {
 }
 
 /// The door of the house of Garet's family in Vale (touch cell 6): it opens and
-/// VALE_TO_VALE_INTERIORS_1_EAST leads in.
+/// VALE_TO_VALE_INTERIORS_SHOPS_EAST leads in.
 static void Event_EnterGaretsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 54, 32);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 406, 727);
-  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_1_EAST);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_EAST);
 }
 
-/// A house door in Vale (touch cell 7): it opens and VALE_TO_VALE_INTERIORS_1
-/// leads in, to the room ValeInteriors1 enters from
-/// VALE_INTERIORS_1_FROM_VALE_SOUTH.
-static void Event_EnterValeInteriors1(void) {
+/// A house door in Vale (touch cell 7): it opens and
+/// VALE_TO_VALE_INTERIORS_SHOPS_SOUTH leads in, to the room ValeInteriorsShops
+/// enters from VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH.
+static void Event_EnterValeInteriorsShops(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 45, 39);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
-  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_1);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_SOUTH);
 }
 
 /// The door of Isaac's house in Vale (touch cell 8): after the party has left
 /// and before Kalay, Dora will not open. "My Isaac would keep his promise...
-/// Go away." Otherwise VALE_TO_VALE_INTERIORS_2 leads in.
+/// Go away." Otherwise VALE_TO_VALE_INTERIORS_INN leads in.
 static void Event_EnterIsaacsHouse(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 &&
       Engine_GameFlagIsSet(FLAG_REACHED_KALAY) == 0) {
@@ -528,37 +529,37 @@ static void Event_EnterIsaacsHouse(void) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gValeCellAnimA, 50, 44);
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
-    Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_2);
+    Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_INN);
   }
 }
 
 /// The door of the house of Jenna's grandparents in Vale (touch cell 9): it
-/// opens and VALE_TO_VALE_INTERIORS_1_NORTH leads in.
+/// opens and VALE_TO_VALE_INTERIORS_SHOPS_NORTH leads in.
 static void Event_EnterJennasGrandparentsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
-  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_1_NORTH);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_NORTH);
 }
 
 /// A house door in Vale (touch cell 10): it opens and
-/// VALE_TO_VALE_INTERIORS_1_WEST leads in, to the room ValeInteriors1 enters
-/// from VALE_INTERIORS_1_FROM_VALE_WEST.
-static void Event_EnterValeInteriors1West(void) {
+/// VALE_TO_VALE_INTERIORS_SHOPS_WEST leads in, to the room ValeInteriorsShops
+/// enters from VALE_INTERIORS_SHOPS_FROM_VALE_WEST.
+static void Event_EnterValeInteriorsShopsWest(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimD, 52, 76);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 1238);
-  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_1_WEST);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_WEST);
 }
 
 /// A second door in Vale into the house of Jenna's grandparents (touch cell
 /// 11): it opens and exit 10, which scene_links.h leaves unnamed, leads in, to
-/// the room ValeInteriors1 enters from VALE_INTERIORS_1_FROM_VALE_NORTH. XXX:
-/// likely a slip in the exit table, because exit 10 sends this door, beside
-/// entrance 11, into that room, whose door returns the party at
-/// VALE_FROM_VALE_INTERIORS_1_NORTH by the other door, and no exit leads to
-/// entrance 11; entering the room by this door in a play-through would settle
-/// it.
+/// the room ValeInteriorsShops enters from
+/// VALE_INTERIORS_SHOPS_FROM_VALE_NORTH. XXX: likely a slip in the exit table,
+/// because exit 10 sends this door, beside entrance 11, into that room, whose
+/// door returns the party at VALE_FROM_VALE_INTERIORS_SHOPS_NORTH by the other
+/// door, and no exit leads to entrance 11; entering the room by this door in a
+/// play-through would settle it.
 static void Event_EnterJennasGrandparentsHouseBySecondDoor(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 35, 74);
@@ -3276,11 +3277,11 @@ struct SceneEntrance gVale_Entrances[] = {
     { VALE_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 38, 0, 636, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_VALE_KRADEN_SOUTH, CONDITION_ALWAYS, 29, 0, 792, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_VALE_GATE, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_1_EAST, CONDITION_ALWAYS, 406, 0, 743, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_1_SOUTH, CONDITION_ALWAYS, 262, 0, 821, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_2, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_1_NORTH, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_1_WEST, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_SHOPS_EAST, CONDITION_ALWAYS, 406, 0, 743, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_SHOPS_SOUTH, CONDITION_ALWAYS, 262, 0, 821, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_INN, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_SHOPS_NORTH, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_SHOPS_WEST, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 11, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_TITLE, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 17, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
@@ -3293,14 +3294,14 @@ u32 gVale_Exits[] = {
     SCENE_EXIT(VALE_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_VALE),
     SCENE_EXIT(VALE_TO_VALE_KRADEN_NORTH, ValeKraden, VALE_KRADEN_FROM_VALE_NORTH),
     SCENE_EXIT(VALE_TO_VALE_KRADEN_SOUTH, ValeKraden, VALE_KRADEN_FROM_VALE_SOUTH),
-    SCENE_EXIT(VALE_TO_VALE_INTERIORS_1_EAST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_EAST),
-    SCENE_EXIT(VALE_TO_VALE_INTERIORS_1, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_SOUTH),
-    SCENE_EXIT(VALE_TO_VALE_INTERIORS_2, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE),
-    SCENE_EXIT(VALE_TO_VALE_INTERIORS_1_NORTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_NORTH),
-    SCENE_EXIT(VALE_TO_VALE_INTERIORS_1_WEST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_WEST),
-    SCENE_EXIT(10, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_SHOPS_EAST, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_EAST),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_SHOPS_SOUTH, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_INN, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_SHOPS_NORTH, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_SHOPS_WEST, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR, ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_NORTH),
     SCENE_EXIT(VALE_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE),
-    SCENE_EXIT(12, Vale, 17),
+    SCENE_EXIT(VALE_TO_ROOF_MENDED, Vale, VALE_FROM_ROOF_MENDED),
     SCENE_EXITS_END,
 };
 
@@ -3470,10 +3471,10 @@ struct SceneEvent gVale_Events[] = {
     { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenSouth) },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGate) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGaretsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriors1) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriorsShops) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriors1West) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriorsShopsWest) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouseBySecondDoor) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
@@ -3520,10 +3521,10 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
     { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenSouth) },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGate) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGaretsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriors1) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriorsShops) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriors1West) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriorsShopsWest) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouseBySecondDoor) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
@@ -3573,10 +3574,10 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenSouth) },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGate) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGaretsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriors1) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriorsShops) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriors1West) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterValeInteriorsShopsWest) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouseBySecondDoor) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },

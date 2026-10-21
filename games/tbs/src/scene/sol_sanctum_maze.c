@@ -2,11 +2,11 @@
 /// Sol Sanctum (scene 14, SceneId_SolSanctumMaze), the room that holds the
 /// second Small Jewel.
 ///
-/// Both its ways out (SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_SOUTH and
-/// _NORTH) lead into scene 16 (SceneId_SolSanctumEntrance1), the rooms inside
+/// Both its ways out (SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH and
+/// _NORTH) lead into scene 16 (SceneId_SolSanctumReliefs), the rooms inside
 /// Sol Sanctum's door, with two minotaur reliefs and the statues the party
 /// pushes or moves with Move; it leads back in by
-/// SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST and _EAST. The room places
+/// SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST and _EAST. The room places
 /// no actors; its one event of its own is the chest
 /// (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND). Each relief in scene 16 has a
 /// sparkling right eye and an empty socket for the left, and the jewel from
@@ -56,21 +56,19 @@ const struct SceneEvent *Scene_GetEvents(void) { return gSolSanctumMazeEvents; }
 
 struct SceneEntrance gSolSanctumMazeEntrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_SOUTH, CONDITION_ALWAYS, 424,
-     0, 615, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_NORTH, CONDITION_ALWAYS, 376,
-     0, 53, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH, CONDITION_ALWAYS, 424, 0,
+     615, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH, CONDITION_ALWAYS, 376, 0,
+     53, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gSolSanctumMazeExits[] = {
     SCENE_EXITS(SolSanctumMaze),
-    SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_SOUTH,
-               SolSanctumEntrance1,
-               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_WEST),
-    SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_NORTH,
-               SolSanctumEntrance1,
-               SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST),
+    SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH, SolSanctumReliefs,
+               SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_WEST),
+    SCENE_EXIT(SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH, SolSanctumReliefs,
+               SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST),
     SCENE_EXITS_END,
 };
 
@@ -79,10 +77,9 @@ struct ScenePlacement gSolSanctumMazePlacements[] = {
 };
 
 struct SceneEvent gSolSanctumMazeEvents[] = {
-    {0x31, 1, CONDITION_ALWAYS,
-     SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_SOUTH},
+    {0x31, 1, CONDITION_ALWAYS, SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,
-     SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_NORTH},
+     SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH},
     {SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND,
      FIND_ITEM(ITEM_SMALL_JEWEL)},
     {SCENE_EVENTS_END},

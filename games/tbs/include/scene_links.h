@@ -5,7 +5,8 @@
 /// The ways between places: each scene's entrances, named by where the party
 /// arrives from, and its exits, named by where they lead, in the exit tables'
 /// numbers (SCENE_EXIT). A door is named the same from both sides. Links
-/// between rooms of one scene keep their numbers: nothing names those rooms.
+/// between rooms of one scene are named by their rooms
+/// (<SCENE>_<ROOM>_TO_<ROOM>).
 
 /// SceneId_Title's entrances and exits.
 enum {
@@ -157,19 +158,39 @@ enum {
   VALE_STORM_FROM_VALE_KRADEN_NORTH = 3,
   VALE_STORM_FROM_VALE_KRADEN_SOUTH = 4,
   VALE_STORM_FROM_VALE_GATE = 5,
-  VALE_STORM_FROM_VALE_INTERIORS_2 = 12,
-  VALE_STORM_FROM_VALE_INTERIORS_2_WEST = 13,
+  VALE_STORM_FROM_VALE_INTERIORS_SHOPS_EAST = 6,
+  VALE_STORM_FROM_VALE_INTERIORS_SHOPS_SOUTH = 7,
+  VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE = 8,
+  VALE_STORM_FROM_VALE_INTERIORS_SHOPS_NORTH = 9,
+  VALE_STORM_FROM_VALE_INTERIORS_SHOPS_WEST = 10,
+  VALE_STORM_FROM_VALE_INTERIORS_INN_WEST = 12,
+  VALE_STORM_FROM_VALE_INTERIORS_INN_EAST = 13,
+  VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA = 15,
+  VALE_STORM_FROM_BOULDER_PASSED = 16,
 };
 enum {
   VALE_STORM_TO_VALE_GATE = 2,
   VALE_STORM_TO_VALE_KRADEN_NORTH = 3,
   VALE_STORM_TO_VALE_KRADEN_SOUTH = 4,
-  VALE_STORM_TO_VALE_INTERIORS_1_EAST = 5,
-  VALE_STORM_TO_VALE_INTERIORS_1 = 6,
-  VALE_STORM_TO_VALE_INTERIORS_1_NORTH = 8,
-  VALE_STORM_TO_VALE_INTERIORS_1_WEST_3 = 11,
-  VALE_STORM_TO_VALE_INTERIORS_2_WEST = 12,
-  VALE_STORM_TO_VALE_INTERIORS_2_EAST = 13,
+  VALE_STORM_TO_VALE_INTERIORS_SHOPS_EAST = 5,
+  VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH = 6,
+  VALE_STORM_TO_VALE_INTERIORS_INN_ISAACS_HOUSE =
+      7, ///< ★ Named from what the player sees: the door of Isaac's house on
+         ///< the stormy night (its render)
+  VALE_STORM_TO_VALE_INTERIORS_SHOPS_NORTH = 8,
+  VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST = 9,
+  VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR =
+      10, ///< ★ Named from what the player sees: the second door of the house
+          ///< by the river, leading where the first house door does (its
+          ///< render)
+  VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR =
+      11, ///< ★ Named from what the player sees: the door where the Sanctum
+          ///< stands by day (its render)
+  VALE_STORM_TO_VALE_INTERIORS_INN_WEST = 12,
+  VALE_STORM_TO_VALE_INTERIORS_INN_EAST = 13,
+  VALE_STORM_TO_BOULDER_PASSED =
+      20, ///< ★ Named from what the player sees: the riverbank where Isaac
+          ///< stands once the Boulder has swept down the river (its render)
 };
 
 /// SceneId_Vale's entrances and exits.
@@ -179,122 +200,163 @@ enum {
   VALE_FROM_VALE_KRADEN_NORTH = 3,
   VALE_FROM_VALE_KRADEN_SOUTH = 4,
   VALE_FROM_VALE_GATE = 5,
-  VALE_FROM_VALE_INTERIORS_1_EAST = 6,
-  VALE_FROM_VALE_INTERIORS_1_SOUTH = 7,
-  VALE_FROM_VALE_INTERIORS_2 = 8,
-  VALE_FROM_VALE_INTERIORS_1_NORTH = 9,
-  VALE_FROM_VALE_INTERIORS_1_WEST = 10,
+  VALE_FROM_VALE_INTERIORS_SHOPS_EAST = 6,
+  VALE_FROM_VALE_INTERIORS_SHOPS_SOUTH = 7,
+  VALE_FROM_VALE_INTERIORS_INN = 8,
+  VALE_FROM_VALE_INTERIORS_SHOPS_NORTH = 9,
+  VALE_FROM_VALE_INTERIORS_SHOPS_WEST = 10,
   VALE_FROM_TITLE = 16,
+  VALE_FROM_ROOF_MENDED = 17,
 };
 enum {
   VALE_TO_SOL_ENTRANCE = 1,
   VALE_TO_VALE_GATE = 2,
   VALE_TO_VALE_KRADEN_NORTH = 3,
   VALE_TO_VALE_KRADEN_SOUTH = 4,
-  VALE_TO_VALE_INTERIORS_1_EAST = 5,
-  VALE_TO_VALE_INTERIORS_1 = 6,
-  VALE_TO_VALE_INTERIORS_2 = 7,
-  VALE_TO_VALE_INTERIORS_1_NORTH = 8,
-  VALE_TO_VALE_INTERIORS_1_WEST = 9,
+  VALE_TO_VALE_INTERIORS_SHOPS_EAST = 5,
+  VALE_TO_VALE_INTERIORS_SHOPS_SOUTH = 6,
+  VALE_TO_VALE_INTERIORS_INN = 7,
+  VALE_TO_VALE_INTERIORS_SHOPS_NORTH = 8,
+  VALE_TO_VALE_INTERIORS_SHOPS_WEST = 9,
+  VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR =
+      10, ///< ★ Named from what the player sees: the door of the house by the
+          ///< river that leads into Jenna's grandparents' house (its render)
   VALE_TO_SANCTUM = 11,
+  VALE_TO_ROOF_MENDED =
+      12, ///< ★ Named from the game: "You patched it nicely." (MsgValeGoodJob)
 };
 
 /// SceneId_ValeGate's entrances and exits.
 enum {
-  VALE_GATE_FROM_VALE_INTERIORS_1_NORTH = 1,
-  VALE_GATE_FROM_VALE_INTERIORS_2_NORTH = 2,
-  VALE_GATE_FROM_VALE_INTERIORS_1_WEST = 3,
-  VALE_GATE_FROM_VALE_INTERIORS_1_EAST = 4,
-  VALE_GATE_FROM_VALE_INTERIORS_1_SOUTH = 5,
-  VALE_GATE_FROM_VALE_INTERIORS_2_WEST = 6,
-  VALE_GATE_FROM_VALE_INTERIORS_2_SOUTH = 7,
+  VALE_GATE_FROM_VALE_INTERIORS_SHOPS_NORTH = 1,
+  VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH = 2,
+  VALE_GATE_FROM_VALE_INTERIORS_SHOPS_WEST = 3,
+  VALE_GATE_FROM_VALE_INTERIORS_SHOPS_EAST = 4,
+  VALE_GATE_FROM_VALE_INTERIORS_SHOPS_SOUTH = 5,
+  VALE_GATE_FROM_VALE_INTERIORS_INN_WEST = 6,
+  VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH = 7,
   VALE_GATE_FROM_VALE = 8,
   VALE_GATE_FROM_WORLD_MAP = 10,
   VALE_GATE_FROM_GOMA_CAVE_WATERWAY_1 = 11,
   VALE_GATE_FROM_SANCTUM = 12,
 };
 enum {
-  VALE_GATE_TO_VALE_INTERIORS_1_EAST = 1,
-  VALE_GATE_TO_VALE_INTERIORS_2_NORTH = 2,
-  VALE_GATE_TO_VALE_INTERIORS_1_NORTH = 3,
-  VALE_GATE_TO_VALE_INTERIORS_1_SOUTH = 4,
-  VALE_GATE_TO_VALE_INTERIORS_1_WEST = 5,
-  VALE_GATE_TO_VALE_INTERIORS_2_NORTHWEST = 6,
-  VALE_GATE_TO_VALE_INTERIORS_2_SOUTH = 7,
+  VALE_GATE_TO_VALE_INTERIORS_SHOPS_EAST = 1,
+  VALE_GATE_TO_VALE_INTERIORS_INN_NORTH = 2,
+  VALE_GATE_TO_VALE_INTERIORS_SHOPS_NORTH = 3,
+  VALE_GATE_TO_VALE_INTERIORS_SHOPS_SOUTH = 4,
+  VALE_GATE_TO_VALE_INTERIORS_SHOPS_WEST = 5,
+  VALE_GATE_TO_VALE_INTERIORS_INN_NORTHWEST = 6,
+  VALE_GATE_TO_VALE_INTERIORS_INN_SOUTH = 7,
   VALE_GATE_TO_VALE = 8,
   VALE_GATE_TO_TITLE = 9,
   VALE_GATE_TO_WORLD_MAP = 10,
   VALE_GATE_TO_GOMA_CAVE_WATERWAY_1 = 11,
   VALE_GATE_TO_BILIBIN = 40,
-  VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST = 50,
+  VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST = 50,
 };
 
 /// SceneId_ValeKraden's entrances and exits.
 enum {
   VALE_KRADEN_FROM_VALE_NORTH = 1,
   VALE_KRADEN_FROM_VALE_SOUTH = 2,
-  VALE_KRADEN_FROM_VALE_INTERIORS_2_NORTH = 3,
-  VALE_KRADEN_FROM_VALE_CAVE_1_WEST = 4,
-  VALE_KRADEN_FROM_VALE_CAVE_1_EAST = 6,
-  VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH = 10,
+  VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH = 3,
+  VALE_KRADEN_FROM_VALE_CAVE_MOUTH_WEST = 4,
+  VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST = 6,
+  VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH = 10,
 };
 enum {
   VALE_KRADEN_TO_VALE_NORTH = 1,
   VALE_KRADEN_TO_VALE_SOUTH = 2,
-  VALE_KRADEN_TO_VALE_INTERIORS_2_NORTH = 3,
-  VALE_KRADEN_TO_VALE_CAVE_1_WEST = 4,
-  VALE_KRADEN_TO_VALE_CAVE_1_EAST = 6,
+  VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH = 3,
+  VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST = 4,
+  VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST = 6,
   VALE_KRADEN_TO_VALE_STORM_NORTH = 11,
   VALE_KRADEN_TO_VALE_STORM_SOUTH = 12,
-  VALE_KRADEN_TO_VALE_INTERIORS_2_2 = 13,
+  VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG =
+      13, ///< ★ Named from the game: "Mythril Bag" (MsgItemName)
 };
 
-/// SceneId_ValeInteriors1's entrances and exits.
+/// SceneId_ValeInteriorsShops's entrances and exits.
 enum {
-  VALE_INTERIORS_1_FROM_VALE_WEST = 1,
-  VALE_INTERIORS_1_FROM_VALE_NORTH = 2,
-  VALE_INTERIORS_1_FROM_VALE_GATE_NORTH = 3,
-  VALE_INTERIORS_1_FROM_VALE_GATE_WEST = 4,
-  VALE_INTERIORS_1_FROM_VALE_SOUTH = 5,
-  VALE_INTERIORS_1_FROM_VALE_EAST = 6,
-  VALE_INTERIORS_1_FROM_VALE_GATE_SOUTH = 7,
-  VALE_INTERIORS_1_FROM_VALE_GATE_EAST = 8,
+  VALE_INTERIORS_SHOPS_FROM_VALE_WEST = 1,
+  VALE_INTERIORS_SHOPS_FROM_VALE_NORTH = 2,
+  VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH = 3,
+  VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST = 4,
+  VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH = 5,
+  VALE_INTERIORS_SHOPS_FROM_VALE_EAST = 6,
+  VALE_INTERIORS_SHOPS_FROM_VALE_GATE_SOUTH = 7,
+  VALE_INTERIORS_SHOPS_FROM_VALE_GATE_EAST = 8,
 };
 enum {
-  VALE_INTERIORS_1_TO_VALE_WEST = 1,
-  VALE_INTERIORS_1_TO_VALE_NORTH = 2,
-  VALE_INTERIORS_1_TO_VALE_GATE_WEST = 3,
-  VALE_INTERIORS_1_TO_VALE_GATE_SOUTH = 4,
-  VALE_INTERIORS_1_TO_VALE_SOUTH = 5,
-  VALE_INTERIORS_1_TO_VALE_EAST = 6,
-  VALE_INTERIORS_1_TO_VALE_GATE_EAST = 7,
-  VALE_INTERIORS_1_TO_VALE_GATE_NORTH = 8,
+  VALE_INTERIORS_SHOPS_TO_VALE_WEST = 1,
+  VALE_INTERIORS_SHOPS_TO_VALE_NORTH = 2,
+  VALE_INTERIORS_SHOPS_TO_VALE_GATE_WEST = 3,
+  VALE_INTERIORS_SHOPS_TO_VALE_GATE_SOUTH = 4,
+  VALE_INTERIORS_SHOPS_TO_VALE_SOUTH = 5,
+  VALE_INTERIORS_SHOPS_TO_VALE_EAST = 6,
+  VALE_INTERIORS_SHOPS_TO_VALE_GATE_EAST = 7,
+  VALE_INTERIORS_SHOPS_TO_VALE_GATE_NORTH = 8,
 };
 
-/// SceneId_ValeInteriors2's entrances and exits.
+/// SceneId_ValeInteriorsInn's entrances and exits.
 enum {
-  VALE_INTERIORS_2_FROM_VALE_GATE_NORTHWEST = 1,
-  VALE_INTERIORS_2_FROM_VALE_KRADEN_NORTH = 2,
-  VALE_INTERIORS_2_FROM_VALE_GATE_NORTHEAST = 3,
-  VALE_INTERIORS_2_FROM_VALE_GATE_WEST = 4,
-  VALE_INTERIORS_2_FROM_VALE = 6,
-  VALE_INTERIORS_2_AFTER_ENTER_BATTLE = 8, ///< LinkLobby_EnterBattle
-  VALE_INTERIORS_2_FROM_VALE_STORM_WEST = 11,
-  VALE_INTERIORS_2_FROM_VALE_STORM_EAST = 12,
-  VALE_INTERIORS_2_FROM_BABI_PALACE_1 = 19,
-  VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST = 20,
-  VALE_INTERIORS_2_FROM_VALE_KRADEN_2 = 22,
+  VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHWEST = 1,
+  VALE_INTERIORS_INN_FROM_VALE_KRADEN_NORTH = 2,
+  VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST = 3,
+  VALE_INTERIORS_INN_FROM_VALE_GATE_WEST = 4,
+  VALE_INTERIORS_INN_INN_FROM_UPSTAIRS =
+      5, ///< ★ Named from what the player sees: Vale's inn, with its
+         ///< innkeeper's counter and the stairs up to the guest room (its
+         ///< render)
+  VALE_INTERIORS_INN_FROM_VALE = 6,
+  VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS =
+      7, ///< ★ Named from what the player sees: Isaac's house, where Dora wakes
+         ///< him on the stormy night (its render)
+  VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS =
+      8, ///< ★ Named from what the player sees: Vale's inn, with its
+         ///< innkeeper's counter and the stairs up to the guest room (its
+         ///< render)
+  VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_DOWNSTAIRS =
+      9, ///< ★ Named from what the player sees: Isaac's house, where Dora wakes
+         ///< him on the stormy night (its render)
+  VALE_INTERIORS_INN_FROM_VALE_STORM_WEST = 11,
+  VALE_INTERIORS_INN_FROM_VALE_STORM_EAST = 12,
+  VALE_INTERIORS_INN_FROM_BABI_PALACE_1 = 19,
+  VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST = 20,
+  VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA =
+      21, ///< ★ Named from what the player sees: Isaac's house, where Dora
+          ///< wakes him on the stormy night (its render)
+  VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG = 22,
 };
 enum {
-  VALE_INTERIORS_2_TO_VALE_GATE_NORTHWEST = 1,
-  VALE_INTERIORS_2_TO_VALE_KRADEN_NORTH = 2,
-  VALE_INTERIORS_2_TO_VALE_GATE_NORTHEAST = 3,
-  VALE_INTERIORS_2_TO_VALE_GATE_WEST = 4,
-  VALE_INTERIORS_2_TO_VALE = 6,
-  VALE_INTERIORS_2_TO_VALE_STORM = 10,
-  VALE_INTERIORS_2_TO_VALE_STORM_WEST = 11,
-  VALE_INTERIORS_2_TO_BABI_PALACE_1 = 19,
-  VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH = 22,
+  VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST = 1,
+  VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH = 2,
+  VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST = 3,
+  VALE_INTERIORS_INN_TO_VALE_GATE_WEST = 4,
+  VALE_INTERIORS_INN_INN_TO_UPSTAIRS =
+      5, ///< ★ Named from what the player sees: the upper floor the stairs
+         ///< climb to, the inn's guest room or Isaac's bedroom (its render)
+  VALE_INTERIORS_INN_TO_VALE = 6,
+  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS =
+      7, ///< ★ Named from what the player sees: the upper floor the stairs
+         ///< climb to, the inn's guest room or Isaac's bedroom (its render)
+  VALE_INTERIORS_INN_INN_TO_DOWNSTAIRS =
+      8, ///< ★ Named from what the player sees: the ground floor at the foot of
+         ///< the stairs (its render)
+  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS =
+      9, ///< ★ Named from what the player sees: the ground floor at the foot of
+         ///< the stairs (its render)
+  VALE_INTERIORS_INN_TO_VALE_STORM_WEST = 10,
+  VALE_INTERIORS_INN_TO_VALE_STORM_EAST = 11,
+  VALE_INTERIORS_INN_TO_BABI_PALACE_1 = 19,
+  VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA =
+      20, ///< ★ Named from what the player sees: the ground floor at the foot
+          ///< of the stairs (its render)
+  VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA =
+      21, ///< ★ Named from what the player sees: Dora leading Isaac down and
+          ///< out of the house on the stormy night (its render)
+  VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH = 22,
 };
 
 /// SceneId_Sanctum's entrances and exits.
@@ -305,6 +367,7 @@ enum {
   SANCTUM_FROM_VAULT_REVISIT = 11,
   SANCTUM_FROM_VAULT_INTERIORS = 12,
   SANCTUM_FROM_VALE_ERUPTION = 20,
+  SANCTUM_FROM_QUEST_RESTART = 21,
   SANCTUM_FROM_ALTIN = 29,
   SANCTUM_FROM_XIAN = 32,
   SANCTUM_FROM_BILIBIN = 35,
@@ -313,6 +376,9 @@ enum {
   SANCTUM_TO_VALE = 1,
   SANCTUM_TO_VAULT = 10,
   SANCTUM_TO_VAULT_REVISIT = 11,
+  SANCTUM_TO_QUEST_RESTART =
+      20, ///< ★ Named from what the player sees: starting again before the
+          ///< Great Healer after refusing the quest and leaving (its render)
   SANCTUM_TO_VALE_GATE = 30,
   SANCTUM_TO_ALTIN = 40,
   SANCTUM_TO_BILIBIN = 41,
@@ -330,23 +396,55 @@ enum {
 
 /// SceneId_SolSanctumLunaSolRooms's entrances and exits.
 enum {
-  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ENTRANCE_1 = 1,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS = 1,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE = 2,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED = 4,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_SPRUNG = 5,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN = 6,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_UNUSED = 7,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION = 8,
 };
 enum {
-  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ENTRANCE_1 = 1,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS = 1,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE = 2,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED =
+      3, ///< ★ Named from what the player sees: the quarter's light flashing
+         ///< ever faster around Kraden once the trap is disarmed (its render)
+  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_SPRUNG =
+      4, ///< ★ Named from the game: "Stop!!! You're about to make a big
+         ///< mistake!" (MsgSolSanctumWhatsHappening)
+  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN =
+      5, ///< ★ Named from the game: "You found it"
+         ///< (MsgSolSanctumKradenYouFoundIt)
+  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_UNUSED = 6,
   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_ELEMENTAL_STAR_ROOM = 7,
-  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SCENE_510 = 10,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_TO_BATTLE = 10,
 };
 
 /// SceneId_SolSanctumStatue's entrances and exits.
 enum {
   SOL_SANCTUM_STATUE_FROM_VALE_GATE = 0,
+  SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 1,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE = 2,
+  SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED = 3,
+  SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG = 4,
+  SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN = 5,
+  SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED = 6,
 };
 enum {
+  SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 1,
   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE = 2,
-  SOL_SANCTUM_STATUE_TO_SCENE_510 = 10,
+  SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED =
+      3, ///< ★ Named from what the player sees: Kraden explaining that the
+         ///< centre statue disarmed the trap (its render)
+  SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG =
+      4, ///< ★ Named from the game: "Stop!!! You're about to make a big
+         ///< mistake!" (MsgSolSanctumWhatsHappening)
+  SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN =
+      5, ///< ★ Named from what the player sees: the lit quarters of the
+         ///< pictures flashing in the Luna room (its render)
+  SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED = 6,
+  SOL_SANCTUM_STATUE_TO_BATTLE = 10,
 };
 
 /// SceneId_SolSanctumPsynergyStone's entrances and exits.
@@ -359,40 +457,104 @@ enum {
 
 /// SceneId_SolSanctumMaze's entrances and exits.
 enum {
-  SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_SOUTH = 1,
-  SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_NORTH = 2,
+  SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH = 1,
+  SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH = 2,
 };
 enum {
-  SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_SOUTH = 1,
-  SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_NORTH = 2,
+  SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH = 1,
+  SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH = 2,
 };
 
 /// SceneId_SolSanctumCorridor's entrances and exits.
 enum {
-  SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_EAST = 1,
-  SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_WEST = 2,
+  SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST = 1,
+  SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST = 2,
 };
 enum {
-  SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_EAST = 1,
-  SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_WEST = 2,
+  SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST = 1,
+  SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST = 2,
 };
 
-/// SceneId_SolSanctumEntrance1's entrances and exits.
+/// SceneId_SolSanctumReliefs's entrances and exits.
 enum {
-  SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_WEST = 1,
-  SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_EAST = 5,
-  SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_WEST = 7,
-  SOL_SANCTUM_ENTRANCE_1_FROM_SOL_ENTRANCE = 8,
-  SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_MAZE_EAST = 14,
-  SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 16,
+  SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST = 1,
+  SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_HALL =
+      2, ///< ★ Named from what the player sees: the room of three passages
+         ///< above a stepping-stone pool, one passage ending at a chest (its
+         ///< render)
+  SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_HALL =
+      3, ///< ★ Named from what the player sees: the narrow dead end with a
+         ///< statue at its head (its render)
+  SOL_SANCTUM_RELIEFS_POOL_ROOM_FROM_ENTRANCE_HALL =
+      4, ///< ★ Named from what the player sees: the room off the entrance hall
+         ///< with a pool crossed on stepping stones (its render)
+  SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_EAST = 5,
+  SOL_SANCTUM_RELIEFS_STAIRWAY_ROOM_FROM_FIRST_RELIEF_HALL =
+      6, ///< ★ Named from what the player sees: the narrow room whose doorway
+         ///< has stairs leading on into the sanctum (its render)
+  SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_WEST = 7,
+  SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE = 8,
+  SOL_SANCTUM_RELIEFS_ENTRANCE_HALL_FROM_POOL_ROOM =
+      9, ///< ★ Named from what the player sees: the room inside Sol Sanctum's
+         ///< door, where the party first comes in from the mountainside (its
+         ///< render)
+  SOL_SANCTUM_RELIEFS_LOOP_CORRIDOR_FROM_SECOND_RELIEF_HALL =
+      10, ///< ★ Named from what the player sees: the passage that runs in a
+          ///< loop round a block of wall (its render)
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_FROM_CHEST_ROOM =
+      11, ///< ★ Named from the game: "It's a relief"
+          ///< (MsgSolSanctumMinotaurReliefOneEye)
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_FROM_STATUE_NOOK =
+      12, ///< ★ Named from the game: "It's a relief"
+          ///< (MsgSolSanctumMinotaurReliefOneEye)
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_FROM_STAIRWAY_ROOM =
+      13, ///< ★ Named from the game: "It's a relief"
+          ///< (MsgSolSanctumMinotaurReliefOneEye)
+  SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST = 14,
+  SOL_SANCTUM_RELIEFS_SECOND_RELIEF_HALL_FROM_LOOP_CORRIDOR =
+      15, ///< ★ Named from the game: "It's a relief"
+          ///< (MsgSolSanctumMinotaurReliefOneEye)
+  SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 16,
 };
 enum {
-  SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_WEST = 1,
-  SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_CORRIDOR_EAST = 5,
-  SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_WEST = 7,
-  SOL_SANCTUM_ENTRANCE_1_TO_SOL_ENTRANCE = 8,
-  SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_MAZE_EAST = 14,
-  SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 16,
+  SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST = 1,
+  SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_HALL =
+      2, ///< ★ Named from the game: "It's a relief"
+         ///< (MsgSolSanctumMinotaurReliefOneEye)
+  SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_HALL =
+      3, ///< ★ Named from the game: "It's a relief"
+         ///< (MsgSolSanctumMinotaurReliefOneEye)
+  SOL_SANCTUM_RELIEFS_POOL_ROOM_TO_ENTRANCE_HALL =
+      4, ///< ★ Named from what the player sees: the room inside Sol Sanctum's
+         ///< door, where the party first comes in from the mountainside (its
+         ///< render)
+  SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST = 5,
+  SOL_SANCTUM_RELIEFS_STAIRWAY_ROOM_TO_FIRST_RELIEF_HALL =
+      6, ///< ★ Named from the game: "It's a relief"
+         ///< (MsgSolSanctumMinotaurReliefOneEye)
+  SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST = 7,
+  SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE = 8,
+  SOL_SANCTUM_RELIEFS_ENTRANCE_HALL_TO_POOL_ROOM =
+      9, ///< ★ Named from what the player sees: the room off the entrance hall
+         ///< with a pool crossed on stepping stones (its render)
+  SOL_SANCTUM_RELIEFS_LOOP_CORRIDOR_TO_SECOND_RELIEF_HALL =
+      10, ///< ★ Named from the game: "It's a relief"
+          ///< (MsgSolSanctumMinotaurReliefOneEye)
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_TO_CHEST_ROOM =
+      11, ///< ★ Named from what the player sees: the room of three passages
+          ///< above a stepping-stone pool, one passage ending at a chest (its
+          ///< render)
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_TO_STATUE_NOOK =
+      12, ///< ★ Named from what the player sees: the narrow dead end with a
+          ///< statue at its head (its render)
+  SOL_SANCTUM_RELIEFS_FIRST_RELIEF_HALL_TO_STAIRWAY_ROOM =
+      13, ///< ★ Named from what the player sees: the narrow room whose doorway
+          ///< has stairs leading on into the sanctum (its render)
+  SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST = 14,
+  SOL_SANCTUM_RELIEFS_SECOND_RELIEF_HALL_TO_LOOP_CORRIDOR =
+      15, ///< ★ Named from what the player sees: the passage that runs in a
+          ///< loop round a block of wall (its render)
+  SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 16,
 };
 
 /// SceneId_SolSanctumElementalStarRoom's entrances and exits.
@@ -414,11 +576,11 @@ enum {
 /// SceneId_SolEntrance's entrances and exits.
 enum {
   SOL_ENTRANCE_FROM_VALE = 1,
-  SOL_ENTRANCE_FROM_SOL_SANCTUM_ENTRANCE_1 = 2,
+  SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS = 2,
 };
 enum {
   SOL_ENTRANCE_TO_VALE = 1,
-  SOL_ENTRANCE_TO_SOL_SANCTUM_ENTRANCE_1 = 2,
+  SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS = 2,
 };
 
 /// SceneId_Vault's entrances and exits.
@@ -1517,42 +1679,58 @@ enum {
   LAMAKAN_DESERT_4_TO_LAMAKAN_DESERT_3_WEST = 4,
 };
 
-/// SceneId_ValeCave1's entrances and exits.
+/// SceneId_ValeCaveMouth's entrances and exits.
 enum {
-  VALE_CAVE_1_FROM_VALE_KRADEN_WEST = 1,
-  VALE_CAVE_1_FROM_VALE_CAVE_2 = 2,
-  VALE_CAVE_1_FROM_VALE_KRADEN_EAST = 3,
+  VALE_CAVE_MOUTH_FROM_VALE_KRADEN_WEST = 1,
+  VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE = 2,
+  VALE_CAVE_MOUTH_FROM_VALE_KRADEN_EAST = 3,
 };
 enum {
-  VALE_CAVE_1_TO_VALE_KRADEN_WEST = 1,
-  VALE_CAVE_1_TO_VALE_CAVE_2 = 2,
-  VALE_CAVE_1_TO_VALE_KRADEN_EAST = 3,
-};
-
-/// SceneId_ValeCave2's entrances and exits.
-enum {
-  VALE_CAVE_2_FROM_VALE_CAVE_1 = 1,
-  VALE_CAVE_2_FROM_VALE_CAVE_3_WEST = 4,
-  VALE_CAVE_2_FROM_VALE_CAVE_3_EAST = 7,
-  VALE_CAVE_2_FROM_VALE_CAVE_3_SOUTH = 10,
-};
-enum {
-  VALE_CAVE_2_TO_VALE_CAVE_1 = 1,
-  VALE_CAVE_2_TO_VALE_CAVE_3_WEST = 4,
-  VALE_CAVE_2_TO_VALE_CAVE_3_EAST = 7,
-  VALE_CAVE_2_TO_VALE_CAVE_3_SOUTH = 10,
+  VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST = 1,
+  VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE = 2,
+  VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST = 3,
 };
 
-/// SceneId_ValeCave3's entrances and exits.
+/// SceneId_ValeCaveKite's entrances and exits.
 enum {
-  VALE_CAVE_3_FROM_VALE_CAVE_2_WEST = 1,
-  VALE_CAVE_3_FROM_VALE_CAVE_2_NORTH = 3,
-  VALE_CAVE_3_FROM_VALE_CAVE_2_SOUTH = 4,
+  VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH = 1,
+  VALE_CAVE_KITE_WEST_FROM_EAST = 2,
+  VALE_CAVE_KITE_WEST_FROM_SOUTH = 3,
+  VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST = 4,
+  VALE_CAVE_KITE_EAST_FROM_WEST = 5,
+  VALE_CAVE_KITE_EAST_FROM_SOUTH = 6,
+  VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST = 7,
+  VALE_CAVE_KITE_SOUTH_FROM_WEST = 8,
+  VALE_CAVE_KITE_SOUTH_FROM_EAST = 9,
+  VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH = 10,
 };
 enum {
-  VALE_CAVE_3_TO_VALE_CAVE_2_WEST = 1,
-  VALE_CAVE_3_TO_VALE_CAVE_2_NORTH = 3,
-  VALE_CAVE_3_TO_VALE_CAVE_2_SOUTH = 4,
+  VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH = 1,
+  VALE_CAVE_KITE_WEST_TO_EAST = 2,
+  VALE_CAVE_KITE_WEST_TO_SOUTH = 3,
+  VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST = 4,
+  VALE_CAVE_KITE_EAST_TO_WEST = 5,
+  VALE_CAVE_KITE_EAST_TO_SOUTH = 6,
+  VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST = 7,
+  VALE_CAVE_KITE_SOUTH_TO_WEST = 8,
+  VALE_CAVE_KITE_SOUTH_TO_EAST = 9,
+  VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH = 10,
+};
+
+/// SceneId_ValeCaveLogs's entrances and exits.
+enum {
+  VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST = 1,
+  VALE_CAVE_LOGS_NORTH_FROM_SOUTH = 2,
+  VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST = 3,
+  VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_SOUTH = 4,
+  VALE_CAVE_LOGS_SOUTH_FROM_NORTH = 5,
+};
+enum {
+  VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST = 1,
+  VALE_CAVE_LOGS_NORTH_TO_SOUTH = 2,
+  VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST = 3,
+  VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH = 4,
+  VALE_CAVE_LOGS_SOUTH_TO_NORTH = 5,
 };
 
 /// SceneId_VaultCave1's entrances and exits.
@@ -2149,14 +2327,14 @@ enum {
 /// SceneId_BabiPalace1's entrances and exits.
 enum {
   BABI_PALACE_1_FROM_BABI_PALACE_2 = 1,
-  BABI_PALACE_1_FROM_VALE_INTERIORS_2 = 11,
+  BABI_PALACE_1_FROM_VALE_INTERIORS_INN = 11,
   BABI_PALACE_1_FROM_COLOSSEUM_TUNNEL = 13,
   BABI_PALACE_1_FROM_COLOSSEUM_FINAL_1 = 98,
   BABI_PALACE_1_FROM_COLOSSEUM_FINAL_3 = 99,
 };
 enum {
   BABI_PALACE_1_TO_BABI_PALACE_2 = 1,
-  BABI_PALACE_1_TO_VALE_INTERIORS_2 = 11,
+  BABI_PALACE_1_TO_VALE_INTERIORS_INN = 11,
   BABI_PALACE_1_TO_COLOSSEUM_TUNNEL = 13,
 };
 

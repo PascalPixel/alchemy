@@ -1,30 +1,31 @@
 /// @file
-/// Vale (ValeInteriors2, scene 8): Isaac's house and the ground outside it, the
-/// inn and the inside of Kraden's cottage, and at
-/// VALE_INTERIORS_2_FROM_BABI_PALACE_1 a room of Babi's Palace: one overlay
+/// Vale (ValeInteriorsInn, scene 8): Isaac's house and the ground outside it,
+/// the inn and the inside of Kraden's cottage, and at
+/// VALE_INTERIORS_INN_FROM_BABI_PALACE_1 a room of Babi's Palace: one overlay
 /// whose tables and setup choose by the entrance and the story flags. In story
 /// order:
 ///
 /// - The stormy night, three years before the journey, when a new game begins
-///   at VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST (from menu/clear.c, or
-///   ValeGate's VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST). The setup sets
+///   at VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST (from menu/clear.c, or
+///   ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST). The setup sets
 ///   FLAG_VALE_STORM and plays Event_DoraWakesIsaac: Dora, Isaac's mother,
 ///   wakes him because the Mt. Aleph Boulder is going to fall, makes him take
-///   his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him out by exit 20, back in
-///   at entrance 21, where Event_HurryToThePlaza plays: Kyle, Isaac's father,
+///   his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him downstairs (exit 20, to
+///   entrance 21), where Event_HurryToThePlaza plays: Kyle, Isaac's father,
 ///   calls them to hurry, ACTOR_FLAME shakes outside the house, then turns to
 ///   smoke and rises away, and they run for the plaza, where the village
 ///   takes refuge, by exit 21 into ValeStorm (its entrance 15). While
 ///   FLAG_VALE_STORM is set the villagers are put out of sight, lightning
-///   flashes, and VALE_INTERIORS_2_TO_VALE leads into the storm (ValeStorm)
-///   instead of Vale (gValeInteriors2_StormExits). Kyle dies that night, as the
-///   village says later.
+///   flashes, and VALE_INTERIORS_INN_TO_VALE leads into the storm (ValeStorm)
+///   instead of Vale (gValeInteriorsInn_StormExits). Kyle dies that night, as
+///   the village says later.
 /// - Vale before the party leaves (FLAG_PARTY_LEFT_VALE clear): from Kraden's
-///   cottage (ValeKraden's VALE_KRADEN_TO_VALE_INTERIORS_2_2) the party arrives
-///   at VALE_INTERIORS_2_FROM_VALE_KRADEN_2, inside it, where the Mythril Bag
-///   rises and wobbles before Kraden as he prepares for the visit to Sol
-///   Sanctum (vale_kraden.c); VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH leads back
-///   out (VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH). In a room of the inn the
+///   cottage (ValeKraden's VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG) the
+///   party arrives at VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, inside
+///   it, where the Mythril Bag rises and wobbles before Kraden as he prepares
+///   for the visit to Sol Sanctum (vale_kraden.c);
+///   VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH leads back out
+///   (VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH). In a room of the inn the
 ///   masked man (ACTOR_MASKED_MAN) asks "Hey... Boy... Do you have business
 ///   with me?" and sends Isaac off whatever he answers; at the inn the talk is
 ///   of three strange travellers staying there, one of them masked, and the
@@ -43,8 +44,8 @@
 ///   back until his quest was done, and gets up to show she is well; she stays
 ///   up for that visit (FLAG_SCENE_TEMP_03), and the setup otherwise puts her
 ///   back in bed, where she dreams of Kyle.
-/// - Babi's Palace (VALE_INTERIORS_2_FROM_BABI_PALACE_1, from Babi's Palace's
-///   BABI_PALACE_1_TO_VALE_INTERIORS_2, scene 138), in Tolbi, whose lord is
+/// - Babi's Palace (VALE_INTERIORS_INN_FROM_BABI_PALACE_1, from Babi's Palace's
+///   BABI_PALACE_1_TO_VALE_INTERIORS_INN, scene 138), in Tolbi, whose lord is
 ///   Babi: a room of his scholars, who speak of Alchemy, of Kraden, Babi's
 ///   favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
 ///   long tunnel beneath them. They talk differently once the Colosso finals
@@ -57,7 +58,7 @@
 
 #include "game_state.h"
 #include "vram_tab.h"
-#include "unit/scene/vale_interiors2.h"
+#include "unit/scene/vale_interiors_inn.h"
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -104,18 +105,18 @@
 // The arrival scenes are defined after the event handlers.
 static void Event_DoraWakesIsaac(void);
 static void Event_HurryToThePlaza(void);
-static void ValeInteriors2_RestoreRoomPatch(void);
+static void ValeInteriorsInn_RestoreRoomPatch(void);
 static void Event_ShowMythrilBag(void);
-static void ValeInteriors2_SpawnEffectPair(union FieldObject *object);
-static void ValeInteriors2_DemonstrateCatch(void);
+static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object);
+static void ValeInteriorsInn_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
 #include "common/object_facing.h"
 
-/// Vale's placed actors, numbered by the rows of gValeInteriors2_Placements.
+/// Vale's placed actors, numbered by the rows of gValeInteriorsInn_Placements.
 /// The tables after the party leaves and after Kalay keep the rows up to the
-/// inn's, and differ after them (ValeInteriors2AfterKalayActor).
-enum ValeInteriors2Actor {
+/// inn's, and differ after them (ValeInteriorsInnAfterKalayActor).
+enum ValeInteriorsInnActor {
   /// Isaac's mother. "Isaac, wake up!"
   ACTOR_DORA = ACTOR_FIRST_PLACED,
   /// Isaac's father (sprite 0x35, Kyle in vale_storm.c). "Isaac, Dora, hurry!
@@ -149,13 +150,13 @@ enum ValeInteriors2Actor {
   /// your tunic!"
   ACTOR_TUNIC,
   /// Kraden's sprite (0x1e, as in Sol Sanctum's scenes), seen only from
-  /// VALE_INTERIORS_2_FROM_VALE_KRADEN_2.
+  /// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG.
   ACTOR_KRADEN
 };
 
-/// The rows of gValeInteriors2_PlacementsAfterKalay that differ from the
+/// The rows of gValeInteriorsInn_PlacementsAfterKalay that differ from the
 /// first table's.
-enum ValeInteriors2AfterKalayActor {
+enum ValeInteriorsInnAfterKalayActor {
   /// At the inn. "Well if it isn't Isaac! You've grown so much, I almost
   /// didn't recognize you!"; Mind Read hears of Dora's illness.
   ACTOR_VILLAGER_YOUVE_GROWN = ACTOR_FIRST_PLACED + 8,
@@ -164,9 +165,10 @@ enum ValeInteriors2AfterKalayActor {
   ACTOR_BLANK_AFTER_KALAY
 };
 
-/// Babi's scholars, numbered by the rows of gValeInteriors2_ScholarsPlacements
-/// and named by what they say before the Colosso finals.
-enum ValeInteriors2ScholarActor {
+/// Babi's scholars, numbered by the rows of
+/// gValeInteriorsInn_ScholarsPlacements and named by what they say before the
+/// Colosso finals.
+enum ValeInteriorsInnScholarActor {
   /// Tells of the ruins where Babi Lighthouse stands. "Originally, there were
   /// ancient ruins at the site of Babi Lighthouse."
   ACTOR_SCHOLAR_ANCIENT_RUINS = ACTOR_FIRST_PLACED,
@@ -186,7 +188,7 @@ enum ValeInteriors2ScholarActor {
 };
 
 /// Vale's place flags this scene keeps while the party is in Vale.
-enum ValeInteriors2PlaceFlag {
+enum ValeInteriorsInnPlaceFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = 0x300,
   /// Back from Kalay, ACTOR_VILLAGER_YOUVE_GROWN remarked how much Isaac has
@@ -197,46 +199,46 @@ enum ValeInteriors2PlaceFlag {
 // FLAG_SCENE_TEMP_03: Dora got out of her sickbed on this visit.
 
 /// Returns the entrances, among them the scenes played on arrival:
-/// VALE_INTERIORS_2_FROM_BABI_PALACE_1 from Babi's palace
-/// (BABI_PALACE_1_TO_VALE_INTERIORS_2),
-/// VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST where a new game begins
-/// (menu/clear.c, and ValeGate's VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST),
+/// VALE_INTERIORS_INN_FROM_BABI_PALACE_1 from Babi's palace
+/// (BABI_PALACE_1_TO_VALE_INTERIORS_INN),
+/// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST where a new game begins
+/// (menu/clear.c, and ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST),
 /// entrance 21 from this scene's own exit 20, and
-/// VALE_INTERIORS_2_FROM_VALE_KRADEN_2 from Kraden's cottage
-/// (VALE_KRADEN_TO_VALE_INTERIORS_2_2).
-const struct SceneEntrance *ValeInteriors2_GetEntrances(void) {
-  return gValeInteriors2_Entrances;
+/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG from Kraden's cottage
+/// (VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG).
+const struct SceneEntrance *ValeInteriorsInn_GetEntrances(void) {
+  return gValeInteriorsInn_Entrances;
 }
 
-const struct SceneRegion *ValeInteriors2_GetRegions(void) { return NULL; }
+const struct SceneRegion *ValeInteriorsInn_GetRegions(void) { return NULL; }
 
 /// On the stormy night the exits lead into the storm.
-const u32 *ValeInteriors2_GetExits(void) {
+const u32 *ValeInteriorsInn_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    return gValeInteriors2_StormExits;
+    return gValeInteriorsInn_StormExits;
   }
-  return gValeInteriors2_Exits;
+  return gValeInteriorsInn_Exits;
 }
 
 /// Places Babi's scholars, or Vale's villagers as the story has left them.
-const struct ScenePlacement *ValeInteriors2_GetPlacements(void) {
+const struct ScenePlacement *ValeInteriorsInn_GetPlacements(void) {
   struct ScenePlacement *table;
 
-  if (gGameState.entrance == VALE_INTERIORS_2_FROM_BABI_PALACE_1)
-    return gValeInteriors2_ScholarsPlacements;
+  if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE_1)
+    return gValeInteriorsInn_ScholarsPlacements;
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
-    table = gValeInteriors2_PlacementsAfterKalay;
+    table = gValeInteriorsInn_PlacementsAfterKalay;
   else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-    table = gValeInteriors2_PlacementsAfterLeaving;
+    table = gValeInteriorsInn_PlacementsAfterLeaving;
   else
-    table = gValeInteriors2_Placements;
+    table = gValeInteriorsInn_Placements;
   FieldScene_PrepareActors(table);
   return table;
 }
 
 /// In Babi's Palace, one of Babi's scholars asks whether the party knows
 /// Kraden. Reached by talking to ACTOR_SCHOLAR_EXPERIMENT in their room
-/// (VALE_INTERIORS_2_FROM_BABI_PALACE_1) once FLAG_COLOSSO_OVER is set;
+/// (VALE_INTERIORS_INN_FROM_BABI_PALACE_1) once FLAG_COLOSSO_OVER is set;
 /// speakerId is the actor spoken to.
 static void Event_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
@@ -254,30 +256,30 @@ static void Event_ScholarAsksAboutKraden(s32 speakerId) {
 
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
-const struct SceneEvent *ValeInteriors2_GetEvents(void) {
-  if (gGameState.entrance == VALE_INTERIORS_2_FROM_BABI_PALACE_1) {
+const struct SceneEvent *ValeInteriorsInn_GetEvents(void) {
+  if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE_1) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-      return gValeInteriors2_ScholarsLaterEvents;
+      return gValeInteriorsInn_ScholarsLaterEvents;
     }
-    return gValeInteriors2_ScholarsEvents;
+    return gValeInteriorsInn_ScholarsEvents;
   }
 
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    return gValeInteriors2_StormEvents;
+    return gValeInteriorsInn_StormEvents;
   }
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
-    return gValeInteriors2_EventsAfterKalay;
+    return gValeInteriorsInn_EventsAfterKalay;
   }
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-    return gValeInteriors2_EventsAfterLeaving;
+    return gValeInteriorsInn_EventsAfterLeaving;
   }
-  return gValeInteriors2_Events;
+  return gValeInteriorsInn_Events;
 }
 
 /// In a room of Vale's inn, the masked man asks whether Isaac has business
 /// with him, and sends him off whatever he answers. "Hey... Boy..." Reached by
 /// talking to ACTOR_MASKED_MAN before the party leaves Vale
-/// (gValeInteriors2_Events).
+/// (gValeInteriorsInn_Events).
 static void Event_AskIsaacHisBusiness(void) {
   Engine_EventBegin();
   Engine_ActorStartRepeatedMotion(ACTOR_MASKED_MAN, 2);
@@ -303,7 +305,7 @@ static void Event_AskIsaacHisBusiness(void) {
 /// In Vale, a villager asks whether the masked man was Felix, and wonders
 /// whether Jenna can be trusted. Reached by talking to ACTOR_VILLAGER_SAW_MASK
 /// once the party has left Vale and until it reaches Kalay
-/// (gValeInteriors2_EventsAfterLeaving).
+/// (gValeInteriorsInn_EventsAfterLeaving).
 static void Event_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
@@ -323,7 +325,7 @@ static void Event_AskWhetherMaskedManWasFelix(void) {
 
 /// Stops storm lightning before fading through the requested exit.
 /// Called by the exit events below.
-static void ValeInteriors2_CloseScreenAndExit(s32 exitId) {
+static void ValeInteriorsInn_CloseScreenAndExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     FieldFx_StopLightning();
   }
@@ -335,93 +337,98 @@ static void ValeInteriors2_CloseScreenAndExit(s32 exitId) {
 
 // The exit events in Vale: stepping on the cell code of the same number in
 // any of the Vale tables plays a step sound and takes that exit
-// (gValeInteriors2_Exits, or gValeInteriors2_StormExits on the stormy night).
+// (gValeInteriorsInn_Exits, or gValeInteriorsInn_StormExits on the stormy
+// night).
 
 /// Reached by cell code 1; leads to ValeGate
-/// (VALE_GATE_FROM_VALE_INTERIORS_2_WEST).
+/// (VALE_GATE_FROM_VALE_INTERIORS_INN_WEST).
 static void Event_TakeExitToValeGateNorthwest(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_GATE_NORTHWEST);
+  ValeInteriorsInn_CloseScreenAndExit(
+      VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST);
 }
 
 /// Reached by cell code 2; leads to Kraden's cottage
-/// (VALE_KRADEN_FROM_VALE_INTERIORS_2_NORTH).
+/// (VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH).
 static void Event_TakeExitToValeKradenNorth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_KRADEN_NORTH);
+  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH);
 }
 
 /// Reached by cell code 3; leads to ValeGate
-/// (VALE_GATE_FROM_VALE_INTERIORS_2_NORTH).
+/// (VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH).
 static void Event_TakeExitToValeGateNortheast(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_GATE_NORTHEAST);
+  ValeInteriorsInn_CloseScreenAndExit(
+      VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST);
 }
 
 /// Reached by cell code 4; leads to ValeGate
-/// (VALE_GATE_FROM_VALE_INTERIORS_2_SOUTH).
+/// (VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH).
 static void Event_TakeExitToValeGateWest(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_GATE_WEST);
+  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_GATE_WEST);
 }
 
-/// Reached by cell code 5; takes exit 5, to this scene's
-/// VALE_INTERIORS_2_AFTER_ENTER_BATTLE.
-static void Event_TakeExit5(void) {
+/// Reached by cell code 5, the inn's stairs; climbs to its guest room at
+/// VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS.
+static void Event_TakeExitToInnUpstairs(void) {
   Engine_AudioPlayCue(SE_128);
-  ValeInteriors2_CloseScreenAndExit(5);
+  ValeInteriorsInn_CloseScreenAndExit(5);
 }
 
-/// Reached by cell code 6; leads to Vale (VALE_FROM_VALE_INTERIORS_2), or on
+/// Reached by cell code 6; leads to Vale (VALE_FROM_VALE_INTERIORS_INN), or on
 /// the stormy night to ValeStorm's entrance 8.
 static void Event_TakeExitToVale(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE);
+  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE);
 }
 
-/// Reached by cell code 7; takes exit 7, to this scene's entrance 9.
-static void Event_TakeExit7(void) {
+/// Reached by cell code 7, the stairs of Isaac's house; climbs to its upper
+/// floor.
+static void Event_TakeExitToIsaacsHouseUpstairs(void) {
   Engine_AudioPlayCue(SE_128);
-  ValeInteriors2_CloseScreenAndExit(7);
+  ValeInteriorsInn_CloseScreenAndExit(7);
 }
 
-/// Reached by cell code 8; takes exit 8, to this scene's entrance 5.
-static void Event_TakeExit8(void) {
+/// Reached by cell code 8, the stairs of the inn's guest room; goes back down.
+static void Event_TakeExitToInnDownstairs(void) {
   Engine_AudioPlayCue(SE_129);
-  ValeInteriors2_CloseScreenAndExit(8);
+  ValeInteriorsInn_CloseScreenAndExit(8);
 }
 
-/// Reached by cell code 9; takes exit 9, to this scene's entrance 7.
-static void Event_TakeExit9(void) {
+/// Reached by cell code 9, the stairs on the upper floor of Isaac's house; goes
+/// back down.
+static void Event_TakeExitToIsaacsHouseDownstairs(void) {
   Engine_AudioPlayCue(SE_129);
-  ValeInteriors2_CloseScreenAndExit(9);
+  ValeInteriorsInn_CloseScreenAndExit(9);
 }
 
 /// Reached by cell code 10; leads to ValeStorm
-/// (VALE_STORM_FROM_VALE_INTERIORS_2).
+/// (VALE_STORM_FROM_VALE_INTERIORS_INN_WEST).
 static void Event_TakeExitToValeStorm(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_STORM);
+  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_STORM_WEST);
 }
 
 /// Reached by cell code 11; leads to ValeStorm
-/// (VALE_STORM_FROM_VALE_INTERIORS_2_WEST).
+/// (VALE_STORM_FROM_VALE_INTERIORS_INN_EAST).
 static void Event_TakeExitToValeStormWest(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_STORM_WEST);
+  ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_STORM_EAST);
 }
 
 /// Sets up the stormy night or the villagers of the story, and plays the
-/// scenes of VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST, entrance 21 and
-/// VALE_INTERIORS_2_FROM_VALE_KRADEN_2.
+/// scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, entrance 21 and
+/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG.
 /// Called by Field_RunScene once the actors are placed.
-/// VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST sets FLAG_VALE_STORM before
+/// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST sets FLAG_VALE_STORM before
 /// Event_DoraWakesIsaac; back from Kalay, Dora is put back in her sickbed
 /// unless FLAG_SCENE_TEMP_03 says she got up.
-s32 ValeInteriors2_Initialize(void) {
+s32 ValeInteriorsInn_Initialize(void) {
   struct FieldActor *actor;
 
-  if (gGameState.entrance == VALE_INTERIORS_2_FROM_BABI_PALACE_1) {
+  if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE_1) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -434,13 +441,13 @@ s32 ValeInteriors2_Initialize(void) {
       Engine_ActorSetPosition(ACTOR_INN_CLEANER, 0, 0);
       Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
     } else {
-      ValeInteriors2_RestoreRoomPatch();
+      ValeInteriorsInn_RestoreRoomPatch();
     }
     Engine_ActorSetSpritePriority(ACTOR_INNKEEPER, 1);
     if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
       actor = Object_GetById(ACTOR_BLANK_AFTER_KALAY);
       Engine_ActorSetSpriteFlags(actor, 0);
-      if (gGameState.entrance == VALE_INTERIORS_2_FROM_VALE ||
+      if (gGameState.entrance == VALE_INTERIORS_INN_FROM_VALE ||
           gGameState.entrance == 7) {
         if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
@@ -457,11 +464,13 @@ s32 ValeInteriors2_Initialize(void) {
       if (gGameState.entrance == 21) {
         Event_HurryToThePlaza();
       } else {
-        if (gGameState.entrance == VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST) {
+        if (gGameState.entrance ==
+            VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST) {
           Engine_GameFlagSet(FLAG_VALE_STORM);
           Event_DoraWakesIsaac();
         } else {
-          if (gGameState.entrance == VALE_INTERIORS_2_FROM_VALE_KRADEN_2) {
+          if (gGameState.entrance ==
+              VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG) {
             Event_ShowMythrilBag();
           } else {
             ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
@@ -489,8 +498,8 @@ s32 ValeInteriors2_Initialize(void) {
 
 /// In their house in Vale on the stormy night, Dora wakes Isaac, makes him take
 /// his tunic, and leads him out into the storm. "The Mt. Aleph Boulder is going
-/// to fall!" Called by ValeInteriors2_Initialize on arrival by
-/// VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST, where a new game begins. Sets
+/// to fall!" Called by ValeInteriorsInn_Initialize on arrival by
+/// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, where a new game begins. Sets
 /// FLAG_ISAAC_WEARS_TUNIC and takes exit 20, back into this scene by entrance
 /// 21, where Event_HurryToThePlaza follows.
 static void Event_DoraWakesIsaac(void) {
@@ -594,7 +603,7 @@ static void Event_DoraWakesIsaac(void) {
   Engine_EventWait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA,
                     0);
-  ValeInteriors2_DemonstrateCatch();
+  ValeInteriorsInn_DemonstrateCatch();
   // Resolve the Psynergy demonstration before the pair walks away together.
   // "It's pouring outside! Don't go out without your tunic!" She steps up to
   // him and he puts it on, with a flash and SE_RECOVERY.
@@ -624,9 +633,9 @@ static void Event_DoraWakesIsaac(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
   Engine_CameraFollowActor(ACTOR_DORA, 1);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= 0x1;
-  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_LeaveHouseScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriorsInn_LeaveHouseScript);
   Engine_EventWait(20);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeInteriors2_LeaveHouseScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeInteriorsInn_LeaveHouseScript);
   Object_RefreshSelectorById(ACTOR_DORA);
   Actor_WalkToAndWait(ACTOR_DORA, 419, 661);
   Actor_WalkToAndWait(ACTOR_DORA, 408, 661);
@@ -644,8 +653,9 @@ static void Event_DoraWakesIsaac(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_DoraLeavesScript);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeInteriors2_IsaacLeavesScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriorsInn_DoraLeavesScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER,
+                        gValeInteriorsInn_IsaacLeavesScript);
   Engine_EventWait(20);
   (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
@@ -661,7 +671,7 @@ static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 /// Outside the house in Vale on the stormy night, Kyle calls to Isaac and Dora
 /// to hurry; ACTOR_FLAME shakes, then turns to smoke and rises away, as they
-/// run to the plaza. Called by ValeInteriors2_Initialize on arrival by
+/// run to the plaza. Called by ValeInteriorsInn_Initialize on arrival by
 /// entrance 21, after Event_DoraWakesIsaac. Takes exit 21, to ValeStorm's
 /// entrance 15, where Event_DoraSendsIsaacToThePlaza follows.
 static void Event_HurryToThePlaza(void) {
@@ -686,7 +696,7 @@ static void Event_HurryToThePlaza(void) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = 0;
   sprite->image.priority = 1;
-  Actor_SetActionScript(ACTOR_FLAME, gValeInteriors2_FlameShakesScript);
+  Actor_SetActionScript(ACTOR_FLAME, gValeInteriorsInn_FlameShakesScript);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Map_CopyCellsTo(83, 15, 83, 19, 5, 4);
@@ -711,8 +721,8 @@ static void Event_HurryToThePlaza(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_KYLE, 0x18000, 0xc000);
   Actor_SetActionScript(ACTOR_PARTY_LEADER,
-                        gValeInteriors2_IsaacRunsAheadScript);
-  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_DoraRunsAheadScript);
+                        gValeInteriorsInn_IsaacRunsAheadScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriorsInn_DoraRunsAheadScript);
   Engine_EventOpenScreen();
   Object_RefreshSelectorById(ACTOR_DORA);
   Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -739,14 +749,14 @@ static void Event_HurryToThePlaza(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_KYLE, ANIM_NOD);
   Engine_ActorWalkTo(ACTOR_KYLE, 415, 589);
   Engine_EventWait(10);
-  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_DoraRunsBackScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriorsInn_DoraRunsBackScript);
   Actor_SetActionScript(ACTOR_PARTY_LEADER,
-                        gValeInteriors2_IsaacRunsBackScript);
+                        gValeInteriorsInn_IsaacRunsBackScript);
   Engine_AudioPlayCue(SE_234);
   Engine_EventWait(20);
   // ACTOR_FLAME flares up, turns to smoke and rises away
-  // (gValeInteriors2_FlameRisesScript) as SE_202 plays.
-  Actor_SetActionScript(ACTOR_FLAME, gValeInteriors2_FlameRisesScript);
+  // (gValeInteriorsInn_FlameRisesScript) as SE_202 plays.
+  Actor_SetActionScript(ACTOR_FLAME, gValeInteriorsInn_FlameRisesScript);
   alpha = &REG_BLDALPHA;
 
   // Bring the boulder fully into view before fading it away.
@@ -780,9 +790,9 @@ ramp:
   Engine_EventWait(40);
   Engine_CameraSetSpeed(0xcccc, 0x1999);
   Engine_CameraFollowActor(ACTOR_DORA, 1);
-  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_RunToPlazaScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriorsInn_RunToPlazaScript);
   Actor_RunActionScriptAndWait(ACTOR_PARTY_LEADER,
-                               gValeInteriors2_RunToPlazaScript);
+                               gValeInteriorsInn_RunToPlazaScript);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 32;
@@ -1000,7 +1010,7 @@ static void Event_TalkToDora(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
     Object_SetTargetAndCallback(ACTOR_DORA,
                                 ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                gValeInteriors2_DoraFacesIsaacScript);
+                                gValeInteriorsInn_DoraFacesIsaacScript);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgValeDontWorryBest);
     Engine_EventShowMessage(ACTOR_DORA, 0);
@@ -1016,19 +1026,19 @@ static void Event_TalkToDora(void) {
 }
 
 /// Restores the room's tiles and collision patch outside the storm sequence.
-/// Called by ValeInteriors2_Initialize when FLAG_VALE_STORM is clear.
-static void ValeInteriors2_RestoreRoomPatch(void) {
+/// Called by ValeInteriorsInn_Initialize when FLAG_VALE_STORM is clear.
+static void ValeInteriorsInn_RestoreRoomPatch(void) {
   Map_CopyCellsTo(22, 85, 25, 85, 2, 2);
   Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 }
 
 /// In Vale, the Mythril Bag rises and wobbles before Kraden, with no text.
-/// Called by ValeInteriors2_Initialize on arrival by
-/// VALE_INTERIORS_2_FROM_VALE_KRADEN_2, from Kraden's cottage, while he
-/// prepares for the first Sol Sanctum visit (Event_TalkToKraden). Takes
-/// VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH back outside
-/// (VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH), where Event_KradenSetsOff gathers
-/// the party.
+/// Called by ValeInteriorsInn_Initialize on arrival by
+/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, from Kraden's cottage,
+/// while he prepares for the first Sol Sanctum visit (Event_TalkToKraden).
+/// Takes VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH back outside
+/// (VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH), where Event_KradenSetsOff
+/// gathers the party.
 static void Event_ShowMythrilBag(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -1063,9 +1073,9 @@ static void Event_ShowMythrilBag(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 420, 164);
   Actor_WalkToAndWait(ACTOR_KRADEN, 326, 185);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 10);
-  Engine_ObjectSetScript(actor, gValeInteriors2_MythrilBagRisesScript);
+  Engine_ObjectSetScript(actor, gValeInteriorsInn_MythrilBagRisesScript);
   ObjectDispatch_WaitForValue16(actor);
-  Object_SetScript(actor, gValeInteriors2_MythrilBagWobblesScript);
+  Object_SetScript(actor, gValeInteriorsInn_MythrilBagWobblesScript);
   ObjectDispatch_WaitForValue16(actor);
   Engine_EventWait(20);
   Engine_ObjectDispatchRelease(actor);
@@ -1073,35 +1083,37 @@ static void Event_ShowMythrilBag(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH);
+  Engine_EventRequestExit(VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH);
 }
 
 /// Unused: an update hook that flashes between two palettes and gives off a
 /// pair of effects every sixteen frames; no actor is given it.
 UNUSED static void
-ValeInteriors2_FlashPaletteAndSpawnPair(union FieldObject *object) {
+ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(&object->actor, 7);
   } else {
     Engine_ObjectSetPartPalettes(&object->actor, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeInteriors2_SpawnEffectPair(object);
+    ValeInteriorsInn_SpawnEffectPair(object);
   }
 }
 
 /// Cycles six palettes on odd frames and periodically emit paired effects.
-static void ValeInteriors2_CyclePaletteAndSpawnPair(union FieldObject *object) {
+static void
+ValeInteriorsInn_CyclePaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
     Engine_ObjectSetPartPalettes(&object->actor, (gFrameCount >> 1) % 6);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeInteriors2_SpawnEffectPair(object);
+    ValeInteriorsInn_SpawnEffectPair(object);
   }
 }
 
 /// Advances deterministically through six palettes on odd frames.
-static void ValeInteriors2_CyclePaletteOnOddFrames(union FieldObject *object) {
+static void
+ValeInteriorsInn_CyclePaletteOnOddFrames(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
 
@@ -1114,7 +1126,7 @@ static void ValeInteriors2_CyclePaletteOnOddFrames(union FieldObject *object) {
 
 /// Copies the parent's terrain height into two oppositely moving vertical
 /// effects.
-static void ValeInteriors2_SpawnEffectPair(union FieldObject *object) {
+static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
   struct FieldActor *parent = &object->actor;
   struct FieldActor *pair[2];
   struct FieldActor *child;
@@ -1170,20 +1182,20 @@ static void ValeInteriors2_SpawnEffectPair(union FieldObject *object) {
 #include "common/effect_psynergy.h"
 
 /// Unused: cycles Dora's palette with particles; nothing calls it.
-UNUSED static void ValeInteriors2_CyclePaletteWithParticles(void) {
-  ValeInteriors2_CyclePaletteAndSpawnPair(
+UNUSED static void ValeInteriorsInn_CyclePaletteWithParticles(void) {
+  ValeInteriorsInn_CyclePaletteAndSpawnPair(
       (union FieldObject *)Object_GetById(ACTOR_DORA));
 }
 
 /// Unused: cycles Dora's palette without particles; nothing calls it.
-UNUSED static void ValeInteriors2_CyclePaletteWithoutParticles(void) {
-  ValeInteriors2_CyclePaletteOnOddFrames(
+UNUSED static void ValeInteriorsInn_CyclePaletteWithoutParticles(void) {
+  ValeInteriorsInn_CyclePaletteOnOddFrames(
       (union FieldObject *)Object_GetById(ACTOR_TUNIC));
 }
 
 /// Catch plays from Dora on the tunic, then its objects are released.
 /// Called by Event_DoraWakesIsaac as Dora hands Isaac his tunic.
-static void ValeInteriors2_DemonstrateCatch(void) {
+static void ValeInteriorsInn_DemonstrateCatch(void) {
   Engine_PsynergyBegin(ABILITY_CATCH, 1);
   Engine_PsynergySetTarget(ACTOR_DORA, ACTOR_TUNIC);
   Engine_PsynergyRaiseHands();
@@ -1192,7 +1204,7 @@ static void ValeInteriors2_DemonstrateCatch(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-s32 gValeInteriors2_LeaveHouseScript[] = {
+s32 gValeInteriorsInn_LeaveHouseScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(522), 0, PIXELS(748)),
     SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(748)),
     SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(691)),
@@ -1200,26 +1212,26 @@ s32 gValeInteriors2_LeaveHouseScript[] = {
     SC_END,
 };
 
-s32 gValeInteriors2_DoraLeavesScript[] = {
+s32 gValeInteriorsInn_DoraLeavesScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)), SC_SYNC, SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gValeInteriors2_IsaacLeavesScript[] = {
+s32 gValeInteriorsInn_IsaacLeavesScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
     SC_SYNC,   SC_MOVE(PIXELS(387), 0, PIXELS(661)),
     SC_SYNC,   SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gValeInteriors2_DoraRunsAheadScript[] = {
+s32 gValeInteriorsInn_DoraRunsAheadScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(468), 0, PIXELS(390)),
     SC_SYNC,   SC_MOVE(PIXELS(508), 0, PIXELS(402)),
     SC_SYNC,   SC_ARG(1),
     SC_END,
 };
 
-s32 gValeInteriors2_IsaacRunsAheadScript[] = {
+s32 gValeInteriorsInn_IsaacRunsAheadScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(431), 0, PIXELS(391)),
     SC_SYNC,   SC_MOVE(PIXELS(468), 0, PIXELS(390)),
     SC_SYNC,   SC_MOVE(PIXELS(486), 0, PIXELS(393)),
@@ -1227,7 +1239,7 @@ s32 gValeInteriors2_IsaacRunsAheadScript[] = {
     SC_END,
 };
 
-s32 gValeInteriors2_DoraRunsBackScript[] = {
+s32 gValeInteriorsInn_DoraRunsBackScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
     SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
     SC_SYNC,   SC_MOVE(PIXELS(455), 0, PIXELS(450)),
@@ -1235,7 +1247,7 @@ s32 gValeInteriors2_DoraRunsBackScript[] = {
     SC_END,
 };
 
-s32 gValeInteriors2_IsaacRunsBackScript[] = {
+s32 gValeInteriorsInn_IsaacRunsBackScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
     SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
     SC_SYNC,   SC_MOVE(PIXELS(481), 0, PIXELS(443)),
@@ -1243,20 +1255,20 @@ s32 gValeInteriors2_IsaacRunsBackScript[] = {
     SC_END,
 };
 
-s32 gValeInteriors2_RunToPlazaScript[] = {
+s32 gValeInteriorsInn_RunToPlazaScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(428), 0, PIXELS(460)),
     SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(513)),
     SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(589)),
     SC_SYNC,   SC_END,
 };
 
-s32 gValeInteriors2_FlameShakesScript[] = {
+s32 gValeInteriorsInn_FlameShakesScript[] = {
     SC_SET(SW_SCALE_X, 0xe666),  SC_SET(SW_SCALE_Y, 0x10000), SC_WAIT(4),
     SC_SET(SW_SCALE_X, 0xcccc),  SC_SET(SW_SCALE_Y, 0xcccc),  SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValeInteriors2_FlameRisesScript[] = {
+s32 gValeInteriorsInn_FlameRisesScript[] = {
     SC_ARG(2),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x13333),
@@ -1289,7 +1301,7 @@ s32 gValeInteriors2_FlameRisesScript[] = {
     SC_END,
 };
 
-s32 gValeInteriors2_DoraFacesIsaacScript[] = {
+s32 gValeInteriorsInn_DoraFacesIsaacScript[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_MOVE(PIXELS(567), 0, PIXELS(690)),
@@ -1299,13 +1311,13 @@ s32 gValeInteriors2_DoraFacesIsaacScript[] = {
     SC_END,
 };
 
-s32 gValeInteriors2_MythrilBagRisesScript[] = {
+s32 gValeInteriorsInn_MythrilBagRisesScript[] = {
     SC_ADD(SW_Y, 0x8000),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
 };
 
-s32 gValeInteriors2_MythrilBagWobblesScript[] = {
+s32 gValeInteriorsInn_MythrilBagWobblesScript[] = {
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
@@ -1333,93 +1345,108 @@ s32 gValeInteriors2_MythrilBagWobblesScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gValeInteriors2_Entrances[] = {
+struct SceneEntrance gValeInteriorsInn_Entrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_INTERIORS_2_FROM_VALE_GATE_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
+    {VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
      FACING_NORTH, 0, 24, 0, 248, 256, 0},
-    {VALE_INTERIORS_2_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 480, 0, 176,
+    {VALE_INTERIORS_INN_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 480, 0, 176,
      FACING_NORTH, 0, 264, 8, 560, 240, 0},
-    {VALE_INTERIORS_2_FROM_VALE_GATE_NORTHEAST, CONDITION_ALWAYS, 721, 0, 192,
+    {VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST, CONDITION_ALWAYS, 721, 0, 192,
      FACING_NORTH, 0, 584, 0, 848, 224, 0},
-    {VALE_INTERIORS_2_FROM_VALE_GATE_WEST, CONDITION_ALWAYS, 144, 0, 494,
+    {VALE_INTERIORS_INN_FROM_VALE_GATE_WEST, CONDITION_ALWAYS, 144, 0, 494,
      FACING_NORTH, 0, 8, 256, 320, 528, 0},
     {5, CONDITION_ALWAYS, 119, 0, 340, FACING_SOUTH, 0, 8, 256, 320, 528, 0},
-    {VALE_INTERIORS_2_FROM_VALE, CONDITION_ALWAYS, 416, 0, 528, FACING_NORTH, 0,
-     344, 272, 640, 560, 0},
+    {VALE_INTERIORS_INN_FROM_VALE, CONDITION_ALWAYS, 416, 0, 528, FACING_NORTH,
+     0, 344, 272, 640, 560, 0},
     {7, CONDITION_ALWAYS, 408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
-    {VALE_INTERIORS_2_AFTER_ENTER_BATTLE, CONDITION_ALWAYS, 184, 0, 633,
+    {VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS, CONDITION_ALWAYS, 184, 0, 633,
      FACING_EAST, 0, 8, 576, 320, 736, 0},
     {9, CONDITION_ALWAYS, 408, 0, 665, FACING_EAST, 0, 328, 600, 624, 816, 0},
     {10, CONDITION_ALWAYS, 528, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {VALE_INTERIORS_2_FROM_VALE_STORM_WEST, CONDITION_ALWAYS, 705, 0, 817,
+    {VALE_INTERIORS_INN_FROM_VALE_STORM_WEST, CONDITION_ALWAYS, 705, 0, 817,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
-    {VALE_INTERIORS_2_FROM_VALE_STORM_EAST, CONDITION_ALWAYS, 879, 0, 765,
+    {VALE_INTERIORS_INN_FROM_VALE_STORM_EAST, CONDITION_ALWAYS, 879, 0, 765,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
     {16, CONDITION_ALWAYS, 538, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {VALE_INTERIORS_2_FROM_BABI_PALACE_1, CONDITION_ALWAYS, 760, 0, 328,
+    {VALE_INTERIORS_INN_FROM_BABI_PALACE_1, CONDITION_ALWAYS, 760, 0, 328,
      FACING_SOUTH, 0, 672, 272, 960, 488, 0},
-    {VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,
+    {VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,
      FACING_EAST, 0, 1024, 576, 1024, 576, 0},
     {21, CONDITION_ALWAYS, 408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
-    {VALE_INTERIORS_2_FROM_VALE_KRADEN_2, CONDITION_ALWAYS, 480, 0, 176,
-     FACING_NORTH, 0, 264, 8, 560, 240, 0},
+    {VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, CONDITION_ALWAYS, 480, 0,
+     176, FACING_NORTH, 0, 264, 8, 560, 240, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gValeInteriors2_Exits[] = {
-    SCENE_EXITS(ValeInteriors2),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_NORTHWEST, ValeGate,
-               VALE_GATE_FROM_VALE_INTERIORS_2_WEST),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_KRADEN_NORTH, ValeKraden,
-               VALE_KRADEN_FROM_VALE_INTERIORS_2_NORTH),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_NORTHEAST, ValeGate,
-               VALE_GATE_FROM_VALE_INTERIORS_2_NORTH),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_WEST, ValeGate,
-               VALE_GATE_FROM_VALE_INTERIORS_2_SOUTH),
-    SCENE_EXIT(5, ValeInteriors2, VALE_INTERIORS_2_AFTER_ENTER_BATTLE),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE, Vale, VALE_FROM_VALE_INTERIORS_2),
-    SCENE_EXIT(7, ValeInteriors2, 9),
-    SCENE_EXIT(8, ValeInteriors2, 5),
-    SCENE_EXIT(9, ValeInteriors2, 7),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_STORM, ValeStorm,
-               VALE_STORM_FROM_VALE_INTERIORS_2),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_STORM_WEST, ValeStorm,
-               VALE_STORM_FROM_VALE_INTERIORS_2_WEST),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_BABI_PALACE_1, BabiPalace1,
-               BABI_PALACE_1_FROM_VALE_INTERIORS_2),
-    SCENE_EXIT(20, ValeInteriors2, 21),
-    SCENE_EXIT(21, ValeStorm, 15),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH, ValeKraden,
-               VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH),
+u32 gValeInteriorsInn_Exits[] = {
+    SCENE_EXITS(ValeInteriorsInn),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_INN_WEST),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH, ValeKraden,
+               VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_GATE_WEST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH),
+    SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_UPSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE, Vale, VALE_FROM_VALE_INTERIORS_INN),
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_DOWNSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_DOWNSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_INN_FROM_UPSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_WEST, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_INN_WEST),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_EAST, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_INN_EAST),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_BABI_PALACE_1, BabiPalace1,
+               BABI_PALACE_1_FROM_VALE_INTERIORS_INN),
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA,
+               ValeInteriorsInn,
+               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_KRADEN_SOUTH, ValeKraden,
+               VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH),
     SCENE_EXITS_END,
 };
 
-u32 gValeInteriors2_StormExits[] = {
-    SCENE_EXITS(ValeInteriors2),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_NORTHWEST, ValeGate,
-               VALE_GATE_FROM_VALE_INTERIORS_2_WEST),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_KRADEN_NORTH, ValeKraden,
-               VALE_KRADEN_FROM_VALE_INTERIORS_2_NORTH),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_NORTHEAST, ValeGate,
-               VALE_GATE_FROM_VALE_INTERIORS_2_NORTH),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_WEST, ValeGate,
-               VALE_GATE_FROM_VALE_INTERIORS_2_SOUTH),
-    SCENE_EXIT(5, ValeInteriors2, VALE_INTERIORS_2_AFTER_ENTER_BATTLE),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE, ValeStorm, 8),
-    SCENE_EXIT(7, ValeInteriors2, 9),
-    SCENE_EXIT(8, ValeInteriors2, 5),
-    SCENE_EXIT(9, ValeInteriors2, 7),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_STORM, ValeStorm,
-               VALE_STORM_FROM_VALE_INTERIORS_2),
-    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_STORM_WEST, ValeStorm,
-               VALE_STORM_FROM_VALE_INTERIORS_2_WEST),
-    SCENE_EXIT(20, ValeInteriors2, 21),
-    SCENE_EXIT(21, ValeStorm, 15),
+u32 gValeInteriorsInn_StormExits[] = {
+    SCENE_EXITS(ValeInteriorsInn),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_INN_WEST),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH, ValeKraden,
+               VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_GATE_WEST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH),
+    SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_UPSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE),
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_DOWNSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_INN_TO_DOWNSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_INN_FROM_UPSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS, ValeInteriorsInn,
+               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_WEST, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_INN_WEST),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_EAST, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_INN_EAST),
+    SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA,
+               ValeInteriorsInn,
+               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA),
     SCENE_EXITS_END,
 };
 
 // clang-format off
-struct ScenePlacement gValeInteriors2_Placements[] = {
+struct ScenePlacement gValeInteriorsInn_Placements[] = {
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x35, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1445,7 +1472,7 @@ struct ScenePlacement gValeInteriors2_Placements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeInteriors2_PlacementsAfterLeaving[] = {
+struct ScenePlacement gValeInteriorsInn_PlacementsAfterLeaving[] = {
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x35, 0x0, ACTOR_STAND,
@@ -1465,7 +1492,7 @@ struct ScenePlacement gValeInteriors2_PlacementsAfterLeaving[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeInteriors2_PlacementsAfterKalay[] = {
+struct ScenePlacement gValeInteriorsInn_PlacementsAfterKalay[] = {
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x35, 0x0, ACTOR_STAND,
@@ -1489,7 +1516,7 @@ struct ScenePlacement gValeInteriors2_PlacementsAfterKalay[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeInteriors2_ScholarsPlacements[] = {
+struct ScenePlacement gValeInteriorsInn_ScholarsPlacements[] = {
     { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(336), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0x71, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1503,16 +1530,16 @@ struct ScenePlacement gValeInteriors2_ScholarsPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gValeInteriors2_StormEvents[] = {
+struct SceneEvent gValeInteriorsInn_StormEvents[] = {
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNorthwest) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNortheast) },
     { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateWest) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit5) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToInnUpstairs) },
     { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToVale) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit7) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit8) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit9) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToIsaacsHouseUpstairs) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToInnDownstairs) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToIsaacsHouseDownstairs) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStorm) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStormWest) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeWoodenBoxEmpty)) },
@@ -1528,7 +1555,7 @@ struct SceneEvent gValeInteriors2_StormEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeInteriors2_Events[] = {
+struct SceneEvent gValeInteriorsInn_Events[] = {
     { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
     { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
     { EVENT_TALK, ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
@@ -1539,11 +1566,11 @@ struct SceneEvent gValeInteriors2_Events[] = {
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNortheast) },
     { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateWest) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit5) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToInnUpstairs) },
     { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToVale) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit7) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit8) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit9) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToIsaacsHouseUpstairs) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToInnDownstairs) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToIsaacsHouseDownstairs) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStorm) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStormWest) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
@@ -1559,7 +1586,7 @@ struct SceneEvent gValeInteriors2_Events[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeInteriors2_EventsAfterLeaving[] = {
+struct SceneEvent gValeInteriorsInn_EventsAfterLeaving[] = {
     { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
     { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
     { EVENT_TALK, ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherMaskedManWasFelix) },
@@ -1574,11 +1601,11 @@ struct SceneEvent gValeInteriors2_EventsAfterLeaving[] = {
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNortheast) },
     { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateWest) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit5) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToInnUpstairs) },
     { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToVale) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit7) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit8) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit9) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToIsaacsHouseUpstairs) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToInnDownstairs) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToIsaacsHouseDownstairs) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStorm) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStormWest) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
@@ -1594,7 +1621,7 @@ struct SceneEvent gValeInteriors2_EventsAfterLeaving[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeInteriors2_EventsAfterKalay[] = {
+struct SceneEvent gValeInteriorsInn_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
     { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
     { EVENT_TALK, ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
@@ -1619,11 +1646,11 @@ struct SceneEvent gValeInteriors2_EventsAfterKalay[] = {
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNortheast) },
     { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateWest) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit5) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToInnUpstairs) },
     { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToVale) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit7) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit8) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit9) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToIsaacsHouseUpstairs) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToInnDownstairs) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToIsaacsHouseDownstairs) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStorm) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStormWest) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
@@ -1642,7 +1669,7 @@ struct SceneEvent gValeInteriors2_EventsAfterKalay[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeInteriors2_ScholarsEvents[] = {
+struct SceneEvent gValeInteriorsInn_ScholarsEvents[] = {
     { EVENT_TALK, ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyThereWereAncientRuinsAt) },
     { EVENT_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, MSGNO(MsgBabiNoMatterHowManyTimesI) },
     { EVENT_TALK, ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiItIsSaidThatLongAgo) },
@@ -1661,7 +1688,7 @@ struct SceneEvent gValeInteriors2_ScholarsEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeInteriors2_ScholarsLaterEvents[] = {
+struct SceneEvent gValeInteriorsInn_ScholarsLaterEvents[] = {
     { EVENT_TALK, ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
     { EVENT_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ScholarAsksAboutKraden) },
     { EVENT_TALK, ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },

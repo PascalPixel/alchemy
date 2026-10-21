@@ -54,7 +54,7 @@ time the leader can stand on it, `FLAG_VALE_STORM_GARET_JOINED` is set and the
 event's first test ends it.
 
 The same night has a third door into one of the village's houses.
-`ValeStorm_UnusedOpenDoorToValeInteriors1West3` would open it and walk the
+`ValeStorm_UnusedOpenSanctumDoor` would open it and walk the
 leader inside, and the storm's exit table even has a row for it, but no event
 names the function and nothing else takes that exit. The house's other two
 doors lead to the same entrance.

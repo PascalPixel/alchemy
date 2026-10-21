@@ -251,18 +251,18 @@ static void BabiLighthouse_LandWithParticles(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
-  options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
+  options.update = (void (*)(union FieldObject *))FieldFx_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   for (particle = 0; particle < 17; particle++) {
     SET_VECTOR(velocity, Engine_MathCos(particle << 12), 0,
                Engine_MathSin(particle << 12));
     velocity[0] += velocity[0] / 2;
-    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocity[0],
-                 velocity[1], velocity[2],
-                 EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                     EFFECT_USE_PALETTE | 1,
-                 &options);
+    FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                  velocity[0], velocity[1], velocity[2],
+                  EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                      EFFECT_USE_PALETTE | 1,
+                  &options);
   }
   Engine_AudioPlayCue(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);

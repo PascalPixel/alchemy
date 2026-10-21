@@ -46,7 +46,7 @@ void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
     struct FieldActor *effect = pair[0];
     struct AnimationObject *effectSprite = effect->sprite;
 
-    effect->update = Effect_AnimateVerticalNegative;
+    effect->update = FieldFx_AnimateVerticalNegative;
     effectSprite->image.priority = 1;
   }
   {
@@ -54,7 +54,7 @@ void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
     struct AnimationObject *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 1;
-    effect->update = Effect_AnimateVerticalPositive;
+    effect->update = FieldFx_AnimateVerticalPositive;
     effect->priorityFlags = 2;
   }
 }

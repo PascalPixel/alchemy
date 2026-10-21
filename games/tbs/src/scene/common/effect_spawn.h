@@ -5,7 +5,7 @@
 #include "fixed_math.h"
 
 // Twenty-four scenes, and the main image's Psynergy effects (whirlwind.c, with
-// EFFECT_SPAWN_RESIDENT): Effect_Spawn, which places a small effect moving at
+// EFFECT_SPAWN_RESIDENT): FieldFx_Spawn, which places a small effect moving at
 // a velocity, its script one of gEffectScripts and its options chosen by the
 // EFFECT_USE_ flags.
 
@@ -32,11 +32,11 @@ enum {
 
 /// Starts with linear motion and the leader's draw order; options can override
 /// it.
-static inline void Effect_InitializeMotion(struct FieldEffect *effect,
-                                           struct AnimationObject *sprite,
-                                           struct FieldActor *leader,
-                                           s32 velocityX, s32 velocityY,
-                                           s32 velocityZ) {
+static inline void FieldFx_InitializeMotion(struct FieldEffect *effect,
+                                            struct AnimationObject *sprite,
+                                            struct FieldActor *leader,
+                                            s32 velocityX, s32 velocityY,
+                                            s32 velocityZ) {
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
@@ -73,8 +73,8 @@ static inline void Effect_InitializeMotion(struct FieldEffect *effect,
     effect->motionFlags = 0;                                                   \
     sprite->flags = 0;                                                         \
     effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;           \
-    Effect_InitializeMotion(effect, sprite, party, velocityX, velocityY,       \
-                            velocityZ);                                        \
+    FieldFx_InitializeMotion(effect, sprite, party, velocityX, velocityY,      \
+                             velocityZ);                                       \
                                                                                \
     if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)                     \
       return;                                                                  \
@@ -117,9 +117,9 @@ static inline void Effect_InitializeMotion(struct FieldEffect *effect,
 
 #ifdef EFFECT_SPAWN_RESIDENT
 /// The resident version uses far calls to the engine.
-EFFECT_SPAWN(Effect_SpawnResident, Object_CreateFar,
+EFFECT_SPAWN(FieldFx_SpawnResident, Object_CreateFar,
              ObjectDispatch_SelectAnimationFar, ObjectDispatch_InitializeFar)
 #else
 /// Each overlay includes its own copy of this version.
-EFFECT_SPAWN(Effect_Spawn, Object_Create, Object_SetMode, Object_SetScript)
+EFFECT_SPAWN(FieldFx_Spawn, Object_Create, Object_SetMode, Object_SetScript)
 #endif

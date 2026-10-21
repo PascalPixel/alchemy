@@ -12,7 +12,6 @@ struct SceneEvent;
 struct ScenePlacement;
 struct UiWindow;
 
-void Effect_SoundAndFlash(void);
 s32 Engine_BattleFxPlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
                                                   s32 mode);
 void Engine_BattleFxRunPageEffectForSlot(s32 slot, s32 element, s32 djinn);

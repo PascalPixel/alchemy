@@ -299,7 +299,7 @@ void FieldMotes_Start(void) {
 /// coming down onto the spot, flipping every other frame. No new bursts start
 /// while the work's stopped is set; FLAG_WEATHER_HELD freezes them. Sol
 /// Sanctum's eruption scene starts them (sol_sanctum_eruption.c).
-void FieldEffect_UpdateSparkles(void) {
+void FieldFx_UpdateSparkles(void) {
   struct GroundParticleWork *work;
   u32 spawned;
   u32 i;
@@ -399,9 +399,9 @@ void FieldEffect_UpdateSparkles(void) {
   } while (i < FIELD_WEATHER_PARTICLE_COUNT);
 }
 
-/// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
+/// Starts the sparkles (FieldFx_UpdateSparkles): loads their tiles and
 /// clears the 32 sparkles.
-void FieldEffect_InitSparkles(void) {
+void FieldFx_InitSparkles(void) {
   u32 size = 0x410;
   struct GroundParticleWork *work =
       Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES, size);
@@ -447,7 +447,7 @@ void FieldEffect_InitSparkles(void) {
     i++;
     sparkle++;
   } while (i < FIELD_WEATHER_PARTICLE_COUNT);
-  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldFx_UpdateSparkles, 0xc80);
 }
 
 /// Starts the storm's lightning (FieldFx_UpdateLightning): builds the dark

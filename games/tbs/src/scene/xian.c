@@ -202,14 +202,14 @@ static void Xian_SpawnTrainingParticles(void) {
     config.palette = 9;
     config.type = 169;
     config.script = gXian_TrainingParticleScript;
-    Effect_Spawn(*(s32 *)(studentActor + offsetof(struct FieldActor, x)),
-                 *(s32 *)(studentActor + offsetof(struct FieldActor, y)),
-                 *(s32 *)(studentActor + offsetof(struct FieldActor, z)) -
-                     PIXELS(1),
-                 0, -PIXELS(1), -PIXELS(1),
-                 EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | EFFECT_USE_TYPE |
-                     EFFECT_USE_SCRIPT,
-                 &config);
+    FieldFx_Spawn(*(s32 *)(studentActor + offsetof(struct FieldActor, x)),
+                  *(s32 *)(studentActor + offsetof(struct FieldActor, y)),
+                  *(s32 *)(studentActor + offsetof(struct FieldActor, z)) -
+                      PIXELS(1),
+                  0, -PIXELS(1), -PIXELS(1),
+                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | EFFECT_USE_TYPE |
+                      EFFECT_USE_SCRIPT,
+                  &config);
   }
 }
 
@@ -539,8 +539,8 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
-    Effect_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0, 0x20001, 0);
-    Effect_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0, 0x20001, 0);
+    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0, 0x20001, 0);
+    FieldFx_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0, 0x20001, 0);
     Engine_AudioPlayCue(SE_132);
     particleCallback = Xian_SpawnTrainingParticles;
     Task_AddCallback(particleCallback, TASK_PRIORITY_SCENE);
@@ -556,25 +556,26 @@ static void Xian_TalkToKungFuStudent(void) {
     effectParams.type = 0x11b;
     effectParams.script = gXian_TreeImpactScript;
     effectParams.rotation = 0x4000;
-    Effect_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,
-                 EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
-                     EFFECT_USE_ROTATION,
-                 &effectParams);
+    FieldFx_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,
+                  EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
+                      EFFECT_USE_ROTATION,
+                  &effectParams);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Engine_ActorWaitForMove(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
     Engine_TaskRemoveCallback((void (*)(void))particleCallback);
-    Effect_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0, 0x20001, 0);
-    Effect_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0, 0x20001, 0);
+    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0, 0x20001, 0);
+    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0, 0x20001, 0);
     reboundVelocity = -0x8000;
-    Effect_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0, 0x20001,
-                 0);
+    FieldFx_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0, 0x20001,
+                  0);
     Object_RefreshSelectorById(ACTOR_TRAINING_TREE);
     Engine_AudioPlayCue(SE_124);
-    Effect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0, 0x20001, 0);
-    Effect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0, 0x20001, 0);
-    Effect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0, 0x20001,
-                 0);
+    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0, 0x20001, 0);
+    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0, 0x20001,
+                  0);
+    FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0, 0x20001,
+                  0);
     Engine_TaskRemoveCallback(Xian_RotateTrainingTree);
     Object_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
     Object_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0x4000;
@@ -712,9 +713,9 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   FieldScheduler_AddCallback(rotationCallback, TASK_PRIORITY_SCENE);
   Object_RefreshSelectorById(ACTOR_TRAINING_TREE);
   Engine_AudioPlayCue(SE_124);
-  Effect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0, 0x20001, 0);
-  Effect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0, 0x20001, 0);
-  Effect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0, 0x20001, 0);
+  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0, 0x20001, 0);
+  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0, 0x20001, 0);
+  FieldFx_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0, 0x20001, 0);
   Engine_TaskRemoveCallback(rotationCallback);
   Object_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
   Engine_ActorSetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));

@@ -130,7 +130,7 @@ extern u32 gWorldMap_GraphicsResources[][6];
 /// SC_WAIT(40), then SC_FREE: the one-off attached effect that ends by itself
 /// (BattleFx_ConfigureLinkedObject, ATTACHED_EFFECT_ONCE).
 extern const u8 gObjectMotion_WaitScript[];
-/// The sparkles' 16 by 16 tiles, packed (FieldEffect_InitSparkles).
+/// The sparkles' 16 by 16 tiles, packed (FieldFx_InitSparkles).
 extern const u8 gFieldFx_SparkleTiles[];
 extern const u8 gField_TileMessageOffsets[];
 /// The motes of light's 16 by 16 tiles, packed (FieldMotes_Start).

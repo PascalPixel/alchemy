@@ -314,10 +314,10 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       speedRoll = ((u32)(Engine_RandomNext() << 2) >> 16);
       velocityY =
           Math_Divide((((speedRoll << 4) - speedRoll) << 16) + 0x3c0000, 100);
-      Effect_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
-                   EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
-                       1,
-                   effectData);
+      FieldFx_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
+                    EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
+                        1,
+                    effectData);
       Engine_EventWait(4);
       sparkIndex++;
     } while ((u32)sparkIndex <= 14);
@@ -495,8 +495,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       SET_VECTOR(velocity, Engine_MathCos(angle), 0, Engine_MathSin(angle));
       velocity[0] -= velocity[0] / 4;
       velocity[2] -= velocity[2] / 2;
-      Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0],
-                   velocity[1], velocity[2], EFFECT_USE_PALETTE | 1, &options);
+      FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0],
+                    velocity[1], velocity[2], EFFECT_USE_PALETTE | 1, &options);
     }
     Engine_AudioPlayCue(SE_188);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);

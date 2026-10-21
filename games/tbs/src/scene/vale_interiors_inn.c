@@ -1220,7 +1220,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
     struct FieldActor *effectActor = pair[0];
     struct AnimationObject *effectSprite = effectActor->sprite;
 
-    effectActor->update = Effect_AnimateVerticalNegative;
+    effectActor->update = FieldFx_AnimateVerticalNegative;
     effectSprite->image.priority = 2;
   }
   {
@@ -1228,7 +1228,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *object) {
     struct AnimationObject *effectSprite = effectActor->sprite;
 
     effectSprite->image.priority = 2;
-    effectActor->update = Effect_AnimateVerticalPositive;
+    effectActor->update = FieldFx_AnimateVerticalPositive;
     effectActor->priorityFlags = 2;
   }
 }

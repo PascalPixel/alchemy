@@ -229,7 +229,7 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags);
 void BattleFx_ClearRandomParticles(void);
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject);
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter);
-void FieldEffect_SpawnNearbyMarkers(void);
+void FieldFx_SpawnNearbyMarkers(void);
 
 void BattleFx_StartWindowHBlankDma(void);
 void DisplayTransition_UpdateScanlineTable(void);

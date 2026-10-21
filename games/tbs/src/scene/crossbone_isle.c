@@ -269,7 +269,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
   s32 velocityZ;
 
   actor = Object_GetById(objectId);
-  options.update = Effect_AdvanceMotion;
+  options.update = FieldFx_AdvanceMotion;
   for (angleStep = 0; angleStep <= 16; angleStep += 2) {
     angle = angleStep << 12;
     velocity.x = Engine_MathCos(angle);
@@ -279,8 +279,8 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
     velocity.z = velocityZ;
     velocityX += Math_Divide(velocityX, 3);
     velocity.x = velocityX;
-    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocityX,
-                 velocity.y, velocityZ, 0x01000001, &options);
+    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocityX,
+                  velocity.y, velocityZ, 0x01000001, &options);
   }
 }
 

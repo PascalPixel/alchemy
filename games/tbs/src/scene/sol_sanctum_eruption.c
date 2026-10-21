@@ -631,7 +631,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 s32 SolSanctumEruption_Initialize(void) {
   if (gGameState.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
-    FieldEffect_InitSparkles();
+    FieldFx_InitSparkles();
     SolSanctumEruption_PlayHostageScene();
   }
   return 0;
@@ -1841,7 +1841,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
       }
     }
   }
-  pair[0]->update = Effect_AnimateVerticalNegative;
+  pair[0]->update = FieldFx_AnimateVerticalNegative;
   pair[0]->sprite->image.priority =
       Object_GetById(ACTOR_WISE_ONE)->sprite->image.priority;
   {
@@ -1849,7 +1849,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
     struct FieldActor *risingEffect = pair[1];
 
     risingEffect->sprite->image.priority = wiseOne->sprite->image.priority;
-    risingEffect->update = Effect_AnimateVerticalPositive;
+    risingEffect->update = FieldFx_AnimateVerticalPositive;
     risingEffect->priorityFlags = 2;
   }
 }

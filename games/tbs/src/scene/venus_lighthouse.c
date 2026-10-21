@@ -589,8 +589,8 @@ static s32 VenusLighthouse_EmitRisingParticles(union FieldObject *fieldObject) {
         actor->y.fixed + ((32 - ((u32)(Engine_RandomNext() * 32) >> 16)) << 16);
     riseSpeed = Math_Divide(
         (((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
-    Effect_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, framePhase,
-                 0x000b0000, &options);
+    FieldFx_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed,
+                  framePhase, 0x000b0000, &options);
   }
 #ifdef UBFIX
   return;
@@ -630,18 +630,18 @@ VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
   fallSpeed = ((u32)(Engine_RandomNext() * 8) >> 16) * 0x3333;
   framePhase = gFrameCount & 15;
 
-  Effect_Spawn(actor->x.fixed +
-                   VENUS_LIGHTHOUSE_FIXED_OFFSET(8 - framePhase, 16),
-               actor->y.fixed + 0x001a0000, actor->z.fixed, 0, -fallSpeed, 0,
-               0x000a0000, &options);
+  FieldFx_Spawn(actor->x.fixed +
+                    VENUS_LIGHTHOUSE_FIXED_OFFSET(8 - framePhase, 16),
+                actor->y.fixed + 0x001a0000, actor->z.fixed, 0, -fallSpeed, 0,
+                0x000a0000, &options);
 
   framePhase = gFrameCount & 15;
   if (framePhase == 0) {
     options.startScaleX = 0x00008000;
     options.startScaleY = 0x00008000;
-    Effect_Spawn(actor->x.fixed +
-                     ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
-                 actor->y.fixed, actor->z.fixed, 0, 0, 0, 0x000a0000, &options);
+    FieldFx_Spawn(
+        actor->x.fixed + ((((u32)(Engine_RandomNext() * 9) >> 16) - 4) << 16),
+        actor->y.fixed, actor->z.fixed, 0, 0, 0, 0x000a0000, &options);
   }
 #ifdef UBFIX
 
@@ -754,7 +754,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   leader->motionFlags = 3;
   Engine_EventWait(24);
   options.palette = 7;
-  options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
+  options.update = (void (*)(union FieldObject *))FieldFx_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
@@ -764,8 +764,8 @@ static void VenusLighthouse_LandWithRadialDust(void) {
     angle = particleIndex << 12;
     SET_VECTOR(velocity, Engine_MathCos(angle), 0, Engine_MathSin(angle));
     velocity[0] += velocity[0] / 2;
-    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocity[0],
-                 velocity[1], velocity[2], 0x1090001, &options);
+    FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                  velocity[0], velocity[1], velocity[2], 0x1090001, &options);
   }
   Event_PlayCue(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
@@ -821,8 +821,8 @@ static s32 VenusLighthouse_EmitGateParticles(union FieldObject *fieldObject) {
   velocityX = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
   random = Engine_RandomNext();
   velocityZ = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
-  Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - 0x10000,
-               velocityX, velocityY, velocityZ, 0x001c0001, &options);
+  FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - 0x10000,
+                velocityX, velocityY, velocityZ, 0x001c0001, &options);
 #ifdef UBFIX
   return;
 #else
@@ -1658,8 +1658,8 @@ static void Event_StepOnWallSwitch(void) {
         options.startScaleY =
             ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
         options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-        Effect_Spawn(dustX, 0, 0x2100000, 0, -(((gFrameCount & 1) * 3) << 16),
-                     0, 0x8a0000, &options);
+        FieldFx_Spawn(dustX, 0, 0x2100000, 0, -(((gFrameCount & 1) * 3) << 16),
+                      0, 0x8a0000, &options);
         if (frame == 240) {
           dustX += -PIXELS(48);
         }
@@ -2207,8 +2207,9 @@ static void Event_StepOnWestWallSwitch(void) {
           options.startScaleY =
               ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
           options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-          Effect_Spawn(dustX, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16),
-                       0, 0x8a0000, &options);
+          FieldFx_Spawn(dustX, 0, 0x1200000, 0,
+                        -(((gFrameCount & 1) * 3) << 16), 0, 0x8a0000,
+                        &options);
           if (tileDelay == 0) {
             tileDelay = 40;
             column += 4;
@@ -2278,8 +2279,9 @@ static void Event_StepOnEastWallSwitch(void) {
           options.startScaleY =
               ((u32)(Engine_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
           options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-          Effect_Spawn(dustX, 0, 0x1200000, 0, -(((gFrameCount & 1) * 3) << 16),
-                       0, 0x8a0000, &options);
+          FieldFx_Spawn(dustX, 0, 0x1200000, 0,
+                        -(((gFrameCount & 1) * 3) << 16), 0, 0x8a0000,
+                        &options);
           if (tileDelay == 0) {
             tileDelay = 40;
             column -= 4;
@@ -3157,13 +3159,14 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
     options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
     particleX = actor->x.fixed +
                 (((u32)(Engine_RandomNext() * 12) >> 16) << 16) - 0x60000;
-    Effect_Spawn(particleX, actor->y.fixed, actor->z.fixed,
-                 (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) *
-                     direction->x,
-                 framePhase,
-                 direction->z *
-                     (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd),
-                 0x800000, &options);
+    FieldFx_Spawn(
+        particleX, actor->y.fixed, actor->z.fixed,
+        (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) *
+            direction->x,
+        framePhase,
+        direction->z *
+            (((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd),
+        0x800000, &options);
   }
   // A drop uses the fall animation; solid terrain instead constrains each step.
   if (collision < 0) {
@@ -3249,9 +3252,10 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
     Rubble_SetScaleAndSpin(&options);
     for (;;) {
       for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
-        Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3600000,
-                     0, 0x300000 + row * 0x100000 + particleIndex * 0x40000, 0,
-                     0, 0, 0x880000, &options);
+        FieldFx_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) +
+                          0x3600000,
+                      0, 0x300000 + row * 0x100000 + particleIndex * 0x40000, 0,
+                      0, 0, 0x880000, &options);
       }
       Engine_TaskWait(3);
       if (row != 3 || extraBursts >= 3) {
@@ -3268,9 +3272,9 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   for (row = 0; row < 10; row++) {
     Rubble_SetScaleAndSpin(&options);
     for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
-      Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3000000,
-                   0, 0x300000 + row * 0x100000 + particleIndex * 0x40000, 0, 0,
-                   0, 0x880000, &options);
+      FieldFx_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3000000,
+                    0, 0x300000 + row * 0x100000 + particleIndex * 0x40000, 0,
+                    0, 0, 0x880000, &options);
     }
     Engine_TaskWait(3);
     Map_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
@@ -3291,14 +3295,14 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
   options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
   if ((gFrameCount & 3) == 0) {
     if (((u32)(Engine_RandomNext() << 1) >> 16) != 0) {
-      Effect_Spawn(
+      FieldFx_Spawn(
           (x + (((u32)(Engine_RandomNext() << 1) >> 16) << 4)) << 16, 0,
           z << 19, 0, 0,
           (s32)((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x70000) / 10,
           0x880000, &options);
     } else {
-      Effect_Spawn((x + ((u32)(Engine_RandomNext() * 17) >> 16)) << 16, 0,
-                   (x << 19) - 0x40000, 0, 0, 0, 0x880000, &options);
+      FieldFx_Spawn((x + ((u32)(Engine_RandomNext() * 17) >> 16)) << 16, 0,
+                    (x << 19) - 0x40000, 0, 0, 0, 0x880000, &options);
     }
   }
 }
@@ -3347,8 +3351,8 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
     particleZ = 0xc00000;
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
-      Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x1a00000,
-                   0, particleZ, 0, zero, zero, 0x880000, effectOptions);
+      FieldFx_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x1a00000,
+                    0, particleZ, 0, zero, zero, 0x880000, effectOptions);
       particleZ += 0x40000;
     }
     Engine_TaskWait(3);
@@ -3411,8 +3415,8 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     particleZ = 0xc00000;
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
-      Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x2200000,
-                   0, particleZ, 0, zero, zero, 0x880000, effectOptions);
+      FieldFx_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x2200000,
+                    0, particleZ, 0, zero, zero, 0x880000, effectOptions);
       particleZ += 0x40000;
     }
     Engine_TaskWait(3);
@@ -3466,8 +3470,8 @@ static s32 VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
     particleZ =
         actor->z.fixed + ((((u32)(Engine_RandomNext() * 49) >> 16) - 24) << 16);
     riseSpeed = (((u32)(Engine_RandomNext() * 4) >> 16) << 15) + 0x8000;
-    Effect_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
-                 0x330000, effectOptions);
+    FieldFx_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
+                  0x330000, effectOptions);
   }
 #ifdef UBFIX
   return;

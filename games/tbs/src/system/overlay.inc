@@ -331,16 +331,15 @@
 	import Field_ClimbDown, Field_ClimbDownFar
 	import Field_ClimbUp, Field_ClimbUpFar
 	import Leader_StopMoving, Leader_StopMovingFar
-	import Effect_SoundAndFlash, FieldFx_StartGroundParticlesFar
 	import FieldFx_StartGroundParticles, FieldFx_StartGroundParticlesFar
 	import FieldFx_StartLightning, FieldFx_StartLightningFar
 	import FieldFx_StopLightning, FieldFx_StopLightningFar
 	import FieldFx_LastLightning, FieldFx_LastLightningFar
 	import FieldFx_ResumeLightning, FieldFx_ResumeLightningFar
 	import BattleFx_StartBufferBlend, BattleFx_StartBufferBlendFar
-	import FieldEffect_InitSparkles, FieldEffect_InitSparklesFar
-	import InitializeSceneRecordBuffer, FieldEffect_InitSparklesFar
-	import Resource37c_FinalizeSetup, FieldEffect_InitSparklesFar
+	import FieldFx_InitSparkles, FieldFx_InitSparklesFar
+	import InitializeSceneRecordBuffer, FieldFx_InitSparklesFar
+	import Resource37c_FinalizeSetup, FieldFx_InitSparklesFar
 	import DisplayTransition_InitializeBattleEffectState, DisplayTransition_InitializeBattleEffectStateFar
 	import Engine_ColorBufferApplyTarget, BattleFx_ApplyColorToTargetBufferFar
 	import Engine_ColorBufferApplySource, BattleFx_ApplyColorToSourceBufferFar

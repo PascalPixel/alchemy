@@ -351,7 +351,7 @@ void BattleFx_ClearRandomParticles(void) {
 
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
 /// pixels of it. Installed as the marker's updateHook by
-/// FieldEffect_SpawnNearbyMarkers.
+/// FieldFx_SpawnNearbyMarkers.
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   const struct FieldActor *source = (const struct FieldActor *)fieldObject;
   union PolarOffsetPosition position;
@@ -397,7 +397,7 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 /// or a mimic and whose flag is not yet set. Each mark is an object of sprite
 /// 22 running gBattleFx_MarkerParticleScript. Called by Reveal's effect
 /// (psynergy_effects/reveal.c).
-void FieldEffect_SpawnNearbyMarkers(void) {
+void FieldFx_SpawnNearbyMarkers(void) {
   u8 *markerData;
   struct ObjectRuntime *actor;
   const struct SceneEvent *entry;

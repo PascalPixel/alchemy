@@ -758,8 +758,8 @@ static void Lunpa_KickUpLeaderDust(void) {
     dustAngle = (((u32)Engine_RandomNext() * 52) >> 16) * 64 + 230;
     SET_VECTOR(dustVelocity, Engine_MathCos(dustAngle) / 4, 0,
                Engine_MathSin(dustAngle) / 2);
-    Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                 dustVelocity[0], dustVelocity[1], dustVelocity[2], 0, NULL);
+    FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                  dustVelocity[0], dustVelocity[1], dustVelocity[2], 0, NULL);
   }
 }
 

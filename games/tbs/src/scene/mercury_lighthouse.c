@@ -800,8 +800,8 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
         negativeIndex = -particleIndex;
         randomZ = Random_Next();
         velocityZ = ((u32)(randomZ << 3) >> 16) * 0x3333 - 0xcccc;
-        Effect_Spawn(particleX, 0, 0x2480000, velocityX, 0, velocityZ, 0x90000,
-                     effectOptions);
+        FieldFx_Spawn(particleX, 0, 0x2480000, velocityX, 0, velocityZ, 0x90000,
+                      effectOptions);
         Engine_EventWait(1);
       } else {
         negativeIndex = -particleIndex;
@@ -853,8 +853,8 @@ static void MercuryLighthouse_StopFountainSpray(void) {
         particleZ = ((0x248 - ((u32)((random << 2) + random) >> 16)) & 0xffff)
                     << 16;
         particleX = (offsetX - (row << 19)) + 0x2d80000;
-        Effect_Spawn(particleX, 0, particleZ, -0x4000, 0, 0, 0x90000,
-                     effectOptions);
+        FieldFx_Spawn(particleX, 0, particleZ, -0x4000, 0, 0, 0x90000,
+                      effectOptions);
         Engine_EventWait(1);
       }
       particleIndex++;
@@ -1047,23 +1047,23 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
     for (particleIndex = 0; particleIndex <= 7; particleIndex++) {
       if (particleIndex & 1) {
         if (side == 0) {
-          Effect_Spawn(0x3180000, 0,
-                       0x2c00000 + (row * 16 + particleIndex) * 0x10000,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
-                       0x90000, effectOptions);
+          FieldFx_Spawn(
+              0x3180000, 0, 0x2c00000 + (row * 16 + particleIndex) * 0x10000,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0x90000,
+              effectOptions);
         } else if (side == 1) {
-          Effect_Spawn(0x3200000 + (row * 16 + particleIndex) * 0x10000, 0,
-                       0x2ea0000,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
-                       0x90000, effectOptions);
+          FieldFx_Spawn(
+              0x3200000 + (row * 16 + particleIndex) * 0x10000, 0, 0x2ea0000,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0x90000,
+              effectOptions);
         } else {
-          Effect_Spawn(0x32c0000 + (row * 16 + particleIndex) * -0x10000, 0,
-                       0x2ca0000,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
-                       MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
-                       0x90000, effectOptions);
+          FieldFx_Spawn(
+              0x32c0000 + (row * 16 + particleIndex) * -0x10000, 0, 0x2ca0000,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0x90000,
+              effectOptions);
         }
         Engine_EventWait(1);
       }
@@ -1097,19 +1097,19 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
         if (side == 0) {
-          Effect_Spawn((0x319 - (((u32)Engine_RandomNext() * 5) >> 16)) << 16,
-                       0, (((row << 2) + particleIndex) << 17) + 0x02b70000, 0,
-                       side, 0x4000, 0x90000, &options);
+          FieldFx_Spawn((0x319 - (((u32)Engine_RandomNext() * 5) >> 16)) << 16,
+                        0, (((row << 2) + particleIndex) << 17) + 0x02b70000, 0,
+                        side, 0x4000, 0x90000, &options);
         } else if (side == 1) {
-          Effect_Spawn((((row << 2) + particleIndex) << 17) + 0x03120000, 0,
-                       ((((u32)Engine_RandomNext() * 5) >> 16) << 16) +
-                           0x2e80000,
-                       0x4000, 0, 0, 0x90000, &options);
+          FieldFx_Spawn((((row << 2) + particleIndex) << 17) + 0x03120000, 0,
+                        ((((u32)Engine_RandomNext() * 5) >> 16) << 16) +
+                            0x2e80000,
+                        0x4000, 0, 0, 0x90000, &options);
         } else {
-          Effect_Spawn(0x3380000 - (particleIndex << 17) - (row << 19), 0,
-                       ((((u32)Engine_RandomNext() * 5) >> 16) << 16) +
-                           0x2c80000,
-                       0x4000, 0, 0, 0x90000, &options);
+          FieldFx_Spawn(0x3380000 - (particleIndex << 17) - (row << 19), 0,
+                        ((((u32)Engine_RandomNext() * 5) >> 16) << 16) +
+                            0x2c80000,
+                        0x4000, 0, 0, 0x90000, &options);
         }
         Engine_EventWait(1);
       }
@@ -1739,8 +1739,8 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
       particleY = actor->y.fixed +
                   ((((u32)Engine_RandomNext() << 5) >> 16) << 16) + -0x100000;
       riseSpeed = ((((u32)Engine_RandomNext() << 2) >> 16) << 15) + 0x8000;
-      Effect_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, 0,
-                   0x330000, effectOptions);
+      FieldFx_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, 0,
+                    0x330000, effectOptions);
     }
     actor->y.fixed += frame * 0x1999;
     actor->targetY = actor->y.fixed;
@@ -1798,7 +1798,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     z >>= 16;
     z <<= 16;
     z += 0x880000;
-    Effect_Spawn(particleX, 0, z, 0, 0, 0, 0x330001, effectOptions);
+    FieldFx_Spawn(particleX, 0, z, 0, 0, 0, 0x330001, effectOptions);
     Engine_EventWait(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
@@ -1824,7 +1824,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     z += 0x980000;
     random = Engine_RandomNext();
     particleSpeed = -((random * 10 >> 16) * 0x3333) - 0x3333;
-    Effect_Spawn(particleX, 0, z, 0, 0, particleSpeed, 0x330001, effectOptions);
+    FieldFx_Spawn(particleX, 0, z, 0, 0, particleSpeed, 0x330001,
+                  effectOptions);
     Engine_EventWait(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
@@ -1852,9 +1853,10 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
       particleVelocityX =
           (0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16)) - 0x6664;
       particleSpeed = 0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16);
-      Effect_Spawn(particleX, 0,
-                   ((-((u32)particleIndex >> 1) - rowOffset) << 16) + 0xc00000,
-                   particleVelocityX, 0, particleSpeed, 0xd0001, effectOptions);
+      FieldFx_Spawn(particleX, 0,
+                    ((-((u32)particleIndex >> 1) - rowOffset) << 16) + 0xc00000,
+                    particleVelocityX, 0, particleSpeed, 0xd0001,
+                    effectOptions);
       particleIndex = (particleIndex + 1);
       Engine_EventWait(2);
     } while ((u32)particleIndex <= 31);
@@ -2079,9 +2081,9 @@ static void SceneEffect_SpawnParticleRowsAndDrawTiles(void) {
         s32 velocityZ =
             (((u32)Engine_RandomNext() << 3) >> 16) * 0x3333 + 0xffff3334;
 
-        Effect_Spawn(0x690000, 0,
-                     ((-particleIndex - (row << 4)) << 16) + 0x2200000,
-                     velocityX, 0, velocityZ, 0x90000, &options);
+        FieldFx_Spawn(0x690000, 0,
+                      ((-particleIndex - (row << 4)) << 16) + 0x2200000,
+                      velocityX, 0, velocityZ, 0x90000, &options);
         Engine_EventWait(1);
       }
     }
@@ -2108,13 +2110,13 @@ static void MercuryLighthouse_OpenThreeStepStair(void) {
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if (particleIndex & 1) {
         if (particleIndex & 2) {
-          Effect_Spawn((105 - (((u32)Engine_RandomNext() * 5) >> 16)) << 16, 0,
-                       offsetZ - (row << 19) + 0x22e0000, 0, 0, -0x4000,
-                       0x90000, effectOptions);
+          FieldFx_Spawn((105 - (((u32)Engine_RandomNext() * 5) >> 16)) << 16, 0,
+                        offsetZ - (row << 19) + 0x22e0000, 0, 0, -0x4000,
+                        0x90000, effectOptions);
         } else {
-          Effect_Spawn((((row << 2) + particleIndex) << 17) + 0xb70000, 0,
-                       (0x26c - (((u32)Engine_RandomNext() * 5) >> 16)) << 16,
-                       0x4000, 0, 0, 0x90000, effectOptions);
+          FieldFx_Spawn((((row << 2) + particleIndex) << 17) + 0xb70000, 0,
+                        (0x26c - (((u32)Engine_RandomNext() * 5) >> 16)) << 16,
+                        0x4000, 0, 0, 0x90000, effectOptions);
         }
         Engine_EventWait(1);
       }
@@ -2144,8 +2146,8 @@ static void SceneEffect_SpawnParticleEveryFourthFrame(void) {
       s32 velocityY =
           (((u32)Engine_RandomNext() << 3) >> 16) * 0x3333 + 0xffff3334;
 
-      Effect_Spawn(leader->x.fixed, y, leader->z.fixed, velocityX, velocityY,
-                   framePhase, 0x90000, &options);
+      FieldFx_Spawn(leader->x.fixed, y, leader->z.fixed, velocityX, velocityY,
+                    framePhase, 0x90000, &options);
     }
   }
 }
@@ -2167,8 +2169,8 @@ static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z) {
       s32 velocityY =
           (((u32)Engine_RandomNext() << 3) >> 16) * 0x3333 + 0xffff3334;
 
-      Effect_Spawn(x, y, z, velocityX, velocityY, framePhase, 0x90000,
-                   &options);
+      FieldFx_Spawn(x, y, z, velocityX, velocityY, framePhase, 0x90000,
+                    &options);
     }
   }
 }
@@ -2187,7 +2189,7 @@ static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z) {
     s32 particleZ =
         z + ((((u32)Engine_RandomNext() << 3) >> 16) << 16) + 0xfffc0000;
 
-    Effect_Spawn(particleX, y, particleZ, 0, 0, 0, 0xb0000, &options);
+    FieldFx_Spawn(particleX, y, particleZ, 0, 0, 0, 0xb0000, &options);
   }
 }
 
@@ -2215,8 +2217,8 @@ static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
         s32 particleZ =
             z + ((6 - (((u32)Engine_RandomNext() * 6) >> 16)) << 16);
 
-        Effect_Spawn(particleX, y, particleZ, velocity[0], velocity[1],
-                     velocity[2], 0x90000, &options);
+        FieldFx_Spawn(particleX, y, particleZ, velocity[0], velocity[1],
+                      velocity[2], 0x90000, &options);
       }
     }
     Engine_TaskWait(2);

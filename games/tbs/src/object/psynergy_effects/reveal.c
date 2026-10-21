@@ -36,7 +36,7 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
 /// (FieldFx_RunReveal). The time counts only while effectTimerRunning is
 /// set, so menus and other effects pause it. It asks every frame until
 /// ResetSceneTransitionEffect removes it.
-void FieldEffect_WatchLeaderDistance(void) {
+void FieldFx_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct ObjectRuntime *actor;
   s16 *timer;
@@ -75,7 +75,7 @@ void FieldEffect_WatchLeaderDistance(void) {
 /// The transition is WINDOW_TRANSITION_RIPPLE, a wobbling circle round the
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
 /// 600 frames of its own time, or until the leader leaves its circle
-/// (FieldEffect_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
+/// (FieldFx_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
 /// Called by BattleFx_Run and BattleFx_DispatchRequestKind.
 void FieldFx_RunReveal(void) {
   struct FieldWork *field;
@@ -115,14 +115,14 @@ void FieldFx_RunReveal(void) {
   field->revealCenterY = transition->centreY / 0x10000;
   field->revealFrames = 600;
   field->effectTimerRunning = 1;
-  FieldEffect_SpawnNearbyMarkers();
+  FieldFx_SpawnNearbyMarkers();
   frame = 0;
   do {
     WaitFrames(1);
     transition->value = frame;
     frame++;
   } while (frame <= 18);
-  Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldFx_WatchLeaderDistance, 0xc80);
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
@@ -150,7 +150,7 @@ void ResetSceneTransitionEffect(void) {
 
   if (state->revealActive != 0) {
     AudioCommand_PlayFar(SE_SCENE_TRANSITION);
-    Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
+    Scheduler_RemoveCallback(FieldFx_WatchLeaderDistance);
 
     zero = 0;
     state->revealActive = zero;

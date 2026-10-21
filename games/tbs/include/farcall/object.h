@@ -94,7 +94,7 @@ void FieldFx_StopLightningFar(void);
 void FieldFx_LastLightningFar(void);
 void FieldFx_ResumeLightningFar(void);
 void BattleFx_StartBufferBlendFar(s32 from, s32 to);
-void FieldEffect_InitSparklesFar(void);
+void FieldFx_InitSparklesFar(void);
 void DisplayTransition_InitializeBattleEffectStateFar(s32 mode);
 void BattleFx_ApplyColorToTargetBufferFar(s32 mode, s32 half);
 void BattleFx_ApplyColorToSourceBufferFar(s32 mode, s32 half);

@@ -391,7 +391,7 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
   options.palette = 5;
   x = object->x.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
   z = object->z.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
-  Effect_Spawn(x, object->y.fixed + PIXELS(16), z, 0, 0, 0, 0x90001, &options);
+  FieldFx_Spawn(x, object->y.fixed + PIXELS(16), z, 0, 0, 0, 0x90001, &options);
 #ifdef UBFIX
   return;
 #else
@@ -480,7 +480,7 @@ static void Event_HopDownStep(void) {
   Engine_TaskWait(6);
   leader->motionFlags = 0;
   // Emit particles on alternate frames while the leader descends.
-  options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
+  options.update = (void (*)(union FieldObject *))FieldFx_AdvanceMotion;
   Engine_AudioPlayCue(SE_LANDING_THUD);
   for (i = 0; i < 8; i++) {
     leader->y.fixed -= PIXELS(2);
@@ -492,8 +492,8 @@ static void Event_HopDownStep(void) {
       s32 velocityZ;
 
       velocityZ = (u32)Engine_RandomNext() % 10 * -0x1999 - 0x7ffd;
-      Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocityX,
-                   0, velocityZ, 0x1000001, &options);
+      FieldFx_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                    velocityX, 0, velocityZ, 0x1000001, &options);
     }
   }
   Engine_ActorSetSpriteFlags(leader, 1);
@@ -746,10 +746,10 @@ static void Event_SinkPillarA(void) {
       randomX = Random_Next();
       randomX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(736));
       randomZ = Engine_RandomNext();
-      Effect_Spawn(randomX, 0,
-                   ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
-                    PIXELS(128)),
-                   0, 0, 0, 0x90000, effectOptions);
+      FieldFx_Spawn(randomX, 0,
+                    ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
+                     PIXELS(128)),
+                    0, 0, 0, 0x90000, effectOptions);
     }
     Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     WAIT(30);
@@ -828,7 +828,7 @@ static void Event_SinkPillarB(void) {
         randomZ = Engine_RandomNext();
         effectZ = ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
                    PIXELS(224));
-        Effect_Spawn(effectX, 0, effectZ, 0, 0, 0, 0x90000, effectOptions);
+        FieldFx_Spawn(effectX, 0, effectZ, 0, 0, 0, 0x90000, effectOptions);
       }
       Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
       WAIT(30);

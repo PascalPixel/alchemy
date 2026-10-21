@@ -117,8 +117,8 @@ struct EffectOptions {
 STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);
 STATIC_ASSERT(offsetof(struct EffectOptions, update) == 0x24);
 
-void Effect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                          s32 velocityZ, u32 flags,
-                          const struct EffectOptions *options);
+void FieldFx_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                           s32 velocityZ, u32 flags,
+                           const struct EffectOptions *options);
 
 #endif

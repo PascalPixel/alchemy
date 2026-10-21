@@ -1528,27 +1528,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       x = left->x.fixed;
       x += r;
       x += -0xc0000;
-      Effect_Spawn(x,
-                   left->y.fixed +
-                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       -0x100000,
-                   left->z.fixed, 0, 0x40000, 0,
-                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                   effectOptions);
+      FieldFx_Spawn(x,
+                    left->y.fixed +
+                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                        -0x100000,
+                    left->z.fixed, 0, 0x40000, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    effectOptions);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x += -0xc0000;
-      Effect_Spawn(x,
-                   right->y.fixed +
-                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       -0x100000,
-                   right->z.fixed, 0, 0x40000, 0,
-                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                   effectOptions);
+      FieldFx_Spawn(x,
+                    right->y.fixed +
+                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                        -0x100000,
+                    right->z.fixed, 0, 0x40000, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    effectOptions);
     }
   }
   Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
@@ -1583,27 +1583,27 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       x = left->x.fixed;
       x += r;
       x += -0xc0000;
-      Effect_Spawn(x,
-                   left->y.fixed +
-                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       0x200000,
-                   left->z.fixed, 0, -0x40000, 0,
-                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                   effectOptions);
+      FieldFx_Spawn(x,
+                    left->y.fixed +
+                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                        0x200000,
+                    left->z.fixed, 0, -0x40000, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    effectOptions);
     } else {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
       x += -0xc0000;
-      Effect_Spawn(x,
-                   right->y.fixed +
-                       ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
-                       0x200000,
-                   right->z.fixed, 0, -0x40000, 0,
-                   EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                   effectOptions);
+      FieldFx_Spawn(x,
+                    right->y.fixed +
+                        ((((u32)Engine_RandomNext() << 5) >> 16) << 16) +
+                        0x200000,
+                    right->z.fixed, 0, -0x40000, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                    effectOptions);
     }
     if (i == 20) {
       Actor_SetChildValue(ACTOR_SATUROS, 0x100);

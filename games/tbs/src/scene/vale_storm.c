@@ -638,7 +638,7 @@ s32 ValeStorm_Initialize(void) {
   // The lightning starts at once, except before Dora and Kyle's scene.
   if (gGameState.entrance != VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA ||
       Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
-    Effect_SoundAndFlash();
+    FieldFx_StartGroundParticles();
     FieldFx_StartLightning();
   }
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_10) != 0) {
@@ -706,7 +706,7 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
   Engine_EventBegin();
-  Effect_SoundAndFlash();
+  FieldFx_StartGroundParticles();
   FieldFx_StartLightning();
   FieldFx_LastLightning();
   Engine_TaskWait(60);
@@ -2868,7 +2868,7 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
     struct FieldActor *effect = pair[0];
     struct AnimationObject *effectSprite = effect->sprite;
 
-    effect->update = Effect_AnimateVerticalNegative;
+    effect->update = FieldFx_AnimateVerticalNegative;
     effectSprite->image.priority = parent->sprite->image.priority;
   }
   {
@@ -2876,7 +2876,7 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
     struct AnimationObject *effectSprite = effect->sprite;
 
     effectSprite->image.priority = parent->sprite->image.priority;
-    effect->update = Effect_AnimateVerticalPositive;
+    effect->update = FieldFx_AnimateVerticalPositive;
     effect->priorityFlags = 2;
   }
 }

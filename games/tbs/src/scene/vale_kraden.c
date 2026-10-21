@@ -908,7 +908,7 @@ s32 ValeKraden_Initialize(void) {
   }
   // The rockslide chapter replaces residents with debris and a survivor.
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    Effect_SoundAndFlash();
+    FieldFx_StartGroundParticles();
     FieldFx_StartLightning();
     Engine_EventBegin();
     Engine_ActorSetPosition(ACTOR_BOY_BY_THE_FENCE, 0, 0);

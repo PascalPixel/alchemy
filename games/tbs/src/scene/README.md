@@ -73,8 +73,8 @@ A scene's functions are `<Place>_` (`Vault_`, `VaultRevisit_`,
 `ColosseumNavampaMatch_`) and say what the player sees, from the English release's names
 and text; an unknown keeps a placeholder. The shared helpers take their
 family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
-`StagedActor_`, `Effect_`); some still carry older descriptive names
-(`SceneActor_`, `SceneEffect_`, `OverlayObject_`, `FieldScene_`) until the
+`StagedActor_`, and `FieldFx_` for the field effects); some still carry older
+descriptive names (`SceneActor_`, `SceneEffect_`, `OverlayObject_`, `FieldScene_`) until the
 scenes that call them are renamed with them.
 
 The spellings some sites keep to match (fields reached through `offsetof`,
@@ -134,7 +134,7 @@ The headers are named after the place or the job they share:
 | `kolima_*.h` | Kolima and its forest | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |
 | `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
 | [`common/vale.h`](common/vale.h), [`common/world_map_linked_effects.h`](common/world_map_linked_effects.h) | Vale's scenes, the world map | the storm's door exits, the particles around a glowing actor |
-| `effect_*.h` | many | Effect_Spawn and the small effects it places, cutscene Psynergy |
+| `effect_*.h` | many | FieldFx_Spawn and the small effects it places, cutscene Psynergy |
 | `object_*.h` | many | actors: pushed blocks and rolling logs, the floating Nut, lookups by cell and distance, turning and waiting |
 | `map_panel.h`, [`common/scroll_initialize_hblank_dma.h`](common/scroll_initialize_hblank_dma.h) | Crossbone Isle and Kolima; the Lemurian ship | a stretch of map drawn into the tile map; the water's ripple |
 

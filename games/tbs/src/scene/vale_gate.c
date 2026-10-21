@@ -1962,7 +1962,7 @@ static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
     struct FieldActor *effect = pair[0];
     struct AnimationObject *effectSprite = effect->sprite;
 
-    effect->update = Effect_AnimateVerticalNegative;
+    effect->update = FieldFx_AnimateVerticalNegative;
     effectSprite->image.priority = 2;
   }
   {
@@ -1970,7 +1970,7 @@ static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
     struct AnimationObject *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 2;
-    effect->update = Effect_AnimateVerticalPositive;
+    effect->update = FieldFx_AnimateVerticalPositive;
     effect->priorityFlags = 2;
   }
 }

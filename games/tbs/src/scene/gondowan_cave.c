@@ -462,9 +462,9 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
     particleVelocity.z = Engine_MathSin(angle);
     particleVelocity.x -= particleVelocity.x / 4;
     particleVelocity.z -= particleVelocity.z / 2;
-    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-                 particleVelocity.x, particleVelocity.y, particleVelocity.z, 0,
-                 0);
+    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+                  particleVelocity.x, particleVelocity.y, particleVelocity.z, 0,
+                  0);
   }
   Actor_SetDestination(actorId, 440, 308);
   // Finish the second movement before restoring the resting animation.

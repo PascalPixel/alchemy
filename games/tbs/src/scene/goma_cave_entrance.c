@@ -544,8 +544,8 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
     SET_POSITION(v, Engine_MathCos(i << 12), 0, Engine_MathSin(i << 12));
     v->x -= v->x / 4;
     v->z -= v->z / 2;
-    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, v->x, v->y,
-                 v->z, 0, NULL);
+    FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, v->x, v->y,
+                  v->z, 0, NULL);
   }
   actor->velocityY = 0x50000;
   Engine_ActorSetDestination(id, 139, 196);
@@ -565,8 +565,8 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
   p->startScaleY = 0xcccc;
   p->targetScaleX = 0x18000;
   p->targetScaleY = 0x13333;
-  Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
-               0x1c0000, p);
+  FieldFx_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
+                0x1c0000, p);
   Engine_AudioPlayCue(SE_CAST);
   OBJ_MODE(id, 3);
   Engine_MapWaitWorkValuesBelow256();

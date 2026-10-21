@@ -80,8 +80,8 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
     vel[1] = 0;
     vz = Trig_Sin(angle);
     vel[2] = vz;
-    Effect_SpawnResident(origin->x, origin->y, origin->z, vel[0], vel[1], vz,
-                         0x01090001, &opt);
+    FieldFx_SpawnResident(origin->x, origin->y, origin->z, vel[0], vel[1], vz,
+                          0x01090001, &opt);
     i++;
   } while (i <= WHIRLWIND_RADIAL_DIRECTIONS);
 }

@@ -6,17 +6,17 @@
 #include "field_obj.h"
 #include "field_event.h"
 
-/// Searching cell code 41 beside the bone giver takes a Bone after the
+/// Searching cell code 41 beside the girl at the inn takes a Bone after the
 /// thieves are jailed. The floor Bone remains, so the party can take more.
-/// With no room for it, ACTOR_BONE_GIVER (as both scenes name her) shakes
+/// With no room for it, ACTOR_GIRL_AT_THE_INN (as both scenes name her) shakes
 /// their head: "Aren't you a greedy lad!"
 static void Vault_FindBone(void) {
   Engine_EventBegin();
   if (PartyInventory_HasSpace() == 0) {
-    Engine_ActorSetAnimationAndWait(ACTOR_BONE_GIVER, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
-    Engine_EventShowMessage(ACTOR_BONE_GIVER, 0);
+    Engine_EventShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
   } else {
     Engine_ItemShowFound(ITEM_BONE, 3);
     Engine_PartyGiveItem(ITEM_BONE, 0);

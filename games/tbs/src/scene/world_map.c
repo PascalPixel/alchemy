@@ -283,8 +283,10 @@ enum WorldMapCaravanActor {
   /// Hammet, in his sprite, as ACTOR_HAMMET is out of West Lunpa Cave.
   /// "We can't stay another minute in a dangerous place like this."
   ACTOR_CARAVAN_HAMMET = ACTOR_FIRST_PLACED,
-  /// One of Hammet's men. "Master Hammet! This is terrible! The bridge has
-  /// been destroyed..."
+  /// One of Hammet's men, bald and bare-chested. "Master Hammet! This is
+  /// terrible! The bridge has been destroyed..."
+  /// ★ Named from the game: "Master Hammet! This is terrible!"
+  /// (MsgWorldMapWeCantStayAnotherMinute)
   ACTOR_CARAVAN_MAN,
   /// The caravan's four wagons, in the sprite of Bunza's wagon.
   /// ★ Named from what the player sees: four covered wagons, each drawn by a
@@ -334,7 +336,7 @@ enum WorldMapEndingActor {
   /// Alex, who comes to show them that Felix and Sheba are alive. "There is
   /// something I wish to show you."
   ACTOR_ALEX,
-  /// Felix, in his sprite as at Mercury Lighthouse (0x23,
+  /// Felix, in his sprite as at Mercury Lighthouse (SPRITE_FELIX,
   /// mercury_lighthouse_aerie.c), shown with Sheba as Jenna and Kraden call
   /// their names.
   /// ★ Named from the game: "Felix" (MsgCharacterName)
@@ -3384,11 +3386,11 @@ s32 gWorldMapPlacement3[] = {
 
 // clang-format off
 struct ScenePlacement gWorldMapPlacements[] = {
-    { 0x5a, FLAG_DJINNI_0 + DJINNI_VINE, (s32)gWorldMapPlacement0,
+    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_VINE, (s32)gWorldMapPlacement0,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x5c, FLAG_DJINNI_0 + DJINNI_CORONA, ACTOR_STAND,
+    { MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_CORONA, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x5b, FLAG_DJINNI_0 + DJINNI_HAIL, ACTOR_STAND,
+    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_HAIL, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5678), 0, PIXELS(1200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3474,11 +3476,11 @@ struct ScenePlacement gWorldMapPlacements[] = {
         PIXELS(4942), 0, PIXELS(2690), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x1f5, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xa1, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapPlacement1,
+    { SPRITE_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapPlacement1,
         PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x121, FLAG_SCENE_TEMP_F1, (s32)gWorldMapPlacement3,
         PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x39, CONDITION_ALWAYS, (s32)gWorldMapPlacement4,
+    { SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapPlacement4,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
     { GARET, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
@@ -3489,17 +3491,17 @@ struct ScenePlacement gWorldMapPlacements[] = {
 struct ScenePlacement gWorldMapPlacementsHammetsCaravan[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x31, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3511,21 +3513,21 @@ struct ScenePlacement gWorldMapPlacementsHammetsCaravan[] = {
 };
 
 struct ScenePlacement gWorldMapPlacementsFromWestLunpaCave[] = {
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5892), 0, PIXELS(1128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5856), 0, PIXELS(1174), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x44, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BUNZA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x31, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacementsCrossingEnds[] = {
-    { 0xa1, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5384), 0, PIXELS(2248), FACING_WEST, TALK_KEEP_FACING, 0 },
     { 0x107, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3537,7 +3539,7 @@ struct ScenePlacement gWorldMapPlacementsCrossingEnds[] = {
 };
 
 struct ScenePlacement gWorldMapPlacementsCrossing[] = {
-    { 0xa1, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5432), 0, PIXELS(2312), FACING_WEST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3547,7 +3549,7 @@ struct ScenePlacement gWorldMapPlacementsFromKalayTunnelEntranceSouth[] = {
         PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5480), 0, PIXELS(2088), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3555,13 +3557,13 @@ struct ScenePlacement gWorldMapPlacementsFromKalayTunnelEntranceSouth[] = {
 struct ScenePlacement gWorldMapPlacementsJennaAndKradenAdrift[] = {
     { JENNA, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SHEBA, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7816), 0, PIXELS(3528), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x1e, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7544), 0, PIXELS(3496), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x2b, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_ALEX, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7708), 0, PIXELS(3456), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x23, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_FELIX, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7800), 0, PIXELS(3544), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x1f5, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7604), 0, PIXELS(3522), FACING_WEST, TALK_KEEP_FACING, 0 },

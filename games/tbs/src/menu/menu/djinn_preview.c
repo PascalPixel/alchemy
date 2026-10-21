@@ -288,7 +288,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
             menu->cursor->active = ICON_SHOWN;
           } while (0);
           UiMenu_SlideCursor(2, 96);
-          gGameState.messageSpeed = 1;
+          gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
           }
@@ -321,7 +321,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
             menu->cursor->active = ICON_SHOWN;
           } while (0);
           UiMenu_SlideCursor(106, 56);
-          gGameState.messageSpeed = 1;
+          gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
           }

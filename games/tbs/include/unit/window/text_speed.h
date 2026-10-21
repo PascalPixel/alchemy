@@ -3,6 +3,14 @@
 
 #include "types.h"
 
+/// GameState.messageSpeed, as the settings name it (MsgMessageSpeedSetting
+/// + speed): it indexes the speed tables below.
+enum MessageSpeed {
+  MESSAGE_SPEED_SLOW = 0,
+  MESSAGE_SPEED_NORMAL = 1, ///< a new game's
+  MESSAGE_SPEED_FAST = 2
+};
+
 extern const u8 gUiText_SpeedDelays[3];
 extern const u8 gUiText_SpeedSteps[3];
 extern const u8 gUiText_SpeedCueGaps[3];

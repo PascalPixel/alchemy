@@ -69,6 +69,8 @@
 #include "item_ids.h"
 #include "macros.h"
 #include "flags.h"
+#include "unit/window/text_speed.h"
+#include "game/character_ids.h"
 
 extern u8 IwramCopyWords[];
 
@@ -192,6 +194,51 @@ enum StatusPanelKind {
 /// OAM attribute 0 in the low half (shape square) and attribute 1 in the high
 /// half (size 1).
 #define ICON_SPRITE_16X16 0x40000000
+
+/// What the Djinn menu's choosers return. DjinnMenu_SelectDjinn's Djinni
+/// chooser returns DJINN_RESULT_CHOSEN, DJINN_RESULT_STATUS or
+/// DJINN_RESULT_HELP; its action chooser one of the commands. Every Djinn menu
+/// screen returns DJINN_RESULT_BACK for B and DJINN_RESULT_START for Start.
+enum DjinnMenuResult {
+  DJINN_RESULT_START = -2, ///< Start: the Djinn menu closes
+  DJINN_RESULT_BACK = -1,
+  DJINN_RESULT_CHOSEN = 1, ///< A on a Djinni
+  DJINN_RESULT_SET = 1,
+  DJINN_RESULT_STANDBY = 2,
+  DJINN_RESULT_GIVE = 3,
+  DJINN_RESULT_TRADE = 4,
+  /// The four commands applied without their preview, which no chooser
+  /// returns.
+  DJINN_RESULT_SET_NOW = 5,
+  DJINN_RESULT_STANDBY_NOW = 6,
+  DJINN_RESULT_STATUS = 7, ///< L: the member's status
+  DJINN_RESULT_GIVE_NOW = 8,
+  DJINN_RESULT_TRADE_NOW = 9,
+  DJINN_RESULT_HELP = 10 ///< Select: the help
+};
+
+/// DjinnMenuBackdrop.tutorialStep: where the Djinn tutorial is. Each lesson's
+/// steps follow its first in order, each waiting, showing a message or
+/// pressing a key for the player (DjinnMenu_SelectDjinn,
+/// OwnerAction_RunCompareLoop); the flags that pick the lesson are
+/// FLAG_DJINN_TUTORIAL_PART_A and _PART_B (DjinnMenu_Run).
+enum DjinnTutorialStep {
+  DJINN_TUTORIAL_OFF = 0,
+  /// Giving a Djinni and setting it: "To give your Djinni to someone else..."
+  DJINN_TUTORIAL_GIVE = 1,
+  /// The Djinn's powers: "Each Djinni has different powers."
+  DJINN_TUTORIAL_POWERS = 14,
+  /// Recovery after a summon: "After a Djinni has been used to summon..."
+  DJINN_TUTORIAL_RECOVERY = 27,
+  /// Waits for the player's A, then presses B.
+  DJINN_TUTORIAL_CLOSE = 28
+};
+
+/// DjinnMenu_SelectDjinn's two choosers.
+enum DjinnSelectMode {
+  DJINN_SELECT_DJINNI = 0, ///< a Djinni in any member's column
+  DJINN_SELECT_ACTION = 1  ///< what to do with the Djinni chosen
+};
 
 /// The preview loop's four operations, as its confirmation text describes them
 /// (OwnerAction_RunCompareLoop's mode). Trade and Give, the first two, have

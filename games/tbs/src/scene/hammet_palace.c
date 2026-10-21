@@ -199,11 +199,11 @@ static void Event_AskWhetherSilkTradeHasEnded(void) {
   EV_END();
 }
 
-/// Talking to Layana in Hammet Palace, the first time after the party has
-/// heard in Lunpa that Hammet is held there (place flag FLAG_PLACE_TEMP_21).
-/// `Isaac, you sneaked into Lunpa? That's far too dangerous!` She is glad
-/// Hammet is unhurt, but asks the party not to go back, and to fulfill their
-/// quest.
+/// Layana scolds Isaac for sneaking into Lunpa. It's the first talk with her in
+/// Hammet Palace after the party has heard in Lunpa that Hammet is held there
+/// (place flag FLAG_PLACE_TEMP_21). `Isaac, you sneaked into Lunpa? That's far
+/// too dangerous!` She is glad Hammet is unhurt, but asks the party not to go
+/// back, and to fulfill their quest.
 static void Event_LayanaScoldsLunpaVisit(void) {
 
   EV_BEGIN();

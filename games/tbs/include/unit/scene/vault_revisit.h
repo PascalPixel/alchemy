@@ -14,18 +14,18 @@ extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
 extern const s32 *gEffectScripts[];
-extern s32 gVaultRevisit_Actor0[];
-extern s32 gVaultRevisit_Actor1[];
+extern s32 gVaultRevisit_FirstWalkerScript[];
+extern s32 gVaultRevisit_SecondWalkerScript[];
 extern struct SceneEntrance gVaultRevisit_Entrances[];
 extern u32 gVaultRevisit_Exits[];
 extern struct ScenePlacement gVaultRevisit_Placements[];
-extern u16 gVaultRevisit_Scene5Cells[];
-extern u16 gVaultRevisit_Scene6Cells[];
-extern u16 gVaultRevisit_Scene7Cells[];
-extern u16 gVaultRevisit_Scene8Cells[];
-extern u16 gVaultRevisit_Scene9Cells[];
-extern u16 gVaultRevisit_Scene10Cells[];
-extern u16 gVaultRevisit_Scene12Cells[];
+extern u16 gVaultRevisit_GemOwnersHouseDoorCells[];
+extern u16 gVaultRevisit_ChildsHouseDoorCells[];
+extern u16 gVaultRevisit_InnDoorCells[];
+extern u16 gVaultRevisit_ItemShopDoorCells[];
+extern u16 gVaultRevisit_WeaponAndArmorShopDoorCells[];
+extern u16 gVaultRevisit_MayorsHouseDoorCells[];
+extern u16 gVaultRevisit_JailDoorCells[];
 extern struct SceneEvent gVaultRevisit_Events[];
 
 #endif

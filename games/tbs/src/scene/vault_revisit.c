@@ -32,15 +32,17 @@
 /// out), runs to a spot and jumps there three times
 /// (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c), and its thoughts then
 /// hint at a passage underground: Reveal shows the passage at that spot, and
-/// its trigger 40 leads down into Vault Cave (scene 96). Trigger 41 is a second
-/// way into Vault Cave (scene 98). A wooden box holds a Nut, and the well
-/// rumbles with water.
+/// its trigger 40 leads down into Vault Cave (VAULT_REVISIT_TO_VAULT_CAVE_1).
+/// Trigger 41 is a second way into Vault Cave (VAULT_REVISIT_TO_VAULT_CAVE_3).
+/// A wooden box holds a Nut, and the well rumbles with water.
 ///
 /// The town's other exits lead to the world map (exits 1 and 2), through six
-/// doors into the houses, shops and inn (scene 24, each door's number its
-/// entrance there), into Vault Sanctum (exit 11, the Sanctum's entrance 11)
-/// and into the jail (exit 12, the jail's entrance 10, where a lone prisoner
-/// sits in the thieves' place). Touch triggers 1 and 2 swap the collision of a
+/// doors into the houses, shops and inn (SceneId_VaultInteriorsRevisit,
+/// VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST to
+/// VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTHWEST), into Vault Sanctum
+/// (VAULT_REVISIT_TO_SANCTUM) and into the jail (VAULT_REVISIT_TO_VAULT_JAIL,
+/// arriving at VAULT_JAIL_FROM_VAULT_REVISIT, where a lone prisoner sits in
+/// the thieves' place). Touch triggers 1 and 2 swap the collision of a
 /// 4-by-2 block of cells (common/vault_toggle.h), as in vault.c.
 
 #include "game_state.h"
@@ -74,20 +76,41 @@
 #include "flags.h"
 #include "songs.h"
 
-enum {
-  ACTOR_GREETER = 8, ///< Vault's greeter. "You're the warriors who captured..."
-  ACTOR_LUNPA_GOSSIP = 11, ///< rumors of thieves from Lunpa running wild
+/// The townspeople, the dog and Sap, numbering gVaultRevisit_Placements' rows
+/// from ACTOR_FIRST_PLACED.
+enum VaultRevisitActor {
+  /// Vault's greeter. "You're the warriors who captured the thieves a while
+  /// back, aren't you?"
+  ACTOR_GREETER = ACTOR_FIRST_PLACED,
+  /// Brings the news from Kalay. "You've probably already heard, but the
+  /// bridge to Kalay has been fixed."
+  ACTOR_VILLAGER_BRIDGE_FIXED,
+  /// Worries about Hammet. "I wonder what happened to Hammet when he went to
+  /// Lunpa..."
+  ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET,
+  ACTOR_LUNPA_GOSSIP, ///< rumors of thieves from Lunpa running wild
   /// Has talked with the mayor. "I was just talking about you with our mayor"
-  ACTOR_MAYORS_VISITOR = 12,
-  ACTOR_VOLCANO_WATCHER = 13, ///< if the volcano stays calm...
+  ACTOR_MAYORS_VISITOR,
+  ACTOR_VOLCANO_WATCHER, ///< if the volcano stays calm...
   /// The two who walk in circles. "Hey, it's that warrior guy!"
-  ACTOR_FIRST_WALKER = 14,
+  ACTOR_FIRST_WALKER,
   /// Speaks of the grown-ups. "Grown-ups always get so scared"
-  ACTOR_SECOND_WALKER = 15,
-  ACTOR_WATCHMAN = 16, ///< Vault's watchman. "Did you guys check out the jail?"
-  ACTOR_VAULT_DOG = 18,
-  ACTOR_VAULT_VENUS_DJINNI = 21, ///< Sap, hiding until the bell calls it
-  VAULT_VENUS_DJINNI_INDEX = 4,  ///< Sap's index among the Venus Djinn
+  ACTOR_SECOND_WALKER,
+  ACTOR_WATCHMAN, ///< Vault's watchman. "Did you guys check out the jail?"
+  /// Takes the thieves' escape calmly. "The thieves escaped, but I think it's
+  /// all right. It's all part of a divine plan."
+  ACTOR_VILLAGER_DIVINE_PLAN,
+  ACTOR_VAULT_DOG,
+  /// vault.c's roofer, standing where he did there, his work done. "There,
+  /// you see? The roof repairs are all finished."
+  ACTOR_ROOFER,
+  /// Sap, a Venus Djinni, hiding until the bell calls it. The row before it,
+  /// sprite 0xf8 placed at 0, 0, is never referred to.
+  ACTOR_SAP = ACTOR_FIRST_PLACED + 13
+};
+
+enum {
+  VAULT_VENUS_DJINNI_INDEX = 4, ///< Sap's index among the Venus Djinn
   VAULT_PROXIMITY_REACTION_PAUSED = 2
 };
 
@@ -229,7 +252,7 @@ static void Event_AskAboutJailbreak(void) {
   Engine_EventSetMessage(MsgVaultGuysCheckJail);
   Engine_ActorFaceEachOther(ACTOR_WATCHMAN, ACTOR_PARTY_LEADER, 2);
   Engine_EventOpenMessage(ACTOR_WATCHMAN, 0);
-  if (Engine_EventChooseYesNo(0, 0) != 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) != 0) {
     gEventWork->message += 1;
   }
   Engine_EventShowMessage(ACTOR_WATCHMAN, 0);
@@ -329,9 +352,9 @@ static void Event_ReadMindOnJailKey(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_WATCHMAN, 1);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgVaultGuysCheckJail);
-    Engine_ActorFaceEachOther(ACTOR_WATCHMAN, 0, 2);
+    Engine_ActorFaceEachOther(ACTOR_WATCHMAN, ACTOR_PARTY_LEADER, 2);
     Event_OpenMessage(ACTOR_WATCHMAN, 0);
-    if (Engine_EventChooseYesNo(0, 0) != 0) {
+    if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) != 0) {
       gEventWork->message++;
     }
     Event_ShowMessage(ACTOR_WATCHMAN, 0);
@@ -378,17 +401,16 @@ static void Event_RingBell(void) {
   Event_PlayCue(SE_100);
   Engine_EventWait(40);
   if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
-    Actor_SetAttachedEffect(ACTOR_VAULT_VENUS_DJINNI, 0x102);
-    Engine_ActorJump(ACTOR_VAULT_VENUS_DJINNI, 4, 0);
+    Actor_SetAttachedEffect(ACTOR_SAP, 0x102);
+    Engine_ActorJump(ACTOR_SAP, 4, 0);
     Engine_EventWait(12);
-    Engine_ActorJump(ACTOR_VAULT_VENUS_DJINNI, 4, 0);
+    Engine_ActorJump(ACTOR_SAP, 4, 0);
     Engine_EventWait(20);
     // Let the Djinni leap from hiding before it walks to the bell.
-    VaultRevisit_JumpActorToAndWait(ACTOR_VAULT_VENUS_DJINNI, 392, 104,
-                                    PIXELS(7));
+    VaultRevisit_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
     Engine_EventWait(20);
-    Actor_WalkToAndWait(ACTOR_VAULT_VENUS_DJINNI, 408, 104);
-    Actor_WalkToAndWait(ACTOR_VAULT_VENUS_DJINNI, 408, 120);
+    Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
+    Actor_WalkToAndWait(ACTOR_SAP, 408, 120);
     GameFlag_Set(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
   }
   Engine_EventEnd();
@@ -404,62 +426,73 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Door 5 opens into the house of the man whose precious stone a cat ate.
+/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST opens into
+/// the house of the man whose precious stone a cat ate.
 static void Event_EnterGemOwnersHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapAnimateCells(gVaultRevisit_Scene5Cells, 56, 19);
-  Vault_WalkThroughExit(408, 320, 5);
+  Engine_MapAnimateCells(gVaultRevisit_GemOwnersHouseDoorCells, 56, 19);
+  Vault_WalkThroughExit(408, 320,
+                        VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHEAST);
 }
 
-/// Door 6 opens into the house of the child who doubts the thieves were from
-/// Lunpa.
+/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTH opens into the
+/// house of the child who doubts the thieves were from Lunpa.
 static void Event_EnterChildsHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapAnimateCells(gVaultRevisit_Scene6Cells, 50, 18);
-  Vault_WalkThroughExit(312, 304, 6);
+  Engine_MapAnimateCells(gVaultRevisit_ChildsHouseDoorCells, 50, 18);
+  Vault_WalkThroughExit(312, 304,
+                        VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTH);
 }
 
-/// Door 7 opens into the inn.
+/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHWEST opens into
+/// the inn.
 static void Event_EnterInn(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapAnimateCells(gVaultRevisit_Scene7Cells, 44, 17);
-  Vault_WalkThroughExit(216, 288, 7);
+  Engine_MapAnimateCells(gVaultRevisit_InnDoorCells, 44, 17);
+  Vault_WalkThroughExit(216, 288,
+                        VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_SOUTHWEST);
 }
 
-/// Door 8 opens into the item shop, where the couple who talk of Colosso also
-/// stand. The leader is drawn at sprite priority 3 as he walks in, as at
-/// doors 9 and 12, and the collision of the doorway, a column of three cells
-/// at (23, 12), is replaced so he can pass.
+/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_EAST opens into the
+/// item shop, where the couple who talk of Colosso also stand. The leader is
+/// drawn at sprite priority 3 as he walks in, as at the weapon and armor shop
+/// and the jail, and the collision of the doorway, a column of three cells at
+/// (23, 12), is replaced so he can pass.
 static void Event_EnterItemShop(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapAnimateCells(gVaultRevisit_Scene8Cells, 54, 13);
+  Engine_MapAnimateCells(gVaultRevisit_ItemShopDoorCells, 54, 13);
   Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
-  Vault_WalkThroughExit(376, 224, 8);
+  Vault_WalkThroughExit(376, 224,
+                        VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_EAST);
 }
 
-/// Door 9 opens into the weapon and armor shop, drawn like door 8.
+/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTH opens into the
+/// weapon and armor shop, drawn like the item shop's.
 static void Event_EnterWeaponAndArmorShop(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapAnimateCells(gVaultRevisit_Scene9Cells, 49, 10);
+  Engine_MapAnimateCells(gVaultRevisit_WeaponAndArmorShopDoorCells, 49, 10);
   Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
-  Vault_WalkThroughExit(296, 176, 9);
+  Vault_WalkThroughExit(296, 176,
+                        VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTH);
 }
 
-/// Door 10 opens into the mayor's house.
+/// The door of VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTHWEST opens into
+/// the mayor's house.
 static void Event_EnterMayorsHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapAnimateCells(gVaultRevisit_Scene10Cells, 38, 6);
-  Vault_WalkThroughExit(120, 144, 10);
+  Engine_MapAnimateCells(gVaultRevisit_MayorsHouseDoorCells, 38, 6);
+  Vault_WalkThroughExit(120, 144,
+                        VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_NORTHWEST);
 }
 
 // The remaining doorway helper retains its position in the overlay.
@@ -469,17 +502,17 @@ static void Event_EnterMayorsHouse(void) {
 #include "objcmd.h"
 
 /// The jail door opens and the party walks in, drawn behind the doorway, to
-/// the jail's entrance 10, where the lone prisoner sits.
+/// VAULT_JAIL_FROM_VAULT_REVISIT, where the lone prisoner sits.
 static void Event_EnterJail(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapAnimateCells(gVaultRevisit_Scene12Cells, 35, 9);
+  Engine_MapAnimateCells(gVaultRevisit_JailDoorCells, 35, 9);
   Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
-  Vault_WalkThroughExit(72, 160, 12);
+  Vault_WalkThroughExit(72, 160, VAULT_REVISIT_TO_VAULT_JAIL);
 }
 
 // Shared entrance toggles precede the Djinni and dog events.
@@ -487,7 +520,7 @@ static void Event_EnterJail(void) {
 
 /// Talking to Sap, a Venus Djinni: it joins the party.
 static void Event_TalkToVenusDjinni(void) {
-  Djinn_JoinParty(ACTOR_VAULT_VENUS_DJINNI, 0, VAULT_VENUS_DJINNI_INDEX);
+  Djinn_JoinParty(ACTOR_SAP, 0, VAULT_VENUS_DJINNI_INDEX);
 }
 
 /// Jumps at the hidden passage, then pauses so the party can see the clue.
@@ -584,9 +617,10 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// map (entrances 0 to 2) before Sap has joined clears
 /// FLAG_VAULT_DJINNI_CALLED_BY_BELL, so Sap is hidden again; while it is
 /// called and has not joined, it stands by the bell. Coming out of Vault
-/// Sanctum (entrance 11) clears FLAG_SHOW_LOCATION_NAME, and coming up from
-/// Vault Cave (entrance 13) clears FLAG_EXIT_ARRIVAL_PENDING (0x120), so the
-/// leader's arrival animation does not play.
+/// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME, and
+/// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_1) clears
+/// FLAG_EXIT_ARRIVAL_PENDING (0x120), so the leader's arrival animation does
+/// not play.
 s32 Scene_Initialize(void) {
 
   struct FieldActor *actor;
@@ -627,7 +661,7 @@ s32 Scene_Initialize(void) {
     Engine_GameFlagClear(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
   if (Engine_GameFlagIsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) &&
       !Engine_GameFlagIsSet(FLAG_DJINNI_0 + VAULT_VENUS_DJINNI_INDEX))
-    Actor_SetPosition(ACTOR_VAULT_VENUS_DJINNI, PIXELS(408), PIXELS(120));
+    Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
   if (gGameState.entrance == VAULT_REVISIT_FROM_SANCTUM)
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   if (gGameState.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_1)
@@ -656,7 +690,7 @@ const s32 *gEffectScripts[] = {
     gEffectScript2,
 };
 
-s32 gVaultRevisit_Actor0[] = {
+s32 gVaultRevisit_FirstWalkerScript[] = {
     SC_ARG(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
     SC_SET(SW_ACCEL, PIXELS(1) / 5),
@@ -681,7 +715,7 @@ s32 gVaultRevisit_Actor0[] = {
     SC_END,
 };
 
-s32 gVaultRevisit_Actor1[] = {
+s32 gVaultRevisit_SecondWalkerScript[] = {
     SC_ARG(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),
     SC_SET(SW_ACCEL, PIXELS(1) / 5),
@@ -779,9 +813,9 @@ struct ScenePlacement gVaultRevisit_Placements[] = {
         PIXELS(124), 0, PIXELS(196), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
     { 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(244), 0, PIXELS(300), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6b, CONDITION_ALWAYS, (s32)gVaultRevisit_Actor0,
+    { 0x6b, CONDITION_ALWAYS, (s32)gVaultRevisit_FirstWalkerScript,
         PIXELS(132), 0, PIXELS(380), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0x66, CONDITION_ALWAYS, (s32)gVaultRevisit_Actor1,
+    { 0x66, CONDITION_ALWAYS, (s32)gVaultRevisit_SecondWalkerScript,
         PIXELS(132), 0, PIXELS(420), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(332), 0, PIXELS(412), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -798,39 +832,39 @@ struct ScenePlacement gVaultRevisit_Placements[] = {
     { SCENE_TABLE_END },
 };
 
-u16 gVaultRevisit_Scene5Cells[] = {
+u16 gVaultRevisit_GemOwnersHouseDoorCells[] = {
     MAP_CELL_STEP(35, 52, 2, 2, 4), MAP_CELL_STEP(33, 52, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 gVaultRevisit_Scene6Cells[] = {
+u16 gVaultRevisit_ChildsHouseDoorCells[] = {
     MAP_CELL_STEP(35, 50, 2, 2, 4), MAP_CELL_STEP(33, 50, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 gVaultRevisit_Scene7Cells[] = {
+u16 gVaultRevisit_InnDoorCells[] = {
     MAP_CELL_STEP(35, 48, 2, 2, 4), MAP_CELL_STEP(33, 48, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 gVaultRevisit_Scene8Cells[] = {
+u16 gVaultRevisit_ItemShopDoorCells[] = {
     MAP_CELL_STEP(42, 48, 2, 2, 4), MAP_CELL_STEP(40, 48, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 gVaultRevisit_Scene9Cells[] = {
+u16 gVaultRevisit_WeaponAndArmorShopDoorCells[] = {
     MAP_CELL_STEP(42, 46, 2, 2, 4), MAP_CELL_STEP(40, 46, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 gVaultRevisit_Scene10Cells[] = {
+u16 gVaultRevisit_MayorsHouseDoorCells[] = {
     MAP_CELL_STEP(35, 46, 2, 2, 4), MAP_CELL_STEP(33, 46, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
-u16 gVaultRevisit_Scene12Cells[] = {
+u16 gVaultRevisit_JailDoorCells[] = {
     MAP_CELL_STEP(35, 33, 2, 2, 4), MAP_CELL_STEP(33, 33, 2, 2, 4), MAP_CELL_STEPS_END,
 };
 
 struct SceneEvent gVaultRevisit_Events[] = {
     { EVENT_EXIT, 20, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 21, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 40, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 41, CONDITION_ALWAYS, 14 },
+    { EVENT_EXIT, 40, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_1 },
+    { EVENT_EXIT, 41, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_3 },
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGemOwnersHouse) },
@@ -842,36 +876,36 @@ struct SceneEvent gVaultRevisit_Events[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJail) },
     { EVENT_TALK, ACTOR_GREETER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RecognizeThiefCatchers) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatHappenedToHammet) },
+    { EVENT_TALK, ACTOR_VILLAGER_BRIDGE_FIXED, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },
+    { EVENT_TALK, ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatHappenedToHammet) },
     { EVENT_TALK, ACTOR_LUNPA_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkOfLunpaThieves) },
     { EVENT_TALK, ACTOR_MAYORS_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PraisePartyStrength) },
     { EVENT_TALK, ACTOR_VOLCANO_WATCHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopeVolcanoStaysCalm) },
     { EVENT_TALK, ACTOR_FIRST_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GreetWarriorGuy) },
     { EVENT_TALK, ACTOR_SECOND_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WishEldersWereBrave) },
     { EVENT_TALK, ACTOR_WATCHMAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutJailbreak) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultTheThievesEscapedButIThink) },
+    { EVENT_TALK, ACTOR_VILLAGER_DIVINE_PLAN, CONDITION_ALWAYS, MSGNO(MsgVaultTheThievesEscapedButIThink) },
     { EVENT_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToDog) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
-    { EVENT_TALK, ACTOR_VAULT_VENUS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToVenusDjinni) },
+    { EVENT_TALK, ACTOR_ROOFER, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
+    { EVENT_TALK, ACTOR_SAP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToVenusDjinni) },
     { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RingBell) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, FLAG_GREETER_RECOGNIZED_PARTY, EVENT_SCRIPT(Event_ReadMindAndRecognizeThiefCatchers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GREETER, FLAG_GREETER_RECOGNIZED_PARTY, EVENT_SCRIPT(Event_ReadMindAndRecognizeThiefCatchers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETER, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultYeahSomeWarriorsFromKalayCame) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BRIDGE_FIXED, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultYeahSomeWarriorsFromKalayCame) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUNPA_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnDodonpa) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40c, FLAG_PARTY_PRAISED, EVENT_SCRIPT(Event_ReadMindAndPraisePartyStrength) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAYORS_VISITOR, FLAG_PARTY_PRAISED, EVENT_SCRIPT(Event_ReadMindAndPraisePartyStrength) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_VISITOR, CONDITION_ALWAYS, MSGNO(MsgVaultThoseStupidThievesEscapedAndWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VOLCANO_WATCHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnWinter) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, FLAG_WALKER_SPOKE, EVENT_SCRIPT(Event_ReadMindOnFeelingBrave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_FIRST_WALKER, FLAG_WALKER_SPOKE, EVENT_SCRIPT(Event_ReadMindOnFeelingBrave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnFeelingBrave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnScaredGrownUps) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, FLAG_ASKED_ABOUT_JAIL, EVENT_SCRIPT(Event_ReadMindOnJailKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WATCHMAN, FLAG_ASKED_ABOUT_JAIL, EVENT_SCRIPT(Event_ReadMindOnJailKey) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WATCHMAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnJailKey) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultIKeepWonderingWasOurStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DIVINE_PLAN, CONDITION_ALWAYS, MSGNO(MsgVaultIKeepWonderingWasOurStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, IF_FLAG_SET(FLAG_VAULT_DOG_SHOWN_PASSAGE), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultThatsTheLastOfTheRoof) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOFER, CONDITION_ALWAYS, MSGNO(MsgVaultThatsTheLastOfTheRoof) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PeerIntoWell) },
     { SEARCH(SEARCH_WOODEN_BOX), 101, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { USE_ITEM_ON_ACTOR(ITEM_BONE), ACTOR_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(Event_GiveBoneToDog) },

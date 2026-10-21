@@ -241,9 +241,9 @@ static void Event_TalkToHungryDiner(void) {
   Engine_EventEnd();
 }
 
-/// A diner in Bilibin's restaurant, before the curse is lifted, asks whether a
-/// tree spirit can curse a man; on yes, sends the party to hear Lord McCoy's
-/// story. Then the diner turns back to the table.
+/// A diner asks whether a tree spirit can curse a man. The diner sits in
+/// Bilibin's restaurant before the curse is lifted; on yes, sends the party to
+/// hear Lord McCoy's story. Then the diner turns back to the table.
 static void Event_AskAboutTreeSpirit(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoBelieveTreeSpiritCan);
@@ -258,8 +258,8 @@ static void Event_AskAboutTreeSpirit(void) {
   Engine_EventEnd();
 }
 
-/// A young man in Bilibin, once the curse is lifted, asks whether the holy tree
-/// of Kolima Forest survived.
+/// A young man asks whether Kolima Forest's holy tree survived. He's in Bilibin
+/// once the curse is lifted.
 static void Event_AskAboutHolyTree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoKnowIfHolyTree);
@@ -325,8 +325,8 @@ static void Event_TalkToBusyChef(void) {
   Engine_EventEnd();
 }
 
-/// The kitchen worker in Bilibin's restaurant, once the curse is lifted,
-/// cannot keep up with the head chef's energy.
+/// The kitchen worker can't keep up with the head chef's energy. This is in
+/// Bilibin's restaurant once the curse is lifted.
 static void Event_TalkToKitchenWorker(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinReallyThinkHeadChefHas);
@@ -337,8 +337,8 @@ static void Event_TalkToKitchenWorker(void) {
   Engine_EventEnd();
 }
 
-/// The waitress in Bilibin's restaurant, once the curse is lifted, hurries
-/// through her work before the head chef yells.
+/// The waitress hurries through her work before the head chef yells. She works
+/// in Bilibin's restaurant once the curse is lifted.
 static void Event_TalkToWaitress(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinLetsSeeServeThemWater);
@@ -349,8 +349,8 @@ static void Event_TalkToWaitress(void) {
   Engine_EventEnd();
 }
 
-/// A diner in Bilibin's restaurant, once the curse is lifted and the food
-/// flows, asks whether the party loves it too.
+/// A diner loves the meal and asks whether the party does too. The diner is in
+/// Bilibin's restaurant once the curse is lifted and the food flows.
 static void Event_TalkAboutMeal(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasSomeMealDontJust);

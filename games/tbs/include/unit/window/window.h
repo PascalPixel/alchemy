@@ -402,7 +402,7 @@ void UiIcon_Decode(GlyphTransfer *glyph, s32 outlined);
 void UiGlyph_ResetWorkState(void);
 void Resource_ClearOwnerListAndCounters(void);
 void Resource_PushPendingPair(u32 first, u32 second);
-void MenuSelection_BuildEntries(u32 unused);
+void SelectionScreen_BuildEntries(u32 unused);
 void UiWork_ReservedNoOp(void);
 struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind);
 void Resource_ScheduleOwnerResetDelayed(void);
@@ -414,7 +414,8 @@ void Resource_ResetOwnerEntries(void);
 void Menu_SetNodeCoordinates(u32 first, u32 second);
 void Menu_SetupSelectionBothSides(void);
 void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 index);
-struct SelectionNode *Selection_GetCursorNode(struct SelectionScreen *screen);
+struct SelectionNode *
+SelectionScreen_GetCursorNode(struct SelectionScreen *screen);
 s32 Menu_SelectionLoop(s32 mode);
 u32 Menu_WaitForSelectionInput(u32 mode);
 void Menu_MoveSelectionForward(struct SelectionScreen *screen);

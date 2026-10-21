@@ -107,7 +107,7 @@ void Resource_PushPendingPair(u32 kind, u32 base) {
 /// the screen.
 /// Builds the linked row before placing the visible icons and loading the
 /// preview.
-void MenuSelection_BuildEntries(u32 unused) {
+void SelectionScreen_BuildEntries(u32 unused) {
   struct SelectionScreen *screen = gResQueueWork;
   u32 count = screen->count;
   u32 entryIndex = screen->top;
@@ -281,7 +281,7 @@ void SelectionScreen_Draw(void) {
   }
   // The selected command's large icon owns a separate cached tile block.
   if (transfer->kind != ICON_KIND_NONE) {
-    node = Selection_GetCursorNode(state);
+    node = SelectionScreen_GetCursorNode(state);
     commandSprite = &transfer->sprite;
     commandSprite->mode = 0;
     commandSprite->affine = 0;
@@ -442,7 +442,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   struct UiWindow *window;
 
   screen = gResQueueWork;
-  node = Selection_GetCursorNode(screen);
+  node = SelectionScreen_GetCursorNode(screen);
   slot = &screen->window;
   window = *slot;
   if (window == 0) {
@@ -600,7 +600,8 @@ void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 side) {
 
 /// Returns the node at the selection screen's cursor index.
 /// cursorIndex is relative to head, not the number of queued entries.
-struct SelectionNode *Selection_GetCursorNode(struct SelectionScreen *screen) {
+struct SelectionNode *
+SelectionScreen_GetCursorNode(struct SelectionScreen *screen) {
   struct SelectionNode *node = screen->head;
   s32 i;
 
@@ -1347,7 +1348,7 @@ void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }
 /// Resource_ResetPendingTransfer.
 void SelectionScreen_LoadLargeIcon(void) {
   struct SelectionScreen *state = gResQueueWork;
-  struct SelectionNode *selected = Selection_GetCursorNode(state);
+  struct SelectionNode *selected = SelectionScreen_GetCursorNode(state);
   struct SelectionNode *transfer;
   GlyphTransfer *buffer;
   u8 *table;
@@ -1508,7 +1509,7 @@ u32 Menu_RunSelectionForValue(u32 initialIndex) {
   // tiles wide inside its frame.
   screen->cursorIndex = initialIndex;
   screen->locked = 1;
-  MenuSelection_BuildEntries(initialIndex);
+  SelectionScreen_BuildEntries(initialIndex);
   Menu_SetupSelectionBothSides();
   Menu_OpenSelectionWindow(0, 5);
   Resource_ScheduleOwnerResetDelayed();

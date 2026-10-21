@@ -4,6 +4,7 @@
 #include "types.h"
 #include "item.h"
 #include "unit/menu/menu.h"
+#include "game/character_ids.h"
 
 // The menu tables: cursor bobbing, sort orders, highlight widths and
 // resource ids.
@@ -84,5 +85,6 @@ u8 gCharacterMenu_CursorWidths[5] = {6, 7, 7, 6, 6};
 #endif
 
 /// The sprites of the four Djinn FourObjectMotion shows: a Venus, a Mercury,
-/// a Mars and a Jupiter Djinni (sprites 90 to 93).
-s32 gFourObjectMotion_ResourceIds[4] = {0x5a, 0x5b, 0x5c, 0x5d};
+/// a Mars and a Jupiter Djinni.
+s32 gFourObjectMotion_ResourceIds[4] = {VENUS_DJINNI, MERCURY_DJINNI,
+                                        MARS_DJINNI, JUPITER_DJINNI};

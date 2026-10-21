@@ -101,10 +101,9 @@
 // south of z
 //   224; FLAG_PLACE_TEMP_05: it was won. The party's and visitors' lines read
 //   them.
-// FLAG_PLACE_TEMP_E8, flag 1000: the last linked battle broke off
-// (Battle_RunEncounter). In a
-//   monster series, byte flag 1000 (flags 1000 to 1007) instead counts the
-//   victories, 0 to 2, towards a stronger monster.
+// FLAG_PLACE_TEMP_E8: the last linked battle broke off (Battle_RunEncounter).
+//   In a monster series, the byte flag at FLAG_PLACE_TEMP_E8 instead counts
+//   the victories, 0 to 2, towards a stronger monster.
 
 /// The placed actors, numbering the rows of gLinkLobbyPlacements and
 /// gLinkLobbyBattlePlacements, which list the same people in the same order;
@@ -1035,10 +1034,10 @@ static s32 LinkLobby_ChooseBattleMode(void) {
       Engine_EventSetMessage(messageBase + 5);
       Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
       answer = Engine_EventChooseYesNo(0, 0);
-      // Yes (0) starts a monster series: byte flag 1000 and the series'
-      // victories (tally 3) start at 0.
-      if (answer == 0) {
-        FieldGameFlag_SetByte(1000, 0);
+      // Yes starts a monster series: FLAG_PLACE_TEMP_E8's byte and
+      // LINK_TALLY_MONSTER_STREAK start at 0.
+      if (answer == CONFIRM_YES) {
+        FieldGameFlag_SetByte(FLAG_PLACE_TEMP_E8, 0);
         Engine_GameFlagSet(FLAG_MONSTER_BATTLE);
         Engine_GameFlagClear(FLAG_LINK_BATTLE_ARRANGED);
         Engine_GameFlagClear(FLAG_LINK_BATTLE);
@@ -1089,7 +1088,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
         Engine_EventSetMessage(messageBase + 1);
       }
       Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
-      if (Engine_EventChooseYesNo(0, 0) == 0) {
+      if (Engine_EventChooseYesNo(0, 0) == CONFIRM_YES) {
         // Yes, and the partner is still there; else the link is lost.
         if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
           Engine_GameFlagSet(FLAG_LINK_BATTLE);
@@ -1471,11 +1470,11 @@ static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
 /// The overlay's initialize entry, run on every arrival: settles the battle
 /// that brought the party here and restarts the lobby's polling. Entrance 8
 /// is a monster battle won, 9 one lost, 10 a linked battle won (or broken
-/// off, flag 1000) and 11 one lost; any other entrance (LINK_LOBBY_FROM_CLEAR,
-/// from the file select screen) restarts the link. Updates
-/// gGameState.linkTallies, saves after linked battles and new monster records,
-/// and restores the party's HP, PP and Djinn unless a monster series goes on.
-/// Returns 0.
+/// off, FLAG_PLACE_TEMP_E8) and 11 one lost; any other entrance
+/// (LINK_LOBBY_FROM_CLEAR, from the file select screen) restarts the link.
+/// Updates gGameState.linkTallies, saves after linked battles and new monster
+/// records, and restores the party's HP, PP and Djinn unless a monster series
+/// goes on. Returns 0.
 s32 LinkLobby_RunRoundResult(void) {
   s32 i;
   u32 score;
@@ -1523,26 +1522,26 @@ s32 LinkLobby_RunRoundResult(void) {
     gGameState.linkTallies[LINK_TALLY_MONSTER_WINS]++;
     gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
     // The offer has two lines a level (FLAG_MONSTER_BATTLE_WINS, -1 when a
-    // series starts), the even line capped at 14. Byte flag 1000 counts the
-    // victories 0 to 2; the third raises the level and takes the next, odd
-    // line (at most 15), which promises a stronger monster.
+    // series starts), the even line capped at 14. FLAG_PLACE_TEMP_E8's byte
+    // counts the victories 0 to 2; the third raises the level and takes the
+    // next, odd line (at most 15), which promises a stronger monster.
     wins = (s8)FieldGameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
     messageOffset = wins * 2 + 2;
     if (messageOffset > 14) {
       messageOffset = 14;
     }
-    v = FieldGameFlag_GetByte(1000);
+    v = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_E8);
     if (v == 2) {
-      FieldGameFlag_SetByte(1000, 0);
+      FieldGameFlag_SetByte(FLAG_PLACE_TEMP_E8, 0);
       wins++;
       messageOffset++;
     } else {
-      FieldGameFlag_SetByte(1000, v + 1);
+      FieldGameFlag_SetByte(FLAG_PLACE_TEMP_E8, v + 1);
     }
     Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
     Engine_EventSetMessage(MsgLobbyNotBadNextMonster + messageOffset);
     Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == CONFIRM_YES) {
       if (wins > 90) {
         wins = 90;
       }
@@ -1605,11 +1604,11 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
-    // The battle broke off instead (Battle_RunEncounter set flag 1000):
-    // report the link lost and restart it.
-    if (GameFlag_IsSet(1000)) {
+    // The battle broke off instead (Battle_RunEncounter set
+    // FLAG_PLACE_TEMP_E8): report the link lost and restart it.
+    if (GameFlag_IsSet(FLAG_PLACE_TEMP_E8)) {
       eventWork = gEventWork;
-      Engine_GameFlagClear(1000);
+      Engine_GameFlagClear(FLAG_PLACE_TEMP_E8);
       eventWork->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
       Engine_GameFlagClear(FLAG_PLACE_TEMP_04);
       Engine_TaskWait(20);

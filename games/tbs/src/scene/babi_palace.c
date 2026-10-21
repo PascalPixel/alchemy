@@ -102,57 +102,69 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The palace's actors are placed by one of three tables, as the story goes
-/// on: before Babi is rescued (gBabiPalace_PlacementsOther), during the
-/// finals (gBabiPalace_PlacementsColosso) and after Colosso
+/// The palace's actors are placed by one of three tables, as the story goes on:
+/// before Babi is rescued (gBabiPalace_PlacementsOther), during the finals
+/// (gBabiPalace_PlacementsColosso) and after Colosso
 /// (gBabiPalace_PlacementsAfterColosso). Each numbers its rows from
 /// ACTOR_FIRST_PLACED, with Garet, Ivan, Mia and Sheba in their own party
-/// slots, and most of the people stand in all three under other numbers.
-/// The palace's residents stand in all three: one sent Babi's soldiers to
-/// search the town, and another tells warriors who are not entering Colosso
-/// that they may not stay. The game names none of them.
+/// slots, and most of the people stand in all three under other numbers. The
+/// palace's residents, three old men with canes and a young man with brown
+/// hair, stand in all three: one sent Babi's soldiers to search the town, and
+/// another tells warriors who are not entering Colosso that they may not stay.
+/// The game names none of them.
 ///
-/// Before the rescue: the attendant who shows the party its beds, Iodem and
-/// the two soldiers he sent to Altmiller Cave; Sheba is held here until
-/// Colosso is over.
+/// Before the rescue: the attendant who shows the party its beds, Iodem and the
+/// two soldiers he sent to Altmiller Cave; Sheba is held here until Colosso is
+/// over.
 enum BabiPalaceActor {
-  /// In the same room and at the same number in every table, and the one who
-  /// sent Babi's soldiers to search the town: "Did you run into any of Babi's
-  /// soldiers in Town?", and if not, "Hmph! I told them to search every nook
-  /// and cranny of this town..."
+  /// An old man with a cane, in the same room and at the same number in every
+  /// table, and the one who sent Babi's soldiers to search the town: "Did you
+  /// run into any of Babi's soldiers in Town?", and if not, "Hmph! I told them
+  /// to search every nook and cranny of this town..."
   /// ★ Named from the game: "Did you run into any of Babi's soldiers in Town?"
   /// (MsgTolbiRunBabisSoldiers)
   ACTOR_ASKING_ABOUT_BABIS_SOLDIERS = ACTOR_FIRST_PLACED,
-  /// The attendant, whose number is the same after Colosso: "No one's going
-  /// to sleep in this big bedroom until the next Colosso!"
-  ACTOR_BED_ATTENDANT,
-  /// "So, did you guys get injured, too?" Thoughts: "I hurt my back during my
-  /// training, and now I can't move at all."
-  ACTOR_INJURED_WARRIOR,
-  /// "I can't fight because of a little indigestion? That's pathetic!"
-  ACTOR_WARRIOR_WITH_INDIGESTION,
-  /// "If you're entering Colosso, hurry along to the colosseum." Thoughts:
-  /// "Warriors are not allowed to stay in the palace if they don't enter
+  /// The attendant, a woman with fair hair, whose number is the same after
+  /// Colosso: "No one's going to sleep in this big bedroom until the next
   /// Colosso!"
+  /// ★ Named from the game: "We have just enough extra beds in this room for
+  /// everybody." (MsgTolbiWeHaveJustEnoughExtra)
+  ACTOR_BED_ATTENDANT,
+  /// A warrior in a golden helmet. "So, did you guys get injured, too?"
+  /// Thoughts: "I hurt my back during my training, and now I can't move at
+  /// all."
+  /// ★ Named from the game: "I hurt my back during my training"
+  /// (MsgBabiPalaceIGetSoAngrySeeingAll)
+  ACTOR_INJURED_WARRIOR,
+  /// A warrior in a golden helmet. "I can't fight because of a little
+  /// indigestion? That's pathetic!"
+  /// ★ Named from the game: "Maybe I shouldn't have eaten quite so much
+  /// yesterday..." (MsgBabiPalaceMaybeIShouldntHaveEatenQuite)
+  ACTOR_WARRIOR_WITH_INDIGESTION,
+  /// A young man with brown hair in a purple shirt. "If you're entering
+  /// Colosso, hurry along to the colosseum." Thoughts: "Warriors are not
+  /// allowed to stay in the palace if they don't enter Colosso!"
   /// ★ Named from the game: "If you're entering Colosso, hurry along to the
   /// colosseum." (MsgBabiPalaceIfYoureEnteringColossoHurryAlong)
   ACTOR_HURRYING_WARRIORS_ALONG,
   /// Four of Babi's soldiers, in one room; the first says "Only warriors who
   /// fight well in Colosso's finals can become soldiers here."
+  /// ★ Named from the game: "Only warriors who fight well in Colosso's finals
+  /// can become soldiers here." (MsgBabiPalaceOnlyWarriorsWhoFightWellIn)
   ACTOR_FIRST_PALACE_SOLDIER,
-  /// Beside Babi's bed. "It looks like Lord Babi didn't use his bed this
-  /// morning."
+  /// An old man with a cane beside Babi's bed. "It looks like Lord Babi didn't
+  /// use his bed this morning."
   /// ★ Named from what the player sees: an old man with a cane beside Babi's
   /// bed (its render)
   ACTOR_BY_BABIS_BED = ACTOR_FIRST_PALACE_SOLDIER + 4,
-  /// "Sheba has been staying as Lord Babi's guest for some time." Thoughts:
-  /// "It is heartbreaking to see her tears and hear her pleas to be
-  /// released."
+  /// An old man with a cane. "Sheba has been staying as Lord Babi's guest for
+  /// some time." Thoughts: "It is heartbreaking to see her tears and hear her
+  /// pleas to be released."
   /// ★ Named from the game: "It is heartbreaking to see her tears"
   /// (MsgBabiPalaceActorWasTakenHostageToForce)
   ACTOR_SORRY_FOR_SHEBA,
-  /// In Sheba's room, in the old woman's sprite (0x6f, as in vale_gate.c).
-  /// Thoughts: "Sheba is not permitted to leave this room."
+  /// In Sheba's room, in SPRITE_OLD_WOMAN, as in vale_gate.c. Thoughts: "Sheba
+  /// is not permitted to leave this room."
   /// ★ Named from what the player sees: a white-haired old woman in Sheba's
   /// room (its render)
   ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM,
@@ -199,15 +211,18 @@ enum BabiPalaceFinalsActor {
 /// ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, ACTOR_BED_ATTENDANT and Iodem keep their
 /// numbers.
 enum BabiPalaceAfterColossoActor {
-  /// "Babi was found safe and sound, and Colosso ended without incident."
+  /// One of Babi's soldiers.
+  /// ★ Named from the game: "We're relieved everything went so well."
+  /// (MsgBabiPalaceBabiWasFoundSafeAndSound)
   ACTOR_RELIEVED_SOLDIER = ACTOR_FIRST_PLACED + 2,
   /// The same resident as ACTOR_HURRYING_WARRIORS_ALONG: "So, you're all from
   /// the eastern shores of the Karagol Sea, huh?"
   /// ★ Named from the game: "So, you're all from the eastern shores of the
   /// Karagol Sea, huh?" (MsgTolbiEasternShoresKaragol)
   ACTOR_ASKING_ABOUT_THE_EASTERN_SHORES,
-  /// "Now that Colosso is over, I'm going to Gondowan to build Babi
-  /// Lighthouse!"
+  /// One of Babi's soldiers.
+  /// ★ Named from the game: "Now that Colosso is over, I'm going to Gondowan to
+  /// build Babi Lighthouse!" (MsgBabiPalaceNowThatColossoIsOverIm)
   ACTOR_GONDOWAN_BOUND_SOLDIER,
   /// "The southern continent is a dangerous place... you'll know why I prefer
   /// Angara."
@@ -315,8 +330,8 @@ static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// A resident of the palace, while Babi is missing, asks whether the party ran
-/// into Babi's soldiers in town.
+/// An old man with a cane, one of the palace's residents, asks while Babi is
+/// missing whether the party ran into Babi's soldiers in town.
 static void BabiPalace_AskAboutSoldiers(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiRunBabisSoldiers);
 }
@@ -502,14 +517,14 @@ static void BabiPalace_ReadShebasMind(s32 unused0, s32 actorId) {
   Event_End();
 }
 
-/// A resident of the palace, after Colosso, asks whether the party has met with
-/// Babi.
+/// The same old man, after Colosso, asks whether the party has met with Babi.
 static void BabiPalace_AskAboutMeetingBabi(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiMeetBabi);
 }
 
-/// A resident of the palace, after Colosso, asks whether the party wants to go
-/// back already to the eastern shores of the Karagol Sea.
+/// A young man with brown hair, one of the palace's residents, asks after
+/// Colosso whether the party wants to go back already to the eastern shores of
+/// the Karagol Sea.
 static void BabiPalace_AskAboutEasternShores(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiEasternShoresKaragol);
 }

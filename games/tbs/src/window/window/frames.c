@@ -262,7 +262,7 @@ void UiWork_ResetCounters(void) {
   state->colour = 15;
   state->lineSpacing = 10;
   state->letterSpacing = 9;
-  state->outline = 0;
+  state->outline = TEXT_STYLE_PLAIN;
   state->unknownAfterLineSpacing = 1;
 }
 
@@ -279,7 +279,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
   state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->letterSpacing = 9;
   state->lineSpacing = 10;
-  state->outline = 0;
+  state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->count = 0;
   // 200 << 4 is 0xc80, SCHEDULER_KEY_MAIN_LOOP: the update runs in the main
@@ -301,7 +301,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 loadGlyphTiles) {
     state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->letterSpacing = 9;
   state->lineSpacing = 10;
-  state->outline = 0;
+  state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->count = 0;
   priority = 200;

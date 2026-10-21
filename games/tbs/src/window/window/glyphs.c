@@ -56,7 +56,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
   glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
   // Outlined text is the glyph drawn twice a pixel apart, over its shadow
   // drawn the same way: one pixel wider.
-  if (work->outline == 1) {
+  if (work->outline == TEXT_STYLE_OUTLINED) {
     Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + 50, shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
@@ -78,7 +78,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
 #endif
     secondWidth = *(const u16 *)glyph;
     glyph += 2;
-    if (work->outline == 1) {
+    if (work->outline == TEXT_STYLE_OUTLINED) {
       u8 *dst = pixels + width;
       Iwram_ExpandBitRuns(glyph, dst + 49, shadowColour);
       Iwram_ExpandBitRuns(glyph, dst + 50, shadowColour);
@@ -149,7 +149,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
     shadowColour = 1;
     colour = work->colour;
   }
-  if (work->outline == 1) {
+  if (work->outline == TEXT_STYLE_OUTLINED) {
     Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + 50, shadowColour);
     if (markGlyph != 0) {
@@ -354,7 +354,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
           s16 width = gUiText_Glyphs[code - 32].width +
                       gUiText_Glyphs[nextCode - 32].width;
 
-          if (work->outline == 1) {
+          if (work->outline == TEXT_STYLE_OUTLINED) {
             if ((u16)width <= 14) {
               code |= nextCode << 8;
               text++;

@@ -169,8 +169,7 @@ enum {
   TEXT_PAUSE_LONGEST = 6, ///< a 120-frame pause a button can cut short
   TEXT_COLOURS_RESET = 7, ///< colour 15, style 0 and line spacing 10 again
   TEXT_COLOUR = 8,        ///< the next entry is the text colour
-  /// The next entry is the text style (UiRenderWork.outline): 1 outlined
-  /// glyphs, 2 to 5 a motion of the glyph sprites (UiText_DrawGlyph).
+  /// The next entry is the text style (enum TextStyle).
   TEXT_OUTLINE = 9,
   /// The next entry is the line spacing; a glyph sprite sits half of it below
   /// its line's top.
@@ -189,6 +188,17 @@ enum {
 #define TEXT_CODE_MARK_SHIFT 14
 #define TEXT_CODE_VOICED (1 << TEXT_CODE_MARK_SHIFT)
 #define TEXT_CODE_SEMIVOICED (2 << TEXT_CODE_MARK_SHIFT)
+
+/// The style of sprite text (UiRenderWork.outline, set by TEXT_OUTLINE): its
+/// glyphs outlined, or a motion of the glyph sprites (UiText_DrawGlyph).
+enum TextStyle {
+  TEXT_STYLE_PLAIN = 0,
+  TEXT_STYLE_OUTLINED = 1, ///< drawn a pixel wider (UiText_RenderGlyphPair)
+  TEXT_STYLE_WOBBLE = 2,   ///< UI_SPRITE_WOBBLE
+  TEXT_STYLE_SHAKE = 3,    ///< UI_SPRITE_SHAKE
+  TEXT_STYLE_POP = 4,      ///< UI_SPRITE_POP
+  TEXT_STYLE_SPIN = 5      ///< UI_SPRITE_SPIN, a pixel wider too
+};
 
 /// The window effect a message can start (TEXT_WINDOW_STATE): the window's
 /// frame grows by a tile and its text sprites pulse, for the channel's

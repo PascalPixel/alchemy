@@ -221,7 +221,7 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
     case TEXT_PAGE:
       // The French, Spanish and Italian releases end the style at a page
       // break, as their channels do (UiWork_StepChannelScript).
-      work->outline = 0;
+      work->outline = TEXT_STYLE_PLAIN;
       goto done;
 #endif
     case 14:
@@ -356,7 +356,7 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       } else {
         glyph = gUiText_Glyphs[code - 32].width;
         outline = work->outline;
-        if (outline == 1 || outline == 5)
+        if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
           glyph++;
         width += glyph;
       }
@@ -377,7 +377,7 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
           if (code <= 0xff)
             glyph = gUiText_Glyphs[code - 32].width;
           outline = work->outline;
-          if (outline == 1 || outline == 5)
+          if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
             glyph++;
           width += glyph;
         }
@@ -426,7 +426,7 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       if (page == 0 && maxWidth < width)
         maxWidth = width;
 #if TBS_PATCH_3
-      work->outline = 0;
+      work->outline = TEXT_STYLE_PLAIN;
 #endif
       page++;
       break;

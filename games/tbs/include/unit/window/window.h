@@ -177,6 +177,18 @@ enum CommandIcon {
   COMMAND_ICON_BRONZE = 48
 };
 
+/// The system menu's entries, as Menu_RunWorkspaceSelectionLoop returns them
+/// (counted from Save your quest even when only Change settings shows).
+enum SystemMenuEntry {
+  SYSTEM_MENU_SAVE = 0,
+  SYSTEM_MENU_SLEEP = 1,
+  SYSTEM_MENU_CHANGE_SETTINGS = 2,
+  // The debug entries.
+  SYSTEM_MENU_ROUGH_MENU = 3,
+  SYSTEM_MENU_RECOVERY_TEST = 4,
+  SYSTEM_MENU_RESTART_QUEST = 5
+};
+
 /// The kinds of icon the selection screen lists (SelectionNode.kind) and
 /// Resource_LoadByMode, Resource_LoadByModeIntoSlot and
 /// RenderOutput_CreateFromResource load.

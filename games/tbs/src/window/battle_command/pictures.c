@@ -384,7 +384,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
 /// Loads the portrait of character `member` (ISAAC to PIERS, 0 to 7; any
 /// higher value shows Isaac's) into VRAM cache entry `cacheSlot`, in OBJ
 /// palette 14, and returns its first tile. In the prologue, Isaac and Garet
-/// use their childhood portraits, entries 0x38 and 0x39. The status screen
+/// use their childhood portraits. The status screen
 /// and the battle command menus draw the member's portrait with it.
 s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot) {
   s32 tile;
@@ -393,16 +393,16 @@ s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot) {
 
   portrait = member;
   slot = cacheSlot;
-  if (portrait > 7U) {
+  if (portrait > (u32)PIERS) {
     portrait = 0;
   }
   if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0) {
     switch (portrait) {
-    case 0:
-      portrait = 0x38;
+    case ISAAC:
+      portrait = FACE_ISAAC_CHILD;
       break;
-    case 1:
-      portrait = 0x39;
+    case GARET:
+      portrait = FACE_GARET_CHILD;
       break;
     }
   }

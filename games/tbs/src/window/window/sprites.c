@@ -93,18 +93,18 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
       output->active = UI_SPRITE_PAGE_ARROW;
     } else {
       switch (work->outline) {
-      case 3:
+      case TEXT_STYLE_SHAKE:
         output->active = UI_SPRITE_SHAKE;
         break;
-      case 4:
+      case TEXT_STYLE_POP:
         output->active = UI_SPRITE_POP;
         output->animStep = 8;
         break;
-      case 5:
+      case TEXT_STYLE_SPIN:
         output->active = UI_SPRITE_SPIN;
         output->animStep = 0;
         break;
-      case 2:
+      case TEXT_STYLE_WOBBLE:
         output->active = UI_SPRITE_WOBBLE;
         output->animStep = 0;
         break;

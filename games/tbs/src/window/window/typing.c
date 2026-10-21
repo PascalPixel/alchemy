@@ -248,7 +248,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         // default style.
 #if TBS_PATCH_3
         channel->colour = 15;
-        channel->outline = 0;
+        channel->outline = TEXT_STYLE_PLAIN;
         channel->lineSpacing = 10;
         UiText_ApplyChannelStyle(channel);
 #endif
@@ -305,7 +305,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
 
       case TEXT_COLOURS_RESET:
         channel->colour = 15;
-        channel->outline = 0;
+        channel->outline = TEXT_STYLE_PLAIN;
         channel->lineSpacing = 10;
         UiText_ApplyChannelStyle(channel);
         break;
@@ -364,7 +364,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         s16 pair = gUiText_Glyphs[code - TEXT_SPACE].width +
                    gUiText_Glyphs[nextCode - TEXT_SPACE].width;
 
-        if (work->outline == 1) {
+        if (work->outline == TEXT_STYLE_OUTLINED) {
           if ((u16)pair <= 14) {
             code |= nextCode << 8;
             channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;

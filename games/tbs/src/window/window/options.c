@@ -193,14 +193,21 @@ void PaletteGlow_Update(s32 phase, s32 brightness) {
   BG_PLTT_COLOR(15, 10) = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
 }
 
+/// The rows of the unused three-row settings cursor (WorkspaceWork.page).
+enum OptionMenuRow {
+  OPTION_ROW_MESSAGE_SPEED = 0,
+  OPTION_ROW_WINDOW_HUE = 1,
+  OPTION_ROW_WINDOW_BRIGHTNESS = 2
+};
+
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
 /// rows are those of OptionMenu_LowerSetting. XXX: likely left from an
 /// earlier option screen, because the five-row one Menu_RunWorkspaceOptions
 /// runs uses none of these four functions.
 /// Nothing calls it.
 UNUSED void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
-  if (work->page == 0)
-    work->page = 2;
+  if (work->page == OPTION_ROW_MESSAGE_SPEED)
+    work->page = OPTION_ROW_WINDOW_BRIGHTNESS;
   else
     work->page--;
 }
@@ -208,8 +215,8 @@ UNUSED void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
 /// Moves the three-row settings cursor down, wrapping to the top.
 /// Nothing calls it.
 UNUSED void OptionMenu_NextRow(struct WorkspaceWork *work) {
-  if (++work->page > 2)
-    work->page = 0;
+  if (++work->page > OPTION_ROW_WINDOW_BRIGHTNESS)
+    work->page = OPTION_ROW_MESSAGE_SPEED;
 }
 
 /// Lowers the setting on the three-row cursor's row: message speed, window hue
@@ -217,15 +224,15 @@ UNUSED void OptionMenu_NextRow(struct WorkspaceWork *work) {
 /// Nothing calls it.
 UNUSED void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
   switch (work->page) {
-  case 0:
+  case OPTION_ROW_MESSAGE_SPEED:
     if (gGameState.messageSpeed != 0)
       gGameState.messageSpeed--;
     break;
-  case 1:
+  case OPTION_ROW_WINDOW_HUE:
     if (gGameState.paletteGlow[0] != 0)
       gGameState.paletteGlow[0]--;
     break;
-  case 2:
+  case OPTION_ROW_WINDOW_BRIGHTNESS:
     if (gGameState.paletteGlow[1] != 0)
       gGameState.paletteGlow[1]--;
     break;
@@ -237,15 +244,15 @@ UNUSED void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
 /// Nothing calls it.
 UNUSED void OptionMenu_RaiseSetting(struct WorkspaceWork *work) {
   switch (work->page) {
-  case 0:
+  case OPTION_ROW_MESSAGE_SPEED:
     if (gGameState.messageSpeed <= 1)
       gGameState.messageSpeed++;
     break;
-  case 1:
+  case OPTION_ROW_WINDOW_HUE:
     if (gGameState.paletteGlow[0] <= 23)
       gGameState.paletteGlow[0]++;
     break;
-  case 2:
+  case OPTION_ROW_WINDOW_BRIGHTNESS:
     if (gGameState.paletteGlow[1] <= 14)
       gGameState.paletteGlow[1]++;
     break;
@@ -694,7 +701,7 @@ struct UiWindow *SystemMenu_Open(void) {
   first = 0;
   if (settingsOnly != 0) {
     rows = 1;
-    first = 2;
+    first = SYSTEM_MENU_CHANGE_SETTINGS;
   }
   if (gDebugMode != 0)
     rows += WORKSPACE_DEBUG_ROWS;
@@ -747,8 +754,8 @@ struct UiWindow *SystemMenu_Open(void) {
   return window;
 }
 
-/// Runs the system menu until the player picks an entry (its number, counting
-/// Save your quest as 0) or cancels with B or START (-1).
+/// Runs the system menu until the player picks an entry (enum
+/// SystemMenuEntry) or cancels with B or START (-1).
 /// The result counts in the full entry table even when only Change settings is
 /// shown. The menu's window and work block are freed before it returns;
 /// Menu_RunWorkspaceResultLoop (battle_command/debug.c) acts on the result.
@@ -773,7 +780,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   struct WorkspaceWork *work;
 
   redraw = 1;
-  rows = 3;
+  rows = WORKSPACE_ROWS;
   settingsOnly = GameFlag_TestFar(FLAG_IN_LINK_LOBBY);
   first = 0;
   SystemMenu_Initialize();
@@ -796,10 +803,10 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   selectedEntry = work->page;
   if (settingsOnly != 0) {
     rows = 1;
-    first = 2;
+    first = SYSTEM_MENU_CHANGE_SETTINGS;
   }
   if (gDebugMode != 0) {
-    rows += 3;
+    rows += WORKSPACE_DEBUG_ROWS;
   }
   for (;;) {
     if (redraw != 0) {

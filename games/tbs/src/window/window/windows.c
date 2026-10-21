@@ -567,7 +567,7 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
     found->colour = UI_TEXT_DEFAULT_COLOUR;
     found->lineSpacing = UI_TEXT_DEFAULT_LINE_SPACING;
     found->countdown = 0;
-    found->outline = 0;
+    found->outline = TEXT_STYLE_PLAIN;
     found->ended = 0;
     found->flags = flags;
     if (spacing != NULL) {
@@ -677,7 +677,7 @@ void UiWork_ResetFreeChannel(void) {
     selection->x = 0;
     selection->countdown = 0;
     selection->colour = UI_TEXT_DEFAULT_COLOUR;
-    selection->outline = 0;
+    selection->outline = TEXT_STYLE_PLAIN;
     selection->lineSpacing = UI_TEXT_DEFAULT_LINE_SPACING;
   }
 }

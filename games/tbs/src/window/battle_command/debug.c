@@ -332,14 +332,14 @@ s32 Menu_RunWorkspaceResultLoop(void) {
   if (result == -1) {
     return -1;
   }
-  if (result == 0) {
+  if (result == SYSTEM_MENU_SAVE) {
     if (Save_WriteSelectedSlot() == -1) {
       return Menu_RunWorkspaceResultLoop();
     }
-  } else if (result == 1) {
+  } else if (result == SYSTEM_MENU_SLEEP) {
     UiText_ShowPositionedMessageAndWait(MsgSleepMode, 1);
     gSleepRequested = result;
-  } else if (result == 2) {
+  } else if (result == SYSTEM_MENU_CHANGE_SETTINGS) {
     if (Menu_RunWorkspaceOptions() == -1) {
       return Menu_RunWorkspaceResultLoop();
     }

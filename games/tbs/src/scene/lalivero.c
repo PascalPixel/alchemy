@@ -84,34 +84,55 @@ enum LaliveroActor {
   ACTOR_EAST_SOLDIER, ///< "They were terrible! We were no match..."
   /// Sobs for Sheba (gLaliveroMournerSobs). "Ohh... They took Sheba and
   /// headed for the ruins."
-  ACTOR_MOURNER,
+  /// ★ Named from the game: "Ohh... They took"
+  /// (MsgLaliveroOhhTheyTookShebaHeaded)
+  ACTOR_VILLAGER_THEY_TOOK_SHEBA,
   /// "Sheba is our only hope. If something happens to her, Lalivero is
   /// finished."; later asks whether the party is leaving Lalivero.
+  /// ★ Named from the game: "is our only hope."
+  /// (MsgLaliveroActorIsOurOnlyHopeIf)
   ACTOR_VILLAGER_OUR_ONLY_HOPE,
   /// "This all happened because Tolbi took Sheba away from us..."
+  /// ★ Named from the game: "This all happened because Tolbi took"
+  /// (MsgLaliveroThisAllHappenedBecauseTolbiTook)
   ACTOR_VILLAGER_BLAMING_TOLBI,
-  ACTOR_VILLAGER_TRUSTING_FARAN, ///< "Faran followed Sheba. I'm sure he'll..."
+  /// "Faran followed Sheba. I'm sure he'll rescue her."
+  /// ★ Named from the game: "I'm sure he'll rescue her."
+  /// (MsgLaliveroFaranFollowedActorImSureHell)
+  ACTOR_VILLAGER_TRUSTING_FARAN,
   /// "The rumbling at the ruins must have been a warning..."
   ACTOR_VILLAGER_RUMBLING_WARNING,
   /// "There was an earthquake at the ruins before this happened."
   ACTOR_VILLAGER_EARLIER_EARTHQUAKE,
   /// "If I were bigger, I would have saved Sheba myself!"
+  /// ★ Named from the game: "If I were bigger, I would have saved"
+  /// (MsgLaliveroIfIWereBiggerIWould)
   ACTOR_VILLAGER_IF_I_WERE_BIGGER,
   /// "I bet Sheba can use her powers to escape them."
+  /// ★ Named from the game: "can use her powers to escape them."
+  /// (MsgLaliveroIBetActorCanUseHer)
   ACTOR_VILLAGER_SHEBAS_POWERS,
   /// Keeps the door to Babi's ship. "Babi's most precious belonging is kept
   /// here. No one may enter!"
   ACTOR_WHARF_GUARD,
   /// Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing
-  /// and
-  /// Suhalla Gate. Here they stand in animation 3, block nothing and no event
-  /// answers them.
+  /// and Suhalla Gate. Here they stand in animation 3, block nothing and no
+  /// event answers them.
+  /// ★ Named from what the player sees: small green sprouts on the edges of
+  /// the rooftops (its render)
   ACTOR_FIRST_PLANT,
-  ACTOR_IODEM = ACTOR_FIRST_PLACED + 14, ///< placed off the map until needed
-  ACTOR_TORCH, ///< Torch, a Mars Djinni, placed until it joins
+  /// Placed off the map until needed.
+  /// ★ Named from the game: "Iodem of Tolbi"
+  /// (MsgLaliveroIodemOfTolbiDoesntSeemToo)
+  ACTOR_IODEM = ACTOR_FIRST_PLACED + 14,
+  /// Torch, a Mars Djinni, placed until it joins.
+  /// ★ Named from the game: "Torch" (MsgDjinnName)
+  ACTOR_TORCH,
   /// Placed after Venus Lighthouse. "No trespassing. Danger beyond this point."
   ACTOR_NORTH_EXIT_SIGN,
-  ACTOR_BLACK_ORB ///< the orb Iodem holds out, drawn from its item icon
+  /// The orb Iodem holds out, drawn from its item icon.
+  /// ★ Named from the game: "Black Orb" (MsgItemName)
+  ACTOR_BLACK_ORB
 };
 
 /// The door at trigger 6, into the Lalivero Sanctum, is a gate two cells wide.
@@ -882,8 +903,8 @@ s32 Lalivero_Initialize(void) {
   return 0;
 }
 
-/// The mourner's sobbing: the sprite squashes and stretches twice, then
-/// rests 80 frames.
+/// The sobbing of ACTOR_VILLAGER_THEY_TOOK_SHEBA: the sprite squashes and
+/// stretches twice, then rests 80 frames.
 s32 gLaliveroMournerSobs[] = {
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
@@ -1088,7 +1109,7 @@ struct SceneEvent gLaliveroEvents[] = {
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(TakeTouchedExit) },
     { EVENT_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroUhhnnWeWereTakenBySurprise) },
     { EVENT_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyWereTerribleWeWereNo) },
-    { EVENT_TALK, ACTOR_MOURNER, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToMourner) },
+    { EVENT_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToMourner) },
     { EVENT_TALK, ACTOR_VILLAGER_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroActorIsOurOnlyHopeIf) },
     { EVENT_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroThisAllHappenedBecauseTolbiTook) },
     { EVENT_TALK, ACTOR_VILLAGER_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranFollowedActorImSureHell) },
@@ -1099,7 +1120,7 @@ struct SceneEvent gLaliveroEvents[] = {
     { EVENT_TALK, ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroBabisMostPreciousBelongingIsKept) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfOnlyTheyDidntHaveActor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyUsedFireOnUsThats) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MOURNER, CONDITION_ALWAYS, MSGNO(MsgLaliveroCursesWeCouldntStopActorAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroCursesWeCouldntStopActorAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhatDoTheyPlanToDo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroWeNeverShouldHaveLetTolbi) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroFaranStillDoesNotReturnWhat) },
@@ -1133,7 +1154,7 @@ struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(TalkToWharfGuard) },
     { EVENT_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },
     { EVENT_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWillNeverLetMyGuard) },
-    { EVENT_TALK, ACTOR_MOURNER, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },
+    { EVENT_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroWhereCouldActorBeNowIm) },
     { EVENT_TALK, ACTOR_VILLAGER_OUR_ONLY_HOPE, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToVillagerAskingIfLeaving) },
     { EVENT_TALK, ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroISawTheBeaconOfVenus) },
     { EVENT_TALK, ACTOR_VILLAGER_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheExplosionInTheVenusRuins) },
@@ -1145,7 +1166,7 @@ struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
     { EVENT_TALK, ACTOR_WHARF_GUARD, CONDITION_ALWAYS, MSGNO(MsgLaliveroApparentlyAShipHasBeenDocked) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIAmAllHealedNowBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIWantedToBeAPart) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MOURNER, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfActorUsedHerGreatPowers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroIfActorUsedHerGreatPowers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_OUR_ONLY_HOPE, CONDITION_ALWAYS, MSGNO(MsgLaliveroAfterEverythingThatsHappenedLaliveroNo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BLAMING_TOLBI, CONDITION_ALWAYS, MSGNO(MsgLaliveroVenusLighthouseHasBeenTheSymbol) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TRUSTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroIodemOfTolbiDoesntSeemToo) },

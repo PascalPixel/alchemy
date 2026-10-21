@@ -3380,7 +3380,7 @@ struct SceneEntrance gLunpaFortressEntrancesOther[] = {
 /// for them yet, nor for scene 99.
 u32 gLunpaFortressExitsOther[] = {
     SCENE_EXITS(WestLunpaCave),
-    SCENE_EXIT(1, WorldMap, 49),
+    SCENE_EXIT(WEST_LUNPA_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
     SCENE_EXIT(2, Lunpa, 3),
     SCENE_EXIT(3, Kalay1, KALAY_1_FROM_KALAY_2),
     SCENE_EXITS(LunpaFortress1),

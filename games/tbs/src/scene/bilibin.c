@@ -310,8 +310,8 @@ const struct SceneEvent *Bilibin_GetEvents(void) {
   return gBilibinEventsOther;
 }
 
-/// Searching the sign at the Bilibin Barricade shows Lord McCoy's notice that
-/// no one may pass without a permit.
+/// The Bilibin Barricade's sign forbids passing without a permit. Searching it
+/// shows Lord McCoy's notice that no one may pass without one.
 static void Event_ReadRestrictedAreaSign(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinAreaOffLimitsThoseWithout, 1);
@@ -326,8 +326,9 @@ static void Event_ReadWarehouseSign(void) {
   Engine_EventEnd();
 }
 
-/// Talking to one of the Gang of Three's trees at the Bilibin Barricade,
-/// standing or pushed down, or to the actor that answers for the fallen one.
+/// The Gang of Three's trees at the Bilibin Barricade look like people.
+/// Talking to one, standing or pushed down, or to the actor that answers for
+/// the fallen one, says so.
 /// `There is a tree that looks like a person.`
 static void Event_InspectHumanShapedTree(void) {
   Engine_EventBegin();
@@ -350,9 +351,9 @@ static void Event_ExamineTreeMan(void) {
   Engine_EventEnd();
 }
 
-/// A burly grey-haired man in Bilibin, before the curse is lifted, asks
-/// whether the party saw the tree at the entrance; on yes, that it was once a
-/// man who came under a curse.
+/// A burly man asks about the tree at Bilibin's entrance. He's grey-haired and
+/// there before the curse is lifted, and asks whether the party saw it; on
+/// yes, he says it was once a man who came under a curse.
 static void Event_AskAboutEntranceTree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDidSeeTreeAtEntrance);
@@ -360,8 +361,9 @@ static void Event_AskAboutEntranceTree(void) {
   Engine_EventEnd();
 }
 
-/// An old man in Bilibin, before the curse is lifted, asks whether the party
-/// has tried heading southeast; either way, the barricade blocks the road.
+/// An old man asks whether the party has tried heading southeast. He's in
+/// Bilibin before the curse is lifted, and either way he says the barricade
+/// blocks the road.
 static void Event_AskAboutSoutheastRoute(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveTriedHeadingSoutheastFrom);
@@ -369,8 +371,9 @@ static void Event_AskAboutSoutheastRoute(void) {
   Engine_EventEnd();
 }
 
-/// In Bilibin once the curse is lifted, the man who was the tree at the
-/// entrance asks whether the party can believe he was one.
+/// The man who was the tree at the entrance talks about it. He's in Bilibin
+/// once the curse is lifted, and asks whether the party can believe he was a
+/// tree.
 static void Event_AskAboutBeingATree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasTurnedIntoTreeFor);
@@ -378,8 +381,9 @@ static void Event_AskAboutBeingATree(void) {
   Engine_EventEnd();
 }
 
-/// A small boy in Bilibin, once the curse is lifted, asks whether the party are
-/// the three young warriors who broke it.
+/// A small boy asks whether the party broke the curse. He's in Bilibin once the
+/// curse is lifted, and asks whether the party are the three young warriors who
+/// broke it.
 static void Event_AskAboutCurseBreakers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinCurseWasBrokenThanksEfforts);
@@ -387,8 +391,9 @@ static void Event_AskAboutCurseBreakers(void) {
   Engine_EventEnd();
 }
 
-/// A strongman in Bilibin, once the curse is lifted, asks whether the party has
-/// been to Imil, up north, and seen its lighthouse.
+/// A strongman asks whether the party has been to Imil. He's in Bilibin once
+/// the curse is lifted, and asks whether the party has been there, up north,
+/// and seen its lighthouse.
 static void Event_AskAboutImil(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveEverBeenVillageImil);
@@ -510,14 +515,16 @@ static void Event_PullJillFromRiver(void) {
   }
 }
 
-/// Walking into the cells beside the statue in the Bilibin Treasury or the
-/// crates at the Bilibin Barricade: checks the blocked direction before
-/// allowing another movement step.
+/// Checks ahead before the leader takes another step. It runs on walking into
+/// the cells beside the statue in the Bilibin Treasury or the crates at the
+/// Bilibin Barricade, and checks the blocked direction before allowing another
+/// movement step.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-/// Stepping up to Jill and her friends on the bank at the Bilibin Barricade,
-/// once the curse is lifted and if she was pulled from the river: they
-/// recognize the leader, and she gives him a Hard Nut in thanks.
+/// Jill and her friends thank the leader with a Hard Nut. It happens on
+/// stepping up to them on the bank at the Bilibin Barricade, once the curse is
+/// lifted and if she was pulled from the river: they recognize the leader, and
+/// she gives him the Hard Nut in thanks.
 /// "Remember me? I was that tree!"
 static void Event_JillGivesHardNut(void) {
   struct FieldActor *leader;
@@ -677,9 +684,10 @@ static void Bilibin_RestoreVillageActors(void) {
   }
 }
 
-/// After the statue in Bilibin moves (Move, a push, or entry): updates the
-/// collision cells of its lane, opens its home cell (16, 13) once it has left
-/// it, and moves the leader clear if it has landed on him.
+/// Updates the cells around the statue in Bilibin after it moves. It runs after
+/// Move, a push, or entry: it updates the collision cells of the statue's lane,
+/// opens its home cell (16, 13) once it has left it, and moves the leader clear
+/// if it has landed on him.
 static void Bilibin_UpdateVillagePillarCells(void) {
   s32 leaderRow;
   s32 leaderColumn;

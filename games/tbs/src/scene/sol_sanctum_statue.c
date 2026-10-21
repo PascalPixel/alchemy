@@ -1728,7 +1728,7 @@ u32 gSolSanctumStatue_Exits[] = {
 
 // clang-format off
 struct ScenePlacement gSolSanctumStatue_Placements[] = {
-    { 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(488), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },

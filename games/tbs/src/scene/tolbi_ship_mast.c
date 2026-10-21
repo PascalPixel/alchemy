@@ -120,6 +120,8 @@ enum TolbiShipMastFirstAttackActor {
   /// shrinking frames), placed nowhere else. It turns, swells for 10 frames and
   /// shrinks for 24 (gTolbiShipMast_FollowCameraActions) where the monsters
   /// then appear.
+  /// ★ Named from what the player sees: a white four-pointed sparkle
+  /// (its render)
   ACTOR_SPARKLE = ACTOR_LOOKOUT + 1,
   /// The first of three monsters, all with the sprite of the first attack's
   /// monsters below decks (gTolbiShipInteriors_FirstAttackMonsters). They grow
@@ -145,6 +147,7 @@ enum TolbiShipMastEnsembleActor {
   ACTOR_SEAN = ACTOR_FIRST_BIRD + 7,
   /// The sprite of the third attack's monster below decks
   /// (gTolbiShipInteriors_ThirdAttackMonsters); it drops in beside the lookout.
+  /// ★ Named from what the player sees: a blue winged monster (its render)
   ACTOR_LANDING_MONSTER,
   /// The sprite kolima_forest_tree.c and vale_storm.c place as an invisible
   /// actor. It grows from a tenth of its size where ACTOR_LANDING_MONSTER

@@ -271,7 +271,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   target->bounce = 0x3333;
   target->terrainId = 0;
   src->update = 0;
-  Animation_ApplyChildValuesFar((struct DispatchObject *)src, 0);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)src,
+                                SPRITE_COLOR_NORMAL);
   if (work->childOption != 0) {
     // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)

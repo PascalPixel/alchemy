@@ -69,7 +69,8 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
     EffectSlot_Initialize(slot, 284, position.x, position.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialSpread);
     EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 11);
+    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+                                              SPRITE_COLOR_GREEN_TINT);
     slot->scaleX = 0x8000;
     slot->scaleY = Random16() + 0x18000;
     remaining--;
@@ -118,7 +119,8 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
       djinni->callback = BattleFx_UpdateDescendingOrbitObject;
       djinni->mode = 0;
       ObjectDispatch_SelectAnimationFar(djinni, 7);
-      Animation_ApplyChildValuesFar((struct DispatchObject *)djinni, 11);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)djinni,
+                                    SPRITE_COLOR_GREEN_TINT);
     }
   }
 
@@ -146,7 +148,8 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
     djinni->speed = Random16() + 0x16666;
     Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                                0x200000, Random16());
-    Animation_ApplyChildValuesFar((struct DispatchObject *)djinni, 11);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)djinni,
+                                  SPRITE_COLOR_GREEN_TINT);
     djinni->lifetime = 8;
     ObjectDispatch_InitializeFar((struct DispatchObject *)djinni,
                                  gBattleFx_CommonParticleScript);

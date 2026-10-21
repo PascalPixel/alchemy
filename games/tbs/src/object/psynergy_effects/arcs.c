@@ -142,9 +142,11 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
 void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 2) != 0) {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)actor, 7);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)actor,
+                                  SPRITE_COLOR_WHITE);
   } else {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)actor, 0);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)actor,
+                                  SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     BattleFx_SpawnScaledArcObjects(actor);

@@ -198,6 +198,15 @@ void BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject);
 s32 BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject);
 #endif
 void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait);
+/// BattleFx_ConfigureLinkedObject's flags: a mode in the low two bits, and
+/// ATTACHED_EFFECT_IN_FRONT.
+enum AttachedEffectFlag {
+  ATTACHED_EFFECT_REMOVE = 0, ///< removes the attached object
+  ATTACHED_EFFECT_ATTACH = 1, ///< attaches one that stays until removed
+  ATTACHED_EFFECT_ONCE = 2,   ///< shows a one-off one that ends by itself
+  /// The object takes sprite priority 1, not the actor's.
+  ATTACHED_EFFECT_IN_FRONT = 0x100
+};
 void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags);
 s32 Object_ClearChildAndCollisionFlags(void *obj);
 s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object);

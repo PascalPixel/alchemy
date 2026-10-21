@@ -114,7 +114,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   context = object->animation;
   effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(context, 27);
   zero = 0;
-  param = 15;
+  param = SPRITE_COLOR_HIDDEN;
 
   // No shadow as the leader leaves.
   context->flags = zero;
@@ -131,9 +131,10 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   WaitFrames(18);
 }
 
-/// Leaves through an exit of kind 0x20 (animation 26); flag 0x120 makes the
-/// next scene play the matching arrival (ObjectEffect_RunPendingFlagEvent).
-/// Called by the exit handling in events.c, after it plays SE_128.
+/// Leaves through an exit of kind 0x20 (animation 26);
+/// FLAG_EXIT_ARRIVAL_PENDING makes the next scene play the matching arrival
+/// (ObjectEffect_RunPendingFlagEvent). Called by the exit handling in events.c,
+/// after it plays SE_128.
 void ObjectEffect_BeginContextEffect26(void) {
   ObjectEffect_PrepareContextEffect(0x1A);
   GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_PENDING);
@@ -163,7 +164,7 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   zero = 0;
   mask = 0xfff00000;
   spriteAnimation->flags = zero;
-  eff->param = 15;
+  eff->param = SPRITE_COLOR_HIDDEN;
   leader->x = (leader->x & mask) + 0x80000;
   leader->z &= mask;
   ObjectDispatch_SelectAnimationFar(leader, animation);
@@ -173,7 +174,7 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   spriteAnimation->count = 1;
   ResourceMetadata_ClearRecordFar(spriteAnimation->entries[1]);
   spriteAnimation->entries[1] = (void *)zero;
-  spriteAnimation->flags = 1;
+  spriteAnimation->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x10000;
   Object_SetMoveTargetFar(leader, leader->x, leader->y, leader->z + 0x80000);
@@ -181,14 +182,14 @@ void ObjectEffect_EndContextEffect(s32 animation) {
 }
 
 /// Plays the leader's arrival for the way the last scene was left: through an
-/// exit of kind 0x20 (flag 0x120, animation 24, returns 1) or 0x30 (flag
-/// 0x121, animation 23, returns 2), or falling in from 160 pixels above
-/// (flag 0x122, returns 3). Returns 0 when there is nothing to play. Called by
-/// Field_RunScene as the scene fades in, which waits out the fade itself only
-/// when this returns 0. Clears the flag it acts on.
+/// exit of kind 0x20 (FLAG_EXIT_ARRIVAL_PENDING, animation 24, returns 1) or
+/// 0x30 (flag 0x121, animation 23, returns 2), or falling in from 160 pixels
+/// above (FLAG_ARRIVE_FALLING, returns 3). Returns 0 when there is nothing to
+/// play. Called by Field_RunScene as the scene fades in, which waits out the
+/// fade itself only when this returns 0. Clears the flag it acts on.
 s32 ObjectEffect_RunPendingFlagEvent(void) {
   s32 result = 0;
-  s32 flag = 0x120;
+  s32 flag = FLAG_EXIT_ARRIVAL_PENDING;
 
   if (GameFlag_TestFar(flag) != 0) {
     ObjectEffect_EndContextEffect(24);
@@ -201,7 +202,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
       GameFlag_ClearBitFar(flag);
       result = 2;
     } else {
-      flag = 0x122;
+      flag = FLAG_ARRIVE_FALLING;
       if (GameFlag_TestFar(flag) != 0) {
         s32 leaderId;
         struct ObjectRuntime *leader;
@@ -209,9 +210,9 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         GameFlag_ClearBitFar(flag);
         leaderId = gGameState.selectedActor;
         leader = ObjectTable_Get(leaderId);
-        // Flag 0x122 is set by scenes the party drops out of (the Suhalla
-        // storm, a floor giving way in the Tret tree): start 160 pixels up
-        // and let gravity bring the leader down to the ground.
+        // FLAG_ARRIVE_FALLING is set by scenes the party drops out of (the
+        // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
+        // up and let gravity bring the leader down to the ground.
         leader->y += 0x00a00000;
         Camera_MoveWithinMapBounds(-1, -1, -1, 0);
         // Until the next frame's fall would reach the ground.

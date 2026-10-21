@@ -64,7 +64,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     EffectSlot_Initialize(slot, 284, position.x, position.z);
     EffectSlot_SetCallback(slot, BattleEffect_UpdatePhasedRadialParticle);
     EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 10);
+    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+                                              SPRITE_COLOR_RED_TINT);
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
     slot->scaleY = scale;
     slot->scaleX = scale;

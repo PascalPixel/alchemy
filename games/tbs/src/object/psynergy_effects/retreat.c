@@ -119,7 +119,8 @@ void FieldFx_RunRetreat(void) {
 
   // Start spinning.
   AudioCommand_PlayFar(SE_220);
-  Animation_ApplyChildValuesFar((struct DispatchObject *)obj, 0);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)obj,
+                                SPRITE_COLOR_NORMAL);
   ObjectDispatch_SelectAnimationFar(obj, 3);
   obj->update = FieldFx_UpdateSpinAngle;
   obj->timer = 0;

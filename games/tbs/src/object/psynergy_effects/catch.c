@@ -59,7 +59,8 @@ void FieldFx_RunCatch(void) {
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(object, 5);
-  Animation_ApplyChildValuesFar((struct DispatchObject *)object, 1);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+                                SPRITE_COLOR_GRB);
 
   // Reach out to the goal: steps 0 to 10 of an 11-step loop, a tenth of the
   // way each frame.

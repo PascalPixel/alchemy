@@ -55,7 +55,8 @@ void FieldFx_RunForce(void) {
     EffectSlot_Initialize(slot, 0x11c, pos.x, pos.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
     EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 9);
+    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+                                              SPRITE_COLOR_BLUE_TINT);
     slot->scaleY = 0xb333; // 0.7
     slot->scaleX = 0xb333;
     WaitFrames(2);
@@ -81,7 +82,8 @@ void FieldFx_RunForce(void) {
   projectile->acceleration = 4 << 16;
   projectile->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(projectile, 5);
-  Animation_ApplyChildValuesFar((struct DispatchObject *)projectile, 3);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)projectile,
+                                SPRITE_COLOR_BGR);
   scale = projectile->scaleX;
   if (scale < 0x10000) {
     do {
@@ -107,7 +109,8 @@ void FieldFx_RunForce(void) {
       copy->acceleration = 4 << 16;
       copy->motionFlags = 0;
       ObjectDispatch_SelectAnimationFar(copy, 5);
-      Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 2);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)copy,
+                                    SPRITE_COLOR_RBG);
       sharedAnimation = Sprite_ShareVramCache(
           (struct AnimationObject *)copy->sprite, sharedAnimation);
     }

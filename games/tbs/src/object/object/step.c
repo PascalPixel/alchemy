@@ -315,9 +315,11 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (gGameState.hazardMode == HAZARD_COUNT_FRAMES) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
-      BattleFx_ConfigureLinkedObject(leaderId, 0x101);
+      BattleFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ATTACH);
     if (gGameState.hazardSteps == gGameState.hazardLimit)
-      BattleFx_ConfigureLinkedObject(leaderId, 0x100);
+      BattleFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_REMOVE);
   }
   if (gGameState.hazardSteps >= gGameState.hazardLimit) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
@@ -328,14 +330,15 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   }
 
   // The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
-  // one-off object 209 (0x102); each character whose HP reached 0 on this
+  // one-off object 209; each character whose HP reached 0 on this
   // step is listed, loses its poison and raises event -1, which
   // Field_RunScene handles.
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
     leader->velocityY = 0x40000;
-    BattleFx_ConfigureLinkedObject(leaderId, 0x102);
+    BattleFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                 ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
       unitVitals = UnitGetFar(gGameState.activeOwners[i]);

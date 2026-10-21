@@ -233,7 +233,8 @@ void FieldFx_RunDouse(void) {
         particle->flag = 0;
         particle->sprite->mode = 2;
         ObjectDispatch_SelectAnimationFar(particle, 8);
-        Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 7);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)particle,
+                                      SPRITE_COLOR_WHITE);
       }
       WaitFrames(6);
     }

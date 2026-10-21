@@ -85,7 +85,8 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
       spark->gravity = 458;
       spark->phase = Random16() >> 9;
       spark->anchorX = spark->x;
-      Animation_ApplyChildValuesFar((struct DispatchObject *)spark, 9);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)spark,
+                                    SPRITE_COLOR_BLUE_TINT);
       spark->lifetime = 72;
       ObjectDispatch_InitializeFar((struct DispatchObject *)spark,
                                    gBattleFx_CommonParticleScript);
@@ -157,7 +158,8 @@ void FieldFx_RunPly(void) {
     target->y.fixed = scene->y + 0x100000;
     target->z.fixed = scene->z;
     target->motionFlags = 4;
-    Animation_ApplyChildValuesFar((struct DispatchObject *)target, 7);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)target,
+                                  SPRITE_COLOR_WHITE);
   }
 
   AudioCommand_PlayFar(SE_131);
@@ -170,15 +172,18 @@ void FieldFx_RunPly(void) {
        * instructions differ in tbs-en. */
       target = object;
       if (i & 3)
-        Animation_ApplyChildValuesFar((struct DispatchObject *)object, 9);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+                                      SPRITE_COLOR_BLUE_TINT);
       else
-        Animation_ApplyChildValuesFar((struct DispatchObject *)object, 10);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+                                      SPRITE_COLOR_RED_TINT);
       WaitFrames(2);
     }
   }
 
   // Sparks.
-  Animation_ApplyChildValuesFar((struct DispatchObject *)object, 0);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+                                SPRITE_COLOR_NORMAL);
   AudioCommand_PlayFar(MUS_084);
   if (object != 0) {
     target->update = BattleFx_RunSparkEmitter;

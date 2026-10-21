@@ -142,7 +142,8 @@ void FieldFx_RunAvoid(void) {
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 2);
   else
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
-  Animation_ApplyChildValuesFar((struct DispatchObject *)object, 0);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+                                SPRITE_COLOR_NORMAL);
   Resource_ResetEntry(scene->arcTileSlot);
   UiText_ShowPositionedMessageAndWaitFar(MsgMonstersAttackLess, 1);
 }

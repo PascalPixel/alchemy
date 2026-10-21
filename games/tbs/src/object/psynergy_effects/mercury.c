@@ -75,7 +75,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
       copy->steeringFlags |= 1;
       copy->update = BattleFx_HalveDistanceToTarget;
       copy->facing = djinni->facing;
-      Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 9);
+      Animation_ApplyChildValuesFar((struct DispatchObject *)copy,
+                                    SPRITE_COLOR_BLUE_TINT);
       ObjectDispatch_SelectAnimationFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
       resource = Sprite_ShareVramCache(copy->sprite, resource);
@@ -120,7 +121,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
     EffectSlot_Initialize(slot, 240, position.x, position.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRandomTargetParticle);
     EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, 9);
+    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+                                              SPRITE_COLOR_BLUE_TINT);
     remaining--;
     WaitFrames(1);
     slot++;

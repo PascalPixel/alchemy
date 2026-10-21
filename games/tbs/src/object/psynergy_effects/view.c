@@ -209,14 +209,13 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
   }
 }
 
-/// The event command "actor set attached effect": with mode (the low 2 bits)
-/// 0 removes the object attached to an actor; 1 attaches one (object 209,
-/// animation 1) that stays until removed; 2 shows a one-off one (animation 2)
-/// that ends by itself (gObjectMotion_WaitScript, 40 frames). With 0x100 the
-/// object takes sprite priority 1, otherwise the actor's. The attached object
-/// is kept as the actor's linkedObject, so mode 1 does nothing while the
-/// actor has one, and mode 0 releases whatever it is; a one-off is never
-/// recorded there. The leader's step runs all three for hazard ground
+/// The event command "actor set attached effect", by enum AttachedEffectFlag:
+/// removes the object attached to an actor, attaches one (sprite 209,
+/// animation 1) or shows a one-off one (animation 2) that ends by itself
+/// (gObjectMotion_WaitScript, 40 frames). The attached object is kept as the
+/// actor's linkedObject, so ATTACHED_EFFECT_ATTACH does nothing while the
+/// actor has one, and ATTACHED_EFFECT_REMOVE releases whatever it is; a one-off
+/// is never recorded there. The leader's step runs all three for hazard ground
 /// (object/step.c).
 void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   struct FieldActor *object = ObjectTable_Get(actor);
@@ -231,7 +230,7 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || object->linkedObject == 0) {
+    if ((flags & 3) == ATTACHED_EFFECT_ONCE || object->linkedObject == 0) {
       effect = (struct FieldActor *)Object_CreateFar(
           209, object->x.fixed, object->y.fixed, object->z.fixed);
     }
@@ -249,12 +248,12 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
 
   mode = flags & 3;
   switch (mode) {
-  case 1:
+  case ATTACHED_EFFECT_ATTACH:
     ObjectDispatch_SelectAnimationFar(effect, 1);
     object->linkedObject = effect;
     effect->timer = 1;
     break;
-  case 2:
+  case ATTACHED_EFFECT_ONCE:
     ObjectDispatch_SelectAnimationFar(effect, 2);
     ObjectDispatch_InitializeFar((struct DispatchObject *)effect,
                                  (const s32 *)gObjectMotion_WaitScript);
@@ -275,7 +274,7 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   effect->linkedObject = object;
 
   // Replace the effect's priority bits (2 and 3) with 1 or the actor's.
-  if (flags & 0x100) {
+  if (flags & ATTACHED_EFFECT_IN_FRONT) {
     s32 mask = 13;
     u8 attr = SPRITE_ATTR2_HIGH(visual);
 

@@ -366,8 +366,8 @@ s32 Scene_RunTouchOrExit(s32 value) {
     if (exit != 0) {
       // Bits 5 and 4 choose how the leader leaves: 0 with the usual sound,
       // 16 silently, 32 and 48 with their own sound and leaving animation (26
-      // and 25), whose flag (0x120, 0x121) makes the next scene play the
-      // matching arrival.
+      // and 25), whose flag (FLAG_EXIT_ARRIVAL_PENDING, flag 0x121) makes the
+      // next scene play the matching arrival.
       exitKind = exit->flags & 0x30;
       switch (exitKind) {
       case 0:

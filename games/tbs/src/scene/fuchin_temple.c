@@ -379,10 +379,10 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   EV_END();
 }
 
-/// Coming back out of the grotto at Fuchin Temple (FuchinTempleGrounds, trigger
-/// 5) with the Orb of Force, Isaac is sent on to Nyunpa and the way back is
-/// open again. "Young master, did you complete the test?" Then "Master Nyunpa
-/// is waiting for you... Proceed to the temple."
+/// Isaac comes back out of the grotto with the Orb of Force. At Fuchin Temple
+/// (FuchinTempleGrounds, trigger 5) the monk sends him on to Nyunpa, and the
+/// way back is open again. "Young master, did you complete the test?" Then
+/// "Master Nyunpa is waiting for you... Proceed to the temple."
 static void Event_MonkAsksWhetherTestIsDone(void) {
   EV_BEGIN();
   Engine_GameFlagSet(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST);

@@ -427,8 +427,8 @@ test-devtools: devtools
 progress: devtools
 	$(DEVTOOLS) progress
 
-# Before landing on main: all twelve editions, both test suites, then the
-# measurement the pre-push hook sends for CI (C3).
-land: compare-editions test test-devtools
+# Before landing on main: all twelve editions, the current-GCC build, both
+# test suites, then the measurement the pre-push hook sends for CI (C3).
+land: compare-editions modern test test-devtools
 	$(DEVTOOLS) progress
 endif

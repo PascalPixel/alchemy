@@ -1,9 +1,12 @@
 # Alchemy CI and publication
 
-`build.yml` tests the C tools, builds the pinned compiler sources, compares all
-six Broken Seal editions without an input ROM, and compiles them with current
-GCC. Pull requests stop there. The Lost Age still needs private cartridge
-dumps, so twelve-edition verification happens locally.
+`build.yml` proves in public what anyone can check: from a clean clone with no
+ROM, it builds the pinned compilers and all six Broken Seal editions and checks
+each against `rom.sha1`. ccache hands back a compile only when its preprocessed
+source, compiler and options are identical, so a push that changes comments
+recompiles almost nothing; every ROM is still linked and checked. Pull requests
+stop there. The tool tests, the format check, `make modern` and The Lost Age's
+editions, which need private cartridge dumps, run locally in `make land`.
 
 For a landing, stage every source change and run `make land`. The receipt
 records the staged source tree, measurement time and hashes of the TSV and
@@ -12,7 +15,7 @@ pre-push hook uploads that receipt and both reports, named for the pushed
 commit, to the `decomp-reports` release. A changed measurement can never
 overwrite an existing commit's report. No ROM, executable or map is uploaded.
 
-After the main build succeeds, CI verifies the matching receipt and accepts
+After the main build succeeds, the `publish` job verifies the matching receipt and accepts
 it as `<commit>.accepted.tsv`. History is reconstructed from the immutable
 `progress-history-v1.tsv` baseline and accepted ancestors of that commit.
 The original baseline retains its recorded dates; new measurement dates use
@@ -22,8 +25,7 @@ immutable `<commit>.site.tar.gz` containing only the two PNG figures,
 artifact retention. `combined_report`, containing `report.pb`, remains a CI
 artifact for decomp.dev.
 
-`docs.yml` runs after successful CI on main, refuses a superseded revision and
-starts the site build through the Vercel deploy hook in the `VERCEL_DEPLOY_HOOK`
+The same job then refuses a superseded revision and starts the site build through the Vercel deploy hook in the `VERCEL_DEPLOY_HOOK`
 secret. Vercel builds `alchemy-docs` at its main branch: it clones Alchemy's
 main, generates the pages from the source and takes the accepted figures from
 the release, then serves them at <https://alchemy.pascalpixel.com/>, where
@@ -39,8 +41,8 @@ more. To replace it, create a new hook with `vercel deploy-hooks create`,
 store its URL in the secret and remove the old hook.
 
 A generator change publishes when it is pushed to `alchemy-docs`.
-To retry publication, rerun the failed job. The `Publish docs` workflow also
-accepts the ID of a successful main CI run; it refuses a superseded revision.
+To retry publication, rerun the failed `publish` job; it refuses a superseded
+revision.
 If the build fails before reports are archived, fix the build first.
 
 The old `progress` branch remains as a frozen, recoverable archive. Its

@@ -108,10 +108,14 @@
 /// AltmillerCaveBabi's actors: Babi while invisible and once seen, and the two
 /// men from Tolbi who come looking for him.
 enum {
+  /// Babi's second sheet, SPRITE_BABI_IN_ALTMILLER_CAVE: the old man with
+  /// long pink hair and a cane, standing unseen in the cave.
   ACTOR_INVISIBLE_BABI = 8,
+  /// SPRITE_BABI, the same old man once seen.
   /// ★ Named from the game: "Babi!" (MsgAltmillerBabi)
   ACTOR_BABI = 9,
-  /// Their sprite is a helmeted soldier carrying a torch.
+  /// Their sprite is a helmeted soldier carrying a torch
+  /// (SPRITE_SOLDIER_WITH_TORCH).
   /// ★ Named from what the player sees: a soldier from Tolbi, sent to find
   /// Babi (its render)
   ACTOR_FIRST_SOLDIER = 10,
@@ -2332,14 +2336,14 @@ struct ScenePlacement gAltmillerCave_BabiPlacements[] = {
      0},
     {MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY,
      0},
-    {0x41, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(232), 0, PIXELS(160),
+    {SPRITE_BABI_IN_ALTMILLER_CAVE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(232),
+     0, PIXELS(160), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_BABI, CONDITION_ALWAYS, ACTOR_STAND, -PIXELS(64), 0, -PIXELS(64),
      FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x34, CONDITION_ALWAYS, ACTOR_STAND, -PIXELS(64), 0, -PIXELS(64),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0xa3, CONDITION_ALWAYS, ACTOR_STAND, -PIXELS(64), 0, -PIXELS(64),
-     FACING_NORTH, TALK_KEEP_FACING, 0},
-    {0xa3, CONDITION_ALWAYS, ACTOR_STAND, -PIXELS(64), 0, -PIXELS(64),
-     FACING_NORTH, TALK_KEEP_FACING, 0},
+    {SPRITE_SOLDIER_WITH_TORCH, CONDITION_ALWAYS, ACTOR_STAND, -PIXELS(64), 0,
+     -PIXELS(64), FACING_NORTH, TALK_KEEP_FACING, 0},
+    {SPRITE_SOLDIER_WITH_TORCH, CONDITION_ALWAYS, ACTOR_STAND, -PIXELS(64), 0,
+     -PIXELS(64), FACING_NORTH, TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2354,7 +2358,7 @@ struct ScenePlacement gAltmillerCave_SquallPlacements[] = {
      FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(472), 0,
      PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x5d, FLAG_DJINNI_0 + DJINNI_SQUALL, ACTOR_STAND, PIXELS(264), 0,
+    {JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_SQUALL, ACTOR_STAND, PIXELS(264), 0,
      PIXELS(200), FACING_SOUTHWEST, TALK_FACE_PARTY, 0},
     {SCENE_TABLE_END},
 };

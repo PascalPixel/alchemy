@@ -5,28 +5,26 @@
 /// with four chests each. All three take the area name Crossbone Isle Cave. In
 /// the order the party meets them:
 ///
-/// - CrossboneIsleKeys (scene 117), off the third floor, a
-///   room of locked doors. Four Blue Keys lie about it until Catch takes them,
-///   and a Red Key shows only while Reveal lasts. Walking into one of the four
-///   blue doors in a row with a Blue Key opens it and uses the key up (four
-///   flags from FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN), and the Red Key
-///   opens the red door beyond them (FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN). The
-///   keys taken and the doors opened are restored on entry.
-/// - CrossboneIsleStatues (scene 118), off the fourth, where five
-///   statues of a robed woman wait, lit in circles by braziers in the dark. As
-///   the leader crosses each one's stretch of the room it steps out after him
-///   unless he is hidden by Cloak, and goes back home once he is past
-///   (FLAG_SCENE_TEMP_20 while one is after him); Halt stops one where it
-///   stands, and Reveal clears the translucent layer over the room while it
-///   lasts.
-/// - CrossboneIsleBane (scene 120), off the sixth, where Bane, a
-///   Venus Djinni, hides. Five pillars to push or move with Move, a ladder and
-///   a puddle that Frost freezes into a pillar of ice make a way across the
-///   room. The first three times the party comes near, Bane flees, the third
-///   time to the room's last corner (FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE to
-///   _LAST_ESCAPE); there it runs to whichever spot the leader steps toward
-///   unless Halt holds it. Once the battle with Bane is won, Bane joins the
-///   party.
+/// - SceneId_CrossboneIsleKeys, off the third floor, a room of locked doors.
+///   Four Blue Keys lie about it until Catch takes them, and a Red Key shows
+///   only while Reveal lasts. Walking into one of the four blue doors in a row
+///   with a Blue Key opens it and uses the key up (four flags from
+///   FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN), and the Red Key opens the red
+///   door beyond them (FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN). The keys taken and
+///   the doors opened are restored on entry.
+/// - SceneId_CrossboneIsleStatues, off the fourth, where five statues of a
+///   robed woman wait, lit in circles by braziers in the dark. As the leader
+///   crosses each one's stretch of the room it steps out after him unless he is
+///   hidden by Cloak, and goes back home once he is past (FLAG_SCENE_TEMP_20
+///   while one is after him); Halt stops one where it stands, and Reveal clears
+///   the translucent layer over the room while it lasts.
+/// - SceneId_CrossboneIsleBane, off the sixth, where Bane, a Venus Djinni,
+///   hides. Five pillars to push or move with Move, a ladder and a puddle that
+///   Frost freezes into a pillar of ice make a way across the room. The first
+///   three times the party comes near, Bane flees, the third time to the room's
+///   last corner (FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE to _LAST_ESCAPE); there
+///   it runs to whichever spot the leader steps toward unless Halt holds it.
+///   Once the battle with Bane is won, Bane joins the party.
 #include "game_state.h"
 #include "version.h"
 #include "global_cells.h"
@@ -93,7 +91,7 @@ static void CrossboneIsleKeys_InitializeStatues(void);
 static void CrossboneIsleKeys_InitializeBane(void);
 
 /// CrossboneIsleKeys's placed actors, numbered in the order of
-/// gCrossboneIsleKeysPlacements1: the keys, drawn as their item icons
+/// gCrossboneIsleKeysRoomPlacements: the keys, drawn as their item icons
 /// (Colosso_ShowItemIcon) until Catch takes them.
 enum CrossboneIsleKeysActor {
   ACTOR_FIRST_BLUE_KEY = ACTOR_FIRST_PLACED,
@@ -104,8 +102,8 @@ enum CrossboneIsleKeysActor {
 };
 
 /// CrossboneIsleStatues's placed actors, numbered in the order of
-/// gCrossboneIsleKeysPlacements2: the five statues that pursue the
-/// leader, sprite 0x1f4, each waiting at its home for the leader to cross its
+/// gCrossboneIsleStatuesPlacements: the five statues that pursue the leader,
+/// all of one sprite, each waiting at its home for the leader to cross its
 /// stretch of the room.
 enum CrossboneIsleStatuesActor {
   ACTOR_FIRST_PURSUER = ACTOR_FIRST_PLACED,
@@ -125,17 +123,17 @@ enum CrossboneIsleStatuesTrigger {
 };
 
 /// CrossboneIsleBane's placed actors, numbered in the order of
-/// gCrossboneIsleKeysPlacements3.
+/// gCrossboneIsleBanePlacements.
 enum CrossboneIsleBaneActor {
-  /// The five pillars, sprite 0xd3 as Goma Cave's, pushed by walking into them
-  /// or with Move.
+  /// The five pillars, in Goma Cave's pillar sprite, pushed by walking into
+  /// them or with Move.
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_PILLAR,
   ACTOR_THIRD_PILLAR,
   ACTOR_FOURTH_PILLAR,
   ACTOR_FIFTH_PILLAR,
   ACTOR_PUDDLE, ///< frozen by Frost into a pillar of ice
-  /// The chest on top of the second pillar, sprite 0x14 as McCoy's Palace's
+  /// The chest on top of the second pillar, in the sprite of McCoy's Palace's
   /// chests, holding the Demon Axe: it follows the pillar until the pillar
   /// reaches the ladder, where the chest's search marker 107 takes its place,
   /// and it is drawn open once the chest's flag 0xed9 is set.
@@ -184,13 +182,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
-    return gCrossboneIsleKeysEntrances1;
+    return gCrossboneIsleKeysRoomEntrances;
   }
   if (selector == (s32)&SceneId_CrossboneIsleStatues) {
-    return gCrossboneIsleKeysEntrances2;
+    return gCrossboneIsleStatuesEntrances;
   }
   if (selector == (s32)&SceneId_CrossboneIsleBane) {
-    return gCrossboneIsleKeysEntrances3;
+    return gCrossboneIsleBaneEntrances;
   }
   return gCrossboneIsleKeysEntrancesOther;
 }
@@ -203,13 +201,13 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
-    return gCrossboneIsleKeysPlacements1;
+    return gCrossboneIsleKeysRoomPlacements;
   }
   if (selector == (s32)&SceneId_CrossboneIsleStatues) {
-    return gCrossboneIsleKeysPlacements2;
+    return gCrossboneIsleStatuesPlacements;
   }
   if (selector == (s32)&SceneId_CrossboneIsleBane) {
-    return gCrossboneIsleKeysPlacements3;
+    return gCrossboneIsleBanePlacements;
   }
   return gCrossboneIsleKeysPlacementsOther;
 }
@@ -419,13 +417,13 @@ const struct SceneEvent *Scene_GetEvents(void) {
   s16 selector = gGameState.scene;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
-    return gCrossboneIsleKeysEvents1;
+    return gCrossboneIsleKeysRoomEvents;
   }
   if (selector == (s32)&SceneId_CrossboneIsleStatues) {
-    return gCrossboneIsleKeysEvents2;
+    return gCrossboneIsleStatuesEvents;
   }
   if (selector == (s32)&SceneId_CrossboneIsleBane) {
-    return gCrossboneIsleKeysEvents3;
+    return gCrossboneIsleBaneEvents;
   }
   return gCrossboneIsleKeysEventsOther;
 }
@@ -1214,7 +1212,8 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 /// of CrossboneIsleKeys, the pursuers of CrossboneIsleStatues,
 /// or the pillars and Bane of CrossboneIsleBane.
 s32 Scene_Initialize(void) {
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_CrossboneIsleKeys) {
     CrossboneIsleKeys_InitializeKeys();
   }
@@ -1319,10 +1318,11 @@ static void CrossboneIsleKeys_InitializeStatues(void) {
   Object_GetById(ACTOR_FOURTH_PURSUER)->scaleX = 7 * Q16_ONE / 10;
   Object_GetById(ACTOR_FIFTH_PURSUER)->scaleX = 7 * Q16_ONE / 10;
   FieldScheduler_AddOrUpdateCallback(CrossboneIsleKeys_CheckFifthPursuerTrigger,
-                                     0xc80);
+                                     TASK_PRIORITY_SCENE);
   FieldScheduler_AddOrUpdateCallback(
-      CrossboneIsleKeys_CheckSecondPursuerTrigger, 0xc80);
-  FieldScheduler_AddCallback(CrossboneIsleKeys_CheckFirstPursuerTrigger, 0xc80);
+      CrossboneIsleKeys_CheckSecondPursuerTrigger, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(CrossboneIsleKeys_CheckFirstPursuerTrigger,
+                             TASK_PRIORITY_SCENE);
   Io_Write16(0x3f42, &REG_BLDCNT);
   Io_Write16(0x607, &REG_BLDALPHA);
 }
@@ -1335,8 +1335,9 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   // cells.
   Object_GetById(ACTOR_SECOND_PILLAR_CHEST)->motionFlags = 0;
   FieldScheduler_AddOrUpdateCallback(CrossboneIsleKeys_FollowSecondPillar,
-                                     0xc80);
-  FieldScheduler_AddCallback(CrossboneIsleKeys_UpdatePillarPriorities, 0xc80);
+                                     TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(CrossboneIsleKeys_UpdatePillarPriorities,
+                             TASK_PRIORITY_SCENE);
   MapObject_SetPosition(107, 0, 0);
   if (FLAG_CHECK(0xed9) != 0) {
     OBJ_MODE(ACTOR_SECOND_PILLAR_CHEST, 2);
@@ -1451,23 +1452,23 @@ s32 gCrossboneIsleKeys_BaneWalkTargets[] = {
 };
 
 struct SceneEntrance gCrossboneIsleKeysEntrancesOther[] = {
-    { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleKeysEntrances1[] = {
+struct SceneEntrance gCrossboneIsleKeysRoomEntrances[] = {
     { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_EAST, CONDITION_ALWAYS, 200, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
     { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_WEST, CONDITION_ALWAYS, 88, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleKeysEntrances2[] = {
+struct SceneEntrance gCrossboneIsleStatuesEntrances[] = {
     { CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_EAST, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
     { CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_WEST, CONDITION_ALWAYS, 88, 0, 392, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleKeysEntrances3[] = {
+struct SceneEntrance gCrossboneIsleBaneEntrances[] = {
     { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_EAST, CONDITION_ALWAYS, 776, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
     { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_WEST, CONDITION_ALWAYS, 664, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
     { SCENE_TABLE_END },
@@ -1490,7 +1491,7 @@ struct ScenePlacement gCrossboneIsleKeysPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIsleKeysPlacements1[] = {
+struct ScenePlacement gCrossboneIsleKeysRoomPlacements[] = {
     { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1504,7 +1505,7 @@ struct ScenePlacement gCrossboneIsleKeysPlacements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIsleKeysPlacements2[] = {
+struct ScenePlacement gCrossboneIsleStatuesPlacements[] = {
     { 0x1f4, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(152), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x1f4, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1518,7 +1519,7 @@ struct ScenePlacement gCrossboneIsleKeysPlacements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIsleKeysPlacements3[] = {
+struct ScenePlacement gCrossboneIsleBanePlacements[] = {
     { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(616), 0, PIXELS(680), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1534,7 +1535,7 @@ struct ScenePlacement gCrossboneIsleKeysPlacements3[] = {
     { 0x14, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(728), 0, PIXELS(760), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     // Bane, until it is caught
-    { 0x5a, FLAG_DJINNI_0 + DJINNI_BANE, ACTOR_STAND,
+    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_BANE, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1543,7 +1544,7 @@ struct SceneEvent gCrossboneIsleKeysEventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIsleKeysEvents1[] = {
+struct SceneEvent gCrossboneIsleKeysRoomEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowRedKey) },
@@ -1568,7 +1569,7 @@ struct SceneEvent gCrossboneIsleKeysEvents1[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIsleKeysEvents2[] = {
+struct SceneEvent gCrossboneIsleStatuesEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST },
     { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TrackThirdPursuerColumn) },
@@ -1593,7 +1594,7 @@ struct SceneEvent gCrossboneIsleKeysEvents2[] = {
 };
 // clang-format on
 
-struct SceneEvent gCrossboneIsleKeysEvents3[] = {
+struct SceneEvent gCrossboneIsleBaneEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
      CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,

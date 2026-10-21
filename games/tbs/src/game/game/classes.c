@@ -113,7 +113,7 @@ u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
   s32 values[4];
   s32 i;
 
-  if (state->classIndex == 0) {
+  if (state->classIndex == CLASS_INDEX_ENEMY) {
     index =
         ((const struct EnemyDefinition *)Enemy_GetDefinition(state->classId))
             ->elementPreset;

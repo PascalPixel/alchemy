@@ -201,7 +201,7 @@ void UnitCalc(s32 owner) {
 
   // Apply additive equipment and set-Djinn bonuses before class scaling.
   // An enemy (CLASS_INDEX_ENEMY) skips equipment, Djinn and class entirely.
-  if (unit->classIndex) {
+  if (unit->classIndex != CLASS_INDEX_ENEMY) {
     for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
@@ -371,7 +371,7 @@ void UnitCalc(s32 owner) {
   for (index = 0; index < NUM_ELEMENTS; index++)
     stats->element[index][1] += unit->resistanceStage * 20;
 
-  if (unit->classIndex) {
+  if (unit->classIndex != CLASS_INDEX_ENEMY) {
     lighthouseLit = 0;
     // Faster PP recovery once the character's own element's lighthouse is lit
     switch (unit->classId) {

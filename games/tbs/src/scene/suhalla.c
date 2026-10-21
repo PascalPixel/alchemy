@@ -24,10 +24,11 @@
 /// (SceneId_SuhallaInteriors), the wide door of SUHALLA_TO_SANCTUM into Suhalla
 /// Sanctum. Three ways lead out onto the world map: SUHALLA_TO_WORLD_MAP, to
 /// WORLD_MAP_FROM_SUHALLA, where the desert's sandstorms also drop the party,
-/// and exits 11 and 12. A chest and two jars hold a Hard Nut, a Lucky Medal
-/// and 5 coins, and Growth on a sprout grows it and changes its cell
-/// (FLAG_SCENE_TEMP_01, a scene flag, so the grown sprout is redrawn only on a
-/// return that keeps the party's position, as after a battle).
+/// SUHALLA_TO_WORLD_MAP_NORTH and SUHALLA_TO_WORLD_MAP_EAST. A chest and two
+/// jars hold a Hard Nut, a Lucky Medal and 5 coins, and Growth on a sprout
+/// grows it and changes its cell (FLAG_SCENE_TEMP_01, a scene flag, so the
+/// grown sprout is redrawn only on a return that keeps the party's position, as
+/// after a battle).
 
 #include "game_state.h"
 #include "unit/scene/suhalla.h"
@@ -238,7 +239,7 @@ struct SceneEntrance gSuhallaEntrances[] = {
 
 u32 gSuhallaExits[] = {
     SCENE_EXITS(Suhalla),
-    SCENE_EXIT(SUHALLA_TO_INN, SuhallaInteriors, 1),
+    SCENE_EXIT(SUHALLA_TO_INN, SuhallaInteriors, SUHALLA_INTERIORS_INN),
     SCENE_EXIT(SUHALLA_TO_SANCTUM, SuhallaInteriors, SUHALLA_INTERIORS_SANCTUM),
     SCENE_EXIT(SUHALLA_TO_HOUSE_WEST, SuhallaInteriors,
                SUHALLA_INTERIORS_HOUSE_WEST),
@@ -247,8 +248,10 @@ u32 gSuhallaExits[] = {
     SCENE_EXIT(SUHALLA_TO_HOUSE_EAST, SuhallaInteriors,
                SUHALLA_INTERIORS_HOUSE_EAST),
     SCENE_EXIT(SUHALLA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SUHALLA),
-    SCENE_EXIT(11, WorldMap, 56),
-    SCENE_EXIT(12, WorldMap, 57),
+    SCENE_EXIT(SUHALLA_TO_WORLD_MAP_NORTH, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_NORTH),
+    SCENE_EXIT(SUHALLA_TO_WORLD_MAP_EAST, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_EAST),
     SCENE_EXITS_END,
 };
 

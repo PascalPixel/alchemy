@@ -1,13 +1,13 @@
 /// @file
 /// The buildings of Lunpa (LunpaSuhalla, scene 105), one scene whose area name
 /// follows the door the party comes in by: Lunpa for the homes, the shops and
-/// the inn (ROOM_FIRST_HOME to ROOM_INN, ROOM_EIGHTH and ROOM_NINTH), Lunpa
+/// the inn (ROOM_FIRST_HOME to ROOM_INN, ROOM_STOREROOM and ROOM_NINTH), Lunpa
 /// Temple (ROOM_TEMPLE and ROOM_TEMPLE_SECOND_ENTRANCE) and Gate to Suhalla
 /// (ROOM_GATE_TO_SUHALLA).
 ///
 /// - Lunpa, the homes, the weapon and armor shop, the item shop and the inn,
 ///   entered by the town's doors (lunpa.c); their exits, ROOM_FIRST_HOME to
-///   ROOM_EIGHTH, lead back out, the temple's included. While Dodonpa keeps
+///   ROOM_STOREROOM, lead back out, the temple's included. While Dodonpa keeps
 ///   the town sealed (FLAG_LUNPA_TRADE_REOPENED clear, gInteriorSealedEvents),
 ///   the merchants cannot buy or sell, the innkeeper has no guests, and the
 ///   residents talk of Lunpa, the noble thief lost in the great flood while
@@ -59,7 +59,7 @@ const struct SceneEntrance gInteriorEntrances[] = {
     { ROOM_ITEM_SHOP, CONDITION_ALWAYS, 704, 0, 584, FACING_NORTH, 0, 576, 352, 816, 608, 0 },
     { ROOM_INN, CONDITION_ALWAYS, 288, 0, 840, FACING_NORTH, 0, 40, 656, 368, 944, 0 },
     { ROOM_TEMPLE, CONDITION_ALWAYS, 688, 0, 280, FACING_NORTH, 0, 568, 32, 808, 304, 0 },
-    { ROOM_EIGHTH, CONDITION_ALWAYS, 560, 0, 880, FACING_NORTH, 0, 400, 656, 640, 912, 0 },
+    { ROOM_STOREROOM, CONDITION_ALWAYS, 560, 0, 880, FACING_NORTH, 0, 400, 656, 640, 912, 0 },
     { ROOM_NINTH, CONDITION_ALWAYS, 672, 0, 888, FACING_NORTH, 0, 520, 656, 760, 896, 0 },
     { ROOM_GATE_TO_SUHALLA, CONDITION_ALWAYS, 832, 0, 848, FACING_NORTH, 0, 680, 656, 920, 896, 0 },
     { ROOM_TEMPLE_SECOND_ENTRANCE, CONDITION_ALWAYS, 688, 0, 184, FACING_NORTH, 0, 568, 32, 808, 288, 0 },
@@ -75,8 +75,8 @@ const u32 gInteriorExits[] = {
     SCENE_EXIT(ROOM_ITEM_SHOP, Lunpa, LUNPA_FROM_ITEM_SHOP),
     SCENE_EXIT(ROOM_INN, Lunpa, LUNPA_FROM_INN),
     SCENE_EXIT(ROOM_TEMPLE, Lunpa, LUNPA_FROM_TEMPLE),
-    SCENE_EXIT(ROOM_EIGHTH, Lunpa, LUNPA_FROM_EIGHTH_ROOM),
-    SCENE_EXIT(ROOM_GATE_TO_SUHALLA, SuhallaGate1, SUHALLA_GATE_1_FROM_LUNPA_SUHALLA),
+    SCENE_EXIT(ROOM_STOREROOM, Lunpa, LUNPA_FROM_STOREROOM),
+    SCENE_EXIT(ROOM_GATE_TO_SUHALLA, SuhallaGateCheckpoint, SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA),
     SCENE_EXITS_END,
 };
 
@@ -128,7 +128,7 @@ const struct SceneEvent gInteriorSealedEvents[] = {
     ROOM_DOOR(ROOM_ITEM_SHOP),
     ROOM_DOOR(ROOM_INN),
     ROOM_DOOR(ROOM_TEMPLE),
-    ROOM_DOOR(ROOM_EIGHTH),
+    ROOM_DOOR(ROOM_STOREROOM),
     { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeASealed) },
     { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeBSealed) },
     { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeASealed) },
@@ -197,7 +197,7 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
     ROOM_DOOR(ROOM_ITEM_SHOP),
     ROOM_DOOR(ROOM_INN),
     ROOM_DOOR(ROOM_TEMPLE),
-    ROOM_DOOR(ROOM_EIGHTH),
+    ROOM_DOOR(ROOM_STOREROOM),
     { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeAReopened) },
     { EVENT_TALK, ACTOR_FIRST_HOME_RESIDENT_B, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeBReopened) },
     { EVENT_TALK, ACTOR_SECOND_HOME_RESIDENT_A, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeAReopened) },

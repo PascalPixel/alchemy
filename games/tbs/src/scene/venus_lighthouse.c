@@ -42,10 +42,10 @@
 ///   VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_1 link the two scenes.
 /// - Venus Lighthouse (VenusLighthouse2, scene 183), the first floor of the
 ///   climb, where the Tunnel Ruins come up
-///   (VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_2;
-///   VENUS_LIGHTHOUSE_2_TO_TUNNEL_RUINS_2 leads back down), in the room
-///   VENUS_LIGHTHOUSE_1_TO_VENUS_LIGHTHOUSE_2 also reaches. A floor drifts the
-///   party south (trigger 30), a hole drops the leader into the room below
+///   (VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_LADY_STATUES;
+///   VENUS_LIGHTHOUSE_2_TO_TUNNEL_RUINS_LADY_STATUES leads back down), in the
+///   room VENUS_LIGHTHOUSE_1_TO_VENUS_LIGHTHOUSE_2 also reaches. A floor drifts
+///   the party south (trigger 30), a hole drops the leader into the room below
 ///   (trigger 35), three pillars can be Moved or pushed, and two pillars by a
 ///   gap are carried across it with Carry, or dropped into it to fall through
 ///   the floor. A chest holds the Thunder Crown, and a Psynergy Stone lies
@@ -4117,7 +4117,7 @@ struct SceneEntrance gVenusLighthouseEntrances3[] = {
     { 15, CONDITION_ALWAYS, 840, 0, 360, FACING_NORTH, 0, 616, 40, 1000, 360, 0 },
     { VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_1, CONDITION_ALWAYS, 88, 0, 152, FACING_SOUTH, 0, 40, 40, 328, 208, 0 },
     { 17, CONDITION_ALWAYS, 184, 0, 104, FACING_SOUTH, 0, 40, 40, 328, 208, 0 },
-    { VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_2, CONDITION_ALWAYS, 280, 0, 152, FACING_SOUTH, 0, 40, 40, 328, 208, 0 },
+    { VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_LADY_STATUES, CONDITION_ALWAYS, 280, 0, 152, FACING_SOUTH, 0, 40, 40, 328, 208, 0 },
     { 19, CONDITION_ALWAYS, 472, 0, 776, FACING_SOUTH, 0, 424, 688, 672, 848, 0 },
     { 20, CONDITION_ALWAYS, 600, 0, 776, FACING_SOUTH, 0, 424, 688, 672, 848, 0 },
     { VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_EAST, CONDITION_ALWAYS, 840, 0, 136, FACING_SOUTH, 0, 616, 40, 1000, 360, 0 },
@@ -4235,7 +4235,7 @@ u32 gVenusLighthousePrimaryTable[] = {
     SCENE_EXIT(15, VenusLighthouse2, 17),
     SCENE_EXIT(VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_1, VenusLighthouse1, VENUS_LIGHTHOUSE_1_FROM_VENUS_LIGHTHOUSE_2),
     SCENE_EXIT(17, VenusLighthouse2, 15),
-    SCENE_EXIT(VENUS_LIGHTHOUSE_2_TO_TUNNEL_RUINS_2, TunnelRuins2, TUNNEL_RUINS_2_FROM_VENUS_LIGHTHOUSE_2),
+    SCENE_EXIT(VENUS_LIGHTHOUSE_2_TO_TUNNEL_RUINS_LADY_STATUES, TunnelRuinsLadyStatues, TUNNEL_RUINS_LADY_STATUES_FROM_VENUS_LIGHTHOUSE_2),
     SCENE_EXIT(19, VenusLighthouse2, 1),
     SCENE_EXIT(20, VenusLighthouse2, 20),
     SCENE_EXIT(VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_3_SOUTH, VenusLighthouse3, VENUS_LIGHTHOUSE_3_FROM_VENUS_LIGHTHOUSE_2_SOUTH),
@@ -4519,7 +4519,7 @@ struct SceneEvent gVenusLighthouseEvents3[] = {
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { 0x21, 16, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_1 },
     { EVENT_EXIT, 17, CONDITION_ALWAYS, 17 },
-    { 0x31, 18, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_2_TO_TUNNEL_RUINS_2 },
+    { 0x31, 18, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_2_TO_TUNNEL_RUINS_LADY_STATUES },
     { 0x21, 19, CONDITION_ALWAYS, 19 },
     { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
     { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FallThroughFloor) },

@@ -1,5 +1,5 @@
 /// @file
-/// Suhalla Desert (SuhallaDesert1 to 3, scenes 164 to 166), the desert of
+/// Suhalla Desert (SuhallaDesertNorth to 3, scenes 164 to 166), the desert of
 /// sandstorms between Suhalla and Suhalla Gate.
 ///
 /// After Babi's audience the party crosses it with Iodem, who commands
@@ -7,23 +7,26 @@
 /// child of Lalivero: the soldiers escorting her home were caught in the
 /// sandstorms, and in Suhalla the survivors said she had not been caught with
 /// them. The three scenes, in the order the party meets them:
-/// - Suhalla Desert (scene 164), entered from the world map near Suhalla,
-///   where SUHALLA_DESERT_1_TO_WORLD_MAP leads back out;
-///   SUHALLA_DESERT_1_TO_SUHALLA_DESERT_2 leads on into scene 165. Five storms
-///   stand here.
-/// - Suhalla Desert (scene 165), with four storms and a fifth that gives
-///   chase. SUHALLA_DESERT_2_TO_WORLD_MAP leads out onto the world map, and
-///   SUHALLA_DESERT_2_TO_SUHALLA_DESERT_3_EAST and
-///   SUHALLA_DESERT_2_TO_SUHALLA_DESERT_3_WEST into scene 166. Flash, a Mars
-///   Djinni, waits here and fights when spoken to (Event_FightDjinni). Near
-///   the way out, once Iodem has questioned the soldiers
-///   (FLAG_IODEM_MET_WOUNDED_SOLDIERS), he steps out of the party: `Sheba is
-///   nowhere to be found.` He asks whether to search on or press on to
-///   Lalivero, and either way decides to head first for the guard gate ahead
+/// - Suhalla Desert (SuhallaDesertNorth, scene 164), entered from the world map
+/// near Suhalla,
+///   where SUHALLA_DESERT_NORTH_TO_WORLD_MAP leads back out;
+///   SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH leads on into
+///   SuhallaDesertSouth. Five storms stand here.
+/// - Suhalla Desert (SuhallaDesertSouth, scene 165), with four storms and a
+/// fifth that gives
+///   chase. SUHALLA_DESERT_SOUTH_TO_WORLD_MAP leads out onto the world map, and
+///   SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST and
+///   SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST into SuhallaDesertCaves.
+///   Flash, a Mars Djinni, waits here and fights when spoken to
+///   (Event_FightDjinni). Near the way out, once Iodem has questioned the
+///   soldiers (FLAG_IODEM_MET_WOUNDED_SOLDIERS), he steps out of the party:
+///   `Sheba is nowhere to be found.` He asks whether to search on or press on
+///   to Lalivero, and either way decides to head first for the guard gate ahead
 ///   and leave Sheba to its soldiers (Event_IodemAsksWhetherToPressOn, once,
 ///   FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
-/// - Suhalla Desert (scene 166), whose exits lead only back into scene 165
-///   and between its own two parts; it places nothing and plays a sound on
+/// - Suhalla Desert (SuhallaDesertCaves, scene 166), two caves under the
+/// desert, whose exits lead only back into SuhallaDesertSouth
+///   and between its two caves; it places nothing and plays a sound on
 ///   entry.
 ///
 /// The storms are ACTOR_FIRST_STORM to ACTOR_LAST_STORM of the first two
@@ -183,13 +186,13 @@ SuhallaDesert_ToggleActorActive(struct ScriptInterpreter *interpreter) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
-  if (selector == (s32)&SceneId_SuhallaDesert1) {
+  if (selector == (s32)&SceneId_SuhallaDesertNorth) {
     return gSuhallaDesertEntrances1;
   }
-  if (selector == (s32)&SceneId_SuhallaDesert2) {
+  if (selector == (s32)&SceneId_SuhallaDesertSouth) {
     return gSuhallaDesertEntrances2;
   }
-  if (selector == (s32)&SceneId_SuhallaDesert3) {
+  if (selector == (s32)&SceneId_SuhallaDesertCaves) {
     return gSuhallaDesertEntrances3;
   }
   return gSuhallaDesertEntrancesOther;
@@ -204,13 +207,13 @@ const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
-  if (selector == (s32)&SceneId_SuhallaDesert1) {
+  if (selector == (s32)&SceneId_SuhallaDesertNorth) {
     return gSuhallaDesertPlacements1;
   }
-  if (selector == (s32)&SceneId_SuhallaDesert2) {
+  if (selector == (s32)&SceneId_SuhallaDesertSouth) {
     return gSuhallaDesertPlacements2;
   }
-  if (selector == (s32)&SceneId_SuhallaDesert3) {
+  if (selector == (s32)&SceneId_SuhallaDesertCaves) {
     return gSuhallaDesertPlacements3;
   }
   return gSuhallaDesertPlacementsOther;
@@ -307,8 +310,9 @@ static void Event_CaughtByFourthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_STORM + 3);
 }
 
-/// In Suhalla Desert, the leader walks into scene 164's fifth storm (cell code
-/// 45), or scene 165's chasing storm reaches the moving leader (event 55).
+/// In Suhalla Desert, the leader walks into SuhallaDesertNorth's fifth storm
+/// (cell code 45), or SuhallaDesertSouth's chasing storm reaches the moving
+/// leader (event 55).
 static void Event_CaughtByFifthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_STORM + 4);
 }
@@ -417,19 +421,19 @@ static void Event_ThirdStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_STORM + 2);
 }
 
-/// In Suhalla Desert (scene 164), the party nears the fourth storm (cell code
+/// In SuhallaDesertNorth, the party nears the fourth storm (cell code
 /// 64).
 static void Event_FourthStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_STORM + 3);
 }
 
-/// In Suhalla Desert (scene 164), the party nears the fifth storm (cell code
+/// In SuhallaDesertNorth, the party nears the fifth storm (cell code
 /// 65).
 static void Event_FifthStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_STORM + 4);
 }
 
-/// In Suhalla Desert (scene 165), near its way out to the world map
+/// In SuhallaDesertSouth, near its way out to the world map
 /// (cell code 9), once Iodem has heard the wounded soldiers in Suhalla: he
 /// steps out of the party. "Sheba is nowhere to be found. Should we search
 /// the desert once more or press on to Lalivero?" Whatever the answer, Iodem
@@ -543,7 +547,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// In Suhalla Desert (scene 165), until the chasing storm has been doused: it
+/// In SuhallaDesertSouth, until the chasing storm has been doused: it
 /// appears behind the party and gives chase.
 static void Event_StormGivesChase(void) {
   if (GameFlag_IsSet(FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED) == 0) {
@@ -573,11 +577,11 @@ static void Event_DouseStorm(s32 unused, s32 stormId) {
     gEventWork->raisedTrigger = 0;
   }
   Engine_GameFlagClear(FLAG_SCENE_TEMP_0F);
-  if (gGameState.scene == (s32)&SceneId_SuhallaDesert1) {
+  if (gGameState.scene == (s32)&SceneId_SuhallaDesertNorth) {
     Engine_GameFlagSet(
         (stormId + FLAG_FIRST_SCENE_STORM_DOUSED - ACTOR_FIRST_STORM));
   } else {
-    if (gGameState.scene == (s32)&SceneId_SuhallaDesert2) {
+    if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
       Engine_GameFlagSet(
           (stormId + FLAG_SECOND_SCENE_STORM_DOUSED - ACTOR_FIRST_STORM));
     }
@@ -586,7 +590,7 @@ static void Event_DouseStorm(s32 unused, s32 stormId) {
   Field_RequestBattleFromEncounterTable(98, 5);
   Battle_SetStart(3);
   state = &gGameState;
-  if (state->scene == (s32)&SceneId_SuhallaDesert2) {
+  if (state->scene == (s32)&SceneId_SuhallaDesertSouth) {
     if (stormId == ACTOR_FOURTH_STORM) {
       Field_RequestBattleFromEncounterTable(98, 7);
     } else {
@@ -637,7 +641,7 @@ static void Event_StormCarriesPartyAway(void) {
   Engine_EventWaitForScreen();
   Engine_EventEnd();
   Engine_GameFlagSet(FLAG_ARRIVE_FALLING);
-  if (gGameState.scene == (s32)&SceneId_SuhallaDesert2 &&
+  if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth &&
       FieldGameFlag_GetByte(FLAG_SCENE_TEMP_18) == ACTOR_FOURTH_STORM) {
     Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_STORM_DROP_FOURTH);
   } else {
@@ -658,7 +662,7 @@ static void SuhallaDesert_PulseRevealPalette(void) {
   SUHALLA_REVEAL_PALETTE_COLOR = ((u32)color << 16) >> 16;
 }
 
-/// Reveal ends, or a scene is entered: in Suhalla Desert's scene 165, what
+/// Reveal ends, or a scene is entered: in SuhallaDesertSouth, what
 /// Reveal showed is hidden again and the pulsing color is put back.
 // Native event return forms: see MATCHING.md.
 #ifdef UBFIX
@@ -667,7 +671,7 @@ static void Event_RevealEnds(void) {
 static s32 Event_RevealEnds(void) {
   s32 removalResult;
 #endif
-  if (gGameState.scene == (s32)&SceneId_SuhallaDesert2) {
+  if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
     Object_GetById(ACTOR_REVEALED_OBJECT)->priorityFlags = 2;
     Object_GetById(ACTOR_REVEALED_OBJECT)->motionFlags = 3;
     Actor_SetPosition(ACTOR_REVEALED_OBJECT, 0, 0);
@@ -687,14 +691,14 @@ static s32 Event_RevealEnds(void) {
   }
 }
 
-/// Reveal in Suhalla Desert (scene 165): the hidden object appears at 248, 712,
+/// Reveal in SuhallaDesertSouth: the hidden object appears at 248, 712,
 /// map cells and the map object at 100 change, and a palette color pulses.
 #ifdef UBFIX
 static void Event_RevealStarts(void) {
 #else
 static s32 Event_RevealStarts(void) {
 #endif
-  if (gGameState.scene == (s32)&SceneId_SuhallaDesert2) {
+  if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
     Object_GetById(ACTOR_REVEALED_OBJECT)->priorityFlags = 2;
     Object_GetById(ACTOR_REVEALED_OBJECT)->motionFlags = 0;
     Actor_SetPosition(ACTOR_REVEALED_OBJECT, PIXELS(248), PIXELS(712));
@@ -715,7 +719,7 @@ static s32 Event_RevealStarts(void) {
 /// The third scene's exits, or the storms, Iodem, treasure and Reveal of the
 /// first two.
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (gGameState.scene == (s32)&SceneId_SuhallaDesert3) {
+  if (gGameState.scene == (s32)&SceneId_SuhallaDesertCaves) {
     return gSuhallaDesertEvents3;
   }
   return gSuhallaDesertEventsOther;
@@ -734,14 +738,14 @@ s32 Scene_Initialize(void) {
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_SCENE);
   }
-  if (gGameState.scene == (s32)&SceneId_SuhallaDesert1 ||
-      gGameState.scene == (s32)&SceneId_SuhallaDesert2) {
+  if (gGameState.scene == (s32)&SceneId_SuhallaDesertNorth ||
+      gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
     sSuhallaDesertSavedColor = SUHALLA_REVEAL_PALETTE_COLOR;
     Event_RevealEnds();
   }
-  if (gGameState.scene == (s32)&SceneId_SuhallaDesert1) {
+  if (gGameState.scene == (s32)&SceneId_SuhallaDesertNorth) {
     SuhallaDesert_SetUpFirstSceneStorms();
-  } else if (gGameState.scene == (s32)&SceneId_SuhallaDesert2) {
+  } else if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
     SuhallaDesert_SetUpSecondSceneStorms();
   } else {
     Engine_AudioPlayCue(SE_288);
@@ -890,57 +894,63 @@ struct SceneEntrance gSuhallaDesertEntrancesOther[] = {
 };
 
 struct SceneEntrance gSuhallaDesertEntrances1[] = {
-    {SUHALLA_DESERT_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 264, 0, 56,
+    {SUHALLA_DESERT_NORTH_FROM_WORLD_MAP, CONDITION_ALWAYS, 264, 0, 56,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SUHALLA_DESERT_1_FROM_SUHALLA_DESERT_2, CONDITION_ALWAYS, 24, 0, 936,
-     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH, CONDITION_ALWAYS, 24, 0,
+     936, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaDesertEntrances2[] = {
-    {SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_1, CONDITION_ALWAYS, 488, 0, 456,
+    {SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH, CONDITION_ALWAYS, 488, 0,
+     456, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP, CONDITION_ALWAYS, 488, 0, 1208,
      FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {SUHALLA_DESERT_2_FROM_WORLD_MAP, CONDITION_ALWAYS, 488, 0, 1208,
-     FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_3_EAST, CONDITION_ALWAYS, 440, 0, 624,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_3_WEST, CONDITION_ALWAYS, 56, 0, 624,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_EAST, CONDITION_ALWAYS, 440,
+     0, 624, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_WEST, CONDITION_ALWAYS, 56,
+     0, 624, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaDesertEntrances3[] = {
-    {SUHALLA_DESERT_3_FROM_SUHALLA_DESERT_2_WEST, CONDITION_ALWAYS, 72, 0, 248,
-     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST, CONDITION_ALWAYS, 72,
+     0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 440, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {3, CONDITION_ALWAYS, 632, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SUHALLA_DESERT_3_FROM_SUHALLA_DESERT_2_EAST, CONDITION_ALWAYS, 648, 0, 280,
-     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST, CONDITION_ALWAYS, 648,
+     0, 280, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gSuhallaDesertExits[] = {
-    SCENE_EXITS(SuhallaDesert1),
-    SCENE_EXIT(SUHALLA_DESERT_1_TO_WORLD_MAP, WorldMap,
-               WORLD_MAP_FROM_SUHALLA_DESERT_1),
-    SCENE_EXIT(SUHALLA_DESERT_1_TO_SUHALLA_DESERT_2, SuhallaDesert2,
-               SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_1),
-    SCENE_EXITS(SuhallaDesert2),
-    SCENE_EXIT(SUHALLA_DESERT_2_TO_SUHALLA_DESERT_1, SuhallaDesert1,
-               SUHALLA_DESERT_1_FROM_SUHALLA_DESERT_2),
-    SCENE_EXIT(SUHALLA_DESERT_2_TO_WORLD_MAP, WorldMap,
-               WORLD_MAP_FROM_SUHALLA_DESERT_2),
-    SCENE_EXIT(SUHALLA_DESERT_2_TO_SUHALLA_DESERT_3_EAST, SuhallaDesert3,
-               SUHALLA_DESERT_3_FROM_SUHALLA_DESERT_2_EAST),
-    SCENE_EXIT(SUHALLA_DESERT_2_TO_SUHALLA_DESERT_3_WEST, SuhallaDesert3,
-               SUHALLA_DESERT_3_FROM_SUHALLA_DESERT_2_WEST),
-    SCENE_EXITS(SuhallaDesert3),
-    SCENE_EXIT(SUHALLA_DESERT_3_TO_SUHALLA_DESERT_2_WEST, SuhallaDesert2,
-               SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_3_WEST),
-    SCENE_EXIT(2, SuhallaDesert3, 3),
-    SCENE_EXIT(3, SuhallaDesert3, 2),
-    SCENE_EXIT(SUHALLA_DESERT_3_TO_SUHALLA_DESERT_2_EAST, SuhallaDesert2,
-               SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_3_EAST),
+    SCENE_EXITS(SuhallaDesertNorth),
+    SCENE_EXIT(SUHALLA_DESERT_NORTH_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_DESERT_NORTH),
+    SCENE_EXIT(SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH, SuhallaDesertSouth,
+               SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH),
+    SCENE_EXITS(SuhallaDesertSouth),
+    SCENE_EXIT(SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH, SuhallaDesertNorth,
+               SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH),
+    SCENE_EXIT(SUHALLA_DESERT_SOUTH_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_DESERT_SOUTH),
+    SCENE_EXIT(SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST,
+               SuhallaDesertCaves,
+               SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST),
+    SCENE_EXIT(SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST,
+               SuhallaDesertCaves,
+               SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST),
+    SCENE_EXITS(SuhallaDesertCaves),
+    SCENE_EXIT(SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST,
+               SuhallaDesertSouth,
+               SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_WEST),
+    SCENE_EXIT(SUHALLA_DESERT_CAVES_WEST_TO_EAST, SuhallaDesertCaves,
+               SUHALLA_DESERT_CAVES_EAST_FROM_WEST),
+    SCENE_EXIT(SUHALLA_DESERT_CAVES_EAST_TO_WEST, SuhallaDesertCaves,
+               SUHALLA_DESERT_CAVES_WEST_FROM_EAST),
+    SCENE_EXIT(SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST,
+               SuhallaDesertSouth,
+               SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_EAST),
     SCENE_EXITS_END,
 };
 
@@ -996,8 +1006,8 @@ s32 gSuhallaDesertChaseScript[] = {
 
 /// The first two scenes' events, in one table. Its exits keep their numbers,
 /// since each scene's exit table gives them its own ways out: exit 1 is
-/// SUHALLA_DESERT_1_TO_WORLD_MAP in the first and
-/// SUHALLA_DESERT_2_TO_SUHALLA_DESERT_1 in the second.
+/// SUHALLA_DESERT_NORTH_TO_WORLD_MAP in the first and
+/// SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH in the second.
 struct SceneEvent gSuhallaDesertEventsOther[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
@@ -1052,10 +1062,10 @@ struct SceneEvent gSuhallaDesertEventsOther[] = {
 
 struct SceneEvent gSuhallaDesertEvents3[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
-     SUHALLA_DESERT_3_TO_SUHALLA_DESERT_2_WEST},
+     SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS,
-     SUHALLA_DESERT_3_TO_SUHALLA_DESERT_2_EAST},
+     SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST},
     {SCENE_EVENTS_END},
 };

@@ -11,49 +11,54 @@
 /// leader. In both, the retreat point is set and a fade overlay follows the
 /// leader in the rooms that need it (TunnelRuins_UpdateTrackedActor).
 ///
-/// - Tunnel Ruins (TunnelRuins1, scene 172), entered from Babi Lighthouse
-///   (BabiLighthouse1, scene 174) at TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1,
-///   where TUNNEL_RUINS_1_TO_BABI_LIGHTHOUSE_1 leads back; Retreat returns to
-///   TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1. In the first room a statue (search
-///   code 40) speaks to the leader's soul: those who would climb Venus
-///   Lighthouse must seek the lady's leave. Once the statue in Venus Lighthouse
-///   has opened one of its two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
-///   _SECOND_PATH) it says instead that the path will not open here, and the
-///   setup redraws this room and the room of entrances 5 to 7 to match the
-///   path. The rooms that follow hold two pairs of pillars to push or Move,
-///   three blocks with three bushes for Whirlwind (bushes A and B,
-///   FLAG_SCENE_TEMP_00 and _01, change what block C can do; bush C stays gone,
-///   FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY), and two pillars that sink into the
-///   floor once moved onto their columns (FLAG_TUNNEL_RUINS_PILLAR_A_SUNK and
-///   _B_SUNK, B only after Douse has soaked it, FLAG_SCENE_TEMP_02); each sunk
-///   pillar carries a puddle that Frost freezes into a pillar of ice
-///   (FLAG_SCENE_TEMP_00 and _01 in that room), after which some of the hops
-///   beside it no longer run. TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_WEST, _SOUTHWEST
-///   and _SOUTHEAST lead on into TunnelRuins2.
-/// - Tunnel Ruins (TunnelRuins2, scene 173), whose entrances 1 to 3
-///   (TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST, _NORTH and _SOUTH) the
-///   area names call Babi Lighthouse: they are where the three drops in Babi
-///   Lighthouse Entry (BabiLighthouseEntry, scene 176) land, and from those
-///   rooms Retreat leads back up there, the place name not shown; regions for
-///   TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST, _SOUTH and _NORTH lead back
-///   up to it. There two pillars to push or Move keep their places between
-///   visits (FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and _B_PUSHED_WEST).
+/// - Tunnel Ruins (TunnelRuinsGreatStatue, scene 172), entered from Babi
+/// Lighthouse
+///   (BabiLighthouse1, scene 174) at
+///   TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_1, where
+///   TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_1 leads back; Retreat returns
+///   to TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_1. In the first room a
+///   statue (search code 40) speaks to the leader's soul: those who would climb
+///   Venus Lighthouse must seek the lady's leave. Once the statue in Venus
+///   Lighthouse has opened one of its two paths
+///   (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH) it says instead that
+///   the path will not open here, and the setup redraws this room and the north
+///   room of columns to match the path. The rooms that follow hold two pairs of
+///   pillars to push or Move, three carved stones with three bushes for
+///   Whirlwind (bushes A and B, FLAG_SCENE_TEMP_00 and _01, change what carved
+///   stone C can do; bush C stays gone, FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY), and
+///   two pillars that sink into the floor once moved onto their columns
+///   (FLAG_TUNNEL_RUINS_PILLAR_A_SUNK and _B_SUNK, B only after Douse has
+///   soaked it, FLAG_SCENE_TEMP_02); each sunk pillar carries a puddle that
+///   Frost freezes into a pillar of ice (FLAG_SCENE_TEMP_00 and _01 in that
+///   room), after which some of the hops beside it no longer run.
+///   TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH, _SOUTHWEST
+///   and _SOUTHEAST lead on into TunnelRuinsLadyStatues.
+/// - Tunnel Ruins (TunnelRuinsLadyStatues, scene 173), whose entrances 1 to 3
+///   (TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST, _NORTH and
+///   _SOUTH) the area names call Babi Lighthouse: they are where the three
+///   drops in Babi Lighthouse Entry (BabiLighthouseEntry, scene 176) land, and
+///   from those rooms Retreat leads back up there, the place name not shown;
+///   regions for TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST,
+///   _SOUTH and _NORTH lead back up to it. There two pillars to push or Move
+///   keep their places between visits
+///   (FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and _B_PUSHED_WEST).
 ///   Elsewhere: a pillar that Douse soaks (FLAG_SCENE_TEMP_03), after which its
 ///   puddle follows it and Frost freezes the puddle into a pillar of ice
-///   (FLAG_SCENE_TEMP_04); two balance platforms, each block set on one with
-///   Carry (FLAG_SCENE_TEMP_00 to _02) sinking it a step and raising the other,
-///   set out with all three blocks on them when the party comes in at entrance
-///   5; two false statues that block their cells until Reveal's phase 5 makes
-///   them vanish; the rooms of entrances 8 to 11, redrawn for the path the
-///   statue in Venus Lighthouse opened; and five coloured statues of a woman
-///   before a door. Searching a statue there (search code 42) speaks to the
-///   soul, Mind Read on the five tells which colour shines in which direction,
-///   and with all five moved onto their marks the door opens
+///   (FLAG_SCENE_TEMP_04); two balance platforms, each carved stone set on one
+///   with Carry (FLAG_SCENE_TEMP_00 to _02) sinking it a step and raising the
+///   other, set out with all three carved stones on them when the party comes
+///   in at entrance 5; two false statues that block their cells until Reveal's
+///   phase 5 makes them vanish; the room of four walkways over a pit, redrawn
+///   for the path the statue in Venus Lighthouse opened; and five coloured
+///   statues of a woman before a door. Searching a statue there (search code
+///   42) speaks to the soul, Mind Read on the five tells which colour shines in
+///   which direction, and with all five moved onto their marks the door opens
 ///   (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN), closing again if one is moved off.
 ///   Two chests hold an Oracle's Robe and Asura's Armor.
-///   TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_NORTH, _SOUTHWEST and _SOUTHEAST lead
-///   back into TunnelRuins1, and TUNNEL_RUINS_2_TO_VENUS_LIGHTHOUSE_2 into
-///   Venus Lighthouse (VenusLighthouse2, scene 183).
+///   TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH, _SOUTHWEST
+///   and _SOUTHEAST lead back into TunnelRuinsGreatStatue, and
+///   TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_2 into Venus Lighthouse
+///   (VenusLighthouse2, scene 183).
 
 #include "script.h"
 #include "version.h"
@@ -96,18 +101,18 @@
 #include "event.h"
 #include "item_ids.h"
 
-/// The actors of TunnelRuins1, in the order of its placements: two pairs of
-/// pillars to push or Move, three blocks, three bushes
-/// for Whirlwind, two pillars that sink into the floor, and two puddles for
-/// Frost, both placed with the first sinking pillar.
+/// The actors of TunnelRuinsGreatStatue, in the order of its placements: two
+/// pairs of pillars to push or Move, three carved stones, three bushes for
+/// Whirlwind, two pillars that sink into the floor, and two puddles for Frost,
+/// both placed with the first sinking pillar.
 enum {
   ACTOR_FIRST_PILLAR_A = ACTOR_FIRST_PLACED,
   ACTOR_FIRST_PILLAR_B,
   ACTOR_SECOND_PILLAR_A,
   ACTOR_SECOND_PILLAR_B,
-  ACTOR_BLOCK_A,
-  ACTOR_BLOCK_B,
-  ACTOR_BLOCK_C,
+  ACTOR_CARVED_STONE_A,
+  ACTOR_CARVED_STONE_B,
+  ACTOR_CARVED_STONE_C,
   ACTOR_BUSH_A,
   ACTOR_BUSH_B,
   ACTOR_BUSH_C,
@@ -117,18 +122,18 @@ enum {
   ACTOR_PUDDLE_B
 };
 
-/// The actors of TunnelRuins2 and any other scene: a pillar for Douse with a
-/// puddle for Frost, two balance platforms with three blocks to Carry onto
-/// them, two statues that vanish under Reveal, two pillars to push in the
-/// east, and five coloured statues of a woman to Move before the door.
+/// The actors of TunnelRuinsLadyStatues and any other scene: a pillar for Douse
+/// with a puddle for Frost, two balance platforms with three carved stones to
+/// Carry onto them, two statues that vanish under Reveal, two pillars to push
+/// in the east, and five coloured statues of a woman to Move before the door.
 enum {
   ACTOR_DOUSE_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_DOUSE_PUDDLE,
   ACTOR_BALANCE_WEST,
   ACTOR_BALANCE_EAST,
-  ACTOR_CARRY_BLOCK_A,
-  ACTOR_CARRY_BLOCK_B,
-  ACTOR_CARRY_BLOCK_C,
+  ACTOR_CARRY_STONE_A,
+  ACTOR_CARRY_STONE_B,
+  ACTOR_CARRY_STONE_C,
   ACTOR_FALSE_STATUE_A,
   ACTOR_FALSE_STATUE_B,
   ACTOR_EAST_PILLAR_A,
@@ -145,29 +150,30 @@ enum {
   SPRITE_PUDDLE = 227,
   SPRITE_BUSH = 248,
   SPRITE_PILLAR = 253,
-  SPRITE_BLOCK = 254,
+  SPRITE_CARVED_STONE = 254,
   SPRITE_SINKING_PILLAR = 255,
-  SPRITE_CARRY_BLOCK = 256,
+  SPRITE_CARRY_STONE = 256,
   SPRITE_BALANCE = 257,
   SPRITE_STATUE = 258,
   SPRITE_LADY_STATUE = 500
 };
 
-// The scene's temporary flags, by room. TunnelRuins1: FLAG_SCENE_TEMP_00 and
-// _01 are bushes A and B blown away beside the blocks, and in the sinking
-// pillars' room puddles A and B frozen; FLAG_SCENE_TEMP_02 is pillar B
-// soaked by Douse. TunnelRuins2: FLAG_SCENE_TEMP_00 to _02 are the blocks set
-// on the balance, FLAG_SCENE_TEMP_03 the pillar soaked by Douse and
-// FLAG_SCENE_TEMP_04 its puddle frozen.
+// The scene's temporary flags, by room. TunnelRuinsGreatStatue:
+// FLAG_SCENE_TEMP_00 and _01 are bushes A and B blown away beside the carved
+// stones, and in the sinking pillars' room puddles A and B frozen;
+// FLAG_SCENE_TEMP_02 is pillar B soaked by Douse. TunnelRuinsLadyStatues:
+// FLAG_SCENE_TEMP_00 to _02 are the carved stones set on the balance,
+// FLAG_SCENE_TEMP_03 the pillar soaked by Douse and FLAG_SCENE_TEMP_04 its
+// puddle frozen.
 
 #ifdef UBFIX
-static void TunnelRuins_RideBlockBelow(union FieldObject *fieldObject);
+static void TunnelRuins_RideStoneBelow(union FieldObject *fieldObject);
 #else
-static s32 TunnelRuins_RideBlockBelow(union FieldObject *fieldObject);
+static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject);
 #endif
 static void TunnelRuins_UpdateFirstPillarCells(void);
 static void TunnelRuins_UpdateSecondPillarCells(void);
-static void TunnelRuins_UpdateBlockCells(void);
+static void TunnelRuins_UpdateStoneCells(void);
 static void TunnelRuins_MarkPushPillarCells(void);
 
 #include "common/object_staged_actor.h"
@@ -236,8 +242,8 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 }
 
 /// Walking south into a gap: the leader hops 32 pixels across it.
-/// Reached by walking south into cell codes 29, 30 and 50 in TunnelRuins1
-/// and 29 in TunnelRuins2.
+/// Reached by walking south into cell codes 29, 30 and 50 in
+/// TunnelRuinsGreatStatue and 29 in TunnelRuinsLadyStatues.
 static void Event_HopSouth(void) {
   struct FieldPosition target;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -249,8 +255,8 @@ static void Event_HopSouth(void) {
 }
 
 /// Walking north into a gap: the leader hops 32 pixels across it.
-/// Reached by walking north into cell codes 29 and 30 in TunnelRuins1 and
-/// 29 in TunnelRuins2.
+/// Reached by walking north into cell codes 29 and 30 in TunnelRuinsGreatStatue
+/// and 29 in TunnelRuinsLadyStatues.
 static void Event_HopNorth(void) {
   struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -271,7 +277,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   effectWork = gActorEffectWork;
   depthLimit = 0;
   // Each tracked entrance measures depth in eight-pixel steps.
-  if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
+  if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue) {
     switch (gGameState.entrance) {
     case 3:
     case 4:
@@ -396,8 +402,8 @@ static void TunnelRuins_WaitForActorToLand(struct FieldActor *actor) {
 
 /// Walking south off a step: the leader hops 12 pixels forward and slides 16
 /// pixels down, kicking up dust behind.
-/// Reached by walking south into cell code 25 in TunnelRuins1 and 27 in
-/// TunnelRuins2.
+/// Reached by walking south into cell code 25 in TunnelRuinsGreatStatue and 27
+/// in TunnelRuinsLadyStatues.
 static void Event_HopDownStep(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct EffectOptions options;
@@ -444,30 +450,30 @@ static void Event_HopDownStep(void) {
   ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #endif
 #ifdef UBFIX
-#define ACTOR_UPDATE_RIDE_BLOCK TunnelRuins_RideBlockBelow
+#define ACTOR_UPDATE_RIDE_STONE TunnelRuins_RideStoneBelow
 #else
-#define ACTOR_UPDATE_RIDE_BLOCK                                                \
-  ((void (*)(union FieldObject *))TunnelRuins_RideBlockBelow)
+#define ACTOR_UPDATE_RIDE_STONE                                                \
+  ((void (*)(union FieldObject *))TunnelRuins_RideStoneBelow)
 #endif
 
 #include "common/effect_radial.h"
 
-/// The entrances of TunnelRuins1, TunnelRuins2, or a table for any other scene
-/// number.
+/// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or a table
+/// for any other scene number.
 const struct SceneEntrance *TunnelRuins_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
-  if (sceneId == (s32)&SceneId_TunnelRuins1) {
+  if (sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
     return gTunnelRuinsEntrances1;
   }
-  if (sceneId == (s32)&SceneId_TunnelRuins2) {
+  if (sceneId == (s32)&SceneId_TunnelRuinsLadyStatues) {
     return gTunnelRuinsEntrances2;
   }
   return gTunnelRuinsEntrancesOther;
 }
 
 const struct SceneRegion *TunnelRuins_GetRegions(void) {
-  if (gGameState.scene == (s32)&SceneId_TunnelRuins2) {
+  if (gGameState.scene == (s32)&SceneId_TunnelRuinsLadyStatues) {
     return gTunnelRuinsRegions2;
   }
   return 0;
@@ -475,12 +481,12 @@ const struct SceneRegion *TunnelRuins_GetRegions(void) {
 
 const u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 
-/// The actors of TunnelRuins1 or of TunnelRuins2 (the enums above), each
-/// prepared to appear only when it lies in the view.
+/// The actors of TunnelRuinsGreatStatue or of TunnelRuinsLadyStatues (the enums
+/// above), each prepared to appear only when it lies in the view.
 const struct ScenePlacement *TunnelRuins_GetPlacements(void) {
   struct ScenePlacement *table;
 
-  if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
+  if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue) {
     table = gTunnelRuinsPlacements1;
   } else {
     table = gTunnelRuinsPlacementsOther;
@@ -490,7 +496,7 @@ const struct ScenePlacement *TunnelRuins_GetPlacements(void) {
 }
 
 /// Walking into the first pair of pillars pushes them along.
-/// Reached by walking into cell code 24 in TunnelRuins1.
+/// Reached by walking into cell code 24 in TunnelRuinsGreatStatue.
 static void Event_PushFirstPillars(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
@@ -501,7 +507,8 @@ static void Event_PushFirstPillars(void) {
 
 /// Walking west into a gap: the leader hops 32 pixels across it.
 /// Reached by walking west into the gaps' cells: codes 23, 31 and 32 in
-/// TunnelRuins1 (31 until puddle A is frozen), 26 and 30 in TunnelRuins2.
+/// TunnelRuinsGreatStatue (31 until puddle A is frozen), 26 and 30 in
+/// TunnelRuinsLadyStatues.
 static void Event_HopWest(void) {
   struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -513,7 +520,7 @@ static void Event_HopWest(void) {
 }
 
 /// Walking into the second pair of pillars pushes them along.
-/// Reached by walking into cell code 26 in TunnelRuins1.
+/// Reached by walking into cell code 26 in TunnelRuinsGreatStatue.
 static void Event_PushSecondPillars(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
@@ -523,16 +530,16 @@ static void Event_PushSecondPillars(void) {
 }
 
 /// Walking south off a ledge: the leader jumps down.
-/// Reached by walking south into cell codes 23 and 27 (TunnelRuins1) and 26
-/// (TunnelRuins2).
+/// Reached by walking south into cell codes 23 and 27 (TunnelRuinsGreatStatue)
+/// and 26 (TunnelRuinsLadyStatues).
 static void Event_JumpDownLedge(void) {
   FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
 }
 
 /// Walking east into a gap: the leader hops 32 pixels across it.
 /// Reached by walking east into the gaps' cells: codes 27, 29, 31, 32 and 50
-/// in TunnelRuins1, some only until the puddle beside them is frozen, and 30
-/// in TunnelRuins2.
+/// in TunnelRuinsGreatStatue, some only until the puddle beside them is frozen,
+/// and 30 in TunnelRuinsLadyStatues.
 static void Event_HopEast(void) {
   struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -543,21 +550,21 @@ static void Event_HopEast(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-/// Walking into the blocks pushes the one in front along.
-/// Reached by walking into cell code 28 in TunnelRuins1.
-static void Event_PushBlocks(void) {
+/// Walking into the carved stones pushes the one in front along.
+/// Reached by walking into cell code 28 in TunnelRuinsGreatStatue.
+static void Event_PushStones(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
   StagedActor_AdvancePair();
-  TunnelRuins_UpdateBlockCells();
+  TunnelRuins_UpdateStoneCells();
   EV_END();
 }
 
-/// Walking south at the blocks: the leader hops a gap if there is one, and
-/// pushes the block in front otherwise.
-/// Reached by walking south into cell code 28 in TunnelRuins1.
-static void Event_HopSouthOrPushBlocks(void) {
+/// Walking south at the carved stones: the leader hops a gap if there is one,
+/// and pushes the carved stone in front otherwise. Reached by walking south
+/// into cell code 28 in TunnelRuinsGreatStatue.
+static void Event_HopSouthOrPushStones(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition target;
 
@@ -565,25 +572,25 @@ static void Event_HopSouthOrPushBlocks(void) {
   target.y = actor->y.fixed;
   target.z = actor->z.fixed + PIXELS(32);
   if (TunnelRuins_HopLeaderTo(&target) != 0) {
-    Event_PushBlocks();
+    Event_PushStones();
   }
 }
 
-/// Whirlwind on bush A blows it away. Block C changes state with the bushes:
-/// with one of bushes A and B gone its rise counter is 1 and its collision
-/// bit 3 is set; with both gone, 0 and clear.
-/// Reached by Whirlwind on bush A until FLAG_SCENE_TEMP_00 is set; sets it.
+/// Whirlwind on bush A blows it away. Carved stone C changes state with the
+/// bushes: with one of bushes A and B gone its rise counter is 1 and its
+/// collision bit 3 is set; with both gone, 0 and clear. Reached by Whirlwind on
+/// bush A until FLAG_SCENE_TEMP_00 is set; sets it.
 static void Event_BlowAwayBushA(void) {
   u8 *flags;
   u8 value;
 
   FLAG_SET(FLAG_SCENE_TEMP_00);
   if (FLAG_CHECK(FLAG_SCENE_TEMP_01) != 0) {
-    Object_GetById(ACTOR_BLOCK_C)->riseCounter = 0;
-    Object_GetById(ACTOR_BLOCK_C)->collisionFlags &= 0xf7;
+    Object_GetById(ACTOR_CARVED_STONE_C)->riseCounter = 0;
+    Object_GetById(ACTOR_CARVED_STONE_C)->collisionFlags &= 0xf7;
   } else {
-    Object_GetById(ACTOR_BLOCK_C)->riseCounter = 1;
-    flags = &Object_GetById(ACTOR_BLOCK_C)->collisionFlags;
+    Object_GetById(ACTOR_CARVED_STONE_C)->riseCounter = 1;
+    flags = &Object_GetById(ACTOR_CARVED_STONE_C)->collisionFlags;
     value = 8;
     value |= *flags;
     *flags = value;
@@ -598,11 +605,11 @@ static void Event_BlowAwayBushB(void) {
 
   FLAG_SET(FLAG_SCENE_TEMP_01);
   if (FLAG_CHECK(FLAG_SCENE_TEMP_00) != 0) {
-    Object_GetById(ACTOR_BLOCK_C)->riseCounter = 0;
-    Object_GetById(ACTOR_BLOCK_C)->collisionFlags &= 0xf7;
+    Object_GetById(ACTOR_CARVED_STONE_C)->riseCounter = 0;
+    Object_GetById(ACTOR_CARVED_STONE_C)->collisionFlags &= 0xf7;
   } else {
-    Object_GetById(ACTOR_BLOCK_C)->riseCounter = 1;
-    flags = &Object_GetById(ACTOR_BLOCK_C)->collisionFlags;
+    Object_GetById(ACTOR_CARVED_STONE_C)->riseCounter = 1;
+    flags = &Object_GetById(ACTOR_CARVED_STONE_C)->collisionFlags;
     value = 8;
     value |= *flags;
     *flags = value;
@@ -617,7 +624,7 @@ static void Event_BlowAwayBushC(void) {
 }
 
 /// Hops west as Event_HopWest, except from cell (32, 50).
-/// Reached by walking west into cell code 50 in TunnelRuins1.
+/// Reached by walking west into cell code 50 in TunnelRuinsGreatStatue.
 static void Event_HopWestUnlessAtCell32x50(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -627,7 +634,7 @@ static void Event_HopWestUnlessAtCell32x50(void) {
 }
 
 /// Hops north as Event_HopNorth, except from cell (30, 52).
-/// Reached by walking north into cell code 50 in TunnelRuins1.
+/// Reached by walking north into cell code 50 in TunnelRuinsGreatStatue.
 static void Event_HopNorthUnlessAtCell30x52(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -704,7 +711,7 @@ static void Event_SinkPillarA(void) {
 
 /// Walking into sinking pillar A pushes it, and it sinks if it reaches column
 /// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_SUNK).
-/// Reached by walking into cell code 29 in TunnelRuins1.
+/// Reached by walking into cell code 29 in TunnelRuinsGreatStatue.
 static void Event_PushSinkingPillarA(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -785,7 +792,7 @@ static void Event_SinkPillarB(void) {
 /// Walking into sinking pillar B pushes it, and it sinks if it is soaked and
 /// reaches column 48.
 /// Reached by walking into cell code 30, or east into 32 before Douse has
-/// soaked it, in TunnelRuins1.
+/// soaked it, in TunnelRuinsGreatStatue.
 static void Event_PushSinkingPillarB(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -820,12 +827,12 @@ static void Event_FreezePuddleB(void) {
   FLAG_SET(FLAG_SCENE_TEMP_01);
 }
 
-/// Searching the statue in TunnelRuins1's first room: it speaks to the
-/// leader's soul of the lady whose leave opens the way up Venus Lighthouse,
+/// Searching the statue in TunnelRuinsGreatStatue's first room: it speaks to
+/// the leader's soul of the lady whose leave opens the way up Venus Lighthouse,
 /// or, once the statue in Venus Lighthouse has opened a path
 /// (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH), that the path will not
 /// open here.
-/// Reached by searching cell code 40 in TunnelRuins1.
+/// Reached by searching cell code 40 in TunnelRuinsGreatStatue.
 static void Event_ReadFirstStatue(void) {
   EV_BEGIN();
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -847,7 +854,7 @@ static void Event_MoveDousePillar(void) {
 }
 
 /// Walking into the Douse pillar pushes it along.
-/// Reached by walking into cell code 25 in TunnelRuins2.
+/// Reached by walking into cell code 25 in TunnelRuinsLadyStatues.
 static void Event_PushDousePillar(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -910,12 +917,12 @@ static void Event_FreezeDousePuddle(void) {
 
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 34 to 32 bytes in tbs-en.
-// A block set on the balance rides 16 pixels above what it rests on, whose
-// actor its timer holds.
+// A carved stone set on the balance rides 16 pixels above what it rests on,
+// whose actor its timer holds.
 #ifdef UBFIX
-static void TunnelRuins_RideBlockBelow(union FieldObject *fieldObject) {
+static void TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
 #else
-static s32 TunnelRuins_RideBlockBelow(union FieldObject *fieldObject) {
+static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *supportedActor = (struct FieldActor *)fieldObject;
   s16 *supportingActorId = &supportedActor->timer;
@@ -970,9 +977,9 @@ static void TunnelRuins_SettleBalance(s32 wait) {
   WAIT(wait);
 }
 
-/// A carried block drops onto the highest platform or block in its cell and
-/// lands with a thud and a ring of dust.
-static void TunnelRuins_DropBlockOnStack(s32 actorId) {
+/// A carried stone drops onto the highest platform or carved stone in its cell
+/// and lands with a thud and a ring of dust.
+static void TunnelRuins_DropStoneOnStack(s32 actorId) {
   s32 highestHeight = -PIXELS(80);
   u32 i;
 
@@ -1012,12 +1019,12 @@ static void TunnelRuins_DropBlockOnStack(s32 actorId) {
   WAIT(30);
 }
 
-/// Setting down a block with Carry: one dropped into a pit is gone; one set in
-/// row 9 drops onto the balance platform below it, which sinks a step while
-/// the other rises.
-/// Reached by Carry on any of the three blocks; sets FLAG_SCENE_TEMP_00 to _02,
-/// one for each block that rests on the balance.
-static void Event_SetBlockOnBalance(void) {
+/// Setting down a carved stone with Carry: one dropped into a pit is gone; one
+/// set in row 9 drops onto the balance platform below it, which sinks a step
+/// while the other rises. Reached by Carry on any of the three carved stones;
+/// sets FLAG_SCENE_TEMP_00 to _02, one for each carved stone that rests on the
+/// balance.
+static void Event_SetStoneOnBalance(void) {
   struct FieldActor savedPosition;
   s32 i;
   s32 j;
@@ -1025,57 +1032,58 @@ static void Event_SetBlockOnBalance(void) {
 
   EV_BEGIN();
   for (i = 0; i <= 2; i++) {
-    if (Object_GetById(i + ACTOR_CARRY_BLOCK_A)->sprite->image.priority == 3 &&
+    if (Object_GetById(i + ACTOR_CARRY_STONE_A)->sprite->image.priority == 3 &&
         FLAG_CHECK(i + FLAG_SCENE_TEMP_00) == 0) {
-      TunnelRuins_WaitForActorToLand(Actor_Get(i + ACTOR_CARRY_BLOCK_A));
-      Actor_SetPosition(i + ACTOR_CARRY_BLOCK_A, 0, 0);
+      TunnelRuins_WaitForActorToLand(Actor_Get(i + ACTOR_CARRY_STONE_A));
+      Actor_SetPosition(i + ACTOR_CARRY_STONE_A, 0, 0);
       FLAG_SET(i + FLAG_SCENE_TEMP_00);
       break;
     }
-    if ((Object_GetById(i + ACTOR_CARRY_BLOCK_A)->z.fixed >> 20) == 9 &&
+    if ((Object_GetById(i + ACTOR_CARRY_STONE_A)->z.fixed >> 20) == 9 &&
         FLAG_CHECK(i + FLAG_SCENE_TEMP_00) == 0) {
-      Object_GetById(i + ACTOR_CARRY_BLOCK_A)->terrainHeight = 0;
-      Object_GetById(i + ACTOR_CARRY_BLOCK_A)->velocityY = 0;
-      Object_GetById(i + ACTOR_CARRY_BLOCK_A)->targetY = ACTOR_NO_TARGET;
-      Actor_Get(i + ACTOR_CARRY_BLOCK_A)->motionFlags = 0;
-      Object_GetById(i + ACTOR_CARRY_BLOCK_A)->timer = 0;
-      // The block set down takes the place of the first block not yet set.
+      Object_GetById(i + ACTOR_CARRY_STONE_A)->terrainHeight = 0;
+      Object_GetById(i + ACTOR_CARRY_STONE_A)->velocityY = 0;
+      Object_GetById(i + ACTOR_CARRY_STONE_A)->targetY = ACTOR_NO_TARGET;
+      Actor_Get(i + ACTOR_CARRY_STONE_A)->motionFlags = 0;
+      Object_GetById(i + ACTOR_CARRY_STONE_A)->timer = 0;
+      // The carved stone set down takes the place of the first carved stone not
+      // yet set.
       settledIndex = i;
       for (j = 0; j < i; j++) {
         if (FLAG_CHECK(FLAG_SCENE_TEMP_00 + j) == 0) {
           savedPosition.x.fixed =
-              Object_GetById(i + ACTOR_CARRY_BLOCK_A)->x.fixed;
+              Object_GetById(i + ACTOR_CARRY_STONE_A)->x.fixed;
           savedPosition.y.fixed =
-              Object_GetById(i + ACTOR_CARRY_BLOCK_A)->y.fixed;
+              Object_GetById(i + ACTOR_CARRY_STONE_A)->y.fixed;
           savedPosition.z.fixed =
-              Object_GetById(i + ACTOR_CARRY_BLOCK_A)->z.fixed;
-          Actor_Get(i + ACTOR_CARRY_BLOCK_A)->x.fixed =
-              Object_GetById(j + ACTOR_CARRY_BLOCK_A)->x.fixed;
-          Object_GetById(i + ACTOR_CARRY_BLOCK_A)->y.fixed =
-              Object_GetById(j + ACTOR_CARRY_BLOCK_A)->y.fixed;
-          Object_GetById(i + ACTOR_CARRY_BLOCK_A)->z.fixed =
-              Object_GetById(j + ACTOR_CARRY_BLOCK_A)->z.fixed;
-          Actor_Get(j + ACTOR_CARRY_BLOCK_A)->x.fixed = savedPosition.x.fixed;
-          Actor_Get(j + ACTOR_CARRY_BLOCK_A)->y.fixed = savedPosition.y.fixed;
-          Actor_Get(j + ACTOR_CARRY_BLOCK_A)->z.fixed = savedPosition.z.fixed;
+              Object_GetById(i + ACTOR_CARRY_STONE_A)->z.fixed;
+          Actor_Get(i + ACTOR_CARRY_STONE_A)->x.fixed =
+              Object_GetById(j + ACTOR_CARRY_STONE_A)->x.fixed;
+          Object_GetById(i + ACTOR_CARRY_STONE_A)->y.fixed =
+              Object_GetById(j + ACTOR_CARRY_STONE_A)->y.fixed;
+          Object_GetById(i + ACTOR_CARRY_STONE_A)->z.fixed =
+              Object_GetById(j + ACTOR_CARRY_STONE_A)->z.fixed;
+          Actor_Get(j + ACTOR_CARRY_STONE_A)->x.fixed = savedPosition.x.fixed;
+          Actor_Get(j + ACTOR_CARRY_STONE_A)->y.fixed = savedPosition.y.fixed;
+          Actor_Get(j + ACTOR_CARRY_STONE_A)->z.fixed = savedPosition.z.fixed;
           settledIndex = j;
           break;
         }
       }
-      Object_GetById(settledIndex + ACTOR_CARRY_BLOCK_A)->terrainHeight = 0;
-      Actor_Get(settledIndex + ACTOR_CARRY_BLOCK_A)->velocityY = 0;
-      Object_GetById(settledIndex + ACTOR_CARRY_BLOCK_A)->targetY =
+      Object_GetById(settledIndex + ACTOR_CARRY_STONE_A)->terrainHeight = 0;
+      Actor_Get(settledIndex + ACTOR_CARRY_STONE_A)->velocityY = 0;
+      Object_GetById(settledIndex + ACTOR_CARRY_STONE_A)->targetY =
           ACTOR_NO_TARGET;
-      Actor_Get(settledIndex + ACTOR_CARRY_BLOCK_A)->motionFlags = 0;
-      Object_GetById(settledIndex + ACTOR_CARRY_BLOCK_A)->timer = 0;
-      // The camera turns to the balance as the block drops and the
+      Actor_Get(settledIndex + ACTOR_CARRY_STONE_A)->motionFlags = 0;
+      Object_GetById(settledIndex + ACTOR_CARRY_STONE_A)->timer = 0;
+      // The camera turns to the balance as the carved stone drops and the
       // platforms move.
       Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
       Camera_GetEventObject()->motionFlags = 0;
       Camera_MoveTo(PIXELS(168), PIXELS(8), PIXELS(184), 1);
       Engine_CameraWaitForMove();
-      TunnelRuins_DropBlockOnStack(settledIndex + ACTOR_CARRY_BLOCK_A);
-      if ((Object_GetById(settledIndex + ACTOR_CARRY_BLOCK_A)->x.fixed >> 20) ==
+      TunnelRuins_DropStoneOnStack(settledIndex + ACTOR_CARRY_STONE_A);
+      if ((Object_GetById(settledIndex + ACTOR_CARRY_STONE_A)->x.fixed >> 20) ==
           8) {
         Object_GetById(ACTOR_BALANCE_WEST)->timer++;
         (Object_GetById(ACTOR_BALANCE_EAST)->timer)--;
@@ -1084,14 +1092,14 @@ static void Event_SetBlockOnBalance(void) {
         Object_GetById(ACTOR_BALANCE_EAST)->timer++;
       }
 #ifdef UBFIX
-      Actor_Get(settledIndex + ACTOR_CARRY_BLOCK_A)->update =
-          TunnelRuins_RideBlockBelow;
+      Actor_Get(settledIndex + ACTOR_CARRY_STONE_A)->update =
+          TunnelRuins_RideStoneBelow;
 #else
-      Actor_Get(settledIndex + ACTOR_CARRY_BLOCK_A)->update =
-          (void (*)(union FieldObject *))TunnelRuins_RideBlockBelow;
+      Actor_Get(settledIndex + ACTOR_CARRY_STONE_A)->update =
+          (void (*)(union FieldObject *))TunnelRuins_RideStoneBelow;
 #endif
       TunnelRuins_SettleBalance(40);
-      Actor_Get(settledIndex + ACTOR_CARRY_BLOCK_A)->priorityFlags |=
+      Actor_Get(settledIndex + ACTOR_CARRY_STONE_A)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
       FLAG_SET(FLAG_SCENE_TEMP_00 + settledIndex);
       break;
@@ -1101,7 +1109,7 @@ static void Event_SetBlockOnBalance(void) {
 }
 
 /// Walking into a pushable object pushes it along.
-/// Reached by walking into cell codes 28 and 30 in TunnelRuins2.
+/// Reached by walking into cell codes 28 and 30 in TunnelRuinsLadyStatues.
 static void Event_PushObject(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -1132,7 +1140,7 @@ static void Event_MoveEastPillar(void) {
 }
 
 /// Walking into an east pillar pushes it along, and its place is kept.
-/// Reached by walking east into cell code 29 in TunnelRuins2.
+/// Reached by walking east into cell code 29 in TunnelRuinsLadyStatues.
 static void Event_PushEastPillar(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -1143,7 +1151,7 @@ static void Event_PushEastPillar(void) {
 /// The two false statues stand, blocking their cells: on entering their rooms
 /// and at Reveal's phase 4.
 /// Reached by Reveal's phase 4, and called by TunnelRuins_Initialize in
-/// room 12.
+/// either false statue's room.
 static void Event_ShowFalseStatues(void) {
   Map_CopyCellAttributes(72, 49, 1, 1, 8, 49);
   Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
@@ -1155,7 +1163,7 @@ static void Event_ShowFalseStatues(void) {
 
 /// At Reveal's phase 5 the two false statues vanish and their cells can be
 /// walked through.
-/// Reached by Reveal's phase 5 anywhere in TunnelRuins2.
+/// Reached by Reveal's phase 5 anywhere in TunnelRuinsLadyStatues.
 static void Event_HideFalseStatues(void) {
   Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);
@@ -1165,10 +1173,10 @@ static void Event_HideFalseStatues(void) {
   Actor_SetPosition(ACTOR_FALSE_STATUE_B, 0, 0);
 }
 
-/// Moving one of the five coloured statues in TunnelRuins2: with all five on
-/// their marks (cells (25, 49), (23, 49), (25, 47), (23, 47) and (24, 48)) the
-/// camera turns to the door as it opens; moving one off again closes it.
-/// Reached by Move on any of the five statues, and called by
+/// Moving one of the five coloured statues in TunnelRuinsLadyStatues: with all
+/// five on their marks (cells (25, 49), (23, 49), (25, 47), (23, 47) and (24,
+/// 48)) the camera turns to the door as it opens; moving one off again closes
+/// it. Reached by Move on any of the five statues, and called by
 /// Event_PushLadyStatue; sets FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN as the door
 /// opens and clears it as it closes.
 static void Event_MoveLadyStatue(void) {
@@ -1281,7 +1289,7 @@ static void Event_MoveLadyStatue(void) {
 
 /// Walking into one of the five coloured statues pushes it along, then checks
 /// the door.
-/// Reached by walking into cell code 41 in TunnelRuins2.
+/// Reached by walking into cell code 41 in TunnelRuinsLadyStatues.
 static void Event_PushLadyStatue(void) {
   EV_BEGIN();
   {
@@ -1292,9 +1300,9 @@ static void Event_PushLadyStatue(void) {
   EV_END();
 }
 
-/// Searching the statue in TunnelRuins2's room of the five coloured statues.
-/// "The statue seems to speak to your soul..."
-/// Reached by searching cell code 42 in TunnelRuins2.
+/// Searching the statue in TunnelRuinsLadyStatues's room of the five coloured
+/// statues. "The statue seems to speak to your soul..." Reached by searching
+/// cell code 42 in TunnelRuinsLadyStatues.
 static void Event_ReadSecondStatue(void) {
   EV_BEGIN();
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1302,17 +1310,18 @@ static void Event_ReadSecondStatue(void) {
   EV_END();
 }
 
-/// Searching the door in TunnelRuins2: it is tightly locked.
-/// Reached by searching cell code 20 in TunnelRuins2.
+/// Searching the door in TunnelRuinsLadyStatues: it is tightly locked.
+/// Reached by searching cell code 20 in TunnelRuinsLadyStatues.
 static void Event_SearchLockedDoor(void) {
   EV_BEGIN();
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   EV_END();
 }
 
-/// The events of TunnelRuins1, or of TunnelRuins2 and any other scene.
+/// The events of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and any
+/// other scene.
 const struct SceneEvent *TunnelRuins_GetEvents(void) {
-  if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
+  if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue) {
     return gTunnelRuinsEvents1;
   }
   return gTunnelRuinsEventsOther;
@@ -1367,29 +1376,29 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
   }
 }
 
-/// After the blocks move: redraw their room's cells and mark the cells the
-/// blocks stand on.
-/// Reached by Move on any of the three blocks, and called by Event_PushBlocks.
-static void TunnelRuins_UpdateBlockCells(void) {
+/// After the carved stones move: redraw their room's cells and mark the cells
+/// the carved stones stand on. Reached by Move on any of the three carved
+/// stones, and called by Event_PushStones.
+static void TunnelRuins_UpdateStoneCells(void) {
   struct FieldActor *actor;
   s32 column;
 
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-  Object_GetById(ACTOR_BLOCK_C)->terrainId = 1;
-  actor = Object_GetById(ACTOR_BLOCK_A);
+  Object_GetById(ACTOR_CARVED_STONE_C)->terrainId = 1;
+  actor = Object_GetById(ACTOR_CARVED_STONE_A);
   column = actor->x.fixed;
-  actor = Object_GetById(ACTOR_BLOCK_A);
+  actor = Object_GetById(ACTOR_CARVED_STONE_A);
   column >>= 20;
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
-  actor = Object_GetById(ACTOR_BLOCK_B);
+  actor = Object_GetById(ACTOR_CARVED_STONE_B);
   column = actor->x.fixed;
-  actor = Object_GetById(ACTOR_BLOCK_B);
+  actor = Object_GetById(ACTOR_CARVED_STONE_B);
   column >>= 20;
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
-  actor = Object_GetById(ACTOR_BLOCK_C);
+  actor = Object_GetById(ACTOR_CARVED_STONE_C);
   column = actor->x.fixed;
-  actor = Object_GetById(ACTOR_BLOCK_C);
+  actor = Object_GetById(ACTOR_CARVED_STONE_C);
   column >>= 20;
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
 }
@@ -1407,23 +1416,24 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 
 /// On entering a room: the puzzle as it was left, and the path the statue in
 /// Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH).
-/// Retreat leads back to TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1, or, from
-/// TunnelRuins2's three entrances from Babi Lighthouse Entry, up there to
-/// BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE.
-/// The scene's initialization. Entering at entrances 8 to 11 sets flag 0x973.
+/// Retreat leads back to TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_1, or,
+/// from TunnelRuinsLadyStatues's three entrances from Babi Lighthouse Entry, up
+/// there to BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE. The scene's
+/// initialization. Entering at entrances 8 to 11 sets flag 0x973.
 /// XXX: no other code of the game reads flag 0x973; a reader elsewhere would
 /// say what it records.
 s32 TunnelRuins_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gGameState.scene == (s32)&SceneId_TunnelRuins1 ||
-      gGameState.scene == (s32)&SceneId_TunnelRuins2) {
+  if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue ||
+      gGameState.scene == (s32)&SceneId_TunnelRuinsLadyStatues) {
     BattleFx_StartFadeOverlay(0);
-    gGameState.retreatEntrance = TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1;
-    gGameState.retreatScene = (s32)&SceneId_TunnelRuins1;
+    gGameState.retreatEntrance =
+        TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_1;
+    gGameState.retreatScene = (s32)&SceneId_TunnelRuinsGreatStatue;
   }
-  if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
+  if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue) {
     switch (gGameState.entrance) {
-    case TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1:
+    case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_1:
     case 2:
       if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
         Map_CopyCellsTo(121, 4, 74, 9, 5, 8);
@@ -1521,18 +1531,18 @@ s32 TunnelRuins_Initialize(void) {
       break;
     case 12:
     case 13:
-      TunnelRuins_UpdateBlockCells();
-      Object_GetById(ACTOR_BLOCK_A)->motionFlags = 0;
-      Object_GetById(ACTOR_BLOCK_B)->motionFlags = 0;
+      TunnelRuins_UpdateStoneCells();
+      Object_GetById(ACTOR_CARVED_STONE_A)->motionFlags = 0;
+      Object_GetById(ACTOR_CARVED_STONE_B)->motionFlags = 0;
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BUSH_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BUSH_B), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BUSH_C), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BLOCK_A), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BLOCK_B), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BLOCK_C), 0);
-      Object_GetById(ACTOR_BLOCK_A)->update = ACTOR_UPDATE_IDLE;
-      Object_GetById(ACTOR_BLOCK_B)->update = ACTOR_UPDATE_IDLE;
-      Object_GetById(ACTOR_BLOCK_C)->update = ACTOR_UPDATE_IDLE;
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARVED_STONE_A), 0);
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARVED_STONE_B), 0);
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARVED_STONE_C), 0);
+      Object_GetById(ACTOR_CARVED_STONE_A)->update = ACTOR_UPDATE_IDLE;
+      Object_GetById(ACTOR_CARVED_STONE_B)->update = ACTOR_UPDATE_IDLE;
+      Object_GetById(ACTOR_CARVED_STONE_C)->update = ACTOR_UPDATE_IDLE;
       FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
                                  TASK_PRIORITY_SCENE);
       break;
@@ -1541,9 +1551,9 @@ s32 TunnelRuins_Initialize(void) {
     switch (gGameState.entrance) {
     case 0:
       break;
-    case TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST:
-    case TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH:
-    case TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH:
+    case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST:
+    case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH:
+    case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH:
       gGameState.retreatEntrance =
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
       gGameState.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
@@ -1556,7 +1566,7 @@ s32 TunnelRuins_Initialize(void) {
         OBJ_POS_SET(ACTOR_EAST_PILLAR_B, 744, 312);
       TunnelRuins_MarkPushPillarCells();
       break;
-    case TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_NORTH:
+    case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST:
     case 7:
       Engine_ActorSetSpritePriority(ACTOR_DOUSE_PILLAR, 1);
       Object_GetById(ACTOR_DOUSE_PILLAR)->motionFlags = 0;
@@ -1575,7 +1585,7 @@ s32 TunnelRuins_Initialize(void) {
       Object_GetById(ACTOR_DOUSE_PUDDLE)->update = ACTOR_UPDATE_IDLE;
       Object_GetById(ACTOR_DOUSE_PILLAR)->update = ACTOR_UPDATE_IDLE;
       break;
-    case TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_WEST:
+    case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH:
     case 5:
       if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION)) {
         Object_GetById(ACTOR_BALANCE_WEST)->motionFlags = 0;
@@ -1592,35 +1602,35 @@ s32 TunnelRuins_Initialize(void) {
         Object_GetById(ACTOR_BALANCE_EAST)->timer = 3;
         Engine_ActorSetSpritePriority(ACTOR_BALANCE_WEST, 1);
         Engine_ActorSetSpritePriority(ACTOR_BALANCE_EAST, 1);
-        Object_GetById(ACTOR_CARRY_BLOCK_A)->motionFlags = 0;
-        Object_GetById(ACTOR_CARRY_BLOCK_B)->motionFlags = 0;
-        Object_GetById(ACTOR_CARRY_BLOCK_C)->motionFlags = 0;
-        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARRY_BLOCK_A), 0);
-        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARRY_BLOCK_B), 0);
-        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARRY_BLOCK_C), 0);
-        Object_GetById(ACTOR_CARRY_BLOCK_A)->timer = 0;
-        Object_GetById(ACTOR_CARRY_BLOCK_B)->timer = 0;
-        Object_GetById(ACTOR_CARRY_BLOCK_C)->timer = 0;
+        Object_GetById(ACTOR_CARRY_STONE_A)->motionFlags = 0;
+        Object_GetById(ACTOR_CARRY_STONE_B)->motionFlags = 0;
+        Object_GetById(ACTOR_CARRY_STONE_C)->motionFlags = 0;
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARRY_STONE_A), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARRY_STONE_B), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARRY_STONE_C), 0);
+        Object_GetById(ACTOR_CARRY_STONE_A)->timer = 0;
+        Object_GetById(ACTOR_CARRY_STONE_B)->timer = 0;
+        Object_GetById(ACTOR_CARRY_STONE_C)->timer = 0;
         if (gGameState.entrance != 5)
           break;
         Object_GetById(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(32);
         Object_GetById(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
         Object_GetById(ACTOR_BALANCE_WEST)->timer = 2;
         Object_GetById(ACTOR_BALANCE_EAST)->timer = 4;
-        OBJ_POS_SET(ACTOR_CARRY_BLOCK_A, 200, 152);
-        Object_GetById(ACTOR_CARRY_BLOCK_A)->timer = ACTOR_BALANCE_EAST;
-        Object_GetById(ACTOR_CARRY_BLOCK_A)->update = ACTOR_UPDATE_RIDE_BLOCK;
-        Object_GetById(ACTOR_CARRY_BLOCK_A)->priorityFlags |=
+        OBJ_POS_SET(ACTOR_CARRY_STONE_A, 200, 152);
+        Object_GetById(ACTOR_CARRY_STONE_A)->timer = ACTOR_BALANCE_EAST;
+        Object_GetById(ACTOR_CARRY_STONE_A)->update = ACTOR_UPDATE_RIDE_STONE;
+        Object_GetById(ACTOR_CARRY_STONE_A)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_POS_SET(ACTOR_CARRY_BLOCK_B, 200, 152);
-        Object_GetById(ACTOR_CARRY_BLOCK_B)->timer = ACTOR_CARRY_BLOCK_A;
-        Object_GetById(ACTOR_CARRY_BLOCK_B)->update = ACTOR_UPDATE_RIDE_BLOCK;
-        Object_GetById(ACTOR_CARRY_BLOCK_B)->priorityFlags |=
+        OBJ_POS_SET(ACTOR_CARRY_STONE_B, 200, 152);
+        Object_GetById(ACTOR_CARRY_STONE_B)->timer = ACTOR_CARRY_STONE_A;
+        Object_GetById(ACTOR_CARRY_STONE_B)->update = ACTOR_UPDATE_RIDE_STONE;
+        Object_GetById(ACTOR_CARRY_STONE_B)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Engine_ActorSetPosition(ACTOR_CARRY_BLOCK_C, PIXELS(136), PIXELS(152));
-        Object_GetById(ACTOR_CARRY_BLOCK_C)->timer = ACTOR_BALANCE_WEST;
-        Object_GetById(ACTOR_CARRY_BLOCK_C)->update = ACTOR_UPDATE_RIDE_BLOCK;
-        Object_GetById(ACTOR_CARRY_BLOCK_C)->priorityFlags |=
+        Engine_ActorSetPosition(ACTOR_CARRY_STONE_C, PIXELS(136), PIXELS(152));
+        Object_GetById(ACTOR_CARRY_STONE_C)->timer = ACTOR_BALANCE_WEST;
+        Object_GetById(ACTOR_CARRY_STONE_C)->update = ACTOR_UPDATE_RIDE_STONE;
+        Object_GetById(ACTOR_CARRY_STONE_C)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
         WAIT(2);
         FLAG_SET(FLAG_SCENE_TEMP_00);
@@ -1689,7 +1699,7 @@ s32 TunnelRuins_Initialize(void) {
           20, 56, 1, 1, Object_GetById(ACTOR_LADY_STATUE_E)->x.fixed >> 20,
           Object_GetById(ACTOR_LADY_STATUE_E)->z.fixed >> 20);
       break;
-    case TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_SOUTH:
+    case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST:
       Map_CopyCellAttributes(49, 43, 1, 1, 49, 107);
       Event_ShowFalseStatues();
       break;
@@ -1734,8 +1744,8 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-/// A balance platform's height by its weight (its timer): each block on it
-/// takes it 16 pixels further down, and the other platform up as far.
+/// A balance platform's height by its weight (its timer): each carved stone on
+/// it takes it 16 pixels further down, and the other platform up as far.
 u32 gTunnelRuins_BalanceHeights[] = {
     -PIXELS(16), -PIXELS(16), -PIXELS(32), -PIXELS(48),
     -PIXELS(64), -PIXELS(80), -PIXELS(80),
@@ -1790,8 +1800,8 @@ struct SceneEntrance gTunnelRuinsEntrancesOther[] = {
 
 struct SceneEntrance gTunnelRuinsEntrances1[] = {
     {0, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1, CONDITION_ALWAYS, 104, 0, 152,
-     FACING_SOUTH, 0, 48, 48, 288, 368, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_1, CONDITION_ALWAYS, 104, 0,
+     152, FACING_SOUTH, 0, 48, 48, 288, 368, 0},
     {2, CONDITION_ALWAYS, 200, 0, 328, FACING_NORTH, 0, 48, 48, 288, 368, 0},
     {3, CONDITION_ALWAYS, 184, 0, 552, FACING_SOUTH, 0, 64, 464, 304, 816, 0},
     {4, CONDITION_ALWAYS, 168, 0, 816, FACING_NORTH, 0, 64, 464, 304, 816, 0},
@@ -1805,29 +1815,29 @@ struct SceneEntrance gTunnelRuinsEntrances1[] = {
     {12, CONDITION_ALWAYS, 504, 0, 792, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
     {13, CONDITION_ALWAYS, 568, 0, 872, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
     {14, CONDITION_ALWAYS, 776, 0, 432, FACING_NORTH, 0, 688, 368, 928, 640, 0},
-    {TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_NORTH, CONDITION_ALWAYS, 840, 0, 608,
-     FACING_NORTH, 0, 688, 368, 928, 640, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH,
+     CONDITION_ALWAYS, 840, 0, 608, FACING_NORTH, 0, 688, 368, 928, 640, 0},
     {16, CONDITION_ALWAYS, 744, 0, 792, FACING_SOUTH, 0, 688, 736, 928, 976, 0},
-    {TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHWEST, CONDITION_ALWAYS, 744, 0,
-     944, FACING_NORTH, 0, 688, 736, 928, 976, 0},
-    {TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHEAST, CONDITION_ALWAYS, 872, 0,
-     880, FACING_NORTH, 0, 688, 736, 928, 976, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST,
+     CONDITION_ALWAYS, 744, 0, 944, FACING_NORTH, 0, 688, 736, 928, 976, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST,
+     CONDITION_ALWAYS, 872, 0, 880, FACING_NORTH, 0, 688, 736, 928, 976, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gTunnelRuinsEntrances2[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST, CONDITION_ALWAYS, 632, 0,
-     344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
-    {TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH, CONDITION_ALWAYS, 840, 0,
-     120, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
-    {TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH, CONDITION_ALWAYS, 824, 0,
-     344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
-    {TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_WEST, CONDITION_ALWAYS, 216, 0, 104,
-     FACING_SOUTH, 0, 32, 48, 272, 320, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST,
+     CONDITION_ALWAYS, 632, 0, 344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH,
+     CONDITION_ALWAYS, 840, 0, 120, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH,
+     CONDITION_ALWAYS, 824, 0, 344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH,
+     CONDITION_ALWAYS, 216, 0, 104, FACING_SOUTH, 0, 32, 48, 272, 320, 0},
     {5, CONDITION_ALWAYS, 216, 0, 296, FACING_NORTH, 0, 32, 48, 272, 320, 0},
-    {TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_NORTH, CONDITION_ALWAYS, 360, 0, 104,
-     FACING_SOUTH, 0, 304, 48, 544, 352, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST,
+     CONDITION_ALWAYS, 360, 0, 104, FACING_SOUTH, 0, 304, 48, 544, 352, 0},
     {7, CONDITION_ALWAYS, 488, 0, 328, FACING_NORTH, 0, 304, 48, 544, 352, 0},
     {8, CONDITION_ALWAYS, 120, 0, 568, FACING_NORTH, 0, 80, 400, 448, 592, 0},
     {9, CONDITION_ALWAYS, 216, 0, 456, FACING_SOUTH, 0, 80, 400, 448, 592, 0},
@@ -1837,75 +1847,133 @@ struct SceneEntrance gTunnelRuinsEntrances2[] = {
     {13, CONDITION_ALWAYS, 392, 0, 712, FACING_SOUTH, 0, 288, 656, 560, 864, 0},
     {14, CONDITION_ALWAYS, 520, 0, 776, FACING_SOUTH, 0, 288, 656, 560, 864, 0},
     {15, CONDITION_ALWAYS, 648, 0, 952, FACING_NORTH, 0, 608, 816, 848, 976, 0},
-    {TUNNEL_RUINS_2_FROM_VENUS_LIGHTHOUSE_2, CONDITION_ALWAYS, 776, 0, 904,
-     FACING_SOUTH, 0, 608, 816, 848, 976, 0},
-    {TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_SOUTH, CONDITION_ALWAYS, 696, 0, 680,
-     FACING_SOUTH, 0, 624, 592, 864, 768, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FROM_VENUS_LIGHTHOUSE_2, CONDITION_ALWAYS, 776,
+     0, 904, FACING_SOUTH, 0, 608, 816, 848, 976, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST,
+     CONDITION_ALWAYS, 696, 0, 680, FACING_SOUTH, 0, 624, 592, 864, 768, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneRegion gTunnelRuinsRegions2[] = {
     {624, 16, 336, 640, 32, 352, -1,
-     TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST},
+     TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST},
     {816, 16, 336, 832, 32, 352, -1,
-     TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH},
+     TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH},
     {832, 16, 112, 848, 32, 128, -1,
-     TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_NORTH},
+     TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_NORTH},
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
 u32 gTunnelRuinsExits[] = {
-    SCENE_EXITS(TunnelRuins1),
-    SCENE_EXIT(TUNNEL_RUINS_1_TO_BABI_LIGHTHOUSE_1, BabiLighthouse1,
-               BABI_LIGHTHOUSE_1_FROM_TUNNEL_RUINS_1),
-    SCENE_EXIT(2, TunnelRuins1, 3),
-    SCENE_EXIT(3, TunnelRuins1, 2),
-    SCENE_EXIT(4, TunnelRuins1, 5),
-    SCENE_EXIT(5, TunnelRuins1, 4),
-    SCENE_EXIT(6, TunnelRuins1, 8),
-    SCENE_EXIT(7, TunnelRuins1, 10),
-    SCENE_EXIT(8, TunnelRuins1, 6),
-    SCENE_EXIT(9, TunnelRuins1, 12),
-    SCENE_EXIT(10, TunnelRuins1, 7),
-    SCENE_EXIT(11, TunnelRuins1, 16),
-    SCENE_EXIT(12, TunnelRuins1, 9),
-    SCENE_EXIT(13, TunnelRuins1, 14),
-    SCENE_EXIT(14, TunnelRuins1, 13),
-    SCENE_EXIT(TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_WEST, TunnelRuins2,
-               TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_WEST),
-    SCENE_EXIT(16, TunnelRuins1, 11),
-    SCENE_EXIT(TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHWEST, TunnelRuins2,
-               TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_NORTH),
-    SCENE_EXIT(TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHEAST, TunnelRuins2,
-               TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_SOUTH),
-    SCENE_EXITS(TunnelRuins2),
-    SCENE_EXIT(TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_NORTH, TunnelRuins1,
-               TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_NORTH),
-    SCENE_EXIT(2, TunnelRuins2, 9),
-    SCENE_EXIT(TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_SOUTHWEST, TunnelRuins1,
-               TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHWEST),
-    SCENE_EXIT(4, TunnelRuins2, 11),
-    SCENE_EXIT(5, TunnelRuins2, 5),
-    SCENE_EXIT(6, TunnelRuins2, 7),
-    SCENE_EXIT(7, TunnelRuins2, 12),
-    SCENE_EXIT(8, TunnelRuins2, 13),
-    SCENE_EXIT(9, TunnelRuins2, 8),
-    SCENE_EXIT(10, TunnelRuins2, 10),
-    SCENE_EXIT(11, TunnelRuins2, 15),
-    SCENE_EXIT(TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_SOUTHEAST, TunnelRuins1,
-               TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHEAST),
-    SCENE_EXIT(13, TunnelRuins2, 14),
-    SCENE_EXIT(TUNNEL_RUINS_2_TO_VENUS_LIGHTHOUSE_2, VenusLighthouse2,
-               VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_2),
-    SCENE_EXIT(TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST,
+    SCENE_EXITS(TunnelRuinsGreatStatue),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_1, BabiLighthouse1,
+               BABI_LIGHTHOUSE_1_FROM_TUNNEL_RUINS_GREAT_STATUE),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_STATUE_TO_FIRST_PILLARS,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_STATUE,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_COLUMNS_NORTH,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_FIRST_PILLARS,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_SECOND_PILLARS,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_SINKING_PILLARS,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_COLUMNS_NORTH,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_BUSHES,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_SECOND_PILLARS),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_NORTH,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SINKING_PILLARS),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_SOUTH,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_FROM_SINKING_PILLARS),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_BUSHES_TO_SECOND_PILLARS,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_BUSHES),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_BUSHES_TO_CORRIDOR,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_CORRIDOR_FROM_BUSHES),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_CORRIDOR_TO_BUSHES,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_CORRIDOR),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH),
+    SCENE_EXIT(TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_TO_SINKING_PILLARS,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH),
+    SCENE_EXIT(
+        TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST,
+        TunnelRuinsLadyStatues,
+        TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST),
+    SCENE_EXIT(
+        TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST,
+        TunnelRuinsLadyStatues,
+        TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST),
+    SCENE_EXITS(TunnelRuinsLadyStatues),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH,
+               TunnelRuinsGreatStatue,
+               TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_NORTHWEST,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHWEST),
+    SCENE_EXIT(
+        TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST,
+        TunnelRuinsGreatStatue,
+        TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_NORTHEAST,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHEAST),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_BALANCE_SOUTH,
+               TunnelRuinsLadyStatues, TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_DOUSE_PILLAR_SOUTH,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_DOUSE_PILLAR_SOUTH),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_FALSE_STATUE_WEST,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_FALSE_STATUE_WEST),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_NORTH,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_SOUTHWEST,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHWEST),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_SOUTHEAST,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHEAST),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_TREE_DOOR_SOUTH,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_TREE_DOOR_SOUTH),
+    SCENE_EXIT(
+        TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST,
+        TunnelRuinsGreatStatue,
+        TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_EAST,
+               TunnelRuinsLadyStatues,
+               TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_2,
+               VenusLighthouse2,
+               VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_LADY_STATUES),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST,
                BabiLighthouseEntry,
-               BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_WEST),
-    SCENE_EXIT(TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH,
+               BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_WEST),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH,
                BabiLighthouseEntry,
-               BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_SOUTH),
-    SCENE_EXIT(TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_NORTH,
+               BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH),
+    SCENE_EXIT(TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_NORTH,
                BabiLighthouseEntry,
-               BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_NORTH),
+               BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH),
     SCENE_EXITS_END,
 };
 
@@ -1918,12 +1986,12 @@ struct ScenePlacement gTunnelRuinsPlacements1[] = {
      TALK_KEEP_FACING, 0},
     {SPRITE_PILLAR, 0, ACTOR_STAND, PIXELS(536), 0, PIXELS(488), FACING_SOUTH,
      TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_BLOCK, 0, ACTOR_STAND, PIXELS(488), 0, PIXELS(840), FACING_SOUTH,
-     TALK_KEEP_FACING, 0},
-    {SPRITE_BLOCK, 0, ACTOR_STAND, PIXELS(520), 0, PIXELS(840), FACING_SOUTH,
-     TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_BLOCK, 0, ACTOR_STAND, PIXELS(424), 0, PIXELS(792), FACING_SOUTH,
-     TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_CARVED_STONE, 0, ACTOR_STAND, PIXELS(488), 0, PIXELS(840),
+     FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_CARVED_STONE, 0, ACTOR_STAND, PIXELS(520), 0, PIXELS(840),
+     FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_CARVED_STONE, 0, ACTOR_STAND, PIXELS(424), 0, PIXELS(792),
+     FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_BUSH, 0, (s32)gTunnelRuins_StretchScript, PIXELS(416), 0,
      PIXELS(794), FACING_NORTH, TALK_FACE_PARTY, 0},
     {SPRITE_BUSH, 0, (s32)gTunnelRuins_StretchScript, PIXELS(432), 0,
@@ -1953,11 +2021,11 @@ struct ScenePlacement gTunnelRuinsPlacementsOther[] = {
      TALK_KEEP_FACING, 0},
     {SPRITE_BALANCE, 0, 7, PIXELS(200), 0, PIXELS(152), FACING_NORTH,
      TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_CARRY_BLOCK, 0, ACTOR_STAND, PIXELS(152), 0, PIXELS(136),
+    {SPRITE_CARRY_STONE, 0, ACTOR_STAND, PIXELS(152), 0, PIXELS(136),
      FACING_NORTH, TALK_KEEP_FACING, 0},
-    {SPRITE_CARRY_BLOCK, 0, ACTOR_STAND, PIXELS(184), 0, PIXELS(136),
+    {SPRITE_CARRY_STONE, 0, ACTOR_STAND, PIXELS(184), 0, PIXELS(136),
      FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_CARRY_BLOCK, 0, ACTOR_STAND, PIXELS(216), 0, PIXELS(136),
+    {SPRITE_CARRY_STONE, 0, ACTOR_STAND, PIXELS(216), 0, PIXELS(136),
      FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_STATUE, 0, ACTOR_STAND, PIXELS(136), 0, PIXELS(792), FACING_SOUTH,
      TALK_KEEP_FACING, 0},
@@ -1982,7 +2050,7 @@ struct ScenePlacement gTunnelRuinsPlacementsOther[] = {
 
 // clang-format off
 struct SceneEvent gTunnelRuinsEvents1[] = {
-    {0x21, 1, CONDITION_ALWAYS, TUNNEL_RUINS_1_TO_BABI_LIGHTHOUSE_1},
+    {0x21, 1, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -1996,10 +2064,10 @@ struct SceneEvent gTunnelRuinsEvents1[] = {
     {EVENT_EXIT, 12, CONDITION_ALWAYS, 12},
     {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
     {EVENT_EXIT, 14, CONDITION_ALWAYS, 14},
-    {EVENT_EXIT, 15, CONDITION_ALWAYS, TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_WEST},
+    {EVENT_EXIT, 15, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH},
     {EVENT_EXIT, 16, CONDITION_ALWAYS, 16},
-    {EVENT_EXIT, 17, CONDITION_ALWAYS, TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHWEST},
-    {EVENT_EXIT, 18, CONDITION_ALWAYS, TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHEAST},
+    {EVENT_EXIT, 17, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST},
+    {EVENT_EXIT, 18, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpDownLedge)},
     {TOUCH_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS,
         EVENT_SCRIPT(Event_HopWest)},
@@ -2018,8 +2086,8 @@ struct SceneEvent gTunnelRuinsEvents1[] = {
         EVENT_SCRIPT(Event_HopNorthUnlessAtCell30x52)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
         EVENT_SCRIPT(Event_HopSouth)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouthOrPushBlocks)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlocks)},
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouthOrPushStones)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStones)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 29, FLAG_TUNNEL_RUINS_PILLAR_A_SUNK, EVENT_SCRIPT(Event_PushSinkingPillarA)},
     {TOUCH_WALKING_INTO(FACING_EAST), 29, FLAG_SCENE_TEMP_00,
         EVENT_SCRIPT(Event_HopEast)},
@@ -2050,9 +2118,9 @@ struct SceneEvent gTunnelRuinsEvents1[] = {
         EVENT_SCRIPT(TunnelRuins_UpdateSecondPillarCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR_B, CONDITION_ALWAYS,
         EVENT_SCRIPT(TunnelRuins_UpdateSecondPillarCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BLOCK_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateBlockCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BLOCK_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateBlockCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BLOCK_C, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateBlockCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARVED_STONE_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARVED_STONE_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARVED_STONE_C, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_BlowAwayBushA)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_BlowAwayBushB)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_C, FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayBushC)},
@@ -2066,9 +2134,9 @@ struct SceneEvent gTunnelRuinsEvents1[] = {
 };
 
 struct SceneEvent gTunnelRuinsEventsOther[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_NORTH},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_SOUTHWEST},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
     {EVENT_EXIT, 6, CONDITION_ALWAYS, 6},
@@ -2077,9 +2145,9 @@ struct SceneEvent gTunnelRuinsEventsOther[] = {
     {EVENT_EXIT, 9, CONDITION_ALWAYS, 9},
     {EVENT_EXIT, 10, CONDITION_ALWAYS, 10},
     {EVENT_EXIT, 11, CONDITION_ALWAYS, 11},
-    {EVENT_EXIT, 12, CONDITION_ALWAYS, TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_SOUTHEAST},
+    {EVENT_EXIT, 12, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST},
     {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
-    {0x21, 14, CONDITION_ALWAYS, TUNNEL_RUINS_2_TO_VENUS_LIGHTHOUSE_2},
+    {0x21, 14, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_2},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDousePillar)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpDownLedge)},
     {TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,
@@ -2105,12 +2173,12 @@ struct SceneEvent gTunnelRuinsEventsOther[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(Event_MoveDousePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_DouseBeginsOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DOUSE_PUDDLE, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(Event_FreezeDousePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_BLOCK_A, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_BLOCK_B, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_BLOCK_C, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_CARRY_BLOCK_A, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetBlockOnBalance)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_CARRY_BLOCK_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetBlockOnBalance)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_CARRY_BLOCK_C, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetBlockOnBalance)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_STONE_A, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_STONE_B, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARRY_STONE_C, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_CARRY_STONE_A, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetStoneOnBalance)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_CARRY_STONE_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetStoneOnBalance)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_CARRY_STONE_C, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetStoneOnBalance)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(Event_HideFalseStatues)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,

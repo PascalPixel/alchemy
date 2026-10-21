@@ -7,8 +7,8 @@
 /// - Suhalla, the houses, shop and inn behind the village's doors
 ///   (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST, SUHALLA_TO_HOUSE_NORTHEAST and
 ///   SUHALLA_TO_HOUSE_EAST lead to the entrances of the same numbers, and
-///   leaving by them goes back out). Exits 10 to 13 join the inn's rooms
-///   within the scene.
+///   leaving by them goes back out). Doors join the inn to its two guest
+///   rooms, and a ladder to its loft.
 /// - Suhalla Sanctum, behind the village's wide door (SUHALLA_TO_SANCTUM, to
 ///   SUHALLA_INTERIORS_SANCTUM), whose priest offers the sanctum's services.
 ///
@@ -202,8 +202,8 @@ static void Event_AskIfBlownHere(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// The doors of Suhalla and Suhalla Sanctum, and the inn's inner exits 10 to
-/// 13: the party leaves by the touched exit.
+/// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
+/// its guest rooms: the party leaves by the touched exit.
 static void Event_LeaveByExit(void) {
   struct EventWork *state = gEventWork;
   s16 *touchedTrigger = (s16 *)&state->touchedTrigger;
@@ -560,12 +560,12 @@ u32 gSuhallaInteriorsExits[] = {
     SCENE_EXIT(SUHALLA_INTERIORS_HOUSE_WEST_TO_SUHALLA, Suhalla, SUHALLA_FROM_HOUSE_WEST),
     SCENE_EXIT(SUHALLA_INTERIORS_HOUSE_NORTHEAST_TO_SUHALLA, Suhalla, SUHALLA_FROM_HOUSE_NORTHEAST),
     SCENE_EXIT(SUHALLA_INTERIORS_HOUSE_EAST_TO_SUHALLA, Suhalla, SUHALLA_FROM_HOUSE_EAST),
-    SCENE_EXIT(10, SuhallaInteriors, 12),
-    SCENE_EXIT(11, SuhallaInteriors, 13),
-    SCENE_EXIT(12, SuhallaInteriors, 10),
-    SCENE_EXIT(13, SuhallaInteriors, 11),
-    SCENE_EXIT(14, SuhallaInteriors, 15),
-    SCENE_EXIT(15, SuhallaInteriors, 14),
+    SCENE_EXIT(SUHALLA_INTERIORS_INN_TO_GUEST_ROOM_WEST, SuhallaInteriors, SUHALLA_INTERIORS_GUEST_ROOM_WEST_FROM_INN),
+    SCENE_EXIT(SUHALLA_INTERIORS_INN_TO_GUEST_ROOM_EAST, SuhallaInteriors, SUHALLA_INTERIORS_GUEST_ROOM_EAST_FROM_INN),
+    SCENE_EXIT(SUHALLA_INTERIORS_GUEST_ROOM_WEST_TO_INN, SuhallaInteriors, SUHALLA_INTERIORS_INN_FROM_GUEST_ROOM_WEST),
+    SCENE_EXIT(SUHALLA_INTERIORS_GUEST_ROOM_EAST_TO_INN, SuhallaInteriors, SUHALLA_INTERIORS_INN_FROM_GUEST_ROOM_EAST),
+    SCENE_EXIT(SUHALLA_INTERIORS_INN_TO_LOFT, SuhallaInteriors, SUHALLA_INTERIORS_LOFT_FROM_INN),
+    SCENE_EXIT(SUHALLA_INTERIORS_LOFT_TO_INN, SuhallaInteriors, SUHALLA_INTERIORS_INN_FROM_LOFT),
     SCENE_EXITS_END,
 };
 

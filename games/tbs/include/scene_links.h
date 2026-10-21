@@ -51,8 +51,8 @@ enum {
   WORLD_MAP_FROM_GONDOWAN_PASSAGE_EAST = 25,
   WORLD_MAP_FROM_GONDOWAN_CAVE_NORTH = 26,
   WORLD_MAP_FROM_SUHALLA = 27,
-  WORLD_MAP_FROM_SUHALLA_DESERT_1 = 28,
-  WORLD_MAP_FROM_SUHALLA_GATE_1_EAST = 29,
+  WORLD_MAP_FROM_SUHALLA_DESERT_NORTH = 28,
+  WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_SOUTH = 29,
   WORLD_MAP_FROM_LALIVERO_EAST = 30,
   WORLD_MAP_FROM_ROAD_TO_BABI_LIGHTHOUSE = 31,
   WORLD_MAP_FROM_VENUS_LIGHTHOUSE_ENTRY_EAST = 32,
@@ -63,7 +63,7 @@ enum {
   WORLD_MAP_FROM_IMIL_NORTH = 39,
   WORLD_MAP_FROM_GOMA_CAVE_BRIDGE = 40,
   WORLD_MAP_FROM_GONDOWAN_CAVE_SOUTH = 41,
-  WORLD_MAP_FROM_SUHALLA_GATE_1_WEST = 42,
+  WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_EAST = 42,
   WORLD_MAP_FROM_MOGALL_FOREST_KILLER_APE = 43,
   WORLD_MAP_FROM_VAULT_NORTH = 44,
   WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST = 46,
@@ -75,7 +75,9 @@ enum {
   WORLD_MAP_FROM_ALTIN_PEAK_WEST_EXIT = 52,
   WORLD_MAP_FROM_LAMAKAN_DESERT_CAVE = 53,
   WORLD_MAP_FROM_GONDOWAN_PASSAGE_WEST = 54,
-  WORLD_MAP_FROM_SUHALLA_DESERT_2 = 55,
+  WORLD_MAP_FROM_SUHALLA_DESERT_SOUTH = 55,
+  WORLD_MAP_FROM_SUHALLA_NORTH = 56,
+  WORLD_MAP_FROM_SUHALLA_EAST = 57,
   WORLD_MAP_FROM_KALAY_DOCKS_WEST = 58,
   WORLD_MAP_FROM_LALIVERO_WEST = 59,
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_NORTH = 60,
@@ -126,8 +128,8 @@ enum {
   WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST = 25,
   WORLD_MAP_TO_GONDOWAN_CAVE_NORTH = 26,
   WORLD_MAP_TO_SUHALLA = 27,
-  WORLD_MAP_TO_SUHALLA_DESERT_1 = 28,
-  WORLD_MAP_TO_SUHALLA_GATE_1_WEST = 29,
+  WORLD_MAP_TO_SUHALLA_DESERT_NORTH = 28,
+  WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_SOUTH = 29,
   WORLD_MAP_TO_LALIVERO_EAST = 30,
   WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE = 31,
   WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST = 32,
@@ -136,7 +138,7 @@ enum {
   WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE = 35,
   WORLD_MAP_TO_GOMA_CAVE_BRIDGE = 40,
   WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH = 41,
-  WORLD_MAP_TO_SUHALLA_GATE_1_EAST = 42,
+  WORLD_MAP_TO_SUHALLA_GATE_CHECKPOINT_EAST = 42,
   WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE = 43,
   WORLD_MAP_TO_VAULT_NORTH = 44,
   WORLD_MAP_TO_KOLIMA_BRIDGE_WEST = 46,
@@ -148,7 +150,7 @@ enum {
   WORLD_MAP_TO_ALTIN_PEAK_WEST_EXIT = 52,
   WORLD_MAP_TO_LAMAKAN_DESERT_CAVE = 53,
   WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST = 54,
-  WORLD_MAP_TO_SUHALLA_DESERT_2 = 55,
+  WORLD_MAP_TO_SUHALLA_DESERT_SOUTH = 55,
   WORLD_MAP_TO_KALAY_DOCKS_NORTH = 56,
   WORLD_MAP_TO_LALIVERO_WEST = 59,
   WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE = 60,
@@ -2984,7 +2986,7 @@ enum {
   LUNPA_FROM_ITEM_SHOP = 8,
   LUNPA_FROM_INN = 9,
   LUNPA_FROM_TEMPLE = 10,
-  LUNPA_FROM_EIGHTH_ROOM = 11,
+  LUNPA_FROM_STOREROOM = 11,
   LUNPA_FROM_VAULT_JAIL = 12,
 };
 enum {
@@ -2998,13 +3000,13 @@ enum {
   LUNPA_TO_ITEM_SHOP = 8,
   LUNPA_TO_INN = 9,
   LUNPA_TO_TEMPLE = 10,
-  LUNPA_TO_EIGHTH_ROOM = 11,
+  LUNPA_TO_STOREROOM = 11,
   LUNPA_TO_VAULT_JAIL = 12,
 };
 
 /// SceneId_LunpaSuhalla's entrances and exits.
 enum {
-  LUNPA_SUHALLA_FROM_SUHALLA_GATE_1 = 10,
+  LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT = 10,
 };
 
 /// SceneId_WestLunpaCave's entrances and exits.
@@ -4219,99 +4221,351 @@ enum {
 
 /// SceneId_LunpaFortressGates's entrances and exits.
 enum {
-  LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_1 = 1,
+  LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_GROUND_FLOOR = 1,
   LUNPA_FORTRESS_GATES_FROM_LUNPA = 2,
-  LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_4 = 3,
+  LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA = 3,
   LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT = 4,
 };
 enum {
-  LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_1 = 1,
+  LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR = 1,
   LUNPA_FORTRESS_GATES_TO_LUNPA = 2,
 };
 
-/// SceneId_LunpaFortress1's entrances and exits.
+/// SceneId_LunpaFortressGroundFloor's entrances and exits.
 enum {
-  LUNPA_FORTRESS_1_FROM_LUNPA_FORTRESS_GATES = 1,
-  LUNPA_FORTRESS_1_FROM_LUNPA_FORTRESS_2_SOUTH = 8,
-  LUNPA_FORTRESS_1_FROM_LUNPA_FORTRESS_2_NORTH = 10,
-  LUNPA_FORTRESS_1_FROM_LUNPA_FORTRESS_3 = 11,
+  LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_GATES = 1,
+  LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_FROM_MAIN_HALL =
+      2, ///< ★ Named from what the player sees: the small room just inside the
+         ///< fortress door (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_ENTRANCE =
+      3, ///< ★ Named from what the player sees: the long winding hall kept by
+         ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_NORTH_HALL =
+      4, ///< ★ Named from what the player sees: the long winding hall kept by
+         ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_DINING_ROOM =
+      5, ///< ★ Named from what the player sees: the long winding hall kept by
+         ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_NORTHEAST_HALL =
+      6, ///< ★ Named from what the player sees: the long winding hall kept by
+         ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_FROM_EAST_HALL =
+      7, ///< ★ Named from what the player sees: the long winding hall kept by
+         ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH = 8,
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTH_HALL_FROM_MAIN_HALL =
+      9, ///< ★ Named from what the player sees: the hall at the top of the map
+         ///< with a cell door, the stairs up and the way down to the cave (its
+         ///< render)
+  LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_UPPER_FLOOR_NORTH = 10,
+  LUNPA_FORTRESS_GROUND_FLOOR_FROM_LUNPA_FORTRESS_CAVE = 11,
+  LUNPA_FORTRESS_GROUND_FLOOR_DINING_ROOM_FROM_MAIN_HALL =
+      12, ///< ★ Named from the game: "Whee! Thanks to Hammet we can enjoy food
+          ///< and drink all day long!" (MsgLunpaHammetBuysDrink)
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_MAIN_HALL =
+      13, ///< ★ Named from what the player sees: the winding hall in the top
+          ///< right of the map, with one guard (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_EAST_HALL =
+      14, ///< ★ Named from what the player sees: the winding hall in the top
+          ///< right of the map, with one guard (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_FROM_STOREROOM =
+      15, ///< ★ Named from what the player sees: the winding hall in the top
+          ///< right of the map, with one guard (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_MAIN_HALL =
+      16, ///< ★ Named from what the player sees: the hall on the right of the
+          ///< map with a patrolling guard and a cell door (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_NORTHEAST_HALL =
+      17, ///< ★ Named from what the player sees: the hall on the right of the
+          ///< map with a patrolling guard and a cell door (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_FROM_TREASURE_ROOM =
+      18, ///< ★ Named from what the player sees: the hall on the right of the
+          ///< map with a patrolling guard and a cell door (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_STOREROOM_FROM_NORTHEAST_HALL =
+      19, ///< ★ Named from what the player sees: a small room of barrels where
+          ///< a startled resident hides (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_FROM_EAST_HALL =
+      20, ///< ★ Named from what the player sees: the room of four chests (its
+          ///< render)
 };
 enum {
-  LUNPA_FORTRESS_1_TO_LUNPA_FORTRESS_GATES = 1,
-  LUNPA_FORTRESS_1_TO_LUNPA_FORTRESS_2_SOUTH = 8,
-  LUNPA_FORTRESS_1_TO_LUNPA_FORTRESS_2_NORTH = 10,
-  LUNPA_FORTRESS_1_TO_LUNPA_FORTRESS_3 = 11,
+  LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_GATES = 1,
+  LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_TO_MAIN_HALL =
+      2, ///< ★ Named from what the player sees: the long winding hall kept by
+         ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_ENTRANCE =
+      3, ///< ★ Named from what the player sees: the small room just inside the
+         ///< fortress door (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_NORTH_HALL =
+      4, ///< ★ Named from what the player sees: the hall at the top of the map
+         ///< with a cell door, the stairs up and the way down to the cave (its
+         ///< render)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_DINING_ROOM =
+      5, ///< ★ Named from the game: "Whee! Thanks to Hammet we can enjoy food
+         ///< and drink all day long!" (MsgLunpaHammetBuysDrink)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_NORTHEAST_HALL =
+      6, ///< ★ Named from what the player sees: the winding hall in the top
+         ///< right of the map, with one guard (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_MAIN_HALL_TO_EAST_HALL =
+      7, ///< ★ Named from what the player sees: the hall on the right of the
+         ///< map with a patrolling guard and a cell door (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH = 8,
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTH_HALL_TO_MAIN_HALL =
+      9, ///< ★ Named from what the player sees: the long winding hall kept by
+         ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_NORTH = 10,
+  LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_CAVE = 11,
+  LUNPA_FORTRESS_GROUND_FLOOR_DINING_ROOM_TO_MAIN_HALL =
+      12, ///< ★ Named from what the player sees: the long winding hall kept by
+          ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_TO_MAIN_HALL =
+      13, ///< ★ Named from what the player sees: the long winding hall kept by
+          ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_TO_EAST_HALL =
+      14, ///< ★ Named from what the player sees: the hall on the right of the
+          ///< map with a patrolling guard and a cell door (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_HALL_TO_STOREROOM =
+      15, ///< ★ Named from what the player sees: a small room of barrels where
+          ///< a startled resident hides (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_TO_MAIN_HALL =
+      16, ///< ★ Named from what the player sees: the long winding hall kept by
+          ///< the entrance guard and two sentries (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_TO_NORTHEAST_HALL =
+      17, ///< ★ Named from what the player sees: the winding hall in the top
+          ///< right of the map, with one guard (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_EAST_HALL_TO_TREASURE_ROOM =
+      18, ///< ★ Named from what the player sees: the room of four chests (its
+          ///< render)
+  LUNPA_FORTRESS_GROUND_FLOOR_STOREROOM_TO_NORTHEAST_HALL =
+      19, ///< ★ Named from what the player sees: the winding hall in the top
+          ///< right of the map, with one guard (its render)
+  LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_HALL =
+      20, ///< ★ Named from what the player sees: the hall on the right of the
+          ///< map with a patrolling guard and a cell door (its render)
 };
 
-/// SceneId_LunpaFortress2's entrances and exits.
+/// SceneId_LunpaFortressUpperFloor's entrances and exits.
 enum {
-  LUNPA_FORTRESS_2_FROM_LUNPA_FORTRESS_1_SOUTH = 1,
-  LUNPA_FORTRESS_2_FROM_LUNPA_FORTRESS_1_NORTH = 16,
+  LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
+  LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_FROM_NORTH_HALL =
+      2, ///< ★ Named from what the player sees: the tall hall on the left of
+         ///< the map where two guards patrol (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_FROM_CENTRAL_HALL =
+      3, ///< ★ Named from what the player sees: the tall hall on the left of
+         ///< the map where two guards patrol (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_FROM_WEST_HALL =
+      4, ///< ★ Named from what the player sees: the empty winding hall at the
+         ///< top of the map (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_FROM_GUARD_ROOM =
+      5, ///< ★ Named from what the player sees: the empty winding hall at the
+         ///< top of the map (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_FROM_WOMENS_ROOM =
+      6, ///< ★ Named from what the player sees: the empty winding hall at the
+         ///< top of the map (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_FROM_WEST_HALL =
+      7, ///< ★ Named from what the player sees: the hall in the middle of the
+         ///< map, one guard under three arches (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_FROM_FAMILY_ROOM =
+      8, ///< ★ Named from what the player sees: the hall in the middle of the
+         ///< map, one guard under three arches (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_FROM_CELL_KEY_ROOM =
+      9, ///< ★ Named from what the player sees: the hall in the middle of the
+         ///< map, one guard under three arches (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_FROM_CENTRAL_HALL =
+      10, ///< ★ Named from what the player sees: the bedroom of Dodonpa's wife
+          ///< and children (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_NORTH_HALL =
+      11, ///< ★ Named from what the player sees: the room where three guards
+          ///< stand together and fight together (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_FROM_SOUTH_HALL =
+      12, ///< ★ Named from what the player sees: the room where three guards
+          ///< stand together and fight together (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_FROM_NORTH_HALL =
+      13, ///< ★ Named from the game: "Nearly all of these women were brought
+          ///< here against their will" (MsgLunpaWomenWantHome)
+  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_CENTRAL_HALL =
+      14, ///< ★ Named from the game: "Cell Key" (MsgItemName)
+  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_FROM_EAST_HALL =
+      15, ///< ★ Named from the game: "Cell Key" (MsgItemName)
+  LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_NORTH = 16,
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_FROM_GUARD_ROOM =
+      17, ///< ★ Named from what the player sees: the winding hall at the bottom
+          ///< of the map, with one guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_FROM_DONPAS_ROOM =
+      18, ///< ★ Named from what the player sees: the winding hall at the bottom
+          ///< of the map, with one guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_FROM_EAST_HALL =
+      19, ///< ★ Named from what the player sees: the winding hall at the bottom
+          ///< of the map, with one guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_SOUTH_HALL =
+      20, ///< ★ Named from the game: "Who is disrupting my sleep???"
+          ///< (MsgLunpaWhoDisruptingSleep)
+  LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_FROM_CELL_KEY_ROOM =
+      21, ///< ★ Named from what the player sees: the hall on the right of the
+          ///< map with a patrolling guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_FROM_SOUTH_HALL =
+      22, ///< ★ Named from what the player sees: the hall on the right of the
+          ///< map with a patrolling guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_FROM_DONPAS_ROOM =
+      23, ///< ★ Named from the game: "Tonic" (MsgDjinnName)
+  LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM =
+      24, ///< ★ Named from the game: "Who is disrupting my sleep???"
+          ///< (MsgLunpaWhoDisruptingSleep)
 };
 enum {
-  LUNPA_FORTRESS_2_TO_LUNPA_FORTRESS_1_SOUTH = 1,
-  LUNPA_FORTRESS_2_TO_LUNPA_FORTRESS_1_NORTH = 16,
+  LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
+  LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_TO_NORTH_HALL =
+      2, ///< ★ Named from what the player sees: the empty winding hall at the
+         ///< top of the map (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_WEST_HALL_TO_CENTRAL_HALL =
+      3, ///< ★ Named from what the player sees: the hall in the middle of the
+         ///< map, one guard under three arches (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_TO_WEST_HALL =
+      4, ///< ★ Named from what the player sees: the tall hall on the left of
+         ///< the map where two guards patrol (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_TO_GUARD_ROOM =
+      5, ///< ★ Named from what the player sees: the room where three guards
+         ///< stand together and fight together (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_NORTH_HALL_TO_WOMENS_ROOM =
+      6, ///< ★ Named from the game: "Nearly all of these women were brought
+         ///< here against their will" (MsgLunpaWomenWantHome)
+  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_TO_WEST_HALL =
+      7, ///< ★ Named from what the player sees: the tall hall on the left of
+         ///< the map where two guards patrol (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_TO_FAMILY_ROOM =
+      8, ///< ★ Named from what the player sees: the bedroom of Dodonpa's wife
+         ///< and children (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_TO_CELL_KEY_ROOM =
+      9, ///< ★ Named from the game: "Cell Key" (MsgItemName)
+  LUNPA_FORTRESS_UPPER_FLOOR_FAMILY_ROOM_TO_CENTRAL_HALL =
+      10, ///< ★ Named from what the player sees: the hall in the middle of the
+          ///< map, one guard under three arches (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_NORTH_HALL =
+      11, ///< ★ Named from what the player sees: the empty winding hall at the
+          ///< top of the map (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_TO_SOUTH_HALL =
+      12, ///< ★ Named from what the player sees: the winding hall at the bottom
+          ///< of the map, with one guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_WOMENS_ROOM_TO_NORTH_HALL =
+      13, ///< ★ Named from what the player sees: the empty winding hall at the
+          ///< top of the map (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_CENTRAL_HALL =
+      14, ///< ★ Named from what the player sees: the hall in the middle of the
+          ///< map, one guard under three arches (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_CELL_KEY_ROOM_TO_EAST_HALL =
+      15, ///< ★ Named from what the player sees: the hall on the right of the
+          ///< map with a patrolling guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_NORTH = 16,
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_TO_GUARD_ROOM =
+      17, ///< ★ Named from what the player sees: the room where three guards
+          ///< stand together and fight together (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_TO_DONPAS_ROOM =
+      18, ///< ★ Named from the game: "Who is disrupting my sleep???"
+          ///< (MsgLunpaWhoDisruptingSleep)
+  LUNPA_FORTRESS_UPPER_FLOOR_SOUTH_HALL_TO_EAST_HALL =
+      19, ///< ★ Named from what the player sees: the hall on the right of the
+          ///< map with a patrolling guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_SOUTH_HALL =
+      20, ///< ★ Named from what the player sees: the winding hall at the bottom
+          ///< of the map, with one guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_TO_CELL_KEY_ROOM =
+      21, ///< ★ Named from the game: "Cell Key" (MsgItemName)
+  LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_TO_SOUTH_HALL =
+      22, ///< ★ Named from what the player sees: the winding hall at the bottom
+          ///< of the map, with one guard (its render)
+  LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_TO_DONPAS_ROOM =
+      23, ///< ★ Named from the game: "Who is disrupting my sleep???"
+          ///< (MsgLunpaWhoDisruptingSleep)
+  LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_TONIC_ROOM =
+      24, ///< ★ Named from the game: "Tonic" (MsgDjinnName)
 };
 
-/// SceneId_LunpaFortress3's entrances and exits.
+/// SceneId_LunpaFortressCave's entrances and exits.
 enum {
-  LUNPA_FORTRESS_3_FROM_LUNPA_FORTRESS_1 = 1,
-  LUNPA_FORTRESS_3_FROM_LUNPA_FORTRESS_4_NORTHEAST = 4,
-  LUNPA_FORTRESS_3_FROM_LUNPA_FORTRESS_4_NORTH = 5,
-  LUNPA_FORTRESS_3_FROM_LUNPA_FORTRESS_4_NORTHWEST = 6,
+  LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_GROUND_FLOOR = 1,
+  LUNPA_FORTRESS_CAVE_ENTRANCE_FROM_POOL =
+      2, ///< ★ Named from what the player sees: the small cave at the foot of
+         ///< the stairs from the fortress (its render)
+  LUNPA_FORTRESS_CAVE_POOL_FROM_ENTRANCE =
+      3, ///< ★ Named from what the player sees: the big cave round an
+         ///< underground pool (its render)
+  LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHEAST = 4,
+  LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTH = 5,
+  LUNPA_FORTRESS_CAVE_FROM_LUNPA_FORTRESS_TOADONPA_NORTHWEST = 6,
 };
 enum {
-  LUNPA_FORTRESS_3_TO_LUNPA_FORTRESS_1 = 1,
-  LUNPA_FORTRESS_3_TO_LUNPA_FORTRESS_4_NORTHEAST = 4,
-  LUNPA_FORTRESS_3_TO_LUNPA_FORTRESS_4_NORTH = 5,
-  LUNPA_FORTRESS_3_TO_LUNPA_FORTRESS_4_NORTHWEST = 6,
-};
-
-/// SceneId_LunpaFortress4's entrances and exits.
-enum {
-  LUNPA_FORTRESS_4_FROM_LUNPA_FORTRESS_3_WEST = 1,
-  LUNPA_FORTRESS_4_FROM_LUNPA_FORTRESS_3_SOUTH = 2,
-  LUNPA_FORTRESS_4_FROM_LUNPA_FORTRESS_3_EAST = 3,
-};
-enum {
-  LUNPA_FORTRESS_4_TO_LUNPA_FORTRESS_3_WEST = 1,
-  LUNPA_FORTRESS_4_TO_LUNPA_FORTRESS_3_SOUTH = 2,
-  LUNPA_FORTRESS_4_TO_LUNPA_FORTRESS_GATES = 4,
-  LUNPA_FORTRESS_4_TO_LUNPA_FORTRESS_3_2 = 5,
-};
-
-/// SceneId_SuhallaDesert1's entrances and exits.
-enum {
-  SUHALLA_DESERT_1_FROM_WORLD_MAP = 1,
-  SUHALLA_DESERT_1_FROM_SUHALLA_DESERT_2 = 2,
-};
-enum {
-  SUHALLA_DESERT_1_TO_WORLD_MAP = 1,
-  SUHALLA_DESERT_1_TO_SUHALLA_DESERT_2 = 2,
+  LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_GROUND_FLOOR = 1,
+  LUNPA_FORTRESS_CAVE_ENTRANCE_TO_POOL =
+      2, ///< ★ Named from what the player sees: the big cave round an
+         ///< underground pool (its render)
+  LUNPA_FORTRESS_CAVE_POOL_TO_ENTRANCE =
+      3, ///< ★ Named from what the player sees: the small cave at the foot of
+         ///< the stairs from the fortress (its render)
+  LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST = 4,
+  LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTH = 5,
+  LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST = 6,
 };
 
-/// SceneId_SuhallaDesert2's entrances and exits.
+/// SceneId_LunpaFortressToadonpa's entrances and exits.
 enum {
-  SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_1 = 1,
-  SUHALLA_DESERT_2_FROM_WORLD_MAP = 2,
-  SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_3_EAST = 3,
-  SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_3_WEST = 4,
+  LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTH = 1,
+  LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHEAST = 2,
+  LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST = 3,
 };
 enum {
-  SUHALLA_DESERT_2_TO_SUHALLA_DESERT_1 = 1,
-  SUHALLA_DESERT_2_TO_WORLD_MAP = 2,
-  SUHALLA_DESERT_2_TO_SUHALLA_DESERT_3_EAST = 3,
-  SUHALLA_DESERT_2_TO_SUHALLA_DESERT_3_WEST = 4,
+  LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTH = 1,
+  LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHEAST = 2,
+  LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES = 4,
+  LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST = 5,
 };
 
-/// SceneId_SuhallaDesert3's entrances and exits.
+/// SceneId_SuhallaDesertNorth's entrances and exits.
 enum {
-  SUHALLA_DESERT_3_FROM_SUHALLA_DESERT_2_WEST = 1,
-  SUHALLA_DESERT_3_FROM_SUHALLA_DESERT_2_EAST = 4,
+  SUHALLA_DESERT_NORTH_FROM_WORLD_MAP = 1,
+  SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH = 2,
 };
 enum {
-  SUHALLA_DESERT_3_TO_SUHALLA_DESERT_2_WEST = 1,
-  SUHALLA_DESERT_3_TO_SUHALLA_DESERT_2_EAST = 4,
+  SUHALLA_DESERT_NORTH_TO_WORLD_MAP = 1,
+  SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH = 2,
+};
+
+/// SceneId_SuhallaDesertSouth's entrances and exits.
+enum {
+  SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH = 1,
+  SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP = 2,
+  SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_EAST = 3,
+  SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_CAVES_WEST = 4,
+};
+enum {
+  SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH = 1,
+  SUHALLA_DESERT_SOUTH_TO_WORLD_MAP = 2,
+  SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST = 3,
+  SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST = 4,
+};
+
+/// SceneId_SuhallaDesertCaves's entrances and exits.
+enum {
+  SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST = 1,
+  SUHALLA_DESERT_CAVES_WEST_FROM_EAST =
+      2, ///< ★ Named from what the player sees: the long winding cave on the
+         ///< left, under the desert's western cave mouth (its render)
+  SUHALLA_DESERT_CAVES_EAST_FROM_WEST =
+      3, ///< ★ Named from what the player sees: the short cave on the right,
+         ///< under the desert's eastern cave mouth (its render)
+  SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST = 4,
+};
+enum {
+  SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST =
+      1, ///< ★ Named from what the player sees: the long winding cave on the
+         ///< left, under the desert's western cave mouth (its render)
+  SUHALLA_DESERT_CAVES_WEST_TO_EAST =
+      2, ///< ★ Named from what the player sees: the short cave on the right,
+         ///< under the desert's eastern cave mouth (its render)
+  SUHALLA_DESERT_CAVES_EAST_TO_WEST =
+      3, ///< ★ Named from what the player sees: the long winding cave on the
+         ///< left, under the desert's western cave mouth (its render)
+  SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST =
+      4, ///< ★ Named from what the player sees: the short cave on the right,
+         ///< under the desert's eastern cave mouth (its render)
 };
 
 /// SceneId_Suhalla's entrances and exits.
@@ -4330,10 +4584,13 @@ enum {
   SUHALLA_TO_HOUSE_NORTHEAST = 4,
   SUHALLA_TO_HOUSE_EAST = 5,
   SUHALLA_TO_WORLD_MAP = 10,
+  SUHALLA_TO_WORLD_MAP_NORTH = 11,
+  SUHALLA_TO_WORLD_MAP_EAST = 12,
 };
 
 /// SceneId_SuhallaInteriors's entrances and exits.
 enum {
+  SUHALLA_INTERIORS_INN = 1,
   SUHALLA_INTERIORS_SANCTUM =
       2, ///< the room behind Suhalla's sanctum door;
          ///< the room holds the sanctum; through SUHALLA_TO_SANCTUM
@@ -4342,9 +4599,29 @@ enum {
   SUHALLA_INTERIORS_HOUSE_NORTHEAST =
       4, ///< the room behind Suhalla's house northeast door; through
          ///< SUHALLA_TO_HOUSE_NORTHEAST
-  SUHALLA_INTERIORS_HOUSE_EAST = 5,    ///< the room behind Suhalla's house east
-                                       ///< door; through SUHALLA_TO_HOUSE_EAST
-  SUHALLA_INTERIORS_SANCTUM_NORTH = 6, ///< the room holds the sanctum;
+  SUHALLA_INTERIORS_HOUSE_EAST = 5, ///< the room behind Suhalla's house east
+                                    ///< door; through SUHALLA_TO_HOUSE_EAST
+  SUHALLA_INTERIORS_SANCTUM_NORTH =
+      6, ///< before the priest in Suhalla Sanctum, where a party defeated in
+         ///< Suhalla wakes
+  SUHALLA_INTERIORS_INN_FROM_GUEST_ROOM_WEST =
+      10, ///< ★ Named from what the player sees: Suhalla's inn and its counter
+          ///< (its render)
+  SUHALLA_INTERIORS_INN_FROM_GUEST_ROOM_EAST =
+      11, ///< ★ Named from what the player sees: Suhalla's inn and its counter
+          ///< (its render)
+  SUHALLA_INTERIORS_GUEST_ROOM_WEST_FROM_INN =
+      12, ///< ★ Named from what the player sees: the inn's guest room with one
+          ///< bed, behind its western doorway (its render)
+  SUHALLA_INTERIORS_GUEST_ROOM_EAST_FROM_INN =
+      13, ///< ★ Named from what the player sees: the inn's guest room with two
+          ///< beds, behind its eastern doorway (its render)
+  SUHALLA_INTERIORS_INN_FROM_LOFT =
+      14, ///< ★ Named from what the player sees: Suhalla's inn and its counter
+          ///< (its render)
+  SUHALLA_INTERIORS_LOFT_FROM_INN =
+      15, ///< ★ Named from what the player sees: the room with beds up the
+          ///< inn's ladder (its render)
 };
 enum {
   SUHALLA_INTERIORS_INN_TO_SUHALLA = 1,
@@ -4352,88 +4629,258 @@ enum {
   SUHALLA_INTERIORS_HOUSE_WEST_TO_SUHALLA = 3,
   SUHALLA_INTERIORS_HOUSE_NORTHEAST_TO_SUHALLA = 4,
   SUHALLA_INTERIORS_HOUSE_EAST_TO_SUHALLA = 5,
+  SUHALLA_INTERIORS_INN_TO_GUEST_ROOM_WEST =
+      10, ///< ★ Named from what the player sees: the inn's guest room with one
+          ///< bed, behind its western doorway (its render)
+  SUHALLA_INTERIORS_INN_TO_GUEST_ROOM_EAST =
+      11, ///< ★ Named from what the player sees: the inn's guest room with two
+          ///< beds, behind its eastern doorway (its render)
+  SUHALLA_INTERIORS_GUEST_ROOM_WEST_TO_INN =
+      12, ///< ★ Named from what the player sees: Suhalla's inn and its counter
+          ///< (its render)
+  SUHALLA_INTERIORS_GUEST_ROOM_EAST_TO_INN =
+      13, ///< ★ Named from what the player sees: Suhalla's inn and its counter
+          ///< (its render)
+  SUHALLA_INTERIORS_INN_TO_LOFT =
+      14, ///< ★ Named from what the player sees: the room with beds up the
+          ///< inn's ladder (its render)
+  SUHALLA_INTERIORS_LOFT_TO_INN =
+      15, ///< ★ Named from what the player sees: Suhalla's inn and its counter
+          ///< (its render)
 };
 
-/// SceneId_SuhallaGate1's entrances and exits.
+/// SceneId_SuhallaGateCheckpoint's entrances and exits.
 enum {
-  SUHALLA_GATE_1_FROM_WORLD_MAP_WEST = 1,
-  SUHALLA_GATE_1_FROM_SUHALLA_GATE_2_WEST = 2,
-  SUHALLA_GATE_1_FROM_LUNPA_SUHALLA = 3,
-  SUHALLA_GATE_1_FROM_SUHALLA_GATE_2_EAST = 4,
-  SUHALLA_GATE_1_FROM_WORLD_MAP_EAST = 5,
+  SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH = 1,
+  SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST = 2,
+  SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA = 3,
+  SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST = 4,
+  SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST = 5,
 };
 enum {
-  SUHALLA_GATE_1_TO_WORLD_MAP_EAST = 1,
-  SUHALLA_GATE_1_TO_SUHALLA_GATE_2_WEST = 2,
-  SUHALLA_GATE_1_TO_LUNPA_SUHALLA = 3,
-  SUHALLA_GATE_1_TO_SUHALLA_GATE_2_EAST = 4,
-  SUHALLA_GATE_1_TO_WORLD_MAP_WEST = 5,
+  SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH = 1,
+  SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST = 2,
+  SUHALLA_GATE_CHECKPOINT_TO_LUNPA_SUHALLA = 3,
+  SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST = 4,
+  SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST = 5,
 };
 
-/// SceneId_SuhallaGate2's entrances and exits.
+/// SceneId_SuhallaGateDew's entrances and exits.
 enum {
-  SUHALLA_GATE_2_FROM_SUHALLA_GATE_1_WEST = 1,
-  SUHALLA_GATE_2_FROM_SUHALLA_GATE_1_EAST = 4,
-  SUHALLA_GATE_2_FROM_GATEWAY_CAVE = 5,
+  SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST = 1,
+  SUHALLA_GATE_DEW_WEST_FROM_EAST =
+      2, ///< ★ Named from what the player sees: the cliffs reached by the
+         ///< gate's western way, with a chest (its render)
+  SUHALLA_GATE_DEW_EAST_FROM_WEST =
+      3, ///< ★ Named from what the player sees: the cliffs reached by the
+         ///< gate's eastern way, where Dew waits by the cave mouth (its render)
+  SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST = 4,
+  SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE = 5,
 };
 enum {
-  SUHALLA_GATE_2_TO_SUHALLA_GATE_1_WEST = 1,
-  SUHALLA_GATE_2_TO_SUHALLA_GATE_1_EAST = 4,
-  SUHALLA_GATE_2_TO_GATEWAY_CAVE = 5,
+  SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST =
+      1, ///< ★ Named from what the player sees: the cliffs reached by the
+         ///< gate's western way, with a chest (its render)
+  SUHALLA_GATE_DEW_WEST_TO_EAST =
+      2, ///< ★ Named from what the player sees: the cliffs reached by the
+         ///< gate's eastern way, where Dew waits by the cave mouth (its render)
+  SUHALLA_GATE_DEW_EAST_TO_WEST =
+      3, ///< ★ Named from what the player sees: the cliffs reached by the
+         ///< gate's western way, with a chest (its render)
+  SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST =
+      4, ///< ★ Named from what the player sees: the cliffs reached by the
+         ///< gate's eastern way, where Dew waits by the cave mouth (its render)
+  SUHALLA_GATE_DEW_TO_GATEWAY_CAVE = 5,
 };
 
 /// SceneId_GatewayCave's entrances and exits.
 enum {
-  GATEWAY_CAVE_FROM_SUHALLA_GATE_2 = 1,
+  GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW = 1,
+  GATEWAY_CAVE_NORTH_FROM_SOUTH =
+      2, ///< ★ Named from what the player sees: the small cave entered from the
+         ///< cliffs (its render)
+  GATEWAY_CAVE_SOUTH_FROM_NORTH =
+      3, ///< ★ Named from what the player sees: the larger cave of pools and
+         ///< purple crystals that leads out (its render)
   GATEWAY_CAVE_FROM_WORLD_MAP = 4,
 };
 enum {
-  GATEWAY_CAVE_TO_SUHALLA_GATE_2 = 1,
+  GATEWAY_CAVE_TO_SUHALLA_GATE_DEW = 1,
+  GATEWAY_CAVE_NORTH_TO_SOUTH =
+      2, ///< ★ Named from what the player sees: the larger cave of pools and
+         ///< purple crystals that leads out (its render)
+  GATEWAY_CAVE_SOUTH_TO_NORTH =
+      3, ///< ★ Named from what the player sees: the small cave entered from the
+         ///< cliffs (its render)
   GATEWAY_CAVE_TO_WORLD_MAP = 4,
 };
 
-/// SceneId_TunnelRuins1's entrances and exits.
+/// SceneId_TunnelRuinsGreatStatue's entrances and exits.
 enum {
-  TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1 = 1,
-  TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_NORTH = 15,
-  TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHWEST = 17,
-  TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_SOUTHEAST = 18,
+  TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_1 = 1,
+  TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS =
+      2, ///< ★ Named from the game: "The statue seems to speak to your soul..."
+         ///< (MsgTunnelRuinsStatueSeemsSpeakYourSoul)
+  TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE =
+      3, ///< ★ Named from what the player sees: the first room on the way with
+         ///< a pair of stone pillars to push (its render)
+  TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH =
+      4, ///< ★ Named from what the player sees: the first room on the way with
+         ///< a pair of stone pillars to push (its render)
+  TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS =
+      5, ///< ★ Named from what the player sees: the upper room of columns
+         ///< standing in a pit, hopped across (its render)
+  TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS =
+      6, ///< ★ Named from what the player sees: the upper room of columns
+         ///< standing in a pit, hopped across (its render)
+  TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SINKING_PILLARS =
+      7, ///< ★ Named from what the player sees: the upper room of columns
+         ///< standing in a pit, hopped across (its render)
+  TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH =
+      8, ///< ★ Named from what the player sees: the second room with a pair of
+         ///< stone pillars to push (its render)
+  TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_BUSHES =
+      9, ///< ★ Named from what the player sees: the second room with a pair of
+         ///< stone pillars to push (its render)
+  TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH =
+      10, ///< ★ Named from what the player sees: two stone pillars that sink
+          ///< into the floor once moved onto their columns (its render)
+  TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH =
+      11, ///< ★ Named from what the player sees: two stone pillars that sink
+          ///< into the floor once moved onto their columns (its render)
+  TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_SECOND_PILLARS =
+      12, ///< ★ Named from what the player sees: the room of bushes that
+          ///< Whirlwind blows away (its render)
+  TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_CORRIDOR =
+      13, ///< ★ Named from what the player sees: the room of bushes that
+          ///< Whirlwind blows away (its render)
+  TUNNEL_RUINS_GREAT_STATUE_CORRIDOR_FROM_BUSHES =
+      14, ///< ★ Named from what the player sees: a long narrow corridor (its
+          ///< render)
+  TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH = 15,
+  TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_FROM_SINKING_PILLARS =
+      16, ///< ★ Named from what the player sees: the lower room of columns
+          ///< standing in a pit (its render)
+  TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST = 17,
+  TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST = 18,
 };
 enum {
-  TUNNEL_RUINS_1_TO_BABI_LIGHTHOUSE_1 = 1,
-  TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_WEST = 15,
-  TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHWEST = 17,
-  TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHEAST = 18,
+  TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_1 = 1,
+  TUNNEL_RUINS_GREAT_STATUE_STATUE_TO_FIRST_PILLARS =
+      2, ///< ★ Named from what the player sees: the first room on the way with
+         ///< a pair of stone pillars to push (its render)
+  TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_STATUE =
+      3, ///< ★ Named from the game: "The statue seems to speak to your soul..."
+         ///< (MsgTunnelRuinsStatueSeemsSpeakYourSoul)
+  TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_COLUMNS_NORTH =
+      4, ///< ★ Named from what the player sees: the upper room of columns
+         ///< standing in a pit, hopped across (its render)
+  TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_FIRST_PILLARS =
+      5, ///< ★ Named from what the player sees: the first room on the way with
+         ///< a pair of stone pillars to push (its render)
+  TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_SECOND_PILLARS =
+      6, ///< ★ Named from what the player sees: the second room with a pair of
+         ///< stone pillars to push (its render)
+  TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_TO_SINKING_PILLARS =
+      7, ///< ★ Named from what the player sees: two stone pillars that sink
+         ///< into the floor once moved onto their columns (its render)
+  TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_COLUMNS_NORTH =
+      8, ///< ★ Named from what the player sees: the upper room of columns
+         ///< standing in a pit, hopped across (its render)
+  TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_BUSHES =
+      9, ///< ★ Named from what the player sees: the room of bushes that
+         ///< Whirlwind blows away (its render)
+  TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_NORTH =
+      10, ///< ★ Named from what the player sees: the upper room of columns
+          ///< standing in a pit, hopped across (its render)
+  TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_SOUTH =
+      11, ///< ★ Named from what the player sees: the lower room of columns
+          ///< standing in a pit (its render)
+  TUNNEL_RUINS_GREAT_STATUE_BUSHES_TO_SECOND_PILLARS =
+      12, ///< ★ Named from what the player sees: the second room with a pair of
+          ///< stone pillars to push (its render)
+  TUNNEL_RUINS_GREAT_STATUE_BUSHES_TO_CORRIDOR =
+      13, ///< ★ Named from what the player sees: a long narrow corridor (its
+          ///< render)
+  TUNNEL_RUINS_GREAT_STATUE_CORRIDOR_TO_BUSHES =
+      14, ///< ★ Named from what the player sees: the room of bushes that
+          ///< Whirlwind blows away (its render)
+  TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH = 15,
+  TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_TO_SINKING_PILLARS =
+      16, ///< ★ Named from what the player sees: two stone pillars that sink
+          ///< into the floor once moved onto their columns (its render)
+  TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST = 17,
+  TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST = 18,
 };
 
-/// SceneId_TunnelRuins2's entrances and exits.
+/// SceneId_TunnelRuinsLadyStatues's entrances and exits.
 enum {
-  TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST = 1,
-  TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH = 2,
-  TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH = 3,
-  TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_WEST = 4,
-  TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_NORTH = 6,
-  TUNNEL_RUINS_2_FROM_VENUS_LIGHTHOUSE_2 = 16,
-  TUNNEL_RUINS_2_FROM_TUNNEL_RUINS_1_SOUTH = 17,
+  TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST = 1,
+  TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH = 2,
+  TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH = 3,
+  TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH = 4,
+  TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH = 5,
+  TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST = 6,
+  TUNNEL_RUINS_LADY_STATUES_DOUSE_PILLAR_SOUTH = 7,
+  TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHWEST = 8,
+  TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHWEST = 9,
+  TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHEAST = 10,
+  TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHEAST = 11,
+  TUNNEL_RUINS_LADY_STATUES_FALSE_STATUE_WEST = 12,
+  TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH = 13,
+  TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST = 14,
+  TUNNEL_RUINS_LADY_STATUES_TREE_DOOR_SOUTH = 15,
+  TUNNEL_RUINS_LADY_STATUES_FROM_VENUS_LIGHTHOUSE_2 = 16,
+  TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST = 17,
 };
 enum {
-  TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_NORTH = 1,
-  TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_SOUTHWEST = 3,
-  TUNNEL_RUINS_2_TO_TUNNEL_RUINS_1_SOUTHEAST = 12,
-  TUNNEL_RUINS_2_TO_VENUS_LIGHTHOUSE_2 = 14,
-  TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST = 15,
-  TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH = 16,
-  TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_NORTH = 17,
+  TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH = 1,
+  TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_NORTHWEST =
+      2, ///< ★ Named from what the player sees: four raised walkways over a pit
+         ///< (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST = 3,
+  TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_NORTHEAST =
+      4, ///< ★ Named from what the player sees: four raised walkways over a pit
+         ///< (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_BALANCE_SOUTH =
+      5, ///< ★ Named from what the player sees: two platforms that sink and
+         ///< rise like a balance under what Carry sets on them (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_DOUSE_PILLAR_SOUTH =
+      6, ///< ★ Named from what the player sees: the room of a stone pillar that
+         ///< Douse soaks (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_FALSE_STATUE_WEST =
+      7, ///< ★ Named from what the player sees: the western room of a statue
+         ///< that vanishes under Reveal (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_NORTH =
+      8, ///< ★ Named from what the player sees: the room of five coloured
+         ///< statues of a woman before a door (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_SOUTHWEST =
+      9, ///< ★ Named from what the player sees: four raised walkways over a pit
+         ///< (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_WALKWAYS_SOUTHEAST =
+      10, ///< ★ Named from what the player sees: four raised walkways over a
+          ///< pit (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_TREE_DOOR_SOUTH =
+      11, ///< ★ Named from what the player sees: the great door with a tree
+          ///< carved over it, the way on to Venus Lighthouse (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST = 12,
+  TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_EAST =
+      13, ///< ★ Named from what the player sees: the room of five coloured
+          ///< statues of a woman before a door (its render)
+  TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_2 = 14,
+  TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST = 15,
+  TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_SOUTH = 16,
+  TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_NORTH = 17,
 };
 
 /// SceneId_BabiLighthouse1's entrances and exits.
 enum {
-  BABI_LIGHTHOUSE_1_FROM_TUNNEL_RUINS_1 = 1,
+  BABI_LIGHTHOUSE_1_FROM_TUNNEL_RUINS_GREAT_STATUE = 1,
   BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_WEST = 2,
   BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_EAST = 3,
 };
 enum {
-  BABI_LIGHTHOUSE_1_TO_TUNNEL_RUINS_1 = 1,
+  BABI_LIGHTHOUSE_1_TO_TUNNEL_RUINS_GREAT_STATUE = 1,
   BABI_LIGHTHOUSE_1_TO_BABI_LIGHTHOUSE_2_WEST = 2,
 };
 
@@ -4455,17 +4902,17 @@ enum {
   BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE = 1,
   BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_WEST = 2,
   BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_EAST = 3,
-  BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_WEST = 4,
-  BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_SOUTH = 5,
-  BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_NORTH = 6,
+  BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_WEST = 4,
+  BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH = 5,
+  BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
 };
 enum {
   BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE = 1,
   BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_2_EAST = 2,
   BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_2_WEST = 3,
-  BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_WEST = 4,
-  BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_SOUTH = 5,
-  BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_NORTH = 6,
+  BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST = 4,
+  BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_SOUTH = 5,
+  BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_NORTH = 6,
 };
 
 /// SceneId_RoadToBabiLighthouse's entrances and exits.
@@ -4574,7 +5021,7 @@ enum {
   VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_WEST = 8,
   VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_NORTH = 12,
   VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_1 = 16,
-  VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_2 = 18,
+  VENUS_LIGHTHOUSE_2_FROM_TUNNEL_RUINS_LADY_STATUES = 18,
   VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_EAST = 21,
 };
 enum {
@@ -4582,7 +5029,7 @@ enum {
   VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_3_EAST = 8,
   VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_3_WEST = 12,
   VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_1 = 16,
-  VENUS_LIGHTHOUSE_2_TO_TUNNEL_RUINS_2 = 18,
+  VENUS_LIGHTHOUSE_2_TO_TUNNEL_RUINS_LADY_STATUES = 18,
   VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_3_SOUTH = 21,
 };
 

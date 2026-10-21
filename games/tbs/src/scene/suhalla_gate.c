@@ -1,18 +1,20 @@
 /// @file
-/// Suhalla Gate (SuhallaGate1 and SuhallaGate2, scenes 169 and 170) and
-/// Gateway Cave (GatewayCave, scene 171), the pass that Babi's soldiers
+/// Suhalla Gate (SuhallaGateCheckpoint and SuhallaGateDew, scenes 169 and 170)
+/// and Gateway Cave (GatewayCave, scene 171), the pass that Babi's soldiers
 /// guard on the way to Babi Lighthouse.
 ///
 /// The party comes here after the Suhalla Desert, and the three scenes are
 /// the pass in the order it is crossed:
-/// - Suhalla Gate (scene 169), the gate itself. The world map leads in from
-///   the south (SUHALLA_GATE_1_FROM_WORLD_MAP_WEST) and from the east
-///   (SUHALLA_GATE_1_FROM_WORLD_MAP_EAST), each way into its own part of the
-///   map; beside the gate stands a house whose door
-///   (SUHALLA_GATE_1_TO_LUNPA_SUHALLA) leads into Gate to Suhalla, the
-///   house's own area name (LUNPA_SUHALLA_FROM_SUHALLA_GATE_1). The passage
-///   north (SUHALLA_GATE_1_TO_SUHALLA_GATE_2_WEST) and the eastern part
-///   (SUHALLA_GATE_1_TO_SUHALLA_GATE_2_EAST) both lead into scene 170.
+/// - Suhalla Gate (SuhallaGateCheckpoint, scene 169), the gate itself. The
+/// world map leads in from
+///   the south (SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) and from the east
+///   (SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST), each way into its own part
+///   of the map; beside the gate stands a house whose door
+///   (SUHALLA_GATE_CHECKPOINT_TO_LUNPA_SUHALLA) leads into Gate to Suhalla, the
+///   house's own area name (LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT). The
+///   passage north (SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST) and the
+///   eastern part (SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST) both lead
+///   into SuhallaGateDew.
 ///
 ///   Before Babi's audience after Colosso (FLAG_BABI_SPOKE_AFTER_COLOSSO), two
 ///   of Babi's soldiers keep the passage: only those with travel papers may
@@ -38,11 +40,12 @@
 ///   (Event_SoldierVanishes, FLAG_SUHALLA_GATE_SOLDIER_VANISHED). Once Iodem
 ///   has questioned the guards, a defeat with no defeat point returns the
 ///   party to the house beside the gate.
-/// - Suhalla Gate (scene 170), beyond the passage, in two parts that exits 2
-///   and 3 join. Dew, a Mercury Djinni, waits here and fights when spoken to
-///   (Event_FightDjinni), and a chest holds a Mint.
-///   SUHALLA_GATE_2_TO_GATEWAY_CAVE leads into Gateway Cave.
-/// - Gateway Cave (scene 171), entered by GATEWAY_CAVE_FROM_SUHALLA_GATE_2;
+/// - Suhalla Gate (SuhallaGateDew, scene 170), beyond the passage, in a west
+/// part
+///   and an east part (SUHALLA_GATE_DEW_WEST_TO_EAST). Dew, a Mercury Djinni,
+///   waits here and fights when spoken to (Event_FightDjinni), and a chest
+///   holds a Mint. SUHALLA_GATE_DEW_TO_GATEWAY_CAVE leads into Gateway Cave.
+/// - Gateway Cave (scene 171), entered by GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW;
 ///   GATEWAY_CAVE_TO_WORLD_MAP leads out onto the world map
 ///   (WORLD_MAP_FROM_GATEWAY_CAVE). Searching in it finds a Psynergy Stone,
 ///   kept by a place flag (0x350) and so back on every new visit.
@@ -82,15 +85,16 @@
 #include "item_ids.h"
 
 #if TBS_PATCH_3
-#define SUHALLA_GATE_RETREAT_SCENE(currentScene) ((s32)&SceneId_SuhallaGate1)
+#define SUHALLA_GATE_RETREAT_SCENE(currentScene)                               \
+  ((s32)&SceneId_SuhallaGateCheckpoint)
 #else
 #define SUHALLA_GATE_RETREAT_SCENE(currentScene) (currentScene)
 #endif
 
-/// The actors of the gate itself (SuhallaGate1), numbered in the order of
-/// gSuhallaGatePlacements1 and, after Babi's audience, of
+/// The actors of the gate itself (SuhallaGateCheckpoint), numbered in the order
+/// of gSuhallaGatePlacements1 and, after Babi's audience, of
 /// gSuhallaGatePlacements1AfterAudience.
-enum SuhallaGate1Actor {
+enum SuhallaGateCheckpointActor {
   /// The two of Babi's soldiers who keep the passage north, standing before
   /// Babi's audience and lying wounded after it. "Only those with travel
   /// papers may pass through."
@@ -104,9 +108,9 @@ enum SuhallaGate1Actor {
   ACTOR_IODEM
 };
 
-/// The actors of the second scene (SuhallaGate2), numbered in the order of
+/// The actors of the second scene (SuhallaGateDew), numbered in the order of
 /// gSuhallaGatePlacements2.
-enum SuhallaGate2Actor {
+enum SuhallaGateDewActor {
   /// Five sprouts (sprite 0xee, the sprout Growth grows in Suhalla), each
   /// drawn in the frame Scene_Initialize gives it.
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
@@ -122,7 +126,7 @@ static void Event_FightDjinni(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_SuhallaGate2) {
+  if (scene == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateEntrances2;
   }
   if (scene == (s32)&SceneId_GatewayCave) {
@@ -140,10 +144,10 @@ const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_SuhallaGate2) {
+  if (scene == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGatePlacements2;
   }
-  if (scene == (s32)&SceneId_SuhallaGate1) {
+  if (scene == (s32)&SceneId_SuhallaGateCheckpoint) {
     if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gSuhallaGatePlacements1AfterAudience;
     }
@@ -157,7 +161,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_SuhallaGate2) {
+  if (scene == (s32)&SceneId_SuhallaGateDew) {
     return gSuhallaGateEvents2;
   }
   if (scene == (s32)&SceneId_GatewayCave) {
@@ -179,10 +183,10 @@ s32 Scene_Initialize(void) {
 
   if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
     gGameState.savedScene = (s32)&SceneId_LunpaSuhalla;
-    gGameState.savedEntrance = LUNPA_SUHALLA_FROM_SUHALLA_GATE_1;
+    gGameState.savedEntrance = LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT;
   }
   scene = gGameState.scene;
-  if (scene == (s32)&SceneId_SuhallaGate1) {
+  if (scene == (s32)&SceneId_SuhallaGateCheckpoint) {
     if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Engine_ActorSetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
@@ -195,25 +199,27 @@ s32 Scene_Initialize(void) {
 #endif
     // Out of the house, Retreat leads back to the side the party came in by,
     // and the place's name is not shown again.
-    if (gGameState.entrance == SUHALLA_GATE_1_FROM_LUNPA_SUHALLA) {
+    if (gGameState.entrance == SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA) {
       if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
         gGameState.retreatScene = SUHALLA_GATE_RETREAT_SCENE(scene);
-        gGameState.retreatEntrance = SUHALLA_GATE_1_FROM_WORLD_MAP_WEST;
+        gGameState.retreatEntrance =
+            SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
       }
       if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
         gGameState.retreatScene = SUHALLA_GATE_RETREAT_SCENE(scene);
-        gGameState.retreatEntrance = SUHALLA_GATE_1_FROM_WORLD_MAP_EAST;
+        gGameState.retreatEntrance =
+            SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
       }
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     }
-    if (gGameState.entrance == SUHALLA_GATE_1_FROM_WORLD_MAP_WEST) {
+    if (gGameState.entrance == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
       Engine_GameFlagSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
       if (!Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO))
         Map_CopyCellAttributes(6, 0, 2, 1, 8, 27);
     }
-    if (gGameState.entrance == SUHALLA_GATE_1_FROM_WORLD_MAP_EAST)
+    if (gGameState.entrance == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       Engine_GameFlagSet(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
-  } else if (scene == (s32)&SceneId_SuhallaGate2) {
+  } else if (scene == (s32)&SceneId_SuhallaGateDew) {
     Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT, 4);
     Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 1, 4);
     Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 2, 3);
@@ -243,9 +249,10 @@ static void Event_EnterHouse(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-/// In Suhalla Gate (169), the party leaves for the world map by the south way
-/// out (SUHALLA_GATE_1_TO_WORLD_MAP_EAST) or the east one
-/// (SUHALLA_GATE_1_TO_WORLD_MAP_WEST), forgetting the side it came in by.
+/// In SuhallaGateCheckpoint, the party leaves for the world map by the south
+/// way out (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH) or the east one
+/// (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST), forgetting the side it came in
+/// by.
 static void Event_LeaveForWorldMap(void) {
   s16 exitTrigger = gEventWork->touchedTrigger;
 
@@ -502,33 +509,33 @@ s32 gSuhallaGateWoundedFlipped[] = {
 
 struct SceneEntrance gSuhallaGateEntrancesOther[] = {
     {0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
-    {SUHALLA_GATE_1_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 152, 0, 520,
-     FACING_NORTH, 0, 32, 32, 272, 544, 0},
-    {SUHALLA_GATE_1_FROM_SUHALLA_GATE_2_WEST, CONDITION_ALWAYS, 248, 0, 280,
-     FACING_WEST, 0, 32, 32, 272, 544, 0},
-    {SUHALLA_GATE_1_FROM_LUNPA_SUHALLA, CONDITION_ALWAYS, 136, 0, 304,
+    {SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 152, 0,
+     520, FACING_NORTH, 0, 32, 32, 272, 544, 0},
+    {SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST, CONDITION_ALWAYS, 248,
+     0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
+    {SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA, CONDITION_ALWAYS, 136, 0, 304,
      FACING_SOUTH, 0, 32, 32, 272, 544, 0},
-    {SUHALLA_GATE_1_FROM_SUHALLA_GATE_2_EAST, CONDITION_ALWAYS, 360, 0, 296,
-     FACING_EAST, 0, 336, 32, 736, 496, 0},
-    {SUHALLA_GATE_1_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 664, 0, 424,
+    {SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST, CONDITION_ALWAYS, 360,
+     0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
+    {SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 664, 0, 424,
      FACING_WEST, 0, 336, 32, 736, 496, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaGateEntrances2[] = {
-    {SUHALLA_GATE_2_FROM_SUHALLA_GATE_1_WEST, CONDITION_ALWAYS, 40, 0, 304,
-     FACING_EAST, 0, 16, 32, 416, 480, 0},
+    {SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST, CONDITION_ALWAYS, 40,
+     0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
     {2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0},
     {3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0},
-    {SUHALLA_GATE_2_FROM_SUHALLA_GATE_1_EAST, CONDITION_ALWAYS, 680, 0, 904,
-     FACING_WEST, 0, 16, 608, 720, 1008, 0},
-    {SUHALLA_GATE_2_FROM_GATEWAY_CAVE, CONDITION_ALWAYS, 616, 0, 920,
+    {SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST, CONDITION_ALWAYS, 680,
+     0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
+    {SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE, CONDITION_ALWAYS, 616, 0, 920,
      FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaGateEntrances3[] = {
-    {GATEWAY_CAVE_FROM_SUHALLA_GATE_2, CONDITION_ALWAYS, 72, 0, 264,
+    {GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW, CONDITION_ALWAYS, 72, 0, 264,
      FACING_NORTH, 0, 24, 24, 280, 256, 0},
     {2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0},
     {3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
@@ -538,31 +545,37 @@ struct SceneEntrance gSuhallaGateEntrances3[] = {
 };
 
 u32 gSuhallaGateExits[] = {
-    SCENE_EXITS(SuhallaGate1),
-    SCENE_EXIT(SUHALLA_GATE_1_TO_WORLD_MAP_EAST, WorldMap,
-               WORLD_MAP_FROM_SUHALLA_GATE_1_EAST),
-    SCENE_EXIT(SUHALLA_GATE_1_TO_SUHALLA_GATE_2_WEST, SuhallaGate2,
-               SUHALLA_GATE_2_FROM_SUHALLA_GATE_1_WEST),
-    SCENE_EXIT(SUHALLA_GATE_1_TO_LUNPA_SUHALLA, LunpaSuhalla,
-               LUNPA_SUHALLA_FROM_SUHALLA_GATE_1),
-    SCENE_EXIT(SUHALLA_GATE_1_TO_SUHALLA_GATE_2_EAST, SuhallaGate2,
-               SUHALLA_GATE_2_FROM_SUHALLA_GATE_1_EAST),
-    SCENE_EXIT(SUHALLA_GATE_1_TO_WORLD_MAP_WEST, WorldMap,
-               WORLD_MAP_FROM_SUHALLA_GATE_1_WEST),
-    SCENE_EXITS(SuhallaGate2),
-    SCENE_EXIT(SUHALLA_GATE_2_TO_SUHALLA_GATE_1_WEST, SuhallaGate1,
-               SUHALLA_GATE_1_FROM_SUHALLA_GATE_2_WEST),
-    SCENE_EXIT(2, SuhallaGate2, 3),
-    SCENE_EXIT(3, SuhallaGate2, 2),
-    SCENE_EXIT(SUHALLA_GATE_2_TO_SUHALLA_GATE_1_EAST, SuhallaGate1,
-               SUHALLA_GATE_1_FROM_SUHALLA_GATE_2_EAST),
-    SCENE_EXIT(SUHALLA_GATE_2_TO_GATEWAY_CAVE, GatewayCave,
-               GATEWAY_CAVE_FROM_SUHALLA_GATE_2),
+    SCENE_EXITS(SuhallaGateCheckpoint),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_SOUTH),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST, SuhallaGateDew,
+               SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_LUNPA_SUHALLA, LunpaSuhalla,
+               LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST, SuhallaGateDew,
+               SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_EAST),
+    SCENE_EXITS(SuhallaGateDew),
+    SCENE_EXIT(SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST,
+               SuhallaGateCheckpoint,
+               SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST),
+    SCENE_EXIT(SUHALLA_GATE_DEW_WEST_TO_EAST, SuhallaGateDew,
+               SUHALLA_GATE_DEW_EAST_FROM_WEST),
+    SCENE_EXIT(SUHALLA_GATE_DEW_EAST_TO_WEST, SuhallaGateDew,
+               SUHALLA_GATE_DEW_WEST_FROM_EAST),
+    SCENE_EXIT(SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST,
+               SuhallaGateCheckpoint,
+               SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST),
+    SCENE_EXIT(SUHALLA_GATE_DEW_TO_GATEWAY_CAVE, GatewayCave,
+               GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW),
     SCENE_EXITS(GatewayCave),
-    SCENE_EXIT(GATEWAY_CAVE_TO_SUHALLA_GATE_2, SuhallaGate2,
-               SUHALLA_GATE_2_FROM_GATEWAY_CAVE),
-    SCENE_EXIT(2, GatewayCave, 3),
-    SCENE_EXIT(3, GatewayCave, 2),
+    SCENE_EXIT(GATEWAY_CAVE_TO_SUHALLA_GATE_DEW, SuhallaGateDew,
+               SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE),
+    SCENE_EXIT(GATEWAY_CAVE_NORTH_TO_SOUTH, GatewayCave,
+               GATEWAY_CAVE_SOUTH_FROM_NORTH),
+    SCENE_EXIT(GATEWAY_CAVE_SOUTH_TO_NORTH, GatewayCave,
+               GATEWAY_CAVE_NORTH_FROM_SOUTH),
     SCENE_EXIT(GATEWAY_CAVE_TO_WORLD_MAP, WorldMap,
                WORLD_MAP_FROM_GATEWAY_CAVE),
     SCENE_EXITS_END,
@@ -620,8 +633,8 @@ struct ScenePlacement gSuhallaGatePlacements1AfterAudience[] = {
 
 struct SceneEvent gSuhallaGateEventsOther[] = {
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveForWorldMap) },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_1_TO_SUHALLA_GATE_2_WEST },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_1_TO_SUHALLA_GATE_2_EAST },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveForWorldMap) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterHouse) },
     { EVENT_TOUCH, 10, FLAG_BABI_SPOKE_AFTER_COLOSSO, EVENT_SCRIPT(Event_GuardsBlockPassage) },
@@ -640,11 +653,13 @@ struct SceneEvent gSuhallaGateEventsOther[] = {
 // clang-format on
 
 struct SceneEvent gSuhallaGateEvents2[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, SUHALLA_GATE_2_TO_SUHALLA_GATE_1_WEST},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+     SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_2_TO_SUHALLA_GATE_1_EAST},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, SUHALLA_GATE_2_TO_GATEWAY_CAVE},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS,
+     SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS, SUHALLA_GATE_DEW_TO_GATEWAY_CAVE},
     {EVENT_TALK, ACTOR_DEW, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FightDjinni)},
     {0xc413, 100, 0xfb4, FIND_ITEM(ITEM_MINT)},
     {0x413, 100, 0xfb4, FIND_ITEM(ITEM_MINT)},
@@ -653,7 +668,7 @@ struct SceneEvent gSuhallaGateEvents2[] = {
 };
 
 struct SceneEvent gSuhallaGateEvents3[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, GATEWAY_CAVE_TO_SUHALLA_GATE_2},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, GATEWAY_CAVE_TO_SUHALLA_GATE_DEW},
     {0x31, 2, CONDITION_ALWAYS, 2},
     {0x21, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, GATEWAY_CAVE_TO_WORLD_MAP},

@@ -317,20 +317,40 @@ extern char SceneId_GondowanCaveRiver;
 /// ★ Named from its area name: Gondowan Cave
 extern char SceneId_GondowanCave;
 extern char SceneId_LunpaFortressGates;
-extern char SceneId_LunpaFortress1;
-extern char SceneId_LunpaFortress2;
-extern char SceneId_LunpaFortress3;
-extern char SceneId_LunpaFortress4;
-extern char SceneId_SuhallaDesert1;
-extern char SceneId_SuhallaDesert2;
-extern char SceneId_SuhallaDesert3;
+/// ★ Named from what the player sees: the fortress floor inside its door, whose
+/// staircases climb to the floor above (its render)
+extern char SceneId_LunpaFortressGroundFloor;
+/// ★ Named from what the player sees: the floor reached up the fortress's two
+/// staircases, where Donpa sleeps (its render)
+extern char SceneId_LunpaFortressUpperFloor;
+/// ★ Named from the game: "Hammet's down in that treacherous cave."
+/// (MsgLunpaHammetInCave)
+extern char SceneId_LunpaFortressCave;
+/// ★ Named from the game: "Toadonpa" (MsgEnemyName)
+extern char SceneId_LunpaFortressToadonpa;
+/// ★ Named from what the player sees: the northern half of the desert, entered
+/// from the world map just south of Suhalla (its render)
+extern char SceneId_SuhallaDesertNorth;
+/// ★ Named from what the player sees: the southern half of the desert, whose
+/// way out leads on toward Suhalla Gate (its render)
+extern char SceneId_SuhallaDesertSouth;
+/// ★ Named from what the player sees: two caves under the desert, reached
+/// through its two cave mouths (its render)
+extern char SceneId_SuhallaDesertCaves;
 extern char SceneId_Suhalla;
 extern char SceneId_SuhallaInteriors;
-extern char SceneId_SuhallaGate1;
-extern char SceneId_SuhallaGate2;
+/// ★ Named from the game: "Only those with travel papers may pass through."
+/// (MsgSuhallaTravelPapersRequired)
+extern char SceneId_SuhallaGateCheckpoint;
+/// ★ Named from the game: "Dew" (MsgDjinnName)
+extern char SceneId_SuhallaGateDew;
 extern char SceneId_GatewayCave;
-extern char SceneId_TunnelRuins1;
-extern char SceneId_TunnelRuins2;
+/// ★ Named from the game: "Ye who seek to climb Venus Lighthouse must seek the
+/// lady's leave." (MsgTunnelRuinsStatueSpeaksIsaacSoulYe)
+extern char SceneId_TunnelRuinsGreatStatue;
+/// ★ Named from what the player sees: five coloured statues of a woman standing
+/// before a door (its render)
+extern char SceneId_TunnelRuinsLadyStatues;
 extern char SceneId_BabiLighthouse1;
 extern char SceneId_BabiLighthouse2;
 extern char SceneId_BabiLighthouseEntry;

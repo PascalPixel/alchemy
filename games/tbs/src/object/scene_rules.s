@@ -148,9 +148,9 @@ gScene_InteractionRuleTable:
 	group_cue 50, -1, -1, 25
 	group_cue 51, -1, -1, 26
 	group_cue 52, -1, -1, 24
-	scene_cue TunnelRuins2, 1, -1, 28
-	scene_cue TunnelRuins2, 2, -1, 28
-	scene_cue TunnelRuins2, 3, -1, 28
+	scene_cue TunnelRuinsLadyStatues, 1, -1, 28
+	scene_cue TunnelRuinsLadyStatues, 2, -1, 28
+	scene_cue TunnelRuinsLadyStatues, 3, -1, 28
 	group_cue 53, -1, -1, 29
 	group_cue 54, -1, -1, 28
 	group_cue 55, -1, 0x9a7, 1
@@ -268,9 +268,9 @@ gScene_AreaNameRules:
 	group_name 51, -1, 81
 	scene_name GatewayCave, -1, 82
 	group_name 52, -1, 83
-	scene_name TunnelRuins2, 1, 84
-	scene_name TunnelRuins2, 2, 84
-	scene_name TunnelRuins2, 3, 84
+	scene_name TunnelRuinsLadyStatues, 1, 84
+	scene_name TunnelRuinsLadyStatues, 2, 84
+	scene_name TunnelRuinsLadyStatues, 3, 84
 	group_name 53, -1, 85
 	scene_name BabiLighthouseEntry, -1, 86
 	scene_name RoadToBabiLighthouse, -1, 87
@@ -344,14 +344,14 @@ gBattle_BackdropScenes:
 	backdrop TolbiShipInteriorsBackdrop, TolbiShipInteriors
 	backdrop ColossoBackdrop, ColosseumAzartMatch, ColosseumSatrageMatch, ColosseumNavampaMatch, LinkLobby
 	backdrop AltmillerCaveBackdrop, AltmillerCaveEntrance, AltmillerCaveBabi, AltmillerCaveVialChest, AltmillerCaveSquall, AltmillerCaveCookieChest, AltmillerCaveDraught
-	backdrop AltmillerCaveBackdrop, LunpaFortress1, LunpaFortress2, LunpaFortress3, LunpaFortress4
-	backdrop SuhallaDesertBackdrop, SuhallaDesert1, SuhallaDesert2
+	backdrop AltmillerCaveBackdrop, LunpaFortressGroundFloor, LunpaFortressUpperFloor, LunpaFortressCave, LunpaFortressToadonpa
+	backdrop SuhallaDesertBackdrop, SuhallaDesertNorth, SuhallaDesertSouth
 	backdrop CrossboneIsleCaveBackdrop, CrossboneIsleFirstFloor, CrossboneIsleSecondFloor, CrossboneIsleThirdFloor, CrossboneIsleFourthFloor, CrossboneIsleFifthFloor, CrossboneIsleSixthFloor, CrossboneIsleSeventhFloor, CrossboneIsleEighthFloor, CrossboneIsleNinthFloor
 	backdrop PirateShipBackdrop, PirateShip
-	backdrop SuhallaGateBackdrop, SuhallaGate1, SuhallaGate2
+	backdrop SuhallaGateBackdrop, SuhallaGateCheckpoint, SuhallaGateDew
 	backdrop GomaCaveBackdrop, GatewayCave
 	backdrop BabiLighthouseBackdrop, BabiLighthouseEntry, BabiLighthouse2, BabiLighthouse1, CrossboneIsleBane
-	backdrop TunnelRuinsBackdrop, TunnelRuins1, TunnelRuins2
+	backdrop TunnelRuinsBackdrop, TunnelRuinsGreatStatue, TunnelRuinsLadyStatues
 	backdrop InteriorBackdrop, Lalivero, LaliveroInteriors1, LaliveroInteriors2
 	backdrop VenusLighthouseBackdrop, VenusLighthouse1, VenusLighthouse2, VenusLighthouse3, VenusLighthouse4, VenusLighthouse5
 	backdrop VenusLighthouseAerieBackdrop, VenusLighthouseAerie

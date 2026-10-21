@@ -152,16 +152,16 @@ gBattle_LocationRules:
 	location GondowanCave, 2, -1, 0, 76
 	location GondowanCave, 3, -1, 0, 76
 	location GondowanCave, -1, -1, 1, 73
-	location LunpaFortress3, 1, -1, 1, 77
-	location LunpaFortress3, 2, -1, 1, 77
-	location LunpaFortress3, -1, -1, 1, 78
-	location LunpaFortress4, 1, -1, 1, 79
-	location LunpaFortress4, 2, -1, 1, 79
-	location SuhallaDesert1, -1, -1, 1, 82
-	location SuhallaDesert2, -1, -1, 1, 83
-	location SuhallaGate2, 1, -1, 1, 85
-	location SuhallaGate2, 2, -1, 1, 85
-	location SuhallaGate2, -1, -1, 1, 86
+	location LunpaFortressCave, 1, -1, 1, 77
+	location LunpaFortressCave, 2, -1, 1, 77
+	location LunpaFortressCave, -1, -1, 1, 78
+	location LunpaFortressToadonpa, 1, -1, 1, 79
+	location LunpaFortressToadonpa, 2, -1, 1, 79
+	location SuhallaDesertNorth, -1, -1, 1, 82
+	location SuhallaDesertSouth, -1, -1, 1, 83
+	location SuhallaGateDew, 1, -1, 1, 85
+	location SuhallaGateDew, 2, -1, 1, 85
+	location SuhallaGateDew, -1, -1, 1, 86
 	location GatewayCave, 1, -1, 1, 87
 	location GatewayCave, 2, -1, 1, 87
 	location GatewayCave, -1, -1, 1, 88
@@ -179,27 +179,27 @@ gBattle_LocationRules:
 	location BabiLighthouseEntry, -1, -1, 1, 91
 	location BabiLighthouse2, -1, -1, 1, 91
 	location BabiLighthouse1, -1, -1, 1, 91
-	location TunnelRuins2, 1, -1, 1, 91
-	location TunnelRuins2, 2, -1, 1, 91
-	location TunnelRuins2, 3, -1, 1, 91
-	location TunnelRuins1, 1, -1, 1, 92
-	location TunnelRuins1, 2, -1, 1, 92
-	location TunnelRuins1, 5, -1, 1, 92
-	location TunnelRuins1, 6, -1, 1, 92
-	location TunnelRuins1, 7, -1, 1, 92
-	location TunnelRuins1, 14, -1, 1, 92
-	location TunnelRuins1, 15, -1, 1, 92
-	location TunnelRuins1, 16, -1, 1, 92
-	location TunnelRuins1, 17, -1, 1, 92
-	location TunnelRuins1, 18, -1, 1, 92
-	location TunnelRuins2, 8, -1, 1, 92
-	location TunnelRuins2, 9, -1, 1, 92
-	location TunnelRuins2, 10, -1, 1, 92
-	location TunnelRuins2, 11, -1, 1, 92
-	location TunnelRuins2, 12, -1, 1, 93
-	location TunnelRuins2, 15, -1, 1, 93
-	location TunnelRuins2, 16, -1, 1, 93
-	location TunnelRuins2, 17, -1, 1, 93
+	location TunnelRuinsLadyStatues, 1, -1, 1, 91
+	location TunnelRuinsLadyStatues, 2, -1, 1, 91
+	location TunnelRuinsLadyStatues, 3, -1, 1, 91
+	location TunnelRuinsGreatStatue, 1, -1, 1, 92
+	location TunnelRuinsGreatStatue, 2, -1, 1, 92
+	location TunnelRuinsGreatStatue, 5, -1, 1, 92
+	location TunnelRuinsGreatStatue, 6, -1, 1, 92
+	location TunnelRuinsGreatStatue, 7, -1, 1, 92
+	location TunnelRuinsGreatStatue, 14, -1, 1, 92
+	location TunnelRuinsGreatStatue, 15, -1, 1, 92
+	location TunnelRuinsGreatStatue, 16, -1, 1, 92
+	location TunnelRuinsGreatStatue, 17, -1, 1, 92
+	location TunnelRuinsGreatStatue, 18, -1, 1, 92
+	location TunnelRuinsLadyStatues, 8, -1, 1, 92
+	location TunnelRuinsLadyStatues, 9, -1, 1, 92
+	location TunnelRuinsLadyStatues, 10, -1, 1, 92
+	location TunnelRuinsLadyStatues, 11, -1, 1, 92
+	location TunnelRuinsLadyStatues, 12, -1, 1, 93
+	location TunnelRuinsLadyStatues, 15, -1, 1, 93
+	location TunnelRuinsLadyStatues, 16, -1, 1, 93
+	location TunnelRuinsLadyStatues, 17, -1, 1, 93
 	location VenusLighthouse2, 19, -1, 1, 95
 	location VenusLighthouse2, 20, -1, 1, 95
 	location VenusLighthouse2, -1, -1, 0, 94

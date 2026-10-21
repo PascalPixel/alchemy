@@ -9,10 +9,13 @@
 /// party since, decides most of the scene.
 ///
 /// The scene is six rooms, the six camera boxes of its entrance table. The
-/// party comes in from Kolima Forest (KolimaForestTree, scene 44) at entrance
-/// 1 and leaves by exit 1; exits 2 to 9 lead out to Tret Tree's other scene
-/// (TretTreeBranch, scene 46), and exits 10 to 15 lead from room to room,
-/// three of them (10, 12 and 14) through regions 28 to 36 pixels up.
+/// party comes in from Kolima Forest (KolimaForestTree, scene 44) at
+/// TRET_TREE_INTERIORS_FROM_KOLIMA_FOREST_TREE and leaves by
+/// TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE; eight exits, from
+/// TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST to _NORTH_NORTHEAST,
+/// lead out to Tret Tree's other scene (TretTreeBranch, scene 46), and exits 10
+/// to 15 lead from room to room, three of them (10, 12 and 14) through regions
+/// 28 to 36 pixels up.
 ///
 /// Webs hold cocoons, each a touch cell (21 to 29, 31, 32 and 50 to 59) with
 /// a temporary flag of its own (FLAG_SCENE_TEMP_00 to _14). The first step on
@@ -33,15 +36,15 @@
 /// lines. Walking up to him (touch cell 40, while FLAG_TRET_DEFEATED is clear)
 /// runs Event_FightTret: he roars, the party gathers in front of him, and the
 /// evil within him scorns them before the battle with Tret. The battle returns
-/// to entrance 19, where the setup plays the conversation after it: a passage
-/// opens in his room, he comes to himself, thanks the party and asks whether
-/// they need something, realises that he turned the people of Kolima into
-/// trees ("I turned the people of Kolima into trees?"), tries to free them
-/// but cannot reach that far, and his face sinks away as the party resolve to
-/// heal him. Only then is FLAG_TRET_DEFEATED set; in Kolima Forest it lets
-/// Hermes' Water heal Tret and lift the curse. Once it is set, the setup
-/// moves both Tret actors away, opens that passage and redraws cells near
-/// entrance 20; before, it keeps the passage closed.
+/// to TRET_TREE_INTERIORS_AFTER_FIGHT_TRET, where the setup plays the
+/// conversation after it: a passage opens in his room, he comes to himself,
+/// thanks the party and asks whether they need something, realises that he
+/// turned the people of Kolima into trees ("I turned the people of Kolima into
+/// trees?"), tries to free them but cannot reach that far, and his face sinks
+/// away as the party resolve to heal him. Only then is FLAG_TRET_DEFEATED set;
+/// in Kolima Forest it lets Hermes' Water heal Tret and lift the curse. Once it
+/// is set, the setup moves both Tret actors away, opens that passage and
+/// redraws cells near entrance 20; before, it keeps the passage closed.
 ///
 /// The setup also saves the background palettes and starts a slow tint that
 /// shifts them every 32 frames (not after the battle until the conversation
@@ -307,7 +310,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Walking up to Tret in Tret Tree (touch cell 40, while FLAG_TRET_DEFEATED is
 /// clear): he roars, the party gathers in front of him, and the evil within
 /// him scorns them before the battle with Tret starts. "Hm... HROOOM!!!" and
-/// "You hoped to find my kindly self?" The battle returns to entrance 19.
+/// "You hoped to find my kindly self?" The battle returns to
+/// TRET_TREE_INTERIORS_AFTER_FIGHT_TRET.
 static void Event_FightTret(void) {
   s32 hasMia;
   struct FieldActor *leader;
@@ -381,7 +385,8 @@ static void Event_FightTret(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gEventWork->transitionFrames = 64;
   Battle_SetStart(3);
-  Event_SetNextDestination((s32)&SceneId_TretTreeInteriors, 19);
+  Event_SetNextDestination((s32)&SceneId_TretTreeInteriors,
+                           TRET_TREE_INTERIORS_AFTER_FIGHT_TRET);
   Field_RequestBattleFromEncounterTable(36, 0);
   EV_END();
 }
@@ -628,7 +633,7 @@ static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
 /// redraws the torn cocoons after a battle, sets the map by
 /// FLAG_TRET_DEFEATED, and plays what the entrance calls for: the falls on
 /// from entrances 50, 40, 30 and 20, the landing at entrance 10, or the
-/// conversation after the battle at entrance 19.
+/// conversation after the battle at TRET_TREE_INTERIORS_AFTER_FIGHT_TRET.
 s32 TretTreeInteriors_EnterRoom(void) {
   struct FieldActor *tret;
   struct FieldActor *actor;
@@ -684,7 +689,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   // Entrances 20, 30, 40 and 50: the leader falls on through the room, to
   // the entrance numbered ten lower. Entrance 10: the leader lands in a cloud
   // of dust in front of Tret.
-  // Entrance 19: back from the battle with Tret.
+  // TRET_TREE_INTERIORS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
     Engine_EventOpenScreen();
     OBJ_MODE(selectedActorId, 27);
@@ -1292,15 +1297,23 @@ struct ScenePlacement gTretTreeInteriorsPlacements[] = {
 // clang-format on
 
 struct SceneEvent gTretTreeInteriorsEvents[] = {
-    {0x4401, 1, CONDITION_ALWAYS, 1},
-    {0x8401, 2, CONDITION_ALWAYS, 2},
-    {0x401, 3, CONDITION_ALWAYS, 3},
-    {0x4401, 4, CONDITION_ALWAYS, 4},
-    {0x401, 5, CONDITION_ALWAYS, 5},
-    {0x8401, 6, CONDITION_ALWAYS, 6},
-    {0x4401, 7, CONDITION_ALWAYS, 7},
-    {0x8401, 8, CONDITION_ALWAYS, 8},
-    {0x401, 9, CONDITION_ALWAYS, 9},
+    {0x4401, 1, CONDITION_ALWAYS, TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE},
+    {0x8401, 2, CONDITION_ALWAYS,
+     TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST},
+    {0x401, 3, CONDITION_ALWAYS,
+     TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST},
+    {0x4401, 4, CONDITION_ALWAYS,
+     TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH},
+    {0x401, 5, CONDITION_ALWAYS,
+     TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTHEAST},
+    {0x8401, 6, CONDITION_ALWAYS,
+     TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTHWEST},
+    {0x4401, 7, CONDITION_ALWAYS,
+     TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH},
+    {0x8401, 8, CONDITION_ALWAYS,
+     TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST},
+    {0x401, 9, CONDITION_ALWAYS,
+     TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST},
     {EVENT_EXIT, 11, CONDITION_ALWAYS, 11},
     {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
     {EVENT_EXIT, 15, CONDITION_ALWAYS, 15},

@@ -15,9 +15,10 @@
 /// - Imil (Imil, scene 50), the village. A man shivers and sneezes in the
 ///   snow, waiting for Mia, and a child counts out his exercises against the
 ///   cold. Six doors (triggers 51 to 56) open into the houses, the shops, the
-///   inn and the Sanctum (scene 51), exits 11 and 12 lead out to the world
-///   map, and the way north (trigger 4) leads into Imil Falls Cave; coming
-///   back out of it (entrance 9) the leader walks down into the village. Two
+///   inn and the Sanctum (scene 51), IMIL_TO_WORLD_MAP_SOUTH and
+///   IMIL_TO_WORLD_MAP_NORTH lead out to the world map, and the way north
+///   (trigger 4) leads into Imil Falls Cave; coming back out of it
+///   (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down into the village. Two
 ///   callbacks run while the party is here: one makes puffs rise at five
 ///   places, staggered over each second, and one sets the map layer the
 ///   leader walks on from where he stands (layer 0 near the middle of the
@@ -27,19 +28,18 @@
 ///   which stays where it lands at cell (15, 7) for the rest of the visit
 ///   (a temporary flag). Searching finds 9 coins, a Vial and a Lucky Medal.
 /// - Imil (ImilInteriors, scene 51), inside the houses, the shops and the inn;
-/// by
-///   entrance 7 the same scene is the Imil Sanctum. While the epidemic lasts
-///   the weapon and armor sellers are sick: searching their counters pans the
-///   camera to them, and they say the shop is closed. The item seller's
-///   daughter minds that shop for her mother. In the Sanctum Mia's two
-///   apprentices keep her place: one offers healing across the counter, the
-///   first time saying she can act as the party's healer
+///   by IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST the same scene is the Imil
+///   Sanctum. While the epidemic lasts the weapon and armor sellers are sick:
+///   searching their counters pans the camera to them, and they say the shop is
+///   closed. The item seller's daughter minds that shop for her mother. In the
+///   Sanctum Mia's two apprentices keep her place: one offers healing across
+///   the counter, the first time saying she can act as the party's healer
 ///   (FLAG_IMIL_APPRENTICE_OFFERED_HEALING), and the other asks whether the
 ///   party has visited the old couple who live near the entrance of town,
 ///   where Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE). In the old couple's
-///   house (entrance 1) the old man moans for help, and talking to him sends
-///   his wife hurrying to fetch Mia. Either sets flag 0x82c, which changes the
-///   couple's lines and where they stand.
+///   house (IMIL_INTERIORS_HOUSE_SOUTHWEST) the old man moans for help, and
+///   talking to him sends his wife hurrying to fetch Mia. Either sets flag
+///   0x82c, which changes the couple's lines and where they stand.
 ///
 ///   Mia's healing is this scene's first scripted sequence. Entering the old
 ///   couple's house once the apprentice has told the party where Mia went,
@@ -48,7 +48,7 @@
 ///   `Was that... the lighthouse?` She runs out, and the party follows her
 ///   (FLAG_IMIL_MET_MIA); at the lighthouse she goes on with them. Afterwards
 ///   the old man lies in bed feeling much better, and talking or Mind Read
-///   across the bed (actor 10) reaches him.
+///   across the bed (ACTOR_OLD_MAN_BEDSIDE) reaches him.
 ///
 ///   Once Saturos is beaten the sellers are well and open their shops across
 ///   the counters. The second sequence is Mia's farewell, the first time the
@@ -103,28 +103,43 @@
 #include "character_ids.h"
 #include "songs.h"
 
-/// Imil's two scenes share actor numbers; each is named in the scene it is
-/// proved.
-enum ImilActor {
-  // The village (Imil)
-  ACTOR_COLD_VILLAGER = 8, ///< shivering and sneezing in the snow
-  ACTOR_GREETER = 9,
-  ACTOR_COUNTING_CHILD = 10,
-  ACTOR_SNOWMAN = 11,
-  // The houses and the Sanctum (ImilInteriors)
-  ACTOR_OLD_WOMAN = 8, ///< the old couple's house
-  ACTOR_OLD_MAN = 9,
+/// The village's actors (Imil), numbering gImil_TownPlacements' rows, and
+/// gImil_TownPlacementsCured's, from ACTOR_FIRST_PLACED.
+enum ImilVillageActor {
+  ACTOR_COLD_VILLAGER = ACTOR_FIRST_PLACED, ///< shivering and sneezing
+  /// "Hi! Are you new in Imil?"
+  ACTOR_GREETER,
+  ACTOR_COUNTING_CHILD, ///< "One, two, three, four!"
+  ACTOR_SNOWMAN         ///< Move pushes it
+};
+
+/// The actors of the houses and the Sanctum (ImilInteriors), numbering
+/// gImil_InteriorPlacements' rows from ACTOR_FIRST_PLACED; the rows of Garet,
+/// Ivan and Mia take those characters' own slots.
+enum ImilInteriorsActor {
+  ACTOR_OLD_WOMAN = ACTOR_FIRST_PLACED, ///< the old couple's house
+  ACTOR_OLD_MAN,
   /// Beside the old man's bed: once Mia has healed him, talking or Mind Read
   /// here reaches him.
-  ACTOR_OLD_MAN_BEDSIDE = 10,
-  ACTOR_WEAPON_MERCHANT = 12,
-  ACTOR_ARMOR_MERCHANT = 13,
-  ACTOR_ITEM_SHOP_CHILD = 14, ///< minds the shop while the mother is sick
-  ACTOR_ITEM_MERCHANT = 15,
-  ACTOR_INNKEEPER = 16,
-  ACTOR_RESTAURANT_OWNER = 18,
-  ACTOR_APPRENTICE = 19, ///< Mia's apprentices; the first keeps the Sanctum
-  ACTOR_SECOND_APPRENTICE = 20
+  ACTOR_OLD_MAN_BEDSIDE,
+  /// Shivers while the epidemic lasts. "Cough... The epidemic has hit almost
+  /// everyone in Imil. I'm sick, too."
+  ACTOR_SICK_VILLAGER,
+  ACTOR_WEAPON_MERCHANT,
+  ACTOR_ARMOR_MERCHANT,
+  ACTOR_ITEM_SHOP_CHILD, ///< minds the shop while the mother is sick
+  ACTOR_ITEM_MERCHANT,
+  ACTOR_INNKEEPER,
+  /// "We're the only inn that stays open in winter, since guests are so few.
+  /// We'll wait on you hand and foot, so please stay a while!"
+  ACTOR_INN_ATTENDANT,
+  ACTOR_RESTAURANT_OWNER,
+  ACTOR_APPRENTICE, ///< Mia's apprentices; the first keeps the Sanctum
+  ACTOR_SECOND_APPRENTICE,
+  /// Sprite 0xdf in the old couple's house, kept under the party as altin.c
+  /// keeps its ground sprites; Vault's crate (vault_interiors.c) uses the same
+  /// sprite. XXX: what it shows here; a picture of the house would settle it.
+  ACTOR_GROUND_SPRITE
 };
 
 /// The village's own temporary flags, which last until the party leaves the
@@ -155,7 +170,8 @@ static void Imil_RunIceSlide(void);
 /// The position (x, y, z) the unused arc and sway effects move around.
 extern s32 gImil_ArcOrigin[];
 
-/// A sick person shivers: a quick squash, then a pause, longer for the old man.
+/// A sick person shivers: a quick squash, then a pause, longer for
+/// ACTOR_SICK_VILLAGER, whose work Imil_Initialize sets.
 static s32 Imil_UpdateShiver(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   switch (actor->timer) {
@@ -199,8 +215,9 @@ const struct SceneRegion *Imil_GetRegions(void) { return NULL; }
 
 const u32 *Imil_GetExits(void) { return gImil_Exits; }
 
-/// Once Saturos is beaten at Mercury Lighthouse, the villagers are well again
-/// and the old man is up and about.
+/// Once Saturos is beaten at Mercury Lighthouse, the villagers are well again:
+/// inside, the sick villager is up and wandering, and the restaurant owner
+/// keeps facing the party after talking.
 const struct ScenePlacement *Imil_GetPlacements(void) {
   struct ScenePlacement *script;
 
@@ -208,12 +225,15 @@ const struct ScenePlacement *Imil_GetPlacements(void) {
     script = gImil_InteriorPlacements;
     FieldScene_PrepareActors(script);
     if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-      // A byte view: as script[10].talkFacing, the row is addressed first.
-      ((u8 *)script)[10 * sizeof(struct ScenePlacement) +
-                     offsetof(struct ScenePlacement, talkFacing)] = 0;
-      script[3].x = PIXELS(182);
-      script[3].z = PIXELS(564);
-      script[3].behavior = 2;
+      // A byte view: written as script[row].talkFacing, the row's address is
+      // formed first.
+      ((u8 *)script)[(ACTOR_RESTAURANT_OWNER - ACTOR_FIRST_PLACED) *
+                         sizeof(struct ScenePlacement) +
+                     offsetof(struct ScenePlacement, talkFacing)] =
+          TALK_FACE_PARTY;
+      script[ACTOR_SICK_VILLAGER - ACTOR_FIRST_PLACED].x = PIXELS(182);
+      script[ACTOR_SICK_VILLAGER - ACTOR_FIRST_PLACED].z = PIXELS(564);
+      script[ACTOR_SICK_VILLAGER - ACTOR_FIRST_PLACED].behavior = ACTOR_WANDER;
     }
     return script;
   }
@@ -248,8 +268,8 @@ static void Imil_TalkToColdVillager(void) {
   }
   {
     s32 val = 0;
-    s32 mode = 8;
-    Engine_EventShowMessage(mode, val);
+    s32 speaker = ACTOR_COLD_VILLAGER;
+    Engine_EventShowMessage(speaker, val);
   }
   Engine_EventEnd();
 }
@@ -324,7 +344,7 @@ static void Imil_TalkToOldMan(void) {
 
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     Engine_EventBegin();
-    Actor_FaceActor(ACTOR_OLD_MAN, 0, 0);
+    Actor_FaceActor(ACTOR_OLD_MAN, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgMercuryReallySayDie);
     Event_AskYesNo(ACTOR_OLD_MAN, 0);
@@ -474,8 +494,8 @@ static void Imil_ReadApprenticeMind(void) {
 }
 
 /// Walking north into one of Imil's six doors (triggers 51 to 56): everyone
-/// stops, the door opens and the leader walks in; the Sanctum's door (6) has
-/// its own sound and a slower walk.
+/// stops, the door opens and the leader walks in; the Sanctum's door
+/// (IMIL_TO_IMIL_INTERIORS_NORTHEAST) has its own sound and a slower walk.
 static void Imil_OpenDoorAndExit(void) {
   struct EventWork *event;
   struct FieldActor *actor;
@@ -484,14 +504,14 @@ static void Imil_OpenDoorAndExit(void) {
 
   event = gEventWork;
   Engine_EventBegin();
-  for (i = 8; i <= 65; i++) {
+  for (i = ACTOR_FIRST_PLACED; i <= 65; i++) {
     actor = Object_GetById(i);
     if (actor != NULL) {
       actor->motionFlags = 0;
     }
   }
   exit = (s16)(event->touchedTrigger - 50);
-  if (exit == 6) {
+  if (exit == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
     Engine_AudioPlayCue(SE_188);
   } else {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -504,7 +524,7 @@ static void Imil_OpenDoorAndExit(void) {
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (exit == 6) {
+  if (exit == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
@@ -532,7 +552,7 @@ static void Imil_TalkToWeaponMerchant(void) {
       return;
     }
     Engine_EventBegin();
-    Engine_ActorFaceActor(ACTOR_WEAPON_MERCHANT, 0, 0);
+    Engine_ActorFaceActor(ACTOR_WEAPON_MERCHANT, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgMercuryCatchUpLostOpportunity);
     Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
@@ -568,7 +588,7 @@ static void Imil_TalkToArmorMerchant(void) {
       return;
     }
     Engine_EventBegin();
-    Engine_ActorFaceActor(ACTOR_ARMOR_MERCHANT, 0, 0);
+    Engine_ActorFaceActor(ACTOR_ARMOR_MERCHANT, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgMercuryShameStoreClosed);
     Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
@@ -604,7 +624,7 @@ static void Imil_TalkToItemMerchant(void) {
       return;
     }
     Engine_EventBegin();
-    Engine_ActorFaceActor(ACTOR_ITEM_MERCHANT, 0, 0);
+    Engine_ActorFaceActor(ACTOR_ITEM_MERCHANT, ACTOR_PARTY_LEADER, 0);
     Engine_EventSetMessage(MsgMercuryRecoveredThanksFountain);
     Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
     Actor_FaceDirection(ACTOR_ITEM_MERCHANT, FACING_SOUTH, 0);
@@ -620,7 +640,7 @@ static void Imil_TalkToItemMerchant(void) {
       IMIL_OPEN_SHOP(12, ACTOR_ITEM_SHOP_CHILD);
       Engine_EventEnd();
     } else {
-      Engine_ActorFaceActor(ACTOR_ITEM_SHOP_CHILD, 0, 10);
+      Engine_ActorFaceActor(ACTOR_ITEM_SHOP_CHILD, ACTOR_PARTY_LEADER, 10);
       Engine_EventSetMessage(MsgMercuryDadLumberjack);
       Engine_EventShowMessage(ACTOR_ITEM_SHOP_CHILD, 0);
       Actor_FaceDirection(ACTOR_ITEM_SHOP_CHILD, FACING_SOUTH + FACING_STEP,
@@ -720,19 +740,19 @@ s32 Imil_Initialize(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     entrance = gGameState.entrance;
     if (entrance == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
-      Engine_ActorSetChildValue(21, 15);
-      Object_GetById(21)->collisionFlags |= 8;
-      Engine_ActorSetSpritePriority(21, 1);
+      Engine_ActorSetChildValue(ACTOR_GROUND_SPRITE, 15);
+      Object_GetById(ACTOR_GROUND_SPRITE)->collisionFlags |= 8;
+      Engine_ActorSetSpritePriority(ACTOR_GROUND_SPRITE, 1);
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Map_CopyCellAttributes(10, 7, 1, 1, 10, 8);
         Map_CopyCellsTo(3, 125, 9, 69, 3, 3);
         Engine_MapRedraw();
         Engine_TaskWait(1);
         Actor_SetBuiltinAction(ACTOR_OLD_WOMAN, 2);
-        Engine_ActorSetPosition(10, 0, 0);
+        Engine_ActorSetPosition(ACTOR_OLD_MAN_BEDSIDE, 0, 0);
       } else if (Engine_GameFlagIsSet(0x82c) &&
                  Engine_GameFlagIsSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
-        Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MAN_BEDSIDE), 0);
         Engine_ActorSetPosition(ACTOR_OLD_MAN, PIXELS(174), PIXELS(164));
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MAN), 0);
         Engine_ActorSetAnimation(ACTOR_OLD_MAN, 5);
@@ -758,8 +778,8 @@ s32 Imil_Initialize(void) {
       }
     } else if (entrance == IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST) {
       if (!Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
-        Object_GetById(11)->work = 1;
-        Actor_SetActionScript(11, gImil_ShiverScript);
+        Object_GetById(ACTOR_SICK_VILLAGER)->work = 1;
+        Actor_SetActionScript(ACTOR_SICK_VILLAGER, gImil_ShiverScript);
       }
     } else if (entrance == IMIL_INTERIORS_HOUSE_NORTHEAST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -846,11 +866,11 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_WalkTo(GARET, 150, 234);
   Actor_WalkToAndWait(IVAN, 134, 234);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
-  FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 3,
+  FieldObject_SetTargetAndCallback(
+      ACTOR_PARTY_LEADER, ACTOR_LINK_KEEP_MOTION | MIA, gImil_FaceTargetScript);
+  FieldObject_SetTargetAndCallback(GARET, ACTOR_LINK_KEEP_MOTION | MIA,
                                    gImil_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(1, ACTOR_LINK_KEEP_MOTION | 3,
-                                   gImil_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(2, ACTOR_LINK_KEEP_MOTION | 3,
+  FieldObject_SetTargetAndCallback(IVAN, ACTOR_LINK_KEEP_MOTION | MIA,
                                    gImil_FaceTargetScript);
   Engine_CameraWaitForMove();
   table = gImil_BobScript;
@@ -1049,9 +1069,9 @@ static void Imil_OldManBobsAndSpeaks(void) {
 static void Imil_MiaCastsPlyOnOldMan(void) {
   u8 *work;
 
-  Engine_PsynergyBegin(93, 1);
+  Engine_PsynergyBegin(ABILITY_PLY, 1);
   work = gEffectWork;
-  Engine_PsynergySetTarget(3, 9);
+  Engine_PsynergySetTarget(MIA, ACTOR_OLD_MAN);
   *(s32 *)(work + 36) = (s32)Imil_OldManBobsAndSpeaks;
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
@@ -1207,7 +1227,7 @@ static void Imil_PlaceMovedSnowman(void) {
 }
 
 /// Walking into the way north out of Imil (trigger 4): the leader faces north
-/// and goes into Imil Falls Cave (exit 8).
+/// and goes into Imil Falls Cave (IMIL_TO_IMIL_FALLS_CAVE).
 static void Imil_LeaveNorth(void) {
   struct FieldActor *work;
 
@@ -1217,11 +1237,11 @@ static void Imil_LeaveNorth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(8);
+  Engine_EventRequestExit(IMIL_TO_IMIL_FALLS_CAVE);
 }
 
-/// Coming back out of Imil Falls Cave (entrance 9), the leader walks down into
-/// the village.
+/// Coming back out of Imil Falls Cave (IMIL_FROM_IMIL_FALLS_CAVE), the leader
+/// walks down into the village.
 static void Imil_ArriveFromFallsCave(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
@@ -1272,7 +1292,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
                            10);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 40);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
   Engine_EventWait(20);
   Actor_SetAttachedEffect(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 2);
@@ -1300,7 +1320,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 40);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(MIA, FACING_SOUTHWEST, 80);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 20);
   Actor_FaceDirection(ACTOR_SECOND_APPRENTICE, FACING_NORTHEAST + FACING_STEP,
                       0);
   Actor_FaceDirection(ACTOR_APPRENTICE, FACING_SOUTHWEST + FACING_STEP, 40);
@@ -1319,7 +1339,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 2);
@@ -1327,7 +1347,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
   Engine_ActorSetAnimation(MIA, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_APPRENTICE, 1);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 40);
@@ -1341,7 +1361,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 80);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 80);
   Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 5, 0);
   Actor_ShowEmote(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 5, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_SHAKE_HEAD);
@@ -1350,7 +1370,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
                            20);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 60);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
@@ -1362,7 +1382,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Actor_FaceDirection(MIA, FACING_NORTH, 40);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | MIA, 0, 10);
   Engine_ActorSetAnimation(ACTOR_APPRENTICE, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
   Engine_EventWait(40);
@@ -1755,9 +1775,9 @@ struct ScenePlacement gImil_InteriorPlacements[] = {
 };
 
 struct SceneEvent gImil_TownEvents[] = {
-    { EVENT_EXIT, 60, CONDITION_ALWAYS, 11 },
-    { EVENT_EXIT, 61, CONDITION_ALWAYS, 12 },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_IMIL_MAP_LAYER_0, EVENT_SCRIPT(Imil_PlaceMovedSnowman) },
+    { EVENT_EXIT, 60, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_SOUTH },
+    { EVENT_EXIT, 61, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_NORTH },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SNOWMAN, FLAG_IMIL_MAP_LAYER_0, EVENT_SCRIPT(Imil_PlaceMovedSnowman) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
@@ -1766,17 +1786,17 @@ struct SceneEvent gImil_TownEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
     { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_LeaveNorth) },
     { EVENT_TOUCH, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_StartIceSlide) },
-    { EVENT_TALK, 8, 0x881, EVENT_SCRIPT(Imil_TalkToColdVillager) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImilTheMercuryLighthouseIsShiningMia) },
-    { EVENT_TALK, 9, 0x881, EVENT_SCRIPT(Imil_GreetVisitor) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgImilImilWillBeFineDiseaseIs) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToCountingChild) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(Imil_ReadColdVillagerMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImilMiaWasOnlyInImilTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImilWeveHadALotOfStrangers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImilDontWorryAboutUsMiaWell) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x881, MSGNO(MsgImilPeopleGetSickBecauseTheyStay) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgImilNowThatIveLetMyGuard) },
+    { EVENT_TALK, ACTOR_COLD_VILLAGER, 0x881, EVENT_SCRIPT(Imil_TalkToColdVillager) },
+    { EVENT_TALK, ACTOR_COLD_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgImilTheMercuryLighthouseIsShiningMia) },
+    { EVENT_TALK, ACTOR_GREETER, 0x881, EVENT_SCRIPT(Imil_GreetVisitor) },
+    { EVENT_TALK, ACTOR_GREETER, CONDITION_ALWAYS, MSGNO(MsgImilImilWillBeFineDiseaseIs) },
+    { EVENT_TALK, ACTOR_COUNTING_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToCountingChild) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLD_VILLAGER, 0x881, EVENT_SCRIPT(Imil_ReadColdVillagerMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLD_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgImilMiaWasOnlyInImilTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETER, 0x881, MSGNO(MsgImilWeveHadALotOfStrangers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETER, CONDITION_ALWAYS, MSGNO(MsgImilDontWorryAboutUsMiaWell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COUNTING_CHILD, 0x881, MSGNO(MsgImilPeopleGetSickBecauseTheyStay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COUNTING_CHILD, CONDITION_ALWAYS, MSGNO(MsgImilNowThatIveLetMyGuard) },
     { SEARCH(SEARCH_JAR), 100, 0xf5f, FIND_COINS(9) },
     { SEARCH(SEARCH_CHEST), 101, 0xf60, FIND_ITEM(ITEM_VIAL) },
     { SEARCH(SEARCH_GRAVE), 102, 0xf61, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -1784,59 +1804,59 @@ struct SceneEvent gImil_TownEvents[] = {
 };
 
 struct SceneEvent gImil_InteriorEvents[] = {
-    { EVENT_TALK, 8, 0x82c, MSGNO(MsgImilTheresBeenAnEpidemicGoingAround) },
-    { EVENT_TALK, 8, FLAG_IMIL_MET_MIA, MSGNO(MsgImilGetMiaHurry) },
-    { EVENT_TALK, 8, 0x881, EVENT_SCRIPT(Imil_TalkToOldWoman) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImilThatFountainWaterReallyMadeGrandpa) },
-    { EVENT_TALK, 9, 0x82c, EVENT_SCRIPT(Imil_TalkToOldMan) },
-    { EVENT_TALK, 9, FLAG_IMIL_MET_MIA, MSGNO(MsgImilItHurts) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToOldMan) },
-    { EVENT_TALK, 10, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_TalkToOldManInBed) },
-    { EVENT_TALK, 11, 0x881, MSGNO(MsgImilCoughTheEpidemicHasHitAlmost) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgImilItsNiceThatTheFountainCan) },
-    { EVENT_TALK, 12, 0x881, EVENT_SCRIPT(Imil_AskAboutWeapons) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
-    { EVENT_TALK, 13, 0x881, MSGNO(MsgImilWereClosedSorryIGetA) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
-    { EVENT_TALK, 15, 0x881, MSGNO(MsgImilIfYouWantToBuyAnything) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToItemMerchant) },
-    { EVENT_TALK, 14, 0x881, EVENT_SCRIPT(Imil_TalkToItemMerchant) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgImilImSoHappyThatMommyIs) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToInnkeeper) },
-    { EVENT_TALK, 17, 0x881, MSGNO(MsgImilWereTheOnlyInnThatStays) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgImilThankGoodnessTheTownIsBack) },
-    { EVENT_TALK, 18, 0x881, EVENT_SCRIPT(Imil_AskAboutRestaurantMenu) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgImilImGladTheBeaconHasBeen) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToApprentice) },
-    { EVENT_TALK, 20, 0x881, EVENT_SCRIPT(Imil_TalkToSecondApprentice) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgImilIWillBeAKindGirl) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(Imil_ReadOldWomanMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImilGrandpasAllBetterNowThanksTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x82c, EVENT_SCRIPT(Imil_TalkToOldMan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_IMIL_MET_MIA, MSGNO(MsgImilOoohIDontFeelSoGood) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImilMiaIsAGoodGirlI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImilNowMiaCanLeaveTheVillage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_ReadOldManInBedMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x881, MSGNO(MsgImilHerPalmsShineWithABlue) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgImilThatBlueLightFromHerHands) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x881, MSGNO(MsgImilWhoAreThesePeopleTheyMust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgImilCustomersAreHardToComeBy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x881, MSGNO(MsgImilWhyDoTheyAlwaysComeWhen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgImilTheCustomersAreBackIThought) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x881, MSGNO(MsgImilIfOnlyWeHadSomeOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgImilMiaSaidItWouldntBeGood) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x881, MSGNO(MsgImilIWonderIfTheyAreHeaded) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgImilMyDaddysStillInKolimaIll) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x881, MSGNO(MsgImilSoManyCustomersItJustGoes) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgImilMiaWillBeLeavingWithYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x881, MSGNO(MsgImilWintersAreToughHereSoIm) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgImilTheyCameToOurVillageAnd) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x881, MSGNO(MsgImilWeDontGetToEatMany) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgImilINeverToldMiaThatI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x881, EVENT_SCRIPT(Imil_ReadApprenticeMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x881, EVENT_SCRIPT(Imil_ReadSecondApprenticeMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN, 0x82c, MSGNO(MsgImilTheresBeenAnEpidemicGoingAround) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilGetMiaHurry) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN, 0x881, EVENT_SCRIPT(Imil_TalkToOldWoman) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgImilThatFountainWaterReallyMadeGrandpa) },
+    { EVENT_TALK, ACTOR_OLD_MAN, 0x82c, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { EVENT_TALK, ACTOR_OLD_MAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilItHurts) },
+    { EVENT_TALK, ACTOR_OLD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { EVENT_TALK, ACTOR_OLD_MAN_BEDSIDE, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_TalkToOldManInBed) },
+    { EVENT_TALK, ACTOR_SICK_VILLAGER, 0x881, MSGNO(MsgImilCoughTheEpidemicHasHitAlmost) },
+    { EVENT_TALK, ACTOR_SICK_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgImilItsNiceThatTheFountainCan) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, 0x881, EVENT_SCRIPT(Imil_AskAboutWeapons) },
+    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, 0x881, MSGNO(MsgImilWereClosedSorryIGetA) },
+    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, 0x881, MSGNO(MsgImilIfYouWantToBuyAnything) },
+    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_SHOP_CHILD, 0x881, EVENT_SCRIPT(Imil_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_ITEM_SHOP_CHILD, CONDITION_ALWAYS, MSGNO(MsgImilImSoHappyThatMommyIs) },
+    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToInnkeeper) },
+    { EVENT_TALK, ACTOR_INN_ATTENDANT, 0x881, MSGNO(MsgImilWereTheOnlyInnThatStays) },
+    { EVENT_TALK, ACTOR_INN_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgImilThankGoodnessTheTownIsBack) },
+    { EVENT_TALK, ACTOR_RESTAURANT_OWNER, 0x881, EVENT_SCRIPT(Imil_AskAboutRestaurantMenu) },
+    { EVENT_TALK, ACTOR_RESTAURANT_OWNER, CONDITION_ALWAYS, MSGNO(MsgImilImGladTheBeaconHasBeen) },
+    { EVENT_TALK, ACTOR_APPRENTICE, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToApprentice) },
+    { EVENT_TALK, ACTOR_SECOND_APPRENTICE, 0x881, EVENT_SCRIPT(Imil_TalkToSecondApprentice) },
+    { EVENT_TALK, ACTOR_SECOND_APPRENTICE, CONDITION_ALWAYS, MSGNO(MsgImilIWillBeAKindGirl) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, 0x881, EVENT_SCRIPT(Imil_ReadOldWomanMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgImilGrandpasAllBetterNowThanksTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_OLD_MAN, 0x82c, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilOoohIDontFeelSoGood) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN, 0x881, MSGNO(MsgImilMiaIsAGoodGirlI) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgImilNowMiaCanLeaveTheVillage) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_BEDSIDE, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_ReadOldManInBedMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SICK_VILLAGER, 0x881, MSGNO(MsgImilHerPalmsShineWithABlue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SICK_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgImilThatBlueLightFromHerHands) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, 0x881, MSGNO(MsgImilWhoAreThesePeopleTheyMust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgImilCustomersAreHardToComeBy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, 0x881, MSGNO(MsgImilWhyDoTheyAlwaysComeWhen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgImilTheCustomersAreBackIThought) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, 0x881, MSGNO(MsgImilIfOnlyWeHadSomeOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgImilMiaSaidItWouldntBeGood) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOP_CHILD, 0x881, MSGNO(MsgImilIWonderIfTheyAreHeaded) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOP_CHILD, CONDITION_ALWAYS, MSGNO(MsgImilMyDaddysStillInKolimaIll) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, 0x881, MSGNO(MsgImilSoManyCustomersItJustGoes) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgImilMiaWillBeLeavingWithYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_ATTENDANT, 0x881, MSGNO(MsgImilWintersAreToughHereSoIm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgImilTheyCameToOurVillageAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RESTAURANT_OWNER, 0x881, MSGNO(MsgImilWeDontGetToEatMany) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RESTAURANT_OWNER, CONDITION_ALWAYS, MSGNO(MsgImilINeverToldMiaThatI) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APPRENTICE, 0x881, EVENT_SCRIPT(Imil_ReadApprenticeMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APPRENTICE, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_APPRENTICE, 0x881, EVENT_SCRIPT(Imil_ReadSecondApprenticeMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_APPRENTICE, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
     { 0xc403, 10, 0x881, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
     { 0xc403, 11, 0x881, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
     { SEARCH(SEARCH_CHEST), 100, 0xf26, FIND_ITEM(ITEM_EMPTY_BOTTLE) },
@@ -1844,13 +1864,13 @@ struct SceneEvent gImil_InteriorEvents[] = {
     { SEARCH(SEARCH_OVEN), 102, 0xf63, FIND_ITEM(ITEM_LUCKY_PEPPER) },
     { SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItLooksLikePorridgeItIs)) },
     { SEARCH(SEARCH_OVEN), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItsSomeHotStewItWarms)) },
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, IMIL_INTERIORS_HOUSE_WEST_TO_IMIL },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_WEST_SOUTHWEST },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_EAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_SOUTH_SOUTHWEST },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
+    { EVENT_EXIT, 7, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_EAST_NORTHEAST },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { SCENE_EVENTS_END },
 };

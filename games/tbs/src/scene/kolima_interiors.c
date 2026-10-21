@@ -2,27 +2,31 @@
 /// Kolima (scene 37, a row of the scene table with no name of its own): the
 /// village's houses, shops and inn, all in one map. Some of its exits join its
 /// own rooms (1, 2, 5, 6 and 10 to 13), five lead back out to the village
-/// (scene 36) and one into Kolima Tunnel (scene 38, exit 14).
+/// (scene 36) and one into Kolima Tunnel (scene 38,
+/// KOLIMA_INTERIORS_TO_KOLIMA_TUNNEL).
 ///
-/// Like the people outside, the fifteen residents (actors 8 to 22) were turned
-/// into trees when the curse fell, and until it is lifted in Kolima Forest
-/// (FLAG_KOLIMA_CURSE_LIFTED) KolimaInteriors_GetPlacements gives them tree
-/// sprites that stand still: they answer only Mind Read, each with the thoughts
-/// of someone stuck as a tree ("Who caused all this? Someone must have tried to
-/// cut down Tret!"). Once the curse is lifted they talk, of the warriors said
-/// to have saved the village, of McCoy's halted palace and the lumberjacks'
-/// lost work, of a father's secret treasure "hidden deep in the forest", and
-/// the weapon, armor and item sellers and the innkeeper serve the party across
-/// their counters. Three bookcases hold books on the holy tree ("Tret and
-/// Laurel are the spirits of the holy trees protecting Kolima forest"), on
-/// trees and flowers and on logging; a jar holds a Lucky Medal and a barrel 7
-/// coins.
+/// Like the people outside, the fifteen residents (ACTOR_FIRST_VILLAGER to
+/// ACTOR_LAST_VILLAGER) were turned into trees when the curse fell, and until
+/// it is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED)
+/// KolimaInteriors_GetPlacements gives them tree sprites that stand still: they
+/// answer only Mind Read, each with the thoughts of someone stuck as a tree
+/// ("Who caused all this? Someone must have tried to cut down Tret!"). Once the
+/// curse is lifted they talk, of the warriors said to have saved the village,
+/// of McCoy's halted palace and the lumberjacks' lost work, of a father's
+/// secret treasure "hidden deep in the forest", and the weapon, armor and item
+/// sellers and the innkeeper serve the party across their counters. Three
+/// bookcases hold books on the holy tree ("Tret and Laurel are the spirits of
+/// the holy trees protecting Kolima forest"), on trees and flowers and on
+/// logging; a jar holds a Lucky Medal and a barrel 7 coins.
 ///
 /// KolimaInteriors_Initialize opens with a window transition and draws one room
-/// in two ways: entered by its door from the village (entrance 7), or from
-/// behind, by the village's south-facing doorway (entrance 8) or from Kolima
-/// Tunnel (entrance 9), when other cells are drawn and the father's family
-/// (actors 10 to 12) is put out of sight.
+/// in two ways: entered by its door from the village
+/// (KOLIMA_INTERIORS_FROM_KOLIMA_SOUTHWEST), or from behind, by the village
+/// doorway the leader steps south into (KOLIMA_INTERIORS_FROM_KOLIMA_WEST) or
+/// from Kolima Tunnel (KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL), when other cells
+/// are drawn and the father's family (ACTOR_SECRETIVE_FATHER,
+/// ACTOR_SECRETIVE_FATHERS_WIFE and ACTOR_SECRETIVE_FATHERS_CHILD) is put out
+/// of sight.
 
 #include "game_state.h"
 #include "flags.h"
@@ -46,13 +50,42 @@
 #include "field_scene.h"
 #include "item_ids.h"
 
+/// The residents, numbering gKolimaInteriors_Placements' rows from
+/// ACTOR_FIRST_PLACED. Their notes quote what they say once the curse is
+/// lifted.
 enum KolimaInteriorActor {
-  ACTOR_FIRST_VILLAGER = 8,
-  ACTOR_WEAPON_MERCHANT = 16,
-  ACTOR_ARMOR_MERCHANT = 17,
-  ACTOR_ITEM_MERCHANT = 18,
-  ACTOR_INNKEEPER = 19,
-  ACTOR_LAST_VILLAGER = 22
+  /// "I heard that traveling warriors from the Goma Range saved the village."
+  ACTOR_VILLAGER_HEARD_OF_WARRIORS = ACTOR_FIRST_PLACED,
+  /// "Big, strong warriors with great beards freed Kolima from the curse."
+  ACTOR_VILLAGER_BEARDED_WARRIORS,
+  /// The father with a secret: "You saved Kolima? Wow! That makes me want to
+  /// tell you a secret!" His thoughts: "It's hidden deep in the forest, but I
+  /// can't tell him that!"
+  ACTOR_SECRETIVE_FATHER,
+  /// "My husband seems to be keeping a secret from me."
+  ACTOR_SECRETIVE_FATHERS_WIFE,
+  ACTOR_SECRETIVE_FATHERS_CHILD, ///< "Daddy told me his secret."
+  ACTOR_LUMBERJACK_FATHER,       ///< "I'm never going to use an axe again."
+  /// "Dad, will you please go back to being a lumberjack?"
+  ACTOR_LUMBERJACKS_CHILD,
+  /// "Dad! How are we going to eat if you don't work?"
+  ACTOR_LUMBERJACKS_HUNGRY_CHILD,
+  ACTOR_WEAPON_MERCHANT,
+  ACTOR_ARMOR_MERCHANT,
+  ACTOR_ITEM_MERCHANT,
+  ACTOR_INNKEEPER,
+  /// "With no more work here, Kolima can go back to being a quiet little
+  /// village." As a tree: "How am I supposed to charge people for their rooms
+  /// if I'm a tree!?"
+  ACTOR_VILLAGER_QUIET_VILLAGE,
+  /// "I've been a lumberjack for years, but I've never seen anything like
+  /// this. I think I'll go home to my family in Imil." As a tree: "I never
+  /// should have tried to cut that tree down."
+  ACTOR_LUMBERJACK_FROM_IMIL,
+  /// "I'm only a merchant, but I got turned into a tree just for staying here."
+  ACTOR_MERCHANT_GUEST,
+  ACTOR_FIRST_VILLAGER = ACTOR_VILLAGER_HEARD_OF_WARRIORS,
+  ACTOR_LAST_VILLAGER = ACTOR_MERCHANT_GUEST
 };
 
 /// Replaces the cursed residents' sprites and disables their movement and
@@ -74,7 +107,10 @@ KolimaInteriors_TurnVillagersIntoTrees(struct ScenePlacement *placement) {
     placement->talkFacing = talkFacing;
     placement->behavior = behavior;
     placement->sprite = treeSprite;
-    if (villagerIndex == 4 || villagerIndex == 7) {
+    // The two residents drawn with sprite 0x6b take the other tree sprite.
+    if (villagerIndex == ACTOR_SECRETIVE_FATHERS_CHILD - ACTOR_FIRST_VILLAGER ||
+        villagerIndex ==
+            ACTOR_LUMBERJACKS_HUNGRY_CHILD - ACTOR_FIRST_VILLAGER) {
       placement->sprite = alternateTreeSprite;
     }
     villagerIndex++;
@@ -196,7 +232,9 @@ s32 KolimaInteriors_Initialize(void) {
 
   entrance = (u16)gGameState.entrance;
 
-  // Entrance 7 uses one layout; entrances 8 and 9 use the other.
+  // KOLIMA_INTERIORS_FROM_KOLIMA_SOUTHWEST uses one layout;
+  // KOLIMA_INTERIORS_FROM_KOLIMA_WEST and KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL
+  // use the other.
   // The unsigned packed comparison below tests the low 16-bit difference.
   if ((s16)entrance == KOLIMA_INTERIORS_FROM_KOLIMA_SOUTHWEST) {
     s32 height;
@@ -206,7 +244,8 @@ s32 KolimaInteriors_Initialize(void) {
     Map_CopyCellsTo(34, 34, 18, 16, width, height);
     Map_CopyCellsTo(34, 94, 18, 76, width, height);
     Map_CopyCellsTo(94, 34, 78, 16, width, height);
-  } else if (((entrance - 8) << 16) <= (1u << 16)) {
+  } else if (((entrance - KOLIMA_INTERIORS_FROM_KOLIMA_WEST) << 16) <=
+             (1u << 16)) {
     s32 height;
     s32 width;
     width = 11;
@@ -214,9 +253,9 @@ s32 KolimaInteriors_Initialize(void) {
     Map_CopyCellsTo(34, 43, 19, 23, width, height);
     Map_CopyCellsTo(34, 94, 19, 83, width, height);
     Map_CopyCellsTo(94, 34, 79, 23, width, height);
-    Engine_ActorSetPosition(10, 0, 0);
-    Engine_ActorSetPosition(11, 0, 0);
-    Engine_ActorSetPosition(12, 0, 0);
+    Engine_ActorSetPosition(ACTOR_SECRETIVE_FATHER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_SECRETIVE_FATHERS_WIFE, 0, 0);
+    Engine_ActorSetPosition(ACTOR_SECRETIVE_FATHERS_CHILD, 0, 0);
   }
   return 0;
 }
@@ -313,63 +352,63 @@ struct ScenePlacement gKolimaInteriors_Placements[] = {
 struct SceneEvent gKolimaInteriors_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, KOLIMA_INTERIORS_TO_KOLIMA_NORTHWEST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, KOLIMA_INTERIORS_TO_KOLIMA_NORTHEAST },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
+    { EVENT_EXIT, 7, CONDITION_ALWAYS, KOLIMA_INTERIORS_TO_KOLIMA_SOUTHWEST },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, KOLIMA_INTERIORS_TO_KOLIMA_WEST },
+    { EVENT_EXIT, 9, CONDITION_ALWAYS, KOLIMA_INTERIORS_TO_KOLIMA_EAST },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
-    { EVENT_TALK, 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIHeardThatTravelingWarriorsFrom) },
-    { EVENT_TALK, 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards) },
-    { EVENT_TALK, 10, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsYouSavedKolimaWowThatMakes) },
-    { EVENT_TALK, 11, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsMyHusbandSeemsToBeKeeping) },
-    { EVENT_TALK, 12, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDaddyToldMeHisSecret) },
-    { EVENT_TALK, 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImNeverGoingToUseAn) },
-    { EVENT_TALK, 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadWillYouPleaseGoBack) },
-    { EVENT_TALK, 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadHowAreWeGoingTo) },
+    { EVENT_EXIT, 14, CONDITION_ALWAYS, KOLIMA_INTERIORS_TO_KOLIMA_TUNNEL },
+    { EVENT_TALK, ACTOR_VILLAGER_HEARD_OF_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIHeardThatTravelingWarriorsFrom) },
+    { EVENT_TALK, ACTOR_VILLAGER_BEARDED_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards) },
+    { EVENT_TALK, ACTOR_SECRETIVE_FATHER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsYouSavedKolimaWowThatMakes) },
+    { EVENT_TALK, ACTOR_SECRETIVE_FATHERS_WIFE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsMyHusbandSeemsToBeKeeping) },
+    { EVENT_TALK, ACTOR_SECRETIVE_FATHERS_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDaddyToldMeHisSecret) },
+    { EVENT_TALK, ACTOR_LUMBERJACK_FATHER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImNeverGoingToUseAn) },
+    { EVENT_TALK, ACTOR_LUMBERJACKS_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadWillYouPleaseGoBack) },
+    { EVENT_TALK, ACTOR_LUMBERJACKS_HUNGRY_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadHowAreWeGoingTo) },
     { EVENT_TALK, ACTOR_WEAPON_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToWeaponMerchant) },
     { EVENT_TALK, ACTOR_ARMOR_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToArmorMerchant) },
     { EVENT_TALK, ACTOR_ITEM_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToItemMerchant) },
     { EVENT_TALK, ACTOR_INNKEEPER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToInnkeeper) },
-    { EVENT_TALK, 20, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsWithNoMoreWorkHereKolima) },
-    { EVENT_TALK, 21, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIveBeenALumberjackForYears) },
-    { EVENT_TALK, 22, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImOnlyAMerchantButI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIDontReallyKnowButYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsAllWarriorsAreBigAndAll) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsHiddenDeepInTheForest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIThinkHeFoundSomethingValuable) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsStillTellingMeItsOutsideThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsPeopleTurnedIntoTreesBecauseOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsKnowingMyDadHellStartWorking) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsHowAmISupposedToGrow) },
+    { EVENT_TALK, ACTOR_VILLAGER_QUIET_VILLAGE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsWithNoMoreWorkHereKolima) },
+    { EVENT_TALK, ACTOR_LUMBERJACK_FROM_IMIL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIveBeenALumberjackForYears) },
+    { EVENT_TALK, ACTOR_MERCHANT_GUEST, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImOnlyAMerchantButI) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARD_OF_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIDontReallyKnowButYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BEARDED_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsAllWarriorsAreBigAndAll) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsHiddenDeepInTheForest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHERS_WIFE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIThinkHeFoundSomethingValuable) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHERS_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsStillTellingMeItsOutsideThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACK_FATHER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsPeopleTurnedIntoTreesBecauseOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsKnowingMyDadHellStartWorking) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_HUNGRY_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsHowAmISupposedToGrow) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsFuchinTemplesMasterNyunpaIsSaid) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsAShameWeHadTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItFeltSoGoodWhenMy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsTheVillageWasReallyBoomingWith) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsRemainingAQuietVillageMeansRemaining) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImALumberjackAndImOkay) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIWishIdGrabbedSomeOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatAreTheyStaringAtThey) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIDreamtThatAMightyWarrior) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatWillHappenToMyTreasure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsSoonAllOfKolimaWillBe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIWonderWhatFathersSecretIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsMaybeWeTurnedIntoTreesBecause) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsAtLeastMyFatherWasntThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsTheHolyTreeOfKolimaHas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_QUIET_VILLAGE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsRemainingAQuietVillageMeansRemaining) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACK_FROM_IMIL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImALumberjackAndImOkay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT_GUEST, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIWishIdGrabbedSomeOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARD_OF_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatAreTheyStaringAtThey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BEARDED_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIDreamtThatAMightyWarrior) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHER, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatWillHappenToMyTreasure) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsSoonAllOfKolimaWillBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIWonderWhatFathersSecretIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACK_FATHER, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsMaybeWeTurnedIntoTreesBecause) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_CHILD, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsAtLeastMyFatherWasntThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_HUNGRY_CHILD, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsTheHolyTreeOfKolimaHas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIUsedToCarveWeaponsOut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsManImStuckInsideThatMeans) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsNoIDontWantToBe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhoCausedAllThisSomeoneMust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsHowAmISupposedToCharge) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsTheVillagersWereRightINever) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIfOnlyIdLeftTownA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_QUIET_VILLAGE, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsHowAmISupposedToCharge) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACK_FROM_IMIL, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsTheVillagersWereRightINever) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT_GUEST, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIfOnlyIdLeftTownA) },
     { SEARCH(SEARCH_JAR), 100, 0xf59, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_BARREL), 101, 0xf5a, FIND_COINS(7) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledTheHoly)) },

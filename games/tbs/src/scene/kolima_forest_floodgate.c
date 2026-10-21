@@ -49,10 +49,12 @@
 #include "item_ids.h"
 #include "heap_state.h"
 
+/// The actors, numbering gKolimaForestFloodgatePlacements' rows from
+/// ACTOR_FIRST_PLACED.
 enum {
-  SHORT_LOG = 8, ///< slides between x 72 and x 104
-  FLOODGATE_SWITCH = 9,
-  SIGN = 10 ///< reads a warning. "Do not touch Floodgate Switch!"
+  SHORT_LOG = ACTOR_FIRST_PLACED, ///< slides between x 72 and x 104
+  FLOODGATE_SWITCH,
+  SIGN ///< reads a warning. "Do not touch Floodgate Switch!"
 };
 
 static void KolimaForestFloodgate_MarkShortLogCells(void);
@@ -313,18 +315,18 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
 static void KolimaForestFloodgate_PushShortLogWest(void) {
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(0, 8);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
   Engine_EventWait(6);
   Engine_AudioPlayCue(SE_239);
   Actor_SetSpeed(SHORT_LOG, 0x8000, 0x3333);
   Engine_ActorSetAnimation(SHORT_LOG, 2);
   Engine_ActorSetDestination(SHORT_LOG, 72, 176);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(0, 2);
-  Actor_SetSpeed(0, 0x4ccc, 0x3333);
-  Engine_ActorSetDestinationOffset(0, -8, 0);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x3333);
+  Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, -8, 0);
   Engine_EventWait(24);
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_ActorWaitForMove(SHORT_LOG);
   Engine_ActorSetAnimation(SHORT_LOG, 1);
   Engine_AudioPlayCue(SE_288);
@@ -340,18 +342,18 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
 static void KolimaForestFloodgate_PushShortLogEast(void) {
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(0, 8);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
   Engine_EventWait(6);
   Engine_AudioPlayCue(SE_239);
   Actor_SetSpeed(SHORT_LOG, 0x8000, 0x3333);
   Engine_ActorSetAnimation(SHORT_LOG, 2);
   Engine_ActorSetDestination(SHORT_LOG, 104, 176);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(0, 2);
-  Actor_SetSpeed(0, 0x4ccc, 0x3333);
-  Engine_ActorSetDestinationOffset(0, 8, 0);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x3333);
+  Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Engine_EventWait(24);
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_ActorWaitForMove(SHORT_LOG);
   Engine_ActorSetAnimation(SHORT_LOG, 1);
   Engine_AudioPlayCue(SE_288);
@@ -547,7 +549,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   actor = run->actor;
   quarter = facing / 0x4000;
   Engine_EventBegin();
-  Engine_ActorSetAnimation(0, 8);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
   Engine_EventWait(6);
   actor->speed = 0x8000;
   actor->acceleration = 0x3333;
@@ -555,14 +557,15 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Object_SetMode(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
   Engine_ObjectSetPosition(actor, x, 0, z);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(0, 2);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->camera, (s32)actor);
-  Actor_SetSpeed(0, 0x4ccc, 0x3333);
-  Actor_SetDestinationOffset(0, gKolimaForestFloodgate_PushStepX[quarter],
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x3333);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
+                             gKolimaForestFloodgate_PushStepX[quarter],
                              gKolimaForestFloodgate_PushStepZ[quarter]);
   Engine_EventWait(24);
-  Engine_ActorSetAnimation(0, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
   Event_PlayCue(SE_288);
@@ -598,7 +601,6 @@ struct SceneEntrance gKolimaForestFloodgateEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-/// Exit 1 back (scene 42), exit 2 on to Tret (scene 44).
 u32 gKolimaForestFloodgateExits[] = {
     SCENE_EXITS(KolimaForestFloodgate),
     SCENE_EXIT(KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_3, KolimaForest3, KOLIMA_FOREST_3_FROM_KOLIMA_FOREST_FLOODGATE),
@@ -618,8 +620,10 @@ struct ScenePlacement gKolimaForestFloodgatePlacements[] = {
 // clang-format on
 
 struct SceneEvent gKolimaForestFloodgateEvents[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+     KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_3},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS,
+     KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestFloodgate_JumpSouth)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 11, CONDITION_ALWAYS,
@@ -631,7 +635,6 @@ struct SceneEvent gKolimaForestFloodgateEvents[] = {
     {EVENT_TALK, SIGN, CONDITION_ALWAYS, MSGNO(MsgKolimaDoNotTouchFloodgate)},
     {SEARCH(SEARCH_UNNAMED), FLOODGATE_SWITCH, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestFloodgate_FlipFloodgateSwitch)},
-    // A Fur Coat (item 0x5b).
     {SEARCH(SEARCH_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
     {SCENE_EVENTS_END},
 };

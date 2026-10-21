@@ -24,8 +24,8 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
 #endif
 extern const u8 gColosseumSatrageMatch_RollLogScript[];
 extern const u8 gColosso_LetteringPaletteOffsets[];
-extern const s16 gColosseumSatrageMatch_ModeRecordTwo[];
-extern const s16 gColosseumSatrageMatch_ModeRecordThreeAlt[];
+extern const s16 gColosseumSatrageMatch_LetteringDigit[];
+extern const s16 gColosseumSatrageMatch_LetteringLose[];
 extern char gHexDigits[20];
 extern s32 gColosseumSatrageMatch_SparkScript[];
 extern s32 gColosseumSatrageMatch_RaiseScript[];
@@ -37,9 +37,9 @@ extern s32 gColosseumSatrageMatch_LiftPhase;
 extern s32 gColosseumSatrageMatch_LiftTimer;
 extern struct SceneEvent gColosseumSatrageMatchEvents[];
 extern s16 gColosso_LetteringSlot;
-extern s16 gColosseumSatrageMatch_ModeRecordDefault[];
-extern s16 gColosseumSatrageMatch_ModeRecordFour[];
-extern s16 gColosseumSatrageMatch_ModeRecordThree[];
+extern s16 gColosseumSatrageMatch_LetteringTitle[];
+extern s16 gColosseumSatrageMatch_LetteringGo[];
+extern s16 gColosseumSatrageMatch_LetteringWon[];
 extern s16 gColosso_MarkerSlot;
 extern s32 gColosso_RivalFinishScript[];
 extern s32 gColosseumSatrageMatch_ApproachScript[];

@@ -843,7 +843,7 @@ static void Event_ReachArena(void) {
   /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
    * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(72, last - place + 1);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_ColosseumNavampaMatch, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch, 5);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);

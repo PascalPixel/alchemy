@@ -558,7 +558,7 @@ static void Event_ReachArena(void) {
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;
    * as 1 - approach, 1 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(72, base - approach + 1);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_ColosseumAzartMatch, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColosseumAzartMatch, 5);
   GameFlag_Set(FLAG_KEEP_MUSIC);

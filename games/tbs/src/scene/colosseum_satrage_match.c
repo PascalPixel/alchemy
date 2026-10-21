@@ -803,10 +803,10 @@ static void Event_ReachArena(void) {
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
    * unfolded; as 3 - rivalFinishedFirst, which shares r5's 3 with
-   * Battle_SetStart(3), 3 of 106 instructions differ in tbs-en. */
+   * Battle_SetStart(BATTLE_START_SCENE), 3 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(72,
                                         resultBase - rivalFinishedFirst + 1);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_ColosseumSatrageMatch, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColosseumSatrageMatch, 5);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);

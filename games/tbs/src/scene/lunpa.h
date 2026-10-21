@@ -12,6 +12,9 @@
 #include "songs.h"
 
 // Lunpa's and the gates' entrances and exits are in scene_links.h.
+
+/// The exit the gates' third road (TRIGGER_THIRD_ROAD) requests, which
+/// gGateExits has no row for.
 enum { GATE_EXIT_THIRD = 3 };
 
 /// The first of the rooms in LunpaSuhalla that Lunpa's doors lead into.
@@ -53,29 +56,37 @@ enum {
   DOOR_TEMPLE = TRIGGER_TEMPLE_DOOR - TRIGGER_FIRST_HOME_DOOR
 };
 
+/// Lunpa's placed actors, numbered in the order of gLunpaPlacements from
+/// ACTOR_FIRST_PLACED. The villagers keep the letters of their messages'
+/// names (MsgLunpaVillageVillagerBSealed and the rest).
 enum LunpaActor {
+  /// The puddle Reveal shows and Frost freezes into a pillar.
   ACTOR_HIDDEN_PUDDLE = ACTOR_FIRST_PLACED,
-  ACTOR_VILLAGER_A,
+  ACTOR_VILLAGER_A, ///< "Have you been in Lunpa long?"
+  /// "We've had no freedom ever since the caravan came to the village."
   ACTOR_VILLAGER_B,
+  /// "Is it true that Dodonpa kidnapped Hammet and extorted ransom for him?"
   ACTOR_VILLAGER_C,
+  /// "Donpa is too old to lead, so his men do whatever Dodonpa says."
   ACTOR_VILLAGER_D,
+  /// "The righteous thief, Lunpa, and his son, Donpa" were great men.
   ACTOR_VILLAGER_E,
-  ACTOR_VILLAGER_F,
-  ACTOR_VILLAGER_G,
+  ACTOR_VILLAGER_F, ///< "Donpa has no idea what Dodonpa is doing."
+  ACTOR_VILLAGER_G, ///< "You want to see Donpa?"
+  /// "The chef from the inn has been delivering meals to the fortress lately."
   ACTOR_VILLAGER_H,
-  ACTOR_WEST_GUARD,
-  ACTOR_EAST_GUARD,
-  ACTOR_SWITCH_GLINT,
-  ACTOR_FLOATING_NUT
+  ACTOR_WEST_GUARD,   ///< keeps the road in from the world map
+  ACTOR_EAST_GUARD,   ///< wants Dodonpa's authorization
+  ACTOR_SWITCH_GLINT, ///< the hidden switch's glint, shown by Reveal
+  ACTOR_FLOATING_NUT  ///< the Nut that floats over the town, for Catch
 };
 
 enum { ACTOR_LAST_PLACED = 65 };
 
-enum GateActor {
-  ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED,
-  ACTOR_RIGHT_GUARD,
-  ACTOR_GATE_GARET
-};
+/// The Lunpa Fortress Gates' placed actors, numbered in the order of
+/// gGatePlacements from ACTOR_FIRST_PLACED. Garet's row, the third, takes his
+/// own actor, GARET, as every row of a party member's sprite does.
+enum GateActor { ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED, ACTOR_RIGHT_GUARD };
 
 enum LunpaSprite {
   SPRITE_ITEM_ICON = 0x16,

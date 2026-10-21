@@ -12,41 +12,43 @@
 /// talk of the intruders who got into the fortress.
 ///
 /// - Lunpa (Lunpa, scene 104), the town. Two guards keep the road in from
-///   the world map (exit 1) and turn the party away. The east guard wants
-///   Dodonpa's authorization; once the guards suspect Kalay
+///   the world map (LUNPA_TO_WORLD_MAP) and turn the party away. The east
+///   guard wants Dodonpa's authorization; once the guards suspect Kalay
 ///   (FLAG_GUARDS_SUSPECT_KALAY, set on the world map) he asks whether the
 ///   party came from there, and his thoughts tell of the gate in the cave
-///   west of town, which opens only from the inside. Exit 3 leads to West
-///   Lunpa Cave, the doors into the homes, the shops, the inn and Lunpa
-///   Temple (LunpaSuhalla, lunpa_suhalla.c), and exit 2 up to the Lunpa
-///   Fortress Gates. Every entry and the end of Reveal hide the town's
-///   secrets (Event_HideSecrets, FLAG_SCENE_TEMP_01), and Reveal shows them
-///   (Event_RevealSecrets): a Psynergy Stone, a puddle that Frost freezes
-///   into a pillar to stand on (FLAG_SCENE_TEMP_00), and the glint of a
-///   switch. Searching the switch opens a passage (FLAG_SCENE_TEMP_02) that,
-///   while Reveal shows it, leads to the jail (exit 12, entrance 2 of
-///   VaultJail, whose area name there is Lunpa). A Nut floats over the town
-///   for Catch, a grave and a barrel hold a Sleep Bomb and a Nut, and frogs
-///   croak in the well.
+///   west of town, which opens only from the inside. LUNPA_TO_WEST_LUNPA_CAVE
+///   leads to West Lunpa Cave, the doors into the homes, the shops, the inn
+///   and Lunpa Temple (LunpaSuhalla, lunpa_suhalla.c), and
+///   LUNPA_TO_LUNPA_FORTRESS_GATES up to the Lunpa Fortress Gates. Every entry
+///   and the end of Reveal hide the town's secrets (Event_HideSecrets,
+///   FLAG_SCENE_TEMP_01), and Reveal shows them (Event_RevealSecrets): a
+///   Psynergy Stone, a puddle that Frost freezes into a pillar to stand on
+///   (FLAG_SCENE_TEMP_00), and the glint of a switch. Searching the switch
+///   opens a passage (FLAG_SCENE_TEMP_02) that, while Reveal shows it, leads
+///   to the jail (LUNPA_TO_VAULT_JAIL, arriving at VAULT_JAIL_FROM_LUNPA; the
+///   jail's area name there is Lunpa). A Nut floats over the town for Catch, a
+///   grave and a barrel hold a Sleep Bomb and a Nut, and frogs croak in the
+///   well.
 /// - Lunpa Fortress Gates (LunpaFortressGates, scene 159), the steps up to the
-/// fortress
-///   door, kept by two guards. Stepping on the ground before them uncloaked
-///   (trigger 10, Event_GuardsBlockGate) brings them in front of the door
-///   (FLAG_SCENE_TEMP_40). Cloak (Event_CastCloak, FLAG_SCENE_TEMP_41) lets
-///   the leader slip past to the door (trigger 1, Event_EnterFortress,
-///   FLAG_SCENE_TEMP_42), exit 1 into Lunpa Fortress. An uncloaked leader in
-///   front of the guards (Lunpa_WatchForUncloakedParty), or one still among
-///   them when Cloak fades (Event_CloakFades), is marched back down the steps
-///   (Event_GuardsCatchParty, FLAG_SCENE_TEMP_44). A party caught in the
-///   fortress arrives by entrance 4 and is thrown down the steps
-///   (Event_GuardsThrowLeaderOut); one that slips out arrives by entrance 3
-///   and casts Cloak to get round the guards (Event_LeaderSneaksOut). Every
-///   entry resets the fortress's puzzles and beaten guards. After Donpa's
-///   judgment, until Hammet finds Bunza, a Kalay merchant, and his wagon in
-///   West Lunpa Cave (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader
-///   from going back up (trigger 20, FLAG_SCENE_TEMP_43) and the left guard
-///   nearly recognizes the man with the party
-///   (FLAG_LUNPA_GATE_GUARD_SAW_HAMMET). Exit 2 leads back down to Lunpa.
+///   fortress door, kept by two guards. Stepping on the ground before them
+///   uncloaked (TRIGGER_GUARDED_GROUND, Event_GuardsBlockGate) brings them in
+///   front of the door (FLAG_SCENE_TEMP_40). Cloak (Event_CastCloak,
+///   FLAG_SCENE_TEMP_41) lets the leader slip past to the door
+///   (TRIGGER_FORTRESS_DOOR, Event_EnterFortress, FLAG_SCENE_TEMP_42), and
+///   LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_1 leads into Lunpa Fortress. An
+///   uncloaked leader in front of the guards (Lunpa_WatchForUncloakedParty),
+///   or one still among them when Cloak fades (Event_CloakFades), is marched
+///   back down the steps (Event_GuardsCatchParty, FLAG_SCENE_TEMP_44). A party
+///   caught in the fortress arrives by LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT
+///   and is thrown down the steps (Event_GuardsThrowLeaderOut); one that slips
+///   out arrives by LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_4 and casts Cloak
+///   to get round the guards (Event_LeaderSneaksOut). Every entry resets the
+///   fortress's puzzles and beaten guards. After Donpa's judgment, until
+///   Hammet finds Bunza, a Kalay merchant, and his wagon in West Lunpa Cave
+///   (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going back up
+///   (TRIGGER_FORTRESS_APPROACH, FLAG_SCENE_TEMP_43) and the left guard nearly
+///   recognizes the man with the party (FLAG_LUNPA_GATE_GUARD_SAW_HAMMET).
+///   LUNPA_FORTRESS_GATES_TO_LUNPA leads back down to Lunpa.
 
 #include "game_state.h"
 #include "version.h"
@@ -262,7 +264,8 @@ static void Event_HideSecrets(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
-/// Lunpa, trigger 90: frogs croak in the well.
+/// Searching the well (TRIGGER_WELL), in Lunpa or at the Lunpa Fortress Gates:
+/// frogs croak in it.
 static void Event_SearchWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -465,7 +468,7 @@ static void Event_ReadRightGuardsThoughts(void) {
 }
 
 /// Every frame at the Lunpa Fortress Gates after Donpa's judgment: stepping up
-/// to row 10 raises Garet's warning (trigger TRIGGER_FORTRESS_APPROACH).
+/// to row 10 raises Garet's warning (TRIGGER_FORTRESS_APPROACH).
 static void Lunpa_WatchForFortressApproach(void) {
   s32 leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
@@ -475,8 +478,9 @@ static void Lunpa_WatchForFortressApproach(void) {
   }
 }
 
-/// Lunpa Fortress Gates, trigger 20 after Donpa's judgment: Garet reminds the
-/// leader they cannot go into the fortress, and the leader steps back.
+/// Lunpa Fortress Gates, TRIGGER_FORTRESS_APPROACH after Donpa's judgment:
+/// Garet reminds the leader they cannot go into the fortress, and the leader
+/// steps back.
 static void Event_GaretTurnsLeaderBack(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -525,8 +529,8 @@ static void Event_EnterDoor(void) {
   Engine_EventEnd();
 }
 
-/// Lunpa, trigger 11: the hidden passage leads to the jail once opened, while
-/// Reveal shows it.
+/// Lunpa, TRIGGER_HIDDEN_PASSAGE: the hidden passage leads to the jail once
+/// opened, while Reveal shows it.
 static void Event_EnterHiddenPassage(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) != 0) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
@@ -540,8 +544,8 @@ static void Event_EnterHiddenPassage(void) {
   }
 }
 
-/// Lunpa Fortress Gates, trigger 1: through the fortress door at the top of
-/// the steps, into Lunpa Fortress.
+/// Lunpa Fortress Gates, TRIGGER_FORTRESS_DOOR: through the fortress door at
+/// the top of the steps, into Lunpa Fortress.
 static void Event_EnterFortress(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_42);
   Engine_EventBegin();
@@ -602,8 +606,8 @@ static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
   Map_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 9, 11);
 }
 
-/// Lunpa Fortress Gates, trigger 10: coming close uncloaked, the guards step
-/// in front of the fortress door and the gateway closes.
+/// Lunpa Fortress Gates, TRIGGER_GUARDED_GROUND: coming close uncloaked, the
+/// guards step in front of the fortress door and the gateway closes.
 static void Event_GuardsBlockGate(void) {
   if (gGameState.cloaked == 0) {
     Engine_EventBegin();
@@ -758,8 +762,8 @@ static void Lunpa_KickUpLeaderDust(void) {
   }
 }
 
-/// Lunpa Fortress Gates, entrance 4, after being caught in the fortress: the
-/// guards throw the leader out and down the steps.
+/// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT, after being
+/// caught in the fortress: the guards throw the leader out and down the steps.
 static void Event_GuardsThrowLeaderOut(void) {
   Engine_EventBegin();
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(160), PIXELS(128));
@@ -837,8 +841,9 @@ static void Event_GuardsThrowLeaderOut(void) {
   Engine_EventEnd();
 }
 
-/// Lunpa Fortress Gates, entrance 3, after slipping out of the fortress: the
-/// leader casts Cloak and slips round the guards.
+/// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_4, after
+/// slipping out of the fortress: the leader casts Cloak and slips round the
+/// guards.
 static void Event_LeaderSneaksOut(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();

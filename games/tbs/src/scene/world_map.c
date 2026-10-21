@@ -4,72 +4,78 @@
 ///
 /// It lets the party into the places. Each place is an actor on the map, and
 /// WorldMap_UpdateLocationContacts, run every frame, hides the ones far from
-/// the view and raises trigger 100 plus the actor's number when the leader
-/// touches one, which the event table turns into that place's exit; a few
-/// places are cells instead. Five places have two ways in, and their events
-/// choose the exit by the side the party comes from: the Bilibin Barricade
-/// from the west or the east, and Kolima Bridge, Kalay Docks, Gondowan Passage
-/// and Lalivero from the north or the south. Kolima Bridge's actor takes
-/// another mode once the bridge has fallen (FLAG_KOLIMA_BRIDGE_COLLAPSED).
+/// the view and raises PLACE_TRIGGER of the actor when the leader touches one,
+/// which the event table turns into that place's exit; a few places are cells
+/// instead. Five places have two ways in, and their events choose the exit by
+/// the side the party comes from: the Bilibin Barricade from the west or the
+/// east, and Kolima Bridge, Kalay Docks, Gondowan Passage and Lalivero from
+/// the north or the south. Kolima Bridge's actor takes another mode once the
+/// bridge has fallen (FLAG_KOLIMA_BRIDGE_COLLAPSED).
 ///
 /// It holds what the party meets on the map itself. Vine, Corona and Hail, a
 /// Venus, a Mars and a Mercury Djinni, stand on the map and, talked to or
 /// walked near, fight once a random battle is nearly due. A storm like the
-/// Suhalla Desert's (actor 54, put away while the Tolbi-bound Ship lies at
+/// Suhalla Desert's (ACTOR_STORM, put away while the Tolbi-bound Ship lies at
 /// anchor off the island, FLAG_TOLBI_SHIP_AT_ISLAND) lifts the party, spinning,
 /// for 180 frames when walked into (FLAG_SCENE_TEMP_F0, with the frames left in
 /// the byte at FLAG_SCENE_TEMP_F8): Douse on it brings the party down into a
 /// battle (FLAG_SCENE_TEMP_F1), and when the time runs out it carries the
-/// party off and drops it outside Suhalla (entrance 27, FLAG_ARRIVE_FALLING),
-/// as the desert's storms do. The Turtle Boots are buried in the ground.
+/// party off and drops it outside Suhalla (WORLD_MAP_FROM_SUHALLA,
+/// FLAG_ARRIVE_FALLING), as the desert's storms do. The Turtle Boots are
+/// buried in the ground.
 ///
 /// And it plays the story's moments on the map, run by WorldMap_Initialize
 /// for the entrance another scene sent the party to. In story order:
-/// - Leaving Vale (entrance 1): the first time sets FLAG_PARTY_LEFT_VALE.
+/// - Leaving Vale (WORLD_MAP_FROM_VALE_GATE): the first time sets
+///   FLAG_PARTY_LEFT_VALE.
 /// - Flint (cell 90, until he is caught), bobbing on the map: the first
 ///   Djinni, a Venus Djinni separated from his comrades when the volcano
 ///   erupted, asks to come along, joins whatever the answer, teaches how Djinn
 ///   are set and put on standby (FLAG_DJINN_TUTORIAL and its two parts), and
 ///   a tutorial battle follows.
-/// - Vault, the first time (cell 112): entrance 64 plays Hammet's caravan
-///   leaving Vault for Kalay. Hammet, the merchant of Kalay whose rod was
-///   stolen, blames Ivan, his servant, whom he leaves behind; the bridge south
-///   is destroyed, so the caravan heads north for Lunpa. It sets
-///   FLAG_GUARDS_SUSPECT_KALAY, after which Lunpa's east guard asks whether
-///   the party came from Kalay, and goes on into Vault, where the cell leads
-///   straight in from then on.
-/// - Mercury Lighthouse (entrance 90): the lighthouse transition
-///   (WorldMap_PlayLighthouseTransition) takes the party to Mercury Lighthouse
-///   Aerie's entrance 1.
-/// - Bunza's wagon: out of West Lunpa Cave (entrance 49), Bunza and Hammet
-///   climb aboard with the leader and the wagon rolls off
-///   (FLAG_BUNZAS_WAGON_LEFT); from the Kalay Tunnel Entrance (entrance 71),
-///   the wagon stops and the leader steps down.
+/// - Vault, the first time (touching ACTOR_PLACE_VAULT): entrance 64 plays
+///   Hammet's caravan leaving Vault for Kalay. Hammet, the merchant of Kalay
+///   whose rod was stolen, blames Ivan, his servant, whom he leaves behind;
+///   the bridge south is destroyed, so the caravan heads north for Lunpa. It
+///   sets FLAG_GUARDS_SUSPECT_KALAY, after which Lunpa's east guard asks
+///   whether the party came from Kalay, and goes on into Vault, where touching
+///   the place leads straight in from then on.
+/// - Mercury Lighthouse (WORLD_MAP_MERCURY_LIGHTHOUSE_LIT): the lighthouse
+///   transition (WorldMap_PlayLighthouseTransition) takes the party to
+///   Mercury Lighthouse Aerie (MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT).
+/// - Bunza's wagon: out of West Lunpa Cave (WORLD_MAP_FROM_WEST_LUNPA_CAVE),
+///   Bunza and Hammet climb aboard with the leader and the wagon rolls off
+///   (FLAG_BUNZAS_WAGON_LEFT); from the Kalay Tunnel Entrance
+///   (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH), the wagon stops and the
+///   leader steps down.
 /// - The Tolbi-bound Ship's crossing of the Karagol Sea: between the ship's
-///   scenes (entrances 65 to 69 and 75) the map shows the ship on its way and
-///   hands the party on, the oars moving (FLAG_TOLBI_SHIP_ROWING); entrance
-///   70 ends the crossing at Tolbi (FLAG_TOLBI_SHIP_REACHED_TOLBI). While the
-///   ship lies at anchor off the island its actor stands there, cell 75 leads
-///   to Crossbone Isle and walking east onto cell 74 leads back aboard.
-/// - The Black Orb (entrance 33, out of Gateway Cave). Iodem, who commands
-///   Babi's soldiers and travels with the party, sees Babi's ship scuttled off
-///   the coast and gives Isaac the Black Orb to use on it (FLAG_SCENE_TEMP_34,
-///   FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE); walking back into the cave turns
-///   the leader round (cell 138). Used on the wreck (cell 96), the orb does
-///   nothing: it is not yet time, Iodem takes it back, and the party must
-///   press on to Babi Lighthouse (FLAG_BLACK_ORB_RETURNED).
-/// - Venus Lighthouse: after the beacon erupts (entrance 91) the beam's
-///   transition sends the party back to the Lighthouse Aerie's entrance 93,
-///   and after that look back (entrance 73) a sparkling transition sends it on
-///   to Sheba's fall, at the aerie's entrance 4.
-/// - The ending: once the cleared game is saved (menu/clear.c), entrance 72
-///   leads to entrance 80, where Jenna and Kraden, adrift on an island since
-///   the Venus beacon was lit, wonder about Felix, Jenna's brother, and Isaac,
-///   until Alex shows them that Felix and Sheba are alive.
+///   scenes (entrances 65 to 69 and WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS) the
+///   map shows the ship on its way and hands the party on, the oars moving
+///   (FLAG_TOLBI_SHIP_ROWING); entrance 70 ends the crossing at Tolbi
+///   (FLAG_TOLBI_SHIP_REACHED_TOLBI). While the ship lies at anchor off the
+///   island its actor stands there, cell 75 leads to Crossbone Isle and
+///   walking east onto cell 74 leads back aboard.
+/// - The Black Orb (WORLD_MAP_FROM_GATEWAY_CAVE). Iodem, who commands Babi's
+///   soldiers and travels with the party, sees Babi's ship scuttled off the
+///   coast and gives Isaac the Black Orb to use on it (FLAG_SCENE_TEMP_34,
+///   FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE); walking back into the cave
+///   (ACTOR_PLACE_GATEWAY_CAVE) turns the leader round. Used on the wreck
+///   (cell 96), the orb does nothing: it is not yet time, Iodem takes it back,
+///   and the party must press on to Babi Lighthouse (FLAG_BLACK_ORB_RETURNED).
+/// - Venus Lighthouse: after the beacon erupts (WORLD_MAP_VENUS_LIGHTHOUSE_LIT)
+///   the beam's transition sends the party back to the Lighthouse Aerie
+///   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT), and after that look back
+///   (entrance 73) a sparkling transition sends it on to Sheba's fall
+///   (WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE).
+/// - The ending: once the cleared game is saved (menu/clear.c),
+///   WORLD_MAP_FROM_CLEAR leads to entrance 80, where Jenna and Kraden, adrift
+///   on an island since the Venus beacon was lit, wonder about Felix, Jenna's
+///   brother, and Isaac, until Alex shows them that Felix and Sheba are alive.
 ///
 /// Entrance 78 is where a defeat returns after Iodem hands over the Black Orb
 /// (WorldMap_RunBlackOrbScene stores it as gGameState.savedEntrance). It
-/// discards the Black Orb and leads to Gate to Suhalla (exit 112).
+/// discards the Black Orb and leads to Gate to Suhalla
+/// (WORLD_MAP_TO_LUNPA_SUHALLA).
 
 #include "script.h"
 #include "version.h"
@@ -131,43 +137,143 @@ static void WorldMap_ShowHammetsCaravan(void);
 static void WorldMap_ShakeTransferStartCamera(void);
 static void WorldMap_ShakeTransferLandingCamera(void);
 static void WorldMap_UpdateTransferredActorLanding(void);
-static void WorldMap_TransferToExit102(void);
-static void WorldMap_TransferToExit103(void);
-static void WorldMap_TransferToExit104(void);
+static void WorldMap_SailToFirstMonsterAttack(void);
+static void WorldMap_SailToSecondMonsterAttack(void);
+static void WorldMap_SailToThirdMonsterAttack(void);
 static void WorldMap_TransferToTolbiShipInteriors(void);
-static void WorldMap_TransferToExit106(void);
+static void WorldMap_SailUntilLandSighted(void);
 static void WorldMap_CompleteTransfer(void);
 static void WorldMap_StepDownFromBunzasWagon(void);
 static void WorldMap_RunBlackOrbScene(void);
-static void WorldMap_ActivateSite138(s32 actor);
+static void WorldMap_BlockGatewayCaveExit(s32 actor);
 static void Event_StopLeavingShip(void);
 static void WorldMap_ShowEndingScene(void);
 static void WorldMap_StartTransitionEffect(void);
 static void WorldMap_UpdateTransitionEffect(void);
-static void WorldMap_MoveActorEightToExit(void);
-static s32 WorldMap_ComputeOpposingRewardTotals(void);
-static s32 WorldMap_GetSelectedReward(u32 selection);
+static void WorldMap_SailTolbiShipToIsland(void);
+static s32 WorldMap_GetRowingBalance(void);
+static s32 WorldMap_GetSeatRowValue(u32 seat);
 static void WorldMap_RunOpeningRise(void);
 static void WorldMap_UpdateStormTimer(void);
 static void WorldMap_PlayLighthouseTransition(s32 palette);
 
-/// The one actor placed for entrance 75, which travels north to exit 110.
-#define ACTOR 8
-
 enum { CONTACT_LAST_ACTOR = 65, CONTACT_TRIGGER_BASE = 100 };
 
-/// The Djinn met on the world map. The Venus Djinni's actor is Flint, bobbing
-/// on the map until the party meets him, and later Vine; the Mars Djinni is
-/// Corona and the Mercury Djinni Hail.
-enum {
-  ACTOR_VENUS_DJINNI = 8,
-  ACTOR_MARS_DJINNI = 9,
-  ACTOR_MERCURY_DJINNI = 10
+/// The world map's own actors, numbered in the order of gWorldMapPlacements
+/// from ACTOR_FIRST_PLACED: the Djinn met on the map, the places, then the
+/// Tolbi-bound Ship, the storm and Iodem. Each place is named by the scene its
+/// exit leads into (gWorldMapExits), and touching it raises its PLACE_TRIGGER
+/// (WorldMap_UpdateLocationContacts).
+enum WorldMapActor {
+  /// The Venus Djinni: Flint, bobbing on the map until the party meets him,
+  /// and later Vine.
+  ACTOR_VENUS_DJINNI = ACTOR_FIRST_PLACED,
+  ACTOR_MARS_DJINNI,    ///< Corona
+  ACTOR_MERCURY_DJINNI, ///< Hail
+  ACTOR_PLACE_VALE_GATE,
+  ACTOR_PLACE_VAULT,
+  ACTOR_PLACE_ALTIN,
+  ACTOR_PLACE_SUHALLA,
+  ACTOR_PLACE_LUNPA,
+  ACTOR_PLACE_KALAY_DOCKS,
+  ACTOR_PLACE_TOLBI_DOCKS,
+  ACTOR_PLACE_IMIL,
+  ACTOR_PLACE_KOLIMA,
+  ACTOR_PLACE_XIAN,
+  ACTOR_PLACE_LAMA_TEMPLE,
+  ACTOR_PLACE_FUCHIN_TEMPLE,
+  ACTOR_PLACE_BILIBIN,
+  ACTOR_PLACE_KALAY,
+  ACTOR_PLACE_LALIVERO,
+  ACTOR_PLACE_TOLBI,
+  ACTOR_PLACE_MERCURY_LIGHTHOUSE,
+  /// After two rows, in sprites 0x10f and 0x114, that no event answers.
+  ACTOR_PLACE_BILIBIN_BARRICADE = ACTOR_PLACE_MERCURY_LIGHTHOUSE + 3,
+  ACTOR_PLACE_ROAD_TO_BABI_LIGHTHOUSE,
+  ACTOR_PLACE_GOMA_CAVE_ENTRANCE,
+  ACTOR_PLACE_GOMA_CAVE_WATERWAY,
+  ACTOR_PLACE_ALTMILLER_CAVE,
+  ACTOR_PLACE_GONDOWAN_CAVE_NORTH,
+  ACTOR_PLACE_GONDOWAN_CAVE_SOUTH,
+  ACTOR_PLACE_MOGALL_FOREST_3,
+  ACTOR_PLACE_GATEWAY_CAVE,
+  ACTOR_PLACE_BILIBIN_CAVE_ENTRANCE,
+  ACTOR_PLACE_BILIBIN_CAVE,
+  ACTOR_PLACE_WEST_LUNPA_CAVE,
+  ACTOR_PLACE_ALTIN_PEAK,
+  ACTOR_PLACE_LAMAKAN_DESERT_4,
+  ACTOR_PLACE_KOLIMA_FOREST,
+  ACTOR_PLACE_MOGALL_FOREST_1,
+  ACTOR_PLACE_KALAY_TUNNEL_ENTRANCE,
+  /// After three rows in sprite 0x112 that no code refers to.
+  ACTOR_PLACE_KOLIMA_BRIDGE = ACTOR_PLACE_KALAY_TUNNEL_ENTRANCE + 4,
+  ACTOR_PLACE_GONDOWAN_PASSAGE,
+  /// The Tolbi-bound Ship at anchor off the island, after one row in sprite
+  /// 0x1f5 that no code refers to.
+  ACTOR_TOLBI_SHIP = ACTOR_PLACE_GONDOWAN_PASSAGE + 2,
+  ACTOR_STORM, ///< the storm that lifts the party, as the Suhalla Desert's do
+  ACTOR_IODEM  ///< placed by the coast once he has handed over the Black Orb
+};
+
+/// The trigger raised by touching a place's actor.
+#define PLACE_TRIGGER(actor) (CONTACT_TRIGGER_BASE + (actor))
+
+/// The actors of Hammet's caravan leaving Vault (gWorldMapPlacements64,
+/// entrance 64), numbered from ACTOR_FIRST_PLACED; Garet's row takes his own
+/// actor.
+enum WorldMapCaravanActor {
+  /// Hammet, in his sprite (0x31, as ACTOR_HAMMET's out of West Lunpa Cave).
+  /// "We can't stay another minute in a dangerous place like this."
+  ACTOR_CARAVAN_HAMMET = ACTOR_FIRST_PLACED,
+  /// One of Hammet's men. "Master Hammet! This is terrible! The bridge has
+  /// been destroyed..."
+  ACTOR_CARAVAN_MAN,
+  /// The caravan's four wagons, in the sprite of Bunza's wagon.
+  ACTOR_CARAVAN_FIRST_WAGON,
+  /// What the falling rock is held above as it drops
+  /// (WorldMap_UpdateTransferredActorLanding); it grows from a tenth of its
+  /// size as it moves (gCaravanRockGuideScript).
+  ACTOR_FALLING_ROCK_GUIDE = ACTOR_CARAVAN_FIRST_WAGON + 4,
+  /// In sprite 0xd8, the rocks' in sol_sanctum_eruption.c; it lands by the
+  /// caravan. "Well, it's better than being smashed by falling rocks here,
+  /// isn't it?"
+  ACTOR_FALLING_ROCK
+};
+
+/// The Tolbi-bound Ship, the first actor of gWorldMapPlacements65 and
+/// gWorldMapPlacements66 (entrances 65 to 70 and
+/// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS), shown on its way across the Karagol
+/// Sea.
+enum { ACTOR_CROSSING_SHIP = ACTOR_FIRST_PLACED };
+
+/// Bunza's wagon at Kalay (gWorldMapPlacementsFromKalayTunnelEntranceSouth),
+/// after Kalay's and the Kalay Tunnel Entrance's place actors.
+enum { ACTOR_KALAY_WAGON = ACTOR_FIRST_PLACED + 2 };
+
+/// The one actor of gWorldMapPlacementsFromClear, before the ending. It sails
+/// east trailing a wake (WorldMap_SpawnIslandWake) until the map leads into
+/// Jenna and Kraden's scene. XXX: likely the island they drift on ("How long
+/// will this island continue to drift?"), because that scene follows at once.
+enum { ACTOR_DRIFTING_ISLAND = ACTOR_FIRST_PLACED };
+
+/// The ending's actors (gWorldMapPlacements80), numbered from
+/// ACTOR_FIRST_PLACED after the rows of Jenna and Sheba, which take their own
+/// actors.
+enum WorldMapEndingActor {
+  /// Kraden, adrift with Jenna. Asked how long the island will drift: "I don't
+  /// know... I wish you could tell me."
+  ACTOR_KRADEN = ACTOR_FIRST_PLACED,
+  /// Alex, who comes to show them that Felix and Sheba are alive. "There is
+  /// something I wish to show you."
+  ACTOR_ALEX,
+  /// Felix, in his sprite as at Mercury Lighthouse (0x23,
+  /// mercury_lighthouse_aerie.c), shown with Sheba as Jenna and Kraden call
+  /// their names.
+  ACTOR_FELIX
 };
 
 // The world map's scene flags:
-// FLAG_SCENE_TEMP_00: the carried actor has landed on its guide, in Hammet's
-// caravan scene.
+// FLAG_SCENE_TEMP_00: the falling rock has landed, in Hammet's caravan scene.
 // FLAG_SCENE_TEMP_34: Iodem has handed over the Black Orb.
 // FLAG_SCENE_TEMP_35: the map's ordinary placements are in use.
 // FLAG_SCENE_TEMP_F0: the storm holds the party up in the air.
@@ -176,8 +282,8 @@ enum {
 
 /// Walking near Vine, or talking to him: once a battle is nearly due, half the
 /// time Vine fights; otherwise the next step brings an ordinary battle.
-/// Reached by talking to actor 8, or by walking onto cell code 92 until Vine is
-/// caught.
+/// Reached by talking to ACTOR_VENUS_DJINNI, or by walking onto cell code 92
+/// until Vine is caught.
 static void Event_MeetVine(void) {
   struct EventWork *work = gEventWork;
 
@@ -194,8 +300,8 @@ static void Event_MeetVine(void) {
 
 /// Walking near Corona, or talking to him: once a battle is nearly due, Corona
 /// fights.
-/// Reached by talking to actor 9, or by walking onto cell code 91 until Corona
-/// is caught.
+/// Reached by talking to ACTOR_MARS_DJINNI, or by walking onto cell code 91
+/// until Corona is caught.
 static void Event_MeetCorona(void) {
   struct GameState *state = &gGameState;
   s32 *steps = &state->encounterSteps;
@@ -209,8 +315,8 @@ static void Event_MeetCorona(void) {
 
 /// Walking near Hail, or talking to him: once a battle is nearly due, Hail
 /// fights.
-/// Reached by talking to actor 10, or by walking onto cell code 93 until Hail
-/// is caught.
+/// Reached by talking to ACTOR_MERCURY_DJINNI, or by walking onto cell code 93
+/// until Hail is caught.
 static void Event_MeetHail(void) {
   struct GameState *state = &gGameState;
   s32 *steps = &state->encounterSteps;
@@ -347,7 +453,7 @@ WorldMap_ApplyMapRotationAndCollision(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Sets up the storm (actor 54) as it is placed: it does not collide, and
+/// Sets up the storm (ACTOR_STORM) as it is placed: it does not collide, and
 /// while the Tolbi-bound Ship lies at anchor off the island
 /// (FLAG_TOLBI_SHIP_AT_ISLAND) it is put away at the map's origin and
 /// FLAG_SCENE_TEMP_F1 keeps it from catching the party.
@@ -375,10 +481,10 @@ static s32 WorldMap_BlinkActorSprite(struct ScriptInterpreter *interpreter) {
 
 const struct ScenePlacement *WorldMap_GetPlacements(void) {
   switch (gGameState.entrance) {
-  case 49:
+  case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
     if (Engine_GameFlagIsSet(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
         Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-      return gWorldMapPlacements49;
+      return gWorldMapPlacementsFromWestLunpaCave;
     }
     break;
   case 64:
@@ -389,17 +495,17 @@ const struct ScenePlacement *WorldMap_GetPlacements(void) {
   case 65:
   case 70:
     return gWorldMapPlacements65;
-  case 71:
-    return gWorldMapPlacements71;
-  case 72:
-    return gWorldMapPlacements72;
+  case WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH:
+    return gWorldMapPlacementsFromKalayTunnelEntranceSouth;
+  case WORLD_MAP_FROM_CLEAR:
+    return gWorldMapPlacementsFromClear;
   case 73:
     return gWorldMapPlacements73;
   case 66:
   case 67:
   case 68:
   case 69:
-  case 75:
+  case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS:
     return gWorldMapPlacements66;
   case 80:
     return gWorldMapPlacements80;
@@ -445,37 +551,49 @@ static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
-/// Touching the Bilibin Barricade's actor (trigger 130): the side the party
-/// comes from decides the exit, from the west the barricade's entrance 1
-/// (exit 6), from the east its entrance 2 (exit 47).
+/// Touching the Bilibin Barricade's actor: the side the party comes from
+/// decides the exit, from the west WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, from
+/// the east WORLD_MAP_TO_BILIBIN_BARRICADE_EAST.
 static void Event_EnterBilibinBarricade(void) {
-  WorldMap_SelectExitByX(0x82, 6, 0x2F);
+  WorldMap_SelectExitByX(PLACE_TRIGGER(ACTOR_PLACE_BILIBIN_BARRICADE),
+                         WORLD_MAP_TO_BILIBIN_BARRICADE_WEST,
+                         WORLD_MAP_TO_BILIBIN_BARRICADE_EAST);
 }
 
-/// As Event_EnterBilibinBarricade, for Kolima Bridge (trigger 150), entered
-/// from the north at its entrance 2 (exit 46) and from the south at its
-/// entrance 1 (exit 11).
+/// As Event_EnterBilibinBarricade, for Kolima Bridge, entered from the north
+/// by WORLD_MAP_TO_KOLIMA_BRIDGE_WEST and from the south by
+/// WORLD_MAP_TO_KOLIMA_BRIDGE_EAST.
 static void Event_EnterKolimaBridge(void) {
-  WorldMap_SelectExitByZ(0x96, 0x2E, 0x0B);
+  WorldMap_SelectExitByZ(PLACE_TRIGGER(ACTOR_PLACE_KOLIMA_BRIDGE),
+                         WORLD_MAP_TO_KOLIMA_BRIDGE_WEST,
+                         WORLD_MAP_TO_KOLIMA_BRIDGE_EAST);
 }
 
-/// As Event_EnterKolimaBridge, for Kalay Docks (trigger 116): from the north
-/// its entrance 4 (exit 56), from the south its entrance 1 (exit 21).
+/// As Event_EnterKolimaBridge, for Kalay Docks: from the north
+/// WORLD_MAP_TO_KALAY_DOCKS_NORTH, from the south
+/// WORLD_MAP_TO_KALAY_DOCKS_EAST.
 static void Event_EnterKalayDocks(void) {
-  WorldMap_SelectExitByZ(0x74, 0x38, 0x15);
+  WorldMap_SelectExitByZ(PLACE_TRIGGER(ACTOR_PLACE_KALAY_DOCKS),
+                         WORLD_MAP_TO_KALAY_DOCKS_NORTH,
+                         WORLD_MAP_TO_KALAY_DOCKS_EAST);
 }
 
-/// As Event_EnterKolimaBridge, for Gondowan Passage (trigger 151): from the
-/// north its entrance 1 (exit 25), from the south its entrance 2 (exit 54).
+/// As Event_EnterKolimaBridge, for Gondowan Passage: from the north
+/// WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, from the south
+/// WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST.
 static void Event_EnterGondowanPassage(void) {
-  WorldMap_SelectExitByZ(0x97, 0x19, 0x36);
+  WorldMap_SelectExitByZ(PLACE_TRIGGER(ACTOR_PLACE_GONDOWAN_PASSAGE),
+                         WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST,
+                         WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST);
 }
 
-/// As Event_EnterKolimaBridge, for Lalivero (trigger 125): from the north its
-/// entrance 21 (exit 59), from the south its entrance 20 (exit 30).
+/// As Event_EnterKolimaBridge, for Lalivero: from the north
+/// WORLD_MAP_TO_LALIVERO_WEST, from the south WORLD_MAP_TO_LALIVERO_EAST.
 static void Event_EnterLalivero(void) {
 
-  WorldMap_SelectExitByZ(0x7D, 0x3B, 0x1E);
+  WorldMap_SelectExitByZ(PLACE_TRIGGER(ACTOR_PLACE_LALIVERO),
+                         WORLD_MAP_TO_LALIVERO_WEST,
+                         WORLD_MAP_TO_LALIVERO_EAST);
 }
 
 const struct SceneEvent *WorldMap_GetEvents(void) { return gWorldMapEvents; }
@@ -539,10 +657,9 @@ static void WorldMap_UpdateLocationContacts(void) {
   }
 }
 
-/// Walking onto Vault (cell code 112): the first time, until
-/// FLAG_GUARDS_SUSPECT_KALAY is set, the world map's entrance 64 plays
-/// Hammet's caravan leaving (exit 101); later the cell is Vault's door (exit
-/// 3).
+/// Touching Vault's actor: the first time, until FLAG_GUARDS_SUSPECT_KALAY is
+/// set, the world map's entrance 64 plays Hammet's caravan leaving (exit 101);
+/// later it is Vault's door (WORLD_MAP_TO_VAULT_SOUTH).
 static void Event_EnterVault(void) {
   if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
     Engine_EventRequestExit(101);
@@ -552,8 +669,8 @@ static void Event_EnterVault(void) {
   }
 }
 
-/// Walking east from the island back aboard the Tolbi-bound Ship (exit 74, its
-/// deck's entrance 6).
+/// Walking east from the island back aboard the Tolbi-bound Ship (exit 74, to
+/// TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS).
 /// Reached by walking east into cell code 74 while the ship lies at anchor off
 /// the island (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void Event_ReturnToTolbiShip(void) {
@@ -563,18 +680,22 @@ static void Event_ReturnToTolbiShip(void) {
 }
 
 /// Restores the map's state and runs the sequence its arrival entrance
-/// selects: 90 and 91 the lighthouse transitions to Mercury Lighthouse Aerie
-/// and back to the Lighthouse Aerie, 1 marks the first time the party leaves
-/// Vale, 33 the Black Orb, 49 Bunza's wagon out of West Lunpa Cave, 64
-/// Hammet's caravan, 65 to 70 and 75 the Tolbi-bound Ship's crossing, 71
-/// Bunza's wagon at Kalay, 78 the discarded Black Orb, 72 and 73 the
-/// transitions to the ending and to Sheba's fall, 80 the ending, and 74, 76
-/// and 77 resume a storm's time in the air.
+/// selects: WORLD_MAP_MERCURY_LIGHTHOUSE_LIT and WORLD_MAP_VENUS_LIGHTHOUSE_LIT
+/// the lighthouse transitions to Mercury Lighthouse Aerie and back to the
+/// Lighthouse Aerie, WORLD_MAP_FROM_VALE_GATE marks the first time the party
+/// leaves Vale, WORLD_MAP_FROM_GATEWAY_CAVE the Black Orb,
+/// WORLD_MAP_FROM_WEST_LUNPA_CAVE Bunza's wagon out of West Lunpa Cave, 64
+/// Hammet's caravan, 65 to 70 and WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS the
+/// Tolbi-bound Ship's crossing, WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH
+/// Bunza's wagon at Kalay, 78 the discarded Black Orb, WORLD_MAP_FROM_CLEAR
+/// and 73 the transitions to the ending and to Sheba's fall, 80 the ending,
+/// and 74, WORLD_MAP_FROM_CROSSBONE_ISLE and 77 resume a storm's time in the
+/// air.
 /// The scene's initialization. Sets FLAG_RETREAT_BLOCKED on the map; entrance
 /// 99, a debug start, sets FLAG_NO_ENCOUNTERS, FLAG_DEBUG_STEPS_OFF and
-/// FLAG_NO_ENCOUNTERS_IN_PLACE. Entrance 1 sets FLAG_PARTY_LEFT_VALE and flag
-/// 0x85c the first time. XXX: flag 0x85c is read by no code of this game; a
-/// reader would say what it records.
+/// FLAG_NO_ENCOUNTERS_IN_PLACE. WORLD_MAP_FROM_VALE_GATE sets
+/// FLAG_PARTY_LEFT_VALE and flag 0x85c the first time. XXX: flag 0x85c is read
+/// by no code of this game; a reader would say what it records.
 s32 WorldMap_Initialize(void) {
   struct GameState *state = &gGameState;
   s16 *entrance = &state->entrance;
@@ -594,7 +715,7 @@ s32 WorldMap_Initialize(void) {
                          VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
   } else if (*entrance == 78) {
     Engine_EventBegin();
-    PartyInventory_Discard(242);
+    PartyInventory_Discard(ITEM_BLACK_ORB);
     Engine_EventRequestExit(WORLD_MAP_TO_LUNPA_SUHALLA);
   } else {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
@@ -609,21 +730,21 @@ s32 WorldMap_Initialize(void) {
     }
     // Each special entrance resumes its travel or story sequence.
     switch (*entrance) {
-    case 1:
+    case WORLD_MAP_FROM_VALE_GATE:
       if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) == 0) {
         Engine_GameFlagSet(FLAG_PARTY_LEFT_VALE);
         Engine_GameFlagSet(0x85c);
       }
       break;
-    case 33:
+    case WORLD_MAP_FROM_GATEWAY_CAVE:
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
         if (Engine_GameFlagIsSet(FLAG_BLACK_ORB_RETURNED) == 0 &&
             Engine_GameFlagIsSet(FLAG_SCENE_TEMP_34) != 0) {
-          gWorldMapTriggerActor = 55;
-          Actor_SetPosition(55, PIXELS(6036), PIXELS(3400));
+          gWorldMapTriggerActor = ACTOR_IODEM;
+          Actor_SetPosition(ACTOR_IODEM, PIXELS(6036), PIXELS(3400));
           Object_GetById(gWorldMapTriggerActor)->facing =
               FACING_SOUTHEAST + FACING_STEP;
-          WorldMap_ActivateSite138(gWorldMapTriggerActor);
+          WorldMap_BlockGatewayCaveExit(gWorldMapTriggerActor);
         }
       } else if (Engine_GameFlagIsSet(FLAG_BLACK_ORB_RETURNED) == 0 &&
                  Engine_GameFlagIsSet(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN) ==
@@ -631,7 +752,7 @@ s32 WorldMap_Initialize(void) {
         WorldMap_RunBlackOrbScene();
       }
       break;
-    case 49:
+    case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
       if (Engine_GameFlagIsSet(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
           Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         WorldMap_BoardBunzasWagon();
@@ -643,34 +764,34 @@ s32 WorldMap_Initialize(void) {
       }
       break;
     case 65:
-      WorldMap_TransferToExit102();
+      WorldMap_SailToFirstMonsterAttack();
       break;
     case 66:
-      WorldMap_TransferToExit103();
+      WorldMap_SailToSecondMonsterAttack();
       break;
     case 67:
-      WorldMap_TransferToExit104();
+      WorldMap_SailToThirdMonsterAttack();
       break;
     case 68:
       WorldMap_TransferToTolbiShipInteriors();
       break;
     case 69:
-      WorldMap_TransferToExit106();
+      WorldMap_SailUntilLandSighted();
       break;
     case 70:
       WorldMap_CompleteTransfer();
       break;
-    case 71:
+    case WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH:
       WorldMap_StepDownFromBunzasWagon();
       break;
-    case 72:
+    case WORLD_MAP_FROM_CLEAR:
       WorldMap_RunOpeningRise();
       break;
     case 73:
       WorldMap_StartTransitionEffect();
       break;
     case 74:
-    case 76:
+    case WORLD_MAP_FROM_CROSSBONE_ISLE:
     case 77:
       Engine_GameFlagSet(FLAG_NOT_ON_MAP);
       if (FieldGameFlag_GetByte(FLAG_SCENE_TEMP_F8) != 0) {
@@ -678,29 +799,36 @@ s32 WorldMap_Initialize(void) {
         FieldScheduler_AddCallback(WorldMap_UpdateStormTimer, 0xc80);
       }
       break;
-    case 75:
-      WorldMap_MoveActorEightToExit();
+    case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS:
+      WorldMap_SailTolbiShipToIsland();
       break;
     case 80:
       WorldMap_ShowEndingScene();
       break;
     default:
-      Object_GetById(53)->scaleX = 5 * Q16_ONE / 4;
-      Object_GetById(53)->scaleY = 5 * Q16_ONE / 4;
+      Object_GetById(ACTOR_TOLBI_SHIP)->scaleX = 5 * Q16_ONE / 4;
+      Object_GetById(ACTOR_TOLBI_SHIP)->scaleY = 5 * Q16_ONE / 4;
       break;
     }
   }
   return 0;
 }
 
-/// The actors placed at entrance 49: Bunza's wagon, Bunza and Hammet.
-enum { ACTOR_WAGON = 8, ACTOR_BUNZA = 11, ACTOR_HAMMET = 12 };
+/// The actors placed at WORLD_MAP_FROM_WEST_LUNPA_CAVE
+/// (gWorldMapPlacementsFromWestLunpaCave), numbered from ACTOR_FIRST_PLACED:
+/// Bunza's wagon, then, after Lunpa's and West Lunpa Cave's place actors,
+/// Bunza and Hammet.
+enum {
+  ACTOR_WAGON = ACTOR_FIRST_PLACED,
+  ACTOR_BUNZA = ACTOR_FIRST_PLACED + 3,
+  ACTOR_HAMMET
+};
 
 /// Out of West Lunpa Cave by wagon: Bunza and Hammet nod to each other and
-/// climb aboard with the hero, and the wagon rolls off.
-/// Called by WorldMap_Initialize at entrance 49, after the trade reopens
-/// (FLAG_LUNPA_TRADE_REOPENED) and until the wagon has left; sets
-/// FLAG_BUNZAS_WAGON_LEFT.
+/// climb aboard with the leader, and the wagon rolls off.
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_WEST_LUNPA_CAVE, after the
+/// trade reopens (FLAG_LUNPA_TRADE_REOPENED) and until the wagon has left;
+/// sets FLAG_BUNZAS_WAGON_LEFT.
 static void WorldMap_BoardBunzasWagon(void) {
   struct FieldActor *record;
 
@@ -767,7 +895,7 @@ static void WorldMap_BoardBunzasWagon(void) {
 /// wagons arrive, Hammet will return to Kalay at once, the bridge south has
 /// been destroyed, he leaves Ivan behind, blaming him for the stolen rod, and
 /// the caravan heads north for Lunpa. Then the party goes on into Vault
-/// (exit 3).
+/// (WORLD_MAP_TO_VAULT_SOUTH).
 /// Called by WorldMap_Initialize at entrance 64 until FLAG_GUARDS_SUSPECT_KALAY
 /// is set; sets it.
 static void WorldMap_ShowHammetsCaravan(void) {
@@ -775,7 +903,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   struct FieldActor *spriteActor;
   const s32 *action;
 
-  actor = Object_GetById(15);
+  actor = Object_GetById(ACTOR_FALLING_ROCK);
   Engine_EventBegin();
   BattleFx_ScheduleRatioTransition(5 * Q16_ONE / 4, 1);
   Engine_TaskWait(4);
@@ -788,23 +916,26 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5884, 1576);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  Actor_SetPosition(8, PIXELS(5848), PIXELS(1576));
+  Actor_SetPosition(ACTOR_CARAVAN_HAMMET, PIXELS(5848), PIXELS(1576));
   Engine_TaskWait(1);
-  Actor_SetChildValue(8, 15);
-  spriteActor = Actor_Get(8);
+  Actor_SetChildValue(ACTOR_CARAVAN_HAMMET, 15);
+  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
-  Actor_SetSpeed(10, PIXELS(8) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(11, PIXELS(8) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(12, PIXELS(8) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(13, PIXELS(8) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_CARAVAN_FIRST_WAGON, PIXELS(8) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_CARAVAN_FIRST_WAGON + 1, PIXELS(8) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_CARAVAN_FIRST_WAGON + 2, PIXELS(8) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_CARAVAN_FIRST_WAGON + 3, PIXELS(8) / 5, PIXELS(2) / 5);
   Event_PlayCue(SE_141);
-  Actor_SetActionScript(10, gTransferArrive10);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON, gCaravanFirstWagonArrives);
   Engine_EventWait(20);
-  Actor_SetActionScript(11, gTransferArrive11);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON + 1,
+                        gCaravanSecondWagonArrives);
   Engine_EventWait(20);
-  Actor_SetActionScript(12, gTransferArrive12);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON + 2,
+                        gCaravanThirdWagonArrives);
   Engine_EventWait(20);
-  Actor_RunActionScriptAndWait(13, gTransferArrive13);
+  Actor_RunActionScriptAndWait(ACTOR_CARAVAN_FIRST_WAGON + 3,
+                               gCaravanFourthWagonArrives);
   Event_PlayCue(SE_289);
   spriteActor = Object_GetById(ACTOR_PARTY_LEADER);
   if (spriteActor != 0) {
@@ -815,11 +946,11 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
-  Actor_SetPosition(8, PIXELS(5848), PIXELS(1592));
+  Actor_SetPosition(ACTOR_CARAVAN_HAMMET, PIXELS(5848), PIXELS(1592));
   Engine_TaskWait(1);
   // Hammet decides to depart; gather the actors for the caravan's move.
   Engine_EventSetMessage(MsgWorldMapWeCantStayAnotherMinute);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_CARAVAN_HAMMET, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -827,92 +958,99 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 10);
   Event_PlayCue(SE_141);
-  Actor_SetActionScript(10, gTransferDepart10);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON, gCaravanFirstWagonDeparts);
   Engine_EventWait(20);
-  Actor_SetActionScript(11, gTransferDepart11);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON + 1,
+                        gCaravanSecondWagonDeparts);
   Engine_EventWait(20);
-  Actor_SetActionScript(12, gTransferDepart12);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON + 2,
+                        gCaravanThirdWagonDeparts);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 10);
-  Actor_RunActionScriptAndWait(13, gTransferDepart13);
+  Actor_RunActionScriptAndWait(ACTOR_CARAVAN_FIRST_WAGON + 3,
+                               gCaravanFourthWagonDeparts);
   Event_PlayCue(SE_289);
   Engine_EventWait(20);
   WorldMap_EndEvent();
-  Engine_ActorSetAnimation(10, 1);
-  Engine_ActorSetAnimation(11, 1);
-  Engine_ActorSetAnimation(12, 1);
-  Engine_ActorSetAnimation(13, 1);
+  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON, 1);
+  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 1, 1);
+  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 2, 1);
+  Engine_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 3, 1);
   Camera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   WorldMap_BeginEvent();
-  Actor_SetPosition(9, PIXELS(5640), PIXELS(1752));
+  Actor_SetPosition(ACTOR_CARAVAN_MAN, PIXELS(5640), PIXELS(1752));
   Engine_TaskWait(1);
-  Actor_SetSpeed(9, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_WalkToAndWait(9, 5640, 1736);
-  Actor_WalkToAndWait(9, 5624, 1736);
-  Actor_WalkToAndWait(9, 5624, 1784);
+  Actor_SetSpeed(ACTOR_CARAVAN_MAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_WalkToAndWait(ACTOR_CARAVAN_MAN, 5640, 1736);
+  Actor_WalkToAndWait(ACTOR_CARAVAN_MAN, 5624, 1736);
+  Actor_WalkToAndWait(ACTOR_CARAVAN_MAN, 5624, 1784);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(9, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_CARAVAN_MAN, 2);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(9, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
-  Actor_FaceDirection(9, 0, 20);
-  Engine_ActorStartRepeatedMotion(9, 3);
-  Event_ShowMessageAndWait(9, 0, 20);
-  Actor_SetPosition(8, PIXELS(5656), PIXELS(1784));
+  Actor_FaceDirection(ACTOR_CARAVAN_MAN, 0, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_CARAVAN_MAN, 3);
+  Event_ShowMessageAndWait(ACTOR_CARAVAN_MAN, 0, 20);
+  Actor_SetPosition(ACTOR_CARAVAN_HAMMET, PIXELS(5656), PIXELS(1784));
   Engine_TaskWait(1);
-  Actor_SetChildValue(8, 0);
-  spriteActor = Actor_Get(8);
+  Actor_SetChildValue(ACTOR_CARAVAN_HAMMET, 0);
+  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
   Engine_ActorSetSpriteFlags(spriteActor, 1);
-  Actor_SetSpeed(8, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(8, 5640, 1784);
+  Actor_SetSpeed(ACTOR_CARAVAN_HAMMET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_WalkToAndWait(ACTOR_CARAVAN_HAMMET, 5640, 1784);
   Engine_EventWait(20);
-  Engine_ActorStartRepeatedMotion(8, 2);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
-  Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 60);
-  Actor_FaceDirection(8, FACING_WEST, 10);
-  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_CARAVAN_HAMMET, 2);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
+                           10);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_SOUTHEAST + FACING_STEP, 60);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 10);
+  Actor_SetAttachedEffect(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
-  Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 40);
-  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
+  Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_SetAttachedEffect(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
-  Engine_ActorStartRepeatedMotion(8, 2);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 40);
-  Engine_ActorRunRepeatedMotion(9, 1);
-  Actor_FaceDirection(9, 0, 10);
-  Event_ShowMessageAndWait(9, 0, 10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | 5, 60);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | 1, 60);
-  Event_ShowMessageAndWait(9, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_ActorStartRepeatedMotion(ACTOR_CARAVAN_HAMMET, 2);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
+                           40);
+  Engine_ActorRunRepeatedMotion(ACTOR_CARAVAN_MAN, 1);
+  Actor_FaceDirection(ACTOR_CARAVAN_MAN, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_CARAVAN_MAN, 0, 10);
+  Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | 5, 60);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
+                           10);
+  Engine_ActorRunRepeatedMotion(ACTOR_CARAVAN_HAMMET, 1);
+  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, 3);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
+                           10);
+  Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | 1, 60);
+  Event_ShowMessageAndWait(ACTOR_CARAVAN_MAN, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, 3);
   WorldMap_EndEvent();
   Event_PlayCue(SE_107);
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
   // Focus on the departure effect before moving the group to the landing.
   WorldMap_ShakeTransferStartCamera();
   Event_PlayCue(SE_289);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT, 0);
-  Actor_FaceDirection(8, FACING_WEST, 0);
-  Actor_FaceDirection(9, 0, 40);
-  Actor_FaceDirection(8, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(9, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT, 0);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_CARAVAN_MAN, 0, 40);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_NORTHWEST + FACING_STEP, 0);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(5608), -1, PIXELS(1736), 1);
   Engine_CameraWaitForMove();
-  Actor_SetPosition(14, PIXELS(5544), PIXELS(1704));
+  Actor_SetPosition(ACTOR_FALLING_ROCK_GUIDE, PIXELS(5544), PIXELS(1704));
   Engine_TaskWait(1);
-  Actor_SetSpeed(14, PIXELS(3) / 10, PIXELS(3) / 20);
-  Actor_SetActionScript(14, gTransferGuide14);
+  Actor_SetSpeed(ACTOR_FALLING_ROCK_GUIDE, PIXELS(3) / 10, PIXELS(3) / 20);
+  Actor_SetActionScript(ACTOR_FALLING_ROCK_GUIDE, gCaravanRockGuideScript);
   Engine_EventWait(160);
-  // Stage the guide and the transferred actor's landing motion.
+  // The falling rock drops from 64 pixels up, and bounces as it lands.
   actor->gravity = PIXELS(1) / 10;
   actor->bounce = PIXELS(1) / 10;
   actor->scaleX = 3 * Q16_ONE / 2;
@@ -923,20 +1061,20 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Engine_ActorSetSpriteFlags(actor, 0);
   Object_SetMode(actor, 2);
   Engine_TaskWait(1);
-  spriteActor = Actor_Get(15);
+  spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
   FieldScheduler_AddCallback(WorldMap_UpdateTransferredActorLanding, 0xc80);
   do {
     Engine_TaskWait(1);
   } while (actor->timer == 0);
-  spriteActor = Actor_Get(15);
+  spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
-  spriteActor = Actor_Get(14);
+  spriteActor = Actor_Get(ACTOR_FALLING_ROCK_GUIDE);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
   Engine_EventWait(10);
-  spriteActor = Actor_Get(9);
+  spriteActor = Actor_Get(ACTOR_CARAVAN_MAN);
   spriteActor->velocityY = PIXELS(6);
-  spriteActor = Object_GetById(8);
+  spriteActor = Object_GetById(ACTOR_CARAVAN_HAMMET);
   spriteActor->velocityY = PIXELS(6);
   Event_PlayCue(SE_145);
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
@@ -947,66 +1085,72 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Camera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   Engine_CameraWaitForMove();
   WorldMap_BeginEvent();
-  Actor_SetAttachedEffect(9, EMOTE_IN_FRONT | 2);
-  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Engine_TaskRemoveCallback(WorldMap_UpdateTransferredActorLanding);
   Engine_TaskWait(1);
-  Actor_SetPosition(14, 0, 0);
-  Actor_SetPosition(15, 0, 0);
-  Actor_FaceDirection(8, FACING_WEST, 10);
-  Engine_ActorJump(8, 4, 40);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
-  Actor_FaceDirection(9, 0, 10);
-  Event_ShowMessageAndWait(9, 0, 20);
-  Actor_FaceDirection(8, FACING_NORTH, 40);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 20);
-  Engine_ActorJump(9, 4, 20);
-  Event_ShowMessageAndWait(9, 0, 10);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Actor_FaceDirection(8, FACING_WEST, 10);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
-  Actor_SetAttachedEffect(9, EMOTE_IN_FRONT | 2);
+  Actor_SetPosition(ACTOR_FALLING_ROCK_GUIDE, 0, 0);
+  Actor_SetPosition(ACTOR_FALLING_ROCK, 0, 0);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 10);
+  Engine_ActorJump(ACTOR_CARAVAN_HAMMET, 4, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
+                           10);
+  Actor_FaceDirection(ACTOR_CARAVAN_MAN, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_CARAVAN_MAN, 0, 20);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_NORTH, 40);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
+                           20);
+  Engine_ActorJump(ACTOR_CARAVAN_MAN, 4, 20);
+  Event_ShowMessageAndWait(ACTOR_CARAVAN_MAN, 0, 10);
+  Engine_ActorRunRepeatedMotion(ACTOR_CARAVAN_HAMMET, 1);
+  Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 10);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
+                           10);
+  Actor_SetAttachedEffect(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | 2);
   Engine_EventWait(80);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, 3);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(9, 1);
-  Engine_ActorSetAnimationAndWait(9, 3);
-  Actor_WalkToAndWait(8, 5656, 1784);
-  Actor_SetPosition(8, 0, 0);
-  Actor_WalkToAndWait(9, 5624, 1736);
-  Actor_WalkToAndWait(9, 5640, 1736);
-  Actor_WalkToAndWait(9, 5640, 1752);
-  Actor_SetPosition(9, 0, 0);
+  Engine_ActorRunRepeatedMotion(ACTOR_CARAVAN_MAN, 1);
+  Engine_ActorSetAnimationAndWait(ACTOR_CARAVAN_MAN, 3);
+  Actor_WalkToAndWait(ACTOR_CARAVAN_HAMMET, 5656, 1784);
+  Actor_SetPosition(ACTOR_CARAVAN_HAMMET, 0, 0);
+  Actor_WalkToAndWait(ACTOR_CARAVAN_MAN, 5624, 1736);
+  Actor_WalkToAndWait(ACTOR_CARAVAN_MAN, 5640, 1736);
+  Actor_WalkToAndWait(ACTOR_CARAVAN_MAN, 5640, 1752);
+  Actor_SetPosition(ACTOR_CARAVAN_MAN, 0, 0);
   Event_PlayCue(SE_141);
-  Actor_SetActionScript(10, gTransferReturn10);
-  Actor_SetActionScript(11, gTransferReturn11);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON, gCaravanFirstWagonReturns);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON + 1,
+                        gCaravanSecondWagonReturns);
   Engine_EventWait(40);
-  Actor_SetActionScript(12, gTransferReturn12);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON + 2,
+                        gCaravanThirdWagonReturns);
   Engine_EventWait(40);
-  Actor_RunActionScriptAndWait(13, gTransferReturn13);
+  Actor_RunActionScriptAndWait(ACTOR_CARAVAN_FIRST_WAGON + 3,
+                               gCaravanFourthWagonReturns);
   WorldMap_EndEvent();
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(5900), PIXELS(1576));
   Actor_SetPosition(GARET, PIXELS(5908), PIXELS(1600));
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   Camera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
   Engine_CameraWaitForMove();
-  action = gTransferGather;
-  Actor_SetActionScript(10, action);
+  action = gCaravanWagonHeadsNorth;
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON, action);
   Engine_EventWait(20);
   Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   Camera_MoveTo(PIXELS(5848), -1, PIXELS(1544), 1);
-  Actor_SetActionScript(11, action);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON + 1, action);
   Engine_EventWait(20);
-  Actor_SetActionScript(12, action);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON + 2, action);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
-  Actor_SetActionScript(13, action);
+  Actor_SetActionScript(ACTOR_CARAVAN_FIRST_WAGON + 3, action);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Object_RefreshSelectorById(13);
+  Object_RefreshSelectorById(ACTOR_CARAVAN_FIRST_WAGON + 3);
   Event_PlayCue(SE_289);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   Camera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
@@ -1073,15 +1217,15 @@ static void WorldMap_ShakeTransferLandingCamera(void) {
   WorldMap_MoveShakeCamera(PIXELS(5608), PIXELS(1736));
 }
 
-/// Keeps the transferred actor above the guide and triggers its landing once.
-/// Run each frame while WorldMap_ShowHammetsCaravan carries an actor; sets
+/// Keeps the falling rock above its guide as it drops, and lands it once.
+/// Run each frame while the rock falls in WorldMap_ShowHammetsCaravan; sets
 /// FLAG_SCENE_TEMP_00 as it lands.
 static void WorldMap_UpdateTransferredActorLanding(void) {
   struct FieldActor *actor;
   struct FieldActor *guide;
 
-  actor = Object_GetById(15);
-  guide = Object_GetById(14);
+  actor = Object_GetById(ACTOR_FALLING_ROCK);
+  guide = Object_GetById(ACTOR_FALLING_ROCK_GUIDE);
   actor->x.fixed = guide->x.fixed;
   actor->z.fixed = guide->z.fixed;
   if (actor->y.fixed < PIXELS(10)) {
@@ -1095,22 +1239,24 @@ static void WorldMap_UpdateTransferredActorLanding(void) {
   }
 }
 
-/// Stages the next leg of travel and leaves through exit 102.
+/// A leg of the Tolbi-bound Ship's crossing: the ship sails out of Kalay
+/// Docks, and exit 102 leads up to the lookout on the mast for the first
+/// monster attack (TolbiShipMast's entrance 11, tolbi_ship_mast.c).
 /// Called by WorldMap_Initialize at entrance 65; sets FLAG_TOLBI_SHIP_ROWING.
-static void WorldMap_TransferToExit102(void) {
+static void WorldMap_SailToFirstMonsterAttack(void) {
   struct FieldActor *actor;
 
-  actor = Object_GetById(8);
+  actor = Object_GetById(ACTOR_CROSSING_SHIP);
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   actor->scaleY = 5 * Q16_ONE / 4;
   actor->scaleX = 5 * Q16_ONE / 4;
-  Engine_CameraFollowActor(8, 1);
+  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
   Engine_EventOpenScreen();
-  Actor_SetSpeed(8, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_WalkToAndWait(8, 5288, 2328);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_WalkToAndWait(ACTOR_CROSSING_SHIP, 5288, 2328);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
@@ -1118,25 +1264,27 @@ static void WorldMap_TransferToExit102(void) {
   Engine_EventEnd();
 }
 
-/// Stages the next leg of travel and leaves through exit 103.
+/// A leg of the Tolbi-bound Ship's crossing: the ship sails on, and exit 103
+/// leads up to the lookout on the mast for the second monster attack
+/// (TolbiShipMast's entrance 12).
 /// Called by WorldMap_Initialize at entrance 66; sets FLAG_TOLBI_SHIP_ROWING.
-static void WorldMap_TransferToExit103(void) {
+static void WorldMap_SailToSecondMonsterAttack(void) {
   struct FieldActor *actor;
 
-  actor = Object_GetById(8);
+  actor = Object_GetById(ACTOR_CROSSING_SHIP);
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(8, PIXELS(7944), PIXELS(200));
+  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
   actor->scaleX = 5 * Q16_ONE / 4;
   actor->scaleY = 5 * Q16_ONE / 4;
   Engine_TaskWait(1);
-  Engine_CameraFollowActor(8, 1);
+  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
   Engine_EventOpenScreen();
-  Actor_SetSpeed(8, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 5, PIXELS(3) / 10);
   actor->timer = 0;
-  Actor_SetActionScript(8, gTransferLeaderIdle);
+  Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderIdle);
   do {
     Engine_TaskWait(1);
   } while (actor->timer == 0);
@@ -1147,25 +1295,27 @@ static void WorldMap_TransferToExit103(void) {
   Engine_EventEnd();
 }
 
-/// Stages the next leg of travel and leaves through exit 104.
+/// A leg of the Tolbi-bound Ship's crossing: the ship sails on, and exit 104
+/// leads up to the lookout on the mast for the third monster attack
+/// (TolbiShipMast's entrance 13).
 /// Called by WorldMap_Initialize at entrance 67; sets FLAG_TOLBI_SHIP_ROWING.
-static void WorldMap_TransferToExit104(void) {
+static void WorldMap_SailToThirdMonsterAttack(void) {
   struct FieldActor *actor;
 
-  actor = Object_GetById(8);
+  actor = Object_GetById(ACTOR_CROSSING_SHIP);
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(8, PIXELS(7944), PIXELS(200));
+  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
   actor->scaleX = 5 * Q16_ONE / 4;
   actor->scaleY = 5 * Q16_ONE / 4;
   Engine_TaskWait(1);
-  Engine_CameraFollowActor(8, 1);
+  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
   Engine_EventOpenScreen();
-  Actor_SetSpeed(8, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 5, PIXELS(3) / 10);
   actor->timer = 0;
-  Actor_SetActionScript(8, gTransferLeaderIdle);
+  Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderIdle);
   do {
     Engine_TaskWait(1);
   } while (actor->timer == 0);
@@ -1181,52 +1331,55 @@ static void WorldMap_TransferToExit104(void) {
 static void WorldMap_TransferToTolbiShipInteriors(void) {
   struct FieldActor *actor;
 
-  actor = Object_GetById(8);
+  actor = Object_GetById(ACTOR_CROSSING_SHIP);
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(8, PIXELS(7944), PIXELS(200));
+  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
   actor->scaleX = 5 * Q16_ONE / 4;
   actor->scaleY = 5 * Q16_ONE / 4;
   Engine_TaskWait(1);
-  Engine_CameraFollowActor(8, 1);
+  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
   Engine_EventOpenScreen();
-  Actor_SetSpeed(8, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 5, PIXELS(3) / 10);
   actor->timer = 0;
-  Actor_SetActionScript(8, gTransferLeaderIdle);
+  Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderIdle);
   do {
     Engine_TaskWait(1);
   } while (actor->timer == 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(FLAG_TOLBI_SHIP_ROWING);
-  Engine_EventRequestExit(105);
+  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_INTERIORS);
   Engine_EventEnd();
 }
 
-/// Stages the next leg of travel and leaves through exit 106.
+/// The last leg of the Tolbi-bound Ship's crossing: the ship sails west,
+/// veering north when the rowers' balance (WorldMap_GetRowingBalance) is the
+/// one that takes it off course to the island, and exit 106 leads up to the
+/// lookout on the mast as he sights land (TolbiShipMast's entrance 14).
 /// Called by WorldMap_Initialize at entrance 69; sets FLAG_TOLBI_SHIP_ROWING.
-static void WorldMap_TransferToExit106(void) {
+static void WorldMap_SailUntilLandSighted(void) {
   struct FieldActor *actor;
 
-  actor = Object_GetById(8);
+  actor = Object_GetById(ACTOR_CROSSING_SHIP);
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(8, PIXELS(7944), PIXELS(200));
+  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(7944), PIXELS(200));
   actor->scaleX = 5 * Q16_ONE / 4;
   actor->scaleY = 5 * Q16_ONE / 4;
   Engine_TaskWait(1);
-  Engine_CameraFollowActor(8, 1);
+  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
   Engine_EventOpenScreen();
-  Actor_SetSpeed(8, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 5, PIXELS(3) / 10);
   actor->timer = 0;
-  if (WorldMap_ComputeOpposingRewardTotals() == 11) {
-    Actor_SetActionScript(8, gTransferLeaderTurn);
+  if (WorldMap_GetRowingBalance() == 11) {
+    Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderTurn);
   } else {
-    Actor_SetActionScript(8, gTransferLeaderIdle);
+    Actor_SetActionScript(ACTOR_CROSSING_SHIP, gTransferLeaderIdle);
   }
   do {
     Engine_TaskWait(1);
@@ -1244,24 +1397,24 @@ static void WorldMap_TransferToExit106(void) {
 static void WorldMap_CompleteTransfer(void) {
   struct FieldActor *actor;
 
-  actor = Object_GetById(8);
+  actor = Object_GetById(ACTOR_CROSSING_SHIP);
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(8, PIXELS(5096), PIXELS(2328));
+  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(5096), PIXELS(2328));
   actor->scaleY = 5 * Q16_ONE / 4;
   actor->scaleX = 5 * Q16_ONE / 4;
   Engine_TaskWait(1);
-  Engine_CameraFollowActor(8, 1);
+  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
   Engine_EventOpenScreen();
-  Actor_SetSpeed(8, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_WalkToAndWait(8, 5064, 2328);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_WalkToAndWait(ACTOR_CROSSING_SHIP, 5064, 2328);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(FLAG_TOLBI_SHIP_REACHED_TOLBI);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
-  Engine_EventRequestExit(107);
+  Engine_EventRequestExit(WORLD_MAP_TO_TOLBI_SHIP_DECK);
   Engine_EventEnd();
 }
 
@@ -1294,9 +1447,9 @@ static void WorldMap_ShowDjinnTutorial(void) {
 
 /// Walking up to Flint: he joins the party and shows how Djinn are set and put
 /// on standby; then comes the tutorial battle.
-/// Reached by walking onto cell code 90 until Flint (Djinni 0) is caught. Sets
-/// FLAG_DJINN_TUTORIAL and its two part flags for each lesson, and clears them
-/// all after the battle.
+/// Reached by walking onto cell code 90 until Flint is caught
+/// (FLAG_DJINNI_0 + DJINNI_FLINT). Sets FLAG_DJINN_TUTORIAL and its two part
+/// flags for each lesson, and clears them all after the battle.
 static void Event_MeetFlint(void) {
   struct FieldActor *djinni;
   struct FieldActor *leader;
@@ -1509,11 +1662,11 @@ s32 gWorldMapTriggerActor;
 
 /// Brings Bunza's wagon to a stop and lets Isaac step down, after Hammet's
 /// return home (kalay.c's Kalay_HammetReturnsToPalace).
-/// Called by WorldMap_Initialize at entrance 71.
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH.
 static void WorldMap_StepDownFromBunzasWagon(void) {
   struct FieldActor *actor;
 
-  actor = Object_GetById(10);
+  actor = Object_GetById(ACTOR_KALAY_WAGON);
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
@@ -1525,18 +1678,18 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Actor_SetPosition(10, PIXELS(5480), PIXELS(2104));
+  Actor_SetPosition(ACTOR_KALAY_WAGON, PIXELS(5480), PIXELS(2104));
   Engine_TaskWait(1);
   Event_PlayCue(SE_141);
-  Actor_SetSpeed(10, PIXELS(8) / 5, PIXELS(2) / 5);
-  Engine_ActorSetAnimation(10, 2);
-  Actor_MoveToAndWait(10, 5485, 2136);
+  Actor_SetSpeed(ACTOR_KALAY_WAGON, PIXELS(8) / 5, PIXELS(2) / 5);
+  Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, 2);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5485, 2136);
   Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   Camera_MoveTo(PIXELS(5560), -1, PIXELS(2136), 1);
-  Actor_MoveToAndWait(10, 5534, 2136);
-  Actor_MoveToAndWait(10, 5544, 2158);
-  Actor_MoveToAndWait(10, 5608, 2168);
-  Engine_ActorSetAnimation(10, 1);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5534, 2136);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5544, 2158);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5608, 2168);
+  Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, 1);
   Event_PlayCue(SE_289);
   Engine_EventWait(20);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(5592), PIXELS(2168));
@@ -1546,17 +1699,17 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5576, 2168);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
   Event_PlayCue(SE_141);
-  Engine_ActorSetAnimation(10, 2);
-  Actor_MoveToAndWait(10, 5624, 2168);
+  Engine_ActorSetAnimation(ACTOR_KALAY_WAGON, 2);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5624, 2168);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-  Actor_MoveToAndWait(10, 5624, 2104);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5624, 2104);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_MoveToAndWait(10, 5565, 2104);
-  Actor_MoveToAndWait(10, 5560, 2131);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5565, 2104);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5560, 2131);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Actor_MoveToAndWait(10, 5490, 2136);
-  Actor_MoveToAndWait(10, 5480, 2104);
-  Actor_SetPosition(10, 0, 0);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5490, 2136);
+  Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5480, 2104);
+  Actor_SetPosition(ACTOR_KALAY_WAGON, 0, 0);
   Event_PlayCue(SE_289);
   Engine_EventWait(40);
   Camera_MoveTo(PIXELS(5592), -1, PIXELS(2136), 1);
@@ -1570,17 +1723,17 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 
 /// Out of Gateway Cave: Iodem sees Babi's ship scuttled off the coast, gives
 /// Isaac the Black Orb and prompts him to use it on the ship.
-/// Called by WorldMap_Initialize at entrance 33 until the Black Orb is handed
-/// back and before the wounded soldiers are seen in Lalivero
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the Black
+/// Orb is handed back and before the wounded soldiers are seen in Lalivero
 /// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets FLAG_SCENE_TEMP_34 and
-/// FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE, and turns the exit at cell code 138
-/// into Event_StopLeavingShip.
+/// FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE, and turns Gateway Cave's exit into
+/// Event_StopLeavingShip.
 static void WorldMap_RunBlackOrbScene(void) {
   struct FieldActor *leader;
 
   Engine_EventBegin();
-  gWorldMapTriggerActor = 55;
-  WorldMap_ActivateSite138(55);
+  gWorldMapTriggerActor = ACTOR_IODEM;
+  WorldMap_BlockGatewayCaveExit(ACTOR_IODEM);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   WorldMap_BeginEvent();
@@ -1637,7 +1790,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 6036, 3400);
   Engine_EventWait(1);
   Object_GetById(gWorldMapTriggerActor)->steeringFlags |= ACTOR_FACES_MOTION;
-  Engine_ItemShowFound(242, 3);
+  Engine_ItemShowFound(ITEM_BLACK_ORB, 3);
   Engine_PartyGiveItem(ITEM_BLACK_ORB, 0);
   Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
   Engine_EventSetMessage(MsgWorldMapNowUseOnShip);
@@ -1654,18 +1807,19 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_EventEnd();
 }
 
-/// Turns the exit at cell code 138 into a touch event that runs
-/// Event_StopLeavingShip, and places the actor given, Iodem (actor 55, sprite
-/// 0x39), at pixel (6036, 3400).
+/// Turns Gateway Cave's exit (the event of ACTOR_PLACE_GATEWAY_CAVE's
+/// PLACE_TRIGGER) into a touch event that runs Event_StopLeavingShip, and
+/// stands Iodem (ACTOR_IODEM, whose placement row it finds by his sprite) at
+/// pixel (6036, 3400); the actor given is not used.
 /// Called by WorldMap_RunBlackOrbScene, and by WorldMap_Initialize when the
-/// party returns to entrance 33 with the orb still to use.
-static void WorldMap_ActivateSite138(s32 actor) {
+/// party returns to WORLD_MAP_FROM_GATEWAY_CAVE with the orb still to use.
+static void WorldMap_BlockGatewayCaveExit(s32 actor) {
   s32 i;
 
   i = 0;
   while (1) {
     if (gWorldMapEvents[i].control == EVENT_EXIT &&
-        gWorldMapEvents[i].trigger == 138) {
+        gWorldMapEvents[i].trigger == PLACE_TRIGGER(ACTOR_PLACE_GATEWAY_CAVE)) {
       gWorldMapEvents[i].control = EVENT_TOUCH;
       gWorldMapEvents[i].value = (u32)Event_StopLeavingShip;
     }
@@ -1683,17 +1837,17 @@ static void WorldMap_ActivateSite138(s32 actor) {
   }
 }
 
-/// Makes cell code 138 an exit again, to exit 33.
+/// Makes touching Gateway Cave an exit again, to WORLD_MAP_TO_GATEWAY_CAVE.
 /// Called by Event_UseBlackOrb once the orb is handed back.
-static void WorldMap_RestoreExitTrigger(void) {
+static void WorldMap_RestoreGatewayCaveExit(void) {
   s32 i;
 
   i = 0;
   while (1) {
     if (gWorldMapEvents[i].control == EVENT_TOUCH &&
-        gWorldMapEvents[i].trigger == 138) {
+        gWorldMapEvents[i].trigger == PLACE_TRIGGER(ACTOR_PLACE_GATEWAY_CAVE)) {
       gWorldMapEvents[i].control = EVENT_EXIT;
-      gWorldMapEvents[i].value = 33;
+      gWorldMapEvents[i].value = WORLD_MAP_TO_GATEWAY_CAVE;
       break;
     }
     if (gWorldMapEvents[i].control == SCENE_EVENTS_END)
@@ -1704,19 +1858,20 @@ static void WorldMap_RestoreExitTrigger(void) {
 
 /// Talking to Iodem, who gave the Black Orb (or reading his mind): he urges
 /// its use. "Now use it... on the ship."
-/// Reached by talking to actor 55, or by Mind Read on it.
+/// Reached by talking to ACTOR_IODEM, or by Mind Read on him.
 static void Event_TalkAboutBlackOrb(void) {
   Engine_EventBegin();
-  Actor_FaceActor(55, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   Engine_EventSetMessage(MsgWorldMapNowUseOnShip);
   Engine_EventShowMessage(gWorldMapTriggerActor, 0);
-  Actor_FaceDirection(55, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventEnd();
 }
 
-/// Walking away from the shipwreck with the Black Orb: the hero walks back.
-/// "(Hero), where you going? I said to use the Orb on Babi's ship!"
-/// Reached by walking onto cell code 138 while WorldMap_ActivateSite138 has
+/// Walking back into Gateway Cave with the Black Orb unused: Iodem calls the
+/// leader back to the coast. "Isaac, where you going? I said to use the Orb on
+/// Babi's ship!"
+/// Reached by touching Gateway Cave while WorldMap_BlockGatewayCaveExit has
 /// made it a touch event.
 static void Event_StopLeavingShip(void) {
   Engine_EventBegin();
@@ -1747,14 +1902,12 @@ static void Event_SearchShipwreck(void) {
   Engine_EventEnd();
 }
 
-#define SITE 55
-
 /// Using the Black Orb on the shipwreck: nothing happens, the orb is taken back
 /// and the party is to press on to Babi Lighthouse.
 /// Reached by using the Black Orb on cell code 96 until it is handed back.
 /// Clears FLAG_SCENE_TEMP_34 and sets FLAG_BLACK_ORB_RETURNED.
 static void Event_UseBlackOrb(void) {
-  struct FieldActor *site;
+  struct FieldActor *iodem;
   struct FieldActor *orb;
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -1769,7 +1922,7 @@ static void Event_UseBlackOrb(void) {
   Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Camera_MoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  site = NULL;
+  iodem = NULL;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   leader->paused = 0;
   ObjectDispatch_StartIdle((struct DispatchObject *)leader);
@@ -1780,8 +1933,8 @@ static void Event_UseBlackOrb(void) {
       FieldObject_WaitForMove(leader);
     }
   } else if (leader->x.fixed > PIXELS(6010)) {
-    // BUG: site is NULL here; this branch reads its height through null.
-    FieldObject_SetPosition(leader, PIXELS(6010), site->y.fixed, PIXELS(3400));
+    // BUG: iodem is NULL here; this branch reads its height through null.
+    FieldObject_SetPosition(leader, PIXELS(6010), iodem->y.fixed, PIXELS(3400));
     FieldObject_WaitForMove(leader);
   }
   FieldObject_SetPosition(leader, PIXELS(5993), 0, PIXELS(3432));
@@ -1841,27 +1994,27 @@ static void Event_UseBlackOrb(void) {
   Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
   Actor_SetSpeed(gWorldMapTriggerActor, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetAnimation(gWorldMapTriggerActor, 2);
-  site = Actor_Get(SITE);
-  FieldObject_SetPosition(site, PIXELS(6010), site->y.fixed, PIXELS(3400));
-  FieldObject_WaitForMove(site);
-  FieldObject_SetPosition(site, PIXELS(6001), 0, PIXELS(3416));
-  FieldObject_WaitForMove(site);
-  Actor_SetAnimation(SITE, 1);
+  iodem = Actor_Get(ACTOR_IODEM);
+  FieldObject_SetPosition(iodem, PIXELS(6010), iodem->y.fixed, PIXELS(3400));
+  FieldObject_WaitForMove(iodem);
+  FieldObject_SetPosition(iodem, PIXELS(6001), 0, PIXELS(3416));
+  FieldObject_WaitForMove(iodem);
+  Actor_SetAnimation(ACTOR_IODEM, 1);
   Actor_FaceDirection(gWorldMapTriggerActor, FACING_SOUTH + FACING_STEP, 10);
   Actor_RunRepeatedMotion(gWorldMapTriggerActor, 1);
   Event_ShowMessageAndWait(gWorldMapTriggerActor | SPEAKER_PORTRAIT_LEFT, 0,
                            20);
   Actor_SetSpeed(gWorldMapTriggerActor, PIXELS(1), PIXELS(1) / 2);
-  Object_GetById(SITE)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetAnimation(SITE, 2);
-  FieldObject_SetPosition(site, PIXELS(5997), 0, PIXELS(3424));
-  FieldObject_WaitForMove(site);
-  Actor_SetAnimation(SITE, 1);
+  Object_GetById(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetAnimation(ACTOR_IODEM, 2);
+  FieldObject_SetPosition(iodem, PIXELS(5997), 0, PIXELS(3424));
+  FieldObject_WaitForMove(iodem);
+  Actor_SetAnimation(ACTOR_IODEM, 1);
   Event_Wait(10);
-  Actor_SetAnimation(SITE, 2);
-  FieldObject_SetPosition(site, PIXELS(6001), 0, PIXELS(3416));
-  FieldObject_WaitForMove(site);
-  Actor_SetAnimation(SITE, 1);
+  Actor_SetAnimation(ACTOR_IODEM, 2);
+  FieldObject_SetPosition(iodem, PIXELS(6001), 0, PIXELS(3416));
+  FieldObject_WaitForMove(iodem);
+  Actor_SetAnimation(ACTOR_IODEM, 1);
   Message_ShowCentered(message + 6, 1);
   gEventWork->message++;
   PartyInventory_Discard(ITEM_BLACK_ORB);
@@ -1881,7 +2034,7 @@ static void Event_UseBlackOrb(void) {
   WorldMap_EndEvent();
   BattleFx_ScheduleRatioTransition(Q16_ONE, 6);
   Event_Wait(20);
-  WorldMap_RestoreExitTrigger();
+  WorldMap_RestoreGatewayCaveExit();
   Engine_ActorDestroy(gWorldMapTriggerActor);
   GameFlag_Clear(FLAG_SCENE_TEMP_34);
   GameFlag_Set(FLAG_BLACK_ORB_RETURNED);
@@ -1909,7 +2062,7 @@ static void WorldMap_ShowEndingScene(void) {
   BattleFx_ScheduleRatioTransition(Q16_ONE, 0x12c);
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ActorSetAnimation(JENNA, 19);
-  Engine_ActorSetAnimation(8, 5);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, 5);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
   BattleFx_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
@@ -1922,93 +2075,96 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Engine_EventWait(20);
-  // Jenna and Kraden discuss the island before their guide arrives.
+  // Jenna and Kraden talk on the drifting island before Alex arrives.
   Engine_EventSetMessage(MsgWorldMapKradenHowLongWillIsland);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 7, 20);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | 5, 80);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 5, 80);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | 5, 100);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 5, 100);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 40);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Event_ShowMessageAndWait(8, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 20);
   Event_ShowMessageAndWait(JENNA, 0, 10);
-  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_KRADEN, EMOTE_IN_FRONT | 2);
   Engine_EventWait(80);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 80);
-  Event_ShowMessageAndWait(8, 0, 120);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 120);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Event_ShowMessageAndWait(JENNA, 0, 40);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 40);
   Event_ShowMessageAndWait(JENNA, 0, 120);
-  // Bring the guide into the conversation and lead the group onward.
-  Actor_SetSpeed(9, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_SetPosition(9, PIXELS(7644), PIXELS(3460));
-  Actor_WalkToAndWait(9, 7572, 3468);
-  Actor_WalkToAndWait(9, 7560, 3488);
+  // Alex comes to show them something and leads them on.
+  Actor_SetSpeed(ACTOR_ALEX, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetPosition(ACTOR_ALEX, PIXELS(7644), PIXELS(3460));
+  Actor_WalkToAndWait(ACTOR_ALEX, 7572, 3468);
+  Actor_WalkToAndWait(ACTOR_ALEX, 7560, 3488);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x6009, 0, 20);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | 1, 0);
+  Event_ShowMessageAndWait(
+      SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 20);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
-  Engine_ActorSetAnimationAndWait(9, 3);
-  Event_ShowMessage(0x6009, 0);
+  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX,
+                    0);
   Map_LoadDefaultCellsAndUpdateBlock();
   Engine_EventWait(20);
-  Actor_SetActionScript(9, gPresentGuide9);
+  Actor_SetActionScript(ACTOR_ALEX, gEndingAlexWalk);
   Engine_EventWait(80);
-  Engine_ActorSetAnimation(8, 1);
-  Engine_ActorJump(8, 4, 40);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
+  Engine_ActorJump(ACTOR_KRADEN, 4, 40);
   Engine_ActorSetAnimation(JENNA, 1);
   Engine_ActorJump(JENNA, 4, 60);
-  Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 40);
-  Actor_SetSpeed(8, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetActionScript(8, gPresentGuide8);
+  Actor_SetActionScript(ACTOR_KRADEN, gEndingKradenWalk);
   Engine_EventWait(20);
   Camera_SetSpeed(PIXELS(7) / 10, PIXELS(7) / 80);
   Camera_MoveTo(PIXELS(7736), -1, PIXELS(3528), 1);
-  Actor_SetActionScript(5, gPresentGuide5);
+  Actor_SetActionScript(JENNA, gEndingJennaWalk);
   do {
-    Engine_ActorSetAnimation(10, 6);
-    Engine_ActorSetAnimation(6, 8);
+    Engine_ActorSetAnimation(ACTOR_FELIX, 6);
+    Engine_ActorSetAnimation(SHEBA, 8);
     Engine_TaskWait(1);
-  } while (Object_GetById(5)->timer == 0);
+  } while (Object_GetById(JENNA)->timer == 0);
   Engine_EventWait(20);
-  Actor_FaceDirection(9, FACING_WEST, 20);
-  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 20);
+  Actor_SetAttachedEffect(ACTOR_KRADEN, EMOTE_IN_FRONT | 2);
   Actor_SetAttachedEffect(JENNA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
   WorldMap_BeginEvent();
-  Event_ShowTwoMessagesAndWait(5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
+  Event_ShowTwoMessagesAndWait(JENNA, 7, 13, 2, 12, ACTOR_KRADEN, 9, 4, 4, 3,
+                               0);
   Engine_EventWait(20);
   Map_LoadDefaultCellsAndUpdateBlock();
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(7768), -1, PIXELS(3528), 1);
-  Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_SetSpeed(8, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_SetSpeed(JENNA, PIXELS(8) / 5, PIXELS(4) / 5);
-  Actor_WalkTo(8, 7804, 3512);
+  Actor_WalkTo(ACTOR_KRADEN, 7804, 3512);
   Actor_WalkToAndWait(JENNA, 7788, 3544);
-  Engine_ActorSetAnimation(8, 1);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
   WorldMap_BeginEvent();
   Engine_EventWait(80);
-  Engine_ActorRunRepeatedMotion(8, 1);
-  Event_ShowMessageAndWait(8, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 40);
-  Actor_FaceDirection(8, FACING_WEST, 20);
-  Engine_ActorStartRepeatedMotion(8, 2);
-  Event_ShowMessageAndWait(8, 0, 60);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 2);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 60);
   Map_LoadDefaultCellsAndUpdateBlock();
   Event_PlayCue(MUS_017);
   ColorBuffer_ApplyTarget(0, 0);
@@ -2090,20 +2246,21 @@ static void WorldMap_UpdateTransitionEffect(void) {
   }
 }
 
-/// Moves the arrival actor along the staged route to its exit, a leg of the
-/// Tolbi-bound Ship's crossing: from the ship's interior (its exit 21) north
-/// back into it (exit 110, its entrance 23).
-/// Called by WorldMap_Initialize at entrance 75.
-static void WorldMap_MoveActorEightToExit(void) {
+/// A leg of the Tolbi-bound Ship's crossing: out of the ship's interior
+/// (TOLBI_SHIP_INTERIORS_TO_WORLD_MAP) the ship sails north to its anchorage
+/// off the island, where ACTOR_TOLBI_SHIP stands, and the party goes back into
+/// it (exit 110, to the interior's entrance 23).
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS.
+static void WorldMap_SailTolbiShipToIsland(void) {
 
   struct FieldActor *actor;
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  Engine_ActorSetAnimation(ACTOR, 2);
-  Actor_SetPosition(ACTOR, PIXELS(4872), PIXELS(808));
-  actor = Actor_Get(ACTOR);
+  Engine_ActorSetAnimation(ACTOR_CROSSING_SHIP, 2);
+  Actor_SetPosition(ACTOR_CROSSING_SHIP, PIXELS(4872), PIXELS(808));
+  actor = Actor_Get(ACTOR_CROSSING_SHIP);
   {
     s32 value = FACING_NORTHWEST;
 
@@ -2112,65 +2269,68 @@ static void WorldMap_MoveActorEightToExit(void) {
   Engine_TaskWait(1);
   BattleFx_ScheduleRatioTransition(6 * Q16_ONE / 5, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Engine_CameraFollowActor(ACTOR, 1);
+  Engine_CameraFollowActor(ACTOR_CROSSING_SHIP, 1);
   Engine_TaskWait(1);
   gEventWork->startTransition = 0x100;
   Engine_EventOpenScreen();
-  Actor_SetSpeed(ACTOR, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_MoveToAndWait(ACTOR, 4824, 712);
-  Actor_MoveToAndWait(ACTOR, 4776, 616);
-  Actor_SetSpeed(ACTOR, PIXELS(3) / 10, PIXELS(3) / 20);
-  Actor_MoveToAndWait(ACTOR, 4776, 472);
-  Actor_SetSpeed(ACTOR, PIXELS(1) / 5, PIXELS(1) / 10);
-  Actor_MoveToAndWait(ACTOR, 4760, 456);
-  Actor_SetSpeed(ACTOR, PIXELS(1) / 10, PIXELS(1) / 20);
-  Actor_MoveToAndWait(ACTOR, 4760, 440);
-  Engine_ActorSetAnimation(ACTOR, 1);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_MoveToAndWait(ACTOR_CROSSING_SHIP, 4824, 712);
+  Actor_MoveToAndWait(ACTOR_CROSSING_SHIP, 4776, 616);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(3) / 10, PIXELS(3) / 20);
+  Actor_MoveToAndWait(ACTOR_CROSSING_SHIP, 4776, 472);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_MoveToAndWait(ACTOR_CROSSING_SHIP, 4760, 456);
+  Actor_SetSpeed(ACTOR_CROSSING_SHIP, PIXELS(1) / 10, PIXELS(1) / 20);
+  Actor_MoveToAndWait(ACTOR_CROSSING_SHIP, 4760, 440);
+  Engine_ActorSetAnimation(ACTOR_CROSSING_SHIP, 1);
   Engine_EventWait(40);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(110);
 }
 
-/// Subtracts the opposing pair's rewards from the first pair's total.
-static s32 WorldMap_ComputeOpposingRewardTotals(void) {
-  s32 positiveTotal = WorldMap_GetSelectedReward(0);
+/// The rowers' balance, as TolbiShipMast_GetRowingBalance (tolbi_ship_mast.c)
+/// reckons it: the rowing values at the first and third seats less those at
+/// the second and fourth. A balance of 11 takes the Tolbi-bound Ship off
+/// course to the island.
+static s32 WorldMap_GetRowingBalance(void) {
+  s32 positiveTotal = WorldMap_GetSeatRowValue(0);
   s32 negativeTotal;
 
-  positiveTotal += WorldMap_GetSelectedReward(2);
-  negativeTotal = WorldMap_GetSelectedReward(1);
-  negativeTotal += WorldMap_GetSelectedReward(3);
+  positiveTotal += WorldMap_GetSeatRowValue(2);
+  negativeTotal = WorldMap_GetSeatRowValue(1);
+  negativeTotal += WorldMap_GetSeatRowValue(3);
   return positiveTotal - negativeTotal;
 }
 
-/// Looks up the reward selected by the first set progress flag.
-static s32 WorldMap_GetSelectedReward(u32 selection) {
+/// The rowing value of the passenger chosen for a seat, or 0 while it is empty.
+static s32 WorldMap_GetSeatRowValue(u32 seat) {
   s32 flagBase = 0;
   u32 offset;
 
-  switch (selection) {
+  switch (seat) {
   case 0:
-    flagBase = 0x92C;
+    flagBase = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
     break;
   case 1:
-    flagBase = 0x935;
+    flagBase = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
     break;
   case 2:
-    flagBase = 0x917;
+    flagBase = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
     break;
   case 3:
-    flagBase = 0x990;
+    flagBase = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
     break;
   }
   for (offset = 0; offset < 9; offset++) {
     if (Engine_GameFlagIsSet(flagBase + offset) != 0)
-      return gWorldMapRewards[offset];
+      return gWorldMapPassengerRowValues[offset];
   }
   return 0;
 }
 
-/// Spawns a puff behind the moving actor at staggered intervals.
-static void WorldMap_SpawnActorEightPuff(void) {
+/// Spawns a puff of the wake behind ACTOR_DRIFTING_ISLAND every 16 frames.
+static void WorldMap_SpawnIslandWake(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -2178,7 +2338,7 @@ static void WorldMap_SpawnActorEightPuff(void) {
 
   if ((*(s32 *)&gFrameCount & 15) != 0)
     return;
-  leader = Object_GetById(8);
+  leader = Object_GetById(ACTOR_DRIFTING_ISLAND);
   actor = Engine_ObjectCreate(222, leader->x.fixed - PIXELS(32),
                               leader->y.fixed, leader->z.fixed - PIXELS(16));
   if (actor == 0)
@@ -2203,34 +2363,34 @@ static void WorldMap_SpawnActorEightPuff(void) {
   actor->motionFlags = leader->motionFlags;
   ObjectGroup_SetChildValue(actor, 9);
   Object_SetMode(actor, 2);
-  Engine_ObjectSetScript(actor, gActorEightPuffScript);
+  Engine_ObjectSetScript(actor, gIslandWakeScript);
 }
 
-/// Stages the rising actor and its trailing puffs before the ending, then
-/// leaves for it (exit 111, the world map's entrance 80).
-/// Called by WorldMap_Initialize at entrance 72, once the cleared game is
-/// saved (menu/clear.c).
+/// Sails ACTOR_DRIFTING_ISLAND east with its wake before the ending, then
+/// leaves for it (exit 111, to the world map's entrance 80).
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_CLEAR, once the cleared game
+/// is saved (menu/clear.c).
 static void WorldMap_RunOpeningRise(void) {
   struct FieldActor *actor;
   struct FieldActor *spriteActor;
 
-  actor = Object_GetById(8);
+  actor = Object_GetById(ACTOR_DRIFTING_ISLAND);
   Engine_EventWait(60);
   Engine_EventBegin();
   BattleFx_ScheduleRatioTransition(3 * Q16_ONE / 5, 1);
   actor->scaleX = 6 * Q16_ONE / 5;
   actor->scaleY = 6 * Q16_ONE / 5;
-  Engine_CameraFollowActor(8, 1);
+  Engine_CameraFollowActor(ACTOR_DRIFTING_ISLAND, 1);
   Engine_TaskWait(1);
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
   spriteActor = Actor_Get(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
-  spriteActor = Actor_Get(8);
+  spriteActor = Actor_Get(ACTOR_DRIFTING_ISLAND);
   Engine_ActorSetSpriteFlags(spriteActor, 0);
-  Actor_SetSpeed(8, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_DRIFTING_ISLAND, PIXELS(2) / 5, PIXELS(1) / 5);
   actor->timer = 0;
-  Actor_SetActionScript(8, gOpeningLeaderRise);
-  FieldScheduler_AddCallback(WorldMap_SpawnActorEightPuff, 0xc80);
+  Actor_SetActionScript(ACTOR_DRIFTING_ISLAND, gOpeningLeaderRise);
+  FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, 0xc80);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
   gEventWork->transitionFrames = 32;
@@ -2309,20 +2469,20 @@ static void WorldMap_CatchInStorm(s32 targetActor) {
 /// Walking into the storm: the party is lifted up into the air.
 /// Reached by walking onto cell code 95 until the storm is done with
 /// (FLAG_SCENE_TEMP_F1).
-static void Event_WalkIntoStorm(void) { WorldMap_CatchInStorm(54); }
+static void Event_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 
 /// Starting to cast Douse on the storm.
-/// Reached by the first phase of Douse on the storm (actor 54) while it holds
-/// the party in the air (FLAG_SCENE_TEMP_F0).
+/// Reached by the first phase of Douse on the storm (ACTOR_STORM) while it
+/// holds the party in the air (FLAG_SCENE_TEMP_F0).
 static void Event_StartDousingStorm(void) {
   ((struct BattleFxScene *)gEffectWork)->childOption = 1;
 }
 
 /// Douse on the storm: the party comes down and the battle with what is in it
 /// begins (encounter table 98, entries 5 and 7), as with the Suhalla Desert's
-/// storms. Reached by Douse on the storm (actor 54) while it holds the party
-/// in the air. Clears FLAG_SCENE_TEMP_F0, sets FLAG_SCENE_TEMP_F1 and empties
-/// the timer.
+/// storms. Reached by Douse on the storm (ACTOR_STORM) while it holds the
+/// party in the air. Clears FLAG_SCENE_TEMP_F0, sets FLAG_SCENE_TEMP_F1 and
+/// empties the timer.
 static void Event_DouseMapStorm(void) {
   struct FieldActor *selectedActor;
 
@@ -2342,10 +2502,10 @@ static void Event_DouseMapStorm(void) {
 /// When the time in the air runs out: the party and the storm fly off, and the
 /// map reopens outside Suhalla, where the desert's storms also drop the party.
 /// Reached by the scene raising 99 as the timer runs out. Sets
-/// FLAG_ARRIVE_FALLING and sends the party to the world map's entrance 27.
+/// FLAG_ARRIVE_FALLING and sends the party to WORLD_MAP_FROM_SUHALLA.
 static void Event_StormDropsParty(void) {
   struct FieldActor *actor = Actor_Get(gGameState.selectedActor);
-  struct FieldActor *other = Actor_Get(54);
+  struct FieldActor *other = Actor_Get(ACTOR_STORM);
   s32 frames;
 
   Engine_EventBegin();
@@ -2366,7 +2526,7 @@ static void Event_StormDropsParty(void) {
   Engine_EventWaitForScreen();
   Engine_EventEnd();
   GameFlag_Set(FLAG_ARRIVE_FALLING);
-  Event_SetDestination((s32)&SceneId_WorldMap, 27);
+  Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_SUHALLA);
 }
 
 /// Refreshes the transition's blend registers on alternating frames.
@@ -2419,8 +2579,8 @@ static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
 }
 
 /// Animates the lighthouse transition frames, palette, and camera.
-/// Called by WorldMap_Initialize at entrances 90 (Mercury Lighthouse) and 91
-/// (Venus Lighthouse). Clears FLAG_KEEP_PARTY_POSITION and sets
+/// Called by WorldMap_Initialize at WORLD_MAP_MERCURY_LIGHTHOUSE_LIT and
+/// WORLD_MAP_VENUS_LIGHTHOUSE_LIT. Clears FLAG_KEEP_PARTY_POSITION and sets
 /// FLAG_SKIP_SCENE_CHANGE_SOUND.
 static void WorldMap_PlayLighthouseTransition(s32 palette) {
   u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
@@ -2522,7 +2682,7 @@ UNUSED static void WorldMap_CycleActorPalettes(struct FieldActor *actor) {
 #include "common/effect_vertical.h"
 #include "common/world_map_linked_effects.h"
 
-s32 gTransferArrive10[] = {
+s32 gCaravanFirstWagonArrives[] = {
     SC_POS(PIXELS(5848), 0, PIXELS(1576)),
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
@@ -2540,7 +2700,7 @@ s32 gTransferArrive10[] = {
     SC_END,
 };
 
-s32 gTransferDepart10[] = {
+s32 gCaravanFirstWagonDeparts[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(5868), 0, PIXELS(1624)),
     SC_SYNC,
@@ -2551,12 +2711,12 @@ s32 gTransferDepart10[] = {
     SC_END,
 };
 
-s32 gTransferReturn10[] = {
+s32 gCaravanFirstWagonReturns[] = {
     SC_ARG(2), SC_MOVE(PIXELS(5800), 0, PIXELS(1800)), SC_SYNC, SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gTransferGather[] = {
+s32 gCaravanWagonHeadsNorth[] = {
     SC_POS(PIXELS(5868), 0, PIXELS(1704)),
     SC_WAIT(1),
     SC_ARG(2),
@@ -2568,7 +2728,7 @@ s32 gTransferGather[] = {
     SC_END,
 };
 
-s32 gTransferArrive11[] = {
+s32 gCaravanSecondWagonArrives[] = {
     SC_POS(PIXELS(5848), 0, PIXELS(1576)),
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
@@ -2586,7 +2746,7 @@ s32 gTransferArrive11[] = {
     SC_END,
 };
 
-s32 gTransferDepart11[] = {
+s32 gCaravanSecondWagonDeparts[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(5863), 0, PIXELS(1640)),
     SC_SYNC,
@@ -2597,14 +2757,14 @@ s32 gTransferDepart11[] = {
     SC_END,
 };
 
-s32 gTransferReturn11[] = {
+s32 gCaravanSecondWagonReturns[] = {
     SC_ARG(2), SC_MOVE(PIXELS(5640), 0, PIXELS(1795)),
     SC_SYNC,   SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
     SC_SYNC,   SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gTransferArrive12[] = {
+s32 gCaravanThirdWagonArrives[] = {
     SC_POS(PIXELS(5848), 0, PIXELS(1576)),
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
@@ -2622,7 +2782,7 @@ s32 gTransferArrive12[] = {
     SC_END,
 };
 
-s32 gTransferDepart12[] = {
+s32 gCaravanThirdWagonDeparts[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(5863), 0, PIXELS(1624)),
     SC_SYNC,
@@ -2633,14 +2793,14 @@ s32 gTransferDepart12[] = {
     SC_END,
 };
 
-s32 gTransferReturn12[] = {
+s32 gCaravanThirdWagonReturns[] = {
     SC_ARG(2), SC_MOVE(PIXELS(5656), 0, PIXELS(1795)),
     SC_SYNC,   SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
     SC_SYNC,   SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gTransferArrive13[] = {
+s32 gCaravanFourthWagonArrives[] = {
     SC_POS(PIXELS(5848), 0, PIXELS(1576)),
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
@@ -2658,7 +2818,7 @@ s32 gTransferArrive13[] = {
     SC_END,
 };
 
-s32 gTransferDepart13[] = {
+s32 gCaravanFourthWagonDeparts[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(5863), 0, PIXELS(1608)),
     SC_SYNC,
@@ -2669,14 +2829,14 @@ s32 gTransferDepart13[] = {
     SC_END,
 };
 
-s32 gTransferReturn13[] = {
+s32 gCaravanFourthWagonReturns[] = {
     SC_ARG(3), SC_MOVE(PIXELS(5672), 0, PIXELS(1795)),
     SC_SYNC,   SC_MOVE(PIXELS(5800), 0, PIXELS(1800)),
     SC_SYNC,   SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gTransferGuide14[] = {
+s32 gCaravanRockGuideScript[] = {
     SC_SET(SW_SCALE_X, Q16_ONE / 10),
     SC_SET(SW_SCALE_Y, Q16_ONE / 10),
     SC_WAIT(1),
@@ -2702,7 +2862,7 @@ s32 gBlackOrbLeaderScript[] = {
     SC_END,
 };
 
-s32 gPresentGuide9[] = {
+s32 gEndingAlexWalk[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(7564), 0, PIXELS(3476)),
     SC_SYNC,
@@ -2722,7 +2882,7 @@ s32 gPresentGuide9[] = {
     SC_END,
 };
 
-s32 gPresentGuide8[] = {
+s32 gEndingKradenWalk[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(7564), 0, PIXELS(3476)),
     SC_SYNC,
@@ -2740,7 +2900,7 @@ s32 gPresentGuide8[] = {
     SC_END,
 };
 
-s32 gPresentGuide5[] = {
+s32 gEndingJennaWalk[] = {
     SC_SET(0x23, 0),
     SC_ARG(2),
     SC_MOVE(PIXELS(7564), 0, PIXELS(3476)),
@@ -3214,7 +3374,7 @@ struct ScenePlacement gWorldMapPlacements64[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gWorldMapPlacements49[] = {
+struct ScenePlacement gWorldMapPlacementsFromWestLunpaCave[] = {
     { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
@@ -3246,7 +3406,7 @@ struct ScenePlacement gWorldMapPlacements66[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gWorldMapPlacements71[] = {
+struct ScenePlacement gWorldMapPlacementsFromKalayTunnelEntranceSouth[] = {
     { 0x107, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
@@ -3272,7 +3432,7 @@ struct ScenePlacement gWorldMapPlacements80[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gWorldMapPlacements72[] = {
+struct ScenePlacement gWorldMapPlacementsFromClear[] = {
     { 0x1f8, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7464), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
@@ -3285,82 +3445,84 @@ struct ScenePlacement gWorldMapPlacements73[] = {
 };
 
 struct SceneEvent gWorldMapEvents[] = {
-    { EVENT_TOUCH, 90, FLAG_DJINNI_0, EVENT_SCRIPT(Event_MeetFlint) },
+    { EVENT_TOUCH, 90, FLAG_DJINNI_0 + DJINNI_FLINT, EVENT_SCRIPT(Event_MeetFlint) },
     { EVENT_TOUCH, 95, FLAG_SCENE_TEMP_F1, EVENT_SCRIPT(Event_WalkIntoStorm) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetVine) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetCorona) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetHail) },
+    { EVENT_TALK, ACTOR_VENUS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetVine) },
+    { EVENT_TALK, ACTOR_MARS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetCorona) },
+    { EVENT_TALK, ACTOR_MERCURY_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetHail) },
     { EVENT_TOUCH, 92, FLAG_DJINNI_0 + DJINNI_VINE, EVENT_SCRIPT(Event_MeetVine) },
     { EVENT_TOUCH, 91, FLAG_DJINNI_0 + DJINNI_CORONA, EVENT_SCRIPT(Event_MeetCorona) },
     { EVENT_TOUCH, 93, FLAG_DJINNI_0 + DJINNI_HAIL, EVENT_SCRIPT(Event_MeetHail) },
     { SEARCH(SEARCH_UNNAMED), 96, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchShipwreck) },
     { USE_ITEM(ITEM_BLACK_ORB), 96, FLAG_BLACK_ORB_RETURNED, EVENT_SCRIPT(Event_UseBlackOrb) },
     { SEARCH(SEARCH_GROUND), 100, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },
-    { EVENT_TALK, 55, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x437, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
-    { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
-    { EVENT_EXIT, 50, CONDITION_ALWAYS, 50 },
-    { EVENT_EXIT, 51, CONDITION_ALWAYS, 51 },
-    { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
-    { EVENT_EXIT, 28, CONDITION_ALWAYS, 28 },
-    { EVENT_EXIT, 55, CONDITION_ALWAYS, 55 },
-    { EVENT_EXIT, 29, CONDITION_ALWAYS, 29 },
-    { EVENT_EXIT, 42, CONDITION_ALWAYS, 42 },
-    { EVENT_EXIT, 32, CONDITION_ALWAYS, 32 },
-    { EVENT_EXIT, 61, CONDITION_ALWAYS, 61 },
-    { EVENT_EXIT, 47, CONDITION_ALWAYS, 47 },
-    { EVENT_EXIT, 111, CONDITION_ALWAYS, 1 },
-    { EVENT_TOUCH, 112, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterVault) },
-    { EVENT_EXIT, 132, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 133, CONDITION_ALWAYS, 40 },
-    { EVENT_EXIT, 123, CONDITION_ALWAYS, 5 },
-    { EVENT_TOUCH, 130, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterBilibinBarricade) },
-    { EVENT_EXIT, 119, CONDITION_ALWAYS, 7 },
-    { EVENT_TOUCH, 150, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterKolimaBridge) },
-    { EVENT_EXIT, 144, CONDITION_ALWAYS, 8 },
-    { EVENT_EXIT, 139, CONDITION_ALWAYS, 35 },
-    { EVENT_EXIT, 140, CONDITION_ALWAYS, 48 },
-    { EVENT_EXIT, 118, CONDITION_ALWAYS, 9 },
-    { EVENT_EXIT, 127, CONDITION_ALWAYS, 10 },
-    { EVENT_EXIT, 122, CONDITION_ALWAYS, 12 },
-    { EVENT_EXIT, 145, CONDITION_ALWAYS, 13 },
-    { EVENT_EXIT, 137, CONDITION_ALWAYS, 43 },
-    { EVENT_EXIT, 120, CONDITION_ALWAYS, 14 },
-    { EVENT_EXIT, 113, CONDITION_ALWAYS, 16 },
-    { EVENT_EXIT, 142, CONDITION_ALWAYS, 52 },
-    { EVENT_EXIT, 121, CONDITION_ALWAYS, 17 },
-    { EVENT_EXIT, 143, CONDITION_ALWAYS, 53 },
-    { EVENT_EXIT, 124, CONDITION_ALWAYS, 20 },
-    { EVENT_EXIT, 115, CONDITION_ALWAYS, 34 },
-    { EVENT_EXIT, 141, CONDITION_ALWAYS, 49 },
-    { EVENT_TOUCH, 116, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterKalayDocks) },
-    { EVENT_EXIT, 117, CONDITION_ALWAYS, 22 },
-    { EVENT_EXIT, 126, CONDITION_ALWAYS, 23 },
-    { EVENT_EXIT, 134, CONDITION_ALWAYS, 24 },
-    { EVENT_TOUCH, 151, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGondowanPassage) },
-    { EVENT_EXIT, 146, CONDITION_ALWAYS, 60 },
-    { EVENT_EXIT, 135, CONDITION_ALWAYS, 26 },
-    { EVENT_EXIT, 136, CONDITION_ALWAYS, 41 },
-    { EVENT_EXIT, 114, CONDITION_ALWAYS, 27 },
-    { EVENT_EXIT, 138, CONDITION_ALWAYS, 33 },
-    { EVENT_EXIT, 131, CONDITION_ALWAYS, 31 },
-    { EVENT_TOUCH, 125, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterLalivero) },
+    { EVENT_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
+    { EVENT_EXIT, 13, CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_1 },
+    { EVENT_EXIT, 15, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_EAST },
+    { EVENT_EXIT, 50, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_NORTH },
+    { EVENT_EXIT, 51, CONDITION_ALWAYS, WORLD_MAP_TO_ALPINE_CROSSING_WEST },
+    { EVENT_EXIT, 18, CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_1 },
+    { EVENT_EXIT, 28, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_1 },
+    { EVENT_EXIT, 55, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_DESERT_2 },
+    { EVENT_EXIT, 29, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_1_WEST },
+    { EVENT_EXIT, 42, CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA_GATE_1_EAST },
+    { EVENT_EXIT, 32, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_WEST },
+    { EVENT_EXIT, 61, CONDITION_ALWAYS, WORLD_MAP_TO_VENUS_LIGHTHOUSE_ENTRY_EAST },
+    { EVENT_EXIT, 47, CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_BARRICADE_EAST },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_VALE_GATE), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_GATE },
+    { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterVault) },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GOMA_CAVE_WATERWAY), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_WATERWAY_2 },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_BILIBIN), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN },
+    { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_BILIBIN_BARRICADE), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterBilibinBarricade) },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_KOLIMA), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_WEST },
+    { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_KOLIMA_BRIDGE), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterKolimaBridge) },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_KOLIMA_FOREST), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_FOREST_1 },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_BILIBIN_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_BILIBIN_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN_CAVE_1 },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_IMIL), CONDITION_ALWAYS, WORLD_MAP_TO_IMIL_SOUTH },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_MERCURY_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_MERCURY_LIGHTHOUSE_4_EAST },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_FUCHIN_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_FUCHIN_TEMPLE_1 },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_MOGALL_FOREST_1), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_1 },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_MOGALL_FOREST_3), CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_3 },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_XIAN), CONDITION_ALWAYS, WORLD_MAP_TO_XIAN },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_ALTIN), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_ALTIN_PEAK), CONDITION_ALWAYS, WORLD_MAP_TO_ALTIN_PEAK_11 },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_LAMA_TEMPLE), CONDITION_ALWAYS, WORLD_MAP_TO_LAMA_TEMPLE },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_LAMAKAN_DESERT_4), CONDITION_ALWAYS, WORLD_MAP_TO_LAMAKAN_DESERT_4 },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_KALAY), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_1_EAST },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_LUNPA), CONDITION_ALWAYS, WORLD_MAP_TO_LUNPA },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_WEST_LUNPA_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_WEST_LUNPA_CAVE },
+    { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_KALAY_DOCKS), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterKalayDocks) },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_TOLBI_DOCKS), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI_DOCKS },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_TOLBI), CONDITION_ALWAYS, WORLD_MAP_TO_TOLBI },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_ALTMILLER_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_ALTMILLER_CAVE_1 },
+    { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_GONDOWAN_PASSAGE), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGondowanPassage) },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_KALAY_TUNNEL_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GONDOWAN_CAVE_NORTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_2_NORTH },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GONDOWAN_CAVE_SOUTH), CONDITION_ALWAYS, WORLD_MAP_TO_GONDOWAN_CAVE_2_SOUTH },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_SUHALLA), CONDITION_ALWAYS, WORLD_MAP_TO_SUHALLA },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GATEWAY_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_GATEWAY_CAVE },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_ROAD_TO_BABI_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE },
+    { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_LALIVERO), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterLalivero) },
     { TOUCH_WALKING_INTO(FACING_EAST), 74, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT_SCRIPT(Event_ReturnToTolbiShip) },
-    { 0xc401, 75, CONDITION_ALWAYS, 75 },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, 1), 54, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_StartDousingStorm) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 54, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_DouseMapStorm) },
+    { 0xc401, 75, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, 1), ACTOR_STORM, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_StartDousingStorm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_STORM, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_DouseMapStorm) },
     { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StormDropsParty) },
     { SCENE_EVENTS_END },
 };
 
-u32 gWorldMapRewards[] = {
+/// Each passenger's rowing value, the world map's copy of
+/// gTolbiShipMast_PassengerRowValues (tolbi_ship_mast.c).
+u32 gWorldMapPassengerRowValues[] = {
     7, 5, 8, 4, 9, 12, 6, 3,
     0,
 };
 // clang-format on
 
-s32 gActorEightPuffScript[] = {
+s32 gIslandWakeScript[] = {
     SC_ADD(SW_X, -PIXELS(1) / 10),
     SC_ADD(SW_Z, PIXELS(1) / 10),
     SC_ADD(SW_SCALE_X, 7 * Q16_ONE / 128),

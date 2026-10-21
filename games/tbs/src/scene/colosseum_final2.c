@@ -9,31 +9,34 @@
 /// Mini-Maze, the shifting floor stage, the Log-Rolling Stage, The Wall and the
 /// Board Walk. Isaac comes here three times, each at its own entrance, and
 /// ColosseumFinal2_Initialize restores the stages from the group's flags
-/// (FLAG_PLACE_TEMP_30 to FLAG_PLACE_TEMP_35, and the Mini-Maze rocks' columns
-/// in byte flags 0x340, 0x348 and 0x350) before setting up the visit its
-/// entrance stands for:
+/// (FLAG_PLACE_TEMP_30 to FLAG_PLACE_TEMP_35, and the Mini-Maze pillars'
+/// columns in the bytes at FLAG_PLACE_TEMP_40, _48 and _50) before setting up
+/// the visit its entrance stands for:
 ///
-/// - Entrance 3, the tour (ColosseumFinal2_IntroduceSecondFinals). The guide
-/// only
-///   greets the party, since the first finals match's guide explained the
-///   rules; the five stages' attendants describe their stages and offer a place
-///   for each friend to cheer, and the guide then sends Isaac back to the west
-///   passage (exit 11).
-/// - Entrance 2, `Lend a Hand`: Garet, Ivan and Mia in turn may use Psynergy on
-///   the stages. Move shifts the Mini-Maze's rocks and the rock by The Wall,
-///   Halt stops the lifts' operator and with him the shifting floor, Frost
-///   freezes two targets on the Log-Rolling Stage, Growth grows a plant up The
-///   Wall, and Force knocks an obstacle down onto the Board Walk. After Mia,
-///   exit 10 starts the race.
+/// - COLOSSEUM_FINAL_2_FROM_COLOSSEUM_WEST, the tour
+///   (ColosseumFinal2_IntroduceSecondFinals). The guide only greets the party,
+///   since the first finals match's guide explained the rules; the five
+///   stages' attendants describe their stages and offer a place for each
+///   friend to cheer, and the guide then sends Isaac back to the west passage
+///   (COLOSSEUM_FINAL_2_TO_COLOSSEUM_SOUTH).
+/// - COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST, `Lend a Hand`: Garet, Ivan and Mia
+///   in turn may use Psynergy on the stages. Move shifts the Mini-Maze's stone
+///   pillars and the stone pillar by The Wall, Halt stops the lifts' operator
+///   and with him the shifting floor, Frost freezes two targets on the
+///   Log-Rolling Stage, Growth grows a plant up The Wall, and Force knocks an
+///   obstacle down onto the Board Walk. After Mia, exit 10 starts the race.
 /// - Entrance 1, the race against Satrage, who follows a recorded path, after
 ///   the lettering `Match 2` and a count of three. At the arena the first to
 ///   arrive takes the Chain Mail and the second the Cotton Shirt, and the
 ///   battle is encounter table 72's third or fourth group, the Satrage with or
 ///   without the mail.
 ///
-/// A win returns to entrance 4 and on to the Colosseum's entrance 31 (exit 4),
-/// which sets FLAG_COLOSSO_SECOND_MATCH_WON; a loss returns to entrance 5, and
-/// exit 5 wakes the party in Babi's Palace from what it takes for a dream.
+/// A win returns to entrance 4 and on to the Colosseum
+/// (COLOSSEUM_FINAL_2_TO_COLOSSEUM_NORTH, arriving at
+/// COLOSSEUM_FROM_COLOSSEUM_FINAL_2_NORTH), which sets
+/// FLAG_COLOSSO_SECOND_MATCH_WON; a loss returns to entrance 5, and
+/// COLOSSEUM_FINAL_2_TO_BABI_PALACE_1 wakes the party in Babi's Palace from
+/// what it takes for a dream.
 
 #include "script.h"
 #include "game_state.h"
@@ -90,8 +93,6 @@
 #include "songs.h"
 #include "macros.h"
 
-#define COLOSSEUM_FINAL_2_FIRST_PLATFORM 22
-#define COLOSSEUM_FINAL_2_LAST_PLATFORM 25
 #define COLOSSEUM_FINAL_2_PLATFORM_CYCLE_FRAMES 120
 #define COLOSSEUM_FINAL_2_PLATFORM_CROSSING_FRAME 75
 #define COLOSSEUM_FINAL_2_DEMONSTRATION_TIMEOUT_FRAMES 600
@@ -160,32 +161,53 @@ static s32 ColosseumFinal2_ApproachFinishAndTakeItem(s32 firstItem,
 static void ColosseumFinal2_StartRivalPath(s32 pathResource);
 static void ColosseumFinal2_PushAdjacentObstacle(void);
 
-/// The second finals match's actors, by the guide's and attendants'
-/// explanations: the Mini-Maze, the shifting floor stage, the Log-Rolling
-/// Stage, The Wall and the Board Walk lead to the arena. The lifts are actors
-/// 22 to 25 (COLOSSEUM_FINAL_2_FIRST_PLATFORM to
-/// COLOSSEUM_FINAL_2_LAST_PLATFORM).
-enum {
-  OPPONENT = 8, ///< Satrage, racing Isaac to the arena
-  ROLLING_LOG_WEST = 15,
-  ROLLING_LOG_EAST = 16,
-  ROLLING_LOG_CENTER = 17,
-  FORCE_TARGET = 18,
-  GROWTH_PLANT = 19,
-  FROST_TARGET_WEST = 20,
-  FROST_TARGET_EAST = 21,
-  FALLING_OBSTACLE = 30, ///< knocked down by Force on FORCE_TARGET
-  LIFT_OPERATOR = 31,
-  RIDING_LOG_NORTH = 32, ///< the Log-Rolling Stage's two logs
-  RIDING_LOG_SOUTH = 33,
-  GUIDE = 34, ///< explains the second finals match
-  MINI_MAZE_ATTENDANT = 35,
-  SHIFTING_FLOOR_ATTENDANT = 36,
-  LOG_ROLLING_ATTENDANT = 37,
-  WALL_ATTENDANT = 38,
-  BOARD_WALK_ATTENDANT = 39,
-  PRIZE_A = 40, ///< the arena's Chain Mail and Cotton Shirt
-  PRIZE_B = 41
+/// The second finals match's actors, numbered in the order of
+/// gColosseumFinal2Placements from ACTOR_FIRST_PLACED; the rows of Isaac,
+/// Garet, Ivan and Mia take their own actors. By the guide's and attendants'
+/// explanations, the Mini-Maze, the shifting floor stage, the Log-Rolling
+/// Stage, The Wall and the Board Walk lead to the arena. The stone pillars are
+/// sprite 0xd3, the sprite of the stone pillars Move pushes elsewhere.
+enum ColosseumFinal2Actor {
+  OPPONENT = ACTOR_FIRST_PLACED, ///< Satrage, racing Isaac to the arena
+  /// The Board Walk's two stone pillars, on which Move does nothing.
+  BOARD_WALK_WEST_PILLAR,
+  BOARD_WALK_EAST_PILLAR,
+  WALL_PILLAR, ///< the stone pillar by The Wall, pushed or moved with Move
+  /// The Mini-Maze's three stone pillars, pushed or moved with Move.
+  /// ColosseumFinal2_Initialize stands them west to east, at columns 73, 76
+  /// and 79, until they have been moved.
+  MINI_MAZE_FIRST_PILLAR,
+  ROLLING_LOG_WEST = MINI_MAZE_FIRST_PILLAR + 3, ///< the Board Walk's logs
+  ROLLING_LOG_EAST,
+  ROLLING_LOG_CENTER,
+  FORCE_TARGET,
+  GROWTH_PLANT,
+  /// The Log-Rolling Stage's two Frost targets, in sprite 0xe3, the sprite of
+  /// the puddle Frost freezes in Lunpa (lunpa.h's SPRITE_PUDDLE).
+  FROST_TARGET_WEST,
+  FROST_TARGET_EAST,
+  /// The shifting floor stage's four lifts, from west to east, which the
+  /// lifts' operator runs.
+  COLOSSEUM_FINAL_2_FIRST_PLATFORM,
+  COLOSSEUM_FINAL_2_LAST_PLATFORM = COLOSSEUM_FINAL_2_FIRST_PLATFORM + 3,
+  /// Four pieces in the lifts' sprite, lying on the Board Walk; nothing but
+  /// ColosseumFinal2_Initialize touches them.
+  BOARD_WALK_FIRST_PLATFORM,
+  /// Knocked down onto the Board Walk by Force on FORCE_TARGET.
+  FALLING_OBSTACLE = BOARD_WALK_FIRST_PLATFORM + 4,
+  /// "The operator of the lifts", as the shifting floor stage's attendant
+  /// calls him.
+  LIFT_OPERATOR,
+  RIDING_LOG_NORTH, ///< the Log-Rolling Stage's two logs
+  RIDING_LOG_SOUTH,
+  GUIDE, ///< explains the second finals match
+  MINI_MAZE_ATTENDANT,
+  SHIFTING_FLOOR_ATTENDANT,
+  LOG_ROLLING_ATTENDANT,
+  WALL_ATTENDANT,
+  BOARD_WALK_ATTENDANT,
+  PRIZE_A, ///< the arena's Chain Mail and Cotton Shirt
+  PRIZE_B
 };
 
 /// Sets the party leader's walking speed and acceleration.
@@ -212,21 +234,21 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gColosseumFinal2Placements;
 }
 
-/// Move on the Board Walk's two rocks does nothing.
+/// Move on the Board Walk's two stone pillars does nothing.
 static void Event_IgnoreMove(void) {}
 
-/// Walking into a rock in Colosseum Final 2 (trigger 21) pushes the obstacle
-/// immediately ahead of the selected actor.
-static void Event_PushRock(void) { ColosseumFinal2_PushAdjacentObstacle(); }
+/// Walking into a stone pillar in Colosseum Final 2 (trigger 21) pushes the
+/// obstacle immediately ahead of the selected actor.
+static void Event_PushPillar(void) { ColosseumFinal2_PushAdjacentObstacle(); }
 
-/// Move on the rock by The Wall, and after each push: its cell is updated, and
-/// FLAG_PLACE_TEMP_35 keeps whether it stands at column 36.
-static void Event_UpdateMovedRockCell(void) {
+/// Move on the stone pillar by The Wall, and after each push: its cell is
+/// updated, and FLAG_PLACE_TEMP_35 keeps whether it stands at column 36.
+static void Event_UpdateMovedPillarCell(void) {
   struct FieldActor *obstacle;
   s32 column;
   s32 row;
 
-  obstacle = Object_GetById(11);
+  obstacle = Object_GetById(WALL_PILLAR);
   if ((obstacle->x.fixed >> 20) == 36) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_35);
     column = 0x23;
@@ -240,36 +262,36 @@ static void Event_UpdateMovedRockCell(void) {
   }
 }
 
-/// Walking into the rock by The Wall (triggers 20 and 26) pushes it, then
-/// updates its cell.
-static void Event_PushRockAndUpdateCells(void) {
+/// Walking into the stone pillar by The Wall (triggers 20 and 26) pushes it,
+/// then updates its cell.
+static void Event_PushPillarAndUpdateCells(void) {
   ColosseumFinal2_PushAdjacentObstacle();
-  Event_UpdateMovedRockCell();
+  Event_UpdateMovedPillarCell();
 }
 
-/// Move on a rock in the Mini-Maze, and after each push: the three rocks'
-/// columns are kept (byte flags 0x340, 0x348 and 0x350) and their cells
-/// rebuilt.
-static void Event_SaveMovedRockColumns(void) {
+/// Move on a stone pillar in the Mini-Maze, and after each push: the three
+/// pillars' columns are kept (the bytes at FLAG_PLACE_TEMP_40, _48 and _50)
+/// and their cells rebuilt.
+static void Event_SaveMovedPillarColumns(void) {
 
   struct FieldActor *obstacle;
   s32 column;
 
   Map_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
-  obstacle = Object_GetById(12);
+  obstacle = Object_GetById(MINI_MAZE_FIRST_PILLAR);
   column = obstacle->x.fixed >> 20;
-  FieldGameFlag_SetByte(832, column);
+  FieldGameFlag_SetByte(FLAG_PLACE_TEMP_40, column);
   Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  obstacle = Object_GetById(13);
+  obstacle = Object_GetById(MINI_MAZE_FIRST_PILLAR + 1);
   column = obstacle->x.fixed >> 20;
-  FieldGameFlag_SetByte(840, column);
+  FieldGameFlag_SetByte(FLAG_PLACE_TEMP_48, column);
   Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  obstacle = Object_GetById(14);
+  obstacle = Object_GetById(MINI_MAZE_FIRST_PILLAR + 2);
   column = obstacle->x.fixed >> 20;
-  FieldGameFlag_SetByte(848, column);
+  FieldGameFlag_SetByte(FLAG_PLACE_TEMP_50, column);
   Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
 
@@ -634,23 +656,23 @@ static void ColosseumFinal2_UpdateMovingPlatforms(void) {
   if (gColosseumFinal2_LiftTimer == 0) {
     gColosseumFinal2_LiftPhase ^= 1;
     if (gColosseumFinal2_LiftPhase != 0) {
-      platformActor = Object_GetById(22);
+      platformActor = Object_GetById(COLOSSEUM_FINAL_2_FIRST_PLATFORM);
       FieldObject_SetPosition(platformActor, PIXELS(936), 0, PIXELS(184));
-      platformActor = Object_GetById(23);
+      platformActor = Object_GetById(COLOSSEUM_FINAL_2_FIRST_PLATFORM + 1);
       FieldObject_SetPosition(platformActor, PIXELS(968), 0, PIXELS(248));
-      platformActor = Object_GetById(24);
+      platformActor = Object_GetById(COLOSSEUM_FINAL_2_FIRST_PLATFORM + 2);
       FieldObject_SetPosition(platformActor, PIXELS(1000), 0, PIXELS(184));
-      platformActor = Object_GetById(25);
+      platformActor = Object_GetById(COLOSSEUM_FINAL_2_LAST_PLATFORM);
       FieldObject_SetPosition(platformActor, PIXELS(1032), 0, PIXELS(248));
       Engine_ActorSetAnimation(LIFT_OPERATOR, 11);
     } else {
-      platformActor = Object_GetById(22);
+      platformActor = Object_GetById(COLOSSEUM_FINAL_2_FIRST_PLATFORM);
       FieldObject_SetPosition(platformActor, PIXELS(936), 0, PIXELS(216));
-      platformActor = Object_GetById(23);
+      platformActor = Object_GetById(COLOSSEUM_FINAL_2_FIRST_PLATFORM + 1);
       FieldObject_SetPosition(platformActor, PIXELS(968), 0, PIXELS(216));
-      platformActor = Object_GetById(24);
+      platformActor = Object_GetById(COLOSSEUM_FINAL_2_FIRST_PLATFORM + 2);
       FieldObject_SetPosition(platformActor, PIXELS(1000), 0, PIXELS(216));
-      platformActor = Object_GetById(25);
+      platformActor = Object_GetById(COLOSSEUM_FINAL_2_LAST_PLATFORM);
       FieldObject_SetPosition(platformActor, PIXELS(1032), 0, PIXELS(216));
       Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
     }
@@ -669,10 +691,12 @@ static void ColosseumFinal2_ResetMovingPlatforms(void) {
   gColosseumFinal2_LiftTimer = 0;
   gColosseumFinal2_LiftPhase = 0;
   Engine_TaskRemoveCallback(ColosseumFinal2_UpdateMovingPlatforms);
-  Actor_SetPosition(22, PIXELS(936), PIXELS(216));
-  Actor_SetPosition(23, PIXELS(968), PIXELS(216));
-  Actor_SetPosition(24, PIXELS(1000), PIXELS(216));
-  Actor_SetPosition(25, PIXELS(1032), PIXELS(216));
+  Actor_SetPosition(COLOSSEUM_FINAL_2_FIRST_PLATFORM, PIXELS(936), PIXELS(216));
+  Actor_SetPosition(COLOSSEUM_FINAL_2_FIRST_PLATFORM + 1, PIXELS(968),
+                    PIXELS(216));
+  Actor_SetPosition(COLOSSEUM_FINAL_2_FIRST_PLATFORM + 2, PIXELS(1000),
+                    PIXELS(216));
+  Actor_SetPosition(COLOSSEUM_FINAL_2_LAST_PLATFORM, PIXELS(1032), PIXELS(216));
   Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
 }
 
@@ -704,7 +728,7 @@ static void ColosseumFinal2_WaitForPlatformCrossingPhase(void) {
 /// crossing (FLAG_PLACE_TEMP_34).
 static void Event_HaltLifts(void) {
   BattleEffect_PauseObject(LIFT_OPERATOR);
-  Engine_GameFlagSet(820);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_34);
 
   if (gColosseumFinal2_LiftPhase != 0) {
     gColosseumFinal2_LiftTimer = 0;
@@ -799,8 +823,10 @@ static void ColosseumFinal2_StageBattleResult(s32 result) {
 }
 
 /// Sets up Colosseum Final 2: restores obstacle progress, then by the arrival:
-/// the race (1), the friends' turns to lend a hand (2), the guide's tour (3),
-/// or the match won (4) or lost (5).
+/// the race (entrance 1), the friends' turns to lend a hand
+/// (COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST), the guide's tour
+/// (COLOSSEUM_FINAL_2_FROM_COLOSSEUM_WEST), or the match won (entrance 4) or
+/// lost (entrance 5).
 s32 ColosseumFinal2_Initialize(void) {
   struct FieldActor *actor;
   s32 x;
@@ -816,7 +842,8 @@ s32 ColosseumFinal2_Initialize(void) {
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   Map_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   Map_CopyCellAttributes(48, 10, 5, 6, 120, 10);
-  for (obstacleId = 26; obstacleId <= 30; obstacleId++) {
+  for (obstacleId = BOARD_WALK_FIRST_PLATFORM; obstacleId <= FALLING_OBSTACLE;
+       obstacleId++) {
     actor = Object_GetById(obstacleId);
     Object_SetMode(actor, 4);
     actor->motionFlags = 0;
@@ -836,7 +863,7 @@ s32 ColosseumFinal2_Initialize(void) {
     Object_SetMode(actor, 3);
     actor->y.fixed = PIXELS(16);
   }
-  Object_GetById(11)->priorityFlags = 2;
+  Object_GetById(WALL_PILLAR)->priorityFlags = 2;
   zero = 0;
   if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_35)) {
     Map_CopyCellAttributes(35, 78, 1, 1, 35, 77);
@@ -868,30 +895,30 @@ s32 ColosseumFinal2_Initialize(void) {
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(52, 28, 1, 3, column, 13);
 
-  // Each movable obstacle stores its last occupied column in the scene flags.
-  x = FieldGameFlag_GetByte(0x340);
+  // Each Mini-Maze pillar returns to the column its place flag byte keeps.
+  x = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_40);
   if (x == 0) {
     x = 73;
   }
-  actor = Object_GetById(12);
+  actor = Object_GetById(MINI_MAZE_FIRST_PILLAR);
   actor->x.fixed = (x << 20) + 0x80000;
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
-  x = FieldGameFlag_GetByte(0x348);
+  x = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_48);
   if (x == 0) {
     x = 76;
   }
-  actor = Object_GetById(13);
+  actor = Object_GetById(MINI_MAZE_FIRST_PILLAR + 1);
   actor->x.fixed = (x << 20) + 0x80000;
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(71, 16, 1, 1, x, 16);
-  x = FieldGameFlag_GetByte(0x350);
+  x = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_50);
   if (x == 0) {
     x = 79;
   }
-  actor = Object_GetById(14);
+  actor = Object_GetById(MINI_MAZE_FIRST_PILLAR + 2);
   actor->x.fixed = (x << 20) + 0x80000;
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
@@ -929,8 +956,7 @@ s32 ColosseumFinal2_Initialize(void) {
   Colosso_ShowItemIcon(PRIZE_B, 89);
   Colosso_ShowItemIcon(PRIZE_A, 77);
   Engine_ActorSetChildValue(OPPONENT, 1);
-  // Entrances: the race (1), the friends' turns (2), the tour (3), and the
-  // battle's result (4 and 5).
+  // Entrance 1 is the race, and entrances 4 and 5 the battle's result.
   switch (gGameState.entrance) {
   case 1:
     FieldScene_BuildDescriptorAndInstallTask(ACTOR_PARTY_LEADER, OPPONENT, 5,
@@ -945,26 +971,26 @@ s32 ColosseumFinal2_Initialize(void) {
     Engine_ActorDestroy(BOARD_WALK_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Engine_AudioPlayCue(MUS_017);
-      Colosso_ControlCharacterAlone(0);
+      Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumFinal2_ShowRoundStartLettering(2);
     }
-    Object_LinkObjectAndSetCallback(1, 0);
-    Object_LinkObjectAndSetCallback(2, 0);
-    Object_LinkObjectAndSetCallback(3, 0);
+    Object_LinkObjectAndSetCallback(GARET, ACTOR_PARTY_LEADER);
+    Object_LinkObjectAndSetCallback(IVAN, ACTOR_PARTY_LEADER);
+    Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
     ColosseumFinal2_StartRivalPath((s32)&ResourceId_RivalPathB);
     break;
-  case 2:
+  case COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy, 0xc80);
     Engine_ActorDestroy(PRIZE_A);
     Engine_ActorDestroy(PRIZE_B);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
-      Colosso_ControlCharacterAlone(1);
+      Colosso_ControlCharacterAlone(GARET);
       ColosseumFinal2_ShowRoundStartLettering(0);
     }
     break;
-  case 3:
+  case COLOSSEUM_FINAL_2_FROM_COLOSSEUM_WEST:
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       ColosseumFinal2_IntroduceSecondFinals(GUIDE);
       Colosso_ClearCheeringSpots();
@@ -982,9 +1008,9 @@ s32 ColosseumFinal2_Initialize(void) {
   return 0;
 }
 
-/// The tour of Colosseum Final 2 (entrance 3): the guide welcomes the party to
-/// the second finals match's stages and leaves them to their attendants, then
-/// Garet, Ivan and Mia walk back into Isaac.
+/// The tour of Colosseum Final 2 (COLOSSEUM_FINAL_2_FROM_COLOSSEUM_WEST): the
+/// guide welcomes the party to the second finals match's stages and leaves
+/// them to their attendants, then Garet, Ivan and Mia walk back into Isaac.
 static void ColosseumFinal2_IntroduceSecondFinals(s32 attendantId) {
   s32 attendantZ;
   s32 attendantX;
@@ -996,22 +1022,22 @@ static void ColosseumFinal2_IntroduceSecondFinals(s32 attendantId) {
   Engine_EventBegin();
   Actor_SetSpeed(attendantId, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(1, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(2, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(3, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   Engine_ActorSetPosition(ACTOR_PARTY_LEADER, (attendantX << 16),
                           ((attendantZ << 16) - 0x300000));
-  Engine_ActorSetPosition(1, (attendantX << 16) - 0x100000,
+  Engine_ActorSetPosition(GARET, (attendantX << 16) - 0x100000,
                           (attendantZ << 16) - 0x280000);
-  Engine_ActorSetPosition(2, (attendantX << 16) + 0x100000,
+  Engine_ActorSetPosition(IVAN, (attendantX << 16) + 0x100000,
                           (attendantZ << 16) - 0x280000);
-  Engine_ActorSetPosition(3, (attendantX << 16),
+  Engine_ActorSetPosition(MIA, (attendantX << 16),
                           ((attendantZ << 16) - 0x200000));
   Engine_ActorSetPosition(attendantId, (attendantX << 16),
                           ((attendantZ << 16) - 0x500000));
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   actor->facing = FACING_NORTH;
-  Engine_CameraFollowActor(0, 0);
+  Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventSetMessage(MsgColossoSiteSecondFinals);
@@ -1024,30 +1050,30 @@ static void ColosseumFinal2_IntroduceSecondFinals(s32 attendantId) {
   Engine_ActorRunRepeatedMotion(attendantId, 2);
   Engine_EventShowMessage(attendantId, 0);
   // Gather the companions into Isaac before the attendant returns to his post.
-  Engine_ActorSetAnimation(3, 3);
-  Engine_ActorSetAnimation(1, 3);
-  Engine_ActorSetAnimation(2, 3);
+  Engine_ActorSetAnimation(MIA, 3);
+  Engine_ActorSetAnimation(GARET, 3);
+  Engine_ActorSetAnimation(IVAN, 3);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(1, 2);
+  Engine_ActorSetAnimation(GARET, 2);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Engine_ActorSetDestination(1, actor->x.part.pixel, actor->z.part.pixel);
+    Engine_ActorSetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(2, 2);
+  Engine_ActorSetAnimation(IVAN, 2);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Engine_ActorSetDestination(2, actor->x.part.pixel, actor->z.part.pixel);
+    Engine_ActorSetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
-  Engine_ActorSetAnimation(3, 2);
+  Engine_ActorSetAnimation(MIA, 2);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Engine_ActorSetDestination(3, actor->x.part.pixel, actor->z.part.pixel);
+    Engine_ActorSetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorWalkToAndWait(attendantId, (attendantX - 16), (attendantZ - 64));
-  Engine_ActorSetPosition(1, 0, 0);
-  Engine_ActorSetPosition(2, 0, 0);
-  Engine_ActorSetPosition(3, 0, 0);
+  Engine_ActorSetPosition(GARET, 0, 0);
+  Engine_ActorSetPosition(IVAN, 0, 0);
+  Engine_ActorSetPosition(MIA, 0, 0);
   Engine_ActorWalkToAndWait(attendantId, (attendantX - 16), (attendantZ - 16));
   Engine_ActorWalkToAndWait(attendantId, attendantX, attendantZ);
   Engine_ActorFaceDirection(attendantId, FACING_NORTH, 10);
@@ -1056,8 +1082,9 @@ static void ColosseumFinal2_IntroduceSecondFinals(s32 attendantId) {
 
 /// The Mini-Maze's attendant, stage 1 of Colosseum Final 2: the first time,
 /// Isaac appears and runs the maze; then the objective, and a place for a
-/// friend to cheer. With a friend alone on the stages (entrance 2) he asks
-/// whether they are done cheering instead.
+/// friend to cheer. With a friend alone on the stages
+/// (COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST) he asks whether they are done
+/// cheering instead.
 static void Event_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
   struct FieldActor *actor;
@@ -1260,8 +1287,8 @@ static void Event_TalkToWallAttendant(s32 attendant) {
 
 /// Moves a demonstration obstacle to pixel coordinates while its pusher
 /// follows.
-static void ColosseumFinal2_PushBlockToCell(s32 obstacleId, s32 column,
-                                            s32 row) {
+static void ColosseumFinal2_PushObstacleToCell(s32 obstacleId, s32 column,
+                                               s32 row) {
   s32 pusher = gGameState.selectedActor;
   struct FieldActor *pusherActor = Object_GetById(pusher);
   struct FieldActor *obstacle = Object_GetById(obstacleId);
@@ -1327,7 +1354,7 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 408, 216);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
     Engine_EventShowMessage(attendant, 0);
-    ColosseumFinal2_PushBlockToCell(ROLLING_LOG_EAST, 360, 208);
+    ColosseumFinal2_PushObstacleToCell(ROLLING_LOG_EAST, 360, 208);
     Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 264, 45);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 216);
@@ -1730,7 +1757,8 @@ static void ColosseumFinal2_PushAdjacentObstacle(void) {
     return;
   }
 
-  // Require a free destination cell and free space immediately above the block.
+  // Require a free destination cell and free space immediately above the
+  // pillar.
   packedOffset = gColosseumFinal2_DirectionSteps[direction];
   destination.x = obstacle->x.fixed + (packedOffset & 0xffff0000);
   destination.y = obstacle->y.fixed;
@@ -1989,9 +2017,9 @@ struct SceneEvent gColosseumFinal2Events[] = {
     { TOUCH_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollWestLogWest) },
     { TOUCH_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollWestLogEast) },
     { TOUCH_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RideLog) },
-    { TOUCH_WALKING, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
-    { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockAndUpdateCells) },
-    { TOUCH_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockAndUpdateCells) },
+    { TOUCH_WALKING, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
+    { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillarAndUpdateCells) },
+    { TOUCH_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillarAndUpdateCells) },
     { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_10, EVENT_SCRIPT(Event_ReachArena) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_PLACE_TEMP_38, FIND_ITEM(ITEM_NUT) },
     { 0x8413, 102, FLAG_PLACE_TEMP_39, FIND_ITEM(ITEM_SMOKE_BOMB) },
@@ -2001,12 +2029,12 @@ struct SceneEvent gColosseumFinal2Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE) | 0x10000000, FORCE_TARGET, FLAG_PLACE_TEMP_30, EVENT_SCRIPT(Event_PrepareForce) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), FORCE_TARGET, FLAG_PLACE_TEMP_30, EVENT_SCRIPT(Event_KnockDownObstacle) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, FLAG_PLACE_TEMP_33, EVENT_SCRIPT(Event_GrowPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UpdateMovedRockCell) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedRockColumns) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedRockColumns) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedRockColumns) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), BOARD_WALK_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), BOARD_WALK_EAST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UpdateMovedPillarCell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), MINI_MAZE_FIRST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedPillarColumns) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), MINI_MAZE_FIRST_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedPillarColumns) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), MINI_MAZE_FIRST_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedPillarColumns) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), LIFT_OPERATOR, FLAG_PLACE_TEMP_34, EVENT_SCRIPT(Event_HaltLifts) },
     { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
     { EVENT_TALK, MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMiniMazeAttendant) },

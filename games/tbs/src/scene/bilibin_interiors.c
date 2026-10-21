@@ -1,12 +1,13 @@
 /// @file
 /// Inside Bilibin's buildings: scene 31, a row the scene table leaves without
-/// a symbol, whose area name is Bilibin. Six of Bilibin's doors (Bilibin's
-/// exits 3 to 8, in bilibin.c) lead into its rooms, and each room's door leads
-/// back out to the door it was entered by. One room holds the weapon and armor
-/// shops, another the item shop, a third the inn with the restaurant beside
-/// it, whose inner door (exits 7 and 8) leads to one more room; three other
-/// buildings hold villagers. BilibinInteriors_GetPlacements leaves out the
-/// actors of the rooms not in view.
+/// a symbol, whose area name is Bilibin. Six of Bilibin's doors
+/// (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, in bilibin.c) lead into
+/// its rooms, and each room's door leads back out to the door it was entered
+/// by. One room holds the weapon and armor shops, another the item shop, a
+/// third the inn with the restaurant beside it, whose inner door (exits 7 and
+/// 8) leads to one more room; three other buildings hold villagers.
+/// BilibinInteriors_GetPlacements leaves out the actors of the rooms not in
+/// view.
 ///
 /// The party first comes in while Kolima's curse holds
 /// (FLAG_KOLIMA_CURSE_LIFTED clear), and the townsfolk explain what the street
@@ -63,18 +64,54 @@ enum {
   BILIBIN_INN = 2
 };
 
-/// Actor slots follow the placement rows, starting at ACTOR_FIRST_PLACED.
-enum {
-  BILIBIN_MIA_ADMIRER = 10, ///< wants to see Mia again. "that angelic" Mia
-  BILIBIN_WEAPON_SHOPKEEPER = 16,
-  BILIBIN_ARMOR_SHOPKEEPER = 17,
-  BILIBIN_ITEM_SHOPKEEPER = 18,
-  BILIBIN_INNKEEPER = 19,
-  BILIBIN_CHEF = 21, ///< the restaurant's head chef, born in Kolima
-  BILIBIN_KITCHEN_WORKER = 22,
-  BILIBIN_WAITRESS = 23,
-  BILIBIN_HUNGRY_DINER = 24, ///< a businessman waiting for his dinner
-  BILIBIN_DINER = 27
+/// The placed actors, numbered in the order of gBilibinInteriorsPlacements
+/// from ACTOR_FIRST_PLACED. Each room's actors are together: two in each house,
+/// then the shops' customers and keepers, the inn and its restaurant, and the
+/// room behind the inn's inner door.
+enum BilibinInteriorsActor {
+  /// In the house east. "That tree at the entrance is really a man cursed by
+  /// the sacred tree!"
+  BILIBIN_VILLAGER_CURSED_MAN = ACTOR_FIRST_PLACED,
+  /// "McCoy had the trees cut down so he could build his wife a grand
+  /// palace."
+  BILIBIN_VILLAGER_PALACE,
+  /// In the house west; wants to see Mia again. "that angelic" Mia
+  BILIBIN_MIA_ADMIRER,
+  BILIBIN_VILLAGER_SNOW, ///< "We rarely see any snow around Bilibin."
+  /// In the house north. "How are people doing in Kolima? I've been
+  /// worried..."
+  BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA,
+  /// "I know that guy who turned into the tree... I remember his clothes.";
+  /// later asks whether the party knows what silk is.
+  BILIBIN_VILLAGER_SILK,
+  /// In the item shop. "Long ago, the lighthouse near Imil held the Water of
+  /// Hermes"
+  BILIBIN_VILLAGER_WATER_OF_HERMES,
+  /// "But even the legendary Water of Hermes cannot turn back time."
+  BILIBIN_VILLAGER_LOST_YOUTH,
+  BILIBIN_WEAPON_SHOPKEEPER,
+  BILIBIN_ARMOR_SHOPKEEPER,
+  BILIBIN_ITEM_SHOPKEEPER,
+  BILIBIN_INNKEEPER,
+  /// Beside the innkeeper. "There will be fewer guests now that the fuss is
+  /// over."
+  BILIBIN_INN_WORKER,
+  BILIBIN_CHEF, ///< the restaurant's head chef, born in Kolima
+  BILIBIN_KITCHEN_WORKER,
+  BILIBIN_WAITRESS,
+  BILIBIN_HUNGRY_DINER, ///< a businessman waiting for his dinner
+  /// A diner. "I came to Bilibin hoping to sell furniture."
+  BILIBIN_FURNITURE_SELLER,
+  /// A diner. "I think that big tree deep in the forest looks suspicious!"
+  BILIBIN_DINER_BIG_TREE,
+  BILIBIN_DINER, ///< asks whether a tree spirit can curse a man
+  /// A diner. "I can't wait to see today's special! Yippee!"
+  BILIBIN_DINER_TODAYS_SPECIAL,
+  /// In the room behind the inn's inner door. "I went to Lord McCoy looking
+  /// for work..."
+  BILIBIN_JOB_SEEKER,
+  /// "I've heard songs that tell of ancient trees developing strange powers."
+  BILIBIN_VILLAGER_ANCIENT_TREES
 };
 
 const struct SceneEntrance *BilibinInteriors_GetEntrances(void) {
@@ -218,7 +255,7 @@ static void Event_AskAboutTreeSpirit(void) {
 static void Event_AskAboutHolyTree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoKnowIfHolyTree);
-  Engine_EventAskYesNo(8, 0);
+  Engine_EventAskYesNo(BILIBIN_VILLAGER_CURSED_MAN, 0);
   Engine_EventEnd();
 }
 
@@ -228,7 +265,7 @@ static void Event_AskAboutHolyTree(void) {
 static void Event_AskAboutSilk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoKnowSilk);
-  Engine_EventAskYesNo(13, 0);
+  Engine_EventAskYesNo(BILIBIN_VILLAGER_SILK, 0);
   Engine_EventEnd();
 }
 
@@ -439,106 +476,106 @@ struct ScenePlacement gBilibinInteriorsPlacements[] = {
 };
 
 struct SceneEvent gBilibinInteriorsEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_INTERIORS_HOUSE_EAST_TO_BILIBIN },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_INTERIORS_HOUSE_WEST_TO_BILIBIN },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, BILIBIN_INTERIORS_HOUSE_NORTH_TO_BILIBIN },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, BILIBIN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_BILIBIN },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, BILIBIN_INTERIORS_ITEM_SHOP_TO_BILIBIN },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, BILIBIN_INTERIORS_INN_TO_BILIBIN },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-    { EVENT_TALK, 8, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatTreeAtTheEntranceIs) },
-    { EVENT_TALK, 9, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinMccoyHadTheTreesCutDown) },
+    { EVENT_TALK, BILIBIN_VILLAGER_CURSED_MAN, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatTreeAtTheEntranceIs) },
+    { EVENT_TALK, BILIBIN_VILLAGER_PALACE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinMccoyHadTheTreesCutDown) },
     { EVENT_TALK, BILIBIN_MIA_ADMIRER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheSnowIsAlreadyPilingUp) },
-    { EVENT_TALK, 11, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeRarelySeeAnySnowAround) },
-    { EVENT_TALK, 12, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHowArePeopleDoingInKolima) },
-    { EVENT_TALK, 13, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIKnowThatGuyWhoTurned) },
-    { EVENT_TALK, 14, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinLongAgoTheLighthouseNearImil) },
-    { EVENT_TALK, 15, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinButEvenTheLegendaryWaterOf) },
+    { EVENT_TALK, BILIBIN_VILLAGER_SNOW, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeRarelySeeAnySnowAround) },
+    { EVENT_TALK, BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHowArePeopleDoingInKolima) },
+    { EVENT_TALK, BILIBIN_VILLAGER_SILK, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIKnowThatGuyWhoTurned) },
+    { EVENT_TALK, BILIBIN_VILLAGER_WATER_OF_HERMES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinLongAgoTheLighthouseNearImil) },
+    { EVENT_TALK, BILIBIN_VILLAGER_LOST_YOUTH, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinButEvenTheLegendaryWaterOf) },
     { EVENT_TALK, BILIBIN_WEAPON_SHOPKEEPER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
     { EVENT_TALK, BILIBIN_ARMOR_SHOPKEEPER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
     { EVENT_TALK, BILIBIN_ITEM_SHOPKEEPER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
     { EVENT_TALK, BILIBIN_INNKEEPER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { EVENT_TALK, 20, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouCantReachKolimaNoMatter) },
+    { EVENT_TALK, BILIBIN_INN_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouCantReachKolimaNoMatter) },
     { EVENT_TALK, BILIBIN_CHEF, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToWorriedChef) },
     { EVENT_TALK, BILIBIN_KITCHEN_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeyMisterHeadChefAreYou) },
     { EVENT_TALK, BILIBIN_WAITRESS, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinStartCookingAlready) },
     { EVENT_TALK, BILIBIN_HUNGRY_DINER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToHungryDiner) },
-    { EVENT_TALK, 25, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeCameHereBecauseLordMccoy) },
-    { EVENT_TALK, 26, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIThinkThatBigTreeDeep) },
+    { EVENT_TALK, BILIBIN_FURNITURE_SELLER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeCameHereBecauseLordMccoy) },
+    { EVENT_TALK, BILIBIN_DINER_BIG_TREE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIThinkThatBigTreeDeep) },
     { EVENT_TALK, BILIBIN_DINER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_AskAboutTreeSpirit) },
-    { EVENT_TALK, 28, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantWaitToSeeTodays) },
-    { EVENT_TALK, 29, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWentToLordMccoyLooking) },
-    { EVENT_TALK, 30, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIveHeardSongsThatTellOf) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutHolyTree) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBilibinThankGoodnessTheyStoppedConstructionOf) },
+    { EVENT_TALK, BILIBIN_DINER_TODAYS_SPECIAL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantWaitToSeeTodays) },
+    { EVENT_TALK, BILIBIN_JOB_SEEKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWentToLordMccoyLooking) },
+    { EVENT_TALK, BILIBIN_VILLAGER_ANCIENT_TREES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIveHeardSongsThatTellOf) },
+    { EVENT_TALK, BILIBIN_VILLAGER_CURSED_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutHolyTree) },
+    { EVENT_TALK, BILIBIN_VILLAGER_PALACE, CONDITION_ALWAYS, MSGNO(MsgBilibinThankGoodnessTheyStoppedConstructionOf) },
     { EVENT_TALK, BILIBIN_MIA_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgBilibinIAlwaysMissAltinInThe) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherSaysThatItsWarm) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinTheRoadToKolimaIsOpen) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutSilk) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBilibinIThoughtISawLightsIn) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgBilibinHisEyesAreRedBecauseHe) },
+    { EVENT_TALK, BILIBIN_VILLAGER_SNOW, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherSaysThatItsWarm) },
+    { EVENT_TALK, BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgBilibinTheRoadToKolimaIsOpen) },
+    { EVENT_TALK, BILIBIN_VILLAGER_SILK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutSilk) },
+    { EVENT_TALK, BILIBIN_VILLAGER_WATER_OF_HERMES, CONDITION_ALWAYS, MSGNO(MsgBilibinIThoughtISawLightsIn) },
+    { EVENT_TALK, BILIBIN_VILLAGER_LOST_YOUTH, CONDITION_ALWAYS, MSGNO(MsgBilibinHisEyesAreRedBecauseHe) },
     { EVENT_TALK, BILIBIN_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponShopkeeper) },
     { EVENT_TALK, BILIBIN_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorShopkeeper) },
     { EVENT_TALK, BILIBIN_ITEM_SHOPKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemShopkeeper) },
     { EVENT_TALK, BILIBIN_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgBilibinThereWillBeFewerGuestsNow) },
+    { EVENT_TALK, BILIBIN_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinThereWillBeFewerGuestsNow) },
     { EVENT_TALK, BILIBIN_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBusyChef) },
     { EVENT_TALK, BILIBIN_KITCHEN_WORKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKitchenWorker) },
     { EVENT_TALK, BILIBIN_WAITRESS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWaitress) },
     { EVENT_TALK, BILIBIN_HUNGRY_DINER, CONDITION_ALWAYS, MSGNO(MsgBilibinImALittleSurprisedThatThe) },
-    { EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgBilibinTheresNoBusinessHereSoIm) },
-    { EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyServedSoMuchFoodToday) },
+    { EVENT_TALK, BILIBIN_FURNITURE_SELLER, CONDITION_ALWAYS, MSGNO(MsgBilibinTheresNoBusinessHereSoIm) },
+    { EVENT_TALK, BILIBIN_DINER_BIG_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyServedSoMuchFoodToday) },
     { EVENT_TALK, BILIBIN_DINER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutMeal) },
-    { EVENT_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgBilibinOooohThatsItITriedMy) },
-    { EVENT_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgBilibinTheIncidentWasResolvedBeforeI) },
-    { EVENT_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatThatEerieHowling) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThisIsAllLordMccoysFault) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAhLadyMccoyIWouldJust) },
+    { EVENT_TALK, BILIBIN_DINER_TODAYS_SPECIAL, CONDITION_ALWAYS, MSGNO(MsgBilibinOooohThatsItITriedMy) },
+    { EVENT_TALK, BILIBIN_JOB_SEEKER, CONDITION_ALWAYS, MSGNO(MsgBilibinTheIncidentWasResolvedBeforeI) },
+    { EVENT_TALK, BILIBIN_VILLAGER_ANCIENT_TREES, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatThatEerieHowling) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_CURSED_MAN, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThisIsAllLordMccoysFault) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_PALACE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAhLadyMccoyIWouldJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_MIA_ADMIRER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_ReadMiaAdmirersMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItMustBeDifficultToLive) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantImagineThatEveryoneIn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeSeemedSoHappyAndThen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinCouldTheWaterOfHermesSave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheWaterOfHermesVanishedLong) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_SNOW, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItMustBeDifficultToLive) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantImagineThatEveryoneIn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_SILK, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeSeemedSoHappyAndThen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_WATER_OF_HERMES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinCouldTheWaterOfHermesSave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_LOST_YOUTH, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheWaterOfHermesVanishedLong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_WEAPON_SHOPKEEPER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheWorldWillNeverSeeSuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_ARMOR_SHOPKEEPER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWishICouldSeeAnother) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_ITEM_SHOPKEEPER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinOnlySomeoneReallyBraveWouldGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_INNKEEPER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIDontBelieveInCursesFrom) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAnyTravelersHeadingEastAreStuck) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_INN_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAnyTravelersHeadingEastAreStuck) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_CHEF, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinFatherMotherIHopeTheyreAll) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_KITCHEN_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinShouldIJustForgetThatIm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_WAITRESS, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIveHadAllTheCustomerComplaints) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_HUNGRY_DINER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinArghhhThatsItIJustWant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICameToBilibinHopingTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinISeeWhyTheyCallThat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_FURNITURE_SELLER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICameToBilibinHopingTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_DINER_BIG_TREE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinISeeWhyTheyCallThat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_DINER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIDontCareWhoDoesIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYippeeIsItReadyYetMy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinImGettingALittleScaredHearing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItHasBeenSaidThatA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBilibinItTakesManyYearsForA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinSometimesIWishICouldSee) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_DINER_TODAYS_SPECIAL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYippeeIsItReadyYetMy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_JOB_SEEKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinImGettingALittleScaredHearing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_ANCIENT_TREES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItHasBeenSaidThatA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_CURSED_MAN, CONDITION_ALWAYS, MSGNO(MsgBilibinItTakesManyYearsForA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_PALACE, CONDITION_ALWAYS, MSGNO(MsgBilibinSometimesIWishICouldSee) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_MIA_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderIfThereAreStill) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherHasTraveledAllOver) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinTravelingMakesYoungWarriorsStronger) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBilibinClothesMadeWithSilkAreSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBilibinTheresNoDoubtAboutItIts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgBilibinWhatsTheBigDealWhyAre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_SNOW, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherHasTraveledAllOver) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgBilibinTravelingMakesYoungWarriorsStronger) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_SILK, CONDITION_ALWAYS, MSGNO(MsgBilibinClothesMadeWithSilkAreSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_WATER_OF_HERMES, CONDITION_ALWAYS, MSGNO(MsgBilibinTheresNoDoubtAboutItIts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_LOST_YOUTH, CONDITION_ALWAYS, MSGNO(MsgBilibinWhatsTheBigDealWhyAre) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_WEAPON_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgBilibinAltinsGotGoodWeaponsButI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_ARMOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgBilibinIWishICouldGoOut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_ITEM_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyCallThemselvesWarriorsButYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgBilibinWellIWasOnlyActingScared) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgBilibinItdBeBetterForBusinessIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinItdBeBetterForBusinessIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_CHEF, CONDITION_ALWAYS, MSGNO(MsgBilibinIllGoToKolimaWhenThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_KITCHEN_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinLetsSeeSoupSaladAndI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_WAITRESS, CONDITION_ALWAYS, MSGNO(MsgBilibinTheHeadChefWasSoLazy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_HUNGRY_DINER, CONDITION_ALWAYS, MSGNO(MsgBilibinItUsedToTakeThemSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgBilibinWhenTheyStoppedBuildingThePalace) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgBilibinIWishICouldEatLike) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_FURNITURE_SELLER, CONDITION_ALWAYS, MSGNO(MsgBilibinWhenTheyStoppedBuildingThePalace) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_DINER_BIG_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinIWishICouldEatLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_DINER, CONDITION_ALWAYS, MSGNO(MsgBilibinIdBetterEatALotThat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgBilibinTheFoodIsSuchAGood) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgBilibinIfAKidLikeThisCould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgBilibinItLooksLikeScaryThingsAre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_DINER_TODAYS_SPECIAL, CONDITION_ALWAYS, MSGNO(MsgBilibinTheFoodIsSuchAGood) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_JOB_SEEKER, CONDITION_ALWAYS, MSGNO(MsgBilibinIfAKidLikeThisCould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_ANCIENT_TREES, CONDITION_ALWAYS, MSGNO(MsgBilibinItLooksLikeScaryThingsAre) },
     { SEARCH(SEARCH_BARREL), 100, 0xf52, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_BED), 101, 0xf53, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_BARREL), 102, 0xf54, FIND_ITEM(ITEM_HARD_NUT) },

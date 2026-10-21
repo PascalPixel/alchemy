@@ -279,7 +279,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Engine_ActorWaitForMove(selectedActorId);
     selectedActor->velocityY = captureActive;
     selectedActor->motionFlags = 4;
-    gGameState.movementMode = 2;
+    gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_SCENE_TEMP_0F);
     FieldGameFlag_SetByte(FLAG_SCENE_TEMP_18, stormIdCopy);
     FieldGameFlag_SetByte(FLAG_SCENE_TEMP_10, STORM_CAPTURE_FRAMES);
@@ -743,7 +743,7 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_SCENE_TEMP_10) != 0) {
-    gGameState.movementMode = 2;
+    gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_SCENE);
   }

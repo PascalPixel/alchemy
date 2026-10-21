@@ -803,7 +803,8 @@ static void Event_ReachArena(void) {
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
    * unfolded; as 3 - rivalFinishedFirst, which shares r5's 3 with
-   * Battle_SetStart(BATTLE_START_SCENE), 3 of 106 instructions differ in tbs-en. */
+   * Battle_SetStart(BATTLE_START_SCENE), 3 of 106 instructions differ in
+   * tbs-en. */
   Field_RequestBattleFromEncounterTable(72,
                                         resultBase - rivalFinishedFirst + 1);
   Battle_SetStart(BATTLE_START_SCENE);
@@ -973,7 +974,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Scheduler_SetTaskFlags(ColosseumSatrageMatch_UpdateMovingPlatforms, 1);
   }
   Engine_ActorSetAnimation(OPPONENT, 9);
-  gGameState.movementMode = 0;
+  gGameState.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(PRIZE_B, 89);
   Colosso_ShowItemIcon(PRIZE_A, 77);
   Engine_ActorSetChildValue(OPPONENT, 1);
@@ -1377,7 +1378,7 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
     Engine_EventShowMessage(attendant, 0);
     ColosseumSatrageMatch_PushObstacleToCell(ROLLING_LOG_EAST, 360, 208);
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 264, 45);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 8, 45);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 216);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 248);
@@ -1520,7 +1521,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
     Engine_EventWait(result * 60 + 60);
     reactingActor = 8;
   }
-  Engine_ActorShowEmote(reactingActor, 0x105, 0);
+  Engine_ActorShowEmote(reactingActor, EMOTE_IN_FRONT | 5, 0);
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
@@ -2048,7 +2049,7 @@ struct SceneEvent gColosseumSatrageMatchEvents[] = {
     { TOUCH_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillarAndUpdateCells) },
     { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_10, EVENT_SCRIPT(Event_ReachArena) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_PLACE_TEMP_38, FIND_ITEM(ITEM_NUT) },
-    { 0x8413, 102, FLAG_PLACE_TEMP_39, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_WEST, 102, FLAG_PLACE_TEMP_39, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SEARCH(SEARCH_CHEST), 104, FLAG_PLACE_TEMP_3B, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET_WEST, FLAG_PLACE_TEMP_31, EVENT_SCRIPT(Event_FreezeWestTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET_EAST, FLAG_PLACE_TEMP_32, EVENT_SCRIPT(Event_FreezeEastTarget) },

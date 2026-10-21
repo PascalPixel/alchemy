@@ -1,5 +1,5 @@
 /// @file
-/// Xian (scene 72), the village of kinu, silk, reached through Mogall Forest,
+/// SceneId_Xian, the village of kinu, silk, reached through Mogall Forest,
 /// which sends its silk along Silk Road to Tolbi and where martial arts are
 /// taught at Master Feh's school. Its houses, shops and inn are
 /// xian_interiors.c; the school itself is a room of the Fuchin Temple overlay
@@ -42,8 +42,8 @@
 /// does when spoken to.
 ///
 /// A jar holds a Lucky Medal. Five doors lead into the houses, shops and inn
-/// (scene 73, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP), XIAN_TO_SANCTUM
-/// into Xian Sanctum, its sliding door playing SE_188,
+/// (SceneId_XianInteriors, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP),
+/// XIAN_TO_SANCTUM into Xian Sanctum, its sliding door playing SE_188,
 /// XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school, and
 /// XIAN_TO_WORLD_MAP out to the world map. Coming back from the school
 /// (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum (XIAN_FROM_SANCTUM_WEST)

@@ -9,9 +9,9 @@
 /// the palette into BG palettes 0 to 13, the next four into the two halves of
 /// char blocks 2 and 3, and the last into gMapLayerData, where the tile
 /// animation copies its frames from. It takes the second set when the cell it
-/// loads at has terrain kind 21, and keeps the set's row in the perspective
-/// work's resources, from which Map_LoadAreaGraphics reloads all but the
-/// last. Not const: the loader reads it through a u32 *.
+/// loads at is WORLD_MAP_REGION_SNOWFIELD, and keeps the set's row in the
+/// perspective work's resources, from which Map_LoadAreaGraphics reloads all
+/// but the last. Not const: the loader reads it through a u32 *.
 u32 gWorldMap_GraphicsResources[2][6] = {
     {
         (u32)&ResourceId_WorldMapPaletteA,

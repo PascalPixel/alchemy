@@ -127,6 +127,15 @@ enum WorldMapTerrainBehavior {
   WORLD_MAP_TERRAIN_SHALLOWS = 7
 };
 
+/// A world map cell's terrain kind (bits 30..24 of its block word): the
+/// region it belongs to, which picks its encounter zones
+/// (gWorldMap_EncounterRules). Only the snowfield changes anything else.
+enum WorldMapRegion {
+  /// Takes the second world map graphics set (WorldMap_LoadGraphics) and the
+  /// snowfield's terrain behaviours (GetWorldMapTerrainBehavior).
+  WORLD_MAP_REGION_SNOWFIELD = 21
+};
+
 /// A map cell's terrain kind: the low four bits of its shape's first byte,
 /// which pick its height function from gMap_TerrainHeightFunctions. Samples
 /// are the shape's other bytes; x and y run 0 to 15 across the cell.

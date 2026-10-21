@@ -48,8 +48,8 @@ The **field work** is `struct FieldWork`, everything a running field scene
 keeps: its actor slots, the scene's events and the pending requests. The
 engine hands each system a block of memory for its working state while the
 game runs (the heap), and finds the block through a numbered heap slot of
-`gWorkSlot`. The field work is slot 27
-(`HEAP_SLOT_EVENT`), also reached by name as `gEventWork`. Scene overlays
+`gWorkSlot`, each named in `enum HeapSlot`. The field work is
+`HEAP_SLOT_EVENT`, also reached by name as `gEventWork`. Scene overlays
 read the same block as `struct EventWork`.
 
 An **actor** is an object in one of the field work's 66 actor slots. Slots 0
@@ -332,7 +332,7 @@ and the flags kept while the party is inside. Entering a new group clears the
 place flags (`FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST`) and the step counters, shows the place name,
 makes the entrance Retreat's destination, and sets the group's visited flag,
 which is what puts the place's marker on the world map screen. Towns and
-their interiors are scenes of variant 2: walking there restores no PP,
+their interiors are `SCENE_VARIANT_TOWN` scenes: walking there restores no PP,
 recovers no Djinn and does no poison damage, Retreat is blocked and Avoid
 doesn't wear off.
 

@@ -160,7 +160,7 @@ script command run once a frame.
 ![Isaac walking through the snow in Imil, leaving footprints that fade behind him](https://alchemy.pascalpixel.com/guides/field/snow.gif)
 
 Imil's snow shows it happening. Every 18 frames of walking, or 12
-of running, the player's control creates a footprint, field object kind 25,
+of running, the player's control creates a footprint, an object of `FIELD_SPRITE_FOOTPRINT`,
 and starts it on a script two words long, `SC_WAIT(120), SC_FREE`
 (`gWorldMap_FootprintActions`, in `facing.c`). Each footprint on screen is one
 of the 64 objects, waiting out its four seconds before it frees itself.

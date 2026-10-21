@@ -613,14 +613,14 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
 
   index = blockX + (((y >> 21) & 31) << 5);
   blockWord = gMapBlocks + index;
-  // Bit 31 of the block word selects the second bank of 16; terrain kind
-  // 21 the third, whatever bit 31 says.
+  // Bit 31 of the block word selects the second bank of 16; the snowfield
+  // the third, whatever bit 31 says.
   if (((u8 *)blockWord)[3] & 0x80)
     behaviorBank = 0x10;
 
   // The terrain kind is bits 24 to 30 of the block word.
   *terrainKind = (*blockWord << 1) >> 25;
-  if (*terrainKind == 21)
+  if (*terrainKind == WORLD_MAP_REGION_SNOWFIELD)
     behaviorBank = 0x20;
 
   return gWorldMap_TerrainBehaviorTable[behaviorBank + collisionKind];

@@ -14,14 +14,14 @@ static __inline__ void Io_Put16(volatile u16 *reg, s32 value) { *reg = value; }
 typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
                                void *out);
 
-/// One 32-pixel cell of the world map: its tile, its kind (21 selects the
-/// second graphics set) and a flag.
+/// One 32-pixel cell of the world map: its tile, its kind (WorldMapRegion) and
+/// a flag.
 struct WorldMapCell {
   u32 tile : 24; ///< its low halfword is the block WorldMap_CopyCellTiles draws
   u32 kind : 7;  ///< the terrain kind; encounters read it too
   /// Selects the second row of gWorldMap_TerrainBehaviorTable
-  /// (GetWorldMapTerrainBehavior); a cell of kind 21 takes the third row
-  /// whatever this bit says.
+  /// (GetWorldMapTerrainBehavior); a WORLD_MAP_REGION_SNOWFIELD cell takes the
+  /// third row whatever this bit says.
   u32 flag : 1;
 };
 
@@ -309,8 +309,8 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
 }
 
 /// Loads the world map's palette and tiles for the area at (x, z): the second
-/// set where the ground there is terrain kind 21. Fills the BG maps, and for
-/// the second set swaps in its own tiles at ids 10-12 and 26-28.
+/// set where the ground there is WORLD_MAP_REGION_SNOWFIELD. Fills the BG maps,
+/// and for the second set swaps in its own tiles at ids 10-12 and 26-28.
 ///
 /// Called through WorldMap_LoadGraphicsFar when the world map scene starts,
 /// with the party's position (run_scene.c). Sets perspective->resources,
@@ -334,7 +334,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   perspective = gMapWork[0];
   // The 32-pixel cell under (x, z) (16.16 / 0x200000), 32 cells to a row.
   if (WORLD_MAP_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)]
-          .kind == 21)
+          .kind == WORLD_MAP_REGION_SNOWFIELD)
     graphicsSet = 1;
   resources = gWorldMap_GraphicsResources[graphicsSet];
   perspective->resources = resources;

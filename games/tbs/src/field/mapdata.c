@@ -30,14 +30,15 @@ const TerrainHeightFn gMap_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
     [TERRAIN_FLAT_C] = Curve_GetFirstSampleC,
 };
 
-/// World map terrain behaviour, indexed by the collision value plus 0x10 when
-/// the block word's top bit is set, or plus 0x20 (whatever that bit) for
-/// terrain kind 21. Read only by GetWorldMapTerrainBehavior.
+/// World map terrain behaviour (enum WorldMapTerrainBehavior), indexed by the
+/// collision value plus 0x10 when the block word's top bit is set, or plus
+/// 0x20 (whatever that bit) for WORLD_MAP_REGION_SNOWFIELD. Read only by
+/// GetWorldMapTerrainBehavior.
 // clang-format off
 const u8 gWorldMap_TerrainBehaviorTable[48] = {
     0, 0, 0, 0, 0, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,
     0, 0, 0, 0, 0, 4, 7, 1, 1, 6, 1, 1, 1, 1, 0, 0, // 0x10
-    0, 0, 0, 0, 0, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // 0x20: terrain kind 21
+    0, 0, 0, 0, 0, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // 0x20: the snowfield
 };
 // clang-format on
 

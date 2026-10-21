@@ -151,8 +151,8 @@ puts its layers at (0, 0), (64, 0) and (0, 68).
 
 ![The whole 128 by 128 cell grid of Goma Cave's map at half size, each cell drawn from its block: the ground layer's window at the top left holds the cave floor and its pool, the middle layer's below it the rock walls around a dark floor, and the overhead layer's at the top right only the glows of the torches, and the rest of the grid is empty.](https://alchemy.pascalpixel.com/guides/map/grid.png)
 
-Layer 0 shows on `BG3`, layer 1 on `BG2` and layer 2 on `BG1`, and `BG0` stays free
-for the windows. A layer's priority byte is also its switch: a layer with
+The ground layer (`MAP_LAYER_GROUND`) shows on `BG3`, the middle layer on
+`BG2` and the overhead layer on `BG1`, and `BG0` stays free for the windows. A layer's priority byte is also its switch: a layer with
 priority 0 isn't shown. Most maps use 3, 2 and 1; nine give 0 to their second
 and third layers and show only the first.
 
@@ -171,9 +171,9 @@ Stones can stand. It's a run of (column, row, id) triples, a cell and the id
 of a scene event, ended by 255, 255. When a scene loads,
 `Field_PlaceMapMarkers` walks the list and places an object at each marker
 whose id (100 to 239) the scene has an event for, up to ten of them. A chest
-event gets a chest (sprite 20), shown open once its flag is set and gone once
+event gets a chest, shown open once its flag is set and gone once
 its mimic has been beaten; a search event that gives a Psynergy Stone gets the
-stone (sprite 28), until it's taken. A marker the scene has no event for takes
+stone, until it's taken. A marker the scene has no event for takes
 no slot.
 
 ### Placeholder blocks

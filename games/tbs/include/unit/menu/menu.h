@@ -18,6 +18,21 @@ struct RenderOutput;
 #define LIST_ORDER_EQUIPPED 0x80
 #define LIST_ORDER_END 0xff
 
+/// The item menu's four sort orders (InventoryMenu_SortByListOrder), which
+/// L + A cycles through in this order.
+enum ListSort {
+  /// The equipped items, the items that are not equipment, then the other
+  /// equipment (gMenu_ListOrderMode0).
+  LIST_SORT_EQUIPPED_THEN_ITEMS = 0,
+  /// The equipped items, the other equipment, then the rest
+  /// (gMenu_ListOrderMode1).
+  LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
+  LIST_SORT_EQUIPMENT_FIRST = 2, ///< gMenu_ListOrderMode2
+  /// The items that are not equipment first (gMenu_ListOrderDefault).
+  LIST_SORT_ITEMS_FIRST = 3,
+  LIST_SORT_COUNT = 4
+};
+
 s32 Menu_ResumeFieldTasks(void);
 s32 Menu_SuspendFieldTasks(void);
 void UiWindow_InitializeWork(s32 unused);

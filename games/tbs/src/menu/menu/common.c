@@ -861,8 +861,8 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
 #endif
 }
 
-/// Sorts a party member's 15 inventory slots by the list order of mode (see
-/// Menu_CopyListOrder): items are grouped by the order's item types and, within
+/// Sorts a party member's 15 inventory slots by the list order of mode (enum
+/// ListSort): items are grouped by the order's item types and, within
 /// a type, run from the highest item id down. Empty slots go to the end.
 /// L + A in the item menu cycles through the modes. Returns 1.
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
@@ -929,21 +929,22 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   return 1;
 }
 
-/// Copies the list order of mode 0 to 2 (any other mode: the default order)
-/// into order, up to and including its LIST_ORDER_END and at most 32 bytes.
+/// Copies the list order of mode (enum ListSort; any other mode takes
+/// LIST_SORT_ITEMS_FIRST's) into order, up to and including its LIST_ORDER_END
+/// and at most 32 bytes.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;
 
   src = gMenu_ListOrderDefault;
   switch (mode) {
-  case 0:
+  case LIST_SORT_EQUIPPED_THEN_ITEMS:
     src = gMenu_ListOrderMode0;
     break;
-  case 1:
+  case LIST_SORT_EQUIPPED_THEN_EQUIPMENT:
     src = gMenu_ListOrderMode1;
     break;
-  case 2:
+  case LIST_SORT_EQUIPMENT_FIRST:
     src = gMenu_ListOrderMode2;
     break;
   }

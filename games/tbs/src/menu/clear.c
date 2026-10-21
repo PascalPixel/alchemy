@@ -479,7 +479,7 @@ menu_top:;
     if (gDebugMode != 0) {
       gGameState.idleSleepEnabled = 1;
       gIdleSleepEnabled = 1;
-      UiText_ShowCenteredMessage(MsgNoBackupMemory, 1, 8);
+      UiText_ShowCenteredMessage(MsgNoBackupMemory, CENTERED_MESSAGE_WINDOW, 8);
     }
   }
   // No save file: fade the menu layers in, once, and start a new game.
@@ -565,7 +565,7 @@ menu_top:;
                ((struct SaveMenuSceneState *)gSceneState)->word100) {
       UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted, 9);
       UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 1, 13);
-      if (Menu_RunConfirmSelection(1, 0, 0, 0) != 0) {
+      if (Menu_RunConfirmSelection(1, 0, 0, CONFIRM_YES) != CONFIRM_YES) {
         UiWork_FinalizePendingCore();
         goto menu_top;
       }
@@ -632,13 +632,13 @@ menu_top:;
     }
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   link_select:;
-    v6 = Menu_SelectResourceLayout(0);
+    v6 = Menu_SelectResourceLayout(RESOURCE_LAYOUT_TRANSFER_METHOD);
     if (v6 == -1) {
       goto link_load;
     }
     // Link transfer waits for the other game's edition-specific greeting in
     // the partner's payload (struct SaveLinkGreeting); B gives up.
-    if (v6 == 1) {
+    if (v6 == TRANSFER_METHOD_CABLE) {
       v6 = (s32)UiWindow_Create(CLEAR_LINK_WINDOW_X, 5, CLEAR_LINK_WINDOW_WIDTH,
                                 8, 2);
       linkMessage = MsgClearSaveLabel;
@@ -743,12 +743,12 @@ menu_top:;
 #endif
       goto menu_top;
     }
-    if (v6 == 0) {
+    if (v6 == TRANSFER_METHOD_PASSWORD) {
     // Password output packs save data, appends CRC bytes, then groups glyphs.
-    // The level is Gold (0), Silver (1) or Bronze (2): 260, 61 or 16
+    // The level is Gold, Silver or Bronze (enum PasswordLevel): 260, 61 or 16
     // symbols, shown 50 to a page.
     page_select:;
-      v6 = Menu_SelectResourceLayout(1);
+      v6 = Menu_SelectResourceLayout(RESOURCE_LAYOUT_PASSWORD_LEVEL);
 
       if (v6 == -1) {
         goto link_select;
@@ -1020,8 +1020,9 @@ struct PasswordOwner {
   u32 djinnAvailable[4]; ///< the Djinn held, a bit per Djinni, by element
 };
 
-/// Packs the four heroes' data for a password of level mode: 0 Gold (173
-/// bytes), 1 Silver (39) or 2 Bronze (9); any other mode clears 11. Clamps
+/// Packs the four heroes' data for a password of level mode (enum
+/// PasswordLevel): PASSWORD_LEVEL_GOLD 173 bytes, _SILVER 39 or _BRONZE 9; any
+/// other mode clears 11. Clamps
 /// each member's base stats and level in place first, and returns the byte
 /// count. Bytes 0 to 2 and the high half of 3 hold the four levels, 7 bits
 /// each from the lowest bit; the low half of 3 and bytes 4 to 6 the Djinn
@@ -1052,13 +1053,13 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
   length = 11;
   switch (mode) {
-  case 0:
+  case PASSWORD_LEVEL_GOLD:
     length = 173;
     break;
-  case 1:
+  case PASSWORD_LEVEL_SILVER:
     length = 39;
     break;
-  case 2:
+  case PASSWORD_LEVEL_BRONZE:
     length = 9;
     break;
   }
@@ -1140,7 +1141,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   }
 
   // The largest password also carries inventories, stack counts and coins.
-  if (mode == 0) {
+  if (mode == PASSWORD_LEVEL_GOLD) {
     outputIndex = 39;
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
@@ -1206,8 +1207,8 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   // The two larger forms include the packed base-stat rows. Each pass packs
   // two members in 15 bytes: each one's first word and the top 28 bits of
   // its second, whose low four bits are always 0.
-  if (mode != 2) {
-    s32 statsOffset = 8 + (mode != 0);
+  if (mode != PASSWORD_LEVEL_BRONZE) {
+    s32 statsOffset = 8 + (mode != PASSWORD_LEVEL_GOLD);
 
     for (i = 0; i != 2; i++) {
       out[statsOffset] = packedStats[i * 4] >> 24;
@@ -1239,7 +1240,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   out[5] = djinnBits >> 12;
   out[6] = djinnBits >> 20;
   out[7] = flagBits;
-  if (mode != 0) {
+  if (mode != PASSWORD_LEVEL_GOLD) {
     out[8] = keyItemBits;
   }
   return length;

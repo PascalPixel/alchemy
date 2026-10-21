@@ -559,7 +559,8 @@ s32 PsynergyMenu_SelectOwner(void) {
         menu->rowPositions[rowIndex] = 30;
       menu->rowPositions[ownerIndex] = 26;
       menu->psynergyCount = PsynergyMenu_CollectActions(
-          UnitGetFar(menu->ownerTable[ownerIndex]), (u16 *)menu->psynergies, 0);
+          UnitGetFar(menu->ownerTable[ownerIndex]), (u16 *)menu->psynergies,
+          PSYNERGY_LIST_ALL);
       PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
       Menu_PlaceEntryObjectsInGrid(96, 96, 8);
       Menu_HideEmptyEntryIcons(menu->psynergies);
@@ -1542,7 +1543,7 @@ s32 PsynergyMenu_SelectAction(void) {
     ItemMenu_PosCategory();
     RenderOutput_RedrawSavedRectFar(menu->statusWindow);
     menu->psynergyCount = PsynergyMenu_CollectActions(
-        UnitGetFar(menu->ownerIds[0]), menu->psynergies, 0);
+        UnitGetFar(menu->ownerIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
     WaitFrames(1);
     Menu_BuildPageResult(&state, 0);
     PsynergyMenu_DrawPreparedPsynergyIcons(menu->statusWindow,
@@ -1769,7 +1770,7 @@ s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
 }
 
 /// The Status menu's equipment page: the member's items in the first list
-/// order (InventoryMenu_SortByListOrder mode 0), PAGE_ROWS to a page, beside
+/// order (LIST_SORT_EQUIPPED_THEN_ITEMS), PAGE_ROWS to a page, beside
 /// the equipment window of what they wear. Up and Down move the cursor, Left
 /// and Right turn pages, L and R switch member. Returns 1 for A (back to the
 /// status page) or -1 for B (back to the member row). Only the list is
@@ -1823,7 +1824,7 @@ s32 ItemMenu_SelectItem(void) {
     for (iconIndex = 0; iconIndex <= 14; iconIndex++)
       savedInventory[iconIndex] = owner->inventory[iconIndex];
     menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
-    InventoryMenu_SortByListOrder(menu->items, 0);
+    InventoryMenu_SortByListOrder(menu->items, LIST_SORT_EQUIPPED_THEN_ITEMS);
     Menu_BuildPageResult(&state, 0);
     RenderOutput_RedrawSavedRectFar(menu->equipWindow);
     ItemMenu_DrawCategory(menu->equipWindow, menu->paneOwner[0], 1);

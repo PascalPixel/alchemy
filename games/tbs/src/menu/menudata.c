@@ -2,6 +2,8 @@
 #include "field.h"
 #include "edition.h"
 #include "types.h"
+#include "item.h"
+#include "unit/menu/menu.h"
 
 // The menu tables: cursor bobbing, sort orders, highlight widths and
 // resource ids.
@@ -16,30 +18,49 @@ u8 gUiMenu_CursorBobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
 /// and two pixels up.
 u8 gUiMenu_CursorBobY[9] = {0, 0xff, 0xff, 0xfe, 0xfe, 0xff, 0xff, 0, 0};
 
-/// The item menu's sort orders (Menu_CopyListOrder), one item type per byte,
-/// 0x80 (LIST_ORDER_EQUIPPED) for only the equipped items of that type,
-/// ending with 0xff (LIST_ORDER_END). The item types (enum ItemType): 0 all
-/// that is not equipment, 1 weapons, 2 armor, 3 shields, gloves and armlets,
-/// 4 helms, 5 boots, 6 Psynergy items, 8 rings and 9 shirts; every order
-/// also lists 7, which no ItemType names. L + A in the item menu sorts by
-/// modes 0, 1 and 2, then this default (mode 3), in turn.
-/// The default puts the items that are not equipment first.
-u8 gMenu_ListOrderDefault[11] = {0x00, 0x01, 0x04, 0x03, 0x02, 0x05,
-                                 0x06, 0x07, 0x08, 0x09, 0xff};
-/// Mode 2: the equipment first, the rest last.
-u8 gMenu_ListOrderMode2[11] = {0x01, 0x04, 0x03, 0x02, 0x05, 0x06,
-                               0x07, 0x08, 0x09, 0x00, 0xff};
+// The item menu's sort orders (enum ListSort, Menu_CopyListOrder): one item
+// type per byte, with LIST_ORDER_EQUIPPED for only the equipped items of that
+// type, ending with LIST_ORDER_END. Every order also lists the item type
+// between ITEM_TYPE_PSYNERGY and ITEM_TYPE_RING, which no item has and no
+// ItemType enumerator names.
 // clang-format off
-/// Mode 1: the equipped items, the other equipment, then the rest.
-u8 gMenu_ListOrderMode1[20] = {
-    0x81, 0x84, 0x83, 0x82, 0x85, 0x86, 0x87, 0x88, 0x89, 0x01,
-    0x04, 0x03, 0x02, 0x05, 0x06, 0x07, 0x08, 0x09, 0x00, 0xff,
+/// LIST_SORT_ITEMS_FIRST: the items that are not equipment first.
+u8 gMenu_ListOrderDefault[11] = {
+    ITEM_TYPE_NONE, ITEM_TYPE_WEAPON, ITEM_TYPE_HELM, ITEM_TYPE_SHIELD,
+    ITEM_TYPE_ARMOR, ITEM_TYPE_BOOTS, ITEM_TYPE_PSYNERGY, 7, ITEM_TYPE_RING,
+    ITEM_TYPE_SHIRT, LIST_ORDER_END,
 };
-/// Mode 0: the equipped items, the items that are not equipment, then the
-/// other equipment. ItemMenu_SelectItem's list also sorts by it.
+/// LIST_SORT_EQUIPMENT_FIRST: the equipment first, the rest last.
+u8 gMenu_ListOrderMode2[11] = {
+    ITEM_TYPE_WEAPON, ITEM_TYPE_HELM, ITEM_TYPE_SHIELD, ITEM_TYPE_ARMOR,
+    ITEM_TYPE_BOOTS, ITEM_TYPE_PSYNERGY, 7, ITEM_TYPE_RING, ITEM_TYPE_SHIRT,
+    ITEM_TYPE_NONE, LIST_ORDER_END,
+};
+/// LIST_SORT_EQUIPPED_THEN_EQUIPMENT: the equipped items, the other equipment,
+/// then the rest.
+u8 gMenu_ListOrderMode1[20] = {
+    LIST_ORDER_EQUIPPED | ITEM_TYPE_WEAPON, LIST_ORDER_EQUIPPED | ITEM_TYPE_HELM,
+    LIST_ORDER_EQUIPPED | ITEM_TYPE_SHIELD, LIST_ORDER_EQUIPPED | ITEM_TYPE_ARMOR,
+    LIST_ORDER_EQUIPPED | ITEM_TYPE_BOOTS, LIST_ORDER_EQUIPPED | ITEM_TYPE_PSYNERGY,
+    LIST_ORDER_EQUIPPED | 7, LIST_ORDER_EQUIPPED | ITEM_TYPE_RING,
+    LIST_ORDER_EQUIPPED | ITEM_TYPE_SHIRT,
+    ITEM_TYPE_WEAPON, ITEM_TYPE_HELM, ITEM_TYPE_SHIELD, ITEM_TYPE_ARMOR,
+    ITEM_TYPE_BOOTS, ITEM_TYPE_PSYNERGY, 7, ITEM_TYPE_RING, ITEM_TYPE_SHIRT,
+    ITEM_TYPE_NONE, LIST_ORDER_END,
+};
+/// LIST_SORT_EQUIPPED_THEN_ITEMS: the equipped items, the items that are not
+/// equipment, then the other equipment. ItemMenu_SelectItem's list also sorts
+/// by it.
 u8 gMenu_ListOrderMode0[20] = {
-    0x81, 0x84, 0x83, 0x82, 0x85, 0x86, 0x87, 0x88, 0x89, 0x00,
-    0x01, 0x04, 0x03, 0x02, 0x05, 0x06, 0x07, 0x08, 0x09, 0xff,
+    LIST_ORDER_EQUIPPED | ITEM_TYPE_WEAPON, LIST_ORDER_EQUIPPED | ITEM_TYPE_HELM,
+    LIST_ORDER_EQUIPPED | ITEM_TYPE_SHIELD, LIST_ORDER_EQUIPPED | ITEM_TYPE_ARMOR,
+    LIST_ORDER_EQUIPPED | ITEM_TYPE_BOOTS, LIST_ORDER_EQUIPPED | ITEM_TYPE_PSYNERGY,
+    LIST_ORDER_EQUIPPED | 7, LIST_ORDER_EQUIPPED | ITEM_TYPE_RING,
+    LIST_ORDER_EQUIPPED | ITEM_TYPE_SHIRT,
+    ITEM_TYPE_NONE,
+    ITEM_TYPE_WEAPON, ITEM_TYPE_HELM, ITEM_TYPE_SHIELD, ITEM_TYPE_ARMOR,
+    ITEM_TYPE_BOOTS, ITEM_TYPE_PSYNERGY, 7, ITEM_TYPE_RING, ITEM_TYPE_SHIRT,
+    LIST_ORDER_END,
 };
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)

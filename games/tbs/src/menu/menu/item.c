@@ -1121,7 +1121,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
     // L + A sorts, cycling through the four sort orders.
     if (gKeysPressed & KEY_A) {
       if (gKeysHeld & KEY_L) {
-        sortMode = (sortMode + 4) % 4;
+        sortMode = (sortMode + LIST_SORT_COUNT) % LIST_SORT_COUNT;
         InventoryMenu_SortByListOrder(unit->inventory, sortMode);
         sortMode++;
         ItemMenu_RefreshOwner(ownerIds[selection], 0);

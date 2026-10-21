@@ -136,6 +136,25 @@ enum CharacterMenuPage {
   CHARACTER_MENU_PAGE_CHOOSER = 3
 };
 
+/// PsynergyMenuState.mode: what choosing a Psynergy does.
+enum PsynergyMenuMode {
+  PSYNERGY_MODE_USE = 0,   ///< use it
+  PSYNERGY_MODE_SET_L = 1, ///< make it the L shortcut
+  PSYNERGY_MODE_SET_R = 2  ///< make it the R shortcut
+};
+
+/// The Psynergy shortcuts (PsynergyMenu_SetShortcut).
+enum PsynergyShortcut { PSYNERGY_SHORTCUT_L = 0, PSYNERGY_SHORTCUT_R = 1 };
+
+/// Which Psynergy PsynergyMenu_CollectActions lists.
+enum PsynergyListMode {
+  /// Those with a field effect or usable in the field first, then the rest.
+  PSYNERGY_LIST_ALL = 0,
+  PSYNERGY_LIST_SHORTCUTS = 1, ///< only those that work on the field
+  /// Those with a field effect or usable in the field.
+  PSYNERGY_LIST_FIELD = 2
+};
+
 /// The bytes of the menu work, heap block HEAP_SLOT_MENU. Each screen's run
 /// function takes the block as it opens and releases it as it closes.
 #define MENU_WORK_SIZE 0xa70

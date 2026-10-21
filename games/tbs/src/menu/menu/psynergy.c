@@ -180,13 +180,13 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
             menu = savedWork;
         }
         switch (menu->mode) {
-        case 0: // use
+        case PSYNERGY_MODE_USE:
           ItemMenu_DrawMessage(0, MsgPsynergyChooseAbility);
           break;
-        case 1: // set the L shortcut
+        case PSYNERGY_MODE_SET_L:
           ItemMenu_DrawMessage(0, MsgPsynergyChooseForL);
           break;
-        case 2: // set the R shortcut
+        case PSYNERGY_MODE_SET_R:
           ItemMenu_DrawMessage(0, MsgPsynergyChooseForR);
           break;
         }
@@ -197,16 +197,18 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         step = PSYNERGY_STEP_OWNER;
         if (chosenAction != -1) {
           step = PSYNERGY_STEP_CLASSIFY;
-          if (menu->mode != 0) {
-            if (menu->mode == 1) {
-              PsynergyMenu_SetShortcut(menu->ownerIds[0], chosenAction, 0);
+          if (menu->mode != PSYNERGY_MODE_USE) {
+            if (menu->mode == PSYNERGY_MODE_SET_L) {
+              PsynergyMenu_SetShortcut(menu->ownerIds[0], chosenAction,
+                                       PSYNERGY_SHORTCUT_L);
               RenderOutput_ClearListFar((void *)menu->infoWindow);
               InventoryMenu_ShowModalMessage(MsgShortcutSetL, -1, -1);
 #if !TBS_PATCH_1
               RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
             } else {
-              PsynergyMenu_SetShortcut(menu->ownerIds[0], chosenAction, 1);
+              PsynergyMenu_SetShortcut(menu->ownerIds[0], chosenAction,
+                                       PSYNERGY_SHORTCUT_R);
               RenderOutput_ClearListFar((void *)menu->infoWindow);
               InventoryMenu_ShowModalMessage(MsgShortcutSetR, -1, -1);
 #if !TBS_PATCH_1
@@ -377,7 +379,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   ownerId = *(u16 *)((u8 *)menu + tableOffset);
   unit = UnitGetFar(ownerId);
   actions = menu->psynergies;
-  actionCount = PsynergyMenu_CollectActions(unit, actions, 2);
+  actionCount = PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_FIELD);
   menu->psynergyCount = actionCount;
   result = PsynergyMenu_SelectMember(menu->ownerTable, actions);
 
@@ -392,8 +394,8 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 /// The party member row of the Psynergy menu. Left and Right move between
 /// members, showing each one's Psynergy, status and shortcuts; A chooses a
 /// member who has Psynergy to use, L or R one who has field Psynergy to set as
-/// that shortcut (menu mode 1 or 2), and B backs out. Returns the chosen
-/// member's id, or -1.
+/// that shortcut (PSYNERGY_MODE_SET_L or _SET_R), and B backs out. Returns the
+/// chosen member's id, or -1.
 s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   struct PsynergyMenuState *menu;
   s32 selection;
@@ -464,12 +466,12 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     if ((gKeysPressed & KEY_L) || (gKeysPressed & KEY_R)) {
       result = ownerIds[selection];
       if (gKeysPressed & KEY_L)
-        menu->mode = 1;
+        menu->mode = PSYNERGY_MODE_SET_L;
       else
-        menu->mode = 2;
+        menu->mode = PSYNERGY_MODE_SET_R;
       actions = MemAlloc(32 * sizeof(u16));
-      fieldCount =
-          PsynergyMenu_CollectActions((struct BattleUnit *)unit, actions, 1);
+      fieldCount = PsynergyMenu_CollectActions(
+          (struct BattleUnit *)unit, actions, PSYNERGY_LIST_SHORTCUTS);
       MemFree(actions);
       shortcutCount = fieldCount;
       if (shortcutCount == 0) {
@@ -512,7 +514,8 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   menu = gMenuWork;
   owner = UnitGetFar(ownerId);
   psynergies = menu->psynergies;
-  menu->psynergyCount = PsynergyMenu_CollectActions(owner, psynergies, 2);
+  menu->psynergyCount =
+      PsynergyMenu_CollectActions(owner, psynergies, PSYNERGY_LIST_FIELD);
   RenderOutput_RedrawSavedRectFar((void *)menu->psynergyWindow);
   PsynergyMenu_RefreshOwnerEntries(108, 32, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
@@ -618,7 +621,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
 #define PSYNERGY_SHORTCUT_OWNER_SHIFT 10
 #define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
-/// Sets the L (shortcutIndex 0) or R (shortcutIndex 1) Psynergy shortcut:
+/// Sets the L or R Psynergy shortcut (enum PsynergyShortcut):
 /// ownerId << 10 | the Psynergy's id. Returns 1.
 s32 PsynergyMenu_SetShortcut(s32 ownerId, s32 actionId, s32 shortcutIndex) {
   s32 id = actionId & OWNER_ACTION_ID_MASK;
@@ -860,9 +863,9 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 }
 
 /// Lists unit's Psynergy into actions (32 entries, cleared first) and returns
-/// how many there are. mode 1 lists only the Psynergy that work on the field
-/// (those that can be shortcuts); mode 2 those with a field effect or usable
-/// in the field; any other mode those first, then the rest.
+/// how many there are, as mode (enum PsynergyListMode) chooses; any mode
+/// other than PSYNERGY_LIST_SHORTCUTS and PSYNERGY_LIST_FIELD lists as
+/// PSYNERGY_LIST_ALL.
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode) {
   /* FAKEMATCH(dead): each entry cleared twice through the byte-offset
@@ -874,7 +877,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
   s32 slotIndex;
   s32 passIndex;
 
-  passCount = (mode != 2) ? 4 : 3;
+  passCount = (mode != PSYNERGY_LIST_FIELD) ? 4 : 3;
   for (clearOffset = 62; clearOffset >= 0; clearOffset -= 2) {
     u16 *q = (u16 *)((u8 *)actions + clearOffset);
     *q = 0;
@@ -883,7 +886,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
   actionCount = 0;
 
   // type0c is the Psynergy's field effect. Passes 1 and 2 add nothing.
-  if (mode == 1) {
+  if (mode == PSYNERGY_LIST_SHORTCUTS) {
     for (slotIndex = 0; slotIndex < 32; slotIndex++) {
       if (unit->actionSlots[slotIndex].encodedAction != 0) {
         if (BattleActGet(unit->actionSlots[slotIndex].encodedAction &
@@ -1088,10 +1091,10 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
 
 /// The Psynergy list of the member in paneIndex, five a page. The cursor's
 /// Psynergy is described in the info window and its icon animates; L and R
-/// switch to the previous or next member who has Psynergy to list. In the use
-/// mode (menu mode 0), A chooses Psynergy the member can use and afford;
+/// switch to the previous or next member who has Psynergy to list. In
+/// PSYNERGY_MODE_USE, A chooses Psynergy the member can use and afford;
 /// holding Select shows the shortcut help, and L or R with Select set the
-/// Psynergy as that shortcut. In the shortcut modes (1 and 2) only field
+/// Psynergy as that shortcut. In the shortcut modes only field
 /// Psynergy are listed and A chooses one. Returns the chosen Psynergy, or -1
 /// when the player backs out.
 s32 PsynergyMenu_RunList(s32 paneIndex) {
@@ -1124,12 +1127,12 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     owner = UnitGetFar(menu->ownerIds[paneIndex]);
-    if (menu->mode != 0) {
-      menu->psynergyCount =
-          PsynergyMenu_CollectActions(owner, menu->psynergies, 1);
+    if (menu->mode != PSYNERGY_MODE_USE) {
+      menu->psynergyCount = PsynergyMenu_CollectActions(
+          owner, menu->psynergies, PSYNERGY_LIST_SHORTCUTS);
     } else {
-      menu->psynergyCount =
-          PsynergyMenu_CollectActions(owner, menu->psynergies, 2);
+      menu->psynergyCount = PsynergyMenu_CollectActions(owner, menu->psynergies,
+                                                        PSYNERGY_LIST_FIELD);
     }
     PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
     PsynergyMenu_BuildPageResult(&state, paneIndex);
@@ -1188,7 +1191,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       }
 
       // Select shows the shortcut help while held, for field Psynergy.
-      if (menu->mode == 0) {
+      if (menu->mode == PSYNERGY_MODE_USE) {
         if ((gKeysPressed & KEY_SELECT) != 0 && shortcutHelp == 0) {
           ability = BattleActGet(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
@@ -1211,10 +1214,10 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         }
       }
 
-      // A: set the shortcut (modes 1 and 2), or use the Psynergy if allowed
+      // A: set the shortcut, or use the Psynergy if allowed
       // and affordable.
       if ((gKeysPressed & KEY_A) != 0) {
-        if (menu->mode != 0) {
+        if (menu->mode != PSYNERGY_MODE_USE) {
           AudioCommand_PlayFar(SE_130); // the shortcut sound
           result = menu->psynergies[state.selectedIndex];
           done = 1;
@@ -1249,7 +1252,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       // L and R: the previous or next member with Psynergy to list.
       if (((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) &&
           (gKeysHeld & KEY_SELECT) == 0) {
-        listMode = menu->mode != 0 ? 1 : 2;
+        listMode = menu->mode != PSYNERGY_MODE_USE ? PSYNERGY_LIST_SHORTCUTS
+                                                   : PSYNERGY_LIST_FIELD;
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         menu->selectedIndexByOwner[menu->ownerIds[paneIndex]] =
             state.selectedIndex;
@@ -1289,7 +1293,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
                                        menu->psynergies[state.selectedIndex],
                                        0) != 0) {
             result = menu->psynergies[state.selectedIndex];
-            menu->mode = 1;
+            menu->mode = PSYNERGY_MODE_SET_L;
             done = 1;
             break;
           }
@@ -1307,7 +1311,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
                                        1) != 0) {
             AudioCommand_PlayFar(SE_130); // the shortcut sound
             result = menu->psynergies[state.selectedIndex];
-            menu->mode = 2;
+            menu->mode = PSYNERGY_MODE_SET_R;
             done = 1;
             break;
           }

@@ -192,17 +192,17 @@ static inline void VaultInteriorsRevisit_FaceAndSpeak(s32 actor, s32 message) {
   VaultInteriorsRevisit_ShowStandingActorDialogue(actor);
 }
 
-/// In the house at VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, the
-/// wife thought she saw the cat paw the gemstone on the table, and then the
-/// treasure was gone.
+/// The wife thought she saw the cat paw the gemstone on the table.
+/// Then the treasure was gone. She's in the house at
+/// VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST.
 static void Event_WifeSawCatTakeGem(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_GEM_OWNERS_WIFE,
                                      MsgVaultThoughtSawCatGetUp);
 }
 
-/// In the house at VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the
-/// boy points out Dodonpa's henchmen never attacked: maybe the thieves
-/// weren't from Lunpa after all.
+/// The boy doubts the thieves were from Lunpa after all.
+/// He points out Dodonpa's henchmen never attacked. He's in the house at
+/// VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH.
 static void Event_BoyDoubtsThievesWereFromLunpa(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_BOY,
                                      MsgVaultDodonpasHenchmenNeverAttackedUs);

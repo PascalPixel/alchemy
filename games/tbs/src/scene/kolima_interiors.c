@@ -1,8 +1,8 @@
 /// @file
-/// Kolima (scene 37, a row of the scene table with no name of its own): the
-/// village's houses, shops and inn, all in one map. Some of its exits join its
-/// own rooms by the stairs up the inn and the weapon and armor shop, five lead
-/// back out to the village (scene 36) and one into Kolima Tunnel (scene 38,
+/// Kolima (SceneId_KolimaInteriors): the village's houses, shops and inn, all
+/// in one map. Some of its exits join its own rooms by the stairs up the inn
+/// and the weapon and armor shop, five lead back out to the village
+/// (SceneId_Kolima) and one into Kolima Tunnel (SceneId_KolimaTunnel,
 /// KOLIMA_INTERIORS_TO_KOLIMA_TUNNEL).
 ///
 /// Like the people outside, the fifteen residents (ACTOR_FIRST_VILLAGER to
@@ -262,16 +262,18 @@ s32 KolimaInteriors_Initialize(void) {
 
 struct SceneEntrance gKolimaInteriors_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 128, 0, 192, FACING_EAST, 0, 16, 56, 256, 216, 0},
-    {2, CONDITION_ALWAYS, 192, 0, 168, FACING_SOUTHWEST, 0, 16, 56, 256, 216,
-     0},
+    {KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP,
+     CONDITION_ALWAYS, 128, 0, 192, FACING_EAST, 0, 16, 56, 256, 216, 0},
+    {KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR,
+     CONDITION_ALWAYS, 192, 0, 168, FACING_SOUTHWEST, 0, 16, 56, 256, 216, 0},
     {KOLIMA_INTERIORS_ITEM_SHOP_FROM_KOLIMA, CONDITION_ALWAYS, 392, 0, 200,
      FACING_NORTH, 0, 288, 64, 512, 232, 0},
     {KOLIMA_INTERIORS_INN_FROM_KOLIMA, CONDITION_ALWAYS, 648, 0, 200,
      FACING_NORTH, 0, 528, 64, 768, 232, 0},
-    {5, CONDITION_ALWAYS, 704, 0, 168, FACING_SOUTHWEST, 0, 528, 64, 768, 224,
-     0},
-    {6, CONDITION_ALWAYS, 128, 0, 416, FACING_EAST, 0, 16, 280, 256, 440, 0},
+    {KOLIMA_INTERIORS_INN_FROM_INN_SECOND_FLOOR, CONDITION_ALWAYS, 704, 0, 168,
+     FACING_SOUTHWEST, 0, 528, 64, 768, 224, 0},
+    {KOLIMA_INTERIORS_INN_THIRD_FLOOR_FROM_INN_SECOND_FLOOR, CONDITION_ALWAYS,
+     128, 0, 416, FACING_EAST, 0, 16, 280, 256, 440, 0},
     {KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_SOUTH, CONDITION_ALWAYS, 392, 0, 472,
      FACING_NORTH, 0, 288, 264, 512, 504, 0},
     {KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_NORTH, CONDITION_ALWAYS, 392, 0, 328,
@@ -280,12 +282,14 @@ struct SceneEntrance gKolimaInteriors_Entrances[] = {
      FACING_NORTH, 0, 288, 264, 512, 496, 0},
     {KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_FROM_KOLIMA, CONDITION_ALWAYS, 648,
      0, 424, FACING_NORTH, 0, 528, 288, 768, 456, 0},
-    {11, CONDITION_ALWAYS, 704, 0, 392, FACING_SOUTHWEST, 0, 528, 288, 768, 448,
-     0},
-    {12, CONDITION_ALWAYS, 128, 0, 688, FACING_EAST, 0, 16, 552, 256, 712, 0},
-    {13, CONDITION_ALWAYS, 192, 0, 664, FACING_SOUTHWEST, 0, 16, 552, 256, 712,
-     0},
-    {14, CONDITION_ALWAYS, 400, 0, 688, FACING_NORTH, 0, 288, 552, 528, 712, 0},
+    {KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
+     CONDITION_ALWAYS, 704, 0, 392, FACING_SOUTHWEST, 0, 528, 288, 768, 448, 0},
+    {KOLIMA_INTERIORS_INN_SECOND_FLOOR_FROM_INN, CONDITION_ALWAYS, 128, 0, 688,
+     FACING_EAST, 0, 16, 552, 256, 712, 0},
+    {KOLIMA_INTERIORS_INN_SECOND_FLOOR_FROM_INN_THIRD_FLOOR, CONDITION_ALWAYS,
+     192, 0, 664, FACING_SOUTHWEST, 0, 16, 552, 256, 712, 0},
+    {KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR,
+     CONDITION_ALWAYS, 400, 0, 688, FACING_NORTH, 0, 288, 552, 528, 712, 0},
     {SCENE_TABLE_END},
 };
 

@@ -460,7 +460,8 @@ static void CrossboneIslePillarRooms_ShrinkPillar(s32 index) {
   }
 }
 
-/// Spawns the unused particle near the leader once every four frames.
+/// Unused: spawns a particle near the leader once every four frames; nothing
+/// calls it.
 UNUSED static void CrossboneIslePillarRooms_SpawnUnusedLeaderParticle(void) {
 
   struct FieldActor *leader;
@@ -1777,6 +1778,7 @@ u32 gCrossboneIslePillarRoomsExits[] = {
     SCENE_EXITS_END,
 };
 
+/// Unused: an empty placement table nothing returns.
 struct ScenePlacement gCrossboneIslePillarRoomsNoPlacements[] = {
     { SCENE_TABLE_END },
 };

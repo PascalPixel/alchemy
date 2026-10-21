@@ -132,7 +132,8 @@ const struct SceneEvent *TolbiInteriors_SelectEvents(void) {
   return gTolbiInteriorsEventsFestival;
 }
 
-/// Leaves through a window transition of 24 frames. No event uses it.
+/// Unused: leaves through TRANSITION_WINDOW, a screen transition of 24
+/// frames; no event row names it.
 UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
   struct EventWork *work = gEventWork;
 

@@ -175,6 +175,7 @@ static void Event_BaneJoins(void) {
   Djinn_JoinParty(ACTOR_BANE, ELEMENT_VENUS, DJINNI_BANE);
 }
 
+/// Unused: an empty function nothing calls.
 UNUSED static void CrossboneIslePlatformRooms_UnusedHook(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -733,6 +734,7 @@ static void Event_TrackFourthPursuerColumn(void) {
   CrossboneIslePlatformRooms_TrackPursuerColumn(1);
 }
 
+/// Unused: tracks the fifth pursuer's column; nothing calls it.
 UNUSED static void CrossboneIslePlatformRooms_TrackFifthPursuerColumn(void) {
   CrossboneIslePlatformRooms_TrackPursuerColumn(2);
 }
@@ -904,6 +906,7 @@ static void Event_UseLadder(void) {
   }
 }
 
+/// Unused: an empty function nothing calls.
 UNUSED static void CrossboneIslePlatformRooms_UnusedCallback(void) {}
 
 /// Frost on CrossboneIsleBane's puddle: it freezes into a pillar of
@@ -1164,7 +1167,8 @@ static void Event_UpdateFifthPillarTerrain(void) {
   CrossboneIslePlatformRooms_RepaintFourthAndFifthPillarCells();
 }
 
-/// Unused callback that moves the fifth pillar and refreshes its terrain.
+/// Unused: a callback that moves the fifth pillar and refreshes its terrain;
+/// nothing calls it.
 UNUSED static void CrossboneIslePlatformRooms_MoveFifthPillar(void) {
   CrossboneIslePlatformRooms_RestoreFourthAndFifthPillarTerrain();
   StagedActor_AdvancePair();
@@ -1231,8 +1235,11 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Unused callback that cycles key icon displays.
-UNUSED static void CrossboneIslePlatformRooms_UpdateItemIcons(void) {
+/// Unused: in CrossboneIsleKeys, the Blue Keys still lying about would have
+/// shown their item icons one after another, every 16 frames.
+///
+/// Nothing adds it as a callback, so the keys never flash.
+UNUSED static void CrossboneIslePlatformRooms_UnusedUpdateKeyIcons(void) {
   if (++gCrossboneIslePlatformRooms_IconTimer > 16) {
     gCrossboneIslePlatformRooms_IconTimer = 0;
   }

@@ -16,7 +16,7 @@ extern struct SceneEntrance gSolSanctumEruption_Entrances[];
 extern u32 gSolSanctumEruption_Exits[];
 extern struct ScenePlacement gSolSanctumEruption_Placements[];
 extern struct SceneEvent gSolSanctumEruption_Events[];
-extern u16 gSolSanctumEruption_StarCells[];
+extern u16 gSolSanctumEruption_UnusedStarCells[];
 extern s32 gEruption_EmberScript[];
 extern u8 gSolSanctum_RingDrift[][3];
 extern u8 gSolSanctum_RingSwing[][3];

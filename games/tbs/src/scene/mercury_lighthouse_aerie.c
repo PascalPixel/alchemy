@@ -1684,8 +1684,11 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   Engine_TaskWait(2);
 }
 
-/// Alex casts Ply on the statue; nothing calls it.
-UNUSED static void MercuryLighthouseAerie_AlexCastsPly(void) {
+/// Unused: Alex raises his hands and casts Ply on the lift's statue.
+///
+/// Nothing calls it. In the game, Alex and Saturos warp over to the lift and
+/// ride it down without it (MercuryLighthouseAerie_AlexAppears).
+UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   Engine_PsynergyBegin(ABILITY_PLY, 1);
   Engine_PsynergySetTarget(ACTOR_ALEX, ACTOR_LIFT_STATUE);
   Engine_PsynergyRaiseHands();

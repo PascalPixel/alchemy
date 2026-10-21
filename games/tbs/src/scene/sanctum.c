@@ -2365,6 +2365,7 @@ struct SceneEvent gSanctum_SceneTableF[] = {
 struct SceneEvent gSanctum_SceneTableG[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_ALTIN },
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutAltinMonsters) },
+    // Unused: a copy of the row above, which always answers first.
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutAltinMonsters) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgSanctumPleaseSaveTheHelplessInAltin) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumAlmightyFateMustHaveHeardMe) },

@@ -262,10 +262,13 @@ static void Event_ClearPathCellOverride(void) {
 
 #include "common/vale.h"
 
-/// Opens a door and takes VALE_STORM_TO_VALE_INTERIORS_1_WEST_3, into a house
-/// of Vale (SceneId_ValeInteriors1, at VALE_INTERIORS_1_FROM_VALE_WEST). No
-/// event row names it.
-UNUSED static void ValeStorm_OpenDoorToValeInteriors1West3(void) {
+/// Unused: on the stormy night, a door opens and the leader goes into a house
+/// of Vale.
+///
+/// It takes VALE_STORM_TO_VALE_INTERIORS_1_WEST_3 (SceneId_ValeInteriors1, at
+/// VALE_INTERIORS_1_FROM_VALE_WEST, the house exits 9 and 10 lead to as
+/// well). No event row names it, and nothing else takes that exit.
+UNUSED static void ValeStorm_UnusedOpenDoorToValeInteriors1West3(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
@@ -1526,7 +1529,8 @@ static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
   }
 }
 
-/// Alternates the four elders between the normal and flashing parameters.
+/// Unused: alternates the four elders between their normal and flashing frame
+/// modes; nothing calls it.
 UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
   if (((gFrameCount >> sShakeShift) & 3) != 0) {
     Storm_SetActorFrameMode(Object_GetById(ACTOR_ELDER_EAST), 1);

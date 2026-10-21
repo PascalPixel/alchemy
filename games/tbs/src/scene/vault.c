@@ -975,7 +975,8 @@ static void Vault_UpdateDriftingEffect(union FieldObject *fieldObject) {
   effect->acceleration = verticalRate - Math_Divide(verticalRate, 28);
 }
 
-/// Spawns a drifting sprite near the dog, sharing its drawing priority.
+/// Unused: spawns a drifting sprite near the dog, sharing its drawing
+/// priority; nothing calls it.
 UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   struct FieldActor *anchor;
   struct FieldActor *effect;

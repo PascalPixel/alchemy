@@ -1607,6 +1607,7 @@ u32 gBabiLighthouse_Exits[] = {
     SCENE_EXITS_END,
 };
 
+/// Unused: an empty placement table nothing returns.
 struct ScenePlacement gBabiLighthouse_NoPlacements[] = {
     {SCENE_TABLE_END},
 };

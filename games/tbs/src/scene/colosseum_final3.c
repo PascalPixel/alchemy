@@ -750,12 +750,19 @@ static void Event_PassSouthWallOpening(void) {
   FieldBattleFx_RunRisingObjectSequence(*actorId, 6, 0);
 }
 
+/// Unused: an empty function nothing calls.
 UNUSED static void ColosseumFinal3_UnusedEventHook(void) {}
 
-/// Nothing calls this: at COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH it asks a yes
-/// or no question and, on yes, makes the character it names the one the player
-/// moves alone, as the friends' turns do.
-UNUSED static void ColosseumFinal3_RunCompetitorTalk(s32 competitorId) {
+/// Unused: talking to a character at the third finals site would have handed
+/// the player control of that character.
+///
+/// Nothing calls it. Arriving at COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH it
+/// would ask a yes or no question and, on yes, make the character it names
+/// the one the player moves alone, as the friends' turns do. XXX: likely its
+/// message numbers date from an earlier catalog, because the lines three apart
+/// per character from MsgColossoDidntThinkBattles are a spectator's thought
+/// and the stage announcements, not this question.
+UNUSED static void ColosseumFinal3_UnusedCompetitorTalk(s32 competitorId) {
   struct EventWork *work;
   s32 actorId;
   s32 messageOffset;
@@ -1887,8 +1894,9 @@ static void ColosseumFinal3_ShowRoundStartLettering(s32 mode) {
   Engine_GameFlagSet(FLAG_IN_TOWN);
 }
 
-/// An unused lettering countdown for a signed number of seconds.
-UNUSED static void ColosseumFinal3_RunUnusedCountdown(s32 countdown) {
+/// Unused: a lettering countdown before the match, for a signed number of
+/// seconds; nothing calls it.
+UNUSED static void ColosseumFinal3_UnusedCountdown(s32 countdown) {
   s32 actorId;
 
   Engine_AudioPlayCue(SE_247);
@@ -1931,7 +1939,8 @@ UNUSED static void ColosseumFinal3_RunUnusedCountdown(s32 countdown) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-/// Writes eight hexadecimal digits followed by a terminator.
+/// Unused: writes eight hexadecimal digits followed by a terminator; nothing
+/// calls it.
 UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
   s32 digitIndex;
 
@@ -1947,7 +1956,7 @@ UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
 
 static void ColosseumFinal3_EmptyHook(void) {}
 
-/// Marks the rival path recorder as finished.
+/// Unused: marks the rival path recorder as finished; nothing calls it.
 UNUSED static void ColosseumFinal3_MarkRivalFinished(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 

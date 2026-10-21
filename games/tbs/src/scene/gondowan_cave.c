@@ -395,6 +395,7 @@ static void Event_MovePillar(void) {
   EV_END();
 }
 
+/// Unused: an empty function nothing calls.
 static UNUSED void GondowanCave_UnusedActorCallback(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
@@ -470,6 +471,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   OBJ_MODE(actorId, 2);
 }
 
+/// Unused: an empty function nothing calls.
 static UNUSED void GondowanCave_UnusedSceneCallback(void) {}
 
 /// Lift on the boulder in Gondowan Cave (scene 158) also takes away the

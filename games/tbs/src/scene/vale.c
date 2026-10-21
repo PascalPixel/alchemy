@@ -56,8 +56,8 @@
 /// into the houses (ValeInteriors1, scene 7, vale_interiors1.c),
 /// VALE_TO_VALE_INTERIORS_2 into Isaac's house (scene 8) and VALE_TO_SANCTUM
 /// into Vale Sanctum (scene 9). Two scenes no table reaches remain:
-/// HouseScene_RunRepairMorning, a copy of the roof's end, and
-/// FieldScene_RunCompanionActorSequence, which sets group flag
+/// Event_UnusedRoofMended, a copy of the roof's end, and
+/// Event_UnusedWaterBurstsByTheRiver, which sets group flag
 /// FLAG_PLACE_TEMP_05. FLAG_SCENE_TEMP_41 pauses the villager who watches Isaac
 /// while a menu is open. The TBS_PATCH_4 editions also set Dora's sprite
 /// priority before Kalay.
@@ -224,7 +224,7 @@ enum ValeAfterKalayActor {
   /// villager of ACTOR_VILLAGER_BY_THE_RIVER.
   ACTOR_VILLAGER_REMEMBERING_FELIX,
   /// Three sprites of water, CrossboneIsleFloodgate's water sprite 0xd6. Only
-  /// the unused FieldScene_RunCompanionActorSequence shows them: during a
+  /// Event_UnusedWaterBurstsByTheRiver shows them: during a
   /// tremor each in turn grows from a tenth of its size at (266, 1230), north
   /// of ACTOR_VILLAGER_REMEMBERING_FELIX, and vanishes
   /// (gValeGrowingWaterAction).
@@ -833,7 +833,14 @@ static void Event_RepeatMtAlephWarningAtEitherPause(void) {
   }
 }
 
-UNUSED static void HouseScene_RunRepairMorning(void) {
+/// Unused: another cut of Event_RoofMended, the end of the morning the story
+/// begins.
+///
+/// No table names it. It plays the same lines as the scene the game uses,
+/// `Good job, Garet.` and `I was devastated when Kyle died...` among them, but
+/// frames them with its own camera and map cells, and sets FLAG_SCENE_TEMP_02
+/// as that scene does.
+UNUSED static void Event_UnusedRoofMended(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   u8 leaderMotionFlags;
@@ -1676,7 +1683,14 @@ static void Event_GaretAsksToProtectFamily(void) {
   Engine_EventEnd();
 }
 
-UNUSED static void FieldScene_RunCompanionActorSequence(void) {
+/// Unused: back from Kalay, a tremor shakes Vale and water bursts up three
+/// times north of the villager by the river who remembers Felix.
+///
+/// No table names it. He would have started, sniffled through
+/// `I still remember when Felix and I used to play here...*Sniff*`, turned to
+/// the leader to say that Felix must be protecting Jenna, and set group flag
+/// FLAG_PLACE_TEMP_05. His talk and Mind Read rows show the same two lines.
+UNUSED static void Event_UnusedWaterBurstsByTheRiver(void) {
   struct FieldActor *actor;
   const s32 *actions;
 

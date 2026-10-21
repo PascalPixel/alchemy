@@ -2142,7 +2142,8 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Engine_EventEnd();
 }
 
-/// Request the original unused Frost action.
+/// Unused: asks the field to use Frost (psynergyRequest 0x1018, owner 4 and
+/// ABILITY_FROST); nothing calls it.
 UNUSED static void AltinPeak_RequestPsynergy(void) {
   gEventWork->psynergyRequest = 0x1018;
 }
@@ -2222,6 +2223,7 @@ static void AltinPeak_StopLogAndJumpOff(struct FieldActor *object) {
   Engine_AudioPlayCue(SE_159);
 }
 
+/// Unused: an empty function nothing calls.
 UNUSED static void AltinPeak_ReservedNoOp(void) {}
 
 /// The log turns a quarter turn right around the corner it reaches.
@@ -2918,7 +2920,9 @@ struct SceneEvent gAltinPeak_Events3[] = {
     {SEARCH(SEARCH_UNNAMED), 83, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom3Switch)},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {SCENE_EVENTS_END},
-    // Two rows past the end marker, which no lookup reaches.
+    // Unused: two rows past the end marker, which no lookup reaches: a second
+    // exit 3 and a chest on code 100 holding a Herb under flag 0xf05, the
+    // spot where the Cookie chest above already stands.
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {SEARCH(SEARCH_CHEST), 100, 0xf05, FIND_ITEM(ITEM_HERB)},
     {SCENE_EVENTS_END},

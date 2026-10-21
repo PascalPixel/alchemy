@@ -573,13 +573,15 @@ static void Event_RollEastLogEast(void) {
   ColosseumFinal2_UpdateRollingLogCollision();
 }
 
-/// Rolls the center log north and rebuilds the log collision rectangles.
+/// Unused: rolls the center log north and rebuilds the log collision
+/// rectangles; nothing calls it.
 static UNUSED void ColosseumFinal2_RollCenterLogNorth(void) {
   ColosseumFinal2_RollLogToCell(ROLLING_LOG_CENTER, 40, 23);
   ColosseumFinal2_UpdateRollingLogCollision();
 }
 
-/// Rolls the center log south and rebuilds the log collision rectangles.
+/// Unused: rolls the center log south and rebuilds the log collision
+/// rectangles; nothing calls it.
 static UNUSED void ColosseumFinal2_RollCenterLogSouth(void) {
   ColosseumFinal2_RollLogToCell(ROLLING_LOG_CENTER, 40, 25);
   ColosseumFinal2_UpdateRollingLogCollision();
@@ -1511,7 +1513,8 @@ static void ColosseumFinal2_ShowBattleResultLettering(s32 result) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-/// Writes eight uppercase hexadecimal digits followed by a terminator.
+/// Unused: writes eight uppercase hexadecimal digits followed by a terminator;
+/// nothing calls it.
 static UNUSED void Text_WriteU32AsHex(u8 *destination, u32 value) {
   s32 digit;
 
@@ -1528,6 +1531,8 @@ static UNUSED void Text_WriteU32AsHex(u8 *destination, u32 value) {
 /// Retains the empty hook called before the finish sequence.
 static void SceneState_EmptyHook(void) {}
 
+/// Unused: marks the rival's path recorder finished (mode 9); nothing calls
+/// it.
 static UNUSED void ColosseumFinal2_MarkRivalFinished(void) {
   ((struct PathRecorder *)gSceneState)->mode = 9;
 }

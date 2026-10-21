@@ -418,7 +418,8 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Object_SetMode(leader, 1);
 }
 
-/// Fills collision codes in a rectangular area of the requested map layer.
+/// Unused: fills collision codes in a rectangle of the requested map layer;
+/// nothing in Venus Lighthouse calls it.
 static UNUSED s32 StagedActor_FillGridAttributeRectangle(u32 layerIndex, s32 x,
                                                          s32 z, u32 width,
                                                          u32 height,

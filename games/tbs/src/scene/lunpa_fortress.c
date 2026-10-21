@@ -3676,6 +3676,7 @@ struct ScenePlacement gLunpaFortressPlacements4[] = {
     { SCENE_TABLE_END },
 };
 
+/// Unused: an empty event table nothing returns.
 struct SceneEvent gLunpaFortressNoEvents[] = {
     { SCENE_EVENTS_END },
 };

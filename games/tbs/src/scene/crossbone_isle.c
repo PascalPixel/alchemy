@@ -167,6 +167,7 @@ static void CrossboneIsle_DrawPillarPuzzleFootprints(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
+/// Unused: an empty function nothing calls.
 UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {

@@ -2646,7 +2646,8 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   Engine_GameFlagSet(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
-/// Blinks an unused actor and periodically creates its linked effects.
+/// Unused: an update hook that blinks an actor and now and then creates its
+/// linked effects; no actor is given it.
 UNUSED static void
 WorldMap_UpdateBlinkingLinkedEffects(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
@@ -2659,7 +2660,8 @@ WorldMap_UpdateBlinkingLinkedEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycles an unused actor's palettes and periodically creates linked effects.
+/// Unused: an update hook that cycles an actor's palettes and now and then
+/// creates its linked effects; no actor is given it.
 UNUSED static void
 WorldMap_UpdateCyclingLinkedEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
@@ -2670,7 +2672,8 @@ WorldMap_UpdateCyclingLinkedEffects(struct FieldActor *actor) {
   }
 }
 
-/// Advances an unused actor's palette on odd frames.
+/// Unused: an update hook that advances an actor's palette on odd frames; no
+/// actor is given it.
 UNUSED static void WorldMap_CycleActorPalettes(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;

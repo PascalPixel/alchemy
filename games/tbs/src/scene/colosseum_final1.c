@@ -509,6 +509,7 @@ static void Event_PushPipeworksPillar(void) {
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
+/// Unused: sets flag 768; nothing calls it.
 UNUSED static void ColosseumFinal1_SetCourseFlag(void) {
   Engine_GameFlagSet(768);
 }
@@ -1252,7 +1253,8 @@ static void ColosseumFinal1_ShowMatchResult(s32 result) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-/// Writes eight hexadecimal digits and a terminating null.
+/// Unused: writes eight hexadecimal digits and a terminating null; nothing
+/// calls it.
 UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
 
@@ -1268,7 +1270,8 @@ UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
 
 static void ColosseumFinal1_NoOp(void) {}
 
-/// Marks the shared stage state ready for the waiting event.
+/// Unused: marks the shared stage state ready for the waiting event; nothing
+/// calls it.
 UNUSED static void ColosseumFinal1_MarkStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
   u16 nine = 9;

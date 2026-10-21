@@ -920,8 +920,9 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   return 0;
 }
 
-/// The Manticore sinks back to its spot; nothing calls this.
-static UNUSED void Manticore_Return(void) {
+/// Unused: the Manticore walks back to its spot (168, 96) and settles. Nothing
+/// calls it.
+static UNUSED void Manticore_UnusedReturn(void) {
   Actor_SetSpeed(MANTICORE, 0x8000, 0x4000);
   Engine_ActorSetAnimation(MANTICORE, 1);
   Actor_WalkToAndWait(MANTICORE, 168, 96);

@@ -14,6 +14,6 @@ extern struct SceneEntrance gTretTreeBranch_Entrances[];
 extern u32 gTretTreeBranch_Exits[];
 extern struct ScenePlacement gTretTreeBranch_Placements[];
 extern struct SceneEvent gTretTreeBranch_Events[];
-extern u16 gTretTreeBranch_CellSteps[];
+extern u16 gTretTreeBranch_UnusedCellSteps[];
 
 #endif

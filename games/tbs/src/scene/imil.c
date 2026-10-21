@@ -1005,7 +1005,8 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Engine_EventEnd();
 }
 
-/// Moves an unused effect around its stored origin until its timer expires.
+/// Unused: an update hook that moves an effect around its stored origin until
+/// its timer runs out; no actor is given it.
 UNUSED static void Imil_UpdateCountdownArc(struct FieldActor *actor) {
   s32 buf[3];
   s32 *b;
@@ -1031,7 +1032,8 @@ UNUSED static void Imil_UpdateCountdownArc(struct FieldActor *actor) {
   }
 }
 
-/// Sways an unused actor and occasionally emits a rising spark.
+/// Unused: an update hook that sways an actor and now and then gives off a
+/// rising spark; no actor is given it.
 UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
   s32 pos[3];
   struct FieldActor *spark;

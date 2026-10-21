@@ -1076,7 +1076,8 @@ static void Event_ShowMythrilBag(void) {
   Engine_EventRequestExit(VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH);
 }
 
-/// Flashes between two palettes and emits a paired effect every sixteen frames.
+/// Unused: an update hook that flashes between two palettes and gives off a
+/// pair of effects every sixteen frames; no actor is given it.
 UNUSED static void
 ValeInteriors2_FlashPaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 2) != 0) {
@@ -1168,11 +1169,13 @@ static void ValeInteriors2_SpawnEffectPair(union FieldObject *object) {
 // Shared Psynergy setup precedes the scene's effect wrappers.
 #include "common/effect_psynergy.h"
 
+/// Unused: cycles Dora's palette with particles; nothing calls it.
 UNUSED static void ValeInteriors2_CyclePaletteWithParticles(void) {
   ValeInteriors2_CyclePaletteAndSpawnPair(
       (union FieldObject *)Object_GetById(ACTOR_DORA));
 }
 
+/// Unused: cycles Dora's palette without particles; nothing calls it.
 UNUSED static void ValeInteriors2_CyclePaletteWithoutParticles(void) {
   ValeInteriors2_CyclePaletteOnOddFrames(
       (union FieldObject *)Object_GetById(ACTOR_TUNIC));

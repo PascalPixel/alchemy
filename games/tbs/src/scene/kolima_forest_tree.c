@@ -119,7 +119,8 @@ const struct ScenePlacement *KolimaForestTree_GetPlacements(void) {
   return gKolimaForestTreePlacements;
 }
 
-/// Takes the touched exit after completing the leader's current movement.
+/// Unused: takes the touched exit after the leader's current movement; no
+/// event row names it.
 UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   struct EventWork *scene;
 

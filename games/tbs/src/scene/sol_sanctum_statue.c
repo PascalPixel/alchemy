@@ -780,8 +780,11 @@ static void Event_CheckAheadFacingSouth(void) {
   }
 }
 
-/// Unused sequence moving the northwest statue to its seal position.
-UNUSED static void SolSanctumStatue_MoveUnusedNorthwestStatue(void) {
+/// Unused: the northwest statue slides by itself to (504, 152), where it
+/// opens its seal, unless that seal is already open.
+///
+/// Nothing calls it; the player moves the statue there with Move instead.
+UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
     Engine_EventBegin();
     Object_GetById(ACTOR_NORTHWEST_STATUE);

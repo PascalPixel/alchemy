@@ -1507,22 +1507,23 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
     Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 1);
 }
 
-/// Hops the leader one map cell north.
+/// Unused: hops the leader one map cell north; nothing calls it.
 static UNUSED void FuchinTemple_HopLeaderNorth(void) {
   FuchinTemple_HopLeaderByOffset(0, -32);
 }
 
-/// Hops the leader one map cell south.
+/// Unused: hops the leader one map cell south; nothing calls it.
 static UNUSED void FuchinTemple_HopLeaderSouth(void) {
   FuchinTemple_HopLeaderByOffset(0, 32);
 }
 
-/// Hops the leader one map cell west.
+/// Unused: hops the leader one map cell west; nothing calls it.
 static UNUSED void FuchinTemple_HopLeaderWest(void) {
   FuchinTemple_HopLeaderByOffset(-32, 0);
 }
 
-/// Hops the leader by a pixel offset, waiting for the movement to finish.
+/// Unused: hops the leader by a pixel offset, waiting for the movement to
+/// finish; only the three unused hops above call it.
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
   EV_BEGIN();
   OBJ_SPEED(ACTOR_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
@@ -2642,6 +2643,7 @@ struct SceneEvent gFuchinTempleEvents1[] = {
     { EVENT_TALK, ACTOR_WORRIED_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaHasWastedAwayAt) },
     { EVENT_TALK, ACTOR_ADMIRING_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), EVENT_SCRIPT(Event_MonkSpeaksOfNyunpa) },
     { EVENT_TALK, ACTOR_KOLIMA_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_VisitorAsksAboutBridge) },
+    // Unused: a copy of the row above, which always answers first.
     { EVENT_TALK, ACTOR_KOLIMA_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_VisitorAsksAboutBridge) },
     { EVENT_TALK, ACTOR_FALLS_MONK, FLAG_NYUNPA_TEST_ACCEPTED, MSGNO(MsgFuchinTempleOmOmBlueLightsInThe) },
     { EVENT_TALK, ACTOR_FALLS_MONK, FLAG_FUCHIN_FALLS_GROTTO_OPENED, EVENT_SCRIPT(Event_MonkLetsPartyIntoGrotto) },

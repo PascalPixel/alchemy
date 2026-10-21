@@ -172,10 +172,10 @@ static void Event_PushWestPillar(void) {
   EV_END();
 }
 
-/// Reserved overlay hook; no current scene calls it.
+/// Unused: an empty function nothing calls.
 UNUSED static void GomaCaveEntrance_NoOpA(void) {}
 
-/// A second reserved hook, also unused by the scene.
+/// Unused: a second empty function nothing calls.
 UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 
 /// Whirlwind on the second ivy at Goma Cave Entrance: it is blown away for

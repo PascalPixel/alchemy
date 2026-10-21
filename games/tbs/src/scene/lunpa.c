@@ -566,7 +566,8 @@ static void Event_EnterFortress(void) {
 
 static void UNUSED Lunpa_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-/// Reveal's sound when it uncovers something.
+/// Unused: plays the treasure jingle for Reveal uncovering something, until
+/// FLAG_SCENE_TEMP_01 is set; nothing calls it.
 UNUSED static void Lunpa_PlayRevealCue(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) == 0) {
     Engine_AudioPlayCue(MUS_TREASURE_FOUND);
@@ -1189,4 +1190,5 @@ struct MapCellAnim gLunpaDoors[] = {
     {gLunpaDoorSteps[6], 33, 6},  {gLunpaDoorSteps[7], 44, 17},
 };
 
+/// Unused: a zero word nothing reads.
 u32 gLunpaUnusedWord = 0;

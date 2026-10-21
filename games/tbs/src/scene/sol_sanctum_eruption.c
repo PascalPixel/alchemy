@@ -594,8 +594,10 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Actor_SetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
 }
 
+/// Unused: an empty function nothing calls.
 UNUSED static void SolSanctumEruption_UnusedCallbackA(void) {}
 
+/// Unused: a second empty function nothing calls.
 UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 
 /// Plays the collapse at entrance 10, the cut from the Elemental Star Room's
@@ -1931,7 +1933,10 @@ struct SceneEvent gSolSanctumEruption_Events[] = {
     { SCENE_EVENTS_END },
 };
 
-u16 gSolSanctumEruption_StarCells[] = {
+/// Unused: a copy of the Elemental Star room's cell animation
+/// (gSolSanctumElementalStarRoom_StarCells), nine steps of a 3-by-4 picture;
+/// nothing in the eruption plays it.
+u16 gSolSanctumEruption_UnusedStarCells[] = {
     MAP_CELL_STEP(59, 40, 3, 4, 6), MAP_CELL_STEP(62, 40, 3, 4, 6), MAP_CELL_STEP(65, 40, 3, 4, 6), MAP_CELL_STEP(68, 40, 3, 4, 6), MAP_CELL_STEP(71, 40, 3, 4, 6), MAP_CELL_STEP(74, 40, 3, 4, 6), MAP_CELL_STEP(77, 40, 3, 4, 6), MAP_CELL_STEP(80, 40, 3, 4, 6), MAP_CELL_STEP(83, 40, 3, 4, 0), MAP_CELL_STEPS_END,
 };
 

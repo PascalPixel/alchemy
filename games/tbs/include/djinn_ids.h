@@ -4,9 +4,12 @@
 /// @file
 /// Djinn numbers, named from the English release.
 
+/// The Djinn of each element.
+#define DJINN_PER_ELEMENT 20
+
 /// Djinn, numbered as Field_RequestDjinnBattle and FLAG_DJINNI_0 count them:
-/// 20 to an element, in the order Venus, Mercury, Mars, Jupiter. A Djinni's
-/// English name is message 1119 + its number.
+/// DJINN_PER_ELEMENT to an element, in the order Venus, Mercury, Mars, Jupiter.
+/// A Djinni's English name is the message MsgDjinnName + its number.
 enum DjinniId {
   DJINNI_FLINT = 0,
   DJINNI_GRANITE = 1,

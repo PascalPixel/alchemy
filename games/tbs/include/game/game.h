@@ -74,8 +74,10 @@ extern s16 gCharacter_SpriteTable[];
 /// Each party member's sprite during the prologue (FLAG_CHILDHOOD): Isaac 18,
 /// Garet 19, Felix 36, Jenna 48.
 extern s16 gCharacter_ChildSpriteTable[];
-/// The summons in menu order, 0 to 15 (Summon_ListLearned).
+/// The summon ids in menu order (Summon_ListLearned).
 extern u8 gSummon_OrderList[16];
+/// Ends a list of summon ids (Summon_ListLearned).
+#define SUMMON_END 32
 s32 Audio_Check(void);
 
 #endif

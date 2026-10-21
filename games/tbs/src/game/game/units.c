@@ -68,10 +68,10 @@ u32 Party_GetAverageLevel(void) {
   return totalLevels;
 }
 
-/// Returns the unit record of `owner`: 0 to 7 are the playable characters in
-/// the game state, 0x80 to 0x85 the enemies of the current battle. Anything
-/// else, or an enemy outside a battle, is NULL. Nearly every bank calls it,
-/// through GAME.S as UnitGetFar.
+/// Returns the unit record of `owner`: ISAAC to PIERS are the playable
+/// characters in the game state, 0x80 to 0x85 the enemies of the current
+/// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
+/// bank calls it, through GAME.S as UnitGetFar.
 struct BattleUnit *UnitGet(u32 owner) {
   struct BattleUnit *states;
   struct BattleUnit *unit;
@@ -85,7 +85,7 @@ struct BattleUnit *UnitGet(u32 owner) {
     asm("" : : "l"(caller));
   }
   states = gGameState.owners;
-  if (owner < 8) {
+  if (owner <= PIERS) {
     unit = &states[owner];
     return unit;
   }
@@ -96,12 +96,13 @@ struct BattleUnit *UnitGet(u32 owner) {
   return NULL;
 }
 
-/// Returns the definition of enemy `selector - 8`; an id past the first 250
-/// gives the first. Called by the battle code that builds and scores
-/// enemies (the formations, the enemy AI, the spoils) and by the element and
-/// weakness reads in this object.
-/// XXX: why enemy ids are offset by 8 is unknown; the encounter tables'
-/// enemy column would show whether 0 to 7 were meant for the characters.
+/// Returns the definition of enemy `selector`, in row `selector -
+/// ENEMY_CLASS_FIRST`; an id past the first 250 gives the first. Called by the
+/// battle code that builds and scores enemies (the formations, the enemy AI,
+/// the spoils) and by the element and weakness reads in this object.
+/// XXX: why enemy ids start at ENEMY_CLASS_FIRST is unknown; the encounter
+/// tables' enemy column would show whether the ids below it were meant for
+/// the characters.
 const u8 *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex;
 
@@ -326,29 +327,30 @@ void UnitCalc(s32 owner) {
         stats->kind = effectKind;
         effectKind -= ITEM_EFFECT_SCALE_HP;
         stats->amount = effectAmount;
+        // The kind less ITEM_EFFECT_SCALE_HP, as the switch table begins there.
         switch (effectKind) {
-        case 0:
+        case ITEM_EFFECT_SCALE_HP - ITEM_EFFECT_SCALE_HP:
           stats->hp = stats->hp * stats->amount / 10;
           break;
-        case 1:
+        case ITEM_EFFECT_SCALE_HP_REGEN - ITEM_EFFECT_SCALE_HP:
           stats->hpRegen = stats->hpRegen * stats->amount / 10;
           break;
-        case 2:
+        case ITEM_EFFECT_SCALE_PP - ITEM_EFFECT_SCALE_HP:
           stats->pp = stats->pp * stats->amount / 10;
           break;
-        case 3:
+        case ITEM_EFFECT_SCALE_PP_REGEN - ITEM_EFFECT_SCALE_HP:
           stats->ppRegen = stats->ppRegen * stats->amount / 10;
           break;
-        case 4:
+        case ITEM_EFFECT_SCALE_ATTACK - ITEM_EFFECT_SCALE_HP:
           stats->atk = stats->atk * stats->amount / 10;
           break;
-        case 5:
+        case ITEM_EFFECT_SCALE_DEFENSE - ITEM_EFFECT_SCALE_HP:
           stats->def = stats->def * stats->amount / 10;
           break;
-        case 6:
+        case ITEM_EFFECT_SCALE_AGILITY - ITEM_EFFECT_SCALE_HP:
           stats->agi = stats->agi * stats->amount / 10;
           break;
-        case 7:
+        case ITEM_EFFECT_SCALE_LUCK - ITEM_EFFECT_SCALE_HP:
           stats->luck = stats->luck * stats->amount / 10;
           break;
         }

@@ -16,13 +16,14 @@
 
 /// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats,
 /// name with its suffix letter, the items it carries, rewards and elements.
-/// Enemies 158 to 171 fight on the party's side. Returns 0 for an id out of
-/// range, 1 otherwise; enemy ids 173 to 250, past the table's 165 rows but
-/// within the check, are filled from row 0. Called by the battle set-up
-/// (Battle_RunEncounter, BattleFormation_BuildEnemyList) and by
+/// Enemies 158 to 171, the Djinn the party fights (rows 150 to 163 of
+/// enemies.tsv, the Venus to Jupiter Djinni), are put on the party's side.
+/// Returns 0 for an id out of range, 1 otherwise; enemy ids 173 to 250, past
+/// the table's 165 rows but within the check, are filled from row 0. Called by the
+/// battle set-up (Battle_RunEncounter, BattleFormation_BuildEnemyList) and by
 /// BattleTargetExec when an enemy calls for help.
-/// XXX: which enemies 158 to 171 are, and when they join the party's side, is
-/// unknown; the encounter tables that place them would say.
+/// XXX: why a Djinni is put on the party's side is unknown; the battle code
+/// that reads BATTLE_UNIT_PARTY for an enemy would say.
 s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
   const struct EnemyDefinition *enemy;
@@ -111,10 +112,10 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   return 1;
 }
 
-// The party: flags 0 to 7 say who is in it, and gGameState.activeOwners
-// lists them in order.
+// The party: the FLAG_IN_PARTY flags say who is in it, and
+// gGameState.activeOwners lists them in order.
 
-/// Returns the number of party members, counted from game flags 0 to 7.
+/// Returns the number of party members, counted from its FLAG_IN_PARTY flags.
 s32 Party_CountActiveOwners(void) {
   s32 owner;
   s32 count;
@@ -122,10 +123,10 @@ s32 Party_CountActiveOwners(void) {
   count = 0;
   owner = 0;
   do {
-    if (GameFlag_Test(owner) != 0)
+    if (GameFlag_Test(FLAG_IN_PARTY(owner)) != 0)
       count++;
     owner++;
-  } while (owner <= 7);
+  } while (owner <= PIERS);
   return count;
 }
 
@@ -137,7 +138,7 @@ s32 Party_AddActiveOwner(s32 owner) {
   s32 partySize = Party_CountActiveOwners();
   s32 partyIndex;
 
-  GameFlag_SetBit(owner);
+  GameFlag_SetBit(FLAG_IN_PARTY(owner));
   partyIndex = 0;
   while (partyIndex < partySize) {
     if (gGameState.activeOwners[partyIndex] == owner)
@@ -157,7 +158,7 @@ s32 Party_RemoveActiveOwner(s32 owner) {
   s32 removedIndex;
   s32 partyIndex;
 
-  GameFlag_ClearBit(owner);
+  GameFlag_ClearBit(FLAG_IN_PARTY(owner));
   for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
     if (gGameState.activeOwners[removedIndex] == owner)
       break;
@@ -168,9 +169,9 @@ s32 Party_RemoveActiveOwner(s32 owner) {
   return Party_CountActiveOwners();
 }
 
-/// Writes the party members to `owners`, ending with 0xff, and returns how
-/// many there are. Every screen that lists the party starts here: the menus,
-/// the shops, the inn and the party inventory searches.
+/// Writes the party members to `owners`, ending with BATTLE_UNIT_LIST_END, and
+/// returns how many there are. Every screen that lists the party starts here:
+/// the menus, the shops, the inn and the party inventory searches.
 s32 Party_ListActiveOwners(s16 *owners) {
   s32 count = 0;
 
@@ -185,7 +186,7 @@ s32 Party_ListActiveOwners(s16 *owners) {
         index++;
       } while (index != count);
     }
-    *owners = 0xff;
+    *owners = BATTLE_UNIT_LIST_END;
   }
   return count;
 }
@@ -244,11 +245,11 @@ PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, 999999)
 PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
 /// Writes the summons whose bit is set in the first word of the party's Djinn
-/// table to `output`, in menu order, ending with 32. Returns how many.
+/// table to `output`, in menu order, ending with SUMMON_END. Returns how many.
 /// Called by SummonMenu_SelectSummon to list the battle's Summon command.
 /// The bits are those BattleSummon_UpdateAvailability sets at the battle's
 /// start and each round. `output` needs room for 17 bytes: up to 16 summons
-/// and the 32.
+/// and SUMMON_END.
 s32 Summon_ListLearned(u8 *output) {
   u8 *source = gSummon_OrderList;
   u8 *end = gSummon_OrderList + 15;
@@ -262,7 +263,7 @@ s32 Summon_ListLearned(u8 *output) {
       count++;
     }
   } while (source <= end);
-  *output = 32;
+  *output = SUMMON_END;
   return count;
 }
 

@@ -55,6 +55,7 @@
 #include "ability_ids.h"
 #include "macros.h"
 #include "item_ids.h"
+#include "djinn_ids.h"
 
 /// Keeps occupied slots in order and clears the unused inventory tail, for
 /// Inventory_Remove (inventory.c) and InventorySnapshot_Save (snapshot.c).

@@ -8,16 +8,16 @@
 #include "types.h"
 #include "global_cells.h"
 #include "render_input.h"
+#include "djinn_ids.h"
 
 // A Djinni's list entry, as Djinn_ListOwnerEntries writes it into
 // DjinnListTable.ids. bits: 15 set | 11..8 owner | 7..5 element | 4..0 index
-#define DJINN_ENTRY_INDEX 31      ///< its number within its element, 0 to 19
-#define DJINN_ENTRY_ELEMENT 0xe0  ///< its element, 0 to 3
+#define DJINN_ENTRY_INDEX 31      ///< its number within its element
+#define DJINN_ENTRY_ELEMENT 0xe0  ///< its element (enum Element)
 #define DJINN_ENTRY_OWNER 0xf00   ///< the member holding it
 #define DJINN_ENTRY_IS_SET 0x8000 ///< set; an unset one is drawn in colour 2
 
 #define DJINN_ELEMENTS 4
-#define DJINN_PER_ELEMENT 20
 #define DJINN_LIST_OWNERS 8 ///< list columns: one per party member
 #define DJINN_LIST_ROWS 10  ///< entries one member's list holds
 

@@ -4,15 +4,15 @@
 
 #include "../game_internal.h"
 
-/// Returns the definition of Djinn `index` (0 to 19) of element `group` (0 to
-/// 3); anything out of range gives the first. Called by UnitCalc for a set
-/// Djinni's stat bonuses and by Djinn_GetAbilityId.
+/// Returns the definition of Djinni `index` of element `group`; anything out of
+/// range gives DJINNI_FLINT's. Called by UnitCalc for a set Djinni's stat
+/// bonuses and by Djinn_GetAbilityId.
 const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
 
   entry = 0;
-  if ((group <= 3U) && (index <= 19U)) {
-    entry = (group * 20) + index;
+  if ((group < NUM_ELEMENTS) && (index < DJINN_PER_ELEMENT)) {
+    entry = (group * DJINN_PER_ELEMENT) + index;
   }
   return &gDjinn_DefinitionTable[entry];
 }
@@ -23,7 +23,7 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
 /// Called by Djinn_JoinParty when a Djinni joins in the field. Of members
 /// holding equally few, the earliest in the party order gets it.
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
-  s32 flag = djinn + element * 20 + FLAG_DJINNI_0;
+  s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINNI_0;
   s32 leastLoadedOwner = 0;
   s32 fewestDjinn = 999;
   s32 partySize;
@@ -97,7 +97,7 @@ s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex) {
     return 0;
 
   recoveryList = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-                       (owner < 0 || owner > 7)))
+                       (owner < 0 || owner > PIERS)))
                       ->list;
   for (entryIndex = 0; entryIndex < recoveryList->count; entryIndex++) {
     if (element == recoveryList->entries[entryIndex].element &&
@@ -163,7 +163,7 @@ s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
   s32 entryIndex;
 
   recoveryList = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-                       (owner < 0 || owner > 7)))
+                       (owner < 0 || owner > PIERS)))
                       ->list;
   for (entryIndex = 0; entryIndex < recoveryList->count; entryIndex++) {
     if (element == recoveryList->entries[entryIndex].element &&
@@ -190,7 +190,8 @@ u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
 
   DjinnRecovery_Remove(owner, element, djinnIndex);
   recoveryList =
-      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(owner > 7))->list;
+      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(owner > PIERS))
+           ->list;
   entryIndex = recoveryList->count;
   recoveryList->entries[entryIndex].element = element;
   recoveryList->entries[entryIndex].index = djinnIndex;

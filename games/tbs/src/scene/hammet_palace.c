@@ -27,17 +27,17 @@
 ///   (FLAG_LAYANA_SCOLDED_LUNPA_VISIT); from then on she talks of Dodonpa's
 ///   greed.
 /// - Hammet's homecoming (HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL, the
-/// first time once Hammet is free, FLAG_LUNPA_TRADE_REOPENED;
-/// FLAG_HAMMET_HOMECOMING_SEEN). Hammet welcomes
-///   the party. Layana is harsh: she had told Ivan time and again not to go to
-///   Lunpa, and the rescue was Kalay's to make, when their quest is to recover
-///   the Elemental Stars. Ivan takes the blame and decides that they leave at
-///   once on Felix's trail, and Hammet sends them to Hesperia, the continent
-///   west of Angara, with the Shaman's Rod, as the Jupiter Adept said.
-///   Afterwards Hammet repeats it, Layana and the palace's people speak of
-///   keeping his return secret, and they tell of the door to the underground
-///   passage, where Hammet keeps his treasure, opened for the party in thanks:
-///   entering by HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
+///   first time once Hammet is free, FLAG_LUNPA_TRADE_REOPENED;
+///   FLAG_HAMMET_HOMECOMING_SEEN). Hammet welcomes the party. Layana is harsh:
+///   she had told Ivan time and again not to go to Lunpa, and the rescue was
+///   Kalay's to make, when their quest is to recover the Elemental Stars. Ivan
+///   takes the blame and decides that they leave at once on Felix's trail, and
+///   Hammet sends them to Hesperia, the continent west of Angara, with the
+///   Shaman's Rod, as the Jupiter Adept said. Afterwards Hammet repeats it,
+///   Layana and the palace's people speak of keeping his return secret, and
+///   they tell of the door to the underground passage, where Hammet keeps his
+///   treasure, opened for the party in thanks: entering by
+///   HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
 ///   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM with flag 0x915 set draws it
 ///   open.
 ///

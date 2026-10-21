@@ -7,7 +7,7 @@
 ///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). Its monks read
 ///   omens in the gems that fell from the sky and the blue lights in the north,
 ///   and tell of Master Nyunpa, who is fasting to save the world by becoming
-///   enlightened. A visitor from Kolima asks whether the bridge is open again
+///   enlightened. A boy from Kolima asks whether the bridge is open again
 ///   (FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN), a traveling healer offers
 ///   the Sanctum's services, and a search finds a Psynergy Stone. The monk
 ///   beneath the falls guards the waterfall grotto: once Nyunpa has set the
@@ -65,7 +65,7 @@
 ///   Hsu is in great danger among the boulders in the mountains; seeing that
 ///   her power has passed to Feizhi, Hama gives Ivan Reveal and hurries with
 ///   her to Hsu's aid, and FLAG_XIAN_HEARD_HSU_TRAPPED is set. Until Hsu is
-///   rescued (FLAG_HSU_RESCUED) Hama and the monk in her room are away;
+///   rescued (FLAG_HSU_RESCUED) Hama and the boy monk in her room are away;
 ///   afterwards they are back. FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE leads
 ///   back into Lama Temple (LamaTemple).
 #include "game_state.h"
@@ -110,24 +110,36 @@
 /// The placed actors outside Fuchin Temple (FuchinTempleGrounds), numbered in
 /// the order of gFuchinTempleGroundsPlacements.
 enum FuchinTempleOutsideActor {
-  /// The visitor from Kolima. "How did you get here? Is the bridge open
+  /// A boy from Kolima. "How did you get here? Is the bridge open
   /// again?"
-  ACTOR_KOLIMA_VISITOR = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "How did you get here? Is the bridge open again?"
+  /// (MsgXianHowDidGetHereBridge)
+  ACTOR_BOY_FROM_KOLIMA = ACTOR_FIRST_PLACED,
   /// The monk beneath the falls, at the waterfall grotto.
   /// ★ Named from what the player sees: a bald monk in an orange robe standing
   /// on a stump beneath the waterfall (its render)
   ACTOR_FALLS_MONK,
-  /// A monk who reads omens. "Gems from the sky, blue lights in the north...
+  /// A boy monk who reads omens. "Gems from the sky, blue lights in the
+  /// north...
   /// All omens of disaster!"
-  ACTOR_OMENS_MONK,
-  /// A monk who fears for Nyunpa. "Nyunpa has not eaten in days... He is
+  /// ★ Named from the game: "Gems from the sky, blue lights in the north... All
+  /// omens of disaster!" (MsgFuchinTempleGemsFromTheSkyBlueLights)
+  ACTOR_BOY_MONK_READING_OMENS,
+  /// A boy monk who fears for Nyunpa. "Nyunpa has not eaten in days... He is
   /// going to waste away to nothing."
-  ACTOR_WORRIED_MONK,
-  /// A monk who admires Nyunpa. "Isn't it noble of him to try to save the
+  /// ★ Named from the game: "Nyunpa has not eaten in days... He is going to
+  /// waste away to nothing." (MsgFuchinTempleNyunpaHasNotEatenInDays)
+  ACTOR_WORRIED_BOY_MONK,
+  /// A boy monk who admires Nyunpa. "Isn't it noble of him to try to save the
   /// world by becoming enlightened?"
-  ACTOR_ADMIRING_MONK,
-  /// The traveling healer. "I'm traveling around the world to spread good
+  /// ★ Named from the game: "Isn't it noble of him to try to save the world by
+  /// becoming enlightened?" (MsgXianIsntNobleHimTrySave)
+  ACTOR_ADMIRING_BOY_MONK,
+  /// The traveling healer, a man in a tall hat and a long robe. "I'm traveling
+  /// around the world to spread good
   /// will."
+  /// ★ Named from the game: "I'm traveling around the world to spread good
+  /// will." (MsgXianImTravelingAroundWorldSpread)
   ACTOR_HEALER
 };
 
@@ -138,30 +150,47 @@ enum FuchinTempleInsideActor {
   /// ★ Named from the game: "I have already heard of your test from Master
   /// Nyunpa." (MsgXianAlreadyHeardTest)
   ACTOR_NYUNPA = ACTOR_FIRST_PLACED,
-  /// By the school's door. "This is Master Feh's school... You came to
+  /// A boy, by the school's door. "This is Master Feh's school... You came to
   /// watch?"
+  /// ★ Named from the game: "This is Master Feh's school... You came to watch?"
+  /// (MsgXianMasterFehsSchoolCameWatch)
   ACTOR_WELCOMING_STUDENT,
   /// A student who practices kicks. "Strong kicks are very important. Kick,
   /// kick, kick!"
+  /// ★ Named from the game: "Strong kicks are very important. Kick, kick,
+  /// kick!" (MsgFuchinTempleStrongKicksAreVeryImportantKick)
   ACTOR_KICKING_STUDENT,
   /// A student who practices punches. "I want to learn, so I train. Quick
   /// punches are very good."
+  /// ★ Named from the game: "I want to learn, so I train. Quick punches are
+  /// very good." (MsgFuchinTempleIWantToLearnSoI)
   ACTOR_PUNCHING_STUDENT,
   /// ★ Named from the game: "Flexibility and jumping are very important in
   /// kung fu." (MsgXianFlexibilityJumpingVeryImportantIn)
   ACTOR_JUMPING_STUDENT,
   /// A student proud of Feh's school. "Everyone in Xian can do martial arts.
   /// But the Feh School of martial arts is the most elite."
+  /// ★ Named from the game: "Everyone in Xian can do martial arts. But the Feh
+  /// School of martial arts is the most elite."
+  /// (MsgFuchinTempleEveryoneInXianCanDoMartial)
   ACTOR_PROUD_STUDENT,
-  /// A student who learns by watching. "Just listening does not make one
+  /// A little girl, a student who learns by watching. "Just listening does not
+  /// make one
   /// strong. I learn by watching."
+  /// ★ Named from the game: "Just listening does not make one strong. I learn
+  /// by watching." (MsgFuchinTempleJustListeningDoesNotMakeOne)
   ACTOR_WATCHING_STUDENT,
   /// By the training tree, which he sets up again after it falls. "Master
   /// Feh is very busy. Do you still wish to see him?"
+  /// ★ Named from the game: "Master Feh is very busy. Do you still wish to see
+  /// him?" (MsgXianMasterFehVeryBusyDo)
   ACTOR_TREE_STUDENT,
   /// Keeps the party from Feh, and goes to Feh's door when the tree first
   /// falls from the line. "Master Feh is very busy. He is speaking with his
   /// daughter, Feizhi. You cannot enter now."
+  /// ★ Named from the game: "Master Feh is very busy. He is speaking with his
+  /// daughter, Feizhi. You cannot enter now."
+  /// (MsgFuchinTempleMasterFehIsVeryBusyHe)
   ACTOR_MESSENGER_STUDENT,
   /// ★ Named from the game: "He is speaking with his daughter, Feizhi."
   /// (MsgFuchinTempleMasterFehIsVeryBusyHe)
@@ -185,9 +214,11 @@ enum HamasRoomActor {
   /// ★ Named from the game: "Master Hama is meditating."
   /// (MsgXianMasterHamaMeditatingPleaseExtremely)
   ACTOR_HAMA = ACTOR_FIRST_PLACED,
-  /// A monk in Hama's room. "Master Hama is meditating. Please be extremely
+  /// A boy monk in Hama's room. "Master Hama is meditating. Please be extremely
   /// quiet."
-  ACTOR_HAMAS_MONK,
+  /// ★ Named from the game: "Master Hama is meditating. Please be extremely
+  /// quiet." (MsgXianMasterHamaMeditatingPleaseExtremely)
+  ACTOR_HAMAS_BOY_MONK,
   /// Bursts in to say that Hsu is in danger.
   /// ★ Named from the game: "Feizhi... Why are you here?"
   /// (MsgXianMasterHamaMeditatingPleaseExtremely)
@@ -272,50 +303,50 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gFuchinTemplePlacements;
 }
 
-/// Talking to the visitor from Kolima at Fuchin Temple
+/// Talking to the boy from Kolima at Fuchin Temple
 /// (FuchinTempleGrounds): he asks how the party got here. "How did you get
 /// here? Is the bridge open again?" Yes cheers him ("Then I can go home to
 /// Kolima now?") and is remembered; no means the party came through the forest.
 /// Later talks go on to the tale of the forest.
-static void Event_VisitorAsksAboutBridge(void) {
+static void Event_BoyFromKolimaAsksAboutBridge(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgXianHowDidGetHereBridge);
   if (FLAG_CHECK(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN) != 0) {
     gEventWork->message += 4;
   }
-  Event_OpenMessage(ACTOR_KOLIMA_VISITOR, 0);
+  Event_OpenMessage(ACTOR_BOY_FROM_KOLIMA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     FLAG_SET(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN);
   } else {
     gEventWork->message++;
   }
-  Event_ShowMessage(ACTOR_KOLIMA_VISITOR, 0);
+  Event_ShowMessage(ACTOR_BOY_FROM_KOLIMA, 0);
   EV_END();
 }
 
-/// Talking to the monk (ACTOR_ADMIRING_MONK) at Fuchin Temple
+/// Talking to the boy monk (ACTOR_ADMIRING_BOY_MONK) at Fuchin Temple
 /// (FuchinTempleGrounds): he speaks of the one seeking enlightenment, with up
 /// to two more questions. "Isn't it noble of him to try to save the world by
 /// becoming enlightened?" Once Nyunpa is gone, "Now, he truly is beyond the
 /// world's concerns. Is he watching over us?"
-static void Event_MonkSpeaksOfNyunpa(void) {
+static void Event_BoyMonkSpeaksOfNyunpa(void) {
 
   EV_BEGIN();
   if (Engine_GameFlagIsSet(FLAG_NYUNPA_ENLIGHTENED) != 0) {
     MESSAGE_SET(MsgXianNowHeTrulyBeyondWorlds);
-    Engine_EventAskYesNo(ACTOR_ADMIRING_MONK, 0);
+    Engine_EventAskYesNo(ACTOR_ADMIRING_BOY_MONK, 0);
     EV_END();
   } else {
     MESSAGE_SET(MsgXianIsntNobleHimTrySave);
-    MESSAGE_OPEN(ACTOR_ADMIRING_MONK, 0);
+    MESSAGE_OPEN(ACTOR_ADMIRING_BOY_MONK, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
       gEventWork->message++;
-      MESSAGE_OPEN(ACTOR_ADMIRING_MONK, 0);
+      MESSAGE_OPEN(ACTOR_ADMIRING_BOY_MONK, 0);
       if (Engine_EventChooseYesNo(0, 0) == 1) {
         gEventWork->message++;
       }
     }
-    MESSAGE_PUT(ACTOR_ADMIRING_MONK, 0);
+    MESSAGE_PUT(ACTOR_ADMIRING_BOY_MONK, 0);
     EV_END();
   }
 }
@@ -537,7 +568,7 @@ static void Event_NyunpaFeelsMindRead(void) {
 }
 
 /// Talking to the student at the door of Master Feh's school in Xian
-/// (ACTOR_WELCOMING_STUDENT): the student asks whether the party came to watch.
+/// (ACTOR_WELCOMING_STUDENT): the boy asks whether the party came to watch.
 /// "This is Master Feh's school... You came to watch?"
 static void Event_StudentWelcomesToSchool(void) {
   EV_BEGIN();
@@ -1739,11 +1770,11 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  OBJ_DIR(ACTOR_HAMAS_MONK, FACING_EAST, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_HAMAS_MONK, 2);
+  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_EAST, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_HAMAS_BOY_MONK, 2);
   WAIT(20);
   MESSAGE_SET(MsgXianMasterHamaMeditatingPleaseExtremely);
-  Event_ShowMessageAndWait(ACTOR_HAMAS_MONK, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_HAMAS_BOY_MONK, 0, 20);
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   WAIT(30);
@@ -1754,7 +1785,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   WAIT(20);
-  OBJ_DIR(ACTOR_HAMAS_MONK, FACING_NORTH + FACING_STEP, 0);
+  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP, 0);
   // Bring the other party members out from the leader for the lesson.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -2049,13 +2080,13 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT, 0);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT, 0);
   OBJ_EMOTE(ACTOR_HAMA, EMOTE_IN_FRONT, 0);
-  OBJ_EMOTE(ACTOR_HAMAS_MONK, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(ACTOR_HAMAS_BOY_MONK, EMOTE_IN_FRONT, 0);
   WAIT(60);
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   OBJ_DIR(GARET, FACING_SOUTH, 0);
   OBJ_DIR(IVAN, FACING_SOUTH, 0);
   OBJ_DIR(MIA, FACING_SOUTH, 0);
-  OBJ_DIR(ACTOR_HAMAS_MONK, FACING_EAST, 0);
+  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_EAST, 0);
   WAIT(30);
   OBJ_SPEED(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 536);
@@ -2153,7 +2184,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   OBJ_DIR(ACTOR_HAMA, FACING_EAST, 0);
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   OBJ_DIR(IVAN, FACING_WEST, 0);
-  OBJ_DIR(ACTOR_HAMAS_MONK, FACING_NORTH + FACING_STEP, 20);
+  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_NORTH + FACING_STEP, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
@@ -2185,7 +2216,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
   OBJ_DIR(IVAN, FACING_SOUTHWEST, 0);
   OBJ_DIR(MIA, FACING_SOUTHEAST, 0);
-  OBJ_DIR(ACTOR_HAMAS_MONK, FACING_SOUTHEAST + FACING_STEP, 0);
+  OBJ_DIR(ACTOR_HAMAS_BOY_MONK, FACING_SOUTHEAST + FACING_STEP, 0);
   WAIT(20);
   Actor_WalkToAndWait(ACTOR_HAMA, 472, 552);
   Engine_ActorRunRepeatedMotion(ACTOR_HAMA, 2);
@@ -2199,17 +2230,17 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_WalkToAndWait(ACTOR_HAMA, 480, 540);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   OBJ_SPEED(ACTOR_HAMA, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  OBJ_SPEED(ACTOR_HAMAS_MONK, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  OBJ_SPEED(ACTOR_HAMAS_BOY_MONK, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   OBJ_WALK(ACTOR_HAMA, 472, 608);
-  OBJ_WALK(ACTOR_HAMAS_MONK, 472, 544);
+  OBJ_WALK(ACTOR_HAMAS_BOY_MONK, 472, 544);
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
-  Engine_ActorWaitForMove(ACTOR_HAMAS_MONK);
-  OBJ_WALK(ACTOR_HAMAS_MONK, 472, 608);
+  Engine_ActorWaitForMove(ACTOR_HAMAS_BOY_MONK);
+  OBJ_WALK(ACTOR_HAMAS_BOY_MONK, 472, 608);
   OBJ_POS_SET(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 0);
   Engine_ActorWaitForMove(ACTOR_HAMA);
   OBJ_POS_SET(ACTOR_HAMA, 0, 0);
-  Engine_ActorWaitForMove(ACTOR_HAMAS_MONK);
-  OBJ_POS_SET(ACTOR_HAMAS_MONK, 0, 0);
+  Engine_ActorWaitForMove(ACTOR_HAMAS_BOY_MONK);
+  OBJ_POS_SET(ACTOR_HAMAS_BOY_MONK, 0, 0);
   Actor_WalkToAndWait(IVAN, 488, 520);
   OBJ_EMOTE(IVAN, 0x101, 60);
   Engine_ActorRunRepeatedMotion(MIA, 1);
@@ -2353,7 +2384,7 @@ s32 Scene_Initialize(void) {
         FuchinTemple_RunHamasRevealLesson();
       } else if (!Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
         Engine_ActorSetPosition(ACTOR_HAMA, 0, 0);
-        Engine_ActorSetPosition(ACTOR_HAMAS_MONK, 0, 0);
+        Engine_ActorSetPosition(ACTOR_HAMAS_BOY_MONK, 0, 0);
       }
     }
   } else {
@@ -2606,46 +2637,46 @@ u32 gFuchinTempleExits[] = {
 
 // clang-format off
 struct ScenePlacement gFuchinTempleGroundsPlacements[] = {
-    { 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(296), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x95, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MONK_IN_WHITE_AND_ORANGE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(360), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x97, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_BOY_IN_ORANGE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x97, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_BOY_IN_ORANGE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(392), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x97, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_BOY_IN_ORANGE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gFuchinTemplePlacements[] = {
     // Nyunpa
-    { 0x33, 0x0, ACTOR_STAND,
+    { SPRITE_NYUNPA, 0x0, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(472), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     // Master Feh's students
-    { 0x6c, 0x0, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(264), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x82, 0x0, ACTOR_STAND,
+    { SPRITE_YOUTH_WITH_HEADBAND, 0x0, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(200), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x83, 0x0, ACTOR_STAND,
+    { SPRITE_YOUTH_WITH_TIED_HAIR, 0x0, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(152), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x83, 0x0, (s32)gFuchinTemple_JumpingStudentScript,
+    { SPRITE_YOUTH_WITH_TIED_HAIR, 0x0, (s32)gFuchinTemple_JumpingStudentScript,
         PIXELS(120), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x83, 0x0, ACTOR_STAND,
+    { SPRITE_YOUTH_WITH_TIED_HAIR, 0x0, ACTOR_STAND,
         PIXELS(176), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x66, 0x0, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, 0x0, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(264), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x82, 0x0, ACTOR_STAND,
+    { SPRITE_YOUTH_WITH_HEADBAND, 0x0, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(152), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x82, 0x0, ACTOR_STAND,
+    { SPRITE_YOUTH_WITH_HEADBAND, 0x0, ACTOR_STAND,
         PIXELS(176), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     // Feizhi and Master Feh, out of sight until they come out
-    { 0x27, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FEIZHI, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x28, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FEH, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     // The training tree, and where Force strikes it
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
@@ -2663,11 +2694,11 @@ struct ScenePlacement gFuchinTemplePlacementsFromLamaTemple[] = {
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     // Hama
-    { 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(472), 0, PIXELS(472), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x97, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_BOY_IN_ORANGE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(440), 0, PIXELS(536), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x27, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FEIZHI, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -2677,37 +2708,37 @@ struct SceneEvent gFuchinTempleGroundsEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterTemple) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWaterfallGrotto) },
     { EVENT_TOUCH, 5, FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST, EVENT_SCRIPT(Event_MonkAsksWhetherTestIsDone) },
-    { EVENT_TALK, ACTOR_KOLIMA_VISITOR, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleTheFuchinTempleIsAPleasant) },
+    { EVENT_TALK, ACTOR_BOY_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleTheFuchinTempleIsAPleasant) },
     { EVENT_TALK, ACTOR_FALLS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleOhIsaacWhatTookYouSo) },
-    { EVENT_TALK, ACTOR_OMENS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleAhhhMasterNyunpaHeHasPassed) },
-    { EVENT_TALK, ACTOR_WORRIED_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaHasWastedAwayAt) },
-    { EVENT_TALK, ACTOR_ADMIRING_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), EVENT_SCRIPT(Event_MonkSpeaksOfNyunpa) },
-    { EVENT_TALK, ACTOR_KOLIMA_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_VisitorAsksAboutBridge) },
+    { EVENT_TALK, ACTOR_BOY_MONK_READING_OMENS, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleAhhhMasterNyunpaHeHasPassed) },
+    { EVENT_TALK, ACTOR_WORRIED_BOY_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaHasWastedAwayAt) },
+    { EVENT_TALK, ACTOR_ADMIRING_BOY_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), EVENT_SCRIPT(Event_BoyMonkSpeaksOfNyunpa) },
+    { EVENT_TALK, ACTOR_BOY_FROM_KOLIMA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyFromKolimaAsksAboutBridge) },
     // Unused: a copy of the row above, which always answers first.
-    { EVENT_TALK, ACTOR_KOLIMA_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_VisitorAsksAboutBridge) },
+    { EVENT_TALK, ACTOR_BOY_FROM_KOLIMA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyFromKolimaAsksAboutBridge) },
     { EVENT_TALK, ACTOR_FALLS_MONK, FLAG_NYUNPA_TEST_ACCEPTED, MSGNO(MsgFuchinTempleOmOmBlueLightsInThe) },
     { EVENT_TALK, ACTOR_FALLS_MONK, FLAG_FUCHIN_FALLS_GROTTO_OPENED, EVENT_SCRIPT(Event_MonkLetsPartyIntoGrotto) },
     { EVENT_TALK, ACTOR_FALLS_MONK, FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND, MSGNO(MsgFuchinTempleTheTestOfFuchinFallsIs) },
     { EVENT_TALK, ACTOR_FALLS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterNyunpaIsWaitingForYou) },
-    { EVENT_TALK, ACTOR_OMENS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleGemsFromTheSkyBlueLights) },
-    { EVENT_TALK, ACTOR_WORRIED_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleNyunpaHasNotEatenInDays) },
-    { EVENT_TALK, ACTOR_ADMIRING_MONK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MonkSpeaksOfNyunpa) },
+    { EVENT_TALK, ACTOR_BOY_MONK_READING_OMENS, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleGemsFromTheSkyBlueLights) },
+    { EVENT_TALK, ACTOR_WORRIED_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleNyunpaHasNotEatenInDays) },
+    { EVENT_TALK, ACTOR_ADMIRING_BOY_MONK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyMonkSpeaksOfNyunpa) },
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
     { SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KOLIMA_VISITOR, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleGemsFallingFromTheSkyMountains) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleGemsFallingFromTheSkyMountains) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleIKnewMasterNyunpaWasFasting) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OMENS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaIsNothingButSkin) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ADMIRING_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleHeCantLeaveUsYetHe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KOLIMA_VISITOR, FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN, MSGNO(MsgFuchinTempleIBeginningToThinkIllBe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KOLIMA_VISITOR, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDontFeelSafeGoingHome) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_MONK_READING_OMENS, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_BOY_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaIsNothingButSkin) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ADMIRING_BOY_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleHeCantLeaveUsYetHe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_FROM_KOLIMA, FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN, MSGNO(MsgFuchinTempleIBeginningToThinkIllBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_FROM_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDontFeelSafeGoingHome) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, FLAG_NYUNPA_TEST_ACCEPTED, MSGNO(MsgFuchinTempleManyStarsFellFromTheSky) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, FLAG_FUCHIN_FALLS_GROTTO_OPENED, MSGNO(MsgFuchinTempleCanSuchYoungWarriorsEndureThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND, MSGNO(MsgFuchinTempleCanSuchYoungWarriorsEndureThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheWarriorsHaveMasteredTheSecrets) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OMENS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleThereIsNoPointInTraining) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleICantImagineFastingItGets) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ADMIRING_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIWillTrainToBecomeA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_MONK_READING_OMENS, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleThereIsNoPointInTraining) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleICantImagineFastingItGets) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ADMIRING_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIWillTrainToBecomeA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleSinceImHereIdLikeTo) },
     { SCENE_EVENTS_END },
 };
@@ -2808,9 +2839,9 @@ struct SceneEvent gFuchinTempleEvents[] = {
 
 struct SceneEvent gFuchinTempleEventsFromLamaTemple[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE },
-    { EVENT_TALK, ACTOR_HAMAS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterHamaIsMeditatingAskingFor) },
+    { EVENT_TALK, ACTOR_HAMAS_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterHamaIsMeditatingAskingFor) },
     { EVENT_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheFutureHoldsManyHardshipsBut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMAS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDoNotThinkMasterHama) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMAS_BOY_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDoNotThinkMasterHama) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleICannotSeeYourFutureClearly) },
     { SEARCH(SEARCH_JAR), 102, 0xf6a, FIND_COINS(6) },
     { SCENE_EVENTS_END },

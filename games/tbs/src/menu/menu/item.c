@@ -1551,9 +1551,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   case ITEM_TYPE_SHIELD:
   case ITEM_TYPE_HELM:
   case ITEM_TYPE_BOOTS:
-  // An item type between ITEM_TYPE_PSYNERGY and ITEM_TYPE_RING that no item
-  // has (items.tsv), so it has no enumerator.
-  case 7:
+  case ITEM_TYPE_UNUSED:
   case ITEM_TYPE_RING:
   case ITEM_TYPE_SHIRT:
     if (owner == target) {
@@ -2036,7 +2034,7 @@ void ItemMenu_TryBreak(void) {
   menu = gMenuWork;
   // One time in eight: 0x2000 of Random16's 0x10000 values.
   if ((Item_GetDirectFar(ITEM_ID_MASK & menu->selectedItems[0])->useType ==
-       2) &&
+       ITEM_USE_MAY_BREAK) &&
       (Random16() < 0x2000U)) {
     Inventory_BreakFar(menu->paneOwner[0], menu->selectedSlots[0]);
     AudioCommand_PlayFar(SE_ITEM_BREAK);
@@ -2178,11 +2176,11 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
   bestowsPsynergy = 0;
   def = Item_GetDirectFar(inventoryEntry & ITEM_ID_MASK);
   // Equipment: a heading, then its Attack and Defense bonuses.
-  if (def->type != 0) {
+  if (def->type != ITEM_TYPE_NONE) {
     hasEffects = 0;
     if (def->primaryBonus == 0 && def->secondaryBonus == 0) {
       for (i = 0; i < 4; i++) {
-        if (def->effects[i].kind != 0 || def->useType == 3) {
+        if (def->effects[i].kind != 0 || def->useType == ITEM_USE_TEACHES) {
           hasEffects = 1;
           break;
         }
@@ -2275,8 +2273,8 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
 #endif
       break;
     case ITEM_EFFECT_ADD_UNLEASH_CHANCE: // "Critical Hits increase"
-    case ITEM_EFFECT_25:                 // "The curse can be removed"
-    case ITEM_EFFECT_LURE:               // "Boosts monster encounters"
+    case ITEM_EFFECT_CURSE_REMOVABLE:
+    case ITEM_EFFECT_LURE: // "Boosts monster encounters"
       UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + MsgEquipEffectName,
                                       window, 0, row * 8);
       break;

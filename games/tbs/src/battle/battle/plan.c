@@ -281,7 +281,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   }
   // A bound unit (restraint bit 0) loses one action in four,
   // except Defend.
-  if ((actor->restraint & 1) && request->command != CMD_DEFEND &&
+  if ((actor->restraint & RESTRAINT_BOUND) && request->command != CMD_DEFEND &&
       (BattleRandomFar() & 3) == 0) {
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiText_ShowMessageAndWaitCoreFar(MsgIsBound);
@@ -390,14 +390,14 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     UiWork_PushValueSlotFar(actor->inventory[request->parameter],
                             VALUE_ITEM_NAME);
     // An item that is kept: weapons, shields, gloves and armlets, the Psynergy
-    // items, rings and type 7, which no row of items.tsv has, are raised
+    // items, rings and ITEM_TYPE_UNUSED are raised
     // ("raises"); anything else is used.
-    if (item->useType == ITEM_USE_MAY_BREAK || item->useType == 0) {
+    if (item->useType == ITEM_USE_MAY_BREAK || item->useType == ITEM_USE_FREE) {
       switch (item->type) {
       case ITEM_TYPE_WEAPON:
       case ITEM_TYPE_SHIELD:
       case ITEM_TYPE_PSYNERGY:
-      case 7:
+      case ITEM_TYPE_UNUSED:
       case ITEM_TYPE_RING:
         UiText_ShowMessageAndWaitCoreFar(MsgActorRaisesItem);
         break;

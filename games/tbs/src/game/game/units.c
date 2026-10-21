@@ -189,25 +189,25 @@ void UnitCalc(s32 owner) {
     unit->pp = unit->maxPp;
   }
 
-  // Restraint bits 0 and 1 are the curse's; bit 2 keeps bit 0 set and bit 3
-  // (an item's effect 25) clears bits 0 and 3 again below.
-  unit->restraint &= ~3;
-  if (unit->restraint & 4)
-    unit->restraint |= 1;
+  // RESTRAINT_KEEP_BOUND keeps RESTRAINT_BOUND, and RESTRAINT_REMOVABLE clears
+  // both again below.
+  unit->restraint &= ~(RESTRAINT_BOUND | RESTRAINT_CURSED_ITEM);
+  if (unit->restraint & RESTRAINT_KEEP_BOUND)
+    unit->restraint |= RESTRAINT_BOUND;
   if (unit->ready)
     stats->turns++;
   unit->equipBonus[0] = 0;
   unit->equipBonus[1] = 0;
 
   // Apply additive equipment and set-Djinn bonuses before class scaling.
-  // An enemy (class 0) skips equipment, Djinn and class entirely.
+  // An enemy (CLASS_INDEX_ENEMY) skips equipment, Djinn and class entirely.
   if (unit->classIndex) {
     for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
       stats->item = Item_GetDirect(unit->inventory[index]);
       if (stats->item->flags & ITEM_CURSED)
-        unit->restraint |= 3;
+        unit->restraint |= RESTRAINT_BOUND | RESTRAINT_CURSED_ITEM;
       /* FAKEMATCH(one-pass): the Attack bonus in a once-only block keeps the
        * Defense load after the item's second bonus; as plain statements, 1 of
        * 864 instructions differ in tbs-en. */
@@ -271,8 +271,8 @@ void UnitCalc(s32 owner) {
         case ITEM_EFFECT_24:
           unit->equipBonus[1] += stats->amount;
           break;
-        case ITEM_EFFECT_25:
-          unit->restraint |= 8;
+        case ITEM_EFFECT_CURSE_REMOVABLE:
+          unit->restraint |= RESTRAINT_REMOVABLE;
           break;
         case ITEM_EFFECT_ADD_TURNS:
           stats->turns += stats->amount;
@@ -280,14 +280,14 @@ void UnitCalc(s32 owner) {
         }
       }
     }
-    if (unit->restraint & 8)
-      unit->restraint &= ~9;
+    if (unit->restraint & RESTRAINT_REMOVABLE)
+      unit->restraint &= ~(RESTRAINT_REMOVABLE | RESTRAINT_BOUND);
 
     // Only set Djinn contribute their stat bonuses.
     for (elementIndex = 0; elementIndex < NUM_ELEMENTS; elementIndex++) {
       u32 activeDjinn = unit->djinnActive[elementIndex];
 
-      for (index = 0; index < 20; index++) {
+      for (index = 0; index < DJINN_PER_ELEMENT; index++) {
         if (activeDjinn & (1 << index)) {
           const struct DjinnDefinition *djinn =
               Djinn_GetDefinition(elementIndex, index);

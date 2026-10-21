@@ -186,6 +186,16 @@ enum TargetMode {
   TARGET_MODE_SELF = 4    ///< the user alone, whatever the range
 };
 
+/// BattleUnit.restraint bits, the curse.
+enum RestraintFlag {
+  RESTRAINT_BOUND = 0x01,       ///< the unit is bound
+  RESTRAINT_CURSED_ITEM = 0x02, ///< a cursed item is equipped
+  RESTRAINT_KEEP_BOUND = 0x04,  ///< keeps RESTRAINT_BOUND through UnitCalc
+  /// ITEM_EFFECT_CURSE_REMOVABLE: UnitCalc clears it again with
+  /// RESTRAINT_BOUND.
+  RESTRAINT_REMOVABLE = 0x08
+};
+
 /// An ability's definition, a row of gBattleAction_DefinitionTable: its
 /// targeting, ability kind, element, effect, range, PP cost and power.
 struct BattleAct {
@@ -320,11 +330,10 @@ struct BattleUnit {
   /// (n * n + n) * 5 power (UnitCalc). Cleared at the battle's start, on
   /// going down and by Break.
   s8 elementLevels[NUM_ELEMENTS];
-  /// The curse. bits: 3 ITEM_EFFECT_25 (UnitCalc clears it again with bit 0)
-  /// | 2 keeps bit 0 | 1 cursed item equipped | 0 bound. UnitCalc rebuilds
-  /// bits 1 and 0 from the equipment. A bound unit loses one action in four,
-  /// except Defend (BattleCommand_BuildPlan); any bit set shows the curse in
-  /// the status screens and lets the sanctum remove it.
+  /// The curse: RestraintFlag bits. UnitCalc rebuilds RESTRAINT_BOUND and
+  /// RESTRAINT_CURSED_ITEM from the equipment. A bound unit loses one action in
+  /// four, except Defend (BattleCommand_BuildPlan); any bit set shows the curse
+  /// in the status screens and lets the sanctum remove it.
   s8 restraint;
   s8 poison; ///< POISON_NORMAL or POISON_DEADLY, 0 for none
   /// Each stat change: the turns it has left, and its stage (UnitCalc: an

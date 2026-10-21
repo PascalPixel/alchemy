@@ -32,7 +32,7 @@
 /// (talking to one, AltinPeak_RollLog), which roll along the turns their
 /// route's cells mark; floor switches in rooms 3, 5, 6 and 7, each remembered
 /// by a place flag (0x323 and 0x325 to 0x327) and redrawn on entry; and a
-/// block in room 7 that Move or a push slides along. Spritz, a Mercury Djinni,
+/// pillar in room 7 that Move or a push slides along. Spritz, a Mercury Djinni,
 /// waits in room 7, placed until it has joined, and talking to it starts its
 /// battle. In room 9 a sign warns `Watch for falling rocks! Do not strike the
 /// wall! Rocks may fall!` at what looks like a dead end: while the party has
@@ -161,7 +161,7 @@ enum { ACTOR_ROOM6_PUDDLE = 9 };
 
 enum {
   ACTOR_ROOM7_PUDDLE = 9,
-  ACTOR_ROOM7_BLOCK = 10,
+  ACTOR_ROOM7_PILLAR = 10,
   ACTOR_ROOM7_SECOND_PUDDLE = 11,
   ACTOR_ROOM7_THIRD_PUDDLE = 12,
   ACTOR_DJINNI = 14
@@ -181,7 +181,7 @@ enum {
 /// Room 10: the guardian statue and its shadow.
 enum { ACTOR_STATUE = 8, ACTOR_STATUE_SHADOW = 9 };
 
-enum { ACTOR_ROOM11_BOULDER = 8, ACTOR_ROOM11_BLOCK = 9 };
+enum { ACTOR_ROOM11_BOULDER = 8, ACTOR_ROOM11_PILLAR = 9 };
 
 /// The rooms' frozen puddles and Garet at the sign: scene flags, kept within
 /// one visit to a room, across its battles.
@@ -404,24 +404,24 @@ static void AltinPeak_FightRoom5Beast(void) {
   Field_RequestBattleFromEncounterTable(53, 2);
 }
 
-/// Move on room 7's block: the cell it left becomes free again and the cell
+/// Move on room 7's pillar: the cell it left becomes free again and the cell
 /// it now stands on (column 24 or 25 of row 26) takes the blocking
 /// attributes kept at (0, 0).
-static void AltinPeak_SettleRoom7Block(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_ROOM7_BLOCK);
+static void AltinPeak_SettleRoom7Pillar(void) {
+  struct FieldActor *pillar = Object_GetById(ACTOR_ROOM7_PILLAR);
 
-  if (block != 0) {
+  if (pillar != 0) {
     s32 column;
 
     Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
-    column = block->x.fixed >> 20;
+    column = pillar->x.fixed >> 20;
     if (column == 25) {
       Map_CopyCellAttributes(0, 0, 1, 1, column, 26);
     } else {
       Map_CopyCellAttributes(0, 0, 1, 1, 24, 26);
     }
-    Engine_ActorSetSpriteFlags(block, 0);
-    block->motionFlags = 0;
+    Engine_ActorSetSpriteFlags(pillar, 0);
+    pillar->motionFlags = 0;
     Engine_MapRedraw();
     Engine_TaskWait(1);
   }
@@ -752,32 +752,32 @@ static void AltinPeak_FlipRoom7Switch(void) {
   Engine_EventEnd();
 }
 
-/// Stepping onto room 7's block: it is drawn under the party leader.
-static void AltinPeak_PlaceBlockUnderLeader(void) {
-  Object_GetById(ACTOR_ROOM7_BLOCK)->priorityFlags =
+/// Stepping onto room 7's pillar: it is drawn under the party leader.
+static void AltinPeak_PlacePillarUnderLeader(void) {
+  Object_GetById(ACTOR_ROOM7_PILLAR)->priorityFlags =
       ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Stepping off room 7's block: it sorts against the leader again.
-static void AltinPeak_RestoreBlockAutomaticPriority(void) {
-  Object_GetById(ACTOR_ROOM7_BLOCK)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+/// Stepping off room 7's pillar: it sorts against the leader again.
+static void AltinPeak_RestorePillarAutomaticPriority(void) {
+  Object_GetById(ACTOR_ROOM7_PILLAR)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 }
 
-/// Walking east into room 7's block pushes it one cell along with a scrape;
+/// Walking east into room 7's pillar pushes it one cell along with a scrape;
 /// the leader follows it and its cells are settled as after Move.
-static void AltinPeak_PushRoom7Block(void) {
+static void AltinPeak_PushRoom7Pillar(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
   Event_PlayCue(SE_185);
-  Actor_SetSpeed(ACTOR_ROOM7_BLOCK, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(ACTOR_ROOM7_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
-  Object_GetById(ACTOR_ROOM7_BLOCK)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_ROOM7_PILLAR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 400, 424);
-  Actor_SetDestination(ACTOR_ROOM7_BLOCK, 408, 424);
-  Engine_ActorWaitForMove(ACTOR_ROOM7_BLOCK);
+  Actor_SetDestination(ACTOR_ROOM7_PILLAR, 408, 424);
+  Engine_ActorWaitForMove(ACTOR_ROOM7_PILLAR);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  AltinPeak_SettleRoom7Block();
+  AltinPeak_SettleRoom7Pillar();
   Engine_EventEnd();
 }
 
@@ -1614,13 +1614,13 @@ static void AltinPeak_RestoreRoom6(void) {
   }
 }
 
-/// Room 7: the block, the three frozen puddles and the switch are restored.
+/// Room 7: the pillar, the three frozen puddles and the switch are restored.
 static void AltinPeak_RestoreRoom7(void) {
   struct FieldActor *actor;
 
   actor = Actor_Get(ACTOR_ROOM7_PUDDLE);
   Engine_ActorSetSpriteFlags(actor, 0);
-  AltinPeak_SettleRoom7Block();
+  AltinPeak_SettleRoom7Pillar();
   AltinPeak_MarkActorTerrainCell(ACTOR_ROOM7_PUDDLE);
   if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
     Engine_ActorSetAnimation(ACTOR_ROOM7_PUDDLE, 5);
@@ -1732,14 +1732,14 @@ static void AltinPeak_RestoreRoom10(void) {
   }
 }
 
-/// Room 11: arriving at entrance 2 the block stands at its pushed place.
+/// Room 11: arriving at entrance 2 the pillar stands at its pushed place.
 static void AltinPeak_RestoreRoom11(void) {
   struct FieldActor *actor;
 
-  actor = Actor_Get(ACTOR_ROOM11_BLOCK);
+  actor = Actor_Get(ACTOR_ROOM11_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
   if (gGameState.entrance == 2) {
-    Actor_SetPosition(ACTOR_ROOM11_BLOCK, PIXELS(184), PIXELS(328));
+    Actor_SetPosition(ACTOR_ROOM11_PILLAR, PIXELS(184), PIXELS(328));
   }
 }
 
@@ -2961,11 +2961,11 @@ struct SceneEvent gAltinPeak_Events7[] = {
     {EVENT_TALK, ACTOR_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_TalkToDjinni)},
     {EVENT_TALK, ACTOR_LOG, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideLog)},
     {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom7Switch)},
-    {EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_PlaceBlockUnderLeader)},
-    {EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RestoreBlockAutomaticPriority)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM7_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_SettleRoom7Block)},
+    {EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_PlacePillarUnderLeader)},
+    {EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RestorePillarAutomaticPriority)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM7_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_SettleRoom7Pillar)},
     {TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
-        EVENT_SCRIPT(AltinPeak_PushRoom7Block)},
+        EVENT_SCRIPT(AltinPeak_PushRoom7Pillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM7_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeRoom7Puddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM7_SECOND_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN,
         EVENT_SCRIPT(AltinPeak_FreezeRoom7SecondPuddle)},
@@ -3015,7 +3015,7 @@ struct SceneEvent gAltinPeak_Events11[] = {
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_ROOM11_BOULDER, CONDITION_ALWAYS,
      0},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM11_BLOCK, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM11_PILLAR, CONDITION_ALWAYS, 0},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_VIAL, FIND_ITEM(ITEM_VIAL)},
     {SCENE_EVENTS_END},
 };

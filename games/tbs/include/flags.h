@@ -191,7 +191,7 @@
 
 // Altin
 #define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff ///< jumped back into the flood
-#define FLAG_ALTIN_BLOCK_MOVED 0x906      ///< pushed to its place by Move
+#define FLAG_ALTIN_PILLAR_MOVED 0x906     ///< pushed to its place by Move
 #define FLAG_ALTIN_NUT 0xf73              ///< a barrel in the houses
 #define FLAG_ALTIN_COINS 0xf74            ///< a barrel in the houses
 #define FLAG_ALTIN_SLEEP_BOMB 0xf75       ///< a bed in the houses
@@ -624,8 +624,8 @@
 
 // Vault cave: its switches, and its chests, set once each is opened
 #define FLAG_VAULT_CAVE_SWITCH_FLIPPED 0x9a8
-#define FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH 0x9a9
-#define FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH 0x9aa
+#define FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH 0x9a9
+#define FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH 0x9aa
 #define FLAG_VAULT_CAVE_1_CHEST 0xef3
 #define FLAG_VAULT_CAVE_2_CHEST 0xfc4
 
@@ -756,9 +756,9 @@
 #define FLAG_VENUS_LIGHTHOUSE_FIRST_PATH 0x982
 #define FLAG_VENUS_LIGHTHOUSE_SECOND_PATH 0x983
 /// Garet has said the block by the wall can go no farther.
-#define FLAG_VENUS_LIGHTHOUSE_BLOCK_AT_WALL 0x986
+#define FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL 0x986
 /// Carry has set that block down beyond the wall.
-#define FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED 0x987
+#define FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED 0x987
 
 // World map
 /// The Black Orb did nothing on Babi's ship and was handed back.

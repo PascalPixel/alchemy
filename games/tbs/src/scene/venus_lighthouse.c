@@ -30,41 +30,41 @@
 ///   under Babi Lighthouse redraw their rooms to match (tunnel_ruins.c), and
 ///   they lead up into VenusLighthouse2. Reliefs (search triggers 35
 ///   to 40) say to seek the power within with the eyes of truth, and Reveal
-///   shows a hidden path in two places. Move pushes a block to a wall, where
-///   Garet wishes they could carry it (FLAG_VENUS_LIGHTHOUSE_BLOCK_AT_WALL),
+///   shows a hidden path in two places. Move pushes a pillar to a wall, where
+///   Garet wishes they could carry it (FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL),
 ///   and Carry, from the Carry Stone in one of the floor's two chests, sets it
-///   down beyond (FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED). A floor switch is
+///   down beyond (FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED). A floor switch is
 ///   pressed while the leader stands on it (FLAG_SCENE_TEMP_01) and held down
-///   by a block Moved onto it (FLAG_SCENE_TEMP_00); until then, walking off a
+///   by a pillar Moved onto it (FLAG_SCENE_TEMP_00); until then, walking off a
 ///   ledge (trigger 45) drops the leader to the floor below. Trigger 23 and
 ///   VenusLighthouse2's exit 16 link the two scenes.
 /// - Venus Lighthouse (VenusLighthouse2, scene 183), the first floor of the
 ///   climb, where the Tunnel Ruins come up (entrance 18; exit 18 leads back
 ///   down), in the room VenusLighthouse1's trigger 23 also reaches. A floor
 ///   drifts the party south (trigger 30), a hole drops the leader into the
-///   room below (trigger 35), three blocks in a row can be Moved or pushed, and
-///   two blocks by a gap are carried across it with Carry, or dropped into it
-///   to fall through the floor. A chest holds the Thunder Crown, and a
+///   room below (trigger 35), three pillars in a row can be Moved or pushed,
+///   and two pillars by a gap are carried across it with Carry, or dropped into
+///   it to fall through the floor. A chest holds the Thunder Crown, and a
 ///   Psynergy Stone lies here.
 /// - Venus Lighthouse (VenusLighthouse3, scene 184). A sparkling passage
 ///   (trigger 2) takes the leader through in a trail of sparks; a floor switch
 ///   (trigger 35) slides a wall aside in a cloud of dust the first time
-///   (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED); a block Moved or pushed into its
+///   (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED); a pillar Moved or pushed into its
 ///   socket sinks and opens a gate (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN); and a
 ///   door is locked. Exit 6 leads up into VenusLighthouse4.
 /// - Venus Lighthouse (VenusLighthouse4, scene 185). Three more sparkling
-///   passages, a drifting floor, and three blocks that sink into free sockets
+///   passages, a drifting floor, and three pillars that sink into free sockets
 ///   (FLAG_VENUS_LIGHTHOUSE_SOCKETS_A and _B record which); with all three
-///   sunk the gate opens (FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN). A door
+///   sunk the gate opens (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN). A door
 ///   is locked and a chest holds Dragon Scales.
 /// - Venus Lighthouse (VenusLighthouse5, scene 186). A passage raises the
 ///   leader to the floor above (trigger 18), floors drift the party each way
 ///   (triggers 30 to 33), and a west and an east floor switch slide their walls
 ///   aside (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
-///   VenusLighthouse4 also redraws). Carry sets down four floating blocks,
+///   VenusLighthouse4 also redraws). Carry sets down four floating pillars,
 ///   and the platforms under them rise or sink to their weight
-///   (FLAG_SCENE_TEMP_00 plus the block's number; Move on them does nothing).
-///   Four blocks sunk into sockets open the gate of the room their pillars
+///   (FLAG_SCENE_TEMP_00 plus the pillar's number; Move on them does nothing).
+///   Four pillars sunk into sockets open the gate of the room their pillars
 ///   stand in (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN). A door is locked, a
 ///   chest holds the Gaia Blade, a Psynergy Stone lies here, and exit 21 leads
 ///   to the Lighthouse Aerie.
@@ -126,12 +126,12 @@
 #define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
 #define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
 #define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
-// The gates the sunken blocks opened: one block, three blocks (and which of
+// The gates the sunken pillars opened: one pillar, three pillars (and which of
 // two sets of sockets they sank into) and the pillar room's four.
 #define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_A 0x302
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
-#define FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN 0x304
+#define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN 0x304
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308
 
 // UB: passage offsets and dust directions can be negative. The callers use
@@ -167,21 +167,21 @@ static void VenusLighthouse_AnimateEastTileWave(void);
 static void VenusLighthouse_RaiseLeaderWithSpray(void);
 
 // The lighthouse's scene flags:
-// FLAG_SCENE_TEMP_00: in the room with the floor switch, the block holds the
-// switch down; in the room of floating blocks, FLAG_SCENE_TEMP_00 plus a
-// block's number (0 to 3): that block is set down in its place.
+// FLAG_SCENE_TEMP_00: in the room with the floor switch, the pillar holds the
+// switch down; in the room of floating pillars, FLAG_SCENE_TEMP_00 plus a
+// pillar's number (0 to 3): that pillar is set down in its place.
 // FLAG_SCENE_TEMP_01: the leader stands on the floor switch.
 
 /// Actors the events name, by scene. At Venus Lighthouse Entry: the man who
 /// tells of the attack and the scholar waiting to go in. In VenusLighthouse1:
-/// the scholar by the door, the block Move pushes to the wall and the block
+/// the scholar by the door, the pillar Move pushes to the wall and the pillar
 /// that holds the floor switch down.
 enum {
   ACTOR_ENTRANCE_MAN = 8,
   ACTOR_ENTRANCE_SCHOLAR = 11,
   ACTOR_DOOR_SCHOLAR = 10,
-  ACTOR_WALL_BLOCK = 12,
-  ACTOR_SWITCH_BLOCK = 13
+  ACTOR_WALL_PILLAR = 12,
+  ACTOR_SWITCH_PILLAR = 13
 };
 
 static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
@@ -232,12 +232,12 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 #include "common/object_distance.h"
 #include "common/object_findslot.h"
 
-/// Pushes the adjacent block only when its destination and overhead space are
+/// Pushes the adjacent pillar only when its destination and overhead space are
 /// clear.
-static void VenusLighthouse_PushAdjacentBlock(void) {
+static void VenusLighthouse_PushAdjacentPillar(void) {
   struct FieldPosition targetPosition;
   struct FieldActor *leader;
-  struct FieldActor *block;
+  struct FieldActor *pillar;
   struct FieldActor *blockingActor;
   s32 directionIndex;
   u32 packedStep;
@@ -246,64 +246,64 @@ static void VenusLighthouse_PushAdjacentBlock(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   directionIndex = leader->facing >> 12;
-  // Look ahead for a block before testing its destination and overhead space.
+  // Look ahead for a pillar before testing its destination and overhead space.
   packedStep = gStagedActor_DirectionSteps[directionIndex];
   targetPosition.x = leader->x.fixed + (packedStep & 0xffff0000);
   targetPosition.y = leader->y.fixed;
   packedStep <<= 16;
   targetPosition.z = leader->z.fixed + packedStep;
-  block = SceneData_FindSlotAtPosition(&targetPosition, leader);
-  if (block == 0)
+  pillar = SceneData_FindSlotAtPosition(&targetPosition, leader);
+  if (pillar == 0)
     return;
 
   packedStep = gStagedActor_DirectionSteps[directionIndex];
-  targetPosition.x = block->x.fixed + (packedStep & 0xffff0000);
-  targetPosition.y = block->y.fixed;
+  targetPosition.x = pillar->x.fixed + (packedStep & 0xffff0000);
+  targetPosition.y = pillar->y.fixed;
   packedStep <<= 16;
-  targetPosition.z = block->z.fixed + packedStep;
-  blockingActor = SceneData_FindSlotAtPosition(&targetPosition, block);
+  targetPosition.z = pillar->z.fixed + packedStep;
+  blockingActor = SceneData_FindSlotAtPosition(&targetPosition, pillar);
   if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
     return;
 
-  targetPosition.x = block->x.fixed;
-  targetPosition.y = block->y.fixed + 0x100000;
-  targetPosition.z = block->z.fixed;
-  blockingActor = SceneData_FindSlotAtPosition(&targetPosition, block);
+  targetPosition.x = pillar->x.fixed;
+  targetPosition.y = pillar->y.fixed + 0x100000;
+  targetPosition.z = pillar->z.fixed;
+  blockingActor = SceneData_FindSlotAtPosition(&targetPosition, pillar);
   if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
     return;
 
-  block->terrainId = 2;
+  pillar->terrainId = 2;
   packedStep = gStagedActor_DirectionSteps[directionIndex];
-  targetPosition.x = block->x.fixed + (packedStep & 0xffff0000);
-  targetPosition.y = block->y.fixed;
+  targetPosition.x = pillar->x.fixed + (packedStep & 0xffff0000);
+  targetPosition.y = pillar->y.fixed;
   packedStep <<= 16;
-  targetPosition.z = block->z.fixed + packedStep;
-  if (FieldObject_CheckMovementCollision(block, &targetPosition) > 0)
+  targetPosition.z = pillar->z.fixed + packedStep;
+  if (FieldObject_CheckMovementCollision(pillar, &targetPosition) > 0)
     return;
 
-  transitionBusy = block->riseCounter;
+  transitionBusy = pillar->riseCounter;
   if (transitionBusy != 0)
     return;
 
-  // Move the block and leader together, then restore their standing state.
+  // Move the pillar and leader together, then restore their standing state.
   Object_SetMode(leader, 8);
   moveRate = 0x3333;
   Engine_TaskWait(15);
   Engine_AudioPlayCue(SE_185);
-  block->speed = moveRate;
-  block->acceleration = moveRate;
-  Engine_ObjectSetPosition(block, targetPosition.x, targetPosition.y,
+  pillar->speed = moveRate;
+  pillar->acceleration = moveRate;
+  Engine_ObjectSetPosition(pillar, targetPosition.x, targetPosition.y,
                            targetPosition.z);
   leader->speed = moveRate;
   leader->acceleration = moveRate;
   Engine_ObjectSetPosition(leader, targetPosition.x, targetPosition.y,
                            targetPosition.z);
-  FieldObject_WaitForMove(block);
+  FieldObject_WaitForMove(pillar);
   BattleFx_PlayQueuedSound();
-  block->x.fixed = targetPosition.x;
-  block->z.fixed = targetPosition.z;
-  block->velocityX = transitionBusy;
-  block->velocityZ = transitionBusy;
+  pillar->x.fixed = targetPosition.x;
+  pillar->z.fixed = targetPosition.z;
+  pillar->velocityX = transitionBusy;
+  pillar->velocityZ = transitionBusy;
   leader->targetX = ACTOR_NO_TARGET;
   leader->targetZ = ACTOR_NO_TARGET;
   leader->velocityX = transitionBusy;
@@ -873,16 +873,16 @@ static void Event_TalkToWaitingScholar(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse1, Carry on the block Move could not push past the wall:
+/// In VenusLighthouse1, Carry on the pillar Move could not push past the wall:
 /// once it is set down beyond, it stays there
-/// (FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED).
-static void Event_CarryBlockPastWall(void) {
-  struct FieldActor *block;
+/// (FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED).
+static void Event_CarryPillarPastWall(void) {
+  struct FieldActor *pillar;
 
-  block = Object_GetById(ACTOR_WALL_BLOCK);
+  pillar = Object_GetById(ACTOR_WALL_PILLAR);
   Engine_EventBegin();
-  if (block->x.fixed >> 20 == 54 || block->z.fixed >> 20 == 6) {
-    Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED);
+  if (pillar->x.fixed >> 20 == 54 || pillar->z.fixed >> 20 == 6) {
+    Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED);
   }
   Engine_EventEnd();
 }
@@ -1067,11 +1067,11 @@ static void Event_SearchStatue(void) {
   work->busy = 0;
 }
 
-/// In VenusLighthouse1, Move on the block by the wall: once it reaches the
-/// wall, the first time only (FLAG_VENUS_LIGHTHOUSE_BLOCK_AT_WALL), Garet comes
-/// out. "Hmmm. We can't push the block farther than this." He wishes they
-/// could carry it, which is what Carry then does.
-static void Event_MoveBlockTowardWall(void) {
+/// In VenusLighthouse1, Move on the pillar by the wall: once it reaches the
+/// wall, the first time only (FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL), Garet
+/// comes out. "Hmmm. We can't push the pillar farther than this." He wishes
+/// they could carry it, which is what Carry then does.
+static void Event_MovePillarTowardWall(void) {
   struct FieldActor *actor;
   struct FieldActor *leader;
   s32 conversationFlag;
@@ -1080,17 +1080,17 @@ static void Event_MoveBlockTowardWall(void) {
   s32 emote;
   s32 garetX;
 
-  conversationFlag = FLAG_VENUS_LIGHTHOUSE_BLOCK_AT_WALL;
+  conversationFlag = FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL;
   walkSpeed = 0xcccc;
   walkAcceleration = 0x6666;
   emote = EMOTE_IN_FRONT;
   garetX = 0x338;
   Engine_EventBegin();
-  actor = Object_GetById(ACTOR_WALL_BLOCK);
+  actor = Object_GetById(ACTOR_WALL_PILLAR);
   if (actor->x.fixed >> 20 == 53) {
     if (Engine_GameFlagIsSet(conversationFlag) == 0) {
       // Record the one-time conversation before bringing Garet out to inspect
-      // the block.
+      // the pillar.
       Engine_GameFlagSet(conversationFlag);
       actor = Object_GetById(ACTOR_PARTY_LEADER);
       if (actor != 0) {
@@ -1129,32 +1129,32 @@ static void Event_MoveBlockTowardWall(void) {
   }
 }
 
-/// In VenusLighthouse1, pushing the block by the wall (touch trigger 50): as
+/// In VenusLighthouse1, pushing the pillar by the wall (touch trigger 50): as
 /// Move, with Garet's remark at the wall.
-static void Event_PushBlockTowardWall(void) {
+static void Event_PushPillarTowardWall(void) {
 
   Engine_EventBegin();
-  VenusLighthouse_PushAdjacentBlock();
+  VenusLighthouse_PushAdjacentPillar();
   Engine_EventWait(20);
   Engine_EventEnd();
-  Event_MoveBlockTowardWall();
+  Event_MovePillarTowardWall();
 }
 
-/// In VenusLighthouse1, Move on the block by the floor switch: on the switch it
-/// sinks in and holds it down (FLAG_SCENE_TEMP_00).
-static void Event_MoveBlockOntoSwitch(void) {
-  struct FieldActor *block;
+/// In VenusLighthouse1, Move on the pillar by the floor switch: on the switch
+/// it sinks in and holds it down (FLAG_SCENE_TEMP_00).
+static void Event_MovePillarOntoSwitch(void) {
+  struct FieldActor *pillar;
   s32 switchHeight;
 
-  block = Object_GetById(ACTOR_SWITCH_BLOCK);
+  pillar = Object_GetById(ACTOR_SWITCH_PILLAR);
   Engine_EventBegin();
-  if (block->x.fixed >> 20 == 42) {
+  if (pillar->x.fixed >> 20 == 42) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(SE_188);
-    block->motionFlags = 0;
+    pillar->motionFlags = 0;
     switchHeight = 0xfffe0000;
-    block->terrainHeight = switchHeight;
-    block->y.fixed = switchHeight;
+    pillar->terrainHeight = switchHeight;
+    pillar->y.fixed = switchHeight;
     Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
     Map_CopyCellsTo(44, 117, 41, 117, 3, 5);
   }
@@ -1278,12 +1278,12 @@ static void Event_FallThroughFloor(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse2, Move on one of the three blocks in a row: the floor
-/// under each block is solid again and the nearer block draws in front.
-static void Event_MoveDepthBlock(void) {
+/// In VenusLighthouse2, Move on one of the three pillars in a row: the floor
+/// under each pillar is solid again and the nearer pillar draws in front.
+static void Event_MoveDepthPillar(void) {
 
-  u32 blockIndex;
-  struct FieldActor *block;
+  u32 pillarIndex;
+  struct FieldActor *pillar;
   s32 destinationColumn;
   s32 destinationRow;
   s32 column;
@@ -1297,125 +1297,126 @@ static void Event_MoveDepthBlock(void) {
   destinationColumn = 11;
   destinationRow = 51;
   Map_CopyCellAttributes(17, 51, 2, 2, destinationColumn, destinationRow);
-  blockIndex = 0;
+  pillarIndex = 0;
   do {
-    block = Object_GetById(blockIndex + 8);
-    column = block->x.fixed >> 20;
-    row = block->z.fixed >> 20;
+    pillar = Object_GetById(pillarIndex + 8);
+    column = pillar->x.fixed >> 20;
+    row = pillar->z.fixed >> 20;
     Map_CopyCellAttributes(12, 50, 1, 1, column, row);
-    blockIndex++;
-  } while (blockIndex <= 2);
+    pillarIndex++;
+  } while (pillarIndex <= 2);
   SceneActor_SwapPositionsByDepth(10, 9);
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse2, pushing one of the three blocks in a row.
-static void Event_PushDepthBlock(void) {
+/// In VenusLighthouse2, pushing one of the three pillars in a row.
+static void Event_PushDepthPillar(void) {
 
   Engine_EventBegin();
   Map_CopyCellAttributes(19, 44, 4, 1, 12, 44);
-  VenusLighthouse_PushAdjacentBlock();
-  Event_MoveDepthBlock();
+  VenusLighthouse_PushAdjacentPillar();
+  Event_MoveDepthPillar();
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse2, Move or Carry starting on one of the two blocks by the
+/// In VenusLighthouse2, Move or Carry starting on one of the two pillars by the
 /// gap: their tiles are marked before they move.
-static void Event_LiftCarryBlock(void) {
-  u32 blockIndex;
-  struct FieldActor *block;
+static void Event_LiftCarryPillar(void) {
+  u32 pillarIndex;
+  struct FieldActor *pillar;
 
-  blockIndex = 0;
+  pillarIndex = 0;
   do {
-    block = Object_GetById(blockIndex + 11);
-    blockIndex++;
-    SetMapCellCollision(0, block->x.fixed, block->z.fixed, 45);
-  } while (blockIndex <= 1);
+    pillar = Object_GetById(pillarIndex + 11);
+    pillarIndex++;
+    SetMapCellCollision(0, pillar->x.fixed, pillar->z.fixed, 45);
+  } while (pillarIndex <= 1);
 }
 
-/// In VenusLighthouse2, Move on one of the two blocks by the gap: blocks still
-/// above the floor are solid again.
-static void Event_MoveCarryBlock(void) {
-  u32 blockIndex;
-  struct FieldActor *block;
+/// In VenusLighthouse2, Move on one of the two pillars by the gap: pillars
+/// still above the floor are solid again.
+static void Event_MoveCarryPillar(void) {
+  u32 pillarIndex;
+  struct FieldActor *pillar;
 
-  blockIndex = 0;
+  pillarIndex = 0;
   do {
-    block = Object_GetById(blockIndex + 11);
-    if (block->y.fixed > -0x100000) {
-      SetMapCellCollision(0, block->x.fixed, block->z.fixed, 255);
+    pillar = Object_GetById(pillarIndex + 11);
+    if (pillar->y.fixed > -0x100000) {
+      SetMapCellCollision(0, pillar->x.fixed, pillar->z.fixed, 255);
     }
-    blockIndex++;
-  } while (blockIndex <= 1);
+    pillarIndex++;
+  } while (pillarIndex <= 1);
 }
 
-/// In VenusLighthouse2, walking into a gap or a block by it: jump the gap,
-/// else push the block.
-static void Event_JumpOrPushCarryBlock(void) {
+/// In VenusLighthouse2, walking into a gap or a pillar by it: jump the gap,
+/// else push the pillar.
+static void Event_JumpOrPushCarryPillar(void) {
 
   Engine_EventBegin();
   if (Event_JumpAcrossGap() == 0) {
-    Event_LiftCarryBlock();
-    VenusLighthouse_PushAdjacentBlock();
-    Event_MoveCarryBlock();
+    Event_LiftCarryPillar();
+    VenusLighthouse_PushAdjacentPillar();
+    Event_MoveCarryPillar();
   }
   Engine_EventEnd();
 }
 
-/// Fixes a block at its destination and restores the cell beneath it.
-static void VenusLighthouse_FixBlockAtDestination(struct FieldActor *block) {
+/// Fixes a pillar at its destination and restores the cell beneath it.
+static void VenusLighthouse_FixPillarAtDestination(struct FieldActor *pillar) {
   s32 column;
   s32 row;
 
-  block->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  block->motionFlags = 0;
-  column = block->x.fixed >> 20;
-  row = block->z.fixed >> 20;
+  pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  pillar->motionFlags = 0;
+  column = pillar->x.fixed >> 20;
+  row = pillar->z.fixed >> 20;
   Map_CopyCellAttributes(9, 24, 1, 1, column, row);
 }
 
-/// Removes a fallen Carry block, or restores collision under the remaining
-/// blocks.
-static void VenusLighthouse_ReleaseFallenCarryBlock(struct FieldActor *block) {
+/// Removes a fallen Carry pillar, or restores collision under the remaining
+/// pillars.
+static void
+VenusLighthouse_ReleaseFallenCarryPillar(struct FieldActor *pillar) {
   struct AnimationObject *sprite;
   s32 zero;
   struct FieldActor *passageEffect;
 
-  sprite = block->sprite;
+  sprite = pillar->sprite;
   if (sprite->image.priority == 3) {
     sprite->image.priority = 1;
     zero = 0;
-    block->bounce = zero;
+    pillar->bounce = zero;
     passageEffect = VenusLighthouse_CreateBlendedPassageEffect(
-        block->x.fixed, 0, 0x2000000, 223);
-    OverlayObject_WaitUntilIdle(block);
-    block->x.fixed = zero;
-    block->z.fixed = zero;
+        pillar->x.fixed, 0, 0x2000000, 223);
+    OverlayObject_WaitUntilIdle(pillar);
+    pillar->x.fixed = zero;
+    pillar->z.fixed = zero;
     Engine_ObjectDispatchRelease(passageEffect);
   } else {
-    Event_MoveCarryBlock();
+    Event_MoveCarryPillar();
   }
 }
 
-/// In VenusLighthouse2, Carry on one of the two blocks by the gap: set down in
+/// In VenusLighthouse2, Carry on one of the two pillars by the gap: set down in
 /// its place it stays fixed; dropped into the gap it falls through the floor.
-static void Event_CarryBlockAcrossGap(void) {
-  struct FieldActor *block;
+static void Event_CarryPillarAcrossGap(void) {
+  struct FieldActor *pillar;
 
   Engine_EventBegin();
-  block = Object_GetById(11);
-  if (block->x.fixed >> 20 == 8) {
-    OverlayObject_WaitUntilIdle(block);
-    VenusLighthouse_FixBlockAtDestination(block);
+  pillar = Object_GetById(11);
+  if (pillar->x.fixed >> 20 == 8) {
+    OverlayObject_WaitUntilIdle(pillar);
+    VenusLighthouse_FixPillarAtDestination(pillar);
   } else {
-    VenusLighthouse_ReleaseFallenCarryBlock(block);
+    VenusLighthouse_ReleaseFallenCarryPillar(pillar);
   }
-  block = Object_GetById(12);
-  if (block->x.fixed >> 20 == 7) {
-    OverlayObject_WaitUntilIdle(block);
-    VenusLighthouse_FixBlockAtDestination(block);
+  pillar = Object_GetById(12);
+  if (pillar->x.fixed >> 20 == 7) {
+    OverlayObject_WaitUntilIdle(pillar);
+    VenusLighthouse_FixPillarAtDestination(pillar);
   } else {
-    VenusLighthouse_ReleaseFallenCarryBlock(block);
+    VenusLighthouse_ReleaseFallenCarryPillar(pillar);
   }
   Engine_EventEnd();
 }
@@ -1496,38 +1497,38 @@ static void Event_StepOnWallSwitch(void) {
   }
 }
 
-/// In VenusLighthouse3, Move on the block before the gate: in its socket it
+/// In VenusLighthouse3, Move on the pillar before the gate: in its socket it
 /// sinks in and the gate opens, the first time only
 /// (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
-static void Event_MoveGateBlock(void) {
+static void Event_MoveGatePillar(void) {
   u8 *flags;
   s32 row;
   s32 column;
   s32 gateOpened;
   struct FieldActor *leader;
-  struct FieldActor *block;
-  struct FieldActor *blockActor;
+  struct FieldActor *pillar;
+  struct FieldActor *pillarActor;
   struct FieldActor *occlusionEffect;
 
   occlusionEffect = 0;
-  block = Object_GetById(9);
+  pillar = Object_GetById(9);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
   Map_CopyCellAttributes(109, 43, 7, 5, 45, 43);
-  flags = &block->priorityFlags;
-  if ((2 & block->priorityFlags) != 0) {
+  flags = &pillar->priorityFlags;
+  if ((2 & pillar->priorityFlags) != 0) {
     Map_CopyCellAttributes(45, 45, 1, 1, 46, 45);
   } else {
-    Map_CopyCellAttributes(48, 42, 1, 1, block->x.fixed >> 20,
-                           block->z.fixed >> 20);
+    Map_CopyCellAttributes(48, 42, 1, 1, pillar->x.fixed >> 20,
+                           pillar->z.fixed >> 20);
   }
-  column = block->x.fixed >> 20;
+  column = pillar->x.fixed >> 20;
   if (column != 46) {
   } else {
-    row = block->z.fixed >> 20;
+    row = pillar->z.fixed >> 20;
     if (row != 45) {
     } else {
-      // Sink an unsolved block only when both of its target cell coordinates
+      // Sink an unsolved pillar only when both of its target cell coordinates
       // match.
       gateOpened = Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
       if (gateOpened != 0) {
@@ -1537,17 +1538,17 @@ static void Event_MoveGateBlock(void) {
               0x2e80000, 0, 0x2c00000, 20);
           Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
         }
-        blockActor = Object_GetById(9);
-        Engine_ActorSetSpriteFlags(blockActor, 0);
-        block->terrainId = gateOpened;
-        block->motionFlags = 3;
-        block->gravity = 0x1999;
-        block->bounce = gateOpened;
+        pillarActor = Object_GetById(9);
+        Engine_ActorSetSpriteFlags(pillarActor, 0);
+        pillar->terrainId = gateOpened;
+        pillar->motionFlags = 3;
+        pillar->gravity = 0x1999;
+        pillar->bounce = gateOpened;
         Map_CopyCellAttributes(43, 45, 1, 1, column, row);
-        OverlayObject_WaitUntilIdle(block);
+        OverlayObject_WaitUntilIdle(pillar);
         Engine_AudioPlayCue(SE_188);
-        block->motionFlags = gateOpened;
-        block->y.fixed = -PIXELS(16);
+        pillar->motionFlags = gateOpened;
+        pillar->y.fixed = -PIXELS(16);
         Engine_ActorSetSpritePriority(9, 3);
         {
           u8 two = 2;
@@ -1558,7 +1559,7 @@ static void Event_MoveGateBlock(void) {
         Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |=
             ACTOR_PRIORITY_AUTOMATIC;
         Engine_ObjectDispatchRelease(occlusionEffect);
-        block->collisionFlags = gateOpened;
+        pillar->collisionFlags = gateOpened;
         *flags |= 2;
         Object_GetById(10)->collisionFlags = gateOpened;
         Object_GetById(10)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -1576,54 +1577,54 @@ static void Event_MoveGateBlock(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse3, walking into the gap or the block before the gate:
-/// jump the gap, else push the block, which may sink into its socket.
-static void Event_JumpOrPushGateBlock(void) {
+/// In VenusLighthouse3, walking into the gap or the pillar before the gate:
+/// jump the gap, else push the pillar, which may sink into its socket.
+static void Event_JumpOrPushGatePillar(void) {
 
   Engine_EventBegin();
   if (Event_JumpAcrossGap() == 0) {
     Map_CopyCellAttributes(109, 43, 7, 5, 45, 43);
-    VenusLighthouse_PushAdjacentBlock();
+    VenusLighthouse_PushAdjacentPillar();
   }
   Engine_EventEnd();
-  Event_MoveGateBlock();
+  Event_MoveGatePillar();
 }
 
-/// In VenusLighthouse4, Move on one of the three blocks: a block on a free
+/// In VenusLighthouse4, Move on one of the three pillars: a pillar on a free
 /// socket sinks in, and with all three sunk the gate opens
-/// (FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN).
-static void Event_MoveSwitchBlock(void) {
+/// (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN).
+static void Event_MoveSwitchPillar(void) {
   struct FieldActor *occlusionEffect = 0;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  struct FieldActor *block;
+  struct FieldActor *pillar;
   struct FieldActor *other;
   struct FieldActor *firstGateEffect;
   struct FieldActor *secondGateEffect;
   u8 *flags;
-  u32 blockId;
+  u32 pillarId;
   u32 candidateIndex;
   u32 switchIndex;
   s32 savedPriority;
 
   Engine_EventBegin();
   Map_CopyCellAttributes(108, 39, 13, 7, 44, 39);
-  // Find blocks on unoccupied switch cells before committing any sinking
+  // Find pillars on unoccupied switch cells before committing any sinking
   // motion.
-  for (blockId = 9; blockId <= 11; blockId++) {
-    block = Object_GetById(blockId);
-    flags = &block->priorityFlags;
+  for (pillarId = 9; pillarId <= 11; pillarId++) {
+    pillar = Object_GetById(pillarId);
+    flags = &pillar->priorityFlags;
     if (*flags != 2) {
-      Map_CopyCellAttributes(47, 39, 1, 1, block->x.fixed >> 20,
-                             block->z.fixed >> 20);
+      Map_CopyCellAttributes(47, 39, 1, 1, pillar->x.fixed >> 20,
+                             pillar->z.fixed >> 20);
     } else {
-      Map_CopyCellAttributes(46, 39, 1, 1, block->x.fixed >> 20,
-                             block->z.fixed >> 20);
+      Map_CopyCellAttributes(46, 39, 1, 1, pillar->x.fixed >> 20,
+                             pillar->z.fixed >> 20);
     }
     switchIndex = 5;
     for (candidateIndex = 0; candidateIndex <= 3; candidateIndex++) {
-      if (block->x.fixed >> 20 == gVenusSwitchCells[candidateIndex].x &&
-          block->z.fixed >> 20 == gVenusSwitchCells[candidateIndex].z &&
-          block->y.fixed >= 0) {
+      if (pillar->x.fixed >> 20 == gVenusSwitchCells[candidateIndex].x &&
+          pillar->z.fixed >> 20 == gVenusSwitchCells[candidateIndex].z &&
+          pillar->y.fixed >= 0) {
         switchIndex = candidateIndex;
         break;
       }
@@ -1633,9 +1634,9 @@ static void Event_MoveSwitchBlock(void) {
     }
     for (candidateIndex = 9; candidateIndex <= 11; candidateIndex++) {
       other = Object_GetById(candidateIndex);
-      if (blockId != candidateIndex &&
-          block->x.fixed >> 20 == other->x.fixed >> 20 &&
-          block->z.fixed >> 20 == other->z.fixed >> 20) {
+      if (pillarId != candidateIndex &&
+          pillar->x.fixed >> 20 == other->x.fixed >> 20 &&
+          pillar->z.fixed >> 20 == other->z.fixed >> 20) {
         switchIndex = 5;
         break;
       }
@@ -1643,27 +1644,27 @@ static void Event_MoveSwitchBlock(void) {
     if (switchIndex == 5) {
       continue;
     }
-    // Preserve overlapping actors while the selected block sinks into its
+    // Preserve overlapping actors while the selected pillar sinks into its
     // socket.
     savedPriority = leader->sprite->image.priority;
     if (leader->z.fixed >> 20 <= gVenusSwitchCells[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
-          block->x.fixed, block->y.fixed, block->z.fixed - 0x40000, 20);
+          pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - 0x40000, 20);
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
     }
-    Engine_ActorSetSpriteFlags(Object_GetById(blockId), 0);
-    block->terrainId = 0;
-    block->motionFlags = 3;
-    block->bounce = 0;
-    block->gravity = 0x1999;
+    Engine_ActorSetSpriteFlags(Object_GetById(pillarId), 0);
+    pillar->terrainId = 0;
+    pillar->motionFlags = 3;
+    pillar->bounce = 0;
+    pillar->gravity = 0x1999;
     Map_CopyCellAttributes(42, 41, 1, 1, gVenusSwitchCells[switchIndex].x,
                            gVenusSwitchCells[switchIndex].z);
-    OverlayObject_WaitUntilIdle(block);
+    OverlayObject_WaitUntilIdle(pillar);
     Engine_AudioPlayCue(SE_188);
-    block->collisionFlags = 0;
-    block->motionFlags = 0;
-    block->y.fixed = -PIXELS(16);
-    Engine_ActorSetSpritePriority(blockId, 3);
+    pillar->collisionFlags = 0;
+    pillar->motionFlags = 0;
+    pillar->y.fixed = -PIXELS(16);
+    Engine_ActorSetSpritePriority(pillarId, 3);
     {
       u8 two = 2;
 
@@ -1677,7 +1678,7 @@ static void Event_MoveSwitchBlock(void) {
     if (occlusionEffect != 0) {
       Engine_ObjectDispatchRelease(occlusionEffect);
     }
-    if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN)) {
+    if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN)) {
       Engine_EventEnd();
       return;
     }
@@ -1685,7 +1686,7 @@ static void Event_MoveSwitchBlock(void) {
          Object_GetById(11)->priorityFlags & 2) == 0) {
       continue;
     }
-    // Once all three blocks settle, run the paired scripts that open the gate.
+    // Once all three pillars settle, run the paired scripts that open the gate.
     firstGateEffect =
         VenusLighthouse_CreateScriptedGateEffect(888, 680, gVenusSettleScriptA);
     secondGateEffect =
@@ -1706,7 +1707,7 @@ static void Event_MoveSwitchBlock(void) {
         } else {
           Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_SOCKETS_B);
         }
-        Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN);
+        Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN);
         break;
       }
       Engine_TaskWait(1);
@@ -1715,34 +1716,34 @@ static void Event_MoveSwitchBlock(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse4, walking into the gap or one of the three blocks: jump
-/// the gap, else push the block, which may sink into a socket.
-static void Event_JumpOrPushSwitchBlock(void) {
+/// In VenusLighthouse4, walking into the gap or one of the three pillars: jump
+/// the gap, else push the pillar, which may sink into a socket.
+static void Event_JumpOrPushSwitchPillar(void) {
   Engine_EventBegin();
   if (Event_JumpAcrossGap() == 0) {
     Map_CopyCellAttributes(108, 39, 13, 7, 44, 39);
-    VenusLighthouse_PushAdjacentBlock();
+    VenusLighthouse_PushAdjacentPillar();
   }
   Engine_EventEnd();
-  Event_MoveSwitchBlock();
+  Event_MoveSwitchPillar();
 }
 
-// Keep a stacked block sixteen pixels above its supporting actor.
+// Keep a stacked pillar sixteen pixels above its supporting actor.
 // UB: update hooks return void. In tbs-en venus_lighthouse, plain
 // void differs in 7 bytes (extent 34 to 32 bytes). Keep the
 // unused native result in matching builds.
 #ifdef UBFIX
 static void
-VenusLighthouse_FollowSupportingBlockHeight(union FieldObject *fieldObject) {
+VenusLighthouse_FollowSupportingPillarHeight(union FieldObject *fieldObject) {
 #else
 static s32
-VenusLighthouse_FollowSupportingBlockHeight(union FieldObject *fieldObject) {
+VenusLighthouse_FollowSupportingPillarHeight(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *block = (struct FieldActor *)fieldObject;
+  struct FieldActor *pillar = (struct FieldActor *)fieldObject;
   struct FieldActor *support;
 
-  support = Object_GetById(block->timer);
-  block->y.fixed = support->y.fixed + PIXELS(16);
+  support = Object_GetById(pillar->timer);
+  pillar->y.fixed = support->y.fixed + PIXELS(16);
 #ifdef UBFIX
   return;
 #else
@@ -1751,10 +1752,10 @@ VenusLighthouse_FollowSupportingBlockHeight(union FieldObject *fieldObject) {
 }
 
 /// Moves the floating supports to the heights selected by their timers.
-static void VenusLighthouse_LowerFloatingBlocks(s32 waitFrames) {
+static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
   struct FieldActor *westSupport = Object_GetById(8);
   struct FieldActor *eastSupport = Object_GetById(9);
-  u32 blockIndex;
+  u32 pillarIndex;
 
   Actor_SetSpeed(8, 0x8000, 0x4000);
   Engine_ActorSetSpeed(9, 0x8000, 0x4000);
@@ -1762,20 +1763,20 @@ static void VenusLighthouse_LowerFloatingBlocks(s32 waitFrames) {
     Engine_AudioPlayCue(SE_180);
   }
   FieldObject_SetPosition(westSupport, westSupport->x.fixed,
-                          gVenusBlockHeights[westSupport->timer],
+                          gVenusPillarHeights[westSupport->timer],
                           westSupport->z.fixed);
   FieldObject_SetPosition(eastSupport, eastSupport->x.fixed,
-                          gVenusBlockHeights[eastSupport->timer],
+                          gVenusPillarHeights[eastSupport->timer],
                           eastSupport->z.fixed);
   Engine_ActorWaitForMove(8);
   Engine_ActorWaitForMove(9);
-  westSupport->y.fixed = gVenusBlockHeights[westSupport->timer];
-  eastSupport->y.fixed = gVenusBlockHeights[eastSupport->timer];
+  westSupport->y.fixed = gVenusPillarHeights[westSupport->timer];
+  eastSupport->y.fixed = gVenusPillarHeights[eastSupport->timer];
   if (waitFrames != 0) {
     Engine_AudioPlayCue(SE_289);
   }
-  for (blockIndex = 0; blockIndex < 5; blockIndex++) {
-    struct FieldActor *actor = Object_GetById(blockIndex + 8);
+  for (pillarIndex = 0; pillarIndex < 5; pillarIndex++) {
+    struct FieldActor *actor = Object_GetById(pillarIndex + 8);
 
     if (actor->y.fixed / 0x10000 < 0 && actor->y.fixed / 0x10000 > -30) {
       Map_CopyCellAttributes(4, 19, 1, 1, actor->x.fixed >> 20,
@@ -1785,54 +1786,54 @@ static void VenusLighthouse_LowerFloatingBlocks(s32 waitFrames) {
   Engine_EventWait(waitFrames);
 }
 
-/// Moves a floating block atop the highest support in its map cell.
-static void VenusLighthouse_StackFloatingBlock(s32 blockId) {
+/// Moves a floating pillar atop the highest support in its map cell.
+static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
 
   struct FieldActor *candidate;
   s32 supportHeight = 0xffb00000;
-  struct FieldActor *block = 0;
+  struct FieldActor *pillar = 0;
   u32 candidateIndex;
 
   for (candidateIndex = 0; candidateIndex <= 5; candidateIndex++) {
     s32 candidateId = candidateIndex + 8;
     s32 candidateTop;
 
-    if (candidateId == blockId) {
+    if (candidateId == pillarId) {
       continue;
     }
 
     candidate = Object_GetById(candidateId);
-    block = Object_GetById(blockId);
+    pillar = Object_GetById(pillarId);
 
-    if ((candidate->x.fixed >> 20) != (block->x.fixed >> 20) ||
-        (candidate->z.fixed >> 20) != (block->z.fixed >> 20)) {
+    if ((candidate->x.fixed >> 20) != (pillar->x.fixed >> 20) ||
+        (candidate->z.fixed >> 20) != (pillar->z.fixed >> 20)) {
       continue;
     }
 
     candidateTop = candidate->y.fixed + PIXELS(16);
     if (supportHeight <= candidateTop) {
-      block->timer = candidateId;
+      pillar->timer = candidateId;
       supportHeight = candidateTop;
     }
   }
 
-  Engine_ActorSetSpeed(blockId, 0x40000, 0x20000);
-  Engine_ObjectSetPosition(block, block->x.fixed, supportHeight,
-                           block->z.fixed);
-  Engine_ActorWaitForMove(blockId);
+  Engine_ActorSetSpeed(pillarId, 0x40000, 0x20000);
+  Engine_ObjectSetPosition(pillar, pillar->x.fixed, supportHeight,
+                           pillar->z.fixed);
+  Engine_ActorWaitForMove(pillarId);
   Engine_AudioPlayCue(SE_188);
-  SceneEffect_SpawnNineRadialEffects(blockId);
+  SceneEffect_SpawnNineRadialEffects(pillarId);
   Engine_EventWait(30);
 }
 
-/// Stops a floating block and resets its vertical motion and timer.
-static __inline__ void FloatingBlock_Settle(struct FieldActor *block,
-                                            s32 resetValue) {
-  block->targetY = ACTOR_NO_TARGET;
-  block->terrainHeight = resetValue;
-  block->velocityY = resetValue;
-  block->motionFlags = resetValue;
-  block->timer = resetValue;
+/// Stops a floating pillar and resets its vertical motion and timer.
+static __inline__ void FloatingPillar_Settle(struct FieldActor *pillar,
+                                             s32 resetValue) {
+  pillar->targetY = ACTOR_NO_TARGET;
+  pillar->terrainHeight = resetValue;
+  pillar->velocityY = resetValue;
+  pillar->motionFlags = resetValue;
+  pillar->timer = resetValue;
 }
 
 /// Copies all three fixed-point position components without changing motion.
@@ -1843,83 +1844,83 @@ static __inline__ void Actor_CopyPosition(struct FieldActor *destination,
   destination->z.fixed = source->z.fixed;
 }
 
-/// In VenusLighthouse5, Carry on one of the four floating blocks: it settles
+/// In VenusLighthouse5, Carry on one of the four floating pillars: it settles
 /// where it is set down (FLAG_SCENE_TEMP_00 plus its number) and the platforms
-/// under the blocks rise or sink to their weight.
-static void Event_CarryFloatingBlock(void) {
+/// under the pillars rise or sink to their weight.
+static void Event_CarryFloatingPillar(void) {
   struct FieldActor savedPosition;
   struct FieldActor *firstPassageEffect = NULL;
   struct FieldActor *secondPassageEffect = NULL;
-  struct FieldActor *block;
+  struct FieldActor *pillar;
   struct FieldActor *other;
-  s32 blockIndex;
+  s32 pillarIndex;
   s32 earlierIndex;
   s32 settledIndex;
   s32 column;
   s32 row;
 
   Engine_EventBegin();
-  // Handle completed destinations and fallen blocks before reordering a new
+  // Handle completed destinations and fallen pillars before reordering a new
   // stack.
-  for (blockIndex = 0; blockIndex < 4; blockIndex++) {
-    block = Object_GetById(blockIndex + 10);
-    column = block->x.fixed >> 20;
-    if (column == 13 && (row = block->z.fixed >> 20) == 7 &&
-        !GameFlag_IsSet(FLAG_SCENE_TEMP_00 + blockIndex)) {
-      OverlayObject_WaitUntilIdle(block);
-      GameFlag_Set(FLAG_SCENE_TEMP_00 + blockIndex);
-      block->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      block->collisionFlags = 0;
-      block->motionFlags = 0;
+  for (pillarIndex = 0; pillarIndex < 4; pillarIndex++) {
+    pillar = Object_GetById(pillarIndex + 10);
+    column = pillar->x.fixed >> 20;
+    if (column == 13 && (row = pillar->z.fixed >> 20) == 7 &&
+        !GameFlag_IsSet(FLAG_SCENE_TEMP_00 + pillarIndex)) {
+      OverlayObject_WaitUntilIdle(pillar);
+      GameFlag_Set(FLAG_SCENE_TEMP_00 + pillarIndex);
+      pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+      pillar->collisionFlags = 0;
+      pillar->motionFlags = 0;
       Map_CopyCellAttributes(4, 19, 1, 1, column, row);
       break;
     }
-    if (block->sprite->image.priority == 3 &&
-        !GameFlag_IsSet(FLAG_SCENE_TEMP_00 + blockIndex)) {
+    if (pillar->sprite->image.priority == 3 &&
+        !GameFlag_IsSet(FLAG_SCENE_TEMP_00 + pillarIndex)) {
       /* FAKEMATCH(temporary): the zero in the search counter, set before the
        * priority call; as block->bounce = 0 after the call, 2 of 272
        * instructions differ in tbs-en. */
       earlierIndex = 0;
-      Engine_ActorSetSpritePriority(blockIndex + 10, 1);
-      block->bounce = earlierIndex;
-      if (block->z.fixed >> 20 <= 12) {
+      Engine_ActorSetSpritePriority(pillarIndex + 10, 1);
+      pillar->bounce = earlierIndex;
+      if (pillar->z.fixed >> 20 <= 12) {
         firstPassageEffect = VenusLighthouse_CreateBlendedPassageEffect(
-            block->x.fixed, 0, 0xe00000, 253);
+            pillar->x.fixed, 0, 0xe00000, 253);
         secondPassageEffect = VenusLighthouse_CreateBlendedPassageEffect(
-            block->x.fixed, 0, 0xf00000, 253);
+            pillar->x.fixed, 0, 0xf00000, 253);
       }
-      OverlayObject_WaitUntilIdle(block);
-      Engine_ActorSetPosition(blockIndex + 10, 0, 0);
+      OverlayObject_WaitUntilIdle(pillar);
+      Engine_ActorSetPosition(pillarIndex + 10, 0, 0);
       Engine_ObjectDispatchRelease(firstPassageEffect);
       Engine_ObjectDispatchRelease(secondPassageEffect);
-      GameFlag_Set(FLAG_SCENE_TEMP_00 + blockIndex);
+      GameFlag_Set(FLAG_SCENE_TEMP_00 + pillarIndex);
       break;
     }
-    if (block->z.fixed >> 20 == 19 &&
-        !GameFlag_IsSet(FLAG_SCENE_TEMP_00 + blockIndex)) {
-      // Keep settled blocks at the front of the actor slots before finding
+    if (pillar->z.fixed >> 20 == 19 &&
+        !GameFlag_IsSet(FLAG_SCENE_TEMP_00 + pillarIndex)) {
+      // Keep settled pillars at the front of the actor slots before finding
       // their support.
-      FloatingBlock_Settle(block, 0);
-      settledIndex = blockIndex;
-      for (earlierIndex = 0; earlierIndex < blockIndex; earlierIndex++) {
+      FloatingPillar_Settle(pillar, 0);
+      settledIndex = pillarIndex;
+      for (earlierIndex = 0; earlierIndex < pillarIndex; earlierIndex++) {
         if (!GameFlag_IsSet(FLAG_SCENE_TEMP_00 + earlierIndex)) {
           other = Object_GetById(earlierIndex + 10);
-          Actor_CopyPosition(&savedPosition, block);
-          Actor_CopyPosition(block, other);
+          Actor_CopyPosition(&savedPosition, pillar);
+          Actor_CopyPosition(pillar, other);
           Actor_CopyPosition(other, &savedPosition);
           settledIndex = earlierIndex;
           break;
         }
       }
       other = Object_GetById(settledIndex + 10);
-      FloatingBlock_Settle(other, 0);
+      FloatingPillar_Settle(other, 0);
       Engine_CameraSetSpeed(0x30000, 0x6000);
       Camera_GetEventObject()->motionFlags = 0;
       Engine_CameraMoveTo(PIXELS(136), PIXELS(8), PIXELS(344), 1);
       Engine_CameraWaitForMove();
-      // Stack the block, then rebalance the two supports and attach the height
+      // Stack the pillar, then rebalance the two supports and attach the height
       // follower.
-      VenusLighthouse_StackFloatingBlock(settledIndex + 10);
+      VenusLighthouse_StackFloatingPillar(settledIndex + 10);
       if (Object_GetById(settledIndex + 10)->x.fixed >> 20 == 6) {
         Object_GetById(8)->timer++;
         Object_GetById(9)->timer--;
@@ -1929,12 +1930,12 @@ static void Event_CarryFloatingBlock(void) {
       }
 #ifdef UBFIX
       Object_GetById(settledIndex + 10)->update =
-          VenusLighthouse_FollowSupportingBlockHeight;
+          VenusLighthouse_FollowSupportingPillarHeight;
 #else
       Object_GetById(settledIndex + 10)->update = (void (*)(
-          union FieldObject *))VenusLighthouse_FollowSupportingBlockHeight;
+          union FieldObject *))VenusLighthouse_FollowSupportingPillarHeight;
 #endif
-      VenusLighthouse_LowerFloatingBlocks(40);
+      VenusLighthouse_LowerFloatingPillars(40);
       Object_GetById(settledIndex + 10)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
       GameFlag_Set(FLAG_SCENE_TEMP_00 + settledIndex);
@@ -1944,11 +1945,11 @@ static void Event_CarryFloatingBlock(void) {
   Engine_EventEnd();
 }
 
-/// In VenusLighthouse5, pushing a block (triggers 35 to 37).
-static void Event_PushPuzzleBlock(void) {
+/// In VenusLighthouse5, pushing a pillar (triggers 35 to 37).
+static void Event_PushPuzzlePillar(void) {
 
   Engine_EventBegin();
-  VenusLighthouse_PushAdjacentBlock();
+  VenusLighthouse_PushAdjacentPillar();
   Engine_EventEnd();
 }
 
@@ -2085,21 +2086,21 @@ static void Event_StepOnEastWallSwitch(void) {
   }
 }
 
-/// In VenusLighthouse5, Move on one of the four blocks in the pillar room: on
+/// In VenusLighthouse5, Move on one of the four pillars in the pillar room: on
 /// a free socket it sinks in, and with all four sunk the gate opens
 /// (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN).
-static void Event_MovePillarSwitchBlock(void) {
+static void Event_MoveSocketPillar(void) {
   struct FieldActor *occlusionEffect;
-  struct FieldActor *block;
-  struct FieldActor *otherBlock;
+  struct FieldActor *pillar;
+  struct FieldActor *otherPillar;
   struct FieldActor *leader;
-  struct FieldActor *firstBlock;
-  struct FieldActor *secondBlock;
-  struct FieldActor *thirdBlock;
-  struct FieldActor *fourthBlock;
+  struct FieldActor *firstPillar;
+  struct FieldActor *secondPillar;
+  struct FieldActor *thirdPillar;
+  struct FieldActor *fourthPillar;
   u8 *flags;
   u8 *motionFlags;
-  u32 blockId;
+  u32 pillarId;
   u32 candidateIndex;
   u32 switchIndex;
   u32 savedPriority;
@@ -2112,22 +2113,22 @@ static void Event_MovePillarSwitchBlock(void) {
 #endif
   Map_CopyCellAttributes(69, 48, 4, 2, 5, 48);
   Map_CopyCellAttributes(73, 37, 9, 13, 9, 37);
-  // Find a block on a clear pillar socket and preserve overlapping draw order.
-  for (blockId = 15; blockId <= 18; blockId++) {
-    block = Object_GetById(blockId);
-    flags = &block->priorityFlags;
+  // Find a pillar on a clear pillar socket and preserve overlapping draw order.
+  for (pillarId = 15; pillarId <= 18; pillarId++) {
+    pillar = Object_GetById(pillarId);
+    flags = &pillar->priorityFlags;
     if (*flags != 2)
-      Map_CopyCellAttributes(72, 48, 1, 1, block->x.fixed >> 20,
-                             block->z.fixed >> 20);
+      Map_CopyCellAttributes(72, 48, 1, 1, pillar->x.fixed >> 20,
+                             pillar->z.fixed >> 20);
     else
-      Map_CopyCellAttributes(73, 48, 1, 1, block->x.fixed >> 20,
-                             block->z.fixed >> 20);
+      Map_CopyCellAttributes(73, 48, 1, 1, pillar->x.fixed >> 20,
+                             pillar->z.fixed >> 20);
 
     switchIndex = 8;
     for (candidateIndex = 0; candidateIndex < 8; candidateIndex++) {
-      if ((block->x.fixed >> 20) == gVenusPillarCells[candidateIndex].x &&
-          (block->z.fixed >> 20) == gVenusPillarCells[candidateIndex].z &&
-          block->y.fixed >= 0) {
+      if ((pillar->x.fixed >> 20) == gVenusPillarCells[candidateIndex].x &&
+          (pillar->z.fixed >> 20) == gVenusPillarCells[candidateIndex].z &&
+          pillar->y.fixed >= 0) {
         switchIndex = candidateIndex;
         break;
       }
@@ -2135,10 +2136,10 @@ static void Event_MovePillarSwitchBlock(void) {
     if (switchIndex == 8)
       continue;
     for (candidateIndex = 15; candidateIndex <= 18; candidateIndex++) {
-      otherBlock = Object_GetById(candidateIndex);
-      if (blockId != candidateIndex &&
-          (block->x.fixed >> 20) == (otherBlock->x.fixed >> 20) &&
-          (block->z.fixed >> 20) == (otherBlock->z.fixed >> 20)) {
+      otherPillar = Object_GetById(candidateIndex);
+      if (pillarId != candidateIndex &&
+          (pillar->x.fixed >> 20) == (otherPillar->x.fixed >> 20) &&
+          (pillar->z.fixed >> 20) == (otherPillar->z.fixed >> 20)) {
         switchIndex = 8;
         break;
       }
@@ -2149,30 +2150,30 @@ static void Event_MovePillarSwitchBlock(void) {
     savedPriority = leader->sprite->image.priority;
     if ((leader->z.fixed >> 20) <= gVenusPillarCells[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
-          block->x.fixed, block->y.fixed, block->z.fixed - 0x40000, 20);
+          pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - 0x40000, 20);
       Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
     }
     for (candidateIndex = 15; candidateIndex <= 18; candidateIndex++) {
-      otherBlock = Object_GetById(candidateIndex);
-      if (blockId != candidateIndex &&
-          (block->x.fixed >> 20) == (otherBlock->x.fixed >> 20) &&
-          (block->z.fixed >> 20) - 1 == (otherBlock->z.fixed >> 20))
+      otherPillar = Object_GetById(candidateIndex);
+      if (pillarId != candidateIndex &&
+          (pillar->x.fixed >> 20) == (otherPillar->x.fixed >> 20) &&
+          (pillar->z.fixed >> 20) - 1 == (otherPillar->z.fixed >> 20))
         Actor_SetSpritePriority(candidateIndex, 3);
     }
-    Actor_SetSpriteFlags(Object_GetById(blockId), 0);
-    block->terrainId = 0;
-    motionFlags = &block->motionFlags;
+    Actor_SetSpriteFlags(Object_GetById(pillarId), 0);
+    pillar->terrainId = 0;
+    motionFlags = &pillar->motionFlags;
     *motionFlags = 3;
-    ((union FieldObject *)block)->effect.velocity.y = 0x1999;
-    ((union FieldObject *)block)->effect.velocity.x = 0;
+    ((union FieldObject *)pillar)->effect.velocity.y = 0x1999;
+    ((union FieldObject *)pillar)->effect.velocity.x = 0;
     Map_CopyCellAttributes(6, 44, 1, 1, gVenusPillarCells[switchIndex].x,
                            gVenusPillarCells[switchIndex].z);
-    OverlayObject_WaitUntilIdle(block);
+    OverlayObject_WaitUntilIdle(pillar);
     Event_PlayCue(SE_188);
-    block->collisionFlags = 0;
+    pillar->collisionFlags = 0;
     *motionFlags = 0;
-    block->y.fixed = -PIXELS(16);
-    Actor_SetSpritePriority(blockId, 3);
+    pillar->y.fixed = -PIXELS(16);
+    Actor_SetSpritePriority(pillarId, 3);
     *flags = 2;
     Map_CopyCellAttributes(73, 48, 1, 1, gVenusPillarCells[switchIndex].x,
                            gVenusPillarCells[switchIndex].z);
@@ -2180,10 +2181,10 @@ static void Event_MovePillarSwitchBlock(void) {
     Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |=
         ACTOR_PRIORITY_AUTOMATIC;
     for (candidateIndex = 15; candidateIndex <= 18; candidateIndex++) {
-      otherBlock = Object_GetById(candidateIndex);
-      if (blockId != candidateIndex &&
-          (block->x.fixed >> 20) == (otherBlock->x.fixed >> 20) &&
-          (block->z.fixed >> 20) - 1 == (otherBlock->z.fixed >> 20)) {
+      otherPillar = Object_GetById(candidateIndex);
+      if (pillarId != candidateIndex &&
+          (pillar->x.fixed >> 20) == (otherPillar->x.fixed >> 20) &&
+          (pillar->z.fixed >> 20) - 1 == (otherPillar->z.fixed >> 20)) {
         Actor_SetSpritePriority(candidateIndex, 1);
         Object_GetById(candidateIndex)->priorityFlags |=
             ACTOR_PRIORITY_AUTOMATIC;
@@ -2194,13 +2195,13 @@ static void Event_MovePillarSwitchBlock(void) {
       Event_End();
       return;
     }
-    // Open the paired gate only after all four blocks are seated.
-    firstBlock = Actor_Get(15);
-    secondBlock = Actor_Get(16);
-    thirdBlock = Actor_Get(17);
-    fourthBlock = Object_GetById(18);
-    if ((firstBlock->priorityFlags & secondBlock->priorityFlags &
-         thirdBlock->priorityFlags & fourthBlock->priorityFlags) &
+    // Open the paired gate only after all four pillars are seated.
+    firstPillar = Actor_Get(15);
+    secondPillar = Actor_Get(16);
+    thirdPillar = Actor_Get(17);
+    fourthPillar = Object_GetById(18);
+    if ((firstPillar->priorityFlags & secondPillar->priorityFlags &
+         thirdPillar->priorityFlags & fourthPillar->priorityFlags) &
         2) {
       struct FieldActor *firstGateEffect;
       struct FieldActor *secondGateEffect;
@@ -2234,9 +2235,9 @@ static void Event_MovePillarSwitchBlock(void) {
   Event_End();
 }
 
-/// In VenusLighthouse5, walking into the gap or a pillar-room block: jump the
-/// gap, else push the block, which may sink into a socket.
-static void Event_JumpOrPushPillarBlock(void) {
+/// In VenusLighthouse5, walking into the gap or a pillar-room pillar: jump the
+/// gap, else push the pillar, which may sink into a socket.
+static void Event_JumpOrPushSocketPillar(void) {
 
   Engine_EventBegin();
   if (Event_JumpAcrossGap() == 0) {
@@ -2246,10 +2247,10 @@ static void Event_JumpOrPushPillarBlock(void) {
     {
       Map_CopyCellAttributes(73, 37, 9, 13, 9, 37);
     }
-    VenusLighthouse_PushAdjacentBlock();
+    VenusLighthouse_PushAdjacentPillar();
   }
   Engine_EventEnd();
-  Event_MovePillarSwitchBlock();
+  Event_MoveSocketPillar();
 }
 
 /// In VenusLighthouse5, walking south into the passage (trigger 18): the
@@ -2334,7 +2335,7 @@ static void VenusLighthouse_VisitPillarActors(void) {
 s32 Scene_RunEntrySetup(void) {
   struct FieldActor *actor;
   s32 scene;
-  u32 blockIndex;
+  u32 pillarIndex;
   s32 column;
   s32 row;
 
@@ -2421,7 +2422,7 @@ s32 Scene_RunEntrySetup(void) {
     case 9:
     case 10:
     case 11:
-      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED)) {
         Actor_SetPosition(12, PIXELS(872), PIXELS(88));
         actor = Object_GetById(12);
         actor->y.fixed = -PIXELS(24);
@@ -2430,7 +2431,7 @@ s32 Scene_RunEntrySetup(void) {
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouse2) {
-    // Restore depth blocks, the Carry puzzle and the paired tile-wave passage.
+    // Restore depth pillars, the Carry puzzle and the paired tile-wave passage.
     switch (gGameState.entrance) {
     case 16:
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
@@ -2446,12 +2447,12 @@ s32 Scene_RunEntrySetup(void) {
     case 9:
     case 10:
       actor = Object_GetById(11);
-      Event_MoveCarryBlock();
+      Event_MoveCarryPillar();
       if (actor->x.fixed >> 20 == 8)
-        VenusLighthouse_FixBlockAtDestination(actor);
+        VenusLighthouse_FixPillarAtDestination(actor);
       actor = Object_GetById(12);
       if (actor->x.fixed >> 20 == 7)
-        VenusLighthouse_FixBlockAtDestination(actor);
+        VenusLighthouse_FixPillarAtDestination(actor);
       VenusLighthouse_CreateBlendedPassageEffect(PIXELS(206), 0, PIXELS(449),
                                                  223);
       VenusLighthouse_CreateBlendedPassageEffect(PIXELS(210), 0, PIXELS(449),
@@ -2470,7 +2471,7 @@ s32 Scene_RunEntrySetup(void) {
       actor = Object_GetById(10);
       actor->motionFlags = 0;
       actor->update = SceneActor_SetFlagBitByRelativeDepth;
-      Event_MoveDepthBlock();
+      Event_MoveDepthPillar();
       break;
     case 11:
     case 12:
@@ -2498,7 +2499,7 @@ s32 Scene_RunEntrySetup(void) {
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouse3) {
-    // Restore the first sliding wall and its sunken-block gate.
+    // Restore the first sliding wall and its sunken-pillar gate.
     switch (gGameState.entrance) {
     case 2:
       VenusLighthouse_ArriveThroughSparkPassage();
@@ -2539,7 +2540,7 @@ s32 Scene_RunEntrySetup(void) {
             (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
 #endif
       }
-      Event_MoveGateBlock();
+      Event_MoveGatePillar();
       break;
     case 11:
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
@@ -2579,7 +2580,7 @@ s32 Scene_RunEntrySetup(void) {
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouse4) {
-    // Restore the two tile waves and the three-block socket puzzle.
+    // Restore the two tile waves and the three-pillar socket puzzle.
     switch (gGameState.entrance) {
     case 19:
       VenusLighthouse_AnimateWestTileWave();
@@ -2627,7 +2628,7 @@ s32 Scene_RunEntrySetup(void) {
       Object_GetById(9)->motionFlags = 0;
       Object_GetById(10)->motionFlags = 0;
       Object_GetById(11)->motionFlags = 0;
-      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN)) {
         Engine_TaskWait(1);
         Map_CopyCellsTo(111, 59, 109, 37, 1, 2);
         Map_CopyCellAttributes(45, 37, 1, 1, 45, 38);
@@ -2666,28 +2667,28 @@ s32 Scene_RunEntrySetup(void) {
             (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
 #endif
       }
-      Event_MoveSwitchBlock();
+      Event_MoveSwitchPillar();
       break;
     case 6:
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouse5) {
-    // Restore floating supports, opposing walls and the four-block pillar
+    // Restore floating supports, opposing walls and the four-pillar pillar
     // puzzle.
     switch (gGameState.entrance) {
     case 1:
     case 2:
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-        VenusLighthouse_LowerFloatingBlocks(0);
+        VenusLighthouse_LowerFloatingPillars(0);
         OverlayObject_WaitUntilIdle(Object_GetById(ACTOR_PARTY_LEADER));
-        for (blockIndex = 0; blockIndex <= 3; blockIndex++) {
-          actor = Object_GetById(blockIndex + 10);
+        for (pillarIndex = 0; pillarIndex <= 3; pillarIndex++) {
+          actor = Object_GetById(pillarIndex + 10);
           column = actor->x.fixed >> 20;
           if (column == 13) {
             row = actor->z.fixed >> 20;
             if (row == 7 &&
-                Engine_GameFlagIsSet(blockIndex + FLAG_SCENE_TEMP_00)) {
+                Engine_GameFlagIsSet(pillarIndex + FLAG_SCENE_TEMP_00)) {
               actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
               actor->collisionFlags = 0;
               actor->motionFlags = 0;
@@ -2832,7 +2833,7 @@ s32 Scene_RunEntrySetup(void) {
             (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
 #endif
       }
-      Event_MovePillarSwitchBlock();
+      Event_MoveSocketPillar();
       break;
     }
   }
@@ -3289,11 +3290,11 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_EventRequestExit(21);
 }
 
-/// Selects the block's push script from its direction, support animation and
+/// Selects the pillar's push script from its direction, support animation and
 /// socket.
 static s32
 VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *block = (struct FieldActor *)interpreter;
+  struct FieldActor *pillar = (struct FieldActor *)interpreter;
   struct FieldPosition supportPosition;
   struct FieldActor *support;
   struct AnimationObject *sprite;
@@ -3303,17 +3304,17 @@ VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
   s32 shapeIndex;
   const u8 *shapeCursor;
 
-  supportPosition.x = block->x.fixed;
-  supportPosition.y = block->y.fixed - 0x100000;
-  supportPosition.z = block->z.fixed;
+  supportPosition.x = pillar->x.fixed;
+  supportPosition.y = pillar->y.fixed - 0x100000;
+  supportPosition.z = pillar->z.fixed;
   support = SceneData_FindSlotAtPosition(&supportPosition, 0);
-  // XXX: Do the block placement and action-script tables guarantee a support
+  // XXX: Do the pillar placement and action-script tables guarantee a support
   // with an animation entry every time this script runs?
   sprite = support->sprite;
   if (sprite->entries[0]->animId == 0x100) {
-    s32 velocityX = block->velocityX;
+    s32 velocityX = pillar->velocityX;
     s32 speedX = velocityX < 0 ? -velocityX : velocityX;
-    s32 velocityZ = block->velocityZ;
+    s32 velocityZ = pillar->velocityZ;
     s32 speedZ = velocityZ < 0 ? -velocityZ : velocityZ;
 
     if (speedX > speedZ) {
@@ -3335,22 +3336,22 @@ VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
       }
     }
     if (*allowedShapes == 0) {
-      Engine_ObjectSetScript(block, gVenusRefusedPushScript);
+      Engine_ObjectSetScript(pillar, gVenusRefusedPushScript);
       return 0;
     }
     // The socket tables retain their moving cursors between push-script calls.
     if (gGameState.scene == (s32)&SceneId_VenusLighthouse4) {
       for (switchIndex = 0;
            switchIndex <= 3 &&
-           !(block->x.fixed >> 20 == gVenusSwitchCells[switchIndex].x &&
-             block->z.fixed >> 20 == gVenusSwitchCells[switchIndex].z);
+           !(pillar->x.fixed >> 20 == gVenusSwitchCells[switchIndex].x &&
+             pillar->z.fixed >> 20 == gVenusSwitchCells[switchIndex].z);
            switchIndex++) {
       }
       for (shapeIndex = 0;; shapeIndex++) {
         shapeCursor = gVenusSwitchShapes[switchIndex];
         shapeId = *shapeCursor;
         if (shapeId == 0) {
-          Engine_ObjectSetScript(block, gVenusRefusedPushScript);
+          Engine_ObjectSetScript(pillar, gVenusRefusedPushScript);
           return 0;
         }
         if (shapeId == support->sprite->lastNo) {
@@ -3358,20 +3359,20 @@ VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
         }
         gVenusSwitchShapes[switchIndex] = shapeCursor + 1;
       }
-      Engine_ObjectSetScript(block,
+      Engine_ObjectSetScript(pillar,
                              gVenusSwitchPushScripts[switchIndex][shapeIndex]);
     } else {
       for (switchIndex = 0;
            switchIndex <= 7 &&
-           !(block->x.fixed >> 20 == gVenusPillarCells[switchIndex].x &&
-             block->z.fixed >> 20 == gVenusPillarCells[switchIndex].z);
+           !(pillar->x.fixed >> 20 == gVenusPillarCells[switchIndex].x &&
+             pillar->z.fixed >> 20 == gVenusPillarCells[switchIndex].z);
            switchIndex++) {
       }
       for (shapeIndex = 0;; shapeIndex++) {
         shapeCursor = gVenusPillarShapes[switchIndex];
         shapeId = *shapeCursor;
         if (shapeId == 0) {
-          Engine_ObjectSetScript(block, gVenusRefusedPushScript);
+          Engine_ObjectSetScript(pillar, gVenusRefusedPushScript);
           return 0;
         }
         if (shapeId == support->sprite->lastNo) {
@@ -3379,11 +3380,11 @@ VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
         }
         gVenusPillarShapes[switchIndex] = shapeCursor + 1;
       }
-      Engine_ObjectSetScript(block,
+      Engine_ObjectSetScript(pillar,
                              gVenusPillarPushScripts[switchIndex][shapeIndex]);
     }
   } else {
-    Engine_ObjectSetScript(block, gVenusRefusedPushScript);
+    Engine_ObjectSetScript(pillar, gVenusRefusedPushScript);
   }
   return 0;
 }
@@ -3428,7 +3429,7 @@ struct SwitchCell gVenusSwitchCells[] = {
 };
 
 // clang-format off
-u32 gVenusBlockHeights[] = {
+u32 gVenusPillarHeights[] = {
     0xfff00000, 0xfff00000, 0xffe00000, 0xffd00000, 0xffc00000, 0xffb00000, 0xffb00000,
 };
 
@@ -4309,7 +4310,7 @@ struct SceneEvent gVenusLighthouseEvents2[] = {
     { 0x21, 32, CONDITION_ALWAYS, 32 },
     { EVENT_TOUCH, 45, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_JumpDown) },
     { EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnFloorSwitch) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlockTowardWall) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillarTowardWall) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenToldThemToStopBut) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenWentInsideButThenCame) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToScholarByDoor) },
@@ -4329,9 +4330,9 @@ struct SceneEvent gVenusLighthouseEvents2[] = {
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchStatue) },
     { SEARCH(SEARCH_CHEST), 100, 0xf37, FIND_ITEM(ITEM_LUCKY_CAP) },
     { SEARCH(SEARCH_CHEST), 101, 0xf38, FIND_ITEM(ITEM_CARRY_STONE) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveBlockTowardWall) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MoveBlockOntoSwitch) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryBlockPastWall) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarTowardWall) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MovePillarOntoSwitch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryPillarPastWall) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealPath) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HidePath) },
     { SCENE_EVENTS_END },
@@ -4359,24 +4360,24 @@ struct SceneEvent gVenusLighthouseEvents3[] = {
     { 0x21, 19, CONDITION_ALWAYS, 19 },
     { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
     { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FallThroughFloor) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDepthBlock) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDepthBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDepthPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDepthPillar) },
     { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearEffectTarget) },
     { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetLeaderAsEffectTarget) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 45, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushCarryBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 45, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushCarryPillar) },
     { SEARCH(SEARCH_CHEST), 100, 0xf34, FIND_ITEM(ITEM_THUNDER_CROWN) },
     { SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthBlock) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryBlock) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryBlock) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryBlock) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveCarryBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveCarryBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryBlockAcrossGap) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryBlockAcrossGap) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthPillar) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryPillar) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryPillar) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryPillar) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveCarryPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveCarryPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryPillarAcrossGap) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryPillarAcrossGap) },
     { SCENE_EVENTS_END },
 };
 
@@ -4392,9 +4393,9 @@ struct SceneEvent gVenusLighthouseEvents4[] = {
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnWallSwitch) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 36, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(Event_JumpOrPushGateBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 36, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(Event_JumpOrPushGatePillar) },
     { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(Event_MoveGateBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(Event_MoveGatePillar) },
     { SCENE_EVENTS_END },
 };
 
@@ -4419,12 +4420,12 @@ struct SceneEvent gVenusLighthouseEvents5[] = {
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
     { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushSwitchBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushSwitchPillar) },
     { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
     { SEARCH(SEARCH_CHEST), 100, 0xf35, FIND_ITEM(ITEM_DRAGON_SCALES) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchPillar) },
     { SCENE_EVENTS_END },
 };
 
@@ -4447,19 +4448,19 @@ struct SceneEvent gVenusLighthouseEvents6[] = {
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
     { 0x31, 17, CONDITION_ALWAYS, 17 },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterRisingPassage) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzleBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzlePillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
     { TOUCH_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzleBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzlePillar) },
     { TOUCH_WALKING_INTO(FACING_EAST), 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzleBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzlePillar) },
     { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnWestWallSwitch) },
     { EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnEastWallSwitch) },
     { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
     { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftNorth) },
     { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftWest) },
     { EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftEast) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 45, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushPillarBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 45, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushSocketPillar) },
     { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
     { SEARCH(SEARCH_CHEST), 100, 0xf36, FIND_ITEM(ITEM_GAIA_BLADE) },
     { SEARCH(SEARCH_UNNAMED), 110, 0x351, FIND_PSYNERGY_STONE },
@@ -4467,14 +4468,14 @@ struct SceneEvent gVenusLighthouseEvents6[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, 0 },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarSwitchBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarSwitchBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarSwitchBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarSwitchBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSocketPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSocketPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSocketPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSocketPillar) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

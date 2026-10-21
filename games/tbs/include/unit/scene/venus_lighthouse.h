@@ -20,7 +20,7 @@ extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
 extern u32 gStagedActor_DirectionSteps[];
 extern struct SwitchCell gVenusSwitchCells[];
-extern u32 gVenusBlockHeights[];
+extern u32 gVenusPillarHeights[];
 extern struct SwitchCell gVenusPillarCells[];
 extern u8 gVenusShapesPushedLeft[];
 extern u8 gVenusShapesPushedRight[];

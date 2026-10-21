@@ -35,8 +35,8 @@
 /// whose wide door is redrawn by hand; coming back out of the Sanctum (entrance
 /// 3) the area name is not shown again. Three doorways (touches 10 to 12,
 /// Village_WalkThroughDoorway) and exit 13 lead into the mine, to Altin Peak's
-/// AltinPeak1, AltinPeak4, AltinPeak8 and AltinPeak7. A block that Move pushes
-/// to column 22 stays there (FLAG_ALTIN_BLOCK_MOVED).
+/// AltinPeak1, AltinPeak4, AltinPeak8 and AltinPeak7. A pillar that Move pushes
+/// to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
 ///
 /// Inside (AltinInteriors), two families shelter in the inn's Room One and Room
 /// Two, as the game calls them, until the first and the second drop send them
@@ -95,7 +95,7 @@ enum AltinVillageActor {
   ACTOR_RETURNING_VILLAGER_B = 16,
   ACTOR_RETURNING_VILLAGER_C = 17,
   ACTOR_WATER_BEAST = 18,
-  ACTOR_MOVABLE_BLOCK = 19,
+  ACTOR_MOVABLE_PILLAR = 19,
   /// The armor and item sellers, waiting outside while their shops are
   /// under water.
   ACTOR_FLOODED_ARMOR_SELLER = 20,
@@ -619,15 +619,15 @@ static void Beast_HopAway(void) {
   Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }
 
-/// After Move: remembers whether the block now stands in map column 22, the
+/// After Move: remembers whether the pillar now stands in map column 22, the
 /// spot it is pushed to.
-static void Village_CheckBlockMoved(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_MOVABLE_BLOCK);
+static void Village_CheckPillarMoved(void) {
+  struct FieldActor *pillar = Object_GetById(ACTOR_MOVABLE_PILLAR);
 
-  if ((block->x.fixed >> 20) == 22) {
-    Engine_GameFlagSet(FLAG_ALTIN_BLOCK_MOVED);
+  if ((pillar->x.fixed >> 20) == 22) {
+    Engine_GameFlagSet(FLAG_ALTIN_PILLAR_MOVED);
   } else {
-    Engine_GameFlagClear(FLAG_ALTIN_BLOCK_MOVED);
+    Engine_GameFlagClear(FLAG_ALTIN_PILLAR_MOVED);
   }
 }
 
@@ -663,7 +663,7 @@ s32 Scene_Initialize(void) {
 /// Sets up Altin's village (Altin): the map block for the current water
 /// level (one of four 32 by 32 cell blocks kept on the map), the villagers and
 /// sellers present at that level, the water beast with its spray while it
-/// remains, and the pushed block. Then redraws the map around the leader.
+/// remains, and the pushed pillar. Then redraws the map around the leader.
 static void Village_ApplyWaterLevel(void) {
   struct FieldActor *leader;
 
@@ -706,10 +706,10 @@ static void Village_ApplyWaterLevel(void) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   Map_CopyCellAttributes(0, 33, 4, 3, 20, 41);
-  if (GameFlag_IsSet(FLAG_ALTIN_BLOCK_MOVED) != 0) {
-    Actor_SetPosition(ACTOR_MOVABLE_BLOCK, PIXELS(360), PIXELS(168));
+  if (GameFlag_IsSet(FLAG_ALTIN_PILLAR_MOVED) != 0) {
+    Actor_SetPosition(ACTOR_MOVABLE_PILLAR, PIXELS(360), PIXELS(168));
   }
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MOVABLE_BLOCK), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MOVABLE_PILLAR), 0);
   // Keep the three ground sprites below the party before redrawing.
   Actor_SetChildValue(ACTOR_FIRST_GROUND_SPRITE, 15);
   Engine_ActorSetChildValue(ACTOR_SECOND_GROUND_SPRITE, 15);
@@ -1148,7 +1148,7 @@ struct SceneEvent gAltinVillage_Events[] = {
         MSGNO(MsgAltinAllMyArmorInventoryIsRusting)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FLOODED_ITEM_SELLER, CONDITION_ALWAYS,
         MSGNO(MsgAltinIfMyGoodsAreWetIll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVABLE_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Village_CheckBlockMoved)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVABLE_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Village_CheckPillarMoved)},
     {EVENT_TOUCH, TRIGGER_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT_SCRIPT(Village_ScareOffBeast)},
     {SCENE_EVENTS_END},
 };

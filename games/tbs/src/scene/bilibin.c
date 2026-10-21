@@ -3,7 +3,7 @@
 /// share one overlay, each a scene of its own: Bilibin (scene 30),
 /// BilibinTreasury (scene 32) and BilibinBarricade (scene 35). The getters pick
 /// each scene's tables by gGameState.scene, Bilibin_Initialize sets up the
-/// scene being entered, and Event_PushBlock serves all three.
+/// scene being entered, and Event_PushPillar serves all three.
 ///
 /// Bilibin (Bilibin) is the town past the Goma Range's cave, and the party
 /// finds it afraid. A man who came to the village under a curse stands at its
@@ -33,8 +33,8 @@
 /// exits lead to the world map, to the garden of McCoy's Palace and, two ways,
 /// into the Treasury: past a bush at the west edge (actor 8, which has a
 /// Whirlwind row that runs nothing), gone when the party comes back out that
-/// way (entrance 10); and from the cell a statue (VILLAGE_BLOCK) stands on,
-/// once Move or a push slides it aside. Bilibin_UpdateVillageBlockCells keeps
+/// way (entrance 10); and from the cell a statue (VILLAGE_PILLAR) stands on,
+/// once Move or a push slides it aside. Bilibin_UpdateVillagePillarCells keeps
 /// the cells of the statue's lane in step and hops the leader clear if it
 /// lands on him; coming back out by that way (entrance 11) the party finds the
 /// statue already moved. Place flag FLAG_PLACE_TEMP_04 is set while McCoy's
@@ -48,8 +48,8 @@
 /// The Bilibin Treasury (BilibinTreasury) is what its sign calls `McCoy's
 /// Hidden Warehouse`. Gust, a Jupiter Djinni, waits there, placed until he has
 /// joined, and joins the party when spoken to (Event_GustJoins). A second
-/// statue (TREASURY_BLOCK) slides along one column, and
-/// Bilibin_UpdateTreasuryBlockCells keeps the two cells it can stand on in
+/// statue (TREASURY_PILLAR) slides along one column, and
+/// Bilibin_UpdateTreasuryPillarCells keeps the two cells it can stand on in
 /// step. Arriving by entrance 3 or 4 the leader starts 4 pixels above the
 /// floor; two exit regions (Bilibin_GetRegions) lead to its other entrance and
 /// back to Bilibin by the statue.
@@ -61,8 +61,8 @@
 /// Palace the worker who built the barricade calls it shabby, a gate guard
 /// thinks its hinges might break, and McCoy's captain hints that the party may
 /// not need a key (mccoy_palace.c, mccoy_palace_garden.c). A stack of crates
-/// (RIVER_BLOCK) slides a cell at a time under Move or a push, and
-/// Bilibin_UpdateRiverBlockCells rewrites the ten cells of its lane after
+/// (RIVER_PILLAR) slides a cell at a time under Move or a push, and
+/// Bilibin_UpdateRiverPillarCells rewrites the ten cells of its lane after
 /// each move. By the river stand three trees, one on another's shoulders
 /// (actors 9, 10 and 11 at one spot, 0, 32 and 48 pixels up): three children of
 /// the town, the Gang of Three, turned into trees while they climbed to pick
@@ -125,25 +125,25 @@
 #include "item_ids.h"
 
 static void Bilibin_RestoreVillageActors(void);
-static void Bilibin_UpdateVillageBlockCells(void);
+static void Bilibin_UpdateVillagePillarCells(void);
 static void Bilibin_RestoreRiverActors(void);
-static void Bilibin_UpdateRiverBlockCells(void);
+static void Bilibin_UpdateRiverPillarCells(void);
 static void Bilibin_SetUpTreasury(void);
 static void Bilibin_UpdateRiverEffect(void);
 static void Bilibin_SpawnRiverEffect(struct FieldActor *actor);
-static void Bilibin_UpdateTreasuryBlockCells(void);
+static void Bilibin_UpdateTreasuryPillarCells(void);
 
 /// Actors of Bilibin (Bilibin), numbered from its placement rows.
 enum {
   TREE_MAN = 9,        ///< the man turned into a tree at the village entrance
-  VILLAGE_BLOCK = 20,  ///< a statue, moved with Move or pushed
+  VILLAGE_PILLAR = 20, ///< a statue, moved with Move or pushed
   FORMER_TREE_MAN = 21 ///< the same man once the curse is lifted
 };
 
 /// Actors of the Bilibin Barricade (BilibinBarricade).
 enum {
-  RIVER_BLOCK = 8, ///< a stack of crates, moved with Move or pushed
-  JILL_TREE = 11,  ///< Jill as a tree, the top of the three
+  RIVER_PILLAR = 8, ///< a stack of crates, moved with Move or pushed
+  JILL_TREE = 11,   ///< Jill as a tree, the top of the three
   /// Jill's two friends, once the curse is lifted. With her they were the
   /// "Gang of Three".
   GANG_MEMBER_WEST = 12,
@@ -153,7 +153,7 @@ enum {
 
 /// Actors of the Bilibin Treasury (BilibinTreasury).
 enum {
-  TREASURY_BLOCK = 8, ///< a statue, moved with Move or pushed
+  TREASURY_PILLAR = 8, ///< a statue, moved with Move or pushed
   GUST = 9
 };
 
@@ -588,10 +588,10 @@ static void Bilibin_RestoreVillageActors(void) {
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     entrance = gGameState.entrance;
     if (entrance == 11) {
-      Actor_SetPosition(VILLAGE_BLOCK, PIXELS(248), PIXELS(216));
+      Actor_SetPosition(VILLAGE_PILLAR, PIXELS(248), PIXELS(216));
     }
   }
-  Bilibin_UpdateVillageBlockCells();
+  Bilibin_UpdateVillagePillarCells();
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0 &&
       GameFlag_IsSet(FLAG_MCCOY_PALACE_VISITED) == 0) {
     GameFlag_Set(FLAG_PLACE_TEMP_04);
@@ -601,36 +601,36 @@ static void Bilibin_RestoreVillageActors(void) {
 /// After the statue in Bilibin moves (Move, a push, or entry): updates the
 /// collision cells of its lane, opens its home cell (16, 13) once it has left
 /// it, and moves the leader clear if it has landed on him.
-static void Bilibin_UpdateVillageBlockCells(void) {
+static void Bilibin_UpdateVillagePillarCells(void) {
   s32 leaderRow;
   s32 leaderColumn;
   struct FieldActor *leader;
-  struct FieldActor *block;
-  s32 blockX;
-  s32 blockRow;
+  struct FieldActor *pillar;
+  s32 pillarX;
+  s32 pillarRow;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  block = Object_GetById(VILLAGE_BLOCK);
-  blockRow = block->z.fixed >> 20;
+  pillar = Object_GetById(VILLAGE_PILLAR);
+  pillarRow = pillar->z.fixed >> 20;
   leaderColumn = (leader->x.fixed >> 20);
   leaderRow = (leader->z.fixed >> 20);
-  blockX = block->x.fixed;
-  // Repaint the block's lane before clearing the cells it currently occupies.
+  pillarX = pillar->x.fixed;
+  // Repaint the pillar's lane before clearing the cells it currently occupies.
   Map_CopyCellAttributes(15, 11, 3, 1, 15, 12);
   Map_CopyCellAttributes(15, 11, 3, 1, 15, 13);
   Map_CopyCellAttributes(15, 11, 3, 1, 15, 14);
-  Map_CopyCellAttributes(1, 0, 1, 1, (blockX >> 20), blockRow);
-  if ((blockX >> 20) != 16 || blockRow != 13) {
+  Map_CopyCellAttributes(1, 0, 1, 1, (pillarX >> 20), pillarRow);
+  if ((pillarX >> 20) != 16 || pillarRow != 13) {
     Map_CopyCellAttributes(0, 0, 1, 1, 16, 13);
   }
-  // The block may have moved onto the leader while this event was running.
+  // The pillar may have moved onto the leader while this event was running.
   if (leaderColumn == 16) {
     if (leaderRow == 13) {
       Engine_EventBegin();
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 20);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
       Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
-      if (blockRow == 13) {
+      if (pillarRow == 13) {
         Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 262, 196);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
       } else {
@@ -654,7 +654,7 @@ static void Bilibin_RestoreRiverActors(void) {
 
   fallenTree = Object_GetById(10);
   jillTree = Object_GetById(JILL_TREE);
-  actor = Actor_Get(RIVER_BLOCK);
+  actor = Actor_Get(RIVER_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
   populationState = GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED);
   if (populationState != 0) {
@@ -713,38 +713,38 @@ static void Bilibin_RestoreRiverActors(void) {
       jillTree->y.fixed = PIXELS(48);
     }
   }
-  Bilibin_UpdateRiverBlockCells();
+  Bilibin_UpdateRiverPillarCells();
 }
 
 /// After the crates at the Bilibin Barricade move (Move, a push, or entry):
 /// restores the ten cells of their lane, then marks the cell they stand on.
-static void Bilibin_UpdateRiverBlockCells(void) {
+static void Bilibin_UpdateRiverPillarCells(void) {
   struct FieldActor *actor;
-  s32 blockColumn;
-  s32 blockRow;
+  s32 pillarColumn;
+  s32 pillarRow;
   u32 cellOffset;
 
-  actor = Object_GetById(RIVER_BLOCK);
-  blockColumn = actor->x.fixed >> 20;
-  blockRow = actor->z.fixed >> 20;
+  actor = Object_GetById(RIVER_PILLAR);
+  pillarColumn = actor->x.fixed >> 20;
+  pillarRow = actor->z.fixed >> 20;
 
   // The packed table stores ten byte-sized column/row pairs.
   for (cellOffset = 0; cellOffset < 20; cellOffset += 2) {
-    s32 column = ((u8 *)gBilibin_RiverBlockCells)[cellOffset];
-    s32 row = ((u8 *)gBilibin_RiverBlockCells)[cellOffset + 1];
+    s32 column = ((u8 *)gBilibin_RiverPillarCells)[cellOffset];
+    s32 row = ((u8 *)gBilibin_RiverPillarCells)[cellOffset + 1];
     Map_CopyCellAttributes(1, 0, 1, 1, column, row);
   }
 
-  Map_CopyCellAttributes(0, 0, 1, 1, blockColumn, blockRow);
+  Map_CopyCellAttributes(0, 0, 1, 1, pillarColumn, pillarRow);
 }
 
-/// Sets up the Bilibin Treasury: its block's passage cells, and the leader
+/// Sets up the Bilibin Treasury: its pillar's passage cells, and the leader
 /// arriving by entrance 3 or 4 starts 16 pixels above the floor.
 static void Bilibin_SetUpTreasury(void) {
   struct FieldActor *leader;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  Bilibin_UpdateTreasuryBlockCells();
+  Bilibin_UpdateTreasuryPillarCells();
   if (gGameState.entrance == 3 || gGameState.entrance == 4) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -763,50 +763,50 @@ static void Bilibin_SetUpTreasury(void) {
 /// Pushing a statue in Bilibin or the Bilibin Treasury, or the crates at the
 /// Bilibin Barricade: it slides one cell ahead with the leader behind it, if
 /// the cell is free.
-static void Event_PushBlock(void) {
+static void Event_PushPillar(void) {
   struct FieldActor *leader;
-  struct FieldActor *block;
+  struct FieldActor *pillar;
   u32 direction;
   struct FieldPosition destination;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
-  block = SceneActor_FindActorAtCell(
+  pillar = SceneActor_FindActorAtCell(
       (leader->x.part.pixel + (gBilibin_FacingCellSteps[direction] >> 16)) >> 4,
       (leader->z.part.pixel + (s16)gBilibin_FacingCellSteps[direction]) >> 4);
-  if (block != NULL) {
-    block->terrainId = 2;
+  if (pillar != NULL) {
+    pillar->terrainId = 2;
     destination.x =
-        block->x.fixed + (gBilibin_FacingCellSteps[direction] & -0x10000);
-    destination.y = block->y.fixed;
+        pillar->x.fixed + (gBilibin_FacingCellSteps[direction] & -0x10000);
+    destination.y = pillar->y.fixed;
     destination.z =
-        block->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
-    if (FieldObject_CheckMovementCollision(block, &destination) <= 0) {
-      // The leader leans on the block, then both move together.
+        pillar->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
+    if (FieldObject_CheckMovementCollision(pillar, &destination) <= 0) {
+      // The leader leans on the pillar, then both move together.
       Object_SetMode(leader, 8);
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_185);
-      block->speed = PIXELS(1) / 5;
-      block->acceleration = PIXELS(1) / 5;
-      Engine_ObjectSetPosition(block, destination.x, destination.y,
+      pillar->speed = PIXELS(1) / 5;
+      pillar->acceleration = PIXELS(1) / 5;
+      Engine_ObjectSetPosition(pillar, destination.x, destination.y,
                                destination.z);
       leader->speed = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(leader, destination.x, destination.y,
                                destination.z);
-      FieldObject_WaitForMove(block);
-      block->x.fixed = destination.x;
-      block->z.fixed = destination.z;
-      block->velocityX = 0;
-      block->velocityZ = 0;
+      FieldObject_WaitForMove(pillar);
+      pillar->x.fixed = destination.x;
+      pillar->z.fixed = destination.z;
+      pillar->velocityX = 0;
+      pillar->velocityZ = 0;
       Object_SetMode(leader, 1);
       // Each map derives its collision cells from this same moved actor.
       if (gGameState.scene == (s32)&SceneId_BilibinBarricade)
-        Bilibin_UpdateRiverBlockCells();
+        Bilibin_UpdateRiverPillarCells();
       else if (gGameState.scene == (s32)&SceneId_Bilibin)
-        Bilibin_UpdateVillageBlockCells();
+        Bilibin_UpdateVillagePillarCells();
       else if (gGameState.scene == (s32)&SceneId_BilibinTreasury)
-        Bilibin_UpdateTreasuryBlockCells();
+        Bilibin_UpdateTreasuryPillarCells();
     }
   }
 }
@@ -856,19 +856,19 @@ static void Bilibin_SpawnRiverEffect(struct FieldActor *actor) {
 
 /// After the statue in the Bilibin Treasury moves (Move, a push, or entry):
 /// updates the two cells it can stand on, rows 6 and 9 of its column.
-static void Bilibin_UpdateTreasuryBlockCells(void) {
-  struct FieldActor *block;
+static void Bilibin_UpdateTreasuryPillarCells(void) {
+  struct FieldActor *pillar;
 
-  block = Actor_Get(TREASURY_BLOCK);
-  if (block == NULL)
+  pillar = Actor_Get(TREASURY_PILLAR);
+  if (pillar == NULL)
     return;
 
-  if (block->z.fixed >> 20 == 6)
+  if (pillar->z.fixed >> 20 == 6)
     Map_CopyCellAttributes(2, 0, 1, 1, 14, 6);
   else
     Map_CopyCellAttributes(0, 0, 1, 1, 14, 6);
 
-  if (block->z.fixed >> 20 == 9)
+  if (pillar->z.fixed >> 20 == 9)
     Map_CopyCellAttributes(2, 0, 1, 1, 14, 9);
   else
     Map_CopyCellAttributes(1, 0, 1, 1, 14, 9);
@@ -1088,8 +1088,8 @@ struct SceneEvent gBilibinEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBilibinIWantToShareWithYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatExplosionMustHaveBeenA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgBilibinAsLongAsImOkayI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), VILLAGE_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateVillageBlockCells) },
-    { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), VILLAGE_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateVillagePillarCells) },
+    { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0 },
     { SEARCH(SEARCH_JAR), 100, 0xf50, FIND_ITEM(ITEM_HERB) },
     { SEARCH(SEARCH_JAR), 101, 0xf51, FIND_COINS(5) },
@@ -1128,9 +1128,9 @@ struct SceneEvent gBilibinEvents3[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, EVENT_SCRIPT(Event_PullJillFromRiver) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
-    { TOUCH_WALKING, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), RIVER_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateRiverBlockCells) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
+    { TOUCH_WALKING, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), RIVER_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateRiverPillarCells) },
     { SCENE_EVENTS_END },
 };
 
@@ -1139,10 +1139,10 @@ struct SceneEvent gBilibinEvents2[] = {
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadWarehouseSign) },
     { EVENT_TALK, GUST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GustJoins) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), TREASURY_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateTreasuryBlockCells) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
-    { TOUCH_WALKING, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), TREASURY_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateTreasuryPillarCells) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
+    { TOUCH_WALKING, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
     { TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
@@ -1191,7 +1191,7 @@ u32 gBilibin_DoorCells[] = {
     0x140036, 0x12002b, 0x130025, 0xb0029, 0xb0023, 0x90031, 0x60037,
 };
 
-u32 gBilibin_RiverBlockCells[] = {
+u32 gBilibin_RiverPillarCells[] = {
     0x12091208, 0x1308120a, 0x130a1309, 0x1409130b, 0x140b140a,
 };
 // clang-format on

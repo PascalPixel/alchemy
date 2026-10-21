@@ -11,9 +11,9 @@
 ///   triggers 9 and 10 out to the world map (its entrances 20 and 19). The
 ///   weapon, armor and item sellers open their shops only when spoken to
 ///   across the counter. A Nut circles in the air until Catch pulls it in
-///   (FLAG_KALAY_TOWN_NUT_CAUGHT), and a block at the north edge, which Move
+///   (FLAG_KALAY_TOWN_NUT_CAUGHT), and a pillar at the north edge, which Move
 ///   pushes aside, covers the way down into the Kalay Tunnel (exit 14);
-///   coming up from it (entrance 14) finds the block moved.
+///   coming up from it (entrance 14) finds the pillar moved.
 ///
 ///   Once the party has heard of the Colosso tour at the inn
 ///   (FLAG_KALAY_HEARD_OF_COLOSSO_TOUR), leaving town plays the tour group's
@@ -55,11 +55,11 @@
 ///   once Hammet is home (flag 0x915). Scene 154 joins the Kalay Tunnel
 ///   Entrance to scene 155, and a chest holds an Apple. Scene 155 opens with a
 ///   window transition, its way through drawn open once flag 0x915 is set.
-///   Scene 156 holds the puzzle: two blocks, pushed by walking into them or
+///   Scene 156 holds the puzzle: two pillars, pushed by walking into them or
 ///   moved with Move, each open a passage step by step once far enough west
 ///   (FLAG_TUNNEL_FIRST_PASSAGE_OPEN and FLAG_TUNNEL_SECOND_PASSAGE_OPEN,
-///   place flags, so the blocks are back once the party leaves the tunnel's
-///   scenes); while a passage is closed, particles stream from its block as it
+///   place flags, so the pillars are back once the party leaves the tunnel's
+///   scenes); while a passage is closed, particles stream from its pillar as it
 ///   nears its place. The first passage raises a target that Frost sinks into
 ///   the floor, freeing its cells; that is a temporary flag, so the target
 ///   stands again on each entry. Scorch, a Mars Djinni, joins the party when
@@ -150,8 +150,8 @@ enum KalayActor {
   ACTOR_BUNZA = 11,
   ACTOR_TUNNEL_ENTRANCE_NUT = 12,
   // Kalay Tunnel (KalayTunnel3)
-  ACTOR_FIRST_BLOCK = 8, ///< the blocks that open the two passages
-  ACTOR_SECOND_BLOCK = 9,
+  ACTOR_FIRST_PILLAR = 8, ///< the blocks that open the two passages
+  ACTOR_SECOND_PILLAR = 9,
   ACTOR_FROST_TARGET = 11,
   ACTOR_SCORCH = 12 ///< a Mars Djinni
 };
@@ -161,7 +161,7 @@ enum KalayActor {
 enum KalayTunnelFlag {
   FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00, ///< the fade overlay
   FLAG_TUNNEL_FROST_TARGET_FROZEN = FLAG_SCENE_TEMP_01,
-  /// Each block's particles have started their sound.
+  /// Each pillar's particles have started their sound.
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
   FLAG_TUNNEL_FIRST_PASSAGE_OPEN = 0x302,
@@ -1033,7 +1033,7 @@ s32 Kalay_Initialize(void) {
 /// flag FLAG_PLACE_TEMP_21; once Hammet is free (FLAG_LUNPA_TRADE_REOPENED) the
 /// palace's flags 0x912 to 0x915 are set too, so its earlier scenes count as
 /// seen and the passage is open. Coming up from the Kalay Tunnel (entrance 14)
-/// finds its block moved aside, and until it is caught the Nut circles in the
+/// finds its pillar moved aside, and until it is caught the Nut circles in the
 /// air.
 static void Kalay_PrepareTown(void) {
   OrbitingSceneObject *nut;
@@ -1139,7 +1139,7 @@ static void Kalay_StartWindowTransition(void) {
 
 /// Sets up the Kalay Tunnel's scene 156 (KalayTunnel3): the fade overlay
 /// follows the leader unless he came down from the town (entrance 4); the
-/// pushed blocks, the frozen target and the opened passages are restored, and
+/// pushed pillars, the frozen target and the opened passages are restored, and
 /// once flag 0x915 is set the man waits here and some of the cells are redrawn.
 static void Kalay_PrepareTunnel(void) {
 #if TBS_PATCH_1
@@ -1224,9 +1224,9 @@ static void Kalay_PrepareTunnel(void) {
       }
     }
   }
-  actor = Actor_Get(ACTOR_FIRST_BLOCK);
+  actor = Actor_Get(ACTOR_FIRST_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_SECOND_BLOCK);
+  actor = Actor_Get(ACTOR_SECOND_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
   FieldScheduler_AddCallback(Kalay_UpdateTunnelEmitters,
                              KALAY_CALLBACK_PRIORITY);
@@ -1244,7 +1244,7 @@ static void Kalay_PrepareTunnel(void) {
     Map_CopyCellAttributes(22, 50, 2, 1, 24, 49);
   }
   if (GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_FIRST_BLOCK, PIXELS(232), PIXELS(732));
+    Actor_SetPosition(ACTOR_FIRST_PILLAR, PIXELS(232), PIXELS(732));
     Map_CopyCellAttributes(7, 44, 1, 1, 0, 1);
     Map_CopyCellsTo(74, 58, 78, 41, 1, 5);
     Map_CopyCellsTo(16, 109, 13, 109, 3, 2);
@@ -1283,7 +1283,7 @@ static void Kalay_PrepareTunnel(void) {
     }
   }
   if (GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_SECOND_BLOCK, PIXELS(696), PIXELS(732));
+    Actor_SetPosition(ACTOR_SECOND_PILLAR, PIXELS(696), PIXELS(732));
     Map_CopyCellsTo(74, 58, 107, 41, 1, 5);
     Map_CopyCellsTo(45, 109, 42, 109, 3, 2);
     Map_CopyCellsTo(67, 64, 102, 44, 1, 2);
@@ -1868,12 +1868,12 @@ static void Kalay_HammetReturnsToPalace(void) {
 // Shared source, included in link order.
 #include "common/object_findcell.h"
 
-/// In the Kalay Tunnel (KalayTunnel3), walking into a block pushes it one tile
+/// In the Kalay Tunnel (KalayTunnel3), walking into a pillar pushes it one tile
 /// when there is room.
-static void Kalay_PushTunnelBlock(void) {
+static void Kalay_PushTunnelPillar(void) {
   struct FieldPosition destination;
   struct FieldActor *leader;
-  struct FieldActor *block;
+  struct FieldActor *pillar;
   s32 direction;
   s32 probeStep;
   s32 moveStep;
@@ -1886,44 +1886,44 @@ static void Kalay_PushTunnelBlock(void) {
   direction = (leader->facing >> 12);
   leaderX = leader->x.part.pixel;
   probeStep = gKalay_TileStepByFacing[direction];
-  block =
+  pillar =
       SceneActor_FindActorAtCell((leaderX + (probeStep >> 16)) >> 4,
                                  (leader->z.part.pixel + (s16)probeStep) >> 4);
-  if (block != NULL) {
+  if (pillar != NULL) {
     stoppedVelocity = 0;
-    block->terrainId = 2;
+    pillar->terrainId = 2;
     target = &destination;
     moveStep = gKalay_TileStepByFacing[direction];
-    SET_POSITION(target, block->x.fixed + (moveStep & -0x10000), block->y.fixed,
-                 block->z.fixed + (moveStep << 16));
-    if (FieldObject_CheckMovementCollision(block, target) <= 0) {
+    SET_POSITION(target, pillar->x.fixed + (moveStep & -0x10000),
+                 pillar->y.fixed, pillar->z.fixed + (moveStep << 16));
+    if (FieldObject_CheckMovementCollision(pillar, target) <= 0) {
       Object_SetMode(leader, 8);
       pushSpeed = PIXELS(1) / 5;
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_185);
-      block->speed = pushSpeed;
-      block->acceleration = pushSpeed;
-      Engine_ObjectSetPosition(block, target->x, target->y, target->z);
+      pillar->speed = pushSpeed;
+      pillar->acceleration = pushSpeed;
+      Engine_ObjectSetPosition(pillar, target->x, target->y, target->z);
       leader->speed = pushSpeed;
       leader->acceleration = pushSpeed;
       Engine_ObjectSetPosition(leader, target->x, target->y, target->z);
-      FieldObject_WaitForMove(block);
+      FieldObject_WaitForMove(pillar);
       BattleFx_PlayQueuedSound();
-      block->x.fixed = target->x;
-      block->z.fixed = target->z;
-      block->velocityX = stoppedVelocity;
-      block->velocityZ = stoppedVelocity;
+      pillar->x.fixed = target->x;
+      pillar->z.fixed = target->z;
+      pillar->velocityX = stoppedVelocity;
+      pillar->velocityZ = stoppedVelocity;
       Object_SetMode(leader, 1);
       Kalay_UpdateTunnelPassages();
     }
   }
 }
 
-/// In the Kalay Tunnel (KalayTunnel3), once a block is pushed far enough west,
+/// In the Kalay Tunnel (KalayTunnel3), once a pillar is pushed far enough west,
 /// its passage opens step by step, and the first raises the target for Frost.
 static void Kalay_UpdateTunnelPassages(void) {
-  struct FieldActor *firstBlock;
-  struct FieldActor *secondBlock;
+  struct FieldActor *firstPillar;
+  struct FieldActor *secondPillar;
   s32 firstPassageOpen;
   struct FieldActor *frostEffect;
   u32 i;
@@ -1931,12 +1931,12 @@ static void Kalay_UpdateTunnelPassages(void) {
   s32 height;
   s32 width;
 
-  // Open each passage only after its corresponding block reaches the trigger.
-  firstBlock = Object_GetById(ACTOR_FIRST_BLOCK);
-  secondBlock = Object_GetById(ACTOR_SECOND_BLOCK);
+  // Open each passage only after its corresponding pillar reaches the trigger.
+  firstPillar = Object_GetById(ACTOR_FIRST_PILLAR);
+  secondPillar = Object_GetById(ACTOR_SECOND_PILLAR);
   firstPassageOpen = GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
   if (firstPassageOpen != 0) {
-  } else if ((firstBlock->x.fixed >> 19) > 29) {
+  } else if ((firstPillar->x.fixed >> 19) > 29) {
   } else {
     frostEffect = Object_GetById(ACTOR_FROST_TARGET);
     Engine_EventBegin();
@@ -1995,7 +1995,7 @@ static void Kalay_UpdateTunnelPassages(void) {
     Engine_EventEnd();
   }
   if (GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
-  } else if ((secondBlock->x.fixed >> 19) > 87) {
+  } else if ((secondPillar->x.fixed >> 19) > 87) {
   } else {
     Engine_EventBegin();
     i = 67;
@@ -2085,14 +2085,14 @@ static void Kalay_UpdateTunnelParticle(struct ScriptInterpreter *interpreter) {
 #endif
 }
 
-/// In the Kalay Tunnel (KalayTunnel3), particles stream from each block as it
+/// In the Kalay Tunnel (KalayTunnel3), particles stream from each pillar as it
 /// nears its place, while its passage is closed.
 static void Kalay_UpdateTunnelEmitters(void) {
   struct FieldActor *firstEmitter;
   struct FieldActor *secondEmitter;
 
-  firstEmitter = Actor_Get(ACTOR_FIRST_BLOCK);
-  secondEmitter = Actor_Get(ACTOR_SECOND_BLOCK);
+  firstEmitter = Actor_Get(ACTOR_FIRST_PILLAR);
+  secondEmitter = Actor_Get(ACTOR_SECOND_PILLAR);
   if ((u32)(firstEmitter->x.part.pixel - 381) <= 12 &&
       firstEmitter->z.part.pixel > 777) {
     firstEmitter->sprite->image.priority =
@@ -2735,11 +2735,11 @@ struct SceneEvent gKalay_TunnelEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayTreasureBeyondDoors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_TUNNEL_FIRST_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_TUNNEL_SECOND_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelBlock) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelBlock) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelBlock) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelBlock) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FLAG_TUNNEL_FROST_TARGET_FROZEN, EVENT_SCRIPT(Kalay_FreezeFrostTarget) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StopTrackingLeader) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_StartTrackingLeader) },

@@ -30,9 +30,9 @@
 ///
 /// Rooms 3 to 5 lead on, with a chest in rooms 3 and 5. Room 4 is lit; in it
 /// Squall, a Jupiter Djinni, starts its battle when spoken to, three obstacles
-/// move when pushed (as three do in room 6), a block that Move slides into
+/// move when pushed (as three do in room 6), a pillar that Move slides into
 /// its cell opens the way beside it (which the editions from TBS_PATCH_1 on
-/// also keep open after a battle, FLAG_BLOCK_IN_PLACE), and a puddle the
+/// also keep open after a battle, FLAG_PILLAR_IN_PLACE), and a puddle the
 /// party hops over (AltmillerCave_HopSelectedActor) until Frost freezes it,
 /// unless something stands on it (AltmillerCave_CheckFrostTargetCollision).
 /// Room 6, also lit, holds the five rocks, whose colors show only while Reveal
@@ -113,11 +113,11 @@ enum {
 };
 
 /// Rooms 4 and 6 place first the three obstacles the party pushes; room 4
-/// then a puddle, a block for Move and Squall, a Jupiter Djinni.
+/// then a puddle, a pillar for Move and Squall, a Jupiter Djinni.
 enum {
   ACTOR_FIRST_OBSTACLE = 8,
   ACTOR_ROOM4_PUDDLE = 11,
-  ACTOR_ROOM4_BLOCK = 12,
+  ACTOR_ROOM4_PILLAR = 12,
   ACTOR_DJINNI = 13
 };
 
@@ -159,8 +159,8 @@ enum {
   FLAG_GRADED_DARKNESS = FLAG_SCENE_TEMP_01,
   /// Frost has frozen room 4's puddle.
   FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_11,
-  /// Room 4's block stands where Move opens the passage.
-  FLAG_BLOCK_IN_PLACE = FLAG_SCENE_TEMP_12
+  /// Room 4's pillar stands where Move opens the passage.
+  FLAG_PILLAR_IN_PLACE = FLAG_SCENE_TEMP_12
 };
 
 static void AltmillerCave_ReleaseWallBurst(void);
@@ -428,10 +428,10 @@ static void AltmillerCave_BeginRetreat(void) {
   }
 }
 
-/// After Move on room 4's block: in its cell at (30, 20) it settles and opens
+/// After Move on room 4's pillar: in its cell at (30, 20) it settles and opens
 /// the way beside it (remembered in TBS_PATCH_1 and later).
 static void AltmillerCave_UpdateMovedObstacle(void) {
-  struct FieldActor *actor = Object_GetById(ACTOR_ROOM4_BLOCK);
+  struct FieldActor *actor = Object_GetById(ACTOR_ROOM4_PILLAR);
 
   if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20) {
     actor->motionFlags = 2;
@@ -439,12 +439,12 @@ static void AltmillerCave_UpdateMovedObstacle(void) {
     actor->priorityFlags = 2;
     Map_CopyCellAttributes(30, 20, 1, 1, 32, 20);
 #if TBS_PATCH_1
-    Engine_GameFlagSet(FLAG_BLOCK_IN_PLACE);
+    Engine_GameFlagSet(FLAG_PILLAR_IN_PLACE);
 #endif
   }
 }
 
-/// Walking east into room 4's block pushes it a cell.
+/// Walking east into room 4's pillar pushes it a cell.
 static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
   StagedActor_AdvancePair();
   AltmillerCave_UpdateMovedObstacle();
@@ -2000,7 +2000,7 @@ s32 AltmillerCave_Initialize(void) {
     }
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROOM4_PUDDLE), 0);
 #if TBS_PATCH_1
-    if (Engine_GameFlagIsSet(FLAG_BLOCK_IN_PLACE)) {
+    if (Engine_GameFlagIsSet(FLAG_PILLAR_IN_PLACE)) {
       Map_CopyCellAttributes(30, 20, 1, 1, 32, 20);
     }
 #endif
@@ -2445,7 +2445,7 @@ struct SceneEvent gAltmillerCave_Events4[] = {
     {TOUCH_WALKING_INTO(FACING_EAST), 75, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 71, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_MoveStagedActorToClearPosition)},
     {TOUCH_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_AdvanceObstacleAndCheckPassage)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM4_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_UpdateMovedObstacle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM4_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_UpdateMovedObstacle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, 1), ACTOR_ROOM4_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_CheckFrostTargetCollision)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM4_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_FreezePuddle)},
     {EVENT_TALK, ACTOR_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartDjinnBattle)},

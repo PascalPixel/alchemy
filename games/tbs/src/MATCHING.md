@@ -310,7 +310,7 @@ come down to how a struct's member is addressed.
   ahead of the options-script store. Through the members, the load moves after
   the store and the constant load that follows it in the English build.
 - A global's member is reached through a local pointer to the global or
-  through the global's own name, each where it matches. `Event_MoveBlock`
+  through the global's own name, each where it matches. `Event_MovePillar`
   ([`scene/crossbone_isle.c`](scene/crossbone_isle.c)) takes `&state->scene`
   with `state = &gGameState`, because `&gGameState.scene` folds into one
   literal (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja). McCoy
@@ -321,7 +321,7 @@ come down to how a struct's member is addressed.
 - A table of `s16` pairs is read a word per index through a struct with an
   array member, `((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading]`,
   because an `s32` pointer to the table loses the original's loads
-  (`VaultCave_PushBlockAhead`); `UBFIX` builds the word from its halfwords.
+  (`VaultCave_PushPillarAhead`); `UBFIX` builds the word from its halfwords.
 - `gStagedActor_DirectionSteps`, `gStagedActor_FootprintKinds` and
   `gStagedActor_FootprintBounds`
   ([`scene/lunpa_fortress.c`](scene/lunpa_fortress.c)) are put in read-only

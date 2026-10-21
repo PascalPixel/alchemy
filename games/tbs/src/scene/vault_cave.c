@@ -19,10 +19,10 @@
 ///   time the party comes in from Vault; arriving elsewhere in the room
 ///   (entrances 5 to 8 and 13) redraws the flipped switch and its changed
 ///   cells. The room's chest is a mimic (search value type 5, battle 3).
-/// - Vault Cave (scene 97, SceneId_VaultCave2). In one part a block (actor 9)
-///   goes onto its switch by pushing (Event_PushSouthernBlock) or Move
-///   (Event_MoveSouthernBlock); once it rests there the puzzle chime plays and
-///   the switch opens the way (FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH). In
+/// - Vault Cave (scene 97, SceneId_VaultCave2). In one part a pillar (actor 9)
+///   goes onto its switch by pushing (Event_PushSouthernPillar) or Move
+///   (Event_MoveSouthernPillar); once it rests there the puzzle chime plays and
+///   the switch opens the way (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In
 ///   another, six objects (actors 10 to 15) fall at random, one every 64
 ///   frames, over six targets (actors 16 to 21) that Frost freezes. A frozen
 ///   target changes its map cell, and an object falling onto it stops 32
@@ -36,16 +36,16 @@
 ///   Vambrace.
 /// - Vault Cave (scene 98, SceneId_VaultCave3). Four objects (actors 11 to 14)
 ///   fall on a fixed schedule (gVaultCave_ScheduleFrames) while the party
-///   pushes or Moves a block (actor 10) onto its switch
-///   (FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH). A falling object that lands on
-///   that block marks it struck (FLAG_NORTH_BLOCK_STRUCK, SE_204), and a struck
-///   block no longer opens the switch until the room is entered again. Exit 1
-///   leads out to Vault (entrance 14).
+///   pushes or Moves a pillar (actor 10) onto its switch
+///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A falling object that lands on
+///   that pillar marks it struck (FLAG_NORTH_PILLAR_STRUCK, SE_204), and a
+///   struck pillar no longer opens the switch until the room is entered again.
+///   Exit 1 leads out to Vault (entrance 14).
 ///
 /// Each room has a door that only says it is locked (Event_ShowLockedDoor).
-/// The pushes share VaultCave_PushBlockAhead, which moves the block the leader
-/// faces one cell unless another actor or the terrain is in the way, and the
-/// falling objects run as scene callbacks started by Scene_Initialize.
+/// The pushes share VaultCave_PushPillarAhead, which moves the pillar the
+/// leader faces one cell unless another actor or the terrain is in the way, and
+/// the falling objects run as scene callbacks started by Scene_Initialize.
 
 #include "game_state.h"
 #include "unit/field/field.h"
@@ -101,8 +101,8 @@ enum {
   FLAG_EAST_UPPER_FROZEN = FLAG_SCENE_TEMP_03,
   FLAG_EAST_LOWER_FROZEN = FLAG_SCENE_TEMP_04,
   FLAG_FAR_EAST_FROZEN = FLAG_SCENE_TEMP_05,
-  /// A falling object struck the northern block before it reached its switch.
-  FLAG_NORTH_BLOCK_STRUCK = FLAG_SCENE_TEMP_07,
+  /// A falling object struck the northern pillar before it reached its switch.
+  FLAG_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
   FLAG_WHIRLWIND_USED = FLAG_SCENE_TEMP_00 + 0x100
 };
 
@@ -139,7 +139,7 @@ const u32 *Scene_GetExits(void) {
   return gVaultCaveExitsOther;
 }
 
-/// Selects the movable blocks, falling objects and Frost targets.
+/// Selects the movable pillars, falling objects and Frost targets.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -206,11 +206,11 @@ struct DirectionSteps {
   (((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading])
 #endif
 
-/// Pushes the faced block one cell unless another actor or terrain blocks it.
-static void VaultCave_PushBlockAhead(void) {
+/// Pushes the faced pillar one cell unless another actor or terrain blocks it.
+static void VaultCave_PushPillarAhead(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 direction = leader->facing >> 12;
-  struct FieldActor *block;
+  struct FieldActor *pillar;
   struct FieldActor *beyond;
   struct FieldPosition destination;
   s32 fallingIndex;
@@ -219,49 +219,49 @@ static void VaultCave_PushBlockAhead(void) {
 
   column = (leader->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
   row = (leader->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
-  block = VaultCave_FindCollidableActorAtCell(column, row);
+  pillar = VaultCave_FindCollidableActorAtCell(column, row);
   // UB: the lookup may return NULL. The plain safe guard moves the null
   // branch ahead of the byte load in EN, so matching keeps its original order.
 #ifdef UBFIX
-  if (block == NULL || block->collisionFlags == 0) {
+  if (pillar == NULL || pillar->collisionFlags == 0) {
 #else
-  if (block->collisionFlags == 0 || block == NULL) {
+  if (pillar->collisionFlags == 0 || pillar == NULL) {
 #endif
     return;
   }
   for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
-    if (block == Object_GetById(fallingIndex + 11)) {
+    if (pillar == Object_GetById(fallingIndex + 11)) {
       return;
     }
   }
-  column = (block->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
-  row = (block->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
+  column = (pillar->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
+  row = (pillar->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
   beyond = VaultCave_FindCollidableActorAtCell(column, row);
   if (beyond != 0 && (beyond->collisionFlags & 1)) {
     return;
   }
-  block->terrainId = 2;
-  destination.x = block->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
-  destination.y = block->y.fixed;
-  destination.z = block->z.fixed + (s32)((u32)DIRECTION_STEP(direction) << 16);
-  if (FieldObject_CheckMovementCollision(block, &destination) > 0) {
+  pillar->terrainId = 2;
+  destination.x = pillar->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
+  destination.y = pillar->y.fixed;
+  destination.z = pillar->z.fixed + (s32)((u32)DIRECTION_STEP(direction) << 16);
+  if (FieldObject_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }
   Object_SetMode(leader, 8);
   Engine_TaskWait(15);
   Engine_AudioPlayCue(SE_238);
-  block->speed = 0x3333;
-  block->acceleration = 0x3333;
-  Engine_ObjectSetPosition(block, destination.x, destination.y, destination.z);
+  pillar->speed = 0x3333;
+  pillar->acceleration = 0x3333;
+  Engine_ObjectSetPosition(pillar, destination.x, destination.y, destination.z);
   leader->speed = 0x3333;
   leader->acceleration = 0x3333;
   Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
-  FieldObject_WaitForMove(block);
+  FieldObject_WaitForMove(pillar);
   Engine_AudioPlayCue(SE_288);
-  block->x.fixed = destination.x;
-  block->z.fixed = destination.z;
-  block->velocityX = 0;
-  block->velocityZ = 0;
+  pillar->x.fixed = destination.x;
+  pillar->z.fixed = destination.z;
+  pillar->velocityX = 0;
+  pillar->velocityZ = 0;
   leader->velocityX = 0;
   leader->velocityZ = 0;
   leader->targetX = ACTOR_NO_TARGET;
@@ -297,10 +297,10 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultCaveEventsOther;
 }
 
-/// Tests the southern block's cell, rounding fixed coordinates toward zero.
-static s32 VaultCave_IsSouthernBlockOnSwitch(void) {
-  struct FieldActor *block = Object_GetById(9);
-  s32 fixedZ = block->z.fixed;
+/// Tests the southern pillar's cell, rounding fixed coordinates toward zero.
+static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
+  struct FieldActor *pillar = Object_GetById(9);
+  s32 fixedZ = pillar->z.fixed;
   s32 fixedX;
   s32 row;
   s32 column;
@@ -308,7 +308,7 @@ static s32 VaultCave_IsSouthernBlockOnSwitch(void) {
   if (fixedZ < 0) {
     fixedZ += 0x000FFFFF;
   }
-  fixedX = block->x.fixed;
+  fixedX = pillar->x.fixed;
   row = fixedZ >> 20;
   if (fixedX < 0) {
     fixedX += 0x000FFFFF;
@@ -320,20 +320,20 @@ static s32 VaultCave_IsSouthernBlockOnSwitch(void) {
   return 0;
 }
 
-/// Finishes the southern switch only after the block reaches its target cell.
+/// Finishes the southern switch only after the pillar reaches its target cell.
 static inline void VaultCave_CompleteSouthernSwitch(void) {
-  if (VaultCave_IsSouthernBlockOnSwitch() != 0) {
-    GameFlag_Set(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH);
+  if (VaultCave_IsSouthernPillarOnSwitch() != 0) {
+    GameFlag_Set(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH);
     Event_PlayCue(MUS_PUZZLE_SOLVED);
     VaultCave_ApplySouthernSwitchCells();
   }
 }
 
-/// In Vault Cave's second room, pushing the southern block; once it rests on
+/// In Vault Cave's second room, pushing the southern pillar; once it rests on
 /// its switch, the puzzle chime plays and the switch opens the way.
-static void Event_PushSouthernBlock(void) {
-  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) == 0) {
-    VaultCave_PushBlockAhead();
+static void Event_PushSouthernPillar(void) {
+  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
+    VaultCave_PushPillarAhead();
     VaultCave_CompleteSouthernSwitch();
   }
 }
@@ -345,10 +345,10 @@ static void VaultCave_ApplySouthernSwitchCells(void) {
   Map_CopyCellAttributes(16, 52, 1, 1, 16, 53);
 }
 
-/// In Vault Cave's second room, Move on the southern block, with the same
+/// In Vault Cave's second room, Move on the southern pillar, with the same
 /// switch check.
-static void Event_MoveSouthernBlock(void) {
-  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) == 0) {
+static void Event_MoveSouthernPillar(void) {
+  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_CompleteSouthernSwitch();
   }
 }
@@ -362,10 +362,10 @@ static void VaultCave_ApplyNorthernSwitchCells(void) {
   Map_CopyCellAttributes(17, 10, 1, 1, 17, 11);
 }
 
-/// Tests the northern block's cell with the same signed-coordinate rounding.
-static s32 VaultCave_IsNorthernBlockOnSwitch(void) {
-  struct FieldActor *block = Object_GetById(10);
-  s32 fixedZ = block->z.fixed;
+/// Tests the northern pillar's cell with the same signed-coordinate rounding.
+static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
+  struct FieldActor *pillar = Object_GetById(10);
+  s32 fixedZ = pillar->z.fixed;
   s32 fixedX;
   s32 row;
   s32 column;
@@ -373,7 +373,7 @@ static s32 VaultCave_IsNorthernBlockOnSwitch(void) {
   if (fixedZ < 0) {
     fixedZ += 0x000FFFFF;
   }
-  fixedX = block->x.fixed;
+  fixedX = pillar->x.fixed;
   row = fixedZ >> 20;
   if (fixedX < 0) {
     fixedX += 0x000FFFFF;
@@ -387,30 +387,30 @@ static s32 VaultCave_IsNorthernBlockOnSwitch(void) {
 
 /// The northern switch also waits until the falling-object guard is clear.
 static inline void VaultCave_CompleteNorthernSwitch(void) {
-  if (GameFlag_IsSet(FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH) == 0) {
-    if (VaultCave_IsNorthernBlockOnSwitch() != 0) {
-      if (GameFlag_IsSet(FLAG_NORTH_BLOCK_STRUCK) == 0) {
+  if (GameFlag_IsSet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
+    if (VaultCave_IsNorthernPillarOnSwitch() != 0) {
+      if (GameFlag_IsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
         Event_PlayCue(MUS_PUZZLE_SOLVED);
         VaultCave_ApplyNorthernSwitchCells();
-        GameFlag_Set(FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH);
+        GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH);
       }
     }
   }
 }
 
-/// In Vault Cave's third room, pushing the northern block; it opens its
+/// In Vault Cave's third room, pushing the northern pillar; it opens its
 /// switch only if no falling object has struck it.
-static void Event_PushNorthernBlock(void) {
-  VaultCave_PushBlockAhead();
+static void Event_PushNorthernPillar(void) {
+  VaultCave_PushPillarAhead();
   VaultCave_CompleteNorthernSwitch();
 }
 
-/// In Vault Cave's third room, Move on the southern block does nothing.
+/// In Vault Cave's third room, Move on the southern pillar does nothing.
 static void Event_IgnoreMove(void) {}
 
-/// In Vault Cave's third room, Move on the northern block, with the same
+/// In Vault Cave's third room, Move on the northern pillar, with the same
 /// switch check.
-static void Event_MoveNorthernBlock(void) {
+static void Event_MoveNorthernPillar(void) {
   VaultCave_CompleteNorthernSwitch();
 }
 
@@ -695,11 +695,11 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
         }
       }
     }
-    // A falling object landing on either movable block restarts at the top.
+    // A falling object landing on either movable pillar restarts at the top.
     if (VaultCave_ResetFallingObjectAtActorCell(10) != 0) {
       Engine_ActorSetAnimation(10, 1);
-      if (GameFlag_IsSet(FLAG_NORTH_BLOCK_STRUCK) == 0) {
-        GameFlag_Set(FLAG_NORTH_BLOCK_STRUCK);
+      if (GameFlag_IsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
+        GameFlag_Set(FLAG_NORTH_PILLAR_STRUCK);
         Event_PlayCue(SE_204);
       } else {
         Event_PlayCue(SE_106);
@@ -923,7 +923,7 @@ s32 Scene_Initialize(void) {
       break;
     case 10:
     case 11:
-      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplySouthernSwitchCells();
         Actor_SetPosition(9, PIXELS(248), PIXELS(876));
       }
@@ -938,7 +938,7 @@ s32 Scene_Initialize(void) {
   }
   if (gGameState.scene == (s32)&SceneId_VaultCave3) {
     Engine_ActorSetAnimation(8, 2);
-    if (Engine_GameFlagIsSet(FLAG_NORTH_BLOCK_STRUCK) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
       Engine_ActorSetAnimation(10, 2);
     }
     Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
@@ -957,7 +957,7 @@ s32 Scene_Initialize(void) {
       Object_GetById(8)->collisionFlags = 1;
       Object_GetById(10)->collisionFlags = 1;
       Object_GetById(9)->collisionFlags = 1;
-      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplyNorthernSwitchCells();
         Actor_SetPosition(10, PIXELS(264), PIXELS(204));
       }
@@ -1203,8 +1203,8 @@ struct SceneEvent gVaultCaveEvents2[] = {
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_2_CHEST, FIND_ITEM(ITEM_VAMBRACE) },
     { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH, EVENT_SCRIPT(Event_MoveSouthernBlock) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 60, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushSouthernBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(Event_MoveSouthernPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 60, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushSouthernPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, FLAG_WEST_UPPER_FROZEN, EVENT_SCRIPT(Event_FreezeWestUpperTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, FLAG_WEST_LOWER_FROZEN, EVENT_SCRIPT(Event_FreezeWestLowerTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, FLAG_INNER_WEST_LOWER_FROZEN, EVENT_SCRIPT(Event_FreezeInnerWestLowerTarget) },
@@ -1222,8 +1222,8 @@ struct SceneEvent gVaultCaveEvents3[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { 0x21, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushNorthernBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH, EVENT_SCRIPT(Event_MoveNorthernBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushNorthernPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(Event_MoveNorthernPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
     { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
     { SCENE_EVENTS_END },

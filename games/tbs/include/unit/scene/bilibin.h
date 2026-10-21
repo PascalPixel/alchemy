@@ -39,7 +39,7 @@ extern u16 gBilibin_DoorSteps2[];
 extern u16 gBilibin_DoorSteps3[];
 extern u16 *gBilibin_DoorSteps[];
 extern u32 gBilibin_DoorCells[];
-extern u32 gBilibin_RiverBlockCells[];
+extern u32 gBilibin_RiverPillarCells[];
 extern s32 gBilibin_FacingCellSteps[];
 extern s32 gBilibin_TransientEffectScript[];
 

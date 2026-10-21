@@ -44,12 +44,14 @@ the targets take: whether they're hurt or healed, and by how much. Quake's
 ability kind is `ABILITY_KIND_DAMAGE`, Psynergy damage, and its effect kind is
 `BATTLE_FX_QUAKE`. [Battles](../battle/README.md) explains the ability kind.
 
-Quake, Earthquake and Quake Sphere all play `BATTLE_FX_QUAKE`, effect kind 1, at
-variants 0, 1 and 2, so their rows read `0x001`, `0x1001` and `0x2001`. A double
-or triple blow adds one or two to the variant as the battle builds its plan.
-Ramses' row is `0x8001`, the summon scene `SCENE_EFFECT_RAMSES`, and Meltdown's
-is `0x4079`: effect kind 121 (`0x79`), which `BattleFx_DispatchByIdRange` plays
-as casting impact 21, `CASTING_IMPACT_IMPACT_MELTDOWN`.
+Quake, Earthquake and Quake Sphere all play `BATTLE_FX_QUAKE` at its three
+variants, `EFFECT_VARIANT_BASIC`, `EFFECT_VARIANT_STRONGER` and
+`EFFECT_VARIANT_STRONGEST`, so their rows read `0x001`, `0x1001` and `0x2001`. A
+double or triple blow raises the variant by one or two as the battle builds its
+plan. Ramses' row is `0x8001`, the summon scene `SCENE_EFFECT_RAMSES`, and
+Meltdown's is `0x4079`: `STAGING_BY_ID_RANGE` and the effect kind `0x79`, which
+`BattleFx_DispatchByIdRange` plays as `CASTING_IMPACT_IMPACT_MELTDOWN`, the
+casting impact at that kind less 100.
 
 The `flags` half is for the battle rather than the effects. Its bits 0 and 1
 are `STAGING_ON_DOWNED` (shown on downed targets too, for revivals) and
@@ -68,7 +70,8 @@ first ability that uses it:
 [BATTLE_FX_QUAKE - 1] = BattleFx_RunQuake, // quake.c: Quake
 ```
 
-The table starts at effect kind 1, hence the `- 1`. Of its 407 rows, 162 have a
+The table starts at `BATTLE_FX_QUAKE`, the first kind after `BATTLE_FX_NONE`,
+hence the `- 1`. Of its 407 rows, 162 have a
 handler, 143 different functions between them. An effect kind without one has
 no name in `enum BattleFxKind`
 ([`effect.h`](../../include/unit/effect/effect.h)) and leaves its row empty.
@@ -89,7 +92,7 @@ comment has an `Abilities:` line listing every ability that reaches it.
 Many effect kinds belong to a family drawn by one shared runner, and the mode
 it's passed picks the family member. The handler is then a two-line function,
 named for the move, that calls the runner with its mode: `BattleFx_RunCure`
-calls `BattleFx_RunHealingMotes(effect, 2)`. The runners are listed under
+calls `BattleFx_RunHealingMotes(effect, HEALING_MODE_CURE)`. The runners are listed under
 [Effect families](#effect-families).
 
 ### What a handler's comment says
@@ -108,9 +111,9 @@ Every handler opens with a documentation comment of the same shape. Gaia's:
 /// Its centre is at canvas x 64 + wallX. The rocks are 11 animation objects,
 /// moved by particles[10] to particles[20].
 ///
-/// effect: the targets; variant 0 to 2 widens the wall: 0 for Gaia and
-///         Rockfall, 1 for Mother Gaia and Rockslide, 2 for Grand Gaia and
-///         Avalanche.
+/// effect: the targets; the variant widens the wall: narrowest for Gaia and
+///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
+///         Gaia and Avalanche.
 ```
 
 It opens with a sentence saying what the player sees. Doxygen takes a
@@ -185,12 +188,12 @@ effect and gives the blocks back.
 
 - `BattleFx_RunTableEffect` ([`parts/dispatch.c`](parts/dispatch.c)) plays an
   ordinary effect: it looks the effect kind up in `gBattleFx_EffectHandlers`
-  and calls the handler. Effect kind 0 is no effect and only clears the
+  and calls the handler. `BATTLE_FX_NONE` is no effect and only clears the
   variant.
 - `BattleFx_RunSceneEffect` (also in `dispatch.c`) plays the rows with bit 15
   set: the twelve summons that need two or more Djinn, such as Ramses and Thor,
-  chosen by `enum SceneEffectKind` in `effect.h`. Scene 0, which no row uses,
-  plays Meteor's scene too. The four summons that need one Djinni, Venus,
+  chosen by `enum SceneEffectKind` in `effect.h`. `SCENE_EFFECT_NONE`, which no
+  row uses, plays Meteor's scene too. The four summons that need one Djinni, Venus,
   Mercury, Mars and Jupiter, are ordinary effect kinds, `BATTLE_FX_VENUS` to
   `BATTLE_FX_JUPITER`.
 - `BattleFx_DispatchByIdRange` (`positions.c`) plays the rows with bit 14 set,
@@ -441,9 +444,9 @@ half.
 
 A lot of moves share one animation drawn with different settings. The simplest
 share it through the variant alone. Rockfall and Avalanche both play
-`BATTLE_FX_GAIA`, Rockfall at variant 0 and Avalanche at variant 2.
+`BATTLE_FX_GAIA`, Rockfall at the basic variant and Avalanche at the strongest.
 `BattleFx_RunGaia` ([`gaia.c`](parts/gaia.c)) stretches its canvas 1.25 times
-across for variant 0 and twice for variant 2, so Avalanche's wall comes out
+across for Rockfall and twice for Avalanche, so Avalanche's wall comes out
 wider, and the higher the variant, the larger it draws each rock and the more
 of the field the falling rocks spread across.
 
@@ -490,21 +493,22 @@ chosen by its number in `enum CastingImpact`, the effect kind less 100, and
 runs in four phases.
 
 While the caster gathers, 64 sparks close in on it over 32 frames, four more
-each frame, each in its own random rotation. A Djinni's impact (impacts 0 to 7)
+each frame, each in its own random rotation. A Djinni's impact (Bane to Sap)
 shows its Djinni 80 pixels above the caster once the first sparks have gone
 out.
 
 Next, `BG2` is placed so the impact sits over the target. A few impacts stop here
-and hand the canvas on: 15 to projectile volley 9, 24 to Mystic Flame's orbs,
-26 to projectile volley 8 and 35 (Severe Blow) to the spark bursts, while 17
-simply ends.
+and hand the canvas on: three of the four no ability selects go to Blizzard's
+volley, Mystic Flame's orbs and `PROJECTILE_VOLLEY_IMPACT_COMETS`, while
+`CASTING_IMPACT_IMPACT_UNUSED_GATHERING` simply ends, and Severe Blow goes to
+the spark bursts.
 
 The impact itself lasts 20 to 80 frames, depending on the impact. The caster's
 overlay, an orb, sparks and the impact's own animation are drawn while the
 background palette steps towards the impact's palette; a Djinni flies to the
 target over the first six frames, and the target is hit on frame 6.
 
-Last, the canvas and its callbacks are released, or impact 21 (Meltdown) hands
+Last, the canvas and its callbacks are released, or Meltdown's impact hands
 them to the stat reduction.
 
 Flint's impact, `CASTING_IMPACT_IMPACT_FLINT`, has no animation of its own, so
@@ -657,8 +661,8 @@ are and go out one by one. Each target turns white 36 frames into its swarm
 ![Isaac casts Cure on Ivan, fighting beside him against a Vermin, and a ring of glittering light gathers on the ground around Ivan and closes in on him until he flashes white.](https://alchemy.pascalpixel.com/abilities/cure.gif)
 
 The motes live in `PARTICLES`, 64 slots to a target (`HEALING_SLOTS`), and the
-variant sets how many each target draws: 32 at variant 0, 64 at variant 1 and
-128 at variant 2, which runs on into the next target's slots.
+variant sets how many each target draws: 32 for the basic variant, 64 for the
+stronger and 128 for the strongest, which runs on into the next target's slots.
 
 ### Target strikes
 

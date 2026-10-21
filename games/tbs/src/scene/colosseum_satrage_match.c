@@ -404,7 +404,7 @@ static void Event_GrowPlant(void) {
 /// The selected actor jumps down off the ledge by an obstacle. Walking south
 /// into the obstacle at trigger 30 in Colosseum Final 2 plays the hop the field
 /// plays at any ledge (FieldActor_JumpDownLedge) for the actor touching it.
-static void Event_RunRisingSequence(void) {
+static void Event_JumpDownLedge(void) {
   FieldActor_JumpDownLedge(gGameState.selectedActor, 6, 0);
 }
 
@@ -2046,7 +2046,7 @@ s32 gColosseumSatrageMatch_LiftPhase = 0;
 s32 gColosseumSatrageMatch_LiftTimer = 0;
 
 struct SceneEvent gColosseumSatrageMatchEvents[] = {
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RunRisingSequence) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpDownLedge) },
     { TOUCH_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { TOUCH_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollEastLogWest) },
     { TOUCH_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollEastLogEast) },

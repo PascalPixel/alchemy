@@ -6,7 +6,6 @@
 
 #include "types.h"
 #include "version.h"
-#include "heap_state.h"
 
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
@@ -43,7 +42,8 @@
 #define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e50, gWorkSlot)
 #endif
 
-// Work pointers in the gWorkSlot table.
+// Work pointers in the gWorkSlot table. Their users include heap_state.h, which
+// the sound library's include path cannot reach.
 #define Ram_MapWork ((void **)&gWorkSlot[HEAP_SLOT_MAP])
 #define Ram_CameraWork ((void **)&gWorkSlot[HEAP_SLOT_CAMERA])
 #define Ram_EventWork ((void **)&gWorkSlot[HEAP_SLOT_EVENT])

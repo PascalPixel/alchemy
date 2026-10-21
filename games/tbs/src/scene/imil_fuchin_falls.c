@@ -23,21 +23,22 @@
 ///   the room of the Ki inscription (SceneId_FuchinFallsCaveOrbOfForce) and the
 ///   dragon statue's room (SceneId_FuchinFallsCaveDragonStatue).
 ///
-///   The first four rooms are crossed on floating logs (sprites 0xec and 0xed,
-///   the logs of Colosso's Lumber Water Crossing Area,
-///   colosseum_azart_match.c). Walking into a log's trigger cell pushes it
-///   along the water to its next stop, the leader moving with it
-///   (SceneActor_PlacePairAtOffset); touching the cell plays the log's two
-///   rolling animations. Each stop is a place flag, FLAG_PLACE_TEMP_01 to
-///   FLAG_PLACE_TEMP_03 for the first room's logs, FLAG_PLACE_TEMP_04 to
-///   FLAG_PLACE_TEMP_07 the second's, FLAG_PLACE_TEMP_08 to FLAG_PLACE_TEMP_12
-///   the third's and FLAG_PLACE_TEMP_13 to FLAG_PLACE_TEMP_15 the fourth's, so
-///   the logs are back where they started once the party leaves the cave's
-///   scenes. After each move, and on entry, the room's rebuild function puts
-///   every log at the cell its flags name and rewrites the cells of each log's
-///   track to match. In the third room the logs block one another, so where a
-///   log stops depends on where the others lie; in the second and third rooms
-///   the leader hops across gaps a log's stop leaves.
+///   The first four rooms are crossed on floating logs
+///   (SPRITE_FLOATING_LOG_WEST_EAST and SPRITE_FLOATING_LOG_NORTH_SOUTH, the
+///   logs of Colosso's Lumber Water Crossing Area, colosseum_azart_match.c).
+///   Walking into a log's trigger cell pushes it along the water to its next
+///   stop, the leader moving with it (SceneActor_PlacePairAtOffset); touching
+///   the cell plays the log's two rolling animations. Each stop is a place
+///   flag, FLAG_PLACE_TEMP_01 to FLAG_PLACE_TEMP_03 for the first room's logs,
+///   FLAG_PLACE_TEMP_04 to FLAG_PLACE_TEMP_07 the second's, FLAG_PLACE_TEMP_08
+///   to FLAG_PLACE_TEMP_12 the third's and FLAG_PLACE_TEMP_13 to
+///   FLAG_PLACE_TEMP_15 the fourth's, so the logs are back where they started
+///   once the party leaves the cave's scenes. After each move, and on entry,
+///   the room's rebuild function puts every log at the cell its flags name and
+///   rewrites the cells of each log's track to match. In the third room the
+///   logs block one another, so where a log stops depends on where the others
+///   lie; in the second and third rooms the leader hops across gaps a log's
+///   stop leaves.
 ///
 ///   Zephyr, a Jupiter Djinni, waits in the second room
 ///   (SceneId_FuchinFallsCaveZephyr) and fights when spoken to. In the first
@@ -45,7 +46,8 @@
 ///   (FIND_MIMIC); the fourth room's chest holds an Arctic Blade, and the Ki
 ///   room's the Orb of Force. Arriving in the third room by
 ///   FUCHIN_FALLS_CAVE_DRAGONS_EYE_PEDESTAL_FROM_LOGS before the Dragon's Eye
-///   is taken (flag 0xf13) shows it, and searching there takes it.
+///   is taken (FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) shows it, and searching
+///   there takes it.
 ///
 ///   The dragon statue's room is dark until the eye is set: entering its
 ///   northern half (its first six entrances, up to
@@ -173,7 +175,7 @@ STATIC_ASSERT(offsetof(struct CaveDustOptions, targetScaleY) ==
 
 /// Talking to Fever, a Mars Djinni, in Imil Falls Cave adds it to the party.
 static void Imil_RecruitFever(void) {
-  Djinn_JoinParty(ACTOR_FEVER, ELEMENT_MARS, 1);
+  Djinn_JoinParty(ACTOR_FEVER, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FEVER));
 }
 
 /// Talking to Zephyr, a Jupiter Djinni, in Fuchin Falls Cave's second room
@@ -1347,7 +1349,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
 
   ImilFuchinFalls_RebuildLogRoom();
   if (gGameState.scene == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
-    if (!GameFlag_IsSet(0xf13) &&
+    if (!GameFlag_IsSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) &&
         gGameState.entrance ==
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_PEDESTAL_FROM_LOGS) {
       ImilFuchinFalls_PlaceDragonsEye();
@@ -1467,7 +1469,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
   GlyphTransfer *glyph;
   u8 clear = 0;
 
-  actor = Object_Create(22, PIXELS(248), PIXELS(8), PIXELS(152));
+  actor = Object_Create(SPRITE_BLANK, PIXELS(248), PIXELS(8), PIXELS(152));
   if (actor != NULL) {
     sprite = actor->sprite;
     sprite->flags = clear;
@@ -1485,7 +1487,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
 }
 
 /// Searching where the Dragon's Eye lies, in Fuchin Falls Cave's third room
-/// (trigger 30), gives it to the party (flag 0xf13).
+/// (trigger 30), gives it to the party (FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND).
 static void Fuchin_CollectDragonsEye(void) {
   Engine_EventBegin();
 
@@ -1494,7 +1496,7 @@ static void Fuchin_CollectDragonsEye(void) {
   }
 
   Engine_PartyGiveItem(ITEM_DRAGONS_EYE, 0);
-  Engine_GameFlagSet(0xF13);
+  Engine_GameFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND);
 
   if (gImilFuchinFalls_DragonsEye != NULL) {
     Engine_ObjectDispatchRelease(gImilFuchinFalls_DragonsEye);
@@ -1534,7 +1536,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
       gImilFuchinFalls_DustScript2,
   };
 
-  effect = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
+  effect = (struct FieldEffect *)Engine_ObjectCreate(SPRITE_DUST_PUFF, x, y, z);
   if (effect == 0)
     return;
   sprite = effect->sprite;
@@ -1981,21 +1983,21 @@ struct ScenePlacement gImilFuchinFalls_ImilFallsCavePlacements[] = {
 };
 
 struct ScenePlacement gImilFuchinFalls_FirstRoomPlacements[] = {
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(200), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(296), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gImilFuchinFalls_SecondRoomPlacements[] = {
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(312), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x5d, 0x6e, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -2003,23 +2005,23 @@ struct ScenePlacement gImilFuchinFalls_SecondRoomPlacements[] = {
 };
 
 struct ScenePlacement gImilFuchinFalls_ThirdRoomPlacements[] = {
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(328), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(568), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(488), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gImilFuchinFalls_FourthRoomPlacements[] = {
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(328), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(120), 0, PIXELS(744), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -2138,7 +2140,7 @@ struct SceneEvent gImilFuchinFalls_ThirdRoomEvents[] = {
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 3, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_PEDESTAL },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ENTRANCE },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ZEPHYR },
-    { SEARCH(SEARCH_UNNAMED), 30, 0xf13, EVENT_SCRIPT(Fuchin_CollectDragonsEye) },
+    { SEARCH(SEARCH_UNNAMED), 30, FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND, EVENT_SCRIPT(Fuchin_CollectDragonsEye) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
@@ -2225,8 +2227,8 @@ struct SceneEvent gImilFuchinFalls_DragonRoomEvents[] = {
      EVENT_SCRIPT(Fuchin_LightDragonWithEye)},
     {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(Fuchin_SearchDragonStatue)},
-    {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET,
-     EVENT_SCRIPT(Fuchin_EndRevealLighting)},
+    {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,
+     FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET, EVENT_SCRIPT(Fuchin_EndRevealLighting)},
     {SCENE_EVENTS_END},
 };
 

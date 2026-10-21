@@ -60,6 +60,7 @@
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them.
 
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "version.h"
 #include "unit/scene/kalay_tolbi_docks.h"
 #include "unit/object/object.h"
@@ -130,7 +131,7 @@ enum TolbiDocksActor {
   /// "It's been quite some time since the Colosso Tour passengers left for
   /// Tolbi."
   ACTOR_VILLAGER_TOUR_LONG_GONE,
-  /// The two stacks of wooden crates Move pushes along the pier: sprite 0xf1,
+  /// The two stacks of wooden crates Move pushes along the pier: SPRITE_CRATES,
   /// the crates of the Bilibin Barricade (bilibin.c).
   ACTOR_FIRST_CRATES,
   ACTOR_SECOND_CRATES
@@ -193,7 +194,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void);
 
 /// Kalay Docks: talking to Ground, a Venus Djinni, makes it join the party.
 static void KalayTolbiDocks_GroundJoins(void) {
-  Djinn_JoinParty(ACTOR_GROUND, ELEMENT_VENUS, 5);
+  Djinn_JoinParty(ACTOR_GROUND, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND));
 }
 
 /// Selects the entrances of Kalay Docks, Tolbi Docks or the building between.
@@ -1129,9 +1130,9 @@ struct ScenePlacement gKalayTolbiDocks_TolbiPlacements[] = {
         PIXELS(296), 0, PIXELS(216), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
     { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(280), 0, PIXELS(248), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
-    { 0xf1, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRATES, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(190), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf1, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRATES, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(190), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -1149,9 +1150,9 @@ struct ScenePlacement gKalayTolbiDocks_TolbiPlacementsStranded[] = {
         PIXELS(256), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(304), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xf1, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRATES, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(190), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf1, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRATES, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(190), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(280), 0, PIXELS(288), FACING_WEST, TALK_KEEP_FACING, 0 },

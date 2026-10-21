@@ -2628,9 +2628,9 @@ struct ScenePlacement gFuchinTemplePlacements[] = {
     { 0x28, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     // The training tree, and where Force strikes it
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(232), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x16, CONDITION_ALWAYS, (s32)gFuchinTemple_HiddenSpriteScript,
+    { SPRITE_BLANK, CONDITION_ALWAYS, (s32)gFuchinTemple_HiddenSpriteScript,
         PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

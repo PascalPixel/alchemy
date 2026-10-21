@@ -109,8 +109,14 @@ enum HeapSlot {
   /// BattleEffect_InitializeBuffers allocates on scene load, or the title
   /// intro's struct PaletteFade.
   HEAP_SLOT_PALETTE_BUFFER = 32,
+  /// The floating lights of Sol Sanctum's Elemental Star room (struct
+  /// SolSanctumRingList, sol_sanctum_elemental_star_ring_setup.h).
+  HEAP_SLOT_SOL_SANCTUM_LIGHTS = 33,
   /// The wavy background's work (struct DisplayScrollWork).
   HEAP_SLOT_WAVY_BACKGROUND = 34,
+  /// Where Mercury Lighthouse keeps a pointer to the state of the lights that
+  /// carry the leader over its pools (struct MercuryLighthouseLights).
+  HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS = 35,
   /// The fade overlay's work (struct FadeOverlayWork).
   HEAP_SLOT_FADE_OVERLAY = 36,
   /// The battle message display (struct BattleDisplayWork).

@@ -40,7 +40,7 @@
 ///   (Colosso_StartRaceGauge), after the lettering `Match 1` and a count of
 ///   three. At the arena (Event_ReachArena) the first to arrive takes the Iron
 ///   Shield and the second the Padded Gloves, which Isaac is given and equipped
-///   with, and the two fight: the battle is encounter table 72's first or
+///   with, and the two fight: the battle is ENCOUNTER_ZONE_COLOSSO's first or
 ///   second group, the Azart who has the shield or the one who has not.
 ///
 /// A win returns to COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON, which shows the
@@ -559,7 +559,8 @@ static void Event_ReachArena(void) {
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;
    * as 1 - approach, 1 of 106 instructions differ in tbs-en. */
-  Field_RequestBattleFromEncounterTable(72, base - approach + 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
+                                        base - approach + 1);
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_ColosseumAzartMatch, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColosseumAzartMatch, 5);
@@ -1320,7 +1321,7 @@ ColosseumAzartMatch_SpawnRandomEffect(union FieldObject *fieldObject) {
       s32 y = position[1];
       s32 z = position[2];
 
-      effect = Engine_ObjectCreate(285, x, y, z);
+      effect = Engine_ObjectCreate(SPRITE_SPARKLE, x, y, z);
     }
     if (effect != 0) {
       effect->motionFlags = 0;
@@ -1619,11 +1620,11 @@ struct ScenePlacement gColosseumAzartMatch_Placements[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0x3e, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(408), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(456), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xe5, CONDITION_ALWAYS, 7,
         PIXELS(601), 0, PIXELS(146), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1631,15 +1632,15 @@ struct ScenePlacement gColosseumAzartMatch_Placements[] = {
         PIXELS(552), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x122, CONDITION_ALWAYS, 7,
         PIXELS(664), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(760), 0, PIXELS(194), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xa5, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(944), 0, PIXELS(216), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(1048), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(1016), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0xa5, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(376), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -1649,9 +1650,9 @@ struct ScenePlacement gColosseumAzartMatch_Placements[] = {
         PIXELS(824), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0xa5, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1080), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1304), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1304), 0, PIXELS(208), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

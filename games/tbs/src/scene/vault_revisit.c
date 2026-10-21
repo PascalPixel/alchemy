@@ -49,6 +49,7 @@
 /// 4-by-2 block of cells (common/vault_toggle.h), as in vault.c.
 
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "window.h"
 #include "unit/scene/vault_revisit.h"
 #include "unit/scene/common/vault_range.h"
@@ -112,10 +113,7 @@ enum VaultRevisitActor {
   ACTOR_SAP = ACTOR_FIRST_PLACED + 13
 };
 
-enum {
-  VAULT_VENUS_DJINNI_INDEX = 4, ///< Sap's index among the Venus Djinn
-  VAULT_PROXIMITY_REACTION_PAUSED = 2
-};
+enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
 
 /// Place flags, kept while the party stays in Vault's scenes: what the
 /// townspeople have already said. A Mind Read before someone has spoken plays
@@ -523,7 +521,7 @@ static void Event_EnterJail(void) {
 
 /// Talking to Sap, a Venus Djinni: it joins the party.
 static void Event_TalkToVenusDjinni(void) {
-  Djinn_JoinParty(ACTOR_SAP, 0, VAULT_VENUS_DJINNI_INDEX);
+  Djinn_JoinParty(ACTOR_SAP, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_SAP));
 }
 
 /// Jumps at the hidden passage, then pauses so the party can see the clue.
@@ -659,11 +657,11 @@ s32 Scene_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));
   if (gGameState.entrance <= 2 &&
-      !Engine_GameFlagIsSet(FLAG_DJINNI_0 + VAULT_VENUS_DJINNI_INDEX) &&
+      !Engine_GameFlagIsSet(FLAG_DJINNI_0 + DJINNI_SAP) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     Engine_GameFlagClear(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
   if (Engine_GameFlagIsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) &&
-      !Engine_GameFlagIsSet(FLAG_DJINNI_0 + VAULT_VENUS_DJINNI_INDEX))
+      !Engine_GameFlagIsSet(FLAG_DJINNI_0 + DJINNI_SAP))
     Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
   if (gGameState.entrance == VAULT_REVISIT_FROM_SANCTUM)
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
@@ -915,8 +913,8 @@ struct SceneEvent gVaultRevisit_Events[] = {
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PeerIntoWell) },
     { SEARCH(SEARCH_WOODEN_BOX), 101, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { USE_ITEM_ON_ACTOR(ITEM_BONE), ACTOR_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(Event_GiveBoneToDog) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealPassage) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HidePassage) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealPassage) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HidePassage) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

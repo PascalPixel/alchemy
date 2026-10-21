@@ -223,7 +223,6 @@ enum {
 };
 
 /// Reveal's phases: the hidden things show, and hide again.
-enum { REVEAL_SHOWN = 5, REVEAL_FADED = 4 };
 
 /// Where a party caught by a guard is sent: the Lunpa Fortress Gates.
 enum { EXIT_THROWN_OUT = 60 };
@@ -536,33 +535,33 @@ static void Event_SearchSealedDoor(void) {
 enum { FIRST_ITEM_DISPLAY_ACTOR = ACTOR_FIRST_PLACED };
 
 /// Unused: an Arctic Blade, a Masamune, a Silver Blade and a Shamshir set out
-/// on the four item display actors, each taken once, with flags 0xf2a to
-/// 0xf2d.
+/// on the four item display actors, each taken once, with
+/// FLAG_LUNPA_FORTRESS_ARCTIC_BLADE to FLAG_LUNPA_FORTRESS_SHAMSHIR.
 static void UNUSED LunpaFortress_TryCollectArcticBlade(void) {
   if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR,
                                             ITEM_ARCTIC_BLADE) != 0) {
-    Engine_GameFlagSet(0xf2a);
+    Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_ARCTIC_BLADE);
   }
 }
 
 static void UNUSED LunpaFortress_TryCollectMasamune(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 1, 7) !=
-      0) {
-    Engine_GameFlagSet(0xf2b);
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 1,
+                                            ITEM_MASAMUNE) != 0) {
+    Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_MASAMUNE);
   }
 }
 
 static void UNUSED LunpaFortress_TryCollectSilverBlade(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 2, 6) !=
-      0) {
-    Engine_GameFlagSet(0xf2c);
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 2,
+                                            ITEM_SILVER_BLADE) != 0) {
+    Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SILVER_BLADE);
   }
 }
 
 static void UNUSED LunpaFortress_TryCollectShamshir(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 3, 5) !=
-      0) {
-    Engine_GameFlagSet(0xf2d);
+  if (LunpaFortress_TryCollectDisplayedItem(FIRST_ITEM_DISPLAY_ACTOR + 3,
+                                            ITEM_SHAMSHIR) != 0) {
+    Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SHAMSHIR);
   }
 }
 
@@ -3562,13 +3561,13 @@ struct ScenePlacement gLunpaFortressPlacementsOther[] = {
 };
 
 struct ScenePlacement gLunpaFortressPlacementsWestLunpaCave[] = {
-    { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(252), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(552), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x44, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3584,13 +3583,13 @@ struct ScenePlacement gLunpaFortressPlacementsWestLunpaCave[] = {
 };
 
 struct ScenePlacement gLunpaFortressGroundFloorPlacements[] = {
-    { 0x14, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEST, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x14, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEST, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x14, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEST, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x14, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEST, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(760), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -3664,19 +3663,19 @@ struct ScenePlacement gLunpaFortressCavePlacements[] = {
         PIXELS(440), 0, PIXELS(282), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(176), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(504), 0, PIXELS(168), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0xf1, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRATES, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(248), 0, PIXELS(136), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gLunpaFortressToadonpaPlacements[] = {
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0xbb, CONDITION_ALWAYS, 7,
         PIXELS(472), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3696,7 +3695,7 @@ struct ScenePlacement gLunpaFortressToadonpaPlacements[] = {
         PIXELS(464), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3840,8 +3839,8 @@ struct SceneEvent gLunpaFortressCaveEvents[] = {
     { TOUCH_WALKING, 70, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushCrates) },
     { SEARCH(SEARCH_UNNAMED), 51, FLAG_SCENE_TEMP_18, EVENT_SCRIPT(Event_FlipSecondSwitch) },
     { SEARCH(SEARCH_UNNAMED), 52, FLAG_SCENE_TEMP_17, EVENT_SCRIPT(Event_FlipFirstSwitch) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, REVEAL_SHOWN), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealSwitches) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, REVEAL_FADED), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideSwitches) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealSwitches) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideSwitches) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_FIRST_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayFirstSwitchCover) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_PASSAGE_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayPassageCover) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_SECOND_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwaySecondSwitchCover) },

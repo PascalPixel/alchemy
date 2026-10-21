@@ -42,7 +42,7 @@
 ///   about the lack of travellers since the eruption (FLAG_PLACE_TEMP_07).
 ///   Isaac's house opens again: Dora lies ill inside (vale_interiors_inn.c).
 ///
-/// In every set: a Nut to catch with Catch (its flag 0xfd0; ACTOR_NUT, or
+/// In every set: a Nut to catch with Catch (FLAG_VALE_NUT_CAUGHT; ACTOR_NUT, or
 /// ACTOR_NUT_AFTER_KALAY), a pillar to push or Move, whose column the setup
 /// restores from FLAG_PLACE_TEMP_14 to _16, a passage the leader moves through
 /// on touch cells 100 and 101 (FLAG_SCENE_TEMP_04 while inside), and cells of
@@ -192,7 +192,8 @@ enum ValeActor {
   /// "You're in trouble now, Garet... Your sister's really mad!"; after the
   /// party has left, "Please take care of my brother, Isaac."
   ACTOR_GARETS_SIBLING,
-  /// Sprite 0xd3, as Goma Cave's pillars: pushed (Event_PushPillar) or moved
+  /// SPRITE_STONE_PILLAR, as Goma Cave's pillars: pushed (Event_PushPillar) or
+  /// moved
   /// with Move, its column kept in FLAG_PLACE_TEMP_14 to _16
   /// (Event_SettleMovedPillar).
   ACTOR_PILLAR,
@@ -206,7 +207,7 @@ enum ValeActor {
   ACTOR_FIRST_BOARD,
   ACTOR_SECOND_BOARD,
   ACTOR_THIRD_BOARD,
-  ACTOR_NUT ///< the Nut for Catch, until its flag 0xfd0 is set
+  ACTOR_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
 };
 
 /// Back from Kalay, the placed actors of gVale_PlacementsAfterKalay; Garet's
@@ -286,7 +287,7 @@ const struct ScenePlacement *Vale_GetPlacements(void) {
 static void Event_CatchNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(ACTOR_NUT, 0, 0);
-  Engine_GameFlagSet(0xfd0);
+  Engine_GameFlagSet(FLAG_VALE_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
   Engine_EventEnd();
@@ -296,7 +297,7 @@ static void Event_CatchNut(void) {
 static void Event_CatchNutAfterKalay(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(ACTOR_NUT_AFTER_KALAY, 0, 0);
-  Engine_GameFlagSet(0xfd0);
+  Engine_GameFlagSet(FLAG_VALE_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
   Engine_EventEnd();
@@ -1399,7 +1400,7 @@ s32 Vale_Initialize(void) {
     PaletteGlow_Update(((u8 *)&gGameState)[517], ((u8 *)&gGameState)[518]);
     Event_MendingTheRoof();
   } else {
-    if (!Engine_GameFlagIsSet(0xfd0)) {
+    if (!Engine_GameFlagIsSet(FLAG_VALE_NUT_CAUGHT)) {
       if (!Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
         Scene_FloatNut(ACTOR_NUT);
       } else {
@@ -2900,8 +2901,8 @@ static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
   randomDistance = Engine_RandomNext();
   Vector_AddPolarOffset(((randomDistance << 1) + randomDistance) << 4,
                         Engine_RandomNext(), spawnPosition);
-  particle = Engine_ObjectCreate(0x11d, spawnPosition[0], spawnPosition[1],
-                                 spawnPosition[2]);
+  particle = Engine_ObjectCreate(SPRITE_SPARKLE, spawnPosition[0],
+                                 spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {
     particle->motionFlags = 2;
     particle->gravity = 0x1999;
@@ -3283,7 +3284,7 @@ struct SceneEntrance gVale_Entrances[] = {
     { VALE_FROM_VALE_INTERIORS_INN, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_VALE_INTERIORS_SHOPS_NORTH, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_VALE_INTERIORS_SHOPS_WEST, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 11, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_TITLE, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_ROOF_MENDED, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
@@ -3335,7 +3336,7 @@ struct ScenePlacement gVale_Placements[] = {
         PIXELS(412), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x25, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(398), 0, PIXELS(616), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3347,7 +3348,7 @@ struct ScenePlacement gVale_Placements[] = {
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x16, 0xfd0, 7,
+    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3381,7 +3382,7 @@ struct ScenePlacement gVale_PlacementsAfterLeaving[] = {
         PIXELS(412), 0, PIXELS(586), FACING_WEST, 3, 0 },
     { 0x25, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(398), 0, PIXELS(616), FACING_NORTH, 3, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(335), 0, PIXELS(869), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3393,7 +3394,7 @@ struct ScenePlacement gVale_PlacementsAfterLeaving[] = {
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x16, 0xfd0, 7,
+    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3425,9 +3426,9 @@ struct ScenePlacement gVale_PlacementsAfterKalay[] = {
         PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x16, 0xfd0, ACTOR_STAND,
+    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3439,7 +3440,7 @@ struct ScenePlacement gVale_RepairPlacements[] = {
         PIXELS(428), 0, PIXELS(588), FACING_WEST, TALK_FACE_PARTY, 0 },
     { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(204), 0, PIXELS(924), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(394), 0, PIXELS(584), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -3487,7 +3488,7 @@ struct SceneEvent gVale_Events[] = {
     { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningAtEitherPause) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReturnThroughSouthernPassage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, 0xfd0, EVENT_SCRIPT(Event_CatchNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchNut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleMovedPillar) },
     { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
@@ -3537,7 +3538,7 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
     { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningAtEitherPause) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReturnThroughSouthernPassage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, 0xfd0, EVENT_SCRIPT(Event_CatchNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchNut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleMovedPillar) },
     { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
@@ -3584,7 +3585,7 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReturnThroughSouthernPassage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT_AFTER_KALAY, 0xfd0, EVENT_SCRIPT(Event_CatchNutAfterKalay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT_AFTER_KALAY, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchNutAfterKalay) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_AFTER_KALAY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleMovedPillar) },
     { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },

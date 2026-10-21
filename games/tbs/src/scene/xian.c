@@ -50,6 +50,7 @@
 /// clears FLAG_SHOW_LOCATION_NAME, so the name is not shown again.
 
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "unit/import.h"
 #include "unit/scene/xian.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -136,10 +137,10 @@ enum { ANIM_PUDDLE_FROZEN = 5 };
 /// for two seconds.
 enum { XIAN_TRIGGER_CARRIER_BLOCKED = 200, XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
-/// Talking to Mist in Xian: Mist, a Mercury Djinni (Mercury's Djinni 2),
+/// Talking to Mist in Xian: Mist, a Mercury Djinni,
 /// joins the party.
 static void Xian_MistJoins(void) {
-  Djinn_JoinParty(ACTOR_MIST, ELEMENT_MERCURY, 2);
+  Djinn_JoinParty(ACTOR_MIST, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_MIST));
 }
 
 /// Draws the frozen puddle under the leader while the leader stands on top of
@@ -988,13 +989,13 @@ struct ScenePlacement gXian_Placements[] = {
         PIXELS(368), 0, PIXELS(496), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
     { 0x9f, CONDITION_ALWAYS, (s32)gXian_WaterCarrierRoute,
         PIXELS(280), 0, PIXELS(232), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0xe3, CONDITION_ALWAYS, 7,
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x5b, FLAG_DJINNI_0 + ELEMENT_MERCURY * 20 + 2, ACTOR_STAND,
+    { 0x5b, FLAG_DJINNI_0 + DJINNI_MIST, ACTOR_STAND,
         PIXELS(448), 0, PIXELS(328), FACING_WEST, TALK_FACE_PARTY, 0 },
     { 0xdf, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(426), 0, PIXELS(428), FACING_WEST, TALK_FACE_PARTY, 0 },

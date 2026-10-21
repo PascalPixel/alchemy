@@ -126,14 +126,14 @@ void Colosso_ControlCharacterAlone(s32 id) {
 }
 
 /// A scene callback while a friend looks around the stages alone (the visit to
-/// lend a hand): when the Psynergy request names that friend and flag 0x141 is
-/// set, raise event 99, Colosso_TakePlaceForMatch.
+/// lend a hand): when the Psynergy request names that friend and
+/// FLAG_PSYNERGY_TARGET is set, raise event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct EventWork *work = gEventWork;
   s32 selection = gGameState.selectedActor;
 
   if (selection != 0 && (work->psynergyRequest >> 10) == selection &&
-      Engine_GameFlagIsSet(0x141) != 0) {
+      Engine_GameFlagIsSet(FLAG_PSYNERGY_TARGET) != 0) {
     u16 *raised = (u16 *)&work->raisedTrigger;
     s32 trigger = 99;
 

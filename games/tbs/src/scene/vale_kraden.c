@@ -1079,7 +1079,7 @@ static void Event_FightFirstMonster(void) {
   work->transitionFrames = 64;
 
   Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
-  Field_RequestBattleFromEncounterTable(12, 0);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 0);
   Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
   Engine_EventEnd();
 }
@@ -1100,7 +1100,7 @@ static void Event_FightSecondMonster(void) {
   work->transitionFrames = 64;
 
   Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);
-  Field_RequestBattleFromEncounterTable(12, 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 1);
   Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
   Engine_EventEnd();
 }

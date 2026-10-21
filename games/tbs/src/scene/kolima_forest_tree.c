@@ -961,9 +961,9 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
   case 40:
     Engine_AudioPlayCue(SE_220);
     for (sparkIndex = 0; sparkIndex <= 5; sparkIndex++) {
-      spark = Engine_ObjectCreate(0x11d, gKolimaForestTreeSparkOrigin[0],
-                                  gKolimaForestTreeSparkOrigin[1],
-                                  gKolimaForestTreeSparkOrigin[2]);
+      spark = Engine_ObjectCreate(
+          SPRITE_SPARKLE, gKolimaForestTreeSparkOrigin[0],
+          gKolimaForestTreeSparkOrigin[1], gKolimaForestTreeSparkOrigin[2]);
       if (spark != 0) {
         previousSprite = Sprite_ShareVramCache(spark->sprite, previousSprite);
         spark->motionFlags = 0;
@@ -1054,13 +1054,13 @@ struct ScenePlacement gKolimaForestTreePlacements[] = {
         PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x38, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(270), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(270), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(327), 0, PIXELS(194), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(272), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x37, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },

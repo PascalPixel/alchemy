@@ -52,7 +52,7 @@ void FieldFx_RunForce(void) {
     caster = scene->mainObject;
     BattleFx_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
-    EffectSlot_Initialize(slot, 0x11c, pos.x, pos.z);
+    EffectSlot_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
@@ -177,7 +177,8 @@ void FieldFx_RunForce(void) {
   }
 
   // Run the map's event for it, if there is one.
-  event = BattleFx_FindMatchingEvent(0x50000005, 4, &eventTarget);
+  event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                     FIELD_KIND_FORCE, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   WaitFrames(10);

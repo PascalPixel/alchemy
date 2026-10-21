@@ -11,9 +11,9 @@
 #include "frame.h"
 #include "battle_work.h"
 
-/// gDebugMode under the battle's name. While it and flag 0x16d are set,
-/// holding R as an action is planned defeats every enemy, or with Select the
-/// party (BattleCommand_BuildPlan).
+/// gDebugMode under the battle's name. While it and FLAG_DEBUG_BATTLE_KEYS are
+/// set, holding R as an action is planned defeats every enemy, or with Select
+/// the party (BattleCommand_BuildPlan).
 #define BATTLE_AUTO_MODE gDebugMode
 /// gKeysHeld under the battle's name: the keys held this frame.
 #define BATTLE_OPTIONS gKeysHeld

@@ -143,7 +143,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     pos.z = orb->z;
     Camera_WorldToScreen((struct EffectVector *)&pos.x);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
-    EffectSlot_Initialize(slot, 285, pos.x, pos.z);
+    EffectSlot_Initialize(slot, SPRITE_SPARKLE, pos.x, pos.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialCamera);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object, SPRITE_COLOR_WHITE);
     slot++;

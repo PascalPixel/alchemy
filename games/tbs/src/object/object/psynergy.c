@@ -8,8 +8,9 @@
 /// user (bits 10 to 13; 15 for character 0) and ACT_PACKED to use it without
 /// paying PP. Checks it can be used here (Reveal not on the world map, Retreat
 /// where it is not blocked, after asking), pays its PP, then plays its effect
-/// between the scene's Psynergy events for what the leader faces: phase 1
-/// before and phase 0 after. A phase 5 event is not run here; it only makes
+/// between the scene's Psynergy events for what the leader faces:
+/// PSYNERGY_PHASE_BEFORE_CAST before and PSYNERGY_PHASE_AFTER_CAST after. A
+/// PSYNERGY_PHASE_EFFECT_ACTS event is not run here; it only makes
 /// the effect aim at the actor ahead, and the effects that act on it (Force,
 /// Frost, Reveal) find it themselves. An after event whose trigger has flag
 /// 0x400 plays the effect itself. Called by Field_RunScene for the Psynergy
@@ -73,7 +74,7 @@ s32 Field_UsePsynergy(u32 code) {
     work->exit = EXIT_RETREAT;
     retreat = 1;
   }
-  // A use that pays no PP only runs the scene's events (phases 3 and 2).
+  // A use that pays no PP only runs the scene's ending events.
   if (code & ACT_PACKED)
     return Field_RunPsynergyEvents(code);
 
@@ -93,9 +94,12 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Find the scene's events, and choose how the effect plays. The before
   // event runs before the two flags are read, so its script can change them.
-  before = BattleFx_FindMatchingEvent(PSYNERGY_EV(1), abilityGroup, &target);
-  after = BattleFx_FindMatchingEvent(PSYNERGY_EV(0), abilityGroup, &target);
-  during = BattleFx_FindMatchingEvent(PSYNERGY_EV(5), abilityGroup, &target);
+  before = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_CAST),
+                                      abilityGroup, &target);
+  after = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_AFTER_CAST),
+                                     abilityGroup, &target);
+  during = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                      abilityGroup, &target);
   target = -1;
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);

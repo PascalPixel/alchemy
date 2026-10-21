@@ -1065,7 +1065,7 @@ struct ScenePlacement gTolbiShipMast_EnsembleObjects[] = {
 struct ScenePlacement gTolbiShipMast_LandingObjects[] = {
     { 0xc5, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

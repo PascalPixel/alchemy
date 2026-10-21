@@ -11,8 +11,8 @@
 #define TILE_CELLS_NORTH ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
 
 /// Makes the leader jump two tiles forward, over the tile in front, when the
-/// map allows it (Map_CheckObjectStep). On a platform object (SPRITE_PLATFORM
-/// or SPRITE_PLATFORM_2) the platform plays its animation 7 and the leader bobs
+/// map allows it (Map_CheckObjectStep). On a log (SPRITE_LOG_WEST_EAST
+/// or SPRITE_LOG_NORTH_SOUTH) the log plays its animation 7 and the leader bobs
 /// down 2 pixels and back. Each jump adds two tiles to work->walkingDistance,
 /// as walking them would, and the leader keeps jumping while it lands on
 /// another jump spot (MAP_CELL_JUMP_FORWARD_UNREACHED). Returns 0 after a jump,
@@ -76,11 +76,11 @@ again:
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)leader,
                                           spriteFlags);
 
-    // A platform underfoot dips 2 pixels with the leader and comes back up.
-    if ((platform = Object_FindNearestFacingTarget(leader, SPRITE_PLATFORM)) !=
-            NULL ||
+    // A log underfoot dips 2 pixels with the leader and comes back up.
+    if ((platform = Object_FindNearestFacingTarget(
+             leader, SPRITE_LOG_WEST_EAST)) != NULL ||
         (platform = Object_FindNearestFacingTarget(
-             leader, SPRITE_PLATFORM_2)) != NULL) {
+             leader, SPRITE_LOG_NORTH_SOUTH)) != NULL) {
       ObjectDispatch_SelectAnimationFar(platform, 7);
       leader->y -= 0x10000;
       leader->terrainHeight -= 0x10000;

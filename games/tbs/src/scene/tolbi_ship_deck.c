@@ -1939,7 +1939,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_TolbiShipDeck,
                            TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
-  Field_RequestBattleFromEncounterTable(62, 3);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 3);
   Engine_EventEnd();
 }
 
@@ -3340,7 +3340,7 @@ const struct ScenePlacement gTolbiShipDeck_CrewScriptD[] = {
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0xc5, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3362,7 +3362,7 @@ const struct ScenePlacement gTolbiShipDeck_CrewScriptE[] = {
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xc2, CONDITION_ALWAYS, 7,
         PIXELS(216), 0, PIXELS(540), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x16, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(216), 0, PIXELS(640), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -3416,7 +3416,7 @@ const struct ScenePlacement gTolbiShipDeckPlacementsArrived[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x16, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

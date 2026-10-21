@@ -119,10 +119,12 @@ enum {
   SMOG = LAST_PIT + 1 ///< Smog, a Jupiter Djinni
 };
 
-/// The encounter zone of the scripted battles of Mogall Forest, Altin Peak and
-/// Lamakan Desert, whose last two slots hold the battles with the Ant Lions and
-/// the Manticore.
-enum { LAMAKAN_ENCOUNTERS = 53 };
+/// The desert's two Psynergy Stones, place flags: each is back once the
+/// party has left Lamakan Desert.
+enum {
+  FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE = FLAG_PLACE_TEMP_50,
+  FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE = FLAG_PLACE_TEMP_51
+};
 
 #define NULL ((void *)0)
 
@@ -132,8 +134,7 @@ enum { LAMAKAN_ENCOUNTERS = 53 };
 /// LamakanDesertSmog: talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
 static void TalkToSmog(void) {
-  Djinn_JoinParty(SMOG, ELEMENT_JUPITER,
-                  DJINNI_SMOG - DJINN_PER_ELEMENT * ELEMENT_JUPITER);
+  Djinn_JoinParty(SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
 
 #include "common/object_waitdown.h"
@@ -393,7 +394,8 @@ static void FightManticore(void) {
   Event_SetNextDestination((s32)&SceneId_LamakanDesertManticore,
                            LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
   Battle_SetStart(BATTLE_START_SCENE);
-  Field_RequestBattleFromEncounterTable(LAMAKAN_ENCOUNTERS, 5);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 5);
 }
 
 /// Lamakan Desert, raised trigger 1, 2 or 3 as the heat gauge passes a
@@ -738,7 +740,8 @@ static void FallIntoPit(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   record = Object_GetById(ACTOR_PARTY_LEADER);
   record->update = NULL;
-  Field_RequestBattleFromEncounterTable(LAMAKAN_ENCOUNTERS, 4);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
 }
 
 /// Lamakan Desert, trigger 30, on a slope of sand: the sand carries the leader
@@ -1264,15 +1267,15 @@ struct SceneEvent gLamakanDesertEvents[] = {
     { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MeetManticore) },
     { EVENT_TALK, MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(FightManticore) },
     { EVENT_TALK, SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToSmog) },
-    { SEARCH(SEARCH_CHEST), 100, 0xf7b, FIND_ITEM(ITEM_VULCAN_AXE) },
-    { SEARCH(SEARCH_UNNAMED), 101, 0x350, FIND_PSYNERGY_STONE },
-    { SEARCH(SEARCH_CHEST), 102, 0xf7c, FIND_ITEM(ITEM_LUCKY_PEPPER) },
-    { SEARCH(SEARCH_UNNAMED), 103, 0x351, FIND_PSYNERGY_STONE },
-    { SEARCH(SEARCH_CHEST), 105, 0xf7d, FIND_COINS(777) },
-    { SEARCH(SEARCH_CHEST), 106, 0xf7e, FIND_ITEM(ITEM_POTION) },
-    { SEARCH(SEARCH_CHEST), 107, 0xf7f, FIND_ITEM(ITEM_MINT) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_ShowSecrets) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_HideSecrets) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
+    { SEARCH(SEARCH_UNNAMED), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
+    { SEARCH(SEARCH_UNNAMED), 103, FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { SEARCH(SEARCH_CHEST), 105, FLAG_LAMAKAN_DESERT_777_COINS, FIND_COINS(777) },
+    { SEARCH(SEARCH_CHEST), 106, FLAG_LAMAKAN_DESERT_POTION, FIND_ITEM(ITEM_POTION) },
+    { SEARCH(SEARCH_CHEST), 107, FLAG_LAMAKAN_DESERT_MINT, FIND_ITEM(ITEM_MINT) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_ShowSecrets) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Reveal_HideSecrets) },
     { EVENT_RAISED, 1, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },
     { EVENT_RAISED, 2, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },
     { EVENT_RAISED, 3, FLAG_SECRETS_REVEALED, EVENT_SCRIPT(ComplainAboutHeat) },

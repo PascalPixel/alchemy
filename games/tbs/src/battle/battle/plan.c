@@ -229,12 +229,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     return PLAN_NO_ACTION;
 
   // Debug: hold R to defeat all enemies, or R+Select to defeat the whole party.
-  // Only in debug mode, with flag 0x16d set; each unit loses 0x40000000 HP,
-  // more than any unit has. Flag 0x16d is set by Vale's debug entrance
-  // (ValeGate_SetProgressFlagsAndExit) and by the Colosseum's escorts as Mia
-  // takes Jenna's place (colosseum_entrance.c). XXX: what the flag means; a
-  // reader that tests it outside this debug key would say.
-  if (BATTLE_AUTO_MODE && GameFlag_TestFar(0x16d) && (BATTLE_OPTIONS & KEY_R)) {
+  // Only in debug mode, with FLAG_DEBUG_BATTLE_KEYS set; each unit loses
+  // 0x40000000 HP, more than any unit has.
+  if (BATTLE_AUTO_MODE && GameFlag_TestFar(FLAG_DEBUG_BATTLE_KEYS) &&
+      (BATTLE_OPTIONS & KEY_R)) {
     s32 enemy = 1;
     s32 index;
     s32 id;

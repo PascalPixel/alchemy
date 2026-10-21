@@ -30,7 +30,8 @@
 ///   left behind (FLAG_VALE_STORM_GARET_JOINED). With Garet along, the first
 ///   fallen rock has him say they must find another way, and the path north has
 ///   him turn Isaac back, since it leads to Mt. Aleph. Two cells start a
-///   monster battle each, once (encounters 2 and 3 of table 12).
+///   monster battle each, once (slots 2 and 3 of
+///   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 /// - Further on, the Boulder slips toward Vale while the elders strain to
 ///   hold it, and they tell the boys to run (Event_WatchBoulderFall,
 ///   FLAG_VALE_BOULDER_FELL; from then on it stays where it slipped to).
@@ -2699,8 +2700,8 @@ static void ValeStorm_RebuildRiverbank(void) {
   Engine_MapRedraw();
 }
 
-/// In Vale on the stormy night, a monster attacks on the paths (encounter 2 of
-/// table 12).
+/// In Vale on the stormy night, a monster attacks on the paths (slot 2 of
+/// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 /// Reached by stepping on cell code 16 until
 /// FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT is set.
 static void Event_FightThirdMonster(void) {
@@ -2712,13 +2713,13 @@ static void Event_FightThirdMonster(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
   Engine_GameFlagSet(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
-  Field_RequestBattleFromEncounterTable(12, 2);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 2);
   Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
   Engine_EventEnd();
 }
 
-/// In Vale on the stormy night, another monster attacks (encounter 3 of table
-/// 12).
+/// In Vale on the stormy night, another monster attacks (slot 3 of
+/// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 /// Reached by stepping on cell code 17 until
 /// FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT is set.
 static void Event_FightFourthMonster(void) {
@@ -2730,7 +2731,7 @@ static void Event_FightFourthMonster(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
   Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
-  Field_RequestBattleFromEncounterTable(12, 3);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 3);
   Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
   Engine_EventEnd();
 }
@@ -3225,13 +3226,13 @@ struct ScenePlacement gValeStorm_Placements[] = {
 };
 
 struct ScenePlacement gValeStorm_BoulderWatchers[] = {
-    { 0x16, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(85), 0, PIXELS(361), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(135), 0, PIXELS(363), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(100), 0, PIXELS(375), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },

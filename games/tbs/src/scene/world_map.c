@@ -363,7 +363,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
   x = actor->x.fixed;
   y = actor->y.fixed;
   z = actor->z.fixed;
-  spark = Engine_ObjectCreate(0x11d, x, y, z);
+  spark = Engine_ObjectCreate(SPRITE_SPARKLE, x, y, z);
   Engine_AudioPlayCue(SE_246);
   if (spark == 0)
     return;
@@ -1468,7 +1468,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
   GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_B);
   DjinnMenu_Open();
   Engine_EventWait(30);
-  Field_RequestBattleFromEncounterTable(12, 6);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 6);
 }
 
 /// Walking up to Flint: he joins the party and shows how Djinn are set and put
@@ -1497,7 +1497,7 @@ static void Event_MeetFlint(void) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0)
       Actor_SetPosition(ACTOR_VENUS_DJINNI, leader->x.fixed, leader->z.fixed);
-    Djinn_AddToOwner(0, 0, 0);
+    Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
     DjinnRecovery_AddStandby(0, 0, 0);
     WorldMap_BeginEvent();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
@@ -1676,7 +1676,8 @@ static void Event_MeetFlint(void) {
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   WorldMap_EndEvent();
-  Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS, 0);
+  Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS,
+                  DJINNI_INDEX(DJINNI_FLINT));
   Event_PlayCue(MUS_042);
   Event_End();
   GameFlag_Clear(FLAG_DJINN_TUTORIAL);
@@ -1973,7 +1974,7 @@ static void Event_UseBlackOrb(void) {
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 28);
   // Present the orb icon before its sparks and the ship's response.
-  orb = Object_Create(22, leader->x.fixed + PIXELS(2), PIXELS(38),
+  orb = Object_Create(SPRITE_BLANK, leader->x.fixed + PIXELS(2), PIXELS(38),
                       leader->z.fixed);
   if (orb != NULL) {
     u8 *motion;
@@ -2370,7 +2371,7 @@ static void WorldMap_SpawnIslandWake(void) {
   if ((*(s32 *)&gFrameCount & 15) != 0)
     return;
   leader = Object_GetById(ACTOR_DRIFTING_ISLAND);
-  actor = Engine_ObjectCreate(222, leader->x.fixed - PIXELS(32),
+  actor = Engine_ObjectCreate(SPRITE_DUST_PUFF, leader->x.fixed - PIXELS(32),
                               leader->y.fixed, leader->z.fixed - PIXELS(16));
   if (actor == 0)
     return;
@@ -2511,9 +2512,9 @@ static void Event_StartDousingStorm(void) {
 }
 
 /// Douse on the storm: the party comes down and the battle with what is in it
-/// begins (encounter table 98, entries 5 and 7), as with the Suhalla Desert's
-/// storms. Reached by Douse on the storm (ACTOR_STORM) while it holds the
-/// party in the air. Clears FLAG_SCENE_TEMP_F0, sets FLAG_SCENE_TEMP_F1 and
+/// begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
+/// Desert's storms. Reached by Douse on the storm (ACTOR_STORM) while it holds
+/// the party in the air. Clears FLAG_SCENE_TEMP_F0, sets FLAG_SCENE_TEMP_F1 and
 /// empties the timer.
 static void Event_DouseMapStorm(void) {
   struct FieldActor *selectedActor;
@@ -3431,7 +3432,7 @@ struct ScenePlacement gWorldMapPlacementsHammetsCaravan[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3574,7 +3575,7 @@ struct SceneEvent gWorldMapEvents[] = {
     { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_LALIVERO), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterLalivero) },
     { TOUCH_WALKING_INTO(FACING_EAST), 74, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT_SCRIPT(Event_ReturnToTolbiShip) },
     { EVENT_EXIT | EVENT_TOUCH_FACING | FACING_NORTH, 75, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, 1), ACTOR_STORM, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_StartDousingStorm) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_STORM, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_StartDousingStorm) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_STORM, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_DouseMapStorm) },
     { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StormDropsParty) },
     { SCENE_EVENTS_END },

@@ -49,6 +49,7 @@
 /// and, once Kite has run behind its ledge, puts it back there.
 
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "version.h"
 #include "engine_call.h"
 #include "global_cells.h"
@@ -134,10 +135,8 @@ enum ValeCaveLogsActor {
 #define ACTOR_LANDING_TIMEOUT 60
 #define FIRST_DJINNI_ROUTE_TRIGGER 45
 
-/// The flag of Kite, set once it is caught: Kite is number 4 of the Jupiter
-/// Djinn, whose flags follow the three elements before Jupiter, twenty flags
-/// to an element.
-#define FLAG_KITE (FLAG_DJINNI_0 + 3 * 20 + 4)
+/// The flag of Kite, set once it is caught.
+#define FLAG_KITE (FLAG_DJINNI_0 + DJINNI_KITE)
 
 // The cave's scene flags:
 // - FLAG_SCENE_TEMP_00 and _01: in the second room, the western and eastern
@@ -169,7 +168,7 @@ static void ValeCave_ApplyEntryState(void);
 /// FLAG_KITE, so
 /// neither room places Kite again.
 static void Event_TalkToKite(void) {
-  Djinn_JoinParty(ACTOR_KITE, ELEMENT_JUPITER, 4);
+  Djinn_JoinParty(ACTOR_KITE, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_KITE));
 }
 
 /// Waits for an actor to land, bounded by a one-second timeout.
@@ -255,15 +254,16 @@ const struct ScenePlacement *ValeCave_GetPlacements(void) {
 
 /// In Vale Cave's second room, Reveal ends and the hidden tile is hidden again.
 ///
-/// Reached by Reveal's phase 4 anywhere in the second room.
+/// Reached by Reveal's PSYNERGY_PHASE_EFFECT_ENDS anywhere in the second room.
 static void Event_HideRevealedTile(void) {
   Map_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
 /// In Vale Cave's second room, Reveal shows a hidden tile.
 ///
-/// Reached by Reveal's phase 5 anywhere in the second room; copies cell
-/// (16, 17) over cell (15, 15) until Event_HideRevealedTile puts it back.
+/// Reached by Reveal's PSYNERGY_PHASE_EFFECT_ACTS anywhere in the second room;
+/// copies cell (16, 17) over cell (15, 15) until Event_HideRevealedTile puts it
+/// back.
 static void Event_RevealHiddenTile(void) {
   Map_CopyCells(16, 17, 1, 1, 15, 15);
 }
@@ -1040,15 +1040,15 @@ u32 gValeCave_Exits[] = {
 };
 
 struct ScenePlacement gValeCave_Placements1[] = {
-    { 0xf1, CONDITION_ALWAYS, 7,
+    { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf1, CONDITION_ALWAYS, 7,
+    { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(232), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf1, CONDITION_ALWAYS, 7,
+    { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(192), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(208), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -1056,19 +1056,19 @@ struct ScenePlacement gValeCave_Placements1[] = {
 struct ScenePlacement gValeCave_Placements2[] = {
     { 0x5d, FLAG_KITE, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xf1, CONDITION_ALWAYS, 7,
+    { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(344), 0, PIXELS(632), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf1, CONDITION_ALWAYS, 7,
+    { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(456), 0, PIXELS(664), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(376), 0, PIXELS(576), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf1, CONDITION_ALWAYS, 7,
+    { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(422), 0, PIXELS(206), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf1, CONDITION_ALWAYS, 7,
+    { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(440), 0, PIXELS(206), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(384), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(400), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
@@ -1076,11 +1076,11 @@ struct ScenePlacement gValeCave_Placements2[] = {
 struct ScenePlacement gValeCave_Placements3[] = {
     { 0x5d, FLAG_KITE, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(200), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(312), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(240), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -1130,8 +1130,8 @@ struct SceneEvent gValeCave_Events2[] = {
     { EVENT_TALK_HALTED, ACTOR_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKite) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenTile) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRevealedTile) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenTile) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRevealedTile) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_CRATES, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MoveWestCratesIntoHole) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_CRATES, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_MoveEastCratesIntoHole) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltKite) },

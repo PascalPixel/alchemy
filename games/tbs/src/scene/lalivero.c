@@ -39,6 +39,7 @@
 /// Life, a Psy Crystal and a Warrior's Helm.
 
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "unit/scene/lalivero.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -101,7 +102,8 @@ enum LaliveroActor {
   /// Keeps the door to Babi's ship. "Babi's most precious belonging is kept
   /// here. No one may enter!"
   ACTOR_WHARF_GUARD,
-  /// Three plants, sprite 0xee, the sprout Growth grows at Alpine Crossing and
+  /// Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing
+  /// and
   /// Suhalla Gate. Here they stand in animation 3, block nothing and no event
   /// answers them.
   ACTOR_FIRST_PLANT,
@@ -124,7 +126,9 @@ enum {
 
 /// Lalivero, either visit: talking to Torch, a Mars Djinni, makes it join the
 /// party.
-static void TalkToTorch(void) { Djinn_JoinParty(ACTOR_TORCH, ELEMENT_MARS, 6); }
+static void TalkToTorch(void) {
+  Djinn_JoinParty(ACTOR_TORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
+}
 
 const struct SceneEntrance *Lalivero_GetEntrances(void) {
   return gLaliveroEntrances;
@@ -974,9 +978,9 @@ u32 gLaliveroExits[] = {
 
 // clang-format off
 struct ScenePlacement gLaliveroPlacements[] = {
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(224), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(288), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x6c, CONDITION_ALWAYS, (s32)gLaliveroMournerSobs,
         PIXELS(248), 0, PIXELS(96), FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -994,13 +998,13 @@ struct ScenePlacement gLaliveroPlacements[] = {
         PIXELS(200), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x66, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(248), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(72), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(160), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(128), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(440), 0, PIXELS(400), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x39, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_KEEP_FACING, 0 },
@@ -1010,9 +1014,9 @@ struct ScenePlacement gLaliveroPlacements[] = {
 };
 
 struct ScenePlacement gLaliveroPlacementsAfterLighthouse[] = {
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(280), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(248), 0, PIXELS(112), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1030,13 +1034,13 @@ struct ScenePlacement gLaliveroPlacementsAfterLighthouse[] = {
         PIXELS(200), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x66, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(248), 0, PIXELS(232), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(72), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(160), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(128), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(440), 0, PIXELS(400), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x39, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_KEEP_FACING, 0 },
@@ -1044,7 +1048,7 @@ struct ScenePlacement gLaliveroPlacementsAfterLighthouse[] = {
         PIXELS(200), 0, PIXELS(136), FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x112, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(248), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },

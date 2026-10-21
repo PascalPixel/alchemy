@@ -54,7 +54,7 @@ void Kolima_UpdateCurseDust(void) {
     break;
   }
   if ((gFrameCount & 7) == 0 &&
-      (object = Engine_ObjectCreate(285, 0, 0, 0)) != 0) {
+      (object = Engine_ObjectCreate(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
     origin = ((struct MapScrollWork *)gMapWork[0])->origin;
     if ((gFrameCount & 63) == 0)
       Engine_AudioPlayCue(SE_246);

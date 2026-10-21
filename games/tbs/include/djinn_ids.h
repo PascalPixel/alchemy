@@ -7,6 +7,10 @@
 /// The Djinn of each element.
 #define DJINN_PER_ELEMENT 20
 
+/// A Djinni's place among its element's Djinn, from 0, as Djinn_JoinParty and
+/// the owners' Djinn lists take it.
+#define DJINNI_INDEX(id) ((id) % DJINN_PER_ELEMENT)
+
 /// Djinn, numbered as Field_RequestDjinnBattle and FLAG_DJINNI_0 count them:
 /// DJINN_PER_ELEMENT to an element, in the order Venus, Mercury, Mars, Jupiter.
 /// A Djinni's English name is the message MsgDjinnName + its number.

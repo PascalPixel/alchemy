@@ -406,21 +406,24 @@ static void AltinPeak_FightFirstWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakFirstWaterBeast,
                            ENTRANCE_AFTER_BATTLE);
-  Field_RequestBattleFromEncounterTable(53, 2);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
 static void AltinPeak_FightSecondWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakSecondWaterBeast,
                            ENTRANCE_AFTER_BATTLE);
-  Field_RequestBattleFromEncounterTable(53, 2);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
 static void AltinPeak_FightThirdWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakThirdWaterBeast,
                            ENTRANCE_AFTER_BATTLE);
-  Field_RequestBattleFromEncounterTable(53, 2);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
 /// Move on AltinPeakSpritz's pillar: the cell it left becomes free again and
@@ -2043,7 +2046,8 @@ static void AltinPeak_StartHydrosBattle(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakHydrosStatue,
                            ENTRANCE_AFTER_BATTLE);
-  Field_RequestBattleFromEncounterTable(53, 3);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 3);
 }
 
 /// Scheduler task while the statue sinks: it flickers every other frame.
@@ -2843,9 +2847,9 @@ struct ScenePlacement gAltinPeak_PlacementsOther[] = {
 };
 
 struct ScenePlacement gAltinPeak_FirstWaterBeastPlacements[] = {
-    {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(152), 0, PIXELS(216), FACING_SOUTH,
+    {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(152), 0, PIXELS(216), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(296), 0, PIXELS(216), FACING_SOUTH,
+    {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(296), 0, PIXELS(216), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {0xbe, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(296), 0, PIXELS(336), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
@@ -2865,7 +2869,7 @@ struct ScenePlacement gAltinPeak_SecondWaterBeastPlacements[] = {
 struct ScenePlacement gAltinPeak_ThirdWaterBeastPlacements[] = {
     {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(536), 0, PIXELS(296), FACING_EAST,
         TALK_KEEP_FACING, 0},
-    {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(408), 0, PIXELS(216), FACING_SOUTH,
+    {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(408), 0, PIXELS(216), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {0xbe, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(759), 0, PIXELS(285), FACING_WEST,
         TALK_KEEP_FACING, 0},
@@ -2875,7 +2879,7 @@ struct ScenePlacement gAltinPeak_ThirdWaterBeastPlacements[] = {
 struct ScenePlacement gAltinPeak_PoolPlacements[] = {
     {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(712), 0, PIXELS(184), FACING_EAST,
         TALK_KEEP_FACING, 0},
-    {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(696), 0, PIXELS(664), FACING_SOUTH,
+    {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(696), 0, PIXELS(664), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };
@@ -2883,17 +2887,17 @@ struct ScenePlacement gAltinPeak_PoolPlacements[] = {
 struct ScenePlacement gAltinPeak_SpritzPlacements[] = {
     {0xe7, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(264), 0, PIXELS(408), FACING_EAST,
         TALK_KEEP_FACING, 0},
-    {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(424), 0, PIXELS(424), FACING_SOUTH,
+    {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(424), 0, PIXELS(424), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0xd3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(408), 0, PIXELS(424), FACING_SOUTH,
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(408), 0, PIXELS(424), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(280), 0, PIXELS(168), FACING_SOUTH,
+    {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(280), 0, PIXELS(168), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0xe3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(424), 0, PIXELS(248), FACING_SOUTH,
+    {SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(424), 0, PIXELS(248), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(520), 0, PIXELS(632), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0x5b, FLAG_DJINNI_0 + 23, ACTOR_STAND, PIXELS(56), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {0x5b, FLAG_DJINNI_0 + DJINNI_SPRITZ, ACTOR_STAND, PIXELS(56), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2907,8 +2911,8 @@ struct ScenePlacement gAltinPeak_FallingRocksPlacements[] = {
     {0xc8, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(784), 0, PIXELS(80), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {0x120, CONDITION_ALWAYS, 7, PIXELS(784), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0xcd, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(76), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x16, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(76), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_BLANK, CONDITION_ALWAYS, 7, PIXELS(774), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {0x112, CONDITION_ALWAYS, 7, PIXELS(792), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
@@ -2928,7 +2932,7 @@ struct ScenePlacement gAltinPeak_HydrosStatuePlacements[] = {
 struct ScenePlacement gAltinPeak_WestExitPlacements[] = {
     {0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(280), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0xd3, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(200), 0, PIXELS(328), FACING_SOUTH,
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(200), 0, PIXELS(328), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };

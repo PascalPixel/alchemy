@@ -396,7 +396,8 @@ static void Event_FightTret(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_TretTreeInteriors,
                            TRET_TREE_INTERIORS_AFTER_FIGHT_TRET);
-  Field_RequestBattleFromEncounterTable(36, 0);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
+                                        0);
   EV_END();
 }
 
@@ -938,8 +939,8 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
     // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
     // converting them to turns, preserving the original rounding.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
-      spark = Engine_ObjectCreate(0x11d, sSparkOrigin.x, sSparkOrigin.y,
-                                  sSparkOrigin.z);
+      spark = Engine_ObjectCreate(SPRITE_SPARKLE, sSparkOrigin.x,
+                                  sSparkOrigin.y, sSparkOrigin.z);
       if (spark != 0) {
         previousResourceEntry =
             Sprite_ShareVramCache(spark->sprite, previousResourceEntry);
@@ -987,8 +988,8 @@ static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
   }
 }
 
-/// Casting Reveal in Tret Tree (its phase 5) stops the scene tint until the
-/// scene is entered again.
+/// Casting Reveal in Tret Tree (PSYNERGY_PHASE_EFFECT_ACTS) stops the scene
+/// tint until the scene is entered again.
 static void Event_CastReveal(void) {
   Engine_TaskRemoveCallback(TretPalette_UpdateSceneTint);
 }
@@ -1401,8 +1402,8 @@ struct SceneEvent gTretTreeInteriorsEvents[] = {
     {EVENT_TOUCH, 58, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon58)},
     {EVENT_TOUCH, 59, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon59)},
     {EVENT_TOUCH, 40, FLAG_TRET_DEFEATED, EVENT_SCRIPT(Event_FightTret)},
-    {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_CastReveal)},
+    {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,
+     CONDITION_ALWAYS, EVENT_SCRIPT(Event_CastReveal)},
     {SEARCH(SEARCH_CHEST), 100, 0xf5b, FIND_ITEM(ITEM_HEALING_RING)},
     {SEARCH(SEARCH_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT)},
     {SEARCH(SEARCH_UNNAMED), 102, 0x350, FIND_PSYNERGY_STONE},

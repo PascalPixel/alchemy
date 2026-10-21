@@ -10,6 +10,7 @@
 #include "mem.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "heap_state.h"
 
 // Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
 // in the room, actors in a row from the first the scene passes, each pulsing
@@ -35,20 +36,21 @@ struct SolSanctumRingEntry {
   u8 pad26[2];
 };
 
-/// The floating lights' work in work slot 33, one entry per light.
+/// The floating lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS, one entry per
+/// light.
 struct SolSanctumRingList {
   struct SolSanctumRingEntry entries[SOL_SANCTUM_RING_MAX];
   u16 count;
 };
 
-/// A scene callback, the lights' work in work slot 33. Every third frame each
-/// light grows to its largest scale and shrinks to a tenth; at the smallest it
-/// vanishes for 24 steps while its drift carries on, and comes back where the
-/// drift has taken it. Its drift is a random speed on each axis, as its tables
-/// allow, turned into a sine swing.
+/// A scene callback, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS. Every
+/// third frame each light grows to its largest scale and shrinks to a tenth; at
+/// the smallest it vanishes for 24 steps while its drift carries on, and comes
+/// back where the drift has taken it. Its drift is a random speed on each axis,
+/// as its tables allow, turned into a sine swing.
 static void SolSanctum_UpdateRing(void) {
-  struct SolSanctumRingList *list =
-      Runtime_AllocateBlock(33, sizeof(struct SolSanctumRingList));
+  struct SolSanctumRingList *list = Runtime_AllocateBlock(
+      HEAP_SLOT_SOL_SANCTUM_LIGHTS, sizeof(struct SolSanctumRingList));
   struct SolSanctumRingEntry *entry = list->entries;
   u32 i;
 
@@ -187,7 +189,8 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   s32 none;
   s32 cleared;
 
-  list = Runtime_AllocateBlock(33, sizeof(struct SolSanctumRingList));
+  list = Runtime_AllocateBlock(HEAP_SLOT_SOL_SANCTUM_LIGHTS,
+                               sizeof(struct SolSanctumRingList));
   entry = list->entries;
   Dma_Fill32(0, list, sizeof(struct SolSanctumRingList));
   if (count > SOL_SANCTUM_RING_MAX)

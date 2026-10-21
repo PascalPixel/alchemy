@@ -299,7 +299,7 @@ static void Event_LandOnPillar(void) {
   s32 reboundStep;
 
   Engine_EventBegin();
-  pillarId = SceneActor_FindNearestSlotOfKindF2();
+  pillarId = SceneActor_FindNearestFloatingPlatform();
   gVenusLighthouseAerie_NearestActor = pillarId;
   if (pillarId != 0) {
     Engine_GameFlagSet(FLAG_SCENE_TEMP_50);
@@ -421,7 +421,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
   }
 
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-    s32 slot = SceneActor_FindNearestSlotOfKindF2();
+    s32 slot = SceneActor_FindNearestFloatingPlatform();
 
     if (slot != 0) {
       struct FieldActor *nearestPillar = Object_GetById(slot);
@@ -1885,12 +1885,12 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   }
   center = Actor_Get(ACTOR_BEAM_1);
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_36) != 0) {
-    effect = Object_Create(284, center->x.fixed,
+    effect = Object_Create(SPRITE_PARTICLE, center->x.fixed,
                            (s32)((u32)(Random_Next() << 8) >> 16 << 16) +
                                center->y.fixed - PIXELS(28),
                            center->z.fixed);
   } else {
-    effect = Object_Create(284, center->x.fixed,
+    effect = Object_Create(SPRITE_PARTICLE, center->x.fixed,
                            (s32)((u32)(Random_Next() << 6) >> 16 << 16) +
                                center->y.fixed - PIXELS(28),
                            center->z.fixed);
@@ -3022,7 +3022,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   }
   if (spawnParticles) {
     randomHeight = ((u32)(Random_Next() * 80) >> 16) << 16;
-    effect = Object_Create(284, center->x.fixed,
+    effect = Object_Create(SPRITE_PARTICLE, center->x.fixed,
                            center->y.fixed - randomHeight + -PIXELS(8),
                            center->z.fixed);
     if (effect != 0) {
@@ -3098,7 +3098,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   phase = gFrameCount & 15;
   if (phase != 0)
     return;
-  effect = Object_Create(284, center->actor.x.fixed + PIXELS(8),
+  effect = Object_Create(SPRITE_PARTICLE, center->actor.x.fixed + PIXELS(8),
                          center->actor.y.fixed + drift + PIXELS(8),
                          center->actor.z.fixed);
   drift /= PIXELS(6);
@@ -3329,19 +3329,19 @@ struct ScenePlacement gVenusLighthouseAeriePlacements[] = {
         PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x102, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xf2, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(440), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf2, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(472), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xf2, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(504), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xf2, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(104), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xf2, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xf2, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(168), 0, PIXELS(252), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xf2, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(504), 0, PIXELS(148), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3357,7 +3357,7 @@ struct ScenePlacement gVenusLighthouseAeriePlacements[] = {
         PIXELS(248), 0, PIXELS(172), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x23, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(252), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xf4, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },

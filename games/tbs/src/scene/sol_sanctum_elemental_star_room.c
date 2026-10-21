@@ -2136,7 +2136,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   s32 slot;
 
   glyph = NULL;
-  actor = Engine_ObjectCreate(22, x, y, z);
+  actor = Engine_ObjectCreate(SPRITE_BLANK, x, y, z);
   owner = PartyInventory_FindOwner(ITEM_MYTHRIL_BAG);
   slot = Inventory_Find(owner, ITEM_MYTHRIL_BAG);
   if (actor == NULL)
@@ -2323,7 +2323,7 @@ struct ScenePlacement gSolSanctumElementalStarRoom_Placements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, 3, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, 3, 0 },

@@ -283,7 +283,7 @@ u32 gGomaCaveWaterwayExits[] = {
 
 // clang-format off
 struct ScenePlacement gGomaCaveWaterwayPlacementsOther[] = {
-    { 0xd4, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(400), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

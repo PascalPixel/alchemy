@@ -50,6 +50,7 @@
 ///   object on the world map changes with the same flag.
 
 #include "script.h"
+#include "djinn_ids.h"
 #include "flags.h"
 #include "character_ids.h"
 #include "game_state.h"
@@ -290,7 +291,7 @@ static void Kolima_TalkToHealer(void) {
 
 /// Kolima: talking to Granite, a Venus Djinni, makes it join the party.
 static void Kolima_GraniteJoins(void) {
-  Djinn_JoinParty(ACTOR_GRANITE, ELEMENT_VENUS, 1);
+  Djinn_JoinParty(ACTOR_GRANITE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
 }
 
 /// Selects Kolima Bridge's events, or the table Kolima and Kolima Tunnel share.
@@ -409,8 +410,8 @@ static void Kolima_ShowBridgeCollapse(void) {
   Engine_AudioPlayCue(SE_188);
   // Scatter ten fragments with alternating horizontal velocities.
   for (debrisIndex = 0; debrisIndex < 10; debrisIndex++) {
-    struct FieldActor *debris =
-        Engine_ObjectCreate(222, PIXELS(148 + debrisIndex * 4), 0, PIXELS(258));
+    struct FieldActor *debris = Engine_ObjectCreate(
+        SPRITE_DUST_PUFF, PIXELS(148 + debrisIndex * 4), 0, PIXELS(258));
 
     if (debris != 0) {
       debris->motionFlags = 0;
@@ -856,7 +857,7 @@ static void Kolima_WitnessForestCurse(void) {
   gFallingEffectWidth = 0;
   firstCurtainState = &gFallingEffectState;
   gFallingEffectOffset = PIXELS(128);
-  *firstCurtainState = 1;
+  *firstCurtainState = KOLIMA_DUST_CLOSING;
   FieldScheduler_AddCallback(Kolima_UpdateCurseDust, 0xc80);
   Engine_EventWait(180);
   Event_PlayCue(MUS_021);
@@ -868,7 +869,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetAttachedEffect(MIA, 0x102);
   Engine_EventWait(60);
   Kolima_ShowMessageAndWait(IVAN, 20);
-  *firstCurtainState = 2;
+  *firstCurtainState = KOLIMA_DUST_CLOSING_WIDE;
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(GARET, 1);
@@ -892,7 +893,7 @@ static void Kolima_WitnessForestCurse(void) {
     gEventWork->message++;
   }
   sceneState = (s32 *)&gFallingEffectState;
-  *sceneState = 3;
+  *sceneState = KOLIMA_DUST_DRIFTING;
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &= 254;
   Object_GetById(GARET)->priorityFlags &= 254;
   Object_GetById(IVAN)->priorityFlags &= 254;
@@ -924,10 +925,10 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorSetSpritePriority(ACTOR_GARETS_PSYNERGY_FIELD, 2);
   Actor_SetPosition(ACTOR_GARETS_PSYNERGY_FIELD, PIXELS(94), PIXELS(225));
   Actor_SetActionScript(ACTOR_GARETS_PSYNERGY_FIELD, growFieldActions);
-  if (*sceneState != 0) {
+  if (*sceneState != KOLIMA_DUST_CENTRED) {
     do {
       Engine_TaskWait(1);
-    } while (gFallingEffectState != 0);
+    } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
   }
   Engine_EventWait(300);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
@@ -1149,7 +1150,7 @@ static void Kolima_WitnessForestCurse(void) {
   gFallingEffectWidth = 0;
   gFallingEffectOffset = PIXELS(128);
   secondCurtainState = &gFallingEffectState;
-  *secondCurtainState = 1;
+  *secondCurtainState = KOLIMA_DUST_CLOSING;
   FieldScheduler_AddCallback(Kolima_UpdateCurseDust, 0xc80);
   Engine_EventWait(80);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1174,7 +1175,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorSetSpritePriority(GARET, 3);
   Engine_ActorSetSpritePriority(IVAN, 3);
   Engine_ActorSetSpritePriority(MIA, 3);
-  *secondCurtainState = 2;
+  *secondCurtainState = KOLIMA_DUST_CLOSING_WIDE;
   Event_PlayCue(SE_220);
   Actor_SetPosition(ACTOR_LEADERS_PSYNERGY_FIELD, PIXELS(120), PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
@@ -1188,10 +1189,10 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetPosition(ACTOR_GARETS_PSYNERGY_FIELD, PIXELS(94), PIXELS(225));
   Actor_SetActionScript(ACTOR_GARETS_PSYNERGY_FIELD, growFieldActions);
   Engine_EventWait(120);
-  *secondCurtainState = 3;
+  *secondCurtainState = KOLIMA_DUST_DRIFTING;
   do {
     Engine_TaskWait(1);
-  } while (gFallingEffectState != 0);
+  } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
   // Tret and Laurel, unseen, wonder at the party's immunity to the glamour.
   Kolima_ShowMessageAndWait(ACTOR_TRET, 80);
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
@@ -1796,13 +1797,13 @@ struct ScenePlacement gKolimaPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0xdc, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
+    { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(24), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
+    { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
+    { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
+    { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x5a, 0x31, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -1812,15 +1813,15 @@ struct ScenePlacement gKolimaPlacements[] = {
 /// Five more glints, placed by Kolima_Initialize once the curse has been seen
 /// and kept while it lasts.
 struct ScenePlacement gKolima_EntryScript[] = {
-    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
+    { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(120), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
+    { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(296), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
+    { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(440), 0, PIXELS(344), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
+    { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(296), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
+    { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };

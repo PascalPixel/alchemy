@@ -30,8 +30,8 @@
 /// - COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND, the race against Navampa,
 ///   who follows a recorded path, after the lettering `Match 3` and a count of
 ///   three. At the arena the first to arrive takes the Claymore and the second
-///   the Hunter's Sword, and the battle is encounter table 72's fifth or sixth
-///   group, the Navampa with or without the Claymore.
+///   the Hunter's Sword, and the battle is ENCOUNTER_ZONE_COLOSSO's fifth or
+///   sixth group, the Navampa with or without the Claymore.
 ///
 /// Win or lose, the third match ends Colosso:
 /// COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON and _LOST set FLAG_COLOSSO_OVER, and
@@ -843,7 +843,8 @@ static void Event_ReachArena(void) {
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
    * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
-  Field_RequestBattleFromEncounterTable(72, last - place + 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
+                                        last - place + 1);
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_ColosseumNavampaMatch, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch, 5);
@@ -2021,7 +2022,7 @@ ColosseumNavampaMatch_SpawnRandomFinishEffect(union FieldObject *fieldObject) {
       s32 y = position[1];
       s32 z = position[2];
 
-      effect = Engine_ObjectCreate(285, x, y, z);
+      effect = Engine_ObjectCreate(SPRITE_SPARKLE, x, y, z);
     }
     if (effect != 0) {
       effect->motionFlags = 0;
@@ -2349,23 +2350,23 @@ struct ScenePlacement gColosseumNavampaMatchPlacements[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0x3e, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x122, CONDITION_ALWAYS, 7,
         PIXELS(152), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x122, CONDITION_ALWAYS, 7,
         PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(712), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1240), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1272), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1304), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x123, CONDITION_ALWAYS, 7,
         PIXELS(536), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -2389,13 +2390,13 @@ struct ScenePlacement gColosseumNavampaMatchPlacements[] = {
         PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xa5, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(720), 0, PIXELS(216), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xee, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(194), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x126, CONDITION_ALWAYS, 7,
         PIXELS(1080), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(1208), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0xa5, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -2409,9 +2410,9 @@ struct ScenePlacement gColosseumNavampaMatchPlacements[] = {
         PIXELS(1080), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0xa5, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1304), 0, PIXELS(312), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1512), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1512), 0, PIXELS(208), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x118, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },

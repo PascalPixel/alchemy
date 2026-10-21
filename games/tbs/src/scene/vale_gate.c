@@ -1262,7 +1262,7 @@ static void ValeGate_FightTravelers(void) {
     Event_SetNextDestination((s32)message, VALE_GATE_AFTER_TRAVELERS_BATTLE);
     Event_SetDefeatDestination((s32)message, VALE_GATE_AFTER_TRAVELERS_BATTLE);
   }
-  Field_RequestBattleFromEncounterTable(12, 4);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 4);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
@@ -1878,14 +1878,12 @@ static void ValeGate_UpdateSmallRockPalette(void) {
 /// Arriving by VALE_GATE_DEBUG_STORY_PRESET: sets a preset of story flags,
 /// which differs by edition, and leaves by VALE_GATE_TO_BILIBIN.
 ///
-/// Called by ValeGate_Initialize. Sets FLAG_NO_ENCOUNTERS and flag 0x16d; from
-/// the third patch the whole story up to Kalay, before it FLAG_TRET_DEFEATED
-/// and FLAG_KOLIMA_CURSE_LIFTED.
+/// Called by ValeGate_Initialize. Sets FLAG_NO_ENCOUNTERS and
+/// FLAG_DEBUG_BATTLE_KEYS; from the third patch the whole story up to Kalay,
+/// before it FLAG_TRET_DEFEATED and FLAG_KOLIMA_CURSE_LIFTED.
 static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_NO_ENCOUNTERS);
-  // XXX: flag 0x16d gates the battle debug key R (plan.c), and the Colosseum
-  // sets it as Mia takes Jenna's place; a third use would say what it means.
-  Engine_GameFlagSet(0x16d);
+  Engine_GameFlagSet(FLAG_DEBUG_BATTLE_KEYS);
 #if TBS_PATCH_3
   Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_FELL);
   Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_FELL);
@@ -2277,7 +2275,7 @@ struct ScenePlacement gValeGate_Placements[] = {
         0, 0, 0, FACING_SOUTHWEST, 3, 0 },
     { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -2328,7 +2326,7 @@ struct ScenePlacement gValeGate_StormPlacements[] = {
         PIXELS(250), 0, PIXELS(773), FACING_SOUTHWEST, 3, 0 },
     { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(729), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(729), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(215), 0, PIXELS(709), FACING_NORTH, TALK_FACE_PARTY, 0 },

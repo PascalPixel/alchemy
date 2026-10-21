@@ -197,7 +197,8 @@ void MercuryLighthouse_ChargeLights(void) {
   struct FieldActor *obj;
   s32 step;
 
-  state = *(struct MercuryLighthouseLights **)WORK_SLOT(35);
+  state = *(struct MercuryLighthouseLights **)WORK_SLOT(
+      HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   leader = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
                ->actors[gGameState.selectedActor];
   if ((u32)state->levels > 2)
@@ -248,7 +249,8 @@ void MercuryLighthouse_ChargeLights(void) {
 /// fades away.
 void MercuryLighthouse_LoseLights(void) {
   struct MercuryLighthouseLights *state =
-      *(struct MercuryLighthouseLights **)WORK_SLOT(35);
+      *(struct MercuryLighthouseLights **)WORK_SLOT(
+          HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   struct FieldActor *target;
 
   if (state->levels == 0) {
@@ -291,7 +293,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   u8 zero;
   union FieldCoordinate pos[3];
 
-  state = *(struct MercuryLighthouseLights **)WORK_SLOT(35);
+  state = *(struct MercuryLighthouseLights **)WORK_SLOT(
+      HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   work = WORK_SLOT(HEAP_SLOT_EVENT);
   actor = work->actors[gGameState.selectedActor];
   flags = &actor->motionFlags;
@@ -397,7 +400,8 @@ void MercuryLighthouse_SparkleAtLeader(void) {
   struct MercuryLighthouseLights *state;
   struct FieldActor *point;
 
-  state = *(struct MercuryLighthouseLights **)WORK_SLOT(35);
+  state = *(struct MercuryLighthouseLights **)WORK_SLOT(
+      HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   point = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
               ->actors[gGameState.selectedActor];
   if (state->sparkTimer != 0) {
@@ -408,9 +412,11 @@ void MercuryLighthouse_SparkleAtLeader(void) {
   }
 }
 
-/// Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, 1)): remove the column of light.
+/// Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST)):
+/// remove the column of light.
 static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
-  struct MercuryLighthouseLights **published = Runtime_AllocateBlock(35, 4);
+  struct MercuryLighthouseLights **published =
+      Runtime_AllocateBlock(HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, 4);
   struct MercuryLighthouseLights *state;
   struct FieldActor *pillar;
 

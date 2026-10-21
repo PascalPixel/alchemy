@@ -102,7 +102,8 @@ void FieldFx_RunReveal(void) {
   field->revealActive = 0;
 #endif
   WaitFrames(1);
-  event = BattleFx_FindMatchingEvent(0x50000005, 8, &eventTarget);
+  event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                     FIELD_KIND_REVEAL, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   AudioCommand_PlayFar(SE_131);
@@ -124,13 +125,11 @@ void FieldFx_RunReveal(void) {
   Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
 }
 
-#define REVEAL_END_EVENT 0x40000005 ///< Psynergy event, stage 4
-
 /// Ends Reveal if it is running: stops its watch, brings the colours back
-/// from black over 30 frames and runs stage 4 of the Psynergy event. Unless a
-/// scene set childOption, the window transition is then reset at once (no next
-/// mode, one frame). Called as Reveal ends (FieldEvent_RunTypeHandler) and
-/// before Mind Read starts its own colours.
+/// from black over 30 frames and runs the scene's PSYNERGY_PHASE_EFFECT_ENDS
+/// event. Unless a scene set childOption, the window transition is then reset
+/// at once (no next mode, one frame). Called as Reveal ends
+/// (FieldEvent_RunTypeHandler) and before Mind Read starts its own colours.
 void ResetSceneTransitionEffect(void) {
 #ifdef UBFIX
   struct BattleFxScene *work = gEffectWork;
@@ -165,8 +164,8 @@ void ResetSceneTransitionEffect(void) {
     BattleFx_StartBufferInterpolation(30);
     WaitFrames(1);
 
-    event = BattleFx_FindMatchingEvent(REVEAL_END_EVENT, FIELD_KIND_REVEAL,
-                                       &eventTarget);
+    event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
+                                       FIELD_KIND_REVEAL, &eventTarget);
     if (event != NULL)
       Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
 
@@ -178,5 +177,3 @@ void ResetSceneTransitionEffect(void) {
     }
   }
 }
-
-#undef REVEAL_END_EVENT

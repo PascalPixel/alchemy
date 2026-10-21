@@ -38,8 +38,9 @@
 ///   party has visited the old couple who live near the entrance of town, where
 ///   Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE). In the old couple's house
 ///   (IMIL_INTERIORS_HOUSE_SOUTHWEST) the old man moans for help, and talking
-///   to him sends his wife hurrying to fetch Mia. Either sets flag 0x82c, which
-///   changes the couple's lines and where they stand.
+///   to him sends his wife hurrying to fetch Mia. Either sets
+///   FLAG_IMIL_MIA_SENT_FOR, which changes the couple's lines and where they
+///   stand.
 ///
 ///   Mia's healing is this scene's first scripted sequence. Entering the old
 ///   couple's house once the apprentice has told the party where Mia went,
@@ -335,9 +336,9 @@ static void Imil_TalkToCountingChild(void) {
 }
 
 /// The old man in the old couple's house moans for help, and his wife hurries
-/// to fetch Mia (flag 0x82c); after Mia's healing he feels much better, and
-/// once Saturos is beaten he asks whether the party really thought he would
-/// die.
+/// to fetch Mia (FLAG_IMIL_MIA_SENT_FOR); after Mia's healing he feels much
+/// better, and once Saturos is beaten he asks whether the party really thought
+/// he would die.
 static void Imil_TalkToOldMan(void) {
 
   struct FieldActor *oldMan;
@@ -386,7 +387,7 @@ static void Imil_TalkToOldMan(void) {
       Engine_EventShowMessage(ACTOR_OLD_WOMAN, 0);
       oldWoman = Object_GetById(ACTOR_OLD_WOMAN);
       oldWoman->collisionFlags ^= 0x2;
-      GameFlag_Set(0x82c);
+      GameFlag_Set(FLAG_IMIL_MIA_SENT_FOR);
       Engine_EventEnd();
     }
   }
@@ -412,8 +413,8 @@ static void Imil_AskAboutRestaurantMenu(void) {
 
 /// Mia's second apprentice, in the Imil Sanctum until Saturos is beaten, asks
 /// whether the party has visited the old couple, where Mia went
-/// (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE, and flag 0x82c); once Mia has joined
-/// the party, she says everyone counts on her.
+/// (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE, and FLAG_IMIL_MIA_SENT_FOR); once Mia
+/// has joined the party, she says everyone counts on her.
 static void Imil_TalkToSecondApprentice(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -423,7 +424,7 @@ static void Imil_TalkToSecondApprentice(void) {
     Engine_EventSetMessage(MsgImilHaveVisitedOldCoupleWho);
     Engine_EventAskYesNo(ACTOR_SECOND_APPRENTICE, 0);
     Engine_GameFlagSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE);
-    Engine_GameFlagSet(0x82c);
+    Engine_GameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
   }
   Engine_EventEnd();
 }
@@ -458,7 +459,7 @@ static void Imil_ReadOldWomanMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilMiaClanOnceLivedHere));
-  } else if (Engine_GameFlagIsSet(0x82c) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_IMIL_MIA_SENT_FOR) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilHesAlwaysExaggeratingThingsBut));
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilMiaRunningAroundTownCaring));
@@ -752,7 +753,7 @@ s32 Imil_Initialize(void) {
         Engine_TaskWait(1);
         Actor_SetBuiltinAction(ACTOR_OLD_WOMAN, 2);
         Engine_ActorSetPosition(ACTOR_OLD_MAN_BEDSIDE, 0, 0);
-      } else if (Engine_GameFlagIsSet(0x82c) &&
+      } else if (Engine_GameFlagIsSet(FLAG_IMIL_MIA_SENT_FOR) &&
                  Engine_GameFlagIsSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MAN_BEDSIDE), 0);
         Engine_ActorSetPosition(ACTOR_OLD_MAN, PIXELS(174), PIXELS(164));
@@ -769,7 +770,7 @@ s32 Imil_Initialize(void) {
         Map_CopyCellsTo(3, 125, 9, 69, 3, 3);
         Engine_MapRedraw();
         Engine_TaskWait(1);
-        if (Engine_GameFlagIsSet(0x82c)) {
+        if (Engine_GameFlagIsSet(FLAG_IMIL_MIA_SENT_FOR)) {
           Engine_ActorSetPosition(ACTOR_OLD_WOMAN, PIXELS(149), PIXELS(116));
           Object_GetById(ACTOR_OLD_WOMAN)->facing = 0;
           Object_GetById(ACTOR_OLD_MAN)->work = 0;
@@ -1050,7 +1051,7 @@ UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
     SET_VECTOR(pos, actor->x.fixed, actor->y.fixed + PIXELS(2), actor->z.fixed);
     radius = Engine_RandomNext();
     Vector_AddPolarOffset(radius * 6, Engine_RandomNext(), pos);
-    spark = Engine_ObjectCreate(0x11d, pos[0], pos[1], pos[2]);
+    spark = Engine_ObjectCreate(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     if (spark != NULL) {
       spark->sprite->image.priority = 0;
       Engine_ActorSetSpriteFlags(spark, 0);
@@ -1134,28 +1135,28 @@ static void Imil_SpawnAmbientEffects(void) {
 
   frame = &gFrameCount;
   if (((u32)*frame % (u32)60) == 0) {
-    object =
-        (union FieldObject *)Object_Create(222, PIXELS(463), 0, PIXELS(292));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(463),
+                                                0, PIXELS(292));
     Imil_StartRisingEffect(object);
   }
   if (((u32)(*frame + 30) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(222, PIXELS(320), PIXELS(32),
-                                                PIXELS(356));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(320),
+                                                PIXELS(32), PIXELS(356));
     Imil_StartRisingEffect(object);
   }
   if (((u32)(*frame + 10) % (u32)60) == 0) {
-    object =
-        (union FieldObject *)Object_Create(222, PIXELS(118), 0, PIXELS(70));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(118),
+                                                0, PIXELS(70));
     Imil_StartRisingEffect(object);
   }
   if (((u32)(*frame + 50) % (u32)60) == 0) {
-    object =
-        (union FieldObject *)Object_Create(222, PIXELS(342), 0, PIXELS(124));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(342),
+                                                0, PIXELS(124));
     Imil_StartRisingEffect(object);
   }
   if (((u32)(*frame + 80) % (u32)60) == 0) {
-    object =
-        (union FieldObject *)Object_Create(222, PIXELS(431), 0, PIXELS(171));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(431),
+                                                0, PIXELS(171));
     Imil_StartRisingEffect(object);
   }
 }
@@ -1747,7 +1748,7 @@ struct ScenePlacement gImil_InteriorPlacements[] = {
         PIXELS(111), 0, PIXELS(215), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x67, 0x0, ACTOR_STAND,
         PIXELS(166), 0, PIXELS(116), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, 0x0, 7,
+    { SPRITE_BLANK, 0x0, 7,
         PIXELS(174), 0, PIXELS(173), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x67, 0x0, ACTOR_STAND,
         PIXELS(118), 0, PIXELS(488), FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -1810,11 +1811,11 @@ struct SceneEvent gImil_TownEvents[] = {
 };
 
 struct SceneEvent gImil_InteriorEvents[] = {
-    { EVENT_TALK, ACTOR_OLD_WOMAN, 0x82c, MSGNO(MsgImilTheresBeenAnEpidemicGoingAround) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN, FLAG_IMIL_MIA_SENT_FOR, MSGNO(MsgImilTheresBeenAnEpidemicGoingAround) },
     { EVENT_TALK, ACTOR_OLD_WOMAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilGetMiaHurry) },
     { EVENT_TALK, ACTOR_OLD_WOMAN, 0x881, EVENT_SCRIPT(Imil_TalkToOldWoman) },
     { EVENT_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgImilThatFountainWaterReallyMadeGrandpa) },
-    { EVENT_TALK, ACTOR_OLD_MAN, 0x82c, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { EVENT_TALK, ACTOR_OLD_MAN, FLAG_IMIL_MIA_SENT_FOR, EVENT_SCRIPT(Imil_TalkToOldMan) },
     { EVENT_TALK, ACTOR_OLD_MAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilItHurts) },
     { EVENT_TALK, ACTOR_OLD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToOldMan) },
     { EVENT_TALK, ACTOR_OLD_MAN_BEDSIDE, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_TalkToOldManInBed) },
@@ -1838,7 +1839,7 @@ struct SceneEvent gImil_InteriorEvents[] = {
     { EVENT_TALK, ACTOR_SECOND_APPRENTICE, CONDITION_ALWAYS, MSGNO(MsgImilIWillBeAKindGirl) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, 0x881, EVENT_SCRIPT(Imil_ReadOldWomanMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgImilGrandpasAllBetterNowThanksTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_OLD_MAN, 0x82c, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_OLD_MAN, FLAG_IMIL_MIA_SENT_FOR, EVENT_SCRIPT(Imil_TalkToOldMan) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilOoohIDontFeelSoGood) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN, 0x881, MSGNO(MsgImilMiaIsAGoodGirlI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgImilNowMiaCanLeaveTheVillage) },

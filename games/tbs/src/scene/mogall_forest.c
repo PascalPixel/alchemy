@@ -14,9 +14,10 @@
 /// its spot, and Force on a hiding place brings its ape out. Most turn to the
 /// leader, point the way on and leave; two first bolt to a second hiding place;
 /// and one in the first area and one in the third leap at the leader instead,
-/// starting a battle with an Ape (encounter table 53, slot 0). An ape stays
-/// gone once out, and logs pushed into the river stay there, for as long
-/// as the party is in the forest (place flags from FLAG_PLACE_TEMP_00).
+/// starting a battle with an Ape (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN,
+/// slot 0). An ape stays gone once out, and logs pushed into the river stay
+/// there, for as long as the party is in the forest (place flags from
+/// FLAG_PLACE_TEMP_00).
 ///
 /// - First area (SceneId_MogallForestSign). Arriving the first time, an ape
 /// peeks out at the
@@ -32,7 +33,8 @@
 ///   with Move, and a chest holds an Elven Shirt. Touching cell code 22 the
 ///   first time, the east ape leads the party south to a hiding place
 ///   (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE); there (cell code 23) the Killer
-///   Ape bursts out to fight (encounter table 53, slot 1), and coming back at
+///   Ape bursts out to fight (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN,
+///   slot 1), and coming back at
 ///   MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS marks it beaten
 ///   (FLAG_MOGALL_FOREST_KILLER_APE_BEATEN). Entering at
 ///   MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER or
@@ -503,7 +505,7 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
 
 /// Mogall Forest, the first area: Force on the hostile ape's hiding place. It
 /// comes out angry, leaps at the leader and the battle with an Ape begins
-/// (encounter table 53, slot 0).
+/// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0).
 static void MogallForest_FirstArea_ApeAttacks(void) {
   struct FieldActor *creature;
 
@@ -537,7 +539,8 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
 
   Battle_SetStart(BATTLE_START_SCENE);
 
-  Field_RequestBattleFromEncounterTable(53, 0);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
 
   Engine_EventEnd();
 }
@@ -978,7 +981,8 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   Engine_EventWait(10);
   Engine_GameFlagSet(FLAG_THIRD_AREA_HOSTILE_APE_OUT);
   Battle_SetStart(BATTLE_START_SCENE);
-  Field_RequestBattleFromEncounterTable(53, 0);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
   Engine_EventEnd();
 }
 
@@ -1158,9 +1162,9 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
 
 /// Mogall Forest, the third area: touching cell code 23 until the Killer Ape
 /// is beaten. The hiding place shakes twice and out comes the Killer Ape, the
-/// east ape's actor a fifth again as big, to fight (encounter table 53, slot
-/// 1); the party comes back at
-/// MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS.
+/// east ape's actor a fifth again as big, to fight
+/// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 1); the party comes back
+/// at MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS.
 static void MogallForest_KillerApeAttacks(void) {
   struct Vector3 velocity;
   struct Vector3 *emissionVelocity;
@@ -1229,7 +1233,8 @@ static void MogallForest_KillerApeAttacks(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_MogallForestKillerApe,
                            MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS);
-  Field_RequestBattleFromEncounterTable(53, 1);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 1);
   Engine_EventEnd();
 }
 
@@ -1751,9 +1756,9 @@ u32 gMogallForest_Exits[] = {
 };
 
 struct ScenePlacement gMogallForestPlacements1[] = {
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(488), 0, PIXELS(464), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(528), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbf, FLAG_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1761,23 +1766,23 @@ struct ScenePlacement gMogallForestPlacements1[] = {
         PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbf, FLAG_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, FLAG_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, FLAG_FIRST_AREA_HOSTILE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_FIRST_AREA_HOSTILE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x16, FLAG_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x16, FLAG_NUT_CAUGHT, 7,
+    { SPRITE_BLANK, FLAG_NUT_CAUGHT, 7,
         PIXELS(632), 0, PIXELS(440), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gMogallForestPlacements2[] = {
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(592), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(592), 0, PIXELS(456), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(648), 0, PIXELS(512), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x125, CONDITION_ALWAYS, (s32)gMogallForest_RockScript,
         PIXELS(584), 0, PIXELS(376), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1787,27 +1792,27 @@ struct ScenePlacement gMogallForestPlacements2[] = {
         PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbf, FLAG_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, FLAG_SECOND_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_SECOND_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, FLAG_SECOND_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_SECOND_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x16, FLAG_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x5a, FLAG_DJINNI_0 + 2, ACTOR_STAND,
+    { 0x5a, FLAG_DJINNI_0 + DJINNI_QUARTZ, ACTOR_STAND,
         PIXELS(488), 0, PIXELS(568), FACING_EAST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gMogallForestPlacements3[] = {
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(680), 0, PIXELS(96), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(616), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(552), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(600), 0, PIXELS(544), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(544), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x125, CONDITION_ALWAYS, (s32)gMogallForest_RockScript,
         PIXELS(696), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1821,13 +1826,13 @@ struct ScenePlacement gMogallForestPlacements3[] = {
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbf, MOGALL_FOREST_EAST_ACTOR_CONDITION, (s32)gMogallForest_ActorScript,
         PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, FLAG_THIRD_AREA_HOSTILE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_THIRD_AREA_HOSTILE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, FLAG_THIRD_AREA_CENTRAL_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_THIRD_AREA_CENTRAL_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x16, FLAG_THIRD_AREA_WEST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_THIRD_AREA_WEST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x16, MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };

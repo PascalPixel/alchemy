@@ -585,11 +585,11 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
 /// way it runs: one sprite for north to south, another for west to east.
 // clang-format off
 struct FloodgateLog gKolimaForestFloodgate_DefaultRecords[] = {
-    {0xcd, 11, 9, 1, NULL},
-    {0xcf, 12, 12, 0, NULL},
-    {0xcf, 17, 12, 0, NULL},
-    {0xcd, 13, 13, 1, NULL},
-    {0xcf, 10, 18, 0, NULL},
+    {SPRITE_LOG_NORTH_SOUTH, 11, 9, 1, NULL},
+    {SPRITE_LOG_WEST_EAST, 12, 12, 0, NULL},
+    {SPRITE_LOG_WEST_EAST, 17, 12, 0, NULL},
+    {SPRITE_LOG_NORTH_SOUTH, 13, 13, 1, NULL},
+    {SPRITE_LOG_WEST_EAST, 10, 18, 0, NULL},
     {-1},
 };
 
@@ -614,7 +614,7 @@ u32 gKolimaForestFloodgateExits[] = {
 };
 
 struct ScenePlacement gKolimaForestFloodgatePlacements[] = {
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(104), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd6, CONDITION_ALWAYS, 7,
         PIXELS(256), 0, PIXELS(464), FACING_SOUTH, TALK_KEEP_FACING, 0 },

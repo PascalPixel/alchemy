@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-s32 SceneActor_FindNearestSlotOfKindF2(void);
+s32 SceneActor_FindNearestFloatingPlatform(void);
 
 #endif

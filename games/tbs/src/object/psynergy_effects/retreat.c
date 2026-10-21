@@ -146,7 +146,7 @@ void FieldFx_RunRetreat(void) {
   slot = scene->slots;
   do {
     s32 scale;
-    EffectSlot_Initialize(slot, 0x11c, pos.x, pos.z);
+    EffectSlot_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialLaunch);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,

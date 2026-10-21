@@ -112,7 +112,7 @@ enum SuhallaGateCheckpointActor {
 /// The actors of the second scene (SuhallaGateDew), numbered in the order of
 /// gSuhallaGateDewPlacements.
 enum SuhallaGateDewActor {
-  /// Five sprouts (sprite 0xee, the sprout Growth grows in Suhalla), each
+  /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
   /// drawn in the frame Scene_Initialize gives it.
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
   ACTOR_DEW = ACTOR_FIRST_SPROUT + 5 ///< Dew, a Mercury Djinni
@@ -595,15 +595,15 @@ struct ScenePlacement gSuhallaGatePlacementsOther[] = {
 
 // clang-format off
 struct ScenePlacement gSuhallaGateDewPlacements[] = {
-    { 0xee, CONDITION_ALWAYS, 7,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, 7,
         PIXELS(264), 0, PIXELS(400), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0xee, CONDITION_ALWAYS, 7,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, 7,
         PIXELS(280), 0, PIXELS(368), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0xee, CONDITION_ALWAYS, 7,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, 7,
         PIXELS(472), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0xee, CONDITION_ALWAYS, 7,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, 7,
         PIXELS(536), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0xee, CONDITION_ALWAYS, 7,
+    { SPRITE_SPROUT, CONDITION_ALWAYS, 7,
         PIXELS(552), 0, PIXELS(880), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0x5b, 0x4a, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
@@ -611,27 +611,27 @@ struct ScenePlacement gSuhallaGateDewPlacements[] = {
 };
 
 struct ScenePlacement gSuhallaGateCheckpointPlacements[] = {
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gSuhallaGateCheckpointPlacementsAfterAudience[] = {
 #if !TBS_PATCH_3
-    { 0x98, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlipped,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlipped,
         PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x98, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
         PIXELS(168), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x98, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
         PIXELS(472), 0, PIXELS(304), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 #else
-    { 0x98, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlippedNoCollision,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlippedNoCollision,
         PIXELS(140), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x98, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
         PIXELS(164), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x98, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
         PIXELS(476), 0, PIXELS(300), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 #endif
     { 0x39, CONDITION_ALWAYS, ACTOR_STAND,

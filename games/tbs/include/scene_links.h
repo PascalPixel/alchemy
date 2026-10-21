@@ -4710,6 +4710,13 @@ enum {
   SUHALLA_FROM_HOUSE_NORTHEAST = 4,
   SUHALLA_FROM_HOUSE_EAST = 5,
   SUHALLA_FROM_WORLD_MAP = 10,
+  /// In no table row and led to by no exit: arriving by it sets
+  /// FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held. XXX:
+  /// likely a debug start into the story after the audience, because Babi's
+  /// Palace (BABI_PALACE_AFTER_COLOSSO) and Suhalla's buildings
+  /// (SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE) have entrances that set story
+  /// flags the same way.
+  SUHALLA_AFTER_BABI_AUDIENCE = 90,
 };
 enum {
   SUHALLA_TO_INN = 1,

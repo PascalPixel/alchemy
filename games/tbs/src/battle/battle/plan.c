@@ -92,33 +92,6 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
 #define TARGET_MAX 14
 /// The first Djinni's ability id: each element's 20 follow, Venus first.
 #define DJINN_FIRST_ABILITY 300
-/// The ability Annihilation, which rolls its hit as it is planned.
-#define ABILITY_ANNIHILATION 178
-
-// The enemy abilities BattleCommand_BuildPlan announces in their own words,
-// by their rows of actions.tsv; Sonic Wave has two.
-#define ABILITY_HEAT_MIRAGE 224
-#define ABILITY_SONIC_WAVE 435
-#define ABILITY_SONIC_WAVE_2 436
-#define ABILITY_SHRIEK 437
-#define ABILITY_BANSHEE_HOWL 438
-#define ABILITY_CRAZY_VOICE 439
-#define ABILITY_WAR_CRY 440
-#define ABILITY_WICKED_HOWL 441
-#define ABILITY_WING_BEAT 442
-#define ABILITY_WING_FLUTTER 443
-#define ABILITY_WING_STROKE 444
-#define ABILITY_ROTTEN_BLOOD 472
-#define ABILITY_HEARTRENDER 488
-#define ABILITY_DECOMPOSE 492
-#define ABILITY_WORMS 494
-#define ABILITY_BERSERK 495
-#define ABILITY_CONTAIN 499
-#define ABILITY_THREATEN 500
-#define ABILITY_TREMBLE 501
-#define ABILITY_ALLY_SEARCH 504
-#define ABILITY_SEARCH_FOR_HELP 508
-
 /// Announces the action and plans its targets and effects.
 /// Returns 0 to stage the plan, PLAN_REPORTED when the action failed (its
 /// message shown), or PLAN_NO_ACTION.
@@ -781,8 +754,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     // How it is staged: the ability's row of actflags.tsv, its variant
     // raised to the first target's multiplier less one (a double or triple
     // blow); then the outcome, from actstat.tsv where it gives one. The two
-    // tables end at 518 and 517.
-    if (abilityId >= 0 && abilityId <= 518) {
+    // tables end at ABILITY_THRASH and ABILITY_SEVERE_BLOW.
+    if (abilityId >= 0 && abilityId <= ABILITY_THRASH) {
       plan->presentationFlags = gBattle_ActionFlags[abilityId];
       if (plan->targetMultiplier[0] > 1)
         plan->presentationFlags =
@@ -790,7 +763,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
             (plan->targetMultiplier[0] << STAGING_VARIANT_SHIFT) -
             (1 << STAGING_VARIANT_SHIFT);
     }
-    if ((abilityId >= 0 && abilityId <= 517) &&
+    if ((abilityId >= 0 && abilityId <= ABILITY_SEVERE_BLOW) &&
         gBattle_ActionStatus[abilityId] != 0)
       plan->outcome = gBattle_ActionStatus[abilityId];
     else if (Ability_IsPsynergy(abilityId))
@@ -819,25 +792,3 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
 }
 
 #undef DJINN_FIRST_ABILITY
-#undef ABILITY_ANNIHILATION
-#undef ABILITY_HEAT_MIRAGE
-#undef ABILITY_SONIC_WAVE
-#undef ABILITY_SONIC_WAVE_2
-#undef ABILITY_SHRIEK
-#undef ABILITY_BANSHEE_HOWL
-#undef ABILITY_CRAZY_VOICE
-#undef ABILITY_WAR_CRY
-#undef ABILITY_WICKED_HOWL
-#undef ABILITY_WING_BEAT
-#undef ABILITY_WING_FLUTTER
-#undef ABILITY_WING_STROKE
-#undef ABILITY_ROTTEN_BLOOD
-#undef ABILITY_HEARTRENDER
-#undef ABILITY_DECOMPOSE
-#undef ABILITY_WORMS
-#undef ABILITY_BERSERK
-#undef ABILITY_CONTAIN
-#undef ABILITY_THREATEN
-#undef ABILITY_TREMBLE
-#undef ABILITY_ALLY_SEARCH
-#undef ABILITY_SEARCH_FOR_HELP

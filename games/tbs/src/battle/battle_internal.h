@@ -137,8 +137,7 @@
 #define PARTY_BATTLE_SIZE 4
 #define ENEMY_BATTLE_SIZE 6
 
-#define ABILITY_ATTACK 1 ///< the ability "Attack"
-#define ALLY_MAX 7       ///< the last party member's unit id
+#define ALLY_MAX 7 ///< the last party member's unit id
 
 // BattleWork.defeatState: whether the last enemy fell alone, or with others
 // before it, or a party member's action ended the battle with a single

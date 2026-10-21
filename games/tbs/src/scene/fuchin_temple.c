@@ -110,8 +110,7 @@
 /// The placed actors outside Fuchin Temple (FuchinTempleGrounds), numbered in
 /// the order of gFuchinTempleGroundsPlacements.
 enum FuchinTempleOutsideActor {
-  /// A boy from Kolima. "How did you get here? Is the bridge open
-  /// again?"
+  /// A boy from Kolima.
   /// ★ Named from the game: "How did you get here? Is the bridge open again?"
   /// (MsgXianHowDidGetHereBridge)
   ACTOR_BOY_FROM_KOLIMA = ACTOR_FIRST_PLACED,
@@ -119,25 +118,19 @@ enum FuchinTempleOutsideActor {
   /// ★ Named from what the player sees: a bald monk in an orange robe standing
   /// on a stump beneath the waterfall (its render)
   ACTOR_FALLS_MONK,
-  /// A boy monk who reads omens. "Gems from the sky, blue lights in the
-  /// north...
-  /// All omens of disaster!"
+  /// A boy monk who reads omens.
   /// ★ Named from the game: "Gems from the sky, blue lights in the north... All
   /// omens of disaster!" (MsgFuchinTempleGemsFromTheSkyBlueLights)
   ACTOR_BOY_MONK_READING_OMENS,
-  /// A boy monk who fears for Nyunpa. "Nyunpa has not eaten in days... He is
-  /// going to waste away to nothing."
+  /// A boy monk who fears for Nyunpa.
   /// ★ Named from the game: "Nyunpa has not eaten in days... He is going to
   /// waste away to nothing." (MsgFuchinTempleNyunpaHasNotEatenInDays)
   ACTOR_WORRIED_BOY_MONK,
-  /// A boy monk who admires Nyunpa. "Isn't it noble of him to try to save the
-  /// world by becoming enlightened?"
+  /// A boy monk who admires Nyunpa.
   /// ★ Named from the game: "Isn't it noble of him to try to save the world by
   /// becoming enlightened?" (MsgXianIsntNobleHimTrySave)
   ACTOR_ADMIRING_BOY_MONK,
-  /// The traveling healer, a man in a tall hat and a long robe. "I'm traveling
-  /// around the world to spread good
-  /// will."
+  /// The traveling healer, a man in a tall hat and a long robe.
   /// ★ Named from the game: "I'm traveling around the world to spread good
   /// will." (MsgXianImTravelingAroundWorldSpread)
   ACTOR_HEALER
@@ -150,44 +143,36 @@ enum FuchinTempleInsideActor {
   /// ★ Named from the game: "I have already heard of your test from Master
   /// Nyunpa." (MsgXianAlreadyHeardTest)
   ACTOR_NYUNPA = ACTOR_FIRST_PLACED,
-  /// A boy, by the school's door. "This is Master Feh's school... You came to
-  /// watch?"
+  /// A boy, by the school's door.
   /// ★ Named from the game: "This is Master Feh's school... You came to watch?"
   /// (MsgXianMasterFehsSchoolCameWatch)
   ACTOR_WELCOMING_STUDENT,
-  /// A student who practices kicks. "Strong kicks are very important. Kick,
-  /// kick, kick!"
+  /// A student who practices kicks.
   /// ★ Named from the game: "Strong kicks are very important. Kick, kick,
   /// kick!" (MsgFuchinTempleStrongKicksAreVeryImportantKick)
   ACTOR_KICKING_STUDENT,
-  /// A student who practices punches. "I want to learn, so I train. Quick
-  /// punches are very good."
+  /// A student who practices punches.
   /// ★ Named from the game: "I want to learn, so I train. Quick punches are
   /// very good." (MsgFuchinTempleIWantToLearnSoI)
   ACTOR_PUNCHING_STUDENT,
   /// ★ Named from the game: "Flexibility and jumping are very important in
   /// kung fu." (MsgXianFlexibilityJumpingVeryImportantIn)
   ACTOR_JUMPING_STUDENT,
-  /// A student proud of Feh's school. "Everyone in Xian can do martial arts.
-  /// But the Feh School of martial arts is the most elite."
+  /// A student proud of Feh's school.
   /// ★ Named from the game: "Everyone in Xian can do martial arts. But the Feh
   /// School of martial arts is the most elite."
   /// (MsgFuchinTempleEveryoneInXianCanDoMartial)
   ACTOR_PROUD_STUDENT,
-  /// A little girl, a student who learns by watching. "Just listening does not
-  /// make one
-  /// strong. I learn by watching."
+  /// A little girl, a student who learns by watching.
   /// ★ Named from the game: "Just listening does not make one strong. I learn
   /// by watching." (MsgFuchinTempleJustListeningDoesNotMakeOne)
   ACTOR_WATCHING_STUDENT,
-  /// By the training tree, which he sets up again after it falls. "Master
-  /// Feh is very busy. Do you still wish to see him?"
+  /// By the training tree, which he sets up again after it falls.
   /// ★ Named from the game: "Master Feh is very busy. Do you still wish to see
   /// him?" (MsgXianMasterFehVeryBusyDo)
   ACTOR_TREE_STUDENT,
-  /// Keeps the party from Feh, and goes to Feh's door when the tree first
-  /// falls from the line. "Master Feh is very busy. He is speaking with his
-  /// daughter, Feizhi. You cannot enter now."
+  /// Keeps the party from Feh, and goes to Feh's door when the tree first falls
+  /// from the line.
   /// ★ Named from the game: "Master Feh is very busy. He is speaking with his
   /// daughter, Feizhi. You cannot enter now."
   /// (MsgFuchinTempleMasterFehIsVeryBusyHe)
@@ -214,8 +199,7 @@ enum HamasRoomActor {
   /// ★ Named from the game: "Master Hama is meditating."
   /// (MsgXianMasterHamaMeditatingPleaseExtremely)
   ACTOR_HAMA = ACTOR_FIRST_PLACED,
-  /// A boy monk in Hama's room. "Master Hama is meditating. Please be extremely
-  /// quiet."
+  /// A boy monk in Hama's room.
   /// ★ Named from the game: "Master Hama is meditating. Please be extremely
   /// quiet." (MsgXianMasterHamaMeditatingPleaseExtremely)
   ACTOR_HAMAS_BOY_MONK,

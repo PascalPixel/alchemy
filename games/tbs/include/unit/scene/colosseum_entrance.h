@@ -33,8 +33,9 @@ extern struct ScenePlacement gColosseumEntrancePlacements1Entrance5[];
 extern struct ScenePlacement gColosseumEntrancePlacements1Entrance7[];
 extern struct ScenePlacement gColosseumEntrancePlacements1[];
 extern struct ScenePlacement gColosseumEntrancePlacements1Entrance8[];
-extern struct ScenePlacement gColosseumEntrancePlacements1Entrance12[];
-extern struct ScenePlacement gColosseumEntrancePlacements1Entrance66[];
+extern struct ScenePlacement
+    gColosseumEntrancePlacements1FromColosseumFinal1West[];
+extern struct ScenePlacement gColosseumEntrancePlacements1FromColosseumFinal3[];
 extern struct ScenePlacement gColosseumEntrancePlacements3[];
 extern struct ScenePlacement gColosseumEntrancePlacements3FinalsDay[];
 extern struct ScenePlacement gColosseumEntrancePlacements3AfterColosso[];
@@ -42,6 +43,6 @@ extern struct SceneEvent gColosseumEntranceEventsOther[];
 extern struct SceneEvent gColosseumEntranceEvents2[];
 extern struct SceneEvent gColosseumEntranceEvents1[];
 extern struct SceneEvent gColosseumEntranceEvents3[];
-extern struct SceneEvent gColosseumEntranceEvents1Entrance12[];
+extern struct SceneEvent gColosseumEntranceEvents1FromColosseumFinal1West[];
 
 #endif

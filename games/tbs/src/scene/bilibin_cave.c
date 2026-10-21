@@ -32,17 +32,19 @@
 /// (FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED), and the puddle freezes into
 /// a pillar drawn underfoot, which the party walks over. The second puddle
 /// stands beside a torch that cannot be moved, and Frost on it always melts
-/// back. The third is an ice pillar: two of the six torches (PUSHED_ACTOR_A
-/// and PUSHED_ACTOR_B) can be pushed or moved with Move, and while either
-/// stands beside the pillar, on cell (35, 23), the pillar melts into a puddle
-/// and the cells north and south of it change with it; when both leave it
-/// freezes again (BilibinCave_UpdateFrostTargetFromMovableActors). Place flags
+/// back. The third is an ice pillar: two of the six torches
+/// (ACTOR_MOVABLE_TORCH_A and ACTOR_MOVABLE_TORCH_B) can be pushed or moved
+/// with Move, and while either stands beside the pillar, on cell (35, 23), the
+/// pillar melts into a puddle and the cells north and south of it change with
+/// it; when both leave it freezes again
+/// (BilibinCave_UpdateFrostTargetFromMovableActors). Place flags
 /// FLAG_PLACE_TEMP_03 and FLAG_PLACE_TEMP_04 remember which torch stands there
 /// and FLAG_PLACE_TEMP_02 that the pillar has melted, so coming back from
 /// BilibinCave2 puts the torches and the pillar back; leaving Bilibin Cave
-/// resets them. Nine more puddles and pillars (actors 18 to 26) only stand
-/// there. Its chests hold a Vial, a Psy Crystal and Water of Life, and touches
-/// 20 and 21 set and clear a byte of the map's work (MapState.unk17).
+/// resets them. Nine more pieces of ice only stand there: five pillars from
+/// ACTOR_FIRST_ICE_PILLAR and four lower pieces from ACTOR_FIRST_LOW_ICE. Its
+/// chests hold a Vial, a Psy Crystal and Water of Life, and touches 20 and 21
+/// set and clear a byte of the map's work (MapState.unk17).
 
 #include "script.h"
 #include "game_state.h"
@@ -86,20 +88,32 @@ enum {
   GROWTH_TARGET = 8 ///< a sprout Growth grows into a vine
 };
 
-/// Actors of BilibinCave2.
+/// Actors of BilibinCave2, numbered by the rows of gBilibinCavePlacements2.
 enum {
-  CAVE2_DOUSE_TARGET = 9 ///< a fire between two torches
+  ACTOR_CAVE2_WEST_TORCH = 8, ///< a torch (sprite 0xf6) west of the fire
+  CAVE2_DOUSE_TARGET = 9,     ///< a fire between two torches
+  ACTOR_CAVE2_EAST_TORCH = 10 ///< a torch east of the fire
 };
 
-/// Actors of BilibinCave1.
+/// Actors of BilibinCave1, numbered by the rows of gBilibinCavePlacements1.
 enum {
   CAVE1_DOUSE_TARGET = 8, ///< a fire beside the first puddle
-  PUSHED_ACTOR_A = 11,    ///< a torch, moved by Move or pushed
-  PUSHED_ACTOR_B = 12,    ///< a torch, moved by Move or pushed
-  FROST_TARGET_A = 15,    ///< a puddle, walkable once the fire is out
-  FROST_TARGET_B = 16,    ///< a puddle beside a torch that stays put
+  /// Six torches (sprite 0xf6), 9 to 14; the second stands beside
+  /// FROST_TARGET_B.
+  ACTOR_FIRST_TORCH = 9,
+  ACTOR_MOVABLE_TORCH_A = 11, ///< the third torch, moved by Move or pushed
+  ACTOR_MOVABLE_TORCH_B = 12, ///< the fourth torch, moved by Move or pushed
+  FROST_TARGET_A = 15,        ///< a puddle, walkable once the fire is out
+  FROST_TARGET_B = 16,        ///< a puddle beside a torch that stays put
   /// An ice pillar, melted while a torch stands on cell (35, 23).
-  FROST_TARGET_C = 17
+  FROST_TARGET_C = 17,
+  /// Five ice pillars, 18 to 22, drawn as a frozen Frost target is (animation
+  /// 5); nothing acts on them.
+  ACTOR_FIRST_ICE_PILLAR = 18,
+  /// Four pieces of ice, 23 to 26, held at the second step of freezing: their
+  /// animation 3 shows frame 2 of sprite 0xe3, of the five that animation 2
+  /// plays from puddle to pillar. Nothing acts on them.
+  ACTOR_FIRST_LOW_ICE = 23
 };
 
 /// Clears the scripted actor's sprite flags and completes this script command.
@@ -272,8 +286,8 @@ static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   s32 destinationCellX;
 
   // Track each movable actor independently before changing the Frost target.
-  firstActor = Object_GetById(PUSHED_ACTOR_A);
-  secondActor = Actor_Get(PUSHED_ACTOR_B);
+  firstActor = Object_GetById(ACTOR_MOVABLE_TORCH_A);
+  secondActor = Actor_Get(ACTOR_MOVABLE_TORCH_B);
   if ((firstActor->x.fixed >> 20) == 35 && (firstActor->z.fixed >> 20) == 23) {
     GameFlag_Set(FLAG_PLACE_TEMP_03);
   } else {
@@ -365,8 +379,8 @@ static void BilibinCave_RestoreCave2(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 
-  Engine_ActorSetAnimation(8, 1);
-  Engine_ActorSetAnimation(10, 2);
+  Engine_ActorSetAnimation(ACTOR_CAVE2_WEST_TORCH, 1);
+  Engine_ActorSetAnimation(ACTOR_CAVE2_EAST_TORCH, 2);
 
   if (Engine_GameFlagIsSet(FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED) !=
       0) {
@@ -390,45 +404,45 @@ static void BilibinCave_RestoreCave1(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   // Set up the decorative animations before restoring interactive actors.
-  BilibinCave_ClearActorSpriteFlags(18);
-  BilibinCave_ClearActorSpriteFlags(19);
-  BilibinCave_ClearActorSpriteFlags(20);
-  BilibinCave_ClearActorSpriteFlags(21);
-  BilibinCave_ClearActorSpriteFlags(22);
-  BilibinCave_ClearActorSpriteFlags(23);
-  BilibinCave_ClearActorSpriteFlags(24);
-  BilibinCave_ClearActorSpriteFlags(25);
-  BilibinCave_ClearActorSpriteFlags(26);
-  Engine_ActorSetAnimation(18, 5);
-  Engine_ActorSetAnimation(19, 5);
-  Engine_ActorSetAnimation(20, 5);
-  Engine_ActorSetAnimation(21, 5);
-  Engine_ActorSetAnimation(22, 5);
-  Engine_ActorSetAnimation(23, 3);
-  Engine_ActorSetAnimation(24, 3);
-  Engine_ActorSetAnimation(25, 3);
-  Engine_ActorSetAnimation(26, 3);
-  Engine_ActorSetAnimation(9, 2);
-  Engine_ActorSetAnimation(10, 2);
-  Engine_ActorSetAnimation(11, 2);
-  Engine_ActorSetAnimation(12, 2);
-  Engine_ActorSetAnimation(13, 2);
-  Engine_ActorSetAnimation(14, 2);
-  BilibinCave_EmptyActorSetupHook(18);
-  BilibinCave_EmptyActorSetupHook(19);
-  BilibinCave_EmptyActorSetupHook(20);
-  BilibinCave_EmptyActorSetupHook(21);
-  BilibinCave_EmptyActorSetupHook(22);
-  BilibinCave_EmptyActorSetupHook(23);
-  BilibinCave_EmptyActorSetupHook(24);
-  BilibinCave_EmptyActorSetupHook(25);
-  BilibinCave_EmptyActorSetupHook(26);
-  BilibinCave_EmptyActorSetupHook(9);
-  BilibinCave_EmptyActorSetupHook(10);
-  BilibinCave_EmptyActorSetupHook(11);
-  BilibinCave_EmptyActorSetupHook(12);
-  BilibinCave_EmptyActorSetupHook(13);
-  BilibinCave_EmptyActorSetupHook(14);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 1);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 2);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 3);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 4);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 1);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 2);
+  BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_LOW_ICE + 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR, 5);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 1, 5);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 2, 5);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 3, 5);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ICE_PILLAR + 4, 5);
+  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 1, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 2, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 3, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH, 2);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 1, 2);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 2, 2);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 3, 2);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 4, 2);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 5, 2);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 1);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 2);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 3);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 4);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_LOW_ICE);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_LOW_ICE + 1);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_LOW_ICE + 2);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_LOW_ICE + 3);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 1);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 2);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 3);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 4);
+  BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 5);
   // Restore the surface exposed by Douse, including its collision and priority.
   if (GameFlag_IsSet(FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED) != 0) {
     Actor_SetPosition(CAVE1_DOUSE_TARGET, 0, 0);
@@ -458,10 +472,10 @@ static void BilibinCave_RestoreCave1(void) {
     Map_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_03) != 0) {
-    Actor_SetPosition(PUSHED_ACTOR_A, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_MOVABLE_TORCH_A, PIXELS(570), PIXELS(376));
   }
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_04) != 0) {
-    Actor_SetPosition(PUSHED_ACTOR_B, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_MOVABLE_TORCH_B, PIXELS(570), PIXELS(376));
   }
 }
 
@@ -723,8 +737,8 @@ struct SceneEvent gBilibinCaveEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_A, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_FreezeFirstTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FreezeSecondTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_C, IF_FLAG_SET(FLAG_PLACE_TEMP_02), EVENT_SCRIPT(Event_FreezeThirdTarget) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), PUSHED_ACTOR_A, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), PUSHED_ACTOR_B, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVABLE_TORCH_A, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVABLE_TORCH_B, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
     { TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushActorAhead) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushActorAhead) },
     { SEARCH(SEARCH_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },

@@ -1,48 +1,55 @@
 /// @file
 /// Vale (ValeInteriors2, scene 8): Isaac's house and the ground outside it, the
-/// inn and the inside of Kraden's cottage, and at entrance 19 a room of Babi's
-/// Palace: one overlay whose tables and setup
-/// choose by the entrance and the story flags. In story order:
+/// inn and the inside of Kraden's cottage, and at
+/// VALE_INTERIORS_2_FROM_BABI_PALACE_1 a room of Babi's Palace: one overlay
+/// whose tables and setup choose by the entrance and the story flags. In story
+/// order:
 ///
 /// - The stormy night, three years before the journey, when a new game begins
-///   at entrance 20 (from menu/clear.c, or ValeGate's exit 50). The setup sets
+///   at VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST (from menu/clear.c, or
+///   ValeGate's VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST). The setup sets
 ///   FLAG_VALE_STORM and plays Event_DoraWakesIsaac: Dora, Isaac's mother,
 ///   wakes him because the Mt. Aleph Boulder is going to fall, makes him take
 ///   his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him out by exit 20, back in
 ///   at entrance 21, where Event_HurryToThePlaza plays: Kyle, Isaac's father,
-///   calls them to hurry, actor 10 falls from the slope, and they run for the
-///   plaza, where the village takes refuge, by exit 21 into ValeStorm
-///   (entrance 15). While FLAG_VALE_STORM is set the villagers are put out of
-///   sight, lightning flashes, and exit 6 leads into the storm (ValeStorm)
+///   calls them to hurry, ACTOR_FLAME shakes outside the house, then turns to
+///   smoke and rises away, and they run for the plaza, where the village
+///   takes refuge, by exit 21 into ValeStorm (its entrance 15). While
+///   FLAG_VALE_STORM is set the villagers are put out of sight, lightning
+///   flashes, and VALE_INTERIORS_2_TO_VALE leads into the storm (ValeStorm)
 ///   instead of Vale (gValeInteriors2_StormExits). Kyle dies that night, as the
 ///   village says later.
 /// - Vale before the party leaves (FLAG_PARTY_LEFT_VALE clear): from Kraden's
-///   cottage (ValeKraden's exit 13) the party arrives at entrance 22, inside
-///   it, where the Mythril Bag rises and wobbles before Kraden as he prepares
-///   for the visit to Sol Sanctum (vale_kraden.c); exit 22 leads back out
-///   (ValeKraden, entrance 10). A villager (actor 16) asks "Hey... Boy... Do
-///   you have business with me?" and sends Isaac off whatever he answers; at
-///   the inn the talk is of three strange travellers staying there, one of
-///   them masked, and the innkeeper offers a room.
+///   cottage (ValeKraden's VALE_KRADEN_TO_VALE_INTERIORS_2_2) the party arrives
+///   at VALE_INTERIORS_2_FROM_VALE_KRADEN_2, inside it, where the Mythril Bag
+///   rises and wobbles before Kraden as he prepares for the visit to Sol
+///   Sanctum (vale_kraden.c); VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH leads back
+///   out (VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH). In a room of the inn the
+///   masked man (ACTOR_MASKED_MAN) asks "Hey... Boy... Do you have business
+///   with me?" and sends Isaac off whatever he answers; at the inn the talk is
+///   of three strange travellers staying there, one of them masked, and the
+///   innkeeper offers a room.
 /// - After the party has left Vale (FLAG_PARTY_LEFT_VALE): the villagers talk
 ///   of the eruption and of Jenna, whom the visitors kidnapped, and one asks
 ///   whether the masked man was Felix, Jenna's brother, and whether Jenna can
 ///   be trusted.
 /// - Back from Kalay (FLAG_REACHED_KALAY): Dora lies ill. The innkeeper
-///   welcomes Isaac home and the villager of actor 16 sees how he has grown
-///   (Vale's place flags FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
-///   FLAG_VALE_ACTOR16_SAW_ISAAC_GROWN); Mind Read on either tells of Dora's
+///   welcomes Isaac home and a villager at the inn (ACTOR_VILLAGER_YOUVE_GROWN)
+///   sees how he has grown (Vale's place flags
+///   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
+///   FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN); Mind Read on either tells of Dora's
 ///   illness (FLAG_READ_THOUGHTS_ABOUT_DORA). Visiting her
 ///   (FLAG_VISITED_SICK_DORA) she reminds Isaac that he promised not to come
 ///   back until his quest was done, and gets up to show she is well; she stays
 ///   up for that visit (FLAG_SCENE_TEMP_03), and the setup otherwise puts her
 ///   back in bed, where she dreams of Kyle.
-/// - Babi's Palace (entrance 19, from Babi's Palace's exit 11, scene 138), in
-///   Tolbi, whose lord is Babi: a room of his scholars, who speak of Alchemy,
-///   of Kraden, Babi's favourite scholar, and of the Venus Ruins under Babi
-///   Lighthouse with a long tunnel beneath them. They talk differently once
-///   the Colosso finals are over (FLAG_COLOSSO_OVER), when one asks whether the
-///   party knows Kraden. The setup does not show the place name there.
+/// - Babi's Palace (VALE_INTERIORS_2_FROM_BABI_PALACE_1, from Babi's Palace's
+///   BABI_PALACE_1_TO_VALE_INTERIORS_2, scene 138), in Tolbi, whose lord is
+///   Babi: a room of his scholars, who speak of Alchemy, of Kraden, Babi's
+///   favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
+///   long tunnel beneath them. They talk differently once the Colosso finals
+///   are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
+///   Kraden. The setup does not show the place name there.
 ///
 /// Exits 1 to 11 are cell codes of the same number, leading to the rest of
 /// Vale (ValeGate, ValeKraden, Vale and ValeStorm) or between this scene's
@@ -105,38 +112,98 @@ static void ValeInteriors2_DemonstrateCatch(void);
 // Shared facing code retains its position before the overlay entry points.
 #include "common/object_facing.h"
 
-/// Vale's placed actors, numbered in the order of gValeInteriors2_Placements
-/// (the scholars of entrance 19 are numbered from 8 in their own table).
+/// Vale's placed actors, numbered by the rows of gValeInteriors2_Placements.
+/// The tables after the party leaves and after Kalay keep the rows up to the
+/// inn's, and differ after them (ValeInteriors2AfterKalayActor).
 enum ValeInteriors2Actor {
   /// Isaac's mother. "Isaac, wake up!"
-  ACTOR_DORA = 8,
+  ACTOR_DORA = ACTOR_FIRST_PLACED,
   /// Isaac's father (sprite 0x35, Kyle in vale_storm.c). "Isaac, Dora, hurry!
   /// The Boulder could fall at any second!"
-  ACTOR_KYLE = 9,
-  ACTOR_INNKEEPER = 13,
-  /// A villager who asks "Hey... Boy... Do you have business with me?", and
-  /// who knows of Dora's illness once the party is back from Kalay.
-  ACTOR_VILLAGER_16 = 16,
+  ACTOR_KYLE,
+  /// Sprite 0xd0, whose frames are a flame and wisps of smoke; it is placed
+  /// outside the house only for Event_HurryToThePlaza, where it shakes, then
+  /// flares up as its animation turns from flame to smoke, and rises 18 pixels
+  /// as it shrinks away.
+  ACTOR_FLAME,
+  /// Lost his father in the storm and means to be a smith. "My father also died
+  /// in that storm three years ago."; once the party has left, "By then, I'll
+  /// surely be a fine smith."
+  ACTOR_YOUNG_SMITH,
+  /// ACTOR_YOUNG_SMITH's mother. "My son is still young, so I don't make him
+  /// work too long."
+  ACTOR_YOUNG_SMITHS_MOTHER,
+  ACTOR_INNKEEPER,
+  /// Walks about the inn. "One of the men from that group staying here wore a
+  /// mask over his face."
+  ACTOR_VILLAGER_SAW_MASK,
+  /// At the inn. "Two of those three guests staying with us have gone out.";
+  /// Mind Read later hears "I found his wallet when I was cleaning the room..."
+  ACTOR_INN_CLEANER,
+  /// In a room of the inn, before the party leaves Vale: sprite 0x22, masked
+  /// Felix's (sol_sanctum_eruption.h). "Hey... Boy... Do you have business with
+  /// me?"
+  ACTOR_MASKED_MAN,
+  /// Sprite 0xe2, set beside Isaac's bed on the stormy night: Catch reaches it
+  /// and Isaac puts it on (FLAG_ISAAC_WEARS_TUNIC). Dora: "Don't go out without
+  /// your tunic!"
+  ACTOR_TUNIC,
   /// Kraden's sprite (0x1e, as in Sol Sanctum's scenes), seen only from
-  /// entrance 22.
-  ACTOR_KRADEN = 18
+  /// VALE_INTERIORS_2_FROM_VALE_KRADEN_2.
+  ACTOR_KRADEN
+};
+
+/// The rows of gValeInteriors2_PlacementsAfterKalay that differ from the
+/// first table's.
+enum ValeInteriors2AfterKalayActor {
+  /// At the inn. "Well if it isn't Isaac! You've grown so much, I almost
+  /// didn't recognize you!"; Mind Read hears of Dora's illness.
+  ACTOR_VILLAGER_YOUVE_GROWN = ACTOR_FIRST_PLACED + 8,
+  /// Sprite 0x16, a blank square, beside ACTOR_VILLAGER_YOUVE_GROWN.
+  /// XXX: no event answers it, and the setup only clears its sprite flags.
+  ACTOR_BLANK_AFTER_KALAY
+};
+
+/// Babi's scholars, numbered by the rows of gValeInteriors2_ScholarsPlacements
+/// and named by what they say before the Colosso finals.
+enum ValeInteriors2ScholarActor {
+  /// Tells of the ruins where Babi Lighthouse stands. "Originally, there were
+  /// ancient ruins at the site of Babi Lighthouse."
+  ACTOR_SCHOLAR_ANCIENT_RUINS = ACTOR_FIRST_PLACED,
+  /// A scholar whose experiments fail. "No matter how many times I run the
+  /// experiment, I never get the results I want!"; after the finals he asks
+  /// whether the party knows Kraden.
+  ACTOR_SCHOLAR_EXPERIMENT,
+  /// Tells of Alchemy sealed away. "It is said that long ago, the power of
+  /// Alchemy was sealed away."
+  ACTOR_SCHOLAR_SEALED_ALCHEMY,
+  /// Tells of the Venus Ruins. "Originally, the ancient Venus Ruins lay buried
+  /// under Babi Lighthouse."
+  ACTOR_SCHOLAR_VENUS_RUINS,
+  /// Walks about the room. "Babi makes his scholars perform all sorts of
+  /// research. I wonder where Babi's favorite scholar, Kraden, is now?"
+  ACTOR_VILLAGER_BABIS_RESEARCH
 };
 
 /// Vale's place flags this scene keeps while the party is in Vale.
 enum ValeInteriors2PlaceFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = 0x300,
-  /// Back from Kalay, the villager of actor 16 remarked how much Isaac has
+  /// Back from Kalay, ACTOR_VILLAGER_YOUVE_GROWN remarked how much Isaac has
   /// grown.
-  FLAG_VALE_ACTOR16_SAW_ISAAC_GROWN = 0x301
+  FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN = 0x301
 };
 
 // FLAG_SCENE_TEMP_03: Dora got out of her sickbed on this visit.
 
-/// Returns the entrances, among them the scenes played on arrival: 19 from
-/// Babi's palace (its exit 11), 20 where a new game begins (menu/clear.c, and
-/// ValeGate's exit 50), 21 from this scene's own exit 20, and 22 from Kraden's
-/// cottage (ValeKraden's exit 13).
+/// Returns the entrances, among them the scenes played on arrival:
+/// VALE_INTERIORS_2_FROM_BABI_PALACE_1 from Babi's palace
+/// (BABI_PALACE_1_TO_VALE_INTERIORS_2),
+/// VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST where a new game begins
+/// (menu/clear.c, and ValeGate's VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST),
+/// entrance 21 from this scene's own exit 20, and
+/// VALE_INTERIORS_2_FROM_VALE_KRADEN_2 from Kraden's cottage
+/// (VALE_KRADEN_TO_VALE_INTERIORS_2_2).
 const struct SceneEntrance *ValeInteriors2_GetEntrances(void) {
   return gValeInteriors2_Entrances;
 }
@@ -168,8 +235,9 @@ const struct ScenePlacement *ValeInteriors2_GetPlacements(void) {
 }
 
 /// In Babi's Palace, one of Babi's scholars asks whether the party knows
-/// Kraden. Reached by talking to scholar 9 in their room (entrance 19) once
-/// FLAG_COLOSSO_OVER is set; speakerId is the actor spoken to.
+/// Kraden. Reached by talking to ACTOR_SCHOLAR_EXPERIMENT in their room
+/// (VALE_INTERIORS_2_FROM_BABI_PALACE_1) once FLAG_COLOSSO_OVER is set;
+/// speakerId is the actor spoken to.
 static void Event_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
@@ -206,48 +274,49 @@ const struct SceneEvent *ValeInteriors2_GetEvents(void) {
   return gValeInteriors2_Events;
 }
 
-/// In Vale, a villager asks whether Isaac has business with him, and sends
-/// him off whatever he answers. "Hey... Boy..." Reached by talking to the
-/// villager (actor 16) before the party leaves Vale (gValeInteriors2_Events).
+/// In a room of Vale's inn, the masked man asks whether Isaac has business
+/// with him, and sends him off whatever he answers. "Hey... Boy..." Reached by
+/// talking to ACTOR_MASKED_MAN before the party leaves Vale
+/// (gValeInteriors2_Events).
 static void Event_AskIsaacHisBusiness(void) {
   Engine_EventBegin();
-  Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_16, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_MASKED_MAN, 2);
   Engine_EventWait(30);
   Engine_EventSetMessage(MsgValeHeyBoy);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_VILLAGER_16, 10);
-  Event_ShowMessageAndWait(ACTOR_VILLAGER_16, 0, 6);
-  Actor_ShowEmote(ACTOR_VILLAGER_16, EMOTE_IN_FRONT | 2, 0);
-  Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_16, 1);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
+  Event_ShowMessageAndWait(ACTOR_MASKED_MAN, 0, 6);
+  Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | 2, 0);
+  Engine_ActorStartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_VILLAGER_16, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_MASKED_MAN, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_OpenMessage(ACTOR_VILLAGER_16, 0);
+  Event_OpenMessage(ACTOR_MASKED_MAN, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     gEventWork->message++;
   }
-  Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_16, 1);
+  Engine_ActorStartRepeatedMotion(ACTOR_MASKED_MAN, 1);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_VILLAGER_16, 0, 4);
+  Event_ShowMessageAndWait(ACTOR_MASKED_MAN, 0, 4);
   Engine_EventEnd();
 }
 
 /// In Vale, a villager asks whether the masked man was Felix, and wonders
-/// whether Jenna can be trusted. Reached by talking to actor 14 once the party
-/// has left Vale and until it reaches Kalay
+/// whether Jenna can be trusted. Reached by talking to ACTOR_VILLAGER_SAW_MASK
+/// once the party has left Vale and until it reaches Kalay
 /// (gValeInteriors2_EventsAfterLeaving).
 static void Event_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
-  Engine_ActorFaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
+  Engine_ActorFaceActor(ACTOR_VILLAGER_SAW_MASK, ACTOR_PARTY_LEADER, 0xA);
   Engine_EventSetMessage(MsgValeTheMaskedManWasFelix);
-  Engine_EventOpenMessage(0xE, 0);
+  Engine_EventOpenMessage(ACTOR_VILLAGER_SAW_MASK, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventShowMessage(0xE, 0);
+    Engine_EventShowMessage(ACTOR_VILLAGER_SAW_MASK, 0);
   } else {
     work = gEventWork;
     work->message = (work->message + 1);
-    Engine_EventAskYesNo(0xE, 0);
+    Engine_EventAskYesNo(ACTOR_VILLAGER_SAW_MASK, 0);
   }
   Engine_EventEnd();
 }
@@ -268,42 +337,46 @@ static void ValeInteriors2_CloseScreenAndExit(s32 exitId) {
 // any of the Vale tables plays a step sound and takes that exit
 // (gValeInteriors2_Exits, or gValeInteriors2_StormExits on the stormy night).
 
-/// Reached by cell code 1; takes exit 1, to ValeGate's entrance 6.
-static void Event_TakeExit1(void) {
+/// Reached by cell code 1; leads to ValeGate
+/// (VALE_GATE_FROM_VALE_INTERIORS_2_WEST).
+static void Event_TakeExitToValeGateNorthwest(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(1);
+  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_GATE_NORTHWEST);
 }
 
-/// Reached by cell code 2; takes exit 2, to Kraden's cottage (ValeKraden's
-/// entrance 3).
-static void Event_TakeExit2(void) {
+/// Reached by cell code 2; leads to Kraden's cottage
+/// (VALE_KRADEN_FROM_VALE_INTERIORS_2_NORTH).
+static void Event_TakeExitToValeKradenNorth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(2);
+  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_KRADEN_NORTH);
 }
 
-/// Reached by cell code 3; takes exit 3, to ValeGate's entrance 2.
-static void Event_TakeExit3(void) {
+/// Reached by cell code 3; leads to ValeGate
+/// (VALE_GATE_FROM_VALE_INTERIORS_2_NORTH).
+static void Event_TakeExitToValeGateNortheast(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(3);
+  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_GATE_NORTHEAST);
 }
 
-/// Reached by cell code 4; takes exit 4, to ValeGate's entrance 7.
-static void Event_TakeExit4(void) {
+/// Reached by cell code 4; leads to ValeGate
+/// (VALE_GATE_FROM_VALE_INTERIORS_2_SOUTH).
+static void Event_TakeExitToValeGateWest(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(4);
+  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_GATE_WEST);
 }
 
-/// Reached by cell code 5; takes exit 5, to this scene's entrance 8.
+/// Reached by cell code 5; takes exit 5, to this scene's
+/// VALE_INTERIORS_2_AFTER_ENTER_BATTLE.
 static void Event_TakeExit5(void) {
   Engine_AudioPlayCue(SE_128);
   ValeInteriors2_CloseScreenAndExit(5);
 }
 
-/// Reached by cell code 6; takes exit 6, to Vale's entrance 8, or on the
-/// stormy night to ValeStorm's.
-static void Event_TakeExit6(void) {
+/// Reached by cell code 6; leads to Vale (VALE_FROM_VALE_INTERIORS_2), or on
+/// the stormy night to ValeStorm's entrance 8.
+static void Event_TakeExitToVale(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(6);
+  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE);
 }
 
 /// Reached by cell code 7; takes exit 7, to this scene's entrance 9.
@@ -324,23 +397,27 @@ static void Event_TakeExit9(void) {
   ValeInteriors2_CloseScreenAndExit(9);
 }
 
-/// Reached by cell code 10; takes exit 10, to ValeStorm's entrance 12.
-static void Event_TakeExit10(void) {
+/// Reached by cell code 10; leads to ValeStorm
+/// (VALE_STORM_FROM_VALE_INTERIORS_2).
+static void Event_TakeExitToValeStorm(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(10);
+  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_STORM);
 }
 
-/// Reached by cell code 11; takes exit 11, to ValeStorm's entrance 13.
-static void Event_TakeExit11(void) {
+/// Reached by cell code 11; leads to ValeStorm
+/// (VALE_STORM_FROM_VALE_INTERIORS_2_WEST).
+static void Event_TakeExitToValeStormWest(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeInteriors2_CloseScreenAndExit(11);
+  ValeInteriors2_CloseScreenAndExit(VALE_INTERIORS_2_TO_VALE_STORM_WEST);
 }
 
 /// Sets up the stormy night or the villagers of the story, and plays the
-/// scenes of entrances 20 to 22.
-/// Called by Field_RunScene once the actors are placed. Entrance 20 sets
-/// FLAG_VALE_STORM before Event_DoraWakesIsaac; back from Kalay, Dora is put
-/// back in her sickbed unless FLAG_SCENE_TEMP_03 says she got up.
+/// scenes of VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST, entrance 21 and
+/// VALE_INTERIORS_2_FROM_VALE_KRADEN_2.
+/// Called by Field_RunScene once the actors are placed.
+/// VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST sets FLAG_VALE_STORM before
+/// Event_DoraWakesIsaac; back from Kalay, Dora is put back in her sickbed
+/// unless FLAG_SCENE_TEMP_03 says she got up.
 s32 ValeInteriors2_Initialize(void) {
   struct FieldActor *actor;
 
@@ -350,18 +427,18 @@ s32 ValeInteriors2_Initialize(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   } else {
     if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-      Engine_ActorSetPosition(11, 0, 0);
-      Engine_ActorSetPosition(12, 0, 0);
-      Engine_ActorSetPosition(13, 0, 0);
-      Engine_ActorSetPosition(14, 0, 0);
-      Engine_ActorSetPosition(15, 0, 0);
-      Engine_ActorSetPosition(ACTOR_VILLAGER_16, 0, 0);
+      Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
+      Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
+      Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
+      Engine_ActorSetPosition(ACTOR_VILLAGER_SAW_MASK, 0, 0);
+      Engine_ActorSetPosition(ACTOR_INN_CLEANER, 0, 0);
+      Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
     } else {
       ValeInteriors2_RestoreRoomPatch();
     }
-    Engine_ActorSetSpritePriority(13, 1);
+    Engine_ActorSetSpritePriority(ACTOR_INNKEEPER, 1);
     if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
-      actor = Object_GetById(17);
+      actor = Object_GetById(ACTOR_BLANK_AFTER_KALAY);
       Engine_ActorSetSpriteFlags(actor, 0);
       if (gGameState.entrance == VALE_INTERIORS_2_FROM_VALE ||
           gGameState.entrance == 7) {
@@ -412,9 +489,10 @@ s32 ValeInteriors2_Initialize(void) {
 
 /// In their house in Vale on the stormy night, Dora wakes Isaac, makes him take
 /// his tunic, and leads him out into the storm. "The Mt. Aleph Boulder is going
-/// to fall!" Called by ValeInteriors2_Initialize on arrival by entrance 20,
-/// where a new game begins. Sets FLAG_ISAAC_WEARS_TUNIC and takes exit 20, back
-/// into this scene by entrance 21, where Event_HurryToThePlaza follows.
+/// to fall!" Called by ValeInteriors2_Initialize on arrival by
+/// VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST, where a new game begins. Sets
+/// FLAG_ISAAC_WEARS_TUNIC and takes exit 20, back into this scene by entrance
+/// 21, where Event_HurryToThePlaza follows.
 static void Event_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct AnimationObject *sprite;
@@ -432,22 +510,22 @@ static void Event_DoraWakesIsaac(void) {
     mapWork = *(struct MapScrollWork **)Ram_MapWork;
     viewCenter = event->viewCenter;
   }
-  sprite = Object_GetById(17)->sprite;
+  sprite = Object_GetById(ACTOR_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm scene.
   Engine_EventBegin();
-  Engine_ActorSetPosition(11, 0, 0);
-  Engine_ActorSetPosition(12, 0, 0);
-  Engine_ActorSetPosition(13, 0, 0);
-  Engine_ActorSetPosition(14, 0, 0);
-  Engine_ActorSetPosition(15, 0, 0);
-  Engine_ActorSetPosition(ACTOR_VILLAGER_16, 0, 0);
-  // Isaac lies asleep in bed (animation 18); actor 17 is set beside him.
+  Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
+  Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
+  Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
+  Engine_ActorSetPosition(ACTOR_VILLAGER_SAW_MASK, 0, 0);
+  Engine_ActorSetPosition(ACTOR_INN_CLEANER, 0, 0);
+  Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
+  // Isaac lies asleep in bed (animation 18); his tunic is set beside him.
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 18);
   sprite->rotation = 1365;
-  Object_GetById(17)->motionFlags = 0;
-  Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
-  Engine_ActorSetPosition(17, PIXELS(576), PIXELS(650));
+  Object_GetById(ACTOR_TUNIC)->motionFlags = 0;
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_TUNIC), 0);
+  Engine_ActorSetPosition(ACTOR_TUNIC, PIXELS(576), PIXELS(650));
   Map_ClearLayerEntryFlag(7);
   Engine_ActorSetPosition(ACTOR_DORA, PIXELS(534), PIXELS(688));
   ObjectSystem_SuspendProjectionAndShowSprites();
@@ -511,7 +589,7 @@ static void Event_DoraWakesIsaac(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 543, 674);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
-  // "Isaac! You forgot something!" Catch's effect plays on Dora.
+  // "Isaac! You forgot something!" Catch plays from Dora on the tunic.
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA,
@@ -582,33 +660,33 @@ static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 /// Outside the house in Vale on the stormy night, Kyle calls to Isaac and Dora
-/// to hurry; actor 10 shakes, falls and fades as they run to the plaza. Called
-/// by ValeInteriors2_Initialize on arrival by entrance 21, after
-/// Event_DoraWakesIsaac. Takes exit 21, to ValeStorm's entrance 15, where
-/// Event_DoraSendsIsaacToThePlaza follows.
+/// to hurry; ACTOR_FLAME shakes, then turns to smoke and rises away, as they
+/// run to the plaza. Called by ValeInteriors2_Initialize on arrival by
+/// entrance 21, after Event_DoraWakesIsaac. Takes exit 21, to ValeStorm's
+/// entrance 15, where Event_DoraSendsIsaacToThePlaza follows.
 static void Event_HurryToThePlaza(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
   u32 i;
   volatile u16 *alpha;
 
-  actor = Object_GetById(10);
+  actor = Object_GetById(ACTOR_FLAME);
   sprite = actor->sprite;
   Engine_EventBegin();
-  // The villagers stay out of sight; actor 10 starts shaking on the slope.
-  Engine_ActorSetPosition(11, 0, 0);
-  Engine_ActorSetPosition(12, 0, 0);
-  Engine_ActorSetPosition(13, 0, 0);
-  Engine_ActorSetPosition(14, 0, 0);
-  Engine_ActorSetPosition(15, 0, 0);
-  Engine_ActorSetPosition(ACTOR_VILLAGER_16, 0, 0);
+  // The villagers stay out of sight; ACTOR_FLAME starts shaking.
+  Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
+  Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
+  Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
+  Engine_ActorSetPosition(ACTOR_VILLAGER_SAW_MASK, 0, 0);
+  Engine_ActorSetPosition(ACTOR_INN_CLEANER, 0, 0);
+  Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
   Actor_SetPosition(ACTOR_DORA, PIXELS(431), PIXELS(391));
-  Engine_ActorSetPosition(10, PIXELS(463), PIXELS(404));
-  Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+  Engine_ActorSetPosition(ACTOR_FLAME, PIXELS(463), PIXELS(404));
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FLAME), 0);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = 0;
   sprite->image.priority = 1;
-  Actor_SetActionScript(10, gValeInteriors2_Actor10ShakesScript);
+  Actor_SetActionScript(ACTOR_FLAME, gValeInteriors2_FlameShakesScript);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Map_CopyCellsTo(83, 15, 83, 19, 5, 4);
@@ -666,8 +744,9 @@ static void Event_HurryToThePlaza(void) {
                         gValeInteriors2_IsaacRunsBackScript);
   Engine_AudioPlayCue(SE_234);
   Engine_EventWait(20);
-  // Actor 10 drops (gValeInteriors2_Actor10FallsScript) and lands with SE_202.
-  Actor_SetActionScript(10, gValeInteriors2_Actor10FallsScript);
+  // ACTOR_FLAME flares up, turns to smoke and rises away
+  // (gValeInteriors2_FlameRisesScript) as SE_202 plays.
+  Actor_SetActionScript(ACTOR_FLAME, gValeInteriors2_FlameRisesScript);
   alpha = &REG_BLDALPHA;
 
   // Bring the boulder fully into view before fading it away.
@@ -714,7 +793,7 @@ ramp:
 
 /// Vale's innkeeper offers a room from behind the counter; elsewhere talks of
 /// the travelers, the eruption, or, back from Kalay, welcomes Isaac home.
-/// Reached by talking to the innkeeper (actor 13) in every Vale table but the
+/// Reached by talking to ACTOR_INNKEEPER in every Vale table but the
 /// storm's, and back from Kalay by Mind Read on him until he has welcomed
 /// Isaac. Sets FLAG_VALE_INNKEEPER_WELCOMED_ISAAC on that welcome.
 static void Event_TalkToInnkeeper(void) {
@@ -748,21 +827,20 @@ static void Event_TalkToInnkeeper(void) {
   }
 }
 
-/// Back from Kalay, the villager in Vale who once asked "Hey... Boy... Do you
-/// have business with me?" remarks how much Isaac has grown. Reached by
-/// talking to that villager (actor 16) while
+/// Back from Kalay, a villager at Vale's inn (ACTOR_VILLAGER_YOUVE_GROWN)
+/// remarks how much Isaac has grown. Reached by talking to him while
 /// FLAG_VALE_INNKEEPER_WELCOMED_ISAAC is clear, or by Mind Read on him until
-/// FLAG_VALE_ACTOR16_SAW_ISAAC_GROWN is set, which this sets. XXX: the
+/// FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN is set, which this sets. XXX: the
 /// talk row tests the innkeeper's flag, not this one; likely a slip, because
 /// the Mind Read row tests this one, but both show the same line.
 static void Event_RemarkIsaacHasGrown(void) {
   Engine_EventBegin();
-  Engine_ActorFaceActor(ACTOR_VILLAGER_16, ACTOR_PARTY_LEADER, 10);
+  Engine_ActorFaceActor(ACTOR_VILLAGER_YOUVE_GROWN, ACTOR_PARTY_LEADER, 10);
   Engine_EventSetMessage(MsgValeYouveGrownSoMuch);
-  Engine_EventShowMessage(ACTOR_VILLAGER_16, 0);
-  Engine_ActorFaceDirection(ACTOR_VILLAGER_16, FACING_NORTHWEST + FACING_STEP,
-                            10);
-  Engine_GameFlagSet(FLAG_VALE_ACTOR16_SAW_ISAAC_GROWN);
+  Engine_EventShowMessage(ACTOR_VILLAGER_YOUVE_GROWN, 0);
+  Engine_ActorFaceDirection(ACTOR_VILLAGER_YOUVE_GROWN,
+                            FACING_NORTHWEST + FACING_STEP, 10);
+  Engine_GameFlagSet(FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN);
   Engine_EventEnd();
 }
 
@@ -777,20 +855,21 @@ static void Event_ReadInnkeepersThoughts(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the villager of actor 16 in Vale: Dora was struck with illness.
+/// Mind Read on ACTOR_VILLAGER_YOUVE_GROWN at Vale's inn: Dora was struck with
+/// illness.
 /// Reached back from Kalay once he has remarked on Isaac. Sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
 static void Event_ReadThoughtsAboutDorasIllness(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDoraWasStruckWithIllness);
-  Engine_EventShowMessage(ACTOR_VILLAGER_16, 0);
+  Engine_EventShowMessage(ACTOR_VILLAGER_YOUVE_GROWN, 0);
   Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
   Engine_EventEnd();
 }
 
 /// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale; she asks
 /// who told him she was ill, then gets up to show she feels well. Reached by
-/// talking to Dora (actor 8), or by Mind Read on her, until
+/// talking to Dora, or by Mind Read on her, until
 /// FLAG_VISITED_SICK_DORA is set. Sets it and FLAG_SCENE_TEMP_03.
 static void Event_VisitSickDora(void) {
   struct FieldActor *leader;
@@ -944,10 +1023,12 @@ static void ValeInteriors2_RestoreRoomPatch(void) {
 }
 
 /// In Vale, the Mythril Bag rises and wobbles before Kraden, with no text.
-/// Called by ValeInteriors2_Initialize on arrival by entrance 22, from Kraden's
-/// cottage, while he prepares for the first Sol Sanctum visit
-/// (Event_TalkToKraden). Takes exit 22 back outside (ValeKraden's entrance 10),
-/// where Event_KradenSetsOff gathers the party.
+/// Called by ValeInteriors2_Initialize on arrival by
+/// VALE_INTERIORS_2_FROM_VALE_KRADEN_2, from Kraden's cottage, while he
+/// prepares for the first Sol Sanctum visit (Event_TalkToKraden). Takes
+/// VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH back outside
+/// (VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH), where Event_KradenSetsOff gathers
+/// the party.
 static void Event_ShowMythrilBag(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -992,7 +1073,7 @@ static void Event_ShowMythrilBag(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(22);
+  Engine_EventRequestExit(VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH);
 }
 
 /// Flashes between two palettes and emits a paired effect every sixteen frames.
@@ -1089,19 +1170,19 @@ static void ValeInteriors2_SpawnEffectPair(union FieldObject *object) {
 
 UNUSED static void ValeInteriors2_CyclePaletteWithParticles(void) {
   ValeInteriors2_CyclePaletteAndSpawnPair(
-      (union FieldObject *)Object_GetById(8));
+      (union FieldObject *)Object_GetById(ACTOR_DORA));
 }
 
 UNUSED static void ValeInteriors2_CyclePaletteWithoutParticles(void) {
   ValeInteriors2_CyclePaletteOnOddFrames(
-      (union FieldObject *)Object_GetById(17));
+      (union FieldObject *)Object_GetById(ACTOR_TUNIC));
 }
 
-/// Catch's effect plays on Dora, then its objects are released.
+/// Catch plays from Dora on the tunic, then its objects are released.
 /// Called by Event_DoraWakesIsaac as Dora hands Isaac his tunic.
 static void ValeInteriors2_DemonstrateCatch(void) {
   Engine_PsynergyBegin(ABILITY_CATCH, 1);
-  Engine_PsynergySetTarget(ACTOR_DORA, 0x11);
+  Engine_PsynergySetTarget(ACTOR_DORA, ACTOR_TUNIC);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
@@ -1166,13 +1247,13 @@ s32 gValeInteriors2_RunToPlazaScript[] = {
     SC_SYNC,   SC_END,
 };
 
-s32 gValeInteriors2_Actor10ShakesScript[] = {
+s32 gValeInteriors2_FlameShakesScript[] = {
     SC_SET(SW_SCALE_X, 0xe666),  SC_SET(SW_SCALE_Y, 0x10000), SC_WAIT(4),
     SC_SET(SW_SCALE_X, 0xcccc),  SC_SET(SW_SCALE_Y, 0xcccc),  SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValeInteriors2_Actor10FallsScript[] = {
+s32 gValeInteriors2_FlameRisesScript[] = {
     SC_ARG(2),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x13333),
@@ -1420,17 +1501,17 @@ struct ScenePlacement gValeInteriors2_ScholarsPlacements[] = {
 };
 
 struct SceneEvent gValeInteriors2_StormEvents[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit1) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit2) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit3) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit4) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNorthwest) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNortheast) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateWest) },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit5) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit6) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToVale) },
     { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit7) },
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit8) },
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit9) },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit10) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit11) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStorm) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStormWest) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeWoodenBoxEmpty)) },
     { SEARCH(SEARCH_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
     { SEARCH(SEARCH_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
@@ -1445,23 +1526,23 @@ struct SceneEvent gValeInteriors2_StormEvents[] = {
 };
 
 struct SceneEvent gValeInteriors2_Events[] = {
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
-    { EVENT_TALK, ACTOR_VILLAGER_16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIsaacHisBusiness) },
+    { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
+    { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
+    { EVENT_TALK, ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
+    { EVENT_TALK, ACTOR_INN_CLEANER, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
+    { EVENT_TALK, ACTOR_MASKED_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIsaacHisBusiness) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit1) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit2) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit3) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit4) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNorthwest) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNortheast) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateWest) },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit5) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit6) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToVale) },
     { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit7) },
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit8) },
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit9) },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit10) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit11) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStorm) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStormWest) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { SEARCH(SEARCH_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { SEARCH(SEARCH_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1476,27 +1557,27 @@ struct SceneEvent gValeInteriors2_Events[] = {
 };
 
 struct SceneEvent gValeInteriors2_EventsAfterLeaving[] = {
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherMaskedManWasFelix) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeWereASmallHotelAndWe) },
+    { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
+    { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
+    { EVENT_TALK, ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherMaskedManWasFelix) },
+    { EVENT_TALK, ACTOR_INN_CLEANER, CONDITION_ALWAYS, MSGNO(MsgValeWereASmallHotelAndWe) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeIWillThinkOfJennaAs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeNowThatJennaIsGoneWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIWillThinkOfJennaAs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeNowThatJennaIsGoneWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_CLEANER, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit1) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit2) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit3) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit4) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNorthwest) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNortheast) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateWest) },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit5) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit6) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToVale) },
     { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit7) },
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit8) },
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit9) },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit10) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit11) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStorm) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStormWest) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { SEARCH(SEARCH_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { SEARCH(SEARCH_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1511,37 +1592,37 @@ struct SceneEvent gValeInteriors2_EventsAfterLeaving[] = {
 };
 
 struct SceneEvent gValeInteriors2_EventsAfterKalay[] = {
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeArentYouGladToSeeThe) },
+    { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
+    { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
+    { EVENT_TALK, ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
+    { EVENT_TALK, ACTOR_INN_CLEANER, CONDITION_ALWAYS, MSGNO(MsgValeArentYouGladToSeeThe) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { EVENT_TALK, ACTOR_VILLAGER_16, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(Event_RemarkIsaacHasGrown) },
-    { EVENT_TALK, ACTOR_VILLAGER_16, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeIPromisedIdBecomeAGreat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeThatShyGirlWithIsaacSure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfIsaacWillContinue) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeValeWillNeverChangeSoYou) },
+    { EVENT_TALK, ACTOR_VILLAGER_YOUVE_GROWN, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(Event_RemarkIsaacHasGrown) },
+    { EVENT_TALK, ACTOR_VILLAGER_YOUVE_GROWN, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIPromisedIdBecomeAGreat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeThatShyGirlWithIsaacSure) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfIsaacWillContinue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_CLEANER, CONDITION_ALWAYS, MSGNO(MsgValeValeWillNeverChangeSoYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INNKEEPER, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadInnkeepersThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_VILLAGER_16, FLAG_VALE_ACTOR16_SAW_ISAAC_GROWN, EVENT_SCRIPT(Event_RemarkIsaacHasGrown) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadThoughtsAboutDorasIllness) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_VILLAGER_YOUVE_GROWN, FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN, EVENT_SCRIPT(Event_RemarkIsaacHasGrown) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YOUVE_GROWN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadThoughtsAboutDorasIllness) },
     { EVENT_TALK, ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(Event_VisitSickDora) },
     { EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToDora) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(Event_VisitSickDora) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DORA, FLAG_SCENE_TEMP_03, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgValeImSorryISeemedSoHarsh) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit1) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit2) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit3) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit4) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNorthwest) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNortheast) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateWest) },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit5) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit6) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToVale) },
     { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit7) },
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit8) },
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit9) },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit10) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit11) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStorm) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeStormWest) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { SEARCH(SEARCH_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { SEARCH(SEARCH_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1559,16 +1640,16 @@ struct SceneEvent gValeInteriors2_EventsAfterKalay[] = {
 };
 
 struct SceneEvent gValeInteriors2_ScholarsEvents[] = {
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyThereWereAncientRuinsAt) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiNoMatterHowManyTimesI) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiItIsSaidThatLongAgo) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyTheAncientVenusRuinsLay) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiBabiMakesHisScholarsPerformAll) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBabiNoOneHasEverReachedThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBabiStillMyExperimentsInAlchemyAre) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBabiKradensJourneyWasMeantToRevive) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiTheVenusRuinsAreTheRemnants) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
+    { EVENT_TALK, ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyThereWereAncientRuinsAt) },
+    { EVENT_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, MSGNO(MsgBabiNoMatterHowManyTimesI) },
+    { EVENT_TALK, ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiItIsSaidThatLongAgo) },
+    { EVENT_TALK, ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyTheAncientVenusRuinsLay) },
+    { EVENT_TALK, ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiBabiMakesHisScholarsPerformAll) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiNoOneHasEverReachedThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, MSGNO(MsgBabiStillMyExperimentsInAlchemyAre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiKradensJourneyWasMeantToRevive) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiTheVenusRuinsAreTheRemnants) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
     { 0x21, 20, CONDITION_ALWAYS, 19 },
     { SEARCH(SEARCH_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
@@ -1578,16 +1659,16 @@ struct SceneEvent gValeInteriors2_ScholarsEvents[] = {
 };
 
 struct SceneEvent gValeInteriors2_ScholarsLaterEvents[] = {
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ScholarAsksAboutKraden) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIfTheRiddleOfTheVenus) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiImSureKradenWouldStopBy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBabiTheRelationshipBetweenAlchemyAndThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBabiIWantToSeeKradenAnd) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBabiTheresGotToBeAGood) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBabiWhatSortOfUnfathomableRiddlesAre) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
+    { EVENT_TALK, ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
+    { EVENT_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ScholarAsksAboutKraden) },
+    { EVENT_TALK, ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },
+    { EVENT_TALK, ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiIfTheRiddleOfTheVenus) },
+    { EVENT_TALK, ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiImSureKradenWouldStopBy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiTheRelationshipBetweenAlchemyAndThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, MSGNO(MsgBabiIWantToSeeKradenAnd) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiTheresGotToBeAGood) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiWhatSortOfUnfathomableRiddlesAre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
     { 0x21, 20, CONDITION_ALWAYS, 19 },
     { SEARCH(SEARCH_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },

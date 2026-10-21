@@ -182,6 +182,45 @@ void Menu_LoadResourceSlot(s32 slot, s32 index);
 void Menu_AppendResourceEntry(s32 no);
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase);
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase);
+/// The field menu's commands, as Menu_SelectTopEntry takes and returns them
+/// (gMenu_TopEntryCommandByPosition).
+enum FieldMenuCommand {
+  FIELD_MENU_PSYNERGY = 1,
+  FIELD_MENU_DJINN = 2,
+  FIELD_MENU_ITEM = 3,
+  FIELD_MENU_STATUS = 4
+};
+
+/// The title menu's choices, as Menu_SelectSaveSlotAction returns them
+/// (gMenu_SaveSlotActionByPosition).
+enum SaveSlotAction {
+  SAVE_ACTION_NEW_GAME = 0,
+  SAVE_ACTION_CONTINUE = 1,
+  SAVE_ACTION_COPY = 2,
+  SAVE_ACTION_ERASE = 3,
+  SAVE_ACTION_BATTLE = 4,
+  SAVE_ACTION_SEND = 5
+};
+
+/// What Menu_SelectResourceLayout offers.
+enum ResourceLayoutMode {
+  RESOURCE_LAYOUT_TRANSFER_METHOD = 0, ///< Password or Cable
+  RESOURCE_LAYOUT_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
+};
+
+/// The places of the transfer method menu (RESOURCE_LAYOUT_TRANSFER_METHOD).
+enum TransferMethod { TRANSFER_METHOD_PASSWORD = 0, TRANSFER_METHOD_CABLE = 1 };
+
+/// The places of the password level menu (RESOURCE_LAYOUT_PASSWORD_LEVEL).
+enum PasswordLevel {
+  PASSWORD_LEVEL_GOLD = 0,
+  PASSWORD_LEVEL_SILVER = 1,
+  PASSWORD_LEVEL_BRONZE = 2
+};
+
+/// What Menu_RunConfirmSelection and Menu_RunConfirmSelectionAt return.
+enum ConfirmChoice { CONFIRM_YES = 0, CONFIRM_NO = 1 };
+
 s32 Menu_SelectTopEntry(s32 selection);
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1);
 s32 Menu_SelectSaveSlotAction(void);

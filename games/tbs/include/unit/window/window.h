@@ -133,6 +133,68 @@ enum {
   UI_SPRITE_HOP_DOWN_LEFT = 18,
 };
 
+/// The command icons (ResourceId_CommandIcons), each drawn with the command
+/// name of the same number (MsgCommandName + icon).
+enum CommandIcon {
+  COMMAND_ICON_ATTACK = 0,
+  COMMAND_ICON_PSYNERGY = 1,
+  COMMAND_ICON_ITEM = 2,
+  COMMAND_ICON_DEFEND = 3,
+  COMMAND_ICON_FLEE = 4,
+  COMMAND_ICON_YES = 5,
+  COMMAND_ICON_NO = 6,
+  COMMAND_ICON_STATUS = 7,
+  COMMAND_ICON_CHECK = 8,
+  COMMAND_ICON_USE = 9,
+  COMMAND_ICON_GIVE = 10,
+  COMMAND_ICON_DROP = 11,
+  COMMAND_ICON_SPEAK = 12,
+  COMMAND_ICON_EQUIP = 13,
+  COMMAND_ICON_FIGHT = 14,
+  COMMAND_ICON_DJINN = 15,
+  COMMAND_ICON_SUMMON = 16,
+  COMMAND_ICON_BUY = 17,
+  COMMAND_ICON_SELL = 18,
+  COMMAND_ICON_ARTIFACTS = 19,
+  COMMAND_ICON_REPAIR = 20,
+  COMMAND_ICON_NEW_GAME = 21,
+  COMMAND_ICON_CONTINUE = 22,
+  COMMAND_ICON_COPY = 23,
+  COMMAND_ICON_ERASE = 24,
+  COMMAND_ICON_REVIVE = 25,
+  COMMAND_ICON_CURE_POISON = 26,
+  COMMAND_ICON_REPEL_EVIL = 27,
+  COMMAND_ICON_REMOVE_CURSE = 28,
+  COMMAND_ICON_BATTLE = 29,
+  COMMAND_ICON_SEND = 30,
+  COMMAND_ICON_CHANGE = 31,
+  COMMAND_ICON_COINS = 32,
+  COMMAND_ICON_LUCKY_MEDALS = 33,
+  COMMAND_ICON_PASSWORD = 44,
+  COMMAND_ICON_CABLE = 45,
+  COMMAND_ICON_GOLD = 46,
+  COMMAND_ICON_SILVER = 47,
+  COMMAND_ICON_BRONZE = 48
+};
+
+/// The kinds of icon the selection screen lists (SelectionNode.kind) and
+/// Resource_LoadByMode, Resource_LoadByModeIntoSlot and
+/// RenderOutput_CreateFromResource load.
+enum IconKind {
+  ICON_KIND_NONE = 0,    ///< a free selection icon record
+  ICON_KIND_COMMAND = 1, ///< a command's icon, from its number
+  /// An item's icon, with its count above one and its equipped and broken
+  /// marks (and the artifact mark where a slot is given).
+  ICON_KIND_ITEM = 2,
+  ICON_KIND_ABILITY = 4, ///< a Psynergy's icon, from its ability number
+  ICON_KIND_YES_NO = 6,  ///< a yes or no command, drawn as a command
+  /// An item's icon without the broken mark, for the equipment view.
+  ICON_KIND_EQUIPMENT_ITEM = 7,
+  ICON_KIND_PATTERN = 8, ///< one of the other icons (Ui_BuildPatternToSlot)
+  /// The one tile RenderResource_LoadTableEntry loads.
+  ICON_KIND_TABLE_ENTRY = 9
+};
+
 /// The kinds of message argument (UiWork_PushValueSlot), which the message
 /// codes such as {argument_item_name} read.
 enum {

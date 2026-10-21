@@ -471,7 +471,7 @@ static __inline__ s32 ResourceMenu_ReadCommandPosition(s8 *table, s32 index) {
 /// Translates between command IDs and visible icon positions using the two
 /// lookup rows. The icons are Psynergy, Djinn, Item and Status on row 17;
 /// `selection` is the command to start on and the result the command
-/// chosen: 1 Psynergy, 2 Djinn, 3 Item, 4 Status, or -1 when cancelled. The
+/// chosen (enum FieldMenuCommand), or -1 when cancelled. The
 /// field's menu runs it (window/window/selection.c).
 s32 Menu_SelectTopEntry(s32 selection) {
   s32 group = 0;
@@ -495,12 +495,12 @@ s32 Menu_SelectTopEntry(s32 selection) {
   }
 
   AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(1);
+  Menu_AppendResourceEntry(COMMAND_ICON_PSYNERGY);
   if (group == 0) {
-    Menu_AppendResourceEntry(15);
+    Menu_AppendResourceEntry(COMMAND_ICON_DJINN);
   }
-  Menu_AppendResourceEntry(2);
-  Menu_AppendResourceEntry(7);
+  Menu_AppendResourceEntry(COMMAND_ICON_ITEM);
+  Menu_AppendResourceEntry(COMMAND_ICON_STATUS);
   Menu_CenterResourceEntries(17, SELECT_MENU_WIDTH, 0);
   result = Menu_RunResourceSelectionLoop(selection);
   Menu_EndResourceSelection();
@@ -520,16 +520,16 @@ s32 Menu_SelectTopEntry(s32 selection) {
 
 /// Opens the field command menu and animates from start to the command's icon.
 /// Returns the final icon position after closing the menu. The Djinn icon is
-/// always shown, so `command` (1 to 4, as Menu_SelectTopEntry gives it) is
-/// position command - 1. The world map's scenes show it picking Djinn
-/// (scene/world_map.c).
+/// always shown, so `command` (enum FieldMenuCommand, as Menu_SelectTopEntry
+/// gives it) is position command - 1. The world map's scenes show it picking
+/// Djinn (scene/world_map.c).
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   UiWindow_OpenMode1AndWaitFrame();
   AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(1);
-  Menu_AppendResourceEntry(0xF);
-  Menu_AppendResourceEntry(2);
-  Menu_AppendResourceEntry(7);
+  Menu_AppendResourceEntry(COMMAND_ICON_PSYNERGY);
+  Menu_AppendResourceEntry(COMMAND_ICON_DJINN);
+  Menu_AppendResourceEntry(COMMAND_ICON_ITEM);
+  Menu_AppendResourceEntry(COMMAND_ICON_STATUS);
   Menu_CenterResourceEntries(0x11, ANIMATE_ENTRIES_ROW, 0);
   command = Menu_SelectResource(start, command - 1);
   Menu_EndResourceSelection();
@@ -538,14 +538,15 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 }
 
 /// Builds the title menu from the save summaries and optional send flags.
-/// Translates the chosen visible position back to its save-action code:
-/// 0 New Game, 1 Continue, 2 Copy, 3 Erase, 4 Battle, 5 Send, or -1 when
-/// cancelled or the backup memory cannot be read. With no files it returns 0
-/// at once. The icons, by SaveState_ScanRecordFlags' count: New Game,
-/// Continue, Copy and Erase for one or two files (starting on Continue);
-/// no New Game or Copy with three; with every file cleared no Continue, and
-/// only Erase with three such files. Battle and Send follow when enabled.
-/// XXX: with Send shown but not Battle, Send's place maps to 4 (Battle),
+/// Translates the chosen visible position back to its action (enum
+/// SaveSlotAction), or -1 when cancelled or the backup memory cannot be read.
+/// With no files it returns 0 at once. The icons, by SaveState_ScanRecordFlags'
+/// count: New Game, Continue, Copy and Erase for one or two files (starting on
+/// Continue); no New Game or Copy with three; with every file cleared no
+/// Continue, and only Erase with three such files. Battle and Send follow when
+/// enabled.
+/// XXX: with Send shown but not Battle, Send's place maps to
+/// SAVE_ACTION_BATTLE,
 /// because gMenu_SaveSlotActionByPosition lists Battle before Send in every
 /// row; whether a file can ever be cleared without any of flags 48-127 set
 /// is not established. The file menu runs it (menu/clear.c).
@@ -575,20 +576,20 @@ s32 Menu_SelectSaveSlotAction(void) {
   }
   AffineEffect_InitializeWork();
   if ((group == 0) || (group == 3)) {
-    Menu_AppendResourceEntry(0x15);
+    Menu_AppendResourceEntry(COMMAND_ICON_NEW_GAME);
   }
   if (group <= 1U) {
-    Menu_AppendResourceEntry(0x16);
+    Menu_AppendResourceEntry(COMMAND_ICON_CONTINUE);
   }
   if ((group == 0) || (group == 3)) {
-    Menu_AppendResourceEntry(0x17);
+    Menu_AppendResourceEntry(COMMAND_ICON_COPY);
   }
-  Menu_AppendResourceEntry(0x18);
+  Menu_AppendResourceEntry(COMMAND_ICON_ERASE);
   if ((*(s16 *)gTitleExtraOptionEnabled) != 0) {
-    Menu_AppendResourceEntry(0x1D);
+    Menu_AppendResourceEntry(COMMAND_ICON_BATTLE);
   }
   if (gTitleSendOptionEnabled != 0) {
-    Menu_AppendResourceEntry(0x1E);
+    Menu_AppendResourceEntry(COMMAND_ICON_SEND);
   }
   Menu_CenterResourceEntries(0x11, TYPE_MENU_WIDTH, 0);
   result = Menu_RunResourceSelectionLoop(initial);
@@ -621,7 +622,7 @@ void Menu_DrawModeLabel(void) {
                                 80);
 
     switch (state->selection) {
-    case 0: {
+    case PASSWORD_LEVEL_GOLD: {
       s32 text = MsgPasswordLevel;
 
       UiText_DrawCharacterAtOffset(text, state->lowerWindow, MODE_LABEL_X, 40);
@@ -635,7 +636,7 @@ void Menu_DrawModeLabel(void) {
       UiText_DrawCharacterAtOffset(text, state->lowerWindow, MODE_LABEL_X, 72);
       break;
     }
-    case 1: {
+    case PASSWORD_LEVEL_SILVER: {
       s32 text = MsgPasswordLevel;
 
       UiText_DrawCharacterAtOffset(text, state->lowerWindow, MODE_LABEL_X, 40);
@@ -645,7 +646,7 @@ void Menu_DrawModeLabel(void) {
       UiText_DrawCharacterAtOffset(text, state->lowerWindow, MODE_LABEL_X, 56);
       break;
     }
-    case 2:
+    case PASSWORD_LEVEL_BRONZE:
     default: {
       s32 text = MsgPasswordLevel;
 
@@ -674,17 +675,17 @@ void Menu_DrawModeLabel(void) {
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
 /// Redraws password/cable transfer help when the chosen method changes. A
-/// scheduler callback of the transfer method menu: Password (0) or Cable.
+/// scheduler callback of the transfer method menu: Password or Cable.
 void Menu_DrawModeIndicator(void) {
   struct ResourceMenuWork *state = gMenuSelectWork;
 
   if (state->previousMode != state->selection) {
-    if (state->selection == 0) {
+    if (state->selection == TRANSFER_METHOD_PASSWORD) {
       RenderOutput_ClearList(state->lowerWindow);
       UiText_DrawResource(MsgPasswordTransferHelp, state->lowerWindow, 16, 4);
       UiText_DrawResource(MsgPasswordTransferHelp + 1, state->lowerWindow, 16,
                           16);
-    } else if (state->previousMode == 0) {
+    } else if (state->previousMode == TRANSFER_METHOD_PASSWORD) {
       RenderOutput_ClearList(state->lowerWindow);
       UiText_DrawResource(MsgCableTransferHelp, state->lowerWindow, 0, 4);
       UiText_DrawResource(MsgCableTransferHelp + 1, state->lowerWindow, 0, 16);
@@ -695,7 +696,7 @@ void Menu_DrawModeIndicator(void) {
 }
 #else
 /// Redraws password/cable transfer help when the chosen method changes. A
-/// scheduler callback of the transfer method menu: Password (0) or Cable.
+/// scheduler callback of the transfer method menu: Password or Cable.
 void Menu_DrawModeIndicator(void) {
   struct ResourceMenuWork *state = gMenuSelectWork;
   s16 *shown = &state->previousMode;
@@ -704,7 +705,7 @@ void Menu_DrawModeIndicator(void) {
   if (*shown != *current) {
     *shown = *current;
     RenderOutput_PrepareForRedraw(state->lowerWindow);
-    if (*current == 0) {
+    if (*current == TRANSFER_METHOD_PASSWORD) {
       TRANSFER_MODE_DRAW_HELP(MsgPasswordTransferHelp, state->lowerWindow,
                               TRANSFER_PASSWORD_HELP_X,
                               TRANSFER_PASSWORD_HELP_FIRST_Y);
@@ -723,10 +724,10 @@ void Menu_DrawModeIndicator(void) {
 }
 #endif
 
-/// Selects either the transfer method (mode 0) or password level. Schedules the
+/// Selects either the transfer method or the password level (enum
+/// ResourceLayoutMode). Schedules the
 /// appropriate help redraw while the icon menu is active, then closes both
-/// help windows and the icon menu. Mode 0 offers Password and Cable (icons
-/// 44 and 45), mode 1 Gold, Silver and Bronze (46 to 48). Returns the place
+/// help windows and the icon menu. Returns the place
 /// chosen, or -1 when cancelled. The Send screens run it (menu/clear.c).
 s32 Menu_SelectResourceLayout(s32 mode) {
   struct ResourceMenuWork *work;
@@ -737,13 +738,13 @@ s32 Menu_SelectResourceLayout(s32 mode) {
 
   AffineEffect_InitializeWork();
   work = gMenuSelectWork;
-  if (mode == 0) {
-    Menu_AppendResourceEntry(44);
-    Menu_AppendResourceEntry(45);
+  if (mode == RESOURCE_LAYOUT_TRANSFER_METHOD) {
+    Menu_AppendResourceEntry(COMMAND_ICON_PASSWORD);
+    Menu_AppendResourceEntry(COMMAND_ICON_CABLE);
   } else {
-    Menu_AppendResourceEntry(46);
-    Menu_AppendResourceEntry(47);
-    Menu_AppendResourceEntry(48);
+    Menu_AppendResourceEntry(COMMAND_ICON_GOLD);
+    Menu_AppendResourceEntry(COMMAND_ICON_SILVER);
+    Menu_AppendResourceEntry(COMMAND_ICON_BRONZE);
 #if (LANGUAGE == LANGUAGE_SPANISH)
     Menu_CenterResourceEntries(17, 5, 0);
 #endif
@@ -757,7 +758,7 @@ s32 Menu_SelectResourceLayout(s32 mode) {
 #else
   Menu_CenterResourceEntries(17, 5, 0);
 #endif
-  if (mode != 0) {
+  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
     work->previousMode = 0xffff;
     window = UiWindow_Create(RESOURCE_MODE0_WINDOW_X, 0,
@@ -793,7 +794,7 @@ s32 Menu_SelectResourceLayout(s32 mode) {
                                         TRANSFER_HELP_WINDOW_WIDTH, 7, 2);
   }
   result = Menu_RunResourceSelectionLoop(0);
-  if (mode != 0)
+  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD)
     Scheduler_RemoveCallback(Menu_DrawModeLabel);
   else
     Scheduler_RemoveCallback(Menu_DrawModeIndicator);
@@ -810,43 +811,43 @@ s32 Menu_SelectResourceLayout(s32 mode) {
 // Icon numbers refer to ResourceId_CommandIcons.
 // Each shows the name of the icon under the cursor in a window.
 
-/// Selects a shop command, icons 0x11-0x14 (Buy, Sell, Artifacts, Repair),
+/// Selects a shop command (Buy, Sell, Artifacts, Repair),
 /// centered on row 17, starting on position `selection`. Returns the
 /// position chosen, or -1 when cancelled.
 s32 Menu_SelectShopCommand(s32 selection) {
   s32 result;
 
   AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(0x11);
-  Menu_AppendResourceEntry(0x12);
-  Menu_AppendResourceEntry(0x13);
-  Menu_AppendResourceEntry(0x14);
+  Menu_AppendResourceEntry(COMMAND_ICON_BUY);
+  Menu_AppendResourceEntry(COMMAND_ICON_SELL);
+  Menu_AppendResourceEntry(COMMAND_ICON_ARTIFACTS);
+  Menu_AppendResourceEntry(COMMAND_ICON_REPAIR);
   Menu_CenterResourceEntries(17, ENTRY11_COMMAND_LABEL_WIDTH, 0);
   result = Menu_RunResourceSelectionLoop(selection);
   Menu_EndResourceSelection();
   return result;
 }
 
-/// Selects a Sanctum service, icons 0x19-0x1c (Revive, Cure Poison, Repel
-/// Evil, Remove Curse), centered on row 17, starting on position
-/// `selection`. Returns the position chosen, or -1 when cancelled.
+/// Selects a Sanctum service (Revive, Cure Poison, Repel Evil, Remove Curse),
+/// centered on row 17, starting on position `selection`. Returns the position
+/// chosen, or -1 when cancelled.
 s32 Menu_SelectSanctumService(s32 selection) {
   s32 result;
 
   AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(0x19);
-  Menu_AppendResourceEntry(0x1A);
-  Menu_AppendResourceEntry(0x1B);
-  Menu_AppendResourceEntry(0x1C);
+  Menu_AppendResourceEntry(COMMAND_ICON_REVIVE);
+  Menu_AppendResourceEntry(COMMAND_ICON_CURE_POISON);
+  Menu_AppendResourceEntry(COMMAND_ICON_REPEL_EVIL);
+  Menu_AppendResourceEntry(COMMAND_ICON_REMOVE_CURSE);
   Menu_CenterResourceEntries(17, ENTRY19_COMMAND_LABEL_WIDTH, 0);
   result = Menu_RunResourceSelectionLoop(selection);
   Menu_EndResourceSelection();
   return result;
 }
 
-/// Selects Yes/No (icons 5/6), returning 0 for Yes and 1 for No; cancelling
-/// returns 1 (No). The menu sits on row 17 when `bottom` is nonzero, else on
-/// row 0. `message` is the first of the two names to show, or 0 for the
+/// Selects Yes or No, returning CONFIRM_YES or CONFIRM_NO; cancelling
+/// returns CONFIRM_NO. The menu sits on row 17 when `bottom` is nonzero, else
+/// on row 0. `message` is the first of the two names to show, or 0 for the
 /// command names; `labelWidth` is the name window's width inside its frame,
 /// or 0 for 3. The cursor starts on position `selection`.
 s32 Menu_RunConfirmSelection(s32 bottom, s32 message, s32 labelWidth,
@@ -864,31 +865,31 @@ s32 Menu_RunConfirmSelection(s32 bottom, s32 message, s32 labelWidth,
     row = 17;
   }
 
-  Menu_AppendResourceEntry(5);
-  Menu_AppendResourceEntry(6);
+  Menu_AppendResourceEntry(COMMAND_ICON_YES);
+  Menu_AppendResourceEntry(COMMAND_ICON_NO);
   Menu_CenterResourceEntries(row, labelWidth, message);
 
   selection = Menu_RunResourceSelectionLoop(selection);
   Menu_EndResourceSelection();
   if (selection == -1) {
-    selection = 1;
+    selection = CONFIRM_NO;
   }
   return selection;
 }
 
-/// Selects Yes/No with the icons from tile (x, y) and the name window after
-/// them, returning 0 for Yes and 1 for No; cancelling returns 1 (No).
+/// Selects Yes or No with the icons from tile (x, y) and the name window after
+/// them, returning CONFIRM_YES or CONFIRM_NO; cancelling returns CONFIRM_NO.
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
   s32 message = MsgCommandYes;
 
   AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(5);
-  Menu_AppendResourceEntry(6);
+  Menu_AppendResourceEntry(COMMAND_ICON_YES);
+  Menu_AppendResourceEntry(COMMAND_ICON_NO);
   Menu_LayoutResourceEntries(x, y, 3, message);
   selection = Menu_RunResourceSelectionLoop(selection);
   Menu_EndResourceSelection();
   if (selection == -1) {
-    selection = 1;
+    selection = CONFIRM_NO;
   }
   return selection;
 }
@@ -902,15 +903,15 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 #define PAIR_WIDTH 9
 #endif
 
-/// Selects icons 0x20 and 0x21 (Coins, Lucky Medals) centered on row 17,
+/// Selects Coins or Lucky Medals, centered on row 17,
 /// starting on position `selection`. Returns the position chosen, or -1 when
 /// cancelled. Tolbi's spring asks it (scene/tolbi_spring.c).
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 result;
 
   AffineEffect_InitializeWork();
-  Menu_AppendResourceEntry(0x20);
-  Menu_AppendResourceEntry(0x21);
+  Menu_AppendResourceEntry(COMMAND_ICON_COINS);
+  Menu_AppendResourceEntry(COMMAND_ICON_LUCKY_MEDALS);
   Menu_CenterResourceEntries(17, PAIR_WIDTH, 0);
   result = Menu_RunResourceSelectionLoop(selection);
   Menu_EndResourceSelection();

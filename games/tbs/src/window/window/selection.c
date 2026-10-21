@@ -87,8 +87,9 @@ void Resource_ClearOwnerListAndCounters(void) {
 
 /// Adds an entry (kind and id) to the selection screen's list, up to 16.
 /// The count starts at 0 when the screen is created or cleared. The kinds
-/// SelectionScreen_SetupIcon draws: 1 a command (6 a yes or no command), 2 an
-/// item, 4 a Psynergy; base is the command's, item's or ability's number.
+/// SelectionScreen_SetupIcon draws (enum IconKind) are ICON_KIND_COMMAND,
+/// ICON_KIND_YES_NO, ICON_KIND_ITEM and ICON_KIND_ABILITY; base is the
+/// command's, item's or ability's number.
 void Resource_PushPendingPair(u32 kind, u32 base) {
   struct SelectionScreen *state = gResQueueWork;
   u16 entryCount = state->count;
@@ -151,7 +152,7 @@ void MenuSelection_BuildEntries(u32 unused) {
     previous->targetX = x;
     previous->targetY = y;
     // While locked is 0 a yes or no row sits at the top of the screen.
-    if (previous->kind == 6 && screen->locked == 0) {
+    if (previous->kind == ICON_KIND_YES_NO && screen->locked == 0) {
       previous->y = 6;
       previous->targetY = 6;
     }
@@ -166,20 +167,20 @@ void MenuSelection_BuildEntries(u32 unused) {
 /// far-call table (system/far_call/WINDOW.S).
 void UiWork_ReservedNoOp(void) {}
 
-/// Returns a free selection icon record: one of the seven row icons (kind 0) or
-/// of the five chosen icons (otherwise), or NULL.
+/// Returns a free selection icon record: one of the seven row icons (kind
+/// ICON_KIND_NONE) or of the five chosen icons (otherwise), or NULL.
 struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind) {
   struct SelectionScreen *state = gResQueueWork;
   s32 i;
 
-  if (kind != 0) {
+  if (kind != ICON_KIND_NONE) {
     for (i = 0; i != 5; i++) {
-      if (state->records[i + 9].kind == 0)
+      if (state->records[i + 9].kind == ICON_KIND_NONE)
         return &state->records[i + 9];
     }
   } else {
     for (i = 0; i != 7; i++) {
-      if (state->records[i + 2].kind == 0)
+      if (state->records[i + 2].kind == ICON_KIND_NONE)
         return &state->records[i + 2];
     }
   }
@@ -202,8 +203,8 @@ void Resource_ScheduleOwnerReset(void) {
 /// chosen and the pointing hand. The depth slots: 240 for the row and the
 /// chosen icons, 241 for the icon under the cursor, 248 for the large icon and
 /// the hand, 238 for the arrows. In battle the sprites are semi-transparent
-/// (OBJ mode 1) while the hand is shown, and a command's (kind 1) icon and the
-/// large icon always.
+/// (OBJ mode 1) while the hand is shown, and a command's icon and the large
+/// icon always.
 void SelectionScreen_Draw(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionSprite *cursorEntry = &state->records[14].sprite;
@@ -247,7 +248,7 @@ void SelectionScreen_Draw(void) {
       sprite->x = node->x;
     } else if (entryIndex == state->cursorIndex) {
       slot = 241;
-      if (cursor->kind != 0) {
+      if (cursor->kind != ICON_KIND_NONE) {
         if (BattleMotion_ProjectScaledPositionFar(
                 node->base, EffectPosition_Coordinates(&pos)) != -1) {
           cursor->targetX = pos.x;
@@ -262,12 +263,12 @@ void SelectionScreen_Draw(void) {
     }
     if (node->scale != 0) {
       if (GameFlag_TestFar(FLAG_IN_BATTLE) != 0) {
-        if (state->records[14].kind == 1) {
+        if (state->records[14].kind == ICON_KIND_COMMAND) {
           sprite->mode = 1;
         } else {
           sprite->mode = 0;
         }
-        if (node->kind == 1) {
+        if (node->kind == ICON_KIND_COMMAND) {
           sprite->mode = 1;
         }
       }
@@ -277,7 +278,7 @@ void SelectionScreen_Draw(void) {
     entryIndex++;
   }
   // The selected command's large icon owns a separate cached tile block.
-  if (transfer->kind != 0) {
+  if (transfer->kind != ICON_KIND_NONE) {
     node = Selection_GetCursorNode(state);
     commandSprite = &transfer->sprite;
     commandSprite->mode = 0;
@@ -338,12 +339,12 @@ void SelectionScreen_Draw(void) {
       sprite->param = 0;
     }
     if (GameFlag_TestFar(FLAG_IN_BATTLE) != 0) {
-      if (state->records[14].kind == 1) {
+      if (state->records[14].kind == ICON_KIND_COMMAND) {
         sprite->mode = 1;
       } else {
         sprite->mode = 0;
       }
-      if (node->kind == 1) {
+      if (node->kind == ICON_KIND_COMMAND) {
         sprite->mode = 1;
       }
     }
@@ -353,7 +354,7 @@ void SelectionScreen_Draw(void) {
   // Point at the selected battle target, smoothing each axis separately: the
   // hand covers half the distance left each frame. Its 16 frames of 256 bytes
   // change every 4 frames.
-  if (cursor->kind != 0) {
+  if (cursor->kind != ICON_KIND_NONE) {
     entryIndex = (s32)gMenu_AnimatedCursorTiles;
     {
       void *src = (void *)(entryIndex + (((gFrameTick >> 2) & 15) << 8));
@@ -379,7 +380,7 @@ void SelectionScreen_Draw(void) {
         cursor->y + gMenu_CursorBobOffsets[(gFrameTick >> 2) & 15] - 32;
     cursorEntry->x = cursor->x - 4;
     if (GameFlag_TestFar(FLAG_IN_BATTLE) != 0) {
-      if (state->records[14].kind == 1) {
+      if (state->records[14].kind == ICON_KIND_COMMAND) {
         cursorEntry->mode = 1;
       } else {
         cursorEntry->mode = 0;
@@ -399,7 +400,7 @@ void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 side) {
   const u8 *arrowTiles;
   const u8 *tmp;
 
-  if (state->records[side].kind == 0)
+  if (state->records[side].kind == ICON_KIND_NONE)
     return;
   arrow = &state->records[side].sprite;
   arrow->x = state->records[side].x;
@@ -416,7 +417,7 @@ void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 side) {
   tmp = arrowTiles + animationStep * 128;
   arrow->tile = VramCache_Load(state->records[side].slot, 128, tmp);
   if (GameFlag_TestFar(FLAG_IN_BATTLE)) {
-    if (state->records[14].kind == 1)
+    if (state->records[14].kind == ICON_KIND_COMMAND)
       arrow->mode = 1;
     else
       arrow->mode = 0;
@@ -427,11 +428,11 @@ void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 side) {
 }
 
 /// Opens or refits the name window above the selection row and writes the name
-/// of the icon under the cursor, or that nothing is known (mode 4, Psynergy)
-/// or held (mode 2, items). mode 6 is a yes or no question, placed at the
-/// bottom or top of the screen. count is the name's width in tiles inside the
-/// frame; 0 keeps the open window as it is. The window stays open until
-/// Resource_ResetOwnerEntries closes it.
+/// of the icon under the cursor, or that nothing is known (ICON_KIND_ABILITY)
+/// or held (ICON_KIND_ITEM). ICON_KIND_YES_NO is a yes or no question, placed
+/// at the bottom or top of the screen. count is the name's width in tiles
+/// inside the frame; 0 keeps the open window as it is. The window stays open
+/// until Resource_ResetOwnerEntries closes it.
 void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   struct SelectionScreen *screen;
   struct SelectionNode *node;
@@ -447,7 +448,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
     // top while locked is 0. Otherwise a window count + 2 tiles wide at row
     // 17, centred about 24.5 tiles from the left. Both take flags 6:
     // UI_WINDOW_INSTANT and bit 2, which no flag names.
-    if (mode == 6) {
+    if (mode == ICON_KIND_YES_NO) {
       if (screen->locked != 0) {
         *slot = UiWindow_Create(17, 17, 5, 3, mode);
       } else {
@@ -470,10 +471,10 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
     UiText_DrawCharacterAtOffset(node->message, screen->window, 0, 0);
   } else {
     switch (mode) {
-    case 4:
+    case ICON_KIND_ABILITY:
       UiText_DrawCharacterAtOffset(MsgAbilityNotKnown, screen->window, 0, 0);
       break;
-    case 2:
+    case ICON_KIND_ITEM:
       UiText_DrawCharacterAtOffset(MsgItemNotHeld, screen->window, 0, 0);
       break;
     }
@@ -492,7 +493,7 @@ void Resource_ResetOwnerEntries(void) {
   WaitFrames(1);
   node = state->head;
   while (node != 0) {
-    if (node->kind != 0) {
+    if (node->kind != ICON_KIND_NONE) {
       Resource_ResetEntry(node->slot);
       node->kind = 0;
     }
@@ -500,7 +501,7 @@ void Resource_ResetOwnerEntries(void) {
   }
   node = state->path;
   while (node != 0) {
-    if (node->kind != 0) {
+    if (node->kind != ICON_KIND_NONE) {
       Resource_ResetEntry(node->slot);
       node->kind = 0;
     }
@@ -914,7 +915,7 @@ void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 rowIndex) {
     rowIndex--;
     node = node->next;
   }
-  if (node->kind == 1 || node->kind == 6) {
+  if (node->kind == ICON_KIND_COMMAND || node->kind == ICON_KIND_YES_NO) {
     u32 first = node->message - MsgCommandName;
 
     value = node->slot;
@@ -935,7 +936,7 @@ void SelectionScreen_HighlightIcon(struct SelectionScreen *state,
     rowIndex--;
     node = node->next;
   }
-  if (node->kind == 1 || node->kind == 6) {
+  if (node->kind == ICON_KIND_COMMAND || node->kind == ICON_KIND_YES_NO) {
     u32 resource = node->message - MsgCommandName;
 
     value = node->slot;
@@ -1056,37 +1057,38 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     while (node->next != NULL)
       node = node->next;
     Resource_ResetEntry(node->slot);
-    node->kind = 0;
+    node->kind = ICON_KIND_NONE;
     node->prev->next = NULL;
   }
 }
 
-/// Loads the icon of an entry of kind mode (1 and 6 commands, 2 items, 4
-/// Psynergy, 9 the one tile RenderResource_LoadTableEntry loads) into a free
-/// sprite tile slot and returns it, or -1. Items show their count above one
-/// and their equipped and broken marks (0x1a). The caller frees the slot.
+/// Loads the icon of an entry of kind mode (ICON_KIND_COMMAND,
+/// ICON_KIND_YES_NO, ICON_KIND_ITEM, ICON_KIND_ABILITY or
+/// ICON_KIND_TABLE_ENTRY) into a free sprite tile slot and returns it, or -1.
+/// Items show their count above one and their equipped and broken marks (0x1a).
+/// The caller frees the slot.
 s32 Resource_LoadByMode(s32 mode, s32 value) {
   s32 output;
   s32 result = -1;
 
   switch (mode) {
-  case 1:
-  case 6:
+  case ICON_KIND_COMMAND:
+  case ICON_KIND_YES_NO:
     Ui_BuildPairedPatternsToSlot(value, 0, &result, &output, 0);
     break;
-  case 2:
+  case ICON_KIND_ITEM:
     result = Resource_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
     UiIcon_CopyResourceToSlot(value, 0x1a, result);
     break;
-  case 9:
+  case ICON_KIND_TABLE_ENTRY:
     result = Resource_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
     RenderResource_LoadTableEntry(value, 0, result);
     break;
-  case 4:
+  case ICON_KIND_ABILITY:
     Ability_LoadGlyph(value, 1, &result, &output, 0);
     break;
   }
@@ -1094,11 +1096,11 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
 }
 
 /// Loads the icon of an entry of kind mode into sprite tile slot result (a free
-/// slot when -1) and returns the slot, or -1 when none was free. Kind 2 is an
-/// item icon with its count above one and its equipped, broken and artifact
-/// marks (0x3a); kind 7 the same without the broken mark (0x2a); 8 one of the
-/// other icons. For a command option is the frame drawn under the icon; for
-/// Psynergy, whether the icon frame is drawn.
+/// slot when -1) and returns the slot, or -1 when none was free. An item's icon
+/// has its count above one and its equipped, broken and artifact marks (0x3a),
+/// ICON_KIND_EQUIPMENT_ITEM the same without the broken mark (0x2a). For a
+/// command option is the frame drawn under the icon; for Psynergy, whether the
+/// icon frame is drawn.
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 output;
   s32 original = result;
@@ -1110,23 +1112,23 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   }
 
   switch (mode) {
-  case 1:
-  case 6:
+  case ICON_KIND_COMMAND:
+  case ICON_KIND_YES_NO:
     Ui_BuildPairedPatternsToSlot(value, option, &result, &output, 1);
     break;
-  case 2:
+  case ICON_KIND_ITEM:
     UiIcon_CopyResourceToSlot(value, 58, result);
     break;
-  case 7:
+  case ICON_KIND_EQUIPMENT_ITEM:
     UiIcon_CopyResourceToSlot(value, 42, result);
     break;
-  case 4:
+  case ICON_KIND_ABILITY:
     Ability_LoadGlyph(value, option, &result, &output, 1);
     break;
-  case 8:
+  case ICON_KIND_PATTERN:
     Ui_BuildPatternToSlot(value, 0, result);
     break;
-  case 9:
+  case ICON_KIND_TABLE_ENTRY:
     RenderResource_LoadTableEntry(value, 0, result);
     break;
   }
@@ -1146,20 +1148,20 @@ void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   struct SelectionSprite *sprite;
 
   switch (kind) {
-  case 1:
-  case 6:
+  case ICON_KIND_COMMAND:
+  case ICON_KIND_YES_NO:
     if (reuse != 0)
       cacheSlot = node->slot;
     Ui_BuildPairedPatternsToSlot(base, 0, &cacheSlot, &tile, reuse);
     node->message = base + MsgCommandName;
     break;
-  case 2:
+  case ICON_KIND_ITEM:
     if (reuse != 0)
       cacheSlot = node->slot;
     UiIcon_BuildItemIconTiles(base, 1, &cacheSlot, &tile, reuse);
     node->message = base + MsgItemName;
     break;
-  case 4:
+  case ICON_KIND_ABILITY:
     if (reuse != 0)
       cacheSlot = node->slot;
     Ability_LoadGlyph(base, 1, &cacheSlot, &tile, reuse);
@@ -1345,7 +1347,7 @@ void SelectionScreen_LoadLargeIcon(void) {
   void *resource;
   s32 resourceId;
 
-  if (selected->kind != 1 && selected->kind != 6)
+  if (selected->kind != ICON_KIND_COMMAND && selected->kind != ICON_KIND_YES_NO)
     return;
 
   buffer = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
@@ -1360,7 +1362,7 @@ void SelectionScreen_LoadLargeIcon(void) {
   }
   Resource_DecodeByteLz(resource, buffer);
 
-  if (transfer->kind == 0)
+  if (transfer->kind == ICON_KIND_NONE)
     transfer->slot = Resource_FindFreeEntry();
   transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
   transfer->kind = 1;
@@ -1376,7 +1378,7 @@ void SelectionScreen_LoadLargeIcon(void) {
 void Resource_ResetPendingTransfer(void) {
   struct SelectionNode *largeIcon = &gResQueueWork->records[15];
 
-  if (largeIcon->kind != 0) {
+  if (largeIcon->kind != ICON_KIND_NONE) {
     Resource_ResetEntry(largeIcon->slot);
     largeIcon->kind = 0;
   }
@@ -1423,10 +1425,9 @@ s32 Menu_RunTopSelection(void) {
     ret = UiWork_CloseAndRelease();
 #endif
 
-    // The commands of gMenu_TopEntryCommandByPosition: 1 Psynergy, 2 Djinn,
-    // 3 Item, 4 Status. A screen left without a choice (-1, or nonzero from
-    // the Djinn screen) opens the field menu again. Case 0 is unreachable:
-    // Menu_SelectTopEntry returns 1 to 4 or -1; it would store the trigger
+    // A screen left without a choice (-1, or nonzero from the Djinn screen)
+    // opens the field menu again. Case 0 is unreachable: Menu_SelectTopEntry
+    // returns a FieldMenuCommand or -1; it would store the trigger
     // tile ahead of the leader (0xff for none) in facingTrigger.
     switch (selection) {
     case 0:
@@ -1435,22 +1436,22 @@ s32 Menu_RunTopSelection(void) {
         ret = 0xff;
       ((struct EventWork *)state)->facingTrigger = ret;
       break;
-    case 1:
+    case FIELD_MENU_PSYNERGY:
       ret = PsynergyMenu_RunFar();
       if (ret == -1)
         continue;
       break;
-    case 2:
+    case FIELD_MENU_DJINN:
       ret = DjinnMenu_RunFar();
       if (ret != 0)
         continue;
       break;
-    case 3:
+    case FIELD_MENU_ITEM:
       ret = ItemMenu_RunFar();
       if (ret == -1)
         continue;
       break;
-    case 4:
+    case FIELD_MENU_STATUS:
       ret = StatusMenu_RunFar();
       if (ret == -1)
         continue;

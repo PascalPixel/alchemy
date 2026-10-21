@@ -52,7 +52,7 @@ void FieldFx_RunForce(void) {
     caster = scene->mainObject;
     BattleFx_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
-    EffectSlot_Initialize(slot, 0x11c, pos.x, pos.z);
+    EffectSlot_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialBurst);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,

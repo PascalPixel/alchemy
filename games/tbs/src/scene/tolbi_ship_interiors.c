@@ -3094,7 +3094,7 @@ static struct FieldActor *TolbiShipInteriors_PlaceAnchorCharm(void) {
   if (set != 0) {
     return gTolbiShipInteriors_AnchorObject;
   }
-  object = Engine_ObjectCreate(22, 0x1c70000, 0x40000, 0x2200000);
+  object = Engine_ObjectCreate(SPRITE_BLANK, 0x1c70000, 0x40000, 0x2200000);
   object->motionFlags = set;
   object->retainSpriteCache = 1;
   sprite = object->sprite;

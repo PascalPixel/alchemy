@@ -288,7 +288,8 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
       pos.x = work->x;                                                         \
       pos.y = work->y + 0x100000;                                              \
       pos.z = work->z;                                                         \
-      obj = (struct MotionObject *)Object_Spawn(285, pos.x, pos.y, pos.z);     \
+      obj = (struct MotionObject *)Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y,  \
+                                                pos.z);                        \
       if (obj != 0) {                                                          \
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj,             \
                                      gBattleFx_FragmentScript);                \

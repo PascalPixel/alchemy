@@ -39,7 +39,6 @@ STATIC_ASSERT(offsetof(struct EffectObj, updateHook) == 0x6c);
 // to 0x156 bytes in tbs-en; keep the native read here.
 #define EFFECT_OBJECT_POOL (*(struct EffectObj **)((u8 *)&gEventWork - 88))
 #endif
-#define SPARKLE_OBJECT_ID 285 ///< the sprite of one sparkle
 
 /// Keeps the party leader off the markers: a leader within 16 pixels of a
 /// marker cell's centre is moved 20 pixels from that centre, in the direction
@@ -123,7 +122,7 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   position.vector.z = emitter->z;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  obj = Object_Spawn(SPARKLE_OBJECT_ID, position.vector.x, position.vector.y,
+  obj = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
                      position.vector.z);
   Object_InitializeSparkle(obj);
 }
@@ -182,7 +181,8 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   }
 
   WaitFrames(3);
-  picture = (struct EffectObj *)Object_CreateFar(22, pictureX, 16 << 16, srcZ);
+  picture = (struct EffectObj *)Object_CreateFar(SPRITE_BLANK, pictureX,
+                                                 16 << 16, srcZ);
   if (picture == 0)
     return 0;
 
@@ -370,7 +370,7 @@ void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   position.vector.z = source->z.fixed;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  obj = Object_Spawn(SPARKLE_OBJECT_ID, position.vector.x, position.vector.y,
+  obj = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
                      position.vector.z);
   Object_InitializeSparkle(obj);
 }
@@ -469,6 +469,5 @@ void FieldEffect_SpawnNearbyMarkers(void) {
 
 #undef EFFECT_OBJECT_COUNT
 #undef EFFECT_OBJECT_POOL
-#undef SPARKLE_OBJECT_ID
 #undef PARTICLES_PAUSE_FOR_MENU
 #undef MENU_OPEN_OFFSET

@@ -363,7 +363,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
   x = actor->x.fixed;
   y = actor->y.fixed;
   z = actor->z.fixed;
-  spark = Engine_ObjectCreate(0x11d, x, y, z);
+  spark = Engine_ObjectCreate(SPRITE_SPARKLE, x, y, z);
   Engine_AudioPlayCue(SE_246);
   if (spark == 0)
     return;
@@ -1974,7 +1974,7 @@ static void Event_UseBlackOrb(void) {
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 28);
   // Present the orb icon before its sparks and the ship's response.
-  orb = Object_Create(22, leader->x.fixed + PIXELS(2), PIXELS(38),
+  orb = Object_Create(SPRITE_BLANK, leader->x.fixed + PIXELS(2), PIXELS(38),
                       leader->z.fixed);
   if (orb != NULL) {
     u8 *motion;
@@ -2371,7 +2371,7 @@ static void WorldMap_SpawnIslandWake(void) {
   if ((*(s32 *)&gFrameCount & 15) != 0)
     return;
   leader = Object_GetById(ACTOR_DRIFTING_ISLAND);
-  actor = Engine_ObjectCreate(222, leader->x.fixed - PIXELS(32),
+  actor = Engine_ObjectCreate(SPRITE_DUST_PUFF, leader->x.fixed - PIXELS(32),
                               leader->y.fixed, leader->z.fixed - PIXELS(16));
   if (actor == 0)
     return;
@@ -3432,7 +3432,7 @@ struct ScenePlacement gWorldMapPlacementsHammetsCaravan[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd8, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },

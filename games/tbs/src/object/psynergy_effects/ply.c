@@ -53,7 +53,7 @@ void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
 /// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
 /// above the effect's position, and every 3 frames sheds a spark that sways
 /// as it slowly falls. With phase -1 it stays where it is. The update
-/// FieldFx_RunPly gives the centre particle; spawns object 0x11d for each
+/// FieldFx_RunPly gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
 void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
   struct SparkObject *emitter = (struct SparkObject *)fieldObject;
@@ -75,7 +75,8 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.
     SET_VECTOR(pos, emitter->x, emitter->y + (2 << 16), emitter->z);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
-    spark = (struct SparkObject *)Object_Spawn(0x11d, pos[0], pos[1], pos[2]);
+    spark = (struct SparkObject *)Object_Spawn(SPRITE_SPARKLE, pos[0], pos[1],
+                                               pos[2]);
     // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
     // and is freed after 72 frames, its script's wait (lifetime).
     if (spark != 0) {

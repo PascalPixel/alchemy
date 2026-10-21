@@ -1574,8 +1574,8 @@ static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep) {
   orbitStep = angleStep;
   owner = Object_GetById(ownerId);
   if (owner != 0) {
-    effect = Object_Create(0x11d, owner->x.fixed, owner->y.fixed + PIXELS(45),
-                           owner->z.fixed);
+    effect = Object_Create(SPRITE_SPARKLE, owner->x.fixed,
+                           owner->y.fixed + PIXELS(45), owner->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;
       Engine_ObjectSetScript(effect, gSanctum_OwnerEffectScript);
@@ -1901,7 +1901,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
   u32 frame;
   u8 zero;
 
-  icon = Engine_ObjectCreate(22, fixedX, fixedY, fixedZ);
+  icon = Engine_ObjectCreate(SPRITE_BLANK, fixedX, fixedY, fixedZ);
   zero = 0;
   if (icon != 0) {
     Engine_ObjectSetScript(icon, gSanctum_ItemIconGrowScript);

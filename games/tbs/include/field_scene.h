@@ -9,6 +9,7 @@
 #include "scene_ids.h"
 #include "scene_links.h"
 #include "character_ids.h"
+#include "sprite_ids.h"
 
 /// The eight compass headings in 1/65536 turns, from east through south: a
 /// quarter turn is 0x4000, and the screen's y axis points south.

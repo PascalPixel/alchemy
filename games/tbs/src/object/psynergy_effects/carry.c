@@ -24,7 +24,7 @@ void BattleFx_SpawnFallingParticles(void) {
   Vector_AddPolarOffset(radius * 16, Random16(), &position);
 
   fragment = (struct ItemBreakFragmentObject *)Object_Spawn(
-      0x11d, position.x, position.y, position.z);
+      SPRITE_SPARKLE, position.x, position.y, position.z);
   BattleFx_InitializeFallingFragment(fragment);
 }
 
@@ -240,7 +240,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
 
     // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
     for (i = 0; i < CARRY_SHARD_MAX; i++) {
-      obj = (struct FieldActor *)Object_Spawn(0x11d, p->x, p->y, p->z);
+      obj = (struct FieldActor *)Object_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
       *walk++ = obj;
       if (obj != NULL) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj,

@@ -191,7 +191,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void);
 
 /// Venus Lighthouse Entry's actors, numbering the rows of
 /// gVenusLighthouseEntryPlacements: the scholars (sprite 0x70) and Babi's
-/// soldiers (sprite 0x98) the wanderers attacked; after the man by the
+/// soldiers (SPRITE_SOLDIER) the wanderers attacked; after the man by the
 /// entrance, each is named by what they say.
 enum VenusLighthouseEntryActor {
   /// Drawn as the soldiers are: "Venus Lighthouse was... attacked by
@@ -226,15 +226,16 @@ enum VenusLighthouseGroundFloorActor {
   /// The pillar Move pushes to the wall and Carry sets down beyond it
   /// (Event_MovePillarTowardWall).
   ACTOR_WALL_PILLAR = ACTOR_FIRST_PLACED + 4,
-  /// The pillar Move pushes onto the floor switch, sprite 0x1f4
+  /// The lady statue Move pushes onto the floor switch (SPRITE_LADY_STATUE)
   /// (Event_MovePillarOntoSwitch).
-  ACTOR_FLOOR_SWITCH_PILLAR
+  ACTOR_FLOOR_SWITCH_STATUE
 };
 
 /// VenusLighthouseFirstFloor's actors, numbering the rows of
 /// gVenusLighthouseFirstFloorPlacements.
 enum VenusLighthouseFirstFloorActor {
-  /// The three pillars, sprite 0xfd, that Move or a push shifts, the nearer
+  /// The three pillars, SPRITE_CAPPED_PILLAR, that Move or a push shifts, the
+  /// nearer
   /// drawn in front (Event_MoveDepthPillar).
   ACTOR_FIRST_DEPTH_PILLAR = ACTOR_FIRST_PLACED,
   /// The two pillars by the gap, carried across it or dropped into it
@@ -245,29 +246,30 @@ enum VenusLighthouseFirstFloorActor {
 /// VenusLighthouseSecondFloor's actors, numbering the rows of
 /// gVenusLighthouseSecondFloorPlacements.
 enum VenusLighthouseSecondFloorActor {
-  /// A pillar, sprite 0x1f4 as ACTOR_FLOOR_SWITCH_PILLAR's, where
+  /// A lady statue, as ACTOR_FLOOR_SWITCH_STATUE is, where
   /// ACTOR_GATE_EFFECT sets out for the gate.
-  ACTOR_GATE_EFFECT_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_GATE_EFFECT_STATUE = ACTOR_FIRST_PLACED,
   /// The pillar before the gate, which sinks into its socket
   /// (Event_MoveGatePillar).
   ACTOR_GATE_PILLAR,
-  /// Sprite 0x11c, the kind of object VenusLighthouse_CreateScriptedGateEffect
-  /// makes: once the pillar sinks it travels gVenusPushScript to the gate,
-  /// which opens, and stays there shedding particles. XXX: what it shows is
-  /// not known, and the code calls it a gate effect; a render of the gate
-  /// opening would settle its name.
+  /// SPRITE_PARTICLE, the kind of object
+  /// VenusLighthouse_CreateScriptedGateEffect makes: once the pillar sinks it
+  /// travels gVenusPushScript to the gate, which opens, and stays there
+  /// shedding particles. XXX: the code calls it a gate effect; a render of the
+  /// gate opening would say what the player sees of it.
   ACTOR_GATE_EFFECT
 };
 
 /// VenusLighthouseThirdFloor's actors, numbering the rows of
 /// gVenusLighthouseThirdFloorPlacements.
 enum VenusLighthouseThirdFloorActor {
-  /// A pillar, sprite 0x1f4, where the two gate effects set out once all
+  /// A lady statue (SPRITE_LADY_STATUE), where the two gate effects set out
+  /// once all
   /// three switch pillars have sunk.
-  ACTOR_SWITCH_EFFECT_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_SWITCH_EFFECT_STATUE = ACTOR_FIRST_PLACED,
   /// The three pillars that sink into free sockets (Event_MoveSwitchPillar).
   ACTOR_FIRST_SWITCH_PILLAR,
-  /// Sprite 0x11c, as ACTOR_GATE_EFFECT, placed where the gate effects end
+  /// SPRITE_PARTICLE, as ACTOR_GATE_EFFECT, placed where the gate effects end
   /// once the gate is open.
   ACTOR_SWITCH_GATE_EFFECT = ACTOR_FIRST_SWITCH_PILLAR + 3
 };
@@ -275,21 +277,24 @@ enum VenusLighthouseThirdFloorActor {
 /// VenusLighthouseFourthFloor's actors, numbering the rows of
 /// gVenusLighthouseFourthFloorPlacements.
 enum VenusLighthouseFourthFloorActor {
-  /// The two platforms, sprite 0x101, that rise or sink to the weight of the
+  /// The two platforms, SPRITE_BALANCE_PLATFORM, that rise or sink to the
+  /// weight of the
   /// floating pillars set down on them (VenusLighthouse_LowerFloatingPillars).
   ACTOR_WEST_PLATFORM = ACTOR_FIRST_PLACED,
   ACTOR_EAST_PLATFORM,
   /// The four floating pillars Carry sets down (Event_CarryFloatingPillar).
   ACTOR_FIRST_FLOATING_PILLAR,
-  /// A pillar, sprite 0x1f4, where the first gate effect sets out once all
+  /// A lady statue (SPRITE_LADY_STATUE), where the first gate effect sets out
+  /// once all
   /// four socket pillars have sunk; the camera goes to it first.
-  ACTOR_SOCKET_EFFECT_PILLAR = ACTOR_FIRST_FLOATING_PILLAR + 4,
+  ACTOR_SOCKET_EFFECT_STATUE = ACTOR_FIRST_FLOATING_PILLAR + 4,
   /// The four pillars of the pillar room (Event_MoveSocketPillar).
   ACTOR_FIRST_SOCKET_PILLAR,
-  /// Sprite 0x11c, as ACTOR_GATE_EFFECT, placed where the gate effects end
+  /// SPRITE_PARTICLE, as ACTOR_GATE_EFFECT, placed where the gate effects end
   /// once the gate is open.
   ACTOR_SOCKET_GATE_EFFECT = ACTOR_FIRST_SOCKET_PILLAR + 4,
-  /// The platform, sprite 0xf2 as the floating platforms of Mercury
+  /// The platform, SPRITE_FLOATING_PLATFORM as the floating platforms of
+  /// Mercury
   /// Lighthouse's aerie, that dips as the leader lands on it at
   /// VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING
   /// and then carries him up to the Lighthouse Aerie
@@ -776,7 +781,7 @@ VenusLighthouse_CreateScriptedGateEffect(s32 x, s32 z, const s32 *script) {
 
   fixedX = x << 16;
   fixedZ = z << 16;
-  effect = Engine_ObjectCreate(284, fixedX, 0, fixedZ);
+  effect = Engine_ObjectCreate(SPRITE_PARTICLE, fixedX, 0, fixedZ);
   if (effect == 0) {
     return 0;
   }
@@ -1270,7 +1275,7 @@ static void Event_MovePillarOntoSwitch(void) {
   struct FieldActor *pillar;
   s32 switchHeight;
 
-  pillar = Object_GetById(ACTOR_FLOOR_SWITCH_PILLAR);
+  pillar = Object_GetById(ACTOR_FLOOR_SWITCH_STATUE);
   Engine_EventBegin();
   if (pillar->x.fixed >> 20 == 42) {
     Engine_EventWait(30);
@@ -2365,7 +2370,7 @@ static void Event_MoveSocketPillar(void) {
       struct FieldActor *secondGateEffect;
 
       Camera_SetSpeed(0x10000, 0x2000);
-      Object_PlaceCurrentWithinCameraBounds(ACTOR_SOCKET_EFFECT_PILLAR, 1);
+      Object_PlaceCurrentWithinCameraBounds(ACTOR_SOCKET_EFFECT_STATUE, 1);
       Camera_WaitForMove();
       firstGateEffect = VenusLighthouse_CreateScriptedGateEffect(
           136, 776, gVenusFirstGateScript);
@@ -2676,7 +2681,7 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_WALL_SWITCH:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_PILLAR_PIT:
-      actor = Object_GetById(ACTOR_GATE_EFFECT_PILLAR);
+      actor = Object_GetById(ACTOR_GATE_EFFECT_STATUE);
       actor->motionFlags = 0;
       actor->y.fixed = 0;
       actor = Object_GetById(ACTOR_GATE_PILLAR);
@@ -2790,7 +2795,7 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM:
-      actor = Object_GetById(ACTOR_SWITCH_EFFECT_PILLAR);
+      actor = Object_GetById(ACTOR_SWITCH_EFFECT_STATUE);
       actor->motionFlags = 0;
       actor->y.fixed = 0;
       Object_GetById(ACTOR_FIRST_SWITCH_PILLAR)->motionFlags = 0;
@@ -2968,7 +2973,7 @@ s32 Scene_RunEntrySetup(void) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_EAST:
       Engine_TaskWait(1);
       FieldScheduler_AddCallback(VenusLighthouse_VisitPillarActors, 0xc80);
-      actor = Object_GetById(ACTOR_SOCKET_EFFECT_PILLAR);
+      actor = Object_GetById(ACTOR_SOCKET_EFFECT_STATUE);
       actor->motionFlags = 0;
       actor->y.fixed = 0;
       Object_GetById(ACTOR_FIRST_SOCKET_PILLAR)->motionFlags = 0;
@@ -4338,7 +4343,7 @@ struct ScenePlacement gVenusLighthousePlacementsOther[] = {
 };
 
 struct ScenePlacement gVenusLighthouseEntryPlacements[] = {
-    { 0x98, FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD, ACTOR_STAND,
+    { SPRITE_SOLDIER, FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(268), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(352), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -4346,11 +4351,11 @@ struct ScenePlacement gVenusLighthouseEntryPlacements[] = {
         PIXELS(272), 0, PIXELS(428), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(368), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(400), 0, PIXELS(172), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(416), 0, PIXELS(412), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(192), 0, PIXELS(364), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -4368,37 +4373,37 @@ struct ScenePlacement gVenusLighthouseGroundFloorPlacements[] = {
         PIXELS(872), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x100, 0x0, ACTOR_STAND,
         PIXELS(840), 0, PIXELS(88), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(664), 0, PIXELS(792), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x114, 0x0, (s32)gVenusLighthousePlacements2_1,
         PIXELS(488), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(72), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(72), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(168), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(72), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(104), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(136), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(168), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(200), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gVenusLighthouseFirstFloorPlacements[] = {
-    { 0xfd, 0x0, (s32)gVenusLighthousePlacements3_Data,
+    { SPRITE_CAPPED_PILLAR, 0x0, (s32)gVenusLighthousePlacements3_Data,
         PIXELS(248), 0, PIXELS(712), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xfd, 0x0, (s32)gVenusLighthousePlacements3_Data,
+    { SPRITE_CAPPED_PILLAR, 0x0, (s32)gVenusLighthousePlacements3_Data,
         PIXELS(184), 0, PIXELS(824), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xfd, 0x0, (s32)gVenusLighthousePlacements3_Data,
+    { SPRITE_CAPPED_PILLAR, 0x0, (s32)gVenusLighthousePlacements3_Data,
         PIXELS(200), 0, PIXELS(824), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x100, 0x0, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(392), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -4408,17 +4413,17 @@ struct ScenePlacement gVenusLighthouseFirstFloorPlacements[] = {
 };
 
 struct ScenePlacement gVenusLighthouseSecondFloorPlacements[] = {
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(808), 0, PIXELS(728), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x100, 0x0, (s32)gVenusLighthousePlacements4_1,
         PIXELS(776), 0, PIXELS(712), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x11c, CONDITION_ALWAYS, 7,
+    { SPRITE_PARTICLE, CONDITION_ALWAYS, 7,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gVenusLighthouseThirdFloorPlacements[] = {
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(888), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x100, 0x0, (s32)gVenusLighthousePlacements5_1,
         PIXELS(792), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -4426,15 +4431,15 @@ struct ScenePlacement gVenusLighthouseThirdFloorPlacements[] = {
         PIXELS(808), 0, PIXELS(648), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x100, 0x0, (s32)gVenusLighthousePlacements5_3,
         PIXELS(824), 0, PIXELS(680), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x11c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PARTICLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gVenusLighthouseFourthFloorPlacements[] = {
-    { 0x101, 0x0, 7,
+    { SPRITE_BALANCE_PLATFORM, 0x0, 7,
         PIXELS(104), 0, PIXELS(312), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x101, 0x0, 7,
+    { SPRITE_BALANCE_PLATFORM, 0x0, 7,
         PIXELS(168), 0, PIXELS(312), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x100, 0x0, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(280), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -4444,7 +4449,7 @@ struct ScenePlacement gVenusLighthouseFourthFloorPlacements[] = {
         PIXELS(152), 0, PIXELS(280), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x100, 0x0, ACTOR_STAND,
         PIXELS(248), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1f4, 0x0, (s32)gVenusLighthousePlacements2_0,
+    { SPRITE_LADY_STATUE, 0x0, (s32)gVenusLighthousePlacements2_0,
         PIXELS(136), 0, PIXELS(776), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x100, 0x0, (s32)gVenusLighthousePlacements4_1,
         PIXELS(184), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -4454,9 +4459,9 @@ struct ScenePlacement gVenusLighthouseFourthFloorPlacements[] = {
         PIXELS(232), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x100, 0x0, (s32)gVenusLighthousePlacements6_4,
         PIXELS(248), 0, PIXELS(616), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x11c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PARTICLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0xf2, 0x0, 7,
+    { SPRITE_FLOATING_PLATFORM, 0x0, 7,
         PIXELS(664), 0, PIXELS(136), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -4530,7 +4535,7 @@ struct SceneEvent gVenusLighthouseGroundFloorEvents[] = {
     { SEARCH(SEARCH_CHEST), 100, 0xf37, FIND_ITEM(ITEM_LUCKY_CAP) },
     { SEARCH(SEARCH_CHEST), 101, 0xf38, FIND_ITEM(ITEM_CARRY_STONE) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarTowardWall) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FLOOR_SWITCH_PILLAR, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MovePillarOntoSwitch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FLOOR_SWITCH_STATUE, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MovePillarOntoSwitch) },
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryPillarPastWall) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealPath) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HidePath) },

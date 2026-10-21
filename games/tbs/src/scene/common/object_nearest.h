@@ -4,9 +4,9 @@
 
 // Mercury and Venus Lighthouses' aeries.
 
-/// Returns the placed actor drawn with sprite 0xf2 nearest the leader, within
-/// 640 pixels, or 0.
-s32 SceneActor_FindNearestSlotOfKindF2(void) {
+/// Returns the placed actor drawn as SPRITE_FLOATING_PLATFORM nearest the
+/// leader, within 640 pixels, or 0.
+s32 SceneActor_FindNearestFloatingPlatform(void) {
   struct EventWork *work = gEventWork;
   struct FieldActor **slot;
   struct FieldActor *origin;
@@ -21,7 +21,7 @@ s32 SceneActor_FindNearestSlotOfKindF2(void) {
   do {
     struct FieldActor *actor = *slot++;
     if (actor != 0) {
-      if (actor->sprite->entries[0]->animId == 0xf2) {
+      if (actor->sprite->entries[0]->animId == SPRITE_FLOATING_PLATFORM) {
         s32 dist = FixedPoint_Distance(
             (const u8 *)origin + offsetof(struct FieldActor, x),
             (const u8 *)actor + offsetof(struct FieldActor, x));

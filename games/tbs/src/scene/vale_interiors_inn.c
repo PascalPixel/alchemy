@@ -164,7 +164,7 @@ enum ValeInteriorsInnAfterKalayActor {
   /// At the inn. "Well if it isn't Isaac! You've grown so much, I almost
   /// didn't recognize you!"; Mind Read hears of Dora's illness.
   ACTOR_VILLAGER_YOUVE_GROWN = ACTOR_FIRST_PLACED + 8,
-  /// Sprite 0x16, a blank square, beside ACTOR_VILLAGER_YOUVE_GROWN.
+  /// SPRITE_BLANK, a blank square, beside ACTOR_VILLAGER_YOUVE_GROWN.
   /// XXX: no event answers it, and the setup only clears its sprite flags.
   ACTOR_BLANK_AFTER_KALAY
 };
@@ -1067,7 +1067,8 @@ static void Event_ShowMythrilBag(void) {
   Engine_TaskWait(1);
   Engine_CameraFollowActor(ACTOR_KRADEN, 1);
   clear = 0;
-  actor = Engine_ObjectCreate(22, PIXELS(328), PIXELS(2), PIXELS(195));
+  actor =
+      Engine_ObjectCreate(SPRITE_BLANK, PIXELS(328), PIXELS(2), PIXELS(195));
   actor->motionFlags = clear;
   sprite = actor->sprite;
   actor->y.fixed = PIXELS(5);
@@ -1529,7 +1530,7 @@ struct ScenePlacement gValeInteriorsInn_PlacementsAfterKalay[] = {
         PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x65, 0x0, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(373), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x16, 0x0, ACTOR_STAND,
+    { SPRITE_BLANK, 0x0, ACTOR_STAND,
         PIXELS(252), 0, PIXELS(378), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

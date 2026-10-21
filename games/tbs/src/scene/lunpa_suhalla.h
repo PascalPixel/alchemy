@@ -54,7 +54,6 @@ enum InteriorActor {
 };
 
 enum InteriorSprite {
-  SPRITE_COUNTER = 0x16,
   SPRITE_TOWNSPERSON_A = 0x65,
   SPRITE_TOWNSPERSON_B = 0x67,
   SPRITE_TOWNSPERSON_C = 0x6a,

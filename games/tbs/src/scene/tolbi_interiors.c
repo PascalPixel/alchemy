@@ -190,7 +190,7 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
 
   // A sparkle on the floor where she finds it.
   Engine_EventWait(40);
-  sparkle = Engine_ObjectCreate(0x11c, PIXELS(600), 0, PIXELS(824));
+  sparkle = Engine_ObjectCreate(SPRITE_PARTICLE, PIXELS(600), 0, PIXELS(824));
   Engine_ActorSetSpriteFlags(sparkle, 0);
   Object_SetMode(sparkle, 6);
   Engine_EventWait(10);

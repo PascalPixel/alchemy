@@ -14,7 +14,7 @@ s32 Input_GetDpadAngle(u32 unused) {
 
 /// Per-frame update of Move's hand (BattleFx_StartItemBreak): turns it toward
 /// the object it is linked to, at most 1/16 turn a frame, and sheds a particle
-/// (object 0x11d) round it.
+/// (SPRITE_SPARKLE) round it.
 void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   struct FieldActor *source = (struct FieldActor *)fieldObject;
   struct FieldActor *target;
@@ -50,7 +50,7 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   Vector_AddPolarOffset(radius, Random16(), &position);
 
   fragment = (struct ItemBreakFragmentObject *)Object_Spawn(
-      0x11d, position.x, position.y, position.z);
+      SPRITE_SPARKLE, position.x, position.y, position.z);
   BattleFx_InitializeFallingFragment(fragment);
 }
 
@@ -368,7 +368,7 @@ void *BattleFx_StartItemBreak(void *object) {
   // pixels a frame.
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
     child = (struct MotionObject *)Object_Spawn(
-        285, source->x, source->y + (16 << 16), source->z);
+        SPRITE_SPARKLE, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)child,
                                    gBattleFx_FragmentScript);
@@ -432,7 +432,8 @@ void UpdateRisingParticleBurst(void *object) {
     WaitFrames(1);
   }
   for (i = 7; i >= 0; i--) {
-    child = (struct MotionObject *)Object_Spawn(285, src->x, src->y, src->z);
+    child = (struct MotionObject *)Object_Spawn(SPRITE_SPARKLE, src->x, src->y,
+                                                src->z);
     if (child != 0) {
       s32 speed;
       /* FAKEMATCH(temporary): 1.0 in a block local set before the block's

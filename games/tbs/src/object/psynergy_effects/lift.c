@@ -203,7 +203,7 @@ s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
 
   // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
   for (fragmentIndex = 0; fragmentIndex < 12; fragmentIndex++) {
-    fragment = Object_Spawn(0x11d, pos.x, pos.y, pos.z);
+    fragment = Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)fragment,
                                    gBattleFx_FragmentScript);

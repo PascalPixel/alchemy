@@ -84,18 +84,19 @@
 /// The placed actors, numbered in the order of each room's placement table
 /// (Scene_GetPlacements).
 enum CrossboneIsleSteppingStonesActor {
-  /// The pillars of CrossboneIsleSteppingStones (four, sprite 0xd3),
+  /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
   /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
   /// sprite 0x100), the only actors those rooms place.
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
-  /// The logs, sprites 0xcd and 0xcf as Kolima Forest's: eight in
+  /// The logs, SPRITE_LOG_NORTH_SOUTH and SPRITE_LOG_WEST_EAST as Kolima
+  /// Forest's: eight in
   /// CrossboneIsleFloodgate, where the seven after the first float on the
   /// raised water, and two in CrossboneIsleDragonStatue.
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// CrossboneIsleDragonStatue's pillar for Move, sprite 0x125, which sinks
   /// into place at column 16.
   ACTOR_SINKING_PILLAR = ACTOR_FIRST_LOG + 2,
-  /// CrossboneIsleDragonStatue's three puddles, sprite 0xe3, which Frost
+  /// CrossboneIsleDragonStatue's three puddles, SPRITE_PUDDLE, which Frost
   /// freezes into pillars of ice.
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
@@ -1788,13 +1789,13 @@ struct ScenePlacement gCrossboneIsleSteppingStonesNoPlacements[] = {
 };
 
 struct ScenePlacement gCrossboneIsleSteppingStonesPlacements[] = {
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(744), 0, PIXELS(488), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(552), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(696), 0, PIXELS(616), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(776), 0, PIXELS(680), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -1814,21 +1815,21 @@ struct ScenePlacement gCrossboneIsleIcePillarsPlacements[] = {
 };
 
 struct ScenePlacement gCrossboneIsleFloodgatePlacements[] = {
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(144), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(232), 0, PIXELS(256), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(208), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(232), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcd, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(272), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(352), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd6, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1848,17 +1849,17 @@ struct ScenePlacement gCrossboneIsleSteppingStonesPlacementsOther[] = {
 };
 
 struct ScenePlacement gCrossboneIsleDragonStatuePlacements[] = {
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(208), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xcf, CONDITION_ALWAYS, 7,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(224), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x125, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x122, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },

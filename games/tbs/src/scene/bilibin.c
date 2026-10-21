@@ -1064,7 +1064,7 @@ struct ScenePlacement gBilibinPlacements[] = {
 };
 
 struct ScenePlacement gBilibinBarricadePlacements[] = {
-    { 0xf1, CONDITION_ALWAYS, 7,
+    { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x69, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
@@ -1080,7 +1080,7 @@ struct ScenePlacement gBilibinBarricadePlacements[] = {
         PIXELS(262), 0, PIXELS(156), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x17, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, CONDITION_ALWAYS, 7,
+    { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

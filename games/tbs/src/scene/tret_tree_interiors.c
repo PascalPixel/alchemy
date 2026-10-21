@@ -939,8 +939,8 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
     // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
     // converting them to turns, preserving the original rounding.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
-      spark = Engine_ObjectCreate(0x11d, sSparkOrigin.x, sSparkOrigin.y,
-                                  sSparkOrigin.z);
+      spark = Engine_ObjectCreate(SPRITE_SPARKLE, sSparkOrigin.x,
+                                  sSparkOrigin.y, sSparkOrigin.z);
       if (spark != 0) {
         previousResourceEntry =
             Sprite_ShareVramCache(spark->sprite, previousResourceEntry);

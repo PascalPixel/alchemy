@@ -192,7 +192,8 @@ enum ValeActor {
   /// "You're in trouble now, Garet... Your sister's really mad!"; after the
   /// party has left, "Please take care of my brother, Isaac."
   ACTOR_GARETS_SIBLING,
-  /// Sprite 0xd3, as Goma Cave's pillars: pushed (Event_PushPillar) or moved
+  /// SPRITE_STONE_PILLAR, as Goma Cave's pillars: pushed (Event_PushPillar) or
+  /// moved
   /// with Move, its column kept in FLAG_PLACE_TEMP_14 to _16
   /// (Event_SettleMovedPillar).
   ACTOR_PILLAR,
@@ -2900,8 +2901,8 @@ static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
   randomDistance = Engine_RandomNext();
   Vector_AddPolarOffset(((randomDistance << 1) + randomDistance) << 4,
                         Engine_RandomNext(), spawnPosition);
-  particle = Engine_ObjectCreate(0x11d, spawnPosition[0], spawnPosition[1],
-                                 spawnPosition[2]);
+  particle = Engine_ObjectCreate(SPRITE_SPARKLE, spawnPosition[0],
+                                 spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {
     particle->motionFlags = 2;
     particle->gravity = 0x1999;
@@ -3335,7 +3336,7 @@ struct ScenePlacement gVale_Placements[] = {
         PIXELS(412), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x25, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(398), 0, PIXELS(616), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3347,7 +3348,7 @@ struct ScenePlacement gVale_Placements[] = {
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x16, FLAG_VALE_NUT_CAUGHT, 7,
+    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3381,7 +3382,7 @@ struct ScenePlacement gVale_PlacementsAfterLeaving[] = {
         PIXELS(412), 0, PIXELS(586), FACING_WEST, 3, 0 },
     { 0x25, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(398), 0, PIXELS(616), FACING_NORTH, 3, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(335), 0, PIXELS(869), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3393,7 +3394,7 @@ struct ScenePlacement gVale_PlacementsAfterLeaving[] = {
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x16, FLAG_VALE_NUT_CAUGHT, 7,
+    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3425,9 +3426,9 @@ struct ScenePlacement gVale_PlacementsAfterKalay[] = {
         PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x16, FLAG_VALE_NUT_CAUGHT, ACTOR_STAND,
+    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3439,7 +3440,7 @@ struct ScenePlacement gVale_RepairPlacements[] = {
         PIXELS(428), 0, PIXELS(588), FACING_WEST, TALK_FACE_PARTY, 0 },
     { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(204), 0, PIXELS(924), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(394), 0, PIXELS(584), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_NORTH, TALK_FACE_PARTY, 0 },

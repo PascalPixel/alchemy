@@ -43,7 +43,7 @@ struct Effect05State {
   u8 variant; ///< childOption: set by a scene, the orb stops 80 pixels up
   u8 reserved35[0x10];
   /// lit: set in two Mercury Lighthouse maps (setup.c), where swaying
-  /// particles (object 0x11c) fall rather than splashing drops.
+  /// particles (SPRITE_PARTICLE) fall rather than splashing drops.
   u8 alternate;
 };
 
@@ -226,8 +226,8 @@ void FieldFx_RunDouse(void) {
       pos.y = lightOrb->y;
       pos.z = lightOrb->z;
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
-      particle =
-          (struct Effect05Object *)Object_Spawn(0x11c, pos.x, pos.y, pos.z);
+      particle = (struct Effect05Object *)Object_Spawn(SPRITE_PARTICLE, pos.x,
+                                                       pos.y, pos.z);
       if (particle != 0) {
         particle->callback = BattleFx_UpdateDriftingFallObject;
         particle->flag = 0;

@@ -1637,7 +1637,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
       break;
     }
     gArcEffectTimers[arcIndex] = clear;
-    actor = Engine_ObjectCreate(284, x, y, z);
+    actor = Engine_ObjectCreate(SPRITE_PARTICLE, x, y, z);
     gArcEffects[arcIndex] = actor;
     actor->motionFlags = clear;
     sprite = actor->sprite;
@@ -1901,7 +1901,7 @@ struct ScenePlacement gSolSanctumEruption_Placements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },

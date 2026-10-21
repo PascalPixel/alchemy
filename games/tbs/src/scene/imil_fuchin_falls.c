@@ -1468,7 +1468,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
   GlyphTransfer *glyph;
   u8 clear = 0;
 
-  actor = Object_Create(22, PIXELS(248), PIXELS(8), PIXELS(152));
+  actor = Object_Create(SPRITE_BLANK, PIXELS(248), PIXELS(8), PIXELS(152));
   if (actor != NULL) {
     sprite = actor->sprite;
     sprite->flags = clear;
@@ -1535,7 +1535,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
       gImilFuchinFalls_DustScript2,
   };
 
-  effect = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
+  effect = (struct FieldEffect *)Engine_ObjectCreate(SPRITE_DUST_PUFF, x, y, z);
   if (effect == 0)
     return;
   sprite = effect->sprite;

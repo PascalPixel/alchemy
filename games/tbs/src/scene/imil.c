@@ -1051,7 +1051,7 @@ UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
     SET_VECTOR(pos, actor->x.fixed, actor->y.fixed + PIXELS(2), actor->z.fixed);
     radius = Engine_RandomNext();
     Vector_AddPolarOffset(radius * 6, Engine_RandomNext(), pos);
-    spark = Engine_ObjectCreate(0x11d, pos[0], pos[1], pos[2]);
+    spark = Engine_ObjectCreate(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     if (spark != NULL) {
       spark->sprite->image.priority = 0;
       Engine_ActorSetSpriteFlags(spark, 0);
@@ -1135,28 +1135,28 @@ static void Imil_SpawnAmbientEffects(void) {
 
   frame = &gFrameCount;
   if (((u32)*frame % (u32)60) == 0) {
-    object =
-        (union FieldObject *)Object_Create(222, PIXELS(463), 0, PIXELS(292));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(463),
+                                                0, PIXELS(292));
     Imil_StartRisingEffect(object);
   }
   if (((u32)(*frame + 30) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(222, PIXELS(320), PIXELS(32),
-                                                PIXELS(356));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(320),
+                                                PIXELS(32), PIXELS(356));
     Imil_StartRisingEffect(object);
   }
   if (((u32)(*frame + 10) % (u32)60) == 0) {
-    object =
-        (union FieldObject *)Object_Create(222, PIXELS(118), 0, PIXELS(70));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(118),
+                                                0, PIXELS(70));
     Imil_StartRisingEffect(object);
   }
   if (((u32)(*frame + 50) % (u32)60) == 0) {
-    object =
-        (union FieldObject *)Object_Create(222, PIXELS(342), 0, PIXELS(124));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(342),
+                                                0, PIXELS(124));
     Imil_StartRisingEffect(object);
   }
   if (((u32)(*frame + 80) % (u32)60) == 0) {
-    object =
-        (union FieldObject *)Object_Create(222, PIXELS(431), 0, PIXELS(171));
+    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(431),
+                                                0, PIXELS(171));
     Imil_StartRisingEffect(object);
   }
 }
@@ -1748,7 +1748,7 @@ struct ScenePlacement gImil_InteriorPlacements[] = {
         PIXELS(111), 0, PIXELS(215), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x67, 0x0, ACTOR_STAND,
         PIXELS(166), 0, PIXELS(116), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x16, 0x0, 7,
+    { SPRITE_BLANK, 0x0, 7,
         PIXELS(174), 0, PIXELS(173), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x67, 0x0, ACTOR_STAND,
         PIXELS(118), 0, PIXELS(488), FACING_NORTH, TALK_FACE_PARTY, 0 },

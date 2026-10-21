@@ -26,6 +26,13 @@ enum BattleCritical {
 /// lands; BattleCommand_BuildPlan rolls it ahead only for Annihilation.
 #define HIT_NOT_ROLLED -1
 
+/// BattlePlan.failure: why a cast plays no effect, which the staging shows.
+enum BattlePlanFailure {
+  PLAN_FAILURE_NONE,
+  PLAN_FAILURE_SEALED, ///< "blocked": the user's Psynergy is sealed
+  PLAN_FAILURE_NO_PP   ///< the user has too little PP
+};
+
 /// One action, as BattleCommand_BuildPlan lays it out for BattleTargetExec to
 /// apply target by target.
 struct BattlePlan {
@@ -47,7 +54,7 @@ struct BattlePlan {
   /// bits: 19 view reversed | 18 view across | 17 other side | 16 on downed |
   /// 15 scene | 14 by id range | 13..12 variant | 11..0 effect kind
   u32 presentationFlags;
-  s32 failure; ///< 0 cast; 1 the Psynergy is sealed, 2 too little PP
+  s32 failure; ///< enum BattlePlanFailure
   /// The damage the evil spirit deals a haunted actor at the end of its turn.
   u32 hauntDamage;
 };

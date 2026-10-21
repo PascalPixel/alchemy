@@ -279,13 +279,6 @@ enum BattlePlanStaging {
 #define PLAN_REPORTED -1  ///< the action failed and its message is shown
 #define PLAN_NO_ACTION -2 ///< nothing to stage or show
 
-/// BattlePlan.failure: why a cast plays no effect, which the staging shows.
-enum BattlePlanFailure {
-  PLAN_FAILURE_NONE,
-  PLAN_FAILURE_SEALED, ///< "blocked": the user's Psynergy is sealed
-  PLAN_FAILURE_NO_PP   ///< the user has too little PP
-};
-
 /// BattlePresentation_RunUnitTransition's mode: a summon hides its user too.
 #define TRANSITION_HIDE_ACTOR 1
 
@@ -294,33 +287,6 @@ enum BattleCastKind {
   CAST_PSYNERGY = 0, ///< the star field gathers on the caster
   CAST_DJINNI = 1,   ///< no glow; the effect plays its prelude
   CAST_ENEMY = 2     ///< the element's streaks
-};
-
-// EnemyDefinition.targetStrategy: a single-target attacker favours the
-// target with the most HP left, the most maximum HP, or no one
-// (BattleTarget_SelectForAction). The same column steers
-// BattleCommand_SelectAutomatic: with any strategy but STRATEGY_MOST_HP an
-// enemy skips Psynergy it lacks the PP for, and with STRATEGY_RANDOM any
-// Psynergy while sealed; with STRATEGY_MOST_HP, an enemy that picks an item
-// place with no items left still commands CMD_ITEM.
-#define STRATEGY_MOST_HP 0
-#define STRATEGY_MOST_MAX_HP 1
-#define STRATEGY_RANDOM 2
-
-/// EnemyDefinition.actionStrategy: how BattleCommand_SelectAutomatic picks a
-/// place in the enemy's eight actions. The first three roll against
-/// gBattleCommand_SelectionWeights; the next two remember the place in
-/// BattleUnit.rewards. No row of enemies.tsv has a strategy past
-/// ACTION_STRATEGY_RANDOM_START.
-enum EnemyActionStrategy {
-  ACTION_STRATEGY_EVEN,           ///< 32 in 256 each
-  ACTION_STRATEGY_FALLING,        ///< from 53 in 256 down to 11
-  ACTION_STRATEGY_FIRST_FAVOURED, ///< the first 113 in 256, down to 5
-  /// A random place the first time, then each in turn at the enemy's turn.
-  ACTION_STRATEGY_RANDOM_START,
-  ACTION_STRATEGY_IN_ORDER,  ///< each in turn from the remembered place
-  ACTION_STRATEGY_NEXT_PICK, ///< the next place at each new pick, from 0
-  ACTION_STRATEGY_SAME       ///< the place last picked
 };
 
 // BattleAct.targetMode: whom an ability may target, from its user's view.

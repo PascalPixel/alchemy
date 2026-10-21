@@ -84,6 +84,35 @@ struct DjinnDefinition {
   u8 unk0a[2]; ///< Reserved in djinn.tsv.
 };
 
+/// EnemyDefinition.targetStrategy: a single-target attacker favours the
+/// target with the most HP left, the most maximum HP, or no one
+/// (BattleTarget_SelectForAction). The same column steers
+/// BattleCommand_SelectAutomatic: with any strategy but STRATEGY_MOST_HP an
+/// enemy skips Psynergy it lacks the PP for, and with STRATEGY_RANDOM any
+/// Psynergy while sealed; with STRATEGY_MOST_HP, an enemy that picks an item
+/// place with no items left still commands CMD_ITEM.
+enum EnemyTargetStrategy {
+  STRATEGY_MOST_HP = 0,
+  STRATEGY_MOST_MAX_HP = 1,
+  STRATEGY_RANDOM = 2
+};
+
+/// EnemyDefinition.actionStrategy: how BattleCommand_SelectAutomatic picks a
+/// place in the enemy's eight actions. The first three roll against
+/// gBattleCommand_SelectionWeights; the next two remember the place in
+/// BattleUnit.rewards. No row of enemies.tsv has a strategy past
+/// ACTION_STRATEGY_RANDOM_START.
+enum EnemyActionStrategy {
+  ACTION_STRATEGY_EVEN,           ///< 32 in 256 each
+  ACTION_STRATEGY_FALLING,        ///< from 53 in 256 down to 11
+  ACTION_STRATEGY_FIRST_FAVOURED, ///< the first 113 in 256, down to 5
+  /// A random place the first time, then each in turn at the enemy's turn.
+  ACTION_STRATEGY_RANDOM_START,
+  ACTION_STRATEGY_IN_ORDER,  ///< each in turn from the remembered place
+  ACTION_STRATEGY_NEXT_PICK, ///< the next place at each new pick, from 0
+  ACTION_STRATEGY_SAME       ///< the place last picked
+};
+
 /// An enemy's definition: its level and stats, items, element preset, the
 /// actions it chooses from and its rewards.
 struct EnemyDefinition {
@@ -109,15 +138,10 @@ struct EnemyDefinition {
   u16 items[4];     ///< items the enemy carries, 0 for none
   u8 counts[4];     ///< how many of each item it carries
   u8 elementPreset; ///< row of gEnemy_ElementPresetTable, 0 to 43
-  /// Whom a single-target attack favours: the target with the most HP left
-  /// (STRATEGY_MOST_HP), the most maximum HP (STRATEGY_MOST_MAX_HP) or no one
-  /// (STRATEGY_RANDOM). The action choice also skips an ability the enemy
-  /// lacks PP for unless it is STRATEGY_MOST_HP, and a sealed one when it is
-  /// STRATEGY_RANDOM.
+  /// Whom a single-target attack favours: an enum EnemyTargetStrategy.
   s8 targetStrategy;
   /// How the action is chosen from `actions` (BattleCommand_SelectAutomatic):
-  /// an enum EnemyActionStrategy: one of three weight tables, a random place
-  /// then in order, in order, the next place or the same place.
+  /// an enum EnemyActionStrategy.
   s8 actionStrategy;
   u8 itemActions; ///< one bit per place in `actions`: use an item held instead
   u16 actions[8]; ///< the abilities the enemy chooses from

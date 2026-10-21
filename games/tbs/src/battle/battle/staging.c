@@ -61,7 +61,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
   // player first.
   actingUnit[0] = request->unitId;
   actingUnit[1] = BATTLE_UNIT_LIST_END;
-  BattlePres_SetActorModes(actingUnit, 1);
+  BattlePres_SetActorModes(actingUnit, HIGHLIGHT_SELECTED);
   result = BattleCommand_BuildPlan(request, &battle->plan);
   if (result == 0) {
     switch (battle->plan.outcome) {
@@ -72,19 +72,20 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
       BattlePres_RunAttack(&battle->plan, 0);
       break;
     case PLAN_SHOW_SUMMON:
-      BattlePresentation_RunUnitTransition(&battle->plan, 1);
+      BattlePresentation_RunUnitTransition(&battle->plan,
+                                           TRANSITION_HIDE_ACTOR);
       break;
     case PLAN_SHOW_FULL_SCREEN:
       BattlePresentation_RunUnitTransition(&battle->plan, 0);
       break;
     case PLAN_SHOW_CAST:
-      BattlePres_RunPsynergyCast(&battle->plan, 0);
+      BattlePres_RunPsynergyCast(&battle->plan, CAST_PSYNERGY);
       break;
     case PLAN_SHOW_DJINNI:
-      BattlePres_RunPsynergyCast(&battle->plan, 1);
+      BattlePres_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       break;
     case PLAN_SHOW_ENEMY_CAST:
-      BattlePres_RunPsynergyCast(&battle->plan, 2);
+      BattlePres_RunPsynergyCast(&battle->plan, CAST_ENEMY);
       break;
     case PLAN_SHOW_ITEM:
       BattlePres_RunItem(&battle->plan, 0, request);
@@ -101,7 +102,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
       BattlePresentation_WaitForAdvance();
       WaitFrames(3);
     }
-    BattlePres_SetActorModes(0, 0);
+    BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
   }
 
   // The turn's end, then every unit back to its spot. A party that fled
@@ -114,7 +115,8 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
     ObjMotRst(unitIds[unitIndex]);
   request->unitId = BATTLE_UNIT_LIST_END;
 finish:
-  BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
+  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_PLANE,
+                                          gBattleWork->background, 0);
   return fled;
 }
 
@@ -195,11 +197,11 @@ s32 BattlePres_RunEscape(struct BattlePlan *plan) {
   completed.halves[1] = 0;
   presentation->targetYaw = YAW_PARTY_TURN;
   presentation->active = 1;
-  BattlePres_SetActorModes(0, 0);
+  BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
 
   // The party: each member that can move runs, the last listed first, eight
   // frames apart.
-  if (plan->actorId <= 7) {
+  if (plan->actorId <= ALLY_MAX) {
     partyMode = completed.value;
 
     if (scene->encounterMode != BATTLE_ENCOUNTER_ENEMIES_FIRST) {
@@ -250,11 +252,12 @@ s32 BattlePres_RunEscape(struct BattlePlan *plan) {
 /// element and the other side fades out; then, unless the cast failed
 /// ("blocked" or too little PP), the target side's units are readied alone
 /// and the effect plays while the events run. Everyone fades back in.
-/// Called by BattlePresentation_DispatchAction for PLAN_SHOW_SUMMON (mode 1)
-/// and PLAN_SHOW_FULL_SCREEN (mode 0). Sets gTransitionWork's yaw (and its
-/// frames, for a scene), REG_BLDCNT and REG_BLDALPHA for the fades, and the
-/// units' record modes; schedules BattleEvent_Playback around the effect.
-/// @param mode bit 0 hides the actor too (the summons)
+/// Called by BattlePresentation_DispatchAction for PLAN_SHOW_SUMMON (with
+/// TRANSITION_HIDE_ACTOR) and PLAN_SHOW_FULL_SCREEN. Sets gTransitionWork's yaw
+/// (and its frames, for a scene), REG_BLDCNT and REG_BLDALPHA for the fades,
+/// and the units' record modes; schedules BattleEvent_Playback around the
+/// effect.
+/// @param mode TRANSITION_HIDE_ACTOR hides the actor too (the summons)
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   u16 units[14];
   struct BattlePresentationWork work;
@@ -272,7 +275,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
 #endif
 
   // The camera: a staged scene turns to the actor's side over 60 frames (an
-  // enemy's to 0x5000); otherwise the acting side's usual view.
+  // enemy's to YAW_BEHIND_ENEMIES); otherwise the acting side's usual view.
   BattlePres_BuildTargetList(plan, &work.effect);
   actor = plan->actorId;
   target = plan->targetIds[0];
@@ -285,8 +288,8 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
     yaw = YAW_PARTY_TURN;
-    if (actor > 7)
-      yaw = 0x5000;
+    if (actor > ALLY_MAX)
+      yaw = YAW_BEHIND_ENEMIES;
     transition->targetYaw = yaw;
     transition->frames = 60;
   } else {
@@ -298,15 +301,16 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
     yaw = YAW_ENEMY_TURN;
-    if (actor <= 7)
+    if (actor <= ALLY_MAX)
       yaw = YAW_PARTY_TURN;
     if (transition->targetYaw != yaw)
       transition->targetYaw = yaw;
   }
 
-  // The actor raises its hand (animation 3) and glows; the units of the side
-  // not targeted fade out over 16 frames (and the actor too, for mode 1).
-  BattlePres_SetActorModes(0, 0);
+  // The actor raises its hand (POSE_CAST) and glows; the units of the side
+  // not targeted fade out over 16 frames (and the actor too, for
+  // TRANSITION_HIDE_ACTOR).
+  BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
   object = BattleObjGet(actor)->object;
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
@@ -315,24 +319,25 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
     if (units[i] != actor) {
-      if ((target <= 7) != (units[i] <= 7))
-        BattlePres_SetActorRecordMode(units[i], 1);
+      if ((target <= ALLY_MAX) != (units[i] <= ALLY_MAX))
+        BattlePres_SetActorRecordMode(units[i], ACTOR_SEMI_TRANSPARENT);
     } else {
-      ObjectDispatch_SelectAnimationFar(object, 3);
+      ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
     }
   }
   // The sound of a cast, as the caster raises its hand.
   AudioCommand_PlayFar(SE_CAST);
-  BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 0, 0);
-  if (mode & 1)
-    BattlePres_SetActorRecordMode(actor, 1);
+  BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element,
+                                 GLOW_STAR_FIELD, 0);
+  if (mode & TRANSITION_HIDE_ACTOR)
+    BattlePres_SetActorRecordMode(actor, ACTOR_SEMI_TRANSPARENT);
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = BLEND_ALPHA(16 - i, 16);
     WaitFrames(1);
   }
   // A failed cast: "blocked" (sealed) or too little PP, shown at once.
-  if (plan->failure != 0) {
-    if (plan->failure == 1) {
+  if (plan->failure != PLAN_FAILURE_NONE) {
+    if (plan->failure == PLAN_FAILURE_SEALED) {
       BattleEvPush(BATTLE_EVENT_UNIT_NAME, plan->actorId);
       BattleEvPush(BATTLE_EVENT_MESSAGE, MsgPsynergyBlocked);
     } else {
@@ -342,14 +347,15 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     BattlePres_RestorePalette();
   } else {
     // Only the target side's units stay on the field (with the actor, unless
-    // mode 1 hides it); the list is then reused for the plan's targets.
+    // TRANSITION_HIDE_ACTOR hides it); the list is then reused for the plan's
+    // targets.
     kept = 0;
     for (i = 0; i < count; i++) {
       u32 unit = units[i];
       if (unit == actor) {
-        if (!(mode & 1))
+        if (!(mode & TRANSITION_HIDE_ACTOR))
           units[kept++] = actor;
-      } else if ((target <= 7) == (unit <= 7)) {
+      } else if ((target <= ALLY_MAX) == (unit <= ALLY_MAX)) {
         units[kept++] = unit;
       }
     }
@@ -374,17 +380,17 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
         work.savedAnimationParameters[i][child] =
             animation->entries[child]->param;
     }
-    // The side the effect plays on: 1 when the targets are the party's.
+    // The side the effect plays on: the targets'.
     if (plan->presentationFlags & STAGING_SCENE) {
-      if (target > 7)
-        work.effect.side = 0;
+      if (target > ALLY_MAX)
+        work.effect.side = EFFECT_SIDE_ENEMIES;
       else
-        work.effect.side = 1;
+        work.effect.side = EFFECT_SIDE_PARTY;
     } else {
-      if (plan->targetIds[0] <= 7)
-        work.effect.side = 1;
+      if (plan->targetIds[0] <= ALLY_MAX)
+        work.effect.side = EFFECT_SIDE_PARTY;
       else
-        work.effect.side = 0;
+        work.effect.side = EFFECT_SIDE_ENEMIES;
     }
     if (plan->presentationFlags & STAGING_OTHER_SIDE)
       work.effect.side ^= 1;
@@ -408,15 +414,15 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   for (i = 0; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED || units[i] == actor)
       continue;
-    if ((target <= 7) != (units[i] <= 7))
-      BattlePres_SetActorRecordMode(units[i], 1);
+    if ((target <= ALLY_MAX) != (units[i] <= ALLY_MAX))
+      BattlePres_SetActorRecordMode(units[i], ACTOR_SEMI_TRANSPARENT);
   }
   for (i = 0; i != 16; i++) {
     REG_BLDALPHA = BLEND_ALPHA(i, 16);
     WaitFrames(1);
   }
   for (i = 0; i != count; i++)
-    BattlePres_SetActorRecordMode(units[i], 0);
+    BattlePres_SetActorRecordMode(units[i], ACTOR_OPAQUE);
   BattlePres_SetupTransitionScene(0, 0, 0, 100);
   WaitFrames(1);
   return 0;
@@ -434,7 +440,7 @@ s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
 #endif
   s32 targetIndex;
 
-  BattlePres_SetActorModes(0, 0);
+  BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
   if (plan->targetCount == 0) {
     BattlePresentation_WaitForAdvance();
   } else {
@@ -487,7 +493,7 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
       plan = savedPlan;
   }
 
-  // The camera turns to halfway between the party's view (0x2000) and the
+  // The camera turns to halfway between YAW_PARTY_TURN and the
   // attacker's bearing from the centre, an enemy's taken from the other
   // side: 5 frames if it is there already, else 10.
   object = BattleObjGet(plan->actorId)->object;
@@ -495,7 +501,7 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
   x = object->x;
   angle = (u16)ArcTan2(x, z);
   adjusted = angle - 0x2000;
-  if (plan->actorId > 7)
+  if (plan->actorId > ALLY_MAX)
     adjusted = angle + 0x6000;
   adjusted &= 0x7fff;
   facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
@@ -508,11 +514,10 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
     WaitFrames(10);
   }
 
-  BattlePres_SetActorModes(0, 0);
+  BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
   BattlePres_BuildTargetList(plan, &work.effect);
-  // Effect 0x87 is Severe Blow's alone (ability 517, actflags.tsv): the
-  // status window without its PP row while it plays.
-  if (work.effect.kind == 0x87)
+  // Severe Blow drops the status window's PP row while it plays.
+  if (work.effect.kind == STAGING_KIND_SEVERE_BLOW)
     PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
 
   unit = UnitGetFar(work.effect.actor);
@@ -520,7 +525,7 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
   critical = plan->targetCritical[0];
   missed = plan->targetMultiplier[0] == 0;
 
-  // The run up: as long as the attacker's animation 2, with its class's hop
+  // The run up: as long as the attacker's POSE_LEAP, with its class's hop
   // height (16.16).
   animation = GetMotionRecord(BattleObjGet(plan->actorId)->object, 0);
   frames = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->animId,
@@ -531,10 +536,10 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
       (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
   BattleObjGet(work.effect.actors[0]);
 
-  if ((u16)work.effect.actors[0] <= 7)
-    work.effect.side = 1;
+  if ((u16)work.effect.actors[0] <= ALLY_MAX)
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = 0;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
 
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN0V = WIN_RANGE(16, 136);
@@ -557,16 +562,16 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
     BattleEv_DispatchQueued();
     ObjMotRst(work.effect.actors[0]);
   } else {
-    // A hit. A critical hit plays the effect 200 kinds on, with only the pair
-    // on the field and the camera zooming in on them (scale 100 to 130) over
-    // the rest of the run up.
+    // A hit. A critical hit plays the effect's critical version, with only the
+    // pair on the field and the camera zooming in on them (scale 100 to 130)
+    // over the rest of the run up.
     zoomOnCritical = 0;
     work.effect.prelude = 0;
     if (plan->presentationFlags != 0)
       work.effect.prelude = 1;
 
     if (critical != 0) {
-      work.effect.kind += 200;
+      work.effect.kind += EFFECT_KIND_CRITICAL_OFFSET;
       zoomOnCritical = 1;
       transition->flag = 1;
       criticalPair[0] = work.effect.actor;
@@ -642,7 +647,7 @@ UNUSED s32 BattlePres_RunPlainAttack(struct BattlePlan *input, s32 flags) {
   x = object->x;
   angle = (u16)ArcTan2(x, z);
   adjusted = angle - 0x2000;
-  if (savedInput->actorId > 7)
+  if (savedInput->actorId > ALLY_MAX)
     adjusted = angle + 0x6000;
   adjusted &= 0x7fff;
   facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
@@ -655,7 +660,7 @@ UNUSED s32 BattlePres_RunPlainAttack(struct BattlePlan *input, s32 flags) {
     WaitFrames(20);
   }
 
-  BattlePres_SetActorModes(0, 0);
+  BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
   BattlePres_BuildTargetList(savedInput, &work.effect);
   UnitGetFar(work.effect.actor);
   UnitGetFar(savedInput->targetIds[0]);
@@ -670,10 +675,10 @@ UNUSED s32 BattlePres_RunPlainAttack(struct BattlePlan *input, s32 flags) {
       (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
   BattleObjGet(savedInput->targetIds[0]);
 
-  if (savedInput->targetIds[0] <= 7)
-    work.effect.side = 1;
+  if (savedInput->targetIds[0] <= ALLY_MAX)
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = 0;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
   if (missed != 0) {
     WaitFrames(10);
     BattleMotion_ResetObjectAtScaledAnchor(savedInput->targetIds[0]);
@@ -716,11 +721,11 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
   s32 targetYaw;
 
   // The camera turns to the user's side; the user raises the item
-  // (animation 3).
-  // XXX: likely a slip, because the other runners test > 7: with > 4, unit
-  // ids 5 to 7 (Jenna, Sheba and Piers in character_ids.h) would take the
-  // enemies' view; whether any of them uses an item in a battle of this
-  // game would settle whether it is seen.
+  // (POSE_CAST).
+  // XXX: likely a slip, because the other runners test > ALLY_MAX: with > 4,
+  // Jenna, Sheba and Piers (character_ids.h) would take the enemies' view;
+  // whether any of them uses an item in a battle of this game would settle
+  // whether it is seen.
   if (plan->actorId > 4)
     targetYaw = YAW_ENEMY_TURN;
   else
@@ -728,14 +733,14 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
   BattlePres_BuildTargetList(plan, &work.effect);
-  BattlePres_SetActorModes(0, 0);
+  BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
   object = BattleObjGet(work.effect.actor)->object;
-  ObjectDispatch_SelectAnimationFar(object, 3);
+  ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
-  if (plan->targetIds[0] <= 7)
-    work.effect.side = 1;
+  if (plan->targetIds[0] <= ALLY_MAX)
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = 0;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
 
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.count;
        targetOrFadeIndex++) {
@@ -780,7 +785,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
     WaitFrames(60);
   }
   BattleEventRuntime_WaitForReady();
-  ObjectDispatch_SelectAnimationFar(object, 1);
+  ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.count;
        targetOrFadeIndex++)
     ObjMotRst(work.effect.actors[targetOrFadeIndex]);
@@ -871,11 +876,11 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
 /// in its element (no glow for a Djinni); then the cast fails ("blocked" or
 /// too little PP) or its effect plays with the events, and the targets
 /// return to their spots.
-/// Called by BattlePresentation_DispatchAction for PLAN_SHOW_CAST (mode 0),
-/// PLAN_SHOW_DJINNI (1) and PLAN_SHOW_ENEMY_CAST (2). Sets gTransitionWork's
-/// yaw (and its frames for a fixed view), redraws the party status window
-/// without its PP row, and schedules BattleEvent_Playback around the effect.
-/// @param mode 1 a Djinni, 2 an enemy's cast, 0 any other
+/// Called by BattlePresentation_DispatchAction for PLAN_SHOW_CAST
+/// (CAST_PSYNERGY), PLAN_SHOW_DJINNI (CAST_DJINNI) and PLAN_SHOW_ENEMY_CAST
+/// (CAST_ENEMY). Sets gTransitionWork's yaw (and its frames for a fixed view),
+/// redraws the party status window without its PP row, and schedules
+/// BattleEvent_Playback around the effect.
 s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition = gTransitionWork;
@@ -884,59 +889,63 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   s32 targetIndex;
 
   // The camera. STAGING_VIEW_ACROSS takes the other side's view (an enemy's
-  // cast 0x5000) over 60 frames. Otherwise it starts 0x1800 off the caster's
-  // bearing (less for the party, more for an enemy) and goes three quarters
-  // of the way to the caster's side's view; a cast on the caster's own side
-  // takes 0x2400 instead (-0x2400 for an enemy). STAGING_VIEW_REVERSED then
-  // overrides it with the opposite side's view.
+  // cast YAW_BEHIND_ENEMIES) over 60 frames. Otherwise it starts 0x1800 off the
+  // caster's bearing (less for the party, more for an enemy) and goes three
+  // quarters of the way to the caster's side's view; a cast on the caster's own
+  // side takes 0x2400 instead (-0x2400 for an enemy). STAGING_VIEW_REVERSED
+  // then overrides it with the opposite side's view.
   if (plan->presentationFlags & STAGING_VIEW_ACROSS) {
-    transition->targetYaw = plan->actorId <= 7 ? YAW_ENEMY_TURN : 0x5000;
+    transition->targetYaw =
+        plan->actorId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_BEHIND_ENEMIES;
     transition->frames = 60;
   } else {
     struct MotionObject *actor = BattleObjGet(plan->actorId)->object;
     s32 angle = (u16)ArcTan2(actor->x, actor->z);
     s32 targetYaw;
 
-    if (plan->actorId <= 7)
+    if (plan->actorId <= ALLY_MAX)
       targetYaw = angle - 0x1800;
     else
       targetYaw = angle + 0x1800;
     targetYaw = (s16)targetYaw;
     targetYaw +=
-        ((plan->actorId <= 7 ? YAW_PARTY_TURN : YAW_ENEMY_TURN) - targetYaw) *
+        ((plan->actorId <= ALLY_MAX ? YAW_PARTY_TURN : YAW_ENEMY_TURN) -
+         targetYaw) *
         3 / 4;
-    if (!((plan->actorId <= 7) ^ (plan->targetIds[0] <= 7)))
-      targetYaw = plan->actorId <= 7 ? 0x2400 : -0x2400;
+    if (!((plan->actorId <= ALLY_MAX) ^ (plan->targetIds[0] <= ALLY_MAX)))
+      targetYaw = plan->actorId <= ALLY_MAX ? 0x2400 : -0x2400;
     if (transition->targetYaw != targetYaw)
       transition->targetYaw = targetYaw;
   }
   if (plan->presentationFlags & STAGING_VIEW_REVERSED) {
     transition->targetYaw =
-        plan->actorId <= 7 ? YAW_ENEMY_TURN : YAW_PARTY_TURN;
+        plan->actorId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_PARTY_TURN;
     transition->frames = 60;
   }
 
-  // The caster raises its hand (animation 3) and glows in its element (style
-  // 1 for an enemy's cast); a Djinni does not glow, and its effect plays its
-  // prelude instead.
+  // The caster raises its hand (POSE_CAST) and glows in its element (its
+  // streaks for an enemy's cast); a Djinni does not glow, and its effect plays
+  // its prelude instead.
   BattlePres_BuildTargetList(plan, &work.effect);
-  isDjinni = mode & 1;
+  isDjinni = mode & CAST_DJINNI;
   if (isDjinni)
     work.effect.prelude = 1;
-  BattlePres_SetActorModes(0, 0);
+  BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
   object = BattleObjGet(work.effect.actor)->object;
-  ObjectDispatch_SelectAnimationFar(object, 3);
+  ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   AudioCommand_PlayFar(SE_CAST);
-  if (mode & 2)
-    BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 1, 0);
+  if (mode & CAST_ENEMY)
+    BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element,
+                                   GLOW_STREAKS, 0);
   else if (!isDjinni)
-    BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element, 0, 0);
-  if (plan->targetIds[0] <= 7)
-    work.effect.side = 1;
+    BattleFx_PlayUnitElementEffect(work.effect.actor, plan->element,
+                                   GLOW_STAR_FIELD, 0);
+  if (plan->targetIds[0] <= ALLY_MAX)
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = 0;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
 
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++) {
     struct AnimationObject *animation = GetMotionRecord(
@@ -950,8 +959,8 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 
   // A failed cast is shown at once; otherwise the effect plays while the
   // events do, and an ability with no effect only restores the palette.
-  if (plan->failure != 0) {
-    if (plan->failure == 1) {
+  if (plan->failure != PLAN_FAILURE_NONE) {
+    if (plan->failure == PLAN_FAILURE_SEALED) {
       BattleEvPush(BATTLE_EVENT_UNIT_NAME, plan->actorId);
       BattleEvPush(BATTLE_EVENT_MESSAGE, MsgPsynergyBlocked);
     } else {
@@ -970,7 +979,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       BattlePres_RestorePalette();
     }
     BattleEventRuntime_WaitForReady();
-    ObjectDispatch_SelectAnimationFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
     for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
       ObjMotRst(work.effect.actors[targetIndex]);
   }

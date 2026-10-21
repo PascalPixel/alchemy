@@ -280,8 +280,8 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
         if (Djinn_IsReadyFar(owner, element, djinni) != 0) {
           struct DjinnRecoveryList *list =
               &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                    (owner < 0 || owner > 7) ? DJINN_RECOVERY_OPPONENT
-                                             : DJINN_RECOVERY_PARTY))
+                    (owner < 0 || owner > ALLY_MAX) ? DJINN_RECOVERY_OPPONENT
+                                                    : DJINN_RECOVERY_PARTY))
                    ->list;
           s32 j;
 

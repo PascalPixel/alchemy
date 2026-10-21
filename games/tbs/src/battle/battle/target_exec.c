@@ -54,7 +54,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
 #define MESSAGE_NONE -1
 
 /// Unit ids 0 to 7 are the party's; enemy units start at FIRST_ENEMY_UNIT.
-#define IS_PARTY_UNIT(unitId) ((unitId) >= 0 && (unitId) < 8)
+#define IS_PARTY_UNIT(unitId) ((unitId) >= 0 && (unitId) <= ALLY_MAX)
 
 // The helpers below are macros because the bytes need them so: written as
 // inline functions they compile to different code.

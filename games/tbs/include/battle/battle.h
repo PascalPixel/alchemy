@@ -260,4 +260,22 @@ enum BattlePose {
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose
 };
 
+/// A battle unit's sprites' OBJ mode, as BattlePres_SetActorRecordMode sets
+/// it: faded units are semi-transparent, and the battle's blends act on them.
+enum BattleActorMode { ACTOR_OPAQUE, ACTOR_SEMI_TRANSPARENT };
+
+/// BattlePres_SetActorModes' mode, kept in BattleWork.highlightMode: whether
+/// the selected units are highlighted, every other unit faded.
+enum BattleHighlight { HIGHLIGHT_OFF, HIGHLIGHT_SELECTED };
+
+/// The glows BattleFx_PlayUnitElementEffect plays about a unit in its element.
+enum BattleElementGlow {
+  /// The star field gathering on the unit while the background darkens: a
+  /// cast.
+  GLOW_STAR_FIELD,
+  GLOW_STREAKS, ///< the element's streaks: an enemy's cast
+  GLOW_PILLAR,  ///< the element's pillar, at a strength: a summon's boost
+  GLOW_BURST    ///< the element's burst: a Djinni set
+};
+
 #endif

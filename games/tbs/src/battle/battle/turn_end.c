@@ -328,7 +328,7 @@ s32 Battle_ProcessRoundEnd(void) {
       } while (recoveryIndex < list->count);
     }
     // Set each recovered Djinni, as DjinnRecovery_Tick does, with its
-    // message, the owner's pose 3 and its element's effect. As there, the
+    // message, the owner's POSE_CAST and its element's effect. As there, the
     // cursor stays on a removed entry; it would stay for ever on one whose
     // owner is off the field, but only an owner on the field counts down to 0
     // above.
@@ -354,7 +354,8 @@ s32 Battle_ProcessRoundEnd(void) {
             PUSH_MESSAGE(MsgDjinnSet);
             BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
             AudioCommand_PlayFar(SE_212);
-            ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, 3);
+            ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object,
+                                              POSE_CAST);
             ObjectDispatch_SetAnimationSpeedFar(
                 (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
             element = expiredEntry->element;
@@ -362,7 +363,7 @@ s32 Battle_ProcessRoundEnd(void) {
             DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
                                     expiredEntry->index);
             UnitCalcFar(unitId);
-            BattleFx_PlayUnitElementEffect(unitId, element, 3, 0);
+            BattleFx_PlayUnitElementEffect(unitId, element, GLOW_BURST, 0);
             BattleEventRuntime_WaitForReady();
           }
         } else {
@@ -374,7 +375,8 @@ s32 Battle_ProcessRoundEnd(void) {
   }
   // Fade 0 leaves the palette as it is: this only puts the perspective
   // plane back and rebuilds its map.
-  BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
+  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_PLANE,
+                                          gBattleWork->background, 0);
   {
     s32 *groupList;
     struct BattleGroupOrder order = gBattleParty_RoundEndGroupOrder;
@@ -544,7 +546,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   battleContinues = 0;
   unit = UnitGetFar(unitId);
   list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-               (unitId < 0 || unitId > 7)))
+               (unitId < 0 || unitId > ALLY_MAX)))
               ->list;
   for (strongestElement = 0; strongestElement < list->count;
        strongestElement++) {
@@ -563,7 +565,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     s32 owner;
     struct DjinnRecoveryList *pending;
     pending = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                    (unitId < 0 || unitId > 7)))
+                    (unitId < 0 || unitId > ALLY_MAX)))
                    ->list;
     // The Djinn a summon used (turns -2, from BattleCommand_BuildPlan), owner
     // by owner: they recover one a turn, after the last the owner already has
@@ -639,12 +641,14 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, unitId);
         AudioCommand_PlayFar(SE_212);
-        ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, 3);
+        ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object,
+                                          POSE_CAST);
         ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
         // The pillar of each element whose power rose, its strength the most
         // Djinn of one element the summon used, less one.
-        BattleFx_PlayUnitElementEffect(unitId, i, 2, mostOfOneElement - 1);
+        BattleFx_PlayUnitElementEffect(unitId, i, GLOW_PILLAR,
+                                       mostOfOneElement - 1);
         BattleEventRuntime_WaitForReady();
       }
     }
@@ -665,7 +669,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         s32 text;
         BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-        if (unitId >= 0 && unitId <= 7) {
+        if (unitId >= 0 && unitId <= ALLY_MAX) {
           text = MsgGoesDown;
         } else {
           text = MsgStrengthExhausted;
@@ -697,7 +701,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         s32 text;
         BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-        if (unitId >= 0 && unitId <= 7) {
+        if (unitId >= 0 && unitId <= ALLY_MAX) {
           text = MsgGoesDown;
         } else {
           text = MsgStrengthExhausted;
@@ -719,7 +723,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         BattleEvPush(BATTLE_EVENT_HIT, unitId);
         BattleEvPush(BATTLE_EVENT_DEFEAT, unitId);
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-        if (unitId >= 0 && unitId <= 7) {
+        if (unitId >= 0 && unitId <= ALLY_MAX) {
           PUSH_MESSAGE(MsgReaperCalls - 3);
         } else {
           PUSH_MESSAGE(MsgReaperCalls + 3);

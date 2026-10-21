@@ -35,7 +35,7 @@ STATIC_ASSERT(offsetof(struct BattleCamera, followPos) == 0x1c);
 STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
 STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
-/// Work slot 12 (HEAP_SLOT_CAMERA) during a battle: the battle camera.
+/// The HEAP_SLOT_CAMERA work slot during a battle: the battle camera.
 extern struct BattleCamera *gCameraWork;
 
 /// The battle background's work slot as the camera reads it: the yaw the
@@ -69,13 +69,27 @@ STATIC_ASSERT(offsetof(struct BattlePresentationTransition, active) == 0x10);
 STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x54);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, effect.actors) == 0x24);
 
+/// BattleBackgroundView.mode and secondMode: how the battle background is
+/// shown.
+enum BattleBackgroundMode {
+  /// Not loaded yet: the next load adds BattlePres_UpdateHBlankScroll.
+  BATTLE_BACKGROUND_NONE,
+  /// The flat picture on BG1 (BATTLE_BG1CNT), its scroll following the
+  /// camera, BG2 left to an effect.
+  BATTLE_BACKGROUND_FLAT,
+  /// The affine perspective plane on BG2, a line at a time by HBlank DMA.
+  BATTLE_BACKGROUND_PLANE
+};
+
 /// The battle background's work slot as the background code reads it: its
-/// display mode (2 draws it as an affine perspective plane).
+/// display mode.
 struct BattleBackgroundView {
-  u8 unk00[8];    ///< BattlePresentationTransition's targetYaw and frames
-  s32 mode;       ///< 2 draws the affine plane; 1 sets BG1's scroll too
-  s32 secondMode; ///< 1 also sets BG1's scroll; one effect sets it
-  s32 busy;       ///< while set, BattleCamera_SetRange leaves BG1's scroll
+  u8 unk00[8]; ///< BattlePresentationTransition's targetYaw and frames
+  s32 mode;    ///< enum BattleBackgroundMode
+  /// BATTLE_BACKGROUND_FLAT also sets BG1's scroll whatever the mode;
+  /// the effects' canvas layers set it.
+  s32 secondMode;
+  s32 busy; ///< while set, BattleCamera_SetRange leaves BG1's scroll
 };
 
 /// The battle background's affine parameters and reference point, copied
@@ -87,8 +101,9 @@ struct BattleAffine {
   s32 x, y; ///< BG2X and BG2Y, 8.8 fixed-point pixels
 };
 
-/// The battle background's scanline work in heap slot 10: two pages of
-/// per-line BG2CNT values, swapped each frame, and the affine parameters.
+/// The battle background's scanline work, in HEAP_SLOT_BATTLE_SCANLINES: two
+/// pages of per-line BG2CNT values, swapped each frame, and the affine
+/// parameters.
 struct BattleAffineHdma {
   u32 page;     ///< the page of lines shown; the other one is built
   u8 unk04[12]; ///< not named by TBS code

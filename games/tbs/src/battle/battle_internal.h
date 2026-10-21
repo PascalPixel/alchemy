@@ -94,7 +94,7 @@
 #include "frame.h"
 #include "unit/object/psynergy_effects.h"
 #include "macros.h"
-#include "enemy_ids.h"
+#include "battle_enemy_ids.h"
 
 /// The battle's windows: window 0 shows BG0 to BG2, sprites and blending,
 /// window 1 BG0, BG2, sprites and blending, and outside them only BG0 and
@@ -251,10 +251,31 @@ enum BattlePlanStaging {
 #define STAGING_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
 #define STAGING_OTHER_SIDE 0x20000 ///< played from the other side
 
+/// The effect kind Severe Blow alone has: the status window drops its PP row
+/// while it plays.
+#define STAGING_KIND_SEVERE_BLOW 0x87
+
 /// More of BattlePlan.presentationFlags: the camera takes the other side's
 /// view (an enemy's cast a view of its own), or turns right round.
 #define STAGING_VIEW_ACROSS 0x40000
 #define STAGING_VIEW_REVERSED 0x80000
+
+/// BattlePlan.failure: why a cast plays no effect, which the staging shows.
+enum BattlePlanFailure {
+  PLAN_FAILURE_NONE,
+  PLAN_FAILURE_SEALED, ///< "blocked": the user's Psynergy is sealed
+  PLAN_FAILURE_NO_PP   ///< the user has too little PP
+};
+
+/// BattlePresentation_RunUnitTransition's mode: a summon hides its user too.
+#define TRANSITION_HIDE_ACTOR 1
+
+/// BattlePres_RunPsynergyCast's mode: what is cast, which decides the glow.
+enum BattleCastKind {
+  CAST_PSYNERGY = 0, ///< the star field gathers on the caster
+  CAST_DJINNI = 1,   ///< no glow; the effect plays its prelude
+  CAST_ENEMY = 2     ///< the element's streaks
+};
 
 // ItemDefinition.useType: what using an item in battle does to it.
 #define ITEM_USE_CONSUMED 1  ///< one is used up
@@ -264,8 +285,9 @@ enum BattlePlanStaging {
 // BattleAct.targetMode: whom an ability may target, from its user's view.
 // The party's cursor (BattleTarget_RunSelection) shows the enemies for every
 // mode but TARGET_MODE_ALLIES and TARGET_MODE_SELF. No row of actions.tsv has
-// mode 3 or one above 4; BattlePlan_SetTargets would walk such a mode's range
-// as it does TARGET_MODE_FOES'.
+// a mode between TARGET_MODE_ALLIES and TARGET_MODE_SELF or above it;
+// BattlePlan_SetTargets would walk such a mode's range as it does
+// TARGET_MODE_FOES'.
 /// The ability takes one target, the aimed unit, whatever its range
 /// (BattlePlan_SetTargets), and an enemy aims it at itself. The field
 /// Psynergy and enemies' commands such as Threaten, Ally Search and Flee have
@@ -288,8 +310,12 @@ enum BattlePlanStaging {
 #define YAW_PARTY_TURN 0x2000
 #define YAW_ENEMY_TURN -0x2000
 
-/// REG_BLDCNT: blend the semi-transparent sprites (OBJ mode 1) over every
-/// layer, to fade them.
+/// The camera's yaw from behind the enemies, which an enemy's staged scene and
+/// cast take in place of YAW_ENEMY_TURN.
+#define YAW_BEHIND_ENEMIES 0x5000
+
+/// REG_BLDCNT: blend the semi-transparent sprites (ACTOR_SEMI_TRANSPARENT)
+/// over every layer, to fade them.
 #define BLEND_SPRITES_OVER_ALL (BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 /// The keys that take the player on past a message: A, B, L and R.

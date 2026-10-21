@@ -364,7 +364,7 @@ s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
         action->targetMode == TARGET_MODE_SELF)
       ownSide = 1;
 
-    if (actorId < 0 || actorId > 7) {
+    if (actorId < 0 || actorId > ALLY_MAX) {
       if (ownSide != 0)
         goto scan_enemies;
     } else if (ownSide == 0) {

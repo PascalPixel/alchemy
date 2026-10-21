@@ -82,7 +82,7 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
       sprite = BATTLE_CHARACTER(ISAAC);
       break;
     }
-    if (unitId < 0 || unitId > 7)
+    if (unitId < 0 || unitId > ALLY_MAX)
       palette = 1;
   }
 
@@ -452,7 +452,7 @@ s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
   u32 listIndex;
 
   // An enemy's place to its unit id.
-  if (place > 7)
+  if (place > ALLY_MAX)
     place += FIRST_ENEMY_UNIT - 8;
   listIndex = 0;
   do {

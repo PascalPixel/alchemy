@@ -1,8 +1,9 @@
-#ifndef ALCHEMY_ENEMY_IDS_H
-#define ALCHEMY_ENEMY_IDS_H
+#ifndef ALCHEMY_BATTLE_ENEMY_IDS_H
+#define ALCHEMY_BATTLE_ENEMY_IDS_H
 
 /// @file
-/// Enemy class ids, named from the English release.
+/// The enemy classes the battle code singles out, named from the English
+/// release.
 
 /// The enemy classes the battle code tests by id, each named by its row of
 /// enemies.tsv: a class id is the row plus ENEMY_CLASS_FIRST. Where several

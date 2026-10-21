@@ -14,9 +14,9 @@ struct Spark {
 /// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
 /// in the HEAP_SLOT_BATTLE_EFFECT work slot from BattleFx_InitializeStarField
 /// to Graphics_ResetVramBlockAndReleaseHeapBlocks, the 45 frames of a cast's
-/// glow (BattleFx_PlayUnitElementEffect, mode 0). BattleFx_UpdateStarField
-/// draws from it, BattleFx_UploadStarField reads its ready flag, and
-/// BattleFx_PlayUnitElementEffect writes its canvas origin.
+/// glow (BattleFx_PlayUnitElementEffect, GLOW_STAR_FIELD).
+/// BattleFx_UpdateStarField draws from it, BattleFx_UploadStarField reads its
+/// ready flag, and BattleFx_PlayUnitElementEffect writes its canvas origin.
 struct SparkWork {
   /// The blue ring sheet's pictures, decoded: the sparks' sizes at
   /// gBattleFx_StarWorkOffsets, the rings' frames at
@@ -200,11 +200,11 @@ u32 BattleFx_UploadStarField(void) {
 /// into the work, loads the element's 64 colours over the first of BG palette
 /// RAM, sets BG2's affine parameters to no zoom, loads both blitters and adds
 /// BattleFx_UpdateStarField and BattleFx_UploadStarField. Also sets
-/// BattleBackgroundView.mode to 1. Called by BattleFx_PlayUnitElementEffect;
-/// Graphics_ResetVramBlockAndReleaseHeapBlocks undoes it. Returns the upload
-/// callback's task index (-1 when the task table is full), which the caller
-/// does not read.
-s32 BattleFx_InitializeStarField(s32 mode) {
+/// BattleBackgroundView.mode to BATTLE_BACKGROUND_FLAT. Called by
+/// BattleFx_PlayUnitElementEffect; Graphics_ResetVramBlockAndReleaseHeapBlocks
+/// undoes it. Returns the upload callback's task index (-1 when the task table
+/// is full), which the caller does not read.
+s32 BattleFx_InitializeStarField(s32 element) {
   struct SparkWork *work;
   struct Spark *spark;
   struct Ring *ring;
@@ -216,7 +216,7 @@ s32 BattleFx_InitializeStarField(s32 mode) {
   UNUSED struct Spark unused;
 
   // Word 2 of the background's work is BattleBackgroundView.mode.
-  ((s32 *)gTransitionWork)[2] = 1;
+  ((s32 *)gTransitionWork)[2] = BATTLE_BACKGROUND_FLAT;
   work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
   /* FAKEMATCH(one-pass): an empty one-pass loop, a scheduling barrier that
@@ -267,14 +267,14 @@ s32 BattleFx_InitializeStarField(s32 mode) {
   Iwram_CopyWords(BG_PLTT, graphics, 128);
   graphics += 128;
   Resource_DecodeType01(graphics, work);
-  switch (mode) {
-  case 0:
+  switch (element) {
+  case ELEMENT_VENUS:
     graphics = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteB);
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     graphics = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
     break;
-  case 2:
+  case ELEMENT_MARS:
     graphics = Resource_GetTableEntry((s32)&ResourceId_RedPaletteC);
     break;
   default:
@@ -361,15 +361,14 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 }
 
 /// Plays a glow of the element about a unit, and returns when it is over.
-/// By mode: 0 the star field gathering on the unit while the background
-/// darkens (a cast), 1 the element streaks, 2 the element pillar at strength
-/// variant (a summon's power boost) and 3 the element burst (a Djinni set).
-/// Called with 0 by BattlePresentation_RunUnitTransition and
-/// BattlePres_RunPsynergyCast, with 1 by the latter, with 2 by
-/// BattleUnit_ProcessTurnEnd and with 3 by Battle_ProcessRoundEnd and
-/// BattleCommand_BuildPlan. Every mode first puts the background in mode 1
-/// and opens window 0 over lines 16 to 135, with BG2 blended over the other
-/// layers; mode 0 leaves the background's palette and BattleWork.brightness
+/// The glow is mode (enum BattleElementGlow), GLOW_PILLAR at strength
+/// variant. Called with GLOW_STAR_FIELD by
+/// BattlePresentation_RunUnitTransition and BattlePres_RunPsynergyCast, with
+/// GLOW_STREAKS by the latter, with GLOW_PILLAR by BattleUnit_ProcessTurnEnd
+/// and with GLOW_BURST by Battle_ProcessRoundEnd and BattleCommand_BuildPlan.
+/// Every glow first puts the background in BATTLE_BACKGROUND_FLAT and opens
+/// window 0 over lines 16 to 135, with BG2 blended over the other layers;
+/// GLOW_STAR_FIELD leaves the background's palette and BattleWork.brightness
 /// darkened.
 void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
                                     s32 variant) {
@@ -380,10 +379,10 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
   struct EffectPosition position2;
   struct BattlePresentationWork launch;
   struct BattlePresentationWork launch2;
-  /* FAKEMATCH(temporary): one variable holds slot 12's address, the battle
-   * work's base and later IME's; as battle = gWorkSlot[9] with ime set only
-   * in the loop, 61 of 249 instructions differ in tbs-en. */
-  volatile u16 *ime = (volatile u16 *)&gWorkSlot[12];
+  /* FAKEMATCH(temporary): one variable holds HEAP_SLOT_CAMERA's address, the
+   * battle work's base and later IME's; as battle = gWorkSlot[HEAP_SLOT_BATTLE]
+   * with ime set only in the loop, 61 of 249 instructions differ in tbs-en. */
+  volatile u16 *ime = (volatile u16 *)&gWorkSlot[HEAP_SLOT_CAMERA];
   struct BattleWork *battle = *(struct BattleWork **)((u8 *)ime - 12);
   struct SparkWork *work;
   s32 frame;
@@ -391,7 +390,8 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
   struct EffectPosition *projectedPosition;
 
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFade(1, battle->background, 0);
+  BattlePresentation_ConfigurePaletteFade(BATTLE_BACKGROUND_FLAT,
+                                          battle->background, 0);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
                                               DISPCNT_BG0_ON | DISPCNT_BG1_ON |
@@ -406,7 +406,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
   Io_Write16(WIN_RANGE(16, 136), &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
-  if (mode == 0) {
+  if (mode == GLOW_STAR_FIELD) {
     // The star field for 45 frames, darkening the background a level a
     // frame for its first 25 and keeping BG2's canvas centred on the unit
     // (its origin queued to BG2X and BG2Y with interrupts off).
@@ -429,7 +429,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
       WaitFrames(1);
     }
     Graphics_ResetVramBlockAndReleaseHeapBlocks(element);
-  } else if (mode == 1) {
+  } else if (mode == GLOW_STREAKS) {
     // The streaks for 40 frames, their canvas centred on the unit likewise.
     struct BattleEffectWork *effectWork;
 
@@ -448,9 +448,9 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
       WaitFrames(1);
     }
     BattleFx_EndElementStreaksFar();
-  } else if (mode == 2) {
-    // Modes 2 and 3 run an effect with the unit as its actor and only
-    // target.
+  } else if (mode == GLOW_PILLAR) {
+    // The pillar and the burst run an effect with the unit as its actor and
+    // only target.
     launch.effect.prelude = 0;
     launch.effect.kind = element;
     launch.effect.variant = variant;

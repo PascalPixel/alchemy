@@ -16,7 +16,7 @@ u32 BattleParty_IsUnitListed(u32 unitId) {
   s32 unitIndex;
 
   side = BATTLE_SIDE_PARTY;
-  if (unitId > 7)
+  if (unitId > ALLY_MAX)
     side = BATTLE_SIDE_ENEMIES;
   unitCount = BattleParty_ListActorIds(side, list);
 
@@ -48,11 +48,11 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
 
   standbyCount = 0;
   sideMask = BATTLE_SIDE_PARTY;
-  if (unitId > 7)
+  if (unitId > ALLY_MAX)
     sideMask = BATTLE_SIDE_ENEMIES;
   unitCount = BattleParty_ListActorIds(sideMask, unitIds);
   enemySide = 0;
-  if (unitId > 7)
+  if (unitId > ALLY_MAX)
     enemySide = 1;
   recoveryList =
       &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(enemySide))
@@ -225,7 +225,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   plan->actorId = request->unitId;
   plan->targetCount = 0;
   plan->presentationFlags = 0;
-  plan->failure = 0;
+  plan->failure = PLAN_FAILURE_NONE;
   plan->element = ELEMENT_NONE;
   UiWork_ClearValueNameTablesFar();
   if (actor->hp == 0)
@@ -351,15 +351,15 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     // failure is shown by the staging (plan->failure). Only a cast that goes
     // ahead pays its PP.
     if (actor->pp < ability->ppCost) {
-      plan->failure = 2;
+      plan->failure = PLAN_FAILURE_NO_PP;
       canCast = 0;
     }
     if (actor->psySeal) {
-      plan->failure = 1;
+      plan->failure = PLAN_FAILURE_SEALED;
       canCast = 0;
     }
     if (canCast) {
-      plan->failure = 0;
+      plan->failure = PLAN_FAILURE_NONE;
       actor->pp -= ability->ppCost;
       UnitRatioFar(request->unitId);
       CLAMP(actor->pp, 0, actor->maxPp);
@@ -505,7 +505,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       if (Djinn_IsReadyFar(request->unitId, DJINN_ELEMENT(request->parameter),
                            DJINN_INDEX(request->parameter))) {
         BattleActGet(abilityId);
-        BattlePres_SetActorModes(0, 0);
+        BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
         Djinn_ActivateFar(request->unitId, DJINN_ELEMENT(request->parameter),
                           DJINN_INDEX(request->parameter));
         DjinnRecovery_RemoveFar(request->unitId,
@@ -524,11 +524,11 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
         AudioCommand_PlayFar(SE_212);
         ObjectDispatch_SelectAnimationFar(BattleObjGet(request->unitId)->object,
-                                          3);
+                                          POSE_CAST);
         ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObjGet(request->unitId)->object, 32);
-        BattleFx_PlayUnitElementEffect(request->unitId,
-                                       DJINN_ELEMENT(request->parameter), 3, 0);
+        BattleFx_PlayUnitElementEffect(
+            request->unitId, DJINN_ELEMENT(request->parameter), GLOW_BURST, 0);
         BattleEventRuntime_WaitForReady();
         return -2;
       }

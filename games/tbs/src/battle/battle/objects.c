@@ -375,7 +375,7 @@ void BattleActor_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   for (unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++) {
     if (!BattlePlacement_ContainsId(unitIds, unitIndex)) {
       releasedUnitId = unitIndex + FIRST_ENEMY_UNIT - 8;
-      if (unitIndex <= 7)
+      if (unitIndex <= ALLY_MAX)
         releasedUnitId = unitIndex;
       ReleaseBattleObjectRecords(releasedUnitId);
     }
@@ -493,7 +493,7 @@ struct BattleObj *BattleObjGet(s32 unitId) {
   struct BattleObj *objects = battle->slots;
   s32 placementIndex;
   // Enemy unit ids 128 to 133 index placement 8 to 13.
-  if (unitId > 7) {
+  if (unitId > ALLY_MAX) {
     unitId -= FIRST_ENEMY_UNIT - 8;
   }
   placementIndex = unitId;
@@ -575,7 +575,7 @@ void *BattleMotion_DestroyAllSlotObjects(void) {
   placementIndex = 0;
   do {
     unitId = placementIndex + FIRST_ENEMY_UNIT - 8;
-    if (placementIndex <= 7) {
+    if (placementIndex <= ALLY_MAX) {
       unitId = placementIndex;
     }
     battleObject = BattleObjGet(unitId);

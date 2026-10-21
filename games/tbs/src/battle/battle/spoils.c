@@ -112,7 +112,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   unit = UnitGetFar(unitId);
   battle = gBattleWork;
   spoils = &battle->spoils;
-  if (unitId >= 0 && unitId < 8)
+  if (unitId >= 0 && unitId <= ALLY_MAX)
     return -1;
   if (unit->classIndex != 0)
     return -2;

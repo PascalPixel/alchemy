@@ -25,10 +25,11 @@
 #define DEFEAT_SEVERAL 1
 #define DEFEAT_BY_PARTY_MEMBER 3
 
-/// The six enemy units, BATTLE_UNIT_SIZE bytes each: heap slot 54,
-/// gBattleOwnerStates, which UnitGet reads for unit ids 128 to 133 while it
-/// is allocated (game/game/units.c). The link lobby passes the opponent's
-/// party to the battle in a copy of this block (menu/lobby.c).
+/// The six enemy units, BATTLE_UNIT_SIZE bytes each: the
+/// HEAP_SLOT_LINK_OWNER_STATES work slot, gBattleOwnerStates, which UnitGet
+/// reads for unit ids 128 to 133 while it is allocated (game/game/units.c). The
+/// link lobby passes the opponent's party to the battle in a copy of this block
+/// (menu/lobby.c).
 #define LINK_OWNER_STATES_SIZE 0x7c8
 
 /// Fights the battle against the enemy formation enemyGroup, from the
@@ -70,15 +71,14 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   // The fill word Dma_Fill32Cell reads its zero from.
   volatile u32 fill;
 
-  // The battle's work areas. Slot 54 holds the enemy units
-  // (gBattleOwnerStates) and slot 37 the display work (gBattleDisplayWork).
-  // Slots 4 and 3 below are the object system's sprite and layer pools,
-  // taken here from EWRAM first: ObjectSystem_InitializeFar's own requests
+  // The battle's work areas. The object system's sprite and layer pools
+  // are taken here from EWRAM first: ObjectSystem_InitializeFar's own requests
   // for them then get these blocks, as an allocated slot is returned as it
   // is (field/field/animation.c, runtime/runtime/heap.c).
   camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
-  ownerStates = Runtime_AllocateBlock(54, LINK_OWNER_STATES_SIZE);
+  ownerStates = Runtime_AllocateBlock(HEAP_SLOT_LINK_OWNER_STATES,
+                                      LINK_OWNER_STATES_SIZE);
   transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
   Runtime_AllocateBlock(11, 0x280);
   focus = camera->pos;
@@ -89,9 +89,9 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   Iwram_ClearWords(ownerStates, LINK_OWNER_STATES_SIZE);
   Scheduler_ResetTaskTable();
   // The transition owns the background (flag) until the entry transition
-  // is over; yaws are in 1/65536 turns, 0x2000 an eighth.
+  // is over, the camera toward the party's view.
   transition->frames = 0;
-  transition->targetYaw = 0x2000;
+  transition->targetYaw = YAW_PARTY_TURN;
   transition->flag = 1;
   transition->unk18 = 0;
   transition->unk1c = 0;
@@ -106,11 +106,12 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   Dma_Fill32Cell(fill, 0, battle, sizeof(struct BattleWork));
   battle->promptSlot = -1;
   battle->enemyGroup = enemyGroup;
-  display = Runtime_AllocateBlock(37, sizeof(struct BattleDisplayWork));
+  display = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_DISPLAY,
+                                  sizeof(struct BattleDisplayWork));
   Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleDisplayWork));
   battle->background = Event_GetSpecialValueFar();
-  Runtime_AllocateBlock(4, 0xe00);
-  Runtime_AllocateBlock(3, 0x600);
+  Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_SPRITES, 0xe00);
+  Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_LAYERS, 0x600);
   ObjectSystem_InitializeFar(MODE_BATTLE);
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0)
     UiWork_InitializeFar(1);
@@ -193,7 +194,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   Camera_InitDefaultTransform();
   BattleObjPut();
   BattlePresentation_InitializeWorkAndResetState();
-  BattleBackground_Load(1, battle->background, 0);
+  BattleBackground_Load(BATTLE_BACKGROUND_FLAT, battle->background, 0);
   // The camera on the centre at 190 percent, until the opening sets its own
   // zoom (BattlePres_RunEntryTransition). With the background in mode 1,
   // BattleCamera_SetRange builds no plane page; it sets at most BG1's
@@ -280,7 +281,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         goto party_lost;
       if (BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) == 0) {
         // Unit ids 0 to 7 are party members.
-        if (actingUnit <= 7 && battle->spoils.defeated == 1)
+        if (actingUnit <= ALLY_MAX && battle->spoils.defeated == 1)
           battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
         goto won;
       }

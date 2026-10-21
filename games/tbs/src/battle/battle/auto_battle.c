@@ -143,10 +143,10 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
   return 0;
 }
 
-/// Returns 0 for a party member's or an enemy's unit id (0 to 7, 128 to
-/// 133), -1 for any other. Called by the auto battle's action players.
+/// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
+/// Called by the auto battle's action players.
 s32 BattleObject_IsValidId(u32 unitId) {
-  if (unitId <= 7) {
+  if (unitId <= ALLY_MAX) {
     return 0;
   }
   if (unitId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE) {
@@ -239,8 +239,10 @@ s32 BattlePresentation_RunPairedUnitTransition(
 
   {
     struct BattlePresentationTransition *transition = gTransitionWork;
-    // An enemy caster turns the camera to 0x5000, not YAW_ENEMY_TURN.
-    transition->targetYaw = action->unitId > 4 ? 0x5000 : YAW_PARTY_TURN;
+    // An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
+    // YAW_ENEMY_TURN.
+    transition->targetYaw =
+        action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_TURN;
     transition->frames = 60;
   }
   WaitFrames(10);
@@ -249,8 +251,8 @@ s32 BattlePresentation_RunPairedUnitTransition(
   actorRecord = BattleObjGet(actorId)->object;
 
   // The caster's side, taken as the side the target is not on, and the
-  // caster's pose 3 when its id is among that side's first sideCount ids.
-  if (targetId >= 0 && targetId <= 7) {
+  // caster's POSE_CAST when its id is among that side's first sideCount ids.
+  if (targetId >= 0 && targetId <= ALLY_MAX) {
     sideCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, visibleUnits);
     sideStart = FIRST_ENEMY_UNIT;
   } else {
@@ -260,17 +262,17 @@ s32 BattlePresentation_RunPairedUnitTransition(
 
   for (index = 0; index != sideCount; index++) {
     if (index + sideStart == actorId) {
-      ObjectDispatch_SelectAnimationFar(actorRecord, 3);
+      ObjectDispatch_SelectAnimationFar(actorRecord, POSE_CAST);
     }
   }
 
-  // Fade the caster's side out: its sprites semi-transparent (OBJ mode 1),
+  // Fade the caster's side out: its sprites ACTOR_SEMI_TRANSPARENT,
   // their blend weight falling from 16 to 1 over 16 frames. Then the party
-  // status window is erased (PARTY_STATUS_CLOSED, 9).
+  // status window is erased (PARTY_STATUS_CLOSED).
   WaitFrames(30);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
-    BattlePres_SetActorRecordMode(index + sideStart, 1);
+    BattlePres_SetActorRecordMode(index + sideStart, ACTOR_SEMI_TRANSPARENT);
   }
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = BLEND_ALPHA(16 - index, 16);
@@ -306,10 +308,10 @@ s32 BattlePresentation_RunPairedUnitTransition(
     context.effect.actors[index] = visibleUnits[index];
   }
   context.effect.count = livingCount;
-  if (targetId >= 0 && targetId <= 7) {
-    context.effect.side = 1;
+  if (targetId >= 0 && targetId <= ALLY_MAX) {
+    context.effect.side = EFFECT_SIDE_PARTY;
   } else {
-    context.effect.side = 0;
+    context.effect.side = EFFECT_SIDE_ENEMIES;
   }
   BattleFx_RunSceneEffectFar(&context.effect);
 
@@ -318,14 +320,14 @@ s32 BattlePresentation_RunPairedUnitTransition(
   BattleObjPut();
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
-    BattlePres_SetActorRecordMode(index + sideStart, 1);
+    BattlePres_SetActorRecordMode(index + sideStart, ACTOR_SEMI_TRANSPARENT);
   }
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = BLEND_ALPHA(index, 16);
     WaitFrames(1);
   }
   for (index = 0; index != sideCount; index++) {
-    BattlePres_SetActorRecordMode(index + sideStart, 0);
+    BattlePres_SetActorRecordMode(index + sideStart, ACTOR_OPAQUE);
   }
   BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
   WaitFrames(3);
@@ -368,10 +370,10 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   BattleObjGet(work.effect.actors[0]);
 
   work.effect.count = 1;
-  if ((u16)work.effect.actors[0] <= 7)
-    work.effect.side = 1;
+  if ((u16)work.effect.actors[0] <= ALLY_MAX)
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = 0;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
   work.effect.prelude = 0;
 
   WaitFrames(4);
@@ -419,17 +421,17 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
         BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
   // The status window without its PP row (see PARTY_STATUS_SUMMONS).
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
-  // The actor raises its hand (pose 3); then only the first living unit of
+  // The actor raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
   object = BattleObjGet(work.effect.actor)->object;
-  ObjectDispatch_SelectAnimationFar(object, 3);
+  ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
-  if ((u16)action->target <= 7) {
-    work.effect.side = 1;
+  if ((u16)action->target <= ALLY_MAX) {
+    work.effect.side = EFFECT_SIDE_PARTY;
     BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
     work.effect.count = 1;
   } else {
-    work.effect.side = 0;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
     BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, work.effect.actors);
     work.effect.count = 1;
   }
@@ -448,18 +450,18 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
    * each call's argument before its kind's store; as plain statements, 43 of
    * 180 instructions differ in tbs-en. */
   do {
-    work.effect.kind = 0;
+    work.effect.kind = ELEMENT_VENUS;
     work.effect.variant = 0;
     BattleFx_RunElementPillarFar(&work.effect);
-    work.effect.kind = 1;
+    work.effect.kind = ELEMENT_MERCURY;
     BattleFx_RunElementPillarFar(&work.effect);
-    work.effect.kind = 2;
+    work.effect.kind = ELEMENT_MARS;
     BattleFx_RunElementPillarFar(&work.effect);
-    work.effect.kind = 3;
+    work.effect.kind = ELEMENT_JUPITER;
     BattleFx_RunElementPillarFar(&work.effect);
     work.effect.kind = 0;
     BattleFx_RunTableEffectFar(&work.effect);
-    ObjectDispatch_SelectAnimationFar(object, 1);
+    ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
     ObjMotRst(work.effect.actors[targetIndex]);
@@ -494,11 +496,11 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
 
   // The damage pose, and the status window with names and HP only.
   battleObject = BattleObjGet(unitId);
-  ObjectDispatch_SelectAnimationFar(battleObject->object, 5);
+  ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_DAMAGE);
   PartyStatusDrawFar(0);
   UiWork_ClearValueNameTablesFar();
 
-  if (unitId <= 7) {
+  if (unitId <= ALLY_MAX) {
     if (showMessage != 0)
       UiText_ShowMessageAndWaitCoreFar(MsgBitterBlow);
     UiWork_PushValueSlotFar(damage, VALUE_NUMBER);
@@ -514,7 +516,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   BattleMotion_SetMode5AndActivateSlot(unitId);
-  if (unitId <= 7) {
+  if (unitId <= ALLY_MAX) {
     if (unit->hp <= 0) {
       UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
       UiText_ShowMessageAndWaitCoreFar(MsgGoesDown);
@@ -525,7 +527,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   battleObject = BattleObjGet(unitId);
-  ObjectDispatch_SelectAnimationFar(battleObject->object, 1);
+  ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_STANDING);
 }
 
 /// For a unit whose HP has run out: plays its falling animation to the last
@@ -535,11 +537,11 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
   struct AnimationObject *object;
   if (UnitGetFar(unitId)->hp <= 0) {
-    // Animation 5, its first entry set to frame 0xff, past its last.
+    // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
     object = BattleObjGet(unitId)->object->records;
-    AnimationObjects_SelectAnimationFar(object, 5);
+    AnimationObjects_SelectAnimationFar(object, POSE_DAMAGE);
     actorData = object->entries[0];
-    actorData->param = 6;
+    actorData->param = SPRITE_COLOR_GREY;
     actorData->frame = 0xFF;
     WaitFrames(4);
     Map_RenderAnimatedTileFramesForObjectFar((u8 *)object);

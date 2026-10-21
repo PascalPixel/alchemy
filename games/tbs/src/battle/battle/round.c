@@ -744,7 +744,7 @@ s32 Battle_FindTaggedSlotByValue(u32 unitId) {
   s32 placeIndex;
   s16 listedUnit;
 
-  if (unitId <= 7) {
+  if (unitId <= ALLY_MAX) {
     for (placeIndex = 0;; placeIndex++) {
       listedUnit = battle->partyUnits[placeIndex];
       if (listedUnit == BATTLE_UNIT_LIST_END)

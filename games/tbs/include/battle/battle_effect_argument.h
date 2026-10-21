@@ -8,10 +8,18 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// BattleEffectArgument.side: the side the targets are on.
+enum BattleEffectSide { EFFECT_SIDE_ENEMIES, EFFECT_SIDE_PARTY };
+
+/// What a critical hit adds to an attack's effect kind: BattlePres_RunAttack
+/// plays the critical version of the blow.
+#define EFFECT_KIND_CRITICAL_OFFSET 200
+
 /// The command shared by an effect's caller, dispatcher and handlers.
 struct BattleEffectArgument {
-  s32 kind;        ///< handler table index; 200 more for a critical hit
-  s32 side;        ///< 1 when the targets are the party, 0 for enemies
+  s32 kind;        ///< handler table index; a critical hit adds
+                   ///< EFFECT_KIND_CRITICAL_OFFSET
+  s32 side;        ///< enum BattleEffectSide
   s32 actor;       ///< the user's unit id
   s32 firstTarget; ///< the action's first target, standing or not
   s32 range;       ///< forwarded action range, otherwise initialized to 1

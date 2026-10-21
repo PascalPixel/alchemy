@@ -2,14 +2,11 @@
 #define ALCHEMY_COLOSSO_GAUGE_H
 
 /// @file
-/// The Colosso race's heap slot, and the race gauge's sprites and work.
+/// The Colosso race gauge's sprites and work.
 
 #include "types.h"
 #include "static_assert.h"
-
-/// The heap slot of the Colosso finals' race work (struct ColossoRaceWork),
-/// which gColossoWork reads by its own name.
-#define HEAP_SLOT_COLOSSO_RACE 59
+#include "heap_state.h"
 
 /// One sprite of the race gauge's list: a link word, its position and shape
 /// attributes, and its tile.

@@ -50,7 +50,7 @@
 #define Ram_DisplayWork ((void **)&gWorkSlot[HEAP_SLOT_TRANSITION])
 #define Ram_ActorEffectWork ((void **)&gWorkSlot[HEAP_SLOT_FADE_OVERLAY])
 #define Ram_Disp ((void **)&gWorkSlot[HEAP_SLOT_BATTLE_ENTRY_TIMER])
-#define Ram_EffectWork ((void **)&gWorkSlot[56])
+#define Ram_EffectWork ((void **)&gWorkSlot[HEAP_SLOT_FX])
 
 #define Ram_SceneMapStateOffset FIXED_OFFSET(0xc, gFieldBlendWork, gEventWork)
 

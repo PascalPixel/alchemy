@@ -152,10 +152,18 @@ enum HeapSlot {
   /// and the shop; each takes it on opening and releases it on closing. The
   /// save screen takes it for its sprite work (struct ShopRuntime).
   HEAP_SLOT_MENU = 55,
+  /// The Psynergy effect's work (struct BattleFxScene, gEffectWork). A field
+  /// Psynergy holds it from BattleFx_LoadActionEffectResources to
+  /// BattleEffect_CleanupSceneObjects, a Djinni's joining from
+  /// BattleFx_InitializeSlots to BattleFx_ClearActiveSlotsAndScheduleUpdates.
+  HEAP_SLOT_FX = 56,
   /// The battle command menus' work (struct BattleMenuWork).
   HEAP_SLOT_BATTLE_COMMANDS = 57,
   /// A command icon menu's work (struct ResourceMenuWork).
-  HEAP_SLOT_ICON_MENU = 58
+  HEAP_SLOT_ICON_MENU = 58,
+  /// The Colosso finals' race work (struct ColossoRaceWork), which
+  /// gColossoWork reads by its own name.
+  HEAP_SLOT_COLOSSO_RACE = 59
 };
 
 #endif

@@ -206,13 +206,6 @@ struct CaptureObject {
     }                                                                          \
   }
 
-/// The heap slot of the Psynergy effect's work, struct BattleFxScene
-/// (gWorkSlot[56], gEffectWork). A field Psynergy holds it from
-/// BattleFx_LoadActionEffectResources to BattleEffect_CleanupSceneObjects, a
-/// Djinni's joining from BattleFx_InitializeSlots to
-/// BattleFx_ClearActiveSlotsAndScheduleUpdates.
-#define HEAP_SLOT_FX 56
-
 /// A particle's sprite (struct AnimationObject), seen as the two fields
 /// Douse and Mind Read set on it; the notes give the AnimationObject fields
 /// at the same offsets.

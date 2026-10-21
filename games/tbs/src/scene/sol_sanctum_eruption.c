@@ -624,7 +624,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackA(void) {}
 /// Unused: a second empty function nothing calls.
 UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 
-/// Plays the collapse at
+/// Plays the collapse after the cut from the Elemental Star Room. It plays at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from the
 /// Elemental Star Room (SceneId_SolSanctumElementalStarRoom). Called by
 /// Field_RunScene once the actors exist.
@@ -715,9 +715,9 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
   }
 }
 
-/// Retires landed embers and launches the next free one at the current
-/// frequency, shaking the map after each. Run each frame as a callback that
-/// SolSanctumEruption_PlayHostageScene adds and
+/// Retires landed embers and launches new ones, shaking the map. It launches
+/// the next free one at the current frequency, shaking the map after each. Run
+/// each frame as a callback that SolSanctumEruption_PlayHostageScene adds and
 /// SolSanctumEruption_PlayWiseOneRescue removes.
 static void SolSanctumEruption_StepEmbers(void) {
   struct GroundParticleWork *sparkles;

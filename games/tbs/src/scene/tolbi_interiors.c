@@ -114,8 +114,10 @@ const struct ScenePlacement *TolbiInteriors_SelectPlacements(void) {
 }
 
 #if TBS_PATCH_4
-/// In Tolbi on finals day, the Spanish and Italian editions add a question: was
-/// Babi missing at all, since he showed himself at the finals?
+/// In Tolbi on finals day, patch 4 (the Spanish and Italian editions) adds a
+/// question: was Babi missing at all, since he showed himself at the finals?
+/// Its lines are in every edition's text, Japanese included, so it is a
+/// later change to the script, not a translation's.
 static void TolbiInteriors_AskWhetherBabiWasMissing(s32 speaker) {
   TolbiInteriors_AskYesNo(MsgTolbiInteriorsBabiShowedHimselfAtFinals, speaker);
 }

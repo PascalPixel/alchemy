@@ -1005,17 +1005,23 @@ static void Event_CarryPillarPastWall(void) {
   Engine_EventEnd();
 }
 
-/// Searching a relief in VenusLighthouseGroundFloor shows its words; each
-/// relief has its own message, except in English, which keeps one. "There are
-/// words carved into the relief..."
+/// Searching a relief in VenusLighthouseGroundFloor shows its words, the relief
+/// trigger's own message. "There are words carved into the relief..."
+///
+/// The Japanese text gives each of the six reliefs its own words; every
+/// translation joins the first five into one message and leaves the next four
+/// empty, so outside Japanese only the first and sixth reliefs can be read
+/// (gVenusLighthouseEvents2). The English edition, patch 1, also
+/// dropped the sixth relief and showed the first message for every relief;
+/// patch 2 put the per-relief message and the sixth relief back.
 static void Event_ReadRelief(void) {
   s32 message;
-#if TBS_PATCH_LEVEL != 1
+#if !TBS_PATCH_1 || TBS_PATCH_2
   struct EventWork *work = gEventWork;
 #endif
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-#if TBS_PATCH_LEVEL == 1
+#if TBS_PATCH_1 && !TBS_PATCH_2
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
   message =
@@ -4508,13 +4514,13 @@ struct SceneEvent gVenusLighthouseEvents2[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_NOT_THE_ENTRANCE, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenSaidSomethingAboutThisBeing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOOR_SCHOLAR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIWonderWhatMysteriesTheStatue) },
     { SEARCH(SEARCH_UNNAMED), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
-#if !TBS_PATCH_1
+#if LANGUAGE == LANGUAGE_JAPANESE
     { SEARCH(SEARCH_UNNAMED), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
     { SEARCH(SEARCH_UNNAMED), 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
     { SEARCH(SEARCH_UNNAMED), 38, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
     { SEARCH(SEARCH_UNNAMED), 39, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
 #endif
-#if TBS_PATCH_LEVEL != 1
+#if !TBS_PATCH_1 || TBS_PATCH_2
     { SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
 #endif
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchStatue) },

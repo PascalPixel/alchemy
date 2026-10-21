@@ -44,8 +44,8 @@
 /// (BabiPalace_WakeFromFinalsDream), free to go back and try again.
 ///
 /// The third match, won or lost, ends Colosso and brings the party back by
-/// entrance 99 (colosseum_final3.c): the leader wakes long after the finals, and
-/// Babi wants to see him (BabiPalace_WakeAfterFinals). Coming into Babi's
+/// entrance 99 (colosseum_final3.c): the leader wakes long after the finals,
+/// and Babi wants to see him (BabiPalace_WakeAfterFinals). Coming into Babi's
 /// room (entrance 33) the first time plays BabiPalace_MeetBabiAfterColosso
 /// (FLAG_BABI_SPOKE_AFTER_COLOSSO): Babi praises the party's fighting, and
 /// has Iodem bring the victor's prize if it won (FLAG_WON_COLOSSO). He saw its

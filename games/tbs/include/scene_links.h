@@ -8,6 +8,11 @@
 /// between rooms of one scene are named by their rooms
 /// (<SCENE>_<ROOM>_TO_<ROOM>).
 
+/// The entrance a scene's table lists first: Scene_TakeExit sends the party
+/// there when an exit has no row of its own, and the debug menu's scene select
+/// starts there. A scene that gives it a place of its own names it below.
+enum { ENTRANCE_DEFAULT = 0 };
+
 /// SceneId_Title's entrances and exits.
 enum {
   TITLE_FROM_VALE_GATE = 1,
@@ -91,9 +96,16 @@ enum {
   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI = 70,
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH = 71,
   WORLD_MAP_FROM_CLEAR = 72,
+  /// After the look back at Venus Lighthouse, a sparkling transition sends the
+  /// party on to Sheba's fall by WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE
+  /// (WorldMap_StartTransitionEffect).
+  WORLD_MAP_BEFORE_SHEBAS_FALL = 73,
   WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE = 74,
   WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS = 75,
   WORLD_MAP_FROM_CROSSBONE_ISLE = 76,
+  /// Where a defeat returns after Iodem hands over the Black Orb: the orb is
+  /// discarded and WORLD_MAP_TO_LUNPA_SUHALLA leads on.
+  WORLD_MAP_AFTER_BLACK_ORB_DEFEAT = 78,
   WORLD_MAP_JENNA_AND_KRADEN_ADRIFT = 80,
   WORLD_MAP_MERCURY_LIGHTHOUSE_LIT =
       90, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition
@@ -103,6 +115,9 @@ enum {
       91, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition
           ///< here in Venus Lighthouse's colours, then sends the party back to
           ///< the aerie
+  /// The world map's debug entrance, which sets FLAG_NO_ENCOUNTERS,
+  /// FLAG_NO_ENCOUNTERS_IN_PLACE and FLAG_DEBUG_STEPS_OFF.
+  WORLD_MAP_FROM_DEBUG = 99,
 };
 enum {
   WORLD_MAP_TO_VALE_GATE = 1,
@@ -235,6 +250,10 @@ enum {
   VALE_FROM_VALE_INTERIORS_INN = 8,
   VALE_FROM_VALE_INTERIORS_SHOPS_NORTH = 9,
   VALE_FROM_VALE_INTERIORS_SHOPS_WEST = 10,
+  /// Beside the second door into the house of Jenna's grandparents, which
+  /// VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR leaves by; no exit leads
+  /// here.
+  VALE_FROM_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR = 11,
   VALE_FROM_TITLE = 16,
   VALE_FROM_ROOF_MENDED = 17,
 };
@@ -269,6 +288,18 @@ enum {
   VALE_GATE_FROM_WORLD_MAP = 10,
   VALE_GATE_FROM_GOMA_CAVE_STREAM = 11,
   VALE_GATE_FROM_SANCTUM = 12,
+  /// Beside VALE_GATE_FROM_GOMA_CAVE_STREAM, facing north; no exit leads here.
+  VALE_GATE_STREAM_UNUSED = 15,
+  /// Where the battle with the travelers on the stormy night returns, won or
+  /// lost (ValeGate_FightTravelers).
+  VALE_GATE_AFTER_TRAVELERS_BATTLE = 19,
+  /// Entrances only the debug menu's scene select reaches: no table places
+  /// them and no exit leads to them. The first replays the travelers leaving,
+  /// the second sets FLAG_CHILDHOOD, the third a preset of story flags
+  /// (ValeGate_SetProgressFlagsAndExit).
+  VALE_GATE_DEBUG_TRAVELERS_LEAVE = 97,
+  VALE_GATE_DEBUG_CHILDHOOD = 98,
+  VALE_GATE_DEBUG_STORY_PRESET = 99,
 };
 enum {
   VALE_GATE_TO_VALE_INTERIORS_SHOPS_EAST = 1,
@@ -292,6 +323,9 @@ enum {
   VALE_KRADEN_FROM_VALE_SOUTH = 2,
   VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH = 3,
   VALE_KRADEN_FROM_VALE_CAVE_MOUTH_WEST = 4,
+  /// Cleared of the place name with VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST, but
+  /// no exit leads here and the entrance table has no row for it.
+  VALE_KRADEN_FROM_VALE_CAVE_MOUTH_UNUSED = 5,
   VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST = 6,
   VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH = 10,
 };
@@ -393,6 +427,8 @@ enum {
 enum {
   SANCTUM_DJINNIS_HOUSE = 0, ///< the room holds the djinnis house;
   SANCTUM_FROM_VALE = 1,
+  /// Vale Sanctum, inside by the healers and facing south; no exit leads here.
+  SANCTUM_VALE_UNUSED = 2,
   SANCTUM_FROM_VAULT = 10,
   SANCTUM_FROM_VAULT_REVISIT = 11,
   SANCTUM_FROM_VAULT_INTERIORS = 12,
@@ -401,6 +437,9 @@ enum {
   SANCTUM_FROM_ALTIN = 29,
   SANCTUM_FROM_XIAN = 32,
   SANCTUM_FROM_BILIBIN = 35,
+  /// Plays the quest's gathering like SANCTUM_FROM_VALE_ERUPTION; no exit leads
+  /// here and the entrance table has no row for it.
+  SANCTUM_QUEST_UNUSED = 50,
 };
 enum {
   SANCTUM_TO_VALE = 1,
@@ -428,6 +467,7 @@ enum {
 enum {
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS = 1,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE = 2,
+  SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED = 3, ///< no exit leads here
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED = 4,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_SPRUNG = 5,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN = 6,
@@ -616,6 +656,7 @@ enum {
 /// SceneId_Vault's entrances and exits.
 enum {
   VAULT_FROM_WORLD_MAP_SOUTH = 1,
+  VAULT_NORTH_GATE_UNUSED = 2, ///< inside the north gate; no exit leads here
   VAULT_FROM_WORLD_MAP_NORTH = 3,
   VAULT_FROM_VAULT_INTERIORS_EAST_SOUTHEAST = 5,
   VAULT_FROM_VAULT_INTERIORS_SOUTHEAST = 6,
@@ -663,6 +704,14 @@ enum {
   VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM =
       15, ///< ★ Named from the game: "I came into this loft"
           ///< (MsgVaultVaultCutFree)
+  /// The inn's loft after the party loses the battle with the three thieves
+  /// (VaultInteriors_LoseToThieves).
+  /// ★ Named from the game: "I came into this loft" (MsgVaultVaultCutFree)
+  VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES = 16,
+  /// The inn's loft after the party beats the three thieves
+  /// (VaultInteriors_DefeatThieves).
+  /// ★ Named from the game: "I came into this loft" (MsgVaultVaultCutFree)
+  VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED = 17,
 };
 enum {
   VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST = 5,
@@ -1230,11 +1279,18 @@ enum {
 
 /// SceneId_KolimaForestEntrance's entrances and exits.
 enum {
+  /// Only the two unused exits lead here, and the entrance table has no row
+  /// for it.
+  KOLIMA_FOREST_ENTRANCE_UNUSED = 1,
   KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE = 2,
   KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP = 4,
 };
 enum {
   KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE = 1,
+  /// Two exits no event takes, back into this map
+  /// (KOLIMA_FOREST_ENTRANCE_UNUSED).
+  KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_A = 2,
+  KOLIMA_FOREST_ENTRANCE_UNUSED_EXIT_B = 3,
   KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP = 4,
 };
 
@@ -1434,6 +1490,8 @@ enum {
 /// SceneId_Imil's entrances and exits.
 enum {
   IMIL_FROM_HOUSE_SOUTHWEST = 1,
+  IMIL_EAST_UNUSED =
+      2, ///< at the village's east edge, facing west; no exit leads here
   IMIL_FROM_HOUSE_WEST = 3,
   IMIL_FROM_HOUSE_NORTHEAST = 4,
   IMIL_FROM_IMIL_INTERIORS_EAST = 5,
@@ -1548,6 +1606,13 @@ enum {
       20, ///< ★ Named from what the player sees: the eastern of the two rooms
           ///< of three waterfalls, with a chest (its render)
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE = 25,
+  /// Where Mia tries the doorway again and again while the Lizard Man
+  /// blocks it.
+  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_BEFORE_LIZARD_MAN = 30,
+  /// Where the party comes back from the battle with the Lizard Man.
+  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_AFTER_LIZARD_MAN = 31,
+  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_UNUSED_NORTH = 60,  ///< no exit leads here
+  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_UNUSED_MIDDLE = 99, ///< no exit leads here
 };
 enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
@@ -1597,6 +1662,9 @@ enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_DRY_POOL_TO_CHEST_POOL =
       19, ///< ★ Named from what the player sees: the pool room with a chest on
           ///< its ledge (its render)
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_HALL_BEFORE_LIZARD_MAN = 20,
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE = 50,
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_HALL_AFTER_LIZARD_MAN = 63,
 };
 
 /// SceneId_MercuryLighthouseLower's entrances and exits.
@@ -1773,6 +1841,7 @@ enum {
           ///< stops to open the way up (its render)
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP = 11,
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_ENTRANCE = 12,
+  MERCURY_LIGHTHOUSE_EXTERIOR_UNUSED = 13, ///< no exit leads here
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE = 15,
 };
 enum {
@@ -2770,6 +2839,7 @@ enum {
   KALAY_FROM_INN = 7,
   KALAY_FROM_KALAY_SANCTUM = 8,
   KALAY_FROM_WORLD_MAP = 9,
+  KALAY_FROM_WORLD_MAP_WEST_UNUSED = 10, ///< no exit leads here
   KALAY_FROM_HAMMET_PALACE_GROUNDS = 11,
   KALAY_FROM_WEAPON_SHOP_COUNTER = 12,
   KALAY_FROM_ARMOR_SHOP_COUNTER = 13,
@@ -3033,6 +3103,9 @@ enum {
 enum {
   WEST_LUNPA_CAVE_FROM_WORLD_MAP = 1,
   WEST_LUNPA_CAVE_FROM_LUNPA = 2,
+  /// WEST_LUNPA_CAVE_FROM_LUNPA again with a shorter camera; no exit leads
+  /// here.
+  WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED = 3,
 };
 enum {
   WEST_LUNPA_CAVE_TO_WORLD_MAP = 1,
@@ -3159,12 +3232,18 @@ enum {
   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK =
       15, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE =
+      16, ///< TolbiShipInteriors_FightRowingDeckMonsters
   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK =
       17, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE =
+      18, ///< TolbiShipInteriors_FightRowingDeckMonsters
   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK =
       19, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
+  TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE =
+      20, ///< TolbiShipInteriors_FightRowingDeckMonsters
   TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP = 21,
   TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_ISLAND =
       22, ///< ★ Named from what the player sees: the room where the captain
@@ -3173,6 +3252,10 @@ enum {
   TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS =
       24, ///< ★ Named from what the player sees: the oarsmen rowing in rows to
           ///< a drummer's beat (its render)
+  /// Where a defeat in the monster attacks or the Kraken battle returns the
+  /// party (gGameState.savedEntrance): the voyage's flags are cleared and the
+  /// party goes up on deck.
+  TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT = 30,
 };
 enum {
   TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK = 1,
@@ -3754,6 +3837,13 @@ enum {
           ///< door outside Sheba's room (its render)
   BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING =
       45, ///< ★ Named from the game: "Sheba" (MsgCharacterName)
+  /// In no table row and led to by no exit: arriving by it sets
+  /// FLAG_BABI_SAVED.
+  /// XXX: likely a debug start.
+  BABI_PALACE_AFTER_BABI_SAVED = 90,
+  /// In no table row and led to by no exit: arriving by it sets FLAG_BABI_SAVED
+  /// and FLAG_COLOSSO_OVER. XXX: likely a debug start.
+  BABI_PALACE_AFTER_COLOSSO = 91,
   BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH = 98,
   BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH = 99,
 };
@@ -3991,6 +4081,10 @@ enum {
          ///< stages after the lettering Match 1 (its render)
   COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST = 2,
   COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM = 3,
+  /// The return from the battle with Azart when Isaac wins.
+  COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON = 4,
+  /// The return from the battle with Azart when Isaac loses.
+  COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST = 5,
 };
 enum {
   COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST = 4,
@@ -4008,6 +4102,10 @@ enum {
          ///< the stages after the lettering Match 2 (its render)
   COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST = 2,
   COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST = 3,
+  /// The return from the battle with Satrage when Isaac wins.
+  COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON = 4,
+  /// The return from the battle with Satrage when Isaac loses.
+  COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST = 5,
 };
 enum {
   COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH = 4,
@@ -4025,6 +4123,10 @@ enum {
          ///< the stages after the lettering Match 3 (its render)
   COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH = 2,
   COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH = 3,
+  /// The return from the battle with Navampa when Isaac wins.
+  COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON = 4,
+  /// The return from the battle with Navampa when Isaac loses.
+  COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST = 5,
 };
 enum {
   COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE = 4,
@@ -4435,6 +4537,11 @@ enum {
   LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM =
       24, ///< ★ Named from the game: "Who is disrupting my sleep???"
           ///< (MsgLunpaWhoDisruptingSleep)
+  LUNPA_FORTRESS_UPPER_FLOOR_CENTRAL_HALL_UNUSED =
+      30, ///< no exit or event leads here
+  /// Where the party comes back after the battle with the three guards in the
+  /// guard room.
+  LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE = 31,
 };
 enum {
   LUNPA_FORTRESS_UPPER_FLOOR_TO_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH = 1,
@@ -4535,6 +4642,8 @@ enum {
   LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTH = 1,
   LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHEAST = 2,
   LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST = 3,
+  /// Where the party comes back after the battle with Toadonpa.
+  LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE = 4,
 };
 enum {
   LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTH = 1,
@@ -4629,6 +4738,7 @@ enum {
   SUHALLA_INTERIORS_SANCTUM_NORTH =
       6, ///< before the priest in Suhalla Sanctum, where a party defeated in
          ///< Suhalla wakes
+  SUHALLA_INTERIORS_HOUSE_WEST_UNUSED = 7, ///< no exit leads here
   SUHALLA_INTERIORS_INN_FROM_GUEST_ROOM_WEST =
       10, ///< ★ Named from what the player sees: Suhalla's inn and its counter
           ///< (its render)
@@ -4647,6 +4757,10 @@ enum {
   SUHALLA_INTERIORS_LOFT_FROM_INN =
       15, ///< ★ Named from what the player sees: the room with beds up the
           ///< inn's ladder (its render)
+  /// In no table row and led to by no exit: arriving by it also marks Babi's
+  /// audience as held, as SUHALLA_AFTER_BABI_AUDIENCE does. XXX: likely a
+  /// debug start into the story after the audience.
+  SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE = 90,
 };
 enum {
   SUHALLA_INTERIORS_INN_TO_SUHALLA = 1,
@@ -5686,6 +5800,9 @@ enum {
 /// SceneId_LemurianShip's entrances and exits.
 enum {
   LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE = 1,
+  /// In no table row and led to by no exit; arriving by it hands the leader the
+  /// Black Orb. XXX: what arrives that way is not known.
+  LEMURIAN_SHIP_WITH_BLACK_ORB = 99,
 };
 enum {
   LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE = 1,

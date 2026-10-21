@@ -1452,11 +1452,12 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
   }
 }
 
-/// Packs size bytes of input into dst with a small LZ scheme and returns the
-/// packed size. Each group starts with a flag byte, a set bit marking a match:
-/// two bytes of distance and length (lengths 2 to 16), or three for lengths up
-/// to 272; a match is put off by one byte when the next position matches
-/// further. A zero match ends the stream. Nothing in this game calls it.
+/// Unused: packs size bytes of input into dst with a small LZ scheme and
+/// returns the packed size. Each group starts with a flag byte, a set bit
+/// marking a match: two bytes of distance and length (lengths 2 to 16), or
+/// three for lengths up to 272; a match is put off by one byte when the next
+/// position matches further. A zero match ends the stream. Nothing in this game
+/// calls it.
 UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
   s32 defer;
   s32 len;

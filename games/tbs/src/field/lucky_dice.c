@@ -73,7 +73,8 @@ void Camera_ResetSceneDefaults(void) {
   Projection_Set(focalLength, nearPlane, 0x7fff0000);
 }
 
-/// Multiplies two 8.8 fixed-point values, rounding toward zero.
+/// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.
+/// Nothing calls it.
 UNUSED s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
   /* FAKEMATCH(temporary): the product built in its own variable from a copy
    * of right, then rounded into another; as product = left * right adjusted
@@ -95,7 +96,8 @@ UNUSED s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
   return (s16)(roundedProduct >> 8);
 }
 
-/// Divides two 8.8 fixed-point values.
+/// Unused: divides two 8.8 fixed-point values.
+/// Nothing calls it.
 UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 // UB: a signed numerator may be negative. All s16 values times 256 fit.
 #ifdef UBFIX
@@ -105,7 +107,8 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 #endif
 }
 
-/// The reciprocal of an 8.8 fixed-point value.
+/// Unused: the reciprocal of an 8.8 fixed-point value.
+/// Nothing calls it.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
 #include "resource.h"

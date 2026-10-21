@@ -210,6 +210,7 @@ void ObjectSystem_UpdateCamera(void) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
 }
 
+/// Unused: returns 1; nothing calls it.
 UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
 /// Each frame, with the fixed camera: places every object's sprite, from the

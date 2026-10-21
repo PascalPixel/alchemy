@@ -79,8 +79,9 @@ void Tilemap_DecodeStagedBuffer(s32 size) {
 
 typedef void (*TilemapConvertFn)(void *dst, const void *src, const void *saved);
 
-/// Gives each map cell whose block number is 0xfff (a placeholder) a number
-/// of its own, counting up from 0 in map order.
+/// Unused: gives each map cell whose block number is 0xfff (a placeholder) a
+/// number of its own, counting up from 0 in map order.
+/// Nothing calls it.
 UNUSED void Tilemap_NumberPlaceholderBlocks(void) {
   u32 *cell = (u32 *)gMapCellBuffer;
   u32 remaining = 128 << 7;

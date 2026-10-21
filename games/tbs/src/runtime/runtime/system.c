@@ -61,8 +61,8 @@ void System_Initialize(void) {
   Game_RunFar(0);
 }
 
-/// Waits out frames forever; the frame loop still runs the scheduled tasks.
-/// Nothing in ☀️ calls it.
+/// Unused: waits out frames forever; the frame loop still runs the scheduled
+/// tasks. Nothing in ☀️ calls it.
 UNUSED void Runtime_IdleForever(void) {
   for (;;) {
     (void)gKeysPressed;
@@ -108,19 +108,24 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
-/// Reserved empty export A in the runtime far-call table; no source caller.
+/// Unused: reserved empty export A in the runtime far-call table; no source
+/// caller.
 UNUSED void RuntimeDispatch_ReservedNoOpA(void) {}
 
-/// Reserved empty export B in the runtime far-call table; no source caller.
+/// Unused: reserved empty export B in the runtime far-call table; no source
+/// caller.
 UNUSED void RuntimeDispatch_ReservedNoOpB(void) {}
 
-/// Reserved empty export C in the runtime far-call table; no source caller.
+/// Unused: reserved empty export C in the runtime far-call table; no source
+/// caller.
 UNUSED void RuntimeDispatch_ReservedNoOpC(void) {}
 
-/// Reserved empty export D in the runtime far-call table; no source caller.
+/// Unused: reserved empty export D in the runtime far-call table; no source
+/// caller.
 UNUSED void RuntimeDispatch_ReservedNoOpD(void) {}
 
-/// Reserved empty export E in the runtime far-call table; no source caller.
+/// Unused: reserved empty export E in the runtime far-call table; no source
+/// caller.
 UNUSED void RuntimeDispatch_ReservedNoOpE(void) {}
 
 /// An exported stub that ignores its arguments and reports 0. The sprite
@@ -158,14 +163,14 @@ void *Resource_GetTableEntry(s32 index) {
   return Resource_DirectoryTable[index];
 }
 
-/// Resolves the Thumb long branches (BL pairs) of a block of code whose branch
-/// offsets are stored from the start of the block. A BL is two halfwords: the
-/// first carries the marker bits 0xf000 and the high eleven bits of the offset,
-/// the second the marker 0xf800 and the low eleven bits of the halfword offset.
-/// Each pair's offset is reduced by the pair's own position in the block, which
-/// turns it into the pc-relative offset the CPU expects; the pairs are
-/// rewritten in place. `byteLength` is the code size. Nothing calls it:
-/// Resource_LoadCode uses the ARM routine that does the same.
+/// Unused: resolves the Thumb long branches (BL pairs) of a block of code whose
+/// branch offsets are stored from the start of the block. A BL is two
+/// halfwords: the first carries the marker bits 0xf000 and the high eleven bits
+/// of the offset, the second the marker 0xf800 and the low eleven bits of the
+/// halfword offset. Each pair's offset is reduced by the pair's own position in
+/// the block, which turns it into the pc-relative offset the CPU expects; the
+/// pairs are rewritten in place. `byteLength` is the code size. Nothing calls
+/// it: Resource_LoadCode uses the ARM routine that does the same.
 UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
   s32 entryCount;
   s32 entryIndex;

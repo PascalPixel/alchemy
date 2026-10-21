@@ -156,6 +156,7 @@ s32 Marker_FindSlot(s32 id) {
   return matchingSlot;
 }
 
+/// Unused: an empty function nothing calls.
 UNUSED void EffectRuntime_ReservedNoOp(void) {}
 
 /// Gives the actor of marker id animation, plays sound and waits 12 frames.

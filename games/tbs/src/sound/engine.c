@@ -183,8 +183,8 @@ void AudioEngine_SetMode(u32 mode) {
   work->lock = SOUND_LOCK;
 }
 
-/// Silences every PCM and CGB note while holding the sound work lock. Nothing
-/// in ☀️ calls it.
+/// Unused: silences every PCM and CGB note while holding the sound work lock.
+/// Nothing in ☀️ calls it.
 UNUSED void AudioEngine_StopAllChannels(void) {
   // Splitting the counter or typed iterators changes the native EN registers.
   struct SoundWork *work = SOUND_WORK;
@@ -900,8 +900,8 @@ void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch) {
   player->lock = SOUND_LOCK;
 }
 
-/// Sets the stereo pan offset of selected active tracks. Nothing in ☀️ calls
-/// it.
+/// Unused: sets the stereo pan offset of selected active tracks. Nothing in ☀️
+/// calls it.
 UNUSED void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan) {
   s32 tracksRemaining;
   struct SoundTrack *track;

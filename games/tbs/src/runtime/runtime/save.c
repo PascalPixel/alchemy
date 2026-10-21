@@ -178,8 +178,8 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index) {
 
 typedef u16 (*EraseSectorProc)(u16);
 
-/// Erases flash sector `sector` with the flash library's routine for this chip.
-/// Nothing calls it.
+/// Unused: erases flash sector `sector` with the flash library's routine for
+/// this chip. Nothing calls it.
 UNUSED u16 SaveState_EraseSlotSector(u16 sector) {
   return ((EraseSectorProc)gEraseFlashSector)(sector);
 }

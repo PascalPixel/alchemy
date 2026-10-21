@@ -165,7 +165,7 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
   return 0;
 }
 
-/// Nothing calls this.
+/// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk event of actor id, or 0: for the actor stopped with Halt

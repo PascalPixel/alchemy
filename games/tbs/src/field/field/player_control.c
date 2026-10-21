@@ -37,7 +37,8 @@ static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
   *address = value;
 }
 
-/// Stores value as a word at the object's unk6c.
+/// Unused: stores value as a word at the object's unk6c.
+/// Nothing calls it.
 UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
   struct ObjectRuntime *object = rawObject;
 

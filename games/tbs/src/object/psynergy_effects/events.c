@@ -128,7 +128,7 @@ void FieldEvent_End(void) {
   GameFlag_RefreshLureCapFar();
 }
 
-/// Nothing calls it.
+/// Unused: an empty function nothing calls.
 UNUSED void Event_NoOpHookA(void) {}
 
 /// An empty hook; it does nothing in the released game. Only

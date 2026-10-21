@@ -209,6 +209,7 @@ static void DebugMenu_RunPresetShop(void) {
   Battle_ApplyPresetItemsAndFlags(1);
 }
 
+/// Unused: an empty function nothing calls.
 UNUSED static void DebugMenu_NoOp(void) {}
 
 /// Opens the shop inventory selector and discards its selected owner and slot.

@@ -169,6 +169,6 @@ void *Runtime_BumpAllocateAlternatePool(s32 size) {
   return (void *)allocationAddress;
 }
 
-/// Reserved empty memory export; nothing calls it. XXX: what it was for is
-/// not known; a caller of the same export in ⚓️ would settle it.
+/// Unused: reserved empty memory export; nothing calls it. XXX: what it was for
+/// is not known; a caller of the same export in ⚓️ would settle it.
 UNUSED void RuntimeMemory_ReservedNoOp(void) {}

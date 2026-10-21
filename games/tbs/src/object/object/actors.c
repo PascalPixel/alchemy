@@ -325,7 +325,8 @@ s32 ObjectTable_FindLastActiveId(void) {
   return lastActorIndex;
 }
 
-/// Returns the address of actor slot index in the event work.
+/// Unused: returns the address of actor slot index in the event work.
+/// Nothing calls it.
 UNUSED void *ObjectTable_GetSlotAddress(u32 actorIndex) {
   return (u8 *)gEventWork + 0x14 + actorIndex * sizeof(void *);
 }

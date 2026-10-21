@@ -160,8 +160,8 @@ void Audio_PlaySound(u16 songId) {
   MusicPlayer_StartSong(slots[song->slot].player, song->header);
 }
 
-/// Starts the song unless its selected player is already playing it. Nothing
-/// in ☀️ calls it.
+/// Unused: starts the song unless its selected player is already playing it.
+/// Nothing in ☀️ calls it.
 UNUSED void Audio_PlaySoundIfInactive(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
   const struct SongEntry *songs = gSound_SongTable;
@@ -175,8 +175,8 @@ UNUSED void Audio_PlaySoundIfInactive(u16 songId) {
     MusicPlayer_StartSong(player, song->header);
 }
 
-/// Starts a different or finished song, or resumes the same paused song.
-/// Nothing in ☀️ calls it.
+/// Unused: starts a different or finished song, or resumes the same paused
+/// song. Nothing in ☀️ calls it.
 UNUSED void Audio_PlayOrResumeSound(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
   const struct SongEntry *songs = gSound_SongTable;
@@ -191,7 +191,7 @@ UNUSED void Audio_PlayOrResumeSound(u16 songId) {
     Audio_ResumePlayer(player);
 }
 
-/// Stops the selected player only when it holds this song. Nothing in ☀️
+/// Unused: stops the selected player only when it holds this song. Nothing in ☀️
 /// calls it.
 UNUSED void Audio_StopSound(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
@@ -203,8 +203,8 @@ UNUSED void Audio_StopSound(u16 songId) {
     MusicPlayer_Stop(player);
 }
 
-/// Resumes the selected player only when it holds this song. Nothing in ☀️
-/// calls it.
+/// Unused: resumes the selected player only when it holds this song. Nothing in
+/// ☀️ calls it.
 UNUSED void Audio_ResumeSound(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
   const struct SongEntry *songs = gSound_SongTable;
@@ -215,7 +215,8 @@ UNUSED void Audio_ResumeSound(u16 songId) {
     Audio_ResumePlayer(player);
 }
 
-/// Stops every player. Nothing in ☀️ calls it.
+/// Unused: stops every player. Only AudioCommand_StopAllPlayers calls it, and
+/// only a bare far-call veneer, which no ☀️ code names, leads there.
 UNUSED void Audio_StopAllPlayers(void) {
   s32 playerIndex;
 
@@ -223,12 +224,13 @@ UNUSED void Audio_StopAllPlayers(void) {
     MusicPlayer_Stop(gSound_PlayerSlots[playerIndex].player);
 }
 
-/// Resumes `player`. Nothing in ☀️ calls it.
+/// Unused: resumes `player`. Nothing in ☀️ calls it.
 UNUSED void MusicPlayer_Resume(struct SoundPlayer *player) {
   Audio_ResumePlayer(player);
 }
 
-/// Resumes every player. Nothing in ☀️ calls it.
+/// Unused: resumes every player. Only AudioCommand_ResumeAllPlayers calls it,
+/// and only a bare far-call veneer, which no ☀️ code names, leads there.
 UNUSED void Audio_ResumeAllPlayers(void) {
   s32 playerIndex;
 
@@ -242,21 +244,21 @@ void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_BeginFadeOut(player, speed);
 }
 
-/// Begins a fade that pauses the player at zero volume, keeping its tracks'
-/// state for a later resume. Nothing in ☀️ calls it.
+/// Unused: begins a fade that pauses the player at zero volume, keeping its
+/// tracks' state for a later resume. Nothing in ☀️ calls it.
 UNUSED void MusicPlayer_FadeOutPause(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_SetFadeParameters(player, speed,
                                 SOUND_FADE_FULL_VOLUME | SOUND_FADE_PAUSE);
 }
 
-/// Starts a fade from zero volume and resumes the player. Nothing in ☀️ calls
-/// it.
+/// Unused: starts a fade from zero volume and resumes the player. Nothing in ☀️
+/// calls it.
 UNUSED void MusicPlayer_FadeIn(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_SetFadeParameters(player, speed, SOUND_FADE_IN);
 }
 
-/// Initializes active tracks still carrying their reset flag: clears their
-/// settings and gives them the default bend range, volume and LFO speed.
+/// Unused: initializes active tracks still carrying their reset flag: clears
+/// their settings and gives them the default bend range, volume and LFO speed.
 /// Nothing in ☀️ calls it.
 UNUSED void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player) {
   s32 count = player->trackCount;

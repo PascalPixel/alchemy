@@ -447,10 +447,10 @@ s32 Sound_LoadPresetParameters(s32 preset) {
   return 0;
 }
 
-/// Nothing calls it.
+/// Unused: an empty function nothing calls.
 UNUSED void Sound_ReservedNoOpA(void) {}
 
-/// Nothing calls it.
+/// Unused: an empty function nothing calls.
 UNUSED void Sound_ReservedNoOpB(void) {}
 
 /// The keypad interrupt, from the handler table: A+B+Select+Start was pressed,

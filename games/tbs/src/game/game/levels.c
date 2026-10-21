@@ -306,7 +306,7 @@ void Party_InitCharacters(void) {
   }
 }
 
-/// Unused reserved entry; keeps its place in the far-call table.
+/// Unused: reserved entry; keeps its place in the far-call table.
 UNUSED void Owner_LevelNoOp(void) {}
 
 /// Returns the experience a character needs for `level` (0 for level 0 and

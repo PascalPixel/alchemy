@@ -367,8 +367,9 @@ void AudioCommand_WaitForCompletion(void) {
   } while (framesWaited < MUSIC_WAIT_TIMEOUT_FRAMES);
 }
 
-/// Returns the mixer record AudioCommand_Play gives music cue `command`: 3
-/// for MUS_067, MUS_070 and MUS_075, 2 for the rest. Nothing in ☀️ calls it.
+/// Unused: returns the mixer record AudioCommand_Play gives music cue
+/// `command`: 3 for MUS_067, MUS_070 and MUS_075, 2 for the rest. Nothing in ☀️
+/// calls it.
 UNUSED s32 AudioCommand_GetWidth(s32 command) {
   if (command == MUS_070 || command == MUS_075 || command == MUS_067)
     return 3;

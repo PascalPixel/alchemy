@@ -507,7 +507,7 @@ s32 Title_ShowIntro(s32 prompt) {
   return result;
 }
 
-/// Unused palette entry retained in the far-call table.
+/// Unused: palette entry retained in the far-call table.
 UNUSED void Title_NoOpPalette(void) {}
 
 /// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
@@ -661,7 +661,7 @@ s32 Title_ShowAnimatedSplash(void) {
   return result;
 }
 
-/// Unused color entry retained in the far-call table.
+/// Unused: color entry retained in the far-call table.
 UNUSED void Graphics_NoOpColor(void) {}
 
 // The palette fade (struct PaletteFade) keeps the saved palettes, the
@@ -1017,15 +1017,15 @@ void PaletteFade_Init(void) {
   Scheduler_AddOrUpdateCallback(PaletteFade_Update, callbackPriority);
 }
 
-/// Unschedules the palette fade and frees its buffers. Nothing in ☀️ calls
-/// it.
+/// Unused: unschedules the palette fade and frees its buffers. Nothing in ☀️
+/// calls it.
 UNUSED void PaletteFade_Release(void) {
   Scheduler_RemoveCallback(&PaletteFade_Update);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_PALETTE_BUFFER);
 }
 
-/// Sets the fade target by transforming the saved background and/or sprite
-/// palettes through the requested mode. Nothing in ☀️ calls it.
+/// Unused: sets the fade target by transforming the saved background and/or
+/// sprite palettes through the requested mode. Nothing in ☀️ calls it.
 UNUSED void PaletteFade_SetTarget(s32 mode, s32 paletteHalf) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 
@@ -1042,7 +1042,8 @@ void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf) {
     Palette_Transform(mode, fade->palette, fade->current, paletteHalf);
 }
 
-/// Replaces the first saved colour, the backdrop. Nothing in ☀️ calls it.
+/// Unused: replaces the first saved colour, the backdrop. Nothing in ☀️ calls
+/// it.
 UNUSED void PaletteFade_SetBackdrop(s32 color) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 

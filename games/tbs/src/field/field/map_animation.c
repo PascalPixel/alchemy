@@ -266,8 +266,9 @@ void DisplayBlend_ResumeScript(void) {
   Scheduler_ResumeTasks(DisplayBlend_RunScript);
 }
 
-/// Allocates the palette cycling queue (heap slot 28) with its four entries
-/// cleared.
+/// Unused: allocates the palette cycling queue (heap slot 28) with its four
+/// entries cleared.
+/// Nothing calls it.
 UNUSED void PaletteQueue_Initialize(void) {
   struct PaletteSnapshotWork *paletteCycles;
   struct PaletteSnapshot *cycle;
@@ -291,10 +292,11 @@ UNUSED void PaletteQueue_Initialize(void) {
   paletteCycles->count = 0;
 }
 
-/// Adds a palette cycle: colorCount colours of background palette paletteBank
-/// from firstColor, rotated by one every delay + 1 frames. Returns 0, or -1
-/// when all four cycles are taken. The cycle keeps a copy of the colours as
-/// they were, which every step rotates from.
+/// Unused: adds a palette cycle: colorCount colours of background palette
+/// paletteBank from firstColor, rotated by one every delay + 1 frames. Returns
+/// 0, or -1 when all four cycles are taken. The cycle keeps a copy of the
+/// colours as they were, which every step rotates from.
+/// Nothing calls it.
 UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
                             s16 colorCount) {
   struct PaletteSnapshotWork *paletteQueue;
@@ -323,13 +325,15 @@ UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
   return 0;
 }
 
-/// Stops the palette cycles and frees their queue (heap slot 28).
+/// Unused: stops the palette cycles and frees their queue (heap slot 28).
+/// Nothing calls it.
 UNUSED void PaletteQueue_Stop(void) {
   Scheduler_RemoveCallback(PaletteQueue_StepCycles);
   Runtime_ReleaseHeapBlock(28);
 }
 
-/// Starts running the palette cycles each frame.
+/// Unused: starts running the palette cycles each frame.
+/// Nothing calls it.
 UNUSED void PaletteQueue_Start(void) {
   Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
 }

@@ -439,7 +439,8 @@ UNUSED static void ItemLevel_SelectAbility(void) {
 }
 #endif
 
-/// Requests a window-style exit with variant one over 24 frames.
+/// Unused: requests an exit through TRANSITION_WINDOW over 24 frames; no event
+/// row names it.
 UNUSED static void ItemLevel_RequestExit(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gEventWork->transitionFrames = 24;

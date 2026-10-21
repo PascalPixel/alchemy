@@ -33,7 +33,7 @@ void Scheduler_ResetTaskTable(void) {
   gSchedulerReady = 1;
 }
 
-/// Copies `byteCount` bytes a word at a time. Nothing in ☀️ calls it.
+/// Unused: copies `byteCount` bytes a word at a time. Nothing in ☀️ calls it.
 UNUSED void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
   u32 index;
   byteCount >>= 2;
@@ -71,8 +71,8 @@ void Scheduler_SortTasks(void) {
   }
 }
 
-/// Returns the table index of the task running `callback`, or -1. Nothing in
-/// ☀️ calls it.
+/// Unused: returns the table index of the task running `callback`, or -1.
+/// Nothing in ☀️ calls it.
 UNUSED s32 Scheduler_FindCallback(SchedulerCallback callback) {
   s32 result;
   struct SchedulerTask *task;
@@ -137,10 +137,10 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
   return index;
 }
 
-/// An empty routine; nothing in ☀️ calls it.
+/// Unused: an empty routine; nothing in ☀️ calls it.
 UNUSED void Scheduler_Idle(void) {}
 
-/// An empty routine; nothing in ☀️ calls it.
+/// Unused: an empty routine; nothing in ☀️ calls it.
 UNUSED void Scheduler_EmptyCallback(void) {}
 
 /// Unschedules the task running `callback`: clears its routine and gives it

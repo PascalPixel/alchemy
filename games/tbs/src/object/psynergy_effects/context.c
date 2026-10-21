@@ -48,6 +48,7 @@ s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
   return 0;
 }
 
+/// Unused: an empty function nothing calls.
 UNUSED void ObjectEffect_ReservedNoOp941DC(void) {}
 
 // UB: no value is returned, and run_scene.c ignores it; as void, the epilogue

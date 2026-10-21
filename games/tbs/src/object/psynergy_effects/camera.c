@@ -144,8 +144,9 @@ struct FieldActor *Camera_GetEventObject(void) {
       ->camera;
 }
 
-/// Makes the camera follow target; unless keepCurrentPosition is set it jumps
-/// there at once.
+/// Unused: makes the camera follow target; unless keepCurrentPosition is set it
+/// jumps there at once.
+/// Nothing calls it.
 UNUSED void Camera_FollowObject(struct ObjectRuntime *target,
                                 s32 keepCurrentPosition) {
   struct ObjectRuntime *camera;

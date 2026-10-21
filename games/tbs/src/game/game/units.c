@@ -735,7 +735,7 @@ void Party_RestorePpOfLitElements(void) {
   }
 }
 
-/// Unused reserved entry; keeps its place in the far-call table.
+/// Unused: reserved entry; keeps its place in the far-call table.
 UNUSED void Owner_RatioNoOp(void) {}
 
 /// Recomputes the HP and PP gauges of `owner` from its current HP and PP, so

@@ -198,8 +198,10 @@ void ObjectSystem_Initialize(s32 controlMode) {
   objectSystem->fill = 0;
 }
 
+/// Unused: an empty function nothing calls.
 UNUSED void ResourceTable_ReservedNoOpC0C4(void) {}
 
+/// Unused: an empty function nothing calls.
 UNUSED void ResourceTable_ReservedNoOp2(void) {}
 
 /// Returns the first of the 64 objects not in use (with no script), or 0.
@@ -593,6 +595,7 @@ void ObjectSystem_ResumeProjectionAndHideLayers(void) {
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }
 
+/// Unused: returns 1; nothing calls it.
 UNUSED s32 ObjectDispatch_ReturnTrue(void) { return 1; }
 
 #undef OBJECT_DISPATCH_DEFINE_APPLY

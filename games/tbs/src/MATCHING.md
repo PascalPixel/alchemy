@@ -283,8 +283,8 @@ come down to how a struct's member is addressed.
   callers take from whole actors. Its byte cursor steps across x, y and z, so
   it reads the actors' own signed coordinate members without treating them as
   an array or copying them into one.
-- Some helpers in Colosso and in one of Kolima Forest's scenes (scene 43,
-  where logs roll) are called before they're declared. With their exact
+- Some helpers in Colosso and in `SceneId_KolimaForestFloodgate`, where logs
+  roll, are called before they're declared. With their exact
   `void` prototype in scope, the arguments are set up in another order, so the
   matching build keeps the call ahead of the declaration, and their unit
   headers give the correct declarations under `UBFIX`.

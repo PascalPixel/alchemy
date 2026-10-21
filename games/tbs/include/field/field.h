@@ -176,8 +176,8 @@ extern u32 gKolimaForestFloodgate_ShakeChance;
 /// The background scroll words captured each frame for the shaken lines.
 extern u32 gKolimaForestFloodgate_ShakeScroll[];
 /// The healthy colours: the first 448 colours (896 bytes) of the colour
-/// buffer, kept by KolimaPalette_SaveFirst; the array is 1792 bytes. Kolima
-/// Forest's scenes 41 and 42 each define one.
+/// buffer, kept by KolimaPalette_SaveFirst; the array is 1792 bytes.
+/// SceneId_KolimaForestGlade and SceneId_KolimaForestCliff each define one.
 extern u8 gKolimaPalette_First[];
 /// The cursed colours, kept by KolimaPalette_SaveSecond.
 extern u8 gKolimaPalette_Second[];

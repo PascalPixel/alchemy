@@ -158,12 +158,13 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   s32 i;
 
   work = (struct FieldWork *)gEventWork;
-  // UB: flag 351 reaches the draw without setting entry. Hoisting the zone
-  // lookup changes native instructions at the same 440-byte size in tbs-en.
+  // UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting entry.
+  // Hoisting the zone lookup changes native instructions at the same 440-byte
+  // size in tbs-en.
 #ifdef UBFIX
   entry = (struct EncounterZone *)gEncounter_EnemyGroupTable + zone;
 #endif
-  if (GameFlag_TestFar(351) == 0) {
+  if (GameFlag_TestFar(FLAG_IGNORE_ENCOUNTER_CHECKS) == 0) {
     if (GameFlag_TestFar(FLAG_NO_ENCOUNTERS) != 0 ||
         GameFlag_TestFar(FLAG_NO_ENCOUNTERS_IN_PLACE) != 0)
       return 0;

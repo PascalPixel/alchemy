@@ -180,9 +180,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
 
   collision = 0;
   pushed = 0;
-  // Debug (flag 350): beep when fewer than 136 of the 512 resource blocks
-  // are free.
-  if (gDebugMode != 0 && GameFlag_TestFar(350) != 0) {
+  // Debug (FLAG_DEBUG_RESOURCE_BEEP): beep when fewer than 136 of the 512
+  // resource blocks are free.
+  if (gDebugMode != 0 && GameFlag_TestFar(FLAG_DEBUG_RESOURCE_BEEP) != 0) {
     s32 freeBlocks;
     s32 blockIndex;
 

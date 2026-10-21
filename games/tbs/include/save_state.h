@@ -17,7 +17,8 @@
 /// its checksum and its sequence number.
 struct SaveSlotHeader {
   u8 signature[7]; ///< `CAMELOT`, unterminated
-  /// File n's records are n and n + 3 (n from 0 to 2); 16 marks a free sector.
+  /// File n's records are n and n + 3; SAVE_RECORD_NONE (runtime/save.c) marks
+  /// a free sector.
   u8 recordId;
   u16 checksum;   ///< low half of the payload's checksum
   u16 sequence;   ///< the highest is the current copy; restarts after 65000
@@ -39,7 +40,7 @@ struct SaveSummary {
   /// Copied from GameState.unk20f, which saving at the end of the game sets;
   /// the file menu for cleared data lists a file without it as not cleared.
   s8 sendFlag;
-  s8 flagCount; ///< how many of game flags 48 to 127 are set
+  s8 flagCount; ///< how many Djinn flags (FLAG_DJINNI_0 on) are set
   u8 hasFlag20; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
   /// bits: 15..8 paletteGlowSub | 7..0 paletteGlow
   ///@{

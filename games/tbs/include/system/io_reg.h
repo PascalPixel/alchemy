@@ -191,6 +191,12 @@ enum DisplayControl {
 
 // SIOCNT flags, as pret names them.
 #define SIO_115200_BPS 0x0003
+#define SIO_MULTI_SI                                                           \
+  0x0004 ///< multiplayer: this console's SI pin, clear on the parent
+#define SIO_MULTI_SD 0x0008 ///< multiplayer: every console is ready
+#define SIO_ID 0x0030       ///< multiplayer: this console's id, 0 the parent
+#define SIO_ID_SHIFT 4
+#define SIO_ERROR 0x0040
 #define SIO_START 0x0080
 #define SIO_32BIT_MODE 0x1000
 #define SIO_MULTI_MODE 0x2000

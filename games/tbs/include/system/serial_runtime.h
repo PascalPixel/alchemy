@@ -42,13 +42,37 @@ union SerialDataRegisters {
   u16 halfwords[4];
 };
 
+/// SerialRuntime.phase.
+enum SerialPhase {
+  SERIAL_PHASE_SEARCHING = 0, ///< looking for the partner
+  SERIAL_PHASE_CONNECTED = 1
+};
+
+/// SerialRuntime.mode: how this console takes part in the link.
+enum SerialMode {
+  SERIAL_MODE_CHILD = 0,
+  /// SIO_MULTI_SD alone of SIOCNT's SIO_START and SIO_MULTI_SD: this console
+  /// armed timer 3 and clocks the transfers.
+  SERIAL_MODE_CLOCKING = SIO_MULTI_SD
+};
+
+/// The link status bits SerialRuntime_ExchangePayloads returns.
+enum LinkStatus {
+  LINK_STATUS_HEARD_BOTH = 3,  ///< both consoles heard from this frame
+  LINK_STATUS_CLOCKING = 0x80, ///< this console clocks the transfers
+  LINK_STATUS_PARENT =
+      0x1000, ///< isParent, SIOCNT's bit 6 at the last interrupt
+  /// SIOCNT's multiplayer id is 2 or more.
+  LINK_STATUS_EXTRA_CONSOLE = 0x2000
+};
+
 /// The link cable's runtime: its mode and phase, the consoles heard from, the
 /// send position and the packet buffers the interrupt handler fills.
 struct SerialRuntime {
-  /// SIOCNT's bits 7 and 3 when this console armed timer 3 to clock the
-  /// transfers: 8 then, else 0; 8 adds 0x80 to the link status.
+  /// An enum SerialMode; SERIAL_MODE_CLOCKING adds LINK_STATUS_CLOCKING to the
+  /// link status.
   u8 mode;
-  u8 phase;        ///< 0 looking for the partner, 1 connected
+  u8 phase;        ///< an enum SerialPhase
   u8 receivedMask; ///< the consoles heard from since the link began
   u8 currentMask;  ///< the consoles heard from this frame
   /// Set by the interrupt for each console and cleared each frame.
@@ -90,6 +114,20 @@ STATIC_ASSERT(offsetof(struct SerialRuntime, transferEnabled) == 8);
 STATIC_ASSERT(offsetof(struct SerialRuntime, sendIndex) == 0x14);
 STATIC_ASSERT(offsetof(struct SerialRuntime, storage) == 0x60);
 
+/// SerialTransferState.flags: how far this console's receive has got.
+enum SerialReceiveState {
+  SERIAL_RECEIVE_IDLE = 0,
+  SERIAL_RECEIVE_ACTIVE = 1,
+  SERIAL_RECEIVE_DONE = 2 ///< the last block taken
+};
+
+/// SerialTransferState.peerFlags: the kind of block this console sends.
+enum SerialSendState {
+  SERIAL_SEND_IDLE = 0,
+  SERIAL_SEND_MORE = 1, ///< a block with more to follow
+  SERIAL_SEND_LAST = 2
+};
+
 /// A console's block transfer state, exchanged with the partner each VBlank:
 /// its block sequence, its status and flags, and a 20-byte block.
 struct SerialTransferState {
@@ -99,10 +137,8 @@ struct SerialTransferState {
   /// 0x80 sending or 0x81 receiving when started; the receiver counts blocks
   /// (status + 1, with bit 7) and sets 0 after the last.
   u8 status;
-  /// The receive state: 1 receiving, 2 the last block taken, 0 idle.
-  u8 flags;
-  /// The send state: 1 a block with more to follow, 2 the last block, 0 idle.
-  u8 peerFlags;
+  u8 flags;       ///< the receive state, an enum SerialReceiveState
+  u8 peerFlags;   ///< the send state, an enum SerialSendState
   u8 payload[20]; ///< one block of the data sent
 };
 
@@ -139,7 +175,7 @@ extern volatile u16 gLinkStatus;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status) {
   if (gSerialRuntime.isParent != 0)
-    status |= 0x1000;
+    status |= LINK_STATUS_PARENT;
   return status;
 }
 

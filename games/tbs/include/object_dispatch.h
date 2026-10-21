@@ -17,10 +17,10 @@ struct DispatchObject {
   s32 value34;    ///< acceleration, 16.16 fixed point
   u8 unk38[0x18]; ///< the target, bounce, gravity and a spare word
   union {
-    struct AnimationObject *child; ///< kind 1
-    void **children;               ///< kind 2: four sprites, empty ones null
+    struct AnimationObject *child; ///< OBJECT_SPRITE_ONE
+    void **children; ///< OBJECT_SPRITE_GROUP: four, empty ones null
   } target;
-  u8 kind;      ///< low four bits: 0 no sprite, 1 one, 2 up to four
+  u8 kind;      ///< low four bits: an OBJECT_SPRITE_ kind
   u8 unk55[2];  ///< motion flags and arrival axis; not named here
   u8 value57;   ///< the script's last flag test; cleared with a new script
   u8 unk58[3];  ///< snap, collision and steering flags; not named here

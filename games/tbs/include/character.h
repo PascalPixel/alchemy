@@ -110,13 +110,14 @@ struct EnemyDefinition {
   u8 counts[4];     ///< how many of each item it carries
   u8 elementPreset; ///< row of gEnemy_ElementPresetTable, 0 to 43
   /// Whom a single-target attack favours: the target with the most HP left
-  /// (0), the most maximum HP (1) or no one (2). The action choice also skips
-  /// an ability the enemy lacks PP for unless it is 0, and a sealed one when
-  /// it is 2.
+  /// (STRATEGY_MOST_HP), the most maximum HP (STRATEGY_MOST_MAX_HP) or no one
+  /// (STRATEGY_RANDOM). The action choice also skips an ability the enemy
+  /// lacks PP for unless it is STRATEGY_MOST_HP, and a sealed one when it is
+  /// STRATEGY_RANDOM.
   s8 targetStrategy;
   /// How the action is chosen from `actions` (BattleCommand_SelectAutomatic):
-  /// one of three weight tables (0 to 2), a random place then in order (3),
-  /// in order (4), the next place (5) or the same place (6).
+  /// an enum EnemyActionStrategy: one of three weight tables, a random place
+  /// then in order, in order, the next place or the same place.
   s8 actionStrategy;
   u8 itemActions; ///< one bit per place in `actions`: use an item held instead
   u16 actions[8]; ///< the abilities the enemy chooses from

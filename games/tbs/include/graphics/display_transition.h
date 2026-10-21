@@ -59,14 +59,14 @@ struct DisplayTransitionState {
   u16 pages[2][322];
   /// The dissolve's solid tile, one 8 by 8 tile of 4-bit pixels.
   u32 solidTile[8];
-  /// The window transition's shape: modes are listed at
-  /// DisplayTransition_UpdateScanlineTable.
+  /// The window transition's shape, an enum WindowTransitionMode, which
+  /// DisplayTransition_UpdateScanlineTable draws.
   u16 mode;
   /// The progress, moved from start to end over duration frames: bit 5 says
   /// whether the transition opens or closes, the low 5 bits how far it is.
   u16 value;
   /// 16.16 fixed-point pixels: the centre of the ellipse around a point
-  /// (mode 8), set by the Reveal effect.
+  /// (WINDOW_TRANSITION_RIPPLE), set by the Reveal effect.
   s32 centreX;
   s32 centreY; ///< as centreX: the target's z less its y
   /// WINOUT, or WININ by mode: 0x3f3f or 63 when a transition starts.

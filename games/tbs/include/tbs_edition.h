@@ -7,8 +7,8 @@
 #include "version.h"
 
 // Lunpa Fortress's guard room fades in after its battle through a window
-// transition: the ellipse around the leader (mode 9) in Japanese, random bars
-// (mode 0) in the others.
+// transition: the ellipse around the leader (WINDOW_TRANSITION_LEADER) in
+// Japanese, random bars (WINDOW_TRANSITION_BARS) in the others.
 #if !TBS_PATCH_1
 #define LUNPA_RETURN_TRANSITION_VARIANT 9
 #else

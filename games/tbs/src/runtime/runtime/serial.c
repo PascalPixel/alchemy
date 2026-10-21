@@ -105,11 +105,11 @@ void SerialRuntime_DisableTransfer(void) {
 }
 
 /// Looks for the link partner and, once connected, does one exchange (as
-/// SerialRuntime_ExchangePayloads). When SIOCNT shows multiplayer id 0 with
-/// bit 3 set and bits 2 and 7 clear, and no packet is being sent, this
-/// console arms timer 3 to clock the transfers and so acts as the parent.
-/// Called by the Tret tree branch scene for its own exchange. Returns the
-/// link status (see SerialRuntime_ExchangePayloads).
+/// SerialRuntime_ExchangePayloads). When SIOCNT shows the parent's id with
+/// SIO_MULTI_SD set and SIO_MULTI_SI and SIO_START clear, and no packet is
+/// being sent, this console arms timer 3 to clock the transfers and so acts as
+/// the parent. Called by the Tret tree branch scene for its own exchange.
+/// Returns the link status (see SerialRuntime_ExchangePayloads).
 s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
@@ -119,14 +119,15 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
   siocnt = &REG_SIOCNT;
   control = *siocnt;
   switch (gSerialRuntime.phase) {
-  case 0: {
-    u8 mask30 = control & 0x30;
+  case SERIAL_PHASE_SEARCHING: {
+    u8 mask30 = control & SIO_ID;
     u8 mode;
 
-    // Bits 4 and 5 are the multiplayer id. Id 0 waits here until bit 3 is
-    // set with bit 7 clear; any other id is a child and connects at once.
-    if (mask30 == 0 && (mode = control & 0x88) == 8) {
-      u8 serialError = control & 4;
+    // The parent waits here until SIO_MULTI_SD is set with SIO_START clear;
+    // a child connects at once.
+    if (mask30 == 0 &&
+        (mode = control & (SIO_START | SIO_MULTI_SD)) == SERIAL_MODE_CLOCKING) {
+      u8 serialError = control & SIO_MULTI_SI;
 
       if (serialError == 0 && gSerialRuntime.sendIndex == -1) {
         u32 ie;
@@ -145,10 +146,10 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
     } else if (mask30 == 0) {
       break;
     }
-    gSerialRuntime.phase = 1;
+    gSerialRuntime.phase = SERIAL_PHASE_CONNECTED;
   }
     // Fall through.
-  case 1:
+  case SERIAL_PHASE_CONNECTED:
     SerialRuntime_CollectReceivedPayloads(receive);
     SerialRuntime_PrepareSendPacket(send);
     break;
@@ -156,11 +157,11 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
 
   gSerialRuntime.sequence++;
   status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
-  if (gSerialRuntime.mode == 8)
-    status |= 0x80;
+  if (gSerialRuntime.mode == SERIAL_MODE_CLOCKING)
+    status |= LINK_STATUS_CLOCKING;
   result = SerialRuntime_AddParentFlag(status);
   if (((control << 26) >> 30) > 1)
-    result |= 0x2000;
+    result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
 }
 
@@ -175,11 +176,11 @@ s32 SerialRuntime_PollStatus(void) {
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
-  if (gSerialRuntime.phase == 0) {
-    u8 mode = control & 0x88;
+  if (gSerialRuntime.phase == SERIAL_PHASE_SEARCHING) {
+    u8 mode = control & (SIO_START | SIO_MULTI_SD);
 
-    if (mode == 8) {
-      u8 serialError = control & 4;
+    if (mode == SERIAL_MODE_CLOCKING) {
+      u8 serialError = control & SIO_MULTI_SI;
 
       if (serialError == 0 && gSerialRuntime.sendIndex == -1) {
         u32 ie;
@@ -195,26 +196,26 @@ s32 SerialRuntime_PollStatus(void) {
         REG_TM3CNT = SERIAL_TIMER_RELOAD;
         gSerialRuntime.mode = mode;
       }
-      gSerialRuntime.phase = 1;
+      gSerialRuntime.phase = SERIAL_PHASE_CONNECTED;
     }
     gSerialRuntime.sequence++;
   }
 
   status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
-  if (gSerialRuntime.mode == 8)
-    status |= 0x80;
+  if (gSerialRuntime.mode == SERIAL_MODE_CLOCKING)
+    status |= LINK_STATUS_CLOCKING;
   result = SerialRuntime_AddParentFlag(status);
   if (((control << 26) >> 30) > 1)
-    result |= 0x2000;
+    result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
 }
 
-/// Once connected (phase 1), gathers the received payloads into `receive` and
-/// builds the next packet from `send`. Called by the VBlank handler while
-/// gSerialExchangeActive is set, which stores the result in gLinkStatus.
-/// Returns the link status:
+/// Once connected (SERIAL_PHASE_CONNECTED), gathers the received payloads into
+/// `receive` and builds the next packet from `send`. Called by the VBlank
+/// handler while gSerialExchangeActive is set, which stores the result in
+/// gLinkStatus. Returns the link status:
 ///   bits 0 and 1 : consoles 0 and 1 heard from this frame
-///   0x80         : this console clocks the transfers (mode 8)
+///   0x80         : this console clocks the transfers (LINK_STATUS_CLOCKING)
 ///   bits 8 and 9 : consoles 0 and 1 heard from since the link began
 ///   0x1000       : SIOCNT's bit 6 was set at the last transfer interrupt
 ///                  (isParent)
@@ -229,18 +230,18 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
-  if (gSerialRuntime.phase == 1) {
+  if (gSerialRuntime.phase == SERIAL_PHASE_CONNECTED) {
     SerialRuntime_CollectReceivedPayloads(receive);
     SerialRuntime_PrepareSendPacket(send);
     gSerialRuntime.sequence++;
   }
   status = gSerialRuntime.currentMask | (gSerialRuntime.receivedMask << 8);
-  if (gSerialRuntime.mode == 8)
-    status |= 0x80;
+  if (gSerialRuntime.mode == SERIAL_MODE_CLOCKING)
+    status |= LINK_STATUS_CLOCKING;
   result = SerialRuntime_AddParentFlag(status);
   // SIOCNT bits 4 and 5, the multiplayer id
   if (((control << 26) >> 30) > 1)
-    result |= 0x2000;
+    result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
 }
 
@@ -590,28 +591,29 @@ void SerialRuntime_StepBlockTransfer(void) {
   if ((gLinkStatus & 3) != 3)
     return;
   // Receiving advances only when the peer presents the expected sequence.
-  // peerFlags is the sender's block kind: 1 a block with more to come, 2 the
-  // last block.
+  // peerFlags is the sender's block kind, an enum SerialSendState.
   {
     s32 *receive = &gSerialReceiveDest;
     s32 dest = *receive;
     if (dest != 0) {
-      if (own->flags == 1 && (u8)(peer->peerFlags - 1) <= 1) {
+      if (own->flags == SERIAL_RECEIVE_ACTIVE &&
+          (u8)(peer->peerFlags - SERIAL_SEND_MORE) <=
+              SERIAL_SEND_LAST - SERIAL_SEND_MORE) {
         if (peer->active == (gSerialBlockSequence & 0x7f)) {
           own->active = 0;
           switch (peer->peerFlags) {
-          case 1:
+          case SERIAL_SEND_MORE:
             // A block with more to come: store it and move on
             Dma_Set(peer->payload, (void *)dest, DMA_COPY_WORDS(5), REG_DMA3);
             *receive += SERIAL_BLOCK_BYTES;
             gSerialReceivedSize += SERIAL_BLOCK_BYTES;
             own->status = (own->status + 1) | 0x80;
             break;
-          case 2:
+          case SERIAL_SEND_LAST:
             // The last block: store it and report the receive finished
             Dma_Set(peer->payload, (void *)dest, DMA_COPY_WORDS(5), REG_DMA3);
             gSerialReceivedSize += SERIAL_BLOCK_BYTES;
-            own->flags = 2;
+            own->flags = SERIAL_RECEIVE_DONE;
             own->status = 0;
             own->active = one.v;
             break;
@@ -640,7 +642,7 @@ void SerialRuntime_StepBlockTransfer(void) {
     s32 src = *send;
     // A peer behind our sequence requests a rewind before the next block.
     if (src != 0) {
-      if (peer->flags == 1) {
+      if (peer->flags == SERIAL_RECEIVE_ACTIVE) {
         if (peer->active & 0x80) {
           gap = (gSerialBlockSequence - peer->active) & 0x7f;
           *send = src - gap * SERIAL_BLOCK_BYTES;
@@ -653,11 +655,11 @@ void SerialRuntime_StepBlockTransfer(void) {
           Dma_Set((void *)*send, own->payload, DMA_COPY_WORDS(5), REG_DMA3);
           gSerialSendSize += -SERIAL_BLOCK_BYTES;
           if (gSerialSendSize != 0) {
-            own->peerFlags = 1;
+            own->peerFlags = SERIAL_SEND_MORE;
             own->active = gSerialBlockSequence & 0x7f;
             *send += SERIAL_BLOCK_BYTES;
           } else {
-            own->peerFlags = 2;
+            own->peerFlags = SERIAL_SEND_LAST;
             own->active = gSerialBlockSequence & 0x7f;
             *send += SERIAL_BLOCK_BYTES;
           }
@@ -665,24 +667,25 @@ void SerialRuntime_StepBlockTransfer(void) {
         }
       }
       // The partner has stored the last block: the send is finished
-      if (own->peerFlags == 2 && peer->flags == 2) {
+      if (own->peerFlags == SERIAL_SEND_LAST &&
+          peer->flags == SERIAL_RECEIVE_DONE) {
         gSerialSendSource = 0;
-        own->peerFlags = 0;
+        own->peerFlags = SERIAL_SEND_IDLE;
         own->active = 1;
       }
     }
   }
-  // flags tells the partner this side is receiving (1) or has received the
-  // last block (2); the receive ends once the partner has seen that
-  if (own->flags == 2) {
-    if (peer->peerFlags != 2) {
+  // flags tells the partner this side is receiving or has received the last
+  // block; the receive ends once the partner has seen that
+  if (own->flags == SERIAL_RECEIVE_DONE) {
+    if (peer->peerFlags != SERIAL_SEND_LAST) {
       gSerialReceiveDest = 0;
-      own->flags = 0;
+      own->flags = SERIAL_RECEIVE_IDLE;
     }
   } else {
-    own->flags = 0;
+    own->flags = SERIAL_RECEIVE_IDLE;
     if (gSerialReceiveDest != 0)
-      own->flags = 1;
+      own->flags = SERIAL_RECEIVE_ACTIVE;
   }
 }
 

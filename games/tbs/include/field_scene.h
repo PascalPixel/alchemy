@@ -43,10 +43,11 @@ enum {
 /// A condition that holds while flag is set.
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
 
-/// Set once the party has left Vale (the world map's entrance 1): Vale's
+/// Set once the party has left Vale (WORLD_MAP_FROM_VALE_GATE): Vale's
 /// scenes then place their later actors and lines, the Sanctum takes another
 /// event table and Healer line, and the Sol Sanctum approach moves its sentry,
-/// changes cell collision and stops sending its way down to scene 10.
+/// changes cell collision and stops sending its way down to
+/// SceneId_ValeEruption.
 enum { FLAG_PARTY_LEFT_VALE = 0x815 };
 
 /// A scene entrance: where and facing which way the party arrives, and the
@@ -181,8 +182,7 @@ struct SceneEvent {
 
 STATIC_ASSERT(sizeof(struct SceneEvent) == 12);
 
-/// SceneEvent.control's low four bits: what the event answers. Kind 7 is the
-/// talk event of an actor Halt has stopped (Scene_FindActorTalkEvent).
+/// SceneEvent.control's low four bits: what the event answers.
 enum SceneEventKind {
   EVENT_TALK = 0, ///< the A button on an actor; trigger is its id
   /// Stepping onto a cell whose collision code is the trigger, when no touch
@@ -192,7 +192,9 @@ enum SceneEventKind {
   EVENT_SEARCH = 3, ///< the A button on what is ahead, when it is no actor
   EVENT_ITEM = 4,   ///< an item used on a cell or an actor
   EVENT_PSYNERGY = 5,
-  EVENT_RAISED = 6 ///< raised by code through FieldWork.event
+  EVENT_RAISED = 6, ///< raised by code through FieldWork.event
+  /// Talking to an actor Halt has stopped (Scene_FindActorTalkEvent).
+  EVENT_TALK_HALTED = 7
 };
 
 /// The raised event the menus and shortcut keys raise instead of opening

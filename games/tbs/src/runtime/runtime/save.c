@@ -6,9 +6,10 @@
 
 // Saving. The flash chip holds 16 sectors of 4 KB; each holds one record: a
 // 16-byte header (signature, record id, checksum of the payload, sequence
-// number) and its payload. A save file is records n and n + 3 (n = 0 to 2).
-// Writing a record goes to a free sector before the old copy is invalidated,
-// and the highest sequence number of a record id is its current copy.
+// number) and its payload. A save file is records n and n + 3, for n below
+// SAVE_FILE_COUNT. Writing a record goes to a free sector before the old copy
+// is invalidated, and the highest sequence number of a record id is its current
+// copy.
 
 enum {
   SAVE_FLASH_TIMER = 2, ///< the hardware timer handed to the flash library
@@ -25,15 +26,15 @@ enum {
 };
 
 /// Allocates the save workspace (heap slot HEAP_SLOT_SAVE), installs the flash
-/// library's timer 2 handler, identifies the flash chip (up to eight tries,
-/// a frame apart) and scans all 16 sectors into the workspace's occupied,
-/// recordId and sequence tables: a sector counts as taken when its signature
-/// and checksum are good, and of two copies of a record only the newer stays
-/// taken. Returns 1 when no flash chip answers, 0 otherwise; either way the
-/// caller ends with SaveState_ReleaseWorkspace. Called by the save screens
-/// (window/battle_command/save.c) before every save, load, copy or delete.
-/// The workspace is EWRAM first (Runtime_AllocateBlock) and not cleared by
-/// the allocator, so it is cleared here; the record and sector-table
+/// library's SAVE_FLASH_TIMER handler, identifies the flash chip (up to eight
+/// tries, a frame apart) and scans all 16 sectors into the workspace's
+/// occupied, recordId and sequence tables: a sector counts as taken when its
+/// signature and checksum are good, and of two copies of a record only the
+/// newer stays taken. Returns 1 when no flash chip answers, 0 otherwise; either
+/// way the caller ends with SaveState_ReleaseWorkspace. Called by the save
+/// screens (window/battle_command/save.c) before every save, load, copy or
+/// delete. The workspace is EWRAM first (Runtime_AllocateBlock) and not cleared
+/// by the allocator, so it is cleared here; the record and sector-table
 /// functions in this file read it through gSaveWorkspace, the slot's word in
 /// gWorkSlot, and need it allocated.
 s32 SaveState_InitializeWorkspace(void) {
@@ -103,8 +104,8 @@ s32 SaveState_InitializeWorkspace(void) {
 
 /// Picks the free sector to write record `mode` to, at random. The last free
 /// sector only goes to a record that already has a copy, so replacing a save
-/// always has room. Called by SaveState_WriteRecord. Returns 16 when there is
-/// no sector to use.
+/// always has room. Called by SaveState_WriteRecord. Returns SAVE_SECTOR_COUNT
+/// when there is no sector to use.
 u32 SaveState_SelectWriteSlot(s32 mode) {
   u32 empty[SAVE_SECTOR_COUNT];
   s32 count;
@@ -303,7 +304,7 @@ s32 SaveState_ChecksumWorkspace(void) {
 }
 
 /// Returns the occupied sector holding the newest copy of record `recordId`,
-/// or 16. Called by every record operation in this file.
+/// or SAVE_SECTOR_COUNT. Called by every record operation in this file.
 u32 SaveState_FindLatestSlot(s32 recordId) {
   struct SaveWorkspace *work;
   u32 latestSequence;
@@ -324,8 +325,8 @@ u32 SaveState_FindLatestSlot(s32 recordId) {
   return latestSlot;
 }
 
-/// Overwrites sector `index` with a header for no record (id 16) and clears
-/// its occupied entry. Called by SaveState_WriteRecord and
+/// Overwrites sector `index` with a header for no record (SAVE_RECORD_NONE) and
+/// clears its occupied entry. Called by SaveState_WriteRecord and
 /// SaveState_DeleteRecord. Returns 0 on success and 1 on failure.
 s32 SaveState_InvalidateSlot(s32 index) {
   struct SaveWorkspace *work;

@@ -19,9 +19,9 @@ struct FieldActor;
 /// numbers.
 struct SceneRecord {
   s16 resourceId; ///< the overlay Resource_LoadCode loads into gOverlayArea
-  /// The place: entering a new group clears flags 0x300 to 0x3ff and the step
-  /// counters and moves Retreat's destination; FLAG_PLACE_VISITED(group) marks
-  /// it visited (Scene_ResetFlagsOnEnter).
+  /// The place: entering a new group clears the FLAG_PLACE_TEMP_ flags and the
+  /// step counters and moves Retreat's destination; FLAG_PLACE_VISITED(group)
+  /// marks it visited (Scene_ResetFlagsOnEnter).
   s8 group;
   /// An enum SceneVariant, copied to gGameState.sceneVariant:
   /// SCENE_VARIANT_TOWN for towns and their interiors (53 rows: Vale,

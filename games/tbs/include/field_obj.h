@@ -79,8 +79,8 @@ struct FieldActor {
   /// keeps a resting height, a sway or a countdown here.
   s32 riseBaseY;
   union {
-    struct AnimationObject *sprite; ///< spriteStorageKind 1
-    void **sprites; ///< spriteStorageKind 2: four sprites, empty ones null
+    struct AnimationObject *sprite; ///< OBJECT_SPRITE_ONE
+    void **sprites; ///< OBJECT_SPRITE_GROUP: four, empty ones null
   };
   /// Zero hides sprites; one draws a single sprite, two draws a group.
   /// The engine reads the low four bits; SC_B54_ON and SC_B54_OFF set 1 and 0.

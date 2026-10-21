@@ -36,7 +36,7 @@ struct DjinnMenuBackdrop {
   u16 palette[64];   ///< BG palettes 4 to 7
   s32 tutorialTimer; ///< frames into the tutorial's current step
   /// The Djinn tutorial's step: 0 outside it, else 1, 14, 27 or 28 to start,
-  /// by flags 0x16f and 0x171.
+  /// by FLAG_DJINN_TUTORIAL_PART_A and FLAG_DJINN_TUTORIAL_PART_B.
   long tutorialStep;
 };
 

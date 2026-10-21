@@ -54,8 +54,8 @@
 #define SC_NOP(v) 0x1d, (v) ///< Skip its operand.
 #define SC_SE(n) 0x1e, (n)  ///< Sound effect
 #define SC_BASE 0x1f        ///< Restart from the next word.
-#define SC_B54_OFF 0x20     ///< Hide the sprites (spriteStorageKind 0).
-#define SC_B54_ON 0x21      ///< Show one sprite (spriteStorageKind 1).
+#define SC_B54_OFF 0x20     ///< Hide the sprites (OBJECT_SPRITE_NONE).
+#define SC_B54_ON 0x21      ///< Show one sprite (OBJECT_SPRITE_ONE).
 /// Call fn with the object each frame until it returns zero.
 #define SC_CALL(fn) 0x22, (s32)(fn)
 #define SC_KEY_COUNT 0x23 ///< Check the configured keys.

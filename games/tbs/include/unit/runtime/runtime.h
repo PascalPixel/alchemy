@@ -179,7 +179,7 @@ s32 SerialRuntime_BeginSend(void *source, s32 size);
 s32 SerialRuntime_BeginReceive(void *destination);
 void SerialRuntime_WaitForTransfers(void);
 s32 SerialRuntime_GetActiveTransfers(void);
-void BattleLink_ResetTransferState(void);
+void LinkBattle_ResetTransferState(void);
 void SerialRuntime_StepBlockTransfer(void);
 void SerialTest_Delay(void);
 void SerialTest_Run(void);

@@ -415,7 +415,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
 
   // Sends the header, then this console's actions. Both transfers share one
   // timeout of LINK_TRANSFER_TIMEOUT frames.
-  s32 BattleLink_SendActions(void) {
+  s32 LinkBattle_SendActions(void) {
     s32 timeout;
     s32 disconnected;
     s32 status = SerialRuntime_BeginSend(state, LINK_PACKET_BYTES);
@@ -456,7 +456,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
 
   // Receives the header, then the other console's actions after ours. A
   // transfer that grows past its expected size, or ends short of it, fails.
-  s32 BattleLink_ReceiveActions(void) {
+  s32 LinkBattle_ReceiveActions(void) {
     // gSerialReceivedSize changes under the serial interrupt and is volatile
     // (serial_runtime.h), so every read here loads it again.
     s32 timeout;
@@ -531,15 +531,15 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       IRQ_LOCK(saved);
       gBattleRandomSeed = state->seed = gRandomSeed;
       IRQ_UNLOCK(saved);
-      if (BattleLink_SendActions() < 0 || BattleLink_ReceiveActions() < 0)
+      if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
         goto fail;
       result = state->count;
     } else {
-      if (BattleLink_ReceiveActions() < 0)
+      if (LinkBattle_ReceiveActions() < 0)
         goto fail;
       result = state->count;
       state->count = count;
-      if (BattleLink_SendActions() < 0 || BattleRandomFar() != state->check)
+      if (LinkBattle_SendActions() < 0 || BattleRandomFar() != state->check)
         goto fail;
       gBattleRandomSeed = state->seed;
     }
@@ -558,7 +558,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   }
 
 fail:
-  BattleLink_ResetTransferState();
+  LinkBattle_ResetTransferState();
   SerialRuntime_RemoveIrqHandlers();
   MemFree(state);
   return -1;

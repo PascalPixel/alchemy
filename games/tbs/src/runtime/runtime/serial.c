@@ -74,7 +74,7 @@ void SerialRuntime_Initialize(void) {
   gSerialSendSize = 0;
   gSerialReceiveDest = 0;
   gSerialReceivedSize = 0;
-  BattleLink_ResetTransferState();
+  LinkBattle_ResetTransferState();
   IRQ_UNLOCK(interruptEnable);
 }
 
@@ -557,7 +557,7 @@ s32 SerialRuntime_GetActiveTransfers(void) {
   return flags;
 }
 
-void BattleLink_ResetTransferState(void) { SerialRuntime_ResetTransferState(); }
+void LinkBattle_ResetTransferState(void) { SerialRuntime_ResetTransferState(); }
 
 struct OneCell {
   u16 v;

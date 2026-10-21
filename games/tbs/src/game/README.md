@@ -13,6 +13,19 @@ it's a good place to start when you want to know what something in the game
 actually is. [Battles](../battle/README.md) follows an ability from these
 tables to its damage, and [Shops](../shop/README.md) sell the items.
 
+![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
+
+The Item screen above asks one of those questions. With the hand on Remove,
+the status panel shows Isaac's Attack as 24 now and 17 without the Machete,
+and the menu has no formula of its own for the second number. It copies
+Isaac aside, really takes the Machete off him, and has `UnitCalc`
+([`game/units.c`](game/units.c)) work out his stats again from his base
+stats, equipment, Djinn and class, the same function that runs whenever any
+of those change. Then it draws the new numbers against the copy and puts
+the copy back (`Menu_DrawOwnerStatusPanel`, in
+[`menu/menu/common.c`](../menu/menu/common.c)). So whatever the menu
+promises is exactly what equipping would do.
+
 ## Files
 
 | File | What it holds |

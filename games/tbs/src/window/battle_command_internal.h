@@ -326,6 +326,12 @@ enum {
   LIST_TILE_PAGES_RIGHT = 0xf335 ///< Right arrow, tile 0x335
 };
 
+/// The two battle command rows Menu_RunCommandRow runs.
+enum CommandRowMode {
+  COMMAND_ROW_PARTY = 0, ///< the start of a round: Fight, Flee and Status
+  COMMAND_ROW_MEMBER = 1 ///< a member's commands; any mode but 0 is this row
+};
+
 /// What BattleTarget_RunSelection shows on a party member for the action
 /// being aimed (Battle_ClassifyEntryKind), and which member it starts on.
 enum BattleTargetHint {

@@ -25,17 +25,16 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
 
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until
-/// a command is chosen. Returns the command chosen (its name is
-/// MsgCommandName + command), -1 when B cancels, or -2 when L or R asks for
-/// the status screen; the last two in a member's row only. When the link
-/// battle's time runs out the row takes its first command.
-/// Battle_CollectPartyCommands runs both rows.
+/// a command is chosen. Returns the command chosen (enum CommandIcon), -1 when
+/// B cancels, or -2 when L or R asks for the status screen; the last two in a
+/// member's row only. When the link battle's time runs out the row takes its
+/// first command. Battle_CollectPartyCommands runs both rows.
 ///
-/// Mode 0 is the party's row at the start of a round: Fight (14), Flee (4)
-/// and Status (7). Any other mode is a member's row: Attack (0), Psynergy
-/// (1), Djinn (15) once the party's Djinn are enough for a summon
-/// (BattleSummonState.availableMask), Summon (16) while any Djinni is on
-/// standby, Item (2) and Defend (3). Each row remembers its choice in
+/// COMMAND_ROW_PARTY is the party's row at the start of a round: Fight, Flee
+/// and Status. COMMAND_ROW_MEMBER, as any other mode, is a member's row:
+/// Attack, Psynergy, Djinn once the party's Djinn are enough for a summon
+/// (BattleSummonState.availableMask), Summon while any Djinni is on standby,
+/// Item and Defend. Each row remembers its choice in
 /// BattleMenuWork.commandSelection. While the Djinn tutorial runs, the row
 /// presses the keys for the player.
 s32 Menu_RunCommandRow(s32 mode) {
@@ -59,35 +58,35 @@ s32 Menu_RunCommandRow(s32 mode) {
   for (i = 255; i >= 0; i--)
     selectionUi->palette.slot[i] = 255;
   selectionUi->palette.count = 1;
-  if (mode == 0)
+  if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = UiWindow_Create(20, 17, 10, 3, 6);
   else
     selectionUi->window = UiWindow_Create(WINDOW_X, 17, 30 - WINDOW_X, 3, 6);
   selectionUi->drawnIndex = -1;
   // The commands, as listed above. tradeCount counts the party's standby
   // Djinn.
-  if (mode == 0) {
+  if (mode == COMMAND_ROW_PARTY) {
     kindCount = 0;
-    selectionUi->commandKinds[kindCount++] = 14;
-    selectionUi->commandKinds[kindCount++] = 4;
-    selectionUi->commandKinds[kindCount++] = 7;
+    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FIGHT;
+    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
+    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
     selectionUi->commandKinds[kindCount] = -1;
     selectionUi->selectedIndex = gLinkCountdownWork->commandSelection[0];
   } else {
     selectionUi->selectedIndex = gLinkCountdownWork->commandSelection[1];
     kindCount = 0;
-    selectionUi->commandKinds[kindCount++] = 0;
-    selectionUi->commandKinds[kindCount++] = 1;
+    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ATTACK;
+    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_PSYNERGY;
     if (*((s32 *)Djinn_GetRecoveryTableFar(0)) != 0) {
       BattleParty_CountStandbyDjinnFar(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
-      selectionUi->commandKinds[kindCount++] = 15;
+      selectionUi->commandKinds[kindCount++] = COMMAND_ICON_DJINN;
       if (tradeCount != 0)
-        selectionUi->commandKinds[kindCount++] = 16;
+        selectionUi->commandKinds[kindCount++] = COMMAND_ICON_SUMMON;
     }
-    selectionUi->commandKinds[kindCount++] = 2;
-    selectionUi->commandKinds[kindCount++] = 3;
+    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ITEM;
+    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_DEFEND;
     // UB: with all six commands this -1 lands in commandKinds[6], one word
     // past the end of the block; the loops below stop at six and never read
     // it.
@@ -112,7 +111,7 @@ s32 Menu_RunCommandRow(s32 mode) {
     do {
       s32 x = (entryIndex - selectionUi->iconCount) * 24;
       selectionUi->entries[entryIndex].posX = x + 155;
-      if (mode != 0)
+      if (mode != COMMAND_ROW_PARTY)
         selectionUi->entries[entryIndex].posX = x + WINDOW_X * 8 - 5;
       selectionUi->entries[entryIndex].posY = 136;
       entryIndex++;
@@ -138,7 +137,7 @@ s32 Menu_RunCommandRow(s32 mode) {
     if (stripDirty != 0) {
       stripDirty = 0;
       render->menuBusy = 1;
-      if (mode) {
+      if (mode != COMMAND_ROW_PARTY) {
         s32 panel;
         s32 count;
         for (panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
@@ -195,13 +194,14 @@ s32 Menu_RunCommandRow(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++) {
               s32 tmp;
-              /* FAKEMATCH(temporary): vram, offset and mask, as in mode 1; as
-               * constants in place, 6 of 1037 instructions differ in tbs-en. */
+              /* FAKEMATCH(temporary): vram, offset and mask, as in the member's
+               * row; as constants in place, 6 of 1037 instructions differ in
+               * tbs-en. */
               volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 20;
               s32 offset = 0x100;
               s32 mask = 3;
-              /* FAKEMATCH(temporary): tmp, as in mode 1; as the two values in
-               * place, 129 of 1037 instructions differ in tbs-en. */
+              /* FAKEMATCH(temporary): tmp, as in the member's row; as the two
+               * values in place, 129 of 1037 instructions differ in tbs-en. */
               vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
                   tmp = panel * 16 + entryIndex * 4 + col + offset;
               tmp = col & mask;
@@ -256,20 +256,22 @@ s32 Menu_RunCommandRow(s32 mode) {
       keys = repeat = 0;
       if (navigation->tutorialDelay == 0) {
         if (navigation->commandActor == 1) {
-          if (selectionUi->commandKinds[selectionUi->selectedIndex] == 3)
+          if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
+              COMMAND_ICON_DEFEND)
             keys = repeat = 1;
           else
             keys = repeat = 32;
           navigation->tutorialDelay = 30;
         } else if (navigation->commandActor == 0) {
           s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
-          if (kind == 16 || (tradeCount == 0 && kind == 15)) {
+          if (kind == COMMAND_ICON_SUMMON ||
+              (tradeCount == 0 && kind == COMMAND_ICON_DJINN)) {
             if (navigation->tutorialStep == 1) {
               struct UiWindow *message;
-              if (kind == 15)
+              if (kind == COMMAND_ICON_DJINN)
                 message = UiText_ShowMessageAndWaitComplete(
                     MsgDjinnTutorialUnleashCommand, 15, 8);
-              else if (kind == 16)
+              else if (kind == COMMAND_ICON_SUMMON)
                 message = UiText_ShowMessageAndWaitComplete(
                     MsgDjinnTutorialSummon, 15, 8);
               BattlePresentation_WaitForPromptAtFar(102, 155);
@@ -292,7 +294,7 @@ s32 Menu_RunCommandRow(s32 mode) {
         navigation->tutorialDelay--;
       }
     }
-    if ((keys & KEYS_SHOULDERS) && mode != 0) {
+    if ((keys & KEYS_SHOULDERS) && mode != COMMAND_ROW_PARTY) {
       command = -2;
       break;
     }
@@ -300,7 +302,7 @@ s32 Menu_RunCommandRow(s32 mode) {
       command = selectionUi->commandKinds[selectionUi->selectedIndex];
       break;
     }
-    if (mode != 0 && (keys & KEY_B)) {
+    if (mode != COMMAND_ROW_PARTY && (keys & KEY_B)) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
       command = -1;
       break;
@@ -326,7 +328,7 @@ s32 Menu_RunCommandRow(s32 mode) {
     render->menuBusy = 0;
     WaitFrames(1);
   }
-  if (mode != 0)
+  if (mode != COMMAND_ROW_PARTY)
     gLinkCountdownWork->commandSelection[1] = selectionUi->selectedIndex;
   else
     gLinkCountdownWork->commandSelection[0] = selectionUi->selectedIndex;

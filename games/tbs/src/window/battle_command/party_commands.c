@@ -174,7 +174,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
     }
     // The party's row; with no member to choose, as if Fight were taken.
     if (commandCount > 0) {
-      mode = Menu_RunCommandRow(0);
+      mode = Menu_RunCommandRow(COMMAND_ROW_PARTY);
     } else {
       mode = COMMAND_ICON_FIGHT;
     }
@@ -285,7 +285,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       BattlePres_SetActorModesFar(signatureHeader, 1);
       BattleLayout_HighlightPartyPanels(signatureHeader);
       WaitFrames(1);
-      mode = Menu_RunCommandRow(1);
+      mode = Menu_RunCommandRow(COMMAND_ROW_MEMBER);
       WaitFrames(1);
       if (mode == -2) {
         void *block;

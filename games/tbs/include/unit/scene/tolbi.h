@@ -13,7 +13,7 @@ const struct SceneEvent *Tolbi_SelectEvents(void);
 s32 Tolbi_ApplyEntryState(s32 unused);
 extern s32 gTolbiMirroredActor[];
 extern s32 gTolbiOlderBrotherRun[];
-extern s32 gTolbiYoungerSiblingRun[];
+extern s32 gTolbiYoungerSisterRun[];
 extern struct SceneEntrance gTolbiEntrances[];
 extern u32 gTolbiExits[];
 extern struct ScenePlacement gTolbiPlacements[];

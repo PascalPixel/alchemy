@@ -320,10 +320,10 @@ const struct ScenePlacement *Xian_GetPlacements(void) {
   return gXian_Placements;
 }
 
-/// A villager, ACTOR_WOMAN_ON_YOUNG_WARRIORS, asks about the young warriors'
-/// way here, before Xian hears of Hsu. "Young warriors, very gallant! You came
-/// through Mogall Forest?" A yes earns respect; a no is a lie, since Silk Road
-/// from Altin is blocked.
+/// A villager asks whether the young warriors came through Mogall Forest. She's
+/// ACTOR_WOMAN_ON_YOUNG_WARRIORS, and asks before Xian hears of Hsu. "Young
+/// warriors, very gallant! You came through Mogall Forest?" A yes earns
+/// respect; a no is a lie, since Silk Road from Altin is blocked.
 static void Xian_AskAboutYoungWarriors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianYoungWarriorsVeryGallantCame);
@@ -591,10 +591,10 @@ static void Xian_TalkToKungFuStudent(void) {
   }
 }
 
-/// Talking to Feizhi by the south exit, after she has left Master Feh's school
-/// and before Xian hears of Hsu. "You are the warriors from the school... Are
-/// you strong warriors?" A yes: she hopes they will go west; a no: very few
-/// warriors would call themselves weak.
+/// Feizhi asks whether the party are strong warriors. She's by the south exit
+/// after she has left Master Feh's school, and before Xian hears of Hsu. "You
+/// are the warriors from the school... Are you strong warriors?" A yes: she
+/// hopes they will go west; a no: very few warriors would call themselves weak.
 static void Xian_TalkToFeizhi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianWarriorsFromSchoolStrongWarriors);

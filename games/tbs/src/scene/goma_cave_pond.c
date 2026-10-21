@@ -108,8 +108,8 @@ struct ScenePlacement gGomaCavePondPlacements[] = {
 // clang-format on
 
 struct SceneEvent gGomaCavePondEvents[] = {
-    {0x21, 5, CONDITION_ALWAYS, 1},
-    {0x21, 6, CONDITION_ALWAYS, 2},
-    {0x21, 7, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 5, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 6, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 7, CONDITION_ALWAYS, 3},
     {SCENE_EVENTS_END},
 };

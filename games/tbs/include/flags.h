@@ -28,8 +28,9 @@
 /// Set while the field menu is open; scenes hold their moving actors still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or the pause menu, or pressing a shortcut,
-/// raises event 250 instead (Field_RunScene, Field_RequestShortcut); Vault's
-/// inn sets it while the party corners the suspects.
+/// raises FIELD_EVENT_MENUS_RAISED instead (Field_RunScene,
+/// Field_RequestShortcut); Vault's inn sets it while the party corners the
+/// suspects.
 #define FLAG_MENUS_RAISE_EVENT 0x107
 // Lit lighthouses: the adepts of a lit element regain PP faster
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
@@ -769,9 +770,10 @@
 #define FLAG_BLACK_ORB_RETURNED 0x85d
 #define FLAG_WORLD_MAP_TURTLE_BOOTS 0xfcf ///< buried, found by searching
 
-// Scene flags, 0x200 to 0x2ff: Scene_ResetFlagsOnEnter clears them on every
-// ordinary entrance, and each scene keeps its own puzzle and event states in
-// them. A scene says beside its uses what each one holds there.
+// Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF:
+// Scene_ResetFlagsOnEnter clears them on every ordinary entrance, and each
+// scene keeps its own puzzle and event states in them. A scene says beside its
+// uses what each one holds there.
 #define FLAG_SCENE_TEMP_00 0x200
 #define FLAG_SCENE_TEMP_01 0x201
 #define FLAG_SCENE_TEMP_02 0x202
@@ -1029,11 +1031,11 @@
 #define FLAG_SCENE_TEMP_FE 0x2fe
 #define FLAG_SCENE_TEMP_FF 0x2ff
 
-// Place flags, 0x300 to 0x3ff: Scene_ResetFlagsOnEnter clears them whenever
-// the party enters a different place (a new scene group), so they keep what
-// should last while the party is anywhere inside one place, such as where
-// Fuchin Falls Cave's logs float. A scene says beside its uses what each one
-// holds there.
+// Place flags, FLAG_PLACE_TEMP_00 to FLAG_PLACE_TEMP_FF:
+// Scene_ResetFlagsOnEnter clears them whenever the party enters a different
+// place (a new scene group), so they keep what should last while the party is
+// anywhere inside one place, such as where Fuchin Falls Cave's logs float. A
+// scene says beside its uses what each one holds there.
 #define FLAG_PLACE_TEMP_00 0x300
 #define FLAG_PLACE_TEMP_01 0x301
 #define FLAG_PLACE_TEMP_02 0x302

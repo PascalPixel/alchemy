@@ -77,6 +77,8 @@ void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
 /// BattleFx_Run when no target with a talk event is near, and through
 /// BattleFx_MarkChildAndRunFallbackTransition otherwise. Fills effect slots 0
 /// to 15 and sets scene->y to the caster's height.
+///
+/// Abilities: Halt (FIELD_KIND_HALT).
 void BattleEffect_RunFallbackObjectTransition(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct MotionObject *caster = scene->mainObject;

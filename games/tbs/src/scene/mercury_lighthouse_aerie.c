@@ -100,9 +100,16 @@ enum MercuryLighthouseAerieActor {
   /// the two east of it, ACTOR_FIRST_BEACON_STATUE + 2 and + 3, are drawn
   /// mirrored.
   ACTOR_FIRST_BEACON_STATUE,
-  ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6, ///< six
+  /// Six of them.
+  /// ★ Named from what the player sees: round white platforms at the foot of
+  /// the aerie's side ledges (its render)
+  ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6,
   /// The two platforms that stand on the lift and go up and down with it.
+  /// ★ Named from what the player sees: round white platforms below the lift's
+  /// statue (its render)
   ACTOR_LIFT_PLATFORM_1 = ACTOR_FIRST_PLATFORM + 3,
+  /// ★ Named from what the player sees: round white platforms below the lift's
+  /// statue (its render)
   ACTOR_LIFT_PLATFORM_2,
   ACTOR_KRADEN = ACTOR_FIRST_PLACED + 12,
   ACTOR_FELIX,

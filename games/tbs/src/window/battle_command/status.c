@@ -15,8 +15,78 @@
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define OWNER_STATUS_LABEL(row) (MsgOwnerStatusAttack + (row))
 #else
-#define OWNER_STATUS_LABEL(row) (MsgOwnerStatusExp - 10 + (row))
+#define OWNER_STATUS_LABEL(row)                                                \
+  (MsgOwnerStatusExp - OWNER_STATUS_LABEL_EXP + (row))
 #endif
+
+/// The status screen's labels, in their message order from
+/// MsgOwnerStatusAttack (OWNER_STATUS_LABEL).
+enum OwnerStatusLabel {
+  OWNER_STATUS_LABEL_ATTACK = 0,
+  OWNER_STATUS_LABEL_DEFENSE = 1,
+  OWNER_STATUS_LABEL_AGILITY = 2,
+  OWNER_STATUS_LABEL_LUCK = 3,
+  OWNER_STATUS_LABEL_ATTRIBUTES = 4,    ///< "Attributes", which nothing draws
+  OWNER_STATUS_LABEL_ELEMENT_LEVEL = 5, ///< "Lv"
+  OWNER_STATUS_LABEL_POWER = 6,
+  OWNER_STATUS_LABEL_RESIST = 7,
+  OWNER_STATUS_LABEL_CLASS = 8, ///< "Class", which nothing draws
+  OWNER_STATUS_LABEL_DJINN = 9,
+  OWNER_STATUS_LABEL_EXP = 10 ///< MsgOwnerStatusExp
+};
+
+/// The status screen's help lines, from MsgOwnerStatusEntryHelp, which the
+/// cursor stops in windata.s name; the condition icons' places follow.
+enum OwnerStatusHelp {
+  /// The name, whose help says how to switch members with L and R.
+  OWNER_STATUS_HELP_NAME = 0,
+  OWNER_STATUS_HELP_LEVEL = 1, ///< no cursor stop shows it
+  OWNER_STATUS_HELP_EXPERIENCE = 2,
+  OWNER_STATUS_HELP_HP = 3,
+  OWNER_STATUS_HELP_PP = 4,
+  OWNER_STATUS_HELP_CLASS = 5,
+  OWNER_STATUS_HELP_DJINN = 6,
+  OWNER_STATUS_HELP_ELEMENT_LEVEL = 7,
+  OWNER_STATUS_HELP_POWER = 8,
+  OWNER_STATUS_HELP_RESIST = 9,
+  OWNER_STATUS_HELP_ATTACK = 10,
+  OWNER_STATUS_HELP_DEFENSE = 11,
+  OWNER_STATUS_HELP_AGILITY = 12,
+  OWNER_STATUS_HELP_LUCK = 13,
+  /// The first condition icon's place: its help is its condition's
+  /// (MsgOwnerStatusConditionHelp).
+  OWNER_STATUS_HELP_CONDITION = 14,
+  OWNER_STATUS_HELP_LAST_CONDITION = 21 ///< the eighth icon's place
+};
+
+/// A condition the status screen shows as an icon, which picks both the icon
+/// and its help (MsgOwnerStatusConditionHelp + condition).
+enum OwnerStatusCondition {
+  OWNER_CONDITION_EMPTY = -1, ///< a place with no icon
+  OWNER_CONDITION_NORMAL = 0, ///< no condition: "Normal status."
+  OWNER_CONDITION_POISON = 1,
+  OWNER_CONDITION_DEADLY_POISON = 2,
+  OWNER_CONDITION_STUN = 3,
+  OWNER_CONDITION_PSYNERGY_SEALED = 4,
+  OWNER_CONDITION_SLEEP = 5,
+  OWNER_CONDITION_DELUSION = 6,
+  OWNER_CONDITION_HAUNT = 7,
+  OWNER_CONDITION_GRIM_REAPER = 8, ///< downed when its turns run out
+  OWNER_CONDITION_ATTACK_UP = 9,
+  OWNER_CONDITION_ATTACK_DOWN = 10,
+  OWNER_CONDITION_DEFENSE_UP = 11,
+  OWNER_CONDITION_DEFENSE_DOWN = 12,
+  OWNER_CONDITION_RESISTANCE_UP = 13,
+  OWNER_CONDITION_RESISTANCE_DOWN = 14,
+  OWNER_CONDITION_CURSED_ITEM = 15,
+  OWNER_CONDITION_DOWNED = 16,
+  OWNER_CONDITION_AGILITY_UP = 17,
+  OWNER_CONDITION_AGILITY_DOWN = 18
+};
+
+/// What the status screen redraws on its next frame.
+#define OWNER_STATUS_REDRAW_ALL 1  ///< on opening, and on L or R
+#define OWNER_STATUS_REDRAW_HELP 2 ///< only the help line
 
 // The status screen's cursor groups, each with its table of cursor stops.
 /// The name, experience, HP, PP, class, Djinn and element rows
@@ -29,12 +99,11 @@
 /// The status screen's cursor: its place in each group, the help entry it
 /// shows and where it points.
 struct StatusCursor {
-  /// The cursor's place in each group. [3] is written when Left, Right or A
-  /// in group 1 makes it group 3 for a frame; [4] is cleared at the start
-  /// and never read.
+  /// The cursor's place in each group. [3] is written for the one frame
+  /// Left, Right or A in STATUS_CURSOR_COMBAT_STATS leaves the group at a
+  /// value no branch reads; [4] is cleared at the start and never read.
   s8 groupPositions[5];
-  /// The help shown: MsgOwnerStatusEntryHelp + entry for 0 to 13, the help
-  /// of condition icon entry - 14 from 14 on. It decides the group.
+  /// The help shown (enum OwnerStatusHelp). It decides the group.
   s32 helpEntry;
   s32 drawnHelpEntry; ///< the help drawn last; a change redraws the help
   s32 group;          ///< STATUS_CURSOR_ group
@@ -47,11 +116,11 @@ struct StatusCursor {
 /// the link battle's time runs out: the member's level, experience, HP and
 /// PP, class, stats, Djinn, elements and conditions, with a help line for
 /// the item under the cursor. With `listCount` nonzero, L and R step through
-/// the members of `list` (0xff ends it, 0xfe is an empty place). The link
-/// timer's window is closed while it is open (BattleMenuWork.timerHidden),
-/// and the party status window is redrawn on the way out. Returns 0.
-/// Battle_CollectPartyCommands opens it from the Status command and from L
-/// or R in a member's command row.
+/// the members of `list` (BATTLE_UNIT_LIST_END ends it, BATTLE_UNIT_REMOVED is
+/// an empty place). The link timer's window is closed while it is open
+/// (BattleMenuWork.timerHidden), and the party status window is redrawn on the
+/// way out. Returns 0. Battle_CollectPartyCommands opens it from the Status
+/// command and from L or R in a member's command row.
 s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   struct MenuSprite portraitSprite;
   struct MenuSprite cursorSprite;
@@ -89,7 +158,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   s32 iconX;
 
   render = UI_WORK;
-  redraw = 1;
+  redraw = OWNER_STATUS_REDRAW_ALL;
   ownerIndex = -1;
   portraitSlot = VramCache_AllocEntry(0x200);
   statusCount = 0;
@@ -113,7 +182,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   cursorSlot = VramCache_AllocEntry(0x80);
   for (i = 0; i <= 10; i++) {
     statusSlots[i] = VramCache_AllocEntry(0x80);
-    statusKinds[i] = -1;
+    statusKinds[i] = OWNER_CONDITION_EMPTY;
   }
 
   // Find the member's place in the list, for L and R.
@@ -121,10 +190,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     for (i = 0; i <= 5; i++) {
       s32 kind = list[i];
 
-      if (kind == 0xFF) {
+      if (kind == BATTLE_UNIT_LIST_END) {
         break;
       }
-      if (kind != 0xFE) {
+      if (kind != BATTLE_UNIT_REMOVED) {
         if (kind == owner) {
           ownerIndex = i;
           break;
@@ -152,19 +221,11 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     nameSprite.oam.f.palette = 14;
     Runtime_PushSlotEntry((s32 *)&nameSprite, 240);
 
-    // The group follows the help shown: entries 0 to 9 are the general rows
-    // (9 stops with Djinn, 7 without), 10 to 13 the stats, 14 to 21 the
-    // conditions.
+    // The group follows the help shown: the general rows have 9 stops with
+    // Djinn, 7 without.
     switch (cursor.helpEntry) {
-    case 0:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
+    case OWNER_STATUS_HELP_NAME:
+    case OWNER_STATUS_HELP_EXPERIENCE ... OWNER_STATUS_HELP_RESIST:
     default:
       cursor.group = STATUS_CURSOR_GENERAL;
       if (hasDjinn != 0) {
@@ -173,21 +234,11 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         cursor.groupSize = 7;
       }
       break;
-    case 10:
-    case 11:
-    case 12:
-    case 13:
+    case OWNER_STATUS_HELP_ATTACK ... OWNER_STATUS_HELP_LUCK:
       cursor.group = STATUS_CURSOR_COMBAT_STATS;
       cursor.groupSize = 4;
       break;
-    case 14:
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-    case 19:
-    case 20:
-    case 21:
+    case OWNER_STATUS_HELP_CONDITION ... OWNER_STATUS_HELP_LAST_CONDITION:
       cursor.group = STATUS_CURSOR_CONDITIONS;
       cursor.groupSize = statusCount;
       break;
@@ -221,12 +272,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
               groupPosition = cursor.groupPositions[cursor.group];
             }
           }
-        } else if ((keys & 0x31) != 0) {
+        } else if ((keys & (KEY_A | KEY_RIGHT | KEY_LEFT)) != 0) {
           keys = 0;
           AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
-          // A, Right or Left (0x31) toggles between the general group and
-          // the conditions. From group 1 this makes group 3, which no branch
-          // below reads; the next frame's switch makes it group 1 again.
+          // A, Right or Left toggles between the general group and the
+          // conditions. From STATUS_CURSOR_COMBAT_STATS this makes a group
+          // no branch below reads; the next frame's switch restores it.
           cursor.group ^= STATUS_CURSOR_CONDITIONS;
           if ((gKeysRepeat & KEY_A) != 0) {
             groupPosition = cursor.groupPositions[cursor.group];
@@ -261,8 +312,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
             groupPosition = cursor.groupPositions[0];
           }
           AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
-        } else if ((keys & 0xC1) != 0) {
-          // A, Up or Down (0xc1) go back to the general group.
+        } else if ((keys & (KEY_A | KEY_UP | KEY_DOWN)) != 0) {
+          // A, Up or Down go back to the general group.
           keys = 0;
           cursor.group = STATUS_CURSOR_GENERAL;
           groupPosition = cursor.groupPositions[0];
@@ -276,8 +327,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
       s32 k = cursor.groupPositions[cursor.group];
 
       // Without Djinn in the party the stops come from the table's second
-      // part, which leaves out the class and Djinn stops (help entries 5 and
-      // 6): 7 stops instead of 9.
+      // part, which leaves out the class and Djinn stops: 7 stops instead of 9.
       if (hasDjinn == 0) {
         k += 9;
       }
@@ -312,7 +362,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 
     if (cursor.drawnHelpEntry != cursor.helpEntry) {
       cursor.drawnHelpEntry = cursor.helpEntry;
-      redraw = 2;
+      redraw = OWNER_STATUS_REDRAW_HELP;
     }
     cursorPosition.x = cursor.column * 8;
     cursorPosition.y = cursor.row * 8;
@@ -355,8 +405,6 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     cursorSprite.oam.f.affineIndex = 8;
     Runtime_PushSlotEntry((s32 *)&cursorSprite, 241);
 
-    // redraw: bit 0 draws the whole screen (on opening and on L or R), bit 1
-    // only the help line.
     if (redraw != 0) {
       unit = UnitGetFar(owner);
 #if TBS_PATCH_1
@@ -364,7 +412,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 #endif
       Ui_FillVramBlockPattern();
 
-      if ((redraw & 1) != 0) {
+      if ((redraw & OWNER_STATUS_REDRAW_ALL) != 0) {
         RenderOutput_RedrawSavedRect(statusWindow);
         UiWindow_MapTextCanvasTiles(helpWindow->x, helpWindow->y,
                                     helpWindow->width, helpWindow->height, 0);
@@ -434,35 +482,40 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
                                   88, 32);
         UiText_DrawNumberInWindow(unit->maxPp, 4, statusWindow, 96, 32);
 
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(0), statusWindow, 136,
-                                     16);
+        UiText_DrawCharacterAtOffset(
+            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ATTACK), statusWindow, 136,
+            16);
         UiText_DrawNumberInWindow(unit->atk, 3, statusWindow,
                                   OWNER_STATUS_VALUE_X, 16);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(1), statusWindow, 136,
-                                     24);
+        UiText_DrawCharacterAtOffset(
+            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DEFENSE), statusWindow, 136,
+            24);
         UiText_DrawNumberInWindow(unit->def, 3, statusWindow,
                                   OWNER_STATUS_VALUE_X, 24);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(2), statusWindow, 136,
-                                     32);
+        UiText_DrawCharacterAtOffset(
+            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_AGILITY), statusWindow, 136,
+            32);
         UiText_DrawNumberInWindow(unit->agi, 3, statusWindow,
                                   OWNER_STATUS_VALUE_X, 32);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(3), statusWindow, 136,
-                                     40);
+        UiText_DrawCharacterAtOffset(
+            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_LUCK), statusWindow, 136, 40);
         UiText_DrawNumberInWindow(unit->luck, 3, statusWindow,
                                   OWNER_STATUS_VALUE_X, 40);
 
         UiText_DrawCharacterAtOffset(MsgClassName + unit->classIndex,
                                      statusWindow, 0, 48);
         if (hasDjinn != 0) {
-          UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(9), statusWindow, 0,
-                                       72);
+          UiText_DrawCharacterAtOffset(
+              OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DJINN), statusWindow, 0,
+              72);
         }
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(5), statusWindow, 0,
-                                     80);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(6), statusWindow, 0,
-                                     88);
-        UiText_DrawCharacterAtOffset(OWNER_STATUS_LABEL(7), statusWindow, 0,
-                                     96);
+        UiText_DrawCharacterAtOffset(
+            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ELEMENT_LEVEL), statusWindow,
+            0, 80);
+        UiText_DrawCharacterAtOffset(
+            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_POWER), statusWindow, 0, 88);
+        UiText_DrawCharacterAtOffset(
+            OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_RESIST), statusWindow, 0, 96);
 
         for (j = 0; j <= 3; j++) {
           s32 pal;
@@ -489,78 +542,76 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
                                     statusWindow, 40 + j * 32, 96);
         }
 
-        // The condition icons, at most eight, in this order: downed (16),
-        // cursed item (15), Grim Reaper (8), poison (1), deadly poison (2),
-        // Psynergy sealed (4), stun (3), sleep (5), haunt (7), delusion (6),
-        // then Attack, Defense and Resistance raised or lowered (9 to 14)
-        // and Agility (17, 18). The kind picks both the icon and its help
-        // (MsgOwnerStatusConditionHelp + kind); 0 alone means normal.
+        // The condition icons, at most eight, in this order: downed, cursed
+        // item, Grim Reaper, poison, deadly poison, Psynergy sealed, stun,
+        // sleep, haunt, delusion, then Attack, Defense and Resistance raised
+        // or lowered, and Agility. OWNER_CONDITION_NORMAL alone means none.
         i = 0;
         if (unit->hp == 0) {
-          statusKinds[0] = 16;
+          statusKinds[0] = OWNER_CONDITION_DOWNED;
           i = 1;
         }
         do {
           if (unit->restraint != 0) {
-            statusKinds[i++] = 15;
+            statusKinds[i++] = OWNER_CONDITION_CURSED_ITEM;
           }
           if (i > 7) {
             break;
           }
           if (unit->grimReaper != 0) {
-            statusKinds[i++] = 8;
+            statusKinds[i++] = OWNER_CONDITION_GRIM_REAPER;
           }
           if (i > 7) {
             break;
           }
           if (unit->poison == 1) {
-            statusKinds[i++] = 1;
+            statusKinds[i++] = OWNER_CONDITION_POISON;
           }
           if (i > 7) {
             break;
           }
           if (unit->poison == 2) {
-            statusKinds[i++] = 2;
+            statusKinds[i++] = OWNER_CONDITION_DEADLY_POISON;
           }
           if (i > 7) {
             break;
           }
           if (unit->psySeal != 0) {
-            statusKinds[i++] = 4;
+            statusKinds[i++] = OWNER_CONDITION_PSYNERGY_SEALED;
           }
           if (i > 7) {
             break;
           }
           if (unit->stun != 0) {
-            statusKinds[i++] = 3;
+            statusKinds[i++] = OWNER_CONDITION_STUN;
           }
           if (i > 7) {
             break;
           }
           if (unit->sleep != 0) {
-            statusKinds[i++] = 5;
+            statusKinds[i++] = OWNER_CONDITION_SLEEP;
           }
           if (i > 7) {
             break;
           }
           if (unit->haunt != 0) {
-            statusKinds[i++] = 7;
+            statusKinds[i++] = OWNER_CONDITION_HAUNT;
           }
           if (i > 7) {
             break;
           }
           if (unit->delusion != 0) {
-            statusKinds[i++] = 6;
+            statusKinds[i++] = OWNER_CONDITION_DELUSION;
           }
           if (i > 7) {
             break;
           }
           if (unit->attackTurns != 0) {
             if (unit->attackStage > 0) {
-              statusKinds[i++] = 9;
+              statusKinds[i++] = OWNER_CONDITION_ATTACK_UP;
             }
             if (unit->attackStage < 0) {
-              statusKinds[i++] = 10;
+              statusKinds[i++] = OWNER_CONDITION_ATTACK_DOWN;
             }
           }
           if (i > 7) {
@@ -568,10 +619,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           }
           if (unit->defenseTurns != 0) {
             if (unit->defenseStage > 0) {
-              statusKinds[i++] = 11;
+              statusKinds[i++] = OWNER_CONDITION_DEFENSE_UP;
             }
             if (unit->defenseStage < 0) {
-              statusKinds[i++] = 12;
+              statusKinds[i++] = OWNER_CONDITION_DEFENSE_DOWN;
             }
           }
           if (i > 7) {
@@ -579,20 +630,20 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           }
           if (unit->resistanceTurns != 0) {
             if (unit->resistanceStage > 0) {
-              statusKinds[i++] = 13;
+              statusKinds[i++] = OWNER_CONDITION_RESISTANCE_UP;
             }
             if (unit->resistanceStage < 0) {
-              statusKinds[i++] = 14;
+              statusKinds[i++] = OWNER_CONDITION_RESISTANCE_DOWN;
             }
           }
           if (i > 7) {
             break;
           }
           if (unit->agilityStage > 0) {
-            statusKinds[i++] = 17;
+            statusKinds[i++] = OWNER_CONDITION_AGILITY_UP;
           }
           if (unit->agilityStage < 0) {
-            statusKinds[i++] = 18;
+            statusKinds[i++] = OWNER_CONDITION_AGILITY_DOWN;
           }
         } while (0);
 
@@ -600,16 +651,16 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           Resource_LoadTableEntryToBuffer(statusKinds[j], statusSlots[j]);
         }
         if (i == 0) {
-          statusKinds[0] = 0;
+          statusKinds[0] = OWNER_CONDITION_NORMAL;
           i = 1;
         }
         if (i <= 10) {
           for (j = i; j < 11; j++) {
-            statusKinds[j] = -1;
+            statusKinds[j] = OWNER_CONDITION_EMPTY;
           }
         }
         statusCount = i;
-        if (statusKinds[0] == 0) {
+        if (statusKinds[0] == OWNER_CONDITION_NORMAL) {
           UiText_DrawCharacterAtOffset(unit->hp != 0 ? MsgOwnerStatusNormal
                                                      : MsgOwnerStatusDowned,
                                        statusWindow, 112, 0);
@@ -617,10 +668,11 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
       }
 
       helpText = (u16 *)MemAlloc(OWNER_STATUS_TEXT_MAX * sizeof(*helpText));
-      if ((u32)cursor.helpEntry > 13) {
-        statusKind = statusKinds[cursor.helpEntry - 14];
-        if (statusKind == 0 && unit->hp == 0) {
-          statusKind = 16;
+      if ((u32)cursor.helpEntry >= OWNER_STATUS_HELP_CONDITION) {
+        statusKind =
+            statusKinds[cursor.helpEntry - OWNER_STATUS_HELP_CONDITION];
+        if (statusKind == OWNER_CONDITION_NORMAL && unit->hp == 0) {
+          statusKind = OWNER_CONDITION_DOWNED;
         }
 
         // A condition's help carries a number: the Grim Reaper's turns left,
@@ -645,29 +697,29 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         MemFree(savedUnit);
 
         switch (statusKind) {
-        case 8:
+        case OWNER_CONDITION_GRIM_REAPER:
           helpValue = unit->grimReaper;
           break;
-        case 9:
+        case OWNER_CONDITION_ATTACK_UP:
           helpValue = attackDelta;
           break;
-        case 10:
+        case OWNER_CONDITION_ATTACK_DOWN:
           helpValue = -attackDelta;
           break;
-        case 11:
+        case OWNER_CONDITION_DEFENSE_UP:
           helpValue = defenseDelta;
           break;
-        case 12:
+        case OWNER_CONDITION_DEFENSE_DOWN:
           helpValue = -defenseDelta;
           break;
-        case 17:
+        case OWNER_CONDITION_AGILITY_UP:
           helpValue = agilityDelta;
           break;
-        case 18:
+        case OWNER_CONDITION_AGILITY_DOWN:
           helpValue = -agilityDelta;
           break;
-        case 13:
-        case 14:
+        case OWNER_CONDITION_RESISTANCE_UP:
+        case OWNER_CONDITION_RESISTANCE_DOWN:
           helpValue = unit->resistanceStage * 20;
 #if TBS_PATCH_4
           if (helpValue < 0) {
@@ -678,15 +730,16 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         default:
           break;
         }
-        UiWork_PushValueSlot(helpValue, 5);
+        UiWork_PushValueSlot(helpValue, MSG_ARG_NUMBER);
         UiText_CopyMessageString(statusKind + MsgOwnerStatusConditionHelp,
                                  helpText, OWNER_STATUS_TEXT_MAX);
-      } else if (cursor.helpEntry == 2 && unit->level <= 98) {
+      } else if (cursor.helpEntry == OWNER_STATUS_HELP_EXPERIENCE &&
+                 unit->level <= 98) {
         // Experience below level 99: the points still needed for the next.
         UiWork_PushValueSlot(
             Unit_GetExperienceForLevelFar(owner, unit->level + 1) -
                 unit->experience,
-            5);
+            MSG_ARG_NUMBER);
         UiText_CopyMessageString(MsgOwnerStatusNextLevel, helpText,
                                  OWNER_STATUS_TEXT_MAX);
       } else {
@@ -702,7 +755,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
     }
 
     // The condition icons, 15 pixels apart from x 112 on the first row;
-    // normal (0) and unused places (-1) are not drawn.
+    // OWNER_CONDITION_NORMAL and empty places are not drawn.
     statusSprite = statusSprites;
     statusSlot = statusSlots;
     {
@@ -714,7 +767,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         statusSprite->oam.f.tile = cache[*statusSlot++].offset >> 5;
         statusSprite->oam.f.x = iconX;
         statusSprite->oam.f.y = (u8)(statusWindow->y * 8 + 8);
-        if (statusKinds[i] > 0) {
+        if (statusKinds[i] > OWNER_CONDITION_NORMAL) {
           Runtime_PushSlotEntry((s32 *)statusSprite, 240);
         }
         iconX += 15;
@@ -736,7 +789,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           ownerIndex = 0;
         }
         owner = list[ownerIndex];
-        redraw = 1;
+        redraw = OWNER_STATUS_REDRAW_ALL;
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       } else if ((keys & KEY_L) != 0) {
         ownerIndex--;
@@ -744,7 +797,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           ownerIndex = listCount - 1;
         }
         owner = list[ownerIndex];
-        redraw = 1;
+        redraw = OWNER_STATUS_REDRAW_ALL;
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }

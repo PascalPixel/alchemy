@@ -1736,7 +1736,7 @@ struct ScenePlacement gSolSanctumStatue_Placements[] = {
 // clang-format on
 
 struct SceneEvent gSolSanctumStatue_Events[] = {
-    {0x31, 1, CONDITION_ALWAYS,
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE},

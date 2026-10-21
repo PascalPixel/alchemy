@@ -54,7 +54,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
   state->active = 1;
   // Xian's inn has lines of its own, as far past the other inns' as the
   // warriors' shops' are past the weapon shop's (warriorShop).
-  if (innId == 5)
+  if (innId == INN_XIAN)
     state->specialActive = 1;
 
   innkeeper = Object_GetByIdFar(objectId);

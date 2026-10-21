@@ -26,8 +26,8 @@ decides which artifacts the shop lists and which lines its keeper says. Each
 line a shopkeeper says exists once for each kind of shop, in the same order,
 and the code always names the weapon shop's version (`UiMessage_ShowAndWait`):
 an armor or item shop says its own line at the same distance from its own
-welcome. Stock rows 16, 17 and 18 are warriors' shops, which greet the party
-with a run of lines of their own.
+welcome. Xian's three shops (`SHOP_STOCK_ROW_XIAN_WEAPONS` to `_ITEMS`) are
+warriors' shops, which greet the party with a run of lines of their own.
 
 ![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper's portrait greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
 
@@ -118,8 +118,8 @@ and Altmiller's wall burst as well as for the sanctum.
 
 A shop's stock is its row of `sStockTable` in `artifacts.c`: up to 24 ordinary
 items, then up to 8 artifacts, then the shop's type. Each row's number is the
-`stockRow` its scene passes to `Shop_Run`. There are 35 rows, and row 0 is
-empty and stands in for a row out of range.
+`stockRow` its scene passes to `Shop_Run`. There are 35 rows, and `SHOP_STOCK_ROW_EMPTY`
+is empty and stands in for a row out of range.
 
 The counters look slightly different in each edition, mostly windows moved or
 widened for longer words: German moves the shop's Yes/No menu one column left,
@@ -136,7 +136,7 @@ which the linker resolves, and their text is in the PO catalogs under
 A shop sells at most 24 items and 8 artifacts, because that's how many
 columns its stock row has (`SHOP_STOCK_`). It adds its artifacts only once,
 remembered by `FLAG_SHOP_ARTIFACTS_STOCKED + stockRow`. There are 35 stock rows, and a row out
-of range opens row 0, the empty one.
+of range opens `SHOP_STOCK_ROW_EMPTY`, the empty one.
 
 Shop credit stops at 999,999 and the Game Ticket count at 28
 (`Party_AdjustShopCredit`, `Party_AdjustShopGifts`). So from the 29th ticket
@@ -211,7 +211,7 @@ release.
 
 Still unknown:
 
-- XXX: why rows 16, 17 and 18 are the warriors' shops (`shop->warriorShop`,
+- XXX: why Xian's rows are the warriors' shops (`shop->warriorShop`,
   `shop/run.c`) by number rather than by a column of the row.
 - XXX: `EventTable_ApplyRowAbilities` and the other `EventTable_` names say
   less than the functions do, which read and seed the stock rows. Their

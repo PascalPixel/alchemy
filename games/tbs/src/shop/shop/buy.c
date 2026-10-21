@@ -535,7 +535,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
           y += 16;
         }
         itemIndex++;
-        if (itemIndex > 14)
+        if (itemIndex >= INVENTORY_SLOTS)
           break;
         nextOffset = itemIndex * 2 + SHOP_INVENTORY_OFFSET;
         if (*(u16 *)(unitBytes + nextOffset) == 0)
@@ -613,8 +613,8 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
 /// Chooses how many items to buy or sell, returning the quantity above
 /// `minimum` or -1 when cancelled. The bar's fixed prefix is `minimum`
 /// (items already carried when buying); `maximum` must exceed it so at least
-/// one can be chosen. Holds heap slot 14 for the bar's tiles. Called by the
-/// buy and sell quantity pickers.
+/// one can be chosen. Holds HEAP_SLOT_TILE_SCRATCH for the bar's tiles. Called
+/// by the buy and sell quantity pickers.
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   void *tileBuffer;
   struct UiWindow *window;
@@ -627,7 +627,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   s32 unitMessageBase;
 #endif
 
-  tileBuffer = Runtime_AllocateBlock(14, 0x400);
+  tileBuffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   redraw = 1;
   maximum -= minimum;
   selectedQuantity = -1;
@@ -699,7 +699,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
       UiWork_FinalizeFar(window, 2);
     }
   }
-  Runtime_ReleaseHeapBlock(14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   return selectedQuantity;
 }
 

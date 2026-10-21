@@ -70,6 +70,10 @@ enum ShopType {
   SHOP_TYPE_ARMOR = 2 ///< an armor shop: armor, shields, helms, boots, shirts
 };
 
+/// The inn the inn's own code names (Inn_CheckIn's innId, a row of
+/// sInnPricesPerGuest); each town scene names its own inn where it opens it.
+#define INN_XIAN 5
+
 /// The stock rows the shop code itself names; each town scene names its own
 /// shops' rows where it opens them.
 enum ShopStockRow {

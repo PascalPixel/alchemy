@@ -79,19 +79,19 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   } while (count >= 0);
 }
 
-/// Builds a price of up to five digits in scratch tiles (heap slot 14), loads
-/// them into a free VRAM cache slot and attaches them to `window` as one
-/// sprite at (x, y). Returns the sprite, or NULL with no free slot. Called by
-/// Shop_DrawStock for each item on sale. A price of 100000 or more shows its
-/// last five digits. The scratch block is released before returning; the
-/// cache entry is not freed here.
+/// Builds a price of up to five digits in scratch tiles
+/// (HEAP_SLOT_TILE_SCRATCH), loads them into a free VRAM cache slot and
+/// attaches them to `window` as one sprite at (x, y). Returns the sprite, or
+/// NULL with no free slot. Called by Shop_DrawStock for each item on sale. A
+/// price of 100000 or more shows its last five digits. The scratch block is
+/// released before returning; the cache entry is not freed here.
 struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
                                             s32 x, s32 y) {
   u8 *tileBuffer;
   s32 resourceSlot;
   struct RenderOutput *priceSprite;
 
-  tileBuffer = Runtime_AllocateBlock(14, 0x400);
+  tileBuffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
   priceSprite = 0;
   // 0x40 words: the blank price's eight tiles, 0x100 bytes of the block
   Dma_Set(gShop_PriceTiles, tileBuffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x40,
@@ -120,7 +120,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
     priceSprite =
         RenderOutput_CreateFar(resourceSlot, 0x80008000, window, x, y);
   }
-  Runtime_ReleaseHeapBlock(14);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   return priceSprite;
 }
 

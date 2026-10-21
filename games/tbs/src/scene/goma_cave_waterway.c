@@ -125,7 +125,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 s32 Scene_Initialize(void) {
   struct FieldActor *stump;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_GomaCaveStream) {
     if (gGameState.entrance == GOMA_CAVE_STREAM_FROM_VALE_GATE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);

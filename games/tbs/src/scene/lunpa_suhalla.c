@@ -475,7 +475,8 @@ static void Event_TalkToArmorMerchant(void) {
 s32 Scene_Initialize(void) {
   s16 entrance;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   entrance = gGameState.entrance;
   if (entrance == ROOM_GATE_TO_SUHALLA) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);

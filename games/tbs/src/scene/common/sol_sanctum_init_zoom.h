@@ -17,7 +17,8 @@ s32 SolSanctumRooms_Initialize(void) {
   s32 shakeDecay = 0x10000;
 
   work = (struct FieldWork *)gEventWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 16;
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     QueueSceneSound(SE_141);

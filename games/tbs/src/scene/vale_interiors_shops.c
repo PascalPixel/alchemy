@@ -269,7 +269,8 @@ static void ValeInteriorsShops_RequestWindowExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     FieldFx_StopLightning();
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gEventWork->transitionFrames = 16;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
@@ -338,7 +339,8 @@ s32 ValeInteriorsShops_Initialize(void) {
   struct FieldActor *actor;
   struct EventWork **eventSlot = &gEventWork;
 
-  (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  (*eventSlot)->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     Engine_ActorSetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);

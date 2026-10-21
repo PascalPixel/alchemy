@@ -63,7 +63,8 @@ s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     OBJ_POS_SET(FALLEN_STUMP, 216, 136);

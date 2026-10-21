@@ -378,7 +378,8 @@ static void BilibinCave_RestoreEntrance(void) {
 /// gone once Douse has put it out.
 static void BilibinCave_RestoreRapierRoom(void) {
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Engine_ActorSetAnimation(ACTOR_CAVE2_WEST_TORCH, 1);
   Engine_ActorSetAnimation(ACTOR_CAVE2_EAST_TORCH, 2);
@@ -403,7 +404,8 @@ static void BilibinCave_RestoreIceRoom(void) {
   struct FieldActor *actor;
   s32 destinationCellX;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Set up the decorative animations before restoring interactive actors.
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 1);

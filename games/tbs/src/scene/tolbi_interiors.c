@@ -141,7 +141,8 @@ const struct SceneEvent *TolbiInteriors_SelectEvents(void) {
 UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
   struct EventWork *work = gEventWork;
 
-  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  work->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   work->transitionFrames = 24;
   Engine_EventRequestExit();
 }
@@ -291,7 +292,8 @@ s32 TolbiInteriors_ApplyEntryState(void) {
   s32 clearedPriorityFlags;
   struct FieldActor *actor;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     // Restore the changed room tiles and the passengers' fixed draw priority.
     Map_CopyCellAttributes(51, 47, 3, 1, 51, 45);

@@ -451,7 +451,8 @@ static void Event_CaptainSeesPartyOff(void) {
     Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 570, 758);
     Actor_SetPosition(ACTOR_CAPTAIN, 0, 0);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     GameFlag_Set(FLAG_MCCOY_PALACE_PARTY_REWARDED);
     GameFlag_Set(FLAG_PLACE_TEMP_33);
     Engine_EventEnd();
@@ -480,7 +481,8 @@ s32 Scene_Initialize(void) {
   s32 curseLifted;
   struct FieldActor *chest;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Map_SetLayerEntryFlag(1);
   Map_SetLayerEntryFlag(2);
   Engine_GameFlagSet(FLAG_MCCOY_PALACE_VISITED);
@@ -1101,7 +1103,8 @@ static void Event_McCoyRewardsParty(void) {
   Engine_MapRedraw();
   Engine_TaskWait(1);
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   gEventWork->transitionFrames = 16;
 
   Engine_EventOpenScreen();
@@ -1389,7 +1392,8 @@ static void Event_PresentRewardChests(void) {
   Object_GetById(ACTOR_WATER_OF_LIFE_CHEST)->y.fixed = -PIXELS(4);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   gEventWork->transitionFrames = 16;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();

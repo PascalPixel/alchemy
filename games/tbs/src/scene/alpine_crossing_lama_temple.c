@@ -284,7 +284,8 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(60);
@@ -763,7 +764,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_EventWait(20);
   Engine_EventEnd();
   GameFlag_Set(FLAG_HSU_RESCUED);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventRequestExit(ALPINE_CROSSING_TO_LAMA_TEMPLE);
 }
 

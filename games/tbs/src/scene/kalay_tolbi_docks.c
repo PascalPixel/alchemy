@@ -14,11 +14,11 @@
 /// walks in from the world map (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH,
 /// FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) KalayTolbiDocks_GaretSeesTheKaragol
 /// plays: Garet runs to the water ("So this is the ocean Kraden was talking
-/// about!"), a boy tells him the Karagol is surrounded by land and no true
-/// ocean, and Garet means to see a real one someday. Until the tour's group
-/// has left Kalay, the ship is open to look around and the man at its plank
-/// (ACTOR_CHECKING_TICKETS) checks no tickets; afterwards he stands in the way
-/// and asks for one, takes it if the party has bought it
+/// about!"), a young man tells him the Karagol is surrounded by land and no
+/// true ocean, and Garet means to see a real one someday. Until the tour's
+/// group has left Kalay, the ship is open to look around and the man at its
+/// plank (ACTOR_CHECKING_TICKETS) checks no tickets; afterwards he stands in
+/// the way and asks for one, takes it if the party has bought it
 /// (FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) and lets the party aboard, and then
 /// offers to let it ashore again until it boards
 /// (FLAG_KALAY_DOCKS_WENT_ASHORE, cleared each time the party comes back off
@@ -99,11 +99,12 @@
 /// ship has crossed (gKalayTolbiDocks_KalayPlacementsShipGone) the first four
 /// stand off the map.
 enum KalayDocksActor {
-  /// A boy with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), who walks over to
+  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), who walks over
+  /// to
   /// tell Garet the Karagol is no real ocean.
   /// ★ Named from the game: "Do you want to go to Tolbi?"
   /// (MsgKalayWantGoToTolbi)
-  ACTOR_BOY_ASKING_ABOUT_TOLBI = ACTOR_FIRST_PLACED,
+  ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI = ACTOR_FIRST_PLACED,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "We can't take Silk Road, so everyone's in a
   /// pickle." (MsgKalayTolbiDocksWeCantTakeSilkRoadSo)
@@ -146,10 +147,10 @@ enum TolbiDocksActor {
   /// ★ Named from the game: "I think we're done sailing for a while."
   /// (MsgKalayTolbiDocksSighIThinkWereDoneSailing)
   ACTOR_MAN_DONE_SAILING,
-  /// A boy with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
+  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
   /// ★ Named from the game: "The tourists look a little upset. Did they get
   /// seasick?" (MsgKalayTouristsLookUpset)
-  ACTOR_BOY_ASKING_IF_SEASICK,
+  ACTOR_YOUNG_MAN_ASKING_IF_SEASICK,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) who watches the sea
   /// for her parents.
   /// ★ Named from the game: "Silk Road was blocked, so I thought my parents
@@ -179,11 +180,12 @@ enum TolbiDocksActor {
 /// gKalayTolbiDocks_TolbiPlacements. The man who hears of the scary trip, the
 /// one done sailing and the crates keep their rows.
 enum TolbiDocksStrandedActor {
-  /// A boy with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), the passenger who
+  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), the passenger
+  /// who
   /// charges the tour guide and is knocked flat.
   /// ★ Named from the game: "To heck with you! I'm staying right here until
   /// the ship leaves!" (MsgKalayTolbiDocksToHeckWithYouImStaying)
-  ACTOR_ANGRY_BOY = ACTOR_FIRST_PLACED + 2,
+  ACTOR_ANGRY_YOUNG_MAN = ACTOR_FIRST_PLACED + 2,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "Sigh. I wonder when we'll be able to return to
   /// Kalay." (MsgKalayTolbiDocksSighIWonderWhenWellBe)
@@ -194,7 +196,7 @@ enum TolbiDocksStrandedActor {
   /// ★ Named from the game: "Tour groups should take care of you from start to
   /// finish" (MsgKalayTolbiDocksTourGroupsShouldTakeCareOf)
   ACTOR_SECOND_TOUR_GUIDE,
-  /// Refunded the angry boy's ticket.
+  /// Refunded the angry young man's ticket.
   /// ★ Named from the game: "I returned the cost of your ticket to you."
   /// (MsgKalayReturnedTicketCost)
   ACTOR_TOUR_GUIDE,
@@ -374,13 +376,13 @@ const struct SceneEvent *KalayTolbiDocks_GetEvents(void) {
   return gKalayTolbiDocks_NoEvents;
 }
 
-/// Kalay Docks: a boy asks whether the party wants to go to Tolbi. Yes, and he
-/// says that past Silk Road's end the way is across the Karagol Sea; no, and
-/// he suggests a long look around the ship.
+/// Kalay Docks: a young man asks whether the party wants to go to Tolbi. Yes,
+/// and he says that past Silk Road's end the way is across the Karagol Sea; no,
+/// and he suggests a long look around the ship.
 static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayWantGoToTolbi);
-  Engine_EventAskYesNo(ACTOR_BOY_ASKING_ABOUT_TOLBI, 0);
+  Engine_EventAskYesNo(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   Engine_EventEnd();
 }
 
@@ -601,11 +603,11 @@ static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
   Engine_EventEnd();
 }
 
-/// Tolbi Docks: a boy asks whether the upset tourists got seasick.
+/// Tolbi Docks: a young man asks whether the upset tourists got seasick.
 static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayTouristsLookUpset);
-  Engine_EventAskYesNo(ACTOR_BOY_ASKING_IF_SEASICK, 0);
+  Engine_EventAskYesNo(ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, 0);
   Engine_EventEnd();
 }
 
@@ -745,11 +747,11 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     Actor_FaceDirection(ACTOR_TOUR_GUIDE, FACING_NORTH, 0);
     Actor_SetPosition(ACTOR_BODYGUARD, PIXELS(288), PIXELS(280));
     Actor_FaceDirection(ACTOR_BODYGUARD, FACING_NORTHEAST, 0);
-    Actor_SetPosition(ACTOR_ANGRY_BOY, PIXELS(232), PIXELS(304));
-    Actor_FaceDirection(ACTOR_ANGRY_BOY, FACING_SOUTH, 0);
+    Actor_SetPosition(ACTOR_ANGRY_YOUNG_MAN, PIXELS(232), PIXELS(304));
+    Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
     Actor_SetPosition(ACTOR_STRANDED_WOMAN, PIXELS(240), PIXELS(312));
     Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTH, 0);
-    actor = Object_GetById(ACTOR_ANGRY_BOY);
+    actor = Object_GetById(ACTOR_ANGRY_YOUNG_MAN);
     actor->collisionFlags = 0;
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     ((u8 *)actor->sprite)[9] |= 12;
@@ -806,7 +808,7 @@ static void KalayTolbiDocks_SettleCrates(s32 actorId) {
 /// FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL): Garet runs to the edge of the docks and
 /// marvels at the sea. "Incredible! So this is the ocean Kraden was talking
 /// about!" Kraden is the scholar who has told Garet of the ocean. The man who
-/// asks travellers about Tolbi (ACTOR_BOY_ASKING_ABOUT_TOLBI) walks over,
+/// asks travellers about Tolbi (ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI) walks over,
 /// shaking his head: the Karagol is surrounded by land, so it is not a real
 /// ocean. Garet means to see a real one someday, nods with the leader and
 /// rejoins the party.
@@ -815,8 +817,9 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
 
   Engine_EventBegin();
   Battle_ResetEffectCounter();
-  Actor_SetPosition(ACTOR_BOY_ASKING_ABOUT_TOLBI, PIXELS(328), PIXELS(1424));
-  Object_GetById(ACTOR_BOY_ASKING_ABOUT_TOLBI)->paused = 1;
+  Actor_SetPosition(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, PIXELS(328),
+                    PIXELS(1424));
+  Object_GetById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 1;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
@@ -840,18 +843,18 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Camera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_BOY_ASKING_ABOUT_TOLBI, EMOTE_IN_FRONT, 50);
-  Actor_SetSpeed(ACTOR_BOY_ASKING_ABOUT_TOLBI, 0x13333, 0x9999);
-  Actor_WalkToAndWait(ACTOR_BOY_ASKING_ABOUT_TOLBI, 264, 1424);
-  Actor_FaceDirection(ACTOR_BOY_ASKING_ABOUT_TOLBI, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, EMOTE_IN_FRONT, 50);
+  Actor_SetSpeed(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0x13333, 0x9999);
+  Actor_WalkToAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 264, 1424);
+  Actor_FaceDirection(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, FACING_WEST, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Engine_EventWait(20);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_BOY_ASKING_ABOUT_TOLBI,
+  Engine_ActorSetAnimationAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
                                   ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Event_ShowMessage(ACTOR_BOY_ASKING_ABOUT_TOLBI, 0);
+  Event_ShowMessage(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 0);
   Engine_EventWait(20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
   Engine_EventWait(30);
@@ -865,7 +868,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_WalkToAndWait(GARET, 264, 1464);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_BOY_ASKING_ABOUT_TOLBI, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, FACING_SOUTH, 0);
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(10);
@@ -883,9 +886,9 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
   Engine_EventWait(20);
-  Object_GetById(ACTOR_BOY_ASKING_ABOUT_TOLBI)->paused = 0;
-  Actor_SetBuiltinAction(ACTOR_BOY_ASKING_ABOUT_TOLBI, 2);
-  actor = Object_GetById(ACTOR_BOY_ASKING_ABOUT_TOLBI);
+  Object_GetById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 0;
+  Actor_SetBuiltinAction(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
+  actor = Object_GetById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI);
   {
     s32 pixelX = actor->x.fixed / 0x10000;
 
@@ -901,7 +904,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
 
 /// Tolbi Docks after Colosso, the first time the party comes to the pier
 /// (trigger 50, until FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED): it watches the tour
-/// guide tell an angry boy his ticket was refunded. The passengers
+/// guide tell an angry young man his ticket was refunded. The passengers
 /// demand to be taken home, the ships being stuck and the road blocked; when
 /// the angry one charges, the guides' hired bodyguard steps in, and after a
 /// second try the passenger is knocked flat and the bodyguard spins on the
@@ -926,11 +929,11 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | 2, 50);
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_ANGRY_BOY, EMOTE_IN_FRONT | 7, 50);
-  Actor_FaceDirection(ACTOR_ANGRY_BOY, FACING_EAST, 0);
-  Engine_ActorJump(ACTOR_ANGRY_BOY, 4, 13);
-  Engine_ActorJump(ACTOR_ANGRY_BOY, 4, 30);
-  Event_ShowMessage(ACTOR_ANGRY_BOY, 0);
+  Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | 7, 50);
+  Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
+  Engine_ActorJump(ACTOR_ANGRY_YOUNG_MAN, 4, 13);
+  Engine_ActorJump(ACTOR_ANGRY_YOUNG_MAN, 4, 30);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_STRANDED_WOMAN, 2);
   Engine_EventWait(20);
@@ -940,19 +943,19 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(20);
   Engine_EventShowMessage(ACTOR_TOUR_GUIDE, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_ANGRY_BOY, EMOTE_IN_FRONT | 3, 55);
-  Actor_SetSpeed(ACTOR_ANGRY_BOY, 0x20000, 0x10000);
-  Actor_WalkByAndWait(ACTOR_ANGRY_BOY, 16, 0);
-  Engine_ActorJump(ACTOR_ANGRY_BOY, 7, 0);
-  Actor_WalkByAndWait(ACTOR_ANGRY_BOY, 24, 0);
-  Object_GetById(ACTOR_ANGRY_BOY)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkBy(ACTOR_ANGRY_BOY, -16, 0);
+  Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | 3, 55);
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x20000, 0x10000);
+  Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 16, 0);
+  Engine_ActorJump(ACTOR_ANGRY_YOUNG_MAN, 7, 0);
+  Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
+  Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkBy(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
   Event_PlayCue(SE_HIGH_JUMP);
   Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0x26666, 0x13333);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, 16, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_ANGRY_BOY, ANIM_STAND);
-  Object_GetById(ACTOR_ANGRY_BOY)->steeringFlags |= ACTOR_FACES_MOTION;
+  Engine_ActorSetAnimation(ACTOR_ANGRY_YOUNG_MAN, ANIM_STAND);
+  Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetAttachedEffect(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | 2);
   Engine_ActorStartRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
   Event_PlayCue(SE_155);
@@ -967,7 +970,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_PlayCue(SE_159);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, -8, 0);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_ANGRY_BOY, 0);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Engine_EventWait(10);
   Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | 2, 70);
   Actor_SetSpeed(ACTOR_BODYGUARD, 0x10000, 0x8000);
@@ -978,11 +981,11 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_ANGRY_BOY, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_NORTHEAST, 0);
   Engine_EventWait(35);
-  Engine_ActorRunRepeatedMotion(ACTOR_ANGRY_BOY, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_ANGRY_BOY, 0);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTHEAST, 0);
   Engine_EventWait(55);
@@ -1005,61 +1008,61 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_ANGRY_BOY, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_EAST, 0);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(ACTOR_ANGRY_BOY, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_ANGRY_BOY, 0);
-  Actor_SetSpeed(ACTOR_ANGRY_BOY, 0x13333, 0x9999);
-  Actor_WalkByAndWait(ACTOR_ANGRY_BOY, 8, 0);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x13333, 0x9999);
+  Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
   Actor_SetSpeed(ACTOR_BODYGUARD, 0x20000, 0x10000);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 16);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_WEST, 0);
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_ANGRY_BOY, EMOTE_IN_FRONT | 2, 50);
-  Object_GetById(ACTOR_ANGRY_BOY)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_ANGRY_BOY, 0xcccc, 0x6666);
-  Actor_WalkByAndWait(ACTOR_ANGRY_BOY, -8, 0);
-  Object_GetById(ACTOR_ANGRY_BOY)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | 2, 50);
+  Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0xcccc, 0x6666);
+  Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -8, 0);
+  Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(ACTOR_ANGRY_BOY, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_ANGRY_BOY, 0);
+  Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_BODYGUARD, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Engine_EventWait(10);
-  Object_GetById(ACTOR_ANGRY_BOY)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_ANGRY_BOY, 0xcccc, 0x6666);
-  Actor_WalkByAndWait(ACTOR_ANGRY_BOY, -16, 0);
-  Object_GetById(ACTOR_ANGRY_BOY)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_FaceDirection(ACTOR_ANGRY_BOY, FACING_EAST, 0);
+  Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0xcccc, 0x6666);
+  Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
+  Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_ANGRY_BOY, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_ANGRY_YOUNG_MAN, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_ANGRY_BOY, 0x1cccc, 0xe666);
-  Actor_WalkByAndWait(ACTOR_ANGRY_BOY, 8, 0);
-  Engine_ActorJump(ACTOR_ANGRY_BOY, 6, 0);
-  Actor_WalkByAndWait(ACTOR_ANGRY_BOY, 24, 0);
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0x1cccc, 0xe666);
+  Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
+  Engine_ActorJump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
+  Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
   Event_PlayCue(SE_133);
   Engine_ActorJump(ACTOR_BODYGUARD, 6, 0);
   // The passenger bounces off the spinning bodyguard and lands on his back.
   Actor_SetActionScript(ACTOR_BODYGUARD, gKalayTolbiDocks_BodyguardSpinScript);
-  Object_GetById(ACTOR_ANGRY_BOY)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Engine_ActorJump(ACTOR_ANGRY_BOY, 6, 0);
-  Actor_WalkByAndWait(ACTOR_ANGRY_BOY, -12, 4);
-  actor = Actor_Get(ACTOR_ANGRY_BOY);
+  Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Engine_ActorJump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
+  Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
+  actor = Actor_Get(ACTOR_ANGRY_YOUNG_MAN);
   actor->collisionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   ((u8 *)actor->sprite)[9] |= 12;
   ((u8 *)actor->sprite)[38] = 0;
   actor->sprite->rotation = 0xc000;
-  Actor_WalkByAndWait(ACTOR_ANGRY_BOY, -12, 4);
-  Actor_FaceDirection(ACTOR_ANGRY_BOY, FACING_SOUTH, 0);
-  Object_GetById(ACTOR_ANGRY_BOY)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
+  Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
+  Object_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_PlayCue(SE_159);
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | 2, 50);
@@ -1078,7 +1081,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(ACTOR_ANGRY_BOY, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
   Engine_EventWait(20);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_EAST, 0);
@@ -1332,7 +1335,7 @@ struct SceneEvent gKalayTolbiDocks_KalayEvents[] = {
     { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_NORTH },
-    { EVENT_TALK, ACTOR_BOY_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutTolbiCrossing) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutTolbiCrossing) },
     { EVENT_TALK, ACTOR_WOMAN_IN_A_PICKLE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeCantTakeSilkRoadSo) },
     { EVENT_TALK, ACTOR_MAN_AT_SILK_ROADS_END, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCantTakeSilkRoadMuch) },
     { EVENT_TALK, ACTOR_WOMAN_WITH_A_MESSAGE, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWomanWithAMessage) },
@@ -1346,7 +1349,7 @@ struct SceneEvent gKalayTolbiDocks_KalayEvents[] = {
     { 0xc400, ACTOR_CHECKING_TICKETS, IF_FLAG_SET(FLAG_KALAY_DOCKS_WENT_ASHORE), EVENT_SCRIPT(KalayTolbiDocks_RemindBoardShip) },
 #endif
     { EVENT_TALK, ACTOR_DOCK_WORKER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToDockWorker) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWithSilkRoadClosedEveryoneWill) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWithSilkRoadClosedEveryoneWill) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_IN_A_PICKLE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksICantBelieveHowExpensiveTickets) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_AT_SILK_ROADS_END, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellIsntThisGreatWeCant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WITH_A_MESSAGE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeveSpentAYearPlanningThis) },
@@ -1378,13 +1381,13 @@ struct SceneEvent gKalayTolbiDocks_TolbiEvents[] = {
     { EVENT_TOUCH, 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED, EVENT_SCRIPT(KalayTolbiDocks_GreetArrivals) },
     { EVENT_TALK, ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutRoughCrossing) },
     { EVENT_TALK, ACTOR_MAN_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIThinkWereDoneSailing) },
-    { EVENT_TALK, ACTOR_BOY_ASKING_IF_SEASICK, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutSeasickTourists) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_AskAboutSeasickTourists) },
     { EVENT_TALK, ACTOR_WAITING_DAUGHTER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWaitingDaughter) },
     { EVENT_TALK, ACTOR_WOMAN_POINTING_WEST, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfYoureGoingToTolbiKeep) },
     { EVENT_TALK, ACTOR_MAN_ON_THE_TOUR_LONG_GONE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksItsBeenQuiteSomeTimeSince) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_DAUGHTER, IF_FLAG_SET(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED), MSGNO(MsgKalayTolbiDocksItWasAHardCrossingVery) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WAITING_DAUGHTER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_TalkToWaitingDaughter) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_IF_SEASICK, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAfterSeeingTheLooksOnThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ASKING_IF_SEASICK, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAfterSeeingTheLooksOnThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_POINTING_WEST, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGetTheFeelingThatIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_TOUR_LONG_GONE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksYouCrossedTheSeaJustFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIGuessWeWontBeSeeing) },
@@ -1406,13 +1409,13 @@ struct SceneEvent gKalayTolbiDocks_TolbiEventsStranded[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfBothTheCaptainAndKaja) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfKajaAndTheOthersSay) },
     { EVENT_TALK, ACTOR_SECOND_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTourGroupsShouldTakeCareOf) },
-    { EVENT_TALK, ACTOR_ANGRY_BOY, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksToHeckWithYouImStaying) },
+    { EVENT_TALK, ACTOR_ANGRY_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksToHeckWithYouImStaying) },
     { EVENT_TALK, ACTOR_STRANDED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIWonderWhenWellBe) },
     { EVENT_TALK, ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWellBeCountingOnYouIf) },
     { EVENT_TALK, ACTOR_BODYGUARD, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsWereStuckHere) },
     { EVENT_TALK, ACTOR_SIGHING_PASSENGER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighIfIKnewItWould) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfTheydJustLetTheShip) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ANGRY_BOY, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfImGoingToBeStuck) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ANGRY_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfImGoingToBeStuck) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRANDED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksGrrrWhyDontYouGetUp) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAsLongAsYoureHereWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BODYGUARD, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThisTourWasntWellOrganizedThats) },

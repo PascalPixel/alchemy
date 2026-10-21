@@ -152,10 +152,10 @@ enum KalayTownActor {
   /// ★ Named from the game: "We soldiers protect the peace in Kalay with our
   /// lives." (MsgKalaySoldiersProtectPeace)
   ACTOR_SOLDIER_PROTECTING_THE_PEACE,
-  /// A boy with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
+  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
   /// ★ Named from the game: "Lord Hammet, the founder of Kalay, is a great
   /// merchant." (MsgKalayHammetGenerousMerchant)
-  ACTOR_BOY_ON_HAMMET_THE_MERCHANT,
+  ACTOR_YOUNG_MAN_ON_HAMMET_THE_MERCHANT,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "Lord Hammet is still out with his caravans on
   /// business." (MsgKalayHammetOnJourney)
@@ -219,7 +219,7 @@ enum KalayTownActor {
   ACTOR_TOWN_NUT,
   /// The tour group, ACTOR_FIRST_TOURIST and the six after it, then
   /// ACTOR_OURANOS: in row order a chef (SPRITE_CHEF), a young woman in
-  /// green, a boy with brown hair, a woman with fair hair, a woman with a
+  /// green, a young man with brown hair, a woman with fair hair, a woman with a
   /// sword, a bald, muscular man, a young man with blue hair, and Ouranos, a
   /// young man with red hair. Their first lines, in row order: "Why are we
   /// stopping at
@@ -2833,7 +2833,7 @@ struct SceneEvent gKalay_TownEvents[] = {
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
     { EVENT_TALK, ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWelcomeInPeace) },
     { EVENT_TALK, ACTOR_SOLDIER_PROTECTING_THE_PEACE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersProtectPeace) },
-    { EVENT_TALK, ACTOR_BOY_ON_HAMMET_THE_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetGenerousMerchant) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_ON_HAMMET_THE_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetGenerousMerchant) },
     { EVENT_TALK, ACTOR_WOMAN_ON_HAMMETS_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetOnJourney) },
     { EVENT_TALK, ACTOR_MAN_ON_THE_REBUILT_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalayNorthernBridgeRebuilt) },
     { EVENT_TALK, ACTOR_WOMAN_ON_LAMAKAN_DESERT, CONDITION_ALWAYS, MSGNO(MsgKalayLamakanTrouble) },
@@ -2851,7 +2851,7 @@ struct SceneEvent gKalay_TownEvents[] = {
     { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToItemMerchant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorHonestEyes) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_PROTECTING_THE_PEACE, CONDITION_ALWAYS, MSGNO(MsgKalayGuardsJudgeVisitors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_HAMMET_THE_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetPeaceAndLiberty) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_HAMMET_THE_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetPeaceAndLiberty) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_HAMMETS_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCanBeRash) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_REBUILT_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersWentToVault) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_LAMAKAN_DESERT, CONDITION_ALWAYS, MSGNO(MsgKalayStrangeEvents) },

@@ -58,10 +58,10 @@
 /// otherwise, it quotes what its actor says before the Colosso tour leaves.
 enum KalayInteriorsActor {
   // Kalay's houses
-  /// A boy with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
+  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
   /// ★ Named from the game: "I'm shocked to hear the righteous thieves of
   /// Lunpa have gone bad." (MsgKalayInteriorsImShockedToHearTheRighteous)
-  ACTOR_BOY_ON_LUNPA_GONE_BAD = ACTOR_FIRST_PLACED,
+  ACTOR_YOUNG_MAN_ON_LUNPA_GONE_BAD = ACTOR_FIRST_PLACED,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "Lunpa was a kind thief."
   /// (MsgKalayInteriorsLunpaWasAKindThiefHis)
@@ -100,11 +100,12 @@ enum KalayInteriorsActor {
   /// ★ Named from the game: "My son received his knack for business from Lord
   /// Hammet." (MsgKalayInteriorsMySonReceivedHisKnackFor)
   ACTOR_MERCHANTS_MOTHER,
-  /// A boy with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), gone once the tour
+  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), gone once the
+  /// tour
   /// has left.
   /// ★ Named from the game: "Do you know about the continent south of
   /// Tolbi?" (MsgKalayDoKnowAboutContinentSouth)
-  ACTOR_BOY_ASKING_ABOUT_THE_SOUTH,
+  ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), about to join the
   /// tour, and gone with it.
   /// ★ Named from the game: "I better get ready! The Colosso Tour is about
@@ -281,7 +282,7 @@ static void KalayInteriors_TalkToTourGuide(void) {
 static void KalayInteriors_AskAboutSouthernContinent(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayDoKnowAboutContinentSouth);
-  Engine_EventAskYesNo(ACTOR_BOY_ASKING_ABOUT_THE_SOUTH, 0);
+  Engine_EventAskYesNo(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, 0);
   Engine_EventEnd();
 }
 
@@ -435,7 +436,7 @@ static void KalayInteriors_ApplyRoomState(void) {
     return;
   default:
     if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      Engine_ActorDestroy(ACTOR_BOY_ASKING_ABOUT_THE_SOUTH);
+      Engine_ActorDestroy(ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH);
       Engine_ActorDestroy(ACTOR_WOMAN_BOUND_FOR_THE_TOUR);
     }
     break;
@@ -638,7 +639,7 @@ struct SceneEvent gKalayInteriors_HouseEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, KALAY_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_CORRIDOR },
     { TOUCH_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
-    { EVENT_TALK, ACTOR_BOY_ON_LUNPA_GONE_BAD, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImShockedToHearTheRighteous) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_ON_LUNPA_GONE_BAD, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImShockedToHearTheRighteous) },
     { EVENT_TALK, ACTOR_WOMAN_SAYING_LUNPA_WAS_KIND, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpaWasAKindThiefHis) },
     { EVENT_TALK, ACTOR_MAN_ON_THE_NORTH, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSomehowTheNorthHasBecomeThe) },
     { EVENT_TALK, ACTOR_WOMAN_ON_THE_VAULT_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsAMerchantFromVaultHadBeen) },
@@ -646,13 +647,13 @@ struct SceneEvent gKalayInteriors_HouseEvents[] = {
     { EVENT_TALK, ACTOR_WORRIED_FATHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDoNotWantMySon) },
     { EVENT_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantSkillForA) },
     { EVENT_TALK, ACTOR_MERCHANTS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonReceivedHisKnackFor) },
-    { EVENT_TALK, ACTOR_BOY_ASKING_ABOUT_THE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_AskAboutSouthernContinent) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_AskAboutSouthernContinent) },
     { EVENT_TALK, ACTOR_WOMAN_BOUND_FOR_THE_TOUR, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIBetterGetReadyTheColosso) },
     { EVENT_TALK, ACTOR_MAN_FROM_LALIVERO, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsWeFledFromGondowanToThe) },
     { EVENT_TALK, ACTOR_MAN_FROM_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeCameHereToEscapeThe) },
     { EVENT_TALK, ACTOR_SECOND_MAN_FROM_LALIVERO, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsLaliveroWhereImFromIsThe) },
     { EVENT_TALK, ACTOR_SECOND_MAN_FROM_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeEscapedFromTheNortheasternRegion) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_LUNPA_GONE_BAD, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheRegionNorthOfVaultWas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_LUNPA_GONE_BAD, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheRegionNorthOfVaultWas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_SAYING_LUNPA_WAS_KIND, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpasReputationIsVeryBadNowadays) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_NORTH, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsThreeYearsAgoThievesRaidedMt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_VAULT_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheySayOtherNorthernPartsAre) },
@@ -660,7 +661,7 @@ struct SceneEvent gKalayInteriors_HouseEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_FATHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDontCareHowMySon) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantThingIsNot) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANTS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonIsVeryTightWith) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_ABOUT_THE_SOUTH, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsPeopleFromTheContinentSouthOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsPeopleFromTheContinentSouthOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_BOUND_FOR_THE_TOUR, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImPrettyExcitedBecauseThisIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_FROM_LALIVERO, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsIFledAllThisWayNow) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_FROM_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWonderWhatColossoIsLike) },

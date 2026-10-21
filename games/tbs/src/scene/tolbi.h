@@ -27,9 +27,9 @@
 enum TolbiActor {
   TOLBI_SPROUT = 8,
   TOLBI_PUDDLE = 9,
-  /// A boy with brown hair (SPRITE_BOY_WITH_BROWN_HAIR): "This festival only
-  /// happens once a year, so I'm really excited."
-  TOLBI_EXCITED_BOY = 10,
+  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR): "This festival
+  /// only happens once a year, so I'm really excited."
+  TOLBI_EXCITED_YOUNG_MAN = 10,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR): "If we don't go
   /// right now, we won't get good seats!"
   TOLBI_HURRYING_WOMAN = 11,

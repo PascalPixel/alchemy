@@ -1,11 +1,13 @@
 /// @file
 /// Vault, before and after the thieves are caught: the two villagers who walk
-/// about together (actors 14 and 15).
+/// about together (ACTOR_FIRST_WALKER and ACTOR_SECOND_WALKER, as both scenes
+/// name them).
 #include "types.h"
 #include "field_obj.h"
 
-// The update hook of actors 14 and 15. Their timer holds two bits: bit 0
-// picks the partner (set for actor 14, whose partner is 15; clear for 15) and
+// The update hook of the two walkers. Their timer holds two bits: bit 0 picks
+// the partner (set for ACTOR_FIRST_WALKER, whose partner is
+// ACTOR_SECOND_WALKER; clear for ACTOR_SECOND_WALKER) and
 // bit 1 is set while the party talks to them. A villager stops when close to
 // and facing its partner, and otherwise when the leader is within 18 pixels in
 // front of it. While the window work's word at 376 or the render mode is set
@@ -31,9 +33,9 @@ static s32 Vault_UpdateWalkingVillager(union FieldObject *fieldObject) {
   struct FieldActor *player;
 
   if ((*flags & 1) != 0) {
-    partner = Object_GetById(15);
+    partner = Object_GetById(ACTOR_SECOND_WALKER);
   } else {
-    partner = Object_GetById(14);
+    partner = Object_GetById(ACTOR_FIRST_WALKER);
   }
   if (Vault_StopIfFacingNear(self, partner, 32, 0) != 0) {
 #ifdef UBFIX

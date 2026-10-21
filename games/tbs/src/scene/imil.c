@@ -12,34 +12,34 @@
 /// party. Some lines also change while she travels with them
 /// (FLAG_IN_PARTY(MIA)).
 ///
-/// - Imil (Imil, scene 50), the village. A man shivers and sneezes in the
-///   snow, waiting for Mia, and a child counts out his exercises against the
-///   cold. Six doors (triggers 51 to 56) open into the houses, the shops, the
-///   inn and the Sanctum (scene 51), IMIL_TO_WORLD_MAP_SOUTH and
+/// - Imil (SceneId_Imil), the village. A man shivers and sneezes in the snow,
+///   waiting for Mia, and a child counts out his exercises against the cold.
+///   Six doors (triggers 51 to 56) open into the houses, the shops, the inn and
+///   the Sanctum (SceneId_ImilInteriors), IMIL_TO_WORLD_MAP_SOUTH and
 ///   IMIL_TO_WORLD_MAP_NORTH lead out to the world map, and the way north
 ///   (trigger 4) leads into Imil Falls Cave; coming back out of it
 ///   (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down into the village. Two
 ///   callbacks run while the party is here: one makes puffs rise at five
-///   places, staggered over each second, and one sets the map layer the
-///   leader walks on from where he stands (layer 0 near the middle of the
-///   village, layer 1 elsewhere). Stepping onto ice (collision code 90)
-///   slides the leader in the held direction, turning toward it as he goes,
-///   until a blocked cell or one too high stops him. Move pushes the snowman,
-///   which stays where it lands at cell (15, 7) for the rest of the visit
-///   (a temporary flag). Searching finds 9 coins, a Vial and a Lucky Medal.
-/// - Imil (ImilInteriors, scene 51), inside the houses, the shops and the inn;
-///   by IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST the same scene is the Imil
+///   places, staggered over each second, and one sets the map layer the leader
+///   walks on from where he stands (layer 0 near the middle of the village,
+///   layer 1 elsewhere). Stepping onto ice (collision code 90) slides the
+///   leader in the held direction, turning toward it as he goes, until a
+///   blocked cell or one too high stops him. Move pushes the snowman, which
+///   stays where it lands at cell (15, 7) for the rest of the visit (a
+///   temporary flag). Searching finds 9 coins, a Vial and a Lucky Medal.
+/// - Imil (SceneId_ImilInteriors), inside the houses, the shops and the inn; by
+///   IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST the same scene is the Imil
 ///   Sanctum. While the epidemic lasts the weapon and armor sellers are sick:
 ///   searching their counters pans the camera to them, and they say the shop is
 ///   closed. The item seller's daughter minds that shop for her mother. In the
 ///   Sanctum Mia's two apprentices keep her place: one offers healing across
 ///   the counter, the first time saying she can act as the party's healer
 ///   (FLAG_IMIL_APPRENTICE_OFFERED_HEALING), and the other asks whether the
-///   party has visited the old couple who live near the entrance of town,
-///   where Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE). In the old couple's
-///   house (IMIL_INTERIORS_HOUSE_SOUTHWEST) the old man moans for help, and
-///   talking to him sends his wife hurrying to fetch Mia. Either sets flag
-///   0x82c, which changes the couple's lines and where they stand.
+///   party has visited the old couple who live near the entrance of town, where
+///   Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE). In the old couple's house
+///   (IMIL_INTERIORS_HOUSE_SOUTHWEST) the old man moans for help, and talking
+///   to him sends his wife hurrying to fetch Mia. Either sets flag 0x82c, which
+///   changes the couple's lines and where they stand.
 ///
 ///   Mia's healing is this scene's first scripted sequence. Entering the old
 ///   couple's house once the apprentice has told the party where Mia went,
@@ -136,8 +136,8 @@ enum ImilInteriorsActor {
   ACTOR_RESTAURANT_OWNER,
   ACTOR_APPRENTICE, ///< Mia's apprentices; the first keeps the Sanctum
   ACTOR_SECOND_APPRENTICE,
-  /// Sprite 0xdf in the old couple's house, kept under the party as altin.c
-  /// keeps its ground sprites; Vault's crate (vault_interiors.c) uses the same
+  /// A sprite in the old couple's house, kept under the party as altin.c keeps
+  /// its ground sprites; Vault's crate (vault_interiors.c) uses the same
   /// sprite. XXX: what it shows here; a picture of the house would settle it.
   ACTOR_GROUND_SPRITE
 };
@@ -145,9 +145,10 @@ enum ImilInteriorsActor {
 /// The village's own temporary flags, which last until the party leaves the
 /// scene.
 enum ImilTownFlag {
-  /// Which map layer the leader walks on, from where he stands.
-  FLAG_IMIL_MAP_LAYER_0 = FLAG_SCENE_TEMP_00,
-  FLAG_IMIL_MAP_LAYER_1 = FLAG_SCENE_TEMP_01,
+  /// Which map layer the leader walks on, from where he stands: the first near
+  /// the middle of the village, the second elsewhere.
+  FLAG_IMIL_CENTRE_LAYER = FLAG_SCENE_TEMP_00,
+  FLAG_IMIL_OUTER_LAYER = FLAG_SCENE_TEMP_01,
   FLAG_IMIL_SNOWMAN_MOVED = FLAG_SCENE_TEMP_03
 };
 
@@ -719,8 +720,8 @@ s32 Imil_Initialize(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ActorSetAnimation(ACTOR_COUNTING_CHILD, 9);
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
-      Engine_GameFlagClear(FLAG_IMIL_MAP_LAYER_0);
-      Engine_GameFlagClear(FLAG_IMIL_MAP_LAYER_1);
+      Engine_GameFlagClear(FLAG_IMIL_CENTRE_LAYER);
+      Engine_GameFlagClear(FLAG_IMIL_OUTER_LAYER);
     }
     leader->timer = 0;
     leader->work = 0;
@@ -737,7 +738,8 @@ s32 Imil_Initialize(void) {
     }
   } else if (gGameState.scene == (s32)&SceneId_ImilInteriors) {
     // Restore each interior's occupants before running its arrival event.
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     entrance = gGameState.entrance;
     if (entrance == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
       Engine_ActorSetChildValue(ACTOR_GROUND_SPRITE, 15);
@@ -999,7 +1001,8 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_RunActionScriptAndWait(IVAN, table);
   Engine_EventWait(20);
   work = gEventWork;
-  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  work->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
   Engine_GameFlagSet(FLAG_IMIL_MET_MIA);
   Engine_EventEnd();
@@ -1171,8 +1174,8 @@ static void Imil_UpdateMapLayerByLeaderPosition(void) {
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   x = actor->x.fixed;
   column = x >> 19;
-  zoneFlag = FLAG_IMIL_MAP_LAYER_0;
-  otherZoneFlag = FLAG_IMIL_MAP_LAYER_1;
+  zoneFlag = FLAG_IMIL_CENTRE_LAYER;
+  otherZoneFlag = FLAG_IMIL_OUTER_LAYER;
   if ((u32)(column - 24) <= 7 ||
       ((u32)((actor->z.fixed >> 19) - 36) <= 9 && (u32)(column - 22) <= 9)) {
     isSet = Engine_GameFlagIsSet(zoneFlag);
@@ -1402,7 +1405,8 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   // the field, the next gEventWork load moves after the constant.
   *((u8 *)Object_GetById(ACTOR_SECOND_APPRENTICE) +
     offsetof(struct FieldActor, steeringFlags)) |= ACTOR_FACES_MOTION;
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_IMIL_MIA_SAID_FAREWELL);
   GameFlag_Clear(FLAG_IMIL_APPRENTICE_OFFERED_HEALING);
   Engine_EventEnd();
@@ -1665,9 +1669,9 @@ s32 gImil_FollowMiaOutScript[] = {
 };
 
 struct SceneEntrance gImil_TownEntrances[] = {
-    { 0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { IMIL_FROM_HOUSE_SOUTHWEST, CONDITION_ALWAYS, 288, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 480, 0, 280, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+    { IMIL_EAST_UNUSED, CONDITION_ALWAYS, 480, 0, 280, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { IMIL_FROM_HOUSE_WEST, CONDITION_ALWAYS, 312, 0, 424, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { IMIL_FROM_HOUSE_NORTHEAST, CONDITION_ALWAYS, 424, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { IMIL_FROM_IMIL_INTERIORS_EAST, CONDITION_ALWAYS, 456, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -1679,15 +1683,15 @@ struct SceneEntrance gImil_TownEntrances[] = {
 };
 
 struct SceneEntrance gImil_InteriorEntrances[] = {
-    { 0, CONDITION_ALWAYS, 136, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { IMIL_INTERIORS_HOUSE_SOUTHWEST, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
     { IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
     { IMIL_INTERIORS_HOUSE_WEST, CONDITION_ALWAYS, 399, 0, 322, FACING_NORTH, 0, 320, 58, 536, 360, 0 },
     { IMIL_INTERIORS_HOUSE_NORTHEAST, CONDITION_ALWAYS, 400, 0, 659, FACING_NORTH, 0, 307, 382, 545, 697, 0 },
     { IMIL_INTERIORS_INN, CONDITION_ALWAYS, 129, 0, 915, FACING_NORTH, 0, 50, 706, 350, 949, 0 },
-    { 6, CONDITION_ALWAYS, 446, 0, 825, FACING_SOUTH, 0, 402, 740, 670, 921, 0 },
+    { IMIL_INTERIORS_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 446, 0, 825, FACING_SOUTH, 0, 402, 740, 670, 921, 0 },
     { IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST, CONDITION_ALWAYS, 687, 0, 264, FACING_NORTH, 0, 594, 49, 806, 295, 0 },
-    { 8, CONDITION_ALWAYS, 182, 0, 772, FACING_SOUTH, 0, 50, 706, 350, 949, 0 },
+    { IMIL_INTERIORS_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 182, 0, 772, FACING_SOUTH, 0, 50, 706, 350, 949, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -1779,7 +1783,7 @@ struct ScenePlacement gImil_InteriorPlacements[] = {
 struct SceneEvent gImil_TownEvents[] = {
     { EVENT_EXIT, 60, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_SOUTH },
     { EVENT_EXIT, 61, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_NORTH },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SNOWMAN, FLAG_IMIL_MAP_LAYER_0, EVENT_SCRIPT(Imil_PlaceMovedSnowman) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SNOWMAN, FLAG_IMIL_CENTRE_LAYER, EVENT_SCRIPT(Imil_PlaceMovedSnowman) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },

@@ -38,11 +38,21 @@ enum ItemFlags {
 };
 
 /// What using an item costs (struct ItemDefinition's useType).
+#define ITEM_USE_FREE 0      ///< nothing: it is kept, as equipment is
 #define ITEM_USE_CONSUMED 1  ///< one is used up
 #define ITEM_USE_MAY_BREAK 2 ///< breaks one time in eight
 /// Not used up: equipped, it teaches its actionId as Psynergy.
 #define ITEM_USE_TEACHES 3
 #define ITEM_USE_EMPTIES 4 ///< Hermes' Water leaves an Empty Bottle
+
+/// What kind of thing an item is (Item_GetEquipmentGroup), which picks the
+/// comparison a shop shows.
+enum EquipmentGroup {
+  EQUIPMENT_GROUP_NONE = 0, ///< anything not a weapon or armor, rings included
+  EQUIPMENT_GROUP_WEAPON = 1,
+  /// Armor, shields, helms, boots and shirts.
+  EQUIPMENT_GROUP_ARMOR = 2
+};
 
 /// An item's type (struct ItemDefinition's type, items.tsv's type column).
 /// A unit equips one item of each type, except Psynergy items.
@@ -56,8 +66,9 @@ enum ItemType {
   ITEM_TYPE_BOOTS = 5,  ///< Hyper Boots to Turtle Boots
   /// The items that teach Psynergy while held: Orb of Force to Catch Beads.
   ITEM_TYPE_PSYNERGY = 6,
-  ITEM_TYPE_RING = 8, ///< Adept Ring to Cleric's Ring
-  ITEM_TYPE_SHIRT = 9 ///< Mythril Shirt, Silk Shirt, Running Shirt
+  ITEM_TYPE_UNUSED = 7, ///< no row of items.tsv has it; listed as equipment
+  ITEM_TYPE_RING = 8,   ///< Adept Ring to Cleric's Ring
+  ITEM_TYPE_SHIRT = 9   ///< Mythril Shirt, Silk Shirt, Running Shirt
 };
 
 enum ItemEffectKind {
@@ -88,8 +99,10 @@ enum ItemEffectKind {
   ITEM_EFFECT_ADD_JUPITER_RESIST,
   ITEM_EFFECT_ADD_UNLEASH_CHANCE, ///< percent added to the weapon's unleash
   ITEM_EFFECT_24,                 ///< summed by UnitCalc; TBS never reads it
-  ITEM_EFFECT_25,                 ///< sets restraint bit 3, which lifts bit 0
-  ITEM_EFFECT_ADD_TURNS,          ///< more actions each round
+  /// "The curse can be removed": sets RESTRAINT_REMOVABLE, which lifts
+  /// RESTRAINT_BOUND.
+  ITEM_EFFECT_CURSE_REMOVABLE,
+  ITEM_EFFECT_ADD_TURNS, ///< more actions each round
   ITEM_EFFECT_LURE ///< sets FLAG_LURE_CAP while worn: encounters come faster
 };
 
@@ -116,7 +129,7 @@ struct ItemDefinition {
   s16 primaryBonus;  ///< Attack added while equipped
   s8 secondaryBonus; ///< Defense added while equipped
   u8 unleashChance;  ///< in steps of 5 percent
-  u8 useType;        ///< what using it costs (ITEM_USE_), or 0 for nothing
+  u8 useType;        ///< what using it costs (ITEM_USE_)
   u8 reserved0d;     ///< not named by TBS code
   u16 unleashAction; ///< the action a weapon unleashes, or 0
 

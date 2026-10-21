@@ -1,6 +1,6 @@
 /// @file
-/// Kolima Forest (scenes 40 and 42): the hop east onto actor 10 (the third
-/// placement).
+/// Kolima Forest (SceneId_KolimaForestEntrance and SceneId_KolimaForestCliff):
+/// the hop east onto the scene's third placed actor.
 #include "types.h"
 #include "engine_call.h"
 #include "field_obj.h"
@@ -10,9 +10,9 @@
 
 /// Hops the leader to the pixel of the 16.16 position request, unless something
 /// blocks the way: the leader crouches, jumps (3 pixels a frame, rising at 4)
-/// and lands while actor 10 plays its animation 7; the leader then dips a pixel
-/// twice, its height and its ground height together, and rises back. Returns 1
-/// after a hop.
+/// and lands while that actor plays its animation 7; the leader then dips a
+/// pixel twice, its height and its ground height together, and rises back.
+/// Returns 1 after a hop.
 static s32 StagedActor_RunStepEffect(struct FieldPosition *request) {
   struct FieldActor *actor = Object_GetById(0);
   u8 *flags = &actor->motionFlags;
@@ -34,7 +34,7 @@ static s32 StagedActor_RunStepEffect(struct FieldPosition *request) {
         ACTOR_PARTY_LEADER, ((union FieldCoordinate *)&request->x)->part.pixel,
         ((union FieldCoordinate *)&request->z)->part.pixel);
     Object_SetMode(actor, 6);
-    Engine_ActorSetSpriteFlags(actor, 1);
+    Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     *flags = ret;
     Engine_ActorSetAnimation(10, 7);
     actor->y.fixed += 0xffff0000;

@@ -1,7 +1,7 @@
 /// @file
 /// The Alpine Crossing and Lama Temple, two places on Silk Road west of Xian
-/// that share this overlay: the Alpine Crossing is AlpineCrossing
-/// (scene 74) and Lama Temple is LamaTemple (scene 88). The
+/// that share this overlay: the Alpine Crossing is
+/// SceneId_AlpineCrossing and Lama Temple is SceneId_LamaTemple. The
 /// getters pick each scene's tables by gGameState.scene, both scenes share one
 /// exit table, and Scene_Initialize sets up the scene being entered from the
 /// story flags of Hsu's rescue.
@@ -45,7 +45,8 @@
 /// shown again. Writing on a wall hints at Reveal, which shows a passage behind
 /// a false wall (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
 /// wall back when Reveal wears off and on entry, the wall cell's own attributes
-/// saved at (21, 73). The temple also holds a Psynergy Stone (place flag 0x350)
+/// saved at (21, 73). The temple also holds a Psynergy Stone
+/// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, a place flag)
 /// and a chest with Water of Life.
 ///
 /// Back at the Alpine Crossing after the lesson, until Hsu is freed, Hama and
@@ -283,7 +284,8 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(60);
@@ -326,7 +328,8 @@ static void LamaTemple_RunHamasFarewell(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHEAST, 0);
     Engine_ActorStartRepeatedMotion(GARET, 2);
-    Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
+    Actor_SetAttachedEffect(GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Actor_FaceDirection(GARET, FACING_WEST, 20);
     Event_ShowMessageAndWait(GARET, 0, 20);
@@ -546,7 +549,8 @@ static void AlpineCrossing_FeizhiArrives(void) {
     Actor_FaceDirection(ACTOR_FEIZHI, FACING_WEST, 20);
     Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_FEIZHI, 2);
-    Actor_SetAttachedEffect(ACTOR_FEIZHI, EMOTE_IN_FRONT | 2);
+    Actor_SetAttachedEffect(ACTOR_FEIZHI,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
 
@@ -629,7 +633,8 @@ static void AlpineCrossing_HamaReachesHsu(void) {
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_FEIZHI, 2);
-  Actor_SetAttachedEffect(ACTOR_FEIZHI, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_FEIZHI,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorSetAnimation(ACTOR_HSU, ANIM_HSU_STRUGGLE);
@@ -645,12 +650,14 @@ static void AlpineCrossing_HamaReachesHsu(void) {
 static void AlpineCrossing_LiftBoulder(void) {
 
   Engine_EventBegin();
-  Actor_SetAttachedEffect(ACTOR_HAMA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_HAMA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorStartRepeatedMotion(ACTOR_HAMA, 2);
   Engine_EventWait(60);
   Engine_EventSetMessage(MsgMountainIsaacDidLiftBoulder);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0, 20);
-  Actor_SetAttachedEffect(ACTOR_FEIZHI, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_FEIZHI,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorJump(ACTOR_FEIZHI, 4, 0);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(ACTOR_FEIZHI, 0, 20);
@@ -757,7 +764,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_EventWait(20);
   Engine_EventEnd();
   GameFlag_Set(FLAG_HSU_RESCUED);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_EventRequestExit(ALPINE_CROSSING_TO_LAMA_TEMPLE);
 }
 
@@ -1032,7 +1040,8 @@ u16 gLamaTemple_DoorCloseCells[] = {
 };
 
 struct SceneEntrance gLamaTemple_Entrances[] = {
-    {0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
+     -1, -1, 0},
     {LAMA_TEMPLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
     {LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS, CONDITION_ALWAYS, 136, 0, 168,
@@ -1044,7 +1053,8 @@ struct SceneEntrance gLamaTemple_Entrances[] = {
 };
 
 struct SceneEntrance gAlpineCrossing_Entrances[] = {
-    {0, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
+     -1, -1, 0},
     {ALPINE_CROSSING_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 496, 0, 216,
      FACING_WEST, 0, 16, 32, 520, 416, 0},
     {ALPINE_CROSSING_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 384, 0, 72,

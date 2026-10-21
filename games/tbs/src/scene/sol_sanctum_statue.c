@@ -1,14 +1,16 @@
 /// @file
-/// Sol Sanctum (scene 12, a row of the scene table with no symbol), the room
-/// of what Kraden calls the statue puzzle.
+/// Sol Sanctum (SceneId_SolSanctumStatue), the room of what Kraden calls the
+/// statue puzzle.
 ///
 /// Isaac, Garet and Jenna have come into the sanctum with Kraden, the sage
 /// who teaches in Vale, looking for the hidden passage that two strangers,
 /// Saturos and Menardi, spoke of. Kraden has found the Luna and Sol rooms
-/// (scene 11) and waits there, sending the party to look farther up the
-/// passage; this room opens off them (its exit 1, their entrance 2), and
+/// (SceneId_SolSanctumLunaSolRooms) and waits there, sending the party to look
+/// farther up the passage; this room opens off them
+/// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to
+/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE), and
 /// SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE leads into a room with a
-/// Psynergy Stone (scene 13).
+/// Psynergy Stone (SceneId_SolSanctumPsynergyStone).
 ///
 /// Eight statues stand here around a ninth in the centre. Four can be pushed,
 /// or moved with Move, onto seals in the floor; two others, pushed in front
@@ -24,28 +26,31 @@
 /// The puzzle is a trap, and the room's logic follows it in story order:
 /// - Until the centre statue has moved (FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED),
 ///   the scene cuts away when a seal first opens (SolSanctumStatue_OpenSeal):
-///   SolSanctumStatue_SelectStoryExit takes exit 4 to the Luna and Sol rooms,
-///   where the quarter of the pictures the seal lights flashes and lights
-///   fall through the Luna room around Kraden
+///   SolSanctumStatue_SelectStoryExit takes
+///   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG to the Luna
+///   and Sol rooms, where the quarter of the pictures the seal lights flashes
+///   and lights fall through the Luna room around Kraden
 ///   (FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) and he cries `Stop!!! You're
-///   about to make a big mistake!` He runs here after the party (entrance 4)
-///   to warn that moving one statue springs the sanctum's trap, set by
-///   someone who hid something very important here, perhaps the key to
-///   Alchemy, and that the light must be the key to the secret
-///   (SolSanctumStatue_ExplainStatuePuzzle, once,
-///   FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED). After that a seal opened too
-///   soon closes again: its statue slides back and the leader jumps clear.
+///   about to make a big mistake!` He runs here after the party
+///   (SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG) to warn
+///   that moving one statue springs the sanctum's trap, set by someone who hid
+///   something very important here, perhaps the key to Alchemy, and that the
+///   light must be the key to the secret (SolSanctumStatue_ExplainStatuePuzzle,
+///   once, FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED). After that a seal opened
+///   too soon closes again: its statue slides back and the leader jumps clear.
 /// - The beams are the way through. With both shining, the floor before the
 ///   centre statue opens (SolSanctumStatue_OpenCentralHole), and the centre
 ///   statue, moved south with Move, slides into the hole and the room shakes:
 ///   `Something clicked!` (Event_CenterStatueMoved).
-/// - From then on the seals stay open. The first one opened cuts away by exit
-///   3: in the Luna and Sol rooms the quarter it lights only flashes, and
-///   Kraden runs off to see what Isaac has found
-///   (FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG), and he comes here (entrance 3) to
-///   find the hole. Garet and Jenna tell him how it opened; he decides that
-///   the statue puzzle was the trap and the centre statue there to disarm it,
-///   and goes back to watch from the Luna room
+/// - From then on the seals stay open. The first one opened cuts away by
+///   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED: in the
+///   Luna and Sol rooms the quarter it lights only flashes, and Kraden runs off
+///   to see what Isaac has found (FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG), and he
+///   comes here
+///   (SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED) to find
+///   the hole. Garet and Jenna tell him how it opened; he decides that the
+///   statue puzzle was the trap and the centre statue there to disarm it, and
+///   goes back to watch from the Luna room
 ///   (SolSanctumStatue_ExplainTrapDisarmed, once,
 ///   FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED). Once all four seals are open,
 ///   the picture of Luna in the Luna and Sol rooms has changed to Sol, and
@@ -212,18 +217,22 @@ const struct SceneEvent *SolSanctumStatue_GetEvents(void) {
 
 /// Chooses the scripted scene in the Luna and Sol rooms that a newly opened
 /// seal leads to, and requests its exit: once the centre statue has moved,
-/// the quarter it lit flashing in the Luna and Sol rooms (exit 3), until
+/// the quarter it lit flashing in the Luna and Sol rooms
+/// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED), until
 /// FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG is set; before then, the falling
-/// lights (exit 4), until FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set.
-/// Returns 1 when it requests an exit, otherwise -1.
+/// lights (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG), until
+/// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set. Returns 1 when it requests an
+/// exit, otherwise -1.
 static s32 SolSanctumStatue_SelectStoryExit(void) {
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG) == 0) {
-      Engine_EventRequestExit(3);
+      Engine_EventRequestExit(
+          SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED);
       return 1;
     }
   } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
-    Engine_EventRequestExit(4);
+    Engine_EventRequestExit(
+        SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG);
     return 1;
   }
   return -1;
@@ -263,7 +272,8 @@ static void SolSanctumStatue_OpenCentralHole(void) {
 /// it, Isaac!"
 /// Garet and Jenna tell him how it opened; he decides the statue puzzle was
 /// the trap and the centre statue there to disarm it, and leaves to observe
-/// from the Luna room. Called by SolSanctumStatue_Initialize at entrance 3
+/// from the Luna room. Called by SolSanctumStatue_Initialize at
+/// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED
 /// until FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED is set, which the caller
 /// sets. Clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumStatue_ExplainTrapDisarmed(void) {
@@ -426,7 +436,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
 /// springs it; whoever set it hid something very important, perhaps the key
 /// to Alchemy itself, and his intuition says the light is the key to the
 /// secret. He goes back to the Luna room and Jenna sets the party to work it
-/// out. Called by SolSanctumStatue_Initialize at entrance 4 until
+/// out. Called by SolSanctumStatue_Initialize at
+/// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG until
 /// FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED is set, which the caller sets.
 /// Clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumStatue_ExplainStatuePuzzle(void) {
@@ -796,8 +807,10 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 
 /// Restores the room's statues, beams and seals from their flags and plays
 /// Kraden's two visits. Called by Field_RunScene once the actors exist.
-/// Sets FLAG_RETREAT_BLOCKED; starts the parallax rows; at entrance 3 plays
-/// SolSanctumStatue_ExplainTrapDisarmed and at entrance 4
+/// Sets FLAG_RETREAT_BLOCKED; starts the parallax rows; at
+/// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED plays
+/// SolSanctumStatue_ExplainTrapDisarmed and at
+/// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG
 /// SolSanctumStatue_ExplainStatuePuzzle, each once (setting
 /// FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED or
 /// FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED), and not on a return after a
@@ -807,7 +820,7 @@ s32 SolSanctumStatue_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   SolSanctumStatue_InitializeScrollingSprites();
-  // Retreat does not work here (flag 0x144).
+  // Retreat does not work here (FLAG_RETREAT_BLOCKED).
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   centerEffect = Object_GetById(ACTOR_MOVED_CENTER_STATUE);
   centerEffect->collisionFlags = 0;
@@ -880,7 +893,8 @@ s32 SolSanctumStatue_Initialize(void) {
     Map_CopyCellsTo(4, 31, 18, 11, 2, 1);
     Map_CopyCellsTo(4, 58, 36, 43, 4, 1);
   }
-  if (gGameState.entrance == 3) {
+  if (gGameState.entrance ==
+      SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED) != 0) {
       Actor_SetPosition(GARET, 0, 0);
       Actor_SetPosition(JENNA, 0, 0);
@@ -889,7 +903,8 @@ s32 SolSanctumStatue_Initialize(void) {
       GameFlag_Set(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED);
     }
   }
-  if (gGameState.entrance == 4) {
+  if (gGameState.entrance ==
+      SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED) != 0) {
       Actor_SetPosition(GARET, 0, 0);
       Actor_SetPosition(JENNA, 0, 0);
@@ -1574,7 +1589,8 @@ static void SolSanctumStatue_OpenSeal(void) {
           SolSanctumStatue_RunSealOpenedSequence();
         }
       } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
-        Engine_EventRequestExit(5);
+        Engine_EventRequestExit(
+            SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN);
         exitResult = 1;
       }
     }
@@ -1646,13 +1662,18 @@ static void Event_SayThenWait(s32 speaker, s32 frames) {
 struct SceneEntrance gSolSanctumStatue_Entrances[] = {
     {SOL_SANCTUM_STATUE_FROM_VALE_GATE, CONDITION_ALWAYS, 287, 0, 176,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 646, 0, 329, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS, CONDITION_ALWAYS, 646,
+     0, 329, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE, CONDITION_ALWAYS, 647,
      0, 470, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {4, CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {5, CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {6, CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED,
+     CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG,
+     CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN,
+     CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED,
+     CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {99, CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
@@ -1715,7 +1736,8 @@ struct ScenePlacement gSolSanctumStatue_Placements[] = {
 // clang-format on
 
 struct SceneEvent gSolSanctumStatue_Events[] = {
-    {0x31, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS,
+     SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE},
     {TOUCH_WALKING, 10, CONDITION_ALWAYS,

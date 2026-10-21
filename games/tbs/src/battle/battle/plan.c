@@ -90,8 +90,6 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
 #define DJINN_INDEX(v) ((v) & 255)
 /// The most targets a plan holds (BATTLE_TARGET_CAPACITY).
 #define TARGET_MAX 14
-/// The first Djinni's ability id: each element's 20 follow, Venus first.
-#define DJINN_FIRST_ABILITY 300
 /// Announces the action and plans its targets and effects.
 /// Returns 0 to stage the plan, PLAN_REPORTED when the action failed (its
 /// message shown), or PLAN_NO_ACTION.
@@ -283,7 +281,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   }
   // A bound unit (restraint bit 0) loses one action in four,
   // except Defend.
-  if ((actor->restraint & 1) && request->command != CMD_DEFEND &&
+  if ((actor->restraint & RESTRAINT_BOUND) && request->command != CMD_DEFEND &&
       (BattleRandomFar() & 3) == 0) {
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiText_ShowMessageAndWaitCoreFar(MsgIsBound);
@@ -392,14 +390,14 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     UiWork_PushValueSlotFar(actor->inventory[request->parameter],
                             VALUE_ITEM_NAME);
     // An item that is kept: weapons, shields, gloves and armlets, the Psynergy
-    // items, rings and type 7, which no row of items.tsv has, are raised
+    // items, rings and ITEM_TYPE_UNUSED are raised
     // ("raises"); anything else is used.
-    if (item->useType == ITEM_USE_MAY_BREAK || item->useType == 0) {
+    if (item->useType == ITEM_USE_MAY_BREAK || item->useType == ITEM_USE_FREE) {
       switch (item->type) {
       case ITEM_TYPE_WEAPON:
       case ITEM_TYPE_SHIELD:
       case ITEM_TYPE_PSYNERGY:
-      case 7:
+      case ITEM_TYPE_UNUSED:
       case ITEM_TYPE_RING:
         UiText_ShowMessageAndWaitCoreFar(MsgActorRaisesItem);
         break;
@@ -516,7 +514,8 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         BattleEvPush(BATTLE_EVENT_UNIT_NAME, request->unitId);
         BattleEvPush(BATTLE_EVENT_ABILITY_NAME,
                      DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
-                         DJINN_INDEX(request->parameter) + DJINN_FIRST_ABILITY);
+                         DJINN_INDEX(request->parameter) +
+                         ABILITY_DJINNI_FIRST);
         BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
         BattleEvPush(BATTLE_EVENT_DRAW_STATUS, 0);
         BattleEvPush(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
@@ -790,5 +789,3 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   plan->command = request->command;
   return 0;
 }
-
-#undef DJINN_FIRST_ABILITY

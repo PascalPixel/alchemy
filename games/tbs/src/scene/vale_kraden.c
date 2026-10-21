@@ -1,26 +1,27 @@
 /// @file
-/// Vale (scene 6, SceneId_ValeKraden): the part of the village around Kraden's
-/// cottage, by the fence that closes off the lands beyond. Kraden, "a trained
-/// Alchemy sage" in his own words, came to Vale to study Mt. Aleph and
-/// Alchemy. One placement table serves every visit: ValeKraden_Initialize
-/// removes the people a visit does not use, and ValeKraden_GetEvents picks
-/// the events for the time of the story.
+/// Vale (SceneId_ValeKraden): the part of the village around Kraden's cottage,
+/// by the fence that closes off the lands beyond. Kraden, "a trained Alchemy
+/// sage" in his own words, came to Vale to study Mt. Aleph and Alchemy. One
+/// placement table serves every visit: ValeKraden_Initialize removes the people
+/// a visit does not use, and ValeKraden_GetEvents picks the events for the time
+/// of the story.
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). The storm's map (Vale,
-///   scene 3, SceneId_ValeStorm) leads here by VALE_STORM_TO_VALE_KRADEN_NORTH
-///   and VALE_STORM_TO_VALE_KRADEN_SOUTH, arriving by
-///   VALE_KRADEN_FROM_VALE_NORTH and VALE_KRADEN_FROM_VALE_SOUTH, and the two
-///   paths lead back (VALE_KRADEN_TO_VALE_STORM_NORTH and
-///   VALE_KRADEN_TO_VALE_STORM_SOUTH). A rockslide has broken the fence and let
-///   monsters in: Initialize starts the lightning, leaves the two rocks that
-///   Isaac cannot budge across the way and blocks the cells around them, and
-///   lays a hurt man by the fence. Talking to him, or walking up to him (cell
-///   code 20), plays Event_TalkToRockslideSurvivor: asked whether he will die,
-///   a yes leaves him giving up (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP), and a
-///   no has him find he is not hurt at all, warn them of the monsters on their
-///   way to the plaza and run off (FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED), after
-///   which he is no longer placed. Two cells start a monster battle each, once
-///   (encounters 0 and 1 of table 12, the storm's).
+///   SceneId_ValeStorm) leads here by VALE_STORM_TO_VALE_KRADEN_NORTH and
+///   VALE_STORM_TO_VALE_KRADEN_SOUTH, arriving by VALE_KRADEN_FROM_VALE_NORTH
+///   and VALE_KRADEN_FROM_VALE_SOUTH, and the two paths lead back
+///   (VALE_KRADEN_TO_VALE_STORM_NORTH and VALE_KRADEN_TO_VALE_STORM_SOUTH). A
+///   rockslide has broken the fence and let monsters in: Initialize starts the
+///   lightning, leaves the two rocks that Isaac cannot budge across the way and
+///   blocks the cells around them, and lays a hurt man by the fence. Talking to
+///   him, or walking up to him (cell code 20), plays
+///   Event_TalkToRockslideSurvivor: asked whether he will die, a yes leaves him
+///   giving up (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP), and a no has him find he
+///   is not hurt at all, warn them of the monsters on their way to the plaza
+///   and run off (FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED), after which he is no
+///   longer placed. Two cells start a monster battle each, once (the first two
+///   slots of the encounter zone of the scripted battles of Vale, Vault and the
+///   world map).
 /// - Three years later, the day the story begins, Isaac comes up with Garet and
 ///   Jenna to find two strangers outside. Walking past them (cell code 7) plays
 ///   Event_MeetSaturosAndMenardi: the three overhear the two speak of Sol
@@ -33,21 +34,22 @@
 ///   Saturos and Menardi, and Kraden talks the three into a secret look at Sol
 ///   Sanctum on the forbidden mountain, then goes in to prepare, and
 ///   VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG takes the party into the
-///   cottage (scene 8, VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG). Coming
-///   back out by VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH, Kraden joins them
-///   for Mt. Aleph (Event_KradenSetsOff, FLAG_SANCTUM_VISIT_PLANNED); from then
-///   on he and the strangers are gone. A child at the fence hears growls beyond
-///   it, and a jar holds an Elixir.
+///   cottage (SceneId_ValeInteriorsInn,
+///   VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG). Coming back out by
+///   VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH, Kraden joins them for Mt. Aleph
+///   (Event_KradenSetsOff, FLAG_SANCTUM_VISIT_PLANNED); from then on he and the
+///   strangers are gone. A child at the fence hears growls beyond it, and a jar
+///   holds an Elixir.
 /// - After the party has left Vale (FLAG_PARTY_LEFT_VALE) the child means to
 ///   climb the fence one day, and after Kalay (FLAG_REACHED_KALAY) a villager
 ///   visits the empty cottage, missing Kraden.
 ///
 /// By day the cottage's gate (Event_EnterCottage) leads into the cottage
-/// (VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH, to scene 8's
+/// (VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH, to SceneId_ValeInteriorsInn's
 /// VALE_INTERIORS_INN_FROM_VALE_KRADEN_NORTH), VALE_KRADEN_TO_VALE_NORTH and
-/// VALE_KRADEN_TO_VALE_SOUTH go down into the village (Vale, scene 4) and
+/// VALE_KRADEN_TO_VALE_SOUTH go down into the village (SceneId_Vale) and
 /// VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST and VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST
-/// into Vale Cave's way in (scene 93). Coming back from it by
+/// into Vale Cave's way in (SceneId_ValeCaveMouth). Coming back from it by
 /// VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST clears FLAG_SHOW_LOCATION_NAME, so the
 /// place name is not shown again. The jar's row finds nothing on the stormy
 /// night, and after Kalay it is there only from the third patch on.
@@ -87,9 +89,9 @@
 /// The placed actors, numbered in the order of gValeKraden_Placements; Garet
 /// and Jenna, placed between Kraden and Saturos, keep their own slots.
 enum ValeKradenActor {
-  /// A boulder by the fence: sprite 0x127, the boulder Lift raises at the
+  /// A boulder by the fence, with the sprite of the boulder Lift raises at the
   /// Alpine Crossing (MsgMountainIsaacDidLiftBoulder) and in Gondowan Cave. Its
-  /// Lift row runs no script, like ACTOR_CAVE_1_BOULDER's in gondowan_cave.c,
+  /// Lift row runs no script, like ACTOR_RIVER_BOULDER's in gondowan_cave.c,
   /// and the stormy night's events have no row for it.
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,
   /// The west rock. "It's a huge rock that Isaac's strength can't even budge."
@@ -200,10 +202,10 @@ static void Event_TalkToFenceOnlooker(void) {
 ///
 /// Reached by talking to Kraden in the day's events, until
 /// FLAG_SANCTUM_VISIT_PLANNED is set. Ends by taking
-/// VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG into the cottage (scene 8,
-/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG); the party comes back by
-/// VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH, where Event_KradenSetsOff goes
-/// on.
+/// VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG into the cottage
+/// (SceneId_ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG);
+/// the party comes back by VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH, where
+/// Event_KradenSetsOff goes on.
 static void Event_KradenPlansSanctumVisit(void) {
   struct FieldActor *leader;
   s32 x, z;
@@ -445,7 +447,8 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
     Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG);
@@ -475,7 +478,8 @@ static void Event_KradenSetsOff(void) {
   actor = Object_GetById(JENNA);
   actor->facing = facing;
   Map_AnimateCells(gValeKraden_GateCells, 43, 8);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
@@ -877,7 +881,7 @@ s32 ValeKraden_Initialize(void) {
   struct FieldActor *actor;
   s32 debrisRow;
 
-  if (gGameState.entrance == 5 ||
+  if (gGameState.entrance == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_UNUSED ||
       gGameState.entrance == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
@@ -1062,14 +1066,16 @@ static void Event_TalkToRockslideSurvivor(void) {
 ///
 /// Reached by stepping on cell code 10 until
 /// FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT is set. Sets it and
-/// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts encounter 0 of table 12.
+/// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts the first slot of the encounter
+/// zone of the scripted battles of Vale, Vault and the world map.
 static void Event_FightFirstMonster(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
 
   work = gEventWork;
-  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  work->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;
 
   Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
@@ -1082,14 +1088,15 @@ static void Event_FightFirstMonster(void) {
 ///
 /// Reached by stepping on cell code 11 until
 /// FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT is set. Sets it and
-/// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts encounter 1 of table 12.
+/// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts its second slot.
 static void Event_FightSecondMonster(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
 
   work = gEventWork;
-  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  work->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;
 
   Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);
@@ -1146,7 +1153,8 @@ s32 gValeKraden_FaceTargetActions[] = {
 };
 
 struct SceneEntrance gValeKraden_Entrances[] = {
-    {0, CONDITION_ALWAYS, 228, 0, 172, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 228, 0, 172, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {VALE_KRADEN_FROM_VALE_NORTH, CONDITION_ALWAYS, 454, 0, 290, FACING_WEST, 0,
      -1, -1, -1, -1, 0},
     {VALE_KRADEN_FROM_VALE_SOUTH, CONDITION_ALWAYS, 454, 0, 443, FACING_WEST, 0,

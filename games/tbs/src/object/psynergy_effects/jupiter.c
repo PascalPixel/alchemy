@@ -52,7 +52,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   remainingParticles = 23;
   // One a frame, each with a random sprite param of 0 to 6.
   do {
-    EffectSlot_Initialize(slot, 284, position.x, position.z);
+    EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
     EffectSlot_SetCallback(slot, BattleFx_RunAngledApproachPhases);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,

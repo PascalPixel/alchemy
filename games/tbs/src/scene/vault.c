@@ -1,15 +1,14 @@
 /// @file
-/// Vault (scene 20, SceneId_Vault), "the town at the heart of Angara", as the
-/// party first finds it, just after Mt. Aleph's eruption: the first town on
-/// the journey, where Vale's villagers send the party (vale_gate.c). In the
-/// chaos of the eruption thieves struck: Master Hammet, a wealthy landowner
-/// and merchant from Kalay, had his precious rod, the Shaman's Rod, stolen,
-/// and his servant Ivan was left at the mayor's and cannot go home until he
-/// recovers it. This scene is the town's streets, with the townspeople's
-/// talk, Ivan's comings and goings, the bell and the dog; the houses, the
-/// inn and its loft, where the story plays out, are vault_interiors.c.
-/// Scene_GetPlacements and Scene_GetEvents choose by
-/// FLAG_VAULT_THIEVES_JAILED.
+/// Vault (SceneId_Vault), "the town at the heart of Angara", as the party first
+/// finds it, just after Mt. Aleph's eruption: the first town on the journey,
+/// where Vale's villagers send the party (vale_gate.c). In the chaos of the
+/// eruption thieves struck: Master Hammet, a wealthy landowner and merchant
+/// from Kalay, had his precious rod, the Shaman's Rod, stolen, and his servant
+/// Ivan was left at the mayor's and cannot go home until he recovers it. This
+/// scene is the town's streets, with the townspeople's talk, Ivan's comings and
+/// goings, the bell and the dog; the houses, the inn and its loft, where the
+/// story plays out, are vault_interiors.c. Scene_GetPlacements and
+/// Scene_GetEvents choose by FLAG_VAULT_THIEVES_JAILED.
 ///
 /// - While the rod is missing, the townspeople talk of the eruption, of the
 ///   stolen rod, and of strange travelers who left in a hurry: two women and
@@ -23,12 +22,12 @@
 ///   into the inn's loft to fix its roof and was tied up there.
 /// - Once Ivan has joined the search (FLAG_VAULT_IVAN_JOINED_ROD_SEARCH),
 ///   walking out of either gate (triggers 20 and 21, before
-///   VAULT_TO_WORLD_MAP_SOUTH and the north gate's exit 2) has him stay
-///   behind to wait in Vault (Event_IvanStaysBehind): he hands back any Venus
-///   Djinni of Isaac's he holds and leaves the party. Coming back in by a gate
-///   (VAULT_FROM_WORLD_MAP_SOUTH, or entrance 0 or 2 at the north gate) or out
-///   of the Vault Sanctum (VAULT_FROM_SANCTUM), Scene_Initialize has him greet
-///   the two and rejoin.
+///   VAULT_TO_WORLD_MAP_SOUTH and VAULT_TO_WORLD_MAP_NORTH) has him stay behind
+///   to wait in Vault (Event_IvanStaysBehind): he hands back any Venus Djinni
+///   of Isaac's he holds and leaves the party. Coming back in by a gate
+///   (VAULT_FROM_WORLD_MAP_SOUTH, or ENTRANCE_DEFAULT or
+///   VAULT_NORTH_GATE_UNUSED at the north gate) or out of the Vault Sanctum
+///   (VAULT_FROM_SANCTUM), Scene_Initialize has him greet the two and rejoin.
 /// - After the thieves are jailed, the townspeople thank the party, Ivan has
 ///   gone out to Lunpa to rescue Hammet, and the dog, given a Bone
 ///   (Event_GiveBoneToDog, FLAG_VAULT_DOG_SHOWN_PASSAGE), runs to a spot and
@@ -85,6 +84,7 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "character_ids.h"
 #include "songs.h"
 
@@ -105,8 +105,8 @@ enum {
   ACTOR_SECOND_WALKER = 15,
   /// Keeps watch. "Nobody's stealing anything on my watch!"
   ACTOR_WATCHMAN = 16,
-  /// One of the three thieves, sprite 0x40 as in the loft. "Are you accusing
-  /// us of stealing...?"
+  /// One of the three thieves, in his sprite in the loft. "Are you accusing us
+  /// of stealing...?"
   ACTOR_LOITERING_THIEF = 17,
   ACTOR_STRANDED_TRAVELER = 18, ///< was leaving town when the volcano erupted
   ACTOR_VAULT_DOG = 19,
@@ -115,8 +115,7 @@ enum {
   ACTOR_ROOFER = 20,
   /// Complains of the roofer. "He should be fixing the roof now"
   ACTOR_ROOF_COMPLAINER = 21,
-  ACTOR_SAP = 23, ///< Sap, a Venus Djinni, hiding until the bell calls it
-  SAP_INDEX = 4   ///< Sap's number among the Venus Djinn (DJINNI_SAP)
+  ACTOR_SAP = 23 ///< Sap, a Venus Djinni, hiding until the bell calls it
 };
 
 static void Vault_ShowStandingActorMessage(s32 actor);
@@ -187,10 +186,10 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 #include "common/vault_djinn.h"
 
 /// Leaving Vault by either gate (triggers 20 and 21, before
-/// VAULT_TO_WORLD_MAP_SOUTH and the north gate's exit 2):
-/// while Ivan is helping search for the rod and the thieves are free, he walks
-/// out to the gate, says he is still worried about the rod and will wait in
-/// Vault, leaves any Venus Djinni with Isaac and leaves the party.
+/// VAULT_TO_WORLD_MAP_SOUTH and VAULT_TO_WORLD_MAP_NORTH): while Ivan is
+/// helping search for the rod and the thieves are free, he walks out to the
+/// gate, says he is still worried about the rod and will wait in Vault, leaves
+/// any Venus Djinni with Isaac and leaves the party.
 static void Event_IvanStaysBehind(void) {
   struct FieldActor *actor;
   struct EventWork *eventWork;
@@ -815,7 +814,7 @@ s32 Scene_Initialize(void) {
   // Once the party has reached Kalay (FLAG_REACHED_KALAY), the town is its
   // later scene, SceneId_VaultRevisit (vault_revisit.c).
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
-    Engine_EventRequestExit(14);
+    Engine_EventRequestExit(VAULT_TO_VAULT_REVISIT);
   }
   // Restore the passage cells and the two walkers' proximity callbacks.
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
@@ -855,7 +854,7 @@ s32 Scene_Initialize(void) {
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
-  if (gGameState.entrance <= 2) {
+  if (gGameState.entrance <= VAULT_NORTH_GATE_UNUSED) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Engine_GameFlagClear(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
       if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -1209,10 +1208,12 @@ s32 gVault_SecondWalkerRoute[] = {
 };
 
 struct SceneEntrance gVault_Entrances[] = {
-    {0, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {VAULT_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VAULT_NORTH_GATE_UNUSED, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
     {VAULT_FROM_VAULT_INTERIORS_EAST_SOUTHEAST, CONDITION_ALWAYS, 408, 0, 344,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VAULT_FROM_VAULT_INTERIORS_SOUTHEAST, CONDITION_ALWAYS, 312, 0, 328,
@@ -1292,7 +1293,7 @@ struct ScenePlacement gVault_Placements[] = {
         PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xf8, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x5a, FLAG_DJINNI_0 + SAP_INDEX, ACTOR_STAND,
+    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_SAP, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1328,7 +1329,7 @@ struct ScenePlacement gVault_PlacementsAfterThieves[] = {
         PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xf8, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x5a, FLAG_DJINNI_0 + SAP_INDEX, ACTOR_STAND,
+    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_SAP, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

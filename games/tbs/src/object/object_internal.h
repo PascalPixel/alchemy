@@ -95,6 +95,7 @@
 #include "fixed_point_position.h"
 #include "macros.h"
 #include "ability_ids.h"
+#include "sprite_ids.h"
 
 /// The exit request whose destination is already in gGameState.scene and
 /// .entrance, so that Scene_TakeExit leaves them as they are. Random battles,

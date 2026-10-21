@@ -981,7 +981,7 @@ static s32 LinkLobby_EnterBattle(void) {
     // Publish EXEC only after the battle and return destinations are ready.
     // It fills the payload's first four halfwords, where the link battle's
     // command entry looks for it in the partner's (party_commands.c).
-    Battle_SetStart(4);
+    Battle_SetStart(BATTLE_START_LINK);
     Field_RequestBattleFromEncounterTable(1, 1);
     signature = (u16 *)gSerialTransfer.payload;
     signature[0] = 'E';

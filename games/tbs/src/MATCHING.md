@@ -251,7 +251,7 @@ each keeps its spelling until it is.
   `WORK_SLOT(HEAP_SLOT_EVENT)`, or `Runtime_AllocateBlock(HEAP_SLOT_EVENT,
   sizeof(struct FieldWork))`, which returns the existing block.
 - The effect scene is `gEffectWork` or `*(gWorkSlot + HEAP_SLOT_FX)`.
-- The map's view is `gMapWork[0]` or `WORK_SLOT(8)`.
+- The map's view is `gMapWork[0]` or `WORK_SLOT(HEAP_SLOT_MAP)`.
 - The field blend work is `gFieldBlendWork[0]`,
   `WORK_SLOT(HEAP_SLOT_FIELD_BLEND)` (`ValeInteriorsInn_Initialize`), or
   `Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND, sizeof(struct

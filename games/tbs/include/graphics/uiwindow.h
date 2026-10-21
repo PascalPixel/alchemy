@@ -16,7 +16,7 @@ struct UiWindow {
   u16 y;                          ///< tiles
   u16 unk10; ///< 1 once opened, 0 once freed; not read by name in TBS
   /// The effect a message's TEXT_WINDOW_STATE code sets. Only
-  /// UI_WINDOW_EFFECT_SWELL (4) is acted on; its channel types nothing more
+  /// UI_WINDOW_EFFECT_SWELL is acted on; its channel types nothing more
   /// until the swell ends and clears it.
   u16 effect;
   /// 0 while a message channel is typing into the window; 1 once its text has

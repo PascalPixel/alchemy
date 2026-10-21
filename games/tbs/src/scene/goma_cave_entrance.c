@@ -1,5 +1,5 @@
 /// @file
-/// Goma Cave Entrance (GomaCaveEntrance, scene 25), the mouth of the cave in
+/// Goma Cave Entrance (SceneId_GomaCaveEntrance), the mouth of the cave in
 /// the Goma Range that leads from Vault to Bilibin, where Ivan rejoins the
 /// party.
 ///
@@ -32,8 +32,9 @@
 ///
 /// Scene_Initialize blocks Retreat and puts everything back as these flags say:
 /// the stump where it landed, the pillars on their columns and the map cells
-/// that go with them. Exit 1 leads into Goma Cave (GomaCaveStream, scene 28)
-/// and exit 2 out to the world map.
+/// that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma
+/// Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
+/// world map.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -308,7 +309,7 @@ static void Event_IvanRejoins(void) {
     OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
     Actor_WalkToAndWait(IVAN, 232, 184);
     WAIT(20);
-    OBJ_EMOTE(IVAN, 0x105, 60);
+    OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 5, 60);
     OBJ_DIR(IVAN, FACING_NORTHEAST, 20);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     WAIT(20);
@@ -318,14 +319,14 @@ static void Event_IvanRejoins(void) {
     WAIT(20);
     OBJ_DIR(IVAN, FACING_WEST, 20);
     Event_ShowMessageAndWait(IVAN, 0, 120);
-    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x105, 0);
-    OBJ_EMOTE(GARET, 0x105, 60);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 5, 60);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
     WAIT(60);
     OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     OBJ_DIR(GARET, FACING_SOUTHWEST, 0);
     WAIT(60);
-    OBJ_EMOTE(IVAN, 0x106, 0);
+    OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 6, 0);
     Engine_ActorStartRepeatedMotion(IVAN, 1);
     WAIT(30);
     Event_ShowMessageAndWait(IVAN, 0, 30);
@@ -361,10 +362,10 @@ static void Event_IvanRejoins(void) {
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 60);
-    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x105, 0);
-    OBJ_EMOTE(GARET, 0x105, 60);
-    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x101, 0);
-    OBJ_EMOTE(GARET, 0x101, 0);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 5, 60);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 0);
     WAIT(60);
     OBJ_DIR(GARET, FACING_WEST, 0);
     OBJ_DIR(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -373,29 +374,31 @@ static void Event_IvanRejoins(void) {
     OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     WAIT(10);
     GomaCaveEntrance_SayThenWait(GARET, 20);
-    OBJ_EMOTE(IVAN, 0x105, 0);
+    OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 5, 0);
     WAIT(60);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
     Actor_FaceActor(GARET, IVAN, 0);
-    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x102, 0);
-    OBJ_EMOTE(GARET, 0x102, 0);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 2, 0);
     WAIT(60);
     Engine_ActorRunRepeatedMotion(IVAN, 2);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 30);
-    OBJ_EMOTE(ACTOR_PARTY_LEADER, 0x101, 0);
-    OBJ_EMOTE(GARET, 0x101, 0);
+    OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 0);
     WAIT(80);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     WAIT(20);
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorStartRepeatedMotion(GARET, 1);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(GARET, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     WAIT(60);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     WAIT(20);
@@ -489,7 +492,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
     *f = t;
   }
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET);
   EffectRuntime_StopCurrentObject();
 }
 
@@ -650,7 +653,8 @@ s32 gGomaCaveEntranceTallIvyScript[] = {
 };
 
 struct SceneEntrance gGomaCaveEntranceEntrances[] = {
-    {0, CONDITION_ALWAYS, 192, 0, 197, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 192, 0, 197, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 96, 0, 440,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_STREAM, CONDITION_ALWAYS, 200, 0, 184,

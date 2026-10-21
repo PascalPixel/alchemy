@@ -1,5 +1,5 @@
 /// @file
-/// Vale (scene 4), Isaac's village by day, outside the houses: the door of
+/// SceneId_Vale, Isaac's village by day, outside the houses: the door of
 /// Isaac's house, the houses of Garet's family and of Jenna's grandparents,
 /// the Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
 /// placements and events come in three sets, chosen by the story flags: before
@@ -13,12 +13,12 @@
 ///   the caption "Three years later...", Isaac is mending the roof of his house
 ///   while Dora, his mother, calls up to him; Garet, who will travel with him,
 ///   trains his Psynergy nearby, and Jenna comes by, and the two speak of that
-///   day before going to fetch Isaac to go to Kraden's. Exit 12 brings the
-///   party back in at entrance 17, where Event_RoofMended plays once (group
-///   flag FLAG_PLACE_TEMP_08): Dora praises the roof, remembers Kyle, and sends
-///   the three off on their climb of Mt. Aleph with Kraden, the scholar who
-///   teaches them Alchemy (FLAG_SCENE_TEMP_02); for the rest of that visit Dora
-///   frets about the hole clumsy Garet left.
+///   day before going to fetch Isaac to go to Kraden's. VALE_TO_ROOF_MENDED
+///   brings the party back in at VALE_FROM_ROOF_MENDED, where Event_RoofMended
+///   plays once (group flag FLAG_PLACE_TEMP_08): Dora praises the roof,
+///   remembers Kyle, and sends the three off on their climb of Mt. Aleph with
+///   Kraden, the scholar who teaches them Alchemy (FLAG_SCENE_TEMP_02); for the
+///   rest of that visit Dora frets about the hole clumsy Garet left.
 /// - Vale before the party leaves. Until Kraden has planned the visit to Sol
 ///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
 ///   Aleph; a villager jumps out to warn him against sneaking up the sacred
@@ -44,20 +44,21 @@
 ///
 /// In every set: a Nut to catch with Catch (its flag 0xfd0; ACTOR_NUT, or
 /// ACTOR_NUT_AFTER_KALAY), a pillar to push or Move, whose column the setup
-/// restores from group flags 0x314 to 0x316, a passage the leader moves through
+/// restores from FLAG_PLACE_TEMP_14 to _16, a passage the leader moves through
 /// on touch cells 100 and 101 (FLAG_SCENE_TEMP_04 while inside), and cells of
 /// an upper path that change while the leader is on it (FLAG_SCENE_TEMP_10);
 /// after a battle (FLAG_KEEP_PARTY_POSITION) the setup restores both. Exits:
-/// VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol Entrance (scene 19),
-/// VALE_TO_VALE_GATE to ValeGate (scene 5), VALE_TO_VALE_KRADEN_NORTH and
-/// VALE_TO_VALE_KRADEN_SOUTH to ValeKraden (scene 6), the doors
+/// VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol Entrance (SceneId_SolEntrance),
+/// VALE_TO_VALE_GATE to SceneId_ValeGate, VALE_TO_VALE_KRADEN_NORTH and
+/// VALE_TO_VALE_KRADEN_SOUTH to SceneId_ValeKraden, the doors
 /// VALE_TO_VALE_INTERIORS_SHOPS_EAST, VALE_TO_VALE_INTERIORS_SHOPS_SOUTH,
 /// VALE_TO_VALE_INTERIORS_SHOPS_NORTH, VALE_TO_VALE_INTERIORS_SHOPS_WEST and
-/// exit 10 into the houses (ValeInteriorsShops, scene 7,
+/// VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR into the houses
+/// (SceneId_ValeInteriorsShops,
 /// vale_interiors_shops.c), VALE_TO_VALE_INTERIORS_INN into Isaac's house
-/// (scene 8) and VALE_TO_SANCTUM into Vale Sanctum (scene 9). Two scenes no
-/// table reaches remain: Event_UnusedRoofMended, a copy of the roof's end, and
-/// Event_UnusedWaterBurstsByTheRiver, which sets group flag
+/// (SceneId_ValeInteriorsInn) and VALE_TO_SANCTUM into SceneId_Sanctum. Two
+/// scenes no table reaches remain: Event_UnusedRoofMended, a copy of the roof's
+/// end, and Event_UnusedWaterBurstsByTheRiver, which sets group flag
 /// FLAG_PLACE_TEMP_05. FLAG_SCENE_TEMP_41 pauses the villager who watches Isaac
 /// while a menu is open. The TBS_PATCH_4 editions also set Dora's sprite
 /// priority before Kalay.
@@ -192,7 +193,7 @@ enum ValeActor {
   /// party has left, "Please take care of my brother, Isaac."
   ACTOR_GARETS_SIBLING,
   /// Sprite 0xd3, as Goma Cave's pillars: pushed (Event_PushPillar) or moved
-  /// with Move, its column kept in group flags 0x314 to 0x316
+  /// with Move, its column kept in FLAG_PLACE_TEMP_14 to _16
   /// (Event_SettleMovedPillar).
   ACTOR_PILLAR,
   ACTOR_DORA, ///< Isaac's mother
@@ -467,19 +468,19 @@ static void Event_ApproachMtAleph(void) {
   }
 }
 
-/// Touch cell 3 in Vale takes the northern way out to ValeKraden (scene 6).
+/// Touch cell 3 in Vale takes the northern way out to SceneId_ValeKraden.
 static void Event_TakeExitToValeKradenNorth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(VALE_TO_VALE_KRADEN_NORTH);
 }
 
-/// Touch cell 4 in Vale takes the southern way out to ValeKraden (scene 6).
+/// Touch cell 4 in Vale takes the southern way out to SceneId_ValeKraden.
 static void Event_TakeExitToValeKradenSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(VALE_TO_VALE_KRADEN_SOUTH);
 }
 
-/// Touch cell 5 in Vale takes the way out to ValeGate (scene 5).
+/// Touch cell 5 in Vale takes the way out to SceneId_ValeGate.
 static void Event_TakeExitToValeGate(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(VALE_TO_VALE_GATE);
@@ -552,10 +553,10 @@ static void Event_EnterValeInteriorsShopsWest(void) {
 }
 
 /// A second door in Vale into the house of Jenna's grandparents (touch cell
-/// 11): it opens and exit 10, which scene_links.h leaves unnamed, leads in, to
-/// the room ValeInteriorsShops enters from
+/// 11): it opens and VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR leads in,
+/// to the room ValeInteriorsShops enters from
 /// VALE_INTERIORS_SHOPS_FROM_VALE_NORTH. XXX: likely a slip in the exit table,
-/// because exit 10 sends this door, beside entrance 11, into that room, whose
+/// because the exit sends this door, beside entrance 11, into that room, whose
 /// door returns the party at VALE_FROM_VALE_INTERIORS_SHOPS_NORTH by the other
 /// door, and no exit leads to entrance 11; entering the room by this door in a
 /// play-through would settle it.
@@ -563,7 +564,7 @@ static void Event_EnterJennasGrandparentsHouseBySecondDoor(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
-  Engine_EventRequestExit(10);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_SHOPS_NORTH_SECOND_DOOR);
 }
 
 /// On the path to Mt. Aleph in Vale, before the visit is planned: Jenna comes
@@ -1473,7 +1474,8 @@ s32 Vale_Initialize(void) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephVillagerPause, 0xc80);
         }
       }
-      if (!GameFlag_IsSet(FLAG_PLACE_TEMP_08) && gGameState.entrance == 17) {
+      if (!GameFlag_IsSet(FLAG_PLACE_TEMP_08) &&
+          gGameState.entrance == VALE_FROM_ROOF_MENDED) {
         Event_RoofMended();
         Engine_GameFlagSet(FLAG_PLACE_TEMP_08);
       }
@@ -2144,13 +2146,13 @@ static void Event_MendingTheRoof(void) {
   gEventWork->transitionFrames = 60;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(12);
+  Engine_EventRequestExit(VALE_TO_ROOF_MENDED);
   Engine_EventEnd();
 }
 
-/// Arriving by entrance 17 after the opening, in Vale: Dora praises the mended
-/// roof, remembers Kyle, and sends Isaac, Garet and Jenna off to Mt. Aleph
-/// with Kraden. "Good job, Isaac. You patched it nicely."
+/// Arriving by VALE_FROM_ROOF_MENDED after the opening, in Vale: Dora praises
+/// the mended roof, remembers Kyle, and sends Isaac, Garet and Jenna off to Mt.
+/// Aleph with Kraden. "Good job, Isaac. You patched it nicely."
 static void Event_RoofMended(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -2995,8 +2997,8 @@ static void Event_PushPillar(void) {
   Event_SettleMovedPillar();
 }
 
-/// After Move or a push, record the pillar's column in group flags 0x314 to
-/// 0x316 and block the cell it now stands on.
+/// After Move or a push, record the pillar's column in FLAG_PLACE_TEMP_14 to
+/// _16 and block the cell it now stands on.
 static void Event_SettleMovedPillar(void) {
   struct FieldActor *actor;
   s32 column;
@@ -3283,7 +3285,7 @@ struct SceneEntrance gVale_Entrances[] = {
     { VALE_FROM_VALE_INTERIORS_SHOPS_WEST, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 11, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_TITLE, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 17, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_ROOF_MENDED, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 

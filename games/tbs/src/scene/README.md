@@ -179,7 +179,7 @@ takes an exit and the next scene is loaded.
 - **Placements** (`struct ScenePlacement`): a sprite, a condition, a
   behaviour (`ACTOR_STAND`, `ACTOR_WANDER` or an object script), a position in
   pixels, a facing and how the actor turns when spoken to. The rows whose
-  condition holds become actors 8, 9 and so on, in order.
+  condition holds become actors from `ACTOR_FIRST_PLACED` on, in order.
 - **Events** (`struct SceneEvent`): a kind, a trigger, a condition and what
   happens, ending with `SCENE_EVENTS_END`.
 
@@ -224,7 +224,8 @@ such find, place by place.
    `msgctxt` is the message's linker name (`MsgVaultWelcomeToVaultTheTownAt`),
    which the scene uses as written.
 3. The scene's event table names the function or message for each actor and
-   spot; its actors are numbered from 8 in the order of the placement table.
+   spot; its actors are numbered from `ACTOR_FIRST_PLACED` in the order of the
+   placement table.
 
 ## How to change a line of dialogue
 
@@ -249,15 +250,16 @@ Scenes are written in the commands of `event.h` and the services of
 `field_event.h`:
 
 ```c
-// Stop first guard, face leader, then second guard expels party.
-static void LunpaFortress_ConfrontCaughtPairedPatrol(void) {
+/// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
+/// the first stops and stares, and the second throws the party out.
+static void Event_PatrolPairThrowsPartyOut(void) {
   EV_BEGIN();
-  Engine_ActorStop(9);
-  Engine_ActorSetDestinationOffset(9, 0, 0);
-  OBJ_MODE(9, 0);
-  OBJ_FACE(9, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorShowEmote(9, EMOTE_IN_FRONT, 0);
-  LunpaFortress_ExpelPartyWithGuard(10);
+  Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
+  Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
+  OBJ_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJ_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL, EMOTE_IN_FRONT, 0);
+  LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
   EV_END();
 }
 ```
@@ -266,7 +268,8 @@ static void LunpaFortress_ConfrontCaughtPairedPatrol(void) {
   control the party. `WAIT(n)` waits n frames (60 a second).
 - `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it, spoken by an
   actor; each `MESSAGE_PUT` moves on to the message after it.
-- Actors are moved by number: `OBJ_POS_SET`, `OBJ_WALK`, `OBJ_SPEED`,
+- Actors are moved by the names each scene's actor enum gives them:
+  `OBJ_POS_SET`, `OBJ_WALK`, `OBJ_SPEED`,
   `OBJ_DIR`, `OBJ_FACE`, `OBJ_MODE` (an animation: `ANIM_STAND`, `ANIM_WALK`,
   `ANIM_NOD`, `ANIM_SHAKE_HEAD`).
 - `FLAG_CHECK` and `FLAG_SET` test and set game flags; `SE(n)` plays a sound.

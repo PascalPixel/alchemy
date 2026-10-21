@@ -1,5 +1,5 @@
 /// @file
-/// Vault's jail (VaultJail, scene 22), one map of two rooms that the area
+/// Vault's jail (SceneId_VaultJail), one map of two rooms that the area
 /// names tell apart by entrance. The entrance also picks the tables: the
 /// thieves' for VAULT_JAIL_FROM_VAULT and VAULT_JAIL_FROM_LUNPA, the
 /// prisoner's for VAULT_JAIL_FROM_VAULT_REVISIT.

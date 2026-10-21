@@ -11,13 +11,13 @@
 #define TILE_CELLS_NORTH ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
 
 /// Makes the leader jump two tiles forward, over the tile in front, when the
-/// map allows it (Map_CheckObjectStep). On a platform object (sprite 207 or
-/// 205) the platform plays its animation 7 and the leader bobs down 2 pixels
-/// and back. Each jump adds two tiles to work->walkingDistance, as walking
-/// them would, and the leader keeps jumping while it lands on another jump
-/// spot (MAP_CELL_JUMP_FORWARD_UNREACHED). Returns 0 after a jump, -1 when the
-/// leader cannot jump; a chain that is blocked after its first jump also
-/// returns -1, with the leader standing on the jump spot it reached.
+/// map allows it (Map_CheckObjectStep). On a platform object (SPRITE_PLATFORM
+/// or SPRITE_PLATFORM_2) the platform plays its animation 7 and the leader bobs
+/// down 2 pixels and back. Each jump adds two tiles to work->walkingDistance,
+/// as walking them would, and the leader keeps jumping while it lands on
+/// another jump spot (MAP_CELL_JUMP_FORWARD_UNREACHED). Returns 0 after a jump,
+/// -1 when the leader cannot jump; a chain that is blocked after its first jump
+/// also returns -1, with the leader standing on the jump spot it reached.
 ///
 /// Called by Field_RunPushTileEvent when the leader has pushed against a jump
 /// spot (0xf9 or 0xfe) for more than 12 frames, and by the gap jumps of Goma
@@ -77,8 +77,10 @@ again:
                                           spriteFlags);
 
     // A platform underfoot dips 2 pixels with the leader and comes back up.
-    if ((platform = Object_FindNearestFacingTarget(leader, 207)) != NULL ||
-        (platform = Object_FindNearestFacingTarget(leader, 205)) != NULL) {
+    if ((platform = Object_FindNearestFacingTarget(leader, SPRITE_PLATFORM)) !=
+            NULL ||
+        (platform = Object_FindNearestFacingTarget(
+             leader, SPRITE_PLATFORM_2)) != NULL) {
       ObjectDispatch_SelectAnimationFar(platform, 7);
       leader->y -= 0x10000;
       leader->terrainHeight -= 0x10000;

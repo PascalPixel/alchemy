@@ -421,13 +421,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
         switch (System_GetLanguage()) {
-        case 2:
+        case CARTRIDGE_LANGUAGE_FRENCH:
           UiText_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
           UiText_DrawStringAtOffset((u8 *)gOwnerStatus_NivString, statusWindow,
                                     51, 0);
           UiText_DrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
           break;
-        case 3:
+        case CARTRIDGE_LANGUAGE_SPANISH:
           UiText_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
           UiText_DrawStringAtOffset((u8 *)gOwnerStatus_NvString, statusWindow,
                                     56, 0);
@@ -451,19 +451,19 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
         switch (System_GetLanguage()) {
-        case 1:
+        case CARTRIDGE_LANGUAGE_GERMAN:
           UiText_DrawStringAtOffset((u8 *)gOwnerStatus_KpString, statusWindow,
                                     40, 24);
           break;
-        case 2:
+        case CARTRIDGE_LANGUAGE_FRENCH:
           UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString, statusWindow,
                                     40, 24);
           break;
-        case 3:
+        case CARTRIDGE_LANGUAGE_SPANISH:
           UiText_DrawStringAtOffset((u8 *)gOwnerStatus_PvString, statusWindow,
                                     40, 24);
           break;
-        case 4:
+        case CARTRIDGE_LANGUAGE_ITALIAN:
           UiText_DrawStringAtOffset((u8 *)gOwnerStatus_HpString, statusWindow,
                                     40, 24);
           break;

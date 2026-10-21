@@ -1,5 +1,5 @@
 /// @file
-/// Lighthouse Aerie (VenusLighthouseAerie, scene 187), the top of Venus
+/// Lighthouse Aerie (SceneId_VenusLighthouseAerie), the top of Venus
 /// Lighthouse, where the pursuit of Saturos and Menardi ends. The scene is one
 /// scripted sequence cut by two battles and two trips to the world map; each
 /// part starts in VenusLighthouseAerie_Initialize from the entrance the part
@@ -12,7 +12,7 @@
 /// her because they cannot enter Jupiter Lighthouse without a Wind Adept.
 /// Felix has sent Jenna and the others ahead to the dock at Idejima. In story
 /// order:
-/// - The arrival (entrance 1, from VenusLighthouseFourthFloor;
+/// - The arrival (AERIE_ENTRANCE_ARRIVAL, from VenusLighthouseFourthFloor;
 ///   VenusLighthouseAerie_OverhearSaturosAndMenardi). A pillar carries the
 ///   leader up, and the party overhears Saturos and Menardi about to light the
 ///   beacon and Felix demanding that they free Sheba as they promised. They
@@ -26,35 +26,37 @@
 ///   that reaches Jupiter Lighthouse; Saturos promises not to harm her for the
 ///   Shaman's Rod, Isaac hands it over through Felix (FLAG_SHAMANS_ROD_OWNER
 ///   plus the member who carried it), and Saturos says he never said he would
-///   let her go. The battle follows (encounter table 98, entry 1).
-/// - After it (entrance 2, VenusLighthouseAerie_CombineSaturosAndMenardi).
-///   Felix will still have the beacons lit, Saturos throws the Venus Star into
-///   the lighthouse, and the beacon's light restores the two Fire Adepts'
-///   Psynergy; Menardi taunts Felix over his childhood friend until he leaves
-///   with Sheba, and Saturos and Menardi fuse. Party_RestorePpOfLitElements
-///   refills the PP of the party's Adepts whose lighthouses are lit, and the
-///   second battle follows (entry 0).
-/// - After that (entrance 3,
+///   let her go. The battle follows (ENCOUNTER_ZONE_SCRIPTED, slot 1).
+/// - After it (AERIE_ENTRANCE_AFTER_FIRST_BATTLE,
+///   VenusLighthouseAerie_CombineSaturosAndMenardi). Felix will still have the
+///   beacons lit, Saturos throws the Venus Star into the lighthouse, and the
+///   beacon's light restores the two Fire Adepts' Psynergy; Menardi taunts
+///   Felix over his childhood friend until he leaves with Sheba, and Saturos
+///   and Menardi fuse. Party_RestorePpOfLitElements refills the PP of the
+///   party's Adepts whose lighthouses are lit, and the second battle follows
+///   (its slot 0).
+/// - After that (AERIE_ENTRANCE_AFTER_SECOND_BATTLE,
 ///   VenusLighthouseAerie_FinishSaturosAndMenardiBattle). Saturos and Menardi
 ///   fall into the lighthouse; the party wonders whether it has won; Felix,
 ///   who says he must still light the beacons, takes Sheba and goes; the
 ///   beacon erupts and splits the aerie, its light lifts the party away, and
-///   the world map (its entrance 91) plays the lighthouse's transition and
-///   sends the party back to entrance 93.
-/// - A look back (entrance 93, VenusLighthouseAerie_ShowShebaInDanger): Felix
-///   calls to Sheba as she clings to the broken aerie, and the world map
-///   returns (exit 1, its entrance 73) with its music kept, then sends the
-///   party back to entrance 4.
-/// - Sheba's fall (entrance 4, VenusLighthouseAerie_StageShebasFall). The
-///   foundations crumble, Sheba lets go, and Felix leaps after her. The party
-///   resolves to find Jenna and the others at Idejima, but a long search finds
-///   no sign of Jenna, and the party is taken to Lalivero
-///   (AERIE_EXIT_AFTER_SHEBAS_FALL, to
+///   the world map (WORLD_MAP_VENUS_LIGHTHOUSE_LIT) plays the lighthouse's
+///   transition and sends the party back to AERIE_ENTRANCE_SHEBA_IN_DANGER.
+/// - A look back (AERIE_ENTRANCE_SHEBA_IN_DANGER,
+///   VenusLighthouseAerie_ShowShebaInDanger): Felix calls to Sheba as she
+///   clings to the broken aerie, and the world map returns
+///   (AERIE_EXIT_TO_WORLD_MAP, to WORLD_MAP_ENTRANCE_FROM_AERIE) with its music
+///   kept, then sends the party back to AERIE_ENTRANCE_SHEBAS_FALL.
+/// - Sheba's fall (AERIE_ENTRANCE_SHEBAS_FALL,
+///   VenusLighthouseAerie_StageShebasFall). The foundations crumble, Sheba lets
+///   go, and Felix leaps after her. The party resolves to find Jenna and the
+///   others at Idejima, but a long search finds no sign of Jenna, and the party
+///   is taken to Lalivero (AERIE_EXIT_AFTER_SHEBAS_FALL, to
 ///   LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE) with
 ///   FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE set.
 ///
-/// A lost battle brings the party to entrance 9, which gives the Shaman's Rod
-/// back to whoever carried it and leaves for Lalivero Sanctum
+/// A lost battle brings the party to AERIE_ENTRANCE_DEFEAT, which gives the
+/// Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
 /// (AERIE_EXIT_AFTER_DEFEAT, to LALIVERO_SHOPS_SANCTUM).
 
 #include "script.h"
@@ -1150,14 +1152,14 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Actor_SetActionScript(ACTOR_SATUROS, gSceneAction_EntryPair);
   Actor_SetActionScript(ACTOR_FELIX, gSceneAction_EntryGroup);
   Actor_RunActionScriptAndWait(SHEBA, gSceneAction_EntryGroup);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   {
     s32 actor = (s32)&SceneId_VenusLighthouseAerie;
 
     Event_SetNextDestination(actor, AERIE_ENTRANCE_AFTER_FIRST_BATTLE);
     Event_SetDefeatDestination(actor, AERIE_ENTRANCE_DEFEAT);
   }
-  Field_RequestBattleFromEncounterTable(98, 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 1);
   GameFlag_Set(FLAG_PLACE_TEMP_50);
 }
 
@@ -1271,12 +1273,13 @@ static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
   Actor_ShowEmote(MIA, emote, waitFrames);
 }
 
-/// Back from the first battle (entrance 2): Felix will still have the beacons
-/// lit, Saturos throws the Venus Star into the lighthouse, its light restores
-/// Saturos and Menardi, Felix leaves with Sheba, and the two fuse. Refills the
-/// PP of the party's Adepts whose lighthouses are lit, starts the second
-/// battle and sets 0x351 (XXX: VenusLighthouseFourthFloor's Psynergy Stone
-/// flag, as 0x350 is in Event_ConfrontSaturosAndMenardi).
+/// Back from the first battle (AERIE_ENTRANCE_AFTER_FIRST_BATTLE): Felix will
+/// still have the beacons lit, Saturos throws the Venus Star into the
+/// lighthouse, its light restores Saturos and Menardi, Felix leaves with Sheba,
+/// and the two fuse. Refills the PP of the party's Adepts whose lighthouses are
+/// lit, starts the second battle and sets 0x351 (XXX:
+/// VenusLighthouseFourthFloor's Psynergy Stone flag, as 0x350 is in
+/// Event_ConfrontSaturosAndMenardi).
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct EffectOptions menardiBurst;
   s32 velocity[3];
@@ -1803,12 +1806,12 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Event_Wait(20);
   VenusLighthouseAerie_FlashScreen();
   Event_Wait(20);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_VenusLighthouseAerie,
                            AERIE_ENTRANCE_AFTER_SECOND_BATTLE);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseAerie,
                              AERIE_ENTRANCE_DEFEAT);
-  Field_RequestBattleFromEncounterTable(98, 0);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 0);
   Party_RestorePpOfLitElements();
   GameFlag_Set(FLAG_PLACE_TEMP_51);
 }
@@ -1972,9 +1975,10 @@ static void VenusLighthouseAerie_FinishSaturosAndMenardiBattle(void) {
   Engine_EventEnd();
 }
 
-/// A look back from the world map (entrance 93, after the world map's
-/// lighthouse transition): Felix cries out as Sheba clings to the broken
-/// aerie, then the world map returns with its music still playing (exit 1).
+/// A look back from the world map (AERIE_ENTRANCE_SHEBA_IN_DANGER, after the
+/// world map's lighthouse transition): Felix cries out as Sheba clings to the
+/// broken aerie, then the world map returns with its music still playing
+/// (AERIE_EXIT_TO_WORLD_MAP).
 static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   Engine_EventBegin();
   VenusLighthouseAerie_RestorePartyOnBrokenAerie();
@@ -1990,9 +1994,10 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   Engine_EventEnd();
 }
 
-/// Back from the world map (entrance 4): stages the broken aerie for Sheba's
-/// fall and the party's escape, plays them, sets
-/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE and leaves for Lalivero (exit 2).
+/// Back from the world map (AERIE_ENTRANCE_SHEBAS_FALL): stages the broken
+/// aerie for Sheba's fall and the party's escape, plays them, sets
+/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE and leaves for Lalivero
+/// (AERIE_EXIT_AFTER_SHEBAS_FALL).
 static void VenusLighthouseAerie_StageShebasFall(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;

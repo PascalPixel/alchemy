@@ -152,7 +152,7 @@ next_page:
       Shop_PlaceCursor(partyWindow, selectionIndex * 24 - 12, 0);
       shop->mode = 3;
       Shop_DrawParty(partyWindow, selectionIndex, shop->selectedItem);
-      if (Item_GetEquipmentGroupFar(shop->selectedItem) == SHOP_TYPE_ITEMS)
+      if (Item_GetEquipmentGroupFar(shop->selectedItem) == EQUIPMENT_GROUP_NONE)
         Shop_DrawUnitItem(itemWindow, unitId, shop->selectedItem);
       else
         Shop_DrawEquipComparison(itemWindow, unitId, shop->selectedItem);
@@ -275,7 +275,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
                                     24);
       zero = 0;
       icon->kind = zero;
-      icon->active = 15;
+      icon->active = UI_SPRITE_HOP_DOWN_2;
       icon->animStep = zero;
     }
     pageSlot = 0;

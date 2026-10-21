@@ -24,10 +24,11 @@
 
 // Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
 // Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
-// Cave, Kolima Forest (scenes 40 to 42), Lunpa's fortress, Mercury
-// Lighthouse and its entrance, Mogall Forest, the Tunnel Ruins, Vale and its
-// cave): blocks pushed a cell at a time, and logs and other large things that
-// roll until they meet something, redrawn into the map where they stop.
+// Cave, Kolima Forest (SceneId_KolimaForestEntrance to
+// SceneId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
+// entrance, Mogall Forest, the Tunnel Ruins, Vale and its cave): blocks pushed
+// a cell at a time, and logs and other large things that roll until they meet
+// something, redrawn into the map where they stop.
 //
 // A large thing is one of six footprints, by its sprite's animation
 // (gStagedActor_FootprintKinds): its bounds in gStagedActor_FootprintBounds
@@ -70,7 +71,7 @@ StagedActor_FindAtTile(const struct FieldPosition *position,
 
 /// The leader pushes the block in front of them a cell on, unless something
 /// solid is beyond it or on top of it, the ground beyond refuses it or it is
-/// still moving: after a quarter second's push (mode 8) the block and the
+/// still moving: after a quarter second's push (animation 8) the block and the
 /// leader slide one cell together, with SE_185.
 UNUSED static void StagedActor_AdvancePair(void) {
   struct FieldPosition dst;
@@ -390,10 +391,10 @@ found:
 }
 
 /// Rolls the large thing to the position probe found: the leader pushes
-/// (animation 8), the thing rolls (mode 3 or 2 by the direction) with SE_239
-/// while the leader follows half a cell, and it stops with SE_288 and SE_213.
-/// Its cells are blocked (collision 255) at its new place, through the map's
-/// layer 1 offset, and its old place is given back what was under it.
+/// (animation 8), the thing rolls (animation 3 or 2 by the direction) with
+/// SE_239 while the leader follows half a cell, and it stops with SE_288 and
+/// SE_213. Its cells are blocked (collision 255) at its new place, through the
+/// map's layer 1 offset, and its old place is given back what was under it.
 UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   struct MapScrollWork *workspace;
   struct FieldActor *actor;

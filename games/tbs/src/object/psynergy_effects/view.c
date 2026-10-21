@@ -210,13 +210,13 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
 }
 
 /// The event command "actor set attached effect", by enum AttachedEffectFlag:
-/// removes the object attached to an actor, attaches one (sprite 209,
-/// animation 1) or shows a one-off one (animation 2) that ends by itself
-/// (gObjectMotion_WaitScript, 40 frames). The attached object is kept as the
-/// actor's linkedObject, so ATTACHED_EFFECT_ATTACH does nothing while the
-/// actor has one, and ATTACHED_EFFECT_REMOVE releases whatever it is; a one-off
-/// is never recorded there. The leader's step runs all three for hazard ground
-/// (object/step.c).
+/// removes the object attached to an actor, attaches one
+/// (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation 2)
+/// that ends by itself (gObjectMotion_WaitScript, 40 frames). The attached
+/// object is kept as the actor's linkedObject, so ATTACHED_EFFECT_ATTACH does
+/// nothing while the actor has one, and ATTACHED_EFFECT_REMOVE releases
+/// whatever it is; a one-off is never recorded there. The leader's step runs
+/// all three for hazard ground (object/step.c).
 void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   struct FieldActor *object = ObjectTable_Get(actor);
   struct FieldActor *effect;
@@ -232,7 +232,8 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   if ((flags & 3) != 0) {
     if ((flags & 3) == ATTACHED_EFFECT_ONCE || object->linkedObject == 0) {
       effect = (struct FieldActor *)Object_CreateFar(
-          209, object->x.fixed, object->y.fixed, object->z.fixed);
+          SPRITE_ATTACHED_EFFECT, object->x.fixed, object->y.fixed,
+          object->z.fixed);
     }
   } else {
     effect = object->linkedObject;

@@ -1,12 +1,13 @@
 /// @file
-/// Kolima Forest (KolimaForestFloodgate, scene 43), the fourth of the forest's
-/// five maps, between scene 42 and the map where Tret stands (scene 44). A
-/// Floodgate Switch, beside a sign that reads "Do not touch Floodgate Switch!",
-/// raises and lowers the river: with the water high the logs float (26 pixels
-/// up) and can be rolled along it; with it low they lie on the riverbed. A
-/// short log slides between two places, the leader can jump south across a gap
-/// (trigger 10), and a chest holds a Fur Coat. The forest keeps its cursed
-/// colours until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED).
+/// Kolima Forest (SceneId_KolimaForestFloodgate), the fourth of the forest's
+/// five maps, between SceneId_KolimaForestCliff and the map where Tret stands
+/// (SceneId_KolimaForestTree). A Floodgate Switch, beside a sign that reads "Do
+/// not touch Floodgate Switch!", raises and lowers the river: with the water
+/// high the logs float (26 pixels up) and can be rolled along it; with it low
+/// they lie on the riverbed. A short log slides between two places, the leader
+/// can jump south across a gap (trigger 10), and a chest holds a Fur Coat. The
+/// forest keeps its cursed colours until Tret lifts the curse
+/// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// The water level, the short log's place and each log's cells are kept in
 /// gSceneState (gKolimaForestFloodgateLayout, gKolimaForestFloodgateReturned
@@ -61,14 +62,16 @@ static void KolimaForestFloodgate_MarkShortLogCells(void);
 static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *log);
 static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs);
 
-/// Where the party enters, from scene 42 and from scene 44.
+/// Where the party enters, from SceneId_KolimaForestCliff and from
+/// SceneId_KolimaForestTree.
 const struct SceneEntrance *KolimaForestFloodgate_GetEntrances(void) {
   return gKolimaForestFloodgateEntrances;
 }
 
 const struct SceneRegion *KolimaForestFloodgate_GetRegions(void) { return 0; }
 
-/// The ways back (scene 42) and on to Tret (scene 44).
+/// The ways back (SceneId_KolimaForestCliff) and on to Tret
+/// (SceneId_KolimaForestTree).
 const u32 *KolimaForestFloodgate_GetExits(void) {
   return gKolimaForestFloodgateExits;
 }
@@ -83,8 +86,8 @@ const struct SceneEvent *KolimaForestFloodgate_GetEvents(void) {
   return gKolimaForestFloodgateEvents;
 }
 
-/// Kolima Forest (scene 43), walking into a log: it rolls ahead, and the cells
-/// of the logs are marked again where they now lie.
+/// Kolima Forest (SceneId_KolimaForestFloodgate), walking into a log: it rolls
+/// ahead, and the cells of the logs are marked again where they now lie.
 static void KolimaForestFloodgate_PushLog(void) {
   KolimaForestFloodgate_RollLog(gKolimaForestFloodgateRecords);
   Map_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
@@ -92,8 +95,8 @@ static void KolimaForestFloodgate_PushLog(void) {
   KolimaForestFloodgate_MarkShortLogCells();
 }
 
-/// Kolima Forest (scene 43), walking south into the gap (trigger 10): the
-/// leader jumps across.
+/// Kolima Forest (SceneId_KolimaForestFloodgate), walking south into the gap
+/// (trigger 10): the leader jumps across.
 static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
 #include "common/map_panel.h"
@@ -209,10 +212,10 @@ static void KolimaForestFloodgate_CaptureShakeScroll(void) {
   scroll[5] += 0xb0;
 }
 
-/// Kolima Forest (scene 43), searching the Floodgate Switch flips it. "Isaac
-/// flipped the switch." The camera turns to the floodgate, which opens or
-/// closes; the ground rumbles and the top of the screen shakes harder for 100
-/// frames, and the river rises or falls.
+/// Kolima Forest (SceneId_KolimaForestFloodgate), searching the Floodgate
+/// Switch flips it. "Isaac flipped the switch." The camera turns to the
+/// floodgate, which opens or closes; the ground rumbles and the top of the
+/// screen shakes harder for 100 frames, and the river rises or falls.
 static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 
@@ -280,7 +283,8 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   // The shake: each frame captures the scroll, and the HBlank handler shows
   // the upper lines shifted, more often as the chance climbs to 100%.
   gKolimaForestFloodgate_ShakeChance = 0;
-  FieldScheduler_AddCallback(KolimaForestFloodgate_CaptureShakeScroll, 0xc80);
+  FieldScheduler_AddCallback(KolimaForestFloodgate_CaptureShakeScroll,
+                             TASK_PRIORITY_SCENE);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(IRQ_HBLANK, 0, KolimaForestFloodgate_ShakeLines);
   Engine_AudioPlayCue(SE_231);
@@ -310,8 +314,8 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   Engine_EventEnd();
 }
 
-/// Kolima Forest (scene 43), walking west into the short log: the leader
-/// shoves it west to x 72.
+/// Kolima Forest (SceneId_KolimaForestFloodgate), walking west into the short
+/// log: the leader shoves it west to x 72.
 static void KolimaForestFloodgate_PushShortLogWest(void) {
 
   Engine_EventBegin();
@@ -322,11 +326,11 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
   Engine_ActorSetAnimation(SHORT_LOG, 2);
   Engine_ActorSetDestination(SHORT_LOG, 72, 176);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x3333);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, -8, 0);
   Engine_EventWait(24);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_ActorWaitForMove(SHORT_LOG);
   Engine_ActorSetAnimation(SHORT_LOG, 1);
   Engine_AudioPlayCue(SE_288);
@@ -337,8 +341,8 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
   Engine_EventEnd();
 }
 
-/// Kolima Forest (scene 43), walking east into the short log: the leader
-/// shoves it east to x 104.
+/// Kolima Forest (SceneId_KolimaForestFloodgate), walking east into the short
+/// log: the leader shoves it east to x 104.
 static void KolimaForestFloodgate_PushShortLogEast(void) {
 
   Engine_EventBegin();
@@ -349,11 +353,11 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Engine_ActorSetAnimation(SHORT_LOG, 2);
   Engine_ActorSetDestination(SHORT_LOG, 104, 176);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x3333);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Engine_EventWait(24);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_ActorWaitForMove(SHORT_LOG);
   Engine_ActorSetAnimation(SHORT_LOG, 1);
   Engine_AudioPlayCue(SE_288);
@@ -395,7 +399,8 @@ s32 KolimaForestFloodgate_Initialize(void) {
   actor->radius = 8;
   actor->scaleX = 0xc000;
   actor->scaleY = 0xc000;
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
     KolimaPalette_Curse(4);
   return 0;
@@ -557,7 +562,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Object_SetMode(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
   Engine_ObjectSetPosition(actor, x, 0, z);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->camera, (s32)actor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x3333);
@@ -565,7 +570,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
                              gKolimaForestFloodgate_PushStepX[quarter],
                              gKolimaForestFloodgate_PushStepZ[quarter]);
   Engine_EventWait(24);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
   Event_PlayCue(SE_288);
@@ -576,8 +581,8 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
 
 #include "common/kolima_palette.h"
 
-/// The logs on a first visit, as struct FloodgateLog: sprite 0xcd runs north to
-/// south and 0xcf west to east.
+/// The logs on a first visit, as struct FloodgateLog, each in the sprite of the
+/// way it runs: one sprite for north to south, another for west to east.
 // clang-format off
 struct FloodgateLog gKolimaForestFloodgate_DefaultRecords[] = {
     {0xcd, 11, 9, 1, NULL},
@@ -595,7 +600,7 @@ s8 gKolimaForestFloodgate_PushStepX[] = {8, 0, -8, 0};
 s8 gKolimaForestFloodgate_PushStepZ[] = {0, 8, 0, -8};
 
 struct SceneEntrance gKolimaForestFloodgateEntrances[] = {
-    { 0, CONDITION_ALWAYS, 407, 0, 276, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 407, 0, 276, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF, CONDITION_ALWAYS, 50, 32, 369, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE, CONDITION_ALWAYS, 162, 32, 84, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },

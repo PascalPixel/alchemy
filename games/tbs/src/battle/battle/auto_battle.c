@@ -278,7 +278,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
     REG_BLDALPHA = BLEND_ALPHA(16 - index, 16);
     WaitFrames(1);
   }
-  PartyStatusDrawFar(9);
+  PartyStatusDrawFar(PARTY_STATUS_CLOSED);
 
   // Ready only the target side's living units, and play the effect. The
   // walk counts unit ids up from the side's first until it has found as
@@ -420,7 +420,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
     work.effect.count =
         BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
   // The status window without its PP row (see PARTY_STATUS_SUMMONS).
-  PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
+  PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   // The actor raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
   object = BattleObjGet(work.effect.actor)->object;
@@ -497,7 +497,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   // The damage pose, and the status window with names and HP only.
   battleObject = BattleObjGet(unitId);
   ObjectDispatch_SelectAnimationFar(battleObject->object, POSE_DAMAGE);
-  PartyStatusDrawFar(0);
+  PartyStatusDrawFar(PARTY_STATUS_HP_ONLY);
   UiWork_ClearValueNameTablesFar();
 
   if (unitId <= ALLY_MAX) {

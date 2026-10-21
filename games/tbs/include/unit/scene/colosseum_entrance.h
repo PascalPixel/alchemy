@@ -25,25 +25,23 @@ extern s32 gColosseumEntrance_JoinFinalsFromSouthScript[];
 extern s32 gColosseumEntrance_EnterFinalsScript[];
 extern s32 gColosseumEntrance_PulseScaleScript[];
 extern struct SceneEntrance gColosseumEntranceEntrancesOther[];
-extern struct SceneEntrance gColosseumEntranceEntrances1[];
-extern struct SceneEntrance gColosseumEntranceEntrances3[];
+extern struct SceneEntrance gColosseumEntrances[];
+extern struct SceneEntrance gColosseumEntranceEntrances[];
 extern u32 gColosseumEntranceExits[];
 extern struct ScenePlacement gColosseumEntrancePlacementsOther[];
-extern struct ScenePlacement gColosseumEntrancePlacements1Entrance5[];
-extern struct ScenePlacement gColosseumEntrancePlacements1Entrance7[];
-extern struct ScenePlacement gColosseumEntrancePlacements1[];
-extern struct ScenePlacement gColosseumEntrancePlacements1Entrance8[];
-extern struct ScenePlacement
-    gColosseumEntrancePlacements1FromColosseumAzartMatchWest[];
-extern struct ScenePlacement
-    gColosseumEntrancePlacements1FromColosseumNavampaMatch[];
-extern struct ScenePlacement gColosseumEntrancePlacements3[];
-extern struct ScenePlacement gColosseumEntrancePlacements3FinalsDay[];
-extern struct ScenePlacement gColosseumEntrancePlacements3AfterColosso[];
+extern struct ScenePlacement gColosseumStandsPlacements[];
+extern struct ScenePlacement gColosseumTrialGroundsPlacements[];
+extern struct ScenePlacement gColosseumPlacements[];
+extern struct ScenePlacement gColosseumOfficialsPlacements[];
+extern struct ScenePlacement gColosseumPlacementsFromColosseumAzartMatchWest[];
+extern struct ScenePlacement gColosseumPlacementsFromColosseumNavampaMatch[];
+extern struct ScenePlacement gColosseumEntrancePlacements[];
+extern struct ScenePlacement gColosseumEntrancePlacementsFinalsDay[];
+extern struct ScenePlacement gColosseumEntrancePlacementsAfterColosso[];
 extern struct SceneEvent gColosseumEntranceEventsOther[];
-extern struct SceneEvent gColosseumEntranceEvents2[];
-extern struct SceneEvent gColosseumEntranceEvents1[];
-extern struct SceneEvent gColosseumEntranceEvents3[];
-extern struct SceneEvent gColosseumEntranceEvents1FromColosseumAzartMatchWest[];
+extern struct SceneEvent gColosseumTunnelEvents[];
+extern struct SceneEvent gColosseumEvents[];
+extern struct SceneEvent gColosseumEntranceEvents[];
+extern struct SceneEvent gColosseumEventsFromColosseumAzartMatchWest[];
 
 #endif

@@ -9,6 +9,14 @@ struct AffineTransform;
 
 void System_Initialize(void);
 void Runtime_IdleForever(void);
+/// The cartridge's language, from its header (System_GetLanguage).
+enum CartridgeLanguage {
+  CARTRIDGE_LANGUAGE_ENGLISH,
+  CARTRIDGE_LANGUAGE_GERMAN,
+  CARTRIDGE_LANGUAGE_FRENCH,
+  CARTRIDGE_LANGUAGE_SPANISH,
+  CARTRIDGE_LANGUAGE_ITALIAN
+};
 s32 System_GetLanguage(void);
 void RuntimeDispatch_ReservedNoOpA(void);
 void RuntimeDispatch_ReservedNoOpB(void);

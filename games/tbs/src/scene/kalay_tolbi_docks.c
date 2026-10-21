@@ -1,13 +1,12 @@
 /// @file
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
-/// Karagol Sea, in three scenes that share one overlay: KalayDocks
-/// (scene 107), KalayTolbiDocksInteriors (scene 108) and TolbiDocks (scene
-/// 112). The getters pick each scene's tables by gGameState.scene, and three
-/// story flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the
-/// ship has made its crossing (set on the world map,
-/// WorldMap_CompleteTransfer); FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the
-/// Colosso Tour's group has left Kalay; and FLAG_COLOSSO_OVER, whether the
-/// Colosso finals have been fought.
+/// Karagol Sea, in three scenes that share one overlay: SceneId_KalayDocks,
+/// SceneId_KalayTolbiDocksInteriors and SceneId_TolbiDocks. The getters pick
+/// each scene's tables by gGameState.scene, and three story flags choose among
+/// them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the ship has made its crossing
+/// (set on the world map, WorldMap_CompleteTransfer);
+/// FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the Colosso Tour's group has left
+/// Kalay; and FLAG_COLOSSO_OVER, whether the Colosso finals have been fought.
 ///
 /// Kalay Docks (KalayDocks) is where the party's road to Tolbi ends:
 /// Silk Road is blocked, so everyone bound for Tolbi and its Colosso must cross
@@ -30,8 +29,9 @@
 /// Once the ship has crossed, the travellers are gone and the dock hands wait
 /// for a ship that has not returned. The docks lead to the world map
 /// (KALAY_DOCKS_TO_WORLD_MAP_SOUTH and KALAY_DOCKS_TO_WORLD_MAP_NORTH), onto
-/// the ship (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship, scene 109)
-/// and through a door (trigger 10) into the building beside them.
+/// the ship (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship,
+/// SceneId_TolbiShipDeck) and through a door (trigger 10) into the building
+/// beside them.
 ///
 /// That building (KalayTolbiDocksInteriors) has a room at each dock: entered
 /// from Kalay Docks (KALAY_TOLBI_DOCKS_INTERIORS_FROM_KALAY_DOCKS) it is Kalay
@@ -215,8 +215,9 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
 const struct SceneRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
 /// The exits of the three scenes, each scene's after its header word (an exit
-/// of kind 0): both docks lead to the world map, onto the ship (scene 109)
-/// and into the building (scene 108), whose rooms lead back to their docks.
+/// of kind 0): both docks lead to the world map, onto the ship
+/// (SceneId_TolbiShipDeck) and into the building
+/// (SceneId_KalayTolbiDocksInteriors), whose rooms lead back to their docks.
 const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
 /// Each scene's people before the crossing, once the ship has crossed and not

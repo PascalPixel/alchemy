@@ -31,6 +31,18 @@ enum AbilityId {
   /// their own words; the others run from ABILITY_SONIC_WAVE to
   /// ABILITY_SEARCH_FOR_HELP.
   ABILITY_HEAT_MIRAGE = 0xe0,
+  /// The stat items' abilities, each raising one base stat for good (the item
+  /// menu's use).
+  ABILITY_POWER_BREAD = 0x104,
+  ABILITY_COOKIE = 0x105,
+  ABILITY_APPLE = 0x106,
+  ABILITY_HARD_NUT = 0x107,
+  ABILITY_MINT = 0x108,
+  ABILITY_LUCKY_PEPPER = 0x109,
+  /// The first Djinni's ability: Djinni n of element e has ability
+  /// ABILITY_DJINNI_FIRST + e * DJINN_PER_ELEMENT + n, djinn.tsv's ability
+  /// column, whose name is the Djinni's.
+  ABILITY_DJINNI_FIRST = 0x12c,
   /// The summons: four to an element, in the order of their Djinn costs, each
   /// element's six ids apart.
   ABILITY_VENUS = 0x17c,

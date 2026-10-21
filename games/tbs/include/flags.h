@@ -87,13 +87,25 @@
 /// it, and every normal scene entrance (not a return keeping the party's
 /// position) clears it.
 #define FLAG_LINK_BATTLE 0x16c
+/// Set, the highest of these picks the tint a field Psynergy effect fades
+/// toward, gBattleFx_TargetColors[n], in place of the frame counter's pick
+/// (BattleEffect_InitializeSharedScene).
+#define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
+/// In debug mode, each step beeps (SE_135) while fewer than 136 of the 512
+/// resource blocks are free.
+#define FLAG_DEBUG_RESOURCE_BEEP 350
+/// Encounters are rolled even where FLAG_NO_ENCOUNTERS,
+/// FLAG_NO_ENCOUNTERS_IN_PLACE, a zone of 0 or Cloak would stop them
+/// (Encounter_SelectEnemyGroup).
+#define FLAG_IGNORE_ENCOUNTER_CHECKS 351
 /// A battle plays the Djinn tutorial: the party strikes first, two tutorial
 /// messages follow each round, and no spoils are handed out. The world map's
 /// scene sets it.
 #define FLAG_DJINN_TUTORIAL 0x16e
 /// With FLAG_DJINN_TUTORIAL set, these two choose the part of the tutorial the
-/// Djinn menu plays: neither, step 1; only the second, step 14; only the first,
-/// step 27; both, step 28 (DjinnMenu_Open).
+/// Djinn menu plays: neither, DJINN_TUTORIAL_GIVE; only the second,
+/// DJINN_TUTORIAL_POWERS; only the first, DJINN_TUTORIAL_RECOVERY; both,
+/// DJINN_TUTORIAL_CLOSE (DjinnMenu_Open).
 #define FLAG_DJINN_TUTORIAL_PART_A 0x16f
 #define FLAG_DJINN_TUTORIAL_PART_B 0x171
 /// A linked battle has been arranged in the link lobby, with FLAG_LINK_BATTLE:

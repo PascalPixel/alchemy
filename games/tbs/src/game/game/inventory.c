@@ -29,33 +29,32 @@ s32 Item_CanOwnerEquipDirect(s32 owner, s32 item) {
 /// the character can equip it. The shop's buy screen calls it to grey out the
 /// members who could not use an item.
 s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
-  if (Item_GetEquipmentGroup(item) == 0) {
+  if (Item_GetEquipmentGroup(item) == EQUIPMENT_GROUP_NONE) {
     return 1;
   }
   return Item_CanOwnerEquipDirect(unit, item);
 }
 
-/// Returns what kind of thing an item is: 1 a weapon, 2 armor (armor,
-/// shields, helms, boots and shirts), 0 anything else, rings included. Called
-/// by the shops to choose the comparison they show.
+/// Returns what kind of thing an item is, an enum EquipmentGroup. Called by
+/// the shops to choose the comparison they show.
 s32 Item_GetEquipmentGroup(s32 itemId) {
   s32 group;
   struct ItemDefinition *item;
 
   item = Item_GetDirect(itemId);
-  group = 0;
+  group = EQUIPMENT_GROUP_NONE;
   if (item->type == ITEM_TYPE_WEAPON)
-    group = 1;
+    group = EQUIPMENT_GROUP_WEAPON;
   else if (item->type == ITEM_TYPE_ARMOR)
-    group = 2;
+    group = EQUIPMENT_GROUP_ARMOR;
   else if (item->type == ITEM_TYPE_SHIELD)
-    group = 2;
+    group = EQUIPMENT_GROUP_ARMOR;
   else if (item->type == ITEM_TYPE_HELM)
-    group = 2;
+    group = EQUIPMENT_GROUP_ARMOR;
   else if (item->type == ITEM_TYPE_BOOTS)
-    group = 2;
+    group = EQUIPMENT_GROUP_ARMOR;
   else if (item->type == ITEM_TYPE_SHIRT)
-    group = 2;
+    group = EQUIPMENT_GROUP_ARMOR;
   return group;
 }
 

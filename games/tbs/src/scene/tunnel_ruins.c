@@ -11,8 +11,8 @@
 /// leader. In both, the retreat point is set and a fade overlay follows the
 /// leader in the rooms that need it (TunnelRuins_UpdateTrackedActor).
 ///
-/// - Tunnel Ruins (TunnelRuinsGreatStatue, scene 172), entered from Babi
-///   Lighthouse (BabiLighthouseStoneDoor, scene 174) at
+/// - Tunnel Ruins (SceneId_TunnelRuinsGreatStatue), entered from Babi
+///   Lighthouse (SceneId_BabiLighthouseStoneDoor) at
 ///   TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR, where
 ///   TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR leads back;
 ///   Retreat returns to
@@ -33,10 +33,11 @@
 ///   room), after which some of the hops beside it no longer run.
 ///   TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH, _SOUTHWEST
 ///   and _SOUTHEAST lead on into TunnelRuinsLadyStatues.
-/// - Tunnel Ruins (TunnelRuinsLadyStatues, scene 173), whose entrances 1 to 3
+/// - Tunnel Ruins (SceneId_TunnelRuinsLadyStatues), whose entrances from Babi
+///   Lighthouse Entry
 ///   (TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST, _NORTH and
 ///   _SOUTH) the area names call Babi Lighthouse: they are where the three
-///   drops in Babi Lighthouse Entry (BabiLighthouseEntry, scene 176) land, and
+///   drops in Babi Lighthouse Entry (SceneId_BabiLighthouseEntry) land, and
 ///   from those rooms Retreat leads back up there, the place name not shown;
 ///   regions for TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST,
 ///   _SOUTH and _NORTH lead back up to it. There two pillars to push or Move
@@ -47,18 +48,18 @@
 ///   (FLAG_SCENE_TEMP_04); two balance platforms, each carved stone set on one
 ///   with Carry (FLAG_SCENE_TEMP_00 to _02) sinking it a step and raising the
 ///   other, set out with all three carved stones on them when the party comes
-///   in at entrance 5; two false statues that block their cells until Reveal's
-///   phase 5 makes them vanish; the room of four walkways over a pit, redrawn
-///   for the path the statue in Venus Lighthouse opened; and five coloured
-///   statues of a woman before a door. Searching a statue there (search code
-///   42) speaks to the soul, Mind Read on the five tells which colour shines in
-///   which direction, and with all five moved onto their marks the door opens
-///   (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN), closing again if one is moved off.
-///   Two chests hold an Oracle's Robe and Asura's Armor.
-///   TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH, _SOUTHWEST
-///   and _SOUTHEAST lead back into TunnelRuinsGreatStatue, and
+///   in at TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH; two false statues that
+///   block their cells until Reveal makes them vanish; the room of four
+///   walkways over a pit, redrawn for the path the statue in Venus Lighthouse
+///   opened; and five coloured statues of a woman before a door. Searching a
+///   statue there (search code 42) speaks to the soul, Mind Read on the five
+///   tells which colour shines in which direction, and with all five moved onto
+///   their marks the door opens (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN), closing
+///   again if one is moved off. Two chests hold an Oracle's Robe and Asura's
+///   Armor. TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_NORTH,
+///   _SOUTHWEST and _SOUTHEAST lead back into TunnelRuinsGreatStatue, and
 ///   TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR into Venus
-///   Lighthouse (VenusLighthouseFirstFloor, scene 183).
+///   Lighthouse (SceneId_VenusLighthouseFirstFloor).
 
 #include "script.h"
 #include "version.h"
@@ -279,20 +280,21 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   // Each tracked entrance measures depth in eight-pixel steps.
   if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue) {
     switch (gGameState.entrance) {
-    case 3:
-    case 4:
+    case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
+    case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH:
       depthLimit = 94;
       break;
-    case 8:
-    case 9:
+    case TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH:
+    case TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_BUSHES:
       depthLimit = 74;
       break;
-    case 12:
-    case 13:
+    case TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_SECOND_PILLARS:
+    case TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_CORRIDOR:
       depthLimit = 118;
       break;
     }
-  } else if (gGameState.entrance == 12) {
+  } else if (gGameState.entrance ==
+             TUNNEL_RUINS_LADY_STATUES_FALSE_STATUE_WEST) {
     depthLimit = 93;
   }
   if ((leader->z.fixed >> 19) <= depthLimit) {
@@ -464,17 +466,17 @@ const struct SceneEntrance *TunnelRuins_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
-    return gTunnelRuinsEntrances1;
+    return gTunnelRuinsGreatStatueEntrances;
   }
   if (sceneId == (s32)&SceneId_TunnelRuinsLadyStatues) {
-    return gTunnelRuinsEntrances2;
+    return gTunnelRuinsLadyStatuesEntrances;
   }
   return gTunnelRuinsEntrancesOther;
 }
 
 const struct SceneRegion *TunnelRuins_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuinsLadyStatues) {
-    return gTunnelRuinsRegions2;
+    return gTunnelRuinsLadyStatuesRegions;
   }
   return 0;
 }
@@ -487,7 +489,7 @@ const struct ScenePlacement *TunnelRuins_GetPlacements(void) {
   struct ScenePlacement *table;
 
   if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue) {
-    table = gTunnelRuinsPlacements1;
+    table = gTunnelRuinsGreatStatuePlacements;
   } else {
     table = gTunnelRuinsPlacementsOther;
   }
@@ -1149,9 +1151,8 @@ static void Event_PushEastPillar(void) {
 }
 
 /// The two false statues stand, blocking their cells: on entering their rooms
-/// and at Reveal's phase 4.
-/// Reached by Reveal's phase 4, and called by TunnelRuins_Initialize in
-/// either false statue's room.
+/// and as Reveal's light fades. Reached by Reveal as its light fades, and
+/// called by TunnelRuins_Initialize in either false statue's room.
 static void Event_ShowFalseStatues(void) {
   Map_CopyCellAttributes(72, 49, 1, 1, 8, 49);
   Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
@@ -1161,9 +1162,8 @@ static void Event_ShowFalseStatues(void) {
   OBJ_POS_SET(ACTOR_FALSE_STATUE_B, 792, 696);
 }
 
-/// At Reveal's phase 5 the two false statues vanish and their cells can be
-/// walked through.
-/// Reached by Reveal's phase 5 anywhere in TunnelRuinsLadyStatues.
+/// As Reveal shows what is hidden, the two false statues vanish and their cells
+/// can be walked through. Reached by Reveal anywhere in TunnelRuinsLadyStatues.
 static void Event_HideFalseStatues(void) {
   Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);
@@ -1322,7 +1322,7 @@ static void Event_SearchLockedDoor(void) {
 /// other scene.
 const struct SceneEvent *TunnelRuins_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue) {
-    return gTunnelRuinsEvents1;
+    return gTunnelRuinsGreatStatueEvents;
   }
   return gTunnelRuinsEventsOther;
 }
@@ -1420,11 +1420,13 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR, or, from
 /// TunnelRuinsLadyStatues's three entrances from Babi Lighthouse Entry, up
 /// there to BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE. The scene's
-/// initialization. Entering at entrances 8 to 11 sets flag 0x973.
-/// XXX: no other code of the game reads flag 0x973; a reader elsewhere would
-/// say what it records.
+/// initialization. Entering the room of four walkways
+/// (TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHWEST and the three after it) sets
+/// flag 0x973. XXX: no other code of the game reads flag 0x973; a reader
+/// elsewhere would say what it records.
 s32 TunnelRuins_Initialize(void) {
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue ||
       gGameState.scene == (s32)&SceneId_TunnelRuinsLadyStatues) {
     BattleFx_StartFadeOverlay(0);
@@ -1435,7 +1437,7 @@ s32 TunnelRuins_Initialize(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue) {
     switch (gGameState.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR:
-    case 2:
+    case TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS:
       if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
         Map_CopyCellsTo(121, 4, 74, 9, 5, 8);
         Map_CopyCellsTo(18, 83, 9, 73, 3, 2);
@@ -1455,8 +1457,8 @@ s32 TunnelRuins_Initialize(void) {
         Map_CopyCellsTo(18, 83, 13, 79, 3, 2);
       }
       break;
-    case 3:
-    case 4:
+    case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
+    case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH:
       TunnelRuins_UpdateFirstPillarCells();
       Object_GetById(ACTOR_FIRST_PILLAR_A)->motionFlags = 0;
       Object_GetById(ACTOR_FIRST_PILLAR_B)->motionFlags = 0;
@@ -1467,16 +1469,16 @@ s32 TunnelRuins_Initialize(void) {
       FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
                                  TASK_PRIORITY_SCENE);
       break;
-    case 5:
-    case 6:
-    case 7:
+    case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS:
+    case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS:
+    case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SINKING_PILLARS:
       if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
         Map_CopyCells(23, 17, 1, 2, 30, 8);
       if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
         Map_CopyCells(23, 17, 1, 2, 32, 10);
       break;
-    case 8:
-    case 9:
+    case TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH:
+    case TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_BUSHES:
       TunnelRuins_UpdateSecondPillarCells();
       Object_GetById(ACTOR_SECOND_PILLAR_A)->motionFlags = 0;
       Object_GetById(ACTOR_SECOND_PILLAR_B)->motionFlags = 0;
@@ -1487,8 +1489,8 @@ s32 TunnelRuins_Initialize(void) {
       FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
                                  TASK_PRIORITY_SCENE);
       break;
-    case 10:
-    case 11:
+    case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH:
+    case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH:
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SINKING_PILLAR_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SINKING_PILLAR_B), 0);
       OBJ_MODE(ACTOR_SINKING_PILLAR_A, 2);
@@ -1530,8 +1532,8 @@ s32 TunnelRuins_Initialize(void) {
         OBJ_MODE(ACTOR_PUDDLE_B, 5);
       }
       break;
-    case 12:
-    case 13:
+    case TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_SECOND_PILLARS:
+    case TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_CORRIDOR:
       TunnelRuins_UpdateStoneCells();
       Object_GetById(ACTOR_CARVED_STONE_A)->motionFlags = 0;
       Object_GetById(ACTOR_CARVED_STONE_B)->motionFlags = 0;
@@ -1550,7 +1552,7 @@ s32 TunnelRuins_Initialize(void) {
     }
   } else {
     switch (gGameState.entrance) {
-    case 0:
+    case ENTRANCE_DEFAULT:
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST:
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH:
@@ -1568,7 +1570,7 @@ s32 TunnelRuins_Initialize(void) {
       TunnelRuins_MarkPushPillarCells();
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST:
-    case 7:
+    case TUNNEL_RUINS_LADY_STATUES_DOUSE_PILLAR_SOUTH:
       Engine_ActorSetSpritePriority(ACTOR_DOUSE_PILLAR, 1);
       Object_GetById(ACTOR_DOUSE_PILLAR)->motionFlags = 0;
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_DOUSE_PILLAR), 0);
@@ -1587,7 +1589,7 @@ s32 TunnelRuins_Initialize(void) {
       Object_GetById(ACTOR_DOUSE_PILLAR)->update = ACTOR_UPDATE_IDLE;
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH:
-    case 5:
+    case TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH:
       if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION)) {
         Object_GetById(ACTOR_BALANCE_WEST)->motionFlags = 0;
         Object_GetById(ACTOR_BALANCE_EAST)->motionFlags = 0;
@@ -1612,7 +1614,7 @@ s32 TunnelRuins_Initialize(void) {
         Object_GetById(ACTOR_CARRY_STONE_A)->timer = 0;
         Object_GetById(ACTOR_CARRY_STONE_B)->timer = 0;
         Object_GetById(ACTOR_CARRY_STONE_C)->timer = 0;
-        if (gGameState.entrance != 5)
+        if (gGameState.entrance != TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH)
           break;
         Object_GetById(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(32);
         Object_GetById(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
@@ -1640,24 +1642,24 @@ s32 TunnelRuins_Initialize(void) {
       }
       TunnelRuins_SettleBalance(0);
       break;
-    case 8:
-    case 9:
-    case 10:
-    case 11:
+    case TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHWEST:
+    case TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHWEST:
+    case TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHEAST:
+    case TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHEAST:
       if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
         Map_CopyCells(10, 30, 1, 2, 16, 30);
       if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
         Map_CopyCells(10, 30, 1, 2, 22, 30);
       FLAG_SET(0x973);
       break;
-    case 12:
+    case TUNNEL_RUINS_LADY_STATUES_FALSE_STATUE_WEST:
       Map_CopyCellAttributes(8, 49, 1, 1, 8, 113);
       Event_ShowFalseStatues();
       FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
                                  TASK_PRIORITY_SCENE);
       break;
-    case 13:
-    case 14:
+    case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH:
+    case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST:
       WAIT(1);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         Map_CopyCells(24, 59, 1, 2, 32, 46);
@@ -1794,31 +1796,47 @@ u16 gTunnelRuins_DoorCloseSteps[] = {
 };
 
 struct SceneEntrance gTunnelRuinsEntrancesOther[] = {
-    {0, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {10, CONDITION_ALWAYS, 440, 0, 552, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gTunnelRuinsEntrances1[] = {
-    {0, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+struct SceneEntrance gTunnelRuinsGreatStatueEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR,
      CONDITION_ALWAYS, 104, 0, 152, FACING_SOUTH, 0, 48, 48, 288, 368, 0},
-    {2, CONDITION_ALWAYS, 200, 0, 328, FACING_NORTH, 0, 48, 48, 288, 368, 0},
-    {3, CONDITION_ALWAYS, 184, 0, 552, FACING_SOUTH, 0, 64, 464, 304, 816, 0},
-    {4, CONDITION_ALWAYS, 168, 0, 816, FACING_NORTH, 0, 64, 464, 304, 816, 0},
-    {5, CONDITION_ALWAYS, 520, 0, 104, FACING_SOUTH, 0, 336, 48, 576, 288, 0},
-    {6, CONDITION_ALWAYS, 392, 0, 192, FACING_NORTH, 0, 336, 48, 576, 288, 0},
-    {7, CONDITION_ALWAYS, 520, 0, 256, FACING_NORTH, 0, 336, 48, 576, 288, 0},
-    {8, CONDITION_ALWAYS, 568, 0, 440, FACING_SOUTH, 0, 384, 352, 624, 640, 0},
-    {9, CONDITION_ALWAYS, 440, 0, 648, FACING_NORTH, 0, 384, 352, 624, 640, 0},
-    {10, CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, 624, 40, 864, 288, 0},
-    {11, CONDITION_ALWAYS, 680, 0, 256, FACING_NORTH, 0, 624, 40, 864, 288, 0},
-    {12, CONDITION_ALWAYS, 504, 0, 792, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
-    {13, CONDITION_ALWAYS, 568, 0, 872, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
-    {14, CONDITION_ALWAYS, 776, 0, 432, FACING_NORTH, 0, 688, 368, 928, 640, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS, CONDITION_ALWAYS, 200,
+     0, 328, FACING_NORTH, 0, 48, 48, 288, 368, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE, CONDITION_ALWAYS, 184,
+     0, 552, FACING_SOUTH, 0, 64, 464, 304, 816, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH,
+     CONDITION_ALWAYS, 168, 0, 816, FACING_NORTH, 0, 64, 464, 304, 816, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS,
+     CONDITION_ALWAYS, 520, 0, 104, FACING_SOUTH, 0, 336, 48, 576, 288, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS,
+     CONDITION_ALWAYS, 392, 0, 192, FACING_NORTH, 0, 336, 48, 576, 288, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SINKING_PILLARS,
+     CONDITION_ALWAYS, 520, 0, 256, FACING_NORTH, 0, 336, 48, 576, 288, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH,
+     CONDITION_ALWAYS, 568, 0, 440, FACING_SOUTH, 0, 384, 352, 624, 640, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_BUSHES, CONDITION_ALWAYS,
+     440, 0, 648, FACING_NORTH, 0, 384, 352, 624, 640, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH,
+     CONDITION_ALWAYS, 744, 0, 104, FACING_SOUTH, 0, 624, 40, 864, 288, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH,
+     CONDITION_ALWAYS, 680, 0, 256, FACING_NORTH, 0, 624, 40, 864, 288, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_SECOND_PILLARS, CONDITION_ALWAYS,
+     504, 0, 792, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_CORRIDOR, CONDITION_ALWAYS, 568, 0,
+     872, FACING_SOUTH, 0, 368, 720, 608, 976, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_CORRIDOR_FROM_BUSHES, CONDITION_ALWAYS, 776, 0,
+     432, FACING_NORTH, 0, 688, 368, 928, 640, 0},
     {TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_NORTH,
      CONDITION_ALWAYS, 840, 0, 608, FACING_NORTH, 0, 688, 368, 928, 640, 0},
-    {16, CONDITION_ALWAYS, 744, 0, 792, FACING_SOUTH, 0, 688, 736, 928, 976, 0},
+    {TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_FROM_SINKING_PILLARS,
+     CONDITION_ALWAYS, 744, 0, 792, FACING_SOUTH, 0, 688, 736, 928, 976, 0},
     {TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST,
      CONDITION_ALWAYS, 744, 0, 944, FACING_NORTH, 0, 688, 736, 928, 976, 0},
     {TUNNEL_RUINS_GREAT_STATUE_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST,
@@ -1826,8 +1844,9 @@ struct SceneEntrance gTunnelRuinsEntrances1[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gTunnelRuinsEntrances2[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+struct SceneEntrance gTunnelRuinsLadyStatuesEntrances[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST,
      CONDITION_ALWAYS, 632, 0, 344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
     {TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH,
@@ -1836,18 +1855,28 @@ struct SceneEntrance gTunnelRuinsEntrances2[] = {
      CONDITION_ALWAYS, 824, 0, 344, FACING_SOUTH, 0, 592, 64, 880, 400, 0},
     {TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH,
      CONDITION_ALWAYS, 216, 0, 104, FACING_SOUTH, 0, 32, 48, 272, 320, 0},
-    {5, CONDITION_ALWAYS, 216, 0, 296, FACING_NORTH, 0, 32, 48, 272, 320, 0},
+    {TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH, CONDITION_ALWAYS, 216, 0, 296,
+     FACING_NORTH, 0, 32, 48, 272, 320, 0},
     {TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST,
      CONDITION_ALWAYS, 360, 0, 104, FACING_SOUTH, 0, 304, 48, 544, 352, 0},
-    {7, CONDITION_ALWAYS, 488, 0, 328, FACING_NORTH, 0, 304, 48, 544, 352, 0},
-    {8, CONDITION_ALWAYS, 120, 0, 568, FACING_NORTH, 0, 80, 400, 448, 592, 0},
-    {9, CONDITION_ALWAYS, 216, 0, 456, FACING_SOUTH, 0, 80, 400, 448, 592, 0},
-    {10, CONDITION_ALWAYS, 312, 0, 568, FACING_NORTH, 0, 80, 400, 448, 592, 0},
-    {11, CONDITION_ALWAYS, 408, 0, 456, FACING_SOUTH, 0, 80, 400, 448, 592, 0},
-    {12, CONDITION_ALWAYS, 136, 0, 712, FACING_SOUTH, 0, 16, 656, 256, 880, 0},
-    {13, CONDITION_ALWAYS, 392, 0, 712, FACING_SOUTH, 0, 288, 656, 560, 864, 0},
-    {14, CONDITION_ALWAYS, 520, 0, 776, FACING_SOUTH, 0, 288, 656, 560, 864, 0},
-    {15, CONDITION_ALWAYS, 648, 0, 952, FACING_NORTH, 0, 608, 816, 848, 976, 0},
+    {TUNNEL_RUINS_LADY_STATUES_DOUSE_PILLAR_SOUTH, CONDITION_ALWAYS, 488, 0,
+     328, FACING_NORTH, 0, 304, 48, 544, 352, 0},
+    {TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHWEST, CONDITION_ALWAYS, 120, 0,
+     568, FACING_NORTH, 0, 80, 400, 448, 592, 0},
+    {TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHWEST, CONDITION_ALWAYS, 216, 0,
+     456, FACING_SOUTH, 0, 80, 400, 448, 592, 0},
+    {TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHEAST, CONDITION_ALWAYS, 312, 0,
+     568, FACING_NORTH, 0, 80, 400, 448, 592, 0},
+    {TUNNEL_RUINS_LADY_STATUES_WALKWAYS_NORTHEAST, CONDITION_ALWAYS, 408, 0,
+     456, FACING_SOUTH, 0, 80, 400, 448, 592, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FALSE_STATUE_WEST, CONDITION_ALWAYS, 136, 0, 712,
+     FACING_SOUTH, 0, 16, 656, 256, 880, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH, CONDITION_ALWAYS, 392, 0,
+     712, FACING_SOUTH, 0, 288, 656, 560, 864, 0},
+    {TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST, CONDITION_ALWAYS, 520, 0, 776,
+     FACING_SOUTH, 0, 288, 656, 560, 864, 0},
+    {TUNNEL_RUINS_LADY_STATUES_TREE_DOOR_SOUTH, CONDITION_ALWAYS, 648, 0, 952,
+     FACING_NORTH, 0, 608, 816, 848, 976, 0},
     {TUNNEL_RUINS_LADY_STATUES_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR,
      CONDITION_ALWAYS, 776, 0, 904, FACING_SOUTH, 0, 608, 816, 848, 976, 0},
     {TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST,
@@ -1855,7 +1884,7 @@ struct SceneEntrance gTunnelRuinsEntrances2[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneRegion gTunnelRuinsRegions2[] = {
+struct SceneRegion gTunnelRuinsLadyStatuesRegions[] = {
     {624, 16, 336, 640, 32, 352, -1,
      TUNNEL_RUINS_LADY_STATUES_TO_BABI_LIGHTHOUSE_ENTRY_WEST},
     {816, 16, 336, 832, 32, 352, -1,
@@ -1979,7 +2008,7 @@ u32 gTunnelRuinsExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gTunnelRuinsPlacements1[] = {
+struct ScenePlacement gTunnelRuinsGreatStatuePlacements[] = {
     {SPRITE_PILLAR, 0, ACTOR_STAND, PIXELS(152), 0, PIXELS(616), FACING_SOUTH,
      TALK_KEEP_FACING, 0},
     {SPRITE_PILLAR, 0, ACTOR_STAND, PIXELS(168), 0, PIXELS(616), FACING_SOUTH,
@@ -2051,8 +2080,8 @@ struct ScenePlacement gTunnelRuinsPlacementsOther[] = {
 };
 
 // clang-format off
-struct SceneEvent gTunnelRuinsEvents1[] = {
-    {0x21, 1, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR},
+struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 1, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_BABI_LIGHTHOUSE_STONE_DOOR},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_STATUE_TO_FIRST_PILLARS},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_STATUE},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_TO_COLUMNS_NORTH},
@@ -2149,7 +2178,7 @@ struct SceneEvent gTunnelRuinsEventsOther[] = {
     {EVENT_EXIT, 11, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_TREE_DOOR_SOUTH},
     {EVENT_EXIT, 12, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST},
     {EVENT_EXIT, 13, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_EAST},
-    {0x21, 14, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 14, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDousePillar)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpDownLedge)},
     {TOUCH_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,

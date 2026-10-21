@@ -146,9 +146,11 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     work->speakerVoiceCountdown = zero;
 
     // The message's arguments: the member (MSG_ARG_ACTOR) and the Djinni's
-    // name, ability 300 + 20 * element + djinn (MSG_ARG_ABILITY).
+    // name, its ability (ABILITY_DJINNI_FIRST, MSG_ARG_ABILITY).
     UiWork_PushValueSlot(member, MSG_ARG_ACTOR);
-    UiWork_PushValueSlot(element * 20 + djinn + 300, MSG_ARG_ABILITY);
+    UiWork_PushValueSlot(element * DJINN_PER_ELEMENT + djinn +
+                             ABILITY_DJINNI_FIRST,
+                         MSG_ARG_ABILITY);
 
     text = UiText_BuildRenderEntriesMode1(element + MsgVenusDjinnJoined);
 

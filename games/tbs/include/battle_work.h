@@ -97,7 +97,9 @@ struct BattleWork {
   u16 firstDefeated;
   u16 defeatState; ///< DEFEAT_ONE, DEFEAT_SEVERAL or DEFEAT_BY_PARTY_MEMBER
   u8 summonCount;  ///< classes listed in enemyClasses, at most 5
-  u8 partyStatus;  ///< PARTY_STATUS_SUMMONS or PARTY_STATUS_NO_SUMMONS
+  u8 partyStatus;  ///< PARTY_STATUS_SUMMONS or PARTY_STATUS_NO_SUMMONS; the
+                   ///< staging draws it less PARTY_STATUS_SHOW_PP, names and
+                   ///< HP only
   u8 battleType;   ///< FORMATION_SHUFFLED or FORMATION_INTERLEAVED
   /// bits: 1 a party unit was challenged; nonzero, the party cannot run
   u8 challengeFlag;

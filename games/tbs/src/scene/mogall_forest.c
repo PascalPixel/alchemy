@@ -1,29 +1,34 @@
 /// @file
-/// Mogall Forest (SceneId_MogallForestSign to 4, scenes 68 to 71), the endless
+/// Mogall Forest (SceneId_MogallForestSign to SceneId_MogallForestSidePaths),
+/// the endless
 /// woods on the way from Fuchin Temple to Xian. The prairie there became a
 /// forest overnight, and Master Nyunpa of Fuchin Temple, the only one who could
 /// still pass through it, told the party that no ordinary man can; having
 /// survived his test of the grotto and learned Force, the party crosses it now.
 ///
-/// The way runs from the first area (scene 68), entered from the world map,
-/// through the second (scene 69) to the third (scene 70), which leaves for the
-/// world map by MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP. Apes (sprite 0xbf) hide
-/// in the undergrowth, each behind an invisible hiding place (sprite 0x16) on
+/// The way runs from the first area (SceneId_MogallForestSign), entered from
+/// the world map, through the second (SceneId_MogallForestQuartz) to the third
+/// (SceneId_MogallForestKillerApe), which leaves for the
+/// world map by MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP. Apes hide in the
+/// undergrowth, each behind an invisible hiding place on
 /// its spot, and Force on a hiding place brings its ape out. Most turn to the
 /// leader, point the way on and leave; two first bolt to a second hiding place;
 /// and one in the first area and one in the third leap at the leader instead,
 /// starting a battle with an Ape (encounter table 53, slot 0). An ape stays
-/// gone once out, and logs (sprites 0xcd and 0xcf) pushed into the river stay
-/// there, for as long as the party is in the forest (place flags 0x300 and up).
+/// gone once out, and logs pushed into the river stay there, for as long
+/// as the party is in the forest (place flags from FLAG_PLACE_TEMP_00).
 ///
-/// - First area (scene 68). Arriving the first time, an ape peeks out at the
+/// - First area (SceneId_MogallForestSign). Arriving the first time, an ape
+/// peeks out at the
 ///   leader and hides (FLAG_MOGALL_FOREST_FIRST_APE_SEEN). A broken sign reads
 ///   `North: Fuchin Temple South: Mogall Prairie...`, a log pushed to the river
 ///   rolls in and can be crossed, and a Nut floats over the river for Catch.
-/// - Second area (scene 69). Quartz, a Venus Djinni, waits to be fought; one
+/// - Second area (SceneId_MogallForestQuartz). Quartz, a Venus Djinni, waits to
+/// be fought; one
 ///   log changes the ground beside it and another rolls into the river; a
 ///   rock moved with Move settles into place; a chest holds an Apple.
-/// - Third area (scene 70). Two logs roll into the river, two rocks settle
+/// - Third area (SceneId_MogallForestKillerApe). Two logs roll into the river,
+/// two rocks settle
 ///   with Move, and a chest holds an Elven Shirt. Touching cell code 22 the
 ///   first time, the east ape leads the party south to a hiding place
 ///   (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE); there (cell code 23) the Killer
@@ -34,7 +39,7 @@
 ///   MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP once Force is learned and the
 ///   Killer Ape beaten sets FLAG_NYUNPA_ENLIGHTENED: back at Fuchin Temple the
 ///   monks say that Nyunpa has reached enlightenment and passed away.
-/// - MogallForestSidePaths (scene 71), also named Mogall Forest: side paths
+/// - SceneId_MogallForestSidePaths, also named Mogall Forest: side paths
 ///   that the three areas' exits lead into and back out of, some of them
 ///   leading back into the scene itself; a Psynergy Stone lies there.
 ///
@@ -89,10 +94,11 @@
 #include "item_ids.h"
 #include "songs.h"
 
-/// Actors of the first area (scene 68), numbered in the order of
-/// gMogallForestPlacements1.
+/// Actors of the first area (SceneId_MogallForestSign), numbered in the order
+/// of gMogallForestPlacements1.
 enum MogallForestSignActor {
-  /// A log (sprite 0xcd) at (488, 464), pushed as the river log is but with
+  /// A log lying north to south at (488, 464), pushed as the river log is but
+  /// with
   /// nothing happening where it stops.
   ACTOR_FIRST_AREA_LOG = ACTOR_FIRST_PLACED,
   ACTOR_FIRST_AREA_RIVER_LOG,
@@ -105,15 +111,15 @@ enum MogallForestSignActor {
   ACTOR_NUT ///< a Nut floating over the river, caught with Catch
 };
 
-/// Actors of the second area (scene 69), numbered in the order of
-/// gMogallForestPlacements2.
+/// Actors of the second area (SceneId_MogallForestQuartz), numbered in the
+/// order of gMogallForestPlacements2.
 enum MogallForestQuartzActor {
   ACTOR_SECOND_AREA_LOG = ACTOR_FIRST_PLACED,
-  /// A log (sprite 0xcf) at (592, 456), south of ACTOR_SECOND_AREA_LOG, pushed
-  /// with nothing happening where it stops.
+  /// A log lying west to east at (592, 456), south of ACTOR_SECOND_AREA_LOG,
+  /// pushed with nothing happening where it stops.
   ACTOR_SECOND_AREA_SOUTH_LOG,
   ACTOR_SECOND_AREA_RIVER_LOG,
-  /// A rock moved with Move: sprite 0x125, the rocks of Altmiller Cave's color
+  /// A rock moved with Move, drawn as the rocks of Altmiller Cave's color
   /// puzzle (MsgAltmillerRotatedRock), drawn plain as those are while Reveal is
   /// off.
   ACTOR_SECOND_AREA_ROCK,
@@ -126,17 +132,17 @@ enum MogallForestQuartzActor {
   ACTOR_QUARTZ ///< Quartz, a Venus Djinni, placed until the party has it
 };
 
-/// Actors of the third area (scene 70), numbered in the order of
-/// gMogallForestPlacements3.
+/// Actors of the third area (SceneId_MogallForestKillerApe), numbered in the
+/// order of gMogallForestPlacements3.
 enum MogallForestKillerApeActor {
   ACTOR_THIRD_AREA_LOG = ACTOR_FIRST_PLACED,
   ACTOR_THIRD_AREA_RIVER_LOG_1,
-  /// A log (sprite 0xcd) at (552, 480), west of the two river logs, pushed
-  /// with nothing happening where it stops.
+  /// A log lying north to south at (552, 480), west of the two river logs,
+  /// pushed with nothing happening where it stops.
   ACTOR_THIRD_AREA_WEST_LOG,
   ACTOR_THIRD_AREA_RIVER_LOG_2,
-  /// A log (sprite 0xcf) at (544, 536), south of ACTOR_THIRD_AREA_WEST_LOG,
-  /// pushed with nothing happening where it stops.
+  /// A log lying west to east at (544, 536), south of
+  /// ACTOR_THIRD_AREA_WEST_LOG, pushed with nothing happening where it stops.
   ACTOR_THIRD_AREA_SOUTHWEST_LOG,
   /// Two rocks moved with Move, as in the second area.
   ACTOR_THIRD_AREA_NORTH_ROCK,
@@ -235,7 +241,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, (s16)((u32)position->x >> 16),
                               (s16)((u32)position->z >> 16));
     Object_SetMode(leader, 6);
-    Engine_ActorSetSpriteFlags(leader, 1);
+    Engine_ActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
     Engine_EventEnd();
     return 1;
@@ -274,7 +280,7 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
   Engine_ActorSetSpriteFlags(actor, 0);
   Actor_MoveToAndWait(actorId, targetX, targetZ);
   Actor_SetPosition(actorId, PIXELS(targetX), PIXELS(targetZ));
-  Engine_ActorSetSpriteFlags(actor, 1);
+  Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   actor->gravity = PIXELS(1);
 }
 
@@ -328,7 +334,8 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
   Engine_ActorFaceEachOther(guideId, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
   Engine_ActorStartRepeatedMotion(guideId, 2);
-  Engine_ActorSetAttachedEffect(guideId, 258);
+  Engine_ActorSetAttachedEffect(guideId, ATTACHED_EFFECT_IN_FRONT |
+                                             ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
 }
 
@@ -528,7 +535,7 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
   Engine_GameFlagSet(FLAG_FIRST_AREA_HOSTILE_APE_OUT);
   Engine_ActorSetPosition(ACTOR_FIRST_AREA_HOSTILE_HIDEOUT, 0, 0);
 
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
 
   Field_RequestBattleFromEncounterTable(53, 0);
 
@@ -970,7 +977,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
                           leaderForZ->z.part.pixel, PIXELS(6));
   Engine_EventWait(10);
   Engine_GameFlagSet(FLAG_THIRD_AREA_HOSTILE_APE_OUT);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Field_RequestBattleFromEncounterTable(53, 0);
   Engine_EventEnd();
 }
@@ -1129,7 +1136,8 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
   Effect_Spawn(creature->x.fixed, creature->y.fixed,
                (creature->z.fixed + PIXELS(4)), 0, 0, 0, 1, 0);
   Actor_FaceDirection(ACTOR_THIRD_AREA_EAST_APE, FACING_NORTH, 40);
-  Actor_SetAttachedEffect(ACTOR_THIRD_AREA_EAST_APE, 0x102);
+  Actor_SetAttachedEffect(ACTOR_THIRD_AREA_EAST_APE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_ActorRunRepeatedMotion(ACTOR_THIRD_AREA_EAST_APE, 2);
   Engine_CameraFollowActor(ACTOR_THIRD_AREA_EAST_APE, 1);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 440, PIXELS(6));
@@ -1218,7 +1226,7 @@ static void MogallForest_KillerApeAttacks(void) {
         Object_GetById(ACTOR_PARTY_LEADER)->z.part.pixel - 16, PIXELS(8));
   }
   Engine_EventWait(10);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_MogallForestKillerApe,
                            MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS);
   Field_RequestBattleFromEncounterTable(53, 1);
@@ -1254,7 +1262,8 @@ s32 MogallForest_Initialize(void) {
   s32 column;
   s32 fixedZ;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   sceneId = gGameState.scene;
   if (sceneId == (s32)&SceneId_MogallForestSign) {
     // Show the first guide once, or restore the first area's completed
@@ -1264,7 +1273,7 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_SIGN_FROM_WORLD_MAP:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
-    case 4:
+    case MOGALL_FOREST_SIGN_ENTRANCE_FROM_SOUTHWEST_CLEARING:
       if (GameFlag_IsSet(FLAG_MOGALL_FOREST_FIRST_APE_SEEN) == 0) {
         Engine_EventBegin();
         Engine_TaskWait(1);
@@ -1301,7 +1310,7 @@ s32 MogallForest_Initialize(void) {
       Actor_SetPosition(ACTOR_FIRST_AREA_NORTH_APE, PIXELS(136), PIXELS(116));
       break;
 
-    case 7:
+    case MOGALL_FOREST_SIGN_RIVER_FROM_SOUTHWEST_CLEARING:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ:
       actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1342,9 +1351,9 @@ s32 MogallForest_Initialize(void) {
     entrance = gGameState.entrance;
     switch (entrance) {
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
-    case 4:
-    case 5:
-    case 6:
+    case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING:
+    case MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND:
+    case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING:
       if (Engine_GameFlagIsSet(FLAG_SECOND_AREA_NORTH_APE_OUT) == 0) {
         Engine_ActorSetChildValue(ACTOR_SECOND_AREA_NORTH_APE, 15);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SECOND_AREA_NORTH_APE),
@@ -1357,7 +1366,7 @@ s32 MogallForest_Initialize(void) {
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SECOND_AREA_EAST_APE), 0);
       break;
 
-    case 10:
+    case MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING:
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE:
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
       if (Engine_GameFlagIsSet(FLAG_SECOND_AREA_LOG_ROLLED) == 0) {
@@ -1408,9 +1417,9 @@ s32 MogallForest_Initialize(void) {
     entrance = gGameState.entrance;
     switch (entrance) {
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
-    case 4:
-    case 5:
-    case 6:
+    case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST:
+    case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_NORTHWEST_CLEARING:
+    case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER:
       Engine_TaskWait(1);
       if (Engine_GameFlagIsSet(FLAG_THIRD_AREA_HOSTILE_APE_OUT) == 0) {
         Engine_ActorSetChildValue(ACTOR_THIRD_AREA_HOSTILE_APE, 15);
@@ -1435,7 +1444,7 @@ s32 MogallForest_Initialize(void) {
                                  0);
       break;
 
-    case 7:
+    case MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS:
       column = Object_GetById(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed;
       fixedZ = Object_GetById(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed;
       column >>= 20;
@@ -1447,10 +1456,10 @@ s32 MogallForest_Initialize(void) {
       FieldScene_RedrawActorFootprint(ACTOR_THIRD_AREA_LOG);
       break;
 
-    case 8:
+    case MOGALL_FOREST_KILLER_APE_RIVER_FROM_STUMPS:
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_EAST:
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH:
-    case 11:
+    case MOGALL_FOREST_KILLER_APE_RIVER_FROM_BRIDGES:
       OverlayObject_CreateConfiguredObject(PIXELS(734), 0, PIXELS(370), 223);
       OverlayObject_CreateConfiguredObject(PIXELS(754), 0, PIXELS(370), 223);
       FieldScene_RedrawActorFootprint(ACTOR_THIRD_AREA_WEST_LOG);
@@ -1508,7 +1517,7 @@ s32 MogallForest_Initialize(void) {
       MogallForest_ThirdArea_UpdateSouthRock();
       break;
 
-    case 12:
+    case MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER:
     case MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP:
       Actor_SetActionScript(ACTOR_THIRD_AREA_EAST_APE,
                             gMogallForest_ActorScript);
@@ -1622,46 +1631,46 @@ struct SceneEntrance gMogallForestEntrances1[] = {
     { MOGALL_FOREST_SIGN_FROM_WORLD_MAP, CONDITION_ALWAYS, 136, 0, 24, FACING_SOUTH, 0, 0, 0, 272, 224, 0 },
     { MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
     { MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
-    { 4, CONDITION_ALWAYS, 136, 0, 200, FACING_NORTH, 0, 0, 0, 272, 224, 0 },
-    { 5, CONDITION_ALWAYS, 72, 0, 264, FACING_SOUTH, 0, 0, 240, 272, 464, 0 },
-    { 6, CONDITION_ALWAYS, 200, 0, 440, FACING_NORTH, 0, 0, 240, 272, 464, 0 },
-    { 7, CONDITION_ALWAYS, 416, 0, 264, FACING_SOUTH, 0, 288, 240, 672, 624, 0 },
+    { MOGALL_FOREST_SIGN_ENTRANCE_FROM_SOUTHWEST_CLEARING, CONDITION_ALWAYS, 136, 0, 200, FACING_NORTH, 0, 0, 0, 272, 224, 0 },
+    { MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_FROM_ENTRANCE, CONDITION_ALWAYS, 72, 0, 264, FACING_SOUTH, 0, 0, 240, 272, 464, 0 },
+    { MOGALL_FOREST_SIGN_SOUTHWEST_CLEARING_FROM_RIVER, CONDITION_ALWAYS, 200, 0, 440, FACING_NORTH, 0, 0, 240, 272, 464, 0 },
+    { MOGALL_FOREST_SIGN_RIVER_FROM_SOUTHWEST_CLEARING, CONDITION_ALWAYS, 416, 0, 264, FACING_SOUTH, 0, 288, 240, 672, 624, 0 },
     { MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_EAST, CONDITION_ALWAYS, 560, 0, 264, FACING_SOUTH, 0, 288, 240, 672, 624, 0 },
     { MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_QUARTZ, CONDITION_ALWAYS, 648, 0, 344, FACING_WEST, 0, 288, 240, 672, 624, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gMogallForestEntrances2[] = {
-    { 0, CONDITION_ALWAYS, 120, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIGN, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
-    { 2, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
+    { MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_FROM_STUMPS, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
     { MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH, CONDITION_ALWAYS, 424, 0, 24, FACING_SOUTH, 0, 288, 0, 560, 224, 0 },
-    { 4, CONDITION_ALWAYS, 312, 0, 136, FACING_EAST, 0, 288, 0, 560, 224, 0 },
-    { 5, CONDITION_ALWAYS, 536, 0, 120, FACING_WEST, 0, 288, 0, 560, 224, 0 },
-    { 6, CONDITION_ALWAYS, 424, 0, 200, FACING_NORTH, 0, 288, 0, 560, 224, 0 },
-    { 7, CONDITION_ALWAYS, 744, 0, 24, FACING_SOUTH, 0, 576, 0, 848, 224, 0 },
-    { 8, CONDITION_ALWAYS, 744, 0, 200, FACING_NORTH, 0, 576, 0, 848, 224, 0 },
-    { 9, CONDITION_ALWAYS, 24, 0, 368, FACING_EAST, 0, 0, 240, 272, 464, 0 },
-    { 10, CONDITION_ALWAYS, 488, 0, 264, FACING_SOUTH, 0, 288, 240, 736, 624, 0 },
+    { MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING, CONDITION_ALWAYS, 312, 0, 136, FACING_EAST, 0, 288, 0, 560, 224, 0 },
+    { MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND, CONDITION_ALWAYS, 536, 0, 120, FACING_WEST, 0, 288, 0, 560, 224, 0 },
+    { MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING, CONDITION_ALWAYS, 424, 0, 200, FACING_NORTH, 0, 288, 0, 560, 224, 0 },
+    { MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_FROM_STUMPS, CONDITION_ALWAYS, 744, 0, 24, FACING_SOUTH, 0, 576, 0, 848, 224, 0 },
+    { MOGALL_FOREST_QUARTZ_NORTHEAST_CLEARING_FROM_RIVER, CONDITION_ALWAYS, 744, 0, 200, FACING_NORTH, 0, 576, 0, 848, 224, 0 },
+    { MOGALL_FOREST_QUARTZ_POND_FROM_STUMPS, CONDITION_ALWAYS, 24, 0, 368, FACING_EAST, 0, 0, 240, 272, 464, 0 },
+    { MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING, CONDITION_ALWAYS, 488, 0, 264, FACING_SOUTH, 0, 288, 240, 736, 624, 0 },
     { MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_KILLER_APE, CONDITION_ALWAYS, 312, 0, 528, FACING_EAST, 0, 288, 240, 736, 624, 0 },
     { MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH, CONDITION_ALWAYS, 360, 0, 600, FACING_NORTH, 0, 288, 240, 736, 624, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gMogallForestEntrances3[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_FROM_STUMPS, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
     { MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_QUARTZ, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
     { MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST, CONDITION_ALWAYS, 424, 0, 24, FACING_SOUTH, 0, 288, 0, 560, 224, 0 },
-    { 4, CONDITION_ALWAYS, 312, 0, 160, FACING_EAST, 0, 288, 0, 560, 224, 0 },
-    { 5, CONDITION_ALWAYS, 536, 0, 160, FACING_WEST, 0, 288, 0, 560, 224, 0 },
-    { 6, CONDITION_ALWAYS, 424, 0, 200, FACING_NORTH, 0, 288, 0, 560, 224, 0 },
-    { 7, CONDITION_ALWAYS, 824, 0, 136, FACING_WEST, 0, 576, 0, 848, 224, 0 },
-    { 8, CONDITION_ALWAYS, 728, 0, 264, FACING_SOUTH, 0, 400, 240, 848, 640, 0 },
+    { MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST, CONDITION_ALWAYS, 312, 0, 160, FACING_EAST, 0, 288, 0, 560, 224, 0 },
+    { MOGALL_FOREST_KILLER_APE_STUMPS_FROM_NORTHWEST_CLEARING, CONDITION_ALWAYS, 536, 0, 160, FACING_WEST, 0, 288, 0, 560, 224, 0 },
+    { MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER, CONDITION_ALWAYS, 424, 0, 200, FACING_NORTH, 0, 288, 0, 560, 224, 0 },
+    { MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS, CONDITION_ALWAYS, 824, 0, 136, FACING_WEST, 0, 576, 0, 848, 224, 0 },
+    { MOGALL_FOREST_KILLER_APE_RIVER_FROM_STUMPS, CONDITION_ALWAYS, 728, 0, 264, FACING_SOUTH, 0, 400, 240, 848, 640, 0 },
     { MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_EAST, CONDITION_ALWAYS, 824, 0, 512, FACING_WEST, 0, 400, 240, 848, 640, 0 },
     { MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_SOUTH, CONDITION_ALWAYS, 824, 0, 608, FACING_WEST, 0, 400, 240, 848, 640, 0 },
-    { 11, CONDITION_ALWAYS, 736, 0, 616, FACING_NORTH, 0, 400, 240, 848, 640, 0 },
-    { 12, CONDITION_ALWAYS, 264, 0, 264, FACING_SOUTH, 0, 0, 240, 384, 496, 0 },
+    { MOGALL_FOREST_KILLER_APE_RIVER_FROM_BRIDGES, CONDITION_ALWAYS, 736, 0, 616, FACING_NORTH, 0, 400, 240, 848, 640, 0 },
+    { MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER, CONDITION_ALWAYS, 264, 0, 264, FACING_SOUTH, 0, 0, 240, 384, 496, 0 },
     { MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP, CONDITION_ALWAYS, 136, 0, 472, FACING_NORTH, 0, 0, 240, 384, 496, 0 },
     { MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS, CONDITION_ALWAYS, 136, 0, 432, FACING_NORTH, 0, 0, 240, 384, 496, 0 },
     { SCENE_TABLE_END },
@@ -1676,8 +1685,8 @@ struct SceneEntrance gMogallForestEntrancesOther[] = {
     { MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_EAST, CONDITION_ALWAYS, 312, 0, 552, FACING_EAST, 0, 288, 480, 560, 704, 0 },
     { MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_KILLER_APE_SOUTH, CONDITION_ALWAYS, 312, 0, 648, FACING_EAST, 0, 288, 480, 560, 704, 0 },
     { MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_EAST, CONDITION_ALWAYS, 648, 0, 680, FACING_NORTH, 0, 576, 480, 848, 704, 0 },
-    { 9, CONDITION_ALWAYS, 536, 0, 128, FACING_WEST, 0, 288, 0, 560, 224, 0 },
-    { 10, CONDITION_ALWAYS, 24, 0, 368, FACING_EAST, 0, 0, 240, 272, 464, 0 },
+    { MOGALL_FOREST_SIDE_PATHS_NORTH_CLEARING_EAST, CONDITION_ALWAYS, 536, 0, 128, FACING_WEST, 0, 288, 0, 560, 224, 0 },
+    { MOGALL_FOREST_SIDE_PATHS_WEST_CLEARING_WEST, CONDITION_ALWAYS, 24, 0, 368, FACING_EAST, 0, 0, 240, 272, 464, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -1945,14 +1954,22 @@ struct SceneEvent gMogallForestEventsOther[] = {
      MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_KILLER_APE_SOUTH},
     {EVENT_EXIT, 8, CONDITION_ALWAYS,
      MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_EAST},
-    {EVENT_EXIT, 11, CONDITION_ALWAYS, 20},
-    {EVENT_EXIT, 12, CONDITION_ALWAYS, 19},
-    {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
-    {EVENT_EXIT, 14, CONDITION_ALWAYS, 14},
-    {EVENT_EXIT, 15, CONDITION_ALWAYS, 15},
-    {EVENT_EXIT, 16, CONDITION_ALWAYS, 16},
-    {EVENT_EXIT, 17, CONDITION_ALWAYS, 17},
-    {EVENT_EXIT, 18, CONDITION_ALWAYS, 18},
+    {EVENT_EXIT, 11, CONDITION_ALWAYS,
+     MOGALL_FOREST_SIDE_PATHS_TO_WEST_CLEARING_WEST},
+    {EVENT_EXIT, 12, CONDITION_ALWAYS,
+     MOGALL_FOREST_SIDE_PATHS_TO_NORTH_CLEARING_EAST},
+    {EVENT_EXIT, 13, CONDITION_ALWAYS,
+     MOGALL_FOREST_SIDE_PATHS_TO_CENTER_CLEARING},
+    {EVENT_EXIT, 14, CONDITION_ALWAYS,
+     MOGALL_FOREST_SIDE_PATHS_TO_EAST_CLEARING},
+    {EVENT_EXIT, 15, CONDITION_ALWAYS,
+     MOGALL_FOREST_SIDE_PATHS_TO_SOUTHWEST_CLEARING},
+    {EVENT_EXIT, 16, CONDITION_ALWAYS,
+     MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_NORTHWEST},
+    {EVENT_EXIT, 17, CONDITION_ALWAYS,
+     MOGALL_FOREST_SIDE_PATHS_TO_SOUTH_CLEARING_SOUTHWEST},
+    {EVENT_EXIT, 18, CONDITION_ALWAYS,
+     MOGALL_FOREST_SIDE_PATHS_TO_SOUTHEAST_CLEARING},
     {SEARCH(SEARCH_UNNAMED), 100, FLAG_PSYNERGY_STONE, FIND_PSYNERGY_STONE},
     {SCENE_EVENTS_END},
 };

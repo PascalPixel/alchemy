@@ -66,7 +66,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   slot = effectScene->slots;
   remaining = 23;
   do {
-    EffectSlot_Initialize(slot, 284, position.x, position.z);
+    EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
     EffectSlot_SetCallback(slot, BattleFx_UpdateRadialSpread);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
@@ -108,8 +108,8 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
     position.x = leader->x;
     position.y = leader->y + 0x780000;
     position.z = leader->z;
-    djinni = (struct CaptureObject *)Object_Spawn(284, position.x, position.y,
-                                                  position.z);
+    djinni = (struct CaptureObject *)Object_Spawn(SPRITE_PARTICLE, position.x,
+                                                  position.y, position.z);
     if (djinni != NULL) {
       scale = Random16() / 3 + 0x10000;
       djinni->scaleY = scale;
@@ -136,8 +136,8 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   // FieldActor.velocityY), falling, and freed after 8 frames; stop at the
   // first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni = (struct CaptureObject *)Object_Spawn(284, position.x, position.y,
-                                                  position.z);
+    djinni = (struct CaptureObject *)Object_Spawn(SPRITE_PARTICLE, position.x,
+                                                  position.y, position.z);
     if (djinni == NULL)
       break;
     djinni->scaleY = 0x9999;

@@ -1,5 +1,5 @@
 /// @file
-/// Vale (ValeInteriorsInn, scene 8): Isaac's house and the ground outside it,
+/// Vale (SceneId_ValeInteriorsInn): Isaac's house and the ground outside it,
 /// the inn and the inside of Kraden's cottage, and at
 /// VALE_INTERIORS_INN_FROM_BABI_PALACE a room of Babi's Palace: one overlay
 /// whose tables and setup choose by the entrance and the story flags. In story
@@ -10,15 +10,18 @@
 ///   ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST). The setup sets
 ///   FLAG_VALE_STORM and plays Event_DoraWakesIsaac: Dora, Isaac's mother,
 ///   wakes him because the Mt. Aleph Boulder is going to fall, makes him take
-///   his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him downstairs (exit 20, to
-///   entrance 21), where Event_HurryToThePlaza plays: Kyle, Isaac's father,
-///   calls them to hurry, ACTOR_FLAME shakes outside the house, then turns to
-///   smoke and rises away, and they run for the plaza, where the village
-///   takes refuge, by exit 21 into ValeStorm (its entrance 15). While
-///   FLAG_VALE_STORM is set the villagers are put out of sight, lightning
-///   flashes, and VALE_INTERIORS_INN_TO_VALE leads into the storm (ValeStorm)
-///   instead of Vale (gValeInteriorsInn_StormExits). Kyle dies that night, as
-///   the village says later.
+///   his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him downstairs
+///   (VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA, to
+///   VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA), where
+///   Event_HurryToThePlaza plays: Kyle, Isaac's father, calls them to hurry,
+///   ACTOR_FLAME shakes outside the house, then turns to smoke and rises away,
+///   and they run for the plaza, where the village takes refuge, by
+///   VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA into ValeStorm
+///   (VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA). While FLAG_VALE_STORM is
+///   set the villagers are put out of sight, lightning flashes, and
+///   VALE_INTERIORS_INN_TO_VALE leads into the storm (ValeStorm) instead of
+///   Vale (gValeInteriorsInn_StormExits). Kyle dies that night, as the village
+///   says later.
 /// - Vale before the party leaves (FLAG_PARTY_LEFT_VALE clear): from Kraden's
 ///   cottage (ValeKraden's VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG) the
 ///   party arrives at VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, inside
@@ -45,16 +48,17 @@
 ///   up for that visit (FLAG_SCENE_TEMP_03), and the setup otherwise puts her
 ///   back in bed, where she dreams of Kyle.
 /// - Babi's Palace (VALE_INTERIORS_INN_FROM_BABI_PALACE, from Babi's Palace's
-///   BABI_PALACE_TO_VALE_INTERIORS_INN, scene 138), in Tolbi, whose lord is
-///   Babi: a room of his scholars, who speak of Alchemy, of Kraden, Babi's
-///   favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
-///   long tunnel beneath them. They talk differently once the Colosso finals
-///   are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
+///   BABI_PALACE_TO_VALE_INTERIORS_INN, SceneId_BabiPalace), in Tolbi, whose
+///   lord is Babi: a room of his scholars, who speak of Alchemy, of Kraden,
+///   Babi's favourite scholar, and of the Venus Ruins under Babi Lighthouse
+///   with a long tunnel beneath them. They talk differently once the Colosso
+///   finals are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
 ///   Kraden. The setup does not show the place name there.
 ///
-/// Exits 1 to 11 are cell codes of the same number, leading to the rest of
-/// Vale (ValeGate, ValeKraden, Vale and ValeStorm) or between this scene's
-/// own parts.
+/// The exits VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST to
+/// VALE_INTERIORS_INN_TO_VALE_STORM_EAST are taken by the cell codes of the
+/// same numbers, leading to the rest of Vale (ValeGate, ValeKraden, Vale and
+/// ValeStorm) or between this scene's own parts.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -203,7 +207,8 @@ enum ValeInteriorsInnPlaceFlag {
 /// (BABI_PALACE_TO_VALE_INTERIORS_INN),
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST where a new game begins
 /// (menu/clear.c, and ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST),
-/// entrance 21 from this scene's own exit 20, and
+/// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this scene's
+/// own VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA, and
 /// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG from Kraden's cottage
 /// (VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG).
 const struct SceneEntrance *ValeInteriorsInn_GetEntrances(void) {
@@ -378,7 +383,8 @@ static void Event_TakeExitToInnUpstairs(void) {
 }
 
 /// Reached by cell code 6; leads to Vale (VALE_FROM_VALE_INTERIORS_INN), or on
-/// the stormy night to ValeStorm's entrance 8.
+/// the stormy night to ValeStorm
+/// (VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE).
 static void Event_TakeExitToVale(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE);
@@ -419,7 +425,8 @@ static void Event_TakeExitToValeStormWest(void) {
 }
 
 /// Sets up the stormy night or the villagers of the story, and plays the
-/// scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, entrance 21 and
+/// scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST,
+/// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
 /// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG.
 /// Called by Field_RunScene once the actors are placed.
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST sets FLAG_VALE_STORM before
@@ -448,7 +455,8 @@ s32 ValeInteriorsInn_Initialize(void) {
       actor = Object_GetById(ACTOR_BLANK_AFTER_KALAY);
       Engine_ActorSetSpriteFlags(actor, 0);
       if (gGameState.entrance == VALE_INTERIORS_INN_FROM_VALE ||
-          gGameState.entrance == 7) {
+          gGameState.entrance ==
+              VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
             Map_ClearLayerEntryFlag(12);
@@ -461,7 +469,8 @@ s32 ValeInteriorsInn_Initialize(void) {
         }
       }
     } else {
-      if (gGameState.entrance == 21) {
+      if (gGameState.entrance ==
+          VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA) {
         Event_HurryToThePlaza();
       } else {
         if (gGameState.entrance ==
@@ -500,8 +509,10 @@ s32 ValeInteriorsInn_Initialize(void) {
 /// his tunic, and leads him out into the storm. "The Mt. Aleph Boulder is going
 /// to fall!" Called by ValeInteriorsInn_Initialize on arrival by
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, where a new game begins. Sets
-/// FLAG_ISAAC_WEARS_TUNIC and takes exit 20, back into this scene by entrance
-/// 21, where Event_HurryToThePlaza follows.
+/// FLAG_ISAAC_WEARS_TUNIC and takes
+/// VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA, back into this
+/// scene by VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
+/// Event_HurryToThePlaza follows.
 static void Event_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct AnimationObject *sprite;
@@ -661,7 +672,8 @@ static void Event_DoraWakesIsaac(void) {
   (*eventSlot)->transitionFrames = 16;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(20);
+  Engine_EventRequestExit(
+      VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA);
 }
 
 /// Selects the hardware blend targets for the storm sequence.
@@ -672,8 +684,10 @@ static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 /// Outside the house in Vale on the stormy night, Kyle calls to Isaac and Dora
 /// to hurry; ACTOR_FLAME shakes, then turns to smoke and rises away, as they
 /// run to the plaza. Called by ValeInteriorsInn_Initialize on arrival by
-/// entrance 21, after Event_DoraWakesIsaac. Takes exit 21, to ValeStorm's
-/// entrance 15, where Event_DoraSendsIsaacToThePlaza follows.
+/// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, after
+/// Event_DoraWakesIsaac. Takes VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA, to
+/// ValeStorm (VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA), where
+/// Event_DoraSendsIsaacToThePlaza follows.
 static void Event_HurryToThePlaza(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -798,7 +812,7 @@ ramp:
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 32;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(21);
+  Engine_EventRequestExit(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA);
 }
 
 /// Vale's innkeeper offers a room from behind the counter; elsewhere talks of
@@ -1355,13 +1369,16 @@ struct SceneEntrance gValeInteriorsInn_Entrances[] = {
      FACING_NORTH, 0, 584, 0, 848, 224, 0},
     {VALE_INTERIORS_INN_FROM_VALE_GATE_WEST, CONDITION_ALWAYS, 144, 0, 494,
      FACING_NORTH, 0, 8, 256, 320, 528, 0},
-    {5, CONDITION_ALWAYS, 119, 0, 340, FACING_SOUTH, 0, 8, 256, 320, 528, 0},
+    {VALE_INTERIORS_INN_INN_FROM_UPSTAIRS, CONDITION_ALWAYS, 119, 0, 340,
+     FACING_SOUTH, 0, 8, 256, 320, 528, 0},
     {VALE_INTERIORS_INN_FROM_VALE, CONDITION_ALWAYS, 416, 0, 528, FACING_NORTH,
      0, 344, 272, 640, 560, 0},
-    {7, CONDITION_ALWAYS, 408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
+    {VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS, CONDITION_ALWAYS, 408, 0,
+     371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
     {VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS, CONDITION_ALWAYS, 184, 0, 633,
      FACING_EAST, 0, 8, 576, 320, 736, 0},
-    {9, CONDITION_ALWAYS, 408, 0, 665, FACING_EAST, 0, 328, 600, 624, 816, 0},
+    {VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_DOWNSTAIRS, CONDITION_ALWAYS, 408, 0,
+     665, FACING_EAST, 0, 328, 600, 624, 816, 0},
     {10, CONDITION_ALWAYS, 528, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
     {VALE_INTERIORS_INN_FROM_VALE_STORM_WEST, CONDITION_ALWAYS, 705, 0, 817,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
@@ -1372,7 +1389,8 @@ struct SceneEntrance gValeInteriorsInn_Entrances[] = {
      FACING_SOUTH, 0, 672, 272, 960, 488, 0},
     {VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,
      FACING_EAST, 0, 1024, 576, 1024, 576, 0},
-    {21, CONDITION_ALWAYS, 408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
+    {VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, CONDITION_ALWAYS,
+     408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
     {VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG, CONDITION_ALWAYS, 480, 0,
      176, FACING_NORTH, 0, 264, 8, 560, 240, 0},
     {SCENE_TABLE_END},
@@ -1680,7 +1698,7 @@ struct SceneEvent gValeInteriorsInn_ScholarsEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiKradensJourneyWasMeantToRevive) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiTheVenusRuinsAreTheRemnants) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
-    { 0x21, 20, CONDITION_ALWAYS, 19 },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
     { SEARCH(SEARCH_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
@@ -1699,7 +1717,7 @@ struct SceneEvent gValeInteriorsInn_ScholarsLaterEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiTheresGotToBeAGood) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiWhatSortOfUnfathomableRiddlesAre) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
-    { 0x21, 20, CONDITION_ALWAYS, 19 },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
     { SEARCH(SEARCH_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },

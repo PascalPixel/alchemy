@@ -1,6 +1,6 @@
 /// @file
-/// McCoy's Palace (McCoyPalace, scene 33), the palace of Lord McCoy, the lord
-/// of Bilibin. The grounds outside its gate (McCoyPalaceGrounds, scene 34,
+/// McCoy's Palace (SceneId_McCoyPalace), the palace of Lord McCoy, the lord
+/// of Bilibin. The grounds outside its gate (SceneId_McCoyPalaceGrounds,
 /// mccoy_palace_grounds.c) have the same area name, and the party comes in
 /// from there (MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE, arriving at
 /// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST;
@@ -451,7 +451,8 @@ static void Event_CaptainSeesPartyOff(void) {
     Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 570, 758);
     Actor_SetPosition(ACTOR_CAPTAIN, 0, 0);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     GameFlag_Set(FLAG_MCCOY_PALACE_PARTY_REWARDED);
     GameFlag_Set(FLAG_PLACE_TEMP_33);
     Engine_EventEnd();
@@ -480,7 +481,8 @@ s32 Scene_Initialize(void) {
   s32 curseLifted;
   struct FieldActor *chest;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Map_SetLayerEntryFlag(1);
   Map_SetLayerEntryFlag(2);
   Engine_GameFlagSet(FLAG_MCCOY_PALACE_VISITED);
@@ -492,7 +494,7 @@ s32 Scene_Initialize(void) {
       Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     if (gGameState.entrance == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
       Event_AudienceWithMcCoy();
-    } else if (gGameState.entrance == 9 &&
+    } else if (gGameState.entrance == MCCOY_PALACE_HALL_FROM_MCCOYS_ROOM &&
                Engine_GameFlagIsSet(FLAG_PLACE_TEMP_21) != 0) {
       Event_CaptainHintsAtBarricade();
     }
@@ -509,7 +511,7 @@ s32 Scene_Initialize(void) {
         }
       } else {
         // Restore the displayed chest row after reloading the treasure room.
-        if (gGameState.entrance == 28) {
+        if (gGameState.entrance == MCCOY_PALACE_TREASURE_ROOM_FROM_HALL) {
           if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_22) != 0) {
             if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
               McCoyPalace_OpenRewardChestRow();
@@ -618,7 +620,8 @@ static void Event_AudienceWithMcCoy(void) {
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
-    Engine_ActorSetAttachedEffect(ACTOR_CAPTAIN, EMOTE_IN_FRONT | 2);
+    Engine_ActorSetAttachedEffect(ACTOR_CAPTAIN, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTHEAST + FACING_STEP, 10);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
@@ -670,7 +673,8 @@ static void Event_AudienceWithMcCoy(void) {
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0, 10);
-    Engine_ActorSetAttachedEffect(ACTOR_CAPTAIN, EMOTE_IN_FRONT | 2);
+    Engine_ActorSetAttachedEffect(ACTOR_CAPTAIN, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 20);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 40);
@@ -883,7 +887,8 @@ accepted:
   Engine_EventWait(40);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 80);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST + FACING_STEP, 10);
-  Actor_SetAttachedEffect(ACTOR_CAPTAIN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_CAPTAIN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
@@ -904,10 +909,13 @@ accepted:
   Engine_ActorWaitForMove(ACTOR_BARRICADE_KEY);
   Engine_ActorSetPosition(ACTOR_BARRICADE_KEY, 0, 0);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
-  Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
-  Engine_ActorSetAttachedEffect(IVAN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ActorSetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                          ATTACHED_EFFECT_ONCE);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
@@ -999,11 +1007,12 @@ accepted:
   Engine_EventWaitForScreen();
   Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
 leave:
-  Engine_EventRequestExit(29);
+  Engine_EventRequestExit(MCCOY_PALACE_MCCOYS_ROOM_TO_HALL);
   Engine_EventEnd();
 }
 
-/// McCoy's Palace, entrance 9 after the first audience: outside McCoy's door,
+/// McCoy's Palace, at MCCOY_PALACE_HALL_FROM_MCCOYS_ROOM after the first
+/// audience: outside McCoy's door,
 /// his captain is sorry the party was rejected, asks them not to go to Kolima
 /// and lets slip that the barricade may not need a key.
 static void Event_CaptainHintsAtBarricade(void) {
@@ -1041,7 +1050,8 @@ static void Event_CaptainHintsAtBarricade(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 2);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
-  Actor_SetAttachedEffect(ACTOR_CAPTAIN, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_CAPTAIN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(ACTOR_CAPTAIN, 1);
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
@@ -1093,7 +1103,8 @@ static void Event_McCoyRewardsParty(void) {
   Engine_MapRedraw();
   Engine_TaskWait(1);
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   gEventWork->transitionFrames = 16;
 
   Engine_EventOpenScreen();
@@ -1343,13 +1354,13 @@ static void Event_McCoyRewardsParty(void) {
     GameFlag_Set(FLAG_MCCOY_PALACE_BARRICADE_HINT);
     GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
   }
-  Engine_EventRequestExit(6);
+  Engine_EventRequestExit(MCCOY_PALACE_HALL_TO_TREASURE_ROOM);
   Engine_EventEnd();
 }
 
-/// McCoy's Palace, entrance 28, the treasure room: the captain shows the four
-/// chests and the keeper of the treasure explains that only one may be
-/// chosen.
+/// McCoy's Palace, at MCCOY_PALACE_TREASURE_ROOM_FROM_HALL, the treasure room:
+/// the captain shows the four chests and the keeper of the treasure explains
+/// that only one may be chosen.
 static void Event_PresentRewardChests(void) {
   struct FieldActor *actor;
 
@@ -1381,7 +1392,8 @@ static void Event_PresentRewardChests(void) {
   Object_GetById(ACTOR_WATER_OF_LIFE_CHEST)->y.fixed = -PIXELS(4);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   gEventWork->transitionFrames = 16;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1425,36 +1437,64 @@ s32 gPalace_PacingActions[] = {
 };
 
 struct SceneEntrance gMcCoyPalaceEntrances[] = {
-    {0, CONDITION_ALWAYS, 256, 0, 808, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 808, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST, CONDITION_ALWAYS, 256, 0, 808,
      FACING_NORTH, 0, 32, 496, 480, 856, 0},
-    {2, CONDITION_ALWAYS, 120, 0, 792, FACING_EAST, 0, 32, 496, 480, 856, 0},
-    {3, CONDITION_ALWAYS, 392, 0, 792, FACING_WEST, 0, 32, 496, 480, 856, 0},
-    {4, CONDITION_ALWAYS, 232, 0, 712, FACING_EAST, 0, 32, 496, 480, 856, 0},
-    {5, CONDITION_ALWAYS, 280, 0, 712, FACING_WEST, 0, 32, 496, 480, 856, 0},
-    {6, CONDITION_ALWAYS, 152, 0, 632, FACING_WEST, 0, 32, 496, 480, 856, 0},
-    {7, CONDITION_ALWAYS, 104, 0, 552, FACING_EAST, 0, 32, 496, 480, 856, 0},
-    {8, CONDITION_ALWAYS, 408, 0, 552, FACING_WEST, 0, 32, 496, 480, 856, 0},
-    {9, CONDITION_ALWAYS, 256, 0, 632, FACING_SOUTH, 0, 32, 496, 480, 856, 0},
-    {10, CONDITION_ALWAYS, 152, 0, 376, FACING_WEST, 0, 56, 304, 360, 464, 0},
-    {11, CONDITION_ALWAYS, 264, 0, 376, FACING_EAST, 0, 56, 304, 360, 464, 0},
-    {12, CONDITION_ALWAYS, 104, 0, 376, FACING_SOUTH, 0, 56, 304, 360, 464, 0},
-    {13, CONDITION_ALWAYS, 312, 0, 376, FACING_SOUTH, 0, 56, 304, 360, 464, 0},
-    {14, CONDITION_ALWAYS, 696, 0, 96, FACING_WEST, 0, 592, 0, 832, 160, 0},
-    {15, CONDITION_ALWAYS, 680, 0, 72, FACING_WEST, 0, 592, 0, 832, 160, 0},
-    {16, CONDITION_ALWAYS, 952, 0, 72, FACING_EAST, 0, 800, 0, 1040, 160, 0},
-    {17, CONDITION_ALWAYS, 936, 0, 96, FACING_EAST, 0, 800, 0, 1040, 160, 0},
-    {18, CONDITION_ALWAYS, 88, 0, 200, FACING_NORTH, 0, 0, 16, 240, 240, 0},
-    {19, CONDITION_ALWAYS, 360, 0, 200, FACING_NORTH, 0, 208, 16, 448, 240, 0},
-    {20, CONDITION_ALWAYS, 536, 0, 112, FACING_EAST, 0, 400, 0, 640, 160, 0},
-    {21, CONDITION_ALWAYS, 536, 0, 88, FACING_EAST, 0, 400, 0, 640, 160, 0},
-    {22, CONDITION_ALWAYS, 520, 0, 312, FACING_WEST, 0, 400, 208, 640, 368, 0},
-    {23, CONDITION_ALWAYS, 520, 0, 296, FACING_WEST, 0, 400, 208, 640, 368, 0},
-    {24, CONDITION_ALWAYS, 728, 0, 264, FACING_EAST, 0, 592, 192, 832, 352, 0},
-    {25, CONDITION_ALWAYS, 904, 0, 264, FACING_WEST, 0, 792, 192, 1032, 352, 0},
-    {26, CONDITION_ALWAYS, 744, 0, 424, FACING_EAST, 0, 592, 352, 832, 512, 0},
-    {27, CONDITION_ALWAYS, 888, 0, 424, FACING_WEST, 0, 792, 352, 1032, 512, 0},
-    {28, CONDITION_ALWAYS, 600, 0, 760, FACING_EAST, 0, 512, 560, 752, 816, 0},
+    {MCCOY_PALACE_HALL_FROM_SOUTHWEST_LANDING, CONDITION_ALWAYS, 120, 0, 792,
+     FACING_EAST, 0, 32, 496, 480, 856, 0},
+    {MCCOY_PALACE_HALL_FROM_SOUTHEAST_LANDING, CONDITION_ALWAYS, 392, 0, 792,
+     FACING_WEST, 0, 32, 496, 480, 856, 0},
+    {MCCOY_PALACE_HALL_FROM_LADY_MCCOYS_ROOM_WEST, CONDITION_ALWAYS, 232, 0,
+     712, FACING_EAST, 0, 32, 496, 480, 856, 0},
+    {MCCOY_PALACE_HALL_FROM_LADY_MCCOYS_ROOM_EAST, CONDITION_ALWAYS, 280, 0,
+     712, FACING_WEST, 0, 32, 496, 480, 856, 0},
+    {MCCOY_PALACE_HALL_FROM_TREASURE_ROOM, CONDITION_ALWAYS, 152, 0, 632,
+     FACING_WEST, 0, 32, 496, 480, 856, 0},
+    {MCCOY_PALACE_HALL_FROM_NORTHWEST_LANDING, CONDITION_ALWAYS, 104, 0, 552,
+     FACING_EAST, 0, 32, 496, 480, 856, 0},
+    {MCCOY_PALACE_HALL_FROM_NORTHEAST_LANDING, CONDITION_ALWAYS, 408, 0, 552,
+     FACING_WEST, 0, 32, 496, 480, 856, 0},
+    {MCCOY_PALACE_HALL_FROM_MCCOYS_ROOM, CONDITION_ALWAYS, 256, 0, 632,
+     FACING_SOUTH, 0, 32, 496, 480, 856, 0},
+    {MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_HALL_WEST, CONDITION_ALWAYS, 152, 0,
+     376, FACING_WEST, 0, 56, 304, 360, 464, 0},
+    {MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_HALL_EAST, CONDITION_ALWAYS, 264, 0,
+     376, FACING_EAST, 0, 56, 304, 360, 464, 0},
+    {MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_WEST_BEDROOM, CONDITION_ALWAYS, 104, 0,
+     376, FACING_SOUTH, 0, 56, 304, 360, 464, 0},
+    {MCCOY_PALACE_LADY_MCCOYS_ROOM_FROM_EAST_BEDROOM, CONDITION_ALWAYS, 312, 0,
+     376, FACING_SOUTH, 0, 56, 304, 360, 464, 0},
+    {MCCOY_PALACE_SOUTHWEST_LANDING_FROM_HALL, CONDITION_ALWAYS, 696, 0, 96,
+     FACING_WEST, 0, 592, 0, 832, 160, 0},
+    {MCCOY_PALACE_SOUTHWEST_LANDING_FROM_SOUTHWEST_TOWER, CONDITION_ALWAYS, 680,
+     0, 72, FACING_WEST, 0, 592, 0, 832, 160, 0},
+    {MCCOY_PALACE_SOUTHEAST_LANDING_FROM_SOUTHEAST_TOWER, CONDITION_ALWAYS, 952,
+     0, 72, FACING_EAST, 0, 800, 0, 1040, 160, 0},
+    {MCCOY_PALACE_SOUTHEAST_LANDING_FROM_HALL, CONDITION_ALWAYS, 936, 0, 96,
+     FACING_EAST, 0, 800, 0, 1040, 160, 0},
+    {MCCOY_PALACE_WEST_BEDROOM_FROM_LADY_MCCOYS_ROOM, CONDITION_ALWAYS, 88, 0,
+     200, FACING_NORTH, 0, 0, 16, 240, 240, 0},
+    {MCCOY_PALACE_EAST_BEDROOM_FROM_LADY_MCCOYS_ROOM, CONDITION_ALWAYS, 360, 0,
+     200, FACING_NORTH, 0, 208, 16, 448, 240, 0},
+    {MCCOY_PALACE_NORTHEAST_LANDING_FROM_HALL, CONDITION_ALWAYS, 536, 0, 112,
+     FACING_EAST, 0, 400, 0, 640, 160, 0},
+    {MCCOY_PALACE_NORTHEAST_LANDING_FROM_NORTHEAST_TOWER, CONDITION_ALWAYS, 536,
+     0, 88, FACING_EAST, 0, 400, 0, 640, 160, 0},
+    {MCCOY_PALACE_NORTHWEST_LANDING_FROM_HALL, CONDITION_ALWAYS, 520, 0, 312,
+     FACING_WEST, 0, 400, 208, 640, 368, 0},
+    {MCCOY_PALACE_NORTHWEST_LANDING_FROM_NORTHWEST_TOWER, CONDITION_ALWAYS, 520,
+     0, 296, FACING_WEST, 0, 400, 208, 640, 368, 0},
+    {MCCOY_PALACE_NORTHWEST_TOWER_FROM_NORTHWEST_LANDING, CONDITION_ALWAYS, 728,
+     0, 264, FACING_EAST, 0, 592, 192, 832, 352, 0},
+    {MCCOY_PALACE_NORTHEAST_TOWER_FROM_NORTHEAST_LANDING, CONDITION_ALWAYS, 904,
+     0, 264, FACING_WEST, 0, 792, 192, 1032, 352, 0},
+    {MCCOY_PALACE_SOUTHWEST_TOWER_FROM_SOUTHWEST_LANDING, CONDITION_ALWAYS, 744,
+     0, 424, FACING_EAST, 0, 592, 352, 832, 512, 0},
+    {MCCOY_PALACE_SOUTHEAST_TOWER_FROM_SOUTHEAST_LANDING, CONDITION_ALWAYS, 888,
+     0, 424, FACING_WEST, 0, 792, 352, 1032, 512, 0},
+    {MCCOY_PALACE_TREASURE_ROOM_FROM_HALL, CONDITION_ALWAYS, 600, 0, 760,
+     FACING_EAST, 0, 512, 560, 752, 816, 0},
     {MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, CONDITION_ALWAYS, 896, 0, 728,
      FACING_NORTH, 0, 776, 560, 1016, 768, 0},
     {SCENE_TABLE_END},

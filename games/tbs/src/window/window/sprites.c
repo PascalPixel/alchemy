@@ -572,8 +572,8 @@ void UiWork_AnimateSpriteSlots(void) {
         sprite->y = output->y - gUiSprite_BounceOffsets[output->animStep & 15];
         break;
       case UI_SPRITE_HOP_DOWN:
-      case UI_SPRITE_HOP_DOWN + 1:
-      case UI_SPRITE_HOP_DOWN + 2:
+      case UI_SPRITE_HOP_DOWN_2:
+      case UI_SPRITE_HOP_DOWN_3:
         output->animStep++;
         sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
         break;

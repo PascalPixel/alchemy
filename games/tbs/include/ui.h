@@ -64,4 +64,21 @@ extern const u8 gOwnerStatus_KpString[];
 extern const u8 gOwnerStatus_PvString[];
 #endif
 
+/// The party status window's flags (PartyStatusDraw,
+/// UiWindow_CreateWithLayoutBounds): one column of six tiles per party member
+/// (name, HP and, when shown, PP with a bar under each), and in battle an
+/// optional five-tile column of standby Djinn counts on its left.
+enum PartyStatusFlag {
+  PARTY_STATUS_HP_ONLY = 0,     ///< names and HP
+  PARTY_STATUS_SHOW_PP = 1,     ///< add the PP row
+  PARTY_STATUS_SHOW_DJINN = 2,  ///< add the Djinn column (needs the PP row)
+  PARTY_STATUS_CLOSED = 9,      ///< erase the window
+  PARTY_STATUS_KEEP_FLAGS = -1, ///< redraw with the flags it has
+  /// BattleWork.partyStatus while the party cannot summon.
+  PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
+  /// BattleWork.partyStatus while it can, drawn only while a Djinni is on
+  /// standby.
+  PARTY_STATUS_SUMMONS = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
+};
+
 #endif

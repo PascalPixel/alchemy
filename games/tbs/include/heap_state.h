@@ -77,6 +77,8 @@ enum HeapSlot {
   HEAP_SLOT_TILE_SCRATCH = 14,
   /// The window renderer's work (struct UiRenderWork, gWindowWork).
   HEAP_SLOT_WINDOW = 15,
+  /// The party status window's layout (struct PartyStatusWindow).
+  HEAP_SLOT_PARTY_STATUS = 16,
   /// The buffers an icon or portrait is decoded through (GlyphTransfer).
   HEAP_SLOT_GLYPH_TRANSFER = 17,
   /// The selection screen's work (struct SelectionScreen).

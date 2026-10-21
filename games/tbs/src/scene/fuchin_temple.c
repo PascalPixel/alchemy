@@ -3,7 +3,7 @@
 /// overlay: Master Feh's school in Xian and the room in Lama Temple where
 /// Master Hama meditates. Two scenes hold four places, by their area names:
 ///
-/// - Fuchin Temple (FuchinTempleGrounds, scene 60), outside the temple, reached
+/// - Fuchin Temple (SceneId_FuchinTempleGrounds), outside the temple, reached
 ///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). Its monks read
 ///   omens in the gems that fell from the sky and the blue lights in the north,
 ///   and tell of Master Nyunpa, who is fasting to save the world by becoming
@@ -17,7 +17,7 @@
 ///   with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), Isaac is
 ///   sent on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST). The temple
 ///   door leads inside (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_TEMPLE_INTERIORS).
-/// - Fuchin Temple (FuchinTempleInteriors, scene 61, by
+/// - Fuchin Temple (SceneId_FuchinTempleInteriors, by
 ///   FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS or the default
 ///   entrance), inside, where Nyunpa meditates and does not answer. When the
 ///   party reads his mind (Event_NyunpaOffersTest), he hears them, reads their
@@ -108,7 +108,7 @@
 #define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
 
 /// The placed actors outside Fuchin Temple (FuchinTempleGrounds), numbered in
-/// the order of gFuchinTemplePlacements1.
+/// the order of gFuchinTempleGroundsPlacements.
 enum FuchinTempleOutsideActor {
   /// The visitor from Kolima. "How did you get here? Is the bridge open
   /// again?"
@@ -215,7 +215,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_FuchinTempleGrounds) {
-    return gFuchinTempleEntrances1;
+    return gFuchinTempleGroundsEntrances;
   }
   return gFuchinTempleEntrancesOther;
 }
@@ -227,7 +227,7 @@ const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 /// Selects the room's actors and applies the post-lesson placement changes.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_FuchinTempleGrounds) {
-    return gFuchinTemplePlacements1;
+    return gFuchinTempleGroundsPlacements;
   }
   if (gGameState.entrance == FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
     return gFuchinTemplePlacementsFromLamaTemple;
@@ -715,9 +715,18 @@ static void FuchinTemple_StudentWalksAroundTree(void) {
   }
 }
 
-/// The student by the tree explains the rules: mode 0 when Psynergy felled it
-/// but not from the line, 1 when Isaac pushed it by hand, 2 to praise a
-/// warrior Feh has already seen. Then he sets the tree up again.
+/// What the student by the tree explains
+/// (FuchinTemple_StudentExplainsChiRules).
+enum FuchinTempleChiRule {
+  /// Psynergy felled the tree, but not from the line.
+  FUCHIN_TEMPLE_CHI_NOT_FROM_LINE = 0,
+  FUCHIN_TEMPLE_CHI_PUSHED_BY_HAND = 1, ///< Isaac pushed it over by hand
+  /// Praise for a warrior Feh has already seen.
+  FUCHIN_TEMPLE_CHI_SEEN_BEFORE = 2
+};
+
+/// The student by the tree explains the rules, as `mode`, an enum
+/// FuchinTempleChiRule, says. Then he sets the tree up again.
 static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   s32 rulesMessage;
 
@@ -725,7 +734,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   WAIT(60);
   rulesMessage = MsgXianCannotPushHands;
   MESSAGE_SET(rulesMessage);
-  if (mode == 0) {
+  if (mode == FUCHIN_TEMPLE_CHI_NOT_FROM_LINE) {
     MESSAGE_SET(rulesMessage - 1);
     OBJ_EMOTE(ACTOR_TREE_STUDENT, 0x101, 60);
     Engine_EventShowMessageAndWait(ACTOR_TREE_STUDENT, 0, 20);
@@ -738,7 +747,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
     Engine_ActorSetAnimationAndWait(ACTOR_TREE_STUDENT, 3);
     WAIT(20);
   }
-  if (mode == 2) {
+  if (mode == FUCHIN_TEMPLE_CHI_SEEN_BEFORE) {
     MESSAGE_SET(MsgXianGreatWarriorTrain);
     Engine_ActorRunRepeatedMotion(ACTOR_TREE_STUDENT, 2);
     WAIT(20);
@@ -830,7 +839,7 @@ static void Event_MoveTree(void) {
   if (Engine_GameFlagIsSet(FLAG_FEH_WAITS_TO_SEE_CHI) != 0) {
     FuchinTemple_StudentsSeeTreeFall();
   } else {
-    FuchinTemple_StudentExplainsChiRules(0);
+    FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_NOT_FROM_LINE);
   }
 
   EV_END();
@@ -859,7 +868,7 @@ static void Event_PushTreeByHand(void) {
   }
 
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
-  FuchinTemple_StudentExplainsChiRules(1);
+  FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_PUSHED_BY_HAND);
   EV_END();
 }
 
@@ -891,7 +900,7 @@ static void Event_ForceTree(void) {
   if (leader->z.part.pixel <= 209) {
     if (Engine_GameFlagIsSet(FLAG_FEIZHI_WENT_TO_HSU) == 0 ||
         Engine_GameFlagIsSet(FLAG_FEH_SAW_CHI) != 0) {
-      FuchinTemple_StudentExplainsChiRules(0);
+      FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_NOT_FROM_LINE);
     } else {
       FuchinTemple_StudentsSeeTreeFall();
     }
@@ -900,7 +909,7 @@ static void Event_ForceTree(void) {
   }
 
   if (Engine_GameFlagIsSet(FLAG_FEH_SAW_CHI) != 0) {
-    FuchinTemple_StudentExplainsChiRules(2);
+    FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_SEEN_BEFORE);
   } else if (Engine_GameFlagIsSet(FLAG_FEIZHI_WENT_TO_HSU) == 0) {
     FuchinTemple_FeizhiLeavesForHsu();
   } else {
@@ -1473,7 +1482,7 @@ static void Event_ReadNyunpasLastWish(void) {
 /// Selects the outdoor, school, or lesson event table.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_FuchinTempleGrounds) {
-    return gFuchinTempleEvents1;
+    return gFuchinTempleGroundsEvents;
   }
   if (gGameState.entrance == FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE) {
     return gFuchinTempleEventsFromLamaTemple;
@@ -2527,7 +2536,7 @@ u16 gFuchinTemple_CellStepsC[] = {
     MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance gFuchinTempleEntrances1[] = {
+struct SceneEntrance gFuchinTempleGroundsEntrances[] = {
     {0, CONDITION_ALWAYS, 296, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP, CONDITION_ALWAYS, 296, 0, 504,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -2576,7 +2585,7 @@ u32 gFuchinTempleExits[] = {
 };
 
 // clang-format off
-struct ScenePlacement gFuchinTemplePlacements1[] = {
+struct ScenePlacement gFuchinTempleGroundsPlacements[] = {
     { 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(296), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x95, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2643,7 +2652,7 @@ struct ScenePlacement gFuchinTemplePlacementsFromLamaTemple[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gFuchinTempleEvents1[] = {
+struct SceneEvent gFuchinTempleGroundsEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterTemple) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWaterfallGrotto) },

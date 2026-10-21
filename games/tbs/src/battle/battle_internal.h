@@ -56,6 +56,7 @@
 #include "heap_state.h"
 #include "flags.h"
 #include "ability_ids.h"
+#include "djinn_ids.h"
 #include "menu_list.h"
 #include "audio_engine_symbols.h"
 #include "ui.h"
@@ -167,27 +168,6 @@
 /// the sync or transfer under way (link.c, round.c).
 #define LINK_MAX_MISSED_FRAMES 24
 
-/// The Djinn recovery list's two tables (Djinn_GetRecoveryTableFar): the
-/// party's and the link opponent's.
-#define DJINN_RECOVERY_PARTY 0
-#define DJINN_RECOVERY_OPPONENT 1
-
-/// DjinnRecoveryEntry.turns of a Djinni on standby. In battle it stays so
-/// until a Djinn command sets it again or a summon uses it
-/// (DJINN_RECOVERY_SUMMONED), both in
-/// BattleCommand_BuildPlan; an owner who does not fight has it set as the
-/// next battle starts, outside a link battle
-/// (BattleParty_ReconcileDjinnRecovery). DjinnRecovery_Tick counts down only
-/// positive turns.
-#define DJINN_RECOVERY_AFTER_BATTLE -1
-
-/// DjinnRecoveryEntry.turns of a standby Djinni a summon has just used, until
-/// the turn's end gives it its turn to recover (BattleUnit_ProcessTurnEnd).
-#define DJINN_RECOVERY_SUMMONED -2
-
-/// The Djinn of each element, numbered 0 to 19 (DjinnRecoveryEntry.index).
-#define DJINN_PER_ELEMENT 20
-
 /// BattleWork.battleType, from the enemy formation
 /// (BattleFormation_BuildEnemyList): the random formations stand left to right
 /// in the order they were drawn, any other is laid out from the centre.
@@ -269,21 +249,6 @@ enum BattleCastKind {
   CAST_DJINNI = 1,   ///< no glow; the effect plays its prelude
   CAST_ENEMY = 2     ///< the element's streaks
 };
-
-// BattleAct.targetMode: whom an ability may target, from its user's view.
-// The party's cursor (BattleTarget_RunSelection) shows the enemies for every
-// mode but TARGET_MODE_ALLIES and TARGET_MODE_SELF. No row of actions.tsv has
-// a mode between TARGET_MODE_ALLIES and TARGET_MODE_SELF or above it;
-// BattlePlan_SetTargets would walk such a mode's range as it does
-// TARGET_MODE_FOES'.
-/// The ability takes one target, the aimed unit, whatever its range
-/// (BattlePlan_SetTargets), and an enemy aims it at itself. The field
-/// Psynergy and enemies' commands such as Threaten, Ally Search and Flee have
-/// it.
-#define TARGET_MODE_NONE 0
-#define TARGET_MODE_FOES 1
-#define TARGET_MODE_ALLIES 2 ///< the user's side, the user included
-#define TARGET_MODE_SELF 4   ///< the user alone, whatever the range
 
 /// BattleTarget_SelectForAction's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.

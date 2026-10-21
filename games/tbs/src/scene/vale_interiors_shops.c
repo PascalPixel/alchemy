@@ -1,22 +1,22 @@
 /// @file
-/// Vale (scene 7, a row the scene table leaves unnamed): the insides of the
+/// Vale (SceneId_ValeInteriorsShops): the insides of the
 /// village's houses and shops, all on one map. Each room is an entrance with a
 /// camera box of its own, named for the door it is entered by
 /// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST and the rest), and its door takes the
-/// exit of the same number back out: four open onto the village (Vale, scene
-/// 4), and four onto the part of Vale with the Psynergy Stone
-/// (SceneId_ValeGate, scene 5), as the exits' names say. Garet's family lives
-/// in the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_EAST: his
-/// grandfather the mayor, his grandmother and his parents. Jenna's grandparents
-/// live in the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, and the
-/// one entered from VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST holds the item,
-/// weapon and armor shops, each opened across its counter. The placements and
-/// events follow the story:
+/// exit of the same number back out: four open onto the village (SceneId_Vale),
+/// and four onto the part of Vale with the Psynergy Stone (SceneId_ValeGate),
+/// as the exits' names say. Garet's family lives in the room entered from
+/// VALE_INTERIORS_SHOPS_FROM_VALE_EAST: his grandfather the mayor, his
+/// grandmother and his parents. Jenna's grandparents live in the room entered
+/// from VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, and the one entered from
+/// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST holds the item, weapon and armor
+/// shops, each opened across its counter. The placements and events follow the
+/// story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   ValeInteriorsShops_Initialize removes every resident and flashes the
 ///   lightning outside, and the doors out to the village lead into the
-///   storm's map (Vale, scene 3) instead (ValeInteriorsShops_GetExits). The
+///   storm's map (SceneId_ValeStorm) instead (ValeInteriorsShops_GetExits). The
 ///   jars and the barrel are empty, and six more bookcases than by day can be
 ///   read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -269,7 +269,8 @@ static void ValeInteriorsShops_RequestWindowExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     FieldFx_StopLightning();
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gEventWork->transitionFrames = 16;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
@@ -278,7 +279,8 @@ static void ValeInteriorsShops_RequestWindowExit(s32 exitId) {
 
 // The rooms' doors: stepping on a door's cell, whose collision code is its
 // exit's number, takes that exit back out, in every table. On the stormy night
-// the exits to Vale (scene 4) lead to the storm's map (scene 3) instead.
+// the exits to SceneId_Vale lead to the storm's map (SceneId_ValeStorm)
+// instead.
 
 /// Leaves the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_WEST, where
 /// ACTOR_VILLAGER_DREAMS_OF_LEAVING wanders.
@@ -337,7 +339,8 @@ s32 ValeInteriorsShops_Initialize(void) {
   struct FieldActor *actor;
   struct EventWork **eventSlot = &gEventWork;
 
-  (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  (*eventSlot)->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     Engine_ActorSetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);
@@ -916,7 +919,8 @@ s32 gValeInteriorsShops_DriftingSpriteScript[] = {
 };
 
 struct SceneEntrance gValeInteriorsShops_Entrances[] = {
-    {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {VALE_INTERIORS_SHOPS_FROM_VALE_WEST, CONDITION_ALWAYS, 96, 0, 222,
      FACING_NORTH, 0, 4, 4, 244, 292, 0},
     {VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, CONDITION_ALWAYS, 337, 0, 199,
@@ -1104,10 +1108,10 @@ struct SceneEvent gValeInteriorsShops_StormEvents[] = {
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateNorth) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
-    { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
-    { 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
-    { 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
-    { 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
     { SEARCH(SEARCH_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeNotebookStudyOfAlchemy)) },
     { SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookAncientLemurians)) },
     { SEARCH(SEARCH_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookFountainOfTolbi)) },
@@ -1148,10 +1152,10 @@ struct SceneEvent gValeInteriorsShops_Events[] = {
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToValeGateNorth) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
-    { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
-    { 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
-    { 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
-    { 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
     { SEARCH(SEARCH_BARREL), 100, FLAG_VALE_INTERIORS_SHOPS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_JAR), 101, FLAG_VALE_INTERIORS_SHOPS_JAR_6_COINS, FIND_COINS(6) },
     { SEARCH(SEARCH_JAR), 102, FLAG_VALE_INTERIORS_SHOPS_JAR_2_COINS, FIND_COINS(2) },
@@ -1206,10 +1210,10 @@ struct SceneEvent gValeInteriorsShops_EventsAfterLeaving[] = {
     { SEARCH(SEARCH_JAR), 104, FLAG_VALE_INTERIORS_SHOPS_JAR_3_COINS, FIND_COINS(3) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
-    { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
-    { 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
-    { 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
-    { 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
     { SCENE_EVENTS_END },
 };
 
@@ -1260,10 +1264,10 @@ struct SceneEvent gValeInteriorsShops_EventsAfterKalay[] = {
     { SEARCH(SEARCH_JAR), 104, FLAG_VALE_INTERIORS_SHOPS_JAR_3_COINS, FIND_COINS(3) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
-    { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
-    { 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
-    { 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
-    { 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

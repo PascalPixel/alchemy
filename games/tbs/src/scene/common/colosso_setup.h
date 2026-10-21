@@ -73,7 +73,7 @@ void Colosso_StartRival(s32 resource) {
 
   FieldResource_DecodeType01(Resource_GetTableEntry(resource), work->path);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-    recorder->mode = 1;
+    recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
     recorder->actor = work->gauge.rivalActor;
     recorder->still = 0;

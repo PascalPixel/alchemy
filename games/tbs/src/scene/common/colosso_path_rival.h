@@ -27,19 +27,19 @@
 struct ColossoRaceWork {
   struct ColossoGaugeWork gauge;
   /// Pixels, as pairs of x and z, one pair a frame, ending with (0, 0):
-  /// decoded from the scene's resource, or recorded in mode 2.
+  /// decoded from the scene's resource, or recorded (PATH_RECORDER_RECORD).
   s16 path[0x3840];
 };
 
 STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 
-/// The rival's scene callback. Mode 1 plays the path back: each frame the rival
-/// steps to the next point (mirrored across the finish when asked), turning by
-/// at most a sixteenth of a turn, and stands once still for three frames. At
-/// the path's end the rival walks to the finish, beside the first finisher's
-/// item actor or the second's, and sets FLAG_SCENE_TEMP_11 (a racer has
-/// finished). Mode 2 records the actor's own path instead, up to 0x383e
-/// halfwords, then plays it back with the rival.
+/// The rival's scene callback. PATH_RECORDER_PLAY plays the path back: each
+/// frame the rival steps to the next point (mirrored across the finish when
+/// asked), turning by at most a sixteenth of a turn, and stands once still for
+/// three frames. At the path's end the rival walks to the finish, beside the
+/// first finisher's item actor or the second's, and sets FLAG_SCENE_TEMP_11 (a
+/// racer has finished). PATH_RECORDER_RECORD records the actor's own path
+/// instead, up to 0x383e halfwords, then plays it back with the rival.
 static void Colosso_UpdatePathRival(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
@@ -51,12 +51,12 @@ static void Colosso_UpdatePathRival(void) {
   if (obj == NULL) {
     return;
   }
-  if (rec->mode == 1) {
+  if (rec->mode == PATH_RECORDER_PLAY) {
     x = work->path[(s16)rec->pos++];
     z = work->path[(s16)rec->pos++];
     if (x == 0 && z == 0) {
       s32 fz;
-      rec->mode = 9;
+      rec->mode = PATH_RECORDER_FINISHED;
       Object_SetMode(obj, 1);
       if (work->gauge.finishX < obj->x.fixed) {
         x = work->gauge.finishX + 0xc0000;
@@ -106,7 +106,7 @@ static void Colosso_UpdatePathRival(void) {
     } else {
       Object_SetMode(obj, 5);
     }
-  } else if (rec->mode == 2) {
+  } else if (rec->mode == PATH_RECORDER_RECORD) {
     x = obj->x.part.pixel;
     z = obj->z.part.pixel;
     work->path[(s16)rec->pos++] = x;
@@ -116,7 +116,7 @@ static void Colosso_UpdatePathRival(void) {
       work->path[(s16)rec->pos] = 0;
       rec->actor = work->gauge.rivalActor;
       rec->pos = 0;
-      rec->mode = 1;
+      rec->mode = PATH_RECORDER_PLAY;
     }
   }
 }

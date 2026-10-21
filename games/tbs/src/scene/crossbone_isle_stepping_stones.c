@@ -8,22 +8,22 @@
 /// lead back out. Each is a puzzle with four chests, and all five take the area
 /// name Crossbone Isle Cave. In the order the party meets them:
 ///
-/// - CrossboneIsleSteppingStones (scene 115), off the first floor: stepping
+/// - SceneId_CrossboneIsleSteppingStones, off the first floor: stepping
 ///   stones over a pit; walking into a pillar jumps two cells across it where
 ///   the cells allow, and otherwise pushes it (Event_JumpOrPushPillar).
-/// - CrossboneIsleIcePillars (scene 116), off the second floor:
+/// - SceneId_CrossboneIsleIcePillars, off the second floor:
 ///   pillars of ice to push, standing and lying across a floor of spikes.
-/// - CrossboneIsleFloodgate (scene 119), off the fifth floor: a cave
+/// - SceneId_CrossboneIsleFloodgate, off the fifth floor: a cave
 ///   with a stream and a floodgate across it, and seven logs to roll. The
 ///   switch beside the floodgate (Event_FlipWaterSwitch) closes it, so the
 ///   water backs up and floats the logs higher, or opens it to drain them
 ///   back down; the water level lasts only while the party stays
 ///   (FLAG_SCENE_TEMP_00, kept through a battle).
-/// - CrossboneIsleStackedPillars (scene 121), off the seventh floor, a cave of
+/// - SceneId_CrossboneIsleStackedPillars, off the seventh floor, a cave of
 ///   cliffs and ladders: four pillars that Move and Carry shift, and that
 ///   settle and redraw their footprints after every push (Event_MovePillar), a
 ///   ladder, and pillars to jump across.
-/// - CrossboneIsleDragonStatue (scene 122), off the eighth floor, by a dragon
+/// - SceneId_CrossboneIsleDragonStatue, off the eighth floor, by a dragon
 ///   statue: three puddles that Frost freezes into pillars of ice. Frost on
 ///   the third makes the pillar in it rise and thaws a frozen second puddle,
 ///   and the third freezes only if the leader was not standing on it; a pillar
@@ -602,19 +602,19 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIsleSteppingStones) {
-    return gCrossboneIsleSteppingStonesEntrances1;
+    return gCrossboneIsleSteppingStonesEntrances;
   }
   if (scene == (s32)&SceneId_CrossboneIsleIcePillars) {
-    return gCrossboneIsleSteppingStonesEntrances2;
+    return gCrossboneIsleIcePillarsEntrances;
   }
   if (scene == (s32)&SceneId_CrossboneIsleFloodgate) {
-    return gCrossboneIsleSteppingStonesEntrances3;
+    return gCrossboneIsleFloodgateEntrances;
   }
   if (scene == (s32)&SceneId_CrossboneIsleStackedPillars) {
-    return gCrossboneIsleSteppingStonesEntrances4;
+    return gCrossboneIsleStackedPillarsEntrances;
   }
   if (scene == (s32)&SceneId_CrossboneIsleDragonStatue) {
-    return gCrossboneIsleSteppingStonesEntrances5;
+    return gCrossboneIsleDragonStatueEntrances;
   }
   return gCrossboneIsleSteppingStonesEntrancesOther;
 }
@@ -628,16 +628,16 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIsleSteppingStones) {
-    return gCrossboneIsleSteppingStonesPlacements1;
+    return gCrossboneIsleSteppingStonesPlacements;
   }
   if (scene == (s32)&SceneId_CrossboneIsleIcePillars) {
-    return gCrossboneIsleSteppingStonesPlacements2;
+    return gCrossboneIsleIcePillarsPlacements;
   }
   if (scene == (s32)&SceneId_CrossboneIsleFloodgate) {
-    return gCrossboneIsleSteppingStonesPlacements3;
+    return gCrossboneIsleFloodgatePlacements;
   }
   if (scene == (s32)&SceneId_CrossboneIsleDragonStatue) {
-    return gCrossboneIsleSteppingStonesPlacements5;
+    return gCrossboneIsleDragonStatuePlacements;
   }
   return gCrossboneIsleSteppingStonesPlacementsOther;
 }
@@ -1449,19 +1449,19 @@ const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIsleSteppingStones) {
-    return gCrossboneIsleSteppingStonesEvents1;
+    return gCrossboneIsleSteppingStonesEvents;
   }
   if (scene == (s32)&SceneId_CrossboneIsleIcePillars) {
-    return gCrossboneIsleSteppingStonesEvents2;
+    return gCrossboneIsleIcePillarsEvents;
   }
   if (scene == (s32)&SceneId_CrossboneIsleFloodgate) {
-    return gCrossboneIsleSteppingStonesEvents3;
+    return gCrossboneIsleFloodgateEvents;
   }
   if (scene == (s32)&SceneId_CrossboneIsleStackedPillars) {
-    return gCrossboneIsleSteppingStonesEvents4;
+    return gCrossboneIsleStackedPillarsEvents;
   }
   if (scene == (s32)&SceneId_CrossboneIsleDragonStatue) {
-    return gCrossboneIsleSteppingStonesEvents5;
+    return gCrossboneIsleDragonStatueEvents;
   }
   return gCrossboneIsleSteppingStonesEventsOther;
 }
@@ -1733,31 +1733,31 @@ struct SceneEntrance gCrossboneIsleSteppingStonesEntrancesOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleSteppingStonesEntrances1[] = {
+struct SceneEntrance gCrossboneIsleSteppingStonesEntrances[] = {
     { CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST, CONDITION_ALWAYS, 712, 0, 760, FACING_NORTH, 0, 560, 368, 992, 792, 0 },
     { CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_WEST, CONDITION_ALWAYS, 600, 0, 760, FACING_NORTH, 0, 560, 368, 992, 792, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleSteppingStonesEntrances2[] = {
+struct SceneEntrance gCrossboneIsleIcePillarsEntrances[] = {
     { CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_EAST, CONDITION_ALWAYS, 216, 0, 360, FACING_NORTH, 0, 32, 32, 384, 400, 0 },
     { CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_WEST, CONDITION_ALWAYS, 104, 0, 360, FACING_NORTH, 0, 32, 32, 384, 400, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleSteppingStonesEntrances3[] = {
+struct SceneEntrance gCrossboneIsleFloodgateEntrances[] = {
     { CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_EAST, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_WEST, CONDITION_ALWAYS, 64, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleSteppingStonesEntrances4[] = {
+struct SceneEntrance gCrossboneIsleStackedPillarsEntrances[] = {
     { CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST, CONDITION_ALWAYS, 744, 0, 520, FACING_NORTH, 0, 440, 16, 960, 544, 0 },
     { CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST, CONDITION_ALWAYS, 632, 0, 520, FACING_NORTH, 0, 440, 16, 960, 544, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIsleSteppingStonesEntrances5[] = {
+struct SceneEntrance gCrossboneIsleDragonStatueEntrances[] = {
     { CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST, CONDITION_ALWAYS, 280, 0, 488, FACING_NORTH, 0, 16, 32, 464, 528, 0 },
     { CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST, CONDITION_ALWAYS, 168, 0, 488, FACING_NORTH, 0, 16, 32, 464, 528, 0 },
     { SCENE_TABLE_END },
@@ -1787,7 +1787,7 @@ struct ScenePlacement gCrossboneIsleSteppingStonesNoPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIsleSteppingStonesPlacements1[] = {
+struct ScenePlacement gCrossboneIsleSteppingStonesPlacements[] = {
     { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(744), 0, PIXELS(488), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1799,7 +1799,7 @@ struct ScenePlacement gCrossboneIsleSteppingStonesPlacements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIsleSteppingStonesPlacements2[] = {
+struct ScenePlacement gCrossboneIsleIcePillarsPlacements[] = {
     { 0x12a, CONDITION_ALWAYS, 7,
         PIXELS(144), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x12a, CONDITION_ALWAYS, 7,
@@ -1813,7 +1813,7 @@ struct ScenePlacement gCrossboneIsleSteppingStonesPlacements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIsleSteppingStonesPlacements3[] = {
+struct ScenePlacement gCrossboneIsleFloodgatePlacements[] = {
     { 0xcd, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xcf, CONDITION_ALWAYS, 7,
@@ -1847,7 +1847,7 @@ struct ScenePlacement gCrossboneIsleSteppingStonesPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIsleSteppingStonesPlacements5[] = {
+struct ScenePlacement gCrossboneIsleDragonStatuePlacements[] = {
     { 0xcf, CONDITION_ALWAYS, 7,
         PIXELS(208), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xcf, CONDITION_ALWAYS, 7,
@@ -1869,7 +1869,7 @@ struct SceneEvent gCrossboneIsleSteppingStonesEventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIsleSteppingStonesEvents1[] = {
+struct SceneEvent gCrossboneIsleSteppingStonesEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STEPPING_STONES_TO_CROSSBONE_ISLE_FIRST_FLOOR_WEST },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushPillar) },
@@ -1884,7 +1884,7 @@ struct SceneEvent gCrossboneIsleSteppingStonesEvents1[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIsleSteppingStonesEvents2[] = {
+struct SceneEvent gCrossboneIsleIcePillarsEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_ICE_PILLARS_TO_CROSSBONE_ISLE_SECOND_FLOOR_WEST },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
@@ -1895,7 +1895,7 @@ struct SceneEvent gCrossboneIsleSteppingStonesEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIsleSteppingStonesEvents3[] = {
+struct SceneEvent gCrossboneIsleFloodgateEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_FIFTH_FLOOR_WEST },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
@@ -1909,7 +1909,7 @@ struct SceneEvent gCrossboneIsleSteppingStonesEvents3[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIsleSteppingStonesEvents4[] = {
+struct SceneEvent gCrossboneIsleStackedPillarsEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushStackedPillar) },
@@ -1934,7 +1934,7 @@ struct SceneEvent gCrossboneIsleSteppingStonesEvents4[] = {
 };
 // clang-format on
 
-struct SceneEvent gCrossboneIsleSteppingStonesEvents5[] = {
+struct SceneEvent gCrossboneIsleDragonStatueEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
      CROSSBONE_ISLE_DRAGON_STATUE_TO_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,

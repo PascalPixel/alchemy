@@ -15,19 +15,10 @@
   UiWindow_PutGlyph(window, glyph, x, y)
 #endif
 
-// The party status window: one column of six tiles per party member (name,
-// HP and, when shown, PP with a bar under each), and in battle an optional
-// five-tile column of standby Djinn counts on its left. It sits at the top
-// right of the screen. Its flags:
-#define PARTY_STATUS_SHOW_PP 1     ///< add the PP row
-#define PARTY_STATUS_SHOW_DJINN 2  ///< add the Djinn column (needs the PP row)
-#define PARTY_STATUS_CLOSED 9      ///< erase the window
-#define PARTY_STATUS_KEEP_FLAGS -1 ///< redraw with the flags it has
+// The party status window (enum PartyStatusFlag, ui.h) sits at the top right
+// of the screen.
 #define PARTY_STATUS_COLUMN_WIDTH 6
 #define PARTY_STATUS_DJINN_WIDTH 5
-
-/// The heap block the party status window's layout lives in.
-#define PARTY_STATUS_BLOCK 16
 
 /// The address of pixel row 7 - `up` of BG tile `tile` (4bpp, 32 bytes a tile,
 /// 4 bytes a row): the status bars are drawn from a tile's bottom row up.
@@ -43,7 +34,7 @@ void UiWindow_BuildLayoutBounds(s32 flags) {
   // the actual owners grows the EN function from 0x68 to 0x6c bytes.
   // Keep the original address formation only in the matching build.
 #ifdef UBFIX
-  struct PartyStatusWindow *layout = WORK_SLOT(PARTY_STATUS_BLOCK);
+  struct PartyStatusWindow *layout = WORK_SLOT(HEAP_SLOT_PARTY_STATUS);
   struct UiRenderWork *work = UI_WORK;
 #else
   void **slot = (void **)&gPartyStatusWork;
@@ -81,7 +72,7 @@ void UiWindow_BuildLayoutBounds(s32 flags) {
 }
 
 /// Opens the party status window with `flags` (see PARTY_STATUS_*) in a new
-/// heap block, PARTY_STATUS_BLOCK, which PartyStatus_Close frees, and draws
+/// heap block, HEAP_SLOT_PARTY_STATUS, which PartyStatus_Close frees, and draws
 /// it; the tilemap upload is held back (menuBusy) while it is drawn. A battle
 /// opens it with flags 9, which lays it out with the PP row and leaves it
 /// erased until the battle draws it (Battle_RunEncounter); the field opens it
@@ -91,7 +82,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags) {
   struct PartyStatusWindow *layout;
   s8 *busy;
 
-  layout = Runtime_AllocateBlock(PARTY_STATUS_BLOCK, sizeof(*layout));
+  layout = Runtime_AllocateBlock(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
   busy = (s8 *)&UI_WORK->menuBusy;
   zero = 0;
   *busy = 1;
@@ -243,7 +234,7 @@ void PartyStatusDraw(s32 flags) {
   // Named owners grow the EN function from 0x3d4 to 0x3dc bytes. Keep the
   // original address formation and load order in the matching build.
 #ifdef UBFIX
-  struct PartyStatusWindow *layout = WORK_SLOT(PARTY_STATUS_BLOCK);
+  struct PartyStatusWindow *layout = WORK_SLOT(HEAP_SLOT_PARTY_STATUS);
   struct BattleWork *battle = gBattleWork;
   struct UiWindow *window = layout->window;
   struct UiRenderWork *work = UI_WORK;
@@ -394,7 +385,7 @@ void PartyStatus_Close(void) {
 #else
   UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
 #endif
-  Runtime_ReleaseHeapBlock(PARTY_STATUS_BLOCK);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_PARTY_STATUS);
 }
 
 /// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the

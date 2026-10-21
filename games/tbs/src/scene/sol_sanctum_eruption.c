@@ -1,13 +1,15 @@
 /// @file
-/// Elemental Star Room (SolSanctumEruption, scene 18), the chamber of scene 17
-/// (sol_sanctum_elemental_star_room.c) as it collapses: one scripted scene,
-/// with no events of its own. Isaac has just taken the Mars Star, the last of
-/// the four Elemental Stars, while Saturos and Menardi hold Jenna and Kraden,
-/// and without the stars' power to contain it the magma beneath Mt. Aleph flows
-/// again.
+/// Elemental Star Room (SceneId_SolSanctumEruption), the chamber of
+/// SceneId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as
+/// it collapses: one scripted scene, with no events of its own. Isaac has just
+/// taken the Mars Star, the last of the four Elemental Stars, while Saturos and
+/// Menardi hold Jenna and Kraden, and without the stars' power to contain it
+/// the magma beneath Mt. Aleph flows again.
 ///
-/// SolSanctumEruption_Initialize plays it on arrival at entrance 10, the cut
-/// from scene 17's exit 2, in two parts:
+/// SolSanctumEruption_Initialize plays it on arrival at
+/// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from
+/// SceneId_SolSanctumElementalStarRoom's
+/// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION, in two parts:
 /// - SolSanctumEruption_PlayHostageScene: the chamber quakes and its water
 ///   drains away. A floating rock appears and stills the quake; Kraden wonders
 ///   whether it is the Wise One, and Saturos takes it for the guardian of the
@@ -24,8 +26,10 @@
 ///   light the four lighthouses, the power of Alchemy will be released upon the
 ///   world. As the volcano erupts it sends the two away in a white flash: it
 ///   sets FLAG_SOL_SANCTUM_ERUPTED, which every room of Sol Sanctum tests from
-///   then on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, and takes exit 5 to the
-///   rooms of Sol and Luna (scene 11, entrance 8).
+///   then on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, and takes
+///   SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS to the rooms of Sol and
+///   Luna (SceneId_SolSanctumLunaSolRooms,
+///   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
 ///
 /// The effects are the scene's own. Sixteen rocks thrown out in a ring
 /// (SolSanctumEruption_ThrowEruptionRing) become embers launched from a pool at
@@ -90,7 +94,7 @@ static void SolSanctumEruption_DrawFirstCollapseTiles(s32 alternate);
 static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate);
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void);
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void);
-static void SolSanctumEruption_RaiseElementalArcs(u32 mode);
+static void SolSanctumEruption_RaiseElementalArcs(u32 corner);
 static void SolSanctumEruption_UpdateElementalArcs(void);
 static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z);
 static void SolSanctumEruption_RestoreCornerCellAttributes(void);
@@ -105,7 +109,20 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void);
 // - FLAG_SCENE_TEMP_46: set as Saturos's group starts to leave; from then on
 //   the embers fall without their sound (SE_246).
 
-enum { ACTOR_WISE_ONE = 15, ACTOR_FIRST_ROCK = 16, ROCK_COUNT = 16 };
+/// The four corners of the chamber where SolSanctumEruption_RaiseElementalArcs
+/// raises lights, in the order the Wise One's scene visits them.
+enum SolSanctumEruptionCorner {
+  CHAMBER_NORTHWEST = 0,
+  CHAMBER_SOUTHWEST = 1,
+  CHAMBER_NORTHEAST = 2,
+  CHAMBER_SOUTHEAST = 3
+};
+
+enum {
+  ACTOR_WISE_ONE = ACTOR_ALEX + 1,
+  ACTOR_FIRST_ROCK = ACTOR_WISE_ONE + 1,
+  ROCK_COUNT = 16
+};
 
 enum { OBJECT_ELEMENTAL_STAR = 22 };
 
@@ -123,10 +140,10 @@ const u32 *SolSanctumEruption_GetExits(void) {
   return gSolSanctumEruption_Exits;
 }
 
-/// Returns Garet and Jenna, then the departure glow (actor 8), Kraden,
-/// Saturos, Menardi, Felix masked and unmasked, Alex, the Wise One (15) and
-/// sixteen rocks (16 to 31), all placed off the map until the cutscene moves
-/// them.
+/// Returns Garet and Jenna, then the departure glow (ACTOR_TELEPORT_GLOW),
+/// Kraden, Saturos, Menardi, Felix masked and unmasked, Alex, the Wise One
+/// (ACTOR_WISE_ONE) and sixteen rocks (from ACTOR_FIRST_ROCK), all placed off
+/// the map until the cutscene moves them.
 const struct ScenePlacement *SolSanctumEruption_GetPlacements(void) {
   return gSolSanctumEruption_Placements;
 }
@@ -149,9 +166,10 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 /// Elemental Star Room, collapsing: the Wise One stills the first quake,
 /// Saturos's group argues over the Mars Star and leaves with Jenna and Kraden
 /// as hostages, and the Wise One then rescues Isaac and Garet. Called by
-/// SolSanctumEruption_Initialize at entrance 10, the cut from scene 17. Sets
-/// FLAG_SCENE_TEMP_46, plays SolSanctumEruption_PlayWiseOneRescue and then
-/// removes Jenna from the party.
+/// SolSanctumEruption_Initialize at
+/// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from
+/// SceneId_SolSanctumElementalStarRoom. Sets FLAG_SCENE_TEMP_46, plays
+/// SolSanctumEruption_PlayWiseOneRescue and then removes Jenna from the party.
 static void SolSanctumEruption_PlayHostageScene(void) {
   void Actor_ShowEmote();
   void ColorBuffer_ApplyTarget();
@@ -309,8 +327,9 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Event_ShowMessageAndWait(JENNA, 0, 30);
   // Embers start to rain from the Wise One.
   SolSanctumEruption_ResetEmberEmission();
-  Task_AddCallback(SolSanctumEruption_StepEmbers, 0xc80);
-  Task_AddCallback(SolSanctumEruption_UpdateEmberFrequency, 0xc80);
+  Task_AddCallback(SolSanctumEruption_StepEmbers, TASK_PRIORITY_SCENE);
+  Task_AddCallback(SolSanctumEruption_UpdateEmberFrequency,
+                   TASK_PRIORITY_SCENE);
   Engine_EventWait(240);
   // Saturos: "It must be the guardian of the Elemental Stars!" The camera
   // moves to his group, all facing west.
@@ -489,7 +508,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_EventWait(20);
   Actor_WalkTo(JENNA, 432, 316);
   Actor_WalkToAndWait(ACTOR_FELIX, 422, 311);
-  Engine_ActorSetAnimation(JENNA, 1);
+  Engine_ActorSetAnimation(JENNA, ANIM_STAND);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   // Felix leads Jenna aside. Saturos: "Master Kraden, you will be joining us,
@@ -600,8 +619,10 @@ UNUSED static void SolSanctumEruption_UnusedCallbackA(void) {}
 /// Unused: a second empty function nothing calls.
 UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 
-/// Plays the collapse at entrance 10, the cut from the Elemental Star Room's
-/// scene 17. Called by Field_RunScene once the actors exist.
+/// Plays the collapse at
+/// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from the
+/// Elemental Star Room (SceneId_SolSanctumElementalStarRoom). Called by
+/// Field_RunScene once the actors exist.
 s32 SolSanctumEruption_Initialize(void) {
   if (gGameState.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
@@ -828,8 +849,9 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
 /// One, which makes the Mars Star glow, warns them of Alchemy's threat and
 /// sends them out as the volcano erupts. Isaac keeps the Star. Called by
 /// SolSanctumEruption_PlayHostageScene. Sets FLAG_SOL_SANCTUM_ERUPTED and
-/// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and takes exit 5, to the rooms of Sol
-/// and Luna (scene 11, entrance 8).
+/// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and takes
+/// SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to the rooms of Sol and
+/// Luna (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
 static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct GroundParticleWork *sparkles;
   struct FieldActor *wiseOne;
@@ -1250,7 +1272,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // Lights rise at the chamber's first corner. The Wise One: the Elemental
   // Djinn have returned; "Take out the Elemental Star..." Refusing, "Isaac
   // cannot resist."
-  SolSanctumEruption_RaiseElementalArcs(0);
+  SolSanctumEruption_RaiseElementalArcs(CHAMBER_NORTHWEST);
   Engine_ActorRunRepeatedMotion(ACTOR_WISE_ONE, 2);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1320,13 +1342,13 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   SolSanctumEruption_FadeCameraTo(232, 464);
-  SolSanctumEruption_RaiseElementalArcs(1);
+  SolSanctumEruption_RaiseElementalArcs(CHAMBER_SOUTHWEST);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   SolSanctumEruption_FadeCameraTo(711, 144);
-  SolSanctumEruption_RaiseElementalArcs(2);
+  SolSanctumEruption_RaiseElementalArcs(CHAMBER_NORTHEAST);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   SolSanctumEruption_FadeCameraTo(711, 464);
-  SolSanctumEruption_RaiseElementalArcs(3);
+  SolSanctumEruption_RaiseElementalArcs(CHAMBER_SOUTHEAST);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST + FACING_STEP, 0);
   Actor_SetPosition(GARET, PIXELS(582), PIXELS(345));
@@ -1560,7 +1582,7 @@ static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
 }
 
 /// Stages and raises ten arc effects at one of the four chamber positions.
-static void SolSanctumEruption_RaiseElementalArcs(u32 mode) {
+static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   void Actor_ShowEmote(s32, s32, s32);
   void ColorBuffer_ApplyTarget(s32, s32);
   void Event_PlayCue(s32);
@@ -1572,18 +1594,18 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 mode) {
   struct AnimationObject *sprite;
 
   for (arcIndex = 0; arcIndex <= 15; arcIndex++)
-    Engine_ActorDestroy(arcIndex + 16);
-  switch (mode) {
-  case 0:
+    Engine_ActorDestroy(arcIndex + ACTOR_FIRST_ROCK);
+  switch (corner) {
+  case CHAMBER_NORTHWEST:
     ColorBuffer_ApplyTarget(0x4039d2, 1);
     break;
-  case 1:
+  case CHAMBER_SOUTHWEST:
     ColorBuffer_ApplyTarget(0x4049d2, 1);
     break;
-  case 2:
+  case CHAMBER_NORTHEAST:
     ColorBuffer_ApplyTarget(0x404a4e, 1);
     break;
-  case 3:
+  case CHAMBER_SOUTHEAST:
     ColorBuffer_ApplyTarget(0x403a52, 1);
     break;
   }
@@ -1596,20 +1618,20 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 mode) {
     x = origin[0];
     y = origin[1];
     z = 0;
-    switch (mode) {
-    case 0:
+    switch (corner) {
+    case CHAMBER_NORTHWEST:
       x += PIXELS(232);
       z = PIXELS(144);
       break;
-    case 1:
+    case CHAMBER_SOUTHWEST:
       x += PIXELS(232);
       z = PIXELS(464);
       break;
-    case 2:
+    case CHAMBER_NORTHEAST:
       x += PIXELS(711);
       z = PIXELS(144);
       break;
-    case 3:
+    case CHAMBER_SOUTHEAST:
       x += PIXELS(711);
       z = PIXELS(464);
       break;
@@ -1624,12 +1646,13 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 mode) {
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
   }
-  if (mode == 0) {
+  if (corner == CHAMBER_NORTHWEST) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
   }
   Engine_TaskWait(20);
-  FieldScheduler_AddCallback(SolSanctumEruption_UpdateElementalArcs, 3200);
+  FieldScheduler_AddCallback(SolSanctumEruption_UpdateElementalArcs,
+                             TASK_PRIORITY_SCENE);
   Event_PlayCue(SE_246);
   gArcEffectTimers[0] = 1;
   Engine_TaskWait(6);
@@ -1863,7 +1886,7 @@ s32 gEruption_ArcOrigins[] = {
 };
 
 struct SceneEntrance gSolSanctumEruption_Entrances[] = {
-    { 0, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 

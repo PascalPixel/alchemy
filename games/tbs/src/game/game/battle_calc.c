@@ -131,7 +131,7 @@ s32 Item_GetEquippedElement(s32 owner) {
   struct BattleUnit *unit;
 
   unit = UnitGet(owner);
-  if (unit->classIndex == 0)
+  if (unit->classIndex == CLASS_INDEX_ENEMY)
     return Enemy_GetAttackElement(unit);
   item = Inventory_GetEquippedDefinition(unit, ITEM_TYPE_WEAPON);
   if (item != NULL)
@@ -171,7 +171,7 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
   struct ItemDefinition *item;
   s32 rate;
 
-  if (owner->classIndex == 0) {
+  if (owner->classIndex == CLASS_INDEX_ENEMY) {
     return 1;
   }
   item = Inventory_GetEquippedDefinition(owner, ITEM_TYPE_WEAPON);
@@ -253,7 +253,7 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
   const u8 *weakEffects;
   s32 weaknessIndex;
 
-  if (target->classIndex == 0) {
+  if (target->classIndex == CLASS_INDEX_ENEMY) {
     weakEffects = Enemy_GetDefinition(target->classId) + 0x48;
     for (weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
       if (*weakEffects == effectId)

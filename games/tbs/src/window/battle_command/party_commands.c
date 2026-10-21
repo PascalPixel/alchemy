@@ -136,7 +136,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         state->linkTimer = 0;
         break;
       }
-      if ((gLinkStatus & 3) != 3) {
+      if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
         if (++missedLinkFrames > 24) {
           commandCount = -1;
           state->linkTimer = 0;
@@ -809,7 +809,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         commandCount = -1;
         break;
       }
-      if ((gLinkStatus & 3) != 3) {
+      if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
         mode++;
         if (mode > 24) {
           commandCount = -1;

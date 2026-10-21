@@ -1,15 +1,17 @@
 /// @file
-/// Sol Sanctum (SolSanctumCorridor, scene 15), a passage between two parts of
-/// the sanctum's rooms inside its door, scene 16 (sol_sanctum_entrance.c),
-/// which Isaac, Garet, Jenna and Kraden explore together.
+/// Sol Sanctum (SceneId_SolSanctumCorridor), a passage between two parts of
+/// the sanctum's rooms inside its door, SceneId_SolSanctumReliefs
+/// (sol_sanctum_entrance.c), which Isaac, Garet, Jenna and Kraden explore
+/// together.
 ///
 /// It places nobody and holds no event of its own: its only rows are its two
-/// exits, the passage's two ends, which both lead back to scene 16
-/// (SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST and
-/// SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST), and the party comes
-/// back in through the same doors. Its setup is the one it shares with scene 14
-/// (sol_sanctum_maze.c), SolSanctumRooms_Initialize: once Mt. Aleph has erupted
-/// (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes.
+/// exits, the passage's two ends, which both lead back to
+/// SceneId_SolSanctumReliefs (SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST
+/// and SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST), and the party comes
+/// back in through the same doors. Its setup is the one it shares with
+/// SceneId_SolSanctumMaze (sol_sanctum_maze.c), SolSanctumRooms_Initialize:
+/// once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles
+/// and shakes.
 
 #include "unit/scene/sol_sanctum_corridor.h"
 #include "unit/scene/common/sol_sanctum_init_zoom.h"
@@ -51,7 +53,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 #include "common/sol_sanctum_init_zoom.h"
 
 struct SceneEntrance gSolSanctumCorridorEntrances[] = {
-    {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST, CONDITION_ALWAYS, 727,
      0, 92, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST, CONDITION_ALWAYS, 56,

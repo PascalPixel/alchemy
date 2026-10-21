@@ -276,21 +276,21 @@ void BattleEffect_InitializeSharedScene(void) {
 
   // Of the forcing flags, the highest one set wins.
   no = gFrameCount & 7;
-  if (GameFlag_TestFar(0x148))
+  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(0)))
     no = 0;
-  if (GameFlag_TestFar(0x149))
+  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(1)))
     no = 1;
-  if (GameFlag_TestFar(0x14a))
+  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(2)))
     no = 2;
-  if (GameFlag_TestFar(0x14b))
+  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(3)))
     no = 3;
-  if (GameFlag_TestFar(0x14c))
+  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(4)))
     no = 4;
-  if (GameFlag_TestFar(0x14d))
+  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(5)))
     no = 5;
-  if (GameFlag_TestFar(0x14e))
+  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(6)))
     no = 6;
-  if (GameFlag_TestFar(0x14f))
+  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(7)))
     no = 7;
   BattleFx_ApplyColorToTargetBuffer(gBattleFx_TargetColors[no], 1);
   BattleFx_StartBufferInterpolation(8);

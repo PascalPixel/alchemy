@@ -1,7 +1,7 @@
 /// @file
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three places that
-/// share one overlay, each a scene of its own: Bilibin (scene 30),
-/// BilibinTreasury (scene 32) and BilibinBarricade (scene 35). The getters pick
+/// share one overlay, each a scene of its own: SceneId_Bilibin,
+/// SceneId_BilibinTreasury and SceneId_BilibinBarricade. The getters pick
 /// each scene's tables by gGameState.scene, Bilibin_Initialize sets up the
 /// scene being entered, and Event_PushPillar serves all three.
 ///
@@ -22,20 +22,21 @@
 /// ACTOR_VILLAGER_ASKS_ABOUT_SOUTHEAST and ACTOR_VILLAGER_ROAD_BLOCKED about.
 /// Each of the ten villagers (ACTOR_VILLAGER_WELCOME to
 /// ACTOR_VILLAGER_STRANGE_CREATURES) has two lines and two thoughts in
-/// gBilibinEvents1, the row that needs the flag clear first, so the first row
+/// gBilibinEvents, the row that needs the flag clear first, so the first row
 /// that matches picks the time: before, they talk of the curse, the barricade,
 /// McCoy's fear and the lighthouse of Imil; after, of the three young warriors
 /// who broke the curse. A few ask the party a yes-or-no question (the
 /// Event_AskAbout functions).
 ///
 /// Bilibin's doors (touches 3 to 9) open before the party walks in
-/// (Event_OpenDoorAndLeave): six lead into Bilibin's buildings (scene 31,
-/// bilibin_interiors.c) and the seventh into the Bilibin Sanctum. Coming back
-/// out of the Sanctum (BILIBIN_FROM_SANCTUM) the area name is not shown again.
-/// The other exits lead to the world map, to the garden of McCoy's Palace and,
-/// two ways, into the Treasury: past a bush at the west edge (ACTOR_BUSH, which
-/// has a Whirlwind row that runs nothing), gone when the party comes back out
-/// that way (BILIBIN_FROM_BILIBIN_TREASURY_WEST); and from the cell a statue
+/// (Event_OpenDoorAndLeave): six lead into Bilibin's buildings
+/// (SceneId_BilibinInteriors, bilibin_interiors.c) and the seventh into the
+/// Bilibin Sanctum. Coming back out of the Sanctum (BILIBIN_FROM_SANCTUM) the
+/// area name is not shown again. The other exits lead to the world map, to the
+/// garden of McCoy's Palace and, two ways, into the Treasury: past a bush at
+/// the west edge (ACTOR_BUSH, which has a Whirlwind row that runs nothing),
+/// gone when the party comes back out that way
+/// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); and from the cell a statue
 /// (ACTOR_VILLAGE_PILLAR) stands on, once Move or a push slides it aside.
 /// Bilibin_UpdateVillagePillarCells keeps the cells of the statue's lane in
 /// step and hops the leader clear if it lands on him; coming back out by that
@@ -218,13 +219,13 @@ const struct SceneEntrance *Bilibin_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Bilibin) {
-    return gBilibinEntrances1;
+    return gBilibinEntrances;
   }
   if (scene == (s32)&SceneId_BilibinBarricade) {
-    return gBilibinEntrances3;
+    return gBilibinBarricadeEntrances;
   }
   if (scene == (s32)&SceneId_BilibinTreasury) {
-    return gBilibinEntrances2;
+    return gBilibinTreasuryEntrances;
   }
   return (const struct SceneEntrance *)gBilibinEntrancesOther;
 }
@@ -232,7 +233,7 @@ const struct SceneEntrance *Bilibin_GetEntrances(void) {
 /// Only the Bilibin Treasury has exit regions.
 const struct SceneRegion *Bilibin_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_BilibinTreasury) {
-    return (const struct SceneRegion *)gBilibinRegions2;
+    return (const struct SceneRegion *)gBilibinTreasuryRegions;
   }
   return 0;
 }
@@ -252,13 +253,13 @@ const struct ScenePlacement *Bilibin_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Bilibin) {
-    return gBilibinPlacements1;
+    return gBilibinPlacements;
   }
   if (scene == (s32)&SceneId_BilibinBarricade) {
-    return gBilibinPlacements3;
+    return gBilibinBarricadePlacements;
   }
   if (scene == (s32)&SceneId_BilibinTreasury) {
-    return gBilibinPlacements2;
+    return gBilibinTreasuryPlacements;
   }
   return gBilibinPlacementsOther;
 }
@@ -276,13 +277,13 @@ const struct SceneEvent *Bilibin_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_Bilibin) {
-    return gBilibinEvents1;
+    return gBilibinEvents;
   }
   if (scene == (s32)&SceneId_BilibinBarricade) {
-    return gBilibinEvents3;
+    return gBilibinBarricadeEvents;
   }
   if (scene == (s32)&SceneId_BilibinTreasury) {
-    return gBilibinEvents2;
+    return gBilibinTreasuryEvents;
   }
   return gBilibinEventsOther;
 }
@@ -805,7 +806,7 @@ static void Bilibin_SetUpTreasury(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Bilibin_UpdateTreasuryPillarCells();
-  if (gGameState.entrance == 3 ||
+  if (gGameState.entrance == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
       gGameState.entrance == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -946,7 +947,7 @@ u16 gBilibinEntrancesOther[] = {
     MAP_CELL_STEPS_END,
 };
 
-struct SceneEntrance gBilibinEntrances1[] = {
+struct SceneEntrance gBilibinEntrances[] = {
     {BILIBIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 240, 0, 472, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
     {BILIBIN_FROM_MCCOY_PALACE_GROUNDS, CONDITION_ALWAYS, 224, 0, 88,
@@ -972,7 +973,7 @@ struct SceneEntrance gBilibinEntrances1[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBilibinEntrances3[] = {
+struct SceneEntrance gBilibinBarricadeEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 56, 0, 376,
      FACING_EAST, 0, 16, 16, 400, 400, 0},
@@ -981,19 +982,21 @@ struct SceneEntrance gBilibinEntrances3[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBilibinEntrances2[] = {
+struct SceneEntrance gBilibinTreasuryEntrances[] = {
     {0, CONDITION_ALWAYS, 232, 0, 144, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {BILIBIN_TREASURY_FROM_BILIBIN_SOUTH, CONDITION_ALWAYS, 120, 0, 408,
      FACING_NORTH, 0, 0, 288, 240, 448, 0},
-    {2, CONDITION_ALWAYS, 120, 0, 384, FACING_SOUTH, 0, 0, 288, 240, 448, 0},
-    {3, CONDITION_ALWAYS, 72, 4, 128, FACING_NORTH, 0, 32, 32, 384, 304, 0},
+    {BILIBIN_TREASURY_LOWER_FROM_UPPER, CONDITION_ALWAYS, 120, 0, 384,
+     FACING_SOUTH, 0, 0, 288, 240, 448, 0},
+    {BILIBIN_TREASURY_UPPER_FROM_LOWER, CONDITION_ALWAYS, 72, 4, 128,
+     FACING_NORTH, 0, 32, 32, 384, 304, 0},
     {BILIBIN_TREASURY_FROM_BILIBIN_NORTH, CONDITION_ALWAYS, 296, 4, 224,
      FACING_NORTH, 0, 32, 32, 384, 304, 0},
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-s16 gBilibinRegions2[] = {
+s16 gBilibinTreasuryRegions[] = {
     66, 26, 128, 78, 38, 140, -1, 3,
     290, 26, 224, 302, 38, 236, -1, BILIBIN_TREASURY_TO_BILIBIN_NORTH,
     -1, 0, 0, 0, 0, 0, 0, 0,
@@ -1027,7 +1030,7 @@ struct ScenePlacement gBilibinPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBilibinPlacements1[] = {
+struct ScenePlacement gBilibinPlacements[] = {
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(40), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x69, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1059,7 +1062,7 @@ struct ScenePlacement gBilibinPlacements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBilibinPlacements3[] = {
+struct ScenePlacement gBilibinBarricadePlacements[] = {
     { 0xf1, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x69, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1081,7 +1084,7 @@ struct ScenePlacement gBilibinPlacements3[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBilibinPlacements2[] = {
+struct ScenePlacement gBilibinTreasuryPlacements[] = {
     { 0xf3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x5d, FLAG_DJINNI_0 + ELEMENT_JUPITER * 20, ACTOR_STAND,
@@ -1093,7 +1096,7 @@ struct SceneEvent gBilibinEventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBilibinEvents1[] = {
+struct SceneEvent gBilibinEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_TO_WORLD_MAP },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_TO_MCCOY_PALACE_GROUNDS },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, BILIBIN_TO_BILIBIN_TREASURY_WEST },
@@ -1158,7 +1161,7 @@ struct SceneEvent gBilibinEvents1[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBilibinEvents3[] = {
+struct SceneEvent gBilibinBarricadeEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_BARRICADE_TO_WORLD_MAP_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_BARRICADE_TO_WORLD_MAP_WEST },
     { EVENT_TALK, ACTOR_BOTTOM_TREE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectHumanShapedTree) },
@@ -1195,7 +1198,7 @@ struct SceneEvent gBilibinEvents3[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBilibinEvents2[] = {
+struct SceneEvent gBilibinTreasuryEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, BILIBIN_TREASURY_TO_BILIBIN_SOUTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, BILIBIN_TREASURY_LOWER_TO_UPPER },
     { SEARCH(SEARCH_UNNAMED), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadWarehouseSign) },

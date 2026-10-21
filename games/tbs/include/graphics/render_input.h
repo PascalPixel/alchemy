@@ -61,20 +61,26 @@ struct RenderOam {
   u16 high;        ///< not named by TBS code
 };
 
+/// RenderOutput.kind: what a render output owns besides itself, which
+/// RenderOutput_Release frees.
+enum RenderOutputKind {
+  RENDER_OUTPUT_GLYPH = 0,   ///< a glyph of the window's glyph sheet
+  RENDER_OUTPUT_SPRITE = 1,  ///< its own VRAM cache entry
+  RENDER_OUTPUT_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
+};
+
 /// A render output: a sprite in a window's output list (a character, an icon
 /// or a portrait), with its VRAM cache slot and OAM attributes.
 struct RenderOutput {
   struct RenderOutput *next; ///< the next output in its list
-  /// 0 for a glyph; otherwise it owns VRAM cache slot index, freed with it,
-  /// and 2 (a portrait) also its palette slot.
-  s8 kind;
-  s8 active;    ///< its UI_SPRITE_ motion; 0 while free
-  u16 x;        ///< screen pixels
-  u16 y;        ///< screen pixels
-  u16 unk0a;    ///< not named by TBS code
-  u16 animStep; ///< step of its motion's animation
-  s8 index;     ///< VRAM cache slot, or a glyph's tile after glyphTiles
-  u8 sentinel;  ///< depth slot it is drawn at (254 for glyphs)
+  s8 kind;                   ///< an enum RenderOutputKind
+  s8 active;                 ///< its UI_SPRITE_ motion; 0 while free
+  u16 x;                     ///< screen pixels
+  u16 y;                     ///< screen pixels
+  u16 unk0a;                 ///< not named by TBS code
+  u16 animStep;              ///< step of its motion's animation
+  s8 index;    ///< VRAM cache slot, or a glyph's tile after glyphTiles
+  u8 sentinel; ///< depth slot it is drawn at (254 for glyphs)
   /// The depth queue's link: with oam it is the sprite entry queued each
   /// frame, read as struct CursorSprite.
   u8 unk10[4];

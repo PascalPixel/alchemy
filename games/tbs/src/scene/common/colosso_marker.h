@@ -119,7 +119,7 @@ void Colosso_RestoreCompetitor(s32 id) {
   actor->terrainId = 0;
   actor->y.fixed = zero;
   ((struct ObjectRuntime *)actor)->terrainHeight = zero;
-  Engine_ActorSetSpriteFlags(actor, 1);
+  Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Object_SetMode(actor, 0);
   Object_SetMode(actor, 1);
   Engine_TaskWait(1);

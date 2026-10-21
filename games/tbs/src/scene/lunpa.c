@@ -11,7 +11,7 @@
 /// town gLunpaReopenedEvents instead of gLunpaSealedEvents, and the people
 /// talk of the intruders who got into the fortress.
 ///
-/// - Lunpa (Lunpa, scene 104), the town. Two guards keep the road in from
+/// - Lunpa (SceneId_Lunpa), the town. Two guards keep the road in from
 ///   the world map (LUNPA_TO_WORLD_MAP) and turn the party away. The east
 ///   guard wants Dodonpa's authorization; once the guards suspect Kalay
 ///   (FLAG_GUARDS_SUSPECT_KALAY, set on the world map) he asks whether the
@@ -29,7 +29,7 @@
 ///   jail's area name there is Lunpa). A Nut floats over the town for Catch, a
 ///   grave and a barrel hold a Sleep Bomb and a Nut, and frogs croak in the
 ///   well.
-/// - Lunpa Fortress Gates (LunpaFortressGates, scene 159), the steps up to the
+/// - Lunpa Fortress Gates (SceneId_LunpaFortressGates), the steps up to the
 ///   fortress door, kept by two guards. Stepping on the ground before them
 ///   uncloaked (TRIGGER_GUARDED_GROUND, Event_GuardsBlockGate) brings them in
 ///   front of the door (FLAG_SCENE_TEMP_40). Cloak (Event_CastCloak,

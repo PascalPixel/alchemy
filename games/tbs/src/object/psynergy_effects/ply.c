@@ -133,7 +133,7 @@ void FieldFx_RunPly(void) {
       object->update = BattleFx_UpdateShrinkingOrbitObject;
       object->timer = 120;
       object->work = i << 13;
-      object->motionFlags = 4;
+      object->motionFlags = ACTOR_FLOATS;
       last = Sprite_ShareVramCache(object->sprite, last);
     }
     WaitFrames(1);
@@ -157,7 +157,7 @@ void FieldFx_RunPly(void) {
     target->x.fixed = scene->x;
     target->y.fixed = scene->y + 0x100000;
     target->z.fixed = scene->z;
-    target->motionFlags = 4;
+    target->motionFlags = ACTOR_FLOATS;
     Animation_ApplyChildValuesFar((struct DispatchObject *)target,
                                   SPRITE_COLOR_WHITE);
   }

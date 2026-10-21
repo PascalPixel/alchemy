@@ -1,5 +1,5 @@
 /// @file
-/// Vault (VaultRevisit, scene 23), the town as the party finds it once it has
+/// Vault (SceneId_VaultRevisit), the town as the party finds it once it has
 /// reached Kalay, on the same map as Vault's first scene (vault.c). The world
 /// map still leads into that first scene, but once FLAG_REACHED_KALAY is set
 /// (entering Kalay sets it) its setup sends the party straight on here by its
@@ -622,7 +622,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// called and has not joined, it stands by the bell. Coming out of Vault
 /// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME, and
 /// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
-/// FLAG_EXIT_ARRIVAL_PENDING (0x120), so the leader's arrival animation does
+/// FLAG_EXIT_ARRIVAL_PENDING, so the leader's arrival animation does
 /// not play.
 s32 Scene_Initialize(void) {
 
@@ -745,7 +745,8 @@ s32 gVaultRevisit_SecondWalkerScript[] = {
 
 struct SceneEntrance gVaultRevisit_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {VAULT_REVISIT_FROM_VAULT, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
+     -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTHEAST, CONDITION_ALWAYS,
      408, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

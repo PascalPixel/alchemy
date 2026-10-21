@@ -27,14 +27,32 @@ enum BattleSideMask {
   BATTLE_SIDE_BOTH = BATTLE_SIDE_PARTY | BATTLE_SIDE_ENEMIES
 };
 
+/// The Djinn recovery list's two tables (Djinn_GetRecoveryTableFar): the
+/// party's and the link opponent's.
+#define DJINN_RECOVERY_PARTY 0
+#define DJINN_RECOVERY_OPPONENT 1
+
+/// DjinnRecoveryEntry.turns of a Djinni on standby. In battle it stays so
+/// until a Djinn command sets it again or a summon uses it
+/// (DJINN_RECOVERY_SUMMONED), both in
+/// BattleCommand_BuildPlan; an owner who does not fight has it set as the
+/// next battle starts, outside a link battle
+/// (BattleParty_ReconcileDjinnRecovery). DjinnRecovery_Tick counts down only
+/// positive turns.
+#define DJINN_RECOVERY_AFTER_BATTLE -1
+
+/// DjinnRecoveryEntry.turns of a standby Djinni a summon has just used, until
+/// the turn's end gives it its turn to recover (BattleUnit_ProcessTurnEnd).
+#define DJINN_RECOVERY_SUMMONED -2
+
 /// A Djinni on standby or recovering: its element and index, its owner, and
 /// the turns until it is set again.
 struct DjinnRecoveryEntry {
   u8 element; ///< enum Element
-  u8 index;   ///< the Djinni within its element, 0 to 19
+  u8 index;   ///< the Djinni within its element
   u8 unitId;  ///< its owner
-  /// Turns until it is set again; -1 on standby
-  /// (DJINN_RECOVERY_AFTER_BATTLE), -2 while a summon uses it.
+  /// Turns until it is set again, or DJINN_RECOVERY_AFTER_BATTLE or
+  /// DJINN_RECOVERY_SUMMONED.
   s8 turns;
 };
 

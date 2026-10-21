@@ -11,16 +11,15 @@
 /// "after" tables: the people speak of the rough seas since the beacon was lit
 /// and of the search for Sheba, who fell from the lighthouse into the sea.
 ///
-/// - LaliveroShops (scene 179): the houses, three shops and the Sanctum,
-///   whose area name is Lalivero Sanctum by
-///   LALIVERO_SHOPS_FROM_LALIVERO_NORTHEAST and LALIVERO_SHOPS_SANCTUM. The
-///   weapon, armor and item merchants trade across their counters and the
-///   priest offers the Sanctum's services; entering the Sanctum by
-///   LALIVERO_SHOPS_SANCTUM makes it the place a defeated party wakes. Barrels
-///   hold a Lucky Medal and an Antidote. The doors lead back out into Lalivero
-///   (lalivero.c, scene 178).
-/// - LaliveroFaransHouse (scene 180): Faran's house, the inn, and the way out
-///   to the edge of town where Babi's ship lies
+/// - SceneId_LaliveroShops: the houses, three shops and the Sanctum, whose area
+///   name is Lalivero Sanctum by LALIVERO_SHOPS_FROM_LALIVERO_NORTHEAST and
+///   LALIVERO_SHOPS_SANCTUM. The weapon, armor and item merchants trade across
+///   their counters and the priest offers the Sanctum's services; entering the
+///   Sanctum by LALIVERO_SHOPS_SANCTUM makes it the place a defeated party
+///   wakes. Barrels hold a Lucky Medal and an Antidote. The doors lead back out
+///   into Lalivero (lalivero.c, SceneId_Lalivero).
+/// - SceneId_LaliveroFaransHouse: Faran's house, the inn, and the way out to
+///   the edge of town where Babi's ship lies
 ///   (LALIVERO_FARANS_HOUSE_TO_LEMURIAN_SHIP, to
 ///   LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE). Before Venus Lighthouse,
 ///   Faran's household waits for news, and a maid too worried about Sheba to
@@ -141,9 +140,9 @@ enum LaliveroInteriorsActor {
   ACTOR_COOK
 };
 
-/// Flag 0x300, which several places use for a passing state as they use the
-/// scene flags from 0x200: the maid has apologized.
-enum { FLAG_MAID_APOLOGIZED = 0x300 };
+/// The place flag FLAG_PLACE_TEMP_00, which lasts until the party enters
+/// another place: the maid has apologized.
+enum { FLAG_MAID_APOLOGIZED = FLAG_PLACE_TEMP_00 };
 
 /// Behind a counter: the actor is drawn under the counter's top and the
 /// party talks across it.
@@ -777,7 +776,8 @@ s32 Scene_Initialize(void) {
   if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
     Engine_GameFlagSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE);
   }
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_LaliveroShops) {
     // The shops and the sanctum.
@@ -861,14 +861,18 @@ struct SceneEntrance gLaliveroEntrances[] = {
      FACING_NORTH, 0, 0, 8, 240, 192, 0},
     {LALIVERO_SHOPS_FROM_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, 400, 0, 168,
      FACING_NORTH, 0, 256, 8, 496, 192, 0},
-    {3, CONDITION_ALWAYS, 648, 0, 72, FACING_NORTH, 0, 488, 8, 728, 184, 0},
+    {LALIVERO_SHOPS_ITEM_SHOP_UPSTAIRS_FROM_ITEM_SHOP, CONDITION_ALWAYS, 648, 0,
+     72, FACING_NORTH, 0, 488, 8, 728, 184, 0},
     {LALIVERO_SHOPS_FROM_LALIVERO_NORTH, CONDITION_ALWAYS, 128, 0, 472,
      FACING_NORTH, 0, 0, 216, 240, 488, 0},
-    {5, CONDITION_ALWAYS, 136, 0, 296, FACING_SOUTH, 0, 0, 216, 240, 488, 0},
+    {LALIVERO_SHOPS_ITEM_SHOP_FROM_ITEM_SHOP_UPSTAIRS, CONDITION_ALWAYS, 136, 0,
+     296, FACING_SOUTH, 0, 0, 216, 240, 488, 0},
     {LALIVERO_SHOPS_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 368, 0, 472,
      FACING_NORTH, 0, 240, 216, 480, 488, 0},
-    {7, CONDITION_ALWAYS, 392, 0, 296, FACING_SOUTH, 0, 240, 216, 480, 488, 0},
-    {8, CONDITION_ALWAYS, 648, 0, 280, FACING_NORTH, 0, 480, 216, 720, 488, 0},
+    {LALIVERO_SHOPS_NORTHWEST_HOUSE_FROM_NORTHWEST_HOUSE_UPSTAIRS,
+     CONDITION_ALWAYS, 392, 0, 296, FACING_SOUTH, 0, 240, 216, 480, 488, 0},
+    {LALIVERO_SHOPS_NORTHWEST_HOUSE_UPSTAIRS_FROM_NORTHWEST_HOUSE,
+     CONDITION_ALWAYS, 648, 0, 280, FACING_NORTH, 0, 480, 216, 720, 488, 0},
     {LALIVERO_SHOPS_FROM_LALIVERO_SOUTH, CONDITION_ALWAYS, 96, 0, 680,
      FACING_NORTH, 0, 8, 520, 312, 696, 0},
     {LALIVERO_SHOPS_FROM_LALIVERO_EAST_SOUTHEAST, CONDITION_ALWAYS, 200, 0, 600,
@@ -883,12 +887,18 @@ struct SceneEntrance gLaliveroEntrances[] = {
      FACING_SOUTH, 0, 8, 8, 312, 192, 0},
     {LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHEAST, CONDITION_ALWAYS, 224, 0,
      392, FACING_NORTH, 0, 8, 232, 312, 416, 0},
-    {24, CONDITION_ALWAYS, 88, 0, 312, FACING_SOUTH, 0, 8, 232, 312, 416, 0},
-    {25, CONDITION_ALWAYS, 384, 0, 368, FACING_NORTH, 0, 320, 240, 632, 400, 0},
-    {26, CONDITION_ALWAYS, 456, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
-    {27, CONDITION_ALWAYS, 504, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
-    {28, CONDITION_ALWAYS, 472, 0, 72, FACING_SOUTH, 0, 344, 8, 584, 168, 0},
-    {29, CONDITION_ALWAYS, 744, 0, 72, FACING_SOUTH, 0, 632, 8, 872, 168, 0},
+    {LALIVERO_FARANS_HOUSE_INN_FROM_INN_CORRIDOR, CONDITION_ALWAYS, 88, 0, 312,
+     FACING_SOUTH, 0, 8, 232, 312, 416, 0},
+    {LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_INN, CONDITION_ALWAYS, 384, 0, 368,
+     FACING_NORTH, 0, 320, 240, 632, 400, 0},
+    {LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_WEST, CONDITION_ALWAYS,
+     456, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
+    {LALIVERO_FARANS_HOUSE_INN_CORRIDOR_FROM_GUEST_ROOM_EAST, CONDITION_ALWAYS,
+     504, 0, 376, FACING_NORTH, 0, 320, 240, 632, 400, 0},
+    {LALIVERO_FARANS_HOUSE_GUEST_ROOM_WEST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     472, 0, 72, FACING_SOUTH, 0, 344, 8, 584, 168, 0},
+    {LALIVERO_FARANS_HOUSE_GUEST_ROOM_EAST_FROM_INN_CORRIDOR, CONDITION_ALWAYS,
+     744, 0, 72, FACING_SOUTH, 0, 632, 8, 872, 168, 0},
     {LALIVERO_FARANS_HOUSE_FROM_LALIVERO_NORTHWEST, CONDITION_ALWAYS, 832, 0,
      872, FACING_NORTH, 0, 280, 504, 912, 896, 0},
     {LALIVERO_FARANS_HOUSE_FROM_LEMURIAN_SHIP, CONDITION_ALWAYS, 464, 0, 832,

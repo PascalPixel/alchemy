@@ -62,9 +62,10 @@ enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 /// Rebuilds a character's Psynergy list: drops the actions its class and items
 /// gave, closes up the list, adds every class action learned by its level and
 /// the action of each equipped item that grants one, and closes it up again.
-/// Writes only the unit's actionSlots; enemies (class 0) are left alone.
-/// Called whenever the class, level or equipment changes: Inventory_Equip,
-/// Unit_UpdateClass, Owner_LevelUp, Unit_LearnPsynergy and the item menu.
+/// Writes only the unit's actionSlots; enemies (CLASS_INDEX_ENEMY) are left
+/// alone. Called whenever the class, level or equipment changes:
+/// Inventory_Equip, Unit_UpdateClass, Owner_LevelUp, Unit_LearnPsynergy and the
+/// item menu.
 s32 Unit_RefreshPsynergy(s32 owner) {
   struct BattleUnit *unit;
   struct OwnerActionSlot *abilities;
@@ -78,7 +79,7 @@ s32 Unit_RefreshPsynergy(s32 owner) {
   unit = UnitGet(owner);
   abilities = unit->actionSlots;
   classDefinition = Class_GetDefinition(unit->classIndex);
-  if (unit->classIndex == 0)
+  if (unit->classIndex == CLASS_INDEX_ENEMY)
     return 0;
   // Remove actions inherited from the previous class and equipment.
   originFlag = OWNER_ACTION_CLASS;
@@ -315,7 +316,7 @@ UNUSED void Owner_LevelNoOp(void) {}
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
   struct BattleUnit *unit = UnitGet(owner);
 
-  if (unit->classIndex != 0) {
+  if (unit->classIndex != CLASS_INDEX_ENEMY) {
     if (level <= 0) {
       return 0;
     }

@@ -309,9 +309,10 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   }
 
   // With HAZARD_COUNT_FRAMES, which no ☀️ code sets, the count rises by one each
-  // call, that is each frame the field loop runs. Half way, object 209 is
-  // attached to the leader until removed (0x101, at sprite priority 1); at the
-  // limit it is removed (0x100) and the party takes the hazard's damage.
+  // call, that is each frame the field loop runs. Half way,
+  // SPRITE_ATTACHED_EFFECT is attached to the leader until removed (0x101, at
+  // sprite priority 1); at the limit it is removed (0x100) and the party takes
+  // the hazard's damage.
   if (gGameState.hazardMode == HAZARD_COUNT_FRAMES) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
@@ -330,7 +331,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   }
 
   // The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
-  // one-off object 209; each character whose HP reached 0 on this
+  // one-off SPRITE_ATTACHED_EFFECT; each character whose HP reached 0 on this
   // step is listed, loses its poison and raises event -1, which
   // Field_RunScene handles.
   if (partyHurt) {

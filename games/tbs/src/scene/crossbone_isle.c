@@ -7,7 +7,7 @@
 /// that ends with Deadbeard on the Pirate Ship. Its places are met in this
 /// order:
 ///
-/// - Crossbone Isle (CrossboneIsle, scene 113), the island itself, reached
+/// - Crossbone Isle (SceneId_CrossboneIsle), the island itself, reached
 ///   from the world map (WORLD_MAP_TO_CROSSBONE_ISLE;
 ///   CROSSBONE_ISLE_TO_WORLD_MAP leads back to it). Whirlwind blows four ivies
 ///   away for good (four flags from FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY,
@@ -15,12 +15,13 @@
 ///   crossed, for this visit only (FLAG_SCENE_TEMP_40 to _43), two pillars can
 ///   be pushed, and a Nut circles until Catch takes it (0xfd7).
 ///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
-/// - Crossbone Isle Cave (CrossboneIsleCaveEntrance, scene 114), the cave's
+/// - Crossbone Isle Cave (SceneId_CrossboneIsleCaveEntrance), the cave's
 ///   mouth, with only its two exits.
-/// - Crossbone Isle Cave (CrossboneIsleFirstFloor to CrossboneIsleNinthFloor,
-///   scenes 126 to 134), the nine floors the cave descends through, all on one
-///   map, each entered from the east (CORRIDOR_FROM_PREVIOUS_ROOM) and left to
-///   the west (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
+/// - Crossbone Isle Cave (SceneId_CrossboneIsleFirstFloor to
+///   SceneId_CrossboneIsleNinthFloor), the nine floors the cave descends
+///   through, all on one map, each entered from the east
+///   (CORRIDOR_FROM_PREVIOUS_ROOM) and left to the west
+///   (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
 ///   scene_links.h names them room by room
 ///   (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE and
 ///   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR in the first).
@@ -36,13 +37,13 @@
 ///   from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the first floor a chest
 ///   is a mimic (0xef4). The side rooms of the first eight floors are in
 ///   crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
-/// - Crossbone Isle Cave (CrossboneIsleFloatingLogs, scene 123), the ninth
+/// - Crossbone Isle Cave (SceneId_CrossboneIsleFloatingLogs), the ninth
 ///   floor's side room: twelve logs floating on green water, which drift with
 ///   the leader standing on them until another log or the shore stops them, and
 ///   hops from log to log, lead to its four chests.
-/// - Crossbone Isle Cave (CrossboneIslePier, scene 124), the ledge past the
+/// - Crossbone Isle Cave (SceneId_CrossboneIslePier), the ledge past the
 ///   ninth floor where a wooden pier leads out to the Pirate Ship.
-/// - Pirate Ship (PirateShip, scene 125), at the end. Stepping on trigger
+/// - Pirate Ship (SceneId_PirateShip), at the end. Stepping on trigger
 ///   10 (Event_FightDeadbeard) sets off the battle with Deadbeard, encounter
 ///   table 84's sixth group; when the party comes back
 ///   (ENTRANCE_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set and
@@ -94,12 +95,12 @@
 enum CrossboneIsleActor {
   /// The Nut that circles over the island until Catch takes it (0xfd7).
   ACTOR_ISLE_NUT = ACTOR_FIRST_PLACED,
-  /// The two pillars a push moves (Event_PushIslePillar), sprite 0xcf.
+  /// The two pillars a push moves (Event_PushIslePillar).
   ACTOR_FIRST_ISLE_PILLAR,
-  /// The four plants Growth grows (sprite 0xee), crossable once grown for the
+  /// The four plants Growth grows, crossable once grown for the
   /// rest of the visit (FLAG_SCENE_TEMP_40 to _43).
   ACTOR_FIRST_PLANT = ACTOR_FIRST_ISLE_PILLAR + 2,
-  /// The ivy Whirlwind blows away (sprite 0xf8), one flag each from
+  /// The ivy Whirlwind blows away, one flag each from
   /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY. Only three rows place one: the
   /// fourth ivy's event and CrossboneIsle_RestoreIvy name ACTOR_FIRST_IVY + 3,
   /// which the table leaves unplaced.
@@ -107,23 +108,23 @@ enum CrossboneIsleActor {
 };
 
 /// The twelve floating logs of the ninth floor's side room
-/// (CrossboneIsleFloatingLogs), numbered in the order of
+/// (SceneId_CrossboneIsleFloatingLogs), numbered in the order of
 /// gCrossboneIslePlacements3, from the first to the twelfth, with their
-/// sprites. Those with sprite 0xec are three cells wide and slide north and
-/// south; those with 0xed are three cells tall and slide east and west.
+/// shapes: a log three cells wide slides north and south, and one three cells
+/// tall slides east and west.
 enum CrossboneIsleFloatingLogsActor {
-  ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED, ///< 0xec
-  ACTOR_SECOND_PILLAR,                     ///< 0xec
-  ACTOR_THIRD_PILLAR,                      ///< 0xec
-  ACTOR_FOURTH_PILLAR,                     ///< 0xed
-  ACTOR_FIFTH_PILLAR,                      ///< 0xed
-  ACTOR_SIXTH_PILLAR,                      ///< 0xed
-  ACTOR_SEVENTH_PILLAR,                    ///< 0xed
-  ACTOR_EIGHTH_PILLAR,                     ///< 0xed
-  ACTOR_NINTH_PILLAR,                      ///< 0xed
-  ACTOR_TENTH_PILLAR,                      ///< 0xec
-  ACTOR_ELEVENTH_PILLAR,                   ///< 0xec
-  ACTOR_TWELFTH_PILLAR                     ///< 0xed
+  ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED, ///< three cells wide
+  ACTOR_SECOND_PILLAR,                     ///< three cells wide
+  ACTOR_THIRD_PILLAR,                      ///< three cells wide
+  ACTOR_FOURTH_PILLAR,                     ///< three cells tall
+  ACTOR_FIFTH_PILLAR,                      ///< three cells tall
+  ACTOR_SIXTH_PILLAR,                      ///< three cells tall
+  ACTOR_SEVENTH_PILLAR,                    ///< three cells tall
+  ACTOR_EIGHTH_PILLAR,                     ///< three cells tall
+  ACTOR_NINTH_PILLAR,                      ///< three cells tall
+  ACTOR_TENTH_PILLAR,                      ///< three cells wide
+  ACTOR_ELEVENTH_PILLAR,                   ///< three cells wide
+  ACTOR_TWELFTH_PILLAR                     ///< three cells tall
 };
 
 /// The corridor rooms' one placed actor (gCrossboneIslePlacements6To14): the
@@ -248,7 +249,7 @@ static void Event_FightDeadbeard(void) {
 
   EV_BEGIN();
   Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   Field_RequestBattleFromEncounterTable(84, 5);
   EV_END();
 }
@@ -295,7 +296,8 @@ s32 Scene_Initialize(void) {
   s32 current;
   s32 first;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // CrossboneIsleFloatingLogs's sliding pillars restore their map footprints
   // alone.
   scene = gGameState.scene;
@@ -495,7 +497,7 @@ static void Event_OpenEastDoor(void) {
                             (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
     EV_BEGIN();
     Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
-    Battle_SetStart(3);
+    Battle_SetStart(BATTLE_START_SCENE);
     // The first four rooms use encounter table 63; the next five use 84.
     switch (gGameState.scene - (s32)&SceneId_CrossboneIsleFirstFloor) {
     case 0:
@@ -905,7 +907,7 @@ static s32 CrossboneIsle_TryHop(struct FieldActor *actor,
                                 pixelCoordinates[5]);
     }
     Object_SetMode(actor, 6);
-    Engine_ActorSetSpriteFlags(actor, 1);
+    Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     *motionFlags = (u8)savedMotionFlags;
     EV_END();
     return 1;
@@ -2202,7 +2204,7 @@ struct SceneEvent gCrossboneIsleEventsOther[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenWestDoor) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CORRIDOR_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillar) },
-    { SEARCH(SEARCH_CHEST), 100, 0xef4, 0x500004 },
+    { SEARCH(SEARCH_CHEST), 100, 0xef4, FIND_MIMIC | 4 },
     { SCENE_EVENTS_END },
 };
 
@@ -2226,12 +2228,12 @@ struct SceneEvent gCrossboneIsleEvents1[] = {
     { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIslePillar) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIslePillar) },
-    { 0x8413, 100, 0xec0, FIND_COINS(1) },
-    { 0xc413, 100, 0xec0, FIND_COINS(1) },
-    { 0xa413, 100, 0xec0, FIND_COINS(1) },
-    { 0x8413, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
-    { 0xc413, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
-    { 0xa413, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
+    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_WEST, 100, 0xec0, FIND_COINS(1) },
+    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_NORTH, 100, 0xec0, FIND_COINS(1) },
+    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_NORTHWEST, 100, 0xec0, FIND_COINS(1) },
+    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_WEST, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
+    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_NORTH, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
+    { SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_NORTHWEST, 101, 0xec1, FIND_ITEM(ITEM_MINT) },
     { SCENE_EVENTS_END },
 };
 
@@ -2324,6 +2326,6 @@ struct SceneEvent gCrossboneIsleEvents5[] = {
     {TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_HopSouth)},
     {SEARCH(SEARCH_CHEST), 100, 0xee6, FIND_ITEM(ITEM_DEMON_MAIL)},
-    {SEARCH(SEARCH_CHEST), 101, 0xef7, 0x500007},
+    {SEARCH(SEARCH_CHEST), 101, 0xef7, FIND_MIMIC | 7},
     {SCENE_EVENTS_END},
 };

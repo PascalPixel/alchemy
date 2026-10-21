@@ -4,10 +4,9 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define GROWTH_PARTICLE_MAX 24     ///< particles round the target
-#define GROWTH_PARTICLE_OBJECT 284 ///< particle object
-#define GROWTH_FALL_OBJECT 217     ///< falling object
-#define GROWTH_FALL_LAST 4         ///< five falling objects, 0 to 4
+#define GROWTH_PARTICLE_MAX 24 ///< particles round the target
+#define GROWTH_FALL_OBJECT 217 ///< falling object
+#define GROWTH_FALL_LAST 4     ///< five falling objects, 0 to 4
 
 /// A point Growth works out round the effect's position.
 struct BurstParticleVector {
@@ -151,7 +150,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
     // palette, so the shadow (turned on by SPRITE_FLAG_SHADOW below) is drawn
     // with the particle's picture. BUG: the copy comes before the NULL test, so
     // a failed spawn (a full object table) is read through.
-    particle = (struct FieldActor *)Object_Spawn(GROWTH_PARTICLE_OBJECT, pos[0],
+    particle = (struct FieldActor *)Object_Spawn(SPRITE_PARTICLE, pos[0],
                                                  pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
@@ -191,6 +190,6 @@ void BattleEffect_SpawnBurstParticleField(void) {
 }
 
 #undef GROWTH_PARTICLE_MAX
-#undef GROWTH_PARTICLE_OBJECT
+#undef SPRITE_PARTICLE
 #undef GROWTH_FALL_OBJECT
 #undef GROWTH_FALL_LAST

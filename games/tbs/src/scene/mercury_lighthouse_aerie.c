@@ -1,5 +1,5 @@
 /// @file
-/// Lighthouse Aerie (SceneId_MercuryLighthouseAerie, scene 58), the top of
+/// Lighthouse Aerie (SceneId_MercuryLighthouseAerie), the top of
 /// Mercury Lighthouse, where its beacon burns. Isaac and Garet, with Ivan and
 /// Mia, have climbed the lighthouse after Saturos and Menardi, who hold Jenna
 /// and Kraden and carry the Elemental Stars; they come too late to stop the
@@ -30,8 +30,8 @@
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
 ///   from one to the next (cell codes 10 and 11); the lift leads down to
-///   Mercury Lighthouse's scene 57 (MercuryLighthouseExterior,
-///   mercury_lighthouse.c), arriving at
+///   Mercury Lighthouse's SceneId_MercuryLighthouseExterior
+///   (mercury_lighthouse.c), arriving at
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain
 ///   of Healing: cell code 6 calls it up, cell code 12 rides it down
 ///   (MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR), and arriving by
@@ -45,7 +45,7 @@
 /// down. Jenna, Kraden, Felix and Menardi are placed only on the first arrival:
 /// every other entrance sets FLAG_HOSTAGES_GONE before the placements are read.
 ///
-/// Unused: scene 59 (SceneId_UnusedMercuryLighthouseAerieCopy), which the area
+/// Unused: SceneId_UnusedMercuryLighthouseAerieCopy, which the area
 /// names call Mercury Lighthouse and the debug scene list labels `MTO07NG`,
 /// loads this overlay and the same map. The setup does nothing for it, and no
 /// exit, table or code leads there; only the debug scene selector, which
@@ -93,14 +93,14 @@
 /// "Alex!"). Saturos is fought as encounter table 36, slot 2.
 enum MercuryLighthouseAerieActor {
   ACTOR_BEACON_FLAME = ACTOR_FIRST_PLACED, ///< flickers and sheds sparks
-  /// A statue, sprite 0xe0 as the lighthouse's statues all are, standing on
+  /// A statue, drawn as the lighthouse's statues all are, standing on
   /// the lift; it rides up and down with it.
   ACTOR_LIFT_STATUE,
-  /// Four more statues (sprite 0xe0) flank the beacon, two on each side of it;
+  /// Four more statues flank the beacon, two on each side of it;
   /// the two east of it, ACTOR_FIRST_BEACON_STATUE + 2 and + 3, are drawn
   /// mirrored.
   ACTOR_FIRST_BEACON_STATUE,
-  ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6, ///< six, sprite 0xf2
+  ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6, ///< six
   /// The two platforms that stand on the lift and go up and down with it.
   ACTOR_LIFT_PLATFORM_1 = ACTOR_FIRST_PLATFORM + 3,
   ACTOR_LIFT_PLATFORM_2,
@@ -145,7 +145,7 @@ const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
 
 const struct SceneRegion *MercuryLighthouseAerie_GetRegions(void) { return 0; }
 
-/// Returns the one exit: the lift down to scene 57's
+/// Returns the one exit: the lift down to SceneId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, by the Fountain
 /// of Healing.
 const u32 *MercuryLighthouseAerie_GetExits(void) {
@@ -180,7 +180,8 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   struct FieldActor *obj;
 
   Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouseAerie) {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon, 0xc80);
@@ -300,14 +301,15 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_ColorBufferInterpolate(30);
   Engine_EventWait(30);
   Engine_EventWait(80);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 1);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER),
+                             SPRITE_FLAG_SHADOW);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(60);
-  Engine_ActorSetSpriteFlags(Object_GetById(GARET), 1);
+  Engine_ActorSetSpriteFlags(Object_GetById(GARET), SPRITE_FLAG_SHADOW);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
@@ -315,11 +317,11 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_EAST, 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(IVAN), 1);
+  Engine_ActorSetSpriteFlags(Object_GetById(IVAN), SPRITE_FLAG_SHADOW);
   Engine_ActorSetAnimation(IVAN, ANIM_STAND);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Engine_EventWait(40);
-  Engine_ActorSetSpriteFlags(Object_GetById(MIA), 1);
+  Engine_ActorSetSpriteFlags(Object_GetById(MIA), SPRITE_FLAG_SHADOW);
   Engine_ActorSetAnimation(MIA, ANIM_STAND);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
@@ -380,7 +382,7 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
     Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, position.x >> 16,
                               position.z >> 16);
     Object_SetMode(actor, 6);
-    Engine_ActorSetSpriteFlags(actor, 1);
+    Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = flags;
   }
 }
@@ -493,7 +495,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventSetMessage(MsgMercuryLighthouseAlreadyLit);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_SetAttachedEffect(MIA, 0x102);
+  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Actor_SetSpeed(MIA, 0x18000, 0xC000);
   Actor_WalkToAndWait(MIA, 328, 232);
@@ -732,12 +734,14 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Actor_SetAttachedEffect(ACTOR_FELIX, 0x102);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
-  Actor_SetAttachedEffect(JENNA, 0x102);
+  Actor_SetAttachedEffect(JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(JENNA, 0, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
@@ -768,7 +772,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MENARDI), 0);
   Object_GetById(ACTOR_LIFT_PLATFORM_1)->motionFlags = 4;
   Engine_ActorMoveToAndWait(ACTOR_MENARDI, 104, 168);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MENARDI), 1);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MENARDI), SPRITE_FLAG_SHADOW);
   Actor_Get(ACTOR_MENARDI)->motionFlags = 3;
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 10);
@@ -865,7 +869,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
   Actor_WalkToAndWait(ACTOR_SATUROS, 336, 216);
   Event_SetNextDestination((s32)&SceneId_MercuryLighthouseAerie, 2);
-  Battle_SetStart(3);
+  Battle_SetStart(BATTLE_START_SCENE);
   // Saturos: encounter table 36, slot 2.
   Field_RequestBattleFromEncounterTable(36, 2);
   Engine_EventEnd();
@@ -1055,7 +1059,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ActorSetAnimation(ACTOR_SATUROS, 8);
   Engine_EventWait(45);
   Engine_ActorSetAnimation(ACTOR_SATUROS, 1);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), 1);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
   Engine_EventWait(40);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 60);
   Event_ShowMessage(IVAN, 0);
@@ -1365,9 +1369,12 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-  Actor_SetAttachedEffect(GARET, 0x102);
-  Actor_SetAttachedEffect(IVAN, 0x102);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(IVAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(IVAN, 0, 20);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
@@ -1451,7 +1458,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
 }
 
 /// Lighthouse Aerie: touching cell code 12. The leader steps onto the lift and
-/// rides it down to scene 57, arriving at
+/// rides it down to SceneId_MercuryLighthouseExterior, arriving at
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
@@ -1582,8 +1589,8 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   }
   Engine_ActorSetChildValue(ACTOR_SATUROS, 0);
   Engine_ActorSetChildValue(ACTOR_ALEX, 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), 1);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 1);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
 }
 
 /// MercuryLighthouseAerie_LowerLift passes its lift as a third
@@ -1800,7 +1807,8 @@ const s32 *gEffectScripts[] = {
 };
 
 struct SceneEntrance gMercuryLighthouseAerieEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, CONDITION_ALWAYS, 8, 0, 8,
      FACING_SOUTH, 0, 0, 0, 608, 424, 0},
     {MERCURY_LIGHTHOUSE_AERIE_AFTER_CONFRONT_SATUROS, CONDITION_ALWAYS, 8, 0, 8,

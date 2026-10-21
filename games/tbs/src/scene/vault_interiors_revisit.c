@@ -1,5 +1,5 @@
 /// @file
-/// Vault's houses, shops and inn (scene 24, a row with no SceneId_ name; the
+/// Vault's houses, shops and inn (SceneId_VaultInteriorsRevisit; the
 /// area names call it Vault) as the party finds them once it has reached
 /// Kalay. They replace the first visit's interiors (vault_interiors.c) as
 /// Vault's revisit scene (vault_revisit.c) replaces the town: each of its six
@@ -96,7 +96,7 @@ enum {
   ACTOR_MAYOR, ///< "our mayor", as the villagers call him
   ACTOR_MAYORS_WIFE,
   /// The girl at the inn, as the Bone's description calls her.
-  ACTOR_VAULT_BONE_GIVER,
+  ACTOR_BONE_GIVER,
   ACTOR_VAULT_WEAPON_MERCHANT,
   ACTOR_VAULT_ARMOR_MERCHANT,
   ACTOR_VAULT_ITEM_MERCHANT,
@@ -225,27 +225,27 @@ static void Event_UnusedOfferLeftoverBones(void) {
 /// leader not standing beside the floor Bone.
 static void Event_OfferBones(void) {
   Engine_EventBegin();
-  Engine_ActorFaceEachOther(ACTOR_VAULT_BONE_GIVER, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorFaceEachOther(ACTOR_BONE_GIVER, ACTOR_PARTY_LEADER, 0);
   if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
-    Event_OpenMessage(ACTOR_VAULT_BONE_GIVER, 0);
+    Event_OpenMessage(ACTOR_BONE_GIVER, 0);
   } else {
     Engine_EventSetMessage(MsgVaultWantMoreBones);
-    Event_OpenMessage(ACTOR_VAULT_BONE_GIVER, 0);
+    Event_OpenMessage(ACTOR_BONE_GIVER, 0);
   }
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     // Show the offer before checking whether the party can carry the gift.
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
+    Event_ShowMessage(ACTOR_BONE_GIVER, 0);
     Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(ACTOR_VAULT_BONE_GIVER, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_BONE_GIVER, 2);
     Engine_EventWait(20);
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
-      Engine_ActorSetAnimationAndWait(ACTOR_VAULT_BONE_GIVER, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(ACTOR_BONE_GIVER, ANIM_SHAKE_HEAD);
       Engine_EventWait(20);
       Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
-      Event_ShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
+      Event_ShowMessage(ACTOR_BONE_GIVER, 0);
     } else {
       Engine_ItemShowFound(ITEM_BONE, 3);
       Engine_PartyGiveItem(ITEM_BONE, 0);
@@ -255,11 +255,11 @@ static void Event_OfferBones(void) {
     // Declining selects the following line and the actor's response pose.
     gEventWork->message++;
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_VAULT_BONE_GIVER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_BONE_GIVER, ANIM_NOD);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
+    Event_ShowMessage(ACTOR_BONE_GIVER, 0);
   }
-  Actor_FaceDirection(ACTOR_VAULT_BONE_GIVER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_BONE_GIVER, FACING_SOUTH, 0);
   Engine_EventEnd();
 }
 
@@ -365,7 +365,7 @@ static void Event_ReadBoneGiverMind(void) {
   } else {
     Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
   }
-  Engine_EventShowMessage(ACTOR_VAULT_BONE_GIVER, 0);
+  Engine_EventShowMessage(ACTOR_BONE_GIVER, 0);
   Engine_EventEnd();
 }
 
@@ -377,14 +377,16 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Opens the room through a window transition. Entering the house at
 /// VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST sets its owner on the
 /// floor and copies a block of cells; entering the inn
-/// (VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST or entrance 11)
+/// (VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST, or from upstairs by
+/// VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS)
 /// places the floor Bone beside the girl and starts
 /// Vault_UpdateBoneProximityFlag.
 s32 Scene_Initialize(void) {
   s32 entrance;
   s32 clearedState;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   entrance = gGameState.entrance;
 
   if (entrance == VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST) {
@@ -395,7 +397,7 @@ s32 Scene_Initialize(void) {
     Object_GetById(ACTOR_GEM_OWNER)->y.fixed = clearedState;
     Object_GetById(ACTOR_GEM_OWNER)->terrainHeight = clearedState;
   } else if (entrance == VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST ||
-             entrance == 11) {
+             entrance == VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS) {
     // Show the Bone lying in the room, and track whether the leader stands
     // beside it (FLAG_SCENE_TEMP_50).
     Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
@@ -410,7 +412,8 @@ s32 Scene_Initialize(void) {
 #include "common/vault_itemobj.h"
 
 struct SceneEntrance gVaultInteriorsRevisit_Entrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, CONDITION_ALWAYS,
      192, 0, 220, FACING_NORTH, 0, 32, 0, 272, 240, 0},
     {VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, CONDITION_ALWAYS, 432, 0,
@@ -423,8 +426,10 @@ struct SceneEntrance gVaultInteriorsRevisit_Entrances[] = {
      492, FACING_NORTH, 0, 16, 288, 256, 512, 0},
     {VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST, CONDITION_ALWAYS,
      416, 0, 526, FACING_NORTH, 0, 320, 288, 592, 544, 0},
-    {11, CONDITION_ALWAYS, 744, 0, 640, FACING_SOUTH, 0, 432, 576, 800, 800, 0},
-    {12, CONDITION_ALWAYS, 358, 0, 632, FACING_SOUTH, 0, 32, 576, 400, 776, 0},
+    {VAULT_INTERIORS_REVISIT_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 744, 0,
+     640, FACING_SOUTH, 0, 432, 576, 800, 800, 0},
+    {VAULT_INTERIORS_REVISIT_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 358, 0,
+     632, FACING_SOUTH, 0, 32, 576, 400, 776, 0},
     {SCENE_TABLE_END},
 };
 
@@ -515,7 +520,7 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
     // Unused: the row above always answers the cook first.
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedOfferLeftoverBones) },
-    { EVENT_TALK, ACTOR_VAULT_BONE_GIVER, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
+    { EVENT_TALK, ACTOR_BONE_GIVER, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
@@ -532,13 +537,13 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_BONE_GIVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BONE_GIVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
     { SEARCH(SEARCH_JAR), 100, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
     { SEARCH(SEARCH_BARREL), 101, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
     { SEARCH(SEARCH_BARREL), 102, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_WOODEN_BOX), 103, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
-    { 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOfAngara)) },
     { SCENE_EVENTS_END },
 };

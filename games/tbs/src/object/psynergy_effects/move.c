@@ -116,7 +116,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   // its ground from the overhead layer.
   pusher->speed = 4 << 16;
   pusher->acceleration = 0x8000;
-  pusher->motionFlags = 4;
+  pusher->motionFlags = ACTOR_FLOATS;
   target->update = ObjectGroup_ApplyRandomChildValues;
   target->speed = 0x6666;
   target->acceleration = 0x3333;

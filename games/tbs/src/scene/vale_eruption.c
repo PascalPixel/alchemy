@@ -1,26 +1,27 @@
 /// @file
-/// Vale (scene 10, a row the scene table leaves unnamed) while Mt. Aleph
-/// erupts: the ground before the sanctum's door, on the village's own map
-/// (Vale's, scene 4), where the villagers wait for Isaac and Garet.
+/// Vale (SceneId_ValeEruption) while Mt. Aleph erupts: the ground before the
+/// sanctum's door, on the village's own map (SceneId_Vale's), where the
+/// villagers wait for Isaac and Garet.
 ///
 /// The scene falls between Sol Sanctum and the party's journey. On the
 /// mountain, Saturos and Menardi, with Alex and Felix, carried off Jenna and
 /// Kraden, and the Wise One saved Isaac and Garet as the volcano woke
 /// (sol_sanctum_eruption.c). The path down the mountain leads here, by
-/// entrance 15 (sol_sanctum_entrance.c's exit 1). Gathered before the sanctum
-/// are the Great Healer, Garet's grandfather the mayor, Isaac's mother Dora,
+/// VALE_ERUPTION_FROM_SOL_ENTRANCE (sol_sanctum_entrance.c's
+/// SOL_ENTRANCE_TO_VALE after the eruption). Gathered before the sanctum are
+/// the Great Healer, Garet's grandfather the mayor, Isaac's mother Dora,
 /// Garet's sister, and the guard who saw the two hanging around on his watch.
 ///
 /// The scene has no events. ValeEruption_Initialize plays the whole scene on
-/// arrival by entrance 15 (Event_ReturnFromMtAleph): the ground shakes, the
-/// villagers wonder where the two are, Isaac and Garet come down the path and
-/// are called over, and Dora's question about Jenna and Kraden is answered
-/// the same way whatever Isaac replies. The Great Healer then opens the
-/// sanctum's door (Map_AnimateCells) and leads everyone in, and the scene's
-/// one exit takes the party into the Vale Sanctum (scene 9, entrance 20),
-/// where the Great Healer passes on the Wise One's quest
-/// (Sanctum_RequestQuestAcceptance). The tremors are Map_SetShake calls, each
-/// with a flash (FieldFx_LastLightning) and SE_145. The scene sets
+/// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (Event_ReturnFromMtAleph): the
+/// ground shakes, the villagers wonder where the two are, Isaac and Garet come
+/// down the path and are called over, and Dora's question about Jenna and
+/// Kraden is answered the same way whatever Isaac replies. The Great Healer
+/// then opens the sanctum's door (Map_AnimateCells) and leads everyone in, and
+/// the scene's one exit takes the party into the Vale Sanctum
+/// (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
+/// One's quest (Sanctum_RequestQuestAcceptance). The tremors are Map_SetShake
+/// calls, each with a flash (FieldFx_LastLightning) and SE_145. The scene sets
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
 /// scene does (sol_sanctum_entrance.c).
 
@@ -49,36 +50,40 @@
 /// The placed actors, numbered in the order of gValeEruption_Placements;
 /// Garet's row places the party's Garet and takes no number.
 enum ValeEruptionActor {
-  /// The Great Healer (sprite 0x79, the healer of sanctum.c), who leads the
+  /// The Great Healer (with the sprite of sanctum.c's healer), who leads the
   /// villagers into the sanctum. "Come into the sanctum, both of you."
   ACTOR_GREAT_HEALER = ACTOR_FIRST_PLACED,
-  /// Garet's grandfather, the mayor (sprite 0x75, whom the Great Healer calls
-  /// Mayor in sanctum.c). "Oooh, my grandson! Will Garet be safe in this
-  /// eruption?!?"
+  /// Garet's grandfather, the mayor (whom the Great Healer calls Mayor in
+  /// sanctum.c). "Oooh, my grandson! Will Garet be safe in this eruption?!?"
   ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED + 1,
-  /// Isaac's mother (sprite 0x1f, Dora in sanctum.c). "Isaac and Garet went
-  /// to Mr. Kraden's house."
+  /// Isaac's mother (Dora in sanctum.c). "Isaac and Garet went to Mr. Kraden's
+  /// house."
   ACTOR_DORA = ACTOR_FIRST_PLACED + 2,
-  /// Garet's sister (sprite 0x2a), whom Garet calls Sis at the farewell
-  /// (vale_gate.c). She calls the mayor Grandpa, and actor 12 calls her Sis.
-  /// "Grandpa, we don't even know if he's up there!"
+  /// Garet's sister, whom Garet calls Sis at the farewell (vale_gate.c). She
+  /// calls the mayor Grandpa, and ACTOR_GARETS_SIBLING calls her Sis. "Grandpa,
+  /// we don't even know if he's up there!"
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PLACED + 3,
+  /// Garet's sibling, by the sprite of vale.c's ACTOR_GARETS_SIBLING, who says
+  /// someone saw Garet climb and is first to cry "Garet!"
+  ACTOR_GARETS_SIBLING = ACTOR_FIRST_PLACED + 4,
   /// The guard. "They were hanging around here while I was on guard duty."
-  ACTOR_GUARD = ACTOR_FIRST_PLACED + 5
+  ACTOR_GUARD = ACTOR_FIRST_PLACED + 5,
+  /// The first of the six villagers gathered behind them.
+  ACTOR_FIRST_VILLAGER = ACTOR_FIRST_PLACED + 6
 };
 
 static void Event_ReturnFromMtAleph(void);
 
-/// Returns where the party appears: entrance 15 is the path down from the
-/// mountain, Mt. Aleph.
+/// Returns where the party appears: VALE_ERUPTION_FROM_SOL_ENTRANCE is the path
+/// down from the mountain, Mt. Aleph.
 const struct SceneEntrance *ValeEruption_GetEntrances(void) {
   return gValeEruption_Entrances;
 }
 
 const struct SceneRegion *ValeEruption_GetRegions(void) { return NULL; }
 
-/// Returns the one exit, into the Vale Sanctum (scene 9, entrance 20), which
-/// Event_ReturnFromMtAleph takes.
+/// Returns the one exit, VALE_ERUPTION_TO_SANCTUM into the Vale Sanctum
+/// (SANCTUM_FROM_VALE_ERUPTION), which Event_ReturnFromMtAleph takes.
 const u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
 
 /// Returns Garet and the villagers gathered before the sanctum.
@@ -92,10 +97,10 @@ const struct SceneEvent *ValeEruption_GetEvents(void) {
 }
 
 /// Arriving in Vale during the eruption: plays the return from the mountain
-/// when the party comes by entrance 15.
-/// Called by Field_RunScene once the actors are placed; entrance 15 is where
-/// Sol Sanctum's approach leads after the eruption and before the party
-/// leaves Vale (its exit 1).
+/// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE. Called by
+/// Field_RunScene once the actors are placed; VALE_ERUPTION_FROM_SOL_ENTRANCE
+/// is where Sol Sanctum's approach leads after the eruption and before the
+/// party leaves Vale.
 s32 ValeEruption_Initialize(void) {
   if (gGameState.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     Event_ReturnFromMtAleph();
@@ -106,25 +111,25 @@ s32 ValeEruption_Initialize(void) {
 /// In Vale during the eruption, before the sanctum, the volcano shakes the
 /// ground while the villagers wonder where Isaac and Garet are; the two come
 /// down the mountain, tell that Jenna and Kraden were taken away, and follow
-/// the elders into the sanctum.
-/// Called by ValeEruption_Initialize on arrival by entrance 15. Clears
-/// FLAG_SHOW_LOCATION_NAME, sets FLAG_VALE_RETURNED_FROM_MT_ALEPH and takes
-/// exit 1 into the Vale Sanctum, where Sanctum_RequestQuestAcceptance follows.
+/// the elders into the sanctum. Called by ValeEruption_Initialize on arrival by
+/// VALE_ERUPTION_FROM_SOL_ENTRANCE. Clears FLAG_SHOW_LOCATION_NAME, sets
+/// FLAG_VALE_RETURNED_FROM_MT_ALEPH and takes VALE_ERUPTION_TO_SANCTUM, where
+/// Sanctum_RequestQuestAcceptance follows.
 static void Event_ReturnFromMtAleph(void) {
   struct EventWork *work;
   const s32 *actionScript;
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(14, 0);
-  Engine_ActorSetAnimation(15, 0);
-  Engine_ActorSetAnimation(16, 0);
-  Engine_ActorSetAnimation(17, 0);
-  Engine_ActorSetAnimation(18, 0);
-  Engine_ActorSetAnimation(19, 0);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER, 0);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 1, 0);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 2, 0);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 3, 0);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 4, 0);
+  Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 5, 0);
   Actor_WalkToAndWait(ACTOR_GARETS_SISTER, 265, 487);
   Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
-  Actor_WalkToAndWait(12, 256, 500);
-  Actor_FaceDirection(12, FACING_NORTHWEST, 0);
+  Actor_WalkToAndWait(ACTOR_GARETS_SIBLING, 256, 500);
+  Actor_FaceDirection(ACTOR_GARETS_SIBLING, FACING_NORTHWEST, 0);
   // A lightning flash, then the screen opens on the villagers below.
   BattleFx_StartBufferBlend(0x10003, 0x10006);
   FieldFx_LastLightning();
@@ -166,15 +171,16 @@ static void Event_ReturnFromMtAleph(void) {
   // The mayor: "Oooh, my grandson!"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(30);
-  // Garet's sister doubts he is up there; actor 12 says someone saw him climb.
+  // Garet's sister doubts he is up there; her sibling says someone saw him
+  // climb.
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SISTER, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_GARETS_SISTER, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
                       0);
-  Actor_FaceActor(12, ACTOR_GARETS_SISTER, 0);
+  Actor_FaceActor(ACTOR_GARETS_SIBLING, ACTOR_GARETS_SISTER, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(12, ANIM_SHAKE_HEAD);
-  Event_ShowMessage(12, 0);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(ACTOR_GARETS_SIBLING, 0);
   // The guard saw them hanging around; Dora says they went to Kraden's house,
   // and the mayor and Dora wonder what Alchemy has to do with the eruption.
   Engine_ActorRunRepeatedMotion(ACTOR_GUARD, 1);
@@ -198,12 +204,12 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventWait(60);
   Engine_ActorFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_ActorFaceEachOther(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
-  Engine_ActorFaceEachOther(12, ACTOR_GUARD, 0);
+  Engine_ActorFaceEachOther(ACTOR_GARETS_SIBLING, ACTOR_GUARD, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_GREAT_HEALER, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_GARETS_SISTER, 2);
-  Engine_ActorStartRepeatedMotion(12, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_GARETS_SIBLING, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_GUARD, 2);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
@@ -261,16 +267,16 @@ static void Event_ReturnFromMtAleph(void) {
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
 
-  // The villagers spot them: "Garet!" "Isaac!"
-  // Actor 12 cries "Garet!" and the villagers turn to the path.
-  Event_ShowMessage(12, 0);
+  // The villagers spot them: "Garet!" "Isaac!" Garet's sibling cries "Garet!"
+  // and the villagers turn to the path.
+  Event_ShowMessage(ACTOR_GARETS_SIBLING, 0);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(12, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARETS_SIBLING, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GUARD, FACING_NORTHWEST, 0);
   // The camera flies to Dora: "Isaac!" The Great Healer: "You're safe!"
   Camera_SetSpeed(0x30000, 0x6000);
@@ -437,7 +443,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_SetActionScript(GARET, actionScript);
   Object_RefreshSelectorById(1);
   Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_GARETS_SIBLING, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(40);
   Map_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   FieldFx_LastLightning();
@@ -483,7 +489,8 @@ s32 gValeEruption_EnterSanctum[] = {
 };
 
 struct SceneEntrance gValeEruption_Entrances[] = {
-    {0, CONDITION_ALWAYS, 110, 0, 270, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 110, 0, 270, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {VALE_ERUPTION_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 103, 0, 284,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},

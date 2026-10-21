@@ -21,19 +21,19 @@ extern struct LightWheel *gAltmillerCave_LightWheel;
 extern struct SceneEntrance gAltmillerCave_Entrances[];
 extern u32 gAltmillerCave_Exits[];
 extern struct ScenePlacement gAltmillerCave_PlacementsOther[];
-extern struct ScenePlacement gAltmillerCave_Placements2[];
-extern struct ScenePlacement gAltmillerCave_Placements4[];
-extern struct ScenePlacement gAltmillerCave_Placements6[];
+extern struct ScenePlacement gAltmillerCave_BabiPlacements[];
+extern struct ScenePlacement gAltmillerCave_SquallPlacements[];
+extern struct ScenePlacement gAltmillerCave_DraughtPlacements[];
 extern u32 gAltmillerCave_PulseScales[];
 extern s32 gAltmillerCave_GuardsArrivePath[];
 extern s32 gAltmillerCave_SecondGuardLeavePath[];
 extern s32 gAltmillerCave_FirstGuardLeavePath[];
 extern s32 gAltmillerCave_BabiLeavePath[];
 extern struct SceneEvent gAltmillerCave_EventsOther[];
-extern struct SceneEvent gAltmillerCave_Events2[];
-extern struct SceneEvent gAltmillerCave_Events3[];
-extern struct SceneEvent gAltmillerCave_Events4[];
-extern struct SceneEvent gAltmillerCave_Events5[];
-extern struct SceneEvent gAltmillerCave_Events6[];
+extern struct SceneEvent gAltmillerCave_BabiEvents[];
+extern struct SceneEvent gAltmillerCave_VialChestEvents[];
+extern struct SceneEvent gAltmillerCave_SquallEvents[];
+extern struct SceneEvent gAltmillerCave_CookieChestEvents[];
+extern struct SceneEvent gAltmillerCave_DraughtEvents[];
 
 #endif

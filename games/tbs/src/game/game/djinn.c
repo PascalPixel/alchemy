@@ -104,11 +104,12 @@ s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex) {
         djinnIndex == recoveryList->entries[entryIndex].index)
       break;
   }
-  // Ready when not listed, on standby (-1) or recovered (0); not while
-  // recovering or held by a summon (-2).
+  // Ready when not listed, on standby (DJINN_RECOVERY_AFTER_BATTLE) or
+  // recovered (0); not while recovering or held by a summon
+  // (DJINN_RECOVERY_SUMMONED).
   if (entryIndex == recoveryList->count ||
       ((recoveryTurns = recoveryList->entries[entryIndex].turns) <= 0 &&
-       recoveryTurns != -2))
+       recoveryTurns != DJINN_RECOVERY_SUMMONED))
     return 1;
   return 0;
 }
@@ -179,11 +180,11 @@ s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
   return removed;
 }
 
-/// Puts the owner's Djinni at the end of its side's list on standby (turns
-/// -1), moving it there if it was already listed. Returns a pointer to the
-/// list's count. Nothing checks the list's 64-entry capacity. Called when a
-/// Djinni joins, by the Djinn menu's standby command, by battle and by the
-/// scene where Flint joins.
+/// Puts the owner's Djinni at the end of its side's list on standby
+/// (DJINN_RECOVERY_AFTER_BATTLE), moving it there if it was already listed.
+/// Returns a pointer to the list's count. Nothing checks the list's 64-entry
+/// capacity. Called when a Djinni joins, by the Djinn menu's standby command,
+/// by battle and by the scene where Flint joins.
 u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
   struct DjinnRecoveryList *recoveryList;
   s32 entryIndex;
@@ -196,7 +197,7 @@ u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
   recoveryList->entries[entryIndex].element = element;
   recoveryList->entries[entryIndex].index = djinnIndex;
   recoveryList->entries[entryIndex].unitId = owner;
-  recoveryList->entries[entryIndex].turns = -1;
+  recoveryList->entries[entryIndex].turns = DJINN_RECOVERY_AFTER_BATTLE;
   recoveryList->count = entryIndex + 1;
   return (u32 *)&recoveryList->count;
 }

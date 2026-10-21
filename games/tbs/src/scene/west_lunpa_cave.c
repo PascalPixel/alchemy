@@ -1,10 +1,11 @@
 /// @file
-/// West Lunpa Cave (WestLunpaCave, scene 106), the cave between Lunpa and the
+/// West Lunpa Cave (SceneId_WestLunpaCave), the cave between Lunpa and the
 /// world map. The party comes in from Lunpa (Lunpa's exit to the cave) at
-/// entrance 2 and from the world map at entrance 1; trigger 2 leads back up
-/// into Lunpa (its entrance 3) and trigger 1 out to the world map (its entrance
-/// 49). Entrance 3, which no exit names, repeats entrance 2 with a shorter
-/// camera.
+/// WEST_LUNPA_CAVE_FROM_LUNPA and from the world map at
+/// WEST_LUNPA_CAVE_FROM_WORLD_MAP; trigger 2 leads back up into Lunpa
+/// (LUNPA_FROM_WEST_LUNPA_CAVE) and trigger 1 out to the world map
+/// (WORLD_MAP_FROM_WEST_LUNPA_CAVE). WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which
+/// no exit names, repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
 ///
 /// A gate blocks the cave. Its puzzle runs on scene flags, which last until the
 /// party next enters a scene other than by returning from a battle, and which
@@ -29,10 +30,10 @@
 /// Lunpa's villagers though he despised Dodonpa. Bunza has a wagon nearby and
 /// offers to take everyone back to Kalay before Dodonpa's henchmen find Hammet
 /// again, and the party's yes-or-no answers (WagonChoice_Run) decide whether it
-/// rides. Riding, all set off for Kalay and Hammet's wife, Lady Layana, by exit
-/// 3 to the world map's entrance 49, where world_map.c plays the wagon's
-/// departure. Staying, Ivan goes on with his friends, Hammet and Bunza leave
-/// alone, and FLAG_BUNZAS_WAGON_LEFT is set.
+/// rides. Riding, all set off for Kalay and Hammet's wife, Lady Layana, by
+/// WEST_LUNPA_CAVE_BY_WAGON to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where
+/// world_map.c plays the wagon's departure. Staying, Ivan goes on with his
+/// friends, Hammet and Bunza leave alone, and FLAG_BUNZAS_WAGON_LEFT is set.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -988,7 +989,8 @@ static void Party_RidesWagon(void) {
 
 /// Restores the gate and frozen puddles from the persistent puzzle flags.
 s32 Scene_Initialize(void) {
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_WestLunpaCave) {
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_HIDDEN_PUDDLE), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SOUTH_PUDDLE), 0);
@@ -1016,10 +1018,10 @@ s32 Scene_Initialize(void) {
 
 // clang-format off
 const struct SceneEntrance gCaveEntrances[] = {
-    { 0, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { WEST_LUNPA_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
     { WEST_LUNPA_CAVE_FROM_LUNPA, CONDITION_ALWAYS, 552, 0, 328, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
-    { CAVE_ENTRANCE_THIRD, CONDITION_ALWAYS, 552, 0, 328, FACING_NORTH, 0, 88, 56, 648, 488, 0 },
+    { WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, CONDITION_ALWAYS, 552, 0, 328, FACING_NORTH, 0, 88, 56, 648, 488, 0 },
     { SCENE_TABLE_END },
 };
 

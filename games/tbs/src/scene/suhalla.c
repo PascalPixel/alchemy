@@ -1,5 +1,5 @@
 /// @file
-/// Suhalla (scene 167), the desert village of Gondowan on the way to
+/// SceneId_Suhalla, the desert village of Gondowan on the way to
 /// Lalivero, at the edge of the Suhalla Desert.
 ///
 /// Its people and their talk come in two sets, each a placement table and an
@@ -14,10 +14,11 @@
 /// commands his soldiers, and Sheba left Tolbi for Lalivero with soldiers
 /// bound for Babi Lighthouse. Afterwards the village talks of those soldiers:
 /// caught in the sandstorms, nearly all perished, and the survivors lie in a
-/// house of the village (scene 168, where Iodem questions them). The storms
-/// attack people as if they were alive, and one villager asks whether a
-/// sandstorm brought the party to Suhalla (Event_AskIfBroughtBySandstorm),
-/// for everyone the storms catch winds up here.
+/// house of the village (SceneId_SuhallaInteriors, where Iodem questions them).
+/// The storms attack people as if they were alive, and one villager asks
+/// whether a sandstorm brought the party to Suhalla
+/// (Event_AskIfBroughtBySandstorm), for everyone the storms catch winds up
+/// here.
 ///
 /// Five doors (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST) open as the leader
 /// walks north into them and lead into the village's buildings
@@ -56,8 +57,10 @@
 
 /// Arriving by this entrance also marks Babi's audience as held. The entrance
 /// table does not list it and no exit of the game leads to it. XXX: likely a
-/// debug start into the story after the audience, because Babi's Palace and
-/// the Tolbi docks have entrances 90 and 91 that set story flags the same way.
+/// debug start into the story after the audience, because Babi's Palace
+/// (BABI_PALACE_AFTER_BABI_SAVED, BABI_PALACE_AFTER_COLOSSO) and Suhalla's
+/// buildings (SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE) have entrances that set
+/// story flags the same way.
 enum { ENTRANCE_90 = 90 };
 
 /// Suhalla's people and its sprout, numbering the rows of both placement
@@ -220,7 +223,8 @@ s32 Scene_Initialize(void) {
 }
 
 struct SceneEntrance gSuhallaEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SUHALLA_FROM_INN, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {SUHALLA_FROM_SANCTUM, CONDITION_ALWAYS, 256, 0, 120, FACING_SOUTH, 0, -1,

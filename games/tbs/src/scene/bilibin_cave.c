@@ -1,12 +1,12 @@
 /// @file
 /// The Bilibin Cave Entrance and Bilibin Cave, two places on the way north
 /// from Bilibin toward Imil that share this overlay: the Bilibin Cave Entrance
-/// is BilibinCaveEntrance (scene 49), and Bilibin Cave is BilibinCaveRapier
-/// (scene 48) and, beyond it, BilibinCaveIce (scene 47), whose far end opens
-/// onto the world map farther north. No one speaks here: each scene is a run of
-/// Psynergy puzzles, the getters pick its tables by gGameState.scene, and
-/// BilibinCave_Initialize restores what the party has already solved in the
-/// scene being entered.
+/// is SceneId_BilibinCaveEntrance, and Bilibin Cave is
+/// SceneId_BilibinCaveRapier and, beyond it, SceneId_BilibinCaveIce, whose far
+/// end opens onto the world map farther north. No one speaks here: each scene
+/// is a run of Psynergy puzzles, the getters pick its tables by
+/// gGameState.scene, and BilibinCave_Initialize restores what the party has
+/// already solved in the scene being entered.
 ///
 /// At the Bilibin Cave Entrance, entered from the world map, Growth on a
 /// sprout (GROWTH_TARGET) grows it into a vine and changes the collision of
@@ -91,7 +91,7 @@ enum {
 /// Actors of BilibinCaveRapier, numbered by the rows of
 /// gBilibinCavePlacements2.
 enum {
-  ACTOR_CAVE2_WEST_TORCH = 8, ///< a torch (sprite 0xf6) west of the fire
+  ACTOR_CAVE2_WEST_TORCH = 8, ///< a torch west of the fire
   CAVE2_DOUSE_TARGET = 9,     ///< a fire between two torches
   ACTOR_CAVE2_EAST_TORCH = 10 ///< a torch east of the fire
 };
@@ -99,7 +99,7 @@ enum {
 /// Actors of BilibinCaveIce, numbered by the rows of gBilibinCavePlacements1.
 enum {
   CAVE1_DOUSE_TARGET = 8, ///< a fire beside the first puddle
-  /// Six torches (sprite 0xf6), 9 to 14; the second stands beside
+  /// Six torches, 9 to 14; the second stands beside
   /// FROST_TARGET_B.
   ACTOR_FIRST_TORCH = 9,
   ACTOR_MOVABLE_TORCH_A = 11, ///< the third torch, moved by Move or pushed
@@ -112,7 +112,7 @@ enum {
   /// 5); nothing acts on them.
   ACTOR_FIRST_ICE_PILLAR = 18,
   /// Four pieces of ice, 23 to 26, held at the second step of freezing: their
-  /// animation 3 shows frame 2 of sprite 0xe3, of the five that animation 2
+  /// animation 3 shows frame 2 of the five that a Frost target's animation 2
   /// plays from puddle to pillar. Nothing acts on them.
   ACTOR_FIRST_LOW_ICE = 23
 };
@@ -175,9 +175,9 @@ const struct SceneEvent *BilibinCave_GetEvents(void) {
 }
 
 /// Stepping on touch 10 at the Bilibin Cave Entrance, on either side of the
-/// way into Bilibin Cave: the way's cell (21, 14), whose collision code 2 is
-/// the exit into the cave, takes the attributes of source cell (1, 0), which
-/// has none.
+/// way into Bilibin Cave: the way's cell (21, 14), the exit cell of
+/// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the
+/// attributes of source cell (1, 0), which has none.
 static void Event_DisableExitToCave(void) {
   Map_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
@@ -378,7 +378,8 @@ static void BilibinCave_RestoreEntrance(void) {
 /// gone once Douse has put it out.
 static void BilibinCave_RestoreRapierRoom(void) {
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Engine_ActorSetAnimation(ACTOR_CAVE2_WEST_TORCH, 1);
   Engine_ActorSetAnimation(ACTOR_CAVE2_EAST_TORCH, 2);
@@ -403,7 +404,8 @@ static void BilibinCave_RestoreIceRoom(void) {
   struct FieldActor *actor;
   s32 destinationCellX;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Set up the decorative animations before restoring interactive actors.
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 1);
@@ -559,12 +561,14 @@ s32 gBilibinCave_ClearSpriteScript[] = {
 };
 
 struct SceneEntrance gBilibinCaveEntrancesOther[] = {
-    {0, CONDITION_ALWAYS, 72, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 72, 0, 488, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinCaveEntrances3[] = {
-    {0, CONDITION_ALWAYS, 372, 0, 272, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 372, 0, 272, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 99, 0, 447,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_RAPIER_SOUTH, CONDITION_ALWAYS,
@@ -575,30 +579,36 @@ struct SceneEntrance gBilibinCaveEntrances3[] = {
 };
 
 struct SceneEntrance gBilibinCaveEntrances2[] = {
-    {0, CONDITION_ALWAYS, 864, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 864, 0, 168, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_WEST, CONDITION_ALWAYS, 312,
      0, 756, FACING_NORTH, 0, 40, 60, 630, 840, 0},
     {BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ENTRANCE_EAST, CONDITION_ALWAYS, 472,
      0, 680, FACING_NORTH, 0, 40, 60, 630, 840, 0},
     {BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_WEST, CONDITION_ALWAYS, 392, 0,
      200, FACING_SOUTH, 0, 40, 60, 630, 840, 0},
-    {4, CONDITION_ALWAYS, 536, 0, 426, FACING_SOUTH, 0, 40, 60, 630, 840, 0},
+    {BILIBIN_CAVE_RAPIER_FROM_TORCHES, CONDITION_ALWAYS, 536, 0, 426,
+     FACING_SOUTH, 0, 40, 60, 630, 840, 0},
     {BILIBIN_CAVE_RAPIER_FROM_BILIBIN_CAVE_ICE_EAST, CONDITION_ALWAYS, 856, 0,
      124, FACING_SOUTH, 0, 760, 65, 925, 330, 0},
-    {6, CONDITION_ALWAYS, 808, 0, 248, FACING_NORTH, 0, 760, 65, 925, 330, 0},
+    {BILIBIN_CAVE_RAPIER_TORCHES_FROM_BILIBIN_CAVE_RAPIER, CONDITION_ALWAYS,
+     808, 0, 248, FACING_NORTH, 0, 760, 65, 925, 330, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gBilibinCaveEntrances1[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 300, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 300, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_WEST, CONDITION_ALWAYS, 120, 0,
      472, FACING_NORTH, 0, 60, 60, 790, 600, 0},
     {BILIBIN_CAVE_ICE_FROM_BILIBIN_CAVE_RAPIER_EAST, CONDITION_ALWAYS, 312, 0,
      524, FACING_NORTH, 0, 60, 60, 790, 600, 0},
     {BILIBIN_CAVE_ICE_FROM_WORLD_MAP, CONDITION_ALWAYS, 538, 0, 548,
      FACING_NORTH, 0, 60, 60, 790, 600, 0},
-    {4, CONDITION_ALWAYS, 344, 0, 176, FACING_SOUTH, 0, 60, 60, 790, 600, 0},
-    {5, CONDITION_ALWAYS, 856, 0, 632, FACING_NORTH, 0, 740, 510, 980, 690, 0},
+    {BILIBIN_CAVE_ICE_FROM_CHESTS, CONDITION_ALWAYS, 344, 0, 176, FACING_SOUTH,
+     0, 60, 60, 790, 600, 0},
+    {BILIBIN_CAVE_ICE_CHESTS_FROM_BILIBIN_CAVE_ICE, CONDITION_ALWAYS, 856, 0,
+     632, FACING_NORTH, 0, 740, 510, 980, 690, 0},
     {SCENE_TABLE_END},
 };
 

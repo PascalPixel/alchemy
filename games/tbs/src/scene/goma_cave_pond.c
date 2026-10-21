@@ -1,10 +1,11 @@
 /// @file
-/// Goma Cave (GomaCavePond, scene 26), the room below the room of two pillars
+/// Goma Cave (SceneId_GomaCavePond), the room below the room of two pillars
 /// and a stump, in the cave in the Goma Range that the mayor of Vault tells the
 /// party to pass through on the way to Bilibin.
 ///
 /// The room is reached only from the room above (goma_cave_pillar.c): its
-/// three exits lead back up to that room's entrances 4, 5 and 3. It has no
+/// three exits lead back up to that room's
+/// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
 /// events of its own. Its one placed actor is the stump the party pushes over
 /// the edge up there with Move: once it has fallen (FLAG_GOMA_CAVE_STUMP_FELL),
 /// entering finds it lying flat underfoot where it landed, and the map cells it
@@ -62,7 +63,8 @@ s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     OBJ_POS_SET(FALLEN_STUMP, 216, 136);
@@ -76,7 +78,8 @@ s32 Scene_Initialize(void) {
 }
 
 struct SceneEntrance gGomaCavePondEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST, CONDITION_ALWAYS, 120, 0, 88,
      FACING_SOUTH, 0, 24, 8, 504, 424, 0},
     {GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_SOUTH, CONDITION_ALWAYS, 424, 0, 344,
@@ -106,8 +109,8 @@ struct ScenePlacement gGomaCavePondPlacements[] = {
 // clang-format on
 
 struct SceneEvent gGomaCavePondEvents[] = {
-    {0x21, 5, CONDITION_ALWAYS, 1},
-    {0x21, 6, CONDITION_ALWAYS, 2},
-    {0x21, 7, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 5, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 6, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 7, CONDITION_ALWAYS, 3},
     {SCENE_EVENTS_END},
 };

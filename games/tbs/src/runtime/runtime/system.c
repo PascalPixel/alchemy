@@ -72,16 +72,8 @@ UNUSED void Runtime_IdleForever(void) {
 
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 
-enum CartridgeLanguage {
-  CARTRIDGE_LANGUAGE_ENGLISH,
-  CARTRIDGE_LANGUAGE_GERMAN,
-  CARTRIDGE_LANGUAGE_FRENCH,
-  CARTRIDGE_LANGUAGE_SPANISH,
-  CARTRIDGE_LANGUAGE_ITALIAN
-};
-
-/// Returns the language of this cartridge from the header's game code letter:
-/// 0 English, 1 German, 2 French, 3 Spanish, 4 Italian. Only the Spanish and
+/// Returns the language of this cartridge from the header's game code letter,
+/// an enum CartridgeLanguage. Only the Spanish and
 /// Italian editions have it. Called by the battle target selection and the
 /// status screen, which lay text out by language.
 s32 System_GetLanguage(void) {

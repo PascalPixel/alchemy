@@ -128,7 +128,9 @@ enum {
   UI_SPRITE_SHRINK = 11,      ///< shrinks from 1.5 times to its size, once
   UI_SPRITE_SHRINK_HALF = 12, ///< the same at half the scale
   UI_SPRITE_HIDDEN = 13,      ///< not drawn
-  UI_SPRITE_HOP_DOWN = 14,    ///< 14 to 16: hops down and back
+  UI_SPRITE_HOP_DOWN = 14,    ///< hops down and back
+  UI_SPRITE_HOP_DOWN_2 = 15,  ///< as UI_SPRITE_HOP_DOWN
+  UI_SPRITE_HOP_DOWN_3 = 16,  ///< as UI_SPRITE_HOP_DOWN
   UI_SPRITE_HOP_UP = 17,
   UI_SPRITE_HOP_DOWN_LEFT = 18,
 };
@@ -175,14 +177,6 @@ enum CommandIcon {
   COMMAND_ICON_GOLD = 46,
   COMMAND_ICON_SILVER = 47,
   COMMAND_ICON_BRONZE = 48
-};
-
-/// RenderOutput.kind: what a render output owns besides itself, which
-/// RenderOutput_Release frees.
-enum RenderOutputKind {
-  RENDER_OUTPUT_GLYPH = 0,   ///< a glyph of the window's glyph sheet
-  RENDER_OUTPUT_SPRITE = 1,  ///< its own VRAM cache entry
-  RENDER_OUTPUT_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
 };
 
 /// What UiText_DrawGlyph and UiWindow_PutGlyph draw.

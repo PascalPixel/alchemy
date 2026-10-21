@@ -346,11 +346,10 @@ s32 Battle_ProcessRoundEnd(void) {
             BattleEventRuntime_Reset();
             BattleEventRuntime_SchedulePhase(30);
             BattleEvPush(BATTLE_EVENT_UNIT_NAME, unitId);
-            // The Djinni's own ability, which names it: 300 + 20 * element +
-            // index, the ability column of djinn.tsv.
-            BattleEvPush(BATTLE_EVENT_ABILITY_NAME, expiredEntry->element * 20 +
-                                                        expiredEntry->index +
-                                                        300);
+            // The Djinni's own ability, which names it (ABILITY_DJINNI_FIRST).
+            BattleEvPush(BATTLE_EVENT_ABILITY_NAME,
+                         expiredEntry->element * DJINN_PER_ELEMENT +
+                             expiredEntry->index + ABILITY_DJINNI_FIRST);
             BattleEvPush(BATTLE_EVENT_SOUND, SE_175);
             BattleEvPush(BATTLE_EVENT_DRAW_STATUS, 0);
             PUSH_MESSAGE(MsgDjinnSet);

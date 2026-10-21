@@ -41,18 +41,18 @@ extern u16 gMercuryLighthouse_FloorSwitchCells[];
 extern u16 gMercuryLighthouse_FloorSwitchCloseCells[];
 extern u16 gMercuryLighthouse_ColumnCells[];
 extern struct SceneEntrance gMercuryLighthouseEntrancesOther[];
-extern struct SceneEntrance gMercuryLighthouseEntrances2[];
-extern struct SceneEntrance gMercuryLighthouseEntrances3[];
-extern struct SceneEntrance gMercuryLighthouseEntrances4[];
+extern struct SceneEntrance gMercuryLighthouseMiddleEntrances[];
+extern struct SceneEntrance gMercuryLighthouseUpperEntrances[];
+extern struct SceneEntrance gMercuryLighthouseExteriorEntrances[];
 extern u32 gMercuryLighthouse_Exits[];
 extern struct ScenePlacement gMercuryLighthousePlacementsOther[];
-extern struct ScenePlacement gMercuryLighthousePlacements1[];
-extern struct ScenePlacement gMercuryLighthousePlacements2[];
-extern struct ScenePlacement gMercuryLighthousePlacements3[];
-extern struct ScenePlacement gMercuryLighthousePlacements4[];
-extern struct SceneEvent gMercuryLighthouseEvents1[];
-extern struct SceneEvent gMercuryLighthouseEvents2[];
-extern struct SceneEvent gMercuryLighthouseEvents3[];
+extern struct ScenePlacement gMercuryLighthouseLowerPlacements[];
+extern struct ScenePlacement gMercuryLighthouseMiddlePlacements[];
+extern struct ScenePlacement gMercuryLighthouseUpperPlacements[];
+extern struct ScenePlacement gMercuryLighthouseExteriorPlacements[];
+extern struct SceneEvent gMercuryLighthouseLowerEvents[];
+extern struct SceneEvent gMercuryLighthouseMiddleEvents[];
+extern struct SceneEvent gMercuryLighthouseUpperEvents[];
 extern struct SceneEvent gMercuryLighthouseEventsOther[];
 
 #endif

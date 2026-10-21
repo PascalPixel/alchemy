@@ -40,7 +40,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
     record = Actor_Get(ACTOR_PARTY_LEADER);
-    Engine_ActorSetSpriteFlags(record, 1);
+    Engine_ActorSetSpriteFlags(record, SPRITE_FLAG_SHADOW);
     sprite = actor->sprite;
     sprite->image.priority = 1;
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);

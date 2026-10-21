@@ -1,5 +1,6 @@
 /// @file
-/// Suhalla Desert (SuhallaDesertNorth to 3, scenes 164 to 166), the desert of
+/// Suhalla Desert (SceneId_SuhallaDesertNorth, SceneId_SuhallaDesertSouth and
+/// SceneId_SuhallaDesertCaves), the desert of
 /// sandstorms between Suhalla and Suhalla Gate.
 ///
 /// After Babi's audience the party crosses it with Iodem, who commands
@@ -7,11 +8,11 @@
 /// child of Lalivero: the soldiers escorting her home were caught in the
 /// sandstorms, and in Suhalla the survivors said she had not been caught with
 /// them. The three scenes, in the order the party meets them:
-/// - Suhalla Desert (SuhallaDesertNorth, scene 164), entered from the world map
+/// - Suhalla Desert (SceneId_SuhallaDesertNorth), entered from the world map
 ///   near Suhalla, where SUHALLA_DESERT_NORTH_TO_WORLD_MAP leads back out;
 ///   SUHALLA_DESERT_NORTH_TO_SUHALLA_DESERT_SOUTH leads on into
 ///   SuhallaDesertSouth. Five storms stand here.
-/// - Suhalla Desert (SuhallaDesertSouth, scene 165), with four storms and a
+/// - Suhalla Desert (SceneId_SuhallaDesertSouth), with four storms and a
 ///   fifth that gives chase. SUHALLA_DESERT_SOUTH_TO_WORLD_MAP leads out onto
 ///   the world map, and SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_EAST and
 ///   SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_CAVES_WEST into SuhallaDesertCaves.
@@ -22,7 +23,7 @@
 ///   to Lalivero, and either way decides to head first for the guard gate ahead
 ///   and leave Sheba to its soldiers (Event_IodemAsksWhetherToPressOn, once,
 ///   FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
-/// - Suhalla Desert (SuhallaDesertCaves, scene 166), two caves under the
+/// - Suhalla Desert (SceneId_SuhallaDesertCaves), two caves under the
 ///   desert, whose exits lead only back into SuhallaDesertSouth and between its
 ///   two caves; it places nothing and plays a sound on entry.
 ///
@@ -48,7 +49,8 @@
 ///   party to chase it (SuhallaDesert_ChaseLeader); it catches a leader on
 ///   the move.
 ///
-/// A doused storm's flag (0x301 to 0x305, 0x311 to 0x315) is a place flag:
+/// A doused storm's flag (five from FLAG_FIRST_SCENE_STORM_DOUSED and five
+/// from FLAG_SECOND_SCENE_STORM_DOUSED) is a place flag:
 /// the storm stays gone until the party leaves the desert's place group,
 /// except the chasing storm, which once doused is gone for good
 /// (FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED). In the second scene Reveal
@@ -57,7 +59,7 @@
 /// cannot remember a saying about the storms, and Mind Read finds half of it,
 /// about eyes of truth. Chests hold a
 /// Virtuous Armlet, a Lucky Medal and a Cookie, a fourth chest is a mimic,
-/// and searching finds a Psynergy Stone (place flag 0x351).
+/// and searching finds a Psynergy Stone (FLAG_SUHALLA_DESERT_PSYNERGY_STONE).
 
 #include "script.h"
 #include "flags.h"
@@ -114,13 +116,15 @@ enum {
   FLAG_FIRST_SCENE_STORM_DOUSED = 0x301,
   FLAG_SECOND_SCENE_STORM_DOUSED = 0x311,
   /// A storm has risen: the sand haze stays faded in.
-  FLAG_STORMS_RISEN = 0x340
+  FLAG_STORMS_RISEN = 0x340,
+  /// The Psynergy Stone has been found, a place flag.
+  FLAG_SUHALLA_DESERT_PSYNERGY_STONE = FLAG_PLACE_TEMP_51
 };
 
 /// The actors, numbering the placement rows of the first two scenes from
 /// ACTOR_FIRST_PLACED; the third scene places none.
 enum {
-  /// The storms, five in each scene, sprite 0x121.
+  /// The storms, five in each scene.
   ACTOR_FIRST_STORM = ACTOR_FIRST_PLACED,
   ACTOR_FOURTH_STORM = ACTOR_FIRST_STORM + 3,
   ACTOR_LAST_STORM = ACTOR_FIRST_STORM + 4,
@@ -128,8 +132,8 @@ enum {
   ACTOR_CHASING_STORM = ACTOR_LAST_STORM,
   /// Iodem, who steps out of the party to talk and then rejoins it.
   ACTOR_IODEM,
-  /// In the second scene, seen only while Reveal lasts: sprite 0xd3, the
-  /// stone pillar sprite of Goma Cave. XXX: no text names it here.
+  /// In the second scene, seen only while Reveal lasts, drawn as
+  /// Goma Cave's stone pillars. XXX: no text names it here.
   ACTOR_REVEALED_OBJECT,
   ACTOR_FLASH ///< in the second scene, the Mars Djinni Flash
 };
@@ -255,7 +259,8 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   captureActive = GameFlag_IsSet(FLAG_SCENE_TEMP_0F);
   if (captureActive == 0) {
     Engine_EventBegin();
-    Actor_SetAttachedEffect(selectedActorId, 0x101);
+    Actor_SetAttachedEffect(selectedActorId,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Engine_ActorSetAnimation(selectedActorId, 9);
     storm = Object_GetById(stormIdCopy);
     if (storm != 0) {
@@ -274,7 +279,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Engine_ActorWaitForMove(selectedActorId);
     selectedActor->velocityY = captureActive;
     selectedActor->motionFlags = 4;
-    gGameState.movementMode = 2;
+    gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_SCENE_TEMP_0F);
     FieldGameFlag_SetByte(FLAG_SCENE_TEMP_18, stormIdCopy);
     FieldGameFlag_SetByte(FLAG_SCENE_TEMP_10, STORM_CAPTURE_FRAMES);
@@ -283,26 +288,30 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   }
 }
 
-/// In Suhalla Desert (scenes 164 and 165), the leader walks into the scene's
-/// first storm (cell code 41 or 51).
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), the leader walks into the scene's first storm
+/// (cell code 41 or 51).
 static void Event_CaughtByFirstStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_STORM);
 }
 
-/// In Suhalla Desert (scenes 164 and 165), the leader walks into the second
-/// storm (cell code 42 or 52).
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), the leader walks into the second storm (cell
+/// code 42 or 52).
 static void Event_CaughtBySecondStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_STORM + 1);
 }
 
-/// In Suhalla Desert (scenes 164 and 165), the leader walks into the third
-/// storm (cell code 43 or 53).
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), the leader walks into the third storm (cell
+/// code 43 or 53).
 static void Event_CaughtByThirdStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_STORM + 2);
 }
 
-/// In Suhalla Desert (scenes 164 and 165), the leader walks into the fourth
-/// storm (cell code 44 or 54).
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), the leader walks into the fourth storm (cell
+/// code 44 or 54).
 static void Event_CaughtByFourthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_STORM + 3);
 }
@@ -400,20 +409,23 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   Engine_EventEnd();
 }
 
-/// In Suhalla Desert (scenes 164 and 165), the party nears the scene's first
-/// storm (cell code 61 or 71).
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), the party nears the scene's first storm (cell
+/// code 61 or 71).
 static void Event_FirstStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_STORM);
 }
 
-/// In Suhalla Desert (scenes 164 and 165), the party nears the second storm
-/// (cell code 62 or 72).
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), the party nears the second storm (cell code 62
+/// or 72).
 static void Event_SecondStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_STORM + 1);
 }
 
-/// In Suhalla Desert (scenes 164 and 165), the party nears the third storm
-/// (cell code 63 or 73).
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), the party nears the third storm (cell code 63
+/// or 73).
 static void Event_ThirdStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_STORM + 2);
 }
@@ -504,7 +516,6 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
   actor->motionFlags = 0;
   Engine_ActorSetSpriteFlags(actor, 0);
   actor->spriteStorageKind ^= 1;
-  // Flag 0x104 stops the chase.
   if (Engine_GameFlagIsSet(FLAG_FIELD_HANDLING_REQUESTS)) {
     actor->targetX = ACTOR_NO_TARGET;
     actor->targetY = ACTOR_NO_TARGET;
@@ -554,18 +565,18 @@ static void Event_StormGivesChase(void) {
   }
 }
 
-/// In Suhalla Desert (scenes 164 and 165), Douse cast at the storm that caught
-/// the leader: sets the Psynergy effect's
-/// child option (its meaning unknown).
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), Douse cast at the storm that caught the leader:
+/// sets the Psynergy effect's child option (its meaning unknown).
 static void Event_DouseCastAtStorm(void) {
   u8 *state = gEffectWork;
   ((struct BattleFxScene *)state)->childOption = 1;
 }
 
-/// In Suhalla Desert (scenes 164 and 165), Douse stops the storm that caught
-/// the leader: it is doused for good, and the monster in it attacks. Scene
-/// 165's fourth and chasing storms
-/// hold other monsters.
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), Douse stops the storm that caught the leader:
+/// it is doused for good, and the monster in it attacks.
+/// SceneId_SuhallaDesertSouth's fourth and chasing storms hold other monsters.
 static void Event_DouseStorm(s32 unused, s32 stormId) {
   struct GameState *state;
 
@@ -584,15 +595,15 @@ static void Event_DouseStorm(s32 unused, s32 stormId) {
     }
   }
   FieldGameFlag_SetByte(FLAG_SCENE_TEMP_10, 0);
-  Field_RequestBattleFromEncounterTable(98, 5);
-  Battle_SetStart(3);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
+  Battle_SetStart(BATTLE_START_SCENE);
   state = &gGameState;
   if (state->scene == (s32)&SceneId_SuhallaDesertSouth) {
     if (stormId == ACTOR_FOURTH_STORM) {
-      Field_RequestBattleFromEncounterTable(98, 7);
+      Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
     } else {
       if (stormId == ACTOR_CHASING_STORM) {
-        Field_RequestBattleFromEncounterTable(98, 6);
+        Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 6);
         Engine_ActorStop(ACTOR_CHASING_STORM);
         Engine_ActorSetPosition(ACTOR_CHASING_STORM, 0, 0);
       }
@@ -601,10 +612,11 @@ static void Event_DouseStorm(s32 unused, s32 stormId) {
   Object_GetById(gGameState.selectedActor)->motionFlags = 3;
 }
 
-/// In Suhalla Desert (scenes 164 and 165), the spinning runs out (event 99):
-/// the storm rises into the sky with the party, the screen closes, and the
-/// party lands falling (flag 0x122, FLAG_ARRIVE_FALLING) on the world map
-/// outside Suhalla, or where the second scene's fourth storm drops it.
+/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
+/// SceneId_SuhallaDesertSouth), the spinning runs out (event 99): the storm
+/// rises into the sky with the party, the screen closes, and the party lands
+/// falling (FLAG_ARRIVE_FALLING) on the world map outside Suhalla, or where the
+/// second scene's fourth storm drops it.
 static void Event_StormCarriesPartyAway(void) {
   s32 stormId;
   struct FieldActor *selectedActor;
@@ -729,9 +741,9 @@ s32 Scene_Initialize(void) {
 
   map = WORK_SLOT(HEAP_SLOT_MAP);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_SCENE_TEMP_10) != 0) {
-    gGameState.movementMode = 2;
+    gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_SCENE);
   }
@@ -747,7 +759,7 @@ s32 Scene_Initialize(void) {
   } else {
     Engine_AudioPlayCue(SE_288);
   }
-  if (gGameState.entrance == 0) {
+  if (gGameState.entrance == ENTRANCE_DEFAULT) {
     map->flags &= ~DISPCNT_BG1_ON;
   }
   return 0;
@@ -886,7 +898,8 @@ s32 gSuhallaDesertFourthStormScript[] = {
 };
 
 struct SceneEntrance gSuhallaDesertEntrancesOther[] = {
-    {0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -913,8 +926,10 @@ struct SceneEntrance gSuhallaDesertEntrances2[] = {
 struct SceneEntrance gSuhallaDesertEntrances3[] = {
     {SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST, CONDITION_ALWAYS, 72,
      0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 440, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 632, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SUHALLA_DESERT_CAVES_WEST_FROM_EAST, CONDITION_ALWAYS, 440, 0, 152,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SUHALLA_DESERT_CAVES_EAST_FROM_WEST, CONDITION_ALWAYS, 632, 0, 152,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_EAST, CONDITION_ALWAYS, 648,
      0, 280, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
@@ -1012,7 +1027,7 @@ struct SceneEvent gSuhallaDesertEventsOther[] = {
 #if !TBS_PATCH_1
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
 #else
-    { 0xc401, 4, CONDITION_ALWAYS, 4 },
+    { EVENT_EXIT | EVENT_TOUCH_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, 4 },
 #endif
     { EVENT_TOUCH, 9, FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA, EVENT_SCRIPT(Event_IodemAsksWhetherToPressOn) },
     { EVENT_TOUCH, 41, FLAG_FIRST_SCENE_STORM_DOUSED, EVENT_SCRIPT(Event_CaughtByFirstStorm) },
@@ -1034,11 +1049,11 @@ struct SceneEvent gSuhallaDesertEventsOther[] = {
     { EVENT_TOUCH, 54, FLAG_SECOND_SCENE_STORM_DOUSED + 3, EVENT_SCRIPT(Event_CaughtByFourthStorm) },
     { EVENT_TOUCH, 81, FLAG_SCENE_TEMP_0E, EVENT_SCRIPT(Event_StormGivesChase) },
     { EVENT_TALK, ACTOR_FLASH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FightDjinni) },
-    { SEARCH(SEARCH_UNNAMED), 100, 0x351, FIND_PSYNERGY_STONE },
+    { SEARCH(SEARCH_UNNAMED), 100, FLAG_SUHALLA_DESERT_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { SEARCH(SEARCH_CHEST), 103, 0xfb1, FIND_ITEM(ITEM_VIRTUOUS_ARMLET) },
     { SEARCH(SEARCH_CHEST), 104, 0xfb2, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_CHEST), 101, 0xfb3, FIND_ITEM(ITEM_COOKIE) },
-    { SEARCH(SEARCH_CHEST), 102, 0xef6, 0x500006 },
+    { SEARCH(SEARCH_CHEST), 102, 0xef6, FIND_MIMIC | 6 },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, 1), ACTOR_FIRST_STORM, IF_FLAG_SET(FLAG_SCENE_TEMP_0F), EVENT_SCRIPT(Event_DouseCastAtStorm) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, 1), ACTOR_FIRST_STORM + 1, IF_FLAG_SET(FLAG_SCENE_TEMP_0F), EVENT_SCRIPT(Event_DouseCastAtStorm) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, 1), ACTOR_FIRST_STORM + 2, IF_FLAG_SET(FLAG_SCENE_TEMP_0F), EVENT_SCRIPT(Event_DouseCastAtStorm) },
@@ -1060,8 +1075,8 @@ struct SceneEvent gSuhallaDesertEventsOther[] = {
 struct SceneEvent gSuhallaDesertEvents3[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
      SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST},
-    {0x21, 2, CONDITION_ALWAYS, 2},
-    {0x31, 3, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 2, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS,
      SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_EAST},
     {SCENE_EVENTS_END},

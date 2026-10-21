@@ -1,5 +1,5 @@
 /// @file
-/// Hammet Palace (HammetPalace, scene 103), the rooms of Lord Hammet's palace
+/// Hammet Palace (SceneId_HammetPalace), the rooms of Lord Hammet's palace
 /// in Kalay. The scene before its door, also Hammet Palace in the game's area
 /// names, is kalay.c's HammetPalaceGrounds.
 ///
@@ -26,18 +26,20 @@
 ///   into Lunpa? That's far too dangerous!` and asks them not to go back
 ///   (FLAG_LAYANA_SCOLDED_LUNPA_VISIT); from then on she talks of Dodonpa's
 ///   greed.
-/// - Hammet's homecoming (entrance 9, the first time once Hammet is free,
-///   FLAG_LUNPA_TRADE_REOPENED; FLAG_HAMMET_HOMECOMING_SEEN). Hammet welcomes
-///   the party. Layana is harsh: she had told Ivan time and again not to go to
-///   Lunpa, and the rescue was Kalay's to make, when their quest is to recover
-///   the Elemental Stars. Ivan takes the blame and decides that they leave at
-///   once on Felix's trail, and Hammet sends them to Hesperia, the continent
-///   west of Angara, with the Shaman's Rod, as the Jupiter Adept said.
-///   Afterwards Hammet repeats it, Layana and the palace's people speak of
-///   keeping his return secret, and they tell of the door to the underground
-///   passage, where Hammet keeps his treasure, opened for the party in thanks:
-///   entering by entrance 10 or HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM
-///   with flag 0x915 set draws it open.
+/// - Hammet's homecoming (HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL, the
+///   first time once Hammet is free, FLAG_LUNPA_TRADE_REOPENED;
+///   FLAG_HAMMET_HOMECOMING_SEEN). Hammet welcomes the party. Layana is harsh:
+///   she had told Ivan time and again not to go to Lunpa, and the rescue was
+///   Kalay's to make, when their quest is to recover the Elemental Stars. Ivan
+///   takes the blame and decides that they leave at once on Felix's trail, and
+///   Hammet sends them to Hesperia, the continent west of Angara, with the
+///   Shaman's Rod, as the Jupiter Adept said. Afterwards Hammet repeats it,
+///   Layana and the palace's people speak of keeping his return secret, and
+///   they tell of the door to the underground passage, where Hammet keeps his
+///   treasure, opened for the party in thanks: entering by
+///   HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
+///   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM with flag 0x915 set draws it
+///   open.
 ///
 /// The people of the palace (ACTOR_TOWNSFOLK_WORRIER to ACTOR_SILK_TRADE_ASKER)
 /// have one line before Hammet is free and another after. Walking north into
@@ -238,13 +240,15 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets up the room the party enters by. In Layana's room (entrance 9), Hammet
-/// stands beside her once he is free, and his homecoming plays the first time;
-/// before that she stands elsewhere once the party has heard of him in Lunpa
-/// (FLAG_PLACE_TEMP_21). By the door to the underground passage (entrance 10
-/// and HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open
-/// once flag 0x915 is set. HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS
-/// is Ivan's report.
+/// Sets up the room the party enters by. In Layana's room
+/// (HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL), Hammet stands beside her
+/// once he is free, and his homecoming plays the first time; before that she
+/// stands elsewhere once the party has heard of him in Lunpa
+/// (FLAG_PLACE_TEMP_21). By the door to the underground passage
+/// (HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING and
+/// HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open once
+/// flag 0x915 is set. HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS is
+/// Ivan's report.
 static void HammetPalace_SetUpEntrance(void) {
   struct FieldActor *actor;
   s32 facing;
@@ -255,7 +259,7 @@ static void HammetPalace_SetUpEntrance(void) {
   Map_SetLayerEntryFlag(2);
 
   switch (gGameState.entrance) {
-  case 9:
+  case HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL:
     if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
       // Hammet is home.
       actor = Object_GetById(ACTOR_LAYANA);
@@ -276,7 +280,7 @@ static void HammetPalace_SetUpEntrance(void) {
     }
     break;
 
-  case 10:
+  case HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING:
   case HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM:
     if (Engine_GameFlagIsSet(0x915) != 0) {
       Map_CopyCellsTo(58, 70, 54, 70, 4, 3);
@@ -981,20 +985,32 @@ struct SceneEntrance gHammetPalaceEntrances[] = {
     {0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS, CONDITION_ALWAYS, 240, 0, 648,
      FACING_NORTH, 0, 45, 360, 440, 680, 0},
-    {2, CONDITION_ALWAYS, 88, 0, 552, FACING_SOUTH, 0, 45, 360, 440, 680, 0},
-    {3, CONDITION_ALWAYS, 392, 0, 552, FACING_SOUTH, 0, 45, 360, 440, 680, 0},
-    {4, CONDITION_ALWAYS, 240, 0, 408, FACING_SOUTH, 0, 45, 360, 440, 680, 0},
-    {5, CONDITION_ALWAYS, 152, 0, 432, FACING_SOUTH, 0, 45, 360, 440, 680, 0},
-    {6, CONDITION_ALWAYS, 264, 0, 136, FACING_NORTH, 0, 40, 20, 305, 285, 0},
-    {7, CONDITION_ALWAYS, 504, 0, 152, FACING_NORTH, 0, 380, 20, 755, 290, 0},
-    {8, CONDITION_ALWAYS, 448, 0, 112, FACING_SOUTH, 0, 380, 20, 755, 290, 0},
-    {9, CONDITION_ALWAYS, 864, 0, 576, FACING_NORTH, 0, 750, 370, 985, 635, 0},
-    {10, CONDITION_ALWAYS, 928, 0, 224, FACING_WEST, 0, 800, 20, 1040, 250, 0},
+    {HAMMET_PALACE_ENTRANCE_HALL_FROM_WEST_WING, CONDITION_ALWAYS, 88, 0, 552,
+     FACING_SOUTH, 0, 45, 360, 440, 680, 0},
+    {HAMMET_PALACE_ENTRANCE_HALL_FROM_EAST_WING, CONDITION_ALWAYS, 392, 0, 552,
+     FACING_SOUTH, 0, 45, 360, 440, 680, 0},
+    {HAMMET_PALACE_ENTRANCE_HALL_FROM_THRONE_ROOM, CONDITION_ALWAYS, 240, 0,
+     408, FACING_SOUTH, 0, 45, 360, 440, 680, 0},
+    {HAMMET_PALACE_ENTRANCE_HALL_FROM_LANDING, CONDITION_ALWAYS, 152, 0, 432,
+     FACING_SOUTH, 0, 45, 360, 440, 680, 0},
+    {HAMMET_PALACE_WEST_WING_FROM_ENTRANCE_HALL, CONDITION_ALWAYS, 264, 0, 136,
+     FACING_NORTH, 0, 40, 20, 305, 285, 0},
+    {HAMMET_PALACE_EAST_WING_FROM_ENTRANCE_HALL, CONDITION_ALWAYS, 504, 0, 152,
+     FACING_NORTH, 0, 380, 20, 755, 290, 0},
+    {HAMMET_PALACE_EAST_WING_FROM_PASSAGE_DOOR, CONDITION_ALWAYS, 448, 0, 112,
+     FACING_SOUTH, 0, 380, 20, 755, 290, 0},
+    {HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL, CONDITION_ALWAYS, 864, 0,
+     576, FACING_NORTH, 0, 750, 370, 985, 635, 0},
+    {HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING, CONDITION_ALWAYS, 928, 0, 224,
+     FACING_WEST, 0, 800, 20, 1040, 250, 0},
     {HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM, CONDITION_ALWAYS, 904, 0,
      72, FACING_SOUTH, 0, 800, 20, 1040, 250, 0},
-    {12, CONDITION_ALWAYS, 616, 0, 824, FACING_NORTH, 0, 465, 640, 705, 875, 0},
-    {13, CONDITION_ALWAYS, 128, 0, 808, FACING_EAST, 0, 20, 730, 260, 890, 0},
-    {14, CONDITION_ALWAYS, 168, 0, 808, FACING_SOUTH, 0, 20, 730, 260, 890, 0},
+    {HAMMET_PALACE_BEDROOM_FROM_LANDING, CONDITION_ALWAYS, 616, 0, 824,
+     FACING_NORTH, 0, 465, 640, 705, 875, 0},
+    {HAMMET_PALACE_LANDING_FROM_ENTRANCE_HALL, CONDITION_ALWAYS, 128, 0, 808,
+     FACING_EAST, 0, 20, 730, 260, 890, 0},
+    {HAMMET_PALACE_LANDING_FROM_BEDROOM, CONDITION_ALWAYS, 168, 0, 808,
+     FACING_SOUTH, 0, 20, 730, 260, 890, 0},
     {HAMMET_PALACE_THRONE_ROOM_FROM_HAMMET_PALACE_GROUNDS, CONDITION_ALWAYS,
      864, 0, 576, FACING_NORTH, 0, 750, 370, 985, 635, 0},
     {SCENE_TABLE_END},
@@ -1082,7 +1098,7 @@ struct SceneEvent gHammetPalaceEvents[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, HAMMET_PALACE_EAST_WING_TO_PASSAGE_DOOR },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, HAMMET_PALACE_THRONE_ROOM_TO_ENTRANCE_HALL },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, HAMMET_PALACE_PASSAGE_DOOR_TO_EAST_WING },
-    { 0x31, 11, CONDITION_ALWAYS, HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 11, CONDITION_ALWAYS, HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, HAMMET_PALACE_BEDROOM_TO_LANDING },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, HAMMET_PALACE_LANDING_TO_ENTRANCE_HALL },
     { TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },

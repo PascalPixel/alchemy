@@ -1,6 +1,7 @@
 /// @file
-/// Kolima and Kolima Forest (scene 40): the sparkling dust that falls when
-/// Tret's curse strikes. "That sparkly stuff on the ground... What is it?"
+/// Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
+/// the sparkling dust that falls when Tret's curse strikes. "That sparkly stuff
+/// on the ground... What is it?"
 #include "script.h"
 #include "types.h"
 #include "field_obj.h"

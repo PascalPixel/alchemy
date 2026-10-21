@@ -56,7 +56,7 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   FieldObject_WaitForMoveFar(pair[0]);
   target->update = ObjectGroup_ApplyRandomChildValues;
   AudioCommand_PlayFar(SE_130);
-  target->motionFlags = 4;
+  target->motionFlags = ACTOR_FLOATS;
 
   // Lift 32 pixels, a quarter pixel at a time.
   startY = target->y.fixed;

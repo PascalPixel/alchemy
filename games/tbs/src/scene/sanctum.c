@@ -1,13 +1,14 @@
 /// @file
 /// The Sanctum of Vale and of four towns on the party's way, which holds six
-/// places in one scene (SceneId_Sanctum, scene 9): the entrance the party comes
-/// in by decides which, and Sanctum_GetPlacements and Sanctum_GetEvents choose
-/// that place's tables by it. Spoken to from the front, each place's healer
-/// opens the Sanctum's services (Engine_SanctumOpen); from any other side the
-/// healer talks. Each place's door leads back out to its own town.
+/// places in one scene (SceneId_Sanctum): the entrance the party comes in by
+/// decides which, and Sanctum_GetPlacements and Sanctum_GetEvents choose that
+/// place's tables by it. Spoken to from the front, each place's healer opens
+/// the Sanctum's services (Engine_SanctumOpen); from any other side the healer
+/// talks. Each place's door leads back out to its own town.
 ///
-/// - Vale Sanctum (SANCTUM_FROM_VALE, SANCTUM_FROM_VALE_ERUPTION and the
-///   scene's own entrances 2 and 21), the Great Healer's, entered from Vale at
+/// - Vale Sanctum (SANCTUM_FROM_VALE, SANCTUM_FROM_VALE_ERUPTION,
+///   SANCTUM_VALE_UNUSED and SANCTUM_FROM_QUEST_RESTART), the Great Healer's,
+///   entered from Vale at
 ///   SANCTUM_FROM_VALE. Before the trip up Mt. Aleph, the Great Healer and two
 ///   other healers (ACTOR_WEST_HEALER and ACTOR_EAST_HEALER) speak of Psynergy:
 ///   "Wielders of Psynergy are called Adepts." After the eruption, the Great
@@ -23,14 +24,16 @@
 ///   (Sanctum_RequestQuestAcceptance). If he accepts, the Wise One appears to
 ///   the Great Healer, who relays its guidance (find the lighthouses, seek the
 ///   Djinn); the two are to leave the next day (Sanctum_ReceiveWiseOnesMission,
-///   FLAG_SANCTUM_QUEST_ACCEPTED), and SANCTUM_TO_VALE_GATE takes them to scene
-///   5 (vale_gate.c). If he refuses, the others talk of his choice, the Great
+///   FLAG_SANCTUM_QUEST_ACCEPTED), and SANCTUM_TO_VALE_GATE takes them to
+///   SceneId_ValeGate (vale_gate.c). If he refuses, the others talk of his
+///   choice, the Great
 ///   Healer asks again when spoken to (Event_ReconsiderQuest), heading for the
 ///   door draws a warning that the choice is final once outside the village,
 ///   and leaving anyway ends the game: `And so the world began drifting toward
 ///   its fated destruction...` The player can start again from the Great
-///   Healer, by the scene's own exit 20 to its entrance 21, which skips the
-///   account, or leave by SANCTUM_TO_CLEAR to scene 1
+///   Healer, by SANCTUM_TO_QUEST_RESTART to SANCTUM_FROM_QUEST_RESTART, which
+///   skips the
+///   account, or leave by SANCTUM_TO_CLEAR to SceneId_Clear
 ///   (Event_LeaveAfterRefusing). After the party has left Vale
 ///   (FLAG_PARTY_LEFT_VALE), and again after it has reached Kalay
 ///   (FLAG_REACHED_KALAY), the three talk of what the eruption and the Wise One
@@ -53,7 +56,7 @@
 ///   through Vault later (vault_revisit.c): the statue has been polished, and
 ///   the healer worries about earthquakes on Mt. Aleph.
 /// - Sanctum, the name the game gives every other entrance, which leaves only
-///   entrance 0; no exit leads there, and it places nobody.
+///   SANCTUM_DJINNIS_HOUSE; no exit leads there, and it places nobody.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -100,41 +103,41 @@
 
 // Scene temporary flags, in Vale Sanctum: 00 is set once the Great Healer has
 // warned Isaac that leaving the village cannot be undone; 01 marks the visit
-// after a refusal (entrance 21), which skips the account of Sol Sanctum.
+// after a refusal (SANCTUM_FROM_QUEST_RESTART), which skips the account of Sol
+// Sanctum.
 
 /// The placed actors, numbering the rows of the table Sanctum_GetPlacements
 /// returns for the entrance; the party's rows take their own ids. Every
 /// place's first row is its healer.
 enum SanctumActor {
-  /// The place's healer (sprite 0x79): the Great Healer in Vale Sanctum, its
-  /// own healer elsewhere.
+  /// The place's healer: the Great Healer in Vale Sanctum, its own healer
+  /// elsewhere.
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
   // Vale Sanctum (gSanctum_PlacementB, and gSanctum_PlacementD at the quest).
-  /// The western of Vale Sanctum's two other healers (sprite 0x7a), as Mind
-  /// Read hears a villager in vale_interiors_shops.c call the Sanctum's people:
-  /// "The
-  /// healers are supposed to guard Sol Sanctum." Before the quest: "Our
-  /// Psynergy was given to us by the sacred power of Mt. Aleph."
+  /// The western of Vale Sanctum's two other healers, as Mind Read hears a
+  /// villager in vale_interiors_shops.c call the Sanctum's people: "The healers
+  /// are supposed to guard Sol Sanctum." Before the quest: "Our Psynergy was
+  /// given to us by the sacred power of Mt. Aleph."
   ACTOR_WEST_HEALER,
   /// The eastern one. "Psynergy is a power that should only be used for
   /// good... Never for evil!"
   ACTOR_EAST_HEALER,
   // The quest (gSanctum_PlacementD).
-  ACTOR_DORA, ///< Isaac's mother (sprite 0x1f)
-  /// The Mayor, Garet's grandfather (sprite 0x75), as the Great Healer calls
-  /// him: "That is all, Mayor."
+  ACTOR_DORA, ///< Isaac's mother
+  /// The Mayor, Garet's grandfather, as the Great Healer calls him: "That is
+  /// all, Mayor."
   ACTOR_GARETS_GRANDFATHER,
-  ACTOR_WISE_ONE,          ///< appears to the Great Healer (sprite 0xfc)
+  ACTOR_WISE_ONE,          ///< appears to the Great Healer
   ACTOR_HEALER_AFTERIMAGE, ///< a copy of the Great Healer for its afterimages
   // Vault Sanctum and Bilibin Sanctum (gSanctum_PlacementC).
-  /// The other person of the Sanctum (sprite 0x7a), who wanders, and who
-  /// speaks of the healer as someone else and of "our teachings" and "our
-  /// meditations". In Vault: "I wonder if we'll ever see our stolen gold statue
-  /// again..."
+  /// The other person of the Sanctum, in the western healer's sprite, who
+  /// wanders, and who speaks of the healer as someone else and of "our
+  /// teachings" and "our meditations". In Vault: "I wonder if we'll ever see
+  /// our stolen gold statue again..."
   ACTOR_SANCTUM_MEMBER = ACTOR_FIRST_PLACED + 1,
-  /// Vault Sanctum's gold statue (sprite 0xdd, the Sanctum's gold statue that
-  /// a chest gives back in vault_interiors.c), placed off the map until the
-  /// thieves are jailed (FLAG_VAULT_THIEVES_JAILED).
+  /// Vault Sanctum's gold statue (the sprite of the one a chest gives back in
+  /// vault_interiors.c), placed off the map until the thieves are jailed
+  /// (FLAG_VAULT_THIEVES_JAILED).
   ACTOR_GOLD_STATUE
 };
 
@@ -182,8 +185,8 @@ const struct SceneRegion *Sanctum_GetRegions(void) { return NULL; }
 const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
 /// Chooses the actors by entrance: Vale Sanctum's Great Healer and two other
-/// healers (SANCTUM_FROM_VALE and entrance 2), the quest's gathering
-/// (SANCTUM_FROM_VALE_ERUPTION and entrance 21), the healer and
+/// healers (SANCTUM_FROM_VALE and SANCTUM_VALE_UNUSED), the quest's gathering
+/// (SANCTUM_FROM_VALE_ERUPTION and SANCTUM_FROM_QUEST_RESTART), the healer and
 /// ACTOR_SANCTUM_MEMBER of Vault Sanctum and Bilibin Sanctum
 /// (SANCTUM_FROM_VAULT, SANCTUM_FROM_VAULT_REVISIT,
 /// SANCTUM_FROM_VAULT_INTERIORS and SANCTUM_FROM_BILIBIN), the healer alone in
@@ -192,7 +195,7 @@ const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 const struct ScenePlacement *Sanctum_GetPlacements(void) {
   switch (gGameState.entrance) {
   case SANCTUM_FROM_VALE:
-  case 2:
+  case SANCTUM_VALE_UNUSED:
     return gSanctum_PlacementB;
 
   case SANCTUM_FROM_VAULT:
@@ -202,7 +205,7 @@ const struct ScenePlacement *Sanctum_GetPlacements(void) {
     return gSanctum_PlacementC;
 
   case SANCTUM_FROM_VALE_ERUPTION:
-  case 21:
+  case SANCTUM_FROM_QUEST_RESTART:
     return gSanctum_PlacementD;
 
   case SANCTUM_FROM_ALTIN:
@@ -217,7 +220,8 @@ const struct ScenePlacement *Sanctum_GetPlacements(void) {
 /// Chooses the events by entrance, and in Vale Sanctum before and after the
 /// quest by story flag: table A before the party has left Vale, E once it has
 /// (FLAG_PARTY_LEFT_VALE), F once it has reached Kalay (FLAG_REACHED_KALAY); D
-/// for the quest's visits (SANCTUM_FROM_VALE_ERUPTION and entrances 21 and 50).
+/// for the quest's visits (SANCTUM_FROM_VALE_ERUPTION,
+/// SANCTUM_FROM_QUEST_RESTART and SANCTUM_QUEST_UNUSED).
 const struct SceneEvent *Sanctum_GetEvents(void) {
   switch (gGameState.entrance) {
   case SANCTUM_FROM_VAULT:
@@ -226,8 +230,8 @@ const struct SceneEvent *Sanctum_GetEvents(void) {
   case SANCTUM_FROM_VAULT_REVISIT:
     return gSanctum_SceneTableC;
   case SANCTUM_FROM_VALE_ERUPTION:
-  case 21:
-  case 50:
+  case SANCTUM_FROM_QUEST_RESTART:
+  case SANCTUM_QUEST_UNUSED:
     return gSanctum_SceneTableD;
   case SANCTUM_FROM_XIAN:
     return gSanctum_SceneTableI;
@@ -405,11 +409,12 @@ static void Event_AskAboutPsynergyChanges(void) {
 
 /// Sets up the place for its entrance and plays its opening scene. Vault
 /// Sanctum places ACTOR_GOLD_STATUE once the thieves are jailed; Vale Sanctum's
-/// quest visits (SANCTUM_FROM_VALE_ERUPTION, and entrance 21 after a refusal,
-/// which sets FLAG_SCENE_TEMP_01) restore the floor and play the request,
-/// unless the party is returning after a battle.
+/// quest visits (SANCTUM_FROM_VALE_ERUPTION, and SANCTUM_FROM_QUEST_RESTART
+/// after a refusal, which sets FLAG_SCENE_TEMP_01) restore the floor and play
+/// the request, unless the party is returning after a battle.
 s32 Sanctum_Initialize(void) {
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_EventWait(1);
@@ -433,7 +438,7 @@ s32 Sanctum_Initialize(void) {
   case SANCTUM_FROM_BILIBIN:
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     break;
-  case 21:
+  case SANCTUM_FROM_QUEST_RESTART:
     Sanctum_RestoreQuestFloor();
     Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -467,9 +472,10 @@ static void Event_WarnBeforeLeaving(void) {
 
 /// Vale Sanctum: leaving after refusing the quest (cell code 1) ends the game.
 /// The room turns sepia: `And so the world began drifting toward its fated
-/// destruction...` Starting again from the Great Healer takes the scene's own
-/// exit 20, back to its entrance 21; the other choices take SANCTUM_TO_CLEAR,
-/// to scene 1.
+/// destruction...` Starting again from the Great Healer takes
+/// SANCTUM_TO_QUEST_RESTART, back to SANCTUM_FROM_QUEST_RESTART; the other
+/// choices take SANCTUM_TO_CLEAR,
+/// to SceneId_Clear.
 static void Event_LeaveAfterRefusing(void) {
   struct BattleEffectBuffers *paletteWork;
 
@@ -501,7 +507,7 @@ static void Event_LeaveAfterRefusing(void) {
   Engine_EventWait(60);
   if (Sanctum_ChooseRestartOption() == 0) {
     Engine_EventEnd();
-    Engine_EventRequestExit(20);
+    Engine_EventRequestExit(SANCTUM_TO_QUEST_RESTART);
   } else {
     Engine_EventEnd();
     Engine_EventRequestExit(SANCTUM_TO_CLEAR);
@@ -560,9 +566,9 @@ static inline void Sanctum_ShowAllEmotes(void) {
   Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | 2, 0);
 }
 
-/// Vale Sanctum, SANCTUM_FROM_VALE_ERUPTION and entrance 21: the gathering
-/// hears what happened in Sol Sanctum (skipped after a refusal), the Great
-/// Healer explains the Wise One's warning, and asks Isaac to accept
+/// Vale Sanctum, SANCTUM_FROM_VALE_ERUPTION and SANCTUM_FROM_QUEST_RESTART: the
+/// gathering hears what happened in Sol Sanctum (skipped after a refusal), the
+/// Great Healer explains the Wise One's warning, and asks Isaac to accept
 /// responsibility for the fate of the land. Accepting plays
 /// Sanctum_ReceiveWiseOnesMission, sets FLAG_SANCTUM_QUEST_ACCEPTED and takes
 /// SANCTUM_TO_VALE_GATE; refusing leaves the room to table D's events.
@@ -591,7 +597,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventWait(1);
     Camera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
     Engine_CameraWaitForMove();
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     // Reenact the journey before explaining the quest.
@@ -2023,8 +2030,9 @@ static void Event_TalkToHealer(void) {
 /// Vault Sanctum: talking to the healer. From the front the healer opens the
 /// Sanctum's services; otherwise the healer speaks of the gold statue or, on
 /// the later visit, of the earthquakes. Its case for the quest's entrances
-/// (SANCTUM_FROM_VALE_ERUPTION and entrances 21 and 50) passes to
-/// Event_ReconsiderQuest, though their table D calls that directly.
+/// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
+/// SANCTUM_QUEST_UNUSED) passes to Event_ReconsiderQuest, though their table D
+/// calls that directly.
 static void Event_TalkToHealerOnVisit(void) {
   s32 entrance;
 
@@ -2050,8 +2058,8 @@ static void Event_TalkToHealerOnVisit(void) {
     Engine_EventSetMessage(MsgSanctumMayWrongButLatelyThere);
     break;
   case SANCTUM_FROM_VALE_ERUPTION:
-  case 21:
-  case 50:
+  case SANCTUM_FROM_QUEST_RESTART:
+  case SANCTUM_QUEST_UNUSED:
     Engine_EventEnd();
     Event_ReconsiderQuest();
     return;
@@ -2214,12 +2222,12 @@ s32 gSanctum_ItemIconEndScript[] = {
 struct SceneEntrance gSanctum_Entrances[] = {
     { SANCTUM_DJINNIS_HOUSE, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SANCTUM_FROM_VALE, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
-    { 2, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
+    { SANCTUM_VALE_UNUSED, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT_INTERIORS, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VALE_ERUPTION, CONDITION_ALWAYS, 192, 0, 168, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
-    { 21, CONDITION_ALWAYS, 192, 0, 168, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
+    { SANCTUM_FROM_QUEST_RESTART, CONDITION_ALWAYS, 192, 0, 168, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
     { SANCTUM_FROM_ALTIN, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
     { SANCTUM_FROM_XIAN, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },
     { SANCTUM_FROM_BILIBIN, CONDITION_ALWAYS, 200, 0, 240, FACING_NORTH, 0, 128, 0, 320, 272, 0 },

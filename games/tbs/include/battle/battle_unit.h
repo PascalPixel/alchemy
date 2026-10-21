@@ -88,12 +88,14 @@ enum AbilityKind {
 /// applied by BattleTargetExec unless noted. Each is named for the abilities
 /// that have it (actions.tsv, with their English names and descriptions).
 /// ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are read by no code
-/// here, and no row has an effect between ABILITY_EFFECT_NONE and
-/// ABILITY_EFFECT_CURE_POISON. A stat
+/// here, and no row has ABILITY_EFFECT_RESTORE_HP or ABILITY_EFFECT_RESTORE_PP.
+/// A stat
 /// change whose name ends in `_2` moves its stat two stages, one without moves
 /// it one.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
+  ABILITY_EFFECT_RESTORE_HP = 1,         ///< restores HP (the item menu's use)
+  ABILITY_EFFECT_RESTORE_PP = 2,         ///< restores PP (the item menu's use)
   ABILITY_EFFECT_CURE_POISON = 3,        ///< Cure Poison, Antidote
   ABILITY_EFFECT_RESTORE = 4,            ///< Restore, Elixir
   ABILITY_EFFECT_REVIVE = 5,             ///< Revive, Water of Life: full HP
@@ -167,10 +169,37 @@ enum AbilityEffect {
   ABILITY_EFFECT_PSY_LEECH = 69           ///< Psy Leech
 };
 
+/// BattleAct.targetMode: whom an ability may target, from its user's view.
+/// The party's cursor (BattleTarget_RunSelection) shows the enemies for every
+/// mode but TARGET_MODE_ALLIES and TARGET_MODE_SELF. No row of actions.tsv has
+/// a mode between TARGET_MODE_ALLIES and TARGET_MODE_SELF or above it;
+/// BattlePlan_SetTargets would walk such a mode's range as it does
+/// TARGET_MODE_FOES'.
+enum TargetMode {
+  /// The ability takes one target, the aimed unit, whatever its range
+  /// (BattlePlan_SetTargets), and an enemy aims it at itself. The field
+  /// Psynergy and enemies' commands such as Threaten, Ally Search and Flee
+  /// have it.
+  TARGET_MODE_NONE = 0,
+  TARGET_MODE_FOES = 1,
+  TARGET_MODE_ALLIES = 2, ///< the user's side, the user included
+  TARGET_MODE_SELF = 4    ///< the user alone, whatever the range
+};
+
+/// BattleUnit.restraint bits, the curse.
+enum RestraintFlag {
+  RESTRAINT_BOUND = 0x01,       ///< the unit is bound
+  RESTRAINT_CURSED_ITEM = 0x02, ///< a cursed item is equipped
+  RESTRAINT_KEEP_BOUND = 0x04,  ///< keeps RESTRAINT_BOUND through UnitCalc
+  /// ITEM_EFFECT_CURSE_REMOVABLE: UnitCalc clears it again with
+  /// RESTRAINT_BOUND.
+  RESTRAINT_REMOVABLE = 0x08
+};
+
 /// An ability's definition, a row of gBattleAction_DefinitionTable: its
 /// targeting, ability kind, element, effect, range, PP cost and power.
 struct BattleAct {
-  u8 targetMode; ///< TARGET_MODE_NONE, _FOES, _ALLIES or _SELF
+  u8 targetMode; ///< enum TargetMode
   /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
   /// row | 3..0 ability kind (ABILITY_KIND_MASK).
   u8 flags;
@@ -301,11 +330,10 @@ struct BattleUnit {
   /// (n * n + n) * 5 power (UnitCalc). Cleared at the battle's start, on
   /// going down and by Break.
   s8 elementLevels[NUM_ELEMENTS];
-  /// The curse. bits: 3 ITEM_EFFECT_25 (UnitCalc clears it again with bit 0)
-  /// | 2 keeps bit 0 | 1 cursed item equipped | 0 bound. UnitCalc rebuilds
-  /// bits 1 and 0 from the equipment. A bound unit loses one action in four,
-  /// except Defend (BattleCommand_BuildPlan); any bit set shows the curse in
-  /// the status screens and lets the sanctum remove it.
+  /// The curse: RestraintFlag bits. UnitCalc rebuilds RESTRAINT_BOUND and
+  /// RESTRAINT_CURSED_ITEM from the equipment. A bound unit loses one action in
+  /// four, except Defend (BattleCommand_BuildPlan); any bit set shows the curse
+  /// in the status screens and lets the sanctum remove it.
   s8 restraint;
   s8 poison; ///< POISON_NORMAL or POISON_DEADLY, 0 for none
   /// Each stat change: the turns it has left, and its stage (UnitCalc: an

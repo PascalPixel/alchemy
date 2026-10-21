@@ -1,13 +1,14 @@
 /// @file
-/// Inside Bilibin's buildings: scene 31, a row the scene table leaves without
-/// a symbol, whose area name is Bilibin. Six of Bilibin's doors
-/// (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, in bilibin.c) lead into
-/// its rooms, and each room's door leads back out to the door it was entered
-/// by. One room holds the weapon and armor shops, another the item shop, a
-/// third the inn with the restaurant beside it, whose stairs (exits 7 and
-/// 8) lead up to its upstairs rooms; three other buildings hold villagers.
-/// BilibinInteriors_GetPlacements leaves out the actors of the rooms not in
-/// view.
+/// Inside Bilibin's buildings: SceneId_BilibinInteriors, whose area name is
+/// Bilibin. Six of Bilibin's doors (BILIBIN_TO_INN to
+/// BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, in bilibin.c) lead into its rooms, and
+/// each room's door leads back out to the door it was entered by. One room
+/// holds the weapon and armor shops, another the item shop, a third the inn
+/// with the restaurant beside it, whose stairs
+/// (BILIBIN_INTERIORS_INN_TO_INN_UPSTAIRS and
+/// BILIBIN_INTERIORS_INN_UPSTAIRS_TO_INN) join it to its upstairs
+/// rooms; three other buildings hold villagers. BilibinInteriors_GetPlacements
+/// leaves out the actors of the rooms not in view.
 ///
 /// The party first comes in while Kolima's curse holds
 /// (FLAG_KOLIMA_CURSE_LIFTED clear), and the townsfolk explain what the street
@@ -351,7 +352,7 @@ static void Event_TalkAboutMeal(void) {
 }
 
 /// Mind Read on the villager in Bilibin who admires Mia, before the curse is
-/// lifted: with Mia in the party (flags 0 to 7 say who is), even frozen Imil
+/// lifted: with Mia in the party (FLAG_IN_PARTY says who is), even frozen Imil
 /// must feel warm with her around; without her, the villager hopes to see her
 /// again in spring.
 static void Event_ReadMiaAdmirersMind(void) {
@@ -400,7 +401,8 @@ struct SceneEntrance gBilibinInteriorsEntrances[] = {
      0, 400, 304, 640, 552, 0},
     {BILIBIN_INTERIORS_INN, CONDITION_ALWAYS, 352, 0, 872, FACING_NORTH, 0, 0,
      640, 400, 896, 0},
-    {7, CONDITION_ALWAYS, 656, 0, 696, FACING_WEST, 0, 432, 640, 848, 896, 0},
+    {BILIBIN_INTERIORS_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 656, 0, 696,
+     FACING_WEST, 0, 432, 640, 848, 896, 0},
     {BILIBIN_INTERIORS_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 344, 0, 696,
      FACING_EAST, 0, 0, 640, 400, 896, 0},
     {SCENE_TABLE_END},

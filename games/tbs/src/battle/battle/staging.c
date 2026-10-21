@@ -311,7 +311,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   // not targeted fade out over 16 frames (and the actor too, for
   // TRANSITION_HIDE_ACTOR).
   BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
-  PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
+  PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObjGet(actor)->object;
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, units);
@@ -518,7 +518,7 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
   BattlePres_BuildTargetList(plan, &work.effect);
   // Severe Blow drops the status window's PP row while it plays.
   if (work.effect.kind == STAGING_KIND_SEVERE_BLOW)
-    PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
+    PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
 
   unit = UnitGetFar(work.effect.actor);
   UnitGetFar(work.effect.actors[0]);
@@ -931,7 +931,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   if (isDjinni)
     work.effect.prelude = 1;
   BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
-  PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
+  PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObjGet(work.effect.actor)->object;
   ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);

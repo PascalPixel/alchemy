@@ -507,9 +507,9 @@ void FieldFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
   particle->acceleration = (velocityZ - (roundedZ >> 4));
 }
 
-/// Kicks up a dust puff (object 222) where source stands: it flies off toward
-/// the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with one
-/// of two animations. A nonzero param is given to its sprite parts
+/// Kicks up a dust puff (SPRITE_DUST_PUFF) where source stands: it flies off
+/// toward the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with
+/// one of two animations. A nonzero param is given to its sprite parts
 /// (ObjectGroup_SetChildValue). Only Actor_JumpDownLedge calls it.
 void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
   struct FieldActor *object;
@@ -517,7 +517,7 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
   s32 speed;
 
   object = (struct FieldActor *)Object_CreateFar(
-      222, source->x.fixed, source->y.fixed, source->z.fixed);
+      SPRITE_DUST_PUFF, source->x.fixed, source->y.fixed, source->z.fixed);
   if (object != 0) {
     child = object->sprite;
     switch (Random16() & 1) {

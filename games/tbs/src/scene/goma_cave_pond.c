@@ -1,10 +1,11 @@
 /// @file
-/// Goma Cave (GomaCavePond, scene 26), the room below the room of two pillars
+/// Goma Cave (SceneId_GomaCavePond), the room below the room of two pillars
 /// and a stump, in the cave in the Goma Range that the mayor of Vault tells the
 /// party to pass through on the way to Bilibin.
 ///
 /// The room is reached only from the room above (goma_cave_pillar.c): its
-/// three exits lead back up to that room's entrances 4, 5 and 3. It has no
+/// three exits lead back up to that room's
+/// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
 /// events of its own. Its one placed actor is the stump the party pushes over
 /// the edge up there with Move: once it has fallen (FLAG_GOMA_CAVE_STUMP_FELL),
 /// entering finds it lying flat underfoot where it landed, and the map cells it

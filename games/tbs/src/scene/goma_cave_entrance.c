@@ -1,5 +1,5 @@
 /// @file
-/// Goma Cave Entrance (GomaCaveEntrance, scene 25), the mouth of the cave in
+/// Goma Cave Entrance (SceneId_GomaCaveEntrance), the mouth of the cave in
 /// the Goma Range that leads from Vault to Bilibin, where Ivan rejoins the
 /// party.
 ///
@@ -32,8 +32,9 @@
 ///
 /// Scene_Initialize blocks Retreat and puts everything back as these flags say:
 /// the stump where it landed, the pillars on their columns and the map cells
-/// that go with them. Exit 1 leads into Goma Cave (GomaCaveStream, scene 28)
-/// and exit 2 out to the world map.
+/// that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma
+/// Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
+/// world map.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
 #include "unit/scene/common/effect_spawn.h"

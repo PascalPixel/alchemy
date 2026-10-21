@@ -37,11 +37,11 @@
 ///   pillar (ACTOR_SOUTHERN_PILLAR) goes onto its switch by pushing
 ///   (Event_PushSouthernPillar) or Move (Event_MoveSouthernPillar); once it
 ///   rests there the puzzle chime plays and the switch opens the way
-///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In the puddle room, six objects
-///   (ACTOR_FIRST_FALLING_OBJECT and the five after it) fall at random, one
+///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In the puddle room, six drops of
+///   water (ACTOR_FIRST_WATER_DROP and the five after it) fall at random, one
 ///   every 64 frames, over six puddles (ACTOR_WEST_UPPER_PUDDLE to
 ///   ACTOR_FAR_EAST_PUDDLE) that Frost freezes. A frozen puddle changes its
-///   map cell, and an object falling onto it stops 32 pixels up instead of
+///   map cell, and a drop falling onto it stops 32 pixels up instead of
 ///   reaching the floor (VaultCave_UpdateFrostControlledFallingObjects); while
 ///   the leader is 16 pixels or more above the floor, the puddles are drawn
 ///   beneath him. The six frozen states are FLAG_SCENE_TEMP_00 to _05, read by
@@ -50,10 +50,10 @@
 ///   stays in the cave (FLAG_WHIRLWIND_USED, a place flag). A chest holds the
 ///   Vambrace.
 /// - Vault Cave (SceneId_VaultCaveMouth). In its northern room four
-///   objects (ACTOR_FIRST_TIMED_FALLING_OBJECT and the three after it) fall on
+///   water drops (ACTOR_FIRST_TIMED_WATER_DROP and the three after it) fall on
 ///   a fixed schedule (gVaultCave_ScheduleFrames) while the party pushes or
 ///   Moves a pillar (ACTOR_NORTHERN_PILLAR) onto its switch
-///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A falling object that lands on
+///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A water drop that lands on
 ///   that pillar marks it struck (FLAG_NORTH_PILLAR_STRUCK, SE_204), and a
 ///   struck pillar no longer opens the switch until the room is entered again.
 ///   VAULT_CAVE_MOUTH_TO_VAULT_REVISIT leads out to Vault
@@ -62,7 +62,7 @@
 /// Each room has a door that only says it is locked (Event_ShowLockedDoor).
 /// The pushes share VaultCave_PushPillarAhead, which moves the pillar the
 /// leader faces one cell unless another actor or the terrain is in the way, and
-/// the falling objects run as scene callbacks started by Scene_Initialize.
+/// the water drops run as scene callbacks started by Scene_Initialize.
 
 #include "game_state.h"
 #include "unit/field/field.h"
@@ -112,14 +112,31 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source);
 /// Scene flags. The six puddles of SceneId_VaultCaveVambrace keep their frozen
 /// state in six flags in a row, read by index as well.
 enum {
+  /// The upper western puddle, the first of the six.
+  /// ★ Named from what the player sees: six puddles of water in the floor of
+  /// the puddle room, under the falling drops (its render)
   FLAG_WEST_UPPER_FROZEN = FLAG_SCENE_TEMP_00,
+  /// ★ Named from what the player sees: the western puddle of the lower row
+  /// (its render)
   FLAG_WEST_LOWER_FROZEN = FLAG_SCENE_TEMP_01,
+  /// ★ Named from what the player sees: the lower row's puddle just east of
+  /// the western one (its render)
   FLAG_INNER_WEST_LOWER_FROZEN = FLAG_SCENE_TEMP_02,
+  /// ★ Named from what the player sees: the eastern puddle of the upper row
+  /// (its render)
   FLAG_EAST_UPPER_FROZEN = FLAG_SCENE_TEMP_03,
+  /// ★ Named from what the player sees: the eastern puddle of the lower row
+  /// (its render)
   FLAG_EAST_LOWER_FROZEN = FLAG_SCENE_TEMP_04,
+  /// ★ Named from what the player sees: the easternmost puddle, between the
+  /// rows (its render)
   FLAG_FAR_EAST_FROZEN = FLAG_SCENE_TEMP_05,
-  /// A falling object struck the northern pillar before it reached its switch.
+  /// A water drop struck the northern pillar before it reached its switch.
+  /// ★ Named from what the player sees: the pillar the leader pushes toward
+  /// its switch in the northern room of SceneId_VaultCaveMouth (its render)
   FLAG_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
+  /// Whirlwind has blown the bush away.
+  /// ★ Named from the game: "Whirlwind" (MsgAbilityName)
   FLAG_WHIRLWIND_USED = FLAG_SCENE_TEMP_00 + 0x100
 };
 
@@ -130,26 +147,45 @@ enum VaultCaveVambraceActor {
   /// southern switch, drawn underfoot when the party arrives by
   /// VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH or
   /// VAULT_CAVE_VAMBRACE_SOUTH_FROM_PUDDLES.
+  /// ★ Named from what the player sees: a pink stone pillar with a flame
+  /// burning on top (its render)
   ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// Pushed or Moved onto the southern switch, map cell (15, 54).
+  /// ★ Named from what the player sees: a pink stone pillar with a flame
+  /// burning on top, beside the switch marked with a flame (its render)
   ACTOR_SOUTHERN_PILLAR,
-  /// The first of six objects (in the sprite VaultCave_SpawnPuffs also uses
-  /// for the puffs where one lands) that fall at random, one every 64 frames
-  /// (VaultCave_UpdateFrostControlledFallingObjects). XXX: no text or other
-  /// scene names their sprite; what it shows would say what falls.
-  ACTOR_FIRST_FALLING_OBJECT,
-  /// The six puddles under the falling objects, in their order and in the
+  /// The first of six water drops (in the sprite VaultCave_SpawnPuffs also
+  /// uses for the puffs where one lands) that fall at random, one every 64
+  /// frames (VaultCave_UpdateFrostControlledFallingObjects).
+  /// ★ Named from what the player sees: blue drops of water above the puddles
+  /// (its render)
+  ACTOR_FIRST_WATER_DROP,
+  /// The six puddles under the water drops, in their order and in the
   /// order of their flags (FLAG_WEST_UPPER_FROZEN to FLAG_FAR_EAST_FROZEN).
   /// Drawn as the puddle that Frost freezes into an ice pillar in
-  /// bilibin_cave.c; frozen, a puddle stops a falling object 32 pixels up.
-  ACTOR_WEST_UPPER_PUDDLE = ACTOR_FIRST_FALLING_OBJECT + 6,
+  /// bilibin_cave.c; frozen, a puddle stops a water drop 32 pixels up.
+  /// ★ Named from what the player sees: six blue puddles on the cave floor,
+  /// each under a drop of water (its render)
+  ACTOR_WEST_UPPER_PUDDLE = ACTOR_FIRST_WATER_DROP + 6,
+  /// ★ Named from what the player sees: the western puddle of the lower row
+  /// (its render)
   ACTOR_WEST_LOWER_PUDDLE,
+  /// ★ Named from what the player sees: the lower row's puddle just east of it
+  /// (its render)
   ACTOR_INNER_WEST_LOWER_PUDDLE,
+  /// ★ Named from what the player sees: the eastern puddle of the upper row
+  /// (its render)
   ACTOR_EAST_UPPER_PUDDLE,
+  /// ★ Named from what the player sees: the eastern puddle of the lower row
+  /// (its render)
   ACTOR_EAST_LOWER_PUDDLE,
+  /// ★ Named from what the player sees: the easternmost puddle, between the
+  /// rows (its render)
   ACTOR_FAR_EAST_PUDDLE,
   /// A bush, as in bilibin.c, drawn half as tall again, placed
   /// until Whirlwind blows it away (FLAG_WHIRLWIND_USED).
+  /// ★ Named from what the player sees: a leafy green bush against the cave
+  /// wall (its render)
   ACTOR_BUSH
 };
 
@@ -157,16 +193,23 @@ enum VaultCaveVambraceActor {
 /// gVaultCavePlacements3. The northern switch is map cell (16, 12).
 enum VaultCaveMouthActor {
   /// A pillar two cells east of the northern switch.
+  /// ★ Named from what the player sees: a pink stone pillar with a flame
+  /// burning on top (its render)
   ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// A pillar two cells south of the northern switch, which Move leaves where
   /// it is (Event_IgnoreMove).
+  /// ★ Named from what the player sees: a pink stone pillar, its flame out
+  /// (its render)
   ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH,
   /// Pushed or Moved onto the northern switch.
+  /// ★ Named from what the player sees: a pink stone pillar with a flame
+  /// burning on top (its render)
   ACTOR_NORTHERN_PILLAR,
-  /// The first of four objects, in the falling objects' sprite, that fall on a
-  /// fixed schedule
-  /// (VaultCave_UpdateTimedFallingObjects).
-  ACTOR_FIRST_TIMED_FALLING_OBJECT
+  /// The first of four water drops, in the same sprite, that fall on a fixed
+  /// schedule (VaultCave_UpdateTimedFallingObjects).
+  /// ★ Named from what the player sees: blue drops of water on the cave floor
+  /// (its render)
+  ACTOR_FIRST_TIMED_WATER_DROP
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -202,7 +245,7 @@ const u32 *Scene_GetExits(void) {
   return gVaultCaveExitsOther;
 }
 
-/// Selects the pillars, falling objects, puddles and bush of the room.
+/// Selects the pillars, water drops, puddles and bush of the room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -292,11 +335,10 @@ static void VaultCave_PushPillarAhead(void) {
 #endif
     return;
   }
-  // SceneId_VaultCaveMouth's falling objects are never pushed; in
-  // SceneId_VaultCaveVambrace these slots hold falling objects too.
+  // SceneId_VaultCaveMouth's water drops are never pushed; in
+  // SceneId_VaultCaveVambrace these slots hold water drops too.
   for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
-    if (pillar ==
-        Object_GetById(fallingIndex + ACTOR_FIRST_TIMED_FALLING_OBJECT)) {
+    if (pillar == Object_GetById(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP)) {
       return;
     }
   }
@@ -466,7 +508,7 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
 }
 
 /// In VaultCaveMouth's northern room, pushing the northern pillar; it opens its
-/// switch only if no falling object has struck it.
+/// switch only if no water drop has struck it.
 static void Event_PushNorthernPillar(void) {
   VaultCave_PushPillarAhead();
   VaultCave_CompleteNorthernSwitch();
@@ -699,14 +741,14 @@ static void Event_FlipSwitch(void) {
   }
 }
 
-/// Resets a low falling object sharing the subject's cell and reports a hit.
+/// Resets a low water drop sharing the subject's cell and reports a hit.
 static s32 VaultCave_ResetFallingObjectAtActorCell(s32 subjectActorId) {
   struct FieldActor *subject = Object_GetById(subjectActorId);
   s32 fallingIndex = 0;
 
   do {
     struct FieldActor *fallingActor =
-        Object_GetById(fallingIndex + ACTOR_FIRST_TIMED_FALLING_OBJECT);
+        Object_GetById(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 
     if ((u32)(fallingActor->y.fixed - 1) <= 0x000ffffe) {
       s32 fallingRow = TILE(fallingActor->z.fixed);
@@ -744,8 +786,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
     }
     scheduleIndex = gVaultCave_ScheduleIndex;
     if (gVaultCave_ScheduleFrames[scheduleIndex] == gVaultCave_ScheduleTimer) {
-      fallingActor =
-          Actor_Get((scheduleIndex + ACTOR_FIRST_TIMED_FALLING_OBJECT));
+      fallingActor = Actor_Get((scheduleIndex + ACTOR_FIRST_TIMED_WATER_DROP));
       fallingActor->gravity = 0xa3d;
       if (++gVaultCave_ScheduleIndex > 3) {
         gVaultCave_ScheduleIndex = 0;
@@ -753,8 +794,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
     }
     // Reset objects that have reached the floor and spawn their landing puffs.
     for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
-      fallingActor =
-          Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_FALLING_OBJECT));
+      fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
       if (fallingActor->velocityY >= 0) {
         if (fallingActor->y.fixed <= 0xffff) {
           VaultCave_SpawnPuffs(fallingActor);
@@ -766,7 +806,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
         }
       }
     }
-    // A falling object landing on either movable pillar restarts at the top.
+    // A water drop landing on either movable pillar restarts at the top.
     if (VaultCave_ResetFallingObjectAtActorCell(ACTOR_NORTHERN_PILLAR) != 0) {
       Engine_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 1);
       if (GameFlag_IsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
@@ -792,7 +832,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
   s32 stateValue;
   s32 *selectedIndex;
 
-  fallingActor = Object_GetById(ACTOR_FIRST_FALLING_OBJECT);
+  fallingActor = Object_GetById(ACTOR_FIRST_WATER_DROP);
   if (fallingActor->paused == 0) {
     // Preserve one random selection per 64 frames.
     if ((++gVaultCave_TickCounter & 63) == 0) {
@@ -800,13 +840,12 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
       stateValue = Engine_RandomNext();
       stateValue = Math_RemainderUnsigned(stateValue, 6);
       *selectedIndex = stateValue;
-      fallingActor = Object_GetById((stateValue + ACTOR_FIRST_FALLING_OBJECT));
+      fallingActor = Object_GetById((stateValue + ACTOR_FIRST_WATER_DROP));
       fallingActor->gravity = 0xa3d;
     }
     // Each object's paired Frost flag selects its reset height.
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
-      fallingActor =
-          Object_GetById((fallingIndex + ACTOR_FIRST_FALLING_OBJECT));
+      fallingActor = Object_GetById((fallingIndex + ACTOR_FIRST_WATER_DROP));
       stateValue =
           Engine_GameFlagIsSet((fallingIndex + FLAG_WEST_UPPER_FROZEN));
       if (stateValue != 0) {
@@ -875,9 +914,9 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source) {
   }
 }
 
-/// Initializes six falling objects and starts their Frost-controlled updater.
+/// Initializes six water drops and starts their Frost-controlled updater.
 static void VaultCave_StartFrostControlledFalls(void) {
-  s32 actorSlot = ACTOR_FIRST_FALLING_OBJECT;
+  s32 actorSlot = ACTOR_FIRST_WATER_DROP;
   s32 remaining = 5;
 
   do {
@@ -896,9 +935,9 @@ static void VaultCave_StartFrostControlledFalls(void) {
                              TASK_PRIORITY_SCENE);
 }
 
-/// Initializes four falling objects and starts their timed updater.
+/// Initializes four water drops and starts their timed updater.
 static void VaultCave_StartTimedFalls(void) {
-  s32 actorSlot = ACTOR_FIRST_TIMED_FALLING_OBJECT;
+  s32 actorSlot = ACTOR_FIRST_TIMED_WATER_DROP;
   s32 fallingIndex = 0;
 
   do {
@@ -909,8 +948,8 @@ static void VaultCave_StartTimedFalls(void) {
     fallingActor->bounce = 0x1999;
     fallingActor->gravity = 0;
     fallingActor->y.fixed = PIXELS(255);
-    Engine_ActorSetSpritePriority(
-        fallingIndex + ACTOR_FIRST_TIMED_FALLING_OBJECT, 1);
+    Engine_ActorSetSpritePriority(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP,
+                                  1);
     fallingIndex++;
     actorSlot++;
   } while (fallingIndex <= 3);
@@ -1029,10 +1068,10 @@ s32 Scene_Initialize(void) {
     case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
     case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
       VaultCave_StartTimedFalls();
-      Object_GetById(ACTOR_FIRST_TIMED_FALLING_OBJECT)->collisionFlags = 2;
-      Object_GetById(ACTOR_FIRST_TIMED_FALLING_OBJECT + 1)->collisionFlags = 2;
-      Object_GetById(ACTOR_FIRST_TIMED_FALLING_OBJECT + 2)->collisionFlags = 2;
-      Object_GetById(ACTOR_FIRST_TIMED_FALLING_OBJECT + 3)->collisionFlags = 2;
+      Object_GetById(ACTOR_FIRST_TIMED_WATER_DROP)->collisionFlags = 2;
+      Object_GetById(ACTOR_FIRST_TIMED_WATER_DROP + 1)->collisionFlags = 2;
+      Object_GetById(ACTOR_FIRST_TIMED_WATER_DROP + 2)->collisionFlags = 2;
+      Object_GetById(ACTOR_FIRST_TIMED_WATER_DROP + 3)->collisionFlags = 2;
       Object_GetById(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH)->collisionFlags = 1;
       Object_GetById(ACTOR_NORTHERN_PILLAR)->collisionFlags = 1;
       Object_GetById(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags = 1;
@@ -1265,7 +1304,7 @@ struct SceneEvent gVaultCaveEvents1[] = {
     { EVENT_EXIT, 13, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_POOL_TO_NORTH_EAST },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FlipSwitch) },
     { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_PASSAGE_CHEST, FIND_MIMIC | 3 },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_PASSAGE_MIMIC_BEATEN, FIND_MIMIC | 3 },
     { SCENE_EVENTS_END },
 };
 

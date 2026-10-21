@@ -31,7 +31,7 @@
 /// - Flint (cell 90, until he is caught), bobbing on the map: the first
 ///   Djinni, a Venus Djinni separated from his comrades when the volcano
 ///   erupted, asks to come along, joins whatever the answer, teaches how Djinn
-///   are set and put on standby (FLAG_DJINN_TUTORIAL and its two parts), and
+///   are set and put on standby (FLAG_DJINN_LESSON and its two parts), and
 ///   a tutorial battle follows.
 /// - Vault, the first time (touching ACTOR_PLACE_VAULT):
 ///   WORLD_MAP_HAMMETS_CARAVAN_LEAVES plays Hammet's caravan leaving Vault for
@@ -170,52 +170,107 @@ enum { CONTACT_LAST_ACTOR = 65, CONTACT_TRIGGER_BASE = 100 };
 enum WorldMapActor {
   /// The Venus Djinni: Flint, bobbing on the map until the party meets him,
   /// and later Vine.
+  /// ★ Named from the game: "The Venus Djinni" (MsgVenusDjinnJoined)
   ACTOR_VENUS_DJINNI = ACTOR_FIRST_PLACED,
-  ACTOR_MARS_DJINNI,    ///< Corona
-  ACTOR_MERCURY_DJINNI, ///< Hail
+  /// Corona.
+  /// ★ Named from the game: "The Mars Djinni" (MsgVenusDjinnJoined)
+  ACTOR_MARS_DJINNI,
+  /// Hail.
+  /// ★ Named from the game: "The Mercury Djinni" (MsgVenusDjinnJoined)
+  ACTOR_MERCURY_DJINNI,
+  /// Vale, whose exit leads to the town gate (SceneId_ValeGate).
+  /// ★ Named from the game: "Why's everyone hanging around the town gate?"
+  /// (MsgValeWhysEveryoneHanging)
   ACTOR_PLACE_VALE_GATE,
+  /// ★ Named from its area name: Vault
   ACTOR_PLACE_VAULT,
+  /// ★ Named from its area name: Altin
   ACTOR_PLACE_ALTIN,
+  /// ★ Named from its area name: Suhalla
   ACTOR_PLACE_SUHALLA,
+  /// ★ Named from its area name: Lunpa
   ACTOR_PLACE_LUNPA,
+  /// ★ Named from its area name: Kalay Docks
   ACTOR_PLACE_KALAY_DOCKS,
+  /// ★ Named from its area name: Tolbi Docks
   ACTOR_PLACE_TOLBI_DOCKS,
+  /// ★ Named from its area name: Imil
   ACTOR_PLACE_IMIL,
+  /// ★ Named from its area name: Kolima
   ACTOR_PLACE_KOLIMA,
+  /// ★ Named from its area name: Xian
   ACTOR_PLACE_XIAN,
+  /// ★ Named from its area name: Lama Temple
   ACTOR_PLACE_LAMA_TEMPLE,
+  /// ★ Named from its area name: Fuchin Temple
   ACTOR_PLACE_FUCHIN_TEMPLE,
+  /// ★ Named from its area name: Bilibin
   ACTOR_PLACE_BILIBIN,
+  /// ★ Named from its area name: Kalay
   ACTOR_PLACE_KALAY,
+  /// ★ Named from its area name: Lalivero
   ACTOR_PLACE_LALIVERO,
+  /// ★ Named from its area name: Tolbi
   ACTOR_PLACE_TOLBI,
+  /// ★ Named from its area name: Mercury Lighthouse
   ACTOR_PLACE_MERCURY_LIGHTHOUSE,
   /// After two rows that no event answers.
+  /// ★ Named from its area name: Bilibin Barricade
   ACTOR_PLACE_BILIBIN_BARRICADE = ACTOR_PLACE_MERCURY_LIGHTHOUSE + 3,
+  /// ★ Named from its area name: Road to Babi Lighthouse
   ACTOR_PLACE_ROAD_TO_BABI_LIGHTHOUSE,
+  /// ★ Named from its area name: Goma Cave Entrance
   ACTOR_PLACE_GOMA_CAVE_ENTRANCE,
-  ACTOR_PLACE_GOMA_CAVE_WATERWAY,
+  /// Goma Cave's way out, where a wooden bridge crosses the river
+  /// (SceneId_GomaCaveBridge).
+  /// ★ Named from its area name: Goma Cave
+  ACTOR_PLACE_GOMA_CAVE_BRIDGE,
+  /// ★ Named from its area name: Altmiller Cave
   ACTOR_PLACE_ALTMILLER_CAVE,
+  /// ★ Named from its area name: Gondowan Cave
   ACTOR_PLACE_GONDOWAN_CAVE_NORTH,
+  /// ★ Named from its area name: Gondowan Cave
   ACTOR_PLACE_GONDOWAN_CAVE_SOUTH,
+  /// The way into Mogall Forest where the Killer Ape waits
+  /// (SceneId_MogallForestKillerApe).
+  /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
   ACTOR_PLACE_MOGALL_FOREST_KILLER_APE,
+  /// ★ Named from its area name: Gateway Cave
   ACTOR_PLACE_GATEWAY_CAVE,
+  /// ★ Named from its area name: Bilibin Cave Entrance
   ACTOR_PLACE_BILIBIN_CAVE_ENTRANCE,
+  /// ★ Named from its area name: Bilibin Cave
   ACTOR_PLACE_BILIBIN_CAVE,
+  /// ★ Named from its area name: West Lunpa Cave
   ACTOR_PLACE_WEST_LUNPA_CAVE,
+  /// ★ Named from its area name: Altin Peak
   ACTOR_PLACE_ALTIN_PEAK,
+  /// ★ Named from its area name: Lamakan Desert
   ACTOR_PLACE_LAMAKAN_DESERT_CAVE,
+  /// ★ Named from its area name: Kolima Forest
   ACTOR_PLACE_KOLIMA_FOREST,
+  /// The way into Mogall Forest by its broken sign (SceneId_MogallForestSign).
+  /// ★ Named from the game: "The broken sign reads:"
+  /// (MsgMogallForestBrokenSign)
   ACTOR_PLACE_MOGALL_FOREST_SIGN,
+  /// ★ Named from its area name: Kalay Tunnel Entrance
   ACTOR_PLACE_KALAY_TUNNEL_ENTRANCE,
   /// After three rows that no code refers to.
+  /// ★ Named from its area name: Kolima Bridge
   ACTOR_PLACE_KOLIMA_BRIDGE = ACTOR_PLACE_KALAY_TUNNEL_ENTRANCE + 4,
+  /// ★ Named from its area name: Gondowan Passage
   ACTOR_PLACE_GONDOWAN_PASSAGE,
   /// The Tolbi-bound Ship at anchor off the island, after one row that no
   /// code refers to.
+  /// ★ Named from its area name: Tolbi-bound Ship
   ACTOR_TOLBI_SHIP = ACTOR_PLACE_GONDOWAN_PASSAGE + 2,
-  ACTOR_STORM, ///< the storm that lifts the party, as the Suhalla Desert's do
-  ACTOR_IODEM  ///< placed by the coast once he has handed over the Black Orb
+  /// The storm that lifts the party, as the Suhalla Desert's do.
+  /// ★ Named from what the player sees: a white whirlwind spinning on the map,
+  /// drawn as the Suhalla Desert's sandstorms (its render)
+  ACTOR_STORM,
+  /// Placed by the coast once he has handed over the Black Orb.
+  /// ★ Named from the game: "Iodem, Iodem!" (MsgTolbiIodemIodem)
+  ACTOR_IODEM
 };
 
 /// The trigger raised by touching a place's actor.
@@ -228,10 +283,14 @@ enum WorldMapCaravanActor {
   /// Hammet, in his sprite, as ACTOR_HAMMET is out of West Lunpa Cave.
   /// "We can't stay another minute in a dangerous place like this."
   ACTOR_CARAVAN_HAMMET = ACTOR_FIRST_PLACED,
-  /// One of Hammet's men. "Master Hammet! This is terrible! The bridge has
-  /// been destroyed..."
+  /// One of Hammet's men, bald and bare-chested. "Master Hammet! This is
+  /// terrible! The bridge has been destroyed..."
+  /// ★ Named from the game: "Master Hammet! This is terrible!"
+  /// (MsgWorldMapWeCantStayAnotherMinute)
   ACTOR_CARAVAN_MAN,
   /// The caravan's four wagons, in the sprite of Bunza's wagon.
+  /// ★ Named from what the player sees: four covered wagons, each drawn by a
+  /// horse (its render)
   ACTOR_CARAVAN_FIRST_WAGON,
   /// What the falling rock is held above as it drops
   /// (WorldMap_UpdateTransferredActorLanding); it grows from a tenth of its
@@ -249,11 +308,17 @@ enum WorldMapCaravanActor {
 /// WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI and
 /// WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS), shown on its way across the Karagol
 /// Sea.
-enum { ACTOR_CROSSING_SHIP = ACTOR_FIRST_PLACED };
+enum {
+  /// ★ Named from its area name: Tolbi-bound Ship
+  ACTOR_CROSSING_SHIP = ACTOR_FIRST_PLACED
+};
 
 /// Bunza's wagon at Kalay (gWorldMapPlacementsFromKalayTunnelEntranceSouth),
 /// after Kalay's and the Kalay Tunnel Entrance's place actors.
-enum { ACTOR_KALAY_WAGON = ACTOR_FIRST_PLACED + 2 };
+enum {
+  /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
+  ACTOR_KALAY_WAGON = ACTOR_FIRST_PLACED + 2
+};
 
 /// The one actor of gWorldMapPlacementsFromClear, before the ending. It sails
 /// east trailing a wake (WorldMap_SpawnIslandWake) until the map leads into
@@ -271,9 +336,10 @@ enum WorldMapEndingActor {
   /// Alex, who comes to show them that Felix and Sheba are alive. "There is
   /// something I wish to show you."
   ACTOR_ALEX,
-  /// Felix, in his sprite as at Mercury Lighthouse (0x23,
+  /// Felix, in his sprite as at Mercury Lighthouse (SPRITE_FELIX,
   /// mercury_lighthouse_aerie.c), shown with Sheba as Jenna and Kraden call
   /// their names.
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX
 };
 
@@ -404,7 +470,7 @@ WorldMap_InitializeFirstDjinni(struct ScriptInterpreter *interpreter) {
   if (Engine_GameFlagIsSet(FLAG_DJINNI_0) != 0) {
     return 0;
   }
-  if (Engine_GameFlagIsSet(FLAG_DJINN_TUTORIAL) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_DJINN_LESSON) != 0) {
     return 0;
   }
   actor->update = WorldMap_UpdateBobbingMarker;
@@ -488,7 +554,7 @@ const struct ScenePlacement *WorldMap_GetPlacements(void) {
   switch (gGameState.entrance) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
     if (Engine_GameFlagIsSet(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
-        Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+        Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
       return gWorldMapPlacementsFromWestLunpaCave;
     }
     break;
@@ -761,7 +827,7 @@ s32 WorldMap_Initialize(void) {
       break;
     case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
       if (Engine_GameFlagIsSet(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
-          Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+          Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
         WorldMap_BoardBunzasWagon();
       }
       break;
@@ -826,15 +892,20 @@ s32 WorldMap_Initialize(void) {
 /// Bunza's wagon, then, after Lunpa's and West Lunpa Cave's place actors,
 /// Bunza and Hammet.
 enum {
+  /// Bunza's wagon.
+  /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
   ACTOR_WAGON = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Then what should we do, Bunza?" (MsgLunpaBunza)
   ACTOR_BUNZA = ACTOR_FIRST_PLACED + 3,
+  /// ★ Named from the game: "Master Hammet!"
+  /// (MsgWorldMapWeCantStayAnotherMinute)
   ACTOR_HAMMET
 };
 
 /// Out of West Lunpa Cave by wagon: Bunza and Hammet nod to each other and
 /// climb aboard with the leader, and the wagon rolls off.
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_WEST_LUNPA_CAVE, after the
-/// trade reopens (FLAG_LUNPA_TRADE_REOPENED) and until the wagon has left;
+/// trade reopens (FLAG_DODONPA_LOCKED_UP) and until the wagon has left;
 /// sets FLAG_BUNZAS_WAGON_LEFT.
 static void WorldMap_BoardBunzasWagon(void) {
   struct FieldActor *record;
@@ -1445,7 +1516,7 @@ static void WorldMap_CompleteTransfer(void) {
 }
 
 /// Demonstrates setting a Djinni and placing it on standby.
-/// Called by Event_MeetFlint; sets and clears FLAG_DJINN_TUTORIAL_PART_A and
+/// Called by Event_MeetFlint; sets and clears FLAG_DJINN_LESSON_PART_A and
 /// _PART_B to choose the menu's two lessons.
 static void WorldMap_ShowDjinnTutorial(void) {
   WorldMap_EndEvent();
@@ -1458,14 +1529,14 @@ static void WorldMap_ShowDjinnTutorial(void) {
   Engine_EventWait(30);
   Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Open();
   Engine_ActorJump(ACTOR_VENUS_DJINNI, 4, 30);
   Engine_EventSetMessage(MsgWorldMapNextIllShowHowCan);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Set(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Open();
   Engine_EventWait(30);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 6);
@@ -1474,7 +1545,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
 /// Walking up to Flint: he joins the party and shows how Djinn are set and put
 /// on standby; then comes the tutorial battle.
 /// Reached by walking onto cell code 90 until Flint is caught
-/// (FLAG_DJINNI_0 + DJINNI_FLINT). Sets FLAG_DJINN_TUTORIAL and its two part
+/// (FLAG_DJINNI_0 + DJINNI_FLINT). Sets FLAG_DJINN_LESSON and its two part
 /// flags for each lesson, and clears them all after the battle.
 static void Event_MeetFlint(void) {
   struct FieldActor *djinni;
@@ -1490,9 +1561,9 @@ static void Event_MeetFlint(void) {
   x = (leader->x.fixed - PIXELS(5584)) / 2 + PIXELS(5584);
   z = (leader->z.fixed - PIXELS(1328)) / 2 + PIXELS(1328);
   // Introduce the Djinni and demonstrate how it joins the party.
-  if (!GameFlag_IsSet(FLAG_DJINN_TUTORIAL)) {
+  if (!GameFlag_IsSet(FLAG_DJINN_LESSON)) {
     Party_RestoreHpPp(1);
-    GameFlag_Set(FLAG_DJINN_TUTORIAL);
+    GameFlag_Set(FLAG_DJINN_LESSON);
     Event_Begin();
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0)
@@ -1640,8 +1711,8 @@ static void Event_MeetFlint(void) {
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
-  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Set(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Open();
   Event_SetMessage(MsgWorldMapGoSetStandby);
   FieldObject_SetPosition(djinni, PIXELS(5584), 0, PIXELS(1328));
@@ -1670,8 +1741,8 @@ static void Event_MeetFlint(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT, 30);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Set(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Set(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Open();
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1680,9 +1751,9 @@ static void Event_MeetFlint(void) {
                   DJINNI_INDEX(DJINNI_FLINT));
   Event_PlayCue(MUS_042);
   Event_End();
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Clear(FLAG_DJINN_LESSON);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
 }
 
 s32 gWorldMapTriggerActor;
@@ -3315,11 +3386,11 @@ s32 gWorldMapPlacement3[] = {
 
 // clang-format off
 struct ScenePlacement gWorldMapPlacements[] = {
-    { 0x5a, FLAG_DJINNI_0 + DJINNI_VINE, (s32)gWorldMapPlacement0,
+    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_VINE, (s32)gWorldMapPlacement0,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x5c, FLAG_DJINNI_0 + DJINNI_CORONA, ACTOR_STAND,
+    { MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_CORONA, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x5b, FLAG_DJINNI_0 + DJINNI_HAIL, ACTOR_STAND,
+    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_HAIL, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5678), 0, PIXELS(1200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3405,11 +3476,11 @@ struct ScenePlacement gWorldMapPlacements[] = {
         PIXELS(4942), 0, PIXELS(2690), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x1f5, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0xa1, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapPlacement1,
+    { SPRITE_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), (s32)gWorldMapPlacement1,
         PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x121, FLAG_SCENE_TEMP_F1, (s32)gWorldMapPlacement3,
         PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x39, CONDITION_ALWAYS, (s32)gWorldMapPlacement4,
+    { SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapPlacement4,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
     { GARET, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
@@ -3420,17 +3491,17 @@ struct ScenePlacement gWorldMapPlacements[] = {
 struct ScenePlacement gWorldMapPlacementsHammetsCaravan[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x31, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3442,21 +3513,21 @@ struct ScenePlacement gWorldMapPlacementsHammetsCaravan[] = {
 };
 
 struct ScenePlacement gWorldMapPlacementsFromWestLunpaCave[] = {
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5892), 0, PIXELS(1128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5856), 0, PIXELS(1174), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x44, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BUNZA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x31, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gWorldMapPlacementsCrossingEnds[] = {
-    { 0xa1, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5384), 0, PIXELS(2248), FACING_WEST, TALK_KEEP_FACING, 0 },
     { 0x107, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3468,7 +3539,7 @@ struct ScenePlacement gWorldMapPlacementsCrossingEnds[] = {
 };
 
 struct ScenePlacement gWorldMapPlacementsCrossing[] = {
-    { 0xa1, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5432), 0, PIXELS(2312), FACING_WEST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3478,7 +3549,7 @@ struct ScenePlacement gWorldMapPlacementsFromKalayTunnelEntranceSouth[] = {
         PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x10c, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5480), 0, PIXELS(2088), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9a, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -3486,13 +3557,13 @@ struct ScenePlacement gWorldMapPlacementsFromKalayTunnelEntranceSouth[] = {
 struct ScenePlacement gWorldMapPlacementsJennaAndKradenAdrift[] = {
     { JENNA, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SHEBA, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7816), 0, PIXELS(3528), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x1e, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7544), 0, PIXELS(3496), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x2b, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_ALEX, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7708), 0, PIXELS(3456), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x23, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
+    { SPRITE_FELIX, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7800), 0, PIXELS(3544), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x1f5, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(7604), 0, PIXELS(3522), FACING_WEST, TALK_KEEP_FACING, 0 },
@@ -3540,7 +3611,7 @@ struct SceneEvent gWorldMapEvents[] = {
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_VALE_GATE), CONDITION_ALWAYS, WORLD_MAP_TO_VALE_GATE },
     { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_VAULT), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterVault) },
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GOMA_CAVE_ENTRANCE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_ENTRANCE },
-    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GOMA_CAVE_WATERWAY), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
+    { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_GOMA_CAVE_BRIDGE), CONDITION_ALWAYS, WORLD_MAP_TO_GOMA_CAVE_BRIDGE },
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_BILIBIN), CONDITION_ALWAYS, WORLD_MAP_TO_BILIBIN },
     { EVENT_TOUCH, PLACE_TRIGGER(ACTOR_PLACE_BILIBIN_BARRICADE), CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterBilibinBarricade) },
     { EVENT_EXIT, PLACE_TRIGGER(ACTOR_PLACE_KOLIMA), CONDITION_ALWAYS, WORLD_MAP_TO_KOLIMA_WEST },

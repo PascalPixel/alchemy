@@ -115,20 +115,28 @@
 /// Falls Cave's first four rooms, followed in the second room by Zephyr, and
 /// the one sprite the dragon statue's room places.
 enum ImilFuchinFallsActor {
-  ACTOR_FEVER = ACTOR_FIRST_PLACED, ///< a Mars Djinni, in Imil Falls Cave
+  /// A Mars Djinni, in Imil Falls Cave.
+  /// ★ Named from the game: "Fever" (MsgDjinnName)
+  ACTOR_FEVER = ACTOR_FIRST_PLACED,
   /// The floating logs: three in the first, second and fourth rooms, four in
   /// the third.
+  /// ★ Named from what the player sees: yellow logs floating on the cave's
+  /// water (its render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: a floating log (its render)
   ACTOR_SECOND_LOG,
+  /// ★ Named from what the player sees: a floating log (its render)
   ACTOR_THIRD_LOG,
+  /// ★ Named from what the player sees: a floating log (its render)
   ACTOR_FOURTH_LOG,
   /// Zephyr, a Jupiter Djinni, after the second room's three logs.
+  /// ★ Named from the game: "Zephyr" (MsgDjinnName)
   ACTOR_ZEPHYR = ACTOR_FIRST_PLACED + 3,
   /// Sprite 0xdf in the dragon statue's room, the sprite of the third room's
   /// two foreground pieces (Fuchin_CreateForegroundActor); on entry
   /// ImilFuchinFalls_PrepareRoom stills it at floor height and draws it at
-  /// sprite priority 1, as those are drawn. XXX: what it shows is not known; a
-  /// render of the room would show it.
+  /// sprite priority 1, as those are drawn. XXX: what it shows is not known;
+  /// the room's renders show nothing where it stands.
   ACTOR_DRAGON_ROOM_FOREGROUND = ACTOR_FIRST_PLACED
 };
 

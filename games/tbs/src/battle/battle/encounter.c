@@ -96,7 +96,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_SPRITES, 0xe00);
   Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_LAYERS, 0x600);
   ObjectSystem_InitializeFar(MODE_BATTLE);
-  if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0)
+  if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0)
     UiWork_InitializeFar(1);
   else
     UiWork_InitializeFar(0);
@@ -194,7 +194,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   // A random encounter may open with a first strike (1 in 16) or a
   // surprise (1 in 32 of the rest); the Djinn tutorial always strikes first.
   battle->encounterMode = BATTLE_ENCOUNTER_NORMAL;
-  if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0) {
+  if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0) {
     battle->encounterMode = BATTLE_ENCOUNTER_PARTY_FIRST;
   } else if (gGameState.battleStart == BATTLE_START_NORMAL) {
     if ((BattleRandomFar() & 15) == 0)
@@ -283,7 +283,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     } else {
       WaitFrames(20);
     }
-    if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0)
+    if (GameFlag_TestFar(FLAG_DJINN_LESSON) == 0)
       continue;
 
     // The Djinn tutorial explains unleashing and standby: two windows that
@@ -306,7 +306,7 @@ won:
   // rewritten as that class to carry the name, bare: letter 26 is past every
   // edition's last (BattleUnitSet). DEFEAT_BY_PARTY_MEMBER shows no line.
   Battle_ClearSerialTransferPayload();
-  if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0) {
+  if (GameFlag_TestFar(FLAG_DJINN_LESSON) == 0) {
     if (battle->twoSided != 0)
       AudioCommand_PlayFar(MUS_058);
     if (battle->spoils.defeated != 0) {

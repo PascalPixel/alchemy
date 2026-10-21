@@ -45,8 +45,8 @@
 /// - From then on the seals stay open. The first one opened cuts away by
 ///   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED: in the
 ///   Luna and Sol rooms the quarter it lights only flashes, and Kraden runs off
-///   to see what Isaac has found (FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG), and he
-///   comes here
+///   to see what Isaac has found
+///   (FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING), and he comes here
 ///   (SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED) to find
 ///   the hole. Garet and Jenna tell him how it opened; he decides that the
 ///   statue puzzle was the trap and the centre statue there to disarm it, and
@@ -169,19 +169,40 @@ STATIC_ASSERT(offsetof(struct SealScene, unused) == 0xc4);
 /// keep their own slots. Of the statues, four are pushed onto seals and two
 /// shine beams at the centre; the other two never move.
 enum SolSanctumStatueActor {
+  /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_NORTHWEST_STATUE,
+  /// ★ Named from the game: "two beams of light shot out from them"
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_LEFT_BEAM_STATUE,
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_NORTHEAST_STATUE,
+  /// ★ Named from the game: "two beams of light shot out from them"
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_RIGHT_BEAM_STATUE,
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_SOUTHWEST_STATUE,
   /// South of the left beam statue; no event moves it.
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_LEFT_STILL_STATUE,
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_SOUTHEAST_STATUE,
   /// South of the right beam statue; no event moves it.
+  /// ★ Named from the game: "So the statue puzzle was the trap..."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_RIGHT_STILL_STATUE,
+  /// ★ Named from the game: "and that other statue was here to... disarm the
+  /// trap." (MsgSolSanctumKradenYouFoundIt)
   ACTOR_CENTER_STATUE,
   /// Stands in the hole in the floor once the centre statue has dropped in.
+  /// ★ Named from the game: "And dropped the statue into it after that."
+  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_MOVED_CENTER_STATUE
 };
 
@@ -219,13 +240,15 @@ const struct SceneEvent *SolSanctumStatue_GetEvents(void) {
 /// seal leads to, and requests its exit: once the centre statue has moved,
 /// the quarter it lit flashing in the Luna and Sol rooms
 /// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED), until
-/// FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG is set; before then, the falling
-/// lights (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG), until
+/// FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING is set; before then, the
+/// falling lights
+/// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG), until
 /// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set. Returns 1 when it requests an
 /// exit, otherwise -1.
 static s32 SolSanctumStatue_SelectStoryExit(void) {
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
-    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) ==
+        0) {
       Engine_EventRequestExit(
           SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED);
       return 1;
@@ -1705,7 +1728,7 @@ u32 gSolSanctumStatue_Exits[] = {
 
 // clang-format off
 struct ScenePlacement gSolSanctumStatue_Placements[] = {
-    { 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(488), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },

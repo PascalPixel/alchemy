@@ -25,7 +25,7 @@
 ///   the party still holds the Mars Star, and the two warp over to the lift
 ///   and ride it down. Mia means to go with the party, since with the
 ///   lighthouse lit the fountain will run over with healing water again
-///   (FLAG_MERCURY_AERIE_CONFRONTATION_DONE, and
+///   (FLAG_MERCURY_AERIE_ALEX_APPEARED, and
 ///   FLAG_SATUROS_BEATEN_AT_MERCURY, which Imil, Bilibin and the lighthouse
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
@@ -100,28 +100,50 @@ enum MercuryLighthouseAerieActor {
   /// the two east of it, ACTOR_FIRST_BEACON_STATUE + 2 and + 3, are drawn
   /// mirrored.
   ACTOR_FIRST_BEACON_STATUE,
-  ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6, ///< six
+  /// Six of them.
+  /// ★ Named from what the player sees: round white platforms at the foot of
+  /// the aerie's side ledges (its render)
+  ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6,
   /// The two platforms that stand on the lift and go up and down with it.
+  /// ★ Named from what the player sees: round white platforms below the lift's
+  /// statue (its render)
   ACTOR_LIFT_PLATFORM_1 = ACTOR_FIRST_PLATFORM + 3,
+  /// ★ Named from what the player sees: round white platforms below the lift's
+  /// statue (its render)
   ACTOR_LIFT_PLATFORM_2,
+  /// ★ Named from the game: "Kraden!" (MsgMercuryLighthouseAlreadyLit)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED + 12,
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX,
+  /// ★ Named from the game: "Oh, Saturos..." (MsgMercuryLighthouseAlreadyLit)
   ACTOR_SATUROS,
+  /// ★ Named from the game: "Menardi... Wait!"
+  /// (MsgMercuryLighthouseAlreadyLit)
   ACTOR_MENARDI,
+  /// ★ Named from the game: "Alex!" (MsgMercuryGot)
   ACTOR_ALEX
 };
 
 /// Scene flags, kept while the party stays on the aerie.
 enum {
   /// The leader stands on a platform, which has dipped under the weight.
+  /// ★ Named from what the player sees: the round platforms floating in the
+  /// sky beside the aerie, which bob under the leader (its render)
   FLAG_ON_PLATFORM = FLAG_SCENE_TEMP_50,
+  /// ★ Named from what the player sees: the lift rising to the aerie with a
+  /// statue on it (its render)
   FLAG_LIFT_UP = FLAG_SCENE_TEMP_00 + 0x51,
   /// Set on every arrival but the first: Jenna, Kraden, Felix and Menardi
   /// are placed only before it.
+  /// ★ Named from the game: "leave our hostages"
+  /// (MsgMercuryLighthouseAlreadyLit)
   FLAG_HOSTAGES_GONE = FLAG_SCENE_TEMP_00 + 0x53
 };
 
-enum { FLAG_PSYNERGY_STONE = 0x350 };
+enum {
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
+  FLAG_PSYNERGY_STONE = 0x350
+};
 
 static void MercuryLighthouseAerie_PartyArrives(void);
 static void MercuryLighthouseAerie_SettlePlatforms(void);
@@ -881,7 +903,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// for long. "Isaac, we got him!" Alex appears and explains that the
 /// lighthouse bound Saturos' fire Psynergy and lent Mia endless power. Saturos
 /// stands again; the two warp over to the lift and ride it down, and the party
-/// regroups on the leader. Sets FLAG_MERCURY_AERIE_CONFRONTATION_DONE and
+/// regroups on the leader. Sets FLAG_MERCURY_AERIE_ALEX_APPEARED and
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
@@ -1423,7 +1445,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Map_CopyCellsTo(4, 0x46, 4, 0x4A, 5, 4);
-  GameFlag_Set(FLAG_MERCURY_AERIE_CONFRONTATION_DONE);
+  GameFlag_Set(FLAG_MERCURY_AERIE_ALEX_APPEARED);
   GameFlag_Set(FLAG_SATUROS_BEATEN_AT_MERCURY);
   Engine_EventEnd();
 }
@@ -1862,22 +1884,22 @@ struct ScenePlacement gMercuryLighthouseAeriePlacements[] = {
         PIXELS(136), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(168), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x1e, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { SPRITE_KRADEN, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(152), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x23, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { SPRITE_FELIX, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(160), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x20, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SATUROS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x21, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { SPRITE_MENARDI, FLAG_HOSTAGES_GONE, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(200), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x2b, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ALEX, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_EAST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 // clang-format on
 
 struct SceneEvent gMercuryLighthouseAerieEvents[] = {
-    {EVENT_TOUCH, 5, FLAG_MERCURY_AERIE_CONFRONTATION_DONE,
+    {EVENT_TOUCH, 5, FLAG_MERCURY_AERIE_ALEX_APPEARED,
      EVENT_SCRIPT(MercuryLighthouseAerie_ConfrontSaturos)},
     {EVENT_TOUCH, 6, FLAG_LIFT_UP,
      EVENT_SCRIPT(MercuryLighthouseAerie_CallLift)},

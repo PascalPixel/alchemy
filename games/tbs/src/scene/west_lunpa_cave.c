@@ -23,7 +23,7 @@
 /// The cave's scripted scene follows the rescue of Hammet, the lord of Kalay,
 /// whom Dodonpa's thieves held in Lunpa Fortress. Once Dodonpa's father Donpa
 /// has judged Dodonpa and let the party leave with Hammet
-/// (FLAG_LUNPA_TRADE_REOPENED, set in lunpa_fortress.c), stepping onto trigger
+/// (FLAG_DODONPA_LOCKED_UP, set in lunpa_fortress.c), stepping onto trigger
 /// 10 the first time (FLAG_LUNPA_CAVE_REUNION_SEEN) brings out a man who hid
 /// behind a rock when the gate moved. Hammet calls out and names him, Bunza, a
 /// Kalay merchant, and Bunza knows Hammet's voice; he had come to sell to
@@ -225,7 +225,7 @@ static void Event_FlipRaisingSwitch(void) {
 }
 
 /// Stepping onto trigger 10, by the rock Bunza hides behind, after Donpa has
-/// let the party leave the fortress with Hammet (FLAG_LUNPA_TRADE_REOPENED):
+/// let the party leave the fortress with Hammet (FLAG_DODONPA_LOCKED_UP):
 /// Bunza steps out, the party and Hammet gather behind the leader, Garet and
 /// Mia think they saw someone, and Ivan asks whether Dodonpa's henchmen have
 /// found them (a yes: Garet will fight; a no: Garet wonders what else it
@@ -237,7 +237,7 @@ static void Event_HammetFindsBunza(void) {
   s32 sighting;
   s32 recognition;
 
-  if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+  if (GameFlag_IsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     // Bring Hammet and the party into view as Bunza leaves his hiding place.
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
     Engine_EventBegin();

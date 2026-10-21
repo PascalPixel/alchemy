@@ -11,7 +11,10 @@
 enum SolSanctumLunaSolRoomsActor {
   /// Eight statues, four in each room, with the sprite of
   /// SceneId_SolSanctumStatue's statues (sol_sanctum_statue.c).
+  /// ★ Named from what the player sees: winged stone statues standing at the
+  /// corners of each room's floor (its render)
   ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN = ACTOR_FIRST_STATUE + 8
 };
 

@@ -102,105 +102,170 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The palace's actors are placed by one of three tables, as the story goes
-/// on: before Babi is rescued (gBabiPalace_PlacementsOther), during the
-/// finals (gBabiPalace_PlacementsColosso) and after Colosso
+/// The palace's actors are placed by one of three tables, as the story goes on:
+/// before Babi is rescued (gBabiPalace_PlacementsOther), during the finals
+/// (gBabiPalace_PlacementsColosso) and after Colosso
 /// (gBabiPalace_PlacementsAfterColosso). Each numbers its rows from
 /// ACTOR_FIRST_PLACED, with Garet, Ivan, Mia and Sheba in their own party
-/// slots, and most of the people stand in all three under other numbers.
-/// The palace's residents stand in all three: one sent Babi's soldiers to
-/// search the town, and another tells warriors who are not entering Colosso
-/// that they may not stay. The game names none of them.
+/// slots, and most of the people stand in all three under other numbers. The
+/// palace's residents, three old men with canes and a young man with brown
+/// hair, stand in all three: one sent Babi's soldiers to search the town, and
+/// another tells warriors who are not entering Colosso that they may not stay.
+/// The game names none of them.
 ///
-/// Before the rescue: the attendant who shows the party its beds, Iodem and
-/// the two soldiers he sent to Altmiller Cave; Sheba is held here until
-/// Colosso is over.
+/// Before the rescue: the attendant who shows the party its beds, Iodem and the
+/// two soldiers he sent to Altmiller Cave; Sheba is held here until Colosso is
+/// over.
 enum BabiPalaceActor {
-  /// In the same room and at the same number in every table, and the one who
-  /// sent Babi's soldiers to search the town: "Did you run into any of Babi's
-  /// soldiers in Town?", and if not, "Hmph! I told them to search every nook
-  /// and cranny of this town..."
-  ACTOR_FIRST_RESIDENT = ACTOR_FIRST_PLACED,
-  /// The attendant, whose number is the same after Colosso: "No one's going
-  /// to sleep in this big bedroom until the next Colosso!"
-  ACTOR_BED_ATTENDANT,
-  /// "So, did you guys get injured, too?" Thoughts: "I hurt my back during my
-  /// training, and now I can't move at all."
-  ACTOR_INJURED_WARRIOR,
-  /// "I can't fight because of a little indigestion? That's pathetic!"
-  ACTOR_WARRIOR_WITH_INDIGESTION,
-  /// "If you're entering Colosso, hurry along to the colosseum." Thoughts:
-  /// "Warriors are not allowed to stay in the palace if they don't enter
+  /// An old man with a cane, in the same room and at the same number in every
+  /// table, and the one who sent Babi's soldiers to search the town: "Did you
+  /// run into any of Babi's soldiers in Town?", and if not, "Hmph! I told them
+  /// to search every nook and cranny of this town..."
+  /// ★ Named from the game: "Did you run into any of Babi's soldiers in Town?"
+  /// (MsgTolbiRunBabisSoldiers)
+  ACTOR_ASKING_ABOUT_BABIS_SOLDIERS = ACTOR_FIRST_PLACED,
+  /// The attendant, a woman with fair hair, whose number is the same after
+  /// Colosso: "No one's going to sleep in this big bedroom until the next
   /// Colosso!"
-  ACTOR_SECOND_RESIDENT,
+  /// ★ Named from the game: "We have just enough extra beds in this room for
+  /// everybody." (MsgTolbiWeHaveJustEnoughExtra)
+  ACTOR_BED_ATTENDANT,
+  /// A warrior in a golden helmet. "So, did you guys get injured, too?"
+  /// Thoughts: "I hurt my back during my training, and now I can't move at
+  /// all."
+  /// ★ Named from the game: "I hurt my back during my training"
+  /// (MsgBabiPalaceIGetSoAngrySeeingAll)
+  ACTOR_INJURED_WARRIOR,
+  /// A warrior in a golden helmet. "I can't fight because of a little
+  /// indigestion? That's pathetic!"
+  /// ★ Named from the game: "Maybe I shouldn't have eaten quite so much
+  /// yesterday..." (MsgBabiPalaceMaybeIShouldntHaveEatenQuite)
+  ACTOR_WARRIOR_WITH_INDIGESTION,
+  /// A young man with brown hair in a purple shirt. "If you're entering
+  /// Colosso, hurry along to the colosseum." Thoughts: "Warriors are not
+  /// allowed to stay in the palace if they don't enter Colosso!"
+  /// ★ Named from the game: "If you're entering Colosso, hurry along to the
+  /// colosseum." (MsgBabiPalaceIfYoureEnteringColossoHurryAlong)
+  ACTOR_HURRYING_WARRIORS_ALONG,
   /// Four of Babi's soldiers, in one room; the first says "Only warriors who
   /// fight well in Colosso's finals can become soldiers here."
+  /// ★ Named from the game: "Only warriors who fight well in Colosso's finals
+  /// can become soldiers here." (MsgBabiPalaceOnlyWarriorsWhoFightWellIn)
   ACTOR_FIRST_PALACE_SOLDIER,
-  /// Beside Babi's bed. "It looks like Lord Babi didn't use his bed this
-  /// morning."
-  ACTOR_BEDSIDE_RESIDENT = ACTOR_FIRST_PALACE_SOLDIER + 4,
-  /// "Sheba has been staying as Lord Babi's guest for some time." Thoughts:
-  /// "It is heartbreaking to see her tears and hear her pleas to be
-  /// released."
-  ACTOR_PITYING_RESIDENT,
-  /// In Sheba's room, in the old woman's sprite (0x6f, as in vale_gate.c).
-  /// Thoughts: "Sheba is not permitted to leave this room."
-  ACTOR_SHEBAS_MINDER,
+  /// An old man with a cane beside Babi's bed. "It looks like Lord Babi didn't
+  /// use his bed this morning."
+  /// ★ Named from what the player sees: an old man with a cane beside Babi's
+  /// bed (its render)
+  ACTOR_BY_BABIS_BED = ACTOR_FIRST_PALACE_SOLDIER + 4,
+  /// An old man with a cane. "Sheba has been staying as Lord Babi's guest for
+  /// some time." Thoughts: "It is heartbreaking to see her tears and hear her
+  /// pleas to be released."
+  /// ★ Named from the game: "It is heartbreaking to see her tears"
+  /// (MsgBabiPalaceActorWasTakenHostageToForce)
+  ACTOR_SORRY_FOR_SHEBA,
+  /// In Sheba's room, in SPRITE_OLD_WOMAN, as in vale_gate.c. Thoughts: "Sheba
+  /// is not permitted to leave this room."
+  /// ★ Named from what the player sees: a white-haired old woman in Sheba's
+  /// room (its render)
+  ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM,
+  /// ★ Named from the game: "Iodem, Iodem!" (MsgTolbiIodemIodem)
   ACTOR_IODEM,
+  /// ★ Named from what the player sees: a soldier in a helmet with a spear,
+  /// SPRITE_SOLDIER (its render)
   ACTOR_FIRST_SOLDIER,
+  /// ★ Named from what the player sees: the second soldier, SPRITE_SOLDIER
+  /// (its render)
   ACTOR_SECOND_SOLDIER
 };
 
-/// During the finals: ACTOR_FIRST_RESIDENT keeps its number, and the others
-/// stand under new ones.
+/// During the finals: ACTOR_ASKING_ABOUT_BABIS_SOLDIERS keeps its number, and
+/// the others stand under new ones.
 enum BabiPalaceFinalsActor {
-  /// The same resident as ACTOR_SECOND_RESIDENT: "What are you doing? Hurry
-  /// over to the colosseum!"
-  ACTOR_FINALS_SECOND_RESIDENT = ACTOR_FIRST_PLACED + 1,
-  ACTOR_FINALS_ATTENDANT, ///< the same attendant, a number later
-  /// The same resident as ACTOR_BEDSIDE_RESIDENT: "Babi has returned and the
+  /// The same resident as ACTOR_HURRYING_WARRIORS_ALONG: "What are you doing?
+  /// Hurry over to the colosseum!"
+  /// ★ Named from the game: "Hurry over to the colosseum!"
+  /// (MsgBabiPalaceWhatAreYouDoingHurryOver)
+  ACTOR_FINALS_HURRYING_WARRIORS_ALONG = ACTOR_FIRST_PLACED + 1,
+  /// The same attendant, a number later.
+  /// ★ Named from the game: "Would you like to sleep right now?"
+  /// (MsgTolbiCameRestBefore)
+  ACTOR_FINALS_ATTENDANT,
+  /// The same resident as ACTOR_BY_BABIS_BED: "Babi has returned and the
   /// finals are set to begin!"
-  ACTOR_FINALS_BEDSIDE_RESIDENT,
-  /// The same resident as ACTOR_PITYING_RESIDENT: "What's going on? Sheba is
+  /// ★ Named from the game: "Babi has returned and the finals are set to
+  /// begin!" (MsgBabiPalaceBabiHasReturnedAndTheFinals)
+  ACTOR_FINALS_BY_BABIS_BED,
+  /// The same resident as ACTOR_SORRY_FOR_SHEBA: "What's going on? Sheba is
   /// looking much happier."
-  ACTOR_FINALS_PITYING_RESIDENT,
-  /// The same woman as ACTOR_SHEBAS_MINDER: "The soldiers came to see Sheba.
-  /// She's been in a great mood ever since."
-  ACTOR_FINALS_SHEBAS_MINDER
+  /// ★ Named from the game: "I wonder what happened to make that girl smile."
+  /// (MsgBabiPalaceWhatsGoingOnActorIsLooking)
+  ACTOR_FINALS_SORRY_FOR_SHEBA,
+  /// The same woman as ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM: "The soldiers came to
+  /// see Sheba. She's been in a great mood ever since."
+  /// ★ Named from the game: "She's been in a great mood ever since."
+  /// (MsgBabiPalaceTheSoldiersCameToSeeActor)
+  ACTOR_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM
 };
 
 /// After Colosso: Babi, and the Cloak Ball he keeps on show;
-/// ACTOR_FIRST_RESIDENT, ACTOR_BED_ATTENDANT and Iodem keep their numbers.
+/// ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, ACTOR_BED_ATTENDANT and Iodem keep their
+/// numbers.
 enum BabiPalaceAfterColossoActor {
-  /// "Babi was found safe and sound, and Colosso ended without incident."
+  /// One of Babi's soldiers.
+  /// ★ Named from the game: "We're relieved everything went so well."
+  /// (MsgBabiPalaceBabiWasFoundSafeAndSound)
   ACTOR_RELIEVED_SOLDIER = ACTOR_FIRST_PLACED + 2,
-  /// The same resident as ACTOR_SECOND_RESIDENT: "So, you're all from the
-  /// eastern shores of the Karagol Sea, huh?"
-  ACTOR_AFTER_COLOSSO_SECOND_RESIDENT,
-  /// "Now that Colosso is over, I'm going to Gondowan to build Babi
-  /// Lighthouse!"
+  /// The same resident as ACTOR_HURRYING_WARRIORS_ALONG: "So, you're all from
+  /// the eastern shores of the Karagol Sea, huh?"
+  /// ★ Named from the game: "So, you're all from the eastern shores of the
+  /// Karagol Sea, huh?" (MsgTolbiEasternShoresKaragol)
+  ACTOR_ASKING_ABOUT_THE_EASTERN_SHORES,
+  /// One of Babi's soldiers.
+  /// ★ Named from the game: "Now that Colosso is over, I'm going to Gondowan to
+  /// build Babi Lighthouse!" (MsgBabiPalaceNowThatColossoIsOverIm)
   ACTOR_GONDOWAN_BOUND_SOLDIER,
   /// "The southern continent is a dangerous place... you'll know why I prefer
   /// Angara."
+  /// ★ Named from the game: "you'll know why I prefer Angara."
+  /// (MsgBabiPalaceTheSouthernContinentIsADangerous)
   ACTOR_SOLDIER_PREFERRING_ANGARA,
+  /// ★ Named from the game: "Babi's face is very pale"
+  /// (MsgBabiPalaceBabisFaceIsVeryPaleLike)
   ACTOR_BABI,
-  /// The same resident as ACTOR_BEDSIDE_RESIDENT: "Babi's face is very pale,
+  /// The same resident as ACTOR_BY_BABIS_BED: "Babi's face is very pale,
   /// like that of a dead man."
-  ACTOR_AFTER_COLOSSO_BEDSIDE_RESIDENT,
+  /// ★ Named from the game: "Babi's face is very pale"
+  /// (MsgBabiPalaceBabisFaceIsVeryPaleLike)
+  ACTOR_AFTER_COLOSSO_BY_BABIS_BED,
+  /// ★ Named from the game: "You found the Cloak Ball."
+  /// (MsgTolbiFoundCloakBall)
   ACTOR_CLOAK_BALL,
-  /// The same resident as ACTOR_PITYING_RESIDENT: "The girl from Lalivero is
+  /// The same resident as ACTOR_SORRY_FOR_SHEBA: "The girl from Lalivero is
   /// no longer here."
-  ACTOR_AFTER_COLOSSO_PITYING_RESIDENT,
-  /// The same woman as ACTOR_SHEBAS_MINDER: "I am surprised Sheba was allowed
-  /// to return to Lalivero like that."
-  ACTOR_AFTER_COLOSSO_SHEBAS_MINDER
+  /// ★ Named from the game: "The girl from Lalivero is no longer here."
+  /// (MsgBabiPalaceTheGirlFromLaliveroIsNo)
+  ACTOR_AFTER_COLOSSO_SORRY_FOR_SHEBA,
+  /// The same woman as ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM: "I am surprised Sheba
+  /// was allowed to return to Lalivero like that."
+  /// ★ Named from the game: "At least she won't be homesick any longer."
+  /// (MsgBabiPalaceIAmSurprisedActorWasAllowed)
+  ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM
 };
 
 /// The two guards outside the palace (BabiPalaceEntrance).
-enum { ACTOR_FIRST_GUARD = 8, ACTOR_SECOND_GUARD = 9 };
+enum {
+  /// ★ Named from the game: "Normally, no one's allowed into Babi's Palace"
+  /// (MsgBabiPalaceNormallyNoOnesAllowedIntoBabis)
+  ACTOR_FIRST_GUARD = 8,
+  /// ★ Named from the game: "Some of the rooms in the palace are available
+  /// to Colosso entrants." (MsgBabiPalaceSomeOfTheRoomsInThe)
+  ACTOR_SECOND_GUARD = 9
+};
 
 /// The attendant has led the party to the beds; talking again sends the
 /// attendant back.
+/// ★ Named from the game: "We have just enough extra beds in this room for
+/// everybody." (MsgTolbiWeHaveJustEnoughExtra)
 enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
 /// After a night in the palace's beds: the party's HP and PP are full,
@@ -265,8 +330,8 @@ static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// A resident of the palace, while Babi is missing, asks whether the party ran
-/// into Babi's soldiers in town.
+/// An old man with a cane, one of the palace's residents, asks while Babi is
+/// missing whether the party ran into Babi's soldiers in town.
 static void BabiPalace_AskAboutSoldiers(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiRunBabisSoldiers);
 }
@@ -452,14 +517,14 @@ static void BabiPalace_ReadShebasMind(s32 unused0, s32 actorId) {
   Event_End();
 }
 
-/// A resident of the palace, after Colosso, asks whether the party has met with
-/// Babi.
+/// The same old man, after Colosso, asks whether the party has met with Babi.
 static void BabiPalace_AskAboutMeetingBabi(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiMeetBabi);
 }
 
-/// A resident of the palace, after Colosso, asks whether the party wants to go
-/// back already to the eastern shores of the Karagol Sea.
+/// A young man with brown hair, one of the palace's residents, asks after
+/// Colosso whether the party wants to go back already to the eastern shores of
+/// the Karagol Sea.
 static void BabiPalace_AskAboutEasternShores(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiEasternShoresKaragol);
 }
@@ -2489,7 +2554,7 @@ s32 BabiPalace_ApplyEntryState(void) {
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     // The attendant before the rescue and after Colosso; during the finals
-    // ACTOR_FINALS_SECOND_RESIDENT has this number.
+    // ACTOR_FINALS_HURRYING_WARRIORS_ALONG has this number.
     Actor_Get(ACTOR_BED_ATTENDANT)->collisionFlags |= 4;
     if (gGameState.entrance == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
       BabiPalace_RestorePartyAndInventory();
@@ -2651,15 +2716,15 @@ struct ScenePlacement gBabiPalace_PlacementsOther[] = {
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(752), 0, PIXELS(136), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x3e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(96), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x3e, CONDITION_ALWAYS, (s32)gBabiPalace_IndigestionScript,
+    { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, (s32)gBabiPalace_IndigestionScript,
         PIXELS(472), 0, PIXELS(136), FACING_NORTHEAST, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(296), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(888), 0, PIXELS(344), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -2669,15 +2734,15 @@ struct ScenePlacement gBabiPalace_PlacementsOther[] = {
         PIXELS(984), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(944), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(920), 0, PIXELS(560), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(112), 0, PIXELS(552), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(728), 0, PIXELS(728), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x6, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(600), 0, PIXELS(744), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x39, FLAG_IODEM_HEARD_SOLDIERS, ACTOR_STAND,
+    { SPRITE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(360), FACING_EAST, TALK_KEEP_FACING, 0 },
     { SPRITE_SOLDIER, FLAG_IODEM_HEARD_SOLDIERS, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(352), FACING_EAST, TALK_KEEP_FACING, 0 },
@@ -2693,17 +2758,17 @@ struct ScenePlacement gBabiPalace_PlacementsColosso[] = {
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(712), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(472), 0, PIXELS(696), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(920), 0, PIXELS(560), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(112), 0, PIXELS(552), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(728), 0, PIXELS(744), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x6, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(600), 0, PIXELS(744), FACING_SOUTHWEST, TALK_FACE_PARTY, 0 },
@@ -2717,31 +2782,31 @@ struct ScenePlacement gBabiPalace_PlacementsAfterColosso[] = {
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(712), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(392), 0, PIXELS(112), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(472), 0, PIXELS(696), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(984), 0, PIXELS(440), FACING_NORTHEAST, TALK_FACE_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(944), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x34, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BABI, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(888), 0, PIXELS(553), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(920), 0, PIXELS(560), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(856), 0, PIXELS(532), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(112), 0, PIXELS(552), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(712), 0, PIXELS(744), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x39, FLAG_BABI_SPOKE_AFTER_COLOSSO, ACTOR_STAND,
+    { SPRITE_IODEM, FLAG_BABI_SPOKE_AFTER_COLOSSO, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(704), FACING_SOUTHEAST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -2787,10 +2852,10 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
     { EVENT_TOUCH, 60, FLAG_IODEM_HEARD_SOLDIERS, EVENT_SCRIPT(BabiPalace_HearSoldiersReport) },
-    { EVENT_TALK, ACTOR_FIRST_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutSoldiers) },
-    { EVENT_TALK, ACTOR_SECOND_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfYoureEnteringColossoHurryAlong) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowDiligentlyBabisSoldiers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWarriorsAreNotAllowedToStay) },
+    { EVENT_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutSoldiers) },
+    { EVENT_TALK, ACTOR_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfYoureEnteringColossoHurryAlong) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowDiligentlyBabisSoldiers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWarriorsAreNotAllowedToStay) },
     { EVENT_TALK, ACTOR_BED_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ShowBeds) },
     { EVENT_TALK, ACTOR_INJURED_WARRIOR, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutColosso) },
     { EVENT_TALK, ACTOR_WARRIOR_WITH_INDIGESTION, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_TalkToWarriorWithIndigestion) },
@@ -2805,13 +2870,13 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_PALACE_SOLDIER + 1, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceOnceTheLighthouseIsCompleteBabis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_PALACE_SOLDIER + 2, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWedNeverGetNearTheLighthouse) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_PALACE_SOLDIER + 3, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIHearThatGirlIsGoing) },
-    { EVENT_TALK, ACTOR_BEDSIDE_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItLooksLikeLordBabiDidnt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BEDSIDE_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIGuessLordBabiDidNot) },
-    { EVENT_TALK, ACTOR_PITYING_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorHasBeenStayingAsLord) },
-    { EVENT_TALK, ACTOR_SHEBAS_MINDER, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasReveredAsAChild) },
+    { EVENT_TALK, ACTOR_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItLooksLikeLordBabiDidnt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIGuessLordBabiDidNot) },
+    { EVENT_TALK, ACTOR_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorHasBeenStayingAsLord) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasReveredAsAChild) },
     { EVENT_TALK, SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsHoldingMeHostageIn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PITYING_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasTakenHostageToForce) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEBAS_MINDER, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsNotPermittedToLeave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasTakenHostageToForce) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsNotPermittedToLeave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_ReadShebasMind) },
     { SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
@@ -2865,19 +2930,19 @@ struct SceneEvent gBabiPalace_EventsColosso[] = {
     { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CENTRAL_HALL },
     { TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
-    { EVENT_TALK, ACTOR_FIRST_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisSoldiersHaveGoneToSee) },
-    { EVENT_TALK, ACTOR_FINALS_SECOND_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhatAreYouDoingHurryOver) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceThoseGuysLookReallyConfidentAbout) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_SECOND_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheFinalsAreAllThatsLeft) },
+    { EVENT_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisSoldiersHaveGoneToSee) },
+    { EVENT_TALK, ACTOR_FINALS_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhatAreYouDoingHurryOver) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceThoseGuysLookReallyConfidentAbout) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheFinalsAreAllThatsLeft) },
     { EVENT_TALK, ACTOR_FINALS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_OfferRest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIHopeYoullAllDoWell) },
-    { EVENT_TALK, ACTOR_FINALS_BEDSIDE_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiHasReturnedAndTheFinals) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_BEDSIDE_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhenBabiReturnedHeHeadedOff) },
-    { EVENT_TALK, ACTOR_FINALS_PITYING_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhatsGoingOnActorIsLooking) },
-    { EVENT_TALK, ACTOR_FINALS_SHEBAS_MINDER, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheSoldiersCameToSeeActor) },
+    { EVENT_TALK, ACTOR_FINALS_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiHasReturnedAndTheFinals) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhenBabiReturnedHeHeadedOff) },
+    { EVENT_TALK, ACTOR_FINALS_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWhatsGoingOnActorIsLooking) },
+    { EVENT_TALK, ACTOR_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheSoldiersCameToSeeActor) },
     { EVENT_TALK, SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceHmphIWishColossoWouldHurry) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_PITYING_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceASmileOnAPrettyGirl) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_SHEBAS_MINDER, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsAGoodGirlBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceASmileOnAPrettyGirl) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsAGoodGirlBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIDontHaveTheLeastInterest) },
     { SEARCH(SEARCH_UNNAMED), 70, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
@@ -2931,10 +2996,10 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CENTRAL_HALL },
     { TOUCH_WALKING_INTO(FACING_NORTH), 44, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
-    { EVENT_TALK, ACTOR_FIRST_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutMeetingBabi) },
-    { EVENT_TALK, ACTOR_AFTER_COLOSSO_SECOND_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutEasternShores) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIHaventSeenMuchOfBabi) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_SECOND_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItWouldBeAWasteTo) },
+    { EVENT_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutMeetingBabi) },
+    { EVENT_TALK, ACTOR_ASKING_ABOUT_THE_EASTERN_SHORES, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutEasternShores) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIHaventSeenMuchOfBabi) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_THE_EASTERN_SHORES, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItWouldBeAWasteTo) },
     { EVENT_TALK, ACTOR_BED_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNoOnesGoingToSleepIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BED_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceWouldThisRoomGetVeryDusty) },
     { EVENT_TALK, ACTOR_RELIEVED_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiWasFoundSafeAndSound) },
@@ -2946,14 +3011,14 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_TALK, ACTOR_BABI, IF_FLAG_SET(FLAG_BABI_PALACE_CLOAK_BALL), MSGNO(MsgBabiPalaceIfYouUseTheCloakBall) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BABI, IF_FLAG_SET(FLAG_BABI_PALACE_CLOAK_BALL), MSGNO(MsgBabiPalaceWhyWouldAnAdeptLikeYou) },
     { EVENT_TALK, ACTOR_BABI, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSleepingALotHelpsToDelay) },
-    { EVENT_TALK, ACTOR_AFTER_COLOSSO_BEDSIDE_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisFaceIsVeryPaleLike) },
+    { EVENT_TALK, ACTOR_AFTER_COLOSSO_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabisFaceIsVeryPaleLike) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BABI, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWishIHadMetYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_BEDSIDE_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfSomethingHappensToBabiWhat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_BY_BABIS_BED, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfSomethingHappensToBabiWhat) },
     { EVENT_TALK, ACTOR_CLOAK_BALL, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_OfferCloakBall) },
-    { EVENT_TALK, ACTOR_AFTER_COLOSSO_PITYING_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheGirlFromLaliveroIsNo) },
-    { EVENT_TALK, ACTOR_AFTER_COLOSSO_SHEBAS_MINDER, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSurprisedActorWasAllowed) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_PITYING_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItSeemedOnlyNaturalThatActor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_SHEBAS_MINDER, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSoRelievedActorHas) },
+    { EVENT_TALK, ACTOR_AFTER_COLOSSO_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheGirlFromLaliveroIsNo) },
+    { EVENT_TALK, ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSurprisedActorWasAllowed) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItSeemedOnlyNaturalThatActor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSoRelievedActorHas) },
     { SEARCH(SEARCH_UNNAMED), 70, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_RestInPalaceBeds) },
     { SEARCH(SEARCH_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { SEARCH(SEARCH_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },

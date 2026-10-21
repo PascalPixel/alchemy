@@ -169,7 +169,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
     state->iconShown[2] = 0;
     state->commandActor = -1;
     state->tutorialStep = 0;
-    if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0) {
+    if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0) {
       state->tutorialStep = 1;
       state->tutorialDelay = 60;
     }

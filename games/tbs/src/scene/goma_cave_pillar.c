@@ -83,24 +83,43 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
-#define FLAG_GOMA_CAVE_STUMP_FELL 0x300 ///< pushed over into the room below
-#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301 ///< sunk into its place
-#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302 ///< one step east of its start
+/// The stump has been pushed over into the room below.
+/// ★ Named from what the player sees: a tree stump standing on a ledge (its
+/// render)
+#define FLAG_GOMA_CAVE_STUMP_FELL 0x300
+/// The east stone pillar has sunk into its place.
+/// ★ Named from what the player sees: a stone pillar on the room's east side
+/// (its render)
+#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301
+/// The west stone pillar stands one step east of its start.
+/// ★ Named from what the player sees: a stone pillar at the head of the room's
+/// west passage (its render)
+#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
 /// The room's actors, numbered in the order of gGomaCavePillar_Placements.
 enum GomaCavePillarActor {
-  ACTOR_WEST_PILLAR = ACTOR_FIRST_PLACED, ///< slides between two places
-  ACTOR_STUMP,       ///< pushed over the edge into the room below
-  ACTOR_EAST_PILLAR, ///< sinks into the floor in its place
+  /// Slides between two places.
+  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
+  ACTOR_WEST_PILLAR = ACTOR_FIRST_PLACED,
+  /// Pushed over the edge into the room below.
+  /// ★ Named from the game: "You want to move the stump, right?"
+  /// (MsgGomaNoUsePsynergy)
+  ACTOR_STUMP,
+  /// Sinks into the floor in its place.
+  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
+  ACTOR_EAST_PILLAR,
   /// Sprite 223, kept in the room's corner until the stump teeters at the
   /// edge, then shown blended there until the stump has fallen. XXX: what the
   /// player sees is not known; a render of the fall would settle it.
   ACTOR_STUMP_FALL_SPRITE,
-  ACTOR_FORGE, ///< Forge, a Mars Djinni, until it joins the party
-  /// The man who fought Forge and lost it. "Did you see something strange
-  /// over there? I fought it, but it fled."
+  /// Forge, a Mars Djinni, until it joins the party.
+  /// ★ Named from the game: "Forge" (MsgDjinnName)
+  ACTOR_FORGE,
+  /// The man who fought Forge and lost it, a man with golden-brown hair in
+  /// orange and red. "Did you see something strange over there? I fought it,
+  /// but it fled."
   ACTOR_WITNESS
 };
 
@@ -690,8 +709,8 @@ struct ScenePlacement gGomaCavePillar_Placements[] = {
     {SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(384), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {223, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {92, FLAG_DJINNI_0 + DJINNI_FORGE, ACTOR_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {134, FLAG_GOMA_CAVE_WITNESS_LEFT, ACTOR_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0},
+    {MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_FORGE, ACTOR_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {SPRITE_MAN_IN_ORANGE, FLAG_GOMA_CAVE_WITNESS_LEFT, ACTOR_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0},
     {SCENE_TABLE_END},
 };
 

@@ -19,8 +19,8 @@
 ///
 ///   Until the curse is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
 ///   Kolima_GetPlacements gives the nine villagers (ACTOR_FIRST_VILLAGER to
-///   ACTOR_LAST_VILLAGER) tree sprites that stand still, glints twinkle on the
-///   ground (ACTOR_FIRST_GLINT and the three after it, and five more that
+///   ACTOR_LAST_VILLAGER) tree sprites that stand still, sparkles twinkle on
+///   the ground (ACTOR_FIRST_SPARKLE and the three after it, and five more that
 ///   Kolima_Initialize places), and the villagers answer only Mind Read, with
 ///   the thoughts of people stuck as trees. Afterwards they are people again
 ///   and talk of the curse, the holy tree and McCoy's money, and the healer
@@ -99,44 +99,64 @@ static void Kolima_RestoreBridgeState(void);
 /// their own actor slots. The nine villagers are named by what they say once
 /// the curse is lifted.
 enum KolimaActor {
-  /// "This is Kolima, village of lumberjacks! I'll shout it out loud!"
-  ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS = ACTOR_FIRST_PLACED,
-  /// "We rely on the forests so much, and yet we hurt the sacred tree..."; as
-  /// a tree, "How could anyone turn a girl as beautiful as me into a tree?"
-  /// Ivan reads her mind in Kolima_WitnessForestCurse.
+  /// A young man with brown hair. "This is Kolima, village of lumberjacks! I'll
+  /// shout
+  /// it out loud!"
+  ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS = ACTOR_FIRST_PLACED,
+  /// A woman with fair hair. "We rely on the forests so much, and yet we hurt
+  /// the sacred tree..."; as a tree, "How could anyone turn a girl as
+  /// beautiful as me into a tree?" Ivan reads her mind in
+  /// Kolima_WitnessForestCurse.
   ACTOR_VILLAGER_RELYING_ON_FORESTS,
-  /// "You know, being a tree gives you a lot of time to think."
+  /// A burly grey-haired man. "You know, being a tree gives you a lot of time
+  /// to think."
   ACTOR_VILLAGER_TIME_TO_THINK,
-  /// "I turned into a tree right when the sparkles fell from the sky."
+  /// A woman in a green dress. "I turned into a tree right when the sparkles
+  /// fell from the sky."
   ACTOR_VILLAGER_SPARKLES_FELL,
-  /// "Don't blame the villagers for being tempted by McCoy's money..."; as a
-  /// tree, "I am old; I've lived a full life."
-  ACTOR_VILLAGER_MCCOYS_MONEY,
-  /// "Who would try to use the holy tree to build a palace, anyway?"
-  ACTOR_VILLAGER_HOLY_TREE_PALACE,
-  /// "I didn't mind being a tree... Water never tasted so good!"
-  ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE,
-  /// "Yawn... Trees are so... sleepy..."; as a tree, "If I can't move, then
-  /// Mom can't make me go to bed!"
-  ACTOR_VILLAGER_SLEEPY_TREES,
-  /// Opens the Sanctum's services across his counter (Engine_SanctumOpen);
-  /// as a tree, "Maybe if I meditate harder, I'll turn back into a man..."
+  /// An old man with a cane. "Don't blame the villagers for being tempted by
+  /// McCoy's money..."; as a tree, "I am old; I've lived a full life."
+  ACTOR_OLD_MAN_MCCOYS_MONEY,
+  /// An old woman. "Who would try to use the holy tree to build a palace,
+  /// anyway?"
+  ACTOR_OLD_WOMAN_HOLY_TREE_PALACE,
+  /// A small boy with fair hair.
+  /// ★ Named from the game: "I didn't mind being a tree... Water never tasted
+  /// so good!" (MsgKolimaIDidntMindBeingATree)
+  ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE,
+  /// A little girl with pigtails. "Yawn... Trees are so... sleepy..."; as a
+  /// tree, "If I can't move, then Mom can't make me go to bed!"
+  ACTOR_GIRL_SLEEPY_TREES,
+  /// A man with a white beard in a tall hat and a long robe; opens the
+  /// Sanctum's services across his counter (Engine_SanctumOpen); as a tree,
+  /// "Maybe if I meditate harder, I'll turn back into a man..."
   ACTOR_HEALER,
   /// Tret's wrathful side, unseen while the curse falls. "Hroom!"
   ACTOR_TRET,
-  ACTOR_LAUREL, ///< unseen while the curse falls
+  /// Unseen while the curse falls.
+  /// ★ Named from the game: "We are not the only ones who will die, Laurel."
+  /// (MsgKolimaWatchOutItsHappeningAgain)
+  ACTOR_LAUREL,
   /// The fields of Psynergy that rise over the party while the curse falls
   /// ("You know what those fields were?"), each set where its character
   /// stands in Kolima_WitnessForestCurse; Mia's only with her in the party.
   ACTOR_LEADERS_PSYNERGY_FIELD,
+  /// ★ Named from the game: "You know what those fields were?"
+  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_IVANS_PSYNERGY_FIELD,
+  /// ★ Named from the game: "You know what those fields were?"
+  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_MIAS_PSYNERGY_FIELD,
+  /// ★ Named from the game: "You know what those fields were?"
+  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_GARETS_PSYNERGY_FIELD,
-  /// The four glints on the ground while the curse lasts
+  /// The four sparkles on the ground while the curse lasts
   /// (gKolima_EntryActions).
-  ACTOR_FIRST_GLINT,
-  ACTOR_GRANITE = ACTOR_FIRST_GLINT + 4, ///< placed until Granite has joined
-  ACTOR_FIRST_VILLAGER = ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS,
+  /// ★ Named from the game: "I turned into a tree right when the sparkles
+  /// fell from the sky." (MsgKolimaITurnedIntoATreeRight)
+  ACTOR_FIRST_SPARKLE,
+  ACTOR_GRANITE = ACTOR_FIRST_SPARKLE + 4, ///< placed until Granite has joined
+  ACTOR_FIRST_VILLAGER = ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS,
   ACTOR_LAST_VILLAGER = ACTOR_HEALER
 };
 
@@ -144,7 +164,8 @@ enum KolimaActor {
 /// ACTOR_FIRST_PLACED: the same villager as a man and as a tree, in the same
 /// place.
 enum KolimaBridgeActor {
-  /// "For a while, I thought no one would ever cross this bridge again."
+  /// A burly grey-haired man. "For a while, I thought no one would ever cross
+  /// this bridge again."
   ACTOR_BRIDGE_VILLAGER = ACTOR_FIRST_PLACED,
   ACTOR_BRIDGE_VILLAGER_AS_TREE ///< while the curse lasts
 };
@@ -159,7 +180,7 @@ static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Each frame of a glint on Kolima's ground: its timer runs on at random, and
+/// Each frame of a sparkle on Kolima's ground: its timer runs on at random, and
 /// it shows its bright frame (7) past 1000 and its dim one (10) before; at
 /// 1200 the timer starts over.
 static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
@@ -181,8 +202,8 @@ static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
 
 /// While the curse lasts, gives Kolima's nine villagers (placement rows 3 to
 /// 11, ACTOR_FIRST_VILLAGER to ACTOR_LAST_VILLAGER) tree sprites, 105 or, for
-/// rows 9 and 10 (ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE and
-/// ACTOR_VILLAGER_SLEEPY_TREES), 110; they stand still and keep their facing
+/// rows 9 and 10 (ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE and
+/// ACTOR_GIRL_SLEEPY_TREES), 110; they stand still and keep their facing
 /// when spoken to.
 static void
 Kolima_InitializeCursedVillagers(struct ScenePlacement *placements) {
@@ -450,12 +471,12 @@ static void Kolima_ShowBridgeCollapse(void) {
 
 /// Sets up whichever scene is entered: Kolima Bridge as the curse and the
 /// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
-/// transition, and Kolima itself. There the four glints twinkle, the
+/// transition, and Kolima itself. There the four sparkles twinkle, the
 /// villagers stand as trees while the curse lasts (and three cells around
 /// (14, 8) take the attributes of cell (13, 9)), and the first entry from the
 /// world map plays Kolima_WitnessForestCurse. Once that has been seen, here or
 /// in Kolima Forest, Garet, Ivan and Mia, the two voices and the domes are
-/// taken away and five more glints are placed.
+/// taken away and five more sparkles are placed.
 s32 Kolima_Initialize(void) {
   s16 scene;
   u32 actor;
@@ -473,16 +494,16 @@ s32 Kolima_Initialize(void) {
     return 0;
   }
 
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT + 1), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT + 2), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_GLINT + 3), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_SPARKLE), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_SPARKLE + 1), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_SPARKLE + 2), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_SPARKLE + 3), 0);
 
   table = gKolima_EntryActions;
-  Actor_SetActionScript(ACTOR_FIRST_GLINT, table);
-  Actor_SetActionScript(ACTOR_FIRST_GLINT + 1, table);
-  Actor_SetActionScript(ACTOR_FIRST_GLINT + 2, table);
-  Actor_SetActionScript(ACTOR_FIRST_GLINT + 3, table);
+  Actor_SetActionScript(ACTOR_FIRST_SPARKLE, table);
+  Actor_SetActionScript(ACTOR_FIRST_SPARKLE + 1, table);
+  Actor_SetActionScript(ACTOR_FIRST_SPARKLE + 2, table);
+  Actor_SetActionScript(ACTOR_FIRST_SPARKLE + 3, table);
 
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     for (actor = ACTOR_FIRST_VILLAGER; actor <= ACTOR_LAST_VILLAGER; actor++) {
@@ -1655,7 +1676,7 @@ s32 gKolima_ProtectiveFieldShrinkActions[] = {
     SC_END,
 };
 
-/// The glints on Kolima's ground: three quarters of their size, passed
+/// The sparkles on Kolima's ground: three quarters of their size, passed
 /// through, twinkling at random (Kolima_UpdateTimedAppearance).
 s32 gKolima_EntryActions[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
@@ -1758,7 +1779,7 @@ struct ScenePlacement gKolimaTunnelPlacements[] = {
 
 /// Kolima's people: Garet, Ivan and Mia for the curse, the nine villagers,
 /// Tret's and Laurel's voices and the four domes until the curse has been seen
-/// (FLAG_KOLIMA_CURSE_WITNESSED), four glints while it lasts, and Granite until
+/// (FLAG_KOLIMA_CURSE_WITNESSED), four sparkles while it lasts, and Granite until
 /// it joins (its Djinni flag, 0x31).
 struct ScenePlacement gKolimaPlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1767,27 +1788,27 @@ struct ScenePlacement gKolimaPlacements[] = {
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(192), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x65, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(168), 0, PIXELS(360), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x73, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(344), 0, PIXELS(280), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(248), 0, PIXELS(392), FACING_SOUTH, 3, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(248), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(264), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(248), 0, PIXELS(264), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x37, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
+    { SPRITE_TRET, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x38, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
+    { SPRITE_LAUREL, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xdc, FLAG_KOLIMA_CURSE_WITNESSED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1805,12 +1826,12 @@ struct ScenePlacement gKolimaPlacements[] = {
         PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, ACTOR_STAND,
         PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x5a, 0x31, ACTOR_STAND,
+    { VENUS_DJINNI, 0x31, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-/// Five more glints, placed by Kolima_Initialize once the curse has been seen
+/// Five more sparkles, placed by Kolima_Initialize once the curse has been seen
 /// and kept while it lasts.
 struct ScenePlacement gKolima_EntryScript[] = {
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
@@ -1830,9 +1851,9 @@ struct ScenePlacement gKolima_EntryScript[] = {
 /// (ACTOR_BRIDGE_VILLAGER_AS_TREE), in the same place;
 /// Kolima_RestoreBridgeState puts one of them out of sight.
 struct ScenePlacement gKolimaBridgePlacements[] = {
-    { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, 3, 0 },
-    { 0x69, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TREE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -1854,33 +1875,33 @@ struct SceneEvent gKolimaEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, KOLIMA_TO_KOLIMA_TUNNEL },
-    { EVENT_TALK, ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
     { EVENT_TALK, ACTOR_VILLAGER_RELYING_ON_FORESTS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWeRelyOnTheForestsSo) },
     { EVENT_TALK, ACTOR_VILLAGER_TIME_TO_THINK, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYouKnowBeingATreeGives) },
     { EVENT_TALK, ACTOR_VILLAGER_SPARKLES_FELL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaITurnedIntoATreeRight) },
-    { EVENT_TALK, ACTOR_VILLAGER_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaDontBlameTheVillagersForBeing) },
-    { EVENT_TALK, ACTOR_VILLAGER_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWhoWouldTryToUseThe) },
-    { EVENT_TALK, ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
-    { EVENT_TALK, ACTOR_VILLAGER_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
+    { EVENT_TALK, ACTOR_OLD_MAN_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaDontBlameTheVillagersForBeing) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWhoWouldTryToUseThe) },
+    { EVENT_TALK, ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
+    { EVENT_TALK, ACTOR_GIRL_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
     { EVENT_TALK, ACTOR_HEALER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(Kolima_TalkToHealer) },
     { EVENT_TALK, ACTOR_GRANITE, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_GraniteJoins) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaForAWhileIThoughtId) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaForAWhileIThoughtId) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RELYING_ON_FORESTS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaTheForestTreesAreAliveJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TIME_TO_THINK, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIWonderIfIdLiveLonger) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SPARKLES_FELL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfThoseSparklesStartFallingAgain) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIveBeenPoorAllMyLife) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaItsNotCalledTheHolyTree) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfWeWereAllTreesThered) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaNobodyYellsAtYouWhenYoure) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_MCCOYS_MONEY, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIveBeenPoorAllMyLife) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_HOLY_TREE_PALACE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaItsNotCalledTheHolyTree) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfWeWereAllTreesThered) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SLEEPY_TREES, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaNobodyYellsAtYouWhenYoure) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIfTheHolyTreeAloneCaused) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_VILLAGE_OF_LUMBERJACKS, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICouldSpeakIdTell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICouldSpeakIdTell) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RELYING_ON_FORESTS, CONDITION_ALWAYS, MSGNO(MsgKolimaHowCouldAnyoneTurnAGirl) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_TIME_TO_THINK, CONDITION_ALWAYS, MSGNO(MsgKolimaThisIsADreamItHas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SPARKLES_FELL, CONDITION_ALWAYS, MSGNO(MsgKolimaBeingUnableToMoveIsSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MCCOYS_MONEY, CONDITION_ALWAYS, MSGNO(MsgKolimaIAmOldIveLivedA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HOLY_TREE_PALACE, CONDITION_ALWAYS, MSGNO(MsgKolimaItsTheSacredTreesCurseWhy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DIDNT_MIND_BEING_TREE, CONDITION_ALWAYS, MSGNO(MsgKolimaTheWaterAtMyFeetHuh) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SLEEPY_TREES, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICantMoveThenMom) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_MCCOYS_MONEY, CONDITION_ALWAYS, MSGNO(MsgKolimaIAmOldIveLivedA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_HOLY_TREE_PALACE, CONDITION_ALWAYS, MSGNO(MsgKolimaItsTheSacredTreesCurseWhy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE, CONDITION_ALWAYS, MSGNO(MsgKolimaTheWaterAtMyFeetHuh) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_SLEEPY_TREES, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICantMoveThenMom) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKolimaMaybeIfIMeditateHarderIll) },
     { SEARCH(SEARCH_JAR), 100, 0xf57, FIND_ITEM(ITEM_APPLE) },
     { SEARCH(SEARCH_JAR), 101, 0xf58, FIND_ITEM(ITEM_HERB) },

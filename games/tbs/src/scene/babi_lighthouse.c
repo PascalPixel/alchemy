@@ -1,35 +1,33 @@
-/// @file
-/// Babi Lighthouse, which Babi is having built on ancient ruins just north of
-/// Lalivero, and the road up to it: four scenes that share this overlay, three
-/// places in the game's area names, met in this order. The Road to Babi
-/// Lighthouse is SceneId_RoadToBabiLighthouse, the Babi Lighthouse Entry
-/// SceneId_BabiLighthouseEntry, and Babi Lighthouse itself
+/// @file Babi Lighthouse, which Babi is having built on ancient ruins just
+/// north of Lalivero, and the road up to it: four scenes that share this
+/// overlay, three places in the game's area names, met in this order. The Road
+/// to Babi Lighthouse is SceneId_RoadToBabiLighthouse, the Babi Lighthouse
+/// Entry SceneId_BabiLighthouseEntry, and Babi Lighthouse itself
 /// SceneId_BabiLighthouseLuff and SceneId_BabiLighthouseStoneDoor. The four
 /// share one exit table, the getters pick the rest by gGameState.scene, and
 /// BabiLighthouse_SetupScene restores the scene being entered.
 ///
 /// The party comes here from Lalivero with Iodem, whom Babi sent with it
-/// (babi_palace.c). Sheba, the holy child of Lalivero, has been taken
-/// hostage by Felix and the others, who went into the ruins, and Faran, the
-/// master of Lalivero, has followed them (lalivero.c). On the Road to Babi
-/// Lighthouse, entered from the world map, four workers have not been
-/// ordered to start work and talk of the strange folk who went to the ruins
-/// with Faran after them; a pillar there, moved by Move or Carry, settles in
-/// its cell at a height of 48 pixels (BabiLighthouse_UpdateMovedPillar), and a
-/// chest holds Lucky Pepper.
+/// (babi_palace.c). Sheba, the holy child of Lalivero, has been taken hostage
+/// by Felix and the others, who went into the ruins, and Faran, the master of
+/// Lalivero, has followed them (lalivero.c). On the Road to Babi Lighthouse,
+/// entered from the world map, four workers have not been ordered to start work
+/// and talk of the strange folk who went to the ruins with Faran after them; a
+/// pillar there, moved by Move or Carry, settles in its cell at a height of 48
+/// pixels (BabiLighthouse_UpdateMovedPillar), and a chest holds Lucky Pepper.
 ///
-/// At the Babi Lighthouse Entry four men lie where the group knocked them down
-/// on its way in (`Only two of those six ever attacked anyone...`), on ground
-/// their fire scorched. Two pillars on ledges are pushed or moved with Move, a
-/// leader left on a ledge jumping off (BabiLighthouse_JumpFromLedge); in the
-/// editions from TBS_PATCH_2 on they also sort against the leader
-/// (BabiLighthouse_MatchLeaderPriority). Growth grows a sprout into a vine the
-/// party climbs (BabiLighthouse_OpenGrowthPassage, FLAG_GROWTH_PASSAGE_OPEN),
-/// and three exit regions,
-/// BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST, _SOUTH and _NORTH,
-/// drop the party to the floor below, TunnelRuinsLadyStatues (tunnel_ruins.c),
-/// which the game still calls Babi Lighthouse; the way back up comes out beside
-/// the same holes, at the entrances of the same names
+/// At the Babi Lighthouse Entry two of Babi's soldiers, a strongman and a bald,
+/// muscular man lie where the group knocked them down on its way in (`Only two
+/// of those six ever attacked anyone...`), on ground their fire scorched. Two
+/// pillars on ledges are pushed or moved with Move, a leader left on a ledge
+/// jumping off (BabiLighthouse_JumpFromLedge); in the editions from TBS_PATCH_2
+/// on they also sort against the leader (BabiLighthouse_MatchLeaderPriority).
+/// Growth grows a sprout into a vine the party climbs
+/// (BabiLighthouse_OpenGrowthPassage, FLAG_GROWTH_PASSAGE_OPEN), and three exit
+/// regions, BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST, _SOUTH and
+/// _NORTH, drop the party to the floor below, TunnelRuinsLadyStatues
+/// (tunnel_ruins.c), which the game still calls Babi Lighthouse; the way back
+/// up comes out beside the same holes, at the entrances of the same names
 /// (BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_WEST and the others).
 /// Retreat anywhere in the lighthouse leads back to the Entry.
 ///
@@ -39,7 +37,7 @@
 /// Djinni, starts its battle when spoken to. BabiLighthouseStoneDoor is the
 /// cave before a stone door the group went through. Walking up to it the first
 /// time plays BabiLighthouse_DiscussPursuit
-/// (FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED, FLAG_IODEM_AT_BABI_LIGHTHOUSE): Faran
+/// (FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW, FLAG_IODEM_AT_BABI_LIGHTHOUSE): Faran
 /// and the onlookers argue whether anyone could have opened it, Iodem tells
 /// them that the party has chased Sheba's kidnappers from the far north, and
 /// Faran, unwilling to leave Sheba's fate to children, asks the party to prove
@@ -99,51 +97,97 @@
 #include "item_ids.h"
 
 /// BabiLighthouseStoneDoor, before the stone door: the door's two halves,
-/// Iodem, the man who saw the kidnappers go through, two more onlookers and
-/// Faran.
+/// Iodem, the strongman who saw the kidnappers go through, a grey-haired man, a
+/// young man and Faran.
 enum {
+  /// ★ Named from what the player sees: the left half of a dark stone door
+  /// (its render)
   ACTOR_LEFT_DOOR = 8,
+  /// ★ Named from what the player sees: the right half of the stone door (its
+  /// render)
   ACTOR_RIGHT_DOOR = 9,
+  /// ★ Named from the game: "I will trust Iodem once more..."
+  /// (MsgBabiLighthouseIfYouCanOpenThisDoor)
   ACTOR_IODEM = 10,
+  /// A strongman.
+  /// ★ Named from the game: "When I saw them, they had already gone through to
+  /// the other side." (MsgBabiLighthouseWhenISawThemTheyHad)
   ACTOR_WITNESS = 11,
-  ACTOR_FIRST_ONLOOKER = 12,
-  ACTOR_SECOND_ONLOOKER = 13,
+  /// A burly grey-haired man with his arms folded.
+  /// ★ Named from the game: "There is no way this door will open."
+  /// (MsgBabiLighthouseIAmSorryButNotEven)
+  ACTOR_DOUBTING_THE_DOOR = 12,
+  /// A young man with brown hair in a purple shirt.
+  /// ★ Named from the game: "her life may be in danger..."
+  /// (MsgBabiLighthouseThisIsAllAHugeWaste)
+  ACTOR_WORRIED_FOR_SHEBA = 13,
+  /// ★ Named from the game: "There were strange folk going to the ruins...
+  /// Faran followed them." (MsgBabiLighthouseThereWereStrangeFolkGoingTo)
   ACTOR_FARAN = 14
 };
 
 /// BabiLighthouseLuff's Djinni, Luff.
-enum { ACTOR_DJINNI = 8 };
+enum {
+  /// ★ Named from the game: "Luff" (MsgDjinnName)
+  ACTOR_DJINNI = 8
+};
 
-/// The Entry (BabiLighthouseEntry): the two pillars on the ledges, the sprout
-/// for Growth and the four men the kidnappers knocked down on their way in,
+/// The Entry (BabiLighthouseEntry): the two pillars on the ledges, the plant
+/// for Growth and the four the kidnappers knocked down on their way in (two of
+/// Babi's soldiers, a strongman and a bald, muscular man), lying on the ground,
 /// each named by what he says. The pillars have the sprite of the pillars Move
 /// or a push shifts in Venus Lighthouse.
 enum {
+  /// ★ Named from what the player sees: a stone pillar with a glowing yellow
+  /// cap on the left ledge (its render)
   ACTOR_LEFT_PILLAR = 8,
+  /// ★ Named from what the player sees: the same capped pillar on the right
+  /// ledge (its render)
   ACTOR_RIGHT_PILLAR = 9,
-  ACTOR_SPROUT = 10,
-  /// "They were terrible! We were absolutely no match for them."
-  ACTOR_FALLEN_MAN_NO_MATCH = 11,
-  /// "Only two of those six ever attacked anyone..."
-  ACTOR_FALLEN_MAN_ONLY_TWO = 12,
-  /// "They just kicked us out of their way and went on to the lighthouse."
-  ACTOR_FALLEN_MAN_KICKED_ASIDE = 13,
-  /// "They set fire to everything! That's why the ground is scorched."
+  /// ★ Named from what the player sees: a small green plant, SPRITE_SPROUT (its
+  /// render)
+  ACTOR_PLANT = 10,
+  /// A soldier lying on the ground.
+  /// ★ Named from the game: "We were absolutely no match for them."
+  /// (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)
+  ACTOR_FALLEN_SOLDIER_NO_MATCH = 11,
+  /// A strongman in a red top lying on the ground.
+  /// ★ Named from the game: "Only two of those six ever attacked anyone..."
+  /// (MsgBabiLighthouseOnlyTwoOfThoseSixEver)
+  ACTOR_FALLEN_STRONGMAN_ONLY_TWO = 12,
+  /// A soldier lying on the ground.
+  /// ★ Named from the game: "They just kicked us out of their way"
+  /// (MsgBabiLighthouseTheyJustKickedUsOutOf)
+  ACTOR_FALLEN_SOLDIER_KICKED_ASIDE = 13,
+  /// A bald, muscular man lying on the ground.
+  /// ★ Named from the game: "That's why the ground is scorched."
+  /// (MsgBabiLighthouseTheySetFireToEverythingThats)
   ACTOR_FALLEN_MAN_SCORCHED_GROUND = 14
 };
 
-/// The Road to Babi Lighthouse (RoadToBabiLighthouse): four workers, each named
-/// by what he says, and the pillar for Move and Carry, with the sprite of the
-/// pillars Carry takes across a gap in Venus Lighthouse.
+/// The Road to Babi Lighthouse (RoadToBabiLighthouse): four workers (a bald,
+/// muscular man, a strongman and two men with pickaxes), each named by what he
+/// says, and the pillar for Move and Carry, with the sprite of the pillars
+/// Carry takes across a gap in Venus Lighthouse.
 enum {
-  /// "We haven't been ordered to start working yet... Do we get today off?"
+  /// A bald, muscular man.
+  /// ★ Named from the game: "Do we get today off?"
+  /// (MsgBabiLighthouseWeHaventBeenOrderedToStart)
   ACTOR_WORKER_DAY_OFF = 8,
-  /// "There were strange folk going to the ruins... Faran followed them."
+  /// A strongman in a red top.
+  /// ★ Named from the game: "There were strange folk going to the ruins..."
+  /// (MsgBabiLighthouseThereWereStrangeFolkGoingTo)
   ACTOR_WORKER_STRANGE_FOLK = 9,
-  /// "It's odd that Babi would build a lighthouse in a place like this."
+  /// A man with a pickaxe.
+  /// ★ Named from the game: "It's odd that Babi would build a lighthouse in a
+  /// place like this." (MsgBabiLighthouseItsOddThatBabiWouldBuild)
   ACTOR_WORKER_ODD_PLACE = 10,
-  /// "Cutting these stones and stacking them on the ruins isn't easy."
+  /// A man with a pickaxe.
+  /// ★ Named from the game: "Cutting these stones and stacking them on the
+  /// ruins isn't easy." (MsgBabiLighthouseCuttingTheseStonesAndStackingThem)
   ACTOR_WORKER_CUTTING_STONES = 11,
+  /// ★ Named from what the player sees: a short grey stone pillar carved with a
+  /// spiral (its render)
   ACTOR_ROAD_PILLAR = 12
 };
 
@@ -449,7 +493,7 @@ static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
 /// doubting them, asks them to prove they can follow by opening the door.
 static void BabiLighthouse_DiscussPursuit(void) {
   // Bring the party to the witnesses gathered around the sealed door.
-  GameFlag_Set(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED);
+  GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
   GameFlag_Set(FLAG_IODEM_AT_BABI_LIGHTHOUSE);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -483,43 +527,43 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   // The witnesses try the stone door and disagree about who passed through it.
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_ONLOOKER, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_DOUBTING_THE_DOOR, 2);
   Engine_EventWait(40);
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_ONLOOKER, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_DOUBTING_THE_DOOR, 2);
   Engine_EventWait(40);
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_ONLOOKER, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_DOUBTING_THE_DOOR, 2);
   Engine_EventWait(40);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 2, 50);
-  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 2, 50);
+  Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_EAST, 0);
   Engine_EventWait(25);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT | 7, 40);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | 7, 40);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT | 1, 75);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | 1, 75);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 60);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_SOUTH, 0);
   Engine_EventWait(20);
@@ -614,18 +658,18 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 50);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
   Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_SECOND_ONLOOKER, 0x14ccc, 0xa666);
-  Actor_WalkByAndWait(ACTOR_SECOND_ONLOOKER, 0, 16);
+  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, 0x14ccc, 0xa666);
+  Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 0, 16);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
-  Actor_SetSpeed(ACTOR_FIRST_ONLOOKER, 0x14ccc, 0xa666);
-  Actor_WalkByAndWait(ACTOR_FIRST_ONLOOKER, 0, 16);
+  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 0x14ccc, 0xa666);
+  Actor_WalkByAndWait(ACTOR_DOUBTING_THE_DOOR, 0, 16);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 7, 50);
-  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 7, 50);
+  Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Engine_EventWait(30);
@@ -660,27 +704,28 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_EventWait(40);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorFaceEachOther(ACTOR_FIRST_ONLOOKER, ACTOR_SECOND_ONLOOKER, 50);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ONLOOKER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_NOD);
+  Engine_ActorFaceEachOther(ACTOR_DOUBTING_THE_DOOR, ACTOR_WORRIED_FOR_SHEBA,
+                            50);
+  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_SOUTH, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ONLOOKER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_SetSpeed(ACTOR_FIRST_ONLOOKER, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_SECOND_ONLOOKER, 0x10000, 0x8000);
-  Actor_WalkBy(ACTOR_FIRST_ONLOOKER, 32, 0);
-  Actor_WalkByAndWait(ACTOR_SECOND_ONLOOKER, 32, 0);
-  Actor_WalkBy(ACTOR_FIRST_ONLOOKER, 0, 16);
-  Actor_WalkByAndWait(ACTOR_SECOND_ONLOOKER, 16, 0);
-  Actor_WalkTo(ACTOR_SECOND_ONLOOKER, 344, 312);
-  Actor_WalkToAndWait(ACTOR_FIRST_ONLOOKER, 344, 336);
-  Engine_ActorSetAnimation(ACTOR_SECOND_ONLOOKER, ANIM_STAND);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, 0x10000, 0x8000);
+  Actor_WalkBy(ACTOR_DOUBTING_THE_DOOR, 32, 0);
+  Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 32, 0);
+  Actor_WalkBy(ACTOR_DOUBTING_THE_DOOR, 0, 16);
+  Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 16, 0);
+  Actor_WalkTo(ACTOR_WORRIED_FOR_SHEBA, 344, 312);
+  Actor_WalkToAndWait(ACTOR_DOUBTING_THE_DOOR, 344, 336);
+  Engine_ActorSetAnimation(ACTOR_WORRIED_FOR_SHEBA, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_EventWait(20);
@@ -736,30 +781,32 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ActorJump(ACTOR_IODEM, 4, 30);
   Engine_EventWait(10);
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 40);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTHWEST + FACING_STEP,
+                      0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTHWEST + FACING_STEP,
+                      0);
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT | 2, 40);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | 2, 40);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 1, 50);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 1, 50);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_EventWait(25);
-  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -792,14 +839,14 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_SOUTH, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_FIRST_ONLOOKER, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Engine_EventWait(30);
@@ -816,26 +863,28 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTHWEST + FACING_STEP,
+                      0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTHWEST + FACING_STEP,
+                      0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_EventWait(30);
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 70);
   Camera_MoveTo(PIXELS(280), -1, PIXELS(312), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 2, 40);
-  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
+  Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | 2, 40);
+  Event_ShowMessage(ACTOR_DOUBTING_THE_DOOR, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
+  Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(30);
@@ -863,8 +912,8 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_OpenMessage(ACTOR_FARAN, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -970,8 +1019,10 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTHWEST + FACING_STEP,
+                      0);
+  Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTHWEST + FACING_STEP,
+                      0);
   Engine_EventWait(30);
   Engine_EventEnd();
 }
@@ -1239,8 +1290,8 @@ static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
 }
 #endif
 
-/// Sets up the scene being entered: Retreat leads back to the Entry; the
-/// road's pillar, the Entry's pillars, vine and fallen men,
+/// Sets up the scene being entered: Retreat leads back to the Entry; the road's
+/// pillar, the Entry's pillars, vine and the four lying on the ground,
 /// BabiLighthouseLuff's arrivals by falling, and BabiLighthouseStoneDoor's door
 /// and onlookers are restored. Returns 0.
 s32 BabiLighthouse_SetupScene(void) {
@@ -1292,12 +1343,13 @@ s32 BabiLighthouse_SetupScene(void) {
     actor = Object_GetById(ACTOR_RIGHT_PILLAR);
     actor->y.fixed = Object_GetById(ACTOR_RIGHT_PILLAR)->terrainHeight;
     if (GameFlag_IsSet(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
-      Engine_ActorSetAnimation(ACTOR_SPROUT, 4);
-      Object_GetById(ACTOR_SPROUT)->collisionFlags = 0xfe;
+      Engine_ActorSetAnimation(ACTOR_PLANT, 4);
+      Object_GetById(ACTOR_PLANT)->collisionFlags = 0xfe;
       BabiLighthouse_OpenGrowthPassage();
     }
-    // Their script waits stagger the four fallen men's first animations.
-    placedActor = Object_GetById(ACTOR_FALLEN_MAN_NO_MATCH);
+    // Their script waits stagger the first animations of the four lying on the
+    // ground.
+    placedActor = Object_GetById(ACTOR_FALLEN_SOLDIER_NO_MATCH);
     placedActor->collisionFlags = 0;
     placedActor->priorityFlags = 0;
     placedActor->wait = 0;
@@ -1305,23 +1357,23 @@ s32 BabiLighthouse_SetupScene(void) {
     zero = 0;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0xc000;
-    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_NO_MATCH, 0);
-    placedActor = Object_GetById(ACTOR_FALLEN_MAN_ONLY_TWO);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_SOLDIER_NO_MATCH, 0);
+    placedActor = Object_GetById(ACTOR_FALLEN_STRONGMAN_ONLY_TWO);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 30;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x4000;
-    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_ONLY_TWO, 0);
-    placedActor = Object_GetById(ACTOR_FALLEN_MAN_KICKED_ASIDE);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, 0);
+    placedActor = Object_GetById(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 60;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x8000;
-    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_KICKED_ASIDE, 0);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, 0);
     placedActor = Object_GetById(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
@@ -1384,25 +1436,25 @@ s32 BabiLighthouse_SetupScene(void) {
         GameFlag_Clear(FLAG_BEYOND_DOOR);
       }
     }
-    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED) == 0) {
+    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW) == 0) {
       Actor_SetPosition(ACTOR_IODEM, -PIXELS(64), -PIXELS(64));
       Actor_SetPosition(ACTOR_WITNESS, PIXELS(280), PIXELS(296));
-      Actor_SetPosition(ACTOR_FIRST_ONLOOKER, PIXELS(312), PIXELS(248));
-      Actor_SetPosition(ACTOR_SECOND_ONLOOKER, PIXELS(296), PIXELS(248));
+      Actor_SetPosition(ACTOR_DOUBTING_THE_DOOR, PIXELS(312), PIXELS(248));
+      Actor_SetPosition(ACTOR_WORRIED_FOR_SHEBA, PIXELS(296), PIXELS(248));
       Actor_SetPosition(ACTOR_FARAN, PIXELS(320), PIXELS(296));
       Actor_FaceDirection(ACTOR_WITNESS, FACING_EAST, 0);
-      Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTH, 0);
-      Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTH, 0);
+      Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH, 0);
+      Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTH, 0);
       Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
       Engine_EventWait(5);
     } else if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) != 0) {
       Actor_SetPosition(ACTOR_IODEM, PIXELS(312), PIXELS(312));
       Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP,
-                          0);
-      Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP,
-                          0);
+      Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR,
+                          FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA,
+                          FACING_NORTHWEST + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
       Engine_EventWait(5);
     }
@@ -1692,12 +1744,13 @@ struct ScenePlacement gBabiLighthouse_EntryPlacements[] = {
      FACING_SOUTH, TALK_FACE_PARTY, 0},
     {SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript,
      PIXELS(176), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x74, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript, PIXELS(240), 0,
-     PIXELS(240), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_STRONGMAN, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript,
+     PIXELS(240), 0, PIXELS(240), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript,
      PIXELS(216), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x72, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript, PIXELS(184), 0,
-     PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS,
+     (s32)gBabiLighthouse_TrembleScript, PIXELS(184), 0, PIXELS(248),
+     FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1717,27 +1770,27 @@ struct ScenePlacement gBabiLighthouse_StoneDoorPlacements[] = {
         TALK_FACE_PARTY, 0},
     {0x128, CONDITION_ALWAYS, 7, PIXELS(296), 0, PIXELS(240), FACING_WEST, TALK_KEEP_FACING, 0},
     {0x128, CONDITION_ALWAYS, 7, PIXELS(312), 0, PIXELS(240), FACING_EAST, TALK_KEEP_FACING, 0},
-    {0x39, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(352), FACING_NORTH,
+    {SPRITE_IODEM, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(352), FACING_NORTH,
         TALK_FACE_PARTY_AND_BACK, 0},
-    {0x74, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(328), FACING_WEST,
+    {SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(328), FACING_WEST,
         TALK_FACE_PARTY_AND_BACK, 0},
-    {0x65, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(344), 0, PIXELS(336), FACING_WEST,
+    {SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(344), 0, PIXELS(336), FACING_WEST,
         TALK_FACE_PARTY_AND_BACK, 0},
-    {0x6c, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(344), 0, PIXELS(312), FACING_WEST,
+    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(344), 0, PIXELS(312), FACING_WEST,
         TALK_FACE_PARTY_AND_BACK, 0},
-    {0x46, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(312), FACING_WEST,
+    {SPRITE_FARAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(312), FACING_WEST,
         TALK_FACE_PARTY_AND_BACK, 0},
     {SCENE_TABLE_END},
 };
 
 struct ScenePlacement gBabiLighthouse_PlacementsOther[] = {
-    {0x72, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(128), 0, PIXELS(264), FACING_WEST,
+    {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(128), 0, PIXELS(264), FACING_WEST,
         TALK_FACE_PARTY, 0},
-    {0x74, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(96), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY,
+    {SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(96), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY,
         0},
-    {0x87, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(184), 0, PIXELS(200), FACING_WEST, TALK_FACE_PARTY,
+    {SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(184), 0, PIXELS(200), FACING_WEST, TALK_FACE_PARTY,
         0},
-    {0x87, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(232), 0, PIXELS(184), FACING_SOUTH,
+    {SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(232), 0, PIXELS(184), FACING_SOUTH,
         TALK_FACE_PARTY, 0},
     {0x100, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(376), 0, PIXELS(216), FACING_SOUTH,
         TALK_FACE_PARTY, 0},
@@ -1750,21 +1803,21 @@ struct SceneEvent gBabiLighthouse_EntryEvents[] = {
     {EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_AdvancePairAndJump)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_ClimbDownOrAdvancePair)},
-    {EVENT_TALK, ACTOR_FALLEN_MAN_NO_MATCH, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
-    {EVENT_TALK, ACTOR_FALLEN_MAN_ONLY_TWO, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
-    {EVENT_TALK, ACTOR_FALLEN_MAN_KICKED_ASIDE, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
+    {EVENT_TALK, ACTOR_FALLEN_SOLDIER_NO_MATCH, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
+    {EVENT_TALK, ACTOR_FALLEN_STRONGMAN_ONLY_TWO, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
+    {EVENT_TALK, ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
     {EVENT_TALK, ACTOR_FALLEN_MAN_SCORCHED_GROUND, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheySetFireToEverythingThats)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_NO_MATCH, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_SOLDIER_NO_MATCH, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseWereTheOnesWhoAttackedBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_ONLY_TWO, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_STRONGMAN_ONLY_TWO, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseTheOtherFourDidntSeemTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_KICKED_ASIDE, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseWhatCouldTheyBePlanningFor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_SCORCHED_GROUND, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseNoneOfThemHadAnyTorches)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_GROWTH_PASSAGE_OPEN, EVENT_SCRIPT(BabiLighthouse_OpenGrowthPassage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_PLANT, FLAG_GROWTH_PASSAGE_OPEN, EVENT_SCRIPT(BabiLighthouse_OpenGrowthPassage)},
     {SCENE_EVENTS_END},
 };
 
@@ -1792,34 +1845,34 @@ struct SceneEvent gBabiLighthouse_LuffEvents[] = {
 struct SceneEvent gBabiLighthouse_StoneDoorEvents[] = {
     {EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST},
-    {EVENT_TOUCH, 10, FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED, EVENT_SCRIPT(BabiLighthouse_DiscussPursuit)},
+    {EVENT_TOUCH, 10, FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW, EVENT_SCRIPT(BabiLighthouse_DiscussPursuit)},
     {EVENT_TOUCH, 20, IF_FLAG_SET(FLAG_BEYOND_DOOR), EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
     {EVENT_TOUCH, 21, FLAG_BEYOND_DOOR, EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
     {EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_OpenTruthDoor)},
     {EVENT_TALK, ACTOR_IODEM, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIAmCountingOnYouIsaac)},
     {EVENT_TALK, ACTOR_WITNESS, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseWhenISawThemTheyHad)},
-    {EVENT_TALK, ACTOR_FIRST_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIAmSorryButNotEven)},
-    {EVENT_TALK, ACTOR_SECOND_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisAllStartedWhenActorWas)},
+    {EVENT_TALK, ACTOR_DOUBTING_THE_DOOR, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIAmSorryButNotEven)},
+    {EVENT_TALK, ACTOR_WORRIED_FOR_SHEBA, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisAllStartedWhenActorWas)},
     {EVENT_TALK, ACTOR_FARAN, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIfYouCanOpenThisDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIDoNotMeanToDoubt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN,
         MSGNO(MsgBabiLighthouseNobodyThinksTheDoorCanBe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOUBTING_THE_DOOR, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN,
         MSGNO(MsgBabiLighthouseIDontKnowWhatTheyreWaiting)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisIsAllAHugeWaste)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_FOR_SHEBA, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisIsAllAHugeWaste)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIHopeTheyCanOpenThe)},
     {EVENT_TALK, ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIBegOfYouIsaacPlease)},
     {EVENT_TALK, ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseICantBelieveThisDoorActually)},
-    {EVENT_TALK, ACTOR_FIRST_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseItTakesGreatCourageToContinue)},
-    {EVENT_TALK, ACTOR_SECOND_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseImVeryInterestedInWhatLies)},
+    {EVENT_TALK, ACTOR_DOUBTING_THE_DOOR, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseItTakesGreatCourageToContinue)},
+    {EVENT_TALK, ACTOR_WORRIED_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseImVeryInterestedInWhatLies)},
     {EVENT_TALK, ACTOR_FARAN, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIAmNotAfraidOfDanger)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIfAnythingHappensToActorTolbi)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIfThisDoorOpensMaybeWe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_ONLOOKER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOUBTING_THE_DOOR, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIBetTheMonstersAroundHere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_ONLOOKER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_FOR_SHEBA, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseThisIsABigWasteOf)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIDontWantToHinderActors)},

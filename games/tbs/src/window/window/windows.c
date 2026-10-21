@@ -106,7 +106,7 @@ void UiWork_InitializeWithResourceCounters(void) {
 /// UiWork_InitializeWithResourceCounters does for the field, and marks the work
 /// block as in battle (menuState 1). Battle_RunEncounter's setup
 /// (battle/battle/encounter.c) passes loadGlyphTiles set only while
-/// FLAG_DJINN_TUTORIAL is set: it reserves the glyph sprites' tiles, which
+/// FLAG_DJINN_LESSON is set: it reserves the glyph sprites' tiles, which
 /// only windows other than text canvases need. Unlike the field setup it does
 /// not mark the portrait slots free (999): they stay 0 from the clear.
 void UiWork_Initialize(s32 loadGlyphTiles) {

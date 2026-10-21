@@ -133,7 +133,7 @@ struct BattleMenuWork {
   u8 listSlots[34];      ///< the Psynergy list's action slots, ended by 0
   u16 listAbilities[33]; ///< the Psynergy list's ability ids, ended by 0
   /// The Djinn tutorial's step: 0 off, 1 from the start of each round while
-  /// FLAG_DJINN_TUTORIAL is set, then one more for each hint shown. While it
+  /// FLAG_DJINN_LESSON is set, then one more for each hint shown. While it
   /// is not 0 the menus press keys for the player.
   s32 tutorialStep;
   s32 tutorialDelay; ///< frames until the tutorial's next key press

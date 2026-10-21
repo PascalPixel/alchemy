@@ -65,24 +65,23 @@ enum JailTrigger {
 /// returns: the three thieves of gJailThiefPlacements, or the prisoner of
 /// gJailPrisonerPlacements in the same first slot.
 enum JailActor {
-  /// The thieves' leader (SPRITE_THIEF_LEADER), in the middle of the cell.
-  /// "Shut yer yaps!"
+  /// The thieves' leader (SPRITE_MAN_WITH_LONG_DARK_HAIR), in the middle of the
+  /// cell.
+  /// ★ Named from the game: "Shut yer yaps!"
+  /// (MsgVaultThiefLeaderSilencesThieves)
   ACTOR_THIEF_LEADER = ACTOR_FIRST_PLACED,
-  /// The thief on the left (SPRITE_THIEF). "If only we had escaped to the cave
-  /// northeast of Goma Range."
+  /// The thief on the left (SPRITE_PERSON_IN_PURPLE).
+  /// ★ Named from the game: "If only we had escaped to the cave northeast of
+  /// Goma Range." (MsgVaultLeftThiefRegretsEscape)
   ACTOR_LEFT_THIEF,
-  /// The thief on the right (SPRITE_THIEF). "Blast! I knew we should have
-  /// skipped town sooner."
+  /// The thief on the right (SPRITE_PERSON_IN_PURPLE).
+  /// ★ Named from the game: "Blast! I knew we should have skipped town sooner."
+  /// (MsgVaultRightThiefRegretsStaying)
   ACTOR_RIGHT_THIEF,
-  /// The lone prisoner after the thieves have broken out. "I hit somebody, so
-  /// they put me in here."
+  /// The lone prisoner after the thieves have broken out (SPRITE_STRONGMAN).
+  /// ★ Named from the game: "I hit somebody, so they put me in here."
+  /// (MsgVaultPrisonerRegretsFight)
   ACTOR_PRISONER = ACTOR_FIRST_PLACED
-};
-
-enum JailSprite {
-  SPRITE_THIEF_LEADER = 0x3f,
-  SPRITE_THIEF = 0x40,
-  SPRITE_PRISONER = 0x74
 };
 
 enum { CELL_COLLISION_FLAGS = 0x14 };
@@ -266,17 +265,17 @@ const u32 gJailExits[] = {
 };
 
 const struct ScenePlacement gJailThiefPlacements[] = {
-    { SPRITE_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
+    { SPRITE_MAN_WITH_LONG_DARK_HAIR, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
+    { SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
       PIXELS(88), 0, PIXELS(144), FACING_SOUTH - FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
+    { SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
       PIXELS(248), 0, PIXELS(144), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
 const struct ScenePlacement gJailPrisonerPlacements[] = {
-    { SPRITE_PRISONER, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

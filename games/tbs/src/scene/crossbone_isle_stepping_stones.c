@@ -26,7 +26,7 @@
 /// - SceneId_CrossboneIsleDragonStatue, off the eighth floor, by a dragon
 ///   statue: three puddles that Frost freezes into pillars of ice. Frost on
 ///   the third makes the pillar in it rise and thaws a frozen second puddle,
-///   and the third freezes only if the leader was not standing on it; a pillar
+///   and the third freezes only if the leader was not standing on it; a boulder
 ///   moved with Move sinks into place at column 16.
 ///
 /// The other three side rooms are in crossbone_isle_keys.c, and the
@@ -87,25 +87,42 @@ enum CrossboneIsleSteppingStonesActor {
   /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
   /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
   /// sprite 0x100), the only actors those rooms place.
+  /// ★ Named from what the player sees: tan stone pillars over the pit,
+  /// pillars of ice on the spikes, and grey carved pillars stacked two high
+  /// (its render)
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   /// The logs, SPRITE_LOG_NORTH_SOUTH and SPRITE_LOG_WEST_EAST as Kolima
   /// Forest's: eight in
   /// CrossboneIsleFloodgate, where the seven after the first float on the
   /// raised water, and two in CrossboneIsleDragonStatue.
+  /// ★ Named from what the player sees: logs lying on the cave floor (its
+  /// render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  /// CrossboneIsleDragonStatue's pillar for Move, sprite 0x125, which sinks
+  /// CrossboneIsleDragonStatue's boulder for Move, sprite 0x125, which sinks
   /// into place at column 16.
-  ACTOR_SINKING_PILLAR = ACTOR_FIRST_LOG + 2,
+  /// ★ Named from what the player sees: a round grey boulder below the logs
+  /// (its render)
+  ACTOR_SINKING_BOULDER = ACTOR_FIRST_LOG + 2,
   /// CrossboneIsleDragonStatue's three puddles, SPRITE_PUDDLE, which Frost
   /// freezes into pillars of ice.
+  /// ★ Named from what the player sees: a small blue puddle on the west ledge
+  /// (its render)
   ACTOR_FIRST_PUDDLE,
+  /// ★ Named from what the player sees: a small blue puddle on the middle
+  /// ledge (its render)
   ACTOR_SECOND_PUDDLE,
+  /// ★ Named from what the player sees: the puddle by the dragon statue,
+  /// drawn frozen around its pillar (its render)
   ACTOR_THIRD_PUDDLE,
   /// The pillar in CrossboneIsleDragonStatue's third puddle, sprite 0x122,
   /// which rises 32 pixels as Frost freezes the puddle.
+  /// ★ Named from what the player sees: a narrow dark pillar standing in the
+  /// third puddle (its render)
   ACTOR_RISING_PILLAR,
   /// CrossboneIsleFloodgate's water, sprite 0xd6, raised behind the closed
   /// floodgate.
+  /// ★ Named from what the player sees: the stream's green water, which the
+  /// closed floodgate backs up (its render)
   ACTOR_WATER = ACTOR_FIRST_LOG + 8
 };
 
@@ -1390,10 +1407,10 @@ static void Event_FreezeThirdPuddle(void) {
   }
 }
 
-/// Move begins on CrossboneIsleDragonStatue's sinking pillar: its cell is
+/// Move begins on CrossboneIsleDragonStatue's sinking boulder: its cell is
 /// cleared.
 static void Event_StartMovingSinkingPillar(void) {
-  struct FieldActor *pillar = Object_GetById(ACTOR_SINKING_PILLAR);
+  struct FieldActor *pillar = Object_GetById(ACTOR_SINKING_BOULDER);
   s32 x;
   s32 z;
 
@@ -1406,13 +1423,13 @@ static void Event_StartMovingSinkingPillar(void) {
   EV_END();
 }
 
-/// Move on CrossboneIsleDragonStatue's sinking pillar, and after each push:
+/// Move on CrossboneIsleDragonStatue's sinking boulder, and after each push:
 /// once it reaches column 16 it sinks two pixels into place for good.
 static void Event_MoveSinkingPillar(void) {
   struct FieldActor *pillar;
   s32 alreadyLowered;
 
-  pillar = Object_GetById(ACTOR_SINKING_PILLAR);
+  pillar = Object_GetById(ACTOR_SINKING_BOULDER);
   EV_BEGIN();
   StagedActor_FillGridAttributeRectangle(2, (pillar->x.fixed >> 20),
                                          (pillar->z.fixed >> 20), 1, 1, 255);
@@ -1430,8 +1447,8 @@ static void Event_MoveSinkingPillar(void) {
   EV_END();
 }
 
-/// Walking into CrossboneIsleDragonStatue's sinking pillar: push it if the cell
-/// beyond is clear.
+/// Walking into CrossboneIsleDragonStatue's sinking boulder: push it if the
+/// cell beyond is clear.
 static void Event_PushSinkingPillar(void) {
   struct StagedActorProbe probe;
 
@@ -1622,8 +1639,8 @@ s32 Scene_Initialize(void) {
   } else if (gGameState.scene == (s32)&SceneId_CrossboneIsleDragonStatue) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
-    OBJ_MODE(ACTOR_SINKING_PILLAR, 2);
-    Engine_ActorSetChildValue(ACTOR_SINKING_PILLAR, 6);
+    OBJ_MODE(ACTOR_SINKING_BOULDER, 2);
+    Engine_ActorSetChildValue(ACTOR_SINKING_BOULDER, 6);
     FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG);
     FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
 #if TBS_PATCH_1
@@ -1947,9 +1964,9 @@ struct SceneEvent gCrossboneIsleDragonStatueEvents[] = {
     {SEARCH(SEARCH_CHEST), 102, 0xee0, FIND_ITEM(ITEM_CLERICS_RING)},
     {SEARCH(SEARCH_CHEST), 103, 0xee1, FIND_ITEM(ITEM_SMOKE_BOMB)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_SINKING_PILLAR, PILLAR_SUNK_FLAG,
+     ACTOR_SINKING_BOULDER, PILLAR_SUNK_FLAG,
      EVENT_SCRIPT(Event_StartMovingSinkingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR, PILLAR_SUNK_FLAG,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_BOULDER, PILLAR_SUNK_FLAG,
      EVENT_SCRIPT(Event_MoveSinkingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
      FIRST_FROZEN_PUDDLE_FLAG, EVENT_SCRIPT(Event_FreezeFirstPuddle)},

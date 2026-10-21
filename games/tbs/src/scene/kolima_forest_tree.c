@@ -75,14 +75,20 @@
 /// ACTOR_FIRST_PLACED.
 enum {
   ACTOR_TRET = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Oh! Laurel, you were given powers, too?"
+  /// (MsgKolimaWasIndeedAngryPeopleHad)
   ACTOR_LAUREL,
   ACTOR_TRET_AUXILIARY,
   ACTOR_LAUREL_AUXILIARY,
   /// An invisible actor on Tret's spot that answers for him:
   /// talking to it, Mind Read on it and Hermes' Water used on it reach Tret.
+  /// ★ Named from the game: "The Water of Hermes seeped into Tret."
+  /// (MsgKolimaWaterHermesSeepedIntoTret)
   ACTOR_TRET_STAND_IN,
   /// The invisible actor on Laurel's spot that answers for her when she is
   /// talked to or her mind is read.
+  /// ★ Named from the game: "I am sorry to have worried you so, Laurel."
+  /// (MsgKolimaFeelGreatPowerSpreadingThrough)
   ACTOR_LAUREL_STAND_IN,
   /// Tret's wrathful side, which speaks with a portrait. "I control all in
   /// Tret's realm!"
@@ -1052,7 +1058,7 @@ u32 gKolimaForestTreeExits[] = {
 struct ScenePlacement gKolimaForestTreePlacements[] = {
     { 0x47, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x38, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_LAUREL, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(270), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1062,7 +1068,7 @@ struct ScenePlacement gKolimaForestTreePlacements[] = {
         PIXELS(327), 0, PIXELS(194), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(272), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x37, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TRET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },

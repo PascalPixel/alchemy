@@ -88,24 +88,31 @@ enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 /// numbered in the order of gTolbiSpringPlacementsOther from
 /// ACTOR_FIRST_PLACED.
 enum TolbiSpringGameRoomActor {
+  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN).
   TOLBI_SPRING_WHEELS_ATTENDANT = ACTOR_FIRST_PLACED,
+  /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR).
   TOLBI_SPRING_DICE_ATTENDANT,
   /// Beside the Lucky Dice attendant, in his sprite. "Read the sign if ya
   /// don't know the rules." XXX: likely a second attendant, because the
   /// Colosso's attendants wear the same sprite.
   TOLBI_SPRING_DICE_RULES_ATTENDANT,
-  /// A Lucky Dice player. "Is this yer first time to play Lucky Dice?"
+  /// A Lucky Dice player, a burly grey-haired man
+  /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR). "Is this yer first time to play Lucky
+  /// Dice?"
   TOLBI_SPRING_DICE_PLAYER_FIRST_TIME,
-  /// "Whoa! Getting triple digits is real tough!"
+  /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE). "Whoa! Getting triple
+  /// digits is real tough!"
   TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS,
-  /// "I don't want to stop playing Lucky Dice, but I can't spend anymore!"
+  /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS). "I don't want to
+  /// stop playing Lucky Dice, but I can't spend anymore!"
   TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS,
   TOLBI_SPRING_WHEELS_PRIZE_SIGN,
   TOLBI_SPRING_WHEELS_RULES_SIGN,
   /// "Lucky Dice. Throw the dice on the table and try to get the same
   /// numbers."
   TOLBI_SPRING_DICE_RULES_SIGN,
-  /// A soldier, gone after Colosso. "poor soldiers like us"
+  /// A soldier, gone after Colosso, drawn with the long-haired fighter's
+  /// sprite (SPRITE_PERSON_WITH_SWORD). "poor soldiers like us"
   TOLBI_SPRING_SOLDIER,
   /// "Lucky Dice. If two numbers match on either the dice or the table..."
   TOLBI_SPRING_DICE_PAIRS_SIGN
@@ -134,11 +141,14 @@ enum TolbiSpringActor {
   /// (TolbiSpring_Initialize); nothing talks to them.
   TOLBI_SPRING_EAST_MIRRORED_PROP,
   TOLBI_SPRING_WEST_MIRRORED_PROP,
-  /// A visitor. "Tolbi Spring has mysterious powers."
+  /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK). "Tolbi
+  /// Spring has mysterious powers."
   TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS,
-  /// Asks for a medal. "Do you have a Lucky Medal?"
+  /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK) who asks for a medal.
+  /// "Do you have a Lucky Medal?"
   TOLBI_SPRING_MEDAL_SEEKER,
-  /// A visitor. "Too bad I only have one Lucky Medal."
+  /// A visitor, a woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR). "Too bad
+  /// I only have one Lucky Medal."
   TOLBI_SPRING_VISITOR_ONE_MEDAL
 };
 
@@ -1497,27 +1507,27 @@ const struct ScenePlacement gTolbiSpringPlacements[] = {
         PIXELS(176), 0, PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x112, CONDITION_ALWAYS, 7,
         PIXELS(72), 0, PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(48), 0, PIXELS(136), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(24), 0, PIXELS(72), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(96), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 
 const struct ScenePlacement gTolbiSpringPlacementsOther[] = {
-    { 0x94, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(144), 0, PIXELS(360), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xa5, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(82), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xa5, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(82), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(128), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(96), 0, PIXELS(168), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(104), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(96), 0, PIXELS(336), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -1525,7 +1535,7 @@ const struct ScenePlacement gTolbiSpringPlacementsOther[] = {
         PIXELS(168), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(160), 0, PIXELS(112), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(152), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(80), 0, PIXELS(88), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },

@@ -16,7 +16,7 @@
 ///   cat paw it, and does not believe him. Arriving here sets him on the floor
 ///   and copies a 4-by-3 block of cells from (0, 120) to (8, 67) (XXX: what
 ///   they show is not known).
-/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the house of a child
+/// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the house of a boy
 ///   who wonders whether the thieves were from Lunpa at all, since Dodonpa's
 ///   henchmen never attacked.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST and
@@ -79,29 +79,68 @@
 /// The townspeople, numbering the placement rows from ACTOR_FIRST_PLACED and
 /// named by what they say on the party's return.
 enum {
-  ACTOR_GEM_OWNER = ACTOR_FIRST_PLACED, ///< a cat ate his precious stone
+  /// A young man whose precious stone, he says, a cat ate.
+  /// ★ Named from the game: "I kept worrying that they would take my gem."
+  /// (MsgVaultICanSleepWellNowThat)
+  ACTOR_GEM_OWNER = ACTOR_FIRST_PLACED,
+  /// A woman with fair hair.
+  /// ★ Named from the game: "My husband says my cat ate the treasure"
+  /// (MsgVaultMyHusbandSaysMyCatAte)
   ACTOR_GEM_OWNERS_WIFE,
-  /// In the child's house. "The prisoners said they wanted to break out of
-  /// jail before Colosso began."
+  /// A burly grey-haired man in the boy's house.
+  /// ★ Named from the game: "The prisoners said they wanted to break out of
+  /// jail before Colosso began." (MsgVaultThePrisonersSaidTheyWantedTo)
   ACTOR_VILLAGER_HEARD_PRISONERS,
-  ACTOR_CHILD,           ///< a child. "Daddy hasn't been paying attention"
-  ACTOR_COLOSSO_HUSBAND, ///< would like to see Colosso once more
+  /// A small boy.
+  /// ★ Named from the game: "Daddy hasn't been paying attention"
+  /// (MsgVaultDaddyHasntBeenPayingAttentionSince)
+  ACTOR_BOY,
+  /// An old man with a cane who would like to see Colosso once more.
+  /// ★ Named from the game: "Whenever my wife used to go to Tolbi for Colosso"
+  /// (MsgVaultWheneverMyWifeUsedToGo)
+  ACTOR_COLOSSO_HUSBAND,
+  /// An old woman.
+  /// ★ Named from the game: "Lately, my husband's been going on and on about
+  /// Colosso." (MsgVaultLatelyMyHusbandsBeenGoingOn)
   ACTOR_COLOSSO_WIFE,
-  /// In the mayor's house. "Those thieves! You go to all that trouble
-  /// catching them, and then we let them get away."
-  ACTOR_VILLAGER_LET_THIEVES_GO,
-  /// In the mayor's house. "I hear that a big festival is about to start in
-  /// some faraway town."
-  ACTOR_VILLAGER_CURIOUS_ABOUT_FESTIVAL,
-  ACTOR_MAYOR, ///< "our mayor", as the villagers call him
+  /// A small boy in the mayor's house.
+  /// ★ Named from the game: "Those thieves! You go to all that trouble catching
+  /// them, and then we let them get away." (MsgVaultThoseThievesYouGoToAll)
+  ACTOR_BOY_ON_THE_THIEVES_ESCAPE,
+  /// A little girl in the mayor's house.
+  /// ★ Named from the game: "I hear that a big festival is about to start in
+  /// some faraway town." (MsgVaultIHearThatABigFestival)
+  ACTOR_GIRL_CURIOUS_ABOUT_THE_FESTIVAL,
+  /// The mayor, an old man with white hair.
+  /// ★ Named from the game: "My husband, the mayor"
+  /// (MsgVaultMyHusbandTheMayorCantBelieve)
+  ACTOR_MAYOR,
+  /// A woman in a green dress.
+  /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
+  /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
   ACTOR_MAYORS_WIFE,
-  /// The girl at the inn, as the Bone's description calls her.
-  ACTOR_BONE_GIVER,
+  /// The girl at the inn, as the Bone's description calls her, a young woman
+  /// with fair hair.
+  /// ★ Named from the game: "A bone from the girl at the inn"
+  /// (MsgItemPlainName)
+  ACTOR_GIRL_AT_THE_INN,
+  /// ★ Named from the game: "I'm sorry I've only got these cheap weapons to
+  /// sell right now." (MsgVaultAllOurBestWeaponsWereStolen)
   ACTOR_VAULT_WEAPON_MERCHANT,
+  /// ★ Named from the game: "I wonder if they left us alone because we don't
+  /// carry any valuable armor?" (MsgVaultIWonderIfTheyLeftUs)
   ACTOR_VAULT_ARMOR_MERCHANT,
+  /// ★ Named from the game: "Why keep the store open if we don't have any
+  /// customers?" (MsgVaultWhyKeepTheStoreOpenIf)
   ACTOR_VAULT_ITEM_MERCHANT,
+  /// A man with dark hair behind the inn's counter.
+  /// ★ Named from the game: "Won't anyone come stay the night here?"
+  /// (MsgVaultWontAnyoneComeStayTheNight)
   ACTOR_VAULT_INNKEEPER,
-  ACTOR_COOK ///< in the inn's other room; did some cooking
+  /// A woman in an apron, in the inn's other room.
+  /// ★ Named from the game: "I did some cooking, so now I've got all these
+  /// useless bones." (MsgVaultDidSomeCookingNowIve)
+  ACTOR_COOK
 };
 
 /// The stock and inn numbers the counters open.
@@ -113,6 +152,8 @@ enum {
 };
 
 /// Set once the mayor has told Isaac the thieves escaped from jail.
+/// ★ Named from the game: "You've come back to Vault!"
+/// (MsgVaultIsaacYouveComeBackVault)
 enum { FLAG_WELCOMED_BACK = FLAG_SCENE_TEMP_00 + 0x100 };
 
 // Shared scene routines stay in their linked order.
@@ -160,10 +201,10 @@ static void Event_WifeSawCatTakeGem(void) {
 }
 
 /// In the house at VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the
-/// child points out Dodonpa's henchmen never attacked: maybe the thieves
+/// boy points out Dodonpa's henchmen never attacked: maybe the thieves
 /// weren't from Lunpa after all.
-static void Event_ChildDoubtsThievesWereFromLunpa(void) {
-  VaultInteriorsRevisit_FaceAndSpeak(ACTOR_CHILD,
+static void Event_BoyDoubtsThievesWereFromLunpa(void) {
+  VaultInteriorsRevisit_FaceAndSpeak(ACTOR_BOY,
                                      MsgVaultDodonpasHenchmenNeverAttackedUs);
 }
 
@@ -207,10 +248,10 @@ static void Event_WarnOfThievesRevenge(void) {
                                      MsgVaultThoseGuysReallyWantedRevenge);
 }
 
-/// Unused: the cook in the inn's other room offers the party his leftover
+/// Unused: the cook in the inn's other room offers the party her leftover
 /// bones, but gives none.
 ///
-/// He would have said `I did some cooking, so now I've got all these useless
+/// She would have said `I did some cooking, so now I've got all these useless
 /// bones.` and asked `...You want some?`. His earlier talk row,
 /// MsgVaultWeDontGetALotOf with no condition, always answers first
 /// (Scene_FindEvent takes the first match), so the player only ever hears that
@@ -225,27 +266,27 @@ static void Event_UnusedOfferLeftoverBones(void) {
 /// leader not standing beside the floor Bone.
 static void Event_OfferBones(void) {
   Engine_EventBegin();
-  Engine_ActorFaceEachOther(ACTOR_BONE_GIVER, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorFaceEachOther(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
   if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
-    Event_OpenMessage(ACTOR_BONE_GIVER, 0);
+    Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   } else {
     Engine_EventSetMessage(MsgVaultWantMoreBones);
-    Event_OpenMessage(ACTOR_BONE_GIVER, 0);
+    Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     // Show the offer before checking whether the party can carry the gift.
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_BONE_GIVER, 0);
+    Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(ACTOR_BONE_GIVER, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_GIRL_AT_THE_INN, 2);
     Engine_EventWait(20);
     // Give the Bone only after the offer is accepted and space is available.
     if (PartyInventory_HasSpace() == 0) {
-      Engine_ActorSetAnimationAndWait(ACTOR_BONE_GIVER, ANIM_SHAKE_HEAD);
+      Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_SHAKE_HEAD);
       Engine_EventWait(20);
       Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
-      Event_ShowMessage(ACTOR_BONE_GIVER, 0);
+      Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     } else {
       Engine_ItemShowFound(ITEM_BONE, 3);
       Engine_PartyGiveItem(ITEM_BONE, 0);
@@ -255,11 +296,11 @@ static void Event_OfferBones(void) {
     // Declining selects the following line and the actor's response pose.
     gEventWork->message++;
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_BONE_GIVER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIM_NOD);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_BONE_GIVER, 0);
+    Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
-  Actor_FaceDirection(ACTOR_BONE_GIVER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
   Engine_EventEnd();
 }
 
@@ -365,7 +406,7 @@ static void Event_ReadBoneGiverMind(void) {
   } else {
     Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
   }
-  Engine_EventShowMessage(ACTOR_BONE_GIVER, 0);
+  Engine_EventShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
   Engine_EventEnd();
 }
 
@@ -458,37 +499,37 @@ u32 gVaultInteriorsRevisit_Exits[] = {
 
 // clang-format off
 struct ScenePlacement gVaultInteriorsRevisit_Placements[] = {
-    { 0x6c, 0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0, ACTOR_STAND,
         PIXELS(160), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6a, 0, 3,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0, 3,
         PIXELS(152), 0, PIXELS(72), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x65, 0, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0, ACTOR_STAND,
         PIXELS(456), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6b, 0, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_FAIR_HAIR, 0, ACTOR_WANDER,
         PIXELS(368), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x67, 0, ACTOR_WANDER,
+    { SPRITE_OLD_MAN_WITH_CANE, 0, ACTOR_WANDER,
         PIXELS(744), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6f, 0, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, 0, ACTOR_STAND,
         PIXELS(752), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6b, 0, ACTOR_STAND,
+    { SPRITE_BOY_WITH_FAIR_HAIR, 0, ACTOR_STAND,
         PIXELS(496), 0, PIXELS(416), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x66, 0, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, 0, ACTOR_STAND,
         PIXELS(512), 0, PIXELS(416), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x75, 0, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0, ACTOR_STAND,
         PIXELS(536), 0, PIXELS(451), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x73, 0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, 0, ACTOR_STAND,
         PIXELS(416), 0, PIXELS(464), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0, ACTOR_STAND,
         PIXELS(568), 0, PIXELS(648), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x7c, 0, ACTOR_STAND,
+    { SPRITE_BALD_MAN_IN_RED, 0, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x7d, 0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_IN_GREEN, 0, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x76, 0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PONYTAIL, 0, ACTOR_STAND,
         PIXELS(632), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x77, 0, ACTOR_STAND,
+    { SPRITE_MAN_WITH_DARK_HAIR, 0, ACTOR_STAND,
         PIXELS(696), 0, PIXELS(696), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x80, 0, ACTOR_WANDER,
+    { SPRITE_WOMAN_IN_PINK_APRON, 0, ACTOR_WANDER,
         PIXELS(248), 0, PIXELS(712), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -505,14 +546,14 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { EVENT_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultWaahACatAteMyPrecious) },
     { EVENT_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WifeSawCatTakeGem) },
     { EVENT_TALK, ACTOR_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultThePrisonersSaidTheyWantedTo) },
-    { EVENT_TALK, ACTOR_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ChildDoubtsThievesWereFromLunpa) },
+    { EVENT_TALK, ACTOR_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyDoubtsThievesWereFromLunpa) },
     { EVENT_TALK, ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HusbandLongsForColosso) },
     { EVENT_TALK, ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
     { EVENT_TALK, ACTOR_MAYOR, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_WelcomeIsaacBack) },
     { EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnOfThievesRevenge) },
     { EVENT_TALK, ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
-    { EVENT_TALK, ACTOR_VILLAGER_LET_THIEVES_GO, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
-    { EVENT_TALK, ACTOR_VILLAGER_CURIOUS_ABOUT_FESTIVAL, CONDITION_ALWAYS, MSGNO(MsgVaultIHearThatABigFestival) },
+    { EVENT_TALK, ACTOR_BOY_ON_THE_THIEVES_ESCAPE, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
+    { EVENT_TALK, ACTOR_GIRL_CURIOUS_ABOUT_THE_FESTIVAL, CONDITION_ALWAYS, MSGNO(MsgVaultIHearThatABigFestival) },
     { EVENT_TALK, ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
     { EVENT_TALK, ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
     { EVENT_TALK, ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
@@ -520,24 +561,24 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
     // Unused: the row above always answers the cook first.
     { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UnusedOfferLeftoverBones) },
-    { EVENT_TALK, ACTOR_BONE_GIVER, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
+    { EVENT_TALK, ACTOR_GIRL_AT_THE_INN, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARD_PRISONERS, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgVaultWheneverMyWifeUsedToGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultLatelyMyHusbandsBeenGoingOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAYOR, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_ReadMindAndWelcomeIsaacBack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgVaultAsLongAsWeStayAlert) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultWellBeSecuringItInA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LET_THIEVES_GO, CONDITION_ALWAYS, MSGNO(MsgVaultItsJustEmbarrassingThatWeLet) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CURIOUS_ABOUT_FESTIVAL, CONDITION_ALWAYS, MSGNO(MsgVaultILoveFestivalsIllBetColosso) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_THIEVES_ESCAPE, CONDITION_ALWAYS, MSGNO(MsgVaultItsJustEmbarrassingThatWeLet) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_CURIOUS_ABOUT_THE_FESTIVAL, CONDITION_ALWAYS, MSGNO(MsgVaultILoveFestivalsIllBetColosso) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultJustImagineHowTerribleItWould) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultItsAGoodThingThatGiant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BONE_GIVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
     { SEARCH(SEARCH_JAR), 100, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
     { SEARCH(SEARCH_BARREL), 101, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },

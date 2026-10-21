@@ -106,15 +106,28 @@ static void SolSanctumElementalStarRoom_AnimateAlexTeleport(void);
 /// keep their own slots.
 enum StarRoomActor {
   ACTOR_TELEPORT_GLOW = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,
+  /// ★ Named from the game: "But, Saturos, there's still a chance they might
+  /// survive." (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_SATUROS,
+  /// ★ Named from the game: "Menardi!" (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_MENARDI,
+  /// Felix in his mask, until SolSanctumElementalStarRoom_UnmaskFelix.
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX_MASKED,
+  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX,
+  /// ★ Named from the game: "Oh, Alex... You're late!"
+  /// (MsgSolSanctumPermitRelieveElemental)
   ACTOR_ALEX,
   /// The first of the ten lights that float about the room, all one sprite
   /// (SolSanctum_StartFloatingLights).
+  /// ★ Named from what the player sees: small blue-green lights floating in
+  /// the dark (its render)
   ACTOR_FIRST_FLOATING_LIGHT,
+  /// ★ Named from what the player sees: small blue-green lights floating in
+  /// the dark (its render)
   ACTOR_LAST_FLOATING_LIGHT = ACTOR_FIRST_FLOATING_LIGHT + 9
 };
 
@@ -2325,17 +2338,17 @@ struct ScenePlacement gSolSanctumElementalStarRoom_Placements[] = {
         0, 0, 0, FACING_SOUTH, 3, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, 3, 0 },
-    { 0x20, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SATUROS, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x21, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MENARDI, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x22, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FELIX_MASKED, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x23, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FELIX, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x2b, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ALEX, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(617), 0, PIXELS(408), FACING_EAST, TALK_FACE_PARTY, 0 },

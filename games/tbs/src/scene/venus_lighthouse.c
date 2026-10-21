@@ -137,11 +137,16 @@
 // The floor switches have slid the walls aside.
 #define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
 #define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
+/// ★ Named from what the player sees: the floor switch on the east side of
+/// the fourth floor (its render)
 #define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
 // The gates the sunken pillars opened: one pillar, three pillars (and which of
 // two sets of sockets they sank into) and the pillar room's four.
 #define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_A 0x302
+/// The second set of sockets.
+/// ★ Named from what the player sees: the square sockets in the third floor
+/// that the pillars sink into (its render)
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
 #define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN 0x304
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308
@@ -190,27 +195,40 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void);
 // and takes no number.
 
 /// Venus Lighthouse Entry's actors, numbering the rows of
-/// gVenusLighthouseEntryPlacements: the scholars (sprite 0x70) and Babi's
-/// soldiers (SPRITE_SOLDIER) the wanderers attacked; after the man by the
-/// entrance, each is named by what they say.
+/// gVenusLighthouseEntryPlacements: the scholars (SPRITE_OLD_MAN_IN_BLUE_CAP)
+/// and Babi's soldiers (SPRITE_SOLDIER) the wanderers attacked, each named by
+/// what they say.
 enum VenusLighthouseEntryActor {
-  /// Drawn as the soldiers are: "Venus Lighthouse was... attacked by
+  /// A soldier by the entrance: "Venus Lighthouse was... attacked by
   /// strange... wanderers...", and he flickers and is gone
   /// (Event_HearOfTheAttack).
-  ACTOR_ENTRANCE_MAN = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "attacked by strange... wanderers..."
+  /// (MsgFieldVenusLighthouseWasAttackedBy)
+  ACTOR_SOLDIER_TELLING_OF_THE_ATTACK = ACTOR_FIRST_PLACED,
   /// "Iodem, be happy. The entrance to Venus Lighthouse is open..."
+  /// ★ Named from the game: "The entrance to Venus Lighthouse is open"
+  /// (MsgVenusLighthouseIodemBeHappyTheEntranceTo)
   ACTOR_SCHOLAR_LIGHTHOUSE_OPEN,
   /// "Ohhh! How could they attack mere scholars? Those barbarians!"
+  /// ★ Named from the game: "Those barbarians!"
+  /// (MsgVenusLighthouseOhhhHowCouldTheyAttackMere)
   ACTOR_SCHOLAR_BARBARIANS,
   /// "I've waited so long to see what it's like inside Venus Lighthouse,
   /// but..." (Event_TalkToWaitingScholar)
+  /// ★ Named from the game: "I've waited so long" (MsgVenusIveWaitedLongSeeIts)
   ACTOR_WAITING_SCHOLAR,
   /// "How... How did they open the door to Venus Lighthouse?"
+  /// ★ Named from the game: "How did they open the door to Venus Lighthouse?"
+  /// (MsgVenusLighthouseHowHowDidTheyOpenThe)
   ACTOR_SOLDIER_OPENED_DOOR,
   /// "They are already... headed for Babi Lighthouse..."
+  /// ★ Named from the game: "headed for Babi Lighthouse..."
+  /// (MsgVenusLighthouseTheyAreAlreadyHeadedForBabi)
   ACTOR_SOLDIER_HEADED_FOR_BABI,
   /// "Babi's soldiers are all Colosso victors... How could anyone beat all of
   /// us?" His thoughts: "Was it Kraden?"
+  /// ★ Named from the game: "Babi's soldiers are all Colosso victors..."
+  /// (MsgVenusLighthouseBabisSoldiersAreAllColossoVictors)
   ACTOR_SOLDIER_COLOSSO_VICTORS
 };
 
@@ -218,16 +236,27 @@ enum VenusLighthouseEntryActor {
 /// gVenusLighthouseGroundFloorPlacements after Garet's.
 enum VenusLighthouseGroundFloorActor {
   /// "Kraden told them to stop, but they attacked anyway."
+  /// ★ Named from the game: "Kraden told them to stop, but they attacked
+  /// anyway." (MsgVenusLighthouseKradenToldThemToStopBut)
   ACTOR_SCHOLAR_ATTACKED_ANYWAY = ACTOR_FIRST_PLACED,
   /// "Kraden went inside, but then came back and said this isn't the
   /// entrance."
+  /// ★ Named from the game: "said this isn't the entrance."
+  /// (MsgVenusLighthouseKradenWentInsideButThenCame)
   ACTOR_SCHOLAR_NOT_THE_ENTRANCE,
-  ACTOR_DOOR_SCHOLAR, ///< Event_TalkToScholarByDoor
+  /// Event_TalkToScholarByDoor.
+  /// ★ Named from the game: "I thought I'd explore after the door opened."
+  /// (MsgVenusThoughtIdExploreAfterDoor)
+  ACTOR_DOOR_SCHOLAR,
   /// The pillar Move pushes to the wall and Carry sets down beyond it
   /// (Event_MovePillarTowardWall).
+  /// ★ Named from what the player sees: a grey pillar carved with spirals, two
+  /// blocks tall, short of the wall (its render)
   ACTOR_WALL_PILLAR = ACTOR_FIRST_PLACED + 4,
   /// The lady statue Move pushes onto the floor switch (SPRITE_LADY_STATUE)
   /// (Event_MovePillarOntoSwitch).
+  /// ★ Named from what the player sees: a white statue of a robed woman beside
+  /// a floor switch (its render)
   ACTOR_FLOOR_SWITCH_STATUE
 };
 
@@ -237,9 +266,13 @@ enum VenusLighthouseFirstFloorActor {
   /// The three pillars, SPRITE_CAPPED_PILLAR, that Move or a push shifts, the
   /// nearer
   /// drawn in front (Event_MoveDepthPillar).
+  /// ★ Named from what the player sees: grey pillars with white tops, one alone
+  /// and two side by side (its render)
   ACTOR_FIRST_DEPTH_PILLAR = ACTOR_FIRST_PLACED,
   /// The two pillars by the gap, carried across it or dropped into it
   /// (Event_CarryPillarAcrossGap).
+  /// ★ Named from what the player sees: two grey pillars carved with spirals
+  /// beside the gap (its render)
   ACTOR_FIRST_CARRY_PILLAR = ACTOR_FIRST_DEPTH_PILLAR + 3
 };
 
@@ -248,15 +281,20 @@ enum VenusLighthouseFirstFloorActor {
 enum VenusLighthouseSecondFloorActor {
   /// A lady statue, as ACTOR_FLOOR_SWITCH_STATUE is, where
   /// ACTOR_GATE_EFFECT sets out for the gate.
+  /// ★ Named from what the player sees: a white statue of a robed woman beside
+  /// the gate (its render)
   ACTOR_GATE_EFFECT_STATUE = ACTOR_FIRST_PLACED,
   /// The pillar before the gate, which sinks into its socket
   /// (Event_MoveGatePillar).
+  /// ★ Named from what the player sees: a grey pillar carved with spirals on
+  /// the track before the gate (its render)
   ACTOR_GATE_PILLAR,
   /// SPRITE_PARTICLE, the kind of object
   /// VenusLighthouse_CreateScriptedGateEffect makes: once the pillar sinks it
   /// travels gVenusPushScript to the gate, which opens, and stays there
-  /// shedding particles. XXX: the code calls it a gate effect; a render of the
-  /// gate opening would say what the player sees of it.
+  /// shedding particles.
+  /// ★ Named from what the player sees: a small sparkle that rises by the
+  /// gate as the pillar sinks (its render)
   ACTOR_GATE_EFFECT
 };
 
@@ -266,11 +304,17 @@ enum VenusLighthouseThirdFloorActor {
   /// A lady statue (SPRITE_LADY_STATUE), where the two gate effects set out
   /// once all
   /// three switch pillars have sunk.
+  /// ★ Named from what the player sees: a white statue of a robed woman at the
+  /// end of the gold track (its render)
   ACTOR_SWITCH_EFFECT_STATUE = ACTOR_FIRST_PLACED,
   /// The three pillars that sink into free sockets (Event_MoveSwitchPillar).
+  /// ★ Named from what the player sees: three grey pillars carved with spirals
+  /// on the gold track (its render)
   ACTOR_FIRST_SWITCH_PILLAR,
   /// SPRITE_PARTICLE, as ACTOR_GATE_EFFECT, placed where the gate effects end
   /// once the gate is open.
+  /// ★ Named from what the player sees: a sparkle, as on the second floor,
+  /// where a gate has opened (its render)
   ACTOR_SWITCH_GATE_EFFECT = ACTOR_FIRST_SWITCH_PILLAR + 3
 };
 
@@ -280,18 +324,30 @@ enum VenusLighthouseFourthFloorActor {
   /// The two platforms, SPRITE_BALANCE_PLATFORM, that rise or sink to the
   /// weight of the
   /// floating pillars set down on them (VenusLighthouse_LowerFloatingPillars).
-  ACTOR_WEST_PLATFORM = ACTOR_FIRST_PLACED,
-  ACTOR_EAST_PLATFORM,
+  /// ★ Named from what the player sees: a white platform on a pole, the west of
+  /// two (its render)
+  ACTOR_BALANCE_WEST = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: the east white platform on its pole
+  /// (its render)
+  ACTOR_BALANCE_EAST,
   /// The four floating pillars Carry sets down (Event_CarryFloatingPillar).
+  /// ★ Named from what the player sees: four grey pillars carved with spirals,
+  /// three in a row above the platforms (its render)
   ACTOR_FIRST_FLOATING_PILLAR,
   /// A lady statue (SPRITE_LADY_STATUE), where the first gate effect sets out
   /// once all
   /// four socket pillars have sunk; the camera goes to it first.
+  /// ★ Named from what the player sees: a white statue of a robed woman at the
+  /// foot of the gold track (its render)
   ACTOR_SOCKET_EFFECT_STATUE = ACTOR_FIRST_FLOATING_PILLAR + 4,
   /// The four pillars of the pillar room (Event_MoveSocketPillar).
+  /// ★ Named from what the player sees: four grey pillars carved with spirals
+  /// on the gold track (its render)
   ACTOR_FIRST_SOCKET_PILLAR,
   /// SPRITE_PARTICLE, as ACTOR_GATE_EFFECT, placed where the gate effects end
   /// once the gate is open.
+  /// ★ Named from what the player sees: a sparkle, as on the second floor,
+  /// where a gate has opened (its render)
   ACTOR_SOCKET_GATE_EFFECT = ACTOR_FIRST_SOCKET_PILLAR + 4,
   /// The platform, SPRITE_FLOATING_PLATFORM as the floating platforms of
   /// Mercury
@@ -299,6 +355,8 @@ enum VenusLighthouseFourthFloorActor {
   /// VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING
   /// and then carries him up to the Lighthouse Aerie
   /// (VenusLighthouse_RaiseLeaderWithSpray).
+  /// ★ Named from what the player sees: a round white platform in a pit of its
+  /// own (its render)
   ACTOR_RISING_PLATFORM
 };
 
@@ -954,24 +1012,24 @@ static void Event_SearchLockedDoor(void) {
   Engine_EventEnd();
 }
 
-/// At Venus Lighthouse Entry, talking to the man by the entrance (or reading
-/// his mind): "Venus Lighthouse was attacked by strange wanderers..." He
-/// flickers ten times and is gone (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the
-/// collision of his spot changes, as it does on later arrivals.
+/// At Venus Lighthouse Entry, talking to the soldier by the entrance (or
+/// reading his mind): "Venus Lighthouse was attacked by strange wanderers..."
+/// He flickers ten times and is gone (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and
+/// the collision of his spot changes, as it does on later arrivals.
 static void Event_HearOfTheAttack(void) {
   u32 flickersLeft;
   u32 flickerDelay;
 
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(ACTOR_ENTRANCE_MAN, 3);
+  Engine_ActorRunRepeatedMotion(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 3);
   Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
   flickersLeft = 10;
   flickerDelay = 8;
-  Engine_EventShowMessageAndWait(ACTOR_ENTRANCE_MAN, 0, 20);
+  Engine_EventShowMessageAndWait(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0, 20);
   do {
-    Engine_ActorSetChildValue(ACTOR_ENTRANCE_MAN, 15);
+    Engine_ActorSetChildValue(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 15);
     Engine_TaskWait(2);
-    Engine_ActorSetChildValue(ACTOR_ENTRANCE_MAN, 0);
+    Engine_ActorSetChildValue(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0);
     Engine_TaskWait(flickerDelay);
     if (flickerDelay > 3) {
       flickerDelay--;
@@ -979,7 +1037,7 @@ static void Event_HearOfTheAttack(void) {
     flickersLeft--;
   } while (flickersLeft != 0);
   Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD);
-  Engine_ActorSetPosition(ACTOR_ENTRANCE_MAN, 0, 0);
+  Engine_ActorSetPosition(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0, 0);
   Map_CopyCellAttributes(7, 17, 2, 1, 7, 16);
   Engine_EventEnd();
 }
@@ -1896,12 +1954,12 @@ VenusLighthouse_FollowSupportingPillarHeight(union FieldObject *fieldObject) {
 
 /// Moves the floating supports to the heights selected by their timers.
 static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
-  struct FieldActor *westSupport = Object_GetById(ACTOR_WEST_PLATFORM);
-  struct FieldActor *eastSupport = Object_GetById(ACTOR_EAST_PLATFORM);
+  struct FieldActor *westSupport = Object_GetById(ACTOR_BALANCE_WEST);
+  struct FieldActor *eastSupport = Object_GetById(ACTOR_BALANCE_EAST);
   u32 pillarIndex;
 
-  Actor_SetSpeed(ACTOR_WEST_PLATFORM, 0x8000, 0x4000);
-  Engine_ActorSetSpeed(ACTOR_EAST_PLATFORM, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_BALANCE_WEST, 0x8000, 0x4000);
+  Engine_ActorSetSpeed(ACTOR_BALANCE_EAST, 0x8000, 0x4000);
   if (waitFrames != 0) {
     Engine_AudioPlayCue(SE_180);
   }
@@ -1911,16 +1969,15 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
   FieldObject_SetPosition(eastSupport, eastSupport->x.fixed,
                           gVenusPillarHeights[eastSupport->timer],
                           eastSupport->z.fixed);
-  Engine_ActorWaitForMove(ACTOR_WEST_PLATFORM);
-  Engine_ActorWaitForMove(ACTOR_EAST_PLATFORM);
+  Engine_ActorWaitForMove(ACTOR_BALANCE_WEST);
+  Engine_ActorWaitForMove(ACTOR_BALANCE_EAST);
   westSupport->y.fixed = gVenusPillarHeights[westSupport->timer];
   eastSupport->y.fixed = gVenusPillarHeights[eastSupport->timer];
   if (waitFrames != 0) {
     Engine_AudioPlayCue(SE_289);
   }
   for (pillarIndex = 0; pillarIndex < 5; pillarIndex++) {
-    struct FieldActor *actor =
-        Object_GetById(pillarIndex + ACTOR_WEST_PLATFORM);
+    struct FieldActor *actor = Object_GetById(pillarIndex + ACTOR_BALANCE_WEST);
 
     if (actor->y.fixed / 0x10000 < 0 && actor->y.fixed / 0x10000 > -30) {
       Map_CopyCellAttributes(4, 19, 1, 1, actor->x.fixed >> 20,
@@ -1939,7 +1996,7 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
   u32 candidateIndex;
 
   for (candidateIndex = 0; candidateIndex <= 5; candidateIndex++) {
-    s32 candidateId = candidateIndex + ACTOR_WEST_PLATFORM;
+    s32 candidateId = candidateIndex + ACTOR_BALANCE_WEST;
     s32 candidateTop;
 
     if (candidateId == pillarId) {
@@ -2070,11 +2127,11 @@ static void Event_CarryFloatingPillar(void) {
       if (Object_GetById(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->x.fixed >>
               20 ==
           6) {
-        Object_GetById(ACTOR_WEST_PLATFORM)->timer++;
-        Object_GetById(ACTOR_EAST_PLATFORM)->timer--;
+        Object_GetById(ACTOR_BALANCE_WEST)->timer++;
+        Object_GetById(ACTOR_BALANCE_EAST)->timer--;
       } else {
-        Object_GetById(ACTOR_WEST_PLATFORM)->timer--;
-        Object_GetById(ACTOR_EAST_PLATFORM)->timer++;
+        Object_GetById(ACTOR_BALANCE_WEST)->timer--;
+        Object_GetById(ACTOR_BALANCE_EAST)->timer++;
       }
 #ifdef UBFIX
       Object_GetById(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->update =
@@ -2519,7 +2576,7 @@ s32 Scene_RunEntrySetup(void) {
   if (scene == (s32)&SceneId_VenusLighthouseEntry) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
-      VenusLighthouse_PrepareStandingActor(ACTOR_ENTRANCE_MAN);
+      VenusLighthouse_PrepareStandingActor(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK);
     else
       Map_CopyCellAttributes(7, 17, 2, 1, 7, 16);
     VenusLighthouse_PrepareStandingActor(ACTOR_SCHOLAR_LIGHTHOUSE_OPEN);
@@ -2877,20 +2934,20 @@ s32 Scene_RunEntrySetup(void) {
           }
         }
       } else {
-        actor = Object_GetById(ACTOR_WEST_PLATFORM);
+        actor = Object_GetById(ACTOR_BALANCE_WEST);
         actor->motionFlags = 0;
         actor->y.fixed = -PIXELS(48);
         actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         actor->collisionFlags &= 0xfe;
         actor->timer = 3;
-        Engine_ActorSetSpritePriority(ACTOR_WEST_PLATFORM, 1);
-        actor = Object_GetById(ACTOR_EAST_PLATFORM);
+        Engine_ActorSetSpritePriority(ACTOR_BALANCE_WEST, 1);
+        actor = Object_GetById(ACTOR_BALANCE_EAST);
         actor->motionFlags = 0;
         actor->y.fixed = -PIXELS(48);
         actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
         actor->collisionFlags &= 0xfe;
         actor->timer = 3;
-        Engine_ActorSetSpritePriority(ACTOR_EAST_PLATFORM, 1);
+        Engine_ActorSetSpritePriority(ACTOR_BALANCE_EAST, 1);
         actor = Object_GetById(ACTOR_FIRST_FLOATING_PILLAR);
         actor->motionFlags = 0;
         actor->timer = 0;
@@ -4345,11 +4402,11 @@ struct ScenePlacement gVenusLighthousePlacementsOther[] = {
 struct ScenePlacement gVenusLighthouseEntryPlacements[] = {
     { SPRITE_SOLDIER, FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(268), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(352), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(428), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(368), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(400), 0, PIXELS(172), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -4363,11 +4420,11 @@ struct ScenePlacement gVenusLighthouseEntryPlacements[] = {
 struct ScenePlacement gVenusLighthouseGroundFloorPlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, 0x0, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x71, 0x0, ACTOR_STAND,
+    { SPRITE_MAN_WITH_GLASSES, 0x0, ACTOR_STAND,
         PIXELS(304), 0, PIXELS(204), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, 0x0, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(592), FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x100, 0x0, ACTOR_STAND,
         PIXELS(872), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -4470,14 +4527,14 @@ struct SceneEvent gVenusLighthouseEntryEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST },
-    { EVENT_TALK, ACTOR_ENTRANCE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
+    { EVENT_TALK, ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
     { EVENT_TALK, ACTOR_SCHOLAR_LIGHTHOUSE_OPEN, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIodemBeHappyTheEntranceTo) },
     { EVENT_TALK, ACTOR_SCHOLAR_BARBARIANS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseOhhhHowCouldTheyAttackMere) },
     { EVENT_TALK, ACTOR_WAITING_SCHOLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWaitingScholar) },
     { EVENT_TALK, ACTOR_SOLDIER_OPENED_DOOR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseHowHowDidTheyOpenThe) },
     { EVENT_TALK, ACTOR_SOLDIER_HEADED_FOR_BABI, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheyAreAlreadyHeadedForBabi) },
     { EVENT_TALK, ACTOR_SOLDIER_COLOSSO_VICTORS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseBabisSoldiersAreAllColossoVictors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_ENTRANCE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_LIGHTHOUSE_OPEN, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseUhnnnIfOnlyICouldMove) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_BARBARIANS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheirPowersWereSoStrangeWho) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_SCHOLAR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIMustGetInsideVenusLighthouse) },

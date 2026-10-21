@@ -20,7 +20,7 @@
 ///
 /// In BilibinCaveRapier a fire burns between two torches (CAVE2_DOUSE_TARGET),
 /// and Douse puts it out for good
-/// (FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED). Reveal shows a hidden path,
+/// (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED). Reveal shows a hidden path,
 /// a strip of tiles and the cells under them, which Event_HideRevealedPath
 /// takes away again when Reveal wears off. A chest holds the Elven Rapier.
 ///
@@ -29,11 +29,11 @@
 /// of a fire or a torch melts back. A fire (CAVE1_DOUSE_TARGET) burns beside
 /// the first puddle: while it burns, Frost on the puddle only melts back
 /// (BilibinCave_FreezeTarget plays the melting). Douse puts the fire out
-/// (FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED), and the puddle freezes into
+/// (FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED), and the puddle freezes into
 /// a pillar drawn underfoot, which the party walks over. The second puddle
 /// stands beside a torch that cannot be moved, and Frost on it always melts
 /// back. The third is an ice pillar: two of the six torches
-/// (ACTOR_MOVABLE_TORCH_A and ACTOR_MOVABLE_TORCH_B) can be pushed or moved
+/// (ACTOR_THIRD_TORCH and ACTOR_FOURTH_TORCH) can be pushed or moved
 /// with Move, and while either stands beside the pillar, on cell (35, 23), the
 /// pillar melts into a puddle and the cells north and south of it change with
 /// it; when both leave it freezes again
@@ -91,9 +91,15 @@ enum {
 /// Actors of BilibinCaveRapier, numbered by the rows of
 /// gBilibinCavePlacements2.
 enum {
-  ACTOR_CAVE2_WEST_TORCH = 8, ///< a torch west of the fire
-  CAVE2_DOUSE_TARGET = 9,     ///< a fire between two torches
-  ACTOR_CAVE2_EAST_TORCH = 10 ///< a torch east of the fire
+  /// A torch west of the fire.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
+  ACTOR_CAVE2_WEST_TORCH = 8,
+  CAVE2_DOUSE_TARGET = 9, ///< a fire between two torches
+  /// A torch east of the fire.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
+  ACTOR_CAVE2_EAST_TORCH = 10
 };
 
 /// Actors of BilibinCaveIce, numbered by the rows of gBilibinCavePlacements1.
@@ -101,19 +107,31 @@ enum {
   CAVE1_DOUSE_TARGET = 8, ///< a fire beside the first puddle
   /// Six torches, 9 to 14; the second stands beside
   /// FROST_TARGET_B.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
   ACTOR_FIRST_TORCH = 9,
-  ACTOR_MOVABLE_TORCH_A = 11, ///< the third torch, moved by Move or pushed
-  ACTOR_MOVABLE_TORCH_B = 12, ///< the fourth torch, moved by Move or pushed
-  FROST_TARGET_A = 15,        ///< a puddle, walkable once the fire is out
-  FROST_TARGET_B = 16,        ///< a puddle beside a torch that stays put
+  /// The third torch, moved by Move or pushed.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
+  ACTOR_THIRD_TORCH = 11,
+  /// The fourth torch, moved by Move or pushed.
+  /// ★ Named from what the player sees: a golden torch burning on its stand
+  /// (its render)
+  ACTOR_FOURTH_TORCH = 12,
+  FROST_TARGET_A = 15, ///< a puddle, walkable once the fire is out
+  FROST_TARGET_B = 16, ///< a puddle beside a torch that stays put
   /// An ice pillar, melted while a torch stands on cell (35, 23).
   FROST_TARGET_C = 17,
   /// Five ice pillars, 18 to 22, drawn as a frozen Frost target is (animation
   /// 5); nothing acts on them.
+  /// ★ Named from what the player sees: tall pillars of pale blue ice (its
+  /// render)
   ACTOR_FIRST_ICE_PILLAR = 18,
   /// Four pieces of ice, 23 to 26, held at the second step of freezing: their
   /// animation 3 shows frame 2 of the five that a Frost target's animation 2
   /// plays from puddle to pillar. Nothing acts on them.
+  /// ★ Named from what the player sees: low, jagged lumps of pale blue ice
+  /// (its render)
   ACTOR_FIRST_LOW_ICE = 23
 };
 
@@ -227,7 +245,7 @@ static void Event_HideRevealedPath(void) {
 static void Event_DouseRapierRoomFire(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(CAVE2_DOUSE_TARGET, 0, 0);
-  Engine_GameFlagSet(FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED);
+  Engine_GameFlagSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
   Engine_EventEnd();
 }
 
@@ -236,7 +254,7 @@ static void Event_DouseRapierRoomFire(void) {
 static void Event_DouseIceRoomFire(void) {
   Engine_EventBegin();
   Actor_SetPosition(CAVE1_DOUSE_TARGET, 0, 0);
-  GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED);
+  GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
   Engine_EventWait(40);
   // Match the replacement's drawing priority to its collision cell.
   Engine_ActorSetAnimationAndWait(FROST_TARGET_A, 2);
@@ -287,8 +305,8 @@ static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   s32 destinationCellX;
 
   // Track each movable actor independently before changing the Frost target.
-  firstActor = Object_GetById(ACTOR_MOVABLE_TORCH_A);
-  secondActor = Actor_Get(ACTOR_MOVABLE_TORCH_B);
+  firstActor = Object_GetById(ACTOR_THIRD_TORCH);
+  secondActor = Actor_Get(ACTOR_FOURTH_TORCH);
   if ((firstActor->x.fixed >> 20) == 35 && (firstActor->z.fixed >> 20) == 23) {
     GameFlag_Set(FLAG_PLACE_TEMP_03);
   } else {
@@ -384,8 +402,7 @@ static void BilibinCave_RestoreRapierRoom(void) {
   Engine_ActorSetAnimation(ACTOR_CAVE2_WEST_TORCH, 1);
   Engine_ActorSetAnimation(ACTOR_CAVE2_EAST_TORCH, 2);
 
-  if (Engine_GameFlagIsSet(FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED) !=
-      0) {
+  if (Engine_GameFlagIsSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
     Engine_ActorSetPosition(CAVE2_DOUSE_TARGET, 0, 0);
   } else {
     Engine_ActorSetSpriteFlags(Object_GetById(CAVE2_DOUSE_TARGET), 0);
@@ -447,7 +464,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 4);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 5);
   // Restore the surface exposed by Douse, including its collision and priority.
-  if (GameFlag_IsSet(FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED) != 0) {
+  if (GameFlag_IsSet(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     Actor_SetPosition(CAVE1_DOUSE_TARGET, 0, 0);
     Engine_ActorSetAnimation(FROST_TARGET_A, 5);
     Actor_Get(FROST_TARGET_A)->motionFlags = 0;
@@ -475,10 +492,10 @@ static void BilibinCave_RestoreIceRoom(void) {
     Map_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_03) != 0) {
-    Actor_SetPosition(ACTOR_MOVABLE_TORCH_A, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_THIRD_TORCH, PIXELS(570), PIXELS(376));
   }
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_04) != 0) {
-    Actor_SetPosition(ACTOR_MOVABLE_TORCH_B, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_FOURTH_TORCH, PIXELS(570), PIXELS(376));
   }
 }
 
@@ -738,7 +755,7 @@ struct SceneEvent gBilibinCaveEvents2[] = {
     { SEARCH(SEARCH_CHEST), 100, 0xf5d, FIND_ITEM(ITEM_ELVEN_RAPIER) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenPath) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRevealedPath) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE2_DOUSE_TARGET, FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_DouseRapierRoomFire) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE2_DOUSE_TARGET, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT_SCRIPT(Event_DouseRapierRoomFire) },
     { SCENE_EVENTS_END },
 };
 
@@ -750,12 +767,12 @@ struct SceneEvent gBilibinCaveEvents1[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
     { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetMapTriggerFlag) },
     { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearMapTriggerFlag) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE1_DOUSE_TARGET, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_DouseIceRoomFire) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_A, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_FreezeFirstTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE1_DOUSE_TARGET, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(Event_DouseIceRoomFire) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_A, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(Event_FreezeFirstTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FreezeSecondTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_C, IF_FLAG_SET(FLAG_PLACE_TEMP_02), EVENT_SCRIPT(Event_FreezeThirdTarget) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVABLE_TORCH_A, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVABLE_TORCH_B, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
     { TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushActorAhead) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushActorAhead) },
     { SEARCH(SEARCH_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },

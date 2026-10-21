@@ -57,28 +57,61 @@ enum {
 };
 
 /// Lunpa's placed actors, numbered in the order of gLunpaPlacements from
-/// ACTOR_FIRST_PLACED. The villagers keep the letters of their messages'
-/// names (MsgLunpaVillageVillagerBSealed and the rest).
+/// ACTOR_FIRST_PLACED. The townspeople are named by their sprites and by what
+/// they say before Donpa's judgment.
 enum LunpaActor {
   /// The puddle Reveal shows and Frost freezes into a pillar.
+  /// ★ Named from what the player sees: its sprite, a small blue puddle (its
+  /// render)
   ACTOR_HIDDEN_PUDDLE = ACTOR_FIRST_PLACED,
-  ACTOR_VILLAGER_A, ///< "Have you been in Lunpa long?"
-  /// "We've had no freedom ever since the caravan came to the village."
-  ACTOR_VILLAGER_B,
-  /// "Is it true that Dodonpa kidnapped Hammet and extorted ransom for him?"
-  ACTOR_VILLAGER_C,
-  /// "Donpa is too old to lead, so his men do whatever Dodonpa says."
-  ACTOR_VILLAGER_D,
-  /// "The righteous thief, Lunpa, and his son, Donpa" were great men.
-  ACTOR_VILLAGER_E,
-  ACTOR_VILLAGER_F, ///< "Donpa has no idea what Dodonpa is doing."
-  ACTOR_VILLAGER_G, ///< "You want to see Donpa?"
-  /// "The chef from the inn has been delivering meals to the fortress lately."
-  ACTOR_VILLAGER_H,
-  ACTOR_WEST_GUARD,   ///< keeps the road in from the world map
-  ACTOR_EAST_GUARD,   ///< wants Dodonpa's authorization
-  ACTOR_SWITCH_GLINT, ///< the hidden switch's glint, shown by Reveal
-  ACTOR_FLOATING_NUT  ///< the Nut that floats over the town, for Catch
+  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
+  /// ★ Named from the game: "Have you been in Lunpa long?"
+  /// (MsgLunpaVillagerAAsksHowLong)
+  ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA,
+  /// A woman with fair hair in a white apron (SPRITE_WOMAN_WITH_FAIR_HAIR).
+  /// ★ Named from the game: "We've had no freedom ever since the caravan
+  /// came to the village." (MsgLunpaVillageVillagerBSealed)
+  ACTOR_WOMAN_WITH_NO_FREEDOM,
+  /// A stout man with brown hair (SPRITE_STOUT_MAN).
+  /// ★ Named from the game: "Is it true that Dodonpa kidnapped Hammet"
+  /// (MsgLunpaVillagerCAsksAboutKidnapping)
+  ACTOR_MAN_ON_HAMMETS_KIDNAPPING,
+  /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
+  /// ★ Named from the game: "Donpa is too old to lead"
+  /// (MsgLunpaVillageVillagerDSealed)
+  ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD,
+  /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who wanders.
+  /// ★ Named from the game: "The righteous thief, Lunpa, and his son, Donpa"
+  /// (MsgLunpaVillageVillagerESealed)
+  ACTOR_OLD_MAN_ON_LUNPA_AND_DONPA,
+  /// An old woman with white hair (SPRITE_OLD_WOMAN).
+  /// ★ Named from the game: "Donpa has no idea what Dodonpa is doing."
+  /// (MsgLunpaVillageVillagerFSealed)
+  ACTOR_OLD_WOMAN_ON_DONPA,
+  /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR).
+  /// ★ Named from the game: "You want to see Donpa?"
+  /// (MsgLunpaVillagerGAsksAboutDonpa)
+  ACTOR_BOY_ASKING_TO_SEE_DONPA,
+  /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS), who
+  /// wanders.
+  /// ★ Named from the game: "The chef from the inn has been delivering meals
+  /// to the fortress lately." (MsgLunpaVillageVillagerHSealed)
+  ACTOR_GIRL_ON_THE_CHEFS_MEALS,
+  /// The two soldiers in spiked helmets (SPRITE_SOLDIER_IN_SPIKED_HELMET);
+  /// this one keeps the road in from the world map.
+  /// ★ Named from what the player sees: a soldier with a spear guarding the
+  /// road (its render)
+  ACTOR_WEST_GUARD,
+  /// ★ Named from what the player sees: a second soldier with a spear (its
+  /// render)
+  ACTOR_EAST_GUARD, ///< wants Dodonpa's authorization
+  /// The hidden switch's sparkle, shown by Reveal.
+  /// ★ Named from what the player sees: its sprite, a small white sparkle (its
+  /// render)
+  ACTOR_SWITCH_SPARKLE,
+  /// The Nut that floats over the town, for Catch.
+  /// ★ Named from the game: "Nut" (MsgItemName)
+  ACTOR_FLOATING_NUT
 };
 
 enum { ACTOR_LAST_PLACED = 65 };
@@ -86,26 +119,21 @@ enum { ACTOR_LAST_PLACED = 65 };
 /// The Lunpa Fortress Gates' placed actors, numbered in the order of
 /// gGatePlacements from ACTOR_FIRST_PLACED. Garet's row, the third, takes his
 /// own actor, GARET, as every row of a party member's sprite does.
-enum GateActor { ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED, ACTOR_RIGHT_GUARD };
-
-enum LunpaSprite {
-  SPRITE_TOWNSPERSON_G = 0x66,
-  SPRITE_TOWNSPERSON_B = 0x67,
-  SPRITE_TOWNSPERSON_C = 0x6a,
-  SPRITE_TOWNSPERSON_H = 0x6b,
-  SPRITE_TOWNSPERSON_D = 0x6c,
-  SPRITE_TOWNSPERSON_I = 0x6d,
-  SPRITE_TOWNSPERSON_E = 0x6f,
-  SPRITE_TOWNSPERSON_J = 0x73,
-  SPRITE_GUARD = 0x96
+enum GateActor {
+  /// ★ Named from the game: "We were on guard the whole time!"
+  /// (MsgLunpaRightGuardReopenedThoughts)
+  ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "We were on guard the whole time!"
+  /// (MsgLunpaRightGuardReopenedThoughts)
+  ACTOR_RIGHT_GUARD
 };
 
 enum { ACTOR_FLOAT = 7 };
 
 enum {
-  GLINT_MOTION_FLAGS = 8,
-  GLINT_SCALE_X = 0x13333,
-  GLINT_SCALE_Y = 0x18000
+  SPARKLE_MOTION_FLAGS = 8,
+  SPARKLE_SCALE_X = 0x13333,
+  SPARKLE_SCALE_Y = 0x18000
 };
 
 enum { GATE_RETREAT_ENTRANCE = 10 };

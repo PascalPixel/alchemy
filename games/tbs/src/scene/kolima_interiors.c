@@ -25,8 +25,8 @@
 /// doorway the leader steps south into
 /// (KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_NORTH) or from Kolima Tunnel
 /// (KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL), when other cells are drawn and the
-/// father's family (ACTOR_SECRETIVE_FATHER, ACTOR_SECRETIVE_FATHERS_WIFE and
-/// ACTOR_SECRETIVE_FATHERS_CHILD) is put out of sight.
+/// father's family (ACTOR_FATHER_WITH_A_SECRET, ACTOR_WIFE_KEPT_FROM_THE_SECRET
+/// and ACTOR_CHILD_TOLD_THE_SECRET) is put out of sight.
 
 #include "game_state.h"
 #include "flags.h"
@@ -54,37 +54,57 @@
 /// ACTOR_FIRST_PLACED. Their notes quote what they say once the curse is
 /// lifted.
 enum KolimaInteriorActor {
-  /// "I heard that traveling warriors from the Goma Range saved the village."
-  ACTOR_VILLAGER_HEARD_OF_WARRIORS = ACTOR_FIRST_PLACED,
-  /// "Big, strong warriors with great beards freed Kolima from the curse."
-  ACTOR_VILLAGER_BEARDED_WARRIORS,
-  /// The father with a secret: "You saved Kolima? Wow! That makes me want to
-  /// tell you a secret!" His thoughts: "It's hidden deep in the forest, but I
-  /// can't tell him that!"
-  ACTOR_SECRETIVE_FATHER,
-  /// "My husband seems to be keeping a secret from me."
-  ACTOR_SECRETIVE_FATHERS_WIFE,
-  ACTOR_SECRETIVE_FATHERS_CHILD, ///< "Daddy told me his secret."
-  ACTOR_LUMBERJACK_FATHER,       ///< "I'm never going to use an axe again."
-  /// "Dad, will you please go back to being a lumberjack?"
-  ACTOR_LUMBERJACKS_CHILD,
-  /// "Dad! How are we going to eat if you don't work?"
-  ACTOR_LUMBERJACKS_HUNGRY_CHILD,
+  /// An old man with a cane. "I heard that traveling warriors from the Goma
+  /// Range saved the village."
+  ACTOR_OLD_MAN_HEARD_OF_WARRIORS = ACTOR_FIRST_PLACED,
+  /// An old woman. "Big, strong warriors with great beards freed Kolima from
+  /// the curse."
+  ACTOR_OLD_WOMAN_BEARDED_WARRIORS,
+  /// The father with a secret, a burly grey-haired man: "You saved Kolima? Wow!
+  /// That makes me want to tell you a secret!" His thoughts: "It's hidden deep
+  /// in the forest, but I can't tell him that!"
+  /// ★ Named from the game: "That makes me want to tell you a secret!"
+  /// (MsgKolimaInteriorsYouSavedKolimaWowThatMakes)
+  ACTOR_FATHER_WITH_A_SECRET,
+  /// His wife, a woman in a green dress.
+  /// ★ Named from the game: "My husband seems to be keeping a secret from me."
+  /// (MsgKolimaInteriorsMyHusbandSeemsToBeKeeping)
+  ACTOR_WIFE_KEPT_FROM_THE_SECRET,
+  /// Their son, a small boy with fair hair.
+  /// ★ Named from the game: "Daddy told me his secret."
+  /// (MsgKolimaInteriorsDaddyToldMeHisSecret)
+  ACTOR_CHILD_TOLD_THE_SECRET,
+  /// A strongman, stocky and muscular. "I'm never going to use an axe again."
+  ACTOR_LUMBERJACK_FATHER,
+  /// His daughter, a woman with long fair hair. "Dad, will you please go back
+  /// to being a lumberjack?"
+  ACTOR_LUMBERJACKS_DAUGHTER,
+  /// His son, a small boy with fair hair. "Dad! How are we going to eat if you
+  /// don't work?"
+  ACTOR_LUMBERJACKS_HUNGRY_SON,
+  /// ★ Named from the game: "I used to carve weapons out of wood."
+  /// (MsgKolimaInteriorsIUsedToCarveWeaponsOut)
   ACTOR_WEAPON_MERCHANT,
+  /// ★ Named from the game: "Ask me anything about armor."
+  /// (MsgArmorShopWelcome)
   ACTOR_ARMOR_MERCHANT,
+  /// ★ Named from the game: "Welcome! We have just the gear you need."
+  /// (MsgItemShopWelcome)
   ACTOR_ITEM_MERCHANT,
+  /// ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   ACTOR_INNKEEPER,
-  /// "With no more work here, Kolima can go back to being a quiet little
-  /// village." As a tree: "How am I supposed to charge people for their rooms
-  /// if I'm a tree!?"
+  /// A woman in a pink dress and an apron. "With no more work here, Kolima can
+  /// go back to being a quiet little village." As a tree: "How am I supposed to
+  /// charge people for their rooms if I'm a tree!?"
   ACTOR_VILLAGER_QUIET_VILLAGE,
-  /// "I've been a lumberjack for years, but I've never seen anything like
-  /// this. I think I'll go home to my family in Imil." As a tree: "I never
-  /// should have tried to cut that tree down."
+  /// A strongman, stocky and muscular. "I've been a lumberjack for years, but
+  /// I've never seen anything like this. I think I'll go home to my family in
+  /// Imil." As a tree: "I never should have tried to cut that tree down."
   ACTOR_LUMBERJACK_FROM_IMIL,
-  /// "I'm only a merchant, but I got turned into a tree just for staying here."
+  /// A man carrying a pack. "I'm only a merchant, but I got turned into a tree
+  /// just for staying here."
   ACTOR_MERCHANT_GUEST,
-  ACTOR_FIRST_VILLAGER = ACTOR_VILLAGER_HEARD_OF_WARRIORS,
+  ACTOR_FIRST_VILLAGER = ACTOR_OLD_MAN_HEARD_OF_WARRIORS,
   ACTOR_LAST_VILLAGER = ACTOR_MERCHANT_GUEST
 };
 
@@ -101,16 +121,15 @@ KolimaInteriors_TurnVillagersIntoTrees(struct ScenePlacement *placement) {
   villagerIndex = 0;
   talkFacing = TALK_KEEP_FACING;
   behavior = ACTOR_STAND;
-  treeSprite = 0x69;
-  alternateTreeSprite = 0x6E;
+  treeSprite = SPRITE_TREE;
+  alternateTreeSprite = SPRITE_SMALL_TREE;
   do {
     placement->talkFacing = talkFacing;
     placement->behavior = behavior;
     placement->sprite = treeSprite;
     // The two residents drawn with sprite 0x6b take the other tree sprite.
-    if (villagerIndex == ACTOR_SECRETIVE_FATHERS_CHILD - ACTOR_FIRST_VILLAGER ||
-        villagerIndex ==
-            ACTOR_LUMBERJACKS_HUNGRY_CHILD - ACTOR_FIRST_VILLAGER) {
+    if (villagerIndex == ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER ||
+        villagerIndex == ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER) {
       placement->sprite = alternateTreeSprite;
     }
     villagerIndex++;
@@ -253,9 +272,9 @@ s32 KolimaInteriors_Initialize(void) {
     Map_CopyCellsTo(34, 43, 19, 23, width, height);
     Map_CopyCellsTo(34, 94, 19, 83, width, height);
     Map_CopyCellsTo(94, 34, 79, 23, width, height);
-    Engine_ActorSetPosition(ACTOR_SECRETIVE_FATHER, 0, 0);
-    Engine_ActorSetPosition(ACTOR_SECRETIVE_FATHERS_WIFE, 0, 0);
-    Engine_ActorSetPosition(ACTOR_SECRETIVE_FATHERS_CHILD, 0, 0);
+    Engine_ActorSetPosition(ACTOR_FATHER_WITH_A_SECRET, 0, 0);
+    Engine_ActorSetPosition(ACTOR_WIFE_KEPT_FROM_THE_SECRET, 0, 0);
+    Engine_ActorSetPosition(ACTOR_CHILD_TOLD_THE_SECRET, 0, 0);
   }
   return 0;
 }
@@ -337,35 +356,35 @@ u32 gKolimaInteriors_Exits[] = {
 
 // clang-format off
 struct ScenePlacement gKolimaInteriors_Placements[] = {
-    { 0x67, 0, ACTOR_WANDER,
+    { SPRITE_OLD_MAN_WITH_CANE, 0, ACTOR_WANDER,
         PIXELS(166), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6f, 0, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, 0, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(144), FACING_EAST, 3, 0 },
-    { 0x65, 0, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0, ACTOR_STAND,
         PIXELS(408), 0, PIXELS(472), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x73, 0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, 0, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(440), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6b, 0, 3,
+    { SPRITE_BOY_WITH_FAIR_HAIR, 0, 3,
         PIXELS(440), 0, PIXELS(456), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x74, 0, ACTOR_STAND,
+    { SPRITE_STRONGMAN, 0, ACTOR_STAND,
         PIXELS(376), 0, PIXELS(616), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0, ACTOR_STAND,
         PIXELS(448), 0, PIXELS(680), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x6b, 0, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_FAIR_HAIR, 0, ACTOR_WANDER,
         PIXELS(424), 0, PIXELS(648), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x7c, 0, ACTOR_STAND,
+    { SPRITE_BALD_MAN_IN_RED, 0, ACTOR_STAND,
         PIXELS(624), 0, PIXELS(360), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x7d, 0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_IN_GREEN, 0, ACTOR_STAND,
         PIXELS(648), 0, PIXELS(360), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x76, 0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PONYTAIL, 0, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x77, 0, ACTOR_STAND,
+    { SPRITE_MAN_WITH_DARK_HAIR, 0, ACTOR_STAND,
         PIXELS(648), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x80, 0, ACTOR_WANDER,
+    { SPRITE_WOMAN_IN_PINK_APRON, 0, ACTOR_WANDER,
         PIXELS(624), 0, PIXELS(200), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x74, 0, ACTOR_WANDER,
+    { SPRITE_STRONGMAN, 0, ACTOR_WANDER,
         PIXELS(120), 0, PIXELS(656), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xab, 0, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, 0, ACTOR_STAND,
         PIXELS(144), 0, PIXELS(368), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -385,14 +404,14 @@ struct SceneEvent gKolimaInteriors_Events[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, KOLIMA_INTERIORS_INN_SECOND_FLOOR_TO_INN_THIRD_FLOOR },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, KOLIMA_INTERIORS_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, KOLIMA_INTERIORS_TO_KOLIMA_TUNNEL },
-    { EVENT_TALK, ACTOR_VILLAGER_HEARD_OF_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIHeardThatTravelingWarriorsFrom) },
-    { EVENT_TALK, ACTOR_VILLAGER_BEARDED_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards) },
-    { EVENT_TALK, ACTOR_SECRETIVE_FATHER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsYouSavedKolimaWowThatMakes) },
-    { EVENT_TALK, ACTOR_SECRETIVE_FATHERS_WIFE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsMyHusbandSeemsToBeKeeping) },
-    { EVENT_TALK, ACTOR_SECRETIVE_FATHERS_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDaddyToldMeHisSecret) },
+    { EVENT_TALK, ACTOR_OLD_MAN_HEARD_OF_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIHeardThatTravelingWarriorsFrom) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_BEARDED_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards) },
+    { EVENT_TALK, ACTOR_FATHER_WITH_A_SECRET, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsYouSavedKolimaWowThatMakes) },
+    { EVENT_TALK, ACTOR_WIFE_KEPT_FROM_THE_SECRET, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsMyHusbandSeemsToBeKeeping) },
+    { EVENT_TALK, ACTOR_CHILD_TOLD_THE_SECRET, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDaddyToldMeHisSecret) },
     { EVENT_TALK, ACTOR_LUMBERJACK_FATHER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImNeverGoingToUseAn) },
-    { EVENT_TALK, ACTOR_LUMBERJACKS_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadWillYouPleaseGoBack) },
-    { EVENT_TALK, ACTOR_LUMBERJACKS_HUNGRY_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadHowAreWeGoingTo) },
+    { EVENT_TALK, ACTOR_LUMBERJACKS_DAUGHTER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadWillYouPleaseGoBack) },
+    { EVENT_TALK, ACTOR_LUMBERJACKS_HUNGRY_SON, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsDadHowAreWeGoingTo) },
     { EVENT_TALK, ACTOR_WEAPON_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToWeaponMerchant) },
     { EVENT_TALK, ACTOR_ARMOR_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToArmorMerchant) },
     { EVENT_TALK, ACTOR_ITEM_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(KolimaInteriors_TalkToItemMerchant) },
@@ -400,14 +419,14 @@ struct SceneEvent gKolimaInteriors_Events[] = {
     { EVENT_TALK, ACTOR_VILLAGER_QUIET_VILLAGE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsWithNoMoreWorkHereKolima) },
     { EVENT_TALK, ACTOR_LUMBERJACK_FROM_IMIL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIveBeenALumberjackForYears) },
     { EVENT_TALK, ACTOR_MERCHANT_GUEST, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImOnlyAMerchantButI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARD_OF_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIDontReallyKnowButYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BEARDED_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsAllWarriorsAreBigAndAll) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsHiddenDeepInTheForest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHERS_WIFE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIThinkHeFoundSomethingValuable) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHERS_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsStillTellingMeItsOutsideThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_HEARD_OF_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIDontReallyKnowButYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_BEARDED_WARRIORS, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsAllWarriorsAreBigAndAll) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHER_WITH_A_SECRET, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsHiddenDeepInTheForest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WIFE_KEPT_FROM_THE_SECRET, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIThinkHeFoundSomethingValuable) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_TOLD_THE_SECRET, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsStillTellingMeItsOutsideThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACK_FATHER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsPeopleTurnedIntoTreesBecauseOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsKnowingMyDadHellStartWorking) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_HUNGRY_CHILD, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsHowAmISupposedToGrow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_DAUGHTER, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsKnowingMyDadHellStartWorking) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_HUNGRY_SON, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsHowAmISupposedToGrow) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsFuchinTemplesMasterNyunpaIsSaid) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItsAShameWeHadTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsItFeltSoGoodWhenMy) },
@@ -415,14 +434,14 @@ struct SceneEvent gKolimaInteriors_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_QUIET_VILLAGE, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsRemainingAQuietVillageMeansRemaining) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACK_FROM_IMIL, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsImALumberjackAndImOkay) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT_GUEST, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaInteriorsIWishIdGrabbedSomeOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARD_OF_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatAreTheyStaringAtThey) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BEARDED_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIDreamtThatAMightyWarrior) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHER, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatWillHappenToMyTreasure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsSoonAllOfKolimaWillBe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECRETIVE_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIWonderWhatFathersSecretIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_HEARD_OF_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatAreTheyStaringAtThey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_BEARDED_WARRIORS, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIDreamtThatAMightyWarrior) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHER_WITH_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsWhatWillHappenToMyTreasure) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WIFE_KEPT_FROM_THE_SECRET, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsSoonAllOfKolimaWillBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_TOLD_THE_SECRET, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIWonderWhatFathersSecretIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACK_FATHER, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsMaybeWeTurnedIntoTreesBecause) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_CHILD, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsAtLeastMyFatherWasntThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_HUNGRY_CHILD, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsTheHolyTreeOfKolimaHas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsAtLeastMyFatherWasntThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACKS_HUNGRY_SON, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsTheHolyTreeOfKolimaHas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIUsedToCarveWeaponsOut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsManImStuckInsideThatMeans) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsNoIDontWantToBe) },

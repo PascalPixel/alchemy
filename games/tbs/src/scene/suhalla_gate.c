@@ -103,9 +103,12 @@ enum SuhallaGateCheckpointActor {
   ACTOR_EAST_GUARD, ///< "Do you want to go to Babi Lighthouse?"
   /// After Babi's audience, the soldier east of the gate who tells of the
   /// attack on Venus Lighthouse and vanishes.
+  /// ★ Named from what the player sees: a wounded soldier lying east of the
+  /// gate, who flickers and vanishes (its render)
   ACTOR_VANISHING_SOLDIER,
   /// After Babi's audience, out of sight until Event_IodemQuestionsGuards
   /// brings him out of the party.
+  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM
 };
 
@@ -114,8 +117,12 @@ enum SuhallaGateCheckpointActor {
 enum SuhallaGateDewActor {
   /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
   /// drawn in the frame Scene_Initialize gives it.
+  /// ★ Named from what the player sees: small green sprouts on the grassy
+  /// ledges (its render)
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
-  ACTOR_DEW = ACTOR_FIRST_SPROUT + 5 ///< Dew, a Mercury Djinni
+  /// A Mercury Djinni.
+  /// ★ Named from the game: "Dew" (MsgDjinnName)
+  ACTOR_DEW = ACTOR_FIRST_SPROUT + 5
 };
 
 /// Suhalla Gate's second scene (SceneId_SuhallaGateDew): talking to Dew, a
@@ -605,7 +612,7 @@ struct ScenePlacement gSuhallaGateDewPlacements[] = {
         PIXELS(536), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, 7,
         PIXELS(552), 0, PIXELS(880), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x5b, 0x4a, ACTOR_STAND,
+    { MERCURY_DJINNI, 0x4a, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -634,7 +641,7 @@ struct ScenePlacement gSuhallaGateCheckpointPlacementsAfterAudience[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
         PIXELS(476), 0, PIXELS(300), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 #endif
-    { 0x39, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_IODEM, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

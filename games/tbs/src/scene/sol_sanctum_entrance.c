@@ -36,7 +36,7 @@
 ///   map's chest set in it opens a passage (FLAG_SOL_SANCTUM_FIRST_GEM_PLACED).
 ///   The first time the party enters the hall of the second relief, Kraden
 ///   sees a row of six statues out of reach and asks Isaac to try his Psynergy
-///   (FLAG_SOL_SANCTUM_INNER_STATUES_SEEN); each can be pushed a cell either
+///   (FLAG_SOL_SANCTUM_MORE_STATUES_SEEN); each can be pushed a cell either
 ///   way. The second relief is there (cell code 21), and the second Small
 ///   Jewel, from the chest in SceneId_SolSanctumMaze (sol_sanctum_maze.c),
 ///   opens a doorway in it (FLAG_SOL_SANCTUM_SECOND_GEM_PLACED). The hall of
@@ -96,24 +96,57 @@
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
 
-// The column each statue that can be pushed stands in, east or west of its
-// start: the first relief hall's west and east statues, then the row
-// of six in the second relief hall. Both clear means the start.
+/// The column each statue that can be pushed stands in, east or west of its
+/// start: the first relief hall's west and east statues, then the row
+/// of six in the second relief hall. Both clear means the start.
+/// ★ Named from what the player sees: the stone statues of the first relief
+/// hall, two of which Move pushes a cell aside (its render)
 #define FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST 0x300
+/// ★ Named from what the player sees: the first relief hall's east statue,
+/// pushed a cell west (its render)
 #define FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST 0x301
+/// ★ Named from what the player sees: the first relief hall's west statue,
+/// pushed a cell east (its render)
 #define FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST 0x302
+/// ★ Named from what the player sees: the first relief hall's west statue,
+/// pushed a cell west (its render)
 #define FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST 0x303
+/// The second relief hall's row of six statues, each two flags as above.
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST 0x310
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST 0x311
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST 0x312
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST 0x313
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST 0x314
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST 0x315
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST 0x316
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST 0x317
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST 0x318
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST 0x319
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST 0x31a
+/// ★ Named from the game: "More statues..."
+/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST 0x31b
 
 // Scene flags, cleared on every ordinary entrance:
@@ -162,7 +195,7 @@ const u32 *SolSanctumEntrance_GetExits(void) {
 /// Selects the actors for the place and, in Sol Sanctum, the room. The first
 /// relief hall's entrances place Kraden and that room's eleven statues, the
 /// second relief hall's Kraden and the row of six; the rest of Sol Sanctum
-/// places Kraden and one statue (ACTOR_LONE_STATUE), and Sol Entrance its
+/// places Kraden and one statue (ACTOR_STATUE), and Sol Entrance its
 /// sentry.
 const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   struct ScenePlacement *table;
@@ -654,7 +687,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 /// FLAG_SOL_SANCTUM_ENTERED is set. In the first relief hall Kraden's talk of
 /// the hidden passage plays until FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, and
 /// the two statues go back to their saved columns; in the second relief hall
-/// Kraden sees the row of statues until FLAG_SOL_SANCTUM_INNER_STATUES_SEEN is
+/// Kraden sees the row of statues until FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is
 /// set, the six go back to their columns, FLAG_SCENE_TEMP_34 is set and the
 /// second relief's doorway shows once it is open.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
@@ -681,7 +714,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_HALL:
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_LONE_STATUE), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STATUE), 0);
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
@@ -728,7 +761,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_4), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_5), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_6), 0);
-    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_INNER_STATUES_SEEN) == 0)
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN) == 0)
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
     Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
@@ -1062,7 +1095,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 /// hall: the camera pans along the row of statues, and Kraden: "More
 /// statues... It doesn't look like we can reach them from here." He asks
 /// Isaac to try his Psynergy. Called by SolSanctumEntrance_RestoreInteriorState
-/// there until FLAG_SOL_SANCTUM_INNER_STATUES_SEEN is set, which it sets.
+/// there until FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is set, which it sets.
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   struct FieldActor *leader;
 
@@ -1115,7 +1148,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   }
   Engine_ActorWaitForMove(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  GameFlag_Set(FLAG_SOL_SANCTUM_INNER_STATUES_SEEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
   Engine_EventEnd();
 }
 
@@ -1379,7 +1412,7 @@ struct ScenePlacement gSolSanctumEntrancePlacements1[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { SPRITE_STONE_STATUE, 0x0, ACTOR_STAND,
         PIXELS(744), 0, PIXELS(56), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1391,7 +1424,7 @@ struct ScenePlacement gSolSanctumEntrancePlacements1FirstReliefHall[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1512), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1423,7 +1456,7 @@ struct ScenePlacement gSolSanctumEntrancePlacements1SecondReliefHall[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1608), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1441,7 +1474,7 @@ struct ScenePlacement gSolSanctumEntrancePlacements1SecondReliefHall[] = {
 };
 
 struct ScenePlacement gSolSanctumEntrancePlacements2[] = {
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

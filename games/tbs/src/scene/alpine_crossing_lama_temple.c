@@ -43,8 +43,8 @@
 /// (FLAG_XIAN_HEARD_HSU_TRAPPED, set as the lesson ends). Coming back out of
 /// the room (LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS) the area name is not
 /// shown again. Writing on a wall hints at Reveal, which shows a passage behind
-/// a false wall (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
-/// wall back when Reveal wears off and on entry, the wall cell's own attributes
+/// a mossy rock (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
+/// rock back when Reveal wears off and on entry, the rock cell's own attributes
 /// saved at (21, 73). The temple also holds a Psynergy Stone
 /// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, a place flag)
 /// and a chest with Water of Life.
@@ -107,31 +107,73 @@
 /// Lama Temple's actors. Garet, Ivan and Mia are placed in their own party
 /// slots for Hama's farewell; the others count from ACTOR_FIRST_PLACED.
 enum LamaTempleActor {
+  /// Hama, back in her temple for her farewell.
+  /// ★ Named from the game: "No, Master Hama"
+  /// (MsgMountainAdeptsLetMeThankAgain)
   ACTOR_TEMPLE_HAMA = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "This is Lama Temple. Welcome, travelers."
+  /// (MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers)
   ACTOR_GREETING_MONK,
-  ACTOR_EASTWARD_MONK,
+  /// ★ Named from the game: "Young warriors, do you come from the east?"
+  /// (MsgMountainYoungWarriorsDoComeFrom)
+  ACTOR_MONK_ASKING_ABOUT_THE_EAST,
+  /// ★ Named from the game: "Do you know what meditation is?"
+  /// (MsgMountainDoKnowMeditation)
   ACTOR_MEDITATING_MONK,
-  ACTOR_ANXIOUS_MONK,
+  /// ★ Named from the game: "I sense great insecurity and anxiety within you."
+  /// (MsgAlpineCrossingLamaTempleYouWhoSpeakToMeI)
+  ACTOR_MONK_SENSING_ANXIETY,
+  /// ★ Named from the game: "Did you know that Master Hama is the greatest
+  /// master of Chi?" (MsgMountainDidKnowMasterHamaGreatest)
   ACTOR_CHI_MONK,
-  ACTOR_FALSE_WALL,
+  /// The rock Reveal takes away to show the passage (LamaTemple_RevealPassage).
+  /// ★ Named from what the player sees: a round, moss-green rock on the grass
+  /// east of the waterfall (its render)
+  ACTOR_PASSAGE_ROCK,
+  /// ★ Named from the game: "I am traveling around the world to spread good
+  /// will." (MsgMountainAmTravelingAroundWorldSpread)
   ACTOR_TRAVELING_HEALER
 };
 
 /// Alpine Crossing's actors.
 enum AlpineCrossingActor {
+  /// ★ Named from the game: "Master Hama, I am okay." (MsgMountainHsuOkay)
   ACTOR_HAMA = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Hsu, are you okay?" (MsgMountainHsuOkay)
   ACTOR_HSU,
+  /// ★ Named from the game: "You must be glad, Feizhi." (MsgMountainHsuOkay)
   ACTOR_FEIZHI,
+  /// ★ Named from the game: "did you lift the boulder?"
+  /// (MsgMountainIsaacDidLiftBoulder)
   ACTOR_BOULDER,
+  /// A young man in a white headband, one of the people of Xian who moved the
+  /// rocks.
+  /// ★ Named from the game: "We moved the rocks. Now people can pass."
+  /// (MsgAlpineCrossingLamaTempleWeMovedTheRocksNowPeople)
   ACTOR_FIRST_WORKER,
+  /// A young man with his hair tied back.
+  /// ★ Named from the game: "Many people from Xian helped move the rocks."
+  /// (MsgAlpineCrossingLamaTempleManyPeopleFromXianHelpedMove)
   ACTOR_SECOND_WORKER,
-  ACTOR_PUDDLE,
-  ACTOR_SPROUT
+  /// The water Frost freezes into a pillar (AlpineCrossing_FreezePuddle).
+  /// ★ Named from what the player sees: a small patch of blue water on the
+  /// grass by the path (its render)
+  ACTOR_WATER_FOR_FROST,
+  /// The plant Growth grows into a vine (AlpineCrossing_GrowSprout).
+  /// ★ Named from what the player sees: a small green sprout at the foot of
+  /// the cliff (its render)
+  ACTOR_PLANT
 };
 
 /// Alpine Crossing's Psynergy puzzles, kept while the party stays.
 enum {
+  /// Frost has frozen the puddle into an ice pillar.
+  /// ★ Named from what the player sees: a small puddle of water on the path
+  /// below the cliffs (its render)
   FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
+  /// Growth has grown the sprout into a vine the party can climb.
+  /// ★ Named from what the player sees: a small sprout at the foot of a cliff
+  /// (its render)
   FLAG_SPROUT_GROWN = FLAG_SCENE_TEMP_01
 };
 
@@ -161,7 +203,7 @@ enum { DOOR_X = 67, DOOR_Y = 6 };
 /// A search made while facing the given way.
 #define SEARCH_FACING(facing) (EVENT_SEARCH | EVENT_TOUCH_FACING | (facing))
 
-/// The map object that draws the passage behind the false wall.
+/// The map object that draws the passage behind the mossy rock.
 enum { MAP_OBJECT_PASSAGE = 100 };
 
 /// Draws the actor behind the background, on sprite priority 3 with automatic
@@ -217,18 +259,18 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// A monk in Lama Temple, until Hsu is freed, asks whether the party comes
 /// from the east. If not, it must have crossed Lamakan Desert; if so, he asks
 /// whether it stopped in Xian, whose Master Feh is close to Master Hama.
-static void LamaTemple_TalkToEastwardMonk(void) {
+static void LamaTemple_TalkToMonkAskingAboutTheEast(void) {
 
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainYoungWarriorsDoComeFrom);
-  Engine_EventOpenMessage(ACTOR_EASTWARD_MONK, 0);
+  Engine_EventOpenMessage(ACTOR_MONK_ASKING_ABOUT_THE_EAST, 0);
 
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
     Engine_EventWait(20);
-    Engine_EventShowMessage(ACTOR_EASTWARD_MONK, 0);
+    Engine_EventShowMessage(ACTOR_MONK_ASKING_ABOUT_THE_EAST, 0);
   } else {
     Event_SkipMessages(1);
-    Engine_EventAskYesNo(ACTOR_EASTWARD_MONK, 0);
+    Engine_EventAskYesNo(ACTOR_MONK_ASKING_ABOUT_THE_EAST, 0);
   }
 
   Engine_EventEnd();
@@ -477,23 +519,23 @@ static void LamaTemple_ReadWallWriting(void) {
   Engine_EventEnd();
 }
 
-/// Puts Lama Temple's false wall back when Reveal wears off (and on entry):
+/// Puts Lama Temple's mossy rock back when Reveal wears off (and on entry):
 /// the wall's cell blocks the way again, the passage's map object is hidden and
-/// the wall actor stands in front of it.
+/// the rock actor stands in front of it.
 static void LamaTemple_ShowFalseWall(void) {
 
   Map_CopyCellAttributes(85, 9, 1, 1, 21, 9);
   Engine_MapObjectSetPosition(MAP_OBJECT_PASSAGE, 0, 0);
-  Actor_SetPosition(ACTOR_FALSE_WALL, PIXELS(344), PIXELS(152));
+  Actor_SetPosition(ACTOR_PASSAGE_ROCK, PIXELS(344), PIXELS(152));
 }
 
-/// Reveal in Lama Temple shows the passage behind the false wall: the cell's
+/// Reveal in Lama Temple shows the passage behind the mossy rock: the cell's
 /// original attributes (saved at (21, 73) on entry) come back, the passage's
-/// map object returns to its place and the wall actor is put away.
+/// map object returns to its place and the rock actor is put away.
 static void LamaTemple_RevealPassage(void) {
   Map_CopyCellAttributes(21, 73, 1, 1, 21, 9);
   MapObject_SetPosition(MAP_OBJECT_PASSAGE, -1, -1);
-  Actor_SetPosition(ACTOR_FALSE_WALL, 0, 0);
+  Actor_SetPosition(ACTOR_PASSAGE_ROCK, 0, 0);
 }
 
 /// The traveling healer in Lama Temple offers the Sanctum's services when
@@ -816,10 +858,10 @@ static s32 Pillar_SortAgainstLeader(union FieldObject *object) {
 /// of it sees the pillar rise in front of the background.
 static void AlpineCrossing_PrepareFrost(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  struct FieldActor *puddle = Object_GetById(ACTOR_PUDDLE);
+  struct FieldActor *puddle = Object_GetById(ACTOR_WATER_FOR_FROST);
 
   if (leader->z.fixed <= puddle->z.fixed) {
-    Engine_ActorSetSpritePriority(ACTOR_PUDDLE, 1);
+    Engine_ActorSetSpritePriority(ACTOR_WATER_FOR_FROST, 1);
   }
 }
 
@@ -831,13 +873,14 @@ static void AlpineCrossing_FreezePuddle(void) {
   Engine_EventBegin();
 
   // Stop the pillar and install its height-dependent drawing priority.
-  Object_GetById(ACTOR_PUDDLE)->priorityFlags &= (u8)~ACTOR_PRIORITY_UNDERFOOT;
-  Object_GetById(ACTOR_PUDDLE)->collisionFlags &= 0xfd;
-  Object_GetById(ACTOR_PUDDLE)->motionFlags = 0;
+  Object_GetById(ACTOR_WATER_FOR_FROST)->priorityFlags &=
+      (u8)~ACTOR_PRIORITY_UNDERFOOT;
+  Object_GetById(ACTOR_WATER_FOR_FROST)->collisionFlags &= 0xfd;
+  Object_GetById(ACTOR_WATER_FOR_FROST)->motionFlags = 0;
 #ifdef UBFIX
-  Object_GetById(ACTOR_PUDDLE)->update = Pillar_SortAgainstLeader;
+  Object_GetById(ACTOR_WATER_FOR_FROST)->update = Pillar_SortAgainstLeader;
 #else
-  Object_GetById(ACTOR_PUDDLE)->update =
+  Object_GetById(ACTOR_WATER_FOR_FROST)->update =
       (void (*)(union FieldObject *))Pillar_SortAgainstLeader;
 #endif
 
@@ -846,7 +889,7 @@ static void AlpineCrossing_FreezePuddle(void) {
 
   Engine_TaskWait(1);
   Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
-  Engine_ActorSetSpritePriority(ACTOR_PUDDLE, 2);
+  Engine_ActorSetSpritePriority(ACTOR_WATER_FOR_FROST, 2);
   Engine_EventEnd();
 }
 
@@ -856,7 +899,7 @@ static void AlpineCrossing_FreezePuddle(void) {
 static void AlpineCrossing_GrowSprout(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
-  Object_GetById(ACTOR_SPROUT)->collisionFlags = 254;
+  Object_GetById(ACTOR_PLANT)->collisionFlags = 254;
   Engine_GameFlagSet(FLAG_SPROUT_GROWN);
   Engine_EventEnd();
 }
@@ -875,12 +918,12 @@ s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gGameState.scene == SCENE_LAMA_TEMPLE) {
     // Lama Temple: the temple's queued sound (SE_169) plays, two monks
-    // meditate and the false wall stands; the wall's own cell attributes are
+    // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
     BattleFx_SetQueuedSoundAndPlay(SE_169);
     Engine_ActorSetAnimation(ACTOR_MEDITATING_MONK, ANIM_MONK_MEDITATE);
-    Engine_ActorSetAnimation(ACTOR_ANXIOUS_MONK, ANIM_MONK_MEDITATE);
-    Engine_ActorSetAnimation(ACTOR_FALSE_WALL, 2);
+    Engine_ActorSetAnimation(ACTOR_MONK_SENSING_ANXIETY, ANIM_MONK_MEDITATE);
+    Engine_ActorSetAnimation(ACTOR_PASSAGE_ROCK, 2);
     Map_CopyCellAttributes(21, 9, 1, 1, 21, 73);
     LamaTemple_ShowFalseWall();
     if (Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
@@ -896,14 +939,15 @@ s32 Scene_Initialize(void) {
     }
   } else if (gGameState.scene == SCENE_ALPINE_CROSSING) {
     // Alpine Crossing: restore the Psynergy puzzles already solved.
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PUDDLE), 0);
-    Object_GetById(ACTOR_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WATER_FOR_FROST), 0);
+    Object_GetById(ACTOR_WATER_FOR_FROST)->priorityFlags |=
+        ACTOR_PRIORITY_UNDERFOOT;
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
-      Engine_ActorSetAnimation(ACTOR_PUDDLE, ANIM_FROZEN);
+      Engine_ActorSetAnimation(ACTOR_WATER_FOR_FROST, ANIM_FROZEN);
       AlpineCrossing_FreezePuddle();
     }
     if (Engine_GameFlagIsSet(FLAG_SPROUT_GROWN)) {
-      Engine_ActorSetAnimation(ACTOR_SPROUT, ANIM_GROWN);
+      Engine_ActorSetAnimation(ACTOR_PLANT, ANIM_GROWN);
       AlpineCrossing_GrowSprout();
     }
     if (gGameState.entrance ==
@@ -1099,37 +1143,37 @@ struct ScenePlacement gLamaTemple_Placements[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(336), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(216), 0, PIXELS(240), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(320), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(320), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(176), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x125, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(152), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gAlpineCrossing_Placements[] = {
-    { 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x29, CONDITION_ALWAYS, (s32)gAlpineCrossing_HsuStruggle,
+    { SPRITE_HSU, CONDITION_ALWAYS, (s32)gAlpineCrossing_HsuStruggle,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x27, FLAG_HSU_RESCUED, ACTOR_STAND,
+    { SPRITE_FEIZHI, FLAG_HSU_RESCUED, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(344), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x127, FLAG_HSU_RESCUED, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(276), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x82, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (s32)gAlpineCrossing_WorkerPlacementScript,
+    { SPRITE_YOUTH_WITH_HEADBAND, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (s32)gAlpineCrossing_WorkerPlacementScript,
         PIXELS(456), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x83, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
+    { SPRITE_YOUTH_WITH_TIED_HAIR, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
         PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1142,25 +1186,25 @@ struct SceneEvent gLamaTemple_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, LAMA_TEMPLE_TO_WORLD_MAP },
     { TOUCH_WALKING_INTO(FACING_NORTH), TRIGGER_TEMPLE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_EnterHamasRoom) },
     { EVENT_TALK, ACTOR_GREETING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers) },
-    { EVENT_TALK, ACTOR_EASTWARD_MONK, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToEastwardMonk) },
+    { EVENT_TALK, ACTOR_MONK_ASKING_ABOUT_THE_EAST, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToMonkAskingAboutTheEast) },
     { EVENT_TALK, ACTOR_MEDITATING_MONK, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToMeditatingMonk) },
-    { EVENT_TALK, ACTOR_ANXIOUS_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleYouWhoSpeakToMeI) },
+    { EVENT_TALK, ACTOR_MONK_SENSING_ANXIETY, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleYouWhoSpeakToMeI) },
     { EVENT_TALK, ACTOR_CHI_MONK, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToChiMonk) },
     { EVENT_TALK, ACTOR_GREETING_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleItIsVeryDangerousToCross) },
-    { EVENT_TALK, ACTOR_EASTWARD_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilDesertIsHotterThan) },
+    { EVENT_TALK, ACTOR_MONK_ASKING_ABOUT_THE_EAST, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilDesertIsHotterThan) },
     { EVENT_TALK, ACTOR_MEDITATING_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIBelieveItIsPossibleTo) },
-    { EVENT_TALK, ACTOR_ANXIOUS_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIWillBeMostThankfulOnce) },
+    { EVENT_TALK, ACTOR_MONK_SENSING_ANXIETY, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleIWillBeMostThankfulOnce) },
     { EVENT_TALK, ACTOR_CHI_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWhenYourTemperatureReachesItsMaximum) },
     { EVENT_TALK, ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleTheySeemToBeAnxiousThey) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EASTWARD_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleTheySayAPersonCanOvercome) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MONK_ASKING_ABOUT_THE_EAST, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleTheySayAPersonCanOvercome) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MEDITATING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleIAmHungry) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ANXIOUS_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleISenseImpureThoughtsFromThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MONK_SENSING_ANXIETY, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleISenseImpureThoughtsFromThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHI_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleChiIsButAFragmentOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleICannotCrossTheDesertIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EASTWARD_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilInTheDesertDistorts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MONK_ASKING_ABOUT_THE_EAST, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleTheEvilInTheDesertDistorts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MEDITATING_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleHowNiceItWouldBeIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ANXIOUS_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleMasterHamaWillBeVerySad) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MONK_SENSING_ANXIETY, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleMasterHamaWillBeVerySad) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHI_MONK, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWithRevealYouWillFindOases) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleForSomeReasonThesePeopleGive) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_RevealPassage) },
@@ -1197,9 +1241,9 @@ struct SceneEvent gAlpineCrossing_Events[] = {
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_RevealPath) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_HidePath) },
     // Frost's first phase, as it reaches the puddle
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_PrepareFrost) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_FreezePuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SPROUT_GROWN, EVENT_SCRIPT(AlpineCrossing_GrowSprout) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WATER_FOR_FROST, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_PrepareFrost) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WATER_FOR_FROST, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AlpineCrossing_FreezePuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_PLANT, FLAG_SPROUT_GROWN, EVENT_SCRIPT(AlpineCrossing_GrowSprout) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_SIGNPOST, CONDITION_ALWAYS, EVENT_SCRIPT(AlpineCrossing_ReadSignpost) },
     { SEARCH(SEARCH_CHEST), TRIGGER_CHEST, FLAG_ALPINE_CROSSING_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { SCENE_EVENTS_END },

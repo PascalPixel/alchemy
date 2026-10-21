@@ -11,7 +11,7 @@
 /// where Hammet was said to be heading.
 ///
 /// A stump caught in ivy blocks the way on, and Move on it runs
-/// Event_IvanRejoins while FLAG_GOMA_CAVE_IVAN_REJOINED is clear. Garet says
+/// Event_IvanRejoins while FLAG_GOMA_CAVE_IVAN_JOINED is clear. Garet says
 /// their Psynergy is not strong enough to free it. If the thieves in Vault are
 /// jailed (FLAG_VAULT_THIEVES_JAILED), Ivan walks up, blows the ivy off with
 /// Whirlwind, tells them he could not get into Lunpa and asks to join their
@@ -213,7 +213,7 @@ s32 Scene_Initialize(void) {
 
     record->collisionFlags = 8 | record->collisionFlags;
   }
-  if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_IVAN_REJOINED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_IVAN_JOINED) != 0) {
     Map_CopyCellAttributes(74, 11, 1, 1, 73, 11);
   }
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
@@ -250,7 +250,7 @@ s32 Scene_Initialize(void) {
 /// their Psynergy is not strong enough. Once the thieves in Vault are jailed
 /// (FLAG_VAULT_THIEVES_JAILED), Ivan turns up, blows the ivy away with
 /// Whirlwind, says he could not get into Lunpa and asks to join the party; he
-/// rejoins with the Shaman's Rod equipped (FLAG_GOMA_CAVE_IVAN_REJOINED).
+/// rejoins with the Shaman's Rod equipped (FLAG_GOMA_CAVE_IVAN_JOINED).
 static void Event_IvanRejoins(void) {
   struct FieldActor *leader;
 
@@ -453,7 +453,7 @@ static void Event_IvanRejoins(void) {
     Engine_ActorWaitForMove(GARET);
     OBJ_POS_SET(GARET, 0, 0);
     Map_CopyCellAttributes(74, 11, 1, 1, 73, 11);
-    FLAG_SET(FLAG_GOMA_CAVE_IVAN_REJOINED);
+    FLAG_SET(FLAG_GOMA_CAVE_IVAN_JOINED);
     EV_END();
   }
 }
@@ -691,7 +691,7 @@ struct ScenePlacement gGomaCaveEntrancePlacements[] = {
         0, 0, 0, FACING_WEST, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xf8, FLAG_GOMA_CAVE_IVAN_REJOINED, 7,
+    { 0xf8, FLAG_GOMA_CAVE_IVAN_JOINED, 7,
         PIXELS(191), 0, PIXELS(194), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0xf8, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, (s32)gGomaCaveEntranceTallIvyScript,
         PIXELS(200), 0, PIXELS(168), FACING_NORTH, TALK_FACE_PARTY, 0 },
@@ -703,7 +703,7 @@ struct SceneEvent gGomaCaveEntranceEvents[] = {
     { EVENT_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
     { TOUCH_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWestPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWestPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STUMP, FLAG_GOMA_CAVE_IVAN_REJOINED, EVENT_SCRIPT(Event_IvanRejoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT_SCRIPT(Event_IvanRejoins) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STUMP, FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveWestPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), EAST_PILLAR, FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_MoveEastPillar) },

@@ -18,7 +18,7 @@
 ///   (LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_GATES leads back out). An
 ///   entrance guard, two sentries, a guard to the north-east and a patrolling
 ///   guard keep watch. The people inside wonder where Dodonpa has gone, his men
-///   boast of the money Hammet brings, and a startled resident promises to keep
+///   boast of the money Hammet brings, and a startled old man promises to keep
 ///   quiet. Chests hold an Elixir, a Lucky Medal, a Mythril Circlet and 100
 ///   coins, and a barrel a Vial.
 ///   LUNPA_FORTRESS_GROUND_FLOOR_TO_LUNPA_FORTRESS_UPPER_FLOOR_SOUTH and _NORTH
@@ -37,11 +37,11 @@
 ///   family and the women he brought here talk.
 /// - SceneId_LunpaFortressCave, the cave, whose ways are hidden. Whirlwind
 ///   blows away what covers two switches and a passage
-///   (FLAG_LUNPA_FORTRESS_*_UNCOVERED; FLAG_SCENE_TEMP_17 and _18 while the
-///   switches are covered), the switches show in the wall only while Reveal
+///   (FLAG_LUNPA_FORTRESS_*_PLANT_BLOWN_AWAY; FLAG_SCENE_TEMP_17 and _18 while
+///   the switches are covered), the switches show in the wall only while Reveal
 ///   lasts, searching one then opens its passage
 ///   (FLAG_LUNPA_FORTRESS_*_SWITCH_FLIPPED), and Move pushes a stack of crates
-///   onto its hole, where it sinks (FLAG_LUNPA_FORTRESS_COLUMN_LOWERED).
+///   onto its hole, where it sinks (FLAG_LUNPA_FORTRESS_CRATES_MOVED).
 ///   LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST, _NORTH and
 ///   _NORTHWEST lead to LunpaFortressToadonpa.
 /// - SceneId_LunpaFortressToadonpa, deeper in the cave, where Hammet is held in
@@ -55,7 +55,7 @@
 ///   punishment until his father Donpa arrives, has him locked up and asks the
 ///   party to leave as they came, since Dodonpa's men would free him; he has
 ///   spread a rumor that the intruders failed and fled. It sets
-///   FLAG_LUNPA_TRADE_REOPENED, which changes all of Lunpa, and place flag
+///   FLAG_DODONPA_LOCKED_UP, which changes all of Lunpa, and place flag
 ///   FLAG_PLACE_TEMP_01, and the party slips out with Hammet
 ///   (LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES, the gates'
 ///   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA). Coming back by
@@ -67,7 +67,7 @@
 ///
 /// Scene flags: FLAG_SCENE_TEMP_14 and _15, a guard has spotted the party;
 /// FLAG_SCENE_TEMP_24 and _25, the entrance guard or the sentries have thrown
-/// it out; FLAG_SCENE_TEMP_26 and _27, the startled resident has promised to
+/// it out; FLAG_SCENE_TEMP_26 and _27, the startled old man has promised to
 /// keep quiet and has been startled. The overlay also holds a copy of West
 /// Lunpa Cave's exits and placements, which these scenes never read (XXX:
 /// why they are here is not known).
@@ -110,11 +110,14 @@
 /// four rows (in a chest's sprite, at the map's origin; see
 /// FIRST_ITEM_DISPLAY_ACTOR).
 enum {
+  /// Dodonpa's men, here and upstairs, wear the sprite of a man with a mop
+  /// of orange hair (SPRITE_MAN_WITH_ORANGE_HAIR).
   GROUND_FLOOR_ENTRANCE_GUARD = ACTOR_FIRST_PLACED + 4,
   GROUND_FLOOR_FIRST_SENTRY,
-  /// Wonders where Dodonpa has gone. "Where could Dodonpa be? He's not in his
+  /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), wondering where
+  /// Dodonpa has gone. "Where could Dodonpa be? He's not in his
   /// room, but he couldn't have left."
-  GROUND_FLOOR_DODONPA_GOSSIP,
+  GROUND_FLOOR_WOMAN_SEEKING_DODONPA,
   /// One of Dodonpa's men (the guards' sprite), feasting on Kalay's ransom.
   /// "Whee! Thanks to Hammet we can enjoy food and drink all day long!"
   GROUND_FLOOR_FEASTING_MAN,
@@ -123,10 +126,14 @@ enum {
   GROUND_FLOOR_BOASTING_MAN,
   GROUND_FLOOR_UPPER_HALL_GUARD,
   GROUND_FLOOR_PATROL_GUARD,
-  /// Talks of Donpa's poor health. "Donpa is supposed to be old. I wonder
+  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), talking of
+  /// Donpa's
+  /// poor health. "Donpa is supposed to be old. I wonder
   /// what he's fighting with in the fortress."
-  GROUND_FLOOR_DONPA_GOSSIP,
-  GROUND_FLOOR_STARTLED_RESIDENT,
+  GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA,
+  /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE);
+  /// Event_TalkToStartledOldMan.
+  GROUND_FLOOR_STARTLED_OLD_MAN,
   GROUND_FLOOR_SECOND_SENTRY
 };
 
@@ -144,25 +151,30 @@ enum {
   UPPER_FLOOR_WEST_GUARD,
   UPPER_FLOOR_EAST_GUARD,
   UPPER_FLOOR_HALL_PATROL,
-  /// Dodonpa's wife, the "Mama" of his children, who LunpaFortressGroundFloor's
+  /// Dodonpa's wife, a woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS),
+  /// the "Mama" of his children, who LunpaFortressGroundFloor's
   /// people say is looking for him. "Do you know where Dodonpa is?"
   UPPER_FLOOR_DODONPAS_WIFE,
-  /// Donpappa, Dodonpa's son, as he names himself to Mind Read: "When my
-  /// Papa's gone, I, Donpappa, shall protect Lunpa myself."
+  /// Donpappa, a small boy (SPRITE_BOY_WITH_FAIR_HAIR), Dodonpa's son, as he
+  /// names himself to Mind Read: "When my Papa's gone, I, Donpappa, shall
+  /// protect Lunpa myself."
   UPPER_FLOOR_DONPAPPA,
-  /// Dodonpa's daughter. "Papa always gets friendly with the ladies when
-  /// Mama's not lookin'."
+  /// Dodonpa's daughter, a little girl (SPRITE_GIRL_WITH_PIGTAILS). "Papa
+  /// always gets friendly with the ladies when Mama's not lookin'."
   UPPER_FLOOR_DODONPAS_DAUGHTER,
-  /// Pities Donpappa. "Dodonpa's child is so well behaved, I can't believe
-  /// he's his father's son!"
-  UPPER_FLOOR_DONPAPPA_GOSSIP,
-  /// Fears for Donpa. "Poor, poor Donpa. Dodonpa's behavior is driving him
+  /// An old woman (SPRITE_OLD_WOMAN) who pities Donpappa. "Dodonpa's child is
+  /// so well behaved, I can't believe he's his father's son!"
+  UPPER_FLOOR_OLD_WOMAN_PRAISING_DONPAPPA,
+  /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) who fears for Donpa.
+  /// "Poor, poor Donpa. Dodonpa's behavior is driving him
   /// into despair."
-  UPPER_FLOOR_DONPA_WORRIER,
-  /// One of the women Dodonpa has brought to the fortress. "Nearly all of
+  UPPER_FLOOR_WOMAN_FEARING_FOR_DONPA,
+  /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), one of the women
+  /// Dodonpa has brought to the fortress. "Nearly all of
   /// these women were brought here against their will, like me."
   UPPER_FLOOR_CAPTIVE_WOMAN,
-  UPPER_FLOOR_DONPA,
+  UPPER_FLOOR_DONPA, ///< SPRITE_DONPA
+  /// Donpa's attendant, a woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
   UPPER_FLOOR_ATTENDANT,
   UPPER_FLOOR_TONIC ///< Tonic, a Mercury Djinni, Donpa's reward
 };
@@ -195,11 +207,13 @@ enum {
   TOADONPA_EAST_INVISIBLE_ACTOR,
   TOADONPA_BOSS,
   TOADONPA_HAMMET,
-  TOADONPA_DODONPA,
+  TOADONPA_DODONPA, ///< SPRITE_DODONPA
   TOADONPA_DONPA,
   /// A sprite drawn underfoot with Toadonpa and moving with it.
   TOADONPA_BOSS_PART,
-  /// One of Dodonpa's men, placed by Dodonpa's cell after Donpa's judgment.
+  /// One of Dodonpa's men, a man with brown hair
+  /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR),
+  /// placed by Dodonpa's cell after Donpa's judgment.
   /// "The merchant from Kalay is in here somewhere." Read with Mind Read:
   /// "Actually, Dodonpa's in here, but only a few people know that."
   TOADONPA_CELL_GUARD,
@@ -293,7 +307,7 @@ const u32 *Scene_GetExits(void) {
   return gLunpaFortressExitsOther;
 }
 
-/// The guards, residents and objects of each map.
+/// The guards, the other people and the objects of each map.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 sceneId = gGameState.scene;
 
@@ -359,7 +373,7 @@ static void Event_CratesSink(void) {
   SE(SE_215);
   WAIT(60);
   LunpaFortress_LowerCrates();
-  FLAG_SET(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED);
+  FLAG_SET(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
 }
 
 /// LunpaFortressCave, Move on the crates: once they are past row 22, over their
@@ -379,7 +393,7 @@ static void Event_MoveCrates(void) {
       Engine_ActorSetSpriteFlags(cratesActor, 0);
       cratesActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     }
-    FLAG_SET(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED);
+    FLAG_SET(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
   }
 }
 
@@ -410,7 +424,7 @@ static void Event_UnlockToadonpaDoor(void) {
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->touchedTrigger;
     doorIndex = doorTrigger - DOOR_TRIGGER_FIRST;
-    if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) == 0 || doorIndex != 4) {
+    if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
       LunpaFortress_OpenToadonpaDoor(doorIndex);
       SE(SE_GATE_MOVE);
       Map_SetShake(0x30000, 0x30000, 0x10000);
@@ -1314,7 +1328,7 @@ static void Event_FightHallGuard(void) {
   Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ActorSetPosition(UPPER_FLOOR_HALL_GUARD, 0, 0);
   EV_END();
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
 }
 
 /// LunpaFortressUpperFloor, trigger 31: walking up to the three guards, they
@@ -1547,7 +1561,7 @@ static void Event_HideSwitches(void) {
 
 /// LunpaFortressCave, Whirlwind on what covers the first switch: it blows away.
 static void Event_BlowAwayFirstSwitchCover(void) {
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_17);
   Engine_ActorSetPosition(CAVE_FIRST_SWITCH_COVER, 0, 0);
 }
@@ -1555,7 +1569,7 @@ static void Event_BlowAwayFirstSwitchCover(void) {
 /// LunpaFortressCave, Whirlwind on what covers the passage: it blows away and
 /// the passage opens.
 static void Event_BlowAwayPassageCover(void) {
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY);
   LunpaFortress_OpenCoveredPassage();
   Engine_ActorSetPosition(CAVE_PASSAGE_COVER, 0, 0);
 }
@@ -1563,7 +1577,7 @@ static void Event_BlowAwayPassageCover(void) {
 /// LunpaFortressCave, Whirlwind on what covers the second switch: it blows
 /// away.
 static void Event_BlowAwaySecondSwitchCover(void) {
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_18);
   Engine_ActorSetPosition(CAVE_SECOND_SWITCH_COVER, 0, 0);
 }
@@ -1930,7 +1944,7 @@ static void Event_FindHammet(void) {
 /// with Toadonpa: the monster has fallen on Dodonpa. The party may pull it off
 /// him; they argue over his punishment until his father Donpa arrives, who
 /// orders him locked up, thanks the party, and lets them leave with Hammet.
-/// Sets FLAG_LUNPA_TRADE_REOPENED.
+/// Sets FLAG_DODONPA_LOCKED_UP.
 static void Event_DonpaJudgesDodonpa(void) {
   struct FieldActor *leader;
   s32 aftermathMessage;
@@ -1938,7 +1952,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   s32 donpaMessage;
 
   FLAG_SET(FLAG_PLACE_TEMP_01);
-  FLAG_SET(FLAG_LUNPA_TRADE_REOPENED);
+  FLAG_SET(FLAG_DODONPA_LOCKED_UP);
   Map_CopyCells(16, 75, 7, 4, 26, 55);
   LunpaFortress_OpenToadonpaDoor(4);
   EV_BEGIN();
@@ -2680,7 +2694,7 @@ static void Event_TalkToAttendant(void) {
   s32 familyMessage;
 
   EV_BEGIN();
-  if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+  if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
     MESSAGE_SET(MsgLunpaDonpaGrateful);
     // XXX: likely a slip for UPPER_FLOOR_ATTENDANT, because the line is the
     // attendant's and Dodonpa's wife stands at the far side of the fortress.
@@ -2740,7 +2754,7 @@ static void Event_TalkToAttendant(void) {
 
 /// LunpaFortressUpperFloor: Mind Read on Donpa's attendant.
 static void Event_ReadAttendantsThoughts(void) {
-  if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED)) {
+  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP)) {
     MESSAGE_SET(MsgLunpaDifficultDonpaRight);
     MESSAGE_PUT(UPPER_FLOOR_ATTENDANT, 0);
   } else {
@@ -2751,7 +2765,7 @@ static void Event_ReadAttendantsThoughts(void) {
 
 /// LunpaFortressUpperFloor: Mind Read on Donpa.
 static void Event_ReadDonpasThoughts(void) {
-  if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED)) {
+  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP)) {
     MESSAGE_SET(MsgLunpaFatherStayAngry);
     MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
   } else {
@@ -2766,7 +2780,7 @@ static void Event_ReadDonpasThoughts(void) {
 static void Event_TalkToDonpa(void) {
   s32 rewardMessage;
 
-  if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+  if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_REWARD_TAKEN) == 0 &&
         FLAG_CHECK(FLAG_PLACE_TEMP_14) == 0) {
       rewardMessage = MsgLunpaThankHelpDodonpa;
@@ -2860,47 +2874,47 @@ static void Event_AskWhereDodonpaIs(void) {
   Engine_EventAskYesNo(UPPER_FLOOR_DODONPAS_WIFE, 0);
 }
 
-/// LunpaFortressGroundFloor: a resident, startled the first time, asks whether
-/// the party sneaked in in search of something; on yes, promises to keep quiet.
-/// "Wh-Wh-Who goes there!"
-static void Event_TalkToStartledResident(void) {
+/// LunpaFortressGroundFloor: a bent old man, startled the first time, asks
+/// whether the party sneaked in in search of something; on yes, promises to
+/// keep quiet. "Wh-Wh-Who goes there!"
+static void Event_TalkToStartledOldMan(void) {
   s32 frightMessage;
   s32 purposeMessage;
 
   if (FLAG_CHECK(FLAG_SCENE_TEMP_26) != 0) {
     MESSAGE_SET(MsgLunpaWontTellAnyone);
-    MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
+    MESSAGE_PUT(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
   } else {
     EV_BEGIN();
-    OBJ_FACE(GROUND_FLOOR_STARTLED_RESIDENT, ACTOR_PARTY_LEADER, 0);
+    OBJ_FACE(GROUND_FLOOR_STARTLED_OLD_MAN, ACTOR_PARTY_LEADER, 0);
     if (FLAG_CHECK(FLAG_SCENE_TEMP_27) == 0) {
-      Engine_ActorJump(GROUND_FLOOR_STARTLED_RESIDENT, 4, 0);
-      Engine_ActorStop(GROUND_FLOOR_STARTLED_RESIDENT);
-      Object_RefreshSelectorById(GROUND_FLOOR_STARTLED_RESIDENT);
+      Engine_ActorJump(GROUND_FLOOR_STARTLED_OLD_MAN, 4, 0);
+      Engine_ActorStop(GROUND_FLOOR_STARTLED_OLD_MAN);
+      Object_RefreshSelectorById(GROUND_FLOOR_STARTLED_OLD_MAN);
       WAIT(20);
       frightMessage = MsgLunpaWhWhWho;
       MESSAGE_SET(frightMessage);
-      MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
-      OBJ_EMOTE(GROUND_FLOOR_STARTLED_RESIDENT, EMOTE_IN_FRONT | 2, 30);
+      MESSAGE_PUT(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
+      OBJ_EMOTE(GROUND_FLOOR_STARTLED_OLD_MAN, EMOTE_IN_FRONT | 2, 30);
       MESSAGE_SET(frightMessage + 1);
-      MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
+      MESSAGE_PUT(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
       WAIT(30);
-      OBJ_MODE(GROUND_FLOOR_STARTLED_RESIDENT, 4);
+      OBJ_MODE(GROUND_FLOOR_STARTLED_OLD_MAN, 4);
       WAIT(30);
     }
     purposeMessage = MsgLunpaDontLookNearly;
     MESSAGE_SET(purposeMessage);
-    MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
-    OBJ_EMOTE(GROUND_FLOOR_STARTLED_RESIDENT, EMOTE_IN_FRONT | 1, 40);
+    MESSAGE_PUT(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
+    OBJ_EMOTE(GROUND_FLOOR_STARTLED_OLD_MAN, EMOTE_IN_FRONT | 1, 40);
     MESSAGE_SET(purposeMessage + 1);
-    MESSAGE_OPEN(GROUND_FLOOR_STARTLED_RESIDENT, 0);
+    MESSAGE_OPEN(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       MESSAGE_SET(purposeMessage + 2);
-      MESSAGE_OPEN(GROUND_FLOOR_STARTLED_RESIDENT, 0);
+      MESSAGE_OPEN(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
       FLAG_SET(FLAG_SCENE_TEMP_26);
     } else {
       MESSAGE_SET(purposeMessage + 3);
-      MESSAGE_OPEN(GROUND_FLOOR_STARTLED_RESIDENT, 0);
+      MESSAGE_OPEN(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
     }
     FLAG_SET(FLAG_SCENE_TEMP_27);
     EV_END();
@@ -2914,13 +2928,13 @@ static void Event_ReadStartledResidentsThoughts(void) {
 
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_26)) {
     MESSAGE_SET(MsgLunpaMaybeMerchantReason);
-    MESSAGE_PUT(GROUND_FLOOR_STARTLED_RESIDENT, 0);
+    MESSAGE_PUT(GROUND_FLOOR_STARTLED_OLD_MAN, 0);
   } else {
     s16 *psynergyRequest = &gEventWork->psynergyRequest;
 
     *psynergyRequest = 0;
     Engine_PsynergyCancel();
-    Event_TalkToStartledResident();
+    Event_TalkToStartledOldMan();
   }
 }
 
@@ -2986,7 +3000,7 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance ==
         LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST) {
       Engine_MapSetWorkFlagBits9To11(0xc00);
-      if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+      if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
         OBJ_POS_SET(TOADONPA_HAMMET, 0, 0);
         OBJ_POS_SET(TOADONPA_CELL_GUARD, 432, 344);
         OBJ_DIR(TOADONPA_CELL_GUARD, FACING_SOUTH + FACING_STEP, 0);
@@ -3080,7 +3094,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN)) {
     OBJ_POS_SET(UPPER_FLOOR_WEST_GUARD, 0, 0);
   }
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN)) {
     OBJ_POS_SET(UPPER_FLOOR_HALL_GUARD, 0, 0);
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN)) {
@@ -3166,20 +3180,20 @@ static void LunpaFortress_InitializeCave(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   LunpaFortress_RestoreCaveDoors();
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_CRATES_MOVED)) {
     LunpaFortress_RestoreLoweredCrates();
   }
   FLAG_SET(FLAG_SCENE_TEMP_17);
   FLAG_SET(FLAG_SCENE_TEMP_18);
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY)) {
     OBJ_POS_SET(CAVE_FIRST_SWITCH_COVER, 0, 0);
     Engine_GameFlagClear(FLAG_SCENE_TEMP_17);
   }
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY)) {
     OBJ_POS_SET(CAVE_PASSAGE_COVER, 0, 0);
     LunpaFortress_OpenCoveredPassage();
   }
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY)) {
     OBJ_POS_SET(CAVE_SECOND_SWITCH_COVER, 0, 0);
     Engine_GameFlagClear(FLAG_SCENE_TEMP_18);
   }
@@ -3569,9 +3583,9 @@ struct ScenePlacement gLunpaFortressPlacementsWestLunpaCave[] = {
         PIXELS(344), 0, PIXELS(252), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(552), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x44, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BUNZA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x31, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_KEEP_FACING, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -3591,25 +3605,25 @@ struct ScenePlacement gLunpaFortressGroundFloorPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(136), 0, PIXELS(760), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(440), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(464), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(192), 0, PIXELS(432), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(808), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, (s32)gGroundFloorPatrolRoute,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gGroundFloorPatrolRoute,
         PIXELS(736), 0, PIXELS(648), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(192), 0, PIXELS(464), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(424), 0, PIXELS(392), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(432), 0, PIXELS(768), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -3617,39 +3631,39 @@ struct ScenePlacement gLunpaFortressGroundFloorPlacements[] = {
 struct ScenePlacement gLunpaFortressUpperFloorPlacements[] = {
     { 0xf5, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(856), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x85, CONDITION_ALWAYS, (s32)gFirstPatrolRoute,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gFirstPatrolRoute,
         PIXELS(88), 0, PIXELS(192), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, (s32)gSecondPatrolRoute,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gSecondPatrolRoute,
         PIXELS(88), 0, PIXELS(288), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(456), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(680), 0, PIXELS(88), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(704), 0, PIXELS(104), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(680), 0, PIXELS(128), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(840), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(680), 0, PIXELS(824), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x85, CONDITION_ALWAYS, (s32)gHallPatrolRoute,
+    { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gHallPatrolRoute,
         PIXELS(920), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(88), 0, PIXELS(616), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(560), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x66, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(148), 0, PIXELS(616), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(72), 0, PIXELS(560), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(664), 0, PIXELS(360), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(712), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x2c, CONDITION_ALWAYS, (s32)gDonpaSleeps,
+    { SPRITE_DONPA, CONDITION_ALWAYS, (s32)gDonpaSleeps,
         PIXELS(944), 0, PIXELS(122), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(904), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_TONIC, ACTOR_STAND,
         PIXELS(872), 0, PIXELS(336), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3679,7 +3693,7 @@ struct ScenePlacement gLunpaFortressToadonpaPlacements[] = {
         PIXELS(216), 0, PIXELS(72), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0xbb, CONDITION_ALWAYS, 7,
         PIXELS(472), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x31, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(528), 0, PIXELS(216), FACING_WEST, TALK_KEEP_FACING, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -3687,13 +3701,13 @@ struct ScenePlacement gLunpaFortressToadonpaPlacements[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x32, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DODONPA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x2c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DONPA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x120, CONDITION_ALWAYS, 7,
         PIXELS(464), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3735,17 +3749,17 @@ struct SceneEvent gLunpaFortressGroundFloorEvents[] = {
     { TOUCH_FACING(FACING_SOUTH), DOOR_TRIGGER_FIRST + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(Event_UnlockGroundFloorDoor) },
     { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_24, EVENT_SCRIPT(Event_EntranceGuardThrowsPartyOut) },
     { EVENT_TOUCH, 51, FLAG_SCENE_TEMP_25, EVENT_SCRIPT(Event_SentriesThrowPartyOut) },
-    { EVENT_TALK, GROUND_FLOOR_DONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaResting) },
-    { EVENT_TALK, GROUND_FLOOR_DODONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaWhereIsDodonpa) },
+    { EVENT_TALK, GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaResting) },
+    { EVENT_TALK, GROUND_FLOOR_WOMAN_SEEKING_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaWhereIsDodonpa) },
     { EVENT_TALK, GROUND_FLOOR_FEASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetBuysDrink) },
     { EVENT_TALK, GROUND_FLOOR_BOASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetMoneyTree) },
-    { EVENT_TALK, GROUND_FLOOR_STARTLED_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToStartledResident) },
+    { EVENT_TALK, GROUND_FLOOR_STARTLED_OLD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToStartledOldMan) },
     { EVENT_TALK, GROUND_FLOOR_SECOND_SENTRY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToSentry) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_DONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaWhoFoughtDonpa) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_DODONPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaWifeSeeksDodonpa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaWhoFoughtDonpa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_WOMAN_SEEKING_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaWifeSeeksDodonpa) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_FEASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaKalayBuysDrink) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_BOASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetKeepsEarnings) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_STARTLED_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadStartledResidentsThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_STARTLED_OLD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadStartledResidentsThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GROUND_FLOOR_SECOND_SENTRY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadSentrysThoughts) },
     { EVENT_RAISED, TRIGGER_GROUND_FLOOR_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GroundFloorPatrolThrowsPartyOut) },
     { EVENT_RAISED, TRIGGER_UPPER_HALL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UpperHallGuardThrowsPartyOut) },
@@ -3753,7 +3767,7 @@ struct SceneEvent gLunpaFortressGroundFloorEvents[] = {
     { EVENT_RAISED, TRIGGER_SENTRIES_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SentriesThrowPartyOut) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_LUNPA_FORTRESS_CHEST_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_LUNPA_FORTRESS_CHEST_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_CHEST), 102, FLAG_LUNPA_FORTRESS_THIRD_CHEST, FIND_ITEM(ITEM_MYTHRIL_CIRCLET) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_LUNPA_FORTRESS_CHEST_MYTHRIL_CIRCLET, FIND_ITEM(ITEM_MYTHRIL_CIRCLET) },
     { SEARCH(SEARCH_CHEST), 103, FLAG_LUNPA_FORTRESS_CHEST_COINS, FIND_COINS(100) },
     { SEARCH(SEARCH_BARREL), 104, FLAG_LUNPA_FORTRESS_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
     { SCENE_EVENTS_END },
@@ -3784,7 +3798,7 @@ struct SceneEvent gLunpaFortressUpperFloorEvents[] = {
     { EVENT_EXIT, 22, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_TO_SOUTH_HALL },
     { EVENT_EXIT, 23, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_TO_DONPAS_ROOM },
     { EVENT_EXIT, 24, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_TONIC_ROOM },
-    { EVENT_TOUCH, 30, FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN, EVENT_SCRIPT(Event_FightHallGuard) },
+    { EVENT_TOUCH, 30, FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN, EVENT_SCRIPT(Event_FightHallGuard) },
     { EVENT_TOUCH, 31, FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN, EVENT_SCRIPT(Event_FightThreeGuards) },
     { EVENT_TOUCH, 32, FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN, EVENT_SCRIPT(Event_FightEastGuard) },
     { EVENT_TOUCH, 33, FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, EVENT_SCRIPT(Event_FightWestGuard) },
@@ -3797,8 +3811,8 @@ struct SceneEvent gLunpaFortressUpperFloorEvents[] = {
     { EVENT_TALK, UPPER_FLOOR_DODONPAS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhereDodonpaIs) },
     { EVENT_TALK, UPPER_FLOOR_DONPAPPA, CONDITION_ALWAYS, MSGNO(MsgLunpaChildMustGrowUp) },
     { EVENT_TALK, UPPER_FLOOR_DODONPAS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgLunpaPapaWatchesLadies) },
-    { EVENT_TALK, UPPER_FLOOR_DONPAPPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaChildTooResponsible) },
-    { EVENT_TALK, UPPER_FLOOR_DONPA_WORRIER, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaExhausted) },
+    { EVENT_TALK, UPPER_FLOOR_OLD_WOMAN_PRAISING_DONPAPPA, CONDITION_ALWAYS, MSGNO(MsgLunpaChildTooResponsible) },
+    { EVENT_TALK, UPPER_FLOOR_WOMAN_FEARING_FOR_DONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaExhausted) },
     { EVENT_TALK, UPPER_FLOOR_CAPTIVE_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLunpaWomenWantHome) },
     { EVENT_TALK, UPPER_FLOOR_GUARD_A, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBeatenGuardA) },
     { EVENT_TALK, UPPER_FLOOR_GUARD_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToBeatenGuardB) },
@@ -3809,8 +3823,8 @@ struct SceneEvent gLunpaFortressUpperFloorEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DODONPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaSuccessor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DONPAPPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaProtectsFortress) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DODONPAS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgLunpaDaughterWillNotMarryPapa) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DONPAPPA_GOSSIP, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaJudges) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_DONPA_WORRIER, CONDITION_ALWAYS, MSGNO(MsgLunpaFearWithoutDonpa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_OLD_WOMAN_PRAISING_DONPAPPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpappaJudges) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_WOMAN_FEARING_FOR_DONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaFearWithoutDonpa) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_CAPTIVE_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHopeDonpaRecovers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_GUARD_A, CONDITION_ALWAYS, MSGNO(MsgLunpaShouldNotHaveFought) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), UPPER_FLOOR_GUARD_B, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetInCave) },
@@ -3844,7 +3858,7 @@ struct SceneEvent gLunpaFortressCaveEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_FIRST_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayFirstSwitchCover) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_PASSAGE_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayPassageCover) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_SECOND_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwaySecondSwitchCover) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), CAVE_CRATES, FLAG_LUNPA_FORTRESS_COLUMN_LOWERED, EVENT_SCRIPT(Event_MoveCrates) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), CAVE_CRATES, FLAG_LUNPA_FORTRESS_CRATES_MOVED, EVENT_SCRIPT(Event_MoveCrates) },
     { SCENE_EVENTS_END },
 };
 

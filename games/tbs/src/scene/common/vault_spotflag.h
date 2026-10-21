@@ -7,10 +7,11 @@
 #include "field_event.h"
 #include "flags.h"
 
-/// Prevents the bone giver offering another Bone while the leader stands
+/// Prevents the girl at the inn offering another Bone while the leader stands
 /// beside the one on the floor.
-/// Each scene adds this callback in the bone giver's house after the thieves
-/// are jailed. FLAG_SCENE_TEMP_50 records proximity for the talk-event table.
+/// Each scene adds this callback in the girl at the inn's house after the
+/// thieves are jailed. FLAG_SCENE_TEMP_50 records proximity for the talk-event
+/// table.
 static void Vault_UpdateBoneProximityFlag(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 fixedX = leader->x.fixed;

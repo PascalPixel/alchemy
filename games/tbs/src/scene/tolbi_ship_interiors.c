@@ -54,22 +54,22 @@
 ///   monsters are belowdecks
 ///   (TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK and
 ///   the second and third attacks'). While they are aboard the stairs are
-///   barred (FLAG_TOLBI_SHIP_MONSTERS_ABOARD) and the leader is turned back
+///   barred (FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) and the leader is turned back
 ///   from them; talking to a monster on the rowing deck fights it (the first,
 ///   second or third slot of the Tolbi ship's scripted battles, by the attack),
 ///   returning to TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE or
 ///   the second or third attack's, which record the attack fought off
-///   (FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, _SECOND_ATTACK_REPELLED and
-///   _THIRD_ATTACK_REPELLED) and leave an oarsman hurt. The party then chooses
-///   a passenger in the hold to row: the attacks fought off number the seat
-///   being filled, and each seat has a group of nine flags, one for each
+///   (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, _SECOND_ATTACK_FOUGHT_OFF and
+///   _THIRD_ATTACK_FOUGHT_OFF) and leave an oarsman hurt. The party then
+///   chooses a passenger in the hold to row: the attacks fought off number the
+///   seat being filled, and each seat has a group of nine flags, one for each
 ///   passenger (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS and the rest); the passenger
 ///   follows the party (FLAG_TOLBI_SHIP_ROWER_CHOSEN) to the rowing deck
 ///   (TOLBI_SHIP_INTERIORS_ROWING_DECK_FROM_PASSENGER_HOLD), where Kaja takes
 ///   them on. Each passenger answers being asked in their own way, and their
 ///   rowing values on the mast decide the course.
 /// - The Kraken: TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP, the ship rocking,
-///   "there's a huge sea monster on the ship!" (FLAG_TOLBI_SHIP_KRAKEN_ABOARD
+///   "there's a huge sea monster on the ship!" (FLAG_TOLBI_SHIP_KRAKEN_ON_DECK
 ///   shakes the scene until it is defeated on deck).
 /// - The island: off course, a short scene in the cabin
 ///   (TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_ISLAND) leads by
@@ -128,11 +128,16 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
-#define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300    ///< a passenger follows the party
-#define FLAG_TOLBI_SHIP_MONSTERS_ABOARD 0x301 ///< the hold's stairs are barred
-/// The Kraken is aboard: the deck shakes until it is defeated
-/// (tolbi_ship_deck.c reads it too). "There's a huge sea monster on the ship!"
-#define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
+#define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300 ///< a passenger follows the party
+/// The hold's stairs are barred while monsters are on the rowing deck.
+/// ★ Named from the game: "Monsters belowdecks!"
+/// (MsgTolbiShipMonstersBelowdecks)
+#define FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS 0x301
+/// The Kraken is on deck: the deck shakes until it is defeated
+/// (tolbi_ship_deck.c reads it too).
+/// ★ Named from the game: "there's a huge sea monster on the ship!"
+/// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
+#define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK 0x302
 
 /// Operations shared by the cabin, passenger hold and rowing-deck events.
 enum ShipSceneCommand {
@@ -170,25 +175,35 @@ enum ShipSceneCommand {
 /// (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + passenger), each named by what they
 /// say.
 enum TolbiShipPassenger {
-  /// "Nobody would choose me... After all, I'm the tour group's guide!"
+  /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK). "Nobody would choose
+  /// me... After all, I'm the tour group's guide!"
   PASSENGER_HEAD_GUIDE,
-  /// The tour's other guide, drawn as kalay.c's ACTOR_SECOND_GUIDE (child value
+  /// The tour's other guide, a man carrying a pack drawn as kalay.c's
+  /// ACTOR_SECOND_GUIDE (child value
   /// 2). "We had enough trouble just getting passengers!"
   PASSENGER_SECOND_GUIDE,
-  /// "I've been in a cold sweat thinking they were going to choose me!"
+  /// A chef (SPRITE_CHEF). "I've been in a cold sweat thinking they were
+  /// going to choose me!"
   PASSENGER_SWEATING,
-  /// "Don't tell me you're going to ask a lady to row?"
+  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN). "Don't tell me
+  /// you're going to ask a lady to row?"
   PASSENGER_LADY,
-  /// "Oh, no. No... When our eyes met, I knew that was it."
+  /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN). "Oh, no. No... When our
+  /// eyes met, I knew that was it."
   PASSENGER_STARED_AT,
-  /// "If something happens to our oarsmen, we'll need the help. If that
+  /// A woman with a sword (SPRITE_PERSON_WITH_SWORD). "If something happens to
+  /// our oarsmen, we'll need the help. If that
   /// happens, we'll help out as warriors."
   PASSENGER_WARRIOR,
-  /// "All that money on tickets, and now we have to row the ship? Madness!"
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR). "All that
+  /// money
+  /// on tickets, and now we have to row the ship? Madness!"
   PASSENGER_TICKET_GRUMBLER,
-  /// "Muscles rippling everywhere... looks great!"
+  /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR). "Muscles rippling
+  /// everywhere... looks great!"
   PASSENGER_MUSCLE_ADMIRER,
-  /// "Out of all these people, you're asking a frail old man like me to row?"
+  /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE). "Out of all these
+  /// people, you're asking a frail old man like me to row?"
   PASSENGER_OLD_MAN
 };
 
@@ -198,9 +213,12 @@ enum TolbiShipPassenger {
 /// party's rows take their own slots. The sprites are tolbi_ship_deck.c's:
 /// 0x2e the captain, 0x2f Kaja, 0x91 the crewman.
 enum TolbiShipCabinActor {
+  /// The captain, an old man with a white beard in green
+  /// (SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN).
   CABIN_CAPTAIN = ACTOR_FIRST_PLACED,
-  CABIN_KAJA,
-  /// The crewman who hid the captain's anchor charm. "I have to confess that
+  CABIN_KAJA, ///< a bald man with a beard (SPRITE_KAJA)
+  /// The crewman, a man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA), who hid
+  /// the captain's anchor charm. "I have to confess that
   /// I hid it on top of the mast."
   CABIN_CREWMAN,
   CABIN_OURANOS,
@@ -221,8 +239,9 @@ enum TolbiShipHoldActor {
   HOLD_SECOND_GUIDE,                 ///< PASSENGER_SECOND_GUIDE
   HOLD_OURANOS,
   HOLD_SEAN,
-  HOLD_HEALER,
-  HOLD_KAJA ///< calls the first passenger to the oars. "Row those oars!"
+  HOLD_HEALER, ///< a bearded man in a long robe
+               ///< (SPRITE_BEARDED_MAN_IN_LONG_ROBE)
+  HOLD_KAJA    ///< calls the first passenger to the oars. "Row those oars!"
 };
 
 /// The hold at sea, numbering the rows of
@@ -248,10 +267,14 @@ enum TolbiShipSeaHoldActor {
 /// gTolbiShipInteriors_RowingDeckPlacements from ACTOR_FIRST_PLACED; the
 /// monsters of each attack are placed after them.
 enum TolbiShipRowingDeckActor {
-  /// "I've been sailing for many years, and I've never seen this island!"
+  /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA). "I've been
+  /// sailing for many years, and I've never seen this island!"
   ROWING_CREWMAN = ACTOR_FIRST_PLACED,
-  ROWING_DRUMMER, ///< "Everyone rows in time with this drum."
-  /// The eight oarsmen, a seat each, two by two from the north, the west seat
+  /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA). "Everyone rows in
+  /// time with this drum."
+  ROWING_DRUMMER,
+  /// The eight oarsmen, men in red bandanas (SPRITE_MAN_IN_RED_BANDANA), a seat
+  /// each, two by two from the north, the west seat
   /// first; the passengers chosen take the first four seats.
   ROWING_FIRST_OARSMAN,
   /// The nine passengers in the order of enum TolbiShipPassenger.
@@ -560,7 +583,7 @@ const struct ScenePlacement *TolbiShipInteriors_SelectPlacements(void) {
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_CABIN_CALL_TO_OARS:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gTolbiShipInteriors_HoldPlacements;
-    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) !=
+    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) !=
                0) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
         // Update talkFacing in the placement rows, preserving their write
@@ -659,7 +682,7 @@ const struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
       return gTolbiShipInteriors_HoldEventsAtIsland;
     }
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0 &&
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0 &&
         Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
       return gTolbiShipInteriors_HoldEventsChoosingRowers;
     }
@@ -735,7 +758,7 @@ static void TolbiShipInteriors_TalkToSeanInCabin(void) {
 /// talking to him also sets the event work's unk172 request.
 static void TolbiShipInteriors_TalkToCaptain(void) {
   Engine_EventBegin();
-  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
     Engine_EventSetMessage(MsgTolbiShipOarsmanWasInjured);
     TolbiShipInteriors_Say(CABIN_CAPTAIN);
     Actor_FaceDirection(CABIN_CAPTAIN, 0xd000, 60);
@@ -833,11 +856,12 @@ static void TolbiShipInteriors_AskHeadGuideToRow(void) {
     TolbiShipInteriors_AskToRow(SEA_HOLD_HEAD_GUIDE, MsgTolbiShipNoooooNotGoing,
                                 FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS +
                                     PASSENGER_HEAD_GUIDE);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
+             0) {
     TolbiShipInteriors_AskToRow(SEA_HOLD_HEAD_GUIDE, MsgTolbiShipNoooooNotGoing,
                                 FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS +
                                     PASSENGER_HEAD_GUIDE);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
              0) {
     TolbiShipInteriors_AskToRow(SEA_HOLD_HEAD_GUIDE, MsgTolbiShipNoooooNotGoing,
                                 FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
@@ -864,11 +888,12 @@ static void TolbiShipInteriors_AskSweatingPassengerToRow(void) {
     TolbiShipInteriors_AskToRow(
         SEA_HOLD_SWEATING_PASSENGER, MsgTolbiShipJokingWantRow,
         FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_SWEATING);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
+             0) {
     TolbiShipInteriors_AskToRow(
         SEA_HOLD_SWEATING_PASSENGER, MsgTolbiShipJokingWantRow,
         FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_SWEATING);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
              0) {
     TolbiShipInteriors_AskToRow(
         SEA_HOLD_SWEATING_PASSENGER, MsgTolbiShipJokingWantRow,
@@ -903,11 +928,12 @@ static void TolbiShipInteriors_AskLadyToRow(void) {
     TolbiShipInteriors_AskToRow(SEA_HOLD_LADY, MsgTolbiShipDontTellGoing,
                                 FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS +
                                     PASSENGER_LADY);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
+             0) {
     TolbiShipInteriors_AskToRow(SEA_HOLD_LADY, MsgTolbiShipDontTellGoing,
                                 FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS +
                                     PASSENGER_LADY);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
              0) {
     TolbiShipInteriors_AskToRow(SEA_HOLD_LADY, MsgTolbiShipDontTellGoing,
                                 FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
@@ -950,9 +976,10 @@ static void TolbiShipInteriors_AskStaredAtPassengerToRow(void) {
       GameFlag_Set(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
       if (GameFlag_IsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
         GameFlag_Set(FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_STARED_AT);
-      } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+      } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) != 0) {
         GameFlag_Set(FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_STARED_AT);
-      } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) != 0) {
+      } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
+                 0) {
         GameFlag_Set(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS + PASSENGER_STARED_AT);
       } else {
         GameFlag_Set(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_STARED_AT);
@@ -996,10 +1023,11 @@ static void TolbiShipInteriors_AskSecondGuideToRow(void) {
       if (GameFlag_IsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
         GameFlag_Set(FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS +
                      PASSENGER_SECOND_GUIDE);
-      } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+      } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) != 0) {
         GameFlag_Set(FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS +
                      PASSENGER_SECOND_GUIDE);
-      } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) != 0) {
+      } else if (GameFlag_IsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
+                 0) {
         GameFlag_Set(FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
                      PASSENGER_SECOND_GUIDE);
       } else {
@@ -1029,11 +1057,12 @@ static void TolbiShipInteriors_AskWarriorToRow(void) {
     TolbiShipInteriors_AskToRow(SEA_HOLD_WARRIOR, MsgTolbiShipNotThinkingMaking,
                                 FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS +
                                     PASSENGER_WARRIOR);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
+             0) {
     TolbiShipInteriors_AskToRow(SEA_HOLD_WARRIOR, MsgTolbiShipNotThinkingMaking,
                                 FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS +
                                     PASSENGER_WARRIOR);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
              0) {
     TolbiShipInteriors_AskToRow(SEA_HOLD_WARRIOR, MsgTolbiShipNotThinkingMaking,
                                 FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS +
@@ -1060,11 +1089,12 @@ static void TolbiShipInteriors_AskTicketGrumblerToRow(void) {
     TolbiShipInteriors_AskToRow(
         SEA_HOLD_TICKET_GRUMBLER, MsgTolbiShipOarsmanGiveBreak,
         FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_TICKET_GRUMBLER);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
+             0) {
     TolbiShipInteriors_AskToRow(
         SEA_HOLD_TICKET_GRUMBLER, MsgTolbiShipOarsmanGiveBreak,
         FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_TICKET_GRUMBLER);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
              0) {
     TolbiShipInteriors_AskToRow(
         SEA_HOLD_TICKET_GRUMBLER, MsgTolbiShipOarsmanGiveBreak,
@@ -1091,11 +1121,12 @@ static void TolbiShipInteriors_AskMuscleAdmirerToRow(void) {
     TolbiShipInteriors_AskToRow(
         SEA_HOLD_MUSCLE_ADMIRER, MsgTolbiShipPoorOarsmanFeel,
         FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_MUSCLE_ADMIRER);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
+             0) {
     TolbiShipInteriors_AskToRow(
         SEA_HOLD_MUSCLE_ADMIRER, MsgTolbiShipPoorOarsmanFeel,
         FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_MUSCLE_ADMIRER);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
              0) {
     TolbiShipInteriors_AskToRow(
         SEA_HOLD_MUSCLE_ADMIRER, MsgTolbiShipPoorOarsmanFeel,
@@ -1124,12 +1155,12 @@ static void TolbiShipInteriors_AskOldManToRow(void) {
       TolbiShipInteriors_AskToRow(
           SEA_HOLD_OLD_MAN, MsgTolbiShipPeopleAskingFrail,
           FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_OLD_MAN);
-    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) !=
+    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
                0) {
       TolbiShipInteriors_AskToRow(
           SEA_HOLD_OLD_MAN, MsgTolbiShipPeopleAskingFrail,
           FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_OLD_MAN);
-    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
                0) {
       TolbiShipInteriors_AskToRow(
           SEA_HOLD_OLD_MAN, MsgTolbiShipPeopleAskingFrail,
@@ -1260,9 +1291,10 @@ static s32 TolbiShipInteriors_GetChosenOarsman(void) {
 
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
     ret = 3;
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
+             0) {
     ret = 2;
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
              0) {
     ret = 1;
   }
@@ -1536,7 +1568,7 @@ static void TolbiShipInteriors_TalkToHealer(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if ((u16)(leader->facing - 0x2000) > 0xc000) {
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0 &&
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0 &&
         Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
       Engine_SanctumOpen(SEA_HOLD_HEALER);
     } else {
@@ -1548,7 +1580,7 @@ static void TolbiShipInteriors_TalkToHealer(void) {
       Engine_EventSetMessage(MsgTolbiShipGoodShipHasArrivedSafely);
     } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
       Engine_EventSetMessage(MsgTolbiShipHateArguing);
-    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) !=
+    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) !=
                0) {
       Engine_EventSetMessage(MsgTolbiShipShipsCrewReadyAnything);
     } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) !=
@@ -1557,7 +1589,7 @@ static void TolbiShipInteriors_TalkToHealer(void) {
     } else {
       Engine_EventSetMessage(MsgTolbiShipImSpreadingGoodwillWhereverTravel);
     }
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0 &&
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0 &&
         Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
       Engine_EventShowMessage(SEA_HOLD_HEALER, 0);
     } else {
@@ -1577,19 +1609,19 @@ static void TolbiShipInteriors_FightRowingDeckMonsters(void) {
   Battle_ResetEffectCounter();
   Battle_SetStart(BATTLE_START_SCENE);
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) == 0) {
     Event_SetNextDestination(
         (s32)&SceneId_TolbiShipInteriors,
         TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 0);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) == 0) {
       Event_SetNextDestination(
           (s32)&SceneId_TolbiShipInteriors,
           TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE);
       Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 1);
     } else {
-      if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) == 0) {
         Event_SetNextDestination(
             (s32)&SceneId_TolbiShipInteriors,
             TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE);
@@ -1603,7 +1635,7 @@ static void TolbiShipInteriors_FightRowingDeckMonsters(void) {
 /// While the monsters are aboard, the leader is walked back from the stairs.
 /// "Where are you going, Isaac? Slay the beasts and save my mates!"
 static void TolbiShipInteriors_TurnBackFromStairs(void) {
-  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_MONSTERS_ABOARD) != 0) {
+  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) != 0) {
     Engine_EventBegin();
     Ui_SetMessageVoiceFromActor(ROWING_CREWMAN);
     UiText_ShowCenteredMessage(MsgTolbiShipWhereGoingSlay, 1, 8);
@@ -2288,7 +2320,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_CABIN_CALL_TO_OARS:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
-        Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+        Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       Engine_ActorSetChildValue(SEA_HOLD_SECOND_GUIDE, 2);
     } else if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       Engine_ActorSetChildValue(HOLD_SECOND_GUIDE, 2);
@@ -2326,14 +2358,14 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
     TolbiShipInteriors_SetUpCabin();
     break;
   case TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_MAST_CAST_OFF:
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       TolbiShipInteriors_AnnounceDeparture();
     } else {
       TolbiShipInteriors_CastOff();
     }
     break;
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_CABIN_CALL_TO_OARS:
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       TolbiShipInteriors_KajaCallsReplacementToOars();
     } else {
       TolbiShipInteriors_KajaCallsToOars();
@@ -2411,7 +2443,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
     break;
   case TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP:
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-      if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_ABOARD) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK) != 0) {
         gTolbiShipInteriors_ShakeTimer = 0;
         FieldScheduler_AddCallback(TolbiShipInteriors_ShakeWhileKrakenAboard,
                                    TASK_PRIORITY_SCENE);
@@ -2458,7 +2490,7 @@ static void TolbiShipInteriors_SetUpCabin(void) {
     TolbiShipInteriors_PlaceAnchorCharm();
     return;
   }
-  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED)) {
+  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF)) {
     TolbiShipInteriors_PlaceAnchorCharm();
   }
   done = Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI);
@@ -2483,7 +2515,7 @@ static void TolbiShipInteriors_SetUpCabin(void) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       TolbiShipInteriors_PlaceActor(ACTOR_PARTY_LEADER, x, 666, 0xa000);
     }
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED)) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF)) {
     TolbiShipInteriors_PlaceActor(CABIN_CAPTAIN, 444, 614, 0xd000);
     TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_CABIN_CREW, 0, 0);
   } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
@@ -2528,7 +2560,7 @@ static void TolbiShipInteriors_SetUpHold(void) {
     return;
   }
 
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
     TolbiShipInteriors_HideSelectedPassengers();
     return;
   }
@@ -2564,18 +2596,18 @@ static void TolbiShipInteriors_SetUpRowingDeck(void) {
         TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_FIRST_OARSMEN, 4, 0);
         TolbiShipInteriors_IntroduceReplacementOarsman(3);
       } else {
-        if (GameFlag_IsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+        if (GameFlag_IsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) != 0) {
           TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_RECRUITMENT_DECK, 0, 0);
           TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_FIRST_OARSMEN, 3, 0);
           TolbiShipInteriors_IntroduceReplacementOarsman(2);
         } else {
-          if (GameFlag_IsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) != 0) {
+          if (GameFlag_IsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) != 0) {
             TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_RECRUITMENT_DECK, 0,
                                                0);
             TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_FIRST_OARSMEN, 2, 0);
             TolbiShipInteriors_IntroduceReplacementOarsman(1);
           } else {
-            if (GameFlag_IsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+            if (GameFlag_IsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
               TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_RECRUITMENT_DECK, 0,
                                                  0);
               Actor_SetPosition(ROWING_FIRST_OARSMAN, 0, 0);
@@ -2610,14 +2642,15 @@ static void TolbiShipInteriors_SetOarCollision(void) {
 static void TolbiShipInteriors_PlaceFoundActors(s32 gated) {
   s32 actor;
 
-  if (gated && !Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED)) {
+  if (gated &&
+      !Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF)) {
     return;
   }
   if ((actor = TolbiShipInteriors_FindFirstSetFlag(0, 0)) != 0) {
     TolbiShipInteriors_PlaceActor(actor, 410, 172, 0xd000);
     Engine_ActorSetPosition(ROWING_FIRST_OARSMAN, 0, 0);
   }
-  if (gated && !Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED)) {
+  if (gated && !Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF)) {
     return;
   }
   if ((actor = TolbiShipInteriors_FindFirstSetFlag(1, 0)) != 0) {
@@ -2890,14 +2923,16 @@ static void TolbiShipInteriors_ShowRowing(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
     Engine_EventRequestExit(
         TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_LAND);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
+             0) {
     Engine_EventRequestExit(
         TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_KRAKEN);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
              0) {
     Engine_EventRequestExit(
         TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_THIRD_ATTACK);
-  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) !=
+             0) {
     Engine_EventRequestExit(
         TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_WORLD_MAP_SAIL_TO_SECOND_ATTACK);
   } else {
@@ -2969,7 +3004,7 @@ static void TolbiShipInteriors_EndFirstAttack(void) {
                                      ROWING_FIRST_OARSMAN + 1,
                                      ROWING_FIRST_OARSMAN + 2);
   TolbiShipInteriors_ReactToMonsterAttack();
-  Engine_GameFlagSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED);
+  Engine_GameFlagSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF);
   Engine_EventEnd();
 }
 
@@ -3028,7 +3063,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
       Actor_FaceDirection(ROWING_KAJA, 0x3000, 0);
       Actor_WalkToAndWait(rowerId, 470, 204);
       TolbiShipInteriors_Turn(rowerId, 0xb000);
-    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) !=
+    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) !=
                0) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 422, 154);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
@@ -3036,7 +3071,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
       Actor_WalkToAndWait(rowerId, 410, 204);
       leftSeat = 1;
       TolbiShipInteriors_Turn(rowerId, 0xd000);
-    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) !=
+    } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) !=
                0) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
       Actor_FaceDirection(ROWING_KAJA, 0x3000, 0);
@@ -3112,7 +3147,7 @@ static struct FieldActor *TolbiShipInteriors_PlaceAnchorCharm(void) {
 
 /// Restores each replacement rower or the original occupant of that seat.
 static void TolbiShipInteriors_InstallRowingDeckActors(u32 action) {
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
     s32 rowerId = TolbiShipInteriors_FindFirstSetFlag(0, 0);
     Engine_ActorSetPosition(rowerId, PIXELS(410), PIXELS(172));
     TolbiShipInteriors_RunSceneCommand(SHIP_SET_SELECTED_ROWER_POSE, rowerId,
@@ -3123,7 +3158,7 @@ static void TolbiShipInteriors_InstallRowingDeckActors(u32 action) {
                                        ROWING_FIRST_OARSMAN, action);
   }
 
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) != 0) {
     s32 rowerId = TolbiShipInteriors_FindFirstSetFlag(1, 0);
     Engine_ActorSetPosition(rowerId, PIXELS(470), PIXELS(172));
     Object_GetById(rowerId)->scaleX = -Q16_ONE;
@@ -3135,7 +3170,7 @@ static void TolbiShipInteriors_InstallRowingDeckActors(u32 action) {
                                        ROWING_FIRST_OARSMAN + 1, action);
   }
 
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) != 0) {
     s32 rowerId = TolbiShipInteriors_FindFirstSetFlag(2, 0);
     Engine_ActorSetPosition(rowerId, PIXELS(410), PIXELS(204));
     TolbiShipInteriors_RunSceneCommand(SHIP_SET_SELECTED_ROWER_POSE, rowerId,
@@ -3469,8 +3504,8 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
                                        FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS,
                                        FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + 8);
     GameFlag_Clear(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
-    GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_ABOARD);
-    GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ABOARD);
+    GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
+    GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
     break;
   case SHIP_RESTORE_SHIVERING_OARSMAN:
     Engine_TaskWait(1);
@@ -3652,7 +3687,7 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   Actor_RunActionScriptAndWait(MIA,
                                gTolbiShipInteriors_FollowersRejoinByStairs);
   Engine_EventWait(40);
-  GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_ABOARD);
+  GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
 }
@@ -3744,7 +3779,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 0, 0);
-  GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_ABOARD);
+  GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
   Engine_EventRequestExit(TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD);
 }
@@ -3761,7 +3796,7 @@ static void TolbiShipInteriors_EndSecondAttack(void) {
                                      ROWING_FIRST_OARSMAN + 2);
   Engine_ActorSetPosition(ROWING_FIRST_OARSMAN + 1, 0, 0);
   TolbiShipInteriors_ReactToMonsterAttack();
-  Engine_GameFlagSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED);
+  Engine_GameFlagSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF);
   Engine_EventEnd();
 }
 
@@ -3809,13 +3844,13 @@ static void TolbiShipInteriors_EndThirdAttack(void) {
   Engine_ActorSetPosition(ROWING_FIRST_OARSMAN + 1, 0, 0);
   Engine_ActorSetPosition(ROWING_FIRST_OARSMAN + 2, 0, 0);
   TolbiShipInteriors_ReactToMonsterAttack();
-  Engine_GameFlagSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED);
+  Engine_GameFlagSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF);
   Engine_EventEnd();
 }
 
 /// TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP, on the rowing deck: the ship rocks, a
 /// huge sea monster is on the ship, and the party goes up on deck
-/// (FLAG_TOLBI_SHIP_KRAKEN_ABOARD).
+/// (FLAG_TOLBI_SHIP_KRAKEN_ON_DECK).
 static void TolbiShipInteriors_NoticeShipRocking(void) {
   s32 secondRower;
   s32 thirdRower;
@@ -3931,7 +3966,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Actor_SetActionScript(GARET, action);
   Actor_SetActionScript(IVAN, action);
   Actor_RunActionScriptAndWait(MIA, action);
-  GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_ABOARD);
+  GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
   gTolbiShipInteriors_ShakeTimer = 0;
   FieldScheduler_AddCallback(TolbiShipInteriors_ShakeWhileKrakenAboard,
                              TASK_PRIORITY_SCENE);
@@ -4460,11 +4495,11 @@ struct ScenePlacement gTolbiShipInteriors_PlacementsNone[] = {
 
 // clang-format off
 struct ScenePlacement gTolbiShipInteriors_CabinPlacements[] = {
-    { 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(446), 0, PIXELS(620), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KAJA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(472), 0, PIXELS(626), FACING_WEST, TALK_KEEP_FACING, 0 },
-    { 0x91, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(454), 0, PIXELS(640), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -4472,17 +4507,17 @@ struct ScenePlacement gTolbiShipInteriors_CabinPlacements[] = {
 /// The cabin once the warriors have come to see the captain, with the party's
 /// followers.
 struct ScenePlacement gTolbiShipInteriors_CabinPlacementsWarriors[] = {
-    { 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(482), 0, PIXELS(604), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KAJA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(474), 0, PIXELS(624), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x91, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(464), 0, PIXELS(690), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x43, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(456), 0, PIXELS(648), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x42, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(444), 0, PIXELS(628), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(472), 0, PIXELS(660), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
@@ -4495,7 +4530,7 @@ struct ScenePlacement gTolbiShipInteriors_CabinPlacementsWarriors[] = {
 
 /// The cabin once the ship has reached Tolbi.
 struct ScenePlacement gTolbiShipInteriors_CabinPlacementsArrived[] = {
-    { 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(462), 0, PIXELS(612), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -4509,23 +4544,23 @@ struct ScenePlacement gTolbiShipInteriors_HoldPlacementsEmpty[] = {
 
 /// The hold while the ship waits at Kalay, and after it reaches Tolbi.
 struct ScenePlacement gTolbiShipInteriors_HoldPlacements[] = {
-    { 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(504), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(540), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(540), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(520), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(130), 0, PIXELS(456), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x43, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(142), 0, PIXELS(446), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x42, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(156), 0, PIXELS(466), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KAJA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xf4, CONDITION_ALWAYS, (s32)gTolbiShipInteriors_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -4534,27 +4569,27 @@ struct ScenePlacement gTolbiShipInteriors_HoldPlacements[] = {
 
 /// The hold at sea, once the passengers row.
 struct ScenePlacement gTolbiShipInteriors_HoldPlacementsAtSea[] = {
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(138), 0, PIXELS(446), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(532), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x84, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEF, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(182), 0, PIXELS(492), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x94, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(492), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(480), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(526), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(172), 0, PIXELS(448), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(180), 0, PIXELS(464), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(122), 0, PIXELS(516), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KAJA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xf4, CONDITION_ALWAYS, (s32)gTolbiShipInteriors_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -4565,45 +4600,45 @@ struct ScenePlacement gTolbiShipInteriors_HoldPlacementsAtSea[] = {
 /// and the drummer, the oarsmen at the seats, the passengers who may take a
 /// seat, Kaja and the eight oars beside the seats.
 struct ScenePlacement gTolbiShipInteriors_RowingDeckPlacements[] = {
-    { 0x93, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(438), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x93, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(438), 0, PIXELS(374), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x90, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(410), 0, PIXELS(172), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x90, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(470), 0, PIXELS(172), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x90, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(410), 0, PIXELS(204), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x90, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(470), 0, PIXELS(204), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x90, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(410), 0, PIXELS(284), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x90, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(470), 0, PIXELS(284), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x90, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(410), 0, PIXELS(314), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x90, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(470), 0, PIXELS(314), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x84, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEF, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x94, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x2f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KAJA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbc, CONDITION_ALWAYS, 7,
         PIXELS(410), 0, PIXELS(174), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -4780,7 +4815,7 @@ struct SceneEvent gTolbiShipInteriors_CabinEvents[] = {
     { EVENT_TALK, CABIN_SEAN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToSeanInCabin) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsThisIsAChanceToMake) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsTheShipWontLeaveDockUntil) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipInteriorsAsLongAsWeHaveThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipInteriorsAsLongAsWeHaveThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeKnewTheRisksWhenWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CREWMAN, FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL, MSGNO(MsgTolbiShipInteriorsSendingOutAShipWhenIts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), CABIN_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIWaitedTooLongIllGet) },

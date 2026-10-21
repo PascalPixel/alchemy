@@ -9,7 +9,7 @@
 ///   (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at the bottom of the room. A
 ///   stump answers Move: pushed to column 24, it spins in place, leaps away,
 ///   lands with a shake and a ring of dust and lies flat underfoot, and the
-///   cells where it lands change (FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED, a story
+///   cells where it lands change (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, a story
 ///   flag, so it stays there for good). A chest holds Power Bread. Exits lead
 ///   back to the Goma Cave Entrance, into the room of two pillars
 ///   (goma_cave_pillar.c; GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST and
@@ -92,7 +92,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 /// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
-/// (FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED): from column 24 it spins, leaps away
+/// (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED): from column 24 it spins, leaps away
 /// and lies where it lands.
 static void Event_MoveStump(void) {
   struct FieldActor *stump;
@@ -107,7 +107,7 @@ static void Event_MoveStump(void) {
     Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
     landed = Object_GetById(ACTOR_STUMP);
     Engine_ActorSetSpriteFlags(landed, 0);
-    Engine_GameFlagSet(FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED);
+    Engine_GameFlagSet(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED);
   }
 }
 
@@ -132,7 +132,7 @@ s32 Scene_Initialize(void) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     } else {
       Object_GetById(ACTOR_STUMP)->collisionFlags |= 16;
-      if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
         Engine_ActorSetPosition(ACTOR_STUMP, PIXELS(346), PIXELS(292));
         stump = Object_GetById(ACTOR_STUMP);
         Engine_ActorSetSpriteFlags(stump, 0);
@@ -303,7 +303,7 @@ struct SceneEvent gGomaCaveWaterwayEventsOther[] = {
     {EVENT_EXIT, 8, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE},
     {SEARCH(SEARCH_CHEST), 100, 0xf28, FIND_ITEM(ITEM_POWER_BREAD)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP,
-     FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump)},
+     FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump)},
     {SCENE_EVENTS_END},
 };
 

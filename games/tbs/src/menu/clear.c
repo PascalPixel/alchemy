@@ -602,7 +602,7 @@ menu_top:;
       goto menu_top;
     }
     gGameState.selectedActor = 0;
-    if (GameFlag_IsSet(FLAG_INVENTORY_SNAPSHOT) != 0) {
+    if (GameFlag_IsSet(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveActiveOwner(0);
       Party_RemoveActiveOwner(1);
@@ -616,7 +616,7 @@ menu_top:;
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
     GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
     GameFlag_ClearBit(FLAG_MENU_OPEN);
-    Engine_GameFlagSet(FLAG_IN_LINK_LOBBY);
+    Engine_GameFlagSet(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
     Event_SetDestination((s32)&SceneId_LinkLobby, LINK_LOBBY_FROM_CLEAR);
     goto leave;
@@ -1376,7 +1376,7 @@ u32 gClear_PasswordMembers[] = {
 };
 
 /// The six story flags of the password's byte 7, as halfwords in pairs, bits
-/// 0 to 5: FLAG_LUNPA_TRADE_REOPENED, FLAG_WON_COLOSSO,
+/// 0 to 5: FLAG_DODONPA_LOCKED_UP, FLAG_WON_COLOSSO,
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
 /// FLAG_VISITED_SICK_DORA and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 u32 gClear_PasswordFlags[] = {

@@ -327,7 +327,7 @@ s32 Field_RunScene(s32 entrance) {
             Battle_ResetEffectCounter();
             UiTimedNotice_CloseIfActiveFar();
             gGameState.returnCue = AudioCommand_GetSecondaryStateByteFar();
-            if (GameFlag_TestFar(FLAG_IN_LINK_LOBBY) == 0) {
+            if (GameFlag_TestFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
               // each) free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give

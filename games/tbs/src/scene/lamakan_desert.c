@@ -94,16 +94,30 @@ static void HeatGauge_SetHeld(u16 held);
 
 enum {
   /// FLAG_SCENE_TEMP_00: a collapse, a pit or the Manticore is under way.
-  FLAG_HAZARDS_PAUSED = FLAG_SCENE_TEMP_00,
+  FLAG_DESERT_EVENT_RUNNING = FLAG_SCENE_TEMP_00,
   /// FLAG_SCENE_TEMP_01: Reveal shows the pits.
+  /// ★ Named from the game: "Reveal" (MsgAbilityName)
   FLAG_SECRETS_REVEALED = FLAG_SCENE_TEMP_01,
-  FLAG_HEAT_QUARTER = 0x300, ///< the gauge has passed a quarter
+  /// The heat gauge has passed a quarter, where the first complaints come.
+  /// ★ Named from the game: "This desert is much hotter than I ever imagined"
+  /// (MsgMountainNorthAltinMineWestLama)
+  FLAG_HEAT_QUARTER = 0x300,
+  /// ★ Named from the game: "I can't keep my cool when it's this hot"
+  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_HALF = 0x301,
+  /// ★ Named from the game: "I can't stand another minute of this!"
+  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_THREE_QUARTERS = 0x302,
   /// Who has complained since the gauge last passed a mark: one per member,
   /// in the order of their actors.
+  /// ★ Named from the game: "My feet are burning!"
+  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_GARET_COMPLAINED = 0x303,
+  /// ★ Named from the game: "Just walking around here saps every ounce of my
+  /// strength." (MsgMountainNorthAltinMineWestLama)
   FLAG_IVAN_COMPLAINED = 0x304,
+  /// ★ Named from the game: "My clothes are drenched in sweat!"
+  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_MIA_COMPLAINED = 0x305
 };
 
@@ -122,7 +136,9 @@ enum {
 /// The desert's two Psynergy Stones, place flags: each is back once the
 /// party has left Lamakan Desert.
 enum {
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE = FLAG_PLACE_TEMP_50,
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE = FLAG_PLACE_TEMP_51
 };
 
@@ -326,7 +342,7 @@ static s32 Reveal_ShowSecrets(void) {
 #endif
   s32 i;
 
-  Engine_GameFlagClear(FLAG_HAZARDS_PAUSED);
+  Engine_GameFlagClear(FLAG_DESERT_EVENT_RUNNING);
   Engine_GameFlagSet(FLAG_SECRETS_REVEALED);
   // Restore each hidden patch from the spare cells saved on entry.
   if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
@@ -517,7 +533,7 @@ static void CollapseFromHeat(void) {
   work = (u8 *)gEventWork;
   frames = 60;
   best = 0xf00000;
-  GameFlag_Set(FLAG_HAZARDS_PAUSED);
+  GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   HeatGauge_SetHeld(1);
   if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
     count = 3;
@@ -682,7 +698,7 @@ static void FallIntoPit(void) {
 
   target = Actor_Get(gGameState.selectedActor);
   best = FIRST_PIT;
-  GameFlag_Set(FLAG_HAZARDS_PAUSED);
+  GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   min = 0x100000;
   // Select the closest live pit using Manhattan distance in whole pixels.
   for (id = FIRST_PIT; id <= LAST_PIT; id++) {
@@ -832,9 +848,9 @@ static void MeetManticore(void) {
   eventBytes = (u8 *)gEventWork;
   HeatGauge_CountStep();
   if (GameFlag_IsSet(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
-    paused = GameFlag_IsSet(FLAG_HAZARDS_PAUSED);
+    paused = GameFlag_IsSet(FLAG_DESERT_EVENT_RUNNING);
     if (paused == 0) {
-      GameFlag_Set(FLAG_HAZARDS_PAUSED);
+      GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
       // Suspend heat accumulation while the leader notices the Manticore.
       HeatGauge_SetHeld(1);
       holdTimer = (u16 *)(eventBytes + 0xcba);
@@ -1260,9 +1276,9 @@ struct SceneEvent gLamakanDesertEvents[] = {
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 4 },
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(LeaveForTheWorldMap) },
-    { EVENT_TOUCH, 20, FLAG_HAZARDS_PAUSED, EVENT_SCRIPT(CollapseFromHeat) },
+    { EVENT_TOUCH, 20, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(CollapseFromHeat) },
     { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(HeatGauge_CountStep) },
-    { EVENT_TOUCH, 22, FLAG_HAZARDS_PAUSED, EVENT_SCRIPT(FallIntoPit) },
+    { EVENT_TOUCH, 22, FLAG_DESERT_EVENT_RUNNING, EVENT_SCRIPT(FallIntoPit) },
     { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SlideDownDune) },
     { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MeetManticore) },
     { EVENT_TALK, MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(FightManticore) },

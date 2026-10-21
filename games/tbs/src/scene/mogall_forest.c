@@ -9,9 +9,9 @@
 /// The way runs from the first area (SceneId_MogallForestSign), entered from
 /// the world map, through the second (SceneId_MogallForestQuartz) to the third
 /// (SceneId_MogallForestKillerApe), which leaves for the
-/// world map by MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP. Apes hide in the
-/// undergrowth, each behind an invisible hiding place on
-/// its spot, and Force on a hiding place brings its ape out. Most turn to the
+/// world map by MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP. Apes hide in hollow
+/// purple stumps, each stump holding a blank actor on its spot, and Force on
+/// a stump brings its ape out. Most turn to the
 /// leader, point the way on and leave; two first bolt to a second hiding place;
 /// and one in the first area and one in the third leap at the leader instead,
 /// starting a battle with an Ape (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN,
@@ -100,93 +100,183 @@
 /// of gMogallForestPlacements1.
 enum MogallForestSignActor {
   /// A log lying north to south at (488, 464), pushed as the river log is but
-  /// with
-  /// nothing happening where it stops.
+  /// with nothing happening where it stops.
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_FIRST_AREA_LOG = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_FIRST_AREA_RIVER_LOG,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_FIRST_AREA_NORTH_APE,
-  ACTOR_FIRST_AREA_HOSTILE_APE,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  ACTOR_FIRST_AREA_ATTACKING_APE,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_FIRST_AREA_EAST_APE,
-  ACTOR_FIRST_AREA_NORTH_HIDEOUT,
-  ACTOR_FIRST_AREA_HOSTILE_HIDEOUT,
-  ACTOR_FIRST_AREA_EAST_HIDEOUT,
-  ACTOR_NUT ///< a Nut floating over the river, caught with Catch
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_FIRST_AREA_NORTH_APE_STUMP,
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_FIRST_AREA_ATTACKING_APE_STUMP,
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_FIRST_AREA_EAST_APE_STUMP,
+  /// A Nut floating over the river, caught with Catch.
+  /// ★ Named from the game: "Nut" (MsgItemName)
+  ACTOR_NUT
 };
 
 /// Actors of the second area (SceneId_MogallForestQuartz), numbered in the
 /// order of gMogallForestPlacements2.
 enum MogallForestQuartzActor {
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_SECOND_AREA_LOG = ACTOR_FIRST_PLACED,
   /// A log lying west to east at (592, 456), south of ACTOR_SECOND_AREA_LOG,
   /// pushed with nothing happening where it stops.
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_SECOND_AREA_SOUTH_LOG,
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_SECOND_AREA_RIVER_LOG,
   /// A rock moved with Move, drawn as the rocks of Altmiller Cave's color
   /// puzzle (MsgAltmillerRotatedRock), drawn plain as those are while Reveal is
   /// off.
+  /// ★ Named from what the player sees: a small grey rock in the grass
+  /// (its render)
   ACTOR_SECOND_AREA_ROCK,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_SECOND_AREA_NORTH_APE,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_SECOND_AREA_EAST_APE,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_SECOND_AREA_SOUTH_APE,
-  ACTOR_SECOND_AREA_NORTH_HIDEOUT,
-  ACTOR_SECOND_AREA_EAST_HIDEOUT,
-  ACTOR_SECOND_AREA_SOUTH_HIDEOUT,
-  ACTOR_QUARTZ ///< Quartz, a Venus Djinni, placed until the party has it
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_SECOND_AREA_NORTH_APE_STUMP,
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_SECOND_AREA_EAST_APE_STUMP,
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_SECOND_AREA_SOUTH_APE_STUMP,
+  /// Quartz, a Venus Djinni, placed until the party has it.
+  /// ★ Named from the game: "Quartz" (MsgDjinnName)
+  ACTOR_QUARTZ
 };
 
 /// Actors of the third area (SceneId_MogallForestKillerApe), numbered in the
 /// order of gMogallForestPlacements3.
 enum MogallForestKillerApeActor {
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_THIRD_AREA_LOG = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_THIRD_AREA_RIVER_LOG_1,
   /// A log lying north to south at (552, 480), west of the two river logs,
   /// pushed with nothing happening where it stops.
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_THIRD_AREA_WEST_LOG,
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_THIRD_AREA_RIVER_LOG_2,
   /// A log lying west to east at (544, 536), south of
   /// ACTOR_THIRD_AREA_WEST_LOG, pushed with nothing happening where it stops.
+  /// ★ Named from what the player sees: a fallen tree trunk lying in the
+  /// grass (its render)
   ACTOR_THIRD_AREA_SOUTHWEST_LOG,
   /// Two rocks moved with Move, as in the second area.
+  /// ★ Named from what the player sees: a small grey rock in the grass
+  /// (its render)
   ACTOR_THIRD_AREA_NORTH_ROCK,
+  /// ★ Named from what the player sees: a small grey rock in the grass
+  /// (its render)
   ACTOR_THIRD_AREA_SOUTH_ROCK,
-  ACTOR_THIRD_AREA_HOSTILE_APE,
-  ACTOR_THIRD_AREA_CENTRAL_APE,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  ACTOR_THIRD_AREA_ATTACKING_APE,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  ACTOR_THIRD_AREA_MIDDLE_APE,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_THIRD_AREA_WEST_APE,
-  ACTOR_THIRD_AREA_EAST_APE, ///< also the Killer Ape and its guide
-  ACTOR_THIRD_AREA_HOSTILE_HIDEOUT,
-  ACTOR_THIRD_AREA_CENTRAL_HIDEOUT,
-  ACTOR_THIRD_AREA_WEST_HIDEOUT,
-  ACTOR_THIRD_AREA_EAST_HIDEOUT
+  /// Also the Killer Ape and its guide.
+  /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
+  ACTOR_THIRD_AREA_EAST_APE,
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_THIRD_AREA_ATTACKING_APE_STUMP,
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_THIRD_AREA_MIDDLE_APE_STUMP,
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_THIRD_AREA_WEST_APE_STUMP,
+  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
+  /// (its render)
+  ACTOR_THIRD_AREA_EAST_APE_STUMP
 };
 
 /// Kept until the party leaves the forest: each ape once it has come out
 /// (or, for two, moved on to a second hiding place) and each rolled log.
 enum {
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_FIRST_AREA_NORTH_APE_OUT = 0x300,
-  FLAG_FIRST_AREA_HOSTILE_APE_OUT,
+  /// The ape that leaps at the leader instead of pointing the way.
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  FLAG_FIRST_AREA_ATTACKING_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_FIRST_AREA_EAST_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_SECOND_AREA_NORTH_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_SECOND_AREA_EAST_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_SECOND_AREA_SOUTH_APE_MOVED,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_SECOND_AREA_SOUTH_APE_OUT,
-  FLAG_THIRD_AREA_HOSTILE_APE_OUT,
-  FLAG_THIRD_AREA_CENTRAL_APE_OUT,
+  /// The ape that leaps at the leader instead of pointing the way.
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  FLAG_THIRD_AREA_ATTACKING_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  FLAG_THIRD_AREA_MIDDLE_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_THIRD_AREA_WEST_APE_OUT,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_THIRD_AREA_EAST_APE_MOVED,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_THIRD_AREA_EAST_APE_OUT,
+  /// ★ Named from what the player sees: a log pushed over the grass rolls into
+  /// the river and lies across it (its render)
   FLAG_FIRST_AREA_LOG_ROLLED = 0x310,
+  /// ★ Named from what the player sees: the second area's log rolled into the
+  /// river (its render)
   FLAG_SECOND_AREA_LOG_ROLLED,
+  /// ★ Named from what the player sees: the third area's first log rolled into
+  /// the river (its render)
   FLAG_THIRD_AREA_FIRST_LOG_ROLLED,
+  /// ★ Named from what the player sees: the third area's second log rolled
+  /// into the river (its render)
   FLAG_THIRD_AREA_SECOND_LOG_ROLLED,
+  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_PSYNERGY_STONE = 0x350
 };
 
 /// Scene flag, kept while the party stays in the area.
-enum { FLAG_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_00 + 0x14 };
+enum {
+  /// ★ Named from what the player sees: the rock beside the log, moved with
+  /// Move (its render)
+  FLAG_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_00 + 0x14
+};
 
 enum {
+  /// ★ Named from the game: "Nut" (MsgItemName)
   FLAG_NUT_CAUGHT = 0xfd4,
+  /// ★ Named from the game: "Apple" (MsgItemName)
   FLAG_CHEST_APPLE = 0xf1b,
+  /// ★ Named from the game: "Elven Shirt" (MsgItemName)
   FLAG_CHEST_ELVEN_SHIRT = 0xf1a
 };
 
@@ -497,45 +587,45 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
   Engine_EventWait(10);
 
   Engine_GameFlagSet(FLAG_FIRST_AREA_NORTH_APE_OUT);
-  Engine_ActorSetPosition(ACTOR_FIRST_AREA_NORTH_HIDEOUT, 0, 0);
+  Engine_ActorSetPosition(ACTOR_FIRST_AREA_NORTH_APE_STUMP, 0, 0);
   Engine_ActorSetPosition(ACTOR_FIRST_AREA_NORTH_APE, 0, 0);
 
   Engine_EventEnd();
 }
 
-/// Mogall Forest, the first area: Force on the hostile ape's hiding place. It
+/// Mogall Forest, the first area: Force on the attacking ape's hiding place. It
 /// comes out angry, leaps at the leader and the battle with an Ape begins
 /// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0).
 static void MogallForest_FirstArea_ApeAttacks(void) {
   struct FieldActor *creature;
 
-  creature = Object_GetById(ACTOR_FIRST_AREA_HOSTILE_APE);
+  creature = Object_GetById(ACTOR_FIRST_AREA_ATTACKING_APE);
 
   Engine_EventBegin();
 
-  MogallForest_ApeComesOut(ACTOR_FIRST_AREA_HOSTILE_APE, 0);
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_HOSTILE_APE, 408, 456, PIXELS(6));
+  MogallForest_ApeComesOut(ACTOR_FIRST_AREA_ATTACKING_APE, 0);
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE, 408, 456, PIXELS(6));
 
   Effect_Spawn(creature->x.fixed, creature->y.fixed,
                creature->z.fixed + PIXELS(24), 0, 0, 0, 1, 0);
 
-  Engine_CameraFollowActor(ACTOR_FIRST_AREA_HOSTILE_APE, 1);
-  Engine_ActorFaceEachOther(ACTOR_FIRST_AREA_HOSTILE_APE, ACTOR_PARTY_LEADER,
+  Engine_CameraFollowActor(ACTOR_FIRST_AREA_ATTACKING_APE, 1);
+  Engine_ActorFaceEachOther(ACTOR_FIRST_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER,
                             0);
   Engine_EventWait(30);
-  Engine_ActorStartRepeatedMotion(ACTOR_FIRST_AREA_HOSTILE_APE, 2);
-  Engine_ActorShowEmote(ACTOR_FIRST_AREA_HOSTILE_APE, EMOTE_IN_FRONT | 3, 0);
+  Engine_ActorStartRepeatedMotion(ACTOR_FIRST_AREA_ATTACKING_APE, 2);
+  Engine_ActorShowEmote(ACTOR_FIRST_AREA_ATTACKING_APE, EMOTE_IN_FRONT | 3, 0);
   Engine_AudioPlayCue(SE_147);
   Engine_EventWait(60);
 
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_HOSTILE_APE,
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE,
                           Object_GetById(ACTOR_PARTY_LEADER)->x.part.pixel,
                           Object_GetById(ACTOR_PARTY_LEADER)->z.part.pixel,
                           PIXELS(4));
 
   Engine_EventWait(10);
-  Engine_GameFlagSet(FLAG_FIRST_AREA_HOSTILE_APE_OUT);
-  Engine_ActorSetPosition(ACTOR_FIRST_AREA_HOSTILE_HIDEOUT, 0, 0);
+  Engine_GameFlagSet(FLAG_FIRST_AREA_ATTACKING_APE_OUT);
+  Engine_ActorSetPosition(ACTOR_FIRST_AREA_ATTACKING_APE_STUMP, 0, 0);
 
   Battle_SetStart(BATTLE_START_SCENE);
 
@@ -575,7 +665,7 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
   Engine_EventWait(6);
 
   Engine_GameFlagSet(FLAG_FIRST_AREA_EAST_APE_OUT);
-  Engine_ActorSetPosition(ACTOR_FIRST_AREA_EAST_HIDEOUT, 0, 0);
+  Engine_ActorSetPosition(ACTOR_FIRST_AREA_EAST_APE_STUMP, 0, 0);
 
   Engine_EventEnd();
 }
@@ -697,7 +787,7 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
   Engine_EventWait(6);
   Engine_ActorSetPosition(ACTOR_SECOND_AREA_NORTH_APE, 0, 0);
   Engine_GameFlagSet(FLAG_SECOND_AREA_NORTH_APE_OUT);
-  Engine_ActorSetPosition(ACTOR_SECOND_AREA_NORTH_HIDEOUT, 0, 0);
+  Engine_ActorSetPosition(ACTOR_SECOND_AREA_NORTH_APE_STUMP, 0, 0);
   Engine_EventEnd();
 }
 
@@ -737,7 +827,7 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
 
   Engine_ActorSetPosition(ACTOR_SECOND_AREA_EAST_APE, 0, 0);
   Engine_GameFlagSet(FLAG_SECOND_AREA_EAST_APE_OUT);
-  Engine_ActorSetPosition(ACTOR_SECOND_AREA_EAST_HIDEOUT, 0, 0);
+  Engine_ActorSetPosition(ACTOR_SECOND_AREA_EAST_APE_STUMP, 0, 0);
 
   Engine_EventEnd();
 }
@@ -758,7 +848,8 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
   Engine_ActorSetSpriteFlags(creature, 0);
   Engine_EventWait(30);
   GameFlag_Set(FLAG_SECOND_AREA_SOUTH_APE_MOVED);
-  Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_HIDEOUT, PIXELS(424), PIXELS(480));
+  Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, PIXELS(424),
+                    PIXELS(480));
   Engine_EventEnd();
 }
 
@@ -800,7 +891,7 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   Engine_ActorSetPosition(ACTOR_SECOND_AREA_SOUTH_APE, 0, 0);
   Engine_EventWait(30);
   Engine_GameFlagSet(FLAG_SECOND_AREA_SOUTH_APE_OUT);
-  Engine_ActorSetPosition(ACTOR_SECOND_AREA_SOUTH_HIDEOUT, 0, 0);
+  Engine_ActorSetPosition(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 0, 0);
 
   Engine_EventEnd();
 }
@@ -947,8 +1038,8 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
   Engine_EventEnd();
 }
 
-/// Mogall Forest, the third area: Force on the hostile ape's hiding place. The
-/// ape leaps at the leader and the battle with an Ape begins.
+/// Mogall Forest, the third area: Force on the attacking ape's hiding place.
+/// The ape leaps at the leader and the battle with an Ape begins.
 static void MogallForest_ThirdArea_ApeAttacks(void) {
 
   struct FieldActor *creature;
@@ -957,29 +1048,29 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   s32 leaderX;
   struct FieldActor *leaderForZ;
 
-  creature = Object_GetById(ACTOR_THIRD_AREA_HOSTILE_APE);
+  creature = Object_GetById(ACTOR_THIRD_AREA_ATTACKING_APE);
   jumpSpeed = PIXELS(8);
   Engine_EventBegin();
-  MogallForest_ApeComesOut(ACTOR_THIRD_AREA_HOSTILE_APE, 0);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_HOSTILE_APE, 472, 104, jumpSpeed);
+  MogallForest_ApeComesOut(ACTOR_THIRD_AREA_ATTACKING_APE, 0);
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, 472, 104, jumpSpeed);
   Engine_EventWait(10);
   Effect_Spawn(creature->x.fixed, creature->y.fixed,
                (creature->z.fixed + jumpSpeed), 0, 0, 0, 1, 0);
-  Engine_CameraFollowActor(ACTOR_THIRD_AREA_HOSTILE_APE, 1);
-  Engine_ActorFaceEachOther(ACTOR_THIRD_AREA_HOSTILE_APE, ACTOR_PARTY_LEADER,
+  Engine_CameraFollowActor(ACTOR_THIRD_AREA_ATTACKING_APE, 1);
+  Engine_ActorFaceEachOther(ACTOR_THIRD_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER,
                             0);
   Engine_EventWait(30);
-  Engine_ActorStartRepeatedMotion(ACTOR_THIRD_AREA_HOSTILE_APE, 2);
-  Engine_ActorShowEmote(ACTOR_THIRD_AREA_HOSTILE_APE, EMOTE_IN_FRONT | 3, 0);
+  Engine_ActorStartRepeatedMotion(ACTOR_THIRD_AREA_ATTACKING_APE, 2);
+  Engine_ActorShowEmote(ACTOR_THIRD_AREA_ATTACKING_APE, EMOTE_IN_FRONT | 3, 0);
   Engine_AudioPlayCue(SE_147);
   Engine_EventWait(60);
   leaderForX = Object_GetById(ACTOR_PARTY_LEADER);
   leaderX = leaderForX->x.part.pixel;
   leaderForZ = Object_GetById(ACTOR_PARTY_LEADER);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_HOSTILE_APE, leaderX,
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, leaderX,
                           leaderForZ->z.part.pixel, PIXELS(6));
   Engine_EventWait(10);
-  Engine_GameFlagSet(FLAG_THIRD_AREA_HOSTILE_APE_OUT);
+  Engine_GameFlagSet(FLAG_THIRD_AREA_ATTACKING_APE_OUT);
   Battle_SetStart(BATTLE_START_SCENE);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
@@ -991,36 +1082,36 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
 static void MogallForest_ThirdArea_CentralApeShowsWay(void) {
   struct FieldActor *creature;
 
-  creature = Object_GetById(ACTOR_THIRD_AREA_CENTRAL_APE);
+  creature = Object_GetById(ACTOR_THIRD_AREA_MIDDLE_APE);
 
   Engine_EventBegin();
 
-  MogallForest_ApeComesOut(ACTOR_THIRD_AREA_CENTRAL_APE, 1);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_CENTRAL_APE, 456, 152, PIXELS(6));
+  MogallForest_ApeComesOut(ACTOR_THIRD_AREA_MIDDLE_APE, 1);
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 456, 152, PIXELS(6));
   Engine_EventWait(10);
 
   Effect_Spawn(creature->x.fixed, creature->y.fixed,
                creature->z.fixed + PIXELS(4), 0, 0, 0, 1, 0);
 
-  MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_CENTRAL_APE);
+  MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_MIDDLE_APE);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_CENTRAL_APE, 448, 192, PIXELS(3));
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_CENTRAL_APE, 0);
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 448, 192, PIXELS(3));
+  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
   Engine_EventWait(6);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_CENTRAL_APE, 424, 208, PIXELS(3));
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_CENTRAL_APE, 0);
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 424, 208, PIXELS(3));
+  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
   Engine_EventWait(6);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_CENTRAL_APE, 424, 224, PIXELS(3));
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_CENTRAL_APE, 0);
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 424, 224, PIXELS(3));
+  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
   Engine_EventWait(6);
 
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorSetPosition(ACTOR_THIRD_AREA_CENTRAL_APE, 0, 0);
+  Engine_ActorSetPosition(ACTOR_THIRD_AREA_MIDDLE_APE, 0, 0);
   Engine_EventWait(30);
-  Engine_GameFlagSet(FLAG_THIRD_AREA_CENTRAL_APE_OUT);
-  Engine_ActorSetPosition(ACTOR_THIRD_AREA_CENTRAL_HIDEOUT, 0, 0);
+  Engine_GameFlagSet(FLAG_THIRD_AREA_MIDDLE_APE_OUT);
+  Engine_ActorSetPosition(ACTOR_THIRD_AREA_MIDDLE_APE_STUMP, 0, 0);
 
   Engine_EventEnd();
 }
@@ -1059,7 +1150,7 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   Engine_ActorSetPosition(ACTOR_THIRD_AREA_WEST_APE, 0, 0);
   Engine_EventWait(30);
   Engine_GameFlagSet(FLAG_THIRD_AREA_WEST_APE_OUT);
-  Engine_ActorSetPosition(ACTOR_THIRD_AREA_WEST_HIDEOUT, 0, 0);
+  Engine_ActorSetPosition(ACTOR_THIRD_AREA_WEST_APE_STUMP, 0, 0);
 
   Engine_EventEnd();
 }
@@ -1079,7 +1170,7 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   Engine_ActorSetSpriteFlags(creature, 0);
   Engine_EventWait(30);
   GameFlag_Set(FLAG_THIRD_AREA_EAST_APE_MOVED);
-  Actor_SetPosition(ACTOR_THIRD_AREA_EAST_HIDEOUT, PIXELS(744), PIXELS(504));
+  Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE_STUMP, PIXELS(744), PIXELS(504));
   Engine_EventEnd();
 }
 
@@ -1333,9 +1424,9 @@ s32 MogallForest_Initialize(void) {
       if (Engine_GameFlagIsSet(FLAG_NUT_CAUGHT) == 0) {
         Scene_FloatNut(ACTOR_NUT);
       }
-      Engine_ActorSetChildValue(ACTOR_FIRST_AREA_HOSTILE_APE, 15);
+      Engine_ActorSetChildValue(ACTOR_FIRST_AREA_ATTACKING_APE, 15);
       Engine_ActorSetChildValue(ACTOR_FIRST_AREA_EAST_APE, 15);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_AREA_HOSTILE_APE),
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_AREA_ATTACKING_APE),
                                  0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_AREA_EAST_APE), 0);
       FieldScene_RedrawActorFootprint(ACTOR_FIRST_AREA_LOG);
@@ -1412,7 +1503,7 @@ s32 MogallForest_Initialize(void) {
         break;
       }
       Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_APE, PIXELS(424), PIXELS(480));
-      Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_HIDEOUT, PIXELS(424),
+      Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, PIXELS(424),
                         PIXELS(480));
       break;
     }
@@ -1426,27 +1517,27 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_NORTHWEST_CLEARING:
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_RIVER:
       Engine_TaskWait(1);
-      if (Engine_GameFlagIsSet(FLAG_THIRD_AREA_HOSTILE_APE_OUT) == 0) {
-        Engine_ActorSetChildValue(ACTOR_THIRD_AREA_HOSTILE_APE, 15);
-        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_THIRD_AREA_HOSTILE_APE),
-                                   0);
+      if (Engine_GameFlagIsSet(FLAG_THIRD_AREA_ATTACKING_APE_OUT) == 0) {
+        Engine_ActorSetChildValue(ACTOR_THIRD_AREA_ATTACKING_APE, 15);
         Engine_ActorSetSpriteFlags(
-            Object_GetById(ACTOR_THIRD_AREA_HOSTILE_HIDEOUT), 0);
+            Object_GetById(ACTOR_THIRD_AREA_ATTACKING_APE), 0);
+        Engine_ActorSetSpriteFlags(
+            Object_GetById(ACTOR_THIRD_AREA_ATTACKING_APE_STUMP), 0);
       }
-      if (Engine_GameFlagIsSet(FLAG_THIRD_AREA_CENTRAL_APE_OUT) == 0) {
-        Engine_ActorSetChildValue(ACTOR_THIRD_AREA_CENTRAL_APE, 15);
-        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_THIRD_AREA_CENTRAL_APE),
+      if (Engine_GameFlagIsSet(FLAG_THIRD_AREA_MIDDLE_APE_OUT) == 0) {
+        Engine_ActorSetChildValue(ACTOR_THIRD_AREA_MIDDLE_APE, 15);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_THIRD_AREA_MIDDLE_APE),
                                    0);
         Engine_ActorSetSpriteFlags(
-            Object_GetById(ACTOR_THIRD_AREA_CENTRAL_HIDEOUT), 0);
+            Object_GetById(ACTOR_THIRD_AREA_MIDDLE_APE_STUMP), 0);
       }
       if (Engine_GameFlagIsSet(FLAG_THIRD_AREA_WEST_APE_OUT) != 0) {
         break;
       }
       Engine_ActorSetChildValue(ACTOR_THIRD_AREA_WEST_APE, 15);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_THIRD_AREA_WEST_APE), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_THIRD_AREA_WEST_HIDEOUT),
-                                 0);
+      Engine_ActorSetSpriteFlags(
+          Object_GetById(ACTOR_THIRD_AREA_WEST_APE_STUMP), 0);
       break;
 
     case MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS:
@@ -1509,7 +1600,7 @@ s32 MogallForest_Initialize(void) {
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_THIRD_AREA_EAST_APE),
                                    0);
         if (Engine_GameFlagIsSet(FLAG_THIRD_AREA_EAST_APE_MOVED) != 0) {
-          Actor_SetPosition(ACTOR_THIRD_AREA_EAST_HIDEOUT, PIXELS(744),
+          Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE_STUMP, PIXELS(744),
                             PIXELS(504));
           Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, PIXELS(744),
                             PIXELS(504));
@@ -1762,13 +1853,13 @@ struct ScenePlacement gMogallForestPlacements1[] = {
         PIXELS(528), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbf, FLAG_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xbf, FLAG_FIRST_AREA_HOSTILE_APE_OUT, (s32)gMogallForest_ActorScript,
+    { 0xbf, FLAG_FIRST_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbf, FLAG_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, FLAG_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLANK, FLAG_FIRST_AREA_HOSTILE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_FIRST_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, FLAG_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
@@ -1798,7 +1889,7 @@ struct ScenePlacement gMogallForestPlacements2[] = {
         PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, FLAG_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x5a, FLAG_DJINNI_0 + DJINNI_QUARTZ, ACTOR_STAND,
+    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_QUARTZ, ACTOR_STAND,
         PIXELS(488), 0, PIXELS(568), FACING_EAST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1818,17 +1909,17 @@ struct ScenePlacement gMogallForestPlacements3[] = {
         PIXELS(696), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x125, CONDITION_ALWAYS, (s32)gMogallForest_RockScript,
         PIXELS(632), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xbf, FLAG_THIRD_AREA_HOSTILE_APE_OUT, (s32)gMogallForest_ActorScript,
+    { 0xbf, FLAG_THIRD_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xbf, FLAG_THIRD_AREA_CENTRAL_APE_OUT, (s32)gMogallForest_ActorScript,
+    { 0xbf, FLAG_THIRD_AREA_MIDDLE_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbf, FLAG_THIRD_AREA_WEST_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xbf, MOGALL_FOREST_EAST_ACTOR_CONDITION, (s32)gMogallForest_ActorScript,
         PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLANK, FLAG_THIRD_AREA_HOSTILE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_THIRD_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLANK, FLAG_THIRD_AREA_CENTRAL_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
+    { SPRITE_BLANK, FLAG_THIRD_AREA_MIDDLE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, FLAG_THIRD_AREA_WEST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
@@ -1855,9 +1946,9 @@ struct SceneEvent gMogallForestEvents1[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_FirstArea_JumpNorth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_FirstArea_JumpSouth) },
     { SEARCH(SEARCH_UNNAMED), 27, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_ReadBrokenSign) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FIRST_AREA_NORTH_HIDEOUT, FLAG_FIRST_AREA_NORTH_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_NorthApeShowsWay) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FIRST_AREA_HOSTILE_HIDEOUT, FLAG_FIRST_AREA_HOSTILE_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_ApeAttacks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FIRST_AREA_EAST_HIDEOUT, FLAG_FIRST_AREA_EAST_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_EastApeShowsWay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FIRST_AREA_NORTH_APE_STUMP, FLAG_FIRST_AREA_NORTH_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_NorthApeShowsWay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FIRST_AREA_ATTACKING_APE_STUMP, FLAG_FIRST_AREA_ATTACKING_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_ApeAttacks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FIRST_AREA_EAST_APE_STUMP, FLAG_FIRST_AREA_EAST_APE_OUT, EVENT_SCRIPT(MogallForest_FirstArea_EastApeShowsWay) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_NUT_CAUGHT, EVENT_SCRIPT(MogallForest_CatchNut) },
     { SCENE_EVENTS_END },
 };
@@ -1877,10 +1968,10 @@ struct SceneEvent gMogallForestEvents2[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_SOUTH },
     { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_SecondArea_PushLog) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_AREA_ROCK, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_SecondArea_UpdateRock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_NORTH_HIDEOUT, FLAG_SECOND_AREA_NORTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_NorthApeShowsWay) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_EAST_HIDEOUT, FLAG_SECOND_AREA_EAST_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_EastApeShowsWay) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_SOUTH_HIDEOUT, FLAG_SECOND_AREA_SOUTH_APE_MOVED, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeHidesAgain) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_SOUTH_HIDEOUT, FLAG_SECOND_AREA_SOUTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeShowsWay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_NORTH_APE_STUMP, FLAG_SECOND_AREA_NORTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_NorthApeShowsWay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_EAST_APE_STUMP, FLAG_SECOND_AREA_EAST_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_EastApeShowsWay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_SOUTH_APE_STUMP, FLAG_SECOND_AREA_SOUTH_APE_MOVED, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeHidesAgain) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SECOND_AREA_SOUTH_APE_STUMP, FLAG_SECOND_AREA_SOUTH_APE_OUT, EVENT_SCRIPT(MogallForest_SecondArea_SouthApeShowsWay) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_CHEST_APPLE, FIND_ITEM(ITEM_APPLE) },
     { EVENT_TALK, ACTOR_QUARTZ, CONDITION_ALWAYS, EVENT_SCRIPT(MogallForest_StartDjinnBattle) },
     { SCENE_EVENTS_END },
@@ -1922,19 +2013,19 @@ struct SceneEvent gMogallForestEvents3[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_AREA_SOUTH_ROCK,
      FLAG_SOUTH_ROCK_SETTLED,
      EVENT_SCRIPT(MogallForest_ThirdArea_UpdateSouthRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_HOSTILE_HIDEOUT,
-     FLAG_THIRD_AREA_HOSTILE_APE_OUT,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_ATTACKING_APE_STUMP,
+     FLAG_THIRD_AREA_ATTACKING_APE_OUT,
      EVENT_SCRIPT(MogallForest_ThirdArea_ApeAttacks)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_CENTRAL_HIDEOUT,
-     FLAG_THIRD_AREA_CENTRAL_APE_OUT,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_MIDDLE_APE_STUMP,
+     FLAG_THIRD_AREA_MIDDLE_APE_OUT,
      EVENT_SCRIPT(MogallForest_ThirdArea_CentralApeShowsWay)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_WEST_HIDEOUT,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_WEST_APE_STUMP,
      FLAG_THIRD_AREA_WEST_APE_OUT,
      EVENT_SCRIPT(MogallForest_ThirdArea_WestApeShowsWay)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_EAST_HIDEOUT,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_EAST_APE_STUMP,
      FLAG_THIRD_AREA_EAST_APE_MOVED,
      EVENT_SCRIPT(MogallForest_ThirdArea_EastApeHidesAgain)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_EAST_HIDEOUT,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_THIRD_AREA_EAST_APE_STUMP,
      FLAG_THIRD_AREA_EAST_APE_OUT,
      EVENT_SCRIPT(MogallForest_ThirdArea_EastApeShowsWay)},
     {SEARCH(SEARCH_CHEST), 100, FLAG_CHEST_ELVEN_SHIRT,

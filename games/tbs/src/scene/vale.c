@@ -21,12 +21,12 @@
 ///   rest of that visit Dora frets about the hole clumsy Garet left.
 /// - Vale before the party leaves. Until Kraden has planned the visit to Sol
 ///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
-///   Aleph; a villager jumps out to warn him against sneaking up the sacred
-///   peak (FLAG_VALE_WARNED_AGAINST_MT_ALEPH) and then keeps watching him,
-///   asking again whenever he comes near (touch cells 51 to 53). Three
-///   puppies (from ACTOR_FIRST_PUPPY) play; walking up to them from either
-///   side (touch cells 20 and 21) sets them barking, until the party has met
-///   Saturos and Menardi, of the strangers staying at the inn
+///   Aleph; a bearded man in a long robe jumps out to warn him against sneaking
+///   up the sacred peak (FLAG_VALE_WARNED_AGAINST_MT_ALEPH) and then keeps
+///   watching him, asking again whenever he comes near (touch cells 51 to 53).
+///   Three puppies (from ACTOR_FIRST_PUPPY) play; walking up to them from
+///   either side (touch cells 20 and 21) sets them barking, until the party has
+///   met Saturos and Menardi, of the strangers staying at the inn
 ///   (FLAG_MET_SATUROS_AND_MENARDI); then the setup removes them. Villagers
 ///   talk of the mayor, Garet's grandfather, and of not going beyond Kraden's
 ///   cottage, Garet's sister scolds him, and Dora says Isaac can fix the hole
@@ -37,7 +37,7 @@
 ///   not come back.
 /// - Back from Kalay (FLAG_REACHED_KALAY): Garet meets his sister (group flag
 ///   FLAG_PLACE_TEMP_03) and asks one of his family to protect it while he is
-///   gone (FLAG_PLACE_TEMP_04), a villager asks whether Jenna is back
+///   gone (FLAG_PLACE_TEMP_04), a young man asks whether Jenna is back
 ///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
 ///   about the lack of travellers since the eruption (FLAG_PLACE_TEMP_07).
 ///   Isaac's house opens again: Dora lies ill inside (vale_interiors_inn.c).
@@ -59,7 +59,7 @@
 /// (SceneId_ValeInteriorsInn) and VALE_TO_SANCTUM into SceneId_Sanctum. Two
 /// scenes no table reaches remain: Event_UnusedRoofMended, a copy of the roof's
 /// end, and Event_UnusedWaterBurstsByTheRiver, which sets group flag
-/// FLAG_PLACE_TEMP_05. FLAG_SCENE_TEMP_41 pauses the villager who watches Isaac
+/// FLAG_PLACE_TEMP_05. FLAG_SCENE_TEMP_41 pauses the man who watches Isaac
 /// while a menu is open. The TBS_PATCH_4 editions also set Dora's sprite
 /// priority before Kalay.
 
@@ -124,7 +124,7 @@
 
 static void Vale_HaveJennaStopTheAlephDetour(void);
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
-                                         const s32 *villagerActions);
+                                         const s32 *guardActions);
 static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
                                           s32 departureAnimationId,
                                           s32 resumeMotion);
@@ -141,9 +141,9 @@ static void Vale_CycleFirstBoardPalette(void);
 static void Vale_CycleSecondBoardPalette(void);
 static void Vale_CycleThirdBoardPalette(void);
 #ifdef UBFIX
-static void Vale_HaveVillagerWatchTheLeader(union FieldObject *fieldObject);
+static void Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
 #else
-static s32 Vale_HaveVillagerWatchTheLeader(union FieldObject *fieldObject);
+static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject);
 #endif
 static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject);
 static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter);
@@ -151,7 +151,7 @@ static void Effect_UpdateParticlePosition(struct FieldActor *particle,
                                           s32 distance, s32 angle);
 static void Event_SettleMovedPillar(void);
 static void Effect_PlayStepSound(void);
-static void Vale_SynchronizeAlephVillagerPause(void);
+static void Vale_SynchronizeAlephGuardPause(void);
 static void Vale_AdjustPillarPriorityForLeaderHeight(void);
 static void Vale_FlashActorAndSpawnEffects(struct FieldActor *actor);
 static void Vale_CycleActorPaletteAndSpawnEffects(struct FieldActor *actor);
@@ -163,50 +163,84 @@ static void Vale_CycleActorPalette(struct FieldActor *actor);
 /// member's actor id instead (Event_SpawnObjectTable), so the numbering skips
 /// it.
 enum ValeActor {
-  /// "Mt. Aleph looks beautiful today. It's so peaceful."; after the party
-  /// has left, "Vale is saved thanks to the Wise One!"
-  ACTOR_VILLAGER_ADMIRING_MT_ALEPH = ACTOR_FIRST_PLACED,
-  /// "Vale stays pristine because of Mt. Aleph's purity."
-  ACTOR_VILLAGER_ALEPHS_PURITY,
-  /// "I'm jealous of you, Garet, because your grandpa's the mayor."
-  /// (Event_TalkAboutTheMayorAndTremors)
-  ACTOR_VILLAGER_JEALOUS_OF_GARET,
-  /// "This place looks just like it did three years ago... after the
-  /// storm..."
-  ACTOR_VILLAGER_REMEMBERING_THE_STORM,
-  /// "Isaac, watch out! Don't get too close to the river!"
-  ACTOR_VILLAGER_BY_THE_RIVER,
-  /// "Vale must remain hidden. Psynergy's secrets mustn't fall into the wrong
-  /// hands."
-  ACTOR_VILLAGER_KEEPING_VALE_HIDDEN,
-  /// Stands by the way out to Kraden's cottage: "Do you need to go past
-  /// here?", then "You mustn't go beyond Kraden's cottage."
-  /// (Event_WarnAboutGoingBeyondKradensCottage)
-  ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN,
-  /// The three puppies, removed once the party has met Saturos and Menardi.
-  /// "Rrruff! Rrrruff!"
+  /// An old woman: "Mt. Aleph looks beautiful today. It's so peaceful."; after
+  /// the party has left, "Vale is saved thanks to the Wise One!"
+  /// ★ Named from the game: "Mt. Aleph looks beautiful today."
+  /// (MsgValeMtAlephLooksBeautifulTodayIts)
+  ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH = ACTOR_FIRST_PLACED,
+  /// A woman in a green dress: "Vale stays pristine because of Mt. Aleph's
+  /// purity."
+  /// ★ Named from the game: "Vale stays pristine because of Mt. Aleph's
+  /// purity." (MsgValeValeStaysPristineBecauseOfMt)
+  ACTOR_WOMAN_ON_ALEPHS_PURITY,
+  /// A little girl with orange pigtails: "I'm jealous of you, Garet, because
+  /// your grandpa's the mayor." (Event_TalkAboutTheMayorAndTremors)
+  /// ★ Named from the game: "I'm jealous of you,"
+  /// (MsgValeYourGrandpaIsTheMayor)
+  ACTOR_GIRL_JEALOUS_OF_GARET,
+  /// A young man with brown hair: "This place looks just like it did three
+  /// years
+  /// ago... after the storm..."
+  /// ★ Named from the game: "This place looks just like it did three years
+  /// ago... after the storm..." (MsgValeThisPlaceLooksJustLikeIt)
+  ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM,
+  /// A strongman by the river: "Isaac, watch out! Don't get too close to the
+  /// river!"
+  /// ★ Named from the game: "Don't get too close to the river!"
+  /// (MsgValeIsaacWatchOutDontGetToo)
+  ACTOR_STRONGMAN_BY_THE_RIVER,
+  /// A burly grey-haired man: "Vale must remain hidden. Psynergy's secrets
+  /// mustn't fall into the wrong hands."
+  /// ★ Named from the game: "Vale must remain hidden."
+  /// (MsgValeValeMustRemainHiddenPsynergysSecrets)
+  ACTOR_MAN_KEEPING_VALE_HIDDEN,
+  /// A woman with fair hair who stands by the way out to Kraden's cottage:
+  /// "Do you need to go past here?", then "You mustn't go beyond Kraden's
+  /// cottage." (Event_WarnAboutGoingBeyondKradensCottage)
+  /// ★ Named from the game: "You mustn't go beyond Kraden's cottage."
+  /// (MsgValeDontGoBeyondKradensCottage)
+  ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
+  /// The three puppies, small white dogs, removed once the party has met
+  /// Saturos and Menardi. "Rrruff! Rrrruff!"
+  /// ★ Named from what the player sees: small white dogs with brown ears (its
+  /// render)
   ACTOR_FIRST_PUPPY,
-  /// "Garet, you make me so mad sometimes!" (Event_ArgueWithGaretsSister);
-  /// Garet calls her "Sis" back from Kalay.
+  /// A young woman with an orange ponytail: "Garet, you make me so mad
+  /// sometimes!" (Event_ArgueWithGaretsSister); Garet calls her "Sis" back
+  /// from Kalay.
+  /// ★ Named from the game: "Your sister's really mad!"
+  /// (MsgValeYoureInTroubleNowGaretYour)
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PUPPY + 3,
   /// "You're in trouble now, Garet... Your sister's really mad!"; after the
   /// party has left, "Please take care of my brother, Isaac."
-  ACTOR_GARETS_SIBLING,
+  /// ★ Named from the game: "Please take care of my brother"
+  /// (MsgValePleaseTakeCareOfMyBrother), said by a small boy with orange hair
+  /// in a green shirt and shorts (its
+  /// render)
+  ACTOR_GARETS_BROTHER,
   /// SPRITE_STONE_PILLAR, as Goma Cave's pillars: pushed (Event_PushPillar) or
   /// moved
   /// with Move, its column kept in FLAG_PLACE_TEMP_14 to _16
   /// (Event_SettleMovedPillar).
+  /// ★ Named from what the player sees: a stone pillar of brown rock standing
+  /// below the cliff north of the village (its render)
   ACTOR_PILLAR,
+  /// ★ Named from the game: "your mother, Dora, has been crying"
+  /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA, ///< Isaac's mother
-  /// Jumps out to warn Isaac off the sacred peak, then keeps watching him
+  /// A man with long brown hair and a beard in a long robe, who jumps out to
+  /// warn Isaac off the sacred peak, then keeps watching him
   /// (Event_WarnAgainstSneakingUpMtAleph). "Mt. Aleph is a sacred peak. It is
   /// forbidden to climb it!"
-  ACTOR_VILLAGER_GUARDING_MT_ALEPH,
+  /// ★ Named from the game: "Mt. Aleph is a sacred peak."
+  /// (MsgValeMtAlephIsASacredPeak)
+  ACTOR_MAN_GUARDING_MT_ALEPH,
   /// The boards on the roof, sprite 0xce, which Isaac moves into place with
   /// Psynergy at the roof's end (Event_RoofMended).
   ACTOR_FIRST_BOARD,
   ACTOR_SECOND_BOARD,
   ACTOR_THIRD_BOARD,
+  /// ★ Named from the game: "Nut" (MsgItemName), the item Catch takes
   ACTOR_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
 };
 
@@ -215,42 +249,70 @@ enum ValeActor {
 enum ValeAfterKalayActor {
   /// Garet's sister. "Ah! It's been a while... You're back?"
   /// (Event_GaretMeetsHisSister)
+  /// ★ Named from the game: "Thanks, Sis." (MsgValeAh), Garet answering her
   ACTOR_GARETS_SISTER_AFTER_KALAY = ACTOR_FIRST_PLACED,
   /// "I will do my best to show everyone that I am strong enough to protect
   /// our family and Vale." (Event_GaretAsksToProtectFamily)
-  ACTOR_GARETS_SIBLING_AFTER_KALAY,
-  /// "Is Jenna back yet?" (Event_AskWhetherJennaHasReturned); the villager of
-  /// ACTOR_VILLAGER_REMEMBERING_THE_STORM.
-  ACTOR_VILLAGER_ASKING_FOR_JENNA,
-  /// "I still remember when Felix and I used to play here...*Sniff*"; the
-  /// villager of ACTOR_VILLAGER_BY_THE_RIVER.
-  ACTOR_VILLAGER_REMEMBERING_FELIX,
+  /// ★ Named from the game: "Please take care of my brother"
+  /// (MsgValePleaseTakeCareOfMyBrother)
+  ACTOR_GARETS_BROTHER_AFTER_KALAY,
+  /// The young man of ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM: "Is Jenna back
+  /// yet?"
+  /// (Event_AskWhetherJennaHasReturned)
+  /// ★ Named from the game: "Is back yet?" (MsgValeIsJennaBackYet)
+  ACTOR_YOUNG_MAN_ASKING_FOR_JENNA,
+  /// The strongman of ACTOR_STRONGMAN_BY_THE_RIVER: "I still remember when
+  /// Felix and I used to play here...*Sniff*"
+  /// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
+  ACTOR_STRONGMAN_REMEMBERING_FELIX,
   /// Three sprites of water, CrossboneIsleFloodgate's water sprite 0xd6. Only
   /// Event_UnusedWaterBurstsByTheRiver shows them: during a
   /// tremor each in turn grows from a tenth of its size at (266, 1230), north
-  /// of ACTOR_VILLAGER_REMEMBERING_FELIX, and vanishes
-  /// (gValeGrowingWaterAction).
+  /// of ACTOR_STRONGMAN_REMEMBERING_FELIX, and vanishes
+  /// (gValeGrowingWaterAction). The row after them places the woman with fair
+  /// hair of ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN at the origin, and nothing
+  /// names her.
   ACTOR_FIRST_WATER,
-  /// "Mt. Aleph's eruption was so powerful, it caused the continent to
-  /// crack!"
-  ACTOR_VILLAGER_ON_THE_ERUPTION = ACTOR_FIRST_WATER + 4,
-  /// "Aghh! I felt another one!" (Event_ReactToAnotherTremor)
-  ACTOR_VILLAGER_FEELING_TREMORS,
-  /// "They say the danger is gone, even though the earthquakes continue..."
-  ACTOR_VILLAGER_DOUBTING_SAFETY,
-  /// "I wonder why we haven't seen any travelers since the eruption..."
-  /// (Event_AskAboutTheLackOfTravelers)
-  ACTOR_VILLAGER_MISSING_TRAVELERS,
+  /// An old woman: "Mt. Aleph's eruption was so powerful, it caused the
+  /// continent to crack!"
+  /// ★ Named from the game: "Mt. Aleph's eruption was so powerful"
+  /// (MsgValeMtAlephsEruptionWasSoPowerful)
+  ACTOR_OLD_WOMAN_ON_THE_ERUPTION = ACTOR_FIRST_WATER + 4,
+  /// A woman in a green dress: "Aghh! I felt another one!"
+  /// (Event_ReactToAnotherTremor)
+  /// ★ Named from the game: "Aghh! I felt another one!"
+  /// (MsgValeIFeltAnotherOne)
+  ACTOR_WOMAN_FEELING_TREMORS,
+  /// A little girl with orange pigtails: "They say the danger is gone, even
+  /// though the earthquakes continue..."
+  /// ★ Named from the game: "They say the danger is gone, even though the
+  /// earthquakes continue..." (MsgValeTheySayTheDangerIsGone)
+  ACTOR_GIRL_DOUBTING_SAFETY,
+  /// A burly grey-haired man: "I wonder why we haven't seen any travelers
+  /// since the eruption..." (Event_AskAboutTheLackOfTravelers)
+  /// ★ Named from the game: "I wonder why we haven't seen any travelers
+  /// since the eruption..." (MsgValeNoTravelersSinceTheEruption)
+  ACTOR_MAN_MISSING_TRAVELERS,
+  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_NUT_AFTER_KALAY,
+  /// ★ Named from what the player sees: a stone pillar of brown rock standing
+  /// below the cliff north of the village (its render)
   ACTOR_PILLAR_AFTER_KALAY ///< the pillar of ACTOR_PILLAR
 };
 
 /// The game's opening (Event_MendingTheRoof), the placed actors of
 /// gVale_RepairPlacements; Jenna's and Garet's rows take their own actor ids.
 enum ValeOpeningActor {
-  ACTOR_OPENING_VILLAGER = ACTOR_FIRST_PLACED, ///< meets Jenna on her way
+  /// A woman in a green dress who meets Jenna on her way.
+  /// ★ Named from what the player sees: a woman with brown hair in a green
+  /// dress and a white apron (its render)
+  ACTOR_OPENING_WOMAN = ACTOR_FIRST_PLACED,
   /// The pillar of ACTOR_PILLAR, which Garet trains his Psynergy on.
+  /// ★ Named from what the player sees: a stone pillar of brown rock standing
+  /// below the cliff north of the village (its render)
   ACTOR_OPENING_PILLAR,
+  /// ★ Named from the game: "your mother, Dora, has been crying"
+  /// (MsgValeDoraHasBeenCrying)
   ACTOR_OPENING_DORA,        ///< calls up to Isaac on the roof
   ACTOR_OPENING_FIRST_BOARD, ///< the boards on the roof, sprite 0xce
   ACTOR_OPENING_SECOND_BOARD,
@@ -313,23 +375,23 @@ const struct SceneEvent *Vale_GetEvents(void) {
   return gVale_Events;
 }
 
-/// A villager in Vale (ACTOR_VILLAGER_JEALOUS_OF_GARET) asks about the mayor
+/// A little girl in Vale (ACTOR_GIRL_JEALOUS_OF_GARET) asks about the mayor
 /// before the party leaves, and speaks of the tremors after.
 static void Event_TalkAboutTheMayorAndTremors(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_EventSetMessage(MsgValeTheGroundStillShakes);
-    Engine_EventShowMessage(ACTOR_VILLAGER_JEALOUS_OF_GARET, 0);
+    Engine_EventShowMessage(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   } else {
     Engine_EventSetMessage(MsgValeYourGrandpaIsTheMayor);
-    Engine_ActorFaceEachOther(ACTOR_VILLAGER_JEALOUS_OF_GARET,
-                              ACTOR_PARTY_LEADER, 4);
-    Engine_EventAskYesNo(ACTOR_VILLAGER_JEALOUS_OF_GARET, 0);
+    Engine_ActorFaceEachOther(ACTOR_GIRL_JEALOUS_OF_GARET, ACTOR_PARTY_LEADER,
+                              4);
+    Engine_EventAskYesNo(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   }
   Engine_EventEnd();
 }
 
-/// A villager in Vale (ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN) asks whether Isaac
+/// A woman in Vale (ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN) asks whether Isaac
 /// is going to Kraden's cottage and warns him not to go beyond it; after the
 /// party has left, says Kraden has not come back.
 static void Event_WarnAboutGoingBeyondKradensCottage(void) {
@@ -337,18 +399,18 @@ static void Event_WarnAboutGoingBeyondKradensCottage(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_EventSetMessage(MsgValeKradenHasntComeBack);
-    Engine_EventShowMessage(ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN, 0);
+    Engine_EventShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   } else if (Engine_GameFlagIsSet(flag) == 0) {
     Engine_GameFlagSet(flag);
     Engine_EventSetMessage(MsgValeDoYouNeedToGo);
-    Engine_ActorFaceEachOther(ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN,
+    Engine_ActorFaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
                               ACTOR_PARTY_LEADER, 4);
-    Engine_EventAskYesNo(ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN, 0);
+    Engine_EventAskYesNo(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   } else {
     Engine_EventSetMessage(MsgValeDontGoBeyondKradensCottage);
-    Engine_ActorFaceEachOther(ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN,
+    Engine_ActorFaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
                               ACTOR_PARTY_LEADER, 4);
-    Engine_EventShowMessage(ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN, 0);
+    Engine_EventShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   }
   Engine_EventEnd();
 }
@@ -357,8 +419,8 @@ static void Event_WarnAboutGoingBeyondKradensCottage(void) {
 /// "Garet, you make me so mad sometimes!"
 static void Event_ArgueWithGaretsSister(void) {
   Engine_EventBegin();
-  if (GameFlag_IsSet(FLAG_VALE_ANGRY_VILLAGER_ARGUED) == 0) {
-    GameFlag_Set(FLAG_VALE_ANGRY_VILLAGER_ARGUED);
+  if (GameFlag_IsSet(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS) == 0) {
+    GameFlag_Set(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
     Engine_EventSetMessage(MsgValeYouMakeMeSoMad);
     Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | 3, 0);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_SISTER, 20);
@@ -392,19 +454,19 @@ static void Event_DoraFretsAboutTheRoof(void) {
   Engine_EventEnd();
 }
 
-/// Back from Kalay, a villager in Vale (ACTOR_VILLAGER_ASKING_FOR_JENNA) asks
+/// Back from Kalay, a young man in Vale (ACTOR_YOUNG_MAN_ASKING_FOR_JENNA) asks
 /// whether Jenna is back.
 static void Event_AskWhetherJennaHasReturned(void) {
   Engine_EventBegin();
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_VILLAGER_ASKING_FOR_JENNA,
-                            20);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER,
+                            ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 20);
   Engine_EventSetMessage(MsgValeIsJennaBackYet);
-  Engine_EventShowMessage(ACTOR_VILLAGER_ASKING_FOR_JENNA, 0);
+  Engine_EventShowMessage(ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 0);
   Engine_GameFlagSet(FLAG_VALE_ASKED_IF_JENNA_IS_BACK);
   Engine_EventEnd();
 }
 
-/// Back from Kalay, a villager in Vale (ACTOR_VILLAGER_FEELING_TREMORS) feels
+/// Back from Kalay, a woman in Vale (ACTOR_WOMAN_FEELING_TREMORS) feels
 /// another tremor, and the view shakes.
 static void Event_ReactToAnotherTremor(void) {
   Engine_EventBegin();
@@ -412,23 +474,22 @@ static void Event_ReactToAnotherTremor(void) {
   Engine_TaskWait(10);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_EventSetMessage(MsgValeIFeltAnotherOne);
-  Event_ShowMessageAndWait(ACTOR_VILLAGER_FEELING_TREMORS, 0, 20);
-  Actor_FaceActor(ACTOR_VILLAGER_FEELING_TREMORS, ACTOR_PARTY_LEADER, 20);
-  Event_ShowMessage(ACTOR_VILLAGER_FEELING_TREMORS, 0);
+  Event_ShowMessageAndWait(ACTOR_WOMAN_FEELING_TREMORS, 0, 20);
+  Actor_FaceActor(ACTOR_WOMAN_FEELING_TREMORS, ACTOR_PARTY_LEADER, 20);
+  Event_ShowMessage(ACTOR_WOMAN_FEELING_TREMORS, 0);
   Engine_EventEnd();
 }
 
-/// Back from Kalay, a villager in Vale (ACTOR_VILLAGER_MISSING_TRAVELERS) asks
-/// about the lack of travellers since the eruption; sets group flag
-/// FLAG_PLACE_TEMP_07.
+/// Back from Kalay, a burly grey-haired man in Vale
+/// (ACTOR_MAN_MISSING_TRAVELERS) asks about the lack of travellers since the
+/// eruption; sets group flag FLAG_PLACE_TEMP_07.
 static void Event_AskAboutTheLackOfTravelers(void) {
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_MISSING_TRAVELERS, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_MAN_MISSING_TRAVELERS, 2);
   Engine_EventWait(20);
-  Engine_ActorFaceActor(ACTOR_VILLAGER_MISSING_TRAVELERS, ACTOR_PARTY_LEADER,
-                        20);
+  Engine_ActorFaceActor(ACTOR_MAN_MISSING_TRAVELERS, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgValeNoTravelersSinceTheEruption);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_MISSING_TRAVELERS, 0);
+  Engine_EventAskYesNo(ACTOR_MAN_MISSING_TRAVELERS, 0);
   Engine_GameFlagSet(FLAG_PLACE_TEMP_07);
   Engine_EventEnd();
 }
@@ -699,71 +760,67 @@ static void Event_ReturnThroughSouthernPassage(void) {
   Engine_EventEnd();
 }
 
-/// A villager in Vale (ACTOR_VILLAGER_GUARDING_MT_ALEPH, touch cell 50) jumps
-/// out in front of Isaac, then keeps watching him; sets
+/// A bearded man in a long robe in Vale (ACTOR_MAN_GUARDING_MT_ALEPH, touch
+/// cell 50) jumps out in front of Isaac, then keeps watching him; sets
 /// FLAG_VALE_WARNED_AGAINST_MT_ALEPH.
 /// "You're not planning on sneaking up to Mt. Aleph...?"
 static void Event_WarnAgainstSneakingUpMtAleph(void) {
-  struct FieldActor *villager;
+  struct FieldActor *guard;
   struct FieldActor *actor;
 
-  villager = Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH);
+  guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
   Engine_ActorJump(ACTOR_PARTY_LEADER, 5, 0);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 215, 403);
-  villager->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_SetPosition(ACTOR_VILLAGER_GUARDING_MT_ALEPH, PIXELS(166), PIXELS(375));
-  Actor_FaceDirection(ACTOR_VILLAGER_GUARDING_MT_ALEPH, FACING_SOUTHEAST, 20);
-  villager->steeringFlags = (villager->steeringFlags ^ 1);
-  Actor_SetSpeed(ACTOR_VILLAGER_GUARDING_MT_ALEPH, PIXELS(5) / 2,
-                 PIXELS(5) / 2);
-  Engine_ActorJump(ACTOR_VILLAGER_GUARDING_MT_ALEPH, 4, 0);
-  Actor_WalkToAndWait(ACTOR_VILLAGER_GUARDING_MT_ALEPH, 202, 395);
+  guard->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_SetPosition(ACTOR_MAN_GUARDING_MT_ALEPH, PIXELS(166), PIXELS(375));
+  Actor_FaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH, FACING_SOUTHEAST, 20);
+  guard->steeringFlags = (guard->steeringFlags ^ 1);
+  Actor_SetSpeed(ACTOR_MAN_GUARDING_MT_ALEPH, PIXELS(5) / 2, PIXELS(5) / 2);
+  Engine_ActorJump(ACTOR_MAN_GUARDING_MT_ALEPH, 4, 0);
+  Actor_WalkToAndWait(ACTOR_MAN_GUARDING_MT_ALEPH, 202, 395);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_VILLAGER_GUARDING_MT_ALEPH,
+  Actor_FaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH,
                       FACING_SOUTHEAST + FACING_STEP, 24);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_VILLAGER_GUARDING_MT_ALEPH, PIXELS(3) / 2, PIXELS(1));
+  Actor_SetSpeed(ACTOR_MAN_GUARDING_MT_ALEPH, PIXELS(3) / 2, PIXELS(1));
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeLeaderWalkActions);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_VILLAGER_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | 3, 0);
-  Actor_SetActionScript(ACTOR_VILLAGER_GUARDING_MT_ALEPH,
+  Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | 3, 0);
+  Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH,
                         gValeAlephGuardWalkActions);
   Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 474);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Object_RefreshSelectorById(ACTOR_VILLAGER_GUARDING_MT_ALEPH);
-  Actor_WalkToAndWait(ACTOR_VILLAGER_GUARDING_MT_ALEPH, 256, 456);
+  Object_RefreshSelectorById(ACTOR_MAN_GUARDING_MT_ALEPH);
+  Actor_WalkToAndWait(ACTOR_MAN_GUARDING_MT_ALEPH, 256, 456);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Actor_FaceDirection(ACTOR_VILLAGER_GUARDING_MT_ALEPH, FACING_SOUTH, 20);
-  Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_GUARDING_MT_ALEPH, 2);
+  Actor_FaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH, FACING_SOUTH, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_MAN_GUARDING_MT_ALEPH, 2);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgValeNotSneakingUpMtAleph);
-  Event_AskYesNo(ACTOR_VILLAGER_GUARDING_MT_ALEPH, 0);
-  actor = Actor_Get(ACTOR_VILLAGER_GUARDING_MT_ALEPH);
+  Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
+  actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
 #ifdef UBFIX
-  actor->update = Vale_HaveVillagerWatchTheLeader;
+  actor->update = Vale_HaveGuardWatchTheLeader;
 #else
-  actor->update =
-      (void (*)(union FieldObject *))Vale_HaveVillagerWatchTheLeader;
+  actor->update = (void (*)(union FieldObject *))Vale_HaveGuardWatchTheLeader;
 #endif
-  Actor_SetActionScript(ACTOR_VILLAGER_GUARDING_MT_ALEPH,
-                        gValeAlephGuardActions);
+  Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH, gValeAlephGuardActions);
   GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Engine_EventEnd();
 }
 
-/// Repeats the warning when the villager reaches the first pause.
+/// Repeats the warning when the man reaches the first pause.
 static void Event_RepeatMtAlephWarningFromFirstApproach(void) {
-  struct FieldActor *villager =
-      Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH);
+  struct FieldActor *guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
   if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
-    if (villager->timer == 1) {
+    if (guard->timer == 1) {
       Vale_AskAboutSneakingToAleph(gValePairTableA, gValePairTableB);
     }
   }
@@ -771,62 +828,58 @@ static void Event_RepeatMtAlephWarningFromFirstApproach(void) {
 
 /// Asks about the Aleph detour, then resumes each actor's response actions.
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
-                                         const s32 *villagerActions) {
+                                         const s32 *guardActions) {
   const s32 *replyActions;
-  struct FieldActor *villager;
+  struct FieldActor *guard;
   struct FieldActor *actor;
 
-  replyActions = villagerActions;
-  villager = Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH);
+  replyActions = guardActions;
+  guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
   Engine_EventBegin();
-  Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_GUARDING_MT_ALEPH, 2);
-  Actor_ShowEmote(ACTOR_VILLAGER_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | 0, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_MAN_GUARDING_MT_ALEPH, 2);
+  Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 40);
   Actor_SetActionScript(ACTOR_PARTY_LEADER, leaderActions);
   Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_VILLAGER_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | 3, 0);
-  Actor_RunActionScriptAndWait(ACTOR_VILLAGER_GUARDING_MT_ALEPH, replyActions);
+  Actor_ShowEmote(ACTOR_MAN_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | 3, 0);
+  Actor_RunActionScriptAndWait(ACTOR_MAN_GUARDING_MT_ALEPH, replyActions);
   Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_GUARDING_MT_ALEPH, 2);
-  villager->scaleX = Q16_ONE;
-  villager->scaleY = Q16_ONE;
+  Engine_ActorRunRepeatedMotion(ACTOR_MAN_GUARDING_MT_ALEPH, 2);
+  guard->scaleX = Q16_ONE;
+  guard->scaleY = Q16_ONE;
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   actor->scaleX = Q16_ONE;
   actor->scaleY = Q16_ONE;
   Engine_EventSetMessage(MsgValeNotSneakingUpMtAleph);
-  Event_AskYesNo(ACTOR_VILLAGER_GUARDING_MT_ALEPH, 0);
-  actor = Actor_Get(ACTOR_VILLAGER_GUARDING_MT_ALEPH);
+  Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
+  actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
 #ifdef UBFIX
-  actor->update = Vale_HaveVillagerWatchTheLeader;
+  actor->update = Vale_HaveGuardWatchTheLeader;
 #else
-  actor->update =
-      (void (*)(union FieldObject *))Vale_HaveVillagerWatchTheLeader;
+  actor->update = (void (*)(union FieldObject *))Vale_HaveGuardWatchTheLeader;
 #endif
-  Actor_SetActionScript(ACTOR_VILLAGER_GUARDING_MT_ALEPH,
-                        gValeAlephGuardActions);
+  Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH, gValeAlephGuardActions);
   Engine_EventEnd();
 }
 
-/// Repeats the warning when the villager reaches the second pause.
+/// Repeats the warning when the man reaches the second pause.
 static void Event_RepeatMtAlephWarningFromSecondApproach(void) {
-  struct FieldActor *villager =
-      Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH);
+  struct FieldActor *guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
   if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
-    if (villager->timer == 2) {
+    if (guard->timer == 2) {
       Vale_AskAboutSneakingToAleph(gValePairTableC, gValePairTableD);
     }
   }
 }
 
-/// Chooses the warning approach matching the current villager pause.
+/// Chooses the warning approach matching the man's current pause.
 static void Event_RepeatMtAlephWarningAtEitherPause(void) {
-  struct FieldActor *villager =
-      Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH);
+  struct FieldActor *guard = Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH);
   if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
     s32 pause;
-    pause = villager->timer;
+    pause = guard->timer;
     if (pause == 1) {
       Vale_AskAboutSneakingToAleph(gValePairTableC, gValePairTableB);
     } else if (pause == 2) {
@@ -1389,7 +1442,7 @@ UNUSED static void Event_UnusedRoofMended(void) {
 
 /// Vale's setup: plays the roof mending (VALE_FROM_TITLE) or its end (entrance
 /// 17, once), floats the Nut, places the pillar by its column, sets the
-/// watching villager going, removes the puppies once Saturos and Menardi have
+/// watching man going, removes the puppies once Saturos and Menardi have
 /// been met, and after a battle restores the passage's and the upper path's
 /// cells.
 s32 Vale_Initialize(void) {
@@ -1454,25 +1507,25 @@ s32 Vale_Initialize(void) {
       if (set == 0) {
         if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
           if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH)) {
-            Actor_SetPosition(ACTOR_VILLAGER_GUARDING_MT_ALEPH, PIXELS(256),
+            Actor_SetPosition(ACTOR_MAN_GUARDING_MT_ALEPH, PIXELS(256),
                               PIXELS(456));
 #ifdef UBFIX
-            Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH)->update =
-                Vale_HaveVillagerWatchTheLeader;
+            Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
+                Vale_HaveGuardWatchTheLeader;
 #else
-            Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH)->update =
-                (void *)Vale_HaveVillagerWatchTheLeader;
+            Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
+                (void *)Vale_HaveGuardWatchTheLeader;
 #endif
-            Actor_SetActionScript(ACTOR_VILLAGER_GUARDING_MT_ALEPH,
+            Actor_SetActionScript(ACTOR_MAN_GUARDING_MT_ALEPH,
                                   gValeAlephGuardActions);
           }
         } else {
-          Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH)->paused = set;
+          Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = set;
           Engine_GameFlagClear(FLAG_SCENE_TEMP_41);
         }
         if (gGameState.entrance != VALE_FROM_TITLE &&
             !Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
-          FieldScheduler_AddCallback(Vale_SynchronizeAlephVillagerPause, 0xc80);
+          FieldScheduler_AddCallback(Vale_SynchronizeAlephGuardPause, 0xc80);
         }
       }
       if (!GameFlag_IsSet(FLAG_PLACE_TEMP_08) &&
@@ -1602,7 +1655,7 @@ static void Event_GaretMeetsHisSister(void) {
 }
 
 /// Back from Kalay, Garet asks one of his family in Vale
-/// (ACTOR_GARETS_SIBLING_AFTER_KALAY) to protect it while he is gone; sets
+/// (ACTOR_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone; sets
 /// group flag FLAG_PLACE_TEMP_04. "WHATEVER YOU DO, you must protect the family
 /// while I'm gone."
 static void Event_GaretAsksToProtectFamily(void) {
@@ -1620,43 +1673,43 @@ static void Event_GaretAsksToProtectFamily(void) {
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
   Engine_EventSetMessage(MsgValeHowHaveYouBeen);
   Event_ShowMessage(GARET, 0);
-  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_SIBLING_AFTER_KALAY, 2);
-  Actor_ShowEmote(ACTOR_GARETS_SIBLING_AFTER_KALAY, EMOTE_IN_FRONT | 0, 0);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
+  Actor_ShowEmote(ACTOR_GARETS_BROTHER_AFTER_KALAY, EMOTE_IN_FRONT | 0, 0);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                       FACING_SOUTHEAST + FACING_STEP, 10);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                       FACING_SOUTH + FACING_STEP, 10);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                       FACING_SOUTHEAST + FACING_STEP, 40);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_SIBLING_AFTER_KALAY, 1);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 1);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                       FACING_SOUTH + FACING_STEP, 10);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY,
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY,
                                   ANIM_SHAKE_HEAD);
-  Event_ShowMessage(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0);
+  Event_ShowMessage(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_SIBLING_AFTER_KALAY, 2);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_GARETS_BROTHER_AFTER_KALAY, 2);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 20);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -1668,8 +1721,8 @@ static void Event_GaretAsksToProtectFamily(void) {
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 10);
   Engine_EventSetMessage(MsgValeEverProtectFamily);
   Event_ShowMessage(GARET, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_GARETS_SIBLING_AFTER_KALAY, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_GARETS_BROTHER_AFTER_KALAY, 0, 20);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 20);
@@ -1687,7 +1740,7 @@ static void Event_GaretAsksToProtectFamily(void) {
 }
 
 /// Unused: back from Kalay, a tremor shakes Vale and water bursts up three
-/// times north of the villager by the river who remembers Felix.
+/// times north of the strongman by the river who remembers Felix.
 ///
 /// No table names it. He would have started, sniffled through
 /// `I still remember when Felix and I used to play here...*Sniff*`, turned to
@@ -1716,15 +1769,15 @@ UNUSED static void Event_UnusedWaterBurstsByTheRiver(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_TaskWait(20);
   Actor_RunActionScriptAndWait(ACTOR_FIRST_WATER + 2, actions);
-  Actor_ShowEmote(ACTOR_VILLAGER_REMEMBERING_FELIX, EMOTE_IN_FRONT | 0, 40);
-  Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_REMEMBERING_FELIX, 2);
-  Actor_FaceDirection(ACTOR_VILLAGER_REMEMBERING_FELIX,
+  Actor_ShowEmote(ACTOR_STRONGMAN_REMEMBERING_FELIX, EMOTE_IN_FRONT | 0, 40);
+  Engine_ActorRunRepeatedMotion(ACTOR_STRONGMAN_REMEMBERING_FELIX, 2);
+  Actor_FaceDirection(ACTOR_STRONGMAN_REMEMBERING_FELIX,
                       FACING_NORTH + FACING_STEP, 10);
   Engine_EventSetMessage(MsgValeIUsedToPlayHere);
-  Event_ShowMessageAndWait(ACTOR_VILLAGER_REMEMBERING_FELIX, 0, 40);
-  Actor_FaceActor(ACTOR_VILLAGER_REMEMBERING_FELIX, ACTOR_PARTY_LEADER, 20);
-  Event_ShowMessage(ACTOR_VILLAGER_REMEMBERING_FELIX, 0);
-  Actor_FaceDirection(ACTOR_VILLAGER_REMEMBERING_FELIX, FACING_WEST, 10);
+  Event_ShowMessageAndWait(ACTOR_STRONGMAN_REMEMBERING_FELIX, 0, 40);
+  Actor_FaceActor(ACTOR_STRONGMAN_REMEMBERING_FELIX, ACTOR_PARTY_LEADER, 20);
+  Event_ShowMessage(ACTOR_STRONGMAN_REMEMBERING_FELIX, 0);
+  Actor_FaceDirection(ACTOR_STRONGMAN_REMEMBERING_FELIX, FACING_WEST, 10);
   GameFlag_Set(FLAG_PLACE_TEMP_05);
   Engine_EventEnd();
 }
@@ -1904,19 +1957,19 @@ static void Event_MendingTheRoof(void) {
   Actor_WalkToAndWait(JENNA, 341, 1064);
   Actor_SetSpeed(JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(JENNA, 359, 1033);
-  Actor_SetSpeed(ACTOR_OPENING_VILLAGER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_WalkTo(ACTOR_OPENING_VILLAGER, 318, 947);
-  Engine_ActorSetAnimation(ACTOR_OPENING_VILLAGER, ANIM_WALK);
+  Actor_SetSpeed(ACTOR_OPENING_WOMAN, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_WalkTo(ACTOR_OPENING_WOMAN, 318, 947);
+  Engine_ActorSetAnimation(ACTOR_OPENING_WOMAN, ANIM_WALK);
   Actor_WalkToAndWait(JENNA, 412, 1033);
   Actor_WalkToAndWait(JENNA, 412, 1019);
   Actor_WalkToAndWait(JENNA, 374, 1008);
   Actor_WalkToAndWait(JENNA, 347, 955);
-  Actor_WalkToAndWait(ACTOR_OPENING_VILLAGER, 318, 947);
-  Engine_ActorFaceEachOther(JENNA, ACTOR_OPENING_VILLAGER, 40);
-  Engine_ActorRunRepeatedMotion(ACTOR_OPENING_VILLAGER, 2);
+  Actor_WalkToAndWait(ACTOR_OPENING_WOMAN, 318, 947);
+  Engine_ActorFaceEachOther(JENNA, ACTOR_OPENING_WOMAN, 40);
+  Engine_ActorRunRepeatedMotion(ACTOR_OPENING_WOMAN, 2);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(10);
-  Actor_WalkTo(ACTOR_OPENING_VILLAGER, 379, 1017);
+  Actor_WalkTo(ACTOR_OPENING_WOMAN, 379, 1017);
   Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   Actor_WalkToAndWait(JENNA, 333, 920);
   Actor_WalkToAndWait(JENNA, 299, 924);
@@ -2868,20 +2921,19 @@ static s32 Vale_TestFacing(struct FieldActor *obj, struct FieldActor *target,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 48 to 44 bytes in tbs-en.
 #ifdef UBFIX
-static void Vale_HaveVillagerWatchTheLeader(union FieldObject *fieldObject) {
+static void Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
 #else
-static s32 Vale_HaveVillagerWatchTheLeader(union FieldObject *fieldObject) {
+static s32 Vale_HaveGuardWatchTheLeader(union FieldObject *fieldObject) {
 #endif
-  struct FieldActor *villager = &fieldObject->actor;
+  struct FieldActor *guard = &fieldObject->actor;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
-  if (villager->targetX == ACTOR_NO_TARGET &&
-      villager->targetZ == ACTOR_NO_TARGET)
+  if (guard->targetX == ACTOR_NO_TARGET && guard->targetZ == ACTOR_NO_TARGET)
 #ifdef UBFIX
     return;
 #else
     return 0;
 #endif
-  Vale_TestFacing(villager, leader, 18, 0);
+  Vale_TestFacing(guard, leader, 18, 0);
 #ifdef UBFIX
   return;
 #else
@@ -3039,19 +3091,19 @@ static void Event_SearchTheLockedDoor(void) {
   Engine_EventEnd();
 }
 
-/// Pauses the Aleph villager while the corresponding event flag is set.
-static void Vale_SynchronizeAlephVillagerPause(void) {
+/// Pauses the man guarding Mt. Aleph while the corresponding event flag is set.
+static void Vale_SynchronizeAlephGuardPause(void) {
   s32 pauseFlag;
 
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_41) != 0) {
     pauseFlag = GameFlag_IsSet(FLAG_MENU_OPEN);
     if (pauseFlag == 0) {
-      Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH)->paused = pauseFlag;
+      Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = pauseFlag;
       GameFlag_Clear(FLAG_SCENE_TEMP_41);
     }
   } else {
     if (GameFlag_IsSet(FLAG_MENU_OPEN) != 0) {
-      Object_GetById(ACTOR_VILLAGER_GUARDING_MT_ALEPH)->paused = 1;
+      Object_GetById(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = 1;
       GameFlag_Set(FLAG_SCENE_TEMP_41);
     }
   }
@@ -3312,35 +3364,35 @@ struct ScenePlacement gVale_Placements[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x73, CONDITION_ALWAYS, 3,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, 3,
         PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(19), 0, PIXELS(614), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x68, CONDITION_ALWAYS, 4,
+    { SPRITE_DOG, CONDITION_ALWAYS, 4,
         PIXELS(50), 0, PIXELS(795), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x68, CONDITION_ALWAYS, 4,
+    { SPRITE_DOG, CONDITION_ALWAYS, 4,
         PIXELS(65), 0, PIXELS(800), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x68, CONDITION_ALWAYS, 4,
+    { SPRITE_DOG, CONDITION_ALWAYS, 4,
         PIXELS(57), 0, PIXELS(805), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x2a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(412), 0, PIXELS(586), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x25, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(398), 0, PIXELS(616), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DORA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -3358,35 +3410,35 @@ struct ScenePlacement gVale_PlacementsAfterLeaving[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x73, CONDITION_ALWAYS, 3,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, 3,
         PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(19), 0, PIXELS(614), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x68, CONDITION_ALWAYS, 4,
+    { SPRITE_DOG, CONDITION_ALWAYS, 4,
         PIXELS(50), 0, PIXELS(795), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x68, CONDITION_ALWAYS, 4,
+    { SPRITE_DOG, CONDITION_ALWAYS, 4,
         PIXELS(65), 0, PIXELS(800), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x68, CONDITION_ALWAYS, 4,
+    { SPRITE_DOG, CONDITION_ALWAYS, 4,
         PIXELS(57), 0, PIXELS(805), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x2a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(412), 0, PIXELS(586), FACING_WEST, 3, 0 },
-    { 0x25, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(398), 0, PIXELS(616), FACING_NORTH, 3, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(378), 0, PIXELS(584), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DORA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(335), 0, PIXELS(869), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -3402,13 +3454,13 @@ struct ScenePlacement gVale_PlacementsAfterLeaving[] = {
 struct ScenePlacement gVale_PlacementsAfterKalay[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x2a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(412), 0, PIXELS(586), FACING_NORTH + FACING_STEP, 3, 0 },
-    { 0x25, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(356), 0, PIXELS(727), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_KEEP_FACING, 0 },
     { 0xd6, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3416,15 +3468,15 @@ struct ScenePlacement gVale_PlacementsAfterKalay[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xd6, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(132), 0, PIXELS(908), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x73, CONDITION_ALWAYS, 3,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, 3,
         PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(276), 0, PIXELS(1044), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3438,11 +3490,11 @@ struct ScenePlacement gVale_RepairPlacements[] = {
         PIXELS(409), 0, PIXELS(1134), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(428), 0, PIXELS(588), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(204), 0, PIXELS(924), FACING_EAST, TALK_FACE_PARTY, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(394), 0, PIXELS(584), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DORA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0xce, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3456,17 +3508,17 @@ struct ScenePlacement gVale_RepairPlacements[] = {
 };
 
 struct SceneEvent gVale_Events[] = {
-    { EVENT_TALK, ACTOR_VILLAGER_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephLooksBeautifulTodayIts) },
-    { EVENT_TALK, ACTOR_VILLAGER_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeValeStaysPristineBecauseOfMt) },
-    { EVENT_TALK, ACTOR_VILLAGER_JEALOUS_OF_GARET, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheMayorAndTremors) },
-    { EVENT_TALK, ACTOR_VILLAGER_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeThisPlaceLooksJustLikeIt) },
-    { EVENT_TALK, ACTOR_VILLAGER_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeIsaacWatchOutDontGetToo) },
-    { EVENT_TALK, ACTOR_VILLAGER_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeValeMustRemainHiddenPsynergysSecrets) },
-    { EVENT_TALK, ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephLooksBeautifulTodayIts) },
+    { EVENT_TALK, ACTOR_WOMAN_ON_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeValeStaysPristineBecauseOfMt) },
+    { EVENT_TALK, ACTOR_GIRL_JEALOUS_OF_GARET, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheMayorAndTremors) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeThisPlaceLooksJustLikeIt) },
+    { EVENT_TALK, ACTOR_STRONGMAN_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeIsaacWatchOutDontGetToo) },
+    { EVENT_TALK, ACTOR_MAN_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeValeMustRemainHiddenPsynergysSecrets) },
+    { EVENT_TALK, ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
     { EVENT_TALK, ACTOR_GARETS_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ArgueWithGaretsSister) },
-    { EVENT_TALK, ACTOR_GARETS_SIBLING, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
+    { EVENT_TALK, ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
     { EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DoraFretsAboutTheRoof) },
-    { EVENT_TALK, ACTOR_VILLAGER_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
+    { EVENT_TALK, ACTOR_MAN_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
@@ -3497,26 +3549,26 @@ struct SceneEvent gVale_Events[] = {
 };
 
 struct SceneEvent gVale_EventsAfterLeaving[] = {
-    { EVENT_TALK, ACTOR_VILLAGER_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeValeIsSavedThanksToThe) },
-    { EVENT_TALK, ACTOR_VILLAGER_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeEverSinceTheTremorsStartedMt) },
-    { EVENT_TALK, ACTOR_VILLAGER_JEALOUS_OF_GARET, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheMayorAndTremors) },
-    { EVENT_TALK, ACTOR_VILLAGER_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeSighNoLongerWillISee) },
-    { EVENT_TALK, ACTOR_VILLAGER_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeIDontBlameFelixIfOnly) },
-    { EVENT_TALK, ACTOR_VILLAGER_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeTheMayorWasTooKindTo) },
-    { EVENT_TALK, ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeValeIsSavedThanksToThe) },
+    { EVENT_TALK, ACTOR_WOMAN_ON_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeEverSinceTheTremorsStartedMt) },
+    { EVENT_TALK, ACTOR_GIRL_JEALOUS_OF_GARET, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheMayorAndTremors) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeSighNoLongerWillISee) },
+    { EVENT_TALK, ACTOR_STRONGMAN_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeIDontBlameFelixIfOnly) },
+    { EVENT_TALK, ACTOR_MAN_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeTheMayorWasTooKindTo) },
+    { EVENT_TALK, ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
     { EVENT_TALK, ACTOR_GARETS_SISTER, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreSoLuckyGaret) },
-    { EVENT_TALK, ACTOR_GARETS_SIBLING, CONDITION_ALWAYS, MSGNO(MsgValePleaseTakeCareOfMyBrother) },
-    { EVENT_TALK, ACTOR_VILLAGER_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
+    { EVENT_TALK, ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValePleaseTakeCareOfMyBrother) },
+    { EVENT_TALK, ACTOR_MAN_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SISTER, CONDITION_ALWAYS, MSGNO(MsgValeGeeIWishICouldSee) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SIBLING, CONDITION_ALWAYS, MSGNO(MsgValeMyBrothersStrengthIsHisBest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeImGladThatFelixIsAlive) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeFelixWasAGoodPersonI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, MSGNO(MsgValePoorKradenWasTakenToSome) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeValeWasSavedBecausePeopleLike) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeICantBelieveAnyoneWouldClimb) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_JEALOUS_OF_GARET, CONDITION_ALWAYS, MSGNO(MsgValeIJustDontFeelSafeKnowing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeThePeopleOfValeWillNever) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValeMyBrothersStrengthIsHisBest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeImGladThatFelixIsAlive) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeFelixWasAGoodPersonI) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, MSGNO(MsgValePoorKradenWasTakenToSome) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeValeWasSavedBecausePeopleLike) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeICantBelieveAnyoneWouldClimb) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_JEALOUS_OF_GARET, CONDITION_ALWAYS, MSGNO(MsgValeIJustDontFeelSafeKnowing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeThePeopleOfValeWillNever) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },
@@ -3549,27 +3601,27 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
 struct SceneEvent gVale_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_GARETS_SISTER_AFTER_KALAY, FLAG_PLACE_TEMP_03, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
     { EVENT_TALK, ACTOR_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICanTellJustByLooking) },
-    { EVENT_TALK, ACTOR_GARETS_SIBLING_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
-    { EVENT_TALK, ACTOR_GARETS_SIBLING_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
-    { EVENT_TALK, ACTOR_VILLAGER_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
-    { EVENT_TALK, ACTOR_VILLAGER_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
-    { EVENT_TALK, ACTOR_VILLAGER_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeIUsedToPlayHere) },
-    { EVENT_TALK, ACTOR_VILLAGER_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephsEruptionWasSoPowerful) },
-    { EVENT_TALK, ACTOR_VILLAGER_FEELING_TREMORS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReactToAnotherTremor) },
-    { EVENT_TALK, ACTOR_VILLAGER_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheDangerIsGone) },
-    { EVENT_TALK, ACTOR_VILLAGER_MISSING_TRAVELERS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
+    { EVENT_TALK, ACTOR_GARETS_BROTHER_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
+    { EVENT_TALK, ACTOR_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
+    { EVENT_TALK, ACTOR_STRONGMAN_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeIUsedToPlayHere) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephsEruptionWasSoPowerful) },
+    { EVENT_TALK, ACTOR_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReactToAnotherTremor) },
+    { EVENT_TALK, ACTOR_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheDangerIsGone) },
+    { EVENT_TALK, ACTOR_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GARETS_SISTER_AFTER_KALAY, FLAG_PLACE_TEMP_03, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreWorkingSoHard) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GARETS_SIBLING_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SIBLING_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_VILLAGER_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeFelixMustBeProtectingJennaIm) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeTheEarthquakesArentCausedByEruptions) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEELING_TREMORS, CONDITION_ALWAYS, MSGNO(MsgValeAhhICantStandTheseEarthquakes) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheSmokeFromMtAlephIsnt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_VILLAGER_MISSING_TRAVELERS, FLAG_PLACE_TEMP_07, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MISSING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GARETS_BROTHER_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeFelixMustBeProtectingJennaIm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeTheEarthquakesArentCausedByEruptions) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, MSGNO(MsgValeAhhICantStandTheseEarthquakes) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheSmokeFromMtAlephIsnt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAN_MISSING_TRAVELERS, FLAG_PLACE_TEMP_07, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeKradenNorth) },

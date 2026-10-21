@@ -74,6 +74,9 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
+/// CrossboneIsleBane's third stone pillar has come down to two cells high or
+/// less.
+/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED 0x300
 
 #if TBS_PATCH_1
@@ -95,11 +98,18 @@ static void CrossboneIsleKeys_InitializeBane(void);
 /// gCrossboneIsleKeysRoomPlacements: the keys, drawn as their item icons
 /// (Colosso_ShowItemIcon) until Catch takes them.
 enum CrossboneIsleKeysActor {
+  /// ★ Named from the game: "Blue Key" (MsgItemName), a key icon lying among
+  /// the room's stone posts
   ACTOR_FIRST_BLUE_KEY = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Blue Key" (MsgItemName), the second key icon
   ACTOR_SECOND_BLUE_KEY,
+  /// ★ Named from the game: "Blue Key" (MsgItemName), the third key icon
   ACTOR_THIRD_BLUE_KEY,
+  /// ★ Named from the game: "Blue Key" (MsgItemName), the fourth key icon
   ACTOR_FOURTH_BLUE_KEY,
-  ACTOR_RED_KEY ///< shown only while Reveal lasts
+  /// Shown only while Reveal lasts.
+  /// ★ Named from the game: "Red Key" (MsgItemName), which opens the red door
+  ACTOR_RED_KEY
 };
 
 /// CrossboneIsleStatues's placed actors, numbered in the order of
@@ -107,11 +117,21 @@ enum CrossboneIsleKeysActor {
 /// all of one sprite, each waiting at its home for the leader to cross its
 /// stretch of the room.
 enum CrossboneIsleStatuesActor {
-  ACTOR_FIRST_PURSUER = ACTOR_FIRST_PLACED,
-  ACTOR_SECOND_PURSUER,
-  ACTOR_THIRD_PURSUER,
-  ACTOR_FOURTH_PURSUER,
-  ACTOR_FIFTH_PURSUER
+  /// ★ Named from what the player sees: a pink statue of a robed woman, lit in
+  /// a circle by a brazier (its render)
+  ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: the second statue of a robed woman (its
+  /// render)
+  ACTOR_SECOND_STATUE,
+  /// ★ Named from what the player sees: the third statue of a robed woman (its
+  /// render)
+  ACTOR_THIRD_STATUE,
+  /// ★ Named from what the player sees: the fourth statue of a robed woman (its
+  /// render)
+  ACTOR_FOURTH_STATUE,
+  /// ★ Named from what the player sees: the fifth statue of a robed woman (its
+  /// render)
+  ACTOR_FIFTH_STATUE
 };
 
 /// The events CrossboneIsleStatues's per-frame checks raise when the
@@ -128,18 +148,35 @@ enum CrossboneIsleStatuesTrigger {
 enum CrossboneIsleBaneActor {
   /// The five pillars, in Goma Cave's pillar sprite, pushed by walking into
   /// them or with Move.
+  /// ★ Named from what the player sees: a brown stone pillar in the north-west
+  /// of the room (its render)
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: a brown stone pillar in the middle of
+  /// the room, a chest on its top (its render)
   ACTOR_SECOND_PILLAR,
+  /// ★ Named from what the player sees: a brown stone pillar in the west of the
+  /// room (its render)
   ACTOR_THIRD_PILLAR,
+  /// ★ Named from what the player sees: one of the two brown stone pillars
+  /// side by side in the south-east (its render)
   ACTOR_FOURTH_PILLAR,
+  /// ★ Named from what the player sees: the other of the two brown stone
+  /// pillars in the south-east (its render)
   ACTOR_FIFTH_PILLAR,
-  ACTOR_PUDDLE, ///< frozen by Frost into a pillar of ice
+  /// Frozen by Frost into a pillar of ice.
+  /// ★ Named from what the player sees: a small blue puddle on the floor of the
+  /// south-west (its render)
+  ACTOR_PUDDLE,
   /// The chest on top of the second pillar, in the sprite of McCoy's Palace's
   /// chests, holding the Demon Axe: it follows the pillar until the pillar
   /// reaches the ladder, where the chest's search marker 107 takes its place,
   /// and it is drawn open once FLAG_CROSSBONE_ISLE_DEMON_AXE is set.
+  /// ★ Named from what the player sees: a red chest standing on the second
+  /// pillar (its render)
   ACTOR_SECOND_PILLAR_CHEST,
-  ACTOR_BANE ///< Bane, a Venus Djinni, until it is caught
+  /// Bane, a Venus Djinni, until it is caught.
+  /// ★ Named from the game: "Bane" (MsgDjinnName)
+  ACTOR_BANE
 };
 
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
@@ -612,7 +649,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   struct EventWork *event = gEventWork;
 
   if (!FLAG_CHECK(FLAG_SCENE_TEMP_20) && gGameState.cloaked == 0 &&
-      gGameState.pausedObject != ACTOR_FIRST_PURSUER &&
+      gGameState.pausedObject != ACTOR_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
     Engine_GameFlagSet(FLAG_SCENE_TEMP_20);
     event->raisedTrigger = TRIGGER_FIRST_CHASE;
@@ -626,21 +663,21 @@ static void Event_DodgeFirstPursuer(void) {
 
   EV_BEGIN();
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
-  OBJ_SPEED(ACTOR_FIRST_PURSUER, PIXELS(19) / 10, PIXELS(19) / 20);
+  OBJ_SPEED(ACTOR_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
   SE(SE_188);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetDestination(ACTOR_FIRST_PURSUER, leader->x.part.pixel,
+    Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  Engine_ActorWaitForMove(ACTOR_FIRST_PURSUER);
+  Engine_ActorWaitForMove(ACTOR_FIRST_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
   WAIT(4);
   SE(SE_188);
-  Actor_SetDestinationOffset(ACTOR_FIRST_PURSUER, 0, CROSSBONE_PURSUER_STEP_Z);
+  Actor_SetDestinationOffset(ACTOR_FIRST_STATUE, 0, CROSSBONE_PURSUER_STEP_Z);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Actor_SetDestination(ACTOR_FIRST_PURSUER, 360, 152);
-  Engine_ActorWaitForMove(ACTOR_FIRST_PURSUER);
+  Actor_SetDestination(ACTOR_FIRST_STATUE, 360, 152);
+  Engine_ActorWaitForMove(ACTOR_FIRST_STATUE);
   EV_END();
   GameFlag_Clear(FLAG_SCENE_TEMP_20);
 }
@@ -653,7 +690,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   struct EventWork *work = gEventWork;
 
   if (FLAG_CHECK(FLAG_SCENE_TEMP_20) == 0 && gGameState.cloaked == 0 &&
-      gGameState.pausedObject != ACTOR_SECOND_PURSUER && column == 10 &&
+      gGameState.pausedObject != ACTOR_SECOND_STATUE && column == 10 &&
       (u32)(row - 16) <= 2) {
     FLAG_SET(FLAG_SCENE_TEMP_20);
     SceneState_StoreStep(&work->raisedTrigger, TRIGGER_SECOND_CHASE);
@@ -667,21 +704,21 @@ static void Event_DodgeSecondPursuer(void) {
 
   EV_BEGIN();
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  OBJ_SPEED(ACTOR_SECOND_PURSUER, PIXELS(17) / 10, PIXELS(17) / 20);
+  OBJ_SPEED(ACTOR_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
   SE(SE_188);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetDestination(ACTOR_SECOND_PURSUER, leader->x.part.pixel,
+    Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  Engine_ActorWaitForMove(ACTOR_SECOND_PURSUER);
+  Engine_ActorWaitForMove(ACTOR_SECOND_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
   SE(SE_188);
   WAIT(4);
-  Actor_SetDestinationOffset(ACTOR_SECOND_PURSUER, 0, 16);
+  Actor_SetDestinationOffset(ACTOR_SECOND_STATUE, 0, 16);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Actor_SetDestination(ACTOR_SECOND_PURSUER, 168, 264);
-  Engine_ActorWaitForMove(ACTOR_SECOND_PURSUER);
+  Actor_SetDestination(ACTOR_SECOND_STATUE, 168, 264);
+  Engine_ActorWaitForMove(ACTOR_SECOND_STATUE);
   EV_END();
   GameFlag_Clear(FLAG_SCENE_TEMP_20);
 }
@@ -692,7 +729,7 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  s32 pursuerId = pursuerIndex + ACTOR_THIRD_PURSUER;
+  s32 pursuerId = pursuerIndex + ACTOR_THIRD_STATUE;
 
   if (gGameState.pausedObject == pursuerId)
     return;
@@ -733,24 +770,24 @@ UNUSED static void CrossboneIsleKeys_TrackFifthPursuerColumn(void) {
 static void Event_DodgeThirdPursuer(void) {
   struct FieldActor *leader;
 
-  if (gGameState.pausedObject != ACTOR_THIRD_PURSUER) {
+  if (gGameState.pausedObject != ACTOR_THIRD_STATUE) {
     EV_BEGIN();
     OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-    OBJ_SPEED(ACTOR_THIRD_PURSUER, PIXELS(17) / 10, PIXELS(17) / 20);
+    OBJ_SPEED(ACTOR_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
     SE(SE_188);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetDestination(ACTOR_THIRD_PURSUER, leader->x.part.pixel,
+      Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
-    Engine_ActorWaitForMove(ACTOR_THIRD_PURSUER);
+    Engine_ActorWaitForMove(ACTOR_THIRD_STATUE);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
     WAIT(4);
     SE(SE_188);
-    Actor_SetDestinationOffset(ACTOR_THIRD_PURSUER, 0, 16);
+    Actor_SetDestinationOffset(ACTOR_THIRD_STATUE, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetDestination(ACTOR_THIRD_PURSUER, 264, 360);
-    Engine_ActorWaitForMove(ACTOR_THIRD_PURSUER);
+    Actor_SetDestination(ACTOR_THIRD_STATUE, 264, 360);
+    Engine_ActorWaitForMove(ACTOR_THIRD_STATUE);
     WAIT(10);
     EV_END();
   }
@@ -762,38 +799,37 @@ static void Event_DodgeFourthPursuer(void) {
   struct FieldActor *leader;
   s32 leaderColumn;
 
-  if (gGameState.pausedObject != ACTOR_FOURTH_PURSUER) {
+  if (gGameState.pausedObject != ACTOR_FOURTH_STATUE) {
     EV_BEGIN();
     OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-    Engine_ActorSetSpeed(ACTOR_FOURTH_PURSUER, PIXELS(17) / 10,
-                         PIXELS(17) / 20);
+    Engine_ActorSetSpeed(ACTOR_FOURTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_AudioPlayCue(SE_188);
     leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
     if (leaderColumn >
-        Object_GetById(ACTOR_FOURTH_PURSUER)->x.fixed / PIXELS(16)) {
-      Engine_ActorSetDestinationOffset(ACTOR_FOURTH_PURSUER, 8, 0);
+        Object_GetById(ACTOR_FOURTH_STATUE)->x.fixed / PIXELS(16)) {
+      Engine_ActorSetDestinationOffset(ACTOR_FOURTH_STATUE, 8, 0);
     }
     leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
     if (leaderColumn <
-        Object_GetById(ACTOR_FOURTH_PURSUER)->x.fixed / PIXELS(16)) {
-      FieldObjectMotion_OffsetPositionAndResetMotion(ACTOR_FOURTH_PURSUER, -8,
+        Object_GetById(ACTOR_FOURTH_STATUE)->x.fixed / PIXELS(16)) {
+      FieldObjectMotion_OffsetPositionAndResetMotion(ACTOR_FOURTH_STATUE, -8,
                                                      0);
     }
-    Engine_ActorWaitForMove(ACTOR_FOURTH_PURSUER);
+    Engine_ActorWaitForMove(ACTOR_FOURTH_STATUE);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Engine_ActorSetDestination(ACTOR_FOURTH_PURSUER, leader->x.part.pixel,
+      Engine_ActorSetDestination(ACTOR_FOURTH_STATUE, leader->x.part.pixel,
                                  leader->z.part.pixel);
     }
-    Engine_ActorWaitForMove(ACTOR_FOURTH_PURSUER);
+    Engine_ActorWaitForMove(ACTOR_FOURTH_STATUE);
     Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0,
                                      CROSSBONE_LEADER_STEP_Z);
     WAIT(4);
     Engine_AudioPlayCue(SE_188);
-    Engine_ActorSetDestinationOffset(ACTOR_FOURTH_PURSUER, 0, 16);
+    Engine_ActorSetDestinationOffset(ACTOR_FOURTH_STATUE, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-    Engine_ActorSetDestination(ACTOR_FOURTH_PURSUER, 344, 360);
-    Engine_ActorWaitForMove(ACTOR_FOURTH_PURSUER);
+    Engine_ActorSetDestination(ACTOR_FOURTH_STATUE, 344, 360);
+    Engine_ActorWaitForMove(ACTOR_FOURTH_STATUE);
     WAIT(10);
     EV_END();
   }
@@ -807,7 +843,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
 
-  if (state->pausedObject != ACTOR_FIFTH_PURSUER &&
+  if (state->pausedObject != ACTOR_FIFTH_STATUE &&
       FLAG_CHECK(FLAG_SCENE_TEMP_20) == 0 && state->cloaked == 0 &&
       column == 19 && (u32)(row - 15) <= 1) {
     FLAG_SET(FLAG_SCENE_TEMP_20);
@@ -822,20 +858,20 @@ static void Event_DodgeFifthPursuer(void) {
 
   EV_BEGIN();
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  OBJ_SPEED(ACTOR_FIFTH_PURSUER, PIXELS(17) / 10, PIXELS(17) / 20);
+  OBJ_SPEED(ACTOR_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
   SE(SE_188);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetDestination(ACTOR_FIFTH_PURSUER, leader->x.part.pixel,
+    Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
-  Engine_ActorWaitForMove(ACTOR_FIFTH_PURSUER);
+  Engine_ActorWaitForMove(ACTOR_FIFTH_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
   SE(SE_188);
-  Actor_SetDestinationOffset(ACTOR_FIFTH_PURSUER, 0, 16);
+  Actor_SetDestinationOffset(ACTOR_FIFTH_STATUE, 0, 16);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Actor_SetDestination(ACTOR_FIFTH_PURSUER, 312, 232);
-  Engine_ActorWaitForMove(ACTOR_FIFTH_PURSUER);
+  Actor_SetDestination(ACTOR_FIFTH_STATUE, 312, 232);
+  Engine_ActorWaitForMove(ACTOR_FIFTH_STATUE);
   EV_END();
   GameFlag_Clear(FLAG_SCENE_TEMP_20);
 }
@@ -1306,15 +1342,15 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
 
 /// Configures the pursuers, their chase triggers and blending.
 static void CrossboneIsleKeys_InitializeStatues(void) {
-  Object_GetById(ACTOR_FIRST_PURSUER)->collisionFlags = 1;
-  Object_GetById(ACTOR_SECOND_PURSUER)->collisionFlags = 1;
-  Object_GetById(ACTOR_THIRD_PURSUER)->collisionFlags = 1;
-  Object_GetById(ACTOR_FOURTH_PURSUER)->collisionFlags = 1;
-  Object_GetById(ACTOR_FIRST_PURSUER)->scaleX = 7 * Q16_ONE / 10;
-  Object_GetById(ACTOR_SECOND_PURSUER)->scaleX = 7 * Q16_ONE / 10;
-  Object_GetById(ACTOR_THIRD_PURSUER)->scaleX = 7 * Q16_ONE / 10;
-  Object_GetById(ACTOR_FOURTH_PURSUER)->scaleX = 7 * Q16_ONE / 10;
-  Object_GetById(ACTOR_FIFTH_PURSUER)->scaleX = 7 * Q16_ONE / 10;
+  Object_GetById(ACTOR_FIRST_STATUE)->collisionFlags = 1;
+  Object_GetById(ACTOR_SECOND_STATUE)->collisionFlags = 1;
+  Object_GetById(ACTOR_THIRD_STATUE)->collisionFlags = 1;
+  Object_GetById(ACTOR_FOURTH_STATUE)->collisionFlags = 1;
+  Object_GetById(ACTOR_FIRST_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Object_GetById(ACTOR_SECOND_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Object_GetById(ACTOR_THIRD_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Object_GetById(ACTOR_FOURTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Object_GetById(ACTOR_FIFTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
   FieldScheduler_AddOrUpdateCallback(CrossboneIsleKeys_CheckFifthPursuerTrigger,
                                      TASK_PRIORITY_SCENE);
   FieldScheduler_AddOrUpdateCallback(
@@ -1579,11 +1615,11 @@ struct SceneEvent gCrossboneIsleStatuesEvents[] = {
     { EVENT_RAISED, TRIGGER_FIRST_CHASE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DodgeFirstPursuer) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BeginRevealBlend) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EndRevealBlend) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIRST_PURSUER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_SECOND_PURSUER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_THIRD_PURSUER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FOURTH_PURSUER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIFTH_PURSUER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIRST_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_SECOND_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_THIRD_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FOURTH_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIFTH_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltPursuer) },
     { SEARCH(SEARCH_CHEST), 100, 0xece, FIND_COINS(444) },
     { SEARCH(SEARCH_CHEST), 101, 0xecf, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_CHEST), 102, 0xed0, FIND_ITEM(ITEM_STORM_GEAR) },

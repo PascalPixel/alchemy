@@ -27,10 +27,10 @@
 ///
 /// In the palace McCoy turns the party away as too young, and his captain
 /// lets slip that the barricade may not need a key
-/// (FLAG_MCCOY_PALACE_BARRICADE_HINT); after that the guards will tell no more.
-/// Once the curse is lifted the building has stopped and Lady McCoy complains
-/// that McCoy loves the holy tree more than her. The first time the party
-/// arrives then, until McCoy has rewarded them
+/// (FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY); after that the guards will tell
+/// no more. Once the curse is lifted the building has stopped and Lady McCoy
+/// complains that McCoy loves the holy tree more than her. The first time the
+/// party arrives then, until McCoy has rewarded them
 /// (FLAG_MCCOY_PALACE_PARTY_REWARDED), the guards stop them
 /// (Event_GuardsArrestParty): witnesses saw them in the forest, and the guards
 /// repeat the accusation until the player admits breaking the curse, then put
@@ -84,19 +84,32 @@
 
 /// The placed actors, numbered in the order of gMcCoyPalaceGroundsPlacements.
 enum McCoyPalaceGroundsActor {
-  /// A worker by the new palace, drawn in front. "The lumber I ordered from
+  /// A worker with a pickaxe by the new palace, drawn in front. "The lumber I
+  /// ordered from
   /// Kolima disappeared..."
+  /// ★ Named from the game: "We'd still be working if we hadn't tried building
+  /// using the holy tree." (MsgBilibinWedStillBeWorkingIfWe)
   ACTOR_WEST_WORKER = ACTOR_FIRST_PLACED,
-  /// The worker who wanders by the new palace. "Have you seen the barricade
+  /// The worker with a pickaxe who wanders by the new palace. "Have you seen
+  /// the barricade
   /// we built on..."
+  /// ★ Named from the game: "Have you seen the barricade we built on the road
+  /// to Kolima?" (MsgBilibinHaveYouSeenBarricadeWe)
   ACTOR_NORTH_WORKER,
-  ACTOR_LADY_MCCOY, ///< "Hmph! My palace is not finished!"
-  /// The guard at the gate who goes in ahead of the party. "Lord McCoy is so
-  /// upset about this curse that he can't even eat."
+  /// A woman with curly purple hair in a pink dress. "Hmph! My palace is not
+  /// finished!"
+  /// ★ Named from the game: "Lady McCoy" (MsgDebugGlyphName)
+  ACTOR_LADY_MCCOY,
+  /// The soldier in a spiked helmet at the gate who goes in ahead of the party.
+  /// "Lord McCoy is so upset about this curse that he can't even eat."
   ACTOR_WEST_GUARD,
-  ACTOR_EAST_GUARD, ///< "The lord will only meet with brave..."
+  /// "The lord will only meet with brave..."
+  /// ★ Named from what the player sees: the eastern of the two soldiers with
+  /// spears at the palace door (its render)
+  ACTOR_EAST_GUARD,
   /// The Nut over the grounds, gone once Catch has taken it
   /// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT).
+  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_FLOATING_NUT
 };
 
@@ -119,7 +132,7 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 /// McCoy faces the party.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalaceGrounds) {
-    if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) != 0)
+    if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsPlacements[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACE_PARTY_AND_BACK;
     if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0)
@@ -319,7 +332,7 @@ static void Garden_ApplyProgress(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
     Actor_SetPosition(ACTOR_WEST_GUARD, PIXELS(308), PIXELS(263));
     Engine_ActorSetPosition(ACTOR_EAST_GUARD, PIXELS(346), PIXELS(263));
-    if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
       if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
         Engine_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
         FieldObject_SetTargetAndCallback(
@@ -468,15 +481,15 @@ struct ScenePlacement gMcCoyPalaceGroundsPlacementsOther[] = {
 };
 
 struct ScenePlacement gMcCoyPalaceGroundsPlacements[] = {
-    { 0x87, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(103), 0, PIXELS(280), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x87, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(135), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x45, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(327), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(320), 0, PIXELS(263), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(334), 0, PIXELS(263), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, 7,
         PIXELS(216), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -500,10 +513,10 @@ struct SceneEvent gMcCoyPalaceGroundsEvents[] = {
     { EVENT_TALK, ACTOR_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinItsOverOverMilordDecidedNot) },
     { EVENT_TALK, ACTOR_LADY_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToLadyMcCoy) },
     { EVENT_TALK, ACTOR_LADY_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
-    { EVENT_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_HINT, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
+    { EVENT_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
     { EVENT_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinICantTellYouAnythingElse) },
     { EVENT_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWestGuard) },
-    { EVENT_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_HINT, EVENT_SCRIPT(Event_TalkToEastGuard) },
+    { EVENT_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, EVENT_SCRIPT(Event_TalkToEastGuard) },
     { EVENT_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinWhatAShameHuhIGuess) },
     { EVENT_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinICouldNeverHaveGoneTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfThingsLikeThisAreGoing) },
@@ -516,7 +529,7 @@ struct SceneEvent gMcCoyPalaceGroundsEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThatBarricadeIsPrettyShabbyIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinIWillBeAReliableWarrior) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_ADMITTED, MSGNO(MsgBilibinIsThereNoOneWhoCan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_HINT, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchWell) },

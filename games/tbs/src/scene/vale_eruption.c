@@ -50,25 +50,44 @@
 /// The placed actors, numbered in the order of gValeEruption_Placements;
 /// Garet's row places the party's Garet and takes no number.
 enum ValeEruptionActor {
-  /// The Great Healer (with the sprite of sanctum.c's healer), who leads the
+  /// The Great Healer, a man with a white beard in a tall hat and a long
+  /// purple and blue robe (the sprite of sanctum.c's healer), who leads the
   /// villagers into the sanctum. "Come into the sanctum, both of you."
+  /// ★ Named from the game: "Come into the sanctum" (MsgValeMtAlephWasInactive)
   ACTOR_GREAT_HEALER = ACTOR_FIRST_PLACED,
-  /// Garet's grandfather, the mayor (whom the Great Healer calls Mayor in
+  /// Garet's grandfather, an old man with white hair and a cane, the mayor
+  /// (whom the Great Healer calls Mayor in
   /// sanctum.c). "Oooh, my grandson! Will Garet be safe in this eruption?!?"
+  /// ★ Named from the game: "Oooh, my grandson!" (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED + 1,
   /// Isaac's mother (Dora in sanctum.c). "Isaac and Garet went to Mr. Kraden's
   /// house."
+  /// ★ Named from the game: "your mother, Dora, has been crying"
+  /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED + 2,
-  /// Garet's sister, whom Garet calls Sis at the farewell (vale_gate.c). She
-  /// calls the mayor Grandpa, and ACTOR_GARETS_SIBLING calls her Sis. "Grandpa,
+  /// Garet's sister, a young woman with an orange ponytail, whom Garet calls
+  /// Sis at the farewell (vale_gate.c). She
+  /// calls the mayor Grandpa, and ACTOR_GARETS_BROTHER calls her Sis. "Grandpa,
   /// we don't even know if he's up there!"
+  /// ★ Named from the game: "we don't even know if he's up there"
+  /// (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PLACED + 3,
-  /// Garet's sibling, by the sprite of vale.c's ACTOR_GARETS_SIBLING, who says
+  /// Garet's brother, the small boy with orange hair of vale.c's
+  /// ACTOR_GARETS_BROTHER, who says
   /// someone saw Garet climb and is first to cry "Garet!"
-  ACTOR_GARETS_SIBLING = ACTOR_FIRST_PLACED + 4,
-  /// The guard. "They were hanging around here while I was on guard duty."
+  /// ★ Named from the game: "But, Sis, someone saw him"
+  /// (MsgValeMtAlephWasInactive), to Garet's sister
+  ACTOR_GARETS_BROTHER = ACTOR_FIRST_PLACED + 4,
+  /// The guard, the man with long brown hair and a beard in a long robe who
+  /// guards Mt. Aleph in vale.c (ACTOR_MAN_GUARDING_MT_ALEPH). "They were
+  /// hanging around here while I was on guard duty."
+  /// ★ Named from the game: "on guard duty" (MsgValeMtAlephWasInactive)
   ACTOR_GUARD = ACTOR_FIRST_PLACED + 5,
-  /// The first of the six villagers gathered behind them.
+  /// The first of the six villagers gathered behind them: a burly grey-haired
+  /// man, a bald muscular man, a woman in a green dress, a little girl with
+  /// pigtails, a young man with brown hair and a strongman.
+  /// ★ Named from what the player sees: men, a woman and children of Vale in
+  /// their sprites (its render)
   ACTOR_FIRST_VILLAGER = ACTOR_FIRST_PLACED + 6
 };
 
@@ -128,8 +147,8 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_VILLAGER + 5, 0);
   Actor_WalkToAndWait(ACTOR_GARETS_SISTER, 265, 487);
   Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
-  Actor_WalkToAndWait(ACTOR_GARETS_SIBLING, 256, 500);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING, FACING_NORTHWEST, 0);
+  Actor_WalkToAndWait(ACTOR_GARETS_BROTHER, 256, 500);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   // A lightning flash, then the screen opens on the villagers below.
   BattleFx_StartBufferBlend(0x10003, 0x10006);
   FieldFx_LastLightning();
@@ -171,16 +190,16 @@ static void Event_ReturnFromMtAleph(void) {
   // The mayor: "Oooh, my grandson!"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Engine_EventWait(30);
-  // Garet's sister doubts he is up there; her sibling says someone saw him
+  // Garet's sister doubts he is up there; her brother says someone saw him
   // climb.
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SISTER, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_GARETS_SISTER, 0);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
                       0);
-  Actor_FaceActor(ACTOR_GARETS_SIBLING, ACTOR_GARETS_SISTER, 0);
+  Actor_FaceActor(ACTOR_GARETS_BROTHER, ACTOR_GARETS_SISTER, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_SIBLING, ANIM_SHAKE_HEAD);
-  Event_ShowMessage(ACTOR_GARETS_SIBLING, 0);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_BROTHER, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   // The guard saw them hanging around; Dora says they went to Kraden's house,
   // and the mayor and Dora wonder what Alchemy has to do with the eruption.
   Engine_ActorRunRepeatedMotion(ACTOR_GUARD, 1);
@@ -204,12 +223,12 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventWait(60);
   Engine_ActorFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Engine_ActorFaceEachOther(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
-  Engine_ActorFaceEachOther(ACTOR_GARETS_SIBLING, ACTOR_GUARD, 0);
+  Engine_ActorFaceEachOther(ACTOR_GARETS_BROTHER, ACTOR_GUARD, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_GREAT_HEALER, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_GARETS_SISTER, 2);
-  Engine_ActorStartRepeatedMotion(ACTOR_GARETS_SIBLING, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_GARETS_BROTHER, 2);
   Engine_ActorStartRepeatedMotion(ACTOR_GUARD, 2);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
@@ -267,16 +286,16 @@ static void Event_ReturnFromMtAleph(void) {
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
 
-  // The villagers spot them: "Garet!" "Isaac!" Garet's sibling cries "Garet!"
+  // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
   // and the villagers turn to the path.
-  Event_ShowMessage(ACTOR_GARETS_SIBLING, 0);
+  Event_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_GARETS_SIBLING, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GUARD, FACING_NORTHWEST, 0);
   // The camera flies to Dora: "Isaac!" The Great Healer: "You're safe!"
   Camera_SetSpeed(0x30000, 0x6000);
@@ -443,7 +462,7 @@ static void Event_ReturnFromMtAleph(void) {
   Actor_SetActionScript(GARET, actionScript);
   Object_RefreshSelectorById(1);
   Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | 2, 0);
-  Actor_ShowEmote(ACTOR_GARETS_SIBLING, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(40);
   Map_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   FieldFx_LastLightning();
@@ -506,29 +525,29 @@ u32 gValeEruption_Exits[] = {
 struct ScenePlacement gValeEruption_Placements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(258), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(265), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x75, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(468), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DORA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(487), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x2a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(265), 0, PIXELS(477), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x25, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(256), 0, PIXELS(490), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(265), 0, PIXELS(523), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(245), 0, PIXELS(532), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(256), 0, PIXELS(543), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(283), 0, PIXELS(536), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(235), 0, PIXELS(552), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(265), 0, PIXELS(561), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(247), 0, PIXELS(573), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

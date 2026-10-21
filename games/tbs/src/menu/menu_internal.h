@@ -281,7 +281,7 @@ enum DjinnMenuResult {
 /// steps follow its first in order, each waiting, showing a message or
 /// pressing a key for the player (DjinnMenu_SelectDjinn,
 /// OwnerAction_RunCompareLoop); the flags that pick the lesson are
-/// FLAG_DJINN_TUTORIAL_PART_A and _PART_B (DjinnMenu_Run).
+/// FLAG_DJINN_LESSON_PART_A and _PART_B (DjinnMenu_Run).
 enum DjinnTutorialStep {
   DJINN_TUTORIAL_OFF = 0,
   /// Giving a Djinni and setting it: "To give your Djinni to someone else..."

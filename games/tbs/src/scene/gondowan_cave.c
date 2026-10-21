@@ -39,10 +39,10 @@
 ///
 ///   In GondowanCave a stump answers Move from column 30 or less: it spins,
 ///   leaps across and lies where it lands, freeing the cell where it stood
-///   (FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE). A pillar is pushed by walking
+///   (FLAG_GONDOWAN_CAVE_STUMP_MOVED). A pillar is pushed by walking
 ///   into it, east or west, or moved with Move; once it is past column 42 it
 ///   drops into its place for good, shown from then on by a second actor
-///   (FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED). Both are story flags, so the
+///   (FLAG_GONDOWAN_CAVE_PILLAR_DROPPED). Both are story flags, so the
 ///   cave stays solved. Lift raises a boulder in each scene; in GondowanCave it
 ///   also takes away the invisible actor beside it (ACTOR_BOULDER_SIDE).
 ///   Two chests in GondowanCaveRiver hold an Apple and a Lucky Medal (each
@@ -96,7 +96,10 @@ enum GondowanPassageActor {
   ACTOR_SECOND_SOLDIER,
   /// "Even if you head east, you can't get to Kalay from here, even!"
   ACTOR_THIRD_SOLDIER,
-  ACTOR_IODEM ///< waits for the party once Babi has spoken after Colosso
+  /// Waits for the party once Babi has spoken after Colosso.
+  /// ★ Named from the game: "Why would Iodem choose to wait for us"
+  /// (MsgGondowanCaveWhyWouldIodemChooseToWait)
+  ACTOR_IODEM
 };
 
 /// GondowanCaveRiver's placed actor, the one row of
@@ -113,12 +116,17 @@ enum GondowanCaveActor {
   ACTOR_STUMP = ACTOR_FIRST_PLACED,
   /// Pushed or moved with Move, in the sprite the stone pillars of other scenes
   /// use (crossbone_isle_stepping_stones.c).
+  /// ★ Named from what the player sees: a tall tan stone pillar standing on
+  /// the cave floor (its render)
   ACTOR_PILLAR,
   /// Stands in for the pillar once it has dropped into its place; out of sight
   /// at first. It is drawn in the stump's sprite, and on later visits in the
   /// animation the stump takes once it has landed.
   ACTOR_DROPPED_PILLAR,
-  ACTOR_BOULDER, ///< raised by Lift
+  /// Raised by Lift.
+  /// ★ Named from what the player sees: a round boulder in the cave passage,
+  /// which floats up under Lift (its render)
+  ACTOR_BOULDER,
   /// An invisible actor 16 pixels west of the boulder, which Lift takes away
   /// with it. XXX: likely holds the cell beside the boulder, because it
   /// stands one cell from it and goes when the boulder does.
@@ -330,10 +338,10 @@ static void Event_LeaveToWorldMapEast(void) {
   EV_BEGIN();
   if (FLAG_CHECK(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
-    GameFlag_Clear(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
+    GameFlag_Clear(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     GameFlag_Clear(0x9a4);
     GameFlag_Clear(0x9a6);
-    FLAG_SET(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
+    FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     FLAG_SET(0x9a4);
   }
   Engine_EventRequestExit(event->touchedTrigger);
@@ -358,7 +366,7 @@ static void Event_MoveStump(void) {
     if ((actor->x.fixed >> 20) <= 30) {
       GondowanCave_RunSpinningLeap(ACTOR_STUMP);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
-      Engine_GameFlagSet(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE);
+      Engine_GameFlagSet(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
     }
   }
   EV_END();
@@ -390,7 +398,7 @@ static void Event_MovePillar(void) {
     WAIT(8);
     GondowanCave_PlaceDroppedPillar(3);
     SE(SE_CAST);
-    FLAG_SET(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
+    FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
   }
   EV_END();
 }
@@ -496,12 +504,12 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
       Map_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
-    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE) != 0) {
+    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
       OBJ_POS_SET(ACTOR_STUMP, 440, 308);
       OBJ_MODE(ACTOR_STUMP, 2);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
-    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED) != 0) {
+    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
       GondowanCave_PlaceDroppedPillar(2);
     }
     actor = Actor_Get(ACTOR_BOULDER_SIDE);
@@ -611,24 +619,24 @@ struct ScenePlacement gGondowanCavePlacementsOther[] = {
 };
 
 struct ScenePlacement gGondowanPassagePlacements[] = {
-    { 0x96, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(144), 0, PIXELS(168), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gGondowanPassagePlacementsWithIodem[] = {
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     // Iodem
-    { 0x39, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_IODEM, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
@@ -713,7 +721,7 @@ struct SceneEvent gGondowanCaveEvents[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WORLD_MAP_WEST },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftBoulder) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE, EVENT_SCRIPT(Event_MoveStump) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CAVE_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(Event_MovePillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },

@@ -1,7 +1,7 @@
 /// @file
 /// The Alpine Crossing and Lama Temple, two places on Silk Road west of Xian
-/// that share this overlay: the Alpine Crossing is AlpineCrossing
-/// (scene 74) and Lama Temple is LamaTemple (scene 88). The
+/// that share this overlay: the Alpine Crossing is
+/// SceneId_AlpineCrossing and Lama Temple is SceneId_LamaTemple. The
 /// getters pick each scene's tables by gGameState.scene, both scenes share one
 /// exit table, and Scene_Initialize sets up the scene being entered from the
 /// story flags of Hsu's rescue.
@@ -45,7 +45,8 @@
 /// shown again. Writing on a wall hints at Reveal, which shows a passage behind
 /// a false wall (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
 /// wall back when Reveal wears off and on entry, the wall cell's own attributes
-/// saved at (21, 73). The temple also holds a Psynergy Stone (place flag 0x350)
+/// saved at (21, 73). The temple also holds a Psynergy Stone
+/// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, a place flag)
 /// and a chest with Water of Life.
 ///
 /// Back at the Alpine Crossing after the lesson, until Hsu is freed, Hama and

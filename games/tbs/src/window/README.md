@@ -144,11 +144,11 @@ several windows show text at once without any allocation. A message is cut
 off at the ring's length.
 
 The Japanese release has a ring of 256 codes and 12 windows; every other
-edition has 512 codes and 8 windows (`TBS_PATCH_1`, with the two layouts in
-`include/tbs_edition.h`). Giving up four windows saves 144 bytes of the 512
-the longer ring costs, so the work block grows by 368 bytes, from 4,492 to
-4,860. XXX: the likely reason the ring was doubled is the longer European
-text; the bytes show only the change.
+edition has 512 codes and 8 windows (`LANGUAGE != LANGUAGE_JAPANESE`, with
+the two layouts in `include/tbs_edition.h`). Giving up four windows saves 144
+bytes of the 512 the longer ring costs, so the work block grows by 368 bytes,
+from 4,492 to 4,860. XXX: the likely reason the ring was doubled is the longer
+European text; the bytes show only the change.
 
 **Typing.** A channel (`struct UiChannelSlot`) types decoded text into one
 window. It holds the window, the pen position in 1/256 pixels, the index of

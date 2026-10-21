@@ -1,5 +1,5 @@
 /// @file
-/// Kolima Forest (KolimaForestTree, scene 44), the last of the forest's five
+/// Kolima Forest (SceneId_KolimaForestTree), the last of the forest's five
 /// maps, where Tret and Laurel, the spirits of the holy trees, stand. The party
 /// has come from Kolima to reawaken Tret's gentle side and save the villagers
 /// he turned into trees, and here the curse is lifted.
@@ -13,22 +13,23 @@
 /// up, and Tret ask Kolima's forgiveness. Using Hermes' Water on Tret now, the
 /// wrathful side throws the leader back. The way on is into Tret himself: the
 /// region at his foot is KOLIMA_FOREST_TREE_TO_TRET_TREE_INTERIORS, into the
-/// Tret Tree (scene 45), where the party defeats the evil within him
-/// (FLAG_TRET_DEFEATED, set there) and finds him too weak to save Kolima. Back
-/// here, with Hermes' Water, which Mercury Lighthouse's fountain gives in an
-/// Empty Bottle, talking to Tret opens the party's items, and using the water
-/// plays KolimaForestTree_RestoreTret: the forest's colours return, Tret frees
-/// Kolima's people (FLAG_KOLIMA_CURSE_LIFTED), he and Laurel tell how the gems
-/// that fell from the sky, the Psynergy Stones, twisted their hearts, and
-/// Laurel warns of an evil forest risen south of the river. The bottle is left
-/// empty. Afterwards Tret and Laurel thank the party and worry about what lies
-/// beyond the river.
+/// Tret Tree (SceneId_TretTreeInteriors), where the party defeats the evil
+/// within him (FLAG_TRET_DEFEATED, set there) and finds him too weak to save
+/// Kolima. Back here, with Hermes' Water, which Mercury Lighthouse's fountain
+/// gives in an Empty Bottle, talking to Tret opens the party's items, and using
+/// the water plays KolimaForestTree_RestoreTret: the forest's colours return,
+/// Tret frees Kolima's people (FLAG_KOLIMA_CURSE_LIFTED), he and Laurel tell
+/// how the gems that fell from the sky, the Psynergy Stones, twisted their
+/// hearts, and Laurel warns of an evil forest risen south of the river. The
+/// bottle is left empty. Afterwards Tret and Laurel thank the party and worry
+/// about what lies beyond the river.
 ///
 /// Until the curse is lifted the forest keeps its cursed colours
 /// (KolimaPalette_Curse). Retreat from here always leads back to the forest's
-/// way in (scene 40, KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP), and the way back,
+/// way in (SceneId_KolimaForestEntrance,
+/// KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP), and the way back,
 /// KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the Floodgate
-/// Switch's map (scene 43).
+/// Switch's map (SceneId_KolimaForestFloodgate).
 
 #include "battle_effect_runtime.h"
 #include "game_state.h"
@@ -77,7 +78,7 @@ enum {
   ACTOR_LAUREL,
   ACTOR_TRET_AUXILIARY,
   ACTOR_LAUREL_AUXILIARY,
-  /// An invisible actor (sprite 0x16) on Tret's spot that answers for him:
+  /// An invisible actor on Tret's spot that answers for him:
   /// talking to it, Mind Read on it and Hermes' Water used on it reach Tret.
   ACTOR_TRET_STAND_IN,
   /// The invisible actor on Laurel's spot that answers for her when she is
@@ -110,7 +111,8 @@ const struct SceneRegion *KolimaForestTree_GetRegions(void) {
   return gKolimaForestTreeRegions;
 }
 
-/// The ways back (scene 43) and into the Tret Tree (scene 45).
+/// The ways back (SceneId_KolimaForestFloodgate) and into the Tret Tree
+/// (SceneId_TretTreeInteriors).
 const u32 *KolimaForestTree_GetExits(void) { return gKolimaForestTreeExits; }
 
 /// Tret and Laurel, their auxiliary actors and the ones the party talks to,
@@ -136,13 +138,13 @@ const struct SceneEvent *KolimaForestTree_GetEvents(void) {
   return gKolimaForestTreeEvents;
 }
 
-/// Kolima Forest (scene 44), talking to Laurel (ACTOR_LAUREL_STAND_IN): the
-/// first time, Laurel asks who the party is, recognises the ones who resisted
-/// Tret's glamour and senses a great warmth in them, but says they are too late
-/// to rescue Tret, and tells them to leave before the forest is destroyed (sets
-/// FLAG_MET_LAUREL); then only that warning. Once the curse is lifted, the
-/// forest is alive again thanks to the party, and Laurel says, "We shall
-/// protect the forest from now on."
+/// Kolima Forest (SceneId_KolimaForestTree), talking to Laurel
+/// (ACTOR_LAUREL_STAND_IN): the first time, Laurel asks who the party is,
+/// recognises the ones who resisted Tret's glamour and senses a great warmth in
+/// them, but says they are too late to rescue Tret, and tells them to leave
+/// before the forest is destroyed (sets FLAG_MET_LAUREL); then only that
+/// warning. Once the curse is lifted, the forest is alive again thanks to the
+/// party, and Laurel says, "We shall protect the forest from now on."
 static void KolimaForestTree_TalkToLaurel(void) {
   Engine_EventBegin();
   KolimaForestTree_PlayGesture(ACTOR_LAUREL_AUXILIARY, 1);
@@ -173,12 +175,12 @@ static void KolimaForestTree_TalkToLaurel(void) {
   Engine_EventEnd();
 }
 
-/// Kolima Forest (scene 44), talking to Tret (ACTOR_TRET_STAND_IN); until
-/// FLAG_TRET_DEFEATED Mind Read on him runs this too, with no effect of its own
-/// (trigger bit 10). Before the Tret Tree, he is silent and his wrathful side
-/// answers, the screen darkening around its words; after it he is silent, and
-/// if anyone carries Hermes' Water the item prompt opens. Once the curse is
-/// lifted, no axe shall touch him again.
+/// Kolima Forest (SceneId_KolimaForestTree), talking to Tret
+/// (ACTOR_TRET_STAND_IN); until FLAG_TRET_DEFEATED Mind Read on him runs this
+/// too, with no effect of its own (trigger bit 10). Before the Tret Tree, he is
+/// silent and his wrathful side answers, the screen darkening around its words;
+/// after it he is silent, and if anyone carries Hermes' Water the item prompt
+/// opens. Once the curse is lifted, no axe shall touch him again.
 static void KolimaForestTree_TalkToTret(void) {
   s32 waterOwner;
 
@@ -219,9 +221,10 @@ static void KolimaForestTree_TalkToTret(void) {
   Engine_EventEnd();
 }
 
-/// Kolima Forest (scene 44), Mind Read on Laurel: before the curse is lifted,
-/// the healing waters of Mercury Lighthouse might save Tret, but its fountain
-/// has dried up; afterwards, it must be horrible beyond the river.
+/// Kolima Forest (SceneId_KolimaForestTree), Mind Read on Laurel: before the
+/// curse is lifted, the healing waters of Mercury Lighthouse might save Tret,
+/// but its fountain has dried up; afterwards, it must be horrible beyond the
+/// river.
 static void KolimaForestTree_ReadLaurelThoughts(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -233,9 +236,9 @@ static void KolimaForestTree_ReadLaurelThoughts(void) {
   Engine_EventEnd();
 }
 
-/// Kolima Forest (scene 44), Mind Read on Tret: before the curse is lifted,
-/// "People of Kolima... Forgive me..."; afterwards, a plea to be careful beyond
-/// the river.
+/// Kolima Forest (SceneId_KolimaForestTree), Mind Read on Tret: before the
+/// curse is lifted, "People of Kolima... Forgive me..."; afterwards, a plea to
+/// be careful beyond the river.
 static void KolimaForestTree_ReadTretThoughts(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -247,8 +250,8 @@ static void KolimaForestTree_ReadTretThoughts(void) {
   Engine_EventEnd();
 }
 
-/// Kolima Forest (scene 44), using Hermes' Water on Tret while the curse lasts:
-/// before the evil within him is defeated in the Tret Tree
+/// Kolima Forest (SceneId_KolimaForestTree), using Hermes' Water on Tret while
+/// the curse lasts: before the evil within him is defeated in the Tret Tree
 /// (FLAG_TRET_DEFEATED), his wrathful side repels it
 /// (KolimaForestTree_RejectHermesWater); afterwards it heals him
 /// (KolimaForestTree_RestoreTret).
@@ -729,7 +732,8 @@ s32 KolimaForestTree_Initialize(void) {
   laurelAuxiliary = Object_GetById(ACTOR_LAUREL_AUXILIARY);
   Engine_TaskWait(1);
   Engine_ActorSetChildValue(ACTOR_TRETS_WRATHFUL_SIDE, 15);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gGameState.retreatScene = (s32)&SceneId_KolimaForestEntrance;
   gGameState.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED))

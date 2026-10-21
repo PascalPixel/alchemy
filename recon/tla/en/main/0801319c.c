@@ -24,7 +24,7 @@ void Func_08014b70(void);
 void VramCache_Reset(void);
 void Func_0801399c(void);
 void Audio_InitializeRuntimeDefaultsFar(void);
-void Game_ResetForNewGameFar(s32);
+void Game_RunFar(s32);
 void WaitFrames(s32 frames);
 void IwramHalt(void);
 
@@ -60,5 +60,5 @@ void System_Initialize(void) {
   gOamUsage.used = 0;
   gSleepDisabled = 0;
   WaitFrames(10);
-  Game_ResetForNewGameFar(0);
+  Game_RunFar(0);
 }

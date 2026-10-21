@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Game_ResetForNewGame
+	.global Game_Run
 	.thumb_func
-Game_ResetForNewGame:
+Game_Run:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

@@ -1,4 +1,4 @@
-// Near miss, differ 66 of 294: ☀️'s Game_ResetForNewGame, with ⚓️'s four
+// Near miss, differ 66 of 294: ☀️'s Game_Run, with ⚓️'s four
 // debug starts, gRenderOamEnabled set after stopping DMA 0 and three
 // minigame scenes (0x1fb to 0x1fd) that keep BG palettes 14 and 15. Two
 // kinds of difference remain: the native issues each gPartyState and scene
@@ -63,7 +63,7 @@ enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
     MemFree(saved);                                                            \
   }
 
-void Game_ResetForNewGame(s32 mode) {
+void Game_Run(s32 mode) {
   const struct SceneRecord *table;
   const struct SceneRecord *record;
   s32 entrance;

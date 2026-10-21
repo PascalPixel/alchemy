@@ -66,18 +66,18 @@
 /// - Venus Lighthouse: after the beacon erupts (WORLD_MAP_VENUS_LIGHTHOUSE_LIT)
 ///   the beam's transition sends the party back to the Lighthouse Aerie
 ///   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT), and after that look back
-///   (entrance 73) a sparkling transition sends it on to Sheba's fall
-///   (WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE).
+///   (WORLD_MAP_BEFORE_SHEBAS_FALL) a sparkling transition sends it on to
+///   Sheba's fall (WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE).
 /// - The ending: once the cleared game is saved (menu/clear.c),
 ///   WORLD_MAP_FROM_CLEAR leads to WORLD_MAP_JENNA_AND_KRADEN_ADRIFT, where
 ///   Jenna and Kraden, adrift on an island since the Venus beacon was lit,
 ///   wonder about Felix, Jenna's brother, and Isaac, until Alex shows them that
 ///   Felix and Sheba are alive.
 ///
-/// Entrance 78 is where a defeat returns after Iodem hands over the Black Orb
-/// (WorldMap_RunBlackOrbScene stores it as gGameState.savedEntrance). It
-/// discards the Black Orb and leads to Gate to Suhalla
-/// (WORLD_MAP_TO_LUNPA_SUHALLA).
+/// WORLD_MAP_AFTER_BLACK_ORB_DEFEAT is where a defeat returns after Iodem hands
+/// over the Black Orb (WorldMap_RunBlackOrbScene stores it as
+/// gGameState.savedEntrance). It discards the Black Orb and leads to Gate to
+/// Suhalla (WORLD_MAP_TO_LUNPA_SUHALLA).
 
 #include "script.h"
 #include "version.h"
@@ -504,7 +504,7 @@ const struct ScenePlacement *WorldMap_GetPlacements(void) {
     return gWorldMapPlacementsFromKalayTunnelEntranceSouth;
   case WORLD_MAP_FROM_CLEAR:
     return gWorldMapPlacementsFromClear;
-  case 73:
+  case WORLD_MAP_BEFORE_SHEBAS_FALL:
     return gWorldMapPlacementsBeforeShebasFall;
   case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_SECOND_ATTACK:
   case WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_THIRD_ATTACK:
@@ -707,7 +707,7 @@ s32 WorldMap_Initialize(void) {
   struct GameState *state = &gGameState;
   s16 *entrance = &state->entrance;
 
-  if (*entrance == 99) {
+  if (*entrance == WORLD_MAP_FROM_DEBUG) {
     Engine_GameFlagSet(FLAG_NO_ENCOUNTERS);
     Engine_GameFlagSet(FLAG_NO_ENCOUNTERS_IN_PLACE);
     Engine_GameFlagSet(FLAG_DEBUG_STEPS_OFF);
@@ -720,7 +720,7 @@ s32 WorldMap_Initialize(void) {
     WorldMap_PlayLighthouseTransition(1);
     Event_SetDestination((s32)&SceneId_VenusLighthouseAerie,
                          VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (*entrance == 78) {
+  } else if (*entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     Engine_EventBegin();
     PartyInventory_Discard(ITEM_BLACK_ORB);
     Engine_EventRequestExit(WORLD_MAP_TO_LUNPA_SUHALLA);
@@ -794,7 +794,7 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_CLEAR:
       WorldMap_RunOpeningRise();
       break;
-    case 73:
+    case WORLD_MAP_BEFORE_SHEBAS_FALL:
       WorldMap_StartTransitionEffect();
       break;
     case WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE:
@@ -2204,7 +2204,8 @@ static void WorldMap_ShowEndingScene(void) {
 }
 
 /// Starts the sparkling travel transition and fades out to its destination.
-/// Called by WorldMap_Initialize at entrance 73; sets FLAG_KEEP_MUSIC.
+/// Called by WorldMap_Initialize at WORLD_MAP_BEFORE_SHEBAS_FALL; sets
+/// FLAG_KEEP_MUSIC.
 static void WorldMap_StartTransitionEffect(void) {
   Engine_EventBegin();
   Engine_AudioPlayCue(SE_141);
@@ -2993,7 +2994,8 @@ s32 gWorldMapPlacement0[] = {
 };
 
 struct SceneEntrance gWorldMapEntrances[] = {
-    {0, CONDITION_ALWAYS, 5656, 0, 1256, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 5656, 0, 1256, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {WORLD_MAP_FROM_VALE_GATE, CONDITION_ALWAYS, 5680, 0, 1226, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TITLE, CONDITION_ALWAYS, 5688, 0, 1224, FACING_SOUTH, 0, -1,
@@ -3129,7 +3131,8 @@ struct SceneEntrance gWorldMapEntrances[] = {
      2120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_CLEAR, CONDITION_ALWAYS, 7464, 0, 200, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
-    {73, CONDITION_ALWAYS, 6088, 0, 3176, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_BEFORE_SHEBAS_FALL, CONDITION_ALWAYS, 6088, 0, 3176, FACING_WEST,
+     0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE, CONDITION_ALWAYS, 4728, 0,
      424, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS, CONDITION_ALWAYS, 4872, 0, 808,
@@ -3137,7 +3140,8 @@ struct SceneEntrance gWorldMapEntrances[] = {
     {WORLD_MAP_FROM_CROSSBONE_ISLE, CONDITION_ALWAYS, 4576, 0, 508,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {77, CONDITION_ALWAYS, 4392, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {78, CONDITION_ALWAYS, 8, 0, 8, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, CONDITION_ALWAYS, 8, 0, 8, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
     {WORLD_MAP_JENNA_AND_KRADEN_ADRIFT, CONDITION_ALWAYS, 7552, 0, 3504,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_MERCURY_LIGHTHOUSE_LIT, CONDITION_ALWAYS, 6024, 0, 160,
@@ -3146,7 +3150,8 @@ struct SceneEntrance gWorldMapEntrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {97, CONDITION_ALWAYS, 6248, 0, 872, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {98, CONDITION_ALWAYS, 4248, 0, 2424, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {99, CONDITION_ALWAYS, 5576, 0, 2088, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_DEBUG, CONDITION_ALWAYS, 5576, 0, 2088, FACING_SOUTH, 0, -1,
+     -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 

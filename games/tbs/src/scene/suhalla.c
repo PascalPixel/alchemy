@@ -1,5 +1,5 @@
 /// @file
-/// Suhalla (scene 167), the desert village of Gondowan on the way to
+/// SceneId_Suhalla, the desert village of Gondowan on the way to
 /// Lalivero, at the edge of the Suhalla Desert.
 ///
 /// Its people and their talk come in two sets, each a placement table and an
@@ -14,10 +14,11 @@
 /// commands his soldiers, and Sheba left Tolbi for Lalivero with soldiers
 /// bound for Babi Lighthouse. Afterwards the village talks of those soldiers:
 /// caught in the sandstorms, nearly all perished, and the survivors lie in a
-/// house of the village (scene 168, where Iodem questions them). The storms
-/// attack people as if they were alive, and one villager asks whether a
-/// sandstorm brought the party to Suhalla (Event_AskIfBroughtBySandstorm),
-/// for everyone the storms catch winds up here.
+/// house of the village (SceneId_SuhallaInteriors, where Iodem questions them).
+/// The storms attack people as if they were alive, and one villager asks
+/// whether a sandstorm brought the party to Suhalla
+/// (Event_AskIfBroughtBySandstorm), for everyone the storms catch winds up
+/// here.
 ///
 /// Five doors (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST) open as the leader
 /// walks north into them and lead into the village's buildings
@@ -220,7 +221,8 @@ s32 Scene_Initialize(void) {
 }
 
 struct SceneEntrance gSuhallaEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SUHALLA_FROM_INN, CONDITION_ALWAYS, 136, 0, 152, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {SUHALLA_FROM_SANCTUM, CONDITION_ALWAYS, 256, 0, 120, FACING_SOUTH, 0, -1,

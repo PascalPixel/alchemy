@@ -24,10 +24,11 @@
 
 // Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
 // Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
-// Cave, Kolima Forest (scenes 40 to 42), Lunpa's fortress, Mercury
-// Lighthouse and its entrance, Mogall Forest, the Tunnel Ruins, Vale and its
-// cave): blocks pushed a cell at a time, and logs and other large things that
-// roll until they meet something, redrawn into the map where they stop.
+// Cave, Kolima Forest (SceneId_KolimaForestEntrance to
+// SceneId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
+// entrance, Mogall Forest, the Tunnel Ruins, Vale and its cave): blocks pushed
+// a cell at a time, and logs and other large things that roll until they meet
+// something, redrawn into the map where they stop.
 //
 // A large thing is one of six footprints, by its sprite's animation
 // (gStagedActor_FootprintKinds): its bounds in gStagedActor_FootprintBounds

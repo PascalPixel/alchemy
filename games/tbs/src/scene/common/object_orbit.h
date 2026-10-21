@@ -1,9 +1,9 @@
 #include "orbit.h"
 #include "flags.h"
 
-// Crossbone Isle, Kalay, Kolima Forest (scene 41), Lunpa, McCoy's palace
-// garden, Mogall Forest and Vale: a Nut floating where it lies, until it is
-// taken.
+// Crossbone Isle, Kalay, Kolima Forest (SceneId_KolimaForestGlade), Lunpa,
+// McCoy's palace garden, Mogall Forest and Vale: a Nut floating where it lies,
+// until it is taken.
 
 /// The Nut's callback, each frame: it sways up to two pixels either side of its
 /// spot and dips up to two pixels below it, at a random pace.

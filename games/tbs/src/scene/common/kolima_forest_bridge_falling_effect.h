@@ -13,19 +13,18 @@
 #include "map_scroll.h"
 #include "songs.h"
 
-// Kolima and Kolima Forest (scene 40): the sparkling dust that falls over the
-// party when Tret's curse strikes ("Watch out! It's happening again!").
+// Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
+// the sparkling dust that falls over the party when Tret's curse strikes
+// ("Watch out! It's happening again!").
 
 s32 gFallingEffectOffset __attribute__((section(".bss")));
 s32 gFallingEffectWidth __attribute__((section(".bss")));
 u32 gFallingEffectState __attribute__((section(".bss")));
 
-/// A scene callback: every eighth frame a speck (object 285, its script
+/// A scene callback: every eighth frame a speck (its script
 /// gFallingEffectScript) starts 160 pixels up at a random point near the point
-/// the map view follows, with SE_246 every 64 frames. gFallingEffectState
-/// shapes the fall: 0 within 128 pixels of that point; 1 and 2 over a band
-/// that widens (by 50 a frame, to 15000 and 30000) as it moves towards it; 3
-/// drifting on until it is far past, then back to 0.
+/// the map view follows, with SE_246 every 64 frames. gFallingEffectState, an
+/// enum KolimaCurseDustState, shapes the fall.
 void Kolima_UpdateCurseDust(void) {
   struct FieldActor *object = NULL;
   s32 *origin;
@@ -33,21 +32,21 @@ void Kolima_UpdateCurseDust(void) {
   s32 x, z;
 
   switch (gFallingEffectState) {
-  case 1:
+  case KOLIMA_DUST_CLOSING:
     if (gFallingEffectWidth < 15000)
       gFallingEffectWidth += 50;
     if (gFallingEffectOffset > 0x3c0000)
       gFallingEffectOffset -= 0x4000;
     break;
-  case 2:
+  case KOLIMA_DUST_CLOSING_WIDE:
     if (gFallingEffectWidth < 30000)
       gFallingEffectWidth += 50;
     if (gFallingEffectOffset > 0x180000)
       gFallingEffectOffset -= 0x4000;
     break;
-  case 3:
+  case KOLIMA_DUST_DRIFTING:
     if (gFallingEffectOffset < -0x800000) {
-      gFallingEffectState = 0;
+      gFallingEffectState = KOLIMA_DUST_CENTRED;
     } else {
       gFallingEffectWidth += 50;
       gFallingEffectOffset -= 0x4000;
@@ -59,7 +58,7 @@ void Kolima_UpdateCurseDust(void) {
     origin = ((struct MapScrollWork *)gMapWork[0])->origin;
     if ((gFrameCount & 63) == 0)
       Engine_AudioPlayCue(SE_246);
-    if (gFallingEffectState != 0)
+    if (gFallingEffectState != KOLIMA_DUST_CENTRED)
       x = origin[0] +
           (((u32)Engine_RandomNext() * gFallingEffectWidth >> 16) << 8) +
           gFallingEffectOffset;

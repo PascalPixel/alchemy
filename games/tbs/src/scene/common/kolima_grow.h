@@ -1,6 +1,7 @@
 /// @file
-/// Kolima (scene 36) and Kolima Forest (scenes 40 and 44): an effect (object
-/// 26) that stretches as it travels.
+/// Kolima and Kolima Forest (SceneId_Kolima, SceneId_KolimaForestEntrance and
+/// SceneId_KolimaForestTree): an effect that
+/// stretches as it travels.
 #include "script.h"
 #include "types.h"
 #include "field_obj.h"

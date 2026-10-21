@@ -50,7 +50,7 @@ struct EncounterZone {
 
 /// Chooses the current scene's encounter zones, one for each kind of ground
 /// the party can stand on (gEventWork->encounterGroups, read by
-/// EffectRuntime_LookupByTableEntry), from the first rule matching the scene
+/// Encounter_RollTerrain), from the first rule matching the scene
 /// and entrance. Ground 0 has none, and grounds 1 to 7 take consecutive zones
 /// from the rule's first one. With useRules 0, or no matching rule, no ground
 /// has encounters. Also resets the random bias and the battle threshold (the

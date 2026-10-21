@@ -496,7 +496,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
   GameFlag_Set(FLAG_IODEM_AT_BABI_LIGHTHOUSE);
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiYoureSureTheyWentThrough);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 352);
@@ -757,7 +757,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   // Everyone reacts to the opened door before trying to follow the party.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgBabiTheDoor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 312);

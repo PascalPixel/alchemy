@@ -254,7 +254,7 @@ void *FieldFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
 /// the kind's ending), as for a
 /// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and
 /// its user (bits 10 to 13). Called by Field_UsePsynergy for a use with
-/// ACT_PACKED, and by Battle_ResetEffectCounter to end Reveal.
+/// ACT_PACKED, and by Field_EndBusyAndReveal to end Reveal.
 s32 Field_RunPsynergyEvents(s32 packed) {
   s32 target;
   s32 abilityId;
@@ -276,7 +276,7 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   FieldFx_SetupObjectPair(gGameState.selectedActor, target);
   Field_RunEventAction(beforeEvent, userId, target);
   FieldEvent_RunTypeHandler();
-  EffectRuntime_StopCurrentObject();
+  FieldFx_StopCasterHook();
   Field_RunEventAction(afterEvent, userId, target);
   FieldFx_End();
   return 0;

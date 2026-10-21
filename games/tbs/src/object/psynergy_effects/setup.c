@@ -105,7 +105,7 @@ void FieldFx_SetupObjectPair(s32 userId, s32 targetId) {
 
 /// Stops the caster's per-frame hook and restores its colours (sprite param
 /// 0), then waits a frame.
-void EffectRuntime_StopCurrentObject(void) {
+void FieldFx_StopCasterHook(void) {
   struct BattleFxScene *work = gEffectWork;
   struct ScriptMotionObject *user = work->mainObject;
 
@@ -244,7 +244,7 @@ void EventObject_Initialize(void) {
     }
     ObjectDispatch_SelectAnimationFar(caster, 0x15);
   } else {
-    EffectRuntime_StopCurrentObject();
+    FieldFx_StopCasterHook();
   }
   ((struct FieldWork *)renderState)->castStarted = 1;
 }

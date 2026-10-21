@@ -675,7 +675,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
   u8 *puzzleState;
 
   Event_Begin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Event_SetMessage(MsgAltmillerRotatedRock);
   Event_ShowMessage(ACTOR_FIRST_ROCK, 0);
   Event_End();
@@ -841,7 +841,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   // Item 237 is the Mystic Draught.
   Engine_PartyRemoveItem(237);
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_ActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgAltmillerCameBackPleaseDraughtQuickly);
@@ -1617,7 +1617,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   GameFlag_Set(FLAG_MET_INVISIBLE_BABI);
   Engine_AudioPlayCue(MUS_024);
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgAltmillerSee);
   Engine_ActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Engine_EventWait(20);

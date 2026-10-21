@@ -2327,7 +2327,7 @@ static void Event_MoveSocketPillar(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Begin();
 #if TBS_PATCH_3
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
 #endif
   Map_CopyCellAttributes(69, 48, 4, 2, 5, 48);
   Map_CopyCellAttributes(73, 37, 9, 13, 9, 37);

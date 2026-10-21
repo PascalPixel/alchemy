@@ -102,7 +102,7 @@ void FieldFx_RunSparkEmitter(union FieldObject *fieldObject) {
 /// This is Ply cast on a target, which FieldFx_DispatchRequestKind calls.
 void FieldFx_RunPlyOnTarget(s32 unused) {
   FieldFx_RunPly();
-  EffectRuntime_StopCurrentObject();
+  FieldFx_StopCasterHook();
 }
 
 /// Eight particles spiral into the centre, where one appears, sheds sparks and

@@ -53,7 +53,7 @@ void Shop_InitializeCursorWork(void) {
   s32 resourceSlot;
 
   shop = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, sizeof(struct ShopRuntime));
-  Battle_ResetEffectCounterFar();
+  Field_EndBusyAndRevealFar();
   Dma_Fill32(0, shop, sizeof(struct ShopRuntime));
   // The hand cursor's glides take 12 frames until a screen changes it
   shop->mode = 12;

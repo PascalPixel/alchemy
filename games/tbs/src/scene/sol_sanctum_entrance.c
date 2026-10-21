@@ -337,7 +337,7 @@ static void Event_SetFirstSmallJewel(void) {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
     } else {
       Engine_EventBegin();
-      Battle_ResetEffectCounter();
+      Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.
       oneCell = 1;
       Event_PlayCue(SE_182);
@@ -401,7 +401,7 @@ static void Event_SetSecondSmallJewel(void) {
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0 &&
       GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) == 0) {
     Engine_EventBegin();
-    Battle_ResetEffectCounter();
+    Field_EndBusyAndReveal();
     // The eye sparkles, then the doorway opens.
     Engine_AudioPlayCue(SE_182);
     Map_CopyCellsTo(0, 71, 100, 71, 1, 1);

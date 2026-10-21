@@ -97,6 +97,7 @@ Functions are named for what they act on:
 | `Event_`, `FieldEvent_` | the commands scene scripts run |
 | `Object_`, `ObjectMotion_`, `ObjectTable_` | actors, their motion and the actor table |
 | `Marker_` | the map's markers |
+| `ItemDisplay_` | a found item's picture, held up over the party leader |
 | `Camera_` | the event camera |
 | `Djinn_` | Djinn joining the party and the hop before a Djinni battle |
 | `DisplayTransition_` | the window transitions and dissolves between scenes |

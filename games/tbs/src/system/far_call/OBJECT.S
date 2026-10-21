@@ -118,7 +118,7 @@ FarCall_ObjectTable:
 	export DisplayScroll_InitializeHBlankDmaFar, DisplayScroll_InitializeHBlankDma
 	export DisplayScroll_DisarmHBlankDmaFar, DisplayScroll_DisarmHBlankDma
 	export FieldFx_PlayCueAndStartEmitterOnTargetFar, FieldFx_PlayCueAndStartEmitterOnTarget
-	export EffectRuntime_RunRisingObjectSequenceFar, EffectRuntime_RunRisingObjectSequence
+	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
 	export FieldFx_StartEffectObject22Far, FieldFx_StartEffectObject22
 	overlay_veneer Marker_GetActor
 	overlay_veneer Marker_OpenChest
@@ -139,12 +139,12 @@ FarCall_ObjectTable:
 	export Field_DispatchTypeHandlerFar, Field_DispatchTypeHandler
 	export FieldFx_LoadActionEffectResourcesFar, FieldFx_LoadActionEffectResources
 	export FieldFx_SetupObjectPairFar, FieldFx_SetupObjectPair
-	export EffectRuntime_StopCurrentObjectFar, EffectRuntime_StopCurrentObject
+	export FieldFx_StopCasterHookFar, FieldFx_StopCasterHook
 	export FieldFx_EndFar, FieldFx_End
 	export EventObject_InitializeFar, EventObject_Initialize
 	overlay_veneer FieldFx_FadeToEffectColor
 	overlay_veneer FieldFx_FadeFromEffectColor
-	export Battle_ResetEffectCounterFar, Battle_ResetEffectCounter
+	export Field_EndBusyAndRevealFar, Field_EndBusyAndReveal
 	export RunSceneTransitionEffectFar, RunSceneTransitionEffect
 	export FieldFx_FinishSceneAndReleaseHeapBlockFar, FieldFx_FinishSceneAndReleaseHeapBlock
 	overlay_veneer Ui_FillBank15PaletteGrey

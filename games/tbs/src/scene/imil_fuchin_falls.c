@@ -1619,7 +1619,7 @@ static void Fuchin_LightDragonWithEye(void) {
   Engine_AudioPlayCue(MUS_019);
   Engine_AudioPlayCue(SE_182);
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
 
   for (pass = 0; pass < 4; pass++) {
     Engine_ColorBufferApplyTarget(0x204318, 1);

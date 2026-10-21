@@ -324,7 +324,7 @@ s32 Field_RunScene(s32 entrance) {
             // As for the main menu above.
             work->event = FIELD_EVENT_MENUS_RAISED;
           } else {
-            Battle_ResetEffectCounter();
+            Field_EndBusyAndReveal();
             UiTimedNotice_CloseIfActiveFar();
             gGameState.returnCue = AudioCommand_GetSecondaryStateByteFar();
             if (GameFlag_TestFar(FLAG_IN_BATTLE_ARENA) == 0) {

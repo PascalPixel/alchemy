@@ -263,7 +263,7 @@ static void KolimaForestTree_ReadTretThoughts(void) {
 /// (KolimaForestTree_RestoreTret).
 static void KolimaForestTree_UseHermesWater(void) {
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   if (Engine_GameFlagIsSet(FLAG_TRET_DEFEATED) == 0) {
     KolimaForestTree_RejectHermesWater();
   } else {

@@ -49,7 +49,7 @@
 	.set import.Field_DispatchTypeHandler, 1
 	.set import.FieldFx_LoadActionEffectResources, 1
 	.set import.FieldFx_SetupObjectPair, 1
-	.set import.EffectRuntime_StopCurrentObject, 1
+	.set import.FieldFx_StopCasterHook, 1
 	.set import.EventObject_Initialize, 1
 	.set import.FieldFx_SetQueuedSoundAndPlay, 1
 	.set import.FieldFx_PlayQueuedSound, 1

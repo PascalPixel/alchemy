@@ -720,7 +720,7 @@ const struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
 /// (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL).
 static void TolbiShipInteriors_TalkToCabinCrewman(void) {
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL) != 0) {
     Engine_EventSetMessage(MsgTolbiShipIfShipFromTolbiHad);
     Event_ShowMessage(CABIN_CREWMAN, 0);
@@ -1606,7 +1606,7 @@ static void TolbiShipInteriors_TalkToHealer(void) {
 static void TolbiShipInteriors_FightRowingDeckMonsters(void) {
 
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Battle_SetStart(BATTLE_START_SCENE);
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) == 0) {
@@ -1655,7 +1655,7 @@ static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
     return;
 
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_CameraSetSpeed(0x19999, 0x3333);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(448), -1, PIXELS(638),
                                        0x10000028u);
@@ -1697,7 +1697,7 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     // Not yet: the party has not heard of the delay.
   } else {
     Engine_EventBegin();
-    Battle_ResetEffectCounter();
+    Field_EndBusyAndReveal();
     Camera_SetSpeed(0x26666, 0x4ccc);
     TolbiShipInteriors_MoveCameraAndWait(PIXELS(1463), -1, PIXELS(464),
                                          0x10000014);
@@ -2074,7 +2074,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
 
   // Let the captain explain why the anchor matters and ask the party to help.
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Actor_FaceActor(CABIN_CAPTAIN, ACTOR_PARTY_LEADER, 0);
   Actor_ShowEmote(CABIN_CAPTAIN, 0x100, 40);
   captainSpeech = SPEAKER(CABIN_CAPTAIN, 1);

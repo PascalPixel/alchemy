@@ -446,7 +446,7 @@ static void AltinPeak_RideCart(s32 log) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   logActor = Object_GetById(ACTOR_CART);
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_JUMP);
   Engine_EventWait(10);

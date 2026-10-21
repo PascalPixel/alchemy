@@ -818,7 +818,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   struct FieldActor *actor;
 
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Actor_SetPosition(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, PIXELS(328),
                     PIXELS(1424));
   Object_GetById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 1;
@@ -916,7 +916,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
 
   GameFlag_Set(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED);
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Engine_EventSetMessage(MsgKalayReturnedTicketCost);
   actor = Object_GetById(ACTOR_STRANDED_WOMAN);
   actor->priorityFlags = 0;

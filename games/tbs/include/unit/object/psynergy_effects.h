@@ -302,7 +302,7 @@ void FieldFx_CycleObjectValueByCounter(union FieldObject *fieldObject);
 void FieldFx_UpdateAllEffectSlots(void);
 void FieldFx_LoadActionEffectResources(s32 abilityId, s32 mode);
 void FieldFx_SetupObjectPair(s32 userId, s32 targetId);
-void EffectRuntime_StopCurrentObject(void);
+void FieldFx_StopCasterHook(void);
 void FieldFx_End(void);
 void EventObject_Initialize(void);
 void FieldFx_FadeToEffectColor(void);

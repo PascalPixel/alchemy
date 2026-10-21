@@ -76,13 +76,13 @@
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.FieldFx_StartFadeOverlay, 1
 	.ifdef TBS_EDITION_ES
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.endif
 	.ifdef TBS_EDITION_FR
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.endif
 	.ifdef TBS_EDITION_IT
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.endif
 	.set import.Engine_ActorWalkByAndWait, 1
 	.set import.FieldFx_SetQueuedSoundAndPlay, 1

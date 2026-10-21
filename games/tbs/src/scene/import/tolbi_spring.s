@@ -43,7 +43,7 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.set import.ObjectTable_Snapshot, 1
 	.set import.AudioCommand_WaitForStateByteClear, 1
 	.set import.Engine_AudioPlayCue, 1

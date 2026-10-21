@@ -493,7 +493,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   }
   EventObject_Initialize();
   Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET);
-  EffectRuntime_StopCurrentObject();
+  FieldFx_StopCasterHook();
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.

@@ -64,7 +64,7 @@
 	.set import.Engine_PsynergySetTarget, 1
 	.set import.Engine_PsynergyLowerHands, 1
 	.set import.Engine_PsynergyRaiseHands, 1
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.EffectSlot_HasPendingTarget, 1
 	.set import.EffectSlot_SetObjectMode, 1

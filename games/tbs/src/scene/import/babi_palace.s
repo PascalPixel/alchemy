@@ -57,7 +57,7 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.Battle_ResetEffectCounter, 1
+	.set import.Field_EndBusyAndReveal, 1
 	.set import.Engine_PsynergyCancel, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.Motion_LaunchFromFocusedObject, 1

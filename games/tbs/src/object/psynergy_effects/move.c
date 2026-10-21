@@ -248,7 +248,7 @@ void FieldFx_SteerPushedTarget(s32 targetId) {
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,
                                work->savedScript);
   target->update = work->savedCallback;
-  EffectRuntime_StopCurrentObject();
+  FieldFx_StopCasterHook();
   if (moved == 1)
     (Object_GetById(work->firstObjectId))->steeringFlags |= 1;
   FieldFx_FadeFromEffectColor();

@@ -260,7 +260,7 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
 /// used with ACT_PACKED runs its ending events. Called by FieldEvent_Begin when
 /// an event starts while the field is busy, by Field_RunScene before the pause
 /// menu, and by 30 scene overlays.
-void Battle_ResetEffectCounter(void) {
+void Field_EndBusyAndReveal(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
   work->busy = 0;

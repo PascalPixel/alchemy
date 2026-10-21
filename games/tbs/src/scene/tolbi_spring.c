@@ -609,7 +609,7 @@ static s32 TolbiSpring_RunSpringGame(void) {
   struct GameState *state;
 
   Event_Begin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   message = MsgTolbiThrow;
 #if TBS_PATCH_1
   state = &gGameState;

@@ -129,7 +129,7 @@ s32 Field_UsePsynergy(u32 code) {
     else
       FieldFx_Run();
   }
-  EffectRuntime_StopCurrentObject();
+  FieldFx_StopCasterHook();
   Field_RunEventAction(after, userId, target);
   if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT))
     FieldFx_ClearChildValueOnMismatch();

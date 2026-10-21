@@ -99,7 +99,7 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
 
 /// Each frame of a found item's picture: one time in ten, a sparkle appears
 /// within 16 pixels of it. Installed as the picture's updateHook by
-/// FieldFx_StartRandomParticleEmitter, EffectRuntime_RunRisingObjectSequence
+/// FieldFx_StartRandomParticleEmitter, ItemDisplay_ShowPicture
 /// and FieldFx_StartEffectObject22.
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   struct ObjectRuntime *emitter = (struct ObjectRuntime *)fieldObject;
@@ -227,7 +227,7 @@ void Object_DestroyIfPresent(void *object) {
 
 /// Raises a found item's picture to 36 pixels above the party leader, who
 /// holds it up (animation 28) facing the screen. Called by Field_SearchTile for
-/// what a search finds, by EffectRuntime_RunRisingObjectSequence and by
+/// what a search finds, by ItemDisplay_ShowPicture and by
 /// FieldFx_StartEffectObject22.
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   struct ObjectRuntime *leader;
@@ -254,7 +254,7 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
 /// above the leader, with waits of 60 and 80 frames around that when both are
 /// set. The leader then returns to animation 1. Scene overlays call it as
 /// Engine_RunRisingObjectSequence (six of them).
-void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
+void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 
   if (object != NULL) {

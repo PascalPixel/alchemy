@@ -615,7 +615,7 @@ static void RaiseTheShip(void) {
   map = gMapWork[0];
 
   Event_Begin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   // The leader steps to the water's edge; the backdrop brightens 16 steps.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 232);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);

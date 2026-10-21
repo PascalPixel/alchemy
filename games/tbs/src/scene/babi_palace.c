@@ -350,7 +350,7 @@ static void BabiPalace_ShowBeds(s32 actorId) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   roundedFacing = (leader->facing + 0x2000) & 0xc000;
   Event_Begin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   if (GameFlag_IsSet(FLAG_ATTENDANT_SHOWED_BEDS) == 0) {
     GameFlag_Set(FLAG_ATTENDANT_SHOWED_BEDS);
     GameFlag_Clear(FLAG_BABI_PALACE_BEDS_OPEN);
@@ -404,7 +404,7 @@ static void BabiPalace_OfferRest(s32 actorId) {
   s32 question;
 
   Event_Begin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   if (GameFlag_IsSet(FLAG_BABI_PALACE_FINALS_REST_OFFERED) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
     GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
@@ -535,7 +535,7 @@ static void BabiPalace_OfferCloakBall(void) {
   s32 msg;
 
   Engine_EventBegin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   msg = MsgTolbiFoundCloakBall;
   Engine_EventSetMessage(msg);
   Engine_EventShowMessage(-1, 0);
@@ -722,7 +722,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   roundedFacing = (leader->facing + 0x2000) & -0x4000;
   Event_Begin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Event_SetMessage(MsgTolbiLikeSleep);
   Event_OpenMessage(-1, 0);
   if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) != 0) {
@@ -887,7 +887,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
 static void BabiPalace_HearSoldiersReport(void) {
   GameFlag_Set(FLAG_IODEM_HEARD_SOLDIERS);
   Event_Begin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Event_SetMessage(MsgTolbiIodemIodem);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 520, 424);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
@@ -2399,7 +2399,7 @@ static void BabiPalace_PassOnBabisWord(void) {
   s32 question;
   GameFlag_Set(FLAG_BABI_PALACE_GUARD_GAVE_WORD);
   Event_Begin();
-  Battle_ResetEffectCounter();
+  Field_EndBusyAndReveal();
   Actor_FaceDirection(ACTOR_FIRST_GUARD, 20480, 0);
   Actor_FaceDirection(ACTOR_SECOND_GUARD, 12288, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 200, 272);

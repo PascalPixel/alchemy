@@ -692,13 +692,13 @@
 /// The ivy on Crossbone Isle itself (CrossboneIsle): four flags from this
 /// one.
 #define FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY 0x8c4
-/// The nine corridor rooms of Crossbone Isle Cave (CrossboneIsle6 to 14): one
+/// The nine floors of Crossbone Isle Cave (CrossboneIsleFirstFloor to 14): one
 /// flag each from these, in room order, for the monsters at the east door
-/// beaten and for the block sunk into the floor.
+/// beaten and for the pillar sunk into the floor.
 #define FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED 0x8c8
 #define FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED 0x8d2
 #define FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1 ///< on the Pirate Ship
-// CrossboneIslePlatformRooms2 keeps FLAG_SCENE_TEMP_20 set while one of its
+// CrossboneIsleStatues keeps FLAG_SCENE_TEMP_20 set while one of its
 // pursuers is after the leader.
 
 // Sol Sanctum

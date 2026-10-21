@@ -142,13 +142,13 @@ Nothing calls it.
 ## What's unused between Kalay and Colosso?
 
 On Crossbone Isle, the room of locked doors in
-[crossbone_isle_platform_rooms.c](src/scene/crossbone_isle_platform_rooms.c)
+[crossbone_isle_keys.c](src/scene/crossbone_isle_keys.c)
 has two rows for walking south into its third and fourth blue doors,
 `Event_UnusedCheckLeaderAhead`. Plain touch rows for the same doors come first,
 and they already look ahead after a dozen steps of pressing against the door,
 so the player sees the same thing either way. The room would also have flashed
 the icons of the Blue Keys still lying about, one after another
-(`CrossboneIslePlatformRooms_UnusedUpdateKeyIcons`), but nothing starts it.
+(`CrossboneIsleKeys_UnusedUpdateKeyIcons`), but nothing starts it.
 
 In Tolbi on the day of the finals, four lines follow a soldier's line about
 scalpers in the catalog and are shown by nothing at all: `The finals are about

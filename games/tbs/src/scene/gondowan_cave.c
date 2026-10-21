@@ -112,7 +112,7 @@ enum GondowanCave2Actor {
   /// game calls "that stump" (MsgGomaNoUsePsynergy).
   ACTOR_STUMP = ACTOR_FIRST_PLACED,
   /// Pushed or moved with Move. Sprite 0xd3, which the stone pillars of other
-  /// scenes use (crossbone_isle_pillar_rooms.c).
+  /// scenes use (crossbone_isle_stepping_stones.c).
   ACTOR_PILLAR,
   /// Stands in for the pillar once it has dropped into its place; out of
   /// sight at first. It is drawn in the stump's sprite (0xd4), and on later

@@ -14,34 +14,37 @@
 ///   the first also opening a cell), Growth grows four plants so they can be
 ///   crossed, for this visit only (FLAG_SCENE_TEMP_40 to _43), two pillars can
 ///   be pushed, and a Nut circles until Catch takes it (0xfd7).
-///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_2 leads down into the cave.
-/// - Crossbone Isle Cave (CrossboneIsle2, scene 114), the cave's mouth, with
+///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
+/// - Crossbone Isle Cave (CrossboneIsleCaveEntrance, scene 114), the cave's
+/// mouth, with
 ///   only its two exits.
-/// - Crossbone Isle Cave (CrossboneIsle6 to CrossboneIsle14, scenes 126 to
-///   134), nine rooms in a row on one map, each entered from the east
-///   (CORRIDOR_FROM_PREVIOUS_ROOM) and left to the west
+/// - Crossbone Isle Cave (CrossboneIsleFirstFloor to CrossboneIsleNinthFloor,
+/// scenes 126 to
+///   134), the nine floors the cave descends through, all on one map, each
+///   entered from the east (CORRIDOR_FROM_PREVIOUS_ROOM) and left to the west
 ///   (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
 ///   scene_links.h names them room by room
-///   (CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_2 and
-///   CROSSBONE_ISLE_6_TO_CROSSBONE_ISLE_7 in the first). Each has two doors in
-///   its north wall into a side room of its own. The first time the party
-///   walks into the east door (Event_OpenEastDoor), the monsters behind it
-///   attack: encounter table 63 for the first four rooms and 84 for the next
-///   five, one group per room. Back from the battle (ENTRANCE_AFTER_BATTLE) the
-///   door opens and the party walks through, and from then on it simply opens
-///   (one flag per room from FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED); the
-///   west door always opens. Between the doors stands a pillar that, pushed or
-///   moved with Move to column 40, sinks into the floor and opens the corridor
-///   (one flag per room from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the
-///   first room a chest is a mimic (0xef4). The side rooms of the first eight
-///   rooms are in crossbone_isle_pillar_rooms.c and
-///   crossbone_isle_platform_rooms.c.
-/// - Crossbone Isle Cave (CrossboneIsle3, scene 123), the ninth room's side
-///   room: twelve pillars that slide with the leader standing on them until
-///   another pillar or the wall stops them, and hops from pillar to pillar,
-///   lead to its four chests.
-/// - Crossbone Isle Cave (CrossboneIsle4, scene 124), the passage from the
-///   ninth room to the Pirate Ship.
+///   (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE and
+///   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR in the first).
+///   Each has two doors in its north wall into a side room of its own. The
+///   first time the party walks into the east door (Event_OpenEastDoor), the
+///   monsters behind it attack: encounter table 63 for the first four rooms and
+///   84 for the next five, one group per room. Back from the battle
+///   (ENTRANCE_AFTER_BATTLE) the door opens and the party walks through, and
+///   from then on it simply opens (one flag per room from
+///   FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED); the west door always opens.
+///   Between the doors stands a pillar that, pushed or moved with Move to
+///   column 40, sinks into the floor and opens the corridor (one flag per room
+///   from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the first floor a chest
+///   is a mimic (0xef4). The side rooms of the first eight floors are in
+///   crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
+/// - Crossbone Isle Cave (CrossboneIsleFloatingLogs, scene 123), the ninth
+/// floor's side
+///   room: twelve logs floating on green water, which drift with the leader
+///   standing on them until another log or the shore stops them, and hops from
+///   log to log, lead to its four chests.
+/// - Crossbone Isle Cave (CrossboneIslePier, scene 124), the ledge past the
+///   ninth floor where a wooden pier leads out to the Pirate Ship.
 /// - Pirate Ship (PirateShip, scene 125), at the end. Stepping on trigger
 ///   10 (Event_FightDeadbeard) sets off the battle with Deadbeard, encounter
 ///   table 84's sixth group; when the party comes back
@@ -106,12 +109,12 @@ enum CrossboneIsleActor {
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLANT + 4
 };
 
-/// The twelve sliding pillars of the ninth corridor room's side room
-/// (CrossboneIsle3), numbered in the order of gCrossboneIslePlacements3, from
-/// the first to the twelfth, with their sprites. Those with sprite 0xec are
-/// three cells wide and slide north and south; those with 0xed are three cells
-/// tall and slide east and west.
-enum CrossboneIsle3Actor {
+/// The twelve floating logs of the ninth floor's side room
+/// (CrossboneIsleFloatingLogs), numbered in the order of
+/// gCrossboneIslePlacements3, from the first to the twelfth, with their
+/// sprites. Those with sprite 0xec are three cells wide and slide north and
+/// south; those with 0xed are three cells tall and slide east and west.
+enum CrossboneIsleFloatingLogsActor {
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED, ///< 0xec
   ACTOR_SECOND_PILLAR,                     ///< 0xec
   ACTOR_THIRD_PILLAR,                      ///< 0xec
@@ -132,13 +135,15 @@ enum CrossboneIsleCorridorActor { ACTOR_CORRIDOR_PILLAR = ACTOR_FIRST_PLACED };
 
 /// The corridor rooms' entrances, which every room numbers alike, so the code
 /// they share names them here; scene_links.h names each room's own
-/// (CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_2 to
-/// CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_PILLAR_ROOMS_1_WEST in the first).
+/// (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE to
+/// CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_WEST in the
+/// first).
 enum {
-  /// At the east end, from the room before (the cave's mouth, CrossboneIsle2,
+  /// At the east end, from the room before (the cave's mouth,
+  /// CrossboneIsleCaveEntrance,
   /// for the first).
   CORRIDOR_FROM_PREVIOUS_ROOM = 1,
-  /// At the west end, from the room after (CrossboneIsle4 for the last).
+  /// At the west end, from the room after (CrossboneIslePier for the last).
   CORRIDOR_FROM_NEXT_ROOM = 2,
   CORRIDOR_FROM_SIDE_ROOM_EAST = 3, ///< out of the side room by the east door
   CORRIDOR_FROM_SIDE_ROOM_WEST = 4  ///< out of the side room by the west door
@@ -176,13 +181,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (scene == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsleEntrances1;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle2) {
+  if (scene == (s32)&SceneId_CrossboneIsleCaveEntrance) {
     return gCrossboneIsleEntrances2;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle3) {
+  if (scene == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     return gCrossboneIsleEntrances3;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle4) {
+  if (scene == (s32)&SceneId_CrossboneIslePier) {
     return gCrossboneIsleEntrances4;
   }
   if (scene == (s32)&SceneId_PirateShip) {
@@ -201,11 +206,11 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIslePlacements1;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle3) {
+  if (scene == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     return gCrossboneIslePlacements3;
   }
-  if (scene <= (s32)&SceneId_CrossboneIsle14 &&
-      scene >= (s32)&SceneId_CrossboneIsle6) {
+  if (scene <= (s32)&SceneId_CrossboneIsleNinthFloor &&
+      scene >= (s32)&SceneId_CrossboneIsleFirstFloor) {
     return gCrossboneIslePlacements6To14;
   }
   return gCrossboneIslePlacementsOther;
@@ -257,13 +262,13 @@ const struct SceneEvent *Scene_GetEvents(void) {
   if (scene == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsleEvents1;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle2) {
+  if (scene == (s32)&SceneId_CrossboneIsleCaveEntrance) {
     return gCrossboneIsleEvents2;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle3) {
+  if (scene == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     return gCrossboneIsleEvents3;
   }
-  if (scene == (s32)&SceneId_CrossboneIsle4) {
+  if (scene == (s32)&SceneId_CrossboneIslePier) {
     return gCrossboneIsleEvents4;
   }
   if (scene == (s32)&SceneId_PirateShip) {
@@ -283,10 +288,10 @@ static void Event_CatchNut(void) {
 }
 
 /// Restores each scene's puzzles from its flags: the sliding pillars'
-/// footprints in CrossboneIsle3; on the Pirate Ship the mimic's chest and,
-/// after Deadbeard, the Demon Mail's; on Crossbone Isle the ivy, plants and
-/// Nut; in the corridor rooms the mimic's chest, the sunk pillars and the door
-/// opened after a battle.
+/// footprints in CrossboneIsleFloatingLogs; on the Pirate Ship the mimic's
+/// chest and, after Deadbeard, the Demon Mail's; on Crossbone Isle the ivy,
+/// plants and Nut; in the corridor rooms the mimic's chest, the sunk pillars
+/// and the door opened after a battle.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   s32 scene;
@@ -294,9 +299,10 @@ s32 Scene_Initialize(void) {
   s32 first;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  // CrossboneIsle3's sliding pillars restore their map footprints alone.
+  // CrossboneIsleFloatingLogs's sliding pillars restore their map footprints
+  // alone.
   scene = gGameState.scene;
-  if (scene == (s32)&SceneId_CrossboneIsle3) {
+  if (scene == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     CrossboneIsle_DrawPillarPuzzleFootprints();
     return 0;
   }
@@ -367,9 +373,9 @@ s32 Scene_Initialize(void) {
     Scene_FloatNut(ACTOR_ISLE_NUT);
     return 0;
   }
-  // The nine corridor rooms (CrossboneIsle6 to 14) share their door battle,
-  // sunk pillar and return entrance.
-  first = (s32)&SceneId_CrossboneIsle6;
+  // The nine corridor rooms (CrossboneIsleFirstFloor to 14) share their door
+  // battle, sunk pillar and return entrance.
+  first = (s32)&SceneId_CrossboneIsleFirstFloor;
   if (current == first) {
     if (FLAG_CHECK(0xef4) == 0) {
       Map_CopyCellAttributes(0, 0, 1, 1, 37, 10);
@@ -378,7 +384,7 @@ s32 Scene_Initialize(void) {
   }
   current = gGameState.scene;
   if (current >= first) {
-    if (current <= (s32)&SceneId_CrossboneIsle14) {
+    if (current <= (s32)&SceneId_CrossboneIsleNinthFloor) {
       CrossboneIsle_RestoreSunkPillar();
       if (gGameState.entrance == ENTRANCE_AFTER_BATTLE) {
         CrossboneIsle_OpenEastDoorAfterBattle();
@@ -397,7 +403,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
   actor = Actor_Get(ACTOR_CORRIDOR_PILLAR);
   cleared =
       FLAG_CHECK((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                                      (s32)&SceneId_CrossboneIsle6)));
+                                      (s32)&SceneId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
     OBJ_POS_SET(ACTOR_CORRIDOR_PILLAR, 650, 168);
     actor->y.fixed = -PIXELS(32);
@@ -434,7 +440,7 @@ static void Event_MovePillar(void) {
   sceneNumber = &state->scene;
   if (Engine_GameFlagIsSet(*sceneNumber +
                            (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                            (s32)&SceneId_CrossboneIsle6)) != 0) {
+                            (s32)&SceneId_CrossboneIsleFirstFloor)) != 0) {
     return;
   }
 #endif
@@ -461,7 +467,7 @@ static void Event_MovePillar(void) {
   sceneNumber = &state->scene;
 #endif
   Engine_GameFlagSet(*sceneNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                                     (s32)&SceneId_CrossboneIsle6));
+                                     (s32)&SceneId_CrossboneIsleFirstFloor));
 }
 
 /// Walking into a corridor room's pillar in Crossbone Isle Cave (trigger 20):
@@ -488,12 +494,12 @@ static void Event_OpenWestDoor(void) {
 static void Event_OpenEastDoor(void) {
   if (Engine_GameFlagIsSet(gGameState.scene +
                            (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
-                            (s32)&SceneId_CrossboneIsle6)) == 0) {
+                            (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
     EV_BEGIN();
     Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
     Battle_SetStart(3);
     // The first four rooms use encounter table 63; the next five use 84.
-    switch (gGameState.scene - (s32)&SceneId_CrossboneIsle6) {
+    switch (gGameState.scene - (s32)&SceneId_CrossboneIsleFirstFloor) {
     case 0:
       Field_RequestBattleFromEncounterTable(63, 0);
       break;
@@ -538,7 +544,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   FLAG_SET((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
-                                (s32)&SceneId_CrossboneIsle6)));
+                                (s32)&SceneId_CrossboneIsleFirstFloor)));
   WAIT(30);
   Map_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
@@ -772,7 +778,8 @@ static void CrossboneIsle_AnimateTouchedPillar(int actorId) {
   OBJ_MODE(actorId, 2);
 }
 
-/// Draws all twelve pillar footprints in Crossbone Isle Cave (CrossboneIsle3).
+/// Draws all twelve pillar footprints in Crossbone Isle Cave
+/// (CrossboneIsleFloatingLogs).
 static void CrossboneIsle_DrawPillarPuzzleFootprints(void) {
   CrossboneIsle_DrawHorizontalPillarFootprint(ACTOR_FIRST_PILLAR, 17, 30, 21);
   CrossboneIsle_DrawHorizontalPillarFootprint(ACTOR_THIRD_PILLAR, 17, 31, 22);
@@ -788,11 +795,11 @@ static void CrossboneIsle_DrawPillarPuzzleFootprints(void) {
   CrossboneIsle_DrawVerticalPillarFootprint(ACTOR_NINTH_PILLAR, 6, 30, 36);
 }
 
-// Crossbone Isle Cave (CrossboneIsle3), the ninth room's side room: its twelve
-// sliding pillars. Stepping onto a pillar plays its animation from the start;
-// walking onto one in a direction it moves slides it that way with the leader
-// on it until another pillar or the wall stops it; walking against a pillar's
-// edge hops the leader 32 pixels if the landing is clear.
+// Crossbone Isle Cave (CrossboneIsleFloatingLogs), the ninth floor's side room:
+// its twelve floating logs. Stepping onto a log plays its animation from the
+// start; walking onto one in a direction it moves slides it that way with the
+// leader on it until another pillar or the wall stops it; walking against a
+// pillar's edge hops the leader 32 pixels if the landing is clear.
 
 /// Stepping onto the first pillar.
 static void Event_StepOnFirstPillar(void) {
@@ -2028,33 +2035,33 @@ const s32 *gEffectScripts[] = {
 
 struct SceneEntrance gCrossboneIsleEntrances1[] = {
     { CROSSBONE_ISLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 280, 0, 544, FACING_NORTH, 0, 0, 0, 512, 560, 0 },
-    { CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_2, CONDITION_ALWAYS, 136, 0, 360, FACING_SOUTH, 0, 0, 0, 512, 560, 0 },
+    { CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE, CONDITION_ALWAYS, 136, 0, 360, FACING_SOUTH, 0, 0, 0, 512, 560, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gCrossboneIsleEntrances2[] = {
-    { CROSSBONE_ISLE_2_FROM_CROSSBONE_ISLE, CONDITION_ALWAYS, 312, 0, 520, FACING_NORTH, 0, 16, 64, 416, 544, 0 },
-    { CROSSBONE_ISLE_2_FROM_CROSSBONE_ISLE_6, CONDITION_ALWAYS, 280, 0, 144, FACING_EAST, 0, 16, 64, 416, 544, 0 },
+    { CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE, CONDITION_ALWAYS, 312, 0, 520, FACING_NORTH, 0, 16, 64, 416, 544, 0 },
+    { CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE_FIRST_FLOOR, CONDITION_ALWAYS, 280, 0, 144, FACING_EAST, 0, 16, 64, 416, 544, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gCrossboneIsleEntrances3[] = {
-    { CROSSBONE_ISLE_3_FROM_CROSSBONE_ISLE_14_EAST, CONDITION_ALWAYS, 312, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
-    { CROSSBONE_ISLE_3_FROM_CROSSBONE_ISLE_14_WEST, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
+    { CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST, CONDITION_ALWAYS, 312, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
+    { CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
     { 99, CONDITION_ALWAYS, 272, 0, 232, FACING_SOUTH, 0, 0, 16, 640, 464, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gCrossboneIsleEntrances4[] = {
-    { CROSSBONE_ISLE_4_FROM_CROSSBONE_ISLE_14, CONDITION_ALWAYS, 184, 0, 136, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { CROSSBONE_ISLE_4_FROM_PIRATE_SHIP, CONDITION_ALWAYS, 40, 0, 184, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { CROSSBONE_ISLE_PIER_FROM_CROSSBONE_ISLE_NINTH_FLOOR, CONDITION_ALWAYS, 184, 0, 136, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+    { CROSSBONE_ISLE_PIER_FROM_PIRATE_SHIP, CONDITION_ALWAYS, 40, 0, 184, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gCrossboneIsleEntrances5[] = {
-    { PIRATE_SHIP_FROM_CROSSBONE_ISLE_4, CONDITION_ALWAYS, 312, 0, 656, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+    { PIRATE_SHIP_FROM_CROSSBONE_ISLE_PIER, CONDITION_ALWAYS, 312, 0, 656, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 216, 0, 544, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    // The nine corridor rooms (CrossboneIsle6 to 14) enter through this
+    // The nine corridor rooms (CrossboneIsleFirstFloor to 14) enter through this
     // shared tail, since every room numbers its entrances alike.
 
     { CORRIDOR_FROM_PREVIOUS_ROOM, CONDITION_ALWAYS, 840, 0, 176, FACING_WEST, 0, 432, 32, 880, 352, 0 },
@@ -2068,63 +2075,63 @@ struct SceneEntrance gCrossboneIsleEntrances5[] = {
 u32 gCrossboneIsleExits[] = {
     SCENE_EXITS(CrossboneIsle),
     SCENE_EXIT(CROSSBONE_ISLE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_CROSSBONE_ISLE),
-    SCENE_EXIT(CROSSBONE_ISLE_TO_CROSSBONE_ISLE_2, CrossboneIsle2, CROSSBONE_ISLE_2_FROM_CROSSBONE_ISLE),
-    SCENE_EXITS(CrossboneIsle2),
-    SCENE_EXIT(CROSSBONE_ISLE_2_TO_CROSSBONE_ISLE, CrossboneIsle, CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_2),
-    SCENE_EXIT(CROSSBONE_ISLE_2_TO_CROSSBONE_ISLE_6, CrossboneIsle6, CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_2),
-    SCENE_EXITS(CrossboneIsle3),
-    SCENE_EXIT(CROSSBONE_ISLE_3_TO_CROSSBONE_ISLE_14_EAST, CrossboneIsle14, CROSSBONE_ISLE_14_FROM_CROSSBONE_ISLE_3_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_3_TO_CROSSBONE_ISLE_14_WEST, CrossboneIsle14, CROSSBONE_ISLE_14_FROM_CROSSBONE_ISLE_3_WEST),
-    SCENE_EXITS(CrossboneIsle4),
-    SCENE_EXIT(CROSSBONE_ISLE_4_TO_CROSSBONE_ISLE_14, CrossboneIsle14, CROSSBONE_ISLE_14_FROM_CROSSBONE_ISLE_4),
-    SCENE_EXIT(CROSSBONE_ISLE_4_TO_PIRATE_SHIP, PirateShip, PIRATE_SHIP_FROM_CROSSBONE_ISLE_4),
+    SCENE_EXIT(CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE, CrossboneIsleCaveEntrance, CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE),
+    SCENE_EXITS(CrossboneIsleCaveEntrance),
+    SCENE_EXIT(CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE, CrossboneIsle, CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE),
+    SCENE_EXIT(CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR, CrossboneIsleFirstFloor, CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE),
+    SCENE_EXITS(CrossboneIsleFloatingLogs),
+    SCENE_EXIT(CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST, CrossboneIsleNinthFloor, CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_FLOATING_LOGS_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST, CrossboneIsleNinthFloor, CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_FLOATING_LOGS_WEST),
+    SCENE_EXITS(CrossboneIslePier),
+    SCENE_EXIT(CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR, CrossboneIsleNinthFloor, CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_PIER),
+    SCENE_EXIT(CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP, PirateShip, PIRATE_SHIP_FROM_CROSSBONE_ISLE_PIER),
     SCENE_EXITS(PirateShip),
-    SCENE_EXIT(PIRATE_SHIP_TO_CROSSBONE_ISLE_4, CrossboneIsle4, CROSSBONE_ISLE_4_FROM_PIRATE_SHIP),
-    SCENE_EXITS(CrossboneIsle6),
-    SCENE_EXIT(CROSSBONE_ISLE_6_TO_CROSSBONE_ISLE_2, CrossboneIsle2, CROSSBONE_ISLE_2_FROM_CROSSBONE_ISLE_6),
-    SCENE_EXIT(CROSSBONE_ISLE_6_TO_CROSSBONE_ISLE_7, CrossboneIsle7, CROSSBONE_ISLE_7_FROM_CROSSBONE_ISLE_6),
-    SCENE_EXIT(CROSSBONE_ISLE_6_TO_CROSSBONE_ISLE_PILLAR_ROOMS_1_EAST, CrossboneIslePillarRooms1, CROSSBONE_ISLE_PILLAR_ROOMS_1_FROM_CROSSBONE_ISLE_6_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_6_TO_CROSSBONE_ISLE_PILLAR_ROOMS_1_WEST, CrossboneIslePillarRooms1, CROSSBONE_ISLE_PILLAR_ROOMS_1_FROM_CROSSBONE_ISLE_6_WEST),
-    SCENE_EXITS(CrossboneIsle7),
-    SCENE_EXIT(CROSSBONE_ISLE_7_TO_CROSSBONE_ISLE_6, CrossboneIsle6, CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_7),
-    SCENE_EXIT(CROSSBONE_ISLE_7_TO_CROSSBONE_ISLE_8, CrossboneIsle8, CROSSBONE_ISLE_8_FROM_CROSSBONE_ISLE_7),
-    SCENE_EXIT(CROSSBONE_ISLE_7_TO_CROSSBONE_ISLE_PILLAR_ROOMS_2_EAST, CrossboneIslePillarRooms2, CROSSBONE_ISLE_PILLAR_ROOMS_2_FROM_CROSSBONE_ISLE_7_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_7_TO_CROSSBONE_ISLE_PILLAR_ROOMS_2_WEST, CrossboneIslePillarRooms2, CROSSBONE_ISLE_PILLAR_ROOMS_2_FROM_CROSSBONE_ISLE_7_WEST),
-    SCENE_EXITS(CrossboneIsle8),
-    SCENE_EXIT(CROSSBONE_ISLE_8_TO_CROSSBONE_ISLE_7, CrossboneIsle7, CROSSBONE_ISLE_7_FROM_CROSSBONE_ISLE_8),
-    SCENE_EXIT(CROSSBONE_ISLE_8_TO_CROSSBONE_ISLE_9, CrossboneIsle9, CROSSBONE_ISLE_9_FROM_CROSSBONE_ISLE_8),
-    SCENE_EXIT(CROSSBONE_ISLE_8_TO_CROSSBONE_ISLE_KEYS_EAST, CrossboneIsleKeys, CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_8_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_8_TO_CROSSBONE_ISLE_KEYS_WEST, CrossboneIsleKeys, CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_8_WEST),
-    SCENE_EXITS(CrossboneIsle9),
-    SCENE_EXIT(CROSSBONE_ISLE_9_TO_CROSSBONE_ISLE_8, CrossboneIsle8, CROSSBONE_ISLE_8_FROM_CROSSBONE_ISLE_9),
-    SCENE_EXIT(CROSSBONE_ISLE_9_TO_CROSSBONE_ISLE_10, CrossboneIsle10, CROSSBONE_ISLE_10_FROM_CROSSBONE_ISLE_9),
-    SCENE_EXIT(CROSSBONE_ISLE_9_TO_CROSSBONE_ISLE_PLATFORM_ROOMS_2_EAST, CrossboneIslePlatformRooms2, CROSSBONE_ISLE_PLATFORM_ROOMS_2_FROM_CROSSBONE_ISLE_9_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_9_TO_CROSSBONE_ISLE_PLATFORM_ROOMS_2_WEST, CrossboneIslePlatformRooms2, CROSSBONE_ISLE_PLATFORM_ROOMS_2_FROM_CROSSBONE_ISLE_9_WEST),
-    SCENE_EXITS(CrossboneIsle10),
-    SCENE_EXIT(CROSSBONE_ISLE_10_TO_CROSSBONE_ISLE_9, CrossboneIsle9, CROSSBONE_ISLE_9_FROM_CROSSBONE_ISLE_10),
-    SCENE_EXIT(CROSSBONE_ISLE_10_TO_CROSSBONE_ISLE_11, CrossboneIsle11, CROSSBONE_ISLE_11_FROM_CROSSBONE_ISLE_10),
-    SCENE_EXIT(CROSSBONE_ISLE_10_TO_CROSSBONE_ISLE_FLOODGATE_EAST, CrossboneIsleFloodgate, CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_10_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_10_TO_CROSSBONE_ISLE_FLOODGATE_WEST, CrossboneIsleFloodgate, CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_10_WEST),
-    SCENE_EXITS(CrossboneIsle11),
-    SCENE_EXIT(CROSSBONE_ISLE_11_TO_CROSSBONE_ISLE_10, CrossboneIsle10, CROSSBONE_ISLE_10_FROM_CROSSBONE_ISLE_11),
-    SCENE_EXIT(CROSSBONE_ISLE_11_TO_CROSSBONE_ISLE_12, CrossboneIsle12, CROSSBONE_ISLE_12_FROM_CROSSBONE_ISLE_11),
-    SCENE_EXIT(CROSSBONE_ISLE_11_TO_CROSSBONE_ISLE_BANE_EAST, CrossboneIsleBane, CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_11_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_11_TO_CROSSBONE_ISLE_BANE_WEST, CrossboneIsleBane, CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_11_WEST),
-    SCENE_EXITS(CrossboneIsle12),
-    SCENE_EXIT(CROSSBONE_ISLE_12_TO_CROSSBONE_ISLE_11, CrossboneIsle11, CROSSBONE_ISLE_11_FROM_CROSSBONE_ISLE_12),
-    SCENE_EXIT(CROSSBONE_ISLE_12_TO_CROSSBONE_ISLE_13, CrossboneIsle13, CROSSBONE_ISLE_13_FROM_CROSSBONE_ISLE_12),
-    SCENE_EXIT(CROSSBONE_ISLE_12_TO_CROSSBONE_ISLE_PILLAR_ROOMS_4_EAST, CrossboneIslePillarRooms4, CROSSBONE_ISLE_PILLAR_ROOMS_4_FROM_CROSSBONE_ISLE_12_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_12_TO_CROSSBONE_ISLE_PILLAR_ROOMS_4_WEST, CrossboneIslePillarRooms4, CROSSBONE_ISLE_PILLAR_ROOMS_4_FROM_CROSSBONE_ISLE_12_WEST),
-    SCENE_EXITS(CrossboneIsle13),
-    SCENE_EXIT(CROSSBONE_ISLE_13_TO_CROSSBONE_ISLE_12, CrossboneIsle12, CROSSBONE_ISLE_12_FROM_CROSSBONE_ISLE_13),
-    SCENE_EXIT(CROSSBONE_ISLE_13_TO_CROSSBONE_ISLE_14, CrossboneIsle14, CROSSBONE_ISLE_14_FROM_CROSSBONE_ISLE_13),
-    SCENE_EXIT(CROSSBONE_ISLE_13_TO_CROSSBONE_ISLE_PILLAR_ROOMS_5_EAST, CrossboneIslePillarRooms5, CROSSBONE_ISLE_PILLAR_ROOMS_5_FROM_CROSSBONE_ISLE_13_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_13_TO_CROSSBONE_ISLE_PILLAR_ROOMS_5_WEST, CrossboneIslePillarRooms5, CROSSBONE_ISLE_PILLAR_ROOMS_5_FROM_CROSSBONE_ISLE_13_WEST),
-    SCENE_EXITS(CrossboneIsle14),
-    SCENE_EXIT(CROSSBONE_ISLE_14_TO_CROSSBONE_ISLE_13, CrossboneIsle13, CROSSBONE_ISLE_13_FROM_CROSSBONE_ISLE_14),
-    SCENE_EXIT(CROSSBONE_ISLE_14_TO_CROSSBONE_ISLE_4, CrossboneIsle4, CROSSBONE_ISLE_4_FROM_CROSSBONE_ISLE_14),
-    SCENE_EXIT(CROSSBONE_ISLE_14_TO_CROSSBONE_ISLE_3_EAST, CrossboneIsle3, CROSSBONE_ISLE_3_FROM_CROSSBONE_ISLE_14_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_14_TO_CROSSBONE_ISLE_3_WEST, CrossboneIsle3, CROSSBONE_ISLE_3_FROM_CROSSBONE_ISLE_14_WEST),
+    SCENE_EXIT(PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER, CrossboneIslePier, CROSSBONE_ISLE_PIER_FROM_PIRATE_SHIP),
+    SCENE_EXITS(CrossboneIsleFirstFloor),
+    SCENE_EXIT(CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_CAVE_ENTRANCE, CrossboneIsleCaveEntrance, CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE_FIRST_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR, CrossboneIsleSecondFloor, CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_FIRST_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_STEPPING_STONES_EAST, CrossboneIsleSteppingStones, CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_STEPPING_STONES_WEST, CrossboneIsleSteppingStones, CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_WEST),
+    SCENE_EXITS(CrossboneIsleSecondFloor),
+    SCENE_EXIT(CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_FIRST_FLOOR, CrossboneIsleFirstFloor, CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_SECOND_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_THIRD_FLOOR, CrossboneIsleThirdFloor, CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_SECOND_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_ICE_PILLARS_EAST, CrossboneIsleIcePillars, CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_SECOND_FLOOR_TO_CROSSBONE_ISLE_ICE_PILLARS_WEST, CrossboneIsleIcePillars, CROSSBONE_ISLE_ICE_PILLARS_FROM_CROSSBONE_ISLE_SECOND_FLOOR_WEST),
+    SCENE_EXITS(CrossboneIsleThirdFloor),
+    SCENE_EXIT(CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR, CrossboneIsleSecondFloor, CROSSBONE_ISLE_SECOND_FLOOR_FROM_CROSSBONE_ISLE_THIRD_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_FOURTH_FLOOR, CrossboneIsleFourthFloor, CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_THIRD_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_KEYS_EAST, CrossboneIsleKeys, CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_THIRD_FLOOR_TO_CROSSBONE_ISLE_KEYS_WEST, CrossboneIsleKeys, CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_WEST),
+    SCENE_EXITS(CrossboneIsleFourthFloor),
+    SCENE_EXIT(CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_THIRD_FLOOR, CrossboneIsleThirdFloor, CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_FOURTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_FIFTH_FLOOR, CrossboneIsleFifthFloor, CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_FOURTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_STATUES_EAST, CrossboneIsleStatues, CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_FOURTH_FLOOR_TO_CROSSBONE_ISLE_STATUES_WEST, CrossboneIsleStatues, CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_WEST),
+    SCENE_EXITS(CrossboneIsleFifthFloor),
+    SCENE_EXIT(CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FOURTH_FLOOR, CrossboneIsleFourthFloor, CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_FIFTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_SIXTH_FLOOR, CrossboneIsleSixthFloor, CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_FIFTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FLOODGATE_EAST, CrossboneIsleFloodgate, CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_FIFTH_FLOOR_TO_CROSSBONE_ISLE_FLOODGATE_WEST, CrossboneIsleFloodgate, CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_FIFTH_FLOOR_WEST),
+    SCENE_EXITS(CrossboneIsleSixthFloor),
+    SCENE_EXIT(CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_FIFTH_FLOOR, CrossboneIsleFifthFloor, CROSSBONE_ISLE_FIFTH_FLOOR_FROM_CROSSBONE_ISLE_SIXTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_SEVENTH_FLOOR, CrossboneIsleSeventhFloor, CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_SIXTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_BANE_EAST, CrossboneIsleBane, CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_SIXTH_FLOOR_TO_CROSSBONE_ISLE_BANE_WEST, CrossboneIsleBane, CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_WEST),
+    SCENE_EXITS(CrossboneIsleSeventhFloor),
+    SCENE_EXIT(CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_SIXTH_FLOOR, CrossboneIsleSixthFloor, CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_EIGHTH_FLOOR, CrossboneIsleEighthFloor, CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_STACKED_PILLARS_EAST, CrossboneIsleStackedPillars, CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_SEVENTH_FLOOR_TO_CROSSBONE_ISLE_STACKED_PILLARS_WEST, CrossboneIsleStackedPillars, CROSSBONE_ISLE_STACKED_PILLARS_FROM_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST),
+    SCENE_EXITS(CrossboneIsleEighthFloor),
+    SCENE_EXIT(CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_SEVENTH_FLOOR, CrossboneIsleSeventhFloor, CROSSBONE_ISLE_SEVENTH_FLOOR_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_NINTH_FLOOR, CrossboneIsleNinthFloor, CROSSBONE_ISLE_NINTH_FLOOR_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_DRAGON_STATUE_EAST, CrossboneIsleDragonStatue, CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_EIGHTH_FLOOR_TO_CROSSBONE_ISLE_DRAGON_STATUE_WEST, CrossboneIsleDragonStatue, CROSSBONE_ISLE_DRAGON_STATUE_FROM_CROSSBONE_ISLE_EIGHTH_FLOOR_WEST),
+    SCENE_EXITS(CrossboneIsleNinthFloor),
+    SCENE_EXIT(CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_EIGHTH_FLOOR, CrossboneIsleEighthFloor, CROSSBONE_ISLE_EIGHTH_FLOOR_FROM_CROSSBONE_ISLE_NINTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_PIER, CrossboneIslePier, CROSSBONE_ISLE_PIER_FROM_CROSSBONE_ISLE_NINTH_FLOOR),
+    SCENE_EXIT(CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_FLOATING_LOGS_EAST, CrossboneIsleFloatingLogs, CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_NINTH_FLOOR_TO_CROSSBONE_ISLE_FLOATING_LOGS_WEST, CrossboneIsleFloatingLogs, CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST),
     SCENE_EXITS_END,
 };
 
@@ -2202,8 +2209,8 @@ struct SceneEvent gCrossboneIsleEventsOther[] = {
 };
 
 struct SceneEvent gCrossboneIsleEvents2[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_2_TO_CROSSBONE_ISLE },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_2_TO_CROSSBONE_ISLE_6 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR },
     { SCENE_EVENTS_END },
 };
 
@@ -2218,7 +2225,7 @@ struct SceneEvent gCrossboneIsleEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 2, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT_SCRIPT(Event_BlowAwayThirdIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 3, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT_SCRIPT(Event_BlowAwayFourthIvy) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_WORLD_MAP },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_2 },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIslePillar) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIslePillar) },
     { 0x8413, 100, 0xec0, FIND_COINS(1) },
@@ -2231,8 +2238,8 @@ struct SceneEvent gCrossboneIsleEvents1[] = {
 };
 
 struct SceneEvent gCrossboneIsleEvents3[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_3_TO_CROSSBONE_ISLE_14_EAST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_3_TO_CROSSBONE_ISLE_14_WEST },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST },
     { TOUCH_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopWest) },
     { TOUCH_WALKING_INTO(FACING_EAST), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopEast) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 42, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouth) },
@@ -2306,13 +2313,14 @@ struct SceneEvent gCrossboneIsleEvents3[] = {
 // clang-format on
 
 struct SceneEvent gCrossboneIsleEvents4[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_4_TO_CROSSBONE_ISLE_14},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_4_TO_PIRATE_SHIP},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+     CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gCrossboneIsleEvents5[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, PIRATE_SHIP_TO_CROSSBONE_ISLE_4},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER},
     {EVENT_TOUCH, 10, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
      EVENT_SCRIPT(Event_FightDeadbeard)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS,

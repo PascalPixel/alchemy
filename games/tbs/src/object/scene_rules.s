@@ -326,7 +326,7 @@ gParty_PairResolveRules:
 	.global gBattle_BackdropScenes
 gBattle_BackdropScenes:
 	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeGate, ValeKraden
-	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeakHydrosStatue, CrossboneIslePillarRooms1
+	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeakHydrosStatue, CrossboneIsleSteppingStones
 	backdrop InteriorBackdrop, VaultInteriors
 	backdrop GomaCaveBackdrop, GomaCaveEntrance
 	backdrop GomaCaveBackdrop, GomaCavePond, GomaCavePillar, GomaCaveStream, KolimaTunnel
@@ -336,7 +336,7 @@ gBattle_BackdropScenes:
 	backdrop GomaCaveBackdrop, BilibinCaveEntrance, BilibinCaveRapier, BilibinCaveIce
 	backdrop MercuryLighthouseBackdrop, MercuryLighthouseEntrance, MercuryLighthouseLower, MercuryLighthouseMiddle, MercuryLighthouseUpper, MercuryLighthouseExterior
 	backdrop MercuryLighthouseAerieBackdrop, MercuryLighthouseAerie
-	backdrop ImilFuchinFallsBackdrop, FuchinFallsCaveEntrance, FuchinFallsCaveZephyr, FuchinFallsCaveDragonsEye, FuchinFallsCaveArcticBlade, FuchinFallsCaveOrbOfForce, FuchinFallsCaveDragonStatue, CrossboneIsle3
+	backdrop ImilFuchinFallsBackdrop, FuchinFallsCaveEntrance, FuchinFallsCaveZephyr, FuchinFallsCaveDragonsEye, FuchinFallsCaveArcticBlade, FuchinFallsCaveOrbOfForce, FuchinFallsCaveDragonStatue, CrossboneIsleFloatingLogs
 	backdrop MogallForestBackdrop, MogallForestSign, MogallForestQuartz, MogallForestKillerApe
 	backdrop AltinPeakBackdrop, AltinPeakFirstWaterBeast, AltinPeakRailTunnel, AltinPeakSecondWaterBeast, AltinPeakSouthEntrance, AltinPeakThirdWaterBeast, AltinPeakPool, AltinPeakSpritz, AltinPeakJunction, AltinPeakFallingRocks, AltinPeakWestExit
 	backdrop LamakanDesertBackdrop, LamakanDesertEast, LamakanDesertSmog, LamakanDesertManticore
@@ -346,7 +346,7 @@ gBattle_BackdropScenes:
 	backdrop AltmillerCaveBackdrop, AltmillerCave1, AltmillerCave2, AltmillerCave3, AltmillerCave4, AltmillerCave5, AltmillerCave6
 	backdrop AltmillerCaveBackdrop, LunpaFortress1, LunpaFortress2, LunpaFortress3, LunpaFortress4
 	backdrop SuhallaDesertBackdrop, SuhallaDesert1, SuhallaDesert2
-	backdrop CrossboneIsleCaveBackdrop, CrossboneIsle6, CrossboneIsle7, CrossboneIsle8, CrossboneIsle9, CrossboneIsle10, CrossboneIsle11, CrossboneIsle12, CrossboneIsle13, CrossboneIsle14
+	backdrop CrossboneIsleCaveBackdrop, CrossboneIsleFirstFloor, CrossboneIsleSecondFloor, CrossboneIsleThirdFloor, CrossboneIsleFourthFloor, CrossboneIsleFifthFloor, CrossboneIsleSixthFloor, CrossboneIsleSeventhFloor, CrossboneIsleEighthFloor, CrossboneIsleNinthFloor
 	backdrop PirateShipBackdrop, PirateShip
 	backdrop SuhallaGateBackdrop, SuhallaGate1, SuhallaGate2
 	backdrop GomaCaveBackdrop, GatewayCave

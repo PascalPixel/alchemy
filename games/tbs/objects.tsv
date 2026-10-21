@@ -886,14 +886,14 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3b2	text	games/tbs/src/scene/crossbone_isle
 3b2	text	games/tbs/src/scene/import/crossbone_isle
 3b2	text	libgcc.a:_call_via_rX
-3b3	text	games/tbs/src/scene/entry/crossbone_isle_pillar_rooms
-3b3	text	games/tbs/src/scene/crossbone_isle_pillar_rooms
-3b3	text	games/tbs/src/scene/import/crossbone_isle_pillar_rooms
+3b3	text	games/tbs/src/scene/entry/crossbone_isle_stepping_stones
+3b3	text	games/tbs/src/scene/crossbone_isle_stepping_stones
+3b3	text	games/tbs/src/scene/import/crossbone_isle_stepping_stones
 3b3	text	libgcc.a:_call_via_rX
-3b3	bss	games/tbs/src/scene/crossbone_isle_pillar_rooms	.bss
-3b4	text	games/tbs/src/scene/entry/crossbone_isle_platform_rooms
-3b4	text	games/tbs/src/scene/crossbone_isle_platform_rooms
-3b4	text	games/tbs/src/scene/import/crossbone_isle_platform_rooms
+3b3	bss	games/tbs/src/scene/crossbone_isle_stepping_stones	.bss
+3b4	text	games/tbs/src/scene/entry/crossbone_isle_keys
+3b4	text	games/tbs/src/scene/crossbone_isle_keys
+3b4	text	games/tbs/src/scene/import/crossbone_isle_keys
 3b4	text	libgcc.a:_call_via_rX
 3b5	text	games/tbs/src/scene/entry/tolbi
 3b5	text	games/tbs/src/scene/tolbi

@@ -1,23 +1,24 @@
 /// @file
 /// Three of the side rooms of Crossbone Isle Cave, the cave beneath Crossbone
-/// Isle, each opening off one of its corridor's nine rooms (crossbone_isle.c)
-/// as the pillar puzzles do (crossbone_isle_pillar_rooms.c), with four chests
-/// each. All three take the area name Crossbone Isle Cave. In the order the
-/// party meets them:
+/// Isle, each opening off one of the nine floors the cave descends through
+/// (crossbone_isle.c) as the other five do (crossbone_isle_stepping_stones.c),
+/// with four chests each. All three take the area name Crossbone Isle Cave. In
+/// the order the party meets them:
 ///
-/// - CrossboneIsleKeys (scene 117), off the third corridor room, a
+/// - CrossboneIsleKeys (scene 117), off the third floor, a
 ///   room of locked doors. Four Blue Keys lie about it until Catch takes them,
 ///   and a Red Key shows only while Reveal lasts. Walking into one of the four
 ///   blue doors in a row with a Blue Key opens it and uses the key up (four
 ///   flags from FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN), and the Red Key
 ///   opens the red door beyond them (FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN). The
 ///   keys taken and the doors opened are restored on entry.
-/// - CrossboneIslePlatformRooms2 (scene 118), off the fourth, where five
-///   pursuers wait. As the leader crosses each one's stretch of the room it
-///   steps out after him unless he is hidden by Cloak, and goes back home
-///   once he is past (FLAG_SCENE_TEMP_20 while one is after him); Halt stops
-///   one where it stands, and Reveal clears the translucent layer over the
-///   room while it lasts.
+/// - CrossboneIsleStatues (scene 118), off the fourth, where five
+///   statues of a robed woman wait, lit in circles by braziers in the dark. As
+///   the leader crosses each one's stretch of the room it steps out after him
+///   unless he is hidden by Cloak, and goes back home once he is past
+///   (FLAG_SCENE_TEMP_20 while one is after him); Halt stops one where it
+///   stands, and Reveal clears the translucent layer over the room while it
+///   lasts.
 /// - CrossboneIsleBane (scene 120), off the sixth, where Bane, a
 ///   Venus Djinni, hides. Five pillars to push or move with Move, a ladder and
 ///   a puddle that Frost freezes into a pillar of ice make a way across the
@@ -31,7 +32,7 @@
 #include "global_cells.h"
 #include "scene_ids.h"
 #include "unit/import.h"
-#include "unit/scene/crossbone_isle_platform_rooms.h"
+#include "unit/scene/crossbone_isle_keys.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
 #include "unit/field/field.h"
@@ -85,14 +86,14 @@
 #endif
 
 static void Event_PushFirstPillar(void);
-static void CrossboneIslePlatformRooms_FollowSecondPillar(void);
-static void CrossboneIslePlatformRooms_PositionSecondPillarMapObject(void);
-static void CrossboneIslePlatformRooms_InitializeScene1(void);
-static void CrossboneIslePlatformRooms_InitializeScene2(void);
-static void CrossboneIslePlatformRooms_InitializeScene3(void);
+static void CrossboneIsleKeys_FollowSecondPillar(void);
+static void CrossboneIsleKeys_PositionSecondPillarMapObject(void);
+static void CrossboneIsleKeys_InitializeKeys(void);
+static void CrossboneIsleKeys_InitializeStatues(void);
+static void CrossboneIsleKeys_InitializeBane(void);
 
 /// CrossboneIsleKeys's placed actors, numbered in the order of
-/// gCrossboneIslePlatformRoomsPlacements1: the keys, drawn as their item icons
+/// gCrossboneIsleKeysPlacements1: the keys, drawn as their item icons
 /// (Colosso_ShowItemIcon) until Catch takes them.
 enum CrossboneIsleKeysActor {
   ACTOR_FIRST_BLUE_KEY = ACTOR_FIRST_PLACED,
@@ -102,10 +103,11 @@ enum CrossboneIsleKeysActor {
   ACTOR_RED_KEY ///< shown only while Reveal lasts
 };
 
-/// CrossboneIslePlatformRooms2's placed actors, numbered in the order of
-/// gCrossboneIslePlatformRoomsPlacements2: the five pursuers, sprite 0x1f4,
-/// each waiting at its home for the leader to cross its stretch of the room.
-enum CrossboneIslePlatformRooms2Actor {
+/// CrossboneIsleStatues's placed actors, numbered in the order of
+/// gCrossboneIsleKeysPlacements2: the five statues that pursue the
+/// leader, sprite 0x1f4, each waiting at its home for the leader to cross its
+/// stretch of the room.
+enum CrossboneIsleStatuesActor {
   ACTOR_FIRST_PURSUER = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_PURSUER,
   ACTOR_THIRD_PURSUER,
@@ -113,17 +115,17 @@ enum CrossboneIslePlatformRooms2Actor {
   ACTOR_FIFTH_PURSUER
 };
 
-/// The events CrossboneIslePlatformRooms2's per-frame checks raise when the
+/// The events CrossboneIsleStatues's per-frame checks raise when the
 /// leader crosses the first, second or fifth pursuer's stretch of the room.
 /// The third and fourth chases start from touch events instead.
-enum CrossboneIslePlatformRooms2Trigger {
+enum CrossboneIsleStatuesTrigger {
   TRIGGER_FIRST_CHASE = 91,
   TRIGGER_SECOND_CHASE = 92,
   TRIGGER_FIFTH_CHASE = 96
 };
 
 /// CrossboneIsleBane's placed actors, numbered in the order of
-/// gCrossboneIslePlatformRoomsPlacements3.
+/// gCrossboneIsleKeysPlacements3.
 enum CrossboneIsleBaneActor {
   /// The five pillars, sprite 0xd3 as Goma Cave's, pushed by walking into them
   /// or with Move.
@@ -149,7 +151,7 @@ enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 // CrossboneIsleBane's temporary flags: FLAG_SCENE_TEMP_00 the puddle
 // is frozen, 01 to 05 end Move on each pillar, 06 the chest on the second
 // pillar has reached the ladder, 07 selects the ladder cell's other attributes.
-// CrossboneIslePlatformRooms2 keeps FLAG_SCENE_TEMP_20 while a pursuer is
+// CrossboneIsleStatues keeps FLAG_SCENE_TEMP_20 while a pursuer is
 // after the leader.
 
 /// Publishes the next raised-event trigger.
@@ -176,43 +178,43 @@ static void Event_BaneJoins(void) {
 }
 
 /// Unused: an empty function nothing calls.
-UNUSED static void CrossboneIslePlatformRooms_UnusedHook(void) {}
+UNUSED static void CrossboneIsleKeys_UnusedHook(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
-    return gCrossboneIslePlatformRoomsEntrances1;
+    return gCrossboneIsleKeysEntrances1;
   }
-  if (selector == (s32)&SceneId_CrossboneIslePlatformRooms2) {
-    return gCrossboneIslePlatformRoomsEntrances2;
+  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
+    return gCrossboneIsleKeysEntrances2;
   }
   if (selector == (s32)&SceneId_CrossboneIsleBane) {
-    return gCrossboneIslePlatformRoomsEntrances3;
+    return gCrossboneIsleKeysEntrances3;
   }
-  return gCrossboneIslePlatformRoomsEntrancesOther;
+  return gCrossboneIsleKeysEntrancesOther;
 }
 
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-const u32 *Scene_GetExits(void) { return gCrossboneIslePlatformRoomsExits; }
+const u32 *Scene_GetExits(void) { return gCrossboneIsleKeysExits; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
-    return gCrossboneIslePlatformRoomsPlacements1;
+    return gCrossboneIsleKeysPlacements1;
   }
-  if (selector == (s32)&SceneId_CrossboneIslePlatformRooms2) {
-    return gCrossboneIslePlatformRoomsPlacements2;
+  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
+    return gCrossboneIsleKeysPlacements2;
   }
   if (selector == (s32)&SceneId_CrossboneIsleBane) {
-    return gCrossboneIslePlatformRoomsPlacements3;
+    return gCrossboneIsleKeysPlacements3;
   }
-  return gCrossboneIslePlatformRoomsPlacementsOther;
+  return gCrossboneIsleKeysPlacementsOther;
 }
 
-/// Halt on a pursuer in CrossboneIslePlatformRooms2: nothing beyond the
+/// Halt on a pursuer in CrossboneIsleStatues: nothing beyond the
 /// Psynergy's own effect, which keeps it from stepping out.
 static void Event_HaltPursuer(void) {}
 
@@ -220,11 +222,11 @@ static void Event_HaltPursuer(void) {}
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
-static void CrossboneIslePlatformRooms_FaceBaneTowardLeader(
-    union FieldObject *fieldObject) {
+static void
+CrossboneIsleKeys_FaceBaneTowardLeader(union FieldObject *fieldObject) {
 #else
-static s32 CrossboneIslePlatformRooms_FaceBaneTowardLeader(
-    union FieldObject *fieldObject) {
+static s32
+CrossboneIsleKeys_FaceBaneTowardLeader(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = &fieldObject->actor;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -314,7 +316,7 @@ static void Event_BaneSecondEscape(void) {
       ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)spinningDjinni,
                                        0);
       Engine_ObjectSetScript(spinningDjinni,
-                             gCrossboneIslePlatformRooms_BaneSquashScript);
+                             gCrossboneIsleKeys_BaneSquashScript);
       EV_END();
     }
   }
@@ -365,10 +367,10 @@ static void Event_BaneLastEscape(void) {
     Actor_SetAttachedEffect(ACTOR_BANE, 0x100);
     djinni = Object_GetById(ACTOR_BANE);
 #ifdef UBFIX
-    djinni->update = CrossboneIslePlatformRooms_FaceBaneTowardLeader;
+    djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
-    djinni->update = (void (*)(
-        union FieldObject *))CrossboneIslePlatformRooms_FaceBaneTowardLeader;
+    djinni->update =
+        (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     EV_END();
   }
@@ -396,7 +398,7 @@ static void Event_BaneKeepsAway(void) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->speed;
       targetByteOffset -= 30;
-      targets = (const u8 *)gCrossboneIslePlatformRooms_BaneWalkTargets;
+      targets = (const u8 *)gCrossboneIsleKeys_BaneWalkTargets;
       // The table stores consecutive signed X/Z pixel pairs.
       targetByteOffset *= 2 * sizeof(s32);
       zByteOffset = targetByteOffset + sizeof(s32);
@@ -417,15 +419,15 @@ const struct SceneEvent *Scene_GetEvents(void) {
   s16 selector = gGameState.scene;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
-    return gCrossboneIslePlatformRoomsEvents1;
+    return gCrossboneIsleKeysEvents1;
   }
-  if (selector == (s32)&SceneId_CrossboneIslePlatformRooms2) {
-    return gCrossboneIslePlatformRoomsEvents2;
+  if (selector == (s32)&SceneId_CrossboneIsleStatues) {
+    return gCrossboneIsleKeysEvents2;
   }
   if (selector == (s32)&SceneId_CrossboneIsleBane) {
-    return gCrossboneIslePlatformRoomsEvents3;
+    return gCrossboneIsleKeysEvents3;
   }
-  return gCrossboneIslePlatformRoomsEventsOther;
+  return gCrossboneIsleKeysEventsOther;
 }
 
 /// Unused: walking south into CrossboneIsleKeys's third or fourth blue door
@@ -438,7 +440,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 static void Event_UnusedCheckLeaderAhead(void) { Engine_LeaderCheckAhead(); }
 
 /// Opens the selected blue door, playing its opening when asked.
-static void CrossboneIslePlatformRooms_OpenBlueDoor(s32 passageInfo) {
+static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
   s32 columnOffset = (passageInfo & PASSAGE_INDEX_MASK) * 4;
   s32 tileColumn = columnOffset + 77;
   s32 collisionColumn = columnOffset + 13;
@@ -456,7 +458,7 @@ static void CrossboneIslePlatformRooms_OpenBlueDoor(s32 passageInfo) {
 }
 
 /// Opens the red door, playing its opening when asked.
-static void CrossboneIslePlatformRooms_OpenRedDoor(s32 passageInfo) {
+static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
   if ((passageInfo & PASSAGE_PLAY_OPENING) != 0) {
     SE(SE_GATE_MOVE);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
@@ -479,7 +481,7 @@ static void Event_UseRedKey(void) {
     if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
       if (PartyInventory_FindOwner(ITEM_RED_KEY) != -1) {
         FLAG_SET(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN);
-        CrossboneIslePlatformRooms_OpenRedDoor(PASSAGE_PLAY_OPENING);
+        CrossboneIsleKeys_OpenRedDoor(PASSAGE_PLAY_OPENING);
         PartyInventory_Remove(ITEM_RED_KEY);
       }
     }
@@ -488,7 +490,7 @@ static void Event_UseRedKey(void) {
 
 /// Facing a blue door with a Blue Key: the door rumbles open, and the key is
 /// used up.
-static void CrossboneIslePlatformRooms_UseBlueKey(s32 doorIndex) {
+static void CrossboneIsleKeys_UseBlueKey(s32 doorIndex) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 flag;
 
@@ -503,19 +505,15 @@ static void CrossboneIslePlatformRooms_UseBlueKey(s32 doorIndex) {
     return;
   }
   Engine_GameFlagSet(flag);
-  CrossboneIslePlatformRooms_OpenBlueDoor(PASSAGE_PLAY_OPENING | doorIndex);
+  CrossboneIsleKeys_OpenBlueDoor(PASSAGE_PLAY_OPENING | doorIndex);
   PartyInventory_Remove(ITEM_BLUE_KEY);
 }
 
 /// Touching CrossboneIsleKeys's first blue door (trigger 51).
-static void Event_OpenFirstBlueDoor(void) {
-  CrossboneIslePlatformRooms_UseBlueKey(0);
-}
+static void Event_OpenFirstBlueDoor(void) { CrossboneIsleKeys_UseBlueKey(0); }
 
 /// Touching CrossboneIsleKeys's second blue door (trigger 52).
-static void Event_OpenSecondBlueDoor(void) {
-  CrossboneIslePlatformRooms_UseBlueKey(1);
-}
+static void Event_OpenSecondBlueDoor(void) { CrossboneIsleKeys_UseBlueKey(1); }
 
 /// Touching CrossboneIsleKeys's third blue door (trigger 53);
 /// pressing on it from the north looks ahead every dozen blocked steps.
@@ -524,7 +522,7 @@ static void Event_OpenThirdBlueDoor(void) {
   s16 *blockedSteps;
   s32 resetSteps;
 
-  CrossboneIslePlatformRooms_UseBlueKey(2);
+  CrossboneIsleKeys_UseBlueKey(2);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
     blockedSteps = &gEventWork->blockedSteps;
@@ -543,7 +541,7 @@ static void Event_OpenFourthBlueDoor(void) {
   s16 *blockedSteps;
   s32 resetSteps;
 
-  CrossboneIslePlatformRooms_UseBlueKey(3);
+  CrossboneIsleKeys_UseBlueKey(3);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
     blockedSteps = &gEventWork->blockedSteps;
@@ -576,9 +574,8 @@ static void Event_HideRedKey(void) {
 }
 
 /// Collects the selected key, hides its actor and remembers it was taken.
-static inline void CrossboneIslePlatformRooms_CollectKey(s32 actorId,
-                                                         s32 itemId,
-                                                         s32 collectedFlag) {
+static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
+                                                s32 collectedFlag) {
   Engine_ItemShowFound(itemId, 3);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_PartyGiveItem(itemId, 0);
@@ -588,35 +585,31 @@ static inline void CrossboneIslePlatformRooms_CollectKey(s32 actorId,
 
 /// Catch on CrossboneIsleKeys's first Blue Key: the party gets it.
 static void Event_CatchFirstBlueKey(void) {
-  CrossboneIslePlatformRooms_CollectKey(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY,
-                                        0xee7);
+  CrossboneIsleKeys_CollectKey(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY, 0xee7);
 }
 
 /// Catch on CrossboneIsleKeys's second Blue Key: the party gets it.
 static void Event_CatchSecondBlueKey(void) {
-  CrossboneIslePlatformRooms_CollectKey(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY,
-                                        0xee8);
+  CrossboneIsleKeys_CollectKey(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY, 0xee8);
 }
 
 /// Catch on CrossboneIsleKeys's third Blue Key: the party gets it.
 static void Event_CatchThirdBlueKey(void) {
-  CrossboneIslePlatformRooms_CollectKey(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY,
-                                        0xee9);
+  CrossboneIsleKeys_CollectKey(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY, 0xee9);
 }
 
 /// Catch on CrossboneIsleKeys's fourth Blue Key: the party gets it.
 static void Event_CatchFourthBlueKey(void) {
-  CrossboneIslePlatformRooms_CollectKey(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY,
-                                        0xeea);
+  CrossboneIsleKeys_CollectKey(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY, 0xeea);
 }
 
 /// Catch on CrossboneIsleKeys's revealed Red Key: the party gets it.
 static void Event_CatchRedKey(void) {
-  CrossboneIslePlatformRooms_CollectKey(ACTOR_RED_KEY, ITEM_RED_KEY, 0xeeb);
+  CrossboneIsleKeys_CollectKey(ACTOR_RED_KEY, ITEM_RED_KEY, 0xeeb);
 }
 
 /// Starts the first chase when an uncloaked leader enters its area.
-static void CrossboneIslePlatformRooms_CheckFirstPursuerTrigger(void) {
+static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
@@ -630,7 +623,7 @@ static void CrossboneIslePlatformRooms_CheckFirstPursuerTrigger(void) {
   }
 }
 
-/// Raised in CrossboneIslePlatformRooms2 (91): the first pursuer follows the
+/// Raised in CrossboneIsleStatues (91): the first pursuer follows the
 /// leader, then goes back home.
 static void Event_DodgeFirstPursuer(void) {
   struct FieldActor *leader;
@@ -657,7 +650,7 @@ static void Event_DodgeFirstPursuer(void) {
 }
 
 /// Starts the second chase when the leader enters column ten.
-static void CrossboneIslePlatformRooms_CheckSecondPursuerTrigger(void) {
+static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
@@ -671,7 +664,7 @@ static void CrossboneIslePlatformRooms_CheckSecondPursuerTrigger(void) {
   }
 }
 
-/// Raised in CrossboneIslePlatformRooms2 (92): the second pursuer follows the
+/// Raised in CrossboneIsleStatues (92): the second pursuer follows the
 /// leader, then goes back home.
 static void Event_DodgeSecondPursuer(void) {
   struct FieldActor *leader;
@@ -698,7 +691,7 @@ static void Event_DodgeSecondPursuer(void) {
 }
 
 /// Moves a pursuer to the leader column and remembers its last column.
-static void CrossboneIslePlatformRooms_TrackPursuerColumn(s32 pursuerIndex) {
+static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
 
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
@@ -707,14 +700,14 @@ static void CrossboneIslePlatformRooms_TrackPursuerColumn(s32 pursuerIndex) {
 
   if (gGameState.pausedObject == pursuerId)
     return;
-  if (column == gCrossboneIslePlatformRooms_SlotColumns[pursuerIndex])
+  if (column == gCrossboneIsleKeys_SlotColumns[pursuerIndex])
     return;
 
   Engine_ActorSetSpeed(pursuerId, PIXELS(9) / 2, PIXELS(9) / 4);
   Engine_AudioPlayCue(SE_188);
   Engine_ActorSetDestination(pursuerId, (column << 4) + 8, 360);
 
-  gCrossboneIslePlatformRooms_SlotColumns[pursuerIndex] = column;
+  gCrossboneIsleKeys_SlotColumns[pursuerIndex] = column;
 
   if (row <= 22) {
     Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
@@ -722,24 +715,24 @@ static void CrossboneIslePlatformRooms_TrackPursuerColumn(s32 pursuerIndex) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 }
 
-/// Touching trigger 53 in CrossboneIslePlatformRooms2: the third pursuer keeps
+/// Touching trigger 53 in CrossboneIsleStatues: the third pursuer keeps
 /// to the leader's column.
 static void Event_TrackThirdPursuerColumn(void) {
-  CrossboneIslePlatformRooms_TrackPursuerColumn(0);
+  CrossboneIsleKeys_TrackPursuerColumn(0);
 }
 
-/// Touching trigger 54 in CrossboneIslePlatformRooms2: the fourth pursuer
+/// Touching trigger 54 in CrossboneIsleStatues: the fourth pursuer
 /// keeps to the leader's column.
 static void Event_TrackFourthPursuerColumn(void) {
-  CrossboneIslePlatformRooms_TrackPursuerColumn(1);
+  CrossboneIsleKeys_TrackPursuerColumn(1);
 }
 
 /// Unused: tracks the fifth pursuer's column; nothing calls it.
-UNUSED static void CrossboneIslePlatformRooms_TrackFifthPursuerColumn(void) {
-  CrossboneIslePlatformRooms_TrackPursuerColumn(2);
+UNUSED static void CrossboneIsleKeys_TrackFifthPursuerColumn(void) {
+  CrossboneIsleKeys_TrackPursuerColumn(2);
 }
 
-/// Touching trigger 61 in CrossboneIslePlatformRooms2: the third pursuer
+/// Touching trigger 61 in CrossboneIsleStatues: the third pursuer
 /// follows the leader, then goes back home.
 static void Event_DodgeThirdPursuer(void) {
   struct FieldActor *leader;
@@ -767,7 +760,7 @@ static void Event_DodgeThirdPursuer(void) {
   }
 }
 
-/// Touching trigger 62 in CrossboneIslePlatformRooms2: the fourth pursuer lines
+/// Touching trigger 62 in CrossboneIsleStatues: the fourth pursuer lines
 /// up and goes after the leader.
 static void Event_DodgeFourthPursuer(void) {
   struct FieldActor *leader;
@@ -811,7 +804,7 @@ static void Event_DodgeFourthPursuer(void) {
 }
 
 /// Starts the fifth chase when the leader enters column nineteen.
-static void CrossboneIslePlatformRooms_CheckFifthPursuerTrigger(void) {
+static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
@@ -826,7 +819,7 @@ static void CrossboneIslePlatformRooms_CheckFifthPursuerTrigger(void) {
   }
 }
 
-/// Raised in CrossboneIslePlatformRooms2 (96): the fifth pursuer follows the
+/// Raised in CrossboneIsleStatues (96): the fifth pursuer follows the
 /// leader, then goes back home.
 static void Event_DodgeFifthPursuer(void) {
   struct FieldActor *leader;
@@ -851,7 +844,7 @@ static void Event_DodgeFifthPursuer(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_20);
 }
 
-/// Reveal in CrossboneIslePlatformRooms2: the translucent layer over the room
+/// Reveal in CrossboneIsleStatues: the translucent layer over the room
 /// vanishes while it lasts.
 static void Event_BeginRevealBlend(void) {
   u32 coefficient = 208;
@@ -860,7 +853,7 @@ static void Event_BeginRevealBlend(void) {
   REG_BLDALPHA = coefficient;
 }
 
-/// Reveal wears off in CrossboneIslePlatformRooms2: the translucent layer
+/// Reveal wears off in CrossboneIsleStatues: the translucent layer
 /// returns.
 static void Event_EndRevealBlend(void) {
   u16 value = 0x0607;
@@ -907,7 +900,7 @@ static void Event_UseLadder(void) {
 }
 
 /// Unused: an empty function nothing calls.
-UNUSED static void CrossboneIslePlatformRooms_UnusedCallback(void) {}
+UNUSED static void CrossboneIsleKeys_UnusedCallback(void) {}
 
 /// Frost on CrossboneIsleBane's puddle: it freezes into a pillar of
 /// ice the party can stand on.
@@ -938,7 +931,7 @@ static void Event_LookAheadOrPushFirstPillar(void) {
 }
 
 /// Restores the first pillar row before applying its current footprint.
-static void CrossboneIslePlatformRooms_RestoreFirstPillarTerrain(void) {
+static void CrossboneIsleKeys_RestoreFirstPillarTerrain(void) {
   Map_CopyCellAttributes(57, 42, 1, 1, 40, 42);
   Map_CopyCellAttributes(57, 42, 1, 1, 41, 42);
   Map_CopyCellAttributes(58, 42, 1, 1, 42, 42);
@@ -948,21 +941,21 @@ static void CrossboneIslePlatformRooms_RestoreFirstPillarTerrain(void) {
 }
 
 /// Restores support under the first pillar at the eastern cell.
-static void CrossboneIslePlatformRooms_RestoreEastUnderfootCell(void) {
+static void CrossboneIsleKeys_RestoreEastUnderfootCell(void) {
 
   Map_CopyCellAttributes(58, 41, 1, 1, 42, 42);
   Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = 2;
 }
 
 /// Restores support under the first pillar at the middle cell.
-static void CrossboneIslePlatformRooms_RestoreMiddleUnderfootCell(void) {
+static void CrossboneIsleKeys_RestoreMiddleUnderfootCell(void) {
 
   Map_CopyCellAttributes(44, 42, 1, 1, 41, 42);
   Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = 2;
 }
 
 /// Restores support under the first pillar at the western cell.
-static void CrossboneIslePlatformRooms_RestoreWestUnderfootCell(void) {
+static void CrossboneIsleKeys_RestoreWestUnderfootCell(void) {
 
   Map_CopyCellAttributes(39, 42, 1, 1, 40, 42);
   Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = 2;
@@ -980,15 +973,15 @@ static void Event_UpdateFirstPillarTerrain(void) {
   if (height == 0) {
     Object_GetById(ACTOR_FIRST_PILLAR)->priorityFlags = 2;
   }
-  CrossboneIslePlatformRooms_RestoreFirstPillarTerrain();
+  CrossboneIsleKeys_RestoreFirstPillarTerrain();
   lowered = 0;
   Object_GetById(ACTOR_FIRST_PILLAR)->motionFlags = 3;
   if (column == 40) {
-    CrossboneIslePlatformRooms_RestoreWestUnderfootCell();
+    CrossboneIsleKeys_RestoreWestUnderfootCell();
   } else if (column == 42) {
-    CrossboneIslePlatformRooms_RestoreEastUnderfootCell();
+    CrossboneIsleKeys_RestoreEastUnderfootCell();
   } else if (column == 41) {
-    CrossboneIslePlatformRooms_RestoreMiddleUnderfootCell();
+    CrossboneIsleKeys_RestoreMiddleUnderfootCell();
   } else if (column == 39) {
     LiftPillar(column, lowered);
   } else if (column == 38) {
@@ -1019,7 +1012,7 @@ static void Event_PushFirstPillar(void) {
     }
   }
 
-  CrossboneIslePlatformRooms_RestoreFirstPillarTerrain();
+  CrossboneIsleKeys_RestoreFirstPillarTerrain();
   StagedActor_AdvancePair();
   Event_UpdateFirstPillarTerrain();
 }
@@ -1027,15 +1020,15 @@ static void Event_PushFirstPillar(void) {
 /// Leaves the chest where the second pillar has reached the ladder: the chest's
 /// actor is hidden, its search marker takes its place and the ladder cell is
 /// restored.
-static void CrossboneIslePlatformRooms_ReleaseSecondPillarChest(void) {
-  Scheduler_RemoveCallback(CrossboneIslePlatformRooms_FollowSecondPillar);
+static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
+  Scheduler_RemoveCallback(CrossboneIsleKeys_FollowSecondPillar);
   OBJ_POS_SET(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
   if (FLAG_CHECK(FLAG_SCENE_TEMP_07) != 0) {
     Map_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
     Map_CopyCellAttributes(46, 43, 1, 1, 45, 43);
   }
-  CrossboneIslePlatformRooms_PositionSecondPillarMapObject();
+  CrossboneIsleKeys_PositionSecondPillarMapObject();
   FLAG_SET(FLAG_SCENE_TEMP_06);
 }
 
@@ -1047,7 +1040,7 @@ static void Event_UpdateSecondPillarTerrain(void) {
   s32 row = pillar->z.fixed / PIXELS(16);
 
   if (column == 45 && row == 43) {
-    CrossboneIslePlatformRooms_ReleaseSecondPillarChest();
+    CrossboneIsleKeys_ReleaseSecondPillarChest();
   }
 }
 
@@ -1059,21 +1052,21 @@ static void Event_PushSecondPillar(void) {
 }
 
 /// Restores the terrain at both ends of the third pillar row.
-static void CrossboneIslePlatformRooms_RestoreThirdPillarTerrain(void) {
+static void CrossboneIsleKeys_RestoreThirdPillarTerrain(void) {
 
   Map_CopyCellAttributes(38, 56, 1, 1, 38, 55);
   Map_CopyCellAttributes(42, 56, 1, 1, 42, 55);
 }
 
 /// Restores the third pillar support at the western end.
-static void CrossboneIslePlatformRooms_RestoreThirdPillarWestCell(void) {
+static void CrossboneIsleKeys_RestoreThirdPillarWestCell(void) {
 
   Map_CopyCellAttributes(40, 54, 1, 1, 38, 55);
   Object_GetById(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
 
 /// Restores the third pillar support at the eastern end.
-static void CrossboneIslePlatformRooms_RestoreThirdPillarEastCell(void) {
+static void CrossboneIsleKeys_RestoreThirdPillarEastCell(void) {
 
   Map_CopyCellAttributes(40, 54, 1, 1, 42, 55);
   Object_GetById(ACTOR_THIRD_PILLAR)->motionFlags = 0;
@@ -1089,24 +1082,24 @@ static void Event_UpdateThirdPillarTerrain(void) {
 
   if (!FLAG_CHECK(FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED) &&
       heightCells <= 2) {
-    CrossboneIslePlatformRooms_RestoreThirdPillarWestCell();
+    CrossboneIsleKeys_RestoreThirdPillarWestCell();
     Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED);
   }
   if (row == 55) {
     if (column == 42) {
-      CrossboneIslePlatformRooms_RestoreThirdPillarEastCell();
+      CrossboneIsleKeys_RestoreThirdPillarEastCell();
     }
     if (column == 38) {
-      CrossboneIslePlatformRooms_RestoreThirdPillarWestCell();
+      CrossboneIsleKeys_RestoreThirdPillarWestCell();
     }
   } else {
-    CrossboneIslePlatformRooms_RestoreThirdPillarTerrain();
+    CrossboneIsleKeys_RestoreThirdPillarTerrain();
   }
 }
 
 /// Pushing CrossboneIsleBane's third pillar (trigger 50).
 static void Event_PushThirdPillar(void) {
-  CrossboneIslePlatformRooms_RestoreThirdPillarTerrain();
+  CrossboneIsleKeys_RestoreThirdPillarTerrain();
   StagedActor_AdvancePair();
   Event_UpdateThirdPillarTerrain();
 }
@@ -1124,8 +1117,7 @@ static void Event_TouchThirdPillar(void) {
 }
 
 /// Clears the support row before repainting the fourth and fifth pillars.
-static void
-CrossboneIslePlatformRooms_RestoreFourthAndFifthPillarTerrain(void) {
+static void CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain(void) {
 
   Map_CopyCellAttributes(48, 55, 1, 1, 49, 55);
   Map_CopyCellAttributes(48, 55, 1, 1, 50, 55);
@@ -1134,11 +1126,11 @@ CrossboneIslePlatformRooms_RestoreFourthAndFifthPillarTerrain(void) {
 }
 
 /// Places support cells beneath the fourth and fifth pillars.
-static void CrossboneIslePlatformRooms_RepaintFourthAndFifthPillarCells(void) {
+static void CrossboneIsleKeys_RepaintFourthAndFifthPillarCells(void) {
   struct FieldActor *pillar;
   s32 column;
 
-  CrossboneIslePlatformRooms_RestoreFourthAndFifthPillarTerrain();
+  CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
 
   pillar = Object_GetById(ACTOR_FOURTH_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
@@ -1151,12 +1143,12 @@ static void CrossboneIslePlatformRooms_RepaintFourthAndFifthPillarCells(void) {
 /// Move on CrossboneIsleBane's fourth pillar: the support row it
 /// shares with the fifth is refreshed.
 static void Event_UpdateFourthPillarTerrain(void) {
-  CrossboneIslePlatformRooms_RepaintFourthAndFifthPillarCells();
+  CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
 }
 
 /// Pushing CrossboneIsleBane's fourth pillar (trigger 53).
 static void Event_PushFourthPillar(void) {
-  CrossboneIslePlatformRooms_RestoreFourthAndFifthPillarTerrain();
+  CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
   StagedActor_AdvancePair();
   Event_UpdateFourthPillarTerrain();
 }
@@ -1164,19 +1156,19 @@ static void Event_PushFourthPillar(void) {
 /// Move on CrossboneIsleBane's fifth pillar: the support row it shares
 /// with the fourth is refreshed.
 static void Event_UpdateFifthPillarTerrain(void) {
-  CrossboneIslePlatformRooms_RepaintFourthAndFifthPillarCells();
+  CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
 }
 
 /// Unused: a callback that moves the fifth pillar and refreshes its terrain;
 /// nothing calls it.
-UNUSED static void CrossboneIslePlatformRooms_MoveFifthPillar(void) {
-  CrossboneIslePlatformRooms_RestoreFourthAndFifthPillarTerrain();
+UNUSED static void CrossboneIsleKeys_MoveFifthPillar(void) {
+  CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
   StagedActor_AdvancePair();
   Event_UpdateFifthPillarTerrain();
 }
 
 /// Keeps the chest on top of the second pillar as the pillar moves.
-static void CrossboneIslePlatformRooms_FollowSecondPillar(void) {
+static void CrossboneIsleKeys_FollowSecondPillar(void) {
   struct FieldActor *target = Object_GetById(ACTOR_SECOND_PILLAR_CHEST);
   struct FieldActor *source = Object_GetById(ACTOR_SECOND_PILLAR);
 
@@ -1186,14 +1178,14 @@ static void CrossboneIslePlatformRooms_FollowSecondPillar(void) {
 }
 
 /// Puts the chest's search marker 107 where the second pillar stands.
-static void CrossboneIslePlatformRooms_PositionSecondPillarMapObject(void) {
+static void CrossboneIsleKeys_PositionSecondPillarMapObject(void) {
   struct FieldActor *frame = Object_GetById(ACTOR_SECOND_PILLAR);
 
   Engine_MapObjectSetPosition(107, frame->x.fixed, frame->z.fixed + PIXELS(1));
 }
 
 /// Chooses pillar drawing priorities from the leader height and row.
-static void CrossboneIslePlatformRooms_UpdatePillarPriorities(void) {
+static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u8 priority;
 
@@ -1219,18 +1211,18 @@ static void CrossboneIslePlatformRooms_UpdatePillarPriorities(void) {
 }
 
 /// Sets up whichever of the three rooms the party enters: the keys and doors
-/// of CrossboneIsleKeys, the pursuers of CrossboneIslePlatformRooms2,
+/// of CrossboneIsleKeys, the pursuers of CrossboneIsleStatues,
 /// or the pillars and Bane of CrossboneIsleBane.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_CrossboneIsleKeys) {
-    CrossboneIslePlatformRooms_InitializeScene1();
+    CrossboneIsleKeys_InitializeKeys();
   }
-  if (gGameState.scene == (s32)&SceneId_CrossboneIslePlatformRooms2) {
-    CrossboneIslePlatformRooms_InitializeScene2();
+  if (gGameState.scene == (s32)&SceneId_CrossboneIsleStatues) {
+    CrossboneIsleKeys_InitializeStatues();
   }
   if (gGameState.scene == (s32)&SceneId_CrossboneIsleBane) {
-    CrossboneIslePlatformRooms_InitializeScene3();
+    CrossboneIsleKeys_InitializeBane();
   }
   return 0;
 }
@@ -1239,11 +1231,11 @@ s32 Scene_Initialize(void) {
 /// shown their item icons one after another, every 16 frames.
 ///
 /// Nothing adds it as a callback, so the keys never flash.
-UNUSED static void CrossboneIslePlatformRooms_UnusedUpdateKeyIcons(void) {
-  if (++gCrossboneIslePlatformRooms_IconTimer > 16) {
-    gCrossboneIslePlatformRooms_IconTimer = 0;
+UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
+  if (++gCrossboneIsleKeys_IconTimer > 16) {
+    gCrossboneIsleKeys_IconTimer = 0;
   }
-  switch (gCrossboneIslePlatformRooms_IconTimer) {
+  switch (gCrossboneIsleKeys_IconTimer) {
   case 12:
     if (Engine_GameFlagIsSet(0xee7) == 0) {
       OBJ_POS_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
@@ -1279,7 +1271,7 @@ UNUSED static void CrossboneIslePlatformRooms_UnusedUpdateKeyIcons(void) {
 #include "common/colosso_item_icon.h"
 
 /// Restores collected keys and already opened passages.
-static void CrossboneIslePlatformRooms_InitializeScene1(void) {
+static void CrossboneIsleKeys_InitializeKeys(void) {
   Engine_TaskWait(1);
   Colosso_ShowItemIcon(ACTOR_RED_KEY, ITEM_RED_KEY);
   Colosso_ShowItemIcon(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY);
@@ -1299,24 +1291,24 @@ static void CrossboneIslePlatformRooms_InitializeScene1(void) {
     OBJ_POS_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
-    CrossboneIslePlatformRooms_OpenBlueDoor(0);
+    CrossboneIsleKeys_OpenBlueDoor(0);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 1) != 0) {
-    CrossboneIslePlatformRooms_OpenBlueDoor(1);
+    CrossboneIsleKeys_OpenBlueDoor(1);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 2) != 0) {
-    CrossboneIslePlatformRooms_OpenBlueDoor(2);
+    CrossboneIsleKeys_OpenBlueDoor(2);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 3) != 0) {
-    CrossboneIslePlatformRooms_OpenBlueDoor(3);
+    CrossboneIsleKeys_OpenBlueDoor(3);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) != 0) {
-    CrossboneIslePlatformRooms_OpenRedDoor(0);
+    CrossboneIsleKeys_OpenRedDoor(0);
   }
 }
 
 /// Configures the pursuers, their chase triggers and blending.
-static void CrossboneIslePlatformRooms_InitializeScene2(void) {
+static void CrossboneIsleKeys_InitializeStatues(void) {
   Object_GetById(ACTOR_FIRST_PURSUER)->collisionFlags = 1;
   Object_GetById(ACTOR_SECOND_PURSUER)->collisionFlags = 1;
   Object_GetById(ACTOR_THIRD_PURSUER)->collisionFlags = 1;
@@ -1326,27 +1318,25 @@ static void CrossboneIslePlatformRooms_InitializeScene2(void) {
   Object_GetById(ACTOR_THIRD_PURSUER)->scaleX = 7 * Q16_ONE / 10;
   Object_GetById(ACTOR_FOURTH_PURSUER)->scaleX = 7 * Q16_ONE / 10;
   Object_GetById(ACTOR_FIFTH_PURSUER)->scaleX = 7 * Q16_ONE / 10;
+  FieldScheduler_AddOrUpdateCallback(CrossboneIsleKeys_CheckFifthPursuerTrigger,
+                                     0xc80);
   FieldScheduler_AddOrUpdateCallback(
-      CrossboneIslePlatformRooms_CheckFifthPursuerTrigger, 0xc80);
-  FieldScheduler_AddOrUpdateCallback(
-      CrossboneIslePlatformRooms_CheckSecondPursuerTrigger, 0xc80);
-  FieldScheduler_AddCallback(
-      CrossboneIslePlatformRooms_CheckFirstPursuerTrigger, 0xc80);
+      CrossboneIsleKeys_CheckSecondPursuerTrigger, 0xc80);
+  FieldScheduler_AddCallback(CrossboneIsleKeys_CheckFirstPursuerTrigger, 0xc80);
   Io_Write16(0x3f42, &REG_BLDCNT);
   Io_Write16(0x607, &REG_BLDALPHA);
 }
 
 /// Restores movable pillars, terrain and the Djinni escape progress.
-static void CrossboneIslePlatformRooms_InitializeScene3(void) {
+static void CrossboneIsleKeys_InitializeBane(void) {
   struct FieldActor *djinni;
 
   // Put the chest back on the second pillar and rebuild all pillar support
   // cells.
   Object_GetById(ACTOR_SECOND_PILLAR_CHEST)->motionFlags = 0;
-  FieldScheduler_AddOrUpdateCallback(
-      CrossboneIslePlatformRooms_FollowSecondPillar, 0xc80);
-  FieldScheduler_AddCallback(CrossboneIslePlatformRooms_UpdatePillarPriorities,
-                             0xc80);
+  FieldScheduler_AddOrUpdateCallback(CrossboneIsleKeys_FollowSecondPillar,
+                                     0xc80);
+  FieldScheduler_AddCallback(CrossboneIsleKeys_UpdatePillarPriorities, 0xc80);
   MapObject_SetPosition(107, 0, 0);
   if (FLAG_CHECK(0xed9) != 0) {
     OBJ_MODE(ACTOR_SECOND_PILLAR_CHEST, 2);
@@ -1361,7 +1351,7 @@ static void CrossboneIslePlatformRooms_InitializeScene3(void) {
 #endif
   Object_GetById(ACTOR_FOURTH_PILLAR)->motionFlags = 0;
   Object_GetById(ACTOR_FIFTH_PILLAR)->motionFlags = 0;
-  CrossboneIslePlatformRooms_RepaintFourthAndFifthPillarCells();
+  CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
   if (FLAG_CHECK(FLAG_SCENE_TEMP_00) != 0) {
     Event_FreezePuddle();
     OBJ_MODE(ACTOR_PUDDLE, 5);
@@ -1373,10 +1363,10 @@ static void CrossboneIslePlatformRooms_InitializeScene3(void) {
       OBJ_POS_SET(ACTOR_BANE, 856, 824);
       djinni = Object_GetById(ACTOR_BANE);
 #ifdef UBFIX
-      djinni->update = CrossboneIslePlatformRooms_FaceBaneTowardLeader;
+      djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
 #else
-      djinni->update = (void (*)(
-          union FieldObject *))CrossboneIslePlatformRooms_FaceBaneTowardLeader;
+      djinni->update =
+          (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     } else if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
       OBJ_POS_SET(ACTOR_BANE, 888, 664);
@@ -1417,7 +1407,7 @@ s32 gStagedActor_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-s32 gCrossboneIslePlatformRooms_BaneSquashScript[] = {
+s32 gCrossboneIsleKeys_BaneSquashScript[] = {
     SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
     SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
@@ -1445,7 +1435,7 @@ s32 gCrossboneIslePlatformRooms_BaneSquashScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gCrossboneIslePlatformRooms_BaneWalkTargets[] = {
+s32 gCrossboneIsleKeys_BaneWalkTargets[] = {
     888, 856,
     872, 856,
     856, 856,
@@ -1460,47 +1450,47 @@ s32 gCrossboneIslePlatformRooms_BaneWalkTargets[] = {
     888, 840,
 };
 
-struct SceneEntrance gCrossboneIslePlatformRoomsEntrancesOther[] = {
+struct SceneEntrance gCrossboneIsleKeysEntrancesOther[] = {
     { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIslePlatformRoomsEntrances1[] = {
-    { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_8_EAST, CONDITION_ALWAYS, 200, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
-    { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_8_WEST, CONDITION_ALWAYS, 88, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
+struct SceneEntrance gCrossboneIsleKeysEntrances1[] = {
+    { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_EAST, CONDITION_ALWAYS, 200, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
+    { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_WEST, CONDITION_ALWAYS, 88, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIslePlatformRoomsEntrances2[] = {
-    { CROSSBONE_ISLE_PLATFORM_ROOMS_2_FROM_CROSSBONE_ISLE_9_EAST, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
-    { CROSSBONE_ISLE_PLATFORM_ROOMS_2_FROM_CROSSBONE_ISLE_9_WEST, CONDITION_ALWAYS, 88, 0, 392, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
+struct SceneEntrance gCrossboneIsleKeysEntrances2[] = {
+    { CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_EAST, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
+    { CROSSBONE_ISLE_STATUES_FROM_CROSSBONE_ISLE_FOURTH_FLOOR_WEST, CONDITION_ALWAYS, 88, 0, 392, FACING_NORTH, 0, 40, 0, 464, 440, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gCrossboneIslePlatformRoomsEntrances3[] = {
-    { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_11_EAST, CONDITION_ALWAYS, 776, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
-    { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_11_WEST, CONDITION_ALWAYS, 664, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
+struct SceneEntrance gCrossboneIsleKeysEntrances3[] = {
+    { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_EAST, CONDITION_ALWAYS, 776, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
+    { CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_SIXTH_FLOOR_WEST, CONDITION_ALWAYS, 664, 0, 952, FACING_NORTH, 0, 512, 544, 928, 992, 0 },
     { SCENE_TABLE_END },
 };
 
-u32 gCrossboneIslePlatformRoomsExits[] = {
+u32 gCrossboneIsleKeysExits[] = {
     SCENE_EXITS(CrossboneIsleKeys),
-    SCENE_EXIT(CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_8_EAST, CrossboneIsle8, CROSSBONE_ISLE_8_FROM_CROSSBONE_ISLE_KEYS_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_8_WEST, CrossboneIsle8, CROSSBONE_ISLE_8_FROM_CROSSBONE_ISLE_KEYS_WEST),
-    SCENE_EXITS(CrossboneIslePlatformRooms2),
-    SCENE_EXIT(CROSSBONE_ISLE_PLATFORM_ROOMS_2_TO_CROSSBONE_ISLE_9_EAST, CrossboneIsle9, CROSSBONE_ISLE_9_FROM_CROSSBONE_ISLE_PLATFORM_ROOMS_2_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_PLATFORM_ROOMS_2_TO_CROSSBONE_ISLE_9_WEST, CrossboneIsle9, CROSSBONE_ISLE_9_FROM_CROSSBONE_ISLE_PLATFORM_ROOMS_2_WEST),
+    SCENE_EXIT(CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST, CrossboneIsleThirdFloor, CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST, CrossboneIsleThirdFloor, CROSSBONE_ISLE_THIRD_FLOOR_FROM_CROSSBONE_ISLE_KEYS_WEST),
+    SCENE_EXITS(CrossboneIsleStatues),
+    SCENE_EXIT(CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST, CrossboneIsleFourthFloor, CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST, CrossboneIsleFourthFloor, CROSSBONE_ISLE_FOURTH_FLOOR_FROM_CROSSBONE_ISLE_STATUES_WEST),
     SCENE_EXITS(CrossboneIsleBane),
-    SCENE_EXIT(CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_11_EAST, CrossboneIsle11, CROSSBONE_ISLE_11_FROM_CROSSBONE_ISLE_BANE_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_11_WEST, CrossboneIsle11, CROSSBONE_ISLE_11_FROM_CROSSBONE_ISLE_BANE_WEST),
+    SCENE_EXIT(CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST, CrossboneIsleSixthFloor, CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_WEST, CrossboneIsleSixthFloor, CROSSBONE_ISLE_SIXTH_FLOOR_FROM_CROSSBONE_ISLE_BANE_WEST),
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gCrossboneIslePlatformRoomsPlacementsOther[] = {
+struct ScenePlacement gCrossboneIsleKeysPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIslePlatformRoomsPlacements1[] = {
+struct ScenePlacement gCrossboneIsleKeysPlacements1[] = {
     { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x16, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1514,7 +1504,7 @@ struct ScenePlacement gCrossboneIslePlatformRoomsPlacements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIslePlatformRoomsPlacements2[] = {
+struct ScenePlacement gCrossboneIsleKeysPlacements2[] = {
     { 0x1f4, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(152), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x1f4, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1528,7 +1518,7 @@ struct ScenePlacement gCrossboneIslePlatformRoomsPlacements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gCrossboneIslePlatformRoomsPlacements3[] = {
+struct ScenePlacement gCrossboneIsleKeysPlacements3[] = {
     { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(616), 0, PIXELS(680), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd3, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1549,13 +1539,13 @@ struct ScenePlacement gCrossboneIslePlatformRoomsPlacements3[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gCrossboneIslePlatformRoomsEventsOther[] = {
+struct SceneEvent gCrossboneIsleKeysEventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIslePlatformRoomsEvents1[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_8_EAST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_8_WEST },
+struct SceneEvent gCrossboneIsleKeysEvents1[] = {
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_EAST },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_THIRD_FLOOR_WEST },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowRedKey) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRedKey) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FIRST_BLUE_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CatchFirstBlueKey) },
@@ -1578,9 +1568,9 @@ struct SceneEvent gCrossboneIslePlatformRoomsEvents1[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gCrossboneIslePlatformRoomsEvents2[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_PLATFORM_ROOMS_2_TO_CROSSBONE_ISLE_9_EAST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_PLATFORM_ROOMS_2_TO_CROSSBONE_ISLE_9_WEST },
+struct SceneEvent gCrossboneIsleKeysEvents2[] = {
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST },
     { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TrackThirdPursuerColumn) },
     { EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TrackFourthPursuerColumn) },
     { EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DodgeThirdPursuer) },
@@ -1603,11 +1593,11 @@ struct SceneEvent gCrossboneIslePlatformRoomsEvents2[] = {
 };
 // clang-format on
 
-struct SceneEvent gCrossboneIslePlatformRoomsEvents3[] = {
+struct SceneEvent gCrossboneIsleKeysEvents3[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
-     CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_11_EAST},
+     CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,
-     CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_11_WEST},
+     CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_WEST},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_PushThirdPillar)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 51, CONDITION_ALWAYS,
@@ -1678,10 +1668,10 @@ struct SceneEvent gCrossboneIslePlatformRoomsEvents3[] = {
     {SCENE_EVENTS_END},
 };
 
-u32 gCrossboneIslePlatformRooms_SlotColumns[] = {
+u32 gCrossboneIsleKeys_SlotColumns[] = {
     16,
     21,
     0,
 };
 
-s32 gCrossboneIslePlatformRooms_IconTimer = 0;
+s32 gCrossboneIsleKeys_IconTimer = 0;

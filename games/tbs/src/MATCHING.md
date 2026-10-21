@@ -293,7 +293,7 @@ come down to how a struct's member is addressed.
   goes through FieldActor's single/group union and moves a load
   ([`scene/common/effect_spawn.h`](scene/common/effect_spawn.h),
   [`scene/common/mercury_lighthouse_pillar.h`](scene/common/mercury_lighthouse_pillar.h),
-  [`scene/crossbone_isle_pillar_rooms.c`](scene/crossbone_isle_pillar_rooms.c),
+  [`scene/crossbone_isle_stepping_stones.c`](scene/crossbone_isle_stepping_stones.c),
   and `Imil_MiaSaysFarewellToApprentices` in [`scene/imil.c`](scene/imil.c)).
 - An actor is read as `struct FieldEffect`, union FieldObject's effect view of
   the same object, whose sprite pointer is a plain member. Through

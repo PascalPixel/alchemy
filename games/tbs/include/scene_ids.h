@@ -214,27 +214,61 @@ extern char SceneId_TolbiShipMast;
 extern char SceneId_TolbiShipInteriors;
 extern char SceneId_TolbiDocks;
 extern char SceneId_CrossboneIsle;
-extern char SceneId_CrossboneIsle2;
-extern char SceneId_CrossboneIslePillarRooms1;
-extern char SceneId_CrossboneIslePillarRooms2;
+/// ★ Named from what the player sees: the winding path lit by torches that
+/// leads down from the island into the cave (its render)
+extern char SceneId_CrossboneIsleCaveEntrance;
+/// ★ Named from what the player sees: raised stone posts over a pit, which the
+/// party hops across to reach four chests (its render)
+extern char SceneId_CrossboneIsleSteppingStones;
+/// ★ Named from what the player sees: pillars of ice, some standing and some
+/// lying as walkways, across a floor of spikes (its render)
+extern char SceneId_CrossboneIsleIcePillars;
 extern char SceneId_CrossboneIsleKeys;
-extern char SceneId_CrossboneIslePlatformRooms2;
+/// ★ Named from what the player sees: a dark hall lit by braziers, where five
+/// statues of a robed woman step out after the leader (its render)
+extern char SceneId_CrossboneIsleStatues;
 extern char SceneId_CrossboneIsleFloodgate;
 extern char SceneId_CrossboneIsleBane;
-extern char SceneId_CrossboneIslePillarRooms4;
-extern char SceneId_CrossboneIslePillarRooms5;
-extern char SceneId_CrossboneIsle3;
-extern char SceneId_CrossboneIsle4;
+/// ★ Named from what the player sees: a cave of cliffs and ladders, where
+/// carved stone pillars are lifted onto one another (its render)
+extern char SceneId_CrossboneIsleStackedPillars;
+/// ★ Named from what the player sees: an icy cave with a coiled, winged dragon
+/// statue beside three puddles (its render)
+extern char SceneId_CrossboneIsleDragonStatue;
+/// ★ Named from what the player sees: two pools of green water, with logs
+/// floating on them that carry the leader (its render)
+extern char SceneId_CrossboneIsleFloatingLogs;
+/// ★ Named from what the player sees: the ledge at the end of the cave, where a
+/// wooden pier leads out to the Pirate Ship (its render)
+extern char SceneId_CrossboneIslePier;
 extern char SceneId_PirateShip;
-extern char SceneId_CrossboneIsle6;
-extern char SceneId_CrossboneIsle7;
-extern char SceneId_CrossboneIsle8;
-extern char SceneId_CrossboneIsle9;
-extern char SceneId_CrossboneIsle10;
-extern char SceneId_CrossboneIsle11;
-extern char SceneId_CrossboneIsle12;
-extern char SceneId_CrossboneIsle13;
-extern char SceneId_CrossboneIsle14;
+/// ★ Named from what the player sees: the first of nine halls that look alike,
+/// each a flight of stairs lower than the last (its render)
+extern char SceneId_CrossboneIsleFirstFloor;
+/// ★ Named from what the player sees: the second of nine halls that look alike,
+/// each a flight of stairs lower than the last (its render)
+extern char SceneId_CrossboneIsleSecondFloor;
+/// ★ Named from what the player sees: the third of nine halls that look alike,
+/// each a flight of stairs lower than the last (its render)
+extern char SceneId_CrossboneIsleThirdFloor;
+/// ★ Named from what the player sees: the fourth of nine halls that look alike,
+/// each a flight of stairs lower than the last (its render)
+extern char SceneId_CrossboneIsleFourthFloor;
+/// ★ Named from what the player sees: the fifth of nine halls that look alike,
+/// each a flight of stairs lower than the last (its render)
+extern char SceneId_CrossboneIsleFifthFloor;
+/// ★ Named from what the player sees: the sixth of nine halls that look alike,
+/// each a flight of stairs lower than the last (its render)
+extern char SceneId_CrossboneIsleSixthFloor;
+/// ★ Named from what the player sees: the seventh of nine halls that look
+/// alike, each a flight of stairs lower than the last (its render)
+extern char SceneId_CrossboneIsleSeventhFloor;
+/// ★ Named from what the player sees: the eighth of nine halls that look alike,
+/// each a flight of stairs lower than the last (its render)
+extern char SceneId_CrossboneIsleEighthFloor;
+/// ★ Named from what the player sees: the last of nine halls that look alike,
+/// which leads on to the pier (its render)
+extern char SceneId_CrossboneIsleNinthFloor;
 extern char SceneId_Tolbi;
 extern char SceneId_TolbiInteriors;
 extern char SceneId_TolbiSpring1;

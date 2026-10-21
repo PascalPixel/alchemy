@@ -234,9 +234,33 @@ enum ExitStyle {
 #define TOUCH_WALKING_INTO(facing)                                             \
   (EVENT_TOUCH | EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING | (facing))
 
-/// Psynergy events run around the effect by phase, control bits 30..28
-/// (Field_UsePsynergy): 1 before it, 0 after it; 5 only aims the effect at
-/// the actor ahead; 3 and 2 serve a use that pays no PP.
+/// When a Psynergy event runs around its effect, control bits 30..28.
+enum PsynergyPhase {
+  /// After the effect (Field_UsePsynergy), PSYNERGY_ON_ACTOR's phase. With
+  /// trigger bit 0x400 the event plays the effect itself.
+  PSYNERGY_PHASE_AFTER_CAST = 0,
+  PSYNERGY_PHASE_BEFORE_CAST = 1, ///< once the PP is paid, before the effect
+  /// After a Psynergy that runs out by itself has ended:
+  /// Field_RunPsynergyEvents
+  /// runs it for a use with ACT_PACKED, as Cloak fades or Reveal runs out.
+  PSYNERGY_PHASE_AFTER_END = 2,
+  PSYNERGY_PHASE_BEFORE_END = 3, ///< as PSYNERGY_PHASE_AFTER_END, before it
+  /// As Reveal's colours come back (ResetSceneTransitionEffect): the scenes
+  /// hide again what Reveal showed.
+  PSYNERGY_PHASE_EFFECT_ENDS = 4,
+  /// Run by the effect itself as it acts (force.c, frost.c and reveal.c): as
+  /// Force strikes, Frost freezes or Reveal shows what is hidden. An event in
+  /// this phase also makes Field_UsePsynergy aim the effect at the actor ahead.
+  PSYNERGY_PHASE_EFFECT_ACTS = 5,
+  PSYNERGY_PHASE_ANY = 7 ///< BattleFx_FindMatchingEvent matches every phase
+};
+
+/// The control word of a Psynergy event (EVENT_PSYNERGY) in the given phase, as
+/// BattleFx_FindMatchingEvent compares it (bits 30..28 phase | 3..0 kind).
+#define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
+#define PSYNERGY_EV_ANY PSYNERGY_EV(PSYNERGY_PHASE_ANY)
+
+/// A Psynergy event on the actor the leader faces.
 #define EVENT_PSYNERGY_ON_ACTOR 0x10
 #define PSYNERGY_ON_ACTOR(ability)                                             \
   (EVENT_PSYNERGY | EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)

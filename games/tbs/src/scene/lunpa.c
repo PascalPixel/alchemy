@@ -1064,10 +1064,10 @@ struct ScenePlacement gGatePlacements[] = {
 #define LUNPA_SECRETS                                                          \
   {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_HIDDEN_PUDDLE, FLAG_SCENE_TEMP_00,  \
    EVENT_SCRIPT(Event_FreezeHiddenPuddle)},                                    \
-      {PSYNERGY_IN_AREA(ABILITY_REVEAL, REVEAL_SHOWN), 0, CONDITION_ALWAYS,    \
-       EVENT_SCRIPT(Event_RevealSecrets)},                                     \
-      {PSYNERGY_IN_AREA(ABILITY_REVEAL, REVEAL_FADED), 0, CONDITION_ALWAYS,    \
-       EVENT_SCRIPT(Event_HideSecrets)},                                       \
+      {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,        \
+       CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealSecrets)},                   \
+      {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,        \
+       CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideSecrets)},                     \
       {SEARCH(SEARCH_UNNAMED), TRIGGER_HIDDEN_SWITCH, FLAG_SCENE_TEMP_01,      \
        EVENT_SCRIPT(Event_PressHiddenSwitch)},                                 \
       {SEARCH(SEARCH_UNNAMED), TRIGGER_PSYNERGY_STONE,                         \
@@ -1147,8 +1147,8 @@ struct SceneEvent gLunpaReopenedEvents[] = {
 struct SceneEvent gGateEvents[] = {
     { EVENT_EXIT, TRIGGER_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
     { EVENT_EXIT, TRIGGER_THIRD_ROAD, CONDITION_ALWAYS, GATE_EXIT_THIRD },
-    { PSYNERGY_IN_AREA(ABILITY_CLOAK, CLOAK_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CastCloak) },
-    { PSYNERGY_IN_AREA(ABILITY_CLOAK, CLOAK_FADED), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CloakFades) },
+    { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CastCloak) },
+    { PSYNERGY_IN_AREA(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CloakFades) },
     { EVENT_TOUCH, TRIGGER_FORTRESS_DOOR, FLAG_SCENE_TEMP_42,
       EVENT_SCRIPT(Event_EnterFortress) },
     { EVENT_TOUCH, TRIGGER_GUARDED_GROUND, FLAG_SCENE_TEMP_40,

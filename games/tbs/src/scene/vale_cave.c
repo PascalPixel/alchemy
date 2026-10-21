@@ -255,15 +255,16 @@ const struct ScenePlacement *ValeCave_GetPlacements(void) {
 
 /// In Vale Cave's second room, Reveal ends and the hidden tile is hidden again.
 ///
-/// Reached by Reveal's phase 4 anywhere in the second room.
+/// Reached by Reveal's PSYNERGY_PHASE_EFFECT_ENDS anywhere in the second room.
 static void Event_HideRevealedTile(void) {
   Map_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
 /// In Vale Cave's second room, Reveal shows a hidden tile.
 ///
-/// Reached by Reveal's phase 5 anywhere in the second room; copies cell
-/// (16, 17) over cell (15, 15) until Event_HideRevealedTile puts it back.
+/// Reached by Reveal's PSYNERGY_PHASE_EFFECT_ACTS anywhere in the second room;
+/// copies cell (16, 17) over cell (15, 15) until Event_HideRevealedTile puts it
+/// back.
 static void Event_RevealHiddenTile(void) {
   Map_CopyCells(16, 17, 1, 1, 15, 15);
 }
@@ -1130,8 +1131,8 @@ struct SceneEvent gValeCave_Events2[] = {
     { EVENT_TALK_HALTED, ACTOR_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKite) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenTile) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRevealedTile) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenTile) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRevealedTile) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_CRATES, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MoveWestCratesIntoHole) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_CRATES, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_MoveEastCratesIntoHole) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_KITE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HaltKite) },

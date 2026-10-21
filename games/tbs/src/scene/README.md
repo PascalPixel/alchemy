@@ -195,6 +195,14 @@ An event's kind says what starts it and what its trigger is:
 | `PSYNERGY_IN_AREA(ability, phase)` | Psynergy anywhere in the scene | 0 |
 | `EVENT_RAISED` | the scene's code raising a value | the value |
 
+A Psynergy event's phase (`enum PsynergyPhase` in `field_scene.h`) says when
+it runs around the effect: `PSYNERGY_PHASE_BEFORE_CAST` before it plays,
+`PSYNERGY_PHASE_AFTER_CAST` after, and `PSYNERGY_PHASE_EFFECT_ACTS` from inside
+the effect, as Force strikes, Frost freezes or Reveal shows what's hidden.
+Reveal's scenes pair that last row with a `PSYNERGY_PHASE_EFFECT_ENDS` one that
+hides it all again as the colours come back, and Cloak's ending runs
+`PSYNERGY_PHASE_AFTER_END`.
+
 What happens is a message (`MSGNO(MsgName)`), a function
 (`EVENT_SCRIPT(Function)`), or for a search what is found (`FIND_ITEM`,
 `FIND_COINS`, `FIND_PSYNERGY_STONE`, `FIND_MESSAGE`). A condition is

@@ -408,7 +408,8 @@ void MercuryLighthouse_SparkleAtLeader(void) {
   }
 }
 
-/// Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, 1)): remove the column of light.
+/// Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST)):
+/// remove the column of light.
 static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
   struct MercuryLighthouseLights **published = Runtime_AllocateBlock(35, 4);
   struct MercuryLighthouseLights *state;

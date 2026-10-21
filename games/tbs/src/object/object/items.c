@@ -250,7 +250,8 @@ void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
 }
 
 /// Runs the scene's events for Psynergy without paying its PP or showing its
-/// usual effect (phases 3 and 2, around the event's own effect), as for a
+/// usual effect (PSYNERGY_PHASE_BEFORE_END and PSYNERGY_PHASE_AFTER_END, around
+/// the kind's ending), as for a
 /// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and
 /// its user (bits 10 to 13). Called by Field_UsePsynergy for a use with
 /// ACT_PACKED, and by Battle_ResetEffectCounter to end Reveal.
@@ -267,8 +268,10 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   group = BattleActGet(abilityId)->type0c;
   // The leader is looked up and the result is not used.
   ObjectTable_Get(gGameState.selectedActor);
-  beforeEvent = BattleFx_FindMatchingEvent(PSYNERGY_EV(3), group, &target);
-  afterEvent = BattleFx_FindMatchingEvent(PSYNERGY_EV(2), group, &target);
+  beforeEvent = BattleFx_FindMatchingEvent(
+      PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_END), group, &target);
+  afterEvent = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_AFTER_END),
+                                          group, &target);
   BattleFx_LoadActionEffectResources(abilityId, 0);
   BattleFx_SetupObjectPair(gGameState.selectedActor, target);
   Field_RunEventAction(beforeEvent, userId, target);

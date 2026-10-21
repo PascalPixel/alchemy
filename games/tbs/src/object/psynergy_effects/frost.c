@@ -184,7 +184,8 @@ void FieldFx_RunFrost(void) {
     }
 
     target->update = BattleFx_UpdateOrbitingParticleMain;
-    event = BattleFx_FindMatchingEvent(0x50000005, 6, &eventTarget);
+    event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                       FIELD_KIND_FROST, &eventTarget);
     if (event != NULL) {
       Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
     }

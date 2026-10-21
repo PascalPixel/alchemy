@@ -2226,8 +2226,8 @@ struct SceneEvent gImilFuchinFalls_DragonRoomEvents[] = {
      EVENT_SCRIPT(Fuchin_LightDragonWithEye)},
     {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(Fuchin_SearchDragonStatue)},
-    {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET,
-     EVENT_SCRIPT(Fuchin_EndRevealLighting)},
+    {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,
+     FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET, EVENT_SCRIPT(Fuchin_EndRevealLighting)},
     {SCENE_EVENTS_END},
 };
 

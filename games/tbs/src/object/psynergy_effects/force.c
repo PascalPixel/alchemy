@@ -177,7 +177,8 @@ void FieldFx_RunForce(void) {
   }
 
   // Run the map's event for it, if there is one.
-  event = BattleFx_FindMatchingEvent(0x50000005, 4, &eventTarget);
+  event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                     FIELD_KIND_FORCE, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   WaitFrames(10);

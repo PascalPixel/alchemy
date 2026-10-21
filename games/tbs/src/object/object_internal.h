@@ -134,12 +134,6 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 /// EXIT_NONE's value: Retreat writes its destination itself.
 #define EXIT_RETREAT 999
 
-/// The control word of a Psynergy event (EVENT_PSYNERGY) in the given phase, as
-/// BattleFx_FindMatchingEvent compares it (bits 30..28 phase | 3..0 kind). The
-/// phases are listed in field_scene.h, above EVENT_PSYNERGY_ON_ACTOR.
-#define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
-#define PSYNERGY_EV_ANY PSYNERGY_EV(7) ///< any phase
-
 /// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \
   (UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4),       \

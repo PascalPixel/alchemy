@@ -105,8 +105,6 @@ enum LunpaSprite {
 
 enum { ACTOR_FLOAT = 7 };
 
-enum { REVEAL_SHOWN = 5, REVEAL_FADED = 4, CLOAK_CAST = 0, CLOAK_FADED = 2 };
-
 enum {
   GLINT_MOTION_FLAGS = 8,
   GLINT_SCALE_X = 0x13333,

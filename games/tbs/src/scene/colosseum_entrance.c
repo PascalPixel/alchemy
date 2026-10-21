@@ -29,7 +29,7 @@
 ///   is closed until next year. COLOSSEUM_ENTRANCE_TO_TOLBI leads back to
 ///   Tolbi.
 /// - Colosseum Tunnel (ColosseumTunnel, scene 141), the passage from Babi's
-///   Palace (BABI_PALACE_1_TO_COLOSSEUM_TUNNEL) into the Colosseum, whose end
+///   Palace (BABI_PALACE_TO_COLOSSEUM_TUNNEL) into the Colosseum, whose end
 ///   of the tunnel (COLOSSEUM_TUNNEL_FROM_COLOSSEUM and
 ///   COLOSSEUM_FROM_COLOSSEUM_TUNNEL) takes the same area name. It has only its
 ///   two exits.
@@ -39,33 +39,35 @@
 ///   ColosseumEntrance_ApplyArrivalState plays the scene that entrance stands
 ///   for. During the trials, the attendant in the stands (entrances 5 and 69)
 ///   shows the party two warriors' trials: the first time the screen goes to
-///   one who strains, gives up and runs (entrance 7), the second time to one
-///   who heaves the trial's load up and drops it, shaking the ground (entrance
-///   70), and back in the stands he explains what the party saw
-///   (FLAG_COLOSSO_FAILED_TRIAL_SEEN, FLAG_COLOSSO_CLEARED_TRIAL_SEEN). On the
-///   finals day the party arrives at COLOSSEUM_FROM_COLOSSEUM_ENTRANCE, where
-///   four officials tell it that only Isaac may enter: by Babi's leave Garet,
-///   Ivan and Mia may cheer him from the stage, and at Ivan's asking Isaac is
-///   shown the finals stages first. The party's items are kept here
-///   (InventorySnapshot_Take) for Babi's Palace to give back after the finals.
-///   An official leads Isaac east (entrance 65) to Colosseum Final 1 for its
-///   tour, which ends in the waiting room
-///   (COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST). There the seven warriors who
+///   one who strains, gives up and runs (COLOSSEUM_FAILED_TRIAL_FROM_STANDS),
+///   the second time to one who heaves the trial's load up and drops it,
+///   shaking the ground (entrance 70), and back in the stands he explains what
+///   the party saw (FLAG_COLOSSO_FAILED_TRIAL_SEEN,
+///   FLAG_COLOSSO_CLEARED_TRIAL_SEEN). On the finals day the party arrives at
+///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE, where four officials tell it that only
+///   Isaac may enter: by Babi's leave Garet, Ivan and Mia may cheer him from
+///   the stage, and at Ivan's asking Isaac is shown the finals stages first.
+///   The party's items are kept here (InventorySnapshot_Take) for Babi's Palace
+///   to give back after the finals. An official leads Isaac east
+///   (COLOSSEUM_ARCHED_PASSAGE_FROM_WAITING_ROOM_EAST) to Colosseum Final 1 for
+///   its tour, which ends in the waiting room
+///   (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST). There the seven warriors who
 ///   cleared the trials introduce themselves: Morgan, the highest-ranked;
 ///   Azart, the second-best; Galahad, the third seed; Satrage, the
 ///   fourth-ranked; Dekka; Navampa of Gondowan, the sixth-ranked; and Buford,
 ///   the seventh seed. Stepping to the line asks whether Isaac is ready
 ///   (Event_FinalsBegin); when he is, the warriors line up by rank and march
 ///   out, and Isaac walks alone from the east passage
-///   (COLOSSEUM_FROM_COLOSSEUM_FINAL_3) into Colosseum Final 1, where his
+///   (COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH) into Colosseum Final 1, where his
 ///   friends lend a hand before the race. After the first win
-///   (COLOSSEUM_FROM_COLOSSEUM_FINAL_1_EAST, FLAG_COLOSSO_FIRST_MATCH_WON) the
-///   officials congratulate him and lead him west to Colosseum Final 2
-///   (entrance 67 and COLOSSEUM_FROM_COLOSSEUM_FINAL_2_SOUTH); after the second
-///   (COLOSSEUM_FROM_COLOSSEUM_FINAL_2_NORTH, FLAG_COLOSSO_SECOND_MATCH_WON)
-///   they lead him east again, and the same passages now go to Colosseum Final
-///   3. The finals stages and their races are in colosseum_final1.c,
-///   colosseum_final2.c and colosseum_final3.c.
+///   (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST, FLAG_COLOSSO_FIRST_MATCH_WON)
+///   the officials congratulate him and lead him west to Colosseum Final 2
+///   (entrance 67 and COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH); after the
+///   second (COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH,
+///   FLAG_COLOSSO_SECOND_MATCH_WON) they lead him east again, and the same
+///   passages now go to Colosseum Final
+///   3. The finals stages and their races are in colosseum_azart_match.c,
+///   colosseum_satrage_match.c and colosseum_navampa_match.c.
 ///
 /// The three scenes share one exit table, a run of exits for each scene, and
 /// the Colosseum's exits are how its arrivals chain into one another and into
@@ -213,9 +215,9 @@ enum ColosseumOfficialActor {
 };
 
 /// The Colosseum's waiting room (Colosseum,
-/// COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST), numbered by the rows of
-/// gColosseumEntrancePlacements1FromColosseumFinal1West: four officials and the
-/// seven warriors who cleared the trials, as they introduce themselves.
+/// COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST), numbered by the rows of
+/// gColosseumEntrancePlacements1FromColosseumAzartMatchWest: four officials and
+/// the seven warriors who cleared the trials, as they introduce themselves.
 enum ColosseumWaitingRoomActor {
   /// Asks whether Isaac is ready for the finals.
   ACTOR_FINALS_OFFICIAL = ACTOR_FIRST_PLACED,
@@ -269,19 +271,19 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
       table = gColosseumEntrancePlacements1Entrance7;
       break;
     case 8:
-    case COLOSSEUM_FROM_COLOSSEUM_FINAL_1_EAST:
-    case COLOSSEUM_FROM_COLOSSEUM_FINAL_2_NORTH:
+    case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST:
+    case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH:
     case COLOSSEUM_FROM_COLOSSEUM_ENTRANCE:
     case 65:
     case 67:
       table = gColosseumEntrancePlacements1Entrance8;
       break;
-    case COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST:
-      table = gColosseumEntrancePlacements1FromColosseumFinal1West;
+    case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST:
+      table = gColosseumEntrancePlacements1FromColosseumAzartMatchWest;
       break;
-    case COLOSSEUM_FROM_COLOSSEUM_FINAL_3:
-    case COLOSSEUM_FROM_COLOSSEUM_FINAL_2_SOUTH:
-      table = gColosseumEntrancePlacements1FromColosseumFinal3;
+    case COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH:
+    case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH:
+      table = gColosseumEntrancePlacements1FromColosseumNavampaMatch;
       break;
     default:
       table = gColosseumEntrancePlacements1;
@@ -308,8 +310,8 @@ const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
     return gColosseumEntranceEvents2;
   }
   if (scene == (s32)&SceneId_Colosseum) {
-    if (gGameState.entrance == COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST) {
-      return gColosseumEntranceEvents1FromColosseumFinal1West;
+    if (gGameState.entrance == COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
+      return gColosseumEntranceEvents1FromColosseumAzartMatchWest;
     }
     return gColosseumEntranceEvents1;
   }
@@ -1240,11 +1242,11 @@ s32 ColosseumEntrance_Initialize(void) {
 /// Each arrival in the Colosseum has its own scene: the trials (entrances 5, 7,
 /// 69 and 70), the briefing before the finals
 /// (COLOSSEUM_FROM_COLOSSEUM_ENTRANCE), the passages to the finals stages
-/// (entrance 65, COLOSSEUM_FROM_COLOSSEUM_FINAL_3, entrance 67 and
-/// COLOSSEUM_FROM_COLOSSEUM_FINAL_2_SOUTH), the waiting room
-/// (COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST) and the congratulations after the
-/// first and second wins (COLOSSEUM_FROM_COLOSSEUM_FINAL_1_EAST and
-/// COLOSSEUM_FROM_COLOSSEUM_FINAL_2_NORTH).
+/// (entrance 65, COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH, entrance 67 and
+/// COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH), the waiting room
+/// (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) and the congratulations after
+/// the first and second wins (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST and
+/// COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH).
 static void ColosseumEntrance_ApplyArrivalState(void) {
   s32 entrance;
 
@@ -1275,17 +1277,17 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   case 65:
     ColosseumEntrance_EscortToEastExit();
     break;
-  case COLOSSEUM_FROM_COLOSSEUM_FINAL_3:
+  case COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH:
     ColosseumEntrance_WalkToEastExit();
     break;
-  case COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST:
+  case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST:
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     ColosseumEntrance_InitializeContestants();
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0)
       break;
     ColosseumEntrance_AnnounceFinals();
     break;
-  case COLOSSEUM_FROM_COLOSSEUM_FINAL_1_EAST:
+  case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST:
     Party_AddActiveOwner(GARET);
     Party_AddActiveOwner(IVAN);
     Party_AddActiveOwner(MIA);
@@ -1295,10 +1297,10 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   case 67:
     ColosseumEntrance_EscortToWestExit();
     break;
-  case COLOSSEUM_FROM_COLOSSEUM_FINAL_2_SOUTH:
+  case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH:
     ColosseumEntrance_WalkToWestExit();
     break;
-  case COLOSSEUM_FROM_COLOSSEUM_FINAL_2_NORTH:
+  case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH:
     Party_AddActiveOwner(GARET);
     Party_AddActiveOwner(IVAN);
     Party_AddActiveOwner(MIA);
@@ -1590,9 +1592,9 @@ static void ColosseumEntrance_EscortToEastExit(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   if (GameFlag_IsSet(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
-    Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_FINAL_3_NORTH);
+    Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH);
   } else {
-    Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_FINAL_1);
+    Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH);
   }
 }
 
@@ -1643,11 +1645,11 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   Engine_EventEnd();
 }
 
-/// The Colosseum's east passage (COLOSSEUM_FROM_COLOSSEUM_FINAL_3): Isaac walks
-/// alone into Colosseum Final 1 or, after the second win, Colosseum Final 3,
-/// where his friends take their turns to lend a hand
-/// (COLOSSEUM_TO_COLOSSEUM_FINAL_1_WEST or
-/// COLOSSEUM_TO_COLOSSEUM_FINAL_3_SOUTH).
+/// The Colosseum's east passage (COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH): Isaac
+/// walks alone into Colosseum Final 1 or, after the second win, Colosseum Final
+/// 3, where his friends take their turns to lend a hand
+/// (COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST or
+/// COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH).
 static void ColosseumEntrance_WalkToEastExit(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1659,15 +1661,15 @@ static void ColosseumEntrance_WalkToEastExit(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   if (GameFlag_IsSet(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
-    Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_FINAL_3_SOUTH);
+    Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH);
   } else {
-    Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_FINAL_1_WEST);
+    Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST);
   }
 }
 
 /// Back in the Colosseum after the first win
-/// (COLOSSEUM_FROM_COLOSSEUM_FINAL_1_EAST): the officials congratulate Isaac
-/// and lead him on to Colosseum Final 2.
+/// (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST): the officials congratulate
+/// Isaac and lead him on to Colosseum Final 2.
 static void ColosseumEntrance_CelebrateAdvancement(void) {
   const s32 *actions;
 
@@ -1746,12 +1748,12 @@ static void ColosseumEntrance_EscortToWestExit(void) {
   Actor_SetDestination(ACTOR_ESCORT_OFFICIAL, 568, 588);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_FINAL_2_WEST);
+  Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST);
 }
 
-/// The Colosseum's west passage (COLOSSEUM_FROM_COLOSSEUM_FINAL_2_SOUTH): Isaac
-/// walks alone into Colosseum Final 2, where his friends take their turns to
-/// lend a hand (COLOSSEUM_TO_COLOSSEUM_FINAL_2_EAST).
+/// The Colosseum's west passage (COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH):
+/// Isaac walks alone into Colosseum Final 2, where his friends take their turns
+/// to lend a hand (COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST).
 static void ColosseumEntrance_WalkToWestExit(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1762,13 +1764,13 @@ static void ColosseumEntrance_WalkToWestExit(void) {
   Actor_SetDestination(ACTOR_PARTY_LEADER, 600, 428);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_FINAL_2_EAST);
+  Engine_EventRequestExit(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST);
 }
 
 /// Back in the Colosseum after the second win
-/// (COLOSSEUM_FROM_COLOSSEUM_FINAL_2_NORTH): one more win and Isaac is the
-/// champion; the officials lead him back east (exit 64), now to Colosseum Final
-/// 3.
+/// (COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH): one more win and Isaac is
+/// the champion; the officials lead him back east (exit 64), now to Colosseum
+/// Final 3.
 static void ColosseumEntrance_CelebrateBothWins(void) {
   const s32 *actions;
 
@@ -1929,7 +1931,7 @@ s32 gColosseumEntrance_PulseScaleScript[] = {
 
 struct SceneEntrance gColosseumEntranceEntrancesOther[] = {
     {0, CONDITION_ALWAYS, 72, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {COLOSSEUM_TUNNEL_FROM_BABI_PALACE_1, CONDITION_ALWAYS, 72, 0, 72,
+    {COLOSSEUM_TUNNEL_FROM_BABI_PALACE, CONDITION_ALWAYS, 72, 0, 72,
      FACING_SOUTH, 0, 16, 16, 528, 256, 0},
     {COLOSSEUM_TUNNEL_FROM_COLOSSEUM, CONDITION_ALWAYS, 488, 0, 88,
      FACING_SOUTH, 0, 16, 16, 528, 256, 0},
@@ -1947,20 +1949,20 @@ struct SceneEntrance gColosseumEntranceEntrances1[] = {
     {6, CONDITION_ALWAYS, 520, 0, 72, FACING_SOUTH, 0, 272, 0, 656, 304, 0},
     {7, CONDITION_ALWAYS, 184, 0, 912, FACING_SOUTH, 0, 0, 736, 368, 1024, 0},
     {8, CONDITION_ALWAYS, 808, 0, 296, FACING_NORTH, 0, 656, 0, 960, 320, 0},
-    {COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST, CONDITION_ALWAYS, 784, 0, 108,
+    {COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST, CONDITION_ALWAYS, 784, 0, 108,
      FACING_SOUTHWEST, 0, 656, 0, 960, 320, 0},
-    {COLOSSEUM_FROM_COLOSSEUM_FINAL_1_EAST, CONDITION_ALWAYS, 808, 0, 120,
+    {COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST, CONDITION_ALWAYS, 808, 0, 120,
      FACING_NORTH, 0, 656, 0, 960, 320, 0},
-    {COLOSSEUM_FROM_COLOSSEUM_FINAL_2_NORTH, CONDITION_ALWAYS, 808, 0, 120,
-     FACING_NORTH, 0, 656, 0, 960, 320, 0},
+    {COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH, CONDITION_ALWAYS, 808, 0,
+     120, FACING_NORTH, 0, 656, 0, 960, 320, 0},
     {COLOSSEUM_FROM_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, 808, 0, 120,
      FACING_NORTH, 0, 656, 0, 960, 320, 0},
     {65, CONDITION_ALWAYS, 680, 0, 588, FACING_EAST, 0, 520, 490, 1020, 640, 0},
-    {COLOSSEUM_FROM_COLOSSEUM_FINAL_3, CONDITION_ALWAYS, 680, 0, 428,
+    {COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH, CONDITION_ALWAYS, 680, 0, 428,
      FACING_EAST, 0, 520, 330, 1020, 480, 0},
     {67, CONDITION_ALWAYS, 900, 0, 588, FACING_WEST, 0, 520, 490, 1020, 640, 0},
-    {COLOSSEUM_FROM_COLOSSEUM_FINAL_2_SOUTH, CONDITION_ALWAYS, 900, 0, 428,
-     FACING_WEST, 0, 520, 330, 1020, 480, 0},
+    {COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH, CONDITION_ALWAYS, 900, 0,
+     428, FACING_WEST, 0, 520, 330, 1020, 480, 0},
     {69, CONDITION_ALWAYS, 440, 0, 120, FACING_SOUTHEAST, 0, 272, 0, 656, 304,
      0},
     {70, CONDITION_ALWAYS, 184, 0, 912, FACING_SOUTH, 0, 0, 736, 368, 1024, 0},
@@ -1976,36 +1978,49 @@ struct SceneEntrance gColosseumEntranceEntrances3[] = {
 
 u32 gColosseumEntranceExits[] = {
     SCENE_EXITS(ColosseumTunnel),
-    SCENE_EXIT(COLOSSEUM_TUNNEL_TO_BABI_PALACE_1, BabiPalace1,
-               BABI_PALACE_1_FROM_COLOSSEUM_TUNNEL),
+    SCENE_EXIT(COLOSSEUM_TUNNEL_TO_BABI_PALACE, BabiPalace,
+               BABI_PALACE_FROM_COLOSSEUM_TUNNEL),
     SCENE_EXIT(COLOSSEUM_TUNNEL_TO_COLOSSEUM, Colosseum,
                COLOSSEUM_FROM_COLOSSEUM_TUNNEL),
     SCENE_EXITS(Colosseum),
-    SCENE_EXIT(1, Colosseum, 6),
-    SCENE_EXIT(2, Colosseum, 5),
-    SCENE_EXIT(3, Colosseum, 1),
+    SCENE_EXIT(COLOSSEUM_CORRIDOR_TO_STANDS_NORTH, Colosseum,
+               COLOSSEUM_STANDS_FROM_CORRIDOR_NORTH),
+    SCENE_EXIT(COLOSSEUM_CORRIDOR_TO_STANDS_WEST, Colosseum,
+               COLOSSEUM_STANDS_FROM_CORRIDOR_WEST),
+    SCENE_EXIT(COLOSSEUM_CORRIDOR_LOCKED_DOOR_TO_CORRIDOR, Colosseum,
+               COLOSSEUM_CORRIDOR_FROM_STANDS_NORTH),
     SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_TUNNEL, ColosseumTunnel,
                COLOSSEUM_TUNNEL_FROM_COLOSSEUM),
-    SCENE_EXIT(5, Colosseum, 2),
-    SCENE_EXIT(6, Colosseum, 1),
-    SCENE_EXIT(7, Colosseum, 7),
-    SCENE_EXIT(69, Colosseum, 69),
-    SCENE_EXIT(70, Colosseum, 70),
-    SCENE_EXIT(64, Colosseum, 65),
-    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_FINAL_1, ColosseumFinal1,
-               COLOSSEUM_FINAL_1_FROM_COLOSSEUM),
-    SCENE_EXIT(66, Colosseum, COLOSSEUM_FROM_COLOSSEUM_FINAL_3),
-    SCENE_EXIT(67, Colosseum, 67),
-    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_FINAL_1_WEST, ColosseumFinal1,
-               COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST),
-    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_FINAL_2_WEST, ColosseumFinal2,
-               COLOSSEUM_FINAL_2_FROM_COLOSSEUM_WEST),
-    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_FINAL_2_EAST, ColosseumFinal2,
-               COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST),
-    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_FINAL_3_NORTH, ColosseumFinal3,
-               COLOSSEUM_FINAL_3_FROM_COLOSSEUM_NORTH),
-    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_FINAL_3_SOUTH, ColosseumFinal3,
-               COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH),
+    SCENE_EXIT(COLOSSEUM_STANDS_TO_CORRIDOR_WEST, Colosseum,
+               COLOSSEUM_CORRIDOR_FROM_STANDS_WEST),
+    SCENE_EXIT(COLOSSEUM_STANDS_TO_CORRIDOR_NORTH, Colosseum,
+               COLOSSEUM_CORRIDOR_FROM_STANDS_NORTH),
+    SCENE_EXIT(COLOSSEUM_STANDS_TO_FAILED_TRIAL, Colosseum,
+               COLOSSEUM_FAILED_TRIAL_FROM_STANDS),
+    SCENE_EXIT(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS, Colosseum,
+               COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS),
+    SCENE_EXIT(COLOSSEUM_STANDS_TO_CLEARED_TRIAL, Colosseum,
+               COLOSSEUM_CLEARED_TRIAL_FROM_STANDS),
+    SCENE_EXIT(COLOSSEUM_WAITING_ROOM_TO_ARCHED_PASSAGE_EAST, Colosseum,
+               COLOSSEUM_ARCHED_PASSAGE_FROM_WAITING_ROOM_EAST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH, ColosseumAzartMatch,
+               COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM),
+    SCENE_EXIT(COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST, Colosseum,
+               COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH),
+    SCENE_EXIT(COLOSSEUM_WAITING_ROOM_TO_ARCHED_PASSAGE_WEST, Colosseum,
+               COLOSSEUM_ARCHED_PASSAGE_FROM_WAITING_ROOM_WEST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST, ColosseumAzartMatch,
+               COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST, ColosseumSatrageMatch,
+               COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST, ColosseumSatrageMatch,
+               COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH,
+               ColosseumNavampaMatch,
+               COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH),
+    SCENE_EXIT(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH,
+               ColosseumNavampaMatch,
+               COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH),
     SCENE_EXITS(ColosseumEntrance),
     SCENE_EXIT(COLOSSEUM_ENTRANCE_TO_TOLBI, Tolbi,
                TOLBI_FROM_COLOSSEUM_ENTRANCE),
@@ -2139,7 +2154,7 @@ struct ScenePlacement gColosseumEntrancePlacements1Entrance8[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gColosseumEntrancePlacements1FromColosseumFinal1West[] = {
+struct ScenePlacement gColosseumEntrancePlacements1FromColosseumAzartMatchWest[] = {
     { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(808), 0, PIXELS(72), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2165,7 +2180,7 @@ struct ScenePlacement gColosseumEntrancePlacements1FromColosseumFinal1West[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gColosseumEntrancePlacements1FromColosseumFinal3[] = {
+struct ScenePlacement gColosseumEntrancePlacements1FromColosseumNavampaMatch[] = {
     { 0xcb, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(536), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xcb, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2345,7 +2360,7 @@ struct SceneEvent gColosseumEntranceEvents3[] = {
 };
 // clang-format on
 
-struct SceneEvent gColosseumEntranceEvents1FromColosseumFinal1West[] = {
+struct SceneEvent gColosseumEntranceEvents1FromColosseumAzartMatchWest[] = {
     {EVENT_TALK, ACTOR_MORGAN, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceIAmMorganIAmThe)},
     {EVENT_TALK, ACTOR_AZART, CONDITION_ALWAYS,

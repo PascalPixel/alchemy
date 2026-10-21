@@ -25,20 +25,20 @@
 ///   (FuchinFallsCaveDragonStatue).
 ///
 ///   The first four rooms are crossed on floating logs (sprites 0xec and 0xed,
-///   the logs of Colosso's Lumber Water Crossing Area, colosseum_final1.c).
-///   Walking into a log's trigger cell pushes it along the water to its next
-///   stop, the leader moving with it (SceneActor_PlacePairAtOffset); touching
-///   the cell plays the log's two rolling animations. Each stop is a
-///   place flag, FLAG_PLACE_TEMP_01 to FLAG_PLACE_TEMP_03 for the first room's
-///   logs, FLAG_PLACE_TEMP_04 to FLAG_PLACE_TEMP_07 the second's,
-///   FLAG_PLACE_TEMP_08 to FLAG_PLACE_TEMP_12 the third's and
-///   FLAG_PLACE_TEMP_13 to FLAG_PLACE_TEMP_15 the fourth's, so the logs are
-///   back where they started once the party leaves the cave's scenes. After
-///   each move, and on entry, the room's rebuild function puts every log at the
-///   cell its flags name and rewrites the cells of each log's track to match.
-///   In the third room the logs block one another, so where a log stops depends
-///   on where the others lie; in the second and third rooms the leader hops
-///   across gaps a log's stop leaves.
+///   the logs of Colosso's Lumber Water Crossing Area,
+///   colosseum_azart_match.c). Walking into a log's trigger cell pushes it
+///   along the water to its next stop, the leader moving with it
+///   (SceneActor_PlacePairAtOffset); touching the cell plays the log's two
+///   rolling animations. Each stop is a place flag, FLAG_PLACE_TEMP_01 to
+///   FLAG_PLACE_TEMP_03 for the first room's logs, FLAG_PLACE_TEMP_04 to
+///   FLAG_PLACE_TEMP_07 the second's, FLAG_PLACE_TEMP_08 to FLAG_PLACE_TEMP_12
+///   the third's and FLAG_PLACE_TEMP_13 to FLAG_PLACE_TEMP_15 the fourth's, so
+///   the logs are back where they started once the party leaves the cave's
+///   scenes. After each move, and on entry, the room's rebuild function puts
+///   every log at the cell its flags name and rewrites the cells of each log's
+///   track to match. In the third room the logs block one another, so where a
+///   log stops depends on where the others lie; in the second and third rooms
+///   the leader hops across gaps a log's stop leaves.
 ///
 ///   Zephyr, a Jupiter Djinni, waits in the second room (scene 63) and fights
 ///   when spoken to. In the first room a chest holds a mimic, whose battle

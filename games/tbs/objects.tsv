@@ -913,20 +913,20 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3b9	text	games/tbs/src/scene/entry/colosseum_entrance
 3b9	text	games/tbs/src/scene/colosseum_entrance
 3b9	text	games/tbs/src/scene/import/colosseum_entrance
-3ba	text	games/tbs/src/scene/entry/colosseum_final1
-3ba	text	games/tbs/src/scene/colosseum_final1
-3ba	text	games/tbs/src/scene/import/colosseum_final1
+3ba	text	games/tbs/src/scene/entry/colosseum_azart_match
+3ba	text	games/tbs/src/scene/colosseum_azart_match
+3ba	text	games/tbs/src/scene/import/colosseum_azart_match
 3ba	text	libgcc.a:_call_via_rX
 3ba	text	games/tbs/src/graphics/colosso/gauge
 3ba	bss	resource_3ba_overlay	.bss
-3bb	text	games/tbs/src/scene/entry/colosseum_final2
-3bb	text	games/tbs/src/scene/colosseum_final2
-3bb	text	games/tbs/src/scene/import/colosseum_final2
+3bb	text	games/tbs/src/scene/entry/colosseum_satrage_match
+3bb	text	games/tbs/src/scene/colosseum_satrage_match
+3bb	text	games/tbs/src/scene/import/colosseum_satrage_match
 3bb	text	games/tbs/src/graphics/colosso/gauge
 3bb	bss	resource_3bb_overlay	.bss
-3bc	text	games/tbs/src/scene/entry/colosseum_final3
-3bc	text	games/tbs/src/scene/colosseum_final3
-3bc	text	games/tbs/src/scene/import/colosseum_final3
+3bc	text	games/tbs/src/scene/entry/colosseum_navampa_match
+3bc	text	games/tbs/src/scene/colosseum_navampa_match
+3bc	text	games/tbs/src/scene/import/colosseum_navampa_match
 3bc	text	libgcc.a:_call_via_rX
 3bc	text	games/tbs/src/graphics/colosso/gauge
 3bc	bss	resource_3bc_overlay	.bss

@@ -47,9 +47,9 @@ enum {
   WORLD_MAP_FROM_KALAY_DOCKS_EAST = 21,
   WORLD_MAP_FROM_TOLBI_DOCKS = 22,
   WORLD_MAP_FROM_TOLBI = 23,
-  WORLD_MAP_FROM_ALTMILLER_CAVE_1 = 24,
+  WORLD_MAP_FROM_ALTMILLER_CAVE_ENTRANCE = 24,
   WORLD_MAP_FROM_GONDOWAN_PASSAGE_EAST = 25,
-  WORLD_MAP_FROM_GONDOWAN_CAVE_2_NORTH = 26,
+  WORLD_MAP_FROM_GONDOWAN_CAVE_NORTH = 26,
   WORLD_MAP_FROM_SUHALLA = 27,
   WORLD_MAP_FROM_SUHALLA_DESERT_1 = 28,
   WORLD_MAP_FROM_SUHALLA_GATE_1_EAST = 29,
@@ -62,7 +62,7 @@ enum {
   WORLD_MAP_FROM_KOLIMA_EAST = 38,
   WORLD_MAP_FROM_IMIL_NORTH = 39,
   WORLD_MAP_FROM_GOMA_CAVE_BRIDGE = 40,
-  WORLD_MAP_FROM_GONDOWAN_CAVE_2_SOUTH = 41,
+  WORLD_MAP_FROM_GONDOWAN_CAVE_SOUTH = 41,
   WORLD_MAP_FROM_SUHALLA_GATE_1_WEST = 42,
   WORLD_MAP_FROM_MOGALL_FOREST_KILLER_APE = 43,
   WORLD_MAP_FROM_VAULT_NORTH = 44,
@@ -122,9 +122,9 @@ enum {
   WORLD_MAP_TO_KALAY_DOCKS_EAST = 21,
   WORLD_MAP_TO_TOLBI_DOCKS = 22,
   WORLD_MAP_TO_TOLBI = 23,
-  WORLD_MAP_TO_ALTMILLER_CAVE_1 = 24,
+  WORLD_MAP_TO_ALTMILLER_CAVE_ENTRANCE = 24,
   WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST = 25,
-  WORLD_MAP_TO_GONDOWAN_CAVE_2_NORTH = 26,
+  WORLD_MAP_TO_GONDOWAN_CAVE_NORTH = 26,
   WORLD_MAP_TO_SUHALLA = 27,
   WORLD_MAP_TO_SUHALLA_DESERT_1 = 28,
   WORLD_MAP_TO_SUHALLA_GATE_1_WEST = 29,
@@ -135,7 +135,7 @@ enum {
   WORLD_MAP_TO_LUNPA = 34,
   WORLD_MAP_TO_BILIBIN_CAVE_ENTRANCE = 35,
   WORLD_MAP_TO_GOMA_CAVE_BRIDGE = 40,
-  WORLD_MAP_TO_GONDOWAN_CAVE_2_SOUTH = 41,
+  WORLD_MAP_TO_GONDOWAN_CAVE_SOUTH = 41,
   WORLD_MAP_TO_SUHALLA_GATE_1_EAST = 42,
   WORLD_MAP_TO_MOGALL_FOREST_KILLER_APE = 43,
   WORLD_MAP_TO_VAULT_NORTH = 44,
@@ -330,7 +330,7 @@ enum {
          ///< him on the stormy night (its render)
   VALE_INTERIORS_INN_FROM_VALE_STORM_WEST = 11,
   VALE_INTERIORS_INN_FROM_VALE_STORM_EAST = 12,
-  VALE_INTERIORS_INN_FROM_BABI_PALACE_1 = 19,
+  VALE_INTERIORS_INN_FROM_BABI_PALACE = 19,
   VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST = 20,
   VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA =
       21, ///< ★ Named from what the player sees: Isaac's house, where Dora
@@ -357,7 +357,7 @@ enum {
          ///< the stairs (its render)
   VALE_INTERIORS_INN_TO_VALE_STORM_WEST = 10,
   VALE_INTERIORS_INN_TO_VALE_STORM_EAST = 11,
-  VALE_INTERIORS_INN_TO_BABI_PALACE_1 = 19,
+  VALE_INTERIORS_INN_TO_BABI_PALACE = 19,
   VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA =
       20, ///< ★ Named from what the player sees: the ground floor at the foot
           ///< of the stairs (its render)
@@ -3472,10 +3472,10 @@ enum {
   TOLBI_FROM_HOUSE_SOUTHWEST = 8,
   TOLBI_FROM_SANCTUM = 9,
   TOLBI_FROM_TOLBI_INTERIORS_WEST = 10,
-  TOLBI_FROM_BABI_PALACE_2 = 11,
+  TOLBI_FROM_BABI_PALACE_ENTRANCE = 11,
   TOLBI_FROM_COLOSSEUM_ENTRANCE = 12,
   TOLBI_FROM_LUCKY_DICE = 13,
-  TOLBI_FROM_TOLBI_SPRING_2 = 20,
+  TOLBI_FROM_TOLBI_SPRING = 20,
 };
 enum {
   TOLBI_TO_HOUSE_SOUTH = 1,
@@ -3489,12 +3489,12 @@ enum {
   TOLBI_TO_WEAPON_AND_ARMOR_SHOP = 7,
   TOLBI_TO_HOUSE_SOUTHWEST = 8,
   TOLBI_TO_SANCTUM = 9,
-  TOLBI_TO_BABI_PALACE_2 = 10,
+  TOLBI_TO_BABI_PALACE_ENTRANCE = 10,
   TOLBI_TO_COLOSSEUM_ENTRANCE = 11,
   TOLBI_TO_WORLD_MAP = 12,
   TOLBI_TO_LUCKY_DICE = 13, ///< ★ Named from the game: "Lucky Dice"
                             ///< (MsgTolbiSpringLuckyDiceThrowTheDiceOn)
-  TOLBI_TO_TOLBI_SPRING_2 = 30,
+  TOLBI_TO_TOLBI_SPRING = 30,
 };
 
 /// SceneId_TolbiInteriors's entrances and exits.
@@ -3598,69 +3598,353 @@ enum {
           ///< the inn's stairs, lined with guest-room doors (its render)
 };
 
-/// SceneId_TolbiSpring1's entrances and exits.
+/// SceneId_TolbiGameRooms's entrances and exits.
 enum {
-  TOLBI_SPRING_1_LUCKY_DICE_FROM_TOLBI = 10,
-  TOLBI_SPRING_1_LUCKY_WHEELS_FROM_TOLBI = 11,
-  TOLBI_SPRING_1_AFTER_OFFER_LUCKY_WHEELS =
-      12,                                     ///< TolbiSpring_OfferLuckyWheels
-  TOLBI_SPRING_1_AFTER_OFFER_LUCKY_DICE = 13, ///< TolbiSpring_OfferLuckyDice
+  TOLBI_GAME_ROOMS_LUCKY_DICE_FROM_TOLBI =
+      10, ///< ★ Named from the game: "Throw the dice"
+          ///< (MsgTolbiSpringLuckyDiceThrowTheDiceOn)
+  TOLBI_GAME_ROOMS_LUCKY_WHEELS_FROM_TOLBI =
+      11, ///< ★ Named from the game: "Lucky Wheels"
+          ///< (MsgTolbiLuckyWheelsRulesPullLever)
+  TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS =
+      12, ///< TolbiSpring_OfferLuckyWheels
+  TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE = 13, ///< TolbiSpring_OfferLuckyDice
 };
 enum {
-  TOLBI_SPRING_1_LUCKY_DICE_TO_TOLBI = 1,
-};
-
-/// SceneId_BabiPalace1's entrances and exits.
-enum {
-  BABI_PALACE_1_FROM_BABI_PALACE_2 = 1,
-  BABI_PALACE_1_FROM_VALE_INTERIORS_INN = 11,
-  BABI_PALACE_1_FROM_COLOSSEUM_TUNNEL = 13,
-  BABI_PALACE_1_FROM_COLOSSEUM_FINAL_1 = 98,
-  BABI_PALACE_1_FROM_COLOSSEUM_FINAL_3 = 99,
-};
-enum {
-  BABI_PALACE_1_TO_BABI_PALACE_2 = 1,
-  BABI_PALACE_1_TO_VALE_INTERIORS_INN = 11,
-  BABI_PALACE_1_TO_COLOSSEUM_TUNNEL = 13,
+  TOLBI_GAME_ROOMS_LUCKY_DICE_TO_TOLBI = 1,
+  TOLBI_GAME_ROOMS_LUCKY_WHEELS_TO_TOLBI = 2,
 };
 
-/// SceneId_BabiPalace2's entrances and exits.
+/// SceneId_BabiPalace's entrances and exits.
 enum {
-  BABI_PALACE_2_FROM_TOLBI = 1,
-  BABI_PALACE_2_FROM_BABI_PALACE_1 = 2,
+  BABI_PALACE_FROM_BABI_PALACE_ENTRANCE = 1,
+  BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_WEST =
+      2, ///< ★ Named from what the player sees: the hall entered from outside,
+         ///< with a winged statue in its middle (its render)
+  BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_EAST =
+      3, ///< ★ Named from what the player sees: the hall entered from outside,
+         ///< with a winged statue in its middle (its render)
+  BABI_PALACE_STATUE_HALL_FROM_WEST_STAIRWELL =
+      4, ///< ★ Named from what the player sees: the hall entered from outside,
+         ///< with a winged statue in its middle (its render)
+  BABI_PALACE_STATUE_HALL_FROM_EAST_STAIRWELL =
+      5, ///< ★ Named from what the player sees: the hall entered from outside,
+         ///< with a winged statue in its middle (its render)
+  BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_WEST =
+      6, ///< ★ Named from what the player sees: the hall entered from outside,
+         ///< with a winged statue in its middle (its render)
+  BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_EAST =
+      7, ///< ★ Named from what the player sees: the hall entered from outside,
+         ///< with a winged statue in its middle (its render)
+  BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_WEST =
+      8, ///< ★ Named from the game: "in this big bedroom"
+         ///< (MsgBabiPalaceNoOnesGoingToSleepIn)
+  BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_EAST =
+      9, ///< ★ Named from the game: "in this big bedroom"
+         ///< (MsgBabiPalaceNoOnesGoingToSleepIn)
+  BABI_PALACE_SCHOLARS_LANDING_FROM_CENTRAL_HALL =
+      10, ///< ★ Named from what the player sees: the stair landing whose dark
+          ///< doorway leads to the scholars' room (its render)
+  BABI_PALACE_FROM_VALE_INTERIORS_INN = 11,
+  BABI_PALACE_TUNNEL_LANDING_FROM_CENTRAL_HALL =
+      12, ///< ★ Named from what the player sees: the stair landing whose dark
+          ///< doorway leads into the Colosseum Tunnel (its render)
+  BABI_PALACE_FROM_COLOSSEUM_TUNNEL = 13,
+  BABI_PALACE_BEDROOM_LANDING_FROM_THRONE_ROOM =
+      16, ///< ★ Named from what the player sees: the small room of stairs and a
+          ///< door outside Babi's bedroom (its render)
+  BABI_PALACE_BEDROOM_LANDING_FROM_BABIS_BEDROOM =
+      17, ///< ★ Named from what the player sees: the small room of stairs and a
+          ///< door outside Babi's bedroom (its render)
+  BABI_PALACE_BABIS_BEDROOM_FROM_BEDROOM_LANDING =
+      18, ///< ★ Named from the game: "Lord Babi didn't use his bed"
+          ///< (MsgBabiPalaceItLooksLikeLordBabiDidnt)
+  BABI_PALACE_WEST_STAIRWELL_FROM_STATUE_HALL =
+      20, ///< ★ Named from what the player sees: the small room that is only a
+          ///< staircase, off the statue hall's west side (its render)
+  BABI_PALACE_WEST_STAIRWELL_FROM_WEST_OCTAGONAL_ROOM =
+      21, ///< ★ Named from what the player sees: the small room that is only a
+          ///< staircase, off the statue hall's west side (its render)
+  BABI_PALACE_EAST_STAIRWELL_FROM_STATUE_HALL =
+      22, ///< ★ Named from what the player sees: the small room that is only a
+          ///< staircase, off the statue hall's east side (its render)
+  BABI_PALACE_EAST_STAIRWELL_FROM_EAST_OCTAGONAL_ROOM =
+      23, ///< ★ Named from what the player sees: the small room that is only a
+          ///< staircase, off the statue hall's east side (its render)
+  BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_WEST =
+      24, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_EAST =
+      25, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_CENTRAL_HALL_FROM_SCHOLARS_LANDING =
+      26, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_CENTRAL_HALL_FROM_TUNNEL_LANDING =
+      27, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_CENTRAL_HALL_FROM_NORTH_OCTAGONAL_ROOM =
+      28, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_CENTRAL_HALL_FROM_SHEBAS_LANDING =
+      29, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_CENTRAL_HALL_FROM_STOVE_ROOM =
+      30, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_CENTRAL_HALL_FROM_SOLDIERS_ROOM =
+      31, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_CENTRAL_HALL_FROM_THRONE_ROOM =
+      32, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_THRONE_ROOM_FROM_CENTRAL_HALL =
+      33, ///< ★ Named from what the player sees: the room with Babi's green
+          ///< throne, where he meets the party after Colosso (its render)
+  BABI_PALACE_THRONE_ROOM_FROM_BEDROOM_LANDING =
+      34, ///< ★ Named from what the player sees: the room with Babi's green
+          ///< throne, where he meets the party after Colosso (its render)
+  BABI_PALACE_STOVE_ROOM_FROM_CENTRAL_HALL =
+      35, ///< ★ Named from what the player sees: the room with a table and a
+          ///< lit stone stove (its render)
+  BABI_PALACE_SOLDIERS_ROOM_FROM_CENTRAL_HALL =
+      36, ///< ★ Named from what the player sees: the room where four of Babi's
+          ///< soldiers stand by a table and a bed (its render)
+  BABI_PALACE_WEST_OCTAGONAL_ROOM_FROM_WEST_STAIRWELL =
+      40, ///< ★ Named from what the player sees: the small eight-sided room up
+          ///< the west staircase, with two jars (its render)
+  BABI_PALACE_EAST_OCTAGONAL_ROOM_FROM_EAST_STAIRWELL =
+      41, ///< ★ Named from what the player sees: the small eight-sided room up
+          ///< the east staircase (its render)
+  BABI_PALACE_NORTH_OCTAGONAL_ROOM_FROM_CENTRAL_HALL =
+      42, ///< ★ Named from what the player sees: the small eight-sided room up
+          ///< the central hall's far west stairs (its render)
+  BABI_PALACE_SHEBAS_LANDING_FROM_CENTRAL_HALL =
+      43, ///< ★ Named from what the player sees: the small room of stairs and a
+          ///< door outside Sheba's room (its render)
+  BABI_PALACE_SHEBAS_LANDING_FROM_SHEBAS_ROOM =
+      44, ///< ★ Named from what the player sees: the small room of stairs and a
+          ///< door outside Sheba's room (its render)
+  BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING =
+      45, ///< ★ Named from the game: "Sheba" (MsgCharacterName)
+  BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH = 98,
+  BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH = 99,
 };
 enum {
-  BABI_PALACE_2_TO_TOLBI = 1,
-  BABI_PALACE_2_TO_BABI_PALACE_1 = 2,
+  BABI_PALACE_TO_BABI_PALACE_ENTRANCE = 1,
+  BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_WEST =
+      2, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+         ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_EAST =
+      3, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+         ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_STATUE_HALL_TO_WEST_STAIRWELL =
+      4, ///< ★ Named from what the player sees: the small room that is only a
+         ///< staircase, off the statue hall's west side (its render)
+  BABI_PALACE_STATUE_HALL_TO_EAST_STAIRWELL =
+      5, ///< ★ Named from what the player sees: the small room that is only a
+         ///< staircase, off the statue hall's east side (its render)
+  BABI_PALACE_STATUE_HALL_TO_BIG_BEDROOM_WEST =
+      6, ///< ★ Named from the game: "in this big bedroom"
+         ///< (MsgBabiPalaceNoOnesGoingToSleepIn)
+  BABI_PALACE_STATUE_HALL_TO_BIG_BEDROOM_EAST =
+      7, ///< ★ Named from the game: "in this big bedroom"
+         ///< (MsgBabiPalaceNoOnesGoingToSleepIn)
+  BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_WEST =
+      8, ///< ★ Named from what the player sees: the hall entered from outside,
+         ///< with a winged statue in its middle (its render)
+  BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_EAST =
+      9, ///< ★ Named from what the player sees: the hall entered from outside,
+         ///< with a winged statue in its middle (its render)
+  BABI_PALACE_SCHOLARS_LANDING_TO_CENTRAL_HALL =
+      10, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_TO_VALE_INTERIORS_INN = 11,
+  BABI_PALACE_TUNNEL_LANDING_TO_CENTRAL_HALL =
+      12, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_TO_COLOSSEUM_TUNNEL = 13,
+  BABI_PALACE_BEDROOM_LANDING_TO_THRONE_ROOM =
+      16, ///< ★ Named from what the player sees: the room with Babi's green
+          ///< throne, where he meets the party after Colosso (its render)
+  BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM =
+      17, ///< ★ Named from the game: "Lord Babi didn't use his bed"
+          ///< (MsgBabiPalaceItLooksLikeLordBabiDidnt)
+  BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING =
+      18, ///< ★ Named from what the player sees: the small room of stairs and a
+          ///< door outside Babi's bedroom (its render)
+  BABI_PALACE_WEST_STAIRWELL_TO_STATUE_HALL =
+      20, ///< ★ Named from what the player sees: the hall entered from outside,
+          ///< with a winged statue in its middle (its render)
+  BABI_PALACE_WEST_STAIRWELL_TO_WEST_OCTAGONAL_ROOM =
+      21, ///< ★ Named from what the player sees: the small eight-sided room up
+          ///< the west staircase, with two jars (its render)
+  BABI_PALACE_EAST_STAIRWELL_TO_STATUE_HALL =
+      22, ///< ★ Named from what the player sees: the hall entered from outside,
+          ///< with a winged statue in its middle (its render)
+  BABI_PALACE_EAST_STAIRWELL_TO_EAST_OCTAGONAL_ROOM =
+      23, ///< ★ Named from what the player sees: the small eight-sided room up
+          ///< the east staircase (its render)
+  BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_WEST =
+      24, ///< ★ Named from what the player sees: the hall entered from outside,
+          ///< with a winged statue in its middle (its render)
+  BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_EAST =
+      25, ///< ★ Named from what the player sees: the hall entered from outside,
+          ///< with a winged statue in its middle (its render)
+  BABI_PALACE_CENTRAL_HALL_TO_SCHOLARS_LANDING =
+      26, ///< ★ Named from what the player sees: the stair landing whose dark
+          ///< doorway leads to the scholars' room (its render)
+  BABI_PALACE_CENTRAL_HALL_TO_TUNNEL_LANDING =
+      27, ///< ★ Named from what the player sees: the stair landing whose dark
+          ///< doorway leads into the Colosseum Tunnel (its render)
+  BABI_PALACE_CENTRAL_HALL_TO_NORTH_OCTAGONAL_ROOM =
+      28, ///< ★ Named from what the player sees: the small eight-sided room up
+          ///< the central hall's far west stairs (its render)
+  BABI_PALACE_CENTRAL_HALL_TO_SHEBAS_LANDING =
+      29, ///< ★ Named from what the player sees: the small room of stairs and a
+          ///< door outside Sheba's room (its render)
+  BABI_PALACE_CENTRAL_HALL_TO_STOVE_ROOM =
+      30, ///< ★ Named from what the player sees: the room with a table and a
+          ///< lit stone stove (its render)
+  BABI_PALACE_CENTRAL_HALL_TO_SOLDIERS_ROOM =
+      31, ///< ★ Named from what the player sees: the room where four of Babi's
+          ///< soldiers stand by a table and a bed (its render)
+  BABI_PALACE_CENTRAL_HALL_TO_THRONE_ROOM =
+      32, ///< ★ Named from what the player sees: the room with Babi's green
+          ///< throne, where he meets the party after Colosso (its render)
+  BABI_PALACE_THRONE_ROOM_TO_CENTRAL_HALL =
+      33, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_THRONE_ROOM_TO_BEDROOM_LANDING =
+      34, ///< ★ Named from what the player sees: the small room of stairs and a
+          ///< door outside Babi's bedroom (its render)
+  BABI_PALACE_STOVE_ROOM_TO_CENTRAL_HALL =
+      35, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_SOLDIERS_ROOM_TO_CENTRAL_HALL =
+      36, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_WEST_OCTAGONAL_ROOM_TO_WEST_STAIRWELL =
+      40, ///< ★ Named from what the player sees: the small room that is only a
+          ///< staircase, off the statue hall's west side (its render)
+  BABI_PALACE_EAST_OCTAGONAL_ROOM_TO_EAST_STAIRWELL =
+      41, ///< ★ Named from what the player sees: the small room that is only a
+          ///< staircase, off the statue hall's east side (its render)
+  BABI_PALACE_NORTH_OCTAGONAL_ROOM_TO_CENTRAL_HALL =
+      42, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_SHEBAS_LANDING_TO_CENTRAL_HALL =
+      43, ///< ★ Named from what the player sees: the T-shaped red-carpeted hall
+          ///< that joins the palace's stairs and doors (its render)
+  BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM =
+      44, ///< ★ Named from the game: "Sheba" (MsgCharacterName)
+  BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING =
+      45, ///< ★ Named from what the player sees: the small room of stairs and a
+          ///< door outside Sheba's room (its render)
+};
+
+/// SceneId_BabiPalaceEntrance's entrances and exits.
+enum {
+  BABI_PALACE_ENTRANCE_FROM_TOLBI = 1,
+  BABI_PALACE_ENTRANCE_FROM_BABI_PALACE = 2,
+};
+enum {
+  BABI_PALACE_ENTRANCE_TO_TOLBI = 1,
+  BABI_PALACE_ENTRANCE_TO_BABI_PALACE = 2,
 };
 
 /// SceneId_Colosseum's entrances and exits.
 enum {
+  COLOSSEUM_CORRIDOR_FROM_STANDS_NORTH =
+      1, ///< ★ Named from what the player sees: the stone corridor the
+         ///< Colosseum Tunnel opens into, with doorways to the stands (its
+         ///< render)
+  COLOSSEUM_CORRIDOR_FROM_STANDS_WEST =
+      2, ///< ★ Named from what the player sees: the stone corridor the
+         ///< Colosseum Tunnel opens into, with doorways to the stands (its
+         ///< render)
   COLOSSEUM_FROM_COLOSSEUM_TUNNEL = 4,
-  COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST = 12,
-  COLOSSEUM_FROM_COLOSSEUM_FINAL_1_EAST = 21,
-  COLOSSEUM_FROM_COLOSSEUM_FINAL_2_NORTH = 31,
+  COLOSSEUM_STANDS_FROM_CORRIDOR_WEST =
+      5, ///< ★ Named from what the player sees: the crowded seats above the
+         ///< trial grounds (its render)
+  COLOSSEUM_STANDS_FROM_CORRIDOR_NORTH =
+      6, ///< ★ Named from what the player sees: the crowded seats above the
+         ///< trial grounds (its render)
+  COLOSSEUM_FAILED_TRIAL_FROM_STANDS =
+      7, ///< ★ Named from what the player sees: a warrior strains at the trial,
+         ///< gives up and runs (its render)
+  COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST = 12,
+  COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST = 21,
+  COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH = 31,
   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE = 64,
-  COLOSSEUM_FROM_COLOSSEUM_FINAL_3 = 66,
-  COLOSSEUM_FROM_COLOSSEUM_FINAL_2_SOUTH = 68,
+  COLOSSEUM_ARCHED_PASSAGE_FROM_WAITING_ROOM_EAST =
+      65, ///< ★ Named from what the player sees: the long passage with arched
+          ///< walls where an official leads Isaac to the finals (its render)
+  COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH = 66,
+  COLOSSEUM_ARCHED_PASSAGE_FROM_WAITING_ROOM_WEST =
+      67, ///< ★ Named from what the player sees: the long passage with arched
+          ///< walls where an official leads Isaac to the finals (its render)
+  COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH = 68,
+  COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS =
+      69, ///< ★ Named from what the player sees: the crowded seats above the
+          ///< trial grounds (its render)
+  COLOSSEUM_CLEARED_TRIAL_FROM_STANDS =
+      70, ///< ★ Named from what the player sees: a warrior heaves the trial's
+          ///< load up and drops it, shaking the ground (its render)
 };
 enum {
+  COLOSSEUM_CORRIDOR_TO_STANDS_NORTH =
+      1, ///< ★ Named from what the player sees: the crowded seats above the
+         ///< trial grounds (its render)
+  COLOSSEUM_CORRIDOR_TO_STANDS_WEST =
+      2, ///< ★ Named from what the player sees: the crowded seats above the
+         ///< trial grounds (its render)
+  COLOSSEUM_CORRIDOR_LOCKED_DOOR_TO_CORRIDOR =
+      3, ///< ★ Named from what the player sees: the stone corridor the
+         ///< Colosseum Tunnel opens into, with doorways to the stands (its
+         ///< render)
   COLOSSEUM_TO_COLOSSEUM_TUNNEL = 4,
-  COLOSSEUM_TO_COLOSSEUM_FINAL_1_WEST = 12,
-  COLOSSEUM_TO_COLOSSEUM_FINAL_2_WEST = 21,
-  COLOSSEUM_TO_COLOSSEUM_FINAL_2_EAST = 22,
-  COLOSSEUM_TO_COLOSSEUM_FINAL_3_NORTH = 31,
-  COLOSSEUM_TO_COLOSSEUM_FINAL_3_SOUTH = 32,
-  COLOSSEUM_TO_COLOSSEUM_FINAL_1 = 65,
+  COLOSSEUM_STANDS_TO_CORRIDOR_WEST =
+      5, ///< ★ Named from what the player sees: the stone corridor the
+         ///< Colosseum Tunnel opens into, with doorways to the stands (its
+         ///< render)
+  COLOSSEUM_STANDS_TO_CORRIDOR_NORTH =
+      6, ///< ★ Named from what the player sees: the stone corridor the
+         ///< Colosseum Tunnel opens into, with doorways to the stands (its
+         ///< render)
+  COLOSSEUM_STANDS_TO_FAILED_TRIAL =
+      7, ///< ★ Named from what the player sees: a warrior strains at the trial,
+         ///< gives up and runs (its render)
+  COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST = 12,
+  COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST = 21,
+  COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST = 22,
+  COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH = 31,
+  COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH = 32,
+  COLOSSEUM_WAITING_ROOM_TO_ARCHED_PASSAGE_EAST =
+      64, ///< ★ Named from what the player sees: the long passage with arched
+          ///< walls where an official leads Isaac to the finals (its render)
+  COLOSSEUM_TO_COLOSSEUM_AZART_MATCH = 65,
+  COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST =
+      66, ///< ★ Named from what the player sees: the long passage with pillars
+          ///< before a plain wall that Isaac walks alone (its render)
+  COLOSSEUM_WAITING_ROOM_TO_ARCHED_PASSAGE_WEST =
+      67, ///< ★ Named from what the player sees: the long passage with arched
+          ///< walls where an official leads Isaac to the finals (its render)
+  COLOSSEUM_TRIAL_GROUNDS_TO_STANDS =
+      69, ///< ★ Named from what the player sees: the crowded seats above the
+          ///< trial grounds (its render)
+  COLOSSEUM_STANDS_TO_CLEARED_TRIAL =
+      70, ///< ★ Named from what the player sees: a warrior heaves the trial's
+          ///< load up and drops it, shaking the ground (its render)
 };
 
 /// SceneId_ColosseumTunnel's entrances and exits.
 enum {
-  COLOSSEUM_TUNNEL_FROM_BABI_PALACE_1 = 1,
+  COLOSSEUM_TUNNEL_FROM_BABI_PALACE = 1,
   COLOSSEUM_TUNNEL_FROM_COLOSSEUM = 2,
 };
 enum {
-  COLOSSEUM_TUNNEL_TO_BABI_PALACE_1 = 1,
+  COLOSSEUM_TUNNEL_TO_BABI_PALACE = 1,
   COLOSSEUM_TUNNEL_TO_COLOSSEUM = 2,
 };
 
@@ -3673,94 +3957,148 @@ enum {
   COLOSSEUM_ENTRANCE_TO_COLOSSEUM = 2,
 };
 
-/// SceneId_ColosseumFinal1's entrances and exits.
+/// SceneId_ColosseumAzartMatch's entrances and exits.
 enum {
-  COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST = 2,
-  COLOSSEUM_FINAL_1_FROM_COLOSSEUM = 3,
+  COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND =
+      1, ///< ★ Named from what the player sees: Isaac racing Azart through the
+         ///< stages after the lettering Match 1 (its render)
+  COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST = 2,
+  COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM = 3,
 };
 enum {
-  COLOSSEUM_FINAL_1_TO_COLOSSEUM_EAST = 4,
-  COLOSSEUM_FINAL_1_TO_BABI_PALACE_1 = 5,
-  COLOSSEUM_FINAL_1_TO_COLOSSEUM_WEST = 11,
-};
-
-/// SceneId_ColosseumFinal2's entrances and exits.
-enum {
-  COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST = 2,
-  COLOSSEUM_FINAL_2_FROM_COLOSSEUM_WEST = 3,
-};
-enum {
-  COLOSSEUM_FINAL_2_TO_COLOSSEUM_NORTH = 4,
-  COLOSSEUM_FINAL_2_TO_BABI_PALACE_1 = 5,
-  COLOSSEUM_FINAL_2_TO_COLOSSEUM_SOUTH = 11,
+  COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST = 4,
+  COLOSSEUM_AZART_MATCH_TO_BABI_PALACE = 5,
+  COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE =
+      10, ///< ★ Named from what the player sees: Isaac racing Azart through the
+          ///< stages after the lettering Match 1 (its render)
+  COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST = 11,
 };
 
-/// SceneId_ColosseumFinal3's entrances and exits.
+/// SceneId_ColosseumSatrageMatch's entrances and exits.
 enum {
-  COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH = 2,
-  COLOSSEUM_FINAL_3_FROM_COLOSSEUM_NORTH = 3,
+  COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND =
+      1, ///< ★ Named from what the player sees: Isaac racing Satrage through
+         ///< the stages after the lettering Match 2 (its render)
+  COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST = 2,
+  COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST = 3,
 };
 enum {
-  COLOSSEUM_FINAL_3_TO_BABI_PALACE_1 = 4,
-  COLOSSEUM_FINAL_3_TO_COLOSSEUM = 11,
-};
-
-/// SceneId_AltmillerCave1's entrances and exits.
-enum {
-  ALTMILLER_CAVE_1_FROM_WORLD_MAP = 1,
-  ALTMILLER_CAVE_1_FROM_ALTMILLER_CAVE_2 = 4,
-};
-enum {
-  ALTMILLER_CAVE_1_TO_WORLD_MAP = 1,
-  ALTMILLER_CAVE_1_TO_ALTMILLER_CAVE_2 = 4,
+  COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH = 4,
+  COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE = 5,
+  COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE =
+      10, ///< ★ Named from what the player sees: Isaac racing Satrage through
+          ///< the stages after the lettering Match 2 (its render)
+  COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH = 11,
 };
 
-/// SceneId_AltmillerCave2's entrances and exits.
+/// SceneId_ColosseumNavampaMatch's entrances and exits.
 enum {
-  ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_1 = 10,
-  ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_3 = 11,
+  COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND =
+      1, ///< ★ Named from what the player sees: Isaac racing Navampa through
+         ///< the stages after the lettering Match 3 (its render)
+  COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH = 2,
+  COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH = 3,
 };
 enum {
-  ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_1 = 10,
-  ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_3 = 11,
-};
-
-/// SceneId_AltmillerCave3's entrances and exits.
-enum {
-  ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_2 = 20,
-  ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_4 = 21,
-};
-enum {
-  ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_2 = 20,
-  ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_4 = 21,
-};
-
-/// SceneId_AltmillerCave4's entrances and exits.
-enum {
-  ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_3 = 30,
-  ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_5 = 31,
-};
-enum {
-  ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_3 = 30,
-  ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_5 = 31,
+  COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE = 4,
+  COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST =
+      5, ///< ★ Named from what the player sees: the third match lost, after
+         ///< which the party wakes in Babi's Palace (its render)
+  COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE =
+      10, ///< ★ Named from what the player sees: Isaac racing Navampa through
+          ///< the stages after the lettering Match 3 (its render)
+  COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM = 11,
 };
 
-/// SceneId_AltmillerCave5's entrances and exits.
+/// SceneId_AltmillerCaveEntrance's entrances and exits.
 enum {
-  ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_4 = 40,
-  ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_6 = 41,
+  ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
+  ALTMILLER_CAVE_ENTRANCE_FROM_INNER_CHAMBER = 2,
+  ALTMILLER_CAVE_ENTRANCE_INNER_CHAMBER_FROM_PASSAGE =
+      3, ///< ★ Named from what the player sees: the small chamber through the
+         ///< hole at the passage's end, with a torch-lit doorway (its render)
+  ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI = 4,
 };
 enum {
-  ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_4 = 40,
-  ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_6 = 41,
+  ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP = 1,
+  ALTMILLER_CAVE_ENTRANCE_TO_INNER_CHAMBER =
+      2, ///< ★ Named from what the player sees: the small chamber through the
+         ///< hole at the passage's end, with a torch-lit doorway (its render)
+  ALTMILLER_CAVE_ENTRANCE_INNER_CHAMBER_TO_PASSAGE =
+      3, ///< ★ Named from what the player sees: the dark winding passage in
+         ///< from the cave mouth (its render)
+  ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI = 4,
 };
 
-/// SceneId_AltmillerCave6's entrances and exits.
+/// SceneId_AltmillerCaveBabi's entrances and exits.
 enum {
-  ALTMILLER_CAVE_6_FROM_ALTMILLER_CAVE_5 = 50,
+  ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE = 10,
+  ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_VIAL_CHEST = 11,
 };
 enum {
-  ALTMILLER_CAVE_6_TO_ALTMILLER_CAVE_5 = 50,
+  ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE = 10,
+  ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST = 11,
+};
+
+/// SceneId_AltmillerCaveVialChest's entrances and exits.
+enum {
+  ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI = 20,
+  ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_SQUALL = 21,
+};
+enum {
+  ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI = 20,
+  ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL = 21,
+};
+
+/// SceneId_AltmillerCaveSquall's entrances and exits.
+enum {
+  ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST = 30,
+  ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_COOKIE_CHEST = 31,
+};
+enum {
+  ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST = 30,
+  ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST = 31,
+};
+
+/// SceneId_AltmillerCaveCookieChest's entrances and exits.
+enum {
+  ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL = 40,
+  ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_DRAUGHT = 41,
+};
+enum {
+  ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL = 40,
+  ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT = 41,
+};
+
+/// SceneId_AltmillerCaveDraught's entrances and exits.
+enum {
+  ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST = 50,
+  ALTMILLER_CAVE_DRAUGHT_FROM_ROCKS = 51,
+  ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CAVERN =
+      52, ///< ★ Named from the game: "rotated the rock"
+          ///< (MsgAltmillerRotatedRock)
+  ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CHEST =
+      53, ///< ★ Named from the game: "rotated the rock"
+          ///< (MsgAltmillerRotatedRock)
+  ALTMILLER_CAVE_DRAUGHT_CHEST_FROM_ROCKS =
+      54, ///< ★ Named from what the player sees: the chamber behind the burst
+          ///< wall, with one chest on a stone (its render)
+};
+enum {
+  ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST =
+      50, ///< ★ Named from what the player sees: the chamber behind the burst
+          ///< wall, with one chest on a stone (its render)
+  ALTMILLER_CAVE_DRAUGHT_TO_ROCKS = 51, ///< ★ Named from the game: "rotated the
+                                        ///< rock" (MsgAltmillerRotatedRock)
+  ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CAVERN =
+      52, ///< ★ Named from what the player sees: the large cavern of stone
+          ///< pillars before the rocks (its render)
+  ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST =
+      53, ///< ★ Named from what the player sees: the chamber behind the burst
+          ///< wall, with one chest on a stone (its render)
+  ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS =
+      54, ///< ★ Named from the game: "rotated the rock"
+          ///< (MsgAltmillerRotatedRock)
 };
 
 /// SceneId_GondowanPassage's entrances and exits.
@@ -3835,28 +4173,48 @@ enum {
   KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY = 4,
 };
 
-/// SceneId_GondowanCave1's entrances and exits.
+/// SceneId_GondowanCaveRiver's entrances and exits.
 enum {
-  GONDOWAN_CAVE_1_FROM_GONDOWAN_CAVE_2_NORTH = 1,
-  GONDOWAN_CAVE_1_FROM_GONDOWAN_CAVE_2_SOUTH = 4,
+  GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_NORTH = 1,
+  GONDOWAN_CAVE_RIVER_FROM_BOULDER_PASSAGE = 2,
+  GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_FROM_RIVER =
+      3, ///< ★ Named from what the player sees: the passage with a boulder that
+         ///< Lift raises (its render)
+  GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_SOUTH = 4,
 };
 enum {
-  GONDOWAN_CAVE_1_TO_GONDOWAN_CAVE_2_NORTH = 1,
-  GONDOWAN_CAVE_1_TO_GONDOWAN_CAVE_2_SOUTH = 4,
+  GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH = 1,
+  GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE =
+      2, ///< ★ Named from what the player sees: the passage with a boulder that
+         ///< Lift raises (its render)
+  GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER =
+      3, ///< ★ Named from what the player sees: the underground river crossed
+         ///< on stepping pads (its render)
+  GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH = 4,
 };
 
-/// SceneId_GondowanCave2's entrances and exits.
+/// SceneId_GondowanCave's entrances and exits.
 enum {
-  GONDOWAN_CAVE_2_FROM_WORLD_MAP_EAST = 1,
-  GONDOWAN_CAVE_2_FROM_GONDOWAN_CAVE_1_NORTH = 2,
-  GONDOWAN_CAVE_2_FROM_GONDOWAN_CAVE_1_SOUTH = 5,
-  GONDOWAN_CAVE_2_FROM_WORLD_MAP_WEST = 6,
+  GONDOWAN_CAVE_FROM_WORLD_MAP_EAST = 1,
+  GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH = 2,
+  GONDOWAN_CAVE_FROM_WEST_PASSAGE = 3,
+  GONDOWAN_CAVE_WEST_PASSAGE_FROM_EAST_CAVERN =
+      4, ///< ★ Named from what the player sees: the narrow passage with a pool
+         ///< and a boulder that leads to the west way in (its render)
+  GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_SOUTH = 5,
+  GONDOWAN_CAVE_FROM_WORLD_MAP_WEST = 6,
 };
 enum {
-  GONDOWAN_CAVE_2_TO_WORLD_MAP_EAST = 1,
-  GONDOWAN_CAVE_2_TO_GONDOWAN_CAVE_1_NORTH = 2,
-  GONDOWAN_CAVE_2_TO_GONDOWAN_CAVE_1_SOUTH = 5,
-  GONDOWAN_CAVE_2_TO_WORLD_MAP_WEST = 6,
+  GONDOWAN_CAVE_TO_WORLD_MAP_EAST = 1,
+  GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH = 2,
+  GONDOWAN_CAVE_TO_WEST_PASSAGE =
+      3, ///< ★ Named from what the player sees: the narrow passage with a pool
+         ///< and a boulder that leads to the west way in (its render)
+  GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVERN =
+      4, ///< ★ Named from what the player sees: the cavern of the east way in,
+         ///< with the stump and the pillar (its render)
+  GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH = 5,
+  GONDOWAN_CAVE_TO_WORLD_MAP_WEST = 6,
 };
 
 /// SceneId_LunpaFortressGates's entrances and exits.
@@ -4303,12 +4661,12 @@ enum {
   LEMURIAN_SHIP_TO_LALIVERO_INTERIORS_2 = 1,
 };
 
-/// SceneId_TolbiSpring2's entrances and exits.
+/// SceneId_TolbiSpring's entrances and exits.
 enum {
-  TOLBI_SPRING_2_FROM_TOLBI = 1,
+  TOLBI_SPRING_FROM_TOLBI = 1,
 };
 enum {
-  TOLBI_SPRING_2_TO_TOLBI = 1,
+  TOLBI_SPRING_TO_TOLBI = 1,
 };
 
 /// SceneId_LinkLobby's entrances and exits.

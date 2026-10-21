@@ -271,21 +271,36 @@ extern char SceneId_CrossboneIsleEighthFloor;
 extern char SceneId_CrossboneIsleNinthFloor;
 extern char SceneId_Tolbi;
 extern char SceneId_TolbiInteriors;
-extern char SceneId_TolbiSpring1;
-extern char SceneId_BabiPalace1;
-extern char SceneId_BabiPalace2;
+/// ★ Named from what the player sees: the two small rooms in Tolbi where Lucky
+/// Dice and Lucky Wheels are played (its render)
+extern char SceneId_TolbiGameRooms;
+/// ★ Named from its area name: Babi's Palace
+extern char SceneId_BabiPalace;
+/// ★ Named from what the player sees: the way up from Tolbi to the palace door,
+/// where two guards stand (its render)
+extern char SceneId_BabiPalaceEntrance;
 extern char SceneId_Colosseum;
 extern char SceneId_ColosseumTunnel;
 extern char SceneId_ColosseumEntrance;
-extern char SceneId_ColosseumFinal1;
-extern char SceneId_ColosseumFinal2;
-extern char SceneId_ColosseumFinal3;
-extern char SceneId_AltmillerCave1;
-extern char SceneId_AltmillerCave2;
-extern char SceneId_AltmillerCave3;
-extern char SceneId_AltmillerCave4;
-extern char SceneId_AltmillerCave5;
-extern char SceneId_AltmillerCave6;
+/// ★ Named from the game: "Azart" (MsgEnemyName)
+extern char SceneId_ColosseumAzartMatch;
+/// ★ Named from the game: "Satrage" (MsgEnemyName)
+extern char SceneId_ColosseumSatrageMatch;
+/// ★ Named from the game: "Navampa" (MsgEnemyName)
+extern char SceneId_ColosseumNavampaMatch;
+/// ★ Named from what the player sees: the dark winding passage in from the cave
+/// mouth and the small chamber beyond it (its render)
+extern char SceneId_AltmillerCaveEntrance;
+/// ★ Named from the game: "Babi!" (MsgAltmillerBabi)
+extern char SceneId_AltmillerCaveBabi;
+/// ★ Named from the game: "Vial" (MsgItemName)
+extern char SceneId_AltmillerCaveVialChest;
+/// ★ Named from the game: "Squall" (MsgDjinnName)
+extern char SceneId_AltmillerCaveSquall;
+/// ★ Named from the game: "Cookie" (MsgItemName)
+extern char SceneId_AltmillerCaveCookieChest;
+/// ★ Named from the game: "Mystic Draught" (MsgItemName)
+extern char SceneId_AltmillerCaveDraught;
 extern char SceneId_GondowanPassage;
 extern char SceneId_KalayTunnelEntrance;
 /// ★ Named from the game: "the cave up ahead" (MsgKalayDoWantGoCaveUp)
@@ -296,8 +311,11 @@ extern char SceneId_KalayTunnelPassage;
 /// ★ Named from the game: "Hammet's treasure room"
 /// (MsgHammetPalaceTheKeyToTheSecretPassage)
 extern char SceneId_KalayTunnelTreasureRoom;
-extern char SceneId_GondowanCave1;
-extern char SceneId_GondowanCave2;
+/// ★ Named from what the player sees: the underground river crossed on stepping
+/// pads, with two chests, between the cave's two halves (its render)
+extern char SceneId_GondowanCaveRiver;
+/// ★ Named from its area name: Gondowan Cave
+extern char SceneId_GondowanCave;
 extern char SceneId_LunpaFortressGates;
 extern char SceneId_LunpaFortress1;
 extern char SceneId_LunpaFortress2;
@@ -328,7 +346,8 @@ extern char SceneId_VenusLighthouse4;
 extern char SceneId_VenusLighthouse5;
 extern char SceneId_VenusLighthouseAerie;
 extern char SceneId_LemurianShip;
-extern char SceneId_TolbiSpring2;
+/// ★ Named from its area name: Tolbi Spring
+extern char SceneId_TolbiSpring;
 extern char SceneId_LinkLobby;
 extern char SceneId_TestRoom0;
 extern char SceneId_TestRoom1;

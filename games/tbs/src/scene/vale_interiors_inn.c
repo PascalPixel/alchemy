@@ -1,7 +1,7 @@
 /// @file
 /// Vale (ValeInteriorsInn, scene 8): Isaac's house and the ground outside it,
 /// the inn and the inside of Kraden's cottage, and at
-/// VALE_INTERIORS_INN_FROM_BABI_PALACE_1 a room of Babi's Palace: one overlay
+/// VALE_INTERIORS_INN_FROM_BABI_PALACE a room of Babi's Palace: one overlay
 /// whose tables and setup choose by the entrance and the story flags. In story
 /// order:
 ///
@@ -44,8 +44,8 @@
 ///   back until his quest was done, and gets up to show she is well; she stays
 ///   up for that visit (FLAG_SCENE_TEMP_03), and the setup otherwise puts her
 ///   back in bed, where she dreams of Kyle.
-/// - Babi's Palace (VALE_INTERIORS_INN_FROM_BABI_PALACE_1, from Babi's Palace's
-///   BABI_PALACE_1_TO_VALE_INTERIORS_INN, scene 138), in Tolbi, whose lord is
+/// - Babi's Palace (VALE_INTERIORS_INN_FROM_BABI_PALACE, from Babi's Palace's
+///   BABI_PALACE_TO_VALE_INTERIORS_INN, scene 138), in Tolbi, whose lord is
 ///   Babi: a room of his scholars, who speak of Alchemy, of Kraden, Babi's
 ///   favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
 ///   long tunnel beneath them. They talk differently once the Colosso finals
@@ -199,8 +199,8 @@ enum ValeInteriorsInnPlaceFlag {
 // FLAG_SCENE_TEMP_03: Dora got out of her sickbed on this visit.
 
 /// Returns the entrances, among them the scenes played on arrival:
-/// VALE_INTERIORS_INN_FROM_BABI_PALACE_1 from Babi's palace
-/// (BABI_PALACE_1_TO_VALE_INTERIORS_INN),
+/// VALE_INTERIORS_INN_FROM_BABI_PALACE from Babi's palace
+/// (BABI_PALACE_TO_VALE_INTERIORS_INN),
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST where a new game begins
 /// (menu/clear.c, and ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST),
 /// entrance 21 from this scene's own exit 20, and
@@ -224,7 +224,7 @@ const u32 *ValeInteriorsInn_GetExits(void) {
 const struct ScenePlacement *ValeInteriorsInn_GetPlacements(void) {
   struct ScenePlacement *table;
 
-  if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE_1)
+  if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE)
     return gValeInteriorsInn_ScholarsPlacements;
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     table = gValeInteriorsInn_PlacementsAfterKalay;
@@ -238,7 +238,7 @@ const struct ScenePlacement *ValeInteriorsInn_GetPlacements(void) {
 
 /// In Babi's Palace, one of Babi's scholars asks whether the party knows
 /// Kraden. Reached by talking to ACTOR_SCHOLAR_EXPERIMENT in their room
-/// (VALE_INTERIORS_INN_FROM_BABI_PALACE_1) once FLAG_COLOSSO_OVER is set;
+/// (VALE_INTERIORS_INN_FROM_BABI_PALACE) once FLAG_COLOSSO_OVER is set;
 /// speakerId is the actor spoken to.
 static void Event_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
@@ -257,7 +257,7 @@ static void Event_ScholarAsksAboutKraden(s32 speakerId) {
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
 const struct SceneEvent *ValeInteriorsInn_GetEvents(void) {
-  if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE_1) {
+  if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gValeInteriorsInn_ScholarsLaterEvents;
     }
@@ -428,7 +428,7 @@ static void Event_TakeExitToValeStormWest(void) {
 s32 ValeInteriorsInn_Initialize(void) {
   struct FieldActor *actor;
 
-  if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE_1) {
+  if (gGameState.entrance == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -1368,7 +1368,7 @@ struct SceneEntrance gValeInteriorsInn_Entrances[] = {
     {VALE_INTERIORS_INN_FROM_VALE_STORM_EAST, CONDITION_ALWAYS, 879, 0, 765,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
     {16, CONDITION_ALWAYS, 538, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {VALE_INTERIORS_INN_FROM_BABI_PALACE_1, CONDITION_ALWAYS, 760, 0, 328,
+    {VALE_INTERIORS_INN_FROM_BABI_PALACE, CONDITION_ALWAYS, 760, 0, 328,
      FACING_SOUTH, 0, 672, 272, 960, 488, 0},
     {VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,
      FACING_EAST, 0, 1024, 576, 1024, 576, 0},
@@ -1401,8 +1401,8 @@ u32 gValeInteriorsInn_Exits[] = {
                VALE_STORM_FROM_VALE_INTERIORS_INN_WEST),
     SCENE_EXIT(VALE_INTERIORS_INN_TO_VALE_STORM_EAST, ValeStorm,
                VALE_STORM_FROM_VALE_INTERIORS_INN_EAST),
-    SCENE_EXIT(VALE_INTERIORS_INN_TO_BABI_PALACE_1, BabiPalace1,
-               BABI_PALACE_1_FROM_VALE_INTERIORS_INN),
+    SCENE_EXIT(VALE_INTERIORS_INN_TO_BABI_PALACE, BabiPalace,
+               BABI_PALACE_FROM_VALE_INTERIORS_INN),
     SCENE_EXIT(VALE_INTERIORS_INN_ISAACS_HOUSE_TO_DOWNSTAIRS_WITH_DORA,
                ValeInteriorsInn,
                VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA),

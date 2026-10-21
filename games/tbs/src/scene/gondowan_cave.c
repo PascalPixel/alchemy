@@ -27,29 +27,30 @@
 ///   the party has something to fetch, he stays to wait, and a defeat now
 ///   returns them to the Tolbi Sanctum (TOLBI_INTERIORS_SANCTUM_NORTH); if
 ///   not, he rejoins them.
-/// - Gondowan Cave (GondowanCave1 and GondowanCave2, scenes 157 and 158), the
+/// - Gondowan Cave (GondowanCaveRiver and GondowanCave, scenes 157 and 158),
+/// the
 ///   cave that, the soldiers say, no one gets through. Someone in Tolbi's
 ///   houses thinks the same (tolbi_interiors.c, Mind Read,
 ///   MsgTolbiInteriorsYoudThinkYouCouldGetThrough): `Not unless you can lift
-///   boulders, at any rate.` Both ways in are in scene 158
-///   (GONDOWAN_CAVE_2_TO_WORLD_MAP_EAST and GONDOWAN_CAVE_2_TO_WORLD_MAP_WEST),
-///   and scene 157 lies between two parts of it
-///   (GONDOWAN_CAVE_2_TO_GONDOWAN_CAVE_1_NORTH and _SOUTH lead in,
-///   GONDOWAN_CAVE_1_TO_GONDOWAN_CAVE_2_NORTH and _SOUTH back).
+///   boulders, at any rate.` Both ways in are in GondowanCave
+///   (GONDOWAN_CAVE_TO_WORLD_MAP_EAST and GONDOWAN_CAVE_TO_WORLD_MAP_WEST),
+///   and GondowanCaveRiver lies between two parts of it
+///   (GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH and _SOUTH lead in,
+///   GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH and _SOUTH back).
 ///
-///   In scene 158 a stump answers Move from column 30 or less: it spins,
+///   In GondowanCave a stump answers Move from column 30 or less: it spins,
 ///   leaps across and lies where it lands, freeing the cell where it stood
 ///   (FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE). A pillar is pushed by walking
 ///   into it, east or west, or moved with Move; once it is past column 42 it
 ///   drops into its place for good, shown from then on by a second actor
 ///   (FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED). Both are story flags, so the
-///   cave stays solved. Lift raises a boulder in each scene; in 158 it also
-///   takes away the invisible actor beside it (ACTOR_CAVE_2_BOULDER_SIDE). Two
-///   chests in scene 157 hold an Apple and a Lucky Medal (each scene's table
-///   carries their search events). Arriving by
-///   GONDOWAN_CAVE_2_FROM_WORLD_MAP_EAST always gives cell (107, 17) the
+///   cave stays solved. Lift raises a boulder in each scene; in GondowanCave it
+///   also takes away the invisible actor beside it (ACTOR_CAVE_2_BOULDER_SIDE).
+///   Two chests in GondowanCaveRiver hold an Apple and a Lucky Medal (each
+///   scene's table carries their search events). Arriving by
+///   GONDOWAN_CAVE_FROM_WORLD_MAP_EAST always gives cell (107, 17) the
 ///   attributes it takes when the pillar drops, and leaving by
-///   GONDOWAN_CAVE_2_TO_WORLD_MAP_EAST runs an event: with FLAG_SCENE_TEMP_04
+///   GONDOWAN_CAVE_TO_WORLD_MAP_EAST runs an event: with FLAG_SCENE_TEMP_04
 ///   set, which no code in this overlay sets, it first puts the puzzle's flags
 ///   into one arrangement.
 ///
@@ -99,15 +100,15 @@ enum GondowanPassageActor {
   ACTOR_IODEM ///< waits for the party once Babi has spoken after Colosso
 };
 
-/// Gondowan Cave's placed actor in scene 157, the one row of
+/// GondowanCaveRiver's placed actor, the one row of
 /// gGondowanCavePlacements2 that an event names.
-enum GondowanCave1Actor {
+enum GondowanCaveRiverActor {
   ACTOR_CAVE_1_BOULDER = ACTOR_FIRST_PLACED ///< raised by Lift
 };
 
-/// Gondowan Cave's placed actors in scene 158, numbered in the order of
+/// GondowanCave's placed actors, numbered in the order of
 /// gGondowanCavePlacements3 from ACTOR_FIRST_PLACED.
-enum GondowanCave2Actor {
+enum GondowanCaveActor {
   /// Moved with Move. Sprite 0xd4, the sprite of the Goma Cave stump the
   /// game calls "that stump" (MsgGomaNoUsePsynergy).
   ACTOR_STUMP = ACTOR_FIRST_PLACED,
@@ -145,10 +146,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (scene == (s32)&SceneId_GondowanPassage) {
     return gGondowanCaveEntrances1;
   }
-  if (scene == (s32)&SceneId_GondowanCave1) {
+  if (scene == (s32)&SceneId_GondowanCaveRiver) {
     return gGondowanCaveEntrances2;
   }
-  if (scene == (s32)&SceneId_GondowanCave2) {
+  if (scene == (s32)&SceneId_GondowanCave) {
     return gGondowanCaveEntrances3;
   }
   return gGondowanCaveEntrancesOther;
@@ -170,10 +171,10 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
     }
     return gGondowanCavePlacements1;
   }
-  if (scene == (s32)&SceneId_GondowanCave1) {
+  if (scene == (s32)&SceneId_GondowanCaveRiver) {
     return gGondowanCavePlacements2;
   }
-  if (scene == (s32)&SceneId_GondowanCave2) {
+  if (scene == (s32)&SceneId_GondowanCave) {
     return gGondowanCavePlacements3;
   }
   return gGondowanCavePlacementsOther;
@@ -189,10 +190,10 @@ const struct SceneEvent *Scene_GetEvents(void) {
     }
     return gGondowanCaveEvents1;
   }
-  if (scene == (s32)&SceneId_GondowanCave1) {
+  if (scene == (s32)&SceneId_GondowanCaveRiver) {
     return gGondowanCaveEvents2;
   }
-  if (scene == (s32)&SceneId_GondowanCave2) {
+  if (scene == (s32)&SceneId_GondowanCave) {
     return gGondowanCaveEvents3;
   }
   return gGondowanCaveEventsOther;
@@ -320,7 +321,7 @@ static void Event_ReadSoldierMind(void) {
   MESSAGE_PUT(ACTOR_SECOND_SOLDIER, 0);
 }
 
-/// Leaving Gondowan Cave's scene 158 by GONDOWAN_CAVE_2_TO_WORLD_MAP_EAST
+/// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST
 /// (collision code 1), out to the world map. With FLAG_SCENE_TEMP_04 set, the
 /// puzzle's saved flags return to one arrangement first.
 static void Event_LeaveToWorldMapEast(void) {
@@ -342,11 +343,11 @@ static void Event_LeaveToWorldMapEast(void) {
   EV_END();
 }
 
-/// Walking into the pillar in Gondowan Cave (scene 158) from the west or the
+/// Walking into the pillar in GondowanCave from the west or the
 /// east (triggers 10 and 11): look at what is ahead, which starts the push.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-/// Move on the stump in Gondowan Cave (scene 158), until it has leapt: from
+/// Move on the stump in GondowanCave, until it has leapt: from
 /// column 30 or less it spins and leaps across, freeing the cell where it
 /// stood.
 static void Event_MoveStump(void) {
@@ -364,7 +365,7 @@ static void Event_MoveStump(void) {
   EV_END();
 }
 
-/// Pushing the pillar in Gondowan Cave (scene 158, trigger 50): it moves a
+/// Pushing the pillar in GondowanCave (trigger 50): it moves a
 /// step, then may have reached its place.
 static void Event_PushPillar(void) {
   StagedActor_AdvancePair();
@@ -378,7 +379,7 @@ static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
   OBJ_MODE(ACTOR_DROPPED_PILLAR, animation);
 }
 
-/// Move on the pillar in Gondowan Cave (scene 158), and after each push: past
+/// Move on the pillar in GondowanCave, and after each push: past
 /// column 42 it drops into its place for good.
 static void Event_MovePillar(void) {
   EV_BEGIN();
@@ -474,7 +475,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
 /// Unused: an empty function nothing calls.
 static UNUSED void GondowanCave_UnusedSceneCallback(void) {}
 
-/// Lift on the boulder in Gondowan Cave (scene 158) also takes away the
+/// Lift on the boulder in GondowanCave also takes away the
 /// invisible actor beside it.
 static void Event_LiftBoulder(void) {
   Engine_ActorSetPosition(ACTOR_CAVE_2_BOULDER_SIDE, 0, 0);
@@ -482,7 +483,7 @@ static void Event_LiftBoulder(void) {
 
 /// Sets up the scene as the party enters. Gondowan Passage blocks Retreat and
 /// keeps Iodem out of sight while he travels with the party; Gondowan Cave's
-/// scene 158 puts the stump and the pillar where the party left them.
+/// GondowanCave puts the stump and the pillar where the party left them.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 
@@ -492,8 +493,8 @@ s32 Scene_Initialize(void) {
       OBJ_POS_SET(ACTOR_IODEM, 0, 0);
     }
   }
-  if (gGameState.scene == (s32)&SceneId_GondowanCave2) {
-    if (gGameState.entrance == GONDOWAN_CAVE_2_FROM_WORLD_MAP_EAST) {
+  if (gGameState.scene == (s32)&SceneId_GondowanCave) {
+    if (gGameState.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
       Map_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE) != 0) {
@@ -570,20 +571,20 @@ struct SceneEntrance gGondowanCaveEntrances1[] = {
 };
 
 struct SceneEntrance gGondowanCaveEntrances2[] = {
-    { GONDOWAN_CAVE_1_FROM_GONDOWAN_CAVE_2_NORTH, CONDITION_ALWAYS, 728, 0, 312, FACING_NORTH, 0, 96, 48, 768, 432, 0 },
+    { GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_NORTH, CONDITION_ALWAYS, 728, 0, 312, FACING_NORTH, 0, 96, 48, 768, 432, 0 },
     { 2, CONDITION_ALWAYS, 168, 0, 408, FACING_NORTH, 0, 96, 48, 768, 432, 0 },
     { 3, CONDITION_ALWAYS, 168, 0, 520, FACING_SOUTH, 0, 112, 464, 576, 704, 0 },
-    { GONDOWAN_CAVE_1_FROM_GONDOWAN_CAVE_2_SOUTH, CONDITION_ALWAYS, 504, 0, 664, FACING_NORTH, 0, 112, 464, 576, 704, 0 },
+    { GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_SOUTH, CONDITION_ALWAYS, 504, 0, 664, FACING_NORTH, 0, 112, 464, 576, 704, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gGondowanCaveEntrances3[] = {
-    { GONDOWAN_CAVE_2_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 792, 0, 456, FACING_NORTH, 0, 240, 48, 864, 464, 0 },
-    { GONDOWAN_CAVE_2_FROM_GONDOWAN_CAVE_1_NORTH, CONDITION_ALWAYS, 360, 0, 152, FACING_SOUTH, 0, 240, 48, 864, 464, 0 },
+    { GONDOWAN_CAVE_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 792, 0, 456, FACING_NORTH, 0, 240, 48, 864, 464, 0 },
+    { GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH, CONDITION_ALWAYS, 360, 0, 152, FACING_SOUTH, 0, 240, 48, 864, 464, 0 },
     { 3, CONDITION_ALWAYS, 344, 0, 440, FACING_NORTH, 0, 240, 48, 864, 464, 0 },
     { 4, CONDITION_ALWAYS, 344, 0, 584, FACING_SOUTH, 0, 48, 432, 408, 896, 0 },
-    { GONDOWAN_CAVE_2_FROM_GONDOWAN_CAVE_1_SOUTH, CONDITION_ALWAYS, 136, 0, 504, FACING_SOUTH, 0, 48, 432, 408, 896, 0 },
-    { GONDOWAN_CAVE_2_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 216, 0, 888, FACING_NORTH, 0, 48, 432, 408, 896, 0 },
+    { GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_SOUTH, CONDITION_ALWAYS, 136, 0, 504, FACING_SOUTH, 0, 48, 432, 408, 896, 0 },
+    { GONDOWAN_CAVE_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 216, 0, 888, FACING_NORTH, 0, 48, 432, 408, 896, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -591,18 +592,18 @@ u32 gGondowanCaveExits[] = {
     SCENE_EXITS(GondowanPassage),
     SCENE_EXIT(GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_EAST),
     SCENE_EXIT(GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_PASSAGE_WEST),
-    SCENE_EXITS(GondowanCave1),
-    SCENE_EXIT(GONDOWAN_CAVE_1_TO_GONDOWAN_CAVE_2_NORTH, GondowanCave2, GONDOWAN_CAVE_2_FROM_GONDOWAN_CAVE_1_NORTH),
-    SCENE_EXIT(2, GondowanCave1, 3),
-    SCENE_EXIT(3, GondowanCave1, 2),
-    SCENE_EXIT(GONDOWAN_CAVE_1_TO_GONDOWAN_CAVE_2_SOUTH, GondowanCave2, GONDOWAN_CAVE_2_FROM_GONDOWAN_CAVE_1_SOUTH),
-    SCENE_EXITS(GondowanCave2),
-    SCENE_EXIT(GONDOWAN_CAVE_2_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_GONDOWAN_CAVE_2_NORTH),
-    SCENE_EXIT(GONDOWAN_CAVE_2_TO_GONDOWAN_CAVE_1_NORTH, GondowanCave1, GONDOWAN_CAVE_1_FROM_GONDOWAN_CAVE_2_NORTH),
-    SCENE_EXIT(3, GondowanCave2, 4),
-    SCENE_EXIT(4, GondowanCave2, 3),
-    SCENE_EXIT(GONDOWAN_CAVE_2_TO_GONDOWAN_CAVE_1_SOUTH, GondowanCave1, GONDOWAN_CAVE_1_FROM_GONDOWAN_CAVE_2_SOUTH),
-    SCENE_EXIT(GONDOWAN_CAVE_2_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_GONDOWAN_CAVE_2_SOUTH),
+    SCENE_EXITS(GondowanCaveRiver),
+    SCENE_EXIT(GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH, GondowanCave, GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_NORTH),
+    SCENE_EXIT(GONDOWAN_CAVE_RIVER_TO_BOULDER_PASSAGE, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_FROM_RIVER),
+    SCENE_EXIT(GONDOWAN_CAVE_RIVER_BOULDER_PASSAGE_TO_RIVER, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_FROM_BOULDER_PASSAGE),
+    SCENE_EXIT(GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH, GondowanCave, GONDOWAN_CAVE_FROM_GONDOWAN_CAVE_RIVER_SOUTH),
+    SCENE_EXITS(GondowanCave),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_GONDOWAN_CAVE_NORTH),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_NORTH),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_WEST_PASSAGE, GondowanCave, GONDOWAN_CAVE_WEST_PASSAGE_FROM_EAST_CAVERN),
+    SCENE_EXIT(GONDOWAN_CAVE_WEST_PASSAGE_TO_EAST_CAVERN, GondowanCave, GONDOWAN_CAVE_FROM_WEST_PASSAGE),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH, GondowanCaveRiver, GONDOWAN_CAVE_RIVER_FROM_GONDOWAN_CAVE_SOUTH),
+    SCENE_EXIT(GONDOWAN_CAVE_TO_WORLD_MAP_WEST, WorldMap, WORLD_MAP_FROM_GONDOWAN_CAVE_SOUTH),
     SCENE_EXITS_END,
 };
 
@@ -694,10 +695,10 @@ struct SceneEvent gGondowanCaveEvents1WithIodem[] = {
 };
 
 struct SceneEvent gGondowanCaveEvents2[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_CAVE_1_TO_GONDOWAN_CAVE_2_NORTH },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_NORTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_1_TO_GONDOWAN_CAVE_2_SOUTH },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, GONDOWAN_CAVE_RIVER_TO_GONDOWAN_CAVE_SOUTH },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_CAVE_1_BOULDER, CONDITION_ALWAYS, 0 },
     { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(ITEM_APPLE) },
     { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
@@ -707,11 +708,11 @@ struct SceneEvent gGondowanCaveEvents2[] = {
 /// FLAG_SCENE_TEMP_05 ends Move on the pillar.
 struct SceneEvent gGondowanCaveEvents3[] = {
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveToWorldMapEast) },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_2_TO_GONDOWAN_CAVE_1_NORTH },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, GONDOWAN_CAVE_2_TO_GONDOWAN_CAVE_1_SOUTH },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_2_TO_WORLD_MAP_WEST },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WORLD_MAP_WEST },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_CAVE_2_BOULDER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftBoulder) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE, EVENT_SCRIPT(Event_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(Event_MovePillar) },

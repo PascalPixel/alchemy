@@ -1,9 +1,9 @@
 /// @file
-/// Altmiller Cave, six scenes (AltmillerCave1 to AltmillerCave6, scenes 146 to
-/// 151) whose area name is Altmiller Cave: rooms one after another, each
-/// numbered here as its scene id is (room 1 is AltmillerCave1), entered from
-/// the world map at room 1. The rooms share one entrance table, and the
-/// getters pick the rest of each room's tables by gGameState.scene;
+/// Altmiller Cave, six scenes (AltmillerCaveEntrance to AltmillerCaveDraught,
+/// scenes 146 to 151) whose area name is Altmiller Cave: rooms one after
+/// another, each each named here by its scene, entered from the world map at
+/// AltmillerCaveEntrance. The rooms share one entrance table, and the getters
+/// pick the rest of each room's tables by gGameState.scene;
 /// AltmillerCave_Initialize sends an entry from outside the cave to the
 /// room's first entrance, darkens the dark rooms and puts back what the party
 /// has done.
@@ -11,16 +11,16 @@
 /// The party comes here during Colosso's trials, while Babi, the ruler of
 /// Tolbi, is missing: in his palace it has heard Iodem's soldiers report that
 /// they searched this cave for him in vain, and Iodem say that he has seen
-/// Babi vanish into it before (babi_palace.c). The cave is dark: room 1
-/// darkens by steps as the party walks in (touches 60 to 65), the other dark
-/// rooms all at once, and Reveal lights them while it lasts
+/// Babi vanish into it before (babi_palace.c). The cave is dark:
+/// AltmillerCaveEntrance darkens by steps as the party walks in (touches 60 to
+/// 65), the other dark rooms all at once, and Reveal lights them while it lasts
 /// (AltmillerCave_StartReveal, AltmillerCave_EndReveal; scene flag FLAG_DARK).
 ///
-/// In room 2 the party meets someone it can hear but not see, wrapped in
-/// Psynergetic light (ACTOR_INVISIBLE_BABI). Talking to him the first time
-/// (AltmillerCave_MeetInvisibleBabi, FLAG_MET_INVISIBLE_BABI), he says he ran
-/// out of his draught and cannot move, and asks the party to fetch it from
-/// deep in the cave: five rocks there, turned the ends first, bring out
+/// In AltmillerCaveBabi the party meets someone it can hear but not see,
+/// wrapped in Psynergetic light (ACTOR_INVISIBLE_BABI). Talking to him the
+/// first time (AltmillerCave_MeetInvisibleBabi, FLAG_MET_INVISIBLE_BABI), he
+/// says he ran out of his draught and cannot move, and asks the party to fetch
+/// it from deep in the cave: five rocks there, turned the ends first, bring out
 /// colored lights, and turning the rock of each light's color, `blue, green,
 /// white, yellow, and red` from the left, opens a hidden door left by an
 /// ancient civilization. The party argues over whether to help him. Walking
@@ -28,24 +28,26 @@
 /// table behind the door (AltmillerCave_BabiCallsPartyBack), and until it is
 /// found he repeats the order (AltmillerCave_RepeatRockOrder).
 ///
-/// Rooms 3 to 5 lead on, with a chest in rooms 3 and 5. Room 4 is lit; in it
-/// Squall, a Jupiter Djinni, starts its battle when spoken to, three obstacles
-/// move when pushed (as three do in room 6), a pillar that Move slides into
-/// its cell opens the way beside it (which the editions from TBS_PATCH_1 on
-/// also keep open after a battle, FLAG_PILLAR_IN_PLACE), and a puddle the
-/// party hops over (AltmillerCave_HopSelectedActor) until Frost freezes it,
-/// unless something stands on it (AltmillerCave_CheckFrostTargetCollision).
-/// Room 6, also lit, holds the five rocks, whose colors show only while Reveal
-/// shines. Talking to one turns it (AltmillerCave_TurnRock): the leftmost and
-/// then the rightmost bring out a ring of five lights above them, which spins
-/// and stops with one light on top; turning that light's rock spins it again, a
-/// wrong rock puts the lights away and starts over, and after three matches
-/// the wall bursts (AltmillerCave_ReleaseWallBurst) and the chest beyond
-/// holds the Mystic Draught (FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT). The
-/// puzzle's state is kept in the scene's work, and coming back up to the
-/// rocks (entrance 52) starts it over.
+/// AltmillerCaveVialChest to AltmillerCaveCookieChest lead on, with a chest in
+/// AltmillerCaveVialChest and AltmillerCaveCookieChest. AltmillerCaveSquall is
+/// lit; in it Squall, a Jupiter Djinni, starts its battle when spoken to, three
+/// obstacles move when pushed (as three do in AltmillerCaveDraught), a pillar
+/// that Move slides into its cell opens the way beside it (which the editions
+/// from TBS_PATCH_1 on also keep open after a battle, FLAG_PILLAR_IN_PLACE),
+/// and a puddle the party hops over (AltmillerCave_HopSelectedActor) until
+/// Frost freezes it, unless something stands on it
+/// (AltmillerCave_CheckFrostTargetCollision). AltmillerCaveDraught, also lit,
+/// holds the five rocks, whose colors show only while Reveal shines. Talking to
+/// one turns it (AltmillerCave_TurnRock): the leftmost and then the rightmost
+/// bring out a ring of five lights above them, which spins and stops with one
+/// light on top; turning that light's rock spins it again, a wrong rock puts
+/// the lights away and starts over, and after three matches the wall bursts
+/// (AltmillerCave_ReleaseWallBurst) and the chest beyond holds the Mystic
+/// Draught (FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT). The puzzle's state is kept in
+/// the scene's work, and coming back up to the rocks (entrance 52) starts it
+/// over.
 ///
-/// Back in room 2, talking to him with the draught plays
+/// Back in AltmillerCaveBabi, talking to him with the draught plays
 /// AltmillerCave_RestoreBabiAndInviteParty (FLAG_BABI_SAVED): he drinks it
 /// and appears, and Ivan reads his mind and finds him to be Babi, the ruler of
 /// Tolbi, who hid himself with the power of an ancient civilization, not
@@ -103,8 +105,8 @@
 #include "flags.h"
 #include "songs.h"
 
-/// Room 2's actors: Babi while invisible and once seen, and the two men from
-/// Tolbi who come looking for him.
+/// AltmillerCaveBabi's actors: Babi while invisible and once seen, and the two
+/// men from Tolbi who come looking for him.
 enum {
   ACTOR_INVISIBLE_BABI = 8,
   ACTOR_BABI = 9,
@@ -112,8 +114,9 @@ enum {
   ACTOR_SECOND_GUARD = 11
 };
 
-/// Rooms 4 and 6 place first the three obstacles the party pushes; room 4
-/// then a puddle, a pillar for Move and Squall, a Jupiter Djinni.
+/// AltmillerCaveSquall and AltmillerCaveDraught place first the three obstacles
+/// the party pushes; AltmillerCaveSquall then a puddle, a pillar for Move and
+/// Squall, a Jupiter Djinni.
 enum {
   ACTOR_FIRST_OBSTACLE = 8,
   ACTOR_ROOM4_PUDDLE = 11,
@@ -121,8 +124,9 @@ enum {
   ACTOR_DJINNI = 13
 };
 
-/// Room 6: the five colored lights and the five rocks, each in Babi's order,
-/// the rocks left to right. The order is "blue, green, white, yellow, red".
+/// AltmillerCaveDraught: the five colored lights and the five rocks, each in
+/// Babi's order, the rocks left to right. The order is "blue, green, white,
+/// yellow, red".
 enum {
   ACTOR_FIRST_LIGHT = 11,
   ACTOR_BLUE_LIGHT = ACTOR_FIRST_LIGHT,
@@ -153,20 +157,22 @@ enum {
 
 /// The scene flags the cave keeps.
 enum {
-  /// The cave is dark: set on entry everywhere but rooms 4 and 6.
+  /// The cave is dark: set on entry everywhere but AltmillerCaveSquall and
+  /// AltmillerCaveDraught.
   FLAG_DARK = FLAG_SCENE_TEMP_00,
-  /// Room 1 darkens by steps as the party walks in.
+  /// AltmillerCaveEntrance darkens by steps as the party walks in.
   FLAG_GRADED_DARKNESS = FLAG_SCENE_TEMP_01,
-  /// Frost has frozen room 4's puddle.
+  /// Frost has frozen AltmillerCaveSquall's puddle.
   FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_11,
-  /// Room 4's pillar stands where Move opens the passage.
+  /// AltmillerCaveSquall's pillar stands where Move opens the passage.
   FLAG_PILLAR_IN_PLACE = FLAG_SCENE_TEMP_12
 };
 
 static void AltmillerCave_ReleaseWallBurst(void);
 
-/// The ring of five lights above room 6's rocks as it spins to its next
-/// light: angles are 16-bit turns, the light at the top is the chosen one.
+/// The ring of five lights above AltmillerCaveDraught's rocks as it spins to
+/// its next light: angles are 16-bit turns, the light at the top is the chosen
+/// one.
 struct LightWheel {
   s16 phase;
   s16 ticks;
@@ -187,8 +193,8 @@ enum {
   WHEEL_STOPPED = 99
 };
 
-/// Room 6's rock puzzle, kept in gSceneState: the rounds of lights matched in
-/// byte 0, then the state and the light shown.
+/// AltmillerCaveDraught's rock puzzle, kept in gSceneState: the rounds of
+/// lights matched in byte 0, then the state and the light shown.
 struct RockPuzzle {
   u8 state;
   s8 chosen;
@@ -210,8 +216,8 @@ struct LightWheel gAltmillerCave_LightWheelState
 
 #include "common/object_staged_actor.h"
 
-/// Talking to the Djinni in room 4 starts the battle with Squall, a Jupiter
-/// Djinni.
+/// Talking to the Djinni in AltmillerCaveSquall starts the battle with Squall,
+/// a Jupiter Djinni.
 static void AltmillerCave_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_SQUALL);
 }
@@ -228,20 +234,20 @@ const u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
 const struct ScenePlacement *AltmillerCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_AltmillerCave2) {
+  if (scene == (s32)&SceneId_AltmillerCaveBabi) {
     return gAltmillerCave_Placements2;
   }
-  if (scene == (s32)&SceneId_AltmillerCave4) {
+  if (scene == (s32)&SceneId_AltmillerCaveSquall) {
     return gAltmillerCave_Placements4;
   }
-  if (scene == (s32)&SceneId_AltmillerCave6) {
+  if (scene == (s32)&SceneId_AltmillerCaveDraught) {
     return gAltmillerCave_Placements6;
   }
   return gAltmillerCave_PlacementsOther;
 }
 
-/// Darkens room 1 to its current level: the brighter blend at level 0, each
-/// level one step darker.
+/// Darkens AltmillerCaveEntrance to its current level: the brighter blend at
+/// level 0, each level one step darker.
 static void AltmillerCave_ApplyFadeBlend(void) {
   s8 level = ((s8 *)gSceneState)[4];
 
@@ -273,8 +279,8 @@ static void AltmillerCave_ApplyFadeBlend(void) {
   }
 }
 
-/// Keeps room 1's darkness level, and shows it unless Reveal is lighting the
-/// room.
+/// Keeps AltmillerCaveEntrance's darkness level, and shows it unless Reveal is
+/// lighting the room.
 static void AltmillerCave_SetFadeLevel(s32 level) {
   struct FieldWork *work;
   u8 *fade = &gSceneState[4];
@@ -286,7 +292,7 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
   }
 }
 
-/// Room 1's darkness boundaries: crossing one sets its level.
+/// AltmillerCaveEntrance's darkness boundaries: crossing one sets its level.
 static void AltmillerCave_DarkenToLevel0(void) {
   AltmillerCave_SetFadeLevel(0);
 }
@@ -311,8 +317,8 @@ static void AltmillerCave_DarkenToLevel5(void) {
   AltmillerCave_SetFadeLevel(5);
 }
 
-/// Darkens the cave on entry: room 1 by its levels, the other dark rooms
-/// evenly.
+/// Darkens the cave on entry: AltmillerCaveEntrance by its levels, the other
+/// dark rooms evenly.
 static void AltmillerCave_InitializeDarkness(void) {
   u8 **workCells = (u8 **)&gEventWork;
   struct DisplayTransitionState *transition;
@@ -370,14 +376,15 @@ static void AltmillerCave_InitializeDarkness(void) {
   }
 }
 
-/// Reveal's light: room 1 is lit and room 6's rocks show their colors.
+/// Reveal's light: AltmillerCaveEntrance is lit and AltmillerCaveDraught's
+/// rocks show their colors.
 static void AltmillerCave_StartReveal(void) {
-  if (gGameState.scene == (s32)&SceneId_AltmillerCave1) {
+  if (gGameState.scene == (s32)&SceneId_AltmillerCaveEntrance) {
     s32 alpha = 0x1000;
 
     REG_BLDALPHA = alpha;
   }
-  if (gGameState.scene == (s32)&SceneId_AltmillerCave6) {
+  if (gGameState.scene == (s32)&SceneId_AltmillerCaveDraught) {
     Engine_ActorSetChildValue(ACTOR_BLUE_ROCK, COLOR_BLUE);
     Engine_ActorSetChildValue(ACTOR_GREEN_ROCK, COLOR_GREEN);
     Engine_ActorSetChildValue(ACTOR_WHITE_ROCK, COLOR_WHITE);
@@ -386,8 +393,8 @@ static void AltmillerCave_StartReveal(void) {
   }
 }
 
-/// Reveal's light ends: the cave darkens again and room 6's rocks lose their
-/// colors.
+/// Reveal's light ends: the cave darkens again and AltmillerCaveDraught's rocks
+/// lose their colors.
 static void AltmillerCave_EndReveal(void) {
   struct BattleFxScene *work = (struct BattleFxScene *)gEffectWork;
 
@@ -395,7 +402,7 @@ static void AltmillerCave_EndReveal(void) {
     AltmillerCave_InitializeDarkness();
     work->childOption = 1;
   }
-  if (gGameState.scene == (s32)&SceneId_AltmillerCave6) {
+  if (gGameState.scene == (s32)&SceneId_AltmillerCaveDraught) {
     Engine_ActorSetChildValue(ACTOR_BLUE_ROCK, COLOR_NONE);
     Engine_ActorSetChildValue(ACTOR_GREEN_ROCK, COLOR_NONE);
     Engine_ActorSetChildValue(ACTOR_WHITE_ROCK, COLOR_NONE);
@@ -428,8 +435,8 @@ static void AltmillerCave_BeginRetreat(void) {
   }
 }
 
-/// After Move on room 4's pillar: in its cell at (30, 20) it settles and opens
-/// the way beside it (remembered in TBS_PATCH_1 and later).
+/// After Move on AltmillerCaveSquall's pillar: in its cell at (30, 20) it
+/// settles and opens the way beside it (remembered in TBS_PATCH_1 and later).
 static void AltmillerCave_UpdateMovedObstacle(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_ROOM4_PILLAR);
 
@@ -444,14 +451,14 @@ static void AltmillerCave_UpdateMovedObstacle(void) {
   }
 }
 
-/// Walking east into room 4's pillar pushes it a cell.
+/// Walking east into AltmillerCaveSquall's pillar pushes it a cell.
 static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
   StagedActor_AdvancePair();
   AltmillerCave_UpdateMovedObstacle();
 }
 
-/// Frost's first phase on room 4's puddle: notes whether its place is
-/// blocked, which keeps it from freezing.
+/// Frost's first phase on AltmillerCaveSquall's puddle: notes whether its place
+/// is blocked, which keeps it from freezing.
 static void AltmillerCave_CheckFrostTargetCollision(void) {
   struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
   struct FieldActor *target = Object_GetById(ACTOR_ROOM4_PUDDLE);
@@ -466,8 +473,8 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
   }
 }
 
-/// Frost on room 4's puddle, unless blocked: it freezes and its cell takes
-/// the frozen attributes kept at (76, 16).
+/// Frost on AltmillerCaveSquall's puddle, unless blocked: it freezes and its
+/// cell takes the frozen attributes kept at (76, 16).
 static void AltmillerCave_FreezePuddle(void) {
   struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
   struct FieldActor *puddle = Object_GetById(ACTOR_ROOM4_PUDDLE);
@@ -485,8 +492,8 @@ static void AltmillerCave_FreezePuddle(void) {
   }
 }
 
-/// Walking into room 4's puddle while it is not frozen: the leader hops 32
-/// pixels over it, if the landing is clear.
+/// Walking into AltmillerCaveSquall's puddle while it is not frozen: the leader
+/// hops 32 pixels over it, if the landing is clear.
 static void AltmillerCave_HopSelectedActor(void) {
   struct FieldActor *actor = Object_GetById(gGameState.selectedActor);
   s32 motionFlags = actor->motionFlags;
@@ -627,12 +634,12 @@ static void AltmillerCave_SpinLights(void) {
   gAltmillerCave_LightWheel->ticks++;
 }
 
-/// Talking to one of room 6's rocks rotates it. "Isaac rotated the rock."
-/// Turning the leftmost rock, then the rightmost, brings out the ring of
-/// lights; then each time the rock matching the light at the top is turned,
-/// the ring spins to another light, and a wrong rock puts the lights away and
-/// starts over. After three lights matched the ring shrinks away, the wall
-/// bursts and the way to Babi's draught opens.
+/// Talking to one of AltmillerCaveDraught's rocks rotates it. "Isaac rotated
+/// the rock." Turning the leftmost rock, then the rightmost, brings out the
+/// ring of lights; then each time the rock matching the light at the top is
+/// turned, the ring spins to another light, and a wrong rock puts the lights
+/// away and starts over. After three lights matched the ring shrinks away, the
+/// wall bursts and the way to Babi's draught opens.
 static void AltmillerCave_TurnRock(s32 rock) {
   s32 correctRock = 0;
   s32 i;
@@ -1899,26 +1906,26 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
 const struct SceneEvent *AltmillerCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_AltmillerCave2) {
+  if (scene == (s32)&SceneId_AltmillerCaveBabi) {
     return gAltmillerCave_Events2;
   }
-  if (scene == (s32)&SceneId_AltmillerCave3) {
+  if (scene == (s32)&SceneId_AltmillerCaveVialChest) {
     return gAltmillerCave_Events3;
   }
-  if (scene == (s32)&SceneId_AltmillerCave4) {
+  if (scene == (s32)&SceneId_AltmillerCaveSquall) {
     return gAltmillerCave_Events4;
   }
-  if (scene == (s32)&SceneId_AltmillerCave5) {
+  if (scene == (s32)&SceneId_AltmillerCaveCookieChest) {
     return gAltmillerCave_Events5;
   }
-  if (scene == (s32)&SceneId_AltmillerCave6) {
+  if (scene == (s32)&SceneId_AltmillerCaveDraught) {
     return gAltmillerCave_Events6;
   }
   return gAltmillerCave_EventsOther;
 }
 
-/// Update callback of room 6's obstacles: drawn on the leader's sprite
-/// priority.
+/// Update callback of AltmillerCaveDraught's obstacles: drawn on the leader's
+/// sprite priority.
 static void AltmillerCave_MatchLeaderPriority(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if (actor != NULL) {
@@ -1936,35 +1943,39 @@ static __inline__ void AltmillerCave_RedrawObstacleFootprints(void) {
 }
 
 /// Sets up the room being entered: an entry from outside the cave takes the
-/// room's first entrance; room 1 picks its darkness from the entrance; room
-/// 2's Babi is invisible until rescued; room 4's obstacles and pillar and
-/// room 6's obstacles, lights and rocks are restored. Returns 0.
+/// room's first entrance; AltmillerCaveEntrance picks its darkness from the
+/// entrance; AltmillerCaveBabi's Babi is invisible until rescued;
+/// AltmillerCaveSquall's obstacles and pillar and AltmillerCaveDraught's
+/// obstacles, lights and rocks are restored. Returns 0.
 s32 AltmillerCave_Initialize(void) {
   s8 *state;
   struct FieldActor *actor;
   s32 i;
 
   if (gGameState.entrance == 0) {
-    if (gGameState.scene == (s32)&SceneId_AltmillerCave2) {
-      gGameState.entrance = ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_1;
+    if (gGameState.scene == (s32)&SceneId_AltmillerCaveBabi) {
+      gGameState.entrance = ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
     }
-    if (gGameState.scene == (s32)&SceneId_AltmillerCave3) {
-      gGameState.entrance = ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_2;
+    if (gGameState.scene == (s32)&SceneId_AltmillerCaveVialChest) {
+      gGameState.entrance = ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
     }
-    if (gGameState.scene == (s32)&SceneId_AltmillerCave4) {
-      gGameState.entrance = ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_3;
+    if (gGameState.scene == (s32)&SceneId_AltmillerCaveSquall) {
+      gGameState.entrance =
+          ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST;
     }
-    if (gGameState.scene == (s32)&SceneId_AltmillerCave5) {
-      gGameState.entrance = ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_4;
+    if (gGameState.scene == (s32)&SceneId_AltmillerCaveCookieChest) {
+      gGameState.entrance =
+          ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL;
     }
-    if (gGameState.scene == (s32)&SceneId_AltmillerCave6) {
-      gGameState.entrance = ALTMILLER_CAVE_6_FROM_ALTMILLER_CAVE_5;
+    if (gGameState.scene == (s32)&SceneId_AltmillerCaveDraught) {
+      gGameState.entrance =
+          ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
   Engine_GameFlagSet(FLAG_DARK);
   GameFlag_Clear(FLAG_GRADED_DARKNESS);
-  if (gGameState.scene == (s32)&SceneId_AltmillerCave1) {
-    if (gGameState.entrance == ALTMILLER_CAVE_1_FROM_WORLD_MAP) {
+  if (gGameState.scene == (s32)&SceneId_AltmillerCaveEntrance) {
+    if (gGameState.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gSceneState + 4) = 0;
       }
@@ -1977,7 +1988,7 @@ s32 AltmillerCave_Initialize(void) {
       Engine_GameFlagSet(FLAG_GRADED_DARKNESS);
     }
   }
-  if (gGameState.scene == (s32)&SceneId_AltmillerCave2) {
+  if (gGameState.scene == (s32)&SceneId_AltmillerCaveBabi) {
     if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
       Engine_ActorSetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     } else {
@@ -1987,8 +1998,8 @@ s32 AltmillerCave_Initialize(void) {
       actor->sprite->rotation = 0x4000;
     }
   }
-  // Restore room 4's moved obstacles and frozen puddle.
-  if (gGameState.scene == (s32)&SceneId_AltmillerCave4) {
+  // Restore AltmillerCaveSquall's moved obstacles and frozen puddle.
+  if (gGameState.scene == (s32)&SceneId_AltmillerCaveSquall) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
@@ -2006,7 +2017,7 @@ s32 AltmillerCave_Initialize(void) {
 #endif
   }
   // Rebuild the final rock puzzle from its saved phase and chosen light.
-  if (gGameState.scene == (s32)&SceneId_AltmillerCave6) {
+  if (gGameState.scene == (s32)&SceneId_AltmillerCaveDraught) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     // UB: the callbacks are stored through an s32 view of update, which keeps
@@ -2199,30 +2210,30 @@ struct LightWheel *gAltmillerCave_LightWheel = &gAltmillerCave_LightWheelState;
 
 struct SceneEntrance gAltmillerCave_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTMILLER_CAVE_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 456, 0, 504,
+    {ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 456, 0, 504,
      FACING_NORTH, 0, 0, 0, 544, 528, 0},
     {2, CONDITION_ALWAYS, 280, 0, 360, FACING_SOUTH, 0, 0, 0, 544, 528, 0},
     {3, CONDITION_ALWAYS, 120, 0, 696, FACING_NORTH, 0, 0, 552, 240, 720, 0},
-    {ALTMILLER_CAVE_1_FROM_ALTMILLER_CAVE_2, CONDITION_ALWAYS, 120, 0, 600,
-     FACING_SOUTH, 0, 0, 552, 240, 720, 0},
-    {ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_1, CONDITION_ALWAYS, 392, 0, 504,
-     FACING_SOUTH, 0, 48, 16, 496, 672, 0},
-    {ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_3, CONDITION_ALWAYS, 136, 0, 104,
-     FACING_SOUTH, 0, 48, 16, 496, 672, 0},
-    {ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_2, CONDITION_ALWAYS, 232, 0, 216,
-     FACING_SOUTH, 0, 64, 48, 592, 576, 0},
-    {ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_4, CONDITION_ALWAYS, 328, 0, 264,
-     FACING_SOUTH, 0, 64, 48, 592, 576, 0},
-    {ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_3, CONDITION_ALWAYS, 200, 0, 424,
-     FACING_SOUTH, 0, 48, 80, 576, 480, 0},
-    {ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_5, CONDITION_ALWAYS, 520, 0, 328,
-     FACING_SOUTH, 0, 48, 80, 576, 480, 0},
-    {ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_4, CONDITION_ALWAYS, 680, 0, 152,
-     FACING_SOUTH, 0, 0, 0, 768, 512, 0},
-    {ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_6, CONDITION_ALWAYS, 40, 0, 248,
-     FACING_SOUTH, 0, 0, 0, 768, 512, 0},
-    {ALTMILLER_CAVE_6_FROM_ALTMILLER_CAVE_5, CONDITION_ALWAYS, 296, 0, 392,
-     FACING_SOUTH, 0, 160, 304, 576, 704, 0},
+    {ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI, CONDITION_ALWAYS, 120, 0,
+     600, FACING_SOUTH, 0, 0, 552, 240, 720, 0},
+    {ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE, CONDITION_ALWAYS, 392, 0,
+     504, FACING_SOUTH, 0, 48, 16, 496, 672, 0},
+    {ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_VIAL_CHEST, CONDITION_ALWAYS, 136,
+     0, 104, FACING_SOUTH, 0, 48, 16, 496, 672, 0},
+    {ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI, CONDITION_ALWAYS, 232,
+     0, 216, FACING_SOUTH, 0, 64, 48, 592, 576, 0},
+    {ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_SQUALL, CONDITION_ALWAYS,
+     328, 0, 264, FACING_SOUTH, 0, 64, 48, 592, 576, 0},
+    {ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST, CONDITION_ALWAYS,
+     200, 0, 424, FACING_SOUTH, 0, 48, 80, 576, 480, 0},
+    {ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_COOKIE_CHEST, CONDITION_ALWAYS,
+     520, 0, 328, FACING_SOUTH, 0, 48, 80, 576, 480, 0},
+    {ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL, CONDITION_ALWAYS,
+     680, 0, 152, FACING_SOUTH, 0, 0, 0, 768, 512, 0},
+    {ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_DRAUGHT, CONDITION_ALWAYS,
+     40, 0, 248, FACING_SOUTH, 0, 0, 0, 768, 512, 0},
+    {ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST, CONDITION_ALWAYS,
+     296, 0, 392, FACING_SOUTH, 0, 160, 304, 576, 704, 0},
     {51, CONDITION_ALWAYS, 424, 0, 392, FACING_SOUTH, 0, 160, 304, 576, 704, 0},
     {52, CONDITION_ALWAYS, 504, 0, 232, FACING_NORTH, 0, 384, 64, 624, 240, 0},
     {53, CONDITION_ALWAYS, 504, 0, 152, FACING_SOUTH, 0, 384, 64, 624, 240, 0},
@@ -2231,40 +2242,57 @@ struct SceneEntrance gAltmillerCave_Entrances[] = {
 };
 
 u32 gAltmillerCave_Exits[] = {
-    SCENE_EXITS(AltmillerCave1),
-    SCENE_EXIT(ALTMILLER_CAVE_1_TO_WORLD_MAP, WorldMap,
-               WORLD_MAP_FROM_ALTMILLER_CAVE_1),
-    SCENE_EXIT(2, AltmillerCave1, 3),
-    SCENE_EXIT(3, AltmillerCave1, 2),
-    SCENE_EXIT(ALTMILLER_CAVE_1_TO_ALTMILLER_CAVE_2, AltmillerCave2,
-               ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_1),
-    SCENE_EXITS(AltmillerCave2),
-    SCENE_EXIT(ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_1, AltmillerCave1,
-               ALTMILLER_CAVE_1_FROM_ALTMILLER_CAVE_2),
-    SCENE_EXIT(ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_3, AltmillerCave3,
-               ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_2),
-    SCENE_EXITS(AltmillerCave3),
-    SCENE_EXIT(ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_2, AltmillerCave2,
-               ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_3),
-    SCENE_EXIT(ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_4, AltmillerCave4,
-               ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_3),
-    SCENE_EXITS(AltmillerCave4),
-    SCENE_EXIT(ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_3, AltmillerCave3,
-               ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_4),
-    SCENE_EXIT(ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_5, AltmillerCave5,
-               ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_4),
-    SCENE_EXITS(AltmillerCave5),
-    SCENE_EXIT(ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_4, AltmillerCave4,
-               ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_5),
-    SCENE_EXIT(ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_6, AltmillerCave6,
-               ALTMILLER_CAVE_6_FROM_ALTMILLER_CAVE_5),
-    SCENE_EXITS(AltmillerCave6),
-    SCENE_EXIT(ALTMILLER_CAVE_6_TO_ALTMILLER_CAVE_5, AltmillerCave5,
-               ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_6),
-    SCENE_EXIT(51, AltmillerCave6, 52),
-    SCENE_EXIT(52, AltmillerCave6, 51),
-    SCENE_EXIT(53, AltmillerCave6, 54),
-    SCENE_EXIT(54, AltmillerCave6, 53),
+    SCENE_EXITS(AltmillerCaveEntrance),
+    SCENE_EXIT(ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_ALTMILLER_CAVE_ENTRANCE),
+    SCENE_EXIT(ALTMILLER_CAVE_ENTRANCE_TO_INNER_CHAMBER, AltmillerCaveEntrance,
+               ALTMILLER_CAVE_ENTRANCE_INNER_CHAMBER_FROM_PASSAGE),
+    SCENE_EXIT(ALTMILLER_CAVE_ENTRANCE_INNER_CHAMBER_TO_PASSAGE,
+               AltmillerCaveEntrance,
+               ALTMILLER_CAVE_ENTRANCE_FROM_INNER_CHAMBER),
+    SCENE_EXIT(ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI,
+               AltmillerCaveBabi,
+               ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE),
+    SCENE_EXITS(AltmillerCaveBabi),
+    SCENE_EXIT(ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE,
+               AltmillerCaveEntrance,
+               ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI),
+    SCENE_EXIT(ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST,
+               AltmillerCaveVialChest,
+               ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI),
+    SCENE_EXITS(AltmillerCaveVialChest),
+    SCENE_EXIT(ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI,
+               AltmillerCaveBabi,
+               ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_VIAL_CHEST),
+    SCENE_EXIT(ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL,
+               AltmillerCaveSquall,
+               ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST),
+    SCENE_EXITS(AltmillerCaveSquall),
+    SCENE_EXIT(ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST,
+               AltmillerCaveVialChest,
+               ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_SQUALL),
+    SCENE_EXIT(ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST,
+               AltmillerCaveCookieChest,
+               ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL),
+    SCENE_EXITS(AltmillerCaveCookieChest),
+    SCENE_EXIT(ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL,
+               AltmillerCaveSquall,
+               ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_COOKIE_CHEST),
+    SCENE_EXIT(ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT,
+               AltmillerCaveDraught,
+               ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST),
+    SCENE_EXITS(AltmillerCaveDraught),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST,
+               AltmillerCaveCookieChest,
+               ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_DRAUGHT),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_TO_ROCKS, AltmillerCaveDraught,
+               ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CAVERN),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CAVERN, AltmillerCaveDraught,
+               ALTMILLER_CAVE_DRAUGHT_FROM_ROCKS),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST, AltmillerCaveDraught,
+               ALTMILLER_CAVE_DRAUGHT_CHEST_FROM_ROCKS),
+    SCENE_EXIT(ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS, AltmillerCaveDraught,
+               ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CHEST),
     SCENE_EXITS_END,
 };
 
@@ -2400,10 +2428,10 @@ s32 gAltmillerCave_BabiLeavePath[] = {
 
 // clang-format off
 struct SceneEvent gAltmillerCave_EventsOther[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTMILLER_CAVE_1_TO_WORLD_MAP},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0x31, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_1_TO_ALTMILLER_CAVE_2},
+    {0x31, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI},
     {EVENT_TOUCH, 60, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel0)},
     {EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel1)},
     {EVENT_TOUCH, 62, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel2)},
@@ -2419,8 +2447,8 @@ struct SceneEvent gAltmillerCave_EventsOther[] = {
 };
 
 struct SceneEvent gAltmillerCave_Events2[] = {
-    {0x21, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_1},
-    {0x31, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_3},
+    {0x21, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
+    {0x31, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT_SCRIPT(AltmillerCave_RepeatRockOrder)},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
@@ -2438,8 +2466,8 @@ struct SceneEvent gAltmillerCave_Events2[] = {
 };
 
 struct SceneEvent gAltmillerCave_Events3[] = {
-    {0x21, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_2},
-    {0x31, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_4},
+    {0x21, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
+    {0x31, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_IN_AREA(ABILITY_RETREAT, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_BeginRetreat)},
@@ -2448,8 +2476,8 @@ struct SceneEvent gAltmillerCave_Events3[] = {
 };
 
 struct SceneEvent gAltmillerCave_Events4[] = {
-    {0x21, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_3},
-    {0x31, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_5},
+    {0x21, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
+    {0x31, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 72, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
     {TOUCH_WALKING_INTO(FACING_WEST), 73, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 74, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
@@ -2464,8 +2492,8 @@ struct SceneEvent gAltmillerCave_Events4[] = {
 };
 
 struct SceneEvent gAltmillerCave_Events5[] = {
-    {0x21, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_4},
-    {0x31, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_6},
+    {0x21, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
+    {0x31, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_IN_AREA(ABILITY_RETREAT, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_BeginRetreat)},
@@ -2475,7 +2503,8 @@ struct SceneEvent gAltmillerCave_Events5[] = {
 // clang-format on
 
 struct SceneEvent gAltmillerCave_Events6[] = {
-    {0x21, 50, CONDITION_ALWAYS, ALTMILLER_CAVE_6_TO_ALTMILLER_CAVE_5},
+    {0x21, 50, CONDITION_ALWAYS,
+     ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST},
     {EVENT_EXIT, 51, CONDITION_ALWAYS, 51},
     {EVENT_EXIT, 52, CONDITION_ALWAYS, 52},
     {EVENT_EXIT, 53, CONDITION_ALWAYS, 53},

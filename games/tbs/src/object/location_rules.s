@@ -138,20 +138,20 @@ gBattle_LocationRules:
 	location ValeCaveLogs, 3, -1, 0, 58
 	location ValeCaveLogs, 4, -1, 1, 59
 	location ValeCaveLogs, 5, -1, 1, 59
-	location AltmillerCave1, -1, -1, 1, 66
-	location AltmillerCave2, -1, -1, 1, 67
-	location AltmillerCave3, -1, -1, 1, 68
-	location AltmillerCave4, -1, -1, 0, 69
-	location AltmillerCave5, -1, -1, 1, 70
-	location AltmillerCave6, 50, -1, 1, 71
-	location AltmillerCave6, 51, -1, 1, 71
-	location GondowanCave1, 1, -1, 0, 75
-	location GondowanCave1, 2, -1, 0, 75
-	location GondowanCave1, -1, -1, 1, 74
-	location GondowanCave2, 1, -1, 0, 76
-	location GondowanCave2, 2, -1, 0, 76
-	location GondowanCave2, 3, -1, 0, 76
-	location GondowanCave2, -1, -1, 1, 73
+	location AltmillerCaveEntrance, -1, -1, 1, 66
+	location AltmillerCaveBabi, -1, -1, 1, 67
+	location AltmillerCaveVialChest, -1, -1, 1, 68
+	location AltmillerCaveSquall, -1, -1, 0, 69
+	location AltmillerCaveCookieChest, -1, -1, 1, 70
+	location AltmillerCaveDraught, 50, -1, 1, 71
+	location AltmillerCaveDraught, 51, -1, 1, 71
+	location GondowanCaveRiver, 1, -1, 0, 75
+	location GondowanCaveRiver, 2, -1, 0, 75
+	location GondowanCaveRiver, -1, -1, 1, 74
+	location GondowanCave, 1, -1, 0, 76
+	location GondowanCave, 2, -1, 0, 76
+	location GondowanCave, 3, -1, 0, 76
+	location GondowanCave, -1, -1, 1, 73
 	location LunpaFortress3, 1, -1, 1, 77
 	location LunpaFortress3, 2, -1, 1, 77
 	location LunpaFortress3, -1, -1, 1, 78

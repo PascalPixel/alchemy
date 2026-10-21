@@ -161,9 +161,9 @@ or code names them or counts on to them, but which person was meant to say
 which is a guess, so [tolbi.c](src/scene/tolbi.c) marks it `XXX: likely`.
 
 The third Colosso finals site,
-[colosseum_final3.c](src/scene/colosseum_final3.c), keeps a countdown before
-the match, `ColosseumFinal3_UnusedCountdown`, with its own lettering and
-sounds, and `ColosseumFinal3_UnusedCompetitorTalk`, which asks a yes or no
+[colosseum_navampa_match.c](src/scene/colosseum_navampa_match.c), keeps a countdown before
+the match, `ColosseumNavampaMatch_UnusedCountdown`, with its own lettering and
+sounds, and `ColosseumNavampaMatch_UnusedCompetitorTalk`, which asks a yes or no
 question and hands the player control of the character it names, as the
 friends' turns do. The lines it would show, three apart per character, are a
 spectator's thought and the stage announcements, which suggests its message

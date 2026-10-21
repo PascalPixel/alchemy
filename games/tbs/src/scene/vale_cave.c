@@ -107,7 +107,7 @@ enum ValeCaveKiteActor {
   ACTOR_EAST_CRATES,
   /// The log the leader rides along the holes' part's passage, from one end
   /// to the other: sprite 0xed, the east-west log of Colosso's Lumber Water
-  /// Crossing Area (colosseum_final1.c).
+  /// Crossing Area (colosseum_azart_match.c).
   ACTOR_RIDING_LOG,
   /// Two stacks of crates and two logs that stand in the first part.
   ACTOR_FIRST_STANDING_CRATES,

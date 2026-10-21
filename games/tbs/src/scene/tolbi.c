@@ -29,7 +29,7 @@
 /// quarrel over their allowance. A gambler stands at the gate of Tolbi Spring;
 /// once the party agrees to test its luck he steps aside for good
 /// (Tolbi_TalkToGambler, FLAG_TOLBI_SPRING_OPENED), and the gate leads into
-/// Tolbi Spring (TOLBI_TO_TOLBI_SPRING_2). Ember, a Mars Djinni, joins the
+/// Tolbi Spring (TOLBI_TO_TOLBI_SPRING). Ember, a Mars Djinni, joins the
 /// party when spoken to. Growth raises a sprout and Frost freezes a puddle,
 /// each a scene flag kept only through a return that keeps the party's
 /// position; Reveal uncovers a chest with Power Bread, and a barrel and a jar
@@ -40,8 +40,9 @@
 /// its trigger, lead into Tolbi's houses, inns and shops and into Tolbi Sanctum
 /// (all scene 136), but for door 4, which with exit 13 leads into the Lucky
 /// Dice and Lucky Wheels rooms (scene 137, whose area name is also Tolbi).
-/// TOLBI_TO_BABI_PALACE_2 leads to Babi's Palace, TOLBI_TO_COLOSSEUM_ENTRANCE
-/// to the Colosseum Entrance and TOLBI_TO_WORLD_MAP out onto the world map.
+/// TOLBI_TO_BABI_PALACE_ENTRANCE leads to Babi's Palace,
+/// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
+/// out onto the world map.
 
 #include "unit/scene/tolbi.h"
 #include "unit/object/object.h"
@@ -527,7 +528,7 @@ static void Tolbi_TalkToGambler(void) {
 /// The gate to Tolbi Spring (cell code 239), once the gambler has stepped
 /// aside.
 static void Tolbi_EnterSpring(void) {
-  Engine_EventRequestExit(TOLBI_TO_TOLBI_SPRING_2);
+  Engine_EventRequestExit(TOLBI_TO_TOLBI_SPRING);
   Engine_EventEnd();
 }
 
@@ -739,13 +740,13 @@ struct SceneEntrance gTolbiEntrances[] = {
      -1, -1, 0},
     {TOLBI_FROM_TOLBI_INTERIORS_WEST, CONDITION_ALWAYS, 88, 0, 392,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {TOLBI_FROM_BABI_PALACE_2, CONDITION_ALWAYS, 64, 0, 112, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
+    {TOLBI_FROM_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, 64, 0, 112,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {TOLBI_FROM_COLOSSEUM_ENTRANCE, CONDITION_ALWAYS, 304, 0, 64, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
     {TOLBI_FROM_LUCKY_DICE, CONDITION_ALWAYS, 424, 0, 224, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
-    {TOLBI_FROM_TOLBI_SPRING_2, CONDITION_ALWAYS, 304, 0, 304, FACING_SOUTH, 0,
+    {TOLBI_FROM_TOLBI_SPRING, CONDITION_ALWAYS, 304, 0, 304, FACING_SOUTH, 0,
      -1, -1, -1, -1, 0},
     {30, CONDITION_ALWAYS, 568, 0, 296, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
@@ -758,8 +759,8 @@ u32 gTolbiExits[] = {
     SCENE_EXIT(TOLBI_TO_HOUSE_NORTHWEST, TolbiInteriors,
                TOLBI_INTERIORS_HOUSE_NORTHWEST),
     SCENE_EXIT(TOLBI_TO_INN, TolbiInteriors, TOLBI_INTERIORS_INN),
-    SCENE_EXIT(TOLBI_TO_LUCKY_WHEELS, TolbiSpring1,
-               TOLBI_SPRING_1_LUCKY_WHEELS_FROM_TOLBI),
+    SCENE_EXIT(TOLBI_TO_LUCKY_WHEELS, TolbiGameRooms,
+               TOLBI_GAME_ROOMS_LUCKY_WHEELS_FROM_TOLBI),
     SCENE_EXIT(TOLBI_TO_HOUSE_NORTHEAST, TolbiInteriors,
                TOLBI_INTERIORS_HOUSE_NORTHEAST),
     SCENE_EXIT(TOLBI_TO_HOUSE_EAST, TolbiInteriors, TOLBI_INTERIORS_HOUSE_EAST),
@@ -768,14 +769,14 @@ u32 gTolbiExits[] = {
     SCENE_EXIT(TOLBI_TO_HOUSE_SOUTHWEST, TolbiInteriors,
                TOLBI_INTERIORS_HOUSE_SOUTHWEST),
     SCENE_EXIT(TOLBI_TO_SANCTUM, TolbiInteriors, TOLBI_INTERIORS_SANCTUM),
-    SCENE_EXIT(TOLBI_TO_BABI_PALACE_2, BabiPalace2, BABI_PALACE_2_FROM_TOLBI),
+    SCENE_EXIT(TOLBI_TO_BABI_PALACE_ENTRANCE, BabiPalaceEntrance,
+               BABI_PALACE_ENTRANCE_FROM_TOLBI),
     SCENE_EXIT(TOLBI_TO_COLOSSEUM_ENTRANCE, ColosseumEntrance,
                COLOSSEUM_ENTRANCE_FROM_TOLBI),
     SCENE_EXIT(TOLBI_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TOLBI),
-    SCENE_EXIT(TOLBI_TO_LUCKY_DICE, TolbiSpring1,
-               TOLBI_SPRING_1_LUCKY_DICE_FROM_TOLBI),
-    SCENE_EXIT(TOLBI_TO_TOLBI_SPRING_2, TolbiSpring2,
-               TOLBI_SPRING_2_FROM_TOLBI),
+    SCENE_EXIT(TOLBI_TO_LUCKY_DICE, TolbiGameRooms,
+               TOLBI_GAME_ROOMS_LUCKY_DICE_FROM_TOLBI),
+    SCENE_EXIT(TOLBI_TO_TOLBI_SPRING, TolbiSpring, TOLBI_SPRING_FROM_TOLBI),
     SCENE_EXITS_END,
 };
 

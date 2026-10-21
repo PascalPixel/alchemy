@@ -1,12 +1,12 @@
 /// @file
 /// Babi's Palace in Tolbi, the palace of Babi, the ruler of Tolbi, in two
 /// scenes that share this overlay and the area name Babi's Palace:
-/// BabiPalace2 (scene 139), outside, between the town and the palace door,
-/// with two guards and a well, and BabiPalace1 (scene 138), the palace
+/// BabiPalaceEntrance (scene 139), outside, between the town and the palace
+/// door, with two guards and a well, and BabiPalace (scene 138), the palace
 /// itself, a set of rooms joined by doors (BabiPalace_LeaveThroughDoor). From
 /// the palace one door leads into a room of Babi's scholars
-/// (BABI_PALACE_1_TO_VALE_INTERIORS_INN, which vale_interiors_inn.c holds) and
-/// another into the Colosseum Tunnel (BABI_PALACE_1_TO_COLOSSEUM_TUNNEL).
+/// (BABI_PALACE_TO_VALE_INTERIORS_INN, which vale_interiors_inn.c holds) and
+/// another into the Colosseum Tunnel (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
 /// Each scene has three sets of placements and events, chosen by the story
 /// (Scene_GetPlacements, Scene_GetEvents): before Babi is saved, during the
 /// finals (FLAG_BABI_SAVED), and after Colosso (FLAG_COLOSSO_OVER).
@@ -37,33 +37,33 @@
 /// waiting at the colosseum (BabiPalace_PassOnBabisWord), and one thanks the
 /// party once for saving him (BabiPalace_ThankForSavingBabi). Inside, the
 /// attendant offers a rest before the match (BabiPalace_OfferRest). A lost
-/// match brings the party back here by BABI_PALACE_1_FROM_COLOSSEUM_FINAL_1
-/// (colosseum_final1.c, colosseum_final2.c): its HP and PP are made full,
-/// Garet, Ivan and Mia rejoin and the inventory Colosso held is returned
+/// match brings the party back here by BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH
+/// (colosseum_azart_match.c, colosseum_satrage_match.c): its HP and PP are made
+/// full, Garet, Ivan and Mia rejoin and the inventory Colosso held is returned
 /// (BabiPalace_RestorePartyAndInventory), and the leader wakes from what his
 /// friends call a dream of fighting in the finals
 /// (BabiPalace_WakeFromFinalsDream), free to go back and try again.
 ///
 /// The third match, won or lost, ends Colosso and brings the party back by
-/// BABI_PALACE_1_FROM_COLOSSEUM_FINAL_3 (colosseum_final3.c): the leader wakes
-/// long after the finals, and Babi wants to see him
-/// (BabiPalace_WakeAfterFinals). Coming into Babi's room (entrance 33) the
-/// first time plays BabiPalace_MeetBabiAfterColosso
-/// (FLAG_BABI_SPOKE_AFTER_COLOSSO): Babi praises the party's fighting, and has
-/// Iodem bring the victor's prize if it won (FLAG_WON_COLOSSO). He saw its
-/// Psynergy through his Cloak Ball, and tells of Lemuria, the city of an
-/// ancient people far out at sea, where he went at the time of the great
-/// flood, a hundred years ago, and whose draught has kept him alive since and
-/// is running out. He built Babi Lighthouse to find Lemuria again, and asks
-/// the party to sail his Lemurian ship, which only an Adept can; learning that
-/// it must beat Felix and the others to Venus Lighthouse, he sends Iodem with
-/// it, to meet at Gondowan Passage. The Cloak Ball on show (ACTOR_CLOAK_BALL,
-/// drawn from its item icon) Babi lends for the quest
-/// (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL), and Sheba has left
-/// for Lalivero with the soldiers going to Babi Lighthouse. Arriving by
-/// entrance 90 sets FLAG_BABI_SAVED, and by 91 FLAG_COLOSSO_OVER as well (XXX:
-/// no exit table in the scenes leads to either; what does would say what they
-/// are for).
+/// BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH (colosseum_navampa_match.c): the
+/// leader wakes long after the finals, and Babi wants to see him
+/// (BabiPalace_WakeAfterFinals). Coming into the throne room
+/// (BABI_PALACE_THRONE_ROOM_FROM_CENTRAL_HALL) the first time plays
+/// BabiPalace_MeetBabiAfterColosso (FLAG_BABI_SPOKE_AFTER_COLOSSO): Babi
+/// praises the party's fighting, and has Iodem bring the victor's prize if it
+/// won (FLAG_WON_COLOSSO). He saw its Psynergy through his Cloak Ball, and
+/// tells of Lemuria, the city of an ancient people far out at sea, where he
+/// went at the time of the great flood, a hundred years ago, and whose draught
+/// has kept him alive since and is running out. He built Babi Lighthouse to
+/// find Lemuria again, and asks the party to sail his Lemurian ship, which only
+/// an Adept can; learning that it must beat Felix and the others to Venus
+/// Lighthouse, he sends Iodem with it, to meet at Gondowan Passage. The Cloak
+/// Ball on show (ACTOR_CLOAK_BALL, drawn from its item icon) Babi lends for the
+/// quest (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL), and Sheba
+/// has left for Lalivero with the soldiers going to Babi Lighthouse. Arriving
+/// by entrance 90 sets FLAG_BABI_SAVED, and by 91 FLAG_COLOSSO_OVER as well
+/// (XXX: no exit table in the scenes leads to either; what does would say what
+/// they are for).
 
 #include "game_state.h"
 #include "version.h"
@@ -194,7 +194,7 @@ enum BabiPalaceAfterColossoActor {
   ACTOR_AFTER_COLOSSO_SHEBAS_MINDER
 };
 
-/// The two guards outside the palace (BabiPalace2).
+/// The two guards outside the palace (BabiPalaceEntrance).
 enum { ACTOR_FIRST_GUARD = 8, ACTOR_SECOND_GUARD = 9 };
 
 /// The attendant has led the party to the beds; talking again sends the
@@ -223,7 +223,7 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
+  if (gGameState.scene == (s32)&SceneId_BabiPalaceEntrance) {
     return gBabiPalace_Entrances2;
   }
   return gBabiPalace_EntrancesOther;
@@ -240,7 +240,7 @@ const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
 /// Returns the actor placements for the scene and the story: before Babi's
 /// rescue, during the finals or after Colosso.
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
+  if (gGameState.scene == (s32)&SceneId_BabiPalaceEntrance) {
     return gBabiPalace_Placements2;
   }
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
@@ -2316,7 +2316,7 @@ static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Map_AnimateCells(gBabiPalace_DoorCells, 36, 10);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Event_Wait(16);
-  Event_RequestExit(BABI_PALACE_2_TO_BABI_PALACE_1);
+  Event_RequestExit(BABI_PALACE_ENTRANCE_TO_BABI_PALACE);
   Event_End();
 }
 
@@ -2408,7 +2408,7 @@ static void BabiPalace_ExamineWell(void) {
 
 /// Returns the event table for the scene and the story, as the placements.
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
+  if (gGameState.scene == (s32)&SceneId_BabiPalaceEntrance) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalace_Events2AfterColosso;
     }
@@ -2445,8 +2445,8 @@ s32 BabiPalace_ApplyEntryState(void) {
     GameFlag_Set(FLAG_BABI_SAVED);
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gGameState.scene != (s32)&SceneId_BabiPalace2) {
-    if (gGameState.entrance == BABI_PALACE_1_FROM_VALE_INTERIORS_INN) {
+  if (gGameState.scene != (s32)&SceneId_BabiPalaceEntrance) {
+    if (gGameState.entrance == BABI_PALACE_FROM_VALE_INTERIORS_INN) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
     if (GameFlag_IsSet(FLAG_COLOSSO_OVER)) {
@@ -2483,12 +2483,12 @@ s32 BabiPalace_ApplyEntryState(void) {
     // The attendant before the rescue and after Colosso; during the finals
     // ACTOR_FINALS_SECOND_RESIDENT has this number.
     Actor_Get(ACTOR_BED_ATTENDANT)->collisionFlags |= 4;
-    if (gGameState.entrance == BABI_PALACE_1_FROM_COLOSSEUM_FINAL_3) {
+    if (gGameState.entrance == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       BabiPalace_WakeAfterFinals();
       gGameState.entrance = 8;
     }
-    if (gGameState.entrance == BABI_PALACE_1_FROM_COLOSSEUM_FINAL_1) {
+    if (gGameState.entrance == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
@@ -2526,7 +2526,7 @@ s32 gBabiPalace_IndigestionScript[] = {
 
 struct SceneEntrance gBabiPalace_EntrancesOther[] = {
     { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { BABI_PALACE_1_FROM_BABI_PALACE_2, CONDITION_ALWAYS, 768, 0, 200, FACING_NORTH, 0, 512, 0, 1024, 224, 0 },
+    { BABI_PALACE_FROM_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, 768, 0, 200, FACING_NORTH, 0, 512, 0, 1024, 224, 0 },
     { 2, CONDITION_ALWAYS, 728, 0, 88, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
     { 3, CONDITION_ALWAYS, 808, 0, 88, FACING_WEST, 0, 512, 0, 1024, 224, 0 },
     { 4, CONDITION_ALWAYS, 600, 0, 152, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
@@ -2536,9 +2536,9 @@ struct SceneEntrance gBabiPalace_EntrancesOther[] = {
     { 8, CONDITION_ALWAYS, 72, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
     { 9, CONDITION_ALWAYS, 440, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
     { 10, CONDITION_ALWAYS, 72, 0, 968, FACING_EAST, 0, 0, 864, 240, 1024, 0 },
-    { BABI_PALACE_1_FROM_VALE_INTERIORS_INN, CONDITION_ALWAYS, 168, 0, 936, FACING_SOUTH, 0, 0, 864, 240, 1024, 0 },
+    { BABI_PALACE_FROM_VALE_INTERIORS_INN, CONDITION_ALWAYS, 168, 0, 936, FACING_SOUTH, 0, 0, 864, 240, 1024, 0 },
     { 12, CONDITION_ALWAYS, 424, 0, 680, FACING_WEST, 0, 328, 600, 568, 760, 0 },
-    { BABI_PALACE_1_FROM_COLOSSEUM_TUNNEL, CONDITION_ALWAYS, 472, 0, 696, FACING_SOUTH, 0, 328, 600, 568, 760, 0 },
+    { BABI_PALACE_FROM_COLOSSEUM_TUNNEL, CONDITION_ALWAYS, 472, 0, 696, FACING_SOUTH, 0, 328, 600, 568, 760, 0 },
     { 16, CONDITION_ALWAYS, 408, 0, 824, FACING_EAST, 0, 320, 728, 560, 888, 0 },
     { 17, CONDITION_ALWAYS, 456, 0, 808, FACING_SOUTH, 0, 320, 728, 560, 888, 0 },
     { 18, CONDITION_ALWAYS, 824, 0, 648, FACING_NORTH, 0, 768, 480, 1024, 672, 0 },
@@ -2565,15 +2565,15 @@ struct SceneEntrance gBabiPalace_EntrancesOther[] = {
     { 43, CONDITION_ALWAYS, 216, 0, 552, FACING_WEST, 0, 0, 472, 304, 632, 0 },
     { 44, CONDITION_ALWAYS, 88, 0, 552, FACING_SOUTH, 0, 0, 472, 304, 632, 0 },
     { 45, CONDITION_ALWAYS, 728, 0, 824, FACING_NORTH, 0, 552, 656, 792, 848, 0 },
-    { BABI_PALACE_1_FROM_COLOSSEUM_FINAL_1, CONDITION_ALWAYS, 152, 0, 104, FACING_SOUTH, 0, 0, 0, 512, 240, 0 },
-    { BABI_PALACE_1_FROM_COLOSSEUM_FINAL_3, CONDITION_ALWAYS, 152, 0, 104, FACING_SOUTH, 0, 0, 0, 512, 240, 0 },
+    { BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH, CONDITION_ALWAYS, 152, 0, 104, FACING_SOUTH, 0, 0, 0, 512, 240, 0 },
+    { BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH, CONDITION_ALWAYS, 152, 0, 104, FACING_SOUTH, 0, 0, 0, 512, 240, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gBabiPalace_Entrances2[] = {
     { 0, CONDITION_ALWAYS, 264, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { BABI_PALACE_2_FROM_TOLBI, CONDITION_ALWAYS, 264, 0, 424, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { BABI_PALACE_2_FROM_BABI_PALACE_1, CONDITION_ALWAYS, 200, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { BABI_PALACE_ENTRANCE_FROM_TOLBI, CONDITION_ALWAYS, 264, 0, 424, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { BABI_PALACE_ENTRANCE_FROM_BABI_PALACE, CONDITION_ALWAYS, 200, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -2582,49 +2582,49 @@ struct SceneRegion gBabiPalace_Regions[] = {
 };
 
 u32 gBabiPalace_Exits[] = {
-    SCENE_EXITS(BabiPalace1),
-    SCENE_EXIT(BABI_PALACE_1_TO_BABI_PALACE_2, BabiPalace2, BABI_PALACE_2_FROM_BABI_PALACE_1),
-    SCENE_EXIT(2, BabiPalace1, 24),
-    SCENE_EXIT(3, BabiPalace1, 25),
-    SCENE_EXIT(4, BabiPalace1, 20),
-    SCENE_EXIT(5, BabiPalace1, 22),
-    SCENE_EXIT(6, BabiPalace1, 8),
-    SCENE_EXIT(7, BabiPalace1, 9),
-    SCENE_EXIT(8, BabiPalace1, 6),
-    SCENE_EXIT(9, BabiPalace1, 7),
-    SCENE_EXIT(10, BabiPalace1, 26),
-    SCENE_EXIT(BABI_PALACE_1_TO_VALE_INTERIORS_INN, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_BABI_PALACE_1),
-    SCENE_EXIT(12, BabiPalace1, 27),
-    SCENE_EXIT(BABI_PALACE_1_TO_COLOSSEUM_TUNNEL, ColosseumTunnel, COLOSSEUM_TUNNEL_FROM_BABI_PALACE_1),
-    SCENE_EXIT(16, BabiPalace1, 34),
-    SCENE_EXIT(17, BabiPalace1, 18),
-    SCENE_EXIT(18, BabiPalace1, 17),
-    SCENE_EXIT(20, BabiPalace1, 4),
-    SCENE_EXIT(21, BabiPalace1, 40),
-    SCENE_EXIT(22, BabiPalace1, 5),
-    SCENE_EXIT(23, BabiPalace1, 41),
-    SCENE_EXIT(24, BabiPalace1, 2),
-    SCENE_EXIT(25, BabiPalace1, 3),
-    SCENE_EXIT(26, BabiPalace1, 10),
-    SCENE_EXIT(27, BabiPalace1, 12),
-    SCENE_EXIT(28, BabiPalace1, 42),
-    SCENE_EXIT(29, BabiPalace1, 43),
-    SCENE_EXIT(30, BabiPalace1, 35),
-    SCENE_EXIT(31, BabiPalace1, 36),
-    SCENE_EXIT(32, BabiPalace1, 33),
-    SCENE_EXIT(33, BabiPalace1, 32),
-    SCENE_EXIT(34, BabiPalace1, 16),
-    SCENE_EXIT(35, BabiPalace1, 30),
-    SCENE_EXIT(36, BabiPalace1, 31),
-    SCENE_EXIT(40, BabiPalace1, 21),
-    SCENE_EXIT(41, BabiPalace1, 23),
-    SCENE_EXIT(42, BabiPalace1, 28),
-    SCENE_EXIT(43, BabiPalace1, 29),
-    SCENE_EXIT(44, BabiPalace1, 45),
-    SCENE_EXIT(45, BabiPalace1, 44),
-    SCENE_EXITS(BabiPalace2),
-    SCENE_EXIT(BABI_PALACE_2_TO_TOLBI, Tolbi, TOLBI_FROM_BABI_PALACE_2),
-    SCENE_EXIT(BABI_PALACE_2_TO_BABI_PALACE_1, BabiPalace1, BABI_PALACE_1_FROM_BABI_PALACE_2),
+    SCENE_EXITS(BabiPalace),
+    SCENE_EXIT(BABI_PALACE_TO_BABI_PALACE_ENTRANCE, BabiPalaceEntrance, BABI_PALACE_ENTRANCE_FROM_BABI_PALACE),
+    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_WEST, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_WEST),
+    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_CENTRAL_HALL_EAST, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_STATUE_HALL_EAST),
+    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_WEST_STAIRWELL, BabiPalace, BABI_PALACE_WEST_STAIRWELL_FROM_STATUE_HALL),
+    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_EAST_STAIRWELL, BabiPalace, BABI_PALACE_EAST_STAIRWELL_FROM_STATUE_HALL),
+    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_BIG_BEDROOM_WEST, BabiPalace, BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_WEST),
+    SCENE_EXIT(BABI_PALACE_STATUE_HALL_TO_BIG_BEDROOM_EAST, BabiPalace, BABI_PALACE_BIG_BEDROOM_FROM_STATUE_HALL_EAST),
+    SCENE_EXIT(BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_WEST, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_WEST),
+    SCENE_EXIT(BABI_PALACE_BIG_BEDROOM_TO_STATUE_HALL_EAST, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_BIG_BEDROOM_EAST),
+    SCENE_EXIT(BABI_PALACE_SCHOLARS_LANDING_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_SCHOLARS_LANDING),
+    SCENE_EXIT(BABI_PALACE_TO_VALE_INTERIORS_INN, ValeInteriorsInn, VALE_INTERIORS_INN_FROM_BABI_PALACE),
+    SCENE_EXIT(BABI_PALACE_TUNNEL_LANDING_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_TUNNEL_LANDING),
+    SCENE_EXIT(BABI_PALACE_TO_COLOSSEUM_TUNNEL, ColosseumTunnel, COLOSSEUM_TUNNEL_FROM_BABI_PALACE),
+    SCENE_EXIT(BABI_PALACE_BEDROOM_LANDING_TO_THRONE_ROOM, BabiPalace, BABI_PALACE_THRONE_ROOM_FROM_BEDROOM_LANDING),
+    SCENE_EXIT(BABI_PALACE_BEDROOM_LANDING_TO_BABIS_BEDROOM, BabiPalace, BABI_PALACE_BABIS_BEDROOM_FROM_BEDROOM_LANDING),
+    SCENE_EXIT(BABI_PALACE_BABIS_BEDROOM_TO_BEDROOM_LANDING, BabiPalace, BABI_PALACE_BEDROOM_LANDING_FROM_BABIS_BEDROOM),
+    SCENE_EXIT(BABI_PALACE_WEST_STAIRWELL_TO_STATUE_HALL, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_WEST_STAIRWELL),
+    SCENE_EXIT(BABI_PALACE_WEST_STAIRWELL_TO_WEST_OCTAGONAL_ROOM, BabiPalace, BABI_PALACE_WEST_OCTAGONAL_ROOM_FROM_WEST_STAIRWELL),
+    SCENE_EXIT(BABI_PALACE_EAST_STAIRWELL_TO_STATUE_HALL, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_EAST_STAIRWELL),
+    SCENE_EXIT(BABI_PALACE_EAST_STAIRWELL_TO_EAST_OCTAGONAL_ROOM, BabiPalace, BABI_PALACE_EAST_OCTAGONAL_ROOM_FROM_EAST_STAIRWELL),
+    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_WEST, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_WEST),
+    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_STATUE_HALL_EAST, BabiPalace, BABI_PALACE_STATUE_HALL_FROM_CENTRAL_HALL_EAST),
+    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_SCHOLARS_LANDING, BabiPalace, BABI_PALACE_SCHOLARS_LANDING_FROM_CENTRAL_HALL),
+    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_TUNNEL_LANDING, BabiPalace, BABI_PALACE_TUNNEL_LANDING_FROM_CENTRAL_HALL),
+    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_NORTH_OCTAGONAL_ROOM, BabiPalace, BABI_PALACE_NORTH_OCTAGONAL_ROOM_FROM_CENTRAL_HALL),
+    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_SHEBAS_LANDING, BabiPalace, BABI_PALACE_SHEBAS_LANDING_FROM_CENTRAL_HALL),
+    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_STOVE_ROOM, BabiPalace, BABI_PALACE_STOVE_ROOM_FROM_CENTRAL_HALL),
+    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_SOLDIERS_ROOM, BabiPalace, BABI_PALACE_SOLDIERS_ROOM_FROM_CENTRAL_HALL),
+    SCENE_EXIT(BABI_PALACE_CENTRAL_HALL_TO_THRONE_ROOM, BabiPalace, BABI_PALACE_THRONE_ROOM_FROM_CENTRAL_HALL),
+    SCENE_EXIT(BABI_PALACE_THRONE_ROOM_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_THRONE_ROOM),
+    SCENE_EXIT(BABI_PALACE_THRONE_ROOM_TO_BEDROOM_LANDING, BabiPalace, BABI_PALACE_BEDROOM_LANDING_FROM_THRONE_ROOM),
+    SCENE_EXIT(BABI_PALACE_STOVE_ROOM_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_STOVE_ROOM),
+    SCENE_EXIT(BABI_PALACE_SOLDIERS_ROOM_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_SOLDIERS_ROOM),
+    SCENE_EXIT(BABI_PALACE_WEST_OCTAGONAL_ROOM_TO_WEST_STAIRWELL, BabiPalace, BABI_PALACE_WEST_STAIRWELL_FROM_WEST_OCTAGONAL_ROOM),
+    SCENE_EXIT(BABI_PALACE_EAST_OCTAGONAL_ROOM_TO_EAST_STAIRWELL, BabiPalace, BABI_PALACE_EAST_STAIRWELL_FROM_EAST_OCTAGONAL_ROOM),
+    SCENE_EXIT(BABI_PALACE_NORTH_OCTAGONAL_ROOM_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_NORTH_OCTAGONAL_ROOM),
+    SCENE_EXIT(BABI_PALACE_SHEBAS_LANDING_TO_CENTRAL_HALL, BabiPalace, BABI_PALACE_CENTRAL_HALL_FROM_SHEBAS_LANDING),
+    SCENE_EXIT(BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, BabiPalace, BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING),
+    SCENE_EXIT(BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING, BabiPalace, BABI_PALACE_SHEBAS_LANDING_FROM_SHEBAS_ROOM),
+    SCENE_EXITS(BabiPalaceEntrance),
+    SCENE_EXIT(BABI_PALACE_ENTRANCE_TO_TOLBI, Tolbi, TOLBI_FROM_BABI_PALACE_ENTRANCE),
+    SCENE_EXIT(BABI_PALACE_ENTRANCE_TO_BABI_PALACE, BabiPalace, BABI_PALACE_FROM_BABI_PALACE_ENTRANCE),
     SCENE_EXITS_END,
 };
 
@@ -2739,7 +2739,7 @@ struct ScenePlacement gBabiPalace_PlacementsAfterColosso[] = {
 };
 
 struct SceneEvent gBabiPalace_EventsOther[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_1_TO_BABI_PALACE_2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
@@ -2749,9 +2749,9 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_1_TO_VALE_INTERIORS_INN },
+    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_TO_VALE_INTERIORS_INN },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
-    { 0x31, 13, CONDITION_ALWAYS, BABI_PALACE_1_TO_COLOSSEUM_TUNNEL },
+    { 0x31, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
@@ -2818,7 +2818,7 @@ struct SceneEvent gBabiPalace_EventsOther[] = {
 };
 
 struct SceneEvent gBabiPalace_EventsColosso[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_1_TO_BABI_PALACE_2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
@@ -2828,9 +2828,9 @@ struct SceneEvent gBabiPalace_EventsColosso[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_1_TO_VALE_INTERIORS_INN },
+    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_TO_VALE_INTERIORS_INN },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
-    { 0x31, 13, CONDITION_ALWAYS, BABI_PALACE_1_TO_COLOSSEUM_TUNNEL },
+    { 0x31, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
@@ -2884,7 +2884,7 @@ struct SceneEvent gBabiPalace_EventsColosso[] = {
 };
 
 struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_1_TO_BABI_PALACE_2 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
@@ -2894,9 +2894,9 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_1_TO_VALE_INTERIORS_INN },
+    { 0x31, 11, CONDITION_ALWAYS, BABI_PALACE_TO_VALE_INTERIORS_INN },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
-    { 0x31, 13, CONDITION_ALWAYS, BABI_PALACE_1_TO_COLOSSEUM_TUNNEL },
+    { 0x31, 13, CONDITION_ALWAYS, BABI_PALACE_TO_COLOSSEUM_TUNNEL },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughDoor) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
@@ -2959,7 +2959,7 @@ struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
 };
 
 struct SceneEvent gBabiPalace_Events2[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_2_TO_TOLBI },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
     { EVENT_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNormallyNoOnesAllowedIntoBabis) },
     { EVENT_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSomeOfTheRoomsInThe) },
@@ -2970,7 +2970,7 @@ struct SceneEvent gBabiPalace_Events2[] = {
 };
 
 struct SceneEvent gBabiPalace_Events2Colosso[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_2_TO_TOLBI },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
     { EVENT_TALK, ACTOR_FIRST_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
     { EVENT_TALK, ACTOR_SECOND_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
@@ -2985,7 +2985,7 @@ struct SceneEvent gBabiPalace_Events2Colosso[] = {
 };
 
 struct SceneEvent gBabiPalace_Events2AfterColosso[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_2_TO_TOLBI },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
     { EVENT_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIveLostAllMyEnthusiasmSince) },
     { EVENT_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_AskAboutRemainingWarriors) },

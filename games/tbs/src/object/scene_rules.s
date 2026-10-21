@@ -123,12 +123,12 @@ gScene_InteractionRuleTable:
 	group_cue 40, -1, 0x950, 1
 	group_cue 40, -1, -1, 10
 	group_cue 41, -1, -1, 3
-	scene_cue ColosseumFinal1, 1, -1, 7
-	scene_cue ColosseumFinal2, 1, -1, 7
-	scene_cue ColosseumFinal3, 1, -1, 7
-	scene_cue ColosseumFinal1, -1, -1, 8
-	scene_cue ColosseumFinal2, -1, -1, 8
-	scene_cue ColosseumFinal3, -1, -1, 8
+	scene_cue ColosseumAzartMatch, 1, -1, 7
+	scene_cue ColosseumSatrageMatch, 1, -1, 7
+	scene_cue ColosseumNavampaMatch, 1, -1, 7
+	scene_cue ColosseumAzartMatch, -1, -1, 8
+	scene_cue ColosseumSatrageMatch, -1, -1, 8
+	scene_cue ColosseumNavampaMatch, -1, -1, 8
 	scene_cue Colosseum, 2, -1, 3
 	scene_cue Colosseum, 4, -1, 3
 	scene_cue Colosseum, 8, -1, 3
@@ -245,16 +245,16 @@ gScene_AreaNameRules:
 	scene_name TolbiInteriors, 8, 62
 	scene_name TolbiInteriors, 30, 62
 	group_name 40, -1, 63
-	scene_name BabiPalace2, -1, 64
-	scene_name BabiPalace1, -1, 64
+	scene_name BabiPalaceEntrance, -1, 64
+	scene_name BabiPalace, -1, 64
 	scene_name ColosseumTunnel, -1, 65
 	scene_name ColosseumEntrance, -1, 66
 	scene_name Colosseum, 2, 67
 	scene_name Colosseum, 4, 67
 	scene_name Colosseum, -1, 68
-	scene_name ColosseumFinal1, -1, 69
-	scene_name ColosseumFinal2, -1, 70
-	scene_name ColosseumFinal3, -1, 71
+	scene_name ColosseumAzartMatch, -1, 69
+	scene_name ColosseumSatrageMatch, -1, 70
+	scene_name ColosseumNavampaMatch, -1, 71
 	group_name 43, -1, 72
 	group_name 44, -1, 73
 	group_name 45, -1, 74
@@ -342,8 +342,8 @@ gBattle_BackdropScenes:
 	backdrop LamakanDesertBackdrop, LamakanDesertEast, LamakanDesertSmog, LamakanDesertManticore
 	backdrop TolbiShipDeckBackdrop, TolbiShipDeck, TolbiShipMast
 	backdrop TolbiShipInteriorsBackdrop, TolbiShipInteriors
-	backdrop ColossoBackdrop, ColosseumFinal1, ColosseumFinal2, ColosseumFinal3, LinkLobby
-	backdrop AltmillerCaveBackdrop, AltmillerCave1, AltmillerCave2, AltmillerCave3, AltmillerCave4, AltmillerCave5, AltmillerCave6
+	backdrop ColossoBackdrop, ColosseumAzartMatch, ColosseumSatrageMatch, ColosseumNavampaMatch, LinkLobby
+	backdrop AltmillerCaveBackdrop, AltmillerCaveEntrance, AltmillerCaveBabi, AltmillerCaveVialChest, AltmillerCaveSquall, AltmillerCaveCookieChest, AltmillerCaveDraught
 	backdrop AltmillerCaveBackdrop, LunpaFortress1, LunpaFortress2, LunpaFortress3, LunpaFortress4
 	backdrop SuhallaDesertBackdrop, SuhallaDesert1, SuhallaDesert2
 	backdrop CrossboneIsleCaveBackdrop, CrossboneIsleFirstFloor, CrossboneIsleSecondFloor, CrossboneIsleThirdFloor, CrossboneIsleFourthFloor, CrossboneIsleFifthFloor, CrossboneIsleSixthFloor, CrossboneIsleSeventhFloor, CrossboneIsleEighthFloor, CrossboneIsleNinthFloor

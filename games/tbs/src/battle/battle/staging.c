@@ -57,8 +57,8 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
     WaitFrames(delay);
   }
   // Plan the action, with the actor highlighted, and stage it by its
-  // outcome. A plan that failed has shown its message; -1 waits for the
-  // player first.
+  // outcome. A plan that failed has shown its message; PLAN_REPORTED
+  // waits for the player first.
   actingUnit[0] = request->unitId;
   actingUnit[1] = BATTLE_UNIT_LIST_END;
   BattlePres_SetActorModes(actingUnit, HIGHLIGHT_SELECTED);
@@ -98,7 +98,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
       break;
     }
   } else {
-    if (result == -1) {
+    if (result == PLAN_REPORTED) {
       BattlePresentation_WaitForAdvance();
       WaitFrames(3);
     }

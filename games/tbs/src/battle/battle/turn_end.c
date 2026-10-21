@@ -567,17 +567,17 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     pending = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                     (unitId < 0 || unitId > ALLY_MAX)))
                    ->list;
-    // The Djinn a summon used (turns -2, from BattleCommand_BuildPlan), owner
-    // by owner: they recover one a turn, after the last the owner already has
-    // recovering and no sooner than in 2 turns. counts gathers how many of
-    // each element the summon used.
+    // The Djinn a summon used (DJINN_RECOVERY_SUMMONED, from
+    // BattleCommand_BuildPlan), owner by owner: they recover one a turn, after
+    // the last the owner already has recovering and no sooner than in 2 turns.
+    // counts gathers how many of each element the summon used.
     for (i = 0; i < 4; i++) {
       counts[i] = 0;
     }
     for (;;) {
       owner = -1;
       for (i = 0; i < pending->count; i++) {
-        if (pending->entries[i].turns == -2) {
+        if (pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
           owner = pending->entries[i].unitId;
           break;
         }
@@ -598,7 +598,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       }
       for (i = 0; i < pending->count; i++) {
         if (pending->entries[i].unitId == owner &&
-            pending->entries[i].turns == -2) {
+            pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
           pending->entries[i].turns = recoveryTurn;
           counts[pending->entries[i].element]++;
           recoveryTurn++;

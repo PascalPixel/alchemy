@@ -170,12 +170,17 @@
 #define DJINN_RECOVERY_OPPONENT 1
 
 /// DjinnRecoveryEntry.turns of a Djinni on standby. In battle it stays so
-/// until a Djinn command sets it again or a summon uses it (-2), both in
+/// until a Djinn command sets it again or a summon uses it
+/// (DJINN_RECOVERY_SUMMONED), both in
 /// BattleCommand_BuildPlan; an owner who does not fight has it set as the
 /// next battle starts, outside a link battle
 /// (BattleParty_ReconcileDjinnRecovery). DjinnRecovery_Tick counts down only
 /// positive turns.
 #define DJINN_RECOVERY_AFTER_BATTLE -1
+
+/// DjinnRecoveryEntry.turns of a standby Djinni a summon has just used, until
+/// the turn's end gives it its turn to recover (BattleUnit_ProcessTurnEnd).
+#define DJINN_RECOVERY_SUMMONED -2
 
 /// The Djinn of each element, numbered 0 to 19 (DjinnRecoveryEntry.index).
 #define DJINN_PER_ELEMENT 20
@@ -260,6 +265,10 @@ enum BattlePlanStaging {
 #define STAGING_VIEW_ACROSS 0x40000
 #define STAGING_VIEW_REVERSED 0x80000
 
+/// BattleCommand_BuildPlan's results besides 0, which stages the plan.
+#define PLAN_REPORTED -1  ///< the action failed and its message is shown
+#define PLAN_NO_ACTION -2 ///< nothing to stage or show
+
 /// BattlePlan.failure: why a cast plays no effect, which the staging shows.
 enum BattlePlanFailure {
   PLAN_FAILURE_NONE,
@@ -303,11 +312,6 @@ enum EnemyActionStrategy {
   ACTION_STRATEGY_NEXT_PICK, ///< the next place at each new pick, from 0
   ACTION_STRATEGY_SAME       ///< the place last picked
 };
-
-// ItemDefinition.useType: what using an item in battle does to it.
-#define ITEM_USE_CONSUMED 1  ///< one is used up
-#define ITEM_USE_MAY_BREAK 2 ///< breaks one time in eight
-#define ITEM_USE_EMPTIES 4   ///< Hermes' Water leaves an Empty Bottle
 
 // BattleAct.targetMode: whom an ability may target, from its user's view.
 // The party's cursor (BattleTarget_RunSelection) shows the enemies for every

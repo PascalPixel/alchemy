@@ -4,6 +4,9 @@
 
 #include "../battle_internal.h"
 
+/// The ability Can't Use, a row of actions.tsv.
+#define ABILITY_CANT_USE 0x1fd
+
 /// An enemy's memory of its action choice, kept in BattleUnit.rewards (0 in
 /// every row of enemies.tsv, so it starts cleared). Only
 /// ACTION_STRATEGY_RANDOM_START and ACTION_STRATEGY_IN_ORDER use it.
@@ -150,11 +153,11 @@ select_again:
       useItem = 0;
       if (enemy->targetStrategy == STRATEGY_MOST_HP) {
         request->command = CMD_ITEM;
-        // XXX: 0x1fd (509) is the row of the ability Can't Use, yet CMD_ITEM
+        // XXX: the parameter is the ability Can't Use, yet CMD_ITEM
         // reads its parameter as an inventory slot (BattleCommand_BuildPlan);
         // a Brigand or Rat Fighter (STRATEGY_MOST_HP, item places) out of
         // items would show what the player sees.
-        request->parameter = 0x1fd;
+        request->parameter = ABILITY_CANT_USE;
         return;
       }
     }
@@ -301,3 +304,5 @@ next_candidate:
 done:
   return;
 }
+
+#undef ABILITY_CANT_USE

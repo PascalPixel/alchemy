@@ -96,7 +96,10 @@ enum GondowanPassageActor {
   ACTOR_SECOND_SOLDIER,
   /// "Even if you head east, you can't get to Kalay from here, even!"
   ACTOR_THIRD_SOLDIER,
-  ACTOR_IODEM ///< waits for the party once Babi has spoken after Colosso
+  /// Waits for the party once Babi has spoken after Colosso.
+  /// ★ Named from the game: "Why would Iodem choose to wait for us"
+  /// (MsgGondowanCaveWhyWouldIodemChooseToWait)
+  ACTOR_IODEM
 };
 
 /// GondowanCaveRiver's placed actor, the one row of
@@ -113,12 +116,17 @@ enum GondowanCaveActor {
   ACTOR_STUMP = ACTOR_FIRST_PLACED,
   /// Pushed or moved with Move, in the sprite the stone pillars of other scenes
   /// use (crossbone_isle_stepping_stones.c).
+  /// ★ Named from what the player sees: a tall tan stone pillar standing on
+  /// the cave floor (its render)
   ACTOR_PILLAR,
   /// Stands in for the pillar once it has dropped into its place; out of sight
   /// at first. It is drawn in the stump's sprite, and on later visits in the
   /// animation the stump takes once it has landed.
   ACTOR_DROPPED_PILLAR,
-  ACTOR_BOULDER, ///< raised by Lift
+  /// Raised by Lift.
+  /// ★ Named from what the player sees: a round boulder in the cave passage,
+  /// which floats up under Lift (its render)
+  ACTOR_BOULDER,
   /// An invisible actor 16 pixels west of the boulder, which Lift takes away
   /// with it. XXX: likely holds the cell beside the boulder, because it
   /// stands one cell from it and goes when the boulder does.

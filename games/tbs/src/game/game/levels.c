@@ -64,7 +64,7 @@ enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 /// the action of each equipped item that grants one, and closes it up again.
 /// Writes only the unit's actionSlots; enemies (CLASS_INDEX_ENEMY) are left
 /// alone. Called whenever the class, level or equipment changes:
-/// Inventory_Equip, Unit_UpdateClass, Owner_LevelUp, Unit_LearnPsynergy and the
+/// Inventory_Equip, Unit_UpdateClass, Unit_LevelUp, Unit_LearnPsynergy and the
 /// item menu.
 s32 Unit_RefreshPsynergy(s32 owner) {
   struct BattleUnit *unit;
@@ -173,7 +173,7 @@ s32 Unit_RefreshPsynergy(s32 owner) {
   return 0;
 }
 
-/// Scratch for Owner_LevelUp, which takes it from EWRAM first
+/// Scratch for Unit_LevelUp, which takes it from EWRAM first
 /// (Runtime_BumpAllocateAlternatePool) and frees it before returning.
 struct LevelUpWork {
   s32 classIndex; ///< the unit's class, written and not read again
@@ -308,7 +308,7 @@ void Party_InitCharacters(void) {
 }
 
 /// Unused: reserved entry; keeps its place in the far-call table.
-UNUSED void Owner_LevelNoOp(void) {}
+UNUSED void Unit_LevelNoOp(void) {}
 
 /// Returns the experience a character needs for `level` (0 for level 0 and
 /// below); -1 for an enemy or a level above 99. Called by the levelling code
@@ -333,7 +333,7 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
 /// part. Writes the unit's level, base stats and, if short, its experience,
 /// then rebuilds its Psynergy and stats. The gains go to `gains`, which is
 /// returned.
-struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *gains) {
+struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
   struct BattleUnit *unit;
   struct LevelUpWork *work;
   u32 requiredExperience;
@@ -426,7 +426,7 @@ struct LevelUpResult *Unit_TryLevelUp(s32 owner, struct LevelUpResult *gains) {
   unit = UnitGet(owner);
   if ((unit->experience >=
        Unit_GetExperienceForLevel(owner, unit->level + 1)) &&
-      (Owner_LevelUp(owner, gains) != NULL)) {
+      (Unit_LevelUp(owner, gains) != NULL)) {
     return gains;
   }
   return 0;
@@ -441,7 +441,7 @@ void Unit_LevelUpTo(s32 owner, s32 targetLevel) {
   s32 currentLevel = UnitGet(owner)->level;
 
   while (currentLevel < targetLevel) {
-    Owner_LevelUp(owner, &gains);
+    Unit_LevelUp(owner, &gains);
     currentLevel++;
   }
   UnitCalc(owner);

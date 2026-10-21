@@ -738,7 +738,7 @@ void Party_RestorePpOfLitElements(void) {
 }
 
 /// Unused: reserved entry; keeps its place in the far-call table.
-UNUSED void Owner_RatioNoOp(void) {}
+UNUSED void Unit_RatioNoOp(void) {}
 
 /// Recomputes the HP and PP gauges of `owner` from its current HP and PP, so
 /// that UnitCalc keeps the same fractions. Called after anything that writes

@@ -1,7 +1,7 @@
 	.section .rodata
 	.balign 4
-	.global gOwner_FourColumnValues
-gOwner_FourColumnValues:
+	.global gClass_SeriesByElements
+gClass_SeriesByElements:
 	.4byte 1, 3, 4, 5, 8, 6, 9, 10
 	.4byte 4, 3, 2, 5, 8, 10, 9, 7
 @ Elemental power and resistance at each elemental level.

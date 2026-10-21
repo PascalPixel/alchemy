@@ -321,10 +321,10 @@ const struct SceneEvent *ValeInteriorsInn_GetEvents(void) {
   return gValeInteriorsInn_Events;
 }
 
-/// In a room of Vale's inn, the masked man asks whether Isaac has business
-/// with him, and sends him off whatever he answers. "Hey... Boy..." Reached by
-/// talking to ACTOR_MASKED_MAN before the party leaves Vale
-/// (gValeInteriorsInn_Events).
+/// The masked man at the inn asks Isaac his business. In a room of Vale's inn,
+/// the masked man asks whether Isaac has business with him, and sends him off
+/// whatever he answers. "Hey... Boy..." Reached by talking to ACTOR_MASKED_MAN
+/// before the party leaves Vale (gValeInteriorsInn_Events).
 static void Event_AskIsaacHisBusiness(void) {
   Engine_EventBegin();
   Engine_ActorStartRepeatedMotion(ACTOR_MASKED_MAN, 2);
@@ -347,10 +347,10 @@ static void Event_AskIsaacHisBusiness(void) {
   Engine_EventEnd();
 }
 
-/// In Vale, a young man with brown hair asks whether the masked man was Felix,
-/// and wonders whether Jenna can be trusted. Reached by talking to
-/// ACTOR_YOUNG_MAN_SAW_MASK once the party has left Vale and until it reaches
-/// Kalay (gValeInteriorsInn_EventsAfterLeaving).
+/// A young man asks whether the masked man was Felix. In Vale, the young man
+/// with brown hair also wonders whether Jenna can be trusted. Reached by
+/// talking to ACTOR_YOUNG_MAN_SAW_MASK once the party has left Vale and until
+/// it reaches Kalay (gValeInteriorsInn_EventsAfterLeaving).
 static void Event_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
@@ -464,8 +464,8 @@ static void Event_TakeExitToValeStormWest(void) {
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_STORM_EAST);
 }
 
-/// Sets up the stormy night or the villagers of the story, and plays the
-/// scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST,
+/// Sets up these rooms for the stormy night or the story's villagers. It also
+/// plays the scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST,
 /// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
 /// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG.
 /// Called by Field_RunScene once the actors are placed.

@@ -1,29 +1,31 @@
 /// @file
 /// The buildings of Lunpa (LunpaSuhalla, scene 105), one scene whose area name
 /// follows the door the party comes in by: Lunpa for the homes, the shops and
-/// the inn (entrances 1 to 6, 8 and 9), Lunpa Temple (entrances 7 and 11) and
-/// Gate to Suhalla (entrance 10).
+/// the inn (ROOM_FIRST_HOME to ROOM_INN, ROOM_EIGHTH and ROOM_NINTH), Lunpa
+/// Temple (ROOM_TEMPLE and ROOM_TEMPLE_SECOND_ENTRANCE) and Gate to Suhalla
+/// (ROOM_GATE_TO_SUHALLA).
 ///
 /// - Lunpa, the homes, the weapon and armor shop, the item shop and the inn,
-///   entered by the town's doors (lunpa.c); exits 1 to 8 lead back out, the
-///   temple's included. While Dodonpa keeps the town sealed
-///   (FLAG_LUNPA_TRADE_REOPENED clear, gInteriorSealedEvents), the merchants
-///   cannot buy or sell, the innkeeper has no guests, and the residents talk of
-///   Lunpa, the noble thief lost in the great flood while traveling with Babi,
-///   of Donpa and of Dodonpa. The inn's chef has been taking meals into the
-///   fortress since the caravan was captured: talking to him or reading his
-///   mind tells the party of the prisoner he takes meals to, Hammet
-///   (FLAG_LUNPA_HEARD_OF_PRISONER). Once Donpa has judged Dodonpa in Lunpa
-///   Fortress (gInteriorReopenedEvents), across their counters the merchants
-///   sell and the innkeeper rents rooms, and the inn makes ready for Donpa's
-///   guests. A wooden box and a barrel hold a Lucky Medal and a Vial, and the
-///   chef's ovens hold Thieves' Stew and Thieves' Cookies.
+///   entered by the town's doors (lunpa.c); their exits, ROOM_FIRST_HOME to
+///   ROOM_EIGHTH, lead back out, the temple's included. While Dodonpa keeps
+///   the town sealed (FLAG_LUNPA_TRADE_REOPENED clear, gInteriorSealedEvents),
+///   the merchants cannot buy or sell, the innkeeper has no guests, and the
+///   residents talk of Lunpa, the noble thief lost in the great flood while
+///   traveling with Babi, of Donpa and of Dodonpa. The inn's chef has been
+///   taking meals into the fortress since the caravan was captured: talking
+///   to him or reading his mind tells the party of the prisoner he takes
+///   meals to, Hammet (FLAG_LUNPA_HEARD_OF_PRISONER). Once Donpa has judged
+///   Dodonpa in Lunpa Fortress (gInteriorReopenedEvents), across their
+///   counters the merchants sell and the innkeeper rents rooms, and the inn
+///   makes ready for Donpa's guests. A wooden box and a barrel hold a Lucky
+///   Medal and a Vial, and the chef's ovens hold Thieves' Stew and Thieves'
+///   Cookies.
 /// - Lunpa Temple, whose priest offers the Sanctum's services across the
 ///   counter and otherwise talks of Dodonpa.
 /// - Gate to Suhalla, the house beside Suhalla Gate (suhalla_gate.c), entered
-///   from there and left by exit 10. A traveling priest offers the same
-///   services (gGateToSuhallaEvents), and Scene_Initialize makes it the place
-///   a defeated party wakes.
+///   from there and left by ROOM_GATE_TO_SUHALLA. A traveling priest offers
+///   the same services (gGateToSuhallaEvents), and Scene_Initialize makes it
+///   the place a defeated party wakes.
 
 #include "game_state.h"
 #include "field_event.h"

@@ -195,14 +195,16 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void);
 // and takes no number.
 
 /// Venus Lighthouse Entry's actors, numbering the rows of
-/// gVenusLighthouseEntryPlacements: the scholars (sprite 0x70) and Babi's
-/// soldiers (SPRITE_SOLDIER) the wanderers attacked; after the man by the
-/// entrance, each is named by what they say.
+/// gVenusLighthouseEntryPlacements: the scholars (SPRITE_OLD_MAN_IN_BLUE_CAP)
+/// and Babi's soldiers (SPRITE_SOLDIER) the wanderers attacked, each named by
+/// what they say.
 enum VenusLighthouseEntryActor {
-  /// Drawn as the soldiers are: "Venus Lighthouse was... attacked by
+  /// A soldier by the entrance: "Venus Lighthouse was... attacked by
   /// strange... wanderers...", and he flickers and is gone
   /// (Event_HearOfTheAttack).
-  ACTOR_ENTRANCE_MAN = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "attacked by strange... wanderers..."
+  /// (MsgFieldVenusLighthouseWasAttackedBy)
+  ACTOR_SOLDIER_TELLING_OF_THE_ATTACK = ACTOR_FIRST_PLACED,
   /// "Iodem, be happy. The entrance to Venus Lighthouse is open..."
   /// ★ Named from the game: "The entrance to Venus Lighthouse is open"
   /// (MsgVenusLighthouseIodemBeHappyTheEntranceTo)
@@ -1010,24 +1012,24 @@ static void Event_SearchLockedDoor(void) {
   Engine_EventEnd();
 }
 
-/// At Venus Lighthouse Entry, talking to the man by the entrance (or reading
-/// his mind): "Venus Lighthouse was attacked by strange wanderers..." He
-/// flickers ten times and is gone (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the
-/// collision of his spot changes, as it does on later arrivals.
+/// At Venus Lighthouse Entry, talking to the soldier by the entrance (or
+/// reading his mind): "Venus Lighthouse was attacked by strange wanderers..."
+/// He flickers ten times and is gone (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and
+/// the collision of his spot changes, as it does on later arrivals.
 static void Event_HearOfTheAttack(void) {
   u32 flickersLeft;
   u32 flickerDelay;
 
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(ACTOR_ENTRANCE_MAN, 3);
+  Engine_ActorRunRepeatedMotion(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 3);
   Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
   flickersLeft = 10;
   flickerDelay = 8;
-  Engine_EventShowMessageAndWait(ACTOR_ENTRANCE_MAN, 0, 20);
+  Engine_EventShowMessageAndWait(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0, 20);
   do {
-    Engine_ActorSetChildValue(ACTOR_ENTRANCE_MAN, 15);
+    Engine_ActorSetChildValue(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 15);
     Engine_TaskWait(2);
-    Engine_ActorSetChildValue(ACTOR_ENTRANCE_MAN, 0);
+    Engine_ActorSetChildValue(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0);
     Engine_TaskWait(flickerDelay);
     if (flickerDelay > 3) {
       flickerDelay--;
@@ -1035,7 +1037,7 @@ static void Event_HearOfTheAttack(void) {
     flickersLeft--;
   } while (flickersLeft != 0);
   Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD);
-  Engine_ActorSetPosition(ACTOR_ENTRANCE_MAN, 0, 0);
+  Engine_ActorSetPosition(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0, 0);
   Map_CopyCellAttributes(7, 17, 2, 1, 7, 16);
   Engine_EventEnd();
 }
@@ -2574,7 +2576,7 @@ s32 Scene_RunEntrySetup(void) {
   if (scene == (s32)&SceneId_VenusLighthouseEntry) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
-      VenusLighthouse_PrepareStandingActor(ACTOR_ENTRANCE_MAN);
+      VenusLighthouse_PrepareStandingActor(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK);
     else
       Map_CopyCellAttributes(7, 17, 2, 1, 7, 16);
     VenusLighthouse_PrepareStandingActor(ACTOR_SCHOLAR_LIGHTHOUSE_OPEN);
@@ -4400,11 +4402,11 @@ struct ScenePlacement gVenusLighthousePlacementsOther[] = {
 struct ScenePlacement gVenusLighthouseEntryPlacements[] = {
     { SPRITE_SOLDIER, FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(268), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(352), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(428), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(368), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(400), 0, PIXELS(172), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -4418,11 +4420,11 @@ struct ScenePlacement gVenusLighthouseEntryPlacements[] = {
 struct ScenePlacement gVenusLighthouseGroundFloorPlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, 0x0, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x71, 0x0, ACTOR_STAND,
+    { SPRITE_MAN_WITH_GLASSES, 0x0, ACTOR_STAND,
         PIXELS(304), 0, PIXELS(204), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x70, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, 0x0, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(592), FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x100, 0x0, ACTOR_STAND,
         PIXELS(872), 0, PIXELS(120), FACING_NORTH, TALK_KEEP_FACING, 0 },
@@ -4525,14 +4527,14 @@ struct SceneEvent gVenusLighthouseEntryEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST },
-    { EVENT_TALK, ACTOR_ENTRANCE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
+    { EVENT_TALK, ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
     { EVENT_TALK, ACTOR_SCHOLAR_LIGHTHOUSE_OPEN, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIodemBeHappyTheEntranceTo) },
     { EVENT_TALK, ACTOR_SCHOLAR_BARBARIANS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseOhhhHowCouldTheyAttackMere) },
     { EVENT_TALK, ACTOR_WAITING_SCHOLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWaitingScholar) },
     { EVENT_TALK, ACTOR_SOLDIER_OPENED_DOOR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseHowHowDidTheyOpenThe) },
     { EVENT_TALK, ACTOR_SOLDIER_HEADED_FOR_BABI, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheyAreAlreadyHeadedForBabi) },
     { EVENT_TALK, ACTOR_SOLDIER_COLOSSO_VICTORS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseBabisSoldiersAreAllColossoVictors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_ENTRANCE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_LIGHTHOUSE_OPEN, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseUhnnnIfOnlyICouldMove) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_BARBARIANS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheirPowersWereSoStrangeWho) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_SCHOLAR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIMustGetInsideVenusLighthouse) },

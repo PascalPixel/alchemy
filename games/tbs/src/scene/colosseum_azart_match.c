@@ -365,8 +365,9 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   Engine_EventEnd();
 }
 
-/// Walking into the Lumber Water Crossing Area's north-south log rolls it, with
-/// the leader, to the other bank.
+/// The north-south log carries the leader to the other bank. It's the Lumber
+/// Water Crossing Area's north-south log, and walking into it rolls it, with
+/// the leader, across.
 static void Event_RollLogNorthSouth(void) {
   struct FieldActor *actor;
   s32 row;
@@ -385,8 +386,9 @@ static void Event_RollLogNorthSouth(void) {
   Map_CopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
-/// Walking into the Lumber Water Crossing Area's east-west log rolls it, with
-/// the leader, the way the pad is held.
+/// The east-west log carries the leader the way the pad is held. It's the
+/// Lumber Water Crossing Area's east-west log, and walking into it rolls it,
+/// with the leader.
 static void Event_RollLogEastWest(void) {
   struct FieldActor *actor;
   s32 column;

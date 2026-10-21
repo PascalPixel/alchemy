@@ -18,6 +18,26 @@ enum SceneVariant {
   SCENE_VARIANT_TOWN = 2
 };
 
+/// gGameState.battleStart: how the next battle starts (Battle_SetStart); it is
+/// set back to BATTLE_START_NORMAL as the battle ends. Any start but that one
+/// stops the opening's first-strike and surprise rolls (Battle_RunEncounter).
+enum BattleStart {
+  BATTLE_START_NORMAL = 0,
+  /// A battle the party cannot run from: a Mimic's (object/object/events.c)
+  /// and the travelers' fight in Vale (ValeGate_FightTravelers,
+  /// scene/vale_gate.c).
+  BATTLE_START_NO_ESCAPE = 2,
+  /// The battles a scene starts. Here and in a link battle the command menu
+  /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
+  /// running away!"), as it does once the party is challenged
+  /// (UiText_ShowLocalizedMessageAndWait, window/battle_command/link_timer.c).
+  BATTLE_START_SCENE = 3,
+  BATTLE_START_LINK = 4, ///< a link battle (Battle_RunEncounter, menu/lobby.c)
+  /// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests
+  /// by value; it still lets the party run.
+  BATTLE_START_DEBUG = 5
+};
+
 /// The game's state: play time, coins, the scene and the leader's position,
 /// the active party and the options.
 ///
@@ -110,7 +130,7 @@ struct GameState {
   u8 perspectiveScene; ///< set to 1 on the world map; not read by name in TBS
   u8 unk225[5];        ///< not named by TBS code
   u8 idleSleepEnabled; ///< the option, saved from gIdleSleepEnabled
-  u8 battleStart;      ///< how the next battle starts (Battle_SetStart)
+  u8 battleStart;      ///< an enum BattleStart
   /// Hazardous ground (the Lamakan Desert's heat): when hazardSteps reaches
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a scene, not a return from battle, resets them to 1 HP

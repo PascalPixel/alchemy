@@ -548,13 +548,13 @@ s32 Field_SearchTile(s32 tile) {
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
-              // Start 2 (BATTLE_START_NO_ESCAPE, battle/battle/round.c): no
-              // first strike or surprise, and every attempt to run fails; the
-              // command menu still offers it, refusing outright only for
-              // starts 3 and 4.
+              // BATTLE_START_NO_ESCAPE (battle/battle/round.c): no first strike
+              // or surprise, and every attempt to run fails; the command menu
+              // still offers it, refusing outright only for BATTLE_START_SCENE
+              // and BATTLE_START_LINK.
               work->battle = Encounter_GetEnemyGroupAtSlot(ENCOUNTER_ZONE_MIMIC,
                                                            (u16)event->value);
-              Battle_SetStart(2);
+              Battle_SetStart(BATTLE_START_NO_ESCAPE);
               BattleFx_SelectBattleCue(ENCOUNTER_ZONE_MIMIC, (u16)event->value);
               AudioCommand_PlayFar(gGameState.sceneCue);
               UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);

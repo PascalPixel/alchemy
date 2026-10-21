@@ -147,24 +147,6 @@
 #define DEFEAT_SEVERAL 1
 #define DEFEAT_BY_PARTY_MEMBER 3
 
-// gGameState.battleStart: how the next battle starts (Battle_SetStart); it is
-// set back to BATTLE_START_NORMAL as the battle ends. Any start but that one
-// stops the opening's first-strike and surprise rolls (Battle_RunEncounter).
-#define BATTLE_START_NORMAL 0
-/// A battle the party cannot run from: a Mimic's (object/object/events.c) and
-/// the travelers' fight in Vale (ValeGate_FightTravelers, scene/vale_gate.c).
-#define BATTLE_START_NO_ESCAPE 2
-/// The battles a scene starts. Here and in a link battle the command menu
-/// itself refuses to run, with MsgNoTimeToRun ("This is no time to be running
-/// away!"), as it does once the party is challenged
-/// (UiText_ShowLocalizedMessageAndWait, window/battle_command/link_timer.c).
-#define BATTLE_START_SCENE 3
-#define BATTLE_START_LINK                                                      \
-  4 ///< a link battle (Battle_RunEncounter, menu/lobby.c)
-/// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests by
-/// value; it still lets the party run.
-#define BATTLE_START_DEBUG 5
-
 /// The game flag of an enemy class the party has defeated, set by
 /// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
 /// choose only formations of defeated enemies (BattleFormation_AverageLevel).

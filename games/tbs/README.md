@@ -58,7 +58,8 @@ The storm also keeps something the player never sees.
 with lines that appear nowhere else, `*Hah* *Hah*` and `Are you trapped, too?`,
 but every path to its cell crosses the cells where Garet already joins, so its
 first test ends it. Its comment opens with `Unused:` and says why, as the
-comment on every such event does.
+comment on every such event does, and [unused.md](unused.md) gathers it with
+the rest of what the game keeps and never plays.
 
 ## What sends the party out?
 
@@ -185,5 +186,8 @@ heading: Idejima adrift, which the flat map above already shows.
   classes and levels.
 - [Engine](https://alchemy.pascalpixel.com/tbs/engine): input, graphics, sound
   and the cartridge's own setup, which the rest of the game is built on.
+- [Unused](https://alchemy.pascalpixel.com/tbs/unused): the scenes, events and
+  lines the game keeps but never plays, place by place, and why each never
+  runs.
 - [Source](https://alchemy.pascalpixel.com/tbs/source): every file of the
   code, with its comments.

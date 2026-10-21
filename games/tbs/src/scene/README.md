@@ -200,6 +200,20 @@ What happens is a message (`MSGNO(MsgName)`), a function
 `FIND_COINS`, `FIND_PSYNERGY_STONE`, `FIND_MESSAGE`). A condition is
 `CONDITION_ALWAYS`, a flag that must be clear, or `IF_FLAG_SET(flag)`.
 
+### Why does a row never run?
+
+`Scene_FindEvent` reads the event table from the top and runs the first row
+whose kind, trigger and condition fit, so a later row for the same actor or
+cell runs only where every earlier one's condition fails. A search on a named
+spot (`SEARCH(SEARCH_OVEN)` and the rest, everything but `SEARCH_UNNAMED`)
+is found whatever its condition, and `Field_SearchTile` tests the condition
+afterwards, so that an opened chest still says it's empty. That's why the
+three ovens that hide an item never show their dish once it's taken: the item
+row comes first under the same trigger and answers every time, and the leader
+finds the oven pitch dark inside. A row the game can't reach this way keeps a
+`// Unused:` tag in its table, and [Unused](../../unused.md) tells of every
+such find, place by place.
+
 ## How to find a scene and an event in it
 
 1. Find the place in `scenes.s`: its row gives the overlay's resource

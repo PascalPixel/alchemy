@@ -4,11 +4,21 @@ The finished game still holds three test rooms: one that hands out Djinn, one
 for levels and for browsing items, icons and letters, and one full of shop and
 message tests.
 
-Nobody has traced yet how the game reaches them, or whether it does. The rooms
-themselves are complete, though. Each is an ordinary scene overlay, put
-together exactly like a town or a dungeon in [Scenes](../scene/README.md) and
-loaded like every other overlay in [System](../system/README.md), so they're
-also a compact look at how a scene is built.
+No exit, table or code of the game leads to them. The only way in is the
+debug scene selector (`Menu_RunSelection`, in
+[debug.c](../window/battle_command/debug.c)), which picks any scene and
+entrance by number and opens from the Start menu with B held, but only while
+`gDebugMode` is set. The only code that turns it on is the sprite viewer,
+`Ui_RunIconMonitor`, and the only thing that leads there is a bare far-call
+veneer at the end of `FIELD.S`, which no code names. XXX: likely the retail
+game never turns debug mode on, because nothing else writes `gDebugMode` but
+the reset to 0 at start-up. [Unused](../../unused.md) has the scene the
+selector reaches that nothing else does.
+
+The rooms themselves are complete, though. Each is an ordinary scene overlay,
+put together exactly like a town or a dungeon in [Scenes](../scene/README.md)
+and loaded like every other overlay in [System](../system/README.md), so
+they're also a compact look at how a scene is built.
 
 ## The rooms and their files
 
@@ -142,9 +152,9 @@ show. `test.c` also keeps one empty function nothing calls, `DebugMenu_NoOp`,
 marked `UNUSED` like other code the ROM keeps (see
 [Matching](../MATCHING.md)).
 
-A few things are still open. Nobody has traced how the retail game reaches
-these scenes, if it does, or why one room's overlay serves eight scenes, each
-on its own map. The 56 words at the head of the Djinn room's data
+A few things are still open: whether anything in the retail game turns debug
+mode on (above), and why one room's overlay serves eight scenes, each on its
+own map. The 56 words at the head of the Djinn room's data
 (`gTestRooms_EntrancesHead`, eight rows of seven) are a mystery too; the menu
 test room keeps the same words (`gDebugItemPromptHead`), and nothing reads
 either by name. And the Japanese loop in `DebugMenu_GivePartyDjinn` is

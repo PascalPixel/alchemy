@@ -106,7 +106,7 @@ struct BattleUnit *UnitGet(u32 owner) {
 const u8 *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex;
 
-  recordIndex = selector - 8;
+  recordIndex = selector - ENEMY_CLASS_FIRST;
   // BUG: the table has 165 rows, but only rows past 249 are refused, so 165 to
   // 249 read the tables after it. BattleUnitSet refuses them itself.
 #ifdef BUGFIX

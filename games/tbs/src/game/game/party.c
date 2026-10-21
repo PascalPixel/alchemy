@@ -16,12 +16,12 @@
 
 /// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats,
 /// name with its suffix letter, the items it carries, rewards and elements.
-/// Enemies 158 to 171, the Djinn the party fights (rows 150 to 163 of
-/// enemies.tsv, the Venus to Jupiter Djinni), are put on the party's side.
+/// The Djinn the party fights (ENEMY_VENUS_DJINNI to ENEMY_JUPITER_DJINNI_4)
+/// are put on the party's side.
 /// Returns 0 for an id out of range, 1 otherwise; enemy ids 173 to 250, past
-/// the table's 165 rows but within the check, are filled from row 0. Called by the
-/// battle set-up (Battle_RunEncounter, BattleFormation_BuildEnemyList) and by
-/// BattleTargetExec when an enemy calls for help.
+/// the table's 165 rows but within the check, are filled from row 0. Called by
+/// the battle set-up (Battle_RunEncounter, BattleFormation_BuildEnemyList) and
+/// by BattleTargetExec when an enemy calls for help.
 /// XXX: why a Djinni is put on the party's side is unknown; the battle code
 /// that reads BATTLE_UNIT_PARTY for an enemy would say.
 s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
@@ -33,7 +33,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   s32 q;
   s32 count;
 
-  index = enemyId - 8;
+  index = enemyId - ENEMY_CLASS_FIRST;
   if (unitId <= 127)
     return 0;
   if (unitId > 134)
@@ -92,20 +92,20 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   UnitCalc(unitId);
   unit->side = BATTLE_UNIT_ENEMY;
   switch (unit->classId) {
-  case 158:
-  case 159:
-  case 160:
-  case 161:
-  case 162:
-  case 163:
-  case 164:
-  case 165:
-  case 166:
-  case 167:
-  case 168:
-  case 169:
-  case 170:
-  case 171:
+  case ENEMY_VENUS_DJINNI:
+  case ENEMY_VENUS_DJINNI_2:
+  case ENEMY_VENUS_DJINNI_3:
+  case ENEMY_MERCURY_DJINNI:
+  case ENEMY_MERCURY_DJINNI_2:
+  case ENEMY_MERCURY_DJINNI_3:
+  case ENEMY_MERCURY_DJINNI_4:
+  case ENEMY_MARS_DJINNI:
+  case ENEMY_MARS_DJINNI_2:
+  case ENEMY_MARS_DJINNI_3:
+  case ENEMY_JUPITER_DJINNI:
+  case ENEMY_JUPITER_DJINNI_2:
+  case ENEMY_JUPITER_DJINNI_3:
+  case ENEMY_JUPITER_DJINNI_4:
     unit->side = BATTLE_UNIT_PARTY;
     break;
   }

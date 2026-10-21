@@ -1,11 +1,15 @@
-#ifndef ALCHEMY_BATTLE_ENEMY_IDS_H
-#define ALCHEMY_BATTLE_ENEMY_IDS_H
+#ifndef ALCHEMY_ENEMY_IDS_H
+#define ALCHEMY_ENEMY_IDS_H
 
 /// @file
-/// The enemy classes the battle code singles out, named from the English
-/// release.
+/// Enemy class ids, named from the English release.
 
-/// The enemy classes the battle code tests by id, each named by its row of
+/// The first enemy class id: class id `ENEMY_CLASS_FIRST + n` is the enemy in
+/// row n of enemies.tsv (Enemy_GetDefinition); the ids below it are the
+/// party's characters. A formation lists its members by row.
+#define ENEMY_CLASS_FIRST 8
+
+/// The enemy classes the code tests by id, each named by its row of
 /// enemies.tsv: a class id is the row plus ENEMY_CLASS_FIRST. Where several
 /// rows share a name, the later ones take `_2` onwards in row order.
 enum EnemyClassId {
@@ -62,7 +66,23 @@ enum EnemyClassId {
   ENEMY_MIMIC_5 = 154,
   ENEMY_MIMIC_6 = 155,
   ENEMY_MIMIC_7 = 156,
-  ENEMY_MIMIC_8 = 157
+  ENEMY_MIMIC_8 = 157,
+  /// The Djinn the party fights, each element's in order of level;
+  /// BattleUnitSet puts them on the party's side.
+  ENEMY_VENUS_DJINNI = 158,
+  ENEMY_VENUS_DJINNI_2 = 159,
+  ENEMY_VENUS_DJINNI_3 = 160,
+  ENEMY_MERCURY_DJINNI = 161,
+  ENEMY_MERCURY_DJINNI_2 = 162,
+  ENEMY_MERCURY_DJINNI_3 = 163,
+  ENEMY_MERCURY_DJINNI_4 = 164,
+  ENEMY_MARS_DJINNI = 165,
+  ENEMY_MARS_DJINNI_2 = 166,
+  ENEMY_MARS_DJINNI_3 = 167,
+  ENEMY_JUPITER_DJINNI = 168,
+  ENEMY_JUPITER_DJINNI_2 = 169,
+  ENEMY_JUPITER_DJINNI_3 = 170,
+  ENEMY_JUPITER_DJINNI_4 = 171
 };
 
 #endif

@@ -94,7 +94,7 @@
 #include "frame.h"
 #include "unit/object/psynergy_effects.h"
 #include "macros.h"
-#include "battle_enemy_ids.h"
+#include "enemy_ids.h"
 
 /// The battle's windows: window 0 shows BG0 to BG2, sprites and blending,
 /// window 1 BG0, BG2, sprites and blending, and outside them only BG0 and
@@ -139,10 +139,6 @@
 
 #define ABILITY_ATTACK 1 ///< the ability "Attack"
 #define ALLY_MAX 7       ///< the last party member's unit id
-
-/// An enemy's class id is its row of enemies.tsv plus 8 (Enemy_GetDefinition);
-/// class ids 0 to 7 are the party's. A formation lists its members by row.
-#define ENEMY_CLASS_FIRST 8
 
 // BattleWork.defeatState: whether the last enemy fell alone, or with others
 // before it, or a party member's action ended the battle with a single

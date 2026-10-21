@@ -50,6 +50,7 @@
 ///   object on the world map changes with the same flag.
 
 #include "script.h"
+#include "djinn_ids.h"
 #include "flags.h"
 #include "character_ids.h"
 #include "game_state.h"
@@ -290,7 +291,7 @@ static void Kolima_TalkToHealer(void) {
 
 /// Kolima: talking to Granite, a Venus Djinni, makes it join the party.
 static void Kolima_GraniteJoins(void) {
-  Djinn_JoinParty(ACTOR_GRANITE, ELEMENT_VENUS, 1);
+  Djinn_JoinParty(ACTOR_GRANITE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
 }
 
 /// Selects Kolima Bridge's events, or the table Kolima and Kolima Tunnel share.

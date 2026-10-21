@@ -134,8 +134,7 @@ enum {
 /// LamakanDesertSmog: talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
 static void TalkToSmog(void) {
-  Djinn_JoinParty(SMOG, ELEMENT_JUPITER,
-                  DJINNI_SMOG - DJINN_PER_ELEMENT * ELEMENT_JUPITER);
+  Djinn_JoinParty(SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
 
 #include "common/object_waitdown.h"

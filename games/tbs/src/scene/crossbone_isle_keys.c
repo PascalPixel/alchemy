@@ -26,6 +26,7 @@
 ///   it runs to whichever spot the leader steps toward unless Halt holds it.
 ///   Once the battle with Bane is won, Bane joins the party.
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "version.h"
 #include "global_cells.h"
 #include "scene_ids.h"
@@ -141,9 +142,6 @@ enum CrossboneIsleBaneActor {
   ACTOR_BANE ///< Bane, a Venus Djinni, until it is caught
 };
 
-/// Bane's number among the Venus Djinn.
-#define DJINNI_BANE 6
-
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 
 // CrossboneIsleBane's temporary flags: FLAG_SCENE_TEMP_00 the puddle
@@ -172,7 +170,7 @@ static __inline__ void LiftPillar(s32 column, u8 motionFlags) {
 /// Raised in CrossboneIsleBane once the battle with Bane is won:
 /// Bane, a Venus Djinni, joins the party.
 static void Event_BaneJoins(void) {
-  Djinn_JoinParty(ACTOR_BANE, ELEMENT_VENUS, DJINNI_BANE);
+  Djinn_JoinParty(ACTOR_BANE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_BANE));
 }
 
 /// Unused: an empty function nothing calls.

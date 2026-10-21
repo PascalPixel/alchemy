@@ -1497,7 +1497,7 @@ static void Event_MeetFlint(void) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0)
       Actor_SetPosition(ACTOR_VENUS_DJINNI, leader->x.fixed, leader->z.fixed);
-    Djinn_AddToOwner(0, 0, 0);
+    Djinn_AddToOwner(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
     DjinnRecovery_AddStandby(0, 0, 0);
     WorldMap_BeginEvent();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
@@ -1676,7 +1676,8 @@ static void Event_MeetFlint(void) {
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   WorldMap_EndEvent();
-  Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS, 0);
+  Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS,
+                  DJINNI_INDEX(DJINNI_FLINT));
   Event_PlayCue(MUS_042);
   Event_End();
   GameFlag_Clear(FLAG_DJINN_TUTORIAL);

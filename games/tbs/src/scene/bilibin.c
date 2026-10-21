@@ -99,6 +99,7 @@
 /// him.
 
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "flags.h"
 #include "scene_ids.h"
 #include "unit/import.h"
@@ -244,7 +245,7 @@ const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
 /// Talking to Gust in the Bilibin Treasury: Gust, a Jupiter Djinni, joins the
 /// party.
 static void Event_GustJoins(void) {
-  Djinn_JoinParty(ACTOR_GUST, ELEMENT_JUPITER, 0);
+  Djinn_JoinParty(ACTOR_GUST, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_GUST));
 }
 
 /// Selects the actors of Bilibin, the Bilibin Barricade or the Bilibin
@@ -1087,7 +1088,7 @@ struct ScenePlacement gBilibinBarricadePlacements[] = {
 struct ScenePlacement gBilibinTreasuryPlacements[] = {
     { 0xf3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x5d, FLAG_DJINNI_0 + ELEMENT_JUPITER * 20, ACTOR_STAND,
+    { 0x5d, FLAG_DJINNI_0 + DJINNI_GUST, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

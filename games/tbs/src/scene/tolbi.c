@@ -46,6 +46,7 @@
 /// out onto the world map.
 
 #include "unit/scene/tolbi.h"
+#include "djinn_ids.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
 #include "unit/window/window.h"
@@ -77,7 +78,7 @@ static void Tolbi_FreezePuddle(void);
 /// Talking to Ember, a Mars Djinni, makes it join the party. Its index among
 /// the Mars Djinn is 4, the fifth Mars name in the game text.
 static void Tolbi_JoinEmber(void) {
-  Djinn_JoinParty(TOLBI_EMBER, ELEMENT_MARS, 4);
+  Djinn_JoinParty(TOLBI_EMBER, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER));
 }
 
 #include "common/object_distance.h"
@@ -830,7 +831,7 @@ struct ScenePlacement gTolbiPlacements[] = {
     { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     // Ember, until its Djinni flag is set: twenty flags to an element.
-    { 0x5c, FLAG_DJINNI_0 + ELEMENT_MARS * 20 + 4, ACTOR_STAND,
+    { 0x5c, FLAG_DJINNI_0 + DJINNI_EMBER, ACTOR_STAND,
         PIXELS(584), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x34, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },

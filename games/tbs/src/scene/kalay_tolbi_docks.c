@@ -60,6 +60,7 @@
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them.
 
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "version.h"
 #include "unit/scene/kalay_tolbi_docks.h"
 #include "unit/object/object.h"
@@ -193,7 +194,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void);
 
 /// Kalay Docks: talking to Ground, a Venus Djinni, makes it join the party.
 static void KalayTolbiDocks_GroundJoins(void) {
-  Djinn_JoinParty(ACTOR_GROUND, ELEMENT_VENUS, 5);
+  Djinn_JoinParty(ACTOR_GROUND, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND));
 }
 
 /// Selects the entrances of Kalay Docks, Tolbi Docks or the building between.

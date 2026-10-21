@@ -49,6 +49,7 @@
 /// and, once Kite has run behind its ledge, puts it back there.
 
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "version.h"
 #include "engine_call.h"
 #include "global_cells.h"
@@ -134,10 +135,8 @@ enum ValeCaveLogsActor {
 #define ACTOR_LANDING_TIMEOUT 60
 #define FIRST_DJINNI_ROUTE_TRIGGER 45
 
-/// The flag of Kite, set once it is caught: Kite is number 4 of the Jupiter
-/// Djinn, whose flags follow the three elements before Jupiter, twenty flags
-/// to an element.
-#define FLAG_KITE (FLAG_DJINNI_0 + 3 * 20 + 4)
+/// The flag of Kite, set once it is caught.
+#define FLAG_KITE (FLAG_DJINNI_0 + DJINNI_KITE)
 
 // The cave's scene flags:
 // - FLAG_SCENE_TEMP_00 and _01: in the second room, the western and eastern
@@ -169,7 +168,7 @@ static void ValeCave_ApplyEntryState(void);
 /// FLAG_KITE, so
 /// neither room places Kite again.
 static void Event_TalkToKite(void) {
-  Djinn_JoinParty(ACTOR_KITE, ELEMENT_JUPITER, 4);
+  Djinn_JoinParty(ACTOR_KITE, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_KITE));
 }
 
 /// Waits for an actor to land, bounded by a one-second timeout.

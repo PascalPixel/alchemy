@@ -277,8 +277,7 @@ static __inline__ void Kalay_ClearScriptDone(struct FieldActor *actor) {
 /// Talking to Scorch, a Mars Djinni, in the Kalay Tunnel
 /// (KalayTunnelTreasureRoom) adds it to the party, without a battle.
 static void Kalay_RecruitScorch(void) {
-  Djinn_JoinParty(ACTOR_SCORCH, ELEMENT_MARS,
-                  DJINNI_SCORCH - DJINN_PER_ELEMENT * ELEMENT_MARS);
+  Djinn_JoinParty(ACTOR_SCORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_SCORCH));
 }
 
 /// In Kalay, while the tour waits, a tourist now and then nods, shakes his head

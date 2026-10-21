@@ -39,6 +39,7 @@
 /// Life, a Psy Crystal and a Warrior's Helm.
 
 #include "game_state.h"
+#include "djinn_ids.h"
 #include "unit/scene/lalivero.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -124,7 +125,9 @@ enum {
 
 /// Lalivero, either visit: talking to Torch, a Mars Djinni, makes it join the
 /// party.
-static void TalkToTorch(void) { Djinn_JoinParty(ACTOR_TORCH, ELEMENT_MARS, 6); }
+static void TalkToTorch(void) {
+  Djinn_JoinParty(ACTOR_TORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
+}
 
 const struct SceneEntrance *Lalivero_GetEntrances(void) {
   return gLaliveroEntrances;

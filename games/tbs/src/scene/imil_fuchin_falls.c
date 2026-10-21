@@ -174,7 +174,7 @@ STATIC_ASSERT(offsetof(struct CaveDustOptions, targetScaleY) ==
 
 /// Talking to Fever, a Mars Djinni, in Imil Falls Cave adds it to the party.
 static void Imil_RecruitFever(void) {
-  Djinn_JoinParty(ACTOR_FEVER, ELEMENT_MARS, 1);
+  Djinn_JoinParty(ACTOR_FEVER, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FEVER));
 }
 
 /// Talking to Zephyr, a Jupiter Djinni, in Fuchin Falls Cave's second room

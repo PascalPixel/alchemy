@@ -2644,13 +2644,11 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Event_PrepareObjectAndApplyValue(MIA, 1);
-  // "The Adept Mia joined your party!" Fizz, Mercury Djinni 0, comes with
+  // "The Adept Mia joined your party!" Fizz, a Mercury Djinni, comes with
   // her and is set; her stats are worked out again.
   Engine_GameFlagSet(FLAG_DJINNI_0 + DJINNI_FIZZ);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY,
-                   DJINNI_FIZZ - DJINN_PER_ELEMENT * ELEMENT_MERCURY);
-  Djinn_Activate(MIA, ELEMENT_MERCURY,
-                 DJINNI_FIZZ - DJINN_PER_ELEMENT * ELEMENT_MERCURY);
+  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
+  Djinn_Activate(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   UnitCalc(MIA);
   Engine_ActorSetAnimation(MIA, ANIM_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);

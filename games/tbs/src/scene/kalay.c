@@ -14,10 +14,10 @@
 ///   WORLD_MAP_FROM_KALAY_EAST and WORLD_MAP_FROM_KALAY_WEST). The weapon,
 ///   armor and item sellers open their shops only when spoken to across the
 ///   counter. A Nut circles in the air until Catch pulls it in
-///   (FLAG_KALAY_TOWN_NUT_CAUGHT), and a pillar at the north edge
-///   (ACTOR_TOWN_PILLAR), which Move pushes aside, covers the way down into the
+///   (FLAG_KALAY_TOWN_NUT_CAUGHT), and a statue at the north edge
+///   (ACTOR_TOWN_STATUE), which Move pushes aside, covers the way down into the
 ///   Kalay Tunnel (KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM); coming up from it
-///   (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds the pillar moved.
+///   (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds the statue moved.
 ///
 ///   Once the party has heard of the Colosso tour at the inn
 ///   (FLAG_KALAY_HEARD_OF_COLOSSO_TOUR), leaving town plays the tour group's
@@ -65,11 +65,11 @@
 ///   (KalayTunnelPassage), and a chest holds an Apple. The passage opens with a
 ///   window transition, its way through drawn open once FLAG_KALAY_TUNNEL_OPEN
 ///   is set. The treasure room (KalayTunnelTreasureRoom) holds the puzzle: two
-///   pillars, pushed by walking into them or moved with Move, each open a
+///   statues, pushed by walking into them or moved with Move, each open a
 ///   passage step by step once far enough west (FLAG_TUNNEL_FIRST_PASSAGE_OPEN
-///   and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, place flags, so the pillars are back
+///   and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, place flags, so the statues are back
 ///   once the party leaves the tunnel's scenes); while a passage is closed,
-///   particles stream from its pillar as it nears its place. The first passage
+///   particles stream from its statue as it nears its place. The first passage
 ///   raises a puddle (ACTOR_PUDDLE) that Frost freezes and sinks into the
 ///   floor, freeing its cells; that is a temporary flag, so the puddle stands
 ///   again on each entry. Scorch, a Mars Djinni, joins the party when spoken
@@ -149,8 +149,9 @@ enum KalayTownActor {
   /// "Welcome to Kalay! You may enter, so long as you do not disrupt the
   /// peace."
   ACTOR_WELCOMING_SOLDIER = ACTOR_FIRST_PLACED,
-  /// "We soldiers protect the peace in Kalay with our lives."
-  ACTOR_PEACEKEEPING_SOLDIER,
+  /// ★ Named from the game: "We soldiers protect the peace in Kalay with our
+  /// lives." (MsgKalaySoldiersProtectPeace)
+  ACTOR_SOLDIER_PROTECTING_THE_PEACE,
   /// "Lord Hammet, the founder of Kalay, is a great merchant."
   ACTOR_VILLAGER_GREAT_MERCHANT,
   /// "Lord Hammet is still out with his caravans on business."
@@ -175,18 +176,30 @@ enum KalayTownActor {
   /// "Lord Hammet's knack for business is the reason Kalay has flourished."
   ACTOR_VILLAGER_HAMMETS_KNACK,
   /// Came to Kalay from Tolbi, afraid of Babi (Kalay_TalkAboutLeavingHome).
-  ACTOR_TOLBI_EMIGRANT,
+  /// ★ Named from the game: "I came to Kalay because I didn't like Tolbi..."
+  /// (MsgKalayCameKalayBecauseDidntLike)
+  ACTOR_VILLAGER_WHO_LEFT_TOLBI,
   /// The Colosso tour's guides, who stand in town and lead the tour off when it
   /// leaves. "OK... Follow me, and stay in line!"
   ACTOR_HEAD_GUIDE,
   ACTOR_SECOND_GUIDE, ///< "Oh, dear..."
+  /// ★ Named from the game: "These weapons are good, but they're not the best
+  /// Kalay makes." (MsgKalayLordHammetSellsHisBest)
   ACTOR_WEAPON_MERCHANT,
+  /// ★ Named from the game: "Ask me anything about armor."
+  /// (MsgArmorShopWelcome)
   ACTOR_ARMOR_MERCHANT,
+  /// ★ Named from the game: "Welcome! We have just the gear you need."
+  /// (MsgItemShopWelcome)
   ACTOR_ITEM_MERCHANT,
-  /// The pillar (with the Kalay Tunnel's sprite) that Move pushes aside from
+  /// The statue (with the Kalay Tunnel's sprite) that Move pushes aside from
   /// the way down into the Kalay Tunnel.
-  ACTOR_TOWN_PILLAR,
-  ACTOR_TOWN_NUT, ///< circles in the air until Catch pulls it in
+  /// ★ Named from what the player sees: a stone statue on a pedestal at the
+  /// town's north edge (its render)
+  ACTOR_TOWN_STATUE,
+  /// Circles in the air until Catch pulls it in.
+  /// ★ Named from the game: "Nut" (MsgItemName)
+  ACTOR_TOWN_NUT,
   /// The tour group, ACTOR_FIRST_TOURIST and the six after it, then
   /// ACTOR_OURANOS. Their first lines, in row order: "Why are we stopping at
   /// a place like this?", "Yeah! We have to hurry, or we'll be late for
@@ -206,7 +219,11 @@ enum KalayTownActor {
 enum KalayPalaceActor {
   /// The soldiers of Kalay before the palace door. "This is Lord Hammet's
   /// palace. The lord is away."
+  /// ★ Named from what the player sees: two soldiers of Kalay standing
+  /// guard at the palace door (its render)
   ACTOR_PALACE_GUARD = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: the second soldier at the palace
+  /// door (its render)
   ACTOR_SECOND_PALACE_GUARD
 };
 
@@ -215,18 +232,30 @@ enum KalayPalaceActor {
 enum KalayTunnelEntranceActor {
   /// "Do you want to go to the cave up ahead?"
   ACTOR_TUNNEL_GUARD = ACTOR_FIRST_PLACED,
-  ACTOR_WAGON, ///< Bunza's
+  /// Bunza's.
+  /// ★ Named from what the player sees: a covered wagon drawn by a horse
+  /// (its render)
+  ACTOR_WAGON,
+  /// ★ Named from the game: "We've arrived, Hammet."
+  /// (MsgKalayWeveArrivedHammet)
   ACTOR_HAMMET,
+  /// ★ Named from the game: "Is that you, Bunza?" (MsgLunpaMoment)
   ACTOR_BUNZA,
-  ACTOR_TUNNEL_ENTRANCE_NUT ///< floats here until Catch takes it
+  /// Floats here until Catch takes it.
+  /// ★ Named from the game: "Nut" (MsgItemName)
+  ACTOR_TUNNEL_ENTRANCE_NUT
 };
 
 /// The Kalay Tunnel's treasure room (KalayTunnelTreasureRoom), numbering
 /// gKalay_TunnelPlacements.
 enum KalayTunnelActor {
-  /// The pillars that open the two passages.
-  ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
-  ACTOR_SECOND_PILLAR,
+  /// The statues that open the two passages.
+  /// ★ Named from what the player sees: two stone statues on pedestals that
+  /// Move slides west (its render)
+  ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: the second stone statue, east of the
+  /// first (its render)
+  ACTOR_SECOND_STATUE,
   /// A man (with ACTOR_BUNZA's sprite) who waits here once
   /// FLAG_KALAY_TUNNEL_OPEN is set.
   /// "Layana was very hard on all of you, wasn't she?" XXX: likely Bunza,
@@ -235,8 +264,12 @@ enum KalayTunnelActor {
   ACTOR_WAITING_MAN,
   /// The sprite of the puddle that Frost freezes into an ice pillar in
   /// bilibin_cave.c.
+  /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE
+  /// (its render)
   ACTOR_PUDDLE,
-  ACTOR_SCORCH ///< a Mars Djinni
+  /// A Mars Djinni.
+  /// ★ Named from the game: "Scorch" (MsgDjinnName)
+  ACTOR_SCORCH
 };
 
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
@@ -244,7 +277,7 @@ enum KalayTunnelActor {
 enum KalayTunnelFlag {
   FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00, ///< the fade overlay
   FLAG_TUNNEL_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
-  /// Each pillar's particles have started their sound.
+  /// Each statue's particles have started their sound.
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
   FLAG_TUNNEL_FIRST_PASSAGE_OPEN = 0x302,
@@ -411,7 +444,7 @@ const struct SceneEvent *Kalay_GetEvents(void) {
 static void Kalay_TalkAboutLeavingHome(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayCameKalayBecauseDidntLike);
-  Engine_EventAskYesNo(ACTOR_TOLBI_EMIGRANT, 0);
+  Engine_EventAskYesNo(ACTOR_VILLAGER_WHO_LEFT_TOLBI, 0);
   Engine_EventEnd();
 }
 
@@ -1130,7 +1163,7 @@ s32 Kalay_Initialize(void) {
 /// palace's FLAG_IVAN_REPORTED_TO_LAYANA, FLAG_LAYANA_SCOLDED_LUNPA_VISIT and
 /// FLAG_KALAY_TUNNEL_OPEN are set too, so its earlier scenes count as seen and
 /// the passage is open. Coming up from the Kalay Tunnel
-/// (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its pillar moved aside, and
+/// (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its statue moved aside, and
 /// until it is caught the Nut circles in the air.
 static void Kalay_PrepareTown(void) {
   OrbitingSceneObject *nut;
@@ -1148,7 +1181,7 @@ static void Kalay_PrepareTown(void) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
   }
   if (gGameState.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
-    Actor_SetPosition(ACTOR_TOWN_PILLAR, PIXELS(424), PIXELS(88));
+    Actor_SetPosition(ACTOR_TOWN_STATUE, PIXELS(424), PIXELS(88));
   }
   Engine_ActorSetChildValue(ACTOR_SECOND_GUIDE, 2);
   found = Engine_GameFlagIsSet(FLAG_KALAY_TOWN_NUT_CAUGHT);
@@ -1243,7 +1276,7 @@ static void Kalay_StartWindowTransition(void) {
 
 /// Sets up the Kalay Tunnel's treasure room (KalayTunnelTreasureRoom): the fade
 /// overlay follows the leader unless he came down from the town
-/// (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); the pushed pillars, the frozen
+/// (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); the pushed statues, the frozen
 /// puddle and the opened passages are restored, and once FLAG_KALAY_TUNNEL_OPEN
 /// is set the man waits here and some of the cells are redrawn.
 static void Kalay_PrepareTunnel(void) {
@@ -1334,9 +1367,9 @@ static void Kalay_PrepareTunnel(void) {
       }
     }
   }
-  actor = Actor_Get(ACTOR_FIRST_PILLAR);
+  actor = Actor_Get(ACTOR_FIRST_STATUE);
   Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_SECOND_PILLAR);
+  actor = Actor_Get(ACTOR_SECOND_STATUE);
   Engine_ActorSetSpriteFlags(actor, 0);
   FieldScheduler_AddCallback(Kalay_UpdateTunnelEmitters, TASK_PRIORITY_SCENE);
   if (GameFlag_IsSet(FLAG_KALAY_TUNNEL_OPEN) != 0) {
@@ -1353,7 +1386,7 @@ static void Kalay_PrepareTunnel(void) {
     Map_CopyCellAttributes(22, 50, 2, 1, 24, 49);
   }
   if (GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_FIRST_PILLAR, PIXELS(232), PIXELS(732));
+    Actor_SetPosition(ACTOR_FIRST_STATUE, PIXELS(232), PIXELS(732));
     Map_CopyCellAttributes(7, 44, 1, 1, 0, 1);
     Map_CopyCellsTo(74, 58, 78, 41, 1, 5);
     Map_CopyCellsTo(16, 109, 13, 109, 3, 2);
@@ -1392,7 +1425,7 @@ static void Kalay_PrepareTunnel(void) {
     }
   }
   if (GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_SECOND_PILLAR, PIXELS(696), PIXELS(732));
+    Actor_SetPosition(ACTOR_SECOND_STATUE, PIXELS(696), PIXELS(732));
     Map_CopyCellsTo(74, 58, 107, 41, 1, 5);
     Map_CopyCellsTo(45, 109, 42, 109, 3, 2);
     Map_CopyCellsTo(67, 64, 102, 44, 1, 2);
@@ -1979,7 +2012,7 @@ static void Kalay_HammetReturnsToPalace(void) {
 // Shared source, included in link order.
 #include "common/object_findcell.h"
 
-/// In the Kalay Tunnel (KalayTunnelTreasureRoom), walking into a pillar pushes
+/// In the Kalay Tunnel (KalayTunnelTreasureRoom), walking into a statue pushes
 /// it one tile when there is room.
 static void Kalay_PushTunnelPillar(void) {
   struct FieldPosition destination;
@@ -2030,7 +2063,7 @@ static void Kalay_PushTunnelPillar(void) {
   }
 }
 
-/// In the Kalay Tunnel (KalayTunnelTreasureRoom), once a pillar is pushed far
+/// In the Kalay Tunnel (KalayTunnelTreasureRoom), once a statue is pushed far
 /// enough west, its passage opens step by step, and the first raises the puddle
 /// for Frost.
 static void Kalay_UpdateTunnelPassages(void) {
@@ -2043,9 +2076,9 @@ static void Kalay_UpdateTunnelPassages(void) {
   s32 height;
   s32 width;
 
-  // Open each passage only after its corresponding pillar reaches the trigger.
-  firstPillar = Object_GetById(ACTOR_FIRST_PILLAR);
-  secondPillar = Object_GetById(ACTOR_SECOND_PILLAR);
+  // Open each passage only after its corresponding statue reaches the trigger.
+  firstPillar = Object_GetById(ACTOR_FIRST_STATUE);
+  secondPillar = Object_GetById(ACTOR_SECOND_STATUE);
   firstPassageOpen = GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
   if (firstPassageOpen != 0) {
   } else if ((firstPillar->x.fixed >> 19) > 29) {
@@ -2198,13 +2231,13 @@ static void Kalay_UpdateTunnelParticle(struct ScriptInterpreter *interpreter) {
 }
 
 /// In the Kalay Tunnel (KalayTunnelTreasureRoom), particles stream from each
-/// pillar as it nears its place, while its passage is closed.
+/// statue as it nears its place, while its passage is closed.
 static void Kalay_UpdateTunnelEmitters(void) {
   struct FieldActor *firstEmitter;
   struct FieldActor *secondEmitter;
 
-  firstEmitter = Actor_Get(ACTOR_FIRST_PILLAR);
-  secondEmitter = Actor_Get(ACTOR_SECOND_PILLAR);
+  firstEmitter = Actor_Get(ACTOR_FIRST_STATUE);
+  secondEmitter = Actor_Get(ACTOR_SECOND_STATUE);
   if ((u32)(firstEmitter->x.part.pixel - 381) <= 12 &&
       firstEmitter->z.part.pixel > 777) {
     firstEmitter->sprite->image.priority =
@@ -2778,7 +2811,7 @@ struct SceneEvent gKalay_TownEvents[] = {
     { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
     { EVENT_TALK, ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWelcomeInPeace) },
-    { EVENT_TALK, ACTOR_PEACEKEEPING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersProtectPeace) },
+    { EVENT_TALK, ACTOR_SOLDIER_PROTECTING_THE_PEACE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersProtectPeace) },
     { EVENT_TALK, ACTOR_VILLAGER_GREAT_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetGenerousMerchant) },
     { EVENT_TALK, ACTOR_VILLAGER_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetOnJourney) },
     { EVENT_TALK, ACTOR_VILLAGER_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalayNorthernBridgeRebuilt) },
@@ -2789,14 +2822,14 @@ struct SceneEvent gKalay_TownEvents[] = {
     { EVENT_TALK, ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgKalayChildWantsFestival) },
     { EVENT_TALK, ACTOR_VILLAGER_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderTownNews) },
     { EVENT_TALK, ACTOR_VILLAGER_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetBusinessSkill) },
-    { EVENT_TALK, ACTOR_TOLBI_EMIGRANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLeavingHome) },
+    { EVENT_TALK, ACTOR_VILLAGER_WHO_LEFT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLeavingHome) },
     { EVENT_TALK, ACTOR_HEAD_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCapturedRumor) },
     { EVENT_TALK, ACTOR_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetWentNorth) },
     { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToWeaponMerchant) },
     { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToArmorMerchant) },
     { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToItemMerchant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorHonestEyes) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PEACEKEEPING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayGuardsJudgeVisitors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_PROTECTING_THE_PEACE, CONDITION_ALWAYS, MSGNO(MsgKalayGuardsJudgeVisitors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GREAT_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetPeaceAndLiberty) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCanBeRash) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersWentToVault) },
@@ -2806,13 +2839,13 @@ struct SceneEvent gKalay_TownEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgKalayChildFestivalDream) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetValuesTrust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_EMIGRANT, CONDITION_ALWAYS, MSGNO(MsgKalayTrustAgainstForce) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WHO_LEFT_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTrustAgainstForce) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEAD_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayLunpaNorthOfVault) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayRumorsHideTruth) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayWishBetterWeapons) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayWeaponsHaveSoul) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayPalaceWaterSupply) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TOWN_PILLAR, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TOWN_STATUE, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_TOWN_NUT, FLAG_KALAY_TOWN_NUT_CAUGHT, EVENT_SCRIPT(Kalay_CatchTownNut) },
     { SEARCH(SEARCH_JAR), 100, 0xf81, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_JAR), 101, 0xf82, FIND_ITEM(ITEM_VIAL) },
@@ -2862,8 +2895,8 @@ struct SceneEvent gKalay_TunnelEvents[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY },
     { EVENT_TALK, ACTOR_WAITING_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLayana) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_MAN, CONDITION_ALWAYS, MSGNO(MsgKalayTreasureBeyondDoors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, FLAG_TUNNEL_FIRST_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, FLAG_TUNNEL_SECOND_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_STATUE, FLAG_TUNNEL_FIRST_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_STATUE, FLAG_TUNNEL_SECOND_PASSAGE_OPEN, EVENT_SCRIPT(Kalay_UpdateTunnelPassages) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_PushTunnelPillar) },

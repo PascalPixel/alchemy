@@ -12,7 +12,7 @@
 #define CLOAK_END 0x2092
 
 /// Scheduler callback of Cloak: when the tile under the leader is not
-/// CLOAK_TILE, requests CLOAK_END. On the world map (event mode 3) it reads
+/// CLOAK_TILE, requests CLOAK_END. On the world map it reads
 /// the 32-pixel gMapBlocks, elsewhere the 16-pixel terrain map. Runs once a
 /// frame from FieldFx_StartCloak, and again from FieldFx_ResumeCloakCheck
 /// when a scene loads with the leader still cloaked.
@@ -83,7 +83,7 @@ void FieldFx_CheckCloakTile(void) {
 /// sight, clearing cloaked. The leader is white (SPRITE_COLOR_WHITE) for the
 /// first five blinks, its outline (sprite flag bit 1) on and off; the last
 /// five alternate white and its own colours (param 0). Each half is 2
-/// frames. The leader ends with its shadow back (flags 1).
+/// frames. The leader ends with its shadow back.
 /// FieldEvent_RunTypeHandler runs it when the CLOAK_END request is handled.
 void FieldFx_EndCloak(void) {
   struct ObjectRuntime *obj;
@@ -103,7 +103,7 @@ void FieldFx_EndCloak(void) {
   for (i = 0; i < 5; ++i) {
     entry->param = SPRITE_COLOR_WHITE;
     anim->dirty = 1;
-    anim->flags = 2;
+    anim->flags = SPRITE_FLAG_OUTLINED;
     WaitFrames(2);
     anim->dirty = 1;
     anim->flags = 0;
@@ -115,12 +115,12 @@ void FieldFx_EndCloak(void) {
     anim->dirty = 1;
     anim->flags = 0;
     WaitFrames(2);
-    entry->param = 0;
+    entry->param = SPRITE_COLOR_NORMAL;
     anim->dirty = 1;
     WaitFrames(2);
   }
 
-  anim->flags = 1;
+  anim->flags = SPRITE_FLAG_SHADOW;
   gGameState.cloaked = 0;
 }
 
@@ -137,8 +137,8 @@ void FieldFx_ResumeCloakCheck(void) {
 ///
 /// Abilities: Cloak (FIELD_KIND_CLOAK).
 ///
-/// Hidden, the leader is drawn as an outline only (sprite flags 2: outlined,
-/// no shadow), and while gGameState.cloaked is set no random battles come
+/// Hidden, the leader is drawn as an outline only (SPRITE_FLAG_OUTLINED, no
+/// shadow), and while gGameState.cloaked is set no random battles come
 /// (Encounter_SelectEnemyGroup). Called by BattleFx_Run and
 /// BattleFx_DispatchRequestKind.
 void FieldFx_StartCloak(void) {
@@ -156,7 +156,7 @@ void FieldFx_StartCloak(void) {
   do {
     entry->param = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
-    animation->flags = 2;
+    animation->flags = SPRITE_FLAG_OUTLINED;
     WaitFrames(2);
     animation->dirty = 1;
     animation->flags = 0;
@@ -165,7 +165,7 @@ void FieldFx_StartCloak(void) {
   } while (n <= 9);
   n = 0;
   entry->param = n;
-  animation->flags = 2;
+  animation->flags = SPRITE_FLAG_OUTLINED;
   animation->dirty = 1;
   // Check the tile at once: off a Cloak tile, unhide and drop the request
   // the check just raised (n is 0 here).

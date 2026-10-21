@@ -259,8 +259,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[1]);
 
   // Restore the target's look and motion, and throw it up at 10 pixels a
-  // frame: it falls and follows the terrain again (motion flags 3), keeping
-  // 0.2 of its speed as it bounces, and reads its ground from layer 0.
+  // frame: it falls and follows the terrain again, keeping 0.2 of its speed
+  // as it bounces, and reads its ground from the ground layer.
   Animation_ApplyChildValuesFar((struct DispatchObject *)target,
                                 work->savedPalette);
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,

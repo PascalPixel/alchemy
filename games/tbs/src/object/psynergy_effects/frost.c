@@ -98,7 +98,7 @@ void FieldFx_RunFrostOnTarget(s32 unused) {
 }
 
 /// 16 particles spiral in on the effect's position and make the target flash 16
-/// times; without childOption the target takes mode 2.
+/// times; without childOption the target takes animation 2.
 ///
 /// Abilities: Frost (FIELD_KIND_FROST).
 ///

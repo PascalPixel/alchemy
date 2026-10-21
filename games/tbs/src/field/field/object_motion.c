@@ -521,7 +521,7 @@ UNUSED void Object_RunUpdateAllFromHeap(void) {
 /// scripts: steering towards a target or braking, gravity and bouncing,
 /// arrival, and turning to face the direction of travel.
 /// ObjectSystem_Initialize schedules it in place of Object_UpdateAllThumb in
-/// mode 4, the battle's.
+/// MODE_BATTLE.
 void Object_UpdateAllMotion(void) {
   struct ScriptMotionObject *object;
   s32 objectsRemaining;

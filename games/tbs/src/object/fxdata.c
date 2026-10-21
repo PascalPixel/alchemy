@@ -123,13 +123,13 @@ const s32 gBattleFx_MarkerParticleScript[] = {
     SC_FREE,
 };
 
-/// The width of the bars of window transition mode 0, by progress.
+/// The width of the bars of WINDOW_TRANSITION_BARS, by progress.
 const u8 gDisplayTransition_NoiseWidths[34] = {
     0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13,
     16, 18, 22, 26, 30, 36, 43, 51, 60, 72, 85, 101, 120, 143, 170, 202, 240,
 };
 
-/// The wobble of the circle edge of window transition mode 8.
+/// The wobble of the circle edge of WINDOW_TRANSITION_RIPPLE.
 const s8 gDisplayTransition_EdgeOffsets[32] = {
     -4, -3, -3, -3, -2, -2, -1, 0, 0, 0, 1, 2, 2, 3, 3, 3,
     4, 3, 3, 3, 2, 2, 1, 0, 0, 0, -1, -2, -2, -3, -3, -3,

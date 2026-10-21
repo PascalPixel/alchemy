@@ -64,10 +64,10 @@ s32 FieldFx_StepRatioTransition(void) {
   }
 }
 
-/// Starts a zoom to zoom (16.16) over frames frames, on the world map (event
-/// mode 3) only. The perspective work keeps the inverse, which scales the
-/// view's distance (farPlane times it, FieldFx_StepRatioTransition): a zoom
-/// of 2 halves the distance. Event_WaitForZoomTransition waits for it.
+/// Starts a zoom to zoom (16.16) over frames frames, on the world map only. The
+/// perspective work keeps the inverse, which scales the view's distance
+/// (farPlane times it, FieldFx_StepRatioTransition): a zoom of 2 halves the
+/// distance. Event_WaitForZoomTransition waits for it.
 void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
   struct PerspectiveWork *work = gMapWork[0];
   s32 inverse;

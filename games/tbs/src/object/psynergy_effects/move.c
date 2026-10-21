@@ -113,7 +113,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   BattleFx_SnapScaleToFull((struct MotionObject *)pusher);
   // The hand floats (motion flag bit 2) at up to 4 pixels a frame. The
   // target cycles its colours, keeps its facing while it moves, and reads
-  // its ground from layer 2.
+  // its ground from the overhead layer.
   pusher->speed = 4 << 16;
   pusher->acceleration = 0x8000;
   pusher->motionFlags = 4;

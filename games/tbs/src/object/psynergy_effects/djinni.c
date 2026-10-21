@@ -93,7 +93,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
       copy->motionFlags = 0;
-      copy->priorityFlags = 2;
+      copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       copy->steeringFlags |= 1;
       copy->update = ObjectMotion_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
@@ -206,11 +206,11 @@ void FieldObject_PlaceSceneActors(void) {
         if (obj == NULL)
           continue;
         // Without DJINN_NO_HOP, back at its placement in a new actor's
-        // ground state: no ground height yet, and motion flags 3 (follows
-        // the terrain and falls).
+        // ground state: no ground height yet, following the terrain and
+        // falling.
         if (flags == 0) {
           obj->terrainHeight = flags;
-          obj->flags = 3;
+          obj->flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
           Object_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
         } else {
           struct ObjectRuntime *leader =

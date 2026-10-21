@@ -20,11 +20,11 @@ void FieldFx_BlinkAvoidCaster(void) {
   phase = gFrameCount % 5;
   if (phase == 0) {
     rec->dirty = 1;
-    rec->flags = 3;
+    rec->flags = SPRITE_FLAG_SHADOW | SPRITE_FLAG_OUTLINED;
   } else if (phase == 2) {
-    entry->param = 0; // restore its colours
+    entry->param = SPRITE_COLOR_NORMAL; // restore its colours
     rec->dirty = 1;
-    rec->flags = 1;
+    rec->flags = SPRITE_FLAG_SHADOW;
   }
 }
 
@@ -126,8 +126,8 @@ void FieldFx_RunAvoid(void) {
     group->dirty = 1;
     WaitFrames(2);
     group->dirty = 1;
-    entry->param = 0;
-    group->flags = 1;
+    entry->param = SPRITE_COLOR_NORMAL;
+    group->flags = SPRITE_FLAG_SHADOW;
     WaitFrames(3);
   }
   object->callback = NULL;
@@ -137,11 +137,14 @@ void FieldFx_RunAvoid(void) {
   AudioCommand_PlayFar(SE_174);
   WaitFrames(55);
   Scheduler_RemoveCallback(FieldFx_BlinkAvoidCaster);
-  // Back to the caster's own look: flags 2 while Cloak is on, else 1.
+  // Back to the caster's own look: outlined while Cloak is on, else with its
+  // shadow.
   if (gGameState.cloaked != 0)
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 2);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+                                          SPRITE_FLAG_OUTLINED);
   else
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+                                          SPRITE_FLAG_SHADOW);
   Animation_ApplyChildValuesFar((struct DispatchObject *)object,
                                 SPRITE_COLOR_NORMAL);
   Resource_ResetEntry(scene->arcTileSlot);

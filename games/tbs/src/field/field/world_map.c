@@ -106,11 +106,11 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 ///
 /// Called through Map_InitializePerspectiveSceneFar when the world map scene
 /// starts (run_scene.c). Allocates and clears the perspective work in
-/// HEAP_SLOT_MAP, the camera in HEAP_SLOT_CAMERA and the affine pages in heap
-/// slot 7; loads the default cells, block attributes and tile animations;
-/// writes the blend, BG and affine registers and REG_DISPCNT (mode 2); and
-/// registers WorldMap_UpdateView and MapAnimation_ApplyAffineFrame with the
-/// scheduler.
+/// HEAP_SLOT_MAP, the camera in HEAP_SLOT_CAMERA and the affine pages in
+/// HEAP_SLOT_MAP_FRAME; loads the default cells, block attributes and tile
+/// animations; writes the blend, BG and affine registers and REG_DISPCNT
+/// (DISPCNT_MODE_2); and registers WorldMap_UpdateView and
+/// MapAnimation_ApplyAffineFrame with the scheduler.
 #ifdef UBFIX
 void Map_InitializePerspectiveScene(void) {
 #else
@@ -430,8 +430,9 @@ void MapAnimation_ApplyAffineFrame(void) {
   }
   perspective->shownTop = perspective->windowTop;
   perspective->shownBottom = perspective->windowBottom;
-  // Mode 2 (the affine ground) for the load's rows 0 to 159; mode 0 for
-  // WorldMap_BeginStillView's 200 and 255, which show the still view on BG1.
+  // DISPCNT_MODE_2 (the affine ground) for the load's rows 0 to 159;
+  // DISPCNT_MODE_0 for WorldMap_BeginStillView's 200 and 255, which show the
+  // still view on BG1.
   windowTop = perspective->shownTop;
   mode = 0;
   if (windowTop < 200) {
@@ -706,7 +707,7 @@ void MapAnimation_PresentFrame(void) {
 /// when a menu or event starts on the world map, and by the world map
 /// scene's lighthouse transition. Sets animationActive, suspends the tile
 /// animations (MapAnimation_Update), copies 8 KB of char block 1 to
-/// gDecodeBuffer, sets the window rows to 200 and 255 (BG mode 0) and sets
+/// gDecodeBuffer, sets the window rows to 200 and 255 (DISPCNT_MODE_0) and sets
 /// gVBlankHook to MapAnimation_PresentFrame. Map_LoadAreaGraphics undoes it.
 void WorldMap_BeginStillView(void) {
   struct MapFrameWork *frameWork = WORK_SLOT(HEAP_SLOT_MAP_FRAME);

@@ -882,8 +882,8 @@ void DisplayTransition_UpdateFromCentre(void) {
 }
 
 /// The HBlank interrupt of the centre-line transition: switches the display
-/// to DISPCNT_MODE_2 (nothing shown) at the first line and back to mode 0 at
-/// the second.
+/// to DISPCNT_MODE_2 (nothing shown) at the first line and back to
+/// DISPCNT_MODE_0 at the second.
 ///
 /// Installed as IRQ handler 1 (IRQ_HBLANK) by DisplayTransition_Start and
 /// DisplayTransition_Finish for the centre line, so it runs after every line

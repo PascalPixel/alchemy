@@ -79,7 +79,7 @@ void Leader_StopMoving(void) {
   object->targetZ = ACTOR_NO_TARGET;
   object->velocityX = 0;
   object->velocityZ = 0;
-  if (gGameState.movementMode == 1) {
+  if (gGameState.movementMode == LEADER_MOVEMENT_CLIMB) {
     ObjectDispatch_SelectAnimationFar(object, 0xC);
     return;
   }

@@ -52,7 +52,7 @@ struct BurstParticleVisualGroup {
 ///
 /// Abilities: Growth (FIELD_KIND_GROWTH).
 ///
-/// The target plays animation 2, stops being solid (collision flags 0),
+/// The target plays animation 2, stops being solid,
 /// loses its shadow and is depth-sorted as if 320 pixels higher
 /// (ACTOR_PRIORITY_UNDERFOOT); the effect leaves it so.
 void FieldFx_RunGrowthOnTarget(s32 unused) {
@@ -148,10 +148,9 @@ void BattleEffect_SpawnBurstParticleField(void) {
     }
 
     // The shadow part takes the image's colour mode, shape, size, tile and
-    // palette, so the shadow (turned on by sprite flag 1 below) is drawn with
-    // the particle's picture.
-    // BUG: the copy comes before the NULL test, so a failed spawn (a full
-    // object table) is read through.
+    // palette, so the shadow (turned on by SPRITE_FLAG_SHADOW below) is drawn
+    // with the particle's picture. BUG: the copy comes before the NULL test, so
+    // a failed spawn (a full object table) is read through.
     particle = (struct FieldActor *)Object_Spawn(GROWTH_PARTICLE_OBJECT, pos[0],
                                                  pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;

@@ -72,7 +72,7 @@ void FieldEffect_WatchLeaderDistance(void) {
 ///
 /// Abilities: Reveal (FIELD_KIND_REVEAL).
 ///
-/// The transition is window transition mode 8, a wobbling circle round the
+/// The transition is WINDOW_TRANSITION_RIPPLE, a wobbling circle round the
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
 /// 600 frames of its own time, or until the leader leaves its circle
 /// (FieldEffect_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
@@ -128,8 +128,8 @@ void FieldFx_RunReveal(void) {
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
 /// from black over 30 frames and runs stage 4 of the Psynergy event. Unless a
-/// scene set childOption, the window transition is then reset at once (next
-/// mode 0, one frame). Called as Reveal ends (FieldEvent_RunTypeHandler) and
+/// scene set childOption, the window transition is then reset at once (no next
+/// mode, one frame). Called as Reveal ends (FieldEvent_RunTypeHandler) and
 /// before Mind Read starts its own colours.
 void ResetSceneTransitionEffect(void) {
 #ifdef UBFIX

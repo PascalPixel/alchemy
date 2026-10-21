@@ -15,9 +15,9 @@
 /// 205) the platform plays its animation 7 and the leader bobs down 2 pixels
 /// and back. Each jump adds two tiles to work->walkingDistance, as walking
 /// them would, and the leader keeps jumping while it lands on another jump
-/// spot (collision 0xf9). Returns 0 after a jump, -1 when the leader cannot
-/// jump; a chain that is blocked after its first jump also returns -1, with
-/// the leader standing on the jump spot it reached.
+/// spot (MAP_CELL_JUMP_FORWARD_UNREACHED). Returns 0 after a jump, -1 when the
+/// leader cannot jump; a chain that is blocked after its first jump also
+/// returns -1, with the leader standing on the jump spot it reached.
 ///
 /// Called by Field_RunPushTileEvent when the leader has pushed against a jump
 /// spot (0xf9 or 0xfe) for more than 12 frames, and by the gap jumps of Goma
@@ -100,7 +100,8 @@ again:
       work->walkingDistance +=
           Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
     // Landed on another jump spot: stand, then jump again.
-    if (GetMapCellCollisionFar(leader->terrainId, pos->x, pos->z) == 0xf9) {
+    if (GetMapCellCollisionFar(leader->terrainId, pos->x, pos->z) ==
+        MAP_CELL_JUMP_FORWARD_UNREACHED) {
       ObjectDispatch_SelectAnimationFar(leader, 1);
       WaitFrames(6);
       goto again;
@@ -131,7 +132,7 @@ s32 Field_ClimbDown(void) {
 
   FieldEvent_Begin();
 
-  if (gGameState.movementMode == 0) {
+  if (gGameState.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
 
     // A wall goes down only where the cell below is the same climbing code.
@@ -144,7 +145,7 @@ s32 Field_ClimbDown(void) {
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
       // The ground under the point 16 pixels lower may not be a wall cell
-      // (collision 0xff) of layer 2: the check returns nonzero for a wall.
+      // of the overhead layer: the check returns nonzero for a wall.
       SET_POSITION(position, object->x, object->y - 0x100000, object->z);
       result =
           CheckMapPositionCellOccupiedFar((struct WorldPosition *)position);
@@ -152,34 +153,35 @@ s32 Field_ClimbDown(void) {
         goto failure;
 
       // Step to the middle of the tile, face north and climb down a tile at
-      // 1 pixel a frame, in free flight (motion flags 0) with no shadow.
+      // 1 pixel a frame, in free flight (no motion flags) with no shadow.
       ObjectMotion_SetPositionAndCommit(gGameState.selectedActor, gridX, gridZ);
       object->speedLimit = 0x10000;
       ObjectMotion_ArmCallback(gGameState.selectedActor, 0xc000, 0);
       Object_RefreshSelectorById(gGameState.selectedActor);
-      object->actionFlags = 1;
+      object->actionFlags = ACTOR_FACES_MOTION;
       object->flags = 0;
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
       ObjectDispatch_SelectAnimationFar(object, 13);
       Object_SetMoveTargetFar(object, gridX << 16, object->y - 0x100000,
                               (gridZ << 16) + 0x100000);
       ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selectedActor);
-      gGameState.movementMode = 1;
+      gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
       goto failure;
     }
   } else {
     // Let go of the wall and fall: terrain following and gravity again
-    // (motion flags 3) after a hop of 4 pixels a frame, the ground taken as
+    // after a hop of 4 pixels a frame, the ground taken as
     // where the leader is until the terrain is read, and the shadow back.
     ObjectDispatch_SelectAnimationFar(object, 10);
-    object->flags = 3;
+    object->flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->velocityY = 0x40000;
     object->terrainHeight = object->y;
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
+    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+                                          SPRITE_FLAG_SHADOW);
     FieldEvent_WaitFrames(6);
-    gGameState.movementMode = 0;
-    object->actionFlags = 1;
+    gGameState.movementMode = LEADER_MOVEMENT_WALK;
+    object->actionFlags = ACTOR_FACES_MOTION;
     object->angle = 0xc000;
   }
 
@@ -216,7 +218,7 @@ s32 Field_ClimbUp(void) {
   if (object->animationKind == OBJECT_SPRITE_ONE)
     spriteFlags = ((struct AnimationObject *)object->animation)->flags;
 
-  if (gGameState.movementMode == 0) {
+  if (gGameState.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
 
     if (TILE_CELLS[index].collisionCode ==
@@ -227,8 +229,8 @@ s32 Field_ClimbUp(void) {
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
-      // The ground under the leader may not be a wall cell (collision 0xff)
-      // of layer 2.
+      // The ground under the leader may not be a wall cell of the overhead
+      // layer.
       SET_POSITION(position, object->x, object->y, object->z);
       result =
           CheckMapPositionCellOccupiedFar((struct WorldPosition *)position);
@@ -251,8 +253,8 @@ s32 Field_ClimbUp(void) {
       object->velocityY = 0;
       ObjectDispatch_SelectAnimationFar(object, 12);
       WaitFrames(4);
-      gGameState.movementMode = 1;
-      object->actionFlags = 1;
+      gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
+      object->actionFlags = ACTOR_FACES_MOTION;
       WaitFrames(8);
     } else {
       goto failure;
@@ -264,14 +266,14 @@ s32 Field_ClimbUp(void) {
     Object_SetMoveTargetFar(object, gridX << 16, object->y + 0x80000,
                             (gridZ << 16) - 0x100000);
     ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selectedActor);
-    object->flags = 3;
+    object->flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= 1;
     object->terrainHeight = object->y;
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
                                           spriteFlags);
     FieldEvent_WaitFrames(4);
-    gGameState.movementMode = 0;
-    object->actionFlags = 1;
+    gGameState.movementMode = LEADER_MOVEMENT_WALK;
+    object->actionFlags = ACTOR_FACES_MOTION;
   }
 
   FieldEvent_End();

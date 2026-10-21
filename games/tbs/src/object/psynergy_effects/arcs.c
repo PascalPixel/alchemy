@@ -133,7 +133,7 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   arcs[0]->sprite->image.priority = 0;
   arcs[1]->update = FieldFx_UpdateScaledArcObjectA;
   arcs[1]->sprite->image.priority = source->sprite->image.priority;
-  arcs[1]->priorityFlags = 2;
+  arcs[1]->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2

@@ -6,7 +6,7 @@
 
 #ifndef UBFIX
 /// The work slots from the window work's onward, seen as the window work and,
-/// twelve slots on, the event work in slot 27.
+/// twelve slots on, the event work in HEAP_SLOT_EVENT.
 struct WorkPointers {
   u8 *window;
   u8 unk04[0x2c];
@@ -51,7 +51,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
 
   win = (struct UiRenderWork *)gWindowWork[0];
   // UB: the fabricated WorkPointers aggregate reaches from the window slot
-  // into event slot 27. Its named load adds eight bytes in native EN
+  // into HEAP_SLOT_EVENT. Its named load adds eight bytes in native EN
   // (0x344 to 0x34c).
 #ifdef UBFIX
   work = (struct FieldWork *)gEventWork;

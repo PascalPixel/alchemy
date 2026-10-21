@@ -566,7 +566,7 @@ struct AnimationObject *ResourceObject_Create(s32 id) {
     return NULL;
   freeSprite->slot = slot;
   freeSprite->rotation = 0;
-  freeSprite->flags = 1;
+  freeSprite->flags = SPRITE_FLAG_SHADOW;
 
   // The OAM shape and size bits (attributes 0 and 1) for the image's width
   // and height in pixels.

@@ -844,8 +844,8 @@ update_object:
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
 /// Returns 1. Run each frame by gObjectDispatch_KeyCheckScript, which the
-/// scene loop starts on the leader in movement mode 2, where the pad does
-/// not move it.
+/// scene loop starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the pad
+/// does not move it.
 s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -860,7 +860,7 @@ s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
 /// too high (up) or too low (down). Returns 1.
 ///
 /// Run each frame by gObjectDispatch_KeysScript, which the scene loop starts
-/// on the leader in movement mode 1 (climbing). Sets the leader's speed,
+/// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
 /// angle, target or velocity, and counts gEventWork->blockedSteps.
 s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;

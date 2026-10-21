@@ -277,9 +277,9 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
 }
 
 /// The event command "set actor position": puts the actor at (x, z), 16.16
-/// pixels, at rest. An actor that follows the ground (flag 1) keeps its height
-/// above the terrain at the new place. Clears its velocity and targets. Scene
-/// scripts reach it as Engine_ActorSetPosition (OBJ_POS_SET,
+/// pixels, at rest. An actor that follows the ground (ACTOR_FOLLOWS_TERRAIN)
+/// keeps its height above the terrain at the new place. Clears its velocity and
+/// targets. Scene scripts reach it as Engine_ActorSetPosition (OBJ_POS_SET,
 /// Actor_SetPosition); Motion_LaunchFromFocusedObject calls it too.
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object;
@@ -325,8 +325,8 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
 }
 
 /// Puts the actor at (x, y, z), 16.16 pixels, at rest; an actor that follows
-/// the ground (flag 1) is raised by the terrain height there, read as
-/// ObjectMotion_SetHorizontalPositionWithTerrain reads it (see the XXX
+/// the ground (ACTOR_FOLLOWS_TERRAIN) is raised by the terrain height there,
+/// read as ObjectMotion_SetHorizontalPositionWithTerrain reads it (see the XXX
 /// there). Nothing in ☀️ calls it.
 void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
   struct ObjectRuntime *object;
@@ -434,7 +434,7 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
   object = ObjectTable_Get(objectId);
   if (object != NULL) {
     objectFlags = &object->flags;
-    updatedFlags = *objectFlags | 2;
+    updatedFlags = *objectFlags | ACTOR_FALLS;
     verticalVelocity = speed << 16;
     *objectFlags = updatedFlags;
     object->velocityY = verticalVelocity;
@@ -586,7 +586,7 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
     WaitFrames(6);
 
     // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
-    // flight (motion flags 0: no gravity, no terrain).
+    // flight: no motion flags, so no gravity and no terrain.
     AudioCommand_PlayFar(SE_217);
     // From here pose counts frames.
     pose = 0;
@@ -604,8 +604,8 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
     } while ((u32)pose <= 0xD);
 
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
-    // the terrain and falling again (motion flags 3).
-    *objectFlags = 3;
+    // the terrain and falling again.
+    *objectFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->velocityY = 0x30000;
     Object_SetMoveTargetFar(object, object->x, object->y, startZ + 0x100000);
     FieldObject_WaitForMoveFar(object);

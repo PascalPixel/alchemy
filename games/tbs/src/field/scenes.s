@@ -131,7 +131,7 @@ gField_SceneTable:
 	scene CrossboneIslePillarRooms2, 0x3b3, 0x27, 1, 0x6f
 	scene CrossboneIslePlatformRooms1, 0x3b4, 0x27, 1, 0x70
 	scene CrossboneIslePlatformRooms2, 0x3b4, 0x27, 1, 0x71
-	scene CrossboneIslePillarRooms3, 0x3b3, 0x27, 1, 0x72
+	scene CrossboneIsleFloodgate, 0x3b3, 0x27, 1, 0x72
 	scene CrossboneIslePlatformRooms3, 0x3b4, 0x27, 1, 0x73
 	scene CrossboneIslePillarRooms4, 0x3b3, 0x27, 1, 0x74
 	scene CrossboneIslePillarRooms5, 0x3b3, 0x27, 1, 0x75

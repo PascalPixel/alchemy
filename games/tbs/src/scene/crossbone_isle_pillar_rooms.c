@@ -5,18 +5,20 @@
 /// east door leads in at the room's `_EAST` entrance
 /// (CROSSBONE_ISLE_PILLAR_ROOMS_1_FROM_CROSSBONE_ISLE_6_EAST in the first) and
 /// its west door at the `_WEST` one, and the exits of the same names lead back
-/// out. Each is a pillar puzzle with four chests, and all five take the area
-/// name Crossbone Isle Cave. In the order the party meets them:
+/// out. Each is a puzzle with four chests, and all five take the area name
+/// Crossbone Isle Cave. In the order the party meets them:
 ///
 /// - CrossboneIslePillarRooms1 (scene 115), off the first corridor room:
 ///   walking into a pillar jumps two cells across it where the cells allow,
 ///   and otherwise pushes it (Event_JumpOrPushPillar).
 /// - CrossboneIslePillarRooms2 (scene 116), off the second corridor room:
 ///   pillars to push.
-/// - CrossboneIslePillarRooms3 (scene 119), off the fifth corridor room: a
-///   switch (Event_FlipWaterSwitch) raises the water or drains it, and its
-///   seven pillars stand higher or lower with it; the water level lasts only
-///   while the party stays (FLAG_SCENE_TEMP_00, kept through a battle).
+/// - CrossboneIsleFloodgate (scene 119), off the fifth corridor room: a cave
+///   with a stream and a floodgate across it, and seven logs to roll. The
+///   switch beside the floodgate (Event_FlipWaterSwitch) closes it, so the
+///   water backs up and floats the logs higher, or opens it to drain them
+///   back down; the water level lasts only while the party stays
+///   (FLAG_SCENE_TEMP_00, kept through a battle).
 /// - CrossboneIslePillarRooms4 (scene 121), off the seventh corridor room:
 ///   four pillars that Move and Carry shift, and that settle and redraw their
 ///   footprints after every push (Event_MovePillar), a ladder, and pillars to
@@ -80,7 +82,7 @@
 #include "macros.h"
 
 #define WATER_ACTOR 16
-/// CrossboneIslePillarRooms3: the water has been raised.
+/// CrossboneIsleFloodgate: the water has been raised.
 #define WATER_RAISED_FLAG FLAG_SCENE_TEMP_00
 // CrossboneIslePillarRooms4 keeps FLAG_SCENE_TEMP_00 to 03 for its four
 // pillars' footprints.
@@ -221,7 +223,9 @@ CrossboneIslePillarRooms_QueryFootprint(s32 id, u32 *width, u32 *depth,
   return 1;
 }
 
-/// Draws the raised pillar's footprint and puts its actor under the leader.
+/// Draws a log's footprint where it floats on CrossboneIsleFloodgate's raised
+/// water, lying across or along the room as the log does, and puts its actor
+/// under the leader.
 static s32 CrossboneIslePillarRooms_DrawRaisedFootprint(s32 actorId) {
   struct FieldActor *actor = Object_GetById(actorId);
   u32 width, depth;
@@ -254,8 +258,8 @@ static s32 CrossboneIslePillarRooms_DrawRaisedFootprint(s32 actorId) {
   return 1;
 }
 
-/// Redraws all seven pillars at the raised water level.
-static inline void CrossboneIslePillarRooms_DrawRaisedPillars(void) {
+/// Redraws CrossboneIsleFloodgate's seven logs floating on the raised water.
+static inline void CrossboneIslePillarRooms_DrawFloatingLogs(void) {
   CrossboneIslePillarRooms_DrawRaisedFootprint(9);
   CrossboneIslePillarRooms_DrawRaisedFootprint(10);
   CrossboneIslePillarRooms_DrawRaisedFootprint(11);
@@ -577,7 +581,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (scene == (s32)&SceneId_CrossboneIslePillarRooms2) {
     return gCrossboneIslePillarRoomsEntrances2;
   }
-  if (scene == (s32)&SceneId_CrossboneIslePillarRooms3) {
+  if (scene == (s32)&SceneId_CrossboneIsleFloodgate) {
     return gCrossboneIslePillarRoomsEntrances3;
   }
   if (scene == (s32)&SceneId_CrossboneIslePillarRooms4) {
@@ -603,7 +607,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_CrossboneIslePillarRooms2) {
     return gCrossboneIslePillarRoomsPlacements2;
   }
-  if (scene == (s32)&SceneId_CrossboneIslePillarRooms3) {
+  if (scene == (s32)&SceneId_CrossboneIsleFloodgate) {
     return gCrossboneIslePillarRoomsPlacements3;
   }
   if (scene == (s32)&SceneId_CrossboneIslePillarRooms5) {
@@ -621,8 +625,8 @@ static void Event_JumpOrPushPillar(void) {
   EV_END();
 }
 
-/// Walking into a pillar in CrossboneIslePillarRooms2 and 3: push it if the
-/// cell beyond is clear.
+/// Walking into a pillar in CrossboneIslePillarRooms2, or a log in
+/// CrossboneIsleFloodgate: push it if the cell beyond is clear.
 static void Event_PushPillar(void) {
   struct StagedActorProbe out;
 
@@ -741,9 +745,10 @@ static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
   Engine_TaskWait(30);
 }
 
-/// Searching the switch in CrossboneIslePillarRooms3 flips it. "Isaac flipped
-/// the switch." The water rises, or drains, and the pillars stand higher or
-/// lower with it.
+/// Searching the switch beside CrossboneIsleFloodgate's floodgate flips it.
+/// "Isaac flipped the switch." The floodgate closes and the water backs up
+/// behind it, floating the logs higher, or it opens and the water drains away
+/// and the logs settle on the floor.
 static void Event_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct FieldActor *water;
@@ -754,7 +759,7 @@ static void Event_FlipWaterSwitch(void) {
   Engine_CameraWaitForMove();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   waterRaised = FLAG_CHECK(WATER_RAISED_FLAG);
-  // Raise or drain the water before updating the pillar collision footprints.
+  // Raise or drain the water before redrawing the logs' footprints.
   if (waterRaised == 0) {
     SE(SE_232);
     Map_AnimateCells(gCrossboneIslePillarRooms_ShiftSteps1, 84, 24);
@@ -770,7 +775,7 @@ static void Event_FlipWaterSwitch(void) {
     Map_AnimateCells(gCrossboneIslePillarRooms_ShiftSteps5, 80, 28);
     Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
     CrossboneIslePillarRooms_AnimateWaterLevel();
-    CrossboneIslePillarRooms_DrawRaisedPillars();
+    CrossboneIslePillarRooms_DrawFloatingLogs();
     Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     FLAG_SET(WATER_RAISED_FLAG);
   } else {
@@ -1416,7 +1421,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   if (scene == (s32)&SceneId_CrossboneIslePillarRooms2) {
     return gCrossboneIslePillarRoomsEvents2;
   }
-  if (scene == (s32)&SceneId_CrossboneIslePillarRooms3) {
+  if (scene == (s32)&SceneId_CrossboneIsleFloodgate) {
     return gCrossboneIslePillarRoomsEvents3;
   }
   if (scene == (s32)&SceneId_CrossboneIslePillarRooms4) {
@@ -1513,8 +1518,9 @@ s32 Scene_Initialize(void) {
     FieldScene_RedrawActorFootprint(10);
     FieldScene_RedrawActorFootprint(11);
     FieldScene_RedrawActorFootprint(12);
-  } else if (gGameState.scene == (s32)&SceneId_CrossboneIslePillarRooms3) {
-    // Rebuild the water room and restore raised pillars when its flag persists.
+  } else if (gGameState.scene == (s32)&SceneId_CrossboneIsleFloodgate) {
+    // Rebuild the flooded room and float the logs again when the water stayed
+    // raised through a battle.
     Map_CopyCells(32, 0, 64, 32, 0, 64);
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
@@ -1529,7 +1535,7 @@ s32 Scene_Initialize(void) {
       Map_CopyCellsTo(79, 34, 84, 24, 1, 2);
       Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
       Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
-      CrossboneIslePillarRooms_DrawRaisedPillars();
+      CrossboneIslePillarRooms_DrawFloatingLogs();
       Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     }
   } else if (gGameState.scene == (s32)&SceneId_CrossboneIslePillarRooms4) {
@@ -1702,8 +1708,8 @@ struct SceneEntrance gCrossboneIslePillarRoomsEntrances2[] = {
 };
 
 struct SceneEntrance gCrossboneIslePillarRoomsEntrances3[] = {
-    { CROSSBONE_ISLE_PILLAR_ROOMS_3_FROM_CROSSBONE_ISLE_10_EAST, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { CROSSBONE_ISLE_PILLAR_ROOMS_3_FROM_CROSSBONE_ISLE_10_WEST, CONDITION_ALWAYS, 64, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_10_EAST, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_10_WEST, CONDITION_ALWAYS, 64, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -1726,9 +1732,9 @@ u32 gCrossboneIslePillarRoomsExits[] = {
     SCENE_EXITS(CrossboneIslePillarRooms2),
     SCENE_EXIT(CROSSBONE_ISLE_PILLAR_ROOMS_2_TO_CROSSBONE_ISLE_7_EAST, CrossboneIsle7, CROSSBONE_ISLE_7_FROM_CROSSBONE_ISLE_PILLAR_ROOMS_2_EAST),
     SCENE_EXIT(CROSSBONE_ISLE_PILLAR_ROOMS_2_TO_CROSSBONE_ISLE_7_WEST, CrossboneIsle7, CROSSBONE_ISLE_7_FROM_CROSSBONE_ISLE_PILLAR_ROOMS_2_WEST),
-    SCENE_EXITS(CrossboneIslePillarRooms3),
-    SCENE_EXIT(CROSSBONE_ISLE_PILLAR_ROOMS_3_TO_CROSSBONE_ISLE_10_EAST, CrossboneIsle10, CROSSBONE_ISLE_10_FROM_CROSSBONE_ISLE_PILLAR_ROOMS_3_EAST),
-    SCENE_EXIT(CROSSBONE_ISLE_PILLAR_ROOMS_3_TO_CROSSBONE_ISLE_10_WEST, CrossboneIsle10, CROSSBONE_ISLE_10_FROM_CROSSBONE_ISLE_PILLAR_ROOMS_3_WEST),
+    SCENE_EXITS(CrossboneIsleFloodgate),
+    SCENE_EXIT(CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_10_EAST, CrossboneIsle10, CROSSBONE_ISLE_10_FROM_CROSSBONE_ISLE_FLOODGATE_EAST),
+    SCENE_EXIT(CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_10_WEST, CrossboneIsle10, CROSSBONE_ISLE_10_FROM_CROSSBONE_ISLE_FLOODGATE_WEST),
     SCENE_EXITS(CrossboneIslePillarRooms4),
     SCENE_EXIT(CROSSBONE_ISLE_PILLAR_ROOMS_4_TO_CROSSBONE_ISLE_12_EAST, CrossboneIsle12, CROSSBONE_ISLE_12_FROM_CROSSBONE_ISLE_PILLAR_ROOMS_4_EAST),
     SCENE_EXIT(CROSSBONE_ISLE_PILLAR_ROOMS_4_TO_CROSSBONE_ISLE_12_WEST, CrossboneIsle12, CROSSBONE_ISLE_12_FROM_CROSSBONE_ISLE_PILLAR_ROOMS_4_WEST),

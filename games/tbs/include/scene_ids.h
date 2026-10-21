@@ -128,7 +128,7 @@ extern char SceneId_CrossboneIslePillarRooms1;
 extern char SceneId_CrossboneIslePillarRooms2;
 extern char SceneId_CrossboneIslePlatformRooms1;
 extern char SceneId_CrossboneIslePlatformRooms2;
-extern char SceneId_CrossboneIslePillarRooms3;
+extern char SceneId_CrossboneIsleFloodgate;
 extern char SceneId_CrossboneIslePlatformRooms3;
 extern char SceneId_CrossboneIslePillarRooms4;
 extern char SceneId_CrossboneIslePillarRooms5;

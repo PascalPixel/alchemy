@@ -146,9 +146,12 @@ enum AlpineCrossingActor {
   /// ★ Named from the game: "did you lift the boulder?"
   /// (MsgMountainIsaacDidLiftBoulder)
   ACTOR_BOULDER,
+  /// A young man in a white headband, one of the people of Xian who moved the
+  /// rocks.
   /// ★ Named from the game: "We moved the rocks. Now people can pass."
   /// (MsgAlpineCrossingLamaTempleWeMovedTheRocksNowPeople)
   ACTOR_FIRST_WORKER,
+  /// A young man with his hair tied back.
   /// ★ Named from the game: "Many people from Xian helped move the rocks."
   /// (MsgAlpineCrossingLamaTempleManyPeopleFromXianHelpedMove)
   ACTOR_SECOND_WORKER,
@@ -256,7 +259,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// A monk in Lama Temple, until Hsu is freed, asks whether the party comes
 /// from the east. If not, it must have crossed Lamakan Desert; if so, he asks
 /// whether it stopped in Xian, whose Master Feh is close to Master Hama.
-static void LamaTemple_TalkToEastwardMonk(void) {
+static void LamaTemple_TalkToMonkAskingAboutTheEast(void) {
 
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainYoungWarriorsDoComeFrom);
@@ -1140,37 +1143,37 @@ struct ScenePlacement gLamaTemple_Placements[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(336), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(216), 0, PIXELS(240), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(320), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(320), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x9e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MONK_IN_ORANGE_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(176), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x125, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(152), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gAlpineCrossing_Placements[] = {
-    { 0x3d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x29, CONDITION_ALWAYS, (s32)gAlpineCrossing_HsuStruggle,
+    { SPRITE_HSU, CONDITION_ALWAYS, (s32)gAlpineCrossing_HsuStruggle,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x27, FLAG_HSU_RESCUED, ACTOR_STAND,
+    { SPRITE_FEIZHI, FLAG_HSU_RESCUED, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(344), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x127, FLAG_HSU_RESCUED, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(276), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x82, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (s32)gAlpineCrossing_WorkerPlacementScript,
+    { SPRITE_YOUTH_WITH_HEADBAND, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (s32)gAlpineCrossing_WorkerPlacementScript,
         PIXELS(456), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x83, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
+    { SPRITE_YOUTH_WITH_TIED_HAIR, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), ACTOR_STAND,
         PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(296), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1183,7 +1186,7 @@ struct SceneEvent gLamaTemple_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, LAMA_TEMPLE_TO_WORLD_MAP },
     { TOUCH_WALKING_INTO(FACING_NORTH), TRIGGER_TEMPLE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_EnterHamasRoom) },
     { EVENT_TALK, ACTOR_GREETING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers) },
-    { EVENT_TALK, ACTOR_MONK_ASKING_ABOUT_THE_EAST, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToEastwardMonk) },
+    { EVENT_TALK, ACTOR_MONK_ASKING_ABOUT_THE_EAST, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToMonkAskingAboutTheEast) },
     { EVENT_TALK, ACTOR_MEDITATING_MONK, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToMeditatingMonk) },
     { EVENT_TALK, ACTOR_MONK_SENSING_ANXIETY, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleYouWhoSpeakToMeI) },
     { EVENT_TALK, ACTOR_CHI_MONK, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToChiMonk) },

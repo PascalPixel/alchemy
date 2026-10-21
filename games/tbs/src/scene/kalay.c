@@ -152,35 +152,52 @@ enum KalayTownActor {
   /// ★ Named from the game: "We soldiers protect the peace in Kalay with our
   /// lives." (MsgKalaySoldiersProtectPeace)
   ACTOR_SOLDIER_PROTECTING_THE_PEACE,
-  /// "Lord Hammet, the founder of Kalay, is a great merchant."
-  ACTOR_VILLAGER_GREAT_MERCHANT,
-  /// "Lord Hammet is still out with his caravans on business."
-  ACTOR_VILLAGER_CARAVANS,
-  /// "The bridge to the north was destroyed by lava."
-  ACTOR_VILLAGER_BRIDGE,
-  /// "I heard a rumor that there's trouble in Lamakan Desert."
-  ACTOR_VILLAGER_LAMAKAN,
-  /// The tourist the guides are missing, who stands in town until then and
-  /// takes his place again after: "Kalay sits at a great crossroads."
+  /// A boy with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
+  /// ★ Named from the game: "Lord Hammet, the founder of Kalay, is a great
+  /// merchant." (MsgKalayHammetGenerousMerchant)
+  ACTOR_BOY_ON_HAMMET_THE_MERCHANT,
+  /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
+  /// ★ Named from the game: "Lord Hammet is still out with his caravans on
+  /// business." (MsgKalayHammetOnJourney)
+  ACTOR_WOMAN_ON_HAMMETS_CARAVANS,
+  /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR).
+  /// ★ Named from the game: "Thankfully, it has been rebuilt since then."
+  /// (MsgKalayNorthernBridgeRebuilt)
+  ACTOR_MAN_ON_THE_REBUILT_BRIDGE,
+  /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
+  /// ★ Named from the game: "I heard a rumor that there's trouble in Lamakan
+  /// Desert." (MsgKalayLamakanTrouble)
+  ACTOR_WOMAN_ON_LAMAKAN_DESERT,
+  /// The tourist the guides are missing, an old man with a cane
+  /// (SPRITE_OLD_MAN_WITH_CANE), who stands in town until then and takes his
+  /// place again after: "Kalay sits at a great crossroads."
   ACTOR_LATE_TOURIST,
-  /// "The guests at the inn are tourists on their way to see Colosso."; Mind
-  /// Read: "I should have saved my money. Then I'd be on that tour, too."
+  /// An old woman (SPRITE_OLD_WOMAN). "The guests at the inn are tourists on
+  /// their way to see Colosso."
+  /// ★ Named from the game: "I should have saved my money. Then I'd be on
+  /// that tour, too." (MsgKalayWishSavedForFestival)
   ACTOR_WOULD_BE_TOURIST,
-  /// "I hear Colosso is incredible. I'd love to see such a huge carnival.";
-  /// Mind Read: "Maybe when I'm older, I'll even get to go fight in
-  /// Colosso!"
-  ACTOR_CHILD,
-  /// "A huge mountain north of the river erupted violently. I think it was
-  /// called Mt. Aleph."
-  ACTOR_VILLAGER_MT_ALEPH,
-  /// "Lord Hammet's knack for business is the reason Kalay has flourished."
-  ACTOR_VILLAGER_HAMMETS_KNACK,
-  /// Came to Kalay from Tolbi, afraid of Babi (Kalay_TalkAboutLeavingHome).
+  /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR). "I hear Colosso
+  /// is incredible. I'd love to see such a huge carnival."
+  /// ★ Named from the game: "Maybe when I'm older, I'll even get to go fight
+  /// in Colosso!" (MsgKalayChildFestivalDream)
+  ACTOR_BOY_DREAMING_OF_COLOSSO,
+  /// A little girl with pigtails (SPRITE_GIRL_WITH_PIGTAILS).
+  /// ★ Named from the game: "I think it was called Mt. Aleph."
+  /// (MsgKalayTraderTownNews)
+  ACTOR_GIRL_ON_MT_ALEPH,
+  /// A strongman (SPRITE_STRONGMAN).
+  /// ★ Named from the game: "Lord Hammet's knack for business is the reason
+  /// Kalay has flourished." (MsgKalayHammetBusinessSkill)
+  ACTOR_STRONGMAN_ON_HAMMETS_KNACK,
+  /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN) who came to Kalay from
+  /// Tolbi, afraid of Babi (Kalay_TalkAboutLeavingHome).
   /// ★ Named from the game: "I came to Kalay because I didn't like Tolbi..."
   /// (MsgKalayCameKalayBecauseDidntLike)
-  ACTOR_VILLAGER_WHO_LEFT_TOLBI,
-  /// The Colosso tour's guides, who stand in town and lead the tour off when it
-  /// leaves. "OK... Follow me, and stay in line!"
+  ACTOR_MAN_WHO_LEFT_TOLBI,
+  /// The Colosso tour's guides, men carrying packs
+  /// (SPRITE_MAN_CARRYING_A_PACK), who stand in town and lead the tour off
+  /// when it leaves. "OK... Follow me, and stay in line!"
   ACTOR_HEAD_GUIDE,
   ACTOR_SECOND_GUIDE, ///< "Oh, dear..."
   /// ★ Named from the game: "These weapons are good, but they're not the best
@@ -201,7 +218,11 @@ enum KalayTownActor {
   /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_TOWN_NUT,
   /// The tour group, ACTOR_FIRST_TOURIST and the six after it, then
-  /// ACTOR_OURANOS. Their first lines, in row order: "Why are we stopping at
+  /// ACTOR_OURANOS: in row order a chef (SPRITE_CHEF), a young woman in
+  /// green, a boy with brown hair, a woman with fair hair, a woman with a
+  /// sword, a bald, muscular man, a young man with blue hair, and Ouranos, a
+  /// young man with red hair. Their first lines, in row order: "Why are we
+  /// stopping at
   /// a place like this?", "Yeah! We have to hurry, or we'll be late for
   /// Colosso!", "I hear there was a landslide on the road to Tolbi.", "Come
   /// on! Why aren't we leaving yet?", "That won't do at all!", "Late for
@@ -444,7 +465,7 @@ const struct SceneEvent *Kalay_GetEvents(void) {
 static void Kalay_TalkAboutLeavingHome(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayCameKalayBecauseDidntLike);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_WHO_LEFT_TOLBI, 0);
+  Engine_EventAskYesNo(ACTOR_MAN_WHO_LEFT_TOLBI, 0);
   Engine_EventEnd();
 }
 
@@ -2686,39 +2707,39 @@ struct ScenePlacement gKalay_NoPlacements[] = {
 
 // clang-format off
 struct ScenePlacement gKalay_TownPlacements[] = {
-    { 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(188), 0, PIXELS(476), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(260), 0, PIXELS(476), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(222), 0, PIXELS(382), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(134), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x65, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(115), 0, PIXELS(453), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x73, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(484), 0, PIXELS(258), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(359), 0, PIXELS(314), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(404), 0, PIXELS(268), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(154), 0, PIXELS(119), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(198), 0, PIXELS(84), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(199), 0, PIXELS(233), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(46), 0, PIXELS(217), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(468), 0, PIXELS(434), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(464), 0, PIXELS(416), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x7c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(280), 0, PIXELS(408), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x7d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x76, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(278), 0, PIXELS(318), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(440), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -2728,21 +2749,21 @@ struct ScenePlacement gKalay_TownPlacements[] = {
 };
 
 struct ScenePlacement gKalay_TourGroupPlacements[] = {
-    { 0x84, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEF, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x94, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_SWORD, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x72, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x42, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x43, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -2750,9 +2771,9 @@ struct ScenePlacement gKalay_TourGroupPlacements[] = {
 struct ScenePlacement gKalay_HammetPalacePlacements[] = {
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(212), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
@@ -2764,13 +2785,13 @@ struct ScenePlacement gKalay_TunnelEntrancePlacements[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x99, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(198), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0x111, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x31, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_HAMMET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x44, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BUNZA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT, 7,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -2782,7 +2803,7 @@ struct ScenePlacement gKalay_TunnelPlacements[] = {
         PIXELS(376), 0, PIXELS(826), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(808), 0, PIXELS(732), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x44, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BUNZA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -2812,17 +2833,17 @@ struct SceneEvent gKalay_TownEvents[] = {
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_WatchTourGroupDeparture) },
     { EVENT_TALK, ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWelcomeInPeace) },
     { EVENT_TALK, ACTOR_SOLDIER_PROTECTING_THE_PEACE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersProtectPeace) },
-    { EVENT_TALK, ACTOR_VILLAGER_GREAT_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetGenerousMerchant) },
-    { EVENT_TALK, ACTOR_VILLAGER_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetOnJourney) },
-    { EVENT_TALK, ACTOR_VILLAGER_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalayNorthernBridgeRebuilt) },
-    { EVENT_TALK, ACTOR_VILLAGER_LAMAKAN, CONDITION_ALWAYS, MSGNO(MsgKalayLamakanTrouble) },
+    { EVENT_TALK, ACTOR_BOY_ON_HAMMET_THE_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetGenerousMerchant) },
+    { EVENT_TALK, ACTOR_WOMAN_ON_HAMMETS_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetOnJourney) },
+    { EVENT_TALK, ACTOR_MAN_ON_THE_REBUILT_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalayNorthernBridgeRebuilt) },
+    { EVENT_TALK, ACTOR_WOMAN_ON_LAMAKAN_DESERT, CONDITION_ALWAYS, MSGNO(MsgKalayLamakanTrouble) },
     { EVENT_TALK, ACTOR_LATE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayElderTownNews) },
     { EVENT_TALK, ACTOR_WOULD_BE_TOURIST, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInnFestivalTourists) },
     { EVENT_TALK, ACTOR_WOULD_BE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayFormerInnFestivalTourists) },
-    { EVENT_TALK, ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgKalayChildWantsFestival) },
-    { EVENT_TALK, ACTOR_VILLAGER_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderTownNews) },
-    { EVENT_TALK, ACTOR_VILLAGER_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetBusinessSkill) },
-    { EVENT_TALK, ACTOR_VILLAGER_WHO_LEFT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLeavingHome) },
+    { EVENT_TALK, ACTOR_BOY_DREAMING_OF_COLOSSO, CONDITION_ALWAYS, MSGNO(MsgKalayChildWantsFestival) },
+    { EVENT_TALK, ACTOR_GIRL_ON_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderTownNews) },
+    { EVENT_TALK, ACTOR_STRONGMAN_ON_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetBusinessSkill) },
+    { EVENT_TALK, ACTOR_MAN_WHO_LEFT_TOLBI, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkAboutLeavingHome) },
     { EVENT_TALK, ACTOR_HEAD_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCapturedRumor) },
     { EVENT_TALK, ACTOR_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayHammetWentNorth) },
     { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToWeaponMerchant) },
@@ -2830,16 +2851,16 @@ struct SceneEvent gKalay_TownEvents[] = {
     { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Kalay_TalkToItemMerchant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorHonestEyes) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_PROTECTING_THE_PEACE, CONDITION_ALWAYS, MSGNO(MsgKalayGuardsJudgeVisitors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GREAT_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetPeaceAndLiberty) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCanBeRash) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersWentToVault) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LAMAKAN, CONDITION_ALWAYS, MSGNO(MsgKalayStrangeEvents) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_HAMMET_THE_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayHammetPeaceAndLiberty) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_HAMMETS_CARAVANS, CONDITION_ALWAYS, MSGNO(MsgKalayHammetCanBeRash) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_REBUILT_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersWentToVault) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_LAMAKAN_DESERT, CONDITION_ALWAYS, MSGNO(MsgKalayStrangeEvents) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LATE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayElderThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOULD_BE_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayWishSavedForFestival) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgKalayChildFestivalDream) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetValuesTrust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WHO_LEFT_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTrustAgainstForce) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_DREAMING_OF_COLOSSO, CONDITION_ALWAYS, MSGNO(MsgKalayChildFestivalDream) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgKalayTraderThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_ON_HAMMETS_KNACK, CONDITION_ALWAYS, MSGNO(MsgKalayHammetValuesTrust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_LEFT_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTrustAgainstForce) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEAD_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayLunpaNorthOfVault) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayRumorsHideTruth) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayWishBetterWeapons) },

@@ -1085,7 +1085,7 @@ struct ScenePlacement gValeCave_Placements1[] = {
 };
 
 struct ScenePlacement gValeCave_Placements2[] = {
-    { 0x5d, FLAG_KITE, ACTOR_STAND,
+    { JUPITER_DJINNI, FLAG_KITE, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(344), 0, PIXELS(632), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1105,7 +1105,7 @@ struct ScenePlacement gValeCave_Placements2[] = {
 };
 
 struct ScenePlacement gValeCave_Placements3[] = {
-    { 0x5d, FLAG_KITE, ACTOR_STAND,
+    { JUPITER_DJINNI, FLAG_KITE, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(200), 0, PIXELS(288), FACING_SOUTH, TALK_KEEP_FACING, 0 },

@@ -38,10 +38,10 @@
 ///   whether the masked man was Felix, Jenna's brother, and whether Jenna can
 ///   be trusted.
 /// - Back from Kalay (FLAG_REACHED_KALAY): Dora lies ill. The innkeeper
-///   welcomes Isaac home and a villager at the inn
-///   (ACTOR_VILLAGER_ISAAC_HAS_GROWN) sees how he has grown (Vale's place flags
+///   welcomes Isaac home and a burly grey-haired man at the inn
+///   (ACTOR_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's place flags
 ///   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
-///   FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN); Mind Read on either tells of Dora's
+///   FLAG_VALE_MAN_SAW_ISAAC_GROWN); Mind Read on either tells of Dora's
 ///   illness (FLAG_READ_THOUGHTS_ABOUT_DORA). Visiting her
 ///   (FLAG_VISITED_SICK_DORA) she reminds Isaac that he promised not to come
 ///   back until his quest was done, and gets up to show she is well; she stays
@@ -121,11 +121,12 @@ static void ValeInteriorsInn_DemonstrateCatch(void);
 /// The tables after the party leaves and after Kalay keep the rows up to the
 /// inn's, and differ after them (ValeInteriorsInnAfterKalayActor).
 enum ValeInteriorsInnActor {
-  /// Isaac's mother. "Isaac, wake up!"
+  /// Isaac's mother, a woman with fair hair tied up. "Isaac, wake up!"
   /// ★ Named from the game: "your mother, Dora, has been crying"
   /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED,
-  /// Isaac's father (sprite 0x35, Kyle in vale_storm.c). "Isaac, Dora, hurry!
+  /// Isaac's father, a man with fair hair (SPRITE_KYLE, Kyle in vale_storm.c).
+  /// "Isaac, Dora, hurry!
   /// The Boulder could fall at any second!"
   /// ★ Named from the game: "Kyle, watch out!"
   /// (MsgValeKyleWatchOutTheBoulderThe)
@@ -135,19 +136,27 @@ enum ValeInteriorsInnActor {
   /// flares up as its animation turns from flame to smoke, and rises 18 pixels
   /// as it shrinks away.
   ACTOR_FLAME,
-  /// Lost his father in the storm and means to be a smith. "My father also died
-  /// in that storm three years ago."; once the party has left, "By then, I'll
-  /// surely be a fine smith."
+  /// A boy with brown hair who lost his father in the storm and means to be a
+  /// smith. "My father also died in that storm three years ago."; once the
+  /// party has left, "By then, I'll surely be a fine smith."
+  /// ★ Named from the game: "My father also died in that storm three years
+  /// ago." (MsgValeMyFatherAlsoDiedInThat)
   ACTOR_YOUNG_SMITH,
-  /// ACTOR_YOUNG_SMITH's mother. "My son is still young, so I don't make him
-  /// work too long."
+  /// ACTOR_YOUNG_SMITH's mother, a woman in a long blue dress. "My son is
+  /// still young, so I don't make him work too long."
+  /// ★ Named from the game: "My son is still young"
+  /// (MsgValeMySonIsStillYoungSo)
   ACTOR_YOUNG_SMITHS_MOTHER,
+  /// A woman with red-brown hair in a pink dress and a white apron.
   /// ★ Named from the game: "Is it the innkeeper?" (MsgValeCoughCoughWho)
   ACTOR_INNKEEPER,
-  /// Walks about the inn. "One of the men from that group staying here wore a
-  /// mask over his face."
-  ACTOR_VILLAGER_SAW_MASK,
-  /// At the inn. "Two of those three guests staying with us have gone out.";
+  /// A boy with brown hair who walks about the inn. "One of the men from that
+  /// group staying here wore a mask over his face."
+  /// ★ Named from the game: "wore a mask over his face"
+  /// (MsgValeOneOfTheMenFromThat)
+  ACTOR_BOY_SAW_MASK,
+  /// A woman with fair hair at the inn. "Two of those three guests staying with
+  /// us have gone out.";
   /// Mind Read later hears "I found his wallet when I was cleaning the room..."
   /// ★ Named from the game: "We're a small hotel, and we get few guests"
   /// (MsgValeWereASmallHotelAndWe)
@@ -170,11 +179,12 @@ enum ValeInteriorsInnActor {
 /// The rows of gValeInteriorsInn_PlacementsAfterKalay that differ from the
 /// first table's.
 enum ValeInteriorsInnAfterKalayActor {
-  /// At the inn. "Well if it isn't Isaac! You've grown so much, I almost
+  /// A burly grey-haired man at the inn. "Well if it isn't Isaac! You've grown
+  /// so much, I almost
   /// didn't recognize you!"; Mind Read hears of Dora's illness.
   /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
-  ACTOR_VILLAGER_ISAAC_HAS_GROWN = ACTOR_FIRST_PLACED + 8,
-  /// SPRITE_BLANK, a blank square, beside ACTOR_VILLAGER_ISAAC_HAS_GROWN.
+  ACTOR_MAN_ISAAC_HAS_GROWN = ACTOR_FIRST_PLACED + 8,
+  /// SPRITE_BLANK, a blank square, beside ACTOR_MAN_ISAAC_HAS_GROWN.
   /// XXX: no event answers it, and the setup only clears its sprite flags.
   ACTOR_BLANK_AFTER_KALAY
 };
@@ -183,22 +193,37 @@ enum ValeInteriorsInnAfterKalayActor {
 /// gValeInteriorsInn_ScholarsPlacements and named by what they say before the
 /// Colosso finals.
 enum ValeInteriorsInnScholarActor {
-  /// Tells of the ruins where Babi Lighthouse stands. "Originally, there were
+  /// An old scholar with a white beard in a blue cap, who tells of the ruins
+  /// where Babi Lighthouse stands. "Originally, there were
   /// ancient ruins at the site of Babi Lighthouse."
+  /// ★ Named from the game: "Babi makes his scholars perform all sorts of
+  /// research." (MsgBabiBabiMakesHisScholarsPerformAll)
   ACTOR_SCHOLAR_ANCIENT_RUINS = ACTOR_FIRST_PLACED,
-  /// A scholar whose experiments fail. "No matter how many times I run the
+  /// A scholar with glasses in a blue cap, whose experiments fail. "No matter
+  /// how many times I run the
   /// experiment, I never get the results I want!"; after the finals he asks
   /// whether the party knows Kraden.
+  /// ★ Named from the game: "No matter how many times I run the experiment"
+  /// (MsgBabiNoMatterHowManyTimesI)
   ACTOR_SCHOLAR_EXPERIMENT,
-  /// Tells of Alchemy sealed away. "It is said that long ago, the power of
+  /// An old scholar with a white beard in a blue cap, who tells of Alchemy
+  /// sealed away. "It is said that long ago, the power of
   /// Alchemy was sealed away."
+  /// ★ Named from the game: "the power of Alchemy was sealed away."
+  /// (MsgBabiItIsSaidThatLongAgo)
   ACTOR_SCHOLAR_SEALED_ALCHEMY,
-  /// Tells of the Venus Ruins. "Originally, the ancient Venus Ruins lay buried
+  /// A scholar with glasses in a blue cap, who tells of the Venus Ruins.
+  /// "Originally, the ancient Venus Ruins lay buried
   /// under Babi Lighthouse."
+  /// ★ Named from the game: "Originally, the ancient Venus Ruins lay buried"
+  /// (MsgBabiOriginallyTheAncientVenusRuinsLay)
   ACTOR_SCHOLAR_VENUS_RUINS,
-  /// Walks about the room. "Babi makes his scholars perform all sorts of
+  /// An old man with a cane who walks about the room. "Babi makes his scholars
+  /// perform all sorts of
   /// research. I wonder where Babi's favorite scholar, Kraden, is now?"
-  ACTOR_VILLAGER_BABIS_RESEARCH
+  /// ★ Named from the game: "Babi makes his scholars perform all sorts of
+  /// research." (MsgBabiBabiMakesHisScholarsPerformAll)
+  ACTOR_OLD_MAN_ON_BABIS_RESEARCH
 };
 
 /// Vale's place flags this scene keeps while the party is in Vale.
@@ -206,11 +231,11 @@ enum ValeInteriorsInnPlaceFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
   /// ★ Named from the game: "You came back, huh?" (MsgValeCameBack2)
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = 0x300,
-  /// Back from Kalay, ACTOR_VILLAGER_ISAAC_HAS_GROWN remarked how much Isaac
+  /// Back from Kalay, ACTOR_MAN_ISAAC_HAS_GROWN remarked how much Isaac
   /// has
   /// grown.
   /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
-  FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN = 0x301
+  FLAG_VALE_MAN_SAW_ISAAC_GROWN = 0x301
 };
 
 // FLAG_SCENE_TEMP_03: Dora got out of her sickbed on this visit.
@@ -320,23 +345,23 @@ static void Event_AskIsaacHisBusiness(void) {
   Engine_EventEnd();
 }
 
-/// In Vale, a villager asks whether the masked man was Felix, and wonders
-/// whether Jenna can be trusted. Reached by talking to ACTOR_VILLAGER_SAW_MASK
-/// once the party has left Vale and until it reaches Kalay
+/// In Vale, a boy with brown hair asks whether the masked man was Felix, and
+/// wonders whether Jenna can be trusted. Reached by talking to
+/// ACTOR_BOY_SAW_MASK once the party has left Vale and until it reaches Kalay
 /// (gValeInteriorsInn_EventsAfterLeaving).
 static void Event_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
-  Engine_ActorFaceActor(ACTOR_VILLAGER_SAW_MASK, ACTOR_PARTY_LEADER, 0xA);
+  Engine_ActorFaceActor(ACTOR_BOY_SAW_MASK, ACTOR_PARTY_LEADER, 0xA);
   Engine_EventSetMessage(MsgValeTheMaskedManWasFelix);
-  Engine_EventOpenMessage(ACTOR_VILLAGER_SAW_MASK, 0);
+  Engine_EventOpenMessage(ACTOR_BOY_SAW_MASK, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventShowMessage(ACTOR_VILLAGER_SAW_MASK, 0);
+    Engine_EventShowMessage(ACTOR_BOY_SAW_MASK, 0);
   } else {
     work = gEventWork;
     work->message = (work->message + 1);
-    Engine_EventAskYesNo(ACTOR_VILLAGER_SAW_MASK, 0);
+    Engine_EventAskYesNo(ACTOR_BOY_SAW_MASK, 0);
   }
   Engine_EventEnd();
 }
@@ -457,7 +482,7 @@ s32 ValeInteriorsInn_Initialize(void) {
       Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
       Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
       Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
-      Engine_ActorSetPosition(ACTOR_VILLAGER_SAW_MASK, 0, 0);
+      Engine_ActorSetPosition(ACTOR_BOY_SAW_MASK, 0, 0);
       Engine_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
       Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
     } else {
@@ -549,7 +574,7 @@ static void Event_DoraWakesIsaac(void) {
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
   Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
-  Engine_ActorSetPosition(ACTOR_VILLAGER_SAW_MASK, 0, 0);
+  Engine_ActorSetPosition(ACTOR_BOY_SAW_MASK, 0, 0);
   Engine_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
   Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
   // Isaac lies asleep in bed (animation 18); his tunic is set beside him.
@@ -714,7 +739,7 @@ static void Event_HurryToThePlaza(void) {
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
   Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
-  Engine_ActorSetPosition(ACTOR_VILLAGER_SAW_MASK, 0, 0);
+  Engine_ActorSetPosition(ACTOR_BOY_SAW_MASK, 0, 0);
   Engine_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
   Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
   Actor_SetPosition(ACTOR_DORA, PIXELS(431), PIXELS(391));
@@ -864,20 +889,21 @@ static void Event_TalkToInnkeeper(void) {
   }
 }
 
-/// Back from Kalay, a villager at Vale's inn (ACTOR_VILLAGER_ISAAC_HAS_GROWN)
+/// Back from Kalay, a burly grey-haired man at Vale's inn
+/// (ACTOR_MAN_ISAAC_HAS_GROWN)
 /// remarks how much Isaac has grown. Reached by talking to him while
 /// FLAG_VALE_INNKEEPER_WELCOMED_ISAAC is clear, or by Mind Read on him until
-/// FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN is set, which this sets. XXX: the
+/// FLAG_VALE_MAN_SAW_ISAAC_GROWN is set, which this sets. XXX: the
 /// talk row tests the innkeeper's flag, not this one; likely a slip, because
 /// the Mind Read row tests this one, but both show the same line.
 static void Event_RemarkIsaacHasGrown(void) {
   Engine_EventBegin();
-  Engine_ActorFaceActor(ACTOR_VILLAGER_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
+  Engine_ActorFaceActor(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
   Engine_EventSetMessage(MsgValeYouveGrownSoMuch);
-  Engine_EventShowMessage(ACTOR_VILLAGER_ISAAC_HAS_GROWN, 0);
-  Engine_ActorFaceDirection(ACTOR_VILLAGER_ISAAC_HAS_GROWN,
+  Engine_EventShowMessage(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
+  Engine_ActorFaceDirection(ACTOR_MAN_ISAAC_HAS_GROWN,
                             FACING_NORTHWEST + FACING_STEP, 10);
-  Engine_GameFlagSet(FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN);
+  Engine_GameFlagSet(FLAG_VALE_MAN_SAW_ISAAC_GROWN);
   Engine_EventEnd();
 }
 
@@ -892,13 +918,13 @@ static void Event_ReadInnkeepersThoughts(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on ACTOR_VILLAGER_ISAAC_HAS_GROWN at Vale's inn: Dora was struck
+/// Mind Read on ACTOR_MAN_ISAAC_HAS_GROWN at Vale's inn: Dora was struck
 /// with illness. Reached back from Kalay once he has remarked on Isaac. Sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
 static void Event_ReadThoughtsAboutDorasIllness(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDoraWasStruckWithIllness);
-  Engine_EventShowMessage(ACTOR_VILLAGER_ISAAC_HAS_GROWN, 0);
+  Engine_EventShowMessage(ACTOR_MAN_ISAAC_HAS_GROWN, 0);
   Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
   Engine_EventEnd();
 }
@@ -1478,69 +1504,69 @@ u32 gValeInteriorsInn_StormExits[] = {
 
 // clang-format off
 struct ScenePlacement gValeInteriorsInn_Placements[] = {
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DORA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x35, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KYLE, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0xd0, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x6c, 0x0, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x78, 0x0, ACTOR_WANDER,
+    { SPRITE_WOMAN_IN_BLUE_DRESS, 0x0, ACTOR_WANDER,
         PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x80, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6c, 0x0, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x22, 0x0, ACTOR_STAND,
+    { SPRITE_FELIX_MASKED, 0x0, ACTOR_STAND,
         PIXELS(54), 0, PIXELS(669), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0xe2, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTHEAST, TALK_KEEP_FACING, 0 },
-    { 0x1e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gValeInteriorsInn_PlacementsAfterLeaving[] = {
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DORA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x35, 0x0, ACTOR_STAND,
+    { SPRITE_KYLE, 0x0, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0xd0, 0x0, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x6c, 0x0, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x78, 0x0, ACTOR_WANDER,
+    { SPRITE_WOMAN_IN_BLUE_DRESS, 0x0, ACTOR_WANDER,
         PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x80, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x6c, 0x0, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gValeInteriorsInn_PlacementsAfterKalay[] = {
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DORA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { 0x35, 0x0, ACTOR_STAND,
+    { SPRITE_KYLE, 0x0, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0xd0, 0x0, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x6c, 0x0, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x78, 0x0, ACTOR_WANDER,
+    { SPRITE_WOMAN_IN_BLUE_DRESS, 0x0, ACTOR_WANDER,
         PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x80, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { 0x6c, 0x0, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x65, 0x0, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(373), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, 0x0, ACTOR_STAND,
         PIXELS(252), 0, PIXELS(378), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1548,15 +1574,15 @@ struct ScenePlacement gValeInteriorsInn_PlacementsAfterKalay[] = {
 };
 
 struct ScenePlacement gValeInteriorsInn_ScholarsPlacements[] = {
-    { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(336), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x71, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_GLASSES, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(864), 0, PIXELS(360), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(904), 0, PIXELS(376), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x71, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_GLASSES, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(728), 0, PIXELS(440), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(832), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1589,7 +1615,7 @@ struct SceneEvent gValeInteriorsInn_StormEvents[] = {
 struct SceneEvent gValeInteriorsInn_Events[] = {
     { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
     { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
-    { EVENT_TALK, ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
+    { EVENT_TALK, ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
     { EVENT_TALK, ACTOR_MASKED_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIsaacHisBusiness) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
@@ -1620,12 +1646,12 @@ struct SceneEvent gValeInteriorsInn_Events[] = {
 struct SceneEvent gValeInteriorsInn_EventsAfterLeaving[] = {
     { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
     { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
-    { EVENT_TALK, ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherMaskedManWasFelix) },
+    { EVENT_TALK, ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherMaskedManWasFelix) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeWereASmallHotelAndWe) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIWillThinkOfJennaAs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeNowThatJennaIsGoneWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNorthwest) },
@@ -1655,19 +1681,19 @@ struct SceneEvent gValeInteriorsInn_EventsAfterLeaving[] = {
 struct SceneEvent gValeInteriorsInn_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
     { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
-    { EVENT_TALK, ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
+    { EVENT_TALK, ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeArentYouGladToSeeThe) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { EVENT_TALK, ACTOR_VILLAGER_ISAAC_HAS_GROWN, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(Event_RemarkIsaacHasGrown) },
-    { EVENT_TALK, ACTOR_VILLAGER_ISAAC_HAS_GROWN, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
+    { EVENT_TALK, ACTOR_MAN_ISAAC_HAS_GROWN, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(Event_RemarkIsaacHasGrown) },
+    { EVENT_TALK, ACTOR_MAN_ISAAC_HAS_GROWN, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIPromisedIdBecomeAGreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeThatShyGirlWithIsaacSure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfIsaacWillContinue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfIsaacWillContinue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeValeWillNeverChangeSoYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INNKEEPER, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadInnkeepersThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_VILLAGER_ISAAC_HAS_GROWN, FLAG_VALE_VILLAGER_SAW_ISAAC_GROWN, EVENT_SCRIPT(Event_RemarkIsaacHasGrown) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ISAAC_HAS_GROWN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadThoughtsAboutDorasIllness) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAN_ISAAC_HAS_GROWN, FLAG_VALE_MAN_SAW_ISAAC_GROWN, EVENT_SCRIPT(Event_RemarkIsaacHasGrown) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ISAAC_HAS_GROWN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadThoughtsAboutDorasIllness) },
     { EVENT_TALK, ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(Event_VisitSickDora) },
     { EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToDora) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(Event_VisitSickDora) },
@@ -1705,12 +1731,12 @@ struct SceneEvent gValeInteriorsInn_ScholarsEvents[] = {
     { EVENT_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, MSGNO(MsgBabiNoMatterHowManyTimesI) },
     { EVENT_TALK, ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiItIsSaidThatLongAgo) },
     { EVENT_TALK, ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyTheAncientVenusRuinsLay) },
-    { EVENT_TALK, ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiBabiMakesHisScholarsPerformAll) },
+    { EVENT_TALK, ACTOR_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiBabiMakesHisScholarsPerformAll) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiNoOneHasEverReachedThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, MSGNO(MsgBabiStillMyExperimentsInAlchemyAre) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiKradensJourneyWasMeantToRevive) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiTheVenusRuinsAreTheRemnants) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiLordBabiExpectedGreatResultsFrom) },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
     { SEARCH(SEARCH_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
@@ -1724,12 +1750,12 @@ struct SceneEvent gValeInteriorsInn_ScholarsLaterEvents[] = {
     { EVENT_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ScholarAsksAboutKraden) },
     { EVENT_TALK, ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },
     { EVENT_TALK, ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiIfTheRiddleOfTheVenus) },
-    { EVENT_TALK, ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiImSureKradenWouldStopBy) },
+    { EVENT_TALK, ACTOR_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiImSureKradenWouldStopBy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiTheRelationshipBetweenAlchemyAndThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, MSGNO(MsgBabiIWantToSeeKradenAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiTheresGotToBeAGood) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_VENUS_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiWhatSortOfUnfathomableRiddlesAre) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_BABIS_RESEARCH, CONDITION_ALWAYS, MSGNO(MsgBabiThereMustBeAReasonWhy) },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED, 20, CONDITION_ALWAYS, VALE_INTERIORS_INN_TO_BABI_PALACE },
     { SEARCH(SEARCH_JAR), 103, FLAG_BABI_PALACE_HARD_NUT, FIND_ITEM(ITEM_HARD_NUT) },
     { SEARCH(SEARCH_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },

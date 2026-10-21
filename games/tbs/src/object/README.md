@@ -253,20 +253,28 @@ plays the effect itself. XXX: on a Psynergy event that bit falls inside the
 ability's number (`PSYNERGY_ON_ACTOR`), so whether it's a flag of its own or
 part of the ability is open.
 
-The effect played is the one for the ability's field kind.
-[`psynergy_effects/dispatch.c`](psynergy_effects/dispatch.c) runs the kind's
-handler, cast with no target (`BattleFx_Run`) or on one
-(`BattleFx_DispatchRequestKind`) when a scene event names the target. Each
+The effect that plays is the one for the ability's field kind.
+[`psynergy_effects/dispatch.c`](psynergy_effects/dispatch.c) runs that field
+kind's handler: `BattleFx_Run` when the Psynergy is cast with no target, and
+`BattleFx_DispatchRequestKind` when a scene event names the target. Each field
 kind's effect is the part named for it, such as `psynergy_effects/reveal.c`.
-A kind's entry points open with the abilities that reach them (Halt's
-part is the one without such a line):
+A part's entry points name the abilities that reach them in the same reach
+line the [battle effects](../effect/README.md) use, a paragraph of its own
+after the opening sentence, with the field kind's `enum FieldKind` name in
+parentheses. This is Carry's, for a cast on a target:
 
 ```c
-/// Abilities: Catch (field kind 13), cast on a target.
+/// When Carry is cast on a target, two hands lift it to 24 pixels above the
+/// ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
+/// where it is.
+///
+/// Abilities: Carry (FIELD_KIND_CARRY).
 ```
 
-Mind Read is the one kind whose effect stays up through the after event,
-since the after event is the conversation it reads.
+Halt's part is the only one without a reach line, because `dispatch.c` plays
+Halt itself, with the helpers in `psynergy_effects/halt.c`. Mind Read is the
+one field kind whose effect stays up through the after event, since the after
+event is the conversation it reads.
 
 ### The world map screen
 

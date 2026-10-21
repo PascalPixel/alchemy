@@ -55,18 +55,21 @@
     }                                                                          \
   }
 
-/// The scene plays in two parts on the effect canvas.
+/// Over scrolling dusk clouds a circle of dots turns, sinks into the sky and
+/// sends down a beam of light; then a pillar of lightning strikes a formation,
+/// violet bolts follow, and the formation is pushed back in smoke.
 ///
-/// Abilities: Thor (scene kind 12).
+/// Abilities: Thor (SCENE_EFFECT_THOR).
 ///
-/// In the dusk part (THOR_DUSK_FRAMES, which A or B cuts short) a circle of 128
-/// dots and three lines across it form over scrolling dusk clouds; the circle
-/// turns, sinks into the sky and a beam of light falls from it. In the
-/// lightning part (THOR_LIGHTNING_FRAMES) a pillar of lightning strikes the
-/// formation and throws sparks, THOR_BOLTS violet bolts follow while a violet
-/// mote sways above, and the formation is pushed back in smoke until an impact
-/// burst ends the effect. The sparks live in THOR_PARTICLES; a spark whose
-/// variant is 0 is free, and a positive variant counts the frames it has left.
+/// The scene plays in two parts on the effect canvas. In the dusk part
+/// (THOR_DUSK_FRAMES, which A or B cuts short) a circle of 128 dots and three
+/// lines across it form over scrolling dusk clouds; the circle turns, sinks
+/// into the sky and a beam of light falls from it. In the lightning part
+/// (THOR_LIGHTNING_FRAMES) a pillar of lightning strikes the formation and
+/// throws sparks, THOR_BOLTS violet bolts follow while a violet mote sways
+/// above, and the formation is pushed back in smoke until an impact burst ends
+/// the effect. The sparks live in THOR_PARTICLES; a spark whose variant is 0
+/// is free, and a positive variant counts the frames it has left.
 ///
 /// Loads the dusk clouds as the battle backdrop (BattleBackground_LoadFar),
 /// and for the dusk part sets view->busy and moves gProjection.centerY to

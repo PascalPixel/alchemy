@@ -25,7 +25,7 @@
 /// shows the damage on frame 32.
 ///
 /// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
-/// Thunderstorm (kind 18).
+/// Thunderstorm (BATTLE_FX_PLASMA).
 ///
 /// effect->variant picks how many pillars (gPlasma_Counts), how many sparks
 /// each throws and how long the screen shakes (gPlasma_Sparks); with variant 2
@@ -197,16 +197,17 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 
 // Spark bursts: the folder README describes them under "Effect families".
 
-/// Bursts at (60, 48), the canvas behind the battle's first layer (priority 1).
+/// Bursts go off at (60, 48), with the canvas behind the battle's first layer
+/// (priority 1).
 ///
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
-/// (kind 15).
+/// (BATTLE_FX_NOVA).
 void BattleFx_RunNova(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 0);
 }
-/// Orange bursts at (60, 64), the canvas in front (priority 0).
+/// Orange bursts go off at (60, 64), with the canvas in front (priority 0).
 ///
-/// Abilities: Dynamite (kind 338).
+/// Abilities: Dynamite (BATTLE_FX_DYNAMITE).
 void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 1);
 }
@@ -215,7 +216,7 @@ void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
 #define SPARK_GROUPS_RING 12        ///< of which drawn as the ring
 #define SPARK_GROUPS_FLASH_DRAWN 18 ///< a flash is drawn for its last 18 frames
 
-/// One to three bursts, 8 frames apart: each flashes, rings itself with
+/// One to three bursts go off 8 frames apart: each flashes, rings itself with
 /// twelve smaller flashes that fade, and throws out sparks that bounce on
 /// the ground; every burst knocks the targets back.
 /// effect->variant picks the shape from gPlasma_Shapes: sparks per

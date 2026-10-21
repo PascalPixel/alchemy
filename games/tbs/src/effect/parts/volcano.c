@@ -24,7 +24,7 @@
 /// and keeps spitting more, and each eruption knocks the targets back.
 ///
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
-/// Storm (kind 13).
+/// Storm (BATTLE_FX_VOLCANO).
 ///
 /// The battle shows the damage on frame 16. Variant 0 is red, 2 orange; variant
 /// 2 also swings the camera round over the first 64 frames.

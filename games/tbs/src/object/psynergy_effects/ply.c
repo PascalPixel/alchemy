@@ -93,21 +93,24 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
   }
 }
 
-/// Runs FieldFx_RunPly, then stops the caster's hook. Called by
-/// BattleFx_DispatchRequestKind.
+/// Runs FieldFx_RunPly, then stops the caster's hook.
 ///
-/// Abilities: Ply, Ply Well, Pure Ply (field kind 3), cast on a target.
+/// Abilities: Ply, Ply Well, Pure Ply (FIELD_KIND_PLY).
+///
+/// This is Ply cast on a target, which BattleFx_DispatchRequestKind calls.
 void FieldFx_RunPlyOnTarget(s32 unused) {
   FieldFx_RunPly();
   EffectRuntime_StopCurrentObject();
 }
 
 /// Eight particles spiral into the centre, where one appears, sheds sparks and
-/// flies far away. Called by BattleFx_Run and FieldFx_RunPlyOnTarget; frees
-/// the particles' shared sprite resource slot at the end and runs the effect
-/// scene's finishCallback.
+/// flies far away.
 ///
-/// Abilities: Ply, Ply Well, Pure Ply (field kind 3).
+/// Abilities: Ply, Ply Well, Pure Ply (FIELD_KIND_PLY).
+///
+/// Called by BattleFx_Run and FieldFx_RunPlyOnTarget; frees the particles'
+/// shared sprite resource slot at the end and runs the effect scene's
+/// finishCallback.
 void FieldFx_RunPly(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->mainObject;

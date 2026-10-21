@@ -31,7 +31,7 @@
 /// upside down in the air; on frame 54 the target is hit and both bounce back,
 /// while flashes burst from the user and rise in a widening ring.
 ///
-/// Abilities: Death Plunge (kind 53).
+/// Abilities: Death Plunge (BATTLE_FX_DEATH_PLUNGE).
 void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -344,9 +344,9 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
 
 #define ELEMENT_PILLAR_FRAMES 56
 
-/// The glow of an element around a unit: a symmetrical pillar of light
-/// stands at the unit's feet while motes spiral up around it, for 56 frames,
-/// and the first target flashes.
+/// A symmetrical pillar of light in an element's colours stands at a unit's
+/// feet while motes spiral up around it, for 56 frames, and the first target
+/// flashes.
 ///
 /// Called through BattleFx_RunElementPillarFar by
 /// BattleFx_PlayUnitElementEffect (its mode 2) and four times in a row, one
@@ -535,12 +535,11 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
 #define SHATTERING_OPENING_DISC_X 96  ///< the centre of the opening disc
 #define SHATTERING_OPENING_DISC_Y 60  ///< the centre of the opening disc
 
-/// The shattering opening of the battle on the Venus aerie storm backdrop:
-/// the screen turns white and a grey disc grows from (96, 60) by 32 pixels a
-/// frame while the TileAnimationMask picture breaks into 33 pieces that fly
-/// apart and fall; background palettes 6 to 13 then ease from white back to
-/// the battle backdrop's colours, and from frame 51 32 flashes rise. Runs
-/// for 128 frames.
+/// As a battle on the Venus aerie storm backdrop opens, the screen turns white
+/// and a grey disc grows from (96, 60) by 32 pixels a frame while the
+/// TileAnimationMask picture breaks into 33 pieces that fly apart and fall;
+/// background palettes 6 to 13 then ease from white back to the battle
+/// backdrop's colours, and from frame 51 32 flashes rise. Runs for 128 frames.
 ///
 /// Called through BattleFx_RunShatteringOpeningFar by
 /// BattlePres_RunEntryTransition, as a battle opens. Allocates and frees its
@@ -922,9 +921,9 @@ struct Streak {
   s32 unused18; ///< the EffectStep's variant, which the streaks leave alone
 };
 
-/// The burst of an element over a unit, for 56 frames: sparks flare at the
-/// four corners around the unit, motes spiral in, and from frame 28 a burst
-/// of light plays over the unit while the first target flashes.
+/// For 56 frames, sparks in an element's colours flare at the four corners
+/// around a unit, motes spiral in, and from frame 28 a burst of light plays
+/// over the unit while the first target flashes.
 ///
 /// Called through BattleFx_RunElementBurstFar by
 /// BattleFx_PlayUnitElementEffect (its mode 3). Allocates and frees its own

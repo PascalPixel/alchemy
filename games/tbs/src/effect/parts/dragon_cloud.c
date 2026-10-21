@@ -26,7 +26,7 @@
 /// behind it, then strikes the first target on DRAGON_CLOUD_STRIKE_FRAME and
 /// bursts into embers and flashes.
 ///
-/// Abilities: Dragon Cloud (kind 49).
+/// Abilities: Dragon Cloud (BATTLE_FX_DRAGON_CLOUD).
 ///
 /// The trail's last nine copies are darker versions of the trail picture, each
 /// DRAGON_CLOUD_TRAIL_CELL_BYTES long. The camera turns a quarter turn about

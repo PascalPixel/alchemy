@@ -4,10 +4,12 @@
 
 #include "../effect_internal.h"
 
-/// Gust: the burst scene in mode 6, 7 or 8 as the variant grows, one to
-/// three strikes that each fill the canvas with light.
+/// The user strikes the first target once, twice or three times as the
+/// variant grows, and each strike fills the canvas with light. These are the
+/// burst scene's modes 6, 7 and 8.
 ///
-/// Abilities: Gust (kind 219); Rapid Smash, Sonic Smash, Slice (kind 310).
+/// Abilities: Gust (BATTLE_FX_GUST); Rapid Smash, Sonic Smash, Slice
+/// (BATTLE_FX_GUST_310).
 void BattleFx_RunGust(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunBurstScene(effect, 6);
@@ -20,38 +22,42 @@ void BattleFx_RunGust(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 8);
 }
 
-/// Bear Claw: five strikes, the burst scene in mode 0.
+/// The user strikes the first target five times, in the burst scene's mode 0.
 ///
-/// Abilities: Bear Claw (kind 317); Counterstrike (kind 342).
+/// Abilities: Bear Claw (BATTLE_FX_BEAR_CLAW); Counterstrike
+/// (BATTLE_FX_BEAR_CLAW_342).
 void BattleFx_RunBearClaw(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
 
-/// Ransack: the same five strikes as Bear Claw (mode 0).
+/// Ransack plays the same five strikes as Bear Claw, the burst scene's mode 0.
 ///
-/// Abilities: Ransack (kind 321); Mad Dash (kind 343).
+/// Abilities: Ransack (BATTLE_FX_RANSACK); Mad Dash (BATTLE_FX_RANSACK_343).
 void BattleFx_RunRansack(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
 
-/// Bacteria Rush: seven strikes in the lime palette (mode 1).
+/// Seven strikes land on the first target in the lime palette, the burst
+/// scene's mode 1.
 ///
-/// Abilities: Bacteria Rush (kind 328).
+/// Abilities: Bacteria Rush (BATTLE_FX_BACTERIA_RUSH).
 void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 1);
 }
 
-/// Freebite Rush: nine strikes in the blue palette (mode 2).
+/// Nine strikes land on the first target in the blue palette, the burst
+/// scene's mode 2.
 ///
-/// Abilities: Freebite Rush (kind 334).
+/// Abilities: Freebite Rush (BATTLE_FX_FREEBITE_RUSH).
 void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 2);
 }
 
-/// Flying Attack: the burst scene in mode 3, 4 or 5 as the variant grows, one
-/// to three strikes.
+/// One, two or three strikes land on the first target as the variant grows,
+/// in the burst scene's modes 3, 4 and 5.
 ///
-/// Abilities: Flying Attack (kind 319); Swift Strike (kind 329).
+/// Abilities: Flying Attack (BATTLE_FX_FLYING_ATTACK); Swift Strike
+/// (BATTLE_FX_FLYING_ATTACK_329).
 void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunBurstScene(effect, 3);
@@ -83,9 +89,9 @@ enum BurstField {
 /// The wave pictures, in the map buffer past the motes.
 #define BURST_SCENE_WAVE_CELLS (Ram_MapCellBuffer + 0x5e00)
 
-/// Flurry: the user closes on the first target and strikes it again and
-/// again; each strike shows an arc (or, in rows with arc sheet 0, a wave
-/// for the third and fourth of every four), flashes and throws motes. A
+/// The user closes on the first target and strikes it again and again; each
+/// strike shows an arc (or, in rows with arc sheet 0, a wave for the third
+/// and fourth of every four), flashes and throws motes. A
 /// strike lands 2 frames after it starts: an odd one jolts the target, and
 /// the last knocks it back, shakes the screen for longer (8 frames against
 /// 4) and ends the attack.

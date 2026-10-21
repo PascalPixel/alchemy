@@ -1,5 +1,6 @@
 /// @file
-/// Status motes: Taint, Delude, Paralyze, Sleep, Curse ....
+/// The status motes of Taint, Delude, Paralyze, Heartrender, Mystic Flame,
+/// Demon Fire and Drown, then Sleep's sheep and Curse's flames.
 // Part of effect.c.
 
 #include "../effect_internal.h"
@@ -14,9 +15,10 @@
 // image cycle. The bouncing sheep (Sleep) that follow keep theirs in
 // PARTICLES too, and the flames of Curse in work->particles.
 
-/// Lime smoke (effect->variant 0) or pink smoke.
+/// Lime smoke swirls in on each target, or pink smoke when effect->variant
+/// isn't 0.
 ///
-/// Abilities: Taint, Poison (kind 32).
+/// Abilities: Taint, Poison (BATTLE_FX_TAINT).
 void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunTargetMotes(effect, 0);
@@ -25,44 +27,47 @@ void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 1);
 }
 
-/// Pink smoke; no ☀️ effect table entry points here.
+/// Pink smoke swirls in on each target, as Taint shows it when
+/// effect->variant isn't 0. No ☀️ effect table entry points here.
 UNUSED void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 1);
 }
 
-/// Cyan smoke that rises.
+/// Cyan smoke rises around each target.
 ///
-/// Abilities: Delude, Confuse, Mist (kind 33).
+/// Abilities: Delude, Confuse, Mist (BATTLE_FX_DELUDE).
 void BattleFx_RunDelude(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 2);
 }
-/// Rising smoke with glints.
+/// Smoke rises around each target, and glints sparkle near it.
 ///
-/// Abilities: Paralyze (kind 36).
+/// Abilities: Paralyze (BATTLE_FX_PARALYZE).
 void BattleFx_RunParalyze(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 3);
 }
-/// Hearts.
+/// Hearts close in on each target, turning as they come.
 ///
-/// Abilities: Heartrender (kind 346); kind 35 is used by no ability.
+/// Abilities: Heartrender (BATTLE_FX_HEARTRENDER_346); none
+/// (BATTLE_FX_HEARTRENDER).
 void BattleFx_RunHeartrender(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 4);
 }
-/// Glowing orbs.
+/// Glowing orbs spiral in on each target.
 ///
-/// Abilities: Mystic Flame (kind 312).
+/// Abilities: Mystic Flame (BATTLE_FX_MYSTIC_FLAME).
 void BattleFx_RunMysticFlame(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 5);
 }
-/// Glowing orbs in Mars Djinn colours, and the user strikes.
+/// Glowing orbs in Mars Djinn colours rise around each target, and then the
+/// user steps up to the first target and strikes it.
 ///
-/// Abilities: Demon Fire (kind 64).
+/// Abilities: Demon Fire (BATTLE_FX_DEMON_FIRE).
 void BattleFx_RunDemonFire(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 7);
 }
-/// Vortex motes.
+/// Thirty-two vortex motes spiral in on each target.
 ///
-/// Abilities: Drown (kind 66).
+/// Abilities: Drown (BATTLE_FX_DROWN).
 void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 6);
 }
@@ -352,11 +357,11 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
 /// its damage pose in turn from frame 64, and the battle shows the result on
 /// frame 80.
 ///
-/// Abilities: Sleep (kind 37).
+/// Abilities: Sleep (BATTLE_FX_SLEEP).
 ///
-/// 148 frames. PARTICLES 0 to 31 are the sheep, canvas pixels in 16.16; only
-/// the first twelve fall. Loads the sheep palette into the first 64
-/// background colours and sets REG_BLDCNT and BG2's affine registers (the
+/// It lasts SLEEP_FRAMES. PARTICLES 0 to 31 are the sheep, canvas pixels in
+/// 16.16; only the first twelve fall. Loads the sheep palette into the first
+/// 64 background colours and sets REG_BLDCNT and BG2's affine registers (the
 /// narrow canvas, moved over the party's side when side is 1).
 void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   void **slots;
@@ -469,7 +474,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
 /// 72 frames each, over a marker at its feet; the battle shows the result on
 /// frame 32.
 ///
-/// Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
+/// Abilities: Curse (BATTLE_FX_CURSE); Lucid Prophecy (BATTLE_FX_CURSE_354).
 ///
 /// Lasts 32 frames a target plus 32, so with one target the flame is cut off
 /// after 64 frames. work->particles' variants, 0 to 63, give each flame its

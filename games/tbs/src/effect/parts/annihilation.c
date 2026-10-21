@@ -9,9 +9,9 @@
 /// The user closes on the first target and fire bursts from it in a shower of
 /// shards.
 ///
-/// Abilities: Annihilation (kind 55).
+/// Abilities: Annihilation (BATTLE_FX_ANNIHILATION).
 ///
-/// Its frames:
+/// Its frames play out like this:
 ///
 ///   4 on       64 shards scatter from the target and fall
 ///   6 to 11    a fire streak flares in front of the user

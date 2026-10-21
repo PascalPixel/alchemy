@@ -107,14 +107,14 @@ void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
 
 /// Runs Douse cast on a target, through FieldFx_RunDouse.
 ///
-/// Abilities: Douse (field kind 5), cast on a target.
+/// Abilities: Douse (FIELD_KIND_DOUSE).
 void FieldFx_RunDouseOnTarget(s32 unused) { FieldFx_RunDouse(); }
 
 /// An orb rises from 16 pixels above the caster to 32 pixels above the
 /// destination (80 with variant) over 10 frames, growing as it goes, rains
 /// particles, and returns.
 ///
-/// Abilities: Douse (field kind 5).
+/// Abilities: Douse (FIELD_KIND_DOUSE).
 ///
 /// The destination is the target's position (BattleFx_SetupObjectPair);
 /// with no target it is 16 pixels in front of the caster, on the ground.

@@ -30,9 +30,9 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   } while (remainingActors >= 0);
 }
 
-/// Scheduler callback of the timed effect (kind 8): asks for it to end once
-/// the leader is 60 pixels from its centre or its time has run out. The
-/// centre and the time are in the event work from 0xcb8 on
+/// Scheduler callback of the timed effect (FIELD_KIND_REVEAL): asks for it to
+/// end once the leader is 60 pixels from its centre or its time has run out.
+/// The centre and the time are in the event work from 0xcb8 on
 /// (FieldFx_RunReveal). The time counts only while effectTimerRunning is
 /// set, so menus and other effects pause it. It asks every frame until
 /// ResetSceneTransitionEffect removes it.
@@ -70,7 +70,7 @@ void FieldEffect_WatchLeaderDistance(void) {
 /// Starts a screen transition centred on the leader, runs the matching event if
 /// there is one, and puts markers round the leader.
 ///
-/// Abilities: Reveal (field kind 8).
+/// Abilities: Reveal (FIELD_KIND_REVEAL).
 ///
 /// The transition is window transition mode 8, a wobbling circle round the
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts

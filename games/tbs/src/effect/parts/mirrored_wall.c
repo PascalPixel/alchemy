@@ -37,19 +37,19 @@ void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
 
 /// The wall rises wide and shakes the screen hard.
 ///
-/// Abilities: Berserk (kind 353).
+/// Abilities: Berserk (BATTLE_FX_BERSERK).
 void BattleFx_RunBerserk(struct BattleEffectArgument *effect) {
   BattleFx_RunMirroredWall(effect, 1);
 }
 /// The wall rises with a long gentle shake and the recovery sound.
 ///
-/// Abilities: Spasm (kind 348).
+/// Abilities: Spasm (BATTLE_FX_SPASM).
 void BattleFx_RunSpasm(struct BattleEffectArgument *effect) {
   BattleFx_RunMirroredWall(effect, 0);
 }
-/// A wide wall of fire, without a shake.
+/// A wide wall of fire rises without shaking the screen.
 ///
-/// Abilities: Recovery (kind 389).
+/// Abilities: Recovery (BATTLE_FX_RECOVERY).
 void BattleFx_RunRecovery(struct BattleEffectArgument *effect) {
   BattleFx_RunMirroredWall(effect, 2);
 }

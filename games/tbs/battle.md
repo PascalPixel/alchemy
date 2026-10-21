@@ -14,18 +14,22 @@ most of the battle code.
 Everything the player can choose becomes an ability, and every ability is a
 row number, the same row in every ability table. Quake is row 3. Its row of
 `actions.tsv` says it strikes with Venus, reaches the aimed unit and one on
-either side, costs 4 PP and has a power of 12. Its row of `actflags.tsv` says
-which effect draws it, and its row of `actstat.tsv` how the outcome is
-staged. So any move can be followed from the menu to the damage it does by
-reading one row across the tables in [Game rules](src/game/README.md).
+either side, costs 4 PP and has a power of 12. Every unit has a Power and a
+Resist in each element, the numbers a party member's status screen lists, and
+Quake's power is what the aimed unit takes when Isaac's Venus Power matches
+its Venus Resist: 12 damage, plus a random 0 to 3. Its row of `actflags.tsv`
+says which effect draws it, and its row of `actstat.tsv` how the battle shows
+it. So any move can be followed from the menu to the damage it does by reading
+one row across the tables in [Game rules](src/game/README.md).
 
 In this recording Isaac's Quake lands on his own party, and the member he aimed
 at takes more damage than the one beside him. That's the range at work:
 Psynergy damage falls off with each step from the aimed unit, to 80 percent
-one step away and 60 two steps away. Then the element comes in: each point the
-caster's Venus power is ahead of the target's Venus resistance adds half a
-percent, up to double. [Battles](src/battle/README.md) has every formula and
-table, with the rows they read.
+one step away and 60 two steps away. Then the element comes in: each point
+Isaac's Venus Power is ahead of the target's Venus Resist adds half a percent,
+up to double, and each point behind takes half a percent off.
+[Battles](src/battle/README.md#how-an-ability-resolves) has every formula and
+table, worked through for Avalanche, Cure and Ragnarok.
 
 ## How can the damage appear before the effect is over?
 
@@ -78,5 +82,4 @@ it strikes. Its ability row carries a bit that sends it to
 `BattleFx_RunSceneEffect` instead of the table of ordinary effects, and its
 damage gets a bonus too, a few percent of the target's maximum HP for every
 Djinni it uses. [Battle effects](src/effect/README.md) goes through the
-effect families, and [Abilities](https://alchemy.pascalpixel.com/tbs/abilities)
-has a recording of every ability beside the code that draws it.
+effect families and how each one is drawn.

@@ -27,22 +27,20 @@ enum SlashSheetCell {
   ATALANTA_SLASH_BOTTOM = 0x1bf3          ///< 21x24
 };
 
-/// Rain of blades: under a violet sky, a 3x3 formation of objects flies along a
-/// stored path while sixteen blades gather trails of light, flash and fly off;
-/// A or B skips ahead.
-///
-/// Abilities: Atalanta (scene kind 4).
-///
-/// Then 24 blades fall diagonally on the targets and burst into flame, hitting
+/// Under a violet sky, a 3x3 formation of objects flies along a stored path
+/// while sixteen blades gather trails of light, flash and fly off; then 24
+/// blades rain down diagonally on the targets and burst into flame, hitting
 /// each target as they land.
 ///
-/// The gathering lasts up to 220 frames and the fall 88. work->particles holds
-/// the 16 gathering blades and then the falling ones; PARTICLES holds 24 trail
-/// particles for each gathering blade, with their rotations in
-/// ATALANTA_MATRICES. The formation is nine objects in work->objects, released
-/// between the parts. Loads the violet sky into BG1 and scrolls it with
-/// BattleFx_AdvanceScrollOnInterval during the gathering, holding view->busy;
-/// restores gBgScroll[1].x and gives BG1 back with
+/// Abilities: Atalanta (SCENE_EFFECT_ATALANTA).
+///
+/// A or B skips the rest of the gathering, which lasts up to 220 frames; the
+/// fall lasts 88. work->particles holds the 16 gathering blades and then the
+/// falling ones; PARTICLES holds 24 trail particles for each gathering blade,
+/// with their rotations in ATALANTA_MATRICES. The formation is nine objects in
+/// work->objects, released between the parts. Loads the violet sky into BG1
+/// and scrolls it with BattleFx_AdvanceScrollOnInterval during the gathering,
+/// holding view->busy; restores gBgScroll[1].x and gives BG1 back with
 /// BattleFx_SetupBlendedDisplay between the parts. Leaves the ember sheet in
 /// Ram_MapCellBuffer.
 ///

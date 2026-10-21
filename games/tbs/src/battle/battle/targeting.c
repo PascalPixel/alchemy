@@ -112,8 +112,14 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
   return positions[(Random16() * count) >> 16];
 }
 
-/// Counts the ailments of unit that a partial cure removes (delusion,
-/// confusion, charm, sleep, Psynergy seal, the Grim Reaper's curse).
+/// Counts the ailments of unit that Restore is taken to cure: delusion,
+/// confusion, charm, sleep, the Psynergy seal and the Grim Reaper.
+/// XXX: likely wrong, because Restore and Tonic clear stun and never
+/// confusion or charm (BattleTargetExec), as Restore's description and the
+/// party's target window (BattleTarget_RunSelection) have it; only
+/// BattleHitCheck counts confusion and charm too. Cerebus and the Hydros
+/// Statue, the enemies with Restore, pass over an ally who is only stunned,
+/// and may spend it on one who is only confused or charmed.
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
   {                                                                            \
     if ((unit)->delusion != 0)                                                 \
@@ -130,7 +136,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       (count)++;                                                               \
   }
 
-/// Counts the ailments a full cure removes: those, haunting and poison.
+/// Counts the ailments Tonic is taken to cure: those, the evil spirit and
+/// poison, with the same mismatch. No enemy has Tonic.
 #define COUNT_ALL_CURES(unit, count)                                           \
   {                                                                            \
     COUNT_PARTIAL_CURES((unit), (count));                                      \
@@ -140,7 +147,9 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       (count)++;                                                               \
   }
 
-/// Counts unit's raised stats: Attack, Defense, Resistance and each element.
+/// Counts what Break would undo on unit: raised Attack, Defense and Resistance
+/// stages and a summon's boost in each element. A raised Agility, which Break
+/// also undoes, isn't counted.
 #define COUNT_POSITIVE_MODIFIERS(unit, count)                                  \
   {                                                                            \
     if ((unit)->attackStage > 0)                                               \
@@ -164,8 +173,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 /// to wear off), a cure or a heal the unit needs, an ailment it lacks, a
 /// revival of a downed unit (100). Failing its added effect, the ability's
 /// damage or healing must have something to work on. kindIndex receives the
-/// ability's kind less one (enum AbilityKind, which says what the unnamed
-/// kinds hold). No row of actions.tsv has effect 1 or 2.
+/// ability kind less one (enum AbilityKind, which says what the unnamed
+/// ability kinds hold). No row of actions.tsv has effect 1 or 2.
 #define CHECK_EFFECT_TARGET(unit, action, applies, kindIndex)                  \
   {                                                                            \
     (applies) = 0;                                                             \
@@ -418,10 +427,10 @@ scan_complete:
            UnitGetFar(actorId)->classId))
               ->targetStrategy != STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_KIND_MASK) - ABILITY_KIND_ATTACK) <= 2) {
-    // A single-target attack of kind 3 to 5 by an enemy with a strategy: sort
-    // the targets by HP left or by maximum HP, the most first. Each pass of
-    // the exchange sort starts one place later, so the order can come out
-    // wrong: HP 1, 2 and 3 end as 2, 3 and 1.
+    // A single-target ability of ABILITY_KIND_ATTACK to ABILITY_KIND_DAMAGE
+    // by an enemy with a strategy: sort the targets by HP left or by maximum
+    // HP, the most first. Each pass of the exchange sort starts one place
+    // later, so the order can come out wrong: HP 1, 2 and 3 end as 2, 3 and 1.
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;

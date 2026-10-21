@@ -17,9 +17,9 @@
 /// shatters in a white flash into a burst of larger pieces and the target is
 /// knocked back, bouncing on frame 120.
 ///
-/// Abilities: Condemn (kind 40).
+/// Abilities: Condemn (BATTLE_FX_CONDEMN).
 ///
-/// The effect layer ripples throughout. 132 frames.
+/// The effect layer ripples throughout.
 ///
 /// Opens the tiled canvas (BattleFx_BeginTiledCanvas) and adds
 /// BattleFx_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes

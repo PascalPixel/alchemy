@@ -48,28 +48,36 @@ enum Element {
 /// as if aimed at.
 #define ABILITY_RANGE_ALL 255
 
-/// The low four bits of BattleAct.flags: how BattleTargetExec applies
-/// the ability's power. Kinds 0, 7 and 9 apply none: 0 is no ability, 7 is
-/// Granite, Flash and Kite, 9 the field Psynergy, Defend, Flee and enemies'
-/// commands.
+/// The low four bits of BattleAct.flags: the ability kind (enum AbilityKind).
 #define ABILITY_KIND_MASK 15
 
-/// The kinds of ability, by the low four bits of BattleAct.flags. Three kinds
-/// have no enumerator, because BattleTargetExec applies no power for them:
-/// 0 is no ability; 7 is Granite, Flash and Kite, whose effect is all they
-/// do; 9 is the field Psynergy (Move, Catch...), the field-only stat items
-/// (Apple, Power Bread...), Defend, Flee and the enemies' commands (Threaten,
-/// Ally Search...). The targeting check treats kind 9 as a summon: worth it
-/// on a living unit only when the power is nonzero.
+/// An ability kind picks what the ability's power does to each target: the
+/// formula BattleTargetExec puts it through. Three ability kinds have no
+/// enumerator, because they apply no power: 0 is only in the blank rows no
+/// table uses; 7 is Granite, Flash and Kite, whose effect is all they do; 9 is
+/// the field Psynergy (Move, Catch...), the field-only stat items (Apple,
+/// Power Bread...), Defend, Flee and the enemies' commands (Threaten, Ally
+/// Search...). The enemies' targeting check (CHECK_EFFECT_TARGET) treats
+/// ability kind 9 as a summon: worth it on a living unit only when the power
+/// is nonzero.
 enum AbilityKind {
   ABILITY_KIND_HEAL_HP = 1,           ///< Cure, Fizz, healing items
   ABILITY_KIND_EFFECT = 2,            ///< damage only if the effect lands
   ABILITY_KIND_ATTACK = 3,            ///< Attack vs Defense, plus the power
   ABILITY_KIND_ATTACK_MULTIPLIED = 4, ///< that attack times power / 10
   ABILITY_KIND_DAMAGE = 5,            ///< HP damage from the power (Psynergy)
-  ABILITY_KIND_UNLEASHED_DAMAGE = 6,  ///< an enemy's. Shown as `X unleashes Y!`
-  ABILITY_KIND_SUMMON = 8,     ///< the summons: damage scaled by distance
-  ABILITY_KIND_PP_DAMAGE = 10, ///< Crazy Voice: the target loses PP
+  /// HP damage from enemies' moves such as Fire Blessing and Deadly Gas,
+  /// falling off faster than Psynergy's (gHpDmgTable6). Unless the move has
+  /// wording of its own, it's announced as `<unit> unleashes <ability>!`. A
+  /// weapon's unleash is something else: ABILITY_KIND_ATTACK, or for Rapid
+  /// Smash ABILITY_KIND_ATTACK_MULTIPLIED.
+  ABILITY_KIND_UNLEASHED_DAMAGE = 6,
+  /// Summon damage falls off faster than Psynergy's (gHpDmgTable8). Called
+  /// with the Summon command, a summon also adds 3% of the target's maximum
+  /// HP to its power for each Djinni it spends; the Fusion Dragon's Outer
+  /// Space and Dragon Driver go without that bonus.
+  ABILITY_KIND_SUMMON = 8,
+  ABILITY_KIND_PP_DAMAGE = 10, ///< Crazy Voice, and Psy Drain when it lands
   ABILITY_KIND_HEAL_PP = 11    ///< Ember, Psy Crystal, Adept Ring
 };
 
@@ -130,7 +138,7 @@ enum AbilityEffect {
   ABILITY_EFFECT_FLEE = 49,               ///< Flee
   ABILITY_EFFECT_CALL_ALLY = 50,          ///< Ally Search, Speed Surge
   ABILITY_EFFECT_CALL_HELP = 51,          ///< Search for Help
-  ABILITY_EFFECT_GROUND = 53,             ///< Ground: the target's turn lost
+  ABILITY_EFFECT_GROUND = 53,             ///< Ground, War Cry, Wicked Howl
   ABILITY_EFFECT_CHALLENGE = 54,          ///< no ability has it
   ABILITY_EFFECT_SELF_DESTRUCT = 55,      ///< Dynamite, Mortal Blow
   ABILITY_EFFECT_REVIVE_HALF = 56,        ///< Quartz
@@ -150,11 +158,11 @@ enum AbilityEffect {
 };
 
 /// An ability's definition, a row of gBattleAction_DefinitionTable: its
-/// targeting, kind, element, effect, range, PP cost and power.
+/// targeting, ability kind, element, effect, range, PP cost and power.
 struct BattleAct {
   u8 targetMode; ///< TARGET_MODE_NONE, _FOES, _ALLIES or _SELF
   /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
-  /// row | 3..0 kind (ABILITY_KIND_MASK, enum AbilityKind).
+  /// row | 3..0 ability kind (ABILITY_KIND_MASK).
   u8 flags;
   u8 element; ///< enum Element
   u8 effect;  ///< enum AbilityEffect
@@ -162,7 +170,14 @@ struct BattleAct {
   u8 unk04[4];
   u8 range;  ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
   u8 ppCost; ///< PP the ability costs
-  u16 power; ///< what the kind applies, 0 for none
+  /// The ability's power, as its ability kind reads it: for damage, about what
+  /// the aimed target loses when the actor's Power in the element equals the
+  /// target's Resist (a summon adds to it, see ABILITY_KIND_SUMMON); for
+  /// healing, about what the aimed target regains from a healer with 100
+  /// Power in the element; for an attack, what it adds to the blow at an even
+  /// match, and for a multiplied one the blow's multiple in tenths. The battle
+  /// README's "How an ability resolves" gives the formulas.
+  u16 power;
   /// The field Psynergy the ability works as, 1 (Move) to 16 (Avoid); 0 for
   /// none. The field effects branch on it, and the status screen counts it as
   /// usable in the field.
@@ -219,8 +234,8 @@ struct BattleUnit {
   /// lighthouse of the character's element is lit.
   u8 ppRegen;
   u8 unk046[2]; ///< Not named by any TBS code.
-  /// Power and resistance in each element, 0 to 200, after equipment,
-  /// element levels and Resistance stages (UnitCalc).
+  /// Power and resistance in each element, 0 to 200, after equipment, a
+  /// summon's boost and Resistance stages (UnitCalc).
   struct BattleElementStats element[4];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's (Unit_RefreshPsynergy). An empty entry is 0.
@@ -253,9 +268,11 @@ struct BattleUnit {
   /// 0, GUARD_DEFEND (1, half the damage) or GUARD_TOTAL_DEFENSE (2, a
   /// tenth); set by Defend and Granite, cleared each round.
   s8 guardLevel;
-  /// A summon's boost to each element: the Djinn of that element the summon
-  /// spent, adding (n * n + n) * 5 power (UnitCalc). Cleared at the battle's
-  /// start and by Break.
+  /// A summon's boost to its summoner's power in each element: at the end of
+  /// the summoner's turn, the element the summon spent the most Djinn of
+  /// rises to that many (BattleUnit_ProcessTurnEnd), and n adds
+  /// (n * n + n) * 5 power (UnitCalc). Cleared at the battle's start, on
+  /// going down and by Break.
   s8 elementLevels[4];
   /// The curse. bits: 3 item effect 25 (UnitCalc clears it again with bit 0)
   /// | 2 keeps bit 0 | 1 cursed item equipped | 0 bound. UnitCalc rebuilds
@@ -300,7 +317,7 @@ struct BattleUnit {
   /// Kite's extra action: 2 when cast, down one at each turn's end; while
   /// nonzero UnitCalc gives the unit one more action a round.
   u8 ready;
-  u8 immobile;     ///< set by Ground: the next action is lost
+  u8 immobile;     ///< set by ABILITY_EFFECT_GROUND: the next action is lost
   u8 agilityTurns; ///< the Agility change's turns left, 5 when cast
   /// The Agility stage: -4 (Vine) to 8 (Zephyr, twice the Agility).
   s8 agilityStage;

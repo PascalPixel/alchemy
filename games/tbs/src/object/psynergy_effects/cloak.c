@@ -135,7 +135,7 @@ void FieldFx_ResumeCloakCheck(void) {
 /// The leader blinks 10 times and hides (cloaked set), and the tile check
 /// starts; where the leader cannot hide it shows again at once.
 ///
-/// Abilities: Cloak (field kind 10).
+/// Abilities: Cloak (FIELD_KIND_CLOAK).
 ///
 /// Hidden, the leader is drawn as an outline only (sprite flags 2: outlined,
 /// no shadow), and while gGameState.cloaked is set no random battles come

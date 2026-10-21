@@ -9,7 +9,7 @@
 /// A fiery disc fades in, its rings running outward while every scanline
 /// ripples, then fades out.
 ///
-/// Abilities: Torch (kind 214).
+/// Abilities: Torch (BATTLE_FX_TORCH).
 ///
 /// The disc is a mirrored radial picture whose pixels hold their distance from
 /// the middle, so rotating the palette moves the rings. It follows a Mars
@@ -166,7 +166,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
 /// target, mirrored from the usual side; the Djinni's entrance is the whole
 /// effect.
 ///
-/// Abilities: Kite (kind 217).
+/// Abilities: Kite (BATTLE_FX_KITE).
 void BattleFx_RunKite(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   s32 originX;

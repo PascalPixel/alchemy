@@ -11,7 +11,7 @@
 /// The user leaps high at the first target, then a burst of 32 sparks rises
 /// beneath it.
 ///
-/// Abilities: Thrash (kind 388).
+/// Abilities: Thrash (BATTLE_FX_THRASH).
 ///
 /// The leap takes the user three quarters of the way in 24 steps, starting up
 /// at 12.2 pixels a frame (16.16); after 29 frames the spark group plays with
@@ -26,7 +26,7 @@ void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
 /// The user leaps at the first target, then a burst of 340 sparks rises
 /// beneath it and the canvas flashes.
 ///
-/// Abilities: none (kind 387).
+/// Abilities: none (BATTLE_FX_SPARK_APPROACH_VARIANT3).
 ///
 /// A lower leap than Thrash's (7.2 pixels a frame up), and the spark group
 /// after 12 frames with effect->variant set to 3, overriding the ability's
@@ -41,7 +41,7 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
 /// The user leaps at the first target, four pictures flash across the effect
 /// layer, then it fills with one colour as the target is struck.
 ///
-/// Abilities: Quick Strike (kind 52).
+/// Abilities: Quick Strike (BATTLE_FX_QUICK_STRIKE).
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
   BattleFx_RunFlashingStrike(effect, 1);
 }
@@ -49,7 +49,7 @@ void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
 /// The user steps up to the first target, four pictures flash across the
 /// effect layer, then it fills with one colour as the target is struck.
 ///
-/// Abilities: Vorpal Slash (kind 65).
+/// Abilities: Vorpal Slash (BATTLE_FX_VORPAL_SLASH).
 void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect) {
   BattleFx_RunFlashingStrike(effect, 2);
 }

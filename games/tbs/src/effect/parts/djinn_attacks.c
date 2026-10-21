@@ -64,11 +64,11 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 #define DJINN_ATTACKS_MOTES_PER_FLAME 32 ///< slots for each flame's motes
 #define DJINN_ATTACKS_MOTE_SLOTS 512
 
-/// Mercury Djinni flames: the small Mercury Djinni spirals around (96, 60) and
-/// fires five blue flames to the left; each flame shatters into 32 motes after
-/// 5 frames, hitting every target.
+/// The small Mercury Djinni spirals around (96, 60) and fires five blue flames
+/// to the left; each flame shatters into 32 motes after 5 frames, hitting
+/// every target.
 ///
-/// Abilities: Mercury (kind 251).
+/// Abilities: Mercury (BATTLE_FX_MERCURY).
 ///
 /// work->particles 0 to 4 hold the flames, variant -1 until launched and then
 /// counting the frames since; Ram_MapCellBuffer takes the blue flame sheet
@@ -205,11 +205,11 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
 #define JUPITER_GROUND_Y 95           ///< where the flameballs land
 #define JUPITER_FLAMEBALL_CELLS 0x320 ///< after the 20x40 Djinni
 
-/// Jupiter Djinni fall: the small Jupiter Djinni spirals while eight flameballs
-/// fall from the top right to the bottom left, 4 frames apart; each shatters
-/// into 32 motes below line 95, hitting every target.
+/// The small Jupiter Djinni spirals while eight flameballs fall from the top
+/// right to the bottom left, 4 frames apart; each shatters into 32 motes below
+/// line 95, hitting every target.
 ///
-/// Abilities: Jupiter (kind 253).
+/// Abilities: Jupiter (BATTLE_FX_JUPITER).
 ///
 /// work->particles holds the flameballs. Copies the Djinni's palette over the
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
@@ -350,11 +350,11 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 #define VENUS_FLAME_SHEET 0x2f8
 #define VENUS_COLUMN_CELLS (VENUS_FLAME_SHEET + DJINN_ATTACKS_FLAME2_CELLS)
 
-/// Venus Djinni columns: the small Venus Djinni sways while ten columns of
-/// flame in its colours rise from the ground one after another, each bursting
-/// into motes and hitting every target.
+/// The small Venus Djinni sways while ten columns of flame in its colours rise
+/// from the ground one after another, each bursting into motes and hitting
+/// every target.
 ///
-/// Abilities: Venus (kind 250).
+/// Abilities: Venus (BATTLE_FX_VENUS).
 ///
 /// work->particles holds the columns. Copies the Djinni's palette over the
 /// first 128 bytes of BG palette RAM, writes REG_BLDALPHA, sets
@@ -474,10 +474,10 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
 #define MARS_EMBERS_PER_FLAME 16 ///< embers in each flame
 #define MARS_ORB_CELLS 0x320     ///< six 40x40 orb pictures, after the Djinni
 
-/// Mars Djinni flames: a glowing orb flares, the small Mars Djinni dives to the
-/// ground, and nine flames erupt in a row while embers rise.
+/// A glowing orb flares, the small Mars Djinni dives to the ground, and nine
+/// flames erupt in a row while embers rise.
 ///
-/// Abilities: Mars (kind 252).
+/// Abilities: Mars (BATTLE_FX_MARS).
 ///
 /// The scene runs for 112 frames:
 ///

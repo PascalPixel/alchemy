@@ -114,7 +114,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// 3. Calling an ally (Ally Search, Search for Help, Speed Surge).
 /// 4. The effects that change the damage step: Ground, Torch, Severe Blow,
 ///    instant death, a self-destruct, Psy Drain.
-/// 5. Damage and healing, by the ability's kind (attack, PP damage, HP and PP
+/// 5. Damage and healing, by the ability kind (attack, PP damage, HP and PP
 ///    healing, Psynergy damage, an effect's damage).
 /// 6. The added effect, by the ability's effect: cures, heals, stat changes,
 ///    revivals, statuses, drains, Break, the curse, guards.
@@ -144,7 +144,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   s32 hit;          // the ability's effect lands
   s32 critical;     // enum BattleCritical
   s32 skipDamage;   // no damage step: instant death replaces it
-  s32 kind;         // how the power applies: enum AbilityKind
+  s32 kind;         // the ability kind: enum AbilityKind
   s32 affinity;     // -1 a resisted element, 1 a weakness, else 0
   // A copy of the target as it was, to measure each stat's change; a heap
   // block freed at the end.
@@ -337,7 +337,11 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
     if (ability->effect == ABILITY_EFFECT_GROUND) {
       u32 i;
 
-      // Ground holds only a target with an action in this turn's queue.
+      // Ground holds only a target with an entry in this round's action
+      // list, which keeps the entries that have run. XXX: likely meant as an
+      // action still to come, because the Djinni Ground is sorted to the
+      // round's front (BattleQueue_SortByPriority); War Cry and Wicked Howl,
+      // which have this effect too, can hold a target that has acted.
       hit = 0;
       for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
         if (work->actions[i].unitId == targetId) {
@@ -526,7 +530,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       break;
     }
 
-    // Never reached, as the kind is 0 to 15: PP damage that, unlike
+    // Never reached, as the ability kind is 0 to 15: PP damage that, unlike
     // ABILITY_KIND_PP_DAMAGE, does not count as damage dealt.
     case -1: {
       if (ability->power == 0)
@@ -552,8 +556,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       break;
     }
 
-    // HP damage from the ability's power, each kind with its own fall-off
-    // by distance.
+    // HP damage from the ability's power, each ability kind with its own
+    // fall-off by distance.
     case ABILITY_KIND_DAMAGE:
     case ABILITY_KIND_UNLEASHED_DAMAGE:
     case ABILITY_KIND_SUMMON: {
@@ -610,8 +614,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         }
         amount = BattlePowerCalc(power, elementBonus, FULL_RATE);
         amount *= multiplier;
-        // The fall-off by distance. (The kind is masked again, as the bytes
-        // need.)
+        // The fall-off by distance. (The ability kind is masked again, as the
+        // bytes need.)
         switch (kind & ABILITY_KIND_MASK) {
         case ABILITY_KIND_DAMAGE:
           amount = amount * gHpDmgTable5[distance] / 100;
@@ -677,7 +681,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       break;
     }
 
-    // The kinds with no damage or healing (see enum AbilityKind).
+    // The ability kinds with no damage or healing (see enum AbilityKind).
     case 0:
     case 7:
     case 9:
@@ -733,9 +737,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
        BattleEffectDeadCheck(ability->effect) != 0) &&
       hit != 0) {
     switch (ability->effect) {
-    // Tonic cures every ailment; sleep goes without a message. Most of its
-    // messages push the name for the next after them; Restore below clears
-    // the arguments and pushes the name before each instead.
+    // Tonic leaves confusion and charm, and ends sleep without a message.
+    // Most of its messages push the name for the next after them; Restore
+    // below clears the arguments and pushes the name before each instead.
     case ABILITY_EFFECT_CURE_ALL:
       if (target->delusion != 0) {
         target->delusion = 0;
@@ -771,8 +775,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
       break;
 
-    // Restore cures delusion, stun, sleep, the Psynergy seal and the Grim
-    // Reaper, but not poison or a haunting.
+    // Restore cures what Tonic does, but not the evil spirit or poison.
     case ABILITY_EFFECT_RESTORE:
       if (target->delusion != 0) {
         target->delusion = 0;
@@ -1184,7 +1187,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       Unit_AddPpFar(actorId, amount);
       break;
 
-    // Break undoes every raised stat and the element stages.
+    // Break returns raised Attack, Defense, Resistance and Agility stages to
+    // 0, leaving lowered ones, and takes away a summon's boost.
     case ABILITY_EFFECT_BREAK:
       if (target->attackStage > 0) {
         target->attackStage = 0;
@@ -1207,6 +1211,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       PUSH_MESSAGE(MsgBuffsReset);
       break;
 
+    // The target now pays for the HP and PP it takes: see the evil spirit's
+    // share at the end of this function.
     case ABILITY_EFFECT_HAUNT:
       PUSH_MESSAGE(MsgEvilSpirit);
       target->haunt = 1;
@@ -1243,7 +1249,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         work->challengeFlag |= 2;
       break;
 
-    // Ground: the target loses its next action.
+    // The target loses its next action (BattleCommand_BuildPlan).
     case ABILITY_EFFECT_GROUND:
       PUSH_MESSAGE(MsgImmobile);
       target->immobile = 1;
@@ -1280,8 +1286,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   //------------------------------------------------------------------
   BattleEvPush(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
 
-  // Damage wakes a sleeping target one time in four, unless it fell asleep
-  // this turn (its count still at STATUS_TURNS).
+  // Losing HP or PP wakes a sleeping target still standing one time in four,
+  // unless it fell asleep this round: Battle_ProcessRoundEnd has not yet
+  // counted it down from STATUS_TURNS.
   if (target->hp != 0 && target->sleep != 0 && target->sleep < STATUS_TURNS &&
       damageDealt > 0 && (BattleRandomFar() & 3) == 0) {
     target->sleep = 0;
@@ -1294,9 +1301,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   PartyStatusDrawFar(gBattleWork->partyStatus);
   if (target->hp != 0)
     BattleEvPush(BATTLE_EVENT_REFRESH_UNIT, targetId);
-  // A haunted actor: one time in four the evil spirit takes a quarter of the
-  // damage it dealt (at least 1), at the end of its turn
-  // (BattleUnit_ProcessTurnEnd).
+  // A haunted actor pays, one time in four, for each target it took HP or PP
+  // from: a quarter of that (at least 1), gathered in hauntDamage and taken
+  // from its own HP at the end of its turn (BattleUnit_ProcessTurnEnd).
   if (actor->haunt != 0 && (BattleRandomFar() & 3) == 0 && damageDealt > 0) {
     s32 share;
 

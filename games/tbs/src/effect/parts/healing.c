@@ -1,5 +1,5 @@
 /// @file
-/// Healing motes: Ply, Wish, Cure, Cure Poison.
+/// The healing motes of Ply, Wish, Cure, Cure Poison, Tonic and Psy Crystal.
 // Part of effect.c.
 
 #include "../effect_internal.h"
@@ -16,34 +16,35 @@
 
 #define HEALING_DJINNI_CELLS 0x1000 ///< the djinni picture in the sheet
 
-/// Ply: sparkles of light swirl around each target and close in on it, in the
-/// ice shard's or ice block's colours; the canvas is shown at its own width,
+/// Sparkles of light swirl around each target and close in on it, in the ice
+/// shard's or ice block's colours, with the canvas shown at its own width and
 /// centred on the first target.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply, Herb, Nut, Vial, Potion, Soothing Water
-/// (kind 22); Fizz (kind 204).
+/// (BATTLE_FX_PLY); Fizz (BATTLE_FX_PLY_204).
 void BattleFx_RunPly(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 0);
 }
-/// Wish (scattering style 1): healing motes tumble in from all around each
-/// target.
+/// Healing motes tumble in on each target from all around it.
 ///
-/// Abilities: Wish, Wish Well, Pure Wish (kind 23); Regenerate (kind 44);
-/// Reflect (kind 45); Spritz (kind 206).
+/// Abilities: Wish, Wish Well, Pure Wish (BATTLE_FX_WISH); Regenerate
+/// (BATTLE_FX_WISH_44); Reflect (BATTLE_FX_WISH_45); Spritz
+/// (BATTLE_FX_WISH_206).
 void BattleFx_RunWish(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 1);
 }
-/// Cure (mode 2): a ring of healing motes below each target closes in on it, in
-/// the blast sheet's colours.
+/// A ring of healing motes below each target closes in on it, in the blast
+/// sheet's colours.
 ///
-/// Abilities: Cure, Cure Well, Potent Cure, Corn (kind 21); Worms (kind 352).
+/// Abilities: Cure, Cure Well, Potent Cure, Corn (BATTLE_FX_CURE); Worms
+/// (BATTLE_FX_CURE_352).
 void BattleFx_RunCure(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 2);
 }
-/// Cure Poison: sparkles twinkle around each target, four more a frame, and go
-/// out one by one instead of closing in.
+/// Sparkles twinkle around each target, four more a frame, and go out one by
+/// one instead of closing in.
 ///
-/// Abilities: Cure Poison, Restore, Antidote, Elixir (kind 24).
+/// Abilities: Cure Poison, Restore, Antidote, Elixir (BATTLE_FX_CURE_POISON).
 ///
 /// Cure Poison and Antidote (variant 0) play mode 3; Restore and Elixir
 /// (variant 1) play mode 4, whose sparkles also turn on a second axis.
@@ -55,23 +56,23 @@ void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 4);
 }
 
-/// Healing sparkles with scattering style 4, as Cure Poison plays them for
-/// variants other than 0 (Restore, Elixir). No effect table entry reaches
+/// Plays the healing motes in mode 4, the sparkles Cure Poison shows for
+/// variants other than 0 (Restore and Elixir). No effect table entry reaches
 /// this one.
 UNUSED void BattleFx_RunHealingMotesMode4(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 4);
 }
-/// Tonic (scattering style 5): sparkles twinkle around each target, turning on
-/// two axes, and go out one by one; mode 5 plays as mode 4 does.
+/// Sparkles twinkle around each target, turning on two axes, and go out one by
+/// one; the runner plays Tonic's mode 5 exactly as it plays mode 4.
 ///
-/// Abilities: Tonic (kind 208).
+/// Abilities: Tonic (BATTLE_FX_TONIC).
 void BattleFx_RunTonic(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 5);
 }
-/// Psy Crystal: healing motes gather around each target in the Mars Djinni
-/// palette; with a prelude, a Mars Djinni appears first.
+/// Healing motes gather around each target in the Mars Djinni palette; with a
+/// prelude, a Mars Djinni appears first.
 ///
-/// Abilities: Psy Crystal, Adept Ring, Ember (kind 212).
+/// Abilities: Psy Crystal, Adept Ring, Ember (BATTLE_FX_PSY_CRYSTAL).
 void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 6);
 }
@@ -83,9 +84,9 @@ void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
 #define HEALING_TINT_FRAMES 28  ///< frames a target stays tinted white
 #define HEALING_DAMAGE_FRAME 40 ///< the frame the battle shows the recovery
 
-/// Healing sparkles: motes of light scattered around each target swirl in
-/// towards it, one target every 8 frames, with the recovery sound on each
-/// target's 20th frame and a tint on its 36th.
+/// Motes of light scattered around each target swirl in towards it, one target
+/// every 8 frames, with the recovery sound on each target's 20th frame and a
+/// tint on its 36th.
 ///
 /// Called by the wrappers above: BattleFx_RunPly (mode 0), BattleFx_RunWish
 /// (1), BattleFx_RunCure (2), BattleFx_RunCurePoison (3 or 4),

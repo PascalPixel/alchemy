@@ -11,11 +11,11 @@
 
 #define HAIL_FRAMES 64
 
-/// Water burst: after a Mercury Djinni enters, ice chips burst out of the first
-/// target and waves rise along the bottom of the screen; the canvas fades out
-/// over the last 16 of its 64 frames.
+/// After a Mercury Djinni enters, ice chips burst out of the first target and
+/// waves of water rise along the bottom of the screen; the canvas fades out
+/// over the last 16 frames.
 ///
-/// Abilities: Hail (kind 207).
+/// Abilities: Hail (BATTLE_FX_HAIL).
 ///
 /// The 64 chips start together and are let go four a frame from frame 4,
 /// alternately mirrored; the battle shows the damage on frame 8. The chips live
@@ -173,11 +173,10 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 #define GROUND_ROCKS 6          ///< rocks thrown
 #define GROUND_CHIPS_PER_ROCK 4 ///< chips each rock sheds
 
-/// Venus Djinni rock toss: after a Venus Djinni enters, six rocks rise from the
-/// user shedding chips, swirl, and home in on the first target, each hitting it
-/// as it lands.
+/// After a Venus Djinni enters, six rocks rise from the user shedding chips,
+/// swirl, and home in on the first target, each hitting it as it lands.
 ///
-/// Abilities: Ground (kind 203).
+/// Abilities: Ground (BATTLE_FX_GROUND).
 ///
 /// A rock's variant is 1 while it flies and 0 once it has hit; the chips are
 /// particles 32 to 63, four for each rock, each with its picture in velocityX

@@ -28,7 +28,7 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// gathers a ring of flares into a burst of light, then five blue flame columns
 /// drop onto the targets, throwing sparks.
 ///
-/// Abilities: Neptune (scene kind 6).
+/// Abilities: Neptune (SCENE_EFFECT_NEPTUNE).
 ///
 /// The scene runs in two stages. The first (244 frames; A or B ends it after
 /// frame 16) places NEPTUNE_OBJECTS objects at one and a half times their
@@ -48,9 +48,9 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// the screen shakes. The formation's objects are released before the scene
 /// returns.
 ///
-/// Particles: in the first stage work->particles 0 to 31 are the converging
-/// flares, then from frame 222 0 to 63 the burst points; PARTICLES holds the
-/// spray (variant counts its frames, -1 when free). In the second stage
+/// In the first stage work->particles 0 to 31 are the converging flares, then
+/// from frame 222 0 to 63 the burst points; PARTICLES holds the spray
+/// (variant counts its frames, -1 when free). In the second stage
 /// work->particles 0 to 4 are the flame columns (variant their frames on the
 /// ground) and PARTICLES the sparks (variant their frames left, 0 when free).
 /// The window's edge step, noise and scanline table use the map cell

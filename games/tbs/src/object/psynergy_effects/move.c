@@ -56,10 +56,11 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel tile
 
-/// Puts the pushing hand beside the target and pushes the target 16 pixels the
-/// way the d-pad points, for as long as the player pushes; A, B, L or R end it.
+/// When Move is cast on a target, the pushing hand appears beside it and pushes
+/// it 16 pixels the way the d-pad points, for as long as the player pushes; A,
+/// B, L or R end it.
 ///
-/// Abilities: Move (field kind 1), cast on a target.
+/// Abilities: Move (FIELD_KIND_MOVE).
 ///
 /// Where the target cannot go, an error sound plays every 16 frames. When the
 /// push would run into the caster, the caster blocks it or, when the tile
@@ -303,10 +304,10 @@ next_state:
     BattleFx_ClearOwnedSlot(slot);
 }
 
-/// Shows the hand beside the caster for 30 frames, then turns it into
-/// particles.
+/// When Move is cast with no target, the hand appears beside the caster for 30
+/// frames and then turns into particles.
 ///
-/// Abilities: Move (field kind 1), cast with no target.
+/// Abilities: Move (FIELD_KIND_MOVE).
 void FieldFx_RunMove(void) {
   UNUSED s32 work[3];
   struct BattleFxScene *scene;

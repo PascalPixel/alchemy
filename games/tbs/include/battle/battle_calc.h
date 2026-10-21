@@ -15,11 +15,12 @@
 /// The share of an effect's chance to land (BattleFx_RollSuccess's
 /// successScale): 100, 60, then 30.
 extern u8 gHitTable[];
-/// Crazy Voice's PP loss (ABILITY_KIND_PP_DAMAGE): 100, 50, 30, then 10.
+/// PP loss (ABILITY_KIND_PP_DAMAGE), Crazy Voice's and Psy Drain's: 100, 50,
+/// 30, then 10.
 extern s32 gPpLossTable[];
 /// HP healing (ABILITY_KIND_HEAL_HP): 100 down to 20 by 20, then 10.
 extern s32 gHpRecoveryTable[];
-/// PP damage of the never-reached kind -1: 100, 50, 30, then 10.
+/// PP damage of the never-reached ability kind -1: 100, 50, 30, then 10.
 extern s32 gPpDmgTable[];
 /// Psynergy damage (ABILITY_KIND_DAMAGE): 100 down to 20 by 20, then 10.
 extern s32 gHpDmgTable5[];

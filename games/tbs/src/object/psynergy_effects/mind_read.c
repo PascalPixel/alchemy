@@ -27,7 +27,7 @@ struct WaveFxWork {
 /// palettes toward a hue that shifts with the frame counter, and starts its
 /// per-frame update (FieldFx_UpdateMindReadWave) after 8 frames.
 ///
-/// Abilities: Mind Read (field kind 2).
+/// Abilities: Mind Read (FIELD_KIND_MIND_READ).
 ///
 /// The effect stays up until BattleFx_ClearChildValueOnMismatch ends it
 /// after the after event; meanwhile the message windows show thoughts

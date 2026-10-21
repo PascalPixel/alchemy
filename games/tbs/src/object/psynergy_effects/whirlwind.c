@@ -169,16 +169,19 @@ void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   }
 }
 
-/// Runs Whirlwind using the target already stored in the effect scene.
-/// Abilities: Whirlwind, Gale (field kind 14), cast on a target.
-/// BattleFx_DispatchRequestKind passes an argument this adapter ignores;
-/// the shared runner reads scene->child instead.
+/// Runs Whirlwind cast on a target, using the target already stored in the
+/// effect scene.
+///
+/// Abilities: Whirlwind, Gale (FIELD_KIND_WHIRLWIND).
+///
+/// BattleFx_DispatchRequestKind passes an argument this adapter ignores; the
+/// shared runner reads scene->child instead.
 void FieldFx_RunWhirlwindOnTarget(s32 unused) { FieldFx_RunWhirlwind(); }
 
 /// An orb is carried from the caster to 4 pixels above the effect's position
 /// over 10 frames, growing from 0.25.
 ///
-/// Abilities: Whirlwind, Gale (field kind 14).
+/// Abilities: Whirlwind, Gale (FIELD_KIND_WHIRLWIND).
 ///
 /// Without scene->enabled the target shrinks, and 16 particles appear round the
 /// orb, one every 6 frames, and circle it.

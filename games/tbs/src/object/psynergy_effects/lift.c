@@ -5,12 +5,13 @@
 #include "../psynergy_effects_internal.h"
 
 /// A hand appears 32 pixels to either side, each moves 14 pixels in, and
-/// they lift the target 32 pixels with them. Called by
-/// BattleFx_DispatchRequestKind; leaves the target raised and floating
-/// (motion flag bit 2), with its update set to
-/// ObjectGroup_ApplyRandomChildValues.
+/// they lift the target 32 pixels with them.
 ///
-/// Abilities: Lift (field kind 7), cast on a target.
+/// Abilities: Lift (FIELD_KIND_LIFT).
+///
+/// This is Lift cast on a target, which BattleFx_DispatchRequestKind calls.
+/// It leaves the target raised and floating (motion flag bit 2), with its
+/// update set to ObjectGroup_ApplyRandomChildValues.
 void FieldFx_RunLiftOnTarget(s32 unused) {
   struct BattleFxScene *work;
   struct DispatchObject *caster;
@@ -74,12 +75,12 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-/// Lift cast with no target: two hands appear 16 pixels above the spot in
-/// front of the caster and 32 pixels to either side, close in 24 pixels and
-/// scatter into shards.
+/// Two hands appear 16 pixels above the spot in front of the caster, 32
+/// pixels to either side, then close in 24 pixels and scatter into shards.
 ///
-/// Abilities: Lift (field kind 7), cast with no target. Called by
-/// BattleFx_Run.
+/// Abilities: Lift (FIELD_KIND_LIFT).
+///
+/// This is Lift cast with no target, which BattleFx_Run calls.
 DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunLift, BattleFx_SpawnItemBreakMode3)
 
 /// Spawns a hand (object 215) and grows it, spinning, from a quarter to full
@@ -118,7 +119,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
 
 /// Effect slot callback of a particle that scatters 25 pixels from its origin
 /// in a random direction, then gathers beside the main object and is freed.
-/// Set on Force's 12 flashes by FieldFx_RunForceOnTarget in force.c.
+/// Set on Force's 12 flashes by FieldFx_RunForce in force.c.
 void BattleFx_UpdateRadialBurst(struct EffectSlot *slot) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. State 1 must enter state 2 immediately.

@@ -89,7 +89,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
 /// Spins the main object and shrinks it while 24 particles fly out, one a
 /// frame.
 ///
-/// Abilities: Retreat (field kind 15).
+/// Abilities: Retreat (FIELD_KIND_RETREAT).
 ///
 /// The caster turns south, plays animation 28 with its colours cycling,
 /// spins up for 70 frames (FieldFx_UpdateSpinAngle), then rises and shrinks

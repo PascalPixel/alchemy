@@ -12,11 +12,11 @@
 /// again, scattering 16 sparks that drift upward; the target is struck on frame
 /// 10.
 ///
-/// Abilities: Undead Sword (kind 320).
+/// Abilities: Undead Sword (BATTLE_FX_UNDEAD_SWORD).
 ///
-/// 54 frames. BG2 is moved so that the canvas's centre line stands on the
-/// target. The sparks are work->particles 0 to 15, variant their age in
-/// frames.
+/// The effect runs 54 frames. BG2 is moved so that the canvas's centre line
+/// stands on the target. The sparks are work->particles 0 to 15, variant their
+/// age in frames.
 void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

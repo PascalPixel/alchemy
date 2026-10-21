@@ -395,8 +395,10 @@ static void Event_IvanRejoins(void) {
     GomaCaveEntrance_SayThenWait(IVAN, 20);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorStartRepeatedMotion(GARET, 1);
-    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Actor_SetAttachedEffect(GARET, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(GARET,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     WAIT(60);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     WAIT(20);
@@ -490,7 +492,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
     *f = t;
   }
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET);
   EffectRuntime_StopCurrentObject();
 }
 

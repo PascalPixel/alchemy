@@ -1,9 +1,10 @@
 /// @file
-/// The first and last rooms of Goma Cave (GomaCaveStream and
-/// GomaCaveBridge, scenes 28 and 29), the cave in the Goma Range that the
+/// The first and last rooms of Goma Cave (SceneId_GomaCaveStream and
+/// SceneId_GomaCaveBridge), the cave in the Goma Range that the
 /// mayor of Vault tells the party to pass through on the way to Bilibin.
 ///
-/// - Goma Cave, scene 28, where a stream runs the length of the room. The party
+/// - Goma Cave, SceneId_GomaCaveStream, where a stream runs the length of the
+/// room. The party
 ///   walks in from the Goma Cave Entrance
 ///   (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at the bottom of the room. A
 ///   stump answers Move: pushed to column 24, it spins in place, leaps away,
@@ -12,20 +13,21 @@
 ///   flag, so it stays there for good). A chest holds Power Bread. Exits lead
 ///   back to the Goma Cave Entrance, into the room of two pillars
 ///   (goma_cave_pillar.c; GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST and
-///   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST) and north into scene 29
-///   (GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE).
+///   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST) and north into
+///   SceneId_GomaCaveBridge (GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE).
 ///   GOMA_CAVE_STREAM_TO_VALE_GATE, on collision code 1, leads to Vale
-///   (vale_gate.c, scene 5), and Vale's VALE_GATE_TO_GOMA_CAVE_STREAM
+///   (SceneId_ValeGate, vale_gate.c), and Vale's VALE_GATE_TO_GOMA_CAVE_STREAM
 ///   leads back in at GOMA_CAVE_STREAM_FROM_VALE_GATE, which arrives
 ///   without the place name. No exit leads to entrance 99.
-/// - Goma Cave, scene 29, the way out, where a wooden bridge crosses the river.
-///   It has no actors and only its two exits: back south into scene 28
-///   (GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM) and out onto the world map
-///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP), toward Bilibin; the world map leads back
-///   in at GOMA_CAVE_BRIDGE_FROM_WORLD_MAP.
+/// - Goma Cave, SceneId_GomaCaveBridge, the way out, where a wooden bridge
+/// crosses the river.
+///   It has no actors and only its two exits: back south into
+///   SceneId_GomaCaveStream (GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM) and out onto
+///   the world map (GOMA_CAVE_BRIDGE_TO_WORLD_MAP), toward Bilibin; the world
+///   map leads back in at GOMA_CAVE_BRIDGE_FROM_WORLD_MAP.
 ///
-/// The getters give scene 29 its own tables; any other scene number takes
-/// scene 28's.
+/// The getters give SceneId_GomaCaveBridge its own tables; any other scene
+/// takes SceneId_GomaCaveStream's.
 #include "game_state.h"
 #include "unit/scene/goma_cave_waterway.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -57,9 +59,10 @@
 #include "ability_ids.h"
 #include "vector3.h"
 
-/// Scene 28's actors, numbering its placement rows from ACTOR_FIRST_PLACED.
+/// SceneId_GomaCaveStream's actors, numbering its placement rows from
+/// ACTOR_FIRST_PLACED.
 enum GomaCaveWaterwayActor {
-  /// The stump Move pushes, sprite 0xd4, as Garet calls the one at the Goma
+  /// The stump Move pushes, as Garet calls the one at the Goma
   /// Cave Entrance: "Our Psynergy isn't strong enough to free that stump."
   ACTOR_STUMP = ACTOR_FIRST_PLACED
 };
@@ -88,7 +91,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGomaCaveWaterwayPlacementsOther;
 }
 
-/// Move on the stump in Goma Cave (scene 28), until it has leapt
+/// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
 /// (FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED): from column 24 it spins, leaps away
 /// and lies where it lands.
 static void Event_MoveStump(void) {
@@ -115,7 +118,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCaveWaterwayEventsOther;
 }
 
-/// Sets up Goma Cave's scene 28 as the party enters (scene 29 needs nothing).
+/// Sets up SceneId_GomaCaveStream as the party enters (SceneId_GomaCaveBridge
+/// needs nothing).
 /// Arriving from Vale (GOMA_CAVE_STREAM_FROM_VALE_GATE) shows no place
 /// name; otherwise the stump lies where the party moved it.
 s32 Scene_Initialize(void) {

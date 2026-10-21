@@ -206,8 +206,10 @@ enum SceneEventKind {
 #define FIELD_EVENT_MENUS_RAISED 250
 
 /// A touch event that needs the leader to have pushed against it for more
-/// than 12 frames, or 2 with control bit 11.
+/// than 12 frames, or 2 with EVENT_TOUCH_QUICK.
 #define EVENT_TOUCH_WALKING 0x200
+/// With EVENT_TOUCH_WALKING, 2 frames of pushing are enough.
+#define EVENT_TOUCH_QUICK 0x800
 /// A touch event that needs the leader to face within an eighth of a turn of
 /// the heading in control bits 15..12 (Scene_FindEvent).
 #define EVENT_TOUCH_FACING 0x400
@@ -281,13 +283,15 @@ enum SearchTarget {
 };
 
 /// What a search finds, a search event's value: a function when bits 27..24
-/// are set, else a type in its top twelve bits (type 5, a mimic chest's
-/// battle, has no macro).
+/// are set, else a type in its top twelve bits.
 #define FIND_ITEM(item) (0x00100000 | (item))
 #define FIND_COINS(coins) (0x00200000 | (coins))
 /// A Psynergy Stone, which restores all PP.
 #define FIND_PSYNERGY_STONE 0x00300000
 #define FIND_MESSAGE(message) (0x00400000 | (message))
+/// A mimic chest's battle, with the event's value its slot of
+/// ENCOUNTER_ZONE_MIMIC.
+#define FIND_MIMIC 0x00500000
 
 /// An event function as a SceneEvent value; its address is above 0x10000, so
 /// it is never taken for a message.

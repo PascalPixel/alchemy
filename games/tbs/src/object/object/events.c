@@ -94,7 +94,7 @@ u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
   searchFlags = flags & 0x1ff;
   ignoresCondition = 0;
   if (searchFlags != EVENT_SEARCH) {
-    mimicDifference = (result & 0xfff00000) ^ 0x500000;
+    mimicDifference = (result & 0xfff00000) ^ FIND_MIMIC;
     ignoresCondition = mimicDifference | (0U - mimicDifference);
     // 1 when mimicDifference is not 0.
     ignoresCondition >>= 31;
@@ -128,7 +128,7 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
       s32 minimumPushFrames = 12;
       s32 touchRequirements;
 
-      if ((flags & 0x800) != 0)
+      if ((flags & EVENT_TOUCH_QUICK) != 0)
         minimumPushFrames = 2;
       touchRequirements = flags & (EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING);
 
@@ -537,7 +537,7 @@ s32 Field_SearchTile(s32 tile) {
               Marker_Hide(tile);
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
-            } else if (rewardType == 0x500000) {
+            } else if (rewardType == FIND_MIMIC) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
               struct FieldWork *work = (struct FieldWork *)gEventWork;
 

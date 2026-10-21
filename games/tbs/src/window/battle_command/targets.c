@@ -26,15 +26,16 @@ struct CursorSlot {
 
 /// Lets the player choose the target of an action of unit `selection`, with
 /// a cursor over the aimed unit and smaller markers on the others its range
-/// covers. `mode` is the action's targetMode: 2 the party, 4 only `selection`
-/// itself, anything else the enemies. `spread` is its range: 1 one unit, n
-/// the aimed one and n - 1 either side, ABILITY_RANGE_ALL every one (the
-/// cursor does not move); 0 counts as 1. `kind` is Battle_ClassifyEntryKind's
-/// class, or 7 for setting a Djinni: on a party member it opens a window of
-/// what the action would do (its HP or PP, the ailments it cures, "Set
-/// Djinni"), and a reviving or curing action (kinds 3 to 6) not aimed at
-/// everyone starts on the first member who needs it. On an enemy a window
-/// across the screen names it.
+/// covers. `mode` is the action's targetMode: TARGET_MODE_ALLIES the party,
+/// TARGET_MODE_SELF only `selection` itself, anything else the enemies
+/// (battle_internal.h has the names, which this folder cannot see yet).
+/// `spread` is its range: 1 one unit, n the aimed one and n - 1 either side,
+/// ABILITY_RANGE_ALL every one (the cursor does not move); 0 counts as 1.
+/// `kind` (enum BattleTargetHint) is Battle_ClassifyEntryKind's class, or
+/// TARGET_HINT_SET_DJINNI: on a party member it opens a window of what the
+/// action would do (its HP or PP, the ailments it cures, "Set Djinni"), and a
+/// reviving or curing action not aimed at everyone starts on the first member
+/// who needs it. On an enemy a window across the screen names it.
 ///
 /// Returns 0x100 | the party place or 0x180 | the enemy place of the unit
 /// chosen with A, or -1 when cancelled or when the link battle's time runs
@@ -119,11 +120,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #endif
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
-  // The candidates: the party, the acting unit alone, or the enemies. 0xfe
-  // is an empty place, skipped; 0xff ends the list.
+  // The candidates: the party, the acting unit alone, or the enemies.
   targetIndex = -1;
   if (mode == 2) {
-    for (i = 0; i <= 5 && battle->partyUnits[i] != 0xFF; i++) {
+    for (i = 0; i <= 5 && battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       candidateIds[targetCount] = battle->partyUnits[i];
       targetCount++;
     }
@@ -131,45 +131,44 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     candidateIds[0] = (u16)selection;
     targetCount = 1;
   } else {
-    for (i = 0; i <= 5 && battle->enemyIds[i] != 0xFF; i++) {
+    for (i = 0; i <= 5 && battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       candidateIds[targetCount] = battle->enemyIds[i];
       targetCount++;
     }
   }
   // Keep the candidate list separate from the markers drawn for a spread.
-  candidateIds[targetCount] = 0xFF;
+  candidateIds[targetCount] = BATTLE_UNIT_LIST_END;
   candidateCount = targetCount;
-  // Restorative actions prefer an ally who benefits from their effect: 5
-  // revives the downed, 3 cures poison, 4 and 6 the ailments they list
-  // below. Otherwise the cursor starts on the acting unit when it is a
+  // Restorative actions prefer an ally who benefits from their effect.
+  // Otherwise the cursor starts on the acting unit when it is a
   // candidate.
   if (mode == 2) {
-    if (spread != ABILITY_RANGE_ALL && kind != 0) {
+    if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
       found = 0;
       for (j = 0; j < targetCount; j++) {
         struct BattleUnit *candidate;
 
-        if (candidateIds[j] == 0xFE)
+        if (candidateIds[j] == BATTLE_UNIT_REMOVED)
           continue;
         candidate = UnitGetFar(candidateIds[j]);
         switch (kind) {
-        case 5:
+        case TARGET_HINT_REVIVE:
           if (candidate->hp == 0) {
             selection = candidateIds[j];
             found = 1;
           }
           break;
-        case 3:
+        case TARGET_HINT_CURE_POISON:
           if (candidate->poison != 0)
             found = 1;
           break;
-        case 4:
+        case TARGET_HINT_RESTORE:
           if (candidate->delusion != 0 || candidate->stun != 0 ||
               candidate->sleep != 0 || candidate->psySeal != 0 ||
               candidate->grimReaper != 0)
             found = 1;
           break;
-        case 6:
+        case TARGET_HINT_CURE_ALL:
           if (candidate->delusion != 0 || candidate->stun != 0 ||
               candidate->sleep != 0 || candidate->psySeal != 0 ||
               candidate->grimReaper != 0 || candidate->poison != 0 ||
@@ -194,7 +193,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // battle, past downed enemies.
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
-  while (candidateIds[targetIndex] == 0xFE ||
+  while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
          (GameFlag_TestFar(FLAG_LINK_BATTLE) && mode == 1 &&
           UnitGetFar(candidateIds[targetIndex])->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
@@ -310,7 +309,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       for (i = 0; (u32)i < spread; i++) {
         {
           n = targetIndex + i;
-          if (n < candidateCount && candidateIds[n] != 0xFE) {
+          if (n < candidateCount && candidateIds[n] != BATTLE_UNIT_REMOVED) {
             spreadActorIds[targetCount] = candidateIds[n];
             cursorTracks[i].flags |= 2;
             if (cursorTracks[i].index != i) {
@@ -320,7 +319,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             spreadTrackIndices[targetCount] = (u8)i;
             targetCount++;
           }
-          if (i != 0 && (n = targetIndex - i) >= 0 && candidateIds[n] != 0xFE) {
+          if (i != 0 && (n = targetIndex - i) >= 0 &&
+              candidateIds[n] != BATTLE_UNIT_REMOVED) {
             spreadActorIds[targetCount] = candidateIds[n];
             cursorTracks[6 - i].flags |= 2;
             if (cursorTracks[6 - i].index != -i) {
@@ -336,12 +336,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         if ((cursorTracks[i].flags & 2) == 0)
           cursorTracks[i].index = 6;
       }
-      spreadActorIds[targetCount] = 0xFF;
+      spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
       BattlePres_SetActorModesFar(spreadActorIds, 1);
       // A party member (units 0 to 7): the window of what the action does,
       // placed by the member's tile column (anchor) and kept on screen.
       if (candidateIds[targetIndex] <= 7) {
-        if (spread != ABILITY_RANGE_ALL && kind != 0) {
+        if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
           unit = UnitGetFar(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(
               candidateIds[targetIndex],
@@ -349,7 +349,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           if (conditionWindow != 0)
             UiWork_Finalize(conditionWindow, 1);
           switch (kind) {
-          case 7: {
+          case TARGET_HINT_SET_DJINNI: {
             s32 anchor;
 
             anchor = selectedPosition.x / 8;
@@ -387,7 +387,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                          0);
             UiWork_SetParamNibble(15);
             break;
-          case 1: {
+          case TARGET_HINT_HP: {
             s32 anchor;
 
             anchor = selectedPosition.x / 8;
@@ -424,7 +424,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                       conditionWindow, 48, 0);
             UiText_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
             break;
-          case 2: {
+          case TARGET_HINT_PP: {
             s32 anchor;
 
             anchor = selectedPosition.x / 8;
@@ -440,7 +440,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                       conditionWindow, 48, 0);
             UiText_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
             break;
-          case 5: {
+          case TARGET_HINT_REVIVE: {
             s32 anchor;
 
             anchor = selectedPosition.x / 8;
@@ -454,7 +454,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             UiText_DrawCharacterAtOffset(MsgTargetDowned, conditionWindow, 0,
                                          0);
             break;
-          case 3: {
+          case TARGET_HINT_CURE_POISON: {
             s32 anchor;
 
             anchor = selectedPosition.x / 8;
@@ -468,7 +468,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             UiText_DrawCharacterAtOffset(MsgTargetCurePoison, conditionWindow,
                                          0, 0);
             break;
-          case 4:
+          case TARGET_HINT_RESTORE:
             count = 0;
             if (unit->delusion != 0)
               count = 1;
@@ -545,7 +545,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           default:
             break;
-          case 6:
+          case TARGET_HINT_CURE_ALL:
             count = 0;
             if (unit->poison != 0)
               count = 1;
@@ -735,14 +735,16 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       id = candidateIds[targetIndex];
       redraw = 0;
       result = -1;
-      for (k = 0; k <= 5 && battle->partyUnits[k] != 0xFF; k++) {
+      for (k = 0; k <= 5 && battle->partyUnits[k] != BATTLE_UNIT_LIST_END;
+           k++) {
         if (battle->partyUnits[k] == id) {
           result = 0x100 | k;
           break;
         }
       }
       if (result < 0) {
-        for (k = 0; k <= 5 && battle->enemyIds[k] != 0xFF; k++) {
+        for (k = 0; k <= 5 && battle->enemyIds[k] != BATTLE_UNIT_LIST_END;
+             k++) {
           if (battle->enemyIds[k] == id) {
             result = 0x180 | k;
             break;
@@ -756,7 +758,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         do {
           targetIndex++;
           targetIndex %= candidateCount;
-        } while (candidateIds[targetIndex] == 0xFE);
+        } while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED);
         redraw |= 1;
       }
       if (repeated & (KEY_UP | KEY_LEFT)) {
@@ -764,7 +766,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         do {
           targetIndex = targetIndex + candidateCount - 1;
           targetIndex %= candidateCount;
-        } while (candidateIds[targetIndex] == 0xFE);
+        } while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED);
         redraw |= 1;
       }
     }

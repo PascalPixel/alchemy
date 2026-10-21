@@ -326,6 +326,25 @@ enum {
   LIST_TILE_PAGES_RIGHT = 0xf335 ///< Right arrow, tile 0x335
 };
 
+/// What BattleTarget_RunSelection shows on a party member for the action
+/// being aimed (Battle_ClassifyEntryKind), and which member it starts on.
+enum BattleTargetHint {
+  TARGET_HINT_NONE = 0,
+  TARGET_HINT_HP = 1, ///< heals HP: the member's HP
+  TARGET_HINT_PP = 2, ///< restores PP: the member's PP
+  /// Cures poison (ABILITY_EFFECT_CURE_POISON): starts on a poisoned member.
+  TARGET_HINT_CURE_POISON = 3,
+  /// Cures what Restore cures (ABILITY_EFFECT_RESTORE): starts on a member
+  /// who has one of those ailments, and lists them.
+  TARGET_HINT_RESTORE = 4,
+  /// Revives (Battle_IsReviveEffectFar): starts on a downed member.
+  TARGET_HINT_REVIVE = 5,
+  /// Cures Restore's ailments, poison and the evil spirit, as Tonic does
+  /// (ABILITY_EFFECT_CURE_ALL).
+  TARGET_HINT_CURE_ALL = 6,
+  TARGET_HINT_SET_DJINNI = 7 ///< setting a Djinni: "Set Djinni"
+};
+
 #define BATTLE_OK 0x80 ///< BattleAct.flags: usable in battle
 
 /// One icon of the command row (struct SelectionWork): its sprite, where it

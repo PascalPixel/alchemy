@@ -5,13 +5,9 @@
 #include "../battle_command_internal.h"
 
 /// Classifies ability `act` for the target selection (the `kind` of
-/// BattleTarget_RunSelection), which shows what it would do on a party
-/// member and, for kinds 3 to 6, starts on one who needs it: 0 none of
-/// these, 1 heals HP, 2 restores PP, 3 cures poison
-/// (ABILITY_EFFECT_CURE_POISON), 4 cures what Restore cures
-/// (ABILITY_EFFECT_RESTORE), 5 revives (Battle_IsReviveEffectFar), 6 cures
-/// Restore's ailments, poison and the evil spirit, as Tonic does
-/// (ABILITY_EFFECT_CURE_ALL). A later test wins: an effect over the ability
+/// BattleTarget_RunSelection, enum BattleTargetHint), which shows what it
+/// would do on a party member and, for the curing and reviving hints, starts
+/// on one who needs it. A later test wins: an effect over the ability
 /// kind, revival over all.
 s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   s32 signedEffect;
@@ -19,22 +15,22 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   s32 targetKind;
   u8 effect;
 
-  targetKind = 0;
+  targetKind = TARGET_HINT_NONE;
   abilityKind = act->flags & ABILITY_KIND_MASK;
   if (abilityKind == ABILITY_KIND_HEAL_HP)
-    targetKind = 1;
+    targetKind = TARGET_HINT_HP;
   if (abilityKind == ABILITY_KIND_HEAL_PP)
-    targetKind = 2;
+    targetKind = TARGET_HINT_PP;
   signedEffect = (s8)act->effect;
   effect = signedEffect;
   if (effect == ABILITY_EFFECT_CURE_POISON)
-    targetKind = 3;
+    targetKind = TARGET_HINT_CURE_POISON;
   if (effect == ABILITY_EFFECT_RESTORE)
-    targetKind = 4;
+    targetKind = TARGET_HINT_RESTORE;
   if (effect == ABILITY_EFFECT_CURE_ALL)
-    targetKind = 6;
+    targetKind = TARGET_HINT_CURE_ALL;
   if (Battle_IsReviveEffectFar(act->effect) != 0)
-    targetKind = 5;
+    targetKind = TARGET_HINT_REVIVE;
   return targetKind;
 }
 
@@ -180,20 +176,20 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
     if (commandCount > 0) {
       mode = Menu_RunCommandRow(0);
     } else {
-      mode = 14;
+      mode = COMMAND_ICON_FIGHT;
     }
     // Status: the party's status screens, from the first member; the
-    // debug build with Start held lists the enemies (side mask 2) instead.
-    if (mode == 7) {
+    // debug build with Start held lists the enemies instead.
+    if (mode == COMMAND_ICON_STATUS) {
       void *block;
       s32 selection;
       s32 handle;
 
       block = MemAlloc(12);
       if (gDebugMode != 0 && (gKeysHeld & KEY_START) != 0) {
-        selection = 2;
+        selection = BATTLE_SIDE_ENEMIES;
       } else {
-        selection = 1;
+        selection = BATTLE_SIDE_PARTY;
       }
       handle = BattleParty_ListActorIdsFar(selection, block);
       WaitFrames(1);
@@ -201,9 +197,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       MemFree(block);
       continue;
     }
-    // Flee, unless the battle forbids it: one CMD_FLEE (99) for the party,
+    // Flee, unless the battle forbids it: one CMD_FLEE for the party,
     // first in the round (priority 0x7ffe).
-    if (mode == 4) {
+    if (mode == COMMAND_ICON_FLEE) {
       if (UiText_ShowLocalizedMessageAndWait() != 0) {
         continue;
       }
@@ -211,7 +207,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       command = commands;
       command->unitId = actors[0];
       command->priority = 0x7ffe;
-      command->command = 99;
+      command->command = CMD_FLEE;
       command->parameter = 0;
       command->target = 256;
       break;
@@ -316,14 +312,14 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
       // Out of time in a link battle: Defend.
       if (gLinkCountdownWork->timer == 0) {
-        mode = 3;
+        mode = COMMAND_ICON_DEFEND;
       }
       iconSprite = &gLinkCountdownWork->icons[0];
       iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.word.attr01 = 0x80002400;
       iconSprite->oam.f.tile =
           Resource_LoadIndexedIntoBuffer(largeIconSlot, mode);
-      if (mode == 15) {
+      if (mode == COMMAND_ICON_DJINN) {
         iconSprite->oam.f.x = 128;
       } else {
         iconSprite->oam.f.x = 96;
@@ -334,24 +330,24 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       // target selection goes back to the command's list (for Attack, to the
       // member's row), B in a list to the row.
       switch (mode) {
-      case 0:
-        // Attack: one enemy (target mode 1, range 1); CMD_ATTACK.
+      case COMMAND_ICON_ATTACK:
+        // Attack: one enemy, range 1; CMD_ATTACK.
         commandWindow = UiWindow_Create(11, 17, 11, 3, 6);
         UiText_DrawCharacterAtOffset(MsgCommandName, commandWindow,
                                      BATTLE_COMMAND_NAME_X, 0);
         state->icons[0].oam.f.x = 64;
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
+        mode = BattleTarget_RunSelection(actorId, 1, 1, TARGET_HINT_NONE);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1) {
           goto mark_visible;
         }
-        commandKind = 0;
+        commandKind = CMD_ATTACK;
         target = mode;
         command->range = 1;
         break;
 
-      case 1: {
+      case COMMAND_ICON_PSYNERGY: {
         struct MenuSprite *iconSprite;
         struct BattleAct *ability;
         struct UiRenderWork *ui;
@@ -434,7 +430,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         UiWindow_SetTilemapEntry(commandWindow, 61471, 11, 0, 0);
         UiWindow_SetTilemapEntry(commandWindow, PSYNERGY_COST_SECOND_TILE, 12,
                                  0, 0);
-        if (ability->element != 4) {
+        if (ability->element != ELEMENT_NONE) {
           UiWindow_SetTilemapEntry(commandWindow, ability->element + 20481, 15,
                                    0, 0);
         }
@@ -449,12 +445,12 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto psynergy_menu;
         }
-        commandKind = 1;
+        commandKind = CMD_PSYNERGY;
         target = mode;
         break;
       }
 
-      case 16: {
+      case COMMAND_ICON_SUMMON: {
         const struct SummonDefinition *summon;
         struct BattleAct *ability;
         struct MenuSprite *iconSprite;
@@ -478,7 +474,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto mark_visible;
         }
-        commandKind = 6;
+        commandKind = CMD_SUMMON;
         parameter = mode;
         WaitFrames(1);
         iconSprite = &state->icons[1];
@@ -550,7 +546,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         break;
       }
 
-      case 15: {
+      case COMMAND_ICON_DJINN: {
         struct BattleAct *ability;
         struct UiWindow *hint;
         s32 cost;
@@ -572,7 +568,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto mark_visible;
         }
-        commandKind = 5;
+        commandKind = CMD_DJINN;
         parameter = mode;
         gLinkCountdownWork->chosenDjinn[commandIndex] = mode;
         element = (parameter >> 8) & 15;
@@ -618,7 +614,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         command->range = 1;
         WaitFrames(1);
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
+        mode = BattleTarget_RunSelection(actorId, 4, 0, TARGET_HINT_SET_DJINNI);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1) {
           goto summon_menu;
@@ -627,7 +623,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         break;
       }
 
-      case 2: {
+      case COMMAND_ICON_ITEM: {
         struct MenuSprite *iconSprite;
         struct BattleAct *ability;
         u16 *list;
@@ -722,14 +718,14 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto item_menu;
         }
-        commandKind = 2;
+        commandKind = CMD_ITEM;
         target = mode;
         break;
       }
 
-      case 3:
+      case COMMAND_ICON_DEFEND:
         // Defend: CMD_DEFEND, nothing to choose.
-        commandKind = 3;
+        commandKind = CMD_DEFEND;
         break;
       }
 

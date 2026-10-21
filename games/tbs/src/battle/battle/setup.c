@@ -89,8 +89,8 @@ void BattlePresentation_UpdateCamera(void) {
 /// strikes first or is caught by surprise. Each of the first enemyCount enemies
 /// gets `<enemy> appeared!`; the last one's comes from a message of its own,
 /// MsgLastEnemyAppeared, whose text matches MsgEnemyAppeared's in every
-/// edition. Called by BattlePres_RunEntryTransition. Rewrites the message
-/// argument tables.
+/// edition. Called by BattlePresentation_RunEntryTransition. Rewrites the
+/// message argument tables.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle;

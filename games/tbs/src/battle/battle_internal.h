@@ -243,7 +243,8 @@ enum BattlePlanStaging {
 /// BattlePresentation_RunUnitTransition's mode: a summon hides its user too.
 #define TRANSITION_HIDE_ACTOR 1
 
-/// BattlePres_RunPsynergyCast's mode: what is cast, which decides the glow.
+/// BattlePresentation_RunPsynergyCast's mode: what is cast, which decides the
+/// glow.
 enum BattleCastKind {
   CAST_PSYNERGY = 0, ///< the star field gathers on the caster
   CAST_DJINNI = 1,   ///< no glow; the effect plays its prelude
@@ -256,9 +257,10 @@ enum BattleCastKind {
 #define TARGET_PICK_NONE -1
 
 /// BattleActionRecord.target of a held unit's lost turn (CMD_NONE, from
-/// BattlePres_BuildOpponentEntries and BattlePres_BuildUnitEntries): as a
-/// place code, place 0 of the other side, 0x100 the party's for an enemy and
-/// 0x180 the enemies' for a party member (PLACE_PARTY, PLACE_ENEMY).
+/// BattlePresentation_BuildOpponentEntries and
+/// BattlePresentation_BuildUnitEntries): as a place code, place 0 of the other
+/// side, 0x100 the party's for an enemy and 0x180 the enemies' for a party
+/// member (PLACE_PARTY, PLACE_ENEMY).
 #define TARGET_NONE_ENEMY 0x100
 #define TARGET_NONE_PARTY 0x180
 

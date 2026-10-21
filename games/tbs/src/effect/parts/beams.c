@@ -6,7 +6,8 @@
 
 /// The beam sequence's pictures, by effect kind: the kinds below 100 that
 /// BattleFx_DispatchByIdRange sends here. No ability's row selects one; the
-/// unused BattlePres_RunPlainAttack plays an attack's kind, 0 for Attack.
+/// unused BattlePresentation_RunPlainAttack plays an attack's kind, 0 for
+/// Attack.
 enum BeamKind {
   BEAM_PLAIN_ATTACK,  ///< blue arc A: Attack's kind
   BEAM_ARC_A,         ///< blue arc A
@@ -22,13 +23,13 @@ enum BeamKind {
 /// effect->kind picks the picture.
 ///
 /// Reached through BattleFx_DispatchByIdRange for kinds 136 to 199 and,
-/// through its unsigned test, every kind below 100; BattlePres_RunPlainAttack
-/// (battle/staging.c) sends every plain attack there. Only the kinds of enum
-/// BeamKind have pictures. Shows the canvas on BG1
-/// (BattleFx_SetupCanvasTileMap), loads palette colours 0 to 63, scrolls BG1
-/// through gBgScroll[1] and uses work->particles 0 to 63 (only 0 to 31 fly) and
-/// both blitter slots; at the end it removes the transfer callback, frees the
-/// blitters, sets gBgScroll[1].y back to 32 and hides BG1 again
+/// through its unsigned test, every kind below 100;
+/// BattlePresentation_RunPlainAttack (battle/staging.c) sends every plain
+/// attack there. Only the kinds of enum BeamKind have pictures. Shows the
+/// canvas on BG1 (BattleFx_SetupCanvasTileMap), loads palette colours 0 to 63,
+/// scrolls BG1 through gBgScroll[1] and uses work->particles 0 to 63 (only 0 to
+/// 31 fly) and both blitter slots; at the end it removes the transfer callback,
+/// frees the blitters, sets gBgScroll[1].y back to 32 and hides BG1 again
 /// (BattleFx_HideBg1AndRestoreBackdrop).
 void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
@@ -274,9 +275,9 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
 /// the background palette fades back in.
 ///
 /// Reached through BattleFx_DispatchByIdRange for kinds 200 and up, which
-/// BattlePres_RunAttack (battle/staging.c) makes by adding 200 to the kind of
-/// a critical hit; so the gathering always plays. Shows the canvas on BG1,
-/// keeps the battle's transition centred between the user and the first
+/// BattlePresentation_RunAttack (battle/staging.c) makes by adding 200 to the
+/// kind of a critical hit; so the gathering always plays. Shows the canvas on
+/// BG1, keeps the battle's transition centred between the user and the first
 /// target while it loads, scrolls BG1 through gBgScroll[1] and uses
 /// work->particles 0 to 63, work->imageStorage, Ram_MapCellBuffer and both
 /// blitter slots. While the motes gather it adds Palette_StepFadeTransfer and
@@ -328,8 +329,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   // burst goes to the image storage and the crescent to the map cell
   // buffer; an enemy user (unit id above 7) also takes the small Mars
   // Djinni's palette.
-  BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
-                                              effect->firstTarget, 130);
+  BattlePresentation_SetupTransitionAtPairMidpointFar(effect->actor,
+                                                      effect->firstTarget, 130);
   WaitFrames(1);
   BattleFx_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
@@ -349,13 +350,13 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   slots = (DrawRectangle *)gWorkSlot;
   draw[0] = slots[HEAP_SLOT_BLITTER];
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
-  BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
-                                              work->effect->firstTarget, 130);
+  BattlePresentation_SetupTransitionAtPairMidpointFar(
+      work->effect->actor, work->effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet,
                              work->imageStorage, 1, 0);
-  BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
-                                              work->effect->firstTarget, 130);
+  BattlePresentation_SetupTransitionAtPairMidpointFar(
+      work->effect->actor, work->effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet, Ram_MapCellBuffer,
                              1, 1);
@@ -363,12 +364,12 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     Iwram_CopyWords(
         colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
         128);
-  BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
-                                              work->effect->firstTarget, 130);
+  BattlePresentation_SetupTransitionAtPairMidpointFar(
+      work->effect->actor, work->effect->firstTarget, 130);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
-                                              work->effect->firstTarget, 130);
+  BattlePresentation_SetupTransitionAtPairMidpointFar(
+      work->effect->actor, work->effect->firstTarget, 130);
   WaitFrames(1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
@@ -407,7 +408,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
                                   EFFECT_PLAYBACK_ORDER);
     AudioCommand_PlayFar(SE_212);
     for (frame = 0; frame != 32; frame++) {
-      BattlePres_SetupTransitionAtPairMidpointFar(
+      BattlePresentation_SetupTransitionAtPairMidpointFar(
           work->effect->actor, work->effect->firstTarget, 130);
       for (i = 0; i != 64; i++) {
         struct EffectStep *mote = &work->particles[i];

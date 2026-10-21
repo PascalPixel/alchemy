@@ -163,7 +163,8 @@ s32 ObjectTable_ReadActiveValue(s32 actor);
 s32 ObjectTable_FindActiveByValue(s32 sprite);
 struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused);
 void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags);
-void BattlePres_RunActionThenWaitIfModeZero(s32 actor, s32 flags, s32 wait);
+void BattlePresentation_RunActionThenWaitIfModeZero(s32 actor, s32 flags,
+                                                    s32 wait);
 s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags);
 void BattleEventRuntime_EmptyCallback(void);
 void Event_ShowSpeakerMessage(s32 speaker);

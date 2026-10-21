@@ -114,8 +114,8 @@ s32 BattlePresentation_WaitForAdvance(void) {
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
     // Cycle the eight frames, one every four frames.
-    frameTiles =
-        ((gFrameCount >> 2) & 7) * 128 + (s32)gBattlePres_AdvanceArrowTiles;
+    frameTiles = ((gFrameCount >> 2) & 7) * 128 +
+                 (s32)gBattlePresentation_AdvanceArrowTiles;
     window = gBattleDisplayWork->window;
     offset = gBattleDisplayWork->offset;
     // Outside windows 0 and 1, sprites show (WINOUT bit 4) and BG2 does not
@@ -316,7 +316,7 @@ u32 BattleEv_DispatchQueued(void) {
       case BATTLE_EVENT_REFRESH_UNIT:
         BattleUnit_BuildStatusFlags(queue->operands[eventIndex],
                                     BattleObjGet(queue->operands[eventIndex]));
-        BattlePres_SetActorModeAndAction(queue->operands[eventIndex]);
+        BattlePresentation_SetActorModeAndAction(queue->operands[eventIndex]);
         break;
       }
   }

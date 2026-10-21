@@ -35,8 +35,8 @@
 
 /// Copies the background's saved palette to BG palettes 6 to 13, darkened by
 /// level (0 for none).
-/// Called by BattlePres_RestorePalette with 0, and by effects that dim the
-/// background (beams.c, canvas.c). Sets BattleWork.brightness when it
+/// Called by BattlePresentation_RestorePalette with 0, and by effects that dim
+/// the background (beams.c, canvas.c). Sets BattleWork.brightness when it
 /// darkens. Interrupts are off while it writes: REG_IME is given its own
 /// address, whose bit 0 is clear, as irqlock.h's IME_DISABLE does, and is
 /// restored after.
@@ -82,8 +82,8 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
 /// canvas layers (canvas.c), and with BATTLE_BACKGROUND_PLANE by
 /// BattlePresentation_DispatchAction and Battle_ProcessRoundEnd. Sets
 /// BattleBackgroundView.mode (enum BattleBackgroundMode), adds
-/// BattlePres_UpdateHBlankScroll when it was BATTLE_BACKGROUND_NONE, and
-/// copies the first sprite palette to BG palette 5. unusedResource is not
+/// BattlePresentation_UpdateHBlankScroll when it was BATTLE_BACKGROUND_NONE,
+/// and copies the first sprite palette to BG palette 5. unusedResource is not
 /// read.
 void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
                                              s32 fade) {
@@ -91,7 +91,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
       (struct BattleBackgroundView *)gTransitionWork;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE) {
-    Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateHBlankScroll, 0x4ff);
   }
   transition->mode = mode;
 
@@ -172,7 +172,7 @@ typedef void (*BitDecoder)(const u8 *source, void *destination);
 /// BATTLE_BACKGROUND_FLAT by
 /// Battle_RunEncounter as the battle opens, and by the Atalanta and Boreas
 /// effects for their violet sky. Sets BattleBackgroundView.mode, and adds
-/// BattlePres_UpdateHBlankScroll when it was BATTLE_BACKGROUND_NONE.
+/// BattlePresentation_UpdateHBlankScroll when it was BATTLE_BACKGROUND_NONE.
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   struct BattleBackgroundView *view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   u8 *backgroundData = Resource_GetTableEntry(resourceId);
@@ -211,7 +211,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   // Clears BG1's last row, 0x7c0 bytes in, which BuildTilemap leaves.
   Iwram_ClearWords((BG_SCREEN_BLOCK(31) + 0x7c0), 64);
   if (view->mode == BATTLE_BACKGROUND_NONE)
-    Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
+    Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateHBlankScroll, 0x4ff);
   view->mode = mode;
   if (mode == BATTLE_BACKGROUND_FLAT)
     REG_BG1CNT = BATTLE_BG1CNT;
@@ -224,7 +224,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 /// the picture a line shows, or none. At a zoom of 1 or more the plane wraps
 /// and turns sideways with the camera's yaw. While the background is
 /// BATTLE_BACKGROUND_FLAT (or secondMode is) and not busy, it also sets BG1's
-/// horizontal scroll. Called by BattlePres_SetupTransitionScene, by
+/// horizontal scroll. Called by BattlePresentation_SetupTransitionScene, by
 /// BattlePresentation_UpdateCamera and the shoulder-key camera
 /// (DEFINE_ADJUST_CAMERA) while BattlePresentationTransition.flag is 0, by
 /// Battle_RunEncounter and by Camera_ConfigureScene. Does nothing before
@@ -304,12 +304,13 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
 /// Sets the camera's eye at its stored distance without taking a zoom;
 /// nothing in the source calls it.
 /// The original zoom is an uninitialized local; UBFIX makes it an explicit
-/// percentage argument, as in BattlePres_SetupTransitionScene.
+/// percentage argument, as in BattlePresentation_SetupTransitionScene.
 #ifdef UBFIX
-UNUSED void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y,
-                                                   s32 zoom) {
+UNUSED void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth,
+                                                           s32 y, s32 zoom) {
 #else
-UNUSED void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
+UNUSED void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth,
+                                                           s32 y) {
 #endif
   s32 span = 0x01fe0000;
   // BUG: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
@@ -363,11 +364,12 @@ UNUSED void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
 /// where the battlefield's origin then projects decides the plane's offset
 /// (BattleCamera_SetRange), and the projection's focal length and depth range
 /// are then scaled by the zoom. Called by the battle's staging
-/// (BattlePres_RunEntryTransition, Battle_RunEncounter, staging.c,
-/// auto_battle.c), BattlePres_SetupTransitionAtPairMidpoint and several
+/// (BattlePresentation_RunEntryTransition, Battle_RunEncounter, staging.c,
+/// auto_battle.c), BattlePresentation_SetupTransitionAtPairMidpoint and several
 /// effects. Writes the camera's pos and eye, gProjection, and the plane's
 /// next page.
-void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
+void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y,
+                                             s32 zoom) {
   struct BattleCamera *camera = gCameraWork;
   s32 *focus = camera->pos;
   s32 scale = (zoom << 16) / 100;
@@ -416,12 +418,13 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   Projection_Set(width, result, half * 4);
 }
 
-/// Points the battle camera, through BattlePres_SetupTransitionScene, at the
-/// ground between two units' battle objects, with a zoom in percent.
+/// Points the battle camera, through BattlePresentation_SetupTransitionScene,
+/// at the ground between two units' battle objects, with a zoom in percent.
 /// Called by the staging of a paired action (staging.c) and by the beam
 /// effects (beams.c).
-void BattlePres_SetupTransitionAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
-                                              s32 zoom) {
+void BattlePresentation_SetupTransitionAtPairMidpoint(s32 firstUnitId,
+                                                      s32 secondUnitId,
+                                                      s32 zoom) {
   struct MotionObject *firstObject = BattleObjGet(firstUnitId)->object;
   struct MotionObject *secondObject = BattleObjGet(secondUnitId)->object;
   s32 firstX = firstObject->x;
@@ -431,7 +434,7 @@ void BattlePres_SetupTransitionAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
   s32 x = (secondX + firstX) / 2;
   s32 z = (secondZ + firstZ) / 2;
 
-  BattlePres_SetupTransitionScene(x, 0, z, zoom);
+  BattlePresentation_SetupTransitionScene(x, 0, z, zoom);
 }
 
 /// Fades BG2 out over the backdrop in eight frames, its blend weight falling
@@ -489,7 +492,7 @@ void BattlePresentation_InitializeTransitionEntries(
 }
 
 /// Nothing calls it.
-s32 BattlePres_DivideBy16(s32 value) { return value / 16; }
+s32 BattlePresentation_DivideBy16(s32 value) { return value / 16; }
 
 /// A debug aid: while Start is held, edits BattleWork.debugValue with the
 /// d-pad (1 left and right, 100 up and down) until A takes it as the result;
@@ -526,10 +529,10 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue) {
 /// Sets the OBJ mode (enum BattleActorMode) of every sprite of a unit's
 /// battle object, the picture and its shadow.
 /// Does nothing for a unit with no battle object or motion object. Called by
-/// BattlePres_SetActorModes and its helpers here, by the opening's storm
-/// (BattlePres_RunEntryTransition), by the staging (staging.c) and by auto
-/// battle (auto_battle.c).
-void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
+/// BattlePresentation_SetActorModes and its helpers here, by the opening's
+/// storm (BattlePresentation_RunEntryTransition), by the staging (staging.c)
+/// and by auto battle (auto_battle.c).
+void BattlePresentation_SetActorRecordMode(s32 actorId, s32 mode) {
   struct BattleObj *slot = BattleObjGet(actorId);
   struct MotionObject *object;
   struct AnimationObject *record;
@@ -566,33 +569,34 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
 
 /// Makes every unit's sprites semi-transparent but selectedUnitId's, which are
 /// left as they are; nothing calls it.
-void BattlePres_SetOtherActorRecordModes(s32 selectedUnitId) {
+void BattlePresentation_SetOtherActorRecordModes(s32 selectedUnitId) {
   s16 unitIds[14];
   s32 unitCount = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
   s32 unitIndex;
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
     if (unitIds[unitIndex] != selectedUnitId)
-      BattlePres_SetActorRecordMode(unitIds[unitIndex], ACTOR_SEMI_TRANSPARENT);
+      BattlePresentation_SetActorRecordMode(unitIds[unitIndex],
+                                            ACTOR_SEMI_TRANSPARENT);
   }
 }
 
 /// Returns every unit's sprites to ACTOR_OPAQUE; called by
-/// BattlePres_SetActorModes when the highlight stops.
-void BattlePres_ClearAllActorRecordModes(void) {
+/// BattlePresentation_SetActorModes when the highlight stops.
+void BattlePresentation_ClearAllActorRecordModes(void) {
   s16 unitIds[14];
   s32 unitCount = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
   s32 unitIndex;
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
-    BattlePres_SetActorRecordMode(unitIds[unitIndex], ACTOR_OPAQUE);
+    BattlePresentation_SetActorRecordMode(unitIds[unitIndex], ACTOR_OPAQUE);
 }
 
 /// Lightens the opaque sprites, the highlighted units, by the next step of
 /// gBattleFx_HighlightBlendRamp.
 /// The ramp's first sixteen steps play once, then its second sixteen over
 /// and over. Runs each frame as a scheduler callback in the VBlank pass
-/// (order 0x480), added by BattlePres_SetActorModes while
+/// (order 0x480), added by BattlePresentation_SetActorModes while
 /// BattleWork.highlightMode is set; writes REG_BLDCNT, REG_BLDALPHA,
 /// REG_BLDY and BattleWork.highlightStep.
 void Graphics_AdvancePaletteCycle(void) {
@@ -624,7 +628,7 @@ void Graphics_AdvancePaletteCycle(void) {
 /// the command menu (party_commands.c, targets.c, selection.c), and with 0 when
 /// either is done. Sets BattleWork.highlightMode and highlightStep, and adds
 /// or removes the callback.
-void BattlePres_SetActorModes(u16 *selectedUnits, s32 mode) {
+void BattlePresentation_SetActorModes(u16 *selectedUnits, s32 mode) {
   s16 unitIds[14];
   struct BattleWork *battle = gBattleWork;
   u32 unitCount;
@@ -633,7 +637,7 @@ void BattlePres_SetActorModes(u16 *selectedUnits, s32 mode) {
   if (mode == HIGHLIGHT_OFF) {
     Scheduler_RemoveCallback(Graphics_AdvancePaletteCycle);
     REG_BLDY = mode;
-    BattlePres_ClearAllActorRecordModes();
+    BattlePresentation_ClearAllActorRecordModes();
     WaitFrames(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
@@ -645,7 +649,7 @@ void BattlePres_SetActorModes(u16 *selectedUnits, s32 mode) {
 
     unitCount = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
     for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
-      BattlePres_SetActorRecordMode(unitIds[unitIndex], mode & 1);
+      BattlePresentation_SetActorRecordMode(unitIds[unitIndex], mode & 1);
 
     if (selectedUnits != 0) {
       u32 unitId = *selectedUnits;
@@ -653,7 +657,7 @@ void BattlePres_SetActorModes(u16 *selectedUnits, s32 mode) {
       selectedUnits++;
       if (unitId != BATTLE_UNIT_LIST_END) {
         do {
-          BattlePres_SetActorRecordMode(unitId, (mode & 1) ^ 1);
+          BattlePresentation_SetActorRecordMode(unitId, (mode & 1) ^ 1);
           unitIndex++;
           // A unit list holds at most 14.
           if (unitIndex > 13)

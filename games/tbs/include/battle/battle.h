@@ -137,15 +137,15 @@ extern s8 gBattleParty_CenterOrderOffsets[];
 /// (BATTLE_SIDE_ENEMIES).
 extern const struct BattleGroupOrder gBattleParty_RoundEndGroupOrder;
 /// A lone SC_END: a battle unit's object script, which BattleObjMake starts.
-extern const s32 gBattlePres_ActorObjectScript[];
+extern const s32 gBattlePresentation_ActorObjectScript[];
 /// The advance arrow beside a battle message: eight 128-byte frames of a
 /// 256-colour sprite, one every four frames.
-extern u8 gBattlePres_AdvanceArrowTiles[];
+extern u8 gBattlePresentation_AdvanceArrowTiles[];
 /// The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each.
-extern const u8 gBattlePres_CurtainTiles[];
+extern const u8 gBattlePresentation_CurtainTiles[];
 /// Eight curtain tiles, 32 bytes each, of which the transition copies one at a
 /// time into the curtain's first tile.
-extern const u8 gBattlePres_TileVariants[];
+extern const u8 gBattlePresentation_TileVariants[];
 /// Garet's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimsGaret[];
 /// Ivan's weapon sprite by weapon kind.
@@ -285,12 +285,13 @@ enum BattlePose {
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose
 };
 
-/// A battle unit's sprites' OBJ mode, as BattlePres_SetActorRecordMode sets
-/// it: faded units are semi-transparent, and the battle's blends act on them.
+/// A battle unit's sprites' OBJ mode, as BattlePresentation_SetActorRecordMode
+/// sets it: faded units are semi-transparent, and the battle's blends act on
+/// them.
 enum BattleActorMode { ACTOR_OPAQUE, ACTOR_SEMI_TRANSPARENT };
 
-/// BattlePres_SetActorModes' mode, kept in BattleWork.highlightMode: whether
-/// the selected units are highlighted, every other unit faded.
+/// BattlePresentation_SetActorModes' mode, kept in BattleWork.highlightMode:
+/// whether the selected units are highlighted, every other unit faded.
 enum BattleHighlight { HIGHLIGHT_OFF, HIGHLIGHT_SELECTED };
 
 /// The glows BattleFx_PlayUnitElementEffect plays about a unit in its element.

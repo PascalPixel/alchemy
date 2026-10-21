@@ -947,10 +947,10 @@ void SelectionScreen_HighlightIcon(struct SelectionScreen *state,
   }
 }
 
-/// Stops the battle's highlight of units (BattlePres_SetActorModesFar with
-/// mode 0); Menu_ConfirmSelection calls it as an entry is chosen. It passes a
-/// unit list with one place an icon, of which only the end marker (0xff,
-/// BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
+/// Stops the battle's highlight of units (BattlePresentation_SetActorModesFar
+/// with mode 0); Menu_ConfirmSelection calls it as an entry is chosen. It
+/// passes a unit list with one place an icon, of which only the end marker
+/// (0xff, BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
 void Menu_SendNodeCountList(struct SelectionScreen *screen) {
   u16 data[6];
   struct SelectionNode *node = screen->head;
@@ -961,7 +961,7 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen) {
     count++;
   }
   data[count] = 0xff;
-  BattlePres_SetActorModesFar(data, 0);
+  BattlePresentation_SetActorModesFar(data, 0);
 }
 
 /// Scrolls the row one entry: forward brings an icon in from the right as the

@@ -53,8 +53,8 @@ void Object_SetTargetAndCallbackFar(u32 objectId, s32 targetId,
 void Event_SetMessageIdFar(s32 value);
 struct UiWindow *UiText_OpenMessageAtObjectFar(s32 arg, s32 unused);
 void FieldEvent_ShowMessageAndWaitFar(s32 action, s32 flag);
-void BattlePres_RunActionThenWaitIfModeZeroFar(s32 first, s32 second,
-                                               s32 value);
+void BattlePresentation_RunActionThenWaitIfModeZeroFar(s32 first, s32 second,
+                                                       s32 value);
 s32 FieldEvent_AskYesNoAndShowResponseFar(s32 objectId, s32 actionId);
 void ObjectMotion_ArmCallbackFar(s32 objectId, s32 angle, s32 wait);
 void Battle_ShowPairedUnitWorkAndWaitFar(s32 first, s32 first_x, s32 first_y,

@@ -27,9 +27,10 @@
 /// pixels: its sprite (an enemy's from its class, sharing the slot it
 /// already holds; a party member's battle sprite), palette, size and weapon
 /// sprite, turned to face the centre, and starts its motion script
-/// (gBattlePres_ActorObjectScript). Called by BattleUnit_RefreshPlacement
-/// and by BattleTargetExec for an enemy that joins. Fills in actor, creates
-/// a field object for it and, for an enemy, claims its sprite slots.
+/// (gBattlePresentation_ActorObjectScript). Called by
+/// BattleUnit_RefreshPlacement and by BattleTargetExec for an enemy that joins.
+/// Fills in actor, creates a field object for it and, for an enemy, claims its
+/// sprite slots.
 void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
@@ -275,7 +276,7 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
     object->scaleY = SCALE_ONE;
   }
   ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                               gBattlePres_ActorObjectScript);
+                               gBattlePresentation_ActorObjectScript);
 }
 
 /// Reads the battlefield position of party place index from

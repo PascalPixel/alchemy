@@ -365,7 +365,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     struct ItemDefinition *item;
 
     // A slot of -1: an earlier command this round used the item up
-    // (BattlePres_RunItem).
+    // (BattlePresentation_RunItem).
     if (request->parameter < 0) {
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiText_ShowMessageAndWaitCoreFar(MsgItemAlreadyUsed);
@@ -500,7 +500,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       if (Djinn_IsReadyFar(request->unitId, DJINN_ELEMENT(request->parameter),
                            DJINN_INDEX(request->parameter))) {
         BattleActGet(abilityId);
-        BattlePres_SetActorModes(0, HIGHLIGHT_OFF);
+        BattlePresentation_SetActorModes(0, HIGHLIGHT_OFF);
         Djinn_ActivateFar(request->unitId, DJINN_ELEMENT(request->parameter),
                           DJINN_INDEX(request->parameter));
         DjinnRecovery_RemoveFar(request->unitId,

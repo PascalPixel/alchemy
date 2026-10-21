@@ -363,13 +363,13 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 /// Plays a glow of the element about a unit, and returns when it is over.
 /// The glow is mode (enum BattleElementGlow), GLOW_PILLAR at strength
 /// variant. Called with GLOW_STAR_FIELD by
-/// BattlePresentation_RunUnitTransition and BattlePres_RunPsynergyCast, with
-/// GLOW_STREAKS by the latter, with GLOW_PILLAR by BattleUnit_ProcessTurnEnd
-/// and with GLOW_BURST by Battle_ProcessRoundEnd and BattleCommand_BuildPlan.
-/// Every glow first puts the background in BATTLE_BACKGROUND_FLAT and opens
-/// window 0 over lines 16 to 135, with BG2 blended over the other layers;
-/// GLOW_STAR_FIELD leaves the background's palette and BattleWork.brightness
-/// darkened.
+/// BattlePresentation_RunUnitTransition and BattlePresentation_RunPsynergyCast,
+/// with GLOW_STREAKS by the latter, with GLOW_PILLAR by
+/// BattleUnit_ProcessTurnEnd and with GLOW_BURST by Battle_ProcessRoundEnd and
+/// BattleCommand_BuildPlan. Every glow first puts the background in
+/// BATTLE_BACKGROUND_FLAT and opens window 0 over lines 16 to 135, with BG2
+/// blended over the other layers; GLOW_STAR_FIELD leaves the background's
+/// palette and BattleWork.brightness darkened.
 void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
                                     s32 variant) {
   /* FAKEMATCH(dead): an unused array for the frame's 40 bytes; without it, 2
@@ -476,13 +476,13 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
 /// Copies the background's saved palette back undarkened, as the star field
 /// of BattleFx_PlayUnitElementEffect leaves it dark.
 /// Called by BattlePresentation_RunUnitTransition and
-/// BattlePres_RunPsynergyCast once the effect has played.
-void BattlePres_RestorePalette(void) {
+/// BattlePresentation_RunPsynergyCast once the effect has played.
+void BattlePresentation_RestorePalette(void) {
   BattlePresentation_SetPaletteLevel(0, 0);
 }
 
-/// Removes the VCount interrupt's handler, as BattlePres_RunEntryTransition
-/// installs one; nothing calls it.
+/// Removes the VCount interrupt's handler, as
+/// BattlePresentation_RunEntryTransition installs one; nothing calls it.
 void Runtime_RemoveIrqHandlerSlot2(void) {
   Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
 }

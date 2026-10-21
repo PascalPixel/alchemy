@@ -69,7 +69,7 @@ u32 BattleClass_GetAttackEffect(u32 index) {
 
 /// Returns how high a class hops as it runs up to attack, in pixels; 0 out
 /// of range.
-/// Called by BattlePres_RunAttack, which passes it to
+/// Called by BattlePresentation_RunAttack, which passes it to
 /// BattleMotion_ApproachTarget, and reached through FarCall_BattleTable.
 u32 BattleClass_GetAttackHop(u32 index) {
   u16 value;

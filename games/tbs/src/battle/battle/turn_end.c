@@ -486,14 +486,14 @@ s32 Battle_ProcessRoundEnd(void) {
         if (BattleUnit_TickStun(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          BattlePres_SetActorModeAndAction(unitId);
+          BattlePresentation_SetActorModeAndAction(unitId);
           UiText_ShowMessageAndWaitCoreFar(MsgCureStun);
           BattlePresentation_WaitForAdvance();
         }
         if (BattleUnit_TickSleep(unitId) != 0) {
           BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
           UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
-          BattlePres_SetActorModeAndAction(unitId);
+          BattlePresentation_SetActorModeAndAction(unitId);
           UiText_ShowMessageAndWaitCoreFar(MsgWakes);
           BattlePresentation_WaitForAdvance();
         }

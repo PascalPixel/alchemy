@@ -8,8 +8,8 @@
 /// turn order. The party act at their Agility and target the first enemy
 /// unit, 128; enemies act at half their Agility plus a random part of it and
 /// target unit id 0 to n - 1 for n living party members, which
-/// BattlePres_RunAction replaces if it is down. Returns how many actions
-/// there are. Called by Battle_RunEncounter each round under
+/// BattlePresentation_RunAction replaces if it is down. Returns how many
+/// actions there are. Called by Battle_RunEncounter each round under
 /// FLAG_AUTO_BATTLE; fills entries.
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries) {
@@ -40,8 +40,8 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     count++;
   }
   // The enemies' actions. Random16() * n >> 16 is a roll from 0 to n - 1;
-  // the target is that number taken as a unit id, which BattlePres_RunAction
-  // replaces if the unit is down.
+  // the target is that number taken as a unit id, which
+  // BattlePresentation_RunAction replaces if the unit is down.
   enemyCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unitIds);
   entry = &entries[partyCount];
   targetRange = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
@@ -82,14 +82,14 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 }
 
 /// Turns the camera while L or R is held. Nothing in the source calls it.
-DEFINE_ADJUST_CAMERA(BattlePres_AdjustCameraByShoulderKeys)
+DEFINE_ADJUST_CAMERA(BattlePresentation_AdjustCameraByShoulderKeys)
 
 /// Auto battle: plays one action. A unit already down does nothing (-1);
 /// a defeated target is replaced by a living unit of its side first.
 /// Returns 1 when the party got away, 0 otherwise. Called by
 /// Battle_RunEncounter for each action under FLAG_AUTO_BATTLE. Turns the
 /// camera to the actor's side (gTransitionWork) and rewrites action->target.
-s32 BattlePres_RunAction(struct BattleActionRecord *action) {
+s32 BattlePresentation_RunAction(struct BattleActionRecord *action) {
   struct BattlePresentationTransition *transition;
   s32 actorId;
   s32 yaw;
@@ -120,17 +120,17 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
     break;
   case CMD_DEFEND:
     WaitFrames(45);
-    BattlePres_ShowDefendMessage(action);
+    BattlePresentation_ShowDefendMessage(action);
     break;
   case CMD_ITEM:
     WaitFrames(45);
-    BattlePres_RunUnitAction(action);
+    BattlePresentation_RunUnitAction(action);
     break;
   case CMD_ATTACK:
   default: {
     struct BattlePresentationTransition *transition = gTransitionWork;
     transition->flag = 0;
-    BattlePres_RunUnitAction(action);
+    BattlePresentation_RunUnitAction(action);
     transition->flag = 0;
     break;
   }
@@ -157,7 +157,7 @@ s32 BattleObject_IsValidId(u32 unitId) {
 
 /// Auto battle: the party tries to run, and gets away 15 times in 16, each
 /// living member running off in turn. Returns 1 when they got away; else
-/// shows MsgCannotEscape and returns 0. Called by BattlePres_RunAction.
+/// shows MsgCannotEscape and returns 0. Called by BattlePresentation_RunAction.
 s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
   s16 partyMembers[14];
   s32 partySize;
@@ -187,8 +187,9 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
 
 /// Auto battle: shows that a standing unit is defending. The message is
 /// `<unit> is defending`. Returns -1 for an invalid unit id, 0 otherwise.
-/// Called by BattlePres_RunAction.
-s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
+/// Called by BattlePresentation_RunAction.
+s32 BattlePresentation_ShowDefendMessage(
+    const struct BattleActionRecord *action) {
   s32 unitId;
   s32 result;
   struct BattleUnit *unit;
@@ -212,7 +213,7 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
 /// the caster raises its hand; the target side fades out, its living units
 /// are readied alone, the Psynergy's effect (kind action->parameter) plays
 /// on them, and everyone fades back in. Returns -1 for an invalid actor or
-/// target. Called by BattlePres_RunAction for CMD_PSYNERGY. Writes
+/// target. Called by BattlePresentation_RunAction for CMD_PSYNERGY. Writes
 /// REG_BLDCNT and REG_BLDALPHA and the actors' record modes, and leaves the
 /// battle objects readied again.
 s32 BattlePresentation_RunPairedUnitTransition(
@@ -272,7 +273,8 @@ s32 BattlePresentation_RunPairedUnitTransition(
   WaitFrames(30);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
-    BattlePres_SetActorRecordMode(index + sideStart, ACTOR_SEMI_TRANSPARENT);
+    BattlePresentation_SetActorRecordMode(index + sideStart,
+                                          ACTOR_SEMI_TRANSPARENT);
   }
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = BLEND_ALPHA(16 - index, 16);
@@ -320,16 +322,17 @@ s32 BattlePresentation_RunPairedUnitTransition(
   BattleObjPut();
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
-    BattlePres_SetActorRecordMode(index + sideStart, ACTOR_SEMI_TRANSPARENT);
+    BattlePresentation_SetActorRecordMode(index + sideStart,
+                                          ACTOR_SEMI_TRANSPARENT);
   }
   for (index = 0; index != 16; index++) {
     REG_BLDALPHA = BLEND_ALPHA(index, 16);
     WaitFrames(1);
   }
   for (index = 0; index != sideCount; index++) {
-    BattlePres_SetActorRecordMode(index + sideStart, ACTOR_OPAQUE);
+    BattlePresentation_SetActorRecordMode(index + sideStart, ACTOR_OPAQUE);
   }
-  BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
+  BattlePresentation_SetupTransitionScene(0, 0, 0, 0x64);
   WaitFrames(3);
   return 0;
 }
@@ -337,7 +340,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
 /// Auto battle: an attack. Shows `<unit> attacks!`, sends the attacker up
 /// to its target, plays the blow and sends both back. Returns -1 for an
 /// invalid attacker or target. Nothing in the source calls it.
-s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
+s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 
   // A short wait when the camera already faces the party's turn.
@@ -386,9 +389,9 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
 /// Auto battle: an attack or an item. Turns the camera to the actor's side,
 /// poses the actor and plays the effect (kind action->parameter) on the
 /// first living unit of the target's side, then sends both back. Returns -1
-/// for an invalid actor. Called by BattlePres_RunAction for CMD_ATTACK,
+/// for an invalid actor. Called by BattlePresentation_RunAction for CMD_ATTACK,
 /// CMD_ITEM and any other command but fleeing, defending and Psynergy.
-s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
+s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition = gTransitionWork;
   struct MotionObject *object;
@@ -556,7 +559,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
 
 /// Returns the action's target, or a random living unit of its side when
 /// the target is down; TARGET_SIDE_DEFEATED when none is left. Called by
-/// BattlePres_RunAction.
+/// BattlePresentation_RunAction.
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
   u16 livingUnits[14];
   s32 targetId;

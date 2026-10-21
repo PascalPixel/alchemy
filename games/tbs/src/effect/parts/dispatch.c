@@ -102,11 +102,11 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
 /// canvas, runs the entry of gBattleFx_EffectHandlers for its kind,
 /// and frees them again.
 ///
-/// Called through BattleFx_RunTableEffectFar by BattlePres_RunAttack,
-/// BattlePres_RunItem, BattlePres_RunPsynergyCast and
+/// Called through BattleFx_RunTableEffectFar by BattlePresentation_RunAttack,
+/// BattlePresentation_RunItem, BattlePresentation_RunPsynergyCast and
 /// BattlePresentation_RunUnitTransition (battle/staging.c, the last when the
 /// plan sets neither STAGING_SCENE nor STAGING_BY_ID_RANGE), and by
-/// BattlePres_RunUnitAction (battle/auto_battle.c).
+/// BattlePresentation_RunUnitAction (battle/auto_battle.c).
 ///
 /// Sets work->effect before the handler runs, which every handler and
 /// callback reads the effect through. BATTLE_FX_NONE is no effect and only

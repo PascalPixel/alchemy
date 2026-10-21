@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gBattlePres_ActorObjectScript in form (16 there)
+@ The Broken Seal's gBattlePresentation_ActorObjectScript in form (16 there)
 	.global Data_0812cacc
 Data_0812cacc:
 	.4byte 17

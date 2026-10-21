@@ -11,8 +11,8 @@
 /// BattleEffectArgument.side: the side the targets are on.
 enum BattleEffectSide { EFFECT_SIDE_ENEMIES, EFFECT_SIDE_PARTY };
 
-/// What a critical hit adds to an attack's effect kind: BattlePres_RunAttack
-/// plays the critical version of the blow.
+/// What a critical hit adds to an attack's effect kind:
+/// BattlePresentation_RunAttack plays the critical version of the blow.
 #define EFFECT_KIND_CRITICAL_OFFSET 200
 
 /// The command shared by an effect's caller, dispatcher and handlers.

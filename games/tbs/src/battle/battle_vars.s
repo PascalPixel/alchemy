@@ -4,8 +4,8 @@
 	.global gDebug_PartyPresets
 gDebug_PartyPresets:
 	.incbin "games/tbs/src/battle/presets.table"
-	.global gBattlePres_ActorObjectScript
-gBattlePres_ActorObjectScript:
+	.global gBattlePresentation_ActorObjectScript
+gBattlePresentation_ActorObjectScript:
 	.4byte 16
 @ Resource id | slot << 9, terminated by 0xffff.
 	.global gResource_SlotAssignments
@@ -30,11 +30,11 @@ gBattleMotion_VariantVelocityY:
 gBattleMotion_VariantDistancePercent:
 	.4byte 140, 140, 150, 200, 200, 150, 100, 100
 	.4byte 0, 20, 27
-	.global gBattlePres_TileVariants
-gBattlePres_TileVariants:
+	.global gBattlePresentation_TileVariants
+gBattlePresentation_TileVariants:
 	.incbin "games/tbs/src/battle/presentation/tilevar.4bpp"
-	.global gBattlePres_CurtainTiles
-gBattlePres_CurtainTiles:
+	.global gBattlePresentation_CurtainTiles
+gBattlePresentation_CurtainTiles:
 	.incbin "games/tbs/src/battle/presentation/curtain.4bpp"
 	.include "games/tbs/src/battle/presentation/highlight_ramp.s"
 	.4byte 1, 27

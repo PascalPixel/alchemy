@@ -295,9 +295,9 @@ s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
 /// BattleActor_SpawnObjectsForList, BattleEv_DispatchQueued,
 /// BattleEvent_Playback and Battle_ProcessRoundEnd.
 #ifdef UBFIX
-void BattlePres_SetActorModeAndAction(s32 unitId) {
+void BattlePresentation_SetActorModeAndAction(s32 unitId) {
 #else
-s32 BattlePres_SetActorModeAndAction(s32 unitId) {
+s32 BattlePresentation_SetActorModeAndAction(s32 unitId) {
 #endif
   struct BattleUnit *unit;
   s32 pose;
@@ -466,7 +466,7 @@ void BattleActor_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         }
       }
     }
-    BattlePres_SetActorModeAndAction(unitId);
+    BattlePresentation_SetActorModeAndAction(unitId);
   }
 
   if (refreshPoses) {
@@ -476,7 +476,7 @@ void BattleActor_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         if (unitIds[unitIndex] != BATTLE_UNIT_REMOVED &&
             (battleObject = BattleObjGet(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
-          BattlePres_SetActorModeAndAction(spriteId);
+          BattlePresentation_SetActorModeAndAction(spriteId);
         unitIndex++;
         if (unitIndex >= UNIT_MAX ||
             (spriteId = unitIds[unitIndex]) == BATTLE_UNIT_LIST_END)
@@ -550,7 +550,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
 /// for release at the end of the action or round
 /// (BattleMotion_DestroyAllSlotObjects), setting its active field to 1.
 /// Returns 0. Called when a unit leaves the battle: by
-/// BattleEvent_Playback, BattlePres_RunEscape, BattleMotion_ShowDowned,
+/// BattleEvent_Playback, BattlePresentation_RunEscape, BattleMotion_ShowDowned,
 /// BattleActor_DestroyTemporaryObject and the auto battle.
 s32 BattleObj_MarkForRelease(s32 unitId) {
   struct BattleObj *battleObject;
@@ -659,7 +659,8 @@ void Camera_InitDefaultTransform(void) {
   struct FixedPointPosition eyeOffset;
 
   // Yaw 0x3000 (in 1/65536 turns), pitch 0xfe00, and 510 pixels away
-  // (0x1fe0000 in 16.16), the distance BattlePres_SetupTransitionScene uses.
+  // (0x1fe0000 in 16.16), the distance BattlePresentation_SetupTransitionScene
+  // uses.
   camera->yaw = 192 << 6;
   camera->pitch = 254 << 8;
   camera->distance = 255 << 17;

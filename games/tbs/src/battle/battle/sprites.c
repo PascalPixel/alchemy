@@ -18,7 +18,8 @@ void BattleObjPut(void) {
 }
 
 /// Readies the sprite of every unit in the battle (releasing those of units
-/// that left), keeping their modes and motions. Called by BattlePres_RunAttack.
+/// that left), keeping their modes and motions. Called by
+/// BattlePresentation_RunAttack.
 void BattleParty_ListAllUnitsAndSubmit(void) {
   s16 unitIds[14];
 

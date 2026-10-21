@@ -297,7 +297,8 @@ void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags) {
 
 /// The event command "show message and wait": shows the message, then waits
 /// wait frames.
-void BattlePres_RunActionThenWaitIfModeZero(s32 actor, s32 flags, s32 wait) {
+void BattlePresentation_RunActionThenWaitIfModeZero(s32 actor, s32 flags,
+                                                    s32 wait) {
   FieldEvent_ShowMessageAndWait(actor, flags);
   FieldEvent_WaitFrames(wait);
 }

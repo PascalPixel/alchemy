@@ -179,11 +179,11 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattlePresentation_InitializeWorkAndResetState();
   BattleBackground_Load(BATTLE_BACKGROUND_FLAT, battle->background, 0);
   // The camera on the centre at 190 percent, until the opening sets its own
-  // zoom (BattlePres_RunEntryTransition). With the background
+  // zoom (BattlePresentation_RunEntryTransition). With the background
   // BATTLE_BACKGROUND_FLAT, BattleCamera_SetRange builds no plane page; it sets
   // at most BG1's horizontal scroll from the camera's yaw.
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
-  BattlePres_SetupTransitionScene(0, 0, 0, 190);
+  BattlePresentation_SetupTransitionScene(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
@@ -204,7 +204,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   }
   // After the entry transition the camera callback owns the background
   // again, and the sprite priorities are sorted every frame.
-  BattlePres_RunEntryTransition(enemyCount, enemyGroup);
+  BattlePresentation_RunEntryTransition(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
   Scheduler_AddOrUpdateCallback(BattleActor_UpdateSpritePriorities, 0xc80);
@@ -255,7 +255,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
                                               i == 0 ? 10 : 0) == 1)
           goto fled;
       } else {
-        if (BattlePres_RunAction(&battle->actions[i]) == 1)
+        if (BattlePresentation_RunAction(&battle->actions[i]) == 1)
           goto fled;
       }
       Runtime_GetRemainingIwram();
@@ -268,7 +268,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
           battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
         goto won;
       }
-      if (BattlePres_SyncTurn() < 0)
+      if (BattlePresentation_SyncTurn() < 0)
         goto aborted;
     }
 
@@ -278,7 +278,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     Battle_ProcessRoundEnd();
     BattleMotion_DestroyAllSlotObjects();
     if (battle->twoSided != 0) {
-      if (BattlePres_SyncTurn() < 0)
+      if (BattlePresentation_SyncTurn() < 0)
         goto aborted;
     } else {
       WaitFrames(20);

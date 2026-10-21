@@ -99,9 +99,9 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// UnitRatioFar its HP and PP gauges after either changes.
 ///
 /// Called for each target in turn by BattleEvent_Playback (an action with an
-/// effect) and BattlePres_RunActorEntries (one without). Changes the target's
-/// HP, PP, statuses, stat stages and turns, and its guard; the actor's HP or
-/// PP for a drain, and plan->hauntDamage; adds an enemy to
+/// effect) and BattlePresentation_RunActorEntries (one without). Changes the
+/// target's HP, PP, statuses, stat stages and turns, and its guard; the actor's
+/// HP or PP for a drain, and plan->hauntDamage; adds an enemy to
 /// gBattleWork->enemyIds when one is called; sets gBattleWork->challengeFlag
 /// bit 1 when the party is challenged; queues the events that show it all.
 /// It takes BattleRandomFar rolls, and borrows a heap block for the target's
@@ -341,7 +341,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
       // Ground holds only a target with an entry in this round's action
       // list. BattlePresentation_DispatchAction clears each entry once it has
       // played, so a target that has already acted is left alone; the auto
-      // battle's BattlePres_RunAction clears none.
+      // battle's BattlePresentation_RunAction clears none.
       hit = 0;
       for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
         if (work->actions[i].unitId == targetId) {

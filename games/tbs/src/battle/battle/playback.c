@@ -232,7 +232,7 @@ void BattleEvent_Playback(void) {
             BattleMotion_SetRecordChildValues(
                 slot->object, BattleMotion_GetSlotPalette(
                                   events->queue.operands[eventIndex]));
-            BattlePres_SetActorModeAndAction(
+            BattlePresentation_SetActorModeAndAction(
                 events->queue.operands[eventIndex]);
             break;
           }
@@ -263,10 +263,10 @@ void BattleEvent_Playback(void) {
       // ticks, a held advance key does too. The arrow is an 8 by 16,
       // 256-colour sprite (attribute 0 0xa000, which unlike that function's
       // is not semi-transparent) cycling eight frames of
-      // gBattlePres_AdvanceArrowTiles, one every four frames, in the VRAM
-      // cache entry BattleWork.promptSlot.
+      // gBattlePresentation_AdvanceArrowTiles, one every four frames, in the
+      // VRAM cache entry BattleWork.promptSlot.
       struct BattlePromptSprite *prompt = &events->displayEntry;
-      u8 *arrowTiles = gBattlePres_AdvanceArrowTiles;
+      u8 *arrowTiles = gBattlePresentation_AdvanceArrowTiles;
       s32 frameTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
       struct BattleDisplayWork *display = gBattleDisplayWork;
       struct UiWindow *window = display->window;

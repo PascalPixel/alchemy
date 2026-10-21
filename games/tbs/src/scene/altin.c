@@ -124,7 +124,7 @@ enum AltinVillageActor {
   ACTOR_THIRSTY_OLD_WOMAN,
   /// The three who come back as the water recedes, one with each drop
   /// (Village_ApplyWaterLevel): this man with brown hair
-  /// (SPRITE_BOY_WITH_BROWN_HAIR), then a strong man and an old man.
+  /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), then a strong man and an old man.
   /// ★ Named from the game: "The waters around here have subsided..."
   /// (MsgAltinTheWatersAroundHereHaveSubsided)
   ACTOR_MAN_WATERS_SUBSIDED,
@@ -163,7 +163,8 @@ enum AltinVillageActor {
 /// the village's are.
 enum AltinHouseActor {
   /// The family sheltering in the inn's Room One until the first drop: this
-  /// man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR) and a woman with fair
+  /// man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) and a woman with
+  /// fair
   /// hair.
   /// ★ Named from the game: "The guests in Room One moved back home when the
   /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
@@ -181,7 +182,7 @@ enum AltinHouseActor {
   /// ★ Named from the game: "The guests in Room Two also went home after the
   /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
   ACTOR_ROOM_TWO_SECOND_GUEST,
-  /// A man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR). He and
+  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR). He and
   /// ACTOR_WOMAN_NO_PLACE_LIKE_HOME are the kissing girl's "Mom and Pop", who
   /// have been acting weird since the ruins were found: his thoughts won't
   /// give up a spot at the end of the mine's easternmost passage, and hers say
@@ -217,7 +218,8 @@ enum AltinHouseActor {
   /// ★ Named from the game: "I came from Xian. I cook good food."
   /// (MsgAltinICameFromXianICook)
   ACTOR_COOK,
-  /// A man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR) in the inn, telling
+  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) in the inn,
+  /// telling
   /// of its guests going home as the water drops.
   /// ★ Named from the game: "None of us can go home until the water
   /// subsides." (MsgAltinNoneOfUsCanGoHome)
@@ -1127,8 +1129,9 @@ struct ScenePlacement gAltinVillage_Placements[] = {
      PIXELS(286), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0},
     {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(41), 0,
      PIXELS(441), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0},
-    {SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(176), 0,
-     PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0},
+    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+     PIXELS(176), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP,
+     TALK_FACE_PARTY, 0},
     {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(136), 0,
      PIXELS(461), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
     {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(350), 0,
@@ -1152,7 +1155,7 @@ struct ScenePlacement gAltinVillage_Placements[] = {
 
 // clang-format off
 struct ScenePlacement gAltinHouses_Placements[] = {
-    {SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(104), 0, PIXELS(120), FACING_EAST + FACING_STEP,
+    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(104), 0, PIXELS(120), FACING_EAST + FACING_STEP,
         TALK_FACE_PARTY, 0},
     {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(105), 0, PIXELS(233), FACING_SOUTH + FACING_STEP,
         TALK_FACE_PARTY, 0},
@@ -1160,7 +1163,7 @@ struct ScenePlacement gAltinHouses_Placements[] = {
         0},
     {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(376), 0, PIXELS(120),
         FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND, PIXELS(690), 0, PIXELS(128), FACING_SOUTHWEST + FACING_STEP,
+    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND, PIXELS(690), 0, PIXELS(128), FACING_SOUTHWEST + FACING_STEP,
         TALK_FACE_PARTY_AND_BACK, 0},
     {SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND, PIXELS(669), 0, PIXELS(128), FACING_EAST + FACING_STEP,
         TALK_FACE_PARTY_AND_BACK, 0},
@@ -1176,7 +1179,7 @@ struct ScenePlacement gAltinHouses_Placements[] = {
     {SPRITE_WOMAN_IN_PINK_APRON, 0x0, 3, PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
     {SPRITE_COOK, 0x0, (s32)gAltinHouses_CookScript, PIXELS(350), 0, PIXELS(746),
         FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND, PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP,
+    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND, PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP,
         TALK_FACE_PARTY, 0},
     {SCENE_TABLE_END},
 };

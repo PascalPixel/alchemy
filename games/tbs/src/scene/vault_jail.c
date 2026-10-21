@@ -70,11 +70,11 @@ enum JailActor {
   /// ★ Named from the game: "Shut yer yaps!"
   /// (MsgVaultThiefLeaderSilencesThieves)
   ACTOR_THIEF_LEADER = ACTOR_FIRST_PLACED,
-  /// The thief on the left (SPRITE_FIGURE_IN_PURPLE).
+  /// The thief on the left (SPRITE_PERSON_IN_PURPLE).
   /// ★ Named from the game: "If only we had escaped to the cave northeast of
   /// Goma Range." (MsgVaultLeftThiefRegretsEscape)
   ACTOR_LEFT_THIEF,
-  /// The thief on the right (SPRITE_FIGURE_IN_PURPLE).
+  /// The thief on the right (SPRITE_PERSON_IN_PURPLE).
   /// ★ Named from the game: "Blast! I knew we should have skipped town sooner."
   /// (MsgVaultRightThiefRegretsStaying)
   ACTOR_RIGHT_THIEF,
@@ -267,9 +267,9 @@ const u32 gJailExits[] = {
 const struct ScenePlacement gJailThiefPlacements[] = {
     { SPRITE_MAN_WITH_LONG_DARK_HAIR, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_FIGURE_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
+    { SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
       PIXELS(88), 0, PIXELS(144), FACING_SOUTH - FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_FIGURE_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
+    { SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), ACTOR_STAND,
       PIXELS(248), 0, PIXELS(144), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

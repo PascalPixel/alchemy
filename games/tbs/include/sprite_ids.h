@@ -153,16 +153,18 @@ enum SpriteId {
   /// ★ Named from what the player sees: an old man with white hair and a
   /// white beard in green clothes (spr_046.png)
   SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN = 0x2e,
+  /// The sprite of Kaja, the Tolbi ship's fighter.
   /// ★ Named from what the player sees: a bald man with a beard in a green
   /// apron (spr_047.png)
-  SPRITE_BALD_MAN_WITH_BEARD = 0x2f,
+  SPRITE_KAJA = 0x2f,
   /// The sprite of Hammet.
   /// ★ Named from what the player sees: a man in a turban and orange and
   /// yellow robes (spr_049.png)
   SPRITE_HAMMET = 0x31,
+  /// The sprite of Dodonpa.
   /// ★ Named from what the player sees: a man with spiky dark blue hair and a
   /// moustache in a white top and a red cloak (spr_050.png)
-  SPRITE_MAN_WITH_SPIKY_BLUE_HAIR = 0x32,
+  SPRITE_DODONPA = 0x32,
   /// The sprite of Nyunpa.
   /// ★ Named from what the player sees: an old man with white hair and a
   /// white beard in an orange robe (spr_051.png)
@@ -210,13 +212,14 @@ enum SpriteId {
   /// ★ Named from what the player sees: a man with long dark hair in a green
   /// and orange outfit (spr_063.png)
   SPRITE_MAN_WITH_LONG_DARK_HAIR = 0x3f,
-  /// ★ Named from what the player sees: a figure with long dark purple hair
+  /// ★ Named from what the player sees: a person with long dark purple hair
   /// in purple clothes (spr_064.png)
-  SPRITE_FIGURE_IN_PURPLE = 0x40,
-  /// The sprite of Babi in Altmiller Cave.
+  SPRITE_PERSON_IN_PURPLE = 0x40,
+  /// Babi's second sheet, which Altmiller Cave places while he is invisible
+  /// (ACTOR_INVISIBLE_BABI).
   /// ★ Named from what the player sees: an old man with long pink hair in a
   /// red and gold robe, with a cane (spr_065.png)
-  SPRITE_BABI_IN_ALTMILLER_CAVE = 0x41,
+  SPRITE_INVISIBLE_BABI = 0x41,
   /// ★ Named from what the player sees: a young man with spiky blue hair and
   /// a yellow headband in white (spr_066.png)
   SPRITE_YOUNG_MAN_WITH_BLUE_HAIR = 0x42,
@@ -255,9 +258,9 @@ enum SpriteId {
   /// ★ Named from what the player sees: a small boy with fair hair in a blue
   /// shirt (spr_107.png)
   SPRITE_BOY_WITH_FAIR_HAIR = 0x6b,
-  /// ★ Named from what the player sees: a boy with brown hair in a purple and
-  /// white shirt (spr_108.png)
-  SPRITE_BOY_WITH_BROWN_HAIR = 0x6c,
+  /// ★ Named from what the player sees: a young man with brown hair in a purple
+  /// and white shirt (spr_108.png)
+  SPRITE_YOUNG_MAN_WITH_BROWN_HAIR = 0x6c,
   /// ★ Named from what the player sees: a stout man with brown hair in an
   /// orange and blue tunic (spr_109.png)
   SPRITE_STOUT_MAN = 0x6d,
@@ -370,13 +373,13 @@ enum SpriteId {
   SPRITE_WAGON = 0x9a,
   /// ★ Named from what the player sees: a white bird with outspread wings
   /// (spr_155.png)
-  SPRITE_SEAGULL = 0x9b,
+  SPRITE_BIRD = 0x9b,
   /// ★ Named from what the player sees: a young man with brown hair tied back
   /// in a blue jacket and a white apron (spr_156.png)
   SPRITE_YOUNG_MAN_IN_BLUE_JACKET = 0x9c,
-  /// ★ Named from what the player sees: a woman with long brown hair in
-  /// green, with a sword (spr_157.png)
-  SPRITE_WOMAN_WITH_SWORD = 0x9d,
+  /// ★ Named from what the player sees: a person with long brown hair and a
+  /// green scarf in a red top, with a sword (spr_157.png)
+  SPRITE_PERSON_WITH_SWORD = 0x9d,
   /// ★ Named from what the player sees: a bald monk in an orange robe
   /// (spr_158.png)
   SPRITE_MONK_IN_ORANGE_ROBE = 0x9e,

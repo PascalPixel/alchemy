@@ -64,7 +64,7 @@ enum LunpaActor {
   /// ★ Named from what the player sees: its sprite, a small blue puddle (its
   /// render)
   ACTOR_HIDDEN_PUDDLE = ACTOR_FIRST_PLACED,
-  /// A man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
+  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
   /// ★ Named from the game: "Have you been in Lunpa long?"
   /// (MsgLunpaVillagerAAsksHowLong)
   ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA,

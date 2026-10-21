@@ -37,7 +37,7 @@
 ///   not come back.
 /// - Back from Kalay (FLAG_REACHED_KALAY): Garet meets his sister (group flag
 ///   FLAG_PLACE_TEMP_03) and asks one of his family to protect it while he is
-///   gone (FLAG_PLACE_TEMP_04), a boy asks whether Jenna is back
+///   gone (FLAG_PLACE_TEMP_04), a young man asks whether Jenna is back
 ///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
 ///   about the lack of travellers since the eruption (FLAG_PLACE_TEMP_07).
 ///   Isaac's house opens again: Dora lies ill inside (vale_interiors_inn.c).
@@ -178,11 +178,12 @@ enum ValeActor {
   /// ★ Named from the game: "I'm jealous of you,"
   /// (MsgValeYourGrandpaIsTheMayor)
   ACTOR_GIRL_JEALOUS_OF_GARET,
-  /// A boy with brown hair: "This place looks just like it did three years
+  /// A young man with brown hair: "This place looks just like it did three
+  /// years
   /// ago... after the storm..."
   /// ★ Named from the game: "This place looks just like it did three years
   /// ago... after the storm..." (MsgValeThisPlaceLooksJustLikeIt)
-  ACTOR_BOY_REMEMBERING_THE_STORM,
+  ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM,
   /// A strongman by the river: "Isaac, watch out! Don't get too close to the
   /// river!"
   /// ★ Named from the game: "Don't get too close to the river!"
@@ -255,10 +256,11 @@ enum ValeAfterKalayActor {
   /// ★ Named from the game: "Please take care of my brother"
   /// (MsgValePleaseTakeCareOfMyBrother)
   ACTOR_GARETS_BROTHER_AFTER_KALAY,
-  /// The boy of ACTOR_BOY_REMEMBERING_THE_STORM: "Is Jenna back yet?"
+  /// The young man of ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM: "Is Jenna back
+  /// yet?"
   /// (Event_AskWhetherJennaHasReturned)
   /// ★ Named from the game: "Is back yet?" (MsgValeIsJennaBackYet)
-  ACTOR_BOY_ASKING_FOR_JENNA,
+  ACTOR_YOUNG_MAN_ASKING_FOR_JENNA,
   /// The strongman of ACTOR_STRONGMAN_BY_THE_RIVER: "I still remember when
   /// Felix and I used to play here...*Sniff*"
   /// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
@@ -452,13 +454,14 @@ static void Event_DoraFretsAboutTheRoof(void) {
   Engine_EventEnd();
 }
 
-/// Back from Kalay, a boy in Vale (ACTOR_BOY_ASKING_FOR_JENNA) asks
+/// Back from Kalay, a young man in Vale (ACTOR_YOUNG_MAN_ASKING_FOR_JENNA) asks
 /// whether Jenna is back.
 static void Event_AskWhetherJennaHasReturned(void) {
   Engine_EventBegin();
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_BOY_ASKING_FOR_JENNA, 20);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER,
+                            ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 20);
   Engine_EventSetMessage(MsgValeIsJennaBackYet);
-  Engine_EventShowMessage(ACTOR_BOY_ASKING_FOR_JENNA, 0);
+  Engine_EventShowMessage(ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 0);
   Engine_GameFlagSet(FLAG_VALE_ASKED_IF_JENNA_IS_BACK);
   Engine_EventEnd();
 }
@@ -3367,7 +3370,7 @@ struct ScenePlacement gVale_Placements[] = {
         PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -3413,7 +3416,7 @@ struct ScenePlacement gVale_PlacementsAfterLeaving[] = {
         PIXELS(92), 0, PIXELS(508), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(252), 0, PIXELS(620), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -3455,7 +3458,7 @@ struct ScenePlacement gVale_PlacementsAfterKalay[] = {
         PIXELS(412), 0, PIXELS(586), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(356), 0, PIXELS(727), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_KEEP_FACING, 0 },
@@ -3508,7 +3511,7 @@ struct SceneEvent gVale_Events[] = {
     { EVENT_TALK, ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephLooksBeautifulTodayIts) },
     { EVENT_TALK, ACTOR_WOMAN_ON_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeValeStaysPristineBecauseOfMt) },
     { EVENT_TALK, ACTOR_GIRL_JEALOUS_OF_GARET, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheMayorAndTremors) },
-    { EVENT_TALK, ACTOR_BOY_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeThisPlaceLooksJustLikeIt) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeThisPlaceLooksJustLikeIt) },
     { EVENT_TALK, ACTOR_STRONGMAN_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeIsaacWatchOutDontGetToo) },
     { EVENT_TALK, ACTOR_MAN_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeValeMustRemainHiddenPsynergysSecrets) },
     { EVENT_TALK, ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
@@ -3549,7 +3552,7 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
     { EVENT_TALK, ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeValeIsSavedThanksToThe) },
     { EVENT_TALK, ACTOR_WOMAN_ON_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeEverSinceTheTremorsStartedMt) },
     { EVENT_TALK, ACTOR_GIRL_JEALOUS_OF_GARET, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheMayorAndTremors) },
-    { EVENT_TALK, ACTOR_BOY_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeSighNoLongerWillISee) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeSighNoLongerWillISee) },
     { EVENT_TALK, ACTOR_STRONGMAN_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeIDontBlameFelixIfOnly) },
     { EVENT_TALK, ACTOR_MAN_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeTheMayorWasTooKindTo) },
     { EVENT_TALK, ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
@@ -3559,7 +3562,7 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SISTER, CONDITION_ALWAYS, MSGNO(MsgValeGeeIWishICouldSee) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValeMyBrothersStrengthIsHisBest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeImGladThatFelixIsAlive) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM, CONDITION_ALWAYS, MSGNO(MsgValeImGladThatFelixIsAlive) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_BY_THE_RIVER, CONDITION_ALWAYS, MSGNO(MsgValeFelixWasAGoodPersonI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, MSGNO(MsgValePoorKradenWasTakenToSome) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeValeWasSavedBecausePeopleLike) },
@@ -3600,8 +3603,8 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICanTellJustByLooking) },
     { EVENT_TALK, ACTOR_GARETS_BROTHER_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
     { EVENT_TALK, ACTOR_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
-    { EVENT_TALK, ACTOR_BOY_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
-    { EVENT_TALK, ACTOR_BOY_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
     { EVENT_TALK, ACTOR_STRONGMAN_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeIUsedToPlayHere) },
     { EVENT_TALK, ACTOR_OLD_WOMAN_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephsEruptionWasSoPowerful) },
     { EVENT_TALK, ACTOR_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReactToAnotherTremor) },
@@ -3611,8 +3614,8 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreWorkingSoHard) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GARETS_BROTHER_AFTER_KALAY, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_BOY_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeFelixMustBeProtectingJennaIm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeTheEarthquakesArentCausedByEruptions) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, MSGNO(MsgValeAhhICantStandTheseEarthquakes) },

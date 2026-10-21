@@ -135,7 +135,7 @@ enum TolbiShipMastFirstAttackActor {
 /// TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK, then from
 /// gTolbiShipMast_LandingObjects.
 enum TolbiShipMastEnsembleActor {
-  /// The first of seven birds, all of one sprite (SPRITE_SEAGULL, a
+  /// The first of seven birds, all of one sprite (SPRITE_BIRD, a
   /// white bird in three wing poses), that flutter and bob about the mast
   /// (TolbiShipMast_SwayActor). One swoops at the lookout at the second attack,
   /// they scatter as the third attack's monster comes, and they fly off just
@@ -1046,19 +1046,19 @@ struct ScenePlacement gTolbiShipMast_StagingObjects[] = {
 };
 
 struct ScenePlacement gTolbiShipMast_EnsembleObjects[] = {
-    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
+    { SPRITE_BIRD, CONDITION_ALWAYS, 7,
         PIXELS(144), 0, PIXELS(169), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
+    { SPRITE_BIRD, CONDITION_ALWAYS, 7,
         PIXELS(134), 0, PIXELS(189), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
+    { SPRITE_BIRD, CONDITION_ALWAYS, 7,
         PIXELS(124), 0, PIXELS(209), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
+    { SPRITE_BIRD, CONDITION_ALWAYS, 7,
         PIXELS(129), 0, PIXELS(174), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
+    { SPRITE_BIRD, CONDITION_ALWAYS, 7,
         PIXELS(139), 0, PIXELS(184), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
+    { SPRITE_BIRD, CONDITION_ALWAYS, 7,
         PIXELS(149), 0, PIXELS(204), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_SEAGULL, CONDITION_ALWAYS, 7,
+    { SPRITE_BIRD, CONDITION_ALWAYS, 7,
         PIXELS(154), 0, PIXELS(194), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(182), 0, PIXELS(420), FACING_SOUTH, TALK_KEEP_FACING, 0 },

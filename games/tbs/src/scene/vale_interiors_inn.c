@@ -136,7 +136,8 @@ enum ValeInteriorsInnActor {
   /// flares up as its animation turns from flame to smoke, and rises 18 pixels
   /// as it shrinks away.
   ACTOR_FLAME,
-  /// A boy with brown hair who lost his father in the storm and means to be a
+  /// A young man with brown hair who lost his father in the storm and means to
+  /// be a
   /// smith. "My father also died in that storm three years ago."; once the
   /// party has left, "By then, I'll surely be a fine smith."
   /// ★ Named from the game: "My father also died in that storm three years
@@ -150,11 +151,12 @@ enum ValeInteriorsInnActor {
   /// A woman with red-brown hair in a pink dress and a white apron.
   /// ★ Named from the game: "Is it the innkeeper?" (MsgValeCoughCoughWho)
   ACTOR_INNKEEPER,
-  /// A boy with brown hair who walks about the inn. "One of the men from that
+  /// A young man with brown hair who walks about the inn. "One of the men from
+  /// that
   /// group staying here wore a mask over his face."
   /// ★ Named from the game: "wore a mask over his face"
   /// (MsgValeOneOfTheMenFromThat)
-  ACTOR_BOY_SAW_MASK,
+  ACTOR_YOUNG_MAN_SAW_MASK,
   /// A woman with fair hair at the inn. "Two of those three guests staying with
   /// us have gone out.";
   /// Mind Read later hears "I found his wallet when I was cleaning the room..."
@@ -345,23 +347,23 @@ static void Event_AskIsaacHisBusiness(void) {
   Engine_EventEnd();
 }
 
-/// In Vale, a boy with brown hair asks whether the masked man was Felix, and
-/// wonders whether Jenna can be trusted. Reached by talking to
-/// ACTOR_BOY_SAW_MASK once the party has left Vale and until it reaches Kalay
-/// (gValeInteriorsInn_EventsAfterLeaving).
+/// In Vale, a young man with brown hair asks whether the masked man was Felix,
+/// and wonders whether Jenna can be trusted. Reached by talking to
+/// ACTOR_YOUNG_MAN_SAW_MASK once the party has left Vale and until it reaches
+/// Kalay (gValeInteriorsInn_EventsAfterLeaving).
 static void Event_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
-  Engine_ActorFaceActor(ACTOR_BOY_SAW_MASK, ACTOR_PARTY_LEADER, 0xA);
+  Engine_ActorFaceActor(ACTOR_YOUNG_MAN_SAW_MASK, ACTOR_PARTY_LEADER, 0xA);
   Engine_EventSetMessage(MsgValeTheMaskedManWasFelix);
-  Engine_EventOpenMessage(ACTOR_BOY_SAW_MASK, 0);
+  Engine_EventOpenMessage(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventShowMessage(ACTOR_BOY_SAW_MASK, 0);
+    Engine_EventShowMessage(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   } else {
     work = gEventWork;
     work->message = (work->message + 1);
-    Engine_EventAskYesNo(ACTOR_BOY_SAW_MASK, 0);
+    Engine_EventAskYesNo(ACTOR_YOUNG_MAN_SAW_MASK, 0);
   }
   Engine_EventEnd();
 }
@@ -482,7 +484,7 @@ s32 ValeInteriorsInn_Initialize(void) {
       Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
       Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
       Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
-      Engine_ActorSetPosition(ACTOR_BOY_SAW_MASK, 0, 0);
+      Engine_ActorSetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
       Engine_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
       Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
     } else {
@@ -574,7 +576,7 @@ static void Event_DoraWakesIsaac(void) {
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
   Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
-  Engine_ActorSetPosition(ACTOR_BOY_SAW_MASK, 0, 0);
+  Engine_ActorSetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
   Engine_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
   Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
   // Isaac lies asleep in bed (animation 18); his tunic is set beside him.
@@ -739,7 +741,7 @@ static void Event_HurryToThePlaza(void) {
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITH, 0, 0);
   Engine_ActorSetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
   Engine_ActorSetPosition(ACTOR_INNKEEPER, 0, 0);
-  Engine_ActorSetPosition(ACTOR_BOY_SAW_MASK, 0, 0);
+  Engine_ActorSetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
   Engine_ActorSetPosition(ACTOR_INN_WORKER, 0, 0);
   Engine_ActorSetPosition(ACTOR_MASKED_MAN, 0, 0);
   Actor_SetPosition(ACTOR_DORA, PIXELS(431), PIXELS(391));
@@ -1510,13 +1512,13 @@ struct ScenePlacement gValeInteriorsInn_Placements[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0xd0, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_IN_BLUE_DRESS, 0x0, ACTOR_WANDER,
         PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -1536,13 +1538,13 @@ struct ScenePlacement gValeInteriorsInn_PlacementsAfterLeaving[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0xd0, 0x0, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_IN_BLUE_DRESS, 0x0, ACTOR_WANDER,
         PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -1556,13 +1558,13 @@ struct ScenePlacement gValeInteriorsInn_PlacementsAfterKalay[] = {
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0xd0, 0x0, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_IN_BLUE_DRESS, 0x0, ACTOR_WANDER,
         PIXELS(87), 0, PIXELS(67), FACING_WEST, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(391), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(159), 0, PIXELS(452), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -1615,7 +1617,7 @@ struct SceneEvent gValeInteriorsInn_StormEvents[] = {
 struct SceneEvent gValeInteriorsInn_Events[] = {
     { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
     { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
-    { EVENT_TALK, ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
     { EVENT_TALK, ACTOR_MASKED_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIsaacHisBusiness) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
@@ -1646,12 +1648,12 @@ struct SceneEvent gValeInteriorsInn_Events[] = {
 struct SceneEvent gValeInteriorsInn_EventsAfterLeaving[] = {
     { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
     { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
-    { EVENT_TALK, ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherMaskedManWasFelix) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherMaskedManWasFelix) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeWereASmallHotelAndWe) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIWillThinkOfJennaAs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeNowThatJennaIsGoneWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExitToValeGateNorthwest) },
@@ -1681,14 +1683,14 @@ struct SceneEvent gValeInteriorsInn_EventsAfterLeaving[] = {
 struct SceneEvent gValeInteriorsInn_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
     { EVENT_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
-    { EVENT_TALK, ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
     { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeArentYouGladToSeeThe) },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { EVENT_TALK, ACTOR_MAN_ISAAC_HAS_GROWN, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(Event_RemarkIsaacHasGrown) },
     { EVENT_TALK, ACTOR_MAN_ISAAC_HAS_GROWN, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeIPromisedIdBecomeAGreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeThatShyGirlWithIsaacSure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfIsaacWillContinue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfIsaacWillContinue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeValeWillNeverChangeSoYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INNKEEPER, FLAG_VALE_INNKEEPER_WELCOMED_ISAAC, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadInnkeepersThoughts) },

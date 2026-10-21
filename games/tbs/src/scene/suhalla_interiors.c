@@ -72,7 +72,7 @@ enum SuhallaInteriorsActor {
   /// (MsgSuhallaInteriorsWhenISeePeopleInTrouble)
   ACTOR_FATHERS_DAUGHTER = ACTOR_FIRST_PLACED,
   /// The man who aids anyone in trouble, a man with brown hair
-  /// (SPRITE_BOY_WITH_BROWN_HAIR), in whose house the wounded soldiers
+  /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), in whose house the wounded soldiers
   /// lie after the audience. "Let me know if you have any problems. I'll do
   /// anything I can to help."
   /// ★ Named from the game: "I want to help people so badly, I can't sit idly
@@ -612,7 +612,7 @@ u32 gSuhallaInteriorsExits[] = {
 struct ScenePlacement gSuhallaInteriorsPlacements[] = {
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(368), 0, PIXELS(192), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(80), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(120), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -638,7 +638,7 @@ struct ScenePlacement gSuhallaInteriorsPlacements[] = {
 struct ScenePlacement gSuhallaInteriorsPlacementsAfterAudience[] = {
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(400), 0, PIXELS(184), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(416), 0, PIXELS(184), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(120), FACING_EAST, TALK_FACE_PARTY, 0 },

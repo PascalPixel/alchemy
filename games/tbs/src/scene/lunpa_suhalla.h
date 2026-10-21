@@ -36,7 +36,8 @@ enum InteriorTrigger {
 /// order of gInteriorPlacements. Two people live in each of the three homes,
 /// named by their sprites and by what they say while the town is sealed.
 enum InteriorActor {
-  /// In the first home: this man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR)
+  /// In the first home: this man with brown hair
+  /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR)
   /// and a woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "My late grandfather traveled the continent with
   /// Lunpa." (MsgLunpaInteriorsFirstHomeASealed)

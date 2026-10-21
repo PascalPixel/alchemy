@@ -60,7 +60,8 @@
 /// people, by sprite, in the same rows. Each note gives what they say before
 /// Babi's audience, then after it.
 enum SuhallaActor {
-  /// A man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), who warns the party
+  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), who warns the
+  /// party
   /// off the desert; later "Welcome to Suhalla. I bet the sandstorms were
   /// terrible..."
   /// ★ Named from the game: "This is Suhalla."
@@ -273,7 +274,7 @@ u32 gSuhallaExits[] = {
 
 // clang-format off
 struct ScenePlacement gSuhallaPlacements[] = {
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(184), 0, PIXELS(304), FACING_WEST, TALK_FACE_PARTY, 0 },
@@ -295,7 +296,7 @@ struct ScenePlacement gSuhallaPlacements[] = {
 };
 
 struct ScenePlacement gSuhallaPlacementsLater[] = {
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(320), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },

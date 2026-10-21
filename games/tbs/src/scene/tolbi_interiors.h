@@ -14,7 +14,7 @@
 /// TOLBI_INTERIORS_SLEEPLESS_GUEST and TOLBI_INTERIORS_CROWD_SICK_GUEST, and
 /// six more rows follow the healer.
 enum TolbiInteriorsActor {
-  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR) who runs a
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) who runs a
   /// makeshift inn during the festival. "Me, I just line up some beds,
   /// and presto! I'm an innkeeper!"
   TOLBI_INTERIORS_MAKESHIFT_INNKEEPER = ACTOR_FIRST_PLACED,
@@ -71,7 +71,8 @@ enum TolbiInteriorsActor {
   /// "This year I'm not letting anyone skip work for
   /// Colosso!"
   TOLBI_INTERIORS_INN_LADY,
-  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR). "We're so busy
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR). "We're so
+  /// busy
   /// running the inn we can't go to Colosso. It's so boring."
   TOLBI_INTERIORS_INN_WORKER,
   TOLBI_INTERIORS_MEDAL_WOMAN, ///< SPRITE_WOMAN_WITH_FAIR_HAIR
@@ -101,7 +102,8 @@ enum TolbiInteriorsActor {
   /// "Tolbi gets so boring once the festival ends! I wanna go
   /// home!"
   TOLBI_INTERIORS_BORED_BOY,
-  /// After Colosso, a young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR)
+  /// After Colosso, a young man with brown hair
+  /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR)
   /// who rode the ship from Kalay with the party. "It's
   /// me! We rode the same ship from Kalay!"
   TOLBI_INTERIORS_FELLOW_PASSENGER,

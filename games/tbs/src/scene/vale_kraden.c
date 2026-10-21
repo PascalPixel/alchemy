@@ -100,7 +100,8 @@ enum ValeKradenActor {
   ACTOR_WEST_ROCK,
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   ACTOR_EAST_ROCK,
-  /// A boy with brown hair who lies by the broken fence on the stormy night.
+  /// A young man with brown hair who lies by the broken fence on the stormy
+  /// night.
   /// "Rockslide...destroyed
   /// fence... Monsters everywhere..."
   /// ★ Named from the game: "Rockslide...destroyed fence..."
@@ -1214,7 +1215,7 @@ struct ScenePlacement gValeKraden_Placements[] = {
         PIXELS(240), 0, PIXELS(353), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xc8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(384), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gValeKraden_RockslideSurvivorSwayActions,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gValeKraden_RockslideSurvivorSwayActions,
         PIXELS(83), 0, PIXELS(273), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(92), 0, PIXELS(268), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },

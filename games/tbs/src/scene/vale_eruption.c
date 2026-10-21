@@ -85,7 +85,7 @@ enum ValeEruptionActor {
   ACTOR_GUARD = ACTOR_FIRST_PLACED + 5,
   /// The first of the six villagers gathered behind them: a burly grey-haired
   /// man, a bald muscular man, a woman in a green dress, a little girl with
-  /// pigtails, a boy with brown hair and a strongman.
+  /// pigtails, a young man with brown hair and a strongman.
   /// ★ Named from what the player sees: men, a woman and children of Vale in
   /// their sprites (its render)
   ACTOR_FIRST_VILLAGER = ACTOR_FIRST_PLACED + 6
@@ -545,7 +545,7 @@ struct ScenePlacement gValeEruption_Placements[] = {
         PIXELS(283), 0, PIXELS(536), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(235), 0, PIXELS(552), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(265), 0, PIXELS(561), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(247), 0, PIXELS(573), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },

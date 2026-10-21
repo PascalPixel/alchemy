@@ -70,9 +70,10 @@ enum {
 /// then the shops' customers and keepers, the inn and its restaurant, and the
 /// room behind the inn's inner door.
 enum BilibinInteriorsActor {
-  /// A boy with brown hair, in the house east. "That tree at the entrance is
+  /// A young man with brown hair, in the house east. "That tree at the entrance
+  /// is
   /// really a man cursed by the sacred tree!"
-  BILIBIN_BOY_CURSED_MAN = ACTOR_FIRST_PLACED,
+  BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN = ACTOR_FIRST_PLACED,
   /// A woman with fair hair. "McCoy had the trees cut down so he could build
   /// his wife a grand palace."
   BILIBIN_VILLAGER_PALACE,
@@ -257,12 +258,12 @@ static void Event_AskAboutTreeSpirit(void) {
   Engine_EventEnd();
 }
 
-/// A boy in Bilibin, once the curse is lifted, asks whether the holy tree
+/// A young man in Bilibin, once the curse is lifted, asks whether the holy tree
 /// of Kolima Forest survived.
 static void Event_AskAboutHolyTree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoKnowIfHolyTree);
-  Engine_EventAskYesNo(BILIBIN_BOY_CURSED_MAN, 0);
+  Engine_EventAskYesNo(BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, 0);
   Engine_EventEnd();
 }
 
@@ -436,7 +437,7 @@ u32 gBilibinInteriorsExits[] = {
 
 // clang-format off
 struct ScenePlacement gBilibinInteriorsPlacements[] = {
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(200), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -494,7 +495,7 @@ struct SceneEvent gBilibinInteriorsEvents[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, BILIBIN_INTERIORS_INN_TO_BILIBIN },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, BILIBIN_INTERIORS_INN_UPSTAIRS_TO_INN },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, BILIBIN_INTERIORS_INN_TO_INN_UPSTAIRS },
-    { EVENT_TALK, BILIBIN_BOY_CURSED_MAN, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatTreeAtTheEntranceIs) },
+    { EVENT_TALK, BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatTreeAtTheEntranceIs) },
     { EVENT_TALK, BILIBIN_VILLAGER_PALACE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinMccoyHadTheTreesCutDown) },
     { EVENT_TALK, BILIBIN_MIA_ADMIRER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheSnowIsAlreadyPilingUp) },
     { EVENT_TALK, BILIBIN_BOY_SNOW, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeRarelySeeAnySnowAround) },
@@ -517,7 +518,7 @@ struct SceneEvent gBilibinInteriorsEvents[] = {
     { EVENT_TALK, BILIBIN_DINER_TODAYS_SPECIAL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantWaitToSeeTodays) },
     { EVENT_TALK, BILIBIN_JOB_SEEKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWentToLordMccoyLooking) },
     { EVENT_TALK, BILIBIN_VILLAGER_ANCIENT_TREES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIveHeardSongsThatTellOf) },
-    { EVENT_TALK, BILIBIN_BOY_CURSED_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutHolyTree) },
+    { EVENT_TALK, BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutHolyTree) },
     { EVENT_TALK, BILIBIN_VILLAGER_PALACE, CONDITION_ALWAYS, MSGNO(MsgBilibinThankGoodnessTheyStoppedConstructionOf) },
     { EVENT_TALK, BILIBIN_MIA_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgBilibinIAlwaysMissAltinInThe) },
     { EVENT_TALK, BILIBIN_BOY_SNOW, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherSaysThatItsWarm) },
@@ -540,7 +541,7 @@ struct SceneEvent gBilibinInteriorsEvents[] = {
     { EVENT_TALK, BILIBIN_DINER_TODAYS_SPECIAL, CONDITION_ALWAYS, MSGNO(MsgBilibinOooohThatsItITriedMy) },
     { EVENT_TALK, BILIBIN_JOB_SEEKER, CONDITION_ALWAYS, MSGNO(MsgBilibinTheIncidentWasResolvedBeforeI) },
     { EVENT_TALK, BILIBIN_VILLAGER_ANCIENT_TREES, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatThatEerieHowling) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_BOY_CURSED_MAN, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThisIsAllLordMccoysFault) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThisIsAllLordMccoysFault) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_PALACE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAhLadyMccoyIWouldJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_MIA_ADMIRER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_ReadMiaAdmirersMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_BOY_SNOW, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItMustBeDifficultToLive) },
@@ -563,7 +564,7 @@ struct SceneEvent gBilibinInteriorsEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_DINER_TODAYS_SPECIAL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYippeeIsItReadyYetMy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_JOB_SEEKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinImGettingALittleScaredHearing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_ANCIENT_TREES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItHasBeenSaidThatA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_BOY_CURSED_MAN, CONDITION_ALWAYS, MSGNO(MsgBilibinItTakesManyYearsForA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, CONDITION_ALWAYS, MSGNO(MsgBilibinItTakesManyYearsForA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_VILLAGER_PALACE, CONDITION_ALWAYS, MSGNO(MsgBilibinSometimesIWishICouldSee) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_MIA_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderIfThereAreStill) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), BILIBIN_BOY_SNOW, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherHasTraveledAllOver) },

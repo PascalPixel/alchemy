@@ -126,7 +126,8 @@ enum {
   GROUND_FLOOR_BOASTING_MAN,
   GROUND_FLOOR_UPPER_HALL_GUARD,
   GROUND_FLOOR_PATROL_GUARD,
-  /// A man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), talking of Donpa's
+  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), talking of
+  /// Donpa's
   /// poor health. "Donpa is supposed to be old. I wonder
   /// what he's fighting with in the fortress."
   GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA,
@@ -206,11 +207,12 @@ enum {
   TOADONPA_EAST_INVISIBLE_ACTOR,
   TOADONPA_BOSS,
   TOADONPA_HAMMET,
-  TOADONPA_DODONPA, ///< SPRITE_MAN_WITH_SPIKY_BLUE_HAIR
+  TOADONPA_DODONPA, ///< SPRITE_DODONPA
   TOADONPA_DONPA,
   /// A sprite drawn underfoot with Toadonpa and moving with it.
   TOADONPA_BOSS_PART,
-  /// One of Dodonpa's men, a man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR),
+  /// One of Dodonpa's men, a man with brown hair
+  /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR),
   /// placed by Dodonpa's cell after Donpa's judgment.
   /// "The merchant from Kalay is in here somewhere." Read with Mind Read:
   /// "Actually, Dodonpa's in here, but only a few people know that."
@@ -3617,7 +3619,7 @@ struct ScenePlacement gLunpaFortressGroundFloorPlacements[] = {
         PIXELS(808), 0, PIXELS(232), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gGroundFloorPatrolRoute,
         PIXELS(736), 0, PIXELS(648), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(192), 0, PIXELS(464), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(424), 0, PIXELS(392), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -3699,13 +3701,13 @@ struct ScenePlacement gLunpaFortressToadonpaPlacements[] = {
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_MAN_WITH_SPIKY_BLUE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DODONPA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { SPRITE_DONPA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0x120, CONDITION_ALWAYS, 7,
         PIXELS(464), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },

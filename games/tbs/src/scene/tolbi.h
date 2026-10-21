@@ -27,8 +27,8 @@
 enum TolbiActor {
   TOLBI_SPROUT = 8,
   TOLBI_PUDDLE = 9,
-  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR): "This festival
-  /// only happens once a year, so I'm really excited."
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR): "This
+  /// festival only happens once a year, so I'm really excited."
   TOLBI_EXCITED_YOUNG_MAN = 10,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR): "If we don't go
   /// right now, we won't get good seats!"
@@ -71,7 +71,7 @@ enum TolbiActor {
   /// festival is humongous!"; Mind Read finds the thought
   /// "Tolbi is not like Xian. It is very lively here!"
   TOLBI_XIAN_VISITOR = 21,
-  /// A woman with a sword (SPRITE_WOMAN_WITH_SWORD), beside a second whose
+  /// A woman with a sword (SPRITE_PERSON_WITH_SWORD), beside a second whose
   /// row has no name: "Rats! We overslept, and now the colosseum is full!"
   TOLBI_OVERSLEEPER = 22,
   /// A family at the festival: the father, a burly grey-haired man

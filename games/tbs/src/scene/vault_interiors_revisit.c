@@ -499,7 +499,7 @@ u32 gVaultInteriorsRevisit_Exits[] = {
 
 // clang-format off
 struct ScenePlacement gVaultInteriorsRevisit_Placements[] = {
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0, ACTOR_STAND,
         PIXELS(160), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0, 3,
         PIXELS(152), 0, PIXELS(72), FACING_WEST, TALK_FACE_PARTY, 0 },

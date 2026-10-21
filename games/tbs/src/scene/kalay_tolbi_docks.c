@@ -99,7 +99,8 @@
 /// ship has crossed (gKalayTolbiDocks_KalayPlacementsShipGone) the first four
 /// stand off the map.
 enum KalayDocksActor {
-  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), who walks over
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), who walks
+  /// over
   /// to
   /// tell Garet the Karagol is no real ocean.
   /// ★ Named from the game: "Do you want to go to Tolbi?"
@@ -147,7 +148,7 @@ enum TolbiDocksActor {
   /// ★ Named from the game: "I think we're done sailing for a while."
   /// (MsgKalayTolbiDocksSighIThinkWereDoneSailing)
   ACTOR_MAN_DONE_SAILING,
-  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
   /// ★ Named from the game: "The tourists look a little upset. Did they get
   /// seasick?" (MsgKalayTouristsLookUpset)
   ACTOR_YOUNG_MAN_ASKING_IF_SEASICK,
@@ -180,7 +181,8 @@ enum TolbiDocksActor {
 /// gKalayTolbiDocks_TolbiPlacements. The man who hears of the scary trip, the
 /// one done sailing and the crates keep their rows.
 enum TolbiDocksStrandedActor {
-  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), the passenger
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), the
+  /// passenger
   /// who
   /// charges the tour guide and is knocked flat.
   /// ★ Named from the game: "To heck with you! I'm staying right here until
@@ -1199,7 +1201,7 @@ struct ScenePlacement gKalayTolbiDocks_TolbiPlacements[] = {
         PIXELS(408), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(392), 0, PIXELS(344), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(216), 0, PIXELS(264), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(344), FACING_EAST, TALK_KEEP_FACING, 0 },
@@ -1219,7 +1221,7 @@ struct ScenePlacement gKalayTolbiDocks_TolbiPlacementsStranded[] = {
         PIXELS(408), 0, PIXELS(296), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(408), 0, PIXELS(344), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(224), 0, PIXELS(304), FACING_EAST, TALK_KEEP_FACING, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(320), FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -1241,7 +1243,7 @@ struct ScenePlacement gKalayTolbiDocks_TolbiPlacementsStranded[] = {
 struct ScenePlacement gKalayTolbiDocks_KalayPlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(248), 0, PIXELS(1408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(1224), FACING_NORTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -1261,7 +1263,7 @@ struct ScenePlacement gKalayTolbiDocks_KalayPlacements[] = {
 struct ScenePlacement gKalayTolbiDocks_KalayPlacementsShipGone[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_NORTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },

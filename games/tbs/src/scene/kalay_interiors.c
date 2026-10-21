@@ -58,7 +58,7 @@
 /// otherwise, it quotes what its actor says before the Colosso tour leaves.
 enum KalayInteriorsActor {
   // Kalay's houses
-  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR).
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
   /// ★ Named from the game: "I'm shocked to hear the righteous thieves of
   /// Lunpa have gone bad." (MsgKalayInteriorsImShockedToHearTheRighteous)
   ACTOR_YOUNG_MAN_ON_LUNPA_GONE_BAD = ACTOR_FIRST_PLACED,
@@ -100,7 +100,8 @@ enum KalayInteriorsActor {
   /// ★ Named from the game: "My son received his knack for business from Lord
   /// Hammet." (MsgKalayInteriorsMySonReceivedHisKnackFor)
   ACTOR_MERCHANTS_MOTHER,
-  /// A young man with brown hair (SPRITE_BOY_WITH_BROWN_HAIR), gone once the
+  /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), gone once
+  /// the
   /// tour
   /// has left.
   /// ★ Named from the game: "Do you know about the continent south of
@@ -161,7 +162,7 @@ enum KalayInteriorsActor {
   /// An old woman (SPRITE_OLD_WOMAN): "Many of the guests here seem to be
   /// heading to Tolbi."
   ACTOR_INN_GUEST,
-  /// A woman with a sword (SPRITE_WOMAN_WITH_SWORD). "Aren't you going to
+  /// A woman with a sword (SPRITE_PERSON_WITH_SWORD). "Aren't you going to
   /// Colosso? You guys are warriors!" Thoughts: "I'm going to sign up for
   /// Colosso as soon as I arrive in Tolbi."
   /// ★ Named from the game: "I'm going to sign up for Colosso as soon as I
@@ -560,7 +561,7 @@ struct ScenePlacement gKalayInteriors_NoPlacements[] = {
 
 // clang-format off
 struct ScenePlacement gKalayInteriors_HousePlacements[] = {
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(101), 0, PIXELS(181), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(167), 0, PIXELS(109), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -576,7 +577,7 @@ struct ScenePlacement gKalayInteriors_HousePlacements[] = {
         PIXELS(183), 0, PIXELS(416), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0x0, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(369), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
         PIXELS(856), 0, PIXELS(628), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(780), 0, PIXELS(633), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -606,7 +607,7 @@ struct ScenePlacement gKalayInteriors_InnPlacements[] = {
         PIXELS(168), 0, PIXELS(643), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0x0, ACTOR_STAND,
         PIXELS(247), 0, PIXELS(736), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_WOMAN_WITH_SWORD, 0x0, ACTOR_STAND,
+    { SPRITE_PERSON_WITH_SWORD, 0x0, ACTOR_STAND,
         PIXELS(263), 0, PIXELS(627), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_RED_HAIR, 0x0, ACTOR_STAND,
         PIXELS(417), 0, PIXELS(810), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0 },

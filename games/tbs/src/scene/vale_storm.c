@@ -188,7 +188,8 @@ enum StormNightActor {
   /// then "If our Psynergy runs out, Vale will be destroyed!"
   /// ★ Named from the game: "It's falling!" (MsgValeTheBoulderIsFalling)
   ACTOR_ELDER_EAST_STAND_IN,
-  /// The westernmost elder, drawn with the sprite of the boy with brown hair
+  /// The westernmost elder, drawn with the sprite of the young man with brown
+  /// hair
   /// (as is ACTOR_ELDER_FAR_EAST), tells the boys to run. "Hurry, boys! Run!!!
   /// It's
   /// just a little farther!"
@@ -3273,9 +3274,9 @@ struct ScenePlacement gValeStorm_Placements[] = {
 struct ScenePlacement gValeStorm_BoulderWatchers[] = {
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(85), 0, PIXELS(361), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(135), 0, PIXELS(363), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(100), 0, PIXELS(375), FACING_NORTH + FACING_STEP, TALK_KEEP_FACING, 0 },

@@ -112,7 +112,7 @@ enum TolbiSpringGameRoomActor {
   /// numbers."
   TOLBI_SPRING_DICE_RULES_SIGN,
   /// A soldier, gone after Colosso, drawn with the long-haired fighter's
-  /// sprite (SPRITE_WOMAN_WITH_SWORD). "poor soldiers like us"
+  /// sprite (SPRITE_PERSON_WITH_SWORD). "poor soldiers like us"
   TOLBI_SPRING_SOLDIER,
   /// "Lucky Dice. If two numbers match on either the dice or the table..."
   TOLBI_SPRING_DICE_PAIRS_SIGN
@@ -1535,7 +1535,7 @@ const struct ScenePlacement gTolbiSpringPlacementsOther[] = {
         PIXELS(168), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(160), 0, PIXELS(112), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_WOMAN_WITH_SWORD, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(152), FACING_SOUTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(80), 0, PIXELS(88), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },

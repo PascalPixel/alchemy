@@ -7,7 +7,7 @@
 /// numbers (SCENE_EXIT). A door is named the same from both sides. Links
 /// between rooms of one scene keep their numbers: nothing names those rooms.
 
-/// Title (scene 0).
+/// SceneId_Title's entrances and exits.
 enum {
   TITLE_FROM_VALE_GATE = 1,
   TITLE_AFTER_RUN = 2, ///< Title_Run
@@ -15,13 +15,13 @@ enum {
   TITLE_FROM_WORLD_MAP = 10,
 };
 
-/// Clear (scene 1).
+/// SceneId_Clear's entrances and exits.
 enum {
   CLEAR_FROM_SANCTUM = 1,
   CLEAR_FROM_TITLE = 2,
 };
 
-/// WorldMap (scene 2).
+/// SceneId_WorldMap's entrances and exits.
 enum {
   WORLD_MAP_FROM_VALE_GATE = 1,
   WORLD_MAP_FROM_TITLE = 2,
@@ -83,11 +83,13 @@ enum {
   WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS = 75,
   WORLD_MAP_FROM_CROSSBONE_ISLE = 76,
   WORLD_MAP_MERCURY_LIGHTHOUSE_LIT =
-      90, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition(0)
-          ///< here, then sends the party to the aerie
+      90, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition
+          ///< here in Mercury Lighthouse's colours, then sends the party to the
+          ///< aerie
   WORLD_MAP_VENUS_LIGHTHOUSE_LIT =
-      91, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition(1)
-          ///< here, then sends the party back to the aerie
+      91, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition
+          ///< here in Venus Lighthouse's colours, then sends the party back to
+          ///< the aerie
 };
 enum {
   WORLD_MAP_TO_VALE_GATE = 1,
@@ -150,7 +152,7 @@ enum {
   WORLD_MAP_TO_LUNPA_SUHALLA = 112,
 };
 
-/// ValeStorm (scene 3).
+/// SceneId_ValeStorm's entrances and exits.
 enum {
   VALE_STORM_FROM_VALE_KRADEN_NORTH = 3,
   VALE_STORM_FROM_VALE_KRADEN_SOUTH = 4,
@@ -170,7 +172,7 @@ enum {
   VALE_STORM_TO_VALE_INTERIORS_2_EAST = 13,
 };
 
-/// Vale (scene 4).
+/// SceneId_Vale's entrances and exits.
 enum {
   VALE_FROM_SANCTUM = 1,
   VALE_FROM_SOL_ENTRANCE = 2,
@@ -197,7 +199,7 @@ enum {
   VALE_TO_SANCTUM = 11,
 };
 
-/// ValeGate (scene 5).
+/// SceneId_ValeGate's entrances and exits.
 enum {
   VALE_GATE_FROM_VALE_INTERIORS_1_NORTH = 1,
   VALE_GATE_FROM_VALE_INTERIORS_2_NORTH = 2,
@@ -227,7 +229,7 @@ enum {
   VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST = 50,
 };
 
-/// ValeKraden (scene 6).
+/// SceneId_ValeKraden's entrances and exits.
 enum {
   VALE_KRADEN_FROM_VALE_NORTH = 1,
   VALE_KRADEN_FROM_VALE_SOUTH = 2,
@@ -247,7 +249,7 @@ enum {
   VALE_KRADEN_TO_VALE_INTERIORS_2_2 = 13,
 };
 
-/// ValeInteriors1 (scene 7).
+/// SceneId_ValeInteriors1's entrances and exits.
 enum {
   VALE_INTERIORS_1_FROM_VALE_WEST = 1,
   VALE_INTERIORS_1_FROM_VALE_NORTH = 2,
@@ -269,7 +271,7 @@ enum {
   VALE_INTERIORS_1_TO_VALE_GATE_NORTH = 8,
 };
 
-/// ValeInteriors2 (scene 8).
+/// SceneId_ValeInteriors2's entrances and exits.
 enum {
   VALE_INTERIORS_2_FROM_VALE_GATE_NORTHWEST = 1,
   VALE_INTERIORS_2_FROM_VALE_KRADEN_NORTH = 2,
@@ -295,7 +297,7 @@ enum {
   VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH = 22,
 };
 
-/// Sanctum (scene 9).
+/// SceneId_Sanctum's entrances and exits.
 enum {
   SANCTUM_DJINNIS_HOUSE = 0, ///< the room holds the djinnis house;
   SANCTUM_FROM_VALE = 1,
@@ -318,7 +320,7 @@ enum {
   SANCTUM_TO_CLEAR = 50,
 };
 
-/// ValeEruption (scene 10).
+/// SceneId_ValeEruption's entrances and exits.
 enum {
   VALE_ERUPTION_FROM_SOL_ENTRANCE = 15,
 };
@@ -326,7 +328,7 @@ enum {
   VALE_ERUPTION_TO_SANCTUM = 1,
 };
 
-/// SolSanctumLunaSolRooms (scene 11).
+/// SceneId_SolSanctumLunaSolRooms's entrances and exits.
 enum {
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ENTRANCE_1 = 1,
   SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION = 8,
@@ -337,7 +339,7 @@ enum {
   SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SCENE_510 = 10,
 };
 
-/// SolSanctumStatue (scene 12).
+/// SceneId_SolSanctumStatue's entrances and exits.
 enum {
   SOL_SANCTUM_STATUE_FROM_VALE_GATE = 0,
   SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE = 2,
@@ -347,7 +349,7 @@ enum {
   SOL_SANCTUM_STATUE_TO_SCENE_510 = 10,
 };
 
-/// SolSanctumPsynergyStone (scene 13).
+/// SceneId_SolSanctumPsynergyStone's entrances and exits.
 enum {
   SOL_SANCTUM_PSYNERGY_STONE_FROM_SOL_SANCTUM_STATUE = 1,
 };
@@ -355,7 +357,7 @@ enum {
   SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE = 1,
 };
 
-/// SolSanctumMaze (scene 14).
+/// SceneId_SolSanctumMaze's entrances and exits.
 enum {
   SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_SOUTH = 1,
   SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_ENTRANCE_1_NORTH = 2,
@@ -365,7 +367,7 @@ enum {
   SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_ENTRANCE_1_NORTH = 2,
 };
 
-/// SolSanctumCorridor (scene 15).
+/// SceneId_SolSanctumCorridor's entrances and exits.
 enum {
   SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_EAST = 1,
   SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_ENTRANCE_1_WEST = 2,
@@ -375,7 +377,7 @@ enum {
   SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_ENTRANCE_1_WEST = 2,
 };
 
-/// SolSanctumEntrance1 (scene 16).
+/// SceneId_SolSanctumEntrance1's entrances and exits.
 enum {
   SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_WEST = 1,
   SOL_SANCTUM_ENTRANCE_1_FROM_SOL_SANCTUM_CORRIDOR_EAST = 5,
@@ -393,7 +395,7 @@ enum {
   SOL_SANCTUM_ENTRANCE_1_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 16,
 };
 
-/// SolSanctumElementalStarRoom (scene 17).
+/// SceneId_SolSanctumElementalStarRoom's entrances and exits.
 enum {
   SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 10,
 };
@@ -401,7 +403,7 @@ enum {
   SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION = 2,
 };
 
-/// SolSanctumEruption (scene 18).
+/// SceneId_SolSanctumEruption's entrances and exits.
 enum {
   SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM = 10,
 };
@@ -409,7 +411,7 @@ enum {
   SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS = 5,
 };
 
-/// SolEntrance (scene 19).
+/// SceneId_SolEntrance's entrances and exits.
 enum {
   SOL_ENTRANCE_FROM_VALE = 1,
   SOL_ENTRANCE_FROM_SOL_SANCTUM_ENTRANCE_1 = 2,
@@ -419,7 +421,7 @@ enum {
   SOL_ENTRANCE_TO_SOL_SANCTUM_ENTRANCE_1 = 2,
 };
 
-/// Vault (scene 20).
+/// SceneId_Vault's entrances and exits.
 enum {
   VAULT_FROM_WORLD_MAP_SOUTH = 1,
   VAULT_FROM_WORLD_MAP_NORTH = 3,
@@ -446,7 +448,7 @@ enum {
   VAULT_TO_VAULT_INTERIORS_WEST = 13,
 };
 
-/// VaultInteriors (scene 21).
+/// SceneId_VaultInteriors's entrances and exits.
 enum {
   VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST = 5,
   VAULT_INTERIORS_FROM_VAULT_SOUTHEAST = 6,
@@ -467,7 +469,7 @@ enum {
   VAULT_INTERIORS_TO_SANCTUM = 16,
 };
 
-/// VaultJail (scene 22).
+/// SceneId_VaultJail's entrances and exits.
 enum {
   VAULT_JAIL_FROM_VAULT = 1,
   VAULT_JAIL_FROM_LUNPA = 2,
@@ -479,7 +481,7 @@ enum {
   VAULT_JAIL_TO_LUNPA = 3,
 };
 
-/// VaultRevisit (scene 23).
+/// SceneId_VaultRevisit's entrances and exits.
 enum {
   VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTHEAST = 5,
   VAULT_REVISIT_FROM_VAULT_INTERIORS_REVISIT_SOUTH = 6,
@@ -505,7 +507,7 @@ enum {
   VAULT_REVISIT_TO_VAULT_CAVE_3 = 14,
 };
 
-/// VaultInteriorsRevisit (scene 24).
+/// SceneId_VaultInteriorsRevisit's entrances and exits.
 enum {
   VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST = 5,
   VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH = 6,
@@ -523,7 +525,7 @@ enum {
   VAULT_INTERIORS_REVISIT_TO_VAULT_REVISIT_NORTHWEST = 10,
 };
 
-/// GomaCaveEntrance (scene 25).
+/// SceneId_GomaCaveEntrance's entrances and exits.
 enum {
   GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
   GOMA_CAVE_ENTRANCE_FROM_GOMA_CAVE_WATERWAY_1 = 2,
@@ -533,7 +535,7 @@ enum {
   GOMA_CAVE_ENTRANCE_TO_WORLD_MAP = 2,
 };
 
-/// GomaCavePond (scene 26).
+/// SceneId_GomaCavePond's entrances and exits.
 enum {
   GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST = 1,
   GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_SOUTH = 2,
@@ -545,7 +547,7 @@ enum {
   GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST = 3,
 };
 
-/// GomaCavePillar (scene 27).
+/// SceneId_GomaCavePillar's entrances and exits.
 enum {
   GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_WATERWAY_1_WEST = 1,
   GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_WATERWAY_1_EAST = 2,
@@ -561,7 +563,7 @@ enum {
   GOMA_CAVE_PILLAR_TO_GOMA_CAVE_WATERWAY_1_EAST = 5,
 };
 
-/// GomaCaveWaterway1 (scene 28).
+/// SceneId_GomaCaveWaterway1's entrances and exits.
 enum {
   GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_ENTRANCE = 1,
   GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_PILLAR_WEST = 2,
@@ -577,7 +579,7 @@ enum {
   GOMA_CAVE_WATERWAY_1_TO_VALE_GATE = 5,
 };
 
-/// GomaCaveWaterway2 (scene 29).
+/// SceneId_GomaCaveWaterway2's entrances and exits.
 enum {
   GOMA_CAVE_WATERWAY_2_FROM_GOMA_CAVE_WATERWAY_1 = 1,
   GOMA_CAVE_WATERWAY_2_FROM_WORLD_MAP = 2,
@@ -587,7 +589,7 @@ enum {
   GOMA_CAVE_WATERWAY_2_TO_WORLD_MAP = 2,
 };
 
-/// Bilibin (scene 30).
+/// SceneId_Bilibin's entrances and exits.
 enum {
   BILIBIN_FROM_WORLD_MAP = 1,
   BILIBIN_FROM_MCCOY_PALACE_GROUNDS = 2,
@@ -615,22 +617,23 @@ enum {
   BILIBIN_TO_BILIBIN_TREASURY_EAST = 11,
 };
 
-/// BilibinInteriors (scene 31).
+/// SceneId_BilibinInteriors's entrances and exits.
 enum {
-  BILIBIN_INTERIORS_HOUSE_EAST =
-      1, ///< the room behind Bilibin's house east door; Bilibin exit 4
-  BILIBIN_INTERIORS_HOUSE_WEST =
-      2, ///< the room behind Bilibin's house west door; Bilibin exit 5
-  BILIBIN_INTERIORS_HOUSE_NORTH =
-      3, ///< the room behind Bilibin's house north door; Bilibin exit 6
+  BILIBIN_INTERIORS_HOUSE_EAST = 1,  ///< the room behind Bilibin's house east
+                                     ///< door; through BILIBIN_TO_HOUSE_EAST
+  BILIBIN_INTERIORS_HOUSE_WEST = 2,  ///< the room behind Bilibin's house west
+                                     ///< door; through BILIBIN_TO_HOUSE_WEST
+  BILIBIN_INTERIORS_HOUSE_NORTH = 3, ///< the room behind Bilibin's house north
+                                     ///< door; through BILIBIN_TO_HOUSE_NORTH
   BILIBIN_INTERIORS_WEAPON_AND_ARMOR_SHOP =
       4, ///< the room behind Bilibin's weapon and armor shop door; the room
-         ///< holds the weapon and armor shop; Bilibin exit 8
+         ///< holds the weapon and armor shop; through
+         ///< BILIBIN_TO_WEAPON_AND_ARMOR_SHOP
   BILIBIN_INTERIORS_ITEM_SHOP =
       5, ///< the room behind Bilibin's item shop door; the room holds the item
-         ///< shop; Bilibin exit 7
+         ///< shop; through BILIBIN_TO_ITEM_SHOP
   BILIBIN_INTERIORS_INN = 6, ///< the room behind Bilibin's inn door; the room
-                             ///< holds the inn; Bilibin exit 3
+                             ///< holds the inn; through BILIBIN_TO_INN
   BILIBIN_INTERIORS_INN_NORTH = 8, ///< the room holds the inn;
 };
 enum {
@@ -642,7 +645,7 @@ enum {
   BILIBIN_INTERIORS_INN_TO_BILIBIN = 6,
 };
 
-/// BilibinTreasury (scene 32).
+/// SceneId_BilibinTreasury's entrances and exits.
 enum {
   BILIBIN_TREASURY_FROM_BILIBIN_SOUTH = 1,
   BILIBIN_TREASURY_FROM_BILIBIN_NORTH = 4,
@@ -652,7 +655,7 @@ enum {
   BILIBIN_TREASURY_TO_BILIBIN_NORTH = 4,
 };
 
-/// McCoyPalace (scene 33).
+/// SceneId_McCoyPalace's entrances and exits.
 enum {
   MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST = 1,
   MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST = 29,
@@ -661,7 +664,7 @@ enum {
   MCCOY_PALACE_TO_MCCOY_PALACE_GROUNDS_WEST = 1,
 };
 
-/// McCoyPalaceGrounds (scene 34).
+/// SceneId_McCoyPalaceGrounds's entrances and exits.
 enum {
   MCCOY_PALACE_GROUNDS_FROM_BILIBIN = 1,
   MCCOY_PALACE_GROUNDS_FROM_MCCOY_PALACE = 2,
@@ -672,7 +675,7 @@ enum {
   MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST = 10,
 };
 
-/// BilibinBarricade (scene 35).
+/// SceneId_BilibinBarricade's entrances and exits.
 enum {
   BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST = 1,
   BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST = 2,
@@ -682,7 +685,7 @@ enum {
   BILIBIN_BARRICADE_TO_WORLD_MAP_WEST = 2,
 };
 
-/// Kolima (scene 36).
+/// SceneId_Kolima's entrances and exits.
 enum {
   KOLIMA_FROM_WORLD_MAP = 1,
   KOLIMA_FROM_KOLIMA_INTERIORS_NORTHWEST = 3,
@@ -703,7 +706,7 @@ enum {
   KOLIMA_TO_KOLIMA_TUNNEL = 10,
 };
 
-/// KolimaInteriors (scene 37).
+/// SceneId_KolimaInteriors's entrances and exits.
 enum {
   KOLIMA_INTERIORS_FROM_KOLIMA_NORTHWEST = 3,
   KOLIMA_INTERIORS_FROM_KOLIMA_NORTHEAST = 4,
@@ -721,7 +724,7 @@ enum {
   KOLIMA_INTERIORS_TO_KOLIMA_TUNNEL = 14,
 };
 
-/// KolimaTunnel (scene 38).
+/// SceneId_KolimaTunnel's entrances and exits.
 enum {
   KOLIMA_TUNNEL_FROM_KOLIMA_INTERIORS = 1,
   KOLIMA_TUNNEL_FROM_KOLIMA = 2,
@@ -731,7 +734,7 @@ enum {
   KOLIMA_TUNNEL_TO_KOLIMA = 2,
 };
 
-/// KolimaBridge (scene 39).
+/// SceneId_KolimaBridge's entrances and exits.
 enum {
   KOLIMA_BRIDGE_FROM_WORLD_MAP_SOUTH = 1,
   KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH = 2,
@@ -741,7 +744,7 @@ enum {
   KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH = 2,
 };
 
-/// KolimaForest1 (scene 40).
+/// SceneId_KolimaForest1's entrances and exits.
 enum {
   KOLIMA_FOREST_1_FROM_KOLIMA_FOREST_2 = 2,
   KOLIMA_FOREST_1_FROM_WORLD_MAP = 4,
@@ -751,7 +754,7 @@ enum {
   KOLIMA_FOREST_1_TO_WORLD_MAP = 4,
 };
 
-/// KolimaForest2 (scene 41).
+/// SceneId_KolimaForest2's entrances and exits.
 enum {
   KOLIMA_FOREST_2_FROM_KOLIMA_FOREST_1 = 1,
   KOLIMA_FOREST_2_FROM_KOLIMA_FOREST_3 = 2,
@@ -761,7 +764,7 @@ enum {
   KOLIMA_FOREST_2_TO_KOLIMA_FOREST_1 = 2,
 };
 
-/// KolimaForest3 (scene 42).
+/// SceneId_KolimaForest3's entrances and exits.
 enum {
   KOLIMA_FOREST_3_FROM_KOLIMA_FOREST_2 = 1,
   KOLIMA_FOREST_3_FROM_KOLIMA_FOREST_FLOODGATE = 2,
@@ -771,7 +774,7 @@ enum {
   KOLIMA_FOREST_3_TO_KOLIMA_FOREST_2 = 2,
 };
 
-/// KolimaForestFloodgate (scene 43).
+/// SceneId_KolimaForestFloodgate's entrances and exits.
 enum {
   KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_3 = 1,
   KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE = 2,
@@ -781,7 +784,7 @@ enum {
   KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE = 2,
 };
 
-/// KolimaForestTree (scene 44).
+/// SceneId_KolimaForestTree's entrances and exits.
 enum {
   KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_FLOODGATE = 1,
   KOLIMA_FOREST_TREE_FROM_TRET_TREE_INTERIORS = 2,
@@ -791,7 +794,7 @@ enum {
   KOLIMA_FOREST_TREE_TO_TRET_TREE_INTERIORS = 2,
 };
 
-/// TretTreeInteriors (scene 45).
+/// SceneId_TretTreeInteriors's entrances and exits.
 enum {
   TRET_TREE_INTERIORS_FROM_KOLIMA_FOREST_TREE = 1,
   TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST = 2,
@@ -816,7 +819,7 @@ enum {
   TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST = 9,
 };
 
-/// TretTreeBranch (scene 46).
+/// SceneId_TretTreeBranch's entrances and exits.
 enum {
   TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST = 1,
   TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST = 2,
@@ -838,7 +841,7 @@ enum {
   TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHEAST = 8,
 };
 
-/// BilibinCave1 (scene 47).
+/// SceneId_BilibinCave1's entrances and exits.
 enum {
   BILIBIN_CAVE_1_FROM_BILIBIN_CAVE_2_WEST = 1,
   BILIBIN_CAVE_1_FROM_BILIBIN_CAVE_2_EAST = 2,
@@ -850,7 +853,7 @@ enum {
   BILIBIN_CAVE_1_TO_WORLD_MAP = 3,
 };
 
-/// BilibinCave2 (scene 48).
+/// SceneId_BilibinCave2's entrances and exits.
 enum {
   BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_ENTRANCE_WEST = 1,
   BILIBIN_CAVE_2_FROM_BILIBIN_CAVE_ENTRANCE_EAST = 2,
@@ -864,7 +867,7 @@ enum {
   BILIBIN_CAVE_2_TO_BILIBIN_CAVE_1_EAST = 5,
 };
 
-/// BilibinCaveEntrance (scene 49).
+/// SceneId_BilibinCaveEntrance's entrances and exits.
 enum {
   BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
   BILIBIN_CAVE_ENTRANCE_FROM_BILIBIN_CAVE_2_SOUTH = 2,
@@ -876,7 +879,7 @@ enum {
   BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_2_NORTH = 3,
 };
 
-/// Imil (scene 50).
+/// SceneId_Imil's entrances and exits.
 enum {
   IMIL_FROM_HOUSE_SOUTHWEST = 1,
   IMIL_FROM_HOUSE_WEST = 3,
@@ -899,15 +902,17 @@ enum {
   IMIL_TO_WORLD_MAP_NORTH = 12,
 };
 
-/// ImilInteriors (scene 51).
+/// SceneId_ImilInteriors's entrances and exits.
 enum {
   IMIL_INTERIORS_HOUSE_SOUTHWEST =
-      1, ///< the room behind Imil's house southwest door; Imil exit 1
+      1, ///< the room behind Imil's house southwest door; through
+         ///< IMIL_TO_HOUSE_SOUTHWEST
   IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST = 2,
   IMIL_INTERIORS_HOUSE_WEST =
-      3, ///< the room behind Imil's house west door; Imil exit 3
+      3, ///< the room behind Imil's house west door; through IMIL_TO_HOUSE_WEST
   IMIL_INTERIORS_HOUSE_NORTHEAST =
-      4, ///< the room behind Imil's house northeast door; Imil exit 4
+      4, ///< the room behind Imil's house northeast door; through
+         ///< IMIL_TO_HOUSE_NORTHEAST
   IMIL_INTERIORS_FROM_IMIL_SOUTH_SOUTHWEST = 5,
   IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST = 7,
 };
@@ -920,7 +925,7 @@ enum {
   IMIL_INTERIORS_TO_IMIL_EAST_NORTHEAST = 7,
 };
 
-/// ImilFallsCave (scene 52).
+/// SceneId_ImilFallsCave's entrances and exits.
 enum {
   IMIL_FALLS_CAVE_FROM_IMIL = 1,
 };
@@ -928,7 +933,7 @@ enum {
   IMIL_FALLS_CAVE_TO_IMIL = 1,
 };
 
-/// MercuryLighthouseEntrance (scene 53).
+/// SceneId_MercuryLighthouseEntrance's entrances and exits.
 enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_4 = 1,
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_1_5 = 6,
@@ -946,7 +951,7 @@ enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_1_EAST_NORTHEAST = 13,
 };
 
-/// MercuryLighthouse1 (scene 54).
+/// SceneId_MercuryLighthouse1's entrances and exits.
 enum {
   MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
   MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
@@ -968,7 +973,7 @@ enum {
   MERCURY_LIGHTHOUSE_1_TO_MERCURY_LIGHTHOUSE_ENTRANCE_6 = 13,
 };
 
-/// MercuryLighthouse2 (scene 55).
+/// SceneId_MercuryLighthouse2's entrances and exits.
 enum {
   MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_1_SOUTH = 1,
   MERCURY_LIGHTHOUSE_2_FROM_MERCURY_LIGHTHOUSE_1_NORTH = 3,
@@ -990,7 +995,7 @@ enum {
   MERCURY_LIGHTHOUSE_2_TO_MERCURY_LIGHTHOUSE_3_NORTH_NORTHEAST = 10,
 };
 
-/// MercuryLighthouse3 (scene 56).
+/// SceneId_MercuryLighthouse3's entrances and exits.
 enum {
   MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_2_WEST_NORTHWEST = 1,
   MERCURY_LIGHTHOUSE_3_FROM_MERCURY_LIGHTHOUSE_2_NORTH_NORTHEAST = 2,
@@ -1012,7 +1017,7 @@ enum {
   MERCURY_LIGHTHOUSE_3_TO_MERCURY_LIGHTHOUSE_4_WEST = 12,
 };
 
-/// MercuryLighthouse4 (scene 57).
+/// SceneId_MercuryLighthouse4's entrances and exits.
 enum {
   MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_2 = 1,
   MERCURY_LIGHTHOUSE_4_FROM_MERCURY_LIGHTHOUSE_3_SOUTH = 2,
@@ -1031,7 +1036,7 @@ enum {
   MERCURY_LIGHTHOUSE_4_TO_MERCURY_LIGHTHOUSE_AERIE_1 = 9,
 };
 
-/// MercuryLighthouseAerie1 (scene 58).
+/// SceneId_MercuryLighthouseAerie1's entrances and exits.
 enum {
   MERCURY_LIGHTHOUSE_AERIE_1_AFTER_BEACON_LIT =
       1, ///< the world map sends the party here after its lighthouse cut
@@ -1043,7 +1048,7 @@ enum {
   MERCURY_LIGHTHOUSE_AERIE_1_TO_MERCURY_LIGHTHOUSE_4 = 1,
 };
 
-/// FuchinTemple1 (scene 60).
+/// SceneId_FuchinTemple1's entrances and exits.
 enum {
   FUCHIN_TEMPLE_1_FROM_WORLD_MAP = 1,
   FUCHIN_TEMPLE_1_FROM_FUCHIN_TEMPLE_2 = 2,
@@ -1055,7 +1060,7 @@ enum {
   FUCHIN_TEMPLE_1_TO_FUCHIN_FALLS_CAVE_1 = 3,
 };
 
-/// FuchinTemple2 (scene 61).
+/// SceneId_FuchinTemple2's entrances and exits.
 enum {
   FUCHIN_TEMPLE_2_FROM_FUCHIN_TEMPLE_1 = 1,
   FUCHIN_TEMPLE_2_FROM_XIAN = 2,
@@ -1069,7 +1074,7 @@ enum {
   FUCHIN_TEMPLE_2_TO_HOUSE = 4,
 };
 
-/// FuchinFallsCave1 (scene 62).
+/// SceneId_FuchinFallsCave1's entrances and exits.
 enum {
   FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_TEMPLE_1 = 1,
   FUCHIN_FALLS_CAVE_1_FROM_FUCHIN_FALLS_CAVE_2 = 2,
@@ -1087,7 +1092,7 @@ enum {
   FUCHIN_FALLS_CAVE_1_TO_FUCHIN_FALLS_CAVE_6_EAST = 8,
 };
 
-/// FuchinFallsCave2 (scene 63).
+/// SceneId_FuchinFallsCave2's entrances and exits.
 enum {
   FUCHIN_FALLS_CAVE_2_FROM_FUCHIN_FALLS_CAVE_3 = 1,
   FUCHIN_FALLS_CAVE_2_FROM_FUCHIN_FALLS_CAVE_1 = 2,
@@ -1097,7 +1102,7 @@ enum {
   FUCHIN_FALLS_CAVE_2_TO_FUCHIN_FALLS_CAVE_1 = 2,
 };
 
-/// FuchinFallsCave3 (scene 64).
+/// SceneId_FuchinFallsCave3's entrances and exits.
 enum {
   FUCHIN_FALLS_CAVE_3_FROM_FUCHIN_FALLS_CAVE_6 = 2,
   FUCHIN_FALLS_CAVE_3_FROM_FUCHIN_FALLS_CAVE_1 = 4,
@@ -1109,7 +1114,7 @@ enum {
   FUCHIN_FALLS_CAVE_3_TO_FUCHIN_FALLS_CAVE_2 = 5,
 };
 
-/// FuchinFallsCave4 (scene 65).
+/// SceneId_FuchinFallsCave4's entrances and exits.
 enum {
   FUCHIN_FALLS_CAVE_4_FROM_FUCHIN_FALLS_CAVE_6 = 1,
   FUCHIN_FALLS_CAVE_4_FROM_FUCHIN_FALLS_CAVE_1 = 4,
@@ -1119,7 +1124,7 @@ enum {
   FUCHIN_FALLS_CAVE_4_TO_FUCHIN_FALLS_CAVE_1 = 4,
 };
 
-/// FuchinFallsCave5 (scene 66).
+/// SceneId_FuchinFallsCave5's entrances and exits.
 enum {
   FUCHIN_FALLS_CAVE_5_FROM_FUCHIN_FALLS_CAVE_6_WEST = 3,
   FUCHIN_FALLS_CAVE_5_FROM_FUCHIN_FALLS_CAVE_6_EAST = 4,
@@ -1129,7 +1134,7 @@ enum {
   FUCHIN_FALLS_CAVE_5_TO_FUCHIN_FALLS_CAVE_6_EAST = 4,
 };
 
-/// FuchinFallsCave6 (scene 67).
+/// SceneId_FuchinFallsCave6's entrances and exits.
 enum {
   FUCHIN_FALLS_CAVE_6_FROM_FUCHIN_FALLS_CAVE_5_EAST = 1,
   FUCHIN_FALLS_CAVE_6_FROM_FUCHIN_FALLS_CAVE_5_WEST = 2,
@@ -1147,7 +1152,7 @@ enum {
   FUCHIN_FALLS_CAVE_6_TO_FUCHIN_FALLS_CAVE_1_SOUTH = 12,
 };
 
-/// MogallForest1 (scene 68).
+/// SceneId_MogallForest1's entrances and exits.
 enum {
   MOGALL_FOREST_1_FROM_WORLD_MAP = 1,
   MOGALL_FOREST_1_FROM_MOGALL_FOREST_4_WEST = 2,
@@ -1163,7 +1168,7 @@ enum {
   MOGALL_FOREST_1_TO_MOGALL_FOREST_2 = 9,
 };
 
-/// MogallForest2 (scene 69).
+/// SceneId_MogallForest2's entrances and exits.
 enum {
   MOGALL_FOREST_2_FROM_MOGALL_FOREST_1 = 1,
   MOGALL_FOREST_2_FROM_MOGALL_FOREST_4_NORTH = 3,
@@ -1177,7 +1182,7 @@ enum {
   MOGALL_FOREST_2_TO_MOGALL_FOREST_4_SOUTH = 12,
 };
 
-/// MogallForest3 (scene 70).
+/// SceneId_MogallForest3's entrances and exits.
 enum {
   MOGALL_FOREST_3_FROM_MOGALL_FOREST_2 = 2,
   MOGALL_FOREST_3_FROM_MOGALL_FOREST_4_NORTH = 3,
@@ -1195,7 +1200,7 @@ enum {
   MOGALL_FOREST_3_TO_WORLD_MAP = 13,
 };
 
-/// MogallForest4 (scene 71).
+/// SceneId_MogallForest4's entrances and exits.
 enum {
   MOGALL_FOREST_4_FROM_MOGALL_FOREST_1_NORTH = 1,
   MOGALL_FOREST_4_FROM_MOGALL_FOREST_1_WEST = 2,
@@ -1217,7 +1222,7 @@ enum {
   MOGALL_FOREST_4_TO_MOGALL_FOREST_1_SOUTH = 8,
 };
 
-/// Xian (scene 72).
+/// SceneId_Xian's entrances and exits.
 enum {
   XIAN_FROM_HOUSE = 1,
   XIAN_FROM_WEAPON_AND_ARMOR_SHOP = 5,
@@ -1239,18 +1244,21 @@ enum {
   XIAN_TO_WORLD_MAP = 8,
 };
 
-/// XianInteriors (scene 73).
+/// SceneId_XianInteriors's entrances and exits.
 enum {
-  XIAN_INTERIORS_HOUSE = 1, ///< the room behind Xian's house door; Xian exit 1
-  XIAN_INTERIORS_HSUS_HOUSE = 2, ///< the room holds the hsus house; Xian exit 2
+  XIAN_INTERIORS_HOUSE =
+      1, ///< the room behind Xian's house door; through XIAN_TO_HOUSE
+  XIAN_INTERIORS_HSUS_HOUSE =
+      2, ///< the room holds the hsus house; through XIAN_TO_HSUS_HOUSE
   XIAN_INTERIORS_FROM_XIAN_EAST = 3,
-  XIAN_INTERIORS_INN_SOUTH = 4, ///< the room holds the inn; Xian exit 4
+  XIAN_INTERIORS_INN_SOUTH = 4, ///< the room holds the inn; through XIAN_TO_INN
   XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP =
       6, ///< the room behind Xian's weapon and armor shop door; the room holds
-         ///< the weapon and armor shop; Xian exit 5
+         ///< the weapon and armor shop; through XIAN_TO_WEAPON_AND_ARMOR_SHOP
   XIAN_INTERIORS_INN_NORTH = 7, ///< the room holds the inn;
   XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_2 =
-      8, ///< the room behind FuchinTemple2's house door; FuchinTemple2 exit 4
+      8, ///< the room behind FuchinTemple2's house door; through
+         ///< FUCHIN_TEMPLE_2_TO_HOUSE
 };
 enum {
   XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_XIAN = 1,
@@ -1260,7 +1268,7 @@ enum {
   XIAN_INTERIORS_HOUSE_TO_FUCHIN_TEMPLE_2 = 8,
 };
 
-/// AlpineCrossing (scene 74).
+/// SceneId_AlpineCrossing's entrances and exits.
 enum {
   ALPINE_CROSSING_FROM_WORLD_MAP_EAST = 1,
   ALPINE_CROSSING_FROM_WORLD_MAP_NORTH = 2,
@@ -1277,7 +1285,7 @@ enum {
   ALPINE_CROSSING_TO_LAMA_TEMPLE = 6,
 };
 
-/// Altin (scene 75).
+/// SceneId_Altin's entrances and exits.
 enum {
   ALTIN_FROM_WORLD_MAP = 1,
   ALTIN_FROM_ALTIN_INTERIORS_SOUTHWEST = 2,
@@ -1309,7 +1317,7 @@ enum {
   ALTIN_TO_ALTIN_PEAK_7 = 13,
 };
 
-/// AltinInteriors (scene 76).
+/// SceneId_AltinInteriors's entrances and exits.
 enum {
   ALTIN_INTERIORS_FROM_ALTIN_NORTHWEST = 1,
   ALTIN_INTERIORS_FROM_ALTIN_NORTH = 2,
@@ -1329,7 +1337,7 @@ enum {
   ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST = 7,
 };
 
-/// AltinPeak1 (scene 77).
+/// SceneId_AltinPeak1's entrances and exits.
 enum {
   ALTIN_PEAK_1_FROM_ALTIN = 1,
 };
@@ -1337,7 +1345,7 @@ enum {
   ALTIN_PEAK_1_TO_ALTIN = 1,
 };
 
-/// AltinPeak2 (scene 78).
+/// SceneId_AltinPeak2's entrances and exits.
 enum {
   ALTIN_PEAK_2_FROM_ALTIN_PEAK_4 = 1,
   ALTIN_PEAK_2_FROM_ALTIN_PEAK_3 = 2,
@@ -1347,7 +1355,7 @@ enum {
   ALTIN_PEAK_2_TO_ALTIN_PEAK_3 = 2,
 };
 
-/// AltinPeak3 (scene 79).
+/// SceneId_AltinPeak3's entrances and exits.
 enum {
   ALTIN_PEAK_3_FROM_ALTIN_PEAK_2 = 1,
 };
@@ -1355,7 +1363,7 @@ enum {
   ALTIN_PEAK_3_TO_ALTIN_PEAK_2 = 1,
 };
 
-/// AltinPeak4 (scene 80).
+/// SceneId_AltinPeak4's entrances and exits.
 enum {
   ALTIN_PEAK_4_FROM_ALTIN = 1,
   ALTIN_PEAK_4_FROM_ALTIN_PEAK_2 = 3,
@@ -1371,7 +1379,7 @@ enum {
   ALTIN_PEAK_4_TO_ALPINE_CROSSING_EAST = 7,
 };
 
-/// AltinPeak5 (scene 81).
+/// SceneId_AltinPeak5's entrances and exits.
 enum {
   ALTIN_PEAK_5_FROM_ALTIN_PEAK_6 = 1,
 };
@@ -1379,7 +1387,7 @@ enum {
   ALTIN_PEAK_5_TO_ALTIN_PEAK_6 = 1,
 };
 
-/// AltinPeak6 (scene 82).
+/// SceneId_AltinPeak6's entrances and exits.
 enum {
   ALTIN_PEAK_6_FROM_ALTIN_PEAK_4 = 1,
   ALTIN_PEAK_6_FROM_ALTIN_PEAK_5 = 6,
@@ -1389,7 +1397,7 @@ enum {
   ALTIN_PEAK_6_TO_ALTIN_PEAK_5 = 6,
 };
 
-/// AltinPeak7 (scene 83).
+/// SceneId_AltinPeak7's entrances and exits.
 enum {
   ALTIN_PEAK_7_FROM_ALTIN_PEAK_8 = 1,
   ALTIN_PEAK_7_FROM_ALTIN_PEAK_9 = 2,
@@ -1401,7 +1409,7 @@ enum {
   ALTIN_PEAK_7_TO_ALTIN = 3,
 };
 
-/// AltinPeak8 (scene 84).
+/// SceneId_AltinPeak8's entrances and exits.
 enum {
   ALTIN_PEAK_8_FROM_ALTIN_PEAK_7 = 1,
   ALTIN_PEAK_8_FROM_ALTIN_PEAK_9_WEST = 2,
@@ -1417,7 +1425,7 @@ enum {
   ALTIN_PEAK_8_TO_ALTIN_PEAK_9_EAST = 5,
 };
 
-/// AltinPeak9 (scene 85).
+/// SceneId_AltinPeak9's entrances and exits.
 enum {
   ALTIN_PEAK_9_FROM_ALTIN_PEAK_7 = 1,
   ALTIN_PEAK_9_FROM_ALTIN_PEAK_8_SOUTH = 3,
@@ -1431,7 +1439,7 @@ enum {
   ALTIN_PEAK_9_TO_ALTIN_PEAK_10 = 6,
 };
 
-/// AltinPeak10 (scene 86).
+/// SceneId_AltinPeak10's entrances and exits.
 enum {
   ALTIN_PEAK_10_FROM_ALTIN_PEAK_9 = 1,
 };
@@ -1439,7 +1447,7 @@ enum {
   ALTIN_PEAK_10_TO_ALTIN_PEAK_9 = 1,
 };
 
-/// AltinPeak11 (scene 87).
+/// SceneId_AltinPeak11's entrances and exits.
 enum {
   ALTIN_PEAK_11_FROM_ALTIN_PEAK_8 = 1,
   ALTIN_PEAK_11_FROM_WORLD_MAP = 4,
@@ -1449,7 +1457,7 @@ enum {
   ALTIN_PEAK_11_TO_WORLD_MAP = 4,
 };
 
-/// LamaTemple (scene 88).
+/// SceneId_LamaTemple's entrances and exits.
 enum {
   LAMA_TEMPLE_FROM_WORLD_MAP = 1,
   LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_2 = 2,
@@ -1460,7 +1468,7 @@ enum {
   LAMA_TEMPLE_TO_FUCHIN_TEMPLE_2 = 2,
 };
 
-/// LamakanDesert1 (scene 89).
+/// SceneId_LamakanDesert1's entrances and exits.
 enum {
   LAMAKAN_DESERT_1_FROM_WORLD_MAP = 1,
   LAMAKAN_DESERT_1_FROM_LAMAKAN_DESERT_2 = 2,
@@ -1470,7 +1478,7 @@ enum {
   LAMAKAN_DESERT_1_TO_LAMAKAN_DESERT_2 = 2,
 };
 
-/// LamakanDesert2 (scene 90).
+/// SceneId_LamakanDesert2's entrances and exits.
 enum {
   LAMAKAN_DESERT_2_FROM_LAMAKAN_DESERT_1 = 1,
   LAMAKAN_DESERT_2_FROM_LAMAKAN_DESERT_3 = 2,
@@ -1480,7 +1488,7 @@ enum {
   LAMAKAN_DESERT_2_TO_LAMAKAN_DESERT_3 = 2,
 };
 
-/// LamakanDesert3 (scene 91).
+/// SceneId_LamakanDesert3's entrances and exits.
 enum {
   LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_2 = 1,
   LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_4_EAST = 2,
@@ -1495,7 +1503,7 @@ enum {
   LAMAKAN_DESERT_3_TO_LAMAKAN_DESERT_4_WEST = 4,
 };
 
-/// LamakanDesert4 (scene 92).
+/// SceneId_LamakanDesert4's entrances and exits.
 enum {
   LAMAKAN_DESERT_4_FROM_LAMAKAN_DESERT_3_SOUTH = 1,
   LAMAKAN_DESERT_4_FROM_LAMAKAN_DESERT_3_SOUTHEAST = 2,
@@ -1509,7 +1517,7 @@ enum {
   LAMAKAN_DESERT_4_TO_LAMAKAN_DESERT_3_WEST = 4,
 };
 
-/// ValeCave1 (scene 93).
+/// SceneId_ValeCave1's entrances and exits.
 enum {
   VALE_CAVE_1_FROM_VALE_KRADEN_WEST = 1,
   VALE_CAVE_1_FROM_VALE_CAVE_2 = 2,
@@ -1521,7 +1529,7 @@ enum {
   VALE_CAVE_1_TO_VALE_KRADEN_EAST = 3,
 };
 
-/// ValeCave2 (scene 94).
+/// SceneId_ValeCave2's entrances and exits.
 enum {
   VALE_CAVE_2_FROM_VALE_CAVE_1 = 1,
   VALE_CAVE_2_FROM_VALE_CAVE_3_WEST = 4,
@@ -1535,7 +1543,7 @@ enum {
   VALE_CAVE_2_TO_VALE_CAVE_3_SOUTH = 10,
 };
 
-/// ValeCave3 (scene 95).
+/// SceneId_ValeCave3's entrances and exits.
 enum {
   VALE_CAVE_3_FROM_VALE_CAVE_2_WEST = 1,
   VALE_CAVE_3_FROM_VALE_CAVE_2_NORTH = 3,
@@ -1547,7 +1555,7 @@ enum {
   VALE_CAVE_3_TO_VALE_CAVE_2_SOUTH = 4,
 };
 
-/// VaultCave1 (scene 96).
+/// SceneId_VaultCave1's entrances and exits.
 enum {
   VAULT_CAVE_1_FROM_VAULT_CAVE_3 = 1,
   VAULT_CAVE_1_FROM_VAULT_CAVE_2_NORTHWEST = 2,
@@ -1563,7 +1571,7 @@ enum {
   VAULT_CAVE_1_TO_VAULT_REVISIT = 10,
 };
 
-/// VaultCave2 (scene 97).
+/// SceneId_VaultCave2's entrances and exits.
 enum {
   VAULT_CAVE_2_FROM_VAULT_CAVE_1_NORTH = 1,
   VAULT_CAVE_2_FROM_VAULT_CAVE_3_NORTH = 2,
@@ -1579,7 +1587,7 @@ enum {
   VAULT_CAVE_2_TO_VAULT_CAVE_1_SOUTH = 10,
 };
 
-/// VaultCave3 (scene 98).
+/// SceneId_VaultCave3's entrances and exits.
 enum {
   VAULT_CAVE_3_FROM_VAULT_REVISIT = 1,
   VAULT_CAVE_3_FROM_VAULT_CAVE_1 = 2,
@@ -1593,7 +1601,7 @@ enum {
   VAULT_CAVE_3_TO_VAULT_CAVE_2_NORTH = 6,
 };
 
-/// Kalay1 (scene 99).
+/// SceneId_Kalay1's entrances and exits.
 enum {
   KALAY_1_FROM_KALAY_INTERIORS_1_NORTHWEST = 1,
   KALAY_1_FROM_KALAY_INTERIORS_1_NORTH = 2,
@@ -1626,7 +1634,7 @@ enum {
   KALAY_1_TO_KALAY_TUNNEL_3 = 14,
 };
 
-/// KalayInteriors1 (scene 100).
+/// SceneId_KalayInteriors1's entrances and exits.
 enum {
   KALAY_INTERIORS_1_FROM_KALAY_1_NORTHWEST = 1,
   KALAY_INTERIORS_1_FROM_KALAY_1_NORTH = 2,
@@ -1650,7 +1658,7 @@ enum {
   KALAY_INTERIORS_1_TO_KALAY_1_SOUTH_SOUTHWEST = 10,
 };
 
-/// KalaySanctum (scene 101).
+/// SceneId_KalaySanctum's entrances and exits.
 enum {
   KALAY_SANCTUM_FROM_KALAY_1 = 1,
 };
@@ -1658,7 +1666,7 @@ enum {
   KALAY_SANCTUM_TO_KALAY_1 = 1,
 };
 
-/// Kalay2 (scene 102).
+/// SceneId_Kalay2's entrances and exits.
 enum {
   KALAY_2_FROM_KALAY_1 = 1,
   KALAY_2_FROM_HAMMET_PALACE = 2,
@@ -1669,7 +1677,7 @@ enum {
   KALAY_2_TO_HAMMET_PALACE_EAST = 5,
 };
 
-/// HammetPalace (scene 103).
+/// SceneId_HammetPalace's entrances and exits.
 enum {
   HAMMET_PALACE_FROM_KALAY_2_WEST = 1,
   HAMMET_PALACE_FROM_KALAY_TUNNEL_3 = 11,
@@ -1680,7 +1688,7 @@ enum {
   HAMMET_PALACE_TO_KALAY_TUNNEL_3 = 11,
 };
 
-/// Lunpa (scene 104).
+/// SceneId_Lunpa's entrances and exits.
 enum {
   LUNPA_FROM_WORLD_MAP = 1,
   LUNPA_FROM_LUNPA_FORTRESS_GATES = 2,
@@ -1710,12 +1718,12 @@ enum {
   LUNPA_TO_VAULT_JAIL = 12,
 };
 
-/// LunpaSuhalla (scene 105).
+/// SceneId_LunpaSuhalla's entrances and exits.
 enum {
   LUNPA_SUHALLA_FROM_SUHALLA_GATE_1 = 10,
 };
 
-/// WestLunpaCave (scene 106).
+/// SceneId_WestLunpaCave's entrances and exits.
 enum {
   WEST_LUNPA_CAVE_FROM_WORLD_MAP = 1,
   WEST_LUNPA_CAVE_FROM_LUNPA = 2,
@@ -1726,7 +1734,7 @@ enum {
   WEST_LUNPA_CAVE_BY_WAGON = 3,
 };
 
-/// KalayDocks (scene 107).
+/// SceneId_KalayDocks's entrances and exits.
 enum {
   KALAY_DOCKS_FROM_WORLD_MAP_SOUTH = 1,
   KALAY_DOCKS_FROM_TOLBI_SHIP_DECK = 2,
@@ -1740,7 +1748,7 @@ enum {
   KALAY_DOCKS_TO_WORLD_MAP_NORTH = 4,
 };
 
-/// KalayTolbiDocks2 (scene 108).
+/// SceneId_KalayTolbiDocks2's entrances and exits.
 enum {
   KALAY_TOLBI_DOCKS_2_FROM_KALAY_DOCKS = 1,
   KALAY_TOLBI_DOCKS_2_FROM_TOLBI_DOCKS = 2,
@@ -1750,7 +1758,7 @@ enum {
   KALAY_TOLBI_DOCKS_2_TO_TOLBI_DOCKS = 2,
 };
 
-/// TolbiShipDeck (scene 109).
+/// SceneId_TolbiShipDeck's entrances and exits.
 enum {
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_2 = 2,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SOUTH = 4,
@@ -1768,7 +1776,7 @@ enum {
   TOLBI_SHIP_DECK_TO_TOLBI_DOCKS = 6,
 };
 
-/// TolbiShipMast (scene 110).
+/// SceneId_TolbiShipMast's entrances and exits.
 enum {
   TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK = 1,
 };
@@ -1777,7 +1785,7 @@ enum {
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_NORTH = 15,
 };
 
-/// TolbiShipInteriors (scene 111).
+/// SceneId_TolbiShipInteriors's entrances and exits.
 enum {
   TOLBI_SHIP_INTERIORS_FROM_TOLBI_SHIP_DECK_2 = 3,
   TOLBI_SHIP_INTERIORS_FROM_WORLD_MAP = 21,
@@ -1791,7 +1799,7 @@ enum {
   TOLBI_SHIP_INTERIORS_TO_WORLD_MAP = 21,
 };
 
-/// TolbiDocks (scene 112).
+/// SceneId_TolbiDocks's entrances and exits.
 enum {
   TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK = 1,
   TOLBI_DOCKS_FROM_WORLD_MAP = 2,
@@ -1803,7 +1811,7 @@ enum {
   TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_2 = 3,
 };
 
-/// CrossboneIsle (scene 113).
+/// SceneId_CrossboneIsle's entrances and exits.
 enum {
   CROSSBONE_ISLE_FROM_WORLD_MAP = 1,
   CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_2 = 2,
@@ -1813,7 +1821,7 @@ enum {
   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_2 = 2,
 };
 
-/// CrossboneIsle2 (scene 114).
+/// SceneId_CrossboneIsle2's entrances and exits.
 enum {
   CROSSBONE_ISLE_2_FROM_CROSSBONE_ISLE = 1,
   CROSSBONE_ISLE_2_FROM_CROSSBONE_ISLE_6 = 2,
@@ -1823,7 +1831,7 @@ enum {
   CROSSBONE_ISLE_2_TO_CROSSBONE_ISLE_6 = 2,
 };
 
-/// CrossboneIslePillarRooms1 (scene 115).
+/// SceneId_CrossboneIslePillarRooms1's entrances and exits.
 enum {
   CROSSBONE_ISLE_PILLAR_ROOMS_1_FROM_CROSSBONE_ISLE_6_EAST = 1,
   CROSSBONE_ISLE_PILLAR_ROOMS_1_FROM_CROSSBONE_ISLE_6_WEST = 2,
@@ -1833,7 +1841,7 @@ enum {
   CROSSBONE_ISLE_PILLAR_ROOMS_1_TO_CROSSBONE_ISLE_6_WEST = 2,
 };
 
-/// CrossboneIslePillarRooms2 (scene 116).
+/// SceneId_CrossboneIslePillarRooms2's entrances and exits.
 enum {
   CROSSBONE_ISLE_PILLAR_ROOMS_2_FROM_CROSSBONE_ISLE_7_EAST = 1,
   CROSSBONE_ISLE_PILLAR_ROOMS_2_FROM_CROSSBONE_ISLE_7_WEST = 2,
@@ -1843,7 +1851,7 @@ enum {
   CROSSBONE_ISLE_PILLAR_ROOMS_2_TO_CROSSBONE_ISLE_7_WEST = 2,
 };
 
-/// CrossboneIsleKeys (scene 117).
+/// SceneId_CrossboneIsleKeys's entrances and exits.
 enum {
   CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_8_EAST = 1,
   CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_8_WEST = 2,
@@ -1853,7 +1861,7 @@ enum {
   CROSSBONE_ISLE_KEYS_TO_CROSSBONE_ISLE_8_WEST = 2,
 };
 
-/// CrossboneIslePlatformRooms2 (scene 118).
+/// SceneId_CrossboneIslePlatformRooms2's entrances and exits.
 enum {
   CROSSBONE_ISLE_PLATFORM_ROOMS_2_FROM_CROSSBONE_ISLE_9_EAST = 1,
   CROSSBONE_ISLE_PLATFORM_ROOMS_2_FROM_CROSSBONE_ISLE_9_WEST = 2,
@@ -1863,7 +1871,7 @@ enum {
   CROSSBONE_ISLE_PLATFORM_ROOMS_2_TO_CROSSBONE_ISLE_9_WEST = 2,
 };
 
-/// CrossboneIsleFloodgate (scene 119).
+/// SceneId_CrossboneIsleFloodgate's entrances and exits.
 enum {
   CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_10_EAST = 1,
   CROSSBONE_ISLE_FLOODGATE_FROM_CROSSBONE_ISLE_10_WEST = 2,
@@ -1873,7 +1881,7 @@ enum {
   CROSSBONE_ISLE_FLOODGATE_TO_CROSSBONE_ISLE_10_WEST = 2,
 };
 
-/// CrossboneIsleBane (scene 120).
+/// SceneId_CrossboneIsleBane's entrances and exits.
 enum {
   CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_11_EAST = 1,
   CROSSBONE_ISLE_BANE_FROM_CROSSBONE_ISLE_11_WEST = 2,
@@ -1883,7 +1891,7 @@ enum {
   CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_11_WEST = 2,
 };
 
-/// CrossboneIslePillarRooms4 (scene 121).
+/// SceneId_CrossboneIslePillarRooms4's entrances and exits.
 enum {
   CROSSBONE_ISLE_PILLAR_ROOMS_4_FROM_CROSSBONE_ISLE_12_EAST = 1,
   CROSSBONE_ISLE_PILLAR_ROOMS_4_FROM_CROSSBONE_ISLE_12_WEST = 2,
@@ -1893,7 +1901,7 @@ enum {
   CROSSBONE_ISLE_PILLAR_ROOMS_4_TO_CROSSBONE_ISLE_12_WEST = 2,
 };
 
-/// CrossboneIslePillarRooms5 (scene 122).
+/// SceneId_CrossboneIslePillarRooms5's entrances and exits.
 enum {
   CROSSBONE_ISLE_PILLAR_ROOMS_5_FROM_CROSSBONE_ISLE_13_EAST = 1,
   CROSSBONE_ISLE_PILLAR_ROOMS_5_FROM_CROSSBONE_ISLE_13_WEST = 2,
@@ -1903,7 +1911,7 @@ enum {
   CROSSBONE_ISLE_PILLAR_ROOMS_5_TO_CROSSBONE_ISLE_13_WEST = 2,
 };
 
-/// CrossboneIsle3 (scene 123).
+/// SceneId_CrossboneIsle3's entrances and exits.
 enum {
   CROSSBONE_ISLE_3_FROM_CROSSBONE_ISLE_14_EAST = 1,
   CROSSBONE_ISLE_3_FROM_CROSSBONE_ISLE_14_WEST = 2,
@@ -1913,7 +1921,7 @@ enum {
   CROSSBONE_ISLE_3_TO_CROSSBONE_ISLE_14_WEST = 2,
 };
 
-/// CrossboneIsle4 (scene 124).
+/// SceneId_CrossboneIsle4's entrances and exits.
 enum {
   CROSSBONE_ISLE_4_FROM_CROSSBONE_ISLE_14 = 1,
   CROSSBONE_ISLE_4_FROM_PIRATE_SHIP = 2,
@@ -1923,7 +1931,7 @@ enum {
   CROSSBONE_ISLE_4_TO_PIRATE_SHIP = 2,
 };
 
-/// PirateShip (scene 125).
+/// SceneId_PirateShip's entrances and exits.
 enum {
   PIRATE_SHIP_FROM_CROSSBONE_ISLE_4 = 1,
 };
@@ -1931,7 +1939,7 @@ enum {
   PIRATE_SHIP_TO_CROSSBONE_ISLE_4 = 1,
 };
 
-/// CrossboneIsle6 (scene 126).
+/// SceneId_CrossboneIsle6's entrances and exits.
 enum {
   CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_2 = 1,
   CROSSBONE_ISLE_6_FROM_CROSSBONE_ISLE_7 = 2,
@@ -1945,7 +1953,7 @@ enum {
   CROSSBONE_ISLE_6_TO_CROSSBONE_ISLE_PILLAR_ROOMS_1_WEST = 4,
 };
 
-/// CrossboneIsle7 (scene 127).
+/// SceneId_CrossboneIsle7's entrances and exits.
 enum {
   CROSSBONE_ISLE_7_FROM_CROSSBONE_ISLE_6 = 1,
   CROSSBONE_ISLE_7_FROM_CROSSBONE_ISLE_8 = 2,
@@ -1959,7 +1967,7 @@ enum {
   CROSSBONE_ISLE_7_TO_CROSSBONE_ISLE_PILLAR_ROOMS_2_WEST = 4,
 };
 
-/// CrossboneIsle8 (scene 128).
+/// SceneId_CrossboneIsle8's entrances and exits.
 enum {
   CROSSBONE_ISLE_8_FROM_CROSSBONE_ISLE_7 = 1,
   CROSSBONE_ISLE_8_FROM_CROSSBONE_ISLE_9 = 2,
@@ -1973,7 +1981,7 @@ enum {
   CROSSBONE_ISLE_8_TO_CROSSBONE_ISLE_KEYS_WEST = 4,
 };
 
-/// CrossboneIsle9 (scene 129).
+/// SceneId_CrossboneIsle9's entrances and exits.
 enum {
   CROSSBONE_ISLE_9_FROM_CROSSBONE_ISLE_8 = 1,
   CROSSBONE_ISLE_9_FROM_CROSSBONE_ISLE_10 = 2,
@@ -1987,7 +1995,7 @@ enum {
   CROSSBONE_ISLE_9_TO_CROSSBONE_ISLE_PLATFORM_ROOMS_2_WEST = 4,
 };
 
-/// CrossboneIsle10 (scene 130).
+/// SceneId_CrossboneIsle10's entrances and exits.
 enum {
   CROSSBONE_ISLE_10_FROM_CROSSBONE_ISLE_9 = 1,
   CROSSBONE_ISLE_10_FROM_CROSSBONE_ISLE_11 = 2,
@@ -2001,7 +2009,7 @@ enum {
   CROSSBONE_ISLE_10_TO_CROSSBONE_ISLE_FLOODGATE_WEST = 4,
 };
 
-/// CrossboneIsle11 (scene 131).
+/// SceneId_CrossboneIsle11's entrances and exits.
 enum {
   CROSSBONE_ISLE_11_FROM_CROSSBONE_ISLE_10 = 1,
   CROSSBONE_ISLE_11_FROM_CROSSBONE_ISLE_12 = 2,
@@ -2015,7 +2023,7 @@ enum {
   CROSSBONE_ISLE_11_TO_CROSSBONE_ISLE_BANE_WEST = 4,
 };
 
-/// CrossboneIsle12 (scene 132).
+/// SceneId_CrossboneIsle12's entrances and exits.
 enum {
   CROSSBONE_ISLE_12_FROM_CROSSBONE_ISLE_11 = 1,
   CROSSBONE_ISLE_12_FROM_CROSSBONE_ISLE_13 = 2,
@@ -2029,7 +2037,7 @@ enum {
   CROSSBONE_ISLE_12_TO_CROSSBONE_ISLE_PILLAR_ROOMS_4_WEST = 4,
 };
 
-/// CrossboneIsle13 (scene 133).
+/// SceneId_CrossboneIsle13's entrances and exits.
 enum {
   CROSSBONE_ISLE_13_FROM_CROSSBONE_ISLE_12 = 1,
   CROSSBONE_ISLE_13_FROM_CROSSBONE_ISLE_14 = 2,
@@ -2043,7 +2051,7 @@ enum {
   CROSSBONE_ISLE_13_TO_CROSSBONE_ISLE_PILLAR_ROOMS_5_WEST = 4,
 };
 
-/// CrossboneIsle14 (scene 134).
+/// SceneId_CrossboneIsle14's entrances and exits.
 enum {
   CROSSBONE_ISLE_14_FROM_CROSSBONE_ISLE_13 = 1,
   CROSSBONE_ISLE_14_FROM_CROSSBONE_ISLE_4 = 2,
@@ -2057,7 +2065,7 @@ enum {
   CROSSBONE_ISLE_14_TO_CROSSBONE_ISLE_3_WEST = 4,
 };
 
-/// Tolbi (scene 135).
+/// SceneId_Tolbi's entrances and exits.
 enum {
   TOLBI_FROM_HOUSE_SOUTH = 1,
   TOLBI_FROM_HOUSE_NORTHWEST = 2,
@@ -2089,26 +2097,30 @@ enum {
   TOLBI_TO_TOLBI_SPRING_2 = 30,
 };
 
-/// TolbiInteriors (scene 136).
+/// SceneId_TolbiInteriors's entrances and exits.
 enum {
   TOLBI_INTERIORS_HOUSE_NORTHEAST =
-      1, ///< the room behind Tolbi's house northeast door; Tolbi exit 5
+      1, ///< the room behind Tolbi's house northeast door; through
+         ///< TOLBI_TO_HOUSE_NORTHEAST
   TOLBI_INTERIORS_HOUSE_NORTHWEST =
-      2, ///< the room behind Tolbi's house northwest door; Tolbi exit 2
-  TOLBI_INTERIORS_HOUSE_EAST =
-      3, ///< the room behind Tolbi's house east door; Tolbi exit 6
-  TOLBI_INTERIORS_HOUSE_SOUTH =
-      4, ///< the room behind Tolbi's house south door; Tolbi exit 1
+      2, ///< the room behind Tolbi's house northwest door; through
+         ///< TOLBI_TO_HOUSE_NORTHWEST
+  TOLBI_INTERIORS_HOUSE_EAST = 3,  ///< the room behind Tolbi's house east door;
+                                   ///< through TOLBI_TO_HOUSE_EAST
+  TOLBI_INTERIORS_HOUSE_SOUTH = 4, ///< the room behind Tolbi's house south
+                                   ///< door; through TOLBI_TO_HOUSE_SOUTH
   TOLBI_INTERIORS_HOUSE_SOUTHWEST =
-      5, ///< the room behind Tolbi's house southwest door; Tolbi exit 8
+      5, ///< the room behind Tolbi's house southwest door; through
+         ///< TOLBI_TO_HOUSE_SOUTHWEST
   TOLBI_INTERIORS_WEAPON_AND_ARMOR_SHOP =
       6, ///< the room behind Tolbi's weapon and armor shop door; the room holds
-         ///< the weapon and armor shop; Tolbi exit 7
-  TOLBI_INTERIORS_SANCTUM = 8, ///< the room behind Tolbi's sanctum door; the
-                               ///< room holds the sanctum; Tolbi exit 9
+         ///< the weapon and armor shop; through TOLBI_TO_WEAPON_AND_ARMOR_SHOP
+  TOLBI_INTERIORS_SANCTUM =
+      8, ///< the room behind Tolbi's sanctum door; the
+         ///< room holds the sanctum; through TOLBI_TO_SANCTUM
   TOLBI_INTERIORS_RESTAURANT =
       9, ///< the room behind Tolbi's restaurant door; the room holds the
-         ///< restaurant; Tolbi exit 3
+         ///< restaurant; through TOLBI_TO_RESTAURANT
   TOLBI_INTERIORS_RESTAURANT_NORTH = 10, ///< the room holds the restaurant;
   TOLBI_INTERIORS_SANCTUM_NORTH = 30,    ///< the room holds the sanctum;
 };
@@ -2124,7 +2136,7 @@ enum {
   TOLBI_INTERIORS_TO_TOLBI_WEST = 9,
 };
 
-/// TolbiSpring1 (scene 137).
+/// SceneId_TolbiSpring1's entrances and exits.
 enum {
   TOLBI_SPRING_1_AFTER_OFFER_LUCKY_WHEELS =
       12,                                     ///< TolbiSpring_OfferLuckyWheels
@@ -2134,7 +2146,7 @@ enum {
   TOLBI_SPRING_1_TO_TOLBI = 1,
 };
 
-/// BabiPalace1 (scene 138).
+/// SceneId_BabiPalace1's entrances and exits.
 enum {
   BABI_PALACE_1_FROM_BABI_PALACE_2 = 1,
   BABI_PALACE_1_FROM_VALE_INTERIORS_2 = 11,
@@ -2148,7 +2160,7 @@ enum {
   BABI_PALACE_1_TO_COLOSSEUM_TUNNEL = 13,
 };
 
-/// BabiPalace2 (scene 139).
+/// SceneId_BabiPalace2's entrances and exits.
 enum {
   BABI_PALACE_2_FROM_TOLBI = 1,
   BABI_PALACE_2_FROM_BABI_PALACE_1 = 2,
@@ -2158,7 +2170,7 @@ enum {
   BABI_PALACE_2_TO_BABI_PALACE_1 = 2,
 };
 
-/// Colosseum (scene 140).
+/// SceneId_Colosseum's entrances and exits.
 enum {
   COLOSSEUM_FROM_COLOSSEUM_TUNNEL = 4,
   COLOSSEUM_FROM_COLOSSEUM_FINAL_1_WEST = 12,
@@ -2178,7 +2190,7 @@ enum {
   COLOSSEUM_TO_COLOSSEUM_FINAL_1 = 65,
 };
 
-/// ColosseumTunnel (scene 141).
+/// SceneId_ColosseumTunnel's entrances and exits.
 enum {
   COLOSSEUM_TUNNEL_FROM_BABI_PALACE_1 = 1,
   COLOSSEUM_TUNNEL_FROM_COLOSSEUM = 2,
@@ -2188,7 +2200,7 @@ enum {
   COLOSSEUM_TUNNEL_TO_COLOSSEUM = 2,
 };
 
-/// ColosseumEntrance (scene 142).
+/// SceneId_ColosseumEntrance's entrances and exits.
 enum {
   COLOSSEUM_ENTRANCE_FROM_TOLBI = 1,
 };
@@ -2197,7 +2209,7 @@ enum {
   COLOSSEUM_ENTRANCE_TO_COLOSSEUM = 2,
 };
 
-/// ColosseumFinal1 (scene 143).
+/// SceneId_ColosseumFinal1's entrances and exits.
 enum {
   COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST = 2,
   COLOSSEUM_FINAL_1_FROM_COLOSSEUM = 3,
@@ -2208,7 +2220,7 @@ enum {
   COLOSSEUM_FINAL_1_TO_COLOSSEUM_WEST = 11,
 };
 
-/// ColosseumFinal2 (scene 144).
+/// SceneId_ColosseumFinal2's entrances and exits.
 enum {
   COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST = 2,
   COLOSSEUM_FINAL_2_FROM_COLOSSEUM_WEST = 3,
@@ -2219,7 +2231,7 @@ enum {
   COLOSSEUM_FINAL_2_TO_COLOSSEUM_SOUTH = 11,
 };
 
-/// ColosseumFinal3 (scene 145).
+/// SceneId_ColosseumFinal3's entrances and exits.
 enum {
   COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH = 2,
   COLOSSEUM_FINAL_3_FROM_COLOSSEUM_NORTH = 3,
@@ -2229,7 +2241,7 @@ enum {
   COLOSSEUM_FINAL_3_TO_COLOSSEUM = 11,
 };
 
-/// AltmillerCave1 (scene 146).
+/// SceneId_AltmillerCave1's entrances and exits.
 enum {
   ALTMILLER_CAVE_1_FROM_WORLD_MAP = 1,
   ALTMILLER_CAVE_1_FROM_ALTMILLER_CAVE_2 = 4,
@@ -2239,7 +2251,7 @@ enum {
   ALTMILLER_CAVE_1_TO_ALTMILLER_CAVE_2 = 4,
 };
 
-/// AltmillerCave2 (scene 147).
+/// SceneId_AltmillerCave2's entrances and exits.
 enum {
   ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_1 = 10,
   ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_3 = 11,
@@ -2249,7 +2261,7 @@ enum {
   ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_3 = 11,
 };
 
-/// AltmillerCave3 (scene 148).
+/// SceneId_AltmillerCave3's entrances and exits.
 enum {
   ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_2 = 20,
   ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_4 = 21,
@@ -2259,7 +2271,7 @@ enum {
   ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_4 = 21,
 };
 
-/// AltmillerCave4 (scene 149).
+/// SceneId_AltmillerCave4's entrances and exits.
 enum {
   ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_3 = 30,
   ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_5 = 31,
@@ -2269,7 +2281,7 @@ enum {
   ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_5 = 31,
 };
 
-/// AltmillerCave5 (scene 150).
+/// SceneId_AltmillerCave5's entrances and exits.
 enum {
   ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_4 = 40,
   ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_6 = 41,
@@ -2279,7 +2291,7 @@ enum {
   ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_6 = 41,
 };
 
-/// AltmillerCave6 (scene 151).
+/// SceneId_AltmillerCave6's entrances and exits.
 enum {
   ALTMILLER_CAVE_6_FROM_ALTMILLER_CAVE_5 = 50,
 };
@@ -2287,7 +2299,7 @@ enum {
   ALTMILLER_CAVE_6_TO_ALTMILLER_CAVE_5 = 50,
 };
 
-/// GondowanPassage (scene 152).
+/// SceneId_GondowanPassage's entrances and exits.
 enum {
   GONDOWAN_PASSAGE_FROM_WORLD_MAP_NORTH = 1,
   GONDOWAN_PASSAGE_FROM_WORLD_MAP_SOUTH = 2,
@@ -2297,7 +2309,7 @@ enum {
   GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH = 2,
 };
 
-/// KalayTunnelEntrance (scene 153).
+/// SceneId_KalayTunnelEntrance's entrances and exits.
 enum {
   KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_1 = 1,
   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH = 2,
@@ -2309,7 +2321,7 @@ enum {
   KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH = 10,
 };
 
-/// KalayTunnel1 (scene 154).
+/// SceneId_KalayTunnel1's entrances and exits.
 enum {
   KALAY_TUNNEL_1_FROM_KALAY_TUNNEL_2 = 1,
   KALAY_TUNNEL_1_FROM_KALAY_TUNNEL_ENTRANCE = 2,
@@ -2319,7 +2331,7 @@ enum {
   KALAY_TUNNEL_1_TO_KALAY_TUNNEL_ENTRANCE = 2,
 };
 
-/// KalayTunnel2 (scene 155).
+/// SceneId_KalayTunnel2's entrances and exits.
 enum {
   KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_WEST = 1,
   KALAY_TUNNEL_2_FROM_KALAY_TUNNEL_3_EAST = 2,
@@ -2331,7 +2343,7 @@ enum {
   KALAY_TUNNEL_2_TO_KALAY_TUNNEL_1 = 5,
 };
 
-/// KalayTunnel3 (scene 156).
+/// SceneId_KalayTunnel3's entrances and exits.
 enum {
   KALAY_TUNNEL_3_FROM_HAMMET_PALACE = 1,
   KALAY_TUNNEL_3_FROM_KALAY_TUNNEL_2_WEST = 2,
@@ -2345,7 +2357,7 @@ enum {
   KALAY_TUNNEL_3_TO_KALAY_1 = 4,
 };
 
-/// GondowanCave1 (scene 157).
+/// SceneId_GondowanCave1's entrances and exits.
 enum {
   GONDOWAN_CAVE_1_FROM_GONDOWAN_CAVE_2_NORTH = 1,
   GONDOWAN_CAVE_1_FROM_GONDOWAN_CAVE_2_SOUTH = 4,
@@ -2355,7 +2367,7 @@ enum {
   GONDOWAN_CAVE_1_TO_GONDOWAN_CAVE_2_SOUTH = 4,
 };
 
-/// GondowanCave2 (scene 158).
+/// SceneId_GondowanCave2's entrances and exits.
 enum {
   GONDOWAN_CAVE_2_FROM_WORLD_MAP_EAST = 1,
   GONDOWAN_CAVE_2_FROM_GONDOWAN_CAVE_1_NORTH = 2,
@@ -2369,7 +2381,7 @@ enum {
   GONDOWAN_CAVE_2_TO_WORLD_MAP_WEST = 6,
 };
 
-/// LunpaFortressGates (scene 159).
+/// SceneId_LunpaFortressGates's entrances and exits.
 enum {
   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_1 = 1,
   LUNPA_FORTRESS_GATES_FROM_LUNPA = 2,
@@ -2381,7 +2393,7 @@ enum {
   LUNPA_FORTRESS_GATES_TO_LUNPA = 2,
 };
 
-/// LunpaFortress1 (scene 160).
+/// SceneId_LunpaFortress1's entrances and exits.
 enum {
   LUNPA_FORTRESS_1_FROM_LUNPA_FORTRESS_GATES = 1,
   LUNPA_FORTRESS_1_FROM_LUNPA_FORTRESS_2_SOUTH = 8,
@@ -2395,7 +2407,7 @@ enum {
   LUNPA_FORTRESS_1_TO_LUNPA_FORTRESS_3 = 11,
 };
 
-/// LunpaFortress2 (scene 161).
+/// SceneId_LunpaFortress2's entrances and exits.
 enum {
   LUNPA_FORTRESS_2_FROM_LUNPA_FORTRESS_1_SOUTH = 1,
   LUNPA_FORTRESS_2_FROM_LUNPA_FORTRESS_1_NORTH = 16,
@@ -2405,7 +2417,7 @@ enum {
   LUNPA_FORTRESS_2_TO_LUNPA_FORTRESS_1_NORTH = 16,
 };
 
-/// LunpaFortress3 (scene 162).
+/// SceneId_LunpaFortress3's entrances and exits.
 enum {
   LUNPA_FORTRESS_3_FROM_LUNPA_FORTRESS_1 = 1,
   LUNPA_FORTRESS_3_FROM_LUNPA_FORTRESS_4_NORTHEAST = 4,
@@ -2419,7 +2431,7 @@ enum {
   LUNPA_FORTRESS_3_TO_LUNPA_FORTRESS_4_NORTHWEST = 6,
 };
 
-/// LunpaFortress4 (scene 163).
+/// SceneId_LunpaFortress4's entrances and exits.
 enum {
   LUNPA_FORTRESS_4_FROM_LUNPA_FORTRESS_3_WEST = 1,
   LUNPA_FORTRESS_4_FROM_LUNPA_FORTRESS_3_SOUTH = 2,
@@ -2432,7 +2444,7 @@ enum {
   LUNPA_FORTRESS_4_TO_LUNPA_FORTRESS_3_2 = 5,
 };
 
-/// SuhallaDesert1 (scene 164).
+/// SceneId_SuhallaDesert1's entrances and exits.
 enum {
   SUHALLA_DESERT_1_FROM_WORLD_MAP = 1,
   SUHALLA_DESERT_1_FROM_SUHALLA_DESERT_2 = 2,
@@ -2442,7 +2454,7 @@ enum {
   SUHALLA_DESERT_1_TO_SUHALLA_DESERT_2 = 2,
 };
 
-/// SuhallaDesert2 (scene 165).
+/// SceneId_SuhallaDesert2's entrances and exits.
 enum {
   SUHALLA_DESERT_2_FROM_SUHALLA_DESERT_1 = 1,
   SUHALLA_DESERT_2_FROM_WORLD_MAP = 2,
@@ -2456,7 +2468,7 @@ enum {
   SUHALLA_DESERT_2_TO_SUHALLA_DESERT_3_WEST = 4,
 };
 
-/// SuhallaDesert3 (scene 166).
+/// SceneId_SuhallaDesert3's entrances and exits.
 enum {
   SUHALLA_DESERT_3_FROM_SUHALLA_DESERT_2_WEST = 1,
   SUHALLA_DESERT_3_FROM_SUHALLA_DESERT_2_EAST = 4,
@@ -2466,7 +2478,7 @@ enum {
   SUHALLA_DESERT_3_TO_SUHALLA_DESERT_2_EAST = 4,
 };
 
-/// Suhalla (scene 167).
+/// SceneId_Suhalla's entrances and exits.
 enum {
   SUHALLA_FROM_INN = 1,
   SUHALLA_FROM_SANCTUM = 2,
@@ -2484,16 +2496,18 @@ enum {
   SUHALLA_TO_WORLD_MAP = 10,
 };
 
-/// SuhallaInteriors (scene 168).
+/// SceneId_SuhallaInteriors's entrances and exits.
 enum {
-  SUHALLA_INTERIORS_SANCTUM = 2, ///< the room behind Suhalla's sanctum door;
-                                 ///< the room holds the sanctum; Suhalla exit 2
-  SUHALLA_INTERIORS_HOUSE_WEST =
-      3, ///< the room behind Suhalla's house west door; Suhalla exit 3
+  SUHALLA_INTERIORS_SANCTUM =
+      2, ///< the room behind Suhalla's sanctum door;
+         ///< the room holds the sanctum; through SUHALLA_TO_SANCTUM
+  SUHALLA_INTERIORS_HOUSE_WEST = 3, ///< the room behind Suhalla's house west
+                                    ///< door; through SUHALLA_TO_HOUSE_WEST
   SUHALLA_INTERIORS_HOUSE_NORTHEAST =
-      4, ///< the room behind Suhalla's house northeast door; Suhalla exit 4
-  SUHALLA_INTERIORS_HOUSE_EAST =
-      5, ///< the room behind Suhalla's house east door; Suhalla exit 5
+      4, ///< the room behind Suhalla's house northeast door; through
+         ///< SUHALLA_TO_HOUSE_NORTHEAST
+  SUHALLA_INTERIORS_HOUSE_EAST = 5,    ///< the room behind Suhalla's house east
+                                       ///< door; through SUHALLA_TO_HOUSE_EAST
   SUHALLA_INTERIORS_SANCTUM_NORTH = 6, ///< the room holds the sanctum;
 };
 enum {
@@ -2504,7 +2518,7 @@ enum {
   SUHALLA_INTERIORS_HOUSE_EAST_TO_SUHALLA = 5,
 };
 
-/// SuhallaGate1 (scene 169).
+/// SceneId_SuhallaGate1's entrances and exits.
 enum {
   SUHALLA_GATE_1_FROM_WORLD_MAP_WEST = 1,
   SUHALLA_GATE_1_FROM_SUHALLA_GATE_2_WEST = 2,
@@ -2520,7 +2534,7 @@ enum {
   SUHALLA_GATE_1_TO_WORLD_MAP_WEST = 5,
 };
 
-/// SuhallaGate2 (scene 170).
+/// SceneId_SuhallaGate2's entrances and exits.
 enum {
   SUHALLA_GATE_2_FROM_SUHALLA_GATE_1_WEST = 1,
   SUHALLA_GATE_2_FROM_SUHALLA_GATE_1_EAST = 4,
@@ -2532,7 +2546,7 @@ enum {
   SUHALLA_GATE_2_TO_GATEWAY_CAVE = 5,
 };
 
-/// GatewayCave (scene 171).
+/// SceneId_GatewayCave's entrances and exits.
 enum {
   GATEWAY_CAVE_FROM_SUHALLA_GATE_2 = 1,
   GATEWAY_CAVE_FROM_WORLD_MAP = 4,
@@ -2542,7 +2556,7 @@ enum {
   GATEWAY_CAVE_TO_WORLD_MAP = 4,
 };
 
-/// TunnelRuins1 (scene 172).
+/// SceneId_TunnelRuins1's entrances and exits.
 enum {
   TUNNEL_RUINS_1_FROM_BABI_LIGHTHOUSE_1 = 1,
   TUNNEL_RUINS_1_FROM_TUNNEL_RUINS_2_NORTH = 15,
@@ -2556,7 +2570,7 @@ enum {
   TUNNEL_RUINS_1_TO_TUNNEL_RUINS_2_SOUTHEAST = 18,
 };
 
-/// TunnelRuins2 (scene 173).
+/// SceneId_TunnelRuins2's entrances and exits.
 enum {
   TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST = 1,
   TUNNEL_RUINS_2_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH = 2,
@@ -2576,7 +2590,7 @@ enum {
   TUNNEL_RUINS_2_TO_BABI_LIGHTHOUSE_ENTRY_NORTH = 17,
 };
 
-/// BabiLighthouse1 (scene 174).
+/// SceneId_BabiLighthouse1's entrances and exits.
 enum {
   BABI_LIGHTHOUSE_1_FROM_TUNNEL_RUINS_1 = 1,
   BABI_LIGHTHOUSE_1_FROM_BABI_LIGHTHOUSE_2_WEST = 2,
@@ -2587,7 +2601,7 @@ enum {
   BABI_LIGHTHOUSE_1_TO_BABI_LIGHTHOUSE_2_WEST = 2,
 };
 
-/// BabiLighthouse2 (scene 175).
+/// SceneId_BabiLighthouse2's entrances and exits.
 enum {
   BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_ENTRY_EAST = 7,
   BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_ENTRY_WEST = 9,
@@ -2600,7 +2614,7 @@ enum {
   BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_1_WEST = 18,
 };
 
-/// BabiLighthouseEntry (scene 176).
+/// SceneId_BabiLighthouseEntry's entrances and exits.
 enum {
   BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE = 1,
   BABI_LIGHTHOUSE_ENTRY_FROM_BABI_LIGHTHOUSE_2_WEST = 2,
@@ -2618,7 +2632,7 @@ enum {
   BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_NORTH = 6,
 };
 
-/// RoadToBabiLighthouse (scene 177).
+/// SceneId_RoadToBabiLighthouse's entrances and exits.
 enum {
   ROAD_TO_BABI_LIGHTHOUSE_FROM_WORLD_MAP = 1,
   ROAD_TO_BABI_LIGHTHOUSE_FROM_BABI_LIGHTHOUSE_ENTRY = 2,
@@ -2628,7 +2642,7 @@ enum {
   ROAD_TO_BABI_LIGHTHOUSE_TO_BABI_LIGHTHOUSE_ENTRY = 2,
 };
 
-/// Lalivero (scene 178).
+/// SceneId_Lalivero's entrances and exits.
 enum {
   LALIVERO_FROM_LALIVERO_INTERIORS_2_NORTHWEST = 1,
   LALIVERO_FROM_LALIVERO_INTERIORS_1_WEST = 2,
@@ -2660,7 +2674,7 @@ enum {
   LALIVERO_TO_WORLD_MAP_WEST = 21,
 };
 
-/// LaliveroInteriors1 (scene 179).
+/// SceneId_LaliveroInteriors1's entrances and exits.
 enum {
   LALIVERO_INTERIORS_1_FROM_LALIVERO_WEST = 1,
   LALIVERO_INTERIORS_1_FROM_LALIVERO_SOUTHEAST = 2,
@@ -2680,7 +2694,7 @@ enum {
   LALIVERO_INTERIORS_1_TO_LALIVERO_NORTHEAST = 11,
 };
 
-/// LaliveroInteriors2 (scene 180).
+/// SceneId_LaliveroInteriors2's entrances and exits.
 enum {
   LALIVERO_INTERIORS_2_FROM_LALIVERO_SOUTHWEST = 21,
   LALIVERO_INTERIORS_2_FROM_LALIVERO_SOUTH = 22,
@@ -2696,7 +2710,7 @@ enum {
   LALIVERO_INTERIORS_2_TO_LEMURIAN_SHIP = 31,
 };
 
-/// VenusLighthouseEntry (scene 181).
+/// SceneId_VenusLighthouseEntry's entrances and exits.
 enum {
   VENUS_LIGHTHOUSE_ENTRY_FROM_WORLD_MAP_WEST = 1,
   VENUS_LIGHTHOUSE_ENTRY_FROM_VENUS_LIGHTHOUSE_1 = 2,
@@ -2708,7 +2722,7 @@ enum {
   VENUS_LIGHTHOUSE_ENTRY_TO_WORLD_MAP_WEST = 3,
 };
 
-/// VenusLighthouse1 (scene 182).
+/// SceneId_VenusLighthouse1's entrances and exits.
 enum {
   VENUS_LIGHTHOUSE_1_FROM_VENUS_LIGHTHOUSE_ENTRY = 1,
   VENUS_LIGHTHOUSE_1_FROM_VENUS_LIGHTHOUSE_2 = 23,
@@ -2718,7 +2732,7 @@ enum {
   VENUS_LIGHTHOUSE_1_TO_VENUS_LIGHTHOUSE_2 = 23,
 };
 
-/// VenusLighthouse2 (scene 183).
+/// SceneId_VenusLighthouse2's entrances and exits.
 enum {
   VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_SOUTH = 3,
   VENUS_LIGHTHOUSE_2_FROM_VENUS_LIGHTHOUSE_3_WEST = 8,
@@ -2736,7 +2750,7 @@ enum {
   VENUS_LIGHTHOUSE_2_TO_VENUS_LIGHTHOUSE_3_SOUTH = 21,
 };
 
-/// VenusLighthouse3 (scene 184).
+/// SceneId_VenusLighthouse3's entrances and exits.
 enum {
   VENUS_LIGHTHOUSE_3_FROM_VENUS_LIGHTHOUSE_2_NORTH = 1,
   VENUS_LIGHTHOUSE_3_FROM_VENUS_LIGHTHOUSE_2_EAST = 4,
@@ -2752,7 +2766,7 @@ enum {
   VENUS_LIGHTHOUSE_3_TO_VENUS_LIGHTHOUSE_2_EAST = 11,
 };
 
-/// VenusLighthouse4 (scene 185).
+/// SceneId_VenusLighthouse4's entrances and exits.
 enum {
   VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_5_WEST_NORTHWEST = 1,
   VENUS_LIGHTHOUSE_4_FROM_VENUS_LIGHTHOUSE_5_NORTH_NORTHEAST = 7,
@@ -2774,7 +2788,7 @@ enum {
   VENUS_LIGHTHOUSE_4_TO_VENUS_LIGHTHOUSE_5_EAST_NORTHEAST = 20,
 };
 
-/// VenusLighthouse5 (scene 186).
+/// SceneId_VenusLighthouse5's entrances and exits.
 enum {
   VENUS_LIGHTHOUSE_5_FROM_VENUS_LIGHTHOUSE_4_WEST_NORTHWEST = 1,
   VENUS_LIGHTHOUSE_5_FROM_VENUS_LIGHTHOUSE_4_NORTH_NORTHWEST = 4,
@@ -2795,7 +2809,7 @@ enum {
   VENUS_LIGHTHOUSE_5_TO_VENUS_LIGHTHOUSE_AERIE = 21,
 };
 
-/// VenusLighthouseAerie (scene 187).
+/// SceneId_VenusLighthouseAerie's entrances and exits.
 enum {
   VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_5 = 1,
   VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP = 4,
@@ -2803,7 +2817,7 @@ enum {
       93, ///< the world map sends the party back here after its lighthouse cut
 };
 
-/// LemurianShip (scene 188).
+/// SceneId_LemurianShip's entrances and exits.
 enum {
   LEMURIAN_SHIP_FROM_LALIVERO_INTERIORS_2 = 1,
 };
@@ -2811,7 +2825,7 @@ enum {
   LEMURIAN_SHIP_TO_LALIVERO_INTERIORS_2 = 1,
 };
 
-/// TolbiSpring2 (scene 189).
+/// SceneId_TolbiSpring2's entrances and exits.
 enum {
   TOLBI_SPRING_2_FROM_TOLBI = 1,
 };
@@ -2819,7 +2833,7 @@ enum {
   TOLBI_SPRING_2_TO_TOLBI = 1,
 };
 
-/// LinkLobby (scene 190).
+/// SceneId_LinkLobby's entrances and exits.
 enum {
   LINK_LOBBY_FROM_CLEAR = 1,
 };

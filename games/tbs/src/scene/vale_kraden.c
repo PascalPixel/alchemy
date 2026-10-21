@@ -1123,8 +1123,8 @@ static void Event_FightSecondMonster(void) {
   Engine_EventEnd();
 }
 
-/// In Vale after the party has reached Kalay, a villager at Kraden's cottage
-/// asks Isaac about his memories of it.
+/// A villager at Kraden's cottage asks Isaac about his memories of it. This is
+/// in Vale after the party has reached Kalay.
 ///
 /// Reached by talking to the cottage visitor (ACTOR_COTTAGE_VISITOR) in the
 /// events after Kalay.

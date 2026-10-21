@@ -219,18 +219,25 @@
 /// action, set by BattleCommand_BuildPlan from the ability
 /// (gBattle_ActionStatus where it gives one).
 enum BattlePlanStaging {
-  PLAN_SHOW_MESSAGES = 1,   ///< no animation: each target's events only
-  PLAN_SHOW_ATTACK = 2,     ///< the actor runs up and strikes
-  PLAN_SHOW_CAST = 3,       ///< Psynergy, and Venus, Mercury, Mars, Jupiter
-  PLAN_SHOW_ITEM = 4,       ///< an item
-  PLAN_SHOW_SUMMON = 5,     ///< the larger summons, the actor hidden
-  PLAN_SHOW_DJINNI = 6,     ///< a Djinni with no attack (Granite, Quartz...)
-  PLAN_SHOW_FLEE = 7,       ///< a unit runs
-  PLAN_SHOW_ENEMY_CAST = 8, ///< an enemy's Psynergy
+  PLAN_SHOW_MESSAGES = 1, ///< no animation: each target's events only
+  PLAN_SHOW_ATTACK = 2,   ///< the actor runs up and strikes
+  PLAN_SHOW_CAST = 3,     ///< Psynergy, and Venus, Mercury, Mars, Jupiter
+  PLAN_SHOW_ITEM = 4,     ///< an item
+  PLAN_SHOW_SUMMON = 5,   ///< the larger summons, the actor hidden
+  PLAN_SHOW_DJINNI = 6,   ///< a Djinni with no attack (Granite, Quartz...)
+  PLAN_SHOW_FLEE = 7,     ///< a unit runs
+  /// The action plays as a cast, the caster showing its element's streaks in
+  /// place of the gathering star field. Where actstat.tsv gives no staging,
+  /// it's how an enemy's ability plays when the ability isn't Psynergy
+  /// (Ability_IsPsynergy) and its row of actflags.tsv isn't 0; an enemy's
+  /// Psynergy plays as PLAN_SHOW_CAST. actstat.tsv gives it to Slice and to
+  /// seven weapon unleashes: Blizzard, Drown, Demon Fire, Vorpal Slash, Rapid
+  /// Smash, Sonic Smash and Titan Blade.
+  PLAN_SHOW_ENEMY_CAST = 8,
   PLAN_SHOW_FULL_SCREEN = 9 ///< Gaia, Rockfall, Procne and their kin
 };
 
-// BattlePlan.presentationFlags: the effect's kind in the low twelve bits and
+// BattlePlan.presentationFlags: the effect kind in the low twelve bits and
 // its strength (a double or triple blow) above them; then how the effect is
 // staged.
 #define STAGING_KIND_MASK 0xfff
@@ -252,10 +259,16 @@ enum BattlePlanStaging {
 #define ITEM_USE_EMPTIES 4   ///< Hermes' Water leaves an Empty Bottle
 
 // BattleAct.targetMode: whom an ability may target, from its user's view.
+// The party's cursor (BattleTarget_RunSelection) shows the enemies for every
+// mode but TARGET_MODE_ALLIES and TARGET_MODE_SELF.
+/// The ability takes one target, the aimed unit, whatever its range
+/// (BattlePlan_SetTargets), and an enemy aims it at itself. The field
+/// Psynergy and enemies' commands such as Threaten, Ally Search and Flee have
+/// it.
 #define TARGET_MODE_NONE 0
 #define TARGET_MODE_FOES 1
-#define TARGET_MODE_ALLIES 2
-#define TARGET_MODE_SELF 4
+#define TARGET_MODE_ALLIES 2 ///< the user's side, the user included
+#define TARGET_MODE_SELF 4   ///< the user alone, whatever the range
 
 /// BattleActionRecord.target of a held unit's lost turn (CMD_NONE, from
 /// BattlePres_BuildOpponentEntries and BattlePres_BuildUnitEntries): as a

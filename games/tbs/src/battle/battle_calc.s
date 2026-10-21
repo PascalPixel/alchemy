@@ -17,7 +17,8 @@ gHpRecoveryTable:
 	.global gPpDmgTable
 gPpDmgTable:
 	.4byte 100, 50, 30, 10, 10, 10
-@ HP damage of effect types 5, 8 and 6
+@ HP damage of the ability kinds ABILITY_KIND_DAMAGE, ABILITY_KIND_SUMMON and
+@ ABILITY_KIND_UNLEASHED_DAMAGE, in that order
 	.global gHpDmgTable5
 gHpDmgTable5:
 	.4byte 100, 80, 60, 40, 20, 10

@@ -356,9 +356,8 @@ void UnitCalc(s32 owner) {
     }
   }
 
-  // Battle stat levels scale by (8 + level) / 8; each element level adds
-  // 5 * (level * level + level) power, and each resistance stage 20 to every
-  // element's resistance.
+  // Then the battle's changes apply: the Attack, Defense and Agility stages,
+  // a summon's boost to each element's power, and the Resistance stage.
   stats->atk = stats->atk * (unit->attackStage + 8) / 8;
   stats->def = stats->def * (unit->defenseStage + 8) / 8;
   stats->agi = stats->agi * (unit->agilityStage + 8) / 8;

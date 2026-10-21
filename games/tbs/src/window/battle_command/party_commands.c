@@ -10,8 +10,9 @@
 /// these, 1 heals HP, 2 restores PP, 3 cures poison
 /// (ABILITY_EFFECT_CURE_POISON), 4 cures what Restore cures
 /// (ABILITY_EFFECT_RESTORE), 5 revives (Battle_IsReviveEffectFar), 6 cures
-/// every ailment (ABILITY_EFFECT_CURE_ALL). A later test wins: an effect
-/// over the kind, revival over all.
+/// Restore's ailments, poison and the evil spirit, as Tonic does
+/// (ABILITY_EFFECT_CURE_ALL). A later test wins: an effect over the ability
+/// kind, revival over all.
 s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   s32 signedEffect;
   s32 abilityKind;

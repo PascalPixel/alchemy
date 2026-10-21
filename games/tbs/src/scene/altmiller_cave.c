@@ -314,27 +314,34 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
   }
 }
 
-/// AltmillerCaveEntrance's darkness boundaries: crossing one sets its level.
+/// Crossing the first darkness boundary sets the cave's lightest level.
+/// AltmillerCaveEntrance's boundaries are touch cells 60 to 65:
+/// crossing one sets its level, 0 to 5, each a step darker than the last.
 static void AltmillerCave_DarkenToLevel0(void) {
   AltmillerCave_SetFadeLevel(0);
 }
 
+/// Crossing the second darkness boundary (touch cell 61) sets darkness level 1.
 static void AltmillerCave_DarkenToLevel1(void) {
   AltmillerCave_SetFadeLevel(1);
 }
 
+/// Crossing the third darkness boundary (touch cell 62) sets darkness level 2.
 static void AltmillerCave_DarkenToLevel2(void) {
   AltmillerCave_SetFadeLevel(2);
 }
 
+/// Crossing the fourth darkness boundary (touch cell 63) sets darkness level 3.
 static void AltmillerCave_DarkenToLevel3(void) {
   AltmillerCave_SetFadeLevel(3);
 }
 
+/// Crossing the fifth darkness boundary (touch cell 64) sets darkness level 4.
 static void AltmillerCave_DarkenToLevel4(void) {
   AltmillerCave_SetFadeLevel(4);
 }
 
+/// Crossing the sixth darkness boundary (touch cell 65) sets darkness level 5.
 static void AltmillerCave_DarkenToLevel5(void) {
   AltmillerCave_SetFadeLevel(5);
 }

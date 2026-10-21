@@ -195,8 +195,7 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
     }
     switch (code) {
     case TEXT_END:
-#if !(LANGUAGE == LANGUAGE_SPANISH) && !(LANGUAGE == LANGUAGE_FRENCH) &&       \
-    !(LANGUAGE == LANGUAGE_ITALIAN)
+#if !TBS_PATCH_3
     case TEXT_PAGE:
 #endif
       goto done;
@@ -252,7 +251,7 @@ done:
   lineWidths[lines] = lineWidth;
   if (width < lineWidth)
     width = lineWidth;
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if !TBS_PATCH_2
   if (work->mode)
     width = width + 2;
 #endif

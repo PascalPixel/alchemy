@@ -482,7 +482,7 @@ s32 SaveState_DeleteSelectedSlot(void) {
   return result;
 }
 
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TBS_PATCH_1
 
 /// A scheduler callback that makes colours 8-11 of BG palette 14 glow: each
 /// follows a sine wave of the frame counter, eight frames behind the one
@@ -856,8 +856,6 @@ enum SaveMenuMode {
 // cursor starts on `file` and moves up and down over the files `mode` allows
 // (see SaveMenuMode). Returns the file chosen with A, -1 when cancelled with
 // B, or SAVE_MENU_NO_FILE when no file is allowed.
-#if TBS_PATCH_1 || LANGUAGE == LANGUAGE_JAPANESE
-
 s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
   struct UiWindow *fileList;
 #if TBS_PATCH_1
@@ -1197,7 +1195,6 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
 done:
   return result;
 }
-#endif
 
 /// The Save command: lets the player choose a file (the current one first),
 /// asks whether to save over it when it has data, then saves the game to it,

@@ -669,7 +669,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         case 13:
         case 14:
           helpValue = unit->resistanceStage * 20;
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if TBS_PATCH_4
           if (helpValue < 0) {
             helpValue = -helpValue;
           }

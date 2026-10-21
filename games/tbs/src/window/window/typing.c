@@ -337,7 +337,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
       nextEntryIndex = channel->entry;
       // Under Mind Read the text starts 8 pixels further in (Japanese and
       // English), in the window UiWindow_FitOnScreen made 2 tiles wider.
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if !TBS_PATCH_2
       if (work->mode != 0)
         pixelX += 8;
 #endif

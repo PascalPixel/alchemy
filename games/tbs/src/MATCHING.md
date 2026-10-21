@@ -253,7 +253,7 @@ each keeps its spelling until it is.
 - The effect scene is `gEffectWork` or `*(gWorkSlot + HEAP_SLOT_FX)`.
 - The map's view is `gMapWork[0]` or `WORK_SLOT(8)`.
 - The field blend work is `gFieldBlendWork[0]`,
-  `WORK_SLOT(HEAP_SLOT_FIELD_BLEND)` (`ValeBabi_Initialize`), or
+  `WORK_SLOT(HEAP_SLOT_FIELD_BLEND)` (`ValeInteriors2_Initialize`), or
   `Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND, sizeof(struct
   FieldBlendWork))`, which returns the existing block.
 - The colour buffer is `gPaletteBufferWork`,

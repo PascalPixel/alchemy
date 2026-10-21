@@ -528,7 +528,7 @@ menu_top:;
       }
     }
     Party_BeginChildhood();
-    gGameState.scene = (s32)&SceneId_ValeBabi;
+    gGameState.scene = (s32)&SceneId_ValeInteriors2;
     gGameState.entrance = 20;
     goto leave;
   }

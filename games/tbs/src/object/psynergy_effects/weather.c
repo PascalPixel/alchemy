@@ -11,7 +11,7 @@
 /// rows play from the last: each comes down slantwise onto its spot and stays
 /// there for its last seven frames. They freeze while FLAG_WEATHER_HELD is set.
 /// Vale runs them with the lightning while FLAG_VALE_STORM is set
-/// (vale_home.c).
+/// (vale_gate.c).
 void FieldFx_UpdateGroundParticles(void) {
   struct MapScrollWork *view = gMapWork[0];
   struct GroundParticleWork *work = gMapWork[21];

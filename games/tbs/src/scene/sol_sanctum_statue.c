@@ -1633,7 +1633,7 @@ static void Event_SayThenWait(s32 speaker, s32 frames) {
 }
 
 struct SceneEntrance gSolSanctumStatue_Entrances[] = {
-    {SOL_SANCTUM_STATUE_FROM_VALE_HOME, CONDITION_ALWAYS, 287, 0, 176,
+    {SOL_SANCTUM_STATUE_FROM_VALE_GATE, CONDITION_ALWAYS, 287, 0, 176,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 646, 0, 329, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_PSYNERGY_STONE, CONDITION_ALWAYS, 647,

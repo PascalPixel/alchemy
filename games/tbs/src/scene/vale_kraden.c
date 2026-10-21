@@ -433,7 +433,7 @@ static void Event_KradenPlansSanctumVisit(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Engine_EventRequestExit(VALE_KRADEN_TO_VALE_BABI_2);
+    Engine_EventRequestExit(VALE_KRADEN_TO_VALE_INTERIORS_2_2);
     Engine_EventEnd();
   }
 }
@@ -521,7 +521,7 @@ static void Event_EnterCottage(void) {
     Engine_MapAnimateCells(gValeKraden_GateCells, 43, 8);
   }
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 229, 217);
-  Engine_EventRequestExit(VALE_KRADEN_TO_VALE_BABI_NORTH);
+  Engine_EventRequestExit(VALE_KRADEN_TO_VALE_INTERIORS_2_NORTH);
 }
 
 /// In Vale on the way to Kraden's cottage, walking past the two strangers:
@@ -911,7 +911,7 @@ s32 ValeKraden_Initialize(void) {
     Engine_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gGameState.entrance == VALE_KRADEN_FROM_VALE_BABI_SOUTH) {
+      if (gGameState.entrance == VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH) {
         Event_KradenSetsOff();
       }
     }
@@ -1133,13 +1133,13 @@ struct SceneEntrance gValeKraden_Entrances[] = {
      -1, -1, -1, -1, 0},
     {VALE_KRADEN_FROM_VALE_SOUTH, CONDITION_ALWAYS, 454, 0, 443, FACING_WEST, 0,
      -1, -1, -1, -1, 0},
-    {VALE_KRADEN_FROM_VALE_BABI_NORTH, CONDITION_ALWAYS, 229, 0, 233,
+    {VALE_KRADEN_FROM_VALE_INTERIORS_2_NORTH, CONDITION_ALWAYS, 229, 0, 233,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_KRADEN_FROM_VALE_CAVE_1_WEST, CONDITION_ALWAYS, 72, 0, 80,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {VALE_KRADEN_FROM_VALE_CAVE_1_EAST, CONDITION_ALWAYS, 104, 0, 104,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_KRADEN_FROM_VALE_BABI_SOUTH, CONDITION_ALWAYS, 232, 0, 264,
+    {VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH, CONDITION_ALWAYS, 232, 0, 264,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
@@ -1148,8 +1148,8 @@ u32 gValeKraden_Exits[] = {
     SCENE_EXITS(ValeKraden),
     SCENE_EXIT(VALE_KRADEN_TO_VALE_NORTH, Vale, VALE_FROM_VALE_KRADEN_NORTH),
     SCENE_EXIT(VALE_KRADEN_TO_VALE_SOUTH, Vale, VALE_FROM_VALE_KRADEN_SOUTH),
-    SCENE_EXIT(VALE_KRADEN_TO_VALE_BABI_NORTH, ValeBabi,
-               VALE_BABI_FROM_VALE_KRADEN_NORTH),
+    SCENE_EXIT(VALE_KRADEN_TO_VALE_INTERIORS_2_NORTH, ValeInteriors2,
+               VALE_INTERIORS_2_FROM_VALE_KRADEN_NORTH),
     SCENE_EXIT(VALE_KRADEN_TO_VALE_CAVE_1_WEST, ValeCave1,
                VALE_CAVE_1_FROM_VALE_KRADEN_WEST),
     SCENE_EXIT(VALE_KRADEN_TO_VALE_CAVE_1_EAST, ValeCave1,
@@ -1158,8 +1158,8 @@ u32 gValeKraden_Exits[] = {
                VALE_STORM_FROM_VALE_KRADEN_NORTH),
     SCENE_EXIT(VALE_KRADEN_TO_VALE_STORM_SOUTH, ValeStorm,
                VALE_STORM_FROM_VALE_KRADEN_SOUTH),
-    SCENE_EXIT(VALE_KRADEN_TO_VALE_BABI_2, ValeBabi,
-               VALE_BABI_FROM_VALE_KRADEN_2),
+    SCENE_EXIT(VALE_KRADEN_TO_VALE_INTERIORS_2_2, ValeInteriors2,
+               VALE_INTERIORS_2_FROM_VALE_KRADEN_2),
     SCENE_EXITS_END,
 };
 

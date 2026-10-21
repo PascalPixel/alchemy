@@ -1,11 +1,11 @@
 /// @file
-/// Vale (ValeBabi, scene 8): Isaac's house and the ground outside it, the inn
-/// and the inside of Kraden's cottage, and at entrance 19 a room of Babi's
+/// Vale (ValeInteriors2, scene 8): Isaac's house and the ground outside it, the
+/// inn and the inside of Kraden's cottage, and at entrance 19 a room of Babi's
 /// Palace: one overlay whose tables and setup
 /// choose by the entrance and the story flags. In story order:
 ///
 /// - The stormy night, three years before the journey, when a new game begins
-///   at entrance 20 (from menu/clear.c, or ValeHome's exit 50). The setup sets
+///   at entrance 20 (from menu/clear.c, or ValeGate's exit 50). The setup sets
 ///   FLAG_VALE_STORM and plays Event_DoraWakesIsaac: Dora, Isaac's mother,
 ///   wakes him because the Mt. Aleph Boulder is going to fall, makes him take
 ///   his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him out by exit 20, back in
@@ -14,7 +14,7 @@
 ///   plaza, where the village takes refuge, by exit 21 into ValeStorm
 ///   (entrance 15). While FLAG_VALE_STORM is set the villagers are put out of
 ///   sight, lightning flashes, and exit 6 leads into the storm (ValeStorm)
-///   instead of Vale (gValeBabi_StormExits). Kyle dies that night, as the
+///   instead of Vale (gValeInteriors2_StormExits). Kyle dies that night, as the
 ///   village says later.
 /// - Vale before the party leaves (FLAG_PARTY_LEFT_VALE clear): from Kraden's
 ///   cottage (ValeKraden's exit 13) the party arrives at entrance 22, inside
@@ -45,12 +45,12 @@
 ///   party knows Kraden. The setup does not show the place name there.
 ///
 /// Exits 1 to 11 are cell codes of the same number, leading to the rest of
-/// Vale (ValeHome, ValeKraden, Vale and ValeStorm) or between this scene's
+/// Vale (ValeGate, ValeKraden, Vale and ValeStorm) or between this scene's
 /// own parts.
 
 #include "game_state.h"
 #include "vram_tab.h"
-#include "unit/scene/vale_babi.h"
+#include "unit/scene/vale_interiors2.h"
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -97,17 +97,17 @@
 // The arrival scenes are defined after the event handlers.
 static void Event_DoraWakesIsaac(void);
 static void Event_HurryToThePlaza(void);
-static void ValeBabi_RestoreRoomPatch(void);
+static void ValeInteriors2_RestoreRoomPatch(void);
 static void Event_ShowMythrilBag(void);
-static void ValeBabi_SpawnEffectPair(union FieldObject *object);
-static void ValeBabi_DemonstrateCatch(void);
+static void ValeInteriors2_SpawnEffectPair(union FieldObject *object);
+static void ValeInteriors2_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
 #include "common/object_facing.h"
 
-/// Vale's placed actors, numbered in the order of gValeBabi_Placements (the
-/// scholars of entrance 19 are numbered from 8 in their own table).
-enum ValeBabiActor {
+/// Vale's placed actors, numbered in the order of gValeInteriors2_Placements
+/// (the scholars of entrance 19 are numbered from 8 in their own table).
+enum ValeInteriors2Actor {
   /// Isaac's mother. "Isaac, wake up!"
   ACTOR_DORA = 8,
   /// Isaac's father (sprite 0x35, Kyle in vale_storm.c). "Isaac, Dora, hurry!
@@ -123,7 +123,7 @@ enum ValeBabiActor {
 };
 
 /// Vale's place flags this scene keeps while the party is in Vale.
-enum ValeBabiPlaceFlag {
+enum ValeInteriors2PlaceFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = 0x300,
   /// Back from Kalay, the villager of actor 16 remarked how much Isaac has
@@ -135,34 +135,34 @@ enum ValeBabiPlaceFlag {
 
 /// Returns the entrances, among them the scenes played on arrival: 19 from
 /// Babi's palace (its exit 11), 20 where a new game begins (menu/clear.c, and
-/// ValeHome's exit 50), 21 from this scene's own exit 20, and 22 from Kraden's
+/// ValeGate's exit 50), 21 from this scene's own exit 20, and 22 from Kraden's
 /// cottage (ValeKraden's exit 13).
-const struct SceneEntrance *ValeBabi_GetEntrances(void) {
-  return gValeBabi_Entrances;
+const struct SceneEntrance *ValeInteriors2_GetEntrances(void) {
+  return gValeInteriors2_Entrances;
 }
 
-const struct SceneRegion *ValeBabi_GetRegions(void) { return NULL; }
+const struct SceneRegion *ValeInteriors2_GetRegions(void) { return NULL; }
 
 /// On the stormy night the exits lead into the storm.
-const u32 *ValeBabi_GetExits(void) {
+const u32 *ValeInteriors2_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    return gValeBabi_StormExits;
+    return gValeInteriors2_StormExits;
   }
-  return gValeBabi_Exits;
+  return gValeInteriors2_Exits;
 }
 
 /// Places Babi's scholars, or Vale's villagers as the story has left them.
-const struct ScenePlacement *ValeBabi_GetPlacements(void) {
+const struct ScenePlacement *ValeInteriors2_GetPlacements(void) {
   struct ScenePlacement *table;
 
-  if (gGameState.entrance == VALE_BABI_FROM_BABI_PALACE_1)
-    return gValeBabi_ScholarsPlacements;
+  if (gGameState.entrance == VALE_INTERIORS_2_FROM_BABI_PALACE_1)
+    return gValeInteriors2_ScholarsPlacements;
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
-    table = gValeBabi_PlacementsAfterKalay;
+    table = gValeInteriors2_PlacementsAfterKalay;
   else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-    table = gValeBabi_PlacementsAfterLeaving;
+    table = gValeInteriors2_PlacementsAfterLeaving;
   else
-    table = gValeBabi_Placements;
+    table = gValeInteriors2_Placements;
   FieldScene_PrepareActors(table);
   return table;
 }
@@ -186,29 +186,29 @@ static void Event_ScholarAsksAboutKraden(s32 speakerId) {
 
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
-const struct SceneEvent *ValeBabi_GetEvents(void) {
-  if (gGameState.entrance == VALE_BABI_FROM_BABI_PALACE_1) {
+const struct SceneEvent *ValeInteriors2_GetEvents(void) {
+  if (gGameState.entrance == VALE_INTERIORS_2_FROM_BABI_PALACE_1) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-      return gValeBabi_ScholarsLaterEvents;
+      return gValeInteriors2_ScholarsLaterEvents;
     }
-    return gValeBabi_ScholarsEvents;
+    return gValeInteriors2_ScholarsEvents;
   }
 
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    return gValeBabi_StormEvents;
+    return gValeInteriors2_StormEvents;
   }
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
-    return gValeBabi_EventsAfterKalay;
+    return gValeInteriors2_EventsAfterKalay;
   }
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-    return gValeBabi_EventsAfterLeaving;
+    return gValeInteriors2_EventsAfterLeaving;
   }
-  return gValeBabi_Events;
+  return gValeInteriors2_Events;
 }
 
 /// In Vale, a villager asks whether Isaac has business with him, and sends
 /// him off whatever he answers. "Hey... Boy..." Reached by talking to the
-/// villager (actor 16) before the party leaves Vale (gValeBabi_Events).
+/// villager (actor 16) before the party leaves Vale (gValeInteriors2_Events).
 static void Event_AskIsaacHisBusiness(void) {
   Engine_EventBegin();
   Engine_ActorStartRepeatedMotion(ACTOR_VILLAGER_16, 2);
@@ -233,7 +233,8 @@ static void Event_AskIsaacHisBusiness(void) {
 
 /// In Vale, a villager asks whether the masked man was Felix, and wonders
 /// whether Jenna can be trusted. Reached by talking to actor 14 once the party
-/// has left Vale and until it reaches Kalay (gValeBabi_EventsAfterLeaving).
+/// has left Vale and until it reaches Kalay
+/// (gValeInteriors2_EventsAfterLeaving).
 static void Event_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
@@ -253,7 +254,7 @@ static void Event_AskWhetherMaskedManWasFelix(void) {
 
 /// Stops storm lightning before fading through the requested exit.
 /// Called by the exit events below.
-static void ValeBabi_CloseScreenAndExit(s32 exitId) {
+static void ValeInteriors2_CloseScreenAndExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     FieldFx_StopLightning();
   }
@@ -265,74 +266,74 @@ static void ValeBabi_CloseScreenAndExit(s32 exitId) {
 
 // The exit events in Vale: stepping on the cell code of the same number in
 // any of the Vale tables plays a step sound and takes that exit
-// (gValeBabi_Exits, or gValeBabi_StormExits on the stormy night).
+// (gValeInteriors2_Exits, or gValeInteriors2_StormExits on the stormy night).
 
-/// Reached by cell code 1; takes exit 1, to ValeHome's entrance 6.
+/// Reached by cell code 1; takes exit 1, to ValeGate's entrance 6.
 static void Event_TakeExit1(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeBabi_CloseScreenAndExit(1);
+  ValeInteriors2_CloseScreenAndExit(1);
 }
 
 /// Reached by cell code 2; takes exit 2, to Kraden's cottage (ValeKraden's
 /// entrance 3).
 static void Event_TakeExit2(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeBabi_CloseScreenAndExit(2);
+  ValeInteriors2_CloseScreenAndExit(2);
 }
 
-/// Reached by cell code 3; takes exit 3, to ValeHome's entrance 2.
+/// Reached by cell code 3; takes exit 3, to ValeGate's entrance 2.
 static void Event_TakeExit3(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeBabi_CloseScreenAndExit(3);
+  ValeInteriors2_CloseScreenAndExit(3);
 }
 
-/// Reached by cell code 4; takes exit 4, to ValeHome's entrance 7.
+/// Reached by cell code 4; takes exit 4, to ValeGate's entrance 7.
 static void Event_TakeExit4(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeBabi_CloseScreenAndExit(4);
+  ValeInteriors2_CloseScreenAndExit(4);
 }
 
 /// Reached by cell code 5; takes exit 5, to this scene's entrance 8.
 static void Event_TakeExit5(void) {
   Engine_AudioPlayCue(SE_128);
-  ValeBabi_CloseScreenAndExit(5);
+  ValeInteriors2_CloseScreenAndExit(5);
 }
 
 /// Reached by cell code 6; takes exit 6, to Vale's entrance 8, or on the
 /// stormy night to ValeStorm's.
 static void Event_TakeExit6(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeBabi_CloseScreenAndExit(6);
+  ValeInteriors2_CloseScreenAndExit(6);
 }
 
 /// Reached by cell code 7; takes exit 7, to this scene's entrance 9.
 static void Event_TakeExit7(void) {
   Engine_AudioPlayCue(SE_128);
-  ValeBabi_CloseScreenAndExit(7);
+  ValeInteriors2_CloseScreenAndExit(7);
 }
 
 /// Reached by cell code 8; takes exit 8, to this scene's entrance 5.
 static void Event_TakeExit8(void) {
   Engine_AudioPlayCue(SE_129);
-  ValeBabi_CloseScreenAndExit(8);
+  ValeInteriors2_CloseScreenAndExit(8);
 }
 
 /// Reached by cell code 9; takes exit 9, to this scene's entrance 7.
 static void Event_TakeExit9(void) {
   Engine_AudioPlayCue(SE_129);
-  ValeBabi_CloseScreenAndExit(9);
+  ValeInteriors2_CloseScreenAndExit(9);
 }
 
 /// Reached by cell code 10; takes exit 10, to ValeStorm's entrance 12.
 static void Event_TakeExit10(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeBabi_CloseScreenAndExit(10);
+  ValeInteriors2_CloseScreenAndExit(10);
 }
 
 /// Reached by cell code 11; takes exit 11, to ValeStorm's entrance 13.
 static void Event_TakeExit11(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  ValeBabi_CloseScreenAndExit(11);
+  ValeInteriors2_CloseScreenAndExit(11);
 }
 
 /// Sets up the stormy night or the villagers of the story, and plays the
@@ -340,10 +341,10 @@ static void Event_TakeExit11(void) {
 /// Called by Field_RunScene once the actors are placed. Entrance 20 sets
 /// FLAG_VALE_STORM before Event_DoraWakesIsaac; back from Kalay, Dora is put
 /// back in her sickbed unless FLAG_SCENE_TEMP_03 says she got up.
-s32 ValeBabi_Initialize(void) {
+s32 ValeInteriors2_Initialize(void) {
   struct FieldActor *actor;
 
-  if (gGameState.entrance == VALE_BABI_FROM_BABI_PALACE_1) {
+  if (gGameState.entrance == VALE_INTERIORS_2_FROM_BABI_PALACE_1) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -356,13 +357,13 @@ s32 ValeBabi_Initialize(void) {
       Engine_ActorSetPosition(15, 0, 0);
       Engine_ActorSetPosition(ACTOR_VILLAGER_16, 0, 0);
     } else {
-      ValeBabi_RestoreRoomPatch();
+      ValeInteriors2_RestoreRoomPatch();
     }
     Engine_ActorSetSpritePriority(13, 1);
     if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
       actor = Object_GetById(17);
       Engine_ActorSetSpriteFlags(actor, 0);
-      if (gGameState.entrance == VALE_BABI_FROM_VALE ||
+      if (gGameState.entrance == VALE_INTERIORS_2_FROM_VALE ||
           gGameState.entrance == 7) {
         if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
@@ -379,11 +380,11 @@ s32 ValeBabi_Initialize(void) {
       if (gGameState.entrance == 21) {
         Event_HurryToThePlaza();
       } else {
-        if (gGameState.entrance == VALE_BABI_FROM_VALE_HOME_SOUTHEAST) {
+        if (gGameState.entrance == VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST) {
           Engine_GameFlagSet(FLAG_VALE_STORM);
           Event_DoraWakesIsaac();
         } else {
-          if (gGameState.entrance == VALE_BABI_FROM_VALE_KRADEN_2) {
+          if (gGameState.entrance == VALE_INTERIORS_2_FROM_VALE_KRADEN_2) {
             Event_ShowMythrilBag();
           } else {
             ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
@@ -411,9 +412,9 @@ s32 ValeBabi_Initialize(void) {
 
 /// In their house in Vale on the stormy night, Dora wakes Isaac, makes him take
 /// his tunic, and leads him out into the storm. "The Mt. Aleph Boulder is going
-/// to fall!" Called by ValeBabi_Initialize on arrival by entrance 20, where a
-/// new game begins. Sets FLAG_ISAAC_WEARS_TUNIC and takes exit 20, back into
-/// this scene by entrance 21, where Event_HurryToThePlaza follows.
+/// to fall!" Called by ValeInteriors2_Initialize on arrival by entrance 20,
+/// where a new game begins. Sets FLAG_ISAAC_WEARS_TUNIC and takes exit 20, back
+/// into this scene by entrance 21, where Event_HurryToThePlaza follows.
 static void Event_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct AnimationObject *sprite;
@@ -515,7 +516,7 @@ static void Event_DoraWakesIsaac(void) {
   Engine_EventWait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA,
                     0);
-  ValeBabi_DemonstrateCatch();
+  ValeInteriors2_DemonstrateCatch();
   // Resolve the Psynergy demonstration before the pair walks away together.
   // "It's pouring outside! Don't go out without your tunic!" She steps up to
   // him and he puts it on, with a flash and SE_RECOVERY.
@@ -545,9 +546,9 @@ static void Event_DoraWakesIsaac(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
   Engine_CameraFollowActor(ACTOR_DORA, 1);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= 0x1;
-  Actor_SetActionScript(ACTOR_DORA, gValeBabi_LeaveHouseScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_LeaveHouseScript);
   Engine_EventWait(20);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabi_LeaveHouseScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeInteriors2_LeaveHouseScript);
   Object_RefreshSelectorById(ACTOR_DORA);
   Actor_WalkToAndWait(ACTOR_DORA, 419, 661);
   Actor_WalkToAndWait(ACTOR_DORA, 408, 661);
@@ -565,8 +566,8 @@ static void Event_DoraWakesIsaac(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_SetActionScript(ACTOR_DORA, gValeBabi_DoraLeavesScript);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabi_IsaacLeavesScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_DoraLeavesScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeInteriors2_IsaacLeavesScript);
   Engine_EventWait(20);
   (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
@@ -582,7 +583,7 @@ static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 /// Outside the house in Vale on the stormy night, Kyle calls to Isaac and Dora
 /// to hurry; actor 10 shakes, falls and fades as they run to the plaza. Called
-/// by ValeBabi_Initialize on arrival by entrance 21, after
+/// by ValeInteriors2_Initialize on arrival by entrance 21, after
 /// Event_DoraWakesIsaac. Takes exit 21, to ValeStorm's entrance 15, where
 /// Event_DoraSendsIsaacToThePlaza follows.
 static void Event_HurryToThePlaza(void) {
@@ -607,7 +608,7 @@ static void Event_HurryToThePlaza(void) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = 0;
   sprite->image.priority = 1;
-  Actor_SetActionScript(10, gValeBabi_Actor10ShakesScript);
+  Actor_SetActionScript(10, gValeInteriors2_Actor10ShakesScript);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Map_CopyCellsTo(83, 15, 83, 19, 5, 4);
@@ -631,8 +632,9 @@ static void Event_HurryToThePlaza(void) {
   Actor_SetSpeed(ACTOR_DORA, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_KYLE, 0x18000, 0xc000);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabi_IsaacRunsAheadScript);
-  Actor_SetActionScript(ACTOR_DORA, gValeBabi_DoraRunsAheadScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER,
+                        gValeInteriors2_IsaacRunsAheadScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_DoraRunsAheadScript);
   Engine_EventOpenScreen();
   Object_RefreshSelectorById(ACTOR_DORA);
   Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -659,12 +661,13 @@ static void Event_HurryToThePlaza(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_KYLE, ANIM_NOD);
   Engine_ActorWalkTo(ACTOR_KYLE, 415, 589);
   Engine_EventWait(10);
-  Actor_SetActionScript(ACTOR_DORA, gValeBabi_DoraRunsBackScript);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabi_IsaacRunsBackScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_DoraRunsBackScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER,
+                        gValeInteriors2_IsaacRunsBackScript);
   Engine_AudioPlayCue(SE_234);
   Engine_EventWait(20);
-  // Actor 10 drops (gValeBabi_Actor10FallsScript) and lands with SE_202.
-  Actor_SetActionScript(10, gValeBabi_Actor10FallsScript);
+  // Actor 10 drops (gValeInteriors2_Actor10FallsScript) and lands with SE_202.
+  Actor_SetActionScript(10, gValeInteriors2_Actor10FallsScript);
   alpha = &REG_BLDALPHA;
 
   // Bring the boulder fully into view before fading it away.
@@ -698,8 +701,9 @@ ramp:
   Engine_EventWait(40);
   Engine_CameraSetSpeed(0xcccc, 0x1999);
   Engine_CameraFollowActor(ACTOR_DORA, 1);
-  Actor_SetActionScript(ACTOR_DORA, gValeBabi_RunToPlazaScript);
-  Actor_RunActionScriptAndWait(ACTOR_PARTY_LEADER, gValeBabi_RunToPlazaScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeInteriors2_RunToPlazaScript);
+  Actor_RunActionScriptAndWait(ACTOR_PARTY_LEADER,
+                               gValeInteriors2_RunToPlazaScript);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 32;
@@ -917,7 +921,7 @@ static void Event_TalkToDora(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
     Object_SetTargetAndCallback(ACTOR_DORA,
                                 ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                gValeBabi_DoraFacesIsaacScript);
+                                gValeInteriors2_DoraFacesIsaacScript);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgValeDontWorryBest);
     Engine_EventShowMessage(ACTOR_DORA, 0);
@@ -933,14 +937,14 @@ static void Event_TalkToDora(void) {
 }
 
 /// Restores the room's tiles and collision patch outside the storm sequence.
-/// Called by ValeBabi_Initialize when FLAG_VALE_STORM is clear.
-static void ValeBabi_RestoreRoomPatch(void) {
+/// Called by ValeInteriors2_Initialize when FLAG_VALE_STORM is clear.
+static void ValeInteriors2_RestoreRoomPatch(void) {
   Map_CopyCellsTo(22, 85, 25, 85, 2, 2);
   Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 }
 
 /// In Vale, the Mythril Bag rises and wobbles before Kraden, with no text.
-/// Called by ValeBabi_Initialize on arrival by entrance 22, from Kraden's
+/// Called by ValeInteriors2_Initialize on arrival by entrance 22, from Kraden's
 /// cottage, while he prepares for the first Sol Sanctum visit
 /// (Event_TalkToKraden). Takes exit 22 back outside (ValeKraden's entrance 10),
 /// where Event_KradenSetsOff gathers the party.
@@ -978,9 +982,9 @@ static void Event_ShowMythrilBag(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 420, 164);
   Actor_WalkToAndWait(ACTOR_KRADEN, 326, 185);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 10);
-  Engine_ObjectSetScript(actor, gValeBabi_MythrilBagRisesScript);
+  Engine_ObjectSetScript(actor, gValeInteriors2_MythrilBagRisesScript);
   ObjectDispatch_WaitForValue16(actor);
-  Object_SetScript(actor, gValeBabi_MythrilBagWobblesScript);
+  Object_SetScript(actor, gValeInteriors2_MythrilBagWobblesScript);
   ObjectDispatch_WaitForValue16(actor);
   Engine_EventWait(20);
   Engine_ObjectDispatchRelease(actor);
@@ -993,29 +997,29 @@ static void Event_ShowMythrilBag(void) {
 
 /// Flashes between two palettes and emits a paired effect every sixteen frames.
 UNUSED static void
-ValeBabi_FlashPaletteAndSpawnPair(union FieldObject *object) {
+ValeInteriors2_FlashPaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(&object->actor, 7);
   } else {
     Engine_ObjectSetPartPalettes(&object->actor, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeBabi_SpawnEffectPair(object);
+    ValeInteriors2_SpawnEffectPair(object);
   }
 }
 
 /// Cycles six palettes on odd frames and periodically emit paired effects.
-static void ValeBabi_CyclePaletteAndSpawnPair(union FieldObject *object) {
+static void ValeInteriors2_CyclePaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
     Engine_ObjectSetPartPalettes(&object->actor, (gFrameCount >> 1) % 6);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeBabi_SpawnEffectPair(object);
+    ValeInteriors2_SpawnEffectPair(object);
   }
 }
 
 /// Advances deterministically through six palettes on odd frames.
-static void ValeBabi_CyclePaletteOnOddFrames(union FieldObject *object) {
+static void ValeInteriors2_CyclePaletteOnOddFrames(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
 
@@ -1028,7 +1032,7 @@ static void ValeBabi_CyclePaletteOnOddFrames(union FieldObject *object) {
 
 /// Copies the parent's terrain height into two oppositely moving vertical
 /// effects.
-static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
+static void ValeInteriors2_SpawnEffectPair(union FieldObject *object) {
   struct FieldActor *parent = &object->actor;
   struct FieldActor *pair[2];
   struct FieldActor *child;
@@ -1083,17 +1087,19 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
 // Shared Psynergy setup precedes the scene's effect wrappers.
 #include "common/effect_psynergy.h"
 
-UNUSED static void ValeBabi_CyclePaletteWithParticles(void) {
-  ValeBabi_CyclePaletteAndSpawnPair((union FieldObject *)Object_GetById(8));
+UNUSED static void ValeInteriors2_CyclePaletteWithParticles(void) {
+  ValeInteriors2_CyclePaletteAndSpawnPair(
+      (union FieldObject *)Object_GetById(8));
 }
 
-UNUSED static void ValeBabi_CyclePaletteWithoutParticles(void) {
-  ValeBabi_CyclePaletteOnOddFrames((union FieldObject *)Object_GetById(17));
+UNUSED static void ValeInteriors2_CyclePaletteWithoutParticles(void) {
+  ValeInteriors2_CyclePaletteOnOddFrames(
+      (union FieldObject *)Object_GetById(17));
 }
 
 /// Catch's effect plays on Dora, then its objects are released.
 /// Called by Event_DoraWakesIsaac as Dora hands Isaac his tunic.
-static void ValeBabi_DemonstrateCatch(void) {
+static void ValeInteriors2_DemonstrateCatch(void) {
   Engine_PsynergyBegin(ABILITY_CATCH, 1);
   Engine_PsynergySetTarget(ACTOR_DORA, 0x11);
   Engine_PsynergyRaiseHands();
@@ -1102,7 +1108,7 @@ static void ValeBabi_DemonstrateCatch(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-s32 gValeBabi_LeaveHouseScript[] = {
+s32 gValeInteriors2_LeaveHouseScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(522), 0, PIXELS(748)),
     SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(748)),
     SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(691)),
@@ -1110,26 +1116,26 @@ s32 gValeBabi_LeaveHouseScript[] = {
     SC_END,
 };
 
-s32 gValeBabi_DoraLeavesScript[] = {
+s32 gValeInteriors2_DoraLeavesScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)), SC_SYNC, SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gValeBabi_IsaacLeavesScript[] = {
+s32 gValeInteriors2_IsaacLeavesScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
     SC_SYNC,   SC_MOVE(PIXELS(387), 0, PIXELS(661)),
     SC_SYNC,   SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gValeBabi_DoraRunsAheadScript[] = {
+s32 gValeInteriors2_DoraRunsAheadScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(468), 0, PIXELS(390)),
     SC_SYNC,   SC_MOVE(PIXELS(508), 0, PIXELS(402)),
     SC_SYNC,   SC_ARG(1),
     SC_END,
 };
 
-s32 gValeBabi_IsaacRunsAheadScript[] = {
+s32 gValeInteriors2_IsaacRunsAheadScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(431), 0, PIXELS(391)),
     SC_SYNC,   SC_MOVE(PIXELS(468), 0, PIXELS(390)),
     SC_SYNC,   SC_MOVE(PIXELS(486), 0, PIXELS(393)),
@@ -1137,7 +1143,7 @@ s32 gValeBabi_IsaacRunsAheadScript[] = {
     SC_END,
 };
 
-s32 gValeBabi_DoraRunsBackScript[] = {
+s32 gValeInteriors2_DoraRunsBackScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
     SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
     SC_SYNC,   SC_MOVE(PIXELS(455), 0, PIXELS(450)),
@@ -1145,7 +1151,7 @@ s32 gValeBabi_DoraRunsBackScript[] = {
     SC_END,
 };
 
-s32 gValeBabi_IsaacRunsBackScript[] = {
+s32 gValeInteriors2_IsaacRunsBackScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
     SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
     SC_SYNC,   SC_MOVE(PIXELS(481), 0, PIXELS(443)),
@@ -1153,20 +1159,20 @@ s32 gValeBabi_IsaacRunsBackScript[] = {
     SC_END,
 };
 
-s32 gValeBabi_RunToPlazaScript[] = {
+s32 gValeInteriors2_RunToPlazaScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(428), 0, PIXELS(460)),
     SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(513)),
     SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(589)),
     SC_SYNC,   SC_END,
 };
 
-s32 gValeBabi_Actor10ShakesScript[] = {
+s32 gValeInteriors2_Actor10ShakesScript[] = {
     SC_SET(SW_SCALE_X, 0xe666),  SC_SET(SW_SCALE_Y, 0x10000), SC_WAIT(4),
     SC_SET(SW_SCALE_X, 0xcccc),  SC_SET(SW_SCALE_Y, 0xcccc),  SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValeBabi_Actor10FallsScript[] = {
+s32 gValeInteriors2_Actor10FallsScript[] = {
     SC_ARG(2),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x13333),
@@ -1199,7 +1205,7 @@ s32 gValeBabi_Actor10FallsScript[] = {
     SC_END,
 };
 
-s32 gValeBabi_DoraFacesIsaacScript[] = {
+s32 gValeInteriors2_DoraFacesIsaacScript[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_MOVE(PIXELS(567), 0, PIXELS(690)),
@@ -1209,13 +1215,13 @@ s32 gValeBabi_DoraFacesIsaacScript[] = {
     SC_END,
 };
 
-s32 gValeBabi_MythrilBagRisesScript[] = {
+s32 gValeInteriors2_MythrilBagRisesScript[] = {
     SC_ADD(SW_Y, 0x8000),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
 };
 
-s32 gValeBabi_MythrilBagWobblesScript[] = {
+s32 gValeInteriors2_MythrilBagWobblesScript[] = {
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
@@ -1243,91 +1249,93 @@ s32 gValeBabi_MythrilBagWobblesScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gValeBabi_Entrances[] = {
+struct SceneEntrance gValeInteriors2_Entrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_BABI_FROM_VALE_HOME_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
+    {VALE_INTERIORS_2_FROM_VALE_GATE_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
      FACING_NORTH, 0, 24, 0, 248, 256, 0},
-    {VALE_BABI_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 480, 0, 176,
+    {VALE_INTERIORS_2_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 480, 0, 176,
      FACING_NORTH, 0, 264, 8, 560, 240, 0},
-    {VALE_BABI_FROM_VALE_HOME_NORTHEAST, CONDITION_ALWAYS, 721, 0, 192,
+    {VALE_INTERIORS_2_FROM_VALE_GATE_NORTHEAST, CONDITION_ALWAYS, 721, 0, 192,
      FACING_NORTH, 0, 584, 0, 848, 224, 0},
-    {VALE_BABI_FROM_VALE_HOME_WEST, CONDITION_ALWAYS, 144, 0, 494, FACING_NORTH,
-     0, 8, 256, 320, 528, 0},
+    {VALE_INTERIORS_2_FROM_VALE_GATE_WEST, CONDITION_ALWAYS, 144, 0, 494,
+     FACING_NORTH, 0, 8, 256, 320, 528, 0},
     {5, CONDITION_ALWAYS, 119, 0, 340, FACING_SOUTH, 0, 8, 256, 320, 528, 0},
-    {VALE_BABI_FROM_VALE, CONDITION_ALWAYS, 416, 0, 528, FACING_NORTH, 0, 344,
-     272, 640, 560, 0},
+    {VALE_INTERIORS_2_FROM_VALE, CONDITION_ALWAYS, 416, 0, 528, FACING_NORTH, 0,
+     344, 272, 640, 560, 0},
     {7, CONDITION_ALWAYS, 408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
-    {VALE_BABI_AFTER_ENTER_BATTLE, CONDITION_ALWAYS, 184, 0, 633, FACING_EAST,
-     0, 8, 576, 320, 736, 0},
+    {VALE_INTERIORS_2_AFTER_ENTER_BATTLE, CONDITION_ALWAYS, 184, 0, 633,
+     FACING_EAST, 0, 8, 576, 320, 736, 0},
     {9, CONDITION_ALWAYS, 408, 0, 665, FACING_EAST, 0, 328, 600, 624, 816, 0},
     {10, CONDITION_ALWAYS, 528, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {VALE_BABI_FROM_VALE_STORM_WEST, CONDITION_ALWAYS, 705, 0, 817,
+    {VALE_INTERIORS_2_FROM_VALE_STORM_WEST, CONDITION_ALWAYS, 705, 0, 817,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
-    {VALE_BABI_FROM_VALE_STORM_EAST, CONDITION_ALWAYS, 879, 0, 765,
+    {VALE_INTERIORS_2_FROM_VALE_STORM_EAST, CONDITION_ALWAYS, 879, 0, 765,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
     {16, CONDITION_ALWAYS, 538, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
-    {VALE_BABI_FROM_BABI_PALACE_1, CONDITION_ALWAYS, 760, 0, 328, FACING_SOUTH,
-     0, 672, 272, 960, 488, 0},
-    {VALE_BABI_FROM_VALE_HOME_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,
+    {VALE_INTERIORS_2_FROM_BABI_PALACE_1, CONDITION_ALWAYS, 760, 0, 328,
+     FACING_SOUTH, 0, 672, 272, 960, 488, 0},
+    {VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,
      FACING_EAST, 0, 1024, 576, 1024, 576, 0},
     {21, CONDITION_ALWAYS, 408, 0, 371, FACING_SOUTH, 0, 344, 272, 640, 560, 0},
-    {VALE_BABI_FROM_VALE_KRADEN_2, CONDITION_ALWAYS, 480, 0, 176, FACING_NORTH,
-     0, 264, 8, 560, 240, 0},
+    {VALE_INTERIORS_2_FROM_VALE_KRADEN_2, CONDITION_ALWAYS, 480, 0, 176,
+     FACING_NORTH, 0, 264, 8, 560, 240, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gValeBabi_Exits[] = {
-    SCENE_EXITS(ValeBabi),
-    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_NORTHWEST, ValeHome,
-               VALE_HOME_FROM_VALE_BABI_WEST),
-    SCENE_EXIT(VALE_BABI_TO_VALE_KRADEN_NORTH, ValeKraden,
-               VALE_KRADEN_FROM_VALE_BABI_NORTH),
-    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_NORTHEAST, ValeHome,
-               VALE_HOME_FROM_VALE_BABI_NORTH),
-    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_WEST, ValeHome,
-               VALE_HOME_FROM_VALE_BABI_SOUTH),
-    SCENE_EXIT(5, ValeBabi, VALE_BABI_AFTER_ENTER_BATTLE),
-    SCENE_EXIT(VALE_BABI_TO_VALE, Vale, VALE_FROM_VALE_BABI),
-    SCENE_EXIT(7, ValeBabi, 9),
-    SCENE_EXIT(8, ValeBabi, 5),
-    SCENE_EXIT(9, ValeBabi, 7),
-    SCENE_EXIT(VALE_BABI_TO_VALE_STORM, ValeStorm, VALE_STORM_FROM_VALE_BABI),
-    SCENE_EXIT(VALE_BABI_TO_VALE_STORM_WEST, ValeStorm,
-               VALE_STORM_FROM_VALE_BABI_WEST),
-    SCENE_EXIT(VALE_BABI_TO_BABI_PALACE_1, BabiPalace1,
-               BABI_PALACE_1_FROM_VALE_BABI),
-    SCENE_EXIT(20, ValeBabi, 21),
+u32 gValeInteriors2_Exits[] = {
+    SCENE_EXITS(ValeInteriors2),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_NORTHWEST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_2_WEST),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_KRADEN_NORTH, ValeKraden,
+               VALE_KRADEN_FROM_VALE_INTERIORS_2_NORTH),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_NORTHEAST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_2_NORTH),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_WEST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_2_SOUTH),
+    SCENE_EXIT(5, ValeInteriors2, VALE_INTERIORS_2_AFTER_ENTER_BATTLE),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE, Vale, VALE_FROM_VALE_INTERIORS_2),
+    SCENE_EXIT(7, ValeInteriors2, 9),
+    SCENE_EXIT(8, ValeInteriors2, 5),
+    SCENE_EXIT(9, ValeInteriors2, 7),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_STORM, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_2),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_STORM_WEST, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_2_WEST),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_BABI_PALACE_1, BabiPalace1,
+               BABI_PALACE_1_FROM_VALE_INTERIORS_2),
+    SCENE_EXIT(20, ValeInteriors2, 21),
     SCENE_EXIT(21, ValeStorm, 15),
-    SCENE_EXIT(VALE_BABI_TO_VALE_KRADEN_SOUTH, ValeKraden,
-               VALE_KRADEN_FROM_VALE_BABI_SOUTH),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_KRADEN_SOUTH, ValeKraden,
+               VALE_KRADEN_FROM_VALE_INTERIORS_2_SOUTH),
     SCENE_EXITS_END,
 };
 
-u32 gValeBabi_StormExits[] = {
-    SCENE_EXITS(ValeBabi),
-    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_NORTHWEST, ValeHome,
-               VALE_HOME_FROM_VALE_BABI_WEST),
-    SCENE_EXIT(VALE_BABI_TO_VALE_KRADEN_NORTH, ValeKraden,
-               VALE_KRADEN_FROM_VALE_BABI_NORTH),
-    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_NORTHEAST, ValeHome,
-               VALE_HOME_FROM_VALE_BABI_NORTH),
-    SCENE_EXIT(VALE_BABI_TO_VALE_HOME_WEST, ValeHome,
-               VALE_HOME_FROM_VALE_BABI_SOUTH),
-    SCENE_EXIT(5, ValeBabi, VALE_BABI_AFTER_ENTER_BATTLE),
-    SCENE_EXIT(VALE_BABI_TO_VALE, ValeStorm, 8),
-    SCENE_EXIT(7, ValeBabi, 9),
-    SCENE_EXIT(8, ValeBabi, 5),
-    SCENE_EXIT(9, ValeBabi, 7),
-    SCENE_EXIT(VALE_BABI_TO_VALE_STORM, ValeStorm, VALE_STORM_FROM_VALE_BABI),
-    SCENE_EXIT(VALE_BABI_TO_VALE_STORM_WEST, ValeStorm,
-               VALE_STORM_FROM_VALE_BABI_WEST),
-    SCENE_EXIT(20, ValeBabi, 21),
+u32 gValeInteriors2_StormExits[] = {
+    SCENE_EXITS(ValeInteriors2),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_NORTHWEST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_2_WEST),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_KRADEN_NORTH, ValeKraden,
+               VALE_KRADEN_FROM_VALE_INTERIORS_2_NORTH),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_NORTHEAST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_2_NORTH),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_GATE_WEST, ValeGate,
+               VALE_GATE_FROM_VALE_INTERIORS_2_SOUTH),
+    SCENE_EXIT(5, ValeInteriors2, VALE_INTERIORS_2_AFTER_ENTER_BATTLE),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE, ValeStorm, 8),
+    SCENE_EXIT(7, ValeInteriors2, 9),
+    SCENE_EXIT(8, ValeInteriors2, 5),
+    SCENE_EXIT(9, ValeInteriors2, 7),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_STORM, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_2),
+    SCENE_EXIT(VALE_INTERIORS_2_TO_VALE_STORM_WEST, ValeStorm,
+               VALE_STORM_FROM_VALE_INTERIORS_2_WEST),
+    SCENE_EXIT(20, ValeInteriors2, 21),
     SCENE_EXIT(21, ValeStorm, 15),
     SCENE_EXITS_END,
 };
 
 // clang-format off
-struct ScenePlacement gValeBabi_Placements[] = {
+struct ScenePlacement gValeInteriors2_Placements[] = {
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x35, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1353,7 +1361,7 @@ struct ScenePlacement gValeBabi_Placements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeBabi_PlacementsAfterLeaving[] = {
+struct ScenePlacement gValeInteriors2_PlacementsAfterLeaving[] = {
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x35, 0x0, ACTOR_STAND,
@@ -1373,7 +1381,7 @@ struct ScenePlacement gValeBabi_PlacementsAfterLeaving[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeBabi_PlacementsAfterKalay[] = {
+struct ScenePlacement gValeInteriors2_PlacementsAfterKalay[] = {
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x35, 0x0, ACTOR_STAND,
@@ -1397,7 +1405,7 @@ struct ScenePlacement gValeBabi_PlacementsAfterKalay[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeBabi_ScholarsPlacements[] = {
+struct ScenePlacement gValeInteriors2_ScholarsPlacements[] = {
     { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(336), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0x71, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1411,7 +1419,7 @@ struct ScenePlacement gValeBabi_ScholarsPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gValeBabi_StormEvents[] = {
+struct SceneEvent gValeInteriors2_StormEvents[] = {
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit1) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit2) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit3) },
@@ -1436,7 +1444,7 @@ struct SceneEvent gValeBabi_StormEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabi_Events[] = {
+struct SceneEvent gValeInteriors2_Events[] = {
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
@@ -1467,7 +1475,7 @@ struct SceneEvent gValeBabi_Events[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabi_EventsAfterLeaving[] = {
+struct SceneEvent gValeInteriors2_EventsAfterLeaving[] = {
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherMaskedManWasFelix) },
@@ -1502,7 +1510,7 @@ struct SceneEvent gValeBabi_EventsAfterLeaving[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabi_EventsAfterKalay[] = {
+struct SceneEvent gValeInteriors2_EventsAfterKalay[] = {
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
@@ -1550,7 +1558,7 @@ struct SceneEvent gValeBabi_EventsAfterKalay[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabi_ScholarsEvents[] = {
+struct SceneEvent gValeInteriors2_ScholarsEvents[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyThereWereAncientRuinsAt) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiNoMatterHowManyTimesI) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiItIsSaidThatLongAgo) },
@@ -1569,7 +1577,7 @@ struct SceneEvent gValeBabi_ScholarsEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabi_ScholarsLaterEvents[] = {
+struct SceneEvent gValeInteriors2_ScholarsLaterEvents[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ScholarAsksAboutKraden) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },

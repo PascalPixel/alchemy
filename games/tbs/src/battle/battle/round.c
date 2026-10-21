@@ -134,7 +134,7 @@ void BattleUnit_ResetGuardLevels(void) {
 
 /// gGameState.battleStart of a battle the party cannot run from: a Mimic's
 /// (object/object/events.c) and the travelers' fight in Vale
-/// (ValeHome_FightTravelers, scene/vale_home.c). The command menu itself
+/// (ValeGate_FightTravelers, scene/vale_gate.c). The command menu itself
 /// refuses to run, with MsgNoTimeToRun ("This is no time to be running
 /// away!"), in modes 3 and 4 (the battles a scene starts, and link
 /// battles) and once the party is challenged

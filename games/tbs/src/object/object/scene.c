@@ -220,7 +220,7 @@ void Game_ResetForNewGame(s32 mode) {
   table = gField_SceneTable;
   // Choose the first scene before initializing the per-scene runtime.
   if (gDebugMode && mode == 1) {
-    gGameState.scene = (s32)&SceneId_ValeHome;
+    gGameState.scene = (s32)&SceneId_ValeGate;
     gGameState.entrance = mode;
   } else if (gDebugMode && mode == 2) {
     gGameState.scene = (s32)&SceneId_Clear;

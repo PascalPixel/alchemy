@@ -7,7 +7,8 @@
 /// from Kalay (FLAG_REACHED_KALAY); entrance 16 has a set of its own. In story
 /// order:
 ///
-/// - The day the story begins, three years after the storm (vale_babi.c), which
+/// - The day the story begins, three years after the storm (vale_interiors2.c),
+/// which
 ///   took Jenna's family and Isaac's father, Kyle. The game opens at entrance
 ///   16 with Event_MendingTheRoof: under the caption "Three years later...",
 ///   Isaac is mending the roof of his house while Dora, his mother, calls up to
@@ -39,7 +40,7 @@
 ///   gone (FLAG_PLACE_TEMP_04), a villager asks whether Jenna is back
 ///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
 ///   about the lack of travellers since the eruption (FLAG_PLACE_TEMP_07).
-///   Isaac's house opens again: Dora lies ill inside (vale_babi.c).
+///   Isaac's house opens again: Dora lies ill inside (vale_interiors2.c).
 ///
 /// In every set: a Nut to catch with Catch (its flag 0xfd0; actor 26, or 20
 /// back from Kalay), an object to push or Move, whose column the setup restores
@@ -47,14 +48,14 @@
 /// cells 100 and 101 (FLAG_SCENE_TEMP_04 while inside), and cells of an upper
 /// path that change while the leader is on it (FLAG_SCENE_TEMP_10); after a
 /// battle (FLAG_KEEP_PARTY_POSITION) the setup restores both. Exits: 1 up Mt.
-/// Aleph to Sol Entrance (SolEntrance, scene 19), 2 to ValeHome (scene
+/// Aleph to Sol Entrance (SolEntrance, scene 19), 2 to ValeGate (scene
 /// 5), 3 and 4 to ValeKraden (scene 6), the doors 5, 6, 8, 9 and 10 into the
-/// houses (scene 7, vale_interiors.c, rooms 6, 5, 2, 1 and 2), 7 into Isaac's
-/// house (ValeBabi, scene 8) and 11 into Vale Sanctum (Sanctum, scene 9). Two
-/// scenes no table reaches remain: HouseScene_RunRepairMorning, a copy of the
-/// roof's end, and FieldScene_RunCompanionActorSequence, which sets group flag
-/// FLAG_PLACE_TEMP_05. FLAG_SCENE_TEMP_41 pauses the villager who watches Isaac
-/// while a menu is open. The TBS_PATCH_4 editions also set Dora's sprite
+/// houses (scene 7, vale_interiors1.c, rooms 6, 5, 2, 1 and 2), 7 into Isaac's
+/// house (ValeInteriors2, scene 8) and 11 into Vale Sanctum (Sanctum, scene 9).
+/// Two scenes no table reaches remain: HouseScene_RunRepairMorning, a copy of
+/// the roof's end, and FieldScene_RunCompanionActorSequence, which sets group
+/// flag FLAG_PLACE_TEMP_05. FLAG_SCENE_TEMP_41 pauses the villager who watches
+/// Isaac while a menu is open. The TBS_PATCH_4 editions also set Dora's sprite
 /// priority before Kalay.
 
 #include "game_state.h"
@@ -364,10 +365,10 @@ static void Event_TakeExit4(void) {
   Engine_EventRequestExit(VALE_TO_VALE_KRADEN_SOUTH);
 }
 
-/// Touch cell 5 in Vale: exit 2, to ValeHome's entrance 8.
+/// Touch cell 5 in Vale: exit 2, to ValeGate's entrance 8.
 static void Event_TakeExit2(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(VALE_TO_VALE_HOME);
+  Engine_EventRequestExit(VALE_TO_VALE_GATE);
 }
 
 /// The door of the house of Garet's family in Vale (touch cell 6): it opens and
@@ -376,7 +377,7 @@ static void Event_EnterGaretsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 54, 32);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 406, 727);
-  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_EAST);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_1_EAST);
 }
 
 /// A house door in Vale (touch cell 7): it opens and exit 6 leads in
@@ -385,12 +386,12 @@ static void Event_EnterInteriorsRoom5(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 45, 39);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
-  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_1);
 }
 
 /// The door of Isaac's house in Vale (touch cell 8): after the party has left
 /// and before Kalay, Dora will not open. "My Isaac would keep his promise...
-/// Go away." Otherwise exit 7 leads in (ValeBabi's entrance 6).
+/// Go away." Otherwise exit 7 leads in (ValeInteriors2's entrance 6).
 static void Event_EnterIsaacsHouse(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 &&
       Engine_GameFlagIsSet(FLAG_REACHED_KALAY) == 0) {
@@ -412,7 +413,7 @@ static void Event_EnterIsaacsHouse(void) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gValeCellAnimA, 50, 44);
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
-    Engine_EventRequestExit(VALE_TO_VALE_BABI);
+    Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_2);
   }
 }
 
@@ -422,7 +423,7 @@ static void Event_EnterJennasGrandparentsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
-  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_NORTH);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS_1_NORTH);
 }
 
 /// A house door in Vale (touch cell 10): it opens and exit 9 leads in
@@ -3107,12 +3108,12 @@ struct SceneEntrance gVale_Entrances[] = {
     { VALE_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 38, 0, 636, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_VALE_KRADEN_SOUTH, CONDITION_ALWAYS, 29, 0, 792, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_HOME, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_EAST, CONDITION_ALWAYS, 406, 0, 743, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_SOUTH, CONDITION_ALWAYS, 262, 0, 821, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_BABI, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_NORTH, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_VALE_INTERIORS_WEST, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_GATE, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_1_EAST, CONDITION_ALWAYS, 406, 0, 743, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_1_SOUTH, CONDITION_ALWAYS, 262, 0, 821, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_2, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_1_NORTH, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_INTERIORS_1_WEST, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 11, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_TITLE, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 17, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
@@ -3122,15 +3123,15 @@ struct SceneEntrance gVale_Entrances[] = {
 u32 gVale_Exits[] = {
     SCENE_EXITS(Vale),
     SCENE_EXIT(VALE_TO_SOL_ENTRANCE, SolEntrance, SOL_ENTRANCE_FROM_VALE),
-    SCENE_EXIT(VALE_TO_VALE_HOME, ValeHome, VALE_HOME_FROM_VALE),
+    SCENE_EXIT(VALE_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_VALE),
     SCENE_EXIT(VALE_TO_VALE_KRADEN_NORTH, ValeKraden, VALE_KRADEN_FROM_VALE_NORTH),
     SCENE_EXIT(VALE_TO_VALE_KRADEN_SOUTH, ValeKraden, VALE_KRADEN_FROM_VALE_SOUTH),
-    SCENE_EXIT(VALE_TO_VALE_INTERIORS_EAST, ValeInteriors, VALE_INTERIORS_FROM_VALE_EAST),
-    SCENE_EXIT(VALE_TO_VALE_INTERIORS, ValeInteriors, VALE_INTERIORS_FROM_VALE_SOUTH),
-    SCENE_EXIT(VALE_TO_VALE_BABI, ValeBabi, VALE_BABI_FROM_VALE),
-    SCENE_EXIT(VALE_TO_VALE_INTERIORS_NORTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_NORTH),
-    SCENE_EXIT(VALE_TO_VALE_INTERIORS_WEST, ValeInteriors, VALE_INTERIORS_FROM_VALE_WEST),
-    SCENE_EXIT(10, ValeInteriors, VALE_INTERIORS_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_1_EAST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_EAST),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_1, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_2, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_1_NORTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS_1_WEST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_WEST),
+    SCENE_EXIT(10, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_NORTH),
     SCENE_EXIT(VALE_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE),
     SCENE_EXIT(12, Vale, 17),
     SCENE_EXITS_END,

@@ -60,7 +60,7 @@ enum ValeEruptionActor {
   /// to Mr. Kraden's house."
   ACTOR_DORA = ACTOR_FIRST_PLACED + 2,
   /// Garet's sister (sprite 0x2a), whom Garet calls Sis at the farewell
-  /// (vale_home.c). She calls the mayor Grandpa, and actor 12 calls her Sis.
+  /// (vale_gate.c). She calls the mayor Grandpa, and actor 12 calls her Sis.
   /// "Grandpa, we don't even know if he's up there!"
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PLACED + 3,
   /// The guard. "They were hanging around here while I was on guard duty."

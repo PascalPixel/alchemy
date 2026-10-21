@@ -5,8 +5,8 @@
 /// with two guards and a well, and BabiPalace1 (scene 138), the palace
 /// itself, a set of rooms joined by doors (BabiPalace_LeaveThroughDoor). From
 /// the palace one door leads into a room of Babi's scholars (exit 11, which
-/// vale_babi.c holds) and another into the Colosseum Tunnel (exit 13). Each
-/// scene has three sets of placements and events, chosen by the story
+/// vale_interiors2.c holds) and another into the Colosseum Tunnel (exit 13).
+/// Each scene has three sets of placements and events, chosen by the story
 /// (Scene_GetPlacements, Scene_GetEvents): before Babi is saved, during the
 /// finals (FLAG_BABI_SAVED), and after Colosso (FLAG_COLOSSO_OVER).
 /// BabiPalace_ApplyEntryState plays the scenes that wait for the party on
@@ -2458,7 +2458,7 @@ struct SceneEntrance gBabiPalace_EntrancesOther[] = {
     { 8, CONDITION_ALWAYS, 72, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
     { 9, CONDITION_ALWAYS, 440, 0, 216, FACING_NORTH, 0, 0, 0, 512, 240, 0 },
     { 10, CONDITION_ALWAYS, 72, 0, 968, FACING_EAST, 0, 0, 864, 240, 1024, 0 },
-    { BABI_PALACE_1_FROM_VALE_BABI, CONDITION_ALWAYS, 168, 0, 936, FACING_SOUTH, 0, 0, 864, 240, 1024, 0 },
+    { BABI_PALACE_1_FROM_VALE_INTERIORS_2, CONDITION_ALWAYS, 168, 0, 936, FACING_SOUTH, 0, 0, 864, 240, 1024, 0 },
     { 12, CONDITION_ALWAYS, 424, 0, 680, FACING_WEST, 0, 328, 600, 568, 760, 0 },
     { BABI_PALACE_1_FROM_COLOSSEUM_TUNNEL, CONDITION_ALWAYS, 472, 0, 696, FACING_SOUTH, 0, 328, 600, 568, 760, 0 },
     { 16, CONDITION_ALWAYS, 408, 0, 824, FACING_EAST, 0, 320, 728, 560, 888, 0 },
@@ -2515,7 +2515,7 @@ u32 gBabiPalace_Exits[] = {
     SCENE_EXIT(8, BabiPalace1, 6),
     SCENE_EXIT(9, BabiPalace1, 7),
     SCENE_EXIT(10, BabiPalace1, 26),
-    SCENE_EXIT(BABI_PALACE_1_TO_VALE_BABI, ValeBabi, VALE_BABI_FROM_BABI_PALACE_1),
+    SCENE_EXIT(BABI_PALACE_1_TO_VALE_INTERIORS_2, ValeInteriors2, VALE_INTERIORS_2_FROM_BABI_PALACE_1),
     SCENE_EXIT(12, BabiPalace1, 27),
     SCENE_EXIT(BABI_PALACE_1_TO_COLOSSEUM_TUNNEL, ColosseumTunnel, COLOSSEUM_TUNNEL_FROM_BABI_PALACE_1),
     SCENE_EXIT(16, BabiPalace1, 34),

@@ -55,7 +55,7 @@ gScene_InteractionRuleTable:
 	scene_cue Sanctum, -1, 0x9f0, 74
 	scene_cue Sanctum, -1, 0x814, 2
 	scene_cue Sanctum, -1, -1, 74
-	scene_cue ValeBabi, 19, -1, 3
+	scene_cue ValeInteriors2, 19, -1, 3
 	group_cue 3, -1, 0x9f0, 0
 	group_cue 3, -1, 0x814, 2
 	group_cue 3, -1, 0x901, 0
@@ -181,7 +181,7 @@ gScene_AreaNameRules:
 	scene_name Sanctum, 32, 6
 	scene_name Sanctum, 29, 7
 	scene_name Sanctum, -1, 8
-	scene_name ValeBabi, 19, 9
+	scene_name ValeInteriors2, 19, 9
 	group_name 3, -1, 10
 	scene_name SolEntrance, -1, 11
 	scene_name SolSanctumElementalStarRoom, -1, 12
@@ -302,7 +302,7 @@ gScene_AreaNameRules:
 
 	.global gParty_PairResolveRules
 gParty_PairResolveRules:
-	return_to ValeStorm, 15, ValeBabi, 16
+	return_to ValeStorm, 15, ValeInteriors2, 16
 	return_to Vale, 16, Sanctum, 2
 	return_to Vault, 1, Sanctum, 12
 	return_to Vault, 3, Sanctum, 12
@@ -325,7 +325,7 @@ gParty_PairResolveRules:
 @ A scene not listed takes the last backdrop.
 	.global gBattle_BackdropScenes
 gBattle_BackdropScenes:
-	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeHome, ValeKraden
+	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeGate, ValeKraden
 	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumEntrance1, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeak10, CrossboneIslePillarRooms1
 	backdrop InteriorBackdrop, VaultInteriors
 	backdrop GomaCaveBackdrop, GomaCaveEntrance

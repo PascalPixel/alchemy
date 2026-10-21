@@ -22,7 +22,7 @@
 ///   the Great Healer, who relays its guidance (find the lighthouses, seek the
 ///   Djinn); the two are to leave the next day (Sanctum_ReceiveWiseOnesMission,
 ///   FLAG_SANCTUM_QUEST_ACCEPTED), and exit 30 takes them to scene 5
-///   (vale_home.c). If he refuses, the others talk of his choice, the Great
+///   (vale_gate.c). If he refuses, the others talk of his choice, the Great
 ///   Healer asks again when spoken to (Event_ReconsiderQuest), heading for the
 ///   door draws a warning that the choice is final once outside the village,
 ///   and leaving anyway ends the game: `And so the world began drifting toward
@@ -315,7 +315,7 @@ static void Event_ReconsiderQuest(void) {
         Engine_AudioPlayCue(MUS_086);
         AudioCommand_WaitForCompletion();
         Engine_GameFlagSet(FLAG_SANCTUM_QUEST_ACCEPTED);
-        Engine_EventRequestExit(SANCTUM_TO_VALE_HOME);
+        Engine_EventRequestExit(SANCTUM_TO_VALE_GATE);
       }
     }
   }
@@ -1035,7 +1035,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_PlayCue(MUS_086);
     AudioCommand_WaitForCompletion();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
-    Engine_EventRequestExit(SANCTUM_TO_VALE_HOME);
+    Engine_EventRequestExit(SANCTUM_TO_VALE_GATE);
   } else {
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(12, 1);
@@ -2194,7 +2194,7 @@ u32 gSanctum_Exits[] = {
     SCENE_EXIT(SANCTUM_TO_VAULT, Vault, VAULT_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_SANCTUM),
     SCENE_EXIT(20, Sanctum, 21),
-    SCENE_EXIT(SANCTUM_TO_VALE_HOME, ValeHome, VALE_HOME_FROM_SANCTUM),
+    SCENE_EXIT(SANCTUM_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_ALTIN, Altin, ALTIN_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_BILIBIN, Bilibin, BILIBIN_FROM_SANCTUM),
     SCENE_EXIT(SANCTUM_TO_XIAN, Xian, XIAN_FROM_SANCTUM_WEST),

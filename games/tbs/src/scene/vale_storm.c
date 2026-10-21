@@ -6,12 +6,12 @@
 /// village's main scene (Vale, scene 4) on that one night, on a map of its
 /// own: the doors that lead to scene 4 by day lead here instead.
 /// ValeStorm_Initialize sets FLAG_VALE_STORM, which tells Vale's other scenes
-/// the storm is on, until the night ends in vale_home.c. The night runs:
+/// the storm is on, until the night ends in vale_gate.c. The night runs:
 ///
 /// - Isaac and his mother Dora come out into the storm (entrance 15, by the
 ///   door of exit 7) to find Kyle, who asks Dora to take good care of Isaac;
 ///   three years later a villager reminds Isaac that he lost his father that
-///   night (vale_home.c). Kyle means to help evacuate the other villagers,
+///   night (vale_gate.c). Kyle means to help evacuate the other villagers,
 ///   Dora insists on going with him, and she sends Isaac on alone to take
 ///   refuge in the plaza (Event_DoraSendsIsaacToThePlaza,
 ///   FLAG_VALE_STORM_SENT_TO_PLAZA). This first time, the scene's lightning
@@ -41,7 +41,7 @@
 ///   scene 5, entrance 8), where Garet's grandfather sends the boys back to
 ///   show Jenna and a man whose Psynergy the Psynergy Stone has restored the
 ///   way to the river (FLAG_VALE_STORM_SENT_TO_AID_ELDERS,
-///   vale_home.c).
+///   vale_gate.c).
 /// - Back at the river (Event_GatherAfterRiverRescue,
 ///   FLAG_VALE_STORM_RIVER_GATHERING_SEEN), Jenna finds her parents again and
 ///   Dora calls everyone down to save Felix; then the Boulder comes down the
@@ -50,7 +50,7 @@
 ///   came to help can no longer move. Leaving by exit 2 now, Isaac goes for
 ///   help and Garet resolves to go after him (ValeStorm_GaretFollowsIsaac,
 ///   FLAG_VALE_STORM_GARET_LEFT); on the way Isaac overhears two strangers,
-///   Garet catches up, and the night ends (vale_home.c).
+///   Garet catches up, and the night ends (vale_gate.c).
 ///
 /// ValeStorm_Initialize rebuilds the night from those flags on every arrival:
 /// the fallen rocks, the Boulder, Garet struggling with his chest until he
@@ -131,7 +131,7 @@ enum { STORM_CALLBACK_PRIORITY = 3200 };
 /// to 33.
 enum StormNightActor {
   /// The man who comes back to the river with Jenna, his Psynergy restored at
-  /// the Psynergy Stone (vale_home.c: "Enough to save Felix"); after the
+  /// the Psynergy Stone (vale_gate.c: "Enough to save Felix"); after the
   /// Boulder has passed he tries to go for help and cannot. "I... I'll go!",
   /// then "It's no use. I can't move..."
   ACTOR_EXHAUSTED_VILLAGER = ACTOR_FIRST_PLACED,
@@ -202,8 +202,8 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
 #include "common/object_pulse.h"
 
 /// Returns where the party appears; entrance 15 is where Dora and Isaac come
-/// out of the door of exit 7, from another part of Vale (SceneId_ValeBabi,
-/// scene 8, its exit 21).
+/// out of the door of exit 7, from another part of Vale
+/// (SceneId_ValeInteriors2, scene 8, its exit 21).
 const struct SceneEntrance *ValeStorm_GetEntrances(void) {
   return gValeStorm_Entrances;
 }
@@ -244,12 +244,12 @@ UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_WEST_3);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_1_WEST_3);
 }
 
 /// In Vale on the stormy night, stepping on cell code 2 requests exit 1, which
 /// has no table row; Scene_TakeExit therefore falls back to the first exit's
-/// scene, Vale's SceneId_ValeHome (scene 5), at entrance 0.
+/// scene, Vale's SceneId_ValeGate (scene 5), at entrance 0.
 static void Event_LeaveByExit1(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
@@ -274,7 +274,7 @@ static void Event_LeaveByExit4(void) {
 }
 
 /// In Vale on the stormy night, leaves for the plaza, where the villagers have
-/// gathered (SceneId_ValeHome, scene 5).
+/// gathered (SceneId_ValeGate, scene 5).
 /// Reached by stepping on cell code 5; takes exit 2, to entrance 8. After the
 /// river gathering, Garet first resolves to go after Isaac
 /// (ValeStorm_GaretFollowsIsaac).
@@ -284,7 +284,7 @@ static void Event_LeaveByExit2(void) {
       Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_LEFT) == 0) {
     ValeStorm_GaretFollowsIsaac();
   }
-  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_HOME);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_GATE);
 }
 
 /// In Vale on the stormy night, opens the door of Garet's house and goes in.
@@ -295,7 +295,7 @@ static void Event_LeaveByExit5(void) {
   Engine_MapAnimateCells(gValeStorm_CellSteps1, 54, 32);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 406, 727);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_EAST);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_1_EAST);
 }
 
 /// In Vale on the stormy night, Isaac's first time at the door of exit 6: a
@@ -317,14 +317,14 @@ static void Event_LeaveByExit6(void) {
   } else {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
     Engine_EventWait(3);
-    Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS);
+    Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_1);
   }
 }
 
 /// In Vale on the stormy night, goes back in through the door Dora and Isaac
 /// came out of, opening it unless they left it open.
 /// Reached by walking north into cell code 8; takes exit 7, to
-/// another part of Vale (SceneId_ValeBabi, scene 8) entrance 6.
+/// another part of Vale (SceneId_ValeInteriors2, scene 8) entrance 6.
 static void Event_LeaveByExit7(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05) == 0) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -343,7 +343,7 @@ static void Event_LeaveByExit8(void) {
   Engine_MapAnimateCells(gValeStorm_CellSteps2, 49, 69);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Engine_EventWait(3);
-  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_NORTH);
+  Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_1_NORTH);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
@@ -370,7 +370,7 @@ static void Event_LeaveByExit10(void) {
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into cell code 12; takes exit 12, to
-/// another part of Vale (SceneId_ValeBabi, scene 8) entrance 11.
+/// another part of Vale (SceneId_ValeInteriors2, scene 8) entrance 11.
 static void Event_LeaveByExit12(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
@@ -381,7 +381,7 @@ static void Event_LeaveByExit12(void) {
 
 /// In Vale on the stormy night, opens a door and goes in.
 /// Reached by walking north into cell code 13; takes exit 13, to
-/// another part of Vale (SceneId_ValeBabi, scene 8) entrance 12.
+/// another part of Vale (SceneId_ValeInteriors2, scene 8) entrance 12.
 static void Event_LeaveByExit13(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
@@ -1930,7 +1930,7 @@ static void Event_TalkAboutRescuingFelix(void) {
 /// Garet and the man whose Psynergy is restored, and the scene ends with the
 /// Boulder sweeping down it. "Mom! Dad! We're back!"
 /// Reached by stepping on cell code 36 once FLAG_VALE_STORM_SENT_TO_AID_ELDERS
-/// is set (vale_home.c), until FLAG_VALE_STORM_RIVER_GATHERING_SEEN is set,
+/// is set (vale_gate.c), until FLAG_VALE_STORM_RIVER_GATHERING_SEEN is set,
 /// which this sets.
 static void Event_GatherAfterRiverRescue(void) {
   struct FieldActor *leader;
@@ -2575,7 +2575,7 @@ static void Event_VillagerAsksForHelp(void) {
 /// goes after him. "I can't let him go alone..."
 /// Called by Event_LeaveByExit2 after the river gathering; sets
 /// FLAG_VALE_STORM_GARET_LEFT, which has the two meet the strangers on the
-/// way (vale_home.c).
+/// way (vale_gate.c).
 static void ValeStorm_GaretFollowsIsaac(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -3050,7 +3050,7 @@ struct SceneEntrance gValeStorm_Entrances[] = {
      FACING_EAST, 0, -1, -1, -1, -1, 0},
     {VALE_STORM_FROM_VALE_KRADEN_SOUTH, CONDITION_ALWAYS, 29, 0, 792,
      FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_HOME, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0,
+    {VALE_STORM_FROM_VALE_GATE, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0,
      -1, -1, -1, -1, 0},
     {6, CONDITION_ALWAYS, 406, 0, 743, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {7, CONDITION_ALWAYS, 262, 0, 821, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -3058,9 +3058,9 @@ struct SceneEntrance gValeStorm_Entrances[] = {
     {9, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {11, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_BABI, CONDITION_ALWAYS, 101, 0, 1216, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
-    {VALE_STORM_FROM_VALE_BABI_WEST, CONDITION_ALWAYS, 146, 0, 1193,
+    {VALE_STORM_FROM_VALE_INTERIORS_2, CONDITION_ALWAYS, 101, 0, 1216,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VALE_STORM_FROM_VALE_INTERIORS_2_WEST, CONDITION_ALWAYS, 146, 0, 1193,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {15, CONDITION_ALWAYS, 335, 0, 908, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {16, CONDITION_ALWAYS, 181, 0, 1273, FACING_NORTHEAST, 0, -1, -1, -1, -1,
@@ -3070,26 +3070,26 @@ struct SceneEntrance gValeStorm_Entrances[] = {
 
 u32 gValeStorm_Exits[] = {
     SCENE_EXITS(ValeStorm),
-    SCENE_EXIT(VALE_STORM_TO_VALE_HOME, ValeHome, VALE_HOME_FROM_VALE),
+    SCENE_EXIT(VALE_STORM_TO_VALE_GATE, ValeGate, VALE_GATE_FROM_VALE),
     SCENE_EXIT(VALE_STORM_TO_VALE_KRADEN_NORTH, ValeKraden,
                VALE_KRADEN_FROM_VALE_NORTH),
     SCENE_EXIT(VALE_STORM_TO_VALE_KRADEN_SOUTH, ValeKraden,
                VALE_KRADEN_FROM_VALE_SOUTH),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_EAST, ValeInteriors,
-               VALE_INTERIORS_FROM_VALE_EAST),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS, ValeInteriors,
-               VALE_INTERIORS_FROM_VALE_SOUTH),
-    SCENE_EXIT(7, ValeBabi, VALE_BABI_FROM_VALE),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_NORTH, ValeInteriors,
-               VALE_INTERIORS_FROM_VALE_NORTH),
-    SCENE_EXIT(9, ValeInteriors, VALE_INTERIORS_FROM_VALE_WEST),
-    SCENE_EXIT(10, ValeInteriors, VALE_INTERIORS_FROM_VALE_WEST),
-    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_WEST_3, ValeInteriors,
-               VALE_INTERIORS_FROM_VALE_WEST),
-    SCENE_EXIT(VALE_STORM_TO_VALE_BABI_WEST, ValeBabi,
-               VALE_BABI_FROM_VALE_STORM_WEST),
-    SCENE_EXIT(VALE_STORM_TO_VALE_BABI_EAST, ValeBabi,
-               VALE_BABI_FROM_VALE_STORM_EAST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_1_EAST, ValeInteriors1,
+               VALE_INTERIORS_1_FROM_VALE_EAST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_1, ValeInteriors1,
+               VALE_INTERIORS_1_FROM_VALE_SOUTH),
+    SCENE_EXIT(7, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_1_NORTH, ValeInteriors1,
+               VALE_INTERIORS_1_FROM_VALE_NORTH),
+    SCENE_EXIT(9, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_WEST),
+    SCENE_EXIT(10, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_1_WEST_3, ValeInteriors1,
+               VALE_INTERIORS_1_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_2_WEST, ValeInteriors2,
+               VALE_INTERIORS_2_FROM_VALE_STORM_WEST),
+    SCENE_EXIT(VALE_STORM_TO_VALE_INTERIORS_2_EAST, ValeInteriors2,
+               VALE_INTERIORS_2_FROM_VALE_STORM_EAST),
     SCENE_EXIT(20, ValeStorm, 16),
     SCENE_EXITS_END,
 };

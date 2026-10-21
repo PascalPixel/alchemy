@@ -11,7 +11,7 @@
 ///   there for good). A chest holds Power Bread. Exits lead back to the Goma
 ///   Cave Entrance (exit 1), into the room of two pillars (goma_cave_pillar.c;
 ///   exits 2 and 3, its entrances 1 and 2) and north into scene 29 (exit 4).
-///   Exit 5, on collision code 1, leads to Vale (vale_home.c, scene 5,
+///   Exit 5, on collision code 1, leads to Vale (vale_gate.c, scene 5,
 ///   entrance 11), and Vale's exit 11 leads back in at entrance 5, which
 ///   arrives without the place name. No exit leads to entrance 99.
 /// - Goma Cave, scene 29, the way out. It has no actors and only its two
@@ -113,7 +113,7 @@ s32 Scene_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_GomaCaveWaterway1) {
-    if (gGameState.entrance == GOMA_CAVE_WATERWAY_1_FROM_VALE_HOME) {
+    if (gGameState.entrance == GOMA_CAVE_WATERWAY_1_FROM_VALE_GATE) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     } else {
       Object_GetById(STUMP)->collisionFlags |= 16;
@@ -231,7 +231,7 @@ struct SceneEntrance gGomaCaveWaterwayEntrancesOther[] = {
      520, FACING_SOUTH, 0, 88, 8, 664, 832, 0},
     {GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_WATERWAY_2, CONDITION_ALWAYS, 376, 0,
      168, FACING_SOUTH, 0, 88, 8, 664, 832, 0},
-    {GOMA_CAVE_WATERWAY_1_FROM_VALE_HOME, CONDITION_ALWAYS, 614, 0, 848,
+    {GOMA_CAVE_WATERWAY_1_FROM_VALE_GATE, CONDITION_ALWAYS, 614, 0, 848,
      FACING_NORTH, 0, 480, 605, 720, 900, 0},
     {99, CONDITION_ALWAYS, 424, 0, 280, FACING_WEST, 0, 88, 8, 664, 832, 0},
     {SCENE_TABLE_END},
@@ -255,8 +255,8 @@ u32 gGomaCaveWaterwayExits[] = {
                GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_WATERWAY_1_EAST),
     SCENE_EXIT(GOMA_CAVE_WATERWAY_1_TO_GOMA_CAVE_WATERWAY_2, GomaCaveWaterway2,
                GOMA_CAVE_WATERWAY_2_FROM_GOMA_CAVE_WATERWAY_1),
-    SCENE_EXIT(GOMA_CAVE_WATERWAY_1_TO_VALE_HOME, ValeHome,
-               VALE_HOME_FROM_GOMA_CAVE_WATERWAY_1),
+    SCENE_EXIT(GOMA_CAVE_WATERWAY_1_TO_VALE_GATE, ValeGate,
+               VALE_GATE_FROM_GOMA_CAVE_WATERWAY_1),
     SCENE_EXITS(GomaCaveWaterway2),
     SCENE_EXIT(GOMA_CAVE_WATERWAY_2_TO_GOMA_CAVE_WATERWAY_1, GomaCaveWaterway1,
                GOMA_CAVE_WATERWAY_1_FROM_GOMA_CAVE_WATERWAY_2),

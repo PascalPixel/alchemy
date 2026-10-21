@@ -12,7 +12,7 @@ instead. When it starts, it sets a story flag, `FLAG_VALE_STORM`, that tells
 the rest of Vale the storm is on.
 
 The rest of Vale doesn't get a copy. The part with the town gate,
-[vale_home.c](src/scene/vale_home.c), is one scene for every point in the
+[vale_gate.c](src/scene/vale_gate.c), is one scene for every point in the
 story: the storm, the morning three years later, the farewell and every visit
 after that. Each time the party arrives, it checks the story flags and picks
 who stands where and what they say. So the game does both: when a place

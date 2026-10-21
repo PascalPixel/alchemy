@@ -1,7 +1,7 @@
 /// @file
 /// Vault (scene 20, SceneId_Vault), "the town at the heart of Angara", as the
 /// party first finds it, just after Mt. Aleph's eruption: the first town on
-/// the journey, where Vale's villagers send the party (vale_home.c). In the
+/// the journey, where Vale's villagers send the party (vale_gate.c). In the
 /// chaos of the eruption thieves struck: Master Hammet, a wealthy landowner
 /// and merchant from Kalay, had his precious rod, the Shaman's Rod, stolen,
 /// and his servant Ivan was left at the mayor's and cannot go home until he

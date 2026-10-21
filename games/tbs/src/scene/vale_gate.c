@@ -1,8 +1,8 @@
 /// @file
-/// Vale (scene 5, SceneId_ValeHome): the part of the village with the
+/// Vale (scene 5, SceneId_ValeGate): the part of the village with the
 /// Psynergy Stone and the town gate, Vale's way out to the world. The scene
-/// sees the prologue end and the journey begin, and ValeHome_GetPlacements
-/// and ValeHome_GetEvents pick its people and events by the time of the
+/// sees the prologue end and the journey begin, and ValeGate_GetPlacements
+/// and ValeGate_GetEvents pick its people and events by the time of the
 /// story. In story order:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
@@ -19,7 +19,7 @@
 ///   (FLAG_VALE_STORM_GARET_LEFT), arriving here plays
 ///   Event_MeetSurvivingTravelers: Isaac overhears two strangers saying only
 ///   the two of them survived Sol Sanctum's fury, Garet catches up, and the
-///   strangers fight the boys to make them forget (ValeHome_FightTravelers,
+///   strangers fight the boys to make them forget (ValeGate_FightTravelers,
 ///   encounter 4 of table 12). Win or lose, the battle returns to entrance
 ///   19, where the strangers leave the boys lying in the storm, the storm
 ///   ends (FLAG_VALE_STORM is cleared) and exit 9 leads to the title shown
@@ -39,7 +39,7 @@
 /// - After the party has left (FLAG_PARTY_LEFT_VALE), the villagers point the
 ///   way to Vault and talk of the eruption, whose sparkles they take for
 ///   crushed Psynergy Stones; a large Psynergy Stone has fallen on the hut,
-///   whose roof ValeHome_Initialize redraws. Only now does the town gate lead
+///   whose roof ValeGate_Initialize redraws. Only now does the town gate lead
 ///   out (Event_LeaveThroughTownGate).
 /// - Back from Kalay (FLAG_REACHED_KALAY), the villagers welcome Isaac home,
 ///   the hut's owner finds the stone gone, leaving a hole in his roof
@@ -56,7 +56,7 @@
 /// Entrances 97 to 99 are in no entrance table and no exit leads to them: 97
 /// replays the strangers' departure, 98 sets FLAG_CHILDHOOD and takes exit 50
 /// into Vale (scene 8), and 99 sets a preset of story flags and takes exit 40
-/// (ValeHome_SetProgressFlagsAndExit).
+/// (ValeGate_SetProgressFlagsAndExit).
 
 #include "game_state.h"
 #include "flags.h"
@@ -64,7 +64,7 @@
 #include "version.h"
 #include "scene_ids.h"
 #include "vram_tab.h"
-#include "unit/scene/vale_home.h"
+#include "unit/scene/vale_gate.h"
 #include "unit/scene/common/effect_psynergy.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -84,7 +84,7 @@
 #include "system.h"
 #include "resource.h"
 #include "global_cells.h"
-#include "vale_home.h"
+#include "vale_gate.h"
 #include "map_scroll.h"
 #include "text/msg_ids.h"
 #include "field_event.h"
@@ -109,8 +109,8 @@
 #define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD 0x306
 
 // The stormy night's actors. Actor numbers differ in each placement table;
-// these hold in gValeHome_StormPlacements.
-enum ValeHomeActor {
+// these hold in gValeGate_StormPlacements.
+enum ValeGateActor {
   /// The two travelers who survived Sol Sanctum, Saturos and Menardi by their
   /// sprites (0x20 and 0x21, as in vale_kraden.c). "Only the two of us
   /// survived..."
@@ -122,60 +122,60 @@ enum ValeHomeActor {
 
 // Forward declarations.
 static void Event_MeetSurvivingTravelers(void);
-static void ValeHome_FightTravelers(void);
+static void ValeGate_FightTravelers(void);
 static void Event_TravelersLeaveAfterBattle(void);
 static void Event_DepartForQuest(void);
 static void Event_SayThenWait(s32 speaker, s32 frames);
-static void ValeHome_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames);
-static void ValeHome_FlashPsynergyPalette(struct FieldActor *actor);
-static void ValeHome_SpawnEffectPair(struct FieldActor *parent);
-static void ValeHome_UpdateActor15Psynergy(void);
-static void ValeHome_UpdateActor17Psynergy(void);
-static void ValeHome_UpdateActor20Psynergy(void);
-static void ValeHome_SetProgressFlagsAndExit(void);
+static void ValeGate_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames);
+static void ValeGate_FlashPsynergyPalette(struct FieldActor *actor);
+static void ValeGate_SpawnEffectPair(struct FieldActor *parent);
+static void ValeGate_UpdateActor15Psynergy(void);
+static void ValeGate_UpdateActor17Psynergy(void);
+static void ValeGate_UpdateActor20Psynergy(void);
+static void ValeGate_SetProgressFlagsAndExit(void);
 
 #ifdef UBFIX
-#define VALE_HOME_TURN_AND_WAIT ValeHome_FaceDirectionAndWait
+#define VALE_GATE_TURN_AND_WAIT ValeGate_FaceDirectionAndWait
 #else
-static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
+static inline s32 ValeGate_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
   /* FAKEMATCH(wrapper): a forwarding inline that calls
-   * ValeHome_FaceDirectionAndWait as returning a value; as a direct call in
+   * ValeGate_FaceDirectionAndWait as returning a value; as a direct call in
    * Event_SentToAidElders, 15 of 455 instructions differ in tbs-en. */
-  return ((s32 (*)())ValeHome_FaceDirectionAndWait)(actor, facing, frames);
+  return ((s32 (*)())ValeGate_FaceDirectionAndWait)(actor, facing, frames);
 }
-#define VALE_HOME_TURN_AND_WAIT ValeHome_TurnAndWaitValue
+#define VALE_GATE_TURN_AND_WAIT ValeGate_TurnAndWaitValue
 #endif
 
 #include "common/object_facing.h"
 
-const struct SceneEntrance *ValeHome_GetEntrances(void) {
-  return gValeHome_Entrances;
+const struct SceneEntrance *ValeGate_GetEntrances(void) {
+  return gValeGate_Entrances;
 }
 
-const struct SceneRegion *ValeHome_GetRegions(void) { return NULL; }
+const struct SceneRegion *ValeGate_GetRegions(void) { return NULL; }
 
 /// Returns the stormy night's exits while FLAG_VALE_STORM is set, else the
 /// day's.
-const u32 *ValeHome_GetExits(void) {
+const u32 *ValeGate_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    return gValeHome_StormExits;
+    return gValeGate_StormExits;
   }
-  return gValeHome_Exits;
+  return gValeGate_Exits;
 }
 
 /// Selects the placements: the stormy night's, the farewell's (entrance 12),
 /// after Kalay, else the day's.
-const struct ScenePlacement *ValeHome_GetPlacements(void) {
+const struct ScenePlacement *ValeGate_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    return gValeHome_StormPlacements;
+    return gValeGate_StormPlacements;
   }
-  if (gGameState.entrance == VALE_HOME_FROM_SANCTUM) {
-    return gValeHome_DeparturePlacements;
+  if (gGameState.entrance == VALE_GATE_FROM_SANCTUM) {
+    return gValeGate_DeparturePlacements;
   }
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
-    return gValeHome_PlacementsAfterKalay;
+    return gValeGate_PlacementsAfterKalay;
   }
-  return gValeHome_Placements;
+  return gValeGate_Placements;
 }
 
 /// In Vale, searching the Psynergy Stone restores the party's PP.
@@ -196,20 +196,20 @@ static void Event_UsePsynergyStone(void) {
 
 /// Selects the events: after Kalay, after the party has left, the farewell's
 /// (entrance 12), the stormy night's, else the day's.
-const struct SceneEvent *ValeHome_GetEvents(void) {
+const struct SceneEvent *ValeGate_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
-    return gValeHome_EventsAfterKalay;
+    return gValeGate_EventsAfterKalay;
   }
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-    return gValeHome_EventsAfterLeaving;
+    return gValeGate_EventsAfterLeaving;
   }
-  if (gGameState.entrance == VALE_HOME_FROM_SANCTUM) {
-    return gValeHome_DepartureEvents;
+  if (gGameState.entrance == VALE_GATE_FROM_SANCTUM) {
+    return gValeGate_DepartureEvents;
   }
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
-    return gValeHome_StormEvents;
+    return gValeGate_StormEvents;
   }
-  return gValeHome_Events;
+  return gValeGate_Events;
 }
 
 /// In Vale on the day the story begins, a villager asks whether Isaac
@@ -254,7 +254,7 @@ static void Event_AskAboutTheTravelers(void) {
 ///
 /// Reached by talking to actor 17 on the day the story begins and after the
 /// party has left. The display adds and removes the callback
-/// ValeHome_UpdateActor17Psynergy and shakes the map for three seconds.
+/// ValeGate_UpdateActor17Psynergy and shakes the map for three seconds.
 static void Event_DemonstratePsynergy(void) {
   u32 i;
   s32 message;
@@ -292,10 +292,10 @@ static void Event_DemonstratePsynergy(void) {
     Scene_BeginCutscenePsynergy();
     shakes = 0;
     for (i = 0; i < 40; i++) {
-      ValeHome_FlashPsynergyPalette(Object_GetById(17));
+      ValeGate_FlashPsynergyPalette(Object_GetById(17));
       Engine_TaskWait(1);
     }
-    FieldScheduler_AddCallback(ValeHome_UpdateActor17Psynergy, 0xc80);
+    FieldScheduler_AddCallback(ValeGate_UpdateActor17Psynergy, 0xc80);
     Engine_AudioPlayCue(SE_107);
     for (i = 0; i != 180; i++) {
       if (Math_RemainderUnsigned(i, 10) == 0) {
@@ -310,7 +310,7 @@ static void Event_DemonstratePsynergy(void) {
     }
     // End the display and restore the villager's ordinary appearance.
     Engine_AudioPlayCue(SE_289);
-    Scheduler_RemoveCallback(ValeHome_UpdateActor17Psynergy);
+    Scheduler_RemoveCallback(ValeGate_UpdateActor17Psynergy);
     Engine_TaskWait(1);
     Scene_EndCutscenePsynergy();
     Engine_ActorSetChildValue(17, 0);
@@ -377,8 +377,8 @@ static void Event_TalkAboutFallenStone(void) {
 /// into the air.
 ///
 /// Reached by talking to actor 15 on the stormy night. Adds and removes the
-/// callbacks ValeHome_UpdateActor15Psynergy and
-/// ValeHome_UpdateActor20Psynergy.
+/// callbacks ValeGate_UpdateActor15Psynergy and
+/// ValeGate_UpdateActor20Psynergy.
 static void Event_DemonstrateLevitation(void) {
   u32 i;
   s32 savedMotionFlags;
@@ -389,17 +389,17 @@ static void Event_DemonstrateLevitation(void) {
   Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 30);
   Engine_EventSetMessage(MsgValeIHaveSomePsynergyLeft);
   Event_SayThenWait(15, 20);
-  ValeHome_FaceDirectionAndWait(15, FACING_NORTHWEST, 20);
+  ValeGate_FaceDirectionAndWait(15, FACING_NORTHWEST, 20);
   Actor_SetAttachedEffect(15, 0x102);
   Engine_EventWait(20);
   // Charge the caster's display, then start both palette updates.
   Scene_BeginCutscenePsynergy();
   for (i = 0; i < 40; i++) {
-    ValeHome_FlashPsynergyPalette(Object_GetById(15));
+    ValeGate_FlashPsynergyPalette(Object_GetById(15));
     Engine_TaskWait(1);
   }
-  FieldScheduler_AddOrUpdateCallback(ValeHome_UpdateActor15Psynergy, 0xc80);
-  FieldScheduler_AddCallback(ValeHome_UpdateActor20Psynergy, 0xc80);
+  FieldScheduler_AddOrUpdateCallback(ValeGate_UpdateActor15Psynergy, 0xc80);
+  FieldScheduler_AddCallback(ValeGate_UpdateActor20Psynergy, 0xc80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
   // Suspend ordinary movement while lifting the target a little each frame.
   levitatingActor = Object_GetById(20);
@@ -410,8 +410,8 @@ static void Event_DemonstrateLevitation(void) {
     Engine_TaskWait(1);
   }
   levitatingActor->motionFlags = savedMotionFlags;
-  Scheduler_RemoveCallback(ValeHome_UpdateActor15Psynergy);
-  Scheduler_RemoveCallback(ValeHome_UpdateActor20Psynergy);
+  Scheduler_RemoveCallback(ValeGate_UpdateActor15Psynergy);
+  Scheduler_RemoveCallback(ValeGate_UpdateActor20Psynergy);
   Engine_TaskWait(1);
   Event_PlayCue(SE_161);
   Actor_SetChildValue(15, 0);
@@ -481,7 +481,7 @@ static void Event_PsynergyStoneIsGone(void) {
   Engine_GameFlagSet(FLAG_VALE_PSYNERGY_STONE_GONE_TOLD);
   Engine_ActorStop(21);
   Engine_TaskWait(1);
-  Actor_SetActionScript(21, gValeHome_Actor21Actions);
+  Actor_SetActionScript(21, gValeGate_Actor21Actions);
   Engine_EventEnd();
 }
 
@@ -491,7 +491,7 @@ static void Event_PsynergyStoneIsGone(void) {
 static inline void Event_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
                                                 s32 z) {
   Event_PlayCue(SE_DOOR_OPEN);
-  Map_AnimateCells(gValeHome_DoorOpens, cellX, cellZ);
+  Map_AnimateCells(gValeGate_DoorOpens, cellX, cellZ);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
 }
 
@@ -502,7 +502,7 @@ static inline void Event_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
 /// In Vale, opens the northwest door, into a house (scene 7, entrance 8).
 static void Event_OpenNorthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(44, 7, 248, 279);
-  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_INTERIORS_EAST);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_1_EAST);
 }
 
 /// In Vale back from Kalay, opens the northeast doorway in two stages and
@@ -519,27 +519,27 @@ static void Event_OpenNortheastDoor(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
-  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_BABI_NORTH);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_2_NORTH);
 }
 
 /// In Vale, enters through the western door of the middle row of houses
 /// (scene 7, entrance 3).
 static void Event_OpenCentralWestDoor(void) {
   Event_OpenDoorAndWalkThrough(43, 15, 230, 407);
-  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_INTERIORS_NORTH);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_1_NORTH);
 }
 
 /// In Vale, enters through the eastern door of the middle row of houses
 /// (scene 7, entrance 7).
 static void Event_OpenCentralEastDoor(void) {
   Event_OpenDoorAndWalkThrough(52, 18, 374, 419);
-  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_INTERIORS_SOUTH);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_1_SOUTH);
 }
 
 /// In Vale, opens the southwest door, into Vale's shops (scene 7, entrance 4).
 static void Event_OpenSouthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(41, 32, 200, 546);
-  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_INTERIORS_WEST);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_1_WEST);
 }
 
 /// In Vale, opens the door at the west edge, into another part of Vale (scene
@@ -553,14 +553,14 @@ static void Event_OpenWestEdgeDoor(void) {
 /// entrance 4).
 static void Event_OpenSoutheastDoor(void) {
   Event_OpenDoorAndWalkThrough(51, 39, 358, 670);
-  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_BABI_SOUTH);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_2_SOUTH);
 }
 
 /// In Vale on the stormy night, leaves by the west passage, back to the
 /// storm's map: stepping on cell code 9 takes exit 8, to scene 3's entrance 5.
 static void Event_LeaveThroughWestPassage(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Vale_RequestBackdropExit(VALE_HOME_TO_VALE);
+  Vale_RequestBackdropExit(VALE_GATE_TO_VALE);
 }
 
 /// In Vale, leaves by the town gate for the world map, once the party has
@@ -572,7 +572,7 @@ static void Event_LeaveThroughWestPassage(void) {
 static void Event_LeaveThroughTownGate(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_AudioPlayCue(SE_MAP_EXIT);
-    Vale_RequestBackdropExit(VALE_HOME_TO_WORLD_MAP);
+    Vale_RequestBackdropExit(VALE_GATE_TO_WORLD_MAP);
   }
 }
 
@@ -610,7 +610,7 @@ static void Event_ClearThirdWhirlwindTarget(void) {
 /// after Isaac (FLAG_VALE_STORM_GARET_LEFT), Event_MeetSurvivingTravelers.
 /// Once the boys have been sent back to the river, it removes the two
 /// villagers who left to aid the elders, Jenna and the man who went with them.
-s32 ValeHome_Initialize(void) {
+s32 ValeGate_Initialize(void) {
   struct FieldActor *actor;
   s32 flag;
   s32 verticalScale;
@@ -630,7 +630,7 @@ s32 ValeHome_Initialize(void) {
     Engine_EventRequestExit(50);
     return 0;
   case 99:
-    ValeHome_SetProgressFlagsAndExit();
+    ValeGate_SetProgressFlagsAndExit();
     return 0;
   case 97:
     Event_TravelersLeaveAfterBattle();
@@ -659,7 +659,7 @@ s32 ValeHome_Initialize(void) {
         Engine_ActorSetPosition(18, 0, 0);
         FieldObject_SetTargetAndCallback(
             19, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-            gValeHome_FaceTargetActions);
+            gValeGate_FaceTargetActions);
       }
     } else {
       if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
@@ -670,7 +670,7 @@ s32 ValeHome_Initialize(void) {
         Engine_TaskWait(1);
       }
     }
-    if (gGameState.entrance == VALE_HOME_FROM_SANCTUM) {
+    if (gGameState.entrance == VALE_GATE_FROM_SANCTUM) {
       Event_DepartForQuest();
     } else {
       if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -714,7 +714,7 @@ s32 ValeHome_Initialize(void) {
 }
 
 /// Walks a separate scene actor back to the leader, then hides it.
-static inline void ValeHome_RejoinParty(s32 actorId) {
+static inline void ValeGate_RejoinParty(s32 actorId) {
   struct FieldActor *leader;
 
   Engine_ActorSetAnimation(actorId, ANIM_WALK);
@@ -785,17 +785,17 @@ static void Event_SentToAidElders(void) {
     Actor_SetSpeed(17, PIXELS(8) / 5, PIXELS(4) / 5);
     Actor_SetSpeed(18, PIXELS(8) / 5, PIXELS(4) / 5);
     // The two run off; Isaac and Garet step up to the group.
-    Actor_SetActionScript(17, gValeHome_Actor17Actions);
+    Actor_SetActionScript(17, gValeGate_Actor17Actions);
     Engine_EventWait(20);
 #if TBS_PATCH_4
     Object_GetById(18)->priorityFlags |= 1;
 #endif
-    Actor_SetActionScript(18, gValeHome_Actor17Actions);
+    Actor_SetActionScript(18, gValeGate_Actor17Actions);
     Actor_FaceDirection(0, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_STORM_GARET, FACING_NORTH, 60);
-    Actor_SetActionScript(0, gValeHome_LeaderStepActions);
+    Actor_SetActionScript(0, gValeGate_LeaderStepActions);
     Actor_RunActionScriptAndWait(ACTOR_STORM_GARET,
-                                 gValeHome_Actor25StepActions);
+                                 gValeGate_Actor25StepActions);
     Engine_EventWait(20);
     Engine_ActorFaceDirection(0, FACING_EAST, 0);
     Engine_ActorFaceDirection(ACTOR_STORM_GARET, FACING_EAST, 10);
@@ -803,7 +803,7 @@ static void Event_SentToAidElders(void) {
     // whether they came to help her.
     Engine_EventShowMessage(ACTOR_STORM_GARET, 0);
     Actor_FaceDirection(19, FACING_WEST, 0);
-    ValeHome_FaceDirectionAndWait(26, FACING_SOUTHWEST, 20);
+    ValeGate_FaceDirectionAndWait(26, FACING_SOUTHWEST, 20);
     Engine_ActorRunRepeatedMotion(26, 2);
     Event_SayThenWait(26, 10);
     Engine_ActorSetAnimation(0, ANIM_NOD);
@@ -826,7 +826,7 @@ static void Event_SentToAidElders(void) {
     }
     // Actor 22, rested, is all charged up; everyone turns to him.
     speechFlags = SPEAKER_WINDOW_ABOVE;
-    ValeHome_FaceDirectionAndWait(22, FACING_SOUTH, 30);
+    ValeGate_FaceDirectionAndWait(22, FACING_SOUTH, 30);
     Engine_EventShowMessage(22, 0);
     Actor_ShowEmote(19, EMOTE_IN_FRONT | 0, 0);
     Actor_ShowEmote(26, EMOTE_IN_FRONT | 0, 0);
@@ -835,7 +835,7 @@ static void Event_SentToAidElders(void) {
     Actor_FaceDirection(19, FACING_NORTHWEST, 0);
     Actor_FaceDirection(26, FACING_NORTHWEST, 0);
     Actor_FaceDirection(0, FACING_NORTHEAST, 0);
-    ValeHome_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_NORTHEAST, 10);
+    ValeGate_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_NORTHEAST, 10);
     Engine_CameraSetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
     Camera_MoveTo(PIXELS(215), -1, PIXELS(758), 1);
     Camera_WaitForArrival();
@@ -843,9 +843,9 @@ static void Event_SentToAidElders(void) {
     Camera_MoveTo(PIXELS(205), -1, PIXELS(778), 1);
     // He hops down to them; asked about his Psynergy, he has enough to save
     // Felix, thanks to the Psynergy Stone.
-    Actor_SetActionScript(22, gValeHome_Actor22Actions);
+    Actor_SetActionScript(22, gValeGate_Actor22Actions);
     Object_RefreshSelectorById(22);
-    VALE_HOME_TURN_AND_WAIT(22, FACING_SOUTHEAST, 60);
+    VALE_GATE_TURN_AND_WAIT(22, FACING_SOUTHEAST, 60);
     Engine_ActorRunRepeatedMotion(19, 2);
     Event_SayThenWait(19, 10);
     Engine_ActorSetAnimationAndWait(22, ANIM_NOD);
@@ -854,30 +854,30 @@ static void Event_SentToAidElders(void) {
     Engine_EventWait(10);
     // Actor 19 sends Jenna back with him, and Isaac and Garet to show the way
     // past the fallen rocks; Jenna thanks Isaac.
-    ValeHome_FaceDirectionAndWait(19, FACING_SOUTH, 30);
+    ValeGate_FaceDirectionAndWait(19, FACING_SOUTH, 30);
     Event_SayThenWait(speechFlags + 19, 10);
-    ValeHome_FaceDirectionAndWait(26, FACING_NORTHEAST, 30);
+    ValeGate_FaceDirectionAndWait(26, FACING_NORTHEAST, 30);
     Engine_ActorSetAnimationAndWait(26, ANIM_NOD);
-    ValeHome_FaceDirectionAndWait(19, FACING_WEST, 30);
+    ValeGate_FaceDirectionAndWait(19, FACING_WEST, 30);
     Engine_ActorRunRepeatedMotion(19, 2);
     Event_SayThenWait(speechFlags + 19, 10);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_GARET, 40);
     Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-    ValeHome_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_EAST, 20);
-    ValeHome_FaceDirectionAndWait(26, FACING_WEST, 30);
+    ValeGate_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_EAST, 20);
+    ValeGate_FaceDirectionAndWait(26, FACING_WEST, 30);
     Engine_ActorSetAnimationAndWait(26, ANIM_NOD);
     Event_SayThenWait(26, 30);
-    ValeHome_FaceDirectionAndWait(26, FACING_NORTH, 30);
+    ValeGate_FaceDirectionAndWait(26, FACING_NORTH, 30);
     Engine_ActorSetAnimationAndWait(26, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(22, ANIM_NOD);
     // Garet, Jenna and actor 22 walk into Isaac; actor 19 keeps turning to
     // watch him.
-    ValeHome_RejoinParty(25);
-    ValeHome_RejoinParty(26);
-    ValeHome_RejoinParty(22);
+    ValeGate_RejoinParty(25);
+    ValeGate_RejoinParty(26);
+    ValeGate_RejoinParty(22);
     FieldObject_SetTargetAndCallback(
         19, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-        gValeHome_FaceTargetActions);
+        gValeGate_FaceTargetActions);
     Engine_GameFlagSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
     Engine_EventEnd();
   }
@@ -887,8 +887,8 @@ static void Event_SentToAidElders(void) {
 /// who survived Sol Sanctum's fury, the game's first sight of Saturos and
 /// Menardi. "Only the two of us survived..."
 ///
-/// Called by ValeHome_Initialize on the stormy night once
-/// FLAG_VALE_STORM_GARET_LEFT is set; goes on into ValeHome_FightTravelers.
+/// Called by ValeGate_Initialize on the stormy night once
+/// FLAG_VALE_STORM_GARET_LEFT is set; goes on into ValeGate_FightTravelers.
 static void Event_MeetSurvivingTravelers(void) {
   struct FieldActor *camera;
 
@@ -928,7 +928,7 @@ static void Event_MeetSurvivingTravelers(void) {
                             0);
   Engine_ActorWaitForMove(ACTOR_SECOND_TRAVELER);
   Engine_ActorSetAnimation(ACTOR_SECOND_TRAVELER, ANIM_STAND);
-  ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
+  ValeGate_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
                                 FACING_SOUTHWEST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   // They talk of Sol Sanctum's fury and its trap switch, of the power of
@@ -937,23 +937,23 @@ static void Event_MeetSurvivingTravelers(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
   Event_SayThenWait(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 30);
-  ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
+  ValeGate_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
                                 FACING_NORTHWEST + FACING_STEP, 20);
   Event_SayThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 10);
-  ValeHome_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
+  ValeGate_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
                                 FACING_NORTHWEST + FACING_STEP, 40);
   Engine_EventShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
   Engine_EventShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
-  ValeHome_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
+  ValeGate_FaceDirectionAndWait(ACTOR_FIRST_TRAVELER,
                                 FACING_NORTHEAST + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
   Engine_EventShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_FIRST_TRAVELER, 0);
-  ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_SOUTHWEST, 20);
+  ValeGate_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_SOUTHWEST, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_NOD);
   Engine_EventWait(20);
   Event_SayThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 20);
-  ValeHome_FightTravelers();
+  ValeGate_FightTravelers();
   Engine_EventEnd();
 }
 
@@ -964,7 +964,7 @@ static void Event_MeetSurvivingTravelers(void) {
 /// Called by Event_MeetSurvivingTravelers. Starts encounter 4 of table 12
 /// with both outcomes leading back to this scene's entrance 19, and sets
 /// FLAG_KEEP_MUSIC.
-static void ValeHome_FightTravelers(void) {
+static void ValeGate_FightTravelers(void) {
   struct FieldActor *actor;
   s32 southSouthwestFacing;
   s32 westFacing;
@@ -983,14 +983,14 @@ static void ValeHome_FightTravelers(void) {
   Engine_ActorSetPosition(ACTOR_STORM_GARET, 0, 0);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH + FACING_STEP, 0);
   southSouthwestFacing = FACING_SOUTH + FACING_STEP;
-  ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
+  ValeGate_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
                                 40);
   Engine_CameraSetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   Engine_CameraMoveTo(PIXELS(89), PIXELS(176), PIXELS(313), 1);
   Camera_WaitForArrival();
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_NORTHEAST, 0);
-  ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
+  ValeGate_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER,
                                 FACING_SOUTHWEST + FACING_STEP, 40);
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_CameraMoveTo(PIXELS(100), PIXELS(144), PIXELS(333), 1);
@@ -1018,50 +1018,50 @@ static void ValeHome_FightTravelers(void) {
   Engine_EventOpenMessage(ACTOR_FIRST_TRAVELER, 0);
   Actor_ShowEmote(ACTOR_STORM_GARET, EMOTE_IN_FRONT | 1, 0);
   northNortheastFacing = FACING_NORTH + FACING_STEP;
-  ValeHome_FaceDirectionAndWait(0, northNortheastFacing, 10);
+  ValeGate_FaceDirectionAndWait(0, northNortheastFacing, 10);
   Engine_EventChooseYesNo(0, 0);
   Engine_EventWait(40);
   Engine_ActorFaceDirection(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
   westFacing = FACING_WEST;
-  ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 20);
+  ValeGate_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_STORM_GARET, 2);
   Event_SayThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 10);
   FieldObject_SetTargetAndCallback(0,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_STORM_GARET,
-                                   gValeHome_FaceTargetActions);
+                                   gValeGate_FaceTargetActions);
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 93, 361);
-  ValeHome_FaceDirectionAndWait(ACTOR_STORM_GARET, northNortheastFacing, 40);
+  ValeGate_FaceDirectionAndWait(ACTOR_STORM_GARET, northNortheastFacing, 40);
   Event_SayThenWait(ACTOR_STORM_GARET, 20);
   Engine_ActorStop(0);
   Engine_ActorFaceDirection(ACTOR_FIRST_TRAVELER, FACING_EAST, 0);
-  ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 15);
+  ValeGate_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, westFacing, 15);
   Engine_ActorSetAnimation(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_NOD);
   Engine_ActorFaceDirection(ACTOR_FIRST_TRAVELER, southSouthwestFacing, 0);
-  ValeHome_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
+  ValeGate_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
                                 30);
   // The travelers: forget everything you heard; we'll help you forget.
   Engine_ActorSetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_SHAKE_HEAD);
   Engine_EventShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SECOND_TRAVELER, 0);
-  ValeHome_FaceDirectionAndWait(0, northNortheastFacing, 30);
-  ValeHome_FaceDirectionAndWait(0, FACING_SOUTH, 40);
+  ValeGate_FaceDirectionAndWait(0, northNortheastFacing, 30);
+  ValeGate_FaceDirectionAndWait(0, FACING_SOUTH, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_FIRST_TRAVELER, 2);
   Engine_ActorSetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
   Event_SayThenWait(ACTOR_FIRST_TRAVELER, 20);
   Actor_SetAttachedEffect(0, 0x102);
   Engine_ActorSetAttachedEffect(ACTOR_STORM_GARET, 0x102);
   Engine_EventWait(80);
-  Actor_SetActionScript(ACTOR_SECOND_TRAVELER, gValeHome_Actor24Actions);
+  Actor_SetActionScript(ACTOR_SECOND_TRAVELER, gValeGate_Actor24Actions);
   Engine_EventWait(6);
-  Actor_SetActionScript(ACTOR_FIRST_TRAVELER, gValeHome_Actor23Actions);
+  Actor_SetActionScript(ACTOR_FIRST_TRAVELER, gValeGate_Actor23Actions);
   Engine_EventWait(20);
-  Actor_SetActionScript(0, gValeHome_LeaderActions);
+  Actor_SetActionScript(0, gValeGate_LeaderActions);
   Engine_EventWait(6);
-  Actor_RunActionScriptAndWait(ACTOR_STORM_GARET, gValeHome_Actor25Actions);
+  Actor_RunActionScriptAndWait(ACTOR_STORM_GARET, gValeGate_Actor25Actions);
   // The confrontation continues in battle; both outcomes return here.
   Battle_SetStart(2);
   {
-    const void *message = &SceneId_ValeHome;
+    const void *message = &SceneId_ValeGate;
 
     Event_SetNextDestination((s32)message, 19);
     Event_SetDefeatDestination((s32)message, 19);
@@ -1073,7 +1073,7 @@ static void ValeHome_FightTravelers(void) {
 /// In Vale after the battle, the travelers leave Isaac and Garet lying in the
 /// storm, and the storm, and the prologue, end.
 ///
-/// Called by ValeHome_Initialize from entrance 19, after the battle, or 97.
+/// Called by ValeGate_Initialize from entrance 19, after the battle, or 97.
 /// Clears FLAG_VALE_STORM and takes exit 9, to the title (scene 0, entrance
 /// 1), which then opens on Vale three years later (menu/title.c).
 static void Event_TravelersLeaveAfterBattle(void) {
@@ -1128,14 +1128,14 @@ static void Event_TravelersLeaveAfterBattle(void) {
   actor = Object_GetById(ACTOR_FIRST_TRAVELER);
   actor->bounce = 0x28f;
   actor->gravity = gravityQ8 << 8;
-  Actor_SetActionScript(ACTOR_FIRST_TRAVELER, gValeHome_Actor23BounceActions);
+  Actor_SetActionScript(ACTOR_FIRST_TRAVELER, gValeGate_Actor23BounceActions);
   Engine_EventWait(ACTOR_SECOND_TRAVELER);
   Engine_ActorSetSpeed(ACTOR_SECOND_TRAVELER, PIXELS(12) / 5, PIXELS(6) / 5);
   actor = Object_GetById(ACTOR_SECOND_TRAVELER);
   actor->bounce = 0x28f;
   actor->gravity = gravityQ8 << 8;
   Actor_RunActionScriptAndWait(ACTOR_SECOND_TRAVELER,
-                               gValeHome_Actor24BounceActions);
+                               gValeGate_Actor24BounceActions);
   Engine_EventWait(40);
   // Three last flashes of lightning, then the storm ends and the screen
   // fades slowly out.
@@ -1152,14 +1152,14 @@ static void Event_TravelersLeaveAfterBattle(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_GameFlagClear(FLAG_VALE_STORM);
-  Engine_EventRequestExit(VALE_HOME_TO_TITLE);
+  Engine_EventRequestExit(VALE_GATE_TO_TITLE);
   Engine_EventEnd();
 }
 
 /// In Vale, at the town gate, the villagers give their supplies and farewells
 /// as Isaac and Garet set out on the Wise One's quest.
 ///
-/// Called by ValeHome_Initialize from entrance 12, the way out of the Vale
+/// Called by ValeGate_Initialize from entrance 12, the way out of the Vale
 /// Sanctum once the quest is accepted. Restores the party's HP and PP, gives a
 /// Herb (from Garet's sister) and the Catch Beads (from Dora), and takes exit
 /// 10, to the world map.
@@ -1203,11 +1203,11 @@ static void Event_DepartForQuest(void) {
   // Actor 12 asks why everyone is at the gate; actor 11 says Isaac and Garet
   // are leaving on a journey, and wishes he could go.
   Actor_ShowEmote(12, EMOTE_IN_FRONT | 1, 40);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 20);
   Event_SetMessage(MSGNO(MsgValeWhysEveryoneHanging));
   Event_SayThenWait(12, 10);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | 2, 20);
-  ValeHome_FaceDirectionAndWait(11, FACING_EAST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(11, FACING_EAST + FACING_STEP, 10);
   Event_SayThenWait(11, 10);
   Engine_ActorSetAnimationAndWait(12, ANIM_NOD);
   Engine_EventWait(10);
@@ -1218,14 +1218,14 @@ static void Event_DepartForQuest(void) {
   Actor_ShowEmote(12, EMOTE_IN_FRONT | 0, 40);
   Actor_SetSpeed(12, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(12, 184, 618);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 60);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 60);
   Event_SayThenWait(12, 20);
   Actor_SetSpeed(11, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(11, 168, 618);
-  ValeHome_FaceDirectionAndWait(11, FACING_NORTHEAST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(11, FACING_NORTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimation(11, ANIM_SHAKE_HEAD);
   Event_SayThenWait(11, 20);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(12, 1);
   Engine_EventShowMessage(12, 0);
   Engine_EventWait(10);
@@ -1233,9 +1233,9 @@ static void Event_DepartForQuest(void) {
   Actor_SetPosition(30, PIXELS(110), PIXELS(744));
   Engine_TaskWait(2);
   Engine_ActorSetAnimation(30, ANIM_NOD);
-  Actor_SetActionScript(30, gValeHome_Actor30Actions);
+  Actor_SetActionScript(30, gValeGate_Actor30Actions);
   Engine_EventWait(40);
-  faceActions = gValeHome_FaceTargetActions;
+  faceActions = gValeGate_FaceTargetActions;
   FieldObject_SetTargetAndCallback(11, ACTOR_LINK_KEEP_MOTION | 30,
                                    faceActions);
   FieldObject_SetTargetAndCallback(12, ACTOR_LINK_KEEP_MOTION | 30,
@@ -1247,40 +1247,40 @@ static void Event_DepartForQuest(void) {
   Actor_ShowEmote(11, EMOTE_IN_FRONT | 5, 0);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | 5, 120);
   Engine_ActorFaceDirection(11, FACING_EAST + FACING_STEP, 0);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 80);
-  ValeHome_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 40);
-  ValeHome_FaceDirectionAndWait(11, FACING_EAST + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 80);
+  ValeGate_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 40);
+  ValeGate_FaceDirectionAndWait(11, FACING_EAST + FACING_STEP, 20);
   Engine_ActorSetAnimationAndWait(11, ANIM_NOD);
   Engine_EventWait(20);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTH + FACING_STEP, 60);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 40);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTH + FACING_STEP, 60);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTH + FACING_STEP, 60);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 40);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTH + FACING_STEP, 60);
   // They step down to look over the crowd: Isaac's mother is not there to
   // see him off.
   Actor_ShowEmote(12, EMOTE_IN_FRONT | 1, 80);
   Engine_ActorFaceDirection(11, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WalkToAndWait(12, 184, 630);
   Engine_EventWait(20);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 20);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTH + FACING_STEP, 20);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTH + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | 1, 40);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | 1, 40);
   Actor_WalkToAndWait(11, 168, 630);
   Engine_EventWait(20);
-  ValeHome_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP, 40);
-  ValeHome_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 40);
-  ValeHome_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP, 40);
+  ValeGate_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP, 40);
+  ValeGate_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 40);
+  ValeGate_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP, 40);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | 1, 40);
-  ValeHome_FaceDirectionAndWait(11, FACING_EAST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(11, FACING_EAST + FACING_STEP, 10);
   Event_SayThenWait(11, 20);
   Engine_ActorSetAnimationAndWait(12, ANIM_NOD);
   Event_SayThenWait(12, 10);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | 0, 20);
-  ValeHome_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 20);
-  ValeHome_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP, 20);
-  ValeHome_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 20);
-  ValeHome_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 60);
+  ValeGate_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(11, FACING_SOUTH + FACING_STEP, 60);
   Engine_ActorSetAnimationAndWait(11, ANIM_NOD);
   Event_SayThenWait(11, 10);
   {
@@ -1298,7 +1298,7 @@ static void Event_DepartForQuest(void) {
   Engine_ActorSetSpritePriority(31, 2);
   Actor_SetSpeed(31, PIXELS(18) / 5, PIXELS(9) / 5);
   Engine_ActorSetAnimation(31, ANIM_WALK);
-  actor31Actions = gValeHome_Actor31Actions;
+  actor31Actions = gValeGate_Actor31Actions;
   Actor_SetActionScript(31, actor31Actions);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(30, ANIM_NOD);
@@ -1308,11 +1308,11 @@ static void Event_DepartForQuest(void) {
   // Should they say good-bye too? Sure: both run down, and the camera
   // follows them to the gate.
   Engine_ActorRunRepeatedMotion(12, 2);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 10);
   Event_SayThenWait(12, 10);
   Engine_ActorRunRepeatedMotion(11, 1);
   Engine_EventWait(20);
-  ValeHome_FaceDirectionAndWait(11, FACING_EAST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(11, FACING_EAST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(11, ANIM_NOD);
   Event_SayThenWait(11, 20);
   Engine_ActorSetAnimation(12, ANIM_NOD);
@@ -1321,23 +1321,23 @@ static void Event_DepartForQuest(void) {
   Engine_EventWait(20);
   Actor_SetSpeed(11, PIXELS(12) / 5, PIXELS(6) / 5);
   Actor_SetSpeed(12, PIXELS(12) / 5, PIXELS(6) / 5);
-  Actor_SetActionScript(11, gValeHome_Actor11Actions);
+  Actor_SetActionScript(11, gValeGate_Actor11Actions);
   Engine_EventWait(10);
   Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   Camera_GetEventObject()->motionFlags = 0;
   Camera_MoveTo(PIXELS(215), PIXELS(16), PIXELS(801), 1);
   Engine_EventWait(10);
-  Actor_SetActionScript(12, gValeHome_Actor12Actions);
+  Actor_SetActionScript(12, gValeGate_Actor12Actions);
   Object_RefreshSelectorById(12);
-  ValeHome_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 120);
+  ValeGate_FaceDirectionAndWait(12, FACING_SOUTHEAST + FACING_STEP, 120);
   // Actor 13 counts on Isaac, and on Garet too; the two nod.
   Engine_ActorRunRepeatedMotion(13, 2);
   Engine_EventWait(20);
   Event_SayThenWait(13, 20);
   Engine_ActorFaceDirection(0, FACING_EAST, 0);
-  ValeHome_FaceDirectionAndWait(1, FACING_WEST + FACING_STEP, 20);
-  ValeHome_FaceDirectionAndWait(0, FACING_NORTH, 10);
-  ValeHome_FaceDirectionAndWait(1, FACING_NORTHWEST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(1, FACING_WEST + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(0, FACING_NORTH, 10);
+  ValeGate_FaceDirectionAndWait(1, FACING_NORTHWEST + FACING_STEP, 10);
   Engine_ActorSetAnimation(0, ANIM_NOD);
   Engine_EventWait(10);
   Engine_ActorSetAnimationAndWait(1, ANIM_NOD);
@@ -1355,7 +1355,7 @@ static void Event_DepartForQuest(void) {
   // Garet protests he knows that, Sis; actor 17 says he will eat anything,
   // and Garet jumps.
   Actor_ShowEmote(1, EMOTE_IN_FRONT | 2, 40);
-  ValeHome_FaceDirectionAndWait(1, FACING_NORTHEAST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(1, FACING_NORTHEAST + FACING_STEP, 10);
   Event_SayThenWait(1, 10);
   Engine_ActorSetAnimationAndWait(17, ANIM_SHAKE_HEAD);
   Event_SayThenWait(17, 10);
@@ -1365,7 +1365,7 @@ static void Event_DepartForQuest(void) {
   // Actor 14: Dora is very late. Everyone wonders; actor 17 remembers.
   Engine_ActorRunRepeatedMotion(14, 2);
   Engine_EventWait(20);
-  ValeHome_FaceDirectionAndWait(14, FACING_NORTH + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(14, FACING_NORTH + FACING_STEP, 10);
   Event_SayThenWait(14, 60);
   Actor_ShowEmote(1, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(16, EMOTE_IN_FRONT | 2, 0);
@@ -1389,14 +1389,14 @@ static void Event_DepartForQuest(void) {
   // Garet thinks they are all set; actor 16 says think again, it must be hard
   // for Dora.
   Engine_ActorRunRepeatedMotion(1, 2);
-  ValeHome_FaceDirectionAndWait(1, FACING_WEST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(1, FACING_WEST + FACING_STEP, 10);
   Event_SayThenWait(1, 10);
   Engine_ActorFaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
-  ValeHome_FaceDirectionAndWait(0, FACING_EAST, 10);
+  ValeGate_FaceDirectionAndWait(0, FACING_EAST, 10);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | 1, 60);
   Engine_ActorRunRepeatedMotion(16, 1);
   Event_SayThenWait(16, 10);
-  ValeHome_FaceDirectionAndWait(1, FACING_NORTHEAST + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(1, FACING_NORTHEAST + FACING_STEP, 10);
   Actor_ShowEmote(1, EMOTE_IN_FRONT | 1, 20);
   Engine_ActorSetAnimationAndWait(16, ANIM_SHAKE_HEAD);
   Event_SayThenWait(16, 10);
@@ -1428,11 +1428,11 @@ static void Event_DepartForQuest(void) {
   ObjectMotion_Launch(15, 4, 40);
   Event_SayThenWait(15, 10);
   Engine_ActorFaceDirection(1, FACING_NORTHWEST + FACING_STEP, 0);
-  ValeHome_FaceDirectionAndWait(0, FACING_NORTH, 20);
-  ValeHome_FaceDirectionAndWait(15, FACING_NORTH + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(0, FACING_NORTH, 20);
+  ValeGate_FaceDirectionAndWait(15, FACING_NORTH + FACING_STEP, 10);
   Event_SayThenWait(15, 10);
-  ValeHome_FaceDirectionAndWait(15, FACING_WEST + FACING_STEP, 20);
-  ValeHome_FaceDirectionAndWait(15, FACING_SOUTH + FACING_STEP, 10);
+  ValeGate_FaceDirectionAndWait(15, FACING_WEST + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(15, FACING_SOUTH + FACING_STEP, 10);
   // The crowd nods in three waves, then all jump together: "Farewell!"
   Engine_ActorSetAnimation(11, ANIM_NOD);
   Engine_ActorSetAnimation(14, ANIM_NOD);
@@ -1487,10 +1487,10 @@ static void Event_DepartForQuest(void) {
   }
   Actor_ShowEmote(0, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(1, EMOTE_IN_FRONT | 2, 80);
-  ValeHome_FaceDirectionAndWait(0, FACING_SOUTH, 10);
-  ValeHome_FaceDirectionAndWait(1, FACING_SOUTH + FACING_STEP, 20);
+  ValeGate_FaceDirectionAndWait(0, FACING_SOUTH, 10);
+  ValeGate_FaceDirectionAndWait(1, FACING_SOUTH + FACING_STEP, 20);
   Actor_SetSpeed(0, PIXELS(4) / 5, PIXELS(2) / 5);
-  departureActions = gValeHome_Actor0And1Actions;
+  departureActions = gValeGate_Actor0And1Actions;
   Actor_SetActionScript(0, departureActions);
   Engine_EventWait(20);
   Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
@@ -1506,7 +1506,7 @@ static void Event_DepartForQuest(void) {
   Engine_EventWaitForScreen();
   Engine_ActorStop(0);
   Engine_ActorStop(1);
-  Engine_EventRequestExit(VALE_HOME_TO_WORLD_MAP);
+  Engine_EventRequestExit(VALE_GATE_TO_WORLD_MAP);
   Engine_EventEnd();
 }
 
@@ -1515,37 +1515,37 @@ static void Event_SayThenWait(s32 speaker, s32 frames) {
   Engine_EventWait(frames);
 }
 
-static void ValeHome_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames) {
+static void ValeGate_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames) {
   Engine_ActorFaceDirection(actorId, facing, 0);
   Engine_EventWait(frames);
 }
 
 /// Flashes the caster's palette and emits paired effects every sixteen frames.
-static void ValeHome_FlashPsynergyPalette(struct FieldActor *actor) {
+static void ValeGate_FlashPsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(actor, 7);
   } else {
     Engine_ObjectSetPartPalettes(actor, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeHome_SpawnEffectPair(actor);
+    ValeGate_SpawnEffectPair(actor);
   }
 }
 
 /// Cycles six palette banks and emits the caster's paired effects.
 static void
-ValeHome_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
+ValeGate_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 palette = Math_RemainderUnsigned(gFrameCount >> 1, 6);
     Engine_ObjectSetPartPalettes(actor, palette);
   }
   if ((gFrameCount & 15) == 0) {
-    ValeHome_SpawnEffectPair(actor);
+    ValeGate_SpawnEffectPair(actor);
   }
 }
 
 /// Cycles the levitated actor through six palette banks.
-static void ValeHome_CyclePsynergyPalette(struct FieldActor *actor) {
+static void ValeGate_CyclePsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 palette = Math_RemainderUnsigned(gFrameCount >> 1, 6);
     Engine_ObjectSetPartPalettes(actor, palette);
@@ -1555,7 +1555,7 @@ static void ValeHome_CyclePsynergyPalette(struct FieldActor *actor) {
 #include "common/effect_vertical.h"
 
 /// Creates the two vertical Psynergy effects using the shared sprite tiles.
-static void ValeHome_SpawnEffectPair(struct FieldActor *parent) {
+static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
@@ -1610,31 +1610,31 @@ static void ValeHome_SpawnEffectPair(struct FieldActor *parent) {
 /// Updates the levitating villager's Psynergy display.
 ///
 /// A callback Event_DemonstrateLevitation adds while the villager lifts.
-static void ValeHome_UpdateActor15Psynergy(void) {
-  ValeHome_CyclePsynergyPaletteAndSpawnEffects(Object_GetById(15));
+static void ValeGate_UpdateActor15Psynergy(void) {
+  ValeGate_CyclePsynergyPaletteAndSpawnEffects(Object_GetById(15));
 }
 
 /// Updates the demonstrating villager's Psynergy display.
 ///
 /// A callback Event_DemonstratePsynergy adds while the ground shakes.
-static void ValeHome_UpdateActor17Psynergy(void) {
-  ValeHome_CyclePsynergyPaletteAndSpawnEffects(Object_GetById(17));
+static void ValeGate_UpdateActor17Psynergy(void) {
+  ValeGate_CyclePsynergyPaletteAndSpawnEffects(Object_GetById(17));
 }
 
 /// Updates the palette of the levitated actor.
 ///
 /// A callback Event_DemonstrateLevitation adds while actor 20 rises.
-static void ValeHome_UpdateActor20Psynergy(void) {
-  ValeHome_CyclePsynergyPalette(Object_GetById(20));
+static void ValeGate_UpdateActor20Psynergy(void) {
+  ValeGate_CyclePsynergyPalette(Object_GetById(20));
 }
 
 /// Arriving by entrance 99, a debug entrance: sets a preset of story flags,
 /// which differs by edition, and leaves by exit 40.
 ///
-/// Called by ValeHome_Initialize from entrance 99. Sets FLAG_NO_ENCOUNTERS
+/// Called by ValeGate_Initialize from entrance 99. Sets FLAG_NO_ENCOUNTERS
 /// and flag 0x16d; from the third patch the whole story up to Kalay, before
 /// it FLAG_TRET_DEFEATED and FLAG_KOLIMA_CURSE_LIFTED.
-static void ValeHome_SetProgressFlagsAndExit(void) {
+static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_NO_ENCOUNTERS);
   // XXX: flag 0x16d gates the battle debug key R (plan.c), and the Colosseum
   // sets it as Mia takes Jenna's place; a third use would say what it means.
@@ -1693,15 +1693,15 @@ static void ValeHome_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_TRET_DEFEATED);
   Engine_GameFlagSet(FLAG_KOLIMA_CURSE_LIFTED);
 #endif
-  Engine_EventRequestExit(VALE_HOME_TO_BILIBIN);
+  Engine_EventRequestExit(VALE_GATE_TO_BILIBIN);
 }
 
 // clang-format off
-u32 gValeHome_Actor22ActionsHead[] = {
+u32 gValeGate_Actor22ActionsHead[] = {
     0x1000000, 0x2020101, 0x3030302, 0x5040404, 0x6060505, 0x1000006, 0x3020201, 0x5040403,
 };
 
-s32 gValeHome_Actor22Actions[] = {
+s32 gValeGate_Actor22Actions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(214), 0, PIXELS(721)),
     SC_SYNC,
@@ -1717,7 +1717,7 @@ s32 gValeHome_Actor22Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor24Actions[] = {
+s32 gValeGate_Actor24Actions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
     SC_SET(SW_ACCEL, PIXELS(2)),
     SC_SE(153),
@@ -1729,7 +1729,7 @@ s32 gValeHome_Actor24Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor23Actions[] = {
+s32 gValeGate_Actor23Actions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
     SC_SET(SW_ACCEL, PIXELS(2)),
     SC_SE(153),
@@ -1741,7 +1741,7 @@ s32 gValeHome_Actor23Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_LeaderActions[] = {
+s32 gValeGate_LeaderActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
     SC_SET(SW_ACCEL, PIXELS(2)),
     SC_SE(152),
@@ -1753,7 +1753,7 @@ s32 gValeHome_LeaderActions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor25Actions[] = {
+s32 gValeGate_Actor25Actions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
     SC_SET(SW_ACCEL, PIXELS(2)),
     SC_SE(152),
@@ -1765,7 +1765,7 @@ s32 gValeHome_Actor25Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor23BounceActions[] = {
+s32 gValeGate_Actor23BounceActions[] = {
     SC_ARG(5),
     SC_WAIT(10),
     SC_ARG(6),
@@ -1793,7 +1793,7 @@ s32 gValeHome_Actor23BounceActions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor24BounceActions[] = {
+s32 gValeGate_Actor24BounceActions[] = {
     SC_ARG(5),
     SC_WAIT(10),
     SC_ARG(6),
@@ -1819,12 +1819,12 @@ s32 gValeHome_Actor24BounceActions[] = {
     SC_END,
 };
 
-s32 gValeHome_FaceTargetActions[] = {
+s32 gValeGate_FaceTargetActions[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValeHome_Actor30Actions[] = {
+s32 gValeGate_Actor30Actions[] = {
     SC_MOVE(PIXELS(132), 0, PIXELS(636)),
     SC_SYNC,
     SC_MOVE(PIXELS(171), 0, PIXELS(629)),
@@ -1840,7 +1840,7 @@ s32 gValeHome_Actor30Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor31Actions[] = {
+s32 gValeGate_Actor31Actions[] = {
     SC_MOVE(PIXELS(271), 0, PIXELS(571)),
     SC_SYNC,
     SC_MOVE(PIXELS(187), 0, PIXELS(577)),
@@ -1854,7 +1854,7 @@ s32 gValeHome_Actor31Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor11Actions[] = {
+s32 gValeGate_Actor11Actions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(137), 0, PIXELS(639)),
     SC_SYNC,
@@ -1870,7 +1870,7 @@ s32 gValeHome_Actor11Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor12Actions[] = {
+s32 gValeGate_Actor12Actions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(137), 0, PIXELS(639)),
     SC_SYNC,
@@ -1886,7 +1886,7 @@ s32 gValeHome_Actor12Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor0And1Actions[] = {
+s32 gValeGate_Actor0And1Actions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(216), 0, PIXELS(854)),
     SC_SYNC,
@@ -1896,7 +1896,7 @@ s32 gValeHome_Actor0And1Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor21Actions[] = {
+s32 gValeGate_Actor21Actions[] = {
     SC_SET(SW_SPEED, PIXELS(1) / 2),
     SC_SET(SW_ACCEL, PIXELS(1) / 20),
     SC_SET(SW_COLLISION, 3),
@@ -1920,7 +1920,7 @@ s32 gValeHome_Actor21Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor17Actions[] = {
+s32 gValeGate_Actor17Actions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(148), 0, PIXELS(758)),
     SC_SYNC,
@@ -1933,7 +1933,7 @@ s32 gValeHome_Actor17Actions[] = {
     SC_END,
 };
 
-s32 gValeHome_LeaderStepActions[] = {
+s32 gValeGate_LeaderStepActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(196), 0, PIXELS(774)),
     SC_SYNC,
@@ -1941,7 +1941,7 @@ s32 gValeHome_LeaderStepActions[] = {
     SC_END,
 };
 
-s32 gValeHome_Actor25StepActions[] = {
+s32 gValeGate_Actor25StepActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(196), 0, PIXELS(790)),
     SC_SYNC,
@@ -1949,61 +1949,61 @@ s32 gValeHome_Actor25StepActions[] = {
     SC_END,
 };
 
-struct SceneEntrance gValeHome_Entrances[] = {
+struct SceneEntrance gValeGate_Entrances[] = {
     { 0, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_VALE_INTERIORS_NORTH, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_VALE_BABI_NORTH, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_VALE_INTERIORS_WEST, CONDITION_ALWAYS, 230, 0, 423, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_VALE_INTERIORS_EAST, CONDITION_ALWAYS, 374, 0, 435, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_VALE_INTERIORS_SOUTH, CONDITION_ALWAYS, 200, 0, 562, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_VALE_BABI_WEST, CONDITION_ALWAYS, 102, 0, 627, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_VALE_BABI_SOUTH, CONDITION_ALWAYS, 358, 0, 678, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_VALE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_WORLD_MAP, CONDITION_ALWAYS, 217, 0, 843, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_GOMA_CAVE_WATERWAY_1, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_HOME_FROM_SANCTUM, CONDITION_ALWAYS, 180, 0, 618, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_1_NORTH, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_2_NORTH, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_1_WEST, CONDITION_ALWAYS, 230, 0, 423, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_1_EAST, CONDITION_ALWAYS, 374, 0, 435, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_1_SOUTH, CONDITION_ALWAYS, 200, 0, 562, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_2_WEST, CONDITION_ALWAYS, 102, 0, 627, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE_INTERIORS_2_SOUTH, CONDITION_ALWAYS, 358, 0, 678, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_VALE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_WORLD_MAP, CONDITION_ALWAYS, 217, 0, 843, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_GOMA_CAVE_WATERWAY_1, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_FROM_SANCTUM, CONDITION_ALWAYS, 180, 0, 618, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 15, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 19, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-u32 gValeHome_Exits[] = {
-    SCENE_EXITS(ValeHome),
-    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_EAST, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_EAST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_NORTH, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHEAST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_NORTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_NORTH),
-    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_SOUTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_SOUTH),
-    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_WEST, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_WEST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_NORTHWEST, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHWEST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_SOUTH, ValeBabi, VALE_BABI_FROM_VALE_HOME_WEST),
-    SCENE_EXIT(VALE_HOME_TO_VALE, Vale, VALE_FROM_VALE_HOME),
-    SCENE_EXIT(VALE_HOME_TO_TITLE, Title, TITLE_FROM_VALE_HOME),
-    SCENE_EXIT(VALE_HOME_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_VALE_HOME),
-    SCENE_EXIT(VALE_HOME_TO_GOMA_CAVE_WATERWAY_1, GomaCaveWaterway1, GOMA_CAVE_WATERWAY_1_FROM_VALE_HOME),
-    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_SOUTHEAST, ValeBabi, VALE_BABI_FROM_VALE_HOME_SOUTHEAST),
+u32 gValeGate_Exits[] = {
+    SCENE_EXITS(ValeGate),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_EAST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_EAST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_NORTH, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHEAST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_NORTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_NORTH),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_SOUTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_SOUTH),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_WEST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_WEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_NORTHWEST, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHWEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_SOUTH, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_WEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE, Vale, VALE_FROM_VALE_GATE),
+    SCENE_EXIT(VALE_GATE_TO_TITLE, Title, TITLE_FROM_VALE_GATE),
+    SCENE_EXIT(VALE_GATE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_VALE_GATE),
+    SCENE_EXIT(VALE_GATE_TO_GOMA_CAVE_WATERWAY_1, GomaCaveWaterway1, GOMA_CAVE_WATERWAY_1_FROM_VALE_GATE),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_SOUTHEAST, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_SOUTHEAST),
 #if !TBS_PATCH_3
-    SCENE_EXIT(VALE_HOME_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
+    SCENE_EXIT(VALE_GATE_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
 #else
-    SCENE_EXIT(VALE_HOME_TO_BILIBIN, SolSanctumStatue, SOL_SANCTUM_STATUE_FROM_VALE_HOME),
+    SCENE_EXIT(VALE_GATE_TO_BILIBIN, SolSanctumStatue, SOL_SANCTUM_STATUE_FROM_VALE_GATE),
 #endif
     SCENE_EXITS_END,
 };
 
-u32 gValeHome_StormExits[] = {
-    SCENE_EXITS(ValeHome),
-    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_EAST, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_EAST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_NORTH, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHEAST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_NORTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_NORTH),
-    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_SOUTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_SOUTH),
-    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_WEST, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_WEST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_NORTHWEST, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHWEST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_SOUTH, ValeBabi, VALE_BABI_FROM_VALE_HOME_WEST),
-    SCENE_EXIT(VALE_HOME_TO_VALE, ValeStorm, VALE_STORM_FROM_VALE_HOME),
-    SCENE_EXIT(VALE_HOME_TO_TITLE, Title, TITLE_FROM_VALE_HOME),
+u32 gValeGate_StormExits[] = {
+    SCENE_EXITS(ValeGate),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_EAST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_EAST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_NORTH, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHEAST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_NORTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_NORTH),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_SOUTH, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_SOUTH),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_1_WEST, ValeInteriors1, VALE_INTERIORS_1_FROM_VALE_GATE_WEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_NORTHWEST, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_NORTHWEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE_INTERIORS_2_SOUTH, ValeInteriors2, VALE_INTERIORS_2_FROM_VALE_GATE_WEST),
+    SCENE_EXIT(VALE_GATE_TO_VALE, ValeStorm, VALE_STORM_FROM_VALE_GATE),
+    SCENE_EXIT(VALE_GATE_TO_TITLE, Title, TITLE_FROM_VALE_GATE),
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gValeHome_Placements[] = {
+struct ScenePlacement gValeGate_Placements[] = {
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2049,7 +2049,7 @@ struct ScenePlacement gValeHome_Placements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeHome_StormPlacements[] = {
+struct ScenePlacement gValeGate_StormPlacements[] = {
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2096,7 +2096,7 @@ struct ScenePlacement gValeHome_StormPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeHome_DeparturePlacements[] = {
+struct ScenePlacement gValeGate_DeparturePlacements[] = {
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2150,7 +2150,7 @@ struct ScenePlacement gValeHome_DeparturePlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeHome_PlacementsAfterKalay[] = {
+struct ScenePlacement gValeGate_PlacementsAfterKalay[] = {
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2182,7 +2182,7 @@ struct ScenePlacement gValeHome_PlacementsAfterKalay[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gValeHome_Events[] = {
+struct SceneEvent gValeGate_Events[] = {
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeQuietDay) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeKradenHadVisitors) },
     { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutMeditation) },
@@ -2210,7 +2210,7 @@ struct SceneEvent gValeHome_Events[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeHome_StormEvents[] = {
+struct SceneEvent gValeGate_StormEvents[] = {
     { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutJourney) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeOldWomanCannotUsePsynergy) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeExhaustedFromFallingRocks) },
@@ -2230,11 +2230,11 @@ struct SceneEvent gValeHome_StormEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeHome_DepartureEvents[] = {
+struct SceneEvent gValeGate_DepartureEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeHome_EventsAfterLeaving[] = {
+struct SceneEvent gValeGate_EventsAfterLeaving[] = {
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeTremorsSettled) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeRoadToVault) },
     { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgValeRoadToGomaRange) },
@@ -2273,7 +2273,7 @@ struct SceneEvent gValeHome_EventsAfterLeaving[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeHome_EventsAfterKalay[] = {
+struct SceneEvent gValeGate_EventsAfterKalay[] = {
     { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WelcomeIsaacHome) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeCameBackSooner) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeMadeFriendsOnJourney) },
@@ -2314,7 +2314,7 @@ struct SceneEvent gValeHome_EventsAfterKalay[] = {
     { SCENE_EVENTS_END },
 };
 
-u16 gValeHome_DoorOpens[] = {
+u16 gValeGate_DoorOpens[] = {
     MAP_CELL_STEP(0, 57, 2, 2, 1), MAP_CELL_STEP(0, 59, 2, 2, 1), MAP_CELL_STEP(2, 59, 2, 2, 1), MAP_CELL_STEPS_END,
 };
 // clang-format on

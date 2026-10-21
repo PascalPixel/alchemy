@@ -4,23 +4,21 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// The zone of the scripted battles (Suhalla Desert, Lunpa Fortress, the
-/// Aerie, the world map); its slot 0 is the Aerie's second battle.
-#define AERIE 98
 /// Sets up a battle with enemy group slot of encounter table zone. On the
-/// world map (mode 3) the terrain under the leader picks the battle backdrop.
+/// world map the terrain under the leader picks the battle backdrop.
 /// Sets the field work's battle request, which the scene loop then handles,
-/// and the battle cue; zone 98's first slot also sets gGameState.special to
-/// the Aerie's storm backdrop. About 35 scenes reach it through
-/// Field_RequestBattleFromEncounterTableFar, and the lobby calls it directly.
-/// The battle starts only once the event that asked for it has returned.
+/// and the battle cue; ENCOUNTER_ZONE_SCRIPTED's first slot also sets
+/// gGameState.special to the Aerie's storm backdrop. About 35 scenes reach it
+/// through Field_RequestBattleFromEncounterTableFar, and the lobby calls it
+/// directly. The battle starts only once the event that asked for it has
+/// returned.
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
   struct FieldWork *field = (struct FieldWork *)gEventWork;
 
   field->battle = Encounter_GetEnemyGroupAtSlot(zone, slot);
-  if (zone == AERIE && slot == 0)
+  if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (field->mode == MODE_WORLD_MAP) {
     struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
@@ -115,5 +113,3 @@ void BattleFx_PlayQueuedSound(void) {
   if (soundId != -1)
     AudioCommand_PlayFar(soundId);
 }
-
-#undef AERIE

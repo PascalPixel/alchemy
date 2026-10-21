@@ -86,7 +86,10 @@ enum ObjectSpriteKind {
 enum ObjectCreateKind {
   OBJECT_CREATE_ONE_SPRITE = 0, ///< the id's sprite (OBJECT_SPRITE_ONE)
   /// The sprites of the id and id + 1 (OBJECT_SPRITE_GROUP).
-  OBJECT_CREATE_GROUP = 2
+  OBJECT_CREATE_GROUP = 2,
+  /// No sprite: any kind but the two above, and the one the camera object
+  /// takes.
+  OBJECT_CREATE_NO_SPRITE = 8
 };
 
 /// The world map's collision values (GetWorldMapCollision), 1 to 15; each

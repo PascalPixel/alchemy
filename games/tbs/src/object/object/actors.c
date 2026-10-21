@@ -9,12 +9,15 @@ enum {
   ACTOR_DJINNI_FLAG_COUNT = NUM_ELEMENTS * 20,
   /// The tunic's child part, drawn over a child sprite while
   /// FLAG_ISAAC_WEARS_TUNIC is set.
-  ACTOR_TUNIC_ANIMATION = 226
+  ACTOR_TUNIC_ANIMATION = 226,
+  /// The field work's actor slots: the party's eight, then the placed
+  /// actors.
+  ACTOR_SLOT_COUNT = 66
 };
 
 /// Returns the sprite of character, which is the character itself except that
-/// FLAG_CHILDHOOD gives characters 0 and 1 sprites 0x12 and 0x13 (ISAAC_CHILD
-/// and GARET_CHILD), and FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite 0x11.
+/// FLAG_CHILDHOOD gives Isaac and Garet ISAAC_CHILD and GARET_CHILD, and
+/// FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite 0x11.
 ///
 /// Called by Event_SpawnObjectTable for every placement, and by
 /// PsynergyMenu_InitializeEntryObjects (through
@@ -25,14 +28,14 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
   sprite = character;
   if (sprite <= 8) {
     if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0) {
-      if (sprite == 0) {
-        sprite = 0x12;
+      if (sprite == ISAAC) {
+        sprite = ISAAC_CHILD;
       }
-      if (sprite == 1) {
-        sprite = 0x13;
+      if (sprite == GARET) {
+        sprite = GARET_CHILD;
       }
     } else if ((GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC) != 0) &&
-               (sprite == 0)) {
+               (sprite == ISAAC)) {
       sprite = 0x11;
     }
   }
@@ -50,11 +53,11 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
 
   sprite = character;
   if ((sprite <= 8) && (childhood != 0)) {
-    if (sprite == 0) {
-      sprite = 0x12;
+    if (sprite == ISAAC) {
+      sprite = ISAAC_CHILD;
     }
-    if (sprite == 1) {
-      sprite = 0x13;
+    if (sprite == GARET) {
+      sprite = GARET_CHILD;
     }
   }
   return sprite;
@@ -67,7 +70,7 @@ extern const struct ScenePlacement gField_DefaultPlacements[2];
 /// Creates the actors of a scene's placement table (ended by sprite -1), and
 /// records the table among the scene's tables. Sprites 0 to 7 are the party's
 /// characters and take their own actor slot; other placements take the actor
-/// slots from slot on, one each, up to slot 65. A placement whose condition
+/// slots from slot on, one each, up to the last. A placement whose condition
 /// does not hold is skipped, as is a Djinni hidden after a lost battle outside
 /// the world map, but it still uses up its slot: actor slot + n is always row
 /// n, counted from 0, of the table's rows of sprite 8 or more, as
@@ -102,7 +105,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
     }
   }
   for (placementSprite = entry->sprite;
-       (s16)placementSprite != -1 && slot <= 65;
+       (s16)placementSprite != -1 && slot <= ACTOR_SLOT_COUNT - 1;
        entry++, placementSprite = entry->sprite) {
     // Current placement tables use sprites 0 to 504, so every live row sets
     // actorIndex. XXX: what the 0x2705 cutoff was for; no table reaches it.
@@ -123,13 +126,15 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
     object = ObjectTable_Get(actorIndex);
     if (object == 0) {
       object = Object_CreateFar(spriteId, entry->x, entry->y, entry->z);
-      // Placement flag 1: share the previous actor's sprite resource. The new
+      // PLACEMENT_SHARE_PREVIOUS_SPRITE: share the previous actor's sprite
+      // resource. The new
       // sprite draws from the previous one's VRAM cache entry, its own entry
       // is freed, and both are marked to keep the shared entry when either
       // is released.
       if (entry->flags & PLACEMENT_SHARE_PREVIOUS_SPRITE) {
         previous = ObjectTable_Get(actorIndex - 1);
-        if (previous->animationKind == 1 && object->animationKind == 1) {
+        if (previous->animationKind == OBJECT_SPRITE_ONE &&
+            object->animationKind == OBJECT_SPRITE_ONE) {
           sprite = previous->animation;
           sprite->retainCacheEntry = 1;
           spriteSlot = sprite->slot;
@@ -141,7 +146,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
       }
       // Dora's tunic overlays the young sprites with its child part.
       if (GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC) &&
-          (u32)(spriteId - 0x12) <= 1)
+          (u32)(spriteId - ISAAC_CHILD) <= GARET_CHILD - ISAAC_CHILD)
         ObjectDispatch_RegisterChildMetadataFar((struct DispatchObject *)object,
                                                 ACTOR_TUNIC_ANIMATION);
     } else if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
@@ -155,26 +160,26 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
       // from its first frame, unless it happens to be 1. XXX: likely meant to
       // start each idle at a random frame, because the value is random; as it
       // stands it only forces the restart.
-      if (object->animationKind == 1 && (sprite = object->animation) != 0)
+      if (object->animationKind == OBJECT_SPRITE_ONE &&
+          (sprite = object->animation) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
       object->angle = entry->facing;
-      // Solid (collision bit 0).
+      // Solid.
       object->collisionFlags = 1;
       ObjectMotion_SetActionCallback(object, entry->behavior);
       ObjectDispatch_SelectAnimationFar(object, 1);
       ((struct ScriptObjectRuntime *)object)->homeX = object->x / 0x10000;
       ((struct ScriptObjectRuntime *)object)->homeZ = object->z / 0x10000;
       // A placement with a height is lifted half a pixel more and takes motion
-      // flags 4, floating: it neither follows the terrain nor falls (bits 0 and
-      // 1, field_obj.h). Outside the world map every height is then counted
-      // from the terrain below.
+      // flags 4, floating: it neither follows the terrain nor falls. Outside
+      // the world map every height is then counted from the terrain below.
       if (object->y != 0) {
         object->flags = 4;
         object->y += 0x8000;
       }
       if (work->mode == MODE_WORLD_MAP) {
         // World-map placements use single sprites and do not follow the
-        // terrain (motion bit 0). While the tunic flag is set, all keep their
+        // terrain. While the tunic flag is set, all keep their
         // native scale; otherwise they draw at 3/4 size.
         object->flags &= 0xfe;
         if (!GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC)) {
@@ -182,7 +187,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
           // The native local is then indeterminate or from an earlier row.
           // Checking the sprite grows tbs-en from 608 to 628 bytes.
 #ifdef UBFIX
-          if (object->animationKind == 1 &&
+          if (object->animationKind == OBJECT_SPRITE_ONE &&
               (sprite = object->animation) != NULL)
 #endif
             sprite->scale = Iwram_MulQ16(sprite->scale, 3 * Q16_ONE / 4);
@@ -192,7 +197,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
             Map_GetTerrainHeightFar(0, object->x, object->z);
         object->y += object->terrainHeight;
       }
-      object->priorityFlags = 1;
+      object->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     }
     work->actors[actorIndex] = (struct FieldActor *)object;
   }
@@ -225,7 +230,7 @@ void ObjectTable_DestroyAtIndex(s32 actorIndex) {
 /// camera that follows the leader. A leader entering above ground where its
 /// cell and the cell north of it are climbing spots (MAP_CELL_CLIMB) is
 /// raised by the ground height of the cell north of it less 32 pixels, and
-/// starts climbing (movement mode 1).
+/// starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
 /// Called by Field_RunScene on entering a scene, and by
 /// Event_RunObjectHookAndWait.
@@ -270,7 +275,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   above = &MAP_CELLS[pos - 128];
   if (gGameState.y != 0 && cell->collisionCode == MAP_CELL_CLIMB &&
       above->collisionCode == MAP_CELL_CLIMB) {
-    gGameState.movementMode = 1;
+    gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
     height =
         Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) - 0x200000;
     object->y += height;
@@ -279,20 +284,20 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 12);
   } else {
-    gGameState.movementMode = 0;
+    gGameState.movementMode = LEADER_MOVEMENT_WALK;
   }
 
   // The camera follows this leader and starts at its resolved ground height;
-  // the map scrolls by the camera's position. Id 0x8000 is object kind 8
-  // (id / 4096, FieldObject_Create), which takes no sprite.
-  camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
+  // the map scrolls by the camera's position. It takes no sprite.
+  camera = Object_CreateFar(OBJECT_CREATE_NO_SPRITE << 12, object->x, object->y,
+                            object->z);
   camera->terrainHeight = object->terrainHeight;
   ObjectDispatch_StartCameraFar((struct DispatchObject *)camera, (s32)object);
   if (work->mode == MODE_WORLD_MAP) {
     struct AnimationEntry *meta =
         (struct AnimationEntry *)ResourceMetadata_RegisterFar(object->animation,
                                                               23);
-    meta->param = 15;
+    meta->param = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }
   ((struct MapScrollWork *)gMapWork[0])->origin = &camera->x;
@@ -300,7 +305,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
 }
 
 /// Returns the slot after the last placed actor (8 when there is none), or -1
-/// when slot 65 is occupied. Earlier holes are not reused by this append scan.
+/// when the last slot is occupied. Earlier holes are not reused by this append
+/// scan.
 ///
 /// Called by BattleEffect_ClearAllObjects and Event_CallWithLastActiveObjectId
 /// to choose where Event_SpawnObjectTable starts.
@@ -317,9 +323,9 @@ s32 ObjectTable_FindLastActiveId(void) {
       lastActorIndex = actorIndex;
     }
     actorIndex++;
-  } while (actorIndex <= 65);
+  } while (actorIndex <= ACTOR_SLOT_COUNT - 1);
   lastActorIndex++;
-  if (lastActorIndex == 66) {
+  if (lastActorIndex == ACTOR_SLOT_COUNT) {
     lastActorIndex = -1;
   }
   return lastActorIndex;
@@ -337,7 +343,8 @@ UNUSED void *ObjectTable_GetSlotAddress(u32 actorIndex) {
 #define FLAG_IN_VIEW 0x164     ///< kept clear, so a placement using it appears
 #define FLAG_OUT_OF_VIEW 0x165 ///< kept set, so a placement using it does not
 
-#define PLACED_MAX 58 ///< actor slots 8 to 65
+#define PLACED_MAX                                                             \
+  (ACTOR_SLOT_COUNT - ACTOR_FIRST_PLACED) ///< the placed actors' slots
 
 /// Gives each placement with condition 0 a condition saying whether it lies
 /// within the map's view bounds, so that only those inside appear.
@@ -414,11 +421,11 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
           u8 *removed = &actor->spriteStorageKind;
           u32 flags;
 
-          // Kind 1 makes the release free the actor's one sprite, and clearing
-          // retainCacheEntry (bit 0 of sprite byte 29) frees its VRAM cache
-          // entry with it, even one shared with a neighbour
+          // OBJECT_SPRITE_ONE makes the release free the actor's one sprite,
+          // and clearing retainCacheEntry (bit 0 of sprite byte 29) frees its
+          // VRAM cache entry with it, even one shared with a neighbour
           // (PLACEMENT_SHARE_PREVIOUS_SPRITE).
-          *removed = 1;
+          *removed = OBJECT_SPRITE_ONE;
           sprite = (u8 *)actor->sprite;
           flags = sprite[29];
           sprite[29] = flags & releaseCacheMask;
@@ -450,7 +457,7 @@ void BattleEffect_ClearAllObjects(void) {
     if (actor != 0) {
       // As in BattleEffect_ClearOutOfBoundsObjects: free the sprite and its
       // VRAM cache entry with the actor.
-      actor->spriteStorageKind = 1;
+      actor->spriteStorageKind = OBJECT_SPRITE_ONE;
       actor->sprite->retainCacheEntry = 0;
       ObjectDispatch_ReleaseFar((struct DispatchObject *)actor);
       work->actors[ACTOR_FIRST_PLACED + slotIndex] = 0;
@@ -464,7 +471,7 @@ void BattleEffect_ClearAllObjects(void) {
     Event_SpawnObjectTable(placements, ObjectTable_FindLastActiveId());
 }
 
-/// Empties all 66 actor slots, without destroying the actors.
+/// Empties all the actor slots, without destroying the actors.
 ///
 /// Called by ObjectTable_ResetForObject.
 void ObjectTable_ClearAll(void) {
@@ -473,7 +480,7 @@ void ObjectTable_ClearAll(void) {
   s32 actorIndex;
 
   emptyActor = NULL;
-  actorIndex = 65;
+  actorIndex = ACTOR_SLOT_COUNT - 1;
   work = (struct FieldWork *)gEventWork;
   do {
     work->actors[actorIndex] = emptyActor;
@@ -481,8 +488,9 @@ void ObjectTable_ClearAll(void) {
   } while (actorIndex >= 0);
 }
 
-/// Returns the actor in slot index (0 to 65), or NULL. Indices up to 191 read
-/// past the actor slots into the rest of the event work; larger ones give NULL.
+/// Returns the actor in slot index (below ACTOR_SLOT_COUNT), or NULL. Indices
+/// up to 191 read past the actor slots into the rest of the event work; larger
+/// ones give NULL.
 ///
 /// The field's actor lookup: called across the object folder and, through
 /// ObjectTable_GetFar (Engine_ActorLookup), by scene overlays.
@@ -539,7 +547,7 @@ void ObjectTable_Snapshot(void) {
     Dma_Set(object, snapshot,
             (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct ObjectRuntime) / 4),
             REG_DMA3);
-    if (object->animationKind == 1) {
+    if (object->animationKind == OBJECT_SPRITE_ONE) {
       struct AnimationObject *sprite = object->animation;
       animation = sprite->lastNo;
       spriteFlagBits = sprite->flags;

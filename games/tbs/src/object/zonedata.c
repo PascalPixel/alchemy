@@ -24,7 +24,8 @@ const s16 gWorldMap_EncounterRules[132] = {
 
 /// The encounter of each Djinni battle (Encounter_GetDjinnEnemyGroup): {zone,
 /// slot}, by Djinni number (element * 20 + index). The 20 rows of an element
-/// all use its zone (100 Venus, 101 Mercury, 102 Mars, 103 Jupiter), slot
+/// all use its zone (ENCOUNTER_ZONE_VENUS_DJINN to
+/// ENCOUNTER_ZONE_JUPITER_DJINN), slot
 /// index % 8, so Djinn 8 apart fight the same group.
 const u16 gEncounter_AreaEntryTable[160] = {
     100, 0, 100, 1, 100, 2, 100, 3, 100, 4, 100, 5, 100, 6, 100, 7, 100, 0,

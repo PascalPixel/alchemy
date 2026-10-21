@@ -264,7 +264,8 @@ s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
 
 /// Returns the enemy group in slot (0 to 7) of zone; 14 halfwords make a zone.
 /// Called by Field_RequestBattleFromEncounterTable,
-/// Encounter_GetDjinnEnemyGroup and the scene event runner (events.c, zone 99).
+/// Encounter_GetDjinnEnemyGroup and the scene event runner (events.c,
+/// ENCOUNTER_ZONE_MIMIC).
 u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
   // A zone's halfwords are rate, level, then the eight groups.
   return gEncounter_EnemyGroupTable[zone * 14 + slot + 2];

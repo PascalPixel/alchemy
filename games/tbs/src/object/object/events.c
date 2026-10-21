@@ -76,9 +76,9 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   return flagSet == 0;
 }
 
-/// Returns 1 for a search event (kind 3) that holds whatever its condition: one
-/// with more flags than its kind, unless its result is a mimic battle (type
-/// 0x005 in its top 12 bits).
+/// Returns 1 for a search event (EVENT_SEARCH) that holds whatever its
+/// condition: one with more flags than its kind, unless its result is a mimic
+/// battle (type 0x005 in its top 12 bits).
 ///
 /// Called by Scene_FindEvent. Field_SearchTile tests such an event's condition
 /// itself (a chest's flag is set once it is opened), so the event is found
@@ -103,9 +103,10 @@ u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
 }
 
 /// Returns the first of the scene's events of kind for target whose condition
-/// holds, or NULL. Flag 0x200 also needs the leader to have pushed against it
-/// for more than 12 frames (2 with flag 0x800); flag 0x400 needs the leader to
-/// face within an eighth of a turn of the direction in the top four bits.
+/// holds, or NULL. EVENT_TOUCH_WALKING also needs the leader to have pushed
+/// against it for more than 12 frames (2 with control bit 11);
+/// EVENT_TOUCH_FACING needs the leader to face within an eighth of a turn of
+/// the direction in the top four bits.
 ///
 /// Called by every lookup of a scene's events in this part and by
 /// Object_GetTriggerTileAheadOfCurrent. Changes nothing.
@@ -299,7 +300,7 @@ finish:
   return result;
 }
 
-/// Runs the scene's raised event (kind 6) for value: its message or its
+/// Runs the scene's raised event (EVENT_RAISED) for value: its message or its
 /// function. Returns 0 when an event ran, -1 when there was none.
 ///
 /// Called by Field_RunScene for a positive event request (work->event).
@@ -328,9 +329,9 @@ s32 Scene_RunRaisedEvent(s32 value) {
   return handled;
 }
 
-/// Runs the touch event (kind 2) of what the leader touched, or else takes its
-/// exit (kind 1): plays the exit's sound (and effect) and records where it
-/// leads. Returns 0 when something ran, -1 when there was nothing.
+/// Runs the touch event (EVENT_TOUCH) of what the leader touched, or else
+/// takes its exit (EVENT_EXIT): plays the exit's sound (and effect) and records
+/// where it leads. Returns 0 when something ran, -1 when there was nothing.
 ///
 /// Called by Field_RunScene for its step request (work->action), which
 /// Field_ProcessStep raises for MAP_CELL_EVENT_FIRST to MAP_CELL_EVENT_LAST.
@@ -430,7 +431,7 @@ s32 Field_RunPushTileEvent(s32 collisionCode) {
 /// Searches the tile ahead with the given collision code. The fixed search
 /// spots, MAP_CELL_JAR to MAP_CELL_WELL, show their two messages. Otherwise the
 /// scene's search event for the tile runs: a function, a message, or a chest
-/// holding a Psynergy stone, a mimic, coins or an item; with no event, "checked
+/// holding a Psynergy Stone, a mimic, coins or an item; with no event, "checked
 /// the ground" and "found nothing".
 ///
 /// Called by Field_RunScene for its search request (work->tile). Opening a
@@ -475,11 +476,11 @@ s32 Field_SearchTile(s32 tile) {
         GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
       }
       // The value is a function address (bits 27 to 24 set) or a FIND_ value
-      // whose top 12 bits give its type: 1 an item, 2 coins, 3 a Psynergy
-      // stone, 4 a message, 5 a mimic.
+      // whose top 12 bits give its type: an item, coins, a Psynergy Stone, a
+      // message or a mimic.
       searchResult = event->value;
       if ((searchResult & 0x0f000000) != 0 ||
-          (searchResult & 0xfff00000) == 0x400000) {
+          (searchResult & 0xfff00000) == FIND_MESSAGE(0)) {
         if ((searchResult & 0x0f000000) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
@@ -488,7 +489,7 @@ s32 Field_SearchTile(s32 tile) {
             UiText_ShowPositionedMessageAndWaitFar(
                 MsgTileResult + messageOffset, 1);
         } else {
-          // A message (type 0x004).
+          // A message.
           if (GameFlag_IsConditionActive(condition) != 0)
             UiText_ShowPositionedMessageAndWaitFar((u16)event->value, 1);
           else
@@ -509,8 +510,8 @@ s32 Field_SearchTile(s32 tile) {
             if ((event->control & 0x1ff) == 19)
               Marker_OpenChest(tile);
             rewardType = event->value & 0xfff00000;
-            if (rewardType == 0x300000) {
-              // A Psynergy stone: restores all PP.
+            if (rewardType == FIND_PSYNERGY_STONE) {
+              // A Psynergy Stone: restores all PP.
               void *object;
 
               if ((event->control & 0x1ff) == 19)
@@ -535,7 +536,7 @@ s32 Field_SearchTile(s32 tile) {
               if (condition != -1)
                 GameFlag_SetBitFar(condition);
             } else if (rewardType == 0x500000) {
-              // A mimic: a battle with enemy group slot of zone 99.
+              // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
               struct FieldWork *work = (struct FieldWork *)gEventWork;
 
               if ((event->control & 0x1ff) == 19)
@@ -550,13 +551,13 @@ s32 Field_SearchTile(s32 tile) {
               // first strike or surprise, and every attempt to run fails; the
               // command menu still offers it, refusing outright only for
               // starts 3 and 4.
-              work->battle =
-                  Encounter_GetEnemyGroupAtSlot(99, (u16)event->value);
+              work->battle = Encounter_GetEnemyGroupAtSlot(ENCOUNTER_ZONE_MIMIC,
+                                                           (u16)event->value);
               Battle_SetStart(2);
-              BattleFx_SelectBattleCue(99, (u16)event->value);
+              BattleFx_SelectBattleCue(ENCOUNTER_ZONE_MIMIC, (u16)event->value);
               AudioCommand_PlayFar(gGameState.sceneCue);
               UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);
-            } else if (rewardType == 0x200000) {
+            } else if (rewardType == FIND_COINS(0)) {
               // Coins.
               void *object;
 

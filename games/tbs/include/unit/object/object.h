@@ -58,6 +58,21 @@ enum WindowTransitionMode {
   WINDOW_TRANSITION_LEADER_LOW = 77
 };
 
+/// The encounter table's zones (encounter.tsv's rows) that code names: the
+/// rows no step on a map rolls.
+enum EncounterZoneId {
+  ENCOUNTER_ZONE_NONE = 0, ///< no battles
+  /// The scripted battles: Suhalla Desert, Venus Lighthouse Aerie and the
+  /// world map; its first slot is the Aerie's second battle.
+  ENCOUNTER_ZONE_SCRIPTED = 98,
+  ENCOUNTER_ZONE_MIMIC = 99, ///< mimic chests, by the chest's slot
+  /// The Djinn battles, one zone for each element in element order.
+  ENCOUNTER_ZONE_VENUS_DJINN = 100,
+  ENCOUNTER_ZONE_MERCURY_DJINN = 101,
+  ENCOUNTER_ZONE_MARS_DJINN = 102,
+  ENCOUNTER_ZONE_JUPITER_DJINN = 103
+};
+
 void Scene_TakeExit(s32 exitKind);
 void Scene_ReturnFromBattle(s32 result);
 s32 BattleFx_GetResourceGroup(s32 scene);

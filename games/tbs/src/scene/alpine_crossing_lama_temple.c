@@ -276,8 +276,8 @@ static void LamaTemple_TalkToMonkAskingAboutTheEast(void) {
   Engine_EventEnd();
 }
 
-/// The meditating monk in Lama Temple, until Hsu is freed, asks whether the
-/// party knows what meditation is, and explains it.
+/// The meditating monk explains meditation. He's in Lama Temple until Hsu is
+/// freed, and first asks whether the party knows what meditation is.
 static void LamaTemple_TalkToMeditatingMonk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainDoKnowMeditation);
@@ -294,8 +294,8 @@ static void LamaTemple_TalkToChiMonk(void) {
   Engine_EventEnd();
 }
 
-/// In Lama Temple, walking north into the door of Hama's room slides it open
-/// and walks the party leader through, into the room
+/// The door of Hama's room slides open for the party leader. Walking north into
+/// it in Lama Temple slides it open and walks the leader through, into the room
 /// (LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS).
 static void LamaTemple_EnterHamasRoom(void) {
   Event_PlayCue(SE_188);
@@ -538,9 +538,9 @@ static void LamaTemple_RevealPassage(void) {
   Actor_SetPosition(ACTOR_PASSAGE_ROCK, 0, 0);
 }
 
-/// The traveling healer in Lama Temple offers the Sanctum's services when
-/// spoken to across his counter, from the south; from any other side he only
-/// greets the party.
+/// The traveling healer in Lama Temple offers the Sanctum's services. He does
+/// when spoken to across his counter, from the south; from any other side he
+/// only greets the party.
 static void LamaTemple_TalkToHealer(void) {
 
   u32 heading = Object_GetById(ACTOR_PARTY_LEADER)->facing;
@@ -555,11 +555,11 @@ static void LamaTemple_TalkToHealer(void) {
   Engine_EventEnd();
 }
 
-/// At the Alpine Crossing, when the party steps onto the road by the boulders
-/// once Feizhi has set out after Hsu, she runs up behind it: she finds the
-/// boulders blocking Silk Road, says her vision came true, cries out for Hsu
-/// and runs ahead along the path to look for him, the party leader following
-/// part of the way.
+/// Feizhi runs up behind the party and goes ahead to look for Hsu. It happens
+/// at the Alpine Crossing when the party steps onto the road by the boulders
+/// once Feizhi has set out after Hsu: she finds the boulders blocking Silk
+/// Road, says her vision came true, cries out for Hsu and runs ahead along the
+/// path to look for him, the party leader following part of the way.
 static void AlpineCrossing_FeizhiArrives(void) {
   struct FieldActor *leader;
 
@@ -854,6 +854,7 @@ static s32 Pillar_SortAgainstLeader(union FieldObject *object) {
   }
 }
 
+/// Puts the rising pillar in front when the leader stands north of the puddle.
 /// As Frost reaches the puddle at the Alpine Crossing, a leader standing north
 /// of it sees the pillar rise in front of the background.
 static void AlpineCrossing_PrepareFrost(void) {

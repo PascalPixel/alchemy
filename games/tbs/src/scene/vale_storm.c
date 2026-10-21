@@ -325,9 +325,10 @@ UNUSED static void ValeStorm_UnusedOpenSanctumDoor(void) {
       VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR);
 }
 
-/// In Vale on the stormy night, stepping on cell code 2 requests exit 1, the
-/// one number the exit table leaves out; Scene_TakeExit therefore falls back to
-/// the first exit's scene, Vale's SceneId_ValeGate, at ENTRANCE_DEFAULT.
+/// Leaves through an exit the exit table doesn't list. In Vale on the stormy
+/// night, stepping on cell code 2 requests exit 1, the one number the exit
+/// table leaves out; Scene_TakeExit therefore falls back to the first exit's
+/// scene, Vale's SceneId_ValeGate, at ENTRANCE_DEFAULT.
 static void Event_LeaveByMissingExit(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
@@ -374,13 +375,14 @@ static void Event_LeaveToValeInteriorsShopsEast(void) {
   Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_SHOPS_EAST);
 }
 
-/// In Vale on the stormy night, Isaac's first time at the door of
-/// VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH: a stout man runs out and shoves
-/// him; afterwards the door opens as usual. "Huh? Isaac?" Reached by walking
-/// north into cell code 7. The shove plays until
-/// FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or FLAG_VALE_STORM_SECOND_ROCK_FELL is
-/// set, and sets FLAG_SCENE_TEMP_06; otherwise goes into a house of Vale
-/// (SceneId_ValeInteriorsShops, at VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
+/// A stout man runs out of a house and shoves Isaac. In Vale on the stormy
+/// night, this is Isaac's first time at the door of
+/// VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH; afterwards the door opens as
+/// usual. "Huh? Isaac?" Reached by walking north into cell code 7. The shove
+/// plays until FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or
+/// FLAG_VALE_STORM_SECOND_ROCK_FELL is set, and sets FLAG_SCENE_TEMP_06;
+/// otherwise goes into a house of Vale (SceneId_ValeInteriorsShops, at
+/// VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
 static void Event_LeaveToValeInteriorsShops(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_06) == 0) {
     Event_PlayCue(SE_DOOR_OPEN);
@@ -397,8 +399,8 @@ static void Event_LeaveToValeInteriorsShops(void) {
   }
 }
 
-/// In Vale on the stormy night, goes back into Isaac's house through the door
-/// he and Dora came out of, opening it unless they left it open.
+/// Goes back into Isaac's house on the stormy night. It's the door he and Dora
+/// came out of in Vale, and it opens unless they left it open.
 /// Reached by walking north into cell code 8; takes
 /// VALE_STORM_TO_VALE_INTERIORS_INN_ISAACS_HOUSE, to
 /// VALE_INTERIORS_INN_FROM_VALE in SceneId_ValeInteriorsInn, where Vale's
@@ -437,8 +439,8 @@ static void Event_LeaveToValeInteriorsShopsWest(void) {
   Vale_RequestBackdropExit(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST);
 }
 
-/// In Vale on the stormy night, opens a door and goes in, to the room
-/// Event_LeaveToValeInteriorsShopsWest leads to.
+/// Opens a second door into the same house and goes in. In Vale on the stormy
+/// night, it leads to the room Event_LeaveToValeInteriorsShopsWest leads to.
 /// Reached by walking north into cell code 11; takes
 /// VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR, which also
 /// arrives at VALE_INTERIORS_SHOPS_FROM_VALE_WEST. The leader walks to the spot
@@ -1378,8 +1380,9 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   Engine_ActorSetPosition(ACTOR_GARET, 0, 0);
 }
 
-/// In Vale on the stormy night, the Boulder slips toward the village while the
-/// elders hold it with their Psynergy, and they tell the boys to run.
+/// The Boulder slips toward the village and the elders tell the boys to run.
+/// In Vale on the stormy night, the elders hold the Boulder with their
+/// Psynergy as it slips.
 /// "Ahhh! The Boulder! It's falling!"
 /// Reached by stepping on cell code 34 until FLAG_VALE_BOULDER_FELL is set,
 /// which this sets. The elders and their two stand-ins
@@ -1609,13 +1612,12 @@ UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
   }
 }
 
-/// In Vale on the stormy night, at the river, Jenna cries out for her brother
-/// Felix, who has fallen in and clings on as Kyle and her parents try to save
-/// him. "Oh no! My brother!" The rope will not reach and no one has Psynergy
-/// left, so they send for help.
-/// Reached by stepping on cell code 35 until
-/// FLAG_VALE_STORM_SAW_FELIX_HANGING_ON is set, which this sets after
-/// ValeStorm_RunRiverSearch.
+/// Jenna cries out for Felix as her family tries to save him at the river. In
+/// Vale on the stormy night, her brother Felix has fallen in and clings on as
+/// Kyle and her parents try to save him. "Oh no! My brother!" The rope will not
+/// reach and no one has Psynergy left, so they send for help. Reached by
+/// stepping on cell code 35 until FLAG_VALE_STORM_SAW_FELIX_HANGING_ON is set,
+/// which this sets after ValeStorm_RunRiverSearch.
 static void Event_WatchAttemptToSaveFelix(void) {
   const s32 *pulseScript;
 
@@ -2002,8 +2004,9 @@ static void ValeStorm_RunRiverSearch(void) {
   Actor_SetPosition(ACTOR_GARET, 0, 0);
 }
 
-/// In Vale on the stormy night, Kyle, at the river, tells Isaac and Garet they
-/// do not have enough Psynergy to save Felix and should find help.
+/// Kyle tells Isaac and Garet to find help for Felix. In Vale on the stormy
+/// night, at the river, he tells them they don't have enough Psynergy to save
+/// Felix.
 /// Reached by talking to Kyle; the first time he greets Isaac and sets
 /// FLAG_VALE_STORM_KYLE_GREETED_ISAAC.
 static void Event_TalkAboutSavingFelix(void) {
@@ -2041,13 +2044,13 @@ static void Event_TalkAboutSavingFelix(void) {
   Engine_EventEnd();
 }
 
-/// In Vale on the stormy night, Jenna comes back to the river with Isaac,
-/// Garet and the man whose Psynergy is restored ("Mom! Dad! We're back!"),
-/// and as Dora calls everyone down to save Felix the Boulder comes down the
-/// river and sweeps away Felix, his parents and Kyle.
-/// Reached by stepping on cell code 36 once FLAG_VALE_STORM_SENT_TO_AID_ELDERS
-/// is set (vale_gate.c), until FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY is set,
-/// which this sets.
+/// The Boulder sweeps Felix, his parents and Kyle away. In Vale on the stormy
+/// night, Jenna comes back to the river with Isaac, Garet and the man whose
+/// Psynergy is restored ("Mom! Dad! We're back!"), and as Dora calls everyone
+/// down to save Felix the Boulder comes down the river and sweeps away Felix,
+/// his parents and Kyle. Reached by stepping on cell code 36 once
+/// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set (vale_gate.c), until
+/// FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY is set, which this sets.
 static void Event_BoulderSweepsThemAway(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -2623,9 +2626,10 @@ static void ValeStorm_FlickerGlowOffset(void) {
   }
 }
 
-/// In Vale on the stormy night, after the Boulder, the strongman who came to
-/// help tries to go for help himself and cannot move. "I can't move..." Reached
-/// by talking to him (ACTOR_EXHAUSTED_STRONGMAN); the first time sets
+/// An exhausted strongman tries to go for help and can't move. In Vale on the
+/// stormy night, after the Boulder, the strongman who came to help tries to go
+/// for help himself. "I can't move..." Reached by talking to him
+/// (ACTOR_EXHAUSTED_STRONGMAN); the first time sets
 /// FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO.
 static void Event_StrongmanTriesToGoForHelp(void) {
   struct FieldActor *villager;

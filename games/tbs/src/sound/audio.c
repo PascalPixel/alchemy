@@ -291,8 +291,8 @@ void CgbAudio_Initialize(struct CgbNote *notes) {
 
   REG_SOUNDCNT_X = SOUNDCNT_X_ENABLE | SOUNDCNT_X_ALL_TONES_ON;
   REG_SOUNDCNT_L = 0;
-  // Channels 1, 2 and 4 silent with a rising envelope, restarted; channel 3
-  // off; the master volume full on both sides
+  // The square and noise channels silent with a rising envelope, restarted;
+  // the wave channel off; the master volume full on both sides
   REG_NR12 = 8;
   REG_NR22 = 8;
   REG_NR42 = 8;

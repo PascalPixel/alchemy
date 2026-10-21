@@ -470,8 +470,8 @@ void MusicTrack_CalcOutput(struct SoundPlayer *player,
 
 /// Converts a key and fractional pitch to a CGB tone or noise-register value.
 /// Installed as the work's cgbFrequency callback by CgbAudio_Initialize. For
-/// the noise channel (kind 4) it returns an NR43 value for keys 21 to 80
-/// (others play the nearer end) and ignores fine. For a tone channel it
+/// the noise channel (CGB_CHANNEL_NOISE) it returns an NR43 value for keys 21
+/// to 80 (others play the nearer end) and ignores fine. For a tone channel it
 /// returns the 11-bit frequency value, 2048 minus the period, for keys 36 to
 /// 166, with fine (0 to 255) moving it towards the next key; keys below 36
 /// play key 36 and keys above 166 play key 166 at fine 255: key 36 gives 44,
@@ -480,7 +480,7 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine) {
   s32 lowerFrequency;
   s32 upperFrequency;
 
-  if (kind == 4) {
+  if (kind == CGB_CHANNEL_NOISE) {
     if (key <= 20)
       key = 0;
     else {
@@ -517,15 +517,15 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine) {
 /// Called by Cgb_UpdateChannels, and installed as the work's cgbMute callback.
 void CgbChannel_Mute(u8 channel) {
   switch (channel) {
-  case 1:
+  case CGB_CHANNEL_SQUARE_1:
     REG_NR12 = 8;
     REG_NR14 = 0x80;
     break;
-  case 2:
+  case CGB_CHANNEL_SQUARE_2:
     REG_NR22 = 8;
     REG_NR24 = 0x80;
     break;
-  case 3:
+  case CGB_CHANNEL_WAVE:
     REG_NR30 = 0;
     break;
   default:
@@ -593,28 +593,28 @@ void Cgb_UpdateChannels(void) {
   else
     work->cgbTick = 14;
 
-  for (channel = 1, note = work->cgbNotes; channel <= SOUND_CGB_CHANNEL_COUNT;
-       channel++, note++) {
+  for (channel = CGB_CHANNEL_SQUARE_1, note = work->cgbNotes;
+       channel <= SOUND_CGB_CHANNEL_COUNT; channel++, note++) {
     if (!(note->state & CGB_NOTE_ON))
       continue;
 
     // Select this channel's sweep, length, envelope and frequency registers.
     switch (channel) {
-    case 1:
+    case CGB_CHANNEL_SQUARE_1:
       sweepOrWaveControl = &REG_NR10;
       lengthDutyRegister = &REG_NR11;
       volumeEnvelopeRegister = &REG_NR12;
       frequencyOrNoiseRegister = &REG_NR13;
       triggerRegister = &REG_NR14;
       break;
-    case 2:
+    case CGB_CHANNEL_SQUARE_2:
       sweepOrWaveControl = &REG_NR10 + 1;
       lengthDutyRegister = &REG_NR21;
       volumeEnvelopeRegister = &REG_NR22;
       frequencyOrNoiseRegister = &REG_NR23;
       triggerRegister = &REG_NR24;
       break;
-    case 3:
+    case CGB_CHANNEL_WAVE:
       sweepOrWaveControl = &REG_NR30;
       lengthDutyRegister = &REG_NR31;
       volumeEnvelopeRegister = &REG_NR32;
@@ -640,15 +640,15 @@ void Cgb_UpdateChannels(void) {
         note->modified = CGB_NOTE_VOLUME_DIRTY | CGB_NOTE_PITCH_DIRTY;
         CgbNote_UpdatePanEnvelope(note);
         switch (channel) {
-        case 1:
+        case CGB_CHANNEL_SQUARE_1:
           *sweepOrWaveControl = note->sweep;
           // Fall through.
-        case 2:
+        case CGB_CHANNEL_SQUARE_2:
           // NRx1: the duty, which a square voice keeps in wave, in bits 7..6
           // over the length.
           *lengthDutyRegister = ((u32)note->wave << 6) + note->length;
           goto init_envelope;
-        case 3:
+        case CGB_CHANNEL_WAVE:
           // A new wave: NR30 bit 6 selects the bank the CPU writes, then 0
           // plays it
           if (note->wave != note->loadedWave) {
@@ -703,7 +703,7 @@ void Cgb_UpdateChannels(void) {
       note->counter = note->release;
       if ((s8)(note->counter & byteMask)) {
         note->modified |= CGB_NOTE_VOLUME_DIRTY;
-        if (channel != 3)
+        if (channel != CGB_CHANNEL_WAVE)
           envelopeControl = note->release;
         goto count_down;
       }
@@ -712,7 +712,7 @@ void Cgb_UpdateChannels(void) {
     // Attack, decay, sustain and release share this countdown path.
     step:
       if (note->counter == 0) {
-        if (channel == 3)
+        if (channel == CGB_CHANNEL_WAVE)
           note->modified |= CGB_NOTE_VOLUME_DIRTY;
         CgbNote_UpdatePanEnvelope(note);
         if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_RELEASE) {
@@ -723,7 +723,7 @@ void Cgb_UpdateChannels(void) {
             if (note->level) {
               note->state |= CGB_NOTE_ECHO;
               note->modified |= CGB_NOTE_VOLUME_DIRTY;
-              if (channel != 3)
+              if (channel != CGB_CHANNEL_WAVE)
                 envelopeControl = 8;
               goto write;
             }
@@ -744,7 +744,7 @@ void Cgb_UpdateChannels(void) {
             }
             note->state--;
             note->modified |= CGB_NOTE_VOLUME_DIRTY;
-            if (channel != 3)
+            if (channel != CGB_CHANNEL_WAVE)
               envelopeControl = 8;
             goto sustain;
           }
@@ -759,7 +759,7 @@ void Cgb_UpdateChannels(void) {
               goto sustain_or_release;
             note->modified |= CGB_NOTE_VOLUME_DIRTY;
             note->level = note->peak;
-            if (channel != 3)
+            if (channel != CGB_CHANNEL_WAVE)
               envelopeControl = note->decay;
           } else {
             note->counter = note->attack;
@@ -777,7 +777,7 @@ void Cgb_UpdateChannels(void) {
   // Only changed pitch and volume settings reach the hardware.
   write:
     if (note->modified & CGB_NOTE_PITCH_DIRTY) {
-      if (channel < 4 && (note->kind & 8)) {
+      if (channel < CGB_CHANNEL_NOISE && (note->kind & 8)) {
         s32 bias = REG_SOUNDBIAS_H;
 
         // The sound bias's resolution (REG_SOUNDBIAS_H bits 7..6): at 0 or 1
@@ -788,7 +788,7 @@ void Cgb_UpdateChannels(void) {
         else if (bias < 0x80)
           note->frequency = (note->frequency + 1) & 0x7fe;
       }
-      if (channel != 4)
+      if (channel != CGB_CHANNEL_NOISE)
         *frequencyOrNoiseRegister = note->frequency;
       else
         *frequencyOrNoiseRegister =
@@ -801,8 +801,8 @@ void Cgb_UpdateChannels(void) {
     if (note->modified & CGB_NOTE_VOLUME_DIRTY) {
       // NR51 routes each channel to the left and right speakers
       REG_NR51 = (REG_NR51 & ~note->channelBits) | note->panBits;
-      if (channel == 3) {
-        // Channel 3 has no envelope: its level maps to an NR32 volume code
+      if (channel == CGB_CHANNEL_WAVE) {
+        // CGB_CHANNEL_WAVE has no envelope: its level maps to an NR32 volume code
         *volumeEnvelopeRegister = gSound_Cgb3LevelCodes[note->level];
         if (note->trigger & 0x80) {
           *sweepOrWaveControl = 0x80;
@@ -814,10 +814,10 @@ void Cgb_UpdateChannels(void) {
         envelopeControl &= 0xf;
         *volumeEnvelopeRegister = (note->level << 4) + envelopeControl;
         *triggerRegister = note->trigger | 0x80;
-        // XXX: channel 1 is restarted a second time unless NR10 bit 3 is set
+        // XXX: CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit 3 is set
         // (a falling sweep, or 8 alone, no sweep); why is not known. How the
         // hardware starts a rising sweep, tested on a console, would say.
-        if (channel == 1 && !(*sweepOrWaveControl & 8))
+        if (channel == CGB_CHANNEL_SQUARE_1 && !(*sweepOrWaveControl & 8))
           *triggerRegister = note->trigger | 0x80;
       }
     }

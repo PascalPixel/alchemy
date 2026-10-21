@@ -92,10 +92,18 @@ enum SoundDriverLimit {
   /// The PCM notes in SoundWork.pcmNotes; mode changes and
   /// AudioEngine_StopAllChannels clear all 12, though only pcmNoteCount play.
   SOUND_PCM_NOTE_CAPACITY = 12,
-  SOUND_CGB_CHANNEL_COUNT = 4, ///< CGB channels, numbered 1 to 4.
+  SOUND_CGB_CHANNEL_COUNT = 4, ///< CGB channels, one per enum CgbChannel
   /// Most tracks a player takes; MusicPlayer_Initialize caps its count here,
   /// and the track masks of the MusicPlayer_Set routines are 16 bits.
   SOUND_PLAYER_TRACK_LIMIT = 16
+};
+
+/// The four CGB channels, numbered as the hardware's NR registers are.
+enum CgbChannel {
+  CGB_CHANNEL_SQUARE_1 = 1, ///< a square wave with a sweep (NR10 to NR14)
+  CGB_CHANNEL_SQUARE_2 = 2, ///< a square wave (NR21 to NR24)
+  CGB_CHANNEL_WAVE = 3,     ///< a pattern from wave RAM (NR30 to NR34)
+  CGB_CHANNEL_NOISE = 4     ///< noise (NR41 to NR44)
 };
 
 enum SoundModulationTarget {
@@ -120,8 +128,8 @@ struct SoundVoice {
   u8 kind;
   u8 baseKey; ///< Key a rhythm entry plays every note at.
   u8 length;  ///< CGB sound length (NRx1); 0 plays until released.
-  /// CGB channel 1's sweep (NR10) when bit 7 is clear and bits 6..4 are not;
-  /// else no sweep. In a rhythm entry with bit 7 set, the note's pan is
+  /// CGB_CHANNEL_SQUARE_1's sweep (NR10) when bit 7 is clear and bits 6..4 are
+  /// not; else no sweep. In a rhythm entry with bit 7 set, the note's pan is
   /// (value - 192) * 2.
   u8 panOrSweep;
   /// The PCM sample, the CGB wave pattern, duty or noise width, or for a
@@ -183,8 +191,9 @@ struct SoundNote {
 /// envelope, its levels and pan, its frequency and its wave.
 struct CgbNote {
   u8 state; ///< CgbNoteState and CgbNotePhase; 0 when the channel is free.
-  /// Channel number 1 to 4 at setup, then the voice's kind; bit 3 rounds
-  /// the frequency to the sound bias's resolution on channels 1 to 3.
+  /// Its enum CgbChannel at setup, then the voice's kind; bit 3 rounds the
+  /// frequency to the sound bias's resolution on every channel but
+  /// CGB_CHANNEL_NOISE.
   u8 kind;
   u8 outRight; ///< Velocity and track volume to the right, 0 to 255.
   u8 outLeft;  ///< Velocity and track volume to the left, 0 to 255.
@@ -209,14 +218,14 @@ struct CgbNote {
   u8 channelBits;  ///< This channel's NR51 bits: 0x11, 0x22, 0x44, 0x88.
   u8 modified;     ///< CgbNoteModified: what to write to the channel.
   u8 length;       ///< The voice's length.
-  u8 sweep;        ///< Channel 1's NR10 sweep; 8 when none.
-  /// Tone frequency from Cgb_KeyToFrequency (2048 added), or channel 4's
-  /// NR43 value.
+  u8 sweep;        ///< CGB_CHANNEL_SQUARE_1's NR10 sweep; 8 when none.
+  /// Tone frequency from Cgb_KeyToFrequency (2048 added), or
+  /// CGB_CHANNEL_NOISE's NR43 value.
   u32 frequency;
-  /// Channel 3: the 16-byte wave pattern. Channels 1 and 2: the duty, into
-  /// NRx1's bits 7..6. Channel 4: the width, into NR43's bit 3.
+  /// CGB_CHANNEL_WAVE: the 16-byte wave pattern. The square channels: the duty,
+  /// into NRx1's bits 7..6. CGB_CHANNEL_NOISE: the width, into NR43's bit 3.
   u32 *wave;
-  u32 *loadedWave; ///< Channel 3: the pattern last copied into wave RAM.
+  u32 *loadedWave; ///< CGB_CHANNEL_WAVE: the pattern last copied into wave RAM.
   /// 0x2c track, 0x30 prev and 0x34 next, as in SoundNote.
   u8 unk2c[0x14];
 };
@@ -418,7 +427,7 @@ struct SoundWork {
   void (*tick)(struct SoundPlayer *player);
   struct SoundPlayer *tickPlayer; ///< Passed to tick.
   void (*cgbUpdate)(void);        ///< Run each mixer frame: Cgb_UpdateChannels.
-  void (*cgbMute)(u8 channel);    ///< CgbChannel_Mute, channel 1 to 4.
+  void (*cgbMute)(u8 channel);    ///< CgbChannel_Mute, by enum CgbChannel.
   s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine); ///< Cgb_KeyToFrequency.
   SoundCommand *commands;                        ///< gSound_CommandTable.
   /// MusicTrack_HandleNote, run for song bytes from 0xCF up with the byte

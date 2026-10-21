@@ -60,34 +60,35 @@ void AudioCommand_Play(s32 id) {
     gMusicFadeRequested++;
     gAudioSecondaryState = MUS_019;
   } else if (id == AUDIO_CUE_FADE_SLOT3) {
-    // 0x121 is also SE_289's number, so playing SE_289 fades player 3 out
-    // over 48 frames (16 steps of 3) and never starts song 289. Only sound
+    // The cue is also SE_289's number, so playing SE_289 fades player 3 out
+    // over 48 frames (16 steps of 3) and never starts SE_289. Only sound
     // effects record their cue in gMusicPlayerVolumes; player 3's is 0 after
     // this fade.
     gMusicPlayerVolumes[3] = 0;
     MusicPlayer_FadeOut(&gSound_Player3, 3);
   } else if (id >= AUDIO_SONG_FIRST) {
-    // Slot 7 borrows a free effect player, searching backwards through 4..7.
+    // A song on SOUND_PLAYER_EFFECT_LAST borrows a free effect player,
+    // searching back to SOUND_PLAYER_EFFECT_FIRST.
     // A player is busy while the low byte of its status, the active bits of
-    // its first eight tracks, is nonzero; with all four busy, player 7's
-    // sound is cut off.
+    // its first eight tracks, is nonzero; with all four busy,
+    // SOUND_PLAYER_EFFECT_LAST's sound is cut off.
     player = gSound_SongTable[id].slot;
-    if (player == 7) {
+    if (player == SOUND_PLAYER_EFFECT_LAST) {
     next:
       if (((u8 *)&gSound_PlayerSlots[player].player->status)[0] != 0) {
         player--;
-        if (player > 3)
+        if (player >= SOUND_PLAYER_EFFECT_FIRST)
           goto next;
-        player = 7;
+        player = SOUND_PLAYER_EFFECT_LAST;
       }
     }
     MusicPlayer_StartSong(gSound_PlayerSlots[player].player,
                           gSound_SongTable[id].header);
     gMusicPlayerVolumes[player] = id;
   } else if (id >= AUDIO_JINGLE_FIRST) {
-    // A fanfare, on its own player (0): the music's tracks 0 to 7 go silent at
-    // once but keep playing, and fade back in once the fanfare has ended
-    // (MusicPlayer_StepVolumeAndPitchTowardTargets).
+    // A fanfare, on its own player (SOUND_PLAYER_FANFARE): the music's tracks 0
+    // to 7 go silent at once but keep playing, and fade back in once the
+    // fanfare has ended (MusicPlayer_StepVolumeAndPitchTowardTargets).
     MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, 0);
     gMusicVolumeTarget = 0;
     gMusicVolume = 0;

@@ -31,11 +31,23 @@ enum AudioCueControl {
   /// Fades player 3 out over 48 frames; also SE_289's number, so SE_289
   /// never plays.
   AUDIO_CUE_FADE_SLOT3 = 0x121,
-  /// Cues 80 to 99 are fanfares; those below are music, but for 17 and 18.
+  /// Cues from here to AUDIO_SONG_FIRST are fanfares; those below are music,
+  /// but for AUDIO_CUE_FADE_BGM and AUDIO_CUE_KEEP_BGM.
   AUDIO_JINGLE_FIRST = 80,
-  /// Cues from 100 but 0x121 each play on the player gSound_SongTable names
-  /// for them.
+  /// Cues from here but AUDIO_CUE_FADE_SLOT3 each play on the player
+  /// gSound_SongTable names for them.
   AUDIO_SONG_FIRST = 100
+};
+
+/// The players by their place in gSound_PlayerSlots (sound/players.s).
+enum SoundPlayerId {
+  SOUND_PLAYER_FANFARE = 0, ///< gMusicPlayerFanfare
+  SOUND_PLAYER_MUSIC = 1,   ///< gMusicPlayerBgm
+  /// The first player a song on SOUND_PLAYER_EFFECT_LAST may borrow.
+  SOUND_PLAYER_EFFECT_FIRST = 4,
+  /// A song on it takes the first idle player from here down to
+  /// SOUND_PLAYER_EFFECT_FIRST, else this one (AudioCommand_Play).
+  SOUND_PLAYER_EFFECT_LAST = 7
 };
 
 s32 Sound_LoadPresetParameters(s32 preset);
@@ -51,9 +63,10 @@ extern struct LzPackWork *gFlash_Handler3;
 extern struct SoundPlayer gMusicPlayerBgm;
 /// Plays fanfares; the music returns once it stops.
 extern struct SoundPlayer gMusicPlayerFanfare;
-extern struct SoundPlayer gSound_Player3; ///< the player cue 0x121 fades out
-/// The cue from 100 up (AUDIO_SONG_FIRST) each player last started, by player,
-/// not a volume: cues below 100 are not recorded, and SE_289 clears entry 3.
+extern struct SoundPlayer
+    gSound_Player3; ///< the player AUDIO_CUE_FADE_SLOT3 fades
+/// The cue from AUDIO_SONG_FIRST up each player last started, by player, not
+/// a volume: cues below it are not recorded, and SE_289 clears entry 3.
 /// Nothing in TBS reads it.
 extern u16 gMusicPlayerVolumes[8];
 /// VBlanks after a fanfare starts before the music waits for its end; held

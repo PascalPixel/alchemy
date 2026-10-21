@@ -175,7 +175,7 @@ const u8 gSound_NoisePitchCodes[] = {
     0x17, 0x16, 0x15, 0x14, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00
 };
 
-/// Channel 3's NR32 volume code for each envelope level 0 to 15. The channel
+/// CGB_CHANNEL_WAVE's NR32 volume code for each envelope level 0 to 15. The channel
 /// has five volumes: 0x00 mute, 0x60 a quarter, 0x40 half, 0x80 three
 /// quarters and 0x20 full.
 const u8 gSound_Cgb3LevelCodes[] = {

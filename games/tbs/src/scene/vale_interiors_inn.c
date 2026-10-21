@@ -57,9 +57,8 @@
 ///
 /// The exits VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST to
 /// VALE_INTERIORS_INN_TO_VALE_STORM_EAST are taken by the cell codes of the
-/// same numbers, leading to the rest of
-/// Vale (ValeGate, ValeKraden, Vale and ValeStorm) or between this scene's
-/// own parts.
+/// same numbers, leading to the rest of Vale (ValeGate, ValeKraden, Vale and
+/// ValeStorm) or between this scene's own parts.
 
 #include "game_state.h"
 #include "vram_tab.h"

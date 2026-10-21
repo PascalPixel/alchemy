@@ -522,7 +522,7 @@ s32 Field_SearchTile(s32 tile) {
               UiWork_PushValueSlotFar((u16)event->value, 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone, 3);
               BattleParty_ApplyDrain(999, 0);
-              UiWindow_CreateWithLayoutBoundsFar(1);
+              UiWindow_CreateWithLayoutBoundsFar(PARTY_STATUS_SHOW_PP);
               AudioCommand_PlayFar(SE_RECOVERY);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 1,
                                                      1);

@@ -4,15 +4,6 @@
 
 #include "../battle_internal.h"
 
-/// BattleWork.partyStatus: the party status window's flags (PartyStatusDraw,
-/// window/battle_command/party_status.c). 1 adds the PP row to the names and
-/// HP; 3 also asks for the standby Djinn column. It is chosen while the
-/// party can summon (BattleSummon_UpdateAvailability) and drawn only while a
-/// Djinni is on standby. The staging draws partyStatus & ~1,
-/// which without the PP row drops the Djinn column too: names and HP only.
-#define PARTY_STATUS_NO_SUMMONS 1
-#define PARTY_STATUS_SUMMONS 3
-
 /// Battle_RunEncounter's results besides the number of enemies defeated.
 #define ENCOUNTER_PARTY_LOST -1
 #define ENCOUNTER_FLED 999
@@ -180,9 +171,9 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     battle->partyStatus = PARTY_STATUS_SUMMONS;
   else
     battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
-  // The party status window, opened with flags 9: laid out, but erased
+  // The party status window, opened PARTY_STATUS_CLOSED: laid out, but erased
   // until it is drawn (window/battle_command/party_status.c).
-  UiWindow_CreateWithLayoutBoundsFar(9);
+  UiWindow_CreateWithLayoutBoundsFar(PARTY_STATUS_CLOSED);
   Camera_InitDefaultTransform();
   BattleObjPut();
   BattlePresentation_InitializeWorkAndResetState();

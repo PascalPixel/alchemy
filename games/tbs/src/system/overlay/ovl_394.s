@@ -1,13 +1,13 @@
 	.section .bss,"aw",%nobits
 	.space 8
-	.global gKolimaForestBendRecords
-gKolimaForestBendRecords:
+	.global gKolimaForestFloodgateRecords
+gKolimaForestFloodgateRecords:
 	.space 4
-	.global gKolimaForestBendReturned
-gKolimaForestBendReturned:
+	.global gKolimaForestFloodgateReturned
+gKolimaForestFloodgateReturned:
 	.space 4
-	.global gKolimaForestBendLayout
-gKolimaForestBendLayout:
+	.global gKolimaForestFloodgateLayout
+gKolimaForestFloodgateLayout:
 	.space 8
 	.global gKolimaPalette_First
 gKolimaPalette_First:
@@ -16,9 +16,9 @@ gKolimaPalette_First:
 gKolimaPalette_Second:
 	.space 896
 	.space 896
-	.global gKolimaForestBend_ShakeScroll
-gKolimaForestBend_ShakeScroll:
+	.global gKolimaForestFloodgate_ShakeScroll
+gKolimaForestFloodgate_ShakeScroll:
 	.space 12
-	.global gKolimaForestBend_ShakeChance
-gKolimaForestBend_ShakeChance:
+	.global gKolimaForestFloodgate_ShakeChance
+gKolimaForestFloodgate_ShakeChance:
 	.space 4

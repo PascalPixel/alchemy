@@ -330,7 +330,7 @@ gBattle_BackdropScenes:
 	backdrop InteriorBackdrop, VaultInteriors
 	backdrop GomaCaveBackdrop, GomaCaveEntrance
 	backdrop GomaCaveBackdrop, GomaCavePond, GomaCavePillar, GomaCaveWaterway1, KolimaTunnel
-	backdrop KolimaForestBackdrop, KolimaForestBridge, KolimaForestClearing, KolimaForestRiver, KolimaForestBend, KolimaForestTree
+	backdrop KolimaForestBackdrop, KolimaForest1, KolimaForest2, KolimaForest3, KolimaForestFloodgate, KolimaForestTree
 	backdrop TretTreeBranchBackdrop, TretTreeBranch
 	backdrop TretTreeInteriorsBackdrop, TretTreeInteriors
 	backdrop GomaCaveBackdrop, BilibinCaveEntrance, BilibinCave2, BilibinCave1

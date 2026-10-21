@@ -1,21 +1,21 @@
 /// @file
-/// Kolima Forest (KolimaForestBend, scene 43), the fourth of the forest's five
-/// maps, between scene 42 and the map where Tret stands (scene 44). A Floodgate
-/// Switch, beside a sign that reads "Do not touch Floodgate Switch!", raises
-/// and lowers the river: with the water high the logs float (26 pixels up) and
-/// can be rolled along it; with it low they lie on the riverbed. A short log
-/// slides between two places, the leader can jump south across a gap
+/// Kolima Forest (KolimaForestFloodgate, scene 43), the fourth of the forest's
+/// five maps, between scene 42 and the map where Tret stands (scene 44). A
+/// Floodgate Switch, beside a sign that reads "Do not touch Floodgate Switch!",
+/// raises and lowers the river: with the water high the logs float (26 pixels
+/// up) and can be rolled along it; with it low they lie on the riverbed. A
+/// short log slides between two places, the leader can jump south across a gap
 /// (trigger 10), and a chest holds a Fur Coat. The forest keeps its cursed
 /// colours until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// The water level, the short log's place and each log's cells are kept in
-/// gSceneState (gKolimaForestBendLayout, gKolimaForestBendReturned and
-/// gKolimaForestBendRecords), so they survive a battle.
+/// gSceneState (gKolimaForestFloodgateLayout, gKolimaForestFloodgateReturned
+/// and gKolimaForestFloodgateRecords), so they survive a battle.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
 #include "unit/import.h"
-#include "unit/scene/kolima_forest_bend.h"
+#include "unit/scene/kolima_forest_floodgate.h"
 #include "unit/scene/common/kolima_palette.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -55,49 +55,51 @@ enum {
   SIGN = 10 ///< reads a warning. "Do not touch Floodgate Switch!"
 };
 
-static void KolimaForestBend_MarkShortLogCells(void);
-static void KolimaForestBend_CreateLogs(struct BendLog *log);
-static void KolimaForestBend_RollLog(struct BendLog *logs);
+static void KolimaForestFloodgate_MarkShortLogCells(void);
+static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *log);
+static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs);
 
 /// Where the party enters, from scene 42 and from scene 44.
-const struct SceneEntrance *KolimaForestBend_GetEntrances(void) {
-  return gKolimaForestBendEntrances;
+const struct SceneEntrance *KolimaForestFloodgate_GetEntrances(void) {
+  return gKolimaForestFloodgateEntrances;
 }
 
-const struct SceneRegion *KolimaForestBend_GetRegions(void) { return 0; }
+const struct SceneRegion *KolimaForestFloodgate_GetRegions(void) { return 0; }
 
 /// The ways back (scene 42) and on to Tret (scene 44).
-const u32 *KolimaForestBend_GetExits(void) { return gKolimaForestBendExits; }
+const u32 *KolimaForestFloodgate_GetExits(void) {
+  return gKolimaForestFloodgateExits;
+}
 
 /// The short log, the switch and the sign.
-const struct ScenePlacement *KolimaForestBend_GetPlacements(void) {
-  return gKolimaForestBendPlacements;
+const struct ScenePlacement *KolimaForestFloodgate_GetPlacements(void) {
+  return gKolimaForestFloodgatePlacements;
 }
 
 /// The logs, the switch, the sign, the jump and the chest.
-const struct SceneEvent *KolimaForestBend_GetEvents(void) {
-  return gKolimaForestBendEvents;
+const struct SceneEvent *KolimaForestFloodgate_GetEvents(void) {
+  return gKolimaForestFloodgateEvents;
 }
 
 /// Kolima Forest (scene 43), walking into a log: it rolls ahead, and the cells
 /// of the logs are marked again where they now lie.
-static void KolimaForestBend_PushLog(void) {
-  KolimaForestBend_RollLog(gKolimaForestBendRecords);
+static void KolimaForestFloodgate_PushLog(void) {
+  KolimaForestFloodgate_RollLog(gKolimaForestFloodgateRecords);
   Map_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
-  State_StampRecordCells(gKolimaForestBendRecords, 0xff);
-  KolimaForestBend_MarkShortLogCells();
+  State_StampRecordCells(gKolimaForestFloodgateRecords, 0xff);
+  KolimaForestFloodgate_MarkShortLogCells();
 }
 
 /// Kolima Forest (scene 43), walking south into the gap (trigger 10): the
 /// leader jumps across.
-static void KolimaForestBend_JumpSouth(void) { Field_TryJumpForward(); }
+static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
 #include "common/map_panel.h"
 
 /// Gives the short log's column of cells its collision: column 4 at the
 /// west place, column 6 at the east.
-static void KolimaForestBend_MarkShortLogCells(void) {
-  if (*(s16 *)gKolimaForestBendReturned == 1) {
+static void KolimaForestFloodgate_MarkShortLogCells(void) {
+  if (*(s16 *)gKolimaForestFloodgateReturned == 1) {
     Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
   } else {
     Map_CopyCellAttributes(0, 0, 1, 4, 6, 9);
@@ -107,18 +109,18 @@ static void KolimaForestBend_MarkShortLogCells(void) {
 /// Draws the river at its level and sets each log to match: high water floats
 /// the logs 26 pixels up over their own cells, low water lays them on the
 /// riverbed.
-static void KolimaForestBend_DrawWaterLevel(void) {
+static void KolimaForestFloodgate_DrawWaterLevel(void) {
   struct FieldActor *piece;
-  struct BendLog *record = gKolimaForestBendRecords;
+  struct FloodgateLog *record = gKolimaForestFloodgateRecords;
 
-  if (*gKolimaForestBendLayout != 0) {
+  if (*gKolimaForestFloodgateLayout != 0) {
     Map_CopyCells(65, 53, 2, 1, 79, 29);
     Map_CopyCells(65, 40, 2, 4, 15, 28);
   } else {
     Map_CopyCells(65, 50, 2, 5, 79, 25);
   }
 
-  if (*gKolimaForestBendLayout != 0) {
+  if (*gKolimaForestFloodgateLayout != 0) {
     Map_CopyCells(0, 32, 32, 32, 32, 0);
     Map_CopyCells(32, 32, 32, 32, 64, 0);
     Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
@@ -132,7 +134,7 @@ static void KolimaForestBend_DrawWaterLevel(void) {
   while (record->sprite != -1) {
     piece = record->actor;
 
-    if (*gKolimaForestBendLayout == 1) {
+    if (*gKolimaForestFloodgateLayout == 1) {
       Object_SetMode(piece, 4);
       piece->priorityFlags = 3;
       piece->motionFlags = 0;
@@ -154,19 +156,19 @@ static void KolimaForestBend_DrawWaterLevel(void) {
 
   Map_CopyCells(70, 42, 1, 1, 10, 50);
 
-  if (*gKolimaForestBendLayout == 1) {
+  if (*gKolimaForestFloodgateLayout == 1) {
     Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
-    State_StampRecordCells(gKolimaForestBendRecords, 254);
+    State_StampRecordCells(gKolimaForestFloodgateRecords, 254);
   } else {
     Map_CopyCellAttributes(0, 64, 32, 32, 0, 0);
-    State_StampRecordCells(gKolimaForestBendRecords, 255);
+    State_StampRecordCells(gKolimaForestFloodgateRecords, 255);
   }
 
-  KolimaForestBend_MarkShortLogCells();
+  KolimaForestFloodgate_MarkShortLogCells();
 }
 
 /// HBlank callback: selects the captured shake scroll above the split line.
-static void KolimaForestBend_ShakeLines(void) {
+static void KolimaForestFloodgate_ShakeLines(void) {
   u16 line;
   u32 *source;
   volatile u32 *destination;
@@ -177,8 +179,8 @@ static void KolimaForestBend_ShakeLines(void) {
 
   if (line == 227 || line <= 52) {
     if ((((u32)Engine_RandomNext() * 100) >> 16) <
-        gKolimaForestBend_ShakeChance) {
-      source = gKolimaForestBend_ShakeScroll;
+        gKolimaForestFloodgate_ShakeChance) {
+      source = gKolimaForestFloodgate_ShakeScroll;
     }
   }
 
@@ -189,17 +191,17 @@ static void KolimaForestBend_ShakeLines(void) {
 }
 
 /// Captures three background scroll pairs and adds the vertical shake offset.
-static void KolimaForestBend_CaptureShakeScroll(void) {
+static void KolimaForestFloodgate_CaptureShakeScroll(void) {
   u32 *destination;
   const u32 *source;
   u16 *scroll;
 
   source = (const u32 *)((u8 *)gBgScroll + 4);
-  destination = gKolimaForestBend_ShakeScroll;
+  destination = gKolimaForestFloodgate_ShakeScroll;
   *destination++ = *source++;
   *destination++ = *source++;
   *destination = *source;
-  scroll = (u16 *)gKolimaForestBend_ShakeScroll;
+  scroll = (u16 *)gKolimaForestFloodgate_ShakeScroll;
   scroll[1] += 0xb0;
   scroll[3] += 0xb0;
   scroll[5] += 0xb0;
@@ -209,7 +211,7 @@ static void KolimaForestBend_CaptureShakeScroll(void) {
 /// flipped the switch." The camera turns to the floodgate, which opens or
 /// closes; the ground rumbles and the top of the screen shakes harder for 100
 /// frames, and the river rises or falls.
-static void KolimaForestBend_FlipFloodgateSwitch(void) {
+static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 
   Engine_EventBegin();
@@ -218,7 +220,7 @@ static void KolimaForestBend_FlipFloodgateSwitch(void) {
   Engine_CameraWaitForMove();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Engine_AudioPlayCue(SE_232);
-  if (*gKolimaForestBendLayout == 0) {
+  if (*gKolimaForestFloodgateLayout == 0) {
     Actor_SetPosition(FLOODGATE_SWITCH, PIXELS(256), PIXELS(462));
     Map_CopyCells(77, 34, 1, 2, 83, 25);
     Engine_TaskWait(3);
@@ -263,8 +265,8 @@ static void KolimaForestBend_FlipFloodgateSwitch(void) {
     Map_CopyCells(65, 50, 2, 5, 79, 25);
     Engine_TaskWait(30);
   }
-  if (*gKolimaForestBendLayout == 0) {
-    Map_DrawCellPanel(9, 19, 16, 5, *gKolimaForestBendLayout, 9, 30);
+  if (*gKolimaForestFloodgateLayout == 0) {
+    Map_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateLayout, 9, 30);
     Map_DrawCellPanel(9, 51, 16, 5, 1, 9, 30);
     Map_DrawCellPanel(41, 51, 16, 5, 2, 9, 30);
   } else {
@@ -275,20 +277,20 @@ static void KolimaForestBend_FlipFloodgateSwitch(void) {
 
   // The shake: each frame captures the scroll, and the HBlank handler shows
   // the upper lines shifted, more often as the chance climbs to 100%.
-  gKolimaForestBend_ShakeChance = 0;
-  FieldScheduler_AddCallback(KolimaForestBend_CaptureShakeScroll, 0xc80);
+  gKolimaForestFloodgate_ShakeChance = 0;
+  FieldScheduler_AddCallback(KolimaForestFloodgate_CaptureShakeScroll, 0xc80);
   Engine_TaskWait(1);
-  Runtime_SetIrqHandler(IRQ_HBLANK, 0, KolimaForestBend_ShakeLines);
+  Runtime_SetIrqHandler(IRQ_HBLANK, 0, KolimaForestFloodgate_ShakeLines);
   Engine_AudioPlayCue(SE_231);
-  gKolimaForestBend_ShakeChance = 0;
+  gKolimaForestFloodgate_ShakeChance = 0;
   do {
     Engine_TaskWait(1);
-    nextShakeChance = (gKolimaForestBend_ShakeChance + 1);
-    gKolimaForestBend_ShakeChance += 1;
+    nextShakeChance = (gKolimaForestFloodgate_ShakeChance + 1);
+    gKolimaForestFloodgate_ShakeChance += 1;
   } while (nextShakeChance <= 100);
   Engine_AudioPlayCue(SE_289);
-  if (*gKolimaForestBendLayout == 0) {
-    Map_DrawCellPanel(9, 19, 16, 5, *gKolimaForestBendLayout, 9, 19);
+  if (*gKolimaForestFloodgateLayout == 0) {
+    Map_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateLayout, 9, 19);
     Map_DrawCellPanel(9, 51, 16, 5, 1, 9, 19);
     Map_DrawCellPanel(41, 51, 16, 5, 2, 9, 19);
   } else {
@@ -299,16 +301,16 @@ static void KolimaForestBend_FlipFloodgateSwitch(void) {
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(IRQ_HBLANK, 0, 0);
   Engine_TaskWait(1);
-  Engine_TaskRemoveCallback(KolimaForestBend_CaptureShakeScroll);
-  *(u16 *)gKolimaForestBendLayout ^= 1;
-  KolimaForestBend_DrawWaterLevel();
+  Engine_TaskRemoveCallback(KolimaForestFloodgate_CaptureShakeScroll);
+  *(u16 *)gKolimaForestFloodgateLayout ^= 1;
+  KolimaForestFloodgate_DrawWaterLevel();
   Engine_MapRedraw();
   Engine_EventEnd();
 }
 
 /// Kolima Forest (scene 43), walking west into the short log: the leader
 /// shoves it west to x 72.
-static void KolimaForestBend_PushShortLogWest(void) {
+static void KolimaForestFloodgate_PushShortLogWest(void) {
 
   Engine_EventBegin();
   Engine_ActorSetAnimation(0, 8);
@@ -329,13 +331,13 @@ static void KolimaForestBend_PushShortLogWest(void) {
   Engine_AudioPlayCue(SE_213);
   Map_CopyCellAttributes(5, 9, 1, 4, 6, 9);
   Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
-  *gKolimaForestBendReturned = 1;
+  *gKolimaForestFloodgateReturned = 1;
   Engine_EventEnd();
 }
 
 /// Kolima Forest (scene 43), walking east into the short log: the leader
 /// shoves it east to x 104.
-static void KolimaForestBend_PushShortLogEast(void) {
+static void KolimaForestFloodgate_PushShortLogEast(void) {
 
   Engine_EventBegin();
   Engine_ActorSetAnimation(0, 8);
@@ -356,7 +358,7 @@ static void KolimaForestBend_PushShortLogEast(void) {
   Engine_AudioPlayCue(SE_213);
   Map_CopyCellAttributes(5, 9, 1, 4, 4, 9);
   Map_CopyCellAttributes(0, 0, 1, 4, 6, 9);
-  *gKolimaForestBendReturned = 0;
+  *gKolimaForestFloodgateReturned = 0;
   Engine_EventEnd();
 }
 
@@ -364,25 +366,27 @@ static void KolimaForestBend_PushShortLogEast(void) {
 /// from the defaults with the water high; the logs are made and the river is
 /// drawn at its level. The forest keeps its cursed colours until the curse is
 /// lifted.
-s32 KolimaForestBend_Initialize(void) {
+s32 KolimaForestFloodgate_Initialize(void) {
   struct FieldActor *actor;
 
-  gKolimaForestBendReturned = (u16 *)gSceneState;
-  gKolimaForestBendLayout = (s16 *)gSceneState + 1;
+  gKolimaForestFloodgateReturned = (u16 *)gSceneState;
+  gKolimaForestFloodgateLayout = (s16 *)gSceneState + 1;
   // The return flag and water level occupy the first two halfwords.
-  gKolimaForestBendRecords = (struct BendLog *)(gSceneState + 2 * sizeof(u16));
+  gKolimaForestFloodgateRecords =
+      (struct FloodgateLog *)(gSceneState + 2 * sizeof(u16));
   Map_CopyCells(32, 0, 64, 32, 0, 64);
   Map_CopyCellAttributes(0, 0, 32, 32, 0, 64);
   Map_CopyCellAttributes(32, 0, 32, 32, 0, 32);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-    Dma_Set(gKolimaForestBend_DefaultRecords, gKolimaForestBendRecords,
+    Dma_Set(gKolimaForestFloodgate_DefaultRecords,
+            gKolimaForestFloodgateRecords,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x12, REG_DMA3);
-    *gKolimaForestBendReturned = 0;
-    *gKolimaForestBendLayout = 1;
+    *gKolimaForestFloodgateReturned = 0;
+    *gKolimaForestFloodgateLayout = 1;
   }
-  KolimaForestBend_CreateLogs(gKolimaForestBendRecords);
-  State_StampRecordCells(gKolimaForestBend_DefaultRecords, 255);
-  KolimaForestBend_DrawWaterLevel();
+  KolimaForestFloodgate_CreateLogs(gKolimaForestFloodgateRecords);
+  State_StampRecordCells(gKolimaForestFloodgate_DefaultRecords, 255);
+  KolimaForestFloodgate_DrawWaterLevel();
   Engine_ActorSetAnimation(FLOODGATE_SWITCH, 0);
   Object_GetById(FLOODGATE_SWITCH)->motionFlags = 0;
   actor = Object_GetById(SIGN);
@@ -396,7 +400,7 @@ s32 KolimaForestBend_Initialize(void) {
 }
 
 /// Makes each log at the middle of its four cells, standing on the ground.
-static void KolimaForestBend_CreateLogs(struct BendLog *entry) {
+static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
   struct FieldActor *actor;
   s32 height;
   s32 x;
@@ -428,9 +432,9 @@ static void KolimaForestBend_CreateLogs(struct BendLog *entry) {
 }
 
 /// Writes a collision code into the four cells of each log.
-void State_StampRecordCells(const struct BendLog *records, s32 value) {
+void State_StampRecordCells(const struct FloodgateLog *records, s32 value) {
 
-  const struct BendLog *record = records;
+  const struct FloodgateLog *record = records;
   if (record->sprite == -1)
     return;
   do {
@@ -452,8 +456,8 @@ void State_StampRecordCells(const struct BendLog *records, s32 value) {
 }
 
 /// The log lying across the cell, or none.
-static struct BendLog *KolimaForestBend_FindLogAt(struct BendLog *run, s32 x,
-                                                  s32 y) {
+static struct FloodgateLog *
+KolimaForestFloodgate_FindLogAt(struct FloodgateLog *run, s32 x, s32 y) {
   while (run->sprite != -1) {
     s32 x0 = run->x;
     s32 x1 = x0;
@@ -474,7 +478,7 @@ static struct BendLog *KolimaForestBend_FindLogAt(struct BendLog *run, s32 x,
 
 /// Whether four cells from the one given, across or down, are free for a log:
 /// none is marked 0xff or holds a wall.
-static s32 KolimaForestBend_CheckLogFits(s32 x, s32 z, s32 mode) {
+static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
   s32 i;
 
   for (i = 0; i <= 3; i++) {
@@ -495,10 +499,10 @@ static s32 KolimaForestBend_CheckLogFits(s32 x, s32 z, s32 mode) {
 
 /// Finds the log ahead of the leader and rolls it on, a cell at a time, up to
 /// eleven cells or until a cell is not free; the leader follows its shove.
-static void KolimaForestBend_RollLog(struct BendLog *runs) {
+static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   struct FieldActor *actor;
   struct FieldWork *work;
-  struct BendLog *run;
+  struct FloodgateLog *run;
   s32 point[3];
   s32 facing;
   s32 moved;
@@ -513,16 +517,16 @@ static void KolimaForestBend_RollLog(struct BendLog *runs) {
   SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + 0x80000, actor->y.fixed,
              (actor->z.fixed & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x100000, facing, point);
-  run = KolimaForestBend_FindLogAt(runs, point[0] / 0x100000,
-                                   point[2] / 0x100000);
+  run = KolimaForestFloodgate_FindLogAt(runs, point[0] / 0x100000,
+                                        point[2] / 0x100000);
   if (run == 0)
     return;
   for (i = 0; i <= 10; i++) {
     point[0] = run->x << 20;
     point[2] = run->z << 20;
     Vector_AddPolarOffset(0x100000, facing, point);
-    if (KolimaForestBend_CheckLogFits(point[0] / 0x100000, point[2] / 0x100000,
-                                      run->vertical) != 0)
+    if (KolimaForestFloodgate_CheckLogFits(
+            point[0] / 0x100000, point[2] / 0x100000, run->vertical) != 0)
       break;
     moved = 1;
     if (run->vertical == 0) {
@@ -548,15 +552,15 @@ static void KolimaForestBend_RollLog(struct BendLog *runs) {
   actor->speed = 0x8000;
   actor->acceleration = 0x3333;
   Event_PlayCue(SE_239);
-  Object_SetMode(actor, gKolimaForestBend_PushAnimations[quarter]);
+  Object_SetMode(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
   Engine_ObjectSetPosition(actor, x, 0, z);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(0, 2);
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->camera, (s32)actor);
   Actor_SetSpeed(0, 0x4ccc, 0x3333);
-  Actor_SetDestinationOffset(0, gKolimaForestBend_PushStepX[quarter],
-                             gKolimaForestBend_PushStepZ[quarter]);
+  Actor_SetDestinationOffset(0, gKolimaForestFloodgate_PushStepX[quarter],
+                             gKolimaForestFloodgate_PushStepZ[quarter]);
   Engine_EventWait(24);
   Engine_ActorSetAnimation(0, 1);
   FieldObject_WaitForMove(actor);
@@ -569,10 +573,10 @@ static void KolimaForestBend_RollLog(struct BendLog *runs) {
 
 #include "common/kolima_palette.h"
 
-/// The logs on a first visit, as struct BendLog: sprite 0xcd runs north to
+/// The logs on a first visit, as struct FloodgateLog: sprite 0xcd runs north to
 /// south and 0xcf west to east.
 // clang-format off
-struct BendLog gKolimaForestBend_DefaultRecords[] = {
+struct FloodgateLog gKolimaForestFloodgate_DefaultRecords[] = {
     {0xcd, 11, 9, 1, NULL},
     {0xcf, 12, 12, 0, NULL},
     {0xcf, 17, 12, 0, NULL},
@@ -581,28 +585,28 @@ struct BendLog gKolimaForestBend_DefaultRecords[] = {
     {-1},
 };
 
-u8 gKolimaForestBend_PushAnimations[] = {2, 2, 3, 3};
+u8 gKolimaForestFloodgate_PushAnimations[] = {2, 2, 3, 3};
 
-s8 gKolimaForestBend_PushStepX[] = {8, 0, -8, 0};
+s8 gKolimaForestFloodgate_PushStepX[] = {8, 0, -8, 0};
 
-s8 gKolimaForestBend_PushStepZ[] = {0, 8, 0, -8};
+s8 gKolimaForestFloodgate_PushStepZ[] = {0, 8, 0, -8};
 
-struct SceneEntrance gKolimaForestBendEntrances[] = {
+struct SceneEntrance gKolimaForestFloodgateEntrances[] = {
     { 0, CONDITION_ALWAYS, 407, 0, 276, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { KOLIMA_FOREST_BEND_FROM_KOLIMA_FOREST_RIVER, CONDITION_ALWAYS, 50, 32, 369, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { KOLIMA_FOREST_BEND_FROM_KOLIMA_FOREST_TREE, CONDITION_ALWAYS, 162, 32, 84, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_3, CONDITION_ALWAYS, 50, 32, 369, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE, CONDITION_ALWAYS, 162, 32, 84, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
 /// Exit 1 back (scene 42), exit 2 on to Tret (scene 44).
-u32 gKolimaForestBendExits[] = {
-    SCENE_EXITS(KolimaForestBend),
-    SCENE_EXIT(KOLIMA_FOREST_BEND_TO_KOLIMA_FOREST_RIVER, KolimaForestRiver, KOLIMA_FOREST_RIVER_FROM_KOLIMA_FOREST_BEND),
-    SCENE_EXIT(KOLIMA_FOREST_BEND_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_BEND),
+u32 gKolimaForestFloodgateExits[] = {
+    SCENE_EXITS(KolimaForestFloodgate),
+    SCENE_EXIT(KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_3, KolimaForest3, KOLIMA_FOREST_3_FROM_KOLIMA_FOREST_FLOODGATE),
+    SCENE_EXIT(KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_FLOODGATE),
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gKolimaForestBendPlacements[] = {
+struct ScenePlacement gKolimaForestFloodgatePlacements[] = {
     { 0xcd, CONDITION_ALWAYS, 7,
         PIXELS(104), 0, PIXELS(176), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xd6, CONDITION_ALWAYS, 7,
@@ -613,20 +617,20 @@ struct ScenePlacement gKolimaForestBendPlacements[] = {
 };
 // clang-format on
 
-struct SceneEvent gKolimaForestBendEvents[] = {
+struct SceneEvent gKolimaForestFloodgateEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestBend_JumpSouth)},
+     EVENT_SCRIPT(KolimaForestFloodgate_JumpSouth)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestBend_PushLog)},
+     EVENT_SCRIPT(KolimaForestFloodgate_PushLog)},
     {TOUCH_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestBend_PushShortLogWest)},
+     EVENT_SCRIPT(KolimaForestFloodgate_PushShortLogWest)},
     {TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestBend_PushShortLogEast)},
+     EVENT_SCRIPT(KolimaForestFloodgate_PushShortLogEast)},
     {EVENT_TALK, SIGN, CONDITION_ALWAYS, MSGNO(MsgKolimaDoNotTouchFloodgate)},
     {SEARCH(SEARCH_UNNAMED), FLOODGATE_SWITCH, CONDITION_ALWAYS,
-     EVENT_SCRIPT(KolimaForestBend_FlipFloodgateSwitch)},
+     EVENT_SCRIPT(KolimaForestFloodgate_FlipFloodgateSwitch)},
     // A Fur Coat (item 0x5b).
     {SEARCH(SEARCH_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
     {SCENE_EVENTS_END},

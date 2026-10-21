@@ -107,7 +107,8 @@ struct T {
 };
 /// A log in Kolima Forest lying across four map cells, from its first cell
 /// across or, when vertical, down. No code in the tree uses it; the bend reads
-/// its logs as struct BendLog (kolima_forest_bend.h), of the same 12 bytes.
+/// its logs as struct FloodgateLog (kolima_forest_floodgate.h), of the same 12
+/// bytes.
 struct TileRun {
   s16 id;
   s16 x; ///< map cells
@@ -138,12 +139,12 @@ extern s32 gFourObjectMotion_ResourceIds[];
 extern s32 gTolbiShipInteriors_ShakeTimer;
 /// The bend's water level in gSceneState's second halfword: 1 high (the logs
 /// float), 0 low; the floodgate switch flips it.
-extern s16 *gKolimaForestBendLayout;
-struct BendLog;
+extern s16 *gKolimaForestFloodgateLayout;
+struct FloodgateLog;
 /// The bend's logs in gSceneState from byte 4, so they survive a battle.
-extern struct BendLog *gKolimaForestBendRecords;
+extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 /// The short log's place in gSceneState's first halfword: 1 west, 0 east.
-extern u16 *gKolimaForestBendReturned;
+extern u16 *gKolimaForestFloodgateReturned;
 #ifndef OWN_gObjectSlots
 /// Work slot 5: the 64 field objects, 0x70 bytes each.
 extern struct ObjectRuntime *gObjectSlots;
@@ -170,10 +171,10 @@ extern const u8 gWorldMapPalettes[];
 extern s32 gKalay_DanceStep;
 /// The percent chance that a line above the split shows the shaken scroll: 0
 /// when the rumble starts (SE_231), then a point higher each frame up to 101
-/// (KolimaForestBend_FlipFloodgateSwitch).
-extern u32 gKolimaForestBend_ShakeChance;
+/// (KolimaForestFloodgate_FlipFloodgateSwitch).
+extern u32 gKolimaForestFloodgate_ShakeChance;
 /// The background scroll words captured each frame for the shaken lines.
-extern u32 gKolimaForestBend_ShakeScroll[];
+extern u32 gKolimaForestFloodgate_ShakeScroll[];
 /// The healthy colours: the first 448 colours (896 bytes) of the colour
 /// buffer, kept by KolimaPalette_SaveFirst; the array is 1792 bytes. Kolima
 /// Forest's scenes 41 and 42 each define one.

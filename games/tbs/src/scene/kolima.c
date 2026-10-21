@@ -522,7 +522,7 @@ static __inline__ void Kolima_NodTogether(void) {
 /// his gentle side and look for Tret deep within the forest. Whatever the
 /// leader answers to Ivan and Garet, the party resolves to save Kolima. Mia's
 /// lines and moves are skipped without her. Sets FLAG_KOLIMA_CURSE_WITNESSED;
-/// KolimaForestBridge_WitnessForestCurse plays the same scene in Kolima Forest.
+/// KolimaForest1_WitnessForestCurse plays the same scene in Kolima Forest.
 static void Kolima_WitnessForestCurse(void) {
   struct FieldActor *actor;
   s32 *partyLayout;

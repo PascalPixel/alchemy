@@ -749,24 +749,24 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 390	text	games/tbs/src/scene/entry/kolima_interiors
 390	text	games/tbs/src/scene/kolima_interiors
 390	text	games/tbs/src/scene/import/kolima_interiors
-391	text	games/tbs/src/scene/entry/kolima_forest_bridge
-391	text	games/tbs/src/scene/kolima_forest_bridge
-391	text	games/tbs/src/scene/import/kolima_forest_bridge
+391	text	games/tbs/src/scene/entry/kolima_forest1
+391	text	games/tbs/src/scene/kolima_forest1
+391	text	games/tbs/src/scene/import/kolima_forest1
 391	text	libgcc.a:_call_via_rX
-391	bss	games/tbs/src/scene/kolima_forest_bridge	.bss
-392	text	games/tbs/src/scene/entry/kolima_forest_clearing
-392	text	games/tbs/src/scene/kolima_forest_clearing
-392	text	games/tbs/src/scene/import/kolima_forest_clearing
+391	bss	games/tbs/src/scene/kolima_forest1	.bss
+392	text	games/tbs/src/scene/entry/kolima_forest2
+392	text	games/tbs/src/scene/kolima_forest2
+392	text	games/tbs/src/scene/import/kolima_forest2
 392	text	libgcc.a:_call_via_rX
-392	bss	games/tbs/src/scene/kolima_forest_clearing	.bss
-393	text	games/tbs/src/scene/entry/kolima_forest_river
-393	text	games/tbs/src/scene/kolima_forest_river
-393	text	games/tbs/src/scene/import/kolima_forest_river
+392	bss	games/tbs/src/scene/kolima_forest2	.bss
+393	text	games/tbs/src/scene/entry/kolima_forest3
+393	text	games/tbs/src/scene/kolima_forest3
+393	text	games/tbs/src/scene/import/kolima_forest3
 393	text	libgcc.a:_call_via_rX
-393	bss	games/tbs/src/scene/kolima_forest_river	.bss
-394	text	games/tbs/src/scene/entry/kolima_forest_bend
-394	text	games/tbs/src/scene/kolima_forest_bend
-394	text	games/tbs/src/scene/import/kolima_forest_bend
+393	bss	games/tbs/src/scene/kolima_forest3	.bss
+394	text	games/tbs/src/scene/entry/kolima_forest_floodgate
+394	text	games/tbs/src/scene/kolima_forest_floodgate
+394	text	games/tbs/src/scene/import/kolima_forest_floodgate
 394	bss	resource_394_overlay	.bss
 395	text	games/tbs/src/scene/entry/kolima_forest_tree
 395	text	games/tbs/src/scene/kolima_forest_tree

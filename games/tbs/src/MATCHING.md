@@ -150,7 +150,7 @@ These turn up all over the game.
     (`RenderOutput_UpdateScaleAnimation`);
   - `*(s32 *)&actor->y` for the union's `actor->y.fixed`, because the member
     form schedules the step to the next log after the store
-    (`KolimaForestBend_CreateLogs`, 1 of 82 instructions in tbs-en);
+    (`KolimaForestFloodgate_CreateLogs`, 1 of 82 instructions in tbs-en);
   - `*(u8 *)&actor->priorityFlags`, which the compiler doesn't treat as a
     struct reference; written as member stores, the loop's registers are
     allocated differently (Crossbone Isle's `Event_MovePillar`, 100 of 265

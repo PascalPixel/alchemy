@@ -715,7 +715,7 @@ s32 KolimaForestTree_Initialize(void) {
   Engine_TaskWait(1);
   Engine_ActorSetChildValue(ACTOR_TRETS_WRATHFUL_SIDE, 15);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  gGameState.retreatScene = (s32)&SceneId_KolimaForestBridge;
+  gGameState.retreatScene = (s32)&SceneId_KolimaForest1;
   gGameState.retreatEntrance = 4;
   if (!Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);
@@ -1009,8 +1009,8 @@ s32 gKolimaForestTree_RejoinPartyActions[] = {
 
 struct SceneEntrance gKolimaForestTreeEntrances[] = {
     {0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, 0, 0, 512, 448, 0},
-    {KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_BEND, CONDITION_ALWAYS, 136, 0, 424,
-     FACING_NORTH, 0, 0, 0, 512, 448, 0},
+    {KOLIMA_FOREST_TREE_FROM_KOLIMA_FOREST_FLOODGATE, CONDITION_ALWAYS, 136, 0,
+     424, FACING_NORTH, 0, 0, 0, 512, 448, 0},
     {KOLIMA_FOREST_TREE_FROM_TRET_TREE_INTERIORS, CONDITION_ALWAYS, 328, 16,
      200, FACING_SOUTH, 0, 0, 0, 512, 448, 0},
     {SCENE_TABLE_END},
@@ -1024,7 +1024,7 @@ struct SceneRegion gKolimaForestTreeRegions[] = {
 
 u32 gKolimaForestTreeExits[] = {
     SCENE_EXITS(KolimaForestTree),
-    SCENE_EXIT(KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_BEND, KolimaForestBend, KOLIMA_FOREST_BEND_FROM_KOLIMA_FOREST_TREE),
+    SCENE_EXIT(KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_TREE),
     SCENE_EXIT(KOLIMA_FOREST_TREE_TO_TRET_TREE_INTERIORS, TretTreeInteriors, TRET_TREE_INTERIORS_FROM_KOLIMA_FOREST_TREE),
     SCENE_EXITS_END,
 };

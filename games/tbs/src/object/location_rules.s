@@ -23,9 +23,9 @@ gBattle_LocationRules:
 	location GomaCavePillar, -1, -1, 1, 10
 	location GomaCaveWaterway1, -1, -1, 1, 11
 	location KolimaTunnel, -1, -1, 1, 15
-	location KolimaForestBridge, -1, -1, 1, 16
-	location KolimaForestClearing, -1, -1, 1, 17
-	location KolimaForestRiver, -1, -1, 0, 18
+	location KolimaForest1, -1, -1, 1, 16
+	location KolimaForest2, -1, -1, 1, 17
+	location KolimaForest3, -1, -1, 0, 18
 	location KolimaForestTree, -1, -1, 1, 19
 	location TretTreeBranch, 1, -1, 1, 20
 	location TretTreeBranch, 2, -1, 1, 20

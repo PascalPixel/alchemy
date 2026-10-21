@@ -126,16 +126,23 @@ enum {
 enum {
   /// The storms, five in each scene.
   ACTOR_FIRST_STORM = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_FOURTH_STORM = ACTOR_FIRST_STORM + 3,
   ACTOR_LAST_STORM = ACTOR_FIRST_STORM + 4,
   /// In the second scene the last storm gives chase.
+  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_CHASING_STORM = ACTOR_LAST_STORM,
   /// Iodem, who steps out of the party to talk and then rejoins it.
+  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM,
-  /// In the second scene, seen only while Reveal lasts, drawn as
-  /// Goma Cave's stone pillars. XXX: no text names it here.
-  ACTOR_REVEALED_OBJECT,
-  ACTOR_FLASH ///< in the second scene, the Mars Djinni Flash
+  /// In the second scene, seen only while Reveal lasts, drawn as Goma Cave's
+  /// stone pillars.
+  /// ★ Named from what the player sees: its sprite, SPRITE_STONE_PILLAR, a
+  /// stone pillar (its render)
+  ACTOR_REVEALED_PILLAR,
+  /// In the second scene, the Mars Djinni.
+  /// ★ Named from the game: "Flash" (MsgDjinnName)
+  ACTOR_FLASH
 };
 
 /// Frames a caught party spins before the storm carries it away.
@@ -681,9 +688,9 @@ static s32 Event_RevealEnds(void) {
   s32 removalResult;
 #endif
   if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
-    Object_GetById(ACTOR_REVEALED_OBJECT)->priorityFlags = 2;
-    Object_GetById(ACTOR_REVEALED_OBJECT)->motionFlags = 3;
-    Actor_SetPosition(ACTOR_REVEALED_OBJECT, 0, 0);
+    Object_GetById(ACTOR_REVEALED_PILLAR)->priorityFlags = 2;
+    Object_GetById(ACTOR_REVEALED_PILLAR)->motionFlags = 3;
+    Actor_SetPosition(ACTOR_REVEALED_PILLAR, 0, 0);
     Map_CopyCellAttributes(16, 44, 1, 1, 15, 44);
     MapObject_SetPosition(100, 0, 0);
     Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
@@ -700,7 +707,7 @@ static s32 Event_RevealEnds(void) {
   }
 }
 
-/// Reveal in SuhallaDesertSouth: the hidden object appears at 248, 712,
+/// Reveal in SuhallaDesertSouth: the hidden stone pillar appears at 248, 712,
 /// map cells and the map object at 100 change, and a palette color pulses.
 #ifdef UBFIX
 static void Event_RevealStarts(void) {
@@ -708,9 +715,9 @@ static void Event_RevealStarts(void) {
 static s32 Event_RevealStarts(void) {
 #endif
   if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {
-    Object_GetById(ACTOR_REVEALED_OBJECT)->priorityFlags = 2;
-    Object_GetById(ACTOR_REVEALED_OBJECT)->motionFlags = 0;
-    Actor_SetPosition(ACTOR_REVEALED_OBJECT, PIXELS(248), PIXELS(712));
+    Object_GetById(ACTOR_REVEALED_PILLAR)->priorityFlags = 2;
+    Object_GetById(ACTOR_REVEALED_PILLAR)->motionFlags = 0;
+    Actor_SetPosition(ACTOR_REVEALED_PILLAR, PIXELS(248), PIXELS(712));
     Map_CopyCellAttributes(31, 95, 1, 1, 15, 44);
     MapObject_SetPosition(100, -1, -1);
     Marker_MoveLeaderAway();

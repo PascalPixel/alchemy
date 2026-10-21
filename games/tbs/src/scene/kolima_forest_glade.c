@@ -90,8 +90,9 @@ const struct SceneEvent *KolimaForestGlade_GetEvents(void) {
   return gKolimaForestGlade_Events;
 }
 
-/// On entry the Nut floats until it is caught, the logs mark the cells they
-/// cover, and the forest keeps its cursed colours until the curse is lifted.
+/// Sets up the floating Nut and the logs on entry. The Nut floats until it is
+/// caught, the logs mark the cells they cover, and the forest keeps its cursed
+/// colours until the curse is lifted.
 s32 KolimaForestGlade_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

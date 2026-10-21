@@ -42,8 +42,9 @@
 ///   fled to Lunpa; the roofer explains it is named after Lunpa, a noble
 ///   thief, and the thieves add that Donpa's son, Dodonpa, is evil. They ask to
 ///   be let go and attack (Event_FreeRooferAndConfrontThieves,
-///   FLAG_VAULT_THIEVES_CONFRONTED, encounter 5 of table 12). A loss returns
-///   to VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES, where they gloat that the
+///   FLAG_VAULT_THIEVES_CONFRONTED, slot 5 of
+///   ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT). A loss returns to
+///   VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES, where they gloat that the
 ///   party will stay as their hostages and warn them to keep quiet if they want
 ///   to help the roofer, and the party comes to in the Vault Sanctum
 ///   (VaultInteriors_LoseToThieves); coming back up replays the challenge
@@ -1420,7 +1421,7 @@ static void Event_FreeRooferAndConfrontThieves(void) {
   Event_SetNextDestination(base, 17);
   Event_SetDefeatDestination(base, 16);
   Battle_SetStart(BATTLE_START_SCENE);
-  Field_RequestBattleFromEncounterTable(12, 5);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
   Engine_EventEnd();
 }
 
@@ -2296,7 +2297,7 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
   Event_SetNextDestination((s32)&SceneId_VaultInteriors, 17);
   Event_SetDefeatDestination((s32)&SceneId_VaultInteriors, 16);
   Battle_SetStart(BATTLE_START_SCENE);
-  Field_RequestBattleFromEncounterTable(12, 5);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
 }
 
 /// Counts the Venus Djinn Ivan holds, which he gives back before he leaves the

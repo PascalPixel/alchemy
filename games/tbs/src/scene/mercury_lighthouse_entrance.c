@@ -385,7 +385,8 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   // The second slot of the encounter zone of Tret Tree's and Mercury
   // Lighthouse's scripted battles: the Lizard Man.
-  Field_RequestBattleFromEncounterTable(36, 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
+                                        1);
   Engine_EventEnd();
 }
 

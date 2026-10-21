@@ -406,21 +406,24 @@ static void AltinPeak_FightFirstWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakFirstWaterBeast,
                            ENTRANCE_AFTER_BATTLE);
-  Field_RequestBattleFromEncounterTable(53, 2);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
 static void AltinPeak_FightSecondWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakSecondWaterBeast,
                            ENTRANCE_AFTER_BATTLE);
-  Field_RequestBattleFromEncounterTable(53, 2);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
 static void AltinPeak_FightThirdWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakThirdWaterBeast,
                            ENTRANCE_AFTER_BATTLE);
-  Field_RequestBattleFromEncounterTable(53, 2);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
 /// Move on AltinPeakSpritz's pillar: the cell it left becomes free again and
@@ -2043,7 +2046,8 @@ static void AltinPeak_StartHydrosBattle(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_AltinPeakHydrosStatue,
                            ENTRANCE_AFTER_BATTLE);
-  Field_RequestBattleFromEncounterTable(53, 3);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 3);
 }
 
 /// Scheduler task while the statue sinks: it flickers every other frame.

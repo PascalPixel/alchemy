@@ -14,9 +14,10 @@
 /// its spot, and Force on a hiding place brings its ape out. Most turn to the
 /// leader, point the way on and leave; two first bolt to a second hiding place;
 /// and one in the first area and one in the third leap at the leader instead,
-/// starting a battle with an Ape (encounter table 53, slot 0). An ape stays
-/// gone once out, and logs pushed into the river stay there, for as long
-/// as the party is in the forest (place flags from FLAG_PLACE_TEMP_00).
+/// starting a battle with an Ape (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN,
+/// slot 0). An ape stays gone once out, and logs pushed into the river stay
+/// there, for as long as the party is in the forest (place flags from
+/// FLAG_PLACE_TEMP_00).
 ///
 /// - First area (SceneId_MogallForestSign). Arriving the first time, an ape
 /// peeks out at the
@@ -32,7 +33,8 @@
 ///   with Move, and a chest holds an Elven Shirt. Touching cell code 22 the
 ///   first time, the east ape leads the party south to a hiding place
 ///   (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE); there (cell code 23) the Killer
-///   Ape bursts out to fight (encounter table 53, slot 1), and coming back at
+///   Ape bursts out to fight (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN,
+///   slot 1), and coming back at
 ///   MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS marks it beaten
 ///   (FLAG_MOGALL_FOREST_KILLER_APE_BEATEN). Entering at
 ///   MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER or
@@ -503,7 +505,7 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
 
 /// Mogall Forest, the first area: Force on the hostile ape's hiding place. It
 /// comes out angry, leaps at the leader and the battle with an Ape begins
-/// (encounter table 53, slot 0).
+/// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0).
 static void MogallForest_FirstArea_ApeAttacks(void) {
   struct FieldActor *creature;
 
@@ -537,7 +539,8 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
 
   Battle_SetStart(BATTLE_START_SCENE);
 
-  Field_RequestBattleFromEncounterTable(53, 0);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
 
   Engine_EventEnd();
 }
@@ -978,7 +981,8 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   Engine_EventWait(10);
   Engine_GameFlagSet(FLAG_THIRD_AREA_HOSTILE_APE_OUT);
   Battle_SetStart(BATTLE_START_SCENE);
-  Field_RequestBattleFromEncounterTable(53, 0);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 0);
   Engine_EventEnd();
 }
 
@@ -1158,9 +1162,9 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
 
 /// Mogall Forest, the third area: touching cell code 23 until the Killer Ape
 /// is beaten. The hiding place shakes twice and out comes the Killer Ape, the
-/// east ape's actor a fifth again as big, to fight (encounter table 53, slot
-/// 1); the party comes back at
-/// MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS.
+/// east ape's actor a fifth again as big, to fight
+/// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 1); the party comes back
+/// at MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS.
 static void MogallForest_KillerApeAttacks(void) {
   struct Vector3 velocity;
   struct Vector3 *emissionVelocity;
@@ -1229,7 +1233,8 @@ static void MogallForest_KillerApeAttacks(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_MogallForestKillerApe,
                            MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS);
-  Field_RequestBattleFromEncounterTable(53, 1);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 1);
   Engine_EventEnd();
 }
 

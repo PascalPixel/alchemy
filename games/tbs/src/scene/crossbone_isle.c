@@ -28,8 +28,9 @@
 ///   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR in the first).
 ///   Each has two doors in its north wall into a side room of its own. The
 ///   first time the party walks into the east door (Event_OpenEastDoor), the
-///   monsters behind it attack: encounter table 63 for the first four rooms and
-///   84 for the next five, one group per room. Back from the battle
+///   monsters behind it attack: ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS for
+///   the first four rooms and ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS for the
+///   next five, one group per room. Back from the battle
 ///   (ENTRANCE_AFTER_BATTLE) the door opens and the party walks through, and
 ///   from then on it simply opens (one flag per room from
 ///   FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED); the west door always opens.
@@ -46,10 +47,10 @@
 /// - Crossbone Isle Cave (SceneId_CrossboneIslePier), the ledge past the
 ///   ninth floor where a wooden pier leads out to the Pirate Ship.
 /// - Pirate Ship (SceneId_PirateShip), at the end. Stepping on trigger
-///   10 (Event_FightDeadbeard) sets off the battle with Deadbeard, encounter
-///   table 84's sixth group; when the party comes back
-///   (ENTRANCE_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set and
-///   a chest with the Demon Mail appears. A second chest is a mimic
+///   10 (Event_FightDeadbeard) sets off the battle with Deadbeard, the sixth
+///   group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS; when the party comes
+///   back (ENTRANCE_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set
+///   and a chest with the Demon Mail appears. A second chest is a mimic
 ///   (FLAG_PIRATE_SHIP_MIMIC_BEATEN once beaten).
 ///
 /// Scene_Initialize restores each scene as its flags say: the ivy and plants on
@@ -246,15 +247,16 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
   }
 }
 
-/// Stepping on trigger 10 on the Pirate Ship: Deadbeard attacks (encounter
-/// table 84's sixth group), and the party comes back to the ship at
-/// ENTRANCE_AFTER_BATTLE.
+/// Stepping on trigger 10 on the Pirate Ship: Deadbeard attacks (the sixth
+/// group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS), and the party comes
+/// back to the ship at ENTRANCE_AFTER_BATTLE.
 static void Event_FightDeadbeard(void) {
 
   EV_BEGIN();
   Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
   Battle_SetStart(BATTLE_START_SCENE);
-  Field_RequestBattleFromEncounterTable(84, 5);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
   EV_END();
 }
 
@@ -503,34 +505,44 @@ static void Event_OpenEastDoor(void) {
     EV_BEGIN();
     Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
     Battle_SetStart(BATTLE_START_SCENE);
-    // The first four rooms use encounter table 63; the next five use 84.
+    // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
+    // next five use ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
     switch (gGameState.scene - (s32)&SceneId_CrossboneIsleFirstFloor) {
     case 0:
-      Field_RequestBattleFromEncounterTable(63, 0);
+      Field_RequestBattleFromEncounterTable(
+          ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 0);
       break;
     case 1:
-      Field_RequestBattleFromEncounterTable(63, 1);
+      Field_RequestBattleFromEncounterTable(
+          ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 1);
       break;
     case 2:
-      Field_RequestBattleFromEncounterTable(63, 2);
+      Field_RequestBattleFromEncounterTable(
+          ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 2);
       break;
     case 3:
-      Field_RequestBattleFromEncounterTable(63, 3);
+      Field_RequestBattleFromEncounterTable(
+          ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 3);
       break;
     case 4:
-      Field_RequestBattleFromEncounterTable(84, 0);
+      Field_RequestBattleFromEncounterTable(
+          ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 0);
       break;
     case 5:
-      Field_RequestBattleFromEncounterTable(84, 1);
+      Field_RequestBattleFromEncounterTable(
+          ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 1);
       break;
     case 6:
-      Field_RequestBattleFromEncounterTable(84, 2);
+      Field_RequestBattleFromEncounterTable(
+          ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 2);
       break;
     case 7:
-      Field_RequestBattleFromEncounterTable(84, 3);
+      Field_RequestBattleFromEncounterTable(
+          ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 3);
       break;
     case 8:
-      Field_RequestBattleFromEncounterTable(84, 4);
+      Field_RequestBattleFromEncounterTable(
+          ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 4);
       break;
     }
     EV_END();

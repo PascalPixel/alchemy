@@ -396,7 +396,8 @@ static void Event_FightTret(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_TretTreeInteriors,
                            TRET_TREE_INTERIORS_AFTER_FIGHT_TRET);
-  Field_RequestBattleFromEncounterTable(36, 0);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
+                                        0);
   EV_END();
 }
 

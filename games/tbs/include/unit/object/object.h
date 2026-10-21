@@ -69,6 +69,28 @@ enum WindowTransitionMode {
 /// rows no step on a map rolls.
 enum EncounterZoneId {
   ENCOUNTER_ZONE_NONE = 0, ///< no battles
+  /// The scripted battles of Vale's stormy night (its monsters, and the
+  /// travelers who catch Isaac at Vale Gate), Vault's thieves and the world
+  /// map's Djinn tutorial battle.
+  ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT = 12,
+  /// The scripted battles of Tret Tree (Tret) and Mercury Lighthouse (the
+  /// Lizard Man, then Saturos at the aerie).
+  ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY = 36,
+  /// The scripted battles of Mogall Forest, Altin Peak and Lamakan Desert,
+  /// whose last two slots hold the battles with the Ant Lions and the
+  /// Manticore.
+  ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN = 53,
+  /// The monster attacks on the Tolbi-bound ship, the Kraken's last.
+  ENCOUNTER_ZONE_TOLBI_SHIP = 62,
+  /// The monsters behind the east doors of Crossbone Isle Cave's first four
+  /// floors, one slot a floor.
+  ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS = 63,
+  /// The battles that end the Colosso finals' matches, the slot chosen by
+  /// how the match went.
+  ENCOUNTER_ZONE_COLOSSO = 72,
+  /// The monsters behind the east doors of Crossbone Isle Cave's next five
+  /// floors, one slot a floor, then Deadbeard on the Pirate Ship.
+  ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS = 84,
   /// The scripted battles: Suhalla Desert, Venus Lighthouse Aerie and the
   /// world map; its first slot is the Aerie's second battle.
   ENCOUNTER_ZONE_SCRIPTED = 98,

@@ -40,7 +40,7 @@
 ///   (Colosso_StartRaceGauge), after the lettering `Match 1` and a count of
 ///   three. At the arena (Event_ReachArena) the first to arrive takes the Iron
 ///   Shield and the second the Padded Gloves, which Isaac is given and equipped
-///   with, and the two fight: the battle is encounter table 72's first or
+///   with, and the two fight: the battle is ENCOUNTER_ZONE_COLOSSO's first or
 ///   second group, the Azart who has the shield or the one who has not.
 ///
 /// A win returns to COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON, which shows the
@@ -559,7 +559,8 @@ static void Event_ReachArena(void) {
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;
    * as 1 - approach, 1 of 106 instructions differ in tbs-en. */
-  Field_RequestBattleFromEncounterTable(72, base - approach + 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
+                                        base - approach + 1);
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_ColosseumAzartMatch, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColosseumAzartMatch, 5);

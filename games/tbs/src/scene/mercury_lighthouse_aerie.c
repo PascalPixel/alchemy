@@ -14,8 +14,8 @@
 ///   protected Sol Sanctum as her clan protects the lighthouse; Jenna calls
 ///   out, and Felix, Menardi and Saturos face the party. Saturos sends Menardi
 ///   on to the next lighthouse with Jenna, Kraden and Felix, and fights the
-///   party alone (encounter table 36, slot 2), the light of Mercury weakening
-///   his Psynergy.
+///   party alone (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2), the light of
+///   Mercury weakening his Psynergy.
 /// - Back from the battle (MERCURY_LIGHTHOUSE_AERIE_AFTER_CONFRONT_SATUROS,
 ///   MercuryLighthouseAerie_AlexAppears): `Isaac, we got him!` Alex, the
 ///   apprentice Mia lost, appears and explains that Saturos, aligned with
@@ -90,7 +90,7 @@
 /// speakers are known from the text: Kraden ("It's all right, Jenna."), Felix
 /// ("Jenna, please... Just do as she says"), Saturos (Menardi: "Oh,
 /// Saturos..."), Menardi (Saturos: "Menardi... Wait!") and Alex (Mia:
-/// "Alex!"). Saturos is fought as encounter table 36, slot 2.
+/// "Alex!"). Saturos is fought as ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
 enum MercuryLighthouseAerieActor {
   ACTOR_BEACON_FLAME = ACTOR_FIRST_PLACED, ///< flickers and sheds sparks
   /// A statue, drawn as the lighthouse's statues all are, standing on
@@ -442,8 +442,8 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
 /// the lighthouse is lit: "It's too late! The lighthouse has already been
 /// lit!" Mia learns the party is from Vale; Jenna calls out, and Felix,
 /// Menardi and Saturos face the party. Menardi leaves with Jenna, Kraden and
-/// Felix for the next lighthouse, and Saturos fights alone (encounter table
-/// 36, slot 2).
+/// Felix for the next lighthouse, and Saturos fights alone
+/// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2).
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct FieldActor *actor;
 
@@ -870,8 +870,9 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_WalkToAndWait(ACTOR_SATUROS, 336, 216);
   Event_SetNextDestination((s32)&SceneId_MercuryLighthouseAerie, 2);
   Battle_SetStart(BATTLE_START_SCENE);
-  // Saturos: encounter table 36, slot 2.
-  Field_RequestBattleFromEncounterTable(36, 2);
+  // Saturos: ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
+                                        2);
   Engine_EventEnd();
 }
 

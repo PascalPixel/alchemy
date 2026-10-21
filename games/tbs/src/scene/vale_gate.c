@@ -1262,7 +1262,7 @@ static void ValeGate_FightTravelers(void) {
     Event_SetNextDestination((s32)message, VALE_GATE_AFTER_TRAVELERS_BATTLE);
     Event_SetDefeatDestination((s32)message, VALE_GATE_AFTER_TRAVELERS_BATTLE);
   }
-  Field_RequestBattleFromEncounterTable(12, 4);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 4);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 

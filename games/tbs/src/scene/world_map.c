@@ -1468,7 +1468,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
   GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_B);
   DjinnMenu_Open();
   Engine_EventWait(30);
-  Field_RequestBattleFromEncounterTable(12, 6);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 6);
 }
 
 /// Walking up to Flint: he joins the party and shows how Djinn are set and put
@@ -2511,9 +2511,9 @@ static void Event_StartDousingStorm(void) {
 }
 
 /// Douse on the storm: the party comes down and the battle with what is in it
-/// begins (encounter table 98, entries 5 and 7), as with the Suhalla Desert's
-/// storms. Reached by Douse on the storm (ACTOR_STORM) while it holds the
-/// party in the air. Clears FLAG_SCENE_TEMP_F0, sets FLAG_SCENE_TEMP_F1 and
+/// begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
+/// Desert's storms. Reached by Douse on the storm (ACTOR_STORM) while it holds
+/// the party in the air. Clears FLAG_SCENE_TEMP_F0, sets FLAG_SCENE_TEMP_F1 and
 /// empties the timer.
 static void Event_DouseMapStorm(void) {
   struct FieldActor *selectedActor;

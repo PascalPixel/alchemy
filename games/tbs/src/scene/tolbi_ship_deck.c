@@ -1939,7 +1939,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_TolbiShipDeck,
                            TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);
-  Field_RequestBattleFromEncounterTable(62, 3);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 3);
   Engine_EventEnd();
 }
 

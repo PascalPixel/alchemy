@@ -29,8 +29,8 @@
 /// - COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND, the race against Satrage,
 ///   who follows a recorded path, after the lettering `Match 2` and a count of
 ///   three. At the arena the first to arrive takes the Chain Mail and the
-///   second the Cotton Shirt, and the battle is encounter table 72's third or
-///   fourth group, the Satrage with or without the mail.
+///   second the Cotton Shirt, and the battle is ENCOUNTER_ZONE_COLOSSO's third
+///   or fourth group, the Satrage with or without the mail.
 ///
 /// A win returns to COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON and on to the
 /// Colosseum (COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH, arriving at
@@ -806,7 +806,7 @@ static void Event_ReachArena(void) {
    * unfolded; as 3 - rivalFinishedFirst, which shares r5's 3 with
    * Battle_SetStart(BATTLE_START_SCENE), 3 of 106 instructions differ in
    * tbs-en. */
-  Field_RequestBattleFromEncounterTable(72,
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         resultBase - rivalFinishedFirst + 1);
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_ColosseumSatrageMatch, 4);

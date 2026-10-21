@@ -233,11 +233,13 @@ A zone is a row of `encounter.tsv`, and its `zone` column names the place:
 
 `FLAG_NO_ENCOUNTERS`, `FLAG_NO_ENCOUNTERS_IN_PLACE` and Cloak keep random
 battles away.
-Zones with rate 0 are only ever fought by slot: zone 98's scripted
-battles, which a scene starts with `Field_RequestBattleFromEncounterTable`
-(it can take a slot of any zone), the mimic chests (zone 99) and the Djinni
-battles (zones 100 to 103, one per element, through
-`gEncounter_AreaEntryTable`). The battle's music comes from
+Zones with rate 0 are only ever fought by slot: the scripted battles
+(`ENCOUNTER_ZONE_SCRIPTED` and the zones named for their places, such as
+`ENCOUNTER_ZONE_TOLBI_SHIP` and `ENCOUNTER_ZONE_COLOSSO`), which a scene starts
+with `Field_RequestBattleFromEncounterTable` (it can take a slot of any zone),
+the mimic chests (`ENCOUNTER_ZONE_MIMIC`) and the Djinni battles
+(`ENCOUNTER_ZONE_VENUS_DJINN` to `ENCOUNTER_ZONE_JUPITER_DJINN`, one per
+element, through `gEncounter_AreaEntryTable`). The battle's music comes from
 `gEncounter_BattleMusic` (`battle_cue.c`), by zone and slot.
 
 ### How field Psynergy reaches its effect

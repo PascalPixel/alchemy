@@ -1581,19 +1581,19 @@ static void TolbiShipInteriors_FightRowingDeckMonsters(void) {
     Event_SetNextDestination(
         (s32)&SceneId_TolbiShipInteriors,
         TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE);
-    Field_RequestBattleFromEncounterTable(62, 0);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 0);
   } else {
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED) == 0) {
       Event_SetNextDestination(
           (s32)&SceneId_TolbiShipInteriors,
           TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_SECOND_ATTACK_BATTLE);
-      Field_RequestBattleFromEncounterTable(62, 1);
+      Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 1);
     } else {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED) == 0) {
         Event_SetNextDestination(
             (s32)&SceneId_TolbiShipInteriors,
             TOLBI_SHIP_INTERIORS_ROWING_DECK_AFTER_THIRD_ATTACK_BATTLE);
-        Field_RequestBattleFromEncounterTable(62, 2);
+        Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_TOLBI_SHIP, 2);
       }
     }
   }

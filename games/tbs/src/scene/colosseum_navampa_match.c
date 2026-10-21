@@ -30,8 +30,8 @@
 /// - COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND, the race against Navampa,
 ///   who follows a recorded path, after the lettering `Match 3` and a count of
 ///   three. At the arena the first to arrive takes the Claymore and the second
-///   the Hunter's Sword, and the battle is encounter table 72's fifth or sixth
-///   group, the Navampa with or without the Claymore.
+///   the Hunter's Sword, and the battle is ENCOUNTER_ZONE_COLOSSO's fifth or
+///   sixth group, the Navampa with or without the Claymore.
 ///
 /// Win or lose, the third match ends Colosso:
 /// COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON and _LOST set FLAG_COLOSSO_OVER, and
@@ -843,7 +843,8 @@ static void Event_ReachArena(void) {
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
    * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
-  Field_RequestBattleFromEncounterTable(72, last - place + 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
+                                        last - place + 1);
   Battle_SetStart(BATTLE_START_SCENE);
   Event_SetNextDestination((s32)&SceneId_ColosseumNavampaMatch, 4);
   Event_SetDefeatDestination((s32)&SceneId_ColosseumNavampaMatch, 5);

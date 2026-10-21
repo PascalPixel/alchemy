@@ -1,31 +1,30 @@
 /// @file
-/// Vale (scene 5, SceneId_ValeGate): the part of the village with the
-/// Psynergy Stone and the town gate, Vale's way out to the world. The scene
-/// sees the prologue end and the journey begin, and ValeGate_GetPlacements
-/// and ValeGate_GetEvents pick its people and events by the time of the
-/// story. In story order:
+/// Vale (SceneId_ValeGate): the part of the village with the Psynergy Stone and
+/// the town gate, Vale's way out to the world. The scene sees the prologue end
+/// and the journey begin, and ValeGate_GetPlacements and ValeGate_GetEvents
+/// pick its people and events by the time of the story. In story order:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
 ///   have gathered in the plaza here. Isaac and Garet come from the river
-///   (Vale, scene 3, by VALE_STORM_TO_VALE_GATE), where Felix has fallen in.
-///   Walking up to the villagers (cell code 20) plays Event_SentToAidElders:
-///   Garet's grandfather, the mayor, sends two villagers to aid the elders
-///   holding the Boulder, then sends Isaac and Garet back to show Jenna and a
-///   man whose Psynergy the Psynergy Stone has restored the way to the river
-///   (FLAG_VALE_STORM_SENT_TO_AID_ELDERS). Others have spent their Psynergy,
-///   and one lifts a small rock to show he has a little left
+///   (Vale, SceneId_ValeStorm, by VALE_STORM_TO_VALE_GATE), where Felix has
+///   fallen in. Walking up to the villagers (cell code 20) plays
+///   Event_SentToAidElders: Garet's grandfather, the mayor, sends two villagers
+///   to aid the elders holding the Boulder, then sends Isaac and Garet back to
+///   show Jenna and a man whose Psynergy the Psynergy Stone has restored the
+///   way to the river (FLAG_VALE_STORM_SENT_TO_AID_ELDERS). Others have spent
+///   their Psynergy, and one lifts a small rock to show he has a little left
 ///   (Event_DemonstrateLevitation). Later, when the Boulder has swept Kyle,
 ///   Jenna's parents and Felix away and Garet has gone after Isaac
 ///   (FLAG_VALE_STORM_GARET_LEFT), arriving here plays
 ///   Event_MeetSurvivingTravelers: Isaac overhears two strangers saying only
 ///   the two of them survived Sol Sanctum's fury, Garet catches up, and the
-///   strangers fight the boys to make them forget (ValeGate_FightTravelers,
-///   encounter 4 of table 12). Win or lose, the battle returns to entrance
-///   19, where the strangers leave the boys lying in the storm, the storm
-///   ends (FLAG_VALE_STORM is cleared) and VALE_GATE_TO_TITLE leads to the
-///   title shown after the prologue, which opens on Vale three years later
-///   (menu/title.c). The game names the two only three years later, as
-///   Saturos and Menardi (vale_kraden.c); their sprites here are the same.
+///   strangers fight the boys to make them forget (ValeGate_FightTravelers).
+///   Win or lose, the battle returns to VALE_GATE_AFTER_TRAVELERS_BATTLE, where
+///   the strangers leave the boys lying in the storm, the storm ends
+///   (FLAG_VALE_STORM is cleared) and VALE_GATE_TO_TITLE leads to the title
+///   shown after the prologue, which opens on Vale three years later
+///   (menu/title.c). The game names the two only three years later, as Saturos
+///   and Menardi (vale_kraden.c); their sprites here are the same.
 /// - Three years later, the day the story begins. The villagers talk of
 ///   meditating on Mt. Aleph, of the travelers who stopped by, and of the
 ///   storm, in which Isaac lost his father and Jenna her whole family; one
@@ -48,16 +47,19 @@
 /// The Psynergy Stone (search 100) restores the party's PP at every time but
 /// the farewell. The ivy in three places (ACTOR_FIRST_IVY to ACTOR_THIRD_IVY)
 /// can be blown away with Whirlwind, each one's flag keeping it gone. The doors
-/// lead into the houses (scene 7) and into another part of Vale (scene 8), the
-/// path west to the village (Vale, scene 4) or, on the stormy night, back to
-/// the storm's map (scene 3), and the exit row of cell code 11 to
-/// VALE_GATE_TO_GOMA_CAVE_STREAM, which the exit table sends to Goma Cave
-/// (scene 28, GOMA_CAVE_STREAM_FROM_VALE_GATE).
+/// lead into the houses (SceneId_ValeInteriorsShops) and into another part of
+/// Vale (SceneId_ValeInteriorsInn), the path west to the village (SceneId_Vale)
+/// or, on the stormy night, back to the storm's map (SceneId_ValeStorm), and
+/// the exit row of cell code 11 to VALE_GATE_TO_GOMA_CAVE_STREAM, which the
+/// exit table sends to Goma Cave (SceneId_GomaCaveStream,
+/// GOMA_CAVE_STREAM_FROM_VALE_GATE).
 ///
-/// Entrances 97 to 99 are in no entrance table and no exit leads to them: 97
-/// replays the strangers' departure, 98 sets FLAG_CHILDHOOD and takes
-/// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST into Vale (scene 8), and 99 sets a
-/// preset of story flags and takes VALE_GATE_TO_BILIBIN
+/// Three debug entrances are in no entrance table and no exit leads to them:
+/// VALE_GATE_DEBUG_TRAVELERS_LEAVE replays the strangers' departure,
+/// VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and takes
+/// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST into Vale
+/// (SceneId_ValeInteriorsInn), and VALE_GATE_DEBUG_STORY_PRESET sets a preset
+/// of story flags and takes VALE_GATE_TO_BILIBIN
 /// (ValeGate_SetProgressFlagsAndExit).
 
 #include "game_state.h"
@@ -114,7 +116,7 @@
 /// keeping his own party slot, and the same people stand in several tables
 /// under other numbers. The three ivy actors come first in every table.
 enum ValeGateActor {
-  /// Ivy, drawn half as tall again: sprite 0xf8, the ivy that holds the stump
+  /// Ivy, drawn half as tall again: the sprite of the ivy that holds the stump
   /// in goma_cave_entrance.c ("It looks like it's trapped in the ivy.").
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_IVY,
@@ -129,9 +131,9 @@ enum ValeGateDayActor {
   /// (Event_AskAboutJourney); after the party has left, "You saw the Wise
   /// One?"
   ACTOR_CURIOUS_VILLAGER = ACTOR_FIRST_PLACED + 3,
-  /// In the old woman's sprite (0x6f), who on the stormy night asks "You
-  /// expect an old woman like me to use Psynergy?" By day: "Long ago, my
-  /// grandfather was a powerful Adept... I'm so proud of him."
+  /// In the old woman's sprite, who on the stormy night asks "You expect an old
+  /// woman like me to use Psynergy?" By day: "Long ago, my grandfather was a
+  /// powerful Adept... I'm so proud of him."
   ACTOR_OLD_WOMAN,
   /// "Well, if it isn't Isaac. It's just another quiet day in Vale."
   ACTOR_VILLAGER_QUIET_DAY,
@@ -148,9 +150,9 @@ enum ValeGateDayActor {
   ACTOR_VILLAGER_SHOWING_PSYNERGY,
   /// "If your Psynergy runs low, just walk around. You'll recover it slowly."
   ACTOR_VILLAGER_WALK_TO_RECOVER,
-  /// Sprite 0x16, which shows nothing (as in gondowan_cave.c), out of sight
-  /// until the party has left; then it stands on the large Psynergy Stone that
-  /// fell on the hut, for the hut's owner to turn to.
+  /// An invisible actor (as in gondowan_cave.c), out of sight until the party
+  /// has left; then it stands on the large Psynergy Stone that fell on the hut,
+  /// for the hut's owner to turn to.
   ACTOR_FALLEN_STONE_SPOT = ACTOR_FIRST_PLACED + 13,
   /// "Isaac! Have you remembered to meditate on Mt. Aleph daily?"
   ACTOR_VILLAGER_ASKING_ABOUT_MEDITATION = ACTOR_FIRST_PLACED + 15,
@@ -181,21 +183,20 @@ enum ValeGateStormActor {
   /// Mt. Aleph Boulder destroy our village."
   ACTOR_STORM_FIRST_AIDE,
   ACTOR_STORM_SECOND_AIDE, ///< "Let's go help the elders."
-  /// Garet's grandfather, the mayor ("Grandpa!", Garet calls him; his sprite,
-  /// 0x75, is vale_interiors_shops.c's). "Go aid the elders!"
+  /// Garet's grandfather, the mayor ("Grandpa!", Garet calls him; his sprite is
+  /// vale_interiors_shops.c's). "Go aid the elders!"
   ACTOR_STORM_GARETS_GRANDFATHER,
-  /// The storm's rock sprite (0xc8) at three tenths of its size.
+  /// The storm's rock sprite at three tenths of its size.
   ACTOR_STORM_SMALL_ROCK,
-  /// Sprite 0x16, which shows nothing, on ACTOR_STORM_SMALL_ROCK's spot at
-  /// three fifths of its size. XXX: nothing here moves or reads it after the
-  /// setup; what it marks or blocks would say what it is for.
+  /// An invisible actor on ACTOR_STORM_SMALL_ROCK's spot at three fifths of its
+  /// size. XXX: nothing here moves or reads it after the setup; what it marks
+  /// or blocks would say what it is for.
   ACTOR_STORM_ROCK_SPOT,
   /// Rested at the Psynergy Stone, the man vale_storm.c calls
   /// ACTOR_EXHAUSTED_VILLAGER. "Great! I'm all charged up!"
   ACTOR_STORM_CHARGED_UP_VILLAGER,
   /// The two travelers who survived Sol Sanctum, Saturos and Menardi by their
-  /// sprites (0x20 and 0x21, as in vale_kraden.c). "Only the two of us
-  /// survived..."
+  /// sprites (as in vale_kraden.c). "Only the two of us survived..."
   ACTOR_FIRST_TRAVELER,
   ACTOR_SECOND_TRAVELER,
   /// Garet as a child, who follows Isaac through the night. "Isaac! Wait!"
@@ -211,8 +212,8 @@ enum ValeGateFarewellActor {
   /// The same child as ACTOR_SECOND_CHILD: "Why's everyone hanging around the
   /// town gate?"
   ACTOR_FAREWELL_SECOND_CHILD,
-  /// The Great Healer, by his sprite (0x79, as in vale_eruption.c and
-  /// sanctum.c). "We are counting on you, Isaac. Oh, and you, too, Garet."
+  /// The Great Healer, by his sprite (as in vale_eruption.c and sanctum.c). "We
+  /// are counting on you, Isaac. Oh, and you, too, Garet."
   ACTOR_FAREWELL_GREAT_HEALER,
   ACTOR_FAREWELL_VILLAGER_AWAITING_DORA, ///< "Hmm... Dora is very late..."
   /// Garet's grandfather. "They can't keep standing around here like this, or
@@ -221,22 +222,22 @@ enum ValeGateFarewellActor {
   /// Garet's sister, who gives the Herb. "I know not to drink stagnant water,
   /// Sis!", Garet answers her.
   ACTOR_FAREWELL_GARETS_SISTER,
-  /// Garet's sibling, by the sprite (0x25) of vale.c's ACTOR_GARETS_SIBLING,
-  /// who brings the Catch Beads: "Aunty Dora asked me to give this to you,
-  /// Isaac." Of Garet: "He's a pig! He'll eat anything that's not tied down!"
+  /// Garet's sibling, by the sprite of vale.c's ACTOR_GARETS_SIBLING, who
+  /// brings the Catch Beads: "Aunty Dora asked me to give this to you, Isaac."
+  /// Of Garet: "He's a pig! He'll eat anything that's not tied down!"
   ACTOR_FAREWELL_GARETS_SIBLING,
   /// "As Garet's mother, I know how Dora must be feeling."
   ACTOR_FAREWELL_GARETS_MOTHER,
-  /// Garet's father, by his sprite (0x36, vale_interiors_shops.c's).
+  /// Garet's father, by his sprite (vale_interiors_shops.c's).
   ACTOR_FAREWELL_GARETS_FATHER,
   /// The rest of the crowd at the gate, ten who only nod and jump.
   ACTOR_FAREWELL_FIRST_CROWD_VILLAGER,
-  /// Sprite 0x68, the dog of vault.c ("Woof! Woof!"), which runs past the
+  /// The sprite of the dog of vault.c ("Woof! Woof!"), which runs past the
   /// children and later after ACTOR_FAREWELL_DOGS_QUARRY.
   ACTOR_FAREWELL_DOG = ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 10,
-  /// Sprite 0x88, set down where the dog stops, which runs off with the dog
-  /// after it. XXX: no other scene places the sprite; what it shows would say
-  /// what it is.
+  /// A sprite set down where the dog stops, which runs off with the dog after
+  /// it. XXX: no other scene places the sprite; what it shows would say what it
+  /// is.
   ACTOR_FAREWELL_DOGS_QUARRY
 };
 
@@ -451,7 +452,8 @@ static void Event_DemonstratePsynergy(void) {
           Object_GetById(ACTOR_VILLAGER_SHOWING_PSYNERGY));
       Engine_TaskWait(1);
     }
-    FieldScheduler_AddCallback(ValeGate_UpdateShowingVillagerPsynergy, 0xc80);
+    FieldScheduler_AddCallback(ValeGate_UpdateShowingVillagerPsynergy,
+                               TASK_PRIORITY_SCENE);
     Engine_AudioPlayCue(SE_107);
     for (i = 0; i != 180; i++) {
       if (Math_RemainderUnsigned(i, 10) == 0) {
@@ -559,8 +561,9 @@ static void Event_DemonstrateLevitation(void) {
     Engine_TaskWait(1);
   }
   FieldScheduler_AddOrUpdateCallback(ValeGate_UpdateLevitatingVillagerPsynergy,
-                                     0xc80);
-  FieldScheduler_AddCallback(ValeGate_UpdateSmallRockPalette, 0xc80);
+                                     TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(ValeGate_UpdateSmallRockPalette,
+                             TASK_PRIORITY_SCENE);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
   // Suspend ordinary movement while lifting the target a little each frame.
   levitatingActor = Object_GetById(ACTOR_STORM_SMALL_ROCK);
@@ -662,22 +665,23 @@ static inline void Event_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
 }
 
-// Vale's doors here: walking north into cell code n opens door n and takes
-// exit n (Vale_RequestBackdropExit), into the houses (scene 7) or another
-// part of Vale (scene 8).
+// Vale's doors here: walking north into cell code n opens door n and takes exit
+// n (Vale_RequestBackdropExit), into the houses (SceneId_ValeInteriorsShops) or
+// another part of Vale (SceneId_ValeInteriorsInn).
 
-/// In Vale, opens the northwest door, into a house (scene 7,
+/// In Vale, opens the northwest door, into a house (SceneId_ValeInteriorsShops,
 /// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_EAST).
 static void Event_OpenNorthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(44, 7, 248, 279);
   Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_SHOPS_EAST);
 }
 
-/// In Vale back from Kalay, opens the northeast doorway in two stages and
-/// walks inside (Vale, scene 8, VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST).
+/// In Vale back from Kalay, opens the northeast doorway in two stages and walks
+/// inside (SceneId_ValeInteriorsInn,
+/// VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST).
 ///
-/// Reached by walking north into cell code 2 after Kalay; the other tables
-/// have no door 2.
+/// Reached by walking north into cell code 2 after Kalay; the other tables have
+/// no such door.
 static void Event_OpenNortheastDoor(void) {
   Event_PlayCue(SE_188);
   Map_CopyCellsTo(0, 63, 51, 8, 2, 2);
@@ -691,35 +695,35 @@ static void Event_OpenNortheastDoor(void) {
 }
 
 /// In Vale, enters through the western door of the middle row of houses
-/// (scene 7, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH).
+/// (SceneId_ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH).
 static void Event_OpenCentralWestDoor(void) {
   Event_OpenDoorAndWalkThrough(43, 15, 230, 407);
   Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_SHOPS_NORTH);
 }
 
 /// In Vale, enters through the eastern door of the middle row of houses
-/// (scene 7, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_SOUTH).
+/// (SceneId_ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_SOUTH).
 static void Event_OpenCentralEastDoor(void) {
   Event_OpenDoorAndWalkThrough(52, 18, 374, 419);
   Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_SHOPS_SOUTH);
 }
 
-/// In Vale, opens the southwest door, into Vale's shops (scene 7,
-/// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST).
+/// In Vale, opens the southwest door, into Vale's shops
+/// (SceneId_ValeInteriorsShops, VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST).
 static void Event_OpenSouthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(41, 32, 200, 546);
   Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_SHOPS_WEST);
 }
 
-/// In Vale, opens the door at the west edge, into another part of Vale (scene
-/// 8, VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHWEST).
+/// In Vale, opens the door at the west edge, into another part of Vale
+/// (SceneId_ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHWEST).
 static void Event_OpenWestEdgeDoor(void) {
   Event_OpenDoorAndWalkThrough(35, 36, 102, 611);
   Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_INN_NORTHWEST);
 }
 
-/// In Vale, opens the southeast door, into another part of Vale (scene 8,
-/// VALE_INTERIORS_INN_FROM_VALE_GATE_WEST).
+/// In Vale, opens the southeast door, into another part of Vale
+/// (SceneId_ValeInteriorsInn, VALE_INTERIORS_INN_FROM_VALE_GATE_WEST).
 static void Event_OpenSoutheastDoor(void) {
   Event_OpenDoorAndWalkThrough(51, 39, 358, 670);
   Vale_RequestBackdropExit(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTH);
@@ -772,16 +776,17 @@ static void Event_BlowAwayThirdIvy(void) {
 }
 
 /// Arriving in this part of Vale: hides the ivy Whirlwind has blown away, runs
-/// entrances 97 to 99 (the strangers' departure and two presets), and sets up
-/// the storm, the farewell or the village after Kalay.
+/// the three debug entrances (the strangers' departure and two presets), and
+/// sets up the storm, the farewell or the village after Kalay.
 ///
-/// The scene's initialize entry. Entrance 98 sets FLAG_CHILDHOOD and takes
-/// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST; VALE_GATE_FROM_SANCTUM runs
-/// Event_DepartForQuest; entrance 19 (and 97) Event_TravelersLeaveAfterBattle;
-/// on the stormy night, once Garet has gone after Isaac
-/// (FLAG_VALE_STORM_GARET_LEFT), Event_MeetSurvivingTravelers. Once the boys
-/// have been sent back to the river, it removes the two villagers who left to
-/// aid the elders, Jenna and the man who went with them.
+/// The scene's initialize entry. VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD
+/// and takes VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST; VALE_GATE_FROM_SANCTUM
+/// runs Event_DepartForQuest; VALE_GATE_AFTER_TRAVELERS_BATTLE (and
+/// VALE_GATE_DEBUG_TRAVELERS_LEAVE) Event_TravelersLeaveAfterBattle; on the
+/// stormy night, once Garet has gone after Isaac (FLAG_VALE_STORM_GARET_LEFT),
+/// Event_MeetSurvivingTravelers. Once the boys have been sent back to the
+/// river, it removes the two villagers who left to aid the elders, Jenna and
+/// the man who went with them.
 s32 ValeGate_Initialize(void) {
   struct FieldActor *actor;
   s32 flag;
@@ -797,14 +802,14 @@ s32 ValeGate_Initialize(void) {
     Engine_ActorSetPosition(ACTOR_THIRD_IVY, 0, 0);
   }
   switch (gGameState.entrance) {
-  case 98:
+  case VALE_GATE_DEBUG_CHILDHOOD:
     Engine_GameFlagSet(FLAG_CHILDHOOD);
     Engine_EventRequestExit(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST);
     return 0;
-  case 99:
+  case VALE_GATE_DEBUG_STORY_PRESET:
     ValeGate_SetProgressFlagsAndExit();
     return 0;
-  case 97:
+  case VALE_GATE_DEBUG_TRAVELERS_LEAVE:
     Event_TravelersLeaveAfterBattle();
     return 0;
   }
@@ -869,7 +874,7 @@ s32 ValeGate_Initialize(void) {
         Engine_ActorSetPosition(ACTOR_STORM_JENNA, 0, 0);
         Engine_ActorSetPosition(ACTOR_STORM_CHARGED_UP_VILLAGER, 0, 0);
       }
-      if (gGameState.entrance == 19) {
+      if (gGameState.entrance == VALE_GATE_AFTER_TRAVELERS_BATTLE) {
         Event_TravelersLeaveAfterBattle();
       } else {
         if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0 &&
@@ -1145,12 +1150,13 @@ static void Event_MeetSurvivingTravelers(void) {
 }
 
 /// In Vale on the stormy night, the travelers catch Isaac eavesdropping and
-/// fight; win or lose, the party returns by entrance 19.
+/// fight; win or lose, the party returns by VALE_GATE_AFTER_TRAVELERS_BATTLE.
 /// "You must forget everything you heard."
 ///
-/// Called by Event_MeetSurvivingTravelers. Starts encounter 4 of table 12
-/// with both outcomes leading back to this scene's entrance 19, and sets
-/// FLAG_KEEP_MUSIC.
+/// Called by Event_MeetSurvivingTravelers. Starts the fifth slot of the
+/// encounter zone of the scripted battles of Vale, Vault and the world map,
+/// with both outcomes leading back to VALE_GATE_AFTER_TRAVELERS_BATTLE, and
+/// sets FLAG_KEEP_MUSIC.
 static void ValeGate_FightTravelers(void) {
   struct FieldActor *actor;
   s32 southSouthwestFacing;
@@ -1249,12 +1255,12 @@ static void ValeGate_FightTravelers(void) {
   Actor_RunActionScriptAndWait(ACTOR_STORM_GARET,
                                gValeGate_StormGaretLeapActions);
   // The confrontation continues in battle; both outcomes return here.
-  Battle_SetStart(2);
+  Battle_SetStart(BATTLE_START_NO_ESCAPE);
   {
     const void *message = &SceneId_ValeGate;
 
-    Event_SetNextDestination((s32)message, 19);
-    Event_SetDefeatDestination((s32)message, 19);
+    Event_SetNextDestination((s32)message, VALE_GATE_AFTER_TRAVELERS_BATTLE);
+    Event_SetDefeatDestination((s32)message, VALE_GATE_AFTER_TRAVELERS_BATTLE);
   }
   Field_RequestBattleFromEncounterTable(12, 4);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
@@ -1263,8 +1269,9 @@ static void ValeGate_FightTravelers(void) {
 /// In Vale after the battle, the travelers leave Isaac and Garet lying in the
 /// storm, and the storm, and the prologue, end.
 ///
-/// Called by ValeGate_Initialize from entrance 19, after the battle, or 97.
-/// Clears FLAG_VALE_STORM and takes VALE_GATE_TO_TITLE, to the title (scene 0,
+/// Called by ValeGate_Initialize from VALE_GATE_AFTER_TRAVELERS_BATTLE, after
+/// the battle, or VALE_GATE_DEBUG_TRAVELERS_LEAVE. Clears FLAG_VALE_STORM and
+/// takes VALE_GATE_TO_TITLE, to the title (SceneId_Title,
 /// TITLE_FROM_VALE_GATE), which then opens on Vale three years later
 /// (menu/title.c).
 static void Event_TravelersLeaveAfterBattle(void) {
@@ -1868,12 +1875,12 @@ static void ValeGate_UpdateSmallRockPalette(void) {
   ValeGate_CyclePsynergyPalette(Object_GetById(ACTOR_STORM_SMALL_ROCK));
 }
 
-/// Arriving by entrance 99, a debug entrance: sets a preset of story flags,
+/// Arriving by VALE_GATE_DEBUG_STORY_PRESET: sets a preset of story flags,
 /// which differs by edition, and leaves by VALE_GATE_TO_BILIBIN.
 ///
-/// Called by ValeGate_Initialize from entrance 99. Sets FLAG_NO_ENCOUNTERS
-/// and flag 0x16d; from the third patch the whole story up to Kalay, before
-/// it FLAG_TRET_DEFEATED and FLAG_KOLIMA_CURSE_LIFTED.
+/// Called by ValeGate_Initialize. Sets FLAG_NO_ENCOUNTERS and flag 0x16d; from
+/// the third patch the whole story up to Kalay, before it FLAG_TRET_DEFEATED
+/// and FLAG_KOLIMA_CURSE_LIFTED.
 static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_NO_ENCOUNTERS);
   // XXX: flag 0x16d gates the battle debug key R (plan.c), and the Colosseum
@@ -2190,7 +2197,7 @@ s32 gValeGate_StormGaretStepActions[] = {
 };
 
 struct SceneEntrance gValeGate_Entrances[] = {
-    { 0, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_VALE_INTERIORS_SHOPS_NORTH, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_VALE_INTERIORS_SHOPS_WEST, CONDITION_ALWAYS, 230, 0, 423, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -2202,8 +2209,8 @@ struct SceneEntrance gValeGate_Entrances[] = {
     { VALE_GATE_FROM_WORLD_MAP, CONDITION_ALWAYS, 217, 0, 843, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_GOMA_CAVE_STREAM, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_GATE_FROM_SANCTUM, CONDITION_ALWAYS, 180, 0, 618, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 15, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 19, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_STREAM_UNUSED, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_GATE_AFTER_TRAVELERS_BATTLE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 

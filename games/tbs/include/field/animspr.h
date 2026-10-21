@@ -89,7 +89,7 @@ struct AnimationSpritePart {
   ///@{
   u16 y : 8;          ///< screen pixels
   u16 affine : 2;     ///< 0 plain, 1 affine, 3 affine at double size
-  u16 objectMode : 2; ///< 0 normal, 1 semi-transparent, 2 OBJ window
+  u16 objectMode : 2; ///< an enum ObjMode
   u16 mosaic : 1;
   u16 fullColor : 1;   ///< 256 colours; set for both parts when created
   u16 shape : 2;       ///< 0 square, 1 wide, 2 tall

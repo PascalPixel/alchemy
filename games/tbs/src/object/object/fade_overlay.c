@@ -74,7 +74,7 @@ void FadeOverlay_DrawMarks(void) {
     ((u32 *)mark)[2] = 0x400;
     mark->priority = 0;
     mark->tile = tile;
-    mark->objectMode = 1;
+    mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
     // Snapped to the cell's 16-pixel grid, then moved up by the ground's
     // height.
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
@@ -95,7 +95,7 @@ void FadeOverlay_DrawMarks(void) {
     ((u32 *)mark)[2] = 0;
     mark->priority = 0;
     mark->tile = tile;
-    mark->objectMode = 1;
+    mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
     screenRow = (z >> 16) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;

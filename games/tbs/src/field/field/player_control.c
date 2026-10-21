@@ -830,7 +830,7 @@ update_object:
         if (rippleSprite != 0) {
           AnimationObjects_SelectAnimation(rippleSprite, 1);
           rippleSprite->flags = collision;
-          rippleSprite->image.objectMode = 1;
+          rippleSprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
           rippleSprite->image.priority = 2;
         }
         object->action = 10;

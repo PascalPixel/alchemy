@@ -384,7 +384,7 @@ void Map_UpdateWorldMapMarkers(void) {
 
   // The blinking frame round the nearest marker.
   if (nearestMarker != -1 && (gFrameCount & 15) <= 7) {
-    WORLD_MAP_MARKER_VIEW(marker).objectMode = 0;
+    WORLD_MAP_MARKER_VIEW(marker).objectMode = OBJ_MODE_NORMAL;
     WORLD_MAP_MARKER_VIEW(marker).tile = tileBase + 3;
     WORLD_MAP_MARKER_VIEW(marker).x = nearestX - 2;
     WORLD_MAP_MARKER_VIEW(marker).y = nearestY - 2;

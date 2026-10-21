@@ -250,6 +250,13 @@ enum DisplayControl {
 #define OAM ((void *)0x07000000)
 /// OAM's size in bytes: 128 sprites of 8 bytes.
 #define OAM_SIZE 0x400
+
+/// A sprite's mode, OAM attribute 0's bits 11..10.
+enum ObjMode {
+  OBJ_MODE_NORMAL = 0,
+  OBJ_MODE_SEMI_TRANSPARENT = 1, ///< blended as BLDCNT's first target
+  OBJ_MODE_WINDOW = 2            ///< drawn into the OBJ window, not shown
+};
 enum KeyMask {
   KEY_A = 0x001,
   KEY_B = 0x002,

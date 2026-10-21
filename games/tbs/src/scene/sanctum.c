@@ -111,24 +111,35 @@
 /// place's first row is its healer.
 enum SanctumActor {
   /// The place's healer: the Great Healer in Vale Sanctum, its own healer
-  /// elsewhere.
+  /// elsewhere, a man with a white beard in a tall hat and a long purple and
+  /// blue robe.
+  /// ★ Named from the game: "What is it, Great Healer?"
+  /// (MsgSanctumWeHadIdeaTrueSanctum)
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
   // Vale Sanctum (gSanctum_PlacementB, and gSanctum_PlacementD at the quest).
-  /// The western of Vale Sanctum's two other healers, as Mind Read hears a
+  /// The western of Vale Sanctum's two other healers, men with long brown hair
+  /// and beards in long robes, as Mind Read hears a
   /// villager in vale_interiors_shops.c call the Sanctum's people: "The healers
   /// are supposed to guard Sol Sanctum." Before the quest: "Our Psynergy was
   /// given to us by the sacred power of Mt. Aleph."
+  /// ★ Named from the game: "The healers are supposed to guard"
+  /// (MsgValeTheHealersAreSupposedToGuard)
   ACTOR_WEST_HEALER,
   /// The eastern one. "Psynergy is a power that should only be used for
   /// good... Never for evil!"
+  /// ★ Named from the game: "should only be used for"
+  /// (MsgSanctumPsynergyIsAPowerThatShould)
   ACTOR_EAST_HEALER,
   // The quest (gSanctum_PlacementD).
-  /// Isaac's mother.
+  /// Isaac's mother, a woman with fair hair tied up.
   /// ★ Named from the game: "Please, call me Dora."
   /// (MsgValeAsStubbornAsYourFather)
   ACTOR_DORA,
-  /// The Mayor, Garet's grandfather, as the Great Healer calls him: "That is
+  /// The Mayor, Garet's grandfather, an old man with white hair and a cane, as
+  /// the Great Healer calls him: "That is
   /// all, Mayor."
+  /// ★ Named from the game: "That is all, Mayor"
+  /// (MsgSanctumAcceptIsaacCantMean)
   ACTOR_GARETS_GRANDFATHER,
   /// Appears to the Great Healer.
   /// ★ Named from the game: "It must be the Wise One, guardian of the Elemental
@@ -136,10 +147,12 @@ enum SanctumActor {
   ACTOR_WISE_ONE,
   ACTOR_HEALER_AFTERIMAGE, ///< a copy of the Great Healer for its afterimages
   // Vault Sanctum and Bilibin Sanctum (gSanctum_PlacementC).
-  /// The other person of the Sanctum, in the western healer's sprite, who
+  /// The other person of the Sanctum, in the western healer's sprite (a man
+  /// with long brown hair and a beard in a long robe), who
   /// wanders, and who speaks of the healer as someone else and of "our
   /// teachings" and "our meditations". In Vault: "I wonder if we'll ever see
   /// our stolen gold statue again..."
+  /// ★ Named from the game: "stolen gold statue" (MsgSanctumWonderIfEverSeeOur)
   ACTOR_SANCTUM_MEMBER = ACTOR_FIRST_PLACED + 1,
   /// Vault Sanctum's gold statue (the sprite of the one a chest gives back in
   /// vault_interiors.c), placed off the map until the thieves are jailed
@@ -2263,11 +2276,11 @@ struct ScenePlacement gSanctum_PlacementB[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(130), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(248), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -2281,9 +2294,9 @@ struct ScenePlacement gSanctum_PlacementSequenceB[] = {
 #endif
 
 struct ScenePlacement gSanctum_PlacementC[] = {
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(200), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xdd, CONDITION_ALWAYS, 7,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -2293,25 +2306,25 @@ struct ScenePlacement gSanctum_PlacementC[] = {
 struct ScenePlacement gSanctum_PlacementD[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(208), 0, PIXELS(168), FACING_NORTH + FACING_STEP, 3, 0 },
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(224), 0, PIXELS(216), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(198), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_DORA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(168), 0, PIXELS(208), FACING_NORTH + FACING_STEP, 3, 0 },
-    { 0x75, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, 3, 0 },
     { 0xfc, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gSanctum_PlacementE[] = {
-    { 0x79, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
 };

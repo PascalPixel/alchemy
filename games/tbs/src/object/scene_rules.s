@@ -350,7 +350,7 @@ gBattle_BackdropScenes:
 	backdrop PirateShipBackdrop, PirateShip
 	backdrop SuhallaGateBackdrop, SuhallaGate1, SuhallaGate2
 	backdrop GomaCaveBackdrop, GatewayCave
-	backdrop BabiLighthouseBackdrop, BabiLighthouseEntry, BabiLighthouse2, BabiLighthouse1, CrossboneIslePlatformRooms3
+	backdrop BabiLighthouseBackdrop, BabiLighthouseEntry, BabiLighthouse2, BabiLighthouse1, CrossboneIsleBane
 	backdrop TunnelRuinsBackdrop, TunnelRuins1, TunnelRuins2
 	backdrop InteriorBackdrop, Lalivero, LaliveroInteriors1, LaliveroInteriors2
 	backdrop VenusLighthouseBackdrop, VenusLighthouse1, VenusLighthouse2, VenusLighthouse3, VenusLighthouse4, VenusLighthouse5

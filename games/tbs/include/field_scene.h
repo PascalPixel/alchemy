@@ -195,6 +195,11 @@ enum SceneEventKind {
   EVENT_RAISED = 6 ///< raised by code through FieldWork.event
 };
 
+/// The raised event the menus and shortcut keys raise instead of opening
+/// while FLAG_MENUS_RAISE_EVENT is set, as Vault's inn sets it while the
+/// party corners the suspects.
+#define FIELD_EVENT_MENUS_RAISED 250
+
 /// A touch event that needs the leader to have pushed against it for more
 /// than 12 frames, or 2 with control bit 11.
 #define EVENT_TOUCH_WALKING 0x200

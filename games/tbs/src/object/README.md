@@ -160,7 +160,7 @@ with it is handled. The exit's kind is what `Field_RunScene` returns, and
 
 A random battle is an exit too. Its handler snapshots the actors
 (`ObjectTable_Snapshot`), sets the next scene to `SCENE_BATTLE` and raises
-the exit `EXIT_NONE` (999), so the next pass of the loop leaves the scene.
+the exit `EXIT_NONE`, so the next pass of the loop leaves the scene.
 The battle runs as a scene of its own, and the field scene is loaded again
 afterwards with the party where it was.
 
@@ -178,10 +178,12 @@ battle.
 
 Because requests are fields rather than a queue, each kind holds at most
 one, and raising one twice before it's handled is the same as raising it
-once. An event's value is the event to run, or a negative code: -1 when
-characters fell to poison or hazardous ground, -888 to show the world map
-picture (`Map_ShowWorldMap`) and -889 for `BattleFx_RunVisibilityTransition`,
-which zooms the world map view out while L is held.
+once. An event's value is the scene's event to run, or one the loop handles
+itself (`enum FieldEventCode`): `FIELD_EVENT_PARTY_FELL` when characters fell
+to poison or hazardous ground, `FIELD_EVENT_WORLD_MAP_PICTURE` to show the
+world map picture (`Map_ShowWorldMap`), and `FIELD_EVENT_WORLD_MAP_ZOOM` for
+`BattleFx_RunVisibilityTransition`, which zooms the world map view out while
+L is held.
 
 This shape is why scene code can be written as straight-line cutscenes. A
 handler runs a script to its end, waiting with `WaitFrames` as it goes, and
@@ -277,10 +279,10 @@ cursor gets a blinking frame and its name in a window, and A or B closes the
 screen. In the German, French, Spanish and Italian releases the cursor also
 glides onto the nearest place when the player lets go of the pad.
 
-In code, R on the world map raises event -888, and the scene loop calls
-`Map_ShowWorldMap`. It decodes the picture into `gMapCellBuffer`, the map
-cells' scratch memory, and copies it into the video memory (VRAM) the
-backgrounds are drawn from. Only then does
+In code, R on the world map raises `FIELD_EVENT_WORLD_MAP_PICTURE`, and the
+scene loop calls `Map_ShowWorldMap`. It decodes the picture into
+`gMapCellBuffer`, the map cells' scratch memory, and copies it into the
+video memory (VRAM) the backgrounds are drawn from. Only then does
 [`psynergy_effects/world_map.c`](psynergy_effects/world_map.c) use
 `gMapCellBuffer` for its own work: the cursor, the markers and the
 place-name window. Its marker task keeps that work until the screen removes

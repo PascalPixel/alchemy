@@ -46,13 +46,12 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 }
 
 /// Handles a shortcut key's assignment: its top two bits choose what it
-/// requests (0 Psynergy, 1 an item) and the low 14 bits which one. With flag
-/// 0x107 (FLAG_MENUS_RAISE_EVENT, which Vault's inn sets while the party
-/// corners the suspects) it raises event 250 instead, as the menus do then; on
-/// the world map (mode 3) R raises event -888 (0xfc88), the world map picture,
-/// and L -889 (0xfc87), the visibility transition. Returns the request id,
-/// the assignment's low 14 bits, even when it raised an event instead; a
-/// shortcut with nothing assigned returns 0, as no key pressed does.
+/// requests (0 Psynergy, 1 an item) and the low 14 bits which one. With
+/// FLAG_MENUS_RAISE_EVENT set it raises FIELD_EVENT_MENUS_RAISED instead, as
+/// the menus do then; on the world map (mode 3) R raises
+/// FIELD_EVENT_WORLD_MAP_PICTURE and L FIELD_EVENT_WORLD_MAP_ZOOM. Returns the
+/// request id, the assignment's low 14 bits, even when it raised an event
+/// instead; a shortcut with nothing assigned returns 0, as no key pressed does.
 ///
 /// Called by Field_CheckConfiguredKeys. Sets fieldWork->command,
 /// fieldWork->item or fieldWork->event, which the scene loop (run_scene.c)
@@ -62,13 +61,14 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 requestId = 0x3FFF & encodedAssignment;
   struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
 
-  if (GameFlag_TestFar(0x107) != 0) {
-    Field_StoreHalfword(&fieldWork->event, 0xFA);
+  if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
+    Field_StoreHalfword(&fieldWork->event, FIELD_EVENT_MENUS_RAISED);
   } else if (fieldWork->mode == 3) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
-      Field_StoreHalfword(&fieldWork->event, 0xFC88);
+      Field_StoreHalfword(&fieldWork->event,
+                          (u16)FIELD_EVENT_WORLD_MAP_PICTURE);
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
-      Field_StoreHalfword(&fieldWork->event, 0xFC87);
+      Field_StoreHalfword(&fieldWork->event, (u16)FIELD_EVENT_WORLD_MAP_ZOOM);
     }
   } else {
     switch (assignmentKind) {

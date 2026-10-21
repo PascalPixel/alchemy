@@ -28,7 +28,8 @@
 ///   the cornered suspect's mind (Event_ReadCorneredSuspectsMinds,
 ///   FLAG_VAULT_SUSPECTS_MIND_READ): they are the thieves, and they have
 ///   hidden the stolen goods somewhere in the inn. During the chase the menus
-///   answer with Garet's refusal (FLAG_MENUS_RAISE_EVENT, raised event 250).
+///   answer with Garet's refusal (FLAG_MENUS_RAISE_EVENT,
+///   FIELD_EVENT_MENUS_RAISED).
 /// - In the room with the crate, Move pushes the crate aside
 ///   (Event_CheckCrateMoved, FLAG_VAULT_CRATE_MOVED), and the way behind it
 ///   climbs to the loft (Event_ClimbToLoft). There the roofer lies tied up;
@@ -413,9 +414,8 @@ static void Event_TalkToInnkeeper(void) {
 /// At Vault's inn, while the party corners the suspects, Garet refuses to stop
 /// for anything else. "We don't have time for that, Isaac!"
 ///
-/// Reached through raised event 250, which the engine raises in place of a
-/// menu or a shortcut while FLAG_MENUS_RAISE_EVENT is set, as the party
-/// corners the suspects.
+/// Reached through FIELD_EVENT_MENUS_RAISED, which the engine raises in place
+/// of a menu or a shortcut while FLAG_MENUS_RAISE_EVENT is set.
 static void Event_GaretRefusesToLeave(void) {
 #if TBS_PATCH_1
   Leader_StopMoving();
@@ -3822,7 +3822,7 @@ struct SceneEvent gVaultInteriors_Events[] = {
     { EVENT_RAISED, VAULT_INTERIORS_LEADER_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadCorneredSuspectsMinds) },
     { EVENT_RAISED, VAULT_INTERIORS_THIEF_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadCorneredSuspectsMinds) },
     { EVENT_RAISED, VAULT_INTERIORS_BOTH_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadCorneredSuspectsMinds) },
-    { EVENT_RAISED, 250, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GaretRefusesToLeave) },
+    { EVENT_RAISED, FIELD_EVENT_MENUS_RAISED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GaretRefusesToLeave) },
     { EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbToLoft) },
     { TOUCH_WALKING, 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossRoofGap) },
     { EVENT_TALK, IVAN, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },

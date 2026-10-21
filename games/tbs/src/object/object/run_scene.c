@@ -171,7 +171,7 @@ s32 Field_RunScene(s32 entrance) {
         }
         if (work->event != 0) {
           work->busy = 1;
-          if (work->event == -1) {
+          if (work->event == FIELD_EVENT_PARTY_FELL) {
             // Characters fell to poison or hazardous ground.
             u32 i;
 
@@ -208,10 +208,10 @@ s32 Field_RunScene(s32 entrance) {
               goto done;
             }
             WorldMap_EndEvent();
-          } else if (work->event == -888) {
+          } else if (work->event == FIELD_EVENT_WORLD_MAP_PICTURE) {
             Leader_StopMoving();
             Map_ShowWorldMap((s32)&ResourceId_WorldMapPicture);
-          } else if (work->event == -889) {
+          } else if (work->event == FIELD_EVENT_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
             BattleFx_RunVisibilityTransition();
           } else {
@@ -276,10 +276,8 @@ s32 Field_RunScene(s32 entrance) {
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
               (gKeysHeld & KEY_SELECT) != 0) {
             Menu_RunSelectionWithCursorObjectFar();
-          } else if (GameFlag_TestFar(0x107) != 0) {
-            // While flag 0x107 is set (Vault's chase sets it), the menu raises
-            // the scene's event 250 instead of opening.
-            work->event = 250;
+          } else if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
+            work->event = FIELD_EVENT_MENUS_RAISED;
           } else {
             work->effectTimerRunning = 0;
             Menu_RunTopSelectionFar();
@@ -326,9 +324,9 @@ s32 Field_RunScene(s32 entrance) {
           else if (*(volatile u8 *)&gDebugMode != 0 &&
                    (gKeysHeld & KEY_L) != 0) {
             Debug_RunPaletteEditor();
-          } else if (GameFlag_TestFar(0x107) != 0) {
+          } else if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
             // As for the main menu above.
-            work->event = 250;
+            work->event = FIELD_EVENT_MENUS_RAISED;
           } else {
             Battle_ResetEffectCounter();
             UiTimedNotice_CloseIfActiveFar();

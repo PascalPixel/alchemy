@@ -81,6 +81,18 @@ STATIC_ASSERT(offsetof(struct MarkerSlot, id) == 4);
 STATIC_ASSERT(offsetof(struct MarkerSlot, column) == 6);
 STATIC_ASSERT(offsetof(struct MarkerSlot, row) == 7);
 
+/// The values of FieldWork.event that the field loop handles itself, rather
+/// than passing them to the scene (Scene_RunRaisedEvent).
+enum FieldEventCode {
+  /// Party members fell to poison or hazardous ground this step.
+  FIELD_EVENT_PARTY_FELL = -1,
+  /// R on the world map: the picture of the whole world (Map_ShowWorldMap).
+  FIELD_EVENT_WORLD_MAP_PICTURE = -888,
+  /// L on the world map: the view zooms out while L is held
+  /// (BattleFx_RunVisibilityTransition).
+  FIELD_EVENT_WORLD_MAP_ZOOM = -889
+};
+
 /// A field scene's work, all of it: Field_RunScene allocates it in heap slot
 /// 27 (HEAP_SLOT_EVENT), zeroes it and frees it on the way out. The scene
 /// overlays read it as struct EventWork through gEventWork. The twelve
@@ -106,8 +118,7 @@ struct FieldWork {
   s16 battle;     ///< the enemy group of a random encounter
   s16 command;    ///< a field Psynergy to use, as owner << 10 | Psynergy
   s16 item;       ///< an item to use, packed as Field_UseItem reads it
-  /// A raised event for Scene_RunRaisedEvent, or -1 when characters fell to
-  /// poison or hazard damage, -888 the world map, -889 a visibility change.
+  /// A raised event for Scene_RunRaisedEvent, or an enum FieldEventCode.
   s16 event;
   ///@}
   s16 fallenCount;     ///< the characters who fell this step

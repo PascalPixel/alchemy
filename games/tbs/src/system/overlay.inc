@@ -411,7 +411,7 @@
 	import DjinnMenu_Open, DjinnMenu_RunFar
 	import Engine_DebugDrawItemDetails, ItemMenu_DrawItemDetailsFar
 @ Shop bank (far_call/SHOP.S)
-	import Battle_ApplyPresetItemsAndFlags, Battle_ApplyPresetItemsAndFlagsFar
+	import Shop_OpenDebugShop, Shop_OpenDebugShopFar
 	import Engine_ShopOpen, Shop_RunFar
 	import Shop_Run, Shop_RunFar
 	import Engine_SanctumOpen, Shop_ConfirmActFar

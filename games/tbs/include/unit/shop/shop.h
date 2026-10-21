@@ -15,7 +15,7 @@ void Shop_StepCursor(void);
 void Shop_InitializeCursorWork(void);
 void Shop_ReleaseCursorWork(void);
 s32 Shop_Run(s32 stockRow, s32 keeperId);
-s32 Battle_ApplyPresetItemsAndFlags(s32 unused);
+s32 Shop_OpenDebugShop(s32 unused);
 void AudioCommand_WaitForStateByteClear(void);
 void UiMessage_ShowAndWait(s32 messageId);
 void UiMessage_ShowAndRestoreState(s32 messageId);

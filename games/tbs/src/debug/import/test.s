@@ -79,7 +79,7 @@
 	.set import.Menu_OpenCharacterSelector, 1
 	.endif
 	.set import.Engine_DebugDrawItemDetails, 1
-	.set import.Battle_ApplyPresetItemsAndFlags, 1
+	.set import.Shop_OpenDebugShop, 1
 	.ifdef TBS_EDITION_JA
 	.set import.Shop_ConfirmAct, 1
 	.endif

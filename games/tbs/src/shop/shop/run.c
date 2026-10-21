@@ -184,7 +184,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 /// Opens the debug shop with 200000 coins, the ticket counter at its cap,
 /// broken equipment for repairs and poisoned or haunted members for the
 /// sanctum. Called by DebugMenu_RunPresetShop.
-s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
+s32 Shop_OpenDebugShop(s32 unused) {
   gGameState.coins = 200000;
   gGameState.shopGifts = 28;
   Inventory_EquipFar(

@@ -205,10 +205,8 @@ static void DebugMenu_RunMessageTest(void) {
 
 /// Runs the shop test's preset inventory, money and ailment setup. Talking
 /// to ACTOR_ARMOR_SHOPKEEPER: the debug shop, with 200000 coins, broken
-/// equipment and afflicted members (Battle_ApplyPresetItemsAndFlags).
-static void DebugMenu_RunPresetShop(void) {
-  Battle_ApplyPresetItemsAndFlags(1);
-}
+/// equipment and afflicted members (Shop_OpenDebugShop).
+static void DebugMenu_RunPresetShop(void) { Shop_OpenDebugShop(1); }
 
 /// Unused: an empty function nothing calls.
 UNUSED static void DebugMenu_NoOp(void) {}

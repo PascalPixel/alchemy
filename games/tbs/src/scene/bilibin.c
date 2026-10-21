@@ -19,8 +19,8 @@
 /// person, and Mind Read hears `Help me... Somebody...`. Once the curse is
 /// lifted, Bilibin_RestoreVillageActors puts the man himself
 /// (ACTOR_FORMER_TREE_MAN) beside the empty spot and turns the pair
-/// ACTOR_VILLAGER_ASKS_ABOUT_SOUTHEAST and ACTOR_VILLAGER_ROAD_BLOCKED about.
-/// Each of the ten villagers (ACTOR_VILLAGER_WELCOME to
+/// ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST and ACTOR_OLD_WOMAN_ROAD_BLOCKED about.
+/// Each of the ten villagers (ACTOR_BOY_WELCOME to
 /// ACTOR_VILLAGER_STRANGE_CREATURES) has two lines and two thoughts in
 /// gBilibinEvents, the row that needs the flag clear first, so the first row
 /// that matches picks the time: before, they talk of the curse, the barricade,
@@ -151,35 +151,43 @@ enum BilibinActor {
   /// village's west edge, the sprite of the ivy Whirlwind blows away (its
   /// render)
   ACTOR_IVY = ACTOR_FIRST_PLACED,
-  ACTOR_TREE_MAN, ///< the man turned into a tree at the village entrance
-  /// "Welcome to Bilibin! Please, just ignore that strange tree out front!"
-  ACTOR_VILLAGER_WELCOME,
-  /// "I hear a large group crossed over Goma Range, heading toward Imil."
+  /// The man turned into a tree at the village entrance, drawn as a tree.
+  ACTOR_TREE_MAN,
+  /// A boy with brown hair: "Welcome to Bilibin! Please, just ignore that
+  /// strange tree out front!"
+  ACTOR_BOY_WELCOME,
+  /// A woman with fair hair: "I hear a large group crossed over Goma Range,
+  /// heading toward Imil."
   ACTOR_VILLAGER_GROUP_TO_IMIL,
-  /// "Did you see the tree at the entrance?" (Event_AskAboutEntranceTree)
+  /// A burly grey-haired man: "Did you see the tree at the entrance?"
+  /// (Event_AskAboutEntranceTree)
   ACTOR_VILLAGER_ASKS_ABOUT_TREE,
-  /// "Lord McCoy has been quite frightened since the incident."
+  /// A woman in a green dress: "Lord McCoy has been quite frightened since
+  /// the incident."
   ACTOR_VILLAGER_MCCOY_FRIGHTENED,
-  /// "Have you tried heading southeast from here?"
+  /// An old man with a cane: "Have you tried heading southeast from here?"
   /// (Event_AskAboutSoutheastRoute)
-  ACTOR_VILLAGER_ASKS_ABOUT_SOUTHEAST,
-  /// "The road to Kolima is blocked now, as per Lord McCoy's orders."
-  ACTOR_VILLAGER_ROAD_BLOCKED,
-  /// A child: "Ever since that man turned into a tree, everyone has been too
-  /// scared to go near the town's entrance." Mind Read: "Is that how all
+  ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
+  /// An old woman: "The road to Kolima is blocked now, as per Lord McCoy's
+  /// orders."
+  ACTOR_OLD_WOMAN_ROAD_BLOCKED,
+  /// A small boy: "Ever since that man turned into a tree, everyone has been
+  /// too scared to go near the town's entrance." Mind Read: "Is that how all
   /// grown-ups are?"
-  ACTOR_VILLAGER_SCARED_OF_ENTRANCE,
-  /// "Is it true that a mountain exploded on the other side of Goma? The sky
-  /// was a brilliant red that day."
-  ACTOR_VILLAGER_RED_SKY,
-  /// "There's a tower at the tip of Imil that people say was built by the
-  /// gods!"
-  ACTOR_VILLAGER_IMIL_TOWER,
-  /// "Something changed in the eruption. Now, all sorts of strange creatures
-  /// lurk in every forest and mountain!"
+  ACTOR_BOY_SCARED_OF_ENTRANCE,
+  /// A little girl: "Is it true that a mountain exploded on the other side of
+  /// Goma? The sky was a brilliant red that day."
+  ACTOR_GIRL_RED_SKY,
+  /// A strongman, stocky and muscular: "There's a tower at the tip of Imil
+  /// that people say was built by the gods!"
+  ACTOR_STRONGMAN_IMIL_TOWER,
+  /// A man with a pickaxe: "Something changed in the eruption. Now, all sorts
+  /// of strange creatures lurk in every forest and mountain!"
   ACTOR_VILLAGER_STRANGE_CREATURES,
   ACTOR_VILLAGE_PILLAR, ///< a statue, moved with Move or pushed
-  ACTOR_FORMER_TREE_MAN ///< the same man once the curse is lifted
+  /// The same man once the curse is lifted, a stocky, muscular man with black
+  /// hair.
+  ACTOR_FORMER_TREE_MAN
 };
 
 /// Actors of the Bilibin Barricade (BilibinBarricade), numbering its placement
@@ -193,13 +201,15 @@ enum BilibinBarricadeActor {
   /// side by the river.
   ACTOR_MIDDLE_TREE,
   ACTOR_JILL_TREE, ///< Jill as a tree, the top of the three
-  /// Jill's two friends, once the curse is lifted, east and west of her. With
-  /// her they were the "Gang of Three".
+  /// Jill's two friends, once the curse is lifted, east and west of her: two
+  /// boys with brown hair. With her they were the "Gang of Three".
   ACTOR_GANG_MEMBER_EAST,
   /// ★ Named from the game: "I heard we were once called the Gang of Three."
   /// (MsgBilibinIHeardWeWereOnceCalled)
   ACTOR_GANG_MEMBER_WEST,
-  /// Jill herself, once the curse is lifted.
+  /// Jill herself, once the curse is lifted, drawn as the woman with long fair
+  /// hair the villages use (SPRITE_WOMAN_WITH_FAIR_HAIR), though the text calls
+  /// the three children.
   /// ★ Named from the game: "Jill, are these the people who saved you?"
   /// (MsgBilibinYoureGuy)
   ACTOR_JILL,
@@ -340,9 +350,9 @@ static void Event_ExamineTreeMan(void) {
   Engine_EventEnd();
 }
 
-/// A villager in Bilibin, before the curse is lifted, asks whether the party
-/// saw the tree at the entrance; on yes, that it was once a man who came under
-/// a curse.
+/// A burly grey-haired man in Bilibin, before the curse is lifted, asks
+/// whether the party saw the tree at the entrance; on yes, that it was once a
+/// man who came under a curse.
 static void Event_AskAboutEntranceTree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDidSeeTreeAtEntrance);
@@ -350,12 +360,12 @@ static void Event_AskAboutEntranceTree(void) {
   Engine_EventEnd();
 }
 
-/// A villager in Bilibin, before the curse is lifted, asks whether the party
+/// An old man in Bilibin, before the curse is lifted, asks whether the party
 /// has tried heading southeast; either way, the barricade blocks the road.
 static void Event_AskAboutSoutheastRoute(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveTriedHeadingSoutheastFrom);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_ASKS_ABOUT_SOUTHEAST, 0);
+  Engine_EventAskYesNo(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, 0);
   Engine_EventEnd();
 }
 
@@ -368,21 +378,21 @@ static void Event_AskAboutBeingATree(void) {
   Engine_EventEnd();
 }
 
-/// A villager in Bilibin, once the curse is lifted, asks whether the party are
+/// A small boy in Bilibin, once the curse is lifted, asks whether the party are
 /// the three young warriors who broke it.
 static void Event_AskAboutCurseBreakers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinCurseWasBrokenThanksEfforts);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_SCARED_OF_ENTRANCE, 0);
+  Engine_EventAskYesNo(ACTOR_BOY_SCARED_OF_ENTRANCE, 0);
   Engine_EventEnd();
 }
 
-/// A villager in Bilibin, once the curse is lifted, asks whether the party has
+/// A strongman in Bilibin, once the curse is lifted, asks whether the party has
 /// been to Imil, up north, and seen its lighthouse.
 static void Event_AskAboutImil(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveEverBeenVillageImil);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_IMIL_TOWER, 0);
+  Engine_EventAskYesNo(ACTOR_STRONGMAN_IMIL_TOWER, 0);
   Engine_EventEnd();
 }
 
@@ -636,10 +646,10 @@ static void Bilibin_RestoreVillageActors(void) {
 
   if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_ActorSetPosition(ACTOR_TREE_MAN, 0, 0);
-    Actor_FaceDirection(ACTOR_VILLAGER_ASKS_ABOUT_SOUTHEAST,
+    Actor_FaceDirection(ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
                         FACING_SOUTHEAST + FACING_STEP, 0);
-    Actor_FaceDirection(ACTOR_VILLAGER_ROAD_BLOCKED, FACING_SOUTH + FACING_STEP,
-                        0);
+    Actor_FaceDirection(ACTOR_OLD_WOMAN_ROAD_BLOCKED,
+                        FACING_SOUTH + FACING_STEP, 0);
   } else {
     actor = Actor_Get(ACTOR_TREE_MAN);
     Engine_ActorSetSpriteFlags(actor, 0);
@@ -1045,31 +1055,31 @@ struct ScenePlacement gBilibinPlacementsOther[] = {
 struct ScenePlacement gBilibinPlacements[] = {
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(40), 0, PIXELS(140), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x69, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TREE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(256), 0, PIXELS(440), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(328), FACING_SOUTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(312), 0, PIXELS(240), FACING_NORTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x65, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(176), 0, PIXELS(328), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x73, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(128), 0, PIXELS(224), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(176), 0, PIXELS(96), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(192), 0, PIXELS(96), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6b, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(208), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(192), 0, PIXELS(208), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(232), 0, PIXELS(296), FACING_SOUTHWEST, TALK_FACE_PARTY, 0 },
-    { 0x87, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(392), 0, PIXELS(360), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0xf3, CONDITION_ALWAYS, 7,
         PIXELS(264), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(432), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1077,17 +1087,17 @@ struct ScenePlacement gBilibinPlacements[] = {
 struct ScenePlacement gBilibinBarricadePlacements[] = {
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x69, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TREE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x69, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TREE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x69, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TREE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(154), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(282), 0, PIXELS(170), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(246), 0, PIXELS(170), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(262), 0, PIXELS(156), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x17, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1099,7 +1109,7 @@ struct ScenePlacement gBilibinBarricadePlacements[] = {
 struct ScenePlacement gBilibinTreasuryPlacements[] = {
     { 0xf3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x5d, FLAG_DJINNI_0 + DJINNI_GUST, ACTOR_STAND,
+    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_GUST, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1122,46 +1132,46 @@ struct SceneEvent gBilibinEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndLeave) },
     { EVENT_TALK, ACTOR_TREE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExamineTreeMan) },
     { EVENT_TALK, ACTOR_FORMER_TREE_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutBeingATree) },
-    { EVENT_TALK, ACTOR_VILLAGER_WELCOME, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWelcomeToBilibinPleaseJustIgnore) },
-    { EVENT_TALK, ACTOR_VILLAGER_WELCOME, CONDITION_ALWAYS, MSGNO(MsgBilibinWelcomeToBilibinWellForgetThat) },
+    { EVENT_TALK, ACTOR_BOY_WELCOME, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWelcomeToBilibinPleaseJustIgnore) },
+    { EVENT_TALK, ACTOR_BOY_WELCOME, CONDITION_ALWAYS, MSGNO(MsgBilibinWelcomeToBilibinWellForgetThat) },
     { EVENT_TALK, ACTOR_VILLAGER_GROUP_TO_IMIL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIHearALargeGroupCrossed) },
     { EVENT_TALK, ACTOR_VILLAGER_GROUP_TO_IMIL, CONDITION_ALWAYS, MSGNO(MsgBilibinIfYoureTalkingAboutTheTravelers) },
     { EVENT_TALK, ACTOR_VILLAGER_ASKS_ABOUT_TREE, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_AskAboutEntranceTree) },
     { EVENT_TALK, ACTOR_VILLAGER_ASKS_ABOUT_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinYoureWonderingAboutTheTreeNear) },
     { EVENT_TALK, ACTOR_VILLAGER_MCCOY_FRIGHTENED, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinLordMccoyHasBeenQuiteFrightened) },
     { EVENT_TALK, ACTOR_VILLAGER_MCCOY_FRIGHTENED, CONDITION_ALWAYS, MSGNO(MsgBilibinISawLordMccoyTheChief) },
-    { EVENT_TALK, ACTOR_VILLAGER_ASKS_ABOUT_SOUTHEAST, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_AskAboutSoutheastRoute) },
-    { EVENT_TALK, ACTOR_VILLAGER_ASKS_ABOUT_SOUTHEAST, CONDITION_ALWAYS, MSGNO(MsgBilibinIHearTheBarricadeGateThat) },
-    { EVENT_TALK, ACTOR_VILLAGER_ROAD_BLOCKED, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheRoadToKolimaIsBlocked) },
-    { EVENT_TALK, ACTOR_VILLAGER_ROAD_BLOCKED, CONDITION_ALWAYS, MSGNO(MsgBilibinThoseThreeKidsVanishedDuringAll) },
-    { EVENT_TALK, ACTOR_VILLAGER_SCARED_OF_ENTRANCE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinEverSinceThatManTurnedInto) },
-    { EVENT_TALK, ACTOR_VILLAGER_SCARED_OF_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutCurseBreakers) },
-    { EVENT_TALK, ACTOR_VILLAGER_RED_SKY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIsItTrueThatAMountain) },
-    { EVENT_TALK, ACTOR_VILLAGER_RED_SKY, CONDITION_ALWAYS, MSGNO(MsgBilibinLordMccoysMenSaidTheySaw) },
-    { EVENT_TALK, ACTOR_VILLAGER_IMIL_TOWER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheresATowerAtTheTip) },
-    { EVENT_TALK, ACTOR_VILLAGER_IMIL_TOWER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutImil) },
+    { EVENT_TALK, ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_AskAboutSoutheastRoute) },
+    { EVENT_TALK, ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, CONDITION_ALWAYS, MSGNO(MsgBilibinIHearTheBarricadeGateThat) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_ROAD_BLOCKED, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheRoadToKolimaIsBlocked) },
+    { EVENT_TALK, ACTOR_OLD_WOMAN_ROAD_BLOCKED, CONDITION_ALWAYS, MSGNO(MsgBilibinThoseThreeKidsVanishedDuringAll) },
+    { EVENT_TALK, ACTOR_BOY_SCARED_OF_ENTRANCE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinEverSinceThatManTurnedInto) },
+    { EVENT_TALK, ACTOR_BOY_SCARED_OF_ENTRANCE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutCurseBreakers) },
+    { EVENT_TALK, ACTOR_GIRL_RED_SKY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIsItTrueThatAMountain) },
+    { EVENT_TALK, ACTOR_GIRL_RED_SKY, CONDITION_ALWAYS, MSGNO(MsgBilibinLordMccoysMenSaidTheySaw) },
+    { EVENT_TALK, ACTOR_STRONGMAN_IMIL_TOWER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheresATowerAtTheTip) },
+    { EVENT_TALK, ACTOR_STRONGMAN_IMIL_TOWER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutImil) },
     { EVENT_TALK, ACTOR_VILLAGER_STRANGE_CREATURES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinSomethingChangedInTheEruptionNow) },
     { EVENT_TALK, ACTOR_VILLAGER_STRANGE_CREATURES, CONDITION_ALWAYS, MSGNO(MsgBilibinTheEruptionOnTheOtherSide) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TREE_MAN, CONDITION_ALWAYS, MSGNO(MsgBilibinHelpMeSomebody) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORMER_TREE_MAN, CONDITION_ALWAYS, MSGNO(MsgBilibinINeverWantToBeTurned) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOME, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouGuysAreSoUnluckyArriving) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOME, CONDITION_ALWAYS, MSGNO(MsgBilibinNotManyLumberjacksAreWillingTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WELCOME, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouGuysAreSoUnluckyArriving) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WELCOME, CONDITION_ALWAYS, MSGNO(MsgBilibinNotManyLumberjacksAreWillingTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GROUP_TO_IMIL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouMustBeMadItsAlmost) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_GROUP_TO_IMIL, CONDITION_ALWAYS, MSGNO(MsgBilibinOneOfTheTwoPeopleThat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKS_ABOUT_TREE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeEndedUpLikeThisBecause) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKS_ABOUT_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinThatGuyMightTurnIntoA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MCCOY_FRIGHTENED, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinEveryoneGetsWorriedWhenTownLeaders) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MCCOY_FRIGHTENED, CONDITION_ALWAYS, MSGNO(MsgBilibinLordMccoySeemsToBeHaving) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKS_ABOUT_SOUTHEAST, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWhereDidTheseKidsComeFrom) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKS_ABOUT_SOUTHEAST, CONDITION_ALWAYS, MSGNO(MsgBilibinApparentlyJustAboutAnyoneCouldJust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ROAD_BLOCKED, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinNoOneWouldDareGoAfter) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ROAD_BLOCKED, CONDITION_ALWAYS, MSGNO(MsgBilibinTheGangOfThreeHaTheyre) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SCARED_OF_ENTRANCE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeBeggedForHelpAsHe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SCARED_OF_ENTRANCE, CONDITION_ALWAYS, MSGNO(MsgBilibinImSureLordMccoyWillGive) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RED_SKY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWantToSeeThatPretty) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_RED_SKY, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyMustBeReportingYourDeeds) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IMIL_TOWER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinOnlyGreatAdeptsCanEnterThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IMIL_TOWER, CONDITION_ALWAYS, MSGNO(MsgBilibinIWantToShareWithYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWhereDidTheseKidsComeFrom) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST, CONDITION_ALWAYS, MSGNO(MsgBilibinApparentlyJustAboutAnyoneCouldJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ROAD_BLOCKED, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinNoOneWouldDareGoAfter) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ROAD_BLOCKED, CONDITION_ALWAYS, MSGNO(MsgBilibinTheGangOfThreeHaTheyre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_SCARED_OF_ENTRANCE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeBeggedForHelpAsHe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_SCARED_OF_ENTRANCE, CONDITION_ALWAYS, MSGNO(MsgBilibinImSureLordMccoyWillGive) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_RED_SKY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWantToSeeThatPretty) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_RED_SKY, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyMustBeReportingYourDeeds) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_IMIL_TOWER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinOnlyGreatAdeptsCanEnterThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_IMIL_TOWER, CONDITION_ALWAYS, MSGNO(MsgBilibinIWantToShareWithYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_STRANGE_CREATURES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatExplosionMustHaveBeenA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_STRANGE_CREATURES, CONDITION_ALWAYS, MSGNO(MsgBilibinAsLongAsImOkayI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VILLAGE_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateVillagePillarCells) },

@@ -8,8 +8,9 @@
 #include "field_event.h"
 #include "flags.h"
 
-/// Cell code 1 selects the passage's alternate collision and sets
-/// FLAG_SCENE_TEMP_00, preserving that choice across a kept-position return.
+/// Switches the passage to its alternate collision.
+/// Cell code 1 reaches it; it sets FLAG_SCENE_TEMP_00, preserving that choice
+/// across a kept-position return.
 static void Vault_EnableAlternatePassageCells(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
   Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);

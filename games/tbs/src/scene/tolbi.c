@@ -1,5 +1,5 @@
 /// @file
-/// Tolbi (scene 135), the town of Babi, its ruler, where Colosso, a festival
+/// SceneId_Tolbi, the town of Babi, its ruler, where Colosso, a festival
 /// of warriors, is held each year in the colosseum.
 ///
 /// The party comes to Tolbi across the Karagol Sea from Kalay while the
@@ -38,8 +38,9 @@
 ///
 /// The doors from TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_SANCTUM, each numbered as
 /// its trigger, lead into Tolbi's houses, inns and shops and into Tolbi Sanctum
-/// (all scene 136), but for door 4, which with exit 13 leads into the Lucky
-/// Dice and Lucky Wheels rooms (scene 137, whose area name is also Tolbi).
+/// (all SceneId_TolbiInteriors), but for TOLBI_TO_LUCKY_WHEELS, which with
+/// TOLBI_TO_LUCKY_DICE leads into the Lucky Dice and Lucky Wheels rooms
+/// (SceneId_TolbiGameRooms, whose area name is also Tolbi).
 /// TOLBI_TO_BABI_PALACE_ENTRANCE leads to Babi's Palace,
 /// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
 /// out onto the world map.

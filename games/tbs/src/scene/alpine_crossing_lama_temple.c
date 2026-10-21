@@ -11,19 +11,22 @@
 /// danger on his way home from training under Master Hama at Lama Temple, and
 /// has gone off alone to find him (FLAG_FEIZHI_WENT_TO_HSU, set in
 /// fuchin_temple.c). At the Alpine Crossing boulders block Silk Road. Stepping
-/// onto the road beside them (touch 10) plays AlpineCrossing_FeizhiArrives:
-/// Feizhi runs up behind the party, finds that her vision has come true, calls
-/// for Hsu and runs ahead down the path with the leader following, and cannot
-/// hear him (FLAG_FEIZHI_SAW_ROCKSLIDE). She stays at the end of that path,
-/// asking whether she should go back to Xian, until Hama's lesson. A signpost
-/// reads `North: Altin Mine West: Lama Temple`; the Crossing opens onto the
-/// world map to the east, north and west, and by two ways (exits 4 and 5) into
-/// Altin Peak's AltinPeak4, whose entrances from here the international
-/// editions also call Alpine Crossing. With the road closed, the villagers of
-/// Altin, to the north, send the party through their mine, Altin Peak
-/// (altin.c, altin_peak.c), and the mine brings it back out here from
-/// AltinPeak4 (entrances 4 and 5); coming in that way the area name is not
-/// shown again.
+/// onto the road beside them (TRIGGER_FEIZHI_ARRIVAL) plays
+/// AlpineCrossing_FeizhiArrives: Feizhi runs up behind the party, finds that
+/// her vision has come true, calls for Hsu and runs ahead down the path with
+/// the leader following, and cannot hear him (FLAG_FEIZHI_SAW_ROCKSLIDE). She
+/// stays at the end of that path, asking whether she should go back to Xian,
+/// until Hama's lesson. A signpost reads
+/// `North: Altin Mine West: Lama Temple`; the Crossing opens onto the world
+/// map to the east, north and west, and by two ways
+/// (ALPINE_CROSSING_TO_ALTIN_PEAK_4_WEST and
+/// ALPINE_CROSSING_TO_ALTIN_PEAK_4_EAST) into Altin Peak's AltinPeak4, whose
+/// entrances from here the international editions also call Alpine Crossing.
+/// With the road closed, the villagers of Altin, to the north, send the party
+/// through their mine, Altin Peak (altin.c, altin_peak.c), and the mine brings
+/// it back out here from AltinPeak4 (ALPINE_CROSSING_FROM_ALTIN_PEAK_4_WEST and
+/// ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST); coming in that way the area name is
+/// not shown again.
 ///
 /// Lama Temple, west along the road, is Master Hama's temple, the last stop
 /// before the Lamakan Desert. Its five monks talk of the desert ahead, of
@@ -31,36 +34,37 @@
 /// thoughts until Hsu is freed (FLAG_HSU_RESCUED), and advice for the desert
 /// after. A traveling healer offers the Sanctum's services across his counter.
 /// Walking north into the sliding door (LamaTemple_EnterHamasRoom) leads into
-/// Hama's room, which is FuchinTemple2's entrance 3, in fuchin_temple.c: there
-/// Hama teaches Ivan Reveal for crossing the desert, and Feizhi, who came
-/// through the mine, bursts in to say that Hsu is trapped by the boulders in
-/// the mountains; Hama hurries to his aid, and the party may follow
-/// (FLAG_XIAN_HEARD_HSU_TRAPPED, set as the lesson ends). Coming back out of
-/// the room (entrance 2) the area name is not shown again. Writing on a wall
-/// hints at Reveal, which shows a passage behind a false wall
-/// (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the wall back
-/// when Reveal wears off and on entry, the wall cell's own attributes saved at
-/// (21, 73). The temple also holds a Psynergy Stone (place flag 0x350) and a
-/// chest with Water of Life.
+/// Hama's room, in FuchinTemple2 (FUCHIN_TEMPLE_2_FROM_LAMA_TEMPLE, in
+/// fuchin_temple.c): there Hama teaches Ivan Reveal for crossing the desert,
+/// and Feizhi, who came through the mine, bursts in to say that Hsu is trapped
+/// by the boulders in the mountains; Hama hurries to his aid, and the party may
+/// follow (FLAG_XIAN_HEARD_HSU_TRAPPED, set as the lesson ends). Coming back
+/// out of the room (LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_2) the area name is not
+/// shown again. Writing on a wall hints at Reveal, which shows a passage behind
+/// a false wall (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
+/// wall back when Reveal wears off and on entry, the wall cell's own attributes
+/// saved at (21, 73). The temple also holds a Psynergy Stone (place flag 0x350)
+/// and a chest with Water of Life.
 ///
 /// Back at the Alpine Crossing after the lesson, until Hsu is freed, Hama and
 /// Feizhi stand by him, pinned between two boulders. Arriving beside him from
-/// AltinPeak4 (entrance 5) the first time, AlpineCrossing_HamaReachesHsu plays:
-/// he is unhurt but cannot move, and no one knows how to free him
-/// (FLAG_HAMA_REACHED_HSU). Lift on the boulder (AlpineCrossing_LiftBoulder),
-/// the Psynergy of the Lifting Gem found in Altin Peak, makes it float while
-/// Hama and Feizhi pull him free; they will ask Master Feh to tend him and
-/// clear the road, and the scene sets FLAG_HSU_RESCUED and leaves for Lama
-/// Temple's entrance 3, where Scene_Initialize plays Hama's farewell
-/// (LamaTemple_RunHamasFarewell). If the party instead comes back by the world
-/// map's north side (entrance 2), Hsu has been freed without it
-/// (FLAG_HSU_RESCUED_WITHOUT_PARTY, which lamakan_desert.c can set too), and
-/// Hama and Feizhi are gone. Once he is free, two workers from Xian stand by
-/// the road they have cleared, and Scene_Initialize copies the cleared cells
-/// over the rocks. The Crossing's other puzzles are kept only within one
-/// visit (scene flags): Reveal shows a hidden path, Frost freezes a puddle
-/// into a pillar the party can climb, and Growth grows a sprout into a vine;
-/// a chest holds Power Bread.
+/// AltinPeak4 (ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST) the first time,
+/// AlpineCrossing_HamaReachesHsu plays: he is unhurt but cannot move, and no
+/// one knows how to free him (FLAG_HAMA_REACHED_HSU). Lift on the boulder
+/// (AlpineCrossing_LiftBoulder), the Psynergy of the Lifting Gem found in Altin
+/// Peak, makes it float while Hama and Feizhi pull him free; they will ask
+/// Master Feh to tend him and clear the road, and the scene sets
+/// FLAG_HSU_RESCUED and leaves for Lama Temple (ALPINE_CROSSING_TO_LAMA_TEMPLE,
+/// to LAMA_TEMPLE_FROM_ALPINE_CROSSING), where Scene_Initialize plays Hama's
+/// farewell (LamaTemple_RunHamasFarewell). If the party instead comes back by
+/// the world map's north side (ALPINE_CROSSING_FROM_WORLD_MAP_NORTH), Hsu has
+/// been freed without it (FLAG_HSU_RESCUED_WITHOUT_PARTY, which
+/// lamakan_desert.c can set too), and Hama and Feizhi are gone. Once he is
+/// free, two workers from Xian stand by the road they have cleared, and
+/// Scene_Initialize copies the cleared cells over the rocks. The Crossing's
+/// other puzzles are kept only within one visit (scene flags): Reveal shows a
+/// hidden path, Frost freezes a puddle into a pillar the party can climb, and
+/// Growth grows a sprout into a vine; a chest holds Power Bread.
 
 #include "script.h"
 #include "game_state.h"
@@ -121,24 +125,6 @@ enum AlpineCrossingActor {
   ACTOR_PUDDLE,
   ACTOR_SPROUT
 };
-
-enum LamaTempleEntrance {
-  TEMPLE_ENTRANCE_FROM_HAMAS_ROOM = 2,
-  TEMPLE_ENTRANCE_FAREWELL = 3
-};
-
-/// The Alpine Crossing's entrances: 1 to 3 from the world map (from its
-/// entrances 15 to the east, 50 to the north and 51 to the west, toward Lama
-/// Temple), 4 and 5 from AltinPeak4 (its exits 6 and 7).
-enum AlpineCrossingEntrance {
-  CROSSING_ENTRANCE_FROM_NORTH = 2,
-  CROSSING_ENTRANCE_4 = 4,
-  CROSSING_ENTRANCE_5 = 5
-};
-
-/// The exit that takes the party from the rescue to Hama's farewell, at Lama
-/// Temple's entrance 3.
-enum { CROSSING_EXIT_TO_FAREWELL = 6 };
 
 /// Alpine Crossing's Psynergy puzzles, kept while the party stays.
 enum {
@@ -234,7 +220,7 @@ static void LamaTemple_TalkToEastwardMonk(void) {
   Engine_EventSetMessage(MsgMountainYoungWarriorsDoComeFrom);
   Engine_EventOpenMessage(ACTOR_EASTWARD_MONK, 0);
 
-  if (Engine_EventChooseYesNo(0, 0) == 1) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
     Engine_EventWait(20);
     Engine_EventShowMessage(ACTOR_EASTWARD_MONK, 0);
   } else {
@@ -264,8 +250,8 @@ static void LamaTemple_TalkToChiMonk(void) {
 }
 
 /// In Lama Temple, walking north into the door of Hama's room slides it open
-/// and walks the party leader through, into the room (FuchinTemple2's
-/// entrance 3).
+/// and walks the party leader through, into the room
+/// (LAMA_TEMPLE_TO_FUCHIN_TEMPLE_2).
 static void LamaTemple_EnterHamasRoom(void) {
   Event_PlayCue(SE_188);
   Map_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
@@ -275,7 +261,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   Engine_EventWait(16);
-  Engine_EventRequestExit(TRIGGER_TEMPLE_DOOR);
+  Engine_EventRequestExit(LAMA_TEMPLE_TO_FUCHIN_TEMPLE_2);
 }
 
 /// Hama's farewell, once the party has freed Hsu and been brought back to Lama
@@ -330,7 +316,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
   Event_OpenMessage(GARET, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(20);
     Actor_FaceDirection(MIA, FACING_EAST, 20);
     Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
@@ -598,7 +584,7 @@ static void AlpineCrossing_TalkToFeizhi(void) {
   Engine_EventSetMessage(MsgMountainDoDoWarriorShouldReturn);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | 5, 60);
   Event_OpenMessage(ACTOR_FEIZHI, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 1) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
     Event_SkipMessages(1);
   }
   Engine_EventWait(20);
@@ -608,10 +594,10 @@ static void AlpineCrossing_TalkToFeizhi(void) {
   Engine_EventEnd();
 }
 
-/// Arriving at the Alpine Crossing from AltinPeak4 by entrance 5 while Hsu is
-/// trapped, until this has run once (FLAG_HAMA_REACHED_HSU): the camera finds
-/// Hsu, Hama asks if he is okay, and he is unhurt but cannot move; none of them
-/// knows how to free him.
+/// Arriving at the Alpine Crossing from AltinPeak4 by
+/// ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST while Hsu is trapped, until this has
+/// run once (FLAG_HAMA_REACHED_HSU): the camera finds Hsu, Hama asks if he is
+/// okay, and he is unhurt but cannot move; none of them knows how to free him.
 static void AlpineCrossing_HamaReachesHsu(void) {
   Engine_EventBegin();
   // Reveal Hsu's position before Hama and Feizhi discuss freeing him.
@@ -769,7 +755,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_EventEnd();
   GameFlag_Set(FLAG_HSU_RESCUED);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  Engine_EventRequestExit(CROSSING_EXIT_TO_FAREWELL);
+  Engine_EventRequestExit(ALPINE_CROSSING_TO_LAMA_TEMPLE);
 }
 
 /// Searching the signpost at the Alpine Crossing.
@@ -891,9 +877,9 @@ s32 Scene_Initialize(void) {
       Engine_ActorFaceDirection(ACTOR_CHI_MONK, FACING_EAST, 0);
     }
     entrance = gGameState.entrance;
-    if (entrance == TEMPLE_ENTRANCE_FROM_HAMAS_ROOM) {
+    if (entrance == LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_2) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-    } else if (entrance == TEMPLE_ENTRANCE_FAREWELL &&
+    } else if (entrance == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
                !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       LamaTemple_RunHamasFarewell();
     }
@@ -909,8 +895,8 @@ s32 Scene_Initialize(void) {
       Engine_ActorSetAnimation(ACTOR_SPROUT, ANIM_GROWN);
       AlpineCrossing_GrowSprout();
     }
-    if (gGameState.entrance == CROSSING_ENTRANCE_4 ||
-        gGameState.entrance == CROSSING_ENTRANCE_5) {
+    if (gGameState.entrance == ALPINE_CROSSING_FROM_ALTIN_PEAK_4_WEST ||
+        gGameState.entrance == ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     }
 
@@ -925,7 +911,7 @@ s32 Scene_Initialize(void) {
     // Hsu: he has been freed without it and the boulder is gone.
     if (!GameFlag_IsSet(FLAG_HSU_RESCUED) &&
         Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
-        gGameState.entrance == CROSSING_ENTRANCE_FROM_NORTH) {
+        gGameState.entrance == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
       Engine_ActorSetPosition(ACTOR_BOULDER, 0, 0);
       Engine_GameFlagSet(FLAG_HSU_RESCUED);
       Engine_GameFlagSet(FLAG_HSU_RESCUED_WITHOUT_PARTY);
@@ -959,7 +945,7 @@ s32 Scene_Initialize(void) {
       Actor_SetActionScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
       Object_GetById(ACTOR_HSU)->scaleX = -0x10000;
     }
-    if (gGameState.entrance == CROSSING_ENTRANCE_5 &&
+    if (gGameState.entrance == ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST &&
         !Engine_GameFlagIsSet(FLAG_HAMA_REACHED_HSU) &&
         !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
         !Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
@@ -1135,7 +1121,7 @@ struct ScenePlacement gAlpineCrossing_Placements[] = {
 };
 
 struct SceneEvent gLamaTemple_Events[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, LAMA_TEMPLE_TO_WORLD_MAP },
     { TOUCH_WALKING_INTO(FACING_NORTH), TRIGGER_TEMPLE_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(LamaTemple_EnterHamasRoom) },
     { EVENT_TALK, ACTOR_GREETING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers) },
     { EVENT_TALK, ACTOR_EASTWARD_MONK, FLAG_HSU_RESCUED, EVENT_SCRIPT(LamaTemple_TalkToEastwardMonk) },
@@ -1171,11 +1157,11 @@ struct SceneEvent gLamaTemple_Events[] = {
 };
 
 struct SceneEvent gAlpineCrossing_Events[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 5 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_EAST },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_NORTH },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_WEST },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_4_WEST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_4_EAST },
     { EVENT_TOUCH, TRIGGER_FEIZHI_ARRIVAL, FLAG_FEIZHI_SAW_ROCKSLIDE, EVENT_SCRIPT(AlpineCrossing_FeizhiArrives) },
     { EVENT_TALK, ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(AlpineCrossing_TalkToFeizhi) },
     { EVENT_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWellIsaacAdeptsYouCameTo) },

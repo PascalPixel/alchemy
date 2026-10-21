@@ -13,25 +13,27 @@
 /// byte flag 0x310), so that what the friends changed stays changed for the
 /// race.
 ///
-/// - Entrance 3, the tour, from the Colosseum's east passage. The guide
-///   (ColosseumFinal1_ExplainFinalsRules) tells the party that warriors enter
-///   without their own equipment and race through the stages to the arena,
-///   where the first to arrive takes the better of two prizes and keeps it for
-///   the next match, and he pans over the stages if asked. Each stage's
-///   attendant names it, the first time with a demonstration (Isaac appears on
-///   the stage to show how it is crossed, or, at the Pipeworks, a pointer shows
-///   how the pipes work), and offers a place to cheer there:
-///   the friend Isaac picks walks to the stage and leaves the party
-///   (Colosso_OfferCheeringSpot). When all three are placed, the guide sends
-///   Isaac on to the Colosseum's waiting room (exit 11).
-/// - Entrance 2, after the warriors have marched out. The lettering reads `Lend
-///   a Hand`, and Garet, Ivan and Mia in turn are the party alone, starting
-///   where they chose to cheer. Each may use Psynergy on the stages for Isaac:
-///   Douse on the Pipeworks' west pipe fills it, Growth grows the plant before
-///   the Broken Bridge, Move shifts the Rock Challenge's rocks. Using Psynergy
-///   (Colosso_TakePlaceForMatch) or telling a stage's attendant they are done
-///   (Colosso_AskDoneCheering) ends that friend's turn, and where they stand is
-///   kept as their place; after Mia, exit 10 starts the race.
+/// - COLOSSEUM_FINAL_1_FROM_COLOSSEUM, the tour, from the Colosseum's east
+///   passage. The guide (ColosseumFinal1_ExplainFinalsRules) tells the party
+///   that warriors enter without their own equipment and race through the
+///   stages to the arena, where the first to arrive takes the better of two
+///   prizes and keeps it for the next match, and he pans over the stages if
+///   asked. Each stage's attendant names it, the first time with a
+///   demonstration (Isaac appears on the stage to show how it is crossed, or,
+///   at the Pipeworks, a pointer shows how the pipes work), and offers a place
+///   to cheer there: the friend Isaac picks walks to the stage and leaves the
+///   party (Colosso_OfferCheeringSpot). When all three are placed, the guide
+///   sends Isaac on to the Colosseum's waiting room
+///   (COLOSSEUM_FINAL_1_TO_COLOSSEUM_WEST).
+/// - COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST, after the warriors have marched
+///   out. The lettering reads `Lend a Hand`, and Garet, Ivan and Mia in turn
+///   are the party alone, starting where they chose to cheer. Each may use
+///   Psynergy on the stages for Isaac: Douse on the Pipeworks' west pipe fills
+///   it, Growth grows the plant before the Broken Bridge, Move shifts the Rock
+///   Challenge's rocks. Using Psynergy (Colosso_TakePlaceForMatch) or telling a
+///   stage's attendant they are done (Colosso_AskDoneCheering) ends that
+///   friend's turn, and where they stand is kept as their place; after Mia,
+///   exit 10 starts the race.
 /// - Entrance 1, the race. Isaac runs alone against Azart, who follows a
 ///   recorded path (Colosso_StartRival), with a gauge at the top of the screen
 ///   showing how near each is to the finish (Colosso_StartRaceGauge), after the
@@ -42,9 +44,10 @@
 ///   the shield or the one who has not.
 ///
 /// A win returns to entrance 4, which shows the result and sends Isaac back to
-/// the Colosseum (exit 4, its entrance 21); a loss returns to entrance 5, and
-/// exit 5 wakes the party in Babi's Palace, where Isaac's friends tell him he
-/// was only dreaming of the finals.
+/// the Colosseum (COLOSSEUM_FINAL_1_TO_COLOSSEUM_EAST, to
+/// COLOSSEUM_FROM_COLOSSEUM_FINAL_1_EAST); a loss returns to entrance 5, and
+/// COLOSSEUM_FINAL_1_TO_BABI_PALACE_1 wakes the party in Babi's Palace, where
+/// Isaac's friends tell him he was only dreaming of the finals.
 
 #include "script.h"
 #include "version.h"
@@ -141,8 +144,10 @@ enum {
   ROCK_A = 9,   ///< the Rock Challenge's three rocks
   ROCK_B = 10,
   ROCK_C = 11,
-  PIPEWORKS_BLOCK = 12, ///< pushed west to let water into the Pipeworks
-  PIPE_WEST = 13,       ///< the Pipeworks' two pipes, a kind of scale
+  /// Pushed west to let water into the Pipeworks. A pillar: sprite 0xe5, as
+  /// mercury_lighthouse.c's ACTOR_CHANNEL_PILLAR_3.
+  PIPEWORKS_PILLAR = 12,
+  PIPE_WEST = 13, ///< the Pipeworks' two pipes, a kind of scale
   PIPE_EAST = 14,
   GROWTH_PLANT = 15,
   BRIDGE_OPERATOR = 16, ///< works the Broken Bridge
@@ -428,10 +433,10 @@ static inline void ColosseumFinal1_AnimatePipeworksWater(void) {
   Map_CopyCells(100, 29, 1, 3, 34, 38);
 }
 
-/// Walking west into the Pipeworks' block pushes it: water runs into the
+/// Walking west into the Pipeworks' pillar pushes it: water runs into the
 /// channel, and the first time the pipes move (FLAG_PLACE_TEMP_02,
 /// FLAG_PLACE_TEMP_01).
-static void Event_PushPipeworksBlock(void) {
+static void Event_PushPipeworksPillar(void) {
   s32 leaderId;
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -439,7 +444,7 @@ static void Event_PushPipeworksBlock(void) {
 
   leaderId = gGameState.selectedActor;
   leader = Object_GetById(leaderId);
-  actor = Object_GetById(PIPEWORKS_BLOCK);
+  actor = Object_GetById(PIPEWORKS_PILLAR);
   GameFlag_Set(FLAG_PLACE_TEMP_02);
   Engine_EventBegin();
   Engine_ActorSetAnimation(leaderId, 8);
@@ -536,13 +541,13 @@ static void Event_ReachArena(void) {
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, OPPONENT, 0);
   Engine_EventWait(10);
   Engine_ActorSetAnimation(OPPONENT, 3);
-  Engine_ActorSetAnimationAndWait(0, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
   Actor_WalkToAndWait(OPPONENT, 1312, 192);
-  Engine_ActorSetAnimation(0, 16);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
   Engine_ActorSetAnimation(OPPONENT, 9);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;
@@ -611,8 +616,10 @@ static void ColosseumFinal1_MarkFinishTerrain(s32 actor) {
 }
 
 /// Sets up Colosseum Final 1: restores the stages as they were left, then by
-/// the arrival: the race (1), the friends' turns to lend a hand (2), the
-/// guide's tour (3), or the match won (4) or lost (5).
+/// the arrival: the race (entrance 1), the friends' turns to lend a hand
+/// (COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST), the guide's tour
+/// (COLOSSEUM_FINAL_1_FROM_COLOSSEUM), or the match won (entrance 4) or lost
+/// (entrance 5).
 s32 ColosseumFinal1_Initialize(void) {
   struct FieldActor *actor;
   s32 hit;
@@ -682,7 +689,8 @@ s32 ColosseumFinal1_Initialize(void) {
   // Select competition, support, explanation, or post-battle arrival.
   switch (gGameState.entrance) {
   case 1:
-    Colosso_StartRaceGauge(0, 8, 4, PIXELS(1304), PIXELS(192), 24, 25);
+    Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, OPPONENT, 4, PIXELS(1304),
+                           PIXELS(192), PRIZE_A, PRIZE_B);
     Map_CopyCellsLayered(127, 0, 1, 2, 19, 2);
     Engine_ActorDestroy(GUIDE);
     Engine_ActorDestroy(ROCK_ATTENDANT);
@@ -691,29 +699,29 @@ s32 ColosseumFinal1_Initialize(void) {
     Engine_ActorDestroy(LUMBER_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Engine_AudioPlayCue(MUS_017);
-      Colosso_ControlCharacterAlone(0);
+      Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
-      ColosseumFinal1_MarkFinishTerrain(1);
-      ColosseumFinal1_MarkFinishTerrain(2);
-      ColosseumFinal1_MarkFinishTerrain(3);
+      ColosseumFinal1_MarkFinishTerrain(GARET);
+      ColosseumFinal1_MarkFinishTerrain(IVAN);
+      ColosseumFinal1_MarkFinishTerrain(MIA);
       ColosseumFinal1_ShowRoundIntroduction(1);
     }
-    Object_LinkObjectAndSetCallback(1, 0);
-    Object_LinkObjectAndSetCallback(2, 0);
-    Object_LinkObjectAndSetCallback(3, 0);
+    Object_LinkObjectAndSetCallback(GARET, ACTOR_PARTY_LEADER);
+    Object_LinkObjectAndSetCallback(IVAN, ACTOR_PARTY_LEADER);
+    Object_LinkObjectAndSetCallback(MIA, ACTOR_PARTY_LEADER);
     Colosso_StartRival((s32)&ResourceId_RivalPathA);
     break;
-  case 2:
+  case COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy, 0xc80);
     Engine_ActorDestroy(PRIZE_A);
     Engine_ActorDestroy(PRIZE_B);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
-      Colosso_ControlCharacterAlone(1);
+      Colosso_ControlCharacterAlone(GARET);
       ColosseumFinal1_ShowRoundIntroduction(0);
     }
     break;
-  case 3:
+  case COLOSSEUM_FINAL_1_FROM_COLOSSEUM:
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       ColosseumFinal1_ExplainFinalsRules(GUIDE);
       Colosso_ClearCheeringSpots();
@@ -731,9 +739,10 @@ s32 ColosseumFinal1_Initialize(void) {
   return 0;
 }
 
-/// The tour of Colosseum Final 1 (entrance 3): the guide shows the party the
-/// site of the first finals match, the race through the stages to the arena,
-/// the prizes there, and that the companions choose where to cheer from.
+/// The tour of Colosseum Final 1 (COLOSSEUM_FINAL_1_FROM_COLOSSEUM): the guide
+/// shows the party the site of the first finals match, the race through the
+/// stages to the arena, the prizes there, and that the companions choose where
+/// to cheer from.
 static void ColosseumFinal1_ExplainFinalsRules(s32 guide) {
   struct FieldActor *actor;
   s32 x;
@@ -867,7 +876,8 @@ static void ColosseumFinal1_ExplainFinalsRules(s32 guide) {
 /// The Rock Challenge's attendant, stage 1 of Colosseum Final 1: the first
 /// time, Isaac appears on the stage and pushes the rocks into steps; then the
 /// objective, and a place for a friend to cheer. With a friend alone on the
-/// stages (entrance 2) he asks whether they are done cheering instead.
+/// stages (COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST) he asks whether they are done
+/// cheering instead.
 static void Event_TalkToRockAttendant(s32 scene) {
   s32 path;
 
@@ -882,7 +892,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Camera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
       Engine_CameraWaitForMove();
       Engine_EventShowMessage(scene, 0);
-      Colosso_FadeInCompetitor(0, 280, 200);
+      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 280, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
       Engine_EventWait(30);
@@ -893,26 +903,26 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-      Colosso_WalkActorToAndStand(0, 296, 184);
-      Colosso_WalkActorToAndStand(0, 296, 152);
-      Colosso_WalkActorToAndStand(0, 312, 152);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 184);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
+      Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 312, 152);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
       ColosseumFinal1_PushObjectAhead();
-      OverlayObject_ResetMotionFields(0);
+      OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
       ColosseumFinal1_PushObjectAhead();
-      OverlayObject_ResetMotionFields(0);
+      OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 184);
       Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 192);
       Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 296, 200);
       Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 15);
       ColosseumFinal1_PushObjectAhead();
-      OverlayObject_ResetMotionFields(0);
+      OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
       ColosseumFinal1_PushObjectAhead();
-      OverlayObject_ResetMotionFields(0);
+      OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
       Engine_EventShowMessage(scene, 0);
-      Colosso_RestoreCompetitor(0);
+      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(ROCK_A, PIXELS(312), PIXELS(168));
       Colosso_RepeatStageNumber(scene, 1);
@@ -986,7 +996,7 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
       Engine_EventShowMessage(attendant, 0);
       Colosso_HidePointer();
       Engine_TaskWait(2);
-      Engine_CameraFollowActor(0, 0);
+      Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(attendant, 2);
     } else if (path == 1) {
       Engine_EventSetMessage(MsgColossoObjectiveMakeGood);
@@ -1018,7 +1028,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       ColosseumFinal1_StartBrokenBridge();
       Engine_EventWait(60);
       Event_ShowMessage(scene, 0);
-      Colosso_FadeInCompetitor(0, 736, 200);
+      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 736, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 99 instructions
        * differ in tbs-en. */
@@ -1029,7 +1039,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       Engine_EventWait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
       Event_ShowMessage(scene, 0);
-      Colosso_RestoreCompetitor(0);
+      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(scene, 3);
     } else if (path == 1) {
@@ -1063,15 +1073,15 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Event_ShowMessage(scene, 0);
     Colosso_HidePointer();
     Engine_EventWait(15);
-    Colosso_FadeInCompetitor(0, 984, 200);
+    Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 984, 200);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
     Event_ShowMessage(scene, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x106, 60);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-    Colosso_WalkActorToAndStand(0, 1000, 192);
-    Colosso_WalkActorToAndStand(0, 1000, 176);
-    Colosso_WalkActorToAndStand(0, 1016, 168);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 192);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 176);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1016, 168);
     Engine_EventWait(15);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r0 last; as a direct call, 1 of 167 instructions differ
@@ -1086,7 +1096,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Event_ShowMessage(scene, 0);
-    Colosso_RestoreCompetitor(0);
+    Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(LOG_EAST_WEST, PIXELS(1016), PIXELS(168));
     Colosso_RepeatStageNumber(scene, 4);
@@ -1200,7 +1210,7 @@ static void ColosseumFinal1_ShowRoundIntroduction(s32 round) {
 /// screen closes.
 static void ColosseumFinal1_ShowMatchResult(s32 result) {
 
-  s32 kind;
+  s32 loser;
 
   Engine_AudioPlayCue(SE_247);
   Engine_EventOpenScreen();
@@ -1217,7 +1227,7 @@ static void ColosseumFinal1_ShowMatchResult(s32 result) {
      * differ in tbs-en. */
     COLOSSEUM_FINAL_1_SELECT_MODE_BLOCK(3, 1);
     Engine_EventWait(-result * 60 + 60);
-    kind = 0;
+    loser = ACTOR_PARTY_LEADER;
   } else {
     Engine_EventWait(30);
     Engine_AudioPlayCue(result + 90);
@@ -1226,9 +1236,9 @@ static void ColosseumFinal1_ShowMatchResult(s32 result) {
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_FINAL_1_SELECT_MODE_BLOCK(3, 0);
     Engine_EventWait(result * 60 + 60);
-    kind = 8;
+    loser = OPPONENT;
   }
-  Engine_ActorShowEmote(kind, 0x105, 0);
+  Engine_ActorShowEmote(loser, 0x105, 0);
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
@@ -1372,12 +1382,12 @@ static s32 ColosseumFinal1_CollectFinishItem(s32 firstItem, s32 secondItem) {
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
      * differ in tbs-en. */
-    COLOSSEUM_FINAL_1_APPLY_MATCHING_SLOT_VALUES(0, firstItem);
+    COLOSSEUM_FINAL_1_APPLY_MATCHING_SLOT_VALUES(ISAAC, firstItem);
     UiWork_PushValueSlot(firstItem, 2);
   } else {
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
-    COLOSSEUM_FINAL_1_APPLY_MATCHING_SLOT_VALUES(0, secondItem);
+    COLOSSEUM_FINAL_1_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
     UiWork_PushValueSlot(secondItem, 2);
   }
 
@@ -1640,7 +1650,7 @@ struct SceneEvent gColosseumFinal1_Events[] = {
     { TOUCH_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockOrCheckAhead) },
     { TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
     { TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 12, FLAG_PLACE_TEMP_02, EVENT_SCRIPT(Event_PushPipeworksBlock) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 12, FLAG_PLACE_TEMP_02, EVENT_SCRIPT(Event_PushPipeworksPillar) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogNorthSouth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogNorthSouth) },
     { TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogEastWest) },

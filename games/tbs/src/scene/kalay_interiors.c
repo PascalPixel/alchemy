@@ -20,7 +20,7 @@
 ///   searches.
 /// - Kalay Sanctum (KalaySanctum, scene 101), whose priest offers the
 ///   Sanctum's services when spoken to across the counter. Its exit leads
-///   back to the town's entrance 8.
+///   back into the town (KALAY_1_FROM_KALAY_SANCTUM).
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -46,11 +46,75 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The inn's rooms are entered through entrances 9 to 15 and 17.
+/// Each table numbers its own rows from ACTOR_FIRST_PLACED: the houses'
+/// (gKalayInteriors_HousePlacements), the inn's, whose rooms are entered
+/// through entrances 9 to 15 and 17 (gKalayInteriors_InnPlacements), and the
+/// Kalay Sanctum's (gKalayInteriors_SanctumPlacements). Unless a note says
+/// otherwise, it quotes what its actor says before the Colosso tour leaves.
 enum KalayInteriorsActor {
-  ACTOR_INNKEEPER = 8,  ///< in the inn
-  ACTOR_PRIEST = 8,     ///< in the sanctum
-  ACTOR_TOUR_GUIDE = 12 ///< in the inn's dining room
+  // Kalay's houses
+  /// "I'm shocked to hear the righteous thieves of Lunpa have gone bad."
+  ACTOR_VILLAGER_LUNPA_GONE_BAD = ACTOR_FIRST_PLACED,
+  ACTOR_VILLAGER_LUNPA_WAS_KIND, ///< "Lunpa was a kind thief."
+  /// "Somehow, the north has become the center of much attention lately."
+  ACTOR_VILLAGER_NORTH_DRAWS_ATTENTION,
+  /// "A merchant from Vault had been saying many things about the north...
+  /// Then the soldiers came and took him to Lord Hammet's Palace."
+  ACTOR_VILLAGER_VAULT_MERCHANT_TAKEN,
+  /// The worried father's son. "No one is allowed to go to Vault, even
+  /// though the bridge has been rebuilt." His thoughts: "I'm an adult, now. I
+  /// don't want my father ordering me around..."
+  ACTOR_WORRIED_FATHERS_SON,
+  ACTOR_WORRIED_FATHER, ///< "I do not want my son to face any danger."
+  /// "The most important skill for a merchant is the ability to discern
+  /// quality." His mother's thoughts say he is one: "I feel like I am living
+  /// with a merchant... Actually, he is one!"
+  ACTOR_MERCHANT,
+  /// The merchant's mother, in the old woman's sprite (0x6f). "My son
+  /// received his knack for business from Lord Hammet."
+  ACTOR_MERCHANTS_MOTHER,
+  /// "Do you know about the continent south of Tolbi?" Gone once the tour
+  /// has left.
+  ACTOR_VILLAGER_ASKING_ABOUT_SOUTH,
+  /// About to join the tour, and gone with it. "I better get ready! The
+  /// Colosso Tour is about to leave!"
+  ACTOR_TOUR_BOUND_VILLAGER,
+  /// Two who fled Lalivero, in Gondowan. "We fled from Gondowan, to the
+  /// south. We lived in Lalivero..."
+  ACTOR_LALIVERO_REFUGEE,
+  /// "Lalivero, where I'm from, is the largest village in Gondowan."
+  ACTOR_SECOND_LALIVERO_REFUGEE,
+  // Kalay's inn: all but the innkeeper, his wife and ACTOR_INN_GUEST are gone
+  // once the tour has left.
+  ACTOR_INNKEEPER = ACTOR_FIRST_PLACED,
+  /// The innkeeper's wife, by what she says once the tour has left: "Even our
+  /// chef left, so we can't keep our business open." Her thoughts: "Even if
+  /// my husband wanted to go on the Colosso tour, I would never let him."
+  ACTOR_INNKEEPERS_WIFE,
+  /// "I've signed on for a tour group going to Tolbi."
+  ACTOR_FIRST_TOURIST,
+  /// "The Colosso gladiators are all strong, muscular men!"
+  ACTOR_SECOND_TOURIST,
+  ACTOR_TOUR_GUIDE, ///< in the inn's dining room
+  /// "Everyone looks forward to going to Tolbi once a year." His thoughts:
+  /// "I'm exhausted from preparing this tour."
+  ACTOR_SECOND_TOUR_GUIDE,
+  /// "Surely Lord Hammet will pop up in Tolbi. He loves Colosso."
+  ACTOR_THIRD_TOURIST,
+  /// "I would have entered Colosso if I were only a little younger."
+  ACTOR_FOURTH_TOURIST,
+  /// "Many of the guests here seem to be heading to Tolbi."
+  ACTOR_INN_GUEST,
+  /// "Aren't you going to Colosso? You guys are warriors!" His thoughts: "I'm
+  /// going to sign up for Colosso as soon as I arrive in Tolbi."
+  ACTOR_COLOSSO_HOPEFUL,
+  /// The warriors bound for Colosso, Ouranos and Sean by their sprites (0x43
+  /// and 0x42, as in tolbi_ship_interiors.c) and by what each says of the
+  /// other. "I have power, and Sean has speed."
+  ACTOR_OURANOS,
+  ACTOR_SEAN, ///< "Then, Ouranos and I will fight each other..."
+  // The Kalay Sanctum
+  ACTOR_PRIEST = ACTOR_FIRST_PLACED
 };
 
 static void KalayInteriors_ApplyRoomState(void);
@@ -149,7 +213,7 @@ static void KalayInteriors_TalkToTourGuide(void) {
 static void KalayInteriors_AskAboutSouthernContinent(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayDoKnowAboutContinentSouth);
-  Engine_EventAskYesNo(16, 0);
+  Engine_EventAskYesNo(ACTOR_VILLAGER_ASKING_ABOUT_SOUTH, 0);
   Engine_EventEnd();
 }
 
@@ -267,13 +331,14 @@ s32 KalayInteriors_Initialize(void) {
 }
 
 /// Once the Colosso tour has left, its guests are gone from Kalay's inn, and
-/// two people from the houses. Entrance 3 instead redraws a rectangle of
+/// two people from the houses. Entering by
+/// KALAY_INTERIORS_1_FROM_KALAY_1_NORTHEAST instead redraws a rectangle of
 /// cells.
 static void KalayInteriors_ApplyRoomState(void) {
   s16 entrance = gGameState.entrance;
 
   switch (entrance) {
-  case 3: {
+  case KALAY_INTERIORS_1_FROM_KALAY_1_NORTHEAST: {
     Map_CopyCellsTo(30, 14, 30, 16, 4, 2);
     return;
   }
@@ -286,23 +351,23 @@ static void KalayInteriors_ApplyRoomState(void) {
   case 15:
   case 17:
     if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      Engine_ActorDestroy(10);
-      Engine_ActorDestroy(11);
-      Engine_ActorDestroy(12);
-      Engine_ActorDestroy(13);
-      Engine_ActorDestroy(14);
-      Engine_ActorDestroy(17);
-      Engine_ActorDestroy(18);
-      Engine_ActorDestroy(19);
-      Engine_ActorDestroy(15);
+      Engine_ActorDestroy(ACTOR_FIRST_TOURIST);
+      Engine_ActorDestroy(ACTOR_SECOND_TOURIST);
+      Engine_ActorDestroy(ACTOR_TOUR_GUIDE);
+      Engine_ActorDestroy(ACTOR_SECOND_TOUR_GUIDE);
+      Engine_ActorDestroy(ACTOR_THIRD_TOURIST);
+      Engine_ActorDestroy(ACTOR_COLOSSO_HOPEFUL);
+      Engine_ActorDestroy(ACTOR_OURANOS);
+      Engine_ActorDestroy(ACTOR_SEAN);
+      Engine_ActorDestroy(ACTOR_FOURTH_TOURIST);
     } else {
-      Engine_ActorSetChildValue(13, 2);
+      Engine_ActorSetChildValue(ACTOR_SECOND_TOUR_GUIDE, 2);
     }
     return;
   default:
     if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-      Engine_ActorDestroy(16);
-      Engine_ActorDestroy(17);
+      Engine_ActorDestroy(ACTOR_VILLAGER_ASKING_ABOUT_SOUTH);
+      Engine_ActorDestroy(ACTOR_TOUR_BOUND_VILLAGER);
     }
     break;
   }
@@ -463,45 +528,45 @@ struct SceneEvent gKalayInteriors_NoEvents[] = {
 /// A bare flag as a condition holds while that flag is clear: these lines are
 /// spoken before the Colosso tour leaves, the next ones after.
 struct SceneEvent gKalayInteriors_HouseEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_NORTHWEST },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_NORTH },
+    { EVENT_EXIT, 3, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_NORTHEAST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_WEST },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_WEST_NORTHWEST },
+    { EVENT_EXIT, 6, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_SOUTH_SOUTHEAST },
+    { EVENT_EXIT, 7, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_EAST_SOUTHEAST },
+    { EVENT_EXIT, 8, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_EAST },
     { TOUCH_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImShockedToHearTheRighteous) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpaWasAKindThiefHis) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSomehowTheNorthHasBecomeThe) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsAMerchantFromVaultHadBeen) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsNoOneIsAllowedToGo) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDoNotWantMySon) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantSkillForA) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonReceivedHisKnackFor) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_AskAboutSouthernContinent) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIBetterGetReadyTheColosso) },
-    { EVENT_TALK, 18, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsWeFledFromGondowanToThe) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeCameHereToEscapeThe) },
-    { EVENT_TALK, 19, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsLaliveroWhereImFromIsThe) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeEscapedFromTheNortheasternRegion) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheRegionNorthOfVaultWas) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpasReputationIsVeryBadNowadays) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsThreeYearsAgoThievesRaidedMt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheySayOtherNorthernPartsAre) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImAnAdultNowIDont) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDontCareHowMySon) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantThingIsNot) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonIsVeryTightWith) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsPeopleFromTheContinentSouthOf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImPrettyExcitedBecauseThisIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsIFledAllThisWayNow) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWonderWhatColossoIsLike) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsItLooksLikeColossoWillSoon) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWasSoScaredComingTo) },
+    { EVENT_TALK, ACTOR_VILLAGER_LUNPA_GONE_BAD, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImShockedToHearTheRighteous) },
+    { EVENT_TALK, ACTOR_VILLAGER_LUNPA_WAS_KIND, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpaWasAKindThiefHis) },
+    { EVENT_TALK, ACTOR_VILLAGER_NORTH_DRAWS_ATTENTION, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSomehowTheNorthHasBecomeThe) },
+    { EVENT_TALK, ACTOR_VILLAGER_VAULT_MERCHANT_TAKEN, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsAMerchantFromVaultHadBeen) },
+    { EVENT_TALK, ACTOR_WORRIED_FATHERS_SON, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsNoOneIsAllowedToGo) },
+    { EVENT_TALK, ACTOR_WORRIED_FATHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDoNotWantMySon) },
+    { EVENT_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantSkillForA) },
+    { EVENT_TALK, ACTOR_MERCHANTS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonReceivedHisKnackFor) },
+    { EVENT_TALK, ACTOR_VILLAGER_ASKING_ABOUT_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_AskAboutSouthernContinent) },
+    { EVENT_TALK, ACTOR_TOUR_BOUND_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIBetterGetReadyTheColosso) },
+    { EVENT_TALK, ACTOR_LALIVERO_REFUGEE, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsWeFledFromGondowanToThe) },
+    { EVENT_TALK, ACTOR_LALIVERO_REFUGEE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeCameHereToEscapeThe) },
+    { EVENT_TALK, ACTOR_SECOND_LALIVERO_REFUGEE, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsLaliveroWhereImFromIsThe) },
+    { EVENT_TALK, ACTOR_SECOND_LALIVERO_REFUGEE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeEscapedFromTheNortheasternRegion) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LUNPA_GONE_BAD, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheRegionNorthOfVaultWas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LUNPA_WAS_KIND, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsLunpasReputationIsVeryBadNowadays) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_NORTH_DRAWS_ATTENTION, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsThreeYearsAgoThievesRaidedMt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_VAULT_MERCHANT_TAKEN, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheySayOtherNorthernPartsAre) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_FATHERS_SON, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImAnAdultNowIDont) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_FATHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIDontCareHowMySon) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheMostImportantThingIsNot) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANTS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMySonIsVeryTightWith) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_ABOUT_SOUTH, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsPeopleFromTheContinentSouthOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOUR_BOUND_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImPrettyExcitedBecauseThisIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LALIVERO_REFUGEE, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsIFledAllThisWayNow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LALIVERO_REFUGEE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWonderWhatColossoIsLike) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_LALIVERO_REFUGEE, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsItLooksLikeColossoWillSoon) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_LALIVERO_REFUGEE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWasSoScaredComingTo) },
     { SEARCH(SEARCH_BARREL), 100, 0xf83, FIND_COINS(11) },
     { SEARCH(SEARCH_OVEN), 101, 0xf84, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SEARCH(SEARCH_BARREL), 102, 0xf85, FIND_ITEM(ITEM_ELIXIR) },
@@ -515,7 +580,7 @@ struct SceneEvent gKalayInteriors_HouseEvents[] = {
 
 struct SceneEvent gKalayInteriors_InnEvents[] = {
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
+    { EVENT_EXIT, 10, CONDITION_ALWAYS, KALAY_INTERIORS_1_TO_KALAY_1_SOUTH_SOUTHWEST },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_OpenDoorAndExit) },
@@ -523,34 +588,34 @@ struct SceneEvent gKalayInteriors_InnEvents[] = {
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 17, CONDITION_ALWAYS, 17 },
     { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToInnkeeper) },
-    { EVENT_TALK, 9, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsEveryoneIsGoingToTolbiTo) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenOurChefLeftSoWe) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIveSignedOnForATour) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheColossoGladiatorsAreAllStrong) },
+    { EVENT_TALK, ACTOR_INNKEEPERS_WIFE, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsEveryoneIsGoingToTolbiTo) },
+    { EVENT_TALK, ACTOR_INNKEEPERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenOurChefLeftSoWe) },
+    { EVENT_TALK, ACTOR_FIRST_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIveSignedOnForATour) },
+    { EVENT_TALK, ACTOR_SECOND_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsTheColossoGladiatorsAreAllStrong) },
     { EVENT_TALK, ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToTourGuide) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEveryoneLooksForwardToGoingTo) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSurelyLordHammetWillPopUp) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWouldHaveEnteredColossoIf) },
-    { EVENT_TALK, 16, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsManyOfTheGuestsHereSeem) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsUhOhHesStillHereEven) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsArentYouGoingToColossoYou) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIfYouAreEnteringColossoYou) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWereSoStrongMakingTheFinals) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsHesAShrewdMerchantIfHe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIdHaveGoneOnTheColosso) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsEveryYearEveryoneGoesToTolbi) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenIfMyHusbandWantedTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsJoiningATourGroupIsThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWonderWhichWarriorWillWin) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsItsBusinessSoYouCantHelp) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImExhaustedFromPreparingThisTour) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWasSoExcitedICouldnt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMyAnimalInstinctsStartWakingUp) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsColossoIsSoCommonWhatsSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICantSeemToRelaxNow) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImGoingToSignUpFor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIHavePowerAndSeanHas) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeAreTheToughestOfAll) },
+    { EVENT_TALK, ACTOR_SECOND_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEveryoneLooksForwardToGoingTo) },
+    { EVENT_TALK, ACTOR_THIRD_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsSurelyLordHammetWillPopUp) },
+    { EVENT_TALK, ACTOR_FOURTH_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWouldHaveEnteredColossoIf) },
+    { EVENT_TALK, ACTOR_INN_GUEST, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsManyOfTheGuestsHereSeem) },
+    { EVENT_TALK, ACTOR_INN_GUEST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsUhOhHesStillHereEven) },
+    { EVENT_TALK, ACTOR_COLOSSO_HOPEFUL, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsArentYouGoingToColossoYou) },
+    { EVENT_TALK, ACTOR_OURANOS, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIfYouAreEnteringColossoYou) },
+    { EVENT_TALK, ACTOR_SEAN, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWereSoStrongMakingTheFinals) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsHesAShrewdMerchantIfHe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIdHaveGoneOnTheColosso) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPERS_WIFE, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsEveryYearEveryoneGoesToTolbi) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsEvenIfMyHusbandWantedTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsJoiningATourGroupIsThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWonderWhichWarriorWillWin) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsItsBusinessSoYouCantHelp) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_TOUR_GUIDE, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImExhaustedFromPreparingThisTour) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIWasSoExcitedICouldnt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FOURTH_TOURIST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsMyAnimalInstinctsStartWakingUp) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_GUEST, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayInteriorsColossoIsSoCommonWhatsSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_GUEST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICantSeemToRelaxNow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_HOPEFUL, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsImGoingToSignUpFor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OURANOS, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsIHavePowerAndSeanHas) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEAN, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsWeAreTheToughestOfAll) },
     { SEARCH(SEARCH_BARREL), 100, 0xf83, FIND_COINS(11) },
     { SEARCH(SEARCH_OVEN), 101, 0xf84, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SEARCH(SEARCH_BARREL), 102, 0xf85, FIND_ITEM(ITEM_ELIXIR) },
@@ -563,9 +628,9 @@ struct SceneEvent gKalayInteriors_InnEvents[] = {
 };
 
 struct SceneEvent gKalayInteriors_SanctumEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, KALAY_SANCTUM_TO_KALAY_1 },
     { EVENT_TALK, ACTOR_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(KalayInteriors_TalkToPriest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

@@ -1,5 +1,5 @@
 /// @file
-/// Goma Cave (GomaCavePillar, scene 27), the room of two pillars and a stump,
+/// Goma Cave (SceneId_GomaCavePillar), the room of two pillars and a stump,
 /// in the cave in the Goma Range that the mayor of Vault tells the party to
 /// pass through on the way to Bilibin.
 ///

@@ -16,10 +16,12 @@
 #include "field_scene.h"
 #include "battle_unit.h"
 #include "flags.h"
+#include "djinn_ids.h"
 
-/// The placed actors, numbered in the order of gTestRooms_Placements: Djinni 0
-/// of each element, which TestRooms_GiveDjinniForTesting gives, placed while
-/// its flag (FLAG_DJINNI_0 + element * 20) is clear.
+/// The placed actors, numbered in the order of gTestRooms_Placements: the
+/// first Djinni of each element, which TestRooms_GiveDjinniForTesting gives,
+/// placed while its flag (FLAG_DJINNI_0 + element * DJINN_PER_ELEMENT) is
+/// clear.
 enum TestRoomsActor {
   ACTOR_FLINT = ACTOR_FIRST_PLACED, ///< Venus, "Flint" (MsgDjinnName)
   ACTOR_FIZZ,                       ///< Mercury, "Fizz"
@@ -41,13 +43,13 @@ u8 *TestRooms_GetPlacements(void) { return (u8 *)gTestRooms_Placements; }
 
 /// Grants the first Djinni of an element, then clears its found flag for
 /// testing. Djinn_JoinParty plays the element's capture effect on the actor,
-/// frees its slot and gives Djinni 0 of the element to the member with the
+/// frees its slot and gives the element's first Djinni to the member with the
 /// fewest Djinn; clearing the flag the placement tests lets the room place
 /// the Djinni again on the next entry.
 static __inline__ void TestRooms_GiveDjinniForTesting(s32 actorId,
                                                       s32 element) {
   Djinn_JoinParty(actorId, element, 0);
-  Engine_GameFlagClear(FLAG_DJINNI_0 + element * 20);
+  Engine_GameFlagClear(FLAG_DJINNI_0 + element * DJINN_PER_ELEMENT);
 }
 
 static void TestRooms_ReceiveFlint(void) {

@@ -122,9 +122,9 @@ static void DebugMenu_BrowseMessageRange(s32 messageId, s32 messageCount) {
   window = UiWindow_CreateWithSideObject(125, 0, 0, 0);
   for (messageIndex = 0; messageIndex < messageCount; messageIndex++) {
     // Supply sample name, item and number substitutions before each message:
-    // character 1 (Garet), item 141 (the Virtuous Armlet) and 123456.
-    UiWork_PushValueSlot(1, 1);
-    UiWork_PushValueSlot(141, 2);
+    // Garet, the Virtuous Armlet and 123456.
+    UiWork_PushValueSlot(GARET, 1);
+    UiWork_PushValueSlot(ITEM_VIRTUOUS_ARMLET, 2);
     UiWork_PushValueSlot(0x1e240, 5);
     SceneDialogue_ShowMessageAndWait(messageId);
     for (;;) {
@@ -289,20 +289,20 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
-  Inventory_AddItem(ISAAC, 180);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
+  Inventory_AddItem(ISAAC, ITEM_HERB);
   Inventory_AddItem(ISAAC, ITEM_NUT);
   Inventory_AddItem(ISAAC, ITEM_NUT);
   Inventory_AddItem(ISAAC, ITEM_NUT);
@@ -327,28 +327,28 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   Inventory_AddItem(ISAAC, ITEM_VIAL);
   Inventory_AddItem(ISAAC, ITEM_VIAL);
   Inventory_AddItem(ISAAC, ITEM_VIAL);
-  Inventory_AddItem(ISAAC, 183);
-  Inventory_AddItem(ISAAC, 183);
-  Inventory_AddItem(ISAAC, 183);
-  Inventory_AddItem(ISAAC, 183);
-  Inventory_AddItem(ISAAC, 183);
-  Inventory_AddItem(ISAAC, 183);
-  Inventory_AddItem(ISAAC, 183);
-  Inventory_AddItem(ISAAC, 183);
-  Inventory_AddItem(ISAAC, 183);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
-  Inventory_AddItem(GARET, 186);
+  Inventory_AddItem(ISAAC, ITEM_POTION);
+  Inventory_AddItem(ISAAC, ITEM_POTION);
+  Inventory_AddItem(ISAAC, ITEM_POTION);
+  Inventory_AddItem(ISAAC, ITEM_POTION);
+  Inventory_AddItem(ISAAC, ITEM_POTION);
+  Inventory_AddItem(ISAAC, ITEM_POTION);
+  Inventory_AddItem(ISAAC, ITEM_POTION);
+  Inventory_AddItem(ISAAC, ITEM_POTION);
+  Inventory_AddItem(ISAAC, ITEM_POTION);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
+  Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
   Inventory_AddItem(GARET, ITEM_ANTIDOTE);
   Inventory_AddItem(GARET, ITEM_ANTIDOTE);
   Inventory_AddItem(GARET, ITEM_ANTIDOTE);
@@ -386,22 +386,22 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   Inventory_AddItem(IVAN, ITEM_WATER_OF_LIFE);
   Inventory_AddItem(IVAN, ITEM_WATER_OF_LIFE);
   Inventory_AddItem(IVAN, ITEM_WATER_OF_LIFE);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
-  Inventory_AddItem(IVAN, 236);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
@@ -413,17 +413,17 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
-  Inventory_AddItem(MIA, 192);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
+  Inventory_AddItem(MIA, ITEM_COOKIE);
   Inventory_AddItem(MIA, ITEM_APPLE);
   Inventory_AddItem(MIA, ITEM_APPLE);
   Inventory_AddItem(MIA, ITEM_APPLE);
@@ -554,7 +554,7 @@ static void DebugMenu_GivePartyDjinn(void) {
 
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
 /// Talking to ACTOR_SATUROS: `The body is being torn apart.` Isaac is poisoned
-/// (poison 1) and haunted, Garet given deadly poison (2). Garet's restraint
+/// and haunted, Garet given deadly poison. Garet's restraint
 /// is set to 1 too, but the closing UnitCalc clears the curse bits again
 /// unless he wears cursed equipment (game/game/units.c).
 static void DebugMenu_DamageAndAfflictParty(void) {
@@ -584,44 +584,43 @@ static void DebugMenu_DamageAndAfflictParty(void) {
 
 /// Adds the test equipment in each owner's original inventory order. Talking
 /// to Jenna: `You got sturdy equipment!`, then weapons and armor for each of
-/// the four, item numbers 9 (the Gaia Blade) to 171 (the Glittering Tiara);
-/// MsgItemName + the number names each.
+/// the four, from the Gaia Blade to the Glittering Tiara.
 static void DebugMenu_GiveEquipmentTestStock(void) {
   UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
-  Inventory_AddItem(ISAAC, 85);
-  Inventory_AddItem(ISAAC, 84);
-  Inventory_AddItem(ISAAC, 124);
-  Inventory_AddItem(ISAAC, 123);
-  Inventory_AddItem(ISAAC, 9);
-  Inventory_AddItem(ISAAC, 11);
-  Inventory_AddItem(ISAAC, 27);
-  Inventory_AddItem(ISAAC, 26);
-  Inventory_AddItem(GARET, 38);
-  Inventory_AddItem(GARET, 37);
-  Inventory_AddItem(GARET, 50);
-  Inventory_AddItem(GARET, 49);
-  Inventory_AddItem(GARET, 83);
-  Inventory_AddItem(GARET, 82);
-  Inventory_AddItem(GARET, 134);
-  Inventory_AddItem(GARET, 133);
-  Inventory_AddItem(GARET, 152);
-  Inventory_AddItem(IVAN, 64);
-  Inventory_AddItem(IVAN, 65);
-  Inventory_AddItem(IVAN, 98);
-  Inventory_AddItem(IVAN, 97);
-  Inventory_AddItem(IVAN, 124);
-  Inventory_AddItem(IVAN, 131);
-  Inventory_AddItem(IVAN, 141);
-  Inventory_AddItem(IVAN, 163);
-  Inventory_AddItem(MIA, 61);
-  Inventory_AddItem(MIA, 63);
-  Inventory_AddItem(MIA, 96);
-  Inventory_AddItem(MIA, 95);
-  Inventory_AddItem(MIA, 113);
-  Inventory_AddItem(MIA, 112);
-  Inventory_AddItem(MIA, 130);
-  Inventory_AddItem(MIA, 142);
-  Inventory_AddItem(MIA, 171);
+  Inventory_AddItem(ISAAC, ITEM_SPIKED_ARMOR);
+  Inventory_AddItem(ISAAC, ITEM_ASURAS_ARMOR);
+  Inventory_AddItem(ISAAC, ITEM_EARTH_SHIELD);
+  Inventory_AddItem(ISAAC, ITEM_DRAGON_SHIELD);
+  Inventory_AddItem(ISAAC, ITEM_GAIA_BLADE);
+  Inventory_AddItem(ISAAC, ITEM_MURAMASA);
+  Inventory_AddItem(ISAAC, ITEM_BANDITS_SWORD);
+  Inventory_AddItem(ISAAC, ITEM_KUSANAGI);
+  Inventory_AddItem(GARET, ITEM_DEMON_AXE);
+  Inventory_AddItem(GARET, ITEM_BURNING_AXE);
+  Inventory_AddItem(GARET, ITEM_WICKED_MACE);
+  Inventory_AddItem(GARET, ITEM_BLESSED_MACE);
+  Inventory_AddItem(GARET, ITEM_DEMON_MAIL);
+  Inventory_AddItem(GARET, ITEM_DRAGON_SCALES);
+  Inventory_AddItem(GARET, ITEM_AURA_GLOVES);
+  Inventory_AddItem(GARET, ITEM_BATTLE_GLOVES);
+  Inventory_AddItem(GARET, ITEM_ADEPTS_HELM);
+  Inventory_AddItem(IVAN, ITEM_ZODIAC_WAND);
+  Inventory_AddItem(IVAN, ITEM_SHAMANS_ROD);
+  Inventory_AddItem(IVAN, ITEM_NINJA_GARB);
+  Inventory_AddItem(IVAN, ITEM_KIMONO);
+  Inventory_AddItem(IVAN, ITEM_EARTH_SHIELD);
+  Inventory_AddItem(IVAN, ITEM_WAR_GLOVES);
+  Inventory_AddItem(IVAN, ITEM_VIRTUOUS_ARMLET);
+  Inventory_AddItem(IVAN, ITEM_PROPHETS_HAT);
+  Inventory_AddItem(MIA, ITEM_ANGELIC_ANKH);
+  Inventory_AddItem(MIA, ITEM_CRYSTAL_ROD);
+  Inventory_AddItem(MIA, ITEM_STORM_GEAR);
+  Inventory_AddItem(MIA, ITEM_WATER_JACKET);
+  Inventory_AddItem(MIA, ITEM_ORACLES_ROBE);
+  Inventory_AddItem(MIA, ITEM_FEATHERED_ROBE);
+  Inventory_AddItem(MIA, ITEM_VAMBRACE);
+  Inventory_AddItem(MIA, ITEM_GUARDIAN_ARMLET);
+  Inventory_AddItem(MIA, ITEM_GLITTERING_TIARA);
   DebugMenu_RecalculateParty();
 }
 
@@ -724,24 +723,23 @@ static void DebugMenu_SelectItem(void) {
 UNUSED static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
 
 /// Adds the original treasure test stock, retaining duplicate tickets and
-/// medals. Talking to ACTOR_MENARDI: `You got treasure!`. Among the numbered
-/// items are 0xc8 to 0xcc and 0xcf (Orb of Force, Douse Drop, Frost Jewel,
-/// Lifting Gem, Halt Gem, Catch Beads), the four Elemental Stars 0xdc to 0xdf
-/// and the Mythril Bag 0xe0 (MsgItemName + the number).
+/// medals. Talking to ACTOR_MENARDI: `You got treasure!`. Among the items
+/// are the Orb of Force, Douse Drop, Frost Jewel, Lifting Gem, Halt Gem and
+/// Catch Beads, the four Elemental Stars and the Mythril Bag.
 static void DebugMenu_GiveTreasureTestStock(void) {
   // Sharing the duplicate grants through a counted loop shrinks this function
   // from 0x194 to 0x120; retain the original calls.
   UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
   Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);
-  Inventory_AddItem(ISAAC, 0xcc);
-  Inventory_AddItem(ISAAC, 0xdc);
-  Inventory_AddItem(ISAAC, 0xdd);
-  Inventory_AddItem(ISAAC, 0xde);
-  Inventory_AddItem(ISAAC, 0xdf);
-  Inventory_AddItem(ISAAC, 0xe0);
+  Inventory_AddItem(ISAAC, ITEM_HALT_GEM);
+  Inventory_AddItem(ISAAC, ITEM_VENUS_STAR);
+  Inventory_AddItem(ISAAC, ITEM_MERCURY_STAR);
+  Inventory_AddItem(ISAAC, ITEM_MARS_STAR);
+  Inventory_AddItem(ISAAC, ITEM_JUPITER_STAR);
+  Inventory_AddItem(ISAAC, ITEM_MYTHRIL_BAG);
   Inventory_AddItem(GARET, ITEM_SMOKE_BOMB);
   Inventory_AddItem(GARET, ITEM_SLEEP_BOMB);
-  Inventory_AddItem(GARET, 0xe6);
+  Inventory_AddItem(GARET, ITEM_DRAGONS_EYE);
   Inventory_AddItem(GARET, ITEM_GAME_TICKET);
   Inventory_AddItem(GARET, ITEM_GAME_TICKET);
   Inventory_AddItem(GARET, ITEM_GAME_TICKET);
@@ -763,19 +761,19 @@ static void DebugMenu_GiveTreasureTestStock(void) {
   Inventory_AddItem(GARET, ITEM_LUCKY_MEDAL);
   Inventory_AddItem(GARET, ITEM_ANCHOR_CHARM);
   Inventory_AddItem(GARET, ITEM_BONE);
-  Inventory_AddItem(GARET, 0xed);
+  Inventory_AddItem(GARET, ITEM_MYSTIC_DRAUGHT);
   Inventory_AddItem(IVAN, ITEM_BLACK_ORB);
-  Inventory_AddItem(IVAN, 0x102);
-  Inventory_AddItem(IVAN, 0x10b);
-  Inventory_AddItem(IVAN, 0x109);
-  Inventory_AddItem(IVAN, 0xfc);
+  Inventory_AddItem(IVAN, ITEM_FUR_BOOTS);
+  Inventory_AddItem(IVAN, ITEM_FAIRY_RING);
+  Inventory_AddItem(IVAN, ITEM_HEALING_RING);
+  Inventory_AddItem(IVAN, ITEM_RUNNING_SHIRT);
   Inventory_AddItem(MIA, ITEM_WATER_OF_LIFE);
-  Inventory_AddItem(MIA, 0xc8);
-  Inventory_AddItem(MIA, 0xc9);
-  Inventory_AddItem(MIA, 0xca);
-  Inventory_AddItem(MIA, 0xcb);
-  Inventory_AddItem(MIA, 0xcc);
-  Inventory_AddItem(MIA, 0xcf);
+  Inventory_AddItem(MIA, ITEM_ORB_OF_FORCE);
+  Inventory_AddItem(MIA, ITEM_DOUSE_DROP);
+  Inventory_AddItem(MIA, ITEM_FROST_JEWEL);
+  Inventory_AddItem(MIA, ITEM_LIFTING_GEM);
+  Inventory_AddItem(MIA, ITEM_HALT_GEM);
+  Inventory_AddItem(MIA, ITEM_CATCH_BEADS);
   DebugMenu_RecalculateParty();
 }
 
@@ -792,22 +790,22 @@ s32 CommandTable_ConfigureCommandList(void) {
   Party_AddActiveOwner(MIA);
   Party_AddActiveOwner(IVAN);
   // Populate the original shop counters, retaining repeated increments: how
-  // many of each rare item the shops may sell, here the Shamshir (5, three),
-  // Silver Blade (6, two), Masamune (7) and eight rare pieces of armor.
-  Item_AdjustCounter(5, 1);
-  Item_AdjustCounter(5, 1);
-  Item_AdjustCounter(5, 1);
-  Item_AdjustCounter(6, 1);
-  Item_AdjustCounter(6, 1);
-  Item_AdjustCounter(7, 1);
-  Item_AdjustCounter(106, 1);
-  Item_AdjustCounter(108, 1);
-  Item_AdjustCounter(109, 1);
-  Item_AdjustCounter(113, 1);
-  Item_AdjustCounter(123, 1);
-  Item_AdjustCounter(130, 1);
-  Item_AdjustCounter(140, 1);
-  Item_AdjustCounter(151, 1);
+  // many of each rare item the shops may sell, here three Shamshirs, two
+  // Silver Blades, a Masamune and eight rare pieces of armor.
+  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
+  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
+  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
+  Item_AdjustCounter(ITEM_SILVER_BLADE, 1);
+  Item_AdjustCounter(ITEM_SILVER_BLADE, 1);
+  Item_AdjustCounter(ITEM_MASAMUNE, 1);
+  Item_AdjustCounter(ITEM_CHINA_DRESS, 1);
+  Item_AdjustCounter(ITEM_COCKTAIL_DRESS, 1);
+  Item_AdjustCounter(ITEM_BLESSED_ROBE, 1);
+  Item_AdjustCounter(ITEM_ORACLES_ROBE, 1);
+  Item_AdjustCounter(ITEM_DRAGON_SHIELD, 1);
+  Item_AdjustCounter(ITEM_VAMBRACE, 1);
+  Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
+  Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
 #if !TBS_PATCH_1
   gGameState.coins = 777777;
 #endif

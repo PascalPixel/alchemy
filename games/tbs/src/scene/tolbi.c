@@ -933,6 +933,11 @@ struct SceneEvent gTolbiEventsFinalsDay[] = {
     { EVENT_TALK, TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsWereSoRivetingThe) },
     { EVENT_TALK, TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIHaveSeatsToTheFinals) },
     { EVENT_TALK, TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIOversleptAgainSoICant) },
+    // XXX: likely the family below had finals-day lines of its own, the four
+    // messages after MsgTolbiSpringOhThereAreAlwaysScalpersAt (`The finals are
+    // about to start.` and the rest), because those speak of waiting for
+    // Colosso to end and of buying once prices drop, and no row or code shows
+    // them; the family repeats its festival lines instead.
     { EVENT_TALK, TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
     { EVENT_TALK, TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
     { EVENT_TALK, TOLBI_CRYING_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingChild) },

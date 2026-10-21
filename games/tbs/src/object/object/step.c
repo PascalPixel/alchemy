@@ -11,7 +11,7 @@ struct StepOwner {
   u8 unitFieldsBeforeHp[0x38];
   s16 hp; ///< struct BattleUnit's hp: current HP, 0 when downed
   u8 unitFieldsBeforePoison[0x131 - 0x3a];
-  u8 poison; ///< struct BattleUnit's poison: 1 poisoned, 2 deadly poison
+  u8 poison; ///< struct BattleUnit's poison: POISON_NORMAL or POISON_DEADLY
 };
 #endif
 
@@ -419,9 +419,9 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
 /// Hurts each poisoned character in the party: poison takes a twentieth of
 /// their maximum HP and deadly poison a tenth, rounded to the nearest and at
 /// least 1.
-/// Returns 0 when nobody was hurt, else the worst status found (1 poison,
-/// 2 deadly poison), after a flash; Field_ProcessStep counts a non-zero result
-/// as the party being hurt.
+/// Returns 0 when nobody was hurt, else the worst status found
+/// (POISON_NORMAL or POISON_DEADLY), after a flash; Field_ProcessStep counts a
+/// non-zero result as the party being hurt.
 ///
 /// Called by Field_ProcessStep at each tick of the distance walked.
 s32 BattleParty_ApplyStatusDamage(void) {
@@ -434,19 +434,19 @@ s32 BattleParty_ApplyStatusDamage(void) {
     s32 hpDelta;
 
     switch (unit->poison) {
-    case 1:
+    case POISON_NORMAL:
       hpDelta = -((unit->maxHp + 10) / 20);
       if (hpDelta == 0)
         hpDelta = -1;
       if (worstPoison <= 0)
-        worstPoison = 1;
+        worstPoison = POISON_NORMAL;
       break;
-    case 2:
+    case POISON_DEADLY:
       hpDelta = -((unit->maxHp + 5) / 10);
       if (hpDelta == 0)
         hpDelta = -1;
-      if (worstPoison <= 1)
-        worstPoison = 2;
+      if (worstPoison <= POISON_NORMAL)
+        worstPoison = POISON_DEADLY;
       break;
     default:
       hpDelta = 0;

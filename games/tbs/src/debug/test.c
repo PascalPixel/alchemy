@@ -573,12 +573,12 @@ static void DebugMenu_DamageAndAfflictParty(void) {
   Unit_AddPp(IVAN, -35);
   Unit_AddPp(MIA, -20);
   record = (u8 *)UnitGet(ISAAC);
-  record[0x131] = 1;
+  record[0x131] = POISON_NORMAL;
   record += 0x140;
   *record = 1;
   record = (u8 *)UnitGet(GARET);
   record[0x130] = 1;
-  record[0x131] = 2;
+  record[0x131] = POISON_DEADLY;
   DebugMenu_RecalculateParty();
 }
 

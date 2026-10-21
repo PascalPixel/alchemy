@@ -39,10 +39,10 @@
 ///
 ///   In GondowanCave a stump answers Move from column 30 or less: it spins,
 ///   leaps across and lies where it lands, freeing the cell where it stood
-///   (FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE). A pillar is pushed by walking
+///   (FLAG_GONDOWAN_CAVE_STUMP_MOVED). A pillar is pushed by walking
 ///   into it, east or west, or moved with Move; once it is past column 42 it
 ///   drops into its place for good, shown from then on by a second actor
-///   (FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED). Both are story flags, so the
+///   (FLAG_GONDOWAN_CAVE_PILLAR_DROPPED). Both are story flags, so the
 ///   cave stays solved. Lift raises a boulder in each scene; in GondowanCave it
 ///   also takes away the invisible actor beside it (ACTOR_BOULDER_SIDE).
 ///   Two chests in GondowanCaveRiver hold an Apple and a Lucky Medal (each
@@ -338,10 +338,10 @@ static void Event_LeaveToWorldMapEast(void) {
   EV_BEGIN();
   if (FLAG_CHECK(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
-    GameFlag_Clear(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
+    GameFlag_Clear(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     GameFlag_Clear(0x9a4);
     GameFlag_Clear(0x9a6);
-    FLAG_SET(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
+    FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
     FLAG_SET(0x9a4);
   }
   Engine_EventRequestExit(event->touchedTrigger);
@@ -366,7 +366,7 @@ static void Event_MoveStump(void) {
     if ((actor->x.fixed >> 20) <= 30) {
       GondowanCave_RunSpinningLeap(ACTOR_STUMP);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
-      Engine_GameFlagSet(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE);
+      Engine_GameFlagSet(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
     }
   }
   EV_END();
@@ -398,7 +398,7 @@ static void Event_MovePillar(void) {
     WAIT(8);
     GondowanCave_PlaceDroppedPillar(3);
     SE(SE_CAST);
-    FLAG_SET(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
+    FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
   }
   EV_END();
 }
@@ -504,12 +504,12 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
       Map_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
-    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE) != 0) {
+    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
       OBJ_POS_SET(ACTOR_STUMP, 440, 308);
       OBJ_MODE(ACTOR_STUMP, 2);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
-    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED) != 0) {
+    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
       GondowanCave_PlaceDroppedPillar(2);
     }
     actor = Actor_Get(ACTOR_BOULDER_SIDE);
@@ -721,7 +721,7 @@ struct SceneEvent gGondowanCaveEvents[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_SOUTH },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_WORLD_MAP_WEST },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftBoulder) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE, EVENT_SCRIPT(Event_MoveStump) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CAVE_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(Event_MovePillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },

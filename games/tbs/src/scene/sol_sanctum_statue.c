@@ -45,8 +45,8 @@
 /// - From then on the seals stay open. The first one opened cuts away by
 ///   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED: in the
 ///   Luna and Sol rooms the quarter it lights only flashes, and Kraden runs off
-///   to see what Isaac has found (FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG), and he
-///   comes here
+///   to see what Isaac has found
+///   (FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING), and he comes here
 ///   (SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED) to find
 ///   the hole. Garet and Jenna tell him how it opened; he decides that the
 ///   statue puzzle was the trap and the centre statue there to disarm it, and
@@ -240,13 +240,15 @@ const struct SceneEvent *SolSanctumStatue_GetEvents(void) {
 /// seal leads to, and requests its exit: once the centre statue has moved,
 /// the quarter it lit flashing in the Luna and Sol rooms
 /// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED), until
-/// FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG is set; before then, the falling
-/// lights (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG), until
+/// FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING is set; before then, the
+/// falling lights
+/// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_SPRUNG), until
 /// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set. Returns 1 when it requests an
 /// exit, otherwise -1.
 static s32 SolSanctumStatue_SelectStoryExit(void) {
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
-    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) ==
+        0) {
       Engine_EventRequestExit(
           SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED);
       return 1;

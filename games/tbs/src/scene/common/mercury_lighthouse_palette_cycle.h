@@ -12,7 +12,7 @@
 #include "io_reg.h"
 
 // Mercury Lighthouse and its entrance: the shimmer of the pool once it is
-// woken (FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), in colours 9 to 15 of
+// woken (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), in colours 9 to 15 of
 // background palette 6.
 
 /// A scene callback: every fifth frame colour 9's red level steps on by 4, and

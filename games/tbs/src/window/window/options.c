@@ -679,7 +679,7 @@ void SystemMenu_Release(void) {
 
 /// Opens the system menu's window with its entries (Save your quest, Sleep,
 /// Change settings, and the debug entries in debug mode; only Change settings
-/// while FLAG_IN_LINK_LOBBY is set), their icons and the cursor. Returns the
+/// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor. Returns the
 /// window.
 struct UiWindow *SystemMenu_Open(void) {
   struct WorkspaceWork *work;
@@ -697,7 +697,7 @@ struct UiWindow *SystemMenu_Open(void) {
 
   rows = WORKSPACE_ROWS;
   work = gSelectionWork;
-  settingsOnly = GameFlag_TestFar(FLAG_IN_LINK_LOBBY);
+  settingsOnly = GameFlag_TestFar(FLAG_IN_BATTLE_ARENA);
   first = 0;
   if (settingsOnly != 0) {
     rows = 1;
@@ -781,7 +781,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
 
   redraw = 1;
   rows = WORKSPACE_ROWS;
-  settingsOnly = GameFlag_TestFar(FLAG_IN_LINK_LOBBY);
+  settingsOnly = GameFlag_TestFar(FLAG_IN_BATTLE_ARENA);
   first = 0;
   SystemMenu_Initialize();
   work = gSelectionWork;

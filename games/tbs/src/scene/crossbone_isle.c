@@ -33,12 +33,12 @@
 ///   next five, one group per room. Back from the battle
 ///   (ENTRANCE_AFTER_BATTLE) the door opens and the party walks through, and
 ///   from then on it simply opens (one flag per room from
-///   FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED); the west door always opens.
-///   Between the doors stands a pillar that, pushed or moved with Move to
-///   column 40, sinks into the floor and opens the corridor (one flag per room
-///   from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the first floor a chest
-///   is a mimic (FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN once beaten). The
-///   side rooms of the first eight floors are in
+///   FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED); the west door
+///   always opens. Between the doors stands a pillar that, pushed or moved with
+///   Move to column 40, sinks into the floor and opens the corridor (one flag
+///   per room from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the first
+///   floor a chest is a mimic (FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN
+///   once beaten). The side rooms of the first eight floors are in
 ///   crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
 /// - Crossbone Isle Cave (SceneId_CrossboneIsleFloatingLogs), the ninth
 ///   floor's side room: twelve logs floating on green water, which drift with
@@ -536,9 +536,10 @@ static void Event_OpenWestDoor(void) {
 /// comes back at ENTRANCE_AFTER_BATTLE; once they are beaten, the door opens
 /// onto the side room.
 static void Event_OpenEastDoor(void) {
-  if (Engine_GameFlagIsSet(gGameState.scene +
-                           (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
-                            (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
+  if (Engine_GameFlagIsSet(
+          gGameState.scene +
+          (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
+           (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
     EV_BEGIN();
     Event_SetNextDestination(gGameState.scene, ENTRANCE_AFTER_BATTLE);
     Battle_SetStart(BATTLE_START_SCENE);
@@ -597,8 +598,9 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  FLAG_SET((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
-                                (s32)&SceneId_CrossboneIsleFirstFloor)));
+  FLAG_SET((gGameState.scene +
+            (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
+             (s32)&SceneId_CrossboneIsleFirstFloor)));
   WAIT(30);
   Map_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);

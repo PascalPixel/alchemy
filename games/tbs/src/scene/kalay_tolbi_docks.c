@@ -55,7 +55,7 @@
 /// back onto the ship (TOLBI_DOCKS_TO_TOLBI_SHIP_DECK) and into the building
 /// (trigger 10). After Colosso the Colosso Tour's passengers are stranded
 /// here, the ships not sailing, and the first time the party comes (trigger
-/// 50, FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN) it watches them demand to be taken
+/// 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be taken
 /// home and the tour guide's hired bodyguard knock the angriest flat;
 /// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them.
 
@@ -688,7 +688,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     Actor_FaceDirection(ACTOR_VILLAGER_HEARING_OF_THE_SCARY_TRIP, FACING_WEST,
                         0);
   }
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN)) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED)) {
     Actor_SetPosition(ACTOR_TOUR_GUIDE, PIXELS(280), PIXELS(296));
     Actor_FaceDirection(ACTOR_TOUR_GUIDE, FACING_NORTH, 0);
     Actor_SetPosition(ACTOR_BODYGUARD, PIXELS(288), PIXELS(280));
@@ -849,7 +849,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
 }
 
 /// Tolbi Docks after Colosso, the first time the party comes to the pier
-/// (trigger 50, until FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN): it watches the tour
+/// (trigger 50, until FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED): it watches the tour
 /// guide tell an angry passenger his ticket was refunded. The passengers
 /// demand to be taken home, the ships being stuck and the road blocked; when
 /// the angry one charges, the guides' hired bodyguard steps in, and after a
@@ -858,7 +858,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
 static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   struct FieldActor *actor;
 
-  GameFlag_Set(FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN);
+  GameFlag_Set(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
   Engine_EventSetMessage(MsgKalayReturnedTicketCost);
@@ -1349,7 +1349,7 @@ struct SceneEvent gKalayTolbiDocks_TolbiEventsStranded[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(KalayTolbiDocks_OpenDoorAndLeave) },
-    { EVENT_TOUCH, 50, FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN, EVENT_SCRIPT(KalayTolbiDocks_PassengersConfrontTourGuide) },
+    { EVENT_TOUCH, 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED, EVENT_SCRIPT(KalayTolbiDocks_PassengersConfrontTourGuide) },
     { EVENT_TALK, ACTOR_VILLAGER_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThereAreManyHereWhoWant) },
     { EVENT_TALK, ACTOR_VILLAGER_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHangingAroundHereLikeThisAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfBothTheCaptainAndKaja) },

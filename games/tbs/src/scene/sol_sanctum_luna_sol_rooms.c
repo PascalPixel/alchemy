@@ -37,8 +37,8 @@
 ///   dropped into the floor, the next statue in place only flashes its light,
 ///   and Kraden runs off to see what Isaac has found
 ///   (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED,
-///   FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG). Each scene ends by taking the party
-///   back to SceneId_SolSanctumStatue.
+///   FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING). Each scene ends by taking
+///   the party back to SceneId_SolSanctumStatue.
 /// - With all four quarters lit, walking up to Kraden (cell code 8) has him see
 ///   that the picture of Luna has changed to Sol
 ///   (FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED), and crossing cell code 13 has him
@@ -850,8 +850,8 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
 /// happening?" "Isaac must have found something!" He runs off to see. Called by
 /// SolSanctumLunaSolRooms_Initialize at
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED until
-/// FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG is set, which it sets; the flag marks
-/// this scene, not the trap. Takes
+/// FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING is set, which it sets; the flag
+/// marks this scene, not the trap. Takes
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED back to
 /// SceneId_SolSanctumStatue.
 static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
@@ -900,7 +900,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   gEventWork->transitionFrames = 32;
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG);
+  GameFlag_Set(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
   Engine_EventRequestExit(
       SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED);
 }
@@ -1387,9 +1387,9 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   // SceneId_SolSanctumStatue for.
   if (gGameState.entrance ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG) == 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
       SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed();
-      Engine_GameFlagSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG);
+      Engine_GameFlagSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
       playedEntrySequence = 1;
     }
   } else if (gGameState.entrance ==

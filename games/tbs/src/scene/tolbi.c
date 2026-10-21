@@ -12,7 +12,7 @@
 ///   town. The first time the party steps on cell code 20, two of them stop
 ///   it to show his picture, `Have you seen anyone who looks like this?`, and
 ///   go their way whatever it answers (Tolbi_MeetSearchingSoldiers,
-///   FLAG_TOLBI_SEARCHERS_MET).
+///   FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI).
 /// - Finals day (FLAG_BABI_SAVED), once the party has saved Babi in
 ///   Altmiller Cave: he has shown himself at the finals, the town hurries to
 ///   the colosseum, and the scalper who slept under the archway has moved,
@@ -544,7 +544,7 @@ static void Tolbi_RequestTouchedExit(void) {
 /// During the festival, the first time the party steps on cell code 20, two
 /// soldiers searching for the missing Babi stop the party and show his
 /// picture. "Have you seen anyone who looks like this?" They leave either way
-/// the party answers. Sets FLAG_TOLBI_SEARCHERS_MET.
+/// the party answers. Sets FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI.
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 
@@ -643,7 +643,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Engine_ActorSetPosition(TOLBI_SOLDIER_A, 0, 0);
   Engine_ActorSetPosition(TOLBI_SOLDIER_B, 0, 0);
   Engine_ActorSetPosition(TOLBI_MISSING_PERSON_POSTER, 0, 0);
-  Engine_GameFlagSet(FLAG_TOLBI_SEARCHERS_MET);
+  Engine_GameFlagSet(FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI);
   Engine_EventEnd();
 }
 
@@ -855,7 +855,7 @@ struct SceneEvent gTolbiEventsFestival[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
     { EVENT_TOUCH | EVENT_TOUCH_FACING | FACING_NORTH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedExit) },
-    { EVENT_TOUCH, 20, FLAG_TOLBI_SEARCHERS_MET, EVENT_SCRIPT(Tolbi_MeetSearchingSoldiers) },
+    { EVENT_TOUCH, 20, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI, EVENT_SCRIPT(Tolbi_MeetSearchingSoldiers) },
     { EVENT_TOUCH | EVENT_TOUCH_FACING | FACING_NORTH, 239, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
     { EVENT_TALK, TOLBI_EXCITED_LOCAL, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbisAlwaysReallyBustlingDuringColosso) },
     { EVENT_TALK, TOLBI_HURRYING_LOCAL, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoIsHeldInTheColosseum) },

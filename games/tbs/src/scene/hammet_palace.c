@@ -24,11 +24,11 @@
 ///   says Dodonpa may have spies in Kalay. Afterwards she stands elsewhere in
 ///   her room, and the first time they speak she scolds `Isaac, you sneaked
 ///   into Lunpa? That's far too dangerous!` and asks them not to go back
-///   (FLAG_LAYANA_SCOLDED_LUNPA_VISIT); from then on she talks of Dodonpa's
-///   greed.
+///   (FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS); from then on she talks of
+///   Dodonpa's greed.
 /// - Hammet's homecoming (HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL, the
-///   first time once Hammet is free, FLAG_LUNPA_TRADE_REOPENED;
-///   FLAG_HAMMET_HOMECOMING_SEEN). Hammet welcomes the party. Layana is harsh:
+///   first time once Hammet is free, FLAG_DODONPA_LOCKED_UP;
+///   FLAG_HAMMET_BACK_HOME_SEEN). Hammet welcomes the party. Layana is harsh:
 ///   she had told Ivan time and again not to go to Lunpa, and the rescue was
 ///   Kalay's to make, when their quest is to recover the Elemental Stars. Ivan
 ///   takes the blame and decides that they leave at once on Felix's trail, and
@@ -214,7 +214,7 @@ static void Event_LayanaScoldsLunpaVisit(void) {
   Engine_EventShowMessageAndWait(ACTOR_LAYANA, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
   Engine_EventShowMessageAndWait(ACTOR_LAYANA, 0, 10);
-  Engine_GameFlagSet(FLAG_LAYANA_SCOLDED_LUNPA_VISIT);
+  Engine_GameFlagSet(FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
   EV_END();
 }
 
@@ -280,13 +280,13 @@ static void HammetPalace_SetUpEntrance(void) {
 
   switch (gGameState.entrance) {
   case HAMMET_PALACE_THRONE_ROOM_FROM_ENTRANCE_HALL:
-    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
       // Hammet is home.
       actor = Object_GetById(ACTOR_LAYANA);
       facing = FACING_EAST + FACING_STEP;
       actor->facing = facing;
 
-      if (Engine_GameFlagIsSet(FLAG_HAMMET_HOMECOMING_SEEN) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_HAMMET_BACK_HOME_SEEN) == 0) {
         HammetPalace_HammetsHomecoming();
       }
     } else {
@@ -985,7 +985,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   work->transitionFrames = 16;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  FLAG_SET(FLAG_HAMMET_HOMECOMING_SEEN);
+  FLAG_SET(FLAG_HAMMET_BACK_HOME_SEEN);
   EV_END();
 }
 
@@ -1123,33 +1123,33 @@ struct SceneEvent gHammetPalaceEvents[] = {
     { EVENT_EXIT, 13, CONDITION_ALWAYS, HAMMET_PALACE_LANDING_TO_ENTRANCE_HALL },
     { TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
     { EVENT_TALK, ACTOR_LAYANA, FLAG_PLACE_TEMP_21, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
-    { EVENT_TALK, ACTOR_LAYANA, FLAG_LAYANA_SCOLDED_LUNPA_VISIT, EVENT_SCRIPT(Event_LayanaScoldsLunpaVisit) },
-    { EVENT_TALK, ACTOR_LAYANA, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceDodonpaPlansToUseHammetTo) },
+    { EVENT_TALK, ACTOR_LAYANA, FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS, EVENT_SCRIPT(Event_LayanaScoldsLunpaVisit) },
+    { EVENT_TALK, ACTOR_LAYANA, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceDodonpaPlansToUseHammetTo) },
     { EVENT_TALK, ACTOR_LAYANA, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceNoOneInKalayKnowsHammet) },
     { EVENT_TALK, ACTOR_HAMMET, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTakeYourShamansRodAndSet) },
-    { EVENT_TALK, ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceTheTownsfolkDontKnowAboutLord) },
+    { EVENT_TALK, ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceTheTownsfolkDontKnowAboutLord) },
     { EVENT_TALK, ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceIHearHammetWasSavedBy) },
-    { EVENT_TALK, ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED, FLAG_LUNPA_TRADE_REOPENED, EVENT_SCRIPT(Event_AskWhetherHammetWillBeReleased) },
+    { EVENT_TALK, ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED, FLAG_DODONPA_LOCKED_UP, EVENT_SCRIPT(Event_AskWhetherHammetWillBeReleased) },
     { EVENT_TALK, ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheySayHammetsReturnIsSupposed) },
-    { EVENT_TALK, ACTOR_LEFT_THE_PASSAGE_DOOR_OPEN, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceLayanaIsPuttingUpAStrong) },
+    { EVENT_TALK, ACTOR_LEFT_THE_PASSAGE_DOOR_OPEN, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceLayanaIsPuttingUpAStrong) },
     { EVENT_TALK, ACTOR_LEFT_THE_PASSAGE_DOOR_OPEN, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceILeftTheDoorToThe) },
-    { EVENT_TALK, ACTOR_AFRAID_OF_DODONPAS_THUGS, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceMerchantsAreSupposedToBeProtected) },
+    { EVENT_TALK, ACTOR_AFRAID_OF_DODONPAS_THUGS, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceMerchantsAreSupposedToBeProtected) },
     { EVENT_TALK, ACTOR_AFRAID_OF_DODONPAS_THUGS, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceIWonderIfAnyOfDodonpas) },
-    { EVENT_TALK, ACTOR_ASKING_ABOUT_THE_SILK_TRADE, FLAG_LUNPA_TRADE_REOPENED, EVENT_SCRIPT(Event_AskWhetherSilkTradeHasEnded) },
+    { EVENT_TALK, ACTOR_ASKING_ABOUT_THE_SILK_TRADE, FLAG_DODONPA_LOCKED_UP, EVENT_SCRIPT(Event_AskWhetherSilkTradeHasEnded) },
     { EVENT_TALK, ACTOR_ASKING_ABOUT_THE_SILK_TRADE, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheSecretPassageIsLockedBecause) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAYANA, FLAG_LAYANA_SCOLDED_LUNPA_VISIT, MSGNO(MsgHammetPalaceIsThisTheRightDecisionHammet) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAYANA, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceIDontCareAboutTheMoney) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAYANA, FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS, MSGNO(MsgHammetPalaceIsThisTheRightDecisionHammet) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAYANA, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceIDontCareAboutTheMoney) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAYANA, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceImSoHappyHammetMadeIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMMET, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceLayanasWordsPainHerMoreThan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceImSureTheVillagersWouldPanic) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceImSureTheVillagersWouldPanic) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceImSoRelievedHammetMadeIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceEveryonesWorriedAboutLordHammetBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceEveryonesWorriedAboutLordHammetBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceICantLetOnToThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEFT_THE_PASSAGE_DOOR_OPEN, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceLadyLayanaWasCryingAgainLast) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEFT_THE_PASSAGE_DOOR_OPEN, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceLadyLayanaWasCryingAgainLast) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEFT_THE_PASSAGE_DOOR_OPEN, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceLayanaOrderedTheDoorToThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFRAID_OF_DODONPAS_THUGS, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceAndToThinkIAlmostWent) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFRAID_OF_DODONPAS_THUGS, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceAndToThinkIAlmostWent) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFRAID_OF_DODONPAS_THUGS, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceWeWillNeverLetDodonpasHenchmen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_THE_SILK_TRADE, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceLordHammetIsALegendAmong) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_THE_SILK_TRADE, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceLordHammetIsALegendAmong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_THE_SILK_TRADE, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceTheKeyToTheSecretPassage) },
     { SEARCH(SEARCH_CHEST), 100, 0xf86, FIND_ITEM(ITEM_WATER_JACKET) },
     { SEARCH(SEARCH_BARREL), 101, 0xf87, FIND_ITEM(ITEM_NUT) },

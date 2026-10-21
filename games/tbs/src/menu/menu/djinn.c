@@ -93,14 +93,14 @@ s32 DjinnMenu_Run(void) {
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = DJINN_TUTORIAL_OFF;
   // The tutorial's lesson, from the flags the world map sets for each.
-  if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL)) {
-    if (!GameFlag_TestFar(FLAG_DJINN_TUTORIAL_PART_A)) {
-      if (!GameFlag_TestFar(FLAG_DJINN_TUTORIAL_PART_B))
+  if (GameFlag_TestFar(FLAG_DJINN_LESSON)) {
+    if (!GameFlag_TestFar(FLAG_DJINN_LESSON_PART_A)) {
+      if (!GameFlag_TestFar(FLAG_DJINN_LESSON_PART_B))
         backdrop->tutorialStep = enabled;
       else
         backdrop->tutorialStep = DJINN_TUTORIAL_POWERS;
     } else {
-      if (!GameFlag_TestFar(FLAG_DJINN_TUTORIAL_PART_B))
+      if (!GameFlag_TestFar(FLAG_DJINN_LESSON_PART_B))
         backdrop->tutorialStep = DJINN_TUTORIAL_RECOVERY;
       else
         backdrop->tutorialStep = DJINN_TUTORIAL_CLOSE;

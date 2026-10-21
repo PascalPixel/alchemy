@@ -20,7 +20,7 @@
 ///
 /// In BilibinCaveRapier a fire burns between two torches (CAVE2_DOUSE_TARGET),
 /// and Douse puts it out for good
-/// (FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED). Reveal shows a hidden path,
+/// (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED). Reveal shows a hidden path,
 /// a strip of tiles and the cells under them, which Event_HideRevealedPath
 /// takes away again when Reveal wears off. A chest holds the Elven Rapier.
 ///
@@ -29,7 +29,7 @@
 /// of a fire or a torch melts back. A fire (CAVE1_DOUSE_TARGET) burns beside
 /// the first puddle: while it burns, Frost on the puddle only melts back
 /// (BilibinCave_FreezeTarget plays the melting). Douse puts the fire out
-/// (FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED), and the puddle freezes into
+/// (FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED), and the puddle freezes into
 /// a pillar drawn underfoot, which the party walks over. The second puddle
 /// stands beside a torch that cannot be moved, and Frost on it always melts
 /// back. The third is an ice pillar: two of the six torches
@@ -245,7 +245,7 @@ static void Event_HideRevealedPath(void) {
 static void Event_DouseRapierRoomFire(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(CAVE2_DOUSE_TARGET, 0, 0);
-  Engine_GameFlagSet(FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED);
+  Engine_GameFlagSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
   Engine_EventEnd();
 }
 
@@ -254,7 +254,7 @@ static void Event_DouseRapierRoomFire(void) {
 static void Event_DouseIceRoomFire(void) {
   Engine_EventBegin();
   Actor_SetPosition(CAVE1_DOUSE_TARGET, 0, 0);
-  GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED);
+  GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
   Engine_EventWait(40);
   // Match the replacement's drawing priority to its collision cell.
   Engine_ActorSetAnimationAndWait(FROST_TARGET_A, 2);
@@ -402,8 +402,7 @@ static void BilibinCave_RestoreRapierRoom(void) {
   Engine_ActorSetAnimation(ACTOR_CAVE2_WEST_TORCH, 1);
   Engine_ActorSetAnimation(ACTOR_CAVE2_EAST_TORCH, 2);
 
-  if (Engine_GameFlagIsSet(FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED) !=
-      0) {
+  if (Engine_GameFlagIsSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
     Engine_ActorSetPosition(CAVE2_DOUSE_TARGET, 0, 0);
   } else {
     Engine_ActorSetSpriteFlags(Object_GetById(CAVE2_DOUSE_TARGET), 0);
@@ -465,7 +464,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 4);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 5);
   // Restore the surface exposed by Douse, including its collision and priority.
-  if (GameFlag_IsSet(FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED) != 0) {
+  if (GameFlag_IsSet(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     Actor_SetPosition(CAVE1_DOUSE_TARGET, 0, 0);
     Engine_ActorSetAnimation(FROST_TARGET_A, 5);
     Actor_Get(FROST_TARGET_A)->motionFlags = 0;
@@ -756,7 +755,7 @@ struct SceneEvent gBilibinCaveEvents2[] = {
     { SEARCH(SEARCH_CHEST), 100, 0xf5d, FIND_ITEM(ITEM_ELVEN_RAPIER) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenPath) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRevealedPath) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE2_DOUSE_TARGET, FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_DouseRapierRoomFire) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE2_DOUSE_TARGET, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT_SCRIPT(Event_DouseRapierRoomFire) },
     { SCENE_EVENTS_END },
 };
 
@@ -768,8 +767,8 @@ struct SceneEvent gBilibinCaveEvents1[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, BILIBIN_CAVE_ICE_CHESTS_TO_BILIBIN_CAVE_ICE },
     { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetMapTriggerFlag) },
     { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearMapTriggerFlag) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE1_DOUSE_TARGET, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_DouseIceRoomFire) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_A, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_FreezeFirstTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE1_DOUSE_TARGET, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(Event_DouseIceRoomFire) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_A, FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED, EVENT_SCRIPT(Event_FreezeFirstTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FreezeSecondTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_C, IF_FLAG_SET(FLAG_PLACE_TEMP_02), EVENT_SCRIPT(Event_FreezeThirdTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },

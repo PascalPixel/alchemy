@@ -15,7 +15,7 @@
 ///   four men, the young girl and the old man among them unhappy to be there.
 ///   Read with Mind Read, they blame the three strangers staying at the inn.
 ///   One of the three loiters in town, denying everything, until the party
-///   has confronted them in the loft (FLAG_VAULT_THIEVES_CONFRONTED removes
+///   has confronted them in the loft (FLAG_VAULT_THIEVES_ATTACKED removes
 ///   him). A man complains of the hole a fiery rock burnt through a roof;
 ///   once the suspects' minds have been read (FLAG_VAULT_SUSPECTS_MIND_READ)
 ///   he is missing and someone walks about looking for him, for he went up
@@ -122,7 +122,7 @@ enum {
   /// (MsgVaultNobodysStealingAnything)
   ACTOR_VILLAGER_ON_WATCH = 16,
   /// One of the three thieves, in his sprite in the loft, standing outside
-  /// until the party confronts them (FLAG_VAULT_THIEVES_CONFRONTED).
+  /// until the party confronts them (FLAG_VAULT_THIEVES_ATTACKED).
   /// ★ Named from the game: "Are you accusing us of stealing Hammet's treasured
   /// Shaman's Rod?" (MsgVaultAccusingUsStealingHammetsTreasured)
   ACTOR_THIEF_IN_TOWN = 17,
@@ -1313,7 +1313,7 @@ struct ScenePlacement gVault_Placements[] = {
         PIXELS(132), 0, PIXELS(420), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(332), 0, PIXELS(412), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x40, FLAG_VAULT_THIEVES_CONFRONTED, ACTOR_STAND,
+    { 0x40, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
         PIXELS(92), 0, PIXELS(284), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(92), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -1349,7 +1349,7 @@ struct ScenePlacement gVault_PlacementsAfterThieves[] = {
         PIXELS(132), 0, PIXELS(420), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x74, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(332), 0, PIXELS(412), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_BLANK, FLAG_VAULT_THIEVES_CONFRONTED, ACTOR_STAND,
+    { SPRITE_BLANK, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(92), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },

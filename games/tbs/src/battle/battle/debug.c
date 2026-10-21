@@ -253,7 +253,7 @@ void DebugBattle_ViewMessages(void) {
 /// Holding Down when A is pressed makes it a link battle. Exported as
 /// DebugBattle_RunMenuFar; nothing in the source calls it. Sets
 /// FLAG_DEBUG_BATTLE and, as chosen, FLAG_AUTO_BATTLE, FLAG_LINK_BATTLE and
-/// FLAG_DJINN_TUTORIAL, and resets the task table, heap and VRAM cache
+/// FLAG_DJINN_LESSON, and resets the task table, heap and VRAM cache
 /// before each battle.
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
@@ -315,7 +315,7 @@ restart:
       UnitCalcFar(0);
       gGameState.special = (s32)&ResourceId_SuhallaGateBackdrop;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
-        GameFlag_SetBitFar(FLAG_DJINN_TUTORIAL);
+        GameFlag_SetBitFar(FLAG_DJINN_LESSON);
       GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
       Battle_RunEncounter(encounter);
       // Rebuild what the battle replaced, then return to the chooser.

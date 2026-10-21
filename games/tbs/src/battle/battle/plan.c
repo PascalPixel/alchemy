@@ -656,7 +656,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       if ((BattleRandomFar() & 31) == 0)
         plan->targetMultiplier[0] = 0;
     } while (0);
-    if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL))
+    if (GameFlag_TestFar(FLAG_DJINN_LESSON))
       plan->targetMultiplier[0] = 0;
     // Critical hit: one chance in 32, or else the equipment's unleash bonus
     // in 200ths, against a 16-bit roll.

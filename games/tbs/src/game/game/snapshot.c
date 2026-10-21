@@ -29,7 +29,7 @@ void Inventory_AddAndEquip(s32 owner, s32 itemId) {
 
 /// Saves the first four characters' inventories, shortcuts and party order,
 /// then keeps only the Psynergy-granting items, gives Isaac the Short
-/// Sword, sets FLAG_INVENTORY_SNAPSHOT and restores everyone's HP and PP.
+/// Sword, sets FLAG_COLOSSO_HOLDS_EQUIPMENT and restores everyone's HP and PP.
 /// Nothing happens when a snapshot is already saved, apart from the restore.
 /// Called by the Colosseum entrance scene as Isaac enters the Colosso.
 void InventorySnapshot_Save(void) {
@@ -73,14 +73,14 @@ void InventorySnapshot_Save(void) {
     save[1] = inventory[1];
 #endif
     Inventory_AddAndEquip(ISAAC, ITEM_SHORT_SWORD);
-    GameFlag_SetBit(FLAG_INVENTORY_SNAPSHOT);
+    GameFlag_SetBit(FLAG_COLOSSO_HOLDS_EQUIPMENT);
   }
   Party_RestoreHpPp(1);
 }
 
 /// Gives back the inventories, shortcuts and party order InventorySnapshot_Save
-/// put aside, then clears the snapshot and FLAG_INVENTORY_SNAPSHOT. Called by
-/// the Babi palace scene after the Colosso, and by the file select screen.
+/// put aside, then clears the snapshot and FLAG_COLOSSO_HOLDS_EQUIPMENT. Called
+/// by the Babi palace scene after the Colosso, and by the file select screen.
 void InventorySnapshot_Restore(void) {
   s32 owner;
   u16 *source = gInventorySnapshot;
@@ -114,7 +114,7 @@ void InventorySnapshot_Restore(void) {
 #endif
     source = gInventorySnapshot;
     *source = 0;
-    GameFlag_ClearBit(FLAG_INVENTORY_SNAPSHOT);
+    GameFlag_ClearBit(FLAG_COLOSSO_HOLDS_EQUIPMENT);
   }
 }
 

@@ -89,7 +89,7 @@
 /// front also catch the palace's story up with Lunpa's: hearing in Lunpa that
 /// Hammet is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets place flag
 /// FLAG_PLACE_TEMP_21, which changes what Layana says, and once Hammet is free
-/// (FLAG_LUNPA_TRADE_REOPENED, set as Donpa judges Dodonpa in Lunpa) Ivan's
+/// (FLAG_DODONPA_LOCKED_UP, set as Donpa judges Dodonpa in Lunpa) Ivan's
 /// report and Layana's scolding count as seen and FLAG_KALAY_TUNNEL_OPEN opens
 /// the passage. The getters choose each scene's tables; the cave and the
 /// passage have no placements, and an empty set serves any other scene number.
@@ -1159,10 +1159,10 @@ s32 Kalay_Initialize(void) {
 }
 
 /// Sets up Kalay. Having heard in Lunpa that Hammet is held there sets place
-/// flag FLAG_PLACE_TEMP_21; once Hammet is free (FLAG_LUNPA_TRADE_REOPENED) the
-/// palace's FLAG_IVAN_REPORTED_TO_LAYANA, FLAG_LAYANA_SCOLDED_LUNPA_VISIT and
-/// FLAG_KALAY_TUNNEL_OPEN are set too, so its earlier scenes count as seen and
-/// the passage is open. Coming up from the Kalay Tunnel
+/// flag FLAG_PLACE_TEMP_21; once Hammet is free (FLAG_DODONPA_LOCKED_UP) the
+/// palace's FLAG_IVAN_REPORTED_TO_LAYANA, FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS
+/// and FLAG_KALAY_TUNNEL_OPEN are set too, so its earlier scenes count as seen
+/// and the passage is open. Coming up from the Kalay Tunnel
 /// (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its statue moved aside, and
 /// until it is caught the Nut circles in the air.
 static void Kalay_PrepareTown(void) {
@@ -1171,9 +1171,9 @@ static void Kalay_PrepareTown(void) {
   u8 *heap;
   OrbitingSceneObjectSprite *sprite;
 
-  if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
-    Engine_GameFlagSet(FLAG_LAYANA_SCOLDED_LUNPA_VISIT);
+    Engine_GameFlagSet(FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
     Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(FLAG_KALAY_TUNNEL_OPEN);
   }
@@ -1214,9 +1214,9 @@ static void Kalay_PrepareTown(void) {
 /// the town, and, the first time the party comes before Ivan has reported to
 /// Layana, the guards scene.
 static void Kalay_PrepareHammetPalace(void) {
-  if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
-    Engine_GameFlagSet(FLAG_LAYANA_SCOLDED_LUNPA_VISIT);
+    Engine_GameFlagSet(FLAG_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
     Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(FLAG_KALAY_TUNNEL_OPEN);
   }

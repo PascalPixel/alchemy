@@ -37,11 +37,11 @@
 ///   family and the women he brought here talk.
 /// - SceneId_LunpaFortressCave, the cave, whose ways are hidden. Whirlwind
 ///   blows away what covers two switches and a passage
-///   (FLAG_LUNPA_FORTRESS_*_UNCOVERED; FLAG_SCENE_TEMP_17 and _18 while the
-///   switches are covered), the switches show in the wall only while Reveal
+///   (FLAG_LUNPA_FORTRESS_*_PLANT_BLOWN_AWAY; FLAG_SCENE_TEMP_17 and _18 while
+///   the switches are covered), the switches show in the wall only while Reveal
 ///   lasts, searching one then opens its passage
 ///   (FLAG_LUNPA_FORTRESS_*_SWITCH_FLIPPED), and Move pushes a stack of crates
-///   onto its hole, where it sinks (FLAG_LUNPA_FORTRESS_COLUMN_LOWERED).
+///   onto its hole, where it sinks (FLAG_LUNPA_FORTRESS_CRATES_MOVED).
 ///   LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST, _NORTH and
 ///   _NORTHWEST lead to LunpaFortressToadonpa.
 /// - SceneId_LunpaFortressToadonpa, deeper in the cave, where Hammet is held in
@@ -55,7 +55,7 @@
 ///   punishment until his father Donpa arrives, has him locked up and asks the
 ///   party to leave as they came, since Dodonpa's men would free him; he has
 ///   spread a rumor that the intruders failed and fled. It sets
-///   FLAG_LUNPA_TRADE_REOPENED, which changes all of Lunpa, and place flag
+///   FLAG_DODONPA_LOCKED_UP, which changes all of Lunpa, and place flag
 ///   FLAG_PLACE_TEMP_01, and the party slips out with Hammet
 ///   (LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_GATES, the gates'
 ///   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA). Coming back by
@@ -359,7 +359,7 @@ static void Event_CratesSink(void) {
   SE(SE_215);
   WAIT(60);
   LunpaFortress_LowerCrates();
-  FLAG_SET(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED);
+  FLAG_SET(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
 }
 
 /// LunpaFortressCave, Move on the crates: once they are past row 22, over their
@@ -379,7 +379,7 @@ static void Event_MoveCrates(void) {
       Engine_ActorSetSpriteFlags(cratesActor, 0);
       cratesActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     }
-    FLAG_SET(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED);
+    FLAG_SET(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
   }
 }
 
@@ -410,7 +410,7 @@ static void Event_UnlockToadonpaDoor(void) {
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->touchedTrigger;
     doorIndex = doorTrigger - DOOR_TRIGGER_FIRST;
-    if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) == 0 || doorIndex != 4) {
+    if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
       LunpaFortress_OpenToadonpaDoor(doorIndex);
       SE(SE_GATE_MOVE);
       Map_SetShake(0x30000, 0x30000, 0x10000);
@@ -1314,7 +1314,7 @@ static void Event_FightHallGuard(void) {
   Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ActorSetPosition(UPPER_FLOOR_HALL_GUARD, 0, 0);
   EV_END();
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
 }
 
 /// LunpaFortressUpperFloor, trigger 31: walking up to the three guards, they
@@ -1547,7 +1547,7 @@ static void Event_HideSwitches(void) {
 
 /// LunpaFortressCave, Whirlwind on what covers the first switch: it blows away.
 static void Event_BlowAwayFirstSwitchCover(void) {
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_17);
   Engine_ActorSetPosition(CAVE_FIRST_SWITCH_COVER, 0, 0);
 }
@@ -1555,7 +1555,7 @@ static void Event_BlowAwayFirstSwitchCover(void) {
 /// LunpaFortressCave, Whirlwind on what covers the passage: it blows away and
 /// the passage opens.
 static void Event_BlowAwayPassageCover(void) {
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY);
   LunpaFortress_OpenCoveredPassage();
   Engine_ActorSetPosition(CAVE_PASSAGE_COVER, 0, 0);
 }
@@ -1563,7 +1563,7 @@ static void Event_BlowAwayPassageCover(void) {
 /// LunpaFortressCave, Whirlwind on what covers the second switch: it blows
 /// away.
 static void Event_BlowAwaySecondSwitchCover(void) {
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_18);
   Engine_ActorSetPosition(CAVE_SECOND_SWITCH_COVER, 0, 0);
 }
@@ -1930,7 +1930,7 @@ static void Event_FindHammet(void) {
 /// with Toadonpa: the monster has fallen on Dodonpa. The party may pull it off
 /// him; they argue over his punishment until his father Donpa arrives, who
 /// orders him locked up, thanks the party, and lets them leave with Hammet.
-/// Sets FLAG_LUNPA_TRADE_REOPENED.
+/// Sets FLAG_DODONPA_LOCKED_UP.
 static void Event_DonpaJudgesDodonpa(void) {
   struct FieldActor *leader;
   s32 aftermathMessage;
@@ -1938,7 +1938,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   s32 donpaMessage;
 
   FLAG_SET(FLAG_PLACE_TEMP_01);
-  FLAG_SET(FLAG_LUNPA_TRADE_REOPENED);
+  FLAG_SET(FLAG_DODONPA_LOCKED_UP);
   Map_CopyCells(16, 75, 7, 4, 26, 55);
   LunpaFortress_OpenToadonpaDoor(4);
   EV_BEGIN();
@@ -2680,7 +2680,7 @@ static void Event_TalkToAttendant(void) {
   s32 familyMessage;
 
   EV_BEGIN();
-  if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+  if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
     MESSAGE_SET(MsgLunpaDonpaGrateful);
     // XXX: likely a slip for UPPER_FLOOR_ATTENDANT, because the line is the
     // attendant's and Dodonpa's wife stands at the far side of the fortress.
@@ -2740,7 +2740,7 @@ static void Event_TalkToAttendant(void) {
 
 /// LunpaFortressUpperFloor: Mind Read on Donpa's attendant.
 static void Event_ReadAttendantsThoughts(void) {
-  if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED)) {
+  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP)) {
     MESSAGE_SET(MsgLunpaDifficultDonpaRight);
     MESSAGE_PUT(UPPER_FLOOR_ATTENDANT, 0);
   } else {
@@ -2751,7 +2751,7 @@ static void Event_ReadAttendantsThoughts(void) {
 
 /// LunpaFortressUpperFloor: Mind Read on Donpa.
 static void Event_ReadDonpasThoughts(void) {
-  if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED)) {
+  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP)) {
     MESSAGE_SET(MsgLunpaFatherStayAngry);
     MESSAGE_PUT(UPPER_FLOOR_DONPA, 0);
   } else {
@@ -2766,7 +2766,7 @@ static void Event_ReadDonpasThoughts(void) {
 static void Event_TalkToDonpa(void) {
   s32 rewardMessage;
 
-  if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+  if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_REWARD_TAKEN) == 0 &&
         FLAG_CHECK(FLAG_PLACE_TEMP_14) == 0) {
       rewardMessage = MsgLunpaThankHelpDodonpa;
@@ -2986,7 +2986,7 @@ s32 Scene_Initialize(void) {
     if (gGameState.entrance ==
         LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST) {
       Engine_MapSetWorkFlagBits9To11(0xc00);
-      if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+      if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
         OBJ_POS_SET(TOADONPA_HAMMET, 0, 0);
         OBJ_POS_SET(TOADONPA_CELL_GUARD, 432, 344);
         OBJ_DIR(TOADONPA_CELL_GUARD, FACING_SOUTH + FACING_STEP, 0);
@@ -3080,7 +3080,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN)) {
     OBJ_POS_SET(UPPER_FLOOR_WEST_GUARD, 0, 0);
   }
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN)) {
     OBJ_POS_SET(UPPER_FLOOR_HALL_GUARD, 0, 0);
   }
   if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN)) {
@@ -3166,20 +3166,20 @@ static void LunpaFortress_InitializeCave(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   LunpaFortress_RestoreCaveDoors();
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_CRATES_MOVED)) {
     LunpaFortress_RestoreLoweredCrates();
   }
   FLAG_SET(FLAG_SCENE_TEMP_17);
   FLAG_SET(FLAG_SCENE_TEMP_18);
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY)) {
     OBJ_POS_SET(CAVE_FIRST_SWITCH_COVER, 0, 0);
     Engine_GameFlagClear(FLAG_SCENE_TEMP_17);
   }
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY)) {
     OBJ_POS_SET(CAVE_PASSAGE_COVER, 0, 0);
     LunpaFortress_OpenCoveredPassage();
   }
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY)) {
     OBJ_POS_SET(CAVE_SECOND_SWITCH_COVER, 0, 0);
     Engine_GameFlagClear(FLAG_SCENE_TEMP_18);
   }
@@ -3753,7 +3753,7 @@ struct SceneEvent gLunpaFortressGroundFloorEvents[] = {
     { EVENT_RAISED, TRIGGER_SENTRIES_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SentriesThrowPartyOut) },
     { SEARCH(SEARCH_CHEST), 100, FLAG_LUNPA_FORTRESS_CHEST_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
     { SEARCH(SEARCH_CHEST), 101, FLAG_LUNPA_FORTRESS_CHEST_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_CHEST), 102, FLAG_LUNPA_FORTRESS_THIRD_CHEST, FIND_ITEM(ITEM_MYTHRIL_CIRCLET) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_LUNPA_FORTRESS_CHEST_MYTHRIL_CIRCLET, FIND_ITEM(ITEM_MYTHRIL_CIRCLET) },
     { SEARCH(SEARCH_CHEST), 103, FLAG_LUNPA_FORTRESS_CHEST_COINS, FIND_COINS(100) },
     { SEARCH(SEARCH_BARREL), 104, FLAG_LUNPA_FORTRESS_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
     { SCENE_EVENTS_END },
@@ -3784,7 +3784,7 @@ struct SceneEvent gLunpaFortressUpperFloorEvents[] = {
     { EVENT_EXIT, 22, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_EAST_HALL_TO_SOUTH_HALL },
     { EVENT_EXIT, 23, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_TONIC_ROOM_TO_DONPAS_ROOM },
     { EVENT_EXIT, 24, CONDITION_ALWAYS, LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_TO_TONIC_ROOM },
-    { EVENT_TOUCH, 30, FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN, EVENT_SCRIPT(Event_FightHallGuard) },
+    { EVENT_TOUCH, 30, FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN, EVENT_SCRIPT(Event_FightHallGuard) },
     { EVENT_TOUCH, 31, FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN, EVENT_SCRIPT(Event_FightThreeGuards) },
     { EVENT_TOUCH, 32, FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN, EVENT_SCRIPT(Event_FightEastGuard) },
     { EVENT_TOUCH, 33, FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, EVENT_SCRIPT(Event_FightWestGuard) },
@@ -3844,7 +3844,7 @@ struct SceneEvent gLunpaFortressCaveEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_FIRST_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayFirstSwitchCover) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_PASSAGE_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwayPassageCover) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), CAVE_SECOND_SWITCH_COVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BlowAwaySecondSwitchCover) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), CAVE_CRATES, FLAG_LUNPA_FORTRESS_COLUMN_LOWERED, EVENT_SCRIPT(Event_MoveCrates) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), CAVE_CRATES, FLAG_LUNPA_FORTRESS_CRATES_MOVED, EVENT_SCRIPT(Event_MoveCrates) },
     { SCENE_EVENTS_END },
 };
 

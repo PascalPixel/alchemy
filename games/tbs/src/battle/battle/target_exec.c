@@ -441,7 +441,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           }
         }
         // In the Djinn tutorial a Djinni's blow always leaves 1 HP.
-        if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0 &&
+        if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0 &&
             plan->command == CMD_DJINN && hp <= amount) {
           amount = hp - 1;
         }
@@ -630,7 +630,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         amount += BattleRandomFar() & 3;
         REDUCE_BY_GUARD(amount, target);
         // In the Djinn tutorial a summon always fells its target.
-        if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0 &&
+        if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0 &&
             plan->command == CMD_SUMMON && newHp > amount) {
           amount = newHp;
         }

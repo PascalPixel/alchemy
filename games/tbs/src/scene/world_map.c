@@ -31,7 +31,7 @@
 /// - Flint (cell 90, until he is caught), bobbing on the map: the first
 ///   Djinni, a Venus Djinni separated from his comrades when the volcano
 ///   erupted, asks to come along, joins whatever the answer, teaches how Djinn
-///   are set and put on standby (FLAG_DJINN_TUTORIAL and its two parts), and
+///   are set and put on standby (FLAG_DJINN_LESSON and its two parts), and
 ///   a tutorial battle follows.
 /// - Vault, the first time (touching ACTOR_PLACE_VAULT):
 ///   WORLD_MAP_HAMMETS_CARAVAN_LEAVES plays Hammet's caravan leaving Vault for
@@ -468,7 +468,7 @@ WorldMap_InitializeFirstDjinni(struct ScriptInterpreter *interpreter) {
   if (Engine_GameFlagIsSet(FLAG_DJINNI_0) != 0) {
     return 0;
   }
-  if (Engine_GameFlagIsSet(FLAG_DJINN_TUTORIAL) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_DJINN_LESSON) != 0) {
     return 0;
   }
   actor->update = WorldMap_UpdateBobbingMarker;
@@ -552,7 +552,7 @@ const struct ScenePlacement *WorldMap_GetPlacements(void) {
   switch (gGameState.entrance) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
     if (Engine_GameFlagIsSet(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
-        Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+        Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
       return gWorldMapPlacementsFromWestLunpaCave;
     }
     break;
@@ -825,7 +825,7 @@ s32 WorldMap_Initialize(void) {
       break;
     case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
       if (Engine_GameFlagIsSet(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
-          Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+          Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
         WorldMap_BoardBunzasWagon();
       }
       break;
@@ -903,7 +903,7 @@ enum {
 /// Out of West Lunpa Cave by wagon: Bunza and Hammet nod to each other and
 /// climb aboard with the leader, and the wagon rolls off.
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_WEST_LUNPA_CAVE, after the
-/// trade reopens (FLAG_LUNPA_TRADE_REOPENED) and until the wagon has left;
+/// trade reopens (FLAG_DODONPA_LOCKED_UP) and until the wagon has left;
 /// sets FLAG_BUNZAS_WAGON_LEFT.
 static void WorldMap_BoardBunzasWagon(void) {
   struct FieldActor *record;
@@ -1514,7 +1514,7 @@ static void WorldMap_CompleteTransfer(void) {
 }
 
 /// Demonstrates setting a Djinni and placing it on standby.
-/// Called by Event_MeetFlint; sets and clears FLAG_DJINN_TUTORIAL_PART_A and
+/// Called by Event_MeetFlint; sets and clears FLAG_DJINN_LESSON_PART_A and
 /// _PART_B to choose the menu's two lessons.
 static void WorldMap_ShowDjinnTutorial(void) {
   WorldMap_EndEvent();
@@ -1527,14 +1527,14 @@ static void WorldMap_ShowDjinnTutorial(void) {
   Engine_EventWait(30);
   Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Open();
   Engine_ActorJump(ACTOR_VENUS_DJINNI, 4, 30);
   Engine_EventSetMessage(MsgWorldMapNextIllShowHowCan);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Set(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Open();
   Engine_EventWait(30);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 6);
@@ -1543,7 +1543,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
 /// Walking up to Flint: he joins the party and shows how Djinn are set and put
 /// on standby; then comes the tutorial battle.
 /// Reached by walking onto cell code 90 until Flint is caught
-/// (FLAG_DJINNI_0 + DJINNI_FLINT). Sets FLAG_DJINN_TUTORIAL and its two part
+/// (FLAG_DJINNI_0 + DJINNI_FLINT). Sets FLAG_DJINN_LESSON and its two part
 /// flags for each lesson, and clears them all after the battle.
 static void Event_MeetFlint(void) {
   struct FieldActor *djinni;
@@ -1559,9 +1559,9 @@ static void Event_MeetFlint(void) {
   x = (leader->x.fixed - PIXELS(5584)) / 2 + PIXELS(5584);
   z = (leader->z.fixed - PIXELS(1328)) / 2 + PIXELS(1328);
   // Introduce the Djinni and demonstrate how it joins the party.
-  if (!GameFlag_IsSet(FLAG_DJINN_TUTORIAL)) {
+  if (!GameFlag_IsSet(FLAG_DJINN_LESSON)) {
     Party_RestoreHpPp(1);
-    GameFlag_Set(FLAG_DJINN_TUTORIAL);
+    GameFlag_Set(FLAG_DJINN_LESSON);
     Event_Begin();
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0)
@@ -1709,8 +1709,8 @@ static void Event_MeetFlint(void) {
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
-  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Set(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Open();
   Event_SetMessage(MsgWorldMapGoSetStandby);
   FieldObject_SetPosition(djinni, PIXELS(5584), 0, PIXELS(1328));
@@ -1739,8 +1739,8 @@ static void Event_MeetFlint(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT, 30);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Set(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Set(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Open();
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1749,9 +1749,9 @@ static void Event_MeetFlint(void) {
                   DJINNI_INDEX(DJINNI_FLINT));
   Event_PlayCue(MUS_042);
   Event_End();
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_A);
-  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_B);
+  GameFlag_Clear(FLAG_DJINN_LESSON);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
+  GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
 }
 
 s32 gWorldMapTriggerActor;

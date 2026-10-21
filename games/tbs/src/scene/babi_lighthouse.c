@@ -39,7 +39,7 @@
 /// Djinni, starts its battle when spoken to. BabiLighthouseStoneDoor is the
 /// cave before a stone door the group went through. Walking up to it the first
 /// time plays BabiLighthouse_DiscussPursuit
-/// (FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED, FLAG_IODEM_AT_BABI_LIGHTHOUSE): Faran
+/// (FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW, FLAG_IODEM_AT_BABI_LIGHTHOUSE): Faran
 /// and the onlookers argue whether anyone could have opened it, Iodem tells
 /// them that the party has chased Sheba's kidnappers from the far north, and
 /// Faran, unwilling to leave Sheba's fate to children, asks the party to prove
@@ -474,7 +474,7 @@ static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
 /// doubting them, asks them to prove they can follow by opening the door.
 static void BabiLighthouse_DiscussPursuit(void) {
   // Bring the party to the witnesses gathered around the sealed door.
-  GameFlag_Set(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED);
+  GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
   GameFlag_Set(FLAG_IODEM_AT_BABI_LIGHTHOUSE);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -1416,7 +1416,7 @@ s32 BabiLighthouse_SetupScene(void) {
         GameFlag_Clear(FLAG_BEYOND_DOOR);
       }
     }
-    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED) == 0) {
+    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW) == 0) {
       Actor_SetPosition(ACTOR_IODEM, -PIXELS(64), -PIXELS(64));
       Actor_SetPosition(ACTOR_WITNESS, PIXELS(280), PIXELS(296));
       Actor_SetPosition(ACTOR_DOUBTING_THE_DOOR, PIXELS(312), PIXELS(248));
@@ -1824,7 +1824,7 @@ struct SceneEvent gBabiLighthouse_LuffEvents[] = {
 struct SceneEvent gBabiLighthouse_StoneDoorEvents[] = {
     {EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST},
-    {EVENT_TOUCH, 10, FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED, EVENT_SCRIPT(BabiLighthouse_DiscussPursuit)},
+    {EVENT_TOUCH, 10, FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW, EVENT_SCRIPT(BabiLighthouse_DiscussPursuit)},
     {EVENT_TOUCH, 20, IF_FLAG_SET(FLAG_BEYOND_DOOR), EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
     {EVENT_TOUCH, 21, FLAG_BEYOND_DOOR, EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
     {EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_OpenTruthDoor)},

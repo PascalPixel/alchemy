@@ -25,10 +25,10 @@
 ///   room of columns to match the path. The rooms that follow hold two pairs of
 ///   pillars to push or Move, three stones with three bushes for
 ///   Whirlwind (bushes A and B, FLAG_SCENE_TEMP_00 and _01, change what
-///   stone C can do; bush C stays gone, FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY), and
-///   two pillars that sink into the floor once moved onto their columns
-///   (FLAG_TUNNEL_RUINS_PILLAR_A_SUNK and _B_SUNK, B only after Douse has
-///   soaked it, FLAG_SCENE_TEMP_02); each sunk pillar carries a puddle that
+///   stone C can do; bush C stays gone, FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY),
+///   and two pillars that sink into the floor once moved onto their columns
+///   (FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR and _B_IN_FLOOR, B only after Douse
+///   has soaked it, FLAG_SCENE_TEMP_02); each sunk pillar carries a puddle that
 ///   Frost freezes into a pillar of ice (FLAG_SCENE_TEMP_00 and _01 in that
 ///   room), after which some of the hops beside it no longer run.
 ///   TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH, _SOUTHWEST
@@ -678,9 +678,9 @@ static void Event_BlowAwayBushB(void) {
 
 /// Whirlwind on bush C blows it away for good.
 /// Reached by Whirlwind on bush C until it is gone; sets
-/// FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY.
+/// FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY.
 static void Event_BlowAwayBushC(void) {
-  FLAG_SET(FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY);
+  FLAG_SET(FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY);
 }
 
 /// Hops west as Event_HopWest, except from cell (32, 50).
@@ -716,7 +716,7 @@ static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
 /// in a cloud of dust, puddle A appears on it, and the floor beside it changes
 /// in two jolts that shake the screen.
 /// Reached by Move on sinking pillar A until it has sunk, and called by
-/// Event_PushSinkingPillarA; sets FLAG_TUNNEL_RUINS_PILLAR_A_SUNK when it
+/// Event_PushSinkingPillarA; sets FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR when it
 /// sinks.
 static void Event_SinkPillarA(void) {
   u32 i;
@@ -764,13 +764,13 @@ static void Event_SinkPillarA(void) {
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
     Engine_MapRenderWaitForValues();
     WAIT(10);
-    FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_A_SUNK);
+    FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR);
   }
   EV_END();
 }
 
 /// Walking into sinking pillar A pushes it, and it sinks if it reaches column
-/// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_SUNK).
+/// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR).
 /// Reached by walking into cell code 29 in TunnelRuinsGreatStatue.
 static void Event_PushSinkingPillarA(void) {
   EV_BEGIN();
@@ -796,7 +796,7 @@ static void Event_FreezePuddleA(void) {
 /// as pillar A does, and puddle B appears on it.
 /// Reached by Move on sinking pillar B until it has sunk, and called by
 /// Event_PushSinkingPillarB and Event_DousePillarB; sets
-/// FLAG_TUNNEL_RUINS_PILLAR_B_SUNK when it sinks.
+/// FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR when it sinks.
 static void Event_SinkPillarB(void) {
   u32 i;
   struct FieldActor *overlay;
@@ -843,7 +843,7 @@ static void Event_SinkPillarB(void) {
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
       Engine_MapRenderWaitForValues();
       WAIT(10);
-      FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_B_SUNK);
+      FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR);
     }
   }
   EV_END();
@@ -1481,7 +1481,7 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// there to BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE. The scene's
 /// initialization. Entering the room of four walkways
 /// (TUNNEL_RUINS_LADY_STATUES_WALKWAYS_SOUTHWEST and the three after it) sets
-/// FLAG_TUNNEL_RUINS_WALKWAYS_ENTERED.
+/// FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED.
 s32 TunnelRuins_Initialize(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1556,7 +1556,7 @@ s32 TunnelRuins_Initialize(void) {
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PUDDLE_B), 0);
       Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 15);
       Engine_ActorSetChildValue(ACTOR_PUDDLE_B, 15);
-      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_A_SUNK)) {
+      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR)) {
         Map_CopyCellsTo(59, 8, 49, 8, 1, 3);
         Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
         Object_GetById(ACTOR_SINKING_PILLAR_A)->priorityFlags |=
@@ -1573,7 +1573,7 @@ s32 TunnelRuins_Initialize(void) {
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_02))
         OBJ_MODE(ACTOR_SINKING_PILLAR_B, 2);
-      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_B_SUNK)) {
+      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR)) {
         Map_CopyCellsTo(59, 8, 45, 14, 1, 3);
         Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
         Object_GetById(ACTOR_SINKING_PILLAR_B)->priorityFlags |=
@@ -1708,7 +1708,7 @@ s32 TunnelRuins_Initialize(void) {
         Map_CopyCells(10, 30, 1, 2, 16, 30);
       if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
         Map_CopyCells(10, 30, 1, 2, 22, 30);
-      FLAG_SET(FLAG_TUNNEL_RUINS_WALKWAYS_ENTERED);
+      FLAG_SET(FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED);
       break;
     case TUNNEL_RUINS_LADY_STATUES_FALSE_STATUE_WEST:
       Map_CopyCellAttributes(8, 49, 1, 1, 8, 113);
@@ -2085,7 +2085,7 @@ struct ScenePlacement gTunnelRuinsGreatStatuePlacements[] = {
      PIXELS(794), FACING_NORTH, TALK_FACE_PARTY, 0},
     {SPRITE_BUSH, 0, (s32)gTunnelRuins_StretchScript, PIXELS(432), 0,
      PIXELS(794), FACING_NORTH, TALK_FACE_PARTY, 0},
-    {SPRITE_BUSH, FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY,
+    {SPRITE_BUSH, FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY,
      (s32)gTunnelRuins_StretchScript, PIXELS(568), 0, PIXELS(856), FACING_NORTH,
      TALK_FACE_PARTY, 0},
     {SPRITE_SINKING_PILLAR, 0, ACTOR_STAND, PIXELS(680), 0, PIXELS(136),
@@ -2177,7 +2177,7 @@ struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
         EVENT_SCRIPT(Event_HopSouth)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopSouthOrPushStones)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStones)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 29, FLAG_TUNNEL_RUINS_PILLAR_A_SUNK, EVENT_SCRIPT(Event_PushSinkingPillarA)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 29, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR, EVENT_SCRIPT(Event_PushSinkingPillarA)},
     {TOUCH_WALKING_INTO(FACING_EAST), 29, FLAG_SCENE_TEMP_00,
         EVENT_SCRIPT(Event_HopEast)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 29, FLAG_SCENE_TEMP_00,
@@ -2188,7 +2188,7 @@ struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
         EVENT_SCRIPT(Event_HopWest)},
     {TOUCH_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
         EVENT_SCRIPT(Event_HopEast)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 30, FLAG_TUNNEL_RUINS_PILLAR_B_SUNK, EVENT_SCRIPT(Event_PushSinkingPillarB)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 30, FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR, EVENT_SCRIPT(Event_PushSinkingPillarB)},
     {TOUCH_WALKING_INTO(FACING_WEST), 30, FLAG_SCENE_TEMP_01,
         EVENT_SCRIPT(Event_HopWest)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 30, FLAG_SCENE_TEMP_01,
@@ -2212,10 +2212,10 @@ struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_C, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_BlowAwayBushA)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_BlowAwayBushB)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_C, FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayBushC)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR_A, FLAG_TUNNEL_RUINS_PILLAR_A_SUNK, EVENT_SCRIPT(Event_SinkPillarA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_C, FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayBushC)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR_A, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR, EVENT_SCRIPT(Event_SinkPillarA)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_FreezePuddleA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR_B, FLAG_TUNNEL_RUINS_PILLAR_B_SUNK, EVENT_SCRIPT(Event_SinkPillarB)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR_B, FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR, EVENT_SCRIPT(Event_SinkPillarB)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_FreezePuddleB)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_SINKING_PILLAR_B, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_DouseBeginsOnPillarB)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_SINKING_PILLAR_B, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_DousePillarB)},

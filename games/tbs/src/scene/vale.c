@@ -381,8 +381,8 @@ static void Event_WarnAboutGoingBeyondKradensCottage(void) {
 /// "Garet, you make me so mad sometimes!"
 static void Event_ArgueWithGaretsSister(void) {
   Engine_EventBegin();
-  if (GameFlag_IsSet(FLAG_VALE_ANGRY_VILLAGER_ARGUED) == 0) {
-    GameFlag_Set(FLAG_VALE_ANGRY_VILLAGER_ARGUED);
+  if (GameFlag_IsSet(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS) == 0) {
+    GameFlag_Set(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
     Engine_EventSetMessage(MsgValeYouMakeMeSoMad);
     Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | 3, 0);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_SISTER, 20);

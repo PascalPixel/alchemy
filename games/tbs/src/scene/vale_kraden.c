@@ -29,10 +29,11 @@
 ///   each other Saturos and Menardi (FLAG_MET_SATUROS_AND_MENARDI), and the
 ///   strangers then stand aside, turning to watch the leader. Near the cottage
 ///   (cell code 5), the party overhears Kraden wondering what the strangers
-///   know of the Elemental Stars (Event_OverhearKraden, FLAG_OVERHEARD_KRADEN).
-///   Talking to Kraden plays Event_KradenPlansSanctumVisit: Garet brings up
-///   Saturos and Menardi, and Kraden talks the three into a secret look at Sol
-///   Sanctum on the forbidden mountain, then goes in to prepare, and
+///   know of the Elemental Stars (Event_OverhearKraden,
+///   FLAG_KRADEN_WONDERED_ABOUT_STRANGERS). Talking to Kraden plays
+///   Event_KradenPlansSanctumVisit: Garet brings up Saturos and Menardi, and
+///   Kraden talks the three into a secret look at Sol Sanctum on the forbidden
+///   mountain, then goes in to prepare, and
 ///   VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG takes the party into the
 ///   cottage (SceneId_ValeInteriorsInn,
 ///   VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG). Coming back out by
@@ -786,11 +787,11 @@ static void Event_MeetSaturosAndMenardi(void) {
 /// Stars.
 ///
 /// Reached by stepping on cell code 5 in the day's events; runs once, setting
-/// FLAG_OVERHEARD_KRADEN.
+/// FLAG_KRADEN_WONDERED_ABOUT_STRANGERS.
 static void Event_OverhearKraden(void) {
   struct FieldActor *leader;
 
-  if (GameFlag_IsSet(FLAG_OVERHEARD_KRADEN) != 0) {
+  if (GameFlag_IsSet(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS) != 0) {
   } else {
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -870,7 +871,7 @@ static void Event_OverhearKraden(void) {
     }
     Engine_ActorWaitForMove(JENNA);
     Engine_ActorSetPosition(JENNA, 0, 0);
-    Engine_GameFlagSet(FLAG_OVERHEARD_KRADEN);
+    Engine_GameFlagSet(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
     Engine_EventEnd();
   }
 }

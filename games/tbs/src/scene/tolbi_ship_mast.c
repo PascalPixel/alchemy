@@ -13,7 +13,7 @@
 ///   charm, gone from his cabin, lies up here. Searching for it (search code
 ///   11) finds the Anchor Charm (FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND), but only
 ///   once the party has confronted the crewman on deck or the warriors have
-///   gone to the captain (FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED or
+///   gone to the captain (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT or
 ///   FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). Until the first attack, Mind
 ///   Read on the lookout has him wonder whether the party has worked out that
 ///   he hid it ("I wonder if they figured out I was the one who hid the
@@ -303,7 +303,7 @@ static void TolbiShipMast_ClimbDownLadder(void) { Field_ClimbDown(); }
 /// gives the Anchor Charm once the crewman has been confronted or the warriors
 /// have gone to the captain.
 static void TolbiShipMast_FindAnchorCharm(void) {
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED) != 0 ||
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0 ||
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
     Engine_EventBegin();
     Engine_ItemShowFound(ITEM_ANCHOR_CHARM, 3);
@@ -325,7 +325,7 @@ s32 TolbiShipMast_Initialize(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if ((Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING) != 0 ||
-       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) &&
+       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) &&
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
     gTolbiShipMast_SwayX = (u16)Engine_RandomNext();
@@ -353,7 +353,7 @@ s32 TolbiShipMast_Initialize(void) {
     }
     break;
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR:
-    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       TolbiShipMast_SetupVisibleLeaderLookout();
     } else {
       TolbiShipMast_SetupHiddenLeaderLookout();
@@ -1075,10 +1075,10 @@ struct ScenePlacement gTolbiShipMast_LandingObjects[] = {
 
 struct SceneEvent gTolbiShipMast_Events[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipMast_ClimbDownLadder) },
-    { EVENT_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
+    { EVENT_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
     { EVENT_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
     { EVENT_TALK, ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandMonstersUnknown) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipSeaTooVast) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandTreasures) },
     { SEARCH(SEARCH_UNNAMED), 11, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT_SCRIPT(TolbiShipMast_FindAnchorCharm) },

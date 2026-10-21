@@ -23,7 +23,7 @@ struct MenuCtrl {
 /// each frame) until a request is made, and then the requests are handled
 /// until none is left.
 ///
-/// Called from Game_ResetForNewGame's main loop for every field scene, which
+/// Called from Game_Run's main loop for every field scene, which
 /// passes the result to Scene_TakeExit. Allocates the field work in heap slot
 /// 27 (HEAP_SLOT_EVENT), cleared, and frees it on the way out, with every
 /// block the scene took after it from the same pool; sets gGameState's default,

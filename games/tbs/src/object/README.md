@@ -313,7 +313,7 @@ while each row still belongs to the same actor.
 
 ## How it fits with the rest of the game
 
-`Game_ResetForNewGame` (`object/scene.c`) is the game's main loop, and it
+`Game_Run` (`object/scene.c`) is the game's main loop, and it
 never returns. Each pass resets the runtime and then either runs a battle or
 minigame and picks the scene to go back to (`Scene_ReturnFromBattle`), or
 loads a field scene's overlay, starts its music and runs `Field_RunScene`

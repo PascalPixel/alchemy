@@ -41,7 +41,7 @@
 /// with the turn-end effects; the Djinn tutorial adds its two messages
 /// after each round.
 ///
-/// Reached through its far stub from Game_ResetForNewGame's scene switch
+/// Reached through its far stub from Game_Run's scene switch
 /// (SCENE_BATTLE, with the entrance as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's work slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the display and

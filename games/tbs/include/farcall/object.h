@@ -4,7 +4,7 @@
 /// games/tbs/src/system/far_call/OBJECT.S.
 
 s32 Field_RunSceneFar(s32 entrance);
-void Game_ResetForNewGameFar(s32 mode);
+void Game_RunFar(s32 mode);
 void FieldEvent_WaitFramesFar(s32 frames);
 void FieldEvent_BeginFar(void);
 void FieldEvent_EndFar(void);

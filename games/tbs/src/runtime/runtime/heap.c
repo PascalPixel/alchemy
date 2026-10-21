@@ -10,7 +10,7 @@
 
 /// Empties the heap: clears the 64 words of gWorkSlot (both pool pointers and
 /// every named slot) and sets the pools' next addresses to gIwramHeap and
-/// gEwramHeap. Called by System_Initialize, by Game_ResetForNewGame and by
+/// gEwramHeap. Called by System_Initialize, by Game_Run and by
 /// the debug modes that start over, so every earlier block is forgotten.
 void Runtime_InitializeHeap(void) {
   union HeapState *work = (union HeapState *)gWorkSlot;

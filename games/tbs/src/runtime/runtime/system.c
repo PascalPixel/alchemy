@@ -58,7 +58,7 @@ void System_Initialize(void) {
   gOamCopyEnabled = 1;
   gSleepDisabled = 0;
   WaitFrames(10);
-  Game_ResetForNewGameFar(0);
+  Game_RunFar(0);
 }
 
 /// Waits out frames forever; the frame loop still runs the scheduled tasks.

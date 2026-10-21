@@ -5,7 +5,7 @@
 	.global FarCall_ObjectTable
 FarCall_ObjectTable:
 	export Field_RunSceneFar, Field_RunScene
-	export Game_ResetForNewGameFar, Game_ResetForNewGame
+	export Game_RunFar, Game_Run
 	export FieldEvent_WaitFramesFar, FieldEvent_WaitFrames
 	export FieldEvent_BeginFar, FieldEvent_Begin
 	export FieldEvent_EndFar, FieldEvent_End

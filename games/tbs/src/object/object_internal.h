@@ -103,7 +103,7 @@
 /// Scene_TakeExit also uses it for "no exit found" (scene.c, run_scene.c).
 #define EXIT_NONE 999
 
-/// Scene ids above the field maps, which Game_ResetForNewGame runs without a
+/// Scene ids above the field maps, which Game_Run runs without a
 /// map; each returns a result to Scene_ReturnFromBattle instead of an exit.
 /// A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers

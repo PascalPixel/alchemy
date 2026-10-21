@@ -142,7 +142,7 @@ IWRAM and points the interrupt vector at its dispatcher
 installs `System_VBlankHandler` for
 VBlank, arms the soft-reset keys, starts the sound driver, resets the sprite
 VRAM cache and the task table, waits ten frames and starts the game with
-`Game_ResetForNewGameFar`. It never returns: `Game_ResetForNewGame`
+`Game_RunFar`. It never returns: `Game_Run`
 (`games/tbs/src/object/object/scene.c`) goes from scene to scene for as long
 as the game runs, starting at the title. The German, French, Spanish and
 Italian editions also take the cartridge-removed interrupt, whose handler
@@ -195,7 +195,7 @@ The game is written as ordinary functions that run until they're done. A
 battle effect, a cutscene or a menu screen is a function with its own loop,
 and when time has to pass it calls `WaitFrames(n)` and carries on from the
 same place when the frames are over. It doesn't return to a main loop
-between frames: `System_Initialize` never returns, and `Game_ResetForNewGame`
+between frames: `System_Initialize` never returns, and `Game_Run`
 runs one scene after another.
 
 So anything that has to keep happening while such a function waits is a

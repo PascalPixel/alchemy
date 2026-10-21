@@ -16,7 +16,7 @@ copies the game's most time-critical routines into it, installs the interrupt
 handlers, starts the sound driver, waits ten frames and starts the game.
 
 It never returns. The game doesn't have a main loop that calls everything
-else once a frame. `Game_ResetForNewGame` goes from scene to scene for as long
+else once a frame. `Game_Run` goes from scene to scene for as long
 as the console is on, and the first scene is the title, which shows the
 Nintendo and Camelot logos. When there's a save file, the intro from
 [the front page](README.md) plays next; with none, as here, the file select

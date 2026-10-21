@@ -108,7 +108,7 @@ When the party walks into a place, its code is unpacked from the cartridge
 into one 32 KB area of work RAM, `gOverlayArea`, and runs from there until
 the party moves on. That code is the place's overlay.
 
-The whole game runs in one loop that never returns, `Game_ResetForNewGame`
+The whole game runs in one loop that never returns, `Game_Run`
 in [object/object/scene.c](object/object/scene.c), and each pass of it runs
 one scene, or a battle or a minigame. A battle or a minigame needs no
 overlay, because its code is in the main image. For every other scene the
@@ -194,7 +194,7 @@ code uses.
 
 To read the game the way it runs, start at power-on. `System_Initialize`, in
 [runtime/runtime/system.c](runtime/runtime/system.c), sets the console up and
-hands over to `Game_ResetForNewGame`, the loop the whole game lives in, which
+hands over to `Game_Run`, the loop the whole game lives in, which
 is short enough to read in one go. [Runtime](runtime/README.md) follows the
 same path in prose.
 

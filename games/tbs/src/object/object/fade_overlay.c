@@ -112,7 +112,7 @@ void FadeOverlay_DrawMarks(void) {
 /// Isle then switches it on and off by setting the work's actor. No ☀️ code
 /// stops it (FadeOverlay_Suspend has no named caller): the work and the
 /// callback last until the next scene change resets the heap and the task
-/// table (Game_ResetForNewGame).
+/// table (Game_Run).
 void BattleFx_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;

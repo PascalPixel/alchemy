@@ -349,7 +349,7 @@ void AudioCommand_UpdateToggleMask(u32 command) {
 /// Returns the music cue AudioCommand_Play last chose: 0xff before any,
 /// MUS_019 after a fade, else the last music cue. Field_RunScene saves it as
 /// gGameState.returnCue before the pause menu, so the music can be started
-/// again when the party is put back where it was (Game_ResetForNewGame,
+/// again when the party is put back where it was (Game_Run,
 /// object/scene.c).
 s32 AudioCommand_GetSecondaryStateByte(void) { return gAudioSecondaryState; }
 

@@ -33,7 +33,7 @@ struct StatWork {
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_Restart(void) {
   GameState_InitDefaults();
-  Game_ResetForNewGameFar(0);
+  Game_RunFar(0);
 }
 
 /// Returns the party's Djinn recovery bank (the standby Djinn and their turns
@@ -548,7 +548,7 @@ struct SceneStateTail {
 /// stamp; sets a new game's defaults: Isaac alone in the party, the standard
 /// button layout, the message speed, the play time clock and the slot
 /// machine prize odds. Called by the file select screen's new game, by
-/// Game_Restart and Game_ResetForNewGame, and by the debug battle menu.
+/// Game_Restart and Game_Run, and by the debug battle menu.
 void GameState_InitDefaults(void) {
   volatile s32 zero;
 

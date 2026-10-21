@@ -28,7 +28,7 @@ union FieldObject;
 void Scene_TakeExit(s32 exitKind);
 void Scene_ReturnFromBattle(s32 result);
 s32 BattleFx_GetResourceGroup(s32 scene);
-void Game_ResetForNewGame(s32 mode);
+void Game_Run(s32 mode);
 void Scene_LoadOverlay(s32 unused);
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
 void Audio_PlayCueFromEventWork(void);

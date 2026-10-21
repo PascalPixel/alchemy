@@ -155,7 +155,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// saved ones when the screen is cancelled. The save file menu
 /// (SaveMenu_SelectSlot) shows the colours of the file under the cursor, and
 /// the saved ones for an empty file and on leaving. The file select
-/// (menu/clear.c), the main loop's start (Game_ResetForNewGame), the end of the
+/// (menu/clear.c), the main loop's start (Game_Run), the end of the
 /// Mind Read wave (Ui_SetBank15PaletteAndClearRenderMode) and the Vale and
 /// world map scenes call it with the saved settings.
 void PaletteGlow_Update(s32 phase, s32 brightness) {

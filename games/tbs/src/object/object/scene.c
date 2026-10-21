@@ -21,7 +21,7 @@
 /// exit table gives the first exit of that kind (or of any kind) whose flag, if
 /// it has one, is not set. An exit of kind 0 or the end of the scene's exits
 /// falls back to the scene of its first exit, at entrance 0. Called by
-/// Game_ResetForNewGame with Field_RunScene's result; sets gGameState.scene and
+/// Game_Run with Field_RunScene's result; sets gGameState.scene and
 /// .entrance, and leaves them alone for EXIT_NONE, whose destination is set
 /// already, or for a scene with no header in the table.
 void Scene_TakeExit(s32 exitKind) {
@@ -86,14 +86,14 @@ void Scene_TakeExit(s32 exitKind) {
 }
 
 /// Chooses where the game continues after a battle or another scene that is
-/// not a field map (see Game_ResetForNewGame). result is that scene's result:
+/// not a field map (see Game_Run). result is that scene's result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
 /// returns to the defeat point, or to the last saved point when none is set.
 /// Any other result goes to the next scene the event set, or to the default
 /// scene (the field scene the battle or minigame was started from) with the
 /// party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// Game_ResetForNewGame after each scene from SCENE_BLANK on; stores result in
+/// Game_Run after each scene from SCENE_BLANK on; stores result in
 /// gGameState.sceneChangeReason and sets gGameState.scene and .entrance.
 void Scene_ReturnFromBattle(s32 result) {
   struct BattleUnit *unit;
@@ -210,9 +210,9 @@ static __inline__ s32 RunReelGame(s32 entrance) {
 /// in Isaac's home in Vale and 2 at the clear screen. Each pass resets the
 /// runtime, then either runs a battle or minigame and picks the scene to return
 /// to, or loads a field scene's code, starts its music and runs it until the
-/// party takes an exit. Called with mode 0 through Game_ResetForNewGameFar by
+/// party takes an exit. Called with mode 0 through Game_RunFar by
 /// System_Initialize at power-on and by Game_Restart.
-void Game_ResetForNewGame(s32 mode) {
+void Game_Run(s32 mode) {
   const struct SceneRecord *table;
   const struct SceneRecord *record;
   s32 entrance;
@@ -309,7 +309,7 @@ void Game_ResetForNewGame(s32 mode) {
 }
 
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
-/// Called by Game_ResetForNewGame before Field_RunScene.
+/// Called by Game_Run before Field_RunScene.
 void Scene_LoadOverlay(s32 unused) {
   const struct SceneRecord *table;
 
@@ -325,7 +325,7 @@ void Scene_LoadOverlay(s32 unused) {
 /// and on entering a new group so are the group's flags and step counters, the
 /// location name is shown and the entrance becomes the point Retreat returns
 /// to. Then the group's visited flag (FLAG_PLACE_VISITED) is set. Called by
-/// Game_ResetForNewGame before each field scene, with keep from
+/// Game_Run before each field scene, with keep from
 /// FLAG_KEEP_PARTY_POSITION; sets gGameState.sceneGroup and .sceneVariant.
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
   s32 group = SCENE_RECORD(gGameState.scene)->group;
@@ -370,7 +370,7 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
 }
 
 /// Starts the current scene's field music, chosen by
-/// Scene_ResolveInteractionResult. Called by Game_ResetForNewGame, and by
+/// Scene_ResolveInteractionResult. Called by Game_Run, and by
 /// 34 scene overlays through Audio_PlayCueFromEventWorkFar.
 void Audio_PlayCueFromEventWork(void) { AudioCommand_PlayFar(gGameState.cue); }
 

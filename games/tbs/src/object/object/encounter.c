@@ -298,7 +298,7 @@ extern const struct SceneInteractionEntry gScene_InteractionRuleTable[];
 
 /// Chooses the current scene's field music (gGameState.cue) from the first rule
 /// matching the scene or its group and the entrance; MUS_018 when none does.
-/// Called by Game_ResetForNewGame on entering each field scene, before
+/// Called by Game_Run on entering each field scene, before
 /// Audio_PlayCueFromEventWork plays it.
 void Scene_ResolveInteractionResult(void) {
   s16 music = MUS_018;

@@ -2,7 +2,7 @@
 
 The Broken Seal starts on a stormy night in Vale, and its chase ends at the
 top of Venus Lighthouse. Underneath, the whole game is one loop,
-[`Game_ResetForNewGame`](src/object/README.md): each pass loads one place's
+[`Game_Run`](src/object/README.md): each pass loads one place's
 code, runs it until the party takes an exit, and loads the place that exit
 leads to, or runs a battle and comes back to the spot the party left.
 Everything a place knows about what has happened so far is in the game

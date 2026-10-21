@@ -24,6 +24,14 @@ enum SpriteId {
   /// ★ Named from what the player sees: a carved stone statue of a figure,
   /// as Sol Sanctum's statues stand on its seals (its render)
   SPRITE_STONE_STATUE = 0xcb,
+  /// The logs that float on the water of Fuchin Falls Cave, Crossbone Isle's
+  /// floating logs room and the Colosso's Lumber Water Crossing Area.
+  /// ★ Named from what the player sees: a yellow log floating west to east
+  /// (its render)
+  SPRITE_FLOATING_LOG_WEST_EAST = 0xec,
+  /// ★ Named from what the player sees: a yellow log floating north to south
+  /// (its render)
+  SPRITE_FLOATING_LOG_NORTH_SOUTH = 0xed,
   /// A log lying north to south, one the leader can hop onto
   /// (Field_TryJumpForward) or roll, as in Kolima Forest.
   /// ★ Named from what the player sees: a log lying north to south (its

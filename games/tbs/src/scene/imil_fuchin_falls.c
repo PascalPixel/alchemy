@@ -23,21 +23,22 @@
 ///   the room of the Ki inscription (SceneId_FuchinFallsCaveOrbOfForce) and the
 ///   dragon statue's room (SceneId_FuchinFallsCaveDragonStatue).
 ///
-///   The first four rooms are crossed on floating logs (sprites 0xec and 0xed,
-///   the logs of Colosso's Lumber Water Crossing Area,
-///   colosseum_azart_match.c). Walking into a log's trigger cell pushes it
-///   along the water to its next stop, the leader moving with it
-///   (SceneActor_PlacePairAtOffset); touching the cell plays the log's two
-///   rolling animations. Each stop is a place flag, FLAG_PLACE_TEMP_01 to
-///   FLAG_PLACE_TEMP_03 for the first room's logs, FLAG_PLACE_TEMP_04 to
-///   FLAG_PLACE_TEMP_07 the second's, FLAG_PLACE_TEMP_08 to FLAG_PLACE_TEMP_12
-///   the third's and FLAG_PLACE_TEMP_13 to FLAG_PLACE_TEMP_15 the fourth's, so
-///   the logs are back where they started once the party leaves the cave's
-///   scenes. After each move, and on entry, the room's rebuild function puts
-///   every log at the cell its flags name and rewrites the cells of each log's
-///   track to match. In the third room the logs block one another, so where a
-///   log stops depends on where the others lie; in the second and third rooms
-///   the leader hops across gaps a log's stop leaves.
+///   The first four rooms are crossed on floating logs
+///   (SPRITE_FLOATING_LOG_WEST_EAST and SPRITE_FLOATING_LOG_NORTH_SOUTH, the
+///   logs of Colosso's Lumber Water Crossing Area, colosseum_azart_match.c).
+///   Walking into a log's trigger cell pushes it along the water to its next
+///   stop, the leader moving with it (SceneActor_PlacePairAtOffset); touching
+///   the cell plays the log's two rolling animations. Each stop is a place
+///   flag, FLAG_PLACE_TEMP_01 to FLAG_PLACE_TEMP_03 for the first room's logs,
+///   FLAG_PLACE_TEMP_04 to FLAG_PLACE_TEMP_07 the second's, FLAG_PLACE_TEMP_08
+///   to FLAG_PLACE_TEMP_12 the third's and FLAG_PLACE_TEMP_13 to
+///   FLAG_PLACE_TEMP_15 the fourth's, so the logs are back where they started
+///   once the party leaves the cave's scenes. After each move, and on entry,
+///   the room's rebuild function puts every log at the cell its flags name and
+///   rewrites the cells of each log's track to match. In the third room the
+///   logs block one another, so where a log stops depends on where the others
+///   lie; in the second and third rooms the leader hops across gaps a log's
+///   stop leaves.
 ///
 ///   Zephyr, a Jupiter Djinni, waits in the second room
 ///   (SceneId_FuchinFallsCaveZephyr) and fights when spoken to. In the first
@@ -1982,21 +1983,21 @@ struct ScenePlacement gImilFuchinFalls_ImilFallsCavePlacements[] = {
 };
 
 struct ScenePlacement gImilFuchinFalls_FirstRoomPlacements[] = {
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(200), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(296), 0, PIXELS(536), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gImilFuchinFalls_SecondRoomPlacements[] = {
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(312), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x5d, 0x6e, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -2004,23 +2005,23 @@ struct ScenePlacement gImilFuchinFalls_SecondRoomPlacements[] = {
 };
 
 struct ScenePlacement gImilFuchinFalls_ThirdRoomPlacements[] = {
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(328), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(568), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(488), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gImilFuchinFalls_FourthRoomPlacements[] = {
-    { 0xec, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(328), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0xed, CONDITION_ALWAYS, 7,
+    { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(120), 0, PIXELS(744), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

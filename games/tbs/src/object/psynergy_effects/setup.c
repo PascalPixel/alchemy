@@ -7,7 +7,7 @@
 /// Scheduler callback: updates the 24 effect slots.
 void BattleFx_UpdateAllEffectSlots(void) { FieldFx_UpdateSceneSlots(); }
 
-/// Prepares the work of the Psynergy effect for ability (heap slot 56) and
+/// Prepares the work of the Psynergy effect for ability (HEAP_SLOT_FX) and
 /// loads its spark tiles. Called again while an effect resolves, it only
 /// switches the ability.
 ///
@@ -110,7 +110,8 @@ void EffectRuntime_StopCurrentObject(void) {
   struct ScriptMotionObject *user = work->mainObject;
 
   user->hook = NULL;
-  Animation_ApplyChildValuesFar((struct DispatchObject *)user, 0);
+  Animation_ApplyChildValuesFar((struct DispatchObject *)user,
+                                SPRITE_COLOR_NORMAL);
   WaitFrames(1);
 }
 

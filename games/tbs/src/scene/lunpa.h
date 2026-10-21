@@ -61,6 +61,8 @@ enum {
 /// names (MsgLunpaVillageVillagerBSealed and the rest).
 enum LunpaActor {
   /// The puddle Reveal shows and Frost freezes into a pillar.
+  /// ★ Named from what the player sees: its sprite, a small blue puddle (its
+  /// render)
   ACTOR_HIDDEN_PUDDLE = ACTOR_FIRST_PLACED,
   ACTOR_VILLAGER_A, ///< "Have you been in Lunpa long?"
   /// "We've had no freedom ever since the caravan came to the village."
@@ -75,10 +77,13 @@ enum LunpaActor {
   ACTOR_VILLAGER_G, ///< "You want to see Donpa?"
   /// "The chef from the inn has been delivering meals to the fortress lately."
   ACTOR_VILLAGER_H,
-  ACTOR_WEST_GUARD,   ///< keeps the road in from the world map
-  ACTOR_EAST_GUARD,   ///< wants Dodonpa's authorization
-  ACTOR_SWITCH_GLINT, ///< the hidden switch's glint, shown by Reveal
-  ACTOR_FLOATING_NUT  ///< the Nut that floats over the town, for Catch
+  ACTOR_WEST_GUARD, ///< keeps the road in from the world map
+  ACTOR_EAST_GUARD, ///< wants Dodonpa's authorization
+  /// The hidden switch's sparkle, shown by Reveal.
+  /// ★ Named from what the player sees: its sprite, a small white sparkle (its
+  /// render)
+  ACTOR_SWITCH_SPARKLE,
+  ACTOR_FLOATING_NUT ///< the Nut that floats over the town, for Catch
 };
 
 enum { ACTOR_LAST_PLACED = 65 };
@@ -86,7 +91,14 @@ enum { ACTOR_LAST_PLACED = 65 };
 /// The Lunpa Fortress Gates' placed actors, numbered in the order of
 /// gGatePlacements from ACTOR_FIRST_PLACED. Garet's row, the third, takes his
 /// own actor, GARET, as every row of a party member's sprite does.
-enum GateActor { ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED, ACTOR_RIGHT_GUARD };
+enum GateActor {
+  /// ★ Named from the game: "We were on guard the whole time!"
+  /// (MsgLunpaRightGuardReopenedThoughts)
+  ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "We were on guard the whole time!"
+  /// (MsgLunpaRightGuardReopenedThoughts)
+  ACTOR_RIGHT_GUARD
+};
 
 enum LunpaSprite {
   SPRITE_TOWNSPERSON_G = 0x66,
@@ -103,9 +115,9 @@ enum LunpaSprite {
 enum { ACTOR_FLOAT = 7 };
 
 enum {
-  GLINT_MOTION_FLAGS = 8,
-  GLINT_SCALE_X = 0x13333,
-  GLINT_SCALE_Y = 0x18000
+  SPARKLE_MOTION_FLAGS = 8,
+  SPARKLE_SCALE_X = 0x13333,
+  SPARKLE_SCALE_Y = 0x18000
 };
 
 enum { GATE_RETREAT_ENTRANCE = 10 };

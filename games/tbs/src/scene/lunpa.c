@@ -7,7 +7,7 @@
 /// Donpa, is too old to lead, and Dodonpa keeps him hidden in the fortress.
 /// Dodonpa's men have sealed the town: no one may come in without his
 /// authorization, and no one may leave. Once Donpa has judged Dodonpa in the
-/// fortress (FLAG_LUNPA_TRADE_REOPENED, set there), Scene_GetEvents gives the
+/// fortress (FLAG_DODONPA_LOCKED_UP, set there), Scene_GetEvents gives the
 /// town gLunpaReopenedEvents instead of gLunpaSealedEvents, and the people
 /// talk of the intruders who got into the fortress.
 ///
@@ -23,7 +23,7 @@
 ///   and the end of Reveal hide the town's secrets (Event_HideSecrets,
 ///   FLAG_SCENE_TEMP_01), and Reveal shows them (Event_RevealSecrets): a
 ///   Psynergy Stone, a puddle that Frost freezes into a pillar to stand on
-///   (FLAG_SCENE_TEMP_00), and the glint of a switch. Searching the switch
+///   (FLAG_SCENE_TEMP_00), and the sparkle of a switch. Searching the switch
 ///   opens a passage (FLAG_SCENE_TEMP_02) that, while Reveal shows it, leads
 ///   to the jail (LUNPA_TO_VAULT_JAIL, arriving at VAULT_JAIL_FROM_LUNPA; the
 ///   jail's area name there is Lunpa). A Nut floats over the town for Catch, a
@@ -197,7 +197,7 @@ static inline void Lunpa_DrawHiddenPassageFrame(s32 sourceColumn,
 }
 
 /// Lunpa, casting Reveal: the Psynergy Stone's spot, the hidden switch's
-/// glint, the puddle and, once opened, the passage to the jail show.
+/// sparkle, the puddle and, once opened, the passage to the jail show.
 static void Event_RevealSecrets(void) {
   struct FieldActor *actor;
   s32 cellX;
@@ -223,19 +223,19 @@ static void Event_RevealSecrets(void) {
     Lunpa_ApplyFrozenPuddleCollision();
   }
 #endif
-  // The opened passage replaces the glint; otherwise show the hidden switch.
+  // The opened passage replaces the sparkle; otherwise show the hidden switch.
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) != 0) {
     Lunpa_DrawHiddenPassageFrame(41, 49);
   } else {
-    Actor_SetPosition(ACTOR_SWITCH_GLINT, PIXELS(56), PIXELS(268));
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SWITCH_GLINT), 0);
-    actor = Actor_Get(ACTOR_SWITCH_GLINT);
+    Actor_SetPosition(ACTOR_SWITCH_SPARKLE, PIXELS(56), PIXELS(268));
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SWITCH_SPARKLE), 0);
+    actor = Actor_Get(ACTOR_SWITCH_SPARKLE);
     if (actor != NULL) {
-      actor->motionFlags = GLINT_MOTION_FLAGS;
+      actor->motionFlags = SPARKLE_MOTION_FLAGS;
       actor->y.fixed = PIXELS(16);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      actor->scaleX = GLINT_SCALE_X;
-      actor->scaleY = GLINT_SCALE_Y;
+      actor->scaleX = SPARKLE_SCALE_X;
+      actor->scaleY = SPARKLE_SCALE_Y;
     }
   }
   FieldScheduler_AddCallback(Lunpa_UpdateIcePillarDrawOrder,
@@ -248,7 +248,7 @@ static void Event_HideSecrets(void) {
   struct FieldActor *puddle;
 
   Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetPosition(ACTOR_SWITCH_GLINT, 0, 0);
+  Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
   Actor_SetPosition(ACTOR_HIDDEN_PUDDLE, 0, 0);
   Map_CopyCells(38, 38, 1, 1, 46, 4);
   Map_CopyCellAttributes(37, 37, 3, 3, 13, 3);
@@ -280,11 +280,11 @@ const struct SceneEvent *Scene_GetEvents(void) {
   s32 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_LunpaFortressGates) {
-    Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED);
+    Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP);
     return gGateEvents;
   }
   if (scene == (s32)&SceneId_Lunpa &&
-      Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+      Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     return gLunpaReopenedEvents;
   }
   return gLunpaSealedEvents;
@@ -330,7 +330,7 @@ static void Event_TalkToEastGuard(void) {
 static void Event_ReadEastGuardsThoughts(void) {
   s32 thoughts;
 
-  if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) == 0) {
     thoughts = Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY);
     if (thoughts == 0) {
       thoughts = MsgLunpaEastGuardFearsBlame;
@@ -399,7 +399,7 @@ static void Event_TalkToLeftGuard(void) {
 
   if (gGameState.cloaked != 0) {
     Engine_EventSetMessage(MsgLunpaLeftGuardHearsSomeone);
-  } else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0 &&
+  } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0 &&
              Engine_GameFlagIsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     Engine_ActorShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
     recognitionMessageBase = MsgLunpaLeftGuardRecognizesHammet;
@@ -420,7 +420,7 @@ static void Event_TalkToLeftGuard(void) {
 static void Event_TalkToRightGuard(void) {
   if (gGameState.cloaked != 0) {
     Engine_EventSetMessage(MsgLunpaRightGuardFeelsCreepy);
-  } else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     Engine_EventSetMessage(MsgLunpaRightGuardWondersHow);
   } else {
     Engine_EventSetMessage(MsgLunpaRightGuardBoasts);
@@ -435,8 +435,7 @@ static void Event_TalkToRightGuard(void) {
 static void Event_ReadLeftGuardsThoughts(void) {
   s32 recognizedHammet;
 
-  if (gGameState.cloaked == 0 &&
-      GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0 &&
+  if (gGameState.cloaked == 0 && GameFlag_IsSet(FLAG_DODONPA_LOCKED_UP) != 0 &&
       GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     recognizedHammet = GameFlag_IsSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
@@ -460,7 +459,7 @@ static void Event_ReadLeftGuardsThoughts(void) {
 
 /// Lunpa Fortress Gates: Mind Read on the right guard.
 static void Event_ReadRightGuardsThoughts(void) {
-  if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     Engine_EventSetMessage(MsgLunpaRightGuardReopenedThoughts);
   } else {
     Engine_EventSetMessage(MsgLunpaYoudShadowSneak);
@@ -585,7 +584,7 @@ static void Event_PressHiddenSwitch(void) {
     return;
   }
   // Open the passage over five map frames, then remember its final state.
-  Actor_SetPosition(ACTOR_SWITCH_GLINT, 0, 0);
+  Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
   Event_PlayCue(SE_HIDDEN_PASSAGE_OPEN);
   Engine_TaskWait(1);
   Lunpa_DrawHiddenPassageFrame(32, 45);
@@ -906,7 +905,7 @@ s32 Scene_Initialize(void) {
         Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Event_LeaderSneaksOut();
     }
-    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0 &&
+    if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0 &&
         Engine_GameFlagIsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
       FieldScheduler_AddCallback(Lunpa_WatchForFortressApproach,
                                  TASK_PRIORITY_SCENE);
@@ -918,13 +917,13 @@ s32 Scene_Initialize(void) {
     FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty,
                                TASK_PRIORITY_SCENE);
     // The fortress's puzzles and beaten guards are reset.
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);

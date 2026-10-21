@@ -1,35 +1,33 @@
-/// @file
-/// Babi Lighthouse, which Babi is having built on ancient ruins just north of
-/// Lalivero, and the road up to it: four scenes that share this overlay, three
-/// places in the game's area names, met in this order. The Road to Babi
-/// Lighthouse is SceneId_RoadToBabiLighthouse, the Babi Lighthouse Entry
-/// SceneId_BabiLighthouseEntry, and Babi Lighthouse itself
+/// @file Babi Lighthouse, which Babi is having built on ancient ruins just
+/// north of Lalivero, and the road up to it: four scenes that share this
+/// overlay, three places in the game's area names, met in this order. The Road
+/// to Babi Lighthouse is SceneId_RoadToBabiLighthouse, the Babi Lighthouse
+/// Entry SceneId_BabiLighthouseEntry, and Babi Lighthouse itself
 /// SceneId_BabiLighthouseLuff and SceneId_BabiLighthouseStoneDoor. The four
 /// share one exit table, the getters pick the rest by gGameState.scene, and
 /// BabiLighthouse_SetupScene restores the scene being entered.
 ///
 /// The party comes here from Lalivero with Iodem, whom Babi sent with it
-/// (babi_palace.c). Sheba, the holy child of Lalivero, has been taken
-/// hostage by Felix and the others, who went into the ruins, and Faran, the
-/// master of Lalivero, has followed them (lalivero.c). On the Road to Babi
-/// Lighthouse, entered from the world map, four workers have not been
-/// ordered to start work and talk of the strange folk who went to the ruins
-/// with Faran after them; a pillar there, moved by Move or Carry, settles in
-/// its cell at a height of 48 pixels (BabiLighthouse_UpdateMovedPillar), and a
-/// chest holds Lucky Pepper.
+/// (babi_palace.c). Sheba, the holy child of Lalivero, has been taken hostage
+/// by Felix and the others, who went into the ruins, and Faran, the master of
+/// Lalivero, has followed them (lalivero.c). On the Road to Babi Lighthouse,
+/// entered from the world map, four workers have not been ordered to start work
+/// and talk of the strange folk who went to the ruins with Faran after them; a
+/// pillar there, moved by Move or Carry, settles in its cell at a height of 48
+/// pixels (BabiLighthouse_UpdateMovedPillar), and a chest holds Lucky Pepper.
 ///
-/// At the Babi Lighthouse Entry four men lie where the group knocked them down
-/// on its way in (`Only two of those six ever attacked anyone...`), on ground
-/// their fire scorched. Two pillars on ledges are pushed or moved with Move, a
-/// leader left on a ledge jumping off (BabiLighthouse_JumpFromLedge); in the
-/// editions from TBS_PATCH_2 on they also sort against the leader
-/// (BabiLighthouse_MatchLeaderPriority). Growth grows a sprout into a vine the
-/// party climbs (BabiLighthouse_OpenGrowthPassage, FLAG_GROWTH_PASSAGE_OPEN),
-/// and three exit regions,
-/// BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST, _SOUTH and _NORTH,
-/// drop the party to the floor below, TunnelRuinsLadyStatues (tunnel_ruins.c),
-/// which the game still calls Babi Lighthouse; the way back up comes out beside
-/// the same holes, at the entrances of the same names
+/// At the Babi Lighthouse Entry two of Babi's soldiers, a strongman and a bald,
+/// muscular man lie where the group knocked them down on its way in (`Only two
+/// of those six ever attacked anyone...`), on ground their fire scorched. Two
+/// pillars on ledges are pushed or moved with Move, a leader left on a ledge
+/// jumping off (BabiLighthouse_JumpFromLedge); in the editions from TBS_PATCH_2
+/// on they also sort against the leader (BabiLighthouse_MatchLeaderPriority).
+/// Growth grows a sprout into a vine the party climbs
+/// (BabiLighthouse_OpenGrowthPassage, FLAG_GROWTH_PASSAGE_OPEN), and three exit
+/// regions, BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST, _SOUTH and
+/// _NORTH, drop the party to the floor below, TunnelRuinsLadyStatues
+/// (tunnel_ruins.c), which the game still calls Babi Lighthouse; the way back
+/// up comes out beside the same holes, at the entrances of the same names
 /// (BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_WEST and the others).
 /// Retreat anywhere in the lighthouse leads back to the Entry.
 ///
@@ -99,8 +97,8 @@
 #include "item_ids.h"
 
 /// BabiLighthouseStoneDoor, before the stone door: the door's two halves,
-/// Iodem, the man who saw the kidnappers go through, two more people and
-/// Faran.
+/// Iodem, the strongman who saw the kidnappers go through, a grey-haired man, a
+/// young man and Faran.
 enum {
   /// ★ Named from what the player sees: the left half of a dark stone door
   /// (its render)
@@ -111,12 +109,15 @@ enum {
   /// ★ Named from the game: "I will trust Iodem once more..."
   /// (MsgBabiLighthouseIfYouCanOpenThisDoor)
   ACTOR_IODEM = 10,
+  /// A strongman.
   /// ★ Named from the game: "When I saw them, they had already gone through to
   /// the other side." (MsgBabiLighthouseWhenISawThemTheyHad)
   ACTOR_WITNESS = 11,
+  /// A burly grey-haired man with his arms folded.
   /// ★ Named from the game: "There is no way this door will open."
   /// (MsgBabiLighthouseIAmSorryButNotEven)
   ACTOR_DOUBTING_THE_DOOR = 12,
+  /// A young man with brown hair in a purple shirt.
   /// ★ Named from the game: "her life may be in danger..."
   /// (MsgBabiLighthouseThisIsAllAHugeWaste)
   ACTOR_WORRIED_FOR_SHEBA = 13,
@@ -132,7 +133,8 @@ enum {
 };
 
 /// The Entry (BabiLighthouseEntry): the two pillars on the ledges, the plant
-/// for Growth and the four men the kidnappers knocked down on their way in,
+/// for Growth and the four the kidnappers knocked down on their way in (two of
+/// Babi's soldiers, a strongman and a bald, muscular man), lying on the ground,
 /// each named by what he says. The pillars have the sprite of the pillars Move
 /// or a push shifts in Venus Lighthouse.
 enum {
@@ -145,27 +147,44 @@ enum {
   /// ★ Named from what the player sees: a small green plant, SPRITE_SPROUT (its
   /// render)
   ACTOR_PLANT = 10,
-  /// "They were terrible! We were absolutely no match for them."
-  ACTOR_FALLEN_MAN_NO_MATCH = 11,
-  /// "Only two of those six ever attacked anyone..."
-  ACTOR_FALLEN_MAN_ONLY_TWO = 12,
-  /// "They just kicked us out of their way and went on to the lighthouse."
-  ACTOR_FALLEN_MAN_KICKED_ASIDE = 13,
-  /// "They set fire to everything! That's why the ground is scorched."
+  /// A soldier lying on the ground.
+  /// ★ Named from the game: "We were absolutely no match for them."
+  /// (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)
+  ACTOR_FALLEN_SOLDIER_NO_MATCH = 11,
+  /// A strongman in a red top lying on the ground.
+  /// ★ Named from the game: "Only two of those six ever attacked anyone..."
+  /// (MsgBabiLighthouseOnlyTwoOfThoseSixEver)
+  ACTOR_FALLEN_STRONGMAN_ONLY_TWO = 12,
+  /// A soldier lying on the ground.
+  /// ★ Named from the game: "They just kicked us out of their way"
+  /// (MsgBabiLighthouseTheyJustKickedUsOutOf)
+  ACTOR_FALLEN_SOLDIER_KICKED_ASIDE = 13,
+  /// A bald, muscular man lying on the ground.
+  /// ★ Named from the game: "That's why the ground is scorched."
+  /// (MsgBabiLighthouseTheySetFireToEverythingThats)
   ACTOR_FALLEN_MAN_SCORCHED_GROUND = 14
 };
 
-/// The Road to Babi Lighthouse (RoadToBabiLighthouse): four workers, each named
-/// by what he says, and the pillar for Move and Carry, with the sprite of the
-/// pillars Carry takes across a gap in Venus Lighthouse.
+/// The Road to Babi Lighthouse (RoadToBabiLighthouse): four workers (a bald,
+/// muscular man, a strongman and two men with pickaxes), each named by what he
+/// says, and the pillar for Move and Carry, with the sprite of the pillars
+/// Carry takes across a gap in Venus Lighthouse.
 enum {
-  /// "We haven't been ordered to start working yet... Do we get today off?"
+  /// A bald, muscular man.
+  /// ★ Named from the game: "Do we get today off?"
+  /// (MsgBabiLighthouseWeHaventBeenOrderedToStart)
   ACTOR_WORKER_DAY_OFF = 8,
-  /// "There were strange folk going to the ruins... Faran followed them."
+  /// A strongman in a red top.
+  /// ★ Named from the game: "There were strange folk going to the ruins..."
+  /// (MsgBabiLighthouseThereWereStrangeFolkGoingTo)
   ACTOR_WORKER_STRANGE_FOLK = 9,
-  /// "It's odd that Babi would build a lighthouse in a place like this."
+  /// A man with a pickaxe.
+  /// ★ Named from the game: "It's odd that Babi would build a lighthouse in a
+  /// place like this." (MsgBabiLighthouseItsOddThatBabiWouldBuild)
   ACTOR_WORKER_ODD_PLACE = 10,
-  /// "Cutting these stones and stacking them on the ruins isn't easy."
+  /// A man with a pickaxe.
+  /// ★ Named from the game: "Cutting these stones and stacking them on the
+  /// ruins isn't easy." (MsgBabiLighthouseCuttingTheseStonesAndStackingThem)
   ACTOR_WORKER_CUTTING_STONES = 11,
   /// ★ Named from what the player sees: a short grey stone pillar carved with a
   /// spiral (its render)
@@ -1271,8 +1290,8 @@ static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
 }
 #endif
 
-/// Sets up the scene being entered: Retreat leads back to the Entry; the
-/// road's pillar, the Entry's pillars, vine and fallen men,
+/// Sets up the scene being entered: Retreat leads back to the Entry; the road's
+/// pillar, the Entry's pillars, vine and the four lying on the ground,
 /// BabiLighthouseLuff's arrivals by falling, and BabiLighthouseStoneDoor's door
 /// and onlookers are restored. Returns 0.
 s32 BabiLighthouse_SetupScene(void) {
@@ -1328,8 +1347,9 @@ s32 BabiLighthouse_SetupScene(void) {
       Object_GetById(ACTOR_PLANT)->collisionFlags = 0xfe;
       BabiLighthouse_OpenGrowthPassage();
     }
-    // Their script waits stagger the four fallen men's first animations.
-    placedActor = Object_GetById(ACTOR_FALLEN_MAN_NO_MATCH);
+    // Their script waits stagger the first animations of the four lying on the
+    // ground.
+    placedActor = Object_GetById(ACTOR_FALLEN_SOLDIER_NO_MATCH);
     placedActor->collisionFlags = 0;
     placedActor->priorityFlags = 0;
     placedActor->wait = 0;
@@ -1337,23 +1357,23 @@ s32 BabiLighthouse_SetupScene(void) {
     zero = 0;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0xc000;
-    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_NO_MATCH, 0);
-    placedActor = Object_GetById(ACTOR_FALLEN_MAN_ONLY_TWO);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_SOLDIER_NO_MATCH, 0);
+    placedActor = Object_GetById(ACTOR_FALLEN_STRONGMAN_ONLY_TWO);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 30;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x4000;
-    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_ONLY_TWO, 0);
-    placedActor = Object_GetById(ACTOR_FALLEN_MAN_KICKED_ASIDE);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, 0);
+    placedActor = Object_GetById(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 60;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x8000;
-    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_KICKED_ASIDE, 0);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, 0);
     placedActor = Object_GetById(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
@@ -1783,15 +1803,15 @@ struct SceneEvent gBabiLighthouse_EntryEvents[] = {
     {EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_AdvancePairAndJump)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_ClimbDownOrAdvancePair)},
-    {EVENT_TALK, ACTOR_FALLEN_MAN_NO_MATCH, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
-    {EVENT_TALK, ACTOR_FALLEN_MAN_ONLY_TWO, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
-    {EVENT_TALK, ACTOR_FALLEN_MAN_KICKED_ASIDE, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
+    {EVENT_TALK, ACTOR_FALLEN_SOLDIER_NO_MATCH, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
+    {EVENT_TALK, ACTOR_FALLEN_STRONGMAN_ONLY_TWO, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
+    {EVENT_TALK, ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
     {EVENT_TALK, ACTOR_FALLEN_MAN_SCORCHED_GROUND, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheySetFireToEverythingThats)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_NO_MATCH, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_SOLDIER_NO_MATCH, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseWereTheOnesWhoAttackedBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_ONLY_TWO, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_STRONGMAN_ONLY_TWO, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseTheOtherFourDidntSeemTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_KICKED_ASIDE, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseWhatCouldTheyBePlanningFor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_SCORCHED_GROUND, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseNoneOfThemHadAnyTorches)},

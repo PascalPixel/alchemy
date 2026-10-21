@@ -104,7 +104,7 @@ enum EncounterZoneId {
 
 void Scene_TakeExit(s32 exitKind);
 void Scene_ReturnFromBattle(s32 result);
-s32 BattleFx_GetResourceGroup(s32 scene);
+s32 FieldFx_GetResourceGroup(s32 scene);
 void Game_Run(s32 mode);
 void Scene_LoadOverlay(s32 unused);
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep);
@@ -122,16 +122,16 @@ void Scene_SetDefeatReturnPoint(void);
 s16 Event_GetSpecialValue(void);
 void Battle_SelectSceneBackdrop(void);
 void Battle_SelectTerrainBackdrop(s32 behavior);
-// Matching builds call BattleFx_SelectBattleCue without a prototype, as in
+// Matching builds call FieldFx_SelectBattleCue without a prototype, as in
 // object.c above its definition: in one file its definition
 // would come before Field_RequestDjinnBattle and
 // Field_RequestBattleFromEncounterTable, and Field_RequestDjinnBattle changes
 // (2 of 52 instructions in tbs-en). Split evidence for object|psynergy_effects.
 #ifdef UBFIX
-void BattleFx_SelectBattleCue(s32 zone, s32 slot);
+void FieldFx_SelectBattleCue(s32 zone, s32 slot);
 #endif
-void BattleFx_ShrinkObjectAndDestroySlow(union FieldObject *object);
-void BattleFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
+void FieldFx_ShrinkObjectAndDestroySlow(union FieldObject *object);
+void FieldFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
 void FieldFx_RunLift(void);
 void FieldFx_RunCarry(void);
 
@@ -196,16 +196,16 @@ s32 Field_SearchTile(s32 tile);
 s32 Field_GetPsynergyTargetRange(s32 kind);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
-s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId);
+s32 FieldFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId);
 void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette);
 void Battle_ResetEffectCounter(void);
 s32 Field_FindItemEvent(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
-void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target);
+void *FieldFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target);
 s32 Field_RunPsynergyEvents(s32 packed);
 s32 Field_UsePsynergy(u32 code);
-s32 BattleFx_HasMatchingEvent5(s32 group);
-u32 BattleFx_HasTrigger(u16 item);
+s32 FieldFx_HasMatchingEvent5(s32 group);
+u32 FieldFx_HasTrigger(u16 item);
 
 void ObjectMotion_SnapToTerrain(void *object);
 void Field_PlaceMapMarkers(void);
@@ -221,17 +221,17 @@ void Marker_SetActorPosition(s32 id, s32 x, s32 z);
 
 void Marker_MoveLeaderAway(void);
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject);
-struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item);
+struct EffectObj *FieldFx_StartRandomParticleEmitter(s32 actor, s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object);
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags);
-void BattleFx_StartEffectObject22(s32 item, s32 flags);
-void BattleFx_ClearRandomParticles(void);
+void FieldFx_StartEffectObject22(s32 item, s32 flags);
+void FieldFx_ClearRandomParticles(void);
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject);
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter);
 void FieldFx_SpawnNearbyMarkers(void);
 
-void BattleFx_StartWindowHBlankDma(void);
+void FieldFx_StartWindowHBlankDma(void);
 void DisplayTransition_UpdateScanlineTable(void);
 void DisplayTransition_InitializeBattleEffectState(s32 mode);
 void DisplayTransition_SuspendCallbacks(void);
@@ -246,34 +246,33 @@ void DisplayTransition_UpdateFrame(void);
 void DisplayTransition_FillTilemapAndSolidTile(s32 color);
 void DisplayTransition_InitializeState(s32 value);
 
-void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
-                                 s32 frames);
-void BattlePalette_UpdateBlend(void);
-// UB: psynergy_effects.c calls BattleFx_BuildBuffer with no declaration in
+void ColorBuffer_ComputeSteps(s16 *source, s16 *target, s16 *step, s32 frames);
+void ColorBuffer_Update(void);
+// UB: psynergy_effects.c calls ColorBuffer_Build with no declaration in
 // scope, as a function returning int. With its prototype in scope (as in one
 // file with its definition) FieldFx_StartLightning and
-// BattleFx_StartBufferBlend change, 6 of 67 and 6 of 74 instructions in
+// FieldFx_StartBufferBlend change, 6 of 67 and 6 of 74 instructions in
 // tbs-en, and even a declaration without a prototype moves two instructions
 // in tbs-ja: evidence that object.c and psynergy_effects.c were separate
 // files. UBFIX declares it.
 #ifdef UBFIX
-void BattleFx_BuildBuffer();
+void ColorBuffer_Build();
 #endif
 void ColorBuffer_Initialize(void);
-void BattlePalette_StopBlendAndReleaseBuffer(void);
-void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half);
-void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half);
-void BattleFx_SetPrimaryBufferValue(u32 color);
-void BattleFx_StartBufferInterpolation(s32 frames);
-s32 BattleFx_ClampRgb555Channel(s32 value);
-s32 BattleFx_ClampRgb555Component(s32 value);
+void ColorBuffer_Release(void);
+void ColorBuffer_SetTarget(s32 mode, s32 half);
+void ColorBuffer_SetSource(s32 mode, s32 half);
+void ColorBuffer_SetBackdrop(u32 color);
+void ColorBuffer_StartInterpolation(s32 frames);
+s32 ColorBuffer_ClampChannel(s32 value);
+s32 ColorBuffer_ClampShiftedChannel(s32 value);
 void FadeOverlay_DrawMarks(void);
-void BattleFx_StartFadeOverlay(void *object);
+void FieldFx_StartFadeOverlay(void *object);
 void FadeOverlay_Suspend(void);
 void FadeOverlay_Resume(void);
-struct BattleEffectEntry *BattleFx_FindDefinition(u32 id);
-s32 BattleFx_GetAnimationValue(s32 id);
-s32 BattleFx_GetResourceId(u32 id);
-s32 BattleFx_GetFlags(s32 id);
+struct BattleEffectEntry *FieldFx_FindDefinition(u32 id);
+s32 FieldFx_GetAnimationValue(s32 id);
+s32 FieldFx_GetResourceId(u32 id);
+s32 FieldFx_GetFlags(s32 id);
 
 #endif

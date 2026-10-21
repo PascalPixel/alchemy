@@ -418,7 +418,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gGameState.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gGameState.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
-  BattleFx_StartFadeOverlay(0);
+  FieldFx_StartFadeOverlay(0);
   if (GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
                                TASK_PRIORITY_SCENE);
@@ -527,7 +527,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // All four arrivals play the same sound.
     // Fall through.
   case MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_POOLS:
-    BattleFx_SetQueuedSoundAndPlay(SE_170);
+    FieldFx_SetQueuedSoundAndPlay(SE_170);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE:
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);

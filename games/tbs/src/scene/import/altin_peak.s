@@ -84,7 +84,7 @@
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Battle_ResetEffectCounter, 1
 	.set import.Audio_PlayCueFromEventWork, 1
-	.set import.BattleFx_SetQueuedSoundAndPlay, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_SetQueuedSoundAndPlay, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

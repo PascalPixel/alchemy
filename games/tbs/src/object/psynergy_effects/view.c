@@ -68,7 +68,7 @@ s32 FieldFx_StepRatioTransition(void) {
 /// perspective work keeps the inverse, which scales the view's distance
 /// (farPlane times it, FieldFx_StepRatioTransition): a zoom of 2 halves the
 /// distance. Event_WaitForZoomTransition waits for it.
-void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
+void FieldFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
   struct PerspectiveWork *work = gMapWork[0];
   s32 inverse;
 
@@ -118,9 +118,9 @@ void Event_WaitForZoomTransition(void) {
 // The hook consumer ignores the result. Plain void removes the native zero
 // result and changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
-void BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+void FieldFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 #else
-s32 BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
+s32 FieldFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 #endif
   void *self = (void *)fieldObject;
   struct FieldActor *obj = self;
@@ -149,9 +149,9 @@ s32 BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 /// over an actor, then waits wait frames. The low 4 bits of emote pick the
 /// bubble's animation (6 also plays sound 110); with 0x100 the bubble takes
 /// sprite priority 1, otherwise the actor's. The bubble rides the actor and
-/// frees itself after 46 frames (gBattleFx_LinkedObjectScript: 16 frames of
+/// frees itself after 46 frames (gFieldFx_LinkedObjectScript: 16 frames of
 /// squash and stretch, then 30), whatever wait is.
-void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
+void FieldFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
   struct FieldActor *target;
 
   if ((emote & 0xff) == 6) {
@@ -167,17 +167,17 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
       struct AnimationObject *sprite;
 
       ObjectDispatch_InitializeFar((struct DispatchObject *)bubble,
-                                   gBattleFx_LinkedObjectScript);
+                                   gFieldFx_LinkedObjectScript);
       ObjectDispatch_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->work = actor;
       sprite = bubble->sprite;
 #ifdef UBFIX
-      bubble->update = BattleFx_CopyLinkedObjectPosition;
+      bubble->update = FieldFx_CopyLinkedObjectPosition;
 #else
       bubble->update =
-          (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
+          (void (*)(union FieldObject *))FieldFx_CopyLinkedObjectPosition;
 #endif
       sprite->flags = 0;
       bubble->linkedObject = target;
@@ -217,7 +217,7 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
 /// nothing while the actor has one, and ATTACHED_EFFECT_REMOVE releases
 /// whatever it is; a one-off is never recorded there. The leader's step runs
 /// all three for hazard ground (object/step.c).
-void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
+void FieldFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   struct FieldActor *object = ObjectTable_Get(actor);
   struct FieldActor *effect;
   struct AnimationObject *visual;
@@ -265,10 +265,10 @@ void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   effect->work = actor;
   effect->motionFlags = 0;
 #ifdef UBFIX
-  effect->update = BattleFx_CopyLinkedObjectPosition;
+  effect->update = FieldFx_CopyLinkedObjectPosition;
 #else
   effect->update =
-      (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
+      (void (*)(union FieldObject *))FieldFx_CopyLinkedObjectPosition;
 #endif
   visual = effect->sprite;
   visual->flags = 0;

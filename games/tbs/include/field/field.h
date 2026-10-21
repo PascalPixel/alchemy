@@ -123,12 +123,12 @@ extern s16 gAltinPeak_PaletteHold;
 extern s16 gAltinPeak_PaletteStep;
 /// One of a ledge jump's dust puffs (FieldFx_SpawnBurstParticle): SC_WAIT(1)
 /// looped 38 times, then SC_FREE.
-extern const u8 gBattleFx_BurstParticleScriptA[];
+extern const u8 gFieldFx_BurstParticleScriptA[];
 /// The other dust puff: the same, looped 18 times.
-extern const u8 gBattleFx_BurstParticleScriptB[];
+extern const u8 gFieldFx_BurstParticleScriptB[];
 extern u32 gWorldMap_GraphicsResources[][6];
 /// SC_WAIT(40), then SC_FREE: the one-off attached effect that ends by itself
-/// (BattleFx_ConfigureLinkedObject, ATTACHED_EFFECT_ONCE).
+/// (FieldFx_ConfigureLinkedObject, ATTACHED_EFFECT_ONCE).
 extern const u8 gObjectMotion_WaitScript[];
 /// The sparkles' 16 by 16 tiles, packed (FieldFx_InitSparkles).
 extern const u8 gFieldFx_SparkleTiles[];

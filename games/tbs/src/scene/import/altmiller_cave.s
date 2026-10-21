@@ -70,15 +70,15 @@
 	.set import.EffectSlot_SetObjectMode, 1
 	.set import.EffectSlot_SetCallback, 1
 	.set import.EffectSlot_Initialize, 1
-	.set import.BattleFx_ClearOwnedSlot, 1
+	.set import.FieldFx_ClearOwnedSlot, 1
 	.set import.Camera_WorldToScreen, 1
-	.set import.BattleFx_InitializeSlots, 1
-	.set import.BattleFx_ClearActiveSlotsAndScheduleUpdates, 1
+	.set import.FieldFx_InitializeSlots, 1
+	.set import.FieldFx_ClearActiveSlotsAndScheduleUpdates, 1
 	.set import.Motion_LaunchFromFocusedObject, 1
 	.set import.Engine_ActorWalkBy, 1
 	.set import.Engine_ActorWalkByAndWait, 1
 	.set import.Engine_ActorFollow, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Shop_SaveAndTintFieldPalette, 1
 	.set import.Shop_RestoreFieldPalette, 1
 	.set import.Engine_AudioPlayCue, 1

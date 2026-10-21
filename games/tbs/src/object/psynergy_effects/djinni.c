@@ -6,7 +6,7 @@
 
 /// Update hook shared by the Djinni battle-start and Mercury afterimages.
 void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
-  BattleFx_MoveAfterimageHalfway(fieldObject);
+  FieldFx_MoveAfterimageHalfway(fieldObject);
 }
 
 #define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
@@ -158,9 +158,9 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
         ObjectTable_ClearOutOfBounds();
 
       if (element == 0) // Venus
-        BattleFx_RunVenusDjinnCapture(slot);
+        FieldFx_RunVenusDjinnCapture(slot);
       else if (element == 1) // Mercury
-        BattleFx_RunMercuryDjinnCapture(slot);
+        FieldFx_RunMercuryDjinnCapture(slot);
       else if (element == 2) // Mars
         Djinn_RunMarsJoinEffect(slot);
       else if (element == 3) // Jupiter
@@ -288,42 +288,42 @@ void Djinn_ResolvePendingEvent(s32 shown) {
 }
 
 /// Scheduler callback: updates the 24 effect slots.
-void BattleFx_UpdateAllSlots(void) { FieldFx_UpdateSceneSlots(); }
+void FieldFx_UpdateAllSlots(void) { FieldFx_UpdateSceneSlots(); }
 
 /// Allocates and clears the effect slots (HEAP_SLOT_FX) and starts their
 /// update callback. The block is a whole effect scene, gEffectWork, the slot
 /// a Psynergy effect's scene also takes. Called by the Djinn joining effects
 /// (jupiter.c, mars.c, venus.c and mercury.c) and Altmiller Cave's scene;
-/// each ends with BattleFx_ClearActiveSlotsAndScheduleUpdates.
-void BattleFx_InitializeSlots(void) {
+/// each ends with FieldFx_ClearActiveSlotsAndScheduleUpdates.
+void FieldFx_InitializeSlots(void) {
   void *work;
 
   work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof(struct BattleFxScene));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene));
   // 3200 is SCHEDULER_KEY_MAIN_LOOP: the slots update once a frame.
-  Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllSlots, 3200);
+  Scheduler_AddOrUpdateCallback(FieldFx_UpdateAllSlots, 3200);
 }
 
 /// Stops the effect slots: removes their callback, frees every slot still in
 /// use and releases their heap block, gEffectWork with it. Then waits a
-/// frame. Pairs with BattleFx_InitializeSlots.
-void BattleFx_ClearActiveSlotsAndScheduleUpdates(void) {
+/// frame. Pairs with FieldFx_InitializeSlots.
+void FieldFx_ClearActiveSlotsAndScheduleUpdates(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct EffectSlot *slot;
   s32 i;
 
-  Scheduler_RemoveCallback(BattleFx_UpdateAllSlots);
+  Scheduler_RemoveCallback(FieldFx_UpdateAllSlots);
   for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
     slot = &scene->slots[i];
     if (slot->active != 0)
-      BattleFx_ClearOwnedSlot(slot);
+      FieldFx_ClearOwnedSlot(slot);
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);
   WaitFrames(1);
 }
 
 /// Per-frame update: spins an object 1/8 turn a frame.
-void BattleFx_AdvanceSpinAngle(union FieldObject *fieldObject) {
+void FieldFx_AdvanceSpinAngle(union FieldObject *fieldObject) {
   struct MotionObject *object = (struct MotionObject *)fieldObject;
   object->angle += 0x2000;
 }
@@ -343,7 +343,7 @@ enum DjinniLightState {
 /// 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
 /// pixel a frame. The slot's origin is the centre, in screen coordinates
 /// (Camera_WorldToScreen).
-void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
+void FieldFx_RunAngledApproachPhases(struct EffectSlot *particle) {
   struct MotionObject *target;
   struct EffectVector position;
 
@@ -382,7 +382,7 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
       particle->state += 1;
     }
   } else if (particle->state == DJINNI_LIGHT_DONE) {
-    BattleFx_ClearOwnedSlot(particle);
+    FieldFx_ClearOwnedSlot(particle);
   }
   // orbitAngle is in 1/32 turns: << 11 makes it 1/65536 turns.
   position.x = particle->originX;

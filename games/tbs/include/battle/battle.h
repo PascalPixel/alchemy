@@ -19,8 +19,8 @@ struct EffectSlot;
 struct ObjectRuntime;
 struct SceneAreaNameRule;
 
-extern u16 gBattleFx_CyclePatternWords[];
-extern s8 gBattleFx_RandomChildValues[];
+extern u16 gFieldFx_CyclePatternWords[];
+extern s8 gFieldFx_RandomChildValues[];
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
 extern const s8 gBattlePlacement_StepPairs[];
@@ -103,22 +103,22 @@ extern u8 gAnimation_ChildPaletteCycle[];
 extern u8 gBattleCommand_SelectionWeights[3][8];
 /// The 32 by 16 spark of Avoid's falling arcs (spark_b), 4 bits a pixel;
 /// FieldFx_RunAvoid loads it.
-extern const u8 gBattleFx_ArcSparkTiles[];
-extern const s32 gBattleFx_BurstParticleObjectScript[];
-extern struct BattleEffectEntry gBattleFx_DefinitionTable[];
-/// The emote bubble's script (BattleFx_SpawnLinked): eight 2-frame steps of
+extern const u8 gFieldFx_ArcSparkTiles[];
+extern const s32 gFieldFx_BurstParticleObjectScript[];
+extern struct BattleEffectEntry gFieldFx_DefinitionTable[];
+/// The emote bubble's script (FieldFx_SpawnLinked): eight 2-frame steps of
 /// squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames still,
 /// then SC_FREE.
-extern const s32 gBattleFx_LinkedObjectScript[];
-extern const s32 gBattleFx_MarkerParticleScript[];
-extern const s32 gBattleFx_ParticleEmitterScript[];
-extern const s32 gBattleFx_ParticleScript[];
-extern u32 gBattleFx_PulseScales[];
-extern const s32 gBattleFx_SourceHoldScript[];
-extern s16 gBattleFx_TargetRangeByMode[];
+extern const s32 gFieldFx_LinkedObjectScript[];
+extern const s32 gFieldFx_MarkerParticleScript[];
+extern const s32 gFieldFx_ParticleEmitterScript[];
+extern const s32 gFieldFx_ParticleScript[];
+extern u32 gFieldFx_PulseScales[];
+extern const s32 gFieldFx_SourceHoldScript[];
+extern s16 gFieldFx_TargetRangeByMode[];
 /// A lone SC_FREE: an object that has arrived frees itself
-/// (BattleFx_SetCallbackWhenTargetUnset).
-extern const s32 gBattleFx_UntargetedObjectScript[];
+/// (FieldFx_SetCallbackWhenTargetUnset).
+extern const s32 gFieldFx_UntargetedObjectScript[];
 /// The knockback's speed gained each frame by variant (enum BattleKnockback),
 /// 16.16 pixels a frame: 1, but 8 for KNOCKBACK_HURL.
 extern s32 gBattleMotion_VariantAcceleration[];
@@ -162,13 +162,13 @@ extern u8 BitDecoder_Size[];
 /// commands are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words.
 extern u8 gCamera_FlagTransformWork[];
 /// The 32 by 16 spark a field Psynergy effect's particles draw (spark_a), 4
-/// bits a pixel; BattleFx_LoadActionEffectResources loads it.
-extern const u8 gBattleFx_SparkTiles[];
-extern const u8 gBattleFx_QuadrantModes[];
+/// bits a pixel; FieldFx_LoadActionEffectResources loads it.
+extern const u8 gFieldFx_SparkTiles[];
+extern const u8 gFieldFx_QuadrantModes[];
 /// The eight tints (PALETTE_TRANSFORM_TINT and an RGB555 colour) a field
 /// Psynergy effect fades the palettes toward, picked by the frame counter or
 /// by the FLAG_PSYNERGY_TINT flags (FieldFx_FadeToEffectColor).
-extern const s32 gBattleFx_TargetColors[];
+extern const s32 gFieldFx_TargetColors[];
 /// Where SparkWork.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
 extern s32 gBattleFx_StarWorkOffsets[];
@@ -219,7 +219,7 @@ extern const u8 gObjectMotion_LinkedActionScript[];
 /// scene, return entrance} rows, ended by scene -1
 /// (Scene_SetDefeatReturnPoint).
 extern const s16 gParty_PairResolveRules[];
-extern const s32 gBattleFx_RisingPulseScript[];
+extern const s32 gFieldFx_RisingPulseScript[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimsIsaac[];
 /// The 20 enemy classes whose defeated flags a monster battle clears before it

@@ -68,7 +68,7 @@ void FieldEvent_WaitFrames(s32 frames) {
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
 /// FieldEvent_Begin, by Field_RunScene before it handles several requests, by
 /// Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and the world
-/// map's zoom (BattleFx_RunVisibilityTransition).
+/// map's zoom (FieldFx_RunVisibilityTransition).
 void Leader_StopMoving(void) {
   struct ObjectRuntime *object;
 

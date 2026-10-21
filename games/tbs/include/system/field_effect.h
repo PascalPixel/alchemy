@@ -48,7 +48,7 @@ struct FieldEffect {
   /// Peak's spray, 60 for Imil's rising effects.
   s32 countdown;
   /// Called each frame while the effect is live: the spawner sets
-  /// BattleFx_UpdateObjectMotionScaleAndLinkedAngle, or options.update.
+  /// FieldFx_UpdateMotionScaleAndSpin, or options.update.
   void (*update)(union FieldObject *object);
 };
 

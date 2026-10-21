@@ -5,11 +5,11 @@
 #include "../object_internal.h"
 
 /// Returns how far, in pixels, a field Psynergy of the given kind reaches:
-/// gBattleFx_TargetRangeByMode (fxdata.c) pairs kinds with ranges, ended by -1,
+/// gFieldFx_TargetRangeByMode (fxdata.c) pairs kinds with ranges, ended by -1,
 /// and a kind not listed reaches 16 pixels. Called by
 /// Field_FindNearbyPsynergyTarget.
 s32 Field_GetPsynergyTargetRange(s32 kind) {
-  s16 *rangeEntry = gBattleFx_TargetRangeByMode;
+  s16 *rangeEntry = gFieldFx_TargetRangeByMode;
   s32 range = 16;
   s32 listedKind = *rangeEntry;
 
@@ -206,7 +206,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 /// encoded actor pointer, or 0 when the target or picture is absent. Called by
 /// two scene overlays: McCoy's palace, when a reward chest opens, and Vault's
 /// interiors, when Ivan finds the Shaman's Rod.
-s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
+s32 FieldFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
   void *targetActor;
   s32 emitter;
 
@@ -216,7 +216,7 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
     AudioCommand_PlayFar(SE_124);
     ObjectDispatch_SelectAnimationFar(targetActor, 4);
     WaitFrames(12);
-    emitter = (s32)BattleFx_StartRandomParticleEmitter(actor, itemId);
+    emitter = (s32)FieldFx_StartRandomParticleEmitter(actor, itemId);
   }
   return emitter;
 }

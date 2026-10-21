@@ -49,7 +49,7 @@
 	.set import.Engine_CameraWaitForMove, 1
 	.set import.Camera_GetEventObject, 1
 	.set import.Engine_MapObjectSetPosition, 1
-	.set import.BattleFx_StartFadeOverlay, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_StartFadeOverlay, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

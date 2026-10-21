@@ -225,7 +225,7 @@ void UiMessage_ShowAndWait(s32 messageId) {
   // A shared message-resolution inline added four bytes to each dialogue caller
   // in the English native build; both callers retain their direct resolution.
   struct ShopRuntime *shop = gMenuWork;
-  s32 portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
+  s32 portraitResource = FieldFx_GetResourceIdFar(shop->keeperResource);
   s32 resolvedMessage = messageId;
   s8 shopType;
 
@@ -260,7 +260,7 @@ void UiMessage_ShowAndRestoreState(s32 messageId) {
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->active;
   resolvedMessage = messageId;
-  portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
+  portraitResource = FieldFx_GetResourceIdFar(shop->keeperResource);
   shopType = shop->shopType;
   if (shopType == SHOP_TYPE_ARMOR) {
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;

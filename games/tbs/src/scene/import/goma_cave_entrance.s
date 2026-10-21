@@ -47,11 +47,11 @@
 	.set import.Engine_ActorShowEmote, 1
 	.set import.Engine_ActorSetAttachedEffect, 1
 	.set import.Field_DispatchTypeHandler, 1
-	.set import.BattleFx_LoadActionEffectResources, 1
-	.set import.BattleFx_SetupObjectPair, 1
+	.set import.FieldFx_LoadActionEffectResources, 1
+	.set import.FieldFx_SetupObjectPair, 1
 	.set import.EffectRuntime_StopCurrentObject, 1
 	.set import.EventObject_Initialize, 1
-	.set import.BattleFx_SetQueuedSoundAndPlay, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_SetQueuedSoundAndPlay, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -1291,7 +1291,7 @@ static void Kalay_StartWindowTransition(void) {
   }
   if (gGameState.entrance <=
       KALAY_TUNNEL_PASSAGE_CORRIDOR_FROM_NORTHEAST_ROOM) {
-    BattleFx_SetQueuedSoundAndPlay(SE_170);
+    FieldFx_SetQueuedSoundAndPlay(SE_170);
   }
 }
 
@@ -1315,7 +1315,7 @@ static void Kalay_PrepareTunnel(void) {
 
   ((struct EventWork *)workSlots[0])->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  BattleFx_StartFadeOverlay(0);
+  FieldFx_StartFadeOverlay(0);
 #if TBS_PATCH_1
   resumedScene = GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION);
   if (resumedScene != 0) {
@@ -1441,7 +1441,7 @@ static void Kalay_PrepareTunnel(void) {
     switch (gGameState.entrance) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   }
@@ -1472,7 +1472,7 @@ static void Kalay_PrepareTunnel(void) {
     switch (gGameState.entrance) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   }
@@ -2073,7 +2073,7 @@ static void Kalay_PushTunnelPillar(void) {
       leader->acceleration = pushSpeed;
       Engine_ObjectSetPosition(leader, target->x, target->y, target->z);
       FieldObject_WaitForMove(pillar);
-      BattleFx_PlayQueuedSound();
+      FieldFx_PlayQueuedSound();
       pillar->x.fixed = target->x;
       pillar->z.fixed = target->z;
       pillar->velocityX = stoppedVelocity;
@@ -2266,7 +2266,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
   } else if (!GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
              firstEmitter->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
     if (!GameFlag_IsSet(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
-      BattleFx_SetQueuedSoundAndPlay(-1);
+      FieldFx_SetQueuedSoundAndPlay(-1);
       Event_PlayCue(SE_230);
       GameFlag_Set(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED);
     }
@@ -2276,7 +2276,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
   if (!GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
       secondEmitter->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
     if (!GameFlag_IsSet(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
-      BattleFx_SetQueuedSoundAndPlay(-1);
+      FieldFx_SetQueuedSoundAndPlay(-1);
       Event_PlayCue(SE_230);
       GameFlag_Set(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED);
     }

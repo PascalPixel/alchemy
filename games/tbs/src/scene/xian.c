@@ -442,7 +442,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Engine_EventWait(70);
   Engine_EventSetMessage(MsgXianDoingMadeMeSpillMy);
   Event_ShowMessageAndWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   if ((Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) == 26 &&
       (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20) > 13) {
     leaderMustStepAside = 1;
@@ -586,7 +586,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_EventWait(20);
     Engine_EventShowMessageAndWait(ACTOR_KUNG_FU_STUDENT, 0, 20);
     Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
-    BattleFx_PlayQueuedSound();
+    FieldFx_PlayQueuedSound();
     Engine_EventEnd();
   }
 }
@@ -729,7 +729,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   }
   Engine_EventShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
@@ -784,7 +784,7 @@ s32 Xian_Initialize(void) {
   u32 decorationIndex;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  BattleFx_SetQueuedSoundAndPlay(SE_169);
+  FieldFx_SetQueuedSoundAndPlay(SE_169);
   // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum
   // (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name is not shown.
   if (gGameState.entrance >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) {

@@ -18,7 +18,7 @@ void EffectSlot_Update(struct EffectSlot *effect) {
       if (effect->updateMotion != 0)
         EffectSlot_UpdateMotion(effect);
       if (effect->render != 0)
-        BattleFx_DrawScaledObject(effect);
+        FieldFx_DrawScaledObject(effect);
     }
   }
 }
@@ -28,7 +28,7 @@ void EffectSlot_Update(struct EffectSlot *effect) {
 /// exclusive. With flag 4 the slot's z also lifts it (0x1fc pixels less z):
 /// it is placed at y 508 pixels and raised back to z, so it shows at the
 /// same point but sorts as if at 508.
-void BattleFx_DrawScaledObject(struct EffectSlot *object) {
+void FieldFx_DrawScaledObject(struct EffectSlot *object) {
   struct AnimationObject *sprite;
   s32 offset;
   struct SpriteScale scale;
@@ -147,7 +147,7 @@ void EffectSlot_SetCallback(struct EffectSlot *effect,
 
 /// Fills an effect slot with a new sprite of kind at (x, z): stopping at its
 /// target, top speed 2, acceleration and scale 1, drawn, animation 1. The
-/// slot owns the sprite until BattleFx_ClearOwnedSlot. Its turn is limited
+/// slot owns the sprite until FieldFx_ClearOwnedSlot. Its turn is limited
 /// with maxTurnStep 0, so it holds heading 0 until its callback clears
 /// limitTurnStep or gives a step, as the first states of the callbacks that
 /// steer to a target do.
@@ -189,7 +189,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
 /// Frees an effect slot and its sprite, clearing the slot to zero (inactive).
 /// Slot callbacks call it on their own slot as their last state; the slot
 /// update then neither moves nor draws it.
-void BattleFx_ClearOwnedSlot(struct EffectSlot *slot) {
+void FieldFx_ClearOwnedSlot(struct EffectSlot *slot) {
   if (slot->object)
     ResourceObject_ReleaseFar(slot->object);
   Dma_Fill32(0, slot, sizeof *slot);

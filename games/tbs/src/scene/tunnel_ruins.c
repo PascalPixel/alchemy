@@ -1487,7 +1487,7 @@ s32 TunnelRuins_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.scene == (s32)&SceneId_TunnelRuinsGreatStatue ||
       gGameState.scene == (s32)&SceneId_TunnelRuinsLadyStatues) {
-    BattleFx_StartFadeOverlay(0);
+    FieldFx_StartFadeOverlay(0);
     gGameState.retreatEntrance =
         TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR;
     gGameState.retreatScene = (s32)&SceneId_TunnelRuinsGreatStatue;

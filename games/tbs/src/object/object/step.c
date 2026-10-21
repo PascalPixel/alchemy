@@ -53,7 +53,7 @@ s32 Field_CountRequests(void) {
 /// Returns the collision code of the map cell 16 pixels ahead of the party
 /// leader (a world map block on the world map), or 0 without a leader.
 ///
-/// Called by Field_FindItemEvent and BattleFx_FindMatchingEvent (items.c),
+/// Called by Field_FindItemEvent and FieldFx_FindMatchingEvent (items.c),
 /// which match an item or Psynergy event to the tile the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
@@ -316,11 +316,11 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (gGameState.hazardMode == HAZARD_COUNT_FRAMES) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
-      BattleFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_ATTACH);
+      FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                  ATTACHED_EFFECT_ATTACH);
     if (gGameState.hazardSteps == gGameState.hazardLimit)
-      BattleFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                   ATTACHED_EFFECT_REMOVE);
+      FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                  ATTACHED_EFFECT_REMOVE);
   }
   if (gGameState.hazardSteps >= gGameState.hazardLimit) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
@@ -338,8 +338,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     work->fallenCount = 0;
     work->survivorCount = 0;
     leader->velocityY = 0x40000;
-    BattleFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
-                                                 ATTACHED_EFFECT_ONCE);
+    FieldFx_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
+                                                ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
       unitVitals = UnitGetFar(gGameState.activeOwners[i]);
@@ -390,8 +390,8 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
 
   // Damage of more than 10 plays the heavier impact sound.
   if (amount < 0) {
-    BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
-    BattleFx_StartBufferInterpolation(4);
+    ColorBuffer_SetSource(0x1ff, 0);
+    ColorBuffer_StartInterpolation(4);
     if (amount < -10)
       AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     else
@@ -457,8 +457,8 @@ s32 BattleParty_ApplyStatusDamage(void) {
   }
 
   if (worstPoison != 0) {
-    BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
-    BattleFx_StartBufferInterpolation(4);
+    ColorBuffer_SetSource(0x1ff, 0);
+    ColorBuffer_StartInterpolation(4);
     AudioCommand_PlayFar(SE_133);
   }
 

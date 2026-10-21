@@ -76,7 +76,7 @@ void FieldFx_WatchLeaderDistance(void) {
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
 /// 600 frames of its own time, or until the leader leaves its circle
 /// (FieldFx_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
-/// Called by BattleFx_Run and BattleFx_DispatchRequestKind.
+/// Called by FieldFx_Run and FieldFx_DispatchRequestKind.
 void FieldFx_RunReveal(void) {
   struct FieldWork *field;
   struct DisplayTransitionState *transition;
@@ -94,16 +94,16 @@ void FieldFx_RunReveal(void) {
   transition->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TRANSFORM_PLAIN, 0x10000) the BG half
   // turns grey (PALETTE_TRANSFORM_GREY, 0x10001) in one frame.
-  BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
-  BattleFx_StartBufferInterpolation(1);
+  ColorBuffer_SetSource(0x10000, 0);
+  ColorBuffer_SetTarget(0x10001, 1);
+  ColorBuffer_StartInterpolation(1);
   // Not in the English release.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
   field->revealActive = 0;
 #endif
   WaitFrames(1);
-  event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
-                                     FIELD_KIND_REVEAL, &eventTarget);
+  event = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
+                                    FIELD_KIND_REVEAL, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
   AudioCommand_PlayFar(SE_131);
@@ -157,15 +157,15 @@ void ResetSceneTransitionEffect(void) {
     state->revealFrames = zero;
     ObjectDispatch_ApplyValueToKind200Children(0);
 
-    BattleFx_ApplyColorToTargetBuffer(PALETTE_TRANSFORM_PLAIN, 1);
-    BattleFx_StartBufferInterpolation(1);
-    BattleFx_ApplyColorToSourceBuffer(0, 0);
-    BattleFx_ApplyColorToTargetBuffer(PALETTE_TRANSFORM_PLAIN, 0);
-    BattleFx_StartBufferInterpolation(30);
+    ColorBuffer_SetTarget(PALETTE_TRANSFORM_PLAIN, 1);
+    ColorBuffer_StartInterpolation(1);
+    ColorBuffer_SetSource(0, 0);
+    ColorBuffer_SetTarget(PALETTE_TRANSFORM_PLAIN, 0);
+    ColorBuffer_StartInterpolation(30);
     WaitFrames(1);
 
-    event = BattleFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
-                                       FIELD_KIND_REVEAL, &eventTarget);
+    event = FieldFx_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
+                                      FIELD_KIND_REVEAL, &eventTarget);
     if (event != NULL)
       Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
 

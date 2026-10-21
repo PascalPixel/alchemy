@@ -10,7 +10,7 @@
 // EFFECT_USE_ flags.
 
 /// Integrates linear motion, scale changes and rotation once per effect frame.
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object) {
+void FieldFx_UpdateMotionScaleAndSpin(union FieldObject *object) {
   object->effect.x += object->effect.velocity.x;
   object->effect.y += object->effect.velocity.y;
   object->effect.z += object->effect.velocity.z;
@@ -72,7 +72,7 @@ static inline void FieldFx_InitializeMotion(struct FieldEffect *effect,
     set_script((void *)effect, gEffectScripts[flags & EFFECT_SCRIPT_MASK]);    \
     effect->motionFlags = 0;                                                   \
     sprite->flags = 0;                                                         \
-    effect->update = BattleFx_UpdateObjectMotionScaleAndLinkedAngle;           \
+    effect->update = FieldFx_UpdateMotionScaleAndSpin;                         \
     FieldFx_InitializeMotion(effect, sprite, party, velocityX, velocityY,      \
                              velocityZ);                                       \
                                                                                \

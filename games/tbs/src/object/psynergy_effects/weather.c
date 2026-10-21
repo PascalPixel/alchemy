@@ -95,7 +95,7 @@ void FieldFx_UpdateLightning(void) {
   case 5:
   case 10:
     // A frame after each flash: fade back to the dark colours over 12 frames.
-    BattleFx_ApplyColorToTargetBuffer((s32)work, 1);
+    ColorBuffer_SetTarget((s32)work, 1);
     Dma_Set(work->delta, target->delta, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0,
             REG_DMA3);
     target->duration = 12;
@@ -105,7 +105,7 @@ void FieldFx_UpdateLightning(void) {
   case 6:
   case 11:
     // The flash: the lit colours, in one frame.
-    BattleFx_ApplyColorToTargetBuffer((s32)work->to, 1);
+    ColorBuffer_SetTarget((s32)work->to, 1);
     target->duration = 1;
     target->step = 0;
     break;
@@ -116,7 +116,7 @@ void FieldFx_UpdateLightning(void) {
 /// loads their tiles and puts 32 of them under the leader with staggered
 /// timers, drawn semi-transparent. Their work is HEAP_SLOT_GROUND_PARTICLES,
 /// which the motes and sparkles also take. SE_170 is queued
-/// (BattleFx_SetQueuedSoundAndPlay), so it plays again wherever the queued
+/// (FieldFx_SetQueuedSoundAndPlay), so it plays again wherever the queued
 /// sound is replayed, as after a Psynergy effect.
 void FieldFx_StartGroundParticles(void) {
   struct GroundParticleWork *work;
@@ -131,7 +131,7 @@ void FieldFx_StartGroundParticles(void) {
   work = Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES,
                                sizeof(struct GroundParticleWork));
   leader = ((struct MapScrollWork *)gMapWork[0])->origin;
-  BattleFx_SetQueuedSoundAndPlay(SE_170);
+  FieldFx_SetQueuedSoundAndPlay(SE_170);
   words = 0;
   particle = work->particles;
   Dma_Fill32((u32)words, work, sizeof(struct GroundParticleWork));
@@ -463,10 +463,10 @@ void FieldFx_StartLightning(void) {
                                sizeof(struct FieldBlendWork));
   buffers = gPaletteBufferWork;
   Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
-  BattleFx_BuildBuffer(0x10003, buffers, work, 1);
-  BattleFx_BuildBuffer(0x10005, buffers, work->to, 1);
-  BattleFx_InterpolateBuffers(work->to, work->from, work->delta, 12);
-  BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
+  ColorBuffer_Build(0x10003, buffers, work, 1);
+  ColorBuffer_Build(0x10005, buffers, work->to, 1);
+  ColorBuffer_ComputeSteps(work->to, work->from, work->delta, 12);
+  ColorBuffer_Build((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
   Scheduler_AddOrUpdateCallback(FieldFx_UpdateLightning, 0xc80);
@@ -500,11 +500,11 @@ void FieldFx_ResumeLightning(void) {
 }
 
 /// Flashes the palette with the storm's callback: one burst of three flashes
-/// of palette to, each fading back to palette from (BattleFx_BuildBuffer
+/// of palette to, each fading back to palette from (ColorBuffer_Build
 /// modes) on the BG colours, ending 120 frames from now, and no more after.
 /// Vale's eruption calls it with the warm and red transforms
 /// (vale_eruption.c).
-void BattleFx_StartBufferBlend(s32 from, s32 to) {
+void FieldFx_StartBufferBlend(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
   s16 *target;
@@ -513,11 +513,11 @@ void BattleFx_StartBufferBlend(s32 from, s32 to) {
                                sizeof(struct FieldBlendWork));
   buffers = gPaletteBufferWork;
   Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
-  BattleFx_BuildBuffer(from, buffers, work, 1);
+  ColorBuffer_Build(from, buffers, work, 1);
   target = work->to;
-  BattleFx_BuildBuffer(to, buffers, target, 1);
-  BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
-  BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
+  ColorBuffer_Build(to, buffers, target, 1);
+  ColorBuffer_ComputeSteps(target, work->from, work->delta, 12);
+  ColorBuffer_Build((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
   Scheduler_AddOrUpdateCallback(FieldFx_UpdateLightning, 0xc80);

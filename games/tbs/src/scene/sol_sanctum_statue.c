@@ -937,7 +937,7 @@ s32 SolSanctumStatue_Initialize(void) {
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    BattleFx_SetQueuedSoundAndPlay(SE_141);
+    FieldFx_SetQueuedSoundAndPlay(SE_141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSceneRecordBuffer();
   }

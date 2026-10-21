@@ -475,7 +475,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Engine_ObjectSetPosition(leader, targetPosition.x, targetPosition.y,
                            targetPosition.z);
   FieldObject_WaitForMove(pillar);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   pillar->x.fixed = targetPosition.x;
   pillar->z.fixed = targetPosition.z;
   pillar->velocityX = transitionBusy;
@@ -713,7 +713,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     leader->motionFlags = 3;
     leader->update = 0;
-    BattleFx_PlayQueuedSound();
+    FieldFx_PlayQueuedSound();
     Engine_EventEnd();
   }
 }
@@ -774,7 +774,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   Engine_EventEnd();
@@ -2669,7 +2669,7 @@ s32 Scene_RunEntrySetup(void) {
       VenusLighthouse_AnimatePairedTileWaves();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR_HOLE:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
         VenusLighthouse_LandWithRadialDust();
       break;
@@ -2689,7 +2689,7 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_FROM_LADDERS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST:
-      BattleFx_StartFadeOverlay(0);
+      FieldFx_StartFadeOverlay(0);
       Engine_TaskWait(2);
       actor = Object_GetById(ACTOR_FIRST_DEPTH_PILLAR);
       actor->motionFlags = 0;
@@ -2707,8 +2707,8 @@ s32 Scene_RunEntrySetup(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_PSYNERGY_STONE:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
-      BattleFx_StartFadeOverlay(0);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_StartFadeOverlay(0);
       Engine_TaskWait(2);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         Map_CopyCellsTo(111, 5, 117, 5, 5, 2);
@@ -2724,7 +2724,7 @@ s32 Scene_RunEntrySetup(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_FROM_THUNDER_CROWN:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouseSecondFloor) {
@@ -2732,11 +2732,11 @@ s32 Scene_RunEntrySetup(void) {
     switch (gGameState.entrance) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR:
-      BattleFx_StartFadeOverlay(0);
+      FieldFx_StartFadeOverlay(0);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_WALL_SWITCH:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_PILLAR_PIT:
@@ -2778,7 +2778,7 @@ s32 Scene_RunEntrySetup(void) {
       // fall through
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       DisplayBlend_SuspendScript();
       {
         s32 zero = 0;
@@ -2805,7 +2805,7 @@ s32 Scene_RunEntrySetup(void) {
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_NORTH:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouseThirdFloor) {
@@ -2821,7 +2821,7 @@ s32 Scene_RunEntrySetup(void) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_SOUTHWEST:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         Map_CopyCells(53, 12, 3, 13, 26, 12);
         Map_CopyCellsTo(81, 41, 89, 14, 9, 2);
@@ -2850,7 +2850,7 @@ s32 Scene_RunEntrySetup(void) {
        * does not cross-jump with the second floor's same call; as a call by
        * its void prototype, 2 of 1431 instructions differ in tbs-en. */
       VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM:
@@ -2908,7 +2908,7 @@ s32 Scene_RunEntrySetup(void) {
       Event_MoveSwitchPillar();
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRIFTING_FLOOR:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouseFourthFloor) {
@@ -2974,7 +2974,7 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_WEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_GAIA_BLADE_FROM_WALL_SWITCHES_EAST:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST:
@@ -3000,7 +3000,7 @@ s32 Scene_RunEntrySetup(void) {
       DisplayBlend_SuspendScript();
       Io_Write16(0, &REG_BLDCNT);
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
-        BattleFx_SetQueuedSoundAndPlay(SE_170);
+        FieldFx_SetQueuedSoundAndPlay(SE_170);
         Map_CopyCellsTo(36, 81, 32, 81, 3, 2);
         Map_CopyCellsTo(36, 83, 36, 81, 3, 2);
         Map_CopyCellAttributes(36, 17, 3, 1, 32, 17);
@@ -3241,7 +3241,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   Engine_EventBegin();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
-  BattleFx_SetQueuedSoundAndPlay(SE_170);
+  FieldFx_SetQueuedSoundAndPlay(SE_170);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
@@ -3333,7 +3333,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   Engine_EventBegin();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
-  BattleFx_SetQueuedSoundAndPlay(SE_170);
+  FieldFx_SetQueuedSoundAndPlay(SE_170);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
@@ -3397,7 +3397,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Engine_EventBegin();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
-  BattleFx_SetQueuedSoundAndPlay(SE_170);
+  FieldFx_SetQueuedSoundAndPlay(SE_170);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);

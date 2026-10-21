@@ -43,7 +43,7 @@ s32 Menu_ResumeFieldTasks(void) {
   // FLAG_WEATHER_HELD freezes the field weather: its particles hold
   // their frame and the storm's lightning waits (psynergy_effects/weather.c).
   GameFlag_ClearBitFar(FLAG_WEATHER_HELD);
-  // FLAG_PALETTE_BLEND_HELD stops BattlePalette_UpdateBlend.
+  // FLAG_PALETTE_BLEND_HELD stops ColorBuffer_Update.
   GameFlag_ClearBitFar(FLAG_PALETTE_BLEND_HELD);
 #ifdef UBFIX
   return 0;

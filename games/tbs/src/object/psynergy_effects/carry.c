@@ -8,8 +8,8 @@ STATIC_ASSERT(sizeof(struct EffectVector) == 0x0c);
 
 /// Scheduler callback while Carry holds its target: drops one particle a
 /// frame round the lifted object, 8 to 24 pixels above it and 0 to 48 pixels
-/// away in a random direction (BattleFx_InitializeFallingFragment).
-void BattleFx_SpawnFallingParticles(void) {
+/// away in a random direction (FieldFx_InitializeFallingFragment).
+void FieldFx_SpawnFallingParticles(void) {
   struct FieldActor *liftedObject;
   struct EffectVector position;
   struct ItemBreakFragmentObject *fragment;
@@ -25,7 +25,7 @@ void BattleFx_SpawnFallingParticles(void) {
 
   fragment = (struct ItemBreakFragmentObject *)Object_Spawn(
       SPRITE_SPARKLE, position.x, position.y, position.z);
-  BattleFx_InitializeFallingFragment(fragment);
+  FieldFx_InitializeFallingFragment(fragment);
 }
 
 #define CARRY_SHARD_MAX 20 ///< shards
@@ -34,8 +34,8 @@ void BattleFx_SpawnFallingParticles(void) {
 /// carried target passes over ground up to 24 pixels above its own (a step
 /// allows 8). Restores the reference before returning the collision result.
 static __inline__ s32
-BattleFx_CheckRaisedTargetCollision(struct FieldActor *target,
-                                    struct EffectVector *position) {
+FieldFx_CheckRaisedTargetCollision(struct FieldActor *target,
+                                   struct EffectVector *position) {
   s32 collision;
 
   target->terrainHeight += 16 << 16;
@@ -52,7 +52,7 @@ BattleFx_CheckRaisedTargetCollision(struct FieldActor *target,
 /// Abilities: Carry (FIELD_KIND_CARRY).
 ///
 /// Where the way is blocked a buzzer sounds.
-void BattleFx_SteerLiftedTarget(s32 targetId) {
+void FieldFx_SteerLiftedTarget(s32 targetId) {
   struct BattleFxScene *work;
   struct FieldActor *src;
   struct FieldActor *target;
@@ -74,7 +74,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   FieldFx_FadeToEffectColor();
   src->linkedObject = target;
   ObjectDispatch_InitializeFar((struct DispatchObject *)src,
-                               gBattleFx_SourceHoldScript);
+                               gFieldFx_SourceHoldScript);
 
   // The hands appear 32 pixels to either side and move to 16 pixels.
   /* FAKEMATCH(temporary): the position reached through p everywhere but in
@@ -82,14 +82,14 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
    * everywhere, 10 of 531 instructions differ in tbs-en. */
   p = &pos;
   SET_POSITION(p, work->x, work->y + (16 << 16), work->z);
-  obj = (struct FieldActor *)BattleFx_SpawnItemBreakMode1(p->x + (32 << 16),
-                                                          p->y, p->z, 0x8000);
+  obj = (struct FieldActor *)FieldFx_SpawnItemBreakMode1(p->x + (32 << 16),
+                                                         p->y, p->z, 0x8000);
   hands[0] = obj;
-  right = (struct FieldActor *)BattleFx_SpawnItemBreakMode1(p->x - (32 << 16),
-                                                            p->y, p->z, 0);
+  right = (struct FieldActor *)FieldFx_SpawnItemBreakMode1(p->x - (32 << 16),
+                                                           p->y, p->z, 0);
   hands[1] = right;
   if (hands[0] == NULL || right == NULL) {
-    BattleFx_PrepareBufferInterpolation();
+    FieldFx_FadeFromEffectColor();
     return;
   }
   WaitFrames(15);
@@ -109,7 +109,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating (motion
   // flag bit 2) with no shadow and its colours cycling.
   target->update = ObjectGroup_ApplyRandomChildValues;
-  Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 0xc80);
+  Scheduler_AddOrUpdateCallback(FieldFx_SpawnFallingParticles, 0xc80);
   AudioCommand_PlayFar(SE_130);
   target->motionFlags = 4;
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
@@ -177,7 +177,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     // instructions differ in tbs-en.
     if (i != 0)
       goto blocked;
-    if (BattleFx_CheckRaisedTargetCollision(target, p) > 0) {
+    if (FieldFx_CheckRaisedTargetCollision(target, p) > 0) {
     blocked: // the way is blocked: a buzzer every 16 frames
       ObjectDispatch_SelectAnimationFar(hands[0], 4);
       ObjectDispatch_SelectAnimationFar(hands[1], 4);
@@ -228,7 +228,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   //------------------------------------------------------------------
   ObjectDispatch_SelectAnimationFar(hands[0], 4);
   ObjectDispatch_SelectAnimationFar(hands[1], 4);
-  Scheduler_RemoveCallback(BattleFx_SpawnFallingParticles);
+  Scheduler_RemoveCallback(FieldFx_SpawnFallingParticles);
   AudioCommand_PlayFar(SE_135);
   WaitFrames(15);
   AudioCommand_PlayFar(SE_135);
@@ -244,7 +244,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       *walk++ = obj;
       if (obj != NULL) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
-                                     gBattleFx_FragmentScript);
+                                     gFieldFx_FragmentScript);
         obj->speed = Random16() + (2 << 16);
         obj->acceleration = 2 << 16;
         obj->motionFlags = 0;
@@ -280,11 +280,11 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
     WaitFrames(1);
     for (i = 0; i < 90 && target->velocityY < 0; i++)
       WaitFrames(1);
-    BattleFx_SpawnRadialParticleRing((struct MotionObject *)target);
-    BattleFx_PrepareBufferInterpolation();
+    FieldFx_SpawnRadialParticleRing((struct MotionObject *)target);
+    FieldFx_FadeFromEffectColor();
     WaitFrames(30);
   } else {
-    BattleFx_PrepareBufferInterpolation();
+    FieldFx_FadeFromEffectColor();
   }
 }
 
@@ -293,15 +293,15 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
 /// scatter into shards.
 ///
 /// Abilities: Carry (FIELD_KIND_CARRY).
-DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunCarry, BattleFx_SpawnItemBreakMode1)
+DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunCarry, FieldFx_SpawnItemBreakMode1)
 
 /// Spawns a hand (object 215) with the item break sound, in animation 1, and
 /// grows it, spinning 1/8 turn a frame, from a quarter to full size over 24
 /// frames; angle is the way it faces once grown. Returns the hand, or NULL
 /// when it cannot be spawned (Object_Spawn); Carry and its no-target effect
 /// release it.
-struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
-                                                  s32 angle) {
+struct MotionObject *FieldFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
+                                                 s32 angle) {
   struct MotionObject *fragment;
   s32 scale;
 

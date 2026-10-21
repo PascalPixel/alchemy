@@ -71,11 +71,11 @@
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.BattleFx_StartFadeOverlay, 1
+	.set import.FieldFx_StartFadeOverlay, 1
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.BattleFx_SetQueuedSoundAndPlay, 1
-	.set import.BattleFx_PlayQueuedSound, 1
+	.set import.FieldFx_SetQueuedSoundAndPlay, 1
+	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

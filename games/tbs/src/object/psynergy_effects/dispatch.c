@@ -13,11 +13,11 @@
 /// its own event.
 void Field_DispatchTypeHandler(s32 kind) {
   if (kind == PSYNERGY_STEP_UNTARGETED)
-    BattleFx_Run();
+    FieldFx_Run();
   else if (kind == PSYNERGY_STEP_ON_TARGET)
-    BattleFx_DispatchRequestKind();
+    FieldFx_DispatchRequestKind();
   else if (kind == PSYNERGY_STEP_FINISH)
-    BattleFx_ClearChildValueOnMismatch();
+    FieldFx_ClearChildValueOnMismatch();
   else if (kind == PSYNERGY_STEP_EXTRA)
     FieldEvent_RunTypeHandler();
 }
@@ -31,7 +31,7 @@ void _call_via_r3(s32, s32);
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
 /// also moves gGameState.pausedObject to the actor it stops.
-void BattleFx_Run(void) {
+void FieldFx_Run(void) {
   struct BattleFxScene *scene;
   struct FieldWork *runtime;
   s32 kind;
@@ -77,16 +77,16 @@ void BattleFx_Run(void) {
   case FIELD_KIND_HALT:
     // Free the object stopped before, then stop the nearest one.
     if (gGameState.pausedObject != -1) {
-      BattleFx_ResumeObject(gGameState.pausedObject);
+      FieldFx_ResumeObject(gGameState.pausedObject);
       gGameState.pausedObject = -1;
     }
 
     nearestTargetId =
         Field_FindNearbyPsynergyTarget(gGameState.selectedActor, kind);
-    nearestTargetId = BattleFx_FilterObjectIdByFlags(nearestTargetId);
+    nearestTargetId = FieldFx_FilterObjectIdByFlags(nearestTargetId);
     if (Scene_FindActorTalkEvent(nearestTargetId) != 0) {
-      BattleFx_SetupObjectPair(gGameState.selectedActor, nearestTargetId);
-      BattleFx_MarkChildAndRunFallbackTransition(nearestTargetId);
+      FieldFx_SetupObjectPair(gGameState.selectedActor, nearestTargetId);
+      FieldFx_RunHaltOnTarget(nearestTargetId);
       FieldFx_PauseObject(nearestTargetId);
       gGameState.pausedObject = nearestTargetId;
     } else {
@@ -120,10 +120,10 @@ void BattleFx_Run(void) {
 /// Called by Field_UsePsynergy when a scene event names the target
 /// (FLAG_PSYNERGY_TARGET still set after the before event), and by
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears scene->enabled
-/// first: that is how the runners BattleFx_Run shares (Force, Frost, Ply,
+/// first: that is how the runners FieldFx_Run shares (Force, Frost, Ply,
 /// Whirlwind, Catch) tell that a scene event decides what happens to the
 /// target. Halt also moves gGameState.pausedObject to the target.
-void BattleFx_DispatchRequestKind(void) {
+void FieldFx_DispatchRequestKind(void) {
   struct BattleFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
   struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
   s32 kind = scene->fieldKind;
@@ -140,13 +140,13 @@ void BattleFx_DispatchRequestKind(void) {
     break;
   case FIELD_KIND_MOVE:
     // Push the target with the direction keys.
-    BattleFx_SteerPushedTarget(targetId);
+    FieldFx_SteerPushedTarget(targetId);
     break;
   case FIELD_KIND_LIFT:
     FieldFx_RunLiftOnTarget(targetId);
     break;
   case FIELD_KIND_CARRY:
-    BattleFx_SteerLiftedTarget(targetId);
+    FieldFx_SteerLiftedTarget(targetId);
     break;
   case FIELD_KIND_FORCE:
     FieldFx_RunForceOnTarget(targetId);
@@ -162,12 +162,12 @@ void BattleFx_DispatchRequestKind(void) {
     break;
   case FIELD_KIND_HALT:
     if (gGameState.pausedObject != -1) {
-      BattleFx_ResumeObject(gGameState.pausedObject);
+      FieldFx_ResumeObject(gGameState.pausedObject);
       gGameState.pausedObject = -1;
     }
     FieldFx_PauseObject(targetId);
     gGameState.pausedObject = targetId;
-    BattleFx_MarkChildAndRunFallbackTransition(targetId);
+    FieldFx_RunHaltOnTarget(targetId);
     break;
   case FIELD_KIND_PLY:
     FieldFx_RunPlyOnTarget(targetId);
@@ -198,11 +198,11 @@ void BattleFx_DispatchRequestKind(void) {
 /// Called by Field_UsePsynergy after the after event, and by
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
 /// whose effect stays up through the after event, the conversation it reads.
-void BattleFx_ClearChildValueOnMismatch(void) {
+void FieldFx_ClearChildValueOnMismatch(void) {
   struct BattleFxScene *scene = gEffectWork;
 
   if (scene->fieldKind == FIELD_KIND_MIND_READ) {
-    BattleFx_FinishSceneAndReleaseHeapBlock();
+    FieldFx_FinishSceneAndReleaseHeapBlock();
     if (gGameState.pausedObject != scene->secondObjectId) {
       ((struct ObjectRuntime *)scene->child)->movementState = 0;
     }
@@ -319,7 +319,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
 // From here on objects are passed in each function's own view of them.
 
 /// Counts the free blocks (owner 0xff) of the 512 resource blocks.
-/// BattleFx_LoadActionEffectResources subtracts this from VRAM_BLOCK_COUNT to
+/// FieldFx_LoadActionEffectResources subtracts this from VRAM_BLOCK_COUNT to
 /// record the blocks already occupied before the effect starts.
 s32 ResourceTable_CountFreeBlocks(void) {
   u8 *marker = gResourceBlockOwners;

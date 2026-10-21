@@ -33,7 +33,7 @@ void FieldFx_BlinkAvoidCaster(void) {
 /// FieldFx_RunAvoid makes it the caster's callback; it counts the caster's
 /// step and turns its angle. The arcs draw with the tiles FieldFx_RunAvoid
 /// loads into scene->arcTileSlot.
-void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
+void FieldFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   struct ArcEffectObject *caster = (struct ArcEffectObject *)fieldObject;
   s16 phase;
   s32 elapsedFrames;
@@ -44,9 +44,9 @@ void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   // SceneId_Clear is the world map's map (Field_RunScene).
   if (gGameState.map == (s32)&SceneId_Clear) {
     if (elapsedFrames % 7 == 0)
-      BattleFx_SpawnDescendingArcParticles((struct FieldActor *)caster);
+      FieldFx_SpawnDescendingArcParticles((struct FieldActor *)caster);
   } else if (elapsedFrames % 5 == 0) {
-    BattleFx_SpawnDescendingArcParticles((struct FieldActor *)caster);
+    FieldFx_SpawnDescendingArcParticles((struct FieldActor *)caster);
   }
 
   if (phase == 1)
@@ -83,7 +83,7 @@ void FieldEvent_ShowStatusMessage(void) {
 /// off, and the game says "Monsters won't attack so often now.". FLAG_ITEM_USE
 /// marks it as cast from the Sacred Feather.
 ///
-/// Called by BattleFx_Run and BattleFx_DispatchRequestKind. Sets
+/// Called by FieldFx_Run and FieldFx_DispatchRequestKind. Sets
 /// gGameState.avoidDistance and avoidByItem; the leader's steps count the
 /// distance down by their speed (object/step.c), 2,400 pixels in all.
 void FieldFx_RunAvoid(void) {
@@ -108,11 +108,11 @@ void FieldFx_RunAvoid(void) {
     // The arcs' tiles (256 bytes) stay loaded until the effect's end; the
     // distance is 2,400 pixels in 16.16.
     *tileSlot = slot;
-    VramCache_Load((s16)slot, 0x100, gBattleFx_ArcSparkTiles);
+    VramCache_Load((s16)slot, 0x100, gFieldFx_ArcSparkTiles);
     gGameState.avoidDistance = 0x09600000;
     gGameState.avoidByItem = GameFlag_TestFar(FLAG_ITEM_USE);
     Animation_ApplyChildValuesFar((struct DispatchObject *)object, zero);
-    object->callback = BattleFx_UpdatePairedArcSpawner;
+    object->callback = FieldFx_UpdatePairedArcSpawner;
     object->phase = zero;
     object->step = zero;
   }

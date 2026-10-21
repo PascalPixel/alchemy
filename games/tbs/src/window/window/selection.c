@@ -1420,7 +1420,7 @@ s32 Menu_RunTopSelection(void) {
 #if defined(HAS_LOCALIZED_MENU_GUARD)
     state[0xcca] = 1;
     if (*(s16 *)(state + 0xcb8) != 0) {
-      BattleFx_ClearRandomParticlesFar();
+      FieldFx_ClearRandomParticlesFar();
       WaitFrames(1);
     }
 #endif

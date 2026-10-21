@@ -9,13 +9,13 @@
 /// Opposite directions cancel, so a third held direction still counts.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
-  return gBattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15];
+  return gFieldFx_CyclePatternWords[(gKeysHeld >> 4) & 15];
 }
 
-/// Per-frame update of Move's hand (BattleFx_StartItemBreak): turns it toward
+/// Per-frame update of Move's hand (FieldFx_StartItemBreak): turns it toward
 /// the object it is linked to, at most 1/16 turn a frame, and sheds a particle
 /// (SPRITE_SPARKLE) round it.
-void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
+void FieldFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   struct FieldActor *source = (struct FieldActor *)fieldObject;
   struct FieldActor *target;
   struct EffectVector position;
@@ -51,7 +51,7 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 
   fragment = (struct ItemBreakFragmentObject *)Object_Spawn(
       SPRITE_SPARKLE, position.x, position.y, position.z);
-  BattleFx_InitializeFallingFragment(fragment);
+  FieldFx_InitializeFallingFragment(fragment);
 }
 
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel tile
@@ -65,7 +65,7 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 /// Where the target cannot go, an error sound plays every 16 frames. When the
 /// push would run into the caster, the caster blocks it or, when the tile
 /// beyond is free, is pushed along too.
-void BattleFx_SteerPushedTarget(s32 targetId) {
+void FieldFx_SteerPushedTarget(s32 targetId) {
   struct EffectVector position;
   struct EffectVector beyond;
   struct BattleFxScene *work;
@@ -95,10 +95,10 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   FieldFx_FadeToEffectColor();
   user->linkedObject = target;
   ObjectDispatch_InitializeFar((struct DispatchObject *)user,
-                               gBattleFx_SourceHoldScript);
-  pusher = BattleFx_StartItemBreak(user);
+                               gFieldFx_SourceHoldScript);
+  pusher = FieldFx_StartItemBreak(user);
   if (pusher == NULL) {
-    BattleFx_PrepareBufferInterpolation();
+    FieldFx_FadeFromEffectColor();
     return;
   }
 
@@ -110,7 +110,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   Vector_AddPolarOffset(16 << 16, angle, candidate);
   Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, candidate->x,
                           candidate->y, candidate->z);
-  BattleFx_SnapScaleToFull((struct MotionObject *)pusher);
+  FieldFx_SnapScaleToFull((struct MotionObject *)pusher);
   // The hand floats (motion flag bit 2) at up to 4 pixels a frame. The
   // target cycles its colours, keeps its facing while it moves, and reads
   // its ground from the overhead layer.
@@ -213,7 +213,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     x = position.x;
     z = position.z;
     ObjectDispatch_SelectAnimationFar(
-        pusher, gBattleFx_QuadrantModes[(u16)(angle - direction) >> 14]);
+        pusher, gFieldFx_QuadrantModes[(u16)(angle - direction) >> 14]);
     WaitFrames(15);
     target->paused = 0;
     target->speed = 0x3333;
@@ -251,14 +251,14 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   EffectRuntime_StopCurrentObject();
   if (moved == 1)
     (Object_GetById(work->firstObjectId))->steeringFlags |= 1;
-  BattleFx_PrepareBufferInterpolation();
+  FieldFx_FadeFromEffectColor();
   UpdateRisingParticleBurst(pusher);
 }
 
 /// Effect slot callback of a particle that flies 30 pixels out from where it
 /// started, comes back and is freed. It goes out straight at up to 4 pixels a
 /// frame and comes back turning at most 1/64 turn a frame, so it curves home.
-void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *slot) {
+void FieldFx_UpdateOrbitAndReturn(struct EffectSlot *slot) {
   // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
   // changes native instructions; retain the immediate retry until a plain form
   // matches.
@@ -303,7 +303,7 @@ next_state:
 
   if (state == OUT_AND_BACK_FLYING_BACK &&
       EffectSlot_HasPendingTarget(slot) == 0)
-    BattleFx_ClearOwnedSlot(slot);
+    FieldFx_ClearOwnedSlot(slot);
 }
 
 /// When Move is cast with no target, the hand appears beside the caster for 30
@@ -324,13 +324,13 @@ void FieldFx_RunMove(void) {
   do {
     FieldFx_FadeToEffectColor();
   } while (0);
-  object = BattleFx_StartItemBreak(object);
-  BattleFx_SnapScaleToFull(object);
+  object = FieldFx_StartItemBreak(object);
+  FieldFx_SnapScaleToFull(object);
   if (object != 0) {
     ObjectDispatch_SelectAnimationFar(object, 4);
     WaitFrames(30);
   }
-  BattleFx_PrepareBufferInterpolation();
+  FieldFx_FadeFromEffectColor();
   UpdateRisingParticleBurst(object);
 }
 
@@ -338,7 +338,7 @@ void FieldFx_RunMove(void) {
 /// and moves it 16 pixels the way object faces (to the nearest quarter
 /// turn), with 8 particles round it. Returns the hand, or 0 when it cannot be
 /// spawned (Object_Spawn); the caller releases it (UpdateRisingParticleBurst).
-void *BattleFx_StartItemBreak(void *object) {
+void *FieldFx_StartItemBreak(void *object) {
   struct MotionObject *source = object;
   struct MotionObject *parent;
   struct MotionObject *child;
@@ -356,7 +356,7 @@ void *BattleFx_StartItemBreak(void *object) {
     return 0;
   parent->scaleY = 0x4000;
   parent->scaleX = 0x4000;
-  parent->update = BattleFx_UpdateItemBreakFragment;
+  parent->update = FieldFx_UpdateItemBreakFragment;
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
@@ -371,7 +371,7 @@ void *BattleFx_StartItemBreak(void *object) {
         SPRITE_SPARKLE, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)child,
-                                   gBattleFx_FragmentScript);
+                                   gFieldFx_FragmentScript);
       speed = Random16() + 0x10000;
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
@@ -394,7 +394,7 @@ void *BattleFx_StartItemBreak(void *object) {
 /// 0xffff: 0x10000 from a multiple of 1/16) when it is smaller, then waits,
 /// at most 600 frames, for it to arrive at its target. Called by both Move
 /// effects on the hand.
-void BattleFx_SnapScaleToFull(struct MotionObject *obj) {
+void FieldFx_SnapScaleToFull(struct MotionObject *obj) {
   s32 next;
   s32 scale;
 
@@ -442,7 +442,7 @@ void UpdateRisingParticleBurst(void *object) {
       s32 unit = 0x10000;
 
       ObjectDispatch_InitializeFar((struct DispatchObject *)child,
-                                   gBattleFx_FragmentScript);
+                                   gFieldFx_FragmentScript);
       speed = Random16();
       child->acceleration = unit;
       child->speedLimit = speed + unit;

@@ -524,12 +524,12 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
     case 1:
       ObjectDispatch_SelectAnimationFar(object, 2);
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   (const s32 *)gBattleFx_BurstParticleScriptA);
+                                   (const s32 *)gFieldFx_BurstParticleScriptA);
       break;
     default:
       ObjectDispatch_SelectAnimationFar(object, 1);
       ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                                   (const s32 *)gBattleFx_BurstParticleScriptB);
+                                   (const s32 *)gFieldFx_BurstParticleScriptB);
       break;
     }
 
@@ -557,7 +557,7 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
 /// FACING_SOUTH) while sinking 28 pixels with a dust puff every other frame
 /// (none when param is -1), then jumps on to 16 pixels south of where it
 /// started and lands. The landing plays the queued sound
-/// (BattleFx_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
+/// (FieldFx_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
 /// (MAP_CELL_LEDGE) with pose 6 and param 0, and by seven scenes through
 /// FieldBattleFx_RunRisingObjectSequence; Mercury Lighthouse passes -1.
 void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
@@ -614,7 +614,7 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
       WaitFrames(1);
     }
     WaitFrames(2);
-    BattleFx_PlayQueuedSound();
+    FieldFx_PlayQueuedSound();
   }
 }
 

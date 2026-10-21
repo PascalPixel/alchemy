@@ -937,7 +937,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
       Map_CopyCells(43, 56, 4, 2, 116, 126);
     } else if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
       v5 = 124;
-      BattleFx_SetQueuedSoundAndPlay(169);
+      FieldFx_SetQueuedSoundAndPlay(169);
       Map_CopyCells(8, 14, 4, 4, 64, v5);
       Map_CopyCells(6, 18, 4, 4, 68, v5);
       Map_CopyCells(10, 21, 4, 4, 72, v5);

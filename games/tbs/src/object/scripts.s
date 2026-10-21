@@ -254,11 +254,11 @@ DisplayTransition_ShapesTail:
 	.global gObjectMotion_LaunchScript
 gObjectMotion_LaunchScript:
 	.4byte 1, 0, 1, 28, 1, 34, ObjectMotion_StepAngle, 16
-	.global gBattleFx_BurstParticleScriptA
-gBattleFx_BurstParticleScriptA:
+	.global gFieldFx_BurstParticleScriptA
+gFieldFx_BurstParticleScriptA:
 	.4byte 0, 1, 12, 38, 0, 27
-	.global gBattleFx_BurstParticleScriptB
-gBattleFx_BurstParticleScriptB:
+	.global gFieldFx_BurstParticleScriptB
+gFieldFx_BurstParticleScriptB:
 	.4byte 0, 1, 12, 18, 0, 27
 	.global gObjectMotion_StepAngleScript
 gObjectMotion_StepAngleScript:
@@ -266,8 +266,8 @@ gObjectMotion_StepAngleScript:
 	.global gUi_RenderResultValues
 gUi_RenderResultValues:
 	.byte 1, 3, 10, 0
-	.global gBattleFx_LinkedObjectScript
-gBattleFx_LinkedObjectScript:
+	.global gFieldFx_LinkedObjectScript
+gFieldFx_LinkedObjectScript:
 	.4byte 22, 9, 0xffff8000, 22, 10, 16384, 0, 2
 	.4byte 22, 9, 16384, 22, 10, 0xffffe000, 0, 2
 	.4byte 22, 9, 8192, 22, 10, 0xfffff000, 0, 2
@@ -327,16 +327,16 @@ gFieldFx_MoteTiles:
 gFieldFx_SparkleTiles:
 	.incbin "games/tbs/src/field/common/effect/sparkle.4bpp16x16.plz"
 	.balign 4, 0
-	.global gBattleFx_TargetColors
-gBattleFx_TargetColors:
+	.global gFieldFx_TargetColors
+gFieldFx_TargetColors:
 	.4byte 2113668, 2101764, 2101392, 2114052
 	.4byte 2113680, 2101776, 2105608, 2114064
-	.global gBattleFx_UntargetedObjectScript
-gBattleFx_UntargetedObjectScript:
+	.global gFieldFx_UntargetedObjectScript
+gFieldFx_UntargetedObjectScript:
 	.4byte 27
 	.global gEffectScripts
 gEffectScripts:
-	.4byte gBattleFx_ShortEffectScript, gBattleFx_MediumEffectScript, gBattleFx_LongEffectScript
+	.4byte gFieldFx_ShortEffectScript, gFieldFx_MediumEffectScript, gFieldFx_LongEffectScript
 @ {tile << 16 | flag, place name}
 	.global gWorldMap_PlaceMarkers
 gWorldMap_PlaceMarkers:

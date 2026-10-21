@@ -169,7 +169,7 @@ static void Event_PushWestPillar(void) {
   WAIT(20);
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_MoveWestPillar();
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   EV_END();
 }
 
@@ -200,7 +200,7 @@ s32 Scene_Initialize(void) {
 
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   WAIT(10);
-  BattleFx_SetQueuedSoundAndPlay(SE_170);
+  FieldFx_SetQueuedSoundAndPlay(SE_170);
   OBJ_MODE(11, 2);
   Object_GetById(11)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
@@ -255,7 +255,7 @@ static void Event_IvanRejoins(void) {
   struct FieldActor *leader;
 
 #if TBS_PATCH_1
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
 #endif
   EV_BEGIN();
   WAIT(30);
@@ -346,7 +346,7 @@ static void Event_IvanRejoins(void) {
     OBJ_MODE(IVAN, ANIM_STAND);
     WAIT(20);
 #if TBS_PATCH_1
-    BattleFx_PlayQueuedSound();
+    FieldFx_PlayQueuedSound();
 #endif
     OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
     OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 60);
@@ -482,8 +482,8 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   u8 *effectWork;
 
   effectWork = gEffectWork;
-  BattleFx_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
-  BattleFx_SetupObjectPair(IVAN, STUMP_IVY);
+  FieldFx_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
+  FieldFx_SetupObjectPair(IVAN, STUMP_IVY);
   {
     u8 *f = (u8 *)((s32)effectWork + 0x71c);
     s32 t = 8;

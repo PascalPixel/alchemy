@@ -78,7 +78,7 @@ s32 Field_RunScene(s32 entrance) {
   }
   Field_PlaceMapMarkers();
   ColorBuffer_Initialize();
-  BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
+  ColorBuffer_SetTarget(0x10000, 0);
   // The default fade is from the backdrop colour over 16 frames; the scene's
   // initialization may choose another.
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -209,7 +209,7 @@ s32 Field_RunScene(s32 entrance) {
             Map_ShowWorldMap((s32)&ResourceId_WorldMapPicture);
           } else if (work->event == FIELD_EVENT_WORLD_MAP_ZOOM) {
             Leader_StopMoving();
-            BattleFx_RunVisibilityTransition();
+            FieldFx_RunVisibilityTransition();
           } else {
             Scene_RunRaisedEvent(work->event);
           }

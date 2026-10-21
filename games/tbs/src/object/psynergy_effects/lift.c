@@ -9,7 +9,7 @@
 ///
 /// Abilities: Lift (FIELD_KIND_LIFT).
 ///
-/// This is Lift cast on a target, which BattleFx_DispatchRequestKind calls.
+/// This is Lift cast on a target, which FieldFx_DispatchRequestKind calls.
 /// It leaves the target raised and floating (motion flag bit 2), with its
 /// update set to ObjectGroup_ApplyRandomChildValues.
 void FieldFx_RunLiftOnTarget(s32 unused) {
@@ -32,7 +32,7 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   // The caster's script starts 3 words into the common particle script, with
   // the target as its argument.
   caster->argument = (s32)target;
-  ObjectDispatch_InitializeFar(caster, gBattleFx_CommonParticleScript + 3);
+  ObjectDispatch_InitializeFar(caster, gFieldFx_CommonParticleScript + 3);
 
   x = work->x;
   pos[0] = x;
@@ -40,8 +40,8 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   pos[1] = y;
   z = work->z;
   pos[2] = z;
-  pair[0] = BattleFx_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
-  pair[1] = BattleFx_SpawnItemBreakMode3(pos[0] - 0x200000, pos[1], pos[2], 0);
+  pair[0] = FieldFx_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
+  pair[1] = FieldFx_SpawnItemBreakMode3(pos[0] - 0x200000, pos[1], pos[2], 0);
 
   // Each hand faces the target (angle 0x8000 on the right, 0 on the left) and
   // moves 14 pixels that way.
@@ -72,7 +72,7 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   // The hands burst into particles; the target stays up.
   UpdateRisingParticleBurst(pair[0]);
   UpdateRisingParticleBurst(pair[1]);
-  BattleFx_PrepareBufferInterpolation();
+  FieldFx_FadeFromEffectColor();
 }
 
 /// Two hands appear 16 pixels above the spot in front of the caster, 32
@@ -80,17 +80,17 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
 ///
 /// Abilities: Lift (FIELD_KIND_LIFT).
 ///
-/// This is Lift cast with no target, which BattleFx_Run calls.
-DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunLift, BattleFx_SpawnItemBreakMode3)
+/// This is Lift cast with no target, which FieldFx_Run calls.
+DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunLift, FieldFx_SpawnItemBreakMode3)
 
 /// Spawns a hand (object 215) and grows it, spinning, from a quarter to full
 /// size over 24 frames; angle is the way it faces once grown. Makes Lift's
 /// two hands, for FieldFx_RunLiftOnTarget and FieldFx_RunLift; returns NULL
 /// when no object could be spawned. Unlike Carry's
-/// (BattleFx_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
+/// (FieldFx_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
 /// autoFaceMotion as created; both are at sprite priority 0 (Object_Spawn).
-struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
-                                                  s32 angle) {
+struct MotionObject *FieldFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
+                                                 s32 angle) {
   struct MotionObject *fragment;
   s32 scale;
 
@@ -120,7 +120,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
 /// Effect slot callback of a particle that scatters 25 pixels from its origin
 /// in a random direction, then gathers beside the main object and is freed.
 /// Set on Force's 12 flashes by FieldFx_RunForce in force.c.
-void BattleFx_UpdateRadialBurst(struct EffectSlot *slot) {
+void FieldFx_UpdateRadialBurst(struct EffectSlot *slot) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
@@ -174,12 +174,12 @@ again:
 
   if (state == OUT_AND_BACK_FLYING_BACK &&
       EffectSlot_HasPendingTarget(slot) == 0)
-    BattleFx_ClearOwnedSlot(slot);
+    FieldFx_ClearOwnedSlot(slot);
 }
 
 /// A heavy impact: places object 0x11b 32 pixels below the source for 20
 /// frames and scatters 12 shards from it. Reached through SC_CALL in
-/// gBattleFx_HeavyImpactScript (fxdata.c), where the interpreter is the
+/// gFieldFx_HeavyImpactScript (fxdata.c), where the interpreter is the
 /// object running the script, which Force's thrown object runs (force.c).
 /// Returns 0, so the script moves on and frees the object.
 s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
@@ -198,7 +198,7 @@ s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
     impact->flags = 0;
     impact->wait = 20;
     ObjectDispatch_InitializeFar((struct DispatchObject *)impact,
-                                 gBattleFx_CommonParticleScript);
+                                 gFieldFx_CommonParticleScript);
   }
 
   // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
@@ -206,7 +206,7 @@ s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
     fragment = Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
       ObjectDispatch_InitializeFar((struct DispatchObject *)fragment,
-                                   gBattleFx_FragmentScript);
+                                   gFieldFx_FragmentScript);
       fragment->speedLimit = Random16() + (1 << 16);
       fragment->acceleration = 1 << 16;
       fragment->flags = 0;

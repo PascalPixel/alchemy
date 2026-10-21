@@ -162,7 +162,7 @@ enum ItemUseMode {
   /// cannot wear or that teaches Psynergy, or its action is usable only in
   /// battle.
   ITEM_USE_MODE_UNUSABLE = -1,
-  /// It works on the field (BattleFx_HasTriggerFar), or its action is usable
+  /// It works on the field (FieldFx_HasTriggerFar), or its action is usable
   /// neither in the field nor in battle, and is used once the menu closes.
   ITEM_USE_MODE_FROM_FIELD = 0,
   ITEM_USE_MODE_CHOOSE_MEMBER = 1, ///< choose a party member to use it on

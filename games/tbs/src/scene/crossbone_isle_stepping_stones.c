@@ -1597,7 +1597,7 @@ s32 Scene_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Object_GetById(ACTOR_PARTY_LEADER)->riseCounter = 1;
     }
-    BattleFx_StartFadeOverlay(0);
+    FieldFx_StartFadeOverlay(0);
     if (Object_GetById(ACTOR_PARTY_LEADER)->riseCounter == 0) {
       Event_StopRising();
     }

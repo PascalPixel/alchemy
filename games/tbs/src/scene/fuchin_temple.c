@@ -373,7 +373,7 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   FieldFx_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
                 -0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
   WAIT(30);
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   Map_CopyCellAttributes(10, 24, 1, 1, 10, 22);
   Engine_GameFlagSet(FLAG_FUCHIN_FALLS_GROTTO_OPENED);
   EV_END();
@@ -2372,7 +2372,7 @@ s32 Scene_Initialize(void) {
       }
     }
   } else {
-    BattleFx_SetQueuedSoundAndPlay(SE_170);
+    FieldFx_SetQueuedSoundAndPlay(SE_170);
     Object_GetById(ACTOR_FALLS_MONK)->collisionFlags |= 16;
     if (gGameState.entrance ==
             FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE &&

@@ -3050,7 +3050,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Actor_FaceDirection(IVAN, FACING_EAST, 0);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  temporaryActor = (struct FieldActor *)BattleFx_PlayCueAndStartEmitterOnTarget(
+  temporaryActor = (struct FieldActor *)FieldFx_PlayCueAndStartEmitterOnTarget(
       IVAN, ACTOR_THIRD_CHEST, ITEM_SHAMANS_ROD);
   Engine_EventWait(60);
   rod = MsgVaultIvanGotShamansRod;

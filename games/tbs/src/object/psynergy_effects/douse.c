@@ -21,7 +21,7 @@ struct Effect05Object {
   u8 flag; ///< motionFlags: 2 falls, 0 free flight
   u8 reserved56[8];
   /// wait: frames its script waits before it runs on; 2 or 6 here, before
-  /// gBattleFx_CommonParticleScript frees it.
+  /// gFieldFx_CommonParticleScript frees it.
   s16 phase;
   u8 reserved60[0xc];
   void (*callback)(union FieldObject *object); ///< per-frame update
@@ -36,7 +36,7 @@ struct Effect05State {
   s32 initialized;       ///< child: the target's object, 0 for none
   u8 reserved18[8];
   /// enabled: set at the start, cleared when a scene event names the target
-  /// (BattleFx_DispatchRequestKind). Set, 10 particles fall; cleared, 24
+  /// (FieldFx_DispatchRequestKind). Set, 10 particles fall; cleared, 24
   /// drops, or 30 swaying particles in Mercury Lighthouse.
   u8 highArc;
   u8 reserved21[0x13];
@@ -61,7 +61,7 @@ void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
   if (particle->y <= particle->altitude) {
     particle->phase = phase;
     ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
-                                 gBattleFx_CommonParticleScript);
+                                 gFieldFx_CommonParticleScript);
     p = NULL;
     particle->callback = NULL;
 
@@ -84,7 +84,7 @@ void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
       phase2 = 6;
       *pp = phase2;
       ObjectDispatch_InitializeFar((struct DispatchObject *)p,
-                                   gBattleFx_CommonParticleScript);
+                                   gFieldFx_CommonParticleScript);
     }
   }
 }
@@ -92,7 +92,7 @@ void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
 /// Per-frame update: drifts from side to side, up to a pixel a frame, as it
 /// falls 0.3 pixels a frame, and is released on reaching its ground height.
 /// Douse's swaying particles in Mercury Lighthouse.
-void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
+void FieldFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   struct ObjectRuntime *particle = (struct ObjectRuntime *)fieldObject;
   s32 drift;
 
@@ -101,7 +101,7 @@ void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   particle->x += drift - Random16();
   if (particle->y <= particle->terrainHeight) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
-                                 gBattleFx_CommonParticleScript);
+                                 gFieldFx_CommonParticleScript);
   }
 }
 
@@ -116,9 +116,9 @@ void FieldFx_RunDouseOnTarget(s32 unused) { FieldFx_RunDouse(); }
 ///
 /// Abilities: Douse (FIELD_KIND_DOUSE).
 ///
-/// The destination is the target's position (BattleFx_SetupObjectPair);
+/// The destination is the target's position (FieldFx_SetupObjectPair);
 /// with no target it is 16 pixels in front of the caster, on the ground.
-/// Called by BattleFx_Run, and through FieldFx_RunDouseOnTarget.
+/// Called by FieldFx_Run, and through FieldFx_RunDouseOnTarget.
 void FieldFx_RunDouse(void) {
   struct EffectVector pos;
   struct EffectVector start;
@@ -179,7 +179,7 @@ void FieldFx_RunDouse(void) {
       t += step * (e - t) / 10;
       lightOrb->z = t;
     }
-    scale = BattleFx_Interpolate(0x10000, 0x4000, step);
+    scale = FieldFx_Interpolate(0x10000, 0x4000, step);
     lightOrb->scaleX = scale;
     lightOrb->scaleY = scale;
     WaitFrames(1);
@@ -229,7 +229,7 @@ void FieldFx_RunDouse(void) {
       particle = (struct Effect05Object *)Object_Spawn(SPRITE_PARTICLE, pos.x,
                                                        pos.y, pos.z);
       if (particle != 0) {
-        particle->callback = BattleFx_UpdateDriftingFallObject;
+        particle->callback = FieldFx_UpdateDriftingFallObject;
         particle->flag = 0;
         particle->sprite->mode = 2;
         ObjectDispatch_SelectAnimationFar(particle, 8);
@@ -264,12 +264,12 @@ void FieldFx_RunDouse(void) {
       t += step * (e - t) / 10;
       lightOrb->z = t;
     }
-    scale = BattleFx_Interpolate(0x4000, 0x10000, step);
+    scale = FieldFx_Interpolate(0x4000, 0x10000, step);
     lightOrb->scaleX = scale;
     lightOrb->scaleY = scale;
     WaitFrames(1);
     step++;
   } while (step < steps);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)lightOrb);
-  BattleFx_PrepareBufferInterpolation();
+  FieldFx_FadeFromEffectColor();
 }

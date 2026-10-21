@@ -81,7 +81,7 @@ s32 Shop_MsgByMode(s32 messageId) {
 void UiMessage_ShowResolvedAndWait(s32 messageId) {
   s32 portraitResource;
 
-  portraitResource = BattleFx_GetResourceIdFar(
+  portraitResource = FieldFx_GetResourceIdFar(
       ((struct ShopRuntime *)gMenuWork)->keeperResource);
   UiWork_FinalizePendingCoreFar();
   messageId = Shop_MsgByMode(messageId);
@@ -105,7 +105,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
   shop = gMenuWork;
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->active;
-  portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
+  portraitResource = FieldFx_GetResourceIdFar(shop->keeperResource);
   messageId = Shop_MsgByMode(messageId);
   (*cursorSlot)->active = 13;
   UiWork_FinalizePendingCoreFar();
@@ -436,7 +436,7 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
       *statePointer = targetPending;
   } else if (state == SANCTUM_SPARKLE_LAST_FLIGHT) {
     if (EffectSlot_HasPendingTargetFar(effect) == 0)
-      BattleFx_ClearOwnedSlotFar(effect);
+      FieldFx_ClearOwnedSlotFar(effect);
   }
 }
 
@@ -551,7 +551,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
 
       flagEntry += 0x48;
       if (flag != 0) {
-        BattleFx_ClearOwnedSlotFar(effectSlot);
+        FieldFx_ClearOwnedSlotFar(effectSlot);
       }
       effectSlot++;
     }

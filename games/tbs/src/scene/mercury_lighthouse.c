@@ -1865,7 +1865,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Engine_AudioPlayCue(SE_289);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
-  BattleFx_PlayQueuedSound();
+  FieldFx_PlayQueuedSound();
   Engine_EventWait(30);
   // After Saturos the leader goes alone; the first time Mia leads the party.
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -2246,7 +2246,7 @@ s32 MercuryLighthouse_Initialize(void) {
   }
   MercuryLighthouse_RestoreLights(
       21, (struct MercuryLighthouseLights *)gSceneState);
-  BattleFx_StartFadeOverlay(0);
+  FieldFx_StartFadeOverlay(0);
   if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
                                TASK_PRIORITY_SCENE);
@@ -2263,7 +2263,7 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     case MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE:
       SetEffectRecordMode(Object_GetById(ACTOR_PARTY_LEADER), 1);
@@ -2413,7 +2413,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_WEST:
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER:
     case MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_FIVE_PILLARS:
@@ -2542,7 +2542,7 @@ s32 MercuryLighthouse_Initialize(void) {
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
         break;
       MercuryLighthouse_ArriveWithSparks();
-      BattleFx_SetQueuedSoundAndPlay(SE_170);
+      FieldFx_SetQueuedSoundAndPlay(SE_170);
       ColorBuffer_ApplySource(128 << 9, 0);
       Engine_ColorBufferApplyTarget(0x10003, 1);
       Engine_ColorBufferInterpolate(30);

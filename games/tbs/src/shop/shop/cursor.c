@@ -145,16 +145,16 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0, REG_DMA3);
-  BattleFx_ApplyColorToTargetBufferFar(layer, 1);
-  BattleFx_StartBufferInterpolationFar(16);
+  ColorBuffer_SetTargetFar(layer, 1);
+  ColorBuffer_StartInterpolationFar(16);
 }
 
 /// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
 /// frames. Called when the sanctum, Djinn capture or Altmiller wall effect
 /// ends.
 void Shop_RestoreFieldPalette(void) {
-  BattleFx_ApplyColorToTargetBufferFar((s32)gEventWork + 0x236, 1);
-  BattleFx_StartBufferInterpolationFar(0x10);
+  ColorBuffer_SetTargetFar((s32)gEventWork + 0x236, 1);
+  ColorBuffer_StartInterpolationFar(0x10);
 }
 
 /// Moves the cursor from its saved position toward its target, in a straight

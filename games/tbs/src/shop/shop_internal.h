@@ -65,9 +65,9 @@ enum ShopAction {
 /// sells, as Item_GetEquipmentGroup sorts items. It picks the artifacts the
 /// shop lists and which of the keepers' lines it says.
 enum ShopType {
-  SHOP_TYPE_ITEMS = 0,   ///< an item shop: anything not weapons or armor
-  SHOP_TYPE_WEAPONS = 1, ///< a weapon shop
-  SHOP_TYPE_ARMOR = 2 ///< an armor shop: armor, shields, helms, boots, shirts
+  SHOP_TYPE_ITEMS = EQUIPMENT_GROUP_NONE, ///< an item shop
+  SHOP_TYPE_WEAPONS = EQUIPMENT_GROUP_WEAPON,
+  SHOP_TYPE_ARMOR = EQUIPMENT_GROUP_ARMOR
 };
 
 /// The inn the inn's own code names (Inn_CheckIn's innId, a row of

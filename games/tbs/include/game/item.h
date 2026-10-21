@@ -45,6 +45,15 @@ enum ItemFlags {
 #define ITEM_USE_TEACHES 3
 #define ITEM_USE_EMPTIES 4 ///< Hermes' Water leaves an Empty Bottle
 
+/// What kind of thing an item is (Item_GetEquipmentGroup), which picks the
+/// comparison a shop shows.
+enum EquipmentGroup {
+  EQUIPMENT_GROUP_NONE = 0, ///< anything not a weapon or armor, rings included
+  EQUIPMENT_GROUP_WEAPON = 1,
+  /// Armor, shields, helms, boots and shirts.
+  EQUIPMENT_GROUP_ARMOR = 2
+};
+
 /// An item's type (struct ItemDefinition's type, items.tsv's type column).
 /// A unit equips one item of each type, except Psynergy items.
 enum ItemType {

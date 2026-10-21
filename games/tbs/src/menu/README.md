@@ -158,7 +158,7 @@ Djinn and Status screens call it in every edition, the Item screen in every
 edition but the Japanese, and the Psynergy screen only in the German, French,
 Spanish and Italian editions.
 
-### Start closes every screen at once
+### Start backs out of every screen at once
 
 Screens nest. The field menu runs a screen, the screen runs its own command
 loop with `WaitFrames`, and a command may run another loop inside that.
@@ -167,10 +167,11 @@ screens, `Menu_CancelSoundReset` schedules `Menu_CancelSoundTick`, a task
 that watches for Start once a frame while the screen runs. When Start is
 pressed, it plays the cancel sound, sets `FLAG_MENU_START_PRESSED` and
 removes itself. The screens' loops test that flag and return as if
-cancelled, so the nested loops unwind one by one to the field without any of
-them knowing how deep it was. The flag is a game flag rather than a
-variable, so code in other banks can test it with the flag calls it already
-imports. XXX: that last reason is an inference.
+cancelled, so the nested loops unwind one by one without any of them knowing
+how deep it was. The screen itself then returns -1, as if the player had
+backed out of it, and the four icons come up again. The flag is a game flag
+rather than a variable, so code in other banks can test it with the flag
+calls it already imports. XXX: that last reason is an inference.
 
 The Djinn screen does without the watch. Its choosers look for Start
 themselves, play the same cancel sound and return -2, and the screen's loop

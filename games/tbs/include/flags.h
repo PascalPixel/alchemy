@@ -962,12 +962,19 @@
 /// ★ Named from the game: "The Boulder! It's falling!"
 /// (MsgValeTheBoulderIsFalling)
 #define FLAG_VALE_BOULDER_FELL 0x838
-/// Isaac saw the villagers trying to pull Felix from the river.
-/// ★ Named from the game: "Oh no! My brother!" (MsgValeNoBrother)
-#define FLAG_VALE_STORM_SAW_RIVER_RESCUE 0x83a
-/// Jenna came back to the river and the scene there ended with
-/// ValeStorm_ShowBoulderSweepingDownriver. "Mom! Dad! We're back!"
-#define FLAG_VALE_STORM_RIVER_GATHERING_SEEN 0x841
+/// Isaac has seen Felix in the river, clinging on while Kyle and Felix's
+/// parents try to save him and the rope will not reach; the attempt fails
+/// later, when the Boulder comes down
+/// (FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY). ★ Named from the game: "Hang on,"
+/// (MsgValeNoBrother)
+#define FLAG_VALE_STORM_SAW_FELIX_HANGING_ON 0x83a
+/// The Boulder has come down the river and swept away Felix, his parents and
+/// Kyle, as Jenna came back with help (ValeStorm_ShowBoulderSweepingDownriver);
+/// Dora, Jenna, Garet and the villager are left at the bank. Afterwards Dora
+/// says "No... It can't be. Kyle..." and Jenna "Don't leave me all alone...".
+/// ★ Named from the game: "Please... Don't leave me all alone..."
+/// (MsgValeMomDadFelixPleaseDontLeave)
+#define FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY 0x841
 /// After the Boulder swept the river, Isaac went for help and Garet set off
 /// after him. "I can't let him go alone..."
 #define FLAG_VALE_STORM_GARET_LEFT 0x842

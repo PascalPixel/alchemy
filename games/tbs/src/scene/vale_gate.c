@@ -964,7 +964,7 @@ static inline void ValeGate_RejoinParty(s32 actorId) {
 /// Reached by stepping on cell code 20 on the stormy night, until
 /// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set; sets it. The flag is named for
 /// the mayor's first order, but what it records is the boys being sent back:
-/// the river's gathering (vale_storm.c) waits for it.
+/// the return to the river (vale_storm.c) waits for it.
 static void Event_SentToAidElders(void) {
   struct FieldActor *leader;
   s32 skipReply = 0;
@@ -1943,9 +1943,9 @@ static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_VALE_STORM_GARET_JOINED);
   Engine_GameFlagSet(FLAG_VALE_BOULDER_FELL);
   Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
-  Engine_GameFlagSet(FLAG_VALE_STORM_SAW_RIVER_RESCUE);
+  Engine_GameFlagSet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON);
   Engine_GameFlagSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
-  Engine_GameFlagSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN);
+  Engine_GameFlagSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY);
   Engine_GameFlagSet(FLAG_VALE_STORM_GARET_LEFT);
   Engine_GameFlagSet(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN);
   Engine_GameFlagSet(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);

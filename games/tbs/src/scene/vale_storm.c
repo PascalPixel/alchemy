@@ -37,18 +37,18 @@
 ///   FLAG_VALE_BOULDER_FELL; from then on it stays where it slipped to).
 /// - At the river, Jenna's brother Felix has fallen in and is clinging on
 ///   while Kyle and Jenna's parents try to save him
-///   (Event_WitnessRiverRescue, FLAG_VALE_STORM_SAW_RIVER_RESCUE). No one has
-///   Psynergy left, so Dora goes north for help, sends Jenna to the plaza and
-///   asks Isaac and Garet to help: either answer sends them to the plaza, a
-///   yes after Jenna (ValeStorm_RunRiverSearch). VALE_STORM_TO_VALE_GATE leads
-///   there (SceneId_ValeGate, at VALE_GATE_FROM_VALE), where Garet's
-///   grandfather sends the boys back to show Jenna and a man whose Psynergy
-///   the Psynergy Stone has restored the way to the river
-///   (FLAG_VALE_STORM_SENT_TO_AID_ELDERS, vale_gate.c).
-/// - Back at the river (Event_GatherAfterRiverRescue,
-///   FLAG_VALE_STORM_RIVER_GATHERING_SEEN), Jenna finds her parents again and
-///   Dora calls everyone down to save Felix; then the Boulder comes down the
-///   mountain into the river, and once it has passed, Kyle, Jenna's parents
+///   (Event_WatchAttemptToSaveFelix, FLAG_VALE_STORM_SAW_FELIX_HANGING_ON). No
+///   one has Psynergy left, so Dora goes north for help, sends Jenna to the
+///   plaza and asks Isaac and Garet to help: either answer sends them to the
+///   plaza, a yes after Jenna (ValeStorm_RunRiverSearch).
+///   VALE_STORM_TO_VALE_GATE leads there (SceneId_ValeGate, at
+///   VALE_GATE_FROM_VALE), where Garet's grandfather sends the boys back to
+///   show Jenna and a man whose Psynergy the Psynergy Stone has restored the
+///   way to the river (FLAG_VALE_STORM_SENT_TO_AID_ELDERS, vale_gate.c).
+/// - Back at the river (Event_BoulderSweepsThemAway,
+///   FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY), Jenna finds her parents again
+///   and Dora calls everyone down to save Felix; then the Boulder comes down
+///   the mountain into the river, and once it has passed, Kyle, Jenna's parents
 ///   and Felix are gone (ValeStorm_ShowBoulderSweepingDownriver). The man who
 ///   came to help can no longer move. Leaving by VALE_STORM_TO_VALE_GATE now,
 ///   Isaac goes for help and Garet resolves to go after him
@@ -332,11 +332,11 @@ static void Event_LeaveToValeKradenSouth(void) {
 /// In Vale on the stormy night, leaves for the plaza, where the villagers have
 /// gathered (SceneId_ValeGate).
 /// Reached by stepping on cell code 5; arrives at VALE_GATE_FROM_VALE. After
-/// the river gathering, Garet first resolves to go after Isaac
+/// the Boulder swept them away, Garet first resolves to go after Isaac
 /// (ValeStorm_GaretFollowsIsaac).
 static void Event_LeaveToValeGate(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0 &&
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0 &&
       Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_LEFT) == 0) {
     ValeStorm_GaretFollowsIsaac();
   }
@@ -511,7 +511,7 @@ s32 ValeStorm_Initialize(void) {
     Actor_SetActionScript(ACTOR_BOULDER, gValeStorm_BoulderScript);
   }
   // Restore the riverbank cast at the saved stage of the storm.
-  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     s32 facing;
     const s32 *table;
     ValeStorm_RebuildRiverbank();
@@ -571,9 +571,9 @@ s32 ValeStorm_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_LEFT) != 0) {
       Engine_ActorSetPosition(ACTOR_GARET, 0, 0);
     }
-    // After the rescue was seen: Kyle and Jenna's parents at the river, Felix
-    // in it.
-  } else if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SAW_RIVER_RESCUE) != 0) {
+    // While they try to save Felix: Kyle and Jenna's parents at the river,
+    // Felix in it.
+  } else if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
     const s32 *table;
     Actor_SetPosition(ACTOR_KYLE, PIXELS(192), PIXELS(1214));
     Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST, 0);
@@ -791,8 +791,9 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
 /// they cannot get around it.
 /// Reached by stepping on cell code 41 until FLAG_VALE_STORM_FIRST_ROCK_PASSED
 /// is set, which this sets. Sets FLAG_VALE_STORM_FIRST_ROCK_FELL as the rock
-/// falls; with Garet along, before the river gathering, his first comment on
-/// any rock sets FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH.
+/// falls; with Garet along, before the Boulder swept Felix, his parents and
+/// Kyle away, his first comment on any rock sets
+/// FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH.
 static void Event_FirstRockFalls(void) {
   struct FieldActor *rock;
   struct FieldActor *leader;
@@ -835,7 +836,7 @@ static void Event_FirstRockFalls(void) {
     ValeStorm_ApplyFirstRockCollision();
     Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_PASSED);
     if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-      if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
         if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
@@ -909,7 +910,7 @@ static void Event_SecondRockFalls(void) {
     ValeStorm_ApplySecondRockCollision();
     Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_PASSED);
     if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-      if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
         if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
@@ -986,7 +987,7 @@ static void Event_ThirdRockFalls(void) {
     ValeStorm_ApplyThirdRockCollision();
     GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_PASSED);
     if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-      if (GameFlag_IsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) == 0) {
+      if (GameFlag_IsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
         if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
@@ -1054,7 +1055,7 @@ static void Event_FourthRockFalls(void) {
     ValeStorm_ApplyFourthRockCollision();
     Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_ROCK_PASSED);
     if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-      if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
         if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
@@ -1163,7 +1164,7 @@ static void Event_GaretCallsAfterIsaac(void) {
 /// Reached by talking to Garet: before he joins, ValeStorm_RunCallOutSequence
 /// brings him along.
 static void Event_TalkToGaret(void) {
-  if (GameFlag_IsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0) {
+  if (GameFlag_IsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     Engine_EventBegin();
     Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
@@ -1590,14 +1591,16 @@ UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
 }
 
 /// In Vale on the stormy night, at the river, Jenna cries out for her brother
-/// Felix, who has fallen in, as Kyle and her parents try to save him.
-/// "Oh no! My brother!"
-/// Reached by stepping on cell code 35 until FLAG_VALE_STORM_SAW_RIVER_RESCUE
-/// is set, which this sets after ValeStorm_RunRiverSearch.
-static void Event_WitnessRiverRescue(void) {
+/// Felix, who has fallen in and clings on as Kyle and her parents try to save
+/// him. "Oh no! My brother!" The rope will not reach and no one has Psynergy
+/// left, so they send for help.
+/// Reached by stepping on cell code 35 until
+/// FLAG_VALE_STORM_SAW_FELIX_HANGING_ON is set, which this sets after
+/// ValeStorm_RunRiverSearch.
+static void Event_WatchAttemptToSaveFelix(void) {
   const s32 *pulseScript;
 
-  if (GameFlag_IsSet(FLAG_VALE_STORM_SAW_RIVER_RESCUE) != 0) {
+  if (GameFlag_IsSet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
     return;
   }
   Engine_EventBegin();
@@ -1833,7 +1836,7 @@ static void Event_WitnessRiverRescue(void) {
   Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 10);
   // Search both river paths before asking the children to help.
   ValeStorm_RunRiverSearch();
-  Engine_GameFlagSet(FLAG_VALE_STORM_SAW_RIVER_RESCUE);
+  Engine_GameFlagSet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON);
   Engine_EventEnd();
 }
 
@@ -1984,7 +1987,7 @@ static void ValeStorm_RunRiverSearch(void) {
 /// do not have enough Psynergy to save Felix and should find help.
 /// Reached by talking to Kyle; the first time he greets Isaac and sets
 /// FLAG_VALE_STORM_KYLE_GREETED_ISAAC.
-static void Event_TalkAboutRescuingFelix(void) {
+static void Event_TalkAboutSavingFelix(void) {
   s32 facing = FACING_SOUTHEAST;
   const s32 *pulseScript;
 
@@ -2020,12 +2023,13 @@ static void Event_TalkAboutRescuingFelix(void) {
 }
 
 /// In Vale on the stormy night, Jenna comes back to the river with Isaac,
-/// Garet and the man whose Psynergy is restored, and the scene ends with the
-/// Boulder sweeping down it. "Mom! Dad! We're back!"
+/// Garet and the man whose Psynergy is restored ("Mom! Dad! We're back!"),
+/// and as Dora calls everyone down to save Felix the Boulder comes down the
+/// river and sweeps away Felix, his parents and Kyle.
 /// Reached by stepping on cell code 36 once FLAG_VALE_STORM_SENT_TO_AID_ELDERS
-/// is set (vale_gate.c), until FLAG_VALE_STORM_RIVER_GATHERING_SEEN is set,
+/// is set (vale_gate.c), until FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY is set,
 /// which this sets.
-static void Event_GatherAfterRiverRescue(void) {
+static void Event_BoulderSweepsThemAway(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   s32 automaticPriority;
@@ -2033,7 +2037,7 @@ static void Event_GatherAfterRiverRescue(void) {
 
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
   } else {
-    if (GameFlag_IsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0) {
+    if (GameFlag_IsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     } else {
       Engine_EventBegin();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -2132,7 +2136,7 @@ static void Event_GatherAfterRiverRescue(void) {
       actor = Object_GetById(ACTOR_EXHAUSTED_VILLAGER);
       actor->priorityFlags |= automaticPriority;
       ValeStorm_ShowBoulderSweepingDownriver();
-      Engine_GameFlagSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN);
+      Engine_GameFlagSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY);
       Engine_EventEnd();
     }
   }
@@ -2667,9 +2671,9 @@ static void Event_VillagerAsksForHelp(void) {
 
 /// As Isaac leaves the river to get help, Garet will not let him go alone and
 /// goes after him. "I can't let him go alone..."
-/// Called by Event_LeaveToValeGate after the river gathering; sets
-/// FLAG_VALE_STORM_GARET_LEFT, which has the two meet the strangers on the
-/// way (vale_gate.c).
+/// Called by Event_LeaveToValeGate after the Boulder swept Felix, his parents
+/// and Kyle away; sets FLAG_VALE_STORM_GARET_LEFT, which has the two meet the
+/// strangers on the way (vale_gate.c).
 static void ValeStorm_GaretFollowsIsaac(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -3290,7 +3294,7 @@ struct SceneEvent gValeStorm_Events[] = {
     {EVENT_TALK, ACTOR_GARET, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_TalkToGaret)},
     {EVENT_TALK, ACTOR_KYLE, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TalkAboutRescuingFelix)},
+     EVENT_SCRIPT(Event_TalkAboutSavingFelix)},
     {EVENT_TALK, ACTOR_JENNAS_PARENT_A, CONDITION_ALWAYS,
      MSGNO(MsgValeHangOnFelixHelpIsOn)},
     {EVENT_TALK, ACTOR_JENNAS_PARENT_B, CONDITION_ALWAYS,
@@ -3332,9 +3336,10 @@ struct SceneEvent gValeStorm_Events[] = {
      EVENT_SCRIPT(Event_UnusedGaretJoinsIsaac)},
     {EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutMtAleph)},
     {EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WatchBoulderFall)},
-    {EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WitnessRiverRescue)},
+    {EVENT_TOUCH, 35, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_WatchAttemptToSaveFelix)},
     {EVENT_TOUCH, 36, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_GatherAfterRiverRescue)},
+     EVENT_SCRIPT(Event_BoulderSweepsThemAway)},
     {EVENT_TOUCH, 16, FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT,
      EVENT_SCRIPT(Event_FightThirdMonster)},
     {EVENT_TOUCH, 17, FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT,

@@ -4,41 +4,48 @@
 
 #include "../effect_internal.h"
 
-/// Gathers stat-boost light and displays a dagger in Mars colours.
+/// Light swirls into each target and bursts, then a dagger appears in Mars
+/// colours.
 ///
-/// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
-/// (kind 210); kind 46 is used by no ability.
+/// Abilities: Impact, High Impact, Demon Spear, Angel Spear (BATTLE_FX_IMPACT);
+/// Forge (BATTLE_FX_IMPACT_210); none (BATTLE_FX_IMPACT_46).
 void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 0);
 }
-/// Gathers stat-boost light and displays a shield in Mars colours.
+/// Light swirls into each target and bursts, then a shield appears in Mars
+/// colours.
 ///
-/// Abilities: Guard, Protect, Guardian, Protector (kind 28); Corona (kind 211).
+/// Abilities: Guard, Protect, Guardian, Protector (BATTLE_FX_GUARD); Corona
+/// (BATTLE_FX_GUARD_211).
 void BattleFx_RunGuard(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 1);
 }
-/// Gathers stat-boost light and displays a shield in Jupiter colours.
+/// Light swirls into each target and bursts, then a shield appears in Jupiter
+/// colours.
 ///
-/// Abilities: Ward, Resist, Magic Shell, Magic Shield (kind 30); Breeze (kind
-/// 215).
+/// Abilities: Ward, Resist, Magic Shell, Magic Shield (BATTLE_FX_WARD); Breeze
+/// (BATTLE_FX_WARD_215).
 void BattleFx_RunWard(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 2);
 }
-/// Gathers stat-boost light and displays a violet streak in Venus colours.
+/// Light swirls into each target and bursts, then a violet streak appears in
+/// Venus colours.
 ///
-/// Abilities: Granite (kind 200).
+/// Abilities: Granite (BATTLE_FX_GRANITE).
 void BattleFx_RunGranite(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 3);
 }
-/// Gathers stat-boost light and displays a violet streak in Mars colours.
+/// Light swirls into each target and bursts, then a violet streak appears in
+/// Mars colours.
 ///
-/// Abilities: Flash (kind 213).
+/// Abilities: Flash (BATTLE_FX_FLASH).
 void BattleFx_RunFlash(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 5);
 }
-/// Gathers stat-boost light and displays a wisp without replacing its palette.
+/// Light swirls into each target and bursts, then a wisp appears in the colours
+/// already loaded, as this is the one boost that keeps the palette.
 ///
-/// Abilities: Zephyr (kind 216).
+/// Abilities: Zephyr (BATTLE_FX_ZEPHYR).
 void BattleFx_RunZephyr(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 4);
 }
@@ -371,24 +378,28 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 // (quake.c), Fire (fire.c), Frost (frost.c) and, after ray.c, Smoke Bomb and
 // Blast (eruption.c).
 
-/// Breaks the dagger picture into shards that fade through darker copies.
+/// A dagger appears over each target and breaks into shards that fade through
+/// darker copies, in the pink burst's colours (style 0).
 ///
-/// Abilities: Dull, Blunt (kind 27).
+/// Abilities: Dull, Blunt (BATTLE_FX_DULL).
 void BattleFx_RunDull(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 0);
 }
 /// A shield appears over each target and breaks into shards that fade through
 /// darker copies, in the glow orb's colours (style 1).
 ///
-/// Abilities: Impair, Debilitate (kind 29); kind 47 is used by no ability.
-/// Casting impact 21 (Meltdown) also ends by calling it.
+/// Abilities: Impair, Debilitate (BATTLE_FX_IMPAIR); none
+/// (BATTLE_FX_IMPAIR_47).
+///
+/// Meltdown's casting impact (CASTING_IMPACT_IMPACT_MELTDOWN) also ends by
+/// calling it.
 void BattleFx_RunImpair(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 1);
 }
 /// A shield appears over each target and breaks into fading shards, in the pink
 /// burst's colours (style 2).
 ///
-/// Abilities: Weaken, Enfeeble (kind 31).
+/// Abilities: Weaken, Enfeeble (BATTLE_FX_WEAKEN).
 void BattleFx_RunWeaken(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 2);
 }
@@ -405,11 +416,11 @@ BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
 #define STAT_REDUCTION_SHARDS 24       ///< shards drawn for each target
 #define STAT_REDUCTION_SLOTS 32        ///< particles reserved for each target
 
-/// Stat cuts: a dagger (mode 0) or a shield (other modes) appears over each
-/// target, 4 frames apart, and then breaks into 24 shards that fly off and
-/// fade out through the darker copies. In each target's own frames the
-/// picture plays until about frame 24, then breaks with a sound; the shards
-/// darken from frame 29 and are gone after frame 60.
+/// A dagger (mode 0) or a shield (other modes) appears over each target, 4
+/// frames apart, and then breaks into 24 shards that fly off and fade out
+/// through the darker copies. In each target's own frames the picture plays
+/// until about frame 24, then breaks with a sound; the shards darken from frame
+/// 29 and are gone after frame 60.
 ///
 /// Reached through Dull, Impair, Weaken and the unused mode 3 wrapper above.
 /// Copies the mode's palette over the first 128 bytes of BG palette RAM,

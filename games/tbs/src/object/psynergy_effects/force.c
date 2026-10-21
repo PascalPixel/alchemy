@@ -6,7 +6,7 @@
 
 /// Runs Force cast on a target, through FieldFx_RunForce.
 ///
-/// Abilities: Force (field kind 4), cast on a target.
+/// Abilities: Force (FIELD_KIND_FORCE).
 void FieldFx_RunForceOnTarget(s32 unused) { FieldFx_RunForce(); }
 
 /// Writes the position 16 pixels above the actor.
@@ -19,7 +19,7 @@ BattleFx_GetPositionAboveActor(struct FieldActor *obj,
 /// A shot appears in front of the caster, grows and flies forward with three
 /// afterimages; what it hits (scene->child) is pushed 16 pixels.
 ///
-/// Abilities: Force (field kind 4).
+/// Abilities: Force (FIELD_KIND_FORCE).
 ///
 /// The shot is object 215, the hand of Move and Carry, flying at 4 pixels a
 /// frame; where it lands it makes a heavy impact (gBattleFx_HeavyImpactScript,

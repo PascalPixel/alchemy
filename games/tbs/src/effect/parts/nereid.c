@@ -21,13 +21,13 @@
 /// A formation of twelve objects sweeps in among embers and columns of fire,
 /// and explodes.
 ///
-/// Abilities: Nereid (scene kind 2).
+/// Abilities: Nereid (SCENE_EFFECT_NEREID).
 ///
-/// 124 frames; pressing A or B during frames 33 to 97 skips to frame 98. A
-/// formation of twelve objects sweeps in from the right; embers burst up on
-/// frame 28 and over frames 32 to 79, fall back under gravity and from frame
-/// 80 rise away, while three columns of fire stream upwards over frames 32 to
-/// 79 and the targets bounce. At the end the formation explodes with
+/// Pressing A or B during frames 33 to 97 skips to frame 98. A formation of
+/// twelve objects sweeps in from the right; embers burst up on frame 28 and
+/// over frames 32 to 79, fall back under gravity and from frame 80 rise away,
+/// while three columns of fire stream upwards over frames 32 to 79 and the
+/// targets bounce. At the end the formation explodes with
 /// BattleFx_RunImpactBurst; the battle shows the damage on frame 120.
 ///
 /// Reached through BattleFx_RunSceneEffect, whose sheet slot holds the mote

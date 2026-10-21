@@ -12,7 +12,7 @@
 /// then sweeps across the targets, each throwing a burst of motes as the row
 /// passes it.
 ///
-/// Abilities: Kirin (scene kind 3).
+/// Abilities: Kirin (SCENE_EFFECT_KIRIN).
 ///
 /// The scene runs in two stages. In the sweep (120 frames; A or B ends it
 /// after frame 16), KIRIN_OBJECTS objects ride in on a sine wave while the
@@ -29,9 +29,9 @@
 /// Camera_ApplyShake then moves while the screen shakes. The nine objects are
 /// released before the scene returns.
 ///
-/// Particles: work->particles 0 to 47 are the fire trail (x in pixels, y
-/// 16.16, variant the frames before it starts); PARTICLES 32i to 32i + 31
-/// are target i's burst motes, variant their frames left.
+/// work->particles 0 to 47 are the fire trail (x in pixels, y 16.16, variant
+/// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
+/// burst motes, variant their frames left.
 void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};

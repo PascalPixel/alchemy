@@ -46,10 +46,11 @@ struct BurstParticleVisualGroup {
   struct BurstParticleVisual child;
 };
 
-/// Particles round the target, which takes the sprite priority of the ground
-/// under it.
+/// When Growth is cast on a target, particles fly from in front of the caster
+/// to points round the target, which then takes the sprite priority of the
+/// ground under it.
 ///
-/// Abilities: Growth (field kind 12), cast on a target.
+/// Abilities: Growth (FIELD_KIND_GROWTH).
 ///
 /// The target plays animation 2, stops being solid (collision flags 0),
 /// loses its shadow and is depth-sorted as if 320 pixels higher
@@ -71,10 +72,11 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
   }
 }
 
-/// The particles, then five falling objects 4 to 10 pixels round the effect's
-/// position.
+/// When Growth is cast with no target, particles fly out from in front of the
+/// caster, and then five falling objects appear 4 to 10 pixels round the
+/// effect's position.
 ///
-/// Abilities: Growth (field kind 12), cast with no target.
+/// Abilities: Growth (FIELD_KIND_GROWTH).
 ///
 /// The objects (217) appear 2 or 3 frames apart and each lasts 60 frames
 /// (gBattleFx_BurstParticleObjectScript).

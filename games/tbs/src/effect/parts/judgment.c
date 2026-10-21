@@ -56,7 +56,7 @@ struct JudgmentWork {
 /// The battle wipes away to a violet sky where a formation flies forward while
 /// motes gather into it, bursts in a flash and sends out a ring of light.
 ///
-/// Abilities: Judgment (scene kind 9).
+/// Abilities: Judgment (SCENE_EFFECT_JUDGMENT).
 ///
 /// The scene then cuts to an aerial view where the blast spreads in rings, to a
 /// beach, and to a forest swept by an explosion front, before brightening back

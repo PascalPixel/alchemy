@@ -16,7 +16,7 @@
 /// camera swings round; each knocks the target back on arrival, and the third
 /// lets the battle show the damage.
 ///
-/// Abilities: Astral Blast (kind 68).
+/// Abilities: Astral Blast (BATTLE_FX_ASTRAL_BLAST).
 ///
 /// work->particles 0 to 2 are the rings, battle positions in 16.16. Loads the
 /// rune palette into the first 64 background colours, sets the user's
@@ -210,10 +210,10 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
 /// bounce shaking the screen and flashing the targets; the battle shows the
 /// damage on frame 96.
 ///
-/// Abilities: Shining Star (kind 62).
+/// Abilities: Shining Star (BATTLE_FX_SHINING_STAR).
 ///
-/// 128 frames. work->particles 0 to 7 are the stars, battle positions in
-/// 16.16, each variant the frame it starts. Rebuilds the background ramp
+/// It lasts 128 frames. work->particles 0 to 7 are the stars, battle positions
+/// in 16.16, each variant the frame it starts. Rebuilds the background ramp
 /// each frame (Graphics_UpdatePhasePalette, after loading the rune palette)
 /// and sets work->shakeFrames at each bounce.
 void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {

@@ -15,7 +15,7 @@ enum {
 /// frames from frame 36; at the burst frame the motes spread and rise, chips
 /// fly up and smoke rises over the heights they span.
 ///
-/// Abilities: Frost, Tundra, Glacier (kind 6).
+/// Abilities: Frost, Tundra, Glacier (BATTLE_FX_FROST).
 ///
 /// The targets take a blue tint 4 frames apart from frame 40, the battle shows
 /// the damage 11 frames after the burst, and the effect ends 75 frames after

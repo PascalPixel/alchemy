@@ -73,7 +73,10 @@ void FieldEvent_ShowStatusMessage(void) {
 /// The caster spins and flashes, then blinks, and encounters are kept away
 /// until Avoid wears off.
 ///
-/// Abilities: Avoid (field kind 16), and the Sacred Feather.
+/// Abilities: Avoid (FIELD_KIND_AVOID).
+///
+/// Using the Sacred Feather plays it too, since the item's field action is
+/// Avoid.
 ///
 /// The caster spins shedding falling arcs and flashes 20 times, then blinks for
 /// 55 frames; encounters are kept away (avoidDistance 0x9600000) until it wears

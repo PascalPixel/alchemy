@@ -4,16 +4,17 @@
 
 #include "../effect_internal.h"
 
-/// The rising embers from the user's side, in the LightningBolt colours.
+/// Embers rise from the ground while sparks and flashes fly from the user's
+/// side, in the LightningBolt colours.
 ///
-/// Abilities: Dragon Driver (kind 385).
+/// Abilities: Dragon Driver (BATTLE_FX_DRAGON_DRIVER).
 void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect) {
   BattleFx_RunPaletteParticles(effect, 1);
 }
-/// The rising embers with a formation of eight objects that sweeps in and
-/// explodes at the end.
+/// Embers rise from the ground while a formation of eight objects sweeps in,
+/// and the formation explodes at the end.
 ///
-/// Abilities: Tiamat (scene kind 7).
+/// Abilities: Tiamat (SCENE_EFFECT_TIAMAT).
 void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
   BattleFx_RunPaletteParticles(effect, 0);
 }
@@ -29,10 +30,10 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 /// The streak pictures in the sheet.
 #define PALETTE_PARTICLES_STREAK_IMAGES 0x3000
 
-/// A 208-frame effect of embers rising from the ground; pressing A or B
-/// during frames 49 to 159 skips to frame 160. The targets reel on frame
-/// 138, the screen flares white over frames 160 to 175 and fades out after,
-/// and the battle shows the damage on frame 178.
+/// Embers rise from the ground, and pressing A or B during frames 49 to 159
+/// skips to frame 160. The targets reel on frame 138, the screen flares white
+/// over frames 160 to 175 and fades out after, and the battle shows the damage
+/// on frame 178.
 ///
 /// Called by BattleFx_RunTiamat (mode 0) and BattleFx_RunDragonDriver
 /// (mode 1).

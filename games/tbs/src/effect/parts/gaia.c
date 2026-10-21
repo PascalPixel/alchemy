@@ -12,11 +12,12 @@
 #define GAIA_FRAMES 192
 #define GAIA_ROCKS 11 ///< rocks that tumble up the wall
 
-/// Rising wall: the ground swells, a wall of rock rises from it, stands while
-/// rocks tumble up its face and the targets are battered, and sinks again.
+/// The ground swells on the targets' side of the field under a narrow shaft of
+/// orange light, which widens into a glowing wall and stands while rocks tumble
+/// up through it and the targets are battered, then narrows away again.
 ///
 /// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
-/// (kind 3).
+/// (BATTLE_FX_GAIA).
 ///
 /// The wall is symmetric: its left half is drawn, then mirrored for the right.
 /// Its centre is at canvas x 64 + wallX. The rocks are 11 animation objects,

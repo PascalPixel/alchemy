@@ -5,12 +5,12 @@ summon, an item or an enemy's attack plays out: everything drawn over the
 battle until the move is over.
 
 Each effect is one function. The battle calls it with a `BattleEffectArgument`,
-which carries the user, the targets and the effect's own values (its kind, the
-side the targets are on, the variant and whether a prelude plays first), and
-the function draws a fixed number of frames and returns when it's done. The
-battle's own code waits for it all that time. The effect still hands the
-processor back once a frame, whenever it waits for the next one, so the battle
-plays its messages and hits from a task that runs alongside. The effect
+which carries the user, the targets and the effect's own values (its effect
+kind, the side the targets are on, the variant and whether a prelude plays
+first), and the function draws a fixed number of frames and returns when it's
+done. The battle's own code waits for it all that time. The effect still hands
+the processor back once a frame, whenever it waits for the next one, so the
+battle plays its messages and hits from a task that runs alongside. The effect
 decides when the damage appears (most effects call `EFFECT_SHOW_DAMAGE` on the
 frame the blow lands), and [Battles](../battle/README.md) decides what the
 damage is and starts each effect in the first place.
@@ -32,16 +32,24 @@ halfword and `flags` the high one. The `STAGING_*` macros in
 
 | Bits of `effect` | What they hold |
 | --- | --- |
-| 0 to 11, the last three digits | the kind: which effect plays, 0 for none |
+| 0 to 11, the last three digits | the effect kind: which effect plays, 0 for none |
 | 12 and 13 | the variant: the ability's strength |
-| 14 (`0x4000`) | `STAGING_BY_ID_RANGE`: the kind goes to `BattleFx_DispatchByIdRange` |
-| 15 (`0x8000`) | `STAGING_SCENE`: one of the summons' scenes (`BattleFx_RunSceneEffect`), not a table kind |
+| 14 (`0x4000`) | `STAGING_BY_ID_RANGE`: the effect kind goes to `BattleFx_DispatchByIdRange` |
+| 15 (`0x8000`) | `STAGING_SCENE`: the effect kind is a summon's scene, an `enum SceneEffectKind` that `BattleFx_RunSceneEffect` plays |
 
-Quake, Earthquake and Quake Sphere all play kind 1, at variants 0, 1 and 2, so
-their rows read `0x001`, `0x1001` and `0x2001`. A double or triple blow adds one
-or two to the variant as the battle builds its plan. Ramses' row is `0x8001`,
-scene 1, and Meltdown's is `0x4079`: kind 121 (`0x79`), which
-`BattleFx_DispatchByIdRange` plays as casting impact 21.
+The effect kind only picks what the player watches. It isn't the ability kind,
+the low four bits of the `flags` column in the same ability's row of
+`games/tbs/src/game/actions.tsv` (`enum AbilityKind`), which picks the formula
+the targets take: whether they're hurt or healed, and by how much. Quake's
+ability kind is `ABILITY_KIND_DAMAGE`, Psynergy damage, and its effect kind is
+`BATTLE_FX_QUAKE`. [Battles](../battle/README.md) explains the ability kind.
+
+Quake, Earthquake and Quake Sphere all play `BATTLE_FX_QUAKE`, effect kind 1, at
+variants 0, 1 and 2, so their rows read `0x001`, `0x1001` and `0x2001`. A double
+or triple blow adds one or two to the variant as the battle builds its plan.
+Ramses' row is `0x8001`, the summon scene `SCENE_EFFECT_RAMSES`, and Meltdown's
+is `0x4079`: effect kind 121 (`0x79`), which `BattleFx_DispatchByIdRange` plays
+as casting impact 21, `CASTING_IMPACT_IMPACT_MELTDOWN`.
 
 The `flags` half is for the battle rather than the effects. Its bits 0 and 1
 are `STAGING_ON_DOWNED` (shown on downed targets too, for revivals) and
@@ -51,8 +59,8 @@ camera the other side's view for Venus, Mercury, Mars and Jupiter, and
 `STAGING_VIEW_REVERSED` turns it right round for twenty others, such as the
 blessings, Astral Blast and Dragon Driver.
 
-An ordinary kind is an index into `gBattleFx_EffectHandlers`, in
-`effect_table.c`. Each row names the function that plays that kind, its
+An ordinary effect kind is an index into `gBattleFx_EffectHandlers`, in
+`effect_table.c`. Each row names the function that plays that effect kind, its
 handler, with a comment giving the part of the code that defines it and the
 first ability that uses it:
 
@@ -60,57 +68,113 @@ first ability that uses it:
 [BATTLE_FX_QUAKE - 1] = BattleFx_RunQuake, // quake.c: Quake
 ```
 
-The table starts at kind 1, hence the `- 1`. Of the 407 kinds, 162 have a
-handler, 143 different functions between them. A kind without one has no name
-in `enum BattleFxKind` ([`effect.h`](../../include/unit/effect/effect.h)) and
-leaves its row empty. Moves that look alike often share a kind: abilities whose
-rows name the same kind and variant play the same effect.
+The table starts at effect kind 1, hence the `- 1`. Of its 407 rows, 162 have a
+handler, 143 different functions between them. An effect kind without one has
+no name in `enum BattleFxKind`
+([`effect.h`](../../include/unit/effect/effect.h)) and leaves its row empty.
+Moves that look alike often share an effect kind: abilities whose rows name the
+same effect kind and variant play the same effect.
 
 A handler is named for a move that uses it, the first ability by id whose row
-selects its kind, as the English release names it. Kind 1's first ability is
-Quake, so its handler is `BattleFx_RunQuake`. A handler several kinds share is
-named from the lowest kind's first ability, and when another handler already
-has that name it passes to the next ability: kind 15 is `BattleFx_RunNova`
-because its first ability is a second Blast. The three kinds no ability uses
-have descriptive names. That's why searching the code for a move's English name
-lands on its handler, whose comment has an `Abilities:` line listing every
-ability that reaches it.
+selects its effect kind, as the English release names it. The first ability
+whose row selects `BATTLE_FX_QUAKE` is Quake, so its handler is
+`BattleFx_RunQuake`. A handler several effect kinds share is named from the
+first ability of the lowest one any ability selects, and when another handler
+already has that name it passes to the next ability: `BATTLE_FX_NOVA` plays
+through `BattleFx_RunNova` because its first ability is a second Blast. The
+three handlers no ability reaches at all have descriptive names. That's why
+searching the code for a move's English name lands on its handler, whose
+comment has an `Abilities:` line listing every ability that reaches it.
 
-Many kinds belong to a family drawn by one shared runner, and the mode it's
-passed picks the family member. The kind's handler is then a two-line function,
+Many effect kinds belong to a family drawn by one shared runner, and the mode
+it's passed picks the family member. The handler is then a two-line function,
 named for the move, that calls the runner with its mode: `BattleFx_RunCure`
 calls `BattleFx_RunHealingMotes(effect, 2)`. The runners are listed under
 [Effect families](#effect-families).
 
 ### What a handler's comment says
 
-Every handler opens with a documentation comment of the same shape. Quake's:
+Every handler opens with a documentation comment of the same shape. Gaia's:
 
 ```c
-/// Rock wall: three rock pillars rise from the left, 4 frames apart, and sink
-/// again, throwing the targets standing on them into the air.
+/// The ground swells on the targets' side of the field under a narrow shaft of
+/// orange light, which widens into a glowing wall and stands while rocks tumble
+/// down through it and the targets are battered, then narrows away again.
 ///
-/// Abilities: Quake, Earthquake, Quake Sphere (kind 1).
+/// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
+/// (BATTLE_FX_GAIA).
 ///
-/// Each pillar is capped with a strip of ground cut from the background.
+/// The wall is symmetric: its left half is drawn, then mirrored for the right.
+/// Its centre is at canvas x 64 + wallX. The rocks are 11 animation objects,
+/// moved by particles[10] to particles[20].
 ///
-/// Writes REG_BG2PA, REG_BLDCNT and, on side 1, REG_BG2X; overwrites the
-/// first 0x8000 bytes of Ram_MapCellBuffer with BG tiles; sets the targets'
-/// vertical velocity and gravity; arms work->shakeFrames.
-///
-/// effect: the targets; variant picks the row of gQuake_Timings.
+/// effect: the targets; variant 0 to 2 widens the wall: 0 for Gaia and
+///         Rockfall, 1 for Mother Gaia and Rockslide, 2 for Grand Gaia and
+///         Avalanche.
 ```
 
-It starts with a short name for what the player sees and one sentence about it. The
-`Abilities:` line follows, with the kind; a kind no ability uses says
-`Abilities: none (kind N).`, and a summon's scene says `(scene kind N)`. Then
-comes what the player sees, frame by frame where the effect is long, which
-particles hold what, the pictures it loads and what it changes beyond its
-canvas. The last line covers any parameter a reader couldn't guess: `effect`
-when the handler reads more than the user and the targets, and for a runner,
-`mode` and what each mode changes. The prose never repeats the kind, which the
-`Abilities:` line already gives, or the frame count when a `*_FRAMES` constant
-above the handler gives it.
+It opens with a sentence saying what the player sees. Doxygen takes a
+comment's first sentence as its summary, so that sentence has to stand on its
+own, with no label such as "Rising wall:" in front of it. The reach line comes
+next, in a paragraph of its own: it names every ability whose row reaches the
+handler, and the effect each one selects. Then comes the rest of what the
+player sees, frame by frame where the effect is long, which particles hold
+what, the pictures it loads and what it changes beyond its canvas. The last
+line covers any parameter a reader couldn't guess: `effect` when the handler
+reads more than the user and the targets, and for a runner, `mode` and what
+each mode changes. The prose never repeats the effect kind, which the reach
+line already gives, or the frame count when a `*_FRAMES` constant above the
+handler gives it.
+
+The reach line is the one part of the comment with a fixed form, so that a
+program can match the abilities to the effects they play as surely as a reader
+can. It starts with `Abilities: ` and ends with a full stop, and in between are
+one or more groups, separated by a semicolon and a space. A group is a list of
+ability names, separated by a comma and a space, then a space and the effect
+they select in parentheses. A name is written exactly as the `ability` column
+of `actions.tsv` writes it, and only once in its group, even where several rows
+share it, like the three Fire Blessings. Where rows that share a name select
+different effects, like the two Blasts or the two Mists, the group's effect
+says which rows are meant. A group whose effect no ability's row selects has
+`none` for its list. Names keep their rows' order, groups follow their effects'
+values, and `none` groups come last:
+
+```c
+/// Abilities: Heartrender (BATTLE_FX_HEARTRENDER_346); none
+/// (BATTLE_FX_HEARTRENDER).
+```
+
+The effect is named by its enumerator, never by its number, and the
+enumerator's prefix says how the effect is reached:
+
+- `BATTLE_FX_`, from `enum BattleFxKind`, for an ordinary effect kind, a row of
+  the handler table;
+- `SCENE_EFFECT_`, from `enum SceneEffectKind`, for a summon's scene, a row
+  whose `effect` has bit 15 set;
+- `CASTING_IMPACT_`, from `enum CastingImpact` in
+  [`casting_impact.c`](parts/casting_impact.c), for a casting impact, a row
+  whose `effect` has bit 14 set and an effect kind from 100 to 135, the
+  enumerator's value being the effect kind less 100;
+- `FIELD_KIND_`, from `enum FieldKind`
+  ([`psynergy_effects.h`](../../include/unit/object/psynergy_effects.h)), for
+  field Psynergy, matched against the `type` column of `actions.tsv`; the field
+  Psynergy effects in `object/psynergy_effects` write the same line.
+
+The line wraps at 80 columns like the rest of the comment, and reads as its
+lines joined by single spaces. Anything more, such as an item that uses the
+ability, which adapter plays field Psynergy cast on a target, or another effect
+that hands over to this one, is a sentence in the next paragraph:
+
+```c
+/// Abilities: Impair, Debilitate (BATTLE_FX_IMPAIR); none
+/// (BATTLE_FX_IMPAIR_47).
+///
+/// Meltdown's casting impact (CASTING_IMPACT_IMPACT_MELTDOWN) also ends by
+/// calling it.
+```
+
+A function no ability's row reaches, such as a family's runner, which only its
+wrappers call, has no reach line; its comment says what calls it instead.
 
 ## How the battle starts an effect
 
@@ -120,17 +184,20 @@ it runs: the sprite sheet, the work block and the canvas. Then it runs the
 effect and gives the blocks back.
 
 - `BattleFx_RunTableEffect` ([`parts/dispatch.c`](parts/dispatch.c)) plays an
-  ordinary effect: it looks the kind up in `gBattleFx_EffectHandlers` and calls
-  the handler. Kind 0 is no effect and only clears the variant.
+  ordinary effect: it looks the effect kind up in `gBattleFx_EffectHandlers`
+  and calls the handler. Effect kind 0 is no effect and only clears the
+  variant.
 - `BattleFx_RunSceneEffect` (also in `dispatch.c`) plays the rows with bit 15
   set: the twelve summons that need two or more Djinn, such as Ramses and Thor,
-  chosen by `enum SceneEffectKind` in `effect.h`. Kind 0, which no row uses,
+  chosen by `enum SceneEffectKind` in `effect.h`. Scene 0, which no row uses,
   plays Meteor's scene too. The four summons that need one Djinni, Venus,
-  Mercury, Mars and Jupiter, are ordinary kinds, 250 to 253.
+  Mercury, Mars and Jupiter, are ordinary effect kinds, `BATTLE_FX_VENUS` to
+  `BATTLE_FX_JUPITER`.
 - `BattleFx_DispatchByIdRange` (`positions.c`) plays the rows with bit 14 set,
-  by the kind's range: 100 to 135 are the casting impacts (the kind less 100),
-  136 to 199 the beam sequences, and 200 and up the ring and spark scenes.
-  These take a sprite sheet a little over twice the usual size.
+  by the effect kind's range: 100 to 135 are the casting impacts
+  (`enum CastingImpact`, the effect kind less 100), 136 to 199 the beam
+  sequences, and 200 and up the ring and spark scenes. These take a sprite
+  sheet a little over twice the usual size.
 
 An effect may schedule callbacks that use those blocks (functions the game runs
 once a frame), but it has to remove them before it returns, because the blocks
@@ -183,7 +250,7 @@ clears them, keeps half or three quarters of each pixel's level, or darkens or
 brightens them. Canvas pixels are levels in a palette ramp, so fading the levels
 makes trails die away without any bookkeeping per particle.
 
-Two kinds of effect also use another background layer, `BG1`. For the beam
+Two sets of effects also use another background layer, `BG1`. For the beam
 scenes, `BattleFx_SetupCanvasTileMap` moves the canvas itself to `BG1` and shows
 it there without stretching it. The particle streams of Meteor and Outer Space
 keep `BG2` as well: while the streams rise they draw a full-screen picture into
@@ -341,18 +408,57 @@ it, and its data is built from an indexed PNG beside it (`fire_pillar_b.png`,
 with a `.tsv` part list where the picture has one). The build packs the PNG and
 its palette into the game.
 
-Each runner decodes its pictures at fixed offsets in `work->sheet`. Since pixel
-values are levels, a picture drawn with additive or brightest-wins compositing
-needs its levels in the same ramp as the canvas palette the effect loads. A
-fade draws from darker copies of a picture, built before the first frame, and a
-symmetric picture is drawn left of its centre line and then mirrored to the
-right.
+Each runner decodes its pictures at fixed offsets in `work->sheet`, and a sheet
+is laid out the way its runner reads it, with the frames of an animation one
+under the next. Dragon Cloud ([`dragon_cloud.c`](parts/dragon_cloud.c)) reads
+`fire_pillar_b.png` as five 24 by 48 frames of its flame, from rising to
+falling, with the 24 by 39 picture of its trail below them. Curse's
+`flame_column.png` ([`target_motes.c`](parts/target_motes.c)) holds nine 16 by
+12 frames of a small flame and, under them, the white candle `BattleFx_RunCurse`
+stands at each target's feet. Quake's `rock_wall.png`
+([`quake.c`](parts/quake.c)) is the body of one of its rock pillars, which
+Quake caps with a strip of ground cut from the battle's own background.
+
+![Five frames of Dragon Cloud's flame stacked one under the next, and the smaller picture of its trail at the bottom.](../graphics/battle_fx/fire_pillar_b.png)
+![Nine frames of a small orange flame stacked one above the next, over the white candle it burns on.](../graphics/battle_fx/flame_column.png)
+![A column of brown rock, the body of one of Quake's pillars.](../graphics/battle_fx/rock_wall.png)
+![The top half of a burst of light, with blue rays fanning out from a white centre at its lower left.](../graphics/battle_fx/blue_burst.png)
+
+Since pixel values are levels, a picture drawn with additive or brightest-wins
+compositing needs its levels in the same ramp as the canvas palette the effect
+loads, and that palette needn't be the picture's own. The rushing strikes
+([`rushing_strike.c`](parts/rushing_strike.c)) load `blue_burst.png` with its
+blue palette and then copy their mode's palette over it, so Bone Charge draws
+the burst in the colours of `fire_pillar_b.png`, Brute Force in the ice
+block's, Onslaught in the pink burst's and Headbutt in the blast's. A fade draws
+from darker copies of a picture, built before the first frame, like the last
+nine copies of Dragon Cloud's trail. A symmetric picture is drawn on one side
+of its centre line and then mirrored: the blue burst is only the burst's top
+half, drawn again upside down beneath itself, and Gaia's wall is only its left
+half.
 
 ## Effect families
 
-A lot of moves share one animation drawn with different settings. A runner
-draws the whole family, and each move's handler is a two-line wrapper that
-passes it a mode. The largest families:
+A lot of moves share one animation drawn with different settings. The simplest
+share it through the variant alone. Rockfall and Avalanche both play
+`BATTLE_FX_GAIA`, Rockfall at variant 0 and Avalanche at variant 2.
+`BattleFx_RunGaia` ([`gaia.c`](parts/gaia.c)) stretches its canvas 1.25 times
+across for variant 0 and twice for variant 2, so Avalanche's wall comes out
+wider, and the higher the variant, the larger it draws each rock and the more
+of the field the falling rocks spread across.
+
+Every recording here comes from
+[Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools#pictures),
+which plays the ability in a built tbs-en edition over a plain grey backdrop:
+one party member strikes the others, copied onto the enemy side the way a link
+battle copies the other player's party, or heals or supports one of them
+fighting beside the caster.
+
+![Isaac casts Rockfall at Ivan, and a thin column of orange light stands among Ivan, Garet and Mia, then widens into a glowing wall over all three while rocks tumble down through it.](https://alchemy.pascalpixel.com/abilities/rockfall.gif)
+![Isaac casts Avalanche at Ivan, and the same wall comes out wide enough to reach Isaac, with bigger rocks tumbling down all across it.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
+
+The families go further. A runner draws the whole family, and each move's
+handler is a two-line wrapper that passes it a mode. The largest families:
 
 | Runner | Part | What it draws |
 | --- | --- | --- |
@@ -380,7 +486,7 @@ The attacks of eight Djinn (Bane, Smog, Mist, Fever, Flint, Scorch, Squall and
 Sap) and the unleashes of many weapons, such as Terra Strike, Meltdown and
 Asura, are casting impacts ([`casting_impact.c`](parts/casting_impact.c)):
 sparks gather on the caster, and then the impact lands on the target. Each is
-chosen by its number in `enum CastingImpact`, the ability's kind less 100, and
+chosen by its number in `enum CastingImpact`, the effect kind less 100, and
 runs in four phases.
 
 While the caster gathers, 64 sparks close in on it over 32 frames, four more
@@ -401,6 +507,14 @@ target over the first six frames, and the target is hit on frame 6.
 Last, the canvas and its callbacks are released, or impact 21 (Meltdown) hands
 them to the stat reduction.
 
+Flint's impact, `CASTING_IMPACT_IMPACT_FLINT`, has no animation of its own, so
+its recording shows only the gathering, the Djinni's flight and the orb and
+sparks, while Scorch's, `CASTING_IMPACT_IMPACT_SCORCH`, adds flash bursts that
+rise from the target.
+
+![Isaac unleashes Flint at Ivan, and sparks close in on a point above Isaac while he hangs in mid-leap, a streak of light shoots down at Ivan, and a ring of light and a spray of sparks burst over him.](https://alchemy.pascalpixel.com/abilities/flint.gif)
+![Garet unleashes Scorch at Mia, and red sparks close in on Garet, a streak of flame shoots at Mia, and a burst of fire swells over her and fades into red smoke.](https://alchemy.pascalpixel.com/abilities/scorch.gif)
+
 The particles are used twice. `work->particles` holds the gathering sparks and
 then, from the impact on, 32 scattering sparks whose `variant` is their
 lifetime. The 64 records 16 KB into `Ram_MapCellBuffer` belong to the impact's
@@ -419,6 +533,8 @@ shatter on the ground. The Venus Djinni sways while ten flame columns rise from
 the ground, each throwing motes upwards. The Mars Djinni flares from a glowing
 orb, dives to the ground and sets nine flames erupting in an arc while embers
 rise.
+
+![Isaac summons Venus against Ivan, Garet and Mia, and a streak of yellow light arcs down onto them, then columns of light rise from the ground one after another, bursting into sprays of motes while the three flash white.](https://alchemy.pascalpixel.com/abilities/venus.gif)
 
 The motes the flames shatter into live in `PARTICLES`, 32 slots a flame, and so
 do the Mars Djinni's embers, 16 a flame; the flames, rocks and chips themselves
@@ -525,16 +641,36 @@ In these scenes a free or waiting particle is usually marked by a negative
 `effect->variant` picks each scene's counts and timing from the named columns
 of its table.
 
+### Healing motes
+
+The healing effects are seven modes of one runner, `BattleFx_RunHealingMotes`
+([`healing.c`](parts/healing.c)): Ply's, Wish's, Cure's, Cure Poison's two,
+Tonic's and Psy Crystal's. Each target gets its own swarm of motes of light
+around a point 40 pixels above it, and each swarm starts `HEALING_STAGGER`
+frames, 8, after the one before. The swarm turns about its point, and in most
+modes its motes are drawn in to it, 2 pixels a frame. Cure's start as a ring on
+the ground around the target, while Cure Poison's and Tonic's stay where they
+are and go out one by one. Each target turns white 36 frames into its swarm
+(`HEALING_TINT_DELAY`), and the battle shows the recovery on frame 40
+(`HEALING_DAMAGE_FRAME`).
+
+![Isaac casts Cure on Ivan, fighting beside him against a Vermin, and a ring of glittering light gathers on the ground around Ivan and closes in on him until he flashes white.](https://alchemy.pascalpixel.com/abilities/cure.gif)
+
+The motes live in `PARTICLES`, 64 slots to a target (`HEALING_SLOTS`), and the
+variant sets how many each target draws: 32 at variant 0, 64 at variant 1 and
+128 at variant 2, which runs on into the next target's slots.
+
 ### Target strikes
 
 Monster attacks such as Cannibal Fang, Poison Tail and Twin Beaks come from one
 runner, `BattleFx_RunTargetStrike` ([`target_strike.c`](parts/target_strike.c)),
 which plays twelve styles of repeated slashes or columns of light on the first
-target. Each style's row gives its kind (0 for a sideways slash, 1 for a column
-of light), its number of hits, its extras (smoke, an absorbing
-drain, glints, sparks or one heavy hit), its palette, the frames each picture
-is held, the column's composite mode and the scene's duration. The wrappers
-above the runner name the style of each effect.
+target. Each style's row gives its strike kind (`STRIKE_KIND_SLASH` for a
+sideways slash, `STRIKE_KIND_COLUMN` for a column of light), its number of
+hits, its extras (smoke, an absorbing drain, glints, sparks or one heavy hit),
+its palette, the frames each picture is held, the column's composite mode and
+the scene's duration. The wrappers above the runner name the style of each
+effect.
 
 The setup loads the pictures and the style's palette, then parks every
 particle, idle, where it will start: 64 smoke puffs at the target's feet, and
@@ -558,8 +694,8 @@ the canvas layer.
 | `battle_effect_composite.s`, `battle_effect_composite_color.s` | the ARM fragments blitters are built from |
 
 The headers are in `games/tbs/include/unit/effect/`:
-[`effect.h`](../../include/unit/effect/effect.h) declares the functions and the
-kinds, and `effect_table.h` the tables.
+[`effect.h`](../../include/unit/effect/effect.h) declares the functions and
+names the effect kinds, and `effect_table.h` declares the tables.
 
 In the ROM, the effect code is one unbroken stretch of about 150 KB, what the
 compiler would make from a single source file (an object). Camelot's other C
@@ -585,13 +721,17 @@ the order of the functions that use them.
 
 A few words mean the same thing all through the effect code:
 
-- **kind**: an effect's number in the handler table, which the ability's row of
-  `actflags.tsv` (`gBattle_ActionFlags`) selects.
-- **runner** and **mode**: a runner draws a family of kinds, and the mode it's
-  passed picks the family member.
+- **effect kind**: `effect->kind`, the number that picks which effect plays,
+  from the low twelve bits (`STAGING_KIND_MASK`) of the `effect` column in the
+  ability's row of `actflags.tsv` (`gBattle_ActionFlags`). `enum BattleFxKind`
+  names the ones the handler table plays, `enum SceneEffectKind` the summons'
+  scenes and `enum CastingImpact` the casting impacts. It isn't an ability
+  kind, as [How a move picks its effect](#how-a-move-picks-its-effect) explains.
+- **runner** and **mode**: a runner draws a family of effect kinds, and the
+  mode it's passed picks the family member.
 - **variant**: `effect->variant`, the ability's strength. Quake, Earthquake and
-  Quake Sphere play the same kind at three variants. A particle's `variant`
-  field is something else: a spare word each effect uses as it needs.
+  Quake Sphere play the same effect kind at three variants. A particle's
+  `variant` field is something else: a spare word each effect uses as it needs.
 - **side**: `effect->side`, 1 when the targets are the party and 0 when they're
   enemies. Effects mirror on it.
 - **sheet** and **cell**: a sheet is a decoded set of pictures in
@@ -642,17 +782,17 @@ read several ways, for one. Those spellings, and what the `DEAD` and
 
 ## Evidence and open questions
 
-A handler's name comes from the abilities that reach its kind, read from
+A handler's name comes from the abilities that reach its effect kind, read from
 `actflags.tsv` and named as the English release names them; a family's runner
 is named from what it draws, and the blitter's words from the fragments it
-joins. The kinds that no ability uses (34, 67 and 387:
-`BattleFx_RunOrbitingSpirals` in `planet_diver.c`, `BattleFx_RunTriangleStrike`
-in `bind.c` and `BattleFx_RunSparkApproachVariant3` in `thrash.c`) are named
-from what they draw.
+joins. The three handlers no ability reaches, `BattleFx_RunOrbitingSpirals` in
+`planet_diver.c`, `BattleFx_RunTriangleStrike` in `bind.c` and
+`BattleFx_RunSparkApproachVariant3` in `thrash.c`, are named from what they
+draw.
 
-Some things are still open. Nothing found so far reaches those three unused
-kinds, so it isn't known what, if anything, ever played them. The work block's
-`unk_` fields aren't understood yet, and neither are the particles' spare words
-in the effects whose use of them hasn't been read. And it isn't settled why
+Some things are still open. Nothing found so far reaches those three handlers'
+effect kinds, so it isn't known what, if anything, ever played them. The work
+block's `unk_` fields aren't understood yet, and neither are the particles'
+spare words in the effects whose use of them hasn't been read. And it isn't settled why
 `work->sheet` may grow into the scanline table (28,800 bytes against 27,008)
 only for effects that don't use that table, or which effects do.

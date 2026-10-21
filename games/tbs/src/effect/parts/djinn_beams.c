@@ -11,16 +11,18 @@
 #define DJINN_BEAMS_MOTE_CELLS 0x2710 ///< the motes (CrescentMoonSheet, 24x24)
 #define DJINN_BEAMS_DJINNI_CELLS 0x65c0 ///< the Djinni (40x40)
 
-/// With a Venus Djinni: beams of light, where motes drift down over each target
-/// and a column of light falls on it.
+/// Motes drift down over each target and a column of light falls on it, in the
+/// Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
 ///
-/// Abilities: Revive, Water of Life (kind 25); Quartz (kind 201).
+/// Abilities: Revive, Water of Life (BATTLE_FX_REVIVE); Quartz
+/// (BATTLE_FX_REVIVE_201).
 void BattleFx_RunRevive(struct BattleEffectArgument *effect) {
   BattleFx_RunDjinnBeams(effect, 0);
 }
-/// With a Mercury Djinni: the same beams of light as Revive.
+/// Dew plays Revive's beams of light in the Mercury Djinni's colours, and with
+/// a prelude a Mercury Djinni appears first.
 ///
-/// Abilities: Dew (kind 209).
+/// Abilities: Dew (BATTLE_FX_DEW).
 void BattleFx_RunDew(struct BattleEffectArgument *effect) {
   BattleFx_RunDjinnBeams(effect, 1);
 }

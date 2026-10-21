@@ -4,10 +4,9 @@
 
 #include "../effect_internal.h"
 
-/// Djinni entrance: sparks swirl around a point that travels from the user
-/// to the goal and gather into the Djinni, which sways for 16 frames and
-/// bursts into motes. Leaves the canvas cleared for the effect that
-/// follows.
+/// Sparks swirl around a point that travels from the user to the goal and
+/// gather into a Djinni, which sways for 16 frames and bursts into motes.
+/// Leaves the canvas cleared for the effect that follows.
 ///
 /// The prelude of the stat boosts, the projectile volleys, the healing motes,
 /// the Djinn beams, the burst scenes, Bind, Hail, Ground, Torch and Vine,
@@ -269,40 +268,40 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
 /// Six comets fly at each target, three frames apart, and burst into a flash
 /// and sparks; the effect's variant picks one of three comets.
 ///
-/// Abilities: Slash, Wind Slash, Sonic Slash (kind 19).
+/// Abilities: Slash, Wind Slash, Sonic Slash (BATTLE_FX_SLASH).
 void BattleFx_RunSlash(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 0);
 }
 /// Four spinning shurikens fly at each target, five frames apart, and vanish
 /// once past it.
 ///
-/// Abilities: Shuriken (kind 54).
+/// Abilities: Shuriken (BATTLE_FX_SHURIKEN).
 void BattleFx_RunShuriken(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 1);
 }
 /// Ten pellets fly slowly at each target and bounce off it, up or down at
 /// random.
 ///
-/// Abilities: Crazy Voice (kind 303).
+/// Abilities: Crazy Voice (BATTLE_FX_CRAZY_VOICE).
 void BattleFx_RunCrazyVoice(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 2);
 }
 /// Five yellow sparks fly level at each target, five frames apart.
 ///
-/// Abilities: Wing Flutter (kind 307).
+/// Abilities: Wing Flutter (BATTLE_FX_WING_FLUTTER).
 void BattleFx_RunWingFlutter(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 3);
 }
 /// Ten large yellow sparks stream level at each target, one a frame, spread up
 /// and down.
 ///
-/// Abilities: Wing Stroke (kind 381).
+/// Abilities: Wing Stroke (BATTLE_FX_WING_STROKE).
 void BattleFx_RunWingStroke(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 11);
 }
 /// Ten small yellow sparks stream level at each target, one a frame.
 ///
-/// Abilities: Wing Beat (kind 306).
+/// Abilities: Wing Beat (BATTLE_FX_WING_BEAT).
 void BattleFx_RunWingBeat(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 4);
 }
@@ -327,14 +326,14 @@ BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
 /// From the user's action pose, one large comet in ice colours flies at each
 /// target and bursts into 80 sparks.
 ///
-/// Abilities: Cutting Edge (kind 57).
+/// Abilities: Cutting Edge (BATTLE_FX_CUTTING_EDGE).
 void BattleFx_RunCuttingEdge(struct BattleEffectArgument *effect) {
   BattleFx_RunVolleyWithAction(effect, 5);
 }
 /// From the user's action pose, seven fireballs trailing embers fly at each
 /// target, two frames apart, each bursting into 40 sparks.
 ///
-/// Abilities: Heat Wave (kind 59).
+/// Abilities: Heat Wave (BATTLE_FX_HEAT_WAVE).
 void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
   BattleFx_RunVolleyWithAction(effect, 6);
 }
@@ -342,21 +341,21 @@ void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
 /// shaking the screen or knocking the target back; the battle shows the damage
 /// on frame 48.
 ///
-/// Abilities: Sleet (kind 205).
+/// Abilities: Sleet (BATTLE_FX_SLEET).
 void BattleFx_RunSleet(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 7);
 }
 /// Sixty ice chips stream at each target, one a frame, without knocking it
 /// back.
 ///
-/// Abilities: Ice Blessing (kind 402).
+/// Abilities: Ice Blessing (BATTLE_FX_ICE_BLESSING).
 void BattleFx_RunIceBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 10);
 }
 /// From the user's action pose, sixty ice chips stream at each target, one a
 /// frame, scattered up and down, without knocking it back.
 ///
-/// Abilities: Blizzard (kind 63).
+/// Abilities: Blizzard (BATTLE_FX_BLIZZARD).
 void BattleFx_RunBlizzard(struct BattleEffectArgument *effect) {
   BattleFx_RunVolleyWithAction(effect, 9);
 }
@@ -387,9 +386,8 @@ enum VolleyField {
 #define PROJECTILE_VOLLEY_FIRST_SPARK 100     ///< the first spark in PARTICLES
 #define PROJECTILE_VOLLEY_FIRST_TRAIL 512     ///< the first trail in PARTICLES
 
-/// Projectile volley: shots fly from the user to each target and burst
-/// into a flash and sparks when they pass it. The hit sound plays at most
-/// once every 8 frames.
+/// Shots fly from the user to each target and burst into a flash and sparks
+/// when they pass it. The hit sound plays at most once every 8 frames.
 ///
 /// Called by the eleven wrappers above, and by casting impacts 15 (mode 9)
 /// and 26 (mode 8, which no wrapper uses) once their prelude ends. With more

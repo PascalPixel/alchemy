@@ -20,9 +20,9 @@
 /// bounce, and the orb's flight ends in a burst of RAMSES_SPARKS sparks from
 /// PARTICLES.
 ///
-/// Abilities: Ramses (scene kind 1).
+/// Abilities: Ramses (SCENE_EFFECT_RAMSES).
 ///
-/// Up to RAMSES_FRAMES frames; A or B ends it early.
+/// The scene plays for up to RAMSES_FRAMES frames, and A or B ends it early.
 ///
 ///   0 to 90     the orb circles above the formation
 ///   91 to 196   it drops three times, 40 frames apart, throwing puffs, and

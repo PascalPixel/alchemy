@@ -15,11 +15,11 @@
 #define BOREAS_POINT_X(rock) gBoreas_Points[rock][0]
 #define BOREAS_POINT_Y(rock) gBoreas_Points[rock][1]
 
-/// Rocks and ice blocks: a window opens on rocks that crumble, a big ice block
-/// drops and throws up spray; then ice blocks rain down on the targets, and
-/// boulders crumble into bouncing chips.
+/// A window opens on rocks that crumble, and a big ice block drops in and
+/// throws up spray; then ice blocks rain down on the targets, and boulders
+/// crumble into bouncing chips.
 ///
-/// Abilities: Boreas (scene kind 10).
+/// Abilities: Boreas (SCENE_EFFECT_BOREAS).
 ///
 /// The longest of the effects, in two halves. The first (288 frames, which A
 /// or B cuts short after frame 16) opens a window on a field of 16 rocks over

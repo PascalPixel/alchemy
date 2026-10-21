@@ -22,7 +22,7 @@
 /// A huge flaming blade swings down over the targets and two columns of light
 /// strike through them.
 ///
-/// Abilities: Ragnarok (kind 58).
+/// Abilities: Ragnarok (BATTLE_FX_RAGNAROK).
 ///
 /// The sword is drawn for 40 frames: it swings down over 10 frames, pauses
 /// until frame 20, then creeps on. The columns flash at frames 16 and 24 and

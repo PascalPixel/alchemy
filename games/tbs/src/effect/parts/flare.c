@@ -6,10 +6,10 @@
 
 #define FLARE_ARC_COUNT 9 ///< flames on the arc
 
-/// Flame arc: nine flames rise one after another, 4 frames apart, along half
-/// an ellipse, over 80 frames.
+/// Nine flames rise one after another, 4 frames apart, along half an ellipse,
+/// over 80 frames.
 ///
-/// Abilities: Flare, Flare Wall, Flare Storm (kind 11).
+/// Abilities: Flare, Flare Wall, Flare Storm (BATTLE_FX_FLARE).
 ///
 /// Each target flashes red in turn, 8 frames apart from frame 16. Writes
 /// REG_BLDCNT and REG_BLDALPHA, and ends with the blitter freed, the transfer

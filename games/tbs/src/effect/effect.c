@@ -1,7 +1,7 @@
 /// @file
-/// The battle effect object: everything drawn over the battle while an
-/// ability plays. effect_internal.h holds what every effect shares (includes,
-/// macros and the frame-loop helpers); the effects are in the files under
+/// Everything drawn over the battle while an ability plays comes from this one
+/// object. effect_internal.h holds what every effect shares (includes, macros
+/// and the frame-loop helpers); the effects are in the files under
 /// parts/, included here in the order their code has in the ROM. That order
 /// mixes families, Djinn, summons and shared machinery, and each part is one
 /// run of it, named for what it holds. Camelot's own files are not
@@ -9,11 +9,13 @@
 /// one family ends and the next begins.
 ///
 /// To find the effect a move plays, search for the move's English name: each
-/// handler's "Abilities:" comment lists the abilities that reach it, and each
-/// row of gBattleFx_EffectHandlers (effect_table.c) gives its kind, its part
-/// and its first ability. README.md gives the words and prefixes the parts
-/// use, and ../MATCHING.md the spellings some sites keep to match. The shared
-/// machinery:
+/// handler's reach line, the paragraph of its comment that starts
+/// "Abilities:", lists the abilities that reach it and the effect each one
+/// selects, and each row of gBattleFx_EffectHandlers (effect_table.c) gives
+/// an effect kind's enumerator, the part that defines its handler and, where
+/// an ability selects it, the first one that does. README.md gives the words
+/// and prefixes the parts use, and ../MATCHING.md the spellings some sites
+/// keep to match. The shared machinery is in these parts:
 ///
 ///   Entry points    dispatch.c: BattleFx_RunTableEffect,
 ///                   BattleFx_RunSceneEffect; positions.c:
@@ -28,13 +30,13 @@
 ///   Targets         dispatch.c: BattleFx_SelectLivingTargets;
 ///                   helm_splitter.c: BattleFx_PlaceFormationObjects
 ///
-/// Who owns what while an effect plays: the three entry points allocate the
-/// sheet (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_EFFECT)
-/// and the canvas (HEAP_SLOT_BATTLE_CANVAS) before the handler runs and
-/// release them after it returns, so a handler removes every callback that
-/// reads them before it returns. The two blitter slots and gMapCellBuffer
-/// (PARTICLES) belong to the handler for as long as it runs; it frees the
-/// blitters itself before it returns.
+/// While an effect plays, its entry point owns the sheet
+/// (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_EFFECT) and the
+/// canvas (HEAP_SLOT_BATTLE_CANVAS): each of the three entry points allocates
+/// them before the handler runs and releases them after it returns, so a
+/// handler removes every callback that reads them before it returns. The two
+/// blitter slots and gMapCellBuffer (PARTICLES) belong to the handler for as
+/// long as it runs; it frees the blitters itself before it returns.
 ///
 /// README.md in this folder explains the ideas: how a move picks its effect,
 /// the frame loop, the canvas, particles, blitters and pictures.

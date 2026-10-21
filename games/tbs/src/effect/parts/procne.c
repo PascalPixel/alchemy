@@ -12,9 +12,9 @@
 /// A whirlwind lifts the targets, then comets from a block of objects in a
 /// violet sky strike them.
 ///
-/// Abilities: Procne (scene kind 8).
+/// Abilities: Procne (SCENE_EFFECT_PROCNE).
 ///
-/// 400 frames:
+/// The scene runs for 400 frames:
 ///   0 to 159   : a whirlwind rises over the field and lifts the targets,
 ///                spinning them round it and drawing them in, while dust
 ///                spirals up;

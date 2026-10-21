@@ -77,9 +77,10 @@ void BattleFx_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
 
 /// Runs Frost cast on a target.
 ///
-/// Abilities: Frost (field kind 6), cast on a target (scene->child).
+/// Abilities: Frost (FIELD_KIND_FROST).
 ///
-/// With childMode the target is left as it is and only the particles appear.
+/// The target is the actor in scene->child. With childMode the target is left
+/// as it is and only the particles appear.
 void FieldFx_RunFrostOnTarget(s32 unused) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->child;
@@ -97,7 +98,7 @@ void FieldFx_RunFrostOnTarget(s32 unused) {
 /// 16 particles spiral in on the effect's position and make the target flash 16
 /// times; without childOption the target takes mode 2.
 ///
-/// Abilities: Frost (field kind 6).
+/// Abilities: Frost (FIELD_KIND_FROST).
 ///
 /// The target's part runs only when a scene event named the target
 /// (BattleFx_DispatchRequestKind clears enabled) and no scene set

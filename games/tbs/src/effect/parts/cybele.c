@@ -21,13 +21,13 @@
 #define CYBELE_FIRST_CHIP 16      ///< the first chip in work->particles
 #define CYBELE_EMBER_CELL 6       ///< the ember picture in gCybele_EmberOffsets
 
-/// Thorn vines: thorns fly in from the right, vines grow out of the ground and
-/// lift the targets while sparks flash around them, the picture dissolves pixel
-/// by pixel, and the targets drop and explode.
+/// Thorns fly in from the right and vines grow out of the ground, lifting the
+/// targets while sparks flash around them; then the picture dissolves pixel by
+/// pixel, and the targets drop and explode.
 ///
-/// Abilities: Cybele (scene kind 5).
+/// Abilities: Cybele (SCENE_EFFECT_CYBELE).
 ///
-/// 366 frames:
+/// The scene runs for CYBELE_FRAMES, in these stages:
 ///
 /// - 0 to 127: the formation objects drop in, landing on frame 31; from 72
 ///   a thorn flies in from the right each frame.

@@ -36,34 +36,33 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 
 /// Rushes the target and scatters sparks in the fire pillar palette.
 ///
-/// Abilities: Bone Charge (kind 311).
+/// Abilities: Bone Charge (BATTLE_FX_BONE_CHARGE).
 void BattleFx_RunBoneCharge(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 0);
 }
 /// Rushes the target and scatters sparks in the ice-block palette.
 ///
-/// Abilities: Brute Force (kind 314).
+/// Abilities: Brute Force (BATTLE_FX_BRUTE_FORCE).
 void BattleFx_RunBruteForce(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 1);
 }
 /// Rushes the target and scatters sparks in the pink-burst palette.
 ///
-/// Abilities: Onslaught (kind 326).
+/// Abilities: Onslaught (BATTLE_FX_ONSLAUGHT).
 void BattleFx_RunOnslaught(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 2);
 }
 /// Rushes the target and scatters sparks in the blast palette.
 ///
-/// Abilities: Headbutt (kind 339).
+/// Abilities: Headbutt (BATTLE_FX_HEADBUTT).
 void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 3);
 }
 #define RUSHING_STRIKE_FRAMES 60
 #define RUSHING_STRIKE_FRAME 10 ///< the user strikes
 
-/// Rushing strike: the user rushes at the first target and strikes it on
-/// frame 10; a ring flares where it hits and 64 sparks scatter, over 60
-/// frames in all.
+/// The user rushes at the first target and strikes it on frame 10; a ring
+/// flares where it hits and 64 sparks scatter.
 ///
 /// Called by the four wrappers above. work->particles holds the sparks, each
 /// variant its frames left; the six packed ring pictures go to

@@ -13,10 +13,10 @@
 /// lands, shakes the screen and strikes the targets.
 #define SPIRE_FALL_FRAMES 18
 
-/// Shattering rocks: boulders drop along the row of targets, centred on it, and
-/// burst into tumbling shards, hitting every target as each lands.
+/// Boulders drop along the row of targets, centred on it, and shatter into
+/// tumbling shards, hitting every target as each lands.
 ///
-/// Abilities: Spire, Clay Spire, Stone Spire (kind 2).
+/// Abilities: Spire, Clay Spire, Stone Spire (BATTLE_FX_SPIRE).
 ///
 /// The boulders are work->particles, of which only y and its speed move; their
 /// shards are PARTICLES, SPIRE_SHARDS for each boulder. Each transfer clears

@@ -10,21 +10,21 @@
 // - The spider web spreads four mirrored quarters of a web over the targets
 //   and fades it in and out.
 
-/// A lime swipe that knocks the target back.
+/// A lime swirl sweeps across the first target and knocks it back.
 ///
-/// Abilities: Poison Beat (kind 382).
+/// Abilities: Poison Beat (BATTLE_FX_POISON_BEAT).
 void BattleFx_RunPoisonBeat(struct BattleEffectArgument *effect) {
   BattleFx_RunSwirlSwipe(effect, 0);
 }
-/// A magenta swipe that throws the target into the air.
+/// A magenta swirl sweeps across the first target and throws it into the air.
 ///
-/// Abilities: Spinning Beat (kind 383).
+/// Abilities: Spinning Beat (BATTLE_FX_SPINNING_BEAT).
 void BattleFx_RunSpinningBeat(struct BattleEffectArgument *effect) {
   BattleFx_RunSwirlSwipe(effect, 1);
 }
-/// A swirling swipe across the first target, six images four frames each,
-/// from the user's side: the first four from the swirl sheet, the last two
-/// from the tail sheet. The swipe lands on frame 8.
+/// A swirl sweeps across the first target from the user's side in six images of
+/// four frames each: the first four from the swirl sheet, the last two from the
+/// tail sheet. The swipe lands on frame 8.
 ///
 /// Called by BattleFx_RunPoisonBeat and BattleFx_RunSpinningBeat. Decodes
 /// the tail sheet into Ram_MapCellBuffer, moves BG2X so the swipe crosses
@@ -138,7 +138,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 /// A spider web spreads over the targets, drawn as four mirrored 32x32 quarters
 /// around the point between the first and last target.
 ///
-/// Abilities: Spider Web (kind 345).
+/// Abilities: Spider Web (BATTLE_FX_SPIDER_WEB).
 ///
 /// It fades in over 8 frames; the targets flash on frame 10, the battle shows
 /// the damage on frame 32, and it fades out from frame 54.

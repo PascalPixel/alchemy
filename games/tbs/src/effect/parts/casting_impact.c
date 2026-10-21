@@ -125,9 +125,9 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
   EFFECT_RELEASE_BLITTERS();
 }
 
-/// The casting impacts, by kind - 100: each is named for the first ability
-/// whose gBattle_ActionFlags entry selects it; the four no ability selects
-/// keep their numbers.
+/// The casting impacts, by effect kind less 100: each is named for the first
+/// ability whose gBattle_ActionFlags entry selects it; the four no ability
+/// selects keep their numbers.
 ///
 /// The trailing comments give each impact's own animation, drawn over the
 /// target after the orb and sparks. Most animations use the 64 particles at
@@ -193,6 +193,35 @@ enum CastingImpact {
 /// Gathers sparks around the caster, launches the Djinni and draws the
 /// impact on the first target.
 ///
+/// Abilities: Bane (CASTING_IMPACT_IMPACT_BANE); Smog
+/// (CASTING_IMPACT_IMPACT_SMOG); Mist (CASTING_IMPACT_IMPACT_MIST); Fever
+/// (CASTING_IMPACT_IMPACT_FEVER); Flint (CASTING_IMPACT_IMPACT_FLINT); Scorch
+/// (CASTING_IMPACT_IMPACT_SCORCH); Squall (CASTING_IMPACT_IMPACT_SQUALL); Sap
+/// (CASTING_IMPACT_IMPACT_SAP); Terra Strike
+/// (CASTING_IMPACT_IMPACT_TERRA_STRIKE); Poison Cloud
+/// (CASTING_IMPACT_IMPACT_POISON_CLOUD); Deadly Poison
+/// (CASTING_IMPACT_IMPACT_DEADLY_POISON); Mortal Danger, Death Size
+/// (CASTING_IMPACT_IMPACT_MORTAL_DANGER); Bad Omen
+/// (CASTING_IMPACT_IMPACT_BAD_OMEN); Life Nourish
+/// (CASTING_IMPACT_IMPACT_LIFE_NOURISH); Aqua Sock
+/// (CASTING_IMPACT_IMPACT_AQUA_SOCK); Frost Bite
+/// (CASTING_IMPACT_IMPACT_FROST_BITE); Life Leech
+/// (CASTING_IMPACT_IMPACT_LIFE_LEECH); Psy Leech
+/// (CASTING_IMPACT_IMPACT_PSY_LEECH); Broil (CASTING_IMPACT_IMPACT_BROIL);
+/// Meltdown (CASTING_IMPACT_IMPACT_MELTDOWN); Heat Mirage, Heat Flash
+/// (CASTING_IMPACT_IMPACT_HEAT_MIRAGE); Barrage
+/// (CASTING_IMPACT_IMPACT_BARRAGE); Acid Bath
+/// (CASTING_IMPACT_IMPACT_ACID_BATH); Stun Voltage
+/// (CASTING_IMPACT_IMPACT_STUN_VOLTAGE); Blinding Smog
+/// (CASTING_IMPACT_IMPACT_BLINDING_SMOG); Murk (CASTING_IMPACT_IMPACT_MURK);
+/// Cyclone Slash (CASTING_IMPACT_IMPACT_CYCLONE_SLASH); Psyphon Seal
+/// (CASTING_IMPACT_IMPACT_PSYPHON_SEAL); Asura (CASTING_IMPACT_IMPACT_ASURA);
+/// Forcible Arm (CASTING_IMPACT_IMPACT_FORCIBLE_ARM); Truncheon Fist
+/// (CASTING_IMPACT_IMPACT_TRUNCHEON_FIST); Severe Blow
+/// (CASTING_IMPACT_IMPACT_SEVERE_BLOW); none (CASTING_IMPACT_IMPACT_15); none
+/// (CASTING_IMPACT_IMPACT_17); none (CASTING_IMPACT_IMPACT_24); none
+/// (CASTING_IMPACT_IMPACT_26).
+///
 /// Called only by BattleFx_DispatchByIdRange (positions.c), for effect kinds
 /// 100 to 135. The phases, the hand-offs and the particle ranges are in the
 /// folder README under "Effect families". Opens the canvas layer (tiled for
@@ -201,8 +230,8 @@ enum CastingImpact {
 /// the sparks gather, and adds BattleFx_ArmBg2AffineHBlankDma for the waving
 /// impacts; it releases all of them before it returns, or hands them on.
 ///
-/// mode: the impact, an enum CastingImpact (the kind less 100). The tests on
-///       mode 100 never hold, as the dispatcher passes 0 to 35.
+/// mode: the impact, an enum CastingImpact (the effect kind less 100). The
+///       tests on mode 100 never hold, as the dispatcher passes 0 to 35.
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   void **slot;

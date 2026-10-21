@@ -10,45 +10,52 @@
 // Lobbed shells: a shell arcs from the user onto each target and bursts
 // into smoke or shards, in seven colourings.
 
-/// Gold shells that burst into shards.
+/// Gold shells arc from the user onto each target in turn and burst into
+/// shards.
 ///
-/// Abilities: Mad Spatter (kind 347).
+/// Abilities: Mad Spatter (BATTLE_FX_MAD_SPATTER).
 void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 4);
 }
-/// Green shells that burst into smoke.
+/// Green shells arc from the user onto each target in turn and burst into
+/// smoke.
 ///
-/// Abilities: Decompose (kind 350).
+/// Abilities: Decompose (BATTLE_FX_DECOMPOSE).
 void BattleFx_RunDecompose(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 5);
 }
-/// Blue shells that burst into smoke.
+/// Blue shells arc from the user onto each target in turn and burst into
+/// smoke.
 ///
-/// Abilities: Bone Chiller (kind 309).
+/// Abilities: Bone Chiller (BATTLE_FX_BONE_CHILLER).
 void BattleFx_RunBoneChiller(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 0);
 }
-/// Shells in the spider web's colours that burst into smoke.
+/// Shells in the spider web's colours arc from the user onto each target in
+/// turn and burst into smoke.
 ///
-/// Abilities: Sticky Goo (kind 315).
+/// Abilities: Sticky Goo (BATTLE_FX_STICKY_GOO).
 void BattleFx_RunStickyGoo(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 1);
 }
-/// Shells in Mars Djinn colours that burst into smoke.
+/// Shells in Mars Djinn colours arc from the user onto each target in turn
+/// and burst into smoke.
 ///
-/// Abilities: Poison Ink (kind 340).
+/// Abilities: Poison Ink (BATTLE_FX_POISON_INK).
 void BattleFx_RunPoisonInk(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 6);
 }
-/// Lime shells that burst into smoke.
+/// Lime shells arc from the user onto each target in turn and burst into
+/// smoke.
 ///
-/// Abilities: Sticky Poison (kind 322).
+/// Abilities: Sticky Poison (BATTLE_FX_STICKY_POISON).
 void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 2);
 }
-/// Green shells that burst into shards.
+/// Green shells arc from the user onto each target in turn and burst into
+/// shards.
 ///
-/// Abilities: Rotten Blood (kind 330).
+/// Abilities: Rotten Blood (BATTLE_FX_ROTTEN_BLOOD).
 void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 3);
 }

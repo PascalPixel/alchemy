@@ -7,7 +7,7 @@
 /// A fountain of grey motes and puffs of smoke bursts up beside the targets and
 /// falls back, flashing each target.
 ///
-/// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
+/// Abilities: Smoke Bomb, Sleep Bomb (BATTLE_FX_SMOKE_BOMB).
 ///
 /// It always uses the second row of gEruption_Counts: 32 motes, 16 puffs, 80
 /// frames.
@@ -17,7 +17,7 @@ void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
 /// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
 /// targets and falls back, flashing each target and making it recoil.
 ///
-/// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
+/// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_FX_BLAST).
 void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
   BattleFx_RunEruption(effect, 0);
 }

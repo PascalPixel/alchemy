@@ -1,5 +1,5 @@
 /// @file
-/// Lalivero (scene 178), the town by Babi Lighthouse and Venus Lighthouse,
+/// SceneId_Lalivero, the town by Babi Lighthouse and Venus Lighthouse,
 /// which has been "the symbol of Lalivero since the olden days". The story
 /// brings the party here twice, and Lalivero_GetPlacements and
 /// Lalivero_GetEvents pick the town's people and events for the visit by
@@ -32,11 +32,11 @@
 /// beacon of Venus Lighthouse and of Sheba's fall.
 ///
 /// On both visits Torch, a Mars Djinni, waits in the town until it joins; doors
-/// (EnterDoor) lead into the houses, shops and inn (scenes 179 and 180) and,
-/// through a gate (trigger 6), into the Lalivero Sanctum;
-/// LALIVERO_TO_WORLD_MAP_EAST and LALIVERO_TO_WORLD_MAP_WEST lead to the world
-/// map; and a jar, a stone pillar and a chest hold a Water of Life, a Psy
-/// Crystal and a Warrior's Helm.
+/// (EnterDoor) lead into the houses, shops and inn (SceneId_LaliveroShops and
+/// SceneId_LaliveroFaransHouse) and, through a gate (trigger 6), into the
+/// Lalivero Sanctum; LALIVERO_TO_WORLD_MAP_EAST and LALIVERO_TO_WORLD_MAP_WEST
+/// lead to the world map; and a jar, a stone pillar and a chest hold a Water of
+/// Life, a Psy Crystal and a Warrior's Helm.
 
 #include "game_state.h"
 #include "unit/scene/lalivero.h"

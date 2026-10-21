@@ -89,146 +89,143 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   // The enemy classes drawn larger or smaller than their sprites, in 16.16
   // (0x18000 is 1.5, 0xe666 0.9). Grouping equal scale cases shortens the
   // matching EN function by 148 bytes, so each case keeps its own store.
-  // Class ids are enemies.tsv rows plus ENEMY_CLASS_FIRST; each case names
-  // its row's enemy. Bandit and Orc Captain are set to 1.0 again.
+  // Bandit and Orc Captain are set to 1.0 again.
   actor->scale = SCALE_ONE;
   switch (unit->classId) {
-  case 78: // Killer Ape
+  case ENEMY_KILLER_APE:
     actor->scale = 0x19999;
     break;
-  case 89: // Manticore
+  case ENEMY_MANTICORE:
     actor->scale = 0x18ccc;
     break;
-  case 130: // Living Statue
+  case ENEMY_LIVING_STATUE:
     actor->scale = 0x13333;
     break;
-  case 131: // Hydros Statue
+  case ENEMY_HYDROS_STATUE:
     actor->scale = 0x19999;
     break;
-  case 138: // Ant Lion
+  case ENEMY_ANT_LION:
     actor->scale = 0x18000;
     break;
-  case 147: // Tret
+  case ENEMY_TRET:
     actor->scale = 0x1cccc;
     break;
-  case 149: // Deadbeard
+  case ENEMY_DEADBEARD:
     actor->scale = 0x1cccc;
     break;
-  case 29: // Bandit
+  case ENEMY_BANDIT:
     actor->scale = 0x10000;
     break;
-  case 121: // Kraken
+  case ENEMY_KRAKEN:
     actor->scale = 0x1b333;
     break;
-  case 148: // Fusion Dragon
+  case ENEMY_FUSION_DRAGON:
     actor->scale = 0x18000;
     break;
-  case 150: // Mimic (eight rows, to 157)
+  case ENEMY_MIMIC:
     actor->scale = 0x18000;
     break;
-  case 151:
+  case ENEMY_MIMIC_2:
     actor->scale = 0x18000;
     break;
-  case 152:
+  case ENEMY_MIMIC_3:
     actor->scale = 0x18000;
     break;
-  case 153:
+  case ENEMY_MIMIC_4:
     actor->scale = 0x18000;
     break;
-  case 154:
+  case ENEMY_MIMIC_5:
     actor->scale = 0x18000;
     break;
-  case 155:
+  case ENEMY_MIMIC_6:
     actor->scale = 0x18000;
     break;
-  case 156:
+  case ENEMY_MIMIC_7:
     actor->scale = 0x18000;
     break;
-  case 157:
+  case ENEMY_MIMIC_8:
     actor->scale = 0x18000;
     break;
-  case 47: // Troll
+  case ENEMY_TROLL:
     actor->scale = 0x13333;
     break;
-  case 48: // Cave Troll
+  case ENEMY_CAVE_TROLL:
     actor->scale = 0x13333;
     break;
-  case 49: // Brutal Troll
+  case ENEMY_BRUTAL_TROLL:
     actor->scale = 0x16666;
     break;
-  case 84: // Orc Captain
+  case ENEMY_ORC_CAPTAIN:
     actor->scale = 0x10000;
     break;
-  case 85: // Orc Lord
+  case ENEMY_ORC_LORD:
     actor->scale = 0x14000;
     break;
-  case 128: // Lizard Fighter
+  case ENEMY_LIZARD_FIGHTER:
     actor->scale = 0x16666;
     break;
-  case 129: // Lizard King
+  case ENEMY_LIZARD_KING:
     actor->scale = 0x16666;
     break;
-  case 94: // Hobgoblin
+  case ENEMY_HOBGOBLIN:
     actor->scale = 0x18000;
     break;
-  case 98: // Gryphon
+  case ENEMY_GRYPHON:
     actor->scale = 0x14ccc;
     break;
-  case 110: // Chimera
+  case ENEMY_CHIMERA:
     actor->scale = 0x13333;
     break;
-  case 132: // Azart (two rows)
+  case ENEMY_AZART:
     actor->scale = 0x10ccc;
     break;
-  case 133:
+  case ENEMY_AZART_2:
     actor->scale = 0x10ccc;
     break;
-  case 134: // Satrage (two rows)
+  case ENEMY_SATRAGE:
     actor->scale = 0x11999;
     break;
-  case 135:
+  case ENEMY_SATRAGE_2:
     actor->scale = 0x11999;
     break;
-  case 136: // Navampa (two rows)
+  case ENEMY_NAVAMPA:
     actor->scale = 0x13333;
     break;
-  case 137:
+  case ENEMY_NAVAMPA_2:
     actor->scale = 0x13333;
     break;
-  case 141: // Toadonpa
+  case ENEMY_TOADONPA:
     actor->scale = 0x18000;
     break;
-  case 144: // Tornado Lizard
+  case ENEMY_TORNADO_LIZARD:
     actor->scale = 0x13333;
     break;
-  case 145: // Storm Lizard
+  case ENEMY_STORM_LIZARD:
     actor->scale = 0x18000;
     break;
-  case 146: // Tempest Lizard
+  case ENEMY_TEMPEST_LIZARD:
     actor->scale = 0x18ccc;
     break;
-  case 52: // Recluse
+  case ENEMY_RECLUSE:
     actor->scale = 0x14000;
     break;
-  case 105: // Cerebus
+  case ENEMY_CEREBUS:
     actor->scale = 0x14000;
     break;
-  // Slime, Slime, Ooze, Slime Beast, Thief, Siren, Succubus, Nightmare,
-  // Kobold, Mystery Man, Saturos (two rows), Mystery Woman and Menardi.
-  case 18:
-  case 19:
-  case 20:
-  case 21:
-  case 30:
-  case 68:
-  case 69:
-  case 70:
-  case 92:
-  case 122:
-  case 123:
-  case 124:
-  case 125:
-  case 126:
+  case ENEMY_SLIME:
+  case ENEMY_SLIME_2:
+  case ENEMY_OOZE:
+  case ENEMY_SLIME_BEAST:
+  case ENEMY_THIEF:
+  case ENEMY_SIREN:
+  case ENEMY_SUCCUBUS:
+  case ENEMY_NIGHTMARE:
+  case ENEMY_KOBOLD:
+  case ENEMY_MYSTERY_MAN:
+  case ENEMY_SATUROS:
+  case ENEMY_SATUROS_2:
+  case ENEMY_MYSTERY_WOMAN:
+  case ENEMY_MENARDI:
     actor->scale = 0xe666;
     break;
   }
@@ -321,9 +318,9 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
       if (!IS_PLACEHOLDER_ID(actorIds[index])) {
         actor = UnitGetFar(actorIds[index]);
         spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
-        // The Fusion Dragon and the Kraken; the first place keeps -80
-        // whatever its class.
-        if (actor->classId == 148 || actor->classId == 121) {
+        // The first place keeps -80 whatever its class.
+        if (actor->classId == ENEMY_FUSION_DRAGON ||
+            actor->classId == ENEMY_KRAKEN) {
           xPositions[index] = -50;
         }
       }

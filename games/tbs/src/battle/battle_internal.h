@@ -94,6 +94,7 @@
 #include "frame.h"
 #include "unit/object/psynergy_effects.h"
 #include "macros.h"
+#include "enemy_ids.h"
 
 /// The battle's windows: window 0 shows BG0 to BG2, sprites and blending,
 /// window 1 BG0, BG2, sprites and blending, and outside them only BG0 and
@@ -189,8 +190,10 @@
 /// second part, which SummonSlot_RegisterActorSprites loads into further
 /// enemy sprite slots and BattleActor_SpawnObjectsForList shows as the
 /// object's second record.
-#define SPRITE_WITH_SECOND_PART_A 476 ///< the Kraken's (class 121, sprites.tsv)
-#define SPRITE_WITH_SECOND_PART_B 483 ///< the Fusion Dragon's (class 148)
+#define SPRITE_WITH_SECOND_PART_A                                              \
+  476 ///< the Kraken's (ENEMY_KRAKEN, sprites.tsv)
+#define SPRITE_WITH_SECOND_PART_B                                              \
+  483 ///< the Fusion Dragon's (ENEMY_FUSION_DRAGON)
 
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1

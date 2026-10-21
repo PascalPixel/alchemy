@@ -171,9 +171,8 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
     s32 classId;
     flags |= ICON_STUN;
     classId = unit->classId;
-    // Kraken and Fusion Dragon never show it; Summon_LayoutPositions also
-    // tests these two classes (enemies.tsv rows 113, 140).
-    if (classId == 121 || classId == 148)
+    // Summon_LayoutPositions also tests these two classes.
+    if (classId == ENEMY_KRAKEN || classId == ENEMY_FUSION_DRAGON)
       flags &= ~ICON_STUN;
   }
   if (unit->psySeal != 0)

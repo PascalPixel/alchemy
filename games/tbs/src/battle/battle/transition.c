@@ -4,9 +4,8 @@
 
 #include "../battle_internal.h"
 
-/// The formation the Fusion Dragon leads (row 347 of formatn.tsv, whose first
-/// member is enemy 140), fought on the Venus Lighthouse aerie: it opens with
-/// the storm instead of the curtain.
+/// The formation the Fusion Dragon leads, fought on the Venus Lighthouse aerie:
+/// it opens with the storm instead of the curtain.
 #define TRANSITION_STORM_FORMATION 0x15b
 
 /// The curtain's map entries: tile 128 + n of CURTAIN_TILE, palette 15.
@@ -17,9 +16,9 @@
 /// Reached only through its entry in the battle bank's far-call table
 /// (FarCall_BattleTable), which no code in TBS names. Sets REG_BLDCNT to
 /// darken the backgrounds, leaves REG_MOSAIC at its largest and REG_DISPCNT
-/// in mode 1 with every layer off; the four BGxCNT are put back as they were.
-/// It draws four random numbers a frame, which only advances the sequence.
-/// Returns 0.
+/// in DISPCNT_MODE_1 with every layer off; the four BGxCNT are put back as they
+/// were. It draws four random numbers a frame, which only advances the
+/// sequence. Returns 0.
 s32 BattlePres_RunMosaicFadeOut(void) {
   /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
    * stored and loaded again as in the ROM; without volatile, 28 of 90
@@ -383,7 +382,7 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
     }
   } else {
-    // The storm: every unit but class 148, the Fusion Dragon, drawn at 0.7
+    // The storm: every unit but the Fusion Dragon drawn at 0.7
     // scale (16.16), the display blank but for the windows.
     battle = WORK_SLOT(HEAP_SLOT_BATTLE);
     background->secondMode = 1;
@@ -398,7 +397,7 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       if ((s32)index <= 7)
         id = index;
       object = BattleObjGet(id);
-      if (UnitGetFar(id)->classId != 148)
+      if (UnitGetFar(id)->classId != ENEMY_FUSION_DRAGON)
         object->scale = 0xb333;
     }
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,

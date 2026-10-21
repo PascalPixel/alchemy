@@ -253,6 +253,8 @@ s32 Object_InitializeMode(struct AnimationObject *state, s32 flags);
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held
   POSE_STANDING = 1,
+  POSE_LEAP = 2,       ///< running up to a target and leaping
+  POSE_CAST = 3,       ///< a hand raised to cast or use an item
   POSE_PARTY_HELD = 4, ///< asleep, stunned or held; also a downed member
   POSE_DAMAGE = 5,     ///< taking damage
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose

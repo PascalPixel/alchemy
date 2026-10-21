@@ -11,9 +11,7 @@
 // The motion values below are 16.16 fixed point, in pixels and frames:
 // acceleration and speedLimit per frame, velocityY the hop's upward speed,
 // and verticalMotionStrength the gravity taken from it each frame (0xab85
-// about 0.67, 0x9999 0.6, 0x7851 about 0.47). The poses are the sprites'
-// animations: 1 POSE_STANDING, 2 the one every run up and leap here takes,
-// 5 POSE_DAMAGE.
+// about 0.67, 0x9999 0.6, 0x7851 about 0.47).
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once. Called after an action by the
@@ -45,7 +43,7 @@ void ObjMotRst(s32 unitId) {
 }
 
 /// Sends unitId running off its side of the battlefield, three times
-/// as far out as its spot, with a hop, in pose 1 (POSE_STANDING). Called by
+/// as far out as its spot, with a hop, in POSE_STANDING. Called by
 /// BattleEscape_PlayRun and BattlePres_RunEscape.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObj *battleObject;
@@ -62,11 +60,11 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
   Object_SetMoveTargetFar((struct ObjectRuntime *)object,
                           battleObject->anchorX * 3, 0, battleObject->anchorZ);
-  ObjectDispatch_SelectAnimationFar(object, 1);
+  ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
 }
 
 /// Sends the unit of startSlot leaping progress percent of the way toward
-/// the unit of endSlot, in pose 2. Also clears REG_BLDCNT. Nothing in the
+/// the unit of endSlot, in POSE_LEAP. Also clears REG_BLDCNT. Nothing in the
 /// source calls it.
 void BattleMotion_InterpolatePosition(struct BattleObj *startSlot,
                                       struct BattleObj *endSlot, s32 progress) {
@@ -93,7 +91,7 @@ void BattleMotion_InterpolatePosition(struct BattleObj *startSlot,
   start->verticalMotionPhase = 0;
   start->autoFaceMotion = 1;
   Object_SetMoveTargetFar((struct ObjectRuntime *)start, x, 0, startZ + zStep);
-  ObjectDispatch_SelectAnimationFar(start, 2);
+  ObjectDispatch_SelectAnimationFar(start, POSE_LEAP);
 }
 
 /// Sends a unit's object back to its spot. Nothing in the source calls it.
@@ -134,7 +132,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
 }
 
 /// Sends unit id leaping back to 1.3 times its spot's distance from the
-/// centre, in pose 5 (POSE_DAMAGE). Only an unnamed overlay veneer in
+/// centre, in POSE_DAMAGE. Only an unnamed overlay veneer in
 /// BATTLE.S reaches it, and nothing in the source calls that.
 void BattleMotion_InitializeObject(s32 unitId) {
   struct BattleObj *battleObject = BattleObjGet(unitId);
@@ -150,23 +148,14 @@ void BattleMotion_InitializeObject(s32 unitId) {
   Object_SetMoveTargetFar((struct ObjectRuntime *)object,
                           Iwram_MulQ16(battleObject->anchorX, 0x14ccc), 0,
                           battleObject->anchorZ);
-  ObjectDispatch_SelectAnimationFar(object, 5);
+  ObjectDispatch_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
-/// A class that never moves when hit: 148, the Fusion Dragon, one of the two
-/// that never show the stun icon.
-#define CLASS_NO_KNOCKBACK 0x94
-
-/// Knocks unit id back, by the speed, hop and distance of motion variant
-/// (gBattleMotion_Variant*, 0 to 7), and puts it in pose 5 (POSE_DAMAGE).
-/// One class only takes the pose. Reached through its far stub from the
-/// effects, by the EFFECT_STRIKE_TARGET macro of effect_internal.h and
+/// Knocks unit id back by the speed, hop and distance of the knockback
+/// variant (enum BattleKnockback), and puts it in POSE_DAMAGE.
+/// The Fusion Dragon only takes the pose. Reached through its far stub from
+/// the effects, by the EFFECT_STRIKE_TARGET macro of effect_internal.h and
 /// directly.
-///
-/// By battle_vars.s, every variant but 4 accelerates by 1 pixel a frame to
-/// at most 4 and hops up at 2 to 10; variant 4 throws hardest, 8 a frame to
-/// at most 20, out to twice the spot's distance from the centre. The others
-/// reach 140 to 200 percent of it, variants 6 and 7 only the spot itself.
 void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
   struct BattleObj *battleObject;
   struct MotionObject *object;
@@ -175,11 +164,11 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
 
   battleObject = BattleObjGet(unitId);
   object = battleObject->object;
-  if (UnitGetFar(unitId)->classId != CLASS_NO_KNOCKBACK) {
+  if (UnitGetFar(unitId)->classId != ENEMY_FUSION_DRAGON) {
     object->acceleration = gBattleMotion_VariantAcceleration[variant];
     object->speedLimit = gBattleMotion_VariantSpeedLimit[variant];
-    // A unit already in the air keeps its hop, except in variants 5 and up.
-    if (object->y == 0 || variant > 4)
+    // A unit already in the air keeps its hop, except from KNOCKBACK_SKID on.
+    if (object->y == 0 || variant > KNOCKBACK_HURL)
       object->velocityY = gBattleMotion_VariantVelocityY[variant];
     object->verticalMotionStrength = 0x9999;
     object->verticalMotionPhase = 0;
@@ -190,12 +179,12 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
     Object_SetMoveTargetFar((struct ObjectRuntime *)object, targetX, 0,
                             battleObject->anchorZ);
   }
-  ObjectDispatch_SelectAnimationFar(object, 5);
+  ObjectDispatch_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
 /// Sends unit actorId three quarters of the way to unit targetId, arriving
 /// in travelDivisor frames at a steady speed, leaping up at initialVelocityY
-/// (16.16 pixels a frame), in pose 2.
+/// (16.16 pixels a frame), in POSE_LEAP.
 /// Called by BattlePres_RunAttack, BattlePres_RunPlainAttack and
 /// BattlePres_RunApproachAction, and through its far stub by the Bind,
 /// burst scene, Annihilation, target motes and Thrash effects.
@@ -235,16 +224,16 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->autoFaceMotion = 1;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
   Object_SetMoveTargetFar((struct ObjectRuntime *)object, x, 0, z);
-  ObjectDispatch_SelectAnimationFar(object, 2);
+  ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
 }
 
-/// Restarts unit id's motion in pose 2. Nothing in the source calls it.
+/// Restarts unit id's motion in POSE_LEAP. Nothing in the source calls it.
 void BattleMotion_ResetSlotObjectMode2(s32 unitId) {
   struct MotionObject *object;
 
   object = BattleObjGet(unitId)->object;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
-  ObjectDispatch_SelectAnimationFar(object, 2);
+  ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
 }
 
 /// Does nothing; BattleMotion_ApplyPairMidpoint, its only caller, passes it

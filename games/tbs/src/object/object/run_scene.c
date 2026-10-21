@@ -382,7 +382,7 @@ s32 Field_RunScene(s32 entrance) {
         WaitFrames(1);
         actor = work->actors[gGameState.selectedActor];
         // In debug mode, flag 0x163 turns step processing off.
-        if (gDebugMode == 0 || GameFlag_TestFar(0x163) == 0)
+        if (gDebugMode == 0 || GameFlag_TestFar(FLAG_DEBUG_STEPS_OFF) == 0)
           Field_ProcessStep(actor->terrainId, actor->x.fixed, actor->y.fixed,
                             actor->z.fixed);
       } while (Field_CountRequests() == 0);

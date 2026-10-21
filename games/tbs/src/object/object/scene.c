@@ -238,8 +238,8 @@ void Game_ResetForNewGame(s32 mode) {
   for (;;) {
     // Flag 0x101 (FLAG_SKIP_SCENE_CHANGE_SOUND) skips SE_288 for one scene
     // change, then clears itself.
-    if (GameFlag_TestFar(0x101))
-      GameFlag_ClearBitFar(0x101);
+    if (GameFlag_TestFar(FLAG_SKIP_SCENE_CHANGE_SOUND))
+      GameFlag_ClearBitFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
       AudioCommand_PlayFar(SE_288);
     record = &table[gGameState.scene];

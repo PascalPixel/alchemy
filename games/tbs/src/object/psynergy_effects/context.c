@@ -132,7 +132,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
 /// Called by the exit handling in events.c, after it plays SE_128.
 void ObjectEffect_BeginContextEffect26(void) {
   ObjectEffect_PrepareContextEffect(0x1A);
-  GameFlag_SetBitFar(0x120);
+  GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_PENDING);
 }
 
 /// Leaves through an exit of kind 0x30 (animation 25), recorded in flag 0x121.

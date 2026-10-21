@@ -95,13 +95,13 @@ s32 DjinnMenu_Run(void) {
   // The tutorial's first step: 0x16f and 0x171 are FLAG_DJINN_TUTORIAL_PART_A
   // and _PART_B, which the world map sets for each lesson (flags.h).
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL)) {
-    if (!GameFlag_TestFar(0x16f)) {
-      if (!GameFlag_TestFar(0x171))
+    if (!GameFlag_TestFar(FLAG_DJINN_TUTORIAL_PART_A)) {
+      if (!GameFlag_TestFar(FLAG_DJINN_TUTORIAL_PART_B))
         backdrop->tutorialStep = enabled;
       else
         backdrop->tutorialStep = 14;
     } else {
-      if (!GameFlag_TestFar(0x171))
+      if (!GameFlag_TestFar(FLAG_DJINN_TUTORIAL_PART_B))
         backdrop->tutorialStep = 27;
       else
         backdrop->tutorialStep = 28;

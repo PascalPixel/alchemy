@@ -200,7 +200,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     Engine_TaskWait(1);
   }
   if (entrance != 50)
-    FLAG_SET(0x122);
+    FLAG_SET(FLAG_ARRIVE_FALLING);
 }
 
 // The cocoons' touch events in Tret Tree, one per cocoon: each passes its

@@ -1196,7 +1196,7 @@ static s32 LinkLobby_TalkByProgress(s32 actor) {
 
     // Isaac's flag is tested and the result dropped; messageBase first
     // holds whether the speaker fought (FLAG_SCENE_TEMP_F0 + actor).
-    GameFlag_IsSet(0x2f0);
+    GameFlag_IsSet(FLAG_SCENE_TEMP_F0);
     messageBase = Engine_GameFlagIsSet(actor + 0x2f0);
     if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_05)) {
       if (messageBase)

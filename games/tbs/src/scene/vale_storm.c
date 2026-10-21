@@ -2320,7 +2320,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_BOULDER_GLOW, PIXELS(214), PIXELS(1216));
   Actor_FaceDirection(ACTOR_JENNAS_PARENT_A, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNAS_PARENT_B, FACING_NORTH, 20);
-  GameFlag_Set(0x166);
+  GameFlag_Set(FLAG_WEATHER_HELD);
   Map_SetLayerEntryFlag(0);
   Map_SetLayerEntryFlag(1);
   Map_SetLayerEntryFlag(2);
@@ -2338,7 +2338,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Event_Wait(100);
   Scheduler_RemoveCallback(ValeStorm_FlickerGlowOffset);
   groupVisual->scale = groupActor->scaleX;
-  GameFlag_Clear(0x166);
+  GameFlag_Clear(FLAG_WEATHER_HELD);
   Map_ClearLayerEntryFlag(0);
   Map_ClearLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);
@@ -2413,7 +2413,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
 /// Flashes the scene layers before fading back to the storm palette.
 static void ValeStorm_FlashLightning(void) {
   Engine_TaskWait(20);
-  GameFlag_Set(0x166);
+  GameFlag_Set(FLAG_WEATHER_HELD);
   Map_SetLayerEntryFlag(0);
   Map_SetLayerEntryFlag(1);
   Map_SetLayerEntryFlag(2);
@@ -2427,7 +2427,7 @@ static void ValeStorm_FlashLightning(void) {
   ColorBuffer_ApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
-  GameFlag_Clear(0x166);
+  GameFlag_Clear(FLAG_WEATHER_HELD);
   Map_ClearLayerEntryFlag(0);
   Map_ClearLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);

@@ -237,7 +237,7 @@ void MercuryLighthouse_ChargeLights(void) {
   state->levels = 3;
   state->targetX = (pillar->x.fixed & -0x100000) + 0x80000;
   state->targetZ = (pillar->z.fixed & -0x100000) + 0x80000;
-  Engine_GameFlagSet(0x161);
+  Engine_GameFlagSet(FLAG_NO_ENCOUNTERS_IN_PLACE);
   Engine_EventEnd();
 }
 
@@ -255,7 +255,7 @@ void MercuryLighthouse_LoseLights(void) {
   }
 
   state->levels = 0;
-  Engine_GameFlagClear(0x161);
+  Engine_GameFlagClear(FLAG_NO_ENCOUNTERS_IN_PLACE);
 
   target = state->pillar;
   if (target != 0) {
@@ -346,7 +346,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
     if (n == 0) {
       Engine_ObjectDispatchRelease(state->pillar);
       state->pillar = NULL;
-      Engine_GameFlagClear(0x161);
+      Engine_GameFlagClear(FLAG_NO_ENCOUNTERS_IN_PLACE);
     } else if (state->pillar != NULL) {
       Object_SetMode(state->pillar, 6 - n);
     }

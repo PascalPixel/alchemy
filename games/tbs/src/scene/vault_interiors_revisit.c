@@ -173,7 +173,7 @@ static void Event_WelcomeIsaacBack(void) {
   }
   Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
   GameFlag_Set(FLAG_WELCOMED_BACK);
-  GameFlag_Set(0x868);
+  GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   Engine_EventEnd();
 }
 

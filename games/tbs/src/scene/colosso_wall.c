@@ -1421,7 +1421,7 @@ static void ColossoWall_ShowRoundStartLettering(s32 mode) {
   Engine_AudioPlayCue(SE_237);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
-  Engine_GameFlagSet(0x123);
+  Engine_GameFlagSet(FLAG_IN_TOWN);
 }
 
 /// The result: `Won` or `Lose` in large lettering, and the loser's reaction.

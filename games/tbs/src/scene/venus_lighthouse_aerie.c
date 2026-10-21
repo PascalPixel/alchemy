@@ -2487,7 +2487,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   do {
     Engine_TaskWait(1);
   } while (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_37) == 0);
-  Engine_GameFlagSet(0x101);
+  Engine_GameFlagSet(FLAG_SKIP_SCENE_CHANGE_SOUND);
   Engine_EventWait(30);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   ObjectTable_Snapshot();

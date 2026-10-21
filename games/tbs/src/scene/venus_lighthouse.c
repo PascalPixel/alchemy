@@ -3278,7 +3278,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_ActorSetSpritePriority(20, 1);
   Event_PlayCue(MUS_017);
   Event_PlayCue(SE_308);
-  GameFlag_Set(0x101);
+  GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
   // Raise the leader, terrain contact and spray by the same pixel each frame.
   for (riseFrame = 0; riseFrame < 128; riseFrame++) {
     leader->y.fixed += PIXELS(1);

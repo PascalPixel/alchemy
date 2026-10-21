@@ -158,7 +158,7 @@ static void Event_PraisePartyStrength(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
   Engine_GameFlagSet(FLAG_PARTY_PRAISED);
-  Engine_GameFlagSet(0x868);
+  Engine_GameFlagSet(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   Engine_EventSetMessage(MsgVaultTalkingMayorStrong);
   Engine_EventShowMessage(ACTOR_MAYORS_VISITOR, 0);
   Engine_EventEnd();
@@ -267,7 +267,7 @@ static void Event_ReadMindAndPraisePartyStrength(void) {
   Engine_EventWait(20);
   Engine_ActorFaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 20);
   Engine_GameFlagSet(FLAG_PARTY_PRAISED);
-  Engine_GameFlagSet(0x868);
+  Engine_GameFlagSet(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   Engine_EventSetMessage(MsgVaultTalkingMayorStrong);
   Engine_EventShowMessageAndWait(ACTOR_MAYORS_VISITOR, 0, 20);
   Engine_EventEnd();
@@ -631,7 +631,7 @@ s32 Scene_Initialize(void) {
   if (gGameState.entrance == VAULT_REVISIT_FROM_SANCTUM)
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   if (gGameState.entrance == VAULT_REVISIT_FROM_VAULT_CAVE_1)
-    Engine_GameFlagClear(0x120);
+    Engine_GameFlagClear(FLAG_EXIT_ARRIVAL_PENDING);
   return 0;
 }
 

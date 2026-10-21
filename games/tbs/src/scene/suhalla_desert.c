@@ -622,7 +622,7 @@ static void Event_StormCarriesPartyAway(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();
-  Engine_GameFlagSet(0x122);
+  Engine_GameFlagSet(FLAG_ARRIVE_FALLING);
   if (gGameState.scene == (s32)&SceneId_SuhallaDesert2 &&
       FieldGameFlag_GetByte(FLAG_SCENE_TEMP_18) == STORM_FOURTH) {
     Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_STORM_DROP_FOURTH);

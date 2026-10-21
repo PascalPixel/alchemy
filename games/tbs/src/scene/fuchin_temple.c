@@ -7,7 +7,7 @@
 ///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). Its monks read
 ///   omens in the gems that fell from the sky and the blue lights in the north,
 ///   and tell of Master Nyunpa, who is fasting to save the world by becoming
-///   enlightened. A boy from Kolima asks whether the bridge is open again
+///   enlightened. A young man from Kolima asks whether the bridge is open again
 ///   (FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN), a traveling healer offers
 ///   the Sanctum's services, and a search finds a Psynergy Stone. The monk
 ///   beneath the falls guards the waterfall grotto: once Nyunpa has set the
@@ -110,10 +110,10 @@
 /// The placed actors outside Fuchin Temple (FuchinTempleGrounds), numbered in
 /// the order of gFuchinTempleGroundsPlacements.
 enum FuchinTempleOutsideActor {
-  /// A boy from Kolima.
+  /// A young man from Kolima.
   /// ★ Named from the game: "How did you get here? Is the bridge open again?"
   /// (MsgXianHowDidGetHereBridge)
-  ACTOR_BOY_FROM_KOLIMA = ACTOR_FIRST_PLACED,
+  ACTOR_YOUNG_MAN_FROM_KOLIMA = ACTOR_FIRST_PLACED,
   /// The monk beneath the falls, at the waterfall grotto.
   /// ★ Named from what the player sees: a bald monk in an orange robe standing
   /// on a stump beneath the waterfall (its render)
@@ -143,7 +143,7 @@ enum FuchinTempleInsideActor {
   /// ★ Named from the game: "I have already heard of your test from Master
   /// Nyunpa." (MsgXianAlreadyHeardTest)
   ACTOR_NYUNPA = ACTOR_FIRST_PLACED,
-  /// A boy, by the school's door.
+  /// A young man, by the school's door.
   /// ★ Named from the game: "This is Master Feh's school... You came to watch?"
   /// (MsgXianMasterFehsSchoolCameWatch)
   ACTOR_WELCOMING_STUDENT,
@@ -287,24 +287,24 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gFuchinTemplePlacements;
 }
 
-/// Talking to the boy from Kolima at Fuchin Temple
+/// Talking to the young man from Kolima at Fuchin Temple
 /// (FuchinTempleGrounds): he asks how the party got here. "How did you get
 /// here? Is the bridge open again?" Yes cheers him ("Then I can go home to
 /// Kolima now?") and is remembered; no means the party came through the forest.
 /// Later talks go on to the tale of the forest.
-static void Event_BoyFromKolimaAsksAboutBridge(void) {
+static void Event_YoungManFromKolimaAsksAboutBridge(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgXianHowDidGetHereBridge);
   if (FLAG_CHECK(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN) != 0) {
     gEventWork->message += 4;
   }
-  Event_OpenMessage(ACTOR_BOY_FROM_KOLIMA, 0);
+  Event_OpenMessage(ACTOR_YOUNG_MAN_FROM_KOLIMA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     FLAG_SET(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN);
   } else {
     gEventWork->message++;
   }
-  Event_ShowMessage(ACTOR_BOY_FROM_KOLIMA, 0);
+  Event_ShowMessage(ACTOR_YOUNG_MAN_FROM_KOLIMA, 0);
   EV_END();
 }
 
@@ -552,7 +552,7 @@ static void Event_NyunpaFeelsMindRead(void) {
 }
 
 /// Talking to the student at the door of Master Feh's school in Xian
-/// (ACTOR_WELCOMING_STUDENT): the boy asks whether the party came to watch.
+/// (ACTOR_WELCOMING_STUDENT): the student asks whether the party came to watch.
 /// "This is Master Feh's school... You came to watch?"
 static void Event_StudentWelcomesToSchool(void) {
   EV_BEGIN();
@@ -2692,14 +2692,14 @@ struct SceneEvent gFuchinTempleGroundsEvents[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterTemple) },
     { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWaterfallGrotto) },
     { EVENT_TOUCH, 5, FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST, EVENT_SCRIPT(Event_MonkAsksWhetherTestIsDone) },
-    { EVENT_TALK, ACTOR_BOY_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleTheFuchinTempleIsAPleasant) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleTheFuchinTempleIsAPleasant) },
     { EVENT_TALK, ACTOR_FALLS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleOhIsaacWhatTookYouSo) },
     { EVENT_TALK, ACTOR_BOY_MONK_READING_OMENS, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleAhhhMasterNyunpaHeHasPassed) },
     { EVENT_TALK, ACTOR_WORRIED_BOY_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaHasWastedAwayAt) },
     { EVENT_TALK, ACTOR_ADMIRING_BOY_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), EVENT_SCRIPT(Event_BoyMonkSpeaksOfNyunpa) },
-    { EVENT_TALK, ACTOR_BOY_FROM_KOLIMA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyFromKolimaAsksAboutBridge) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_FROM_KOLIMA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_YoungManFromKolimaAsksAboutBridge) },
     // Unused: a copy of the row above, which always answers first.
-    { EVENT_TALK, ACTOR_BOY_FROM_KOLIMA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyFromKolimaAsksAboutBridge) },
+    { EVENT_TALK, ACTOR_YOUNG_MAN_FROM_KOLIMA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_YoungManFromKolimaAsksAboutBridge) },
     { EVENT_TALK, ACTOR_FALLS_MONK, FLAG_NYUNPA_TEST_ACCEPTED, MSGNO(MsgFuchinTempleOmOmBlueLightsInThe) },
     { EVENT_TALK, ACTOR_FALLS_MONK, FLAG_FUCHIN_FALLS_GROTTO_OPENED, EVENT_SCRIPT(Event_MonkLetsPartyIntoGrotto) },
     { EVENT_TALK, ACTOR_FALLS_MONK, FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND, MSGNO(MsgFuchinTempleTheTestOfFuchinFallsIs) },
@@ -2709,13 +2709,13 @@ struct SceneEvent gFuchinTempleGroundsEvents[] = {
     { EVENT_TALK, ACTOR_ADMIRING_BOY_MONK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyMonkSpeaksOfNyunpa) },
     { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
     { SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleGemsFallingFromTheSkyMountains) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleGemsFallingFromTheSkyMountains) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleIKnewMasterNyunpaWasFasting) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_MONK_READING_OMENS, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaReachedEnlightenmentDuringHis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_BOY_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleMasterNyunpaIsNothingButSkin) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ADMIRING_BOY_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleHeCantLeaveUsYetHe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_FROM_KOLIMA, FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN, MSGNO(MsgFuchinTempleIBeginningToThinkIllBe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_FROM_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDontFeelSafeGoingHome) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FROM_KOLIMA, FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN, MSGNO(MsgFuchinTempleIBeginningToThinkIllBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FROM_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDontFeelSafeGoingHome) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, FLAG_NYUNPA_TEST_ACCEPTED, MSGNO(MsgFuchinTempleManyStarsFellFromTheSky) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, FLAG_FUCHIN_FALLS_GROTTO_OPENED, MSGNO(MsgFuchinTempleCanSuchYoungWarriorsEndureThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLS_MONK, FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND, MSGNO(MsgFuchinTempleCanSuchYoungWarriorsEndureThe) },

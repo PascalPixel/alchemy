@@ -345,49 +345,49 @@ static void Event_ReadEastGuardsThoughts(void) {
   }
 }
 
-/// Lunpa, before Donpa's judgment: a villager asks how long the party has
-/// been in Lunpa.
+/// Lunpa, before Donpa's judgment: a man asks how long the party has been
+/// in Lunpa.
 static void Event_AskAboutLengthOfStay(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerAAsksHowLong);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_A, 0);
+  Engine_EventAskYesNo(ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA, 0);
   Engine_EventEnd();
 }
 
-/// Lunpa, before Donpa's judgment: a villager asks whether Dodonpa kidnapped
-/// Hammet for ransom.
+/// Lunpa, before Donpa's judgment: a stout man asks whether Dodonpa
+/// kidnapped Hammet for ransom.
 static void Event_AskAboutHammetsKidnapping(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerCAsksAboutKidnapping);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_C, 0);
+  Engine_EventAskYesNo(ACTOR_MAN_ON_HAMMETS_KIDNAPPING, 0);
   Engine_EventEnd();
 }
 
-/// Lunpa, before Donpa's judgment: a villager asks whether the party wants
+/// Lunpa, before Donpa's judgment: a small boy asks whether the party wants
 /// to see Donpa, who is in the fortress.
 static void Event_AskAboutSeeingDonpa(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerGAsksAboutDonpa);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_G, 0);
+  Engine_EventAskYesNo(ACTOR_BOY_ASKING_TO_SEE_DONPA, 0);
   Engine_EventEnd();
 }
 
-/// Lunpa, after Donpa's judgment: a villager shivers and complains that it
+/// Lunpa, after Donpa's judgment: a woman shivers and complains that it
 /// has become colder.
 static void Event_ComplainAboutCold(void) {
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_B, 3);
+  Engine_ActorRunRepeatedMotion(ACTOR_WOMAN_WITH_NO_FREEDOM, 3);
   Engine_EventSetMessage(MsgLunpaVillagerBShivers);
-  Engine_EventShowMessage(ACTOR_VILLAGER_B, 0);
+  Engine_EventShowMessage(ACTOR_WOMAN_WITH_NO_FREEDOM, 0);
   Engine_EventEnd();
 }
 
-/// Lunpa, after Donpa's judgment: a villager offers to explain the commotion
+/// Lunpa, after Donpa's judgment: a woman offers to explain the commotion
 /// at the fortress.
 static void Event_AskAboutFortressCommotion(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerDAsksAboutCommotion);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_D, 0);
+  Engine_EventAskYesNo(ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD, 0);
   Engine_EventEnd();
 }
 
@@ -1001,25 +1001,25 @@ u32 gGateExits[] = {
 struct ScenePlacement gLunpaPlacements[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(520), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_TOWNSPERSON_D, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(112), 0, PIXELS(168), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_TOWNSPERSON_C, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(280), 0, PIXELS(352), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_TOWNSPERSON_I, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STOUT_MAN, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(120), 0, PIXELS(312), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_TOWNSPERSON_J, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(136), 0, PIXELS(328), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_TOWNSPERSON_B, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER,
       PIXELS(368), 0, PIXELS(256), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_TOWNSPERSON_E, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(280), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_TOWNSPERSON_H, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(216), 0, PIXELS(40), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_TOWNSPERSON_G, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_WANDER,
       PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_GUARD, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(192), 0, PIXELS(448), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_GUARD, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(256), 0, PIXELS(448), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(520), 0, PIXELS(520), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
@@ -1029,9 +1029,9 @@ struct ScenePlacement gLunpaPlacements[] = {
 };
 
 struct ScenePlacement gGatePlacements[] = {
-    { SPRITE_GUARD, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(144), 0, PIXELS(200), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_GUARD, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(176), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
@@ -1085,24 +1085,37 @@ struct ScenePlacement gGatePlacements[] = {
 
 struct SceneEvent gLunpaSealedEvents[] = {
     LUNPA_ROADS_AND_DOORS,
-    TALK(ACTOR_VILLAGER_A, EVENT_SCRIPT(Event_AskAboutLengthOfStay)),
-    TALK(ACTOR_VILLAGER_B, MSGNO(MsgLunpaVillageVillagerBSealed)),
-    TALK(ACTOR_VILLAGER_C, EVENT_SCRIPT(Event_AskAboutHammetsKidnapping)),
-    TALK(ACTOR_VILLAGER_D, MSGNO(MsgLunpaVillageVillagerDSealed)),
-    TALK(ACTOR_VILLAGER_E, MSGNO(MsgLunpaVillageVillagerESealed)),
-    TALK(ACTOR_VILLAGER_F, MSGNO(MsgLunpaVillageVillagerFSealed)),
-    TALK(ACTOR_VILLAGER_G, EVENT_SCRIPT(Event_AskAboutSeeingDonpa)),
-    TALK(ACTOR_VILLAGER_H, MSGNO(MsgLunpaVillageVillagerHSealed)),
+    TALK(ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA,
+         EVENT_SCRIPT(Event_AskAboutLengthOfStay)),
+    TALK(ACTOR_WOMAN_WITH_NO_FREEDOM, MSGNO(MsgLunpaVillageVillagerBSealed)),
+    TALK(ACTOR_MAN_ON_HAMMETS_KIDNAPPING,
+         EVENT_SCRIPT(Event_AskAboutHammetsKidnapping)),
+    TALK(ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD,
+         MSGNO(MsgLunpaVillageVillagerDSealed)),
+    TALK(ACTOR_OLD_MAN_ON_LUNPA_AND_DONPA,
+         MSGNO(MsgLunpaVillageVillagerESealed)),
+    TALK(ACTOR_OLD_WOMAN_ON_DONPA, MSGNO(MsgLunpaVillageVillagerFSealed)),
+    TALK(ACTOR_BOY_ASKING_TO_SEE_DONPA,
+         EVENT_SCRIPT(Event_AskAboutSeeingDonpa)),
+    TALK(ACTOR_GIRL_ON_THE_CHEFS_MEALS, MSGNO(MsgLunpaVillageVillagerHSealed)),
     TALK(ACTOR_WEST_GUARD, EVENT_SCRIPT(Event_TalkToWestGuard)),
     TALK(ACTOR_EAST_GUARD, EVENT_SCRIPT(Event_TalkToEastGuard)),
-    MIND_READ(ACTOR_VILLAGER_A, MSGNO(MsgLunpaVillageVillagerASealedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_B, MSGNO(MsgLunpaVillageVillagerBSealedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_C, MSGNO(MsgLunpaVillageVillagerCSealedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_D, MSGNO(MsgLunpaVillageVillagerDSealedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_E, MSGNO(MsgLunpaVillageVillagerESealedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_F, MSGNO(MsgLunpaVillageVillagerFSealedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_G, MSGNO(MsgLunpaVillageVillagerGSealedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_H, MSGNO(MsgLunpaVillageVillagerHSealedThoughts)),
+    MIND_READ(ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA,
+              MSGNO(MsgLunpaVillageVillagerASealedThoughts)),
+    MIND_READ(ACTOR_WOMAN_WITH_NO_FREEDOM,
+              MSGNO(MsgLunpaVillageVillagerBSealedThoughts)),
+    MIND_READ(ACTOR_MAN_ON_HAMMETS_KIDNAPPING,
+              MSGNO(MsgLunpaVillageVillagerCSealedThoughts)),
+    MIND_READ(ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD,
+              MSGNO(MsgLunpaVillageVillagerDSealedThoughts)),
+    MIND_READ(ACTOR_OLD_MAN_ON_LUNPA_AND_DONPA,
+              MSGNO(MsgLunpaVillageVillagerESealedThoughts)),
+    MIND_READ(ACTOR_OLD_WOMAN_ON_DONPA,
+              MSGNO(MsgLunpaVillageVillagerFSealedThoughts)),
+    MIND_READ(ACTOR_BOY_ASKING_TO_SEE_DONPA,
+              MSGNO(MsgLunpaVillageVillagerGSealedThoughts)),
+    MIND_READ(ACTOR_GIRL_ON_THE_CHEFS_MEALS,
+              MSGNO(MsgLunpaVillageVillagerHSealedThoughts)),
     MIND_READ(ACTOR_WEST_GUARD, MSGNO(MsgLunpaVillageWestGuardSealedThoughts)),
     MIND_READ(ACTOR_EAST_GUARD, EVENT_SCRIPT(Event_ReadEastGuardsThoughts)),
     LUNPA_SECRETS,
@@ -1110,31 +1123,37 @@ struct SceneEvent gLunpaSealedEvents[] = {
 
 struct SceneEvent gLunpaReopenedEvents[] = {
     LUNPA_ROADS_AND_DOORS,
-    TALK(ACTOR_VILLAGER_A, MSGNO(MsgLunpaVillageVillagerAReopened)),
-    TALK(ACTOR_VILLAGER_B, EVENT_SCRIPT(Event_ComplainAboutCold)),
-    TALK(ACTOR_VILLAGER_C, MSGNO(MsgLunpaVillageVillagerCReopened)),
-    TALK(ACTOR_VILLAGER_D, EVENT_SCRIPT(Event_AskAboutFortressCommotion)),
-    TALK(ACTOR_VILLAGER_E, MSGNO(MsgLunpaVillageVillagerEReopened)),
-    TALK(ACTOR_VILLAGER_F, MSGNO(MsgLunpaVillageVillagerFReopened)),
-    TALK(ACTOR_VILLAGER_G, MSGNO(MsgLunpaVillageVillagerGReopened)),
-    TALK(ACTOR_VILLAGER_H, MSGNO(MsgLunpaVillageVillagerHReopened)),
+    TALK(ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA,
+         MSGNO(MsgLunpaVillageVillagerAReopened)),
+    TALK(ACTOR_WOMAN_WITH_NO_FREEDOM, EVENT_SCRIPT(Event_ComplainAboutCold)),
+    TALK(ACTOR_MAN_ON_HAMMETS_KIDNAPPING,
+         MSGNO(MsgLunpaVillageVillagerCReopened)),
+    TALK(ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD,
+         EVENT_SCRIPT(Event_AskAboutFortressCommotion)),
+    TALK(ACTOR_OLD_MAN_ON_LUNPA_AND_DONPA,
+         MSGNO(MsgLunpaVillageVillagerEReopened)),
+    TALK(ACTOR_OLD_WOMAN_ON_DONPA, MSGNO(MsgLunpaVillageVillagerFReopened)),
+    TALK(ACTOR_BOY_ASKING_TO_SEE_DONPA,
+         MSGNO(MsgLunpaVillageVillagerGReopened)),
+    TALK(ACTOR_GIRL_ON_THE_CHEFS_MEALS,
+         MSGNO(MsgLunpaVillageVillagerHReopened)),
     TALK(ACTOR_WEST_GUARD, MSGNO(MsgLunpaVillageWestGuardReopened)),
     TALK(ACTOR_EAST_GUARD, MSGNO(MsgLunpaVillageEastGuardReopened)),
-    MIND_READ(ACTOR_VILLAGER_A,
+    MIND_READ(ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA,
               MSGNO(MsgLunpaVillageVillagerAReopenedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_B,
+    MIND_READ(ACTOR_WOMAN_WITH_NO_FREEDOM,
               MSGNO(MsgLunpaVillageVillagerBReopenedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_C,
+    MIND_READ(ACTOR_MAN_ON_HAMMETS_KIDNAPPING,
               MSGNO(MsgLunpaVillageVillagerCReopenedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_D,
+    MIND_READ(ACTOR_WOMAN_SAYING_DONPA_IS_TOO_OLD,
               MSGNO(MsgLunpaVillageVillagerDReopenedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_E,
+    MIND_READ(ACTOR_OLD_MAN_ON_LUNPA_AND_DONPA,
               MSGNO(MsgLunpaVillageVillagerEReopenedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_F,
+    MIND_READ(ACTOR_OLD_WOMAN_ON_DONPA,
               MSGNO(MsgLunpaVillageVillagerFReopenedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_G,
+    MIND_READ(ACTOR_BOY_ASKING_TO_SEE_DONPA,
               MSGNO(MsgLunpaVillageVillagerGReopenedThoughts)),
-    MIND_READ(ACTOR_VILLAGER_H,
+    MIND_READ(ACTOR_GIRL_ON_THE_CHEFS_MEALS,
               MSGNO(MsgLunpaVillageVillagerHReopenedThoughts)),
     MIND_READ(ACTOR_WEST_GUARD,
               MSGNO(MsgLunpaVillageWestGuardReopenedThoughts)),

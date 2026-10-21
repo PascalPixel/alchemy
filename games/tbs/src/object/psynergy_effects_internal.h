@@ -95,6 +95,7 @@
 #include "unit/scene/common/scroll_initialize_hblank_dma.h"
 #include "macros.h"
 #include "ability_ids.h"
+#include "sprite_ids.h"
 
 /// The effect slots of a Psynergy effect's scene (gEffectWork->slots).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24

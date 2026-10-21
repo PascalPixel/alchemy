@@ -61,7 +61,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   slot = effectScene->slots;
   remaining = 23;
   do {
-    EffectSlot_Initialize(slot, 284, position.x, position.z);
+    EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
     EffectSlot_SetCallback(slot, BattleEffect_UpdatePhasedRadialParticle);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,

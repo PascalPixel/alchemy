@@ -126,7 +126,8 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
 /// over 23 pixels away. Returns it if it shows sprite, otherwise NULL: the
 /// sprite is tested only on the nearest object, so a nearer object of
 /// another sprite hides a matching one. Field_TryJumpForward (climbing.c)
-/// asks it for a platform, sprite 207 or 205, where the leader lands.
+/// asks it for a platform, SPRITE_PLATFORM or SPRITE_PLATFORM_2, where the
+/// leader lands.
 struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
                                                      s32 sprite) {
   struct ObjectRuntime *entry;

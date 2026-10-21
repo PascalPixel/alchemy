@@ -36,8 +36,6 @@ enum CaveActor {
   ACTOR_HAMMET
 };
 
-enum CaveSprite { SPRITE_HAMMET = 0x31, SPRITE_BUNZA = 0x44 };
-
 enum { PUDDLE_ANIM_FROZEN = 5 };
 
 enum { GATE_PILLAR_PRIORITY = 3 };

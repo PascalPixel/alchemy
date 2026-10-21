@@ -547,7 +547,7 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
 /// This one and the next two test the whole kind byte, not its low four
 /// bits, so an object with high kind bits set is left alone.
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
-  if (object != 0 && object->kind == 1) {
+  if (object != 0 && object->kind == OBJECT_SPRITE_ONE) {
     struct AnimationObject *sprite = object->target.child;
     sprite->image.objectMode = mode;
   }
@@ -557,7 +557,7 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
 /// scaling it by distance.
 void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
                                        u32 fixedScale) {
-  if (object != 0 && object->kind == 1) {
+  if (object != 0 && object->kind == OBJECT_SPRITE_ONE) {
     struct AnimationObject *sprite = object->target.child;
     sprite->useOwnScale = fixedScale;
   }
@@ -566,7 +566,7 @@ void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
 /// except those drawn hidden (see ObjectGroup_SetChildValueUnlessFifteen).
 void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
-  if (object != NULL && object->kind == 1)
+  if (object != NULL && object->kind == OBJECT_SPRITE_ONE)
     ObjectGroup_SetChildValueUnlessFifteen(object->target.child, param);
 }
 

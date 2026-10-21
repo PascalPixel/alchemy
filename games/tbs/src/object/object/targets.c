@@ -234,7 +234,7 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
   s32 replacement;
   u8 partCount;
 
-  if ((object->recordStorageKind & 15) == 1) {
+  if ((object->recordStorageKind & 15) == OBJECT_SPRITE_ONE) {
     sprite = object->records;
     replacement = palette - 1;
     if (palette == 0)

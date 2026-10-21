@@ -33,7 +33,7 @@ void BattleFx_UpdateDescendingObject(union FieldObject *fieldObject) {
   obj->y.fixed += 1 << 16;
   obj->scaleX = scale;
   if ((s32)scale < 0x3000)
-    obj->spriteStorageKind = 0;
+    obj->spriteStorageKind = OBJECT_SPRITE_NONE;
 }
 
 /// Effect slot callback: a particle flies 120 pixels from the main object's

@@ -44,6 +44,13 @@ enum HazardMode {
   HAZARD_COUNT_FRAMES = 1
 };
 
+/// Game_Run's mode: where the game starts.
+enum GameRunMode {
+  GAME_RUN_TITLE = 0,      ///< the title screen, with a fresh game state
+  GAME_RUN_DEBUG_VALE = 1, ///< in debug mode, SceneId_ValeGate
+  GAME_RUN_DEBUG_CLEAR = 2 ///< in debug mode, the clear screen
+};
+
 /// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
 /// low byte, which DisplayTransition_UpdateScanlineTable draws.
 enum WindowTransitionMode {

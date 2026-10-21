@@ -144,7 +144,7 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 /// applies to what the leader faces.
 #define FLAG_PSYNERGY_TARGET 0x141
 
-/// The control word of a Psynergy event (kind 5) in the given phase, as
+/// The control word of a Psynergy event (EVENT_PSYNERGY) in the given phase, as
 /// BattleFx_FindMatchingEvent compares it (bits 30..28 phase | 3..0 kind). The
 /// phases are listed in field_scene.h, above EVENT_PSYNERGY_ON_ACTOR.
 #define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)

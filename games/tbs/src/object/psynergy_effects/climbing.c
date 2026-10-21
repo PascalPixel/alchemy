@@ -55,7 +55,7 @@ again:
     // Suspend terrain following and the shadow (sprite flag bit 0) while
     // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
     // motion and sprite flags after landing, before returning field control.
-    if (leader->animationKind == 1)
+    if (leader->animationKind == OBJECT_SPRITE_ONE)
       spriteFlags = ((struct AnimationObject *)leader->animation)->flags;
     FieldEvent_Begin();
     ObjectDispatch_SelectAnimationFar(leader, 6);
@@ -213,7 +213,7 @@ s32 Field_ClimbUp(void) {
 
   FieldEvent_Begin();
 
-  if (object->animationKind == 1)
+  if (object->animationKind == OBJECT_SPRITE_ONE)
     spriteFlags = ((struct AnimationObject *)object->animation)->flags;
 
   if (gGameState.movementMode == 0) {

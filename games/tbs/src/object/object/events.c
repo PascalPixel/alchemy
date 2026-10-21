@@ -506,15 +506,16 @@ s32 Field_SearchTile(s32 tile) {
           if ((searchResult & 0xf0000) == 0x10000 && leader <= 7)
             canOpen = 0;
           if (canOpen != 0) {
-            // Control 19, SEARCH(1), is a chest the map shows as a marker.
-            if ((event->control & 0x1ff) == 19)
+            // A SEARCH(SEARCH_CHEST) event is a chest the map shows as a
+            // marker.
+            if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
               Marker_OpenChest(tile);
             rewardType = event->value & 0xfff00000;
             if (rewardType == FIND_PSYNERGY_STONE) {
               // A Psynergy Stone: restores all PP.
               void *object;
 
-              if ((event->control & 0x1ff) == 19)
+              if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
                 Marker_ShowOpened(tile);
               object = Marker_GetActor(tile);
               ItemDisplay_RaiseAboveLeader(object);
@@ -539,7 +540,7 @@ s32 Field_SearchTile(s32 tile) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
               struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-              if ((event->control & 0x1ff) == 19)
+              if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
                 Marker_LaunchMimic(tile);
               // The chest's flag (with 0x1000) waits in pendingDjinnEvent,
               // which Field_RunScene resolves when the scene is entered again
@@ -564,7 +565,7 @@ s32 Field_SearchTile(s32 tile) {
               object = BattleFx_StartRandomParticleEmitter(
                   gGameState.selectedActor, 0);
               WaitFrames(30);
-              if ((event->control & 0x1ff) == 19)
+              if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
                 Marker_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
               AudioCommand_PlayFar(MUS_TREASURE_FOUND);
@@ -590,10 +591,10 @@ s32 Field_SearchTile(s32 tile) {
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem, 1);
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem + 4, 1);
                 Object_DestroyIfPresent(object);
-                if ((event->control & 0x1ff) == 19)
+                if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
                   Marker_CloseChest(tile);
               } else {
-                if ((event->control & 0x1ff) == 19)
+                if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
                   Marker_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
                 AudioCommand_PlayFar(MUS_TREASURE_FOUND);

@@ -18,15 +18,15 @@ s32 Script_SetBase(struct ScriptInterpreter *interpreter) {
 /// SC_B54_OFF: clears spriteStorageKind, hiding the sprites, and moves on to
 /// the next command.
 s32 Script_ClearByte54(struct ScriptInterpreter *interpreter) {
-  interpreter->spriteStorageKind = 0;
+  interpreter->spriteStorageKind = OBJECT_SPRITE_NONE;
   interpreter->cursor++;
   return 1;
 }
 
-/// SC_B54_ON: sets spriteStorageKind to 1, one sprite drawn, and moves on to
-/// the next command.
+/// SC_B54_ON: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite drawn,
+/// and moves on to the next command.
 s32 Script_SetByte54(struct ScriptInterpreter *interpreter) {
-  interpreter->spriteStorageKind = 1;
+  interpreter->spriteStorageKind = OBJECT_SPRITE_ONE;
   interpreter->cursor++;
   return 1;
 }

@@ -393,12 +393,12 @@ void Inventory_ReservedNoOp(void) {}
 
 /// Waits, at most 90 frames, for an actor's animation to stop being animation:
 /// the actor has finished a one-off animation such as a nod. Only actors drawn
-/// as an animation object (animationKind 1) are waited for. Called by
+/// as an animation object (OBJECT_SPRITE_ONE) are waited for. Called by
 /// Event_AskYesNoWithActorAnimation.
 void Actor_WaitForAnimationEnd(s32 actor, s32 animation) {
   struct ObjectRuntime *actorObject = ObjectTable_Get(actor);
 
-  if (actorObject != 0 && actorObject->animationKind == 1) {
+  if (actorObject != 0 && actorObject->animationKind == OBJECT_SPRITE_ONE) {
     s32 frames = 0;
     u8 *animationNumber =
         &((struct AnimationObject *)actorObject->animation)->lastNo;

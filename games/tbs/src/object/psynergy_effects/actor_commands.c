@@ -382,7 +382,7 @@ void Object_SetActionById(u32 objectId, s32 steps) {
 }
 
 /// Waits, at most 90 frames, for an actor's animation to change. Only an actor
-/// drawn as an animation object (animationKind 1) is waited for. Called by
+/// drawn as an animation object (OBJECT_SPRITE_ONE) is waited for. Called by
 /// Motion_SetModeAndWaitAnimation, a few scene scripts and the debug level
 /// screen.
 void ObjectMotion_WaitForAnimationChange(u32 objectId) {
@@ -395,7 +395,7 @@ void ObjectMotion_WaitForAnimationChange(u32 objectId) {
   s32 elapsedFrames;
 
   object = ObjectTable_Get(objectId);
-  if (object != NULL && object->animationKind == 1) {
+  if (object != NULL && object->animationKind == OBJECT_SPRITE_ONE) {
     sprite = object->animation;
     saved = sprite->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
@@ -896,7 +896,7 @@ void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
 void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
-  if (object != NULL && (object->animationKind & 0xF) == 1) {
+  if (object != NULL && (object->animationKind & 0xF) == OBJECT_SPRITE_ONE) {
     struct AnimationObject *sprite = object->animation;
 
     sprite->image.priority = priority;
@@ -958,7 +958,7 @@ s32 ObjectTable_ReadActiveValue(s32 actor) {
       (struct ObjectRuntime *)state->actors[actor & 0x0fff];
 #endif
 
-  if (entry != 0 && entry->animationKind == 1)
+  if (entry != 0 && entry->animationKind == OBJECT_SPRITE_ONE)
     sprite = ((struct AnimationObject *)entry->animation)->entries[0]->animId;
   return sprite;
 }
@@ -974,7 +974,7 @@ s32 ObjectTable_FindActiveByValue(s32 sprite) {
 
   for (index = 8; index <= 65; index++) {
     object = (struct ObjectRuntime *)state->actors[index];
-    if (object != 0 && object->animationKind == 1 &&
+    if (object != 0 && object->animationKind == OBJECT_SPRITE_ONE &&
         ((struct AnimationObject *)object->animation)->entries[0]->animId ==
             sprite) {
       result = index;

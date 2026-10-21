@@ -151,7 +151,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
       continue;
     if (entry == self)
       continue;
-    if (entry->animationKind != 1)
+    if (entry->animationKind != OBJECT_SPRITE_ONE)
       continue;
     // 0x2fffff: under 48 pixels apart in height, either way.
     heightDifference = entry->y - self->y;

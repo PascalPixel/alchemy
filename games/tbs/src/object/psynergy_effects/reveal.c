@@ -15,7 +15,7 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
     if (object->script != NULL) {
       u8 kind = object->animationKind;
 
-      if (kind == 1) {
+      if (kind == OBJECT_SPRITE_ONE) {
         struct AnimationObject *animation = object->animation;
         struct AnimationEntry *entry = animation->entries[0];
 

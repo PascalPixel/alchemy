@@ -205,12 +205,11 @@ static __inline__ s32 RunReelGame(s32 entrance) {
   return result;
 }
 
-/// The game's main loop, which never returns. mode chooses the first scene: 0
-/// starts at the title screen with a fresh game state; in debug mode, 1 starts
-/// in Isaac's home in Vale and 2 at the clear screen. Each pass resets the
+/// The game's main loop, which never returns. mode, an enum GameRunMode,
+/// chooses the first scene. Each pass resets the
 /// runtime, then either runs a battle or minigame and picks the scene to return
 /// to, or loads a field scene's code, starts its music and runs it until the
-/// party takes an exit. Called with mode 0 through Game_RunFar by
+/// party takes an exit. Called with GAME_RUN_TITLE through Game_RunFar by
 /// System_Initialize at power-on and by Game_Restart.
 void Game_Run(s32 mode) {
   const struct SceneRecord *table;
@@ -219,16 +218,16 @@ void Game_Run(s32 mode) {
 
   table = gField_SceneTable;
   // Choose the first scene before initializing the per-scene runtime.
-  if (gDebugMode && mode == 1) {
+  if (gDebugMode && mode == GAME_RUN_DEBUG_VALE) {
     gGameState.scene = (s32)&SceneId_ValeGate;
     gGameState.entrance = mode;
-  } else if (gDebugMode && mode == 2) {
+  } else if (gDebugMode && mode == GAME_RUN_DEBUG_CLEAR) {
     gGameState.scene = (s32)&SceneId_Clear;
-    gGameState.entrance = 1;
+    gGameState.entrance = CLEAR_FROM_SANCTUM;
   } else {
     GameState_InitDefaultsFar();
     gGameState.scene = (s32)&SceneId_Title;
-    gGameState.entrance = 2;
+    gGameState.entrance = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
   PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
@@ -236,7 +235,7 @@ void Game_Run(s32 mode) {
   Scheduler_ResetTaskTable();
   Scheduler_ResetTaskTable();
   for (;;) {
-    // Flag 0x101 (FLAG_SKIP_SCENE_CHANGE_SOUND) skips SE_288 for one scene
+    // FLAG_SKIP_SCENE_CHANGE_SOUND skips SE_288 for one scene
     // change, then clears itself.
     if (GameFlag_TestFar(FLAG_SKIP_SCENE_CHANGE_SOUND))
       GameFlag_ClearBitFar(FLAG_SKIP_SCENE_CHANGE_SOUND);

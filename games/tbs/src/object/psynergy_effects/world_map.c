@@ -536,9 +536,9 @@ void Field_UpdateObjectVisibilityBounds(void) {
       s32 oy = object->z;
 
       if (ox < left || ox > right || oy < top || oy > bottom) {
-        object->animationKind = 0;
+        object->animationKind = OBJECT_SPRITE_NONE;
       } else {
-        object->animationKind = 1;
+        object->animationKind = OBJECT_SPRITE_ONE;
       }
     }
     id++;

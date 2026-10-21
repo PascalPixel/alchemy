@@ -7,19 +7,18 @@
 // The dispatchers use the common effect scene. Individual update hooks use
 // their actor or EffectSlot contract; neither is a scene-script callback.
 
-/// Runs one step of the current Psynergy effect: 0 casts it with no target,
-/// 1 casts it on its target (secondObjectId), 2 finishes it and 3 runs its
-/// kind's extra handler. Exported as Field_DispatchTypeHandlerFar; Goma Cave's
-/// entrance imports it and passes 1 to play Whirlwind on the stump's ivy from
+/// Runs one step of the current Psynergy effect: an enum PsynergyEffectStep.
+/// Exported as Field_DispatchTypeHandlerFar; Goma Cave's entrance imports it
+/// and passes PSYNERGY_STEP_ON_TARGET to play Whirlwind on the stump's ivy from
 /// its own event.
 void Field_DispatchTypeHandler(s32 kind) {
-  if (kind == 0)
+  if (kind == PSYNERGY_STEP_UNTARGETED)
     BattleFx_Run();
-  else if (kind == 1)
+  else if (kind == PSYNERGY_STEP_ON_TARGET)
     BattleFx_DispatchRequestKind();
-  else if (kind == 2)
+  else if (kind == PSYNERGY_STEP_FINISH)
     BattleFx_ClearChildValueOnMismatch();
-  else if (kind == 3)
+  else if (kind == PSYNERGY_STEP_EXTRA)
     FieldEvent_RunTypeHandler();
 }
 
@@ -30,8 +29,8 @@ void _call_via_r3(s32, s32);
 ///
 /// Called by Field_UsePsynergy when no scene event names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
-/// action, and by Field_DispatchTypeHandler(0). Halt also moves
-/// gGameState.pausedObject to the actor it stops.
+/// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
+/// also moves gGameState.pausedObject to the actor it stops.
 void BattleFx_Run(void) {
   struct BattleFxScene *scene;
   struct FieldWork *runtime;
@@ -120,10 +119,10 @@ void BattleFx_Run(void) {
 ///
 /// Called by Field_UsePsynergy when a scene event names the target
 /// (FLAG_PSYNERGY_TARGET still set after the before event), and by
-/// Field_DispatchTypeHandler(1). Clears scene->enabled first: that is how the
-/// runners BattleFx_Run shares (Force, Frost, Ply, Whirlwind, Catch) tell that
-/// a scene event decides what happens to the target. Halt also moves
-/// gGameState.pausedObject to the target.
+/// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears scene->enabled
+/// first: that is how the runners BattleFx_Run shares (Force, Frost, Ply,
+/// Whirlwind, Catch) tell that a scene event decides what happens to the
+/// target. Halt also moves gGameState.pausedObject to the target.
 void BattleFx_DispatchRequestKind(void) {
   struct BattleFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
   struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
@@ -197,8 +196,8 @@ void BattleFx_DispatchRequestKind(void) {
 /// Finishes the current effect when it is Mind Read: ends the effect and lets
 /// its target move again, unless the target is the object kept stopped.
 /// Called by Field_UsePsynergy after the after event, and by
-/// Field_DispatchTypeHandler(2): Mind Read is the one kind whose effect stays
-/// up through the after event, the conversation it reads.
+/// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
+/// whose effect stays up through the after event, the conversation it reads.
 void BattleFx_ClearChildValueOnMismatch(void) {
   struct BattleFxScene *scene = gEffectWork;
 
@@ -212,7 +211,7 @@ void BattleFx_ClearChildValueOnMismatch(void) {
 
 /// The extra handler of Reveal, Cloak and Avoid: what each does when it ends.
 /// Called by Field_RunPsynergyEvents, which ends a Psynergy that runs out by
-/// itself, and by Field_DispatchTypeHandler(3).
+/// itself, and by Field_DispatchTypeHandler(PSYNERGY_STEP_EXTRA).
 void FieldEvent_RunTypeHandler(void) {
   u32 kind;
 
@@ -283,7 +282,7 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
   s32 param;
 
   kind = owner->animationKind;
-  if (kind == 1) {
+  if (kind == OBJECT_SPRITE_ONE) {
     animation = owner->animation;
     if (animation != 0 && animation->retainCacheEntry == 0) {
       initialCount = animation->count;
@@ -378,7 +377,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 
   object = Object_CreateFar(kind, x, y, z);
   if (object != NULL) {
-    if (object->animationKind == 0) {
+    if (object->animationKind == OBJECT_SPRITE_NONE) {
       ObjectDispatch_ReleaseFar((struct DispatchObject *)object);
       return NULL;
     }

@@ -8,10 +8,10 @@
 /// with the item, its user and its inventory slot; its result is not read.
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 
-/// Returns the scene's item event (kind 4) for item that applies to what the
-/// leader faces, or 0 (item 0 matches any item). The event's trigger names an
-/// actor (control flag 0x10) or a tile code, and may also require the leader
-/// to face within 0x17ff (about 34 degrees) of a direction. Called by
+/// Returns the scene's item event (EVENT_ITEM) for item that applies to what
+/// the leader faces, or 0 (item 0 matches any item). The event's trigger names
+/// an actor (EVENT_ITEM_ON_ACTOR) or a tile code, and may also require the
+/// leader to face within 0x17ff (about 34 degrees) of a direction. Called by
 /// Field_UseItem, and by BattleFx_HasTrigger (psynergy.c) to test whether an
 /// item would do anything here.
 s32 Field_FindItemEvent(s32 item) {
@@ -33,7 +33,7 @@ s32 Field_FindItemEvent(s32 item) {
     s16 requiresFacing = event->trigger & 0x0800;
     s32 eventTarget = event->trigger & 0xff;
 
-    if ((event->control & 0x0f) == 4 &&
+    if ((event->control & 0x0f) == EVENT_ITEM &&
         GameFlag_IsConditionActive(event->condition) != 0 &&
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe)) {
@@ -41,7 +41,7 @@ s32 Field_FindItemEvent(s32 item) {
       s32 eventItem = ((const u8 *)&event->control)[1];
 
       if (item == 0 || eventItem == item) {
-        if ((flags & 0x10) != 0) {
+        if ((flags & EVENT_ITEM_ON_ACTOR) != 0) {
           if (eventTarget == actorAhead)
             return (s32)event;
         } else if (eventTarget == tileAhead) {
@@ -199,11 +199,12 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   return result;
 }
 
-/// Returns the scene's Psynergy event (kind 5) for Psynergy of the given
-/// group that applies to what the leader faces, or NULL; stores the actor the
-/// Psynergy would target in *target. eventFlags gives the event's phase and
-/// kind (0x70000005 for any phase). The event may apply to any target
-/// (control flag 0x80), to an actor (0x10) or to a tile code. Called by
+/// Returns the scene's Psynergy event (EVENT_PSYNERGY) for Psynergy of the
+/// given group that applies to what the leader faces, or NULL; stores the actor
+/// the Psynergy would target in *target. eventFlags gives the event's phase and
+/// kind (PSYNERGY_EV_ANY for any phase). The event may apply to any target
+/// (EVENT_PSYNERGY_IN_AREA), to an actor (EVENT_PSYNERGY_ON_ACTOR) or to a
+/// tile code. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
 /// Force, Frost and Reveal effects (psynergy_effects/) for their own phases.
 void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
@@ -234,9 +235,9 @@ void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
         BattleActGet(((const u8 *)&event->control)[1])->type0c == group &&
         (anyPhase || (event->control & 0x7000000f) == eventFlags)) {
       // Any Psynergy of the same field kind (type0c) as the event's matches.
-      if ((event->control & 0x80) != 0)
+      if ((event->control & EVENT_PSYNERGY_IN_AREA) != 0)
         return (void *)event;
-      if ((event->control & 0x10) != 0) {
+      if ((event->control & EVENT_PSYNERGY_ON_ACTOR) != 0) {
         if (eventTarget == actorAhead)
           return (void *)event;
       } else if (eventTarget == tileAhead) {

@@ -10,6 +10,15 @@ struct SceneEvent;
 struct ScenePlacement;
 union FieldObject;
 
+/// A step of the current Psynergy effect (Field_DispatchTypeHandler).
+enum PsynergyEffectStep {
+  PSYNERGY_STEP_UNTARGETED = 0, ///< casts it with no target (BattleFx_Run)
+  /// Casts it on its target, secondObjectId (BattleFx_DispatchRequestKind).
+  PSYNERGY_STEP_ON_TARGET = 1,
+  PSYNERGY_STEP_FINISH = 2, ///< finishes it
+  PSYNERGY_STEP_EXTRA = 3   ///< runs its kind's extra handler
+};
+
 /// A field Psynergy's effect, as the field kind: the type column of
 /// games/tbs/src/game/actions.tsv, named for the abilities that have it. The
 /// effect scene keeps it as its animation.

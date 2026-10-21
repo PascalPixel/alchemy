@@ -408,8 +408,9 @@ static void Event_JumpAcrossRoofGap(void) {
   }
 }
 
-/// In Vault's room with the crate, once Move has pushed the crate aside to
-/// column 42, the passage behind it, the way up to the inn's loft, opens.
+/// Once Move pushes the crate aside, the way up to the inn's loft opens.
+/// This is in Vault's room with the crate: when Move has pushed the crate to
+/// column 42, the passage behind it opens.
 ///
 /// Reached by Move on the crate (ACTOR_CRATE) until FLAG_VAULT_CRATE_MOVED is
 /// set; sets it when the crate has reached column 42.
@@ -613,9 +614,9 @@ static void Event_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-/// In a house of Vault, the wife of the man with the sparkling rock wishes
-/// their rocks were gems, or, after the thieves are jailed, is glad they were
-/// caught before stealing the gem.
+/// The wife of the man with the sparkling rock talks about their rocks.
+/// She wishes their rocks were gems, or, after the thieves are jailed, is glad
+/// they were caught before stealing the gem.
 ///
 /// Reached by talking to the gem owner's wife (ACTOR_GEM_OWNERS_WIFE).
 static void Event_TalkAboutRocks(void) {
@@ -629,9 +630,9 @@ static void Event_TalkAboutRocks(void) {
   Engine_EventEnd();
 }
 
-/// In Vault's item shop, Grandpa talks about missing things, or, after the
-/// thieves are jailed, says they hid the treasure in the loft and more in the
-/// cemetery.
+/// Grandpa in the item shop talks about missing things.
+/// After the thieves are jailed, he says instead that they hid the treasure in
+/// the loft and more in the cemetery.
 /// "Is it just me, or am I missing something?"
 ///
 /// Reached by talking to Grandpa (ACTOR_GRANDPA).
@@ -685,8 +686,9 @@ static void Event_WarnAboutThreeStrangers(void) {
   Engine_EventEnd();
 }
 
-/// In the guests' room at Vault's inn, the suspected leader cries out and runs
-/// to his next spot, chosen by the way he faces and where he is on his route.
+/// The suspected leader cries out and runs to his next spot.
+/// This is in the guests' room at Vault's inn; the spot is chosen by the way he
+/// faces and where he is on his route.
 /// "Ow! Stop it!"
 ///
 /// Reached by Mind Read on him (ACTOR_SUSPECTED_LEADER), and by talking to him
@@ -806,9 +808,10 @@ static void Event_SuspectedThiefDodges(void) {
   Engine_EventEnd();
 }
 
-/// In a house of Vault after the thieves are jailed, the villager suspecting
-/// the neighbor asks whether they came from Lunpa. "Did those thieves come from
-/// Lunpa?"
+/// The villager suspecting the neighbor asks whether the thieves came from
+/// Lunpa.
+/// This is in a house of Vault after the thieves are jailed. "Did those thieves
+/// come from Lunpa?"
 ///
 /// Reached by talking to the villager suspecting the neighbor
 /// (ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR) after the thieves are jailed; the
@@ -820,8 +823,8 @@ static void Event_AskWhetherThievesCameFromLunpa(void) {
   Engine_EventEnd();
 }
 
-/// In a house of Vault after the thieves are jailed, the boy says Father
-/// worries about the prisoners from Lunpa.
+/// The boy says Father worries about the prisoners from Lunpa.
+/// He's in a house of Vault, and says it after the thieves are jailed.
 static void Event_BoyWorriesAboutFather(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultMyFatherWorriedAboutThose);
@@ -838,10 +841,10 @@ static void Event_AskAboutDefeatingThieves(void) {
   Engine_EventEnd();
 }
 
-/// At his house in Vault after the thieves are jailed, the mayor thanks Isaac
-/// and gives the promised Water of Life, if there is room; then asks whether
-/// the party is heading beyond the Goma Range, and points them to the cave on
-/// the way to Bilibin.
+/// The mayor thanks Isaac and gives the promised Water of Life.
+/// This is at his house after the thieves are jailed, and he gives it if there
+/// is room; then he asks whether the party is heading beyond the Goma Range,
+/// and points them to the cave on the way to Bilibin.
 ///
 /// Reached by talking to the mayor (ACTOR_MAYOR) after the thieves are jailed.
 /// Gives the Water of Life and sets FLAG_VAULT_WATER_OF_LIFE_RECEIVED, once;
@@ -1533,8 +1536,9 @@ static void Event_ClimbToLoft(void) {
   Engine_EventRequestExit(VAULT_INTERIORS_CRATE_ROOM_TO_LOFT);
 }
 
-/// Leaving the inn's loft in Vault before the thieves are confronted, the
-/// party hears the tied-up villager groan. "Uhnn... Uhnn..."
+/// Leaving the inn's loft, the party hears the tied-up villager groan.
+/// It hears him when it leaves before the thieves are confronted.
+/// "Uhnn... Uhnn..."
 ///
 /// Reached by stepping on cell code 27 in the loft; takes
 /// VAULT_INTERIORS_LOFT_TO_CRATE_ROOM back down.
@@ -1770,8 +1774,9 @@ static inline void VaultInteriors_SetPartyImagePriority(void) {
   }
 }
 
-/// In the guests' room at Vault's inn, once a suspect is cornered, Garet calls
-/// Ivan and Ivan reads their minds. "Uh-oh! I'm surrounded!" "Now, Ivan!"
+/// Once a suspect is cornered, Garet calls Ivan and Ivan reads their minds.
+/// This is in the guests' room at Vault's inn. "Uh-oh! I'm surrounded!" "Now,
+/// Ivan!"
 ///
 /// Reached through raised events 201 to 203, which
 /// VaultInteriors_UpdateActorStops raises after thirty frames with at least
@@ -2009,8 +2014,9 @@ static void VaultInteriors_DiscussMindReading(void) {
   Engine_ActorSetPosition(IVAN, 0, 0);
 }
 
-/// In the guests' room at Vault's inn, the leader stepping on one of the route
-/// triggers 11 to 18 moves the fleeing suspects on to their next spots.
+/// The fleeing suspects move on to their next spots.
+/// This is in the guests' room at Vault's inn, when the leader steps on one of
+/// the route triggers 11 to 18.
 ///
 /// Reached by stepping on cell codes 11 to 18 while FLAG_SUSPECTS_FLEEING is
 /// set.

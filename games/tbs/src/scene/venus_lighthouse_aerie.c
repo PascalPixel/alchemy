@@ -352,11 +352,11 @@ const struct SceneEvent *VenusLighthouseAerie_GetEvents(void) {
   return gVenusLighthouseAerieEvents;
 }
 
-/// Sets up the floor sections and the six pillars, then runs the part of the
-/// sequence the entrance selects (the arrival only when not back from a
-/// battle), or, after a lost battle, gives back the Shaman's Rod and leaves
-/// for Lalivero Sanctum. Back from a battle, the pillar nearest the leader
-/// stands still.
+/// Sets up the floor sections and the six pillars.
+/// It then runs the part of the sequence the entrance selects (the arrival only
+/// when not back from a battle), or, after a lost battle, gives back the
+/// Shaman's Rod and leaves for Lalivero Sanctum. Back from a battle, the pillar
+/// nearest the leader stands still.
 s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 pillarId;

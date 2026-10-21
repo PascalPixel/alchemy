@@ -28,7 +28,7 @@ command macros are in `games/tbs/include/event.h`, the engine's services in
 language.
 
 Each overlay is three objects in `games/tbs/objects.tsv`, linked in that order
-at 0x2008000: `entry/<place>`, `<place>` and `import/<place>`. Its first
+to run in the overlay area: `entry/<place>`, `<place>` and `import/<place>`. Its first
 column is the overlay's resource number. The scene table,
 `gField_SceneTable` in `games/tbs/src/field/scenes.s`, gives each scene its
 overlay, its group (the place it belongs to), its variant and its map, and names
@@ -43,16 +43,17 @@ for one). A scene is one object: it has no parts.
 - **position**: 16.16 fixed point pixels, x across, y up and z down the map;
   scenes write pixels (`PIXELS(n)`, or plain pixels to a command). A **cell**
   is 16 by 16 pixels (`x >> 20`).
-- **facing**: a 16-bit turn, `FACING_EAST` 0 to `FACING_NORTHEAST` 0xe000,
-  clockwise as seen on the screen.
+- **facing**: one of eight headings, `FACING_EAST` through `FACING_NORTHEAST`,
+  clockwise as seen on the screen; underneath it's a 16-bit fraction of a turn.
 - **flags**: game flags, from `flags.h` where a name is proven: the party
-  and Djinn below 0x100, the system flags the engine shares from 0x100,
-  story flags from 0x800 and most chest and find flags from 0xe00, each place's
-  in its own section. 0x200 to 0x2ff belong to the scene and are cleared on
-  every ordinary entrance: they are written `FLAG_SCENE_TEMP_xx`, and each
-  scene says near its top (or beside a single use) what it keeps in them.
-  0x300 to 0x3ff belong to the group of scenes of one place, which reuses the
-  numbers: each scene names its own in its file, never in `flags.h`. A
+  and the Djinn first, then the system flags the engine shares, then the
+  story flags, and most chest and find flags last, each place's in its own
+  section. The scene's own flags (`FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST`) are
+  cleared on every ordinary entrance: they are written `FLAG_SCENE_TEMP_xx`,
+  and each scene says near its top (or beside a single use) what it keeps in
+  them. A place's flags (`FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST`) belong to
+  the group of scenes of one place, which reuses the numbers: each scene names
+  its own in its file, never in `flags.h`. A
   placement whose condition is 0 is placed only within the view
   (`Scene_AssignViewFlags`); that 0 is no flag. `FLAG_KEEP_PARTY_POSITION` is
   set when the party returns to where it was, as after a battle: a scene's
@@ -62,7 +63,7 @@ for one). A scene is one object: it has no parts.
 - **sounds** come from `songs.h`: `SE_` and `MUS_` names where the sound is
   known, its number otherwise (`SE_188`).
 - **callbacks**: functions the scene adds with `FieldScheduler_AddCallback`
-  (priority 0xc80, `TASK_PRIORITY_SCENE`), run once a frame until removed.
+  (at `TASK_PRIORITY_SCENE`), run once a frame until removed.
 - **update hooks**: an actor's `update`, run each frame with the actor.
 
 ## Prefixes
@@ -83,7 +84,7 @@ comment markers, are in [Matching](../MATCHING.md).
 
 ### A scene is an overlay that answers six questions
 
-Every scene is its own overlay, loaded into the same 32 KB at 0x2008000 when
+Every scene is its own overlay, loaded into the same 32 KB overlay area when
 the party enters, so the game keeps only one place's code in memory at a
 time. The field engine knows nothing about a scene except its entry table:
 six veneers at the overlay's start, always in the same order, which it calls
@@ -100,9 +101,9 @@ rows carry conditions, and for exits, whose rows can depend on a flag.
 
 A scene does not undo what it changed when the party leaves. Instead, two
 ranges of game flags are cleared for it on entry (`Scene_ResetFlagsOnEnter`,
-`games/tbs/src/object/object/scene.c`): 0x200 to 0x2ff on every ordinary
-entrance, and 0x300 to 0x3ff whenever the party enters a different group of
-scenes, the scenes of one place. So a scene keeps a moved crate or an opened
+`games/tbs/src/object/object/scene.c`): the scene's own flags on every
+ordinary entrance, and the place's flags whenever the party enters a
+different group of scenes, the scenes of one place. So a scene keeps a moved crate or an opened
 door in a `FLAG_SCENE_TEMP_xx` flag, and it is put back the next time the
 party comes in; a place keeps what should last while the party is anywhere
 inside it in its group's flags. When the party returns to where it was, as
@@ -199,9 +200,9 @@ What happens is a message (`MSGNO(MsgName)`), a function
 
 ## How to find a scene and an event in it
 
-1. Find the place in `scenes.s`: `scene Vault, 0x382, ...` runs overlay
-   0x382, and the rows of `objects.tsv` that begin `382` name its files
-   (`vault.c`). Scenes that share an overlay (`GomaCaveWaterway1` and
+1. Find the place in `scenes.s`: its row gives the overlay's resource
+   number, and the rows of `objects.tsv` that begin with that number name its
+   files (`vault.c` for Vault). Scenes that share an overlay (`GomaCaveWaterway1` and
    `GomaCaveWaterway2`) share one file.
 2. To find what someone says, search `games/tbs/text/en.po` for the line; its
    `msgctxt` is the message's linker name (`MsgVaultWelcomeToVaultTheTownAt`),
@@ -260,15 +261,15 @@ decompilations write it, with pret's naming (`PascalCase` functions,
 
 ## Limits
 
-- An overlay is loaded at 0x2008000 into `gOverlayArea`, 32 KB of EWRAM
+- An overlay is loaded into `gOverlayArea`, 32 KB of EWRAM
   (`games/tbs/src/system/ewram.s`): its code, tables and RAM variables must
   fit there.
 - An overlay calls the main image only through its import table, never
   another overlay.
 - The field work holds 66 actor slots (`games/tbs/include/field_runtime.h`):
   the party's 8, then the placed actors.
-- A scene's own flags are 0x200 to 0x2ff, cleared on every ordinary
-  entrance.
+- A scene has 256 flags of its own (`FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST`),
+  cleared on every ordinary entrance.
 
 ## Evidence and open questions
 

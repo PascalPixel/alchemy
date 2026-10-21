@@ -575,17 +575,17 @@ static void Event_ReturnToTolbiShip(void) {
 /// transitions to the ending and to Sheba's fall, 80 the ending, and 74, 76
 /// and 77 resume a storm's time in the air.
 /// The scene's initialization. Sets FLAG_RETREAT_BLOCKED on the map; entrance
-/// 99, a debug start, sets FLAG_NO_ENCOUNTERS, FLAG_DEBUG_STEPS_OFF and flag
-/// 0x161. Entrance 1 sets FLAG_PARTY_LEFT_VALE and flag 0x85c the first time.
-/// XXX: flags 0x161 and 0x85c are read by no code of this game; a reader would
-/// say what they record.
+/// 99, a debug start, sets FLAG_NO_ENCOUNTERS, FLAG_DEBUG_STEPS_OFF and
+/// FLAG_NO_ENCOUNTERS_IN_PLACE. Entrance 1 sets FLAG_PARTY_LEFT_VALE and flag
+/// 0x85c the first time. XXX: flag 0x85c is read by no code of this game; a
+/// reader would say what it records.
 s32 WorldMap_Initialize(void) {
   struct GameState *state = &gGameState;
   s16 *entrance = &state->entrance;
 
   if (*entrance == 99) {
     Engine_GameFlagSet(FLAG_NO_ENCOUNTERS);
-    Engine_GameFlagSet(0x161);
+    Engine_GameFlagSet(FLAG_NO_ENCOUNTERS_IN_PLACE);
     Engine_GameFlagSet(FLAG_DEBUG_STEPS_OFF);
   }
   if (*entrance == WORLD_MAP_MERCURY_LIGHTHOUSE_LIT) {

@@ -9,8 +9,9 @@
 /// offsets, tile, shape and size) on a random spot of ground within 128 pixels
 /// of the leader, then starts again elsewhere. The timer counts down, so the
 /// rows play from the last: each comes down slantwise onto its spot and stays
-/// there for its last seven frames. They freeze while flag 0x166 is set. Vale
-/// runs them with the lightning while FLAG_VALE_STORM is set (vale_home.c).
+/// there for its last seven frames. They freeze while FLAG_WEATHER_HELD is set.
+/// Vale runs them with the lightning while FLAG_VALE_STORM is set
+/// (vale_home.c).
 void FieldFx_UpdateGroundParticles(void) {
   struct MapScrollWork *view = gMapWork[0];
   struct GroundParticleWork *work = gMapWork[21];
@@ -29,7 +30,7 @@ void FieldFx_UpdateGroundParticles(void) {
       continue;
     // BUG: freezing a timer of 16 indexes past the 16-frame table. Which
     // frame should be held is not established, so keep the original timing.
-    if (GameFlag_TestFar(0x166))
+    if (GameFlag_TestFar(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gFieldFx_GroundParticleFrames[5 * particle->timer];
     x = (particle->posX - cameraX) / 0x10000 + *frame++;
@@ -65,8 +66,8 @@ void FieldFx_UpdateGroundParticles(void) {
 /// colours show at 11, 6 and 1, each fading back over 12 frames from the
 /// next frame on. While enabled is set, the end of a burst plays a
 /// thunderclap (louder with loud set) and sets the timer to 51 to 549 frames
-/// for the next. Flag 0x166 holds the next burst back, and a timer below 0
-/// stops the lightning.
+/// for the next. FLAG_WEATHER_HELD holds the next burst back, and a timer below
+/// 0 stops the lightning.
 void FieldFx_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
   struct BattleEffectBuffers *target =
@@ -75,7 +76,7 @@ void FieldFx_UpdateLightning(void) {
 
   if (*timer < 0)
     return;
-  if (GameFlag_TestFar(0x166))
+  if (GameFlag_TestFar(FLAG_WEATHER_HELD))
     work->timer = 128;
   switch ((*timer)--) {
   case 0:
@@ -173,7 +174,7 @@ union DustWord {
 /// slowing to 3/4 pixel a frame for its last 90 frames and 1/4 for its last
 /// 60, jittering sideways and changing tiles as it ages. It lasts 120
 /// frames, ending about 52 pixels above its spot, or until it leaves the
-/// screen. They freeze while flag 0x166 is set. Nothing in ☀️ starts them
+/// screen. They freeze while FLAG_WEATHER_HELD is set. Nothing in ☀️ starts them
 /// (FieldMotes_Start has only its overlay veneer).
 void FieldMotes_Update(void) {
   struct GroundParticleWork *work = WORK_SLOT(29);
@@ -194,7 +195,7 @@ void FieldMotes_Update(void) {
       u32 firstJitterDraw;
       u32 secondJitterDraw;
 
-      if (GameFlag_TestFar(0x166)) {
+      if (GameFlag_TestFar(FLAG_WEATHER_HELD)) {
         mote->timer++;
         mote->delay--;
       }
@@ -295,8 +296,8 @@ void FieldMotes_Start(void) {
 /// follow on the same spot, each 4 frames shorter. Each plays
 /// gFieldFx_SparkleFrames from the row its timer starts at down to row 0,
 /// coming down onto the spot, flipping every other frame. No new bursts start
-/// while the work's stopped is set; flag 0x166 freezes them. Sol Sanctum's
-/// eruption scene starts them (sol_sanctum_eruption.c).
+/// while the work's stopped is set; FLAG_WEATHER_HELD freezes them. Sol
+/// Sanctum's eruption scene starts them (sol_sanctum_eruption.c).
 void FieldEffect_UpdateSparkles(void) {
   struct GroundParticleWork *work;
   u32 spawned;
@@ -333,7 +334,7 @@ void FieldEffect_UpdateSparkles(void) {
     if (sparkle->timer != 0) {
       cameraX = camera[0];
       cameraZ = camera[1];
-      if (GameFlag_TestFar(0x166) != 0)
+      if (GameFlag_TestFar(FLAG_WEATHER_HELD) != 0)
         sparkle->timer++;
       frame = (const u16 *)&gFieldFx_SparkleFrames[sparkle->timer >> 1];
       a = Random16();

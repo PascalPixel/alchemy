@@ -914,7 +914,7 @@ static void Event_HidePath(void) {
   s32 row;
 
 #if TBS_PATCH_1
-  Engine_GameFlagClear(0x161);
+  Engine_GameFlagClear(FLAG_NO_ENCOUNTERS_IN_PLACE);
 #endif
   column = 23;
   row = 8;
@@ -935,7 +935,7 @@ static void Event_RevealPath(void) {
   s32 row;
 
 #if TBS_PATCH_1
-  Engine_GameFlagSet(0x161);
+  Engine_GameFlagSet(FLAG_NO_ENCOUNTERS_IN_PLACE);
 #endif
   column = 23;
   row = 8;

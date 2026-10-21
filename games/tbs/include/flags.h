@@ -59,6 +59,10 @@
 /// No random encounters while set (Encounter_SelectEnemyGroup), unless flag
 /// 0x15f is set; debug entrances set it.
 #define FLAG_NO_ENCOUNTERS 0x160
+/// No random battles until the party enters another place: Venus Lighthouse
+/// sets it on its Reveal path, the world map's debug entrance too, and
+/// Scene_ResetFlagsOnEnter clears it with a new place group.
+#define FLAG_NO_ENCOUNTERS_IN_PLACE 0x161
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
 /// In debug mode, steps on the field are not processed (Field_RunScene) and
 /// the world map's places do not react to the leader; debug entrances set it.
@@ -91,10 +95,26 @@
 #define FLAG_IN_LINK_LOBBY 0x17e
 /// With it set, holding B on the field walks the leader at 4 pixels a frame
 /// (FieldObject_UpdatePlayerControl). No ☀️ code sets it.
+/// Holds the field's palette blend still (BattlePalette_UpdateBlend), while a
+/// menu is open (Menu_SuspendFieldTasks).
+#define FLAG_PALETTE_BLEND_HELD 0x152
+/// Holds the field's weather still, its particles and its next burst, while a
+/// menu is open (Menu_SuspendFieldTasks).
+#define FLAG_WEATHER_HELD 0x166
 #define FLAG_FAST_WALK 0x17f
-// Flags 0x300 to 0x3ff are place flags: Scene_ResetFlagsOnEnter clears them
-// when the party enters another place group, and each place uses the numbers
-// for its own, so the scenes name them. These two are the link lobby's.
+/// The places the party has visited, one flag for each place group, set by
+/// Scene_ResetFlagsOnEnter as the party enters the group; the world map screen
+/// shows a marker for each.
+#define FLAG_PLACE_VISITED(group) (0x180 + (group))
+/// A scene's own flags, cleared on every ordinary entrance
+/// (Scene_ResetFlagsOnEnter): puzzles reset when the party walks back in.
+#define FLAG_SCENE_FIRST 0x200
+#define FLAG_SCENE_LAST 0x2ff
+/// A place's flags, kept while the party moves between the scenes of one place
+/// group and cleared when it enters another. Each place uses the numbers for
+/// its own, so the scenes name them; the next two are the link lobby's.
+#define FLAG_PLACE_FIRST 0x300
+#define FLAG_PLACE_LAST 0x3ff
 // Byte flags, read and written eight at a time.
 #define FLAG_LINK_PARTY_COUNT 0x3f0 ///< the members the linked opponent sent
 /// Monster battles won in a row, added to the monsters' level; -1 after the

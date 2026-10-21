@@ -66,10 +66,8 @@ both, 1 only the background colours, 2 only the sprites'.
 
 A **half** is one of the two parts the credits split the background tile
 memory and the background palette into (`alternate` in the code). Half 0 is
-the video memory (VRAM) from 0x06000000 with colours 0 to 127, and half 1 is
-VRAM from 0x06008000, 32 KB further on, with colours 128 to 255. A number
-starting 0x is hexadecimal, the way the code and every GBA tool write
-addresses.
+the first 32 KB of video memory (VRAM) with colours 0 to 127, and half 1 the
+next 32 KB with colours 128 to 255.
 
 The **tile ring** is the credits' 32 rows of text tiles, sixteen of them on
 screen at a time, used over and over as the text scrolls.
@@ -134,8 +132,8 @@ entrance 9, with `MUS_067` playing. They run a little over three minutes: a
 
 A crossfade needs both pictures on screen at the same time, so the credits
 split the 256-colour background tile memory and the background palette into
-two halves. `BG3` draws from tiles at 0x06000000 with colours 0 to 127, and `BG2`
-from tiles at 0x06008000 with colours 128 to 255. A backdrop has 128 colours,
+two halves. `BG3` draws from tiles in the first half with colours 0 to 127, and `BG2`
+from tiles in the second with colours 128 to 255. A backdrop has 128 colours,
 and `Graphics_LoadCharacterBlockAndPalette` adds 128 to every pixel it unpacks
 into the second half, so the same picture works in either.
 

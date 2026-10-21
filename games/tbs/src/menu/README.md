@@ -72,7 +72,7 @@ and [`unit/menu/title.h`](../../include/unit/menu/title.h), `clear.h` and
 
 - **tile**: the screen is built from 8-by-8-pixel squares, 30 across and 20
   down, and windows are placed and sized in them.
-- **menu work**: the heap block `HEAP_SLOT_MENU`, 0xa70 bytes (2,672),
+- **menu work**: the heap block `HEAP_SLOT_MENU`, 2,672 bytes,
   reached as `gMenuWork`. A heap block is memory the
   [Runtime](../runtime/README.md) hands out to a screen while it runs. Each
   screen reads the block through its own struct: `InventoryMenuState` (the
@@ -95,8 +95,8 @@ and [`unit/menu/title.h`](../../include/unit/menu/title.h), `clear.h` and
 - **game flag**: one of the yes-or-no facts the game remembers, such as
   whether a chest has been opened, each kept as one bit (see
   [Game rules](../game/README.md)). The menu uses two of its own:
-  `FLAG_MENU_START_PRESSED` (0x150) makes every screen unwind, and
-  `FLAG_MENU_INFO_KEPT` (0x151) keeps a message in the info window. They're
+  `FLAG_MENU_START_PRESSED` makes every screen unwind, and
+  `FLAG_MENU_INFO_KEPT` keeps a message in the info window. They're
   defined in `menu_internal.h`, beside the menu's other shared names.
 - **info window**: the help line at the top of a screen.
 - **entry icons**: the item or Psynergy icons laid out in a grid
@@ -134,7 +134,7 @@ figures for all four screens (the Item, Psynergy and Djinn screens through
 ### One block, one view per screen
 
 Every screen of the field menu works in the same heap block,
-`HEAP_SLOT_MENU` (0xa70 bytes), and each reads it through its own struct:
+`HEAP_SLOT_MENU` (2,672 bytes), and each reads it through its own struct:
 `InventoryMenuState` for the Item screen and the pieces the screens share,
 `PsynergyMenuState`, `CharacterMenuState`, `DjinnMenuWork` and
 `FourObjectMotionState`. Only one screen's loop runs at a time, so the block
@@ -152,8 +152,8 @@ screen sets the object system's `suspended` field (heap slot
 `HEAP_SLOT_MENU_CONTROL`), so the field's sprites that aren't held stop being
 drawn and give back their VRAM. `Menu_SuspendFieldTasks` goes further: it
 suspends the overlay's tasks (`Scheduler_SuspendOverlayTasks`) and the map's
-tile animations, and sets flags 0x152 and 0x166 so that the field's palette
-blend and weather hold still; `Menu_ResumeFieldTasks` undoes it all. The
+tile animations, and sets `FLAG_PALETTE_BLEND_HELD` and `FLAG_WEATHER_HELD`
+so that the field's palette blend and weather hold still; `Menu_ResumeFieldTasks` undoes it all. The
 Djinn and Status screens call it in every edition, the Item screen in every
 edition but the Japanese, and the Psynergy screen only in the German, French,
 Spanish and Italian editions.
@@ -217,20 +217,19 @@ part or file, so you can see what changes in which edition without hunting
 through the screen's code.
 
 The Item screen's sort orders are `gMenu_ListOrder*` in `menudata.c`. Each
-lists item types a byte at a time, `LIST_ORDER_EQUIPPED` (0x80) added to a
-type for only the equipped items of that type, ending with `LIST_ORDER_END`
-(0xff). Pressing L and A together on the member row sorts that member's
+lists item types a byte at a time, `LIST_ORDER_EQUIPPED` added to a
+type for only the equipped items of that type, ending with `LIST_ORDER_END`. Pressing L and A together on the member row sorts that member's
 items, each press moving on to the next of the four orders.
 
 ## Limits
 
-- The menu work is one heap block of 0xa70 bytes (`HEAP_SLOT_MENU`), shared
+- The menu work is one heap block of 2,672 bytes (`HEAP_SLOT_MENU`), shared
   by every screen's view of it.
 - The work has room for eight party members and 32 listed entries
   (`ownerIds`, `entryIcons`, `items`).
 - A party member's inventory has 15 slots (`INVENTORY_SLOTS`).
 - The title, file select and Battle Arena screens are overlays, loaded into
-  the 32 KB at 0x02008000 (`../system/README.md`).
+  the 32 KB overlay area (`../system/README.md`).
 
 ## Evidence and open questions
 

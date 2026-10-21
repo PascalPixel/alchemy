@@ -33,31 +33,31 @@
 #define WINDOW_STYLE_MASK 0xff
 
 /// Resumes the overlay tasks and tile animations when a menu closes, and
-/// clears game flags 0x166 and 0x152: undoes Menu_SuspendFieldTasks. Called
-/// as DjinnMenu_Run and StatusMenu_Run close, and as ItemMenu_Run
-/// (TBS_PATCH_1) and PsynergyMenu_Run (TBS_PATCH_2) close.
+/// clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes
+/// Menu_SuspendFieldTasks. Called as DjinnMenu_Run and StatusMenu_Run close,
+/// and as ItemMenu_Run (TBS_PATCH_1) and PsynergyMenu_Run (TBS_PATCH_2) close.
 /// Returns nothing useful; callers ignore the value.
 s32 Menu_ResumeFieldTasks(void) {
   Scheduler_ResumeOverlayTasks();
   MapAnimation_ResumeFar();
-  // Flag 0x166, while set, freezes the field weather: its particles hold
+  // FLAG_WEATHER_HELD freezes the field weather: its particles hold
   // their frame and the storm's lightning waits (psynergy_effects/weather.c).
-  GameFlag_ClearBitFar(0x166);
-  // Flag 0x152, while set, stops BattlePalette_UpdateBlend.
-  GameFlag_ClearBitFar(0x152);
+  GameFlag_ClearBitFar(FLAG_WEATHER_HELD);
+  // FLAG_PALETTE_BLEND_HELD stops BattlePalette_UpdateBlend.
+  GameFlag_ClearBitFar(FLAG_PALETTE_BLEND_HELD);
 #ifdef UBFIX
   return 0;
 #endif
 }
 
 /// Suspends the overlay tasks and tile animations while a menu is open, and
-/// sets flags 0x152 and 0x166, so that the field's palette blend and weather
-/// stand still behind it (see Menu_ResumeFieldTasks, which undoes it). Returns
-/// Scheduler_SuspendOverlayTasks' result, the last task index changed or -1;
-/// callers ignore it.
+/// sets FLAG_PALETTE_BLEND_HELD and FLAG_WEATHER_HELD, so that the field's
+/// palette blend and weather stand still behind it (see Menu_ResumeFieldTasks,
+/// which undoes it). Returns Scheduler_SuspendOverlayTasks' result, the last
+/// task index changed or -1; callers ignore it.
 s32 Menu_SuspendFieldTasks(void) {
-  GameFlag_SetBitFar(0x152);
-  GameFlag_SetBitFar(0x166);
+  GameFlag_SetBitFar(FLAG_PALETTE_BLEND_HELD);
+  GameFlag_SetBitFar(FLAG_WEATHER_HELD);
   MapAnimation_SuspendFar();
   return Scheduler_SuspendOverlayTasks();
 }

@@ -57,8 +57,7 @@ more), and the other three bytes are height samples, in steps of eight
 pixels, which the kind's height function fills in between
 (`Map_GetTerrainHeight`, through `gMap_TerrainHeightFunctions`).
 
-The **collision code** says what standing on the cell means. 255 (0xff in
-hexadecimal, which the tables and the code use) is a wall. The codes from 1
+The **collision code** says what standing on the cell means. 255 is a wall. The codes from 1
 to 239 belong to the scene: a scene's touch event fires when the leader steps
 onto or pushes against a cell with its code, and its search event when the
 player presses A facing one. Some of the codes above 239 mean the same thing
@@ -128,7 +127,7 @@ halfword per cell, the block number with its flag bits, and the others a
 byte). Keeping each plane whole keeps its long runs
 of one value together for the packer (XXX: an inference; the bytes show only
 the layout). `Tile_ConvertMap`, run from a copy in RAM, then weaves them
-together into cell words, 128 by 128 of them: 64 KB from address 0x02010000.
+together into cell words, 128 by 128 of them: 64 KB from the start of `Ram_MapCellBuffer`.
 
 That's more than `gMapCellBuffer`'s own 32 KB. The cells run on through
 `gActorSpriteSlots` and `gDecodeBuffer`, so the field can't use those two for
@@ -171,7 +170,7 @@ no slot.
 
 ### Placeholder blocks
 
-A cell whose block is 0xfff (4,095) is a placeholder. As the map is
+A cell whose block is 4,095, the highest a cell can name, is a placeholder. As the map is
 converted, each placeholder is given a fresh block number, counting up
 from 0 in map order; the ROM also keeps an unused C version of that numbering,
 `Tilemap_NumberPlaceholderBlocks`. XXX: what fills those blocks isn't known.
@@ -198,16 +197,16 @@ and then all the low bytes. Each map's `map.s` names the method its stream
 uses, so the build never has to guess.
 
 The tile animation and blend scripts are `script`s, a run of halfwords.
-`channel n` and `jump n` are a prefix plus n (0xfd00 + n and 0xfe00 + n),
-`stop` is 0xfeff and `end` is 0xffff, and `frame`, `control` and `level` are
+`channel n` and `jump n` are a prefix plus n (`0xfd00 + n` and `0xfe00 + n`),
+`stop` is `0xfeff` and `end` is `0xffff`, and `frame`, `control` and `level` are
 written as their values alone, with no command word in front.
 
 In a tile animation script, `channel n` starts channel n right after it, each
 `frame` is four values (the source tile, how many tiles, the destination tile
 and the frames to wait), `jump n` goes to halfword 2n of the channel's script,
 `stop` halts the channel and `end` loops it back to its start. A source tile
-numbered 0x600 or more is copied from RAM and a lower one from elsewhere in
-video memory (the line is 0x200 when a map's animations copy 64-byte tiles).
+numbered 1,536 or more is copied from RAM and a lower one from elsewhere in
+video memory (the line is 512 when a map's animations copy 64-byte tiles).
 In a blend script, `control` sets the blend control register (`BLDCNT`), and
 `level` sets the blend amounts and then waits its second value in frames.
 
@@ -269,7 +268,7 @@ lettering, which differs by edition, is placed after the paths.
 
 - 128 by 128 cells, for all three layers together.
 - 4,095 blocks a map: a cell's block number has 12 bits (0 to 4,095), and
-  4,095 (0xfff) is the placeholder.
+  4,095 is the placeholder.
 - 256 shapes a map, since a cell names its shape in one byte.
 - 16 tile animation channels (`struct MapScrollWork`).
 - Up to ten chests and Psynergy Stones placed on a map
@@ -297,6 +296,6 @@ Still unknown:
   them 0.
 - XXX: the cell map fills 64 KB through `gActorSpriteSlots` and
   `gDecodeBuffer`, yet the tile animation copies tiles from `Ram_DecodeBuffer`
-  plus their number (from 0x600 on, which lands past it, in `gMapLayerData`).
+  plus their number (from 1,536 on, which lands past it, in `gMapLayerData`).
   Which code may use those two buffers while a map is loaded hasn't been
   traced.

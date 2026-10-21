@@ -198,8 +198,7 @@ Sparks, motes, embers and chips of rock are particles. A particle is an
 `variant`, that each effect uses as it needs, for a life, a frame or a picture.
 Positions and velocities are 16.16 fixed point unless a comment says otherwise:
 a 32-bit word whose top 16 bits count whole pixels and whose low 16 bits are a
-fraction of one, so `0x10000` (65,536) is exactly one pixel and `0x2000` an
-eighth of one.
+fraction of one, so 65,536 is exactly one pixel and 8,192 an eighth of one.
 
 There are two pools. The work block holds 64 (`work->particles`). Larger effects
 use `gMapCellBuffer`, 48 KB of map storage the battle doesn't need while an
@@ -327,7 +326,7 @@ Effects move a lot of memory around with `Iwram_CopyWords`, `Iwram_ClearWords`
 and `Iwram_FillWords`. Despite the names, the sizes they're given are in bytes,
 not words.
 
-`BG2`'s scale (`REG_BG2PA`) is 8.8 fixed point, so `0x100` is 1 and `0x80` a
+`BG2`'s scale (`REG_BG2PA`) is 8.8 fixed point, so 256 is 1 and 128 a
 half, and its reference point (`REG_BG2X`) is 20.8. On the wide canvas, which
 `BG2` stretches to twice its width, a point x pixels across the screen is at x / 2
 on the canvas.
@@ -404,7 +403,7 @@ them to the stat reduction.
 
 The particles are used twice. `work->particles` holds the gathering sparks and
 then, from the impact on, 32 scattering sparks whose `variant` is their
-lifetime. The 64 records at `Ram_MapCellBuffer + 0x4000` belong to the impact's
+lifetime. The 64 records 16 KB into `Ram_MapCellBuffer` belong to the impact's
 own animation. An impact that hands off to another runner first removes its
 prelude callbacks and releases the blitters that runner will replace.
 
@@ -634,9 +633,8 @@ read several ways, for one. Those spellings, and what the `DEAD` and
 ## Limits
 
 - The canvas is 128 by 128 pixels.
-- `work->sheet` holds 0x6980 bytes (27,008). An effect that doesn't use the
-  scanline table after it (`bg2xLines`) may use up to 0x7080 (28,800,
-  `imageStorage`).
+- `work->sheet` holds 27,008 bytes. An effect that doesn't use the scanline
+  table after it (`bg2xLines`) may use up to 28,800 (`imageStorage`).
 - The work block has 64 particles, and `PARTICLES` about 1,750.
 - There are two blitter slots, and each combination of canvas size, mirroring,
   clip and mode needs its own blitter; the picture's size is passed with each
@@ -656,5 +654,5 @@ Some things are still open. Nothing found so far reaches those three unused
 kinds, so it isn't known what, if anything, ever played them. The work block's
 `unk_` fields aren't understood yet, and neither are the particles' spare words
 in the effects whose use of them hasn't been read. And it isn't settled why
-`work->sheet` may grow into the scanline table (0x7080 bytes against 0x6980)
+`work->sheet` may grow into the scanline table (28,800 bytes against 27,008)
 only for effects that don't use that table, or which effects do.

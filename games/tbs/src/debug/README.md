@@ -22,10 +22,7 @@ also a compact look at how a scene is built.
 | | `swatch.png` | the colour swatches and letters of the debug palette editor |
 
 An overlay is a block of code the game copies into RAM only while it's needed,
-and the overlay number is the one the scene table uses to pick a scene's code.
-It's written here in hexadecimal, base 16, the way the table and every GBA
-tool write such numbers: a number starting 0x is hex, so 0x3cc is 972 and the
-next two rooms are 973 and 974. Link order is in
+and the scene table names which overlay each scene runs. Link order is in
 `games/tbs/objects.tsv`, from `debug/entry/rooms`. The unit headers are in
 `games/tbs/include/unit/debug/`, and [`level.h`](level.h) and `menu_test.h`
 here hold each room's private declarations.
@@ -124,22 +121,22 @@ English; in German, Spanish, French and Italian it shows a single message
 instead, MsgValeComeOnHurry, with no speaker.
 
 Those rows of `gMenuTest_Events` say which way the leader has to face in
-their control word. A halfword is 16 bits, and the facing sits in the top
-four of the word's low halfword, bits 15 to 12: 0xc north, 0x8 west, 0x0
-east and 0x4 south.
+their control word: the top four bits of its low halfword hold the facing,
+in sixteenths of a turn counted from east, so north, west, east and south.
 
 ## Limits
 
-- Each room is an overlay, loaded into the same 32 KB at 0x2008000 as every
+- Each room is an overlay, loaded into the same 32 KB overlay area as every
   scene (see [System](../system/README.md)).
 - The item browsers cover item numbers 0 to 269.
 
 ## Evidence and open questions
 
 The rooms are scenes of the scene table like any other. Eight scenes, the
-last rows of `games/tbs/src/field/scenes.s` but two, run overlay 0x3cc on
-eight different maps, and the last two run 0x3cd and 0x3ce. They have no
-`SceneId_` names. The game gives the rooms no names either, so their
+last rows of `games/tbs/src/field/scenes.s` but two, run one overlay
+(`rooms.c`) on eight different maps, and the last two run `level.c` and
+`test.c`. They're the scenes `TestRoom0` to `TestRoom7`,
+`IncreaseItemAndLevel` and `MenuTest`. The game gives the rooms no names either, so their
 functions are named for what they let a tester do, going by the messages they
 show. `test.c` also keeps one empty function nothing calls, `DebugMenu_NoOp`,
 marked `UNUSED` like other code the ROM keeps (see

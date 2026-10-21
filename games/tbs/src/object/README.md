@@ -202,7 +202,7 @@ leader's speed limit, and doubled while the Lure Cap is worn. A battle
 starts once the counter reaches 16, and then one of the zone's eight enemy
 groups is drawn by weight. The field counts in 16.16 fixed point, where the
 top 16 bits hold the whole part and the low 16 a fraction, so one is
-written 0x10000 in hexadecimal and the threshold of 16 is 0x100000.
+65,536 and the threshold of 16 is 16 times that.
 
 A field scene's zones come from `gBattle_LocationRules`
 (`location_rules.s`). The first rule that matches the scene and entrance,
@@ -226,7 +226,8 @@ A zone is a row of `encounter.tsv`, and its `zone` column names the place:
   `games/tbs/src/battle/formatn.tsv`, and `weight0` to `weight7` each group's
   relative chance.
 
-`FLAG_NO_ENCOUNTERS`, flag 353 (0x161) and Cloak keep random battles away.
+`FLAG_NO_ENCOUNTERS`, `FLAG_NO_ENCOUNTERS_IN_PLACE` and Cloak keep random
+battles away.
 Zones with rate 0 are only ever fought by slot: zone 98's scripted
 battles, which a scene starts with `Field_RequestBattleFromEncounterTable`
 (it can take a slot of any zone), the mimic chests (zone 99) and the Djinni
@@ -244,8 +245,10 @@ world map, and Retreat refuses where it's blocked and otherwise asks first),
 then pays the PP. Next it looks for the scene's Psynergy events for what the
 leader faces: a before event, an after event, and one that only makes the
 effect aim at the actor ahead. It runs the before event, plays the effect,
-then runs the after event; an after event whose trigger has flag 0x400 plays
-the effect itself.
+then runs the after event; an after event whose trigger has bit `0x400` set
+plays the effect itself. XXX: on a Psynergy event that bit falls inside the
+ability's number (`PSYNERGY_ON_ACTOR`), so whether it's a flag of its own or
+part of the ability is open.
 
 The effect played is the one for the ability's field kind.
 [`psynergy_effects/dispatch.c`](psynergy_effects/dispatch.c) runs the kind's
@@ -285,7 +288,7 @@ the task and releases its window and tile-cache entries, and after that
 
 The places themselves are a table, `gWorldMap_PlaceMarkers` in
 `scripts.s`, with a row for each. A row gives the place's visited flag
-(0x180 plus the place's group number), the picture its marker uses and the
+(`FLAG_PLACE_VISITED` of the place's group), the picture its marker uses and the
 place's name. Where the marker goes comes from the world map's actors: the
 rows belong to the actors in order from slot 11, and each marker is drawn
 where its actor stands. A row of zeros is a gap, an actor with no marker,
@@ -309,7 +312,7 @@ initialization.
 
 The scenes of one place share a group, which picks their music, place name
 and the flags kept while the party is inside. Entering a new group clears the
-group flags (0x300 to 0x3ff) and the step counters, shows the place name,
+place flags (`FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST`) and the step counters, shows the place name,
 makes the entrance Retreat's destination, and sets the group's visited flag,
 which is what puts the place's marker on the world map screen. Towns and
 their interiors are scenes of variant 2: walking there restores no PP,

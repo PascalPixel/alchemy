@@ -20,8 +20,8 @@ struct FieldActor;
 struct SceneRecord {
   s16 resourceId; ///< the overlay Resource_LoadCode loads into gOverlayArea
   /// The place: entering a new group clears flags 0x300 to 0x3ff and the step
-  /// counters and moves Retreat's destination; flag 0x180 + group marks it
-  /// visited (Scene_ResetFlagsOnEnter).
+  /// counters and moves Retreat's destination; FLAG_PLACE_VISITED(group) marks
+  /// it visited (Scene_ResetFlagsOnEnter).
   s8 group;
   /// Copied to gGameState.sceneVariant: 2 for towns and their interiors (53
   /// rows: Vale, Bilibin, Kalay, Tolbi and others), where walking restores no

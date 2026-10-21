@@ -18,7 +18,7 @@ music's ramps and then enters the mixer.
 The number alone decides what kind of sound `AudioCommand_Play(id)` makes.
 Only its low 16 bits count. The low 12 of those hold the cue itself, so cues
 run from 0 to 4,095, and the four above them are flags. The only flag read is
-`AUDIO_CUE_START_SILENT` (0x1000), which starts music at volume 0 and fades it
+`AUDIO_CUE_START_SILENT`, which starts music at volume 0 and fades it
 in over 64 frames.
 
 The sound driver plays songs on players (`struct SoundPlayer`), eight of them,
@@ -41,7 +41,7 @@ Three cues are controls instead. Cue 17 fades the music out over 112 frames
 (16 steps, 7 frames apart), only once until the next music starts, and records
 `MUS_019`, a song with no tracks, as what's playing, so a later cue for the
 faded music starts it again. Cue 18 keeps the music that's playing. And cue
-0x121 (289) fades player 3 out over 48 frames; it's also `SE_289`'s number,
+289 fades player 3 out over 48 frames; it's also `SE_289`'s number,
 so `SE_289` never plays.
 
 Asking for the music that's already playing does nothing, even when that song
@@ -61,13 +61,13 @@ Once a VBlank, `MusicPlayer_StepVolumeAndPitchTowardTargets` (called from
 the fanfare's player to stop, and then sets the music's target volume back to
 full. The same routine steps the volume, and the combined tempo and pitch,
 towards their targets by a fixed step each VBlank, and stops on the target
-when a step would cross it. Full volume is 256 (0x100, which is 1.0 in the
-ramps' 8.8 fixed point, where the low eight bits are the fraction), and the
+when a step would cross it. Full volume is 256, which is 1.0 in the ramps' fixed point (the low eight
+bits are the fraction), and the
 usual step is 4, so a full fade in or out takes 64 frames. That way the music
 resumes where it was, fading back in, and nothing in the waiting code has to
 know a fanfare played.
 
-The music commands here touch only tracks 0 to 7 (`MUSIC_ALL_TRACKS` is 0xff,
+The music commands here touch only tracks 0 to 7 (`MUSIC_ALL_TRACKS` sets eight bits,
 one bit a track), though the music player has 10. A few songs use 9 or more
 (`MUS_006`, `MUS_022`, `MUS_028`, `MUS_029`, `MUS_040` to `MUS_043` and
 `MUS_074`), and their tracks 8 and 9 keep their volume and pitch through the
@@ -81,8 +81,8 @@ handler enters the mixer last of all (`SoundDriver_EnterMixer`). They share
 one word (four bytes), `work->lock`, the first field of the driver's work, and
 each player has a lock word of its own.
 
-The word is both a signature and a lock. `SOUND_LOCK` is 0x68736d53, which
-spells `Smsh` when its bytes are read in memory order. `AudioEngine_Initialize`
+The word is both a signature and a lock. `SOUND_LOCK` is a number whose four
+bytes spell `Smsh` in memory order. `AudioEngine_Initialize`
 sets the word to 0 while it clears the driver's work, and to `SOUND_LOCK` once
 the driver is ready. Every library call that changes the driver's state checks
 that the word is exactly `SOUND_LOCK`, adds 1 for the length of its work, and
@@ -106,20 +106,20 @@ XXX: whether a dropped call ever matters in the game isn't known.
 The PCM channels play recorded samples, and the driver mixes them in software
 into the buffers the hardware plays from. That mixing runs from IWRAM, the
 fast memory: each VBlank, `SoundDriver_EnterMixer` jumps into the resident
-sound code at `IwramSoundMixEntry` (0x03000658), which is copied to IWRAM at
+sound code at `IwramSoundMixEntry`, which is copied to IWRAM at
 power-up with the rest of the resident runtime
 ([System](../system/README.md)).
 
 Part of that code changes with the music. `Sound_LoadPresetParameters` copies
 one of five 152-byte records of mixer code (`IwramCodeRecords`, kept in
-`system/entry.s`) over `IwramSoundPresetCode` (0x03000bd8), in the middle of
+`system/entry.s`) over `IwramSoundPresetCode`, in the middle of
 the code that renders the mix. Music uses record 3 for three songs (`MUS_067`,
 `MUS_070` and `MUS_075`) and record 2 for the rest. A link battle loads record
 4 with its music (`Battle_RunEncounter`), the link lobby record 2, and the
 audio test steps through all five with Select.
 
 The driver's own mixer, `SoundDriver_Mixer` (`mixer.s`), is separate code at
-0x03007000 (`Ram_SoundMixer`), which `Audio_Initialize` copies there, and the
+`Ram_SoundMixer`, which `Audio_Initialize` copies there, and the
 records never touch it.
 
 XXX: what the records change in the mix, and why those three songs, isn't

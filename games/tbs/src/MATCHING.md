@@ -363,7 +363,7 @@ its cells.
   SUMMARY_DISTANCE(party[4], field)`, for `summary[i].sendFlag` and
   `.flagCount` (`SaveState_ScanRecordFlags` in
   [`window/battle_command/save.c`](window/battle_command/save.c)), which keeps
-  the literal 0x1070 and the offsets 1 and 2.
+  the literal `0x1070` and the offsets 1 and 2.
 - A selection record's kind is cleared through a view from its base field,
   `((struct GlyphCursor *)&work->records[n].base)->cursor = 0`, for
   `work->records[n].kind = 0` (`UiGlyph_ResetWorkState`, records 7 and 8).

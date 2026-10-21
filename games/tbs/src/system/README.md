@@ -221,57 +221,24 @@ number, and `make modern` compiles the linked name instead (`FIXED_LINKED_` in
 `include/types.h`). Because the code holds these numbers itself, the layout
 has to keep every one of them:
 
-1. **The cartridge restart entry is 0x08000000** (`Cart_Restart`). The soft
-   reset in `WaitFrames` jumps there, and `SerialTest_Run`, a link cable test
-   left in the game that nothing reaches, sends the first 0x280 bytes from
-   there over the cable. So the header and `System_Entry` stay at the start
-   of the ROM.
-2. **The resident runtime is at 0x03000000** (`.iwram_runtime`, 0x1400
-   bytes), copied from the ROM by `Runtime_InstallIwramAndIrqs`. C calls its
-   routines at their addresses (`IwramSqrt` at 0x030001d8 and the rest), and
-   the ARM code that runs from RAM reaches them as offsets from
-   `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). Nothing in
-   that section can move.
-3. **Every overlay runs at 0x02008000** (`gOverlayArea`) and has to fit in the
-   32 KB below 0x02010000. Its first 48 bytes are its entry table, which the
-   field object calls by member.
-4. **The map and decode buffers sit at fixed places in EWRAM**
-   (`Ram_MapCellBuffer` 0x02010000, `Ram_ActorSpriteSlots` 0x02018000,
-   `Ram_DecodeBuffer` 0x0201c000, `Ram_MapBlocks` 0x02020000,
-   `Ram_MapCollision` 0x0202c000, `Ram_BgTileBuffer` 0x02038000). Code reaches
-   across their boundaries by arithmetic: the map's cells fill 64 KB from
-   0x02010000, through the sprite slots and the decode buffer (see
-   [Maps](../map/README.md)), and the tile animation reads tiles from 0x600
-   on at `Ram_DecodeBuffer + n * 32`, which lands in `gMapLayerData`. So
-   `ewram.s` can't reorder or resize them.
-5. **The heaps end at 0x03007800 and 0x02040000.** The allocators test
-   against these numbers (`heap.c`); `gCartridgeResetMarker` sits at the
-   first, and the system stack lives above it.
-6. **The sound driver's mixer is at 0x03007000** (`.iwram_mixer`, 0x3a4
-   bytes). `Audio_Initialize` copies it there, a whole 1 KB at once
-   (`SOUND_MIXER_CODE_SIZE`), so the 0x5c bytes that follow the mixer in the
-   ROM land just after it. The per-song mixer records go somewhere else:
-   `Sound_LoadPresetParameters` copies its 152-byte presets into the resident
-   code at `IwramSoundPresetCode` (0x03000bd8), not into this mixer. The mixer
-   lies inside the IWRAM heap's range, which runs from `gIwramHeap`
-   (0x03002000) to 0x03007800; see the open questions.
-7. **The frame wait's stack top is 0x03007a00** (`Ram_FrameWaitStackTop`):
-   the 512 bytes between it and the heap's end are what the frame loop, its
-   tasks and the VBlank work always have (see
-   [Runtime](../runtime/README.md)).
-8. **The stacks and the interrupt vector are at the top of IWRAM.**
-   `System_Entry` sets the system stack to 0x03007f00 and the IRQ stack to
-   0x03007fa0, and the BIOS jumps through 0x03007ffc (`gIrqVector`) on an
-   interrupt.
-9. **A few IWRAM variables are reached as constants**: `gBgScroll`,
-   `gVramBlockCache` and `gWorkSlot` (`Ram_WorkSlot`, 0x03001e50). German
-   moves all three 16 bytes up, so `ram_buffer.h` chooses them per edition.
+| What | Where | Why it can't move |
+| --- | --- | --- |
+| The cartridge restart entry, `Cart_Restart` | `0x08000000`, the start of the ROM | The soft reset in `WaitFrames` jumps there, and `SerialTest_Run`, a link cable test left in the game that nothing reaches, sends the first 640 bytes from there over the cable. So the header and `System_Entry` stay at the start of the ROM. |
+| The resident runtime, `.iwram_runtime` (5 KB, copied from the ROM by `Runtime_InstallIwramAndIrqs`) | `0x03000000`, the start of IWRAM | C calls its routines at their addresses (`IwramSqrt` and the rest), and the ARM code that runs from RAM reaches them as offsets from `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). Nothing in that section can move. |
+| The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are its entry table, which the field object calls by member. |
+| The map and decode buffers: `Ram_MapCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_MapBlocks`, `Ram_MapCollision`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table above lists | Code reaches across their boundaries by arithmetic: the map's cells fill 64 KB from the start of `Ram_MapCellBuffer`, through the sprite slots and the decode buffer (see [Maps](../map/README.md)), and the tile animation reads tiles past the end of `Ram_DecodeBuffer`, into `gMapLayerData`. So `ewram.s` can't reorder or resize them. |
+| The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
+| The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies a whole 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes that follow the mixer in the ROM land just after it. The per-song mixer records go somewhere else: `Sound_LoadPresetParameters` copies its 152-byte presets into the resident code at `IwramSoundPresetCode`, not into this mixer. See the open questions for how it overlaps the heap. |
+| The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its tasks and the VBlank work always have (see [Runtime](../runtime/README.md)). |
+| The stacks and the interrupt vector, `gIrqVector` | the top of IWRAM | `System_Entry` sets the system and IRQ stacks there, and the BIOS jumps through `gIrqVector` on an interrupt. |
+| A few IWRAM variables the code reaches as constants: `gBgScroll`, `gVramBlockCache` and `gWorkSlot` (`Ram_WorkSlot`) | in the main image's IWRAM variables | German moves all three 16 bytes up, so `ram_buffer.h` chooses them per edition. |
 
 ## Limits
 
-An overlay has the 32 KB from 0x02008000 to 0x02010000, and a bank has the
-space up to the next bank's fixed start, and no more. The IWRAM heap ends at
-0x03007800 and the EWRAM heap at 0x02040000; `Runtime_AllocateHeapBlock`
+An overlay has the 32 KB of the overlay area, and a bank has the space up to
+the next bank's fixed start, and no more. The IWRAM heap ends just below the
+frame wait's stack and the EWRAM heap at the end of EWRAM;
+`Runtime_AllocateHeapBlock`
 takes IWRAM first and EWRAM when IWRAM is full. A far-call table's entries
 keep their order, because code in other banks calls them by place, and the
 resource directory has 25 spare rows at its end.
@@ -311,8 +278,8 @@ is in [Matching](../MATCHING.md).
   exported through its bank's far-call table and called by its `...Far` name.
   An entry no code calls by name still keeps its place in the table, as a
   jump with no `...Far` name of its own.
-- **Overlay**: code and data loaded at 0x2008000 when a scene or a screen
-  needs it, from one compressed resource. An overlay is its entry table, its
+- **Overlay**: code and data loaded into the overlay area when a scene or a
+  screen needs it, from one compressed resource. An overlay is its entry table, its
   code, and its import table of the main-image functions it calls by name.
 - **Resource**: an entry of the directory, loaded by its id
   (`Resource_GetTableEntry`); the id is the `ResourceId_` symbol's value.
@@ -344,15 +311,14 @@ Still unknown:
 
 - XXX: whether Camelot linked the banks separately, which the fixed bank
   starts suggest but don't prove.
-- XXX: whether the IWRAM heap ever grows past 0x03007000, where it would
-  overwrite the sound mixer (0x3a4 bytes) and the 0x45c unnamed bytes after
-  it. Nothing in `heap.c` keeps it below: the allocators test against
-  0x03007800, and even `Runtime_GetRemainingIwram`, which `Battle_RunEncounter`
-  calls around every action and then ignores, measures up to 0x03007800, so
-  the game's own measure counts the mixer as free. The heap has 0x5000 bytes
-  (20 KB) below the mixer. The EWRAM heap has the same shape: `ewram.s` gives
-  it 32 KB, and the allocators let it run on through `gBgTileBuffer` to
-  0x02040000. Settling either needs the heaps' high-water marks from play.
+- XXX: whether the IWRAM heap ever grows into the sound mixer, which sits
+  inside the heap's range with 1,116 unnamed bytes after it. Nothing in
+  `heap.c` keeps it below: the allocators test against the heap's end, and
+  even `Runtime_GetRemainingIwram`, which `Battle_RunEncounter` calls around
+  every action and then ignores, measures up to that end, so the game's own
+  measure counts the mixer as free. The heap has 20 KB below the mixer. The
+  EWRAM heap has the same shape: `ewram.s` gives it 32 KB, and the
+  allocators let it run on through `gBgTileBuffer` to the end of EWRAM. Settling either needs the heaps' high-water marks from play.
 - XXX: the project's rules ask for each fixed address to be checked against
   the link, but no build step compares a `FIXED_ADDRESS` literal with its
   symbol's linked address (`make modern` only builds with the name). A one-off

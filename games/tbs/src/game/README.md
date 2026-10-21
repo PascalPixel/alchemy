@@ -77,9 +77,7 @@ function here can be known by two names, its own and its far-call one.
   number leads to, the `struct BattleUnit` that `UnitGet(owner)` returns,
   with its stats, HP and PP, inventory and Djinn. Owners 0 to 7 are the eight
   characters, kept in the game state: Isaac (`ISAAC`, 0) to Piers (`PIERS`,
-  7) in `games/tbs/include/game/character_ids.h`. Owners 128 to 133 (0x80 to
-  0x85 in hexadecimal, the way the code writes them) are the enemies of the
-  current battle.
+  7) in `games/tbs/include/game/character_ids.h`. Owners 128 to 133 are the enemies of the current battle.
 - **party** and **active owners**: the characters travelling together, in
   order (`gGameState.activeOwners`, `Party_CountActiveOwners`). Game flags 0
   to 7 say who's in it.
@@ -176,8 +174,8 @@ of 8, are also one byte, and the byte calls (`GameFlag_GetByte`,
 nibble calls (`GameFlag_GetNibble`, `GameFlag_SetNibble`) do the same with
 four flags. So a small counter can live among the flags, which is how the
 Colosso scenes, the world map and the Battle Arena's win counts keep theirs,
-and it follows the flags' rules. One kept in a scene's temporary range
-(0x200 to 0x2ff, flags 512 to 767) is cleared with the rest on every
+and it follows the flags' rules. One kept in a scene's own range
+(`FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST`) is cleared with the rest on every
 ordinary entrance to the scene (see [Scenes](../scene/README.md)), and all of
 them are saved with the game.
 
@@ -199,9 +197,9 @@ bit 9           equipped
 bits 8 to 0     the item id
 ```
 
-The low nine bits hold the item's number, 0 to 511 (`ITEM_ID_MASK`, 0x1ff).
-Bit 9 says it's equipped (`INVENTORY_EQUIPPED`, 0x200, which is 512), bit 10
-that it's broken (`INVENTORY_BROKEN`, 0x400, 1024), and the five bits from
+The low nine bits hold the item's number, 0 to 511 (`ITEM_ID_MASK`).
+Bit 9 says it's equipped (`INVENTORY_EQUIPPED`), bit 10 that it's broken
+(`INVENTORY_BROKEN`), and the five bits from
 bit 11 up hold how many there are, less one (`INVENTORY_QUANTITY_SHIFT`); a
 stack of a stackable item grows to 30. So an item, its state and its stack
 move together in one load and one store, and a slot of 0 is empty, which

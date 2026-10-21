@@ -135,14 +135,14 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// Advances the encounter counter for zone and returns the enemy group to
 /// fight (a row of formatn.tsv), or 0 for no battle. steps (16.16) scales how
 /// far the counter moves; a battle starts once it reaches encounterThreshold.
-/// FLAG_NO_ENCOUNTERS, flag 353 (0x161) and gGameState.cloaked (Cloak) prevent
-/// battles. Flag 0x161 is set by Venus Lighthouse while its Reveal path is
-/// shown (English and later editions), by Mercury Lighthouse while the leader
-/// carries the pillar's lights and by the world map's debug entrance 99, and
-/// cleared by every entry that does not keep the party's position. Flag 351
-/// (0x15f), which no ☀️ C code sets, skips the checks and the counting and
-/// draws a group at once.
-/// Called by Encounter_RollTerrain and Encounter_RollWorldMap; adds to
+/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_PLACE and gGameState.cloaked
+/// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_PLACE is set by Venus
+/// Lighthouse while its Reveal path is shown (English and later editions), by
+/// Mercury Lighthouse while the leader carries the pillar's lights and by the
+/// world map's debug entrance 99, and cleared by every entry that does not keep
+/// the party's position. Flag 351 (0x15f), which no ☀️ C code sets, skips the
+/// checks and the counting and draws a group at once. Called by
+/// Encounter_RollTerrain and Encounter_RollWorldMap; adds to
 /// gGameState.encounterSteps, sets or clears work->encounterBias, and on a
 /// battle sets gGameState.sceneCue.
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
@@ -164,7 +164,8 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   entry = (struct EncounterZone *)gEncounter_EnemyGroupTable + zone;
 #endif
   if (GameFlag_TestFar(351) == 0) {
-    if (GameFlag_TestFar(FLAG_NO_ENCOUNTERS) != 0 || GameFlag_TestFar(353) != 0)
+    if (GameFlag_TestFar(FLAG_NO_ENCOUNTERS) != 0 ||
+        GameFlag_TestFar(FLAG_NO_ENCOUNTERS_IN_PLACE) != 0)
       return 0;
     if (zone == 0)
       return 0;

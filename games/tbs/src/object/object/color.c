@@ -33,18 +33,18 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
   }
 }
 
-/// Each frame (unless flag 0x152 is set): moves the colour buffer one step
-/// toward its target, packs it into RGB555 and queues it for the BG and OBJ
-/// palettes. The packed colours are double-buffered: work->page names the
-/// page the queued DMA reads, and the other is written. Registered by
+/// Each frame (unless FLAG_PALETTE_BLEND_HELD is set): moves the colour buffer
+/// one step toward its target, packs it into RGB555 and queues it for the BG
+/// and OBJ palettes. The packed colours are double-buffered: work->page names
+/// the page the queued DMA reads, and the other is written. Registered by
 /// BattleEffect_InitializeBuffers as a scheduler callback; the menus clear
-/// and set flag 0x152 around it (menu/common.c).
+/// and set FLAG_PALETTE_BLEND_HELD around it (menu/common.c).
 void BattlePalette_UpdateBlend(void) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
   u16 *channelDelta = work->delta;
   s32 i;
 
-  if (GameFlag_TestFar(0x152) != 0) {
+  if (GameFlag_TestFar(FLAG_PALETTE_BLEND_HELD) != 0) {
     return;
   }
   if (work->duration == 0) {

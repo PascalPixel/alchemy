@@ -57,8 +57,7 @@ object's place in the link order is in `games/tbs/objects.tsv`, from the
   ability's `flags` byte (`ABILITY_KIND_MASK`, `enum AbilityKind`).
 - **place** and **place code**: where a unit stands in its side's line-up
   (`BattleWork.partyUnits` or `enemyIds`). A command aims at a place code: the
-  place plus 256 for the party or 384 for the enemies, which the code writes
-  in hexadecimal as 0x100 and 0x180 (`PLACE_PARTY`, `PLACE_ENEMY`).
+  place plus `PLACE_PARTY` for the party or `PLACE_ENEMY` for the enemies.
 - **battle object**: a unit's figure on the battlefield, its sprite and how
   it moves (`struct BattleObj`, `BattleObjGet`). Its **records** are its
   sprites; the Kraken and the Fusion Dragon are drawn in two parts, so they
@@ -187,9 +186,8 @@ every ability table, so any move can be followed from the menu to the damage
 it does by reading its rows. Quake, for example, is row 3 of
 `games/tbs/src/game/actions.tsv`. It aims at foes (`target_mode` 1), strikes
 with Venus (`element` 0), reaches the aimed enemy and one either side
-(`range` 2), costs 4 PP and has a `power` of 12. Its `flags` are 0x85, which
-says it can be used in battle (bit 7, the top one) and, in the low four bits,
-that it's kind 5, Psynergy damage.
+(`range` 2), costs 4 PP and has a `power` of 12. Its `flags` say it can be used in battle (the top bit) and, in the low four
+bits, that it's kind 5, Psynergy damage; `actions.tsv` writes them as `0x85`.
 
 1. **The command picks the id** (`BattleCommand_BuildPlan`, `plan.c`):
    - **Attack** (`CMD_ATTACK`) is ability 1, unless the equipped weapon

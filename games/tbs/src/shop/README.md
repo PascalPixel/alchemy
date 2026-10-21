@@ -76,8 +76,8 @@ builds its list from every item of its type whose counter is above zero
 ([`shop/run.c`](shop/run.c)). The counters move with the items:
 
 - A shop's first visit adds one to the counter of each artifact in its row,
-  and sets game flag 0x400 (1024) plus the row number
-  (`FLAG_SHOP_ARTIFACTS_STOCKED` plus the row) so it never does so again
+  and sets `FLAG_SHOP_ARTIFACTS_STOCKED` plus the row number so it never does
+  so again
   (`EventTable_ApplyRowAbilities`). Game flags are the 4,096 yes-or-no facts
   the game remembers about the journey, and this one only means that the
   shop's artifacts have been counted in.
@@ -131,7 +131,7 @@ which the linker resolves, and their text is in the PO catalogs under
 
 A shop sells at most 24 items and 8 artifacts, because that's how many
 columns its stock row has (`SHOP_STOCK_`). It adds its artifacts only once,
-remembered by flag `0x400 + stockRow`. There are 35 stock rows, and a row out
+remembered by `FLAG_SHOP_ARTIFACTS_STOCKED + stockRow`. There are 35 stock rows, and a row out
 of range opens row 0, the empty one.
 
 Shop credit stops at 999,999 and the Game Ticket count at 28
@@ -171,8 +171,8 @@ The work block's layout, `struct ShopRuntime`, is in
   and the shop's type in column 32 (`SHOP_STOCK_` names the columns).
 - **Artifact**: an item a shop sells only while its shared stock counter is
   above zero (`Item_AdjustCounter`). A shop adds its row's artifacts to the
-  counters once, on its first visit, and sets flag `0x400 + stockRow` to
-  remember it (`EventTable_ApplyRowAbilities`).
+  counters once, on its first visit, and sets `FLAG_SHOP_ARTIFACTS_STOCKED + stockRow`
+  to remember it (`EventTable_ApplyRowAbilities`).
 - **Action** and **service**: an action is what the player chose at a shop's
   counter, buy, sell, artifacts or repair (`enum ShopAction`); a service is
   what the sanctum does for one party member, revive, cure poison, exorcise or

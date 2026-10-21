@@ -60,18 +60,18 @@ renaming one of them touches other folders too.
   handler (for VBlank, the keypad, the link cable or a timer), then carrying
   on where it left off.
 - **IWRAM** and **EWRAM**: the console's two work memories, 32 KB of fast
-  internal RAM at addresses from 0x03000000 and 256 KB of slower external RAM
-  from 0x02000000. Numbers written with 0x in front are hexadecimal, the way
-  the code and the memory maps write addresses.
+  internal RAM and 256 KB of slower external RAM. Where each part of them is
+  used is in [System](../system/README.md).
 - **byte**, **halfword** and **word**: 8, 16 and 32 bits. A halfword holds 0
-  to 65,535 (0xffff); its high byte is its upper eight bits.
+  to 65,535; its high byte is its upper eight bits.
 - **16.16 fixed point**: a word read as a whole part in its upper 16 bits and
-  a fraction in its lower 16, so 0x10000 (65,536) means 1.0. Positions,
-  scales and the transform are kept this way.
-- **angle**: a whole turn is 65,536 steps, so 0x4000 is a quarter turn and
-  0x8000 a half. `Trig_Sin` and `Trig_Cos` return 16.16 values from a table
+  a fraction in its lower 16, so 65,536 means 1.0 and 32,768 a half.
+  Positions, scales and the transform are kept this way.
+- **angle**: a whole turn is 65,536 steps, so 16,384 is a quarter turn and
+  32,768 a half. `Trig_Sin` and `Trig_Cos` return 16.16 values from a table
   of 256 entries for the first quarter turn, each 1/1024 of a turn after the
-  last; `ArcTan2` measures from the y axis, 0 along +y and 0x4000 along +x.
+  last; `ArcTan2` measures from the y axis, 0 along +y and a quarter turn
+  along +x.
 - **heap slot**: one of the named long-lived blocks (`enum HeapSlot`,
   `HEAP_SLOT_*`) in `gWorkSlot`. The heap is two bump allocators, one in IWRAM
   up to `Ram_IwramHeapEnd` and one in EWRAM, and nothing in it is freed one
@@ -90,9 +90,9 @@ renaming one of them touches other folders too.
   over the backgrounds; OAM is the hardware's table of them, which the game
   rebuilds every frame.
 - **cache entry**: one of the 96 entries of the sprite VRAM cache. Sprite tile
-  memory, the 32 KB of video memory from 0x06010000, is split into 512 blocks
-  of 64 bytes, and each entry owns a run of them. An entry whose offset is
-  `0xffff` is free (`vram_cache.c`).
+  memory, the last 32 KB of video memory, is split into 512 blocks of 64
+  bytes, and each entry owns a run of them. An entry with no offset (all its
+  bits set) is free (`vram_cache.c`).
 - **depth slot**: one of 256 lists sprites are linked into each frame, which
   the OAM build walks in order (`render.c`).
 - **transform**: `gTransform`, twelve `s32` in 16.16 fixed point: a 3x3
@@ -128,14 +128,14 @@ renaming one of them touches other folders too.
 ## How the game boots and runs one frame
 
 When the console starts, the cartridge header jumps to `System_Entry`
-(`games/tbs/src/system/entry.s`). It sets up the interrupt stack at
-0x03007fa0 and the system stack at 0x03007f00, then calls
-`System_Initialize`.
+(`games/tbs/src/system/entry.s`). It sets up the interrupt stack and the
+system stack at the top of IWRAM, then calls `System_Initialize`.
 
 `System_Initialize` (`runtime/system.c`) powers the game up. It stops any
 HBlank DMA left running (the copy some screen effects repeat after every line
 of the picture), sets how fast the cartridge is read (its wait states) and
-clears IWRAM up to 0x03007800, leaving the stacks above that alone. It
+clears IWRAM up to the end of its heap (`Ram_IwramHeapEnd`), leaving the
+stacks above that alone. It
 empties the heap (`Runtime_InitializeHeap`), copies the resident runtime into
 IWRAM and points the interrupt vector at its dispatcher
 (`Runtime_InstallIwramAndIrqs`), and loads the window graphics. Then it
@@ -155,7 +155,7 @@ entry point.
 
 From then on, time passes in calls to `WaitFrames(n)` (`runtime/frame.c`),
 made from however deep in its own calls the waiting code is. If the caller's
-stack has grown below `Ram_FrameWaitStackTop` (0x03007a00), it's copied aside
+stack has grown below `Ram_FrameWaitStackTop`, it's copied aside
 and the loop runs from that top instead (why is explained below). Each
 frame the loop runs the main-loop tasks
 (`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`), builds the OAM list into the
@@ -210,15 +210,16 @@ known order, and the blocks tasks use have to outlive them.
 
 Every function call keeps its return address and its local values on the
 stack, which grows downward in memory as calls nest. The system stack starts
-at 0x03007f00 and grows down towards the IWRAM heap, which ends at
-0x03007800: 1,792 bytes in all. Interrupts use that same stack. The
+near the top of IWRAM and grows down towards the end of the IWRAM heap,
+1,792 bytes in all. Interrupts use that same stack. The
 dispatcher, `IwramIrqMain` (`system/runtime.s`), switches the CPU to system
 mode before it calls a handler, so the VBlank handler, the VBlank tasks and
 the sound mixer all run on the system stack, below whatever they interrupted.
 
 A caller deep in its own calls could leave the tasks too little room before
 the heap. `WaitFrames` prevents that. When the caller's stack pointer is
-below `Ram_FrameWaitStackTop` (0x03007a00), it copies everything from the
+below `Ram_FrameWaitStackTop`, 512 bytes above the heap's end, it copies
+everything from the
 stack pointer up to that top into `gSavedStack` in EWRAM by DMA, sets the
 stack pointer to the top and runs its frames from there; on return it copies
 the frames back and restores the stack pointer. The frame loop, the main-loop
@@ -235,8 +236,8 @@ guards against this, and whether any task does it isn't known.
 
 Scenes, battles and menus need memory for their work while they run: a
 battle's state, a menu's windows, a decoded picture. The heap hands it out
-from two pools, one in IWRAM from `gIwramHeap` up to 0x03007800 and one in
-EWRAM from `gEwramHeap` up to 0x02040000. Each pool is a bump allocator: a
+from two pools, one in IWRAM from `gIwramHeap` up to `Ram_IwramHeapEnd` and
+one in EWRAM from `gEwramHeap` up to the end of EWRAM. Each pool is a bump allocator: a
 new block starts at the pool's next free address, and that address moves up
 past it. The two next-free addresses are the first two words of `gWorkSlot`
 (`union HeapState`), and the other 62 words are the named slots.
@@ -250,7 +251,7 @@ Nothing is freed one block at a time. `Runtime_ReleaseHeapBlock(slot)` clears
 the slot and sets its pool's next free address back to the block's start, and
 `MemFree(p)` does the same with `p` (both in `system/heapfree.s`). The pool
 is chosen from the address itself, with no comparison: `(address >> 22) & 4`
-is 0 for an EWRAM address (0x02...) and 4 for an IWRAM one (0x03...), and
+is 0 for an EWRAM address and 4 for an IWRAM one, and
 those are the byte offsets of the two next-free words. So releasing a block
 also releases every block allocated after it in the same pool. The heap is
 two stacks, and the lifetime rule is that blocks are released in the reverse
@@ -267,7 +268,7 @@ right after use. A slot also makes allocation idempotent:
 whatever size is asked for, so "allocate" also means "get".
 
 The frame's scratch block follows the same rule. `WaitFrames` allocates
-`HEAP_SLOT_FRAME_SCRATCH` (0x400 bytes) after the main-loop tasks have run,
+`HEAP_SLOT_FRAME_SCRATCH` (1 KB) after the main-loop tasks have run,
 builds the OAM list in it and releases it after the VBlank that copied it to
 OAM. For that frame it's the top of its pool, so anything the VBlank work
 allocates from the same pool in between is released with it.
@@ -275,12 +276,12 @@ allocates from the same pool in between is released with it.
 ### The order tasks run in
 
 A task's order is a halfword. Its high byte picks the pass that runs it
-(`SCHEDULER_KEY_MAIN_LOOP`, 0xc80, for the frame loop and
-`SCHEDULER_KEY_VBLANK`, 0x480, for VBlank) and its low byte ranks it within
+(`SCHEDULER_KEY_MAIN_LOOP` for the frame loop, `SCHEDULER_KEY_VBLANK` for
+VBlank) and its low byte ranks it within
 the pass. The table is bubble-sorted, highest order first, every time a task
 is added (`Scheduler_SortTasks`), and `Scheduler_RunPass` runs, in table
 order, every task whose high byte equals the pass's. So within a pass a task
-with a higher order runs before a lower one: 0xc94 before 0xc80 before 0xc76.
+with a higher rank runs before a lower one.
 
 The sort has a bug, marked `// BUG:` in the code: it stops one pass short, so
 the tasks in the first two slots of the table can stay out of order. Tasks of
@@ -290,10 +291,10 @@ that needs an order gives its tasks different orders.
 
 A task is suspended by making the high byte odd (`Scheduler_SuspendTasks`
 sets bit 8 of the order), which no pass matches, and resumed by clearing that
-bit again, so it keeps its rank. A free slot's order is 0xffff, or 0x7fff once
+bit again, so it keeps its rank. A free slot's order has every bit set, or every bit but the top one once
 its task has been removed, and both are odd too. `Scheduler_SuspendOverlayTasks`
 tells an overlay's tasks from the main image's by the routine's address
-(0x02... is EWRAM, where overlays run), and spares a task whose flag bit 0
+(an EWRAM address means an overlay, since overlays run there), and spares a task whose flag bit 0
 says to keep it running; the link lobby and the Colosso scenes set that flag
 (`Scheduler_SetTaskFlags`) for tasks that must keep going under a menu.
 
@@ -362,8 +363,8 @@ would then release with it.
 
 The cartridge keeps the saves in flash memory, 16 sectors of 4 KB. Each
 sector holds one record: a 16-byte header (signature, record id, a checksum
-of the payload and a sequence number) and a payload of 0xff0 bytes, of which
-the checksum covers the first 0xfe8. The three save files on the file select
+of the payload and a sequence number) and a payload of 4,080 bytes, of which
+the checksum covers the first 4,072. The three save files on the file select
 screen are six records, file `n` being records `n` and `n + 3`.
 
 A save never writes over the copy it replaces. `SaveState_WriteRecord` writes
@@ -396,7 +397,7 @@ Battle Arena's lobby and the file select screen's data transfer use it.
 ## Limits
 
 - 62 heap slots (`games/tbs/include/heap_state.h`); the IWRAM heap ends at
-  0x03007800 and the EWRAM heap at 0x02040000.
+  `Ram_IwramHeapEnd` and the EWRAM heap at the end of EWRAM.
 - 20 scheduled tasks at a time (`runtime/scheduler.c`).
 - 32 queued register writes a frame; a write to a full queue is dropped.
 - 96 sprite VRAM cache entries over 512 blocks of 64 bytes, and at most 8 KB
@@ -409,13 +410,13 @@ Battle Arena's lobby and the file select screen's data transfer use it.
 
 ## Evidence and open questions
 
-`gSavedStack` holds 0xc50 bytes (3,152), though a caller's stack below the
-frame-wait top and above the heap's end is at most 0x200 (512). Its size is
+`gSavedStack` holds 3,152 bytes, though a caller's stack below the
+frame-wait top and above the heap's end is at most 512. Its size is
 what's left of the EWRAM block it ends. `ewram.s` lays EWRAM out in 4 KB
-blocks, each holding a new group of variables (`gSceneState` at 0x02001000, `gSleepActive`
-and the link cells at 0x02002000, the music state at 0x02003000), and
-`gSavedStack` is the last cell of the 0x02002000 block, running up to
-0x02003000. It could hold a stack that had run 0xa50 bytes into the heap.
+blocks, each holding a new group of variables (`gSceneState` opens the
+second, `gSleepActive` and the link cells the third, the music state the
+fourth), and `gSavedStack` is the last cell of the third block, running up
+to the fourth. It could hold a stack that had run 2,640 bytes into the heap.
 
 The names come from what the code does: `WaitFrames` from its loop,
 `Scheduler_` from the table it keeps, the heap's names from its two pointers

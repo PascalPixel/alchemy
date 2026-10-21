@@ -324,7 +324,7 @@ void Scene_LoadOverlay(s32 unused) {
 /// where it was, as after a battle), the flags of the last scene are cleared,
 /// and on entering a new group so are the group's flags and step counters, the
 /// location name is shown and the entrance becomes the point Retreat returns
-/// to. Then the group's visited flag (0x180 + group) is set. Called by
+/// to. Then the group's visited flag (FLAG_PLACE_VISITED) is set. Called by
 /// Game_ResetForNewGame before each field scene, with keep from
 /// FLAG_KEEP_PARTY_POSITION; sets gGameState.sceneGroup and .sceneVariant.
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
@@ -333,11 +333,11 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
 
   if (keep == 0) {
     // Local puzzle flags expire on every normal scene entrance.
-    for (flag = 0x200; flag <= 0x2ff; flag++)
+    for (flag = FLAG_SCENE_FIRST; flag <= FLAG_SCENE_LAST; flag++)
       GameFlag_ClearBitFar(flag);
     if (group != gGameState.sceneGroup) {
       // Group state and Retreat's destination survive moves within a place.
-      for (flag = 0x300; flag <= 0x3ff; flag++)
+      for (flag = FLAG_PLACE_FIRST; flag <= FLAG_PLACE_LAST; flag++)
         GameFlag_ClearBitFar(flag);
       GameFlag_SetBitFar(FLAG_SHOW_LOCATION_NAME);
       gGameState.encounterSteps = 0;
@@ -354,14 +354,15 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
       GameFlag_ClearBitFar(flag);
     GameFlag_ClearBitFar(FLAG_LINK_BATTLE);
     GameFlag_ClearBitFar(FLAG_RETREAT_BLOCKED);
-    // Flag 0x161 (353) stops random battles (Encounter_SelectEnemyGroup).
-    GameFlag_ClearBitFar(0x161);
+    // FLAG_NO_ENCOUNTERS_IN_PLACE stops random battles
+    // (Encounter_SelectEnemyGroup).
+    GameFlag_ClearBitFar(FLAG_NO_ENCOUNTERS_IN_PLACE);
     GameFlag_ClearBitFar(0x123);
     GameFlag_ClearBitFar(FLAG_NOT_ON_MAP);
     gGameState.returnCue = -1;
   }
   gGameState.sceneGroup = group;
-  GameFlag_SetBitFar((group & 0x7f) + 0x180);
+  GameFlag_SetBitFar(FLAG_PLACE_VISITED(group & 0x7f));
   // Flag 0x123 (FLAG_SCENE_VARIANT_2) marks a scene of variant 2; see
   // SceneRecord.variant (field_runtime.h) for which scenes those are.
   gGameState.sceneVariant = SCENE_RECORD(gGameState.scene)->variant;

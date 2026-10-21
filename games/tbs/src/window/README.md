@@ -182,8 +182,8 @@ The canvas holds 120 tiles, exactly the battle message window's text area:
 the bottom four rows of the screen, all 30 columns (that window is opened
 with no frame, as a bare canvas). So it serves one window at a time. Labels
 and icons are sprites, from the render outputs and the sprite VRAM cache.
-Text drawn as tiles takes them from tiles 0x80 to 0xff, 128 of them, or
-256 when the work block's `alt` adds 0x200 to 0x27f, and
+Text drawn as tiles takes them from a run of 128 tiles, or 256 when the
+work block's `alt` adds a second run, and
 `work->tileAttributes` remembers which of those the tilemap still shows, so
 that redrawing a string can reuse the tiles it already has.
 
@@ -224,7 +224,7 @@ fits on the screen.
 - Twelve windows in Japanese and eight in the other editions.
 - Eight message arguments at a time; another is dropped
   (`UiWork_PushValueSlot`).
-- The text canvas holds 120 tiles from tile 0x128 (`UI_CANVAS_VRAM`): the
+- The text canvas holds 120 tiles (`UI_CANVAS_VRAM`): the
   bottom four rows of the screen, all 30 columns, where the battle message
   window draws.
 - Text drawn as tiles has 128 tiles, or 256 with `alt` set.

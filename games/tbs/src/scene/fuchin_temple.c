@@ -113,7 +113,10 @@ enum FuchinTempleOutsideActor {
   /// The visitor from Kolima. "How did you get here? Is the bridge open
   /// again?"
   ACTOR_KOLIMA_VISITOR = ACTOR_FIRST_PLACED,
-  ACTOR_FALLS_MONK, ///< the monk beneath the falls, at the waterfall grotto
+  /// The monk beneath the falls, at the waterfall grotto.
+  /// ★ Named from what the player sees: a bald monk in an orange robe standing
+  /// on a stump beneath the waterfall (its render)
+  ACTOR_FALLS_MONK,
   /// A monk who reads omens. "Gems from the sky, blue lights in the north...
   /// All omens of disaster!"
   ACTOR_OMENS_MONK,
@@ -132,6 +135,8 @@ enum FuchinTempleOutsideActor {
 /// (FuchinTempleInteriors), numbered in the order of gFuchinTemplePlacements:
 /// Nyunpa, Feh's students, Feizhi and Feh, and the training tree.
 enum FuchinTempleInsideActor {
+  /// ★ Named from the game: "I have already heard of your test from Master
+  /// Nyunpa." (MsgXianAlreadyHeardTest)
   ACTOR_NYUNPA = ACTOR_FIRST_PLACED,
   /// By the school's door. "This is Master Feh's school... You came to
   /// watch?"
@@ -142,6 +147,8 @@ enum FuchinTempleInsideActor {
   /// A student who practices punches. "I want to learn, so I train. Quick
   /// punches are very good."
   ACTOR_PUNCHING_STUDENT,
+  /// ★ Named from the game: "Flexibility and jumping are very important in
+  /// kung fu." (MsgXianFlexibilityJumpingVeryImportantIn)
   ACTOR_JUMPING_STUDENT,
   /// A student proud of Feh's school. "Everyone in Xian can do martial arts.
   /// But the Feh School of martial arts is the most elite."
@@ -156,10 +163,18 @@ enum FuchinTempleInsideActor {
   /// falls from the line. "Master Feh is very busy. He is speaking with his
   /// daughter, Feizhi. You cannot enter now."
   ACTOR_MESSENGER_STUDENT,
+  /// ★ Named from the game: "He is speaking with his daughter, Feizhi."
+  /// (MsgFuchinTempleMasterFehIsVeryBusyHe)
   ACTOR_FEIZHI,
+  /// ★ Named from the game: "Master Feh is talking with Feizhi"
+  /// (MsgFuchinTempleMasterFehIsTalkingWithFeizhi)
   ACTOR_FEH,
+  /// ★ Named from the game: "Look! The tree fell." (MsgXianLookTreeFell)
   ACTOR_TRAINING_TREE,
-  ACTOR_TRAINING_TREE_TARGET ///< where Force strikes the tree
+  /// Where Force strikes the tree.
+  /// ★ Named from the game: "You cannot push it with your hands. Attack it with
+  /// Chi." (MsgXianCannotPushHands)
+  ACTOR_TRAINING_TREE_TARGET
 };
 
 /// The placed actors in Master Hama's room in Lama Temple
@@ -167,11 +182,16 @@ enum FuchinTempleInsideActor {
 /// numbered in the order of gFuchinTemplePlacementsFromLamaTemple; Garet, Ivan
 /// and Mia, placed first, keep their own slots.
 enum HamasRoomActor {
+  /// ★ Named from the game: "Master Hama is meditating."
+  /// (MsgXianMasterHamaMeditatingPleaseExtremely)
   ACTOR_HAMA = ACTOR_FIRST_PLACED,
   /// A monk in Hama's room. "Master Hama is meditating. Please be extremely
   /// quiet."
   ACTOR_HAMAS_MONK,
-  ACTOR_FEIZHI_IN_LAMA_TEMPLE ///< bursts in to say that Hsu is in danger
+  /// Bursts in to say that Hsu is in danger.
+  /// ★ Named from the game: "Feizhi... Why are you here?"
+  /// (MsgXianMasterHamaMeditatingPleaseExtremely)
+  ACTOR_FEIZHI_IN_LAMA_TEMPLE
 };
 
 static void FuchinTemple_FeizhiLeavesForHsu(void);

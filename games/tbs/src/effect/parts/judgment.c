@@ -127,7 +127,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   // Setup: wipe the battle away, change the backdrop behind it, wipe back.
-  BattleFx_WipeCanvas(0, 0);
+  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
   gProjection.centerY = 240;
@@ -136,7 +136,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   // The scene owns BG1's scroll until frame 280 of the sweep.
   ctrl->active = 1;
   gBgScroll[1].x = 0;
-  BattleFx_WipeCanvas(0, 1);
+  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(16);
   // The formation starts 64 pixels back and comes forward 8 pixels a frame
   // (16.16); the depth range is kept only by the dead spark stage.

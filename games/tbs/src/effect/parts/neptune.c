@@ -108,7 +108,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   // Setup: wipe the battle away and close window 0 (its edge opens over the
   // first 16 frames), swap in the dusk backdrop and load the pictures.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
-  BattleFx_WipeCanvas(1, 0);
+  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_SpawnObjects(NEPTUNE_OBJECTS, 0x17a, 1);

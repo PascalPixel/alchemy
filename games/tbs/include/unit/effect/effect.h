@@ -314,7 +314,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode);
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect);
 
 // canvas.c
-void BattleFx_WipeCanvas(s32 mode, s32 value);
+void BattleFx_WipeCanvas(s32 direction, s32 fill);
 void BattleFx_ProcessPendingGraphicsTransfer(void);
 void BattleFx_FlushPendingGraphicsTransfer(void);
 void Graphics_ApplyWindowBlendRegisters(void);

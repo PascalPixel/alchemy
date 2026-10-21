@@ -74,7 +74,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   // backdrop and wipe back. Window 0 narrows to x 0 to 201; right of it only
   // window 1 applies, which shows no sprites, so the row rides in from
   // behind that edge until the rise opens window 0 again.
-  BattleFx_WipeCanvas(1, 0);
+  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleFx_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
   gProjection.centerY = 240;
   BattleFx_SelectLivingTargets(work->effect);
@@ -83,7 +83,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   REG_WIN0H = WIN_RANGE(0, 202);
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
-  BattleFx_WipeCanvas(1, 1);
+  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(14);

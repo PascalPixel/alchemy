@@ -4,19 +4,28 @@
 
 #include "../effect_internal.h"
 
+/// The palette particles' modes (BattleFx_RunPaletteParticles).
+enum PaletteParticlesMode {
+  PALETTE_PARTICLES_TIAMAT,       ///< also a formation of eight objects that
+                                  ///< sweeps in and explodes at the end
+                                  ///< (BattleFx_RunImpactBurst)
+  PALETTE_PARTICLES_DRAGON_DRIVER ///< the sparks and flashes thrown from the
+                                  ///< user's side, in the LightningBolt colours
+};
+
 /// Embers rise from the ground while sparks and flashes fly from the user's
 /// side, in the LightningBolt colours.
 ///
 /// Abilities: Dragon Driver (BATTLE_FX_DRAGON_DRIVER).
 void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect) {
-  BattleFx_RunPaletteParticles(effect, 1);
+  BattleFx_RunPaletteParticles(effect, PALETTE_PARTICLES_DRAGON_DRIVER);
 }
 /// Embers rise from the ground while a formation of eight objects sweeps in,
 /// and the formation explodes at the end.
 ///
 /// Abilities: Tiamat (SCENE_EFFECT_TIAMAT).
 void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
-  BattleFx_RunPaletteParticles(effect, 0);
+  BattleFx_RunPaletteParticles(effect, PALETTE_PARTICLES_TIAMAT);
 }
 #define PALETTE_PARTICLES_FRAMES 208
 /// Falling streaks, work->particles 24 to 39.
@@ -35,8 +44,7 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 /// over frames 160 to 175 and fades out after, and the battle shows the damage
 /// on frame 178.
 ///
-/// Called by BattleFx_RunTiamat (mode 0) and BattleFx_RunDragonDriver
-/// (mode 1).
+/// Called by BattleFx_RunTiamat and BattleFx_RunDragonDriver.
 ///
 /// Four kinds of particle, in canvas coordinates with y growing downwards,
 /// 16.16 except the streaks, which are whole pixels:
@@ -54,13 +62,10 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 /// Sets REG_BLDALPHA and REG_BG2CNT (the canvas in front, priority 0), loads
 /// the flash and later the streak palette (or the lightning bolt's) into the
 /// first 64 background colours and brightens them over frames 160 to 175,
-/// sets work->shakeFrames, and tints and shakes the targets. Mode 0 spawns the
+/// sets work->shakeFrames, and tints and shakes the targets. Tiamat spawns the
 /// eight formation objects and releases them after the impact burst.
 ///
-/// mode : 0 also brings in a formation of eight objects that sweeps in and,
-///          at the end, explodes with BattleFx_RunImpactBurst;
-///        1 throws the sparks and flashes from the user's side
-///          (effect->side), in the LightningBolt colours.
+/// mode: Tiamat's or Dragon Driver's (enum PaletteParticlesMode).
 void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
                                   s32 mode) {
   struct EffectPosition origin;
@@ -103,23 +108,23 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   Resource_DecodeType01(palette, work->sheet + PALETTE_PARTICLES_STREAK_IMAGES);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sheet);
-  if (mode == 1)
+  if (mode == PALETTE_PARTICLES_DRAGON_DRIVER)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
   // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  // Mode 1 mirrors everything when the user is on the right (side 1).
-  if (mode == 0)
+  // Dragon Driver mirrors everything when the user is on the right (side 1).
+  if (mode == PALETTE_PARTICLES_TIAMAT)
     dir = 1;
   else if (work->effect->side == 1)
     dir = -1;
   else
     dir = 1;
-  // Mode 1's sparks and flashes start at a fixed point on the user's side:
-  // the user's projected x is overwritten.
-  if (mode == 1) {
+  // Dragon Driver's sparks and flashes start at a fixed point on the user's
+  // side: the user's projected x is overwritten.
+  if (mode == PALETTE_PARTICLES_DRAGON_DRIVER) {
     EffectPosition_ProjectScaledBattler(work->effect->actor, &origin);
     origin.x /= 2;
     origin.y = 66;
@@ -149,7 +154,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     streak->variant = -(Random16() & 31);
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, PALETTE_PARTICLES_EMBERS);
-  if (mode == 0) {
+  if (mode == PALETTE_PARTICLES_TIAMAT) {
     BattleFx_SelectLivingTargets(work->effect);
     WaitFrames(1);
     BattleFx_SpawnObjects(8, 377, 2);
@@ -161,7 +166,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       // The animations of frame 128 and the targets' reel of frame 138;
       // when the skip comes before frame 128, that frame's sound, shake and
       // shorter trails are skipped with it.
-      if (mode == 0) {
+      if (mode == PALETTE_PARTICLES_TIAMAT) {
         AnimationObjects_SelectAnimationFar(work->objects[0], 8);
         AnimationObjects_SelectAnimationFar(work->objects[1], 9);
         AnimationObjects_SelectAnimationFar(work->objects[3], 10);
@@ -239,7 +244,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
             s32 speed = (Random16() & 255) + 128;
             s32 angle = (Random16() & 0x1fff) + 20000;
 
-            if (mode == 0) {
+            if (mode == PALETTE_PARTICLES_TIAMAT) {
               spark->x = ((Random16() & 7) + 78) << 16;
               spark->y = 70 << 16;
             } else {
@@ -272,7 +277,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
           s32 speed = (Random16() & 255) + 128;
           s32 angle = (Random16() & 0x1fff) - 20000;
 
-          if (mode == 0) {
+          if (mode == PALETTE_PARTICLES_TIAMAT) {
             flash->x = 68 << 16;
             flash->y = 64 << 16;
           } else {
@@ -362,7 +367,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     // The shake and the formation.
     if (frame == 128)
       work->shakeFrames = 48;
-    if (mode == 0 && frame == 48)
+    if (mode == PALETTE_PARTICLES_TIAMAT && frame == 48)
       work->shakeFrames = 8;
 
     // Over frames 40 to 47 the formation moves 8 pixels left and 16 down a
@@ -371,7 +376,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       focus.x += -(8 << 16);
       focus.y += 16 << 16;
     }
-    if (mode == 0) {
+    if (mode == PALETTE_PARTICLES_TIAMAT) {
       if (frame == 128) {
         AnimationObjects_SelectAnimationFar(work->objects[0], 8);
         AnimationObjects_SelectAnimationFar(work->objects[1], 9);
@@ -436,7 +441,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   // The impact burst builds its own blitters and transfer.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  if (mode == 0) {
+  if (mode == PALETTE_PARTICLES_TIAMAT) {
     BattleFx_RunImpactBurst(3, focus.x, focus.y);
     for (i = 0; i != 8; i++)
       ResourceObject_ReleaseFar(work->objects[i]);

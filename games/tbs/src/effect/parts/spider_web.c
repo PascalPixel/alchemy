@@ -10,17 +10,24 @@
 // - The spider web spreads four mirrored quarters of a web over the targets
 //   and fades it in and out.
 
+/// The swirl swipe's modes (BattleFx_RunSwirlSwipe), each named for the
+/// effect that plays it.
+enum SwirlSwipeMode {
+  SWIRL_SWIPE_POISON_BEAT,  ///< lime; the target recoils at once, 48 frames
+  SWIRL_SWIPE_SPINNING_BEAT ///< magenta; the target is thrown up, 74 frames
+};
+
 /// A lime swirl sweeps across the first target and knocks it back.
 ///
 /// Abilities: Poison Beat (BATTLE_FX_POISON_BEAT).
 void BattleFx_RunPoisonBeat(struct BattleEffectArgument *effect) {
-  BattleFx_RunSwirlSwipe(effect, 0);
+  BattleFx_RunSwirlSwipe(effect, SWIRL_SWIPE_POISON_BEAT);
 }
 /// A magenta swirl sweeps across the first target and throws it into the air.
 ///
 /// Abilities: Spinning Beat (BATTLE_FX_SPINNING_BEAT).
 void BattleFx_RunSpinningBeat(struct BattleEffectArgument *effect) {
-  BattleFx_RunSwirlSwipe(effect, 1);
+  BattleFx_RunSwirlSwipe(effect, SWIRL_SWIPE_SPINNING_BEAT);
 }
 /// A swirl sweeps across the first target from the user's side in six images of
 /// four frames each: the first four from the swirl sheet, the last two from the
@@ -28,14 +35,13 @@ void BattleFx_RunSpinningBeat(struct BattleEffectArgument *effect) {
 ///
 /// Called by BattleFx_RunPoisonBeat and BattleFx_RunSpinningBeat. Decodes
 /// the tail sheet into Ram_MapCellBuffer, moves BG2X so the swipe crosses
-/// the target, and sets work->shakeFrames on the hit; mode 0 loads its
-/// colours over the first 64 of the background palette, and mode 1 throws
-/// the target's object into the air.
+/// the target, and sets work->shakeFrames on the hit; Poison Beat loads its
+/// lime colours over the first 64 of the background palette, and the battle
+/// shows its damage at once as the target recoils; in Spinning Beat the
+/// target flashes, its object is thrown up on frame 13 and the battle shows
+/// the damage as it lands on frame 65.
 ///
-/// mode 0 : lime colours; the battle shows the damage at once and the target
-///          recoils. 48 frames.
-/// mode 1 : the target flashes, is thrown up on frame 13 and the battle shows
-///          the damage as it lands on frame 65. 74 frames.
+/// mode: the swipe (enum SwirlSwipeMode).
 void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -68,7 +74,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet,
                              Ram_MapCellBuffer, 1, 0);
-  if (mode == 0) {
+  if (mode == SWIRL_SWIPE_POISON_BEAT) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
@@ -83,7 +89,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   else
     REG_BG2X = (112 - position.x) << 8;
   frames = 74;
-  if (mode != 1)
+  if (mode != SWIRL_SWIPE_SPINNING_BEAT)
     frames = 48;
   for (frame = 0; frame != frames; frame++) {
     // Frame loop. The swipe's six images, from x columns chosen by the
@@ -102,7 +108,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
                 gSpiderWeb_CellHeights[cell]);
     }
     if (frame == 8) {
-      if (mode == 0) {
+      if (mode == SWIRL_SWIPE_POISON_BEAT) {
         EFFECT_SHOW_DAMAGE(SE_133);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
       } else {
@@ -112,11 +118,11 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
       }
       work->shakeFrames = 8;
     }
-    // Mode 1 throws the target up at 12 pixels a frame on frame 13, and
+    // Spinning Beat throws the target up at 12 pixels a frame on frame 13, and
     // shows the damage as it lands on frame 65. Its gravity, 0x7851, takes
     // about 0.47 pixel a frame off its speed each frame, and
     // verticalMotionPhase 0x4000 is the quarter of its speed a bounce keeps.
-    if (mode == 1) {
+    if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
       if (frame == 13) {
         object->velocityY = 0xc0000;
         object->verticalMotionStrength = 0x7851;

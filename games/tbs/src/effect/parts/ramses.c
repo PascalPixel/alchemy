@@ -63,7 +63,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  BattleFx_WipeCanvas(1, 0);
+  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleFx_SelectLivingTargets(work->effect);
   // Nine objects of resource 379, the formation (0 to 6) and the orb (7 and
   // 8), then the six rocks from resource 390, each playing one of its three
@@ -91,7 +91,7 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   REG_WIN1V = WIN_RANGE(16, 136);
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
-  BattleFx_WipeCanvas(1, 1);
+  BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(16);

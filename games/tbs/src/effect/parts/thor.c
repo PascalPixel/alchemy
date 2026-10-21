@@ -155,12 +155,12 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY;
-  BattleFx_WipeCanvas(0, 0);
+  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
   // The projection centre moves down to line 240 for the dusk part;
   // BattleFx_SetupBlendedDisplay puts it back.
   gProjection.centerY = 240;
-  BattleFx_WipeCanvas(0, 1);
+  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);

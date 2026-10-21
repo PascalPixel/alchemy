@@ -84,7 +84,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  BattleFx_WipeCanvas(0, 0);
+  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleFx_SelectLivingTargets(work->effect);
   // The formation: nine objects from resource object 370, sprite priority 1.
   BattleFx_SpawnObjects(9, 370, 1);
@@ -111,7 +111,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval,
                                 EFFECT_CALLBACK_ORDER);
   view->busy = 1;
-  BattleFx_WipeCanvas(0, 1);
+  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(16);
   pathX = 0;
   pathY = 0;

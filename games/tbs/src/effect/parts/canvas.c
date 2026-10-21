@@ -23,9 +23,10 @@
 /// Judgment. Writes the canvas and sets work->transferPending each frame;
 /// the caller's transfer callback must already be running.
 ///
-/// mode  : 1 sweeps left to right; anything else sweeps top to bottom.
-/// value : 0 wipes to colour 1, 1 wipes to colour 0 (clears the canvas).
-void BattleFx_WipeCanvas(s32 mode, s32 value) {
+/// direction: CANVAS_WIPE_ACROSS sweeps left to right, anything else top to
+///            bottom (enum CanvasWipeDirection).
+/// fill: what the wipe leaves (enum CanvasWipeFill).
+void BattleFx_WipeCanvas(s32 direction, s32 fill) {
   // The pixel addresses and both bounds tests stay written out: as a shared
   // helper or one merged test they compile differently.
   struct BattleEffectWork *work;
@@ -45,7 +46,7 @@ void BattleFx_WipeCanvas(s32 mode, s32 value) {
   // front passes 190, its last pixel (127) plus the greatest lag (63).
   // Across, the front speeds up by a column a frame and stops only past 256;
   // down, it speeds up by two rows a frame and stops past 191.
-  if (mode == 1) {
+  if (direction == CANVAS_WIPE_ACROSS) {
     s32 front;
     s32 speed;
 
@@ -61,7 +62,7 @@ void BattleFx_WipeCanvas(s32 mode, s32 value) {
           if (wipePosition >= 0)
             if (wipePosition <= 127)
               canvas[(((y / 8) * 16 + wipePosition / 8) * 8 + (y & 7)) * 8 +
-                     (wipePosition & 7)] = 1 - value;
+                     (wipePosition & 7)] = 1 - fill;
         }
       }
       EFFECT_PRESENT_FRAME(work);
@@ -84,7 +85,7 @@ void BattleFx_WipeCanvas(s32 mode, s32 value) {
               canvas[(((wipePosition / 8) * 16 + x / 8) * 8 +
                       (wipePosition & 7)) *
                          8 +
-                     (x & 7)] = 1 - value;
+                     (x & 7)] = 1 - fill;
         }
       }
       EFFECT_PRESENT_FRAME(work);

@@ -337,4 +337,15 @@ enum SparkGroupsMode {
                          ///< sparks rising; the damage shows on frame 2
 };
 
+/// Which way BattleFx_WipeCanvas sweeps.
+enum CanvasWipeDirection {
+  CANVAS_WIPE_DOWN,  ///< top to bottom
+  CANVAS_WIPE_ACROSS ///< left to right
+};
+/// What BattleFx_WipeCanvas leaves behind it.
+enum CanvasWipeFill {
+  CANVAS_WIPE_FILL, ///< colour 1, which its callers make black first
+  CANVAS_WIPE_CLEAR ///< colour 0: the canvas cleared
+};
+
 #endif // ALCHEMY_EFFECT_INTERNAL_H

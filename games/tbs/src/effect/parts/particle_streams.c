@@ -4,6 +4,13 @@
 
 #include "../effect_internal.h"
 
+/// The particle streams' modes (BattleFx_RunParticleStreams).
+enum ParticleStreamsMode {
+  PARTICLE_STREAMS_METEOR,     ///< one spawned object rises
+  PARTICLE_STREAMS_OUTER_SPACE ///< the user leaps, and two animated objects
+                               ///< rise in the lightning bolt's colours
+};
+
 /// Adds per-channel steps to background colours 1 to 63, capped at 31.
 ///
 /// Called once a frame to whiten the colours over a few frames: by
@@ -48,23 +55,22 @@ void BattleFx_ArmPaletteHBlankDma(void) {
 }
 
 /// A formation rises out of a dissolving starfield and bursts into embers and
-/// flashes: the particle stream in mode 0, with one spawned object rising.
+/// flashes, with one spawned object rising.
 ///
 /// Abilities: Meteor (SCENE_EFFECT_METEOR).
 ///
-/// BattleFx_RunSceneEffect also plays it for scene effect 0, which no row
-/// selects.
+/// BattleFx_RunSceneEffect also plays it for a scene effect of 0, which no
+/// row selects.
 void BattleFx_RunMeteor(struct BattleEffectArgument *effect) {
-  BattleFx_RunParticleStreams(effect, 0);
+  BattleFx_RunParticleStreams(effect, PARTICLE_STREAMS_METEOR);
 }
 
 /// The user leaps up, and two objects rise out of a dissolving starfield and
-/// burst into embers and flashes: the particle stream in mode 1, in the
-/// lightning bolt's colours.
+/// burst into embers and flashes, in the lightning bolt's colours.
 ///
 /// Abilities: Outer Space (BATTLE_FX_OUTER_SPACE).
 void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
-  BattleFx_RunParticleStreams(effect, 1);
+  BattleFx_RunParticleStreams(effect, PARTICLE_STREAMS_OUTER_SPACE);
 }
 
 /// The burst's embers, 512 in PARTICLES after its 128 flashes.
@@ -88,7 +94,7 @@ void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
 /// rise's motes (0 to 31) and flames (32 to 47), then the burst's screen motes
 /// (0 to 63), in whole pixels.
 ///
-/// Called by BattleFx_RunMeteor (mode 0) and BattleFx_RunOuterSpace (mode 1).
+/// Called by BattleFx_RunMeteor and BattleFx_RunOuterSpace.
 /// The rise shows Ram_MapCellBuffer on BG1 through
 /// BattleFx_FlushPendingGraphicsTransfer, scrolls BG2 with
 /// BattleFx_AdvanceBg2OnInterval and colours the backdrop with
@@ -99,7 +105,7 @@ void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
 /// then keeps it within 4 pixels of (120, 120) until BattleFx_EndCanvasLayer
 /// puts it back there at the end. The burst sets BG2 back to the half-scale
 /// canvas and ends the canvas layer. Releases the formation objects it
-/// spawned (mode 1's on frame 48 of the burst).
+/// spawned (Outer Space's on frame 48 of the burst).
 void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                                  s32 mode) {
   volatile u32 fill;
@@ -159,15 +165,15 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   canvas = cache[0];
   work = cache[-1];
 
-  // Begin: in mode 1 the user leaps up with a sound. The stream's direction
-  // is 1 when the mode 1 user stands on side 1, otherwise -1.
+  // Begin: in Outer Space the user leaps up with a sound. The stream's
+  // direction is 1 when that user stands on side 1, otherwise -1.
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(0x2000);
   /* FAKEMATCH(temporary): mode tested through direction, so the arm reloads
-   * mode where CSE would put 1; as if (mode == 1), 1 of 1532 instructions
-   * differ in tbs-en. */
+   * mode where CSE would put 1; as if (mode == PARTICLE_STREAMS_OUTER_SPACE),
+   * 1 of 1532 instructions differ in tbs-en. */
   direction = mode;
-  if (direction == 1) {
+  if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
     struct MotionObject *object =
         GetBattleObjectSlotFar(work->effect->actor)->object;
 
@@ -175,25 +181,25 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     // 0.57 pixels a frame lost each frame.
     object->velocityY = 0xa0000;
     object->verticalMotionStrength = 0x91eb;
-    ObjectGroup_UpdateMembers(work->effect->actor, -1, 2, -1, 0);
+    ObjectGroup_UpdateMembers(work->effect->actor, -1, POSE_LEAP, -1, 0);
     AudioCommand_PlayFar(SE_145);
     direction = work->effect->side == 1 ? mode : -1;
   } else {
     direction = -1;
   }
   BattleFx_ConfigureEffectDisplay();
-  // The backdrop and colour 1 go black: BattleFx_WipeCanvas(0, 0) below
+  // The backdrop and colour 1 go black: the wipe below
   // sweeps the canvas to colour 1, top to bottom.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  BattleFx_WipeCanvas(0, 0);
+  BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-  // The rising formation: two animated objects in mode 1, otherwise one
+  // The rising formation: two animated objects in Outer Space, otherwise one
   // spawned object.
-  if (mode == 1) {
+  if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
       struct AnimationObject *object =
           ResourceObject_CreateFar(483 + i * SPRITE_SECOND_PART);
@@ -208,11 +214,11 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   } else {
     BattleFx_SpawnObjects(1, 381, 3);
   }
-  // The starfield: load the flame sheet (and in mode 1 the bolt's palette),
-  // fill the screen map, give palette entries 128 to 190 random bright
-  // colours and scatter 256 random dots over the 128x128 canvas.
+  // The starfield: load the flame sheet (and in Outer Space the bolt's
+  // palette), fill the screen map, give palette entries 128 to 190 random
+  // bright colours and scatter 256 random dots over the 128x128 canvas.
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
-  if (mode == 1)
+  if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords(colors,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
@@ -294,8 +300,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   // The rise: blend the map over the backdrop, colour the backdrop line by
   // line from the heat lines, and draw motes, orbit sparks and drops into the
   // map for up to PARTICLE_STREAMS_RISE_FRAMES frames. A or B skips ahead
-  // after frame 16 in mode 1, after frame 4 otherwise. The backdrop's scroll
-  // is restored afterwards.
+  // after frame 16 in Outer Space, after frame 4 otherwise. The backdrop's
+  // scroll is restored afterwards.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
@@ -338,7 +344,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
        * instructions differ in tbs-en. */
       asm("" : "=r"(base) : "0"(base), "r"(count));
       line = (u16 *)(base + 0x1f80);
-      if (mode == 1) {
+      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
           break;
       } else {
@@ -398,12 +404,12 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       else
         x = 64 - frame / 4;
       y = 96 - frame;
-      // Place the formation (both objects in mode 1), drifting with the
+      // Place the formation (both objects in Outer Space), drifting with the
       // stream and growing each frame: its 16.16 scale starts at 0.625 in
-      // mode 1 and 1 otherwise, and gains 1/256 a frame.
+      // Outer Space and 1 otherwise, and gains 1/256 a frame.
       position.groundHeight = 0;
       position.height = 0xff0000;
-      if (mode == 1) {
+      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         size = angle + 0xa000;
         scale.x = size;
         scale.y = size;
@@ -551,7 +557,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x10101010);
 
   // The burst shakes while the formation keeps climbing and growing. The
-  // background brightens from frame 36; on frame 48 the mode 1 objects are
+  // background brightens from frame 36; on frame 48 Outer Space's objects are
   // released and the battle shows the damage.
   for (frame = 0; frame != PARTICLE_STREAMS_BURST_FRAMES; frame++) {
     s32 size = (frame + 0x1d0) << 8;
@@ -569,7 +575,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     if (frame == 40)
       AudioCommand_PlayFar(SE_145);
     if (frame == 48) {
-      if (mode == 1) {
+      if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         ResourceObject_ReleaseFar(work->objects[0]);
         ResourceObject_ReleaseFar(work->objects[1]);
         BattleActor_CommitPlacementFar();
@@ -667,11 +673,11 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       x = 56 - frame / 2;
     y = 64 - frame * 2;
     // The formation keeps growing by 1/256 a frame, from a 16.16 scale of
-    // about 1.81 in mode 1 (size) and 2 otherwise (grow).
+    // about 1.81 in Outer Space (size) and 2 otherwise (grow).
     grow = (frame << 8) + 0x20000;
     position.groundHeight = 0;
     position.height = 0xff0000;
-    if (mode == 1) {
+    if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
       scale.x = size;
       scale.y = size;
       position.x = (x << 16) + 0x600000;
@@ -691,7 +697,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  if (mode == 0)
+  if (mode == PARTICLE_STREAMS_METEOR)
     ResourceObject_ReleaseFar(work->objects[0]);
   BattleFx_EndCanvasLayer();
 }

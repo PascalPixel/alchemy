@@ -34,29 +34,38 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 #define RUSHING_STRIKE_SPARK_COUNT 64   ///< sparks
 #define RUSHING_STRIKE_RING_BYTES 0x3c0 ///< one 20x48 ring picture
 
+/// The rushing strike's sparks' palettes (BattleFx_RunRushingStrike), each
+/// named for the effect that plays it.
+enum RushingStrikeMode {
+  RUSHING_STRIKE_BONE_CHARGE, ///< the fire pillar's
+  RUSHING_STRIKE_BRUTE_FORCE, ///< the ice block's
+  RUSHING_STRIKE_ONSLAUGHT,   ///< the pink burst's
+  RUSHING_STRIKE_HEADBUTT     ///< the blast's
+};
+
 /// Rushes the target and scatters sparks in the fire pillar palette.
 ///
 /// Abilities: Bone Charge (BATTLE_FX_BONE_CHARGE).
 void BattleFx_RunBoneCharge(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, 0);
+  BattleFx_RunRushingStrike(effect, RUSHING_STRIKE_BONE_CHARGE);
 }
 /// Rushes the target and scatters sparks in the ice-block palette.
 ///
 /// Abilities: Brute Force (BATTLE_FX_BRUTE_FORCE).
 void BattleFx_RunBruteForce(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, 1);
+  BattleFx_RunRushingStrike(effect, RUSHING_STRIKE_BRUTE_FORCE);
 }
 /// Rushes the target and scatters sparks in the pink-burst palette.
 ///
 /// Abilities: Onslaught (BATTLE_FX_ONSLAUGHT).
 void BattleFx_RunOnslaught(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, 2);
+  BattleFx_RunRushingStrike(effect, RUSHING_STRIKE_ONSLAUGHT);
 }
 /// Rushes the target and scatters sparks in the blast palette.
 ///
 /// Abilities: Headbutt (BATTLE_FX_HEADBUTT).
 void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
-  BattleFx_RunRushingStrike(effect, 3);
+  BattleFx_RunRushingStrike(effect, RUSHING_STRIKE_HEADBUTT);
 }
 #define RUSHING_STRIKE_FRAMES 60
 #define RUSHING_STRIKE_FRAME 10 ///< the user strikes
@@ -71,7 +80,7 @@ void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
 /// BG palette RAM, sets work->shakeFrames on the strike.
 ///
 /// effect: the user and the targets.
-/// mode   : the palette: 0 fire pillar, 1 ice block, 2 pink burst, 3 blast.
+/// mode: the sparks' palette (enum RushingStrikeMode).
 void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   void **cursor;
@@ -127,13 +136,13 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1,
                              1);
   switch (mode) {
-  case 0:
+  case RUSHING_STRIKE_BONE_CHARGE:
     paletteId = (s32)&ResourceId_FirePillarSheetB;
     break;
-  case 1:
+  case RUSHING_STRIKE_BRUTE_FORCE:
     paletteId = (s32)&ResourceId_IceBlockSheet;
     break;
-  case 2:
+  case RUSHING_STRIKE_ONSLAUGHT:
     paletteId = (s32)&ResourceId_PinkBurstSheet;
     break;
   default:

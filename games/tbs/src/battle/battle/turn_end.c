@@ -288,14 +288,14 @@ void Battle_ReservedNoOpF674(void) {}
 /// gBattleParty_RoundEndGroupOrder gives it. Battle_ProcessRoundEnd copies it
 /// to its stack, and the link child swaps the copy's two sides.
 struct BattleGroupOrder {
-  s32 group[2]; ///< enum BattleSideMask: the party (1), then the enemies (2)
+  s32 group[2]; ///< enum BattleSideMask: the party, then the enemies
 };
 
 /// Ends a round: sets recovered Djinn, then gives each unit its regeneration
 /// and counts down its stat changes and statuses, showing each that ends.
 /// Called by Battle_RunEncounter once every unit has acted. Changes HP, PP,
 /// BattleUnit.ready, the Djinn recovery lists and the counters the Tick
-/// functions clear, and puts the background back in its perspective mode (2).
+/// functions clear, and puts the background back in BATTLE_BACKGROUND_PLANE.
 #ifdef UBFIX
 void Battle_ProcessRoundEnd(void) {
 #else
@@ -541,9 +541,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   s32 strongestElement;
   s32 recoveryTurn;
 
-  // Take the actor's standby Djinn (turns -1, as an unleashed Djinni is left
-  // by BattleCommand_BuildPlan) off its set. The table is the opponent's for
-  // an enemy unit id.
+  // Take the actor's standby Djinn (DJINN_RECOVERY_AFTER_BATTLE, as an
+  // unleashed Djinni is left by BattleCommand_BuildPlan) off its set. The table
+  // is the opponent's for an enemy unit id.
   unitId = plan->actorId;
   battleContinues = 0;
   unit = UnitGetFar(unitId);
@@ -553,7 +553,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   for (strongestElement = 0; strongestElement < list->count;
        strongestElement++) {
     if (list->entries[strongestElement].unitId == unitId &&
-        list->entries[strongestElement].turns == -1) {
+        list->entries[strongestElement].turns == DJINN_RECOVERY_AFTER_BATTLE) {
       Djinn_DeactivateFar(unitId, list->entries[strongestElement].element,
                           list->entries[strongestElement].index);
     }

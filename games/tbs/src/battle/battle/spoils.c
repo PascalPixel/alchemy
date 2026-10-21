@@ -120,11 +120,11 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   itemOrClassIndex = 0;
   if (battle->enemyClasses[0] != unit->classId) {
     do {
-      if (++itemOrClassIndex > 5)
+      if (++itemOrClassIndex > BATTLE_ENEMY_CAPACITY - 1)
         break;
     } while (battle->enemyClasses[itemOrClassIndex] != unit->classId);
   }
-  if (itemOrClassIndex != 6)
+  if (itemOrClassIndex != BATTLE_ENEMY_CAPACITY)
     classSlot = itemOrClassIndex;
   // The earliest listed class to fall names the victory message, and a
   // second defeat makes it DEFEAT_SEVERAL.

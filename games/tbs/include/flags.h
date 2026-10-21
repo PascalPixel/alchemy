@@ -44,9 +44,9 @@
 /// (ObjectEffect_RunPendingFlagEvent), as when the world map's airborne
 /// travel ends.
 #define FLAG_ARRIVE_FALLING 0x122
-/// The current scene's record has variant 2; the scene loader sets and clears
-/// it.
-#define FLAG_SCENE_VARIANT_2 0x123
+/// The party is in a town (SCENE_VARIANT_TOWN); the scene loader sets and
+/// clears it, and the Colosso's log sets it as it ends.
+#define FLAG_IN_TOWN 0x123
 /// Set before an action on the field; still set afterwards, nothing came of it
 /// and the game says so. "But nothing happens." An event that acts clears it.
 #define FLAG_NOTHING_HAPPENS 0x142

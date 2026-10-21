@@ -357,17 +357,15 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
     // FLAG_NO_ENCOUNTERS_IN_PLACE stops random battles
     // (Encounter_SelectEnemyGroup).
     GameFlag_ClearBitFar(FLAG_NO_ENCOUNTERS_IN_PLACE);
-    GameFlag_ClearBitFar(0x123);
+    GameFlag_ClearBitFar(FLAG_IN_TOWN);
     GameFlag_ClearBitFar(FLAG_NOT_ON_MAP);
     gGameState.returnCue = -1;
   }
   gGameState.sceneGroup = group;
   GameFlag_SetBitFar(FLAG_PLACE_VISITED(group & 0x7f));
-  // Flag 0x123 (FLAG_SCENE_VARIANT_2) marks a scene of variant 2; see
-  // SceneRecord.variant (field_runtime.h) for which scenes those are.
   gGameState.sceneVariant = SCENE_RECORD(gGameState.scene)->variant;
-  if (gGameState.sceneVariant == 2)
-    GameFlag_SetBitFar(0x123);
+  if (gGameState.sceneVariant == SCENE_VARIANT_TOWN)
+    GameFlag_SetBitFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
 

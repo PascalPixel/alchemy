@@ -23,10 +23,9 @@ struct SceneRecord {
   /// counters and moves Retreat's destination; FLAG_PLACE_VISITED(group) marks
   /// it visited (Scene_ResetFlagsOnEnter).
   s8 group;
-  /// Copied to gGameState.sceneVariant: 2 for towns and their interiors (53
-  /// rows: Vale, Bilibin, Kalay, Tolbi and others), where walking restores no
-  /// PP, recovers no Djinn and does no poison damage, Retreat is blocked,
-  /// Avoid does not wear off and FLAG_SCENE_VARIANT_2 is set. 1 for the rest.
+  /// An enum SceneVariant, copied to gGameState.sceneVariant:
+  /// SCENE_VARIANT_TOWN for towns and their interiors (53 rows: Vale,
+  /// Bilibin, Kalay, Tolbi and others), SCENE_VARIANT_FIELD for the rest.
   s8 variant;
   u16 mapIndex; ///< the map loaded for it, copied to gGameState.map
   u16 reserved; ///< 0 in every row; not read

@@ -293,15 +293,16 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
         gGameState.hazardSteps = gGameState.hazardLimit / 2;
     }
 
-    // Avoid wears off with distance, outside scenes of variant 2.
-    if (gGameState.avoidDistance != 0 && gGameState.sceneVariant != 2) {
+    // Avoid wears off with distance, outside towns.
+    if (gGameState.avoidDistance != 0 &&
+        gGameState.sceneVariant != SCENE_VARIANT_TOWN) {
       gGameState.avoidDistance -= leader->speedLimit;
       if (gGameState.avoidDistance <= 0) {
         gGameState.avoidDistance = 1;
-        // Raise Avoid as a Psynergy request that pays no PP (ACT_PACKED |
-        // ABILITY_AVOID); Avoid's end handler says it wore off.
+        // Raise Avoid as a Psynergy request that pays no PP; Avoid's end
+        // handler says it wore off.
         if (work->command == 0)
-          work->command = 0x2096;
+          work->command = ACT_PACKED | ABILITY_AVOID;
       }
     }
   }

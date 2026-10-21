@@ -1842,7 +1842,7 @@ static void ColossoLog_ShowRoundStartLettering(s32 mode) {
   Engine_AudioPlayCue(SE_237);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
-  Engine_GameFlagSet(0x123);
+  Engine_GameFlagSet(FLAG_IN_TOWN);
 }
 
 /// An unused lettering countdown for a signed number of seconds.

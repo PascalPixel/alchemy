@@ -9,6 +9,15 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
+/// A scene's variant (SceneRecord.variant, copied to GameState.sceneVariant).
+enum SceneVariant {
+  SCENE_VARIANT_FIELD = 1, ///< every other scene: dungeons, the world map
+  /// Towns and their interiors, where walking restores no PP, recovers no
+  /// Djinn and does no poison damage, Retreat is blocked, Avoid does not wear
+  /// off and FLAG_IN_TOWN is set.
+  SCENE_VARIANT_TOWN = 2
+};
+
 /// The game's state: play time, coins, the scene and the leader's position,
 /// the active party and the options.
 ///

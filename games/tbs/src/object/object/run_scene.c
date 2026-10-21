@@ -88,11 +88,11 @@ s32 Field_RunScene(s32 entrance) {
   work->transitionActive = 0;
   // Field_ProcessStep scales the leader's speed by this (16.16) into the
   // distance counted towards PP and poison ticks: 0x10000 / 0x199 makes a
-  // tick about every 160 pixels walked. Scenes of variant 2 turn it off and
+  // tick about every 160 pixels walked. Towns turn it off and
   // block Retreat.
   work->walkingDistanceScale = 0x199;
   work->walkingDistance = 0;
-  if (gGameState.sceneVariant == 2) {
+  if (gGameState.sceneVariant == SCENE_VARIANT_TOWN) {
     work->walkingDistanceScale = 0;
     GameFlag_SetBitFar(FLAG_RETREAT_BLOCKED);
   }

@@ -372,7 +372,7 @@ static s32 Clear_GetSaveRecoveryBlockMask(void) {
   if (Engine_GameFlagIsSet(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
-  if (gGameState.sceneVariant == 2) {
+  if (gGameState.sceneVariant == SCENE_VARIANT_TOWN) {
     return 0;
   }
   // -1 unless the scene is the world map: -d | d has its top bit set for any

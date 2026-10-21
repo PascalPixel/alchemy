@@ -1,10 +1,11 @@
 /// @file
-/// Mercury Lighthouse (MercuryLighthouseLower, MercuryLighthouseMiddle,
-/// MercuryLighthouseUpper and MercuryLighthouseExterior, scenes 54 to 57), four
-/// of the lighthouse's scenes. They share the game's area name Mercury
-/// Lighthouse with MercuryLighthouseEntrance (scene 53,
-/// mercury_lighthouse_entrance.c), the floor inside the door; the Lighthouse
-/// Aerie at the top is scene 58 (mercury_lighthouse_aerie.c). The four share
+/// Mercury Lighthouse (SceneId_MercuryLighthouseLower,
+/// SceneId_MercuryLighthouseMiddle, SceneId_MercuryLighthouseUpper and
+/// SceneId_MercuryLighthouseExterior), four of the lighthouse's scenes. They
+/// share the game's area name Mercury Lighthouse with
+/// SceneId_MercuryLighthouseEntrance (mercury_lighthouse_entrance.c), the floor
+/// inside the door; the Lighthouse Aerie at the top is
+/// SceneId_MercuryLighthouseAerie (mercury_lighthouse_aerie.c). The four share
 /// one exit table.
 ///
 /// Where it falls in the story: the waters of the lighthouse's fountain might
@@ -16,7 +17,7 @@
 /// and Retreat leads out to MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP.
 ///
-/// - MercuryLighthouseExterior (scene 57), the lighthouse's door and the ground
+/// - SceneId_MercuryLighthouseExterior, the lighthouse's door and the ground
 ///   around it, reached from the world map
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP). Until Mia has hurried here
 ///   the door stays shut. Then she stands before it, blocked by a statue
@@ -28,9 +29,9 @@
 ///   down in her clan, and goes in (FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE).
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE, through the
 ///   door, leads into MercuryLighthouseEntrance.
-/// - MercuryLighthouseLower (scene 54). Mia is blocked again by a statue that
-///   was not there before; Move pushes it aside, and she joins the party with
-///   Fizz, a Mercury Djinni (MercuryLighthouse_MiaJoinsAfterRescue,
+/// - SceneId_MercuryLighthouseLower. Mia is blocked again by a statue that was
+///   not there before; Move pushes it aside, and she joins the party with Fizz,
+///   a Mercury Djinni (MercuryLighthouse_MiaJoinsAfterRescue,
 ///   FLAG_MIA_JOINED_PARTY). Three channel pillars pushed into place let the
 ///   water run (FLAG_CHANNEL_1_OPEN to _3_OPEN) and carry the party down to
 ///   MercuryLighthouseEntrance
@@ -39,18 +40,18 @@
 ///   MercuryLighthouseEntrance (FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), water
 ///   pillars rise underfoot to cross on, as there
 ///   (common/mercury_lighthouse_pillar.h). A chest holds a Sleep Bomb.
-/// - MercuryLighthouseMiddle (scene 55). One pillar raises or lowers stairs
+/// - SceneId_MercuryLighthouseMiddle. One pillar raises or lowers stairs
 ///   (FLAG_STAIRS_RAISED), another starts a fountain (FLAG_FOUNTAIN_RUNNING),
 ///   and a statue moved onto a floor switch holds a gate open for good
 ///   (FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN); standing on the switch opens it
 ///   only while the leader stays. Sleet, a Mercury Djinni, fights when spoken
 ///   to. Chests hold a Psy Crystal and a Nut.
-/// - MercuryLighthouseUpper (scene 56). A pillar pushed along a row opens one
-///   of three stone doors by its column, and at column 48 sends a statue
-///   sliding off its ledge to the floor below
-///   (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL), where Move sets it on the stair
-///   gate's switch (FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN). Five pillars
-///   pushed into a row, and one more into a gap, open crossings.
+/// - SceneId_MercuryLighthouseUpper. A pillar pushed along a row opens one of
+///   three stone doors by its column, and at column 48 sends a statue sliding
+///   off its ledge to the floor below (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL),
+///   where Move sets it on the stair gate's switch
+///   (FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN). Five pillars pushed into a
+///   row, and one more into a gap, open crossings.
 /// - MercuryLighthouseExterior again, higher up, reached from
 ///   MercuryLighthouseMiddle
 ///   (MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR) and
@@ -60,7 +61,9 @@
 ///   from the Lighthouse Aerie
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE), the Fountain
 ///   of Healing, whose sign promises the Water of Hermes, and a waterfall.
-///   Arriving at the waterfall (entrance 10) shows its riddle, `He who honors
+///   Arriving at the waterfall
+///   (MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_WALKWAY) shows its
+///   riddle, `He who honors
 ///   the goddess of rainbows shall be guided to the heavens upon wings of fluid
 ///   grace.`; Ply on its statue stops it and opens the way up
 ///   (MercuryLighthouse_PlyOpensWaterfallPassage). The first time, Mia rises
@@ -172,10 +175,10 @@ enum MercuryLighthouseLowerActor {
   ACTOR_CHANNEL_PILLAR_1,
   ACTOR_CHANNEL_PILLAR_2,
   ACTOR_CHANNEL_PILLAR_3,
-  /// Sprite 0xe6, one still frame after the pillars' 0xe4 and 0xe5, 59 pixels
-  /// south of where ACTOR_CHANNEL_PILLAR_3 comes to rest; pushing it does
-  /// nothing, and nothing else moves it. XXX: what it shows is unknown; no text
-  /// names it.
+  /// A pillar sprite of one still frame, the one after the moving pillars' two
+  /// in the sprite table, 59 pixels south of where ACTOR_CHANNEL_PILLAR_3 comes
+  /// to rest; pushing it does nothing, and nothing else moves it. XXX: what it
+  /// shows is unknown; no text names it.
   ACTOR_CHANNEL_FIXED_PILLAR
 };
 
@@ -183,7 +186,7 @@ enum MercuryLighthouseLowerActor {
 /// gate's floor switch and Sleet, a Mercury Djinni.
 enum MercuryLighthouseMiddleActor {
   ACTOR_STAIR_PILLAR = ACTOR_FIRST_PLACED,
-  /// Sprite 0xe6, as ACTOR_CHANNEL_FIXED_PILLAR, 59 pixels south of where
+  /// ACTOR_CHANNEL_FIXED_PILLAR's sprite, 59 pixels south of where
   /// ACTOR_STAIR_PILLAR rests once the stairs are raised; nothing moves it.
   ACTOR_STAIR_FIXED_PILLAR,
   ACTOR_FOUNTAIN_PILLAR,
@@ -199,7 +202,7 @@ enum MercuryLighthouseUpperActor {
   ACTOR_SLIDING_STATUE,
   ACTOR_DOOR_ROOM_PILLAR,
   ACTOR_DOOR_SWITCH_PILLAR,
-  /// Three of sprite 0xe6, as ACTOR_CHANNEL_FIXED_PILLAR, in a row south of the
+  /// Three with ACTOR_CHANNEL_FIXED_PILLAR's sprite, in a row south of the
   /// stone doors' pillars; nothing moves them.
   ACTOR_FIRST_DOOR_FIXED_PILLAR,
   ACTOR_FIRST_CROSSING_PILLAR = ACTOR_FIRST_DOOR_FIXED_PILLAR + 3,
@@ -211,8 +214,8 @@ enum MercuryLighthouseUpperActor {
 /// statues by the way in, the statue at the door, the Ply target, the statue by
 /// the waterfall, the statue on the lift and the people at the fountain.
 enum MercuryLighthouseExteriorActor {
-  /// A pair of statues (sprite 0xe0) either side of the way in from the world
-  /// map (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP); the east one is drawn
+  /// A pair of statues either side of the way in from the world map
+  /// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP); the east one is drawn
   /// mirrored.
   ACTOR_WEST_APPROACH_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_EAST_APPROACH_STATUE,
@@ -277,7 +280,7 @@ static void MercuryLighthouse_StartDjinnBattle(void) {
 
 #if TBS_PATCH_3
 /// Scheduler callback: the fade overlay stops following the leader while he
-/// crosses the patched floor region (map layer 0, 16-pixel rows 13 to 18).
+/// crosses the patched floor region (MAP_LAYER_GROUND, 16-pixel rows 13 to 18).
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FadeOverlayWork *effectWork =
@@ -298,13 +301,13 @@ const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
   if (selector == (s32)&SceneId_MercuryLighthouseExterior) {
-    return gMercuryLighthouseEntrances4;
+    return gMercuryLighthouseExteriorEntrances;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseUpper) {
-    return gMercuryLighthouseEntrances3;
+    return gMercuryLighthouseUpperEntrances;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseMiddle) {
-    return gMercuryLighthouseEntrances2;
+    return gMercuryLighthouseMiddleEntrances;
   }
   return gMercuryLighthouseEntrancesOther;
 }
@@ -319,16 +322,16 @@ const struct ScenePlacement *MercuryLighthouse_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
   if (selector == (s32)&SceneId_MercuryLighthouseLower) {
-    return gMercuryLighthousePlacements1;
+    return gMercuryLighthouseLowerPlacements;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseMiddle) {
-    return gMercuryLighthousePlacements2;
+    return gMercuryLighthouseMiddlePlacements;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseUpper) {
-    return gMercuryLighthousePlacements3;
+    return gMercuryLighthouseUpperPlacements;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseExterior) {
-    return gMercuryLighthousePlacements4;
+    return gMercuryLighthouseExteriorPlacements;
   }
   return gMercuryLighthousePlacementsOther;
 }
@@ -370,13 +373,13 @@ const struct SceneEvent *MercuryLighthouse_GetEvents(void) {
   s16 selector = gGameState.scene;
 
   if (selector == (s32)&SceneId_MercuryLighthouseLower) {
-    return gMercuryLighthouseEvents1;
+    return gMercuryLighthouseLowerEvents;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseMiddle) {
-    return gMercuryLighthouseEvents2;
+    return gMercuryLighthouseMiddleEvents;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseUpper) {
-    return gMercuryLighthouseEvents3;
+    return gMercuryLighthouseUpperEvents;
   }
   return gMercuryLighthouseEventsOther;
 }
@@ -391,13 +394,13 @@ static void MercuryLighthouse_ExitWithSparks(void) {
 }
 
 /// MercuryLighthouseUpper, walking north into trigger 63: the same, through
-/// exit 13.
+/// MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
 static void MercuryLighthouse_ExitAfterSparkStep(void) {
   MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
 
 /// MercuryLighthouseExterior, walking north into trigger 55: the same, through
-/// exit 5.
+/// MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_WALKWAY.
 static void MercuryLighthouse_LeaveWithSparkTrail(void) {
   MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
@@ -501,7 +504,8 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
 
   eventWork = gEventWork;
   Engine_EventBegin();
-  FieldScheduler_AddCallback(SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
+  FieldScheduler_AddCallback(SceneEffect_SpawnParticleEveryFourthFrame,
+                             TASK_PRIORITY_SCENE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -743,7 +747,8 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   MercuryLighthouse_AnimateFountainTiles(0, nextRow, (nextRow + 1));
   Engine_AudioPlayCue(SE_211);
   // Keep the opened fountain spraying after the tile animation completes.
-  FieldScheduler_AddCallback(MercuryLighthouse_SprayAtFountain, 0xc80);
+  FieldScheduler_AddCallback(MercuryLighthouse_SprayAtFountain,
+                             TASK_PRIORITY_SCENE);
   Engine_MapRenderWaitForValues();
 }
 
@@ -1096,7 +1101,7 @@ static void MercuryLighthouse_SprayAboveStatue(void) {
 /// The slide scripts start the sparkles as the statue sets off.
 static s32
 MercuryLighthouse_StartStatueSpray(struct ScriptInterpreter *interpreter) {
-  s32 priority = 0xc80;
+  s32 priority = TASK_PRIORITY_SCENE;
 
   FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue, priority);
   return 0;
@@ -1179,7 +1184,8 @@ static void MercuryLighthouse_MoveStoneDoorPillars(void) {
               SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
           Engine_EventCloseScreen();
           Engine_EventWaitForScreen();
-          Engine_EventRequestExit(15);
+          Engine_EventRequestExit(
+              MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_STAIR_GATE_STATUE_FALLS);
         } else {
           MercuryLighthouse_CloseStoneDoor(2);
 #ifdef UBFIX
@@ -1934,9 +1940,9 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
   Engine_EventEnd();
 }
 
-/// MercuryLighthouseExterior, using the Empty Bottle at the fountain (event
-/// 0xb904: the bottle's item number and kind 4) once Saturos is beaten: the
-/// bottle becomes Hermes' Water, once a visit.
+/// MercuryLighthouseExterior, using the Empty Bottle at the fountain
+/// (USE_ITEM(ITEM_EMPTY_BOTTLE)) once Saturos is beaten: the bottle becomes
+/// Hermes' Water, once a visit.
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Engine_EventBegin();
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
@@ -1968,7 +1974,8 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
-    gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+    gEventWork->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
     Engine_EventWait(60);
     Engine_EventRequestExit(
         MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE);
@@ -2153,7 +2160,8 @@ s32 MercuryLighthouse_Initialize(void) {
   // Set up common lighting before restoring each scene's puzzle-specific state.
   gGameState.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gGameState.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
   {
     s32 alpha = BLEND_ALPHA(16, 16);
@@ -2163,7 +2171,8 @@ s32 MercuryLighthouse_Initialize(void) {
       21, (struct MercuryLighthouseLights *)gSceneState);
   BattleFx_StartFadeOverlay(0);
   if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED))
-    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette, 0xc80);
+    FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
+                               TASK_PRIORITY_SCENE);
   else
     MercuryLighthouse_ClearPalette();
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouseLower) {
@@ -2171,15 +2180,15 @@ s32 MercuryLighthouse_Initialize(void) {
     switch (gGameState.entrance) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST:
-    case 3:
+    case MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE:
       if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED))
         Map_CopyCellAttributes(66, 5, 27, 23, 2, 5);
       break;
-    case 5:
+    case MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH:
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
-    case 15:
+    case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE:
       SetEffectRecordMode(Object_GetById(ACTOR_PARTY_LEADER), 1);
       // Fall through.
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST:
@@ -2209,8 +2218,8 @@ s32 MercuryLighthouse_Initialize(void) {
         Engine_TaskWait(1);
       }
       break;
-    case 9:
-    case 10:
+    case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL:
+    case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS:
       if (!Engine_GameFlagIsSet(FLAG_MIA_JOINED_PARTY)) {
         Actor_SetPosition(MIA, PIXELS(696), PIXELS(632));
         Engine_ActorFaceDirection(MIA, FACING_EAST, 0);
@@ -2225,7 +2234,7 @@ s32 MercuryLighthouse_Initialize(void) {
     // Restore stairs, the floor-switch gate and the fountain's moved pillar.
     switch (gGameState.entrance) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH:
-    case 2:
+    case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
       SetEffectRecordMode(Object_GetById(ACTOR_STAIR_PILLAR), 1);
       SetEffectRecordMode(Object_GetById(ACTOR_STAIR_FIXED_PILLAR), 1);
       if (Engine_GameFlagIsSet(FLAG_STAIRS_RAISED)) {
@@ -2245,7 +2254,7 @@ s32 MercuryLighthouse_Initialize(void) {
       }
       break;
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTH:
-    case 4:
+    case MERCURY_LIGHTHOUSE_MIDDLE_GATE_FROM_PIPES:
       Engine_MapRedraw();
       Engine_TaskWait(1);
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
@@ -2264,7 +2273,7 @@ s32 MercuryLighthouse_Initialize(void) {
       }
 #if TBS_PATCH_3
       FieldScheduler_AddCallback(MercuryLighthouse_UpdateLeaderEffectTarget,
-                                 0xc80);
+                                 TASK_PRIORITY_SCENE);
 #endif
       break;
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST:
@@ -2283,7 +2292,7 @@ s32 MercuryLighthouse_Initialize(void) {
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouseUpper) {
     // Restore movable pillars and the pillar-room door arrangement.
     switch (gGameState.entrance) {
-    case 4:
+    case MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_FROM_STAIR_GATE:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST:
       SetEffectRecordMode(Object_GetById(ACTOR_FIRST_CROSSING_PILLAR), 1);
@@ -2314,14 +2323,14 @@ s32 MercuryLighthouse_Initialize(void) {
       }
       break;
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST:
-    case 11:
+    case MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS:
       if (Engine_GameFlagIsSet(FLAG_GAP_PILLAR_PLACED)) {
         Actor_SetPosition(ACTOR_GAP_PILLAR, PIXELS(456), PIXELS(328));
         Map_CopyCellAttributes(29, 20, 1, 1, 31, 20);
       }
       break;
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST:
-    case 13:
+    case MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_FROM_GAP:
       MercuryLighthouse_ArriveWithSparks();
       // Fall through.
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST:
@@ -2330,8 +2339,8 @@ s32 MercuryLighthouse_Initialize(void) {
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER:
-    case 8:
-    case 9:
+    case MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_FIVE_PILLARS:
+    case MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_STONE_DOORS:
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
           Engine_GameFlagIsSet(FLAG_LEADER_ON_FLOOR_SWITCH)) {
         Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = -0x20000;
@@ -2351,7 +2360,7 @@ s32 MercuryLighthouse_Initialize(void) {
         Engine_MapRedraw();
       }
       break;
-    case 16:
+    case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE_STATUE_FALLS:
       Engine_TaskWait(1);
 #if TBS_PATCH_2
       if (Engine_GameFlagIsSet(FLAG_DOOR_ROOM_PILLAR_PUSHED))
@@ -2373,7 +2382,8 @@ s32 MercuryLighthouse_Initialize(void) {
       if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PILLAR_AT_47)) {
         MercuryLighthouse_OpenStoneDoor(2);
         if (Object_GetById(ACTOR_SLIDING_STATUE)->z.fixed >> 20 == 44)
-          FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue, 0xc80);
+          FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue,
+                                     TASK_PRIORITY_SCENE);
       } else if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PILLAR_AT_48)) {
         MercuryLighthouse_OpenStoneDoor(1);
       } else if (!Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PILLAR_AT_53)) {
@@ -2383,8 +2393,9 @@ s32 MercuryLighthouse_Initialize(void) {
       MercuryLighthouse_OpenStoneDoor(1);
 #endif
       // Fall through.
-    case 14:
-      if (gGameState.entrance == 14)
+    case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE:
+      if (gGameState.entrance ==
+          MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE)
         Engine_AudioPlayCue(SE_211);
       SetEffectRecordMode(Object_GetById(ACTOR_SLIDING_STATUE), 1);
       Engine_ActorSetSpritePriority(ACTOR_DOOR_ROOM_PILLAR, 2);
@@ -2395,7 +2406,8 @@ s32 MercuryLighthouse_Initialize(void) {
       SetEffectRecordMode(Object_GetById(ACTOR_FIRST_DOOR_FIXED_PILLAR + 2), 1);
       FieldScene_RedrawActorFootprint(ACTOR_DOOR_ROOM_PILLAR);
       FieldScene_RedrawActorFootprint(ACTOR_DOOR_SWITCH_PILLAR);
-      if (gGameState.entrance != 14)
+      if (gGameState.entrance !=
+          MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE)
         break;
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         Engine_GameFlagClear(FLAG_DOOR_ROOM_PILLAR_PUSHED);
@@ -2408,14 +2420,15 @@ s32 MercuryLighthouse_Initialize(void) {
       if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PILLAR_AT_47)) {
         MercuryLighthouse_OpenStoneDoor(2);
         if (Object_GetById(ACTOR_SLIDING_STATUE)->z.fixed >> 20 == 44)
-          FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue, 0xc80);
+          FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue,
+                                     TASK_PRIORITY_SCENE);
       } else if (Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PILLAR_AT_48)) {
         MercuryLighthouse_OpenStoneDoor(1);
       } else if (!Engine_GameFlagIsSet(FLAG_DOOR_SWITCH_PILLAR_AT_53)) {
         MercuryLighthouse_OpenStoneDoor(0);
       }
       break;
-    case 15:
+    case MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_STONE_DOORS_STATUE_FALLS:
       Engine_EventBegin();
       SetEffectRecordMode(Object_GetById(ACTOR_FALLEN_STATUE), 1);
       Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -2437,7 +2450,8 @@ s32 MercuryLighthouse_Initialize(void) {
       Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
       Engine_EventWait(60);
-      Engine_EventRequestExit(16);
+      Engine_EventRequestExit(
+          MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_TO_STONE_DOORS_STATUE_FALLS);
       Engine_EventEnd();
       break;
     }
@@ -2445,9 +2459,9 @@ s32 MercuryLighthouse_Initialize(void) {
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouseExterior) {
     // This scene contains Mia's entrance, the lift and the healing fountain.
     switch (gGameState.entrance) {
-    case 10:
+    case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_WALKWAY:
       FieldScheduler_AddCallback(MercuryLighthouse_CycleWaterfallPalette,
-                                 0xc80);
+                                 TASK_PRIORITY_SCENE);
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
         break;
       MercuryLighthouse_ArriveWithSparks();
@@ -2516,7 +2530,7 @@ s32 MercuryLighthouse_Initialize(void) {
         Map_CopyCellAttributes(116, 37, 3, 3, 52, 37);
         Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
         FieldScheduler_AddCallback(MercuryLighthouse_CycleEntrancePalette,
-                                   0xc80);
+                                   TASK_PRIORITY_SCENE);
         break;
       }
       if (!Engine_GameFlagIsSet(FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE)) {
@@ -2530,7 +2544,7 @@ s32 MercuryLighthouse_Initialize(void) {
         SetEffectRecordMode(Object_GetById(MIA), 1);
         Map_CopyCellsTo(126, 35, 116, 35, 1, 2);
         FieldScheduler_AddCallback(MercuryLighthouse_CycleEntrancePalette,
-                                   0xc80);
+                                   TASK_PRIORITY_SCENE);
       } else {
         Engine_ActorSetPosition(MIA, 0, 0);
         Actor_SetPosition(ACTOR_DOOR_STATUE, PIXELS(824), PIXELS(600));
@@ -2632,9 +2646,11 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Event_PrepareObjectAndApplyValue(MIA, 1);
   // "The Adept Mia joined your party!" Fizz, Mercury Djinni 0, comes with
   // her and is set; her stats are worked out again.
-  Engine_GameFlagSet(FLAG_DJINNI_0 + ELEMENT_MERCURY * 20);
-  Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 0);
-  Djinn_Activate(MIA, ELEMENT_MERCURY, 0);
+  Engine_GameFlagSet(FLAG_DJINNI_0 + DJINNI_FIZZ);
+  Djinn_AddToOwner(MIA, ELEMENT_MERCURY,
+                   DJINNI_FIZZ - DJINN_PER_ELEMENT * ELEMENT_MERCURY);
+  Djinn_Activate(MIA, ELEMENT_MERCURY,
+                 DJINNI_FIZZ - DJINN_PER_ELEMENT * ELEMENT_MERCURY);
   UnitCalc(MIA);
   Engine_ActorSetAnimation(MIA, ANIM_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -2656,7 +2672,8 @@ static void MercuryLighthouse_RideLift(void) {
   struct MapLayerScroll *liftLayer;
   s32 liftSpeed;
 
-  liftLayer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+  liftLayer =
+      &((struct MapScrollWork *)gMapWork[0])->layers[MAP_LAYER_OVERHEAD];
   liftSpeed = 0x9c28;
   liftLayer->offsetY = PIXELS(1161);
   liftLayer->speedY = 0;
@@ -2961,28 +2978,28 @@ u16 gMercuryLighthouse_ColumnCells[] = {
 };
 
 struct SceneEntrance gMercuryLighthouseEntrancesOther[] = {
-    { 0, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST, CONDITION_ALWAYS, 56, 0, 440, FACING_NORTH, 0, 16, 16, 496, 448, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST, CONDITION_ALWAYS, 248, 0, 440, FACING_NORTH, 0, 16, 16, 496, 448, 0 },
-    { 3, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, 16, 16, 496, 448, 0 },
+    { MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, 16, 16, 496, 448, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST, CONDITION_ALWAYS, 760, 0, 344, FACING_NORTH, 0, 544, 16, 816, 352, 0 },
-    { 5, CONDITION_ALWAYS, 120, 0, 936, FACING_NORTH, 0, 64, 784, 384, 944, 0 },
+    { MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE, CONDITION_ALWAYS, 120, 0, 936, FACING_NORTH, 0, 64, 784, 384, 944, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH, CONDITION_ALWAYS, 344, 0, 936, FACING_NORTH, 0, 64, 784, 384, 944, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_SOUTHWEST, CONDITION_ALWAYS, 120, 0, 584, FACING_SOUTH, 0, 80, 528, 320, 688, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_UPPER, CONDITION_ALWAYS, 280, 0, 584, FACING_SOUTH, 0, 80, 528, 320, 688, 0 },
-    { 9, CONDITION_ALWAYS, 776, 0, 472, FACING_SOUTH, 0, 640, 416, 896, 704, 0 },
-    { 10, CONDITION_ALWAYS, 856, 0, 520, FACING_SOUTH, 0, 640, 416, 896, 704, 0 },
+    { MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL, CONDITION_ALWAYS, 776, 0, 472, FACING_SOUTH, 0, 640, 416, 896, 704, 0 },
+    { MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS, CONDITION_ALWAYS, 856, 0, 520, FACING_SOUTH, 0, 640, 416, 896, 704, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH, CONDITION_ALWAYS, 472, 0, 696, FACING_NORTH, 0, 352, 512, 592, 720, 0 },
-    { 15, CONDITION_ALWAYS, 712, 0, 264, FACING_SOUTH, 0, 544, 16, 816, 352, 0 },
+    { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE, CONDITION_ALWAYS, 712, 0, 264, FACING_SOUTH, 0, 544, 16, 816, 352, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gMercuryLighthouseEntrances2[] = {
-    { 0, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gMercuryLighthouseMiddleEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH, CONDITION_ALWAYS, 120, 0, 472, FACING_SOUTH, 0, 32, 400, 480, 848, 0 },
-    { 2, CONDITION_ALWAYS, 152, 0, 824, FACING_NORTH, 0, 32, 400, 480, 848, 0 },
+    { MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE, CONDITION_ALWAYS, 152, 0, 824, FACING_NORTH, 0, 32, 400, 480, 848, 0 },
     { MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTH, CONDITION_ALWAYS, 152, 0, 184, FACING_SOUTH, 0, 48, 16, 592, 416, 0 },
-    { 4, CONDITION_ALWAYS, 488, 0, 136, FACING_SOUTH, 0, 48, 16, 592, 416, 0 },
+    { MERCURY_LIGHTHOUSE_MIDDLE_GATE_FROM_PIPES, CONDITION_ALWAYS, 488, 0, 136, FACING_SOUTH, 0, 48, 16, 592, 416, 0 },
     { MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST, CONDITION_ALWAYS, 728, 0, 88, FACING_SOUTH, 0, 656, 16, 896, 272, 0 },
     { MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR, CONDITION_ALWAYS, 728, 0, 216, FACING_SOUTH, 0, 656, 16, 896, 272, 0 },
     { MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST, CONDITION_ALWAYS, 632, 0, 712, FACING_NORTH, 0, 576, 480, 832, 736, 0 },
@@ -2992,37 +3009,37 @@ struct SceneEntrance gMercuryLighthouseEntrances2[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gMercuryLighthouseEntrances3[] = {
-    { 0, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gMercuryLighthouseUpperEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST, CONDITION_ALWAYS, 88, 0, 184, FACING_NORTH, 0, 32, 32, 544, 208, 0 },
     { MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST, CONDITION_ALWAYS, 504, 0, 184, FACING_NORTH, 0, 32, 32, 544, 208, 0 },
     { MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST, CONDITION_ALWAYS, 264, 0, 120, FACING_SOUTH, 0, 32, 32, 544, 208, 0 },
-    { 4, CONDITION_ALWAYS, 648, 0, 168, FACING_NORTH, 0, 592, 16, 992, 320, 0 },
+    { MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_FROM_STAIR_GATE, CONDITION_ALWAYS, 648, 0, 168, FACING_NORTH, 0, 592, 16, 992, 320, 0 },
     { MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST, CONDITION_ALWAYS, 776, 0, 88, FACING_SOUTH, 0, 592, 16, 992, 320, 0 },
     { MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST, CONDITION_ALWAYS, 936, 0, 88, FACING_SOUTH, 0, 592, 16, 992, 320, 0 },
     { MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER, CONDITION_ALWAYS, 88, 0, 328, FACING_SOUTH, 0, 48, 272, 288, 432, 0 },
-    { 8, CONDITION_ALWAYS, 168, 0, 328, FACING_SOUTH, 0, 48, 272, 288, 432, 0 },
-    { 9, CONDITION_ALWAYS, 248, 0, 328, FACING_SOUTH, 0, 48, 272, 288, 432, 0 },
+    { MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_FIVE_PILLARS, CONDITION_ALWAYS, 168, 0, 328, FACING_SOUTH, 0, 48, 272, 288, 432, 0 },
+    { MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_STONE_DOORS, CONDITION_ALWAYS, 248, 0, 328, FACING_SOUTH, 0, 48, 272, 288, 432, 0 },
     { MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST, CONDITION_ALWAYS, 472, 0, 328, FACING_SOUTH, 0, 352, 272, 592, 432, 0 },
-    { 11, CONDITION_ALWAYS, 424, 0, 408, FACING_NORTH, 0, 352, 272, 592, 432, 0 },
+    { MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS, CONDITION_ALWAYS, 424, 0, 408, FACING_NORTH, 0, 352, 272, 592, 432, 0 },
     { MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_WEST, CONDITION_ALWAYS, 88, 0, 600, FACING_SOUTH, 0, 48, 512, 544, 672, 0 },
-    { 13, CONDITION_ALWAYS, 456, 0, 600, FACING_SOUTH, 0, 48, 512, 544, 672, 0 },
-    { 14, CONDITION_ALWAYS, 888, 0, 712, FACING_SOUTH, 0, 688, 384, 928, 816, 0 },
-    { 15, CONDITION_ALWAYS, 168, 0, 368, FACING_SOUTH, 0, 40, 256, 296, 448, 0 },
-    { 16, CONDITION_ALWAYS, 760, 0, 584, FACING_SOUTH, 0, 688, 384, 928, 816, 0 },
+    { MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_FROM_GAP, CONDITION_ALWAYS, 456, 0, 600, FACING_SOUTH, 0, 48, 512, 544, 672, 0 },
+    { MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE, CONDITION_ALWAYS, 888, 0, 712, FACING_SOUTH, 0, 688, 384, 928, 816, 0 },
+    { MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_STONE_DOORS_STATUE_FALLS, CONDITION_ALWAYS, 168, 0, 368, FACING_SOUTH, 0, 40, 256, 296, 448, 0 },
+    { MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE_STATUE_FALLS, CONDITION_ALWAYS, 760, 0, 584, FACING_SOUTH, 0, 688, 384, 928, 816, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gMercuryLighthouseEntrances4[] = {
-    { 0, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct SceneEntrance gMercuryLighthouseExteriorEntrances[] = {
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_MIDDLE, CONDITION_ALWAYS, 232, 0, 104, FACING_SOUTH, 0, 64, 32, 288, 504, 0 },
     { MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST, CONDITION_ALWAYS, 232, 0, 488, FACING_NORTH, 0, 64, 32, 288, 504, 0 },
     { MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST, CONDITION_ALWAYS, 408, 0, 104, FACING_SOUTH, 0, 352, 32, 592, 328, 0 },
-    { 4, CONDITION_ALWAYS, 408, 0, 312, FACING_NORTH, 0, 352, 32, 592, 328, 0 },
-    { 10, CONDITION_ALWAYS, 792, 0, 216, FACING_SOUTH, 0, 664, 124, 920, 292, 0 },
+    { MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_WALKWAY_FROM_WATERFALL, CONDITION_ALWAYS, 408, 0, 312, FACING_NORTH, 0, 352, 32, 592, 328, 0 },
+    { MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_WALKWAY, CONDITION_ALWAYS, 792, 0, 216, FACING_SOUTH, 0, 664, 124, 920, 292, 0 },
     { MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP, CONDITION_ALWAYS, 840, 0, 856, FACING_NORTH, 0, 576, 328, 960, 912, 0 },
     { MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_ENTRANCE, CONDITION_ALWAYS, 840, 0, 600, FACING_SOUTH, 0, 576, 328, 960, 912, 0 },
-    { 13, CONDITION_ALWAYS, 872, 0, 600, FACING_SOUTH, 0, 720, 544, 960, 912, 0 },
+    { MERCURY_LIGHTHOUSE_EXTERIOR_UNUSED, CONDITION_ALWAYS, 872, 0, 600, FACING_SOUTH, 0, 720, 544, 960, 912, 0 },
     { MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, CONDITION_ALWAYS, 680, 0, 584, FACING_SOUTH, 0, 576, 328, 960, 912, 0 },
     { SCENE_TABLE_END },
 };
@@ -3087,7 +3104,7 @@ struct ScenePlacement gMercuryLighthousePlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMercuryLighthousePlacements1[] = {
+struct ScenePlacement gMercuryLighthouseLowerPlacements[] = {
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { 0xe0, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3103,7 +3120,7 @@ struct ScenePlacement gMercuryLighthousePlacements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMercuryLighthousePlacements2[] = {
+struct ScenePlacement gMercuryLighthouseMiddlePlacements[] = {
     { 0xe5, CONDITION_ALWAYS, 7,
         PIXELS(152), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xe6, CONDITION_ALWAYS, 7,
@@ -3112,12 +3129,12 @@ struct ScenePlacement gMercuryLighthousePlacements2[] = {
         PIXELS(704), 0, PIXELS(672), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xe0, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { 0x5b, FLAG_DJINNI_0 + ELEMENT_MERCURY * 20 + 1, ACTOR_STAND,
+    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_SLEET, ACTOR_STAND,
         PIXELS(888), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMercuryLighthousePlacements3[] = {
+struct ScenePlacement gMercuryLighthouseUpperPlacements[] = {
     { 0xe0, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL), ACTOR_STAND,
         PIXELS(200), 0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xe0, FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL, ACTOR_STAND,
@@ -3147,7 +3164,7 @@ struct ScenePlacement gMercuryLighthousePlacements3[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gMercuryLighthousePlacements4[] = {
+struct ScenePlacement gMercuryLighthouseExteriorPlacements[] = {
     { MIA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(840), 0, PIXELS(664), FACING_NORTH, TALK_KEEP_FACING, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3177,18 +3194,18 @@ struct ScenePlacement gMercuryLighthousePlacements4[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gMercuryLighthouseEvents1[] = {
+struct SceneEvent gMercuryLighthouseLowerEvents[] = {
     { EVENT_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST },
     { EVENT_EXIT, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST },
-    { 0x21, 53, CONDITION_ALWAYS, 3 },
-    { 0x31, 59, CONDITION_ALWAYS, 9 },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 59, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL },
     { EVENT_EXIT, 60, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS },
     { EVENT_EXIT, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST },
     { EVENT_EXIT, 61, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_TO_STATUE },
     { EVENT_EXIT, 62, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH },
     { EVENT_EXIT, 57, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH },
-    { 0x31, 55, CONDITION_ALWAYS, 5 },
-    { 0x21, 56, CONDITION_ALWAYS, 6 },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER },
     { EVENT_TOUCH, 32, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouse_ReleaseRaisedPillar) },
     { TOUCH_WALKING, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouse_TryPillarStep) },
     { EVENT_TOUCH, 31, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED), EVENT_SCRIPT(MercuryLighthouse_ReleaseRaisedPillar) },
@@ -3206,13 +3223,13 @@ struct SceneEvent gMercuryLighthouseEvents1[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gMercuryLighthouseEvents2[] = {
+struct SceneEvent gMercuryLighthouseMiddleEvents[] = {
     { EVENT_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_GATE_TO_PIPES },
     { EVENT_EXIT, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_NORTH },
     { EVENT_EXIT, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTH },
     { EVENT_EXIT, 57, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_PIPES_TO_GATE },
     { EVENT_EXIT, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST },
-    { 0x21, 54, CONDITION_ALWAYS, 4 },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR },
     { EVENT_EXIT, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST },
     { EVENT_EXIT, 58, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST },
     { EVENT_EXIT, 59, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST },
@@ -3237,21 +3254,21 @@ struct SceneEvent gMercuryLighthouseEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gMercuryLighthouseEvents3[] = {
+struct SceneEvent gMercuryLighthouseUpperEvents[] = {
     { EVENT_EXIT, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST },
     { EVENT_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST },
     { TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_ExitWithSparks) },
-    { 0x31, 57, CONDITION_ALWAYS, 7 },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 57, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_LOWER },
     { EVENT_EXIT, 59, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_TO_FIVE_PILLARS },
-    { 0x21, 58, CONDITION_ALWAYS, 8 },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 58, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_TO_STONE_DOORS },
     { EVENT_EXIT, 61, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_GAP_TO_WATERFALLS },
-    { 0x21, 60, CONDITION_ALWAYS, 10 },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 60, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST },
     { EVENT_EXIT, 62, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST },
     { TOUCH_WALKING_INTO(FACING_NORTH), 63, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_ExitAfterSparkStep) },
     { EVENT_EXIT, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_TO_STAIR_GATE },
     { EVENT_EXIT, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST },
     { EVENT_EXIT, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST },
-    { 0x31, 64, CONDITION_ALWAYS, 14 },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 64, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_STAIR_GATE },
     { TOUCH_WALKING, 10, FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_PushStairSwitchPillar) },
     { TOUCH_WALKING, 12, FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_PushStairSwitchPillar) },
     { EVENT_TOUCH, 12, FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_PressStairFloorSwitch) },
@@ -3271,12 +3288,12 @@ struct SceneEvent gMercuryLighthouseEvents3[] = {
 };
 
 struct SceneEvent gMercuryLighthouseEventsOther[] = {
-    { EVENT_EXIT, 44, CONDITION_ALWAYS, 7 },
-    { EVENT_EXIT, 43, CONDITION_ALWAYS, 6 },
-    { 0x31, 51, CONDITION_ALWAYS, 1 },
-    { EVENT_EXIT, 52, CONDITION_ALWAYS, 2 },
-    { 0x31, 53, CONDITION_ALWAYS, 3 },
-    { EVENT_EXIT, 54, CONDITION_ALWAYS, 4 },
+    { EVENT_EXIT, 44, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE },
+    { EVENT_EXIT, 43, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_EAST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE },
+    { EVENT_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_WEST },
+    { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_EAST },
+    { EVENT_EXIT, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_WALKWAY_TO_WATERFALL },
     { TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_LeaveWithSparkTrail) },
     { EVENT_TALK, MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT_SCRIPT(MercuryLighthouse_MiaSensesSomeoneInside) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT_SCRIPT(MercuryLighthouse_MiaSensesSomeoneInside) },

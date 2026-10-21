@@ -41,7 +41,7 @@ extern u8 *gColossoWork;
 
 #include "field_obj.h"
 
-/// The main loop pass's task key, 0xc80 (SCHEDULER_KEY_MAIN_LOOP): a scene's
+/// The main loop pass's task key, as SCHEDULER_KEY_MAIN_LOOP: a scene's
 /// per-frame callbacks run once a frame with the field's own.
 enum { TASK_PRIORITY_SCENE = 3200 };
 

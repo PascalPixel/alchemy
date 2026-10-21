@@ -37,7 +37,7 @@ extern const u8 gCharacter_ElementGroupTable[];
 /// The experience each character needs for levels 1 to 99, 99 words a
 /// character (Unit_GetExperienceForLevel).
 extern u32 gCharacter_LevelExpTable[];
-/// The Djinni sprite of each element, Venus to Jupiter (90 to 93), whose
+/// The Djinni sprite of each element, VENUS_DJINNI to JUPITER_DJINNI, whose
 /// picture Djinn_ShowJoinedMessage shows as the portrait.
 extern s16 gDjinn_ElementSprites[];
 /// The class series by a character's strongest and second element, a 4 by 4
@@ -71,8 +71,8 @@ extern u8 gSaveStamp[];
 extern u8 gItem_ArtifactSlotTable[];
 /// Each party member's sprite, by character: Felix's is 35.
 extern s16 gCharacter_SpriteTable[];
-/// Each party member's sprite during the prologue (FLAG_CHILDHOOD): Isaac 18,
-/// Garet 19, Felix 36, Jenna 48.
+/// Each party member's sprite during the prologue (FLAG_CHILDHOOD):
+/// ISAAC_CHILD, GARET_CHILD, FELIX_CHILD and JENNA_CHILD in place of their own.
 extern s16 gCharacter_ChildSpriteTable[];
 /// The summon ids in menu order (Summon_ListLearned).
 extern u8 gSummon_OrderList[16];

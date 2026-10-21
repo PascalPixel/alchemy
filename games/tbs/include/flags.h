@@ -4,15 +4,17 @@
 /// @file
 /// Game flags, named where their meaning is shown.
 
-/// Flags 0 to 7: the character with that id (character_ids.h) is in the party
+/// Set while `character` (character_ids.h) is in the party
 /// (Party_AddActiveOwner).
 #define FLAG_IN_PARTY(character) (character)
 #define FLAG_CHILDHOOD 0x20 ///< the prologue: Isaac and Garet are children
 /// The young Isaac wears the tunic Dora made him take on the stormy night:
 /// placed child sprites get its child part (226), and Isaac's grown sprite is
-/// 0x11. Party_EndChildhood clears it.
+/// ISAAC_TUNIC. Party_EndChildhood clears it.
 #define FLAG_ISAAC_WEARS_TUNIC 0x21
-#define FLAG_DJINNI_0 48 ///< the flag of Djinni 0, set once it is caught
+/// DJINNI_FLINT's flag, set once it is caught; each Djinni's is FLAG_DJINNI_0
+/// plus its DjinniId.
+#define FLAG_DJINNI_0 48
 /// The next scene change is silent: the scene loader clears it in place of
 /// playing SE_288, once. The world map sets it after its lighthouse
 /// transition.
@@ -271,8 +273,8 @@
 #define FLAG_COLOSSO_CLEARED_TRIAL_SEEN 0x8a4 ///< a warrior cleared his trial
 #define FLAG_COLOSSO_FIRST_MATCH_WON 0x90e
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
-// Also FLAG_COLOSSO_OVER (0x950): the colosseum is closed until next year.
-// Also FLAG_BABI_SAVED (0x962): the trials are over, the finals day.
+// Also FLAG_COLOSSO_OVER: the colosseum is closed until next year.
+// Also FLAG_BABI_SAVED: the trials are over, the finals day.
 
 // Kalay
 /// The inn's guests told the party about the Colosso tour to Tolbi.
@@ -307,7 +309,7 @@
 #define FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN 0x8ab
 #define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
 // Kolima
-/// The party has seen the curse fall, in Kolima or in Kolima Forest (scene 40).
+/// The party has seen the curse fall, in Kolima or in SceneId_KolimaForest1.
 #define FLAG_KOLIMA_CURSE_WITNESSED 0x843
 /// Kolima's bridge fell as the party crossed it.
 #define FLAG_KOLIMA_BRIDGE_COLLAPSED 0x847
@@ -364,7 +366,7 @@
 #define FLAG_LUNPA_FORTRESS_REWARD_TAKEN 0x94e
 #define FLAG_LUNPA_FORTRESS_CHEST_ELIXIR 0xfa2
 #define FLAG_LUNPA_FORTRESS_CHEST_LUCKY_MEDAL 0xfa3
-#define FLAG_LUNPA_FORTRESS_THIRD_CHEST 0xfa4 ///< item 0xaa
+#define FLAG_LUNPA_FORTRESS_THIRD_CHEST 0xfa4 ///< ITEM_MYTHRIL_CIRCLET
 #define FLAG_LUNPA_FORTRESS_CHEST_COINS 0xfa5
 #define FLAG_LUNPA_FORTRESS_BARREL_VIAL 0xfa6
 #define FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD 0xfa7
@@ -447,7 +449,7 @@
 
 // Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
 #define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0 ///< at anchor off the island
-/// The ship's place plays music 29, the monsters' theme, instead of 41.
+/// The ship's place plays MUS_029, the monsters' theme, instead of MUS_041.
 #define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
 #define FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED 0x903 ///< the party will scout it
 /// The crew have wondered what became of the replacement ship.
@@ -502,7 +504,7 @@
 #define FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED 0x839
 #define FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT 0x87d
 #define FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT 0x87e
-/// A monster was fought on the stormy night: Vale's music changes (song 23).
+/// A monster was fought on the stormy night: Vale's music changes to MUS_023.
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
 /// The jar's Elixir by the cottage; after Kalay it is searchable only from the
 /// third patch.

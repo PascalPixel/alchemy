@@ -38,19 +38,19 @@ void BattleFx_CallDoNothing(s32 count) {
 /// BattlePresentation_RunPairedUnitTransition (battle/auto_battle.c).
 ///
 /// Each scene is named for the summon whose gBattle_ActionFlags entry selects
-/// its kind, as the handlers of gBattleFx_EffectHandlers are; kind 0, which no
-/// ability selects, runs Meteor's scene too. Takes heap slots
-/// HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_EFFECT and HEAP_SLOT_BATTLE_CANVAS
-/// and releases them in reverse, so the scene must have removed every callback
-/// that reads them. Unlike BattleFx_RunTableEffect it does not set
-/// work->effect: each scene does that itself.
+/// its kind, as the handlers of gBattleFx_EffectHandlers are;
+/// SCENE_EFFECT_NONE, which no ability selects, runs Meteor's scene too. Takes
+/// heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_EFFECT and
+/// HEAP_SLOT_BATTLE_CANVAS and releases them in reverse, so the scene must have
+/// removed every callback that reads them. Unlike BattleFx_RunTableEffect it
+/// does not set work->effect: each scene does that itself.
 void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT,
                             sizeof(struct BattleEffectWork));
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
-  if (effect->kind == 0) {
+  if (effect->kind == SCENE_EFFECT_NONE) {
     BattleFx_RunMeteor(effect);
   } else {
     switch (effect->kind) {
@@ -109,8 +109,8 @@ void BattleFx_RunSceneEffect(struct BattleEffectArgument *effect) {
 /// BattlePres_RunUnitAction (battle/auto_battle.c).
 ///
 /// Sets work->effect before the handler runs, which every handler and
-/// callback reads the effect through. Kind 0 is no effect and only clears
-/// effect->variant.
+/// callback reads the effect through. BATTLE_FX_NONE is no effect and only
+/// clears effect->variant.
 void BattleFx_RunTableEffect(struct BattleEffectArgument *effect) {
   s32 kind;
   struct BattleEffectWork *work;
@@ -123,8 +123,8 @@ void BattleFx_RunTableEffect(struct BattleEffectArgument *effect) {
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   work->effect = effect;
   kind = effect->kind;
-  if (kind == 0)
-    effect->variant = 0;
+  if (kind == BATTLE_FX_NONE)
+    effect->variant = EFFECT_VARIANT_BASIC;
   else
     gBattleFx_EffectHandlers[kind - 1](effect);
 
@@ -229,7 +229,7 @@ void BattleFx_SetupBlendedDisplay(void) {
   gBgScroll[1].y = 32;
   // Level 24 is 60% brightness: each level takes 1092 from the 16.16
   // brightness (BattleBackground_Load).
-  BattleBackground_LoadFar(1, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT, battle->background, 24);
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   Dma_Fill32Cell(fill, 0, BG_CHAR_BLOCK(1), CANVAS_BYTES);
   WaitFrames(1);

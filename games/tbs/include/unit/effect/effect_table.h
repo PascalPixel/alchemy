@@ -16,6 +16,30 @@
 #define STRIKE_SPARKS 8 ///< each hit scatters sparks
 #define STRIKE_HEAVY 16 ///< one heavy hit: a big shake and the target recoils
 
+// The palettes a target strike's background takes (TARGET_STRIKE_COLOUR).
+#define STRIKE_COLOUR_BLUE 0      ///< BlueBeamSheet's
+#define STRIKE_COLOUR_LIME 1      ///< LimePalette
+#define STRIKE_COLOUR_PINK 2      ///< PinkPalette
+#define STRIKE_COLOUR_EMBER 3     ///< EmberStreakSheet's
+#define STRIKE_COLOUR_MARS 4      ///< MarsDjinnSheet's
+#define STRIKE_COLOUR_LIGHTNING 5 ///< LightningBoltSheet's
+
+/// The twelve target strike styles, rows of gTargetStrike_Records.
+enum TargetStrikeStyle {
+  TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS,
+  TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN,
+  TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS,
+  TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS,
+  TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS,
+  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS,
+  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH,
+  TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES,
+  TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH,
+  TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH,
+  TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN,
+  TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS
+};
+
 // Every table effect_table.c defines, in its order. A table read by columns
 // is a two-dimensional array, its columns named by the enum above it.
 extern u16 gBattleFx_MoteCells[];

@@ -11,21 +11,21 @@ struct EffectPosition;
 struct EffectStep;
 
 /// The large effects BattleFx_RunSceneEffect runs, by kind: the twelve
-/// summons. A summon's row of actflags.tsv has effect 0x8000 plus its kind;
-/// kind 0, which no row uses, runs Meteor's scene too.
+/// summons. A summon's row of actflags.tsv has effect 0x8000 plus its kind.
 enum SceneEffectKind {
-  SCENE_EFFECT_RAMSES = 1, ///< BattleFx_RunRamses (ramses.c)
-  SCENE_EFFECT_NEREID,     ///< BattleFx_RunNereid (nereid.c)
-  SCENE_EFFECT_KIRIN,      ///< BattleFx_RunKirin (kirin.c)
-  SCENE_EFFECT_ATALANTA,   ///< BattleFx_RunAtalanta (atalanta.c)
-  SCENE_EFFECT_CYBELE,     ///< BattleFx_RunCybele (cybele.c)
-  SCENE_EFFECT_NEPTUNE,    ///< BattleFx_RunNeptune (neptune.c)
-  SCENE_EFFECT_TIAMAT,     ///< BattleFx_RunTiamat (tiamat.c)
-  SCENE_EFFECT_PROCNE,     ///< BattleFx_RunProcne (procne.c)
-  SCENE_EFFECT_JUDGMENT,   ///< BattleFx_RunJudgment (judgment.c)
-  SCENE_EFFECT_BOREAS,     ///< BattleFx_RunBoreas (boreas.c)
-  SCENE_EFFECT_METEOR,     ///< BattleFx_RunMeteor (particle_streams.c)
-  SCENE_EFFECT_THOR        ///< BattleFx_RunThor (thor.c)
+  SCENE_EFFECT_NONE,     ///< no row uses it; runs Meteor's scene too
+  SCENE_EFFECT_RAMSES,   ///< BattleFx_RunRamses (ramses.c)
+  SCENE_EFFECT_NEREID,   ///< BattleFx_RunNereid (nereid.c)
+  SCENE_EFFECT_KIRIN,    ///< BattleFx_RunKirin (kirin.c)
+  SCENE_EFFECT_ATALANTA, ///< BattleFx_RunAtalanta (atalanta.c)
+  SCENE_EFFECT_CYBELE,   ///< BattleFx_RunCybele (cybele.c)
+  SCENE_EFFECT_NEPTUNE,  ///< BattleFx_RunNeptune (neptune.c)
+  SCENE_EFFECT_TIAMAT,   ///< BattleFx_RunTiamat (tiamat.c)
+  SCENE_EFFECT_PROCNE,   ///< BattleFx_RunProcne (procne.c)
+  SCENE_EFFECT_JUDGMENT, ///< BattleFx_RunJudgment (judgment.c)
+  SCENE_EFFECT_BOREAS,   ///< BattleFx_RunBoreas (boreas.c)
+  SCENE_EFFECT_METEOR,   ///< BattleFx_RunMeteor (particle_streams.c)
+  SCENE_EFFECT_THOR      ///< BattleFx_RunThor (thor.c)
 };
 
 /// An effect handler: plays one effect over the battle, frame by frame, and
@@ -33,8 +33,9 @@ enum SceneEffectKind {
 typedef void (*BattleFxHandler)(struct BattleEffectArgument *effect);
 /// Effect kinds: the kind an ability's gBattle_ActionFlags entry selects, by
 /// the handler that plays it; a later kind that shares a handler adds its
-/// number. Kinds without a handler have no name. Kind 0 is the dispatcher's.
+/// number. Kinds without a handler have no name.
 enum BattleFxKind {
+  BATTLE_FX_NONE = 0, ///< no effect: the dispatcher only clears the variant
   BATTLE_FX_QUAKE = 1,
   BATTLE_FX_SPIRE = 2,
   BATTLE_FX_GAIA = 3,

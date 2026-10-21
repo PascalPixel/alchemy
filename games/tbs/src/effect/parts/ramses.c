@@ -90,7 +90,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(16, 136);
   WaitFrames(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                           (s32)&ResourceId_DesertBackdrop, 0);
   BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);

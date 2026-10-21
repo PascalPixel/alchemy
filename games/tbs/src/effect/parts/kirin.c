@@ -82,7 +82,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 202);
   WaitFrames(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                           (s32)&ResourceId_ForestBackdrop, 0);
   BattleFx_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);

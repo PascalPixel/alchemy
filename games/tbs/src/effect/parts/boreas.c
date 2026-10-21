@@ -97,7 +97,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   gProjection.centerY = 240;
   BattleFx_SelectLivingTargets(work->effect);
   WaitFrames(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
   // The formation: nine objects from resource object 372, sprite priority 1.
   BattleFx_SpawnObjects(9, 0x174, 1);
   EFFECT_SHOW_WIDE_CANVAS(16);

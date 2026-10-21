@@ -185,13 +185,8 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
 /// BattleFx_RunImpactBurst. Places the objects through
 /// Object_ApplyProjectedPlacementFar and changes nothing else.
 ///
-/// formation: 0 = nine in a 3x3 grid at 32-pixel spacing (Thor);
-///            1 = twelve in rows of 1, 3, 4 and 4, from 16 left and 32 up
-///            (Nereid);
-///            2 = eight in rows of 3, 2 and 3, from 16 right (Cybele);
-///            3 = eight drawn at 1.25 times their size (Tiamat's
-///            BattleFx_RunPaletteParticles).
-/// Any other value places nothing.
+/// formation: the summon's layout (enum SummonFormation); any other value
+///            places nothing.
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   static struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale largeScale = {{{0x14000, 0x14000}}};
@@ -207,28 +202,28 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   // use of SpritePlacement.height would settle it.
   switch (formation) {
   // 1 << 21 is 32 pixels in 16.16.
-  case 0:
+  case SUMMON_FORMATION_THOR:
     for (i = 0; i != 9; i++) {
       pos.x = (i % 3 << 21) + x;
       pos.y = (i / 3 << 21) + z;
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
     }
     break;
-  case 1:
+  case SUMMON_FORMATION_NEREID:
     for (i = 0; i != 12; i++) {
       pos.x = (gHelmSplitter_TwelveX[i] << 16) + x - (16 << 16);
       pos.y = (gHelmSplitter_TwelveZ[i] << 16) + z - (32 << 16);
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
     }
     break;
-  case 2:
+  case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != 8; i++) {
       pos.x = (gHelmSplitter_RightEightX[i] << 16) + x + (16 << 16);
       pos.y = (gHelmSplitter_RightEightZ[i] << 16) + z;
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
     }
     break;
-  case 3:
+  case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != 8; i++) {
       pos.x = (gHelmSplitter_SmallEightX[i] << 16) + x;
       pos.y = (gHelmSplitter_SmallEightZ[i] << 16) + z;

@@ -156,7 +156,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
                                 EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY;
   BattleFx_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                           (s32)&ResourceId_DuskCloudsBackdrop, 0);
   // The projection centre moves down to line 240 for the dusk part;
   // BattleFx_SetupBlendedDisplay puts it back.
   gProjection.centerY = 240;
@@ -604,7 +605,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
           formationSpeedX = formationSpeedX * 60 / 64;
           formationSpeedY = formationSpeedY * 60 / 64;
         }
-        BattleFx_PlaceFormationObjects(0, formationX, formationY);
+        BattleFx_PlaceFormationObjects(SUMMON_FORMATION_THOR, formationX,
+                                       formationY);
       }
       // Frames 16 to 143: three puffs of smoke a frame around the
       // formation, from the first three glint cells, placed and flipped at
@@ -638,7 +640,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
 
     Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-    BattleFx_RunImpactBurst(0, formationX, formationY);
+    BattleFx_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);

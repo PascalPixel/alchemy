@@ -152,8 +152,8 @@ void BattleFx_ProcessPendingGraphicsTransfer(void) {
 
 /// Copies a full-screen picture to VRAM once the effect has finished drawing
 /// a frame: the 0x7800 bytes of Ram_MapCellBuffer into BG character block 2
-/// (0x06008000), the way transferMode says (modes 0 to 3; brightening is not
-/// offered).
+/// (0x06008000), the way transferMode says (every mode but
+/// CANVAS_COPY_AND_BRIGHTEN).
 ///
 /// Runs each frame as a scheduler callback added by
 /// BattleFx_RunParticleStreams, which removes it before it returns. Clears
@@ -325,9 +325,9 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   s32 offset;
 
   // The background view's secondMode, which also sets BG1's scroll while it
-  // is 1, holds for the frames BG2 is being changed.
+  // is BATTLE_BACKGROUND_FLAT, holds for the frames BG2 is being changed.
   BattleFx_ClearActorTimers();
-  display->secondMode = 1;
+  display->secondMode = BATTLE_BACKGROUND_FLAT;
   WaitFrames(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, 0x20000);
@@ -335,7 +335,8 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
   WaitFrames(1);
 
   // Start the background palette fade.
-  BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
+  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_FLAT,
+                                             battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
   Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer,
@@ -357,7 +358,7 @@ void BattleFx_BeginCanvasLayer(s32 bgControl) {
                           DISPCNT_WIN1_ON,
                       0x20000);
   BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
-  display->secondMode = 0;
+  display->secondMode = BATTLE_BACKGROUND_NONE;
   WaitFrames(1);
   // Show it: 14/16 of the canvas over all below, inside both windows.
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -405,7 +406,7 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
   s32 offset;
 
   BattleFx_ClearActorTimers();
-  display->secondMode = 1;
+  display->secondMode = BATTLE_BACKGROUND_FLAT;
   WaitFrames(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -414,7 +415,8 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
                       0x20000);
   gBgScroll[1].y = 32;
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 128);
+  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_FLAT,
+                                             battle->background, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer,
@@ -431,7 +433,7 @@ void BattleFx_OpenCanvasLayer(s32 bgControl) {
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
                       0x20000);
   BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
-  display->secondMode = 0;
+  display->secondMode = BATTLE_BACKGROUND_NONE;
   WaitFrames(1);
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -517,7 +519,8 @@ void BattleFx_EndCanvasLayer(void) {
   REG_BLDCNT = 0;
   WaitFrames(1);
 
-  BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 7);
+  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_PLANE,
+                                             battle->background, 7);
   WaitFrames(1);
   for (i = 0; i != 8; i++) {
     BattlePresentation_SetPaletteLevelFar(battle->background, 21 - i * 3);
@@ -535,9 +538,9 @@ void BattleFx_EndCanvasLayer(void) {
 /// Hides BG1 and the windows and starts bringing the backdrop's palette back.
 ///
 /// Called by BattleFx_RunBeamSequence and BattleFx_RunRingAndSparkScene
-/// (beams.c). Sets the background view's secondMode to 1, queues DISPCNT for
-/// two frames later, starts the battle's palette fade (mode 2) and waits two
-/// frames.
+/// (beams.c). Sets the background view's secondMode to BATTLE_BACKGROUND_FLAT,
+/// queues DISPCNT for two frames later, starts the battle's palette fade to
+/// BATTLE_BACKGROUND_PLANE and waits two frames.
 void BattleFx_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
@@ -546,12 +549,13 @@ void BattleFx_HideBg1AndRestoreBackdrop(void) {
       &((struct BattleBackgroundView *)WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND))
            ->secondMode;
   battle = WORK_SLOT(HEAP_SLOT_BATTLE);
-  *flag = 1;
+  *flag = BATTLE_BACKGROUND_FLAT;
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
                                               DISPCNT_BG0_ON | DISPCNT_BG2_ON |
                                               DISPCNT_OBJ_ON);
   WaitFrames(1);
-  BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
+  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_PLANE,
+                                             battle->background, 0);
   WaitFrames(1);
 }
 
@@ -564,11 +568,12 @@ void BattleFx_HideBg1AndRestoreBackdrop(void) {
 /// BattleFx_FlushPendingGraphicsTransfer instead.
 ///
 /// Called by BattleFx_RunBeamSequence and BattleFx_RunRingAndSparkScene
-/// (beams.c). Clears work->actorTimers, starts the battle's palette fade
-/// (mode 2), clears tile 0xff of character block 0 and writes BG1's map in
-/// screen block 31; writes DISPCNT, BG1CNT, BLDCNT, BLDALPHA, the windows,
-/// WININ and WINOUT directly; sets gBgScroll[1].y to 32 and the background
-/// view's secondMode to 0; clears the canvas and character block 1.
+/// (beams.c). Clears work->actorTimers, starts the battle's palette fade to
+/// BATTLE_BACKGROUND_PLANE, clears tile 0xff of character block 0 and writes
+/// BG1's map in screen block 31; writes DISPCNT, BG1CNT, BLDCNT, BLDALPHA, the
+/// windows, WININ and WINOUT directly; sets gBgScroll[1].y to 32 and the
+/// background view's secondMode to BATTLE_BACKGROUND_NONE; clears the canvas
+/// and character block 1.
 void BattleFx_SetupCanvasTileMap(void) {
   // UB: indexing past gBattleWork reaches the work slots after it.
 #ifdef UBFIX
@@ -586,9 +591,10 @@ void BattleFx_SetupCanvasTileMap(void) {
   s32 byteOffset;
 
   BattleFx_ClearActorTimers();
-  BattlePresentation_ConfigurePaletteFadeFar(2, screen->background, 0);
+  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_PLANE,
+                                             screen->background, 0);
   gBgScroll[1].y = 32;
-  layer->secondMode = 0;
+  layer->secondMode = BATTLE_BACKGROUND_NONE;
   // Blank tile 0xff, then map rows 4 to 11 filled with 0xffff.
   // XXX: what map entry 0xffff shows (tile 0x3ff, flipped, palette 15, in
   // a 256-colour layer); a VRAM view of a beam scene would settle whether

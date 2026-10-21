@@ -349,15 +349,16 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
 /// flashes.
 ///
 /// Called through BattleFx_RunElementPillarFar by
-/// BattleFx_PlayUnitElementEffect (its mode 2) and four times in a row, one
+/// BattleFx_PlayUnitElementEffect (GLOW_PILLAR) and four times in a row, one
 /// for each element, by BattlePres_RunUnitAction. Allocates and frees its
 /// own work, canvas and sheet slots; loads the element's colours over the
 /// first 64 of the background palette, fills PARTICLES 0 to 127 and moves
 /// BG2X with the unit. Increments effect->variant in place, so
 /// BattlePres_RunUnitAction's four calls draw ever larger motes.
 ///
-/// effect->kind    : the element, which picks the palette: 0 Venus yellow,
-///                   1 Mercury blue, 2 Mars red, others Jupiter violet.
+/// effect->kind    : the element (enum Element), which picks the palette:
+///                   Venus yellow, Mercury blue, Mars red, others Jupiter
+///                   violet.
 /// effect->variant : the mote size less one, kept to 1 to 4 after adding 1.
 void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
@@ -392,13 +393,13 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   switch (work->effect->kind) {
-  case 0:
+  case ELEMENT_VENUS:
     palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
     break;
-  case 2:
+  case ELEMENT_MARS:
     palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
     break;
   default:
@@ -548,7 +549,7 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
 /// copies it over 0x7800 bytes of BG character block 2; writes background
 /// colours 1 to 63 and palettes 6 to 13; reloads the battle backdrop on BG1 on
 /// frame 5, and on its way out restores gBgScroll[1], starts the battle's
-/// palette fade (mode 2) and queues a DISPCNT without BG1.
+/// palette fade to BATTLE_BACKGROUND_PLANE and queues a DISPCNT without BG1.
 ///
 /// effect : only effect->actors[0], the unit that flashes, is read.
 void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
@@ -597,15 +598,16 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
   // but without its waits: twice the width, 16 lines down, inside both
   // windows.
   BattleFx_ClearActorTimers();
-  view->secondMode = 1;
+  view->secondMode = BATTLE_BACKGROUND_FLAT;
   gBgScroll[1].y = 32;
-  BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
+  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_FLAT,
+                                             battle->background, 0);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   // Aim the camera at the field's centre at 100% zoom, lining the backdrop's
   // perspective plane up with it.
   BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
-  view->secondMode = 0;
+  view->secondMode = BATTLE_BACKGROUND_NONE;
   EFFECT_SET_CANVAS_AFFINE();
   EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
@@ -699,7 +701,7 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
     // battle->palette, the colours the load fills.
     if (frame == 5) {
       gBgScroll[1].x = work->savedBg1X;
-      BattleBackground_LoadFar(1, battle->background, -1);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT, battle->background, -1);
     }
 
     // From frame 8, move every colour of palettes 6 to 13 one step towards
@@ -896,7 +898,8 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
   ObjectGroup_UpdateMembers(work->effect->actors[0], -1, POSE_STANDING, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
-  BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
+  BattlePresentation_ConfigurePaletteFadeFar(BATTLE_BACKGROUND_PLANE,
+                                             battle->background, 0);
   WaitFrames(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -926,13 +929,13 @@ struct Streak {
 /// over the unit while the first target flashes.
 ///
 /// Called through BattleFx_RunElementBurstFar by
-/// BattleFx_PlayUnitElementEffect (its mode 3). Allocates and frees its own
+/// BattleFx_PlayUnitElementEffect (GLOW_BURST). Allocates and frees its own
 /// work, canvas and sheet slots; loads the element's colours over the first
 /// 64 of the background palette, fills PARTICLES 0 to 127 and
 /// work->particles, and moves BG2X with the unit.
 ///
-/// effect->kind : the element, which picks the palette: 0 Venus yellow,
-///                1 Mercury blue, 2 Mars red, others Jupiter violet.
+/// effect->kind : the element (enum Element), which picks the palette: Venus
+///                yellow, Mercury blue, Mars red, others Jupiter violet.
 void BattleFx_RunElementBurst(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
   struct BattleEffectWork *work;
@@ -958,13 +961,13 @@ void BattleFx_RunElementBurst(struct BattleEffectArgument *effect) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   switch (work->effect->kind) {
-  case 0:
+  case ELEMENT_VENUS:
     palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
     break;
-  case 2:
+  case ELEMENT_MARS:
     palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
     break;
   default:
@@ -1137,15 +1140,16 @@ void BattleFx_DrawStreaks(void) {
 /// schedules BattleFx_DrawStreaks with a canvas that darkens each frame.
 ///
 /// Called through BattleFx_StartElementStreaksFar by
-/// BattleFx_PlayUnitElementEffect (its mode 1), which keeps the canvas on
+/// BattleFx_PlayUnitElementEffect (GLOW_STREAKS), which keeps the canvas on
 /// its unit and ends the burst with BattleFx_EndElementStreaks. Allocates
 /// the work and canvas slots, which the end frees; loads the element's
 /// colours over the first 64 of the background palette; adds
 /// BattleFx_DrawStreaks and the canvas transfer to the scheduler, beside the
 /// backdrop fade BattleFx_BeginCanvasLayer adds.
 ///
-/// element: the element, which picks the palette: 0 Venus yellow, 1 Mercury
-///        blue, 2 Mars red, 3 Jupiter violet, others a dusty grey.
+/// element: the element (enum Element), which picks the palette: Venus
+///          yellow, Mercury blue, Mars red, Jupiter violet, and a dusty grey
+///          for none.
 void BattleFx_StartElementStreaks(s32 element) {
   struct BattleEffectWork *work;
   void *palette;
@@ -1158,19 +1162,19 @@ void BattleFx_StartElementStreaks(s32 element) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   switch (element) {
-  case 0:
+  case ELEMENT_VENUS:
     id = (s32)&ResourceId_YellowPaletteB;
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     id = (s32)&ResourceId_CrystalSheet;
     break;
-  case 2:
+  case ELEMENT_MARS:
     id = (s32)&ResourceId_EmberStreakSheet;
     break;
-  case 3:
+  case ELEMENT_JUPITER:
     id = (s32)&ResourceId_VioletPaletteD;
     break;
-  case 4:
+  case ELEMENT_NONE:
   default:
     id = (s32)&ResourceId_DustPuffSheet;
     break;

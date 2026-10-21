@@ -389,7 +389,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
         AnimationObjects_SelectAnimationFar(work->objects[3], 3);
         AnimationObjects_SelectAnimationFar(work->objects[4], 4);
       }
-      BattleFx_PlaceFormationObjects(3, focus.x, focus.y);
+      BattleFx_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     }
     if (frame == 138) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
@@ -442,7 +442,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   if (mode == PALETTE_PARTICLES_TIAMAT) {
-    BattleFx_RunImpactBurst(3, focus.x, focus.y);
+    BattleFx_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     for (i = 0; i != 8; i++)
       ResourceObject_ReleaseFar(work->objects[i]);
   }

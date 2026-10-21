@@ -64,16 +64,16 @@ UNUSED void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
         // for later stars.
         Transform_Push();
         switch (i & 3) {
-        case 0:
+        case SPIN_YAW:
           SceneTransform_ApplyYaw(frame * (i + 32) * 8);
           break;
-        case 1:
+        case SPIN_PITCH:
           SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
           break;
-        case 2:
+        case SPIN_ROLL:
           SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
           break;
-        case 3:
+        case SPIN_PITCH_AND_ROLL:
           SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
           SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
           break;

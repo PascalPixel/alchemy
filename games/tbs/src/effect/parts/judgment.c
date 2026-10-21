@@ -132,7 +132,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   BattleFx_SpawnObjects(JUDGMENT_FORMATION_OBJECTS, 0x17e, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
   // The scene owns BG1's scroll until frame 280 of the sweep.
   ctrl->active = 1;
   gBgScroll[1].x = 0;
@@ -485,7 +486,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   // from the left, so the 120-pixel wave picture is centred on the screen.
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                           (s32)&ResourceId_AerialViewBackdrop, 0);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = -0x3c00;
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -585,7 +587,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // battle's copy with every channel 7 levels darker.
     if (frame == 70) {
       BattlePresentation_ConfigurePaletteFadeFar(
-          1, (s32)&ResourceId_AerialViewBackdrop, 7);
+          BATTLE_BACKGROUND_FLAT, (s32)&ResourceId_AerialViewBackdrop, 7);
     }
 
     // Frame 150, the beach: the rings restart from (112, 32), four a frame
@@ -600,7 +602,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x3f3f3f3f;
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                               (s32)&ResourceId_BeachBackdrop, 0);
     }
 
     // Frame 214, the forest: 16 debris pieces start rising from the forest
@@ -611,7 +614,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x3f3f3f3f;
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
-      BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                               (s32)&ResourceId_ForestBackdrop, 0);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
         particle->x = ((Random16() & 63) + 32) << 16;

@@ -23,29 +23,14 @@ enum {
   TARGET_STRIKE_KIND,         ///< STRIKE_KIND_SLASH or STRIKE_KIND_COLUMN
   TARGET_STRIKE_HITS,         ///< how many times the target is struck
   TARGET_STRIKE_FLAGS,        ///< STRIKE_SMOKE and so on
-  TARGET_STRIKE_COLOUR,       ///< background palette, 0 to 5 (see below)
+  TARGET_STRIKE_COLOUR,       ///< background palette, a STRIKE_COLOUR_
   TARGET_STRIKE_IMAGE_FRAMES, ///< frames each strike image is shown
   TARGET_STRIKE_COMPOSITE,    ///< how the columns are drawn (COMPOSITE_MAX or
                               ///< _ADDITIVE)
   TARGET_STRIKE_FRAMES        ///< length of the effect in frames
 };
-// STRIKE_KIND_* and the STRIKE_SMOKE flags are in effect_table.h.
-
-/// The twelve styles, rows of gTargetStrike_Records.
-enum {
-  TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS = 0,
-  TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN = 1,
-  TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS = 2,
-  TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS = 3,
-  TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS = 4,
-  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS = 5,
-  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH = 6,
-  TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES = 7,
-  TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH = 8,
-  TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH = 9,
-  TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN = 10,
-  TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS = 11
-};
+// STRIKE_KIND_*, the STRIKE_SMOKE flags, the STRIKE_COLOUR_ palettes and enum
+// TargetStrikeStyle are in effect_table.h.
 
 /// One slash strikes the first target among glints, in lightning colours.
 ///
@@ -134,7 +119,7 @@ void BattleFx_RunDrainFang(struct BattleEffectArgument *effect) {
 /// blitters in both slots every frame, sets work->shakeFrames on each hit and
 /// lights the user while an absorb runs. Leaves the canvas layer closed.
 ///
-/// mode : the style, 0 to 11, a row of gTargetStrike_Records.
+/// mode: the style (enum TargetStrikeStyle), a row of gTargetStrike_Records.
 void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition ground;
   struct EffectPosition targetPosition;
@@ -181,22 +166,22 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
                                work->sheet + 0xc80, 0, 0);
   switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOUR)) {
-  case 0:
+  case STRIKE_COLOUR_BLUE:
     resource = (s32)&ResourceId_BlueBeamSheet;
     break;
-  case 1:
+  case STRIKE_COLOUR_LIME:
     resource = (s32)&ResourceId_LimePalette;
     break;
-  case 2:
+  case STRIKE_COLOUR_PINK:
     resource = (s32)&ResourceId_PinkPalette;
     break;
-  case 3:
+  case STRIKE_COLOUR_EMBER:
     resource = (s32)&ResourceId_EmberStreakSheet;
     break;
-  case 4:
+  case STRIKE_COLOUR_MARS:
     resource = (s32)&ResourceId_MarsDjinnSheet;
     break;
-  case 5:
+  case STRIKE_COLOUR_LIGHTNING:
   default:
     resource = (s32)&ResourceId_LightningBoltSheet;
     break;

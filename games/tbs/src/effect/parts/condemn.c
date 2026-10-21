@@ -254,7 +254,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   // blocks; a VRAM view after the panel breaks would show what it repairs.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
-  BattleBackground_LoadFar(1, gBattleWork->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT, gBattleWork->background, 24);
   EFFECT_RELEASE_BLITTERS();
   BattleFx_EndCanvasLayer();
 }

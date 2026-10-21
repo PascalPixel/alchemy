@@ -173,7 +173,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     height += speed;
     if (height > 64 << 16)
       height = 64 << 16;
-    BattleFx_PlaceFormationObjects(2, 128 << 16, height);
+    BattleFx_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, 128 << 16, height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
@@ -537,7 +537,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-  BattleFx_RunImpactBurst(2, 128 << 16, height);
+  BattleFx_RunImpactBurst(SUMMON_FORMATION_CYBELE, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   BattleFx_EndCanvasLayer();

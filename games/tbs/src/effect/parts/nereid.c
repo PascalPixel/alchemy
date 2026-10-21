@@ -125,7 +125,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
         if (focus.x < 120 << 16)
           velocity.x += 0x8000;
       }
-      BattleFx_PlaceFormationObjects(1, focus.x, focus.y);
+      BattleFx_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x, focus.y);
 
       // Embers burst up from an oval around (32, 96), twice as tall as wide
       // on the canvas and so round on the doubled-width screen, with a random
@@ -267,7 +267,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
     // The impact burst builds its own blitters and transfer.
     Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
-    BattleFx_RunImpactBurst(1, focus.x, focus.y);
+    BattleFx_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)
       ResourceObject_ReleaseFar(work->objects[k]);
   }

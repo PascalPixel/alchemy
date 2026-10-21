@@ -4,6 +4,18 @@
 
 #include "../effect_internal.h"
 
+/// The beam sequence's pictures, by effect kind: the kinds below 100 that
+/// BattleFx_DispatchByIdRange sends here. No ability's row selects one; the
+/// unused BattlePres_RunPlainAttack plays an attack's kind, 0 for Attack.
+enum BeamKind {
+  BEAM_PLAIN_ATTACK,  ///< blue arc A: Attack's kind
+  BEAM_ARC_A,         ///< blue arc A
+  BEAM_ARC_B,         ///< blue arc B
+  BEAM_IMAGE,         ///< the beam sequence image, growing
+  BEAM_WAVE,          ///< the wave, played backwards
+  BEAM_ARC_A_INVERTED ///< blue arc A, upside down
+};
+
 /// Draws the selected beam and its projected sparks over the first target: a
 /// beam, arc or wave shoots from the user; from frame 4 the target is hit,
 /// a yellow orb flashes over it and sparks fly off, for 32 frames in all.
@@ -11,12 +23,12 @@
 ///
 /// Reached through BattleFx_DispatchByIdRange for kinds 136 to 199 and,
 /// through its unsigned test, every kind below 100; BattlePres_RunPlainAttack
-/// (battle/staging.c) sends every plain attack there. Only kinds 0 to 5 have
-/// pictures. Shows the canvas on BG1 (BattleFx_SetupCanvasTileMap), loads
-/// palette colours 0 to 63, scrolls BG1 through gBgScroll[1] and uses
-/// work->particles 0 to 63 (only 0 to 31 fly) and both blitter slots; at the
-/// end it removes the transfer callback, frees the blitters, sets
-/// gBgScroll[1].y back to 32 and hides BG1 again
+/// (battle/staging.c) sends every plain attack there. Only the kinds of enum
+/// BeamKind have pictures. Shows the canvas on BG1
+/// (BattleFx_SetupCanvasTileMap), loads palette colours 0 to 63, scrolls BG1
+/// through gBgScroll[1] and uses work->particles 0 to 63 (only 0 to 31 fly) and
+/// both blitter slots; at the end it removes the transfer callback, frees the
+/// blitters, sets gBgScroll[1].y back to 32 and hides BG1 again
 /// (BattleFx_HideBg1AndRestoreBackdrop).
 void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
@@ -53,9 +65,9 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   WaitFrames(1);
-  // Two blitters, additive and brightest-wins; kind 5 draws its pictures
-  // upside down, and side 1 mirrors them.
-  if (kind == 5) {
+  // Two blitters, additive and brightest-wins; BEAM_ARC_A_INVERTED draws its
+  // pictures upside down, and side 1 mirrors them.
+  if (kind == BEAM_ARC_A_INVERTED) {
     if (work->effect->side == 0) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
@@ -90,24 +102,23 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   draw[0] = slots[HEAP_SLOT_BLITTER];
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
   WaitFrames(1);
-  // The picture: kind 4 the wave, 3 the beam image, 0, 1 and 5 blue arc A,
-  // 2 blue arc B. An enemy user (unit id above 7) takes the small Mars
-  // Djinni's palette, a party member the crescent's. The sparks and the
+  // The picture, by BeamKind. An enemy user (unit id above 7) takes the small
+  // Mars Djinni's palette, a party member the crescent's. The sparks and the
   // yellow orb follow.
-  if (kind == 4) {
+  if (kind == BEAM_WAVE) {
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
-  } else if (kind == 3) {
+  } else if (kind == BEAM_IMAGE) {
     Resource_LoadAndDecompress((s32)&ResourceId_BeamSequenceImage, work->sheet,
                                0, 0);
   } else {
     switch (kind) {
-    case 0:
-    case 1:
-    case 5:
+    case BEAM_PLAIN_ATTACK:
+    case BEAM_ARC_A:
+    case BEAM_ARC_A_INVERTED:
       Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
                                  1);
       break;
-    case 2:
+    case BEAM_ARC_B:
       Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
                                  1);
       break;
@@ -181,7 +192,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
     // cells, three frames each.
     EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
     screenPosition.y += 16;
-    if (kind == 4) {
+    if (kind == BEAM_WAVE) {
       if (frame <= 11) {
         if (work->effect->side == 0)
           draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
@@ -191,7 +202,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
           draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
                   screenPosition.x + scrollX, screenPosition.y - 8, 48, 16);
       }
-    } else if ((u32)kind <= 2 || kind == 5) {
+    } else if ((u32)kind <= BEAM_ARC_B || kind == BEAM_ARC_A_INVERTED) {
       if (frame <= 11) {
         if (work->effect->side == 0)
           draw[1](canvas, work->sheet + frame / 2 * (48 * 72),

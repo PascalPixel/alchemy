@@ -103,7 +103,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   gProjection.centerY = 240;
   WaitFrames(1);
   // The violet sky scrolls one pixel left every four frames.
-  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                           (s32)&ResourceId_VioletSkyBackdrop, 0);
   work->scrollTimer = 0;
   work->scrollInterval = 4;
   work->scrollStepX = -1;

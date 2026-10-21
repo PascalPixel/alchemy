@@ -114,7 +114,8 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   BattleFx_SpawnObjects(NEPTUNE_OBJECTS, 0x17a, 1);
   gProjection.centerY = 240;
   WaitFrames(1);
-  BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                           (s32)&ResourceId_DuskCloudsBackdrop, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,

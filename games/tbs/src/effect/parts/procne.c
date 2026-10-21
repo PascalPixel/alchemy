@@ -296,9 +296,10 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
       s32 speed;
       s32 angle;
 
-      BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
+                               (s32)&ResourceId_VioletSkyBackdrop, 0);
       BattlePresentation_ConfigurePaletteFadeFar(
-          1, (s32)&ResourceId_VioletSkyBackdrop, 8);
+          BATTLE_BACKGROUND_FLAT, (s32)&ResourceId_VioletSkyBackdrop, 8);
       BattleFx_SelectLivingTargets(work->effect);
       BattleFx_SpawnObjects(9, 376, 2);
 

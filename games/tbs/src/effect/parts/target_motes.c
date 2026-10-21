@@ -5,6 +5,19 @@
 
 #include "../effect_internal.h"
 
+/// The target motes' styles (BattleFx_RunTargetMotes), each named for the
+/// effect that plays it.
+enum TargetMotesMode {
+  TARGET_MOTES_TAINT,       ///< lime smoke closing in
+  TARGET_MOTES_PINK_SMOKE,  ///< pink smoke closing in; Taint's stronger variant
+  TARGET_MOTES_DELUDE,      ///< cyan smoke rising
+  TARGET_MOTES_PARALYZE,    ///< smoke rising, with glints
+  TARGET_MOTES_HEARTRENDER, ///< hearts closing in
+  TARGET_MOTES_MYSTIC_FLAME, ///< glowing orbs closing in
+  TARGET_MOTES_DROWN,        ///< vortex motes closing in
+  TARGET_MOTES_DEMON_FIRE ///< orbs in Mars Djinn colours rising, then a strike
+};
+
 // Swirling motes around each target, in eight styles of one runner,
 // BattleFx_RunTargetMotes. Each mote cycles through six images, 4 frames
 // each, and then starts again: a closing mote where it is, a rising one at a
@@ -15,74 +28,77 @@
 // image cycle. The bouncing sheep (Sleep) that follow keep theirs in
 // PARTICLES too, and the flames of Curse in work->particles.
 
-/// Lime smoke swirls in on each target, or pink smoke when effect->variant
-/// isn't 0.
+/// Lime smoke swirls in on each target, or pink smoke for a stronger variant.
 ///
 /// Abilities: Taint, Poison (BATTLE_FX_TAINT).
 void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
-  if (effect->variant == 0) {
-    BattleFx_RunTargetMotes(effect, 0);
+  if (effect->variant == EFFECT_VARIANT_BASIC) {
+    BattleFx_RunTargetMotes(effect, TARGET_MOTES_TAINT);
     return;
   }
-  BattleFx_RunTargetMotes(effect, 1);
+  BattleFx_RunTargetMotes(effect, TARGET_MOTES_PINK_SMOKE);
 }
 
-/// Pink smoke swirls in on each target, as Taint shows it when
-/// effect->variant isn't 0. No ☀️ effect table entry points here.
-UNUSED void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 1);
+/// Pink smoke swirls in on each target, as Taint shows it for a stronger
+/// variant. No ☀️ effect table entry points here.
+UNUSED void BattleFx_RunUnusedPinkSmoke(struct BattleEffectArgument *effect) {
+  BattleFx_RunTargetMotes(effect, TARGET_MOTES_PINK_SMOKE);
 }
 
 /// Cyan smoke rises around each target.
 ///
 /// Abilities: Delude, Confuse, Mist (BATTLE_FX_DELUDE).
 void BattleFx_RunDelude(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 2);
+  BattleFx_RunTargetMotes(effect, TARGET_MOTES_DELUDE);
 }
 /// Smoke rises around each target, and glints sparkle near it.
 ///
 /// Abilities: Paralyze (BATTLE_FX_PARALYZE).
 void BattleFx_RunParalyze(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 3);
+  BattleFx_RunTargetMotes(effect, TARGET_MOTES_PARALYZE);
 }
 /// Hearts close in on each target, turning as they come.
 ///
 /// Abilities: Heartrender (BATTLE_FX_HEARTRENDER_346); none
 /// (BATTLE_FX_HEARTRENDER).
 void BattleFx_RunHeartrender(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 4);
+  BattleFx_RunTargetMotes(effect, TARGET_MOTES_HEARTRENDER);
 }
 /// Glowing orbs spiral in on each target.
 ///
 /// Abilities: Mystic Flame (BATTLE_FX_MYSTIC_FLAME).
 void BattleFx_RunMysticFlame(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 5);
+  BattleFx_RunTargetMotes(effect, TARGET_MOTES_MYSTIC_FLAME);
 }
 /// Glowing orbs in Mars Djinn colours rise around each target, and then the
 /// user steps up to the first target and strikes it.
 ///
 /// Abilities: Demon Fire (BATTLE_FX_DEMON_FIRE).
 void BattleFx_RunDemonFire(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 7);
+  BattleFx_RunTargetMotes(effect, TARGET_MOTES_DEMON_FIRE);
 }
 /// Thirty-two vortex motes spiral in on each target.
 ///
 /// Abilities: Drown (BATTLE_FX_DROWN).
 void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
-  BattleFx_RunTargetMotes(effect, 6);
+  BattleFx_RunTargetMotes(effect, TARGET_MOTES_DROWN);
 }
 /// Styles whose motes start in a wide ball and last 64 frames more.
 #define TARGET_MOTES_START_WIDE(mode)                                          \
-  ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
+  ((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_HEARTRENDER ||  \
+   (mode) == TARGET_MOTES_MYSTIC_FLAME || (mode) == TARGET_MOTES_DROWN ||      \
+   (mode) == TARGET_MOTES_DEMON_FIRE)
 /// Styles whose motes close in on the target; the others rise.
 #define TARGET_MOTES_CLOSE_IN(mode)                                            \
-  ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
+  ((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_HEARTRENDER ||  \
+   (mode) == TARGET_MOTES_MYSTIC_FLAME || (mode) == TARGET_MOTES_DROWN)
 
-/// Modes other than 0, 1 and 3 ripple the canvas: BG2's x is set line by
-/// line from work->bg2xLines (BattleFx_ArmBg2AffineHBlankDma).
-#define TARGET_MOTES_RIPPLE(mode) (!((mode) <= 1 || (mode) == 3))
+/// Every style but Taint's smokes and Paralyze ripples the canvas: BG2's x is
+/// set line by line from work->bg2xLines (BattleFx_ArmBg2AffineHBlankDma).
+#define TARGET_MOTES_RIPPLE(mode)                                              \
+  (!((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_PARALYZE))
 
-/// Where mode 3 keeps its glint images in work->sheet.
+/// Where Paralyze keeps its glint images in work->sheet.
 enum { TARGET_MOTES_GLINT_CELLS = 0x2580 };
 
 #define TARGET_MOTES 512      ///< motes scattered at the start
@@ -92,24 +108,20 @@ enum { TARGET_MOTES_GLINT_CELLS = 0x2580 };
 /// Around each target in turn, 8 frames apart, motes (smoke, hearts, orbs)
 /// turn about a point 20 pixels up, either closing in on it or rising, and
 /// the target flashes until the end; the battle shows the damage 32 frames
-/// before the end. The effect layer ripples, except in modes 0, 1 and 3.
+/// before the end. The effect layer ripples, except for Taint's smokes and
+/// Paralyze.
 ///
-/// Called by the wrappers above: BattleFx_RunTaint (mode 0 or 1),
-/// BattleFx_RunDelude (2), BattleFx_RunParalyze (3), BattleFx_RunHeartrender
-/// (4), BattleFx_RunMysticFlame (5), BattleFx_RunDrown (6) and
-/// BattleFx_RunDemonFire (7).
+/// Called by the wrappers above, each with its enum TargetMotesMode.
 ///
 /// Lasts 8 frames a target plus 64 (the wide styles) or 32. Overwrites
 /// PARTICLES 0 to 511, loads the mode's palette into the first 64 background
 /// colours, and in the rippling modes writes work->bg2xLines each frame for
 /// BattleFx_ArmBg2AffineHBlankDma, which it schedules and removes. It builds
 /// both blitters afresh for each target every frame and releases them again,
-/// mode 3 a mirrored one for each glint too, so it ends with none held. Mode
-/// 7 sets work->shakeFrames.
+/// Paralyze a mirrored one for each glint too, so it ends with none held.
+/// Demon Fire sets work->shakeFrames.
 ///
-/// mode : 0 lime smoke, 1 pink smoke, 2 cyan smoke, 3 smoke with glints,
-///        4 hearts, 5 glowing orbs, 6 vortex motes, 7 orbs in Mars Djinn
-///        colours, with the user stepping up to strike the first target.
+/// mode: the style (enum TargetMotesMode).
 void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -128,26 +140,26 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
 
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  // Motes drawn for each target: 16, but 24 in mode 7 and 32 in mode 6.
+  // Motes drawn for each target: 16, but 24 for Demon Fire and 32 for Drown.
   count = 16;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
-  if (mode == 0) {
+  if (mode == TARGET_MOTES_TAINT) {
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  } else if (mode == 1) {
+  } else if (mode == TARGET_MOTES_PINK_SMOKE) {
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-  } else if (mode == 2) {
+  } else if (mode == TARGET_MOTES_DELUDE) {
     palette = Resource_GetTableEntry((s32)&ResourceId_CyanPalette);
-  } else if (mode == 3) {
+  } else if (mode == TARGET_MOTES_PARALYZE) {
     palette = Resource_GetTableEntry((s32)&ResourceId_BlastSheet);
-  } else if (mode == 4) {
+  } else if (mode == TARGET_MOTES_HEARTRENDER) {
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-  } else if (mode == 5) {
+  } else if (mode == TARGET_MOTES_MYSTIC_FLAME) {
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
                                0);
     palette = Resource_GetTableEntry((s32)&ResourceId_GlowOrbSheet);
-  } else if (mode == 7) {
+  } else if (mode == TARGET_MOTES_DEMON_FIRE) {
     count = 24;
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet, 1,
                                0);
@@ -158,9 +170,9 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   }
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  if (mode == 4)
+  if (mode == TARGET_MOTES_HEARTRENDER)
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
-  if (mode == 3)
+  if (mode == TARGET_MOTES_PARALYZE)
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                                work->sheet + TARGET_MOTES_GLINT_CELLS, 1, 0);
 
@@ -198,9 +210,9 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = gCameraWork;
 
-    // Mode 7: the user steps up to the first target 46 frames before the
+    // Demon Fire: the user steps up to the first target 46 frames before the
     // end and strikes it 32 frames before the end, shaking the screen.
-    if (mode == 7) {
+    if (mode == TARGET_MOTES_DEMON_FIRE) {
       if (frame == total - 46)
         BattleMotion_ApproachTargetFar(work->effect->actor,
                                        work->effect->actors[0], 16, 0);
@@ -223,9 +235,10 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
 
-      // Mode 3: two glints a frame, 4 to 35 pixels from the target in a
+      // Paralyze: two glints a frame, 4 to 35 pixels from the target in a
       // random direction, each mirrored at random.
-      if (mode == 3 && frame > member * 8 && frame < member * 8 + 32) {
+      if (mode == TARGET_MOTES_PARALYZE && frame > member * 8 &&
+          frame < member * 8 + 32) {
         EffectPosition_ProjectScaledBattler(work->effect->actors[member],
                                             &base);
         for (i = 0; i != 2; i++) {
@@ -262,12 +275,12 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, object->x, 160 << 13, object->z);
       SceneTransform_ApplyPosition(point);
-      // Turn the group about the vertical axis, and in modes 0, 1 and 4
-      // about the horizontal one too; mote i joins i frames after the
-      // target's turn starts and takes a new image every 4 frames.
+      // Turn the group about the vertical axis, and for Taint's smokes and
+      // Heartrender about the horizontal one too; mote i joins i frames after
+      // the target's turn starts and takes a new image every 4 frames.
       if (frame > member * 8) {
         SceneTransform_ApplyYaw(frame << 9);
-        if (mode <= 1 || mode == 4)
+        if (mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_HEARTRENDER)
           SceneTransform_ApplyPitch(frame << 9);
         for (i = 0; i != count; i++) {
           struct EffectStep *mote = &PARTICLES[member * TARGET_MOTES_SLOTS + i];
@@ -289,13 +302,14 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
               // Orbs 40x40, vortex motes 12x24, a heart 22x42, smoke 24x48;
               // smoke draws one mote in four additively. A mote that has
               // reached the centre is no longer drawn.
-              if (mode == 5 || mode == 7)
+              if (mode == TARGET_MOTES_MYSTIC_FLAME ||
+                  mode == TARGET_MOTES_DEMON_FIRE)
                 draw[1](canvas, work->sheet + cell * (40 * 40), screen.x - 20,
                         screen.y - 20, 40, 40);
-              else if (mode == 6)
+              else if (mode == TARGET_MOTES_DROWN)
                 draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
                         screen.y - 12, 12, 24);
-              else if (mode == 4)
+              else if (mode == TARGET_MOTES_HEARTRENDER)
                 draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
                         42);
               else

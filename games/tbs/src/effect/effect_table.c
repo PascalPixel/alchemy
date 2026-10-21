@@ -186,13 +186,13 @@ s8 gSpiderWeb_CellBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
 
 // gathering_lights.c
 
-/// Gathering lights (Demon Night, Rumble, Haunting), by mode: the lights per
+/// Gathering lights, by mode (enum GatheringLightsMode): the lights per
 /// target and the frames before the targets' turns.
 u8 gGatheringLights_Counts[][2] = {
     // lights per target, frames
-    {16, 88}, // mode 0
-    {8, 72},  // mode 1
-    {12, 80}, // mode 2
+    [GATHERING_LIGHTS_DEMON_NIGHT] = {16, 88},
+    [GATHERING_LIGHTS_RUMBLE] = {8, 72},
+    [GATHERING_LIGHTS_HAUNTING] = {12, 80},
 };
 
 // mirrored_wall.c: Mirrored earth wall picture cells.
@@ -214,16 +214,17 @@ u8 gDjinnBeams_HeadHeights[] = EARTH_WALL_CELL_HEIGHTS;
 
 // lobbed_shells.c: Shell explosion records and shards.
 
-/// Two bytes for each lobbed shell mode.
+/// Two bytes for each lobbed shell style (enum LobbedShellsMode,
+/// lobbed_shells.c).
 s8 gLobbedShells_Records[] = {
     // nonzero: the shells burst into shards, not smoke; unused
-    0, 0, // mode 0
-    0, 0, // mode 1
-    0, 0, // mode 2
-    1, 0, // mode 3
-    1, 0, // mode 4
-    0, 0, // mode 5
-    0, 0, // mode 6
+    0, 0, // LOBBED_SHELLS_BONE_CHILLER
+    0, 0, // LOBBED_SHELLS_STICKY_GOO
+    0, 0, // LOBBED_SHELLS_STICKY_POISON
+    1, 0, // LOBBED_SHELLS_ROTTEN_BLOOD
+    1, 0, // LOBBED_SHELLS_MAD_SPATTER
+    0, 0, // LOBBED_SHELLS_DECOMPOSE
+    0, 0, // LOBBED_SHELLS_POISON_INK
 };
 /// Lobbed shells: nine tumbling images in two sets, the second (cells 9 to 17)
 /// smaller.
@@ -793,8 +794,10 @@ u16 gGrowth_PuffCells[] = {0, 50, 148, 379, 891, 1926, 3276};
 /// Each vine's root, across from the middle of the targets.
 s8 gGrowth_ColumnOffsets[] = {0,   14, -32, 8,   32, -48, 4,   12,
                               -24, 24, -12, -40, -4, -16, -32, 12};
-// Each thorn's kind (size, and mirrored when odd) and root.
-u8 gGrowth_Kinds[] = {0, 3, 2, 1, 2, 3, 2, 1};
+// Each thorn's kind (THORN_ flags) and root.
+u8 gGrowth_Kinds[] = {
+    0,           THORN_SMALL | THORN_MIRRORED, THORN_SMALL, THORN_MIRRORED,
+    THORN_SMALL, THORN_SMALL | THORN_MIRRORED, THORN_SMALL, THORN_MIRRORED};
 s8 gGrowth_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
 /// Thorns by variant.
 u8 gGrowth_Counts[] = {3, 5, 8};
@@ -901,19 +904,31 @@ u16 gSpire_ShardCells[] = {0,   55,   121,  221,  298,  368,  452,  673,
 
 // gaia.c and burst_scene.c: Burst scene records and rising wall geometry.
 
-/// Each burst scene mode, by the BURST_SCENE_ columns (burst_scene.c).
+/// Each burst scene mode (enum BurstSceneMode), by the BURST_SCENE_ columns
+/// (burst_scene.c).
+// clang-format off
 u8 gBurstScene_Records[][7] = {
     // BURST_SCENE_: ARC_SHEET, PALETTE, STRIKES, MOTES, INTERVAL, FRAMES, FLASH
-    {1, 0, 5, 16, 12, 80, 0},  // mode 0
-    {1, 1, 7, 16, 12, 104, 0}, // mode 1
-    {1, 2, 9, 16, 12, 128, 0}, // mode 2
-    {1, 3, 1, 16, 16, 36, 0},  // mode 3
-    {1, 3, 2, 20, 16, 52, 0},  // mode 4
-    {1, 3, 3, 24, 16, 68, 0},  // mode 5
-    {0, 2, 1, 32, 12, 28, 1},  // mode 6
-    {0, 2, 2, 32, 12, 40, 1},  // mode 7
-    {0, 2, 3, 32, 12, 52, 1},  // mode 8
+    [BURST_SCENE_BEAR_CLAW] =
+        {BURST_SCENE_ARCS, BURST_SCENE_PALETTE_MARS_DJINNI, 5, 16, 12, 80, 0},
+    [BURST_SCENE_BACTERIA_RUSH] =
+        {BURST_SCENE_ARCS, BURST_SCENE_PALETTE_LIME, 7, 16, 12, 104, 0},
+    [BURST_SCENE_FREEBITE_RUSH] =
+        {BURST_SCENE_ARCS, BURST_SCENE_PALETTE_BLUE_ARC, 9, 16, 12, 128, 0},
+    [BURST_SCENE_FLYING_ATTACK] =
+        {BURST_SCENE_ARCS, BURST_SCENE_PALETTE_EMBER, 1, 16, 16, 36, 0},
+    [BURST_SCENE_FLYING_ATTACK_DOUBLE] =
+        {BURST_SCENE_ARCS, BURST_SCENE_PALETTE_EMBER, 2, 20, 16, 52, 0},
+    [BURST_SCENE_FLYING_ATTACK_TRIPLE] =
+        {BURST_SCENE_ARCS, BURST_SCENE_PALETTE_EMBER, 3, 24, 16, 68, 0},
+    [BURST_SCENE_GUST] =
+        {BURST_SCENE_ARCS_AND_WAVES, BURST_SCENE_PALETTE_BLUE_ARC, 1, 32, 12, 28, 1},
+    [BURST_SCENE_GUST_DOUBLE] =
+        {BURST_SCENE_ARCS_AND_WAVES, BURST_SCENE_PALETTE_BLUE_ARC, 2, 32, 12, 40, 1},
+    [BURST_SCENE_GUST_TRIPLE] =
+        {BURST_SCENE_ARCS_AND_WAVES, BURST_SCENE_PALETTE_BLUE_ARC, 3, 32, 12, 52, 1},
 };
+// clang-format on
 // Rising wall: the nine rows of the growing wall in the rebuilt sheet.
 u16 gGaia_RowCells[] = {0, 160, 352, 640, 1024, 1504, 2080, 2752, 3776};
 u8 gGaia_RowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};

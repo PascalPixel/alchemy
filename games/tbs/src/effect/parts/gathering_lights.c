@@ -14,21 +14,21 @@
 ///
 /// Abilities: Demon Night (BATTLE_FX_DEMON_NIGHT).
 void BattleFx_RunDemonNight(struct BattleEffectArgument *effect) {
-  BattleFx_RunGatheringLights(effect, 0);
+  BattleFx_RunGatheringLights(effect, GATHERING_LIGHTS_DEMON_NIGHT);
 }
 /// Eight lights in Mars Djinn colours burst out of the user and are pulled into
 /// each target.
 ///
 /// Abilities: Rumble (BATTLE_FX_RUMBLE).
 void BattleFx_RunRumble(struct BattleEffectArgument *effect) {
-  BattleFx_RunGatheringLights(effect, 1);
+  BattleFx_RunGatheringLights(effect, GATHERING_LIGHTS_RUMBLE);
 }
 /// Twelve lights in Mercury Djinn colours burst out of the user and are pulled
 /// into each target.
 ///
 /// Abilities: Haunting (BATTLE_FX_HAUNTING).
 void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
-  BattleFx_RunGatheringLights(effect, 2);
+  BattleFx_RunGatheringLights(effect, GATHERING_LIGHTS_HAUNTING);
 }
 #define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
 
@@ -45,10 +45,10 @@ void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
 /// frame and adds BattleFx_ArmBg2AffineHBlankDma to feed it to BG2X; removes
 /// both its callbacks before it returns.
 ///
-/// mode : the colours (0 pink, 1 Mars Djinn, 2 Mercury Djinn) and the row of
-///        gGatheringLights_Counts: lights per target and frames, 16 and 88,
-///        8 and 72, or 12 and 80, the effect running 20 frames more for
-///        each target.
+/// mode: the colours (enum GatheringLightsMode) and the row of
+///       gGatheringLights_Counts: lights per target and frames, 16 and 88,
+///       8 and 72, or 12 and 80, the effect running 20 frames more for each
+///       target.
 void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
                                  s32 mode) {
   struct EffectPosition screenPosition;
@@ -71,9 +71,9 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   // decode to `work` itself: three 20x32 lights.
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage), work);
-  if (mode == 0)
+  if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
     paletteId = (s32)&ResourceId_PinkBurstSheet;
-  else if (mode == 1)
+  else if (mode == GATHERING_LIGHTS_RUMBLE)
     paletteId = (s32)&ResourceId_MarsDjinnSheet;
   else
     paletteId = (s32)&ResourceId_MercuryDjinnSheet;
@@ -114,7 +114,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     // Frame loop. The damage shows on frame 80 whatever the number of
     // targets, with the mode's hit sound.
     if (frame == 80) {
-      if (mode == 0)
+      if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
         EFFECT_SHOW_DAMAGE(SE_133);
@@ -134,7 +134,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
       s32 half = BattleUnit_GetEffectHeightFar(work->effect->actors[k]) / 2;
 
       if (frame == k * 20 + 71) {
-        if (mode == 0)
+        if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
           AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         else
           AudioCommand_PlayFar(SE_133);

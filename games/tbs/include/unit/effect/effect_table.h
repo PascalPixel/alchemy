@@ -78,6 +78,13 @@ enum {
   GATHERING_LIGHTS_COUNT, ///< lights for each target
   GATHERING_LIGHTS_FRAMES ///< frames before the targets' turns
 };
+/// The gathering lights' modes (BattleFx_RunGatheringLights), each named
+/// for the effect that plays it, and its row of gGatheringLights_Counts.
+enum GatheringLightsMode {
+  GATHERING_LIGHTS_DEMON_NIGHT, ///< pink
+  GATHERING_LIGHTS_RUMBLE,      ///< Mars Djinn colours
+  GATHERING_LIGHTS_HAUNTING     ///< Mercury Djinn colours
+};
 extern u8 gGatheringLights_Counts[][2];
 
 extern u16 gMirroredWall_Cells[];
@@ -271,6 +278,9 @@ extern s8 gGrowth_PuffWidths[];
 extern u8 gGrowth_PuffHeights[];
 extern u16 gGrowth_PuffCells[];
 extern s8 gGrowth_ColumnOffsets[];
+// A thorn's kind in gGrowth_Kinds.
+#define THORN_MIRRORED 1 ///< drawn mirrored across
+#define THORN_SMALL 2    ///< 32 pixels wide, not 48
 extern u8 gGrowth_Kinds[];
 extern s8 gGrowth_X[];
 extern u8 gGrowth_Counts[];
@@ -339,6 +349,33 @@ extern u8 gSpire_RockCounts[];
 extern u8 gSpire_ShardWidths[];
 extern u8 gSpire_ShardHeights[];
 extern u16 gSpire_ShardCells[];
+/// The burst scene's modes (BattleFx_RunBurstScene), its rows of
+/// gBurstScene_Records: Gust and Flying Attack take one, two or three strikes
+/// as a double or triple blow raises their variant.
+enum BurstSceneMode {
+  BURST_SCENE_BEAR_CLAW,            ///< five strikes; also Ransack
+  BURST_SCENE_BACTERIA_RUSH,        ///< seven strikes, in lime
+  BURST_SCENE_FREEBITE_RUSH,        ///< nine strikes, in blue
+  BURST_SCENE_FLYING_ATTACK,        ///< one strike, in embers
+  BURST_SCENE_FLYING_ATTACK_DOUBLE, ///< two
+  BURST_SCENE_FLYING_ATTACK_TRIPLE, ///< three
+  BURST_SCENE_GUST,                 ///< one strike, each filling the canvas
+  BURST_SCENE_GUST_DOUBLE,          ///< two
+  BURST_SCENE_GUST_TRIPLE           ///< three
+};
+/// A burst scene's arcs, its BURST_SCENE_ARC_SHEET.
+enum BurstSceneArcs {
+  BURST_SCENE_ARCS_AND_WAVES, ///< blue arc A, with a wave for the third and
+                              ///< fourth of every four strikes
+  BURST_SCENE_ARCS            ///< blue arc B for every strike
+};
+/// Whose palette a burst scene takes, its BURST_SCENE_PALETTE.
+enum BurstScenePalette {
+  BURST_SCENE_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
+  BURST_SCENE_PALETTE_LIME,        ///< LimePalette
+  BURST_SCENE_PALETTE_BLUE_ARC,    ///< blue arc B's
+  BURST_SCENE_PALETTE_EMBER        ///< the ember streak sheet's
+};
 extern u8 gBurstScene_Records[][7];
 extern u16 gGaia_RowCells[];
 extern u8 gGaia_RowWidths[];

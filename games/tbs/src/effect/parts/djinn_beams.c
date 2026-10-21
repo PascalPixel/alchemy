@@ -17,14 +17,14 @@
 /// Abilities: Revive, Water of Life (BATTLE_FX_REVIVE); Quartz
 /// (BATTLE_FX_REVIVE_201).
 void BattleFx_RunRevive(struct BattleEffectArgument *effect) {
-  BattleFx_RunDjinnBeams(effect, 0);
+  BattleFx_RunDjinnBeams(effect, ELEMENT_VENUS);
 }
 /// Dew plays Revive's beams of light in the Mercury Djinni's colours, and with
 /// a prelude a Mercury Djinni appears first.
 ///
 /// Abilities: Dew (BATTLE_FX_DEW).
 void BattleFx_RunDew(struct BattleEffectArgument *effect) {
-  BattleFx_RunDjinnBeams(effect, 1);
+  BattleFx_RunDjinnBeams(effect, ELEMENT_MERCURY);
 }
 /// When effect->prelude is 1, a Djinni appears, sways and then rises out of
 /// sight. Over each target in turn, 16 frames apart, eight motes drift down,
@@ -37,8 +37,8 @@ void BattleFx_RunDew(struct BattleEffectArgument *effect) {
 /// is the one shown; fills PARTICLES 0 to 511, sets BG2PA and BG2X, and
 /// builds and frees its blitters every frame.
 ///
-/// mode : 0 a Venus Djinni, 1 a Mercury Djinni.
-void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
+/// element: the Djinni's, Venus or Mercury.
+void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 element) {
   struct EffectPosition one;
   struct EffectPosition screenPosition;
   s32 ground[3];
@@ -63,7 +63,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   // targets are enemies (side ^ 1), and returns where it ends in djinnX and
   // djinnY.
   if (work->effect->prelude == 1)
-    BattleFx_RunDjinniEntrance(effect, mode,
+    BattleFx_RunDjinniEntrance(effect, element,
                                work->effect->side ^ work->effect->prelude,
                                DJINNI_ANCHOR_OVER_TARGET, &djinnX, &djinnY);
   // work->sheet: the column's strip and the glow pictures (EarthWallSheet)
@@ -76,7 +76,7 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + DJINN_BEAMS_MOTE_CELLS);
-  if (mode == 0)
+  if (element == ELEMENT_VENUS)
     palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);

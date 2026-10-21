@@ -10,54 +10,66 @@
 // Lobbed shells: a shell arcs from the user onto each target and bursts
 // into smoke or shards, in seven colourings.
 
+/// The lobbed shells' styles (BattleFx_RunLobbedShells), each named for the
+/// effect that plays it, and its row of gLobbedShells_Records.
+enum LobbedShellsMode {
+  LOBBED_SHELLS_BONE_CHILLER,  ///< blue, bursting into smoke
+  LOBBED_SHELLS_STICKY_GOO,    ///< the spider web's colours, smoke
+  LOBBED_SHELLS_STICKY_POISON, ///< lime, smoke
+  LOBBED_SHELLS_ROTTEN_BLOOD,  ///< green, shards
+  LOBBED_SHELLS_MAD_SPATTER,   ///< gold, shards
+  LOBBED_SHELLS_DECOMPOSE,     ///< green, smoke
+  LOBBED_SHELLS_POISON_INK     ///< Mars Djinn colours, smoke
+};
+
 /// Gold shells arc from the user onto each target in turn and burst into
 /// shards.
 ///
 /// Abilities: Mad Spatter (BATTLE_FX_MAD_SPATTER).
 void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 4);
+  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_MAD_SPATTER);
 }
 /// Green shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
 /// Abilities: Decompose (BATTLE_FX_DECOMPOSE).
 void BattleFx_RunDecompose(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 5);
+  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_DECOMPOSE);
 }
 /// Blue shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
 /// Abilities: Bone Chiller (BATTLE_FX_BONE_CHILLER).
 void BattleFx_RunBoneChiller(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 0);
+  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_BONE_CHILLER);
 }
 /// Shells in the spider web's colours arc from the user onto each target in
 /// turn and burst into smoke.
 ///
 /// Abilities: Sticky Goo (BATTLE_FX_STICKY_GOO).
 void BattleFx_RunStickyGoo(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 1);
+  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_STICKY_GOO);
 }
 /// Shells in Mars Djinn colours arc from the user onto each target in turn
 /// and burst into smoke.
 ///
 /// Abilities: Poison Ink (BATTLE_FX_POISON_INK).
 void BattleFx_RunPoisonInk(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 6);
+  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_POISON_INK);
 }
 /// Lime shells arc from the user onto each target in turn and burst into
 /// smoke.
 ///
 /// Abilities: Sticky Poison (BATTLE_FX_STICKY_POISON).
 void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 2);
+  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_STICKY_POISON);
 }
 /// Green shells arc from the user onto each target in turn and burst into
 /// shards.
 ///
 /// Abilities: Rotten Blood (BATTLE_FX_ROTTEN_BLOOD).
 void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
-  BattleFx_RunLobbedShells(effect, 3);
+  BattleFx_RunLobbedShells(effect, LOBBED_SHELLS_ROTTEN_BLOOD);
 }
 /// The bursts live after the shells in PARTICLES, from PARTICLES[256] (0x1c00
 /// bytes is 256 particles of 28): 32 slots a target, of which 4 smoke puffs
@@ -85,9 +97,9 @@ void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
 /// shards, and before it returns removes its transfer callback, frees its
 /// blitters and closes the canvas layer.
 ///
-/// mode : the style, 0 to 6: the colours (blue, spider web, lime, green, gold,
-///        green and Mars Djinn) and the row of gLobbedShells_Records, whose
-///        modes 3 and 4 burst into shards.
+/// mode: the style (enum LobbedShellsMode): its colours and its row of
+///       gLobbedShells_Records, which makes Rotten Blood's and Mad Spatter's
+///       shells burst into shards.
 void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
   BlitterPair draw;
@@ -113,7 +125,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_CELLS and the
-  // style's palette; mode 5 shares mode 3's green.
+  // style's palette; Decompose shares Rotten Blood's green.
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -122,17 +134,17 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + LOBBED_SHELLS_SMOKE_CELLS);
-  if (mode == 0)
+  if (mode == LOBBED_SHELLS_BONE_CHILLER)
     palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
-  else if (mode == 1)
+  else if (mode == LOBBED_SHELLS_STICKY_GOO)
     palette = Resource_GetTableEntry((s32)&ResourceId_SpiderWebSheet);
-  else if (mode == 2)
+  else if (mode == LOBBED_SHELLS_STICKY_POISON)
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-  else if (mode == 3)
+  else if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
-  else if (mode == 4)
+  else if (mode == LOBBED_SHELLS_MAD_SPATTER)
     palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
-  else if (mode == 6)
+  else if (mode == LOBBED_SHELLS_POISON_INK)
     palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
@@ -164,7 +176,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   if (effect->side == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    if (LOBBED_SHELLS_SHATTER(mode) == 0) {
+    if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -177,7 +189,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    if (LOBBED_SHELLS_SHATTER(mode) == 0) {
+    if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
@@ -189,7 +201,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   }
   // Trails keep 3/4 a frame. Smoke lingers 16 frames longer than shards.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  if (LOBBED_SHELLS_SHATTER(mode) == 0)
+  if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER)
     total = work->effect->count * 8 + 72;
   else
     total = work->effect->count * 8 + 56;
@@ -267,7 +279,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
                 SET_POSITION(burst, shot->x, shot->y, shot->z);
                 // Smoke drifts up to a pixel a frame across the ground;
                 // shards fly up to 4 across and 2 to 4 up.
-                if (LOBBED_SHELLS_SHATTER(mode) == 0) {
+                if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
                   SET_VELOCITY(burst, ((Random16() & 63) - 32) << 11, 0,
                                ((Random16() & 63) - 32) << 11);
                 } else {
@@ -293,7 +305,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
         EffectPosition_ProjectPoint(burst, &position);
         position.x >>= 1;
-        if (LOBBED_SHELLS_SHATTER(mode) == 0) {
+        if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
           draw[1](canvas,
                   work->sheet + burst->variant / 8 * (24 * 48) +
                       LOBBED_SHELLS_SMOKE_CELLS,
@@ -317,7 +329,7 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
         }
         // Smoke rises, gaining 1/32 pixel a frame each frame; shards fall,
         // gaining half a pixel.
-        if (LOBBED_SHELLS_SHATTER(mode) == 0)
+        if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER)
           EffectStep_AdvanceWithGravity3D(burst, 62, 0x800);
         else
           EffectStep_AdvanceWithGravity3D(burst, 62, -0x8000);

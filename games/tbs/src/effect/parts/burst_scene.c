@@ -5,77 +5,73 @@
 #include "../effect_internal.h"
 
 /// The user strikes the first target once, twice or three times as the
-/// variant grows, and each strike fills the canvas with light. These are the
-/// burst scene's modes 6, 7 and 8.
+/// variant grows with a double or triple blow, and each strike fills the
+/// canvas with light.
 ///
 /// Abilities: Gust (BATTLE_FX_GUST); Rapid Smash, Sonic Smash, Slice
 /// (BATTLE_FX_GUST_310).
 void BattleFx_RunGust(struct BattleEffectArgument *effect) {
-  if (effect->variant == 0) {
-    BattleFx_RunBurstScene(effect, 6);
+  if (effect->variant == EFFECT_VARIANT_BASIC) {
+    BattleFx_RunBurstScene(effect, BURST_SCENE_GUST);
     return;
   }
-  if (effect->variant == 1) {
-    BattleFx_RunBurstScene(effect, 7);
+  if (effect->variant == EFFECT_VARIANT_STRONGER) {
+    BattleFx_RunBurstScene(effect, BURST_SCENE_GUST_DOUBLE);
     return;
   }
-  BattleFx_RunBurstScene(effect, 8);
+  BattleFx_RunBurstScene(effect, BURST_SCENE_GUST_TRIPLE);
 }
 
-/// The user strikes the first target five times, in the burst scene's mode 0.
+/// The user strikes the first target five times.
 ///
 /// Abilities: Bear Claw (BATTLE_FX_BEAR_CLAW); Counterstrike
 /// (BATTLE_FX_BEAR_CLAW_342).
 void BattleFx_RunBearClaw(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, 0);
+  BattleFx_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
 }
 
-/// Ransack plays the same five strikes as Bear Claw, the burst scene's mode 0.
+/// Ransack plays the same five strikes as Bear Claw.
 ///
 /// Abilities: Ransack (BATTLE_FX_RANSACK); Mad Dash (BATTLE_FX_RANSACK_343).
 void BattleFx_RunRansack(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, 0);
+  BattleFx_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
 }
 
-/// Seven strikes land on the first target in the lime palette, the burst
-/// scene's mode 1.
+/// Seven strikes land on the first target in the lime palette.
 ///
 /// Abilities: Bacteria Rush (BATTLE_FX_BACTERIA_RUSH).
 void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, 1);
+  BattleFx_RunBurstScene(effect, BURST_SCENE_BACTERIA_RUSH);
 }
 
-/// Nine strikes land on the first target in the blue palette, the burst
-/// scene's mode 2.
+/// Nine strikes land on the first target in the blue palette.
 ///
 /// Abilities: Freebite Rush (BATTLE_FX_FREEBITE_RUSH).
 void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
-  BattleFx_RunBurstScene(effect, 2);
+  BattleFx_RunBurstScene(effect, BURST_SCENE_FREEBITE_RUSH);
 }
 
-/// One, two or three strikes land on the first target as the variant grows,
-/// in the burst scene's modes 3, 4 and 5.
+/// One, two or three strikes land on the first target as the variant grows
+/// with a double or triple blow.
 ///
 /// Abilities: Flying Attack (BATTLE_FX_FLYING_ATTACK); Swift Strike
 /// (BATTLE_FX_FLYING_ATTACK_329).
 void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
-  if (effect->variant == 0) {
-    BattleFx_RunBurstScene(effect, 3);
+  if (effect->variant == EFFECT_VARIANT_BASIC) {
+    BattleFx_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK);
     return;
   }
-  if (effect->variant == 1) {
-    BattleFx_RunBurstScene(effect, 4);
+  if (effect->variant == EFFECT_VARIANT_STRONGER) {
+    BattleFx_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK_DOUBLE);
     return;
   }
-  BattleFx_RunBurstScene(effect, 5);
+  BattleFx_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK_TRIPLE);
 }
 
 /// The bytes of a gBurstScene_Records row, one row a mode.
 enum BurstField {
-  BURST_SCENE_ARC_SHEET, ///< 0: blue arc A, else B; 1 also draws every strike
-                         ///< as an arc
-  BURST_SCENE_PALETTE,   ///< whose palette: 0 the Mars Djinni sheet's, 1 lime,
-                         ///< 2 blue arc B's, 3 the ember streak sheet's
+  BURST_SCENE_ARC_SHEET, ///< the arcs (enum BurstSceneArcs)
+  BURST_SCENE_PALETTE,   ///< whose palette (enum BurstScenePalette)
   BURST_SCENE_STRIKES,   ///< the strikes
   BURST_SCENE_MOTES,     ///< motes thrown by each strike, at most the 32 of
                          ///< its run of PARTICLES
@@ -90,8 +86,8 @@ enum BurstField {
 #define BURST_SCENE_WAVE_CELLS (Ram_MapCellBuffer + 0x5e00)
 
 /// The user closes on the first target and strikes it again and again; each
-/// strike shows an arc (or, in rows with arc sheet 0, a wave for the third
-/// and fourth of every four), flashes and throws motes. A
+/// strike shows an arc (or, with BURST_SCENE_ARCS_AND_WAVES, a wave for the
+/// third and fourth of every four), flashes and throws motes. A
 /// strike lands 2 frames after it starts: an odd one jolts the target, and
 /// the last knocks it back, shakes the screen for longer (8 frames against
 /// 4) and ends the attack.
@@ -105,9 +101,9 @@ enum BurstField {
 /// the transfer callback removed and the canvas layer closed.
 ///
 /// effect: the user and the targets; prelude 1 first brings in a Jupiter
-///         Djinni over the user, the 84-frame entrance (mode 7 of
-///         BattleFx_RunDjinniEntrance).
-/// mode   : the row of gBurstScene_Records.
+///         Djinni over the user, the 84-frame entrance
+///         (DJINNI_ENTRANCE_LONG).
+/// mode: the row of gBurstScene_Records (enum BurstSceneMode).
 void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;
@@ -154,7 +150,8 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
       work->sheet[dst] = work->sheet[src];
     }
   }
-  if (gBurstScene_Records[mode][BURST_SCENE_ARC_SHEET] == 0)
+  if (gBurstScene_Records[mode][BURST_SCENE_ARC_SHEET] ==
+      BURST_SCENE_ARCS_AND_WAVES)
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
                                1);
   else
@@ -163,13 +160,13 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, BURST_SCENE_WAVE_CELLS,
                              1, 0);
   switch (gBurstScene_Records[mode][BURST_SCENE_PALETTE]) {
-  case 0:
+  case BURST_SCENE_PALETTE_MARS_DJINNI:
     paletteId = (s32)&ResourceId_MarsDjinnSheet;
     break;
-  case 1:
+  case BURST_SCENE_PALETTE_LIME:
     paletteId = (s32)&ResourceId_LimePalette;
     break;
-  case 2:
+  case BURST_SCENE_PALETTE_BLUE_ARC:
     paletteId = (s32)&ResourceId_BlueArcSheetB;
     break;
   default:
@@ -232,8 +229,8 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
       if (frame >= start && frame < start + 6) {
         s32 step = frame - start;
 
-        if ((i & 3) <= 1 ||
-            gBurstScene_Records[mode][BURST_SCENE_ARC_SHEET] == 1) {
+        if ((i & 3) <= 1 || gBurstScene_Records[mode][BURST_SCENE_ARC_SHEET] ==
+                                BURST_SCENE_ARCS) {
           // The arc: six 48x72 frames.
           if (work->effect->side == 0)
             draw[i & 1](canvas, work->sheet + step * (48 * 72),

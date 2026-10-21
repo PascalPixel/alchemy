@@ -18,6 +18,12 @@
 /// The small thorn in the thorn sheet, after the 48x80 big one.
 #define THORN_SMALL_CELLS (48 * 80)
 
+/// What the growing columns grow (BattleFx_RunGrowingColumns).
+enum GrowingColumnsMode {
+  GROWING_COLUMNS_VINES,  ///< Growth
+  GROWING_COLUMNS_PILLARS ///< Punji's green pillars
+};
+
 /// One growing column, laid over a struct EffectStep in work->particles.
 struct DualColumn {
   s32 x; ///< the root, in canvas pixels
@@ -34,18 +40,18 @@ struct DualColumn {
 ///
 /// Abilities: Growth, Mad Growth, Wild Growth (BATTLE_FX_GROWTH).
 void BattleFx_RunGrowth(struct BattleEffectArgument *effect) {
-  BattleFx_RunGrowingColumns(effect, 0);
+  BattleFx_RunGrowingColumns(effect, GROWING_COLUMNS_VINES);
 }
 /// Green pillars grow from the ground, scattering dust from each root.
 ///
 /// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_FX_PUNJI).
 ///
 /// Punji Strike's row of actflags.tsv gives variant 1, as Punji Trap's does,
-/// so no ability plays BATTLE_FX_PUNJI's variant 2.
+/// so no ability plays BATTLE_FX_PUNJI's strongest variant.
 void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
-  BattleFx_RunGrowingColumns(effect, 1);
+  BattleFx_RunGrowingColumns(effect, GROWING_COLUMNS_PILLARS);
 }
-/// Vines (mode 0) or green pillars (mode 1) grow one every 4 frames,
+/// Vines or green pillars grow one every 4 frames,
 /// alternately mirrored, each throwing up dust from its root.
 ///
 /// Column i appears on frame 4i + 9, shaking the screen, and grows 8 pixels a
@@ -55,7 +61,7 @@ void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
 /// up a puff of dust. The battle moves on to the results 64 frames before the
 /// end; the scene fades out over 16 frames, and nothing grows in its last 4.
 ///
-/// Called by BattleFx_RunGrowth (mode 0) and BattleFx_RunPunji (mode 1).
+/// Called by BattleFx_RunGrowth and BattleFx_RunPunji.
 /// work->particles holds the 16 columns (struct DualColumn) and PARTICLES
 /// the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side 1,
 /// REG_BG2X; sets work->shakeFrames as each column appears.
@@ -106,7 +112,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(1);
   REG_BG2PA = Q_8_8(1); // the canvas at its own width
   REG_BLDCNT = 0;
-  if (mode == 1) {
+  if (mode == GROWING_COLUMNS_PILLARS) {
     Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work->sheet,
                                1, 1);
   } else {
@@ -202,7 +208,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
               if (length > reach) {
                 length = reach;
               }
-              if (mode == 0) {
+              if (mode == GROWING_COLUMNS_VINES) {
                 {
                   s32 side = 1 & i;
                   s32 cell = gGrowth_VineCells[shape];
@@ -281,7 +287,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
         if (puffAge >= 0) {
           image = puffAge / 2;
           puffCells = GROWING_COLUMNS_VINE_DUST_CELLS;
-          if (mode != 0) {
+          if (mode != GROWING_COLUMNS_VINES) {
             puffCells = GROWING_COLUMNS_PILLAR_DUST_CELLS;
           }
           ((DrawRectangle)rectangle[0])(
@@ -498,11 +504,10 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
         s32 height;
         s32 lean;
 
-        // Kinds 0 and 1 are big thorns (48 wide), 2 and 3 small ones (32 wide);
-        // odd kinds are mirrored. A thorn leans sideways as it grows: a big
+        // A thorn leans sideways as it grows: a big
         // one 16 pixels up and 6 across a frame to 80 and 30, a small one 8
         // up and 1 across to 64 and 8. Both stand on row 108.
-        if (gGrowth_Kinds[i] < 2) {
+        if (gGrowth_Kinds[i] < THORN_SMALL) {
           height = age * 16;
           lean = age * 6;
           if (height > 80) {
@@ -511,7 +516,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
           if (lean > 30) {
             lean = 30;
           }
-          if (gGrowth_Kinds[i] & 1) {
+          if (gGrowth_Kinds[i] & THORN_MIRRORED) {
             drawFlip(canvas, work->sheet, gGrowth_X[i] - lean, 108 - height, 48,
                      height);
           } else {
@@ -527,7 +532,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
           if (age > 8) {
             lean = 8;
           }
-          if (gGrowth_Kinds[i] & 1) {
+          if (gGrowth_Kinds[i] & THORN_MIRRORED) {
             drawFlip(canvas, work->sheet + THORN_SMALL_CELLS,
                      gGrowth_X[i] - lean, 108 - height, 32, height);
           } else {

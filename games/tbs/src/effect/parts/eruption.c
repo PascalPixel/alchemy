@@ -4,22 +4,29 @@
 
 #include "../effect_internal.h"
 
+/// The eruption's modes (BattleFx_RunEruption).
+enum EruptionMode {
+  ERUPTION_BLAST,     ///< fire streak colours; the variant picks the counts and
+                      ///< the targets recoil
+  ERUPTION_SMOKE_BOMB ///< greys, with Mad Blast's counts
+};
+
 /// A fountain of grey motes and puffs of smoke bursts up beside the targets and
 /// falls back, flashing each target.
 ///
 /// Abilities: Smoke Bomb, Sleep Bomb (BATTLE_FX_SMOKE_BOMB).
 ///
-/// It always uses the second row of gEruption_Counts: 32 motes, 16 puffs, 80
+/// It always uses Mad Blast's row of gEruption_Counts: 32 motes, 16 puffs, 80
 /// frames.
 void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
-  BattleFx_RunEruption(effect, 1);
+  BattleFx_RunEruption(effect, ERUPTION_SMOKE_BOMB);
 }
 /// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
 /// targets and falls back, flashing each target and making it recoil.
 ///
 /// Abilities: Blast, Mad Blast, Fiery Blast (BATTLE_FX_BLAST).
 void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
-  BattleFx_RunEruption(effect, 0);
+  BattleFx_RunEruption(effect, ERUPTION_BLAST);
 }
 /// The columns of a gEruption_Counts row.
 enum {
@@ -34,17 +41,15 @@ enum {
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one frame apart from frame 6.
 ///
-/// Called by BattleFx_RunBlast (mode 0) and BattleFx_RunSmokeBomb (mode 1).
+/// Called by BattleFx_RunBlast and BattleFx_RunSmokeBomb.
 /// A sound and a 6-frame screen shake start on frame 2, and the battle shows
 /// the damage 48 frames before the end. Writes the first 64 BG colours, sets
 /// work->shakeFrames.
 ///
 /// effect: the targets.
-/// mode: 0 burns (the fire streak palette, the effect's variant picks the
-///       counts, and the targets recoil); 1 is grey (a ramp of greys,
-///       variant 1's counts). The rows of gEruption_Counts give 16 motes, 8
-///       puffs and 72 frames (Blast), 32, 16 and 80 (Mad Blast, and Smoke
-///       Bomb and Sleep Bomb through mode 1) and 128, 32 and 88 (Fiery
+/// mode: fire or smoke (enum EruptionMode). The rows of gEruption_Counts
+///       give 16 motes, 8 puffs and 72 frames (Blast), 32, 16 and 80 (Mad
+///       Blast, and Smoke Bomb and Sleep Bomb) and 128, 32 and 88 (Fiery
 ///       Blast).
 void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
@@ -66,13 +71,13 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   // Smoke Bomb's palette is a ramp of greys, two levels to each step of
   // brightness, 0 to 31; Blast takes the fire streak's.
-  if (mode == 1) {
+  if (mode == ERUPTION_SMOKE_BOMB) {
     for (i = 0; i != 64; i++) {
       s32 level = i / 2;
 
       BG_PLTT[i] = RGB(level, level, level);
     }
-    variant = 1;
+    variant = EFFECT_VARIANT_STRONGER;
   } else {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet),
@@ -188,7 +193,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 
     // The hits, one target a frame from frame 6; Blast's targets also recoil
     // (battle motion 2).
-    if (mode == 0) {
+    if (mode == ERUPTION_BLAST) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i + 6) {
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,

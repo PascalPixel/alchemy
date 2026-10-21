@@ -351,7 +351,7 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode);
 // djinn_beams.c
 void BattleFx_RunRevive(struct BattleEffectArgument *effect);
 void BattleFx_RunDew(struct BattleEffectArgument *effect);
-void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode);
+void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 element);
 
 // lobbed_shells.c
 void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect);
@@ -407,7 +407,7 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect);
 
 // target_motes.c
 void BattleFx_RunTaint(struct BattleEffectArgument *effect);
-void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect);
+void BattleFx_RunUnusedPinkSmoke(struct BattleEffectArgument *effect);
 void BattleFx_RunDelude(struct BattleEffectArgument *effect);
 void BattleFx_RunParalyze(struct BattleEffectArgument *effect);
 void BattleFx_RunHeartrender(struct BattleEffectArgument *effect);

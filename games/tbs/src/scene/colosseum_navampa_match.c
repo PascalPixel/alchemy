@@ -33,12 +33,13 @@
 ///   the Hunter's Sword, and the battle is encounter table 72's fifth or sixth
 ///   group, the Navampa with or without the Claymore.
 ///
-/// Win or lose, the third match ends Colosso: entrances 4 and 5 set
-/// FLAG_COLOSSO_OVER, and a win also FLAG_WON_COLOSSO. In the scene that
-/// follows (ColosseumNavampaMatch_PlayPostBattleReunion), Garet, Ivan and Mia
-/// run to Isaac in the arena, but he falls asleep, exhausted, and they leave
-/// him to sleep; both exits lead to Babi's Palace, where he wakes long after
-/// the finals.
+/// Win or lose, the third match ends Colosso:
+/// COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON and _LOST set FLAG_COLOSSO_OVER, and
+/// a win also FLAG_WON_COLOSSO. In the scene that follows
+/// (ColosseumNavampaMatch_PlayPostBattleReunion), Garet, Ivan and Mia run to
+/// Isaac in the arena, but he falls asleep, exhausted, and they leave him to
+/// sleep; both exits lead to Babi's Palace, where he wakes long after the
+/// finals.
 
 #include "script.h"
 #include "version.h"
@@ -875,7 +876,8 @@ const struct SceneEvent *ColosseumNavampaMatch_GetEvents(void) {
 /// the race (COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND), the friends' turns
 /// to lend a hand (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH), the guide's
 /// tour (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH), or the end of Colosso
-/// after a win (entrance 4) or a loss (entrance 5).
+/// after a win (COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON) or a loss
+/// (COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST).
 s32 ColosseumNavampaMatch_Initialize(void) {
   struct FieldActor *actor;
   s32 i;
@@ -1077,14 +1079,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     Colosso_ClearCheeringSpots();
     break;
 
-  case 4:
+  case COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON:
     ColosseumNavampaMatch_PlayPostBattleReunion(1);
     Engine_EventRequestExit(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE);
     Engine_GameFlagSet(FLAG_COLOSSO_OVER);
     Engine_GameFlagSet(FLAG_WON_COLOSSO);
     break;
 
-  case 5:
+  case COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST:
     ColosseumNavampaMatch_PlayPostBattleReunion(-1);
     Engine_EventRequestExit(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST);
     Engine_GameFlagSet(FLAG_COLOSSO_OVER);
@@ -1159,9 +1161,9 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
   Actor_SetActionScript(kind, gColossoParticleKinds);
 }
 
-/// After the last match (entrance 4 or 5): Garet, Ivan and Mia run to Isaac in
-/// the arena and call his name, but he falls asleep, exhausted, and they leave
-/// him to sleep.
+/// After the last match (COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON or _LOST):
+/// Garet, Ivan and Mia run to Isaac in the arena and call his name, but he
+/// falls asleep, exhausted, and they leave him to sleep.
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   struct FieldActor *actor;
   const s32 *leaderScaleScript;
@@ -2319,11 +2321,11 @@ u32 gStagedActor_DirectionSteps[] = {
 };
 
 struct SceneEntrance gColosseumNavampaMatchEntrances[] = {
-    { 0, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH, CONDITION_ALWAYS, 136, 0, 392, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 4, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 5, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 

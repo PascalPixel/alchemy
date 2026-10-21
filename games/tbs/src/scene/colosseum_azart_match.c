@@ -43,11 +43,13 @@
 ///   with, and the two fight: the battle is encounter table 72's first or
 ///   second group, the Azart who has the shield or the one who has not.
 ///
-/// A win returns to entrance 4, which shows the result and sends Isaac back to
-/// the Colosseum (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST, to
-/// COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST); a loss returns to entrance 5,
-/// and COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace,
-/// where Isaac's friends tell him he was only dreaming of the finals.
+/// A win returns to COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON, which shows the
+/// result and sends Isaac back to the Colosseum
+/// (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST, to
+/// COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST); a loss returns to
+/// COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST, and
+/// COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace, where
+/// Isaac's friends tell him he was only dreaming of the finals.
 
 #include "script.h"
 #include "version.h"
@@ -579,8 +581,8 @@ const struct SceneEvent *ColosseumAzartMatch_GetEvents(void) {
   return gColosseumAzartMatch_Events;
 }
 
-/// Back from the battle (entrance 4 or 5): Isaac and Azart stand in the arena
-/// as the result is shown.
+/// Back from the battle (COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON or _LOST): Isaac
+/// and Azart stand in the arena as the result is shown.
 static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
 
   Engine_ActorDestroy(PRIZE_A);
@@ -624,7 +626,8 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actor) {
 /// the arrival: the race (COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND), the
 /// friends' turns to lend a hand (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST),
 /// the guide's tour (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM), or the match won
-/// (entrance 4) or lost (entrance 5).
+/// (COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON) or lost
+/// (COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST).
 s32 ColosseumAzartMatch_Initialize(void) {
   struct FieldActor *actor;
   s32 hit;
@@ -732,11 +735,11 @@ s32 ColosseumAzartMatch_Initialize(void) {
       Colosso_ClearCheeringSpots();
     }
     break;
-  case 4:
+  case COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON:
     ColosseumAzartMatch_RestoreMatchResult(1);
     Engine_EventRequestExit(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST);
     break;
-  case 5:
+  case COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST:
     ColosseumAzartMatch_RestoreMatchResult(-1);
     Engine_EventRequestExit(COLOSSEUM_AZART_MATCH_TO_BABI_PALACE);
     break;
@@ -1591,7 +1594,7 @@ u32 gColosseumAzartMatch_DirectionSteps[] = {
 };
 
 struct SceneEntrance gColosseumAzartMatch_Entrances[] = {
-    { 0, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };

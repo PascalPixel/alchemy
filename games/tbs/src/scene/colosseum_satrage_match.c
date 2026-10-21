@@ -32,10 +32,11 @@
 ///   second the Cotton Shirt, and the battle is encounter table 72's third or
 ///   fourth group, the Satrage with or without the mail.
 ///
-/// A win returns to entrance 4 and on to the Colosseum
-/// (COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH, arriving at
+/// A win returns to COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON and on to the
+/// Colosseum (COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH, arriving at
 /// COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH), which sets
-/// FLAG_COLOSSO_SECOND_MATCH_WON; a loss returns to entrance 5, and
+/// FLAG_COLOSSO_SECOND_MATCH_WON; a loss returns to
+/// COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST, and
 /// COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace from
 /// what it takes for a dream.
 
@@ -818,8 +819,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gColosseumSatrageMatchEvents;
 }
 
-/// Back from the battle (entrance 4 or 5): Isaac and Satrage stand in the arena
-/// as the result is shown.
+/// Back from the battle (COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON or _LOST):
+/// Isaac and Satrage stand in the arena as the result is shown.
 static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
 
   Engine_ActorDestroy(PRIZE_A);
@@ -847,7 +848,8 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
 /// the race (COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND), the friends' turns
 /// to lend a hand (COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST), the guide's
 /// tour (COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST), or the match won
-/// (entrance 4) or lost (entrance 5).
+/// (COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON) or lost
+/// (COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST).
 s32 ColosseumSatrageMatch_Initialize(void) {
   struct FieldActor *actor;
   s32 x;
@@ -978,7 +980,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   Colosso_ShowItemIcon(PRIZE_B, 89);
   Colosso_ShowItemIcon(PRIZE_A, 77);
   Engine_ActorSetChildValue(OPPONENT, 1);
-  // Entrance 1 is the race, and entrances 4 and 5 the battle's result.
+  // The race, the friends' turns, the tour, and the battle's result.
   switch (gGameState.entrance) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
     FieldScene_BuildDescriptorAndInstallTask(ACTOR_PARTY_LEADER, OPPONENT, 5,
@@ -1018,11 +1020,11 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       Colosso_ClearCheeringSpots();
     }
     break;
-  case 4:
+  case COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON:
     ColosseumSatrageMatch_StageBattleResult(2);
     Engine_EventRequestExit(COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_NORTH);
     break;
-  case 5:
+  case COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST:
     ColosseumSatrageMatch_StageBattleResult(-2);
     Engine_EventRequestExit(COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE);
     break;

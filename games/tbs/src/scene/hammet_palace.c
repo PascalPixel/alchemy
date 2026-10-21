@@ -20,10 +20,10 @@
 ///   something the party will need on their journey. She sends everyone back
 ///   to their posts (FLAG_IVAN_REPORTED_TO_LAYANA).
 /// - Waiting for news. Until the party has heard in Lunpa that Hammet is held
-///   there (place flag 0x321, set by kalay.c's scenes), Layana says Dodonpa
-///   may have spies in Kalay. Afterwards she stands elsewhere in her room, and
-///   the first time they speak she scolds `Isaac, you sneaked into Lunpa?
-///   That's far too dangerous!` and asks them not to go back
+///   there (place flag FLAG_PLACE_TEMP_21, set by kalay.c's scenes), Layana
+///   says Dodonpa may have spies in Kalay. Afterwards she stands elsewhere in
+///   her room, and the first time they speak she scolds `Isaac, you sneaked
+///   into Lunpa? That's far too dangerous!` and asks them not to go back
 ///   (FLAG_LAYANA_SCOLDED_LUNPA_VISIT); from then on she talks of Dodonpa's
 ///   greed.
 /// - Hammet's homecoming (entrance 9, the first time once Hammet is free,
@@ -145,9 +145,10 @@ static void Event_AskWhetherSilkTradeHasEnded(void) {
 }
 
 /// Talking to Layana in Hammet Palace, the first time after the party has
-/// heard in Lunpa that Hammet is held there (place flag 0x321). `Isaac, you
-/// sneaked into Lunpa? That's far too dangerous!` She is glad Hammet is
-/// unhurt, but asks the party not to go back, and to fulfill their quest.
+/// heard in Lunpa that Hammet is held there (place flag FLAG_PLACE_TEMP_21).
+/// `Isaac, you sneaked into Lunpa? That's far too dangerous!` She is glad
+/// Hammet is unhurt, but asks the party not to go back, and to fulfill their
+/// quest.
 static void Event_LayanaScoldsLunpaVisit(void) {
 
   EV_BEGIN();
@@ -209,8 +210,9 @@ s32 Scene_Initialize(void) {
 /// Sets up the room the party enters by. In Layana's room (entrance 9), Hammet
 /// stands beside her once he is free, and his homecoming plays the first time;
 /// before that she stands elsewhere once the party has heard of him in Lunpa
-/// (0x321). By the door to the underground passage (entrances 10 and 11) the
-/// door is drawn open once flag 0x915 is set. Entrance 20 is Ivan's report.
+/// (FLAG_PLACE_TEMP_21). By the door to the underground passage (entrances 10
+/// and 11) the door is drawn open once flag 0x915 is set. Entrance 20 is Ivan's
+/// report.
 static void HammetPalace_SetUpEntrance(void) {
   struct FieldActor *actor;
   s32 facing;
@@ -233,7 +235,7 @@ static void HammetPalace_SetUpEntrance(void) {
       }
     } else {
       Engine_ActorSetPosition(HAMMET, 0, 0);
-      if (Engine_GameFlagIsSet(0x321) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_21) != 0) {
         Engine_ActorSetPosition(LAYANA, waitingX, waitingZ);
         actor = Object_GetById(LAYANA);
         facing = FACING_NORTH + FACING_STEP;
@@ -1039,7 +1041,7 @@ struct SceneEvent gHammetPalaceEvents[] = {
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughDoor) },
-    { EVENT_TALK, LAYANA, 0x321, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
+    { EVENT_TALK, LAYANA, FLAG_PLACE_TEMP_21, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
     { EVENT_TALK, LAYANA, FLAG_LAYANA_SCOLDED_LUNPA_VISIT, EVENT_SCRIPT(Event_LayanaScoldsLunpaVisit) },
     { EVENT_TALK, LAYANA, FLAG_LUNPA_TRADE_REOPENED, MSGNO(MsgHammetPalaceDodonpaPlansToUseHammetTo) },
     { EVENT_TALK, LAYANA, CONDITION_ALWAYS, MSGNO(MsgHammetPalaceNoOneInKalayKnowsHammet) },

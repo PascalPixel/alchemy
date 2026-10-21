@@ -10,11 +10,11 @@
 ///
 /// At the Bilibin Cave Entrance, entered from the world map, Growth on a
 /// sprout (GROWTH_TARGET) grows it into a vine and changes the collision of
-/// its cell (Event_GrowPlant); place flag 0x305 keeps it grown until the party
-/// leaves the Bilibin Cave Entrance, into the cave beyond or out to the world
-/// map, since both are other groups of scenes. Two exits lead on into Bilibin
-/// Cave. Beside one of them, touch 10 turns its exit cell off and
-/// touch 11, a step further out, turns it back on (Event_DisableExitToCave,
+/// its cell (Event_GrowPlant); place flag FLAG_PLACE_TEMP_05 keeps it grown
+/// until the party leaves the Bilibin Cave Entrance, into the cave beyond or
+/// out to the world map, since both are other groups of scenes. Two exits lead
+/// on into Bilibin Cave. Beside one of them, touch 10 turns its exit cell off
+/// and touch 11, a step further out, turns it back on (Event_DisableExitToCave,
 /// Event_EnableExitToCave); XXX: likely so that only walking straight in
 /// enters the cave, because the touch cells flank the exit on both sides.
 ///
@@ -37,12 +37,12 @@
 /// stands beside the pillar, on cell (35, 23), the pillar melts into a puddle
 /// and the cells north and south of it change with it; when both leave it
 /// freezes again (BilibinCave_UpdateFrostTargetFromMovableActors). Place flags
-/// 0x303 and 0x304 remember which torch stands there and 0x302 that the pillar
-/// has melted, so coming back from BilibinCave2 puts the torches and the
-/// pillar back; leaving Bilibin Cave resets them. Nine more puddles and
-/// pillars (actors 18 to 26) only stand there. Its chests hold a Vial, a Psy
-/// Crystal and Water of Life, and touches 20 and 21 set and clear a byte of
-/// the map's work (MapState.unk17).
+/// FLAG_PLACE_TEMP_03 and FLAG_PLACE_TEMP_04 remember which torch stands there
+/// and FLAG_PLACE_TEMP_02 that the pillar has melted, so coming back from
+/// BilibinCave2 puts the torches and the pillar back; leaving Bilibin Cave
+/// resets them. Nine more puddles and pillars (actors 18 to 26) only stand
+/// there. Its chests hold a Vial, a Psy Crystal and Water of Life, and touches
+/// 20 and 21 set and clear a byte of the map's work (MapState.unk17).
 
 #include "script.h"
 #include "game_state.h"
@@ -257,14 +257,15 @@ static void Event_FreezeSecondTarget(void) {
 }
 
 /// Frost on the third puddle in Bilibin Cave (BilibinCave1), while a torch
-/// beside it keeps it melted (0x302).
+/// beside it keeps it melted (FLAG_PLACE_TEMP_02).
 static void Event_FreezeThirdTarget(void) {
   BilibinCave_FreezeTarget(FROST_TARGET_C);
 }
 
 /// After a push or Move in Bilibin Cave (BilibinCave1): while either movable
-/// torch stands on cell (35, 23) (0x303 and 0x304), the ice pillar beside it
-/// melts with a sound, and 0x302 says so; when both leave, it freezes again.
+/// torch stands on cell (35, 23) (FLAG_PLACE_TEMP_03 and FLAG_PLACE_TEMP_04),
+/// the ice pillar beside it melts with a sound, and FLAG_PLACE_TEMP_02 says so;
+/// when both leave, it freezes again.
 static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   struct FieldActor *firstActor;
   struct FieldActor *secondActor;
@@ -274,18 +275,19 @@ static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   firstActor = Object_GetById(PUSHED_ACTOR_A);
   secondActor = Actor_Get(PUSHED_ACTOR_B);
   if ((firstActor->x.fixed >> 20) == 35 && (firstActor->z.fixed >> 20) == 23) {
-    GameFlag_Set(0x303);
+    GameFlag_Set(FLAG_PLACE_TEMP_03);
   } else {
-    GameFlag_Clear(0x303);
+    GameFlag_Clear(FLAG_PLACE_TEMP_03);
   }
   if ((secondActor->x.fixed >> 20) == 35 &&
       (secondActor->z.fixed >> 20) == 23) {
-    GameFlag_Set(0x304);
+    GameFlag_Set(FLAG_PLACE_TEMP_04);
   } else {
-    GameFlag_Clear(0x304);
+    GameFlag_Clear(FLAG_PLACE_TEMP_04);
   }
-  if (GameFlag_IsSet(0x303) != 0 || GameFlag_IsSet(0x304) != 0) {
-    if (GameFlag_IsSet(0x302) == 0) {
+  if (GameFlag_IsSet(FLAG_PLACE_TEMP_03) != 0 ||
+      GameFlag_IsSet(FLAG_PLACE_TEMP_04) != 0) {
+    if (GameFlag_IsSet(FLAG_PLACE_TEMP_02) == 0) {
       Engine_EventBegin();
       Engine_EventWait(40);
       Event_PlayCue(SE_HIDDEN_PASSAGE_OPEN);
@@ -295,9 +297,9 @@ static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
       Map_CopyCellAttributes(0, 2, 1, 1, destinationCellX, 24);
       Engine_EventEnd();
     }
-    GameFlag_Set(0x302);
+    GameFlag_Set(FLAG_PLACE_TEMP_02);
   } else {
-    if (GameFlag_IsSet(0x302) != 0) {
+    if (GameFlag_IsSet(FLAG_PLACE_TEMP_02) != 0) {
       Engine_EventBegin();
       Engine_EventWait(40);
       Event_PlayCue(SE_220);
@@ -307,16 +309,17 @@ static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
       Map_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
       Engine_EventEnd();
     }
-    GameFlag_Clear(0x302);
+    GameFlag_Clear(FLAG_PLACE_TEMP_02);
   }
 }
 
 /// Growth on the sprout at the Bilibin Cave Entrance, until it has grown: it
-/// grows into a vine and its cell's collision changes; 0x305 keeps it grown.
+/// grows into a vine and its cell's collision changes; FLAG_PLACE_TEMP_05 keeps
+/// it grown.
 static void Event_GrowPlant(void) {
 
   Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
-  Engine_GameFlagSet(0x305);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_05);
 }
 
 /// Stepping on touch 20 in Bilibin Cave (BilibinCave1) sets a byte of the map's
@@ -349,7 +352,7 @@ s32 BilibinCave_Initialize(void) {
 
 /// Sets up the Bilibin Cave Entrance: the vine Growth has grown, with its cell.
 static void BilibinCave_RestoreEntrance(void) {
-  if (Engine_GameFlagIsSet(0x305) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_05) != 0) {
 
     Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
     Engine_ActorSetAnimation(GROWTH_TARGET, 0);
@@ -443,7 +446,7 @@ static void BilibinCave_RestoreCave1(void) {
   }
   // Rebuild the Frost target and return moved actors to their saved cells.
   Engine_ActorSetAnimation(FROST_TARGET_B, 1);
-  if (GameFlag_IsSet(0x302) != 0) {
+  if (GameFlag_IsSet(FLAG_PLACE_TEMP_02) != 0) {
     destinationCellX = 36;
     Engine_ActorSetAnimation(FROST_TARGET_C, 1);
     Map_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
@@ -454,10 +457,10 @@ static void BilibinCave_RestoreCave1(void) {
     Map_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
     Map_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }
-  if (GameFlag_IsSet(0x303) != 0) {
+  if (GameFlag_IsSet(FLAG_PLACE_TEMP_03) != 0) {
     Actor_SetPosition(PUSHED_ACTOR_A, PIXELS(570), PIXELS(376));
   }
-  if (GameFlag_IsSet(0x304) != 0) {
+  if (GameFlag_IsSet(FLAG_PLACE_TEMP_04) != 0) {
     Actor_SetPosition(PUSHED_ACTOR_B, PIXELS(570), PIXELS(376));
   }
 }
@@ -690,7 +693,7 @@ struct SceneEvent gBilibinCaveEvents3[] = {
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DisableExitToCave) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnableExitToCave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_TARGET, 0x305, EVENT_SCRIPT(Event_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_TARGET, FLAG_PLACE_TEMP_05, EVENT_SCRIPT(Event_GrowPlant) },
     { SCENE_EVENTS_END },
 };
 
@@ -719,7 +722,7 @@ struct SceneEvent gBilibinCaveEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE1_DOUSE_TARGET, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_DouseCave1Target) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_A, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_FreezeFirstTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FreezeSecondTarget) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_C, IF_FLAG_SET(0x302), EVENT_SCRIPT(Event_FreezeThirdTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_C, IF_FLAG_SET(FLAG_PLACE_TEMP_02), EVENT_SCRIPT(Event_FreezeThirdTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), PUSHED_ACTOR_A, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), PUSHED_ACTOR_B, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateFrostTargetFromMovableActors) },
     { TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushActorAhead) },

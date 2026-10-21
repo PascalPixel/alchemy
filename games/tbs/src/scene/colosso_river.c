@@ -9,8 +9,9 @@
 /// Lumber Water Crossing Area. Isaac comes here three times, each time at its
 /// own entrance, and ColossoRiver_Initialize blocks Retreat and sets up the
 /// visit that entrance stands for after restoring the stages from the group's
-/// flags (0x301 to 0x303 and the rock's column in byte flag 0x310), so that
-/// what the friends changed stays changed for the race.
+/// flags (FLAG_PLACE_TEMP_01 to FLAG_PLACE_TEMP_03 and the rock's column in
+/// byte flag 0x310), so that what the friends changed stays changed for the
+/// race.
 ///
 /// - Entrance 3, the tour, from the Colosseum's east passage. The guide
 ///   (ColossoRiver_ExplainFinalsRules) tells the party that warriors enter
@@ -272,22 +273,22 @@ static void Event_PushRock(void) {
 }
 
 /// Growth on the plant before the Broken Bridge: it grows and its cell becomes
-/// walkable (0x303 keeps it grown).
+/// walkable (FLAG_PLACE_TEMP_03 keeps it grown).
 static void Event_GrowPlant(void) {
   {
 
     Map_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   }
-  Engine_GameFlagSet(0x303);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_03);
 }
 
 /// Douse on the Pipeworks' west pipe: the camera turns to the Pipeworks and the
-/// two pipes move as it fills (0x301).
+/// two pipes move as it fills (FLAG_PLACE_TEMP_01).
 static void Event_DousePipe(void) {
   struct FieldActor *actor;
   s32 none;
 
-  GameFlag_Set(0x301);
+  GameFlag_Set(FLAG_PLACE_TEMP_01);
   actor = Object_GetById(PIPE_WEST);
   Engine_EventBegin();
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -426,7 +427,8 @@ static inline void ColossoRiver_AnimatePipeworksWater(void) {
 }
 
 /// Walking west into the Pipeworks' block pushes it: water runs into the
-/// channel, and the first time the pipes move (0x302, 0x301).
+/// channel, and the first time the pipes move (FLAG_PLACE_TEMP_02,
+/// FLAG_PLACE_TEMP_01).
 static void Event_PushPipeworksBlock(void) {
   s32 leaderId;
   struct FieldActor *leader;
@@ -436,7 +438,7 @@ static void Event_PushPipeworksBlock(void) {
   leaderId = gGameState.selectedActor;
   leader = Object_GetById(leaderId);
   actor = Object_GetById(PIPEWORKS_BLOCK);
-  GameFlag_Set(0x302);
+  GameFlag_Set(FLAG_PLACE_TEMP_02);
   Engine_EventBegin();
   Engine_ActorSetAnimation(leaderId, 8);
   Engine_EventWait(6);
@@ -466,7 +468,7 @@ static void Event_PushPipeworksBlock(void) {
   Engine_EventEnd();
   Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);
   Map_CopyCellAttributes(36, 7, 1, 4, 37, 7);
-  none = GameFlag_IsSet(0x301);
+  none = GameFlag_IsSet(FLAG_PLACE_TEMP_01);
   if (none != 0) {
     Engine_EventBegin();
     Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -477,7 +479,7 @@ static void Event_PushPipeworksBlock(void) {
     Engine_EventEnd();
     return;
   }
-  GameFlag_Set(0x301);
+  GameFlag_Set(FLAG_PLACE_TEMP_01);
   Engine_EventBegin();
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
@@ -637,7 +639,7 @@ s32 ColossoRiver_Initialize(void) {
   actor = Object_GetById(GROWTH_PLANT);
   actor->terrainId = 1;
   zero = 0;
-  if (Engine_GameFlagIsSet(0x303)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_03)) {
     Object_SetMode(actor, 4);
     Engine_ActorSetSpriteFlags(actor, 0);
     actor->collisionFlags = zero;
@@ -654,13 +656,13 @@ s32 ColossoRiver_Initialize(void) {
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   Map_CopyCellAttributes(63, 25, 1, 3, col, 9);
-  if (Engine_GameFlagIsSet(0x302)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_02)) {
     Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);
     Map_CopyCellAttributes(36, 7, 1, 4, 37, 7);
     Map_CopyCells(100, 29, 1, 3, 34, 38);
   }
   actor = Object_GetById(PIPE_WEST);
-  if (Engine_GameFlagIsSet(0x301)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_01)) {
     Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     actor->motionFlags = zero;
     actor->acceleration = PIXELS(2) / 5;
@@ -1633,20 +1635,20 @@ struct SceneEvent gColossoRiver_Events[] = {
     { TOUCH_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockOrCheckAhead) },
     { TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
     { TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 12, 0x302, EVENT_SCRIPT(Event_PushPipeworksBlock) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 12, FLAG_PLACE_TEMP_02, EVENT_SCRIPT(Event_PushPipeworksBlock) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogNorthSouth) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogNorthSouth) },
     { TOUCH_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogEastWest) },
     { TOUCH_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLogEastWest) },
     { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_10, EVENT_SCRIPT(Event_ReachArena) },
-    { SEARCH(SEARCH_CHEST), 100, 0x308, FIND_ITEM(ITEM_NUT) },
-    { SEARCH(SEARCH_CHEST), 101, 0x309, FIND_ITEM(ITEM_OIL_DROP) },
-    { 0x8413, 103, 0x30a, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_PLACE_TEMP_08, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_PLACE_TEMP_09, FIND_ITEM(ITEM_OIL_DROP) },
+    { 0x8413, 103, FLAG_PLACE_TEMP_0A, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ROCK_A, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleRocks) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ROCK_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleRocks) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ROCK_C, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleRocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, 0x303, EVENT_SCRIPT(Event_GrowPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), PIPE_WEST, 0x301, EVENT_SCRIPT(Event_DousePipe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, FLAG_PLACE_TEMP_03, EVENT_SCRIPT(Event_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), PIPE_WEST, FLAG_PLACE_TEMP_01, EVENT_SCRIPT(Event_DousePipe) },
     { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
     { EVENT_TALK, ROCK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToRockAttendant) },
     { EVENT_TALK, PIPEWORKS_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToPipeworksAttendant) },

@@ -8,9 +8,10 @@
 /// Colosseum's west passage. The stages run from east to west, through the
 /// Mini-Maze, the shifting floor stage, the Log-Rolling Stage, The Wall and the
 /// Board Walk. Isaac comes here three times, each at its own entrance, and
-/// ColossoWall_Initialize restores the stages from the group's flags (0x330 to
-/// 0x335, and the Mini-Maze rocks' columns in byte flags 0x340, 0x348 and
-/// 0x350) before setting up the visit its entrance stands for:
+/// ColossoWall_Initialize restores the stages from the group's flags
+/// (FLAG_PLACE_TEMP_30 to FLAG_PLACE_TEMP_35, and the Mini-Maze rocks' columns
+/// in byte flags 0x340, 0x348 and 0x350) before setting up the visit its
+/// entrance stands for:
 ///
 /// - Entrance 3, the tour (ColossoWall_IntroduceSecondFinals). The guide only
 ///   greets the party, since the first finals match's guide explained the
@@ -214,7 +215,7 @@ static void Event_IgnoreMove(void) {}
 static void Event_PushRock(void) { ColossoWall_PushAdjacentObstacle(); }
 
 /// Move on the rock by The Wall, and after each push: its cell is updated, and
-/// 0x335 keeps whether it stands at column 36.
+/// FLAG_PLACE_TEMP_35 keeps whether it stands at column 36.
 static void Event_UpdateMovedRockCell(void) {
   struct FieldActor *obstacle;
   s32 column;
@@ -222,12 +223,12 @@ static void Event_UpdateMovedRockCell(void) {
 
   obstacle = Object_GetById(11);
   if ((obstacle->x.fixed >> 20) == 36) {
-    Engine_GameFlagSet(0x335);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_35);
     column = 0x23;
     row = 0x4D;
     Map_CopyCellAttributes(0x23, 0x4E, 1, 1, column, row);
   } else {
-    Engine_GameFlagClear(0x335);
+    Engine_GameFlagClear(FLAG_PLACE_TEMP_35);
     column = 0x23;
     row = 0x4D;
     Map_CopyCellAttributes(0x22, 0x4D, 1, 1, column, row);
@@ -276,7 +277,7 @@ static void Event_PrepareForce(void) {
 }
 
 /// Force on the target over the Board Walk: the obstacle spins down into place
-/// and the way past it opens (0x330).
+/// and the way past it opens (FLAG_PLACE_TEMP_30).
 static void Event_KnockDownObstacle(void) {
   struct FieldActor *obstacle;
   s32 fallFrames;
@@ -287,7 +288,7 @@ static void Event_KnockDownObstacle(void) {
 
   obstacle = Object_GetById(FALLING_OBSTACLE);
   sprite = obstacle->sprite;
-  GameFlag_Set(0x330);
+  GameFlag_Set(FLAG_PLACE_TEMP_30);
   obstacle->acceleration = 0x1999;
   obstacle->speed = 0x13333;
   Engine_AudioPlayCue(SE_227);
@@ -325,11 +326,11 @@ static void Event_KnockDownObstacle(void) {
 }
 
 /// Frost on the Log-Rolling Stage's western target: it freezes and its crossing
-/// opens (0x331).
+/// opens (FLAG_PLACE_TEMP_31).
 static void Event_FreezeWestTarget(void) {
   struct FieldActor *obstacle;
 
-  Engine_GameFlagSet(0x331);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_31);
   obstacle = Object_GetById(FROST_TARGET_WEST);
   obstacle->motionFlags = 0;
   {
@@ -339,11 +340,11 @@ static void Event_FreezeWestTarget(void) {
 }
 
 /// Frost on the Log-Rolling Stage's eastern target: it freezes and its crossing
-/// opens (0x332).
+/// opens (FLAG_PLACE_TEMP_32).
 static void Event_FreezeEastTarget(void) {
   struct FieldActor *obstacle;
 
-  Engine_GameFlagSet(0x332);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_32);
   obstacle = Object_GetById(FROST_TARGET_EAST);
   obstacle->motionFlags = 0;
   {
@@ -353,9 +354,9 @@ static void Event_FreezeEastTarget(void) {
 }
 
 /// Growth on the plant by The Wall: it grows into a strip that can be climbed
-/// (0x333).
+/// (FLAG_PLACE_TEMP_33).
 static void Event_GrowPlant(void) {
-  Engine_GameFlagSet(0x333);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_33);
   {
 
     Map_CopyCellAttributes(32, 37, 1, 4, 32, 77);
@@ -689,7 +690,7 @@ static void ColossoWall_WaitForPlatformCrossingPhase(void) {
 }
 
 /// Halt on the shifting floor's lift operator: the lifts stop and leave a
-/// crossing (0x334).
+/// crossing (FLAG_PLACE_TEMP_34).
 static void Event_HaltLifts(void) {
   BattleEffect_PauseObject(LIFT_OPERATOR);
   Engine_GameFlagSet(820);
@@ -810,7 +811,7 @@ s32 ColossoWall_Initialize(void) {
     actor->priorityFlags = 2;
   }
   Object_GetById(FORCE_TARGET)->priorityFlags = 2;
-  if (Engine_GameFlagIsSet(0x330)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_30)) {
     actor = Object_GetById(FALLING_OBSTACLE);
     actor->x.fixed = PIXELS(336);
     actor->y.fixed = -PIXELS(8);
@@ -824,20 +825,20 @@ s32 ColossoWall_Initialize(void) {
   }
   Object_GetById(11)->priorityFlags = 2;
   zero = 0;
-  if (Engine_GameFlagIsSet(0x335)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_35)) {
     Map_CopyCellAttributes(35, 78, 1, 1, 35, 77);
   }
-  if (Engine_GameFlagIsSet(0x333)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_33)) {
     Engine_ActorSetAnimation(GROWTH_PLANT, 4);
     Map_CopyCellAttributes(32, 37, 1, 4, 32, 77);
   }
-  if (Engine_GameFlagIsSet(0x331)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_31)) {
     Object_GetById(FROST_TARGET_WEST)->motionFlags = zero;
     Object_GetById(FROST_TARGET_WEST)->priorityFlags = 2;
     Engine_ActorSetAnimation(FROST_TARGET_WEST, 5);
     Map_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
-  if (Engine_GameFlagIsSet(0x332)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_32)) {
     Object_GetById(FROST_TARGET_EAST)->motionFlags = zero;
     Object_GetById(FROST_TARGET_EAST)->priorityFlags = 2;
     Engine_ActorSetAnimation(FROST_TARGET_EAST, 5);
@@ -886,7 +887,7 @@ s32 ColossoWall_Initialize(void) {
   ColossoWall_UpdateRollingLogCollision();
   // A Halted controller leaves stationary platforms; otherwise resume the task.
   Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
-  if (Engine_GameFlagIsSet(0x334)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_34)) {
     for (platformId = COLOSSO_WALL_FIRST_PLATFORM, row = 13, columnOffset = 58;
          platformId <= COLOSSO_WALL_LAST_PLATFORM;
          platformId++, columnOffset += 2) {
@@ -1976,21 +1977,21 @@ struct SceneEvent gColossoWallEvents[] = {
     { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockAndUpdateCells) },
     { TOUCH_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRockAndUpdateCells) },
     { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_10, EVENT_SCRIPT(Event_ReachArena) },
-    { SEARCH(SEARCH_CHEST), 101, 0x338, FIND_ITEM(ITEM_NUT) },
-    { 0x8413, 102, 0x339, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { SEARCH(SEARCH_CHEST), 104, 0x33b, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET_WEST, 0x331, EVENT_SCRIPT(Event_FreezeWestTarget) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET_EAST, 0x332, EVENT_SCRIPT(Event_FreezeEastTarget) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE) | 0x10000000, FORCE_TARGET, 0x330, EVENT_SCRIPT(Event_PrepareForce) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), FORCE_TARGET, 0x330, EVENT_SCRIPT(Event_KnockDownObstacle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, 0x333, EVENT_SCRIPT(Event_GrowPlant) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_PLACE_TEMP_38, FIND_ITEM(ITEM_NUT) },
+    { 0x8413, 102, FLAG_PLACE_TEMP_39, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_CHEST), 104, FLAG_PLACE_TEMP_3B, FIND_ITEM(ITEM_NUT) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET_WEST, FLAG_PLACE_TEMP_31, EVENT_SCRIPT(Event_FreezeWestTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET_EAST, FLAG_PLACE_TEMP_32, EVENT_SCRIPT(Event_FreezeEastTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE) | 0x10000000, FORCE_TARGET, FLAG_PLACE_TEMP_30, EVENT_SCRIPT(Event_PrepareForce) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), FORCE_TARGET, FLAG_PLACE_TEMP_30, EVENT_SCRIPT(Event_KnockDownObstacle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, FLAG_PLACE_TEMP_33, EVENT_SCRIPT(Event_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_UpdateMovedRockCell) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedRockColumns) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedRockColumns) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SaveMovedRockColumns) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), LIFT_OPERATOR, 0x334, EVENT_SCRIPT(Event_HaltLifts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), LIFT_OPERATOR, FLAG_PLACE_TEMP_34, EVENT_SCRIPT(Event_HaltLifts) },
     { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
     { EVENT_TALK, MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMiniMazeAttendant) },
     { EVENT_TALK, SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToShiftingFloorAttendant) },

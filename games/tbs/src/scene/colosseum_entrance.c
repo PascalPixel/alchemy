@@ -18,8 +18,8 @@
 ///   ColosseumEntrance_GetPlacements places a second crowd, with Isaac's
 ///   companions and four of the colosseum's officials, and the event table's
 ///   flag conditions give everyone new lines: the scalpers sell seats, and the
-///   Lucky Guess man recognizes Isaac and will not let a finalist play (0x3c0
-///   remembers that he said so). Stepping toward the gates
+///   Lucky Guess man recognizes Isaac and will not let a finalist play
+///   (FLAG_PLACE_TEMP_C0 remembers that he said so). Stepping toward the gates
 ///   (Event_CrowdRecognizesIsaac) plays the officials' quarrel over the boy
 ///   Babi picked; they lead the party in, and if Isaac will not go, they and
 ///   his companions talk him round, Garet leading the way if he still
@@ -267,11 +267,11 @@ static void Event_DiscussLuckyGuessWinnings(void) {
 
 /// The Lucky Guess man at the Colosseum Entrance explains the game; on the
 /// finals day he recognizes Isaac as Babi's pick and refuses him, as finalists
-/// may not play (0x3c0: said once).
+/// may not play (FLAG_PLACE_TEMP_C0: said once).
 static void Event_OfferLuckyGuess(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_BABI_SAVED) != 0) {
-    if (GameFlag_IsSet(0x3c0) != 0) {
+    if (GameFlag_IsSet(FLAG_PLACE_TEMP_C0) != 0) {
       Engine_EventSetMessage(MsgColosseumLookImSorryButWe);
       Event_ShowMessage(16, 0);
     } else {
@@ -286,7 +286,7 @@ static void Event_OfferLuckyGuess(void) {
         }
         Engine_EventWait(40);
         Event_ShowMessage(16, 0);
-        GameFlag_Set(0x3c0);
+        GameFlag_Set(FLAG_PLACE_TEMP_C0);
       } else {
         Event_ShowMessage(16, 0);
       }
@@ -356,13 +356,13 @@ static void Event_TalkToSatrage(void) {
 }
 
 /// In the Colosseum's waiting room, Dekka psyches himself up; the first time,
-/// Navampa explains he will not answer (0x3c1).
+/// Navampa explains he will not answer (FLAG_PLACE_TEMP_C1).
 static void Event_TalkToDekka(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(DEKKA, 2);
   Engine_EventSetMessage(MsgColosseumDekkaMustWinFinalsDekka);
   Event_ShowMessageAndWait(DEKKA, 0, 20);
-  if (GameFlag_IsSet(0x3c1) != 0) {
+  if (GameFlag_IsSet(FLAG_PLACE_TEMP_C1) != 0) {
     Engine_EventWait(20);
   } else {
     ColosseumEntrance_FaceDirection(NAVAMPA, FACING_EAST);
@@ -374,7 +374,7 @@ static void Event_TalkToDekka(void) {
     Actor_ShowEmote(NAVAMPA, 0x105, 40);
     ColosseumEntrance_ShowMessageAndPause(NAVAMPA);
     ColosseumEntrance_FaceDirection(NAVAMPA, FACING_SOUTH + FACING_STEP);
-    GameFlag_Set(0x3c1);
+    GameFlag_Set(FLAG_PLACE_TEMP_C1);
   }
   Engine_EventEnd();
 }

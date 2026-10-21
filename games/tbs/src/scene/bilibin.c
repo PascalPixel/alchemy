@@ -14,11 +14,11 @@
 /// FLAG_KOLIMA_CURSE_LIFTED, whether Kolima's curse is lifted, which the party
 /// sets far from here, in Kolima Forest, when it heals Tret with the Water of
 /// Hermes. Until then the tree stands at the entrance: a first look says it
-/// almost looks like a man, a second (place flag 0x301 remembers the first
-/// until the party leaves Bilibin) that it looks like a living person, and
-/// Mind Read hears `Help me... Somebody...`. Once the curse is lifted,
-/// Bilibin_RestoreVillageActors puts the man himself (FORMER_TREE_MAN) beside
-/// the empty spot and turns villagers 14 and 15 about. Each of the ten
+/// almost looks like a man, a second (place flag FLAG_PLACE_TEMP_01 remembers
+/// the first until the party leaves Bilibin) that it looks like a living
+/// person, and Mind Read hears `Help me... Somebody...`. Once the curse is
+/// lifted, Bilibin_RestoreVillageActors puts the man himself (FORMER_TREE_MAN)
+/// beside the empty spot and turns villagers 14 and 15 about. Each of the ten
 /// villagers (actors 10 to 19) has two lines and two thoughts in
 /// gBilibinEvents1, the row that needs the flag clear first, so the first row
 /// that matches picks the time: before, they talk of the curse, the
@@ -37,13 +37,13 @@
 /// once Move or a push slides it aside. Bilibin_UpdateVillageBlockCells keeps
 /// the cells of the statue's lane in step and hops the leader clear if it
 /// lands on him; coming back out by that way (entrance 11) the party finds the
-/// statue already moved. Place flag 0x304 is set while McCoy's gate guards
-/// have let the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet
-/// entered the palace (FLAG_MCCOY_PALACE_VISITED), and the garden's east guard
-/// tests it to scold the party for keeping McCoy waiting. XXX: the garden is
-/// another group of scenes (9, Bilibin's is 8), and Scene_ResetFlagsOnEnter
-/// clears place flags on entering a new group, so the guard seems never to see
-/// it set; a playthrough would settle it.
+/// statue already moved. Place flag FLAG_PLACE_TEMP_04 is set while McCoy's
+/// gate guards have let the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has
+/// not yet entered the palace (FLAG_MCCOY_PALACE_VISITED), and the garden's
+/// east guard tests it to scold the party for keeping McCoy waiting. XXX: the
+/// garden is another group of scenes (9, Bilibin's is 8), and
+/// Scene_ResetFlagsOnEnter clears place flags on entering a new group, so the
+/// guard seems never to see it set; a playthrough would settle it.
 ///
 /// The Bilibin Treasury (BilibinTreasury) is what its sign calls `McCoy's
 /// Hidden Warehouse`. Gust, a Jupiter Djinni, waits there, placed until he has
@@ -264,16 +264,16 @@ static void Event_InspectHumanShapedTree(void) {
 
 /// Talking to the tree at Bilibin's entrance, before the curse is lifted: it
 /// almost looks like a man and, looked at again, like a living person. Place
-/// flag 0x301 remembers the first look until the party leaves Bilibin's group
-/// of scenes.
+/// flag FLAG_PLACE_TEMP_01 remembers the first look until the party leaves
+/// Bilibin's group of scenes.
 static void Event_ExamineTreeMan(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinItsTreeButAlmostLooks);
-  if (GameFlag_IsSet(0x301) != 0) {
+  if (GameFlag_IsSet(FLAG_PLACE_TEMP_01) != 0) {
     gEventWork->message++;
   }
   Event_ShowMessage(TREE_MAN, 0);
-  GameFlag_Set(0x301);
+  GameFlag_Set(FLAG_PLACE_TEMP_01);
   Engine_EventEnd();
 }
 
@@ -560,8 +560,8 @@ s32 Bilibin_Initialize(void) {
 }
 
 /// Sets up Bilibin: the tree or the man by FLAG_KOLIMA_CURSE_LIFTED, the bush
-/// and the statue by the entrance used, and place flag 0x304 for McCoy's
-/// garden guard.
+/// and the statue by the entrance used, and place flag FLAG_PLACE_TEMP_04 for
+/// McCoy's garden guard.
 static void Bilibin_RestoreVillageActors(void) {
 
   struct FieldActor *actor;
@@ -594,7 +594,7 @@ static void Bilibin_RestoreVillageActors(void) {
   Bilibin_UpdateVillageBlockCells();
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0 &&
       GameFlag_IsSet(FLAG_MCCOY_PALACE_VISITED) == 0) {
-    GameFlag_Set(0x304);
+    GameFlag_Set(FLAG_PLACE_TEMP_04);
   }
 }
 

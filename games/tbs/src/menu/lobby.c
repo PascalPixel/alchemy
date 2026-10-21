@@ -87,14 +87,19 @@
 //   arrival (LinkLobby_RunRoundResult).
 // 0x172: a linked battle has been arranged (with FLAG_LINK_BATTLE): only the
 //   first three members take part (LinkLobby_PartyContains).
-// The place flags (flags.h), by number:
-// 0x300: the attendant has explained once; talking again offers to apply.
-// 0x302: this console is the link's child (multiplayer id 1), which receives
-//   the parties first. LinkLobby_PeerSlotMatches sets 0x302 and 0x303.
-// 0x303: the link is up (LOBBY_LINK_READY_MASK).
-// 0x304: a linked battle has ended since the leader last walked south of z
-//   224; 0x305: it was won. The party's and visitors' lines read them.
-// 1000 (0x3e8): the last linked battle broke off (Battle_RunEncounter). In a
+// The place flags it uses (flags.h):
+// FLAG_PLACE_TEMP_00: the attendant has explained once; talking again offers to
+// apply. FLAG_PLACE_TEMP_02: this console is the link's child (multiplayer id
+// 1), which receives
+//   the parties first. LinkLobby_PeerSlotMatches sets FLAG_PLACE_TEMP_02 and
+//   FLAG_PLACE_TEMP_03.
+// FLAG_PLACE_TEMP_03: the link is up (LOBBY_LINK_READY_MASK).
+// FLAG_PLACE_TEMP_04: a linked battle has ended since the leader last walked
+// south of z
+//   224; FLAG_PLACE_TEMP_05: it was won. The party's and visitors' lines read
+//   them.
+// FLAG_PLACE_TEMP_E8, flag 1000: the last linked battle broke off
+// (Battle_RunEncounter). In a
 //   monster series, byte flag 1000 (flags 1000 to 1007) instead counts the
 //   victories, 0 to 2, towards a stronger monster.
 //
@@ -211,31 +216,31 @@ s32 LinkLobby_SelectPlacements(void) {
 
 /// Returns 1 when the partner's payload holds slot's word in slot's column,
 /// 0 when it does not or there is no link. Also sets or clears place flags
-/// 0x303 (the link is up) and 0x302 (this console is the child), and reads
-/// the other console's payload by them.
+/// FLAG_PLACE_TEMP_03 (the link is up) and FLAG_PLACE_TEMP_02 (this console is
+/// the child), and reads the other console's payload by them.
 static s32 LinkLobby_PeerSlotMatches(s32 slot) {
   s32 serialPlayerId = -1;
 
   if ((gLinkStatus & LOBBY_LINK_READY_MASK) == LOBBY_LINK_READY_MASK) {
     // SIOCNT bits 4 and 5: 0 for the parent, 1 for the child.
     serialPlayerId = (REG_SIOCNT << 26) >> 30;
-    Engine_GameFlagSet(0x303);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_03);
   } else {
-    Engine_GameFlagClear(0x303);
+    Engine_GameFlagClear(FLAG_PLACE_TEMP_03);
   }
   /* FAKEMATCH(one-pass): a loop left by break after its first pass, which
    * places the test after the body as the ROM does; as an if around the body,
    * 12 of 58 instructions differ in tbs-en. */
-  while (serialPlayerId >= 0 && Engine_GameFlagIsSet(0x303)) {
+  while (serialPlayerId >= 0 && Engine_GameFlagIsSet(FLAG_PLACE_TEMP_03)) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 
     if (serialPlayerId != 0)
-      Engine_GameFlagSet(0x302);
+      Engine_GameFlagSet(FLAG_PLACE_TEMP_02);
     else
-      Engine_GameFlagClear(0x302);
+      Engine_GameFlagClear(FLAG_PLACE_TEMP_02);
     {
       struct LinkPeer *peer = (struct LinkPeer *)
-          gLinkPeerSignatures[Engine_GameFlagIsSet(0x302) ^ 1];
+          gLinkPeerSignatures[Engine_GameFlagIsSet(FLAG_PLACE_TEMP_02) ^ 1];
 
       if (peer->values[gLinkLobby_SlotColumns[slot]] == *expected)
         return 1;
@@ -277,12 +282,12 @@ static s32 LinkLobby_PollPeerReady(void) {
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
   if (Object_GetById(0)->z.fixed > 0xe00000) {
-    Engine_GameFlagClear(0x304);
+    Engine_GameFlagClear(FLAG_PLACE_TEMP_04);
   }
   // While raised event 2 (the lost link) waits, skip the partner tracking.
   if (work->raisedTrigger != 2) {
     LinkLobby_PeerSlotMatches(0);
-    if (!Engine_GameFlagIsSet(0x303)) {
+    if (!Engine_GameFlagIsSet(FLAG_PLACE_TEMP_03)) {
       // Without a link for 26 frames, clear every console's received payload
       // and go idle.
       if (++sLinkLobbyWaitFrames > LOBBY_PEER_WAIT_FRAMES) {
@@ -718,9 +723,9 @@ done:
 }
 
 /// Exchanges the two parties: the parent sends first, the child (place flag
-/// 0x302) receives first. On success stores the partner's member count in
-/// FLAG_LINK_PARTY_COUNT and returns it; on failure resets the transfer
-/// state and returns a negative result.
+/// FLAG_PLACE_TEMP_02) receives first. On success stores the partner's member
+/// count in FLAG_LINK_PARTY_COUNT and returns it; on failure resets the
+/// transfer state and returns a negative result.
 static s32 LinkLobby_ExchangePartyRecords(void) {
   s32 result;
   s32 receivedOwnerCount;
@@ -732,7 +737,7 @@ static s32 LinkLobby_ExchangePartyRecords(void) {
   do {
     result = 0;
   } while (0);
-  receiveFirst = Engine_GameFlagIsSet(0x302);
+  receiveFirst = Engine_GameFlagIsSet(FLAG_PLACE_TEMP_02);
   gLinkExchangeState = result;
   if (!receiveFirst) {
     Engine_TaskWait(5);
@@ -876,7 +881,7 @@ static s32 LinkLobby_EnterBattle(void) {
         Scheduler_SetTaskFlags((SchedulerCallback)LinkLobby_PollPeerReady, 1);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_01);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_02);
-        Engine_GameFlagClear(0x303);
+        Engine_GameFlagClear(FLAG_PLACE_TEMP_03);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_03);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
         work->raisedTrigger = 2;
@@ -991,12 +996,12 @@ static s32 LinkLobby_ChooseBattleMode(void) {
     open_message:
       Engine_EventOpenMessage(8, 0);
     } else if (!Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) &&
-               !GameFlag_IsSet(0x300)) {
+               !GameFlag_IsSet(FLAG_PLACE_TEMP_00)) {
       Engine_EventSetMessage(messageBase);
       Engine_EventOpenMessage(8, 0);
-      Engine_GameFlagSet(0x300);
+      Engine_GameFlagSet(FLAG_PLACE_TEMP_00);
     } else {
-      Engine_GameFlagSet(0x300);
+      Engine_GameFlagSet(FLAG_PLACE_TEMP_00);
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01)) {
         Engine_EventSetMessage(messageBase + 2);
       } else {
@@ -1176,9 +1181,10 @@ static s32 LinkLobby_PartyContains(s32 ownerId) {
 UNUSED static void State_NoOp(void) {}
 
 /// Talk events 1, 2, 3 and 5: Garet, Ivan, Mia or Jenna speaks of the last
-/// linked battle (place flags 0x304 and 0x305) and whether they fought in it,
-/// or else of whether Isaac and they are in the battle party. Each message
-/// family holds one line per character, at actor - 1; Felix's holds "?".
+/// linked battle (place flags FLAG_PLACE_TEMP_04 and FLAG_PLACE_TEMP_05) and
+/// whether they fought in it, or else of whether Isaac and they are in the
+/// battle party. Each message family holds one line per character, at actor -
+/// 1; Felix's holds "?".
 static s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = LinkLobby_PartyContains(0);
@@ -1186,13 +1192,13 @@ static s32 LinkLobby_TalkByProgress(s32 actor) {
 
   Engine_EventBegin();
   Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
-  if (Engine_GameFlagIsSet(0x304)) {
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_04)) {
 
     // Isaac's flag is tested and the result dropped; messageBase first
     // holds whether the speaker fought (FLAG_SCENE_TEMP_F0 + actor).
     GameFlag_IsSet(0x2f0);
     messageBase = Engine_GameFlagIsSet(actor + 0x2f0);
-    if (Engine_GameFlagIsSet(0x305)) {
+    if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_05)) {
       if (messageBase)
         messageBase = MsgLobbyWonToldCountOn;
       else
@@ -1234,8 +1240,9 @@ static s32 LinkLobby_LeaveArena(void) {
 /// Talk events 12 to 14, three visitors: a traveling warrior, one who
 /// explains the linked finals, and one who wonders whether this is the old
 /// man's Battle Arena. Each says their first line unless a linked battle has
-/// ended since the leader last walked south of z 224 (place flag 0x304), then
-/// their second after a win or their third after a loss (0x305).
+/// ended since the leader last walked south of z 224 (place flag
+/// FLAG_PLACE_TEMP_04), then their second after a win or their third after a
+/// loss (FLAG_PLACE_TEMP_05).
 static s32 LinkLobby_TalkToAttendant(s32 actor) {
   s32 message;
   s32 step = 0;
@@ -1254,8 +1261,8 @@ static s32 LinkLobby_TalkToAttendant(s32 actor) {
     break;
   }
   Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
-  if (Engine_GameFlagIsSet(0x304))
-    step = 2 - (Engine_GameFlagIsSet(0x305) != 0);
+  if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_04))
+    step = 2 - (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_05) != 0);
   Engine_EventSetMessage(message + step);
   Engine_EventOpenMessage(actor, 0);
   Engine_EventEnd();
@@ -1519,7 +1526,7 @@ s32 LinkLobby_RunRoundResult(void) {
       eventWork = gEventWork;
       Engine_GameFlagClear(1000);
       eventWork->raisedTrigger = 2;
-      Engine_GameFlagClear(0x304);
+      Engine_GameFlagClear(FLAG_PLACE_TEMP_04);
       Engine_TaskWait(20);
       LinkLobby_InitializeSerial();
       LinkLobby_WriteSlotValue(0);
@@ -1537,8 +1544,8 @@ s32 LinkLobby_RunRoundResult(void) {
       }
       LinkLobby_DrawThreeDigitValue(*(u16 *)score);
       LinkLobby_SaveBattleResults();
-      Engine_GameFlagSet(0x304);
-      Engine_GameFlagSet(0x305);
+      Engine_GameFlagSet(FLAG_PLACE_TEMP_04);
+      Engine_GameFlagSet(FLAG_PLACE_TEMP_05);
     }
     Engine_EventEnd();
     // Entrance 11, a linked battle lost: count the loss and end the run.
@@ -1556,8 +1563,8 @@ s32 LinkLobby_RunRoundResult(void) {
       gGameState.linkTallies[7] = v;
       LinkLobby_SaveBattleResults();
     }
-    Engine_GameFlagSet(0x304);
-    Engine_GameFlagClear(0x305);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_04);
+    Engine_GameFlagClear(FLAG_PLACE_TEMP_05);
     Engine_EventEnd();
     // Arriving from the file select screen: start the link, clear flag 0x172
     // and reset the monster level. Idle sleep is turned off here, with a note

@@ -74,8 +74,8 @@
 ///
 /// Every scene sets FLAG_REACHED_KALAY on entry. Kalay and Hammet Palace's
 /// front also catch the palace's story up with Lunpa's: hearing in Lunpa that
-/// Hammet is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets place flag 0x321,
-/// which changes what Layana says, and once Hammet is free
+/// Hammet is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets place flag
+/// FLAG_PLACE_TEMP_21, which changes what Layana says, and once Hammet is free
 /// (FLAG_LUNPA_TRADE_REOPENED, set as Donpa judges Dodonpa in Lunpa) Ivan's
 /// report and Layana's scolding count as seen and flag 0x915 opens the
 /// passage. The getters choose each scene's tables; scenes 154 and 155 have
@@ -1030,10 +1030,11 @@ s32 Kalay_Initialize(void) {
 }
 
 /// Sets up Kalay. Having heard in Lunpa that Hammet is held there sets place
-/// flag 0x321; once Hammet is free (FLAG_LUNPA_TRADE_REOPENED) the palace's
-/// flags 0x912 to 0x915 are set too, so its earlier scenes count as seen and
-/// the passage is open. Coming up from the Kalay Tunnel (entrance 14) finds
-/// its block moved aside, and until it is caught the Nut circles in the air.
+/// flag FLAG_PLACE_TEMP_21; once Hammet is free (FLAG_LUNPA_TRADE_REOPENED) the
+/// palace's flags 0x912 to 0x915 are set too, so its earlier scenes count as
+/// seen and the passage is open. Coming up from the Kalay Tunnel (entrance 14)
+/// finds its block moved aside, and until it is caught the Nut circles in the
+/// air.
 static void Kalay_PrepareTown(void) {
   OrbitingSceneObject *nut;
   s32 found;
@@ -1041,13 +1042,13 @@ static void Kalay_PrepareTown(void) {
   OrbitingSceneObjectSprite *sprite;
 
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-    Engine_GameFlagSet(0x321);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
     Engine_GameFlagSet(FLAG_LAYANA_SCOLDED_LUNPA_VISIT);
     Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(0x915);
   }
   if (Engine_GameFlagIsSet(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
-    Engine_GameFlagSet(0x321);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
   }
   if (gGameState.entrance == 14) {
     Actor_SetPosition(25, PIXELS(424), PIXELS(88));
@@ -1084,13 +1085,13 @@ static void Kalay_PrepareTown(void) {
 /// the guards scene.
 static void Kalay_PrepareHammetPalace(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-    Engine_GameFlagSet(0x321);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
     Engine_GameFlagSet(FLAG_LAYANA_SCOLDED_LUNPA_VISIT);
     Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
     Engine_GameFlagSet(0x915);
   }
   if (Engine_GameFlagIsSet(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
-    Engine_GameFlagSet(0x321);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_21);
   }
   if (gGameState.entrance != 0) {
     if (Engine_GameFlagIsSet(FLAG_IVAN_REPORTED_TO_LAYANA) == 0) {

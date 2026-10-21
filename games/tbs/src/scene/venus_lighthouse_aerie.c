@@ -1156,7 +1156,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
     Event_SetDefeatDestination(actor, AERIE_ENTRANCE_DEFEAT);
   }
   Field_RequestBattleFromEncounterTable(98, 1);
-  GameFlag_Set(0x350);
+  GameFlag_Set(FLAG_PLACE_TEMP_50);
 }
 
 /// Flashes an actor palette and emits paired effects every fifteenth frame.
@@ -1808,7 +1808,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                              AERIE_ENTRANCE_DEFEAT);
   Field_RequestBattleFromEncounterTable(98, 0);
   Party_RestorePpOfLitElements();
-  GameFlag_Set(0x351);
+  GameFlag_Set(FLAG_PLACE_TEMP_51);
 }
 
 /// Flashes the object palette white, then restores the transformation colour.

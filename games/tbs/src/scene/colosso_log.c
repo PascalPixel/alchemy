@@ -8,8 +8,8 @@
 /// and the stages run through the Scales of Justice, the Stepping-Stone Stage,
 /// the Wall Wedge, the Free-Climb Area, the Moving Sidewalk Stage and another
 /// log-rolling area. ColossoLog_Initialize restores the stages from the group's
-/// flags (0x360 to 0x369, and the stone's column in byte flag 0x370) and sets
-/// up the visit its entrance stands for:
+/// flags (FLAG_PLACE_TEMP_60 to FLAG_PLACE_TEMP_69, and the stone's column in
+/// byte flag 0x370) and sets up the visit its entrance stands for:
 ///
 /// - Entrance 3, the tour (ColossoLog_IntroduceThirdFinals), from the
 ///   Colosseum's east passage after the second win; the attendants describe
@@ -241,8 +241,8 @@ static void ColossoLog_WaitForWallWedgeOpening(void) {
   }
 }
 
-/// On the Moving Sidewalk Stage's belt (touch 11), until 0x363 is set, the belt
-/// carries the controlled actor and the camera west.
+/// On the Moving Sidewalk Stage's belt (touch 11), until FLAG_PLACE_TEMP_63 is
+/// set, the belt carries the controlled actor and the camera west.
 static void Event_RideMovingSidewalk(void) {
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
@@ -258,9 +258,9 @@ static void Event_RideMovingSidewalk(void) {
 }
 
 /// Growth on the plant on Colosseum Final 3's stages: it grows and opens a
-/// shortcut (0x360).
+/// shortcut (FLAG_PLACE_TEMP_60).
 static void Event_GrowPlant(void) {
-  Engine_GameFlagSet(0x360);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_60);
   {
 
     Map_CopyCellAttributes(47, 61, 1, 4, 49, 61);
@@ -275,7 +275,8 @@ static inline void ColossoLog_MoveOnScales(struct FieldActor *pan, s32 height) {
 }
 
 /// Frost on the target on the Scales of Justice's eastern pan: it freezes and
-/// the scales tip, the western pan down and the eastern pan up (0x362).
+/// the scales tip, the western pan down and the eastern pan up
+/// (FLAG_PLACE_TEMP_62).
 static void Event_FreezeOnScales(void) {
   struct FieldActor *object;
 
@@ -289,13 +290,14 @@ static void Event_FreezeOnScales(void) {
   object = Object_GetById(SCALE_PAN_WEST);
   ColossoLog_MoveOnScales(object, PIXELS(4));
 
-  Engine_GameFlagSet(0x362);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_62);
   Map_CopyCellAttributes(15, 12, 1, 1, 13, 12);
   Map_CopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
 
 /// Stepping onto the Scales of Justice's western pan, unless the scales are
-/// frozen: it sinks with the rider as the eastern pan rises (0x367).
+/// frozen: it sinks with the rider as the eastern pan rises
+/// (FLAG_PLACE_TEMP_67).
 static void Event_StepOnScales(void) {
   s32 actor;
   s32 lowered;
@@ -304,7 +306,7 @@ static void Event_StepOnScales(void) {
   u8 *flags;
 
   actor = gGameState.selectedActor;
-  lowered = GameFlag_IsSet(0x362);
+  lowered = GameFlag_IsSet(FLAG_PLACE_TEMP_62);
   if (lowered == 0) {
     log = Object_GetById(SCALE_PAN_WEST);
     if (log != NULL) {
@@ -328,7 +330,7 @@ static void Event_StepOnScales(void) {
     Engine_ActorSetSpriteFlags(rider, 1);
     *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     rider->terrainHeight = rider->y.fixed;
-    Engine_GameFlagSet(0x367);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_67);
   }
 }
 
@@ -351,11 +353,11 @@ static void Event_StepOffScales(void) {
     Map_CopyCellAttributes(0, 25, 1, 1, 9, 12);
   }
   Engine_TaskWait(2);
-  Engine_GameFlagClear(0x367);
+  Engine_GameFlagClear(FLAG_PLACE_TEMP_67);
 }
 
 /// Move on the weight by the Scales of Justice: when it reaches the western
-/// pan, it sinks the pan and the eastern pan rises (0x368).
+/// pan, it sinks the pan and the eastern pan rises (FLAG_PLACE_TEMP_68).
 static void Event_SetWeightOnScales(void) {
   struct FieldActor *probe;
   struct FieldActor *log;
@@ -379,7 +381,7 @@ static void Event_SetWeightOnScales(void) {
       ColossoLog_MoveOnScales(upper, PIXELS(32));
       lower = Object_GetById(SCALE_PAN_WEST);
       ColossoLog_MoveOnScales(lower, PIXELS(4));
-      Engine_GameFlagSet(0x368);
+      Engine_GameFlagSet(FLAG_PLACE_TEMP_68);
       Map_CopyCellAttributes(15, 12, 1, 1, 13, z);
       Map_CopyCellAttributes(1, 25, 1, 1, x, z);
     }
@@ -495,8 +497,8 @@ static s32 ColossoLog_CheckLongLogPath(s32 x, s32 z) {
 
 /// Walking into the log-rolling area's long log (trigger 23) rolls it, with the
 /// leader, the way the pad is held until something stops it; at the east end it
-/// drops into place and the path is made (0x369). Away from the log, a rock
-/// ahead is pushed instead.
+/// drops into place and the path is made (FLAG_PLACE_TEMP_69). Away from the
+/// log, a rock ahead is pushed instead.
 static void Event_RollLongLog(void) {
   struct FieldActor *rider;
   struct FieldActor *log;
@@ -585,7 +587,7 @@ static void Event_RollLongLog(void) {
   FieldObject_WaitForMove(log);
   // At the eastern end the log settles at the end of its stage.
   if (x >= PIXELS(1328)) {
-    GameFlag_Set(0x369);
+    GameFlag_Set(FLAG_PLACE_TEMP_69);
     Engine_ActorSetAnimation(LONG_LOG, 3);
     Actor_SetDestinationOffset(LONG_LOG, 18, 6);
     Engine_EventWait(30);
@@ -624,7 +626,7 @@ ColossoLog_ShowActivatedSidewalkLayer(struct ScriptInterpreter *interpreter) {
 }
 
 /// Force on the Moving Sidewalk Stage's block: it slides away and the belt
-/// carries no one any more (0x363).
+/// carries no one any more (FLAG_PLACE_TEMP_63).
 static void Event_ForceSidewalkBlock(void) {
   struct FieldActor *effect;
   s32 moveRate;
@@ -636,14 +638,14 @@ static void Event_ForceSidewalkBlock(void) {
   effect->speed = moveRate;
   Object_SetMode(effect, 2);
   Engine_ObjectSetScript(effect, gColossoSceneEventEffect);
-  Engine_GameFlagSet(0x363);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_63);
 }
 
 /// Halt on the Wall Wedge's operator: the pistons stop at their next open
-/// pattern (0x361).
+/// pattern (FLAG_PLACE_TEMP_61).
 static void Event_HaltWall(void) {
   BattleEffect_PauseObject(WALL_OPERATOR);
-  Engine_GameFlagSet(0x361);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_61);
   Engine_TaskWait(10);
   while (gColossoSceneTaskStatus != 1 && gColossoSceneTaskStatus != 3)
     Engine_TaskWait(1);
@@ -2350,7 +2352,7 @@ s32 gColossoSceneTaskState = 0;
 struct SceneEvent gColossoLogEvents[] = {
     { TOUCH_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
     { TOUCH_WALKING, 91, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWeightOrCheckAhead) },
-    { EVENT_TOUCH, 11, 0x363, EVENT_SCRIPT(Event_RideMovingSidewalk) },
+    { EVENT_TOUCH, 11, FLAG_PLACE_TEMP_63, EVENT_SCRIPT(Event_RideMovingSidewalk) },
     { TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWeight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), SCALE_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetWeightOnScales) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STONE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveStone) },
@@ -2360,16 +2362,16 @@ struct SceneEvent gColossoLogEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, FLAG_SCENE_TEMP_14, EVENT_SCRIPT(Event_SettleRocks) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, FLAG_SCENE_TEMP_15, EVENT_SCRIPT(Event_SettleRocks) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, FLAG_SCENE_TEMP_16, EVENT_SCRIPT(Event_SettleRocks) },
-    { EVENT_TOUCH, 15, 0x367, EVENT_SCRIPT(Event_StepOnScales) },
-    { EVENT_TOUCH, 16, IF_FLAG_SET(0x367), EVENT_SCRIPT(Event_StepOffScales) },
+    { EVENT_TOUCH, 15, FLAG_PLACE_TEMP_67, EVENT_SCRIPT(Event_StepOnScales) },
+    { EVENT_TOUCH, 16, IF_FLAG_SET(FLAG_PLACE_TEMP_67), EVENT_SCRIPT(Event_StepOffScales) },
     { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_10, EVENT_SCRIPT(Event_ReachArena) },
-    { SEARCH(SEARCH_CHEST), 101, 0x36a, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { SEARCH(SEARCH_CHEST), 102, 0x36b, FIND_ITEM(ITEM_NUT) },
-    { 0x8413, 103, 0x36c, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET, 0x362, EVENT_SCRIPT(Event_FreezeOnScales) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, 0x360, EVENT_SCRIPT(Event_GrowPlant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), WALL_OPERATOR, 0x361, EVENT_SCRIPT(Event_HaltWall) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE) | 0x50000000, SIDEWALK_BLOCK, 0x363, EVENT_SCRIPT(Event_ForceSidewalkBlock) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_PLACE_TEMP_6A, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_CHEST), 102, FLAG_PLACE_TEMP_6B, FIND_ITEM(ITEM_NUT) },
+    { 0x8413, 103, FLAG_PLACE_TEMP_6C, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET, FLAG_PLACE_TEMP_62, EVENT_SCRIPT(Event_FreezeOnScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, FLAG_PLACE_TEMP_60, EVENT_SCRIPT(Event_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), WALL_OPERATOR, FLAG_PLACE_TEMP_61, EVENT_SCRIPT(Event_HaltWall) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE) | 0x50000000, SIDEWALK_BLOCK, FLAG_PLACE_TEMP_63, EVENT_SCRIPT(Event_ForceSidewalkBlock) },
     { EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassNorthWallOpening) },
     { EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassSouthWallOpening) },
     { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },

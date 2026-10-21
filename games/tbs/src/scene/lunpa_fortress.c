@@ -29,8 +29,8 @@
 ///   (Catch or talk, FLAG_LUNPA_FORTRESS_CELL_KEY); it opens the cell doors of
 ///   all four scenes, each remembered in a place flag from 0x350. Donpa lies
 ///   asleep, worn out, beside his attendant, who tells how he spoiled
-///   Dodonpa (place flag 0x313 once told); Dodonpa's family and the women he
-///   brought here talk.
+///   Dodonpa (place flag FLAG_PLACE_TEMP_13 once told); Dodonpa's family and
+///   the women he brought here talk.
 /// - LunpaFortress3 (scene 162), the cave, whose ways are hidden. Whirlwind
 ///   blows away what covers two switches and a passage
 ///   (FLAG_LUNPA_FORTRESS_*_UNCOVERED; FLAG_SCENE_TEMP_17 and _18 while the
@@ -50,12 +50,12 @@
 ///   arrives, has him locked up and asks the party to leave as they came,
 ///   since Dodonpa's men would free him; he has spread a rumor that the
 ///   intruders failed and fled. It sets FLAG_LUNPA_TRADE_REOPENED, which
-///   changes all of Lunpa, and place flag 0x301, and the party slips out with
-///   Hammet (exit 4, the gates' entrance 3). Coming back by entrance 3
-///   afterwards finds Dodonpa in his cell, and in LunpaFortress2 Donpa thanks
-///   the party and has his attendant show them his reward (place flag 0x314),
-///   Tonic, a Mercury Djinni, who joins when spoken to
-///   (FLAG_LUNPA_FORTRESS_REWARD_TAKEN).
+///   changes all of Lunpa, and place flag FLAG_PLACE_TEMP_01, and the party
+///   slips out with Hammet (exit 4, the gates' entrance 3). Coming back by
+///   entrance 3 afterwards finds Dodonpa in his cell, and in LunpaFortress2
+///   Donpa thanks the party and has his attendant show them his reward (place
+///   flag FLAG_PLACE_TEMP_14), Tonic, a Mercury Djinni, who joins when spoken
+///   to (FLAG_LUNPA_FORTRESS_REWARD_TAKEN).
 ///
 /// Scene flags: FLAG_SCENE_TEMP_14 and _15, a guard has spotted the party;
 /// FLAG_SCENE_TEMP_24 and _25, the entrance guard or the sentries have thrown
@@ -1582,7 +1582,7 @@ static void LunpaFortress_PositionPartyForMonster(void) {
 static void Event_FindHammet(void) {
   s32 messageBase;
 
-  if (FLAG_CHECK(0x301) != 0)
+  if (FLAG_CHECK(FLAG_PLACE_TEMP_01) != 0)
     return;
   FLAG_SET(FLAG_SCENE_TEMP_70);
   EV_BEGIN();
@@ -1855,7 +1855,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   s32 punishmentMessage;
   s32 donpaMessage;
 
-  FLAG_SET(0x301);
+  FLAG_SET(FLAG_PLACE_TEMP_01);
   FLAG_SET(FLAG_LUNPA_TRADE_REOPENED);
   Map_CopyCells(16, 75, 7, 4, 26, 55);
   LunpaFortress_OpenDoor4(4);
@@ -2601,7 +2601,7 @@ static void Event_TalkToAttendant(void) {
     MESSAGE_PUT(18, 0);
     EV_END();
   } else {
-    if (FLAG_CHECK(0x313) != 0) {
+    if (FLAG_CHECK(FLAG_PLACE_TEMP_13) != 0) {
       MESSAGE_SET(MsgLunpaMaybeDodonpasEyes);
       MESSAGE_OPEN(FORTRESS2_ATTENDANT, 0);
       EV_END();
@@ -2646,7 +2646,7 @@ static void Event_TalkToAttendant(void) {
       Engine_ActorSetAnimationAndWait(FORTRESS2_ATTENDANT, 3);
       MESSAGE_SET(familyMessage + 2);
       MESSAGE_OPEN(FORTRESS2_ATTENDANT, 0);
-      FLAG_SET(0x313);
+      FLAG_SET(FLAG_PLACE_TEMP_13);
       EV_END();
     }
   }
@@ -2682,7 +2682,7 @@ static void Event_TalkToDonpa(void) {
 
   if (FLAG_CHECK(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_REWARD_TAKEN) == 0 &&
-        FLAG_CHECK(0x314) == 0) {
+        FLAG_CHECK(FLAG_PLACE_TEMP_14) == 0) {
       rewardMessage = MsgLunpaThankHelpDodonpa;
       MESSAGE_SET(rewardMessage);
       MESSAGE_PUT(FORTRESS2_DONPA, 0);
@@ -2725,7 +2725,7 @@ static void Event_TalkToDonpa(void) {
       WAIT(60);
       OBJ_MODE(FORTRESS2_ATTENDANT, 3);
       WAIT(30);
-      FLAG_SET(0x314);
+      FLAG_SET(FLAG_PLACE_TEMP_14);
     } else {
       MESSAGE_SET(MsgLunpaWellWorriedDodonpa);
       MESSAGE_PUT(FORTRESS2_DONPA, 0);
@@ -3016,7 +3016,7 @@ static void LunpaFortress_Initialize2(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Engine_MapSetWorkFlagBits9To11(0xc00);
     Engine_ActorSetSpriteFlags(Actor_Get(FORTRESS2_DONPA), 0);
-    if (FLAG_CHECK(0x314)) {
+    if (FLAG_CHECK(FLAG_PLACE_TEMP_14)) {
       OBJ_POS_SET(FORTRESS2_ATTENDANT, 872, 120);
     }
     break;

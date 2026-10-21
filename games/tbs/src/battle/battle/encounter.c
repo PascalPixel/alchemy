@@ -47,8 +47,8 @@
 /// gBattleWork, the enemy units, the background transition, the display and
 /// others), sets FLAG_IN_BATTLE, and on its way out resets the party's
 /// battle state, sets gGameState.battleStart back to 0 and releases heap
-/// block 10. A broken link also sets flag 0x3e8, which the link lobby reads
-/// (LinkLobby_RunRoundResult).
+/// block 10. A broken link also sets flag FLAG_PLACE_TEMP_E8, which the link
+/// lobby reads (LinkLobby_RunRoundResult).
 s32 Battle_RunEncounter(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
@@ -345,13 +345,13 @@ won:
   goto finished;
 
 aborted:
-  // The link broke, or no actions could be gathered. Flag 0x3e8 tells the
-  // link lobby (LinkLobby_RunRoundResult) the battle did not finish.
+  // The link broke, or no actions could be gathered. Flag FLAG_PLACE_TEMP_E8
+  // tells the link lobby (LinkLobby_RunRoundResult) the battle did not finish.
   Battle_ClearSerialTransferPayload();
   Scheduler_SuspendTasks(0);
   REG_DISPCNT = DISPCNT_MODE_1;
   result = battle->spoils.defeated;
-  GameFlag_SetBitFar(0x3e8);
+  GameFlag_SetBitFar(FLAG_PLACE_TEMP_E8);
   goto finished;
 
 party_lost:

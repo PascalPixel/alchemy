@@ -22,8 +22,8 @@
 /// goes in ahead. Walking north into the open gate (trigger 2,
 /// Event_EnterPalace) takes exit 2 into the palace, its entrance 1. Admitted
 /// but not yet inside the palace, the party that comes back from Bilibin
-/// (which sets place flag 0x304) is scolded once (FLAG_SCENE_TEMP_01): McCoy
-/// is angry because he could not find them.
+/// (which sets place flag FLAG_PLACE_TEMP_04) is scolded once
+/// (FLAG_SCENE_TEMP_01): McCoy is angry because he could not find them.
 ///
 /// In the palace McCoy turns the party away as too young, and his captain
 /// lets slip that the barricade may not need a key
@@ -183,7 +183,7 @@ static void Event_TalkToEastGuard(void) {
   Engine_EventBegin();
   // Once admitted, the party only receives the guard's current reminder.
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
-    if (Engine_GameFlagIsSet(0x304) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_04) != 0) {
       if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
         Engine_EventSetMessage(MsgBilibinWhere);
         Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);

@@ -19,9 +19,9 @@
 /// kitchen worker, the waitress and the diners wait. Once the curse is lifted
 /// the palace work has stopped and the road to Kolima is open again, and the
 /// head chef cooks so hard his kitchen cannot keep up: the first time the
-/// party talks to him (place flag 0x300, kept until the party leaves Bilibin)
-/// he shouts a string of orders and the kitchen worker answers, and from then
-/// on he sends the party to the waitress (Event_TalkToBusyChef).
+/// party talks to him (place flag FLAG_PLACE_TEMP_00, kept until the party
+/// leaves Bilibin) he shouts a string of orders and the kitchen worker answers,
+/// and from then on he sends the party to the waitress (Event_TalkToBusyChef).
 ///
 /// gBilibinInteriorsEvents keeps both times in one table, in the ROM's order:
 /// every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows
@@ -258,9 +258,9 @@ static void Event_TalkToInnkeeper(void) {
 /// out orders once, then sends the party to the waitress.
 static void Event_TalkToBusyChef(void) {
   Engine_EventBegin();
-  if (GameFlag_IsSet(0x300) == 0) {
-    // The first time (0x300, kept until the party leaves Bilibin), the chef
-    // shouts orders and the kitchen worker answers.
+  if (GameFlag_IsSet(FLAG_PLACE_TEMP_00) == 0) {
+    // The first time (FLAG_PLACE_TEMP_00, kept until the party leaves Bilibin),
+    // the chef shouts orders and the kitchen worker answers.
     Engine_EventSetMessage(MsgBilibinTwoSpecialsOneDinnerOne);
     Event_ShowMessage(BILIBIN_CHEF, 0);
     Actor_FaceDirection(BILIBIN_CHEF, FACING_WEST, 20);
@@ -270,7 +270,7 @@ static void Event_TalkToBusyChef(void) {
     Engine_EventWait(60);
     Event_ShowMessage(BILIBIN_KITCHEN_WORKER, 0);
     Engine_EventWait(10);
-    GameFlag_Set(0x300);
+    GameFlag_Set(FLAG_PLACE_TEMP_00);
   }
   // Then, as every later time, he sends the party to the waitress.
   Actor_FaceActor(BILIBIN_CHEF, ACTOR_PARTY_LEADER, 0);

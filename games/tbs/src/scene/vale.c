@@ -14,10 +14,11 @@
 ///   him; Garet, who will travel with him, trains his Psynergy nearby, and
 ///   Jenna comes by, and the two speak of that day before going to fetch Isaac
 ///   to go to Kraden's. Exit 12 brings the party back in at entrance 17, where
-///   Event_RoofMended plays once (group flag 0x308): Dora praises the roof,
-///   remembers Kyle, and sends the three off on their climb of Mt. Aleph with
-///   Kraden, the scholar who teaches them Alchemy (FLAG_SCENE_TEMP_02); for the
-///   rest of that visit Dora frets about the hole clumsy Garet left.
+///   Event_RoofMended plays once (group flag FLAG_PLACE_TEMP_08): Dora praises
+///   the roof, remembers Kyle, and sends the three off on their climb of Mt.
+///   Aleph with Kraden, the scholar who teaches them Alchemy
+///   (FLAG_SCENE_TEMP_02); for the rest of that visit Dora frets about the hole
+///   clumsy Garet left.
 /// - Vale before the party leaves. Until Kraden has planned the visit to Sol
 ///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
 ///   Aleph; a villager jumps out to warn him against sneaking up the sacred
@@ -34,11 +35,11 @@
 ///   away."), and the villagers speak of the tremors and of Kraden, who has
 ///   not come back.
 /// - Back from Kalay (FLAG_REACHED_KALAY): Garet meets his sister (group flag
-///   0x303) and asks one of his family to protect it while he is gone (0x304),
-///   a villager asks whether Jenna is back (FLAG_VALE_ASKED_IF_JENNA_IS_BACK),
-///   another feels a tremor, another asks about the lack of travellers since
-///   the eruption (0x307). Isaac's house opens again: Dora lies ill inside
-///   (vale_babi.c).
+///   FLAG_PLACE_TEMP_03) and asks one of his family to protect it while he is
+///   gone (FLAG_PLACE_TEMP_04), a villager asks whether Jenna is back
+///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
+///   about the lack of travellers since the eruption (FLAG_PLACE_TEMP_07).
+///   Isaac's house opens again: Dora lies ill inside (vale_babi.c).
 ///
 /// In every set: a Nut to catch with Catch (its flag 0xfd0; actor 26, or 20
 /// back from Kalay), an object to push or Move, whose column the setup restores
@@ -52,9 +53,9 @@
 /// house (ValeBabi, scene 8) and 11 into Vale Sanctum (Sanctum, scene 9). Two
 /// scenes no table reaches remain: HouseScene_RunRepairMorning, a copy of the
 /// roof's end, and FieldScene_RunCompanionActorSequence, which sets group flag
-/// 0x305. FLAG_SCENE_TEMP_41 pauses the villager who watches Isaac while a menu
-/// is open. The TBS_PATCH_4 editions also set Dora's sprite priority before
-/// Kalay.
+/// FLAG_PLACE_TEMP_05. FLAG_SCENE_TEMP_41 pauses the villager who watches Isaac
+/// while a menu is open. The TBS_PATCH_4 editions also set Dora's sprite
+/// priority before Kalay.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -304,7 +305,7 @@ static void Event_ReactToAnotherTremor(void) {
 }
 
 /// Back from Kalay, a villager in Vale (actor 19) asks about the lack of
-/// travellers since the eruption; sets group flag 0x307.
+/// travellers since the eruption; sets group flag FLAG_PLACE_TEMP_07.
 static void Event_AskAboutTheLackOfTravelers(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(19, 2);
@@ -312,7 +313,7 @@ static void Event_AskAboutTheLackOfTravelers(void) {
   Engine_ActorFaceActor(19, ACTOR_PARTY_LEADER, 20);
   Engine_EventSetMessage(MsgValeNoTravelersSinceTheEruption);
   Engine_EventAskYesNo(19, 0);
-  Engine_GameFlagSet(0x307);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_07);
   Engine_EventEnd();
 }
 
@@ -1273,9 +1274,9 @@ s32 Vale_Initialize(void) {
     actor =
         Object_GetById((Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) + 20);
     Engine_ActorSetSpriteFlags(actor, 0);
-    if (Engine_GameFlagIsSet(0x314)) {
+    if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_14)) {
       actor->x.fixed = 181 << 17;
-    } else if (Engine_GameFlagIsSet(0x316)) {
+    } else if (Engine_GameFlagIsSet(FLAG_PLACE_TEMP_16)) {
       actor->x.fixed = 197 << 17;
     } else {
       actor->x.fixed = 189 << 17;
@@ -1334,9 +1335,9 @@ s32 Vale_Initialize(void) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephVillagerPause, 0xc80);
         }
       }
-      if (!GameFlag_IsSet(0x308) && gGameState.entrance == 17) {
+      if (!GameFlag_IsSet(FLAG_PLACE_TEMP_08) && gGameState.entrance == 17) {
         Event_RoofMended();
-        Engine_GameFlagSet(0x308);
+        Engine_GameFlagSet(FLAG_PLACE_TEMP_08);
       }
 #if TBS_PATCH_4
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
@@ -1375,7 +1376,7 @@ s32 Vale_Initialize(void) {
 }
 
 /// Back from Kalay, Garet meets his sister in Vale (actor 8); sets group flag
-/// 0x303. "Ah! It's been a while... You're back?" ("Sis...").
+/// FLAG_PLACE_TEMP_03. "Ah! It's been a while... You're back?" ("Sis...").
 static void Event_GaretMeetsHisSister(void) {
   struct FieldActor *record;
   s32 msg;
@@ -1445,13 +1446,13 @@ static void Event_GaretMeetsHisSister(void) {
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  GameFlag_Set(0x303);
+  GameFlag_Set(FLAG_PLACE_TEMP_03);
   Engine_EventEnd();
 }
 
 /// Back from Kalay, Garet asks one of his family in Vale (actor 9) to protect
-/// it while he is gone; sets group flag 0x304. "WHATEVER YOU DO, you must
-/// protect the family while I'm gone."
+/// it while he is gone; sets group flag FLAG_PLACE_TEMP_04. "WHATEVER YOU DO,
+/// you must protect the family while I'm gone."
 static void Event_GaretAsksToProtectFamily(void) {
   struct FieldActor *record;
 
@@ -1524,7 +1525,7 @@ static void Event_GaretAsksToProtectFamily(void) {
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  GameFlag_Set(0x304);
+  GameFlag_Set(FLAG_PLACE_TEMP_04);
   Engine_EventEnd();
 }
 
@@ -1559,7 +1560,7 @@ UNUSED static void FieldScene_RunCompanionActorSequence(void) {
   Actor_FaceActor(ACTOR_D, ACTOR_PARTY_LEADER, 20);
   Event_ShowMessage(ACTOR_D, 0);
   Actor_FaceDirection(ACTOR_D, FACING_WEST, 10);
-  GameFlag_Set(0x305);
+  GameFlag_Set(FLAG_PLACE_TEMP_05);
   Engine_EventEnd();
 }
 
@@ -2839,19 +2840,19 @@ static void Event_SettleMovedObject(void) {
     actor = Object_GetById(20);
   if (actor == NULL)
     return;
-  GameFlag_Clear(0x314);
-  GameFlag_Clear(0x315);
-  GameFlag_Clear(0x316);
+  GameFlag_Clear(FLAG_PLACE_TEMP_14);
+  GameFlag_Clear(FLAG_PLACE_TEMP_15);
+  GameFlag_Clear(FLAG_PLACE_TEMP_16);
   column = actor->x.fixed >> 20;
   if (column == 22) {
     Map_CopyCellAttributes(17, 1, 1, 1, column, 36);
-    Engine_GameFlagSet(0x314);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_14);
   } else if (column == 23) {
     Map_CopyCellAttributes(17, 1, 1, 1, column, 36);
-    Engine_GameFlagSet(0x315);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_15);
   } else {
     Map_CopyCellAttributes(17, 1, 1, 1, 24, 36);
-    Engine_GameFlagSet(0x316);
+    Engine_GameFlagSet(FLAG_PLACE_TEMP_16);
   }
 }
 
@@ -3375,9 +3376,9 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
 };
 
 struct SceneEvent gVale_EventsAfterKalay[] = {
-    { EVENT_TALK, 8, 0x303, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
+    { EVENT_TALK, 8, FLAG_PLACE_TEMP_03, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeICanTellJustByLooking) },
-    { EVENT_TALK, 9, 0x304, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
+    { EVENT_TALK, 9, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
     { EVENT_TALK, 10, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
@@ -3386,9 +3387,9 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReactToAnotherTremor) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheDangerIsGone) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x303, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, FLAG_PLACE_TEMP_03, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreWorkingSoHard) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x304, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, FLAG_PLACE_TEMP_04, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
@@ -3396,7 +3397,7 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeTheEarthquakesArentCausedByEruptions) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeAhhICantStandTheseEarthquakes) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeTheSmokeFromMtAlephIsnt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x413, 0x307, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x413, FLAG_PLACE_TEMP_07, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },

@@ -52,9 +52,10 @@ for one). A scene is one object: it has no parts.
   cleared on every ordinary entrance: they are written `FLAG_SCENE_TEMP_xx`,
   and each scene says near its top (or beside a single use) what it keeps in
   them. A place's flags (`FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST`) belong to
-  the group of scenes of one place, which reuses the numbers: each scene names
-  its own in its file, never in `flags.h`. A
-  placement whose condition is 0 is placed only within the view
+  the group of scenes of one place, which reuses the numbers: they are written
+  `FLAG_PLACE_TEMP_xx`, or by a name of the scene's own in its file where
+  one is proven (never in `flags.h`), and each scene says what it keeps in
+  them. A placement whose condition is 0 is placed only within the view
   (`Scene_AssignViewFlags`); that 0 is no flag. `FLAG_KEEP_PARTY_POSITION` is
   set when the party returns to where it was, as after a battle: a scene's
   initialization skips its arrival cutscenes then.
@@ -103,11 +104,12 @@ A scene does not undo what it changed when the party leaves. Instead, two
 ranges of game flags are cleared for it on entry (`Scene_ResetFlagsOnEnter`,
 `games/tbs/src/object/object/scene.c`): the scene's own flags on every
 ordinary entrance, and the place's flags whenever the party enters a
-different group of scenes, the scenes of one place. So a scene keeps a moved crate or an opened
-door in a `FLAG_SCENE_TEMP_xx` flag, and it is put back the next time the
-party comes in; a place keeps what should last while the party is anywhere
-inside it in its group's flags. When the party returns to where it was, as
-after a battle, `FLAG_KEEP_PARTY_POSITION` keeps both ranges, and a scene's
+different group of scenes, the scenes of one place. So a scene keeps a
+moved crate or an opened door in a `FLAG_SCENE_TEMP_xx` flag, and it is put
+back the next time the party comes in; a place keeps what should last while
+the party is anywhere inside it in `FLAG_PLACE_TEMP_xx` flags, as Fuchin
+Falls Cave keeps where its logs float. When the party returns to where it
+was, as after a battle, `FLAG_KEEP_PARTY_POSITION` keeps both ranges, and a scene's
 initialization skips its arrival cutscenes.
 
 ### Why shared code is copied into each scene

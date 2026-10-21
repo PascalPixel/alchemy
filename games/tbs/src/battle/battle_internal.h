@@ -237,18 +237,6 @@
 #define RECORDS_KIND_MASK 15
 #define RECORDS_TABLE_SIZE 4
 
-/// BattleUnit.poison: the poison takes a tenth of the maximum HP at the end of
-/// each turn, deadly poison a fifth.
-#define POISON_NORMAL 1
-#define POISON_DEADLY 2
-
-/// BattleUnit.guardLevel: Defend and Granite halve the damage, Total Defense
-/// and Flash cut it to a tenth (REDUCE_BY_GUARD, target_exec.c). It lasts
-/// the round: BattleUnit_ResetGuardLevels clears it as the next one's
-/// commands are gathered.
-#define GUARD_DEFEND 1
-#define GUARD_TOTAL_DEFENSE 2
-
 /// BattlePlan.outcome: how BattlePresentation_DispatchAction shows the
 /// action, set by BattleCommand_BuildPlan from the ability
 /// (gBattle_ActionStatus where it gives one).

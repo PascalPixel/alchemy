@@ -201,6 +201,21 @@ enum BattleActionUse {
   ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle; else greyed there
 };
 
+/// BattleUnit.classIndex of an enemy, which has no class of its own.
+#define CLASS_INDEX_ENEMY 0
+
+/// BattleUnit.poison: the poison takes a tenth of the maximum HP at the end of
+/// each turn, deadly poison a fifth.
+#define POISON_NORMAL 1
+#define POISON_DEADLY 2
+
+/// BattleUnit.guardLevel, 0 for no guard: Defend and Granite halve the damage,
+/// Total Defense and Flash cut it to a tenth (REDUCE_BY_GUARD, target_exec.c).
+/// It lasts the round: BattleUnit_ResetGuardLevels clears it as the next
+/// one's commands are gathered.
+#define GUARD_DEFEND 1
+#define GUARD_TOTAL_DEFENSE 2
+
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and ailments.
 struct BattleUnit {
@@ -271,14 +286,14 @@ struct BattleUnit {
   /// Who the unit is: a character's id (ISAAC to JENNA, below 8) or an
   /// enemy's id (BattleUnitSet). The class tables are indexed by classIndex.
   u8 classId;
-  /// The character's class, worked out from its Djinn (Unit_UpdateClass); 0
-  /// marks an enemy, and code throughout tests it to tell the two apart.
+  /// The character's class, worked out from its Djinn (Unit_UpdateClass);
+  /// CLASS_INDEX_ENEMY marks an enemy, and code throughout tests it to tell
+  /// the two apart.
   u8 classIndex;
-  /// BATTLE_UNIT_ABSENT (0), BATTLE_UNIT_ENEMY (1) or BATTLE_UNIT_PARTY (2).
-  /// Enemies 158 to 171 are put on side 2 (BattleUnitSet).
+  /// enum BattleUnitPresence. The Djinn the party fights are enemies put on
+  /// BATTLE_UNIT_PARTY (BattleUnitSet).
   u8 side;
-  /// 0, GUARD_DEFEND (1, half the damage) or GUARD_TOTAL_DEFENSE (2, a
-  /// tenth); set by Defend and Granite, cleared each round.
+  /// GUARD_DEFEND or GUARD_TOTAL_DEFENSE while the unit guards, else 0.
   s8 guardLevel;
   /// A summon's boost to its summoner's power in each element: at the end of
   /// the summoner's turn, the element the summon spent the most Djinn of
@@ -292,7 +307,7 @@ struct BattleUnit {
   /// except Defend (BattleCommand_BuildPlan); any bit set shows the curse in
   /// the status screens and lets the sanctum remove it.
   s8 restraint;
-  s8 poison; ///< 1 poisoned, 2 deadly poison
+  s8 poison; ///< POISON_NORMAL or POISON_DEADLY, 0 for none
   /// Each stat change: the turns it has left, and its stage (UnitCalc: an
   /// eighth of Attack, Defense or Agility, or 20 Resistance, a stage).
   /// Stages run -4 to 4 and last 7 turns; a lowered one may recover sooner at
@@ -324,8 +339,8 @@ struct BattleUnit {
   /// The Grim Reaper's countdown: 7 when cursed, down one at each turn's
   /// end; at 0 the unit falls.
   u8 grimReaper;
-  /// The totals of equipment effects 23 (unleash chance) and 24 that UnitCalc
-  /// sums; TBS never reads them back
+  /// The totals of ITEM_EFFECT_ADD_UNLEASH_CHANCE and ITEM_EFFECT_24 that
+  /// UnitCalc sums; TBS never reads them back
   u8 equipBonus[2];
   /// Kite's extra action: 2 when cast, down one at each turn's end; while
   /// nonzero UnitCalc gives the unit one more action a round.

@@ -114,7 +114,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId <= ALLY_MAX)
     return -1;
-  if (unit->classIndex != 0)
+  if (unit->classIndex != CLASS_INDEX_ENEMY)
     return -2;
   classSlot = 0;
   itemOrClassIndex = 0;

@@ -94,7 +94,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
   // enemies.tsv uses either.
   selection = -1U;
   // A party member chooses in the menu.
-  if (unit->classIndex != 0)
+  if (unit->classIndex != CLASS_INDEX_ENEMY)
     return;
   if (retry != 0 && request->command != CMD_ABILITY)
     return;

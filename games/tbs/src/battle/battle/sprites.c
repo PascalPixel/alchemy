@@ -90,7 +90,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
 
     // A unit with a classIndex is no enemy: nothing is loaded and the
     // result stays 0.
-    if (unit->classIndex != 0)
+    if (unit->classIndex != CLASS_INDEX_ENEMY)
       continue;
 
     // The first free slot (and, for a large enemy, the one after it).

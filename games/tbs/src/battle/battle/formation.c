@@ -88,7 +88,7 @@ struct BattleBaseStats {
   u8 hpRegen;     ///< copied, not read
   u8 ppRegen;     ///< copied, not read
   u8 unk12[2];
-  struct BattleElementStats element[4]; ///< the base power is read
+  struct BattleElementStats element[NUM_ELEMENTS]; ///< the base power is read
 };
 
 /// Chooses a monster battle's formation for the party's level, and returns it
@@ -246,7 +246,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   CLAMP(value, minimumStat, 999);
   unit->baseAgility = value;
 
-  for (element = 0; element < 4; element++) {
+  for (element = 0; element < NUM_ELEMENTS; element++) {
     value = unit->baseElement[element].power + levels * 15;
     minimumStat = base->element[element].power * 7 / 10;
     CLAMP(value, minimumStat, 200);
@@ -333,7 +333,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   s32 classId;
 
   unit = UnitGetFar(actorId);
-  if (unit->classIndex != 0)
+  if (unit->classIndex != CLASS_INDEX_ENEMY)
     return;
 
   classId = unit->classId;

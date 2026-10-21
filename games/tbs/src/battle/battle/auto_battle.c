@@ -25,7 +25,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
   // The party's actions. The four lookups' results are never used.
   partyCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
-  for (index = 0; index != 4; index++)
+  for (index = 0; index != PARTY_BATTLE_SIZE; index++)
     UnitGetFar(index);
   for (index = 0; index < partyCount; index++) {
     s32 unitId = unitIds[index];

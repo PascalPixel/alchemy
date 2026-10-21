@@ -52,9 +52,9 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   if (unitId > ALLY_MAX)
     sideMask = BATTLE_SIDE_ENEMIES;
   unitCount = BattleParty_ListActorIds(sideMask, unitIds);
-  enemySide = 0;
+  enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
-    enemySide = 1;
+    enemySide = DJINN_RECOVERY_OPPONENT;
   recoveryList =
       &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(enemySide))
            ->list;
@@ -587,7 +587,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     const struct SummonDefinition *summon;
     struct DjinnRecoveryList *list;
     s32 side;
-    u8 counts[4];
+    u8 counts[NUM_ELEMENTS];
     /* FAKEMATCH(dead): an unused array for the frame's 8 bytes below counts;
      * without it, 34 of 1393 instructions differ in tbs-en. */
     UNUSED u8 unused[8];
@@ -598,18 +598,19 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     // holding what each element gives.
     summon = SummonDefinition_Get(request->parameter);
     BattleParty_CountStandbyDjinn(request->unitId, counts);
-    side = 0;
+    side = DJINN_RECOVERY_PARTY;
     if ((u16)request->unitId > ALLY_MAX)
-      side = 1;
+      side = DJINN_RECOVERY_OPPONENT;
     list =
         &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
-    for (index = 0; index < 4 && counts[index] >= summon->djinnRequired[index];
+    for (index = 0;
+         index < NUM_ELEMENTS && counts[index] >= summon->djinnRequired[index];
          index++)
       counts[index] = summon->djinnRequired[index];
     abilityId = summon->nameMessageId;
     if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
       return PLAN_REPORTED;
-    if (index != 4) {
+    if (index != NUM_ELEMENTS) {
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
       UiText_ShowMessageAndWaitCoreFar(MsgSummonLacksDjinn);
@@ -645,7 +646,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     // An enemy's attack effect comes from its class; a party member's is
     // effect 1 for Isaac, Garet and Jenna and 4 for Ivan and Mia, any other
     // none. Each is played by id range (STAGING_BY_ID_RANGE).
-    if (actor->classIndex == 0) {
+    if (actor->classIndex == CLASS_INDEX_ENEMY) {
       plan->presentationFlags =
           BattleClass_GetAttackEffect(actor->classId) | STAGING_BY_ID_RANGE;
     } else {
@@ -795,7 +796,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     else if (Ability_IsPsynergy(abilityId))
       plan->outcome = PLAN_SHOW_CAST;
     else if (plan->presentationFlags != 0) {
-      if (actor->classIndex == 0)
+      if (actor->classIndex == CLASS_INDEX_ENEMY)
         plan->outcome = PLAN_SHOW_ENEMY_CAST;
       else
         plan->outcome = PLAN_SHOW_CAST;

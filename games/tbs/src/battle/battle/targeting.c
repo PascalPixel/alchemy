@@ -249,7 +249,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
         (applies) = 1;                                                         \
       break;                                                                   \
     case ABILITY_EFFECT_DEADLY_POISON:                                         \
-      if ((unit)->poison <= 1)                                                 \
+      if ((unit)->poison <= POISON_NORMAL)                                     \
         (applies) = 1;                                                         \
       break;                                                                   \
     case ABILITY_EFFECT_STUN:                                                  \

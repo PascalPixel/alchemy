@@ -35,7 +35,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
   if (unit->hp == 0)
     return -1;
   // An enemy settles its ability now, at its turn.
-  if (unit->classIndex == 0)
+  if (unit->classIndex == CLASS_INDEX_ENEMY)
     BattleCommand_SelectAutomatic(request, 1);
 
   // The view: the camera eases over 60 frames, the background at full

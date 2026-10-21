@@ -227,7 +227,9 @@ s32 DjinnRecovery_Tick(void) {
   s32 removed;
   s32 initialCount;
 
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(0))->list;
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
+               DJINN_RECOVERY_PARTY))
+              ->list;
   initialCount = list->count;
   index = 0;
   removed = 0;
@@ -534,7 +536,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   s32 unitId;
   struct BattleUnit *unit;
   s32 battleContinues;
-  s32 counts[4];
+  s32 counts[NUM_ELEMENTS];
   struct DjinnRecoveryList *list;
   s32 strongestElement;
   s32 recoveryTurn;
@@ -571,7 +573,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     // BattleCommand_BuildPlan), owner by owner: they recover one a turn, after
     // the last the owner already has recovering and no sooner than in 2 turns.
     // counts gathers how many of each element the summon used.
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < NUM_ELEMENTS; i++) {
       counts[i] = 0;
     }
     for (;;) {
@@ -617,7 +619,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
     Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
     strongestElement = -1;
-    for (i = 0; i <= 3; i++) {
+    for (i = 0; i < NUM_ELEMENTS; i++) {
       if (counts[i] > mostOfOneElement) {
         mostOfOneElement = counts[i];
         strongestElement = i;
@@ -628,7 +630,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       unit->elementLevels[strongestElement] = mostOfOneElement;
     }
     UnitCalcFar(unitId);
-    for (i = 0; i <= 3; i++) {
+    for (i = 0; i < NUM_ELEMENTS; i++) {
       s32 gain = unit->element[i].power - before->element[i].power;
 
       if (gain > 0) {

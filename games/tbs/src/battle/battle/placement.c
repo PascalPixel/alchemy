@@ -53,12 +53,12 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   palette = 0;
   registeredSprite = SummonSlot_RegisterActorSprites(unitId);
 
-  // The sprite: an enemy's from its class (classIndex 0), a party member's
+  // The sprite: an enemy's from its class (CLASS_INDEX_ENEMY), a party member's
   // by character. An enemy whose sprite went into its own slots takes the
   // slot's sprite and palette 0, else its class's sprite and palette; a
   // character fighting on the enemy side (a link opponent, a unit id above
   // ALLY_MAX) takes palette 1.
-  if (unit->classIndex == 0) {
+  if (unit->classIndex == CLASS_INDEX_ENEMY) {
     sprite = BattleClass_GetSprite(unit->classId);
     if (registeredSprite == 0)
       palette = BattleClass_GetPalette(unit->classId);
@@ -267,7 +267,7 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   object->angle = facingAngle;
   object->unk59 = 3;
   object->motionFlags = 2;
-  if (unit->classIndex == 0) {
+  if (unit->classIndex == CLASS_INDEX_ENEMY) {
     object->scaleX = 0x14ccc;
     object->scaleY = 0x14ccc;
   } else {

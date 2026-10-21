@@ -383,7 +383,7 @@ s32 ValeBabi_Initialize(void) {
           Engine_GameFlagSet(FLAG_VALE_STORM);
           Event_DoraWakesIsaac();
         } else {
-          if (gGameState.entrance == 22) {
+          if (gGameState.entrance == VALE_BABI_FROM_VALE_KRADEN_2) {
             Event_ShowMythrilBag();
           } else {
             ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =

@@ -867,7 +867,7 @@ static void ColossoRiver_ExplainFinalsRules(s32 guide) {
 static void Event_TalkToRockAttendant(s32 scene) {
   s32 path;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(scene);
   } else {
     Engine_EventBegin();
@@ -938,7 +938,7 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
   struct FieldActor *second;
   struct FieldActor *first;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Engine_EventBegin();
@@ -999,7 +999,7 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
 static void Event_TalkToBridgeAttendant(s32 scene) {
   s32 path;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(scene);
   } else {
     Engine_EventBegin();
@@ -1043,7 +1043,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
 static void Event_TalkToLumberAttendant(s32 scene) {
   s32 path;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_1_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(scene);
     return;
   }

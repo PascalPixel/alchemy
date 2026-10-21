@@ -36,11 +36,18 @@ void BattleFx_UpdateDescendingObject(union FieldObject *fieldObject) {
     obj->spriteStorageKind = OBJECT_SPRITE_NONE;
 }
 
+/// The states of a Retreat particle (BattleFx_UpdateRadialLaunch).
+enum RetreatParticleState {
+  RETREAT_PARTICLE_AIM = 0,    ///< placed on the main object and aimed
+  RETREAT_PARTICLE_FLYING = 1, ///< back to RETREAT_PARTICLE_AIM on arrival
+  /// Set by FieldFx_RunRetreat: freed on arrival.
+  RETREAT_PARTICLE_LAST_FLIGHT = 2
+};
+
 /// Effect slot callback: a particle flies 120 pixels from the main object's
 /// screen position (8 pixels lower) in a direction within 1/8 turn of up the
-/// screen, at up to 5 pixels a frame. In state 1 it starts again from the
-/// main object on arrival; set to state 2 (FieldFx_RunRetreat) it is freed
-/// on arrival.
+/// screen, at up to 5 pixels a frame, and starts again from the main object on
+/// arrival until it takes its last flight.
 void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   struct EffectVector pos;
   struct FieldActor *main;
@@ -50,7 +57,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   main = ((struct BattleFxScene *)gEffectWork)->mainObject;
   state = slot->state;
 
-  if (state == 0) {
+  if (state == RETREAT_PARTICLE_AIM) {
     pos.x = main->x.fixed;
     pos.y = main->y.fixed;
     pos.z = main->z.fixed;
@@ -77,10 +84,10 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
 
     if ((gFrameCount & 2) != 0)
       AudioCommand_PlayFar(SE_246);
-  } else if (state == 1) {
+  } else if (state == RETREAT_PARTICLE_FLYING) {
     if (EffectSlot_HasPendingTarget(slot) == 0)
       slot->state--;
-  } else if (state == 2) {
+  } else if (state == RETREAT_PARTICLE_LAST_FLIGHT) {
     if (EffectSlot_HasPendingTarget(slot) == 0)
       BattleFx_ClearOwnedSlot(slot);
   }
@@ -155,7 +162,7 @@ void FieldFx_RunRetreat(void) {
 
   // The flying particles vanish once they arrive.
   i = 0;
-  last = 2;
+  last = RETREAT_PARTICLE_LAST_FLIGHT;
   do {
     if (scene->slots[i].active != 0)
       scene->slots[i].state = last;

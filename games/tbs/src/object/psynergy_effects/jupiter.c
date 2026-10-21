@@ -119,12 +119,11 @@ void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
 /// from full size. The Mars Djinni's joining shrinks the Djinni away with it.
 DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 
-/// Effect slot callback of a Mars Djinni's sparks. States 0 and 1 repeat: the
+/// Effect slot callback of a Mars Djinni's sparks (enum MarsSparkState): the
 /// spark flies 120 pixels up the screen (give or take 3/32 turn) from its
-/// origin at up to 5 pixels a frame and starts over. Set to 2, it stops where
-/// it arrives, hidden; 40 frames later, states 3 and 4 swarm it to points
-/// within 4 pixels of one 20 pixels over the leader. Set to 5, it is freed
-/// once it arrives. Djinn_RunMarsJoinEffect sets states 2 and 5.
+/// origin at up to 5 pixels a frame and starts over, until it stops where it
+/// arrives, hidden; 40 frames later it swarms to points within 4 pixels of
+/// one 20 pixels over the leader, until it is freed once it arrives.
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   struct Object *owner;
   struct EffectVector position;
@@ -133,7 +132,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   owner = (struct Object *)Object_GetById(gGameState.selectedActor);
   state = effect->state;
 
-  if (state == 0) {
+  if (state == MARS_SPARK_AIM) {
     effect->x = effect->originX;
     effect->z = effect->originZ;
     position.x = effect->x;
@@ -149,7 +148,8 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->limitTurnStep = state;
     effect->state++;
 
-    // At the leader's sprite priority, until state 1 brings it in front
+    // At the leader's sprite priority, until MARS_SPARK_RISING brings it in
+    // front
     // (priority 0, z lifting the sprite) after 3 frames.
     ((struct AnimationObject *)effect->object)->image.priority =
         owner->sprite->image.priority;
@@ -157,14 +157,14 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->age = 0;
     if ((gFrameTick & 1) != 0)
       AudioCommand_PlayFar(SE_HEAVY_IMPACT);
-  } else if (state == 1) {
+  } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
       ((struct AnimationObject *)effect->object)->image.priority = 0;
       effect->flags = 4;
     }
     if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
-  } else if (state == 2) {
+  } else if (state == MARS_SPARK_STOPPING) {
     if (EffectSlot_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
@@ -174,7 +174,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
       effect->state++;
       effect->callbackDelay = 40;
     }
-  } else if (state == 3) {
+  } else if (state == MARS_SPARK_AIM_LEADER) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
@@ -188,10 +188,10 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->state++;
     if ((gFrameTick & 1) != 0)
       AudioCommand_PlayFar(SE_145);
-  } else if (state == 4) {
+  } else if (state == MARS_SPARK_SWARMING) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
-  } else if (state == 5) {
+  } else if (state == MARS_SPARK_LEAVING) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       BattleFx_ClearOwnedSlot(effect);
   }

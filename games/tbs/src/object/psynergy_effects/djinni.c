@@ -290,7 +290,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
 /// Scheduler callback: updates the 24 effect slots.
 void BattleFx_UpdateAllSlots(void) { FieldFx_UpdateSceneSlots(); }
 
-/// Allocates and clears the effect slots (heap block 56) and starts their
+/// Allocates and clears the effect slots (HEAP_SLOT_FX) and starts their
 /// update callback. The block is a whole effect scene, gEffectWork, the slot
 /// a Psynergy effect's scene also takes. Called by the Djinn joining effects
 /// (jupiter.c, mars.c, venus.c and mercury.c) and Altmiller Cave's scene;
@@ -328,6 +328,15 @@ void BattleFx_AdvanceSpinAngle(union FieldObject *fieldObject) {
   object->angle += 0x2000;
 }
 
+/// The states of a Jupiter Djinni's light particle, in order.
+enum DjinniLightState {
+  DJINNI_LIGHT_WIDENING = 0, ///< circles as its radius grows
+  DJINNI_LIGHT_CIRCLING = 1,
+  DJINNI_LIGHT_DRIFTING = 2, ///< its centre drifts toward the leader
+  DJINNI_LIGHT_CLOSING = 3,  ///< circles as its radius shrinks
+  DJINNI_LIGHT_DONE = 4      ///< frees its slot
+};
+
 /// Effect slot callback of a Jupiter Djinni's light particles: each circles
 /// its centre while it widens for 60 frames, circles 40, drifts toward a point
 /// 20 pixels over the leader for 40, closes in for 60 and is freed. It turns
@@ -339,20 +348,20 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
   struct EffectVector position;
 
   target = (struct MotionObject *)Object_GetById(gGameState.selectedActor);
-  if (particle->state == 0) {
+  if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;
     if ((s16)particle->age == 60) {
       particle->age = 0;
       particle->state += 1;
     }
-  } else if (particle->state == 1) {
+  } else if (particle->state == DJINNI_LIGHT_CIRCLING) {
     particle->orbitAngle += 1;
     if ((s16)particle->age == 40) {
       particle->age = 0;
       particle->state += 1;
     }
-  } else if (particle->state == 2) {
+  } else if (particle->state == DJINNI_LIGHT_DRIFTING) {
     particle->orbitAngle += 1;
     position.x = target->x;
     position.y = target->y + 0x140000;
@@ -365,14 +374,14 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
       particle->age = 0;
       particle->state += 1;
     }
-  } else if (particle->state == 3) {
+  } else if (particle->state == DJINNI_LIGHT_CLOSING) {
     particle->orbitRadius -= 1;
     particle->orbitAngle += 1;
     if ((s16)particle->age == 60) {
       particle->age = 0;
       particle->state += 1;
     }
-  } else if (particle->state == 4) {
+  } else if (particle->state == DJINNI_LIGHT_DONE) {
     BattleFx_ClearOwnedSlot(particle);
   }
   // orbitAngle is in 1/32 turns: << 11 makes it 1/65536 turns.

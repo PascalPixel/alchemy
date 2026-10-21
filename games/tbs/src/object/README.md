@@ -71,7 +71,7 @@ one playing as `scene->fieldKind`.
 
 The **effect scene** is `struct BattleFxScene`, the work of the Psynergy
 effect playing: the Psynergy, its caster and target, and its 24 effect
-slots. It's heap slot 56 (`HEAP_SLOT_FX`), reached as `gEffectWork`. An
+slots. It's `HEAP_SLOT_FX`, reached as `gEffectWork`. An
 **effect slot** is a `struct EffectSlot`, one particle an effect moves and
 draws (`psynergy_effects/effect_slot.c`).
 

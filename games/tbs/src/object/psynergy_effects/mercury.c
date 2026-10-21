@@ -128,14 +128,14 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
     slot++;
   } while (remaining >= 0);
 
-  // After 120 frames every droplet still in use goes on to state 2.
+  // After 120 frames every droplet still in use takes its last fall.
   // Walking whole slots instead of their state bytes grows native English
   // from 0x23c to 0x240 bytes.
   WaitFrames(120);
   {
     s32 nextState;
 
-    nextState = 2;
+    nextState = MERCURY_DROPLET_LAST_FALL;
     slotState = (s8 *)effectScene;
     slotState += offsetof(struct BattleFxScene, slots) +
                  offsetof(struct EffectSlot, state);

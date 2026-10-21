@@ -393,8 +393,9 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 }
 
 /// Sets the movement state and animation timer steps of every object but the
-/// player's and except. EventObject_Initialize stops them (state 1, speed 0)
-/// while an effect plays and lets them go again (state 0, speed 0x10).
+/// player's and except. EventObject_Initialize pauses them
+/// (animation speed 0) while an effect plays and lets them go again at
+/// normal speed.
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                     s32 value) {
   s16 *player;

@@ -122,14 +122,15 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
 /// Set on Force's 12 flashes by FieldFx_RunForce in force.c.
 void BattleFx_UpdateRadialBurst(struct EffectSlot *slot) {
   // A for/continue retry keeps the same states but grows the native English
-  // callback from 0xf8 to 0xfc bytes. State 1 must enter state 2 immediately.
+  // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
+  // OUT_AND_BACK_AIM_BACK immediately.
   struct BattleFxScene *scene = gEffectWork;
   struct EffectVector pos;
   s32 state;
 
 again:
   state = slot->state;
-  if (state == 0) {
+  if (state == OUT_AND_BACK_AIM_OUT) {
     // 25 pixels from the origin, in a random direction.
     pos.x = slot->originX;
     pos.z = slot->originZ;
@@ -143,7 +144,7 @@ again:
     return;
   }
 
-  if (state == 1) {
+  if (state == OUT_AND_BACK_FLYING_OUT) {
     // On arrival, go straight on.
     if (EffectSlot_HasPendingTarget(slot) == 0) {
       slot->state++;
@@ -152,7 +153,7 @@ again:
     return;
   }
 
-  if (state == 2) {
+  if (state == OUT_AND_BACK_AIM_BACK) {
     // 8 pixels toward scene->angle from 16 pixels above the main object, on
     // screen, give or take 4 pixels.
     struct MotionObject *caster = scene->mainObject;
@@ -171,7 +172,8 @@ again:
     return;
   }
 
-  if (state == 3 && EffectSlot_HasPendingTarget(slot) == 0)
+  if (state == OUT_AND_BACK_FLYING_BACK &&
+      EffectSlot_HasPendingTarget(slot) == 0)
     BattleFx_ClearOwnedSlot(slot);
 }
 

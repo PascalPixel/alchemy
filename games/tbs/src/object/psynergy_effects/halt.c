@@ -4,15 +4,16 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Effect slot callback: state 0 heads for a point 40 to 70 pixels from where
-/// the particle appeared; state 1 waits to arrive, then goes on to 2; state 2
-/// heads for a point 4 pixels round 8 pixels above the effect's position on
-/// screen; state 3 frees the slot on arrival. Set on the 16 particles of
-/// BattleEffect_RunFallbackObjectTransition. They fly out straight at up to
-/// 4 pixels a frame and come back turning at most 1/16 turn a frame.
+/// Effect slot callback (enum OutAndBackState): the particle heads for a point
+/// 40 to 70 pixels from where it appeared, then for a point 4 pixels round 8
+/// pixels above the effect's position on screen, and is freed on arrival. Set
+/// on the 16 particles of BattleEffect_RunFallbackObjectTransition. They fly
+/// out straight at up to 4 pixels a frame and come back turning at most 1/16
+/// turn a frame.
 void BattleFx_UpdateRadialCamera(struct EffectSlot *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
-  // Retain the immediate state-1-to-state-2 transition on arrival.
+  // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
+  // transition on arrival.
   struct BattleFxScene *scene;
   struct EffectVector pos;
   s8 *statePointer;
@@ -23,7 +24,7 @@ void BattleFx_UpdateRadialCamera(struct EffectSlot *effect) {
   statePointer = &effect->state;
 top:
   state = *statePointer;
-  if (state == 0) {
+  if (state == OUT_AND_BACK_AIM_OUT) {
     pos.x = effect->originX;
     pos.z = effect->originZ;
     angle = Random16();
@@ -36,13 +37,13 @@ top:
     *statePointer = *statePointer + 1;
     return;
   }
-  if (state == 1) {
+  if (state == OUT_AND_BACK_FLYING_OUT) {
     if (EffectSlot_HasPendingTarget(effect) != 0)
       return;
     *statePointer = *statePointer + 1;
     goto top;
   }
-  if (state == 2) {
+  if (state == OUT_AND_BACK_AIM_BACK) {
     pos.x = scene->x;
     pos.y = scene->y + (8 << 16);
     pos.z = scene->z;
@@ -55,7 +56,8 @@ top:
     *statePointer = *statePointer + 1;
     return;
   }
-  if (state == 3 && EffectSlot_HasPendingTarget(effect) == 0)
+  if (state == OUT_AND_BACK_FLYING_BACK &&
+      EffectSlot_HasPendingTarget(effect) == 0)
     BattleFx_ClearOwnedSlot(effect);
 }
 

@@ -78,14 +78,14 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
     slot++;
   } while (remaining >= 0);
 
-  // After 140 frames every particle still in use stops rising (state 2).
+  // After 140 frames every particle still in use stops rising.
   WaitFrames(140);
   // Walking whole slots instead of their state bytes grows native English
   // from 0x2dc to 0x2e0 bytes.
   {
     s32 nextState;
 
-    nextState = 2;
+    nextState = VENUS_PARTICLE_LAST_RISE;
     slotState = (s8 *)effectScene;
     slotState += offsetof(struct BattleFxScene, slots) +
                  offsetof(struct EffectSlot, state);
@@ -162,11 +162,11 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
 
 /// Effect slot callback of a Mercury Djinni's droplets: each falls from 100
 /// pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
-/// to 20 pixels over the leader, at 3 to 6 pixels a frame (state 0), and
+/// to 20 pixels over the leader, at 3 to 6 pixels a frame, and
 /// where it lands splashes 12 pixels in a random direction, at half size,
-/// with SE_143. In state 1 it then falls again 6 frames later (back to state
-/// 0); once BattleFx_RunMercuryDjinnCapture sets state 2, its next splash is
-/// its last (state 3, which frees it).
+/// with SE_143. It then falls again 6 frames later, until
+/// BattleFx_RunMercuryDjinnCapture sets MERCURY_DROPLET_LAST_FALL: its next
+/// splash is its last (enum MercuryDropletState).
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   struct ObjectRuntime *source;
   struct EffectVector position;
@@ -177,7 +177,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   statePointer = &effect->state;
   state = *statePointer;
 
-  if (state == 0) {
+  if (state == MERCURY_DROPLET_AIM) {
     position.x = source->x;
     position.y = source->y + Random16() * 5 + 0xf0000;
     position.z = source->z;
@@ -195,7 +195,8 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
     effect->limitTurnStep = state;
     effect->stopAtTarget = 1;
     (*statePointer)++;
-  } else if ((u8)(effect->state - 1) <= 1) {
+  } else if ((u8)(effect->state - MERCURY_DROPLET_FALLING) <=
+             MERCURY_DROPLET_LAST_FALL - MERCURY_DROPLET_FALLING) {
     if (EffectSlot_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
@@ -210,13 +211,13 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
       effect->scaleY = 0x8000;
       AudioCommand_PlayFar(SE_143);
 
-      if (*statePointer == 1)
+      if (*statePointer == MERCURY_DROPLET_FALLING)
         (*statePointer)--;
       else
         (*statePointer)++;
       effect->callbackDelay = 6;
     }
-  } else if (state == 3) {
+  } else if (state == MERCURY_DROPLET_DONE) {
     BattleFx_ClearOwnedSlot(effect);
   }
 }

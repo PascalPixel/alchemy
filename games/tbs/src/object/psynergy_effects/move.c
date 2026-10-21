@@ -259,15 +259,16 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
 /// started, comes back and is freed. It goes out straight at up to 4 pixels a
 /// frame and comes back turning at most 1/64 turn a frame, so it curves home.
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *slot) {
-  // Forward state-1 fallthrough keeps the callback extent but changes native
-  // instructions; retain the immediate retry until a plain form matches.
+  // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
+  // changes native instructions; retain the immediate retry until a plain form
+  // matches.
   struct EffectVector position;
   s8 *statePtr = &slot->state;
   s32 state;
 
 next_state:
   state = *statePtr;
-  if (state == 0) {
+  if (state == OUT_AND_BACK_AIM_OUT) {
     u32 angle;
 
     position.x = slot->originX;
@@ -283,7 +284,7 @@ next_state:
     return;
   }
 
-  if (state == 1) {
+  if (state == OUT_AND_BACK_FLYING_OUT) {
     if (EffectSlot_HasPendingTarget(slot) == 0) {
       (*statePtr)++;
       goto next_state;
@@ -291,7 +292,7 @@ next_state:
     return;
   }
 
-  if (state == 2) {
+  if (state == OUT_AND_BACK_AIM_BACK) {
     slot->targetX = slot->originX;
     slot->targetZ = slot->originZ;
     slot->maxTurnStep = 0x400;
@@ -300,7 +301,8 @@ next_state:
     return;
   }
 
-  if (state == 3 && EffectSlot_HasPendingTarget(slot) == 0)
+  if (state == OUT_AND_BACK_FLYING_BACK &&
+      EffectSlot_HasPendingTarget(slot) == 0)
     BattleFx_ClearOwnedSlot(slot);
 }
 

@@ -340,4 +340,49 @@ struct SparkObject {
   void (*update)(union FieldObject *object); ///< run each frame
 };
 
+/// The states of an effect slot particle that flies out and back: Halt's,
+/// Force's and Move's (BattleFx_UpdateRadialCamera, BattleFx_UpdateRadialBurst,
+/// BattleFx_UpdateOrbitAndReturn). EffectSlot_SetCallback starts it at the
+/// first; each takes the next.
+enum OutAndBackState {
+  OUT_AND_BACK_AIM_OUT = 0,    ///< picks the point it flies out to
+  OUT_AND_BACK_FLYING_OUT = 1, ///< waits to arrive there
+  OUT_AND_BACK_AIM_BACK = 2,   ///< picks the point it comes back to
+  OUT_AND_BACK_FLYING_BACK = 3 ///< frees its slot once it arrives
+};
+
+/// The states of a Venus Djinni's rising particle
+/// (BattleFx_UpdateRadialSpread), which BattleFx_RunVenusDjinnCapture moves on
+/// to VENUS_PARTICLE_LAST_RISE.
+enum VenusParticleState {
+  VENUS_PARTICLE_AIM = 0,      ///< starts round the leader, aimed up the screen
+  VENUS_PARTICLE_RISING = 1,   ///< back to VENUS_PARTICLE_AIM once it arrives
+  VENUS_PARTICLE_LAST_RISE = 2 ///< freed once it arrives
+};
+
+/// The states of a Mercury Djinni's droplet
+/// (BattleFx_UpdateRandomTargetParticle), which BattleFx_RunMercuryDjinnCapture
+/// moves on to MERCURY_DROPLET_LAST_FALL.
+enum MercuryDropletState {
+  MERCURY_DROPLET_AIM = 0, ///< placed above the leader, aimed at a spot by it
+  /// Splashes where it lands, then falls again (MERCURY_DROPLET_AIM).
+  MERCURY_DROPLET_FALLING = 1,
+  /// Splashes where it lands, for the last time.
+  MERCURY_DROPLET_LAST_FALL = 2,
+  MERCURY_DROPLET_DONE = 3 ///< frees its slot
+};
+
+/// The states of a Mars Djinni's spark
+/// (BattleEffect_UpdatePhasedRadialParticle), which Djinn_RunMarsJoinEffect
+/// moves on to MARS_SPARK_STOPPING and then MARS_SPARK_LEAVING.
+enum MarsSparkState {
+  MARS_SPARK_AIM = 0,    ///< aimed 120 pixels up the screen from its origin
+  MARS_SPARK_RISING = 1, ///< back to MARS_SPARK_AIM once it arrives
+  /// Stops where it arrives, hidden, and waits 40 frames.
+  MARS_SPARK_STOPPING = 2,
+  MARS_SPARK_AIM_LEADER = 3, ///< aimed at a point by the leader
+  MARS_SPARK_SWARMING = 4,   ///< back to MARS_SPARK_AIM_LEADER on arrival
+  MARS_SPARK_LEAVING = 5     ///< freed once it arrives
+};
+
 #endif

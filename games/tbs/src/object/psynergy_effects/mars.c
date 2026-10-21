@@ -80,13 +80,13 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   ObjectDispatch_SelectAnimationFar(Object_GetById(gGameState.selectedActor),
                                     28);
 
-  // Every spark still in use stops its fountain (state 2). The cursor walks
+  // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
   {
     s32 nextState;
 
     WaitFrames(20);
-    nextState = 2;
+    nextState = MARS_SPARK_STOPPING;
     slotState = &effectScene->slots[0].state;
     remaining = 23;
     do {
@@ -102,14 +102,14 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   leader->update = BattleFx_SetObjectAlternatingWords;
   WaitFrames(100);
 
-  // Every spark still in use goes (state 5). This loop's cursor starts as
+  // Every spark still in use goes. This loop's cursor starts as
   // the scene plus 152, the first slot's state: written as above, the
   // cursor's two loads swap (differ 22).
   {
     s32 nextState;
 
     slotState = (s8 *)effectScene;
-    nextState = 5;
+    nextState = MARS_SPARK_LEAVING;
     slotState += offsetof(struct BattleFxScene, slots) +
                  offsetof(struct EffectSlot, state);
     remaining = 23;
@@ -170,10 +170,10 @@ void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
 
 /// Effect slot callback of a Venus Djinni's particles: each starts on screen
 /// at a random point 10 to 20 pixels round the leader and flies 120 pixels up
-/// the screen, over and over (states 0 and 1); set to 2, it is freed once it
-/// arrives. Set by BattleFx_RunVenusDjinnCapture in venus.c; a particle
-/// that starts on an odd frame plays SE_144. It speeds up by 1 pixel a frame
-/// to at most 5, straight at its target.
+/// the screen, over and over, until it is set to VENUS_PARTICLE_LAST_RISE and
+/// freed once it arrives. Set by BattleFx_RunVenusDjinnCapture in venus.c; a
+/// particle that starts on an odd frame plays SE_144. It speeds up by 1 pixel a
+/// frame to at most 5, straight at its target.
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
   struct ObjectRuntime *source;
@@ -183,7 +183,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
   source = (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
   state = effect->state;
 
-  if (state == 0) {
+  if (state == VENUS_PARTICLE_AIM) {
     position.x = source->x;
     position.y = source->y;
     position.z = source->z;
@@ -209,10 +209,10 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
 
     if ((gFrameTick & 1) != 0)
       AudioCommand_PlayFar(SE_144);
-  } else if (state == 1) {
+  } else if (state == VENUS_PARTICLE_RISING) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
-  } else if (state == 2) {
+  } else if (state == VENUS_PARTICLE_LAST_RISE) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       BattleFx_ClearOwnedSlot(effect);
   }

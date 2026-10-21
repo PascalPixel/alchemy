@@ -164,7 +164,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   statusCount = 0;
   hasDjinn = Party_SumDjinnCountsFar(-1);
 
-  navigation = ((struct BattleMenuWork *)gWindowWork[42]);
+  navigation = ((struct BattleMenuWork *)
+                    gWindowWork[HEAP_SLOT_BATTLE_COMMANDS - HEAP_SLOT_WINDOW]);
   navigation->timerHidden = 1;
   if (navigation->timerWindow != 0) {
     UiWork_Finalize((struct UiWindow *)navigation->timerWindow, 1);
@@ -820,13 +821,14 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   UiWork_Finalize(statusWindow, 1);
   UiWork_Finalize(helpWindow, 1);
   PartyStatusDraw(gBattleWork->partyStatus);
-  // UB: the indexed scalar pointer steps outside gBattleWork to slot 57.
+  // UB: the indexed scalar pointer steps outside gBattleWork to
+  // HEAP_SLOT_BATTLE_COMMANDS.
   // The named slot changes native instructions at the same 0xcf8-byte EN
   // extent; using gWorkSlot instead adds eight bytes.
 #ifdef UBFIX
   gLinkCountdownWork->timerHidden = 0;
 #else
-  ((struct BattleMenuWork **)&gBattleWork)[HEAP_SLOT_WINDOW + 42 -
+  ((struct BattleMenuWork **)&gBattleWork)[HEAP_SLOT_BATTLE_COMMANDS -
                                            HEAP_SLOT_BATTLE]
       ->timerHidden = 0;
 #endif

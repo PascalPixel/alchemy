@@ -35,9 +35,10 @@
 /// AltinInteriors and into the Altin Sanctum (ALTIN_TO_SANCTUM), whose wide
 /// door is redrawn by hand; coming back out of the Sanctum (ALTIN_FROM_SANCTUM)
 /// the area name is not shown again. Three doorways (touches 10 to 12,
-/// Village_WalkThroughDoorway) and the exit ALTIN_TO_ALTIN_PEAK_7 lead into the
-/// mine, to Altin Peak's AltinPeak1, AltinPeak4, AltinPeak8 and AltinPeak7. A
-/// pillar that Move pushes to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
+/// Village_WalkThroughDoorway) and the exit ALTIN_TO_ALTIN_PEAK_SPRITZ lead
+/// into the mine, to Altin Peak's AltinPeakFirstWaterBeast,
+/// AltinPeakSouthEntrance, AltinPeakJunction and AltinPeakSpritz. A pillar that
+/// Move pushes to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
 ///
 /// Inside (AltinInteriors), two families shelter in the inn's Room One and Room
 /// Two, as the game calls them, until the first and the second drop send them
@@ -942,14 +943,14 @@ struct SceneEntrance gAltinVillage_Entrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_FROM_ALTIN_INTERIORS_WEST, CONDITION_ALWAYS, 168, 0, 440,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_PEAK_1, CONDITION_ALWAYS, 24, 0, 456, FACING_SOUTHEAST, 0,
-     -1, -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_PEAK_4, CONDITION_ALWAYS, 264, 0, 224, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_PEAK_8, CONDITION_ALWAYS, 328, 0, 264, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
-    {ALTIN_FROM_ALTIN_PEAK_7, CONDITION_ALWAYS, 343, 0, 177, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
+    {ALTIN_FROM_ALTIN_PEAK_FIRST_WATER_BEAST, CONDITION_ALWAYS, 24, 0, 456,
+     FACING_SOUTHEAST, 0, -1, -1, -1, -1, 0},
+    {ALTIN_FROM_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, 264, 0, 224,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ALTIN_FROM_ALTIN_PEAK_JUNCTION, CONDITION_ALWAYS, 328, 0, 264,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ALTIN_FROM_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS, 343, 0, 177, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -992,10 +993,14 @@ u32 gAltin_Exits[] = {
                ALTIN_INTERIORS_FROM_ALTIN_EAST),
     SCENE_EXIT(ALTIN_TO_ALTIN_INTERIORS_WEST, AltinInteriors,
                ALTIN_INTERIORS_FROM_ALTIN_WEST),
-    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_1, AltinPeak1, ALTIN_PEAK_1_FROM_ALTIN),
-    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_4, AltinPeak4, ALTIN_PEAK_4_FROM_ALTIN),
-    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_8, AltinPeak8, ALTIN_PEAK_8_FROM_ALTIN),
-    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_7, AltinPeak7, ALTIN_PEAK_7_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST, AltinPeakFirstWaterBeast,
+               ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance,
+               ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction,
+               ALTIN_PEAK_JUNCTION_FROM_ALTIN),
+    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz,
+               ALTIN_PEAK_SPRITZ_FROM_ALTIN),
     SCENE_EXITS(AltinInteriors),
     SCENE_EXIT(ALTIN_INTERIORS_TO_ALTIN_NORTHWEST, Altin,
                ALTIN_FROM_ALTIN_INTERIORS_NORTHWEST),
@@ -1011,8 +1016,10 @@ u32 gAltin_Exits[] = {
                ALTIN_FROM_ALTIN_INTERIORS_EAST),
     SCENE_EXIT(ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST, Altin,
                ALTIN_FROM_ALTIN_INTERIORS_SOUTHWEST),
-    SCENE_EXIT(8, AltinInteriors, 9),
-    SCENE_EXIT(9, AltinInteriors, 8),
+    SCENE_EXIT(ALTIN_INTERIORS_INN_TO_INN_UPSTAIRS, AltinInteriors,
+               ALTIN_INTERIORS_INN_UPSTAIRS_FROM_INN),
+    SCENE_EXIT(ALTIN_INTERIORS_INN_UPSTAIRS_TO_INN, AltinInteriors,
+               ALTIN_INTERIORS_INN_FROM_INN_UPSTAIRS),
     SCENE_EXITS_END,
 };
 
@@ -1097,7 +1104,7 @@ struct SceneEvent gAltinVillage_Events[] = {
     {TOUCH_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
     {TOUCH_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
     {TOUCH_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
-    {EVENT_EXIT, 13, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_7},
+    {EVENT_EXIT, 13, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_SPRITZ},
     {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_TO_WORLD_MAP},
     {TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},

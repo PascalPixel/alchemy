@@ -199,19 +199,21 @@
 #define FLAG_ALTIN_COINS 0xf74            ///< a barrel in the houses
 #define FLAG_ALTIN_SLEEP_BOMB 0xf75       ///< a bed in the houses
 
-// Altin Peak, numbered by its rooms (SceneId_AltinPeak1 to 11)
-/// Room 1's water beast has been seen hopping along its first and its second
-/// route.
+// Altin Peak (SceneId_AltinPeakFirstWaterBeast to SceneId_AltinPeakWestExit)
+/// AltinPeakFirstWaterBeast's water beast has been seen hopping along its first
+/// and its second route.
 #define FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN 0x904
 #define FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN 0x905
-/// Room 9's boulder has fallen and rolled down after the party leader.
+/// AltinPeakFallingRocks's boulder has fallen and rolled down after the party
+/// leader.
 #define FLAG_ALTIN_PEAK_BOULDER_FALLEN 0x908
-#define FLAG_ALTIN_PEAK_COOKIE 0xf76        ///< room 3's chest
-#define FLAG_ALTIN_PEAK_DRAGON_SHIELD 0xf77 ///< room 5's chest
-#define FLAG_ALTIN_PEAK_LUCKY_MEDAL 0xf78   ///< room 8's chest
-#define FLAG_ALTIN_PEAK_VIAL 0xf79          ///< room 11's chest
-#define FLAG_ALTIN_PEAK_PSY_CRYSTAL 0xf07   ///< room 7's chest
-#define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08   ///< room 10's chest
+#define FLAG_ALTIN_PEAK_COOKIE 0xf76 ///< AltinPeakSecondWaterBeast's chest
+#define FLAG_ALTIN_PEAK_DRAGON_SHIELD                                          \
+  0xf77                                   ///< AltinPeakThirdWaterBeast's chest
+#define FLAG_ALTIN_PEAK_LUCKY_MEDAL 0xf78 ///< AltinPeakJunction's chest
+#define FLAG_ALTIN_PEAK_VIAL 0xf79        ///< AltinPeakWestExit's chest
+#define FLAG_ALTIN_PEAK_PSY_CRYSTAL 0xf07 ///< AltinPeakSpritz's chest
+#define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08 ///< AltinPeakHydrosStatue's chest
 
 // Altmiller Cave
 #define FLAG_MET_INVISIBLE_BABI 0x960 ///< Babi has asked for his draught

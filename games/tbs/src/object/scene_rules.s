@@ -218,8 +218,8 @@ gScene_AreaNameRules:
 	group_name 23, -1, 40
 	group_name 24, -1, 41
 	.if EDITION_INTERNATIONAL
-	scene_name AltinPeak4, 6, 41
-	scene_name AltinPeak4, 7, 41
+	scene_name AltinPeakSouthEntrance, 6, 41
+	scene_name AltinPeakSouthEntrance, 7, 41
 	.endif
 	group_name 25, -1, 42
 	group_name 26, -1, 43
@@ -326,7 +326,7 @@ gParty_PairResolveRules:
 	.global gBattle_BackdropScenes
 gBattle_BackdropScenes:
 	backdrop ValeStormBackdrop, ValeStorm, Vale, ValeGate, ValeKraden
-	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeak10, CrossboneIslePillarRooms1
+	backdrop SolSanctumBackdrop, SolSanctumCorridor, SolSanctumReliefs, SolSanctumMaze, SolSanctumLunaSolRooms, AltinPeakHydrosStatue, CrossboneIslePillarRooms1
 	backdrop InteriorBackdrop, VaultInteriors
 	backdrop GomaCaveBackdrop, GomaCaveEntrance
 	backdrop GomaCaveBackdrop, GomaCavePond, GomaCavePillar, GomaCaveStream, KolimaTunnel
@@ -338,8 +338,8 @@ gBattle_BackdropScenes:
 	backdrop MercuryLighthouseAerieBackdrop, MercuryLighthouseAerie
 	backdrop ImilFuchinFallsBackdrop, FuchinFallsCaveEntrance, FuchinFallsCaveZephyr, FuchinFallsCaveDragonsEye, FuchinFallsCaveArcticBlade, FuchinFallsCaveOrbOfForce, FuchinFallsCaveDragonStatue, CrossboneIsle3
 	backdrop MogallForestBackdrop, MogallForestSign, MogallForestQuartz, MogallForestKillerApe
-	backdrop AltinPeakBackdrop, AltinPeak1, AltinPeak2, AltinPeak3, AltinPeak4, AltinPeak5, AltinPeak6, AltinPeak7, AltinPeak8, AltinPeak9, AltinPeak11
-	backdrop LamakanDesertBackdrop, LamakanDesert1, LamakanDesert2, LamakanDesert3
+	backdrop AltinPeakBackdrop, AltinPeakFirstWaterBeast, AltinPeakRailTunnel, AltinPeakSecondWaterBeast, AltinPeakSouthEntrance, AltinPeakThirdWaterBeast, AltinPeakPool, AltinPeakSpritz, AltinPeakJunction, AltinPeakFallingRocks, AltinPeakWestExit
+	backdrop LamakanDesertBackdrop, LamakanDesertEast, LamakanDesertSmog, LamakanDesertManticore
 	backdrop TolbiShipDeckBackdrop, TolbiShipDeck, TolbiShipMast
 	backdrop TolbiShipInteriorsBackdrop, TolbiShipInteriors
 	backdrop ColossoBackdrop, ColosseumFinal1, ColosseumFinal2, ColosseumFinal3, LinkLobby

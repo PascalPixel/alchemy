@@ -1,14 +1,14 @@
 /// @file
-/// Lamakan Desert (LamakanDesert1 to 4, scenes 89 to 92), the "evil desert"
-/// in which Xian's people say Lama Temple lies. All four maps are Lamakan
-/// Desert in the game's area names, and they share one event table. The monks
-/// of Lama Temple warn the party before it sets out: the "evil desert" is
-/// hotter than the sun, the heat at its maximum does tremendous damage, and
-/// Reveal finds the oases.
+/// Lamakan Desert (LamakanDesertEast to LamakanDesertCave, scenes 89 to 92),
+/// the "evil desert" in which Xian's people say Lama Temple lies. All four maps
+/// are Lamakan Desert in the game's area names, and they share one event table.
+/// The monks of Lama Temple warn the party before it sets out: the "evil
+/// desert" is hotter than the sun, the heat at its maximum does tremendous
+/// damage, and Reveal finds the oases.
 ///
 /// Heat. LamakanDesert_Initialize sets a limit of 600 steps on every map and,
-/// on the first three, starts the heat gauge, a bar at the top of the screen
-/// (HeatGauge_Draw). Each moving frame on the sand adds a step
+/// on all but LamakanDesertCave, starts the heat gauge, a bar at the top of the
+/// screen (HeatGauge_Draw). Each moving frame on the sand adds a step
 /// (HeatGauge_CountStep, triggers 21 and 100 to 107). As the gauge passes a
 /// quarter, a half and three quarters, HeatGauge_RaiseQuarterTriggers sets
 /// FLAG_HEAT_QUARTER to FLAG_HEAT_THREE_QUARTERS and raises trigger 1, 2 or 3,
@@ -21,26 +21,28 @@
 /// Stones. Entry saves the map patches Reveal uncovers and hides all of them
 /// under a shimmering heat haze (Reveal_HideSecrets); Reveal brings them back
 /// and stops the haze (Reveal_ShowSecrets) until it wears off. Talking to Smog,
-/// on the second map, adds the Djinni to the party.
+/// in LamakanDesertSmog, adds the Djinni to the party.
 ///
 /// Hazards. Stepping by a pit (trigger 22) pulls the leader into it for a
 /// battle with an Ant Lion (FallIntoPit), and slopes of sand (trigger 30)
 /// carry the leader south (SlideDownDune).
 ///
-/// The Manticore. On the third map, until it is beaten
+/// The Manticore. In LamakanDesertManticore, until it is beaten
 /// (FLAG_LAMAKAN_MANTICORE_BEATEN), the Manticore rises out of the sand as the
 /// leader comes near (trigger 40, MeetManticore). Talking to it starts its
-/// battle, which ends at the third map's
-/// LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE, and arriving there marks it beaten.
+/// battle, which ends at LamakanDesertManticore's
+/// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, and arriving there marks it
+/// beaten.
 ///
-/// Leaving. The first map's LAMAKAN_DESERT_1_TO_WORLD_MAP and the fourth map's
-/// LAMAKAN_DESERT_4_TO_WORLD_MAP lead out onto the world map; the fourth map
-/// has no heat gauge. Trigger 9 takes LAMAKAN_DESERT_4_TO_WORLD_MAP and settles
-/// the fate of Master Hsu of Xian, trapped under boulders on his way back from
-/// Lama Temple: if the party has not freed him by then, leaving sets
-/// FLAG_HSU_RESCUED and FLAG_HSU_RESCUED_WITHOUT_PARTY, and in Xian, Feizhi
-/// then thanks Master Hama alone for freeing Hsu, instead of the party and
-/// Master Hama (xian_interiors.c).
+/// Leaving. LamakanDesertEast's LAMAKAN_DESERT_EAST_TO_WORLD_MAP and
+/// LamakanDesertCave's LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the world
+/// map; LamakanDesertCave, a cave, has no heat gauge. Trigger 9 takes
+/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP and settles the fate of Master Hsu of Xian,
+/// trapped under boulders on his way back from Lama Temple: if the party has
+/// not freed him by then, leaving sets FLAG_HSU_RESCUED and
+/// FLAG_HSU_RESCUED_WITHOUT_PARTY, and in Xian, Feizhi then thanks Master Hama
+/// alone for freeing Hsu, instead of the party and Master Hama
+/// (xian_interiors.c).
 
 #include "vram_tab.h"
 #include "unit/import.h"
@@ -105,9 +107,9 @@ enum {
 };
 
 /// The actors, numbered in the order of each map's placement table from
-/// ACTOR_FIRST_PLACED. The first three maps place the Manticore, then the
-/// first and third one pit and the second all four pits and Smog; the fourth
-/// places none.
+/// ACTOR_FIRST_PLACED. LamakanDesertEast to LamakanDesertManticore place the
+/// Manticore, then the LamakanDesertEast and LamakanDesertManticore one pit and
+/// LamakanDesertSmog all four pits and Smog; LamakanDesertCave places none.
 enum {
   MANTICORE = 8, ///< sprite 0xc3; talking to it starts its battle
   /// The first of the Ant Lions' pits Reveal shows, up to LAST_PIT (sprite
@@ -126,7 +128,7 @@ enum { LAMAKAN_ENCOUNTERS = 53 };
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Lamakan Desert, second map: talking to Smog, whom Reveal uncovers, adds the
+/// LamakanDesertSmog: talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
 static void TalkToSmog(void) { Djinn_JoinParty(SMOG, 3, 3); }
 
@@ -172,16 +174,16 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
 const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == (s32)&SceneId_LamakanDesert1) {
+  if (scene == (s32)&SceneId_LamakanDesertEast) {
     return gLamakanDesertEntrances1;
   }
-  if (scene == (s32)&SceneId_LamakanDesert2) {
+  if (scene == (s32)&SceneId_LamakanDesertSmog) {
     return gLamakanDesertEntrances2;
   }
-  if (scene == (s32)&SceneId_LamakanDesert3) {
+  if (scene == (s32)&SceneId_LamakanDesertManticore) {
     return gLamakanDesertEntrances3;
   }
-  if (scene == (s32)&SceneId_LamakanDesert4) {
+  if (scene == (s32)&SceneId_LamakanDesertCave) {
     return gLamakanDesertEntrances4;
   }
   return gLamakanDesertEntrancesOther;
@@ -192,33 +194,33 @@ const struct SceneRegion *LamakanDesert_GetRegions(void) { return 0; }
 /// All four desert maps share the packed exit table.
 const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 
-/// The pits, the Manticore and Smog of each map. Arriving at the third map's
-/// LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE, the way back from the Manticore's
-/// battle, marks it beaten; in the patched editions it also sets
-/// FLAG_REACHED_KALAY (XXX: why is not known).
+/// The pits, the Manticore and Smog of each map. Arriving at
+/// LamakanDesertManticore's LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, the
+/// way back from the Manticore's battle, marks it beaten; in the patched
+/// editions it also sets FLAG_REACHED_KALAY (XXX: why is not known).
 const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
-  if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
-    if (gGameState.entrance == LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE) {
+  if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
+    if (gGameState.entrance == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       Engine_GameFlagSet(FLAG_LAMAKAN_MANTICORE_BEATEN);
 #if TBS_PATCH_3
       Engine_GameFlagSet(FLAG_REACHED_KALAY);
 #endif
     }
   }
-  if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
+  if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
     return gLamakanDesertPlacements1;
   }
-  if (gGameState.scene == (s32)&SceneId_LamakanDesert2) {
+  if (gGameState.scene == (s32)&SceneId_LamakanDesertSmog) {
     return gLamakanDesertPlacements2;
   }
-  if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
+  if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
     return gLamakanDesertPlacements3;
   }
   return gLamakanDesertPlacementsOther;
 }
 
-/// Lamakan Desert, trigger 9: LAMAKAN_DESERT_4_TO_WORLD_MAP. If Master Hsu is
-/// still trapped, he is rescued without the party (see the file comment).
+/// Lamakan Desert, trigger 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If Master Hsu
+/// is still trapped, he is rescued without the party (see the file comment).
 static void LeaveForTheWorldMap(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_HSU_RESCUED) == 0) {
@@ -228,7 +230,7 @@ static void LeaveForTheWorldMap(void) {
     }
   }
   Event_PlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(LAMAKAN_DESERT_4_TO_WORLD_MAP);
+  Engine_EventRequestExit(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
   Engine_EventEnd();
 }
 
@@ -250,7 +252,7 @@ static s32 Reveal_HideSecrets(void) {
   s32 mapObjectId;
 
   Engine_GameFlagClear(FLAG_SECRETS_REVEALED);
-  if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
+  if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
     Map_CopyCells(70, 68, 4, 2, 22, 7);
     Map_CopyCells(70, 68, 4, 2, 8, 10);
     Map_CopyCells(70, 68, 4, 2, 23, 21);
@@ -258,7 +260,7 @@ static s32 Reveal_HideSecrets(void) {
     Map_CopyCells(70, 68, 4, 2, 16, 42);
     Map_CopyCells(70, 68, 4, 2, 36, 44);
     Map_CopyCells(70, 68, 4, 2, 14, 55);
-  } else if (gGameState.scene == (s32)&SceneId_LamakanDesert2) {
+  } else if (gGameState.scene == (s32)&SceneId_LamakanDesertSmog) {
     Map_CopyCells(70, 68, 4, 2, 42, 5);
     Map_CopyCells(70, 68, 4, 2, 20, 11);
     Map_CopyCellAttributes(70, 68, 4, 1, 20, 13);
@@ -277,7 +279,7 @@ static s32 Reveal_HideSecrets(void) {
     Map_CopyCells(70, 68, 4, 2, 6, 46);
     Map_CopyCells(70, 68, 4, 2, 27, 55);
     Map_CopyCells(70, 68, 4, 2, 43, 56);
-  } else if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
+  } else if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
     Engine_MapCopyCellsLayered(69, 99, 4, 2, 8, 16);
     Engine_MapCopyCellsLayered(69, 99, 4, 2, 6, 20);
     Engine_MapCopyCellsLayered(69, 99, 4, 2, 10, 23);
@@ -303,7 +305,7 @@ static s32 Reveal_HideSecrets(void) {
     Engine_MapObjectSetPosition(mapObjectId, 0, 0);
     mapObjectId = mapObjectId + 1;
   } while (mapObjectId <= 107);
-  if (gGameState.scene != (s32)&SceneId_LamakanDesert4) {
+  if (gGameState.scene != (s32)&SceneId_LamakanDesertCave) {
     DisplayScroll_StartHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000,
                                  0x4000);
   }
@@ -322,7 +324,7 @@ static s32 Reveal_ShowSecrets(void) {
   Engine_GameFlagClear(FLAG_HAZARDS_PAUSED);
   Engine_GameFlagSet(FLAG_SECRETS_REVEALED);
   // Restore each hidden patch from the spare cells saved on entry.
-  if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
+  if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
     Map_CopyCells(64, 126, 4, 2, 22, 7);
     Map_CopyCells(68, 126, 4, 2, 8, 10);
     Map_CopyCells(72, 126, 4, 2, 23, 21);
@@ -331,7 +333,7 @@ static s32 Reveal_ShowSecrets(void) {
     Map_CopyCells(80, 126, 4, 2, 36, 44);
     Map_CopyCells(84, 126, 4, 2, 14, 55);
     Actor_SetPosition(FIRST_PIT, PIXELS(400), PIXELS(364));
-  } else if (gGameState.scene == (s32)&SceneId_LamakanDesert2) {
+  } else if (gGameState.scene == (s32)&SceneId_LamakanDesertSmog) {
     Map_CopyCells(64, 126, 4, 2, 42, 5);
     Map_CopyCells(68, 126, 4, 2, 20, 11);
     Map_CopyCellAttributes(68, 126, 4, 2, 20, 12);
@@ -355,7 +357,7 @@ static s32 Reveal_ShowSecrets(void) {
     Actor_SetPosition(FIRST_PIT + 2, PIXELS(144), PIXELS(380));
     Actor_SetPosition(LAST_PIT, PIXELS(576), PIXELS(716));
     Actor_SetPosition(SMOG, PIXELS(648), PIXELS(408));
-  } else if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
+  } else if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
     Map_CopyCells(64, 124, 4, 4, 8, 14);
     Map_CopyCells(68, 124, 4, 4, 6, 18);
     Map_CopyCellAttributes(68, 124, 4, 1, 6, 20);
@@ -375,17 +377,17 @@ static s32 Reveal_ShowSecrets(void) {
     MapObject_SetPosition(i, -1, -1);
   }
   Marker_MoveLeaderAway();
-  if (gGameState.scene != (s32)&SceneId_LamakanDesert4) {
+  if (gGameState.scene != (s32)&SceneId_LamakanDesertCave) {
     DisplayScroll_DisarmHBlankDma();
   }
 }
 
-/// Lamakan Desert, third map: talking to the Manticore starts its battle,
-/// which returns the party to LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE.
+/// LamakanDesertManticore: talking to the Manticore starts its battle,
+/// which returns the party to LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
 static void FightManticore(void) {
   Engine_ActorRunRepeatedMotion(MANTICORE, 2);
-  Event_SetNextDestination((s32)&SceneId_LamakanDesert3,
-                           LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE);
+  Event_SetNextDestination((s32)&SceneId_LamakanDesertManticore,
+                           LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE);
   Battle_SetStart(3);
   Field_RequestBattleFromEncounterTable(LAMAKAN_ENCOUNTERS, 5);
 }
@@ -511,10 +513,10 @@ static void CollapseFromHeat(void) {
   best = 0xf00000;
   GameFlag_Set(FLAG_HAZARDS_PAUSED);
   HeatGauge_SetHeld(1);
-  if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
+  if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
     count = 3;
     points = gLamakanDesertRecoveryPoints1;
-  } else if (gGameState.scene == (s32)&SceneId_LamakanDesert2) {
+  } else if (gGameState.scene == (s32)&SceneId_LamakanDesertSmog) {
     count = 5;
     points = gLamakanDesertRecoveryPoints2;
   } else {
@@ -809,8 +811,9 @@ static void SlideDownDune(void) {
   actor->z.fixed += 0x18000;
 }
 
-/// Lamakan Desert, trigger 40 on the third map, until the Manticore is beaten:
-/// the leader stops and backs away as the Manticore rises out of the sand.
+/// Lamakan Desert, trigger 40 in LamakanDesertManticore, until the Manticore is
+/// beaten: the leader stops and backs away as the Manticore rises out of the
+/// sand.
 static void MeetManticore(void) {
   s32 paused;
   struct FieldActor *record;
@@ -872,28 +875,28 @@ static void MeetManticore(void) {
   }
 }
 
-/// Entering Lamakan Desert: the heat gauge (600 steps) starts on the first
-/// three maps, the patches Reveal uncovers are saved to the spare cells at
-/// 64, 126 or 64, 124, and the secrets are hidden.
+/// Entering Lamakan Desert: the heat gauge (600 steps) starts on all but
+/// LamakanDesertCave, the patches Reveal uncovers are saved to the spare cells
+/// at 64, 126 or 64, 124, and the secrets are hidden.
 s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   s32 v5;
 
   gGameState.hazardLimit = 0x258;
   gGameState.hazardMode = 0;
   gGameState.hazardDamage = 0x119;
-  if (gGameState.scene == (s32)&SceneId_LamakanDesert4) {
+  if (gGameState.scene == (s32)&SceneId_LamakanDesertCave) {
   } else {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
     FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers, 0xc80);
-    if (gGameState.scene == (s32)&SceneId_LamakanDesert1) {
+    if (gGameState.scene == (s32)&SceneId_LamakanDesertEast) {
       Map_CopyCells(22, 7, 4, 2, 64, 126);
       Map_CopyCells(8, 10, 4, 2, 68, 126);
       Map_CopyCells(23, 21, 4, 2, 72, 126);
       Map_CopyCells(16, 42, 4, 2, 76, 126);
       Map_CopyCells(36, 44, 4, 2, 80, 126);
       Map_CopyCells(14, 55, 4, 2, 84, 126);
-    } else if (gGameState.scene == (s32)&SceneId_LamakanDesert2) {
+    } else if (gGameState.scene == (s32)&SceneId_LamakanDesertSmog) {
       Map_CopyCells(42, 5, 4, 2, 64, 126);
       Map_CopyCells(20, 11, 4, 2, 68, 126);
       Map_CopyCells(14, 12, 4, 2, 72, 126);
@@ -908,7 +911,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
       Map_CopyCells(6, 46, 4, 2, 108, 126);
       Map_CopyCells(27, 55, 4, 2, 112, 126);
       Map_CopyCells(43, 56, 4, 2, 116, 126);
-    } else if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
+    } else if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
       v5 = 124;
       BattleFx_SetQueuedSoundAndPlay(169);
       Map_CopyCells(8, 14, 4, 4, 64, v5);
@@ -1148,54 +1151,54 @@ struct SceneEntrance gLamakanDesertEntrancesOther[] = {
 
 struct SceneEntrance gLamakanDesertEntrances1[] = {
     { 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { LAMAKAN_DESERT_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 984, 0, 952, FACING_WEST, 0, 0, 0, 1016, 1016, 0 },
-    { LAMAKAN_DESERT_1_FROM_LAMAKAN_DESERT_2, CONDITION_ALWAYS, 400, 0, 24, FACING_SOUTH, 0, 0, 0, 1016, 1016, 0 },
+    { LAMAKAN_DESERT_EAST_FROM_WORLD_MAP, CONDITION_ALWAYS, 984, 0, 952, FACING_WEST, 0, 0, 0, 1016, 1016, 0 },
+    { LAMAKAN_DESERT_EAST_FROM_LAMAKAN_DESERT_SMOG, CONDITION_ALWAYS, 400, 0, 24, FACING_SOUTH, 0, 0, 0, 1016, 1016, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gLamakanDesertEntrances2[] = {
     { 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { LAMAKAN_DESERT_2_FROM_LAMAKAN_DESERT_1, CONDITION_ALWAYS, 912, 0, 1000, FACING_NORTH, 0, 0, 0, 1016, 1016, 0 },
-    { LAMAKAN_DESERT_2_FROM_LAMAKAN_DESERT_3, CONDITION_ALWAYS, 24, 0, 584, FACING_EAST, 0, 0, 0, 1016, 1016, 0 },
+    { LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_EAST, CONDITION_ALWAYS, 912, 0, 1000, FACING_NORTH, 0, 0, 0, 1016, 1016, 0 },
+    { LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_MANTICORE, CONDITION_ALWAYS, 24, 0, 584, FACING_EAST, 0, 0, 0, 1016, 1016, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gLamakanDesertEntrances3[] = {
     { 0, CONDITION_ALWAYS, 256, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_2, CONDITION_ALWAYS, 1511, 0, 104, FACING_WEST, 0, 0, 8, 1528, 504, 0 },
-    { LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_4_EAST, CONDITION_ALWAYS, 727, 0, 104, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
-    { LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_4_SOUTH, CONDITION_ALWAYS, 599, 0, 296, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
-    { LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_4_WEST, CONDITION_ALWAYS, 167, 0, 120, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
-    { LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE, CONDITION_ALWAYS, 167, 0, 136, FACING_NORTH, 0, 0, 8, 1528, 504, 0 },
+    { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_SMOG, CONDITION_ALWAYS, 1511, 0, 104, FACING_WEST, 0, 0, 8, 1528, 504, 0 },
+    { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST, CONDITION_ALWAYS, 727, 0, 104, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
+    { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_SOUTH, CONDITION_ALWAYS, 599, 0, 296, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
+    { LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_WEST, CONDITION_ALWAYS, 167, 0, 120, FACING_SOUTH, 0, 0, 8, 1528, 504, 0 },
+    { LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, CONDITION_ALWAYS, 167, 0, 136, FACING_NORTH, 0, 0, 8, 1528, 504, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gLamakanDesertEntrances4[] = {
     { 0, CONDITION_ALWAYS, 424, 0, 824, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { LAMAKAN_DESERT_4_FROM_LAMAKAN_DESERT_3_SOUTH, CONDITION_ALWAYS, 424, 0, 968, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
-    { LAMAKAN_DESERT_4_FROM_LAMAKAN_DESERT_3_SOUTHEAST, CONDITION_ALWAYS, 552, 0, 776, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
-    { LAMAKAN_DESERT_4_FROM_LAMAKAN_DESERT_3_NORTH, CONDITION_ALWAYS, 440, 0, 312, FACING_NORTH, 0, 32, 16, 496, 320, 0 },
-    { LAMAKAN_DESERT_4_FROM_WORLD_MAP, CONDITION_ALWAYS, 136, 0, 296, FACING_NORTH, 0, 32, 16, 496, 320, 0 },
+    { LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_SOUTH, CONDITION_ALWAYS, 424, 0, 968, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
+    { LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_EAST, CONDITION_ALWAYS, 552, 0, 776, FACING_NORTH, 0, 304, 560, 624, 1024, 0 },
+    { LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_WEST, CONDITION_ALWAYS, 440, 0, 312, FACING_NORTH, 0, 32, 16, 496, 320, 0 },
+    { LAMAKAN_DESERT_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 136, 0, 296, FACING_NORTH, 0, 32, 16, 496, 320, 0 },
     { SCENE_TABLE_END },
 };
 
 u32 gLamakanDesertExits[] = {
-    SCENE_EXITS(LamakanDesert1),
-    SCENE_EXIT(LAMAKAN_DESERT_1_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_1),
-    SCENE_EXIT(LAMAKAN_DESERT_1_TO_LAMAKAN_DESERT_2, LamakanDesert2, LAMAKAN_DESERT_2_FROM_LAMAKAN_DESERT_1),
-    SCENE_EXITS(LamakanDesert2),
-    SCENE_EXIT(LAMAKAN_DESERT_2_TO_LAMAKAN_DESERT_1, LamakanDesert1, LAMAKAN_DESERT_1_FROM_LAMAKAN_DESERT_2),
-    SCENE_EXIT(LAMAKAN_DESERT_2_TO_LAMAKAN_DESERT_3, LamakanDesert3, LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_2),
-    SCENE_EXITS(LamakanDesert3),
-    SCENE_EXIT(LAMAKAN_DESERT_3_TO_LAMAKAN_DESERT_2, LamakanDesert2, LAMAKAN_DESERT_2_FROM_LAMAKAN_DESERT_3),
-    SCENE_EXIT(LAMAKAN_DESERT_3_TO_LAMAKAN_DESERT_4_EAST, LamakanDesert4, LAMAKAN_DESERT_4_FROM_LAMAKAN_DESERT_3_SOUTHEAST),
-    SCENE_EXIT(LAMAKAN_DESERT_3_TO_LAMAKAN_DESERT_4_SOUTH, LamakanDesert4, LAMAKAN_DESERT_4_FROM_LAMAKAN_DESERT_3_SOUTH),
-    SCENE_EXIT(LAMAKAN_DESERT_3_TO_LAMAKAN_DESERT_4_WEST, LamakanDesert4, LAMAKAN_DESERT_4_FROM_LAMAKAN_DESERT_3_NORTH),
-    SCENE_EXITS(LamakanDesert4),
-    SCENE_EXIT(LAMAKAN_DESERT_4_TO_LAMAKAN_DESERT_3_EAST, LamakanDesert3, LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_4_EAST),
-    SCENE_EXIT(LAMAKAN_DESERT_4_TO_LAMAKAN_DESERT_3_SOUTHEAST, LamakanDesert3, LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_4_SOUTH),
-    SCENE_EXIT(LAMAKAN_DESERT_4_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_4),
-    SCENE_EXIT(LAMAKAN_DESERT_4_TO_LAMAKAN_DESERT_3_WEST, LamakanDesert3, LAMAKAN_DESERT_3_FROM_LAMAKAN_DESERT_4_WEST),
+    SCENE_EXITS(LamakanDesertEast),
+    SCENE_EXIT(LAMAKAN_DESERT_EAST_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_EAST),
+    SCENE_EXIT(LAMAKAN_DESERT_EAST_TO_LAMAKAN_DESERT_SMOG, LamakanDesertSmog, LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_EAST),
+    SCENE_EXITS(LamakanDesertSmog),
+    SCENE_EXIT(LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST, LamakanDesertEast, LAMAKAN_DESERT_EAST_FROM_LAMAKAN_DESERT_SMOG),
+    SCENE_EXIT(LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_MANTICORE, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_SMOG),
+    SCENE_EXITS(LamakanDesertManticore),
+    SCENE_EXIT(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_SMOG, LamakanDesertSmog, LAMAKAN_DESERT_SMOG_FROM_LAMAKAN_DESERT_MANTICORE),
+    SCENE_EXIT(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_EAST, LamakanDesertCave, LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_EAST),
+    SCENE_EXIT(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_SOUTH, LamakanDesertCave, LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_SOUTH),
+    SCENE_EXIT(LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_WEST, LamakanDesertCave, LAMAKAN_DESERT_CAVE_FROM_LAMAKAN_DESERT_MANTICORE_WEST),
+    SCENE_EXITS(LamakanDesertCave),
+    SCENE_EXIT(LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_EAST, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST),
+    SCENE_EXIT(LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_SOUTH, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_SOUTH),
+    SCENE_EXIT(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMAKAN_DESERT_CAVE),
+    SCENE_EXIT(LAMAKAN_DESERT_CAVE_TO_LAMAKAN_DESERT_MANTICORE_WEST, LamakanDesertManticore, LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_WEST),
     SCENE_EXITS_END,
 };
 

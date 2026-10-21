@@ -19,14 +19,15 @@
 /// until Hama's lesson. A signpost reads
 /// `North: Altin Mine West: Lama Temple`; the Crossing opens onto the world
 /// map to the east, north and west, and by two ways
-/// (ALPINE_CROSSING_TO_ALTIN_PEAK_4_WEST and
-/// ALPINE_CROSSING_TO_ALTIN_PEAK_4_EAST) into Altin Peak's AltinPeak4, whose
-/// entrances from here the international editions also call Alpine Crossing.
-/// With the road closed, the villagers of Altin, to the north, send the party
-/// through their mine, Altin Peak (altin.c, altin_peak.c), and the mine brings
-/// it back out here from AltinPeak4 (ALPINE_CROSSING_FROM_ALTIN_PEAK_4_WEST and
-/// ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST); coming in that way the area name is
-/// not shown again.
+/// (ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and
+/// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) into Altin Peak's
+/// AltinPeakSouthEntrance, whose entrances from here the international editions
+/// also call Alpine Crossing. With the road closed, the villagers of Altin, to
+/// the north, send the party through their mine, Altin Peak (altin.c,
+/// altin_peak.c), and the mine brings it back out here from
+/// AltinPeakSouthEntrance (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST
+/// and ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST); coming in that way
+/// the area name is not shown again.
 ///
 /// Lama Temple, west along the road, is Master Hama's temple, the last stop
 /// before the Lamakan Desert. Its five monks talk of the desert ahead, of
@@ -49,12 +50,12 @@
 ///
 /// Back at the Alpine Crossing after the lesson, until Hsu is freed, Hama and
 /// Feizhi stand by him, pinned between two boulders. Arriving beside him from
-/// AltinPeak4 (ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST) the first time,
-/// AlpineCrossing_HamaReachesHsu plays: he is unhurt but cannot move, and no
-/// one knows how to free him (FLAG_HAMA_REACHED_HSU). Lift on the boulder
-/// (AlpineCrossing_LiftBoulder), the Psynergy of the Lifting Gem found in Altin
-/// Peak, makes it float while Hama and Feizhi pull him free; they will ask
-/// Master Feh to tend him and clear the road, and the scene sets
+/// AltinPeakSouthEntrance (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST)
+/// the first time, AlpineCrossing_HamaReachesHsu plays: he is unhurt but cannot
+/// move, and no one knows how to free him (FLAG_HAMA_REACHED_HSU). Lift on the
+/// boulder (AlpineCrossing_LiftBoulder), the Psynergy of the Lifting Gem found
+/// in Altin Peak, makes it float while Hama and Feizhi pull him free; they will
+/// ask Master Feh to tend him and clear the road, and the scene sets
 /// FLAG_HSU_RESCUED and leaves for Lama Temple (ALPINE_CROSSING_TO_LAMA_TEMPLE,
 /// to LAMA_TEMPLE_FROM_ALPINE_CROSSING), where Scene_Initialize plays Hama's
 /// farewell (LamaTemple_RunHamasFarewell). If the party instead comes back by
@@ -595,10 +596,11 @@ static void AlpineCrossing_TalkToFeizhi(void) {
   Engine_EventEnd();
 }
 
-/// Arriving at the Alpine Crossing from AltinPeak4 by
-/// ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST while Hsu is trapped, until this has
-/// run once (FLAG_HAMA_REACHED_HSU): the camera finds Hsu, Hama asks if he is
-/// okay, and he is unhurt but cannot move; none of them knows how to free him.
+/// Arriving at the Alpine Crossing from AltinPeakSouthEntrance by
+/// ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST while Hsu is trapped,
+/// until this has run once (FLAG_HAMA_REACHED_HSU): the camera finds Hsu, Hama
+/// asks if he is okay, and he is unhurt but cannot move; none of them knows how
+/// to free him.
 static void AlpineCrossing_HamaReachesHsu(void) {
   Engine_EventBegin();
   // Reveal Hsu's position before Hama and Feizhi discuss freeing him.
@@ -896,8 +898,10 @@ s32 Scene_Initialize(void) {
       Engine_ActorSetAnimation(ACTOR_SPROUT, ANIM_GROWN);
       AlpineCrossing_GrowSprout();
     }
-    if (gGameState.entrance == ALPINE_CROSSING_FROM_ALTIN_PEAK_4_WEST ||
-        gGameState.entrance == ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST) {
+    if (gGameState.entrance ==
+            ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST ||
+        gGameState.entrance ==
+            ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     }
 
@@ -946,7 +950,8 @@ s32 Scene_Initialize(void) {
       Actor_SetActionScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
       Object_GetById(ACTOR_HSU)->scaleX = -0x10000;
     }
-    if (gGameState.entrance == ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST &&
+    if (gGameState.entrance ==
+            ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST &&
         !Engine_GameFlagIsSet(FLAG_HAMA_REACHED_HSU) &&
         !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
         !Engine_GameFlagIsSet(FLAG_HSU_RESCUED)) {
@@ -1046,10 +1051,10 @@ struct SceneEntrance gAlpineCrossing_Entrances[] = {
      FACING_SOUTH, 0, 16, 32, 520, 416, 0},
     {ALPINE_CROSSING_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 40, 0, 280,
      FACING_EAST, 0, 16, 32, 520, 416, 0},
-    {ALPINE_CROSSING_FROM_ALTIN_PEAK_4_WEST, CONDITION_ALWAYS, 88, 0, 248,
-     FACING_SOUTH, 0, 16, 32, 520, 416, 0},
-    {ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST, CONDITION_ALWAYS, 216, 0, 248,
-     FACING_SOUTH, 0, 16, 32, 520, 416, 0},
+    {ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST, CONDITION_ALWAYS, 88,
+     0, 248, FACING_SOUTH, 0, 16, 32, 520, 416, 0},
+    {ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST, CONDITION_ALWAYS, 216,
+     0, 248, FACING_SOUTH, 0, 16, 32, 520, 416, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1065,10 +1070,12 @@ u32 gAlpineCrossingLamaTemple_Exits[] = {
                WORLD_MAP_FROM_ALPINE_CROSSING_NORTH),
     SCENE_EXIT(ALPINE_CROSSING_TO_WORLD_MAP_WEST, WorldMap,
                WORLD_MAP_FROM_ALPINE_CROSSING_WEST),
-    SCENE_EXIT(ALPINE_CROSSING_TO_ALTIN_PEAK_4_WEST, AltinPeak4,
-               ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST),
-    SCENE_EXIT(ALPINE_CROSSING_TO_ALTIN_PEAK_4_EAST, AltinPeak4,
-               ALTIN_PEAK_4_FROM_ALPINE_CROSSING_EAST),
+    SCENE_EXIT(ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST,
+               AltinPeakSouthEntrance,
+               ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST),
+    SCENE_EXIT(ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST,
+               AltinPeakSouthEntrance,
+               ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST),
     SCENE_EXIT(ALPINE_CROSSING_TO_LAMA_TEMPLE, LamaTemple,
                LAMA_TEMPLE_FROM_ALPINE_CROSSING),
     SCENE_EXITS_END,
@@ -1161,8 +1168,8 @@ struct SceneEvent gAlpineCrossing_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_EAST },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_NORTH },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_WEST },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_4_WEST },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_4_EAST },
+    { EVENT_EXIT, 5, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST },
     { EVENT_TOUCH, TRIGGER_FEIZHI_ARRIVAL, FLAG_FEIZHI_SAW_ROCKSLIDE, EVENT_SCRIPT(AlpineCrossing_FeizhiArrives) },
     { EVENT_TALK, ACTOR_FEIZHI, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT_SCRIPT(AlpineCrossing_TalkToFeizhi) },
     { EVENT_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgAlpineCrossingLamaTempleWellIsaacAdeptsYouCameTo) },

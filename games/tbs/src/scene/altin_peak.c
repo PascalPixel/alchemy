@@ -1,60 +1,65 @@
 /// @file
 /// Altin Peak, the mine below Altin that its villagers and the Alpine
-/// Crossing's signpost call Altin Mine: eleven scenes, AltinPeak1 to
-/// AltinPeak11 (scenes 77 to 87), whose area name is Altin Peak, except that
-/// the international editions call AltinPeak4 the Alpine Crossing when the
-/// party comes in from there (ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST and
-/// ALTIN_PEAK_4_FROM_ALPINE_CROSSING_EAST). Each scene is a room of the mine,
-/// numbered here as its scene id is (room 1 is AltinPeak1). The getters pick
-/// each room's tables by gGameState.scene, all the rooms share one exit
-/// table, and Scene_Initialize calls the setup of the room being entered
-/// (AltinPeak_RestoreRoom1 and so on), which puts back what the party has
-/// already done there.
+/// Crossing's signpost call Altin Mine: eleven scenes, AltinPeakFirstWaterBeast
+/// to AltinPeakWestExit (scenes 77 to 87), whose area name is Altin Peak,
+/// except that the international editions call AltinPeakSouthEntrance the
+/// Alpine Crossing when the party comes in from there
+/// (ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST and
+/// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST). Each scene is a room
+/// of the mine, and the getters pick each room's tables by gGameState.scene,
+/// all the rooms share one exit table, and Scene_Initialize calls the setup of
+/// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
+/// which puts back what the party has already done there.
 ///
-/// The party comes down from Altin, by doorways into rooms 1, 4, 7 and 8,
-/// while boulders block Silk Road; the villagers say a passage at the bottom
-/// of the mine leads west. The water-spewing monsters that flooded Altin have
-/// flooded the mine too, and a water beast waits in rooms 1, 3 and 5. In room
-/// 1 the first one shows the way: stepping near it (touch 10,
-/// AltinPeak_ShowFirstBeastRoute) it cries out, hops around the room, freezes
-/// the wide puddle with Frost and hops across, and stepping near it again
-/// (touch 11) it hops back and settles down to spit. Talking to a beast, or
-/// reading its mind, starts its battle, and the party comes back to the room
-/// by ENTRANCE_AFTER_BATTLE, where the room's setup runs a drain: the water
-/// layer sinks and flickers away (AltinPeak_DrainFirstWater and the two after
-/// it), and FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN remember the three
-/// drains, which Altin's code reads to lower the water in the village too.
-/// Back from the first battle, in room 1, the party finds the Frost Jewel
-/// before the water drains, and from then on Frost freezes the mine's puddles
-/// into ice pillars to stand on (scene flags keep them frozen only within one
-/// visit). Room 4's water stands until the second drain and room 6's until the
-/// third.
+/// The party comes down from Altin, by doorways into AltinPeakFirstWaterBeast,
+/// AltinPeakSouthEntrance, AltinPeakSpritz and AltinPeakJunction, while
+/// boulders block Silk Road; the villagers say a passage at the bottom of the
+/// mine leads west. The water-spewing monsters that flooded Altin have flooded
+/// the mine too, and a water beast waits in AltinPeakFirstWaterBeast,
+/// AltinPeakSecondWaterBeast and AltinPeakThirdWaterBeast. In
+/// AltinPeakFirstWaterBeast the first one shows the way: stepping near it
+/// (touch 10, AltinPeak_ShowFirstBeastRoute) it cries out, hops around the
+/// room, freezes the wide puddle with Frost and hops across, and stepping near
+/// it again (touch 11) it hops back and settles down to spit. Talking to a
+/// beast, or reading its mind, starts its battle, and the party comes back to
+/// the room by ENTRANCE_AFTER_BATTLE, where the room's setup runs a drain: the
+/// water layer sinks and flickers away (AltinPeak_DrainFirstWater and the two
+/// after it), and FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN remember the
+/// three drains, which Altin's code reads to lower the water in the village
+/// too. Back from the first battle, in AltinPeakFirstWaterBeast, the party
+/// finds the Frost Jewel before the water drains, and from then on Frost
+/// freezes the mine's puddles into ice pillars to stand on (scene flags keep
+/// them frozen only within one visit). AltinPeakSouthEntrance's water stands
+/// until the second drain and AltinPeakPool's until the third.
 ///
-/// The rooms between are built from a few mechanisms: logs the party rides
-/// (talking to one, AltinPeak_RollLog), which roll along the turns their
-/// route's cells mark; floor switches in rooms 3, 5, 6 and 7, each remembered
+/// The rooms between are built from a few mechanisms: mine carts the party
+/// rides (talking to one, AltinPeak_RollCart), which roll along the turns their
+/// route's cells mark; floor switches in AltinPeakSecondWaterBeast,
+/// AltinPeakThirdWaterBeast, AltinPeakPool and AltinPeakSpritz, each remembered
 /// by a place flag (0x323 and 0x325 to 0x327) and redrawn on entry; and a
-/// pillar in room 7 that Move or a push slides along. Spritz, a Mercury Djinni,
-/// waits in room 7, placed until it has joined, and talking to it starts its
-/// battle. In room 9 a sign warns `Watch for falling rocks! Do not strike the
-/// wall! Rocks may fall!` at what looks like a dead end: while the party has
-/// no Orb of Force, Garet steps out and strikes the wall anyway, and with it
-/// Force does the same (AltinPeak_ForceRockOver); either way a boulder rolls
-/// after the leader down the path and crashes into the wall at the bottom,
-/// leaving rubble (FLAG_ALTIN_PEAK_BOULDER_FALLEN).
+/// stone pillar in AltinPeakSpritz that Move or a push slides along. Spritz, a
+/// Mercury Djinni, waits there too, placed until it has joined, and talking to
+/// it starts its battle. In AltinPeakFallingRocks a sign warns `Watch for
+/// falling rocks! Do not strike the wall! Rocks may fall!` at what looks like a
+/// dead end: while the party has no Orb of Force, Garet steps out and strikes
+/// the wall anyway, and with it Force does the same (AltinPeak_ForceRockOver);
+/// either way a boulder rolls after the leader down the path and crashes into
+/// the wall at the bottom, leaving rubble (FLAG_ALTIN_PEAK_BOULDER_FALLEN).
 ///
-/// Room 10, at the bottom, is a tiled room of carved stone, part of ruins
-/// buried in the mine. Stepping toward its guardian statue
+/// AltinPeakHydrosStatue, at the bottom, is a tiled room of carved stone, part
+/// of ruins buried in the mine. Stepping toward its guardian statue
 /// (AltinPeak_StartHydrosBattle) wakes it and starts the battle with the
 /// Hydros statues. Back from it (FLAG_HYDROS_STATUES_DEFEATED, which Altin's
 /// villagers read), Garet, Ivan and Mia step out and wonder why Altin's
 /// guardian statues turned into monsters, the statue sinks into the floor,
 /// and a chest behind it holds the Lifting Gem. Its Lift is what frees Hsu at
 /// the Alpine Crossing (alpine_crossing_lama_temple.c), and in the mine the
-/// boulders of rooms 3, 8 and 11 have Lift rows that run nothing of their own.
-/// Room 4 opens onto the Alpine Crossing (ALTIN_PEAK_4_TO_ALPINE_CROSSING_WEST
-/// and ALTIN_PEAK_4_TO_ALPINE_CROSSING_EAST) and room 11 onto the world map
-/// (ALTIN_PEAK_11_TO_WORLD_MAP).
+/// boulders of AltinPeakSecondWaterBeast, AltinPeakJunction and
+/// AltinPeakWestExit have Lift rows that run nothing of their own.
+/// AltinPeakSouthEntrance opens onto the Alpine Crossing
+/// (ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST and
+/// ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST) and AltinPeakWestExit
+/// onto the world map (ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP).
 
 #include "script.h"
 #include "version.h"
@@ -111,21 +116,21 @@
 // enters another place group, and other places use the numbers for their own.
 
 // A room's floor switch has been flipped from its first position.
-#define FLAG_ALTIN_PEAK_ROOM_3_SWITCH 0x323
-#define FLAG_ALTIN_PEAK_ROOM_5_SWITCH 0x325
-#define FLAG_ALTIN_PEAK_ROOM_6_SWITCH 0x326
-#define FLAG_ALTIN_PEAK_ROOM_7_SWITCH 0x327
+#define FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH 0x323
+#define FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH 0x325
+#define FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH 0x326
+#define FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH 0x327
 
 static void AltinPeak_RunBoulderChase(s32 boulderDelay);
-static void AltinPeak_RestoreRoom1(void);
-static void AltinPeak_RestoreRoom3(void);
-static void AltinPeak_RestoreRoom4(void);
-static void AltinPeak_RestoreRoom5(void);
-static void AltinPeak_RestoreRoom6(void);
-static void AltinPeak_RestoreRoom7(void);
-static void AltinPeak_RestoreRoom9(void);
-static void AltinPeak_RestoreRoom10(void);
-static void AltinPeak_RestoreRoom11(void);
+static void AltinPeak_RestoreFirstWaterBeastRoom(void);
+static void AltinPeak_RestoreSecondWaterBeastRoom(void);
+static void AltinPeak_RestoreSouthEntranceRoom(void);
+static void AltinPeak_RestoreThirdWaterBeastRoom(void);
+static void AltinPeak_RestorePoolRoom(void);
+static void AltinPeak_RestoreSpritzRoom(void);
+static void AltinPeak_RestoreFallingRocksRoom(void);
+static void AltinPeak_RestoreHydrosStatueRoom(void);
+static void AltinPeak_RestoreWestExitRoom(void);
 static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing);
 static void AltinPeak_SpawnDebris(void);
 static void AltinPeak_SparkleIce(union FieldObject *object);
@@ -136,44 +141,46 @@ static void AltinPeak_DrainAfterThirdBeast(void);
 static void AltinPeak_CelebrateHydrosVictory(void);
 static void AltinPeak_UpdateFrostPillarPriority(void);
 static void AltinPeak_MarkActorTerrainCell(s32 actorId);
-static void AltinPeak_RollLog(s32 id, s32 heading);
+static void AltinPeak_RollCart(s32 id, s32 heading);
 static void AltinPeak_StartPaletteAnim(void);
-
-#define SCENE_MINE_ROOM(n) ((s32)&SceneId_AltinPeak##n)
 
 /// Each room's water beast fight returns the party to this entrance.
 enum { ENTRANCE_AFTER_BATTLE = 99 };
 
-/// The rooms' actors, from their placement tables. Rooms 3, 5, 6 and 7 place
-/// the log the party rides first.
-enum { ACTOR_LOG = 8 };
+/// The rooms' actors, from their placement tables. AltinPeakSecondWaterBeast,
+/// AltinPeakThirdWaterBeast, AltinPeakPool and AltinPeakSpritz place the mine
+/// cart the party rides first.
+enum { ACTOR_CART = 8 };
 
-/// Room 1: a puddle that appears with the first drain, a wide puddle and the
-/// water beast.
+/// AltinPeakFirstWaterBeast: a puddle that appears with the first drain, a wide
+/// puddle and the water beast.
 enum {
-  ACTOR_ROOM1_PUDDLE = 8,
-  ACTOR_ROOM1_WIDE_PUDDLE = 9,
-  ACTOR_ROOM1_BEAST = 10
+  ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE = 8,
+  ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE = 9,
+  ACTOR_FIRST_WATER_BEAST = 10
 };
 
-enum { ACTOR_ROOM3_BEAST = 9, ACTOR_ROOM3_BOULDER = 10 };
+enum {
+  ACTOR_SECOND_WATER_BEAST = 9,
+  ACTOR_SECOND_WATER_BEAST_ROOM_BOULDER = 10
+};
 
-enum { ACTOR_ROOM5_PUDDLE = 9, ACTOR_ROOM5_BEAST = 10 };
+enum { ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE = 9, ACTOR_THIRD_WATER_BEAST = 10 };
 
-enum { ACTOR_ROOM6_PUDDLE = 9 };
+enum { ACTOR_POOL_ROOM_PUDDLE = 9 };
 
 enum {
-  ACTOR_ROOM7_PUDDLE = 9,
-  ACTOR_ROOM7_PILLAR = 10,
-  ACTOR_ROOM7_SECOND_PUDDLE = 11,
-  ACTOR_ROOM7_THIRD_PUDDLE = 12,
+  ACTOR_SPRITZ_ROOM_PUDDLE = 9,
+  ACTOR_SPRITZ_ROOM_PILLAR = 10,
+  ACTOR_SPRITZ_ROOM_SECOND_PUDDLE = 11,
+  ACTOR_SPRITZ_ROOM_THIRD_PUDDLE = 12,
   ACTOR_DJINNI = 14
 };
 
-enum { ACTOR_ROOM8_BOULDER = 8 };
+enum { ACTOR_JUNCTION_ROOM_BOULDER = 8 };
 
-/// Room 9: the boulder that falls and its shadow, the rock that topples as it
-/// comes down, the actor Force is cast on, and the sign.
+/// AltinPeakFallingRocks: the boulder that falls and its shadow, the rock that
+/// topples as it comes down, the actor Force is cast on, and the sign.
 enum {
   ACTOR_FALLING_BOULDER = 8,
   ACTOR_BOULDER_SHADOW = 9,
@@ -185,21 +192,22 @@ enum {
   ACTOR_FALLING_ROCK_SIGN = 12
 };
 
-/// Room 10: the guardian statue and its shadow.
+/// AltinPeakHydrosStatue: the guardian statue and its shadow.
 enum { ACTOR_STATUE = 8, ACTOR_STATUE_SHADOW = 9 };
 
-enum { ACTOR_ROOM11_BOULDER = 8, ACTOR_ROOM11_PILLAR = 9 };
+enum { ACTOR_WEST_EXIT_ROOM_BOULDER = 8, ACTOR_WEST_EXIT_ROOM_PILLAR = 9 };
 
 /// The rooms' frozen puddles and Garet at the sign: scene flags, kept within
 /// one visit to a room, across its battles.
 enum {
   /// Frost has frozen the room's first puddle.
   FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
-  /// Frost has frozen room 1's wide puddle or room 7's second.
+  /// Frost has frozen AltinPeakFirstWaterBeast's wide puddle or
+  /// AltinPeakSpritz's second.
   FLAG_SECOND_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
-  /// Frost has frozen room 7's third puddle.
+  /// Frost has frozen AltinPeakSpritz's third puddle.
   FLAG_THIRD_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
-  /// Garet has come out to look at room 9's falling-rock sign.
+  /// Garet has come out to look at AltinPeakFallingRocks's falling-rock sign.
   FLAG_GARET_WATCHING_ROCKS = FLAG_SCENE_TEMP_05
 };
 
@@ -211,7 +219,7 @@ enum {
 enum { ANIM_LEADER_JUMP = 22, ANIM_LEADER_LEAP = 7 };
 
 /// The sprites the scene makes objects from: the water beast's spray (as in
-/// Altin) and room 9's boulder, whose pieces fly in the crash.
+/// Altin) and AltinPeakFallingRocks's boulder, whose pieces fly in the crash.
 enum { SPRITE_BOULDER = 200, SPRITE_SPRAY = 222 };
 
 // The spray's direction (0 east, 0x8000 west) and origin, and the water's
@@ -220,8 +228,8 @@ extern s32 gAltinPeak_SprayDirection;
 extern s32 gAltinPeak_SprayOrigin[3];
 extern u16 gAltinPeak_FlickerTimer;
 
-/// Talking to the Djinni in room 7 starts the battle with Spritz, a Mercury
-/// Djinni.
+/// Talking to the Djinni in AltinPeakSpritz starts the battle with Spritz, a
+/// Mercury Djinni.
 static void AltinPeak_TalkToDjinni(void) {
   Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_SPRITZ);
 }
@@ -229,10 +237,10 @@ static void AltinPeak_TalkToDjinni(void) {
 // Shared source, included where its bytes sit in the ROM.
 #include "common/object_facing.h"
 
-// Update callback of room 9's boulder shadow: it stays under the boulder, on
-// the ground 12 pixels down, while the boulder bounces.
-// UB: update hooks return void. Plain void removes the native zero result
-// and changes its return sequence (three instructions in tbs-en).
+// Update callback of AltinPeakFallingRocks's boulder shadow: it stays under the
+// boulder, on the ground 12 pixels down, while the boulder bounces. UB: update
+// hooks return void. Plain void removes the native zero result and changes its
+// return sequence (three instructions in tbs-en).
 #ifdef UBFIX
 static void AltinPeak_ShadowFollowBoulder(union FieldObject *object) {
 #else
@@ -269,50 +277,50 @@ static s32 AltinPeak_FlyDebris(struct ScriptInterpreter *interpreter) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == SCENE_MINE_ROOM(1)) {
+  if (scene == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     return gAltinPeak_Entrances1;
   }
-  if (scene == SCENE_MINE_ROOM(2)) {
+  if (scene == (s32)&SceneId_AltinPeakRailTunnel) {
     return gAltinPeak_Entrances2;
   }
-  if (scene == SCENE_MINE_ROOM(3)) {
+  if (scene == (s32)&SceneId_AltinPeakSecondWaterBeast) {
     return gAltinPeak_Entrances3;
   }
-  if (scene == SCENE_MINE_ROOM(4)) {
+  if (scene == (s32)&SceneId_AltinPeakSouthEntrance) {
     return gAltinPeak_Entrances4;
   }
-  if (scene == SCENE_MINE_ROOM(5)) {
+  if (scene == (s32)&SceneId_AltinPeakThirdWaterBeast) {
     return gAltinPeak_Entrances5;
   }
-  if (scene == SCENE_MINE_ROOM(6)) {
+  if (scene == (s32)&SceneId_AltinPeakPool) {
     return gAltinPeak_Entrances6;
   }
-  if (scene == SCENE_MINE_ROOM(7)) {
+  if (scene == (s32)&SceneId_AltinPeakSpritz) {
     return gAltinPeak_Entrances7;
   }
-  if (scene == SCENE_MINE_ROOM(8)) {
+  if (scene == (s32)&SceneId_AltinPeakJunction) {
     return gAltinPeak_Entrances8;
   }
-  if (scene == SCENE_MINE_ROOM(9)) {
+  if (scene == (s32)&SceneId_AltinPeakFallingRocks) {
     return gAltinPeak_Entrances9;
   }
-  if (scene == SCENE_MINE_ROOM(10)) {
+  if (scene == (s32)&SceneId_AltinPeakHydrosStatue) {
     return gAltinPeak_Entrances10;
   }
-  if (scene == SCENE_MINE_ROOM(11)) {
+  if (scene == (s32)&SceneId_AltinPeakWestExit) {
     return gAltinPeak_Entrances11;
   }
   return gAltinPeak_EntrancesOther;
 }
 
-/// Rooms 9 and 10 have regions.
+/// AltinPeakFallingRocks and AltinPeakHydrosStatue have regions.
 const struct SceneRegion *Scene_GetRegions(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == SCENE_MINE_ROOM(9)) {
+  if (scene == (s32)&SceneId_AltinPeakFallingRocks) {
     return gAltinPeak_Regions9;
   }
-  if (scene == SCENE_MINE_ROOM(10)) {
+  if (scene == (s32)&SceneId_AltinPeakHydrosStatue) {
     return gAltinPeak_Regions10;
   }
   return 0;
@@ -324,51 +332,52 @@ const u32 *Scene_GetExits(void) { return gAltinPeak_Exits; }
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
-  if (scene == SCENE_MINE_ROOM(1)) {
+  if (scene == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     return gAltinPeak_Placements1;
   }
-  if (scene == SCENE_MINE_ROOM(3)) {
+  if (scene == (s32)&SceneId_AltinPeakSecondWaterBeast) {
     return gAltinPeak_Placements3;
   }
-  if (scene == SCENE_MINE_ROOM(5)) {
+  if (scene == (s32)&SceneId_AltinPeakThirdWaterBeast) {
     return gAltinPeak_Placements5;
   }
-  if (scene == SCENE_MINE_ROOM(6)) {
+  if (scene == (s32)&SceneId_AltinPeakPool) {
     return gAltinPeak_Placements6;
   }
-  if (scene == SCENE_MINE_ROOM(7)) {
+  if (scene == (s32)&SceneId_AltinPeakSpritz) {
     return gAltinPeak_Placements7;
   }
-  if (scene == SCENE_MINE_ROOM(8)) {
+  if (scene == (s32)&SceneId_AltinPeakJunction) {
     return gAltinPeak_Placements8;
   }
-  if (scene == SCENE_MINE_ROOM(9)) {
+  if (scene == (s32)&SceneId_AltinPeakFallingRocks) {
     return gAltinPeak_Placements9;
   }
-  if (scene == SCENE_MINE_ROOM(10)) {
+  if (scene == (s32)&SceneId_AltinPeakHydrosStatue) {
     return gAltinPeak_Placements10;
   }
-  if (scene == SCENE_MINE_ROOM(11)) {
+  if (scene == (s32)&SceneId_AltinPeakWestExit) {
     return gAltinPeak_Placements11;
   }
   return gAltinPeak_PlacementsOther;
 }
 
-/// Talking to a log: the party leader jumps onto it, and once the leader has
-/// landed on top the log rolls away with the leader riding it.
-static void AltinPeak_RideLog(s32 log) {
+/// Talking to a mine cart: the party leader jumps into it, and once the leader
+/// has landed in it the cart rolls away along its rails with the leader riding
+/// it.
+static void AltinPeak_RideCart(s32 log) {
   struct FieldActor *logActor;
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  logActor = Object_GetById(ACTOR_LOG);
+  logActor = Object_GetById(ACTOR_CART);
   Battle_ResetEffectCounter();
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_JUMP);
   Engine_EventWait(10);
   Engine_AudioPlayCue(SE_JUMP);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(16) / 5, PIXELS(8) / 5);
-  // Leap by the height between leader and log, in quarter pixels, plus 4.
+  // Leap by the height between leader and cart, in quarter pixels, plus 4.
   leader->velocityY =
       ((ABS(logActor->y.fixed - leader->y.fixed) >> 14) << 14) + PIXELS(4);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
@@ -378,7 +387,7 @@ static void AltinPeak_RideLog(s32 log) {
   leader->sprite->image.priority = 3;
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 
-  // Wait until the leader has come down onto the log.
+  // Wait until the leader has come down into the cart.
   for (;;) {
     if (!((logActor->y.fixed >> 14) < (leader->y.fixed >> 14)))
       break;
@@ -386,36 +395,39 @@ static void AltinPeak_RideLog(s32 log) {
   }
   Engine_EventEnd();
   Engine_AudioPlayCue(SE_159);
-  AltinPeak_RollLog(log, 0);
+  AltinPeak_RollCart(log, 0);
   Engine_TaskWait(20);
   BattleFx_PlayQueuedSound();
 }
 
 /// Talking to (or reading the mind of) a room's water beast starts its
 /// battle; afterwards the party returns to the room's battle entrance.
-static void AltinPeak_FightRoom1Beast(void) {
+static void AltinPeak_FightFirstWaterBeast(void) {
   Battle_SetStart(3);
-  Event_SetNextDestination(SCENE_MINE_ROOM(1), ENTRANCE_AFTER_BATTLE);
+  Event_SetNextDestination((s32)&SceneId_AltinPeakFirstWaterBeast,
+                           ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(53, 2);
 }
 
-static void AltinPeak_FightRoom3Beast(void) {
+static void AltinPeak_FightSecondWaterBeast(void) {
   Battle_SetStart(3);
-  Event_SetNextDestination(SCENE_MINE_ROOM(3), ENTRANCE_AFTER_BATTLE);
+  Event_SetNextDestination((s32)&SceneId_AltinPeakSecondWaterBeast,
+                           ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(53, 2);
 }
 
-static void AltinPeak_FightRoom5Beast(void) {
+static void AltinPeak_FightThirdWaterBeast(void) {
   Battle_SetStart(3);
-  Event_SetNextDestination(SCENE_MINE_ROOM(5), ENTRANCE_AFTER_BATTLE);
+  Event_SetNextDestination((s32)&SceneId_AltinPeakThirdWaterBeast,
+                           ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(53, 2);
 }
 
-/// Move on room 7's pillar: the cell it left becomes free again and the cell
-/// it now stands on (column 24 or 25 of row 26) takes the blocking
+/// Move on AltinPeakSpritz's pillar: the cell it left becomes free again and
+/// the cell it now stands on (column 24 or 25 of row 26) takes the blocking
 /// attributes kept at (0, 0).
-static void AltinPeak_SettleRoom7Pillar(void) {
-  struct FieldActor *pillar = Object_GetById(ACTOR_ROOM7_PILLAR);
+static void AltinPeak_SettleSpritzRoomPillar(void) {
+  struct FieldActor *pillar = Object_GetById(ACTOR_SPRITZ_ROOM_PILLAR);
 
   if (pillar != 0) {
     s32 column;
@@ -438,10 +450,10 @@ static void AltinPeak_SettleRoom7Pillar(void) {
 /// the puddle's cell takes the pillar's attributes, kept elsewhere on the
 /// map, and the pillar is drawn 32 pixels lower, under the party. Each
 /// room's puddle has its own copy, setting its own scene flag.
-static void AltinPeak_FreezeRoom1Puddle(void) {
+static void AltinPeak_FreezeFirstWaterBeastRoomPuddle(void) {
   struct FieldActor *puddle;
 
-  puddle = Object_GetById(ACTOR_ROOM1_PUDDLE);
+  puddle = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
   Map_CopyCellAttributes(7, 13, 1, 1, 9, 13);
   if (puddle != 0) {
     Engine_ActorSetSpriteFlags(puddle, 0);
@@ -451,12 +463,12 @@ static void AltinPeak_FreezeRoom1Puddle(void) {
   Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
 }
 
-/// Frost on room 1's wide puddle, three cells across: the cells take the
-/// ice's attributes and the ice is left to fall to the ground.
-static void AltinPeak_FreezeRoom1WidePuddle(void) {
+/// Frost on AltinPeakFirstWaterBeast's wide puddle, three cells across: the
+/// cells take the ice's attributes and the ice is left to fall to the ground.
+static void AltinPeak_FreezeFirstWaterBeastRoomWidePuddle(void) {
   struct FieldActor *puddle;
 
-  puddle = Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE);
+  puddle = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE);
   Map_CopyCellAttributes(29, 1, 3, 1, 17, 13);
   if (puddle != 0) {
     puddle->motionFlags = ACTOR_FALLS;
@@ -464,11 +476,11 @@ static void AltinPeak_FreezeRoom1WidePuddle(void) {
   Engine_GameFlagSet(FLAG_SECOND_PUDDLE_FROZEN);
 }
 
-/// Frost on room 7's first puddle.
-static void AltinPeak_FreezeRoom7Puddle(void) {
+/// Frost on AltinPeakSpritz's first puddle.
+static void AltinPeak_FreezeSpritzRoomPuddle(void) {
   struct FieldActor *puddle;
 
-  puddle = Object_GetById(ACTOR_ROOM7_PUDDLE);
+  puddle = Object_GetById(ACTOR_SPRITZ_ROOM_PUDDLE);
   Map_CopyCellAttributes(0, 0, 1, 1, 26, 26);
   if (puddle != 0) {
     Engine_ActorSetSpriteFlags(puddle, 0);
@@ -478,11 +490,11 @@ static void AltinPeak_FreezeRoom7Puddle(void) {
   Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
 }
 
-/// Frost on room 5's puddle.
-static void AltinPeak_FreezeRoom5Puddle(void) {
+/// Frost on AltinPeakThirdWaterBeast's puddle.
+static void AltinPeak_FreezeThirdWaterBeastRoomPuddle(void) {
   struct FieldActor *puddle;
 
-  puddle = Object_GetById(ACTOR_ROOM5_PUDDLE);
+  puddle = Object_GetById(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE);
   Map_CopyCellAttributes(23, 13, 1, 1, 25, 13);
   if (puddle != 0) {
     Engine_ActorSetSpriteFlags(puddle, 0);
@@ -492,11 +504,11 @@ static void AltinPeak_FreezeRoom5Puddle(void) {
   Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
 }
 
-/// Frost on room 6's puddle.
-static void AltinPeak_FreezeRoom6Puddle(void) {
+/// Frost on AltinPeakPool's puddle.
+static void AltinPeak_FreezePoolRoomPuddle(void) {
   struct FieldActor *puddle;
 
-  puddle = Object_GetById(ACTOR_ROOM6_PUDDLE);
+  puddle = Object_GetById(ACTOR_POOL_ROOM_PUDDLE);
   Map_CopyCellAttributes(45, 41, 1, 1, 43, 41);
   if (puddle != 0) {
     Engine_ActorSetSpriteFlags(puddle, 0);
@@ -506,11 +518,11 @@ static void AltinPeak_FreezeRoom6Puddle(void) {
   Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
 }
 
-/// Frost on room 7's second puddle.
-static void AltinPeak_FreezeRoom7SecondPuddle(void) {
+/// Frost on AltinPeakSpritz's second puddle.
+static void AltinPeak_FreezeSpritzRoomSecondPuddle(void) {
   struct FieldActor *puddle;
 
-  puddle = Object_GetById(ACTOR_ROOM7_SECOND_PUDDLE);
+  puddle = Object_GetById(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE);
   Map_CopyCellAttributes(1, 0, 1, 1, 17, 10);
   if (puddle != 0) {
     Engine_ActorSetSpriteFlags(puddle, 0);
@@ -520,11 +532,11 @@ static void AltinPeak_FreezeRoom7SecondPuddle(void) {
   Engine_GameFlagSet(FLAG_SECOND_PUDDLE_FROZEN);
 }
 
-/// Frost on room 7's third puddle.
-static void AltinPeak_FreezeRoom7ThirdPuddle(void) {
+/// Frost on AltinPeakSpritz's third puddle.
+static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
   struct FieldActor *puddle;
 
-  puddle = Object_GetById(ACTOR_ROOM7_THIRD_PUDDLE);
+  puddle = Object_GetById(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE);
   Map_CopyCellAttributes(1, 0, 1, 1, 26, 15);
   if (puddle != 0) {
     Engine_ActorSetSpriteFlags(puddle, 0);
@@ -574,12 +586,14 @@ static void AltinPeak_DrainFirstWater(void) {
     *(s32 *)(waterLayer + 12) -= PIXELS(1);
     Engine_TaskWait(4);
     if (step == 8) {
-      puddle = Object_GetById(ACTOR_ROOM1_PUDDLE);
+      puddle = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
       puddle->scaleX = Q16_ONE / 10;
-      puddle = Actor_Get(ACTOR_ROOM1_PUDDLE);
+      puddle = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
       puddle->scaleY = Q16_ONE / 10;
-      Actor_SetPosition(ACTOR_ROOM1_PUDDLE, PIXELS(152), PIXELS(216));
-      Actor_SetActionScript(ACTOR_ROOM1_PUDDLE, gAltinPeak_PuddleGrowScript);
+      Actor_SetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, PIXELS(152),
+                        PIXELS(216));
+      Actor_SetActionScript(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE,
+                            gAltinPeak_PuddleGrowScript);
     }
   }
   // Flicker the water away while the timer counts to 100.
@@ -672,124 +686,127 @@ static void AltinPeak_DrainThirdWater(void) {
   GameFlag_Set(FLAG_ALTIN_MINE_THIRD_DRAIN);
 }
 
-/// Flips room 3's switch to its other position, redrawing it and changing the
-/// cell its position opens or closes.
-static void AltinPeak_ToggleRoom3SwitchCells(void) {
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_3_SWITCH) != 0) {
+/// Flips AltinPeakSecondWaterBeast's switch to its other position, redrawing it
+/// and changing the cell its position opens or closes.
+static void AltinPeak_ToggleSecondWaterBeastRoomSwitchCells(void) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH) != 0) {
     Map_CopyCellAttributes(2, 0, 1, 1, 24, 80);
     Map_CopyCellsTo(2, 1, 24, 11, 1, 2);
-    GameFlag_Clear(FLAG_ALTIN_PEAK_ROOM_3_SWITCH);
+    GameFlag_Clear(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH);
   } else {
     Map_CopyCellAttributes(0, 0, 1, 1, 24, 80);
     Map_CopyCellsTo(0, 1, 24, 11, 1, 2);
-    GameFlag_Set(FLAG_ALTIN_PEAK_ROOM_3_SWITCH);
+    GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH);
   }
 }
 
-/// Searching room 3's switch flips it. "You flipped the switch."
-static void AltinPeak_FlipRoom3Switch(void) {
+/// Searching AltinPeakSecondWaterBeast's switch flips it. "You flipped the
+/// switch."
+static void AltinPeak_FlipSecondWaterBeastRoomSwitch(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Engine_AudioPlayCue(SE_125);
-  AltinPeak_ToggleRoom3SwitchCells();
+  AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
   Engine_TaskWait(20);
   BattleFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
-/// Flips room 5's switch, the same way.
-static void AltinPeak_ToggleRoom5SwitchCells(void) {
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_5_SWITCH) != 0) {
+/// Flips AltinPeakThirdWaterBeast's switch, the same way.
+static void AltinPeak_ToggleThirdWaterBeastRoomSwitchCells(void) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH) != 0) {
     Map_CopyCellAttributes(12, 72, 1, 1, 11, 73);
     Map_CopyCellsTo(48, 32, 11, 4, 1, 2);
-    GameFlag_Clear(FLAG_ALTIN_PEAK_ROOM_5_SWITCH);
+    GameFlag_Clear(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH);
   } else {
     Map_CopyCellAttributes(10, 72, 1, 1, 11, 73);
     Map_CopyCellsTo(49, 32, 11, 4, 1, 2);
-    GameFlag_Set(FLAG_ALTIN_PEAK_ROOM_5_SWITCH);
+    GameFlag_Set(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH);
   }
 }
 
-/// Searching room 5's switch flips it.
-static void AltinPeak_FlipRoom5Switch(void) {
+/// Searching AltinPeakThirdWaterBeast's switch flips it.
+static void AltinPeak_FlipThirdWaterBeastRoomSwitch(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Engine_AudioPlayCue(SE_125);
-  AltinPeak_ToggleRoom5SwitchCells();
+  AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
   Engine_TaskWait(20);
   BattleFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
-/// Searching room 6's switch flips it.
-static void AltinPeak_FlipRoom6Switch(void) {
+/// Searching AltinPeakPool's switch flips it.
+static void AltinPeak_FlipPoolRoomSwitch(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Event_PlayCue(SE_125);
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_6_SWITCH) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
     Map_CopyCellAttributes(15, 93, 1, 1, 16, 92);
     Map_CopyCellsTo(47, 29, 16, 28, 1, 2);
-    GameFlag_Clear(FLAG_ALTIN_PEAK_ROOM_6_SWITCH);
+    GameFlag_Clear(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH);
   } else {
     Map_CopyCellAttributes(17, 93, 1, 1, 16, 92);
     Map_CopyCellsTo(46, 29, 16, 28, 1, 2);
-    GameFlag_Set(FLAG_ALTIN_PEAK_ROOM_6_SWITCH);
+    GameFlag_Set(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH);
   }
   Engine_TaskWait(20);
   BattleFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
-/// Searching room 7's switch flips it.
-static void AltinPeak_FlipRoom7Switch(void) {
+/// Searching AltinPeakSpritz's switch flips it.
+static void AltinPeak_FlipSpritzRoomSwitch(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Event_PlayCue(SE_125);
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_7_SWITCH) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
     Map_CopyCellAttributes(28, 82, 1, 1, 29, 81);
     Map_CopyCellsTo(47, 28, 29, 17, 1, 2);
-    GameFlag_Clear(FLAG_ALTIN_PEAK_ROOM_7_SWITCH);
+    GameFlag_Clear(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH);
   } else {
     Map_CopyCellAttributes(30, 82, 1, 1, 29, 81);
     Map_CopyCellsTo(46, 28, 29, 17, 1, 2);
-    GameFlag_Set(FLAG_ALTIN_PEAK_ROOM_7_SWITCH);
+    GameFlag_Set(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH);
   }
   Engine_TaskWait(20);
   BattleFx_PlayQueuedSound();
   Engine_EventEnd();
 }
 
-/// Stepping onto room 7's pillar: it is drawn under the party leader.
+/// Stepping onto AltinPeakSpritz's pillar: it is drawn under the party leader.
 static void AltinPeak_PlacePillarUnderLeader(void) {
-  Object_GetById(ACTOR_ROOM7_PILLAR)->priorityFlags =
+  Object_GetById(ACTOR_SPRITZ_ROOM_PILLAR)->priorityFlags =
       ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Stepping off room 7's pillar: it sorts against the leader again.
+/// Stepping off AltinPeakSpritz's pillar: it sorts against the leader again.
 static void AltinPeak_RestorePillarAutomaticPriority(void) {
-  Object_GetById(ACTOR_ROOM7_PILLAR)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+  Object_GetById(ACTOR_SPRITZ_ROOM_PILLAR)->priorityFlags =
+      ACTOR_PRIORITY_AUTOMATIC;
 }
 
-/// Walking east into room 7's pillar pushes it one cell along with a scrape;
-/// the leader follows it and its cells are settled as after Move.
-static void AltinPeak_PushRoom7Pillar(void) {
+/// Walking east into AltinPeakSpritz's pillar pushes it one cell along with a
+/// scrape; the leader follows it and its cells are settled as after Move.
+static void AltinPeak_PushSpritzRoomPillar(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
   Event_PlayCue(SE_185);
-  Actor_SetSpeed(ACTOR_ROOM7_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(ACTOR_SPRITZ_ROOM_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
-  Object_GetById(ACTOR_ROOM7_PILLAR)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_SPRITZ_ROOM_PILLAR)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 400, 424);
-  Actor_SetDestination(ACTOR_ROOM7_PILLAR, 408, 424);
-  Engine_ActorWaitForMove(ACTOR_ROOM7_PILLAR);
+  Actor_SetDestination(ACTOR_SPRITZ_ROOM_PILLAR, 408, 424);
+  Engine_ActorWaitForMove(ACTOR_SPRITZ_ROOM_PILLAR);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  AltinPeak_SettleRoom7Pillar();
+  AltinPeak_SettleSpritzRoomPillar();
   Engine_EventEnd();
 }
 
-/// Force on room 9's wall: it rumbles, the rock on it rocks one way and back,
-/// then topples with a crash, and the rockfall follows.
+/// Force on AltinPeakFallingRocks's wall: it rumbles, the rock on it rocks one
+/// way and back, then topples with a crash, and the rockfall follows.
 static void AltinPeak_ForceRockOver(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -860,10 +877,10 @@ static void AltinPeak_ForceRockOver(void) {
   Event_End();
 }
 
-/// Room 9's rockfall. The party leader steps back and looks up as the slope
-/// rumbles; the rock lies toppled and a boulder drops onto the path. The
-/// leader flees down the winding path, and after boulderDelay frames the
-/// boulder rolls after; it bounces to a stop at the bottom and crashes into
+/// AltinPeakFallingRocks's rockfall. The party leader steps back and looks up
+/// as the slope rumbles; the rock lies toppled and a boulder drops onto the
+/// path. The leader flees down the winding path, and after boulderDelay frames
+/// the boulder rolls after; it bounces to a stop at the bottom and crashes into
 /// the wall, throwing up rock debris and leaving rubble. Garet, if he came out
 /// at the sign, rejoins the leader. Remembered by
 /// FLAG_ALTIN_PEAK_BOULDER_FALLEN.
@@ -1011,11 +1028,11 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   GameFlag_Set(FLAG_ALTIN_PEAK_BOULDER_FALLEN);
 }
 
-/// Searching room 9's sign, which can bring the rockfall. `Watch for falling
-/// rocks! Do not strike the wall! Rocks may fall!` Before the rockfall, while
-/// the party has no Orb of Force, Garet steps out, grumbles at the dead end
-/// and strikes the wall; the ground shakes, he tells the leader to run and
-/// runs down the path, and the rockfall follows.
+/// Searching AltinPeakFallingRocks's sign, which can bring the rockfall. `Watch
+/// for falling rocks! Do not strike the wall! Rocks may fall!` Before the
+/// rockfall, while the party has no Orb of Force, Garet steps out, grumbles at
+/// the dead end and strikes the wall; the ground shakes, he tells the leader to
+/// run and runs down the path, and the rockfall follows.
 static void AltinPeak_ReadFallingRockSign(void) {
   struct FieldActor *actor;
   s32 message;
@@ -1097,35 +1114,36 @@ static void AltinPeak_ReadFallingRockSign(void) {
   Engine_EventEnd();
 }
 
-/// Room 1 has its own events once the first drain has lowered its water.
+/// AltinPeakFirstWaterBeast has its own events once the first drain has lowered
+/// its water.
 const struct SceneEvent *Scene_GetEvents(void) {
   const struct SceneEvent *table;
 
-  if (gGameState.scene == SCENE_MINE_ROOM(1)) {
+  if (gGameState.scene == (s32)&SceneId_AltinPeakFirstWaterBeast) {
     if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
       table = gAltinPeak_Events1Drained;
     } else {
       table = gAltinPeak_Events1;
     }
-  } else if (gGameState.scene == SCENE_MINE_ROOM(2)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakRailTunnel) {
     table = gAltinPeak_Events2;
-  } else if (gGameState.scene == SCENE_MINE_ROOM(3)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakSecondWaterBeast) {
     table = gAltinPeak_Events3;
-  } else if (gGameState.scene == SCENE_MINE_ROOM(4)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakSouthEntrance) {
     table = gAltinPeak_Events4;
-  } else if (gGameState.scene == SCENE_MINE_ROOM(5)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakThirdWaterBeast) {
     table = gAltinPeak_Events5;
-  } else if (gGameState.scene == SCENE_MINE_ROOM(6)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakPool) {
     table = gAltinPeak_Events6;
-  } else if (gGameState.scene == SCENE_MINE_ROOM(7)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakSpritz) {
     table = gAltinPeak_Events7;
-  } else if (gGameState.scene == SCENE_MINE_ROOM(8)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakJunction) {
     table = gAltinPeak_Events8;
-  } else if (gGameState.scene == SCENE_MINE_ROOM(9)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakFallingRocks) {
     table = gAltinPeak_Events9;
-  } else if (gGameState.scene == SCENE_MINE_ROOM(10)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakHydrosStatue) {
     table = gAltinPeak_Events10;
-  } else if (gGameState.scene == SCENE_MINE_ROOM(11)) {
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakWestExit) {
     table = gAltinPeak_Events11;
   } else {
     table = gAltinPeak_EventsOther;
@@ -1180,22 +1198,23 @@ static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
 }
 
-/// Stepping near room 1's water beast the first time: the camera finds it, it
-/// cries out and hops away around the room, freezes the wide puddle with
-/// Frost and hops across it, then stops to watch the party leader.
+/// Stepping near AltinPeakFirstWaterBeast's water beast the first time: the
+/// camera finds it, it cries out and hops away around the room, freezes the
+/// wide puddle with Frost and hops across it, then stops to watch the party
+/// leader.
 static void AltinPeak_ShowFirstBeastRoute(void) {
   union FieldObject *beast;
   struct FieldActor *leader;
   struct FieldActor *actor;
   s32 jumpSpeed;
 
-  beast = (union FieldObject *)Object_GetById(ACTOR_ROOM1_BEAST);
+  beast = (union FieldObject *)Object_GetById(ACTOR_FIRST_WATER_BEAST);
   Engine_EventBegin();
   Engine_CameraSetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   Camera_MoveTo(PIXELS(298), -1, PIXELS(337), 1);
   Engine_CameraWaitForMove();
   Engine_AudioPlayCue(SE_147);
-  Engine_ActorRunRepeatedMotion(ACTOR_ROOM1_BEAST, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Engine_EventWait(40);
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_CameraMoveTo(PIXELS(295), PIXELS(32), PIXELS(212), 1);
@@ -1205,93 +1224,98 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->actor.work = 0;
   beast->actor.gravity = PIXELS(2) / 5;
   beast->actor.update = AltinPeak_UpdateBeastHops;
-  Actor_SetSpeed(ACTOR_ROOM1_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 308, 291);
-  Engine_ActorMoveToAndWait(ACTOR_ROOM1_BEAST, 311, 215);
+  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 308, 291);
+  Engine_ActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 311, 215);
   beast->actor.update = 0;
   beast->actor.paused = 0;
   Engine_EventWait(16);
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_WEST, 40);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
+                      20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   // Demonstrate Frost between the hopping sections.
   AltinPeak_BeastFreezesWidePuddle();
   Engine_EventWait(40);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTH + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTHEAST + FACING_STEP,
+                      40);
   Camera_MoveTo(PIXELS(334), -1, PIXELS(244), 1);
   beast->effect.countdown = 0;
   beast->actor.timer = 0;
   beast->actor.work = 0;
   beast->actor.update = AltinPeak_UpdateBeastHops;
-  Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 320, 232);
-  Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 340, 262);
-  Engine_ActorMoveToAndWait(ACTOR_ROOM1_BEAST, 374, 262);
+  Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 320, 232);
+  Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 340, 262);
+  Engine_ActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 374, 262);
   beast->actor.update = 0;
   Engine_EventWait(16);
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_NORTHEAST + FACING_STEP, 20);
-  Engine_ActorFaceDirection(ACTOR_ROOM1_BEAST, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTHEAST + FACING_STEP,
+                      20);
+  Engine_ActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH + FACING_STEP,
+                            40);
   Engine_AudioPlayCue(SE_HIGH_JUMP);
-  actor = Object_GetById(ACTOR_ROOM1_BEAST);
+  actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   actor->velocityY = PIXELS(4);
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 2);
-  Engine_ActorMoveToAndWait(ACTOR_ROOM1_BEAST, 380, 248);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 2);
+  Engine_ActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 380, 248);
   Engine_EventWait(10);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(6);
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 1);
   Engine_EventWait(40);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_WEST, 40);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
+                      20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   Camera_MoveTo(PIXELS(304), -1, PIXELS(215), 1);
   beast->effect.countdown = 0;
   beast->actor.timer = 0;
   beast->actor.work = 0;
   beast->actor.update = AltinPeak_UpdateBeastHops;
-  Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 329, 219);
+  Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 329, 219);
   beast->actor.update = 0;
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 1);
   Engine_EventWait(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
-  Engine_ActorFaceDirection(ACTOR_ROOM1_BEAST, FACING_WEST, 40);
-  Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE)->motionFlags = 0;
+  Engine_ActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
+  Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE)->motionFlags = 0;
   // Open the route for the final two beast jumps.
   Map_CopyCellAttributes(3, 0, 1, 1, 17, 13);
   Map_CopyCellAttributes(3, 0, 1, 1, 18, 13);
   Map_CopyCellAttributes(3, 0, 1, 1, 19, 13);
-  Engine_ActorSetSpeed(ACTOR_ROOM1_BEAST, PIXELS(7) / 5, PIXELS(7) / 10);
-  actor = Object_GetById(ACTOR_ROOM1_BEAST);
+  Engine_ActorSetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(7) / 5, PIXELS(7) / 10);
+  actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_AudioPlayCue(SE_HIGH_JUMP);
   jumpSpeed = PIXELS(5);
-  actor = Object_GetById(ACTOR_ROOM1_BEAST);
+  actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   actor->velocityY = jumpSpeed;
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 3);
-  Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 295, 215);
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
-  actor = Object_GetById(ACTOR_ROOM1_BEAST);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
+  Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 295, 215);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 1);
+  actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   Engine_ActorSetSpriteFlags(actor, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
   Engine_AudioPlayCue(SE_HIGH_JUMP);
-  actor = Object_GetById(ACTOR_ROOM1_BEAST);
+  actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   actor->velocityY = jumpSpeed;
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 3);
-  Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 260, 215);
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
+  Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 260, 215);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ActorFaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTHEAST + FACING_STEP,
-                            20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ActorFaceDirection(ACTOR_FIRST_WATER_BEAST,
+                            FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_AudioPlayCue(SE_147);
-  Engine_ActorRunRepeatedMotion(ACTOR_ROOM1_BEAST, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Engine_EventWait(40);
   Map_CopyCellAttributes(4, 0, 1, 1, 17, 13);
   Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
@@ -1300,7 +1324,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_CameraSetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
   Engine_CameraMoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   Engine_CameraWaitForMove();
-  FieldObject_SetTargetAndCallback(ACTOR_ROOM1_BEAST,
+  FieldObject_SetTargetAndCallback(ACTOR_FIRST_WATER_BEAST,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                    gAltinPeak_FaceLeaderScript);
   Engine_GameFlagSet(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN);
@@ -1314,18 +1338,19 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   struct FieldActor *movingActor;
   u32 waitedFrames;
 
-  actor = (union FieldObject *)Object_GetById(ACTOR_ROOM1_BEAST);
+  actor = (union FieldObject *)Object_GetById(ACTOR_FIRST_WATER_BEAST);
   Engine_EventBegin();
-  ObjectMotion_EnableActionAndResetMotion(ACTOR_ROOM1_BEAST);
+  ObjectMotion_EnableActionAndResetMotion(ACTOR_FIRST_WATER_BEAST);
   Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   Camera_MoveTo(PIXELS(279), PIXELS(64), PIXELS(216), 1);
   Engine_CameraWaitForMove();
   Engine_AudioPlayCue(SE_147);
-  Engine_ActorRunRepeatedMotion(ACTOR_ROOM1_BEAST, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Engine_EventWait(40);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTH + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_WEST, 40);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTHEAST + FACING_STEP,
+                      20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(128), PIXELS(64), PIXELS(202), 1);
   actor->effect.countdown = 0;
@@ -1333,51 +1358,52 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   actor->actor.work = 0;
   actor->actor.gravity = PIXELS(2) / 5;
   actor->actor.update = AltinPeak_UpdateBeastHops;
-  Actor_SetSpeed(ACTOR_ROOM1_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 212, 200);
-  Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 103, 200);
+  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 212, 200);
+  Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 103, 200);
   actor->actor.update = NULL;
   actor->actor.paused = 0;
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTH + FACING_STEP, 40);
-  Object_GetById(ACTOR_ROOM1_BEAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_ROOM1_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
-  movingActor = Object_GetById(ACTOR_ROOM1_BEAST);
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH + FACING_STEP, 40);
+  Object_GetById(ACTOR_FIRST_WATER_BEAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
+  movingActor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   Engine_ActorSetSpriteFlags(movingActor, 0);
   Engine_AudioPlayCue(SE_HIGH_JUMP);
-  movingActor = Object_GetById(ACTOR_ROOM1_BEAST);
+  movingActor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   movingActor->velocityY = PIXELS(4);
-  Actor_SetAnimation(ACTOR_ROOM1_BEAST, 3);
-  Engine_ActorMoveToAndWait(ACTOR_ROOM1_BEAST, 86, 214);
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
-  movingActor = Object_GetById(ACTOR_ROOM1_BEAST);
+  Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
+  Engine_ActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 86, 214);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 1);
+  movingActor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
   Engine_ActorSetSpriteFlags(movingActor, 1);
   Engine_EventWait(10);
   AltinPeak_PlayLandingShake(PIXELS(2), 8);
   Engine_EventWait(40);
-  Object_GetById(ACTOR_ROOM1_BEAST)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_ActorFaceDirection(ACTOR_ROOM1_BEAST, 0, 40);
+  Object_GetById(ACTOR_FIRST_WATER_BEAST)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTHEAST + FACING_STEP,
+                      20);
+  Engine_ActorFaceDirection(ACTOR_FIRST_WATER_BEAST, 0, 40);
   actor->effect.countdown = 0;
   actor->actor.timer = 0;
   actor->actor.work = 0;
   actor->actor.update = AltinPeak_UpdateBeastHops;
-  Actor_SetSpeed(ACTOR_ROOM1_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 120, 215);
+  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 120, 215);
   actor->actor.update = NULL;
   actor->actor.paused = 0;
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 1);
   Engine_EventWait(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
-  Engine_ActorFaceDirection(ACTOR_ROOM1_BEAST, 0, 10);
+  Engine_ActorFaceDirection(ACTOR_FIRST_WATER_BEAST, 0, 10);
   Engine_AudioPlayCue(SE_147);
-  Engine_ActorRunRepeatedMotion(ACTOR_ROOM1_BEAST, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Engine_EventWait(80);
-  Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
   // End the route with a spray gust and a short skippable wait.
   AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), 0);
   Engine_EventWait(60);
@@ -1398,32 +1424,32 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
 /// levels already lowered. Returns 0.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gGameState.scene == SCENE_MINE_ROOM(1)) {
-    AltinPeak_RestoreRoom1();
-  } else if (gGameState.scene == SCENE_MINE_ROOM(3)) {
-    AltinPeak_RestoreRoom3();
-  } else if (gGameState.scene == SCENE_MINE_ROOM(4)) {
-    AltinPeak_RestoreRoom4();
-  } else if (gGameState.scene == SCENE_MINE_ROOM(5)) {
-    AltinPeak_RestoreRoom5();
-  } else if (gGameState.scene == SCENE_MINE_ROOM(6)) {
-    AltinPeak_RestoreRoom6();
-  } else if (gGameState.scene == SCENE_MINE_ROOM(7)) {
-    AltinPeak_RestoreRoom7();
-  } else if (gGameState.scene == SCENE_MINE_ROOM(9)) {
-    AltinPeak_RestoreRoom9();
-  } else if (gGameState.scene == SCENE_MINE_ROOM(10)) {
-    AltinPeak_RestoreRoom10();
-  } else if (gGameState.scene == SCENE_MINE_ROOM(11)) {
-    AltinPeak_RestoreRoom11();
+  if (gGameState.scene == (s32)&SceneId_AltinPeakFirstWaterBeast) {
+    AltinPeak_RestoreFirstWaterBeastRoom();
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakSecondWaterBeast) {
+    AltinPeak_RestoreSecondWaterBeastRoom();
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakSouthEntrance) {
+    AltinPeak_RestoreSouthEntranceRoom();
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakThirdWaterBeast) {
+    AltinPeak_RestoreThirdWaterBeastRoom();
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakPool) {
+    AltinPeak_RestorePoolRoom();
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakSpritz) {
+    AltinPeak_RestoreSpritzRoom();
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakFallingRocks) {
+    AltinPeak_RestoreFallingRocksRoom();
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakHydrosStatue) {
+    AltinPeak_RestoreHydrosStatueRoom();
+  } else if (gGameState.scene == (s32)&SceneId_AltinPeakWestExit) {
+    AltinPeak_RestoreWestExitRoom();
   }
   return 0;
 }
 
-/// Room 1: after its beast's battle the Frost Jewel is found and the water
-/// drains; the beast stays where its routes left it while the water is up,
-/// and the frozen puddles are restored once it is down.
-static void AltinPeak_RestoreRoom1(void) {
+/// AltinPeakFirstWaterBeast: after its beast's battle the Frost Jewel is found
+/// and the water drains; the beast stays where its routes left it while the
+/// water is up, and the frozen puddles are restored once it is down.
+static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   s32 opened;
   s32 flag;
   struct FieldActor *actor;
@@ -1436,82 +1462,85 @@ static void AltinPeak_RestoreRoom1(void) {
   }
   AltinPeak_StartPaletteAnim();
   if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN) == 0) {
-    Engine_ActorSetPosition(ACTOR_ROOM1_PUDDLE, 0, 0);
+    Engine_ActorSetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
   } else {
-    actor = Object_GetById(ACTOR_ROOM1_PUDDLE);
+    actor = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
     if (actor != 0) {
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Engine_ActorSetSpriteFlags(actor, 0);
     }
   }
-  actor = Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE);
+  actor = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE);
   if (actor != 0) {
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Engine_ActorSetSpriteFlags(actor, 0);
   }
   opened = Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN);
   if (opened == 0) {
-    Engine_ActorSetChildValue(ACTOR_ROOM1_BEAST, 2);
+    Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
     flag = Engine_GameFlagIsSet(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
     if (flag != 0) {
-      Engine_ActorSetAnimation(ACTOR_ROOM1_WIDE_PUDDLE, 0);
-      actor = Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE);
+      Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE, 0);
+      actor = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE);
       actor->update = AltinPeak_SparkleIce;
-      Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE)->motionFlags = opened;
-      actor = Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE);
+      Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE)->motionFlags =
+          opened;
+      actor = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE);
       actor->y.fixed = PIXELS(32);
       Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
-      Engine_ActorSetPosition(ACTOR_ROOM1_BEAST, PIXELS(120), PIXELS(215));
-      actor = Object_GetById(ACTOR_ROOM1_BEAST);
+      Engine_ActorSetPosition(ACTOR_FIRST_WATER_BEAST, PIXELS(120),
+                              PIXELS(215));
+      actor = Object_GetById(ACTOR_FIRST_WATER_BEAST);
       actor->facing = opened;
-      Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 3);
+      Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST, 3);
       AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), 0);
       return;
     }
     if (Engine_GameFlagIsSet(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN) == 0) {
       return;
     }
-    Engine_ActorSetAnimation(ACTOR_ROOM1_WIDE_PUDDLE, 0);
-    actor = Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE);
+    Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE, 0);
+    actor = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE);
     actor->update = AltinPeak_SparkleIce;
-    Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE)->motionFlags = flag;
-    actor = Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE);
+    Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE)->motionFlags =
+        flag;
+    actor = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE);
     actor->y.fixed = PIXELS(32);
     Map_CopyCellAttributes(2, 0, 1, 1, 18, 13);
-    Actor_SetPosition(ACTOR_ROOM1_BEAST, PIXELS(260), PIXELS(215));
+    Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, PIXELS(260), PIXELS(215));
     FieldObject_SetTargetAndCallback(
         10, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
         gAltinPeak_FaceLeaderScript);
   } else {
     map = gMapWork[0];
-    Engine_ActorSetPosition(ACTOR_ROOM1_BEAST, 0, 0);
+    Engine_ActorSetPosition(ACTOR_FIRST_WATER_BEAST, 0, 0);
     Map_CopyCellAttributes(0, 0, 1, 2, 3, 14);
     map->flags &= 0xfdff;
-    AltinPeak_MarkActorTerrainCell(ACTOR_ROOM1_PUDDLE);
+    AltinPeak_MarkActorTerrainCell(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN) != 0) {
-      Engine_ActorSetAnimation(ACTOR_ROOM1_PUDDLE, 5);
+      Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, 5);
       Map_CopyCellAttributes(7, 13, 1, 1, 9, 13);
-      actor = Object_GetById(ACTOR_ROOM1_PUDDLE);
+      actor = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
       actor->y.fixed = 0;
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     }
-    AltinPeak_MarkActorTerrainCell(ACTOR_ROOM1_WIDE_PUDDLE);
+    AltinPeak_MarkActorTerrainCell(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE);
     if (Engine_GameFlagIsSet(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
-      Engine_ActorSetAnimation(ACTOR_ROOM1_WIDE_PUDDLE, 5);
+      Engine_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE, 5);
       Map_CopyCellAttributes(29, 1, 3, 1, 17, 13);
-      actor = Object_GetById(ACTOR_ROOM1_WIDE_PUDDLE);
+      actor = Object_GetById(ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE);
       actor->y.fixed = PIXELS(32);
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     }
   }
 }
 
-/// Room 3: after its beast's battle the second drain runs; while the water is
-/// up the beast spits it; the switch is restored.
-static void AltinPeak_RestoreRoom3(void) {
+/// AltinPeakSecondWaterBeast: after its beast's battle the second drain runs;
+/// while the water is up the beast spits it; the switch is restored.
+static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
     ((struct MapScrollWork *)gMapWork[0])->flags &= ~0x200;
-    Actor_SetPosition(ACTOR_ROOM3_BEAST, 0, 0);
+    Actor_SetPosition(ACTOR_SECOND_WATER_BEAST, 0, 0);
   } else {
     AltinPeak_StartPaletteAnim();
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0 &&
@@ -1521,13 +1550,13 @@ static void AltinPeak_RestoreRoom3(void) {
       Map_CopyCellAttributes(38, 24, 1, 2, 37, 24);
       Map_CopyCellAttributes(44, 23, 1, 2, 45, 23);
       if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) == 0) {
-        Actor_SetChildValue(ACTOR_ROOM3_BEAST, 2);
-        Engine_ActorSetAnimation(ACTOR_ROOM3_BEAST, 3);
+        Actor_SetChildValue(ACTOR_SECOND_WATER_BEAST, 2);
+        Engine_ActorSetAnimation(ACTOR_SECOND_WATER_BEAST, 3);
         AltinPeak_StartSpitting(PIXELS(238), 0, PIXELS(418), 0x8000);
       }
     }
   }
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_3_SWITCH) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH) != 0) {
     Map_CopyCellAttributes(0, 0, 1, 1, 24, 80);
     Map_CopyCellsTo(0, 1, 24, 11, 1, 2);
   } else {
@@ -1536,10 +1565,11 @@ static void AltinPeak_RestoreRoom3(void) {
   }
 }
 
-/// Room 4: its water is up until the second drain. Arriving from the Alpine
-/// Crossing, at ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST or _EAST, shows no place
+/// AltinPeakSouthEntrance: its water is up until the second drain. Arriving
+/// from the Alpine Crossing, at
+/// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST or _EAST, shows no place
 /// name.
-static void AltinPeak_RestoreRoom4(void) {
+static void AltinPeak_RestoreSouthEntranceRoom(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
     ((struct MapScrollWork *)gMapWork[0])->flags &= ~0x200;
   } else {
@@ -1547,22 +1577,23 @@ static void AltinPeak_RestoreRoom4(void) {
   }
   {
     // Either entrance from the Alpine Crossing: _EAST is the number after
-    // ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST.
+    // ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST.
     if ((u32)(((u16)gGameState.entrance -
-               ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST)
+               ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST)
               << 16) <= 0x10000) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
   }
 }
 
-/// Room 5: after its beast's battle the third drain runs; while the water is
-/// up the beast spits it; the frozen puddle and the switch are restored.
-static void AltinPeak_RestoreRoom5(void) {
+/// AltinPeakThirdWaterBeast: after its beast's battle the third drain runs;
+/// while the water is up the beast spits it; the frozen puddle and the switch
+/// are restored.
+static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
 
   if (GameFlag_IsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     ((struct MapScrollWork *)gMapWork[0])->flags &= ~0x200;
-    Actor_SetPosition(ACTOR_ROOM5_BEAST, 0, 0);
+    Actor_SetPosition(ACTOR_THIRD_WATER_BEAST, 0, 0);
   } else {
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (gGameState.entrance == ENTRANCE_AFTER_BATTLE) {
@@ -1571,21 +1602,21 @@ static void AltinPeak_RestoreRoom5(void) {
     }
     AltinPeak_StartPaletteAnim();
     if (GameFlag_IsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) == 0) {
-      Actor_SetChildValue(ACTOR_ROOM5_BEAST, 2);
-      Engine_ActorSetAnimation(ACTOR_ROOM5_BEAST, 3);
+      Actor_SetChildValue(ACTOR_THIRD_WATER_BEAST, 2);
+      Engine_ActorSetAnimation(ACTOR_THIRD_WATER_BEAST, 3);
       AltinPeak_StartSpitting(PIXELS(748), PIXELS(8), PIXELS(280), 0x8000);
     }
   }
-  AltinPeak_MarkActorTerrainCell(ACTOR_ROOM5_PUDDLE);
+  AltinPeak_MarkActorTerrainCell(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE);
   if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
-    Engine_ActorSetAnimation(ACTOR_ROOM5_PUDDLE, 5);
+    Engine_ActorSetAnimation(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE, 5);
     Map_CopyCellAttributes(23, 13, 1, 1, 25, 13);
     {
-      struct FieldActor *actor = Actor_Get(ACTOR_ROOM5_PUDDLE);
+      struct FieldActor *actor = Actor_Get(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | actor->priorityFlags;
     }
   }
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_5_SWITCH) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH) != 0) {
     Map_CopyCellAttributes(10, 72, 1, 1, 11, 73);
     Map_CopyCellsTo(49, 32, 11, 4, 1, 2);
   } else {
@@ -1594,20 +1625,20 @@ static void AltinPeak_RestoreRoom5(void) {
   }
 }
 
-/// Room 6: arriving at entrance 2 the log waits there; the frozen puddle, the
-/// water level and the switch are restored.
-static void AltinPeak_RestoreRoom6(void) {
+/// AltinPeakPool: arriving at entrance 2 the mine cart waits there; the frozen
+/// puddle, the water level and the switch are restored.
+static void AltinPeak_RestorePoolRoom(void) {
   struct FieldActor *pillar;
 
   if (gGameState.entrance == 2) {
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Actor_SetPosition(ACTOR_LOG, PIXELS(358), PIXELS(104));
+      Actor_SetPosition(ACTOR_CART, PIXELS(358), PIXELS(104));
     }
   }
-  AltinPeak_MarkActorTerrainCell(ACTOR_ROOM6_PUDDLE);
+  AltinPeak_MarkActorTerrainCell(ACTOR_POOL_ROOM_PUDDLE);
   if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
-    pillar = Actor_Get(ACTOR_ROOM6_PUDDLE);
-    Engine_ActorSetAnimation(ACTOR_ROOM6_PUDDLE, 5);
+    pillar = Actor_Get(ACTOR_POOL_ROOM_PUDDLE);
+    Engine_ActorSetAnimation(ACTOR_POOL_ROOM_PUDDLE, 5);
     Map_CopyCellAttributes(45, 41, 1, 1, 43, 41);
     {
       pillar->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | pillar->priorityFlags;
@@ -1616,7 +1647,7 @@ static void AltinPeak_RestoreRoom6(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     ((struct MapScrollWork *)gMapWork[0])->flags &= ~0x200;
   }
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_6_SWITCH) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
     Map_CopyCellAttributes(17, 93, 1, 1, 16, 92);
     Map_CopyCellsTo(46, 29, 16, 28, 1, 2);
   } else {
@@ -1625,43 +1656,44 @@ static void AltinPeak_RestoreRoom6(void) {
   }
 }
 
-/// Room 7: the pillar, the three frozen puddles and the switch are restored.
-static void AltinPeak_RestoreRoom7(void) {
+/// AltinPeakSpritz: the pillar, the three frozen puddles and the switch are
+/// restored.
+static void AltinPeak_RestoreSpritzRoom(void) {
   struct FieldActor *actor;
 
-  actor = Actor_Get(ACTOR_ROOM7_PUDDLE);
+  actor = Actor_Get(ACTOR_SPRITZ_ROOM_PUDDLE);
   Engine_ActorSetSpriteFlags(actor, 0);
-  AltinPeak_SettleRoom7Pillar();
-  AltinPeak_MarkActorTerrainCell(ACTOR_ROOM7_PUDDLE);
+  AltinPeak_SettleSpritzRoomPillar();
+  AltinPeak_MarkActorTerrainCell(ACTOR_SPRITZ_ROOM_PUDDLE);
   if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
-    Engine_ActorSetAnimation(ACTOR_ROOM7_PUDDLE, 5);
+    Engine_ActorSetAnimation(ACTOR_SPRITZ_ROOM_PUDDLE, 5);
     Map_CopyCellAttributes(0, 0, 1, 1, 26, 26);
     {
-      struct FieldActor *actor = Actor_Get(ACTOR_ROOM7_PUDDLE);
+      struct FieldActor *actor = Actor_Get(ACTOR_SPRITZ_ROOM_PUDDLE);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | actor->priorityFlags;
     }
   }
-  AltinPeak_MarkActorTerrainCell(ACTOR_ROOM7_SECOND_PUDDLE);
+  AltinPeak_MarkActorTerrainCell(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE);
   if (GameFlag_IsSet(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
-    Engine_ActorSetAnimation(ACTOR_ROOM7_SECOND_PUDDLE, 5);
+    Engine_ActorSetAnimation(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE, 5);
     Map_CopyCellAttributes(1, 0, 1, 1, 17, 10);
     {
-      struct FieldActor *actor = Actor_Get(ACTOR_ROOM7_SECOND_PUDDLE);
+      struct FieldActor *actor = Actor_Get(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | actor->priorityFlags;
     }
   }
-  AltinPeak_MarkActorTerrainCell(ACTOR_ROOM7_THIRD_PUDDLE);
+  AltinPeak_MarkActorTerrainCell(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE);
   if (GameFlag_IsSet(FLAG_THIRD_PUDDLE_FROZEN) != 0) {
-    Engine_ActorSetAnimation(ACTOR_ROOM7_THIRD_PUDDLE, 5);
+    Engine_ActorSetAnimation(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, 5);
     Map_CopyCellAttributes(1, 0, 1, 1, 26, 15);
     {
-      struct FieldActor *actor = Actor_Get(ACTOR_ROOM7_THIRD_PUDDLE);
+      struct FieldActor *actor = Actor_Get(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | actor->priorityFlags;
     }
   }
   FieldScheduler_AddCallback(AltinPeak_UpdateFrostPillarPriority,
                              TASK_PRIORITY_SCENE);
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_7_SWITCH) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
     Map_CopyCellAttributes(30, 82, 1, 1, 29, 81);
     Map_CopyCellsTo(46, 28, 29, 17, 1, 2);
   } else {
@@ -1670,10 +1702,12 @@ static void AltinPeak_RestoreRoom7(void) {
   }
 }
 
-/// Room 9: the boulder is put away; once the rockfall is over the rock lies
-/// toppled and the rubble fills the bottom of the path. Arriving from room 10
-/// (ALTIN_PEAK_9_FROM_ALTIN_PEAK_10), the leader starts 88 pixels down.
-static void AltinPeak_RestoreRoom9(void) {
+/// AltinPeakFallingRocks: the boulder is put away; once the rockfall is over
+/// the rock lies toppled and the rubble fills the bottom of the path. Arriving
+/// from AltinPeakHydrosStatue
+/// (ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE), the leader starts
+/// 88 pixels down.
+static void AltinPeak_RestoreFallingRocksRoom(void) {
   struct FieldActor *actor;
 
   actor = Object_GetById(ACTOR_TOPPLING_ROCK);
@@ -1697,7 +1731,8 @@ static void AltinPeak_RestoreRoom9(void) {
     Engine_MapRedraw();
     Engine_TaskWait(1);
   }
-  if (gGameState.entrance == ALTIN_PEAK_9_FROM_ALTIN_PEAK_10 &&
+  if (gGameState.entrance ==
+          ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE &&
       !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
     Engine_EventBegin();
     Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(88);
@@ -1708,9 +1743,9 @@ static void AltinPeak_RestoreRoom9(void) {
   }
 }
 
-/// Room 10: the guardian statue stands until the Hydros statues are beaten;
-/// after their battle the party talks it over.
-static void AltinPeak_RestoreRoom10(void) {
+/// AltinPeakHydrosStatue: the guardian statue stands until the Hydros statues
+/// are beaten; after their battle the party talks it over.
+static void AltinPeak_RestoreHydrosStatueRoom(void) {
   s32 statuesDefeated;
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -1729,7 +1764,8 @@ static void AltinPeak_RestoreRoom10(void) {
     Object_GetById(ACTOR_STATUE_SHADOW)->collisionFlags = statuesDefeated;
   }
   entrance = gGameState.entrance;
-  if (entrance == ALTIN_PEAK_10_FROM_ALTIN_PEAK_9 || entrance == 98) {
+  if (entrance == ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS ||
+      entrance == 98) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       Engine_EventBegin();
@@ -1743,14 +1779,15 @@ static void AltinPeak_RestoreRoom10(void) {
   }
 }
 
-/// Room 11: arriving at entrance 2 the pillar stands at its pushed place.
-static void AltinPeak_RestoreRoom11(void) {
+/// AltinPeakWestExit: arriving at entrance 2 the pillar stands at its pushed
+/// place.
+static void AltinPeak_RestoreWestExitRoom(void) {
   struct FieldActor *actor;
 
-  actor = Actor_Get(ACTOR_ROOM11_PILLAR);
+  actor = Actor_Get(ACTOR_WEST_EXIT_ROOM_PILLAR);
   Engine_ActorSetSpriteFlags(actor, 0);
   if (gGameState.entrance == 2) {
-    Actor_SetPosition(ACTOR_ROOM11_PILLAR, PIXELS(184), PIXELS(328));
+    Actor_SetPosition(ACTOR_WEST_EXIT_ROOM_PILLAR, PIXELS(184), PIXELS(328));
   }
 }
 
@@ -1890,30 +1927,32 @@ static void AltinPeak_SparkleIce(union FieldObject *object) {
   }
 }
 
-/// Room 1's water beast casts Frost on the wide puddle.
+/// AltinPeakFirstWaterBeast's water beast casts Frost on the wide puddle.
 static void AltinPeak_BeastFreezesWidePuddle(void) {
   Engine_PsynergyBegin(ABILITY_FROST, 1);
-  Engine_PsynergySetTarget(ACTOR_ROOM1_BEAST, ACTOR_ROOM1_WIDE_PUDDLE);
+  Engine_PsynergySetTarget(ACTOR_FIRST_WATER_BEAST,
+                           ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE);
   Engine_PsynergyRaiseHands();
-  Engine_ActorSetChildValue(ACTOR_ROOM1_BEAST, 2);
+  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
   Engine_PsynergyPlayEffect(1);
-  Engine_ActorSetChildValue(ACTOR_ROOM1_BEAST, 2);
+  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
   Engine_PsynergyLowerHands();
-  Engine_ActorSetChildValue(ACTOR_ROOM1_BEAST, 2);
+  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
   BattleEffect_CleanupSceneObjects();
   Engine_AudioPlayCue(SE_288);
-  Engine_ActorSetChildValue(ACTOR_ROOM1_BEAST, 2);
+  Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
 }
 
-/// Back from room 1's beast battle: the beast is gone and the party finds the
-/// Frost Jewel; the camera pans to the water and the first drain runs.
+/// Back from AltinPeakFirstWaterBeast's beast battle: the beast is gone and the
+/// party finds the Frost Jewel; the camera pans to the water and the first
+/// drain runs.
 static void AltinPeak_AwardFrostJewelAndDrain(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
-  Actor_SetPosition(ACTOR_ROOM1_BEAST, 0, 0);
-  Actor_SetPosition(ACTOR_ROOM1_PUDDLE, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 0, 0);
+  Actor_SetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1933,15 +1972,15 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   Engine_EventEnd();
 }
 
-/// Back from room 3's beast battle: the beast is gone, the log waits at
-/// (328, 424), the switch is back in its first position, and the second
-/// drain runs.
+/// Back from AltinPeakSecondWaterBeast's beast battle: the beast is gone, the
+/// mine cart waits at (328, 424), the switch is back in its first position, and
+/// the second drain runs.
 static void AltinPeak_DrainAfterSecondBeast(void) {
   Engine_EventBegin();
-  Engine_ActorSetPosition(ACTOR_ROOM3_BEAST, 0, 0);
-  Engine_ActorSetPosition(ACTOR_LOG, PIXELS(328), PIXELS(424));
-  Engine_GameFlagSet(FLAG_ALTIN_PEAK_ROOM_3_SWITCH);
-  AltinPeak_ToggleRoom3SwitchCells();
+  Engine_ActorSetPosition(ACTOR_SECOND_WATER_BEAST, 0, 0);
+  Engine_ActorSetPosition(ACTOR_CART, PIXELS(328), PIXELS(424));
+  Engine_GameFlagSet(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH);
+  AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
   Engine_MapRedraw();
   Engine_TaskWait(1);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -1952,13 +1991,14 @@ static void AltinPeak_DrainAfterSecondBeast(void) {
   Engine_EventEnd();
 }
 
-/// Back from room 5's beast battle, the same way, with the third drain.
+/// Back from AltinPeakThirdWaterBeast's beast battle, the same way, with the
+/// third drain.
 static void AltinPeak_DrainAfterThirdBeast(void) {
   Engine_EventBegin();
-  Engine_ActorSetPosition(ACTOR_ROOM5_BEAST, 0, 0);
-  Engine_ActorSetPosition(ACTOR_LOG, PIXELS(488), PIXELS(138));
-  Engine_GameFlagSet(FLAG_ALTIN_PEAK_ROOM_5_SWITCH);
-  AltinPeak_ToggleRoom5SwitchCells();
+  Engine_ActorSetPosition(ACTOR_THIRD_WATER_BEAST, 0, 0);
+  Engine_ActorSetPosition(ACTOR_CART, PIXELS(488), PIXELS(138));
+  Engine_GameFlagSet(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH);
+  AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
   Engine_MapRedraw();
   Engine_TaskWait(1);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -1978,8 +2018,8 @@ static void AltinPeak_PlayHydrosRumble(void) {
   }
 }
 
-/// Stepping toward room 10's guardian statue: the leader walks up to it, it
-/// rumbles and slides forward, and the battle with the Hydros statues
+/// Stepping toward AltinPeakHydrosStatue's guardian statue: the leader walks up
+/// to it, it rumbles and slides forward, and the battle with the Hydros statues
 /// starts.
 static void AltinPeak_StartHydrosBattle(void) {
   Engine_EventBegin();
@@ -2000,7 +2040,8 @@ static void AltinPeak_StartHydrosBattle(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorWaitForMove(ACTOR_STATUE);
   Battle_SetStart(3);
-  Event_SetNextDestination(SCENE_MINE_ROOM(10), ENTRANCE_AFTER_BATTLE);
+  Event_SetNextDestination((s32)&SceneId_AltinPeakHydrosStatue,
+                           ENTRANCE_AFTER_BATTLE);
   Field_RequestBattleFromEncounterTable(53, 3);
 }
 
@@ -2148,20 +2189,22 @@ UNUSED static void AltinPeak_RequestPsynergy(void) {
   gEventWork->psynergyRequest = 0x1018;
 }
 
-/// Scheduler task in room 7: while the leader stands higher than 48 pixels
-/// the second pillar is drawn under the party and the third further back.
+/// Scheduler task in AltinPeakSpritz: while the leader stands higher than 48
+/// pixels the second pillar is drawn under the party and the third further
+/// back.
 static void AltinPeak_UpdateFrostPillarPriority(void) {
   if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed > PIXELS(48)) {
     {
-      u8 *flag = &Object_GetById(ACTOR_ROOM7_SECOND_PUDDLE)->priorityFlags;
+      u8 *flag =
+          &Object_GetById(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE)->priorityFlags;
       s32 bit = 2;
 
       bit |= *flag;
       *flag = bit;
     }
-    Engine_ActorSetSpritePriority(ACTOR_ROOM7_THIRD_PUDDLE, 3);
+    Engine_ActorSetSpritePriority(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, 3);
   } else {
-    Engine_ActorSetSpritePriority(ACTOR_ROOM7_THIRD_PUDDLE, 2);
+    Engine_ActorSetSpritePriority(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, 2);
   }
 }
 
@@ -2175,9 +2218,9 @@ static void AltinPeak_MarkActorTerrainCell(s32 actorId) {
   SetMapCellCollision(0, actor->x.fixed, actor->z.fixed, 255);
 }
 
-/// The log reaches the end of its run: it settles in the middle of its cell
-/// and the party leader jumps off it to the south.
-static void AltinPeak_StopLogAndJumpOff(struct FieldActor *object) {
+/// The mine cart reaches the end of its run: it settles in the middle of its
+/// cell and the party leader jumps off it to the south.
+static void AltinPeak_StopCartAndJumpOff(struct FieldActor *object) {
   s32 x;
   s32 z;
   s32 centerZ;
@@ -2226,8 +2269,8 @@ static void AltinPeak_StopLogAndJumpOff(struct FieldActor *object) {
 /// Unused: an empty function nothing calls.
 UNUSED static void AltinPeak_ReservedNoOp(void) {}
 
-/// The log turns a quarter turn right around the corner it reaches.
-static void AltinPeak_TurnLogRight(struct FieldActor *object) {
+/// The cart turns a quarter turn right around the corner it reaches.
+static void AltinPeak_TurnCartRight(struct FieldActor *object) {
   struct FieldPosition *point;
   struct FieldPosition position;
   s32 angle;
@@ -2259,8 +2302,8 @@ static void AltinPeak_TurnLogRight(struct FieldActor *object) {
   Engine_AudioPlayCue(SE_233);
 }
 
-/// The log turns a quarter turn left.
-static void AltinPeak_TurnLogLeft(struct FieldActor *object) {
+/// The cart turns a quarter turn left.
+static void AltinPeak_TurnCartLeft(struct FieldActor *object) {
   struct FieldPosition *point;
   struct FieldPosition position;
   s32 angle;
@@ -2292,16 +2335,16 @@ static void AltinPeak_TurnLogLeft(struct FieldActor *object) {
   Engine_AudioPlayCue(SE_233);
 }
 
-/// The log rolls over a marked cell: SE_288 plays, and SE_184 and SE_233
+/// The cart rolls over a marked cell: SE_288 plays, and SE_184 and SE_233
 /// follow as its countdown runs out.
-static void AltinPeak_StartLogCountdown(struct FieldActor *object) {
+static void AltinPeak_StartCartCountdown(struct FieldActor *object) {
   object->work = 33;
   Engine_AudioPlayCue(SE_288);
 }
 
-/// Rolls the log on by a frame and picks its animation from the terrain ahead
+/// Rolls the cart on by a frame and picks its animation from the terrain ahead
 /// of and behind it: flat, uphill or downhill.
-static void AltinPeak_AdvanceLog(struct FieldActor *object) {
+static void AltinPeak_AdvanceCart(struct FieldActor *object) {
   s32 angle = 0xc000;
   s32 radius;
   s16 *timer;
@@ -2343,10 +2386,10 @@ static void AltinPeak_AdvanceLog(struct FieldActor *object) {
   }
 }
 
-/// Rolls the log the party leader rides: it sets off the first way it can
+/// Rolls the mine cart the party leader rides: it sets off the first way it can
 /// roll, starting from heading (or its own facing for -1), follows the turns
 /// its route's cells mark until the end cell, and the leader jumps off.
-static void AltinPeak_RollLog(s32 id, s32 heading) {
+static void AltinPeak_RollCart(s32 id, s32 heading) {
   struct FieldActor *object = Object_GetById(id);
   struct FieldActor *leader = Engine_ActorLookup(gGameState.selectedActor);
   struct FieldPosition position;
@@ -2393,22 +2436,22 @@ static void AltinPeak_RollLog(s32 id, s32 heading) {
   for (;;) {
     switch (GetMapCellCollision(2, object->x.fixed, object->z.fixed)) {
     case 98:
-      AltinPeak_TurnLogRight(object);
+      AltinPeak_TurnCartRight(object);
       break;
     case 97:
-      AltinPeak_TurnLogLeft(object);
+      AltinPeak_TurnCartLeft(object);
       break;
     case 96:
-      AltinPeak_StartLogCountdown(object);
+      AltinPeak_StartCartCountdown(object);
       break;
     case 99:
       goto arrived;
     }
-    AltinPeak_AdvanceLog(object);
+    AltinPeak_AdvanceCart(object);
     Engine_TaskWait(1);
   }
 arrived:
-  AltinPeak_StopLogAndJumpOff(object);
+  AltinPeak_StopCartAndJumpOff(object);
   Engine_EventEnd();
 }
 
@@ -2453,7 +2496,7 @@ s8 gAltinPeak_PaletteScript[] = {
     -1,
 };
 
-/// Room 1's beast keeps turning to face the party leader.
+/// AltinPeakFirstWaterBeast's beast keeps turning to face the party leader.
 s32 gAltinPeak_FaceLeaderScript[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -2468,7 +2511,7 @@ s32 gAltinPeak_PuddleGrowScript[] = {
     SC_END,
 };
 
-/// Room 9's boulder rolls straight down the path, and marks its arrival.
+/// AltinPeakFallingRocks's boulder rolls straight down the path, and marks its arrival.
 s32 gAltinPeak_BoulderPath[] = {
     SC_MOVE(PIXELS(786), 0, PIXELS(220)),
     SC_SYNC,
@@ -2612,7 +2655,7 @@ struct SceneEntrance gAltinPeak_EntrancesOther[] = {
 
 struct SceneEntrance gAltinPeak_Entrances1[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_1_FROM_ALTIN, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0},
+    {ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0},
     {98, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 104, 0, 232, FACING_SOUTH, 0, 0, 56, 506, 530, 0},
     {SCENE_TABLE_END},
@@ -2620,14 +2663,14 @@ struct SceneEntrance gAltinPeak_Entrances1[] = {
 
 struct SceneEntrance gAltinPeak_Entrances2[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_2_FROM_ALTIN_PEAK_4, CONDITION_ALWAYS, 248, 0, 464, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_2_FROM_ALTIN_PEAK_3, CONDITION_ALWAYS, 56, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, 248, 0, 464, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST, CONDITION_ALWAYS, 56, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_Entrances3[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_3_FROM_ALTIN_PEAK_2, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 664, 0, 380, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {3, CONDITION_ALWAYS, 904, 0, 214, FACING_NORTH, 0, 842, 40, 1016, 248, 0},
     {98, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -2637,19 +2680,19 @@ struct SceneEntrance gAltinPeak_Entrances3[] = {
 
 struct SceneEntrance gAltinPeak_Entrances4[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_4_FROM_ALTIN, CONDITION_ALWAYS, 248, 0, 498, FACING_NORTH, 0, 24, 0, 648, 560, 0},
+    {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN, CONDITION_ALWAYS, 248, 0, 498, FACING_NORTH, 0, 24, 0, 648, 560, 0},
     {2, CONDITION_ALWAYS, 119, 0, 108, FACING_SOUTH, 0, 24, 0, 648, 560, 0},
-    {ALTIN_PEAK_4_FROM_ALTIN_PEAK_2, CONDITION_ALWAYS, 567, 0, 105, FACING_SOUTH, 0, 24, 0, 648, 560, 0},
+    {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_RAIL_TUNNEL, CONDITION_ALWAYS, 567, 0, 105, FACING_SOUTH, 0, 24, 0, 648, 560, 0},
     {4, CONDITION_ALWAYS, 887, 0, 798, FACING_NORTH, 0, 712, 568, 960, 860, 0},
-    {ALTIN_PEAK_4_FROM_ALTIN_PEAK_6, CONDITION_ALWAYS, 791, 0, 679, FACING_SOUTH, 0, 712, 560, 960, 860, 0},
-    {ALTIN_PEAK_4_FROM_ALPINE_CROSSING_WEST, CONDITION_ALWAYS, 88, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0},
-    {ALTIN_PEAK_4_FROM_ALPINE_CROSSING_EAST, CONDITION_ALWAYS, 216, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0},
+    {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_POOL, CONDITION_ALWAYS, 791, 0, 679, FACING_SOUTH, 0, 712, 560, 960, 860, 0},
+    {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST, CONDITION_ALWAYS, 88, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0},
+    {ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST, CONDITION_ALWAYS, 216, 0, 840, FACING_NORTH, 0, 32, 704, 272, 864, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_Entrances5[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_5_FROM_ALTIN_PEAK_6, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
+    {ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {98, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 747, 0, 258, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
     {SCENE_TABLE_END},
@@ -2657,47 +2700,47 @@ struct SceneEntrance gAltinPeak_Entrances5[] = {
 
 struct SceneEntrance gAltinPeak_Entrances6[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_6_FROM_ALTIN_PEAK_4, CONDITION_ALWAYS, 568, 0, 348, FACING_NORTH, 0, 0, 0, 798, 530, 0},
+    {ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, 568, 0, 348, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {2, CONDITION_ALWAYS, 295, 0, 95, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
     {3, CONDITION_ALWAYS, 442, 0, 774, FACING_NORTH, 0, 0, 530, 512, 948, 0},
     {4, CONDITION_ALWAYS, 72, 0, 870, FACING_NORTH, 0, 0, 530, 512, 948, 0},
     {5, CONDITION_ALWAYS, 918, 0, 712, FACING_SOUTH, 0, 520, 570, 992, 786, 0},
-    {ALTIN_PEAK_6_FROM_ALTIN_PEAK_5, CONDITION_ALWAYS, 615, 0, 684, FACING_SOUTH, 0, 520, 570, 992, 786, 0},
+    {ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_THIRD_WATER_BEAST, CONDITION_ALWAYS, 615, 0, 684, FACING_SOUTH, 0, 520, 570, 992, 786, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_Entrances7[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_7_FROM_ALTIN_PEAK_8, CONDITION_ALWAYS, 72, 0, 502, FACING_NORTH, 0, 0, 0, 820, 568, 0},
-    {ALTIN_PEAK_7_FROM_ALTIN_PEAK_9, CONDITION_ALWAYS, 152, 0, 174, FACING_SOUTH, 0, 0, 0, 820, 568, 0},
-    {ALTIN_PEAK_7_FROM_ALTIN, CONDITION_ALWAYS, 264, 0, 890, FACING_NORTH, 0, 144, 720, 384, 908, 0},
+    {ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION, CONDITION_ALWAYS, 72, 0, 502, FACING_NORTH, 0, 0, 0, 820, 568, 0},
+    {ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 152, 0, 174, FACING_SOUTH, 0, 0, 0, 820, 568, 0},
+    {ALTIN_PEAK_SPRITZ_FROM_ALTIN, CONDITION_ALWAYS, 264, 0, 890, FACING_NORTH, 0, 144, 720, 384, 908, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_Entrances8[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_8_FROM_ALTIN_PEAK_7, CONDITION_ALWAYS, 392, 0, 116, FACING_SOUTH, 0, 0, 0, 830, 564, 0},
-    {ALTIN_PEAK_8_FROM_ALTIN_PEAK_9_WEST, CONDITION_ALWAYS, 40, 0, 116, FACING_NORTH, 0, 0, 0, 830, 564, 0},
-    {ALTIN_PEAK_8_FROM_ALTIN_PEAK_11, CONDITION_ALWAYS, 520, 0, 616, FACING_SOUTH, 0, 244, 564, 1024, 1024, 0},
-    {ALTIN_PEAK_8_FROM_ALTIN, CONDITION_ALWAYS, 408, 0, 970, FACING_NORTH, 0, 244, 564, 1024, 1024, 0},
-    {ALTIN_PEAK_8_FROM_ALTIN_PEAK_9_EAST, CONDITION_ALWAYS, 951, 0, 791, FACING_SOUTH, 0, 244, 564, 1024, 1024, 0},
+    {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS, 392, 0, 116, FACING_SOUTH, 0, 0, 0, 830, 564, 0},
+    {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_NORTH, CONDITION_ALWAYS, 40, 0, 116, FACING_NORTH, 0, 0, 0, 830, 564, 0},
+    {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_WEST_EXIT, CONDITION_ALWAYS, 520, 0, 616, FACING_SOUTH, 0, 244, 564, 1024, 1024, 0},
+    {ALTIN_PEAK_JUNCTION_FROM_ALTIN, CONDITION_ALWAYS, 408, 0, 970, FACING_NORTH, 0, 244, 564, 1024, 1024, 0},
+    {ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_SOUTH, CONDITION_ALWAYS, 951, 0, 791, FACING_SOUTH, 0, 244, 564, 1024, 1024, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_Entrances9[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_9_FROM_ALTIN_PEAK_7, CONDITION_ALWAYS, 361, 0, 309, FACING_NORTH, 0, 0, 0, 524, 816, 0},
+    {ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS, 361, 0, 309, FACING_NORTH, 0, 0, 0, 524, 816, 0},
     {2, CONDITION_ALWAYS, 89, 0, 749, FACING_NORTH, 0, 0, 0, 524, 816, 0},
-    {ALTIN_PEAK_9_FROM_ALTIN_PEAK_8_SOUTH, CONDITION_ALWAYS, 728, 0, 717, FACING_NORTH, 0, 618, 0, 990, 854, 0},
+    {ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_SOUTH, CONDITION_ALWAYS, 728, 0, 717, FACING_NORTH, 0, 618, 0, 990, 854, 0},
     {4, CONDITION_ALWAYS, 935, 0, 493, FACING_SOUTH, 0, 618, 0, 990, 854, 0},
-    {ALTIN_PEAK_9_FROM_ALTIN_PEAK_8_NORTH, CONDITION_ALWAYS, 791, 0, 566, FACING_SOUTH, 0, 618, 0, 990, 854, 0},
-    {ALTIN_PEAK_9_FROM_ALTIN_PEAK_10, CONDITION_ALWAYS, 792, 16, 577, FACING_SOUTH, 0, 618, 0, 998, 854, 0},
+    {ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_NORTH, CONDITION_ALWAYS, 791, 0, 566, FACING_SOUTH, 0, 618, 0, 990, 854, 0},
+    {ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE, CONDITION_ALWAYS, 792, 16, 577, FACING_SOUTH, 0, 618, 0, 998, 854, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gAltinPeak_Entrances10[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_10_FROM_ALTIN_PEAK_9, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
+    {ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
     {98, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 328, 0, 118, FACING_NORTH, 0, 0, 0, 448, 524, 0},
     {SCENE_TABLE_END},
@@ -2705,10 +2748,10 @@ struct SceneEntrance gAltinPeak_Entrances10[] = {
 
 struct SceneEntrance gAltinPeak_Entrances11[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ALTIN_PEAK_11_FROM_ALTIN_PEAK_8, CONDITION_ALWAYS, 408, 0, 517, FACING_NORTH, 0, 0, 0, 540, 590, 0},
+    {ALTIN_PEAK_WEST_EXIT_FROM_ALTIN_PEAK_JUNCTION, CONDITION_ALWAYS, 408, 0, 517, FACING_NORTH, 0, 0, 0, 540, 590, 0},
     {2, CONDITION_ALWAYS, 198, 0, 336, FACING_SOUTH, 0, 0, 0, 540, 590, 0},
     {3, CONDITION_ALWAYS, 568, 0, 136, FACING_NORTH, 0, 480, 15, 684, 180, 0},
-    {ALTIN_PEAK_11_FROM_WORLD_MAP, CONDITION_ALWAYS, 73, 0, 190, FACING_NORTH, 0, 0, 0, 540, 590, 0},
+    {ALTIN_PEAK_WEST_EXIT_FROM_WORLD_MAP, CONDITION_ALWAYS, 73, 0, 190, FACING_NORTH, 0, 0, 0, 540, 590, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2732,56 +2775,56 @@ struct SceneRegion gAltinPeak_Regions10[] = {
 };
 
 u32 gAltinPeak_Exits[] = {
-    SCENE_EXITS(AltinPeak1),
-    SCENE_EXIT(ALTIN_PEAK_1_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_1),
-    SCENE_EXITS(AltinPeak2),
-    SCENE_EXIT(ALTIN_PEAK_2_TO_ALTIN_PEAK_4, AltinPeak4, ALTIN_PEAK_4_FROM_ALTIN_PEAK_2),
-    SCENE_EXIT(ALTIN_PEAK_2_TO_ALTIN_PEAK_3, AltinPeak3, ALTIN_PEAK_3_FROM_ALTIN_PEAK_2),
-    SCENE_EXITS(AltinPeak3),
-    SCENE_EXIT(ALTIN_PEAK_3_TO_ALTIN_PEAK_2, AltinPeak2, ALTIN_PEAK_2_FROM_ALTIN_PEAK_3),
-    SCENE_EXIT(2, AltinPeak3, 3),
-    SCENE_EXIT(3, AltinPeak3, 2),
-    SCENE_EXITS(AltinPeak4),
-    SCENE_EXIT(ALTIN_PEAK_4_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_4),
-    SCENE_EXIT(2, AltinPeak4, 4),
-    SCENE_EXIT(ALTIN_PEAK_4_TO_ALTIN_PEAK_2, AltinPeak2, ALTIN_PEAK_2_FROM_ALTIN_PEAK_4),
-    SCENE_EXIT(4, AltinPeak4, 2),
-    SCENE_EXIT(ALTIN_PEAK_4_TO_ALTIN_PEAK_6, AltinPeak6, ALTIN_PEAK_6_FROM_ALTIN_PEAK_4),
-    SCENE_EXIT(ALTIN_PEAK_4_TO_ALPINE_CROSSING_WEST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_4_WEST),
-    SCENE_EXIT(ALTIN_PEAK_4_TO_ALPINE_CROSSING_EAST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_4_EAST),
-    SCENE_EXITS(AltinPeak5),
-    SCENE_EXIT(ALTIN_PEAK_5_TO_ALTIN_PEAK_6, AltinPeak6, ALTIN_PEAK_6_FROM_ALTIN_PEAK_5),
-    SCENE_EXITS(AltinPeak6),
-    SCENE_EXIT(ALTIN_PEAK_6_TO_ALTIN_PEAK_4, AltinPeak4, ALTIN_PEAK_4_FROM_ALTIN_PEAK_6),
-    SCENE_EXIT(2, AltinPeak6, 3),
-    SCENE_EXIT(3, AltinPeak6, 2),
-    SCENE_EXIT(4, AltinPeak6, 5),
-    SCENE_EXIT(5, AltinPeak6, 4),
-    SCENE_EXIT(ALTIN_PEAK_6_TO_ALTIN_PEAK_5, AltinPeak5, ALTIN_PEAK_5_FROM_ALTIN_PEAK_6),
-    SCENE_EXITS(AltinPeak7),
-    SCENE_EXIT(ALTIN_PEAK_7_TO_ALTIN_PEAK_8, AltinPeak8, ALTIN_PEAK_8_FROM_ALTIN_PEAK_7),
-    SCENE_EXIT(ALTIN_PEAK_7_TO_ALTIN_PEAK_9, AltinPeak9, ALTIN_PEAK_9_FROM_ALTIN_PEAK_7),
-    SCENE_EXIT(ALTIN_PEAK_7_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_7),
-    SCENE_EXITS(AltinPeak8),
-    SCENE_EXIT(ALTIN_PEAK_8_TO_ALTIN_PEAK_7, AltinPeak7, ALTIN_PEAK_7_FROM_ALTIN_PEAK_8),
-    SCENE_EXIT(ALTIN_PEAK_8_TO_ALTIN_PEAK_9_WEST, AltinPeak9, ALTIN_PEAK_9_FROM_ALTIN_PEAK_8_NORTH),
-    SCENE_EXIT(ALTIN_PEAK_8_TO_ALTIN_PEAK_11, AltinPeak11, ALTIN_PEAK_11_FROM_ALTIN_PEAK_8),
-    SCENE_EXIT(ALTIN_PEAK_8_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_8),
-    SCENE_EXIT(ALTIN_PEAK_8_TO_ALTIN_PEAK_9_EAST, AltinPeak9, ALTIN_PEAK_9_FROM_ALTIN_PEAK_8_SOUTH),
-    SCENE_EXITS(AltinPeak9),
-    SCENE_EXIT(ALTIN_PEAK_9_TO_ALTIN_PEAK_7, AltinPeak7, ALTIN_PEAK_7_FROM_ALTIN_PEAK_9),
-    SCENE_EXIT(2, AltinPeak9, 4),
-    SCENE_EXIT(ALTIN_PEAK_9_TO_ALTIN_PEAK_8_SOUTH, AltinPeak8, ALTIN_PEAK_8_FROM_ALTIN_PEAK_9_EAST),
-    SCENE_EXIT(4, AltinPeak9, 2),
-    SCENE_EXIT(ALTIN_PEAK_9_TO_ALTIN_PEAK_8_NORTH, AltinPeak8, ALTIN_PEAK_8_FROM_ALTIN_PEAK_9_WEST),
-    SCENE_EXIT(ALTIN_PEAK_9_TO_ALTIN_PEAK_10, AltinPeak10, ALTIN_PEAK_10_FROM_ALTIN_PEAK_9),
-    SCENE_EXITS(AltinPeak10),
-    SCENE_EXIT(ALTIN_PEAK_10_TO_ALTIN_PEAK_9, AltinPeak9, ALTIN_PEAK_9_FROM_ALTIN_PEAK_10),
-    SCENE_EXITS(AltinPeak11),
-    SCENE_EXIT(ALTIN_PEAK_11_TO_ALTIN_PEAK_8, AltinPeak8, ALTIN_PEAK_8_FROM_ALTIN_PEAK_11),
-    SCENE_EXIT(2, AltinPeak11, 3),
-    SCENE_EXIT(3, AltinPeak11, 2),
-    SCENE_EXIT(ALTIN_PEAK_11_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN_PEAK_11),
+    SCENE_EXITS(AltinPeakFirstWaterBeast),
+    SCENE_EXIT(ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_FIRST_WATER_BEAST),
+    SCENE_EXITS(AltinPeakRailTunnel),
+    SCENE_EXIT(ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_RAIL_TUNNEL),
+    SCENE_EXIT(ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL),
+    SCENE_EXITS(AltinPeakSecondWaterBeast),
+    SCENE_EXIT(ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL, AltinPeakRailTunnel, ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SECOND_WATER_BEAST),
+    SCENE_EXIT(ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_FROM_LAKE),
+    SCENE_EXIT(ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE, AltinPeakSecondWaterBeast, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM),
+    SCENE_EXITS(AltinPeakSouthEntrance),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_POOL, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_POOL_FROM_TUNNEL),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL, AltinPeakRailTunnel, ALTIN_PEAK_RAIL_TUNNEL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_POOL_TO_TUNNEL, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_FROM_POOL),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL, AltinPeakPool, ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_SOUTH_ENTRANCE),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST),
+    SCENE_EXIT(ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST, AlpineCrossing, ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST),
+    SCENE_EXITS(AltinPeakThirdWaterBeast),
+    SCENE_EXIT(ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL, AltinPeakPool, ALTIN_PEAK_POOL_FROM_ALTIN_PEAK_THIRD_WATER_BEAST),
+    SCENE_EXITS(AltinPeakPool),
+    SCENE_EXIT(ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance, ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN_PEAK_POOL),
+    SCENE_EXIT(ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST, AltinPeakPool, ALTIN_PEAK_POOL_SOUTHWEST_FROM_NORTH),
+    SCENE_EXIT(ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH, AltinPeakPool, ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST),
+    SCENE_EXIT(ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST, AltinPeakPool, ALTIN_PEAK_POOL_SOUTHEAST_FROM_SOUTHWEST),
+    SCENE_EXIT(ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST, AltinPeakPool, ALTIN_PEAK_POOL_SOUTHWEST_FROM_SOUTHEAST),
+    SCENE_EXIT(ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST, AltinPeakThirdWaterBeast, ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL),
+    SCENE_EXITS(AltinPeakSpritz),
+    SCENE_EXIT(ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_SPRITZ),
+    SCENE_EXIT(ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_SPRITZ),
+    SCENE_EXIT(ALTIN_PEAK_SPRITZ_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_SPRITZ),
+    SCENE_EXITS(AltinPeakJunction),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz, ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_JUNCTION),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_NORTH),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT, AltinPeakWestExit, ALTIN_PEAK_WEST_EXIT_FROM_ALTIN_PEAK_JUNCTION),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN, Altin, ALTIN_FROM_ALTIN_PEAK_JUNCTION),
+    SCENE_EXIT(ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_JUNCTION_SOUTH),
+    SCENE_EXITS(AltinPeakFallingRocks),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz, ALTIN_PEAK_SPRITZ_FROM_ALTIN_PEAK_FALLING_ROCKS),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_EAST_FROM_WEST),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_SOUTH),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_WEST_FROM_EAST),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_FALLING_ROCKS_NORTH),
+    SCENE_EXIT(ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_HYDROS_STATUE, AltinPeakHydrosStatue, ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS),
+    SCENE_EXITS(AltinPeakHydrosStatue),
+    SCENE_EXIT(ALTIN_PEAK_HYDROS_STATUE_TO_ALTIN_PEAK_FALLING_ROCKS, AltinPeakFallingRocks, ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE),
+    SCENE_EXITS(AltinPeakWestExit),
+    SCENE_EXIT(ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction, ALTIN_PEAK_JUNCTION_FROM_ALTIN_PEAK_WEST_EXIT),
+    SCENE_EXIT(ALTIN_PEAK_WEST_EXIT_TUNNEL_TO_CHEST_ROOM, AltinPeakWestExit, ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_FROM_TUNNEL),
+    SCENE_EXIT(ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_TO_TUNNEL, AltinPeakWestExit, ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM),
+    SCENE_EXIT(ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN_PEAK_WEST_EXIT),
     SCENE_EXITS_END,
 };
 
@@ -2885,39 +2928,39 @@ struct SceneEvent gAltinPeak_EventsOther[] = {
 };
 
 struct SceneEvent gAltinPeak_Events1[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_1_TO_ALTIN},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
     {EVENT_TOUCH, 10, FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowFirstBeastRoute)},
     {EVENT_TOUCH, 11, FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowSecondBeastRoute)},
-    {EVENT_TALK, ACTOR_ROOM1_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightRoom1Beast)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_ROOM1_BEAST, CONDITION_ALWAYS,
-        EVENT_SCRIPT(AltinPeak_FightRoom1Beast)},
+    {EVENT_TALK, ACTOR_FIRST_WATER_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightFirstWaterBeast)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_FIRST_WATER_BEAST, CONDITION_ALWAYS,
+        EVENT_SCRIPT(AltinPeak_FightFirstWaterBeast)},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gAltinPeak_Events1Drained[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_1_TO_ALTIN},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM1_PUDDLE, FLAG_PUDDLE_FROZEN,
-        EVENT_SCRIPT(AltinPeak_FreezeRoom1Puddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM1_WIDE_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeRoom1WidePuddle)},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN,
+        EVENT_SCRIPT(AltinPeak_FreezeFirstWaterBeastRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_WATER_BEAST_ROOM_WIDE_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeFirstWaterBeastRoomWidePuddle)},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gAltinPeak_Events2[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_2_TO_ALTIN_PEAK_4},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_2_TO_ALTIN_PEAK_3},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gAltinPeak_Events3[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_3_TO_ALTIN_PEAK_2},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {EVENT_TALK, ACTOR_LOG, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideLog)},
-    {EVENT_TALK, ACTOR_ROOM3_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightRoom3Beast)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_ROOM3_BEAST, CONDITION_ALWAYS,
-        EVENT_SCRIPT(AltinPeak_FightRoom3Beast)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_ROOM3_BOULDER, CONDITION_ALWAYS, 0},
-    {SEARCH(SEARCH_UNNAMED), 83, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom3Switch)},
+    {EVENT_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideCart)},
+    {EVENT_TALK, ACTOR_SECOND_WATER_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightSecondWaterBeast)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SECOND_WATER_BEAST, CONDITION_ALWAYS,
+        EVENT_SCRIPT(AltinPeak_FightSecondWaterBeast)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_SECOND_WATER_BEAST_ROOM_BOULDER, CONDITION_ALWAYS, 0},
+    {SEARCH(SEARCH_UNNAMED), 83, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipSecondWaterBeastRoomSwitch)},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {SCENE_EVENTS_END},
     // Unused: two rows past the end marker, which no lookup reaches: a second
@@ -2929,24 +2972,24 @@ struct SceneEvent gAltinPeak_Events3[] = {
 };
 
 struct SceneEvent gAltinPeak_Events4[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALTIN},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALTIN_PEAK_2},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALTIN_PEAK_6},
-    {EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALPINE_CROSSING_WEST},
-    {EVENT_EXIT, 7, CONDITION_ALWAYS, ALTIN_PEAK_4_TO_ALPINE_CROSSING_EAST},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL},
+    {EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST},
+    {EVENT_EXIT, 7, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gAltinPeak_Events5[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_5_TO_ALTIN_PEAK_6},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM5_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeRoom5Puddle)},
-    {EVENT_TALK, ACTOR_ROOM5_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightRoom5Beast)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_ROOM5_BEAST, CONDITION_ALWAYS,
-        EVENT_SCRIPT(AltinPeak_FightRoom5Beast)},
-    {EVENT_TALK, ACTOR_LOG, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideLog)},
-    {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom5Switch)},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeThirdWaterBeastRoomPuddle)},
+    {EVENT_TALK, ACTOR_THIRD_WATER_BEAST, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FightThirdWaterBeast)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_THIRD_WATER_BEAST, CONDITION_ALWAYS,
+        EVENT_SCRIPT(AltinPeak_FightThirdWaterBeast)},
+    {EVENT_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideCart)},
+    {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipThirdWaterBeastRoomSwitch)},
     // The Dragon Shield's chest opens only from its west side.
     {SEARCH_CHEST_FACING(FACING_SOUTHEAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
     {SEARCH_CHEST_FACING(FACING_EAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
@@ -2955,59 +2998,66 @@ struct SceneEvent gAltinPeak_Events5[] = {
 };
 
 struct SceneEvent gAltinPeak_Events6[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_6_TO_ALTIN_PEAK_4},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
-    {EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_6_TO_ALTIN_PEAK_5},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM6_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeRoom6Puddle)},
-    {EVENT_TALK, ACTOR_LOG, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideLog)},
-    {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom6Switch)},
+    {EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_POOL_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezePoolRoomPuddle)},
+    {EVENT_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideCart)},
+    {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipPoolRoomSwitch)},
     {SEARCH(SEARCH_CHEST), 100, 0xef2, 0x500002},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gAltinPeak_Events7[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_7_TO_ALTIN_PEAK_8},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_7_TO_ALTIN_PEAK_9},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_7_TO_ALTIN},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN},
     {SEARCH(SEARCH_CHEST), 101, FLAG_ALTIN_PEAK_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL)},
     {EVENT_TALK, ACTOR_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_TalkToDjinni)},
-    {EVENT_TALK, ACTOR_LOG, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideLog)},
-    {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom7Switch)},
+    {EVENT_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RideCart)},
+    {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipSpritzRoomSwitch)},
     {EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_PlacePillarUnderLeader)},
     {EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_RestorePillarAutomaticPriority)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM7_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_SettleRoom7Pillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SPRITZ_ROOM_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_SettleSpritzRoomPillar)},
     {TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
-        EVENT_SCRIPT(AltinPeak_PushRoom7Pillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM7_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeRoom7Puddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM7_SECOND_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN,
-        EVENT_SCRIPT(AltinPeak_FreezeRoom7SecondPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM7_THIRD_PUDDLE, FLAG_THIRD_PUDDLE_FROZEN,
-        EVENT_SCRIPT(AltinPeak_FreezeRoom7ThirdPuddle)},
+        EVENT_SCRIPT(AltinPeak_PushSpritzRoomPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPRITZ_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltinPeak_FreezeSpritzRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPRITZ_ROOM_SECOND_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN,
+        EVENT_SCRIPT(AltinPeak_FreezeSpritzRoomSecondPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, FLAG_THIRD_PUDDLE_FROZEN,
+        EVENT_SCRIPT(AltinPeak_FreezeSpritzRoomThirdPuddle)},
     {SCENE_EVENTS_END},
 };
 // clang-format on
 
 struct SceneEvent gAltinPeak_Events8[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN_PEAK_7},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN_PEAK_9_WEST},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN_PEAK_11},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_8_TO_ALTIN_PEAK_9_EAST},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS,
+     ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS,
+     ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_JUNCTION_TO_ALTIN},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS,
+     ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_LUCKY_MEDAL,
      FIND_ITEM(ITEM_LUCKY_MEDAL)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_ROOM8_BOULDER, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_JUNCTION_ROOM_BOULDER,
+     CONDITION_ALWAYS, 0},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gAltinPeak_Events9[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_9_TO_ALTIN_PEAK_7},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+     ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_9_TO_ALTIN_PEAK_8_SOUTH},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS,
+     ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_9_TO_ALTIN_PEAK_8_NORTH},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS,
+     ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH},
     {SEARCH(SEARCH_UNNAMED), 12, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltinPeak_ReadFallingRockSign)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_WALL,
@@ -3024,13 +3074,15 @@ struct SceneEvent gAltinPeak_Events10[] = {
 };
 
 struct SceneEvent gAltinPeak_Events11[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_11_TO_ALTIN_PEAK_8},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+     ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_11_TO_WORLD_MAP},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_ROOM11_BOULDER, CONDITION_ALWAYS,
-     0},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM11_PILLAR, CONDITION_ALWAYS, 0},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_WEST_EXIT_ROOM_BOULDER,
+     CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_EXIT_ROOM_PILLAR,
+     CONDITION_ALWAYS, 0},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_VIAL, FIND_ITEM(ITEM_VIAL)},
     {SCENE_EVENTS_END},
 };
@@ -3038,7 +3090,7 @@ struct SceneEvent gAltinPeak_Events11[] = {
 /// Frames since the statue's last rumble.
 s32 gAltinPeak_RumbleTicks = 0;
 
-/// The log's speed factor by its height against where it set off: 2 to the
+/// The cart's speed factor by its height against where it set off: 2 to the
 /// power i / 16 for i from 0 to 32, in 16.16.
 u32 gAltinPeak_RollRadii[] = {
     0x10000, 0x10b55, 0x1172b, 0x12387, 0x1306f, 0x13dea, 0x14bfd,

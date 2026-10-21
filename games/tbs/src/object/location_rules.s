@@ -110,19 +110,19 @@ gBattle_LocationRules:
 	location MogallForestSign, -1, -1, 1, 42
 	location MogallForestQuartz, -1, -1, 1, 43
 	location MogallForestKillerApe, -1, -1, 1, 44
-	location AltinPeak2, -1, -1, 0, 47
-	location AltinPeak3, -1, -1, 1, 47
-	location AltinPeak4, -1, -1, 1, 47
-	location AltinPeak5, -1, -1, 1, 48
-	location AltinPeak6, -1, -1, 1, 48
-	location AltinPeak7, -1, -1, 1, 49
-	location AltinPeak8, -1, -1, 1, 49
-	location AltinPeak9, 1, -1, 1, 49
-	location AltinPeak9, 2, -1, 1, 49
-	location AltinPeak11, -1, -1, 1, 49
-	location LamakanDesert1, -1, -1, 1, 50
-	location LamakanDesert2, -1, -1, 1, 51
-	location LamakanDesert3, -1, -1, 0, 52
+	location AltinPeakRailTunnel, -1, -1, 0, 47
+	location AltinPeakSecondWaterBeast, -1, -1, 1, 47
+	location AltinPeakSouthEntrance, -1, -1, 1, 47
+	location AltinPeakThirdWaterBeast, -1, -1, 1, 48
+	location AltinPeakPool, -1, -1, 1, 48
+	location AltinPeakSpritz, -1, -1, 1, 49
+	location AltinPeakJunction, -1, -1, 1, 49
+	location AltinPeakFallingRocks, 1, -1, 1, 49
+	location AltinPeakFallingRocks, 2, -1, 1, 49
+	location AltinPeakWestExit, -1, -1, 1, 49
+	location LamakanDesertEast, -1, -1, 1, 50
+	location LamakanDesertSmog, -1, -1, 1, 51
+	location LamakanDesertManticore, -1, -1, 0, 52
 	location VaultCavePassage, -1, -1, 0, 60
 	location VaultCaveVambrace, -1, -1, 0, 61
 	location VaultCaveMouth, -1, -1, 0, 61

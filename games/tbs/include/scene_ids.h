@@ -135,22 +135,47 @@ extern char SceneId_XianInteriors;
 extern char SceneId_AlpineCrossing;
 extern char SceneId_Altin;
 extern char SceneId_AltinInteriors;
-extern char SceneId_AltinPeak1;
-extern char SceneId_AltinPeak2;
-extern char SceneId_AltinPeak3;
-extern char SceneId_AltinPeak4;
-extern char SceneId_AltinPeak5;
-extern char SceneId_AltinPeak6;
-extern char SceneId_AltinPeak7;
-extern char SceneId_AltinPeak8;
-extern char SceneId_AltinPeak9;
-extern char SceneId_AltinPeak10;
-extern char SceneId_AltinPeak11;
+/// ★ Named from the game: "The water beasts looked"
+/// (MsgAltinTheWaterBeastsLookedExactlyLike)
+extern char SceneId_AltinPeakFirstWaterBeast;
+/// ★ Named from what the player sees: a winding tunnel with nothing in it but
+/// one rail line between fences (its render)
+extern char SceneId_AltinPeakRailTunnel;
+/// ★ Named from the game: "The water beasts looked"
+/// (MsgAltinTheWaterBeastsLookedExactlyLike)
+extern char SceneId_AltinPeakSecondWaterBeast;
+/// ★ Named from the game: "North: Altin Mine"
+/// (MsgMountainNorthAltinMineWestLama)
+extern char SceneId_AltinPeakSouthEntrance;
+/// ★ Named from the game: "The water beasts looked"
+/// (MsgAltinTheWaterBeastsLookedExactlyLike)
+extern char SceneId_AltinPeakThirdWaterBeast;
+/// ★ Named from what the player sees: a cave filled by a large pool, with rails
+/// around it and a doorway above it (its render)
+extern char SceneId_AltinPeakPool;
+/// ★ Named from the game: "Spritz" (MsgDjinnName)
+extern char SceneId_AltinPeakSpritz;
+/// ★ Named from what the player sees: two tunnels where five ways meet, to
+/// Altin and to three other rooms of the mine (its render)
+extern char SceneId_AltinPeakJunction;
+/// ★ Named from the game: "Watch for falling rocks!"
+/// (MsgAltinWatchFallingRocks)
+extern char SceneId_AltinPeakFallingRocks;
+/// ★ Named from the game: "Hydros Statue" (MsgEnemyName)
+extern char SceneId_AltinPeakHydrosStatue;
+/// ★ Named from the game: "find your way west" (MsgAltinTryingFindYourWayWest)
+extern char SceneId_AltinPeakWestExit;
 extern char SceneId_LamaTemple;
-extern char SceneId_LamakanDesert1;
-extern char SceneId_LamakanDesert2;
-extern char SceneId_LamakanDesert3;
-extern char SceneId_LamakanDesert4;
+/// ★ Named from what the player sees: the desert's east end, entered from the
+/// world map beside Lama Temple (its render)
+extern char SceneId_LamakanDesertEast;
+/// ★ Named from the game: "Smog" (MsgDjinnName)
+extern char SceneId_LamakanDesertSmog;
+/// ★ Named from the game: "Manticore" (MsgEnemyName)
+extern char SceneId_LamakanDesertManticore;
+/// ★ Named from what the player sees: dark rock tunnels lit by torches at the
+/// desert's west end, with no sand (its render)
+extern char SceneId_LamakanDesertCave;
 /// ★ Named from what the player sees: the clearing at the cave's mouth above
 /// Vale (its render)
 extern char SceneId_ValeCaveMouth;

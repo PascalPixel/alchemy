@@ -23,8 +23,8 @@
 ///   (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH) it says instead that
 ///   the path will not open here, and the setup redraws this room and the north
 ///   room of columns to match the path. The rooms that follow hold two pairs of
-///   pillars to push or Move, three carved stones with three bushes for
-///   Whirlwind (bushes A and B, FLAG_SCENE_TEMP_00 and _01, change what carved
+///   pillars to push or Move, three stones with three bushes for
+///   Whirlwind (bushes A and B, FLAG_SCENE_TEMP_00 and _01, change what
 ///   stone C can do; bush C stays gone, FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY), and
 ///   two pillars that sink into the floor once moved onto their columns
 ///   (FLAG_TUNNEL_RUINS_PILLAR_A_SUNK and _B_SUNK, B only after Douse has
@@ -48,7 +48,7 @@
 ///   (FLAG_SCENE_TEMP_04); two balance platforms, each carved stone set on one
 ///   with Carry (FLAG_SCENE_TEMP_00 to _02) sinking it a step and raising the
 ///   other, set out with all three carved stones on them when the party comes
-///   in at TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH; two false statues that
+///   in at TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH; two statues that
 ///   block their cells until Reveal makes them vanish; the room of four
 ///   walkways over a pit, redrawn for the path the statue in Venus Lighthouse
 ///   opened; and five coloured statues of a woman before a door. Searching a
@@ -103,23 +103,51 @@
 #include "item_ids.h"
 
 /// The actors of TunnelRuinsGreatStatue, in the order of its placements: two
-/// pairs of pillars to push or Move, three carved stones, three bushes for
+/// pairs of pillars to push or Move, three stones, three bushes for
 /// Whirlwind, two pillars that sink into the floor, and two puddles for Frost,
 /// both placed with the first sinking pillar.
 enum {
+  /// ★ Named from what the player sees: one of a pair of grey pillars with gold
+  /// tops, side by side (its render)
   ACTOR_FIRST_PILLAR_A = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: the other pillar of the first pair (its
+  /// render)
   ACTOR_FIRST_PILLAR_B,
+  /// ★ Named from what the player sees: one of the second pair of grey pillars
+  /// with gold tops (its render)
   ACTOR_SECOND_PILLAR_A,
+  /// ★ Named from what the player sees: the other pillar of the second pair
+  /// (its render)
   ACTOR_SECOND_PILLAR_B,
-  ACTOR_CARVED_STONE_A,
-  ACTOR_CARVED_STONE_B,
-  ACTOR_CARVED_STONE_C,
+  /// ★ Named from what the player sees: a grey stone block below the bushes'
+  /// ledge (its render)
+  ACTOR_STONE_A,
+  /// ★ Named from what the player sees: the second grey stone block, beside the
+  /// first (its render)
+  ACTOR_STONE_B,
+  /// ★ Named from what the player sees: a grey stone block behind the first
+  /// bush, out of sight until Whirlwind clears it (its render)
+  ACTOR_STONE_C,
+  /// ★ Named from what the player sees: a leafy bush on the ledge above the
+  /// stones (its render)
   ACTOR_BUSH_A,
+  /// ★ Named from what the player sees: a second leafy bush, beside the first
+  /// (its render)
   ACTOR_BUSH_B,
+  /// ★ Named from what the player sees: a leafy bush in an arched niche to the
+  /// east (its render)
   ACTOR_BUSH_C,
+  /// ★ Named from what the player sees: a grey pillar with a white top on an
+  /// orange base, in the north-west of its room (its render)
   ACTOR_SINKING_PILLAR_A,
+  /// ★ Named from what the player sees: a second grey pillar with a white top,
+  /// in the south-east of the room (its render)
   ACTOR_SINKING_PILLAR_B,
+  /// ★ Named from what the player sees: a small blue puddle in the middle of
+  /// the room (its render)
   ACTOR_PUDDLE_A,
+  /// ★ Named from what the player sees: the puddle at the same place, for the
+  /// second pillar (its render)
   ACTOR_PUDDLE_B
 };
 
@@ -128,21 +156,53 @@ enum {
 /// Carry onto them, two statues that vanish under Reveal, two pillars to push
 /// in the east, and five coloured statues of a woman to Move before the door.
 enum {
+  /// ★ Named from what the player sees: a grey pillar with a white top on an
+  /// orange base (its render)
   ACTOR_DOUSE_PILLAR = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: a small blue puddle, the room's only
+  /// one, shown once Douse has soaked the pillar (its render)
   ACTOR_DOUSE_PUDDLE,
+  /// ★ Named from what the player sees: a white platform on a pole, the west of
+  /// two below the carved stones (its render)
   ACTOR_BALANCE_WEST,
+  /// ★ Named from what the player sees: the east white platform on its pole
+  /// (its render)
   ACTOR_BALANCE_EAST,
+  /// ★ Named from what the player sees: a grey stone carved with spirals, the
+  /// west of three in a row (its render)
   ACTOR_CARRY_STONE_A,
+  /// ★ Named from what the player sees: the middle grey stone carved with
+  /// spirals (its render)
   ACTOR_CARRY_STONE_B,
+  /// ★ Named from what the player sees: the east grey stone carved with spirals
+  /// (its render)
   ACTOR_CARRY_STONE_C,
-  ACTOR_FALSE_STATUE_A,
-  ACTOR_FALSE_STATUE_B,
+  /// ★ Named from what the player sees: a white statue standing over a chest in
+  /// the west (its render)
+  ACTOR_VANISHING_STATUE_A,
+  /// ★ Named from what the player sees: a white statue standing over a chest in
+  /// the east (its render)
+  ACTOR_VANISHING_STATUE_B,
+  /// ★ Named from what the player sees: one of a pair of grey pillars with gold
+  /// tops in the east (its render)
   ACTOR_EAST_PILLAR_A,
+  /// ★ Named from what the player sees: the other pillar of the east pair (its
+  /// render)
   ACTOR_EAST_PILLAR_B,
+  /// ★ Named from what the player sees: a pink statue of a robed woman,
+  /// north-west of the five (its render)
   ACTOR_LADY_STATUE_A,
+  /// ★ Named from what the player sees: a pink statue of a robed woman,
+  /// north-east of the five (its render)
   ACTOR_LADY_STATUE_B,
+  /// ★ Named from what the player sees: a pink statue of a robed woman,
+  /// south-west of the five (its render)
   ACTOR_LADY_STATUE_C,
+  /// ★ Named from what the player sees: a pink statue of a robed woman,
+  /// south-east of the five (its render)
   ACTOR_LADY_STATUE_D,
+  /// ★ Named from what the player sees: a pink statue of a robed woman, the
+  /// southmost of the five (its render)
   ACTOR_LADY_STATUE_E
 };
 
@@ -156,7 +216,7 @@ enum {
 };
 
 // The scene's temporary flags, by room. TunnelRuinsGreatStatue:
-// FLAG_SCENE_TEMP_00 and _01 are bushes A and B blown away beside the carved
+// FLAG_SCENE_TEMP_00 and _01 are bushes A and B blown away beside the
 // stones, and in the sinking pillars' room puddles A and B frozen;
 // FLAG_SCENE_TEMP_02 is pillar B soaked by Douse. TunnelRuinsLadyStatues:
 // FLAG_SCENE_TEMP_00 to _02 are the carved stones set on the balance,
@@ -441,16 +501,18 @@ static void Event_HopDownStep(void) {
   EV_END();
 }
 
+// The update functions the stones take, cast to the update slot's type
+// where they return a value.
 #ifdef UBFIX
-#define ACTOR_UPDATE_IDLE SceneActor_SetFlagBitByRelativeDepth
+#define UPDATE_BY_RELATIVE_DEPTH SceneActor_SetFlagBitByRelativeDepth
 #else
-#define ACTOR_UPDATE_IDLE                                                      \
+#define UPDATE_BY_RELATIVE_DEPTH                                               \
   ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
 #endif
 #ifdef UBFIX
-#define ACTOR_UPDATE_RIDE_STONE TunnelRuins_RideStoneBelow
+#define UPDATE_RIDE_STONE_BELOW TunnelRuins_RideStoneBelow
 #else
-#define ACTOR_UPDATE_RIDE_STONE                                                \
+#define UPDATE_RIDE_STONE_BELOW                                                \
   ((void (*)(union FieldObject *))TunnelRuins_RideStoneBelow)
 #endif
 
@@ -548,7 +610,7 @@ static void Event_HopEast(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-/// Walking into the carved stones pushes the one in front along.
+/// Walking into the stones pushes the one in front along.
 /// Reached by walking into cell code 28 in TunnelRuinsGreatStatue.
 static void Event_PushStones(void) {
   EV_BEGIN();
@@ -559,8 +621,8 @@ static void Event_PushStones(void) {
   EV_END();
 }
 
-/// Walking south at the carved stones: the leader hops a gap if there is one,
-/// and pushes the carved stone in front otherwise. Reached by walking south
+/// Walking south at the stones: the leader hops a gap if there is one,
+/// and pushes the stone in front otherwise. Reached by walking south
 /// into cell code 28 in TunnelRuinsGreatStatue.
 static void Event_HopSouthOrPushStones(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -574,7 +636,7 @@ static void Event_HopSouthOrPushStones(void) {
   }
 }
 
-/// Whirlwind on bush A blows it away. Carved stone C changes state with the
+/// Whirlwind on bush A blows it away. Stone C changes state with the
 /// bushes: with one of bushes A and B gone its rise counter is 1 and its
 /// collision bit 3 is set; with both gone, 0 and clear. Reached by Whirlwind on
 /// bush A until FLAG_SCENE_TEMP_00 is set; sets it.
@@ -584,11 +646,11 @@ static void Event_BlowAwayBushA(void) {
 
   FLAG_SET(FLAG_SCENE_TEMP_00);
   if (FLAG_CHECK(FLAG_SCENE_TEMP_01) != 0) {
-    Object_GetById(ACTOR_CARVED_STONE_C)->riseCounter = 0;
-    Object_GetById(ACTOR_CARVED_STONE_C)->collisionFlags &= 0xf7;
+    Object_GetById(ACTOR_STONE_C)->riseCounter = 0;
+    Object_GetById(ACTOR_STONE_C)->collisionFlags &= 0xf7;
   } else {
-    Object_GetById(ACTOR_CARVED_STONE_C)->riseCounter = 1;
-    flags = &Object_GetById(ACTOR_CARVED_STONE_C)->collisionFlags;
+    Object_GetById(ACTOR_STONE_C)->riseCounter = 1;
+    flags = &Object_GetById(ACTOR_STONE_C)->collisionFlags;
     value = 8;
     value |= *flags;
     *flags = value;
@@ -603,11 +665,11 @@ static void Event_BlowAwayBushB(void) {
 
   FLAG_SET(FLAG_SCENE_TEMP_01);
   if (FLAG_CHECK(FLAG_SCENE_TEMP_00) != 0) {
-    Object_GetById(ACTOR_CARVED_STONE_C)->riseCounter = 0;
-    Object_GetById(ACTOR_CARVED_STONE_C)->collisionFlags &= 0xf7;
+    Object_GetById(ACTOR_STONE_C)->riseCounter = 0;
+    Object_GetById(ACTOR_STONE_C)->collisionFlags &= 0xf7;
   } else {
-    Object_GetById(ACTOR_CARVED_STONE_C)->riseCounter = 1;
-    flags = &Object_GetById(ACTOR_CARVED_STONE_C)->collisionFlags;
+    Object_GetById(ACTOR_STONE_C)->riseCounter = 1;
+    flags = &Object_GetById(ACTOR_STONE_C)->collisionFlags;
     value = 8;
     value |= *flags;
     *flags = value;
@@ -905,10 +967,10 @@ static void Event_FreezeDousePuddle(void) {
   Map_CopyCellAttributes(26, 8, 1, 1, column >> 20, row);
 
   actor = Object_GetById(ACTOR_DOUSE_PUDDLE);
-  actor->update = ACTOR_UPDATE_IDLE;
+  actor->update = UPDATE_BY_RELATIVE_DEPTH;
 
   actor = Object_GetById(ACTOR_DOUSE_PILLAR);
-  actor->update = ACTOR_UPDATE_IDLE;
+  actor->update = UPDATE_BY_RELATIVE_DEPTH;
 
   EV_END();
 }
@@ -1146,27 +1208,28 @@ static void Event_PushEastPillar(void) {
   EV_END();
 }
 
-/// The two false statues stand, blocking their cells: on entering their rooms
-/// and as Reveal's light fades. Reached by Reveal as its light fades, and
-/// called by TunnelRuins_Initialize in either false statue's room.
+/// The two vanishing statues stand, blocking their cells: on entering their
+/// rooms and as Reveal's light fades. Reached by Reveal as its light fades, and
+/// called by TunnelRuins_Initialize in either vanishing statue's room.
 static void Event_ShowFalseStatues(void) {
   Map_CopyCellAttributes(72, 49, 1, 1, 8, 49);
   Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
   MapObject_SetPosition(100, 0, 0);
   MapObject_SetPosition(101, 0, 0);
-  OBJ_POS_SET(ACTOR_FALSE_STATUE_A, 136, 792);
-  OBJ_POS_SET(ACTOR_FALSE_STATUE_B, 792, 696);
+  OBJ_POS_SET(ACTOR_VANISHING_STATUE_A, 136, 792);
+  OBJ_POS_SET(ACTOR_VANISHING_STATUE_B, 792, 696);
 }
 
-/// As Reveal shows what is hidden, the two false statues vanish and their cells
-/// can be walked through. Reached by Reveal anywhere in TunnelRuinsLadyStatues.
+/// As Reveal shows what is hidden, the two vanishing statues vanish and their
+/// cells can be walked through. Reached by Reveal anywhere in
+/// TunnelRuinsLadyStatues.
 static void Event_HideFalseStatues(void) {
   Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);
   MapObject_SetPosition(100, -1, -1);
   MapObject_SetPosition(101, -1, -1);
-  Actor_SetPosition(ACTOR_FALSE_STATUE_A, 0, 0);
-  Actor_SetPosition(ACTOR_FALSE_STATUE_B, 0, 0);
+  Actor_SetPosition(ACTOR_VANISHING_STATUE_A, 0, 0);
+  Actor_SetPosition(ACTOR_VANISHING_STATUE_B, 0, 0);
 }
 
 /// Moving one of the five coloured statues in TunnelRuinsLadyStatues: with all
@@ -1372,8 +1435,8 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
   }
 }
 
-/// After the carved stones move: redraw their room's cells and mark the cells
-/// the carved stones stand on. Reached by Move on any of the three carved
+/// After the stones move: redraw their room's cells and mark the cells
+/// the stones stand on. Reached by Move on any of the three
 /// stones, and called by Event_PushStones.
 static void TunnelRuins_UpdateStoneCells(void) {
   struct FieldActor *actor;
@@ -1381,20 +1444,20 @@ static void TunnelRuins_UpdateStoneCells(void) {
 
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-  Object_GetById(ACTOR_CARVED_STONE_C)->terrainId = 1;
-  actor = Object_GetById(ACTOR_CARVED_STONE_A);
+  Object_GetById(ACTOR_STONE_C)->terrainId = 1;
+  actor = Object_GetById(ACTOR_STONE_A);
   column = actor->x.fixed;
-  actor = Object_GetById(ACTOR_CARVED_STONE_A);
+  actor = Object_GetById(ACTOR_STONE_A);
   column >>= 20;
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
-  actor = Object_GetById(ACTOR_CARVED_STONE_B);
+  actor = Object_GetById(ACTOR_STONE_B);
   column = actor->x.fixed;
-  actor = Object_GetById(ACTOR_CARVED_STONE_B);
+  actor = Object_GetById(ACTOR_STONE_B);
   column >>= 20;
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
-  actor = Object_GetById(ACTOR_CARVED_STONE_C);
+  actor = Object_GetById(ACTOR_STONE_C);
   column = actor->x.fixed;
-  actor = Object_GetById(ACTOR_CARVED_STONE_C);
+  actor = Object_GetById(ACTOR_STONE_C);
   column >>= 20;
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
 }
@@ -1459,8 +1522,8 @@ s32 TunnelRuins_Initialize(void) {
       Object_GetById(ACTOR_FIRST_PILLAR_B)->motionFlags = 0;
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_PILLAR_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_PILLAR_B), 0);
-      Object_GetById(ACTOR_FIRST_PILLAR_A)->update = ACTOR_UPDATE_IDLE;
-      Object_GetById(ACTOR_FIRST_PILLAR_B)->update = ACTOR_UPDATE_IDLE;
+      Object_GetById(ACTOR_FIRST_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Object_GetById(ACTOR_FIRST_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
       FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
                                  TASK_PRIORITY_SCENE);
       break;
@@ -1479,8 +1542,8 @@ s32 TunnelRuins_Initialize(void) {
       Object_GetById(ACTOR_SECOND_PILLAR_B)->motionFlags = 0;
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SECOND_PILLAR_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SECOND_PILLAR_B), 0);
-      Object_GetById(ACTOR_SECOND_PILLAR_A)->update = ACTOR_UPDATE_IDLE;
-      Object_GetById(ACTOR_SECOND_PILLAR_B)->update = ACTOR_UPDATE_IDLE;
+      Object_GetById(ACTOR_SECOND_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Object_GetById(ACTOR_SECOND_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
       FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
                                  TASK_PRIORITY_SCENE);
       break;
@@ -1530,17 +1593,17 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_SECOND_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_BUSHES_FROM_CORRIDOR:
       TunnelRuins_UpdateStoneCells();
-      Object_GetById(ACTOR_CARVED_STONE_A)->motionFlags = 0;
-      Object_GetById(ACTOR_CARVED_STONE_B)->motionFlags = 0;
+      Object_GetById(ACTOR_STONE_A)->motionFlags = 0;
+      Object_GetById(ACTOR_STONE_B)->motionFlags = 0;
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BUSH_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BUSH_B), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BUSH_C), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARVED_STONE_A), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARVED_STONE_B), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CARVED_STONE_C), 0);
-      Object_GetById(ACTOR_CARVED_STONE_A)->update = ACTOR_UPDATE_IDLE;
-      Object_GetById(ACTOR_CARVED_STONE_B)->update = ACTOR_UPDATE_IDLE;
-      Object_GetById(ACTOR_CARVED_STONE_C)->update = ACTOR_UPDATE_IDLE;
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_A), 0);
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_B), 0);
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_C), 0);
+      Object_GetById(ACTOR_STONE_A)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Object_GetById(ACTOR_STONE_B)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Object_GetById(ACTOR_STONE_C)->update = UPDATE_BY_RELATIVE_DEPTH;
       FieldScheduler_AddCallback(TunnelRuins_UpdateTrackedActor,
                                  TASK_PRIORITY_SCENE);
       break;
@@ -1580,8 +1643,8 @@ s32 TunnelRuins_Initialize(void) {
       Engine_MapCopyCellAttributes(
           26, 8, 1, 1, Object_GetById(ACTOR_DOUSE_PUDDLE)->x.fixed >> 20,
           Object_GetById(ACTOR_DOUSE_PUDDLE)->z.fixed >> 20);
-      Object_GetById(ACTOR_DOUSE_PUDDLE)->update = ACTOR_UPDATE_IDLE;
-      Object_GetById(ACTOR_DOUSE_PILLAR)->update = ACTOR_UPDATE_IDLE;
+      Object_GetById(ACTOR_DOUSE_PUDDLE)->update = UPDATE_BY_RELATIVE_DEPTH;
+      Object_GetById(ACTOR_DOUSE_PILLAR)->update = UPDATE_BY_RELATIVE_DEPTH;
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH:
@@ -1617,17 +1680,17 @@ s32 TunnelRuins_Initialize(void) {
         Object_GetById(ACTOR_BALANCE_EAST)->timer = 4;
         OBJ_POS_SET(ACTOR_CARRY_STONE_A, 200, 152);
         Object_GetById(ACTOR_CARRY_STONE_A)->timer = ACTOR_BALANCE_EAST;
-        Object_GetById(ACTOR_CARRY_STONE_A)->update = ACTOR_UPDATE_RIDE_STONE;
+        Object_GetById(ACTOR_CARRY_STONE_A)->update = UPDATE_RIDE_STONE_BELOW;
         Object_GetById(ACTOR_CARRY_STONE_A)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
         OBJ_POS_SET(ACTOR_CARRY_STONE_B, 200, 152);
         Object_GetById(ACTOR_CARRY_STONE_B)->timer = ACTOR_CARRY_STONE_A;
-        Object_GetById(ACTOR_CARRY_STONE_B)->update = ACTOR_UPDATE_RIDE_STONE;
+        Object_GetById(ACTOR_CARRY_STONE_B)->update = UPDATE_RIDE_STONE_BELOW;
         Object_GetById(ACTOR_CARRY_STONE_B)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
         Engine_ActorSetPosition(ACTOR_CARRY_STONE_C, PIXELS(136), PIXELS(152));
         Object_GetById(ACTOR_CARRY_STONE_C)->timer = ACTOR_BALANCE_WEST;
-        Object_GetById(ACTOR_CARRY_STONE_C)->update = ACTOR_UPDATE_RIDE_STONE;
+        Object_GetById(ACTOR_CARRY_STONE_C)->update = UPDATE_RIDE_STONE_BELOW;
         Object_GetById(ACTOR_CARRY_STONE_C)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
         WAIT(2);
@@ -2144,9 +2207,9 @@ struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
         EVENT_SCRIPT(TunnelRuins_UpdateSecondPillarCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR_B, CONDITION_ALWAYS,
         EVENT_SCRIPT(TunnelRuins_UpdateSecondPillarCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARVED_STONE_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARVED_STONE_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CARVED_STONE_C, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_C, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_BlowAwayBushA)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_BlowAwayBushB)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_C, FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayBushC)},

@@ -1,4 +1,4 @@
-# The Broken Seal
+# ☀️ The Broken Seal
 
 The Broken Seal starts on a stormy night in Vale, and its chase ends at the
 top of Venus Lighthouse. Underneath, the whole game is one loop,
@@ -92,7 +92,7 @@ Most of the game. The party crosses Angara and Gondowan after Saturos and
 Menardi, through towns, caves, forests and deserts, up Mercury Lighthouse too
 late to stop its beacon being lit, over the Karagol Sea on the ship bound for
 Tolbi, and on to Lalivero and Venus Lighthouse. Every one of those is a scene
-like Vale's, and [Places](https://alchemy.pascalpixel.com/tbs/places) has
+like Vale's, and [Places](src/field/scenes.s) has
 them all, in that order.
 
 Between them lies the world map, [world_map.c](src/scene/world_map.c), a scene
@@ -126,11 +126,11 @@ A battle is a detour from all of this. Each scene and each stretch of the world
 map has an encounter zone in `encounter.tsv`, and when one comes due the loop
 runs the battle and returns to the scene with the party where it was,
 `FLAG_KEEP_PARTY_POSITION` set.
-[Battle](https://alchemy.pascalpixel.com/tbs/battle) picks the fight up from
+[Battle](battle.md) picks the fight up from
 there. The field menu, the shops and the windows every line of text appears in
-are in [Menus](https://alchemy.pascalpixel.com/tbs/menus), and the tables all of
+are in [Menus](menus.md), and the tables all of
 it reads, every item, ability, Djinni, enemy and class, are in [Game
-rules](https://alchemy.pascalpixel.com/tbs/game).
+rules](src/game/README.md).
 
 ## How does it end?
 
@@ -170,24 +170,24 @@ heading: Idejima adrift, which the flat map above already shows.
 
 ## What do the other pages cover?
 
-- [Places](https://alchemy.pascalpixel.com/tbs/places): every town and dungeon
+- [Places](src/field/scenes.s): every town and dungeon
   in story order, who stands where, and what happens when the player talks to
   someone or searches a spot.
-- [World](https://alchemy.pascalpixel.com/tbs/world): walking around towns,
+- [World](world.md): walking around towns,
   dungeons and the world map, talking to people, and pushing things with
   Psynergy.
-- [Battle](https://alchemy.pascalpixel.com/tbs/battle): how a battle runs
+- [Battle](battle.md): how a battle runs
   from the first menu to the spoils, how an ability's damage and healing are
   worked out, and how its effects are drawn.
-- [Menus](https://alchemy.pascalpixel.com/tbs/menus): the field menu and its
+- [Menus](menus.md): the field menu and its
   Psynergy, Djinn, Item and Status screens, the shops and inns, and the
   windows they're all drawn in.
-- [Game rules](https://alchemy.pascalpixel.com/tbs/game): stats, items, Djinn,
+- [Game rules](src/game/README.md): stats, items, Djinn,
   classes and levels.
-- [Engine](https://alchemy.pascalpixel.com/tbs/engine): input, graphics, sound
+- [Engine](engine.md): input, graphics, sound
   and the cartridge's own setup, which the rest of the game is built on.
-- [Unused](https://alchemy.pascalpixel.com/tbs/unused): the scenes, events and
+- [Unused](unused.md): the scenes, events and
   lines the game keeps but never plays, place by place, and why each never
   runs.
-- [Source](https://alchemy.pascalpixel.com/tbs/source): every file of the
+- [Source](src/README.md): every file of the
   code, with its comments.

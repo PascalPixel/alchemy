@@ -1,6 +1,6 @@
 # 🌋 Alchemy
 
-Alchemy is a decompilation of the Game Boy Advance games ☀️ **Golden Sun: The Broken Seal** and ⚓️ **Golden Sun: The Lost Age**.
+Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**.
 
 ## What is a decompilation?
 
@@ -40,7 +40,7 @@ Yes! [INSTALL.md](INSTALL.md) has the few commands it takes on Linux, macOS or W
 
 ## Where do I start reading?
 
-[The documentation](https://alchemy.pascalpixel.com/) explains how the games work underneath, like what happens in a battle round or how a town’s people and events are set up. If you’d rather start in the code, the battle effects are a good first stop: [their guide](games/tbs/src/effect/README.md) explains how everything drawn during a battle, from Psynergy to summons, is put on screen.
+[The documentation](https://alchemy.pascalpixel.com/) explains how the games work underneath, like what happens in a battle round or how a town’s people and events are set up. If you’d rather start in the code, the battle effects are a good first stop: [their guide](games/tbs/src/effect/README.md) explains how everything drawn during a battle, from Psynergy to summons, is put on screen, and [MATCHING.md](games/tbs/src/MATCHING.md) collects the plain C spellings that compile to the game's exact instructions.
 
 ## Acknowledgements
 

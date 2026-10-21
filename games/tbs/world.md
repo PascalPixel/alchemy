@@ -44,7 +44,7 @@ a line near the horizon covers far more of the map than a line at the bottom
 of the screen. Each frame, an ARM routine running from fast RAM works out a
 whole page of those values, one for every line, and the transfer feeds them to
 the hardware line by line. The same map drawn flat is on
-[the game's front page](README.md#the-whole-world).
+[the game's front page](README.md#what-lies-between-vale-and-the-lighthouse).
 
 ## What happens when the player presses A?
 
@@ -75,7 +75,7 @@ which tell it where people stand, what the doors lead to and what happens when
 the player talks to someone, searches a spot or uses Psynergy there. They're
 functions rather than tables so that a place can answer differently as the
 story moves on, the way the Vale at the gate does in
-[the story on the front page](README.md#one-village-two-ways).
+[the story on the front page](README.md#where-does-it-start).
 
 The Psynergy that solves puzzles comes through the same door. Choosing Move
 from the menu doesn't push anything by itself: the menu closes, and the field
@@ -88,5 +88,5 @@ is kept in a flag the game clears the next time the party enters, so a room's
 puzzle is back as it was when the party returns, while what should last for a
 whole place is kept in flags that are only cleared when the party moves on
 to another place. [Scenes](src/scene/README.md)
-explains how a scene is put together, and [Places](https://alchemy.pascalpixel.com/tbs/places)
+explains how a scene is put together, and [Places](src/field/scenes.s)
 lists every one of them in story order.

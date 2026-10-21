@@ -50,8 +50,8 @@
 ///   three stone doors by its column, and at column 48 sends a statue sliding
 ///   off its ledge to the floor below (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL),
 ///   where Move sets it on the stair gate's switch
-///   (FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN). Five pillars pushed into a
-///   row, and one more into a gap, open crossings.
+///   (FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN). Five stone statues pushed
+///   into a row, and one more into a gap, open crossings.
 /// - MercuryLighthouseExterior again, higher up, reached from
 ///   MercuryLighthouseMiddle
 ///   (MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR) and
@@ -155,7 +155,7 @@
 
 static void MercuryLighthouse_OpenGateWithMovedPillar(void);
 static void MercuryLighthouse_OpenStairGateWithMovedPillar(void);
-static void MercuryLighthouse_SyncPillarFlags(void);
+static void MercuryLighthouse_SyncCrossingStatueFlags(void);
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void);
 static void MercuryLighthouse_OpenThreeStepStair(void);
 static void SceneEffect_SpawnParticleEveryFourthFrame(void);
@@ -171,43 +171,80 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 /// MercuryLighthouseLower: Mia, the statue that blocks her and the channel
 /// pillars.
 enum MercuryLighthouseLowerActor {
+  /// ★ Named from the game: "But this statue is blocking my way..."
+  /// (MsgImilSomebodyHere)
   ACTOR_STATUE_BLOCKING_MIA = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: a small stone pillar by the water
+  /// grates (its render)
   ACTOR_CHANNEL_PILLAR_1,
+  /// ★ Named from what the player sees: a small stone pillar by the water
+  /// grates (its render)
   ACTOR_CHANNEL_PILLAR_2,
+  /// ★ Named from what the player sees: a small stone pillar by the water
+  /// grates (its render)
   ACTOR_CHANNEL_PILLAR_3,
   /// A pillar sprite of one still frame, the one after the moving pillars' two
   /// in the sprite table, 59 pixels south of where ACTOR_CHANNEL_PILLAR_3 comes
-  /// to rest; pushing it does nothing, and nothing else moves it. XXX: what it
-  /// shows is unknown; no text names it.
+  /// to rest; pushing it does nothing, and nothing else moves it.
+  /// ★ Named from what the player sees: a small stone pillar like the channel
+  /// pillars (its render)
   ACTOR_CHANNEL_FIXED_PILLAR
 };
 
 /// MercuryLighthouseMiddle: the stair and fountain pillars, the statue for the
 /// gate's floor switch and Sleet, a Mercury Djinni.
 enum MercuryLighthouseMiddleActor {
+  /// ★ Named from what the player sees: a small stone pillar by the water
+  /// grates (its render)
   ACTOR_STAIR_PILLAR = ACTOR_FIRST_PLACED,
   /// ACTOR_CHANNEL_FIXED_PILLAR's sprite, 59 pixels south of where
   /// ACTOR_STAIR_PILLAR rests once the stairs are raised; nothing moves it.
+  /// ★ Named from what the player sees: a small stone pillar by the water
+  /// grates (its render)
   ACTOR_STAIR_FIXED_PILLAR,
+  /// ★ Named from what the player sees: a small stone pillar by the water
+  /// grates (its render)
   ACTOR_FOUNTAIN_PILLAR,
+  /// ★ Named from what the player sees: a blue statue of a woman holding a jar
+  /// (its render)
   ACTOR_GATE_STATUE,
+  /// ★ Named from the game: "Sleet" (MsgDjinnName)
   ACTOR_SLEET
 };
 
 /// MercuryLighthouseUpper: the sliding statue and where it lands below, the
-/// pillars before the stone doors, the five pillars of the crossing and the gap
-/// pillar.
+/// pillars before the stone doors, the five statues of the crossing and the gap
+/// statue.
 enum MercuryLighthouseUpperActor {
+  /// The statue of ACTOR_SLIDING_STATUE once it has fallen to the floor below.
+  /// ★ Named from what the player sees: the blue statue ACTOR_SLIDING_STATUE
+  /// shows on its ledge above, before it falls (its render)
   ACTOR_FALLEN_STATUE = ACTOR_FIRST_PLACED,
+  /// Slides off its ledge when the door switch pillar stops at column 48.
+  /// ★ Named from what the player sees: a blue statue under a jet of water on
+  /// its ledge (its render)
   ACTOR_SLIDING_STATUE,
+  /// ★ Named from what the player sees: a small stone pillar by the water
+  /// grates (its render)
   ACTOR_DOOR_ROOM_PILLAR,
+  /// ★ Named from what the player sees: a small stone pillar by the water
+  /// grates (its render)
   ACTOR_DOOR_SWITCH_PILLAR,
   /// Three with ACTOR_CHANNEL_FIXED_PILLAR's sprite, in a row south of the
   /// stone doors' pillars; nothing moves them.
+  /// ★ Named from what the player sees: a small stone pillar by the water
+  /// grates (its render)
   ACTOR_FIRST_DOOR_FIXED_PILLAR,
-  ACTOR_FIRST_CROSSING_PILLAR = ACTOR_FIRST_DOOR_FIXED_PILLAR + 3,
-  ACTOR_LAST_CROSSING_PILLAR = ACTOR_FIRST_CROSSING_PILLAR + 4,
-  ACTOR_GAP_PILLAR
+  /// Five in a row along the north wall.
+  /// ★ Named from what the player sees: stone statues of a robed figure (its
+  /// render)
+  ACTOR_FIRST_CROSSING_STATUE = ACTOR_FIRST_DOOR_FIXED_PILLAR + 3,
+  /// ★ Named from what the player sees: a stone statue of a robed figure (its
+  /// render)
+  ACTOR_LAST_CROSSING_STATUE = ACTOR_FIRST_CROSSING_STATUE + 4,
+  /// ★ Named from what the player sees: a stone statue of a robed figure
+  /// before a gap in the floor (its render)
+  ACTOR_GAP_STATUE
 };
 
 /// MercuryLighthouseExterior: Garet, Ivan and Mia in their own party slots, the
@@ -217,12 +254,25 @@ enum MercuryLighthouseExteriorActor {
   /// A pair of statues either side of the way in from the world map
   /// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP); the east one is drawn
   /// mirrored.
+  /// ★ Named from what the player sees: blue statues either side of the way in
+  /// (its render)
   ACTOR_WEST_APPROACH_STATUE = ACTOR_FIRST_PLACED,
+  /// ★ Named from what the player sees: blue statues either side of the way in
+  /// (its render)
   ACTOR_EAST_APPROACH_STATUE,
   ACTOR_DOOR_STATUE,
+  /// ★ Named from the game: "used Ply." (MsgMercuryDidThat)
   ACTOR_PLY_TARGET,
+  /// ★ Named from what the player sees: a blue statue beside the waterfall (its
+  /// render)
   ACTOR_WATERFALL_STATUE,
+  /// ★ Named from what the player sees: the blue statue that stands on the lift
+  /// in the Lighthouse Aerie (its render)
   ACTOR_LIFT_STATUE,
+  /// The first of four people at the Fountain of Healing once Saturos is
+  /// beaten.
+  /// ★ Named from what the player sees: people gathered round the fountain
+  /// (its render)
   ACTOR_FIRST_VISITOR
 };
 
@@ -240,11 +290,11 @@ enum {
   FLAG_DOOR_SWITCH_PILLAR_AT_47 = 0x319,
   FLAG_DOOR_SWITCH_PILLAR_AT_48 = 0x31a,
   FLAG_DOOR_SWITCH_PILLAR_AT_53 = 0x31b,
-  /// Two flags per crossing pillar for its two resting columns, then the last.
-  FLAG_FIRST_CROSSING_PILLAR = 0x330,
-  FLAG_LAST_CROSSING_PILLAR_WEST = 0x338,
-  FLAG_LAST_CROSSING_PILLAR_EAST = 0x339,
-  FLAG_GAP_PILLAR_PLACED = 0x348
+  /// Two flags per crossing statue for its two resting columns, then the last.
+  FLAG_FIRST_CROSSING_STATUE = 0x330,
+  FLAG_LAST_CROSSING_STATUE_WEST = 0x338,
+  FLAG_LAST_CROSSING_STATUE_EAST = 0x339,
+  FLAG_GAP_STATUE_PLACED = 0x348
 };
 
 /// Scene flags, kept while the party stays on the map.
@@ -1221,34 +1271,34 @@ static void MercuryLighthouse_MoveStoneDoorPillars(void) {
   Engine_EventEnd();
 }
 
-/// MercuryLighthouseUpper, pushing a crossing pillar (walking into trigger 47):
-/// it moves a step and where the pillars rest is saved.
-static void MercuryLighthouse_PushAndSavePillarPositions(void) {
+/// MercuryLighthouseUpper, pushing a crossing statue (walking into trigger 47):
+/// it moves a step and where the statues rest is saved.
+static void MercuryLighthouse_PushAndSaveCrossingStatuePositions(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
-  MercuryLighthouse_SyncPillarFlags();
+  MercuryLighthouse_SyncCrossingStatueFlags();
   Engine_EventEnd();
 }
 
-/// MercuryLighthouseUpper, Move on a crossing pillar, or after a push: each
-/// pillar's column is saved in its pair of flags, and the last opens the
+/// MercuryLighthouseUpper, Move on a crossing statue, or after a push: each
+/// statue's column is saved in its pair of flags, and the last opens the
 /// crossing at column 57 or 59.
-static void MercuryLighthouse_SyncPillarFlags(void) {
-  s32 pillarIndex;
+static void MercuryLighthouse_SyncCrossingStatueFlags(void) {
+  s32 statueIndex;
   s32 positionFlag;
   s32 column;
 
   Engine_EventBegin();
   // Four pillars use paired flags for their two saved stopping columns.
-  for (pillarIndex = 0, positionFlag = FLAG_FIRST_CROSSING_PILLAR;
-       pillarIndex <= 3; pillarIndex++, positionFlag += 2) {
+  for (statueIndex = 0, positionFlag = FLAG_FIRST_CROSSING_STATUE;
+       statueIndex <= 3; statueIndex++, positionFlag += 2) {
     column =
-        Object_GetById(pillarIndex + ACTOR_FIRST_CROSSING_PILLAR)->x.fixed /
+        Object_GetById(statueIndex + ACTOR_FIRST_CROSSING_STATUE)->x.fixed /
         0x100000;
-    if (column == (pillarIndex << 2) + 39) {
+    if (column == (statueIndex << 2) + 39) {
       Engine_GameFlagSet(positionFlag);
       Engine_GameFlagClear(positionFlag + 1);
-    } else if (column == (pillarIndex << 2) + 41) {
+    } else if (column == (statueIndex << 2) + 41) {
       Engine_GameFlagSet(positionFlag + 1);
       Engine_GameFlagClear(positionFlag);
     } else {
@@ -1256,33 +1306,33 @@ static void MercuryLighthouse_SyncPillarFlags(void) {
       Engine_GameFlagClear(positionFlag + 1);
     }
   }
-  // The last pillar also determines whether the crossing cell is open.
-  column = Object_GetById(ACTOR_LAST_CROSSING_PILLAR)->x.fixed / 0x100000;
+  // The last statue also determines whether the crossing cell is open.
+  column = Object_GetById(ACTOR_LAST_CROSSING_STATUE)->x.fixed / 0x100000;
   if (column == 57) {
-    Engine_GameFlagSet(FLAG_LAST_CROSSING_PILLAR_WEST);
-    Engine_GameFlagClear(FLAG_LAST_CROSSING_PILLAR_EAST);
+    Engine_GameFlagSet(FLAG_LAST_CROSSING_STATUE_WEST);
+    Engine_GameFlagClear(FLAG_LAST_CROSSING_STATUE_EAST);
     Map_CopyCellAttributes(53, 10, 1, 1, 58, 7);
   } else if (column == 59) {
-    Engine_GameFlagSet(FLAG_LAST_CROSSING_PILLAR_EAST);
-    Engine_GameFlagClear(FLAG_LAST_CROSSING_PILLAR_WEST);
+    Engine_GameFlagSet(FLAG_LAST_CROSSING_STATUE_EAST);
+    Engine_GameFlagClear(FLAG_LAST_CROSSING_STATUE_WEST);
     Map_CopyCellAttributes(53, 10, 1, 1, 58, 7);
   } else {
-    Engine_GameFlagClear(FLAG_LAST_CROSSING_PILLAR_WEST);
-    Engine_GameFlagClear(FLAG_LAST_CROSSING_PILLAR_EAST);
+    Engine_GameFlagClear(FLAG_LAST_CROSSING_STATUE_WEST);
+    Engine_GameFlagClear(FLAG_LAST_CROSSING_STATUE_EAST);
     Map_CopyCellAttributes(53, 11, 1, 1, 58, 7);
   }
   Engine_EventEnd();
 }
 
-/// MercuryLighthouseUpper, Move on the gap pillar: at column 28 it fills the
+/// MercuryLighthouseUpper, Move on the gap statue: at column 28 it fills the
 /// gap for good.
-static void MercuryLighthouse_OpenMovedPillarCrossing(void) {
+static void MercuryLighthouse_OpenMovedStatueCrossing(void) {
   s32 column;
 
   Engine_EventBegin();
-  column = Object_GetById(ACTOR_GAP_PILLAR)->x.fixed / 0x100000;
+  column = Object_GetById(ACTOR_GAP_STATUE)->x.fixed / 0x100000;
   if (column == 28) {
-    Engine_GameFlagSet(FLAG_GAP_PILLAR_PLACED);
+    Engine_GameFlagSet(FLAG_GAP_STATUE_PLACED);
     {
       s32 destinationColumn = 31;
       s32 destinationRow = 20;
@@ -2151,7 +2201,7 @@ static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
 
 /// Restores each lighthouse scene's puzzle state and entrance sequence.
 s32 MercuryLighthouse_Initialize(void) {
-  u32 pillarIndex;
+  u32 statueIndex;
   s32 positionFlag;
   s32 pillarX;
   s32 keepPartyPosition;
@@ -2295,37 +2345,37 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_FROM_STAIR_GATE:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST:
-      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_CROSSING_PILLAR), 1);
-      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_CROSSING_PILLAR + 1), 1);
-      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_CROSSING_PILLAR + 2), 1);
-      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_CROSSING_PILLAR + 3), 1);
-      SetEffectRecordMode(Object_GetById(ACTOR_LAST_CROSSING_PILLAR), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_CROSSING_STATUE), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_CROSSING_STATUE + 1), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_CROSSING_STATUE + 2), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_FIRST_CROSSING_STATUE + 3), 1);
+      SetEffectRecordMode(Object_GetById(ACTOR_LAST_CROSSING_STATUE), 1);
       SetEffectRecordMode(Object_GetById(ACTOR_PARTY_LEADER), 1);
-      pillarIndex = 0;
+      statueIndex = 0;
       pillarX = PIXELS(632);
-      positionFlag = FLAG_FIRST_CROSSING_PILLAR;
-      for (; pillarIndex <= 3; pillarIndex++) {
+      positionFlag = FLAG_FIRST_CROSSING_STATUE;
+      for (; statueIndex <= 3; statueIndex++) {
         if (Engine_GameFlagIsSet(positionFlag))
-          Engine_ActorSetPosition(pillarIndex + ACTOR_FIRST_CROSSING_PILLAR,
+          Engine_ActorSetPosition(statueIndex + ACTOR_FIRST_CROSSING_STATUE,
                                   pillarX, PIXELS(88));
         else if (Engine_GameFlagIsSet(positionFlag + 1))
-          Engine_ActorSetPosition(pillarIndex + ACTOR_FIRST_CROSSING_PILLAR,
+          Engine_ActorSetPosition(statueIndex + ACTOR_FIRST_CROSSING_STATUE,
                                   pillarX + PIXELS(32), PIXELS(88));
         pillarX += PIXELS(64);
         positionFlag += 2;
       }
-      if (Engine_GameFlagIsSet(FLAG_LAST_CROSSING_PILLAR_WEST)) {
-        Actor_SetPosition(ACTOR_LAST_CROSSING_PILLAR, PIXELS(920), PIXELS(88));
+      if (Engine_GameFlagIsSet(FLAG_LAST_CROSSING_STATUE_WEST)) {
+        Actor_SetPosition(ACTOR_LAST_CROSSING_STATUE, PIXELS(920), PIXELS(88));
         Map_CopyCellAttributes(53, 10, 1, 1, 58, 7);
-      } else if (Engine_GameFlagIsSet(FLAG_LAST_CROSSING_PILLAR_EAST)) {
-        Actor_SetPosition(ACTOR_LAST_CROSSING_PILLAR, PIXELS(952), PIXELS(88));
+      } else if (Engine_GameFlagIsSet(FLAG_LAST_CROSSING_STATUE_EAST)) {
+        Actor_SetPosition(ACTOR_LAST_CROSSING_STATUE, PIXELS(952), PIXELS(88));
         Map_CopyCellAttributes(53, 10, 1, 1, 58, 7);
       }
       break;
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST:
     case MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS:
-      if (Engine_GameFlagIsSet(FLAG_GAP_PILLAR_PLACED)) {
-        Actor_SetPosition(ACTOR_GAP_PILLAR, PIXELS(456), PIXELS(328));
+      if (Engine_GameFlagIsSet(FLAG_GAP_STATUE_PLACED)) {
+        Actor_SetPosition(ACTOR_GAP_STATUE, PIXELS(456), PIXELS(328));
         Map_CopyCellAttributes(29, 20, 1, 1, 31, 20);
       }
       break;
@@ -3272,16 +3322,16 @@ struct SceneEvent gMercuryLighthouseUpperEvents[] = {
     { EVENT_TOUCH, 12, FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_PressStairFloorSwitch) },
     { EVENT_TOUCH, 10, FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_ReleaseStairFloorSwitch) },
     { TOUCH_WALKING, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_MoveStoneDoorPillars) },
-    { TOUCH_WALKING, 47, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushAndSavePillarPositions) },
+    { TOUCH_WALKING, 47, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PushAndSaveCrossingStatuePositions) },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_InspectLockedDoor) },
     { PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLEN_STATUE, FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN, EVENT_SCRIPT(MercuryLighthouse_OpenStairGateWithMovedPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncPillarFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncPillarFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncPillarFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_PILLAR + 3, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncPillarFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_CROSSING_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncPillarFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GAP_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_OpenMovedPillarCrossing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncCrossingStatueFlags) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_STATUE + 1, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncCrossingStatueFlags) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_STATUE + 2, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncCrossingStatueFlags) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CROSSING_STATUE + 3, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncCrossingStatueFlags) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_CROSSING_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_SyncCrossingStatueFlags) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GAP_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_OpenMovedStatueCrossing) },
     { SCENE_EVENTS_END },
 };
 

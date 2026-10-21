@@ -330,8 +330,9 @@ static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// An old man with a cane, one of the palace's residents, asks while Babi is
-/// missing whether the party ran into Babi's soldiers in town.
+/// An old man with a cane asks whether the party ran into Babi's soldiers. He's
+/// one of the palace's residents, and asks while Babi is missing whether the
+/// party ran into them in town.
 static void BabiPalace_AskAboutSoldiers(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiRunBabisSoldiers);
 }
@@ -435,9 +436,9 @@ static void BabiPalace_OfferRest(s32 actorId) {
   Event_End();
 }
 
-/// A warrior in the palace, while Babi is missing, asks whether the party is
-/// entering Colosso, and either hurries it to the trials or asks whether it
-/// got hurt too.
+/// A warrior asks whether the party is entering Colosso. The warrior is in the
+/// palace while Babi is missing, and either hurries the party to the trials or
+/// asks whether it got hurt too.
 static void BabiPalace_AskAboutColosso(s32 actorId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
@@ -455,8 +456,8 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// The warrior in the palace with indigestion, while Babi is missing, tries to
-/// shrug it off, doubles up, and gives up on entering Colosso.
+/// A warrior with indigestion gives up on entering Colosso. The warrior is in
+/// the palace while Babi is missing, tries to shrug it off, and doubles up.
 static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   struct FieldActor *actor;
   const s32 *indigestionScript;
@@ -522,9 +523,9 @@ static void BabiPalace_AskAboutMeetingBabi(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiMeetBabi);
 }
 
-/// A young man with brown hair, one of the palace's residents, asks after
-/// Colosso whether the party wants to go back already to the eastern shores of
-/// the Karagol Sea.
+/// A young man asks whether the party is going back east already. He has brown
+/// hair and is one of the palace's residents, and asks after Colosso whether
+/// the party wants to go back already to the eastern shores of the Karagol Sea.
 static void BabiPalace_AskAboutEasternShores(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiEasternShoresKaragol);
 }
@@ -2453,8 +2454,9 @@ static void BabiPalace_ThankForSavingBabi(void) {
   }
 }
 
-/// A guard outside the palace, after Colosso, asks whether the party is
-/// leaving like the other warriors who stayed in the palace.
+/// A guard asks whether the party is leaving like the other warriors. The guard
+/// stands outside the palace after Colosso, and means the other warriors who
+/// stayed in the palace.
 static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 

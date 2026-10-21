@@ -213,8 +213,9 @@ const struct SceneEvent *ValeInteriorsShops_GetEvents(void) {
   return gValeInteriorsShops_Events;
 }
 
-/// In a house of Vale on the day the story begins, a burly grey-haired man asks
-/// whether Isaac knew why Kraden came to Vale. He came to study Mt. Aleph.
+/// A burly grey-haired man asks whether Isaac knew why Kraden came to Vale.
+/// He stands in a house of Vale on the day the story begins. Kraden came to
+/// study Mt. Aleph.
 ///
 /// Reached by talking to ACTOR_MAN_ON_KRADENS_STUDIES on the day the story
 /// begins.
@@ -227,8 +228,8 @@ static void Event_AskAboutKradensStudies(void) {
   Engine_EventEnd();
 }
 
-/// In a house of Vale on the day the story begins, a strongman asks Isaac to
-/// help scare Kraden's visitors with Psynergy.
+/// A strongman asks Isaac to help scare Kraden's visitors with Psynergy. He
+/// stands in a house of Vale on the day the story begins.
 ///
 /// Reached by talking to ACTOR_STRONGMAN_SCARING_VISITORS on the day the story
 /// begins.
@@ -269,8 +270,8 @@ static void ValeInteriorsShops_GiveFarewellHerb(void) {
   Engine_EventEnd();
 }
 
-/// In a house of Vale after the party has left, a woman in a green dress tells
-/// of the culprits' strange powers and asks about them.
+/// A woman in a green dress tells of the culprits' strange powers. She stands
+/// in a house of Vale after the party has left, and asks Isaac about them.
 ///
 /// Reached by talking to ACTOR_WOMAN_ON_VISITORS_IN_TOWN after the party has
 /// left Vale.
@@ -281,8 +282,8 @@ static void Event_AskAboutCulpritsPowers(void) {
   Engine_EventEnd();
 }
 
-/// In Garet's house in Vale, back from Kalay, Garet's father asks whether
-/// Isaac heard them talking about Dora.
+/// Garet's father asks whether Isaac heard them talking about Dora. He is in
+/// Garet's house in Vale, back from Kalay.
 ///
 /// Reached by talking to Garet's father after Kalay.
 static void Event_AskAboutDora(void) {
@@ -292,8 +293,8 @@ static void Event_AskAboutDora(void) {
   Engine_EventEnd();
 }
 
-/// In Garet's house in Vale, back from Kalay, Garet's mother hopes the
-/// travelers did not get sick on the way.
+/// Garet's mother hopes the travelers didn't get sick on the way. She is in
+/// Garet's house in Vale, back from Kalay.
 ///
 /// Reached by talking to Garet's mother after Kalay.
 static void Event_WorryAboutTravelersHealth(void) {
@@ -322,7 +323,8 @@ static void ValeInteriorsShops_RequestWindowExit(s32 exitId) {
 // the exits to SceneId_Vale lead to the storm's map (SceneId_ValeStorm)
 // instead.
 
-/// Leaves the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_WEST, where
+/// Leaves the house where a young man dreams of leaving. It's the room entered
+/// from VALE_INTERIORS_SHOPS_FROM_VALE_WEST, where
 /// ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING wanders.
 static void Event_LeaveToValeWest(void) {
   ValeInteriorsShops_RequestWindowExit(VALE_INTERIORS_SHOPS_TO_VALE_WEST);
@@ -333,8 +335,9 @@ static void Event_LeaveToValeNorth(void) {
   ValeInteriorsShops_RequestWindowExit(VALE_INTERIORS_SHOPS_TO_VALE_NORTH);
 }
 
-/// Leaves the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH,
-/// which no placement table puts anyone in.
+/// Leaves the empty house. It's the room entered from
+/// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH, which no placement table puts
+/// anyone in.
 static void Event_LeaveToValeGateWest(void) {
   ValeInteriorsShops_RequestWindowExit(VALE_INTERIORS_SHOPS_TO_VALE_GATE_WEST);
 }
@@ -344,7 +347,8 @@ static void Event_LeaveToValeGateSouth(void) {
   ValeInteriorsShops_RequestWindowExit(VALE_INTERIORS_SHOPS_TO_VALE_GATE_SOUTH);
 }
 
-/// Leaves the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH, where
+/// Leaves the house where villagers talk of Kraden and his visitors. It's the
+/// room entered from VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH, where
 /// ACTOR_MAN_ON_KRADENS_STUDIES and ACTOR_WOMAN_ON_VISITORS_IN_TOWN stand.
 static void Event_LeaveToValeSouth(void) {
   ValeInteriorsShops_RequestWindowExit(VALE_INTERIORS_SHOPS_TO_VALE_SOUTH);
@@ -355,13 +359,15 @@ static void Event_LeaveToValeEast(void) {
   ValeInteriorsShops_RequestWindowExit(VALE_INTERIORS_SHOPS_TO_VALE_EAST);
 }
 
-/// Leaves the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_GATE_SOUTH,
-/// where ACTOR_STRONGMAN_SCARING_VISITORS stands.
+/// Leaves the house where a strongman plans to scare Kraden's visitors. It's
+/// the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_GATE_SOUTH, where
+/// ACTOR_STRONGMAN_SCARING_VISITORS stands.
 static void Event_LeaveToValeGateEast(void) {
   ValeInteriorsShops_RequestWindowExit(VALE_INTERIORS_SHOPS_TO_VALE_GATE_EAST);
 }
 
-/// Leaves the room entered from VALE_INTERIORS_SHOPS_FROM_VALE_GATE_EAST, where
+/// Leaves the house where a woman talks of permission to leave. It's the room
+/// entered from VALE_INTERIORS_SHOPS_FROM_VALE_GATE_EAST, where
 /// ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE stands.
 static void Event_LeaveToValeGateNorth(void) {
   ValeInteriorsShops_RequestWindowExit(VALE_INTERIORS_SHOPS_TO_VALE_GATE_NORTH);

@@ -224,14 +224,14 @@ static void Event_FlipRaisingSwitch(void) {
   }
 }
 
-/// Stepping onto trigger 10, by the rock Bunza hides behind, after Donpa has
-/// let the party leave the fortress with Hammet (FLAG_DODONPA_LOCKED_UP):
-/// Bunza steps out, the party and Hammet gather behind the leader, Garet and
-/// Mia think they saw someone, and Ivan asks whether Dodonpa's henchmen have
-/// found them (a yes: Garet will fight; a no: Garet wonders what else it
-/// could be). Hammet calls out and names Bunza, Bunza knows Hammet's voice,
-/// and the reunion and the wagon talk follow. Sets
-/// FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
+/// Hammet finds Bunza hiding behind a rock. It plays on stepping onto trigger
+/// 10, by the rock Bunza hides behind, after Donpa has let the party leave the
+/// fortress with Hammet (FLAG_DODONPA_LOCKED_UP). Bunza steps out, the party
+/// and Hammet gather behind the leader, Garet and Mia think they saw someone,
+/// and Ivan asks whether Dodonpa's henchmen have found them (a yes: Garet will
+/// fight; a no: Garet wonders what else it could be). Hammet calls out and
+/// names Bunza, Bunza knows Hammet's voice, and the reunion and the wagon talk
+/// follow. Sets FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
 static void Event_HammetFindsBunza(void) {
   struct FieldActor *leader;
   s32 sighting;

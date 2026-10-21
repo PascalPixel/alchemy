@@ -295,10 +295,11 @@ static void Event_FreezeThirdTarget(void) {
   BilibinCave_FreezeTarget(FROST_TARGET_C);
 }
 
-/// After a push or Move in Bilibin Cave (BilibinCaveIce): while either movable
-/// torch stands on cell (35, 23) (FLAG_PLACE_TEMP_03 and FLAG_PLACE_TEMP_04),
-/// the ice pillar beside it melts with a sound, and FLAG_PLACE_TEMP_02 says so;
-/// when both leave, it freezes again.
+/// A movable torch melts the ice pillar beside it. This runs after a push
+/// or Move in Bilibin Cave (BilibinCaveIce): while either movable torch stands
+/// on cell (35, 23) (FLAG_PLACE_TEMP_03 and FLAG_PLACE_TEMP_04), the ice pillar
+/// beside it melts with a sound, and FLAG_PLACE_TEMP_02 says so; when both
+/// leave, it freezes again.
 static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   struct FieldActor *firstActor;
   struct FieldActor *secondActor;
@@ -368,8 +369,8 @@ static void Event_ClearMapTriggerFlag(void) {
   map->unk17 = 0;
 }
 
-/// Sets up the scene being entered, the Bilibin Cave Entrance or one of
-/// Bilibin Cave's two, with the puzzles already solved there.
+/// Sets up the scene being entered, with its puzzles already solved. The scene
+/// is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
   s16 variant = gGameState.scene;
 

@@ -815,9 +815,9 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
   Engine_EventEnd();
 }
 
-/// Talking to the tour guide on deck at Kalay, with the same three moods as
-/// TolbiShipDeck_TalkToCrewMember. "If we don't leave soon, Colosso will start
-/// without us!"
+/// The tour guide on deck at Kalay talks about the ship's delay. The guide has
+/// the same three moods as TolbiShipDeck_TalkToCrewMember. "If we don't leave
+/// soon, Colosso will start without us!"
 static void TolbiShipDeck_TalkToTourGuide(void) {
   struct FieldActor *guide;
   s32 random;
@@ -921,11 +921,11 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 }
 #endif
 
-/// On deck at Kalay, once the tour group has left Kalay
-/// (FLAG_KALAY_COLOSSO_TOUR_LEFT; touch cell 10): the captain, Kaja and the
-/// crewman wonder what happened to the replacement ship, and the captain
-/// decides to set sail anyway, trusting his anchor charm; the crewman runs off
-/// through the second door. Plays once
+/// The captain decides to set sail without the replacement ship. On deck at
+/// Kalay, once the tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT;
+/// touch cell 10), the captain, Kaja and the crewman wonder what happened to
+/// the replacement ship, and the captain decides to set sail anyway, trusting
+/// his anchor charm; the crewman runs off through the second door. Plays once
 /// (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   struct FieldActor *record;

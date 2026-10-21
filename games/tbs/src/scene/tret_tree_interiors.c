@@ -216,87 +216,129 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
 // flag, the staging cell of its torn picture and its own number, the landing
 // entrance, to TretTreeInteriors_StepOnCocoon.
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon21(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_00, 64, 35, 21);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon22(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_01, 65, 35, 22);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon23(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_02, 66, 35, 23);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon24(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_03, 67, 35, 24);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon25(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_04, 68, 35, 25);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon26(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_05, 69, 35, 26);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon27(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_06, 70, 35, 27);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon28(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_07, 71, 35, 28);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon29(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_08, 72, 35, 29);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon31(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_09, 73, 35, 31);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon32(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0A, 74, 35, 32);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon50(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0B, 79, 35, 50);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon51(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0C, 75, 35, 51);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon52(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0D, 76, 35, 52);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon53(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0E, 77, 35, 53);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon54(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0F, 78, 35, 54);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon55(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_10, 80, 35, 55);
 }
 
-/// Cocoon 56 lands at the same spot as cocoon 54: their entrances agree.
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below. Cocoon 56 lands at the same spot as cocoon 54: their entrances
+/// agree.
 static void Event_StepOnCocoon56(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_11, 81, 35, 56);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon57(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_12, 82, 35, 57);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon58(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_13, 83, 35, 58);
 }
 
+/// Stepping on a cocoon tears it, and the next step drops the leader to the
+/// room below.
 static void Event_StepOnCocoon59(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_14, 84, 35, 59);
 }

@@ -341,8 +341,10 @@ static void Event_ThiefDeniesTheft(void) {
   Engine_EventEnd();
 }
 
-/// In Vault while the rod is missing, a traveler stranded by the eruption asks
-/// whether the party is off on an adventure. "Off on an adventure, are you?"
+/// A stranded traveler asks whether the party is off on an adventure.
+/// The traveler was stranded by the eruption, and asks while the rod is
+/// missing.
+/// "Off on an adventure, are you?"
 /// Yes: impressive for youngsters. No: see the Sanctum while you're here.
 static void Event_AskAboutAdventure(void) {
 
@@ -353,8 +355,8 @@ static void Event_AskAboutAdventure(void) {
   Engine_EventEnd();
 }
 
-/// In Vault while the rod is missing, a townsperson says some folks got robbed
-/// during the chaos of the eruption.
+/// A townsperson says some folks got robbed in the chaos of the eruption.
+/// She says it while the rod is missing.
 static void Event_TalkOfEruptionThefts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGuessFolksGot);
@@ -442,8 +444,8 @@ static void Vault_ShowStandingActorMessage(s32 actor) {
 
 #include "common/vault_talk.h"
 
-/// In Vault after the thieves are jailed, the welcoming young man asks whether
-/// the party is leaving again. "So, you're hitting the road again?"
+/// The welcoming young man asks whether the party is leaving again.
+/// He asks after the thieves are jailed. "So, you're hitting the road again?"
 static void Event_AskAboutLeavingAgain(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultYoureHittingRoadAgain);
@@ -461,9 +463,9 @@ static void Event_PraiseThievesCapture(void) {
   Engine_EventEnd();
 }
 
-/// In Vault after the thieves are jailed, a townsperson says Ivan went out to
-/// Lunpa, or, with Ivan in the party, that rescuing Hammet must have been
-/// impossible.
+/// An old man talks about Ivan, Hammet's servant.
+/// After the thieves are jailed, he says Ivan went out to Lunpa, or, with Ivan
+/// in the party, that rescuing Hammet must have been impossible.
 static void Event_TalkAboutIvan(void) {
   struct EventWork *workspace;
   Engine_EventBegin();
@@ -486,9 +488,9 @@ static void Event_TalkOfDamagedRoads(void) {
   Engine_EventEnd();
 }
 
-/// In Vault after the thieves are jailed, the boy round the well hopes Ivan
-/// didn't go to Lunpa alone, or, with Ivan in the party, asks when he joined up
-/// with Isaac.
+/// The boy round the well asks after Ivan.
+/// After the thieves are jailed, he hopes Ivan didn't go to Lunpa alone, or,
+/// with Ivan in the party, asks when he joined up with Isaac.
 static void Event_AskWhetherIvanWentToLunpa(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_BOY_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
@@ -568,8 +570,9 @@ static void Event_TalkToDogAfterCapture(void) {
   Engine_EventEnd();
 }
 
-/// In Vault after the thieves are jailed, the young man fixing the roof, whom
-/// the party freed, thanks it before it leaves. "Thank you for the other day.
+/// The young man fixing the roof thanks the party before it leaves.
+/// The party freed him, and he says so after the thieves are jailed.
+/// "Thank you for the other day.
 /// Are you leaving town already?"
 static void Event_ThankBeforeDeparture(void) {
   Engine_EventBegin();
@@ -692,24 +695,27 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Engine_EventRequestExit(continuation);
 }
 
-/// In Vault, the door VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST opens into the
-/// southeastern house, where a man keeps a sparkling rock the volcano threw.
+/// The door of the southeastern house opens and the party walks in.
+/// It's VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST, into the house where a man
+/// keeps a sparkling rock the volcano threw.
 static void Event_EnterSoutheastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_SoutheastHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST);
 }
 
-/// In Vault, the door VAULT_TO_VAULT_INTERIORS_SOUTHEAST opens into the house
-/// east of the town's center, a child's home.
+/// The door of a child's home opens and the party walks in.
+/// It's VAULT_TO_VAULT_INTERIORS_SOUTHEAST, into the house east of the town's
+/// center.
 static void Event_EnterCentralEastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_CentralEastHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_TO_VAULT_INTERIORS_SOUTHEAST);
 }
 
-/// In Vault, the door VAULT_TO_VAULT_INTERIORS_SOUTHWEST opens into the inn,
-/// where the three suspects stay.
+/// The inn's door opens and the party walks in.
+/// It's VAULT_TO_VAULT_INTERIORS_SOUTHWEST, into the inn where the three
+/// suspects stay.
 static void Event_EnterInn(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_InnDoorCells, 44, 17);
@@ -731,8 +737,8 @@ static void Event_EnterItemShop(void) {
   Vault_WalkThroughExit(376, 224, VAULT_TO_VAULT_INTERIORS_EAST);
 }
 
-/// In Vault, the door VAULT_TO_VAULT_INTERIORS_NORTH_NORTHEAST opens into the
-/// weapon and armor shop, entered as the item shop is.
+/// The weapon and armor shop's door opens and the party walks in.
+/// It's VAULT_TO_VAULT_INTERIORS_NORTH_NORTHEAST, entered as the item shop is.
 static void Event_EnterWeaponAndArmorShop(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -820,8 +826,8 @@ static void Event_RingBell(void) {
   Engine_EventEnd();
 }
 
-/// In Vault after the thieves are jailed, the dog, given a Bone, runs to the
-/// hidden passage and jumps there three times
+/// Given a Bone, the dog runs to the hidden passage and jumps there.
+/// It does so after the thieves are jailed, jumping three times
 /// (FLAG_VAULT_DOG_SHOWN_PASSAGE).
 static void Event_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);

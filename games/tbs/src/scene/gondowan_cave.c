@@ -19,9 +19,9 @@
 ///   (FLAG_BABI_SPOKE_AFTER_COLOSSO) the scene takes other placements and
 ///   events: Iodem stands in the passage, and the soldiers talk of him.
 ///   Talking to him, or walking up to him while he is not with the party
-///   (trigger 11), makes him join it (FLAG_IODEM_FOLLOWING_PARTY): `I've been
-///   waiting for you, Isaac! We should go to Babi Lighthouse soon.` While he
-///   travels with them, entering keeps his actor out of sight, and until he
+///   (trigger 11), makes him travel with it (FLAG_IODEM_FOLLOWING_PARTY): `I've
+///   been waiting for you, Isaac! We should go to Babi Lighthouse soon.` While
+///   he travels with them, entering keeps his actor out of sight, and until he
 ///   has reached Babi Lighthouse (FLAG_IODEM_AT_BABI_LIGHTHOUSE) turning back
 ///   (trigger 10) brings him out to ask `Why are you going back, Isaac?` If
 ///   the party has something to fetch, he stays to wait, and a defeat now
@@ -262,9 +262,10 @@ static void Event_IodemAsksWhyTurningBack(void) {
   }
 }
 
-/// Talking to Iodem where he waits in Gondowan Passage, or walking up to him
-/// (trigger 11) while he is not with the party: he joins it. `I've been
-/// waiting for you, Isaac! We should go to Babi Lighthouse soon.`
+/// Iodem comes along with the party from Gondowan Passage, where he waits. He
+/// comes along when he's talked to, or walked up to (trigger 11) while he isn't
+/// with the party. `I've been waiting for you, Isaac! We should go to Babi
+/// Lighthouse soon.`
 static void Event_IodemRejoins(void) {
   EV_BEGIN();
   OBJ_FACE(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);

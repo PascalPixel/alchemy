@@ -377,9 +377,10 @@ static void VaultCave_PushPillarAhead(void) {
   Object_SetMode(leader, 1);
 }
 
-/// In VaultCaveVambrace's puddle room, Whirlwind on ACTOR_BUSH blows it away
-/// for as long as the party stays in the cave (FLAG_WHIRLWIND_USED is a place
-/// flag).
+/// Whirlwind blows the bush away.
+/// It's cast on ACTOR_BUSH in VaultCaveVambrace's puddle room, and the bush
+/// stays gone for as long as the party stays in the cave (FLAG_WHIRLWIND_USED
+/// is a place flag).
 static void Event_UseWhirlwind(void) {
   Engine_GameFlagSet(FLAG_WHIRLWIND_USED);
 }
@@ -524,9 +525,9 @@ static void Event_MoveNorthernPillar(void) {
   VaultCave_CompleteNorthernSwitch();
 }
 
-/// In VaultCaveVambrace's puddle room, Frost on the upper western puddle
-/// freezes it and changes its map cell; arriving again re-freezes every puddle
-/// whose flag is set.
+/// Frost freezes the upper western puddle.
+/// The puddle is in VaultCaveVambrace's puddle room; freezing it changes its
+/// map cell, and arriving again re-freezes every puddle whose flag is set.
 static void Event_FreezeWestUpperPuddle(void) {
   // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
   // of r5 alone and changes the map-copy argument registers in native English.

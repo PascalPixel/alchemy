@@ -444,7 +444,8 @@ static void BabiLighthouse_RisePastSingleEffect(void) {
   Engine_EventEnd();
 }
 
-/// Prepares two effects, raises the leader, then takes
+/// Raises the leader from the west room into the east room. It first prepares
+/// two effects, then raises the leader and takes
 /// BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_RISE_SOUTHWEST.
 static void BabiLighthouse_RisePastPairedEffects(void) {
   Engine_EventBegin();

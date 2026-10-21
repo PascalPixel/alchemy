@@ -345,9 +345,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gAltinOther_Events;
 }
 
-/// A bald strong man in Altin's village, before the hydros statues are
-/// beaten, asks whether this is the party's first visit; either way, the flood
-/// has changed Altin.
+/// A bald strong man asks whether this is the party's first visit. He's in
+/// Altin's village before the hydros statues are beaten; either way, he says
+/// the flood has changed Altin.
 static void Village_AskAboutFirstVisit(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgAltinYourFirstTimeVisitAltin);
@@ -364,8 +364,8 @@ static void Village_AskAboutFirstVisit(void) {
   Engine_EventEnd();
 }
 
-/// A strong man in Altin's village, once the hydros statues are beaten, asks
-/// whether the slain hydros creatures gushed water.
+/// A strong man asks whether the slain hydros creatures gushed water. He's in
+/// Altin's village once the hydros statues are beaten.
 static void Village_AskAboutHydros(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgAltinDidSeeWaterGushingOut);
@@ -411,8 +411,8 @@ static void Village_TalkToThirstyOldWoman(void) {
   Engine_EventEnd();
 }
 
-/// An old man in Altin's village, once the hydros statues are beaten, asks
-/// whether the party really found ruins deep in the mine.
+/// An old man asks whether the party really found ruins deep in the mine. He's
+/// in Altin's village once the hydros statues are beaten.
 static void Village_AskAboutRuins(void) {
 
   Engine_EventBegin();
@@ -421,9 +421,9 @@ static void Village_AskAboutRuins(void) {
   Engine_EventEnd();
 }
 
-/// Inside Altin, once the hydros statues are beaten, the woman of the family
-/// that sheltered in the inn's Room One asks whether the party is who the girl
-/// from Xian was looking for.
+/// A woman asks whether the party is who the girl from Xian was looking for.
+/// She's from the family that sheltered in the inn's Room One, and asks inside
+/// Altin once the hydros statues are beaten.
 static void Houses_AskAboutXianGirl(void) {
 
   Engine_EventBegin();
@@ -432,9 +432,9 @@ static void Houses_AskAboutXianGirl(void) {
   Engine_EventEnd();
 }
 
-/// Inside Altin, before the hydros statues are beaten, the old man of the
-/// family sheltering in the inn's Room Two asks whether the party seeks the way
-/// west, and points to the bottom of the mine.
+/// An old man points the party to the bottom of the mine. He's from the family
+/// sheltering in the inn's Room Two, and inside Altin, before the hydros
+/// statues are beaten, he asks whether the party seeks the way west.
 static void Houses_AskAboutWayWest(void) {
 
   Engine_EventBegin();
@@ -443,9 +443,9 @@ static void Houses_AskAboutWayWest(void) {
   Engine_EventEnd();
 }
 
-/// Inside Altin, before the hydros statues are beaten, a little girl back home
-/// asks whether the party defeated the monsters, and thanks the leader with a
-/// kiss either way.
+/// A little girl thanks the leader with a kiss. She's back home inside Altin
+/// before the hydros statues are beaten, and asks whether the party defeated
+/// the monsters; she gives the kiss either way.
 static void Houses_AskAboutMonsters(void) {
 
   Engine_EventBegin();
@@ -454,8 +454,8 @@ static void Houses_AskAboutMonsters(void) {
   Engine_EventEnd();
 }
 
-/// A man staying at Altin's inn, once the hydros statues are beaten, asks
-/// whether the remaining beasts are deep below.
+/// A man at the inn asks whether the remaining beasts are deep below. He's
+/// staying at Altin's inn once the hydros statues are beaten.
 static void Houses_AskAboutMineBeasts(void) {
 
   Engine_EventBegin();
@@ -554,8 +554,9 @@ static void Altin_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Altin's innkeeper opens the inn across the counter, and otherwise talks
-/// about the flood or, once it is over, the temple west of the mine.
+/// Altin's innkeeper opens the inn when spoken to across the counter. Spoken to
+/// otherwise, the innkeeper talks about the flood or, once it is over, the
+/// temple west of the mine.
 static void Houses_TalkToInnkeeper(void) {
   struct FieldActor *leader;
 
@@ -743,8 +744,8 @@ static void Village_CheckPillarMoved(void) {
   }
 }
 
-/// Works out the village's water level from the mine's drain flags, then sets
-/// up whichever scene is being entered. Returns 0.
+/// Sets up the scene being entered, at the village's water level. It works out
+/// the water level from the mine's drain flags first. Returns 0.
 s32 Scene_Initialize(void) {
   s16 scene;
 

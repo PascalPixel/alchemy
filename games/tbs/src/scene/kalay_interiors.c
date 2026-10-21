@@ -278,8 +278,8 @@ static void KalayInteriors_TalkToTourGuide(void) {
   Engine_EventEnd();
 }
 
-/// Someone in one of Kalay's houses asks whether the party knows the continent
-/// south of Tolbi, and answers either way.
+/// Someone asks whether the party knows the continent south of Tolbi. They're
+/// in one of Kalay's houses, and answer either way the party replies.
 static void KalayInteriors_AskAboutSouthernContinent(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayDoKnowAboutContinentSouth);
@@ -312,9 +312,9 @@ static void KalayInteriors_TalkToInnkeeper(void) {
   }
 }
 
-/// Spoken to across the counter of the Kalay Sanctum, the leader facing north,
-/// the healer offers the Sanctum's services; from elsewhere he says Kalay is a
-/// peaceful place.
+/// The Kalay Sanctum's healer offers its services across the counter. He does
+/// so when spoken to across the counter with the leader facing north; from
+/// elsewhere he says Kalay is a peaceful place.
 static void KalayInteriors_TalkToPriest(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 

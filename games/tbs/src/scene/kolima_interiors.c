@@ -229,8 +229,9 @@ const struct SceneEvent *KolimaInteriors_GetEvents(void) {
   return gKolimaInteriors_Events;
 }
 
-/// Opens with a window transition, sets the trees' sprites while the curse
-/// lasts, and draws the father's room for the way it is entered.
+/// Sets up the houses for the curse and the way they're entered. It opens with
+/// a window transition, sets the trees' sprites while the curse lasts, and
+/// draws the father's room for the way it is entered.
 s32 KolimaInteriors_Initialize(void) {
   struct EventWork *work = gEventWork;
   s32 actorId;

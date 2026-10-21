@@ -241,10 +241,11 @@ static inline u16 Leader_GetSide(void) {
   return (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 }
 
-/// Lalivero (LaliveroShops): across the counter, the weapon shop; from
-/// elsewhere, before Venus Lighthouse, they ask whether the party has heard
-/// that Sheba was taken hostage and Faran went after her, and after it tell of
-/// the rough sea.
+/// The weapon merchant sells weapons, or talks of Sheba and the sea. In
+/// Lalivero's shops (LaliveroShops), across the counter, it's the weapon shop;
+/// from elsewhere, before Venus Lighthouse, they ask whether the party has
+/// heard that Sheba was taken hostage and Faran went after her, and after it
+/// tell of the rough sea.
 static void TalkToWeaponMerchant(s32 keeper) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   // Leader_GetSide's rounding, written with the mask 0xc000, which

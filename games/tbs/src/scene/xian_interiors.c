@@ -240,9 +240,10 @@ static void XianInteriors_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// After the news of Hsu, ACTOR_YOUNG_MAN_ON_SILK_ROAD asks whether something
-/// is wrong on Silk Road and in Lamakan Desert. A yes: no one can use Silk
-/// Road; a no: it is good to hear the desert is fine.
+/// A young man asks whether something is wrong on Silk Road. He's
+/// ACTOR_YOUNG_MAN_ON_SILK_ROAD, after the news of Hsu, and asks about Lamakan
+/// Desert too. A yes: no one can use Silk Road; a no: it is good to hear the
+/// desert is fine.
 static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
@@ -260,8 +261,9 @@ static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventEnd();
 }
 
-/// In the room behind Master Feh's school, when the party helped free Hsu
-/// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear), Feizhi welcomes the party, looks at
+/// Feizhi thanks the party and Master Hama for freeing Hsu. She's in the room
+/// behind Master Feh's school, when the party helped free Hsu
+/// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear); she welcomes the party, looks at
 /// Hsu, then thanks the party and Master Hama. "Oh, warrior! Welcome!"
 static void XianInteriors_FeizhiThanksParty(void) {
   Engine_EventBegin();

@@ -460,8 +460,9 @@ static void TolbiInteriors_TalkToAngryPassenger(s32 speaker) {
   Engine_EventEnd();
 }
 
-/// In Tolbi after Colosso, the man who rode the ship from Kalay with the party
-/// asks whether it remembers him. "Hey! You're the would-be warrior!"
+/// The man from the ship asks whether the party remembers him. He's in Tolbi
+/// after Colosso, and rode the ship from Kalay with the party. "Hey! You're the
+/// would-be warrior!"
 static void TolbiInteriors_TalkToFellowPassenger(s32 speaker) {
   Engine_EventBegin();
   TolbiInteriors_AskYesNo(MsgTolbiWarriorRemember, speaker);

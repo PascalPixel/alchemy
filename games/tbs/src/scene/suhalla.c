@@ -129,10 +129,10 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSuhallaPlacements;
 }
 
-/// In Suhalla before Babi's audience, talking to
-/// ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, who asks about Lalivero. "Are you
-/// trying to get to Lalivero?" Yes, and the sandstorms make it impossible; no,
-/// and the woman doubts it, for Angarans who come to Suhalla are always
+/// A woman asks whether the party is trying to get to Lalivero. She's
+/// ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, in Suhalla before Babi's audience. "Are
+/// you trying to get to Lalivero?" Yes, and the sandstorms make it impossible;
+/// no, and the woman doubts it, for Angarans who come to Suhalla are always
 /// going to Lalivero.
 static void Event_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
@@ -147,10 +147,10 @@ static void Event_AskIfGoingToLalivero(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// In Suhalla after Babi's audience, talking to
-/// ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, who asks whether the sandstorm brought
-/// the party to Suhalla. Yes, and everyone the storms catch winds up here; no,
-/// and the old woman wonders why there are so many storms.
+/// An old woman asks whether the sandstorm brought the party to Suhalla. She's
+/// ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, there after Babi's audience. Yes, and
+/// everyone the storms catch winds up here; no, and the old woman wonders why
+/// there are so many storms.
 static void Event_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Engine_EventSetMessage(firstMessage);

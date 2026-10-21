@@ -490,8 +490,8 @@ const struct SceneEvent *ValeGate_GetEvents(void) {
   return gValeGate_Events;
 }
 
-/// In Vale on the day the story begins, a burly grey-haired man asks whether
-/// Isaac meditates on Mt. Aleph each day.
+/// A burly grey-haired man asks whether Isaac meditates each day. He means on
+/// Mt. Aleph, and he stands in Vale on the day the story begins.
 ///
 /// Reached by talking to ACTOR_MAN_ASKING_ABOUT_MEDITATION on the day the
 /// story begins.
@@ -504,8 +504,8 @@ static void Event_AskAboutMeditation(void) {
   Engine_EventEnd();
 }
 
-/// In Vale on the day the story begins, a woman in a green dress recalls the
-/// difficult time three years ago and asks Isaac about it.
+/// A woman in a green dress recalls the difficult time three years ago. She
+/// asks Isaac about it, in Vale on the day the story begins.
 ///
 /// Reached by talking to ACTOR_WOMAN_RECALLING_STORM on the day the story
 /// begins.
@@ -517,8 +517,9 @@ static void Event_RecallThreeYearsAgo(void) {
   Engine_EventEnd();
 }
 
-/// In Vale on the day the story begins, a small boy with fair hair asks whether
-/// the travelers who stopped by went to meet the mayor.
+/// A small boy asks whether the travelers went to meet the mayor. He has fair
+/// hair, and asks it in Vale on the day the story begins, about the travelers
+/// who stopped by.
 ///
 /// Reached by talking to ACTOR_FIRST_CHILD on the day the story begins.
 static void Event_AskAboutTheTravelers(void) {
@@ -606,9 +607,9 @@ static void Event_DemonstratePsynergy(void) {
   Engine_EventEnd();
 }
 
-/// In Vale, an old man with a cane answers Isaac about Psynergy on the stormy
-/// night, asks about the Wise One after the party has left, and about the
-/// journey after Kalay.
+/// An old man with a cane asks Isaac a question that changes with the story.
+/// In Vale he answers Isaac about Psynergy on the stormy night, asks about the
+/// Wise One after the party has left, and about the journey after Kalay.
 ///
 /// Reached by talking to ACTOR_STORM_CURIOUS_OLD_MAN on the stormy night,
 /// ACTOR_CURIOUS_OLD_MAN after the party has left and
@@ -637,8 +638,9 @@ static void Event_AskAboutJourney(void) {
   Engine_EventEnd();
 }
 
-/// In Vale after the party has left, the old man whose hut it is shows Isaac
-/// the large Psynergy Stone that fell on the hut, and the camera looks at it.
+/// An old man shows Isaac the Psynergy Stone that fell on his hut. In Vale
+/// after the party has left, the old man whose hut it is points out the large
+/// stone, and the camera looks at it.
 ///
 /// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale.
 static void Event_TalkAboutFallenStone(void) {
@@ -714,8 +716,9 @@ static void Event_DemonstrateLevitation(void) {
   Engine_EventEnd();
 }
 
-/// In Vale on the stormy night, a little girl tells Isaac which way Jenna
-/// went, or, once he has been sent back to the river, to help Felix.
+/// A little girl tells Isaac which way Jenna went. In Vale on the stormy night,
+/// once he has been sent back to the river, she tells him to help Felix
+/// instead.
 ///
 /// Reached by talking to ACTOR_STORM_GIRL_WHO_SAW_JENNA on the stormy
 /// night.
@@ -750,8 +753,9 @@ static void Event_WelcomeIsaacHome(void) {
   Engine_EventEnd();
 }
 
-/// In Vale back from Kalay, the old man searching the ground stops and tells
-/// Isaac the Psynergy Stone that fell on his roof is gone.
+/// The old man searching the ground says the Psynergy Stone is gone. In Vale
+/// back from Kalay, he stops and tells Isaac the stone that fell on his roof
+/// has gone.
 ///
 /// Reached after Kalay by talking to ACTOR_AFTER_KALAY_HUT_OWNER, or by Mind
 /// Read on it until FLAG_VALE_PSYNERGY_STONE_GONE_TOLD is set; sets it and
@@ -1033,10 +1037,11 @@ static inline void ValeGate_RejoinParty(s32 actorId) {
   Engine_ActorSetPosition(actorId, 0, 0);
 }
 
-/// In Vale's plaza on the stormy night, Garet's grandfather, the mayor, sends
-/// two strongmen to aid the elders holding back the Boulder, then sends Isaac
-/// and Garet back to the river to show Jenna and a man whose Psynergy is
-/// restored the way. "Go aid the elders!"
+/// The mayor sends help to the elders and the boys back to the river. In Vale's
+/// plaza on the stormy night, Garet's grandfather, the mayor, sends two
+/// strongmen to aid the elders holding back the Boulder, then sends Isaac and
+/// Garet back to the river to show Jenna and a man whose Psynergy is restored
+/// the way. "Go aid the elders!"
 ///
 /// Reached by stepping on cell code 20 on the stormy night, until
 /// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set; sets it. The flag is named for

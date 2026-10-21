@@ -483,8 +483,9 @@ static void Event_OfferLuckyGuess(void) {
   Engine_EventEnd();
 }
 
-/// In the Colosseum's waiting room, Azart, the second-best, will not lose to
-/// someone who skipped the trials; then he goes back to pacing.
+/// Azart won't lose to someone who skipped the trials. He waits in the
+/// Colosseum's waiting room as the second-best, and goes back to pacing after
+/// he has said so.
 static void Event_TalkToAzart(void) {
   struct FieldActor *contestant;
 
@@ -1308,8 +1309,9 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Engine_EventEnd();
 }
 
-/// Sets up the Colosseum by the entrance the party arrives at, or the
-/// Colosseum Entrance by how far Colosso has gone.
+/// Sets up the Colosseum or its entrance as the party arrives. The Colosseum is
+/// set up by the entrance the party arrives at, and the Colosseum Entrance by
+/// how far Colosso has gone.
 s32 ColosseumEntrance_Initialize(void) {
   s32 scene = gGameState.scene;
 

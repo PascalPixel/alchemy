@@ -259,10 +259,10 @@ static void Event_EnterHouse(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-/// In SuhallaGateCheckpoint, the party leaves for the world map by the south
-/// way out (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH) or the east one
-/// (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST), forgetting the side it came in
-/// by.
+/// The party leaves the checkpoint for the world map. In SuhallaGateCheckpoint
+/// it leaves by the south way out (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH)
+/// or the east one (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST), forgetting the
+/// side it came in by.
 static void Event_LeaveForWorldMap(void) {
   s16 exitTrigger = gEventWork->touchedTrigger;
 
@@ -444,11 +444,11 @@ static void Event_TalkToEastGuard(void) {
   Engine_EventEnd();
 }
 
-/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience,
-/// talking to the soldier east of the gate or reading his mind, until he has
-/// vanished: he gasps that Venus Lighthouse was attacked by strange wanderers,
-/// then flickers, slowly and then fast, and vanishes. Sets
-/// FLAG_SUHALLA_GATE_SOLDIER_VANISHED.
+/// The soldier east of the gate gasps out a warning and vanishes. In Suhalla
+/// Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience, this plays on
+/// talking to him or reading his mind, until he has vanished: he gasps that
+/// Venus Lighthouse was attacked by strange wanderers, then flickers, slowly
+/// and then fast, and vanishes. Sets FLAG_SUHALLA_GATE_SOLDIER_VANISHED.
 static void Event_SoldierVanishes(void) {
   unsigned int beat;
 

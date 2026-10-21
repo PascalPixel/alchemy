@@ -714,9 +714,9 @@ const struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
   return gTolbiShipInteriors_EventsOther;
 }
 
-/// In the captain's cabin at Kalay, once the warriors want to see the captain:
-/// the crewman asks whether the party wants to see him too, and on yes the
-/// passengers' pressure on the captain plays
+/// The crewman asks whether the party wants to see the captain too. This is in
+/// the captain's cabin at Kalay, once the warriors want to see the captain; on
+/// yes, the passengers' pressure on the captain plays
 /// (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL).
 static void TolbiShipInteriors_TalkToCabinCrewman(void) {
   Engine_EventBegin();
@@ -945,8 +945,8 @@ static void TolbiShipInteriors_AskLadyToRow(void) {
   }
 }
 
-/// The same for the stared-at passenger, written out in full rather than
-/// through TolbiShipInteriors_AskToRow.
+/// The stared-at passenger is asked to row, as the others are. It's written out
+/// in full rather than through TolbiShipInteriors_AskToRow.
 static void TolbiShipInteriors_AskStaredAtPassengerToRow(void) {
   s32 rowerId;
   struct FieldActor *actor;

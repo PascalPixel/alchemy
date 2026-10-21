@@ -480,9 +480,9 @@ static void Event_ReactToAnotherTremor(void) {
   Engine_EventEnd();
 }
 
-/// Back from Kalay, a burly grey-haired man in Vale
-/// (ACTOR_MAN_MISSING_TRAVELERS) asks about the lack of travellers since the
-/// eruption; sets group flag FLAG_PLACE_TEMP_07.
+/// A burly grey-haired man asks about the lack of travellers since the
+/// eruption. He (ACTOR_MAN_MISSING_TRAVELERS) is in Vale back from Kalay, and
+/// the talk sets group flag FLAG_PLACE_TEMP_07.
 static void Event_AskAboutTheLackOfTravelers(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(ACTOR_MAN_MISSING_TRAVELERS, 2);
@@ -1739,8 +1739,9 @@ static void Event_GaretAsksToProtectFamily(void) {
   Engine_EventEnd();
 }
 
-/// Unused: back from Kalay, a tremor shakes Vale and water bursts up three
-/// times north of the strongman by the river who remembers Felix.
+/// Unused: water bursts up by the river after a tremor. Back from Kalay, a
+/// tremor shakes Vale and water bursts up three times north of the strongman by
+/// the river who remembers Felix.
 ///
 /// No table names it. He would have started, sniffled through
 /// `I still remember when Felix and I used to play here...*Sniff*`, turned to
@@ -3050,8 +3051,9 @@ static void Event_PushPillar(void) {
   Event_SettleMovedPillar();
 }
 
-/// After Move or a push, record the pillar's column in FLAG_PLACE_TEMP_14 to
-/// _16 and block the cell it now stands on.
+/// Records where the pillar now stands and blocks its cell. After Move or a
+/// push, it records the pillar's column in FLAG_PLACE_TEMP_14 to _16 and blocks
+/// the cell the pillar now stands on.
 static void Event_SettleMovedPillar(void) {
   struct FieldActor *actor;
   s32 column;

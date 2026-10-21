@@ -368,10 +368,10 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Engine_EventEnd();
 }
 
-/// On entry: the logs' records come back from gSceneState, or on a first visit
-/// from the defaults with the water high; the logs are made and the river is
-/// drawn at its level. The forest keeps its cursed colours until the curse is
-/// lifted.
+/// Sets up the logs and the river's level on entry. The logs' records come back
+/// from gSceneState, or on a first visit from the defaults with the water high;
+/// the logs are made and the river is drawn at its level. The forest keeps its
+/// cursed colours until the curse is lifted.
 s32 KolimaForestFloodgate_Initialize(void) {
   struct FieldActor *actor;
 

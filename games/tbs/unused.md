@@ -204,7 +204,7 @@ evidence.
   bones, the Keys room's two look-ahead rows, five oven rows with three dish
   lines between them, two copied talk rows and Altin Peak's two rows past the
   end.
-- Scenes no exit, table or code leads to: one, scene 59.
+- Scenes no exit, table or code leads to: one, `SceneId_UnusedMercuryLighthouseAerieCopy`.
 - Functions in the scenes nothing reaches: 51, of which nine hold something the
   player would have seen and carry `Unused` in their names; most of the rest
   are small helpers and empty functions the overlays keep.

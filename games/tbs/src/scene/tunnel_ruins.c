@@ -1220,9 +1220,9 @@ static void Event_ShowFalseStatues(void) {
   OBJ_POS_SET(ACTOR_VANISHING_STATUE_B, 792, 696);
 }
 
-/// As Reveal shows what is hidden, the two vanishing statues vanish and their
-/// cells can be walked through. Reached by Reveal anywhere in
-/// TunnelRuinsLadyStatues.
+/// Reveal makes the two false statues vanish. As it shows what is hidden, the
+/// two vanishing statues go and their cells can be walked through. Reached by
+/// Reveal anywhere in TunnelRuinsLadyStatues.
 static void Event_HideFalseStatues(void) {
   Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);

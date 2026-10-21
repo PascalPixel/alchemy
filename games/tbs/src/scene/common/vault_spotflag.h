@@ -7,8 +7,8 @@
 #include "field_event.h"
 #include "flags.h"
 
-/// Prevents the girl at the inn offering another Bone while the leader stands
-/// beside the one on the floor.
+/// Keeps the girl at the inn from offering another Bone too soon.
+/// She doesn't offer one while the leader stands beside the one on the floor.
 /// Each scene adds this callback in the girl at the inn's house after the
 /// thieves are jailed. FLAG_SCENE_TEMP_50 records proximity for the talk-event
 /// table.

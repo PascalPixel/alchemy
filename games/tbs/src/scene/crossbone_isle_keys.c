@@ -1260,8 +1260,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Unused: in CrossboneIsleKeys, the Blue Keys still lying about would have
-/// shown their item icons one after another, every 16 frames.
+/// Unused: the Blue Keys still lying about would have flashed their icons. In
+/// CrossboneIsleKeys they would have shown their item icons one after another,
+/// every 16 frames.
 ///
 /// Nothing adds it as a callback, so the keys never flash.
 UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {

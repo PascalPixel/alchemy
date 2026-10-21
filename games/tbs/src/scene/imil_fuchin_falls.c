@@ -1036,9 +1036,9 @@ static void Fuchin_RebuildEntranceLogs(void) {
   }
 }
 
-/// Puts the logs of Fuchin Falls Cave's second room
-/// (SceneId_FuchinFallsCaveZephyr) at the cells their flags name, and rewrites
-/// the cells of their tracks to match.
+/// Puts the logs of Fuchin Falls Cave's second room where their flags say. The
+/// flags name cells in SceneId_FuchinFallsCaveZephyr, and the cells of the
+/// logs' tracks are rewritten to match.
 static void Fuchin_RebuildZephyrRoomLogs(void) {
   {
     s32 column = 12;
@@ -1122,9 +1122,9 @@ static void Fuchin_RebuildZephyrRoomLogs(void) {
   }
 }
 
-/// Puts the four logs of Fuchin Falls Cave's third room
-/// (SceneId_FuchinFallsCaveDragonsEye) at the cells their flags name, and
-/// rewrites the cells of their tracks to match.
+/// Puts the four logs of Fuchin Falls Cave's third room where their flags say.
+/// The flags name cells in SceneId_FuchinFallsCaveDragonsEye, and the cells of
+/// the logs' tracks are rewritten to match.
 static void Fuchin_RebuildDragonsEyeRoomLogs(void) {
   {
     Map_CopyCellAttributes(12, 3, 9, 16, 12, 21);
@@ -1297,8 +1297,9 @@ static void Fuchin_RebuildArcticBladeRoomLogs(void) {
   }
 }
 
-/// Touching trigger 15 in Fuchin Falls Cave's dragon statue room makes the fade
-/// overlay follow the leader, once it has been started there.
+/// The fade overlay follows the leader through the dragon statue room. Touching
+/// trigger 15 in Fuchin Falls Cave's dragon statue room makes it follow, once
+/// it has been started there.
 static void Fuchin_FollowLeaderWithLight(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
     struct FadeOverlayWork *work = *(gWorkSlot + 36);
@@ -1700,8 +1701,8 @@ static void Fuchin_SearchDragonStatue(void) {
   Engine_EventEnd();
 }
 
-/// When Reveal ends in Fuchin Falls Cave's dragon statue room, before the eye
-/// is set, the room goes dark again.
+/// The dragon statue room goes dark again when Reveal ends. That happens in
+/// Fuchin Falls Cave only before the eye is set.
 static void Fuchin_EndRevealLighting(void) {
   struct FieldFxScene *scene;
   struct DisplayTransitionState *transition;

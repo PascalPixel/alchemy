@@ -1500,7 +1500,7 @@ static void Fuchin_CollectDragonsEye(void) {
   Engine_EventBegin();
 
   if (gImilFuchinFalls_DragonsEye != NULL) {
-    Engine_RunRisingObjectSequence(gImilFuchinFalls_DragonsEye, 3);
+    Engine_ItemShowPicture(gImilFuchinFalls_DragonsEye, 3);
   }
 
   Engine_PartyGiveItem(ITEM_DRAGONS_EYE, 0);

@@ -2053,14 +2053,14 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
     Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-    FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
+    FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, -1);
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
     Engine_EventWait(60);
     Engine_EventRequestExit(
         MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE);
   } else {
-    FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, -1);
+    FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, -1);
   }
   Engine_EventEnd();
 }

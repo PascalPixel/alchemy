@@ -49,7 +49,7 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Engine_RunRisingObjectSequence, 1
+	.set import.Engine_ItemShowPicture, 1
 	.set import.Engine_ActorLookup, 1
 	.set import.FieldFx_StartFadeOverlay, 1
 	.set import.Field_EndBusyAndReveal, 1

@@ -586,8 +586,7 @@ static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId) {
   s32 itemEffect;
 
   EV_BEGIN();
-  itemEffect =
-      Engine_BattleFxPlayCueAndStartEmitterOnTarget(0, actorId, itemId);
+  itemEffect = Engine_FieldFxPlayCueAndStartEmitterOnTarget(0, actorId, itemId);
   if (Engine_PartyGiveItem(itemId, 0) != -1) {
     OBJ_MODE(actorId, 2);
     itemGiven = 1;
@@ -1308,7 +1307,7 @@ static void Event_FightWestGuard(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetStart(BATTLE_START_SCENE);
-  Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 2);
+  Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ActorSetPosition(UPPER_FLOOR_WEST_GUARD, 0, 0);
   EV_END();
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
@@ -1325,7 +1324,7 @@ static void Event_FightHallGuard(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetStart(BATTLE_START_SCENE);
-  Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 2);
+  Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ActorSetPosition(UPPER_FLOOR_HALL_GUARD, 0, 0);
   EV_END();
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
@@ -1389,7 +1388,7 @@ static void Event_FightThreeGuards(void) {
       (s32)&SceneId_LunpaFortressUpperFloor,
       LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE);
   Battle_SetStart(BATTLE_START_SCENE);
-  Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 3);
+  Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 3);
   OBJ_POS_SET(UPPER_FLOOR_GUARD_A, 0, 0);
   OBJ_POS_SET(UPPER_FLOOR_GUARD_B, 0, 0);
   OBJ_POS_SET(UPPER_FLOOR_GUARD_C, 0, 0);
@@ -1422,7 +1421,7 @@ static void Event_FightEastGuard(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   Battle_SetStart(BATTLE_START_SCENE);
-  Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 2);
+  Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 2);
   Engine_ActorSetPosition(UPPER_FLOOR_EAST_GUARD, 0, 0);
   EV_END();
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
@@ -1734,7 +1733,7 @@ static void Event_FindHammet(void) {
     Battle_SetStart(BATTLE_START_SCENE);
     Engine_EventSetNextDestination((s32)&SceneId_LunpaFortressToadonpa,
                                    LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
-    Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 4);
+    Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 4);
   } else {
     OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
     SE(MUS_017);
@@ -1935,7 +1934,7 @@ static void Event_FindHammet(void) {
     Battle_SetStart(BATTLE_START_SCENE);
     Engine_EventSetNextDestination((s32)&SceneId_LunpaFortressToadonpa,
                                    LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE);
-    Engine_BattleFxSetWeightedResult(ENCOUNTER_ZONE_SCRIPTED, 4);
+    Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 4);
   }
   EV_END();
 }
@@ -2839,7 +2838,7 @@ static void Event_TalkToDonpa(void) {
 /// LunpaFortressUpperFloor: talking to Tonic, a Mercury Djinni and Donpa's
 /// reward, it joins the party.
 static void Event_DjinniJoins(void) {
-  Engine_BattleFxRunPageEffectForSlot(UPPER_FLOOR_TONIC, 1, 5);
+  Engine_DjinnJoinParty(UPPER_FLOOR_TONIC, 1, 5);
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_REWARD_TAKEN);
 }
 

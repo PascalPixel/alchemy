@@ -1142,7 +1142,7 @@ static void Event_TouchThirdPillar(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   if (leader->facing == FACING_SOUTH) {
-    FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
+    FieldActor_JumpDownLedge(0, 6, 0);
   } else {
     Event_PushThirdPillar();
   }

@@ -59,14 +59,14 @@
 	.set import.Engine_CameraMoveToActor, 1
 	.set import.Engine_EventGetViewCenter, 1
 	.set import.Engine_EventRequestExit, 1
-	.set import.Engine_BattleFxSetWeightedResult, 1
+	.set import.Engine_EncounterRequestBattle, 1
 	.set import.Engine_EventSetNextDestination, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
-	.set import.Engine_BattleFxPlayCueAndStartEmitterOnTarget, 1
+	.set import.Engine_FieldFxPlayCueAndStartEmitterOnTarget, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_PsynergyCancel, 1
-	.set import.Engine_BattleFxRunPageEffectForSlot, 1
+	.set import.Engine_DjinnJoinParty, 1
 	.set import.FieldFx_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

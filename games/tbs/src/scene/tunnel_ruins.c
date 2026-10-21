@@ -593,7 +593,7 @@ static void Event_PushSecondPillars(void) {
 /// Reached by walking south into cell codes 23 and 27 (TunnelRuinsGreatStatue)
 /// and 26 (TunnelRuinsLadyStatues).
 static void Event_JumpDownLedge(void) {
-  FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
+  FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
 }
 
 /// Walking east into a gap: the leader hops 32 pixels across it.

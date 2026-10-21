@@ -1307,7 +1307,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     Engine_VramLoad(starSprite->slot, 128, iconPixels + 0x400);
     Engine_HeapRelease(17);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
-    Engine_RunRisingObjectSequence(star, 3);
+    Engine_ItemShowPicture(star, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
   }
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);

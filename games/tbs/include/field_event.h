@@ -210,7 +210,7 @@ void Engine_MapRenderWaitForValues(void);
 void Engine_ObjectMotionSetPositionAndCommit(s32 actor, s32 x, s32 z);
 void Engine_ObjectDispatchRelease(struct FieldActor *object);
 void Engine_MapWaitWorkValuesBelow256(void);
-void Engine_RunRisingObjectSequence(struct FieldActor *object, s32 mode);
+void Engine_ItemShowPicture(struct FieldActor *object, s32 mode);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
 void Audio_PlayCue(s32 cue);

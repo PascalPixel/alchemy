@@ -759,7 +759,7 @@ static void Event_PassSouthWallOpening(void) {
   FieldObject_WaitForMove(actor);
   Engine_ActorSetAttachedEffect(*actorId, ATTACHED_EFFECT_IN_FRONT |
                                               ATTACHED_EFFECT_ONCE);
-  FieldBattleFx_RunRisingObjectSequence(*actorId, 6, 0);
+  FieldActor_JumpDownLedge(*actorId, 6, 0);
 }
 
 /// Unused: an empty function nothing calls.

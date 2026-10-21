@@ -403,7 +403,7 @@ static void Event_GrowPlant(void) {
 /// Walking south into the obstacle at trigger 30 in Colosseum Final 2 runs the
 /// rising-object sequence for the actor touching it.
 static void Event_RunRisingSequence(void) {
-  FieldBattleFx_RunRisingObjectSequence(gGameState.selectedActor, 6, 0);
+  FieldActor_JumpDownLedge(gGameState.selectedActor, 6, 0);
 }
 
 /// Walking west into the obstacle at trigger 30 in Colosseum Final 2 only
@@ -1297,7 +1297,7 @@ static void Event_TalkToWallAttendant(s32 attendant) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 488, 248);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
-    FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
+    FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
     Engine_CameraMoveTo(PIXELS(536), -1, PIXELS(160), 1);
     Engine_EventShowMessage(attendant, 0);
     Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);

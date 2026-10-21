@@ -559,7 +559,7 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
 /// started and lands. The landing plays the queued sound
 /// (FieldFx_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
 /// (MAP_CELL_LEDGE) with pose 6 and param 0, and by seven scenes through
-/// FieldBattleFx_RunRisingObjectSequence; Mercury Lighthouse passes -1.
+/// FieldActor_JumpDownLedge; Mercury Lighthouse passes -1.
 void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
   s32 nextY;
   s32 startZ;

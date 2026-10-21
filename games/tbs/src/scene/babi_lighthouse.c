@@ -419,7 +419,7 @@ static void BabiLighthouse_ClimbDownOrAdvancePair(void) {
 /// Raises the leader, then closes the screen before a room transition.
 static void BabiLighthouse_RiseAndCloseScreen(void) {
   Camera_MoveTo(-1, -1, -1, 0);
-  FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
+  FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
 }

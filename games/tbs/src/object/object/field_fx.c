@@ -253,7 +253,7 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
 /// above the leader, with waits of 60 and 80 frames around that when both are
 /// set. The leader then returns to animation 1. Scene overlays call it as
-/// Engine_RunRisingObjectSequence (six of them).
+/// Engine_ItemShowPicture (six of them).
 void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 

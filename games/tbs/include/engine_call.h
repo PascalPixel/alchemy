@@ -61,8 +61,7 @@ static inline void FieldMap_SetViewBounds(s32 minX, s32 minY, s32 maxX,
   Map_SetViewBounds(minX, minY, maxX, maxY);
 }
 
-static inline void FieldBattleFx_RunRisingObjectSequence(s32 actor, s32 mode,
-                                                         s32 action) {
+static inline void FieldActor_JumpDownLedge(s32 actor, s32 mode, s32 action) {
   Actor_JumpDownLedge(actor, mode, action);
 }
 

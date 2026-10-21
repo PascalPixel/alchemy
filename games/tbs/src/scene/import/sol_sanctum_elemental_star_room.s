@@ -85,7 +85,7 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventCloseScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Engine_RunRisingObjectSequence, 1
+	.set import.Engine_ItemShowPicture, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Shop_PickUnitItem, 1
 	.set import.Engine_AudioPlayCue, 1

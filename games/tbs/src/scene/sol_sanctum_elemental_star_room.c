@@ -2167,7 +2167,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   Engine_VramLoad(sprite->slot, 128, glyph->tiles);
   Engine_HeapRelease(17);
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
-  Engine_RunRisingObjectSequence(actor, 3);
+  Engine_ItemShowPicture(actor, 3);
   Inventory_Discard(owner, slot);
   Inventory_AddItem(owner, item);
   Engine_ObjectDispatchRelease(actor);

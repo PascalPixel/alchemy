@@ -71,7 +71,7 @@
 	.set import.Engine_ColorBufferInterpolate, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Engine_RunRisingObjectSequence, 1
+	.set import.Engine_ItemShowPicture, 1
 	.set import.Engine_PsynergyBegin, 1
 	.set import.FieldFx_End, 1
 	.set import.Engine_AudioPlayCue, 1

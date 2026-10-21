@@ -31,7 +31,7 @@
 	.set import.Engine_EventRequestExit, 1
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
-	.set import.Engine_ResetSceneEffectCounter, 1
+	.set import.Engine_FieldEndBusyAndReveal, 1
 	.set import.Motion_LaunchFromFocusedObject, 1
 	.set import.Engine_ActorWalkByAndWait, 1
 	.set import.Engine_ActorSetActionCallback, 1

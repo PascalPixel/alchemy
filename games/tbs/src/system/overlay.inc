@@ -320,7 +320,7 @@
 	import Event_SetDestination, Event_SetDestinationFar
 	import Engine_EventRequestExit, Event_SetExitRequestFar
 	import Field_RequestBattleFromEncounterTable, Field_RequestBattleFromEncounterTableFar
-	import Engine_BattleFxSetWeightedResult, Field_RequestBattleFromEncounterTableFar
+	import Engine_EncounterRequestBattle, Field_RequestBattleFromEncounterTableFar
 	import Field_RequestDjinnBattle, Field_RequestDjinnBattleFar
 	import Engine_EventSetNextDestination, Event_SetNextDestinationFar
 	import Event_SetNextDestination, Event_SetNextDestinationFar
@@ -350,8 +350,8 @@
 	import Engine_DisplayScrollStartHBlankDma, DisplayScroll_InitializeHBlankDmaFar
 	import DisplayScroll_DisarmHBlankDma, DisplayScroll_DisarmHBlankDmaFar
 	import FieldFx_PlayCueAndStartEmitterOnTarget, FieldFx_PlayCueAndStartEmitterOnTargetFar
-	import Engine_BattleFxPlayCueAndStartEmitterOnTarget, FieldFx_PlayCueAndStartEmitterOnTargetFar
-	import Engine_RunRisingObjectSequence, ItemDisplay_ShowPictureFar
+	import Engine_FieldFxPlayCueAndStartEmitterOnTarget, FieldFx_PlayCueAndStartEmitterOnTargetFar
+	import Engine_ItemShowPicture, ItemDisplay_ShowPictureFar
 	import Engine_ItemShowFound, FieldFx_StartEffectObject22Far
 	import Engine_MapObjectSetPosition, Marker_SetActorPositionFar
 	import Marker_MoveLeaderAway, Marker_MoveLeaderAwayFar
@@ -371,7 +371,7 @@
 	import Engine_PsynergyRaiseHands, EventObject_InitializeFar
 	import EventObject_Initialize, EventObject_InitializeFar
 	import Field_EndBusyAndReveal, Field_EndBusyAndRevealFar
-	import Engine_ResetSceneEffectCounter, Field_EndBusyAndRevealFar
+	import Engine_FieldEndBusyAndReveal, Field_EndBusyAndRevealFar
 	import RunSceneTransitionEffect, RunSceneTransitionEffectFar
 	import Engine_PsynergyCancel, FieldFx_FinishSceneAndReleaseHeapBlockFar
 	import Ui_SetBank15PaletteAndClearRenderMode, Ui_SetBank15PaletteAndClearRenderModeFar
@@ -380,7 +380,7 @@
 	import Menu_AskYesNo, Menu_AskYesNoFar
 	import Audio_PlayCueFromEventWork, Audio_PlayCueFromEventWorkFar
 	import Djinn_JoinParty, Djinn_JoinPartyFar
-	import Engine_BattleFxRunPageEffectForSlot, Djinn_JoinPartyFar
+	import Engine_DjinnJoinParty, Djinn_JoinPartyFar
 	import EffectSlot_HasPendingTarget, EffectSlot_HasPendingTargetFar
 	import EffectSlot_SetObjectMode, EffectSlot_SetObjectModeFar
 	import EffectSlot_SetCallback, EffectSlot_SetCallbackFar

@@ -2486,7 +2486,7 @@ static void Event_EnterRisingPassage(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   (void)VenusLighthouse_CreateBlendedPassageEffect(PIXELS(520), 0, PIXELS(784),
                                                    223);
-  FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
+  FieldActor_JumpDownLedge(0, 6, 0);
   Engine_EventWait(60);
   Engine_EventRequestExit(
       VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING);

@@ -664,10 +664,16 @@ void Menu_DrawModeLabel(void) {
 #define PASSWORD_HELP_X 0
 #endif
 
+// French alone redraws the transfer help its own way: it releases the help's
+// render outputs instead of preparing them for a redraw, and draws Cable's
+// help only when coming from Password. Spanish and Italian, which take the
+// French updates (TBS_PATCH_3), keep the others' form, so the test is on
+// the language.
+// XXX: why French needs its own redraw is unknown; a French recording of the
+// menu switching methods would show what it changes.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
-/// Redraws password/cable transfer help when the chosen method changes.
-/// The French layout keeps its distinct line splitting and redraw path. A
+/// Redraws password/cable transfer help when the chosen method changes. A
 /// scheduler callback of the transfer method menu: Password (0) or Cable.
 void Menu_DrawModeIndicator(void) {
   struct ResourceMenuWork *state = gMenuSelectWork;

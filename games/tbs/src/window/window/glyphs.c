@@ -210,10 +210,10 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
   return width;
 }
 
-// The German, Spanish, French and Italian editions count every character up
-// to 0xff as 10 pixels, and those above as nothing.
-#if (LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||            \
-     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN)
+// From the German release on, every character up to 0xff counts as 10
+// pixels, and those above as nothing. English draws the same Latin font with
+// its glyph widths, so the change is an update, not the language's.
+#if TBS_PATCH_2
 #define WIDE_WIDTH_FIXED 1
 #endif
 

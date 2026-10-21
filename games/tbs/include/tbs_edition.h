@@ -274,11 +274,11 @@
 #define REEL_RELEASE_X 23
 #define REEL_RELEASE_WIDTH 7
 #endif
-// The reel game's count of Game Tickets left after the bet: three digits in
-// French, Italian and Spanish, which also show the hold hint after every spin
-// but the fourth and last.
-#if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN) ||         \
-    (LANGUAGE == LANGUAGE_SPANISH)
+// The reel game's count of Game Tickets left after the bet takes three digits
+// from the French release on, one tile further left so that it ends where the
+// two did, and the hold hint no longer follows the fourth and last spin, after
+// which no reel can be held. Neither is about words, so both are updates.
+#if TBS_PATCH_3
 #define REEL_COIN_DIGITS 3
 #define REEL_COIN_X 56
 #define REEL_HINT_BEFORE_LAST_SPIN 1

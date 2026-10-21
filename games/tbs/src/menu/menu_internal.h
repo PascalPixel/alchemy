@@ -123,8 +123,12 @@ enum StatusPanelKind {
 /// part below them.
 #define STATUS_PANEL_LOWER_ONLY 0x100
 
-// The revised information pane restores its tiles and draws directly into them.
-#if TBS_PATCH_1
+// The information pane's text: outside Japanese it is drawn character by
+// character into the window's tiles, so clearing it redraws the empty frame;
+// the Japanese edition decodes it into the text canvas (UiText_DrawResource),
+// so clearing it releases the canvas's render outputs. Both follow the text
+// system, so the test is on the language.
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define MENU_RESET_INFO_WINDOW RenderOutput_RedrawSavedRectFar
 #define MENU_DRAW_INFO_TEXT UiText_DrawCharacterAtOffsetFar
 #else

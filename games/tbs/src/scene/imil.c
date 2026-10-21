@@ -1135,7 +1135,7 @@ static void Imil_MiaCastsPlyOnOldMan(void) {
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
 }
 
 /// Resets a rising effect's motion, sprite priority, and initial scale.

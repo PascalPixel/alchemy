@@ -137,7 +137,7 @@ void FieldFx_RunDouse(void) {
   lightOrb = (struct Effect05Object *)Object_Spawn(0xef, step = 0, 0, 0);
   if (lightOrb == 0)
     return;
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   AudioCommand_PlayFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
   if (work->initialized == 0) {

@@ -256,8 +256,8 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
     case PSYNERGY_STEP_APPLY:
       chosenTarget = 0;
       actionEntry = menu->paneAction[0];
-      useResult = BattleEffect_ApplyToTargets(actionEntry, menu->ownerIds[0],
-                                              menu->ownerIds[1], 0);
+      useResult = Ability_ApplyToTargets(actionEntry, menu->ownerIds[0],
+                                         menu->ownerIds[1], 0);
       if (menu->ownerIds[1] == MENU_TARGET_WHOLE_PARTY) {
         menu->ownerIds[1] = menu->ownerIds[0];
         chosenTarget = MENU_TARGET_WHOLE_PARTY;

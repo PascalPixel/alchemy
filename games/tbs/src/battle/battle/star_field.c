@@ -294,8 +294,8 @@ s32 BattleFx_InitializeStarField(s32 element) {
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(Q_8_8(1), &REG_BG2PD);
-  BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
-  BattleEffect_LoadWorkFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+  BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+  BattleFx_BuildBlitterFar(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
   Scheduler_AddOrUpdateCallback(STAR_FIELD_UPDATE_CALLBACK, 0xc80);
   return Scheduler_AddOrUpdateCallback(STAR_FIELD_UPLOAD_CALLBACK, 0xc80);
 }

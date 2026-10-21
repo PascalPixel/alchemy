@@ -97,7 +97,7 @@
 	.set import.WorldMap_EndEvent, 1
 	.set import.Engine_ActorLookup, 1
 	.set import.Engine_PsynergyBegin, 1
-	.set import.BattleEffect_CleanupSceneObjects, 1
+	.set import.FieldFx_End, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.BattleFx_ScheduleRatioTransition, 1
 	.set import.Event_WaitForZoomTransition, 1

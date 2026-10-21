@@ -90,7 +90,7 @@ struct ArcSprite {
 /// down); they follow it for 32 frames, then free themselves. They draw
 /// with the effect's spark tiles, so they need the effect's work; the
 /// casting hooks below spawn them every 16 frames, and
-/// BattleEffect_CleanupSceneObjects waits for the last to end (at most 30
+/// FieldFx_End waits for the last to end (at most 30
 /// frames).
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   struct BattleFxScene *scene = gEffectWork;

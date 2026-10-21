@@ -87,10 +87,10 @@ void BattleFx_Run(void) {
     if (Scene_FindActorTalkEvent(nearestTargetId) != 0) {
       BattleFx_SetupObjectPair(gGameState.selectedActor, nearestTargetId);
       BattleFx_MarkChildAndRunFallbackTransition(nearestTargetId);
-      BattleEffect_PauseObject(nearestTargetId);
+      FieldFx_PauseObject(nearestTargetId);
       gGameState.pausedObject = nearestTargetId;
     } else {
-      BattleEffect_RunFallbackObjectTransition();
+      FieldFx_RunHalt();
     }
     return;
   case FIELD_KIND_MIND_READ:
@@ -165,7 +165,7 @@ void BattleFx_DispatchRequestKind(void) {
       BattleFx_ResumeObject(gGameState.pausedObject);
       gGameState.pausedObject = -1;
     }
-    BattleEffect_PauseObject(targetId);
+    FieldFx_PauseObject(targetId);
     gGameState.pausedObject = targetId;
     BattleFx_MarkChildAndRunFallbackTransition(targetId);
     break;

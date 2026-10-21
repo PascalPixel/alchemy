@@ -541,7 +541,7 @@ const s32 gBattleFx_LongEffectScript[] = {
 };
 
 /// The sprite params a paused object flickers through at random
-/// (BattleEffect_SetRandomTableValueOnObject, halt.c): 0 twice as often as
+/// (FieldFx_UpdatePausedObject, halt.c): 0 twice as often as
 /// each of 1 to 6.
 const s8 gBattleFx_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 

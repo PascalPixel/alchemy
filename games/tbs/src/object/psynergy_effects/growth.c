@@ -59,7 +59,7 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
 
   target = ((struct BattleFxScene *)gEffectWork)->child;
   if (target != NULL) {
-    BattleEffect_SpawnBurstParticleField();
+    FieldFx_SpawnBurstParticleField();
     ObjectDispatch_SelectAnimationFar(target, 2);
     target->collisionFlags = 0;
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
@@ -85,7 +85,7 @@ void FieldFx_RunGrowth(void) {
   struct BurstParticleVector *p;
   s32 remainingObjects;
 
-  BattleEffect_SpawnBurstParticleField();
+  FieldFx_SpawnBurstParticleField();
   AudioCommand_PlayFar(SE_HEAVY_IMPACT);
   p = &pos;
   remainingObjects = GROWTH_FALL_LAST;
@@ -117,7 +117,7 @@ void FieldFx_RunGrowth(void) {
 /// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise. Each
 /// flies at 1.5 pixels a frame and is freed on arrival; facing north, the
 /// points are 14 pixels further north.
-void BattleEffect_SpawnBurstParticleField(void) {
+void FieldFx_SpawnBurstParticleField(void) {
   struct BattleFxScene *work;
   struct FieldActor *caster;
   s32 pos[3];
@@ -125,7 +125,7 @@ void BattleEffect_SpawnBurstParticleField(void) {
 
   work = gEffectWork;
   caster = work->mainObject;
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
 
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
        particleIndex++) {

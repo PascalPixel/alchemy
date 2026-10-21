@@ -167,7 +167,7 @@ extern const u8 gBattleFx_SparkTiles[];
 extern const u8 gBattleFx_QuadrantModes[];
 /// The eight tints (PALETTE_TRANSFORM_TINT and an RGB555 colour) a field
 /// Psynergy effect fades the palettes toward, picked by the frame counter or
-/// by the FLAG_PSYNERGY_TINT flags (BattleEffect_InitializeSharedScene).
+/// by the FLAG_PSYNERGY_TINT flags (FieldFx_FadeToEffectColor).
 extern const s32 gBattleFx_TargetColors[];
 /// Where SparkWork.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.

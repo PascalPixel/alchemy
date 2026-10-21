@@ -92,7 +92,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   moved = 0;
   if (target == NULL)
     return;
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   user->linkedObject = target;
   ObjectDispatch_InitializeFar((struct DispatchObject *)user,
                                gBattleFx_SourceHoldScript);
@@ -322,7 +322,7 @@ void FieldFx_RunMove(void) {
    * mainObject load below the frame's sub sp; as a plain call, 2 of 24
    * instructions differ in tbs-en. */
   do {
-    BattleEffect_InitializeSharedScene();
+    FieldFx_FadeToEffectColor();
   } while (0);
   object = BattleFx_StartItemBreak(object);
   BattleFx_SnapScaleToFull(object);

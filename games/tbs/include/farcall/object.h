@@ -120,7 +120,7 @@ void Field_DispatchTypeHandlerFar(s32 kind);
 void BattleFx_LoadActionEffectResourcesFar(s32 abilityId, s32 mode);
 void BattleFx_SetupObjectPairFar(s32 user_id, s32 targetId);
 void EffectRuntime_StopCurrentObjectFar(void);
-void BattleEffect_CleanupSceneObjectsFar(void);
+void FieldFx_EndFar(void);
 void EventObject_InitializeFar(void);
 void Battle_ResetEffectCounterFar(void);
 void RunSceneTransitionEffectFar(s32 x, s32 y);
@@ -156,7 +156,7 @@ void ObjectMotion_OffsetPositionAndResetFar(u32 objectId, s32 x_offset,
 void ObjectMotion_CommitPositionAndActivateFar(u32 objectId, s32 x_offset,
                                                s32 z_offset);
 void Object_LinkObjectAndSetCallbackFar(u32 objectId, u32 linked_object_id);
-void BattleEffect_PauseObjectFar(s32 id);
+void FieldFx_PauseObjectFar(s32 id);
 /// Far call to ObjectTable_Snapshot.
 void SaveState_CaptureObjectTableFar(void);
 void ObjectTable_RestoreFar(void);

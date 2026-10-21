@@ -39,7 +39,7 @@ STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x3000);
 /// The colour buffer (HEAP_SLOT_PALETTE_BUFFER) that fades the BG and OBJ
 /// palettes: the source palette, the shown and target colour channels, their
 /// per-frame steps, and two pages of packed RGB555 colours queued each frame.
-/// Field_RunScene allocates it on scene load (BattleEffect_InitializeBuffers),
+/// Field_RunScene allocates it on scene load (ColorBuffer_Initialize),
 /// and gPaletteBufferWork reads it.
 struct BattleEffectBuffers {
   /// The source palette, RGB555: 224 BG colours, then 224 OBJ colours;

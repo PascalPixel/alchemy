@@ -104,10 +104,10 @@ Functions are named for what they act on:
 | `EffectSlot_` | effect slots |
 | `FieldFx_` | field Psynergy effects; a kind's runner is named for its Psynergy (`FieldFx_RunCatch`) |
 | `ReelGame_`, `LzPack_` | the slot machine, and the LZ packer beside it |
-| `BattleFx_`, `BattleEffect_` | older names on field Psynergy code |
+| `BattleFx_` | older names on field Psynergy code |
 
 Other functions keep the prefixes of the engine's other families. The
-`BattleFx_` and `BattleEffect_` names here are shared with other folders or
+`BattleFx_` names here are shared with other folders or
 with The Lost Age's copies of this code, so they stay until a rename across
 all of them.
 
@@ -373,8 +373,8 @@ Still unknown:
 - XXX: the request fields' names (`descriptor` for talking, `command` for
   Psynergy, `input` for a pushed tile) say less than their handlers do; they
   are shared with other folders and wait for a rename.
-- XXX: the `BattleFx_` and `BattleEffect_` names on field Psynergy code are
-  older than the `FieldFx_` prefix and wait for a rename across folders.
+- XXX: the `BattleFx_` names on field Psynergy code are older than the
+  `FieldFx_` prefix and wait for a rename across folders.
 - XXX: nothing in the scenes calls the `Event_ShowSpeakerMessage` and
   `Event_ShowMessageAtPosition` entry points. Their position limits resemble
   pixels, but their window service takes tiles; a caller establishing the

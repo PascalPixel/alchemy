@@ -260,7 +260,7 @@ each keeps its spelling until it is.
   `WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER)` (`TretPalette_UpdateSceneTint`,
   `SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue`), or
   `*(gWorkSlot + HEAP_SLOT_PALETTE_BUFFER)`
-  (`BattleEffect_InitializeSharedScene`). It's also reached from a
+  (`FieldFx_FadeToEffectColor`). It's also reached from a
   neighbouring slot, as in Menus below: as
   `gFieldBlendWork[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_FIELD_BLEND]`
   (`FieldFx_UpdateLightning`), or as

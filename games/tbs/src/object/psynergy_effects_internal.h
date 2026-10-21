@@ -266,7 +266,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
     s32 dist;                                                                  \
                                                                                \
     work = gEffectWork;                                                        \
-    BattleEffect_InitializeSharedScene();                                      \
+    FieldFx_FadeToEffectColor();                                               \
     pos.x = work->x;                                                           \
     pos.y = work->y + 0x100000;                                                \
     pos.z = work->z;                                                           \
@@ -368,7 +368,7 @@ enum MercuryDropletState {
 };
 
 /// The states of a Mars Djinni's spark
-/// (BattleEffect_UpdatePhasedRadialParticle), which Djinn_RunMarsJoinEffect
+/// (FieldFx_UpdatePhasedRadialParticle), which Djinn_RunMarsJoinEffect
 /// moves on to MARS_SPARK_STOPPING and then MARS_SPARK_LEAVING.
 enum MarsSparkState {
   MARS_SPARK_AIM = 0,    ///< aimed 120 pixels up the screen from its origin

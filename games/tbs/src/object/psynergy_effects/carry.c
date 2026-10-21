@@ -71,7 +71,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   target = work->child;
   if (target == NULL)
     return;
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   src->linkedObject = target;
   ObjectDispatch_InitializeFar((struct DispatchObject *)src,
                                gBattleFx_SourceHoldScript);

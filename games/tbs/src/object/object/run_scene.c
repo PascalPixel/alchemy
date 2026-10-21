@@ -77,7 +77,7 @@ s32 Field_RunScene(s32 entrance) {
     Map_CenterOnFollowedPointFar();
   }
   Field_PlaceMapMarkers();
-  BattleEffect_InitializeBuffers();
+  ColorBuffer_Initialize();
   BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
   // The default fade is from the backdrop colour over 16 frames; the scene's
   // initialization may choose another.

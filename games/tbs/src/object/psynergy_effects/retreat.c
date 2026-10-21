@@ -115,7 +115,7 @@ void FieldFx_RunRetreat(void) {
 
   FieldEvent_Begin();
   Camera_MoveWithinMapBounds(-1, -1, -1, 0);
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   WaitFrames(10);
   ObjectMotion_ArmCallback(scene->firstObjectId, 0x4000, 0);
   WaitFrames(30);

@@ -3169,7 +3169,7 @@ static void VaultInteriors_BeginMindRead(s32 casterId, s32 targetId) {
 static void VaultInteriors_EndMindRead(void) {
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
 }
 
 #include "common/vault_itemobj.h"

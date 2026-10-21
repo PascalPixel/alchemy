@@ -572,7 +572,7 @@ static void Kolima_ReadVillagerThoughts(s32 actorId, s32 targetId) {
 static void Kolima_FinishReadingThoughts(void) {
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
 }
 
 /// Gives the four companions the same nod, waiting on the final actor.

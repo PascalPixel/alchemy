@@ -7,7 +7,7 @@
 /// Effect slot callback (enum OutAndBackState): the particle heads for a point
 /// 40 to 70 pixels from where it appeared, then for a point 4 pixels round 8
 /// pixels above the effect's position on screen, and is freed on arrival. Set
-/// on the 16 particles of BattleEffect_RunFallbackObjectTransition. They fly
+/// on the 16 particles of FieldFx_RunHalt. They fly
 /// out straight at up to 4 pixels a frame and come back turning at most 1/16
 /// turn a frame.
 void BattleFx_UpdateRadialCamera(struct EffectSlot *effect) {
@@ -62,14 +62,14 @@ top:
 }
 
 /// Pauses the target (scene->child) and runs
-/// BattleEffect_RunFallbackObjectTransition. Called by BattleFx_Run and
+/// FieldFx_RunHalt. Called by BattleFx_Run and
 /// BattleFx_DispatchRequestKind for Halt on a target; sets the target's
 /// paused field.
 void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
   struct FieldActor *target = ((struct BattleFxScene *)gEffectWork)->child;
 
   target->paused = 1;
-  BattleEffect_RunFallbackObjectTransition();
+  FieldFx_RunHalt();
 }
 
 /// Throws an object from the caster to the effect's position over 10 frames
@@ -79,7 +79,7 @@ void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
 /// to 15 and sets scene->y to the caster's height.
 ///
 /// Abilities: Halt (FIELD_KIND_HALT).
-void BattleEffect_RunFallbackObjectTransition(void) {
+void FieldFx_RunHalt(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct MotionObject *caster = scene->mainObject;
   struct MotionObject *orb;
@@ -98,7 +98,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
     return;
 
   // From 16 pixels above the caster to 8 pixels above the effect's position.
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   from.x = caster->x;
   from.y = caster->y + (16 << 16);
   from.z = caster->z;
@@ -160,9 +160,9 @@ void BattleEffect_RunFallbackObjectTransition(void) {
 }
 
 /// Per-frame update of a paused object: gives its sprite one of the table's
-/// eight params at random. BattleEffect_PauseObject sets it, and
+/// eight params at random. FieldFx_PauseObject sets it, and
 /// BattleFx_ResumeObject looks for it to know the object was paused this way.
-void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
+void FieldFx_UpdatePausedObject(union FieldObject *fieldObject) {
   void *object = (void *)fieldObject;
   s8 *table = gBattleFx_RandomChildValues;
   s32 random = Random16();
@@ -177,7 +177,7 @@ void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
 /// fields, and stops its animation. gGameState keeps one object's state, so
 /// Halt resumes the one it stopped before it stops another; the paused
 /// object flickers through random sprite params meanwhile.
-void BattleEffect_PauseObject(s32 actorId) {
+void FieldFx_PauseObject(s32 actorId) {
   struct FieldActor *object;
   struct AnimationEntry *entry;
 
@@ -191,14 +191,14 @@ void BattleEffect_PauseObject(s32 actorId) {
         gGameState.pausedPose = entry->param;
       }
     }
-    object->update = BattleEffect_SetRandomTableValueOnObject;
+    object->update = FieldFx_UpdatePausedObject;
     object->paused = 1;
     ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 0);
   }
 }
 
 /// Resumes object id with the update and param kept by
-/// BattleEffect_PauseObject. Called for gGameState.pausedObject by BattleFx_Run
+/// FieldFx_PauseObject. Called for gGameState.pausedObject by BattleFx_Run
 /// and BattleFx_DispatchRequestKind before Halt stops another object, and by
 /// Scene_TalkToActor after talking to the paused actor. Clears
 /// gGameState.pausedUpdate and the object's paused field, and restarts its
@@ -206,7 +206,7 @@ void BattleEffect_PauseObject(s32 actorId) {
 void BattleFx_ResumeObject(s32 actorId) {
   struct FieldActor *object = ObjectTable_Get(actorId);
   if (object != 0) {
-    if (object->update == BattleEffect_SetRandomTableValueOnObject) {
+    if (object->update == FieldFx_UpdatePausedObject) {
       struct GameState *state = &gGameState;
       object->update = (void (*)(union FieldObject *))state->pausedUpdate;
       state->pausedUpdate = 0;

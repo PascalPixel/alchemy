@@ -315,7 +315,7 @@ clipped both ways: `[0]` keeps the brighter pixel and `[1]` adds, both mirrored
 when it's passed the targets' side. The battle's star field
 (`battle/battle/star_field.c`) and `object/colorfx.c` use the builder too. They
 sit in other banks of the game's code, so they reach it through
-`BattleEffect_LoadWorkFar`, one of the 8-byte jumps in
+`BattleFx_BuildBlitterFar`, one of the 8-byte jumps in
 `system/far_call/EFFECT.S` that let code in one bank call into another.
 
 The builder walks a template, `BattleFx_Composite`, word by word (an ARM

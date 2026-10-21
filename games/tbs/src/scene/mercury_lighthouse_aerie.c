@@ -1730,7 +1730,7 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
 }
 
 /// A beacon spark's update: it swings round the flame it is linked to, its

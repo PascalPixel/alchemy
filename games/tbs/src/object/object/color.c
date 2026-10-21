@@ -37,7 +37,7 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
 /// one step toward its target, packs it into RGB555 and queues it for the BG
 /// and OBJ palettes. The packed colours are double-buffered: work->page names
 /// the page the queued DMA reads, and the other is written. Registered by
-/// BattleEffect_InitializeBuffers as a scheduler callback; the menus clear
+/// ColorBuffer_Initialize as a scheduler callback; the menus clear
 /// and set FLAG_PALETTE_BLEND_HELD around it (menu/common.c).
 void BattlePalette_UpdateBlend(void) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
@@ -102,7 +102,7 @@ extern u16 gBattlePalette_ChannelCurveContrast[];
 /// colour; the other PALETTE_TRANSFORM_* values transform each colour; any
 /// other value is the address of a ready buffer to copy. half: 0 for all 448
 /// colours, 1 for the BG's 224, 2 for the OBJ's 224. Called by the
-/// ApplyColorTo functions below, BattleEffect_InitializeBuffers and the
+/// ApplyColorTo functions below, ColorBuffer_Initialize and the
 /// weather effects (psynergy_effects/weather.c).
 void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
@@ -368,7 +368,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
 /// Sets up the colour buffer (gPaletteBufferWork) from the BG and OBJ palettes
 /// and starts updating the palettes from it each frame. Called by
 /// Field_RunScene on scene load.
-void BattleEffect_InitializeBuffers(void) {
+void ColorBuffer_Initialize(void) {
   struct BattleEffectBuffers *work;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_PALETTE_BUFFER, sizeof(*work));

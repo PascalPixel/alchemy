@@ -28,7 +28,7 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   if (target == NULL)
     return;
 
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   // The caster's script starts 3 words into the common particle script, with
   // the target as its argument.
   caster->argument = (s32)target;

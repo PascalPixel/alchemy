@@ -106,7 +106,7 @@ enum HeapSlot {
   HEAP_SLOT_TRANSITION = 31,
   /// The colour buffer (gPaletteBufferWork) that moves the BG and OBJ palettes
   /// toward target colours: the struct BattleEffectBuffers
-  /// BattleEffect_InitializeBuffers allocates on scene load, or the title
+  /// ColorBuffer_Initialize allocates on scene load, or the title
   /// intro's struct PaletteFade.
   HEAP_SLOT_PALETTE_BUFFER = 32,
   /// The floating lights of Sol Sanctum's Elemental Star room (struct
@@ -165,7 +165,7 @@ enum HeapSlot {
   HEAP_SLOT_MENU = 55,
   /// The Psynergy effect's work (struct BattleFxScene, gEffectWork). A field
   /// Psynergy holds it from BattleFx_LoadActionEffectResources to
-  /// BattleEffect_CleanupSceneObjects, a Djinni's joining from
+  /// FieldFx_End, a Djinni's joining from
   /// BattleFx_InitializeSlots to BattleFx_ClearActiveSlotsAndScheduleUpdates.
   HEAP_SLOT_FX = 56,
   /// The battle command menus' work (struct BattleMenuWork).

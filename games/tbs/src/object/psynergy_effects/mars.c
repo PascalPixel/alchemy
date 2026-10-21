@@ -6,7 +6,7 @@
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
-/// (BattleEffect_UpdatePhasedRadialParticle). The leader turns to the camera
+/// (FieldFx_UpdatePhasedRadialParticle). The leader turns to the camera
 /// and plays animation 28, the sparks swarm the leader, who pulses for 100
 /// frames, and the sparks vanish. Called by Djinn_JoinParty for a Mars Djinni,
 /// which then clears the Djinni's actor slot. Uses all 24 effect slots, tints
@@ -62,7 +62,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   remaining = 23;
   do {
     EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(slot, BattleEffect_UpdatePhasedRadialParticle);
+    EffectSlot_SetCallback(slot, FieldFx_UpdatePhasedRadialParticle);
     EffectSlot_SetObjectMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
                                               SPRITE_COLOR_RED_TINT);

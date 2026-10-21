@@ -2017,7 +2017,7 @@ static void AltinPeak_BeastFreezesSecondPuddle(void) {
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
   Engine_PsynergyLowerHands();
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
   Engine_AudioPlayCue(SE_288);
   Engine_ActorSetChildValue(ACTOR_FIRST_WATER_BEAST, 2);
 }

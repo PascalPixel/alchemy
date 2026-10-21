@@ -115,7 +115,7 @@ and [`unit/menu/title.h`](../../include/unit/menu/title.h), `clear.h` and
 | `CharacterMenu_`, `CharacterSelector_`, `StatusMenu_` | the Status screen and the member chooser |
 | `DjinnMenu_`, `Djinn_`, `OwnerAction_` | the Djinn screen, its lists and its preview loop |
 | `FourObjectMotion_` | the row of four figures the Status and Djinn screens show |
-| `Item_`, `Ability_`, `BattleEffect_` | using an item or Psynergy from the menu |
+| `Item_`, `Ability_` | using an item or Psynergy from the menu |
 | `Title_`, `Clear_`, `SaveMenu_`, `LinkLobby_`, `SceneData_` | the three overlays and their scene entry functions |
 | `UiWindow_`, `UiText_`, `UiIcon_`, `UiWork_`, `UiPalette_`, `Palette_`, `Resource_`, `Render_`, `Scheduler_` | windows, text, icons, palettes, VRAM slots and tasks, whose main code lives in other folders |
 

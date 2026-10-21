@@ -130,7 +130,7 @@
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// Set, the highest of these picks the tint a field Psynergy effect fades
 /// toward, gBattleFx_TargetColors[n], in place of the frame counter's pick
-/// (BattleEffect_InitializeSharedScene).
+/// (FieldFx_FadeToEffectColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// In debug mode, each step beeps (SE_135) while fewer than 136 of the 512
 /// resource blocks are free.

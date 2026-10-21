@@ -155,7 +155,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
       // On the world map the actors far from the view are removed while the
       // effect plays and placed again after it.
       if (work->mode == MODE_WORLD_MAP)
-        BattleEffect_ClearOutOfBoundsObjects();
+        ObjectTable_ClearOutOfBounds();
 
       if (element == 0) // Venus
         BattleFx_RunVenusDjinnCapture(slot);
@@ -168,7 +168,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 
       work->actors[slot] = 0;
       if (work->mode == MODE_WORLD_MAP)
-        BattleEffect_ClearAllObjects();
+        ObjectTable_Respawn();
     }
 
     Djinn_ShowJoinedMessageFar(owner, element, djinn);

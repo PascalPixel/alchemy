@@ -160,8 +160,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table);
 s32 ObjectTable_FindLastActiveId(void);
 void *ObjectTable_GetSlotAddress(u32 actorIndex);
 void Scene_AssignViewFlags(struct ScenePlacement *entry);
-void BattleEffect_ClearOutOfBoundsObjects(void);
-void BattleEffect_ClearAllObjects(void);
+void ObjectTable_ClearOutOfBounds(void);
+void ObjectTable_Respawn(void);
 void ObjectTable_ClearAll(void);
 void *ObjectTable_Get(u32 actorIndex);
 void ObjectTable_Snapshot(void);
@@ -259,7 +259,7 @@ void BattlePalette_UpdateBlend(void);
 #ifdef UBFIX
 void BattleFx_BuildBuffer();
 #endif
-void BattleEffect_InitializeBuffers(void);
+void ColorBuffer_Initialize(void);
 void BattlePalette_StopBlendAndReleaseBuffer(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half);
 void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half);

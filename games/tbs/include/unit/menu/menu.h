@@ -241,8 +241,8 @@ void Item_PrepareUsePalette(void);
 void Item_UseNoOpCallback(void);
 s32 Item_Use(s32 slot, s32 ownerId, s32 targetId);
 s32 Item_ReturnOne(void);
-s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
-                                s32 fixedScale);
+s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
+                           s32 fixedScale);
 void Item_PlayUseAnimation(u32 item);
 void Ability_PlayUseAnimation(s32 action);
 

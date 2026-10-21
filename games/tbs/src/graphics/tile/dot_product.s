@@ -1,10 +1,10 @@
 @ Two ARM routines in bank 09, beside the credits slides that use the second.
 @
-@ BattleEffect_DotProduct(ax, bx, ay, by, az, bz): the 16.16 dot product
+@ Vector_DotProduct(ax, bx, ay, by, az, bz): the 16.16 dot product
 @ ax*bx + ay*by + az*bz, the last two arguments on the stack, summed in 64
 @ bits and returned shifted right 16. Nothing in the game calls it.
 @
-@ BattleEffect_Expand(source, destination, offset): decodes a credits slide's
+@ Tile_ExpandSlide(source, destination, offset): decodes a credits slide's
 @ packed picture (r0) into 8bpp tiles (r1), 15 bands of 8 tiles of 32 rows,
 @ adding offset (r2, the same palette offset in every byte) to each pixel.
 @ Graphics_LoadCharacterBlockAndPalette (credits.c) copies it into a heap slot
@@ -12,7 +12,7 @@
 @ commands (expand.s) for wherever the copy landed.
 @
 @ Why assembly:
-@ C2: BattleEffect_DotProduct:
+@ C2: Vector_DotProduct:
 @ smull ip, r0, r1, r0 and both smlal ip, r0, r2, r3 keep the 64-bit sum
 @ with its low half in ip (r12) and its high half in r0. mulsidi3 and
 @ *mulsidi3adddi write a DI register pair, RdHi = RdLo + 1, earlyclobbered
@@ -25,14 +25,14 @@
 @ ldm sp, {r2, r3}, which reloads the two stack arguments into argument
 @ registers already consumed, has no writeback and is within the compiler's
 @ load-multiple patterns.
-@ C2: BattleEffect_Expand:
+@ C2: Tile_ExpandSlide:
 @ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified
 .text
 	.arm
-	.global BattleEffect_DotProduct
-BattleEffect_DotProduct:
+	.global Vector_DotProduct
+Vector_DotProduct:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}
@@ -43,8 +43,8 @@ BattleEffect_DotProduct:
 .syntax unified
 .text
 	.arm
-	.global BattleEffect_Expand
-BattleEffect_Expand:
+	.global Tile_ExpandSlide
+Tile_ExpandSlide:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r2
 	ldr	r2, [pc, #192]
@@ -68,23 +68,23 @@ BattleEffect_Expand:
 .Lcolumn:
 	mov	r7, #32
 .Lrow:
-	bl BattleEffect_ExpandRead
+	bl Tile_ExpandSlideRead
 	lsr	r6, r5, #25
-	bl BattleEffect_ExpandRead
+	bl Tile_ExpandSlideRead
 	orr	r6, r6, r5, lsr #17
-	bl BattleEffect_ExpandRead
+	bl Tile_ExpandSlideRead
 	orr	r6, r6, r5, lsr #9
-	bl BattleEffect_ExpandRead
+	bl Tile_ExpandSlideRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl BattleEffect_ExpandRead
+	bl Tile_ExpandSlideRead
 	lsr	r6, r5, #25
-	bl BattleEffect_ExpandRead
+	bl Tile_ExpandSlideRead
 	orr	r6, r6, r5, lsr #17
-	bl BattleEffect_ExpandRead
+	bl Tile_ExpandSlideRead
 	orr	r6, r6, r5, lsr #9
-	bl BattleEffect_ExpandRead
+	bl Tile_ExpandSlideRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

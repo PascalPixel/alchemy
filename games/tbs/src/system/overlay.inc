@@ -368,7 +368,7 @@
 	import Engine_PsynergySetTarget, BattleFx_SetupObjectPairFar
 	import EffectRuntime_StopCurrentObject, EffectRuntime_StopCurrentObjectFar
 	import Engine_PsynergyLowerHands, EffectRuntime_StopCurrentObjectFar
-	import BattleEffect_CleanupSceneObjects, BattleEffect_CleanupSceneObjectsFar
+	import FieldFx_End, FieldFx_EndFar
 	import Engine_PsynergyRaiseHands, EventObject_InitializeFar
 	import EventObject_Initialize, EventObject_InitializeFar
 	import Battle_ResetEffectCounter, Battle_ResetEffectCounterFar
@@ -397,7 +397,7 @@
 	import ObjectMotion_CommitPositionAndActivate, ObjectMotion_CommitPositionAndActivateFar
 	import Engine_ActorFollow, Object_LinkObjectAndSetCallbackFar
 	import Object_LinkObjectAndSetCallback, Object_LinkObjectAndSetCallbackFar
-	import BattleEffect_PauseObject, BattleEffect_PauseObjectFar
+	import FieldFx_PauseObject, FieldFx_PauseObjectFar
 	import ObjectTable_Snapshot, SaveState_CaptureObjectTableFar
 	import Engine_ActorsRefresh, ObjectTable_RestoreFar
 	import BattleFx_ScheduleRatioTransition, BattleFx_ScheduleRatioTransitionFar

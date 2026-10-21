@@ -120,7 +120,7 @@ void FieldFx_RunFrost(void) {
 
   scene = gEffectWork;
   target = scene->child;
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   AudioCommand_PlayFar(SE_115);
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,

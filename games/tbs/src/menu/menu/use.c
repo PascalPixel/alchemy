@@ -17,7 +17,7 @@ void Item_UseNoOpCallback(void) {}
 
 /// Uses the item in ownerId's inventory slot on targetId, or on every member
 /// when its action's range is ABILITY_RANGE_ALL: applies its action at its
-/// plain power (BattleEffect_ApplyToTargets with fixedScale 1). When the action
+/// plain power (Ability_ApplyToTargets with fixedScale 1). When the action
 /// changed something, an item that is used up (ITEM_USE_CONSUMED) loses one
 /// from its stack and the menu's list is rebuilt, and Hermes' Water
 /// (ITEM_USE_EMPTIES) becomes an Empty Bottle. Returns 0, or
@@ -34,8 +34,8 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   menu = gMenuWork;
   itemId = ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
-  useResult = BattleEffect_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
-                                          ownerId, targetId, 1);
+  useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
+                                     ownerId, targetId, 1);
   if (useResult != -1) {
     item = Item_GetDirectFar(unit->inventory[slot]);
     if (item->useType == ITEM_USE_CONSUMED) {
@@ -63,8 +63,8 @@ s32 Item_ReturnOne(void) { return 1; }
 /// message in the work's messageOffset, counted from MsgItemUseResult ("You
 /// recovered all HP!"). Returns 0 after recalculating every member, or -1 when
 /// nothing changed.
-s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
-                                s32 fixedScale) {
+s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
+                           s32 fixedScale) {
   struct BattleAct *effect;
   struct InventoryMenuState *menu;
   struct BattleUnit *target;

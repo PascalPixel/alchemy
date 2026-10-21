@@ -185,7 +185,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       work->resolvingAction = 1;
       BattleFx_Run();
       work->resolvingAction = 0;
-      BattleEffect_CleanupSceneObjects();
+      FieldFx_End();
 
       if (Item_GetDirectFar(itemId)->useType & 1)
         GameFlag_SetBitFar(FLAG_ITEM_USED_UP);
@@ -278,6 +278,6 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   FieldEvent_RunTypeHandler();
   EffectRuntime_StopCurrentObject();
   Field_RunEventAction(afterEvent, userId, target);
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
   return 0;
 }

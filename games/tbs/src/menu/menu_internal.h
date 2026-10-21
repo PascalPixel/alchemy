@@ -94,7 +94,7 @@ s32 _call_via_r3(void *, void *, s32, void *);
 #define FLAG_MENU_INFO_KEPT 0x151
 
 /// The target id the Psynergy screen passes for an action whose range is
-/// ABILITY_RANGE_ALL. It is no unit's id: BattleEffect_ApplyToTargets starts
+/// ABILITY_RANGE_ALL. It is no unit's id: Ability_ApplyToTargets starts
 /// from unit 0 in its place, and visits every member because of the range, not
 /// this id. The Item screen never passes it: a whole-party item is used with
 /// the work's paneOwner[1] as it stands (ItemMenu_Use), and its range alone
@@ -102,7 +102,7 @@ s32 _call_via_r3(void *, void *, s32, void *);
 #define MENU_TARGET_WHOLE_PARTY 9
 
 /// The result of using an item or Psynergy from the menu: its message,
-/// counted from MsgItemUseResult (BattleEffect_ApplyToTargets).
+/// counted from MsgItemUseResult (Ability_ApplyToTargets).
 enum ItemUseResult {
   ITEM_USE_RESULT_HP_FULLY_RECOVERED = 0, ///< "You recovered all HP!"
   ITEM_USE_RESULT_HP_RECOVERED = 1,       ///< "You recovered HP!"

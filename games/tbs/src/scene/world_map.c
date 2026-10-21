@@ -1613,7 +1613,7 @@ static void Event_MeetFlint(void) {
         WorldMap_CreateLinkedEffects(djinni);
       Task_Wait(1);
     }
-    BattleEffect_CleanupSceneObjects();
+    FieldFx_End();
     Engine_ObjectSetPartPalettes(djinni, 0);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);

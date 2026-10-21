@@ -1256,7 +1256,7 @@ static void ValeInteriorsInn_DemonstrateCatch(void) {
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
 }
 
 s32 gValeInteriorsInn_LeaveHouseScript[] = {

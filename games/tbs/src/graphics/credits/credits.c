@@ -149,8 +149,8 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   }
   // Offset every pixel into the selected palette half so both backdrops
   // can remain visible throughout a crossfade.
-  RamCode_LoadSlot(HEAP_SLOT_TEMP_RENDERER, BattleEffect_Expand,
-                   BattleEffect_ExpandCodeSize);
+  RamCode_LoadSlot(HEAP_SLOT_TEMP_RENDERER, Tile_ExpandSlide,
+                   Tile_ExpandSlideCodeSize);
   ((PackedDecoder)gWorkSlot[HEAP_SLOT_TEMP_RENDERER])(
       resourceData + 256, tileDestination, paletteOffset);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_TEMP_RENDERER);

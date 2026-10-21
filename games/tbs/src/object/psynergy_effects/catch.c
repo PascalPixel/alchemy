@@ -53,7 +53,7 @@ void FieldFx_RunCatch(void) {
   object = (struct MotionObject *)Object_Spawn(215, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   AudioCommand_PlayFar(SE_ITEM_BREAK);
   object->angle = actor->angle;
   object->speedLimit = 0x14ccc;

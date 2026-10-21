@@ -213,7 +213,7 @@ void FieldFx_RunWhirlwind(void) {
   if (ball == 0) {
     return;
   }
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   ObjectDispatch_SelectAnimationFar(ball, 2);
   do {
     s32 scale;

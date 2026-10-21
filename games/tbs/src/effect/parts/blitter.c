@@ -268,7 +268,7 @@
 /// Called through EFFECT_LOAD_BLITTER by nearly every canvas effect and by
 /// BattleFx_FetchRectangleBlitters, directly by the particle streams for a
 /// canvas 256 pixels wide, and from other banks through its far stub,
-/// BattleEffect_LoadWorkFar (the star field in battle/star_field.c and
+/// BattleFx_BuildBlitterFar (the star field in battle/star_field.c and
 /// object/colorfx.c).
 ///
 /// It allocates the slot's block (from IWRAM when it fits) at exactly the

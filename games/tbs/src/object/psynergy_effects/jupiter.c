@@ -124,7 +124,7 @@ DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 /// origin at up to 5 pixels a frame and starts over, until it stops where it
 /// arrives, hidden; 40 frames later it swarms to points within 4 pixels of
 /// one 20 pixels over the leader, until it is freed once it arrives.
-void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
+void FieldFx_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   struct Object *owner;
   struct EffectVector position;
   s32 state;

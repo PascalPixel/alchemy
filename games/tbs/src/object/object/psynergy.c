@@ -116,7 +116,7 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Play the effect.
   if (work->mode == MODE_WORLD_MAP)
-    BattleEffect_ClearOutOfBoundsObjects();
+    ObjectTable_ClearOutOfBounds();
   BattleFx_LoadActionEffectResources(abilityId, 0);
   work->resolvingAction = 1;
   BattleFx_SetupObjectPair(gGameState.selectedActor, target);
@@ -136,9 +136,9 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
   work->resolvingAction = 0;
-  BattleEffect_CleanupSceneObjects();
+  FieldFx_End();
   if (work->mode == MODE_WORLD_MAP)
-    BattleEffect_ClearAllObjects();
+    ObjectTable_Respawn();
   return 0;
 }
 

@@ -12,7 +12,7 @@ void BattleFx_UpdateAllEffectSlots(void) { FieldFx_UpdateSceneSlots(); }
 /// switches the ability.
 ///
 /// Field_UsePsynergy and the item uses (object/items.c) call it before an
-/// effect and BattleEffect_CleanupSceneObjects after it, which releases the
+/// effect and FieldFx_End after it, which releases the
 /// work, the spark tiles' resource entry and the scheduler callback started
 /// here. Goma Cave Entrance calls it too, for Ivan's Whirlwind on the
 /// stump's ivy.
@@ -52,7 +52,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
     work->lit = 1;
   BattleFx_SetupObjectPair(gGameState.selectedActor, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
-  // here) until BattleEffect_CleanupSceneObjects lets it run again.
+  // here) until FieldFx_End lets it run again.
   if (work->fieldKind != FIELD_KIND_REVEAL)
     ev->effectTimerRunning = running;
   work->tileSlot = Resource_FindFreeEntry();
@@ -122,7 +122,7 @@ void EffectRuntime_StopCurrentObject(void) {
 /// swelling arcs to end, stops the slot callback, releases the effect's
 /// tiles, restores the map's shake, plays the queued sound and releases the
 /// effect's work.
-void BattleEffect_CleanupSceneObjects(void) {
+void FieldFx_End(void) {
 #ifndef UBFIX
   struct BattleFxScene **sceneCell;
 #endif
@@ -200,7 +200,7 @@ void BattleEffect_CleanupSceneObjects(void) {
 /// it is quiet, the ability's name is shown while every other object stands
 /// still. With flag 0x140 the caster's colours keep cycling and it
 /// takes pose 21; otherwise the caster's hook stops. Sets the field work's
-/// castStarted, which BattleEffect_CleanupSceneObjects clears. Called by
+/// castStarted, which FieldFx_End clears. Called by
 /// Field_UsePsynergy and Goma Cave Entrance once the effect's caster and
 /// target are set up.
 void EventObject_Initialize(void) {
@@ -253,7 +253,7 @@ void EventObject_Initialize(void) {
 /// effect colours (gBattleFx_TargetColors), picked by the frame counter or
 /// forced by flags 0x148 to 0x14f, over 8 frames. Most field Psynergy
 /// effects open with it, and BattleFx_PrepareBufferInterpolation fades back.
-void BattleEffect_InitializeSharedScene(void) {
+void FieldFx_FadeToEffectColor(void) {
   u8 *scene;
   struct BattleEffectBuffers *work;
   s32 no;

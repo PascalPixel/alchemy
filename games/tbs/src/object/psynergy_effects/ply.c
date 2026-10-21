@@ -121,7 +121,7 @@ void FieldFx_RunPly(void) {
   u8 resourceSlot;
   s32 i;
 
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
 
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;

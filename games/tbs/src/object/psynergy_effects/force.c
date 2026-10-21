@@ -43,7 +43,7 @@ void FieldFx_RunForce(void) {
 
   scene = gEffectWork;
   target = scene->child;
-  BattleEffect_InitializeSharedScene();
+  FieldFx_FadeToEffectColor();
   AudioCommand_PlayFar(SE_130);
   slot = scene->slots;
 

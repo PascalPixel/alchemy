@@ -84,19 +84,24 @@
 
 /// The placed actors, numbered in the order of gMcCoyPalaceGroundsPlacements.
 enum McCoyPalaceGroundsActor {
-  /// A worker by the new palace, drawn in front. "The lumber I ordered from
+  /// A worker with a pickaxe by the new palace, drawn in front. "The lumber I
+  /// ordered from
   /// Kolima disappeared..."
   /// ★ Named from the game: "We'd still be working if we hadn't tried building
   /// using the holy tree." (MsgBilibinWedStillBeWorkingIfWe)
   ACTOR_WEST_WORKER = ACTOR_FIRST_PLACED,
-  /// The worker who wanders by the new palace. "Have you seen the barricade
+  /// The worker with a pickaxe who wanders by the new palace. "Have you seen
+  /// the barricade
   /// we built on..."
   /// ★ Named from the game: "Have you seen the barricade we built on the road
   /// to Kolima?" (MsgBilibinHaveYouSeenBarricadeWe)
   ACTOR_NORTH_WORKER,
-  ACTOR_LADY_MCCOY, ///< "Hmph! My palace is not finished!"
-  /// The guard at the gate who goes in ahead of the party. "Lord McCoy is so
-  /// upset about this curse that he can't even eat."
+  /// A woman with curly purple hair in a pink dress. "Hmph! My palace is not
+  /// finished!"
+  /// ★ Named from the game: "Lady McCoy" (MsgDebugGlyphName)
+  ACTOR_LADY_MCCOY,
+  /// The soldier in a spiked helmet at the gate who goes in ahead of the party.
+  /// "Lord McCoy is so upset about this curse that he can't even eat."
   ACTOR_WEST_GUARD,
   /// "The lord will only meet with brave..."
   /// ★ Named from what the player sees: the eastern of the two soldiers with
@@ -476,15 +481,15 @@ struct ScenePlacement gMcCoyPalaceGroundsPlacementsOther[] = {
 };
 
 struct ScenePlacement gMcCoyPalaceGroundsPlacements[] = {
-    { 0x87, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(103), 0, PIXELS(280), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x87, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(135), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x45, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(327), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(320), 0, PIXELS(263), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(334), 0, PIXELS(263), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, 7,
         PIXELS(216), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },

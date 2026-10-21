@@ -39,7 +39,7 @@
 /// not (the barricade hint flag); he thanks them, admits he relied on his money
 /// and forgot his people's needs, and has the captain take them to the treasure
 /// room (MCCOY_PALACE_HALL_TO_TREASURE_ROOM, place flag FLAG_PLACE_TEMP_22).
-/// There the captain and the keeper of the treasure present four chests
+/// There the captain and the soldier who keeps the treasure present four chests
 /// (Event_PresentRewardChests, FLAG_SCENE_TEMP_02 while choosing): searching
 /// one gives its Vial, Potion, Psy Crystal or Water of Life (FLAG_SCENE_TEMP_10
 /// to _13 record which); afterwards the chosen chest is empty and the others
@@ -49,10 +49,10 @@
 ///
 /// Elsewhere in the palace: a woman with Lady McCoy's silk nightgown dreams of
 /// sleeping in one, and after the reward screams when spoken to ("AAAAH!!!");
-/// an admirer (place flags FLAG_PLACE_TEMP_02 and
-/// FLAG_PLACE_TEMP_03 mark the first word and the first Mind Read); two barrels
-/// hold an Elixir and a Smoke Bomb; a wardrobe holds a silk negligee and a
-/// bookcase the list of McCoy's gifts to his wife. McCoy speaks with his
+/// an old man who praises the party's courage (place flags FLAG_PLACE_TEMP_02
+/// and FLAG_PLACE_TEMP_03 mark the first word and the first Mind Read); two
+/// barrels hold an Elixir and a Smoke Bomb; a wardrobe holds a silk negligee
+/// and a bookcase the list of McCoy's gifts to his wife. McCoy speaks with his
 /// portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY). FLAG_SCENE_TEMP_00
 /// records that the captain has opened McCoy's door.
 
@@ -91,42 +91,53 @@
 /// gMcCoyPalacePlacements' rows from ACTOR_FIRST_PLACED. Each note gives what
 /// they say before the reward, then after it.
 enum McCoyPalaceActor {
-  /// Points the way to McCoy. "If you want to see Lord McCoy, follow the red
-  /// carpet."; later "The people of Bilibin will never forget your bravery."
+  /// A burly grey-haired man; points the way to McCoy. "If you want to see Lord
+  /// McCoy, follow the red carpet."; later "The people of Bilibin will never
+  /// forget your bravery."
   ACTOR_VILLAGER_FOLLOW_RED_CARPET = ACTOR_FIRST_PLACED,
-  /// Warns the party about McCoy. "Make sure you don't offend Lord McCoy!";
-  /// later "I heard you received a spectacular reward."
+  /// A woman in a green dress; warns the party about McCoy. "Make sure you
+  /// don't offend Lord McCoy!"; later "I heard you received a spectacular
+  /// reward."
   /// ★ Named from the game: "Make sure you don't offend Lord McCoy!"
   /// (MsgBilibinMakeSureYouDontOffendLord)
   ACTOR_VILLAGER_DO_NOT_OFFEND_MCCOY,
+  /// A woman with fair hair.
   /// ★ Named from the game: "Oh, are you willing to go to Kolima Forest?"
   /// (MsgBilibinYouWillingGoKolimaForest)
   ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST,
-  /// Speaks of the old tree in Kolima Forest. "I always believed that the old
-  /// tree in Kolima Forest should be protected!"; later "Things are looking
-  /// grim south of Goma Range..."
-  ACTOR_VILLAGER_PROTECT_OLD_TREE,
-  /// Stands in Lady McCoy's room. "This is Lady McCoy's room, so don't touch
-  /// anything."; later "Milady was very upset when she left the room."
+  /// A boy with brown hair; speaks of the old tree in Kolima Forest. "I always
+  /// believed that the old tree in Kolima Forest should be protected!"; later
+  /// "Things are looking grim south of Goma Range..."
+  ACTOR_BOY_PROTECT_OLD_TREE,
+  /// A woman with fair hair standing in Lady McCoy's room. "This is Lady
+  /// McCoy's room, so don't touch anything."; later "Milady was very upset when
+  /// she left the room."
   ACTOR_VILLAGER_LADY_MCCOYS_ROOM,
-  /// Admires Lady McCoy. "Milady was renowned far and wide for her beauty!";
-  /// later "For once, milord didn't let Lady McCoy push him around!"
+  /// A woman with fair hair who admires Lady McCoy. "Milady was renowned far
+  /// and wide for her beauty!"; later "For once, milord didn't let Lady McCoy
+  /// push him around!"
   ACTOR_VILLAGER_MILADYS_BEAUTY,
-  /// Screams when spoken to ("AAAAH!!!"); Mind Read: "Oh, no! This nightgown
-  /// has a hole... Milady will be furious!"
+  /// A woman with fair hair; screams when spoken to ("AAAAH!!!"); Mind Read:
+  /// "Oh, no! This nightgown has a hole... Milady will be furious!"
   /// ★ Named from the game: "Oh, someday, I want to sleep in a silk nightgown
   /// like this." (MsgBilibinOhSomedayIWantToSleep)
   ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
+  /// An old man with a cane.
   /// ★ Named from the game: "You are a fine warrior." (MsgBilibinFineWarrior)
-  ACTOR_VILLAGER_PRAISING_THE_WARRIORS,
+  ACTOR_OLD_MAN_PRAISING_THE_WARRIORS,
+  /// A soldier in a spiked helmet.
   /// ★ Named from the game: "I was watching from here. After all that fuss,
   /// you still went to Kolima?" (MsgBilibinWasWatchingFromHereAfter)
-  ACTOR_VILLAGER_WATCHING_KOLIMA,
-  /// Shows the treasure room's chests, as the captain asks.
+  ACTOR_SOLDIER_WATCHING_KOLIMA,
+  /// A soldier in a spiked helmet; shows the treasure room's chests, as the
+  /// captain asks.
   /// ★ Named from the game: "Please show them their reward!"
   /// (MsgBilibinLordMccoyOrdered)
-  ACTOR_VILLAGER_SHOWING_THE_REWARD,
+  ACTOR_SOLDIER_SHOWING_THE_REWARD,
+  /// McCoy, the chief of Bilibin, a stout man with red hair in a pink tunic.
+  /// ★ Named from the game: "Lord McCoy" (MsgDebugGlyphName)
   ACTOR_LORD_MCCOY,
+  /// The captain of McCoy's soldiers, drawn as they are, in a spiked helmet.
   /// ★ Named from the game: "I dinnae want tae talk about it anymore.
   /// Captain?" (MsgBilibinWellSGoing)
   ACTOR_CAPTAIN,
@@ -166,9 +177,10 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 
-/// The people of McCoy's Palace. Once the reward is taken, the startled
-/// resident, the admirer, the Kolima watcher and the keeper of the treasure
-/// turn differently when talked to.
+/// The people of McCoy's Palace. Once the reward is taken, the woman in
+/// Milady's nightgown, the old man who praises the warriors, the soldier who
+/// watched the party go to Kolima and the soldier who keeps the treasure turn
+/// differently when talked to.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *placements;
 
@@ -180,13 +192,12 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
       gMcCoyPalacePlacements[ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN -
                              ACTOR_FIRST_PLACED]
           .talkFacing = TALK_KEEP_FACING;
-      gMcCoyPalacePlacements[ACTOR_VILLAGER_PRAISING_THE_WARRIORS -
+      gMcCoyPalacePlacements[ACTOR_OLD_MAN_PRAISING_THE_WARRIORS -
                              ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACE_PARTY;
-      gMcCoyPalacePlacements[ACTOR_VILLAGER_WATCHING_KOLIMA -
-                             ACTOR_FIRST_PLACED]
+      gMcCoyPalacePlacements[ACTOR_SOLDIER_WATCHING_KOLIMA - ACTOR_FIRST_PLACED]
           .talkFacing = 3;
-      gMcCoyPalacePlacements[ACTOR_VILLAGER_SHOWING_THE_REWARD -
+      gMcCoyPalacePlacements[ACTOR_SOLDIER_SHOWING_THE_REWARD -
                              ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACE_PARTY_AND_BACK;
     }
@@ -204,8 +215,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gMcCoyPalaceEventsOther;
 }
 
-/// McCoy's Palace, before the reward: a resident asks about going to Kolima.
-/// "Oh, are you willing to go to Kolima Forest?"
+/// McCoy's Palace, before the reward: a woman with fair hair asks about going
+/// to Kolima. "Oh, are you willing to go to Kolima Forest?"
 static void Event_AskAboutGoingToKolima(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinYouWillingGoKolimaForest);
@@ -215,7 +226,7 @@ static void Event_AskAboutGoingToKolima(void) {
 
 /// McCoy's Palace, after the reward: the woman with Lady McCoy's silk
 /// nightgown screams, then turns to the party. "AAAAH!!!"
-static void Event_TalkToStartledResident(void) {
+static void Event_TalkToWomanInMiladysNightgown(void) {
   Engine_EventBegin();
   Actor_ShowEmote(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, EMOTE_IN_FRONT | 2, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, 2);
@@ -230,34 +241,34 @@ static void Event_TalkToStartledResident(void) {
   Engine_EventEnd();
 }
 
-/// McCoy's Palace, after the reward: the admirer praises the party the first
+/// McCoy's Palace, after the reward: the old man praises the party the first
 /// time, then warns of the holy tree.
 /// "You are a fine warrior." After, "It's very reckless for such young
 /// warriors to face the holy tree..."
-static void Event_TalkToAdmirer(void) {
+static void Event_TalkToOldManPraisingTheWarriors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinFineWarrior);
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_02) != 0) {
     Engine_EventSetMessage(MsgBilibinItsVeryRecklessForSuch);
   }
-  Event_ShowMessage(ACTOR_VILLAGER_PRAISING_THE_WARRIORS, 0);
+  Event_ShowMessage(ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, 0);
   GameFlag_Set(FLAG_PLACE_TEMP_02);
   Engine_EventEnd();
 }
 
-/// McCoy's Palace, after the reward: the watcher saw the party go to Kolima.
+/// McCoy's Palace, after the reward: a soldier saw the party go to Kolima.
 /// "I was watching from here. After all that fuss, you still went to Kolima?"
-static void Event_TalkToKolimaWatcher(void) {
+static void Event_TalkToSoldierWatchingKolima(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasWatchingFromHereAfter);
-  Engine_EventAskYesNo(ACTOR_VILLAGER_WATCHING_KOLIMA, 0);
+  Engine_EventAskYesNo(ACTOR_SOLDIER_WATCHING_KOLIMA, 0);
   Engine_EventEnd();
 }
 
-/// McCoy's Palace, the treasure room: the keeper of the treasure. While the
-/// party chooses, only one item; after, the reward was the greatest; before,
-/// Bilibin's great treasures go to whoever ends the curse.
-static void Event_TalkToRewardKeeper(void) {
+/// McCoy's Palace, the treasure room: the soldier who keeps the treasure. While
+/// the party chooses, only one item; after, the reward was the greatest;
+/// before, Bilibin's great treasures go to whoever ends the curse.
+static void Event_TalkToSoldierShowingTheReward(void) {
   Engine_EventBegin();
 
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
@@ -271,28 +282,28 @@ static void Event_TalkToRewardKeeper(void) {
     }
   }
 
-  Engine_EventShowMessage(ACTOR_VILLAGER_SHOWING_THE_REWARD, 0);
+  Engine_EventShowMessage(ACTOR_SOLDIER_SHOWING_THE_REWARD, 0);
   Engine_EventEnd();
 }
 
-/// McCoy's Palace, after the reward: Mind Read on the admirer shows two
+/// McCoy's Palace, after the reward: Mind Read on the old man shows two
 /// thoughts. "Sometimes, we need children to remind us of our own
 /// responsibilities." Then "You looked very courageous walking toward
 /// Kolima."
-static void Event_ReadAdmirersThoughts(void) {
+static void Event_ReadOldMansThoughtsOnTheWarriors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinSometimesWeNeedChildrenRemind);
   if (GameFlag_IsSet(FLAG_PLACE_TEMP_03) != 0) {
     Engine_EventSetMessage(MsgBilibinLookedVeryCourageousWalkingToward);
   }
-  Event_ShowMessage(ACTOR_VILLAGER_PRAISING_THE_WARRIORS, 0);
+  Event_ShowMessage(ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, 0);
   GameFlag_Set(FLAG_PLACE_TEMP_03);
   Engine_EventEnd();
 }
 
-/// McCoy's Palace, the treasure room: Mind Read on the keeper of the treasure,
-/// whose thoughts follow the curse and the reward.
-static void Event_ReadRewardKeepersThoughts(void) {
+/// McCoy's Palace, the treasure room: Mind Read on the soldier who keeps the
+/// treasure, whose thoughts follow the curse and the reward.
+static void Event_ReadRewardSoldiersThoughts(void) {
   Engine_EventBegin();
 
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
@@ -306,7 +317,7 @@ static void Event_ReadRewardKeepersThoughts(void) {
     }
   }
 
-  Engine_EventShowMessage(ACTOR_VILLAGER_SHOWING_THE_REWARD, 0);
+  Engine_EventShowMessage(ACTOR_SOLDIER_SHOWING_THE_REWARD, 0);
   Engine_EventEnd();
 }
 
@@ -472,7 +483,7 @@ static void Event_CaptainSeesPartyOff(void) {
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 622, 764);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_NORTHEAST + FACING_STEP, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_CAPTAIN, 3);
-    Engine_ActorSetAnimationAndWait(ACTOR_VILLAGER_SHOWING_THE_REWARD, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_SOLDIER_SHOWING_THE_REWARD, 3);
     Engine_EventWait(20);
     Actor_FaceActor(ACTOR_CAPTAIN, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
@@ -1390,8 +1401,8 @@ static void Event_McCoyRewardsParty(void) {
 }
 
 /// McCoy's Palace, at MCCOY_PALACE_TREASURE_ROOM_FROM_HALL, the treasure room:
-/// the captain shows the four chests and the keeper of the treasure explains
-/// that only one may be chosen.
+/// the captain shows the four chests and the soldier who keeps the treasure
+/// explains that only one may be chosen.
 static void Event_PresentRewardChests(void) {
   struct FieldActor *actor;
 
@@ -1405,10 +1416,9 @@ static void Event_PresentRewardChests(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(577), PIXELS(760));
   Object_GetById(ACTOR_CAPTAIN)->facing = 0;
   Engine_ActorSetPosition(ACTOR_CAPTAIN, PIXELS(592), PIXELS(760));
-  Object_GetById(ACTOR_VILLAGER_SHOWING_THE_REWARD)->facing =
+  Object_GetById(ACTOR_SOLDIER_SHOWING_THE_REWARD)->facing =
       FACING_WEST + FACING_STEP;
-  Actor_SetPosition(ACTOR_VILLAGER_SHOWING_THE_REWARD, PIXELS(662),
-                    PIXELS(764));
+  Actor_SetPosition(ACTOR_SOLDIER_SHOWING_THE_REWARD, PIXELS(662), PIXELS(764));
   McCoyPalace_PositionRewardChests();
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_VIAL_CHEST), 0);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_POTION_CHEST), 0);
@@ -1442,8 +1452,8 @@ static void Event_PresentRewardChests(void) {
   Engine_EventShowMessageAndWait(ACTOR_CAPTAIN, 0, 10);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 622, 780);
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_NORTH, 10);
-  Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_SHOWING_THE_REWARD, 2);
-  Engine_EventShowMessageAndWait(ACTOR_VILLAGER_SHOWING_THE_REWARD, 0, 10);
+  Engine_ActorRunRepeatedMotion(ACTOR_SOLDIER_SHOWING_THE_REWARD, 2);
+  Engine_EventShowMessageAndWait(ACTOR_SOLDIER_SHOWING_THE_REWARD, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
@@ -1602,29 +1612,29 @@ struct ScenePlacement gMcCoyPalacePlacementsOther[] = {
 
 // clang-format off
 struct ScenePlacement gMcCoyPalacePlacements[] = {
-    { 0x65, 0x0, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, ACTOR_STAND,
         PIXELS(265), 0, PIXELS(702), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x73, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, ACTOR_STAND,
         PIXELS(342), 0, PIXELS(632), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6a, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(632), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6c, 0x0, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_BROWN_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(166), 0, PIXELS(728), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(326), 0, PIXELS(378), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0x0, ACTOR_WANDER,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_WANDER,
         PIXELS(362), 0, PIXELS(142), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x6a, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(87), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x67, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, 0x0, ACTOR_STAND,
         PIXELS(952), 0, PIXELS(289), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x96, 0x0, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, 0x0, ACTOR_STAND,
         PIXELS(951), 0, PIXELS(438), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(616), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x3a, 0x0, ACTOR_STAND,
+    { SPRITE_MCCOY, 0x0, ACTOR_STAND,
         PIXELS(894), 0, PIXELS(634), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xf5, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -1705,21 +1715,21 @@ struct SceneEvent gMcCoyPalaceEvents[] = {
     { EVENT_TALK, ACTOR_VILLAGER_DO_NOT_OFFEND_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinIHeardYouReceivedASpectacular) },
     { EVENT_TALK, ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST, FLAG_MCCOY_PALACE_REWARD_TAKEN, EVENT_SCRIPT(Event_AskAboutGoingToKolima) },
     { EVENT_TALK, ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST, CONDITION_ALWAYS, MSGNO(MsgBilibinLadyMccoyIsQuiteUpsetThat) },
-    { EVENT_TALK, ACTOR_VILLAGER_PROTECT_OLD_TREE, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIAlwaysBelievedThatTheOld) },
-    { EVENT_TALK, ACTOR_VILLAGER_PROTECT_OLD_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinThingsAreLookingGrimSouthOf) },
+    { EVENT_TALK, ACTOR_BOY_PROTECT_OLD_TREE, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIAlwaysBelievedThatTheOld) },
+    { EVENT_TALK, ACTOR_BOY_PROTECT_OLD_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinThingsAreLookingGrimSouthOf) },
     { EVENT_TALK, ACTOR_VILLAGER_LADY_MCCOYS_ROOM, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThisIsLadyMccoysRoomSo) },
     { EVENT_TALK, ACTOR_VILLAGER_LADY_MCCOYS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBilibinMiladyWasVeryUpsetWhenShe) },
     { EVENT_TALK, ACTOR_VILLAGER_MILADYS_BEAUTY, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinMiladyWasRenownedFarAndWide) },
     { EVENT_TALK, ACTOR_VILLAGER_MILADYS_BEAUTY, CONDITION_ALWAYS, MSGNO(MsgBilibinForOnceMilordDidntLetLady) },
     { EVENT_TALK, ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinOhSomedayIWantToSleep) },
-    { EVENT_TALK, ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToStartledResident) },
-    { EVENT_TALK, ACTOR_VILLAGER_PRAISING_THE_WARRIORS, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinYouCanSeeKolimaPrettyWell) },
-    { EVENT_TALK, ACTOR_VILLAGER_PRAISING_THE_WARRIORS, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHeyIfYouCantDoThe) },
-    { EVENT_TALK, ACTOR_VILLAGER_PRAISING_THE_WARRIORS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToAdmirer) },
-    { EVENT_TALK, ACTOR_VILLAGER_WATCHING_KOLIMA, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHmmItSeemsTheCurseOf) },
-    { EVENT_TALK, ACTOR_VILLAGER_WATCHING_KOLIMA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKolimaWatcher) },
+    { EVENT_TALK, ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWomanInMiladysNightgown) },
+    { EVENT_TALK, ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinYouCanSeeKolimaPrettyWell) },
+    { EVENT_TALK, ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHeyIfYouCantDoThe) },
+    { EVENT_TALK, ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToOldManPraisingTheWarriors) },
+    { EVENT_TALK, ACTOR_SOLDIER_WATCHING_KOLIMA, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHmmItSeemsTheCurseOf) },
+    { EVENT_TALK, ACTOR_SOLDIER_WATCHING_KOLIMA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToSoldierWatchingKolima) },
     { EVENT_TALK, ACTOR_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgBilibinYouMaySelectASingleItem) },
-    { EVENT_TALK, ACTOR_VILLAGER_SHOWING_THE_REWARD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToRewardKeeper) },
+    { EVENT_TALK, ACTOR_SOLDIER_SHOWING_THE_REWARD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToSoldierShowingTheReward) },
     { EVENT_TALK, ACTOR_LORD_MCCOY, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinSorryLadsButKolimasFutureIs) },
     { EVENT_TALK, ACTOR_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinYehveTaughtMeThatICannae) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FOLLOW_RED_CARPET, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHowManyTimesDoIHave) },
@@ -1728,21 +1738,21 @@ struct SceneEvent gMcCoyPalaceEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_DO_NOT_OFFEND_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatKindOfTreasure) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinSendingTheseChildrenToKolimaForest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST, CONDITION_ALWAYS, MSGNO(MsgBilibinIWishShedJustStopWhining) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PROTECT_OLD_TREE, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIShouldntHaveSaidAnythingWhen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PROTECT_OLD_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinTheydBeGuaranteedAGoodLife) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_PROTECT_OLD_TREE, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIShouldntHaveSaidAnythingWhen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_PROTECT_OLD_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinTheydBeGuaranteedAGoodLife) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LADY_MCCOYS_ROOM, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinOfAllTheNerveComingInto) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LADY_MCCOYS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBilibinICanTellWhenShesUpset) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MILADYS_BEAUTY, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinWillIEverFindSomeoneTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_MILADYS_BEAUTY, CONDITION_ALWAYS, MSGNO(MsgBilibinSometimesAMansJustGottaPut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinOhNoThisNightgownHasA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN, CONDITION_ALWAYS, MSGNO(MsgBilibinTheHoleInThisNightgownIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRAISING_THE_WARRIORS, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyHasntComeHereFor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRAISING_THE_WARRIORS, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinItsAToughThingBeingSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRAISING_THE_WARRIORS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadAdmirersThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WATCHING_KOLIMA, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinKolimaForestUsedToBeSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WATCHING_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgBilibinACourageousWarriorWouldntThinkTwice) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyHasntComeHereFor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinItsAToughThingBeingSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_PRAISING_THE_WARRIORS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadOldMansThoughtsOnTheWarriors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_WATCHING_KOLIMA, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinKolimaForestUsedToBeSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_WATCHING_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgBilibinACourageousWarriorWouldntThinkTwice) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgBilibinTheseCourageousWarriorsDeserveToReceive) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SHOWING_THE_REWARD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRewardKeepersThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_SHOWING_THE_REWARD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRewardSoldiersThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThereIsNothingMoreToTalk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinButICannaeFiggerOutHow) },
     { SEARCH(SEARCH_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchVialChest) },

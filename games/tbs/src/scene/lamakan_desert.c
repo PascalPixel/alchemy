@@ -30,17 +30,17 @@
 /// The Manticore. On the third map, until it is beaten
 /// (FLAG_LAMAKAN_MANTICORE_BEATEN), the Manticore rises out of the sand as the
 /// leader comes near (trigger 40, MeetManticore). Talking to it starts its
-/// battle, which ends at the third map's entrance 5, and arriving there marks
-/// it beaten.
+/// battle, which ends at the third map's
+/// LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE, and arriving there marks it beaten.
 ///
-/// Leaving. The first map's exit 1 leads to the world map (its entrance 18) and
-/// the fourth map's exit 3 to the world map (entrance 53); the fourth map has
-/// no heat gauge. Trigger 9 takes exit 3 and settles the fate of Master Hsu of
-/// Xian, trapped under boulders on his way back from Lama Temple: if the party
-/// has not freed him by then, leaving sets FLAG_HSU_RESCUED and
-/// FLAG_HSU_RESCUED_WITHOUT_PARTY, and in Xian, Feizhi then thanks Master Hama
-/// alone for freeing Hsu, instead of the party and Master Hama
-/// (xian_interiors.c).
+/// Leaving. The first map's LAMAKAN_DESERT_1_TO_WORLD_MAP and the fourth map's
+/// LAMAKAN_DESERT_4_TO_WORLD_MAP lead out onto the world map; the fourth map
+/// has no heat gauge. Trigger 9 takes LAMAKAN_DESERT_4_TO_WORLD_MAP and settles
+/// the fate of Master Hsu of Xian, trapped under boulders on his way back from
+/// Lama Temple: if the party has not freed him by then, leaving sets
+/// FLAG_HSU_RESCUED and FLAG_HSU_RESCUED_WITHOUT_PARTY, and in Xian, Feizhi
+/// then thanks Master Hama alone for freeing Hsu, instead of the party and
+/// Master Hama (xian_interiors.c).
 
 #include "vram_tab.h"
 #include "unit/import.h"
@@ -104,9 +104,15 @@ enum {
   FLAG_MIA_COMPLAINED = 0x305
 };
 
+/// The actors, numbered in the order of each map's placement table from
+/// ACTOR_FIRST_PLACED. The first three maps place the Manticore, then the
+/// first and third one pit and the second all four pits and Smog; the fourth
+/// places none.
 enum {
   MANTICORE = 8, ///< sprite 0xc3; talking to it starts its battle
-  FIRST_PIT = 9, ///< 9 to 12: the Ant Lions' pits Reveal shows (sprite 0xc1)
+  /// The first of the Ant Lions' pits Reveal shows, up to LAST_PIT (sprite
+  /// 0xc1).
+  FIRST_PIT = 9,
   LAST_PIT = 12,
   SMOG = 13 ///< Smog, a Jupiter Djinni
 };
@@ -187,9 +193,9 @@ const struct SceneRegion *LamakanDesert_GetRegions(void) { return 0; }
 const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 
 /// The pits, the Manticore and Smog of each map. Arriving at the third map's
-/// entrance 5, the way back from the Manticore's battle, marks it beaten; in
-/// the patched editions it also sets FLAG_REACHED_KALAY (XXX: why is not
-/// known).
+/// LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE, the way back from the Manticore's
+/// battle, marks it beaten; in the patched editions it also sets
+/// FLAG_REACHED_KALAY (XXX: why is not known).
 const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
     if (gGameState.entrance == LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE) {
@@ -211,8 +217,8 @@ const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
   return gLamakanDesertPlacementsOther;
 }
 
-/// Lamakan Desert, trigger 9: exit 3 to the world map. If Master Hsu is still
-/// trapped, he is rescued without the party (see the file comment).
+/// Lamakan Desert, trigger 9: LAMAKAN_DESERT_4_TO_WORLD_MAP. If Master Hsu is
+/// still trapped, he is rescued without the party (see the file comment).
 static void LeaveForTheWorldMap(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_HSU_RESCUED) == 0) {
@@ -222,7 +228,7 @@ static void LeaveForTheWorldMap(void) {
     }
   }
   Event_PlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(3);
+  Engine_EventRequestExit(LAMAKAN_DESERT_4_TO_WORLD_MAP);
   Engine_EventEnd();
 }
 
@@ -286,10 +292,10 @@ static s32 Reveal_HideSecrets(void) {
     Map_CopyCellAttributes(9, 0, 3, 3, 9, 6);
   }
   Engine_ActorSetPosition(MANTICORE, 0, 0);
-  Engine_ActorSetPosition(9, 0, 0);
-  Engine_ActorSetPosition(10, 0, 0);
-  Engine_ActorSetPosition(11, 0, 0);
-  Engine_ActorSetPosition(12, 0, 0);
+  Engine_ActorSetPosition(FIRST_PIT, 0, 0);
+  Engine_ActorSetPosition(FIRST_PIT + 1, 0, 0);
+  Engine_ActorSetPosition(FIRST_PIT + 2, 0, 0);
+  Engine_ActorSetPosition(LAST_PIT, 0, 0);
   Engine_ActorSetPosition(SMOG, 0, 0);
   // Hide the searchable map objects independently of the actor placements.
   mapObjectId = 100;
@@ -324,7 +330,7 @@ static s32 Reveal_ShowSecrets(void) {
     Map_CopyCells(76, 126, 4, 2, 16, 42);
     Map_CopyCells(80, 126, 4, 2, 36, 44);
     Map_CopyCells(84, 126, 4, 2, 14, 55);
-    Actor_SetPosition(9, PIXELS(400), PIXELS(364));
+    Actor_SetPosition(FIRST_PIT, PIXELS(400), PIXELS(364));
   } else if (gGameState.scene == (s32)&SceneId_LamakanDesert2) {
     Map_CopyCells(64, 126, 4, 2, 42, 5);
     Map_CopyCells(68, 126, 4, 2, 20, 11);
@@ -344,10 +350,10 @@ static s32 Reveal_ShowSecrets(void) {
     Map_CopyCells(108, 126, 4, 2, 6, 46);
     Map_CopyCells(112, 126, 4, 2, 27, 55);
     Map_CopyCells(116, 126, 4, 2, 43, 56);
-    Actor_SetPosition(9, PIXELS(352), PIXELS(204));
-    Actor_SetPosition(10, PIXELS(736), PIXELS(396));
-    Actor_SetPosition(11, PIXELS(144), PIXELS(380));
-    Actor_SetPosition(12, PIXELS(576), PIXELS(716));
+    Actor_SetPosition(FIRST_PIT, PIXELS(352), PIXELS(204));
+    Actor_SetPosition(FIRST_PIT + 1, PIXELS(736), PIXELS(396));
+    Actor_SetPosition(FIRST_PIT + 2, PIXELS(144), PIXELS(380));
+    Actor_SetPosition(LAST_PIT, PIXELS(576), PIXELS(716));
     Actor_SetPosition(SMOG, PIXELS(648), PIXELS(408));
   } else if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
     Map_CopyCells(64, 124, 4, 4, 8, 14);
@@ -359,7 +365,7 @@ static s32 Reveal_ShowSecrets(void) {
     Map_CopyCells(0, 120, 3, 1, 9, 5);
     Map_CopyCells(3, 120, 3, 1, 44, 5);
     Actor_SetPosition(MANTICORE, PIXELS(168), PIXELS(92));
-    Actor_SetPosition(9, PIXELS(128), PIXELS(316));
+    Actor_SetPosition(FIRST_PIT, PIXELS(128), PIXELS(316));
     Map_CopyCellAttributes(6, 0, 3, 3, 9, 6);
     if (Engine_GameFlagIsSet(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       Map_CopyCells(0, 119, 3, 1, 9, 5);
@@ -375,10 +381,11 @@ static s32 Reveal_ShowSecrets(void) {
 }
 
 /// Lamakan Desert, third map: talking to the Manticore starts its battle,
-/// which returns the party to the third map's entrance 5.
+/// which returns the party to LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE.
 static void FightManticore(void) {
   Engine_ActorRunRepeatedMotion(MANTICORE, 2);
-  Event_SetNextDestination((s32)&SceneId_LamakanDesert3, 5);
+  Event_SetNextDestination((s32)&SceneId_LamakanDesert3,
+                           LAMAKAN_DESERT_3_AFTER_FIGHT_MANTICORE);
   Battle_SetStart(3);
   Field_RequestBattleFromEncounterTable(LAMAKAN_ENCOUNTERS, 5);
 }
@@ -666,7 +673,7 @@ static void FallIntoPit(void) {
   s32 dz;
 
   target = Actor_Get(gGameState.selectedActor);
-  best = 9;
+  best = FIRST_PIT;
   GameFlag_Set(FLAG_HAZARDS_PAUSED);
   min = 0x100000;
   // Select the closest live pit using Manhattan distance in whole pixels.
@@ -705,7 +712,7 @@ static void FallIntoPit(void) {
   record = Object_GetById(ACTOR_PARTY_LEADER);
   actor->facing = (record->facing + 0x8000) & -0x1000;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 5);
-  Object_SetActionById(0, 24);
+  Object_SetActionById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
   record = Object_GetById(ACTOR_PARTY_LEADER);
 #ifdef UBFIX
@@ -1242,8 +1249,8 @@ struct SceneEvent gLamakanDesertEvents[] = {
     { EVENT_TOUCH, 22, FLAG_HAZARDS_PAUSED, EVENT_SCRIPT(FallIntoPit) },
     { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(SlideDownDune) },
     { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(MeetManticore) },
-    { EVENT_TALK, 8, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(FightManticore) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToSmog) },
+    { EVENT_TALK, MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT_SCRIPT(FightManticore) },
+    { EVENT_TALK, SMOG, CONDITION_ALWAYS, EVENT_SCRIPT(TalkToSmog) },
     { SEARCH(SEARCH_CHEST), 100, 0xf7b, FIND_ITEM(ITEM_VULCAN_AXE) },
     { SEARCH(SEARCH_UNNAMED), 101, 0x350, FIND_PSYNERGY_STONE },
     { SEARCH(SEARCH_CHEST), 102, 0xf7c, FIND_ITEM(ITEM_LUCKY_PEPPER) },

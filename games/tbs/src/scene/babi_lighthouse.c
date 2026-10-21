@@ -15,21 +15,23 @@
 /// master of Lalivero, has followed them (lalivero.c). On the Road to Babi
 /// Lighthouse, entered from the world map, four workers have not been
 /// ordered to start work and talk of the strange folk who went to the ruins
-/// with Faran after them; a block there, moved by Move or Carry, settles in
-/// its cell at a height of 48 pixels (BabiLighthouse_UpdateMovedBlock), and a
+/// with Faran after them; a pillar there, moved by Move or Carry, settles in
+/// its cell at a height of 48 pixels (BabiLighthouse_UpdateMovedPillar), and a
 /// chest holds Lucky Pepper.
 ///
-/// At the Babi Lighthouse Entry four men lie where the group knocked them
-/// down on its way in (`Only two of those six ever attacked anyone...`), on
-/// ground their fire scorched. Two blocks on ledges are pushed or moved with
-/// Move, a leader left on a ledge jumping off (BabiLighthouse_JumpFromLedge);
-/// in the editions from TBS_PATCH_2 on they also sort against the leader
-/// (BabiLighthouse_MatchLeaderPriority). Growth grows a sprout into a vine
-/// the party climbs (BabiLighthouse_OpenGrowthPassage, place flag 0x300), and
-/// three exit regions drop the party to the floor below, TunnelRuins2's
-/// entrances 1 to 3 (tunnel_ruins.c), which the game still calls Babi
-/// Lighthouse; the way back up comes out here (entrances 4 to 6).
-/// Retreat anywhere in the lighthouse leads back to the Entry.
+/// At the Babi Lighthouse Entry four men lie where the group knocked them down
+/// on its way in (`Only two of those six ever attacked anyone...`), on ground
+/// their fire scorched. Two pillars on ledges are pushed or moved with Move, a
+/// leader left on a ledge jumping off (BabiLighthouse_JumpFromLedge); in the
+/// editions from TBS_PATCH_2 on they also sort against the leader
+/// (BabiLighthouse_MatchLeaderPriority). Growth grows a sprout into a vine the
+/// party climbs (BabiLighthouse_OpenGrowthPassage, FLAG_GROWTH_PASSAGE_OPEN),
+/// and three exit regions, BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_WEST, _SOUTH
+/// and _NORTH, drop the party to the floor below, TunnelRuins2
+/// (tunnel_ruins.c), which the game still calls Babi Lighthouse; the way back
+/// up comes out beside the same holes, at the entrances of the same names
+/// (BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_WEST and the others). Retreat
+/// anywhere in the lighthouse leads back to the Entry.
 ///
 /// In room 2 the party falls from floor to floor through the lighthouse
 /// (BabiLighthouse_LandWithParticles, BabiLighthouse_FallToExit) and rises
@@ -51,8 +53,8 @@
 /// again as Iodem moves to follow, the party reasons that it keeps out those
 /// without Psynergy, and Iodem and Faran leave Sheba's rescue to the party
 /// (FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN). Walking through the open door shuts it
-/// behind the party (BabiLighthouse_CloseTruthDoor, place flag 0x301), and
-/// beyond lies the Tunnel Ruins (exit 1).
+/// behind the party (BabiLighthouse_CloseTruthDoor, FLAG_BEYOND_DOOR), and
+/// beyond lies the Tunnel Ruins (BABI_LIGHTHOUSE_1_TO_TUNNEL_RUINS_1).
 
 #include "game_state.h"
 #include "version.h"
@@ -110,18 +112,38 @@ enum {
 /// Room 2's Djinni, Luff.
 enum { ACTOR_DJINNI = 8 };
 
-/// The Entry (BabiLighthouseEntry): the two blocks on the ledges, the sprout
-/// for Growth and the four men the kidnappers knocked down on their way in.
+/// The Entry (BabiLighthouseEntry): the two pillars on the ledges, the sprout
+/// for Growth and the four men the kidnappers knocked down on their way in,
+/// each named by what he says. The pillars are sprite 0xfd, the pillars Move
+/// or a push shifts in Venus Lighthouse.
 enum {
-  ACTOR_LEFT_BLOCK = 8,
-  ACTOR_RIGHT_BLOCK = 9,
+  ACTOR_LEFT_PILLAR = 8,
+  ACTOR_RIGHT_PILLAR = 9,
   ACTOR_SPROUT = 10,
-  ACTOR_FIRST_FALLEN_MAN = 11
+  /// "They were terrible! We were absolutely no match for them."
+  ACTOR_FALLEN_MAN_NO_MATCH = 11,
+  /// "Only two of those six ever attacked anyone..."
+  ACTOR_FALLEN_MAN_ONLY_TWO = 12,
+  /// "They just kicked us out of their way and went on to the lighthouse."
+  ACTOR_FALLEN_MAN_KICKED_ASIDE = 13,
+  /// "They set fire to everything! That's why the ground is scorched."
+  ACTOR_FALLEN_MAN_SCORCHED_GROUND = 14
 };
 
-/// The Road to Babi Lighthouse (RoadToBabiLighthouse): four workers and the
-/// block for Move and Carry.
-enum { ACTOR_ROAD_BLOCK = 12 };
+/// The Road to Babi Lighthouse (RoadToBabiLighthouse): four workers, each
+/// named by what he says, and the pillar for Move and Carry, sprite 0x100, the
+/// pillars Carry takes across a gap in Venus Lighthouse.
+enum {
+  /// "We haven't been ordered to start working yet... Do we get today off?"
+  ACTOR_WORKER_DAY_OFF = 8,
+  /// "There were strange folk going to the ruins... Faran followed them."
+  ACTOR_WORKER_STRANGE_FOLK = 9,
+  /// "It's odd that Babi would build a lighthouse in a place like this."
+  ACTOR_WORKER_ODD_PLACE = 10,
+  /// "Cutting these stones and stacking them on the ruins isn't easy."
+  ACTOR_WORKER_CUTTING_STONES = 11,
+  ACTOR_ROAD_PILLAR = 12
+};
 
 /// The lighthouse keeps two flags in the area flags from 0x300.
 enum {
@@ -136,7 +158,7 @@ enum {
   (SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | (facing))
 
 static void BabiLighthouse_CloseTruthDoor(void);
-static void BabiLighthouse_RefreshMovableBlockTiles(void);
+static void BabiLighthouse_RefreshMovablePillarTiles(void);
 
 /// Unused: a signed division nothing calls.
 static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
@@ -281,8 +303,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gBabiLighthouse_PlacementsOther;
 }
 
-/// After Move on one of the blocks at the Babi Lighthouse Entry, or a push: a
-/// leader left standing on a block's ledge cell jumps off it, and the blocks'
+/// After Move on one of the pillars at the Babi Lighthouse Entry, or a push: a
+/// leader left standing on a pillar's ledge cell jumps off it, and the pillars'
 /// cells are redrawn.
 static void BabiLighthouse_JumpFromLedge(void) {
   struct FieldActor *leader;
@@ -304,17 +326,18 @@ static void BabiLighthouse_JumpFromLedge(void) {
         Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
       } else {
-        FieldObjectMotion_OffsetPositionAndResetMotion(0, 0, -16);
+        FieldObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0,
+                                                       -16);
         Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
       }
     }
   }
-  BabiLighthouse_RefreshMovableBlockTiles();
+  BabiLighthouse_RefreshMovablePillarTiles();
   Engine_EventEnd();
 }
 
-/// Walking into one of the blocks at the Babi Lighthouse Entry pushes it.
+/// Walking into one of the pillars at the Babi Lighthouse Entry pushes it.
 static void BabiLighthouse_AdvancePairAndJump(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -322,23 +345,23 @@ static void BabiLighthouse_AdvancePairAndJump(void) {
   Engine_EventEnd();
 }
 
-/// Walking south off the ledge at the Babi Lighthouse Entry: pushes the block
+/// Walking south off the ledge at the Babi Lighthouse Entry: pushes the pillar
 /// below on the leader's side if it stands at the ledge's foot, and otherwise
 /// climbs down.
 static void BabiLighthouse_ClimbDownOrAdvancePair(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_RIGHT_BLOCK);
+  struct FieldActor *pillar = Object_GetById(ACTOR_RIGHT_PILLAR);
 
   if ((Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) <= 12) {
-    block = Object_GetById(ACTOR_LEFT_BLOCK);
-    if ((block->x.fixed >> 20) == 6) {
-      if ((block->z.fixed >> 20) == 20) {
+    pillar = Object_GetById(ACTOR_LEFT_PILLAR);
+    if ((pillar->x.fixed >> 20) == 6) {
+      if ((pillar->z.fixed >> 20) == 20) {
         BabiLighthouse_AdvancePairAndJump();
         return;
       }
     }
   } else {
-    if ((block->x.fixed >> 20) == 18) {
-      if ((block->z.fixed >> 20) == 20) {
+    if ((pillar->x.fixed >> 20) == 18) {
+      if ((pillar->z.fixed >> 20) == 20) {
         BabiLighthouse_AdvancePairAndJump();
         return;
       }
@@ -520,7 +543,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   Event_OpenMessage(GARET, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
     Engine_EventWait(30);
@@ -565,7 +588,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 40);
   Event_OpenMessage(ACTOR_FARAN, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
@@ -606,7 +629,7 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
   Engine_EventWait(20);
   Event_OpenMessage(ACTOR_IODEM, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Engine_EventWait(30);
@@ -835,7 +858,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
     Engine_EventWait(20);
@@ -874,7 +897,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 60);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Engine_EventWait(20);
@@ -1047,25 +1070,25 @@ BabiLighthouse_FindActorAhead(struct FieldActor *actor) {
   return StagedActor_FindAtTile(target, actor);
 }
 
-/// Carry's first phase on the block on the Road to Babi Lighthouse sets the
+/// Carry's first phase on the pillar on the Road to Babi Lighthouse sets the
 /// effect's childOption; what that changes is not known.
 static void BabiLighthouse_EnableChildOption(void) {
   ((struct BattleFxScene *)gEffectWork)->childOption = 1;
 }
 
-/// After Move or Carry on the block on the Road to Babi Lighthouse: in its cell
-/// at (20, 12) it settles at a height of 48 pixels.
-static void BabiLighthouse_UpdateMovedBlock(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_ROAD_BLOCK);
-  s32 column = block->x.fixed >> 20;
+/// After Move or Carry on the pillar on the Road to Babi Lighthouse: in its
+/// cell at (20, 12) it settles at a height of 48 pixels.
+static void BabiLighthouse_UpdateMovedPillar(void) {
+  struct FieldActor *pillar = Object_GetById(ACTOR_ROAD_PILLAR);
+  s32 column = pillar->x.fixed >> 20;
 
   if (column == 20) {
-    s32 row = block->z.fixed >> 20;
+    s32 row = pillar->z.fixed >> 20;
 
     if (row == 12) {
-      block->motionFlags = 2;
-      block->terrainHeight = 0x300000;
-      block->priorityFlags = 2;
+      pillar->motionFlags = 2;
+      pillar->terrainHeight = 0x300000;
+      pillar->priorityFlags = 2;
       {
         s32 targetColumn = column, targetRow = row;
 
@@ -1153,29 +1176,29 @@ static void BabiLighthouse_OpenGrowthPassage(void) {
 }
 
 /// Redraws the ledge cells of the Babi Lighthouse Entry, then blocks the cells
-/// under its two blocks.
-static void BabiLighthouse_RefreshMovableBlockTiles(void) {
-  struct FieldActor *leftBlock = Object_GetById(ACTOR_LEFT_BLOCK);
+/// under its two pillars.
+static void BabiLighthouse_RefreshMovablePillarTiles(void) {
+  struct FieldActor *leftPillar = Object_GetById(ACTOR_LEFT_PILLAR);
 
-  Engine_ActorSetSpritePriority(ACTOR_LEFT_BLOCK, 1);
-  Engine_ActorSetSpritePriority(ACTOR_RIGHT_BLOCK, 1);
+  Engine_ActorSetSpritePriority(ACTOR_LEFT_PILLAR, 1);
+  Engine_ActorSetSpritePriority(ACTOR_RIGHT_PILLAR, 1);
   Map_CopyCellAttributes(69, 19, 3, 3, 5, 19);
   Map_CopyCellAttributes(69, 19, 3, 3, 17, 19);
   {
-    s32 column = leftBlock->x.fixed >> 20, row = leftBlock->z.fixed >> 20;
+    s32 column = leftPillar->x.fixed >> 20, row = leftPillar->z.fixed >> 20;
 
     Map_CopyCellAttributes(3, 3, 1, 1, column, row);
   }
   {
-    struct FieldActor *rightBlock = Object_GetById(ACTOR_RIGHT_BLOCK);
-    s32 column = rightBlock->x.fixed >> 20, row = rightBlock->z.fixed >> 20;
+    struct FieldActor *rightPillar = Object_GetById(ACTOR_RIGHT_PILLAR);
+    s32 column = rightPillar->x.fixed >> 20, row = rightPillar->z.fixed >> 20;
 
     Map_CopyCellAttributes(3, 3, 1, 1, column, row);
   }
 }
 
 #if TBS_PATCH_2
-/// Update callback of the blocks at the Babi Lighthouse Entry (TBS_PATCH_2 and
+/// Update callback of the pillars at the Babi Lighthouse Entry (TBS_PATCH_2 and
 /// later): each is drawn in front of the leader when nearer the screen, and
 /// on its layer otherwise.
 static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
@@ -1184,32 +1207,32 @@ static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
   s32 priority;
 
   sprite = Object_GetById(ACTOR_PARTY_LEADER)->sprite;
-  actor = Object_GetById(ACTOR_LEFT_BLOCK);
+  actor = Object_GetById(ACTOR_LEFT_PILLAR);
   if (actor->z.fixed < Object_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
-    Engine_ActorSetSpritePriority(ACTOR_LEFT_BLOCK, sprite->image.priority);
+    Engine_ActorSetSpritePriority(ACTOR_LEFT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
     if (priority != 1)
       priority--;
-    Engine_ActorSetSpritePriority(ACTOR_LEFT_BLOCK, priority);
-    Object_GetById(ACTOR_LEFT_BLOCK)->priorityFlags |= 1;
+    Engine_ActorSetSpritePriority(ACTOR_LEFT_PILLAR, priority);
+    Object_GetById(ACTOR_LEFT_PILLAR)->priorityFlags |= 1;
   }
-  actor = Object_GetById(ACTOR_RIGHT_BLOCK);
+  actor = Object_GetById(ACTOR_RIGHT_PILLAR);
   if (actor->z.fixed < Object_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
-    Engine_ActorSetSpritePriority(ACTOR_RIGHT_BLOCK, sprite->image.priority);
+    Engine_ActorSetSpritePriority(ACTOR_RIGHT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
     if (priority != 1)
       priority--;
-    Engine_ActorSetSpritePriority(ACTOR_RIGHT_BLOCK, priority);
-    Object_GetById(ACTOR_RIGHT_BLOCK)->priorityFlags |= 1;
+    Engine_ActorSetSpritePriority(ACTOR_RIGHT_PILLAR, priority);
+    Object_GetById(ACTOR_RIGHT_PILLAR)->priorityFlags |= 1;
   }
 }
 #endif
 
 /// Sets up the scene being entered: Retreat leads back to the Entry; the
-/// road's block, the Entry's blocks, vine and fallen men, room 2's arrivals by
-/// falling, and room 1's door and onlookers are restored. Returns 0.
+/// road's pillar, the Entry's pillars, vine and fallen men, room 2's arrivals
+/// by falling, and room 1's door and onlookers are restored. Returns 0.
 s32 BabiLighthouse_SetupScene(void) {
   struct FieldActor *actor;
   struct FieldActor *placedActor;
@@ -1229,9 +1252,9 @@ s32 BabiLighthouse_SetupScene(void) {
     state->retreatScene = (s32)&SceneId_BabiLighthouseEntry;
     sceneCopy = state->scene;
   }
-  // The road: the moved block's collision where it stands.
+  // The road: the moved pillar's collision where it stands.
   if (scene == (s32)&SceneId_RoadToBabiLighthouse) {
-    placedActor = Object_GetById(ACTOR_ROAD_BLOCK);
+    placedActor = Object_GetById(ACTOR_ROAD_PILLAR);
     x = placedActor->x.fixed >> 20;
     if (x == 20) {
       z = placedActor->z.fixed >> 20;
@@ -1240,29 +1263,29 @@ s32 BabiLighthouse_SetupScene(void) {
       }
     }
   } else if (sceneCopy == (s32)&SceneId_BabiLighthouseEntry) {
-    // Set up the movable ledge blocks and the staggered actor animations.
-    Actor_SetChildValue(ACTOR_LEFT_BLOCK, 6);
-    Actor_SetChildValue(ACTOR_RIGHT_BLOCK, 6);
+    // Set up the movable ledge pillars and the staggered actor animations.
+    Actor_SetChildValue(ACTOR_LEFT_PILLAR, 6);
+    Actor_SetChildValue(ACTOR_RIGHT_PILLAR, 6);
 #if TBS_PATCH_2
-    ((union FieldObject *)Object_GetById(ACTOR_LEFT_BLOCK))->actor.update =
+    ((union FieldObject *)Object_GetById(ACTOR_LEFT_PILLAR))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
-    ((union FieldObject *)Object_GetById(ACTOR_RIGHT_BLOCK))->actor.update =
+    ((union FieldObject *)Object_GetById(ACTOR_RIGHT_PILLAR))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
 #endif
     if (state->entrance == BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_2_SOUTH &&
         GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Actor_SetPosition(ACTOR_RIGHT_BLOCK, PIXELS(312), PIXELS(328));
+      Actor_SetPosition(ACTOR_RIGHT_PILLAR, PIXELS(312), PIXELS(328));
     }
-    BabiLighthouse_RefreshMovableBlockTiles();
-    actor = Object_GetById(ACTOR_RIGHT_BLOCK);
-    actor->y.fixed = Object_GetById(ACTOR_RIGHT_BLOCK)->terrainHeight;
+    BabiLighthouse_RefreshMovablePillarTiles();
+    actor = Object_GetById(ACTOR_RIGHT_PILLAR);
+    actor->y.fixed = Object_GetById(ACTOR_RIGHT_PILLAR)->terrainHeight;
     if (GameFlag_IsSet(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
       Engine_ActorSetAnimation(ACTOR_SPROUT, 4);
       Object_GetById(ACTOR_SPROUT)->collisionFlags = 0xfe;
       BabiLighthouse_OpenGrowthPassage();
     }
     // Their script waits stagger the four fallen men's first animations.
-    placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN);
+    placedActor = Object_GetById(ACTOR_FALLEN_MAN_NO_MATCH);
     placedActor->collisionFlags = 0;
     placedActor->priorityFlags = 0;
     placedActor->wait = 0;
@@ -1270,35 +1293,35 @@ s32 BabiLighthouse_SetupScene(void) {
     zero = 0;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0xc000;
-    Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN, 0);
-    placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN + 1);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_NO_MATCH, 0);
+    placedActor = Object_GetById(ACTOR_FALLEN_MAN_ONLY_TWO);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 30;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x4000;
-    Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN + 1, 0);
-    placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN + 2);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_ONLY_TWO, 0);
+    placedActor = Object_GetById(ACTOR_FALLEN_MAN_KICKED_ASIDE);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 60;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x8000;
-    Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN + 2, 0);
-    placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN + 3);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_KICKED_ASIDE, 0);
+    placedActor = Object_GetById(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
     placedActor->wait = 90;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x8000;
-    Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN + 3, 0);
+    Engine_ActorSetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, 0);
   } else if (sceneCopy == (s32)&SceneId_BabiLighthouse2) {
     // Match the arrival effect and fall to the entrance used in this room.
     switch (state->entrance) {
-    case 10:
+    case BABI_LIGHTHOUSE_2_FROM_BABI_LIGHTHOUSE_1:
       GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ROOM2_ENTRANCE_10_USED);
       // Both entrances restore the same remembered tile changes.
       // fall through
@@ -1321,7 +1344,7 @@ s32 BabiLighthouse_SetupScene(void) {
     case 17:
       OverlayObject_PrepareObject(PIXELS(232), 0, PIXELS(594), 223);
       Map_CopyCellAttributes(22, 12, 1, 1, 14, 33);
-      BabiLighthouse_FallToExit(17);
+      BabiLighthouse_FallToExit(BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_1_EAST);
       break;
     case 12:
     case 13:
@@ -1380,7 +1403,7 @@ s32 BabiLighthouse_SetupScene(void) {
       }
     }
   } else {
-    Engine_ActorSetAnimation(12, 2);
+    Engine_ActorSetAnimation(ACTOR_ROAD_PILLAR, 2);
   }
   return 0;
 }
@@ -1521,9 +1544,12 @@ struct SceneEntrance gBabiLighthouse_EntrancesOther[] = {
 };
 
 struct SceneRegion gBabiLighthouse_Regions3[] = {
-    {96, -20, 320, 112, -4, 336, CONDITION_ALWAYS, 4},
-    {288, -20, 320, 304, -4, 336, CONDITION_ALWAYS, 5},
-    {304, -20, 96, 320, -4, 112, CONDITION_ALWAYS, 6},
+    {96, -20, 320, 112, -4, 336, CONDITION_ALWAYS,
+     BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_WEST},
+    {288, -20, 320, 304, -4, 336, CONDITION_ALWAYS,
+     BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_SOUTH},
+    {304, -20, 96, 320, -4, 112, CONDITION_ALWAYS,
+     BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_2_NORTH},
     {SCENE_TABLE_END},
 };
 
@@ -1647,41 +1673,41 @@ struct ScenePlacement gBabiLighthouse_PlacementsOther[] = {
 };
 
 struct SceneEvent gBabiLighthouse_Events3[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_2_EAST},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_2_WEST},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_AdvancePairAndJump)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_ClimbDownOrAdvancePair)},
-    {EVENT_TALK, ACTOR_FIRST_FALLEN_MAN, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
-    {EVENT_TALK, ACTOR_FIRST_FALLEN_MAN + 1, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
-    {EVENT_TALK, ACTOR_FIRST_FALLEN_MAN + 2, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
-    {EVENT_TALK, ACTOR_FIRST_FALLEN_MAN + 3, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheySetFireToEverythingThats)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_FALLEN_MAN, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_FALLEN_MAN_NO_MATCH, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
+    {EVENT_TALK, ACTOR_FALLEN_MAN_ONLY_TWO, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
+    {EVENT_TALK, ACTOR_FALLEN_MAN_KICKED_ASIDE, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
+    {EVENT_TALK, ACTOR_FALLEN_MAN_SCORCHED_GROUND, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheySetFireToEverythingThats)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_NO_MATCH, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseWereTheOnesWhoAttackedBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_FALLEN_MAN + 1, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_ONLY_TWO, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseTheOtherFourDidntSeemTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_FALLEN_MAN + 2, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_KICKED_ASIDE, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseWhatCouldTheyBePlanningFor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_FALLEN_MAN + 3, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN_SCORCHED_GROUND, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseNoneOfThemHadAnyTorches)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_GROWTH_PASSAGE_OPEN, EVENT_SCRIPT(BabiLighthouse_OpenGrowthPassage)},
     {SCENE_EVENTS_END},
 };
 
 struct SceneEvent gBabiLighthouse_Events2[] = {
     {0x31, 5, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 6, CONDITION_ALWAYS, 2},
+    {EVENT_EXIT, 6, CONDITION_ALWAYS, BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_ENTRY_EAST},
     {0x21, 1, CONDITION_ALWAYS, 3},
     {0x31, 2, CONDITION_ALWAYS, 4},
     {0x31, 3, CONDITION_ALWAYS, 5},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, 6},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_ENTRY_WEST},
     {0x21, 7, CONDITION_ALWAYS, 7},
     {0x21, 8, CONDITION_ALWAYS, 8},
     {0x31, 9, CONDITION_ALWAYS, 9},
     {0x21, 10, CONDITION_ALWAYS, 10},
-    {EVENT_EXIT, 11, CONDITION_ALWAYS, 18},
+    {EVENT_EXIT, 11, CONDITION_ALWAYS, BABI_LIGHTHOUSE_2_TO_BABI_LIGHTHOUSE_1_WEST},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RiseToExit)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RisePastSingleEffect)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RisePastPairedEffects)},
@@ -1692,8 +1718,8 @@ struct SceneEvent gBabiLighthouse_Events2[] = {
 };
 
 struct SceneEvent gBabiLighthouse_Events1[] = {
-    {0x31, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
+    {0x31, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_1_TO_TUNNEL_RUINS_1},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, BABI_LIGHTHOUSE_1_TO_BABI_LIGHTHOUSE_2_WEST},
     {EVENT_TOUCH, 10, FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED, EVENT_SCRIPT(BabiLighthouse_DiscussPursuit)},
     {EVENT_TOUCH, 20, IF_FLAG_SET(FLAG_BEYOND_DOOR), EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
     {EVENT_TOUCH, 21, FLAG_BEYOND_DOOR, EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
@@ -1739,30 +1765,31 @@ struct SceneEvent gBabiLighthouse_EventsOther[] = {
      EVENT_SCRIPT(BabiLighthouse_AdvanceNearbyPair)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 51, CONDITION_ALWAYS,
      EVENT_SCRIPT(BabiLighthouse_ClimbOrAdvancePair)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROAD_BLOCK, CONDITION_ALWAYS,
-     EVENT_SCRIPT(BabiLighthouse_UpdateMovedBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), ACTOR_ROAD_BLOCK,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROAD_PILLAR, CONDITION_ALWAYS,
+     EVENT_SCRIPT(BabiLighthouse_UpdateMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), ACTOR_ROAD_PILLAR,
      CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_EnableChildOption)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_ROAD_BLOCK, CONDITION_ALWAYS,
-     EVENT_SCRIPT(BabiLighthouse_UpdateMovedBlock)},
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_TALK, 8, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_ROAD_PILLAR, CONDITION_ALWAYS,
+     EVENT_SCRIPT(BabiLighthouse_UpdateMovedPillar)},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS,
+     ROAD_TO_BABI_LIGHTHOUSE_TO_BABI_LIGHTHOUSE_ENTRY},
+    {EVENT_TALK, ACTOR_WORKER_DAY_OFF, CONDITION_ALWAYS,
      MSGNO(MsgBabiLighthouseWeHaventBeenOrderedToStart)},
-    {EVENT_TALK, 9, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_WORKER_STRANGE_FOLK, CONDITION_ALWAYS,
      MSGNO(MsgBabiLighthouseThereWereStrangeFolkGoingTo)},
-    {EVENT_TALK, 10, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_WORKER_ODD_PLACE, CONDITION_ALWAYS,
      MSGNO(MsgBabiLighthouseItsOddThatBabiWouldBuild)},
-    {EVENT_TALK, 11, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_WORKER_CUTTING_STONES, CONDITION_ALWAYS,
      MSGNO(MsgBabiLighthouseCuttingTheseStonesAndStackingThem)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgBabiLighthouseThereWasABigFightThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgBabiLighthouseIfFaranWentAfterThemThen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgBabiLighthouseWhyWouldTheyWantToRush)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgBabiLighthouseNowThatIThinkOfIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORKER_DAY_OFF,
+     CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseThereWasABigFightThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORKER_STRANGE_FOLK,
+     CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIfFaranWentAfterThemThen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORKER_ODD_PLACE,
+     CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseWhyWouldTheyWantToRush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORKER_CUTTING_STONES,
+     CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseNowThatIThinkOfIt)},
     {SEARCH_CHEST_FACING(FACING_EAST), 100, FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER,
      FIND_ITEM(ITEM_LUCKY_PEPPER)},
     {SCENE_EVENTS_END},

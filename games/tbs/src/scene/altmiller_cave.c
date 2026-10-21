@@ -516,8 +516,8 @@ static void AltmillerCave_HopSelectedActor(void) {
     actor->velocityY = PIXELS(4);
     actor->motionFlags &= 126;
     Engine_ActorSetSpriteFlags(actor, 0);
-    Engine_ObjectMotionSetPositionAndCommit(0, components[0].part.pixel,
-                                            components[2].part.pixel);
+    Engine_ObjectMotionSetPositionAndCommit(
+        ACTOR_PARTY_LEADER, components[0].part.pixel, components[2].part.pixel);
     Object_SetMode(actor, 6);
     Engine_ActorSetSpriteFlags(actor, 1);
     actor->motionFlags = motionFlags;
@@ -916,7 +916,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_OpenMessage(ACTOR_BABI, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
     Engine_EventWait(30);
@@ -1082,7 +1082,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(10);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
   Event_OpenMessage(GARET, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventSetMessage(MsgAltmillerThatsKradenSaidAlchemyCould);
     Event_ShowMessage(GARET, 0);
   } else {
@@ -1108,7 +1108,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(30);
   Event_OpenMessage(ACTOR_BABI, 0);
   Engine_EventSetMessage(MsgAltmillerBabi);
-  Engine_EventChooseYesNo(0, 0);
+  Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0);
   // The cave brightens as two men from Tolbi arrive: "Babi!"
   display = gDisplayTransition;
   {
@@ -1470,7 +1470,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_OpenMessage(GARET, 0);
   Actor_FaceActor(MIA, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Engine_EventWait(20);
@@ -1508,7 +1508,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 40);
   Event_ShowMessage(GARET, 0);
   Event_OpenMessage(GARET, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
     Engine_EventWait(30);
@@ -1682,7 +1682,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_OpenMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventSetMessage(MsgAltmillerKiddingHaventActually);
     Engine_EventWait(20);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 40);
@@ -1861,7 +1861,7 @@ static void AltmillerCave_RepeatRockOrder(void) {
   question = MsgAltmillerForgetOrderRock;
   Engine_EventSetMessage(question);
   Engine_EventOpenMessage(ACTOR_INVISIBLE_BABI, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     Engine_EventWait(20);
     Engine_EventSetMessage(question + 1);
     Engine_EventShowMessage(ACTOR_INVISIBLE_BABI, 0);
@@ -1946,19 +1946,19 @@ s32 AltmillerCave_Initialize(void) {
 
   if (gGameState.entrance == 0) {
     if (gGameState.scene == (s32)&SceneId_AltmillerCave2) {
-      gGameState.entrance = 10;
+      gGameState.entrance = ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_1;
     }
     if (gGameState.scene == (s32)&SceneId_AltmillerCave3) {
-      gGameState.entrance = 20;
+      gGameState.entrance = ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_2;
     }
     if (gGameState.scene == (s32)&SceneId_AltmillerCave4) {
-      gGameState.entrance = 30;
+      gGameState.entrance = ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_3;
     }
     if (gGameState.scene == (s32)&SceneId_AltmillerCave5) {
-      gGameState.entrance = 40;
+      gGameState.entrance = ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_4;
     }
     if (gGameState.scene == (s32)&SceneId_AltmillerCave6) {
-      gGameState.entrance = 50;
+      gGameState.entrance = ALTMILLER_CAVE_6_FROM_ALTMILLER_CAVE_5;
     }
   }
   Engine_GameFlagSet(FLAG_DARK);
@@ -2199,19 +2199,30 @@ struct LightWheel *gAltmillerCave_LightWheel = &gAltmillerCave_LightWheelState;
 
 struct SceneEntrance gAltmillerCave_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 456, 0, 504, FACING_NORTH, 0, 0, 0, 544, 528, 0},
+    {ALTMILLER_CAVE_1_FROM_WORLD_MAP, CONDITION_ALWAYS, 456, 0, 504,
+     FACING_NORTH, 0, 0, 0, 544, 528, 0},
     {2, CONDITION_ALWAYS, 280, 0, 360, FACING_SOUTH, 0, 0, 0, 544, 528, 0},
     {3, CONDITION_ALWAYS, 120, 0, 696, FACING_NORTH, 0, 0, 552, 240, 720, 0},
-    {4, CONDITION_ALWAYS, 120, 0, 600, FACING_SOUTH, 0, 0, 552, 240, 720, 0},
-    {10, CONDITION_ALWAYS, 392, 0, 504, FACING_SOUTH, 0, 48, 16, 496, 672, 0},
-    {11, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 48, 16, 496, 672, 0},
-    {20, CONDITION_ALWAYS, 232, 0, 216, FACING_SOUTH, 0, 64, 48, 592, 576, 0},
-    {21, CONDITION_ALWAYS, 328, 0, 264, FACING_SOUTH, 0, 64, 48, 592, 576, 0},
-    {30, CONDITION_ALWAYS, 200, 0, 424, FACING_SOUTH, 0, 48, 80, 576, 480, 0},
-    {31, CONDITION_ALWAYS, 520, 0, 328, FACING_SOUTH, 0, 48, 80, 576, 480, 0},
-    {40, CONDITION_ALWAYS, 680, 0, 152, FACING_SOUTH, 0, 0, 0, 768, 512, 0},
-    {41, CONDITION_ALWAYS, 40, 0, 248, FACING_SOUTH, 0, 0, 0, 768, 512, 0},
-    {50, CONDITION_ALWAYS, 296, 0, 392, FACING_SOUTH, 0, 160, 304, 576, 704, 0},
+    {ALTMILLER_CAVE_1_FROM_ALTMILLER_CAVE_2, CONDITION_ALWAYS, 120, 0, 600,
+     FACING_SOUTH, 0, 0, 552, 240, 720, 0},
+    {ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_1, CONDITION_ALWAYS, 392, 0, 504,
+     FACING_SOUTH, 0, 48, 16, 496, 672, 0},
+    {ALTMILLER_CAVE_2_FROM_ALTMILLER_CAVE_3, CONDITION_ALWAYS, 136, 0, 104,
+     FACING_SOUTH, 0, 48, 16, 496, 672, 0},
+    {ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_2, CONDITION_ALWAYS, 232, 0, 216,
+     FACING_SOUTH, 0, 64, 48, 592, 576, 0},
+    {ALTMILLER_CAVE_3_FROM_ALTMILLER_CAVE_4, CONDITION_ALWAYS, 328, 0, 264,
+     FACING_SOUTH, 0, 64, 48, 592, 576, 0},
+    {ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_3, CONDITION_ALWAYS, 200, 0, 424,
+     FACING_SOUTH, 0, 48, 80, 576, 480, 0},
+    {ALTMILLER_CAVE_4_FROM_ALTMILLER_CAVE_5, CONDITION_ALWAYS, 520, 0, 328,
+     FACING_SOUTH, 0, 48, 80, 576, 480, 0},
+    {ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_4, CONDITION_ALWAYS, 680, 0, 152,
+     FACING_SOUTH, 0, 0, 0, 768, 512, 0},
+    {ALTMILLER_CAVE_5_FROM_ALTMILLER_CAVE_6, CONDITION_ALWAYS, 40, 0, 248,
+     FACING_SOUTH, 0, 0, 0, 768, 512, 0},
+    {ALTMILLER_CAVE_6_FROM_ALTMILLER_CAVE_5, CONDITION_ALWAYS, 296, 0, 392,
+     FACING_SOUTH, 0, 160, 304, 576, 704, 0},
     {51, CONDITION_ALWAYS, 424, 0, 392, FACING_SOUTH, 0, 160, 304, 576, 704, 0},
     {52, CONDITION_ALWAYS, 504, 0, 232, FACING_NORTH, 0, 384, 64, 624, 240, 0},
     {53, CONDITION_ALWAYS, 504, 0, 152, FACING_SOUTH, 0, 384, 64, 624, 240, 0},
@@ -2389,10 +2400,10 @@ s32 gAltmillerCave_BabiLeavePath[] = {
 
 // clang-format off
 struct SceneEvent gAltmillerCave_EventsOther[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTMILLER_CAVE_1_TO_WORLD_MAP},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0x31, 4, CONDITION_ALWAYS, 4},
+    {0x31, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_1_TO_ALTMILLER_CAVE_2},
     {EVENT_TOUCH, 60, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel0)},
     {EVENT_TOUCH, 61, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel1)},
     {EVENT_TOUCH, 62, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_DarkenToLevel2)},
@@ -2408,8 +2419,8 @@ struct SceneEvent gAltmillerCave_EventsOther[] = {
 };
 
 struct SceneEvent gAltmillerCave_Events2[] = {
-    {0x21, 10, CONDITION_ALWAYS, 10},
-    {0x31, 11, CONDITION_ALWAYS, 11},
+    {0x21, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_1},
+    {0x31, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_2_TO_ALTMILLER_CAVE_3},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT_SCRIPT(AltmillerCave_RepeatRockOrder)},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
@@ -2427,8 +2438,8 @@ struct SceneEvent gAltmillerCave_Events2[] = {
 };
 
 struct SceneEvent gAltmillerCave_Events3[] = {
-    {0x21, 20, CONDITION_ALWAYS, 20},
-    {0x31, 21, CONDITION_ALWAYS, 21},
+    {0x21, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_2},
+    {0x31, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_3_TO_ALTMILLER_CAVE_4},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_IN_AREA(ABILITY_RETREAT, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_BeginRetreat)},
@@ -2437,8 +2448,8 @@ struct SceneEvent gAltmillerCave_Events3[] = {
 };
 
 struct SceneEvent gAltmillerCave_Events4[] = {
-    {0x21, 30, CONDITION_ALWAYS, 30},
-    {0x31, 31, CONDITION_ALWAYS, 31},
+    {0x21, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_3},
+    {0x31, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_4_TO_ALTMILLER_CAVE_5},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 72, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
     {TOUCH_WALKING_INTO(FACING_WEST), 73, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 74, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
@@ -2453,8 +2464,8 @@ struct SceneEvent gAltmillerCave_Events4[] = {
 };
 
 struct SceneEvent gAltmillerCave_Events5[] = {
-    {0x21, 40, CONDITION_ALWAYS, 40},
-    {0x31, 41, CONDITION_ALWAYS, 41},
+    {0x21, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_4},
+    {0x31, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_5_TO_ALTMILLER_CAVE_6},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},
     {PSYNERGY_IN_AREA(ABILITY_RETREAT, 1), 0, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_BeginRetreat)},
@@ -2464,7 +2475,7 @@ struct SceneEvent gAltmillerCave_Events5[] = {
 // clang-format on
 
 struct SceneEvent gAltmillerCave_Events6[] = {
-    {0x21, 50, CONDITION_ALWAYS, 50},
+    {0x21, 50, CONDITION_ALWAYS, ALTMILLER_CAVE_6_TO_ALTMILLER_CAVE_5},
     {EVENT_EXIT, 51, CONDITION_ALWAYS, 51},
     {EVENT_EXIT, 52, CONDITION_ALWAYS, 52},
     {EVENT_EXIT, 53, CONDITION_ALWAYS, 53},

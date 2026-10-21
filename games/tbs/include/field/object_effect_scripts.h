@@ -1,5 +1,5 @@
-#ifndef GUARD_OBJECT_EFFECT_SCRIPTS_H
-#define GUARD_OBJECT_EFFECT_SCRIPTS_H
+#ifndef ALCHEMY_OBJECT_EFFECT_SCRIPTS_H
+#define ALCHEMY_OBJECT_EFFECT_SCRIPTS_H
 
 /// @file
 /// The object scripts effects give their particles and fragments.

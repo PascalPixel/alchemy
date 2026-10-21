@@ -195,10 +195,6 @@ enum {
 /// countdown.
 #define UI_WINDOW_EFFECT_SWELL 4
 
-/// The heap slot of the battle display's work block (struct BattleDisplayWork),
-/// whose window is the battle message window.
-enum { HEAP_SLOT_BATTLE_DISPLAY = 37 };
-
 /// The heap block the message decoder routine is copied into to run, for the
 /// length of one message's decoding (UiText_BuildRenderEntries), or of one
 /// UiText_DecodeMessage call when the block is empty.

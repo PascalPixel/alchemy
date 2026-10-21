@@ -718,8 +718,9 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   }
 }
 
-/// Stepping onto this spot in VenusLighthouseFirstFloor (trigger 32) makes the
-/// leader the actor the room's effect follows.
+/// Makes the leader the actor the room's effect follows.
+/// It's reached by stepping onto this spot in VenusLighthouseFirstFloor
+/// (trigger 32).
 static void Event_SetLeaderAsEffectTarget(void) {
   gActorEffectWork->actor = Object_GetById(ACTOR_PARTY_LEADER);
 }
@@ -862,9 +863,10 @@ VenusLighthouse_CreateScriptedGateEffect(s32 x, s32 z, const s32 *script) {
   return effect;
 }
 
-/// Walking into a one-tile gap, in VenusLighthouseFourthFloor and through the
-/// jump-or-push events of VenusLighthouseFirstFloor to
-/// VenusLighthouseFourthFloor: the leader jumps it if the far side is clear.
+/// The leader jumps a one-tile gap if the far side is clear.
+/// It's reached by walking into the gap, in VenusLighthouseFourthFloor and
+/// through the jump-or-push events of VenusLighthouseFirstFloor to
+/// VenusLighthouseFourthFloor.
 /// Returns 1 after a jump, 0 when there was none.
 static s32 Event_JumpAcrossGap(void) {
   struct FieldActor *leader;
@@ -1042,8 +1044,9 @@ static void Event_HearOfTheAttack(void) {
   Engine_EventEnd();
 }
 
-/// At Venus Lighthouse Entry, talking to the scholar who has waited so long to
-/// see inside Venus Lighthouse, but cannot move for the pain.
+/// A scholar who has waited so long to see inside can't move for the pain.
+/// Talking to the scholar at Venus Lighthouse Entry plays it; it's the inside
+/// of Venus Lighthouse the scholar has waited to see.
 static void Event_TalkToWaitingScholar(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVenusIveWaitedLongSeeIts);

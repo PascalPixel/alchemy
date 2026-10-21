@@ -1,7 +1,7 @@
 /// @file
-/// Altmiller Cave, six scenes (AltmillerCaveEntrance to AltmillerCaveDraught,
-/// scenes 146 to 151) whose area name is Altmiller Cave: rooms one after
-/// another, each each named here by its scene, entered from the world map at
+/// Altmiller Cave, six scenes (SceneId_AltmillerCaveEntrance to
+/// SceneId_AltmillerCaveDraught) whose area name is Altmiller Cave: rooms one
+/// after another, each named here by its scene, entered from the world map at
 /// AltmillerCaveEntrance. The rooms share one entrance table, and the getters
 /// pick the rest of each room's tables by gGameState.scene;
 /// AltmillerCave_Initialize sends an entry from outside the cave to the
@@ -44,8 +44,8 @@
 /// the lights away and starts over, and after three matches the wall bursts
 /// (AltmillerCave_ReleaseWallBurst) and the chest beyond holds the Mystic
 /// Draught (FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT). The puzzle's state is kept in
-/// the scene's work, and coming back up to the rocks (entrance 52) starts it
-/// over.
+/// the scene's work, and coming back up to the rocks
+/// (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CAVERN) starts it over.
 ///
 /// Back in AltmillerCaveBabi, talking to him with the draught plays
 /// AltmillerCave_RestoreBabiAndInviteParty (FLAG_BABI_SAVED): he drinks it
@@ -119,8 +119,8 @@ enum {
 /// Squall, a Jupiter Djinni.
 enum {
   ACTOR_FIRST_OBSTACLE = 8,
-  ACTOR_ROOM4_PUDDLE = 11,
-  ACTOR_ROOM4_PILLAR = 12,
+  ACTOR_SQUALL_ROOM_PUDDLE = 11,
+  ACTOR_SQUALL_ROOM_PILLAR = 12,
   ACTOR_DJINNI = 13
 };
 
@@ -235,13 +235,13 @@ const struct ScenePlacement *AltmillerCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_AltmillerCaveBabi) {
-    return gAltmillerCave_Placements2;
+    return gAltmillerCave_BabiPlacements;
   }
   if (scene == (s32)&SceneId_AltmillerCaveSquall) {
-    return gAltmillerCave_Placements4;
+    return gAltmillerCave_SquallPlacements;
   }
   if (scene == (s32)&SceneId_AltmillerCaveDraught) {
-    return gAltmillerCave_Placements6;
+    return gAltmillerCave_DraughtPlacements;
   }
   return gAltmillerCave_PlacementsOther;
 }
@@ -438,7 +438,7 @@ static void AltmillerCave_BeginRetreat(void) {
 /// After Move on AltmillerCaveSquall's pillar: in its cell at (30, 20) it
 /// settles and opens the way beside it (remembered in TBS_PATCH_1 and later).
 static void AltmillerCave_UpdateMovedObstacle(void) {
-  struct FieldActor *actor = Object_GetById(ACTOR_ROOM4_PILLAR);
+  struct FieldActor *actor = Object_GetById(ACTOR_SQUALL_ROOM_PILLAR);
 
   if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20) {
     actor->motionFlags = 2;
@@ -461,7 +461,7 @@ static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
 /// is blocked, which keeps it from freezing.
 static void AltmillerCave_CheckFrostTargetCollision(void) {
   struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
-  struct FieldActor *target = Object_GetById(ACTOR_ROOM4_PUDDLE);
+  struct FieldActor *target = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   struct FieldPosition position;
 
   position.x = target->x.fixed;
@@ -477,7 +477,7 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
 /// cell takes the frozen attributes kept at (76, 16).
 static void AltmillerCave_FreezePuddle(void) {
   struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
-  struct FieldActor *puddle = Object_GetById(ACTOR_ROOM4_PUDDLE);
+  struct FieldActor *puddle = Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
   blocked = effect->childMode;
@@ -1907,19 +1907,19 @@ const struct SceneEvent *AltmillerCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_AltmillerCaveBabi) {
-    return gAltmillerCave_Events2;
+    return gAltmillerCave_BabiEvents;
   }
   if (scene == (s32)&SceneId_AltmillerCaveVialChest) {
-    return gAltmillerCave_Events3;
+    return gAltmillerCave_VialChestEvents;
   }
   if (scene == (s32)&SceneId_AltmillerCaveSquall) {
-    return gAltmillerCave_Events4;
+    return gAltmillerCave_SquallEvents;
   }
   if (scene == (s32)&SceneId_AltmillerCaveCookieChest) {
-    return gAltmillerCave_Events5;
+    return gAltmillerCave_CookieChestEvents;
   }
   if (scene == (s32)&SceneId_AltmillerCaveDraught) {
-    return gAltmillerCave_Events6;
+    return gAltmillerCave_DraughtEvents;
   }
   return gAltmillerCave_EventsOther;
 }
@@ -1981,7 +1981,7 @@ s32 AltmillerCave_Initialize(void) {
       }
       Engine_GameFlagSet(FLAG_GRADED_DARKNESS);
     }
-    if (gGameState.entrance == 2) {
+    if (gGameState.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_INNER_CHAMBER) {
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gSceneState + 4) = 5;
       }
@@ -2003,13 +2003,13 @@ s32 AltmillerCave_Initialize(void) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN)) {
-      Engine_ActorSetAnimation(ACTOR_ROOM4_PUDDLE, 5);
+      Engine_ActorSetAnimation(ACTOR_SQUALL_ROOM_PUDDLE, 5);
       Map_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     } else {
-      Object_GetById(ACTOR_ROOM4_PUDDLE)->priorityFlags |=
+      Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
     }
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROOM4_PUDDLE), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SQUALL_ROOM_PUDDLE), 0);
 #if TBS_PATCH_1
     if (Engine_GameFlagIsSet(FLAG_PILLAR_IN_PLACE)) {
       Map_CopyCellAttributes(30, 20, 1, 1, 32, 20);
@@ -2037,9 +2037,9 @@ s32 AltmillerCave_Initialize(void) {
     *(s32 *)&Object_GetById(ACTOR_FIRST_OBSTACLE + 2)->update =
         (s32)AltmillerCave_MatchLeaderPriority;
 #endif
-    // Coming up to the rocks (entrance 52) starts the puzzle over, with the
-    // red light first.
-    if (gGameState.entrance == 52) {
+    // Coming up to the rocks (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CAVERN) starts
+    // the puzzle over, with the red light first.
+    if (gGameState.entrance == ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CAVERN) {
       Dma_Fill32(0, gAltmillerCave_LightWheel, 12);
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         u8 *puzzleState = gSceneState;
@@ -2212,8 +2212,10 @@ struct SceneEntrance gAltmillerCave_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 456, 0, 504,
      FACING_NORTH, 0, 0, 0, 544, 528, 0},
-    {2, CONDITION_ALWAYS, 280, 0, 360, FACING_SOUTH, 0, 0, 0, 544, 528, 0},
-    {3, CONDITION_ALWAYS, 120, 0, 696, FACING_NORTH, 0, 0, 552, 240, 720, 0},
+    {ALTMILLER_CAVE_ENTRANCE_FROM_INNER_CHAMBER, CONDITION_ALWAYS, 280, 0, 360,
+     FACING_SOUTH, 0, 0, 0, 544, 528, 0},
+    {ALTMILLER_CAVE_ENTRANCE_INNER_CHAMBER_FROM_PASSAGE, CONDITION_ALWAYS, 120,
+     0, 696, FACING_NORTH, 0, 0, 552, 240, 720, 0},
     {ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI, CONDITION_ALWAYS, 120, 0,
      600, FACING_SOUTH, 0, 0, 552, 240, 720, 0},
     {ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE, CONDITION_ALWAYS, 392, 0,
@@ -2234,10 +2236,14 @@ struct SceneEntrance gAltmillerCave_Entrances[] = {
      40, 0, 248, FACING_SOUTH, 0, 0, 0, 768, 512, 0},
     {ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST, CONDITION_ALWAYS,
      296, 0, 392, FACING_SOUTH, 0, 160, 304, 576, 704, 0},
-    {51, CONDITION_ALWAYS, 424, 0, 392, FACING_SOUTH, 0, 160, 304, 576, 704, 0},
-    {52, CONDITION_ALWAYS, 504, 0, 232, FACING_NORTH, 0, 384, 64, 624, 240, 0},
-    {53, CONDITION_ALWAYS, 504, 0, 152, FACING_SOUTH, 0, 384, 64, 624, 240, 0},
-    {54, CONDITION_ALWAYS, 184, 0, 216, FACING_NORTH, 0, 64, 64, 304, 240, 0},
+    {ALTMILLER_CAVE_DRAUGHT_FROM_ROCKS, CONDITION_ALWAYS, 424, 0, 392,
+     FACING_SOUTH, 0, 160, 304, 576, 704, 0},
+    {ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CAVERN, CONDITION_ALWAYS, 504, 0, 232,
+     FACING_NORTH, 0, 384, 64, 624, 240, 0},
+    {ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CHEST, CONDITION_ALWAYS, 504, 0, 152,
+     FACING_SOUTH, 0, 384, 64, 624, 240, 0},
+    {ALTMILLER_CAVE_DRAUGHT_CHEST_FROM_ROCKS, CONDITION_ALWAYS, 184, 0, 216,
+     FACING_NORTH, 0, 64, 64, 304, 240, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2300,7 +2306,7 @@ struct ScenePlacement gAltmillerCave_PlacementsOther[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltmillerCave_Placements2[] = {
+struct ScenePlacement gAltmillerCave_BabiPlacements[] = {
     {GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST,
      TALK_FACE_PARTY, 0},
     {IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY,
@@ -2318,7 +2324,7 @@ struct ScenePlacement gAltmillerCave_Placements2[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltmillerCave_Placements4[] = {
+struct ScenePlacement gAltmillerCave_SquallPlacements[] = {
     {0x129, CONDITION_ALWAYS, 7, PIXELS(328), 0, PIXELS(256), FACING_SOUTH,
      TALK_KEEP_FACING, 0},
     {0x12a, CONDITION_ALWAYS, 7, PIXELS(352), 0, PIXELS(296), FACING_SOUTH,
@@ -2334,7 +2340,7 @@ struct ScenePlacement gAltmillerCave_Placements4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gAltmillerCave_Placements6[] = {
+struct ScenePlacement gAltmillerCave_DraughtPlacements[] = {
     {0x129, CONDITION_ALWAYS, 7, PIXELS(392), 0, PIXELS(416), FACING_SOUTH,
      TALK_KEEP_FACING, 0},
     {0x12a, CONDITION_ALWAYS, 7, PIXELS(416), 0, PIXELS(456), FACING_SOUTH,
@@ -2446,7 +2452,7 @@ struct SceneEvent gAltmillerCave_EventsOther[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltmillerCave_Events2[] = {
+struct SceneEvent gAltmillerCave_BabiEvents[] = {
     {0x21, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
     {0x31, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
@@ -2465,7 +2471,7 @@ struct SceneEvent gAltmillerCave_Events2[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltmillerCave_Events3[] = {
+struct SceneEvent gAltmillerCave_VialChestEvents[] = {
     {0x21, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
     {0x31, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
@@ -2475,7 +2481,7 @@ struct SceneEvent gAltmillerCave_Events3[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltmillerCave_Events4[] = {
+struct SceneEvent gAltmillerCave_SquallEvents[] = {
     {0x21, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
     {0x31, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 72, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
@@ -2484,14 +2490,14 @@ struct SceneEvent gAltmillerCave_Events4[] = {
     {TOUCH_WALKING_INTO(FACING_EAST), 75, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_HopSelectedActor)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 71, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_MoveStagedActorToClearPosition)},
     {TOUCH_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_AdvanceObstacleAndCheckPassage)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROOM4_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_UpdateMovedObstacle)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, 1), ACTOR_ROOM4_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_CheckFrostTargetCollision)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_ROOM4_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SQUALL_ROOM_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_UpdateMovedObstacle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, 1), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_CheckFrostTargetCollision)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(AltmillerCave_FreezePuddle)},
     {EVENT_TALK, ACTOR_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(AltmillerCave_StartDjinnBattle)},
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gAltmillerCave_Events5[] = {
+struct SceneEvent gAltmillerCave_CookieChestEvents[] = {
     {0x21, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
     {0x31, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
@@ -2502,7 +2508,7 @@ struct SceneEvent gAltmillerCave_Events5[] = {
 };
 // clang-format on
 
-struct SceneEvent gAltmillerCave_Events6[] = {
+struct SceneEvent gAltmillerCave_DraughtEvents[] = {
     {0x21, 50, CONDITION_ALWAYS,
      ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST},
     {EVENT_EXIT, 51, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_TO_ROCKS},

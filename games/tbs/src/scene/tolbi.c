@@ -316,9 +316,10 @@ const struct SceneEvent *Tolbi_SelectEvents(void) {
   return gTolbiEventsFestival;
 }
 
-/// In Tolbi during the festival, TOLBI_SUSPICIOUS_OLD_WOMAN asks whether
-/// someone can live to be more than 100 years old; either way the talk turns to
-/// Babi, who is older still.
+/// A suspicious old woman asks whether anyone can live past 100 years old.
+/// She's TOLBI_SUSPICIOUS_OLD_WOMAN, in Tolbi during the festival, and asks
+/// whether someone can live to be more than 100 years old; either way the talk
+/// turns to Babi, who is older still.
 static void Tolbi_AskAboutLivingPastHundred(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiSomeoneLiveMore);
@@ -541,10 +542,10 @@ static void Tolbi_RequestTouchedExit(void) {
   Engine_EventRequestExit(*trigger);
 }
 
-/// During the festival, the first time the party steps on cell code 20, two
-/// soldiers searching for the missing Babi stop the party and show his
-/// picture. "Have you seen anyone who looks like this?" They leave either way
-/// the party answers. Sets FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI.
+/// Two soldiers searching for the missing Babi stop the party and show his
+/// picture. They do so during the festival, the first time the party steps on
+/// cell code 20. "Have you seen anyone who looks like this?" They leave either
+/// way the party answers. Sets FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI.
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 

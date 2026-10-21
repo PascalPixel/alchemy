@@ -329,9 +329,9 @@ static void Event_CaughtByFourthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_STORM + 3);
 }
 
-/// In Suhalla Desert, the leader walks into SuhallaDesertNorth's fifth storm
-/// (cell code 45), or SuhallaDesertSouth's chasing storm reaches the moving
-/// leader (event 55).
+/// The fifth storm catches the leader. In SuhallaDesertNorth the leader walks
+/// into it (cell code 45); in SuhallaDesertSouth it's the chasing storm, which
+/// reaches the moving leader (event 55).
 static void Event_CaughtByFifthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_STORM + 4);
 }
@@ -455,12 +455,13 @@ static void Event_FifthStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_STORM + 4);
 }
 
-/// In SuhallaDesertSouth, near its way out to the world map
-/// (cell code 9), once Iodem has heard the wounded soldiers in Suhalla: he
-/// steps out of the party. "Sheba is nowhere to be found. Should we search
-/// the desert once more or press on to Lalivero?" Whatever the answer, Iodem
-/// decides to head first for the guard gate ahead, Suhalla Gate, and leave
-/// Sheba to the soldiers there, and rejoins the party. Sets
+/// Iodem asks whether to search the desert for Sheba again or press on. It
+/// plays in SuhallaDesertSouth, near its way out to the world map (cell code
+/// 9), once Iodem has heard the wounded soldiers in Suhalla: he steps out of
+/// the party. "Sheba is nowhere to be found. Should we search the desert once
+/// more or press on to Lalivero?" Whatever the answer, Iodem decides to head
+/// first for the guard gate ahead, Suhalla Gate, and leave Sheba to the
+/// soldiers there, and rejoins the party. Sets
 /// FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA.
 static void Event_IodemAsksWhetherToPressOn(void) {
   struct FieldActor *leader;
@@ -684,12 +685,16 @@ static void SuhallaDesert_PulseRevealPalette(void) {
   SUHALLA_REVEAL_PALETTE_COLOR = ((u32)color << 16) >> 16;
 }
 
-/// Reveal ends, or a scene is entered: in SuhallaDesertSouth, what
-/// Reveal showed is hidden again and the pulsing color is put back.
 // Native event return forms: see MATCHING.md.
 #ifdef UBFIX
+/// Reveal wears off, and what it showed is hidden again. It runs as Reveal
+/// ends and whenever a scene is entered, and only in SuhallaDesertSouth does it
+/// hide what Reveal showed and put back the pulsing color.
 static void Event_RevealEnds(void) {
 #else
+/// Reveal wears off, and what it showed is hidden again. It runs as Reveal
+/// ends and whenever a scene is entered, and only in SuhallaDesertSouth does it
+/// hide what Reveal showed and put back the pulsing color.
 static s32 Event_RevealEnds(void) {
   s32 removalResult;
 #endif
@@ -713,11 +718,15 @@ static s32 Event_RevealEnds(void) {
   }
 }
 
-/// Reveal in SuhallaDesertSouth: the hidden stone pillar appears at 248, 712,
-/// map cells and the map object at 100 change, and a palette color pulses.
 #ifdef UBFIX
+/// Reveal shows a hidden stone pillar in the desert's south. In
+/// SuhallaDesertSouth the stone pillar appears at 248, 712, map cells and the
+/// map object at 100 change, and a palette color pulses.
 static void Event_RevealStarts(void) {
 #else
+/// Reveal shows a hidden stone pillar in the desert's south. In
+/// SuhallaDesertSouth the stone pillar appears at 248, 712, map cells and the
+/// map object at 100 change, and a palette color pulses.
 static s32 Event_RevealStarts(void) {
 #endif
   if (gGameState.scene == (s32)&SceneId_SuhallaDesertSouth) {

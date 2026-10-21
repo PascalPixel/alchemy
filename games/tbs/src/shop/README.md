@@ -29,6 +29,8 @@ an armor or item shop says its own line at the same distance from its own
 welcome. Stock rows 16, 17 and 18 are warriors' shops, which greet the party
 with a run of lines of their own.
 
+![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper's portrait greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
+
 Every coin spent buying also counts towards the party's shop credit
 (`gGameState.shopCredit`). After each purchase, once the credit reaches the
 next Game Ticket's cost, the keeper offers a Game Ticket as a gift and the
@@ -58,6 +60,8 @@ coins in Vale to 25 in Lalivero (`sInnPricesPerGuest`). Then the party sleeps:
 a fade to black, the inn's music, and a fade back with the HP and PP of
 everyone standing restored (`Inn_PlaySleep`). A downed member stays down, and
 the inn neither charges for them nor heals them.
+
+![Isaac asks Bilibin's innkeeper for a room, `It's 28 coins for a room.`, seven for each of the four, and answers Yes; after `Please enjoy your stay.` the room closes in an oval to black for the night, opens again, and the innkeeper says `I hope you slept well. Have a nice trip!`](https://alchemy.pascalpixel.com/guides/shop/inn.gif)
 
 The item picker opens when the party finds an item with every bag full, and
 asks which member's item to drop (`Shop_PickUnitItem`). It refuses an

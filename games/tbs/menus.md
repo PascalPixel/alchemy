@@ -60,6 +60,8 @@ item meant for the field goes the same way, as the item request. That's why
 a scene's code, not the menu's, says what happens when Move is used on a
 statue ([Scenes](src/scene/README.md)).
 
+![Isaac opens the menu beside a stone pillar in Vale and picks Psynergy, himself and then Move; the menu closes, `Move` shows, the field turns blue-green as a hand appears over the pillar, and it pushes the pillar one step to the right.](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
+
 ## The counters
 
 Shops, inns and sanctums are built from the same windows, with a keeper's
@@ -69,3 +71,6 @@ the lines show. Every coin the party spends also counts towards a Game
 Ticket, which the keeper hands over as a gift once enough has been spent, and
 a sanctum charges by the level of the member it revives.
 [Shops](src/shop/README.md) has the prices and the reasons behind them.
+
+
+![Isaac talks to Bilibin's item shopkeeper across the counter: the shopkeeper's portrait greets him, the counter's four icons come up with Buy, he picks a Herb for 10 coins and gives it to himself, the coins window drops from 500 to 490, and the shopkeeper thanks him as he leaves.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)

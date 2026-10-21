@@ -172,6 +172,8 @@ items and level ups at the end. Each round goes like this:
    maximum HP at the end of its turn (deadly poison a fifth), and the Grim
    Reaper takes a cursed unit when its seven-turn countdown runs out.
 
+![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
+
 An enemy picks one of the eight abilities in its row of
 `games/tbs/src/game/enemies.tsv` by its `action_strategy`. Strategies 0 to 2
 weight the eight evenly, falling by 6 a place, or falling steeply from 113
@@ -595,6 +597,10 @@ unit that's already poisoned, and the deadly poison of the ability Poison
 replaces plain poison but does nothing to a unit that has it already. Curse
 calls the Grim Reaper, who takes the target when the seven-turn countdown
 runs out, and each later curse brings it a turn closer.
+
+![Ivan casts Paralyze at Isaac: purple rings and streaks burst around Ivan, a crackle of yellow light wraps Isaac, and the message reads `Isaac has been stunned!`](https://alchemy.pascalpixel.com/abilities/paralyze.gif)
+
+![Ivan casts Confuse at Isaac, Garet and Mia: a pale blue mist rolls over the three, and the messages read `Isaac is confused!` and `But it has no effect on Garet!`](https://alchemy.pascalpixel.com/abilities/confuse.gif)
 
 Cure Poison and Antidote clear poison. Restore and Elixir clear delusion,
 stun, sleep, the Psynergy seal and the Grim Reaper's countdown, but not poison

@@ -173,6 +173,8 @@ backed out of it, and the four icons come up again. The flag is a game flag
 rather than a variable, so code in other banks can test it with the flag
 calls it already imports. XXX: that last reason is an inference.
 
+![The player picks Isaac and his Cure on the Psynergy screen, presses Start, and the screen closes straight back to the four icons.](https://alchemy.pascalpixel.com/guides/menu/menu-start.gif)
+
 The Djinn screen does without the watch. Its choosers look for Start
 themselves, play the same cancel sound and return -2, and the screen's loop
 ends on that result.
@@ -200,6 +202,8 @@ number and the bits above them the member), and the Item screen writes the
 field's item request (`struct ItemPickerResult`). The field carries it out
 once the menu has closed, `Field_RunScene` handing Psynergy to
 `Field_UsePsynergy`.
+
+![Isaac opens the menu beside a stone pillar in Vale and picks Psynergy, himself and then Move; the menu closes, `Move` shows, the field turns blue-green as a hand appears over the pillar, and it pushes the pillar one step to the right.](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
 
 `DjinnMenu_Run` also runs the Djinn tutorial, which the world map opens (as
 `DjinnMenu_Open`) when Flint joins. `Menu_OpenCharacterSelector`

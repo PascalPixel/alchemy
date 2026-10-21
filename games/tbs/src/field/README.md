@@ -307,6 +307,8 @@ them. All three layers are windows onto one shared grid of cells, and each
 has its own parallax, drift and wrap, so it can scroll at its own rate as the
 view moves, or drift by itself.
 
+![The whole 128 by 128 cell grid of Goma Cave's map at half size, each cell drawn from its block: the ground layer's window at the top left holds the cave floor and its pool, the middle layer's below it the rock walls around a dark floor, and the overhead layer's at the top right only the glows of the torches, and the rest of the grid is empty.](https://alchemy.pascalpixel.com/guides/map/grid.png)
+
 - The **ground layer** (`MAP_LAYER_GROUND`, on `BG3`) is at the back.
 - The **middle layer** (`MAP_LAYER_MIDDLE`, on `BG2`) holds walls and edges,
   drawn under the actors.

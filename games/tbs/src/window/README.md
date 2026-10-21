@@ -58,6 +58,8 @@ framed rectangle of the tilemap. It zooms open over 8 frames and closed over
 8-pixel tiles on the 30 by 20 tile screen (240 by 160 pixels), while offsets
 inside a window are pixels from its interior's top left.
 
+![Ten frames of a message window opening over Vale, left to right and down: a thin bar appears at the top of the screen and grows taller and wider frame by frame to its full size, and then the first letters, `You`, and Garet's sister's portrait follow.](https://alchemy.pascalpixel.com/guides/window/window-open.png)
+
 A window with `UI_WINDOW_TEXT_CANVAS` is a **text canvas**, which draws its
 letters into bitmap tiles (`UI_CANVAS_VRAM`) through `glyph_arm.c`. Other
 windows show each character as a 16 by 16 sprite, or as a tile of the
@@ -169,6 +171,8 @@ frame's share. In battle it's 8 a frame, or 13 after a frame that took two or
 more screen refreshes (VBlanks). The speaker's voice blip, one of four sounds,
 plays every few characters.
 
+![Isaac talks to Garet's sister in Vale: a message window zooms open at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out with a bobbing arrow at its end, the window narrows to fit `I wish I could go with you.`, and it closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
+
 ### Windows and their pictures
 
 Every window is a framed rectangle of one shared tilemap, 32 tiles wide and 20
@@ -191,6 +195,8 @@ While Mind Read shows someone's thoughts, the work block's `mode` is set:
 every window corner becomes the one round tile, the text is drawn in colour 8
 with no shadow, and in Japanese and English the message window is made 2
 tiles wider.
+
+![Isaac casts Mind Read on Garet's sister in Vale: the field tints red, then gold and green, as her thought `Gee, I wish I could see new lands, too.` is typed into a round-cornered window beside her portrait.](https://alchemy.pascalpixel.com/abilities/mind-read.gif)
 
 ### Window sizes and message text
 

@@ -1,8 +1,8 @@
 /// @file
-/// The buildings of Suhalla (SuhallaInteriors, scene 168): the village's
-/// houses, its one shop and its inn, which the area names call Suhalla, and
-/// Suhalla Sanctum, as the same scene is named at SUHALLA_INTERIORS_SANCTUM
-/// and SUHALLA_INTERIORS_SANCTUM_NORTH.
+/// The buildings of Suhalla (SceneId_SuhallaInteriors): the village's houses,
+/// its one shop and its inn, which the area names call Suhalla, and Suhalla
+/// Sanctum, as the same scene is named at SUHALLA_INTERIORS_SANCTUM and
+/// SUHALLA_INTERIORS_SANCTUM_NORTH.
 ///
 /// - Suhalla, the houses, shop and inn behind the village's doors
 ///   (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST, SUHALLA_TO_HOUSE_NORTHEAST and
@@ -59,10 +59,6 @@
 #include "flags.h"
 #include "songs.h"
 
-/// Arriving by this entrance also marks Babi's audience as held, as Suhalla's
-/// own entrance 90 does (see suhalla.c).
-enum { ENTRANCE_90 = 90 };
-
 /// The actors, numbering the rows of gSuhallaInteriorsPlacements and of
 /// gSuhallaInteriorsPlacementsAfterAudience from ACTOR_FIRST_PLACED; the two
 /// tables agree up to ACTOR_PRIEST. Where an actor's talk changes after
@@ -79,15 +75,14 @@ enum SuhallaInteriorsActor {
   /// the audience: "Do not approach the large cyclones in the middle of the
   /// Suhalla."
   ACTOR_VILLAGER_IGNORED_BY_TOLBI,
-  /// In the old woman's sprite (0x6f, as in vale_gate.c). "If you head east
-  /// across Suhalla, Lalivero is so close you can see it across the Nol
-  /// River..." After the audience she half remembers a saying about the death
-  /// storms.
+  /// In the old woman's sprite (as in vale_gate.c). "If you head east across
+  /// Suhalla, Lalivero is so close you can see it across the Nol River..."
+  /// After the audience she half remembers a saying about the death storms.
   ACTOR_OLD_WOMAN,
   ACTOR_SHOPKEEPER,
   ACTOR_INNKEEPER,
-  /// A woman at the inn, in the sprite (0x80) of Kalay's innkeeper's wife. "I
-  /// wonder if any customers can get through those sandstorms..."
+  /// A woman at the inn, in the sprite of Kalay's innkeeper's wife. "I wonder
+  /// if any customers can get through those sandstorms..."
   ACTOR_INN_WOMAN,
   /// Travelers the sandstorms blew back, out of sight until the audience. "We
   /// went into the Suhalla to go build the lighthouse, but the storms caught
@@ -345,7 +340,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(40);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IODEM, 3);
     Event_Wait(30);
     Event_Wait(10);
@@ -467,7 +462,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 50);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, 3);
     Event_Wait(30);
@@ -499,13 +494,15 @@ const struct SceneEvent *Scene_GetEvents(void) {
 }
 
 /// Sets Suhalla's buildings up as the party enters: the shopkeeper and
-/// innkeeper behind their counters, and the two wounded soldiers lying in
-/// their beds. Entrance 90 sets FLAG_BABI_SPOKE_AFTER_COLOSSO.
+/// innkeeper behind their counters, and the two wounded soldiers lying in their
+/// beds. SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE sets
+/// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
-  if (gGameState.entrance == ENTRANCE_90)
+  if (gGameState.entrance == SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE)
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gEventWork->transitionFrames = 24;
   // Nearer to talk to, across their counters.
   Object_GetById(ACTOR_SHOPKEEPER)->collisionFlags |= 4;
@@ -524,8 +521,10 @@ s32 Scene_Initialize(void) {
 }
 
 struct SceneEntrance gSuhallaInteriorsEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 256, 0, 456, FACING_NORTH, 0, 0, 280, 336, 480, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
+    {SUHALLA_INTERIORS_INN, CONDITION_ALWAYS, 256, 0, 456, FACING_NORTH, 0, 0,
+     280, 336, 480, 0},
     {SUHALLA_INTERIORS_SANCTUM, CONDITION_ALWAYS, 432, 0, 728, FACING_NORTH, 0,
      312, 528, 552, 752, 0},
     {SUHALLA_INTERIORS_HOUSE_WEST, CONDITION_ALWAYS, 640, 0, 168, FACING_NORTH,
@@ -536,13 +535,20 @@ struct SceneEntrance gSuhallaInteriorsEntrances[] = {
      0, 256, 16, 496, 232, 0},
     {SUHALLA_INTERIORS_SANCTUM_NORTH, CONDITION_ALWAYS, 432, 0, 630,
      FACING_NORTH, 0, 312, 528, 552, 752, 0},
-    {7, CONDITION_ALWAYS, 680, 0, 120, FACING_WEST, 0, 496, 16, 736, 192, 0},
-    {10, CONDITION_ALWAYS, 104, 0, 360, FACING_NORTH, 0, 0, 280, 336, 480, 0},
-    {11, CONDITION_ALWAYS, 152, 0, 360, FACING_NORTH, 0, 0, 280, 336, 480, 0},
-    {12, CONDITION_ALWAYS, 472, 0, 344, FACING_SOUTH, 0, 344, 280, 584, 440, 0},
-    {13, CONDITION_ALWAYS, 712, 0, 344, FACING_SOUTH, 0, 600, 280, 840, 440, 0},
-    {14, CONDITION_ALWAYS, 88, 0, 352, FACING_SOUTH, 0, 0, 280, 336, 480, 0},
-    {15, CONDITION_ALWAYS, 88, 0, 584, FACING_NORTH, 0, 16, 528, 256, 688, 0},
+    {SUHALLA_INTERIORS_HOUSE_WEST_UNUSED, CONDITION_ALWAYS, 680, 0, 120,
+     FACING_WEST, 0, 496, 16, 736, 192, 0},
+    {SUHALLA_INTERIORS_INN_FROM_GUEST_ROOM_WEST, CONDITION_ALWAYS, 104, 0, 360,
+     FACING_NORTH, 0, 0, 280, 336, 480, 0},
+    {SUHALLA_INTERIORS_INN_FROM_GUEST_ROOM_EAST, CONDITION_ALWAYS, 152, 0, 360,
+     FACING_NORTH, 0, 0, 280, 336, 480, 0},
+    {SUHALLA_INTERIORS_GUEST_ROOM_WEST_FROM_INN, CONDITION_ALWAYS, 472, 0, 344,
+     FACING_SOUTH, 0, 344, 280, 584, 440, 0},
+    {SUHALLA_INTERIORS_GUEST_ROOM_EAST_FROM_INN, CONDITION_ALWAYS, 712, 0, 344,
+     FACING_SOUTH, 0, 600, 280, 840, 440, 0},
+    {SUHALLA_INTERIORS_INN_FROM_LOFT, CONDITION_ALWAYS, 88, 0, 352,
+     FACING_SOUTH, 0, 0, 280, 336, 480, 0},
+    {SUHALLA_INTERIORS_LOFT_FROM_INN, CONDITION_ALWAYS, 88, 0, 584,
+     FACING_NORTH, 0, 16, 528, 256, 688, 0},
     {SCENE_TABLE_END},
 };
 

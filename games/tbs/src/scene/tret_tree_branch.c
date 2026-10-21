@@ -1,16 +1,17 @@
 /// @file
-/// Tret Tree (TretTreeBranch, scene 46), the second of Tret Tree's two scenes.
-/// Tret, the holy tree of Kolima Forest, turned Kolima's people into trees;
-/// the party goes inside him to fight the evil within him, the story
-/// tret_tree_interiors.c (TretTreeInteriors, scene 45) tells. This scene has
-/// no story event and tests no story flag.
+/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two scenes.
+/// Tret, the holy tree of Kolima Forest, turned Kolima's people into trees; the
+/// party goes inside him to fight the evil within him, the story
+/// tret_tree_interiors.c (SceneId_TretTreeInteriors) tells. This scene has no
+/// story event and tests no story flag.
 ///
-/// Its eight exits (1 to 8) lead back into scene 45; walking into one plays
-/// the exit sound and leaves at once. Touch cells 10 to 15 move the leader and
-/// the camera five or six cells north or south in one step, with no walk.
-/// Breeze, a Jupiter Djinni, stands here until it has joined the party: its
-/// own flag (FLAG_DJINNI_0 + DJINNI_BREEZE) removes its placement. Talking to
-/// it starts a battle with it.
+/// Its eight exits (TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST and
+/// the seven after it) lead back into SceneId_TretTreeInteriors; walking into
+/// one plays the exit sound and leaves at once. Touch cells 10 to 15 move the
+/// leader and the camera five or six cells north or south in one step, with no
+/// walk. Breeze, a Jupiter Djinni, stands here until it has joined the party:
+/// its own flag (FLAG_DJINNI_0 + DJINNI_BREEZE) removes its placement. Talking
+/// to it starts a battle with it.
 ///
 /// The setup opens the scene with a backdrop fade, blends BG1 over the rest of
 /// the screen and splits BG3's scroll at a scanline that follows the map's
@@ -55,7 +56,7 @@
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed actor; its
 /// placement is gone once its flag (FLAG_DJINNI_0 + DJINNI_BREEZE) is set.
-enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED, SPRITE_JUPITER_DJINNI = 0x5d };
+enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED };
 
 /// Starts the scanline-dependent BG3 scroll callbacks.
 static void TretTreeBranch_StartBg3Split(void);
@@ -155,8 +156,9 @@ static void Event_ShiftNorthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
-/// Walking into one of exits 1 to 8 in Tret Tree: the exit sound plays and the
-/// party leaves by the exit touched, into Tret Tree's other scene (45).
+/// Walking into one of the eight exits in Tret Tree, whose touch cells have the
+/// exits' own numbers: the exit sound plays and the party leaves by the exit
+/// touched, into Tret Tree's other scene (SceneId_TretTreeInteriors).
 static void Event_TakeTouchedExit(void) {
   struct EventWork *state = gEventWork;
   s16 *touchedExit;
@@ -174,8 +176,8 @@ TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
   state->value = 10;
 }
 
-/// Casting Reveal in Tret Tree (its phase 2): the window transition and BG1's
-/// blend over the rest of the screen are set again, as when the scene opened.
+/// Casting Reveal in Tret Tree: the window transition and BG1's blend over the
+/// rest of the screen are set again, as when the scene opened.
 static void Event_CastReveal(void) {
   struct DisplayTransitionState *transition;
 
@@ -227,8 +229,8 @@ s32 TretTreeBranch_Initialize(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  // UB: slot 31 lies past scalar gEventWork. Its named load adds six
-  // bytes in the native EN trial (0x6a to 0x70).
+  // UB: HEAP_SLOT_TRANSITION lies past scalar gEventWork. Its named load adds
+  // six bytes in the native EN trial (0x6a to 0x70).
 #ifdef UBFIX
   transition = gDisplayTransition;
 #else
@@ -258,7 +260,7 @@ static void TretTreeBranch_ApplyBg3ScrollAtScanline(void) {
 /// split, scroll subtracts one pixel for every four elapsed frames.
 static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
   struct MapLayerScroll *layer =
-      &((struct MapScrollWork *)gMapWork[0])->layers[0];
+      &((struct MapScrollWork *)gMapWork[0])->layers[MAP_LAYER_GROUND];
   s32 horizontalOffset;
 
   sSplitLine = 192 - (s16)(layer->y >> 16);
@@ -275,7 +277,8 @@ static void TretTreeBranch_StartBg3Split(void) {
 }
 
 struct SceneEntrance gTretTreeBranch_Entrances[] = {
-    {0, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST,
      CONDITION_ALWAYS, 328, 0, 424, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST,
@@ -324,7 +327,7 @@ u32 gTretTreeBranch_Exits[] = {
 
 // clang-format off
 struct ScenePlacement gTretTreeBranch_Placements[] = {
-    { SPRITE_JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_BREEZE, ACTOR_STAND,
+    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_BREEZE, ACTOR_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };

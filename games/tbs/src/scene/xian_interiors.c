@@ -1,6 +1,6 @@
 /// @file
-/// Xian's houses, shops and inn (scene 73, a row with no SceneId_ name; the
-/// area names call it Xian), and the room behind Master Feh's school.
+/// Xian's houses, shops and inn (SceneId_XianInteriors; the area names call it
+/// Xian), and the room behind Master Feh's school.
 ///
 /// Each of Xian's doors leads to a room here, and each room leads back out to
 /// its door. XIAN_INTERIORS_HOUSE, XIAN_INTERIORS_HSUS_HOUSE and
@@ -261,7 +261,8 @@ const struct SceneEvent *XianInteriors_GetEvents(void) {
 s32 XianInteriors_Initialize(void) {
   s16 entrance;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   entrance = gGameState.entrance;
   // Restore the ambient effects shared by connected interior entrances.
   if (entrance == XIAN_INTERIORS_INN_SOUTH ||
@@ -299,7 +300,8 @@ const s32 *gEffectScripts[] = {
 };
 
 struct SceneEntrance gXianInteriors_Entrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {XIAN_INTERIORS_HOUSE, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24,
      8, 248, 208, 0},
     {XIAN_INTERIORS_HSUS_HOUSE, CONDITION_ALWAYS, 448, 0, 200, FACING_NORTH, 0,
@@ -308,7 +310,8 @@ struct SceneEntrance gXianInteriors_Entrances[] = {
      0, 608, 8, 848, 224, 0},
     {XIAN_INTERIORS_INN_SOUTH, CONDITION_ALWAYS, 160, 0, 472, FACING_NORTH, 0,
      48, 288, 336, 496, 0},
-    {5, CONDITION_ALWAYS, 472, 0, 360, FACING_EAST, 0, 384, 288, 672, 496, 0},
+    {XIAN_INTERIORS_INN_GUEST_ROOMS_FROM_INN, CONDITION_ALWAYS, 472, 0, 360,
+     FACING_EAST, 0, 384, 288, 672, 496, 0},
     {XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, 512, 0, 696,
      FACING_NORTH, 0, 352, 496, 656, 720, 0},
     {XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS, CONDITION_ALWAYS, 120, 0, 360,

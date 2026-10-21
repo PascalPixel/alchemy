@@ -43,9 +43,12 @@
 /// (MercuryLighthouseAerie_FlickerBeacon), and the platforms start 50 pixels
 /// down. Jenna, Kraden, Felix and Menardi are placed only on the first arrival:
 /// every other entrance sets FLAG_HOSTAGES_GONE before the placements are read.
-/// Scene 59, a row of the scene table without a symbol, which the game names
-/// Mercury Lighthouse, loads this overlay and the same map; the setup does
-/// nothing for it, and no exit leads there.
+///
+/// Unused: scene 59 (SceneId_UnusedMercuryLighthouseAerie2), which the area
+/// names call Mercury Lighthouse and the debug scene list labels `MTO07NG`,
+/// loads this overlay and the same map. The setup does nothing for it, and no
+/// exit, table or code leads there; only the debug scene selector, which
+/// reaches every scene, can.
 
 #include "game_state.h"
 #include "scene_ids.h"

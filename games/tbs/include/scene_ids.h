@@ -68,7 +68,7 @@ extern char SceneId_MercuryLighthouse2;
 extern char SceneId_MercuryLighthouse3;
 extern char SceneId_MercuryLighthouse4;
 extern char SceneId_MercuryLighthouseAerie1;
-extern char SceneId_MercuryLighthouseAerie2;
+extern char SceneId_UnusedMercuryLighthouseAerie2;
 extern char SceneId_FuchinTemple1;
 extern char SceneId_FuchinTemple2;
 extern char SceneId_FuchinFallsCave1;

@@ -20,12 +20,19 @@
 // before Isaac runs, Garet, Ivan and Mia each look around the stages on their
 // own and choose where to cheer from, and the guide at each stage describes it
 // and offers a friend's cheering there.
+//
+// The three match scenes number their ways out alike, so the requests here
+// keep the numbers: exit 10 is each scene's way from lending a hand to the
+// race (COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE and its twins), and exit 11
+// its way back out to the Colosseum (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST,
+// COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH,
+// COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM).
 
 // Byte flags (eight flags each) holding where a friend cheers from: the cell
 // column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at
 // COLOSSO_CHEER_ROW + 16 * character, for Garet, Ivan and Mia.
-#define COLOSSO_CHEER_COLUMN 0x370
-#define COLOSSO_CHEER_ROW 0x378
+#define COLOSSO_CHEER_COLUMN FLAG_PLACE_TEMP_70
+#define COLOSSO_CHEER_ROW FLAG_PLACE_TEMP_78
 #define COLOSSO_CHEER_SLOT(character) ((character) << 4)
 
 /// Scene flags, by stage number: a friend cheers at the stage, and its
@@ -118,9 +125,9 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Engine_EventClearInvalidPackedValues();
 }
 
-/// A scene callback while a friend looks around the stages alone (entrance 2):
-/// when the Psynergy request names that friend and flag 0x141 is set, raise
-/// event 99, Colosso_TakePlaceForMatch.
+/// A scene callback while a friend looks around the stages alone (the visit to
+/// lend a hand): when the Psynergy request names that friend and flag 0x141 is
+/// set, raise event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct EventWork *work = gEventWork;
   s32 selection = gGameState.selectedActor;
@@ -138,7 +145,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 /// the friend on the map calls the competitors to their places, and the
 /// friend's cell becomes their place to cheer from. "The match is about to
 /// begin. Please take your places." The next friend then looks around, or,
-/// after Mia, the party leaves by exit 10.
+/// after Mia, the party leaves for the race.
 static void Colosso_TakePlaceForMatch(void) {
   struct EventWork *work = gEventWork;
   s32 speakerId = 8;
@@ -178,7 +185,7 @@ static void Colosso_TakePlaceForMatch(void) {
   Engine_EventSetMessage(MsgColossoMatchAboutBeginPleaseTake);
   Engine_EventShowMessage(speakerId, 0);
   transition = &work->startTransition;
-  *transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+  *transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 15;
   Engine_EventWait(20);
   Engine_EventCloseScreen();
@@ -209,7 +216,7 @@ static void Colosso_TakePlaceForMatch(void) {
 /// they are done cheering. "Huh? Are you done cheering?" On "Yeah", "Then
 /// please wait here until the match begins.": the friend's cell becomes their
 /// place, and the next friend looks around, or, after Mia, the party leaves by
-/// exit 10. On "Nope", "Then cheer as best you can!"
+/// the way to the race. On "Nope", "Then cheer as best you can!"
 void Colosso_AskDoneCheering(s32 id) {
   struct EventWork *work;
   s32 slot;
@@ -233,7 +240,8 @@ void Colosso_AskDoneCheering(s32 id) {
   if (res == 0) {
     Engine_EventSetMessage(msg + 1);
     Engine_EventShowMessage(id, 0);
-    work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+    work->startTransition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     work->transitionFrames = 15;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
@@ -249,7 +257,7 @@ void Colosso_AskDoneCheering(s32 id) {
       Colosso_ControlCharacterAlone(slot);
       Engine_EventOpenScreen();
       Engine_EventWaitForScreen();
-      work->startTransition = 0;
+      work->startTransition = SCENE_TRANSITION(TRANSITION_FADE, 0);
     }
   } else {
     Engine_EventSetMessage(msg + 2);
@@ -260,7 +268,7 @@ void Colosso_AskDoneCheering(s32 id) {
 
 /// The guide where the stages start. Once the friends have all gone to cheer
 /// (Isaac is the party), "Isaac, did you get a good look around?": on yes the
-/// guide steps aside, Isaac walks past and the party leaves by exit 11.
+/// guide steps aside, Isaac walks past and the party leaves for the Colosseum.
 /// Otherwise "Wait, shouldn't you decide where the best place to cheer for
 /// Isaac is?"
 static void Colosso_AskReadyToRace(s32 actorId) {
@@ -306,12 +314,9 @@ void Colosso_ClearCheeringSpots(void) {
 
 /// A stage's guide names the stage and decides what to do next. "This is stage
 /// N of the first finals match." (in Colosseum Final 1; the second in Final 2
-/// and the third in Final 3). Returns what the guide does next:
-/// 0: describe the stage (yes to "Would you like to hear a description of this
-///    stage?", asked the first time, or "Descriptions" afterwards);
-/// 1: no description, then offer a friend's cheering;
-/// 2: "Cheer" chosen, or a friend already cheers here;
-/// 3: "Nothing", or the choice cancelled.
+/// and the third in Final 3). Returns what the guide does next, an enum
+/// ColossoGuideReply; the yes or no answer to the description's question is
+/// COLOSSO_GUIDE_DESCRIBE or COLOSSO_GUIDE_OFFER_CHEERING.
 s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
   s32 scene;
   s32 message;
@@ -330,15 +335,15 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
   Engine_EventSetMessage(message);
   Engine_EventShowMessage(speaker, 0);
   if (Engine_GameFlagIsSet(competitor + COLOSSO_STAGE_CHEERED) != 0) {
-    return 2;
+    return COLOSSO_GUIDE_CHEER;
   }
   if (Engine_GameFlagIsSet(competitor + COLOSSO_STAGE_DESCRIBED) != 0) {
     choice = PartyTalkMenu_Choose(0);
     if (choice == 1) {
-      return 2;
+      return COLOSSO_GUIDE_CHEER;
     }
     if (choice == 2 || choice == -1) {
-      return 3;
+      return COLOSSO_GUIDE_NOTHING;
     }
     return choice;
   }
@@ -368,14 +373,15 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 competitor) {
   Engine_EventShowMessage(speaker, 0);
 }
 
-/// The guide at a stage, with the mode
+/// The guide at a stage, with the reply
 /// Colosso_GreetAtStage returned: offer a friend's
 /// cheering at the stage. With Isaac alone, "All right, do your best!"; with
 /// the stage taken, "Unfortunately, we have a full house."; otherwise "Would
-/// you like a friend to cheer for you here?" (taken as yes in mode 2) and the
-/// party's character menu. The friend chosen is led to the stage and leaves the
-/// party, and their cell is kept. Mode 3, no or no choice: "If you know who you
-/// want to cheer you on, please let me know!"
+/// you like a friend to cheer for you here?" (taken as yes for
+/// COLOSSO_GUIDE_CHEER) and the party's character menu. The friend chosen is
+/// led to the stage and leaves the party, and their cell is kept. With
+/// COLOSSO_GUIDE_NOTHING, no or no choice: "If you know who you want to cheer
+/// you on, please let me know!"
 void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   struct FieldActor *actor;
   struct FieldActor *leader;
@@ -395,7 +401,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   actor = Object_GetById(guide);
   guideX = actor->x.part.pixel;
   guideZ = actor->z.part.pixel;
-  if (mode != 3) {
+  if (mode != COLOSSO_GUIDE_NOTHING) {
     memberCount = GetPartyMemberCount();
     for (i = 0; i < memberCount; i++) {
       members[i] = gGameState.activeOwners[i];
@@ -410,7 +416,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
       Event_ShowMessage(guide, 0);
       return;
     }
-    if (mode == 2) {
+    if (mode == COLOSSO_GUIDE_CHEER) {
       answer = 0;
       Engine_TaskWait(6);
     } else {

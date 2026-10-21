@@ -1,5 +1,5 @@
 /// @file
-/// Colosseum Final 1 (ColosseumAzartMatch, scene 143), the site of the first
+/// Colosseum Final 1 (SceneId_ColosseumAzartMatch), the site of the first
 /// finals match, where Isaac races Azart, the second-best of the warriors who
 /// cleared the trials, through four stages to the arena and fights him there.
 ///
@@ -10,8 +10,8 @@
 /// own entrance, and ColosseumAzartMatch_Initialize blocks Retreat and sets up
 /// the visit that entrance stands for after restoring the stages from the
 /// group's flags (FLAG_PLACE_TEMP_01 to FLAG_PLACE_TEMP_03 and the rock's
-/// column in byte flag 0x310), so that what the friends changed stays changed
-/// for the race.
+/// column in the byte of flags from FLAG_PLACE_TEMP_10), so that what the
+/// friends changed stays changed for the race.
 ///
 /// - COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM, the tour, from the Colosseum's east
 ///   passage. The guide (ColosseumAzartMatch_ExplainFinalsRules) tells the
@@ -145,7 +145,7 @@ enum {
   ROCK_A = 9,   ///< the Rock Challenge's three rocks
   ROCK_B = 10,
   ROCK_C = 11,
-  /// Pushed west to let water into the Pipeworks. A pillar: sprite 0xe5, as
+  /// Pushed west to let water into the Pipeworks. A pillar, drawn as
   /// mercury_lighthouse.c's ACTOR_CHANNEL_PILLAR_3.
   PIPEWORKS_PILLAR = 12,
   PIPE_WEST = 13, ///< the Pipeworks' two pipes, a kind of scale
@@ -241,8 +241,8 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
 }
 
 /// Move on a rock in the Rock Challenge, and after each push: a rock resting on
-/// the floor becomes a step (the second rock's column is kept in byte flag
-/// 0x310).
+/// the floor becomes a step (the second rock's column is kept in the byte of
+/// flags from FLAG_PLACE_TEMP_10).
 static void Event_SettleRocks(void) {
 
   struct FieldActor *actor;
@@ -265,7 +265,7 @@ static void Event_SettleRocks(void) {
   {
     s32 x = actor->x.fixed >> 20;
 
-    FieldGameFlag_SetByte(784, x);
+    FieldGameFlag_SetByte(FLAG_PLACE_TEMP_10, x);
   }
   {
     s32 x = actor->x.fixed >> 20;
@@ -513,9 +513,9 @@ static void Event_PushPipeworksPillar(void) {
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-/// Unused: sets flag 768; nothing calls it.
+/// Unused: sets FLAG_PLACE_TEMP_00; nothing calls it.
 UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
-  Engine_GameFlagSet(768);
+  Engine_GameFlagSet(FLAG_PLACE_TEMP_00);
 }
 
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
@@ -621,10 +621,10 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actor) {
 }
 
 /// Sets up Colosseum Final 1: restores the stages as they were left, then by
-/// the arrival: the race (entrance 1), the friends' turns to lend a hand
-/// (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST), the guide's tour
-/// (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM), or the match won (entrance 4) or
-/// lost (entrance 5).
+/// the arrival: the race (COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND), the
+/// friends' turns to lend a hand (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST),
+/// the guide's tour (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM), or the match won
+/// (entrance 4) or lost (entrance 5).
 s32 ColosseumAzartMatch_Initialize(void) {
   struct FieldActor *actor;
   s32 hit;
@@ -632,7 +632,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   u8 zero;
   s32 col;
 
-  gEventWork->startTransition = 0;
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   actor = Object_GetById(ROCK_A);
   hit = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
@@ -642,7 +642,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Map_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20,
                            actor->z.fixed >> 20);
   }
-  x = FieldGameFlag_GetByte(0x310);
+  x = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_10);
   if (x == 0) {
     x = 25;
   }
@@ -693,7 +693,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   Colosso_ShowItemIcon(PRIZE_B, 127);
   // Select competition, support, explanation, or post-battle arrival.
   switch (gGameState.entrance) {
-  case 1:
+  case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, OPPONENT, 4, PIXELS(1304),
                            PIXELS(192), PRIZE_A, PRIZE_B);
     Map_CopyCellsLayered(127, 0, 1, 2, 19, 2);
@@ -891,7 +891,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
   } else {
     Engine_EventBegin();
     path = Colosso_GreetAtStage(scene, 1);
-    if (path == 0) {
+    if (path == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoCallRockChallenge);
       Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       Camera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
@@ -931,7 +931,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(ROCK_A, PIXELS(312), PIXELS(168));
       Colosso_RepeatStageNumber(scene, 1);
-    } else if (path == 1) {
+    } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Engine_EventSetMessage(MsgColossoObjectiveStageClear);
       Engine_EventShowMessage(scene, 0);
     }
@@ -962,7 +962,7 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
   } else {
     Engine_EventBegin();
     path = Colosso_GreetAtStage(attendant, 2);
-    if (path == 0) {
+    if (path == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoAreaCalledPipeworks);
       Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
       Camera_MoveTo(PIXELS(592), -1, PIXELS(120), 1);
@@ -1003,7 +1003,7 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
       Engine_TaskWait(2);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(attendant, 2);
-    } else if (path == 1) {
+    } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Engine_EventSetMessage(MsgColossoObjectiveMakeGood);
       Engine_EventShowMessage(attendant, 0);
     }
@@ -1023,7 +1023,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
   } else {
     Engine_EventBegin();
     path = Colosso_GreetAtStage(scene, 3);
-    if (path == 0) {
+    if (path == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoTheyCallBrokenBridge);
       ColosseumAzartMatch_ResetBrokenBridge();
       Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -1047,7 +1047,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(scene, 3);
-    } else if (path == 1) {
+    } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Engine_EventSetMessage(MsgColossoOperatorBridgeWillAlsoCheer);
       Event_ShowMessage(scene, 0);
     }
@@ -1068,7 +1068,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
   }
   Engine_EventBegin();
   path = Colosso_GreetAtStage(scene, 4);
-  if (path == 0) {
+  if (path == COLOSSO_GUIDE_DESCRIBE) {
     Engine_EventSetMessage(MsgColossoPlaceNormallyCalledLumberWater);
     Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     Camera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
@@ -1105,7 +1105,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(LOG_EAST_WEST, PIXELS(1016), PIXELS(168));
     Colosso_RepeatStageNumber(scene, 4);
-  } else if (path == 1) {
+  } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
     Engine_EventSetMessage(MsgColossoLogsKeyClearingStage);
     Event_ShowMessage(scene, 0);
   }
@@ -1141,18 +1141,18 @@ static void ColosseumAzartMatch_SelectPresentationScript(u32 mode, u32 param) {
 
   FieldScheduler_AddCallback(Colosso_UpdateLettering, 0xc80);
 
-  script = gColosseumAzartMatch_RoundSpans;
-  if (mode == 2) {
-    script = gColosseumAzartMatch_ModeRecordTwo;
+  script = gColosseumAzartMatch_LetteringTitle;
+  if (mode == COLOSSO_SHAPE_DIGIT) {
+    script = gColosseumAzartMatch_LetteringDigit;
   }
-  if (mode == 4) {
-    script = gColosseumAzartMatch_ModeRecordFour;
+  if (mode == COLOSSO_SHAPE_GO) {
+    script = gColosseumAzartMatch_LetteringGo;
   }
-  if (mode == 3) {
+  if (mode == COLOSSO_SHAPE_RESULT) {
     if (param != 0) {
-      script = gColosseumAzartMatch_SpanB;
+      script = gColosseumAzartMatch_LetteringLose;
     } else {
-      script = gColosseumAzartMatch_SpanA;
+      script = gColosseumAzartMatch_LetteringWon;
     }
   }
 
@@ -1172,8 +1172,8 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_089);
-    Colosso_LoadLettering(0);
-    ColosseumAzartMatch_SelectPresentationScript(1, 0);
+    Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
+    ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
     Engine_EventWait(120);
     Engine_EventEnd();
   } else {
@@ -1181,29 +1181,29 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Engine_EventBegin();
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    gColosseumAzartMatch_RoundSpans[15] = round * 60;
+    gColosseumAzartMatch_LetteringTitle[15] = round * 60;
     Engine_EventWait(30);
     Engine_AudioPlayCue(round + 90);
     Colosso_LoadLettering(round);
-    ColosseumAzartMatch_SelectPresentationScript(1, 0);
+    ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
     Engine_EventWait(120);
     while (AudioCommand_GetStateByte() != 0) {
       Engine_TaskWait(1);
     }
     Engine_AudioPlayCue(SE_289);
-    Colosso_LoadLettering(5);
-    ColosseumAzartMatch_SelectPresentationScript(2, 0);
+    Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
+    ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
     Engine_AudioPlayCue(SE_236);
     Engine_EventWait(60);
-    ColosseumAzartMatch_SelectPresentationScript(2, 1);
+    ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 1);
     Engine_AudioPlayCue(SE_236);
     Engine_EventWait(60);
-    Colosso_LoadLettering(6);
-    ColosseumAzartMatch_SelectPresentationScript(2, 0);
+    Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
+    ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
     Engine_AudioPlayCue(SE_236);
     Engine_EventWait(60);
-    Colosso_LoadLettering(7);
-    ColosseumAzartMatch_SelectPresentationScript(4, 0);
+    Colosso_LoadLettering(COLOSSO_PICTURE_GO);
+    ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_GO, 0);
     Engine_AudioPlayCue(SE_237);
     Audio_PlayCueFromEventWork();
     Engine_EventEnd();
@@ -1220,26 +1220,26 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
   Engine_AudioPlayCue(SE_247);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  gColosseumAzartMatch_SpanA[13] = result * 60;
-  STORE_CONST(gColosseumAzartMatch_SpanB[13]) =
+  gColosseumAzartMatch_LetteringWon[13] = result * 60;
+  STORE_CONST(gColosseumAzartMatch_LetteringLose[13]) =
       (result < 0 ? -result : result) * 60;
   if (result < 0) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_086);
-    Colosso_LoadLettering(8);
+    Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
      * differ in tbs-en. */
-    COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(3, 1);
+    COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 1);
     Engine_EventWait(-result * 60 + 60);
     loser = ACTOR_PARTY_LEADER;
   } else {
     Engine_EventWait(30);
     Engine_AudioPlayCue(result + 90);
-    Colosso_LoadLettering(4);
+    Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
-    COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(3, 0);
+    COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 0);
     Engine_EventWait(result * 60 + 60);
     loser = OPPONENT;
   }
@@ -1507,13 +1507,13 @@ const u8 gColosso_LetteringPaletteOffsets[] = {
 #endif
 };
 
-const s16 gColosseumAzartMatch_ModeRecordTwo[] = {
+const s16 gColosseumAzartMatch_LetteringDigit[] = {
     0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 30, 0x2000, 0,
     30, 0x7fff, 30, -1,
 };
 
-const s16 gColosseumAzartMatch_SpanB[] = {
+const s16 gColosseumAzartMatch_LetteringLose[] = {
     0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
     6, 0x7fff, 6, 0x1000, 240, 6, 0x7fff, 6,
@@ -1592,7 +1592,7 @@ u32 gColosseumAzartMatch_DirectionSteps[] = {
 
 struct SceneEntrance gColosseumAzartMatch_Entrances[] = {
     { 0, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -1689,7 +1689,7 @@ struct SceneEvent gColosseumAzartMatch_Events[] = {
 
 s16 gColosso_LetteringSlot = -1;
 
-s16 gColosseumAzartMatch_RoundSpans[] = {
+s16 gColosseumAzartMatch_LetteringTitle[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     0x4000, -188, 2048, 0x1000, 256, 1, 0x2000, 16,
 #else
@@ -1699,7 +1699,7 @@ s16 gColosseumAzartMatch_RoundSpans[] = {
     0x3000, 2048, 20, 0x7fff, 60, -1,
 };
 
-s16 gColosseumAzartMatch_ModeRecordFour[] = {
+s16 gColosseumAzartMatch_LetteringGo[] = {
 #if LANGUAGE == LANGUAGE_FRENCH
     0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 384,
     6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 512,
@@ -1730,7 +1730,7 @@ s16 gColosseumAzartMatch_ModeRecordFour[] = {
 #endif
 };
 
-s16 gColosseumAzartMatch_SpanA[] = {
+s16 gColosseumAzartMatch_LetteringWon[] = {
     0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
     6, 0x7fff, 6, 0x1000, 272, 6, 0x7fff, 6,

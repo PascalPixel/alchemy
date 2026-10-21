@@ -1,5 +1,5 @@
 /// @file
-/// Colosseum Final 3 (ColosseumNavampaMatch, scene 145), the site of the last
+/// Colosseum Final 3 (SceneId_ColosseumNavampaMatch), the site of the last
 /// finals match, where Isaac, having won the first two, races Navampa of
 /// Gondowan, the sixth-ranked warrior, through six stages to the arena and
 /// fights him there.
@@ -10,8 +10,9 @@
 /// Stepping-Stone Stage, the Wall Wedge, the Free-Climb Area, the Moving
 /// Sidewalk Stage and another log-rolling area.
 /// ColosseumNavampaMatch_Initialize restores the stages from the group's flags
-/// (FLAG_PLACE_TEMP_60 to FLAG_PLACE_TEMP_69, and the stone's column in byte
-/// flag 0x370) and sets up the visit its entrance stands for:
+/// (FLAG_PLACE_TEMP_60 to FLAG_PLACE_TEMP_69, and the stone's column in the
+/// byte of flags from FLAG_PLACE_TEMP_70) and sets up the visit its entrance
+/// stands for:
 ///
 /// - COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH, the tour
 ///   (ColosseumNavampaMatch_IntroduceThirdFinals), from the Colosseum's east
@@ -130,7 +131,7 @@ typedef void (*SceneTaskEntry)(void);
 /// explanations, the Scales of Justice, the Stepping-Stone Stage, the Wall
 /// Wedge, the Free-Climb Area, the Moving Sidewalk Stage and another
 /// log-rolling area lead to the arena. SCALE_WEIGHT to LOG_AREA_STONE_C are
-/// all sprite 0xd3, the rocks of Colosseum Final 1's Rock Challenge; the
+/// all drawn as the rocks of Colosseum Final 1's Rock Challenge; the
 /// attendant of this match's log-rolling area calls the ones there stones.
 enum {
   OPPONENT = 8,        ///< Navampa, racing Isaac to the arena
@@ -362,11 +363,11 @@ static void Event_StepOnScales(void) {
     flags = &rider->motionFlags;
     *flags = lowered;
     ColosseumNavampaMatch_MoveOnScales(rider, PIXELS(4));
-    Engine_ActorSetSpriteFlags(rider, 1);
+    Engine_ActorSetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
     Engine_ActorWaitForMove(actor);
     Map_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     Engine_TaskWait(2);
-    Engine_ActorSetSpriteFlags(rider, 1);
+    Engine_ActorSetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
     *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     rider->terrainHeight = rider->y.fixed;
     Engine_GameFlagSet(FLAG_PLACE_TEMP_67);
@@ -435,14 +436,15 @@ static void Event_PushWeight(void) {
 }
 
 /// Move on the stone on Colosseum Final 3's stages, and after each push: its
-/// column is kept (byte flag 0x370) and its cell rebuilt.
+/// column is kept (the byte of flags from FLAG_PLACE_TEMP_70) and its cell
+/// rebuilt.
 static void Event_MoveStone(void) {
   struct FieldActor *actor;
   s32 x;
 
   actor = Object_GetById(STONE);
   x = actor->x.fixed >> 20;
-  FieldGameFlag_SetByte(880, x);
+  FieldGameFlag_SetByte(FLAG_PLACE_TEMP_70, x);
   Map_CopyCellAttributes(18, 10, 3, 1, 18, 11);
   Map_CopyCellAttributes(17, 11, 1, 1, x, 11);
 }
@@ -714,7 +716,8 @@ static void Event_PassNorthWallOpening(void) {
   actor = Object_GetById(*actorId);
   actor->acceleration = PIXELS(1);
   actor->speed = PIXELS(2);
-  Engine_ActorSetAttachedEffect(*actorId, 258);
+  Engine_ActorSetAttachedEffect(*actorId, ATTACHED_EFFECT_IN_FRONT |
+                                              ATTACHED_EFFECT_ONCE);
   Object_SetMode(actor, 5);
   z = actor->z.fixed & 0xFFF00000;
   Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
@@ -751,7 +754,8 @@ static void Event_PassSouthWallOpening(void) {
   Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                            z + PIXELS(12));
   FieldObject_WaitForMove(actor);
-  Engine_ActorSetAttachedEffect(*actorId, 258);
+  Engine_ActorSetAttachedEffect(*actorId, ATTACHED_EFFECT_IN_FRONT |
+                                              ATTACHED_EFFECT_ONCE);
   FieldBattleFx_RunRisingObjectSequence(*actorId, 6, 0);
 }
 
@@ -785,7 +789,8 @@ ColosseumNavampaMatch_UnusedCompetitorTalk(s32 competitorId) {
     if (Engine_EventChooseYesNo(actorId, 0) == 0) {
       Engine_EventSetMessage(messageOffset + MsgColossoDidntThinkBattles + 1);
       Engine_EventShowMessage(competitorId, 0);
-      work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
+      work->startTransition =
+          SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
       work->transitionFrames = 15;
       Engine_EventCloseScreen();
       Engine_EventWaitForScreen();
@@ -867,10 +872,10 @@ const struct SceneEvent *ColosseumNavampaMatch_GetEvents(void) {
 }
 
 /// Sets up Colosseum Final 3: restores obstacle progress, then by the arrival:
-/// the race (entrance 1), the friends' turns to lend a hand
-/// (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH), the guide's tour
-/// (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH), or the end of Colosso after
-/// a win (entrance 4) or a loss (entrance 5).
+/// the race (COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND), the friends' turns
+/// to lend a hand (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH), the guide's
+/// tour (COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH), or the end of Colosso
+/// after a win (entrance 4) or a loss (entrance 5).
 s32 ColosseumNavampaMatch_Initialize(void) {
   struct FieldActor *actor;
   s32 i;
@@ -929,7 +934,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     actor->y.fixed = PIXELS(32);
   }
 
-  column = FieldGameFlag_GetByte(880);
+  column = FieldGameFlag_GetByte(FLAG_PLACE_TEMP_70);
   if (column == 0) {
     column = 19;
   }
@@ -1028,7 +1033,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   // Entrances: the race (1), the friends' turns, the tour, and the end of
   // Colosso after a win (4) or a loss (5).
   switch (gGameState.entrance) {
-  case 1:
+  case COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, OPPONENT, 6, PIXELS(1512),
                            PIXELS(192), PRIZE_A, PRIZE_B);
     Map_CopyCellsLayered(127, 0, 1, 2, 5, 2);
@@ -1081,7 +1086,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   case 5:
     ColosseumNavampaMatch_PlayPostBattleReunion(-1);
-    Engine_EventRequestExit(5);
+    Engine_EventRequestExit(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST);
     Engine_GameFlagSet(FLAG_COLOSSO_OVER);
     break;
   }
@@ -1451,7 +1456,7 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
   }
   Engine_EventBegin();
   promptResult = Colosso_GreetAtStage(guideId, 1);
-  if (promptResult == 0) {
+  if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
     // Point out the pans, demonstrate both heights, then restore the stage.
     Engine_EventSetMessage(MsgColossoStageCalledScales);
     Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -1494,7 +1499,7 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
     Engine_TaskWait(2);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(guideId, 1);
-  } else if (promptResult == 1) {
+  } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
     Engine_EventSetMessage(MsgColossoObjectiveGetAcross);
     Engine_EventShowMessage(guideId, 0);
   }
@@ -1515,7 +1520,7 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
   }
   Engine_EventBegin();
   promptResult = Colosso_GreetAtStage(guideId, 2);
-  if (promptResult == 0) {
+  if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
     Engine_EventSetMessage(MsgColossoSteppingStoneStage);
     Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
     Camera_MoveTo(PIXELS(376), -1, PIXELS(152), 1);
@@ -1550,7 +1555,7 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
     Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(guideId, 2);
-  } else if (promptResult == 1) {
+  } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
     Engine_EventSetMessage(MsgColossoYourGoalInStageSimple);
     Event_ShowMessage(guideId, 0);
   }
@@ -1570,7 +1575,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
   } else {
     Engine_EventBegin();
     promptResult = Colosso_GreetAtStage(guideId, 3);
-    if (promptResult == 0) {
+    if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
       // Show the pattern cycle before demonstrating a timed passage.
       work = gEventWork;
       Engine_EventSetMessage(MsgColossoPlaceCalledWall);
@@ -1607,7 +1612,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 3);
       work->raisedTrigger = 0;
-    } else if (promptResult == 1) {
+    } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
       Engine_EventSetMessage(MsgColossoOperatorWallsCheer);
       Engine_EventShowMessage(guideId, 0);
     }
@@ -1632,7 +1637,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
   } else {
     Engine_EventBegin();
     result = Colosso_GreetAtStage(guideId, 4);
-    if (result == 0) {
+    if (result == COLOSSO_GUIDE_DESCRIBE) {
       Engine_EventSetMessage(MsgColossoPlaceNormallyCalledFreeClimb);
       Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       Camera_MoveTo(PIXELS(856), -1, PIXELS(168), 1);
@@ -1671,7 +1676,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
       Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 4);
-    } else if (result == 1) {
+    } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Engine_EventSetMessage(MsgColossoClearStageMustAbleChange);
       Event_ShowMessage(guideId, 0);
     }
@@ -1722,7 +1727,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
   } else {
     Engine_EventBegin();
     result = Colosso_GreetAtStage(guideId, 5);
-    if (result == 0) {
+    if (result == COLOSSO_GUIDE_DESCRIBE) {
       // Walk against the sidewalk, then show how its current pushes the rider.
       Engine_EventSetMessage(MsgColossoCalledMovingSidewalkStage);
       Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
@@ -1738,12 +1743,14 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
       ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
       Engine_EventWait(120);
-      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_ATTACH);
       Engine_EventWait(120);
       OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 #if !TBS_PATCH_3
-      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+      Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                      ATTACHED_EFFECT_REMOVE);
 #endif
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
       actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1761,7 +1768,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
       Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 5);
-    } else if (result == 1) {
+    } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Engine_EventSetMessage(MsgColossoInStageMustTryOutpace);
       Event_ShowMessage(guideId, 0);
     }
@@ -1784,7 +1791,7 @@ static void Event_TalkToLogRollingAttendant(s32 actor) {
   Engine_EventBegin();
   state = Colosso_GreetAtStage(actor, 6);
 
-  if (state == 0) {
+  if (state == COLOSSO_GUIDE_DESCRIBE) {
     Engine_EventSetMessage(MsgColossoAnotherLogRollingArea);
     Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
     Engine_CameraMoveTo(PIXELS(1288), -1, PIXELS(152), 1);
@@ -1804,7 +1811,7 @@ static void Event_TalkToLogRollingAttendant(s32 actor) {
     Engine_EventWait(2);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(actor, 6);
-  } else if (state == 1) {
+  } else if (state == COLOSSO_GUIDE_OFFER_CHEERING) {
     Engine_EventSetMessage(MsgColossoHereMustFigureOutHow);
     Engine_EventShowMessage(actor, 0);
   }
@@ -1831,18 +1838,18 @@ static void ColosseumNavampaMatch_StartLetteringAnimation(u32 mode,
     FieldScheduler_AddCallback(task, budget);
   }
 
-  handler = (s32)gColossoModeScriptDefault;
-  if (mode == 2) {
-    handler = (s32)gColossoModeScript2;
+  handler = (s32)gColossoLetteringScriptTitle;
+  if (mode == COLOSSO_SHAPE_DIGIT) {
+    handler = (s32)gColossoLetteringScriptDigit;
   }
-  if (mode == 4) {
-    handler = (s32)gColossoModeScript4;
+  if (mode == COLOSSO_SHAPE_GO) {
+    handler = (s32)gColossoLetteringScriptGo;
   }
-  if (mode == 3) {
+  if (mode == COLOSSO_SHAPE_RESULT) {
     if (parameter != 0) {
-      handler = (s32)gColossoModeScript3B;
+      handler = (s32)gColossoLetteringScriptLose;
     } else {
-      handler = (s32)gColossoModeScript3A;
+      handler = (s32)gColossoLetteringScriptWon;
     }
   }
 
@@ -1862,8 +1869,8 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_089);
-    Colosso_LoadLettering(0);
-    ColosseumNavampaMatch_StartLetteringAnimation(1, 0);
+    Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
+    ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
     Engine_EventWait(120);
     Engine_EventEnd();
     return;
@@ -1874,13 +1881,13 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   {
-    s16 *base = gColossoModeScriptDefault;
+    s16 *base = gColossoLetteringScriptTitle;
     *(s16 *)((u8 *)base + 30) = (mode * 60);
   }
   Engine_EventWait(30);
   Engine_AudioPlayCue(mode + 0x5a);
   Colosso_LoadLettering(mode);
-  ColosseumNavampaMatch_StartLetteringAnimation(1, 0);
+  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
   Engine_EventWait(120);
 
   while (AudioCommand_GetStateByte() != 0) {
@@ -1888,19 +1895,19 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   }
 
   Engine_AudioPlayCue(SE_289);
-  Colosso_LoadLettering(5);
-  ColosseumNavampaMatch_StartLetteringAnimation(2, 0);
+  Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
+  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
-  ColosseumNavampaMatch_StartLetteringAnimation(2, 1);
+  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
   Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
-  Colosso_LoadLettering(6);
-  ColosseumNavampaMatch_StartLetteringAnimation(2, 0);
+  Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
+  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
-  Colosso_LoadLettering(7);
-  ColosseumNavampaMatch_StartLetteringAnimation(4, 0);
+  Colosso_LoadLettering(COLOSSO_PICTURE_GO);
+  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
   Engine_AudioPlayCue(SE_237);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
@@ -1915,13 +1922,13 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
   Engine_AudioPlayCue(SE_247);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  gColossoModeScript3A[13] = countdown * 60;
-  STORE_CONST(gColossoModeScript3B[13]) =
+  gColossoLetteringScriptWon[13] = countdown * 60;
+  STORE_CONST(gColossoLetteringScriptLose[13]) =
       (countdown < 0 ? -countdown : countdown) * 60;
   if (countdown < 0) {
     Engine_EventWait(30);
     Engine_AudioPlayCue(MUS_086);
-    Colosso_LoadLettering(8);
+    Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
      * differ in tbs-en. */
@@ -1931,7 +1938,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
   } else {
     Engine_EventWait(30);
     Engine_AudioPlayCue(countdown + 90);
-    Colosso_LoadLettering(4);
+    Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 0);
@@ -1973,14 +1980,14 @@ static void ColosseumNavampaMatch_EmptyHook(void) {}
 UNUSED static void ColosseumNavampaMatch_MarkRivalFinished(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
-  recorder->mode = 9;
+  recorder->mode = PATH_RECORDER_FINISHED;
 }
 
 /// Waits until the rival path recorder reaches its finished mode.
 static void ColosseumNavampaMatch_WaitForRivalToFinish(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
-  while (recorder->mode != 9) {
+  while (recorder->mode != PATH_RECORDER_FINISHED) {
     Engine_TaskWait(1);
   }
 }
@@ -2228,13 +2235,13 @@ const u8 gColosso_LetteringPaletteOffsets[] = {
 #endif
 };
 
-const s16 gColossoModeScript2[] = {
+const s16 gColossoLetteringScriptDigit[] = {
     0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 30, 0x2000, 0,
     30, 0x7fff, 30, -1,
 };
 
-const s16 gColossoModeScript3B[] = {
+const s16 gColossoLetteringScriptLose[] = {
     0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
     6, 0x7fff, 6, 0x1000, 240, 6, 0x7fff, 6,
@@ -2313,7 +2320,7 @@ u32 gStagedActor_DirectionSteps[] = {
 
 struct SceneEntrance gColosseumNavampaMatchEntrances[] = {
     { 0, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH, CONDITION_ALWAYS, 136, 0, 392, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 4, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 5, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -2565,7 +2572,7 @@ s32 gColossoParticleKinds[] = {
 
 s16 gColosso_LetteringSlot = -1;
 
-s16 gColossoModeScriptDefault[] = {
+s16 gColossoLetteringScriptTitle[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     0x4000, -188, 2048, 0x1000, 256, 1, 0x2000, 16,
 #else
@@ -2575,7 +2582,7 @@ s16 gColossoModeScriptDefault[] = {
     0x3000, 2048, 20, 0x7fff, 60, -1,
 };
 
-s16 gColossoModeScript4[] = {
+s16 gColossoLetteringScriptGo[] = {
 #if LANGUAGE == LANGUAGE_FRENCH
     0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 384,
     6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, 512,
@@ -2606,7 +2613,7 @@ s16 gColossoModeScript4[] = {
 #endif
 };
 
-s16 gColossoModeScript3A[] = {
+s16 gColossoLetteringScriptWon[] = {
     0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
     6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
     6, 0x7fff, 6, 0x1000, 272, 6, 0x7fff, 6,

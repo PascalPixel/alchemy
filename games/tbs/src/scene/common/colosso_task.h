@@ -24,10 +24,9 @@
 
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 /// the large lettering a race starts with. It reads "Match 1", "3", "2", "1",
-/// "Go!", from the pictures of games/tbs/src/graphics/colosso/lettering.tsv, in
-/// this order: 0 Lend a Hand, 1 to 3 Match 1 to 3, 4 Won and Lose, 5 the 3 and
-/// the 2, 6 the 1 and 7 Go. Each picture is 0x400 bytes of tiles after the
-/// palettes.
+/// "Go!", from the pictures of games/tbs/src/graphics/colosso/lettering.tsv
+/// (enum ColossoLetteringPicture). Each picture is 0x400 bytes of tiles after
+/// the palettes.
 ///
 /// The lettering moves by a script of 16-bit words, a command and its values:
 enum ColossoLetteringCommand {
@@ -46,6 +45,28 @@ enum ColossoLetteringCommand {
   COLOSSO_LETTERING_END = -1
 };
 
+/// The lettering pictures, in lettering.tsv's order (Colosso_LoadLettering).
+enum ColossoLetteringPicture {
+  COLOSSO_PICTURE_LEND_A_HAND = 0,
+  COLOSSO_PICTURE_MATCH_1 = 1, ///< then Match 2 and Match 3
+  COLOSSO_PICTURE_WON_LOSE = 4,
+  COLOSSO_PICTURE_COUNT_3_2 = 5, ///< the 3 and the 2
+  COLOSSO_PICTURE_COUNT_1 = 6,
+  COLOSSO_PICTURE_GO = 7,
+  /// COLOSSO_PICTURE_WON_LOSE in the palette a loss shows it in.
+  COLOSSO_PICTURE_WON_LOSE_FOR_LOSS = 8
+};
+
+/// How Colosso_UpdateLettering lays a picture out (gColosso_LetteringMode);
+/// gColosso_LetteringParam picks the second half of a picture.
+enum ColossoLetteringShape {
+  /// Four 32x16 pieces in a row: Match 1 to 3, Lend a Hand.
+  COLOSSO_SHAPE_TITLE = 1,
+  COLOSSO_SHAPE_DIGIT = 2,  ///< one 32x32 piece: 3, 2, 1
+  COLOSSO_SHAPE_RESULT = 3, ///< two 32x16 pieces: Won or Lose
+  COLOSSO_SHAPE_GO = 4      ///< Go!: one 64x32 piece, or two 32x16 in French
+};
+
 static __inline__ void Dma_Wait(volatile u32 *dma) {
   while (dma[2] & 0x80000000)
     ;
@@ -60,8 +81,7 @@ extern s32 gColosso_LetteringPosition;
 extern s16 *gColosso_LetteringScript;
 
 /// Loads lettering picture id into the lettering's VRAM block (taken once) and
-/// its palette into sprite palette 15. Picture 8 is picture 4 in another
-/// palette.
+/// its palette into sprite palette 15.
 static void Colosso_LoadLettering(s32 id) {
   u8 *buf;
   s32 off;
@@ -70,8 +90,8 @@ static void Colosso_LoadLettering(s32 id) {
   if (gColosso_LetteringSlot == -1)
     gColosso_LetteringSlot = Resource_FindFreeEntry();
   off = gColosso_LetteringPaletteOffsets[id];
-  if (id == 8)
-    id = 4;
+  if (id == COLOSSO_PICTURE_WON_LOSE_FOR_LOSS)
+    id = COLOSSO_PICTURE_WON_LOSE;
   FieldResource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering),
                              buf);
   Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0),
@@ -84,10 +104,7 @@ static void Colosso_LoadLettering(s32 id) {
 
 /// The lettering's scene callback: run its script, move, scale and fade it, and
 /// draw it as double-size affine sprites blended over the screen, in the shape
-/// of gColosso_LetteringMode (gColosso_LetteringParam picks the second half of
-/// a picture): 1: four 32x16 pieces in a row (Match 1 to 3, Lend a Hand); 2:
-/// one 32x32 piece (3, 2, 1); 3: two 32x16 pieces (Won or Lose); 4: Go!, one
-/// 64x32 piece, or two 32x16 in French.
+/// of gColosso_LetteringMode.
 static void Colosso_UpdateLettering(void) {
   u32 *write = gColosso_LetteringSprites;
   // Each lettering piece is queued as a sprite part written as three words:
@@ -181,7 +198,7 @@ commands:
   gColosso_LetteringPosition += pos;
   pos = gColosso_LetteringPosition / 256;
   switch (gColosso_LetteringMode) {
-  case 1: {
+  case COLOSSO_SHAPE_TITLE: {
     u32 attr;
     i = 0;
     y = 56;
@@ -201,7 +218,7 @@ commands:
     }
     break;
   }
-  case 3: {
+  case COLOSSO_SHAPE_RESULT: {
     u32 attr;
     i = 0;
     y = 48;
@@ -222,7 +239,7 @@ commands:
     break;
   }
 #if LANGUAGE == LANGUAGE_FRENCH
-  case 4: {
+  case COLOSSO_SHAPE_GO: {
     u32 attr;
     i = 0;
     y = 64;
@@ -243,7 +260,7 @@ commands:
     break;
   }
 #else
-  case 4:
+  case COLOSSO_SHAPE_GO:
     y = 48;
     flags = 0xc0004000;
     left = pos + 56;
@@ -256,7 +273,7 @@ commands:
     }
     break;
 #endif
-  case 2:
+  case COLOSSO_SHAPE_DIGIT:
     y = 48;
     flags = 0x80000000;
     left = pos + 88;

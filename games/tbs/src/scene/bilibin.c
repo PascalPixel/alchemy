@@ -5,12 +5,12 @@
 /// each scene's tables by gGameState.scene, Bilibin_Initialize sets up the
 /// scene being entered, and Event_PushPillar serves all three.
 ///
-/// Bilibin (Bilibin) is the town past the Goma Range's cave, and the party
-/// finds it afraid. A man who came to the village under a curse stands at its
-/// entrance turned into a tree (ACTOR_TREE_MAN); his last words were that he
-/// had offended the sacred tree. Lord McCoy, the chief of Bilibin, has closed
-/// the road to Kolima with a barricade, and the villagers' talk sends the party
-/// to him and on to Kolima. Almost everything here turns on
+/// Bilibin (SceneId_Bilibin) is the town past the Goma Range's cave, and the
+/// party finds it afraid. A man who came to the village under a curse stands at
+/// its entrance turned into a tree (ACTOR_TREE_MAN); his last words were that
+/// he had offended the sacred tree. Lord McCoy, the chief of Bilibin, has
+/// closed the road to Kolima with a barricade, and the villagers' talk sends
+/// the party to him and on to Kolima. Almost everything here turns on
 /// FLAG_KOLIMA_CURSE_LIFTED, whether Kolima's curse is lifted, which the party
 /// sets far from here, in Kolima Forest, when it heals Tret with the Water of
 /// Hermes. Until then the tree stands at the entrance: a first look says it
@@ -140,7 +140,7 @@ static void Bilibin_UpdateRiverEffect(void);
 static void Bilibin_SpawnRiverEffect(struct FieldActor *actor);
 static void Bilibin_UpdateTreasuryPillarCells(void);
 
-/// Actors of Bilibin (Bilibin), numbering its placement rows from
+/// Actors of Bilibin, numbering its placement rows from
 /// ACTOR_FIRST_PLACED. The ten villagers are named by what they say before the
 /// curse is lifted.
 enum BilibinActor {

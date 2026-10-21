@@ -13,25 +13,33 @@
 /// (FLAG_GOMA_CAVE_STUMP_FELL). The east pillar can also be pushed by walking
 /// into it; when it reaches cell (38, 14) it sinks two pixels into the floor
 /// with a burst of fragments and stays there
-/// (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE). Arriving by entrance 2 or 3 then
-/// finds it set into the floor underfoot, with the cells along it changed.
-/// All three are place flags, so the room is as it started again once the
-/// party leaves Goma Cave's four scenes. Walking west into a gap (collision
-/// code 20) jumps the leader across it, and a chest holds a Lucky Medal.
+/// (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE). Coming back in on the east side, from
+/// the first room or from the room below
+/// (GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_WATERWAY_1_EAST,
+/// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST), the party finds it set into the
+/// floor underfoot, with the cells along it changed. All three are place flags,
+/// so the room is as it started again once the party leaves Goma Cave's four
+/// scenes. Walking west into a gap (collision code 20) jumps the leader across
+/// it, and a chest holds a Lucky Medal.
 ///
 /// Forge, a Mars Djinni, waits here beside a man who once fought it: `Did you
 /// see something strange over there? I fought it, but it fled.` Talking to
 /// Forge makes him jump in surprise, and the Djinni's battle begins. After a
 /// win the room reloads with the Djinni's event still pending, so the man
 /// fidgets on a timer while Forge joins the party; once it has, the timer
-/// raises event 99, and the man is amazed and walks away for good
+/// raises TRIGGER_FORGE_JOINED, and the man is amazed and walks away for good
 /// (FLAG_GOMA_CAVE_WITNESS_LEFT). After a loss or an escape Forge hides until
 /// the room is entered again (flag 0xa8, Forge's flag + 80), and the man says
 /// `Hmmm... It must be hiding somewhere again...`.
 ///
-/// Exits 1 and 5 lead back to the first room (its entrances 2 and 3), exits 2
-/// to 4 down to the room below (its entrances 1 to 3). Entrance 99, which no
-/// exit names, replays the stump being pushed to the edge and falling.
+/// Two ways lead back to the first room
+/// (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_WATERWAY_1_WEST and
+/// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_WATERWAY_1_EAST) and three down to the room
+/// below (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST,
+/// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH and
+/// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
+/// ENTRANCE_STUMP_FALL, which no exit names, plays the stump being pushed to
+/// the edge and falling.
 #include "script.h"
 #include "version.h"
 #include "global_cells.h"
@@ -81,12 +89,28 @@
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
-// The room's actors, in placement order.
-#define WEST_PILLAR 8
-#define STUMP 9
-#define EAST_PILLAR 10
-#define FORGE 12
-#define WITNESS 13 ///< the man who fought Forge and lost it
+/// The room's actors, numbered in the order of gGomaCavePillar_Placements.
+enum GomaCavePillarActor {
+  ACTOR_WEST_PILLAR = ACTOR_FIRST_PLACED, ///< slides between two places
+  ACTOR_STUMP,       ///< pushed over the edge into the room below
+  ACTOR_EAST_PILLAR, ///< sinks into the floor in its place
+  /// Sprite 223, kept in the room's corner until the stump teeters at the
+  /// edge, then shown blended there until the stump has fallen. XXX: what the
+  /// player sees is not known; a render of the fall would settle it.
+  ACTOR_STUMP_FALL_SPRITE,
+  ACTOR_FORGE, ///< Forge, a Mars Djinni, until it joins the party
+  /// The man who fought Forge and lost it. "Did you see something strange
+  /// over there? I fought it, but it fled."
+  ACTOR_WITNESS
+};
+
+/// The entrance no exit names, which plays the stump being pushed to the edge
+/// and falling into the room below.
+enum { ENTRANCE_STUMP_FALL = 99 };
+
+/// The event the man's timer raises once Forge has joined the party
+/// (GomaCavePillar_FidgetWhileForgeFights).
+enum { TRIGGER_FORGE_JOINED = 99 };
 
 // Shared movement routines stay in their linked order.
 #include "common/object_staged_actor.h"
@@ -94,9 +118,9 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 /// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in
 /// surprise, and the battle with the Djinni begins.
 static void Event_FightForge(void) {
-  OBJ_EMOTE(WITNESS, EMOTE_IN_FRONT, 0);
-  Engine_ActorJump(WITNESS, 2, 0);
-  Field_RequestDjinnBattle(FORGE, DJINNI_FORGE);
+  OBJ_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
+  Engine_ActorJump(ACTOR_WITNESS, 2, 0);
+  Field_RequestDjinnBattle(ACTOR_FORGE, DJINNI_FORGE);
 }
 
 /// Advances the fragment's selected coordinate plane and keeps its targets in
@@ -199,7 +223,7 @@ static void Event_MoveWestPillar(void) {
   struct FieldActor *actor;
   s32 x;
 
-  actor = Object_GetById(WEST_PILLAR);
+  actor = Object_GetById(ACTOR_WEST_PILLAR);
   x = actor->x.fixed;
   if (x < 0)
     x += 0xfffff;
@@ -231,13 +255,13 @@ static void GomaCavePillar_SpawnStumpDust(void) {
 
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
-    firstXSource = Object_GetById(STUMP);
+    firstXSource = Object_GetById(ACTOR_STUMP);
     firstRandomX = Engine_RandomNext();
     fixedX = firstXSource->x.fixed;
     fixedX +=
         ((((u32)(((firstRandomX << 1) + firstRandomX) << 2)) >> 16) << 16);
-    heightSource = Object_GetById(STUMP);
-    firstZSource = Object_GetById(STUMP);
+    heightSource = Object_GetById(ACTOR_STUMP);
+    firstZSource = Object_GetById(ACTOR_STUMP);
     fixedZ = firstZSource->z.fixed;
     fixedZ += PIXELS(6);
     firstRandomSpeed = Engine_RandomNext();
@@ -255,13 +279,13 @@ static void GomaCavePillar_SpawnStumpDust(void) {
                                  firstFallingSpeed, firstStyle, framePhase);
     framePhase = gFrameCount & 15;
     if (framePhase == 0) {
-      secondXSource = Object_GetById(STUMP);
+      secondXSource = Object_GetById(ACTOR_STUMP);
       secondRandomX = Engine_RandomNext();
       fixedX = secondXSource->x.fixed;
       fixedX +=
           ((((u32)(((secondRandomX << 1) + secondRandomX) << 2)) >> 16) << 16);
-      heightSource = Object_GetById(STUMP);
-      secondZSource = Object_GetById(STUMP);
+      heightSource = Object_GetById(ACTOR_STUMP);
+      secondZSource = Object_GetById(ACTOR_STUMP);
       fixedZ = secondZSource->z.fixed;
       fixedZ += PIXELS(6);
       secondRandomSpeed = Engine_RandomNext();
@@ -303,49 +327,49 @@ static void Event_PushStumpOver(void) {
   s32 randomX, randomSpeed, style, speedBand, speedTimes13, fallingSpeed;
   struct FieldActor *overlayActor;
 
-  stump = Object_GetById(STUMP);
+  stump = Object_GetById(ACTOR_STUMP);
   column = stump->x.fixed / PIXELS(16);
   EV_BEGIN();
   if (column == 25) {
-    overlayActor = Object_GetById(11);
+    overlayActor = Object_GetById(ACTOR_STUMP_FALL_SPRITE);
     zero = 0;
     overlayActor->terrainId = 1;
-    spriteActor = Object_GetById(11);
+    spriteActor = Object_GetById(ACTOR_STUMP_FALL_SPRITE);
     Engine_ActorSetSpriteFlags(spriteActor, 0);
-    Engine_ActorSetChildValue(11, 14);
-    blendActor = Object_GetById(11);
+    Engine_ActorSetChildValue(ACTOR_STUMP_FALL_SPRITE, 14);
+    blendActor = Object_GetById(ACTOR_STUMP_FALL_SPRITE);
     Engine_ObjectSetBlendMode(blendActor, 1);
-    Engine_ActorSetPosition(11, PIXELS(414), PIXELS(240));
+    Engine_ActorSetPosition(ACTOR_STUMP_FALL_SPRITE, PIXELS(414), PIXELS(240));
     WAIT(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
     FieldScheduler_AddCallback(fragmentCallback, 3200);
     Engine_AudioPlayCue(SE_141);
-    Engine_ActorSetDestinationOffset(STUMP, 1, 0);
-    Engine_ActorWaitForMove(STUMP);
+    Engine_ActorSetDestinationOffset(ACTOR_STUMP, 1, 0);
+    Engine_ActorWaitForMove(ACTOR_STUMP);
     WAIT(10);
-    Engine_ActorSetDestinationOffset(STUMP, 2, 0);
-    Engine_ActorWaitForMove(STUMP);
-    bounceActor = Object_GetById(STUMP);
+    Engine_ActorSetDestinationOffset(ACTOR_STUMP, 2, 0);
+    Engine_ActorWaitForMove(ACTOR_STUMP);
+    bounceActor = Object_GetById(ACTOR_STUMP);
     bounceActor->bounce = zero;
-    gravityActor = Object_GetById(STUMP);
+    gravityActor = Object_GetById(ACTOR_STUMP);
     gravityActor->gravity = PIXELS(3) / 5;
     WAIT(3);
     // It tips over the edge.
-    Engine_ActorSetSpeed(STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
+    Engine_ActorSetSpeed(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
     Engine_AudioPlayCue(SE_288);
-    Engine_ActorSetDestination(STUMP, 416, 200);
-    movedActor = Object_GetById(STUMP);
+    Engine_ActorSetDestination(ACTOR_STUMP, 416, 200);
+    movedActor = Object_GetById(ACTOR_STUMP);
     Engine_ActorSetSpriteFlags(movedActor, 0);
     Engine_TaskRemoveCallback(fragmentCallback);
     WAIT(12);
     Engine_AudioPlayCue(SE_189);
-    xSource = Object_GetById(STUMP);
+    xSource = Object_GetById(ACTOR_STUMP);
     randomX = Engine_RandomNext();
     fixedX = xSource->x.fixed;
     fixedX += ((((u32)(((randomX << 1) + randomX) << 2)) >> 16) << 16);
-    heightSource = Object_GetById(STUMP);
-    zSource = Object_GetById(STUMP);
+    heightSource = Object_GetById(ACTOR_STUMP);
+    zSource = Object_GetById(ACTOR_STUMP);
     fixedZ = zSource->z.fixed;
     fixedZ += PIXELS(6);
     randomSpeed = Engine_RandomNext();
@@ -366,8 +390,8 @@ static void Event_PushStumpOver(void) {
     Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
-    Engine_ActorSetPosition(STUMP, 0, 0);
-    Engine_ActorSetPosition(11, 0, 0);
+    Engine_ActorSetPosition(ACTOR_STUMP, 0, 0);
+    Engine_ActorSetPosition(ACTOR_STUMP_FALL_SPRITE, 0, 0);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_STUMP_FELL);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
@@ -380,35 +404,36 @@ static void GomaCavePillar_SettleEastPillar(void) {
   s32 x;
   s32 z;
 
-  x = Object_GetById(EAST_PILLAR)->x.fixed / PIXELS(16);
-  z = Object_GetById(EAST_PILLAR)->z.fixed / PIXELS(16);
+  x = Object_GetById(ACTOR_EAST_PILLAR)->x.fixed / PIXELS(16);
+  z = Object_GetById(ACTOR_EAST_PILLAR)->z.fixed / PIXELS(16);
   if (x == 38 && z == 14) {
-    Object_GetById(EAST_PILLAR)->y.fixed = -PIXELS(2);
-    Object_GetById(EAST_PILLAR)->targetY = Object_GetById(EAST_PILLAR)->y.fixed;
+    Object_GetById(ACTOR_EAST_PILLAR)->y.fixed = -PIXELS(2);
+    Object_GetById(ACTOR_EAST_PILLAR)->targetY =
+        Object_GetById(ACTOR_EAST_PILLAR)->y.fixed;
     Engine_AudioPlayCue(SE_188);
-    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
-                                 Object_GetById(EAST_PILLAR)->y.fixed,
-                                 Object_GetById(EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Object_GetById(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->z.fixed,
                                  PIXELS(1) / 2, 0, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
-                                 Object_GetById(EAST_PILLAR)->y.fixed,
-                                 Object_GetById(EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Object_GetById(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->z.fixed,
                                  PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
-                                 Object_GetById(EAST_PILLAR)->y.fixed,
-                                 Object_GetById(EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Object_GetById(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->z.fixed,
                                  -PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
-                                 Object_GetById(EAST_PILLAR)->y.fixed,
-                                 Object_GetById(EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Object_GetById(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->z.fixed,
                                  -PIXELS(1) / 2, 0, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
-                                 Object_GetById(EAST_PILLAR)->y.fixed,
-                                 Object_GetById(EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Object_GetById(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->z.fixed,
                                  PIXELS(2) / 5, -PIXELS(2) / 5, 0, PLANE_XZ);
-    GomaCavePillar_SpawnFragment(Object_GetById(EAST_PILLAR)->x.fixed,
-                                 Object_GetById(EAST_PILLAR)->y.fixed,
-                                 Object_GetById(EAST_PILLAR)->z.fixed,
+    GomaCavePillar_SpawnFragment(Object_GetById(ACTOR_EAST_PILLAR)->x.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->y.fixed,
+                                 Object_GetById(ACTOR_EAST_PILLAR)->z.fixed,
                                  -PIXELS(2) / 5, -PIXELS(2) / 5, 0, PLANE_XZ);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE);
   }
@@ -443,13 +468,13 @@ static void Event_JumpGapWest(void) {
   u8 *motionFlags;
   u8 savedMotionFlags;
 
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
-  target.x = Object_GetById(0)->x.fixed - PIXELS(32);
+  target.x = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed - PIXELS(32);
   destination = &target;
-  destination->y = Object_GetById(0)->y.fixed;
-  destination->z = Object_GetById(0)->z.fixed;
+  destination->y = Object_GetById(ACTOR_PARTY_LEADER)->y.fixed;
+  destination->z = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
     EV_BEGIN();
     Object_SetMode(leader, 6);
@@ -461,7 +486,8 @@ static void Event_JumpGapWest(void) {
     leader->velocityY = PIXELS(4);
     *motionFlags &= 0x7e;
     Engine_ActorSetSpriteFlags(leader, 0);
-    Engine_ActorMoveToAndWait(0, *(s16 *)((u8 *)destination + 2),
+    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
+                              *(s16 *)((u8 *)destination + 2),
                               *(s16 *)((u8 *)destination + 10));
     Object_SetMode(leader, 6);
     Engine_ActorSetSpriteFlags(leader, 1);
@@ -476,7 +502,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 }
 
 /// Back from a won battle with Forge, the man reacts on a timer while the
-/// Djinni joins the party; once the Djinni event is over, it raises event 99.
+/// Djinni joins the party; once the Djinni event is over, it raises
+/// TRIGGER_FORGE_JOINED.
 static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct EventWork *work;
   s32 frame;
@@ -485,22 +512,22 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
   frame = ++gGomaCavePillar_WitnessFrames;
   switch (frame) {
   case 60:
-    OBJ_DIR(WITNESS, FACING_SOUTHEAST, 0);
-    Engine_ActorShowEmote(WITNESS, 2, 0);
+    OBJ_DIR(ACTOR_WITNESS, FACING_SOUTHEAST, 0);
+    Engine_ActorShowEmote(ACTOR_WITNESS, 2, 0);
     break;
   case 180:
-    Engine_ActorStartRepeatedMotion(WITNESS, 3);
+    Engine_ActorStartRepeatedMotion(ACTOR_WITNESS, 3);
     break;
   case 240:
   case 270:
-    Engine_ActorJump(WITNESS, 4, 0);
+    Engine_ActorJump(ACTOR_WITNESS, 4, 0);
     break;
   case 480:
-    OBJ_MODE(WITNESS, ANIM_SHAKE_HEAD);
+    OBJ_MODE(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
     break;
   }
   if (gGameState.pendingDjinnEvent == 0)
-    work->raisedTrigger = 99;
+    work->raisedTrigger = TRIGGER_FORGE_JOINED;
 }
 
 /// Raised in Goma Cave once Forge has joined the party: the man who fought it
@@ -509,26 +536,26 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 static void Event_WitnessCheersForgeCaught(void) {
   Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
   EV_BEGIN();
-  OBJ_EMOTE(WITNESS, EMOTE_IN_FRONT, 30);
-  Engine_ActorRunRepeatedMotion(WITNESS, 2);
+  OBJ_EMOTE(ACTOR_WITNESS, EMOTE_IN_FRONT, 30);
+  Engine_ActorRunRepeatedMotion(ACTOR_WITNESS, 2);
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   MESSAGE_SET(MsgGomaGotWowThatsPrettyImpressive);
-  Event_ShowMessage(WITNESS, 0);
-  Engine_ActorSetAnimationAndWait(WITNESS, ANIM_NOD);
+  Event_ShowMessage(ACTOR_WITNESS, 0);
+  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
   WAIT(30);
-  Object_GetById(EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  OBJ_SPEED(WITNESS, PIXELS(2), PIXELS(1));
-  Actor_WalkToAndWait(WITNESS, 600, 216);
-  Actor_WalkToAndWait(WITNESS, 600, 248);
-  Actor_WalkToAndWait(WITNESS, 568, 296);
-  OBJ_POS_SET(WITNESS, 0, 0);
-  Object_GetById(EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Object_GetById(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  OBJ_SPEED(ACTOR_WITNESS, PIXELS(2), PIXELS(1));
+  Actor_WalkToAndWait(ACTOR_WITNESS, 600, 216);
+  Actor_WalkToAndWait(ACTOR_WITNESS, 600, 248);
+  Actor_WalkToAndWait(ACTOR_WITNESS, 568, 296);
+  OBJ_POS_SET(ACTOR_WITNESS, 0, 0);
+  Object_GetById(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_GOMA_CAVE_WITNESS_LEFT);
   EV_END();
 }
 
 /// Sets up the room as the party enters: the pillars and the stump where the
-/// party left them. Entrance 99 shows the stump falling again; after a won
+/// party left them. ENTRANCE_STUMP_FALL plays the stump's fall; after a won
 /// battle with Forge, the man's reaction starts.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
@@ -537,37 +564,37 @@ s32 Scene_Initialize(void) {
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 24;
-  Object_GetById(STUMP)->collisionFlags |= 16;
+  Object_GetById(ACTOR_STUMP)->collisionFlags |= 16;
   if (FLAG_CHECK(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
-    OBJ_POS_SET(WEST_PILLAR, 344, 104);
+    OBJ_POS_SET(ACTOR_WEST_PILLAR, 344, 104);
     GomaCavePillar_CopyWestPillarCells(24);
   } else {
     GomaCavePillar_CopyWestPillarCells(18);
   }
   if (FLAG_CHECK(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    OBJ_POS_SET(STUMP, 0, 0);
+    OBJ_POS_SET(ACTOR_STUMP, 0, 0);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
   if (FLAG_CHECK(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
-    OBJ_POS_SET(EAST_PILLAR, 616, 232);
+    OBJ_POS_SET(ACTOR_EAST_PILLAR, 616, 232);
     if (gGameState.entrance ==
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_WATERWAY_1_EAST ||
         gGameState.entrance == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
-      Object_GetById(EAST_PILLAR)->terrainId = 2;
-      actor = Object_GetById(EAST_PILLAR);
+      Object_GetById(ACTOR_EAST_PILLAR)->terrainId = 2;
+      actor = Object_GetById(ACTOR_EAST_PILLAR);
       actor->y.fixed--;
-      Object_GetById(EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+      Object_GetById(ACTOR_EAST_PILLAR)->priorityFlags |=
+          ACTOR_PRIORITY_UNDERFOOT;
       Map_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }
   }
-  // Entrance 99 shows the stump being pushed to the edge and falling.
-  if (gGameState.entrance == 99) {
+  if (gGameState.entrance == ENTRANCE_STUMP_FALL) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    OBJ_POS_SET(STUMP, 384, 192);
+    OBJ_POS_SET(ACTOR_STUMP, 384, 192);
     WAIT(60);
-    Object_GetById(STUMP)->terrainId = 2;
-    Actor_MoveToAndWait(STUMP, 408, 192);
+    Object_GetById(ACTOR_STUMP)->terrainId = 2;
+    Actor_MoveToAndWait(ACTOR_STUMP, 408, 192);
     WAIT(60);
     Event_PushStumpOver();
   }
@@ -645,7 +672,7 @@ struct SceneEntrance gGomaCavePillar_Entrances[] = {
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, CONDITION_ALWAYS, 232, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH, CONDITION_ALWAYS, 536, 0, 408, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
-    { 99, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
+    { ENTRANCE_STUMP_FALL, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -670,23 +697,23 @@ struct ScenePlacement gGomaCavePillar_Placements[] = {
 };
 
 struct SceneEvent gGomaCavePillar_Events[] = {
-    { 0x21, 5, CONDITION_ALWAYS, 1 },
-    { 0x31, 6, CONDITION_ALWAYS, 2 },
-    { 0x31, 7, CONDITION_ALWAYS, 3 },
-    { 0x31, 8, CONDITION_ALWAYS, 4 },
-    { 0x21, 9, CONDITION_ALWAYS, 5 },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_PushEastPillar) },
+    { 0x21, 5, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_WATERWAY_1_WEST },
+    { 0x31, 6, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST },
+    { 0x31, 7, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH },
+    { 0x31, 8, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST },
+    { 0x21, 9, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_WATERWAY_1_EAST },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_PushEastPillar) },
     { TOUCH_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpGapWest) },
-    { EVENT_TALK, FORGE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FightForge) },
-    { EVENT_TALK, WITNESS, 0xa8, MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
-    { EVENT_TALK, WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultHmmmItMustBeHidingSomewhere) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), WITNESS, 0xa8, MSGNO(MsgVaultItJustWhackedMeInThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultIKnowitsKindItllBeBack) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveWestPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STUMP, FLAG_GOMA_CAVE_STUMP_FELL, EVENT_SCRIPT(Event_PushStumpOver) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_MoveEastPillar) },
+    { EVENT_TALK, ACTOR_FORGE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FightForge) },
+    { EVENT_TALK, ACTOR_WITNESS, 0xa8, MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
+    { EVENT_TALK, ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultHmmmItMustBeHidingSomewhere) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, 0xa8, MSGNO(MsgVaultItJustWhackedMeInThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultIKnowitsKindItllBeBack) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveWestPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_STUMP_FELL, EVENT_SCRIPT(Event_PushStumpOver) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT_SCRIPT(Event_MoveEastPillar) },
     { SEARCH(SEARCH_CHEST), 101, 0xf4f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WitnessCheersForgeCaught) },
+    { EVENT_RAISED, TRIGGER_FORGE_JOINED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WitnessCheersForgeCaught) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

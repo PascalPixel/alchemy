@@ -20,9 +20,9 @@
 /// up to meeting his lord; on yes the guards confer, the gate opens
 /// (Garden_OpenPalaceGate, which sets FLAG_SCENE_TEMP_00) and the west guard
 /// goes in ahead. Walking north into the open gate (trigger 2,
-/// Event_EnterPalace) takes exit 2 into the palace, its entrance 1. Admitted
-/// but not yet inside the palace, the party that comes back from Bilibin
-/// (which sets place flag FLAG_PLACE_TEMP_04) is scolded once
+/// Event_EnterPalace) takes MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE into the
+/// palace. Admitted but not yet inside the palace, the party that comes back
+/// from Bilibin (which sets place flag FLAG_PLACE_TEMP_04) is scolded once
 /// (FLAG_SCENE_TEMP_01): McCoy is angry because he could not find them.
 ///
 /// In the palace McCoy turns the party away as too young, and his captain
@@ -34,15 +34,16 @@
 /// (FLAG_MCCOY_PALACE_PARTY_REWARDED), the guards stop them
 /// (Event_GuardsArrestParty): witnesses saw them in the forest, and the guards
 /// repeat the accusation until the player admits breaking the curse, then put
-/// them under arrest and march them to McCoy (exit 10, the palace's entrance
-/// 29), where he rewards them. Afterwards the guards admire the party.
+/// them under arrest and march them to McCoy
+/// (MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST), where he rewards them.
+/// Afterwards the guards admire the party.
 ///
 /// Setup (Garden_ApplyProgress) places the guards by the same flags and floats
 /// a Nut over the grounds until Catch takes it
-/// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT). A dry well can be searched. Exit 1
-/// leads back to Bilibin (Bilibin, scene 30, entrance 2). The patched
-/// editions (TBS_PATCH_3) add one more actor, sprite 0xf8 (XXX: what it is is
-/// not known).
+/// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT). A dry well can be searched.
+/// MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back to Bilibin (scene 30). The
+/// patched editions (TBS_PATCH_3) add one more actor, sprite 0xf8 (XXX: what it
+/// is is not known).
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -81,13 +82,22 @@
 #define MCCOY_GARDEN_SET_ACTOR_POSITION ((s32 (*)())Engine_ActorSetPosition)
 #endif
 
-enum {
-  ACTOR_WEST_WORKER = 8,
-  ACTOR_NORTH_WORKER = 9,
-  ACTOR_LADY_MCCOY = 10,
-  ACTOR_WEST_GUARD = 11,
-  ACTOR_EAST_GUARD = 12,
-  ACTOR_FLOATING_NUT = 13
+/// The placed actors, numbered in the order of gMcCoyPalaceGroundsPlacements.
+enum McCoyPalaceGroundsActor {
+  /// A worker by the new palace, drawn in front. "The lumber I ordered from
+  /// Kolima disappeared..."
+  ACTOR_WEST_WORKER = ACTOR_FIRST_PLACED,
+  /// The worker who wanders by the new palace. "Have you seen the barricade
+  /// we built on..."
+  ACTOR_NORTH_WORKER,
+  ACTOR_LADY_MCCOY, ///< "Hmph! My palace is not finished!"
+  /// The guard at the gate who goes in ahead of the party. "Lord McCoy is so
+  /// upset about this curse that he can't even eat."
+  ACTOR_WEST_GUARD,
+  ACTOR_EAST_GUARD, ///< "The lord will only meet with brave..."
+  /// The Nut over the grounds, gone once Catch has taken it
+  /// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT).
+  ACTOR_FLOATING_NUT
 };
 
 static void Garden_ApplyProgress(void);
@@ -110,9 +120,11 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalaceGrounds) {
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) != 0)
-      gMcCoyPalaceGroundsPlacements[4].talkFacing = TALK_FACE_PARTY_AND_BACK;
+      gMcCoyPalaceGroundsPlacements[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACE_PARTY_AND_BACK;
     if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0)
-      gMcCoyPalaceGroundsPlacements[2].talkFacing = TALK_FACE_PARTY;
+      gMcCoyPalaceGroundsPlacements[ACTOR_LADY_MCCOY - ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACE_PARTY;
     return gMcCoyPalaceGroundsPlacements;
   }
   return gMcCoyPalaceGroundsPlacementsOther;
@@ -480,7 +492,7 @@ struct SceneEvent gMcCoyPalaceGroundsEventsOther[] = {
 };
 
 struct SceneEvent gMcCoyPalaceGroundsEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
+    { EVENT_EXIT, 1, CONDITION_ALWAYS, MCCOY_PALACE_GROUNDS_TO_BILIBIN },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterPalace) },
     { EVENT_TALK, ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
     { EVENT_TALK, ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },

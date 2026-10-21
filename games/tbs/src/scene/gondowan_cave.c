@@ -262,9 +262,9 @@ static void Event_IodemAsksWhyTurningBack(void) {
   }
 }
 
-/// Talking to Iodem where he waits in Gondowan Passage, or walking up to him
-/// (trigger 11) while he is not with the party: he joins it. `I've been
-/// waiting for you, Isaac! We should go to Babi Lighthouse soon.`
+/// Iodem joins the party where he waits in Gondowan Passage. He joins when he's
+/// talked to, or walked up to (trigger 11) while he isn't with the party. `I've
+/// been waiting for you, Isaac! We should go to Babi Lighthouse soon.`
 static void Event_IodemRejoins(void) {
   EV_BEGIN();
   OBJ_FACE(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);

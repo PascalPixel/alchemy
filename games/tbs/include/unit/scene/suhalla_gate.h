@@ -17,15 +17,15 @@ extern s32 gSuhallaGateWounded[];
 extern s32 gSuhallaGateWoundedFlippedNoCollision[];
 extern s32 gSuhallaGateWoundedFlipped[];
 extern struct SceneEntrance gSuhallaGateEntrancesOther[];
-extern struct SceneEntrance gSuhallaGateEntrances2[];
-extern struct SceneEntrance gSuhallaGateEntrances3[];
+extern struct SceneEntrance gSuhallaGateDewEntrances[];
+extern struct SceneEntrance gGatewayCaveEntrances[];
 extern u32 gSuhallaGateExits[];
 extern struct ScenePlacement gSuhallaGatePlacementsOther[];
-extern struct ScenePlacement gSuhallaGatePlacements2[];
-extern struct ScenePlacement gSuhallaGatePlacements1[];
-extern struct ScenePlacement gSuhallaGatePlacements1AfterAudience[];
+extern struct ScenePlacement gSuhallaGateDewPlacements[];
+extern struct ScenePlacement gSuhallaGateCheckpointPlacements[];
+extern struct ScenePlacement gSuhallaGateCheckpointPlacementsAfterAudience[];
 extern struct SceneEvent gSuhallaGateEventsOther[];
-extern struct SceneEvent gSuhallaGateEvents2[];
-extern struct SceneEvent gSuhallaGateEvents3[];
+extern struct SceneEvent gSuhallaGateDewEvents[];
+extern struct SceneEvent gGatewayCaveEvents[];
 
 #endif

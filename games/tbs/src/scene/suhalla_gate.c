@@ -1,11 +1,11 @@
 /// @file
-/// Suhalla Gate (SuhallaGateCheckpoint and SuhallaGateDew, scenes 169 and 170)
-/// and Gateway Cave (GatewayCave, scene 171), the pass that Babi's soldiers
+/// Suhalla Gate (SceneId_SuhallaGateCheckpoint and SceneId_SuhallaGateDew)
+/// and Gateway Cave (SceneId_GatewayCave), the pass that Babi's soldiers
 /// guard on the way to Babi Lighthouse.
 ///
 /// The party comes here after the Suhalla Desert, and the three scenes are
 /// the pass in the order it is crossed:
-/// - Suhalla Gate (SuhallaGateCheckpoint, scene 169), the gate itself. The
+/// - Suhalla Gate (SceneId_SuhallaGateCheckpoint), the gate itself. The
 ///   world map leads in from the south
 ///   (SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) and from the east
 ///   (SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST), each way into its own part
@@ -40,15 +40,16 @@
 ///   (Event_SoldierVanishes, FLAG_SUHALLA_GATE_SOLDIER_VANISHED). Once Iodem
 ///   has questioned the guards, a defeat with no defeat point returns the
 ///   party to the house beside the gate.
-/// - Suhalla Gate (SuhallaGateDew, scene 170), beyond the passage, in a west
+/// - Suhalla Gate (SceneId_SuhallaGateDew), beyond the passage, in a west
 ///   part and an east part (SUHALLA_GATE_DEW_WEST_TO_EAST). Dew, a Mercury
 ///   Djinni, waits here and fights when spoken to (Event_FightDjinni), and a
 ///   chest holds a Mint. SUHALLA_GATE_DEW_TO_GATEWAY_CAVE leads into Gateway
 ///   Cave.
-/// - Gateway Cave (scene 171), entered by GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW;
-///   GATEWAY_CAVE_TO_WORLD_MAP leads out onto the world map
-///   (WORLD_MAP_FROM_GATEWAY_CAVE). Searching in it finds a Psynergy Stone,
-///   kept by a place flag (0x350) and so back on every new visit.
+/// - Gateway Cave (SceneId_GatewayCave), entered by
+///   GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW; GATEWAY_CAVE_TO_WORLD_MAP leads out
+///   onto the world map (WORLD_MAP_FROM_GATEWAY_CAVE). Searching in it finds a
+///   Psynergy Stone, kept by a place flag (0x350) and so back on every new
+///   visit.
 ///
 /// Scene_Initialize also remembers, in FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH
 /// and _EAST, which way the party came in from the world map, so that Retreat
@@ -92,8 +93,8 @@
 #endif
 
 /// The actors of the gate itself (SuhallaGateCheckpoint), numbered in the order
-/// of gSuhallaGatePlacements1 and, after Babi's audience, of
-/// gSuhallaGatePlacements1AfterAudience.
+/// of gSuhallaGateCheckpointPlacements and, after Babi's audience, of
+/// gSuhallaGateCheckpointPlacementsAfterAudience.
 enum SuhallaGateCheckpointActor {
   /// The two of Babi's soldiers who keep the passage north, standing before
   /// Babi's audience and lying wounded after it. "Only those with travel
@@ -109,7 +110,7 @@ enum SuhallaGateCheckpointActor {
 };
 
 /// The actors of the second scene (SuhallaGateDew), numbered in the order of
-/// gSuhallaGatePlacements2.
+/// gSuhallaGateDewPlacements.
 enum SuhallaGateDewActor {
   /// Five sprouts (sprite 0xee, the sprout Growth grows in Suhalla), each
   /// drawn in the frame Scene_Initialize gives it.
@@ -117,8 +118,8 @@ enum SuhallaGateDewActor {
   ACTOR_DEW = ACTOR_FIRST_SPROUT + 5 ///< Dew, a Mercury Djinni
 };
 
-/// Suhalla Gate's second scene (170): talking to Dew, a Mercury Djinni,
-/// starts its battle.
+/// Suhalla Gate's second scene (SceneId_SuhallaGateDew): talking to Dew, a
+/// Mercury Djinni, starts its battle.
 static void Event_FightDjinni(void) {
   Field_RequestDjinnBattle(ACTOR_DEW, DJINNI_DEW);
 }
@@ -127,10 +128,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_SuhallaGateDew) {
-    return gSuhallaGateEntrances2;
+    return gSuhallaGateDewEntrances;
   }
   if (scene == (s32)&SceneId_GatewayCave) {
-    return gSuhallaGateEntrances3;
+    return gGatewayCaveEntrances;
   }
   return gSuhallaGateEntrancesOther;
 }
@@ -145,39 +146,40 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_SuhallaGateDew) {
-    return gSuhallaGatePlacements2;
+    return gSuhallaGateDewPlacements;
   }
   if (scene == (s32)&SceneId_SuhallaGateCheckpoint) {
     if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-      return gSuhallaGatePlacements1AfterAudience;
+      return gSuhallaGateCheckpointPlacementsAfterAudience;
     }
-    return gSuhallaGatePlacements1;
+    return gSuhallaGateCheckpointPlacements;
   }
   return gSuhallaGatePlacementsOther;
 }
 
-/// The events of Suhalla Gate's second scene (170), of Gateway Cave (171), or
-/// of the gate itself (169) for any other scene.
+/// The events of Suhalla Gate's second scene (SceneId_SuhallaGateDew), of
+/// Gateway Cave (SceneId_GatewayCave), or of the gate itself
+/// (SceneId_SuhallaGateCheckpoint) for any other scene.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_SuhallaGateDew) {
-    return gSuhallaGateEvents2;
+    return gSuhallaGateDewEvents;
   }
   if (scene == (s32)&SceneId_GatewayCave) {
-    return gSuhallaGateEvents3;
+    return gGatewayCaveEvents;
   }
   return gSuhallaGateEventsOther;
 }
 
 /// Sets up whichever of the pass's scenes is entered. Once Iodem has
 /// questioned the guards, a defeat returns the party to the house beside the
-/// gate. In Suhalla Gate (169) the vanished soldier stays hidden, the side the
-/// party came in by is remembered for Retreat, and arriving from the south
-/// before Babi's audience changes cells by the passage; the Spanish, French
-/// and Italian editions also change cells around the wounded guards. In the
-/// second scene (170) the five sprouts take their frames, actor 15 is
-/// stretched and one cell changes.
+/// gate. In Suhalla Gate (SceneId_SuhallaGateCheckpoint) the vanished soldier
+/// stays hidden, the side the party came in by is remembered for Retreat, and
+/// arriving from the south before Babi's audience changes cells by the passage;
+/// the Spanish, French and Italian editions also change cells around the
+/// wounded guards. In the second scene (SceneId_SuhallaGateDew) the five
+/// sprouts take their frames, actor 15 is stretched and one cell changes.
 s32 Scene_Initialize(void) {
   s32 scene;
 
@@ -231,8 +233,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// In Suhalla Gate (169), walking north into the door of the house beside it:
-/// the door opens in two frames and the leader steps into Gate to Suhalla.
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint), walking north into the door
+/// of the house beside it: the door opens in two frames and the leader steps
+/// into Gate to Suhalla.
 static void Event_EnterHouse(void) {
   s32 exitTrigger;
   s32 cellSize;
@@ -262,9 +265,9 @@ static void Event_LeaveForWorldMap(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-/// In Suhalla Gate (169) before Babi's audience, each time the party nears the
-/// passage north (cell code 10): the two guards step together in front of it,
-/// and the map cells around them change.
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) before Babi's audience, each
+/// time the party nears the passage north (cell code 10): the two guards step
+/// together in front of it, and the map cells around them change.
 static void Event_GuardsBlockPassage(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_WEST_GUARD, 65536, 32768);
@@ -284,13 +287,13 @@ static void Event_GuardsBlockPassage(void) {
   Engine_EventEnd();
 }
 
-/// In Suhalla Gate (169) after Babi's audience, on reaching the passage (cell
-/// code 10), once: Iodem steps out of the party and demands to know what
-/// happened. "What is the meaning of this!?" The wounded guards tell of a
-/// strange group without papers whose strange powers beat them; Iodem asks
-/// whether it was Felix, the party's foe, and the guards send the party on
-/// after the attackers, toward Babi Lighthouse. Iodem rejoins the party. Sets
-/// FLAG_SUHALLA_GATE_ATTACK_SEEN.
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience, on
+/// reaching the passage (cell code 10), once: Iodem steps out of the party and
+/// demands to know what happened. "What is the meaning of this!?" The wounded
+/// guards tell of a strange group without papers whose strange powers beat
+/// them; Iodem asks whether it was Felix, the party's foe, and the guards send
+/// the party on after the attackers, toward Babi Lighthouse. Iodem rejoins the
+/// party. Sets FLAG_SUHALLA_GATE_ATTACK_SEEN.
 static void Event_IodemQuestionsGuards(void) {
   struct FieldActor *leader;
 #if !TBS_PATCH_3
@@ -401,11 +404,11 @@ static void Event_IodemQuestionsGuards(void) {
   Engine_EventEnd();
 }
 
-/// In Suhalla Gate (169), talking to the east guard. Until Iodem has questioned
-/// the guards he asks whether the party is bound for Babi Lighthouse, `Do you
-/// want to go to Babi Lighthouse?`: yes, and the party must show travel papers
-/// it does not have; no, and he calls them strange. Afterwards, wounded, he
-/// vows to settle the score.
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint), talking to the east guard.
+/// Until Iodem has questioned the guards he asks whether the party is bound for
+/// Babi Lighthouse, `Do you want to go to Babi Lighthouse?`: yes, and the party
+/// must show travel papers it does not have; no, and he calls them strange.
+/// Afterwards, wounded, he vows to settle the score.
 static void Event_TalkToEastGuard(void) {
   Engine_EventBegin();
 
@@ -434,10 +437,11 @@ static void Event_TalkToEastGuard(void) {
   Engine_EventEnd();
 }
 
-/// In Suhalla Gate (169) after Babi's audience, talking to the soldier east of
-/// the gate or reading his mind, until he has vanished: he gasps that Venus
-/// Lighthouse was attacked by strange wanderers, then flickers, slowly and
-/// then fast, and vanishes. Sets FLAG_SUHALLA_GATE_SOLDIER_VANISHED.
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience,
+/// talking to the soldier east of the gate or reading his mind, until he has
+/// vanished: he gasps that Venus Lighthouse was attacked by strange wanderers,
+/// then flickers, slowly and then fast, and vanishes. Sets
+/// FLAG_SUHALLA_GATE_SOLDIER_VANISHED.
 static void Event_SoldierVanishes(void) {
   unsigned int beat;
 
@@ -522,11 +526,13 @@ struct SceneEntrance gSuhallaGateEntrancesOther[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gSuhallaGateEntrances2[] = {
+struct SceneEntrance gSuhallaGateDewEntrances[] = {
     {SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST, CONDITION_ALWAYS, 40,
      0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
-    {2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0},
-    {3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0},
+    {SUHALLA_GATE_DEW_WEST_FROM_EAST, CONDITION_ALWAYS, 392, 0, 368,
+     FACING_WEST, 0, 16, 32, 416, 480, 0},
+    {SUHALLA_GATE_DEW_EAST_FROM_WEST, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST,
+     0, 16, 608, 720, 1008, 0},
     {SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST, CONDITION_ALWAYS, 680,
      0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
     {SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE, CONDITION_ALWAYS, 616, 0, 920,
@@ -534,11 +540,13 @@ struct SceneEntrance gSuhallaGateEntrances2[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gSuhallaGateEntrances3[] = {
+struct SceneEntrance gGatewayCaveEntrances[] = {
     {GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW, CONDITION_ALWAYS, 72, 0, 264,
      FACING_NORTH, 0, 24, 24, 280, 256, 0},
-    {2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0},
-    {3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
+    {GATEWAY_CAVE_NORTH_FROM_SOUTH, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH,
+     0, 24, 24, 280, 256, 0},
+    {GATEWAY_CAVE_SOUTH_FROM_NORTH, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH,
+     0, 208, 288, 704, 640, 0},
     {GATEWAY_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 664, 0, 616, FACING_NORTH,
      0, 208, 288, 704, 640, 0},
     {SCENE_TABLE_END},
@@ -586,7 +594,7 @@ struct ScenePlacement gSuhallaGatePlacementsOther[] = {
 };
 
 // clang-format off
-struct ScenePlacement gSuhallaGatePlacements2[] = {
+struct ScenePlacement gSuhallaGateDewPlacements[] = {
     { 0xee, CONDITION_ALWAYS, 7,
         PIXELS(264), 0, PIXELS(400), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0xee, CONDITION_ALWAYS, 7,
@@ -602,7 +610,7 @@ struct ScenePlacement gSuhallaGatePlacements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSuhallaGatePlacements1[] = {
+struct ScenePlacement gSuhallaGateCheckpointPlacements[] = {
     { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
@@ -610,7 +618,7 @@ struct ScenePlacement gSuhallaGatePlacements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gSuhallaGatePlacements1AfterAudience[] = {
+struct ScenePlacement gSuhallaGateCheckpointPlacementsAfterAudience[] = {
 #if !TBS_PATCH_3
     { 0x98, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlipped,
         PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -652,7 +660,7 @@ struct SceneEvent gSuhallaGateEventsOther[] = {
 };
 // clang-format on
 
-struct SceneEvent gSuhallaGateEvents2[] = {
+struct SceneEvent gSuhallaGateDewEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS,
      SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_DEW_WEST_TO_EAST},
@@ -667,10 +675,10 @@ struct SceneEvent gSuhallaGateEvents2[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gSuhallaGateEvents3[] = {
+struct SceneEvent gGatewayCaveEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, GATEWAY_CAVE_TO_SUHALLA_GATE_DEW},
-    {0x31, 2, CONDITION_ALWAYS, 2},
-    {0x21, 3, CONDITION_ALWAYS, 3},
+    {0x31, 2, CONDITION_ALWAYS, GATEWAY_CAVE_NORTH_TO_SOUTH},
+    {0x21, 3, CONDITION_ALWAYS, GATEWAY_CAVE_SOUTH_TO_NORTH},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, GATEWAY_CAVE_TO_WORLD_MAP},
     {SEARCH(SEARCH_UNNAMED), 100, 0x350, FIND_PSYNERGY_STONE},
     {SCENE_EVENTS_END},

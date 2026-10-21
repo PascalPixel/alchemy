@@ -612,7 +612,7 @@ struct ScenePlacement gSuhallaGateDewPlacements[] = {
         PIXELS(536), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, 7,
         PIXELS(552), 0, PIXELS(880), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { 0x5b, 0x4a, ACTOR_STAND,
+    { MERCURY_DJINNI, 0x4a, ACTOR_STAND,
         PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -641,7 +641,7 @@ struct ScenePlacement gSuhallaGateCheckpointPlacementsAfterAudience[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
         PIXELS(476), 0, PIXELS(300), FACING_SOUTH, TALK_FACE_PARTY, 0 },
 #endif
-    { 0x39, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_IODEM, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };

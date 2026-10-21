@@ -23,12 +23,12 @@
 /// commands his soldiers and travels with the party; Sheba, the holy child of
 /// Lalivero whom Babi held as a hostage, had already left Tolbi for Lalivero
 /// with soldiers bound for Babi Lighthouse. Afterwards two of those soldiers
-/// lie wounded in the house of a man who, his child says, aids anyone in
-/// trouble; the inn is full of travelers the storms blew back, and two
-/// villagers talk of the death storms in the middle of the Suhalla; one says
-/// there was a saying about them she cannot remember, and Mind Read finds half
-/// of it, `"Ye who seek..." Something about eyes of truth...` Stepping into
-/// that house (cell code 50) runs a scripted scene once
+/// lie wounded in the house of a man who, his daughter says, aids anyone in
+/// trouble; the inn is full of travelers the storms blew back, and an old
+/// man and an old woman talk of the death storms in the middle of the Suhalla;
+/// she says there was a saying about them she cannot remember, and Mind Read
+/// finds half of it, `"Ye who seek..." Something about eyes of truth...`
+/// Stepping into that house (cell code 50) runs a scripted scene once
 /// (Event_IodemQuestionsWoundedSoldiers, FLAG_IODEM_MET_WOUNDED_SOLDIERS):
 /// Iodem steps out of the party to question the soldiers, who woke in these
 /// beds and do not know where Sheba is, only that she was not in the sandstorm,
@@ -65,37 +65,47 @@
 /// tables agree up to ACTOR_HEALER. Where an actor's talk changes after
 /// Babi's audience, the note quotes it before.
 enum SuhallaInteriorsActor {
-  /// The child of the man who aids anyone in trouble. "My father loves people
+  /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS), the
+  /// daughter of the man who aids anyone in trouble. "My father loves people
   /// so much, he can't help but aid anyone in trouble."
   /// ★ Named from the game: "I guess I'm just my father's child!"
   /// (MsgSuhallaInteriorsWhenISeePeopleInTrouble)
-  ACTOR_FATHERS_CHILD = ACTOR_FIRST_PLACED,
-  /// The man who aids anyone in trouble, in whose house the wounded soldiers
+  ACTOR_FATHERS_DAUGHTER = ACTOR_FIRST_PLACED,
+  /// The man who aids anyone in trouble, a man with brown hair
+  /// (SPRITE_BOY_WITH_BROWN_HAIR), in whose house the wounded soldiers
   /// lie after the audience. "Let me know if you have any problems. I'll do
   /// anything I can to help."
   /// ★ Named from the game: "I want to help people so badly, I can't sit idly
   /// by!" (MsgSuhallaInteriorsIWantToHelpPeopleSo)
   ACTOR_FATHER_WHO_WANTS_TO_HELP,
-  /// "Tolbi probably ignores small villages like Suhalla, doesn't it?" After
-  /// the audience: "Do not approach the large cyclones in the middle of the
+  /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE). After the
+  /// audience: "Do not approach the large cyclones in the middle of the
   /// Suhalla."
-  ACTOR_VILLAGER_IGNORED_BY_TOLBI,
-  /// In the old woman's sprite (as in vale_gate.c). "If you head east across
+  /// ★ Named from the game: "Tolbi probably ignores small villages like
+  /// Suhalla" (MsgSuhallaInteriorsTolbiProbablyIgnoresSmallVillagesLike)
+  ACTOR_OLD_MAN_IGNORED_BY_TOLBI,
+  /// In the old woman's sprite (SPRITE_OLD_WOMAN, as in vale_gate.c). "If you
+  /// head east across
   /// Suhalla, Lalivero is so close you can see it across the Nol River..."
   /// After the audience she half remembers a saying about the death storms.
   /// ★ Named from what the player sees: a white-haired old woman in a dark
   /// dress (its render)
   ACTOR_OLD_WOMAN,
+  /// A young woman with a brown ponytail (SPRITE_WOMAN_WITH_PONYTAIL).
   /// ★ Named from the game: "Ours is the only store in Suhalla."
   /// (MsgSuhallaOursOnlyStore)
   ACTOR_MERCHANT,
-  /// Opens the inn across its counter (Event_TalkToInnkeeper).
+  /// A man with dark hair (SPRITE_MAN_WITH_DARK_HAIR), who opens the inn across
+  /// its counter (Event_TalkToInnkeeper).
   /// ★ Named from the game: "Innkeeper" (MsgDebugGlyphName)
   ACTOR_INNKEEPER,
-  /// A woman at the inn, in the sprite of Kalay's innkeeper's wife. "I wonder
-  /// if any customers can get through those sandstorms..."
+  /// A woman at the inn, with red-brown hair in a white apron
+  /// (SPRITE_WOMAN_IN_PINK_APRON), the sprite of Kalay's innkeeper's wife.
+  /// ★ Named from the game: "I wonder if any customers can get through those
+  /// sandstorms..." (MsgSuhallaInteriorsIWonderIfAnyCustomersCan)
   ACTOR_INN_WOMAN,
-  /// Travelers the sandstorms blew back, out of sight until the audience. "We
+  /// Travelers the sandstorms blew back, out of sight until the audience: two
+  /// stocky strong men (SPRITE_STRONGMAN). "We
   /// went into the Suhalla to go build the lighthouse, but the storms caught
   /// us."
   /// ★ Named from the game: "We went into the Suhalla to go build the
@@ -106,10 +116,12 @@ enum SuhallaInteriorsActor {
   /// ★ Named from the game: "We went into the Suhalla to go build the
   /// lighthouse" (MsgSuhallaInteriorsWeWentIntoTheSuhallaTo)
   ACTOR_SECOND_LIGHTHOUSE_WORKER,
-  /// "I set out for Babi Lighthouse to open a business there, but then I was
-  /// blown back here again!"
+  /// A stout man with brown hair (SPRITE_STOUT_MAN).
+  /// ★ Named from the game: "I set out for Babi Lighthouse to open a business
+  /// there, but then I was blown back here again!" (MsgSuhallaSupposeFolkBlown)
   ACTOR_STRANDED_TRAVELER,
-  /// Keeps Suhalla Sanctum (Event_TalkToHealer).
+  /// A bearded man in a long robe (SPRITE_BEARDED_MAN_IN_LONG_ROBE), who keeps
+  /// Suhalla Sanctum (Event_TalkToHealer).
   /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
   ACTOR_HEALER,
   /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
@@ -598,55 +610,55 @@ u32 gSuhallaInteriorsExits[] = {
 };
 
 struct ScenePlacement gSuhallaInteriorsPlacements[] = {
-    { 0x66, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(368), 0, PIXELS(192), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(328), 0, PIXELS(80), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(120), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(160), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x76, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(568), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x77, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x80, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(224), 0, PIXELS(344), FACING_NORTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STOUT_MAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(432), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ScenePlacement gSuhallaInteriorsPlacementsAfterAudience[] = {
-    { 0x66, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(400), 0, PIXELS(184), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BOY_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(416), 0, PIXELS(184), FACING_NORTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x67, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(56), 0, PIXELS(120), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x6f, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(160), 0, PIXELS(104), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x76, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(568), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x77, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(272), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x80, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(224), 0, PIXELS(344), FACING_NORTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(688), 0, PIXELS(384), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(712), 0, PIXELS(408), FACING_NORTHWEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x6d, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_STOUT_MAN, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(136), 0, PIXELS(616), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x7a, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(432), 0, PIXELS(600), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x39, FLAG_IODEM_MET_WOUNDED_SOLDIERS, ACTOR_STAND,
+    { SPRITE_IODEM, FLAG_IODEM_MET_WOUNDED_SOLDIERS, ACTOR_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_KEEP_FACING, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(416), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -665,13 +677,13 @@ struct SceneEvent gSuhallaInteriorsEvents[] = {
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
     { EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
     { EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
-    { EVENT_TALK, ACTOR_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsMyFatherLovesPeopleSoMuch) },
+    { EVENT_TALK, ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsMyFatherLovesPeopleSoMuch) },
     { EVENT_TALK, ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsLetMeKnowIfYouHave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenISeePeopleInTrouble) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenISeePeopleInTrouble) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIWantToHelpPeopleSo) },
-    { EVENT_TALK, ACTOR_VILLAGER_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTolbiProbablyIgnoresSmallVillagesLike) },
+    { EVENT_TALK, ACTOR_OLD_MAN_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTolbiProbablyIgnoresSmallVillagesLike) },
     { EVENT_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIfYouHeadEastAcrossSuhalla) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsSuhallaIsADesertVillageI) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsSuhallaIsADesertVillageI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsGoodThingItsNotEasyTo) },
     { EVENT_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMerchant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsAVillageThisSmallCantSupport) },
@@ -699,17 +711,17 @@ struct SceneEvent gSuhallaInteriorsEventsAfterAudience[] = {
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
     { EVENT_TOUCH, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
     { EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit) },
-    { EVENT_TALK, ACTOR_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheWoundedAreSleepingSoDont) },
+    { EVENT_TALK, ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheWoundedAreSleepingSoDont) },
     { EVENT_TALK, ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIAmAmazedTheseSoldiersSurvived) },
     { EVENT_TALK, ACTOR_SOLDIER_SOUTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhyWereTheyHeadedTowardEastern) },
     { EVENT_TALK, ACTOR_SOLDIER_NORTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhereIsActorWhatHasHappened) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheseOldSoldiersMustRestUntil) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheseOldSoldiersMustRestUntil) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhoCouldHaveDoneThisTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_SOUTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsAColumnOfWaterShotUp) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_NORTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsActorWasNotFarBehindUs) },
-    { EVENT_TALK, ACTOR_VILLAGER_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsDoNotApproachTheLargeCyclones) },
+    { EVENT_TALK, ACTOR_OLD_MAN_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsDoNotApproachTheLargeCyclones) },
     { EVENT_TALK, ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsDeathStormsHuhThereWasA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsOnceYouGetSweptUpIn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_IGNORED_BY_TOLBI, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsOnceYouGetSweptUpIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsYeWhoSeekSomethingAboutEyes) },
     { EVENT_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMerchant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWeveHadMoreCustomersLatelyBecause) },

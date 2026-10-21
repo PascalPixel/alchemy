@@ -24,12 +24,12 @@
 ///   plaza bursts out and shoves him (FLAG_VALE_STORM_BUMPED_INTO_VILLAGER).
 ///   Garet is struggling to save his chest of valuables
 ///   (FLAG_VALE_STORM_HEARD_GARET once Isaac has heard him); talking to him or
-///   walking off past him brings him along (a third way, Event_GaretJoinsIsaac,
-///   is unused), and either way the chest is left behind
-///   (FLAG_VALE_STORM_GARET_JOINED). With Garet along, the first fallen rock
-///   has him say they must find another way, and the path north has him turn
-///   Isaac back, since it leads to Mt. Aleph. Two cells start a monster battle
-///   each, once (encounters 2 and 3 of table 12).
+///   walking off past him brings him along (a third way,
+///   Event_UnusedGaretJoinsIsaac, never plays), and either way the chest is
+///   left behind (FLAG_VALE_STORM_GARET_JOINED). With Garet along, the first
+///   fallen rock has him say they must find another way, and the path north has
+///   him turn Isaac back, since it leads to Mt. Aleph. Two cells start a
+///   monster battle each, once (encounters 2 and 3 of table 12).
 /// - Further on, the Boulder slips toward Vale while the elders strain to
 ///   hold it, and they tell the boys to run (Event_WatchBoulderFall,
 ///   FLAG_VALE_BOULDER_FELL; from then on it stays where it slipped to).
@@ -1193,10 +1193,10 @@ static void ValeStorm_RunCallOutSequence(void) {
 /// Garet calls after him and joins (code 31, Event_GaretCallsAfterIsaac), so
 /// Garet has always joined by then and the scene's first test,
 /// FLAG_VALE_STORM_GARET_JOINED, ends it. Its lines appear nowhere else: Garet
-/// runs up (gValeStorm_GaretRunsUpScript), heaves for breath, `*Hah*
-/// *Hah*`, while gValeStorm_GaretPantingScript swells and shrinks his sprite,
-/// and asks `Are you trapped, too?` before they leave together.
-static void Event_GaretJoinsIsaac(void) {
+/// runs up (gValeStorm_UnusedGaretRunsUpScript), heaves for breath, `*Hah*
+/// *Hah*`, while gValeStorm_UnusedGaretPantingScript swells and shrinks his
+/// sprite, and asks `Are you trapped, too?` before they leave together.
+static void Event_UnusedGaretJoinsIsaac(void) {
   struct FieldActor *actor;
   s32 message;
 
@@ -1211,10 +1211,11 @@ static void Event_GaretJoinsIsaac(void) {
     Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
     Camera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
     Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(1));
-    Actor_RunActionScriptAndWait(ACTOR_GARET, gValeStorm_GaretRunsUpScript);
+    Actor_RunActionScriptAndWait(ACTOR_GARET,
+                                 gValeStorm_UnusedGaretRunsUpScript);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
     Engine_EventWait(30);
-    Actor_SetActionScript(ACTOR_GARET, gValeStorm_GaretPantingScript);
+    Actor_SetActionScript(ACTOR_GARET, gValeStorm_UnusedGaretPantingScript);
     Event_ShowMessage(ACTOR_GARET, 0);
     actor = Actor_Get(ACTOR_GARET);
     actor->scaleY = Q16_ONE;
@@ -2870,7 +2871,7 @@ s32 gValeStorm_ShovingVillagerScript[] = {
     SC_ARG(1), SC_END,
 };
 
-s32 gValeStorm_GaretRunsUpScript[] = {
+s32 gValeStorm_UnusedGaretRunsUpScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(345), 0, PIXELS(612)),
     SC_SYNC,   SC_MOVE(PIXELS(311), 0, PIXELS(638)),
     SC_SYNC,   SC_MOVE(PIXELS(256), 0, PIXELS(608)),
@@ -2878,7 +2879,7 @@ s32 gValeStorm_GaretRunsUpScript[] = {
     SC_END,
 };
 
-s32 gValeStorm_GaretPantingScript[] = {
+s32 gValeStorm_UnusedGaretPantingScript[] = {
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 192),
     SC_ADD(SW_SCALE_Y, 384),
@@ -3264,7 +3265,8 @@ struct SceneEvent gValeStorm_Events[] = {
      EVENT_SCRIPT(Event_HearGaretStruggling)},
     {EVENT_TOUCH, 31, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_GaretCallsAfterIsaac)},
-    {EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GaretJoinsIsaac)},
+    {EVENT_TOUCH, 32, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_UnusedGaretJoinsIsaac)},
     {EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutMtAleph)},
     {EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WatchBoulderFall)},
     {EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WitnessRiverRescue)},

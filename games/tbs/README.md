@@ -53,12 +53,12 @@ scene, the one at the top of this page, which then opens on Vale three years
 later. The game names the two only then, as Saturos and Menardi, though their
 sprites in the storm are the same.
 
-The storm also keeps something the player never sees. `Event_GaretJoinsIsaac`
-is an earlier version of Garet joining Isaac, with lines that appear nowhere
-else, `*Hah* *Hah*` and `Are you trapped, too?`, but every path to its cell
-crosses the cells where Garet already joins, so its first test ends it. Its
-comment opens with `Unused:` and says why, as the comment on every such event
-does.
+The storm also keeps something the player never sees.
+`Event_UnusedGaretJoinsIsaac` is an earlier version of Garet joining Isaac,
+with lines that appear nowhere else, `*Hah* *Hah*` and `Are you trapped, too?`,
+but every path to its cell crosses the cells where Garet already joins, so its
+first test ends it. Its comment opens with `Unused:` and says why, as the
+comment on every such event does.
 
 ## What sends the party out?
 

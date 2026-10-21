@@ -200,6 +200,21 @@ enum SceneEventKind {
   EVENT_TALK_HALTED = 7
 };
 
+/// An exit event's control bits 5..4: how the leader leaves
+/// (Scene_RunTouchOrExit). XXX: what leaving animations 26 and 25 and arrivals
+/// 24 and 23 show; recordings of an exit of each style would settle it.
+enum ExitStyle {
+  EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
+  EXIT_STYLE_SILENT = 0x10,
+  /// With SE_128 and leaving animation 26; the next scene plays arrival 24
+  /// (FLAG_EXIT_ARRIVAL_PENDING).
+  EXIT_STYLE_ANIMATED = 0x20,
+  /// With SE_129 and leaving animation 25; the next scene plays arrival 23
+  /// (FLAG_EXIT_ARRIVAL_ALTERNATE).
+  EXIT_STYLE_ANIMATED_ALTERNATE = 0x30,
+  EXIT_STYLE_MASK = 0x30
+};
+
 /// The raised event the menus and shortcut keys raise instead of opening
 /// while FLAG_MENUS_RAISE_EVENT is set, as Vault's inn sets it while the
 /// party corners the suspects.

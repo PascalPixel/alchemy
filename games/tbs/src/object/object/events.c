@@ -365,20 +365,18 @@ s32 Scene_RunTouchOrExit(s32 value) {
   } else {
     exit = Scene_FindEvent(EVENT_EXIT, value);
     if (exit != 0) {
-      // Bits 5 and 4 choose how the leader leaves: 0 with the usual sound,
-      // 16 silently, 32 and 48 with their own sound and leaving animation (26
-      // and 25), whose flag (FLAG_EXIT_ARRIVAL_PENDING, flag 0x121) makes the
-      // next scene play the matching arrival.
-      exitKind = exit->flags & 0x30;
+      // An enum ExitStyle chooses how the leader leaves; the animated styles'
+      // flags make the next scene play the matching arrival.
+      exitKind = exit->flags & EXIT_STYLE_MASK;
       switch (exitKind) {
-      case 0:
+      case EXIT_STYLE_NORMAL:
         AudioCommand_PlayFar(SE_MAP_EXIT);
         break;
-      case 32:
+      case EXIT_STYLE_ANIMATED:
         AudioCommand_PlayFar(SE_128);
         ObjectEffect_BeginContextEffect26();
         break;
-      case 48:
+      case EXIT_STYLE_ANIMATED_ALTERNATE:
         AudioCommand_PlayFar(SE_129);
         ObjectEffect_BeginContextEffect25();
         break;

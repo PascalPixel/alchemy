@@ -43,10 +43,12 @@
 /// As FLAG_KEEP_MUSIC, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_NOT_ON_MAP 0x11c ///< the current place is not on the world map
-/// The leader left through an exit of kind 0x20 (SE_128, animation 26); the
-/// next scene plays the leader's arrival, animation 24
-/// (ObjectEffect_RunPendingFlagEvent), unless its setup clears this first.
+/// The leader left through an EXIT_STYLE_ANIMATED exit; the next scene plays
+/// the leader's arrival (ObjectEffect_RunPendingFlagEvent), unless its setup
+/// clears this first.
 #define FLAG_EXIT_ARRIVAL_PENDING 0x120
+/// As FLAG_EXIT_ARRIVAL_PENDING, for an EXIT_STYLE_ANIMATED_ALTERNATE exit.
+#define FLAG_EXIT_ARRIVAL_ALTERNATE 0x121
 /// The leader falls into the next scene from 160 pixels above
 /// (ObjectEffect_RunPendingFlagEvent), as when the world map's airborne
 /// travel ends.

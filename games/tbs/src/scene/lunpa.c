@@ -1,55 +1,58 @@
 /// @file
-/// Lunpa's overlay, which holds two places, each a scene of its own.
+/// Lunpa, the town of the noble thief's family, sealed by Dodonpa's men while
+/// he holds Hammet for ransom in Lunpa Fortress. Two places share this
+/// overlay, each a scene of its own:
 ///
-/// Where they fall in the story: Master Hammet, a wealthy landowner and
-/// merchant from Kalay, is held for ransom in Lunpa Fortress by Dodonpa, the
-/// grandson of Lunpa, the noble thief who founded the town. Dodonpa's father,
-/// Donpa, is too old to lead, and Dodonpa keeps him hidden in the fortress.
-/// Dodonpa's men have sealed the town: no one may come in without his
-/// authorization, and no one may leave. Once Donpa has judged Dodonpa in the
-/// fortress (FLAG_DODONPA_LOCKED_UP, set there), Scene_GetEvents gives the
-/// town gLunpaReopenedEvents instead of gLunpaSealedEvents, and the people
-/// talk of the intruders who got into the fortress.
+/// - Lunpa (SceneId_Lunpa, area name Lunpa): the town. Two guards keep the
+///   road in from the world map; doors lead into the homes, shops, inn and
+///   temple (LunpaSuhalla, lunpa_suhalla.c), roads to West Lunpa Cave and up
+///   to the Lunpa Fortress Gates, and a hidden passage to the jail
+///   (LUNPA_TO_VAULT_JAIL, whose area name there is Lunpa).
+/// - Lunpa Fortress Gates (SceneId_LunpaFortressGates, area name Lunpa
+///   Fortress Gates): the steps up to the fortress door, kept by two guards
+///   whom the party gets past under Cloak.
 ///
-/// - Lunpa (SceneId_Lunpa), the town. Two guards keep the road in from
-///   the world map (LUNPA_TO_WORLD_MAP) and turn the party away. The east
-///   guard wants Dodonpa's authorization; once the guards suspect Kalay
-///   (FLAG_GUARDS_SUSPECT_KALAY, set on the world map) he asks whether the
-///   party came from there, and his thoughts tell of the gate in the cave
-///   west of town, which opens only from the inside. LUNPA_TO_WEST_LUNPA_CAVE
-///   leads to West Lunpa Cave, the doors into the homes, the shops, the inn
-///   and Lunpa Temple (LunpaSuhalla, lunpa_suhalla.c), and
-///   LUNPA_TO_LUNPA_FORTRESS_GATES up to the Lunpa Fortress Gates. Every entry
-///   and the end of Reveal hide the town's secrets (Event_HideSecrets,
-///   FLAG_SCENE_TEMP_01), and Reveal shows them (Event_RevealSecrets): a
-///   Psynergy Stone, a puddle that Frost freezes into a pillar to stand on
-///   (FLAG_SCENE_TEMP_00), and the sparkle of a switch. Searching the switch
-///   opens a passage (FLAG_SCENE_TEMP_02) that, while Reveal shows it, leads
-///   to the jail (LUNPA_TO_VAULT_JAIL, arriving at VAULT_JAIL_FROM_LUNPA; the
-///   jail's area name there is Lunpa). A Nut floats over the town for Catch, a
-///   grave and a barrel hold a Sleep Bomb and a Nut, and frogs croak in the
-///   well.
-/// - Lunpa Fortress Gates (SceneId_LunpaFortressGates), the steps up to the
-///   fortress door, kept by two guards. Stepping on the ground before them
-///   uncloaked (TRIGGER_GUARDED_GROUND, Event_GuardsBlockGate) brings them in
-///   front of the door (FLAG_SCENE_TEMP_40). Cloak (Event_CastCloak,
-///   FLAG_SCENE_TEMP_41) lets the leader slip past to the door
-///   (TRIGGER_FORTRESS_DOOR, Event_EnterFortress, FLAG_SCENE_TEMP_42), and
-///   LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR leads into Lunpa
-///   Fortress. An uncloaked leader in front of the guards
-///   (Lunpa_WatchForUncloakedParty), or one still among them when Cloak fades
-///   (Event_CloakFades), is marched back down the steps
-///   (Event_GuardsCatchParty, FLAG_SCENE_TEMP_44). A party caught in the
-///   fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT and is thrown
-///   down the steps (Event_GuardsThrowLeaderOut); one that slips out arrives by
-///   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA and casts Cloak to get
-///   round the guards (Event_LeaderSneaksOut). Every entry resets the
-///   fortress's puzzles and beaten guards. After Donpa's judgment, until
-///   Hammet finds Bunza, a Kalay merchant, and his wagon in West Lunpa Cave
-///   (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going back up
-///   (TRIGGER_FORTRESS_APPROACH, FLAG_SCENE_TEMP_43) and the left guard nearly
-///   recognizes the man with the party (FLAG_LUNPA_GATE_GUARD_SAW_HAMMET).
-///   LUNPA_FORTRESS_GATES_TO_LUNPA leads back down to Lunpa.
+/// The getters choose by gGameState.scene, and the town's events also by
+/// FLAG_DODONPA_LOCKED_UP, which Donpa's judgment in the fortress sets: before
+/// it the townspeople live under Dodonpa's men (gLunpaSealedEvents), after it
+/// they talk of the intruders (gLunpaReopenedEvents). Both tables share the
+/// roads and doors (LUNPA_ROADS_AND_DOORS) and Reveal's secrets
+/// (LUNPA_SECRETS).
+///
+/// The town hides three things that Reveal shows (Event_RevealSecrets) and
+/// that every entry and the end of Reveal hide again (Event_HideSecrets): a
+/// Psynergy Stone, a puddle that Frost freezes into a pillar to stand on, and
+/// the sparkle of a switch. Searching the switch opens the passage to the
+/// jail, which can be walked through only while Reveal shows it
+/// (Event_EnterHiddenPassage). Its scene flags:
+///
+/// - FLAG_SCENE_TEMP_00: Frost has frozen the puddle.
+/// - FLAG_SCENE_TEMP_01: the secrets are hidden, Reveal not shining.
+/// - FLAG_SCENE_TEMP_02: the switch has opened the passage.
+///
+/// At the gates, stepping uncloaked on the ground before the guards
+/// (TRIGGER_GUARDED_GROUND) brings them in front of the door, and an
+/// uncloaked leader among them, or one still among them as Cloak fades, is
+/// marched back down the steps (Event_GuardsCatchParty, raised as
+/// TRIGGER_PARTY_SPOTTED by Lunpa_WatchForUncloakedParty). A party caught in
+/// the fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT and is thrown
+/// down the steps; after the rescue it leaves the fortress by
+/// LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA and sneaks past under
+/// Cloak. Every entry clears the fortress's puzzle and beaten-guard flags, so
+/// the fortress starts over. Between Donpa's judgment and the reunion in West
+/// Lunpa Cave (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from
+/// going back up (TRIGGER_FORTRESS_APPROACH). Its scene flags:
+///
+/// - FLAG_SCENE_TEMP_40: the guards stand before the door.
+/// - FLAG_SCENE_TEMP_41: Cloak has been cast at the gates.
+/// - FLAG_SCENE_TEMP_42: the leader is going through the fortress door.
+/// - FLAG_SCENE_TEMP_43: Garet's warning is under way.
+/// - FLAG_SCENE_TEMP_44: the guards are marching the party down.
+///
+/// Open questions:
+/// - XXX: where GATE_EXIT_THIRD, the gates' third road, would have led;
+///   gGateExits has no row for it, so a recording of the leader on
+///   TRIGGER_THIRD_ROAD would show what the engine does with it.
 
 #include "game_state.h"
 #include "version.h"
@@ -231,7 +234,7 @@ static void Event_RevealSecrets(void) {
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SWITCH_SPARKLE), 0);
     actor = Actor_Get(ACTOR_SWITCH_SPARKLE);
     if (actor != NULL) {
-      actor->motionFlags = SPARKLE_MOTION_FLAGS;
+      actor->motionFlags = ACTOR_FLOATS_HIGH;
       actor->y.fixed = PIXELS(16);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->scaleX = SPARKLE_SCALE_X;
@@ -517,7 +520,7 @@ static void Event_EnterDoor(void) {
   doorIndex = fieldWork->action - TRIGGER_FIRST_HOME_DOOR;
   Map_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                    gLunpaDoors[doorIndex].y);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (doorIndex != DOOR_TEMPLE) {
@@ -535,7 +538,7 @@ static void Event_EnterDoor(void) {
 static void Event_EnterHiddenPassage(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) != 0) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
@@ -550,7 +553,7 @@ static void Event_EnterHiddenPassage(void) {
 static void Event_EnterFortress(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_42);
   Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
@@ -664,9 +667,9 @@ static void Event_GuardsCatchParty(void) {
   warningMessageBase = MsgLunpaGuardsCatchParty;
   Engine_EventSetMessage(warningMessageBase + CATCH_LEFT_GUARD_CHALLENGES);
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-  Actor_SetSpeed(ACTOR_LEFT_GUARD, 0x20000, 0x10000);
-  Actor_SetSpeed(ACTOR_RIGHT_GUARD, 0x20000, 0x10000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_LEFT_GUARD, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(2), PIXELS(1));
   Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_SHAKE_HEAD);
   Engine_EventWait(35);
   Engine_EventSetMessage(warningMessageBase + CATCH_RIGHT_GUARD_WONDERS);
@@ -772,14 +775,21 @@ static void Event_GuardsThrowLeaderOut(void) {
   Actor_SetPosition(ACTOR_LEFT_GUARD, PIXELS(152), PIXELS(112));
   Actor_SetPosition(ACTOR_RIGHT_GUARD, PIXELS(168), PIXELS(112));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+#ifdef BUGFIX
+  Actor_FaceDirection(ACTOR_LEFT_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
+#else
+  // BUG: the town's guards, whose actor numbers no actor at the gates holds,
+  // so the gates' guards keep their headings.
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 0);
+#endif
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
   Engine_EventOpenScreen();
   Engine_EventWait(30);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1cccc, 0xe666);
-  Actor_SetSpeed(ACTOR_LEFT_GUARD, 0x1cccc, 0xe666);
-  Actor_SetSpeed(ACTOR_RIGHT_GUARD, 0x1cccc, 0xe666);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(9) / 5, PIXELS(9) / 10);
+  Actor_SetSpeed(ACTOR_LEFT_GUARD, PIXELS(9) / 5, PIXELS(9) / 10);
+  Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(9) / 5, PIXELS(9) / 10);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 288);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 288);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
@@ -831,8 +841,8 @@ static void Event_GuardsThrowLeaderOut(void) {
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
   Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  Actor_SetSpeed(ACTOR_LEFT_GUARD, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_RIGHT_GUARD, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_LEFT_GUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 144, 200);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 176, 200);
   Engine_ActorWaitForMove(ACTOR_LEFT_GUARD);
@@ -1026,7 +1036,7 @@ struct ScenePlacement gLunpaPlacements[] = {
       PIXELS(256), 0, PIXELS(448), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, ACTOR_STAND,
       PIXELS(520), 0, PIXELS(520), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLANK, FLAG_LUNPA_NUT_CAUGHT, ACTOR_FLOAT,
+    { SPRITE_BLANK, FLAG_LUNPA_NUT_CAUGHT, ACTOR_RESET_ACTION,
       PIXELS(120), 0, PIXELS(472), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END, CONDITION_ALWAYS },
 };

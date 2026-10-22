@@ -1,5 +1,5 @@
-#ifndef GUARD_LUNPA_H
-#define GUARD_LUNPA_H
+#ifndef ALCHEMY_LUNPA_H
+#define ALCHEMY_LUNPA_H
 
 #include "types.h"
 #include "text/msg_ids.h"
@@ -114,6 +114,7 @@ enum LunpaActor {
   ACTOR_FLOATING_NUT
 };
 
+/// The last of the 66 actor slots, which Event_EnterDoor stills.
 enum { ACTOR_LAST_PLACED = 65 };
 
 /// The Lunpa Fortress Gates' placed actors, numbered in the order of
@@ -128,14 +129,10 @@ enum GateActor {
   ACTOR_RIGHT_GUARD
 };
 
-enum { ACTOR_FLOAT = 7 };
+/// How the switch's sparkle is stretched while Reveal shows it.
+enum { SPARKLE_SCALE_X = 0x13333, SPARKLE_SCALE_Y = 0x18000 };
 
-enum {
-  SPARKLE_MOTION_FLAGS = 8,
-  SPARKLE_SCALE_X = 0x13333,
-  SPARKLE_SCALE_Y = 0x18000
-};
-
+/// Where Retreat at the gates sends the party (GameState.retreatEntrance).
 enum { GATE_RETREAT_ENTRANCE = 10 };
 
 enum CatchLine {
@@ -152,13 +149,6 @@ enum { ANIM_SPRAWLED = 19 };
 enum { PILLAR_TOP_HEIGHT = PIXELS(16), CELL_SIZE = PIXELS(16) };
 
 enum { MAP_OBJECT_PSYNERGY_STONE = 102 };
-
-enum {
-  HEAP_ITEM_ICON = 17,
-  ITEM_ICON_BUFFER_SIZE = 0x608,
-  ITEM_ICON_TILES = 0x400,
-  ITEM_ICON_TILE_BYTES = 128
-};
 
 extern struct MapCellAnim gLunpaDoors[];
 

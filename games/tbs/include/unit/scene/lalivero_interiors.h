@@ -18,7 +18,8 @@ extern struct SceneRegion gLaliveroInteriors_FaransHouseRegions[];
 extern u32 gLaliveroInteriors_Exits[];
 extern struct ScenePlacement gLaliveroInteriors_ShopsPlacements[];
 extern struct ScenePlacement gLaliveroInteriors_FaransHousePlacements[];
-extern struct ScenePlacement gLaliveroInteriors_FaransHousePlacementsAfterLighthouse[];
+extern struct ScenePlacement
+    gLaliveroInteriors_FaransHousePlacementsAfterLighthouse[];
 extern struct SceneEvent gLaliveroInteriors_ShopsEvents[];
 extern struct SceneEvent gLaliveroInteriors_ShopsEventsAfterLighthouse[];
 extern struct SceneEvent gLaliveroInteriors_FaransHouseEvents[];

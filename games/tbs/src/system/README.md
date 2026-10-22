@@ -19,6 +19,8 @@ state lives.
 
 ![Vale's video memory drawn as tiles, each in the palette the maps or the sprite list give it and grey where nothing on screen names it: the four 16 KB background character blocks, the first with the window font and Vale's trees, the second its grass, cliffs and water, the last two its thatched roofs and houses; beside them the sprites' 32 KB, nearly empty but for the frames on screen; and below, the 256 background colours and the 256 sprite colours.](https://alchemy.pascalpixel.com/guides/system/vram.png)
 
+![EWRAM a pixel to a byte, 512 bytes to a line, and IWRAM below the screen, 256 to a line, each byte a grey of its value tinted with its area's colour and labelled: the main image's variables, the overlay area, the map cells, the actor sprite slots, the decode buffer, the map blocks, layer data and collision, the EWRAM heap and the BG tile buffer; and the resident runtime, the IWRAM variables, the IWRAM heap, the sound mixer and the stacks. In each heap the bytes past the next free address are darkened, with a white line from that address to the end of its line. In Vale the EWRAM heap is in use to near the end of its first 32 KB; as Isaac walks into the Sanctum the overlay area, the map cells and the map layer data are rewritten with the Sanctum's, and the EWRAM heap's next free address falls back to under half of that as the scene's blocks are released and taken again. Then in Goma Cave a random battle opens: the actor sprite slots and the decode buffer are rewritten, the EWRAM heap's next free address moves further on than in the cave, and the IWRAM heap's contents change while its next free address stays about where it was.](https://alchemy.pascalpixel.com/guides/system/memory-maps.gif)
+
 `main.ld` declares the areas the game uses: 256 KB of EWRAM, where most
 variables live; 32 KB of IWRAM, where code that must run fast is copied; VRAM,
 which holds the tiles and maps the screen is drawn from; and the cartridge
@@ -195,6 +197,8 @@ behind its veneer word:
 Every picture, map, table and overlay is found through one directory by its
 row number, and the far-call tables are reached by place the same way, so
 both keep their order.
+
+![The 8 MB cartridge a pixel to 8 bytes, 8 KB to a line, with addresses down the side, coloured by what the 1,000 directory rows point at. The first 3 MB, the main image's code and data, are grey, cut by black gaps where the link places nothing between banks, with small yellow marks for the 19 rows that point at the program's own tables (the start of the ROM, the directory, the build stamp and the far-call tables). From `0x08320000` a purple run of about 1.6 MB holds the other pictures and tables, then about 2.7 MB of map headers in green and map tiles and palettes in blue, interleaved area by area, and last about 530 KB of the 96 overlays in orange; 25 rows hold 0 and point at nothing.](https://alchemy.pascalpixel.com/guides/system/resource-directory.png)
 
 Every picture, map, table and overlay the game loads is a row of
 `Resource_DirectoryTable` (`resource/directory.s`), which holds where that
@@ -396,7 +400,3 @@ to its symbol in each edition its `#if` selects.
   banks as resources (the comment in `menu/title.c` suggests as much), but
   The Lost Age's stubs are empty too, and nothing in either ROM loads a bank
   through its row, so only Camelot's sources could say.
-- XXX (picture): the resource directory's rows drawn against the ROM they
-  point into, overlays, maps and pictures each in their own colour.
-- XXX (picture): the EWRAM and IWRAM maps drawn a byte to a pixel through a
-  scene load and a battle, showing each area and the two heaps' reach.

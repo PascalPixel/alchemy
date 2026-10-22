@@ -51,6 +51,8 @@ rooms count as reachable rather than unused.
 Each room's first entry sets the room up every time the party walks in, so a
 second visit repeats what the first did.
 
+![Three columns: Vale before the visit, then the menu test room twice, each with the party, its levels, the coins and eleven rare-item counters. In Vale the party is Isaac and Garet at level 1, the coins 0 and every counter 0. After the room's first entry Isaac is level 50 and Garet 30, Ivan and Mia have joined at 30, the coins are still 0, and the counters read Shamshir 3, Silver Blade 2 and 1 for each of the others, from the Masamune to the Warrior's Helm. After the setup runs a second time, as the next visit runs it, the levels are unchanged and every counter has gone up by the same amount again: Shamshir 6, Silver Blade 4, the others 2.](https://alchemy.pascalpixel.com/guides/debug/menu-test-setup.png)
+
 The Djinn room's (`Scene_RunEmptyScene`) does nothing. The level room's
 (`FieldScene_RunEntrySetup`) draws the level editor 1.6 times its size (1.7 in
 Japanese) and, outside Japanese, starts the emote testers' animations. The menu
@@ -202,5 +204,3 @@ content, which is why one overlay serves them all.
   for; it fills a buffer nothing reads with 32 to 47 copies of a letter, so it
   changes nothing the code or the player can see, and whatever it once fed is
   gone from every edition.
-- XXX (picture): the setup entries' effect, the menu test room's party and
-  shop counters before and after a visit.

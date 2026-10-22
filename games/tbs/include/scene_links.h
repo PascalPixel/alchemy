@@ -1620,48 +1620,48 @@ enum {
 /// SceneId_MercuryLighthouseEntrance's entrances.
 enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
-  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_FROM_GODDESS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_FROM_GODDESS =
       2, ///< ★ Named from what the player sees: the hall inside the door, lined
          ///< with six statues, where the Lizard Man blocks Mia (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_HALL =
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_SIX_STATUES =
       3, ///< ★ Named from the game: "He who honors the heart of the goddess"
          ///< (MsgMercuryWhoHonorsHeart)
-  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_POOLS_WEST =
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_WEST =
       4, ///< ★ Named from the game: "He who honors the heart of the goddess"
          ///< (MsgMercuryWhoHonorsHeart)
-  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_POOLS_EAST =
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_EAST =
       5, ///< ★ Named from the game: "He who honors the heart of the goddess"
          ///< (MsgMercuryWhoHonorsHeart)
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE = 6,
-  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_FROM_WEST_WATERFALLS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_WEST_WATERFALLS =
       7, ///< ★ Named from what the player sees: the long room of two pools fed
          ///< by spouts (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_FROM_GODDESS_EAST =
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_GODDESS_EAST =
       8, ///< ★ Named from what the player sees: the long room of two pools fed
          ///< by spouts (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_FROM_GODDESS_WEST =
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_GODDESS_WEST =
       9, ///< ★ Named from what the player sees: the long room of two pools fed
          ///< by spouts (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_FROM_EAST_WATERFALLS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_EAST_WATERFALLS =
       10, ///< ★ Named from what the player sees: the long room of two pools fed
           ///< by spouts (its render)
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST = 11,
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST = 12,
-  MERCURY_LIGHTHOUSE_ENTRANCE_DRY_POOL_FROM_CHEST_POOL =
+  MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_FROM_CHEST_FOUNTAIN =
       13, ///< ★ Named from what the player sees: the room whose spout and pool
           ///< are dry until the pipes upstairs run (its render)
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST = 14,
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST = 15,
-  MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_POOL_FROM_DRY_POOL =
+  MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_FOUNTAIN_FROM_DRY_FOUNTAIN =
       16, ///< ★ Named from what the player sees: the pool room with a chest on
           ///< its ledge (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_POOLS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_TWIN_FOUNTAINS =
       17, ///< ★ Named from what the player sees: the western of the two rooms
           ///< of three waterfalls (its render)
   MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_FROM_EAST_WATERFALLS =
       18, ///< ★ Named from what the player sees: the western of the two rooms
           ///< of three waterfalls (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_TWIN_POOLS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_TWIN_FOUNTAINS =
       19, ///< ★ Named from what the player sees: the eastern of the two rooms
           ///< of three waterfalls, with a chest (its render)
   MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_FROM_WEST_WATERFALLS =
@@ -1670,37 +1670,39 @@ enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE = 25,
   /// Where Mia tries the doorway again and again while the Lizard Man
   /// blocks it.
-  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_BEFORE_LIZARD_MAN = 30,
+  MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN = 30,
   /// Where the party comes back from the battle with the Lizard Man.
-  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_AFTER_LIZARD_MAN = 31,
-  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_UNUSED_NORTH = 60,  ///< no exit leads here
-  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_UNUSED_MIDDLE = 99, ///< no exit leads here
+  MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN = 31,
+  MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH =
+      60, ///< no exit leads here
+  MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_MIDDLE =
+      99, ///< no exit leads here
 };
 /// SceneId_MercuryLighthouseEntrance's exits.
 enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR = 1,
-  MERCURY_LIGHTHOUSE_ENTRANCE_HALL_TO_GODDESS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_TO_GODDESS =
       2, ///< ★ Named from the game: "He who honors the heart of the goddess"
          ///< (MsgMercuryWhoHonorsHeart)
-  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_HALL =
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_SIX_STATUES =
       3, ///< ★ Named from what the player sees: the hall inside the door, lined
          ///< with six statues, where the Lizard Man blocks Mia (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_POOLS_WEST =
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_FOUNTAINS_WEST =
       4, ///< ★ Named from what the player sees: the long room of two pools fed
          ///< by spouts (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_POOLS_EAST =
+  MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_TO_TWIN_FOUNTAINS_EAST =
       5, ///< ★ Named from what the player sees: the long room of two pools fed
          ///< by spouts (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_TO_WEST_WATERFALLS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_WEST_WATERFALLS =
       6, ///< ★ Named from what the player sees: the western of the two rooms of
          ///< three waterfalls (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_TO_GODDESS_WEST =
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_GODDESS_WEST =
       7, ///< ★ Named from the game: "He who honors the heart of the goddess"
          ///< (MsgMercuryWhoHonorsHeart)
-  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_TO_GODDESS_EAST =
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_GODDESS_EAST =
       8, ///< ★ Named from the game: "He who honors the heart of the goddess"
          ///< (MsgMercuryWhoHonorsHeart)
-  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_POOLS_TO_EAST_WATERFALLS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_TO_EAST_WATERFALLS =
       9, ///< ★ Named from what the player sees: the eastern of the two rooms of
          ///< three waterfalls, with a chest (its render)
   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST = 10,
@@ -1713,28 +1715,28 @@ enum {
   MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_EAST_WATERFALLS =
       15, ///< ★ Named from what the player sees: the eastern of the two rooms
           ///< of three waterfalls, with a chest (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_TWIN_POOLS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_WEST_WATERFALLS_TO_TWIN_FOUNTAINS =
       16, ///< ★ Named from what the player sees: the long room of two pools fed
           ///< by spouts (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_POOL_TO_DRY_POOL =
+  MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_FOUNTAIN_TO_DRY_FOUNTAIN =
       17, ///< ★ Named from what the player sees: the room whose spout and pool
           ///< are dry until the pipes upstairs run (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_TWIN_POOLS =
+  MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_TWIN_FOUNTAINS =
       18, ///< ★ Named from what the player sees: the long room of two pools fed
           ///< by spouts (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_DRY_POOL_TO_CHEST_POOL =
+  MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_TO_CHEST_FOUNTAIN =
       19, ///< ★ Named from what the player sees: the pool room with a chest on
           ///< its ledge (its render)
-  MERCURY_LIGHTHOUSE_ENTRANCE_TO_HALL_BEFORE_LIZARD_MAN = 20,
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_BEFORE_LIZARD_MAN = 20,
   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE = 50,
-  MERCURY_LIGHTHOUSE_ENTRANCE_TO_HALL_AFTER_LIZARD_MAN = 63,
+  MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN = 63,
 };
 
 /// SceneId_MercuryLighthouseLower's entrances.
 enum {
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
-  MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE =
+  MERCURY_LIGHTHOUSE_LOWER_WATER_PILLARS_FROM_STATUE =
       3, ///< ★ Named from what the player sees: the large pool crossed on
          ///< rising water pillars (its render)
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST = 4,
@@ -1744,7 +1746,7 @@ enum {
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH = 6,
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_SOUTHWEST = 7,
   MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_UPPER = 8,
-  MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL =
+  MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATER_PILLARS =
       9, ///< ★ Named from what the player sees: the room where a statue blocks
          ///< Mia until Move pushes it aside (its render)
   MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS =
@@ -1757,7 +1759,7 @@ enum {
 enum {
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST = 1,
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST = 2,
-  MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE =
+  MERCURY_LIGHTHOUSE_LOWER_WATER_PILLARS_TO_STATUE =
       3, ///< ★ Named from what the player sees: the room where a statue blocks
          ///< Mia until Move pushes it aside (its render)
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST =
@@ -1771,7 +1773,7 @@ enum {
   MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE =
       8, ///< ★ Named from what the player sees: the hole the leader drops
          ///< through to the ground floor (its render)
-  MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL =
+  MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATER_PILLARS =
       9, ///< ★ Named from what the player sees: the large pool crossed on
          ///< rising water pillars (its render)
   MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS =
@@ -1826,16 +1828,16 @@ enum {
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST = 1,
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST = 3,
-  MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_FROM_STAIR_GATE =
+  MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_FROM_GATE =
       4, ///< ★ Named from what the player sees: the room where five pillars
          ///< stand in a row along the north wall (its render)
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST = 5,
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST = 6,
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER = 7,
-  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_FIVE_PILLARS =
+  MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_FIVE_PILLARS =
       8, ///< ★ Named from what the player sees: the room of three doors, a gate
          ///< and the floor switch the fallen statue is set on (its render)
-  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_STONE_DOORS =
+  MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS =
       9, ///< ★ Named from what the player sees: the room of three doors, a gate
          ///< and the floor switch the fallen statue is set on (its render)
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
@@ -1846,14 +1848,14 @@ enum {
   MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_FROM_GAP =
       13, ///< ★ Named from what the player sees: the long hall with a wall of
           ///< waterfalls (its render)
-  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE =
+  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE =
       14, ///< ★ Named from what the player sees: the room of three stone doors
           ///< and the statue that slides off its ledge (its render)
-  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_FROM_STONE_DOORS_STATUE_FALLS =
+  MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS_STATUE_FALLS =
       15, ///< ★ Named from what the player sees: the room of three doors, a
           ///< gate and the floor switch the fallen statue is set on (its
           ///< render)
-  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_STAIR_GATE_STATUE_FALLS =
+  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE_STATUE_FALLS =
       16, ///< ★ Named from what the player sees: the room of three stone doors
           ///< and the statue that slides off its ledge (its render)
 };
@@ -1862,16 +1864,16 @@ enum {
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST = 1,
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST = 3,
-  MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_TO_STAIR_GATE =
+  MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_TO_GATE =
       4, ///< ★ Named from what the player sees: the room of three doors, a gate
          ///< and the floor switch the fallen statue is set on (its render)
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST = 5,
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST = 6,
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_LOWER = 7,
-  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_TO_STONE_DOORS =
+  MERCURY_LIGHTHOUSE_UPPER_GATE_TO_STONE_DOORS =
       8, ///< ★ Named from what the player sees: the room of three stone doors
          ///< and the statue that slides off its ledge (its render)
-  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_TO_FIVE_PILLARS =
+  MERCURY_LIGHTHOUSE_UPPER_GATE_TO_FIVE_PILLARS =
       9, ///< ★ Named from what the player sees: the room where five pillars
          ///< stand in a row along the north wall (its render)
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
@@ -1882,14 +1884,14 @@ enum {
   MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP =
       13, ///< ★ Named from what the player sees: the room with a gap in the
           ///< floor that one more pillar is pushed into (its render)
-  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_STAIR_GATE =
+  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_GATE =
       14, ///< ★ Named from what the player sees: the room of three doors, a
           ///< gate and the floor switch the fallen statue is set on (its
           ///< render)
-  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_STAIR_GATE_STATUE_FALLS =
+  MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_GATE_STATUE_FALLS =
       15, ///< ★ Named from what the player sees: the view cutting to the room
           ///< below as the statue falls and lands (its render)
-  MERCURY_LIGHTHOUSE_UPPER_STAIR_GATE_TO_STONE_DOORS_STATUE_FALLS =
+  MERCURY_LIGHTHOUSE_UPPER_GATE_TO_STONE_DOORS_STATUE_FALLS =
       16, ///< ★ Named from what the player sees: the view cutting to the room
           ///< below as the statue falls and lands (its render)
 };
@@ -1899,10 +1901,10 @@ enum {
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_MIDDLE = 1,
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST = 3,
-  MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_WALKWAY_FROM_WATERFALL =
+  MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_FROM_WATERFALL =
       4, ///< ★ Named from what the player sees: the higher of the two walkways
          ///< up the outside, leading to the waterfall (its render)
-  MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_WALKWAY =
+  MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH =
       10, ///< ★ Named from what the player sees: the waterfall whose statue Ply
           ///< stops to open the way up (its render)
   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP = 11,
@@ -1915,10 +1917,10 @@ enum {
   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE = 1,
   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_WEST = 2,
   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_EAST = 3,
-  MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_WALKWAY_TO_WATERFALL =
+  MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_TO_WATERFALL =
       4, ///< ★ Named from what the player sees: the waterfall whose statue Ply
          ///< stops to open the way up (its render)
-  MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_WALKWAY =
+  MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH =
       5, ///< ★ Named from what the player sees: the higher of the two walkways
          ///< up the outside, leading to the waterfall (its render)
   MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_EAST = 6,

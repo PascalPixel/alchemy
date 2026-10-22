@@ -1,69 +1,50 @@
 /// @file
 /// Lighthouse Aerie (SceneId_VenusLighthouseAerie), the top of Venus
-/// Lighthouse, where the pursuit of Saturos and Menardi ends: the only scene
-/// of this overlay. It is one scripted sequence cut by two battles and two
-/// trips to the world map. Each part starts in VenusLighthouseAerie_Initialize
-/// from the entrance the part before sent the party to, and every arrival
-/// blocks Retreat and sets FLAG_VENUS_LIGHTHOUSE_LIT. Saturos and Menardi have
-/// reached the beacon with Felix and Sheba, whom they keep because they cannot
-/// enter Jupiter Lighthouse without a Wind Adept. In story order:
+/// Lighthouse and the only scene of this overlay: one scripted sequence cut by
+/// two battles and two trips to the world map. Each part starts in
+/// VenusLighthouseAerie_Initialize from the entrance the part before sent the
+/// party to, and every arrival blocks Retreat and sets
+/// FLAG_VENUS_LIGHTHOUSE_LIT. The parts, in the order the entrances chain
+/// them:
 /// - The arrival (VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
 ///   VenusLighthouseAerie_OverhearSaturosAndMenardi): a platform carries the
-///   leader up, the party overhears Saturos and Menardi turn on Felix, and
-///   Garet, Ivan and Mia decide to stop the beacon being lit (a yes or a no,
-///   then on).
+///   leader up and a conversation plays, with one yes-or-no question that
+///   changes only the reply.
 /// - Six floating platforms lie between the party and the beacon
 ///   (TRIGGER_PLATFORM, TRIGGER_FLOOR_BY_PLATFORMS): the leader jumps from one
 ///   to the next, and each stops bobbing and dips under him as he lands
 ///   (FLAG_SCENE_TEMP_50 while he stands on one).
 /// - The confrontation (TRIGGER_BEFORE_BEACON,
-/// Event_ConfrontSaturosAndMenardi):
-///   Isaac hands over the Shaman's Rod through Felix, remembered in
-///   FLAG_SHAMANS_ROD_OWNER plus the member who carried it, and the first
-///   battle follows (ENCOUNTER_ZONE_SCRIPTED, slot 1).
+///   Event_ConfrontSaturosAndMenardi): the Shaman's Rod is handed over,
+///   remembered in FLAG_SHAMANS_ROD_OWNER plus the member who carried it, and
+///   the first battle follows (ENCOUNTER_ZONE_SCRIPTED, slot 1,
+///   FLAG_AERIE_FIRST_BATTLE_BEGUN).
 /// - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE,
 ///   VenusLighthouseAerie_CombineSaturosAndMenardi): Saturos throws the Venus
-///   Star into the lighthouse, its light restores the two Fire Adepts, Felix
-///   leaves with Sheba, and Saturos and Menardi fuse.
-///   Party_RestorePpOfLitElements refills the PP of the party's Adepts whose
-///   lighthouses are lit, and the second battle follows (slot 0).
+///   Star into the beacon (ACTOR_STAR_CARRIER), Felix and Sheba leave, and
+///   Saturos and Menardi fuse. Party_RestorePpOfLitElements refills the PP of
+///   the party's Adepts whose lighthouses are lit, and the second battle
+///   follows (slot 0, FLAG_AERIE_SECOND_BATTLE_BEGUN).
 /// - After that (VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE,
 ///   VenusLighthouseAerie_FinishSaturosAndMenardiBattle): Saturos and Menardi
-///   fall into the lighthouse, Felix takes Sheba and goes, and the beacon
-///   erupts: its beam (ACTOR_BEAM_BOTTOM to ACTOR_BEAM_TOP) rises, the aerie
-///   splits and its statues move apart, and the light lifts the party away to
-///   the world map's lighthouse transition
-///   (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT).
+///   fall into the lighthouse, and the beacon erupts: its beam
+///   (ACTOR_BEAM_BOTTOM to ACTOR_BEAM_TOP) rises, the aerie splits and its
+///   statues move apart, and the light lifts the party away to the world map's
+///   lighthouse transition (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT).
 /// - A look back (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
-///   VenusLighthouseAerie_ShowShebaInDanger): Sheba clings to the broken
+///   VenusLighthouseAerie_ShowShebaInDanger): Sheba hangs from the broken
 ///   aerie, and VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP returns to the world map
 ///   (WORLD_MAP_BEFORE_SHEBAS_FALL) with its music kept.
 /// - Sheba's fall (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP,
-///   VenusLighthouseAerie_StageShebasFall): she lets go and Felix leaps after
-///   her, and the party is taken to Lalivero
-///   (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_FARANS_HOUSE) with
-///   FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE set.
+///   VenusLighthouseAerie_StageShebasFall): Sheba and Felix fall, and the party
+///   is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_FARANS_HOUSE)
+///   with FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE set.
 ///
 /// A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
 /// (VENUS_LIGHTHOUSE_AERIE_TO_LALIVERO_SHOPS).
 ///
 /// Open questions:
-/// - XXX: what the sounds SE_131, SE_141, SE_145, SE_161, SE_187, SE_212,
-///   SE_220, SE_246, SE_289, SE_308 and SE_309 and the music MUS_017, MUS_023,
-///   MUS_029, MUS_054, MUS_061, MUS_062, MUS_063 and MUS_072 are; a recording
-///   of the sequence would settle their names.
-/// - XXX: the per-sprite animations the sequence plays by number (Saturos' 8
-///   to 12, Menardi's 5 to 10, the party's 18 and 19, Felix's and Sheba's 5 to
-///   7); a render of each would settle their names.
-/// - XXX: what carries the Venus Star (ACTOR_STAR_CARRIER, a blank actor) and
-///   what the blue orb the rising particles circle (ACTOR_PARTICLE_SOURCE)
-///   shows; a render of the star being thrown and of the party lifted away
-///   would settle them.
-/// - XXX: what FLAG_PLACE_TEMP_50 and _51 mark as the two battles start,
-///   the flags the first and fourth floors keep their Psynergy Stones in;
-///   nothing in the aerie reads them, and a battle with each set or clear
-///   would show whether either changes.
 /// - XXX (picture): the beacon's eruption taken apart: the five beam segments,
 ///   the particles circling them, and the aerie's halves moving apart.
 
@@ -135,6 +116,17 @@
 /// ★ Named from the game: "Shaman's Rod" (MsgItemName)
 #define FLAG_SHAMANS_ROD_OWNER 0x345
 
+/// Place flags that choose the aerie's field music after each battle, by the
+/// scene's field music rules (gScene_InteractionRuleTable,
+/// object/scene_rules.s): MUS_019 before the first battle, MUS_030 once the
+/// first has begun and MUS_022 once the second has. VenusLighthouseFirstFloor
+/// and VenusLighthouseFourthFloor, in the same place group, keep their Psynergy
+/// Stones in the same two flags, which no one goes back down to see.
+enum {
+  FLAG_AERIE_FIRST_BATTLE_BEGUN = FLAG_PLACE_TEMP_50,
+  FLAG_AERIE_SECOND_BATTLE_BEGUN = FLAG_PLACE_TEMP_51
+};
+
 static void Event_FloatPlatforms(void);
 static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void);
 static void VenusLighthouseAerie_ShowPartyMember(s32 actor, s32 shown);
@@ -174,6 +166,39 @@ enum VenusLighthouseAerieTrigger {
 /// A child value that makes an actor blink rather than set its colour mode
 /// (Engine_ActorSetChildValue).
 enum { CHILD_VALUE_BLINK = 0x100 };
+
+/// Animations the aerie plays by number beyond enum ActorAnimation, from each
+/// sprite's animation table (graphics/sprite/spr_<number>.tsv; the party's
+/// through their animation lists).
+enum {
+  /// Saturos standing, two pictures alternating at long intervals
+  /// (spr_032.tsv).
+  SATUROS_ANIM_BREATHE = 8,
+  SATUROS_ANIM_LIE = 9, ///< lying on his side
+  /// Saturos falling into the lighthouse: upright, then half his height, then
+  /// only his top above the floor.
+  SATUROS_ANIM_TIP = 10,
+  SATUROS_ANIM_SLUMP = 11,
+  SATUROS_ANIM_SINK = 12,
+  /// Menardi standing, her hair blown back (spr_033.tsv).
+  MENARDI_ANIM_STAND_WINDSWEPT = 5,
+  MENARDI_ANIM_LIE = 7, ///< lying on her side
+  /// Menardi falling into the lighthouse, as SATUROS_ANIM_TIP to _SINK.
+  MENARDI_ANIM_TIP = 8,
+  MENARDI_ANIM_SLUMP = 9,
+  MENARDI_ANIM_SINK = 10,
+  /// Garet on his knees, Ivan and Mia lying down, as the party lies on the
+  /// broken aerie (spr_001.tsv to spr_003.tsv).
+  ANIM_PARTY_KNOCKED_DOWN = 18,
+  ANIM_LEADER_KNOCKED_DOWN = 19, ///< Isaac lying on his back (spr_000.tsv)
+  FELIX_ANIM_KNEEL = 5,          ///< Felix crouched on one knee (spr_035.tsv)
+  /// Sheba hanging from the broken aerie by one hand, seen from the side
+  /// (spr_006.tsv).
+  SHEBA_ANIM_HANG_ONE_HAND = 5,
+  SHEBA_ANIM_HANG = 6, ///< hanging by both hands, seen from behind
+  /// Her grip slipping for a moment, then SHEBA_ANIM_HANG again.
+  SHEBA_ANIM_SLIP = 7
+};
 
 // The aerie's scene flags:
 // FLAG_SCENE_TEMP_34: Saturos and Menardi slide together as they fuse.
@@ -772,9 +797,8 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
 /// Lighthouse, they promise not to harm her for the Shaman's Rod, Felix
 /// carries it over, they will not let her go, and the first battle begins. It
 /// sets FLAG_SHAMANS_ROD_OWNER plus the member who carried the rod, and
-/// FLAG_PLACE_TEMP_50 as the battle starts (XXX: VenusLighthouseFirstFloor
-/// keeps its Psynergy Stone in that flag, in the same place group; nothing
-/// here reads it, so what it marks is not known).
+/// FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes the
+/// aerie's music.
 static void Event_ConfrontSaturosAndMenardi(void) {
   s32 rodOwner;
   struct FieldActor *object;
@@ -1187,7 +1211,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
     Event_SetDefeatDestination(actor, VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
   }
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 1);
-  GameFlag_Set(FLAG_PLACE_TEMP_50);
+  GameFlag_Set(FLAG_AERIE_FIRST_BATTLE_BEGUN);
 }
 
 /// Flashes an actor palette and emits paired effects every fifteenth frame.
@@ -1305,8 +1329,7 @@ static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
 /// the lighthouse, its light restores Saturos and Menardi, Felix leaves with
 /// Sheba, and the two fuse. Refills the PP of the party's Adepts whose
 /// lighthouses are lit, starts the second battle and sets
-/// FLAG_PLACE_TEMP_51 (XXX: VenusLighthouseFourthFloor's Psynergy Stone
-/// flag, as FLAG_PLACE_TEMP_50 is in Event_ConfrontSaturosAndMenardi).
+/// FLAG_AERIE_SECOND_BATTLE_BEGUN, which changes the aerie's music.
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct EffectOptions menardiBurst;
   s32 velocity[3];
@@ -1337,14 +1360,14 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   actor->timer = 10;
   actor->facing = FACING_NORTH + FACING_STEP;
   Actor_SetPosition(ACTOR_SATUROS, PIXELS(294), PIXELS(212));
-  Actor_SetAnimation(ACTOR_SATUROS, 9);
+  Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIM_LIE);
   Actor_SetActionScript(ACTOR_SATUROS, gVenusLighthouseAerie_ScaleStepAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 0);
   actor = Actor_Get(ACTOR_MENARDI);
   actor->timer = 10;
   actor->facing = FACING_EAST;
   Actor_SetPosition(ACTOR_MENARDI, PIXELS(286), PIXELS(192));
-  Actor_SetAnimation(ACTOR_MENARDI, 7);
+  Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIM_LIE);
   Actor_SetActionScript(ACTOR_MENARDI, gVenusLighthouseAerie_ScaleStepAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 0);
   Event_GetViewCenter()->motionFlags = 0;
@@ -1442,7 +1465,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Event_Wait(20);
   Actor_Get(ACTOR_SATUROS)->scaleX = -Q16_ONE;
   Event_PlayCue(SE_161);
-  Actor_SetAnimation(ACTOR_SATUROS, 8);
+  Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIM_BREATHE);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 1);
@@ -1455,7 +1478,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_Get(ACTOR_MENARDI)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_MENARDI)->scaleX = -Q16_ONE;
   Event_PlayCue(SE_161);
-  Actor_SetAnimation(ACTOR_MENARDI, 5);
+  Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIM_STAND_WINDSWEPT);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_Wait(20);
@@ -1843,7 +1866,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                              VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 0);
   Party_RestorePpOfLitElements();
-  GameFlag_Set(FLAG_PLACE_TEMP_51);
+  GameFlag_Set(FLAG_AERIE_SECOND_BATTLE_BEGUN);
 }
 
 /// Flashes the object palette white, then restores the transformation colour.
@@ -2048,14 +2071,14 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Engine_TaskWait(1);
   Engine_ActorDestroy(ACTOR_SATUROS);
   Engine_ActorDestroy(ACTOR_MENARDI);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_KNOCKED_DOWN);
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   leader->x.fixed = PIXELS(346);
   leader->z.fixed = PIXELS(205);
   leader->y.fixed = PIXELS(32);
   leader->facing = FACING_SOUTHWEST;
   VenusLighthouseAerie_StopActorMotion(leader);
-  Engine_ActorSetAnimation(GARET, 18);
+  Engine_ActorSetAnimation(GARET, ANIM_PARTY_KNOCKED_DOWN);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
   actor = Actor_Get(GARET);
   actor->x.fixed = PIXELS(356);
@@ -2063,7 +2086,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   actor->facing = FACING_NORTHWEST;
   actor->y.fixed = PIXELS(32);
   VenusLighthouseAerie_StopActorMotion(actor);
-  Engine_ActorSetAnimation(IVAN, 18);
+  Engine_ActorSetAnimation(IVAN, ANIM_PARTY_KNOCKED_DOWN);
   Engine_ActorSetSpriteFlags(Actor_Get(IVAN), 0);
   actor = Actor_Get(IVAN);
   actor->x.fixed = PIXELS(360);
@@ -2071,7 +2094,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   actor->y.fixed = PIXELS(32);
   actor->z.fixed = PIXELS(222);
   VenusLighthouseAerie_StopActorMotion(actor);
-  Engine_ActorSetAnimation(MIA, 18);
+  Engine_ActorSetAnimation(MIA, ANIM_PARTY_KNOCKED_DOWN);
   Engine_ActorSetSpriteFlags(Actor_Get(MIA), 0);
   actor = Actor_Get(MIA);
   actor->x.fixed = PIXELS(334);
@@ -2080,9 +2103,9 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   actor->z.fixed = PIXELS(222);
   VenusLighthouseAerie_StopActorMotion(actor);
   Actor_SetPosition(ACTOR_FELIX, PIXELS(196), PIXELS(220));
-  Engine_ActorSetAnimation(ACTOR_FELIX, 5);
+  Engine_ActorSetAnimation(ACTOR_FELIX, FELIX_ANIM_KNEEL);
   Actor_SetPosition(SHEBA, PIXELS(188), PIXELS(316));
-  Engine_ActorSetAnimation(SHEBA, 5);
+  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIM_HANG_ONE_HAND);
   Engine_ActorSetSpriteFlags(Actor_Get(SHEBA), 0);
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHWEST);
   actor->x.fixed -= PIXELS(16);
@@ -2182,17 +2205,17 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   actor->x.fixed = PIXELS(308);
   actor->y.fixed = PIXELS(28);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 10);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIM_TIP);
   Engine_EventWait(20);
   actor->x.fixed = PIXELS(306);
   actor->y.fixed = PIXELS(28);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 11);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIM_SLUMP);
   Engine_EventWait(12);
   actor->x.fixed = PIXELS(304);
   actor->y.fixed = PIXELS(21);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 12);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIM_SINK);
   Engine_EventWait(8);
   Engine_ActorDestroy(ACTOR_SATUROS);
 
@@ -2200,17 +2223,17 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   actor->x.fixed = PIXELS(294);
   actor->y.fixed = PIXELS(28);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_MENARDI, 8);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIM_TIP);
   Engine_EventWait(20);
   actor->x.fixed = PIXELS(300);
   actor->y.fixed = PIXELS(27);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_MENARDI, 9);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIM_SLUMP);
   Engine_EventWait(12);
   actor->x.fixed = PIXELS(304);
   actor->y.fixed = PIXELS(17);
   actor->z.fixed = PIXELS(152);
-  Engine_ActorSetAnimation(ACTOR_MENARDI, 10);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, MENARDI_ANIM_SINK);
   Engine_EventWait(8);
   Engine_ActorDestroy(ACTOR_MENARDI);
   Engine_EventWait(160);
@@ -2443,9 +2466,9 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   actor->z.fixed += PIXELS(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   Actor_SetPosition(ACTOR_FELIX, PIXELS(196), PIXELS(220));
-  Engine_ActorSetAnimation(ACTOR_FELIX, 5);
+  Engine_ActorSetAnimation(ACTOR_FELIX, FELIX_ANIM_KNEEL);
   Actor_SetPosition(SHEBA, PIXELS(188), PIXELS(316));
-  Engine_ActorSetAnimation(SHEBA, 5);
+  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIM_HANG_ONE_HAND);
   Engine_ActorSetSpriteFlags(Object_GetById(SHEBA), 0);
   Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   Engine_ColorBufferApplyTarget(0x4063ff, 0);
@@ -2571,10 +2594,10 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Engine_MapRedraw();
   Engine_TaskWait(1);
   Event_PlayCue(SE_ITEM_BREAK);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
-  Engine_ActorSetAnimation(GARET, 18);
-  Engine_ActorSetAnimation(IVAN, 18);
-  Engine_ActorSetAnimation(MIA, 18);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_KNOCKED_DOWN);
+  Engine_ActorSetAnimation(GARET, ANIM_PARTY_KNOCKED_DOWN);
+  Engine_ActorSetAnimation(IVAN, ANIM_PARTY_KNOCKED_DOWN);
+  Engine_ActorSetAnimation(MIA, ANIM_PARTY_KNOCKED_DOWN);
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
   Engine_ActorSetSpriteFlags(Actor_Get(IVAN), 0);
@@ -2668,11 +2691,11 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 20);
   Engine_ActorRunRepeatedMotion(SHEBA, 2);
   Event_ShowMessageAndWait(SHEBA, 0, 20);
-  Engine_ActorSetAnimation(SHEBA, 6);
+  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIM_HANG);
   Engine_EventWait(10);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_FELIX, 0, 40);
-  Engine_ActorSetAnimation(SHEBA, 7);
+  Engine_ActorSetAnimation(SHEBA, SHEBA_ANIM_SLIP);
   Event_ShowMessageAndWait(SHEBA, 0, 20);
   Event_PlayCue(MUS_017);
   Engine_ActorRunRepeatedMotion(SHEBA, 2);
@@ -2691,7 +2714,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(ACTOR_FELIX, 0, 40);
-  Engine_ActorSetAnimation(ACTOR_FELIX, 5);
+  Engine_ActorSetAnimation(ACTOR_FELIX, FELIX_ANIM_KNEEL);
   Engine_EventWait(10);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FELIX), 0);
   Engine_ActorSetAnimation(ACTOR_FELIX, 0);

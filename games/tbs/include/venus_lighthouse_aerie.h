@@ -35,10 +35,13 @@ enum {
   ACTOR_SATUROS = 20,
   /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX = 21,
-  /// A blank actor (SPRITE_BLANK) that carries the Venus Star to the beacon.
+  /// A blank actor (SPRITE_BLANK) that runs across the floor under the Venus
+  /// Star as Saturos throws it into the beacon, so that only its shadow shows,
+  /// the star's shadow (a recording of the throw).
   ACTOR_STAR_CARRIER = 22,
-  /// The light the rising particles circle as the party is lifted away
-  /// (SPRITE_BLUE_ORB).
+  /// The orb the rising particles circle as the party is lifted away:
+  /// SPRITE_BLUE_ORB drawn in SPRITE_COLOR_GBR, which turns its blue to green,
+  /// and later solid white (SPRITE_COLOR_WHITE).
   ACTOR_PARTICLE_SOURCE = 23,
   /// The beacon's beam, in five segments (SPRITE_PIPE_NORTH_SOUTH) from the
   /// bottom up; particles circle the lowest.

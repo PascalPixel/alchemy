@@ -6,9 +6,7 @@
 /// entrances are the fallback table), all share one exit table, and
 /// VenusLighthouse_Initialize redraws each scene's puzzles as their flags left
 /// them, case by entrance. Inside, only the actors of the room entered are
-/// placed (CONDITION_IN_VIEW). The party reaches the lighthouse after the
-/// strange wanderers, as the wounded outside call them, have opened it and
-/// gone on.
+/// placed (CONDITION_IN_VIEW).
 ///
 /// - Venus Lighthouse Entry (SceneId_VenusLighthouseEntry), outside. The
 ///   scholars and Babi's soldiers the wanderers attacked lie hurt and say what
@@ -17,12 +15,13 @@
 ///   changes. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the
 ///   open door, leads in.
 /// - Venus Lighthouse (SceneId_VenusLighthouseGroundFloor, named by a scene
-///   rule of its own), the floor behind the front door. Three scholars say
-///   Kraden went in and came back saying this is not the entrance. The great
-///   statue (TRIGGER_GREAT_STATUE) speaks to Isaac's soul and opens one of its
-///   two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH, the first
-///   time by the frame counter's parity, then switching at each search), which
-///   the Tunnel Ruins under Babi Lighthouse redraw to match (tunnel_ruins.c);
+///   rule of its own), the floor behind the front door, with three scholars.
+///   The great statue (TRIGGER_GREAT_STATUE) opens one of two paths
+///   (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH, the first time by the
+///   frame counter's parity, then switching at each search) and lights it in
+///   gold lines between the floor lamps before it, where a small model of the
+///   lighthouse stands (gVenusMiniatureLighthouseScript); the Tunnel Ruins
+///   under Babi Lighthouse redraw their ways to match (tunnel_ruins.c), and
 ///   they lead up into VenusLighthouseFirstFloor. The reliefs
 ///   (TRIGGER_FIRST_RELIEF) are read, and Reveal shows a hidden path in two
 ///   places. Move pushes a pillar to a wall
@@ -49,8 +48,11 @@
 ///   of track that sink into four sockets; with all three sunk two lights run
 ///   from the statue, and when the track leads one to the gate it opens
 ///   (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN, with
-///   FLAG_VENUS_LIGHTHOUSE_SOCKETS_A or _B for where the pillars stand). A
-///   chest holds Dragon Scales.
+///   FLAG_VENUS_LIGHTHOUSE_SOCKETS_A or _B for where the pillars stand). The
+///   room with its sockets labelled, an arrangement of the pieces that opens
+///   the gate and the light's path through it is
+///   https://alchemy.pascalpixel.com/places/venus-lighthouse-third-floor/sockets.png.
+///   A chest holds Dragon Scales.
 /// - Venus Lighthouse (SceneId_VenusLighthouseFourthFloor). Floors carry the
 ///   party each way, a west and an east floor switch slide their walls aside
 ///   (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
@@ -73,32 +75,9 @@
 /// battle. Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
 ///
 /// Open questions:
-/// - XXX: what the sounds SE_142, SE_161, SE_162, SE_170, SE_180, SE_185,
-///   SE_188, SE_204, SE_228, SE_239, SE_246, SE_289 and SE_308 and the music
-///   MUS_017 are; a recording of the floors' events would settle their names.
-/// - XXX: what the ground floor's path cells show
-/// (VenusLighthouse_DrawFirstPath),
-///   and what the world map's picture of Venus Lighthouse stands for in the
-///   statue room (gVenusMiniatureLighthouseScript); a render of the room with
-///   each path flag would settle both.
-/// - XXX: what the objects VenusLighthouse_CreateBlendedPassageEffect and
-///   VenusLighthouse_CreateOccludingPassageEffect make show, drawn as a crate,
-///   a capped column and a chest; a render of a fall and of a pillar sinking
-///   would settle it.
-/// - XXX: whether a second light through a socket takes the wrong path after
-///   VenusLighthouse_RouteLight has moved its cursor; playing the third and
-///   fourth floors' sockets through would settle it.
-/// - XXX: what the first floor's cells 31 and 32 are, where walking pushes a
-///   capped pillar and stepping sets or clears the room effect's actor
-///   (Event_SetLeaderAsEffectTarget); a render of the pillar room would settle
-///   it.
-/// - XXX: the per-sprite animations the scene plays by number (the hurt
-///   scholars' and soldiers' 5, the light's 7, the leader's 5 and 12) and the
-///   leader's action 24 as he falls through the hole; a
-///   render of each would settle their names.
-/// - XXX (picture): a floor of the third or fourth floor with its sockets
-///   labelled, the pieces of track on the pillars' tops, and a light's path
-///   from the statue to the gate.
+/// - XXX: what the hidden chest VenusLighthouse_CreateOccludingPassageEffect
+///   places north of a socket changes on screen while a pillar sinks; a render
+///   of a pillar sinking into its socket with and without it would settle it.
 
 #include "script.h"
 #include "game_state.h"
@@ -148,20 +127,36 @@
 // enters another place group, and other places use the numbers for their own.
 
 // The floor switches have slid the walls aside.
+/// The second floor's pink floor switch has slid the wall beside it aside.
+/// ★ Named from what the player sees: the pink floor switch on the second
+/// floor and the stone wall it moves (its render)
 #define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
+/// ★ Named from what the player sees: the pink floor switch on the west side
+/// of the fourth floor (its render)
 #define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
 /// ★ Named from what the player sees: the floor switch on the east side of
 /// the fourth floor (its render)
 #define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
 // The gates the sunken pillars opened: one pillar, three pillars (and which of
 // two sets of sockets they sank into) and the pillar room's four.
+/// The light from the second floor's lady statue has opened the gate at the
+/// end of its track.
+/// ★ Named from what the player sees: the glowing arch at the end of the gold
+/// track on the second floor (its render)
 #define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
+/// The first set of sockets.
+/// ★ Named from what the player sees: the square sockets in the third floor
+/// that the pillars sink into (its render)
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_A 0x302
 /// The second set of sockets.
 /// ★ Named from what the player sees: the square sockets in the third floor
 /// that the pillars sink into (its render)
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
+/// ★ Named from what the player sees: the gate the gold track leads to in the
+/// third floor's room of three pillars and four sockets (its render)
 #define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN 0x304
+/// ★ Named from what the player sees: the glowing arch over the fourth floor's
+/// room of gold track and four pillars (its render)
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308
 /// The first floor's Psynergy Stone, taken until the party leaves the climb.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
@@ -420,8 +415,27 @@ enum VenusLighthouseFourthFloorActor {
   ACTOR_RISING_PLATFORM
 };
 
+/// Animations the lighthouse plays by number beyond enum ActorAnimation, from
+/// each sprite's animation table (graphics/sprite/spr_<number>.tsv).
+enum {
+  /// The hurt scholars and soldiers lying on the ground (spr_112.tsv and
+  /// spr_152.tsv, the same pose).
+  ANIM_HURT_LYING = 5,
+  /// The leader kicking in the air as he falls (spr_000.tsv).
+  ANIM_LEADER_FALL = 5,
+  /// A light's sparkle, flickering between its two largest pictures
+  /// (spr_284.tsv).
+  PARTICLE_ANIM_FLICKER = 7
+};
+
+/// An animation timer step for Object_SetActionById, in sixteenths of a frame
+/// taken off each frame: 16 plays an animation at its own speed, so 24 plays
+/// it half again as fast.
+enum { ANIM_STEPS_FAST = 24 };
+
 /// The pieces of gold track a SPRITE_SPIRAL_PILLAR can carry, its animations
-/// from 3, each named by the two edges of its cell it joins. The lights the
+/// from 3, each named by the two edges of its cell it joins as the pillar's
+/// top shows it, north up (graphics/sprite/spr_256.png). The lights the
 /// lady statues send out run along the track (VenusLighthouse_RouteLight):
 /// a pillar sunk in a socket carries the track on across it, and a light that
 /// runs onto a piece that does not join the edge it comes in by goes out.
@@ -453,10 +467,12 @@ static void VenusLighthouse_ConfigurePassageEffect(struct FieldActor *object,
   ObjectGroup_SetChildValue(object, childValue);
 }
 
-/// Creates a translucent object behind the actors, of sprite type, as the
-/// leader or a pillar falls through the floor. XXX: what it shows; its sprites
-/// (223, a crate, and 253, a capped column) suggest a mask over the hole, and
-/// a render of a fall would settle it.
+/// Creates a mask over a hole as the leader or a pillar falls through the
+/// floor: an object of sprite type (SPRITE_CRATE or SPRITE_CAPPED_PILLAR)
+/// drawn solid black (SPRITE_COLOR_BLACK) and translucent in front of the
+/// actors, which shows the background through whatever falls behind it, so
+/// that it vanishes below the hole's edge. Babi Lighthouse's PIT_MASK is the
+/// same object, and its render without the mask shows the leader whole.
 static struct FieldActor *
 VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *effect;
@@ -464,8 +480,8 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   effect = Engine_ObjectCreate(type, x, y, z);
   if (effect != 0) {
     ((struct AnimationObject *)effect->sprite)->image.priority = 0;
-    VenusLighthouse_ConfigurePassageEffect(effect, 14);
-    Engine_ObjectSetBlendMode(effect, 1);
+    VenusLighthouse_ConfigurePassageEffect(effect, SPRITE_COLOR_BLACK);
+    Engine_ObjectSetBlendMode(effect, OBJECT_BLEND_TRANSLUCENT);
     return effect;
   }
   return 0;
@@ -473,8 +489,9 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
 /// Creates an object drawn under the actors around it while a pillar sinks
 /// into its socket, so that the leader standing north of it is not hidden.
-/// XXX: what it shows; it is made of sprite 20, the chest, and a render of a
-/// pillar sinking would settle it.
+/// It is a SPRITE_CHEST drawn in SPRITE_COLOR_HIDDEN, so it shows nothing
+/// itself. XXX: what it changes on screen; a render of a pillar sinking into
+/// its socket with and without it would settle it.
 static struct FieldActor *
 VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *object;
@@ -482,7 +499,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   object = Engine_ObjectCreate(type, x, y, z);
   if (object != 0) {
     ((struct AnimationObject *)object->sprite)->image.priority = 1;
-    VenusLighthouse_ConfigurePassageEffect(object, 15);
+    VenusLighthouse_ConfigurePassageEffect(object, SPRITE_COLOR_HIDDEN);
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     return object;
   }
@@ -821,15 +838,19 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   }
 }
 
-/// Makes the leader the actor the room's effect follows.
-/// Reached by stepping onto cell 32 of VenusLighthouseFirstFloor, by the capped
-/// pillars.
+/// Makes the leader the actor the fade overlay follows (struct FadeOverlayWork:
+/// two translucent marks beside him wherever the ground beside him rises above
+/// his floor). Reached by stepping onto cell code 32 of
+/// VenusLighthouseFirstFloor, which the map gives the rows the three capped
+/// pillars stand in; code 31, in the rows that bound them, turns the marks off
+/// again (Event_ClearEffectTarget), and walking into a pillar from either
+/// pushes it (Event_PushDepthPillar).
 static void Event_SetLeaderAsEffectTarget(void) {
   gActorEffectWork->actor = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
-/// Stepping onto cell 31 of VenusLighthouseFirstFloor, by the capped pillars:
-/// the room's effect follows no one.
+/// Stepping onto cell code 31 of VenusLighthouseFirstFloor, in the rows that
+/// bound the capped pillars': the fade overlay follows no one.
 static void Event_ClearEffectTarget(void) { gActorEffectWork->actor = NULL; }
 
 #include "common/object_depth.h"
@@ -960,7 +981,7 @@ static struct FieldActor *VenusLighthouse_CreateLight(s32 x, s32 z,
   effect->speed = PIXELS(1);
   effect->acceleration = PIXELS(1);
   Engine_ActorSetSpriteFlags(effect, 0);
-  Object_SetMode(effect, 7);
+  Object_SetMode(effect, PARTICLE_ANIM_FLICKER);
   effect->motionFlags = 0;
   effect->y.fixed = 0;
   effect->collisionFlags = 0;
@@ -1293,8 +1314,9 @@ static void Event_JumpDown(void) {
 
 /// Redraws the great statue's room for the first of the two paths it opens
 /// (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH): a 7-by-8 block of cells and eleven
-/// 3-by-2 pieces. XXX: what changes on screen; a render of the room with
-/// each flag would settle it.
+/// 3-by-2 pieces, which light gold lines between the round floor lamps before
+/// the statue, from the lamp at its feet along one route across the grid of
+/// fifteen (the room's renders with and without the flag).
 static inline void VenusLighthouse_DrawFirstPath(void) {
   Map_CopyCellsTo(103, 27, 89, 27, 7, 8);
   Map_CopyCellsTo(41, 90, 27, 92, 3, 2);
@@ -1570,8 +1592,8 @@ static void Event_FallThroughFloor(void) {
 
     leader->facing = facing;
   }
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 5);
-  Object_SetActionById(ACTOR_PARTY_LEADER, 24);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_FALL);
+  Object_SetActionById(ACTOR_PARTY_LEADER, ANIM_STEPS_FAST);
   Engine_EventWait(40);
   // Start the fall only after the approach and descent animation have finished.
   leader->gravity = PIXELS(3) / 5;
@@ -1579,7 +1601,8 @@ static void Event_FallThroughFloor(void) {
     s32 z = leader->z.fixed + PIXELS(72);
 
     leader->bounce = zero;
-    VenusLighthouse_CreateBlendedPassageEffect(leader->x.fixed, 0, z, 223);
+    VenusLighthouse_CreateBlendedPassageEffect(leader->x.fixed, 0, z,
+                                               SPRITE_CRATE);
   }
   Map_CopyCellAttributes(VENUS_DESCENT_COLLISION_X, 35,
                          VENUS_DESCENT_COLLISION_WIDTH, 1,
@@ -1707,7 +1730,7 @@ VenusLighthouse_ReleaseFallenCarryPillar(struct FieldActor *pillar) {
     zero = 0;
     pillar->bounce = zero;
     passageEffect = VenusLighthouse_CreateBlendedPassageEffect(
-        pillar->x.fixed, 0, PIXELS(512), 223);
+        pillar->x.fixed, 0, PIXELS(512), SPRITE_CRATE);
     OverlayObject_WaitUntilIdle(pillar);
     pillar->x.fixed = zero;
     pillar->z.fixed = zero;
@@ -1861,7 +1884,7 @@ static void Event_MoveGatePillar(void) {
       } else {
         if ((leader->z.fixed >> 20) <= 45) {
           occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
-              PIXELS(744), 0, PIXELS(704), 20);
+              PIXELS(744), 0, PIXELS(704), SPRITE_CHEST);
           Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
         }
         pillarActor = Object_GetById(ACTOR_GATE_PILLAR);
@@ -1978,7 +2001,8 @@ static void Event_MoveSwitchPillar(void) {
     savedPriority = leader->sprite->image.priority;
     if (leader->z.fixed >> 20 <= gVenusThirdFloorSockets[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
-          pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - PIXELS(4), 20);
+          pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - PIXELS(4),
+          SPRITE_CHEST);
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
     }
     Engine_ActorSetSpriteFlags(Object_GetById(pillarId), 0);
@@ -2219,9 +2243,9 @@ static void Event_CarryFloatingPillar(void) {
       pillar->bounce = earlierIndex;
       if (pillar->z.fixed >> 20 <= 12) {
         firstPassageEffect = VenusLighthouse_CreateBlendedPassageEffect(
-            pillar->x.fixed, 0, PIXELS(224), 253);
+            pillar->x.fixed, 0, PIXELS(224), SPRITE_CAPPED_PILLAR);
         secondPassageEffect = VenusLighthouse_CreateBlendedPassageEffect(
-            pillar->x.fixed, 0, PIXELS(240), 253);
+            pillar->x.fixed, 0, PIXELS(240), SPRITE_CAPPED_PILLAR);
       }
       OverlayObject_WaitUntilIdle(pillar);
       Engine_ActorSetPosition(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR, 0, 0);
@@ -2507,7 +2531,8 @@ static void Event_MoveSocketPillar(void) {
     savedPriority = leader->sprite->image.priority;
     if ((leader->z.fixed >> 20) <= gVenusFourthFloorSockets[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
-          pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - PIXELS(4), 20);
+          pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - PIXELS(4),
+          SPRITE_CHEST);
       Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
     }
     for (candidateIndex = ACTOR_FIRST_SOCKET_PILLAR;
@@ -2624,7 +2649,7 @@ static void Event_EnterRisingPassage(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 520, 712);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   (void)VenusLighthouse_CreateBlendedPassageEffect(PIXELS(520), 0, PIXELS(784),
-                                                   223);
+                                                   SPRITE_CRATE);
   FieldActor_JumpDownLedge(0, 6, 0);
   Engine_EventWait(60);
   Engine_EventRequestExit(
@@ -2658,9 +2683,10 @@ const struct SceneEvent *VenusLighthouse_GetEvents(void) {
   return gVenusLighthouseGroundFloorEvents;
 }
 
-/// Prepares a stationary actor with the room's initial collision and draw
-/// state.
-static void VenusLighthouse_PrepareStandingActor(s32 actorId) {
+/// Lays one of the scholars or soldiers the wanderers hurt on the ground
+/// (ANIM_HURT_LYING), drawn behind the backgrounds' fronts, still and without
+/// the lower two bits of its collision.
+static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
   struct FieldActor *actor;
   s32 collisionFlags;
 
@@ -2670,7 +2696,7 @@ static void VenusLighthouse_PrepareStandingActor(s32 actorId) {
   collisionFlags &= actor->collisionFlags;
   actor->collisionFlags = collisionFlags;
   Engine_ActorSetSpriteFlags(actor, 0);
-  Object_SetMode(actor, 5);
+  Object_SetMode(actor, ANIM_HURT_LYING);
   Engine_ActorSetSpritePriority(actorId, 3);
   {
     s32 priorityFlags = 2;
@@ -2717,22 +2743,22 @@ s32 VenusLighthouse_Initialize(void) {
   if (scene == (s32)&SceneId_VenusLighthouseEntry) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
-      VenusLighthouse_PrepareStandingActor(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK);
+      VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK);
     else
       Map_CopyCellAttributes(7, 17, 2, 1, 7, 16);
-    VenusLighthouse_PrepareStandingActor(ACTOR_SCHOLAR_LIGHTHOUSE_OPEN);
-    VenusLighthouse_PrepareStandingActor(ACTOR_SCHOLAR_BARBARIANS);
-    VenusLighthouse_PrepareStandingActor(ACTOR_WAITING_SCHOLAR);
+    VenusLighthouse_LayDownHurtActor(ACTOR_SCHOLAR_LIGHTHOUSE_OPEN);
+    VenusLighthouse_LayDownHurtActor(ACTOR_SCHOLAR_BARBARIANS);
+    VenusLighthouse_LayDownHurtActor(ACTOR_WAITING_SCHOLAR);
     Engine_ActorSetSpritePriority(ACTOR_WAITING_SCHOLAR, 2);
-    VenusLighthouse_PrepareStandingActor(ACTOR_SOLDIER_OPENED_DOOR);
+    VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_OPENED_DOOR);
     Engine_ActorSetSpritePriority(ACTOR_SOLDIER_OPENED_DOOR, 2);
-    VenusLighthouse_PrepareStandingActor(ACTOR_SOLDIER_HEADED_FOR_BABI);
-    VenusLighthouse_PrepareStandingActor(ACTOR_SOLDIER_COLOSSO_VICTORS);
+    VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_HEADED_FOR_BABI);
+    VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_COLOSSO_VICTORS);
   } else if (scene == (s32)&SceneId_VenusLighthouseGroundFloor) {
     switch (gGameState.entrance) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS:
-      VenusLighthouse_PrepareStandingActor(ACTOR_SCHOLAR_ATTACKED_ANYWAY);
+      VenusLighthouse_LayDownHurtActor(ACTOR_SCHOLAR_ATTACKED_ANYWAY);
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_WEST:
       Engine_GameFlagClear(FLAG_EXIT_ARRIVAL_PENDING);
@@ -2741,7 +2767,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_FRONT_ROOM:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_EAST:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_PILLARS:
-      VenusLighthouse_PrepareStandingActor(ACTOR_SCHOLAR_NOT_THE_ENTRANCE);
+      VenusLighthouse_LayDownHurtActor(ACTOR_SCHOLAR_NOT_THE_ENTRANCE);
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_FLOOR_SWITCH:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_SMALL_ROOM:
@@ -2800,9 +2826,9 @@ s32 VenusLighthouse_Initialize(void) {
       if (actor->x.fixed >> 20 == 7)
         VenusLighthouse_FixPillarAtDestination(actor);
       VenusLighthouse_CreateBlendedPassageEffect(PIXELS(206), 0, PIXELS(449),
-                                                 223);
+                                                 SPRITE_CRATE);
       VenusLighthouse_CreateBlendedPassageEffect(PIXELS(210), 0, PIXELS(449),
-                                                 223);
+                                                 SPRITE_CRATE);
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_PILLARS_FROM_LADDERS:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST:
@@ -2873,7 +2899,7 @@ s32 VenusLighthouse_Initialize(void) {
         Engine_ActorSetSpritePriority(ACTOR_GATE_PILLAR, 3);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Map_CopyCellAttributes(45, 45, 1, 1, 46, 45);
-        Engine_ActorSetAnimation(ACTOR_GATE_EFFECT, 7);
+        Engine_ActorSetAnimation(ACTOR_GATE_EFFECT, PARTICLE_ANIM_FLICKER);
         Engine_ActorSetSpritePriority(ACTOR_GATE_EFFECT, 1);
         actor = Object_GetById(ACTOR_GATE_EFFECT);
         actor->collisionFlags = 0;
@@ -3008,7 +3034,8 @@ s32 VenusLighthouse_Initialize(void) {
         actor = Object_GetById(ACTOR_FIRST_SWITCH_PILLAR + 2);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-        Engine_ActorSetAnimation(ACTOR_SWITCH_GATE_EFFECT, 7);
+        Engine_ActorSetAnimation(ACTOR_SWITCH_GATE_EFFECT,
+                                 PARTICLE_ANIM_FLICKER);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SWITCH_GATE_EFFECT), 0);
         Engine_ActorSetSpritePriority(ACTOR_SWITCH_GATE_EFFECT, 1);
         actor = Object_GetById(ACTOR_SWITCH_GATE_EFFECT);
@@ -3185,7 +3212,8 @@ s32 VenusLighthouse_Initialize(void) {
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Engine_ActorSetSpritePriority(ACTOR_FIRST_SOCKET_PILLAR + 3, 3);
-        Engine_ActorSetAnimation(ACTOR_SOCKET_GATE_EFFECT, 7);
+        Engine_ActorSetAnimation(ACTOR_SOCKET_GATE_EFFECT,
+                                 PARTICLE_ANIM_FLICKER);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SOCKET_GATE_EFFECT), 0);
         Engine_ActorSetSpritePriority(ACTOR_SOCKET_GATE_EFFECT, 1);
         actor = Object_GetById(ACTOR_SOCKET_GATE_EFFECT);
@@ -3294,12 +3322,12 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
                                                ATTACHED_EFFECT_ONCE);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed,
                              actor->z.fixed + PIXELS(8));
-    Object_SetMode(actor, 7);
+    Object_SetMode(actor, ANIM_LEADER_LEAP);
     FieldObject_WaitForMove(actor);
     do {
       Engine_TaskWait(1);
     } while (actor->y.fixed != actor->terrainHeight);
-    Object_SetMode(actor, 6);
+    Object_SetMode(actor, ANIM_LEADER_SPRING);
     Engine_TaskWait(3);
     return;
   }
@@ -3689,10 +3717,15 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
 /// (gVenusLightGoesOut) when there is no spiral pillar, its piece does not join
 /// the edge the light comes in by (gVenusTracksMovingWest and the rest), or the
 /// socket has no path for it. Each socket's list of pieces is searched from a
-/// cursor that the search moves on for good (gVenusThirdFloorSocketTracks).
-/// XXX: a second light through the same socket would then take a path by the
-/// moved cursor; whether any arrangement of pillars does so would need the
-/// puzzle played through.
+/// cursor that the search moves on for good (gVenusThirdFloorSocketTracks), so
+/// a second light through a socket whose cursor has moved would take the path
+/// at the wrong index. No arrangement of the floors' pillars sends one: on the
+/// third floor (pieces south-east, west-east and north-west) the only socket
+/// both lights can reach is the south-east one, where whichever piece stands
+/// there fails one of the two lights' edge check before any search; on the
+/// fourth floor only the
+/// middle socket has more than one piece, and only the light from the
+/// south-east socket reaches it.
 static s32 VenusLighthouse_RouteLight(struct ScriptInterpreter *interpreter) {
   struct FieldActor *light = (struct FieldActor *)interpreter;
   struct FieldPosition pillarPosition;
@@ -3934,8 +3967,8 @@ s32 gVenusLeaderDazedScript[] = {
 
 /// The object script of the world map's picture of Venus Lighthouse, placed
 /// in the ground floor's statue room at three fifths of its size, with no
-/// collision. XXX: what it stands for there; a render of the room would settle
-/// it.
+/// collision: a small purple tower standing among the floor lamps the statue's
+/// routes light (the room's render).
 s32 gVenusMiniatureLighthouseScript[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 5),

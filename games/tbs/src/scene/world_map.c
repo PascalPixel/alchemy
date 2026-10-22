@@ -9,7 +9,11 @@
 /// WorldMap_UpdateLocationContacts, run every frame, hides the actors outside
 /// a box around the view and raises the PLACE_TRIGGER of the one the leader
 /// touches, which the event table turns into that place's exit; a few ways in
-/// are cells instead, each carrying the number of its exit. Five places have
+/// are cells instead, each carrying the number of its exit. The world map laid
+/// flat, with each place actor boxed and labelled by its PLACE_TRIGGER and the
+/// box kept visible around a view at Vale, is
+/// https://alchemy.pascalpixel.com/places/world-map/place-triggers.png. Five
+/// places have
 /// two ways in, and their events choose the exit by the side the leader comes
 /// from: the Bilibin Barricade from the west or the east, and Kolima Bridge,
 /// Kalay Docks, Gondowan Passage and Lalivero from the north or the south.
@@ -77,22 +81,8 @@
 /// WORLD_MAP_FROM_DEBUG, the debug menus' entrance, turns encounters off.
 ///
 /// Open questions:
-/// - XXX: what the sounds SE_107, SE_131, SE_141, SE_145, SE_219, SE_244,
-///   SE_246 and SE_289 and the music MUS_009 and MUS_017 are; a recording of
-///   each moment that plays them would settle their names.
-/// - XXX: the animations the ending plays for Jenna (19), Kraden (5), Felix
-///   (6) and Sheba (8), and the leader's in the storm (9); a render of the
-///   ending and of the storm would settle them.
-/// - XXX: what the lighthouse transition's frames show
-///   (WorldMap_PlayLighthouseTransition); a render of it would settle it.
-/// - XXX: what the 512-pixel tile WorldMap_Initialize swaps until
-///   FLAG_LAMAKAN_MANTICORE_BEATEN shows; a render of the map before and
-///   after the Manticore is beaten would settle it.
 /// - XXX (no evidence): what flag 0x85c records, set the first time the party
 ///   leaves Vale; no code in either game reads it.
-/// - XXX (picture): the world map with its place actors outlined and labelled
-///   by their PLACE_TRIGGER, beside the box WorldMap_UpdateLocationContacts
-///   keeps visible.
 
 #include "script.h"
 #include "version.h"
@@ -399,6 +389,18 @@ enum WorldMapEndingActor {
   /// their names.
   /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX
+};
+
+/// Animations the map plays by number beyond enum ActorAnimation, from each
+/// sprite's animation table (graphics/sprite/spr_<number>.tsv).
+enum {
+  /// The leader held up in a storm: standing, glancing one way and the other
+  /// between blinks (spr_000.tsv).
+  ANIM_LEADER_LOOK_AROUND = 9,
+  ANIM_JENNA_LIE = 19, ///< lying on her back (spr_005.tsv's animation list)
+  ANIM_KRADEN_LIE = 5, ///< lying on his back (spr_030.tsv)
+  ANIM_FELIX_LIE = 6,  ///< lying face down, one arm out (spr_035.tsv)
+  ANIM_SHEBA_LIE = 8   ///< lying on her back (spr_006.tsv)
 };
 
 // The world map's scene flags:
@@ -832,8 +834,10 @@ static void Event_ReturnToTolbiShip(void) {
 /// lighthouse entrances and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at once;
 /// every other arrival sets FLAG_RETREAT_BLOCKED, starts
 /// WorldMap_UpdateLocationContacts, opens the screen from a centre line, and
-/// swaps one 512-pixel tile of the map until the Manticore of the Lamakan
-/// Desert is beaten (FLAG_LAMAKAN_MANTICORE_BEATEN). The arrivals by Crossbone
+/// until the Manticore of the Lamakan Desert is beaten
+/// (FLAG_LAMAKAN_MANTICORE_BEATEN) swaps in the 512-pixel tile south of Vault
+/// whose bridge over the river is broken in the middle (the world map laid
+/// flat with and without the swap). The arrivals by Crossbone
 /// Isle and from the Suhalla Desert's storm resume the time in the air a storm
 /// left (FLAG_SCENE_TEMP_F8). WORLD_MAP_FROM_DEBUG turns encounters off, and
 /// leaving Vale the first time sets FLAG_PARTY_LEFT_VALE and flag 0x85c,
@@ -2196,8 +2200,8 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_EventBegin();
   FieldFx_ScheduleRatioTransition(Q16_ONE, 300);
   Camera_MoveTo(-1, -1, -1, 0);
-  Engine_ActorSetAnimation(JENNA, 19);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, 5);
+  Engine_ActorSetAnimation(JENNA, ANIM_JENNA_LIE);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_KRADEN_LIE);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
   FieldFx_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
@@ -2270,8 +2274,8 @@ static void WorldMap_ShowEndingScene(void) {
   Camera_MoveTo(PIXELS(7736), -1, PIXELS(3528), 1);
   Actor_SetActionScript(JENNA, gEndingJennaWalk);
   do {
-    Engine_ActorSetAnimation(ACTOR_FELIX, 6);
-    Engine_ActorSetAnimation(SHEBA, 8);
+    Engine_ActorSetAnimation(ACTOR_FELIX, ANIM_FELIX_LIE);
+    Engine_ActorSetAnimation(SHEBA, ANIM_SHEBA_LIE);
     Engine_TaskWait(1);
   } while (Object_GetById(JENNA)->timer == 0);
   Engine_EventWait(20);
@@ -2590,7 +2594,7 @@ static void WorldMap_CatchInStorm(s32 targetActor) {
     Engine_EventBegin();
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Engine_ActorSetAnimation(id, 9);
+    Engine_ActorSetAnimation(id, ANIM_LEADER_LOOK_AROUND);
     record = Object_GetById(targetActor);
     if (record != 0) {
       Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
@@ -2734,10 +2738,11 @@ static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
 
 /// The lighthouse transition, after a beacon is lit: seven frames, tile maps
 /// drawn on BG0 in the lighthouse's colours (gWorldMapPalettes, palette 0 for
-/// Mercury and 1 for Venus), close in over the map as it fades behind them,
-/// hold for 140 frames and open out again; then the camera shakes and the
-/// screen closes for the aerie. XXX: what the frames show; a render of the
-/// transition would settle it.
+/// Mercury and 1 for Venus), are a ball of light over the lighthouse's top
+/// that swells frame by frame as the map darkens behind it, holds for 140
+/// frames and shrinks again; then the camera shakes and the screen closes for
+/// the aerie
+/// (https://alchemy.pascalpixel.com/story/venus-lighthouse-lit.gif).
 /// Called by WorldMap_Initialize at WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT and
 /// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT. Clears FLAG_KEEP_PARTY_POSITION and
 /// sets FLAG_SKIP_SCENE_CHANGE_SOUND.

@@ -2,12 +2,15 @@
 
 ![`Event_UnusedGaretJoinsIsaac` played out in Vale on the stormy night, although the game never reaches it: Garet runs up through the rain, pants `*Hah* *Hah*`, asks `Are you trapped, too?` and says `You came just in time... We can go together.`](https://alchemy.pascalpixel.com/places/vale-storm/events/Event_UnusedGaretJoinsIsaac.gif)
 
-The cartridge holds code, table rows and messages that no path through the
-game reaches. They are kept because their bytes are part of the image, and
-they are marked in the source so that a reader knows the code never runs.
+The cartridge holds scenes, events and lines of dialogue that no player ever
+sees: an earlier version of Garet joining Isaac on the stormy night, a cook's
+offer of leftover bones, a room nothing leads to. They are kept because their
+bytes are part of the cartridge, and the source marks them so that a reader
+knows they never run.
 
-Something is unused when no cell, event table, exit, flag path or other code
-can bring control to it. The source marks it in three ways:
+Something is unused when nothing the player can do brings the game to it: no
+cell, event table, exit, flag or other code leads there. The source marks it
+in three ways:
 
 - A function nothing refers to at all is declared `UNUSED`.
 - Anything the game can never reach, whether a function, a table row or a
@@ -27,9 +30,13 @@ why, and the name is left alone too.
 
 ## How is unreachability established?
 
-A scene's events are rows in its tables (see [Scenes](src/scene/README.md)),
-and a row runs only if a lookup returns it. Three properties of the lookup and
-of the map account for nearly every unused row on this page.
+What happens in a place is a list of rows in its tables (see
+[Scenes](src/scene/README.md)), and a row runs only when the game picks it.
+Three habits of how the game picks a row, and of how the party moves through
+a map, account for nearly every unused row on this page: the first row that
+fits answers, a named search answers with its first row whatever its
+condition, and a spot the party can reach only by crossing other spots finds
+their events already run.
 
 `Scene_FindEvent` ([events.c](src/object/object/events.c)) walks the table from
 the top and returns the first row whose kind, target and condition fit. A later
@@ -52,6 +59,11 @@ A function that no table, exit or code names is never called. Such functions
 are found by reference: nothing in the image holds their address or calls them.
 
 ## Rows behind an earlier row
+
+When the player talks to someone or searches something, the game runs the
+first row that fits, so a row behind one that always fits is never reached.
+
+![The first row that fits answers. Four talk rows from Vault's houses once the party is back from Kalay, in table order. The mayor's first row holds until he has welcomed Isaac back, and it runs the first time the player talks to him. His second row holds always, and it answers the later talks on that visit: he warns of the thieves' revenge. The cook's first row holds always and answers every talk with "We don't get a lot of travelers in winter." The cook's second row, in which he would offer his leftover bones, is never reached, because the row above it always fits first.](https://alchemy.pascalpixel.com/illustrations/scene/first-row.svg)
 
 These rows are present in their tables, each with a `// Unused:` tag, and an
 earlier row with an equal or weaker condition always answers first.
@@ -105,6 +117,12 @@ cell of the room's Cookie chest, which is above the end marker and is the one
 the game uses.
 
 ## An event its own flag ends
+
+On the stormy night in Vale, the only way to one spot runs past two others,
+and by the time the leader gets there, the event waiting on it has nothing
+left to do.
+
+![An event its own question ends. On the stormy night in Vale, every way to a third spot crosses two others first. On the first, Isaac hears Garet struggling with his things. On the second, Garet calls after him and joins the party, and the game notes that he has joined. The third spot holds an older version of Garet joining, which first asks whether Garet has joined. By the time the leader can stand there the answer is always yes, so the event ends at once, and its lines, among them "Are you trapped, too?", are never shown.](https://alchemy.pascalpixel.com/illustrations/front/unused-garet.svg)
 
 `Event_UnusedGaretJoinsIsaac` in [vale_storm.c](src/scene/vale_storm.c) is an
 earlier version of Garet joining Isaac on the stormy night. Its row answers cell

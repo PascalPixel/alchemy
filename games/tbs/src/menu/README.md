@@ -85,6 +85,8 @@ also opens the field menu again.
 The Psynergy screen chooses a member, one of their Psynergy and its target,
 and either uses it at once or hands it to the field.
 
+![The Psynergy screen in Xian at twice the GBA's size in five panels, two to a row, one for each step of `Menu_ResolveSelectedAction`, each found where its function is entered and shown just before the A that ends it: `PSYNERGY_STEP_OWNER` asking `Whose Psynergy?` with the hand on Isaac, the user in `ownerIds[0]`; `PSYNERGY_STEP_LIST` with Cure highlighted in his list, the Psynergy in `paneAction[0]`; `PSYNERGY_STEP_CLASSIFY`, which finds that Cure works on one member and takes no frame, so `PSYNERGY_STEP_TARGET` starts in the same frame; `PSYNERGY_STEP_TARGET` asking `Use it on whom?` with the hand on Garet at 60 of 187 HP, the target in `ownerIds[1]`; and `PSYNERGY_STEP_APPLY`, where `Ability_ApplyToTargets` has raised Garet to 139 HP and taken Isaac from 61 to 58 PP, and the screen reads `You recovered HP!`.](https://alchemy.pascalpixel.com/guides/menu/psynergy-steps.png)
+
 The **Psynergy** screen steps through `PSYNERGY_STEP_OWNER`, `_LIST`,
 `_CLASSIFY` (how the chosen Psynergy is used,
 `PsynergyMenu_ClassifySelectedPsynergy`), `_TARGET` and `_APPLY`. Psynergy
@@ -136,6 +138,8 @@ in `menu/item.c`.
 The Djinn screen chooses a Djinni and sets it, puts it on standby, gives it
 away or trades it, after showing what the change would do.
 
+![The Djinn screen in Xian at twice the GBA's size, previewing Isaac's Flint put on standby: `Flint Standby` and `Is this OK?` at the top, Isaac's class going from Knight to Squire and his HP 178 to 141, PP 61 to 51, Attack 121 to 107, Defense 80 to 73 and Agility 69 to 63, and his Psynergy with `No change`. Beside it, Isaac's unit read from memory before and once A has made the change: two Venus Djinn set and then one, Knight and then Squire, and the same stats the preview shows; while the preview is up the unit is as it was before.](https://alchemy.pascalpixel.com/guides/menu/djinn-preview.png)
+
 The **Djinn** screen chooses a Djinni (`DJINN_STEP_SELECT_DJINN`) and what to
 do with it (`DJINN_STEP_SELECT_ACTION`): set it, put it on standby, give it to
 another member or trade it for one of theirs, each with a confirm step and an
@@ -170,10 +174,14 @@ The steps are an enum in `menu/djinn.c`, the results in `menu_internal.h`.
 
 The Status screen shows one member at a time, in three pages.
 
+![The Status screen in Xian at twice the GBA's size in four panels, two to a row, one for each step of `Menu_RunActionFlow`, each found where its function is entered: the member row with Isaac's stats and his Djinn counts, the status page with his ailments, Djinn levels, Power and Resist, the Psynergy page with Cure highlighted, and the equipment page with his Broad Sword, Bronze Helm, Bronze Shield and Adept's Clothes. In the first two the four Djinn figures, one of each element, are outlined in their element's colour, with a key below, where the menu work places them: standing at screen x 130, 162, 194 and 226 pixels and y 128 under the member row, and at y 104 on the status page; on the other two pages they stand at y -16, above the screen.](https://alchemy.pascalpixel.com/guides/menu/status-pages.png)
+
 The **Status** screen shows a member row and three pages: status, Psynergy
 and equipment. When the party has Djinn, it shows the row of four Djinn
-figures that `FourObjectMotion_` places and eases in and out
-([`menu/djinn_figures.c`](menu/djinn_figures.c)).
+figures that `FourObjectMotion_` places
+([`menu/djinn_figures.c`](menu/djinn_figures.c)): under the member row,
+higher on the status page and above the screen on the other two pages, moved
+there at once rather than eased; it is the Djinn screen's row that eases in.
 
 `Menu_OpenCharacterSelector` ([`menu/status.c`](menu/status.c)) lets the
 player choose one party member over the field and returns the member's id, or
@@ -183,6 +191,8 @@ player choose one party member over the field and returns the member's id, or
 
 The status panel is the window on the Item and Psynergy screens that shows
 the chosen member and what a choice would do to them.
+
+![The status panel for Isaac five times at twice its size, three to a row, each labelled with the kind its call's mode asked for and where it was drawn: `STATUS_PANEL_EXPERIENCE` on the Item screen's member row, with his class, HP, PP and experience; `STATUS_PANEL_STATS` with R held there, with his Attack, Defense, Agility and Luck; `STATUS_PANEL_EQUIP` with the cursor on a Long Sword he does not wear, his Attack falling from 121 to 90; `STATUS_PANEL_LEARN` with the cursor on the Orb of Force, `Force` and `Will learn`; and `STATUS_PANEL_CLASS`, class, HP and PP, drawn by giving the member row's call that kind, since no call passes it.](https://alchemy.pascalpixel.com/guides/menu/status-panels.png)
 
 `Menu_DrawOwnerStatusPanel` fills a window at tile (0, 5), 13 by 12 tiles, on
 the Item and Psynergy screens. It shows the member's name, up to two ailments
@@ -197,7 +207,7 @@ restores the unit from a copy.
 | `STATUS_PANEL_EXPERIENCE` | 0 | class, HP, PP and experience |
 | `STATUS_PANEL_EQUIP` | 2 | the stats with an item equipped, or removed; 3 draws the same |
 | `STATUS_PANEL_LEARN` | 4 | the Psynergy a Psynergy item teaches |
-| `STATUS_PANEL_CLASS` | 6 | class, HP and PP |
+| `STATUS_PANEL_CLASS` | 6 | class, HP and PP; no call passes it |
 | `STATUS_PANEL_STATS` | 8 | Attack, Defense, Agility and Luck |
 | `STATUS_PANEL_LOWER_ONLY` | `0x100` | flag: redraw only the part below the name and ailments |
 
@@ -205,6 +215,8 @@ restores the unit from a copy.
 
 L and A on the Item screen's member row sort that member's items, each press
 moving on to the next of four orders.
+
+![Isaac's eleven items five times: as given (Herb ×3, his equipped Broad Sword, Long Sword, Antidote, his equipped Adept's Clothes, Orb of Force, Leather Cap, his equipped Bronze Shield, Nut ×2, Elven Shirt and his equipped Bronze Helm), then after each of four presses of A with L held on the Item screen's member row, two to a row. Each shows the screen's item window at twice its size beside the order his inventory then holds, read from his unit, the equipped items in yellow and marked (E), and is labelled with the sort `InventoryMenu_SortByListOrder` was entered with: `LIST_SORT_EQUIPPED_THEN_ITEMS`, the four equipped items, the Antidote, Nuts and Herbs, then the other equipment; `LIST_SORT_EQUIPPED_THEN_EQUIPMENT`, the equipped items, the other equipment and the Orb of Force, then the rest; `LIST_SORT_EQUIPMENT_FIRST`, the equipment by type, weapons, helms, shields and armor, then the Orb of Force and the rest; and `LIST_SORT_ITEMS_FIRST`, the Antidote, Nuts and Herbs first.](https://alchemy.pascalpixel.com/guides/menu/item-sorting.png)
 
 Pressing A while holding L on the Item screen's member row sorts that
 member's items, each press moving on to the next of the four orders in
@@ -356,11 +368,3 @@ last BIOS instruction fetched; as a width that is over 30, so
   (`FLAG_MENU_START_PRESSED`) rather than a variable; the task that sets it
   and every test are in the menu's own code, so nothing in the ROM needs it to
   be a flag, and only Camelot's sources could say why it is one.
-- XXX (picture): the Psynergy screen, its steps from member to target.
-- XXX (picture): the Djinn screen's preview of a change, beside the stats it
-  shows.
-- XXX (picture): the Status screen's three pages and the row of four Djinn
-  figures.
-- XXX (picture): the status panel's kinds, one window for each.
-- XXX (picture): sorting items, the Item screen's list in each of the four
-  orders.

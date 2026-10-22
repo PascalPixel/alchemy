@@ -18,6 +18,8 @@ detail behind each step. The field menu's four screens are in
 One block of the heap, `struct UiRenderWork`, holds all of the window
 system's state from a scene's setup to the next scene change.
 
+![The window work block of the Japanese and the international editions side by side, a byte a cell at the same scale, 64 bytes a row, as Garet's sister talks in Vale in each: the Japanese block of 4,492 bytes and the international one of 4,860, each measured in the running game as the distance to the next heap block. Each field has its colour and lights where its bytes are not 0: the tilemap at the top, the window slots (taller in Japanese, which has 12), the three channels, the 64 render outputs filling and emptying as the letters appear and the window closes, the tile attributes, the decoded-text ring (twice as long in the international layout) as the message is decoded into it, and the counters, arguments and portrait slots at the end.](https://alchemy.pascalpixel.com/guides/window/work-block.gif)
+
 `struct UiRenderWork` is allocated in heap slot `HEAP_SLOT_WINDOW` by
 `UiWork_InitializeWithResourceCounters` for the field and by
 `UiWork_Initialize` for battle, and lasts until the next scene change. In
@@ -175,6 +177,8 @@ stored one above its value.
 `work->entries` is a ring of 16-bit codes that holds decoded messages until
 a channel types them.
 
+![Garet's sister's two pages in Vale beside the 512 codes of `work->entries`, one cell each, read from the running game every frame: a character as its letter, and the control codes as N (`TEXT_NEWLINE`), P (`TEXT_PAGE`), W (`TEXT_WAIT_KEY`) and E (`TEXT_END`). The ring is empty until the window opens; then `You guys are so lucky, Garet.` and `I wish I could go with you.` are decoded twice in one frame, codes 0 to 58 and 59 to 117, while the window is measured, and `count` moves to 118. The channel types the second copy, from `messageStart` 59: the codes it has passed light up, its next code is outlined, it waits on the page code, starts again after it, waits on the wait-key code, and the channel is freed when the window closes, leaving the codes in the ring.](https://alchemy.pascalpixel.com/guides/window/text-ring.gif)
+
 `work->entries` is a ring of 16-bit codes indexed through `RENDER_ENTRY_MASK`.
 A message is written at `work->count`, ends with 0, and is known only by the
 index it starts at, which `UiText_BuildRenderEntries` returns; asking for
@@ -284,8 +288,10 @@ button press latched before a page's wait is dropped.
 
 ## Render outputs
 
-A render output is one sprite a window carries: a letter, an icon, a portrait
-or the page arrow.
+A render output is one sprite a window carries: two letters of text, an icon,
+a portrait or the page arrow.
+
+![Garet's sister's first page typed out in Vale, each render output outlined at twice the screen's size where its own OAM attributes put it, beside each open window's output list walked from its head, each output named by what it holds with its size and place in pixels, and a colour key below: the message window's outputs appear one by one as `You guys are so lucky, Garet.` is typed, each a 16 by 16 glyph sprite holding two letters, 13 of them, then the bobbing page arrow, an 8 by 16 glyph with motion `UI_SPRITE_PAGE_ARROW`; the portrait window holds one 32 by 32 portrait output. Every output's attributes were found in the game's OAM in the same or the next frame.](https://alchemy.pascalpixel.com/guides/window/render-outputs.gif)
 
 Each window keeps a list of its outputs, taken from the pool's free list and
 returned when the window closes. `UiWork_AnimateSpriteSlots` moves each
@@ -299,6 +305,8 @@ output's picture occupies an entry of the VRAM cache, loaded into a free one
 
 On arrival in an area its name shows briefly in a window near the top of the
 screen.
+
+![The party arrives in Bilibin: as the screen fades in, `UiTimedNotice_Create` runs and a window of 6 by 3 tiles at tile 12, 3 shows `Bilibin` at once, outlined from its `UiWindow`; beside it the countdown read from the event work runs down from 89 to 0, one a frame, and the window closes when it reaches 0.](https://alchemy.pascalpixel.com/guides/window/area-name.gif)
 
 `UiTimedNotice_Create` shows the area's name, from
 `Scene_GetAreaNameIndexFar`, in a window centred across the screen and in its
@@ -427,11 +435,3 @@ in every edition, and nothing reads them.
   editions gave up four windows when they doubled the ring; the code shows
   only the counts each edition uses, and only Camelot's sources could say how
   they were chosen.
-- XXX (picture): the work block, its fields drawn to scale in the Japanese
-  and the international layouts.
-- XXX (picture): the decoded-text ring, its codes drawn as a message is
-  decoded into it and typed out.
-- XXX (picture): render outputs, a window's letters, portrait and page arrow
-  outlined as the sprites they are.
-- XXX (picture): the area name's window as a place is entered, with its
-  countdown.

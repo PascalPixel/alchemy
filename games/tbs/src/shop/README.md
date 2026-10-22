@@ -18,6 +18,8 @@ counters in [Game rules](../game/README.md).
 Every counter borrows the menu work's heap slot for its own state, so a
 counter and the field menu are never open together.
 
+![The menu work slot in Bilibin's item shop twice, read from the running game: above, at the counter's Buy list, below, with the field menu's Item screen open in the same room; both times `gMenuWork` holds the same block. Beside each screen the block's 2,672 bytes, a cell each and 64 a row, bright where a byte is not 0, and under both a key of the fields of the struct the screen reads it as, by colour and byte range. As `struct ShopRuntime` it holds the coins and item windows, the party's icons, the stock (`stockItemIds`, four items here), the party's ids, the cursor and its icons, and the sanctum's 24 effect slots, which fill most of the block; as `struct InventoryMenuState` it holds the windows, the entry and category icons, the members' figures in the same bytes as the shop's party icons, the selection and the items listed, and the bytes past its last field are not read.](https://alchemy.pascalpixel.com/guides/shop/menu-slot.png)
+
 Every counter and the item picker take `HEAP_SLOT_MENU` as `struct
 ShopRuntime` with `Shop_InitializeCursorWork` and give it back with
 `Shop_ReleaseCursorWork`. The field menu's screens use the same slot, so a
@@ -153,8 +155,10 @@ them, so it shows what the counters carry from one town to the next.
 
 ## Sanctums
 
-A sanctum serves one member at a time, choosing among the members who need
-the service (`Shop_CanServe`).
+A sanctum serves one member at a time; the hand can point at any member, but
+only one who needs the service (`Shop_CanServe`) can be chosen.
+
+![The Vale Sanctum's Revive with Isaac, Garet, Ivan and Mia in the party, Garet and Mia down and Ivan poisoned. Beside the screen, the service chosen, `SANCTUM_SERVICE_REVIVE`, and each member of `partyMemberIds` in words, from the fields `Shop_CanServe` reads on their units: Garet and Mia down and able to be chosen, Isaac at full HP and Ivan poisoned but not down, not needing it. When the list opens the hand starts on Garet, the first who needs reviving, at 20 coins; moved to Ivan it shows `This ally needs no healing.` and A there only buzzes; on Mia the fee is 200 coins. Garet is chosen, the donation paid, the room greys while the healing sparkles over his icon, the coins drop from 2000 to 1980, and the choice opens again on Mia, the only one left, before B leaves the service.](https://alchemy.pascalpixel.com/guides/shop/sanctum.gif)
 
 `BattleUnit_ResetStateByMode` applies the service: full HP for a revive,
 poison or the haunting cleared, or every cursed item taken off, after which
@@ -205,6 +209,8 @@ opens it:
 
 The item picker asks which member's item to drop when the party is given an
 item with every bag full.
+
+![Isaac and Garet in Vale with all 15 slots of both bags full, each bag listed in a column beside the screen and read from their units every frame, a changed slot in yellow, are given a Nut through `PartyInventory_GiveItem`: `Isaac got a Nut.`, `But you can't carry any more items.` and `What will you drop?`, then `Shop_PickUnitItem` opens the member row and Isaac's items. The hand moves to Garet, whose items show instead, and back; on Isaac's equipped Machete the picker says it can't be removed; the Potion is chosen, it leaves Isaac's bag, the items after it move up a slot, and the Nut takes the last one.](https://alchemy.pascalpixel.com/guides/shop/item-picker.gif)
 
 `Shop_PickUnitItem` asks which member's item to drop. `PartyInventory_GiveItem`,
 the scene command that gives an item, opens it when every bag is full, as do
@@ -328,7 +334,3 @@ read and seed the stock table.
   (`shop->warriorShop`) by number rather than by a column of the row; the
   stock row's type column is an `s16` that could have carried it, and only
   Camelot's sources could say why it doesn't.
-- XXX (picture): the work block, the menu slot's bytes as a counter and then
-  the field menu use them.
-- XXX (picture): a sanctum serving one member, with the members it offers.
-- XXX (picture): the item picker, opened when a gift finds every bag full.

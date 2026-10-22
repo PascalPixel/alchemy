@@ -36,9 +36,6 @@
 ///   pacing. The villagers now worry about Dora, ill since Isaac left.
 ///
 /// Open questions:
-/// - XXX: what the actor animations beyond enum ActorAnimation that the scene
-///   sets (Garet's grandfather asleep is 5) show; each sprite's animation table
-///   under graphics/sprite would settle it.
 /// - XXX (picture): the letters Z rising and growing from Garet's sleeping
 ///   grandfather (ValeInteriorsShops_SpawnSleepZ), three at frames 10, 20
 ///   and 30 of every 180.
@@ -150,6 +147,18 @@ enum ValeInteriorsShopsActor {
   /// Three letters Z that drift up from Garet's grandfather as he sleeps.
   /// ★ Named from what the player sees: a white letter Z (spr_280.png)
   ACTOR_FIRST_SLEEP_Z
+};
+
+/// Animations of the houses' sprites beyond enum ActorAnimation, as their
+/// animation tables and frames under graphics/sprite draw them.
+enum ValeInteriorsShopsAnimation {
+  /// Garet's grandfather standing with his eyes shut, asleep (spr_117.png).
+  ANIM_GRANDFATHER_ASLEEP = 5,
+  /// Garet's grandfather glancing quickly from side to side (spr_117.png).
+  ANIM_GRANDFATHER_LOOK_ABOUT = 6,
+  /// Jenna's grandmother lying in bed, only her head on the pillow
+  /// (spr_111.png).
+  ANIM_GRANDMOTHER_IN_BED = 5
 };
 
 // Forward declarations.
@@ -435,7 +444,8 @@ s32 ValeInteriorsShops_Initialize(void) {
                               PIXELS(150));
       actor = Object_GetById(ACTOR_JENNAS_GRANDMOTHER);
       Engine_ActorSetSpriteFlags(actor, 0);
-      Engine_ActorSetAnimation(ACTOR_JENNAS_GRANDMOTHER, 5);
+      Engine_ActorSetAnimation(ACTOR_JENNAS_GRANDMOTHER,
+                               ANIM_GRANDMOTHER_IN_BED);
       Map_ClearLayerEntryFlag(4);
     }
   }
@@ -573,7 +583,7 @@ static void Event_GaretComesHome(void) {
   Actor_SetSpeed(GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpeed(MIA, PIXELS(2) / 5, PIXELS(1) / 5);
-  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, 5);
+  Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
   sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z);
   Engine_ActorSetSpriteFlags(sleepZ, 0);
@@ -690,7 +700,7 @@ static void Event_GaretComesHome(void) {
   Engine_EventWait(40);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDMOTHER, 0,
                            40);
-  Engine_ActorSetAnimation(ACTOR_GARETS_MOTHER, 0);
+  Engine_ActorSetAnimation(ACTOR_GARETS_MOTHER, ANIM_STILL);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_MOTHER, 2);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
@@ -727,7 +737,8 @@ static void Event_GaretComesHome(void) {
   // His grandfather wakes, and the sleep stops drifting.
   Engine_TaskRemoveCallback(timedUpdate);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 6);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
+                                  ANIM_GRANDFATHER_LOOK_ABOUT);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,
                            20);
@@ -744,7 +755,8 @@ static void Event_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_EAST + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_SOUTHEAST + FACING_STEP,
                       40);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 6);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER,
+                                  ANIM_GRANDFATHER_LOOK_ABOUT);
   Engine_EventWait(60);
   Engine_ActorJump(ACTOR_GARETS_GRANDFATHER, 6, 0);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,

@@ -40,8 +40,9 @@
 ///   fall into the lighthouse; the party wonders whether it has won; Felix,
 ///   who says he must still light the beacons, takes Sheba and goes; the
 ///   beacon erupts and splits the aerie, its light lifts the party away, and
-///   the world map (WORLD_MAP_VENUS_LIGHTHOUSE_LIT) plays the lighthouse's
-///   transition and sends the party back to AERIE_ENTRANCE_SHEBA_IN_DANGER.
+///   the world map (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) plays the
+///   lighthouse's transition and sends the party back to
+///   AERIE_ENTRANCE_SHEBA_IN_DANGER.
 /// - A look back (AERIE_ENTRANCE_SHEBA_IN_DANGER,
 ///   VenusLighthouseAerie_ShowShebaInDanger): Felix calls to Sheba as she
 ///   clings to the broken aerie, and the world map returns
@@ -2499,7 +2500,8 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Engine_EventWait(30);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   ObjectTable_Snapshot();
-  Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_VENUS_LIGHTHOUSE_LIT);
+  Event_SetDestination((s32)&SceneId_WorldMap,
+                       WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
   {
     u16 white = 0x7fff;
 

@@ -3,7 +3,7 @@
 /// Xian), and the room behind Master Feh's school.
 ///
 /// Each of Xian's doors leads to a room here, and each room leads back out to
-/// its door. XIAN_INTERIORS_HOUSE, XIAN_INTERIORS_HSUS_HOUSE and
+/// its door. XIAN_INTERIORS_HOUSE, XIAN_INTERIORS_HOUSE_NORTH and
 /// XIAN_INTERIORS_FROM_XIAN_EAST are villagers' houses;
 /// XIAN_INTERIORS_INN_SOUTH opens into the inn, where
 /// XIAN_INTERIORS_INN_TO_INN_GUEST_ROOMS leads on into its guest rooms and
@@ -68,7 +68,7 @@ enum XianInteriorsActor {
   /// ★ Named from the game: "Farm work is very hard."
   /// (MsgXianInteriorsFarmWorkIsVeryHardWarriors)
   ACTOR_FARM_WORKER,
-  /// A young man, in the room at XIAN_INTERIORS_HSUS_HOUSE.
+  /// A young man, in the room at XIAN_INTERIORS_HOUSE_NORTH.
   /// ★ Named from the game: "Xian silk is sent on Silk Road to Tolbi."
   /// (MsgXianInteriorsXianSilkIsSentOnSilk)
   ACTOR_YOUNG_MAN_ON_SILK_ROAD,
@@ -336,7 +336,7 @@ struct SceneEntrance gXianInteriors_Entrances[] = {
      -1, -1, 0},
     {XIAN_INTERIORS_HOUSE, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24,
      8, 248, 208, 0},
-    {XIAN_INTERIORS_HSUS_HOUSE, CONDITION_ALWAYS, 448, 0, 200, FACING_NORTH, 0,
+    {XIAN_INTERIORS_HOUSE_NORTH, CONDITION_ALWAYS, 448, 0, 200, FACING_NORTH, 0,
      288, 8, 592, 224, 0},
     {XIAN_INTERIORS_FROM_XIAN_EAST, CONDITION_ALWAYS, 736, 0, 200, FACING_NORTH,
      0, 608, 8, 848, 224, 0},
@@ -357,7 +357,7 @@ u32 gXianInteriors_Exits[] = {
     SCENE_EXITS(XianInteriors),
     SCENE_EXIT(XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_XIAN, Xian,
                XIAN_FROM_WEAPON_AND_ARMOR_SHOP),
-    SCENE_EXIT(XIAN_INTERIORS_HSUS_HOUSE_TO_XIAN, Xian, XIAN_FROM_HSUS_HOUSE),
+    SCENE_EXIT(XIAN_INTERIORS_HOUSE_NORTH_TO_XIAN, Xian, XIAN_FROM_HOUSE_NORTH),
     SCENE_EXIT(XIAN_INTERIORS_TO_XIAN_EAST, Xian,
                XIAN_FROM_XIAN_INTERIORS_EAST),
     SCENE_EXIT(XIAN_INTERIORS_TO_XIAN_SOUTH, Xian,
@@ -414,7 +414,7 @@ struct ScenePlacement gXianInteriors_SchoolRoomPlacements[] = {
 
 struct SceneEvent gXianInteriors_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_XIAN },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, XIAN_INTERIORS_HSUS_HOUSE_TO_XIAN },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, XIAN_INTERIORS_HOUSE_NORTH_TO_XIAN },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, XIAN_INTERIORS_TO_XIAN_EAST },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, XIAN_INTERIORS_TO_XIAN_SOUTH },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, XIAN_INTERIORS_INN_GUEST_ROOMS_TO_INN },

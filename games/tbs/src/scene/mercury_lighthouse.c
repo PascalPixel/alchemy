@@ -69,9 +69,9 @@
 ///   (MercuryLighthouse_PlyOpensWaterfallPassage). The first time, Mia rises
 ///   first and the party follows
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, the world map's
-///   WORLD_MAP_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends at the
-///   Lighthouse Aerie); there the beacon has already been lit, and the party
-///   fights Saturos (mercury_lighthouse_aerie.c). Once Saturos is beaten
+///   WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends
+///   at the Lighthouse Aerie); there the beacon has already been lit, and the
+///   party fights Saturos (mercury_lighthouse_aerie.c). Once Saturos is beaten
 ///   (FLAG_SATUROS_BEATEN_AT_MERCURY) the leader rises alone
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE, the aerie's
 ///   MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR), the fountain
@@ -1757,8 +1757,8 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 /// (MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE); before that Mia
 /// rises first and the party follows
 /// (MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, the world map's
-/// WORLD_MAP_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends at the
-/// aerie).
+/// WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends at
+/// the aerie).
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   struct EffectOptions *effectOptions;
   s32 rowOffset;
@@ -3174,7 +3174,7 @@ u32 gMercuryLighthouse_Exits[] = {
     SCENE_EXIT(MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_WALKWAY, MercuryLighthouseExterior, MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_WALKWAY_FROM_WATERFALL),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_EAST, WorldMap, WORLD_MAP_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE, MercuryLighthouseEntrance, MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR),
-    SCENE_EXIT(MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, WorldMap, WORLD_MAP_MERCURY_LIGHTHOUSE_LIT),
+    SCENE_EXIT(MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, WorldMap, WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT),
     SCENE_EXIT(MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE, MercuryLighthouseAerie, MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR),
     SCENE_EXITS_END,
 };

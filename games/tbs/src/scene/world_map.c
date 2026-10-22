@@ -40,7 +40,8 @@
 ///   caravan heads north for Lunpa. It sets FLAG_GUARDS_SUSPECT_KALAY, after
 ///   which Lunpa's east guard asks whether the party came from Kalay, and goes
 ///   on into Vault, where touching the place leads straight in from then on.
-/// - Mercury Lighthouse (WORLD_MAP_MERCURY_LIGHTHOUSE_LIT): the lighthouse
+/// - Mercury Lighthouse (WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT): the
+/// lighthouse
 ///   transition (WorldMap_PlayLighthouseTransition) takes the party to
 ///   Mercury Lighthouse Aerie (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
 /// - Bunza's wagon: out of West Lunpa Cave (WORLD_MAP_FROM_WEST_LUNPA_CAVE),
@@ -63,7 +64,8 @@
 ///   (ACTOR_PLACE_GATEWAY_CAVE) turns the leader round. Used on the wreck
 ///   (cell 96), the orb does nothing: it is not yet time, Iodem takes it back,
 ///   and the party must press on to Babi Lighthouse (FLAG_BLACK_ORB_RETURNED).
-/// - Venus Lighthouse: after the beacon erupts (WORLD_MAP_VENUS_LIGHTHOUSE_LIT)
+/// - Venus Lighthouse: after the beacon erupts
+/// (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT)
 ///   the beam's transition sends the party back to the Lighthouse Aerie
 ///   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT), and after that look back
 ///   (WORLD_MAP_BEFORE_SHEBAS_FALL) a sparkling transition sends it on to
@@ -754,13 +756,13 @@ static void Event_ReturnToTolbiShip(void) {
 }
 
 /// Restores the map's state and runs the sequence its arrival entrance
-/// selects: WORLD_MAP_MERCURY_LIGHTHOUSE_LIT and WORLD_MAP_VENUS_LIGHTHOUSE_LIT
-/// the lighthouse transitions to Mercury Lighthouse Aerie and back to the
-/// Lighthouse Aerie, WORLD_MAP_FROM_VALE_GATE marks the first time the party
-/// leaves Vale, WORLD_MAP_FROM_GATEWAY_CAVE the Black Orb,
-/// WORLD_MAP_FROM_WEST_LUNPA_CAVE Bunza's wagon out of West Lunpa Cave, 64
-/// Hammet's caravan, 65 to 70 and WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS the
-/// Tolbi-bound Ship's crossing, WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH
+/// selects: WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT and
+/// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT the lighthouse transitions to Mercury
+/// Lighthouse Aerie and back to the Lighthouse Aerie, WORLD_MAP_FROM_VALE_GATE
+/// marks the first time the party leaves Vale, WORLD_MAP_FROM_GATEWAY_CAVE the
+/// Black Orb, WORLD_MAP_FROM_WEST_LUNPA_CAVE Bunza's wagon out of West Lunpa
+/// Cave, 64 Hammet's caravan, 65 to 70 and WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS
+/// the Tolbi-bound Ship's crossing, WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH
 /// Bunza's wagon at Kalay, 78 the discarded Black Orb, WORLD_MAP_FROM_CLEAR
 /// and 73 the transitions to the ending and to Sheba's fall, 80 the ending,
 /// and 74, WORLD_MAP_FROM_CROSSBONE_ISLE and 77 resume a storm's time in the
@@ -779,11 +781,11 @@ s32 WorldMap_Initialize(void) {
     Engine_GameFlagSet(FLAG_NO_ENCOUNTERS_IN_PLACE);
     Engine_GameFlagSet(FLAG_DEBUG_STEPS_OFF);
   }
-  if (*entrance == WORLD_MAP_MERCURY_LIGHTHOUSE_LIT) {
+  if (*entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(0);
     Event_SetDestination((s32)&SceneId_MercuryLighthouseAerie,
                          MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (*entrance == WORLD_MAP_VENUS_LIGHTHOUSE_LIT) {
+  } else if (*entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(1);
     Event_SetDestination((s32)&SceneId_VenusLighthouseAerie,
                          VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
@@ -2685,9 +2687,9 @@ static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
 }
 
 /// Animates the lighthouse transition frames, palette, and camera.
-/// Called by WorldMap_Initialize at WORLD_MAP_MERCURY_LIGHTHOUSE_LIT and
-/// WORLD_MAP_VENUS_LIGHTHOUSE_LIT. Clears FLAG_KEEP_PARTY_POSITION and sets
-/// FLAG_SKIP_SCENE_CHANGE_SOUND.
+/// Called by WorldMap_Initialize at WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT and
+/// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT. Clears FLAG_KEEP_PARTY_POSITION and
+/// sets FLAG_SKIP_SCENE_CHANGE_SOUND.
 static void WorldMap_PlayLighthouseTransition(s32 palette) {
   u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
 
@@ -3218,9 +3220,9 @@ struct SceneEntrance gWorldMapEntrances[] = {
      0, -1, -1, -1, -1, 0},
     {WORLD_MAP_JENNA_AND_KRADEN_ADRIFT, CONDITION_ALWAYS, 7552, 0, 3504,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_MERCURY_LIGHTHOUSE_LIT, CONDITION_ALWAYS, 6024, 0, 160,
+    {WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, CONDITION_ALWAYS, 6024, 0, 160,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {WORLD_MAP_VENUS_LIGHTHOUSE_LIT, CONDITION_ALWAYS, 6088, 0, 3168,
+    {WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT, CONDITION_ALWAYS, 6088, 0, 3168,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {97, CONDITION_ALWAYS, 6248, 0, 872, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {98, CONDITION_ALWAYS, 4248, 0, 2424, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

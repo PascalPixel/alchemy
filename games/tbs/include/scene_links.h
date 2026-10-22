@@ -107,11 +107,11 @@ enum {
   /// discarded and WORLD_MAP_TO_LUNPA_SUHALLA leads on.
   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT = 78,
   WORLD_MAP_JENNA_AND_KRADEN_ADRIFT = 80,
-  WORLD_MAP_MERCURY_LIGHTHOUSE_LIT =
+  WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT =
       90, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition
           ///< here in Mercury Lighthouse's colours, then sends the party to the
           ///< aerie
-  WORLD_MAP_VENUS_LIGHTHOUSE_LIT =
+  WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT =
       91, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition
           ///< here in Venus Lighthouse's colours, then sends the party back to
           ///< the aerie
@@ -188,7 +188,8 @@ enum {
   WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK = 103,
   WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK = 104,
   WORLD_MAP_TO_TOLBI_SHIP_INTERIORS = 105,
-  WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO = 106,
+  WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO =
+      106, ///< ★ Named from the game: "Land ho!" (MsgTolbiShipLandHo)
   WORLD_MAP_TO_TOLBI_SHIP_DECK = 107,
   WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE_SOUTH = 108,
   WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE = 109,
@@ -292,7 +293,7 @@ enum {
   VALE_GATE_FROM_GOMA_CAVE_STREAM = 11,
   VALE_GATE_FROM_SANCTUM = 12,
   /// Beside VALE_GATE_FROM_GOMA_CAVE_STREAM, facing north; no exit leads here.
-  VALE_GATE_STREAM_UNUSED = 15,
+  VALE_GATE_GOMA_CAVE_STREAM_UNUSED = 15,
   /// Where the battle with the travelers on the stormy night returns, won or
   /// lost (ValeGate_FightTravelers).
   VALE_GATE_AFTER_TRAVELERS_BATTLE = 19,
@@ -300,9 +301,9 @@ enum {
   /// them and no exit leads to them. The first replays the travelers leaving,
   /// the second sets FLAG_CHILDHOOD, the third a preset of story flags
   /// (ValeGate_SetProgressFlagsAndExit).
-  VALE_GATE_DEBUG_TRAVELERS_LEAVE = 97,
+  VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE = 97,
   VALE_GATE_DEBUG_CHILDHOOD = 98,
-  VALE_GATE_DEBUG_STORY_PRESET = 99,
+  VALE_GATE_DEBUG_STORY_FLAGS = 99,
 };
 /// SceneId_ValeGate's exits.
 enum {
@@ -432,7 +433,8 @@ enum {
 
 /// SceneId_Sanctum's entrances.
 enum {
-  SANCTUM_DJINNIS_HOUSE = 0, ///< the room holds the djinnis house;
+  SANCTUM_UNUSED = 0, ///< no exit leads here and it places nobody; the area
+                      ///< names call it Sanctum
   SANCTUM_FROM_VALE = 1,
   /// Vale Sanctum, inside by the healers and facing south; no exit leads here.
   SANCTUM_VALE_UNUSED = 2,
@@ -674,7 +676,7 @@ enum {
 /// SceneId_Vault's entrances.
 enum {
   VAULT_FROM_WORLD_MAP_SOUTH = 1,
-  VAULT_NORTH_GATE_UNUSED = 2, ///< inside the north gate; no exit leads here
+  VAULT_NORTH_UNUSED = 2, ///< inside the north gate; no exit leads here
   VAULT_FROM_WORLD_MAP_NORTH = 3,
   VAULT_FROM_VAULT_INTERIORS_EAST_SOUTHEAST = 5,
   VAULT_FROM_VAULT_INTERIORS_SOUTHEAST = 6,
@@ -917,12 +919,18 @@ enum {
 enum {
   BILIBIN_TO_WORLD_MAP = 1,
   BILIBIN_TO_MCCOY_PALACE_GROUNDS = 2,
-  BILIBIN_TO_INN = 3,
-  BILIBIN_TO_HOUSE_EAST = 4,
+  BILIBIN_TO_INN =
+      3, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
+  BILIBIN_TO_HOUSE_EAST = 4, ///< ★ Named from what the player sees: a house
+                             ///< with beds, a table and a hearth (its render)
   BILIBIN_TO_HOUSE_WEST = 5,
   BILIBIN_TO_HOUSE_NORTH = 6,
-  BILIBIN_TO_ITEM_SHOP = 7,
-  BILIBIN_TO_WEAPON_AND_ARMOR_SHOP = 8,
+  BILIBIN_TO_ITEM_SHOP =
+      7, ///< ★ Named from what the player sees: the shop of shelves and crates
+         ///< whose keeper sells items (its render)
+  BILIBIN_TO_WEAPON_AND_ARMOR_SHOP =
+      8, ///< ★ Named from what the player sees: the shop hung with swords and
+         ///< shields, with a seller of each behind its counter (its render)
   BILIBIN_TO_SANCTUM = 9,
   BILIBIN_TO_BILIBIN_TREASURY_WEST = 10,
   BILIBIN_TO_BILIBIN_TREASURY_EAST = 11,
@@ -937,12 +945,13 @@ enum {
   BILIBIN_INTERIORS_HOUSE_NORTH = 3, ///< the room behind Bilibin's house north
                                      ///< door; through BILIBIN_TO_HOUSE_NORTH
   BILIBIN_INTERIORS_WEAPON_AND_ARMOR_SHOP =
-      4, ///< the room behind Bilibin's weapon and armor shop door; the room
-         ///< holds the weapon and armor shop; through
-         ///< BILIBIN_TO_WEAPON_AND_ARMOR_SHOP
+      4, ///< ★ Named from what the player sees: the shop hung with swords and
+         ///< shields, with a seller of each behind its counter (its render);
+         ///< through BILIBIN_TO_WEAPON_AND_ARMOR_SHOP
   BILIBIN_INTERIORS_ITEM_SHOP =
-      5, ///< the room behind Bilibin's item shop door; the room holds the item
-         ///< shop; through BILIBIN_TO_ITEM_SHOP
+      5, ///< ★ Named from what the player sees: the shop of shelves and crates
+         ///< whose keeper sells items (its render); through
+         ///< BILIBIN_TO_ITEM_SHOP
   BILIBIN_INTERIORS_INN = 6, ///< the room behind Bilibin's inn door; the room
                              ///< holds the inn; through BILIBIN_TO_INN
   BILIBIN_INTERIORS_INN_UPSTAIRS_FROM_INN =
@@ -1550,8 +1559,10 @@ enum {
 };
 /// SceneId_Imil's exits.
 enum {
-  IMIL_TO_HOUSE_SOUTHWEST = 1,
-  IMIL_TO_INN = 2,
+  IMIL_TO_HOUSE_SOUTHWEST = 1, ///< ★ Named from what the player sees: a house
+                               ///< with beds, a table and a hearth (its render)
+  IMIL_TO_INN =
+      2, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   IMIL_TO_HOUSE_WEST = 3,
   IMIL_TO_HOUSE_NORTHEAST = 4,
   IMIL_TO_IMIL_INTERIORS_EAST = 5,
@@ -1923,7 +1934,7 @@ enum {
 enum {
   MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT =
       1, ///< the world map sends the party here after its lighthouse cut
-  MERCURY_LIGHTHOUSE_AERIE_AFTER_CONFRONT_SATUROS =
+  MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE =
       2, ///< MercuryLighthouseAerie_ConfrontSaturos
   MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR = 5,
 };
@@ -1957,7 +1968,9 @@ enum {
   FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS = 1,
   FUCHIN_TEMPLE_INTERIORS_TO_XIAN = 2,
   FUCHIN_TEMPLE_INTERIORS_TO_LAMA_TEMPLE = 3,
-  FUCHIN_TEMPLE_INTERIORS_TO_HOUSE = 4,
+  FUCHIN_TEMPLE_INTERIORS_TO_HOUSE =
+      4, ///< ★ Named from what the player sees: the small room with a bed
+         ///< behind the door Master Feh and Feizhi come out of (its render)
 };
 
 /// SceneId_FuchinFallsCaveEntrance's entrances.
@@ -2360,7 +2373,7 @@ enum {
 enum {
   XIAN_FROM_HOUSE = 1,
   XIAN_FROM_WEAPON_AND_ARMOR_SHOP = 5,
-  XIAN_FROM_HSUS_HOUSE = 6,
+  XIAN_FROM_HOUSE_NORTH = 6,
   XIAN_FROM_XIAN_INTERIORS_EAST = 7,
   XIAN_FROM_XIAN_INTERIORS_SOUTH = 8,
   XIAN_FROM_XIAN_INTERIORS_WEST = 9,
@@ -2369,11 +2382,15 @@ enum {
 };
 /// SceneId_Xian's exits.
 enum {
-  XIAN_TO_HOUSE = 1,
-  XIAN_TO_HSUS_HOUSE = 2,
+  XIAN_TO_HOUSE = 1, ///< ★ Named from what the player sees: a house with beds,
+                     ///< a table and a hearth (its render)
+  XIAN_TO_HOUSE_NORTH = 2,
   XIAN_TO_XIAN_INTERIORS_EAST = 3,
-  XIAN_TO_INN = 4,
-  XIAN_TO_WEAPON_AND_ARMOR_SHOP = 5,
+  XIAN_TO_INN =
+      4, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
+  XIAN_TO_WEAPON_AND_ARMOR_SHOP =
+      5, ///< ★ Named from what the player sees: the shop whose sellers stand
+         ///< behind one long white counter (its render)
   XIAN_TO_SANCTUM = 6,
   XIAN_TO_FUCHIN_TEMPLE_INTERIORS = 7,
   XIAN_TO_WORLD_MAP = 8,
@@ -2383,16 +2400,17 @@ enum {
 enum {
   XIAN_INTERIORS_HOUSE =
       1, ///< the room behind Xian's house door; through XIAN_TO_HOUSE
-  XIAN_INTERIORS_HSUS_HOUSE =
-      2, ///< the room holds the hsus house; through XIAN_TO_HSUS_HOUSE
+  XIAN_INTERIORS_HOUSE_NORTH =
+      2, ///< the room holds the hsus house; through XIAN_TO_HOUSE_NORTH
   XIAN_INTERIORS_FROM_XIAN_EAST = 3,
   XIAN_INTERIORS_INN_SOUTH = 4, ///< the room holds the inn; through XIAN_TO_INN
   XIAN_INTERIORS_INN_GUEST_ROOMS_FROM_INN =
       5, ///< ★ Named from what the player sees: the small rooms behind the
          ///< inn's front room, with a bed (its render)
   XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP =
-      6, ///< the room behind Xian's weapon and armor shop door; the room holds
-         ///< the weapon and armor shop; through XIAN_TO_WEAPON_AND_ARMOR_SHOP
+      6, ///< ★ Named from what the player sees: the shop whose sellers stand
+         ///< behind one long white counter (its render); through
+         ///< XIAN_TO_WEAPON_AND_ARMOR_SHOP
   XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS = 7, ///< the room holds the inn;
   XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS =
       8, ///< the room behind FuchinTempleInteriors's house door; through
@@ -2401,7 +2419,7 @@ enum {
 /// SceneId_XianInteriors's exits.
 enum {
   XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP_TO_XIAN = 1,
-  XIAN_INTERIORS_HSUS_HOUSE_TO_XIAN = 2,
+  XIAN_INTERIORS_HOUSE_NORTH_TO_XIAN = 2,
   XIAN_INTERIORS_TO_XIAN_EAST = 3,
   XIAN_INTERIORS_TO_XIAN_SOUTH = 4,
   XIAN_INTERIORS_INN_GUEST_ROOMS_TO_INN = 5,
@@ -2976,10 +2994,17 @@ enum {
 /// SceneId_KalayInteriors's entrances.
 enum {
   KALAY_INTERIORS_HOUSE_NORTHWEST = 1,
-  KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER = 2,
-  KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER = 3,
+  KALAY_INTERIORS_HOUSE_NORTHEAST_UPPER =
+      2, ///< ★ Named from what the player sees: the upper floor of the
+         ///< two-storey house in the town's north-east, entered from its
+         ///< terrace (its render)
+  KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER =
+      3, ///< ★ Named from what the player sees: the ground floor of the
+         ///< two-storey house in the town's north-east (its render)
   KALAY_INTERIORS_HOUSE_SOUTHEAST = 4,
-  KALAY_INTERIORS_WEAPON_SHOP_COUNTER = 5,
+  KALAY_INTERIORS_WEAPON_SHOP_COUNTER =
+      5, ///< ★ Named from what the player sees: behind the weapon seller's
+         ///< counter, through the arched doorway at the back (its render)
   KALAY_INTERIORS_WEAPON_SHOP = 6,
   KALAY_INTERIORS_ARMOR_SHOP = 7,
   KALAY_INTERIORS_ARMOR_SHOP_COUNTER = 8,
@@ -3177,7 +3202,7 @@ enum {
   LUNPA_FROM_ITEM_SHOP = 8,
   LUNPA_FROM_INN = 9,
   LUNPA_FROM_TEMPLE = 10,
-  LUNPA_FROM_STOREROOM = 11,
+  LUNPA_FROM_CRATE_ROOM = 11,
   LUNPA_FROM_VAULT_JAIL = 12,
 };
 /// SceneId_Lunpa's exits.
@@ -3185,14 +3210,27 @@ enum {
   LUNPA_TO_WORLD_MAP = 1,
   LUNPA_TO_LUNPA_FORTRESS_GATES = 2,
   LUNPA_TO_WEST_LUNPA_CAVE = 3,
-  LUNPA_TO_FIRST_HOME = 4,
-  LUNPA_TO_SECOND_HOME = 5,
-  LUNPA_TO_THIRD_HOME = 6,
-  LUNPA_TO_WEAPON_AND_ARMOR_SHOP = 7,
-  LUNPA_TO_ITEM_SHOP = 8,
-  LUNPA_TO_INN = 9,
-  LUNPA_TO_TEMPLE = 10,
-  LUNPA_TO_STOREROOM = 11,
+  LUNPA_TO_FIRST_HOME =
+      4, ///< ★ Named from what the player sees: the first of the town's three
+         ///< homes, each with beds and a hearth (its render)
+  LUNPA_TO_SECOND_HOME =
+      5, ///< ★ Named from what the player sees: the second of the town's three
+         ///< homes, each with beds and a hearth (its render)
+  LUNPA_TO_THIRD_HOME =
+      6, ///< ★ Named from what the player sees: the third of the town's three
+         ///< homes, each with beds and a hearth (its render)
+  LUNPA_TO_WEAPON_AND_ARMOR_SHOP =
+      7, ///< ★ Named from what the player sees: the shop with two counters, a
+         ///< weapon seller and an armor seller (its render)
+  LUNPA_TO_ITEM_SHOP =
+      8, ///< ★ Named from what the player sees: the shop stacked with goods
+         ///< whose keeper sells items (its render)
+  LUNPA_TO_INN =
+      9, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
+  LUNPA_TO_TEMPLE = 10, ///< ★ Named from its area name: Lunpa Temple
+  LUNPA_TO_CRATE_ROOM =
+      11, ///< ★ Named from what the player sees: the room piled with crates,
+          ///< barrels and sacks (its render)
   LUNPA_TO_VAULT_JAIL = 12,
 };
 
@@ -3213,7 +3251,9 @@ enum {
 enum {
   WEST_LUNPA_CAVE_TO_WORLD_MAP = 1,
   WEST_LUNPA_CAVE_TO_LUNPA = 2,
-  WEST_LUNPA_CAVE_BY_WAGON = 3,
+  WEST_LUNPA_CAVE_BY_WAGON =
+      3, ///< ★ Named from the game: "Then let's take that wagon to Kalay!"
+         ///< (MsgLunpaLetsTakeWagon)
 };
 
 /// SceneId_KalayDocks's entrances.
@@ -3253,12 +3293,13 @@ enum {
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY = 10,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_SEA_MONSTERS = 11,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD = 12,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_CREW_ATTACKED = 13,
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_MONSTER_LANDS = 14,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK = 13,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK = 14,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN = 15,
   TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE =
       16, ///< TolbiShipDeck_JumpIntoKrakenBattle
-  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED = 17,
+  TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_LAND_SIGHTED =
+      17, ///< ★ Named from the game: "I can see land!" (MsgTolbiShipCanSeeLand)
   TOLBI_SHIP_DECK_FROM_WORLD_MAP = 18,
   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE = 19,
 };
@@ -3293,16 +3334,18 @@ enum {
   TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK = 11,
   TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK = 12,
   TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK = 13,
-  TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO = 14,
+  TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO =
+      14, ///< ★ Named from the game: "Land ho!" (MsgTolbiShipLandHo)
 };
 /// SceneId_TolbiShipMast's exits.
 enum {
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK = 1,
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_INTERIORS_CAST_OFF = 10,
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_INTERIORS_MONSTERS = 11,
-  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_CREW_ATTACKED = 12,
-  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_MONSTER_LANDS = 13,
-  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED = 14,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_SECOND_ATTACK = 12,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_THIRD_ATTACK = 13,
+  TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED =
+      14, ///< ★ Named from the game: "I can see land!" (MsgTolbiShipCanSeeLand)
   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE = 15,
 };
 
@@ -3720,7 +3763,8 @@ enum {
 };
 /// SceneId_Tolbi's exits.
 enum {
-  TOLBI_TO_HOUSE_SOUTH = 1,
+  TOLBI_TO_HOUSE_SOUTH = 1, ///< ★ Named from what the player sees: a house with
+                            ///< beds, a table and a hearth (its render)
   TOLBI_TO_HOUSE_NORTHWEST = 2,
   TOLBI_TO_INN = 3,          ///< ★ Named from the game: "Inn Full"
                              ///< (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
@@ -3728,7 +3772,9 @@ enum {
                              ///< (MsgTolbiLuckyWheelsRulesPullLever)
   TOLBI_TO_HOUSE_NORTHEAST = 5,
   TOLBI_TO_HOUSE_EAST = 6,
-  TOLBI_TO_WEAPON_AND_ARMOR_SHOP = 7,
+  TOLBI_TO_WEAPON_AND_ARMOR_SHOP =
+      7, ///< ★ Named from what the player sees: the shop of two rooms joined at
+         ///< the front, a seller behind the counter of each (its render)
   TOLBI_TO_HOUSE_SOUTHWEST = 8,
   TOLBI_TO_SANCTUM = 9,
   TOLBI_TO_BABI_PALACE_ENTRANCE = 10,
@@ -3755,8 +3801,9 @@ enum {
       5, ///< the room behind Tolbi's house southwest door; through
          ///< TOLBI_TO_HOUSE_SOUTHWEST
   TOLBI_INTERIORS_WEAPON_AND_ARMOR_SHOP =
-      6, ///< the room behind Tolbi's weapon and armor shop door; the room holds
-         ///< the weapon and armor shop; through TOLBI_TO_WEAPON_AND_ARMOR_SHOP
+      6, ///< ★ Named from what the player sees: the shop of two rooms joined at
+         ///< the front, a seller behind the counter of each (its render);
+         ///< through TOLBI_TO_WEAPON_AND_ARMOR_SHOP
   TOLBI_INTERIORS_SANCTUM =
       8, ///< the room behind Tolbi's sanctum door; the
          ///< room holds the sanctum; through TOLBI_TO_SANCTUM
@@ -4506,7 +4553,9 @@ enum {
   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_GROUND_FLOOR = 1,
   LUNPA_FORTRESS_GATES_FROM_LUNPA = 2,
   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA = 3,
-  LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT = 4,
+  LUNPA_FORTRESS_GATES_AFTER_CAUGHT =
+      4, ///< where a guard who catches the party in the fortress sends it:
+         ///< "You're on your way out now!" (LunpaFortress_GuardThrowsPartyOut)
 };
 /// SceneId_LunpaFortressGates's exits.
 enum {
@@ -4877,15 +4926,17 @@ enum {
   /// FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held. XXX:
   /// likely a debug start into the story after the audience, because Babi's
   /// Palace (BABI_PALACE_AFTER_COLOSSO) and Suhalla's buildings
-  /// (SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE) have entrances that set story
+  /// (SUHALLA_INTERIORS_AFTER_BABI_SPOKE) have entrances that set story
   /// flags the same way.
-  SUHALLA_AFTER_BABI_AUDIENCE = 90,
+  SUHALLA_AFTER_BABI_SPOKE = 90,
 };
 /// SceneId_Suhalla's exits.
 enum {
-  SUHALLA_TO_INN = 1,
+  SUHALLA_TO_INN =
+      1, ///< ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   SUHALLA_TO_SANCTUM = 2,
-  SUHALLA_TO_HOUSE_WEST = 3,
+  SUHALLA_TO_HOUSE_WEST = 3, ///< ★ Named from what the player sees: a house
+                             ///< with beds, a table and a hearth (its render)
   SUHALLA_TO_HOUSE_NORTHEAST = 4,
   SUHALLA_TO_HOUSE_EAST = 5,
   SUHALLA_TO_WORLD_MAP = 10,
@@ -4929,9 +4980,9 @@ enum {
       15, ///< ★ Named from what the player sees: the room with beds up the
           ///< inn's ladder (its render)
   /// In no table row and led to by no exit: arriving by it also marks Babi's
-  /// audience as held, as SUHALLA_AFTER_BABI_AUDIENCE does. XXX: likely a
+  /// audience as held, as SUHALLA_AFTER_BABI_SPOKE does. XXX: likely a
   /// debug start into the story after the audience.
-  SUHALLA_INTERIORS_AFTER_BABI_AUDIENCE = 90,
+  SUHALLA_INTERIORS_AFTER_BABI_SPOKE = 90,
 };
 /// SceneId_SuhallaInteriors's exits.
 enum {

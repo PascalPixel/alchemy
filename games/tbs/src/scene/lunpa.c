@@ -40,7 +40,7 @@
 ///   (Lunpa_WatchForUncloakedParty), or one still among them when Cloak fades
 ///   (Event_CloakFades), is marched back down the steps
 ///   (Event_GuardsCatchParty, FLAG_SCENE_TEMP_44). A party caught in the
-///   fortress arrives by LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT and is thrown
+///   fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT and is thrown
 ///   down the steps (Event_GuardsThrowLeaderOut); one that slips out arrives by
 ///   LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA and casts Cloak to get
 ///   round the guards (Event_LeaderSneaksOut). Every entry resets the
@@ -763,7 +763,7 @@ static void Lunpa_KickUpLeaderDust(void) {
   }
 }
 
-/// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT, after being
+/// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_AFTER_CAUGHT, after being
 /// caught in the fortress: the guards throw the leader out and down the steps.
 static void Event_GuardsThrowLeaderOut(void) {
   Engine_EventBegin();
@@ -896,7 +896,7 @@ s32 Scene_Initialize(void) {
     ((struct FieldWork *)gEventWork)->transition =
         SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gGameState.retreatEntrance = GATE_RETREAT_ENTRANCE;
-    if (gGameState.entrance == LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT &&
+    if (gGameState.entrance == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
         Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Event_GuardsThrowLeaderOut();
     }
@@ -950,7 +950,7 @@ struct SceneEntrance gLunpaEntrances[] = {
     LUNPA_ENTRANCE(LUNPA_FROM_ITEM_SHOP, 328, 120, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_INN, 104, 184, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_TEMPLE, 48, 168, FACING_SOUTH),
-    LUNPA_ENTRANCE(LUNPA_FROM_STOREROOM, 216, 344, FACING_SOUTH),
+    LUNPA_ENTRANCE(LUNPA_FROM_CRATE_ROOM, 216, 344, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_VAULT_JAIL, 40, 328, FACING_SOUTH),
     {SCENE_TABLE_END},
 };
@@ -962,7 +962,7 @@ struct SceneEntrance gGateEntrances[] = {
     GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA, 152, 328, FACING_NORTH),
     GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA, 144, 104,
                   FACING_SOUTH),
-    GATE_ENTRANCE(LUNPA_FORTRESS_GATES_AFTER_THROWN_OUT, 160, 224, FACING_EAST),
+    GATE_ENTRANCE(LUNPA_FORTRESS_GATES_AFTER_CAUGHT, 160, 224, FACING_EAST),
     {SCENE_TABLE_END},
 };
 
@@ -982,7 +982,7 @@ u32 gLunpaExits[] = {
     ROOM_EXIT(LUNPA_TO_ITEM_SHOP),
     ROOM_EXIT(LUNPA_TO_INN),
     ROOM_EXIT(LUNPA_TO_TEMPLE),
-    ROOM_EXIT(LUNPA_TO_STOREROOM),
+    ROOM_EXIT(LUNPA_TO_CRATE_ROOM),
     SCENE_EXIT(LUNPA_TO_VAULT_JAIL, VaultJail, VAULT_JAIL_FROM_LUNPA),
     SCENE_EXITS_END,
 };

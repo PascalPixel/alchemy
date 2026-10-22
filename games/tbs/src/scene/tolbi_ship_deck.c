@@ -48,9 +48,9 @@
 ///   Sea monsters!"), they leap aboard
 ///   (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD), they harry
 ///   Ouranos and Sean, the warriors bound for Colosso who guard the deck with
-///   Kaja (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_CREW_ATTACKED), and a great
+///   Kaja (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK), and a great
 ///   shape rises from the sea and a monster drops onto the deck
-///   (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_MONSTER_LANDS). The sighting leads
+///   (TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK). The sighting leads
 ///   to the cabin, where the captain turns the ship
 ///   (TOLBI_SHIP_INTERIORS_CAPTAINS_CABIN_FROM_TOLBI_SHIP_DECK_TURN); the other
 ///   three each lead below to the fights among the oars
@@ -232,7 +232,7 @@ enum TolbiShipDeckActor {
   /// one sprite, which leap aboard and go below by the first door, where
   /// gTolbiShipInteriors_FirstAttackMonsters places them.
   SEA_FIRST_ATTACK_MONSTER,
-  /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_CREW_ATTACKED
+  /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK
   /// (gTolbiShipDeck_CrewScriptC): four monsters of one sprite hover by the
   /// deck, the first two diving at Sean and the others at Ouranos.
   SEA_FIRST_HOVERING_MONSTER = SEA_CREW_MEMBER + 1,
@@ -242,9 +242,9 @@ enum TolbiShipDeckActor {
   SEA_SECOND_ATTACK_MONSTER = SEA_FIRST_HOVERING_MONSTER + 4,
   /// A sprite that swells for 24 frames at the rail where the last of them
   /// leaps aboard. XXX: what the player sees in it is unknown; a render of
-  /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_CREW_ATTACKED would settle it.
+  /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK would settle it.
   SEA_SWELLING_SPRITE = SEA_SECOND_ATTACK_MONSTER + 3,
-  /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_MONSTER_LANDS
+  /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK
   /// (gTolbiShipDeck_CrewScriptD): four monsters with the first attack's
   /// sprite, that leap at Sean, the first two, and at Ouranos.
   SEA_FIRST_LEAPING_MONSTER = SEA_CREW_MEMBER + 1,
@@ -1234,10 +1234,10 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD:
     TolbiShipDeck_MonstersBoard();
     return;
-  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_CREW_ATTACKED:
+  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK:
     TolbiShipDeck_MonstersAttackCrew();
     return;
-  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_MONSTER_LANDS:
+  case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK:
     TolbiShipDeck_MonsterLandsOnDeck();
     return;
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN:
@@ -1626,7 +1626,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Engine_EventRequestExit(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_FIRST_ATTACK);
 }
 
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_CREW_ATTACKED: the monsters harry the
+/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK: the monsters harry the
 /// crew while more of them climb aboard.
 static void TolbiShipDeck_MonstersAttackCrew(void) {
 
@@ -1729,7 +1729,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
       TOLBI_SHIP_DECK_TO_TOLBI_SHIP_INTERIORS_SECOND_ATTACK);
 }
 
-/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_MONSTER_LANDS: a great shape rises from
+/// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK: a great shape rises from
 /// the sea and a monster drops onto the deck.
 static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   struct FieldActor *monster;
@@ -3117,9 +3117,9 @@ const struct SceneEntrance gTolbiShipDeckEntrances[] = {
      212, 0, 521, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_MONSTERS_BOARD, CONDITION_ALWAYS,
      192, 0, 650, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_CREW_ATTACKED, CONDITION_ALWAYS, 232,
+    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK, CONDITION_ALWAYS, 232,
      0, 654, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_MONSTER_LANDS, CONDITION_ALWAYS, 216,
+    {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK, CONDITION_ALWAYS, 216,
      0, 657, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN, CONDITION_ALWAYS, 216, 0,
      640, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

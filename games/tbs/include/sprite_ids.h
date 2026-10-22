@@ -52,8 +52,8 @@ enum SpriteId {
   /// to push something in a cutscene.
   /// ★ Named from what the player sees: a large open hand (spr_215.png)
   SPRITE_MOVE_HAND = 0xd7,
-  /// A splash thrown up where something lands, as Goma Cave's stumps land
-  /// in water.
+  /// Spray thrown up where water is struck: where Goma Cave's stumps land,
+  /// and at Kolima Forest's floodgate.
   /// ★ Named from what the player sees: a splash of white and pale blue
   /// spray (spr_214.png)
   SPRITE_SPLASH = 0xd6,
@@ -102,6 +102,9 @@ enum SpriteId {
   /// A fire burning on the ground, which Douse puts out.
   /// ★ Named from what the player sees: a flickering flame (spr_247.png)
   SPRITE_FIRE = 0xf7,
+  /// ★ Named from what the player sees: a wooden signpost on a green post
+  /// (spr_274.png)
+  SPRITE_SIGNPOST = 0x112,
   /// The pillars Move shifts in the Tunnel Ruins and the lighthouses.
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)

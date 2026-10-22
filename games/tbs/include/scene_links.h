@@ -2910,7 +2910,7 @@ enum {
   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH = 10,
   VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM = 11,
   VAULT_CAVE_VAMBRACE_CHEST_FROM_FROST_ROOM =
-      13, ///< ★ Named from what the player sees: the room behind the bush
+      13, ///< ★ Named from what the player sees: the room behind the ivy
           ///< holding the Vambrace chest (its render)
   VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST =
       14, ///< ★ Named from what the player sees: the room of six puddles that
@@ -2934,7 +2934,7 @@ enum {
       11, ///< ★ Named from what the player sees: the room of six puddles that
           ///< Frost freezes, under falling objects (its render)
   VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_CHEST =
-      13, ///< ★ Named from what the player sees: the room behind the bush
+      13, ///< ★ Named from what the player sees: the room behind the ivy
           ///< holding the Vambrace chest (its render)
   VAULT_CAVE_VAMBRACE_CHEST_TO_FROST_ROOM =
       14, ///< ★ Named from what the player sees: the room of six puddles that
@@ -4201,11 +4201,11 @@ enum {
   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE = 64,
   COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST =
       65, ///< ★ Named from what the player sees: the long passage with arched
-          ///< walls where an official leads Isaac to the finals (its render)
+          ///< walls where a soldier leads Isaac to the finals (its render)
   COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH = 66,
   COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST =
       67, ///< ★ Named from what the player sees: the long passage with arched
-          ///< walls where an official leads Isaac to the finals (its render)
+          ///< walls where a soldier leads Isaac to the finals (its render)
   COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH = 68,
   COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS =
       69, ///< ★ Named from what the player sees: the crowded seats above the
@@ -4245,14 +4245,14 @@ enum {
   COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH = 32,
   COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST =
       64, ///< ★ Named from what the player sees: the long passage with arched
-          ///< walls where an official leads Isaac to the finals (its render)
+          ///< walls where a soldier leads Isaac to the finals (its render)
   COLOSSEUM_TO_COLOSSEUM_AZART_MATCH = 65,
   COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST =
       66, ///< ★ Named from what the player sees: the long passage with pillars
           ///< before a plain wall that Isaac walks alone (its render)
   COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST =
       67, ///< ★ Named from what the player sees: the long passage with arched
-          ///< walls where an official leads Isaac to the finals (its render)
+          ///< walls where a soldier leads Isaac to the finals (its render)
   COLOSSEUM_TRIAL_GROUNDS_TO_STANDS =
       69, ///< ★ Named from what the player sees: the crowded seats above the
           ///< trial grounds (its render)
@@ -5139,10 +5139,10 @@ enum {
       11, ///< ★ Named from what the player sees: two stone pillars that sink
           ///< into the floor once moved onto their columns (its render)
   TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS =
-      12, ///< ★ Named from what the player sees: the room of bushes that
+      12, ///< ★ Named from what the player sees: the room of ivy that
           ///< Whirlwind blows away (its render)
   TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_LONG_PASSAGE =
-      13, ///< ★ Named from what the player sees: the room of bushes that
+      13, ///< ★ Named from what the player sees: the room of ivy that
           ///< Whirlwind blows away (its render)
   TUNNEL_RUINS_GREAT_STATUE_LONG_PASSAGE_FROM_WHIRLWIND_ROOM =
       14, ///< ★ Named from what the player sees: a long narrow corridor (its
@@ -5179,7 +5179,7 @@ enum {
       8, ///< ★ Named from what the player sees: the upper room of columns
          ///< standing in a pit, hopped across (its render)
   TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_TO_WHIRLWIND_ROOM =
-      9, ///< ★ Named from what the player sees: the room of bushes that
+      9, ///< ★ Named from what the player sees: the room of ivy that
          ///< Whirlwind blows away (its render)
   TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_TO_COLUMNS_NORTH =
       10, ///< ★ Named from what the player sees: the upper room of columns
@@ -5194,7 +5194,7 @@ enum {
       13, ///< ★ Named from what the player sees: a long narrow corridor (its
           ///< render)
   TUNNEL_RUINS_GREAT_STATUE_LONG_PASSAGE_TO_WHIRLWIND_ROOM =
-      14, ///< ★ Named from what the player sees: the room of bushes that
+      14, ///< ★ Named from what the player sees: the room of ivy that
           ///< Whirlwind blows away (its render)
   TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_NORTH = 15,
   TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_TO_SINKING_PILLARS =

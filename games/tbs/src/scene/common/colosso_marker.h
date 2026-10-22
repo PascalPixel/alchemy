@@ -30,8 +30,8 @@
 /// through the backgrounds while he stretches from thin and tall to his own
 /// shape, settles and nods. While he is shown his sprite is outlined, in edge
 /// colour 1 and fill colour 4. His position and facing are kept for
-/// Colosso_RestoreCompetitor.
-void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
+/// Colosso_RestoreWarrior.
+void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   struct ObjectSystemWork *objects;
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -41,10 +41,10 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
   actor = Object_GetById(id);
   objects->edge = 1;
   objects->fill = 4;
-  gColosso_CompetitorStartX = actor->x.fixed;
-  gColosso_CompetitorStartZ = actor->z.fixed;
+  gColosso_WarriorStartX = actor->x.fixed;
+  gColosso_WarriorStartZ = actor->z.fixed;
   sprite = (struct AnimationObject *)actor->sprite;
-  gColosso_CompetitorStartAngle = actor->facing;
+  gColosso_WarriorStartAngle = actor->facing;
   Engine_ActorSetSpritePriority(id, 2);
   actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   actor->facing = FACING_SOUTH;
@@ -79,11 +79,11 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
   Engine_EventWait(20);
 }
 
-/// Puts Isaac (id) back where Colosso_FadeInCompetitor found him: he stands
+/// Puts Isaac (id) back where Colosso_FadeInWarrior found him: he stands
 /// (or turns south, nods and waits half a second), then returns to his kept
 /// position and facing with his motion stopped, and the outline colours are
 /// the field's again (edge 15, fill 0).
-void Colosso_RestoreCompetitor(s32 id) {
+void Colosso_RestoreWarrior(s32 id) {
   struct ObjectSystemWork *objects;
   struct FieldActor *actor;
   s32 zero;
@@ -102,15 +102,15 @@ void Colosso_RestoreCompetitor(s32 id) {
   zero = 0;
   // Stored as bytes through a pointer, the plain-C form of objects->fill and
   // objects->edge this site matches with (scene/README.md): a struct-field
-  // store at a varying address may pass the load of gColosso_CompetitorStartX
+  // store at a varying address may pass the load of gColosso_WarriorStartX
   // (fixed_scalar_and_varying_struct_p), and a byte store is no struct
   // reference.
   control = (u8 *)objects;
   control[offsetof(struct ObjectSystemWork, fill)] = zero;
   control[offsetof(struct ObjectSystemWork, edge)] = 15;
-  actor->x.fixed = gColosso_CompetitorStartX;
-  actor->z.fixed = gColosso_CompetitorStartZ;
-  actor->facing = gColosso_CompetitorStartAngle;
+  actor->x.fixed = gColosso_WarriorStartX;
+  actor->z.fixed = gColosso_WarriorStartZ;
+  actor->facing = gColosso_WarriorStartAngle;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = zero;

@@ -646,7 +646,7 @@
 /// ★ Named from the game: "You've managed to win both of your matches."
 /// (MsgColosseumWonBothMatches)
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
-/// The officials have taken the party into the Colosseum on the finals day.
+/// The soldiers have taken the party into the Colosseum on the finals day.
 /// XXX: no code of this game reads it; a reader would say what it changes.
 /// ★ Named from the game: "Putting him in the finals" (MsgColosseumHeyYouRe)
 #define FLAG_COLOSSEUM_FINALS_ENTERED 0x93f
@@ -1307,11 +1307,11 @@
 /// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_TOLBI_SHIP_QUARTERS_NUT 0xf94
 // Tunnel Ruins
-/// Whirlwind has blown away the third leafy plant in TunnelRuinsGreatStatue,
+/// Whirlwind has blown away the third patch of ivy in TunnelRuinsGreatStatue,
 /// for good.
-/// ★ Named from what the player sees: a leafy plant in a pot that Whirlwind
-/// blows away (its render)
-#define FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY 0x970
+/// ★ Named from the game: "It looks like it's trapped in the ivy."
+/// (MsgGomaNoUsePsynergy)
+#define FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY 0x970
 /// The first of TunnelRuinsGreatStatue's two sinking pillars has gone down
 /// into the floor on its column, leaving a puddle in its place.
 /// ★ Named from what the player sees: the stone pillar gone into the floor

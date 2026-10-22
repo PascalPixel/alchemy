@@ -50,7 +50,7 @@
 /// finals.
 ///
 /// Open questions:
-/// - XXX (no evidence): what ColosseumNavampaMatch_UnusedCompetitorTalk's
+/// - XXX (no evidence): what ColosseumNavampaMatch_UnusedWarriorTalk's
 ///   messages were meant to be; the Japanese and English catalogs hold the
 ///   same run after MsgColossoDidntThinkBattles (spectators' lines, the inn's
 ///   `Inn Full` sign, the stage announcements), so neither shipped the lines
@@ -839,8 +839,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 /// because in it, as in the English one, the lines three apart per character
 /// from MsgColossoDidntThinkBattles are a spectator's thought and the stage
 /// announcements, not this question.
-UNUSED static void
-ColosseumNavampaMatch_UnusedCompetitorTalk(s32 competitorId) {
+UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   struct EventWork *work;
   s32 actorId;
   s32 messageOffset;
@@ -851,23 +850,23 @@ ColosseumNavampaMatch_UnusedCompetitorTalk(s32 competitorId) {
   entrance = gGameState.entrance;
   if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Engine_EventBegin();
-    messageOffset = competitorId * 3;
+    messageOffset = warriorId * 3;
     Engine_EventSetMessage(messageOffset + MsgColossoDidntThinkBattles);
-    Engine_EventOpenMessage(competitorId, 0);
+    Engine_EventOpenMessage(warriorId, 0);
     if (Engine_EventChooseYesNo(actorId, 0) == 0) {
       Engine_EventSetMessage(messageOffset + MsgColossoDidntThinkBattles + 1);
-      Engine_EventShowMessage(competitorId, 0);
+      Engine_EventShowMessage(warriorId, 0);
       work->startTransition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
       work->transitionFrames = 15;
       Engine_EventCloseScreen();
       Engine_EventWaitForScreen();
-      Colosso_ControlCharacterAlone(competitorId);
+      Colosso_ControlCharacterAlone(warriorId);
       Engine_EventOpenScreen();
       Engine_EventWaitForScreen();
     } else {
       Engine_EventSetMessage(messageOffset + MsgColossoDidntThinkBattles + 2);
-      Engine_EventShowMessage(competitorId, 0);
+      Engine_EventShowMessage(warriorId, 0);
     }
     Engine_EventEnd();
   }
@@ -1603,7 +1602,7 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Event_ShowMessage(guideId, 0);
-    Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, x, 200);
+    Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, x, 200);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, x, 152);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
@@ -1627,7 +1626,7 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
     Engine_EventWait(30);
     Event_ShowMessage(guideId, 0);
     Colosso_HidePointer();
-    Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+    Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Colosso_RepeatStageNumber(guideId, 2);
   } else if (promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
@@ -1663,7 +1662,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_StartWallWedge();
       Engine_EventWait(60);
       Engine_EventShowMessage(guideId, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 504, 200);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 504, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 136 instructions
        * differ in tbs-en. */
@@ -1684,7 +1683,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       60);
       Engine_EventShowMessage(guideId, 0);
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 3);
       work->raisedTrigger = 0;
@@ -1721,7 +1720,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
       Engine_EventWait(30);
       Event_ShowMessage(guideId, 0);
       Event_ShowMessage(guideId, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 816, 200);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 816, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 840, 200);
       Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
@@ -1749,7 +1748,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
       FieldObject_WaitForMove(actor);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLING);
       Event_ShowMessage(guideId, 0);
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 4);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
@@ -1812,7 +1811,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
       Engine_EventWait(30);
       Event_ShowMessage(guideId, 0);
       Event_ShowMessage(guideId, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 984, 184);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 184);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
       ColosseumNavampaMatch_PositionAndActivateActor(ACTOR_PARTY_LEADER, 992,
                                                      184);
@@ -1842,7 +1841,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
       Event_ShowMessage(guideId, 0);
       OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
       gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 5);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {

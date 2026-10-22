@@ -253,11 +253,11 @@ enum FlagBearerAnimation {
   FLAG_BEARER_ANIM_WHITE_FLAG = 6 ///< raises a white flag: he cleared it
 };
 
-/// The four soldiers of gColosseumOfficialsPlacements (SPRITE_SOLDIER),
+/// The four soldiers of gColosseumSoldiersPlacements (SPRITE_SOLDIER),
 /// who brief the party at COLOSSEUM_FROM_COLOSSEUM_ENTRANCE, congratulate Isaac
 /// after his wins and lead him through the passages; Isaac's companions take
 /// their own actor slots.
-enum ColosseumOfficialActor {
+enum ColosseumSoldierActor {
   /// ★ Named from what the player sees: soldiers in helmets with spears
   /// (its render)
   ACTOR_FIRST_SOLDIER = ACTOR_FIRST_PLACED,
@@ -387,7 +387,7 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
     case COLOSSEUM_FROM_COLOSSEUM_ENTRANCE:
     case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST:
     case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST:
-      table = gColosseumOfficialsPlacements;
+      table = gColosseumSoldiersPlacements;
       break;
     case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST:
       table = gColosseumPlacementsFromColosseumAzartMatchWest;
@@ -2300,7 +2300,7 @@ struct ScenePlacement gColosseumPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gColosseumOfficialsPlacements[] = {
+struct ScenePlacement gColosseumSoldiersPlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_KEEP_FACING, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,

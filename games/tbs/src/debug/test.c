@@ -64,12 +64,12 @@ enum MenuTestActor {
   /// `You got treasure!`
   /// ★ Named from the game: "Menardi" (MsgDebugGlyphName)
   ACTOR_MENARDI,
-  /// The sprite of Vale's armor shopkeeper, 0x7d (vale_interiors_shops.c);
+  /// The sprite of Vale's armor merchant, 0x7d (vale_interiors_shops.c);
   /// opens
   /// the debug shop.
   /// ★ Named from the game: "Ask me anything about armor."
   /// (MsgArmorShopWelcome)
-  ACTOR_ARMOR_SHOPKEEPER,
+  ACTOR_ARMOR_MERCHANT,
   /// Dora's sprite again: the sanctum's service menu, in French a Nut, and in
   /// Spanish and Italian `That IS dangerous!`
   /// ★ Named from the game: "Dora" (MsgDebugGlyphName)
@@ -216,7 +216,7 @@ static void DebugMenu_RunMessageTest(void) {
 #endif
 
 /// Runs the shop test's preset inventory, money and ailment setup. Talking
-/// to ACTOR_ARMOR_SHOPKEEPER: the debug shop, with 200000 coins, broken
+/// to ACTOR_ARMOR_MERCHANT: the debug shop, with 200000 coins, broken
 /// equipment and afflicted members (Shop_OpenDebugShop).
 static void DebugMenu_RunPresetShop(void) { Shop_OpenDebugShop(1); }
 
@@ -939,7 +939,7 @@ struct SceneEvent gMenuTest_Events[] = {
      EVENT_SCRIPT(DebugMenu_DamageAndAfflictParty)},
     {EVENT_TALK, ACTOR_MENARDI, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_GiveTreasureTestStock)},
-    {EVENT_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
      EVENT_SCRIPT(DebugMenu_RunPresetShop)},
 #if TBS_PATCH_3 && !TBS_PATCH_4
     {EVENT_TALK, ACTOR_SECOND_DORA, CONDITION_ALWAYS,

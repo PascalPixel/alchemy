@@ -142,7 +142,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 }
 
 /// Raised event 99: the nearest actor with animation 165 level with or below
-/// the friend on the map calls the competitors to their places, and the
+/// the friend on the map calls the warriors to their places, and the
 /// friend's cell becomes their place to cheer from. "The match is about to
 /// begin. Please take your places." The next friend then looks around, or,
 /// after Mia, the party leaves for the race.
@@ -317,13 +317,13 @@ void Colosso_ClearCheeringSpots(void) {
 /// and the third in Final 3). Returns what the guide does next, an enum
 /// ColossoGuideReply; the yes or no answer to the description's question is
 /// COLOSSO_GUIDE_DESCRIBE or COLOSSO_GUIDE_OFFER_CHEERING.
-s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
+s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   s32 scene;
   s32 message;
   s32 choice;
 
   Field_EndBusyAndReveal();
-  UiWork_PushValueSlot(competitor, MSG_ARG_NUMBER);
+  UiWork_PushValueSlot(warrior, MSG_ARG_NUMBER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -334,10 +334,10 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
   }
   Engine_EventSetMessage(message);
   Engine_EventShowMessage(speaker, 0);
-  if (Engine_GameFlagIsSet(competitor + COLOSSO_STAGE_CHEERED) != 0) {
+  if (Engine_GameFlagIsSet(warrior + COLOSSO_STAGE_CHEERED) != 0) {
     return COLOSSO_GUIDE_CHEER;
   }
-  if (Engine_GameFlagIsSet(competitor + COLOSSO_STAGE_DESCRIBED) != 0) {
+  if (Engine_GameFlagIsSet(warrior + COLOSSO_STAGE_DESCRIBED) != 0) {
     choice = PartyTalkMenu_Choose(0);
     if (choice == 1) {
       return COLOSSO_GUIDE_CHEER;
@@ -347,7 +347,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
     }
     return choice;
   }
-  Engine_GameFlagSet(competitor + COLOSSO_STAGE_DESCRIBED);
+  Engine_GameFlagSet(warrior + COLOSSO_STAGE_DESCRIBED);
   Engine_EventSetMessage(MsgColossoWouldYouLikeHearDescription);
   Engine_EventOpenMessage(speaker, 0);
   return Engine_EventChooseYesNo(0, 0);
@@ -356,11 +356,11 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
 /// A stage's guide, after describing the stage, names it again: the copy of
 /// that line after it in the text. "This is stage N of the first finals
 /// match." (or the second or third)
-void Colosso_RepeatStageNumber(s32 speaker, s32 competitor) {
+void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   s32 scene;
   s32 message;
 
-  UiWork_PushValueSlot(competitor, MSG_ARG_NUMBER);
+  UiWork_PushValueSlot(warrior, MSG_ARG_NUMBER);
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;

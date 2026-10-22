@@ -178,13 +178,13 @@ extern u32 gKolimaForestFloodgate_ShakeScroll[];
 extern u8 gKolimaPalette_First[];
 /// The cursed colours, kept by KolimaPalette_SaveSecond.
 extern u8 gKolimaPalette_Second[];
-/// Isaac's facing before Colosso_FadeInCompetitor, which
-/// Colosso_RestoreCompetitor puts back.
-extern s32 gColosso_CompetitorStartAngle;
+/// Isaac's facing before Colosso_FadeInWarrior, which
+/// Colosso_RestoreWarrior puts back.
+extern s32 gColosso_WarriorStartAngle;
 /// Isaac's x before he is shown on the stage, 16.16 fixed-point pixels.
-extern s32 gColosso_CompetitorStartX;
+extern s32 gColosso_WarriorStartX;
 /// Isaac's z before he is shown on the stage, 16.16 fixed-point pixels.
-extern s32 gColosso_CompetitorStartZ;
+extern s32 gColosso_WarriorStartZ;
 /// The race gauge's 16 colours, loaded as OBJ palette 14 (Colosso_DrawGauge).
 extern u16 gColosso_GaugePalette[];
 /// The blinking pointer's sprite part: the queue link and attributes 0 to 2.

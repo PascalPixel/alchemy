@@ -27,7 +27,7 @@ enum SpriteId {
   SPRITE_RIPPLE = 0x18,
   /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
   SPRITE_LIZARD_MAN = 0xc0,
-  /// The soldiers of Babi's Tolbi, and the Colosseum's officials, drawn alike.
+  /// The soldiers of Babi's Tolbi and of the Colosseum.
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
   /// (its render)
   SPRITE_SOLDIER = 0x98,

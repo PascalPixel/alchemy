@@ -311,7 +311,7 @@ come down to how a struct's member is addressed.
   (`SolSanctum_StartFloatingLights` in
   [`scene/common/sol_sanctum_elemental_star_ring_setup.h`](scene/common/sol_sanctum_elemental_star_ring_setup.h)).
 - Field stores are byte-addressed with `sizeof` and `offsetof` rather than
-  made through the struct members in `Colosso_RestoreCompetitor`,
+  made through the struct members in `Colosso_RestoreWarrior`,
   `TolbiShipInteriors_SelectPlacements`, and for row 10's talk facing in
   `Imil_GetPlacements`, where `script[10].talkFacing` adds the row's 240 first
   and stores at 22 from another base. These byte views are valid, and they

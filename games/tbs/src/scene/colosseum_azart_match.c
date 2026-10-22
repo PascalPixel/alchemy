@@ -950,7 +950,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
       Camera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
       Engine_CameraWaitForMove();
       Engine_EventShowMessage(scene, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 280, 200);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 280, 200);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
       Engine_EventWait(30);
@@ -981,7 +981,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
       OverlayObject_ResetMotionFields(ACTOR_PARTY_LEADER);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Engine_EventShowMessage(scene, 0);
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Actor_SetPosition(ROCK_A, PIXELS(312), PIXELS(168));
       Colosso_RepeatStageNumber(scene, 1);
@@ -1087,7 +1087,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       ColosseumAzartMatch_StartBrokenBridge();
       Engine_EventWait(60);
       Event_ShowMessage(scene, 0);
-      Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 736, 200);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 736, 200);
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 99 instructions
        * differ in tbs-en. */
@@ -1098,7 +1098,7 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
       Engine_EventWait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
       Event_ShowMessage(scene, 0);
-      Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+      Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(scene, 3);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
@@ -1132,7 +1132,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Event_ShowMessage(scene, 0);
     Colosso_HidePointer();
     Engine_EventWait(15);
-    Colosso_FadeInCompetitor(ACTOR_PARTY_LEADER, 984, 200);
+    Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 200);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
     Event_ShowMessage(scene, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
@@ -1155,7 +1155,7 @@ static void Event_TalkToLumberAttendant(s32 scene) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Event_ShowMessage(scene, 0);
-    Colosso_RestoreCompetitor(ACTOR_PARTY_LEADER);
+    Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(LOG_EAST_WEST, PIXELS(1016), PIXELS(168));
     Colosso_RepeatStageNumber(scene, 4);

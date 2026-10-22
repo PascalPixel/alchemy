@@ -7,9 +7,9 @@
 /// - TunnelRuinsGreatStatue (SceneId_TunnelRuinsGreatStatue): entered from
 ///   Babi Lighthouse's stone door. A statue in the first room speaks to the
 ///   leader's soul; the rooms after it hold two pairs of pillars to push or
-///   Move, three stones with three bushes for Whirlwind, and two pillars that
-///   sink into the floor once moved onto their columns, each then carrying a
-///   puddle for Frost.
+///   Move, three stones with three patches of ivy for Whirlwind, and two
+///   pillars that sink into the floor once moved onto their columns, each then
+///   carrying a puddle for Frost.
 /// - TunnelRuinsLadyStatues (SceneId_TunnelRuinsLadyStatues): a pillar that
 ///   Douse soaks, two balance platforms weighed with carved stones by Carry,
 ///   two false statues that Reveal makes vanish, two pillars that keep their
@@ -31,14 +31,14 @@
 /// (TunnelRuins_HopLeaderTo), jumps off ledges and steps down.
 ///
 /// The puzzles that must survive a visit keep story flags
-/// (FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR,
+/// (FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep scene flags,
 /// which mean different things in each scene:
 ///
 /// - TunnelRuinsGreatStatue: FLAG_SCENE_TEMP_00 and FLAG_SCENE_TEMP_01 are
-///   bushes A and B blown away beside the stones, and in the sinking pillars'
+///   ivy A and B blown away beside the stones, and in the sinking pillars'
 ///   room puddles A and B frozen; FLAG_SCENE_TEMP_02 is pillar B soaked by
 ///   Douse.
 /// - TunnelRuinsLadyStatues: FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_02 are the
@@ -98,7 +98,7 @@
 #include "item_ids.h"
 
 /// The actors of TunnelRuinsGreatStatue, in the order of its placements: two
-/// pairs of pillars to push or Move, three stones, three bushes for
+/// pairs of pillars to push or Move, three stones, three patches of ivy for
 /// Whirlwind, two pillars that sink into the floor, and two puddles for Frost,
 /// both placed with the first sinking pillar.
 enum {
@@ -114,24 +114,28 @@ enum {
   /// ★ Named from what the player sees: the other pillar of the second pair
   /// (its render)
   ACTOR_SECOND_PILLAR_B,
-  /// ★ Named from what the player sees: a grey stone block below the bushes'
+  /// ★ Named from what the player sees: a grey stone block below the ivy's
   /// ledge (its render)
   ACTOR_STONE_A,
   /// ★ Named from what the player sees: the second grey stone block, beside the
   /// first (its render)
   ACTOR_STONE_B,
-  /// ★ Named from what the player sees: a grey stone block behind the first
-  /// bush, out of sight until Whirlwind clears it (its render)
+  /// ★ Named from what the player sees: a grey stone block behind ivy A,
+  /// out of sight until Whirlwind clears it (its render)
   ACTOR_STONE_C,
-  /// ★ Named from what the player sees: a leafy bush on the ledge above the
-  /// stones (its render)
-  ACTOR_BUSH_A,
-  /// ★ Named from what the player sees: a second leafy bush, beside the first
-  /// (its render)
-  ACTOR_BUSH_B,
-  /// ★ Named from what the player sees: a leafy bush in an arched niche to the
-  /// east (its render)
-  ACTOR_BUSH_C,
+  /// Ivy on the ledge above the stones, drawn with SPRITE_IVY, the sprite of
+  /// the ivy that traps the stump at Goma Cave's entrance.
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
+  ACTOR_IVY_A,
+  /// Ivy beside ACTOR_IVY_A.
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
+  ACTOR_IVY_B,
+  /// Ivy in an arched niche to the east.
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
+  ACTOR_IVY_C,
   /// ★ Named from what the player sees: a grey pillar with a white top on an
   /// orange base, in the north-west of its room (its render)
   ACTOR_SINKING_PILLAR_A,
@@ -203,7 +207,6 @@ enum {
 
 /// Sprites, as the sheets show them.
 enum {
-  SPRITE_BUSH = 248,
   SPRITE_CARVED_STONE = 254,
   SPRITE_SINKING_PILLAR = 255,
   SPRITE_CARRY_STONE = 256,
@@ -625,11 +628,11 @@ static void Event_HopSouthOrPushStones(void) {
   }
 }
 
-/// Whirlwind on bush A blows it away. Stone C changes state with the
-/// bushes: with one of bushes A and B gone its rise counter is 1 and its
+/// Whirlwind on ivy A blows it away. Stone C changes state with the
+/// ivy: with one of ivy A and B gone its rise counter is 1 and its
 /// collision bit 3 is set; with both gone, 0 and clear. Reached by Whirlwind on
-/// bush A until FLAG_SCENE_TEMP_00 is set; sets it.
-static void Event_BlowAwayBushA(void) {
+/// ivy A until FLAG_SCENE_TEMP_00 is set; sets it.
+static void Event_BlowAwayIvyA(void) {
   u8 *flags;
   u8 value;
 
@@ -646,9 +649,9 @@ static void Event_BlowAwayBushA(void) {
   }
 }
 
-/// Whirlwind on bush B blows it away, as for bush A.
-/// Reached by Whirlwind on bush B until FLAG_SCENE_TEMP_01 is set; sets it.
-static void Event_BlowAwayBushB(void) {
+/// Whirlwind on ivy B blows it away, as for ivy A.
+/// Reached by Whirlwind on ivy B until FLAG_SCENE_TEMP_01 is set; sets it.
+static void Event_BlowAwayIvyB(void) {
   u8 *flags;
   u8 value;
 
@@ -665,11 +668,11 @@ static void Event_BlowAwayBushB(void) {
   }
 }
 
-/// Whirlwind on bush C blows it away for good.
-/// Reached by Whirlwind on bush C until it is gone; sets
-/// FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY.
-static void Event_BlowAwayBushC(void) {
-  FLAG_SET(FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY);
+/// Whirlwind on ivy C blows it away for good.
+/// Reached by Whirlwind on ivy C until it is gone; sets
+/// FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY.
+static void Event_BlowAwayIvyC(void) {
+  FLAG_SET(FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY);
 }
 
 /// Hops west as Event_HopWest, except from cell (32, 50).
@@ -1584,9 +1587,9 @@ s32 TunnelRuins_Initialize(void) {
       TunnelRuins_UpdateStoneCells();
       Object_GetById(ACTOR_STONE_A)->motionFlags = 0;
       Object_GetById(ACTOR_STONE_B)->motionFlags = 0;
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BUSH_A), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BUSH_B), 0);
-      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_BUSH_C), 0);
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_IVY_A), 0);
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_IVY_B), 0);
+      Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_IVY_C), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_B), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_C), 0);
@@ -1815,7 +1818,7 @@ s32 gTunnelRuins_ShrinkScript[] = {
     SC_END,
 };
 
-/// The bushes stand 8/5 as tall as their sprite.
+/// The ivy stands 8/5 as tall as its sprite.
 s32 gTunnelRuins_StretchScript[] = {
     SC_SET(SW_SCALE_Y, 8 * Q16_ONE / 5),
     SC_END,
@@ -2070,11 +2073,11 @@ struct ScenePlacement gTunnelRuinsGreatStatuePlacements[] = {
      FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CARVED_STONE, 0, ACTOR_STAND, PIXELS(424), 0, PIXELS(792),
      FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_BUSH, 0, (s32)gTunnelRuins_StretchScript, PIXELS(416), 0,
+    {SPRITE_IVY, 0, (s32)gTunnelRuins_StretchScript, PIXELS(416), 0,
      PIXELS(794), FACING_NORTH, TALK_FACE_PARTY, 0},
-    {SPRITE_BUSH, 0, (s32)gTunnelRuins_StretchScript, PIXELS(432), 0,
+    {SPRITE_IVY, 0, (s32)gTunnelRuins_StretchScript, PIXELS(432), 0,
      PIXELS(794), FACING_NORTH, TALK_FACE_PARTY, 0},
-    {SPRITE_BUSH, FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY,
+    {SPRITE_IVY, FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY,
      (s32)gTunnelRuins_StretchScript, PIXELS(568), 0, PIXELS(856), FACING_NORTH,
      TALK_FACE_PARTY, 0},
     {SPRITE_SINKING_PILLAR, 0, ACTOR_STAND, PIXELS(680), 0, PIXELS(136),
@@ -2203,9 +2206,9 @@ struct SceneEvent gTunnelRuinsGreatStatueEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_A, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_B, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_C, CONDITION_ALWAYS, EVENT_SCRIPT(TunnelRuins_UpdateStoneCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_BlowAwayBushA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_BlowAwayBushB)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_C, FLAG_TUNNEL_RUINS_PLANT_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayBushC)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_BlowAwayIvyA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_B, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_BlowAwayIvyB)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_C, FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY, EVENT_SCRIPT(Event_BlowAwayIvyC)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR_A, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR, EVENT_SCRIPT(Event_SinkPillarA)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_FreezePuddleA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR_B, FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR, EVENT_SCRIPT(Event_SinkPillarB)},

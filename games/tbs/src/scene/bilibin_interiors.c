@@ -10,20 +10,14 @@
 /// rooms; three other buildings hold villagers. BilibinInteriors_GetPlacements
 /// leaves out the actors of the rooms not in view.
 ///
-/// The party first comes in while Kolima's curse holds
-/// (FLAG_KOLIMA_CURSE_LIFTED clear), and the townsfolk explain what the street
-/// outside only hints at. The tree at the village entrance is a man cursed by
-/// the sacred tree, because McCoy, the lord of this town, had the trees cut
-/// down to build his wife, Lady McCoy, a grand palace; a fairy named Tret is
-/// said to live in the holy tree, and the lighthouse near Imil once held the
-/// Water of Hermes, which could heal all injuries. In the restaurant the head
-/// chef, born in Kolima, is too worried about his parents to cook, while his
-/// kitchen worker, the waitress and the diners wait. Once the curse is lifted
-/// the palace work has stopped and the road to Kolima is open again, and the
-/// head chef cooks so hard his kitchen cannot keep up: the first time the
-/// party talks to him (place flag FLAG_PLACE_TEMP_00, kept until the party
-/// leaves Bilibin) he shouts a string of orders and the kitchen worker answers,
-/// and from then on he sends the party to the waitress (Event_TalkToBusyChef).
+/// Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
+/// clear) and one for after. Before, the townsfolk explain the tree at the
+/// village entrance, McCoy's palace and the Water of Hermes, and in the
+/// restaurant the head chef, born in Kolima, is too worried to cook. After,
+/// the head chef cooks so hard his kitchen cannot keep up: the first time the
+/// party talks to him (FLAG_PLACE_TEMP_00, kept until the party leaves
+/// Bilibin) he shouts a string of orders and the kitchen worker answers, and
+/// from then on he sends the party to the waitress (Event_TalkToBusyChef).
 ///
 /// gBilibinInteriorsEvents keeps both times in one table, in the ROM's order:
 /// every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows
@@ -33,8 +27,13 @@
 /// time; Mind Read on the villager who admires Mia depends on whether she is in
 /// the party. Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg
 /// soup and omelettes in the ovens, and a book called "All About Items".
-/// BilibinInteriors_Initialize opens the rooms with a window transition and
-/// draws one diner at a fixed sprite priority.
+/// BilibinInteriors_Initialize opens the rooms with a window around the leader
+/// and draws one diner at a fixed sprite priority.
+///
+/// Open questions:
+/// - XXX: why BILIBIN_DINER alone is drawn at a fixed priority, never by the
+///   cell under it; a render of the restaurant's table with and without it
+///   would show what it fixes.
 
 #include "unit/scene/bilibin_interiors.h"
 #include "flags.h"
@@ -58,6 +57,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
+/// Bilibin's shops and inn, as Engine_ShopOpen and Engine_InnOpen number them.
 enum {
   BILIBIN_WEAPON_SHOP = 7,
   BILIBIN_ARMOR_SHOP = 8,
@@ -70,55 +70,93 @@ enum {
 /// then the shops' customers and keepers, the inn and its restaurant, and the
 /// room behind the inn's inner door.
 enum BilibinInteriorsActor {
-  /// A young man with brown hair, in the house east. "That tree at the entrance
-  /// is
-  /// really a man cursed by the sacred tree!"
+  /// A young man with brown hair, in the house east.
+  /// ★ Named from the game: "That tree at the entrance is really a man cursed"
+  /// (MsgBilibinThatTreeAtTheEntranceIs)
   BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN = ACTOR_FIRST_PLACED,
-  /// A woman with fair hair. "McCoy had the trees cut down so he could build
-  /// his wife a grand palace."
+  /// A woman with fair hair.
+  /// ★ Named from the game: "McCoy had the trees cut down so he could build"
+  /// (MsgBilibinMccoyHadTheTreesCutDown)
   BILIBIN_VILLAGER_PALACE,
-  /// A burly grey-haired man in the house west; wants to see Mia again. "that
-  /// angelic" Mia
+  /// A burly grey-haired man in the house west, who wants to see Mia again.
+  /// ★ Named from the game: "When spring comes, I want to go see that angelic"
+  /// (MsgBilibinWhenSpringComesWantGo)
   BILIBIN_MIA_ADMIRER,
-  /// A small boy with fair hair. "We rarely see any snow around Bilibin."
+  /// A small boy with fair hair.
+  /// ★ Named from the game: "We rarely see any snow around Bilibin."
+  /// (MsgBilibinWeRarelySeeAnySnowAround)
   BILIBIN_BOY_SNOW,
-  /// A woman in a green dress, in the house north. "How are people doing in
-  /// Kolima? I've been worried..."
+  /// A woman in a green dress, in the house north.
+  /// ★ Named from the game: "How are people doing in Kolima?"
+  /// (MsgBilibinHowArePeopleDoingInKolima)
   BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA,
-  /// A little girl with pigtails. "I know that guy who turned into the tree...
-  /// I remember his clothes."; later asks whether the party knows what silk is.
+  /// A little girl with pigtails, who later asks whether the party knows what
+  /// silk is.
+  /// ★ Named from the game: "I know that guy who turned into the tree..."
+  /// (MsgBilibinIKnowThatGuyWhoTurned)
   BILIBIN_GIRL_SILK,
-  /// An old man with a cane, in the item shop. "Long ago, the lighthouse near
-  /// Imil held the Water of Hermes"
+  /// An old man with a cane, in the item shop.
+  /// ★ Named from the game: "Long ago, the lighthouse near Imil held the"
+  /// (MsgBilibinLongAgoTheLighthouseNearImil)
   BILIBIN_OLD_MAN_WATER_OF_HERMES,
-  /// An old woman. "But even the legendary Water of Hermes cannot turn back
-  /// time."
+  /// An old woman.
+  /// ★ Named from the game: "But even the legendary Water of Hermes cannot"
+  /// (MsgBilibinButEvenTheLegendaryWaterOf)
   BILIBIN_OLD_WOMAN_LOST_YOUTH,
+  /// ★ Named from the game: "There was an able healer in a village called
+  /// Vale," (MsgBilibinThereWasAbleHealerIn)
   BILIBIN_WEAPON_MERCHANT,
+  /// ★ Named from the game: "Have you ever heard of the 'ocean'?"
+  /// (MsgBilibinHaveEverHeardOcean)
   BILIBIN_ARMOR_MERCHANT,
+  /// ★ Named from the game: "You must be used to all types of danger,"
+  /// (MsgBilibinMustUsedTypesDangerBeing)
   BILIBIN_ITEM_MERCHANT,
+  /// ★ Named from the game: "A curse on Kolima? What a scary development!"
+  /// (MsgBilibinCurseOnKolimaScaryDevelopment)
   BILIBIN_INNKEEPER,
-  /// Beside the innkeeper. "There will be fewer guests now that the fuss is
-  /// over."
+  /// Beside the innkeeper.
+  /// ★ Named from the game: "You can't reach Kolima, no matter how you try."
+  /// (MsgBilibinYouCantReachKolimaNoMatter)
   BILIBIN_INN_WORKER,
-  BILIBIN_CHEF,           ///< the restaurant's head chef, born in Kolima
-  BILIBIN_KITCHEN_WORKER, ///< a second cook in a tall chef's hat
-  BILIBIN_WAITRESS,       ///< a young woman with long brown hair
-  BILIBIN_HUNGRY_DINER,   ///< a man with a pack, waiting for his dinner
-  /// A diner with a pack. "I came to Bilibin hoping to sell furniture."
+  /// The restaurant's head chef, born in Kolima.
+  /// ★ Named from the game: "Hey, Mister Head Chef!"
+  /// (MsgBilibinHeyMisterHeadChefAreYou)
+  BILIBIN_CHEF,
+  /// A second cook in a tall chef's hat.
+  /// ★ Named from the game: "I really think the head chef has changed."
+  /// (MsgBilibinReallyThinkHeadChefHas)
+  BILIBIN_KITCHEN_WORKER,
+  /// A young woman with long brown hair.
+  /// ★ Named from the game: "Let's see, serve them water...then get the
+  /// silverware." (MsgBilibinLetsSeeServeThemWater)
+  BILIBIN_WAITRESS,
+  /// A man with a pack, waiting for his dinner.
+  /// ★ Named from the game: "Grrr..." (MsgBilibinGrrr)
+  BILIBIN_HUNGRY_DINER,
+  /// A diner with a pack.
+  /// ★ Named from the game: "I came to Bilibin hoping to sell furniture."
+  /// (MsgBilibinICameToBilibinHopingTo)
   BILIBIN_FURNITURE_SELLER,
-  /// A strongman at the table. "I think that big tree deep in the forest looks
-  /// suspicious!"
+  /// A strongman at the table.
+  /// ★ Named from the game: "I think that big tree deep in the forest"
+  /// (MsgBilibinIThinkThatBigTreeDeep)
   BILIBIN_DINER_BIG_TREE,
-  /// A diner with a pickaxe; asks whether a tree spirit can curse a man.
+  /// A diner with a pickaxe, drawn at a fixed sprite priority.
+  /// ★ Named from the game: "Do you believe a tree spirit can curse a man?"
+  /// (MsgBilibinDoBelieveTreeSpiritCan)
   BILIBIN_DINER,
-  /// An old man at the table. "I can't wait to see today's special! Yippee!"
+  /// An old man at the table.
+  /// ★ Named from the game: "I can't wait to see today's special!"
+  /// (MsgBilibinICantWaitToSeeTodays)
   BILIBIN_DINER_TODAYS_SPECIAL,
-  /// A man in a red bandana, in the room behind the inn's inner door. "I went
-  /// to Lord McCoy looking for work..."
+  /// A man in a red bandana, in the room behind the inn's inner door.
+  /// ★ Named from the game: "I went to Lord McCoy looking for work..."
+  /// (MsgBilibinIWentToLordMccoyLooking)
   BILIBIN_JOB_SEEKER,
-  /// A man with a lute. "I've heard songs that tell of ancient trees developing
-  /// strange powers."
+  /// A man with a lute.
+  /// ★ Named from the game: "I've heard songs that tell of ancient trees"
+  /// (MsgBilibinIveHeardSongsThatTellOf)
   BILIBIN_VILLAGER_ANCIENT_TREES
 };
 
@@ -311,7 +349,8 @@ static void Event_TalkToBusyChef(void) {
     Actor_FaceDirection(BILIBIN_CHEF, FACING_WEST, 20);
     Event_ShowMessage(BILIBIN_CHEF, 0);
     Engine_ActorStartRepeatedMotion(BILIBIN_KITCHEN_WORKER, 2);
-    Actor_SetAttachedEffect(BILIBIN_KITCHEN_WORKER, 0x102);
+    Actor_SetAttachedEffect(BILIBIN_KITCHEN_WORKER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_EventWait(60);
     Event_ShowMessage(BILIBIN_KITCHEN_WORKER, 0);
     Engine_EventWait(10);
@@ -378,19 +417,12 @@ static void Event_ReadMiaAdmirersMind(void) {
 /// automatic priority.
 s32 BilibinInteriors_Initialize(void) {
   struct FieldActor *actor;
-  u8 *record;
-  s32 bits;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gEventWork->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   actor = Object_GetById(BILIBIN_DINER);
-
-  // priorityFlags and the image's priority bits (2 to 3 of byte 9), as bytes.
-  ((u8 *)actor)[0x23] = bits = 0;
-  record = (u8 *)actor->sprite;
-  bits -= 13;
-  bits &= record[9];
-  bits |= 8;
-  record[9] = bits;
+  actor->priorityFlags = 0;
+  actor->sprite->image.priority = 2;
   return 0;
 }
 

@@ -1279,7 +1279,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
                         projected.x - 4, projected.y - 4, 8, 8);
             step->x -= 6;
             if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
-              AudioCommand_PlayFar(SE_133);
+              AudioCommand_PlayFar(SE_IMPACT);
               ObjectGroup_UpdateMembers(work->effect->actors[0],
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
             }

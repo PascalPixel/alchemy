@@ -695,7 +695,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       if (*poison != 0) {
         state->events.pendingCue = SE_HEAVY_IMPACT;
       } else {
-        state->events.pendingCue = SE_133;
+        state->events.pendingCue = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         s32 text;

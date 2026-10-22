@@ -130,7 +130,7 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 2)
       AudioCommand_PlayFar(SE_144);
     if (frame == gEruption_Counts[variant][ERUPTION_FIELD_FRAMES] - 48)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The motes still above the ground, alternating the two mote sets,
     // falling under a gravity of 1/8 pixel a frame per frame. The half-width

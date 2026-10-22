@@ -109,7 +109,7 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (frame == 8) {
       if (mode == SWIRL_SWIPE_POISON_BEAT) {
-        EFFECT_SHOW_DAMAGE(SE_133);
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
                                            KNOCKBACK_HOP);
       } else {

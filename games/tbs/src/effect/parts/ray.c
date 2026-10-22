@@ -87,7 +87,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // The bolts, over the first 16 frames.
     if (frame < 16) {
       // Fill the canvas with level 16, not 0, on frames 2, 7 and 12.

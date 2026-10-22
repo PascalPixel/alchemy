@@ -334,7 +334,7 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
                                 POSE_DAMAGE, 0, 2);
       work->shakeFrames = 1;
       if ((frame & 7) == 0)
-        AudioCommand_PlayFar(SE_133);
+        AudioCommand_PlayFar(SE_IMPACT);
     }
     Camera_ApplyShake(8, 8);
     EFFECT_END_FRAME(work);

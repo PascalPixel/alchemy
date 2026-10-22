@@ -74,7 +74,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   AudioCommand_PlayFar(SE_ITEM_BREAK);
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
     if (frame == 24)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // The flash at each turn's start: the whole canvas set to level 16.
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 8)

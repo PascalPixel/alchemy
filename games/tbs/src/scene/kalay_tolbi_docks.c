@@ -1049,7 +1049,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
   Engine_ActorJump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
-  Event_PlayCue(SE_133);
+  Event_PlayCue(SE_IMPACT);
   Engine_ActorJump(ACTOR_BODYGUARD, 6, 0);
   // The passenger bounces off the spinning bodyguard and lands on his back.
   Actor_SetActionScript(ACTOR_BODYGUARD, gKalayTolbiDocks_BodyguardSpinScript);

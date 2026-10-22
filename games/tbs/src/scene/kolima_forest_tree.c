@@ -295,7 +295,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
-  Event_PlayCue(SE_133);
+  Event_PlayCue(SE_IMPACT);
   leader->velocityY = PIXELS(5);
   leader->gravity = PIXELS(1) / 4;
   leader->bounce = 5 * Q16_ONE / 8;

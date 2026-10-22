@@ -279,7 +279,7 @@
 /// A blow landing: an enemy class's ordinary hit, field damage of 10 or less,
 /// and poison on the field; the lighter twin of SE_HEAVY_IMPACT, heard in most
 /// attacking Psynergy.
-#define SE_133 133
+#define SE_IMPACT 133
 /// A heavy blow landing: damage over 10 on the field, the heavy-hitting
 /// classes' blows, and the summons and strongest Psynergy.
 #define SE_HEAVY_IMPACT 134

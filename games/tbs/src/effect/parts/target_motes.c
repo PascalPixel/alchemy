@@ -223,7 +223,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
     // Ripple the canvas sideways, line by line: BG2's x (20.8) sways 0 to 2
     // pixels, a wave of 1/32 turn a line that moves 1/16 turn a frame. The

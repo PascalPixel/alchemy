@@ -68,7 +68,7 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
     REG_BLDALPHA = (16 - index) | 0x1000;
     WaitFrames(1);
   }
-  PartyStatusDrawFar(9);
+  PartyStatus_DrawFar(9);
 
   if (targetId > 0x7f) {
     u32 count = BattleParty_ListLivingUnits(2, visibleUnits);

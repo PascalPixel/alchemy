@@ -142,7 +142,7 @@ Func_0811c710:
 	cmp r5, #16
 	bne .L_0811c810
 	movs r0, #9
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 	ldr r2, [sp, #4]
 	cmp r2, #127
 	ble .L_0811c86a

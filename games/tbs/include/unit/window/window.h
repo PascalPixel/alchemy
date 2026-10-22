@@ -338,7 +338,7 @@ void UiText_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
                      s32 mode);
 // UiWindow_PutGlyph is called from battle_command.c with no prototype in
-// scope, as in window.c above its definition: PartyStatusDraw passes four of
+// scope, as in window.c above its definition: PartyStatus_Draw passes four of
 // its five arguments, and in one file, with its definition first, it would not
 // compile. Split evidence for window|battle_command.
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
@@ -533,7 +533,7 @@ void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
                                s32 x, s32 y);
 // UiText_DrawPrefixedNumberAtOffset is called from battle_command.c with no
 // prototype in scope: in one file its definition would come before
-// PartyStatusDraw, and PartyStatusDraw changes (2 of 435 instructions in
+// PartyStatus_Draw, and PartyStatus_Draw changes (2 of 435 instructions in
 // tbs-en). Split evidence for window|battle_command.
 
 #endif

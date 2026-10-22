@@ -311,7 +311,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   // not targeted fade out over 16 frames (and the actor too, for
   // TRANSITION_HIDE_ACTOR).
   BattlePresentation_SetActorModes(0, HIGHLIGHT_OFF);
-  PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
+  PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(actor)->object;
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, units);
@@ -517,7 +517,7 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
   BattlePresentation_BuildTargetList(plan, &work.effect);
   // Severe Blow drops the status window's PP row while it plays.
   if (work.effect.kind == STAGING_KIND_SEVERE_BLOW)
-    PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
+    PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
 
   unit = Unit_GetFar(work.effect.actor);
   Unit_GetFar(work.effect.actors[0]);
@@ -932,7 +932,7 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   if (isDjinni)
     work.effect.prelude = 1;
   BattlePresentation_SetActorModes(0, HIGHLIGHT_OFF);
-  PartyStatusDrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
+  PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.effect.actor)->object;
   ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
@@ -1020,7 +1020,7 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
     flashesRemaining--;
   } while (flashesRemaining >= 0);
 
-  PartyStatusDrawFar(gBattleWork->partyStatus);
+  PartyStatus_DrawFar(gBattleWork->partyStatus);
 }
 
 /// Takes unit id out of the party's or the enemies' list and out of this

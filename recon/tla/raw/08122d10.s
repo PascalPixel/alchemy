@@ -333,7 +333,7 @@ BattleEvent_Playback:
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 	b .L_08122ff0
 .L_08122fb6:
 	lsls r5, r6, #2

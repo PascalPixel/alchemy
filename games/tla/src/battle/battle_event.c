@@ -17,7 +17,7 @@ void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b);
 s32 Func_0812824c(s32 unitId, s32 earned);
 void BattleActor_ResetRuntimeFields(u32 unitId);
 void BattleMotion_ShowDowned(u32 unitId);
-void PartyStatusDrawFar(s32 state);
+void PartyStatus_DrawFar(s32 state);
 struct BattleObj *BattleObject_Get(s32 objectId);
 void BattleUnit_BuildStatusFlags(u32 unitId, struct BattleObj *slot);
 s32 BattlePres_SetActorModeAndAction(s32 id);
@@ -89,7 +89,7 @@ u32 BattleEv_DispatchQueued(void) {
         BattleMotion_ShowDowned(queue->operands[i]);
         break;
       case BATTLE_EVENT_DRAW_STATUS:
-        PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
+        PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
         break;
       case BATTLE_EVENT_REFRESH_UNIT:
         BattleUnit_BuildStatusFlags(queue->operands[i],

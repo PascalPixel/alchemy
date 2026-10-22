@@ -77,7 +77,7 @@ Func_0811df70:
 	movs r3, #2
 	negs r3, r3
 	ands r0, r3
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 	ldr r0, [sp, #12]
 	bl BattleObject_Get
 	ldr r0, [r0]

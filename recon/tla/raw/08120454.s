@@ -4079,7 +4079,7 @@ BattleTarget_Execute:
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 	mov r2, r8
 	movs r1, #56
 	ldrsh r3, [r2, r1]

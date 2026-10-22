@@ -820,7 +820,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 #endif
   UiWork_Finalize(statusWindow, 1);
   UiWork_Finalize(helpWindow, 1);
-  PartyStatusDraw(gBattleWork->partyStatus);
+  PartyStatus_Draw(gBattleWork->partyStatus);
   // UB: the indexed scalar pointer steps outside gBattleWork to
   // HEAP_SLOT_BATTLE_COMMANDS.
   // The named slot changes native instructions at the same 0xcf8-byte EN

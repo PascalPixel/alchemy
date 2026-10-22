@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global PartyStatusDraw
+	.global PartyStatus_Draw
 	.thumb_func
-PartyStatusDraw:
+PartyStatus_Draw:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

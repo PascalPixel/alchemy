@@ -45,7 +45,7 @@ extern char MsgPsynergyBlocked;
 
 s32 ArcTan2(s32 x, s32 y);
 void Object_SetMode(struct MotionObject *object, s32 mode);
-void PartyStatusDrawFar(s32 flags);
+void PartyStatus_DrawFar(s32 flags);
 void *Func_0811e3ac(struct BattlePlan *plan,
                     struct BattlePresentationWork *work);
 void Func_0811e7dc(void *saved);
@@ -107,7 +107,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
     work.flags = 1;
   heap = Ram_HeapSlots;
   BattlePres_SetActorModes(0, 0);
-  PartyStatusDrawFar(heap->battleWork->partyStatus & ~1);
+  PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
   saved = Func_0811e3ac(plan, &work);
   object = BattleObject_Get(work.actor)->object;
   Object_SetMode(object, ((u8 *)heap->battleWork)[0x869]);

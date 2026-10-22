@@ -42,7 +42,7 @@ FarCall_WindowTable:
 	export UiWork_ClearValueNameTablesFar, UiWork_ClearValueNameTables
 	export UiWork_PushValueSlotFar, UiWork_PushValueSlot
 	export UiWindow_CreateWithLayoutBoundsFar, UiWindow_CreateWithLayoutBounds
-	export PartyStatusDrawFar, PartyStatusDraw
+	export PartyStatus_DrawFar, PartyStatus_Draw
 	export PartyStatus_CloseFar, PartyStatus_Close
 	export UiWork_FinalizePendingCoreFar, UiWork_FinalizePendingCore
 	export UiWork_DrainPendingFar, UiWork_DrainPending

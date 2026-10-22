@@ -41,5 +41,5 @@ void BattleMotion_FlashHit(s32 id) {
     remaining--;
   } while (remaining >= 0);
 
-  PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
+  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
 }

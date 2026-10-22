@@ -1,4 +1,4 @@
-// Near miss, differ 26 of 495: The Broken Seal's PartyStatusDraw on this
+// Near miss, differ 26 of 495: The Broken Seal's PartyStatus_Draw on this
 // game's work: at most four party members outside battle, the Djinn counts
 // drawn as tiles, with the glyphs past 9 copied to VRAM when any count passes
 // 9. Left, instruction order only but for one row: the native stores the
@@ -61,7 +61,7 @@ void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
 
 #define DJINN_COUNT_TILE(n) ((n) > 9 ? (n) + 0xf196 : ((n) + '0') | 0xf000)
 
-void PartyStatusDraw(s32 flags) {
+void PartyStatus_Draw(s32 flags) {
   struct PartyStatusWindow *layout = Ram_HeapSlots->windowLayout;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;

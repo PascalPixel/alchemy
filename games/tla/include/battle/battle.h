@@ -164,7 +164,7 @@ struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
 s32 DjinnRecovery_RemoveFar(s32 unitId, s32 element, s32 index);
 void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32 messageId);
-void PartyStatusDrawFar(s32 mode);
+void PartyStatus_DrawFar(s32 mode);
 
 /// The battle sprites' animations (AnimationObjects_SelectAnimation numbers)
 /// that the battle code picks by name.

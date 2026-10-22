@@ -873,10 +873,10 @@ Ui_LoadCharacterEntryForSlot:
 	.section .rom.00042744, "ax"
 	.incbin "baserom.gba", 0x00042744, 0x0000029c
 	.section .rom.000429e0, "ax"
-	.global PartyStatusDraw
-	.type PartyStatusDraw, %function
+	.global PartyStatus_Draw
+	.type PartyStatus_Draw, %function
 	.thumb_func
-PartyStatusDraw:
+PartyStatus_Draw:
 	.incbin "baserom.gba", 0x000429e0, 0x00000430
 	.section .rom.00042e28, "ax"
 	.incbin "baserom.gba", 0x00042e28, 0x00000064

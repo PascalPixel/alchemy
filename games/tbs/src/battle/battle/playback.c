@@ -221,7 +221,7 @@ void BattleEvent_Playback(void) {
             break;
           }
           case BATTLE_EVENT_DRAW_STATUS:
-            PartyStatusDrawFar(gBattleWork->partyStatus);
+            PartyStatus_DrawFar(gBattleWork->partyStatus);
             break;
           case BATTLE_EVENT_REFRESH_UNIT: {
             struct BattleObj *slot;

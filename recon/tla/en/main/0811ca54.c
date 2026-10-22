@@ -54,7 +54,7 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
     work.count = BattleParty_ListLivingUnits(2, (u16 *)work.actors);
   else
     work.count = BattleParty_ListLivingUnits(1, (u16 *)work.actors);
-  PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
+  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(work.actor)->object;
   Object_SetMode(object, 3);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);

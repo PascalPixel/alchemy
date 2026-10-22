@@ -114,7 +114,7 @@ void Func_0811b9fc(void);
 s32 Func_0811a39c(s32 side, s32 value);
 void Func_081195ec(void);
 void Func_0811d7e4(void);
-void PartyStatusDrawFar(s32 mode);
+void PartyStatus_DrawFar(s32 mode);
 void Resource_ResetEntry(s32 slot);
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions);
 s32 Func_0811c3bc(struct BattleActionRecord *actions);
@@ -288,7 +288,7 @@ s32 Func_081197f0(s32 enemyGroup) {
       battle->partyStatus = 1;
     transition->targetYaw = 0x2800;
     transition->frames = 60;
-    PartyStatusDrawFar(battle->partyStatus);
+    PartyStatus_DrawFar(battle->partyStatus);
 
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     Resource_ResetEntry(battle->promptSlot);
@@ -297,7 +297,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     else
       actionCount = Func_0811c3bc(battle->actions);
     battle->promptSlot = VramCache_AllocEntry(128);
-    PartyStatusDrawFar(battle->partyStatus);
+    PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)
       goto aborted;
 

@@ -1302,7 +1302,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   MemFree(savedTarget);
   Unit_CalculateFar(targetId);
   // The party's status is drawn now, not through the queue.
-  PartyStatusDrawFar(gBattleWork->partyStatus);
+  PartyStatus_DrawFar(gBattleWork->partyStatus);
   if (target->hp != 0)
     BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, targetId);
   // A haunted actor pays, one time in four, for each target it took HP or PP

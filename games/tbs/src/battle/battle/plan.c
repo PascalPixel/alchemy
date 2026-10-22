@@ -32,7 +32,7 @@ u32 BattleParty_IsUnitListed(u32 unitId) {
 /// side's Djinn recovery list.
 /// Called by BattleCommand_BuildPlan for a summon, and through
 /// BattleParty_CountStandbyDjinnFar by the command menu (Menu_RunCommandRow,
-/// Battle_CollectPartyCommands, PartyStatusDraw). Returns the total.
+/// Battle_CollectPartyCommands, PartyStatus_Draw). Returns the total.
 /// @param unitId a unit of the party's side, up to ALLY_MAX, or of the
 /// enemies'
 /// @param counts if not null, receives the count for each of the four

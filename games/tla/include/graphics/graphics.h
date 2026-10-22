@@ -52,7 +52,7 @@ void Ui_PrepareTransferFromTableEntry(u32 index);
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 void UiTextResource_Release(s32 value);
-void PartyStatusDraw(s32 flags);
+void PartyStatus_Draw(s32 flags);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 #ifndef OWN_UiWindow_SetTilemapEntry
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,

@@ -150,7 +150,7 @@ Func_0811f088:
 	movs r3, #2
 	negs r3, r3
 	ands r0, r3
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 	adds r1, r6, #0
 	adds r0, r7, #0
 	bl Func_0811e3ac

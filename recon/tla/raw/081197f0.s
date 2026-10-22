@@ -422,7 +422,7 @@ Func_081197f0:
 	movs r5, #187
 	ldrb r0, [r3]
 	lsls r5, r5, #2
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 	add r5, r9
 	movs r1, #160
 	ldr r3, .L_08119cd4
@@ -459,7 +459,7 @@ Func_081197f0:
 	str r0, [r3, #84]
 	ldr r5, [sp, #20]
 	ldrb r0, [r5]
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 	ldr r0, [sp, #28]
 	cmp r0, #0
 	bge .L_08119bd6

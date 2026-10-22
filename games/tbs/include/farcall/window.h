@@ -146,7 +146,7 @@ void UiWork_PushValueSlotFar(u32 value, u32 kind);
 void UiWindow_CreateWithLayoutBoundsFar(s32 flags);
 /// Draws the party status window: names, HP and optionally PP with their bars,
 /// and in battle the standby Djinn of each element.
-void PartyStatusDrawFar(s32 flags);
+void PartyStatus_DrawFar(s32 flags);
 /// Closes the party status window and frees its heap block.
 void PartyStatus_CloseFar(void);
 /// Closes each message window whose text has ended, then waits ten frames;

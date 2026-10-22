@@ -342,7 +342,7 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 /// summon n) and returns the state that holds it. Called by
 /// Battle_RunEncounter as the battle is set up and at the start of each
 /// round, which asks for the party status window's standby Djinn column
-/// (PARTY_STATUS_SUMMONS) while the mask is not 0; PartyStatusDraw shows it
+/// (PARTY_STATUS_SUMMONS) while the mask is not 0; PartyStatus_Draw shows it
 /// only while a Djinni is on standby. Writes the party recovery table's
 /// availableMask.
 struct BattleSummonState *BattleSummon_UpdateAvailability(void) {

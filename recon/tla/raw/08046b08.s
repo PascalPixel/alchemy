@@ -3524,7 +3524,7 @@ Func_08046b08:
 	adds r5, #228
 	adds r3, #65
 	ldrb r0, [r3]
-	bl PartyStatusDraw
+	bl PartyStatus_Draw
 	ldr r2, [r5]
 	movs r3, #0
 	str r3, [r2, #72]

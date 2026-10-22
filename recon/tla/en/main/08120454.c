@@ -1797,7 +1797,7 @@ done:
   }
   MemFree(bak);
   Unit_CalculateFar(tid);
-  PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
+  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   if (target->hp != 0)
     BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
   if (abilityId != 403 && actor->haunt != 0 && (Battle_RandomFar() & 3) == 0 &&

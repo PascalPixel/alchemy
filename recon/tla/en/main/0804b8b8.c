@@ -23,7 +23,7 @@ s32 Func_08118140(s32, s32);
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
-void PartyStatusDraw(s32 flags);
+void PartyStatus_Draw(s32 flags);
 void BattleActor_CommitPlacementFar(void);
 void BattlePres_SetActorModesFar(u16 *, s32);
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
@@ -97,7 +97,7 @@ s32 Func_0804b8b8(s32 slot) {
       object = (struct ObjectRuntime *)to->object;
       to->anchorZ = from->anchorZ;
       Object_SetPositionAndResetMotionFar(object, place->x, place->y, place->z);
-      PartyStatusDraw(Ram_HeapSlots->battleWork->partyStatus);
+      PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
       BattleActor_CommitPlacementFar();
       selected[0] = newId;
       selected[1] = 0xff;
@@ -117,7 +117,7 @@ done:
   selected[0] = 0xff;
   BattlePres_SetActorModesFar(selected, 0);
   BattleLayout_HighlightPartyPanels(selected);
-  PartyStatusDraw(Ram_HeapSlots->battleWork->partyStatus);
+  PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
   BattleActor_CommitPlacementFar();
   WaitFrames(1);
   return result;

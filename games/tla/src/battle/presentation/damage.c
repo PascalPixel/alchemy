@@ -41,7 +41,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
 
   slot = BattleObject_Get(unitId);
   Object_SetMode(slot->object, 5);
-  PartyStatusDrawFar(0);
+  PartyStatus_DrawFar(0);
   UiWork_ClearValueNameTablesFar();
 
   if (unitId <= 7) {

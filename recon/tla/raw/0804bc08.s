@@ -334,7 +334,7 @@ Func_0804bc08:
 	adds r5, #228
 	adds r3, #65
 	ldrb r0, [r3]
-	bl PartyStatusDraw
+	bl PartyStatus_Draw
 	bl BattleActor_CommitPlacementFar
 	ldr r4, [sp, #36]
 	movs r0, #130

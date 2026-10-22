@@ -84,7 +84,7 @@ Func_0811ea0c:
 	movs r3, #2
 	negs r3, r3
 	ands r0, r3
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 .L_0811eab8:
 	ldr r0, [sp, #16]
 	mov r1, r8

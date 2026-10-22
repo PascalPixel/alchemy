@@ -314,7 +314,7 @@ u32 BattleEvent_DispatchQueued(void) {
         BattleMotion_ShowDowned(queue->operands[eventIndex]);
         break;
       case BATTLE_EVENT_DRAW_STATUS:
-        PartyStatusDrawFar(gBattleWork->partyStatus);
+        PartyStatus_DrawFar(gBattleWork->partyStatus);
         break;
       case BATTLE_EVENT_REFRESH_UNIT:
         BattleUnit_BuildStatusFlags(

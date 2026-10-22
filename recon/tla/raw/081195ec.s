@@ -116,7 +116,7 @@ Func_081195ec:
 	ldr r3, [r3, #36]
 	adds r3, #65
 	ldrb r0, [r3]
-	bl PartyStatusDrawFar
+	bl PartyStatus_DrawFar
 	bl BattleObject_Put
 	movs r1, #6
 	ldr r0, [sp, #0]

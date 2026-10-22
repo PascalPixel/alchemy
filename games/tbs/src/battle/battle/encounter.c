@@ -223,7 +223,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     // party status window is drawn with or without its Djinn column.
     transition->targetYaw = 0x2800;
     transition->frames = 60;
-    PartyStatusDrawFar(battle->partyStatus);
+    PartyStatus_DrawFar(battle->partyStatus);
 
     // Every unit's action for the round, in turn order.
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
@@ -240,7 +240,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       actionCount = BattlePresentation_BuildSortedUnitEntries(battle->actions);
     }
     battle->promptSlot = VramCache_AllocEntry(128);
-    PartyStatusDrawFar(battle->partyStatus);
+    PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)
       goto aborted;
 

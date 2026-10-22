@@ -55,7 +55,7 @@ void Func_081195ec(void) {
   }
   for (i = 0; i < count; i++)
     gPartyState.activeOwners[actorCount + i] = actors[i];
-  PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);
+  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   BattleObject_Put();
   BattlePres_SetActorModes(reserves, 6);
   WaitFrames(32);

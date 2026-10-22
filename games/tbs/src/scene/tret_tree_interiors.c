@@ -51,15 +51,6 @@
 /// (search events 100 to 102).
 ///
 /// Open questions:
-/// - XXX: what each of TretTreeInteriors_PlayGesture's gestures shows on
-///   Tret's face (SPRITE_TRET's animations 1 to 11); a render of the face's
-///   animations would name them as an enum.
-/// - XXX: what the leader's animation 27, as he spins and falls through a
-///   cocoon, shows; a render of the party's sprite animations would name it
-///   in field_event.h's ActorAnimation.
-/// - XXX: what MUS_017 and MUS_029, played through SE() in Event_FightTret,
-///   are, and what SE_204, SE_206, SE_220 and SE_289 sound like; a recording
-///   of the fall and the fight would name them.
 /// - XXX (picture): the six rooms side by side with each cocoon's touch code
 ///   and the entrance it drops the leader to.
 
@@ -132,6 +123,23 @@ enum {
 
 static void TretPalette_SaveSceneColors(void);
 static void TretPalette_UpdateSceneTint(void);
+/// The face gestures TretTreeInteriors_PlayGesture plays on Tret, each from
+/// the face with its eyes open; the wrathful ones on his wrathful face.
+enum TretTreeInteriorsGesture {
+  TRET_GESTURE_CLOSE_EYES = 0,
+  TRET_GESTURE_OPEN_EYES = 1,
+  TRET_GESTURE_LOOK_LEFT = 2,
+  TRET_GESTURE_LOOK_RIGHT = 3,
+  TRET_GESTURE_BLINK = 4, ///< twice
+  TRET_GESTURE_HALF_CLOSE_EYES = 5,
+  TRET_GESTURE_WRATHFUL_CLOSE_EYES = 7,
+  TRET_GESTURE_WRATHFUL_OPEN_EYES = 8,
+  TRET_GESTURE_WRATHFUL_LOOK_RIGHT = 9,
+  TRET_GESTURE_WRATHFUL_LOOK_LEFT = 10,
+  TRET_GESTURE_WRATHFUL_BLINK = 11, ///< twice
+  TRET_GESTURE_WRATHFUL_STARE = 12  ///< as TRET_GESTURE_WRATHFUL_OPEN_EYES
+};
+
 static void TretTreeInteriors_PlayGesture(s32 gesture);
 static void TretTreeInteriors_SpawnSwirlSparks(void);
 static void TretTreeInteriors_ApplyFlaggedMapPatches(void);
@@ -202,7 +210,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   SE(SE_206);
   EV_BEGIN();
   Event_SetDestination((s32)&SceneId_TretTreeInteriors, entrance);
-  OBJ_MODE(selectedActorId, 27);
+  OBJ_MODE(selectedActorId, ANIM_LEADER_SPIN_AWAY);
   Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
   Actor_SetAttachedEffect(selectedActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -415,11 +423,11 @@ static void Event_FightTret(void) {
   OBJ_DIR(GARET, FACING_NORTH, 0);
   OBJ_DIR(MIA, FACING_NORTH, 0);
   OBJ_DIR(IVAN, FACING_NORTH, 40);
-  OBJ_MODE(ACTOR_TRET, 11);
+  OBJ_MODE(ACTOR_TRET, TRET_FACE_TURNING_WRATHFUL);
   WAIT(10);
-  OBJ_MODE(ACTOR_TRET, 8);
+  OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
   WAIT(20);
-  TretTreeInteriors_PlayGesture(8);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_OPEN_EYES);
   Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
@@ -429,7 +437,7 @@ static void Event_FightTret(void) {
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   OBJ_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  TretTreeInteriors_PlayGesture(11);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorStartRepeatedMotion(GARET, 1);
@@ -444,7 +452,7 @@ static void Event_FightTret(void) {
   Engine_ActorSetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
                                           ATTACHED_EFFECT_ONCE);
   WAIT(40);
-  TretTreeInteriors_PlayGesture(11);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   MESSAGE_PUT(SPEAKER(ACTOR_TRET), 0);
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -499,7 +507,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
     partyActor = Object_GetById(MIA);
     partyActor->facing = FACING_NORTH;
   }
-  TretTreeInteriors_PlayGesture(0);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   Engine_TaskWait(10);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gEventWork->transitionFrames = 48;
@@ -533,10 +541,10 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Camera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   Engine_CameraWaitForMove();
   WAIT(40);
-  TretTreeInteriors_PlayGesture(1);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_OPEN_EYES);
   WAIT(60);
   SE(MUS_021);
-  TretTreeInteriors_PlayGesture(4);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   OBJ_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -551,7 +559,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   WAIT(20);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  TretTreeInteriors_PlayGesture(0);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   WAIT(40);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -571,7 +579,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   OBJ_DIR(IVAN, FACING_NORTHWEST, 0);
   Event_ShowMessageAndWait(SPEAKER(IVAN), 0, 20);
-  TretTreeInteriors_PlayGesture(0);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   WAIT(40);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -581,7 +589,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   OBJ_DIR(GARET, FACING_NORTH, 0);
   OBJ_DIR(IVAN, FACING_NORTH, 40);
-  TretTreeInteriors_PlayGesture(4);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
   // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
   // not the time to fool around!"
   Event_OpenMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
@@ -597,11 +605,11 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
     Event_ShowMessage(SPEAKER(IVAN), 0);
   }
   WAIT(20);
-  TretTreeInteriors_PlayGesture(4);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
   MESSAGE_SET(MsgTretTurnedPeopleKolima);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
-  TretTreeInteriors_PlayGesture(0);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   WAIT(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
   // swirl out from his face, then fade.
@@ -630,13 +638,13 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   ColorBuffer_ApplyTarget(0x10000, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
-  TretTreeInteriors_PlayGesture(4);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
   WAIT(20);
   // "I can't do it... My power no longer reaches Kolima..." His face sinks
   // away on "People of Kolima... Forgive me...", and the party resolve to
   // heal him.
   Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
-  TretTreeInteriors_PlayGesture(0);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_RunActionScriptAndWait(ACTOR_TRET, gTretTreeInteriors_FaceSinksActions);
   WAIT(40);
@@ -725,7 +733,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
     tretSpeaker->y.fixed = -PIXELS(10);
   }
   Engine_ActorSetChildValue(ACTOR_SECOND_TRET, 15);
-  TretTreeInteriors_PlayGesture(0);
+  TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gGameState.entrance != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateSceneTint,
                                TASK_PRIORITY_SCENE);
@@ -762,7 +770,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   // TRET_TREE_INTERIORS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
     Engine_EventOpenScreen();
-    OBJ_MODE(selectedActorId, 27);
+    OBJ_MODE(selectedActorId, ANIM_LEADER_SPIN_AWAY);
     Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
     Actor_SetAttachedEffect(selectedActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -868,71 +876,71 @@ static void TretPalette_UpdateSceneTint(void) {
 /// Plays a Tret animation sequence with its original pauses.
 static void TretTreeInteriors_PlayGesture(s32 gesture) {
   switch (gesture) {
-  case 0:
-    OBJ_MODE(ACTOR_TRET, 1);
+  case TRET_GESTURE_CLOSE_EYES:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 3);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_CLOSED);
     break;
-  case 1:
-    OBJ_MODE(ACTOR_TRET, 1);
+  case TRET_GESTURE_OPEN_EYES:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_OPEN);
     break;
-  case 2:
-    OBJ_MODE(ACTOR_TRET, 1);
+  case TRET_GESTURE_LOOK_LEFT:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 5);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
     break;
-  case 3:
-    OBJ_MODE(ACTOR_TRET, 1);
+  case TRET_GESTURE_LOOK_RIGHT:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 4);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
     break;
-  case 4:
-    OBJ_MODE(ACTOR_TRET, 1);
+  case TRET_GESTURE_BLINK:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 3);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_CLOSED);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 3);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_CLOSED);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_OPEN);
     break;
-  case 5:
-    OBJ_MODE(ACTOR_TRET, 1);
+  case TRET_GESTURE_HALF_CLOSE_EYES:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 2);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
     break;
-  case 7:
-    OBJ_MODE(ACTOR_TRET, 6);
+  case TRET_GESTURE_WRATHFUL_CLOSE_EYES:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 8);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
     break;
-  case 8:
-    OBJ_MODE(ACTOR_TRET, 6);
+  case TRET_GESTURE_WRATHFUL_OPEN_EYES:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
-  case 9:
-    OBJ_MODE(ACTOR_TRET, 6);
+  case TRET_GESTURE_WRATHFUL_LOOK_RIGHT:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 9);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
     break;
-  case 10:
-    OBJ_MODE(ACTOR_TRET, 6);
+  case TRET_GESTURE_WRATHFUL_LOOK_LEFT:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 10);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
     break;
-  case 11:
-    OBJ_MODE(ACTOR_TRET, 6);
+  case TRET_GESTURE_WRATHFUL_BLINK:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 8);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 8);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
     Engine_TaskWait(6);
-    OBJ_MODE(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
-  case 12:
-    OBJ_MODE(ACTOR_TRET, 6);
+  case TRET_GESTURE_WRATHFUL_STARE:
+    OBJ_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   }
   Engine_TaskWait(12);

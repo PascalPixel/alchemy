@@ -13,15 +13,18 @@
 /// cell (Event_GrowPlant); FLAG_PLACE_TEMP_05 keeps it grown until the party
 /// leaves the Bilibin Cave Entrance, into the cave beyond or out to the world
 /// map, since both are other place groups. Two exits lead on into Bilibin
-/// Cave. Beside one of them, touch 10 turns its exit cell off and touch 11, a
-/// step further out, turns it back on (Event_DisableExitToCave,
-/// Event_EnableExitToCave).
+/// Cave. The south one's exit cell, at the cave mouth, lies under the ledge
+/// path that runs above the mouth, since the collision grid has one cell for
+/// both: touch 10, the ledge cells either side of it, turns the exit off so the
+/// leader can walk the ledge across it, and touch 11, a step further out, turns
+/// it back on (Event_DisableExitToCave, Event_EnableExitToCave; its recording,
+/// places/bilibin-cave-entrance/events/Event_DisableExitToCave.gif).
 ///
-/// In SceneId_BilibinCaveRapier a fire burns between two torches
-/// (ACTOR_RAPIER_ROOM_FIRE), and Douse puts it out for good
-/// (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED). Reveal shows a hidden path, a strip
-/// of tiles and the cells under them, which Event_HideRevealedPath takes away
-/// again when Reveal wears off. A chest holds the Elven Rapier.
+/// In SceneId_BilibinCaveRapier a fire burns between two torches, the west one
+/// cold and the east one lit (ACTOR_RAPIER_ROOM_FIRE), and Douse puts it out
+/// for good (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED). Reveal shows a hidden path,
+/// a strip of tiles and the cells under them, which Event_HideRevealedPath
+/// takes away again when Reveal wears off. A chest holds the Elven Rapier.
 ///
 /// SceneId_BilibinCaveIce holds the cave's one puzzle of several steps, built
 /// from fires, torches and puddles that Frost freezes into ice pillars and the
@@ -40,21 +43,14 @@
 /// SceneId_BilibinCaveRapier puts the torches and the pillar back; leaving
 /// Bilibin Cave resets them. Nine more pieces of ice only stand there: five
 /// pillars from ACTOR_FIRST_ICE_PILLAR and four lower pieces from
-/// ACTOR_FIRST_LOW_ICE. Touch 20 makes the leader leave footprints and touch
-/// 21 stops them (Event_StartFootprints, Event_StopFootprints). Its chests hold
-/// a Vial, a Psy Crystal and Water of Life.
+/// ACTOR_FIRST_LOW_ICE. Touch 20 covers the snow blown in at the cave's mouth
+/// to the world map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes the
+/// leader leave footprints; touch 21, rimming it, stops them
+/// (Event_StartFootprints, Event_StopFootprints; the snow is in
+/// places/bilibin-cave-ice/map-1.png). Its chests hold a Vial, a Psy Crystal
+/// and Water of Life.
 ///
 /// Open questions:
-/// - XXX: why the Bilibin Cave Entrance's touches 10 and 11 switch an exit
-///   cell off and on, likely so that only walking straight in enters the cave,
-///   because the touch cells flank the exit on both sides; a render of the
-///   entrance's collision codes would settle it.
-/// - XXX: what the floor between touches 20 and 21 is, likely snow, because the
-///   leader leaves footprints only there; a render of SceneId_BilibinCaveIce
-///   would settle it.
-/// - XXX: what the torches' animations 1 and 2 show, since the scene starts
-///   them differently on either side of the Rapier room's fire; a render of
-///   spr_246.png's frames would name them.
 /// - XXX (picture): the ice room's third puddle melting as a torch is pushed
 ///   beside it, with the cells BilibinCave_UpdateThirdPuddleFromTorches
 ///   changes outlined.
@@ -107,9 +103,9 @@ enum {
 /// Actors of SceneId_BilibinCaveRapier, numbered by the rows of
 /// gBilibinCaveRapierPlacements.
 enum {
-  /// A torch west of the fire.
-  /// ★ Named from what the player sees: a golden torch burning on its stand
-  /// (its render)
+  /// A torch west of the fire, cold (TORCH_ANIM_UNLIT) where its twin burns.
+  /// ★ Named from what the player sees: a golden torch on its stand, its bowl
+  /// grey with ash (places/bilibin-cave-rapier/map-5.png)
   ACTOR_RAPIER_ROOM_WEST_TORCH = 8,
   /// A fire between two torches, which Douse puts out.
   /// ★ Named from what the player sees: a flickering flame, SPRITE_FIRE (its
@@ -432,8 +428,8 @@ static void BilibinCave_RestoreRapierRoom(void) {
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
-  Engine_ActorSetAnimation(ACTOR_RAPIER_ROOM_WEST_TORCH, 1);
-  Engine_ActorSetAnimation(ACTOR_RAPIER_ROOM_EAST_TORCH, 2);
+  Engine_ActorSetAnimation(ACTOR_RAPIER_ROOM_WEST_TORCH, TORCH_ANIM_UNLIT);
+  Engine_ActorSetAnimation(ACTOR_RAPIER_ROOM_EAST_TORCH, TORCH_ANIM_LIT);
 
   if (Engine_GameFlagIsSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
     Engine_ActorSetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
@@ -475,12 +471,12 @@ static void BilibinCave_RestoreIceRoom(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 1, PUDDLE_ANIM_LOW_ICE);
   Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 2, PUDDLE_ANIM_LOW_ICE);
   Engine_ActorSetAnimation(ACTOR_FIRST_LOW_ICE + 3, PUDDLE_ANIM_LOW_ICE);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH, 2);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 1, 2);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 2, 2);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 3, 2);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 4, 2);
-  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 5, 2);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH, TORCH_ANIM_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 1, TORCH_ANIM_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 2, TORCH_ANIM_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 3, TORCH_ANIM_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 4, TORCH_ANIM_LIT);
+  Engine_ActorSetAnimation(ACTOR_FIRST_TORCH + 5, TORCH_ANIM_LIT);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 1);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_ICE_PILLAR + 2);

@@ -9,8 +9,11 @@
 /// up, blow the ivy off with Whirlwind and rejoin with the Shaman's Rod
 /// equipped. The ivy is never the player's target (ACTOR_NOT_TARGETED), so
 /// that cutscene is the only way past it. After it, Move runs Event_MoveStump,
-/// which sends the stump leaping out of the way once it stands on column 11
-/// (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
+/// which sends the stump leaping out of the way once it stands on column 11:
+/// it lands in the pool under the waterfall and sinks until only its top
+/// shows, a stepping stone beside ACTOR_SUNKEN_STUMP
+/// (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED; its render,
+/// places/goma-cave-entrance_goma-cave-entrance-stump-moved/map-0.png).
 ///
 /// The two stone pillars and a second ivy are puzzles on the way. The west
 /// pillar is pushed by walking into it or moved with Move, and stands on one of
@@ -26,20 +29,6 @@
 /// that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma
 /// Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
 /// world map.
-///
-/// Open questions:
-/// - XXX: whether the stump comes down in water, as its last animation
-///   (STUMP_ANIM_SPLASH) and ACTOR_SUNKEN_STUMP suggest; a render of the room
-///   with FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED set would settle it.
-/// - XXX: what the two Move hands and the stump placed at the origin after
-///   ACTOR_SUNKEN_STUMP are for, since nothing in the overlay addresses them; a
-///   recording of Event_IvanRejoins and of Move cast in the room would settle
-///   it.
-/// - XXX: what the 8 that GomaCaveEntrance_WhirlwindOnStumpIvy adds to the
-///   announcement's box mode changes; a recording of Ivan's Whirlwind here
-///   beside one the player casts would settle it.
-/// - XXX: what SE_170, which plays as the room opens, and SE_185, SE_188 and
-///   SE_141 sound like; a recording of the room's sounds would name them.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -95,10 +84,20 @@ enum GomaCaveEntranceActor {
   /// ★ Named from what the player sees: a stump sunk to its cut top, the last
   /// frame of STUMP_ANIM_SINK in spr_212.png (its render)
   ACTOR_SUNKEN_STUMP,
+  /// Unused: two Move hands and a third stump, placed at the map's origin
+  /// outside the camera's bounds. Nothing in the overlay addresses them, and
+  /// Move spawns its own hand (FieldFx_StartItemBreak), so the player never
+  /// sees them.
+  /// ★ Named from what the player sees: a large open hand (spr_215.png)
+  ACTOR_UNUSED_MOVE_HAND_1,
+  /// ★ Named from what the player sees: a large open hand (spr_215.png)
+  ACTOR_UNUSED_MOVE_HAND_2,
+  /// ★ Named from what the player sees: a tree stump (spr_212.png)
+  ACTOR_UNUSED_STUMP,
   /// The ivy holding the stump, until Ivan blows it away.
   /// ★ Named from the game: "It looks like it's trapped in the ivy."
   /// (MsgGomaNoUsePsynergy)
-  ACTOR_STUMP_IVY = ACTOR_FIRST_PLACED + 7,
+  ACTOR_STUMP_IVY,
   /// ★ Named from the game: "It looks like it's trapped in the ivy."
   /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY
@@ -500,7 +499,9 @@ static void Event_MoveStump(void) {
   EV_END();
 }
 
-/// Ivan casts Whirlwind on the stump's ivy, and the scene waits for it.
+/// Ivan casts Whirlwind on the stump's ivy, and the scene waits for it. The
+/// announcement is lowered to a fixed place (POSITIONED_MESSAGE_LOWER), since
+/// it would otherwise be placed by where the leader, not Ivan, stands.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   struct FieldFxScene *effectWork;
   u8 flags;
@@ -508,7 +509,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   effectWork = gEffectWork;
   FieldFx_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
   FieldFx_SetupObjectPair(IVAN, ACTOR_STUMP_IVY);
-  flags = (u8)effectWork->messageMode | 8;
+  flags = (u8)effectWork->messageMode | POSITIONED_MESSAGE_LOWER;
   effectWork->messageMode = flags;
   EventObject_Initialize();
   Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET);
@@ -528,7 +529,8 @@ static void GomaCaveEntrance_SpinStump(union FieldObject *fieldObject) {
 #include "common/object_waitdown.h"
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
-/// then hops on into the water with a splash and sinks (STUMP_ANIM_SPLASH).
+/// then hops on into the pool under the waterfall with a splash and sinks
+/// (STUMP_ANIM_SPLASH).
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Vector3 dir;
   struct EffectOptions params;

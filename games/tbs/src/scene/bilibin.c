@@ -28,7 +28,9 @@
 /// shown again. The other exits lead to the world map, to the garden of McCoy's
 /// Palace and, two ways, into the Treasury: past the ivy at the west edge
 /// (ACTOR_IVY), gone when the party comes back out that way
-/// (BILIBIN_FROM_BILIBIN_TREASURY_WEST), and from the cell a statue
+/// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); its Whirlwind row runs no script, so
+/// Field_UsePsynergy only aims Whirlwind's effect at it and the ivy stays. And
+/// from the cell a statue
 /// (ACTOR_VILLAGE_STATUE) stands on, once Move or a push slides it aside.
 /// Bilibin_UpdateVillageStatueCells keeps the cells of the statue's lane in
 /// step and hops the leader clear if it lands on him; coming back out that way
@@ -57,10 +59,11 @@
 /// —Lord McCoy`, and a door there stays locked. A stack of crates
 /// (ACTOR_BARRICADE_CRATES) slides a cell at a time under Move or a push, and
 /// Bilibin_UpdateCratesCells rewrites the ten cells of its lane after each
-/// move. By the river stand three trees, one on another's shoulders
-/// (ACTOR_BOTTOM_TREE, ACTOR_MIDDLE_TREE and ACTOR_JILL_TREE at one spot, 0, 32
-/// and 48 pixels up): the Gang of Three, children of the town turned into trees
-/// by the curse.
+/// move (its recording,
+/// places/bilibin-barricade/events/Bilibin_UpdateCratesCells.gif). By the river
+/// stand three trees, one on another's shoulders (ACTOR_BOTTOM_TREE,
+/// ACTOR_MIDDLE_TREE and ACTOR_JILL_TREE at one spot, 0, 32 and 48 pixels up):
+/// the Gang of Three, children of the town turned into trees by the curse.
 ///
 /// Once Saturos is beaten at Mercury Lighthouse
 /// (FLAG_SATUROS_BEATEN_AT_MERCURY), while the curse holds, the travelers from
@@ -79,22 +82,6 @@
 /// stepping up to them (touch 13) plays Event_JillGivesHardNut, which gives
 /// the leader a Hard Nut (FLAG_BILIBIN_JILL_GIFT_RECEIVED); from then on the
 /// three turn to watch him.
-///
-/// Open questions:
-/// - XXX: what the placed actor with sprite 0x17 at the Bilibin Barricade
-///   (the row before ACTOR_FALLEN_TREE_STAND_IN) is for, since no code here
-///   addresses it; a render of the barricade's actors would settle it.
-/// - XXX: why ACTOR_IVY has a Whirlwind row that runs nothing; a recording of
-///   Whirlwind cast on it would show whether the engine still plays the
-///   effect.
-/// - XXX: what the leader's animation 16 in Event_PullJillFromRiver and 8 in
-///   Event_PushStatueOrCrates show (straining and leaning, by their use); a
-///   render of the party's sprite animations would name them in
-///   field_event.h's ActorAnimation.
-/// - XXX: what SE_188, played for the Sanctum's door, and SE_185, as the
-///   statue or crates slide, sound like; a recording would name them.
-/// - XXX (picture): the crates' lane at the Bilibin Barricade, with the ten
-///   cells Bilibin_UpdateCratesCells rewrites outlined.
 
 #include "game_state.h"
 #include "djinn_ids.h"
@@ -242,11 +229,14 @@ enum BilibinBarricadeActor {
   /// ★ Named from the game: "Jill, are these the people who saved you?"
   /// (MsgBilibinYoureGuy)
   ACTOR_JILL,
+  /// Unused: a blank actor (SPRITE_BLANK_32) placed at the map's origin; no
+  /// code or event row addresses it, so it never shows or answers anything.
+  ACTOR_UNUSED_BLANK,
   /// The invisible actor (SPRITE_BLANK) that stands where the middle tree lies
   /// pushed down and answers for it.
   /// ★ Named from the game: "Oh, it looks like she is okay."
   /// (MsgBilibinOhItLooksLikeSheIs)
-  ACTOR_FALLEN_TREE_STAND_IN = ACTOR_FIRST_PLACED + 8
+  ACTOR_FALLEN_TREE_STAND_IN
 };
 
 /// Actors of the Bilibin Treasury (BilibinTreasury), numbering its placement
@@ -517,7 +507,7 @@ static void Event_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 111, 196);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
@@ -525,7 +515,7 @@ static void Event_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 121, 190);
     leader->scaleX = Q16_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
@@ -533,7 +523,7 @@ static void Event_PullJillFromRiver(void) {
     leader->scaleX = -Q16_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 132, 186);
     leader->scaleX = Q16_ONE;
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -921,7 +911,7 @@ static void Event_PushStatueOrCrates(void) {
         pushed->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
     if (FieldObject_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
-      Object_SetMode(leader, 8);
+      Object_SetMode(leader, ANIM_PUSH);
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_185);
       pushed->speed = PIXELS(1) / 5;
@@ -1156,7 +1146,7 @@ struct ScenePlacement gBilibinBarricadePlacements[] = {
         PIXELS(246), 0, PIXELS(170), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(262), 0, PIXELS(156), FACING_WEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x17, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_BLANK_32, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },

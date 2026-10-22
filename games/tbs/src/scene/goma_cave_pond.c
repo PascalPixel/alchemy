@@ -8,16 +8,14 @@
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
 /// events of its own. Its one placed actor is the stump the party pushes over
 /// the edge up there with Move: once it has fallen (FLAG_GOMA_CAVE_STUMP_FELL),
-/// entering finds it sunk where it landed until only its top shows
-/// (STUMP_ANIM_SINK), drawn underfoot with no collision flags, and the map
-/// cells it covers change to match. The flag is a place flag, so
-/// the stump is back up in the room above once the party leaves Goma Cave's
-/// four scenes.
-///
-/// Open questions:
-/// - XXX: whether the stump comes down in the pond the scene is named for, as
-///   STUMP_ANIM_SINK and the changed cells suggest; a render of the room with
-///   FLAG_GOMA_CAVE_STUMP_FELL set would settle it.
+/// entering finds it sunk in the pond until only its top shows
+/// (STUMP_ANIM_SINK), drawn underfoot with no collision flags. The five by
+/// five cells around it, open water in the room's render
+/// (places/goma-cave-pond/map-1.png), are replaced by a copy that adds
+/// MAP_CELL_JUMP_FORWARD cells, so the leader can jump across the water by
+/// way of it.
+/// The flag is a place flag, so the stump is back up in the room above once
+/// the party leaves Goma Cave's four scenes.
 #include "unit/scene/goma_cave_pond.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"

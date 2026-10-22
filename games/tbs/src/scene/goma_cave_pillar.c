@@ -40,14 +40,6 @@
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
 /// ENTRANCE_STUMP_FALL, which no exit names and only the debug scene selector
 /// reaches, plays the stump being pushed to the edge and falling.
-///
-/// Open questions:
-/// - XXX: what ACTOR_STUMP_FALL_SPRITE shows: sprite 223 is a wooden crate
-///   (spr_223.png), yet the scene draws it blended at the edge only while the
-///   stump falls, with child value 14; a render of Event_PushStumpOver would
-///   settle it.
-/// - XXX: what SE_141, SE_189 and SE_188, as the stump teeters, falls and the
-///   east pillar sinks, sound like; a recording of the room would name them.
 #include "script.h"
 #include "version.h"
 #include "global_cells.h"
@@ -118,10 +110,12 @@ enum GomaCavePillarActor {
   /// Sinks into the floor in its place.
   /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_EAST_PILLAR,
-  /// Sprite 223, kept in the room's corner until the stump teeters at the
-  /// edge, then shown blended there until the stump has fallen. XXX: what the
-  /// player sees is not known; a render of the fall would settle it.
-  ACTOR_STUMP_FALL_SPRITE,
+  /// The stump's shadow while it teeters at the edge: a crate's outline drawn
+  /// solid black (SPRITE_COLOR_BLACK) and translucent, kept in the room's
+  /// corner until then and put back there once the stump has fallen.
+  /// ★ Named from what the player sees: SPRITE_CRATE (spr_223.png) drawn as a
+  /// translucent black shape under the stump (Event_PushStumpOver)
+  ACTOR_STUMP_SHADOW,
   /// Forge, a Mars Djinni, until it joins the party.
   /// ★ Named from the game: "Forge" (MsgDjinnName)
   ACTOR_FORGE,
@@ -359,15 +353,15 @@ static void Event_PushStumpOver(void) {
   column = stump->x.fixed / PIXELS(16);
   EV_BEGIN();
   if (column == 25) {
-    overlayActor = Object_GetById(ACTOR_STUMP_FALL_SPRITE);
+    overlayActor = Object_GetById(ACTOR_STUMP_SHADOW);
     zero = 0;
     overlayActor->terrainId = 1;
-    spriteActor = Object_GetById(ACTOR_STUMP_FALL_SPRITE);
+    spriteActor = Object_GetById(ACTOR_STUMP_SHADOW);
     Engine_ActorSetSpriteFlags(spriteActor, 0);
-    Engine_ActorSetChildValue(ACTOR_STUMP_FALL_SPRITE, 14);
-    blendActor = Object_GetById(ACTOR_STUMP_FALL_SPRITE);
-    Engine_ObjectSetBlendMode(blendActor, 1);
-    Engine_ActorSetPosition(ACTOR_STUMP_FALL_SPRITE, PIXELS(414), PIXELS(240));
+    Engine_ActorSetChildValue(ACTOR_STUMP_SHADOW, SPRITE_COLOR_BLACK);
+    blendActor = Object_GetById(ACTOR_STUMP_SHADOW);
+    Engine_ObjectSetBlendMode(blendActor, OBJECT_BLEND_TRANSLUCENT);
+    Engine_ActorSetPosition(ACTOR_STUMP_SHADOW, PIXELS(414), PIXELS(240));
     WAIT(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
@@ -419,7 +413,7 @@ static void Event_PushStumpOver(void) {
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapRenderWaitForValues();
     Engine_ActorSetPosition(ACTOR_STUMP, 0, 0);
-    Engine_ActorSetPosition(ACTOR_STUMP_FALL_SPRITE, 0, 0);
+    Engine_ActorSetPosition(ACTOR_STUMP_SHADOW, 0, 0);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_STUMP_FELL);
     Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
@@ -718,7 +712,7 @@ struct ScenePlacement gGomaCavePillar_Placements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(384), 0, PIXELS(192), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {223, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_FORGE, ACTOR_STAND, PIXELS(664), 0, PIXELS(216), FACING_SOUTH, TALK_FACE_PARTY, 0},
     {SPRITE_MAN_IN_ORANGE, FLAG_GOMA_CAVE_WITNESS_LEFT, ACTOR_STAND, PIXELS(628), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY_AND_BACK, 0},
     {SCENE_TABLE_END},

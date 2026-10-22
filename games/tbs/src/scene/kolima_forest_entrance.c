@@ -21,12 +21,6 @@
 /// battle keeps it.
 ///
 /// Open questions:
-/// - XXX: what the river log's animations 3 and 8 show as it tips into the
-///   water and floats; a render of KolimaForestEntrance_PushLog would name
-///   them beside the log sprites' other animations.
-/// - XXX: what SE_240, as the log falls in, SE_200, the glamour's tinkle, and
-///   SE_106, as a sparkle bursts on a field, sound like; a recording of the
-///   curse here would name them.
 /// - XXX (picture): the fields of Psynergy flickering two on even frames and
 ///   two on odd (KolimaForestEntrance_FlickerPsynergyFields), and the areas
 ///   KolimaForestEntrance_BurstOnPsynergyField tests with and without Mia.
@@ -180,11 +174,11 @@ static void KolimaForestEntrance_PushLog(void) {
     if (res.actorSlot == ACTOR_RIVER_LOG && (res.position.x >> 20) == 20) {
       struct FieldActor *actor;
 
-      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, 3);
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIM_ROLL_WEST);
       Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Engine_EventWait(30);
       Engine_AudioPlayCue(SE_240);
-      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, 8);
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIM_DROP_IN);
       Object_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Map_CopyCellAttributes(0, 17, 2, 4, 19, 17);
       StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
@@ -402,7 +396,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     Actor_SetActionScript(MIA, gKolimaForestEntrance_RestoreScaleAction);
     record = Object_GetById(MIA);
     Engine_ActorSetSpriteFlags(record, 0);
-    Engine_ActorSetAnimation(MIA, 19);
+    Engine_ActorSetAnimation(MIA, ANIM_COLLAPSE);
     Engine_EventWait(10);
   }
   record = Object_GetById(0);
@@ -413,7 +407,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetActionScript(ACTOR_PARTY_LEADER, restoreScaleAction);
   record = Object_GetById(0);
   Engine_ActorSetSpriteFlags(record, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Engine_EventWait(20);
   record = Object_GetById(GARET);
   record->velocityY = PIXELS(2);
@@ -422,7 +416,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetActionScript(GARET, restoreScaleAction);
   record = Object_GetById(GARET);
   Engine_ActorSetSpriteFlags(record, 0);
-  Engine_ActorSetAnimation(GARET, 19);
+  Engine_ActorSetAnimation(GARET, ANIM_COLLAPSE);
   Engine_EventWait(40);
   record = Object_GetById(IVAN);
   record->velocityY = PIXELS(2);
@@ -430,7 +424,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetActionScript(IVAN, restoreScaleAction);
   record = Object_GetById(IVAN);
   Engine_ActorSetSpriteFlags(record, 0);
-  Engine_ActorSetAnimation(IVAN, 19);
+  Engine_ActorSetAnimation(IVAN, ANIM_COLLAPSE);
   gKolimaForestEntrance_SparkleSoundOn = 0;
   Engine_EventWait(160);
   Engine_TaskRemoveCallback(KolimaForestEntrance_SpawnCurseSparkle);

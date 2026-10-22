@@ -70,11 +70,6 @@
 /// (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN).
 ///
 /// Open questions:
-/// - XXX: what the sounds are that this floor plays by number (the Lizard
-///   Man's step SE_118, the sparks' SE_246, the flash SE_220, the drop's
-///   SE_204 and SE_188, the passages' arrival SE_170); recordings of the
-///   Lizard Man scene, Ply at the pool and the drop would let songs.h name
-///   them.
 /// - XXX (no evidence): what the two unused six-statue entrances
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_UNUSED_NORTH and _MIDDLE) were
 ///   for; no exit or code leads to them, so nothing in the ROM shows them in

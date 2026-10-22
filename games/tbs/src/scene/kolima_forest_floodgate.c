@@ -11,21 +11,17 @@
 ///
 /// The water level, the short log's place and each log's cells are kept in
 /// gSceneState (gKolimaForestFloodgateLayout, gKolimaForestFloodgateReturned
-/// and gKolimaForestFloodgateRecords), so they survive a battle.
+/// and gKolimaForestFloodgateRecords), so they survive a battle. Under each
+/// log KolimaForestFloodgate_StampLogCells writes MAP_CELL_JUMP_FORWARD while
+/// the water is high, so the leader jumps across the floating logs, and
+/// MAP_CELL_WALL while it is low and after a roll, which
+/// KolimaForestFloodgate_CheckLogFits also treats as taken.
 ///
-/// Open questions:
-/// - XXX: what the collision codes KolimaForestFloodgate_StampLogCells writes
-///   under the logs mean: 254 at high water, 255 at low and after a roll, which
-///   KolimaForestFloodgate_CheckLogFits treats as taken; the field's collision
-///   table (field/) would settle it.
-/// - XXX: whether ACTOR_FLOODGATE_SPRAY's animations 1 and 2 are the water
-///   bursting through and settling, as the sprite's frames suggest; a render of
-///   KolimaForestFloodgate_FlipFloodgateSwitch would settle it.
-/// - XXX: what SE_232, SE_240, SE_230, SE_231, SE_289, SE_239 and SE_213 sound
-///   like; a recording of the switch and a log's roll would name them.
-/// - XXX (picture): the river at both levels side by side, with the cells
-///   KolimaForestFloodgate_DrawWaterLevel copies and the top lines
-///   KolimaForestFloodgate_ShakeLines shifts.
+/// Flipping the switch from high water opens the floodgate: the water bursts
+/// through in spray (SPLASH_ANIM_BURST), the top lines of the screen shake
+/// and the river falls; flipping it back closes the gate in churning spray
+/// (SPLASH_ANIM_CHURN) and the river rises
+/// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -117,7 +113,8 @@ const struct SceneEvent *KolimaForestFloodgate_GetEvents(void) {
 static void KolimaForestFloodgate_PushLog(void) {
   KolimaForestFloodgate_RollLog(gKolimaForestFloodgateRecords);
   Map_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
-  KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords, 0xff);
+  KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords,
+                                      MAP_CELL_WALL);
   KolimaForestFloodgate_MarkShortLogCells();
 }
 
@@ -190,10 +187,12 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
 
   if (*gKolimaForestFloodgateLayout == 1) {
     Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
-    KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords, 254);
+    KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords,
+                                        MAP_CELL_JUMP_FORWARD);
   } else {
     Map_CopyCellAttributes(0, 64, 32, 32, 0, 0);
-    KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords, 255);
+    KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords,
+                                        MAP_CELL_WALL);
   }
 
   KolimaForestFloodgate_MarkShortLogCells();
@@ -263,7 +262,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     Map_CopyCells(67, 34, 2, 5, 79, 25);
     Engine_TaskWait(6);
     Map_CopyCells(69, 34, 2, 5, 79, 25);
-    Engine_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, 1);
+    Engine_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIM_BURST);
     Engine_AudioPlayCue(SE_240);
     Engine_TaskWait(6);
     Map_CopyCells(71, 34, 2, 5, 79, 25);
@@ -287,7 +286,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     Engine_TaskWait(30);
     Map_CopyCells(65, 45, 2, 4, 15, 28);
     Map_CopyCells(71, 50, 2, 5, 79, 25);
-    Engine_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, 2);
+    Engine_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIM_CHURN);
     Engine_AudioPlayCue(SE_230);
     Engine_TaskWait(6);
     Map_CopyCells(69, 50, 2, 5, 79, 25);
@@ -419,7 +418,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   }
   KolimaForestFloodgate_CreateLogs(gKolimaForestFloodgateRecords);
   KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgate_DefaultRecords,
-                                      255);
+                                      MAP_CELL_WALL);
   KolimaForestFloodgate_DrawWaterLevel();
   Engine_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, 0);
   Object_GetById(ACTOR_FLOODGATE_SPRAY)->motionFlags = 0;
@@ -520,7 +519,7 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
   for (i = 0; i <= 3; i++) {
     struct MapCell *cell = &((struct MapCell *)gMapCellBuffer)[x + (z << 7)];
 
-    if (cell->collisionCode == 0xff ||
+    if (cell->collisionCode == MAP_CELL_WALL ||
         *(u8 *)((cell->attributeB << 2) + (s32)gMapCollision) != 0) {
       return -1;
     }

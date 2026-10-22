@@ -19,13 +19,15 @@
 ///   and IMIL_TO_WORLD_MAP_NORTH lead out to the world map, and the way north
 ///   (trigger 4) leads into Imil Falls Cave; coming back out of it
 ///   (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down into the village. Two
-///   callbacks run while the party is here: one makes puffs rise at five
-///   places, staggered over each second, and one turns the leader's
-///   footprints in the snow off in two stretches of the village and on
-///   elsewhere. Stepping onto ice (collision code 90) slides the leader in
-///   the held direction, turning toward it as he goes, until a blocked cell
-///   or one too high stops him. Move pushes the snowman, from where the
-///   leader leaves footprints, and once it lands at cell (15, 7) it stays
+///   callbacks run while the party is here: one makes smoke rise from the
+///   five houses' chimneys, staggered over each second, and one turns the
+///   leader's footprints in the snow off on the frozen river that runs down
+///   from the falls and on the raised ground under the big tree, and on
+///   elsewhere (both drawn on places/imil/footprints.png). Stepping onto ice
+///   (collision code 90) slides the leader in the held direction, turning
+///   toward it as he goes, until a blocked cell or one too high stops him.
+///   Move pushes the snowman only when cast from the snow, not from the river's
+///   ice or the raised ground, and once it lands at cell (15, 7) it stays
 ///   there for the rest of the visit (a temporary flag). Searching finds 9
 ///   coins, a Vial and a Lucky Medal.
 /// - Imil (SceneId_ImilInteriors), inside the houses, the shops and the inn; by
@@ -63,22 +65,14 @@
 ///   stew, whose find always answers first, so the stew's line is unused.
 ///
 /// Open questions:
-/// - XXX: what the player sees in the two stretches where Imil_UpdateFootprints
-///   turns footprints off, and why Move on the snowman needs the leader
-///   outside them; the village's map render with those bounds drawn would
-///   settle it.
-/// - XXX: what the puffs Imil_SpawnAmbientEffects raises at five places are
-///   (chimney smoke or breath in the cold); the village's render would settle
-///   it.
-/// - XXX: what the sprite's own animations show, the strongman's 9, the old
-///   man's 5, 7 and 8 and the sick sellers' 5; their sheets' frames
-///   (spr_116.png, spr_103.png) would settle it.
 /// - XXX (no evidence): what Imil_UpdateCountdownArc and Imil_SwayAndSpark
 ///   were for; nothing in the game gives them to an actor, so neither the
 ///   ROM nor a render shows them in use.
-/// - XXX: which apprentice is Megan and which Justin; the Japanese text of
-///   MsgImilMia, read with the speakers of the farewell's lines, would settle
-///   it.
+/// - XXX (no evidence): which apprentice is Megan and which Justin; the boy
+///   (ACTOR_APPRENTICE) and the girl (ACTOR_SECOND_APPRENTICE) speak in turn,
+///   but Mia names them together in every edition ("Megan, Justin...", in
+///   Japanese ムギ and ヒエイ), facing neither, so only the English names'
+///   genders suggest the girl is Megan.
 
 #include "script.h"
 #include "animspr.h"
@@ -255,6 +249,19 @@ enum { TRIGGER_WEAPON_COUNTER = 10, TRIGGER_ARMOR_COUNTER = 11 };
 #define IMIL_OPEN_SHOP ((s32 (*)())Engine_ShopOpen)
 #endif
 
+/// The townsfolk's own animations the scenes play, as their sheets draw them.
+enum ImilAnimation {
+  /// Lying in bed, only the head above the covers: the old man
+  /// (SPRITE_OLD_MAN_WITH_CANE, spr_103.png) and the sick sellers.
+  IMIL_ANIM_LIE_IN_BED = 5,
+  IMIL_ANIM_SIT_UP = 7, ///< the old man sits up in bed
+  /// The old man lies back down, then IMIL_ANIM_LIE_IN_BED.
+  IMIL_ANIM_LIE_BACK = 8,
+  /// The strongman's knee bends, over and over (SPRITE_STRONGMAN,
+  /// spr_116.png).
+  IMIL_ANIM_SQUATS = 9
+};
+
 static void Imil_MeetMiaAtOldCouplesHouse(void);
 static void Imil_MiaCastsPlyOnOldMan(void);
 static void Imil_SpawnAmbientEffects(void);
@@ -413,7 +420,8 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Event_AskYesNo(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTHEAST + FACING_STEP, 10);
-    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 9);
+    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
+                             IMIL_ANIM_SQUATS);
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilOneTwoThreeFour));
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
@@ -426,7 +434,8 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTHEAST + FACING_STEP, 10);
-    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 9);
+    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
+                             IMIL_ANIM_SQUATS);
   }
 
   Engine_EventEnd();
@@ -451,11 +460,11 @@ static void Imil_TalkToOldMan(void) {
   } else {
     if (GameFlag_IsSet(FLAG_IMIL_MET_MIA) != 0) {
       Engine_EventBegin();
-      Engine_ActorSetAnimation(ACTOR_OLD_MAN, 7);
+      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_SIT_UP);
       Engine_MapAnimateCells(gImil_CellStepsA, 10, 69);
       Engine_EventSetMessage(MsgMercuryFeelMuchBetter);
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
-      Engine_ActorSetAnimation(ACTOR_OLD_MAN, 8);
+      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_BACK);
       Map_AnimateCells(gImil_CellStepsB, 10, 69);
       Engine_EventEnd();
     } else {
@@ -820,7 +829,8 @@ s32 Imil_Initialize(void) {
   if (gGameState.scene == (s32)&SceneId_Imil) {
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 9);
+    Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
+                             IMIL_ANIM_SQUATS);
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       Engine_GameFlagClear(FLAG_IMIL_NO_FOOTPRINTS);
       Engine_GameFlagClear(FLAG_IMIL_FOOTPRINTS);
@@ -858,7 +868,7 @@ s32 Imil_Initialize(void) {
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MANS_BED), 0);
         Engine_ActorSetPosition(ACTOR_OLD_MAN, PIXELS(174), PIXELS(164));
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MAN), 0);
-        Engine_ActorSetAnimation(ACTOR_OLD_MAN, 5);
+        Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_IN_BED);
         Actor_SetPosition(ACTOR_OLD_WOMAN, PIXELS(168), PIXELS(152));
         Object_GetById(ACTOR_OLD_WOMAN)->facing =
             FACING_SOUTHEAST + FACING_STEP;
@@ -897,9 +907,9 @@ s32 Imil_Initialize(void) {
       } else {
         Object_GetById(ACTOR_WEAPON_MERCHANT)->scaleX = -Q16_ONE;
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEAPON_MERCHANT), 0);
-        Engine_ActorSetAnimation(ACTOR_WEAPON_MERCHANT, 5);
+        Engine_ActorSetAnimation(ACTOR_WEAPON_MERCHANT, IMIL_ANIM_LIE_IN_BED);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ARMOR_MERCHANT), 0);
-        Engine_ActorSetAnimation(ACTOR_ARMOR_MERCHANT, 5);
+        Engine_ActorSetAnimation(ACTOR_ARMOR_MERCHANT, IMIL_ANIM_LIE_IN_BED);
       }
     } else if (entrance == IMIL_INTERIORS_HOUSE_WEST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -918,7 +928,7 @@ s32 Imil_Initialize(void) {
         Object_GetById(ACTOR_ITEM_MERCHANTS_DAUGHTER)->collisionFlags |= 4;
         Object_GetById(ACTOR_ITEM_MERCHANT)->scaleX = -Q16_ONE;
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ITEM_MERCHANT), 0);
-        Engine_ActorSetAnimation(ACTOR_ITEM_MERCHANT, 5);
+        Engine_ActorSetAnimation(ACTOR_ITEM_MERCHANT, IMIL_ANIM_LIE_IN_BED);
       }
     } else if (entrance == IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -1005,7 +1015,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageAndWait(MIA, 0, 40);
   Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0, 20);
   Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ActorSetAnimation(ACTOR_OLD_MAN, 7);
+  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_SIT_UP);
   Map_AnimateCells(gImil_CellStepsA, 10, 69);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -1013,7 +1023,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_OLD_MAN, 1);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_OLD_MAN, 8);
+  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_BACK);
   Map_AnimateCells(gImil_CellStepsB, 10, 69);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
@@ -1227,7 +1237,8 @@ static inline void Imil_StartRisingEffect(union FieldObject *object) {
   }
 }
 
-/// Puffs rise at five places in Imil, staggered over each second.
+/// Smoke rises from the chimneys of Imil's five houses, staggered over each
+/// second (places/imil/footprints.png rings the chimneys).
 static void Imil_SpawnAmbientEffects(void) {
   // volatile: the type of &gFrameCount (tagged in frame.h); the six editions
   // build the same bytes without it
@@ -1263,11 +1274,10 @@ static void Imil_SpawnAmbientEffects(void) {
 }
 
 /// Turns the leader's footprints off in two stretches of Imil and back on
-/// elsewhere, each frame while the party is in the village: a north-south
-/// strip 8 pixel columns wide (x 192 to 255) with a wider patch at its south
-/// end, and the ground above a height of 30 pixels east of x 232 and south of
-/// z 212. XXX: what the player sees in those stretches (a cleared path, the
-/// frozen pond, raised ground); the village's map render would settle it.
+/// elsewhere, each frame while the party is in the village: the frozen river,
+/// a north-south strip from x 192 to 255 widening to x 176 between z 288 and
+/// 367, and the raised ground under the big tree, above a height of 30 pixels
+/// east of x 232 and south of z 212 (places/imil/footprints.png).
 static void Imil_UpdateFootprints(void) {
   struct FieldActor *actor;
   s32 x;

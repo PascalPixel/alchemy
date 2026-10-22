@@ -29,14 +29,18 @@
 ///   FLAG_SATUROS_BEATEN_AT_MERCURY, which Imil, Bilibin and the lighthouse
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
-///   from one to the next (cell codes 10 and 11); the lift leads down to
+///   from one to the next (cell codes 10 and 11;
+///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_StepOntoPlatform.gif);
+///   the lift leads down to
 ///   Mercury Lighthouse's SceneId_MercuryLighthouseExterior
 ///   (mercury_lighthouse.c), arriving at
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain
 ///   of Healing: cell code 6 calls it up, cell code 12 rides it down
 ///   (MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR), and arriving by
 ///   it (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) leaves it
-///   up. A Psynergy Stone can be found here.
+///   up
+///   (places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_RideLiftDown.gif).
+///   A Psynergy Stone can be found here.
 ///
 /// Every arrival sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
 /// regain PP faster. On the aerie Retreat is blocked, the beacon
@@ -55,12 +59,6 @@
 /// - XXX (no evidence): what MercuryLighthouseAerie_UnusedAlexCastsPly was
 ///   for, Ply cast on the lift's statue; nothing calls it, so neither the ROM
 ///   nor a render shows it in a scene.
-/// - XXX: what the songs MUS_029 and MUS_061 are called, which play as Alex
-///   appears and as Saturos and Menardi are confronted; the sound test's
-///   names or the game's credits would let songs.h name them.
-/// - XXX (picture): the platforms dipping under the leader and the lift's
-///   ride, its riders found by height (MercuryLighthouseAerie_FindLiftRiders),
-///   drawn as the scene's sprites over its map.
 
 #include "game_state.h"
 #include "scene_ids.h"

@@ -122,7 +122,7 @@ in the ramps' 8.8 fixed point, and the usual step `MUSIC_DEFAULT_RAMP_STEP`
 is 4, so a full fade takes 64 frames. The music resumes where it was, fading
 back in, and the code that asked for the fanfare need not track it.
 
-![A night at Bilibin's inn drawn as a chart, a column a frame over 25 seconds and a row for each track of the eight players, each cell lit while its track has notes sounding, as bright as its output volume: the music player's rows go dark six seconds in as the fanfare player's rows start, stay dark while the fanfare plays for about five seconds, and come back from about thirteen seconds; player 2 lights once and player 4 in short runs, for sound effects. Small screens below show the inn, the black of the night and the room opening again.](https://alchemy.pascalpixel.com/guides/sound/players.png)
+![A night at Bilibin's inn drawn as a chart, three frames to a column and a row for each track of the eight players, each cell lit while its track has notes sounding, as bright as its output volume: the music player's rows go dark six seconds in as the fanfare player's rows start, stay dark while the fanfare plays for about five seconds, and come back from about thirteen seconds; player 2 lights once and player 4 in short runs, for sound effects. Screens below show the inn at 0, 3, 7, 12 and 20 seconds: the inn, the black of the night and the room opening again.](https://alchemy.pascalpixel.com/guides/sound/players.png)
 
 The music commands here select only tracks 0 to 7 (`MUSIC_ALL_TRACKS`, one
 bit a track), though the music player has 10. `MUS_006`, `MUS_022`,

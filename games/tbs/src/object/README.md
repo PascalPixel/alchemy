@@ -128,7 +128,7 @@ once. A request an event raises waits for the event to return, so a battle a
 cutscene asks for starts only after its last line, and an exit it takes
 discards whatever else it raised.
 
-![The twelve request fields, in the loop's order, at each change as Isaac walks into a door in Vale, watched an instruction at a time: on the first frame `action` is raised with the door's code 7 and cleared again within the frame, as on every frame he pushes against it; at frame 17 it stays raised while the door's event runs; at frame 21 the event raises `exit` 6 with `action` still set, `action` is cleared, and then `exit`, as the scene ends](https://alchemy.pascalpixel.com/guides/object/requests.png)
+![The twelve request fields, in the loop's order, at each change as Isaac walks into a door in Vale, watched an instruction at a time: on the first frame `action` is raised with the door's code 7 and cleared again within the frame, as on every frame he pushes against it; at frame 17 it stays raised while the door's event runs; at frame 21 the event raises `exit` 6 with `action` still set, `action` is cleared, and then `exit`, as the scene ends. The screen at frames 0, 17 and 21 is below the table](https://alchemy.pascalpixel.com/guides/object/requests.png)
 
 An `event` is either a scene event to run (`Scene_RunRaisedEvent`) or a
 negative code from `enum FieldEventCode` that the loop handles itself:

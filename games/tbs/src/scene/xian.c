@@ -169,7 +169,8 @@ enum XianActor {
   ACTOR_FIRST_CRATE
 };
 
-enum { ANIM_PUDDLE_FROZEN = 5 };
+/// SPRITE_PUDDLE's animation once Frost has frozen it into ice.
+enum { PUDDLE_ANIM_FROZEN = 5 };
 
 /// The trigger the water carrier raises when the leader has stood in her way
 /// for two seconds.
@@ -844,7 +845,7 @@ s32 Xian_Initialize(void) {
   }
   // Restore the frozen puddle and callbacks when re-entering the village.
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01)) {
-    Engine_ActorSetAnimation(ACTOR_SPILLED_WATER, ANIM_PUDDLE_FROZEN);
+    Engine_ActorSetAnimation(ACTOR_SPILLED_WATER, PUDDLE_ANIM_FROZEN);
     {
       s32 puddleX = Object_GetById(ACTOR_SPILLED_WATER)->x.fixed;
 

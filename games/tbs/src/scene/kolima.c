@@ -32,32 +32,22 @@
 ///   (KOLIMA_FROM_KOLIMA_TUNNEL). It shares the village's event table, whose
 ///   exits KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
 ///   numbers, its two ways out (KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and
-///   KOLIMA_TUNNEL_TO_KOLIMA), and that table's two jars, an Apple and an
-///   Herb, are in one of the two maps.
+///   KOLIMA_TUNNEL_TO_KOLIMA). That table's two jars, an Apple and an Herb
+///   (search events 100 and 101), are in the village: only Kolima's map
+///   (map_037's markers.tsv) places them, at cells (23, 8) and (13, 23).
 /// - Kolima Bridge (SceneId_KolimaBridge), "the grand bridge across the
 ///   river" and "the pride of Kolima" to the village's armor seller, with the
-///   world map at both ends. A villager stands beside it, a tree while the
-///   curse lasts (ACTOR_BRIDGE_VILLAGER_AS_TREE) and a man afterwards
-///   (ACTOR_BRIDGE_VILLAGER), who says that for a while he thought no one
-///   would ever cross it again. The first time the party then steps onto the
-///   bridge (trigger 10), Kolima_ShowBridgeCollapse plays: he asks whether
-///   they are going to cross, waves them on, and the bridge falls apart in
-///   front of the leader (FLAG_KOLIMA_BRIDGE_COLLAPSED).
-///   Kolima_RestoreBridgeState draws it broken on every later visit, and an
-///   object on the world map changes with the same flag.
-///
-/// Open questions:
-/// - XXX: which map holds the Apple and Herb jars that Kolima and Kolima Tunnel
-///   share in gKolimaEvents; a render of each scene's search cells would settle
-///   it.
-/// - XXX: what the companions' animation 19 in Kolima_WitnessForestCurse shows
-///   as the sparkles press them down; a render of the party's sprite
-///   animations would name it in field_event.h's ActorAnimation.
-/// - XXX: what SE_176, SE_198, SE_188, SE_206, SE_220, SE_200 and SE_106 sound
-///   like, and which tunes MUS_017 and MUS_021 are; a recording of the curse
-///   and the bridge's collapse would name them.
-/// - XXX (picture): the bridge's four collapse steps, the map cells
-///   Kolima_ShowBridgeCollapse copies over it, frame by frame.
+///   world map at both ends. It is a drawbridge, standing raised between its
+///   posts. A villager stands beside it, a tree while the curse lasts
+///   (ACTOR_BRIDGE_VILLAGER_AS_TREE) and a man afterwards
+///   (ACTOR_BRIDGE_VILLAGER). The first time the party then steps up to the
+///   bridge (trigger 10), Kolima_LowerBridge plays: he asks whether they are
+///   going to cross, hops aside and lets the drawbridge down across the river
+///   in front of the leader (FLAG_KOLIMA_BRIDGE_LOWERED; its recording,
+///   places/kolima-bridge/events/Kolima_LowerBridge.gif). From then on
+///   he says that for a while he thought no one would ever cross it again,
+///   Kolima_RestoreBridgeState draws it down on every later visit, and the
+///   bridge on the world map is drawn down with the same flag.
 
 #include "script.h"
 #include "djinn_ids.h"
@@ -403,15 +393,16 @@ static void Kolima_EnterDoor(void) {
   Engine_EventEnd();
 }
 
-/// Kolima Bridge, the first time the party steps onto it (trigger 10, until
-/// FLAG_KOLIMA_BRIDGE_COLLAPSED): the villager beside it
+/// Kolima Bridge, the first time the party steps up to it (trigger 10, until
+/// FLAG_KOLIMA_BRIDGE_LOWERED): the villager beside it
 /// (ACTOR_BRIDGE_VILLAGER) asks whether they are going to cross, and at the
-/// leader's nod says "Go right ahead!" and hops aside. The bridge then falls
-/// apart in front of the leader in four ever quicker steps of map cells, ten
-/// pieces scatter and drop, the screen shakes and the leader jumps back. From
-/// then on the villager keeps turning to face the leader. Sets
-/// FLAG_KOLIMA_BRIDGE_COLLAPSED.
-static void Kolima_ShowBridgeCollapse(void) {
+/// leader's nod says "Go right ahead!" and hops aside to the post. The
+/// drawbridge then comes down across the river in front of the leader in four
+/// ever quicker steps of map cells, ten puffs of dust fly up where it lands,
+/// the screen shakes and the leader jumps back. The last cells copied also
+/// open the bridge's collision. From then on the villager keeps turning to
+/// face the leader. Sets FLAG_KOLIMA_BRIDGE_LOWERED.
+static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
 
   Engine_EventBegin();
@@ -446,7 +437,7 @@ static void Kolima_ShowBridgeCollapse(void) {
   Engine_EventWait(10);
   Engine_AudioPlayCue(SE_198);
   Engine_EventWait(30);
-  // Animate the bridge in progressively shorter collapse steps.
+  // The drawbridge comes down in ever shorter steps.
   Map_CopyCellsTo(91, 0, 72, 9, 5, 4);
   Engine_EventWait(12);
   Map_CopyCellsTo(91, 4, 72, 9, 5, 4);
@@ -457,7 +448,7 @@ static void Kolima_ShowBridgeCollapse(void) {
   Map_CopyCellsTo(91, 13, 72, 9, 5, 6);
   Engine_EventWait(3);
   Engine_AudioPlayCue(SE_188);
-  // Scatter ten fragments with alternating horizontal velocities.
+  // Ten puffs of dust where it lands, thrown alternately left and right.
   for (debrisIndex = 0; debrisIndex < 10; debrisIndex++) {
     struct FieldActor *debris = Engine_ObjectCreate(
         SPRITE_DUST_PUFF, PIXELS(148 + debrisIndex * 4), 0, PIXELS(258));
@@ -493,7 +484,7 @@ static void Kolima_ShowBridgeCollapse(void) {
                                    gKolima_FaceLeaderScript);
   Engine_EventWait(60);
   Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_GameFlagSet(FLAG_KOLIMA_BRIDGE_COLLAPSED);
+  Engine_GameFlagSet(FLAG_KOLIMA_BRIDGE_LOWERED);
   Engine_EventEnd();
 }
 
@@ -866,7 +857,7 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetActionScript(MIA, gKolima_PartyRestoreScaleActions);
     actor = Object_GetById(MIA);
     Engine_ActorSetSpriteFlags(actor, 0);
-    Engine_ActorSetAnimation(MIA, 19);
+    Engine_ActorSetAnimation(MIA, ANIM_COLLAPSE);
     Engine_EventWait(10);
   }
   stagingValue = 128;
@@ -879,7 +870,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetActionScript(ACTOR_PARTY_LEADER, restoreScaleActions);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_ActorSetSpriteFlags(actor, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Engine_EventWait(20);
   actor = Object_GetById(GARET);
   actor->velocityY = (stagingValue << 10);
@@ -888,7 +879,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetActionScript(GARET, restoreScaleActions);
   actor = Object_GetById(GARET);
   Engine_ActorSetSpriteFlags(actor, 0);
-  Engine_ActorSetAnimation(GARET, 19);
+  Engine_ActorSetAnimation(GARET, ANIM_COLLAPSE);
   Engine_EventWait(40);
   actor = Object_GetById(IVAN);
   actor->velocityY = (stagingValue << 10);
@@ -896,7 +887,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetActionScript(IVAN, restoreScaleActions);
   actor = Object_GetById(IVAN);
   Engine_ActorSetSpriteFlags(actor, 0);
-  Engine_ActorSetAnimation(IVAN, 19);
+  Engine_ActorSetAnimation(IVAN, ANIM_COLLAPSE);
   gKolima_EffectActive = 0;
   Engine_EventWait(160);
   Engine_TaskRemoveCallback(Kolima_SpawnCurseSparkle);
@@ -1630,8 +1621,8 @@ s32 gKolima_EffectActive __attribute__((section(".bss")));
 /// (ACTOR_BRIDGE_VILLAGER) is put out of sight, leaving him a tree
 /// (ACTOR_BRIDGE_VILLAGER_AS_TREE), and the row of cells at (9, 18) takes the
 /// attributes of the row above it; afterwards the tree is put out of sight
-/// instead. Once the bridge has fallen (FLAG_KOLIMA_BRIDGE_COLLAPSED), it is
-/// drawn broken and its cells changed to match. XXX: the row likely closes the
+/// instead. Once the bridge is down (FLAG_KOLIMA_BRIDGE_LOWERED), it is
+/// drawn down and its cells changed to match. XXX: the row likely closes the
 /// bridge while the curse lasts, because the bridge's one event (trigger 10)
 /// needs the man who is a tree until then.
 static void Kolima_RestoreBridgeState(void) {
@@ -1645,7 +1636,7 @@ static void Kolima_RestoreBridgeState(void) {
   } else {
     Engine_ActorSetPosition(ACTOR_BRIDGE_VILLAGER_AS_TREE, 0, 0);
   }
-  if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_COLLAPSED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
     {
       Map_CopyCellsTo(91, 19, 72, 9, 5, 7);
     }
@@ -1961,7 +1952,7 @@ struct SceneEvent gKolimaEvents[] = {
 struct SceneEvent gKolimaBridgeEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH },
-    { EVENT_TOUCH, 10, FLAG_KOLIMA_BRIDGE_COLLAPSED, EVENT_SCRIPT(Kolima_ShowBridgeCollapse) },
+    { EVENT_TOUCH, 10, FLAG_KOLIMA_BRIDGE_LOWERED, EVENT_SCRIPT(Kolima_LowerBridge) },
     { EVENT_TALK, ACTOR_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaForAWhileIThoughtNo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaYouWouldntUnderstandButItsTruly) },
     { SCENE_EVENTS_END },

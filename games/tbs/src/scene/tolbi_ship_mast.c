@@ -108,14 +108,17 @@ s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
 
-/// The scene's one placement row, the ship's lookout, a man in a blue
-/// bandana (SPRITE_MAN_IN_BLUE_BANDANA). He is the crewman who hid the
-/// captain's anchor charm (KALAY_CREWMAN on deck, QUARTERS_CREWMAN below), in
-/// the same sprite: Mind Read on him at Kalay hears "I was the one who hid
-/// the anchor" (MsgTolbiShipHiddenAnchorDiscovered).
-/// ★ Named from the game: "No, no, I'm the lookout."
-/// (MsgTolbiShipLookoutCannotRow)
-enum TolbiShipMastActor { ACTOR_LOOKOUT = ACTOR_FIRST_PLACED };
+/// The scene's one placement row.
+enum TolbiShipMastActor {
+  /// The ship's lookout, a man in a blue bandana
+  /// (SPRITE_MAN_IN_BLUE_BANDANA). He is the crewman who hid the captain's
+  /// anchor charm (KALAY_CREWMAN on deck, QUARTERS_CREWMAN below), in the
+  /// same sprite: Mind Read on him at Kalay hears "I was the one who hid the
+  /// anchor" (MsgTolbiShipHiddenAnchorDiscovered).
+  /// ★ Named from the game: "No, no, I'm the lookout."
+  /// (MsgTolbiShipLookoutCannotRow)
+  ACTOR_LOOKOUT = ACTOR_FIRST_PLACED
+};
 
 /// The first attack's actors (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK),
 /// placed after the lookout from gTolbiShipMast_FirstAttackPlacements.
@@ -129,7 +132,8 @@ enum TolbiShipMastFirstAttackActor {
   ACTOR_SPARKLE = ACTOR_LOOKOUT + 1,
   /// The first of three monsters, all with the sprite of the first attack's
   /// monsters below decks (gTolbiShipInteriors_FirstAttackMonsters). They grow
-  /// from half size as they close in. "Monsters sighted!"
+  /// from half size as they close in.
+  /// ★ Named from the game: "Monsters sighted!" (MsgTolbiShipAvast)
   ACTOR_FIRST_SIGHTED_MONSTER
 };
 
@@ -144,10 +148,14 @@ enum TolbiShipMastEnsembleActor {
   /// (TolbiShipMast_SwayActor). One swoops at the lookout at the second attack,
   /// they scatter as the third attack's monster comes, and they fly off just
   /// before "Land ho!".
+  /// ★ Named from what the player sees: a white bird beating its wings (its
+  /// render)
   ACTOR_FIRST_BIRD = ACTOR_LOOKOUT + 1,
   /// Sean, by the sprite he has in the hold (HOLD_SEAN, tolbi_ship_interiors.c)
   /// and on deck (SEA_SEAN, tolbi_ship_deck.c). He cries "Monsters!" at the
   /// second attack.
+  /// ★ Named from the game: "That'll be me, Ouranos, and Sean on deck"
+  /// (MsgTolbiShipOurReplacementNeverArrivedBut)
   ACTOR_SEAN = ACTOR_FIRST_BIRD + 7,
   /// The sprite of the third attack's monster below decks
   /// (gTolbiShipInteriors_ThirdAttackMonsters); it drops in beside the lookout.

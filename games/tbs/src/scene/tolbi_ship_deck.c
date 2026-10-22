@@ -169,9 +169,13 @@ enum TolbiShipDeckActor {
   /// (fastest), drawn under the deck. Each oar at the sides copies the frames
   /// of its seat's stroke (TolbiShipDeck_SwingOar); at rest the first stands in
   /// for the first oar.
+  /// ★ Named from what the player sees: an oar dipping into the water (its
+  /// render)
   ACTOR_FIRST_STROKE_OAR = ACTOR_FIRST_PLACED,
   /// The eight oars at the ship's sides: four at x 132, then four at x 300,
-  /// which are drawn mirrored.
+  /// which are drawn mirrored (SPRITE_OAR).
+  /// ★ Named from what the player sees: an oar dipping into the water (its
+  /// render)
   ACTOR_FIRST_OAR = ACTOR_FIRST_STROKE_OAR + 4,
 
   // At Kalay: gTolbiShipDeckPlacements, then gTolbiShipDeckPlacementsWaiting.

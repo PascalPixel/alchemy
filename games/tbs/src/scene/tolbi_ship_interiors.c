@@ -137,7 +137,10 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
-#define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300 ///< a passenger follows the party
+/// A passenger chosen to row follows the party to the rowing deck.
+/// ★ Named from the game: "Looks like you've been chosen to help row"
+/// (MsgTolbiShipLooksLikeYouveBeenChosen)
+#define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300
 /// The hold's stairs are barred while monsters are on the rowing deck.
 /// ★ Named from the game: "Monsters belowdecks!"
 /// (MsgTolbiShipMonstersBelowdecks)

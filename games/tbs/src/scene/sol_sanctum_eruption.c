@@ -28,9 +28,6 @@
 /// cycle of palettes.
 ///
 /// Open questions:
-/// - XXX: what game flag 0x100, set as the scene ends, marks; nothing else sets
-///   or reads it by number, so a read of its byte or of the flag range would
-///   settle it.
 /// - XXX (picture): what ACTOR_RISING_EFFECT, a blank actor scaled with each
 ///   departing actor, draws; a render of Alex rising away would show it.
 
@@ -1507,8 +1504,10 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Engine_EventRequestExit(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
-  // XXX: flag 0x100 is set nowhere else, and nothing in the repository reads
-  // it by number; a read of its byte or range would say what it marks.
+  // Flag 0x100 marks nothing: it is set nowhere else and read nowhere, by no
+  // table, script or function, and render probe flag-reads, watching every
+  // flag test and every byte and nibble read in the scenes after the
+  // eruption, sees none.
   GameFlag_Set(0x100);
 }
 

@@ -4333,8 +4333,8 @@ enum {
 /// SceneId_AltmillerCaveEntrance's entrances.
 enum {
   ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP = 1,
-  ALTMILLER_CAVE_ENTRANCE_FROM_INNER_CHAMBER = 2,
-  ALTMILLER_CAVE_ENTRANCE_INNER_CHAMBER_FROM_PASSAGE =
+  ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER = 2,
+  ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_FROM_PASSAGE =
       3, ///< ★ Named from what the player sees: the small chamber through the
          ///< hole at the passage's end, with a torch-lit doorway (its render)
   ALTMILLER_CAVE_ENTRANCE_FROM_ALTMILLER_CAVE_BABI = 4,
@@ -4342,10 +4342,10 @@ enum {
 /// SceneId_AltmillerCaveEntrance's exits.
 enum {
   ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP = 1,
-  ALTMILLER_CAVE_ENTRANCE_TO_INNER_CHAMBER =
+  ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER =
       2, ///< ★ Named from what the player sees: the small chamber through the
          ///< hole at the passage's end, with a torch-lit doorway (its render)
-  ALTMILLER_CAVE_ENTRANCE_INNER_CHAMBER_TO_PASSAGE =
+  ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE =
       3, ///< ★ Named from what the player sees: the dark winding passage in
          ///< from the cave mouth (its render)
   ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI = 4,
@@ -4399,7 +4399,7 @@ enum {
 enum {
   ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST = 50,
   ALTMILLER_CAVE_DRAUGHT_FROM_ROCKS = 51,
-  ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CAVERN =
+  ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE =
       52, ///< ★ Named from the game: "rotated the rock"
           ///< (MsgAltmillerRotatedRock)
   ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_CHEST =
@@ -4416,7 +4416,7 @@ enum {
           ///< wall, with one chest on a stone (its render)
   ALTMILLER_CAVE_DRAUGHT_TO_ROCKS = 51, ///< ★ Named from the game: "rotated the
                                         ///< rock" (MsgAltmillerRotatedRock)
-  ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CAVERN =
+  ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE =
       52, ///< ★ Named from what the player sees: the large cavern of stone
           ///< pillars before the rocks (its render)
   ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST =

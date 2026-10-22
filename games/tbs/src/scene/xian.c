@@ -165,7 +165,8 @@ enum XianActor {
   /// ★ Named from the game: "Mist" (MsgDjinnName)
   ACTOR_MIST,
   /// The first of three crates, drawn under the actors and never a target.
-  /// ★ Named from what the player sees: a wooden crate (spr_223.png)
+  /// ★ Named from what the player sees: a wooden crate, as SPRITE_CRATE's
+  /// sheet draws it (its render)
   ACTOR_FIRST_CRATE
 };
 

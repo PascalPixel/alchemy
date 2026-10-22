@@ -166,9 +166,14 @@ enum AltinVillageActor {
   /// soaked?" (MsgAltinWillDoIfMyMerchandise)
   ACTOR_FLOODED_ITEM_MERCHANT,
   /// Three crates, drawn under the actors and never a target.
-  /// ★ Named from what the player sees: a wooden crate (spr_223.png)
+  /// ★ Named from what the player sees: a wooden crate, as SPRITE_CRATE's
+  /// sheet draws it (its render)
   ACTOR_FIRST_CRATE,
+  /// ★ Named from what the player sees: a wooden crate, as SPRITE_CRATE's
+  /// sheet draws it (its render)
   ACTOR_SECOND_CRATE,
+  /// ★ Named from what the player sees: a wooden crate, as SPRITE_CRATE's
+  /// sheet draws it (its render)
   ACTOR_THIRD_CRATE
 };
 

@@ -62,6 +62,10 @@
 ///   the party's sprite sheets would settle names for them.
 /// - XXX: where cell code 20 lies on the desert's maps, and so when the leader
 ///   collapses from the heat; the maps' collision cells would settle it.
+/// - XXX: why the patched editions (TBS_PATCH_3) set FLAG_REACHED_KALAY on
+///   coming back from the Manticore's battle; likely so that a party that
+///   walks past Kalay still counts as having reached it, and the world map's
+///   paths from LamakanDesertCave would settle it.
 
 #include "vram_tab.h"
 #include "unit/import.h"
@@ -246,7 +250,7 @@ const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 /// The pits, the Manticore and Smog of each map. Arriving at
 /// LamakanDesertManticore's LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, the
 /// way back from the Manticore's battle, marks it beaten; in the patched
-/// editions it also sets FLAG_REACHED_KALAY (XXX: why is not known).
+/// editions it also sets FLAG_REACHED_KALAY.
 const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
     if (gGameState.entrance == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {

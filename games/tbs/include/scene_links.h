@@ -5535,10 +5535,10 @@ enum {
 /// SceneId_VenusLighthouseGroundFloor's entrances.
 enum {
   VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY = 1,
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_HALL_FROM_RELIEFS =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS =
       2, ///< ★ Named from what the player sees: the hall of four statues behind
          ///< the front door (its render)
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_FRONT_HALL =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_FRONT_ROOM =
       3, ///< ★ Named from what the player sees: the room of golden reliefs and
          ///< a tree emblem on the floor (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_EAST =
@@ -5571,23 +5571,23 @@ enum {
   VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_PILLARS_WEST =
       13, ///< ★ Named from what the player sees: the room with five statues in
           ///< a row (its render)
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_STAIRWELL =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_FROM_SMALL_ROOM =
       14, ///< ★ Named from what the player sees: the room with five statues in
           ///< a row (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_FLOOR_SWITCH =
       20, ///< ★ Named from what the player sees: the room of the great statue
           ///< that speaks to Isaac (its render)
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_STAIRWELL =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_SMALL_ROOM =
       21, ///< ★ Named from what the player sees: the room of the great statue
           ///< that speaks to Isaac (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS =
       22, ///< ★ Named from what the player sees: the room with a statue, a
           ///< floor switch and a ledge (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR = 23,
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_STAIRWELL_FROM_STATUE_ROW =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_FROM_STATUE_ROW =
       24, ///< ★ Named from what the player sees: the narrow room of two stacked
           ///< arches (its render)
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_STAIRWELL_FROM_GREAT_STATUE =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_FROM_GREAT_STATUE =
       25, ///< ★ Named from what the player sees: the narrow room of two stacked
           ///< arches (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_GREAT_STATUE =
@@ -5603,10 +5603,10 @@ enum {
 /// SceneId_VenusLighthouseGroundFloor's exits.
 enum {
   VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_ENTRY = 1,
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_HALL_TO_RELIEFS =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_TO_RELIEFS =
       2, ///< ★ Named from what the player sees: the room of golden reliefs and
          ///< a tree emblem on the floor (its render)
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_HALL =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_FRONT_ROOM =
       3, ///< ★ Named from what the player sees: the hall of four statues behind
          ///< the front door (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_TO_CARRY_STONE_EAST =
@@ -5636,23 +5636,23 @@ enum {
   VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_PILLARS_WEST =
       13, ///< ★ Named from what the player sees: the room of spiral-marked
           ///< stone pillars (its render)
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_STAIRWELL =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_STATUE_ROW_TO_SMALL_ROOM =
       14, ///< ★ Named from what the player sees: the narrow room of two stacked
           ///< arches (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_FLOOR_SWITCH =
       20, ///< ★ Named from what the player sees: the room with a statue, a
           ///< floor switch and a ledge (its render)
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_STAIRWELL =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_TO_SMALL_ROOM =
       21, ///< ★ Named from what the player sees: the narrow room of two stacked
           ///< arches (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_PILLARS =
       22, ///< ★ Named from what the player sees: the room of spiral-marked
           ///< stone pillars (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR = 23,
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_STAIRWELL_TO_STATUE_ROW =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_STATUE_ROW =
       24, ///< ★ Named from what the player sees: the room with five statues in
           ///< a row (its render)
-  VENUS_LIGHTHOUSE_GROUND_FLOOR_STAIRWELL_TO_GREAT_STATUE =
+  VENUS_LIGHTHOUSE_GROUND_FLOOR_SMALL_ROOM_TO_GREAT_STATUE =
       25, ///< ★ Named from what the player sees: the room of the great statue
           ///< that speaks to Isaac (its render)
   VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_TO_GREAT_STATUE =

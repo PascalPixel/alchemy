@@ -74,6 +74,12 @@ enum SpriteId {
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)
   SPRITE_CAPPED_PILLAR = 0xfd,
+  /// The pillars Move, Carry and pushes shift in Venus Lighthouse. Animations
+  /// 1 and 2 show a grey and an orange spiral on top; 3 to 8 a piece of gold
+  /// track instead, along which the lighthouse's lights run.
+  /// ★ Named from what the player sees: a grey pillar with a spiral carved on
+  /// top (spr_256.png)
+  SPRITE_SPIRAL_PILLAR = 0x100,
   /// The platforms of Venus Lighthouse and the Tunnel Ruins that rise or sink
   /// with the weight set down on them.
   /// ★ Named from what the player sees: a small white pillar on its base

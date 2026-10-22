@@ -6,7 +6,10 @@
 #include "field_scene.h"
 
 enum CollapseActor {
-  ACTOR_TELEPORT_GLOW = ACTOR_FIRST_PLACED,
+  /// The glow that grows or shrinks round an actor rising through the floor.
+  /// ★ Named from what the player sees: a glow round Alex as he rises and
+  /// shrinks away (SolSanctumEruption_RaiseAndShrinkActor)
+  ACTOR_RISING_GLOW = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,
   /// ★ Named from the game: "But, Saturos, there's still a chance they might

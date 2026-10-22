@@ -792,16 +792,17 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   gSolSanctumStatue_ScrollPhase += 128;
 }
 
-/// Walking north over cell code 10: the way ahead is checked as on any field.
-static void Event_CheckAheadFacingNorth(void) {
+/// Walking north over a jump spot jumps the leader two cells ahead
+/// (Field_TryJumpForward).
+static void Event_JumpNorth(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_NORTH) {
     Engine_LeaderCheckAhead();
   }
 }
 
-/// Walking south over cell code 11: the way ahead is checked as on any field.
-static void Event_CheckAheadFacingSouth(void) {
+/// Walking south over a jump spot jumps the leader two cells ahead.
+static void Event_JumpSouth(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
     Engine_LeaderCheckAhead();
@@ -1760,10 +1761,8 @@ struct SceneEvent gSolSanctumStatue_Events[] = {
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS},
     {EVENT_EXIT, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE},
-    {TOUCH_WALKING, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_CheckAheadFacingNorth)},
-    {TOUCH_WALKING, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_CheckAheadFacingSouth)},
+    {TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpNorth)},
+    {TOUCH_WALKING, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpSouth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHWEST_STATUE,
      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(Event_NorthwestStatueMoved)},

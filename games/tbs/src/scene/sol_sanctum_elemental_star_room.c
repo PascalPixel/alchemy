@@ -1,50 +1,38 @@
 /// @file
-/// Elemental Star Room (SceneId_SolSanctumElementalStarRoom), the chamber
-/// Isaac and Kraden rise to through the floor of the rooms of Sol and Luna
-/// (SceneId_SolSanctumLunaSolRooms), where the four Elemental Stars lie on
-/// their pedestals. Kraden came to Sol Sanctum to learn whether Saturos and
-/// Menardi, who spoke of the stars at his cottage, had been there; here the two
-/// take the stars, and Jenna and Kraden with them.
+/// Elemental Star Room (SceneId_SolSanctumElementalStarRoom), the chamber above
+/// the Luna and Sol rooms (SceneId_SolSanctumLunaSolRooms) where the four
+/// Elemental Stars lie on their pedestals.
 ///
-/// - Arriving (SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS)
-///   the first time (SolSanctumElementalStarRoom_EnterStarRoom), Isaac appears
-///   in a glow, Garet and Jenna step out of him, and Kraden follows: `They
-///   really exist... The Elemental Stars exist!` He explains the four
-///   elements, earth, water, fire and wind, and the stars that hold their
-///   purified essence, shows each pedestal in turn, the Venus, Mercury, Mars
-///   and Jupiter Stars, and speaks of the Wisdom Stone and the power of a
-///   single gem. The floor is too slippery for him, so Jenna has Isaac and
-///   Garet fetch the stars, and Kraden gives them four Mythril Bags he brought
-///   from his cottage (FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED). Walking north
-///   into cell code 1, back the way they came, has Kraden call them back:
-///   `There aren't any Elemental Stars out there!`
-/// - Searching a pedestal (cell codes 2 to 5) flashes and shakes the room and
-///   opens new crossings between the pedestals, and the star goes into a
-///   Mythril Bag. The Venus Star (FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) and the
-///   Mercury Star (FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED) come first; Kraden and
-///   Jenna, spoken to, urge the two on.
-/// - Bagging the Jupiter Star brings Saturos and Menardi out with Jenna and
-///   Kraden as their hostages (Event_BagJupiterStarAndMeetSaturos). They demand
-///   the stars, and as a guarantee Menardi has the masked man with them remove
-///   his mask: he is Felix, Jenna's brother, whom Isaac and Garet thought dead
-///   since the day of the Boulder, three years ago, and whom Saturos and
-///   Menardi found floating in the river and saved. Garet carries the three
-///   stars over, and Alex, "another of our companions", appears and takes them,
-///   then demands the last one as well (FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX).
-///   From then on the captors stand round Jenna and Kraden, and each has a word
-///   about the last star when spoken to.
-/// - Searching the Mars Star's pedestal, the last, bags it, and the room quakes
-///   until the scene cuts to the chamber's collapse (Event_TakeMarsStar, by
-///   SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION to
-///   SceneId_SolSanctumEruption, sol_sanctum_eruption.c), which sets
-///   FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED.
+/// The room follows the story flags in order:
+/// - The first arrival from the Luna and Sol rooms
+///   (SolSanctumElementalStarRoom_EnterStarRoom): Isaac rises into the room
+///   with Garet, Jenna and Kraden, who shows each pedestal in turn and gives
+///   the party four Mythril Bags to carry the stars in
+///   (FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED). Kraden calls the party back if it
+///   walks back the way it came (Event_KradenStopsPartyLeaving).
+/// - Searching a pedestal bags its star and opens new crossings between the
+///   pedestals: the Venus Star (FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) and the
+///   Mercury Star (FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED) first.
+/// - Bagging the Jupiter Star brings out Saturos and Menardi with Jenna and
+///   Kraden as hostages (Event_BagJupiterStarAndMeetSaturos). Their masked
+///   companion is unmasked as Felix, and Alex appears and takes the three
+///   stars (FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX). From then on the captors
+///   stand round Jenna and Kraden, each with a word about the last star.
+/// - Bagging the Mars Star sets the room quaking and takes the party to the
+///   eruption (Event_TakeMarsStar, SceneId_SolSanctumEruption,
+///   sol_sanctum_eruption.c).
 ///
-/// Each pedestal's search row lasts until its own flag is set, so a star is
+/// Each pedestal's search row holds only until its flag is set, so a star is
 /// taken once. On every entry SolSanctumElementalStarRoom_Initialize redraws
 /// the crossings each bagged star opened and, once Alex holds the stars, lines
-/// up the captors again (SolSanctumElementalStarRoom_LineUpFollowers), so a
+/// up the captors again (SolSanctumElementalStarRoom_LineUpCaptors), so a
 /// return after a battle finds the room as it was. Ten lights float about the
 /// room (SolSanctum_StartFloatingLights), and Retreat does not work here.
+///
+/// Open questions:
+/// - XXX: MUS_017, MUS_061, SE_141, SE_144, SE_145, SE_161, SE_190, SE_220 and
+///   SE_289 have no proven names; a recording of the arrival, a star being
+///   bagged and Alex's arrival would settle them.
 
 #include "game_state.h"
 #include "unit/import.h"
@@ -93,19 +81,22 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void);
 static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void);
 static void SolSanctumElementalStarRoom_UnmaskFelix(void);
 static void SolSanctumElementalStarRoom_AlexTakesStars(void);
-static void SolSanctumElementalStarRoom_LineUpFollowers(void);
+static void SolSanctumElementalStarRoom_LineUpCaptors(void);
 static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
                                                            s32 frames);
 static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
                                                    s32 z);
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void);
-static void SolSanctumElementalStarRoom_AnimateAlexTeleport(void);
+static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void);
 
 /// The placed actors, numbered in the order of
 /// gSolSanctumElementalStarRoom_Placements; Garet and Jenna, placed first,
 /// keep their own slots.
 enum StarRoomActor {
-  ACTOR_TELEPORT_GLOW = ACTOR_FIRST_PLACED,
+  /// The glow that grows or shrinks round an actor rising through the floor.
+  /// ★ Named from what the player sees: a glow round Isaac as he rises into
+  /// the room (SolSanctumElementalStarRoom_EnterStarRoom)
+  ACTOR_RISING_GLOW = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,
   /// ★ Named from the game: "But, Saturos, there's still a chance they might
@@ -129,6 +120,18 @@ enum StarRoomActor {
   /// ★ Named from what the player sees: small blue-green lights floating in
   /// the dark (its render)
   ACTOR_LAST_FLOATING_LIGHT = ACTOR_FIRST_FLOATING_LIGHT + 9
+};
+
+/// The collision codes of the cells the events answer.
+enum SolSanctumStarRoomCell {
+  /// The way back down to the Luna and Sol rooms.
+  SOL_SANCTUM_STAR_ROOM_CELL_WAY_BACK = 1,
+  SOL_SANCTUM_STAR_ROOM_CELL_VENUS_PEDESTAL = 2,
+  SOL_SANCTUM_STAR_ROOM_CELL_MERCURY_PEDESTAL = 3,
+  SOL_SANCTUM_STAR_ROOM_CELL_JUPITER_PEDESTAL = 4,
+  SOL_SANCTUM_STAR_ROOM_CELL_MARS_PEDESTAL = 5,
+  SOL_SANCTUM_STAR_ROOM_CELL_JUMP_EAST = 10, ///< a jump spot, walked into east
+  SOL_SANCTUM_STAR_ROOM_CELL_JUMP_SOUTH = 11 ///< a jump spot, walked into south
 };
 
 #define NULL ((void *)0)
@@ -167,7 +170,7 @@ const struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void) {
   return gSolSanctumElementalStarRoom_Events;
 }
 
-/// Elemental Star Room: searching the Venus Star's pedestal (cell code 2). The
+/// Elemental Star Room: searching the Venus Star's pedestal. The
 /// room flashes, new crossings open between the pedestals, and the star goes
 /// into a Mythril Bag. Sets FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED.
 static void Event_BagVenusStar(void) {
@@ -270,7 +273,7 @@ static void Event_BagVenusStar(void) {
   Engine_EventEnd();
 }
 
-/// Elemental Star Room: searching the Mercury Star's pedestal (cell code 3), as
+/// Elemental Star Room: searching the Mercury Star's pedestal, as
 /// the Venus Star; Kraden: "Good, good! Now, go fetch the others!" Sets
 /// FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED.
 static void Event_BagMercuryStar(void) {
@@ -373,7 +376,7 @@ static void Event_BagMercuryStar(void) {
   Engine_EventEnd();
 }
 
-/// Elemental Star Room: searching the Jupiter Star's pedestal (cell code 4).
+/// Elemental Star Room: searching the Jupiter Star's pedestal.
 /// The star is bagged, then Saturos and Menardi appear with Jenna and Kraden as
 /// hostages, Felix is unmasked, and Alex takes the three stars. Sets
 /// FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, which ends the row.
@@ -387,7 +390,7 @@ static void Event_BagJupiterStarAndMeetSaturos(void) {
   SolSanctumElementalStarRoom_AlexTakesStars();
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX);
   Engine_EventEnd();
-  SolSanctumElementalStarRoom_LineUpFollowers();
+  SolSanctumElementalStarRoom_LineUpCaptors();
 }
 
 /// Reveals the Jupiter Star's crossings and puts the star in a Mythril Bag.
@@ -533,10 +536,10 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   u8 zero;
 
   Engine_AudioPlayCue(MUS_061);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 4);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Engine_EventSetMessage(MsgSolSanctumLooksLikeTheyveSpottedUs);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
-  Engine_ActorSetAnimation(ACTOR_MENARDI, 4);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Engine_ActorJump(ACTOR_KRADEN, 4, 10);
@@ -554,10 +557,10 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, 4);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   felix = Object_GetById(ACTOR_FELIX_MASKED);
-  glow = Object_GetById(ACTOR_TELEPORT_GLOW);
+  glow = Object_GetById(ACTOR_RISING_GLOW);
   spriteFlags = &felix->sprite->flags;
   zero = 0;
   *spriteFlags = zero;
@@ -581,7 +584,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetPosition(ACTOR_TELEPORT_GLOW, PIXELS(471), PIXELS(290));
+  Engine_ActorSetPosition(ACTOR_RISING_GLOW, PIXELS(471), PIXELS(290));
   Event_PlayCue(SE_190);
   Engine_ActorSetSpritePriority(ACTOR_FELIX_MASKED, 2);
   for (i = 0; i != 90; i++) {
@@ -601,7 +604,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Engine_EventWait(30);
   *spriteFlags = 1;
-  Engine_ActorSetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
+  Engine_ActorSetPosition(ACTOR_RISING_GLOW, 0, 0);
   Engine_ActorSetSpritePriority(ACTOR_FELIX_MASKED, 1);
   {
     u8 *flags = &Object_GetById(ACTOR_FELIX_MASKED)->priorityFlags;
@@ -628,7 +631,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_SATUROS, 1);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP, 10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 30);
@@ -639,15 +642,15 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Engine_EventWait(10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 30);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 30);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Engine_EventWait(20);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 30);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX_MASKED, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX_MASKED, ANIM_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Engine_EventWait(20);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
@@ -680,7 +683,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 20);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, 4);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
@@ -711,10 +714,10 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 10);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 3);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Engine_EventWait(10);
   Actor_FaceDirection(JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
@@ -724,7 +727,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_SetAttachedEffect(ACTOR_FELIX_MASKED,
@@ -775,7 +778,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 20);
   Actor_FaceDirection(JENNA, FACING_EAST, 40);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX_MASKED, 2);
@@ -784,7 +787,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Actor_FaceDirection(JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX_MASKED, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX_MASKED, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX_MASKED, 20);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -817,28 +820,28 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Engine_EventWait(10);
   Engine_ActorStartRepeatedMotion(JENNA, 3);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 40);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Engine_EventWait(10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_SATUROS, 1);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Engine_EventWait(10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
-  Engine_ActorSetAnimation(ACTOR_MENARDI, 3);
+  Engine_ActorSetAnimation(ACTOR_MENARDI, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 80);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX, 40);
@@ -848,16 +851,16 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 2);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(80);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 80);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX, 80);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(4);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 3);
+  Engine_ActorSetAnimation(ACTOR_SATUROS, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 10);
@@ -995,7 +998,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Engine_ActorSetSpriteFlags(alex, 0);
   Actor_SetChildValue(ACTOR_ALEX, 15);
   Actor_SetPosition(ACTOR_ALEX, PIXELS(392), PIXELS(454));
-  SolSanctumElementalStarRoom_AnimateAlexTeleport();
+  SolSanctumElementalStarRoom_AnimateAlexReappearing();
   Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 10);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -1027,15 +1030,15 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_WalkToAndWait(GARET, 376, 470);
   Engine_EventWait(30);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Engine_EventSetMessage(MsgSolSanctumPermitRelieveElemental + 5);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH, 20);
   Actor_SetChildValue(ACTOR_ALEX, 0x100);
@@ -1069,7 +1072,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Event_OpenMessage(ACTOR_MENARDI, 0);
   Camera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
@@ -1080,13 +1083,13 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   if (Engine_EventChooseYesNo(1, 0) != 0) {
     Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
     Engine_EventSetMessage(MsgSolSanctumDontWantAnything);
     Event_OpenMessage(ACTOR_ALEX, 0);
     if (Engine_EventChooseYesNo(1, 0) == 0) {
       do {
         Engine_EventWait(20);
-        Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
+        Engine_ActorSetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
         Engine_EventWait(10);
         Engine_EventSetMessage(MsgSolSanctumDoubtHowFeel);
         Event_OpenMessage(ACTOR_ALEX, 0);
@@ -1094,11 +1097,11 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
     }
   }
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgSolSanctumThankCooperation);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 30);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Engine_EventWait(10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 30);
   actor->motionFlags = 0;
@@ -1164,7 +1167,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
 
 /// Stands Saturos, Menardi, Felix and Alex round Jenna and Kraden after the
 /// exchange, all turning to face the leader.
-static void SolSanctumElementalStarRoom_LineUpFollowers(void) {
+static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   struct FieldActor *alex;
@@ -1214,7 +1217,7 @@ static void SolSanctumElementalStarRoom_LineUpFollowers(void) {
   Engine_EventEnd();
 }
 
-/// Elemental Star Room: searching the Mars Star's pedestal (cell code 5), until
+/// Elemental Star Room: searching the Mars Star's pedestal, until
 /// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED is set. Isaac bags the last star, and
 /// the room quakes until the scene cuts away by
 /// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION to the chamber's
@@ -1363,7 +1366,7 @@ static void Event_TalkToAlex(void) {
   Engine_EventEnd();
 }
 
-/// Elemental Star Room: walking north into cell code 1, back the way the party
+/// Elemental Star Room: walking north back the way the party
 /// came, has Kraden call it back. "There aren't any Elemental Stars out there!"
 static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventBegin();
@@ -1372,9 +1375,9 @@ static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventEnd();
 }
 
-/// Elemental Star Room: walking into cell code 10 or 11 checks the way ahead
-/// as on any field.
-static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
+/// Elemental Star Room: walking east or south into a jump spot jumps the leader
+/// two cells ahead (Field_TryJumpForward).
+static void Event_JumpAhead(void) { Engine_LeaderCheckAhead(); }
 
 /// Shows a pedestal while Kraden describes it, then returns to the party.
 static inline void
@@ -1418,7 +1421,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_CameraWaitForMove();
   Engine_MapRedraw();
   // Materialize Isaac above the arrival platform with the expanding glow.
-  glow = Actor_Get(ACTOR_TELEPORT_GLOW);
+  glow = Actor_Get(ACTOR_RISING_GLOW);
   glow->scaleX = Q16_ONE / 10;
   glow->scaleY = Q16_ONE / 10;
   rising = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1437,7 +1440,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Actor_SetPosition(ACTOR_TELEPORT_GLOW, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_RISING_GLOW, PIXELS(471), PIXELS(290));
   Event_PlayCue(SE_190);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   for (i = 0; i != 90; i++) {
@@ -1471,7 +1474,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 
     *leaderSprite = shown;
   }
-  Engine_ActorSetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
+  Engine_ActorSetPosition(ACTOR_RISING_GLOW, 0, 0);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
@@ -1493,7 +1496,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(JENNA, 453, 302);
   Actor_WalkToAndWait(GARET, 489, 302);
-  Engine_ActorSetAnimation(JENNA, 1);
+  Engine_ActorSetAnimation(JENNA, ANIM_STAND);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1522,7 +1525,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_ActorWaitForMove(JENNA);
-  Engine_ActorSetAnimation(JENNA, 1);
+  Engine_ActorSetAnimation(JENNA, ANIM_STAND);
   Engine_ActorWaitForMove(GARET);
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
@@ -1575,7 +1578,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   Engine_CameraWaitForMove();
-  Actor_SetPosition(ACTOR_TELEPORT_GLOW, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_RISING_GLOW, PIXELS(471), PIXELS(290));
   Event_PlayCue(SE_190);
   Engine_ActorSetSpritePriority(ACTOR_KRADEN, 2);
   for (i = 0; i != 90; i++) {
@@ -1606,7 +1609,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 
     *kradenSprite = shown;
   }
-  Actor_SetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
+  Actor_SetPosition(ACTOR_RISING_GLOW, 0, 0);
   Engine_EventWait(30);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 306);
@@ -1633,7 +1636,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Engine_EventWait(40);
   Actor_WalkToAndWait(ACTOR_KRADEN, 519, 306);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 0);
@@ -1643,7 +1646,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(30);
   kradenSpeaker = 0x4009;
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Engine_EventWait(40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenSpeaker, 30);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
@@ -1658,13 +1661,13 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenSpeaker, 10);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(JENNA, 3);
+  Engine_ActorSetAnimation(JENNA, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Engine_EventWait(40);
   Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   Camera_MoveTo(PIXELS(533), -1, PIXELS(339), 1);
@@ -1725,7 +1728,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 30);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
@@ -1804,7 +1807,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, 4);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     gEventWork->message++;
@@ -1842,7 +1845,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 40);
   Engine_EventSetMessage(MsgSolSanctumTheStarsHaveEnormousPower);
-  Engine_ActorSetAnimation(JENNA, 4);
+  Engine_ActorSetAnimation(JENNA, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
@@ -1888,7 +1891,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetAttachedEffect(GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Engine_EventWait(80);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Engine_EventWait(20);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 40);
@@ -1955,7 +1958,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 30);
   Actor_FaceDirection(JENNA, FACING_EAST, 30);
@@ -1983,7 +1986,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(JENNA, FACING_EAST, 30);
   Event_OpenMessage(JENNA, 0);
@@ -1997,13 +2000,13 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   }
   Engine_EventSetMessage(MsgSolSanctumJennaThankYou);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST, 30);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 30);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 30);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 5, PIXELS(1) / 10);
@@ -2021,12 +2024,12 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_EventSetMessage(MsgSolSanctumTheBagsAreFromKradens);
   SolSanctumElementalStarRoom_ShowMessageAndWait(JENNA, 30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 30);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Engine_EventWait(20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   SolSanctumElementalStarRoom_ShowMessageAndWait(GARET, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(GARET, FACING_WEST, 40);
@@ -2036,7 +2039,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Engine_EventWait(10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 30);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
@@ -2122,7 +2125,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     Map_CopyCellsTo(83, 40, 91, 10, 3, 4);
     Map_CopyCellAttributes(0, 0, 1, 1, 36, 10);
     Map_CopyCellsTo(87, 42, 36, 12, 1, 2);
-    SolSanctumElementalStarRoom_LineUpFollowers();
+    SolSanctumElementalStarRoom_LineUpCaptors();
   }
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
     if (gGameState.entrance ==
@@ -2205,7 +2208,7 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
 }
 
 /// Emits sparks while Alex disappears and reappears.
-static void SolSanctumElementalStarRoom_AnimateAlexTeleport(void) {
+static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
   struct FieldActor *alex;
@@ -2350,25 +2353,25 @@ struct ScenePlacement gSolSanctumElementalStarRoom_Placements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_ALEX, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(617), 0, PIXELS(408), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(429), 0, PIXELS(221), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(696), 0, PIXELS(113), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(170), 0, PIXELS(168), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(308), 0, PIXELS(511), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(397), 0, PIXELS(418), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(542), 0, PIXELS(269), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(421), 0, PIXELS(117), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(295), 0, PIXELS(210), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { 0x11f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_FLOATING_LIGHT, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(742), 0, PIXELS(310), FACING_EAST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -2385,13 +2388,13 @@ struct SceneEvent gSolSanctumElementalStarRoom_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgSolSanctumSaturosBringTheFinalStar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MENARDI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMenardi) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ALEX, CONDITION_ALWAYS, MSGNO(MsgSolSanctumAlexOnlyOneLeft) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_KradenStopsPartyLeaving) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
-    { SEARCH(SEARCH_UNNAMED), 2, FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED, EVENT_SCRIPT(Event_BagVenusStar) },
-    { SEARCH(SEARCH_UNNAMED), 3, FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED, EVENT_SCRIPT(Event_BagMercuryStar) },
-    { SEARCH(SEARCH_UNNAMED), 4, FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, EVENT_SCRIPT(Event_BagJupiterStarAndMeetSaturos) },
-    { SEARCH(SEARCH_UNNAMED), 5, FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, EVENT_SCRIPT(Event_TakeMarsStar) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), SOL_SANCTUM_STAR_ROOM_CELL_WAY_BACK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_KradenStopsPartyLeaving) },
+    { TOUCH_WALKING_INTO(FACING_EAST), SOL_SANCTUM_STAR_ROOM_CELL_JUMP_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAhead) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), SOL_SANCTUM_STAR_ROOM_CELL_JUMP_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAhead) },
+    { SEARCH(SEARCH_UNNAMED), SOL_SANCTUM_STAR_ROOM_CELL_VENUS_PEDESTAL, FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED, EVENT_SCRIPT(Event_BagVenusStar) },
+    { SEARCH(SEARCH_UNNAMED), SOL_SANCTUM_STAR_ROOM_CELL_MERCURY_PEDESTAL, FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED, EVENT_SCRIPT(Event_BagMercuryStar) },
+    { SEARCH(SEARCH_UNNAMED), SOL_SANCTUM_STAR_ROOM_CELL_JUPITER_PEDESTAL, FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, EVENT_SCRIPT(Event_BagJupiterStarAndMeetSaturos) },
+    { SEARCH(SEARCH_UNNAMED), SOL_SANCTUM_STAR_ROOM_CELL_MARS_PEDESTAL, FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, EVENT_SCRIPT(Event_TakeMarsStar) },
     { SCENE_EVENTS_END },
 };
 

@@ -61,6 +61,20 @@
 /// (SceneId_ValeInteriorsInn), and VALE_GATE_DEBUG_STORY_FLAGS sets a preset
 /// of story flags and takes VALE_GATE_TO_BILIBIN
 /// (ValeGate_SetProgressFlagsAndExit).
+///
+/// The hut's owner (ACTOR_HUT_OWNER) is never seen by day after the prologue:
+/// ValeGate_Initialize hides the storm's Jenna by number without testing
+/// FLAG_VALE_STORM, and by day that number is his (a BUG, fixed by BUGFIX).
+///
+/// Open questions:
+/// - XXX: what ACTOR_STORM_ROCK_SPOT, the invisible actor on the small rock's
+///   spot, is for, since nothing reads it after the setup; a recording of
+///   Event_BoyLiftsSmallRock with the actor drawn would show whether it is
+///   the rock's shadow or a block in the path.
+/// - XXX: whether the exit row of cell code 11 (VALE_GATE_TO_GOMA_CAVE_STREAM)
+///   lies on any cell of the map; the map's collision codes would settle it.
+/// - XXX (picture): the Psynergy displays, a villager's sprite cycling its
+///   palettes while sparks rise and fall about him.
 
 #include "game_state.h"
 #include "flags.h"
@@ -200,7 +214,10 @@ enum ValeGateDayActor {
   ACTOR_WOMAN_RECALLING_STORM,
   /// The hut's owner, an old man with a cane, who back from Kalay finds "a big
   /// hole in my roof". "Since food is stored in this hut, it isn't scary at
-  /// all..."
+  /// all..." Once the prologue is over, ValeGate_Initialize hides him by day
+  /// as if he were the storm's ACTOR_STORM_JENNA (a BUG), so only a debug jump
+  /// past the prologue shows him; the renders show him by the hut with no
+  /// story flags set and gone once the party has left.
   /// ★ Named from the game: "Since food is stored in this hut"
   /// (MsgValeFoodStoredForWinter)
   ACTOR_HUT_OWNER = ACTOR_FIRST_PLACED + 18
@@ -251,8 +268,7 @@ enum ValeGateStormActor {
   /// boy who lifts it (its render)
   ACTOR_STORM_SMALL_ROCK,
   /// An invisible actor on ACTOR_STORM_SMALL_ROCK's spot at three fifths of its
-  /// size. XXX: nothing here moves or reads it after the setup; what it marks
-  /// or blocks would say what it is for.
+  /// size, which nothing moves or reads after the setup (an open question).
   ACTOR_STORM_ROCK_SPOT,
   /// Rested at the Psynergy Stone, the strongman vale_storm.c calls
   /// ACTOR_EXHAUSTED_STRONGMAN. "Great! I'm all charged up!"
@@ -635,7 +651,10 @@ static void Event_AskAboutJourney(void) {
 /// after the party has left, the old man whose hut it is points out the large
 /// stone, and the camera looks at it.
 ///
-/// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale.
+/// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale; in a
+/// play-through ValeGate_Initialize has hidden him by then (a BUG), so only
+/// the debug menus, setting FLAG_PARTY_LEFT_VALE without the prologue's flags,
+/// reach it.
 static void Event_TalkAboutFallenStone(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_HUT_OWNER, ANIM_STAND);
@@ -993,9 +1012,16 @@ s32 ValeGate_Initialize(void) {
           Engine_ActorSetSpriteFlags(actor, 0);
         }
       }
-      // XXX: by day these numbers are ACTOR_HUT_OWNER and a strongman out of
-      // sight; whether the flag is still set then would say if he is hidden.
+      // BUG: the test is meant for the stormy night, but the flag stays set,
+      // and by day these numbers are ACTOR_HUT_OWNER and a strongman already
+      // out of sight: the hut's owner is hidden from the prologue's end until
+      // Kalay, and his talk and Event_TalkAboutFallenStone never play.
+#ifdef BUGFIX
+      if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0 &&
+          Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
+#else
       if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
+#endif
         Engine_ActorSetPosition(ACTOR_STORM_JENNA, 0, 0);
         Engine_ActorSetPosition(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0, 0);
       }
@@ -1908,7 +1934,8 @@ static void ValeGate_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames) {
   Engine_EventWait(frames);
 }
 
-/// Flashes the caster's palette and emits paired effects every sixteen frames.
+/// A villager calling up Psynergy: palette 7 for two frames in four, and a
+/// pair of sparks every 16 frames.
 static void ValeGate_FlashPsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(actor, 7);
@@ -1920,7 +1947,8 @@ static void ValeGate_FlashPsynergyPalette(struct FieldActor *actor) {
   }
 }
 
-/// Cycles six palette banks and emits the caster's paired effects.
+/// A villager using Psynergy: palettes 0 to 5 in turn, and a pair of sparks
+/// every 16 frames.
 static void
 ValeGate_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
@@ -1932,7 +1960,7 @@ ValeGate_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycles the levitated actor through six palette banks.
+/// Cycles the lifted rock through palettes 0 to 5, a step every second frame.
 static void ValeGate_CyclePsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 palette = Math_RemainderUnsigned(gFrameCount >> 1, 6);
@@ -1942,7 +1970,8 @@ static void ValeGate_CyclePsynergyPalette(struct FieldActor *actor) {
 
 #include "common/effect_vertical.h"
 
-/// Creates the two vertical Psynergy effects using the shared sprite tiles.
+/// Spawns a pair of Psynergy sparks, one rising and one falling
+/// (common/effect_vertical.h).
 static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;

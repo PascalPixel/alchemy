@@ -420,7 +420,69 @@ enum SpriteId {
   SPRITE_MUSCULAR_MAN_WITH_TOPKNOT = 0xaa,
   /// ★ Named from what the player sees: a man in a green cap and a green and
   /// yellow robe, carrying a pack on his back (spr_171.png)
-  SPRITE_MAN_CARRYING_A_PACK = 0xab
+  SPRITE_MAN_CARRYING_A_PACK = 0xab,
+
+  // The world map's pictures of places and what it shows between them.
+
+  /// ★ Named from what the player sees: houses with orange roofs among trees
+  /// (spr_261.png)
+  SPRITE_WORLD_MAP_VILLAGE = 0x105,
+  /// ★ Named from what the player sees: white and blue buildings inside a wall
+  /// (spr_263.png)
+  SPRITE_WORLD_MAP_TOWN = 0x107,
+  /// ★ Named from what the player sees: houses built into great tree stumps
+  /// (spr_264.png)
+  SPRITE_WORLD_MAP_STUMP_VILLAGE = 0x108,
+  /// ★ Named from what the player sees: houses under snow among snowy trees
+  /// (spr_265.png)
+  SPRITE_WORLD_MAP_SNOWY_VILLAGE = 0x109,
+  /// ★ Named from what the player sees: buildings with blue roofs among trees
+  /// (spr_266.png)
+  SPRITE_WORLD_MAP_BLUE_ROOFED_TOWN = 0x10a,
+  /// ★ Named from what the player sees: a temple with a blue roof by a
+  /// waterfall (spr_267.png)
+  SPRITE_WORLD_MAP_TEMPLE = 0x10b,
+  /// ★ Named from what the player sees: a grey rock arch over a cave mouth
+  /// (spr_268.png)
+  SPRITE_WORLD_MAP_CAVE = 0x10c,
+  /// ★ Named from what the player sees: a tall blue-green tower, where Mercury
+  /// Lighthouse's exit is (spr_269.png)
+  SPRITE_WORLD_MAP_MERCURY_LIGHTHOUSE = 0x10d,
+  /// ★ Named from what the player sees: a wooden barricade (spr_270.png)
+  SPRITE_WORLD_MAP_BARRICADE = 0x10e,
+  /// ★ Named from what the player sees: a snow-capped mountain (spr_271.png)
+  SPRITE_WORLD_MAP_MOUNTAIN = 0x10f,
+  /// ★ Named from what the player sees: a pink and white tower, where Babi
+  /// Lighthouse's road begins (spr_272.png)
+  SPRITE_WORLD_MAP_BABI_LIGHTHOUSE = 0x110,
+  /// ★ Named from what the player sees: a wooden signpost on a green pole
+  /// (spr_274.png)
+  SPRITE_WORLD_MAP_SIGNPOST = 0x112,
+  /// ★ Named from what the player sees: a clump of tall green trees
+  /// (spr_275.png)
+  SPRITE_WORLD_MAP_FOREST = 0x113,
+  /// ★ Named from what the player sees: a tall purple and white tower, where
+  /// Venus Lighthouse stands (spr_276.png)
+  SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE = 0x114,
+  /// ★ Named from what the player sees: a pier with a boat moored at it
+  /// (spr_277.png)
+  SPRITE_WORLD_MAP_DOCK = 0x115,
+  /// A bridge over a river: whole in its first animation, broken in its
+  /// second.
+  /// ★ Named from what the player sees: a bridge, whole and then broken
+  /// (spr_278.png)
+  SPRITE_WORLD_MAP_BRIDGE = 0x116,
+  /// ★ Named from what the player sees: a grey gatehouse between green walls
+  /// (spr_279.png)
+  SPRITE_WORLD_MAP_GATEHOUSE = 0x117,
+  /// ★ Named from what the player sees: a white whirlwind (spr_289.png)
+  SPRITE_WHIRLWIND = 0x121,
+  /// ★ Named from what the player sees: the wreck of a ship lying in the water
+  /// (spr_501.png)
+  SPRITE_SHIPWRECK = 0x1f5,
+  /// ★ Named from what the player sees: an island of green hills around a
+  /// mountain (spr_504.png)
+  SPRITE_WORLD_MAP_ISLAND = 0x1f8
 };
 
 #endif

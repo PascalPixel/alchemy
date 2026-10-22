@@ -1,74 +1,124 @@
 # Field
 
-![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
+![The field's loop. The party walks, and every frame the game checks the ground under the leader and the buttons. When something comes up (a doorway, a random battle, the A button, the menu, Psynergy or an item), walking stops, the game handles one thing at a time until nothing is left, and walking resumes. Leaving the scene, through a doorway or into a battle, is always handled first and ends the loop.](https://alchemy.pascalpixel.com/illustrations/field/scene-loop.svg)
 
-The field engine runs whatever the player walks around in: a town, a dungeon
-or the world map. It keeps the 64 field objects and runs a script on each of
-them every frame, draws their sprites, turns the direction pad into steps,
-loads and scrolls the layered maps, draws the world map in perspective, and
-answers how high the ground is at a point and whether an object may stand
-there. It decides nothing about a place. [Field objects](../object/README.md)
-runs a field scene on the engine, each place's overlay in
-[Scenes](../scene/README.md) supplies the events, and [Maps](../map/README.md)
-holds the map data the engine loads. [World](../../world.md) gives the layer
-as a whole.
+While the party walks around a town, a dungeon or the world map, the game
+asks once a frame whether something should happen. Has the leader stepped
+into a doorway? Has a random battle started? Has the player pressed A beside
+someone, or opened the menu? When something has, the walking stops, the game
+deals with that one thing, and the walking starts again. Nearly everything
+that happens outside a battle passes through that loop.
 
-## Object scripts
+Under the loop is the field engine, the code in this folder. It keeps track
+of everything that moves (the party, the townspeople, the camera, even
+footprints), moves each of them a little every frame, decides whether the
+ground ahead can be walked on, and draws the map: a town as three flat layers,
+or the world map tilted into perspective. It decides nothing about any one
+place. The loop itself is in [Field objects](../object/README.md), each
+place's events come from its overlay in [Scenes](../scene/README.md), and the
+maps are in [Maps](../map/README.md). [World](../../world.md) gives the whole
+layer in brief.
 
-Every field object in use runs a script of 32-bit command words once a
-frame, even if only the idle one, and that is how the camera, the actors and
-the player's control all act.
+## The walk and what interrupts it
 
-```mermaid
-flowchart TD
-    start["Object_UpdateAllThumb:<br/>the next object with a script"] --> hook["call its hook, if it has one"]
-    hook --> paused{{"paused?"}}
-    paused -->|yes| next["next object"]
-    paused -->|no| wait{{"wait is not zero?"}}
-    wait -->|yes| count["count the wait down"] --> move
-    wait -->|no| word{{"command word above 63?"}}
-    word -->|yes| skip["step over it: a label"] --> word
-    word -->|no| run["run gScriptObject_CommandTable[word]"]
-    run -->|returns 1| word
-    run -->|returns 0| move["move the object, unless frozen"]
-    move --> next
-```
+A field scene switches between two states: walking, when the player has
+control and the game watches for anything that should interrupt, and
+handling, when the player has none and the game works through whatever came
+up, one thing at a time.
 
-The camera, an actor wandering near its home and a footprint waiting to
-disappear are scripts, and so is the leader: the player's control is a
-script command run once a frame.
+Three kinds of thing can interrupt the walk:
 
-`Object_UpdateAllThumb` (`field/object_motion.c`) runs the scripts. For each
-object with a script it first calls the object's hook, if it has one, even
-when the object is paused. A paused object does nothing else that frame.
-Otherwise, if the object's wait is not zero, the update counts it down; if it
-is zero, the update runs commands until one yields. A command word is an index
-into `gScriptObject_CommandTable`, whose entry takes the object and returns 1
-or 0:
+- The ground the leader steps onto: a doorway, a spot that starts an event, a
+  ledge to jump down, or ground that adds to the count towards a random
+  battle until one starts.
+- The buttons: A to talk to someone or search something ahead (with nothing
+  there, A opens the menu), the menu button, Start, and the two shortcut
+  buttons, which use the Psynergy or item the player assigned to them.
+- A script that is already running, which can ask for an event or a battle of
+  its own.
 
-- 1 means the command has finished and moved the cursor past its operands, and
-  the next command runs in the same frame. Tests, jumps, flags and work-value
-  arithmetic return 1, so a script branches without spending a frame.
-- 0 ends the object's frame. A command that waits for something returns 0
-  without moving the cursor until it is satisfied: `SC_SYNC` waits until the
-  object reaches its target, or until a solid object has blocked it for 60
-  frames. `SC_WAIT(n)` moves past itself, sets the wait to n - 1, since the
-  current frame counts as the first, and returns 0.
+Each of these raises a flag of its own, a request. The game handles the
+requests in a fixed order, and leaving comes first: once a doorway or a
+battle has been asked for, the scene ends before anything raised with it is
+looked at. After each request the game starts again from the top of the list,
+and when no flag is left the player gets control back.
+
+That is why a cutscene is written as one script that runs from start to end.
+When the leader steps on a spot that starts one, the walking stops, the
+script plays to its last line while the party waits, and only then does the
+walking resume. Whatever has to keep moving during the cutscene (someone
+walking across the screen, the camera) moves on its own, as an object script
+(below).
+
+A random battle is handled as a way out of the scene. The game remembers
+where everyone stood, loads the battle as if it were the next scene, and
+afterwards loads the field scene again with everyone put back.
+
+In the code, `Field_RunScene` ([`object/run_scene.c`](../object/object/run_scene.c))
+runs one scene. Its inner loop is the walk: it waits a frame and calls
+`Field_ProcessStep`, which checks the ground under the leader, until
+`Field_CountRequests` finds a request. The leader's control script reads the
+buttons through `Field_CheckConfiguredKeys`. The requests are fields of
+`struct FieldWork`; [Field objects](../object/README.md#the-scene-loop-handles-requests-not-events)
+lists all twelve in the order they are handled and goes through each one. An
+exit is `Field_RunScene`'s result, which `Game_Run` passes to `Scene_TakeExit`
+to load the next scene.
+
+## Everything that moves runs a script
+
+Everything on the field that moves or changes by itself is a field object,
+and each one runs a small script of steps.
+
+![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
+
+The field objects are the party, the people and things a scene places, the
+camera, even the footprints the leader leaves, and there are 64 slots for
+them. Every frame each object takes a turn: it runs its steps in order until
+one says to wait, which ends its turn until a later frame. A step that only
+tests something or jumps to another part of the script takes no time, so a
+script can make a decision within a single frame.
+
+The player's control is itself one of these steps. The leader's script is
+"move by the pad, wait a frame, repeat"; the camera's is "follow the leader,
+wait a frame, repeat"; a footprint's is "wait 120 frames, disappear". The
+leader leaves a footprint every 18 frames of walking or 12 of running, on the
+maps that show them.
+
+### How a script runs
+
+A script is a list of 32-bit words: each step is a command word, followed by
+the values it needs. The commands are the `SC_` macros of
+[`objcmd.h`](../../include/objcmd.h). `Object_UpdateAllThumb`
+(`field/object_motion.c`) gives every object with a script its turn. It first
+calls the object's hook, if it has one, even when the object is paused; a
+paused object does nothing else that frame. Otherwise, if the object is still
+waiting, the update counts its wait down; if not, the update runs commands
+until one yields. A command word is an index into
+`gScriptObject_CommandTable`, whose entry takes the object and returns 1 or
+0:
+
+- 1 means the command has finished and moved past its values, and the next
+  command runs in the same frame. Tests, jumps, flags and arithmetic return
+  1, so a script branches without spending a frame.
+- 0 ends the object's turn. A command that waits for something returns 0
+  without moving on until it is satisfied: `SC_SYNC` waits until the object
+  reaches its target, or until a solid object has blocked it for 60 frames.
+  `SC_WAIT(n)` moves past itself, sets the wait to n - 1, since the current
+  frame counts as the first, and returns 0.
 
 A word above 63 is not a command, and the update steps over it. That is what
-lets a label sit in the stream: `SC_LABEL(n)` is a word with its top bit set
-and n in bits 16 up. A jump's operand, `SC_TO(n)`, is the same word with bit
-30 also set. `Script_FindLabel` clears bit 30 and searches the first 1,024
-words for the result, so it finds the label rather than the jump's own
-operand, and the script continues after the label. A label it cannot find,
-and `SC_TOP` (0), restart the script.
+lets a label sit in the list: `SC_LABEL(n)` is a word with its top bit set and
+n in bits 16 up. A jump's target, `SC_TO(n)`, is the same word with bit 30
+also set. `Script_FindLabel` clears bit 30 and searches the first 1,024 words
+for the result, so it finds the label rather than the jump's own target, and
+the script continues after the label. A label it cannot find, and `SC_TOP`
+(0), restart the script.
 
 `SC_END` does not free the object: it points the script at
 `gScript_MainScript`, a lone `SC_END`, so the object idles until something
-gives it another script. `SC_FREE` frees the slot. A footprint is the whole
-lifetime in two words: the player's control creates an object of
-`FIELD_SPRITE_FOOTPRINT` every 18 frames of walking or 12 of running and
-starts it on `gWorldMap_FootprintActions`, `SC_WAIT(120), SC_FREE`.
+gives it another script. `SC_FREE` frees the slot. A footprint is an object of
+`FIELD_SPRITE_FOOTPRINT` that the player's control starts on
+`gWorldMap_FootprintActions`, `SC_WAIT(120), SC_FREE`.
 
 The scripts the engine starts by itself (`object_script.c`) each repeat one
 command: the command, `SC_WAIT(1)`, `SC_LOOP(SC_FOREVER, SC_TOP)`. Most
@@ -78,50 +128,54 @@ and `SC_B54_ON` are at the top of `field/object_motion.c`, and the controls
 `field/player_control.c`.
 
 After the scripts, the same loop moves each object that isn't frozen: free
-flight in 3D towards its target, following the terrain, floating, and solid
+flight in 3D towards its target, following the ground, floating, and solid
 objects refusing to overlap. In a battle, `Object_UpdateAllMotion` replaces
 it; it moves the first 14 objects and runs no scripts.
 
 The objects are the 64 slots of `gObjectSlots`, 112 bytes each, in the heap
-block `HEAP_SLOT_OBJECT_POOL`; the commands are the macros of
-[`objcmd.h`](../../include/objcmd.h), and the handlers are the rows of
+block `HEAP_SLOT_OBJECT_POOL`, and the handlers are the rows of
 `gScriptObject_CommandTable` (`object_script.c`).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `FIELD_OBJECT_COUNT` | 64 | field objects, the slots of `gObjectSlots` |
-| `SC_WAIT(n)` | `0x00`, n | end the frame and wait n frames |
+| `SC_WAIT(n)` | `0x00`, n | end the turn and wait n frames |
 | `SC_SYNC` | `0x01` | wait until the object reaches its target |
+| `SC_CAMERA` | `0x0b` | follow the leader |
 | `SC_LOOP(n, to)` | `0x0c`, n, to | jump to label `to` n - 1 times, so what lies between runs n times |
 | `SC_END` | `0x10` | return to `gScript_MainScript` and idle |
-| `SC_PLAYER` | `0x18` | the player's control on a layered map |
+| `SC_PLAYER` | `0x18` | the player's control on a town or dungeon map |
 | `SC_KEYS` | `0x19` | move 8 pixels a step by the direction pad |
 | `SC_WORLD` | `0x1a` | the player's control on the world map |
 | `SC_FREE` | `0x1b` | free the object's slot |
-| `SC_KEY_COUNT` | `0x23` | check the configured keys; the last command |
+| `SC_KEY_COUNT` | `0x23` | check the configured buttons; the last command |
 | `SC_LABEL(n)` | `0x80000000 \| n << 16` | a label: a word the update steps over |
-| `SC_TO(n)` | `0xc0000000 \| n << 16` | a jump's operand naming label n |
+| `SC_TO(n)` | `0xc0000000 \| n << 16` | a jump's target, naming label n |
 | `SC_TOP` | 0 | the script's start |
 | `SC_FOREVER` | `0xffff` | an `SC_LOOP` count that never runs out |
 
 ## Sprites and their animation
 
-A sprite is an image composed from up to four layers, each playing its own
-animation script, and redrawn into video memory whenever one of their frames
-changes.
+What the player sees of an object is its sprite, built from up to four
+pictures laid over each other, each playing its own animation.
 
 ![Isaac attacking in a battle, the screen on the left and his sprite taken apart on the right. Its three layers are each composed alone: `entries[0]`, sprite 300, his body; `entries[1]`, sprite 320, his sword; and `entries[2]`, sprite 510, a dark ellipse along the bottom of its 64 by 64 picture. Beside them is the buffer composed from all three, read back from video memory: the ellipse under his feet, the body over it and the sword over the body. As he winds up, swings and lands, the body's and the sword's frame numbers change together, from 1 to 5 standing, then 13, 15 and 17 for the swing, 7 and 9 as he lands, while the ellipse stays at frame 0.](https://alchemy.pascalpixel.com/guides/field/sprite-layers.gif)
 
+The game redraws a sprite whenever one of its layers changes frame. In a
+battle, Isaac's body, his sword and the shadow under his feet are three layers
+of one sprite, and as he swings, the body and the sword change frame together.
+
 Each layer of a sprite plays an animation script of byte pairs. A first byte
-below `ANIMATION_COMMAND_END` (239) is a frame to show and the second byte how long.
-The layer's timer counts sixteenths of a frame and loses
+below `ANIMATION_COMMAND_END` (239) is a frame to show and the second byte how
+long. The layer's timer counts sixteenths of a frame and loses
 `AnimationEntry.step` each frame, `ANIMATION_NORMAL_STEP` (16) at normal
 speed, so a layer can be made to play slower or faster. From 239 up, the
 first byte is a command (`enum AnimationCommand` in `field_internal.h`):
-`ANIMATION_COMMAND_END`, `ANIMATION_COMMAND_SET_KIND` (choose a facing table), `ANIMATION_COMMAND_HOLD`,
-`ANIMATION_COMMAND_WAIT`, `ANIMATION_COMMAND_JUMP`, `ANIMATION_COMMAND_PLAY` (switch animation) and
-`ANIMATION_COMMAND_BLANK`. The drawing code skips 242 to 244, 246 to 250 and 252 as
-unused, and shows 251 as an ordinary frame.
+`ANIMATION_COMMAND_END`, `ANIMATION_COMMAND_SET_KIND` (choose a facing
+table), `ANIMATION_COMMAND_HOLD`, `ANIMATION_COMMAND_WAIT`,
+`ANIMATION_COMMAND_JUMP`, `ANIMATION_COMMAND_PLAY` (switch animation) and
+`ANIMATION_COMMAND_BLANK`. The drawing code skips 242 to 244, 246 to 250 and
+252 as unused, and shows 251 as an ordinary frame.
 
 When any layer's frame changes, `Sprite_ComposeAnimationFrame` redraws the
 sprite: it decodes each layer's frame into one pixel buffer in priority order,
@@ -132,18 +186,19 @@ pixels through a 256-byte table: one of the five
 The first remap table also recolours the command icons
 (`Runtime_RemapBytesByTable`).
 
-A battle unit's sprite shows how layers combine. `BattleObject_SpawnObjectsForList`
-(`../battle/battle/objects.c`) gives Isaac's sprite three layers: his body
-(`BattleObj.resource`) and his weapon (`BattleObj.overlay`) at priority 1, and
-the 64 by 64 sprite 510 (`BattleObj.effect`) at priority 0. The two at priority
-1 are drawn in layer order, so the weapon lies over the body; the layer at
-priority 0 is drawn first, so its ellipse lies under his feet. The body and the
-weapon play scripts with the same frame numbers, so each change of pose
-changes both and redraws the whole buffer. In the picture each layer is drawn
-alone by the game's own `Sprite_ComposeAnimationFrame`: as it is called for
-Isaac's sprite, the other layers' priority is raised past 3 and every layer's
-`step` set to 0, so the scripts stand still while it composes, and the buffer
-is read back from video memory before the machine is put back as it was.
+Isaac's battle sprite shows how the layers combine.
+`BattleObject_SpawnObjectsForList` (`../battle/battle/objects.c`) gives it
+three layers: his body (`BattleObj.resource`) and his weapon
+(`BattleObj.overlay`) at priority 1, and the 64 by 64 sprite 510
+(`BattleObj.effect`) at priority 0. The two at priority 1 are drawn in layer
+order, so the weapon lies over the body; the layer at priority 0 is drawn
+first, so its shadow lies under his feet. The body and the weapon play scripts
+with the same frame numbers, so each change of pose changes both and redraws
+the whole buffer. In the picture each layer is drawn alone by the game's own
+`Sprite_ComposeAnimationFrame`: as it is called for Isaac's sprite, the other
+layers' priority is raised past 3 and every layer's `step` set to 0, so the
+scripts stand still while it composes, and the buffer is read back from video
+memory before the machine is put back as it was.
 
 A sprite is a `struct AnimationObject`, and each of its layers a
 `struct AnimationEntry`; the colour tables are `gResourceSlot_ConversionTables`
@@ -162,28 +217,18 @@ and `gRuntime_ByteRemapTable` (`remap0.tsv` to `remap3.tsv`).
 | `ANIMATION_COMMAND_PLAY` | 254 | switch to animation `arg` |
 | `ANIMATION_COMMAND_BLANK` | 255 | show nothing for `arg` |
 
-## Cameras and the frame
+## Objects move first, then the camera draws them
 
-The object system runs as two tasks, the object update and a camera, and
-the camera places every object's sprite on the screen once the objects have
-moved.
+Every frame, all the objects move first, and then the camera works out where
+each one appears on the screen and what it is in front of or behind. Because
+that order never changes, each sprite is drawn where its object has just
+moved to.
 
-```mermaid
-sequenceDiagram
-    participant W as WaitFrames
-    participant S as Scheduler_RunPass
-    participant U as Object update (order 0xc8a)
-    participant C as Camera (order 0xc80)
-    participant R as Render_BuildOamList
-    W->>S: once a frame
-    S->>U: run the scripts and move the objects
-    S->>C: place each sprite, queued by depth
-    W->>R: build the sprite list from the queue
-```
-
-`ObjectSystem_Initialize` sets the engine up for one mode and schedules two
-tasks: the object update at order 0xc8a and a camera at 0xc80. The scheduler
-runs higher orders first, so objects move before the camera places them.
+The two steps are two tasks of the scheduler, the list of jobs the game runs
+once a frame. `ObjectSystem_Initialize` sets the engine up for one kind of
+map and schedules both: the object update at order 0xc8a and a camera at
+0xc80. The scheduler runs higher orders first, so objects move before the
+camera places them.
 
 | Mode | Started by | Object update | Camera |
 | --- | --- | --- | --- |
@@ -191,43 +236,48 @@ runs higher orders first, so objects move before the camera places them.
 | `MODE_WORLD_MAP` (3) | the field scene runner | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCameraFixed`, which projects 3D points onto the screen |
 | `MODE_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_UpdateCameraFixed` |
 
-The camera places each object's sprite and queues it by depth; the frame's
-sprite list is built from that queue. The battle effects, the Psynergy
-effects and the menus place their own sprites through the same routine,
-`Object_ApplyProjectedPlacementFar`. While the item, Psynergy, Status, Djinn
-or debug menu is open, `ObjectSystemWork.suspended` is set, so sprites that
-are not held are not drawn and give up their video memory.
+The camera places each object's sprite and queues it by depth, and the
+frame's sprite list is built from that queue. The battle effects, the
+Psynergy effects and the menus place their own sprites through the same
+routine, `Object_ApplyProjectedPlacementFar`. While the item, Psynergy,
+Status, Djinn or debug menu is open, `ObjectSystemWork.suspended` is set, so
+sprites that are not held are not drawn and give up their video memory.
 
-## Player control
+## Walking and running
 
-The player moves the leader through one of the engine's scripts, which sets
-the leader's speed from the keys and probes the ground ahead before each
-step.
+Before each step the leader takes, the game tests the ground ahead, and
+against a wall it tries other directions so the leader slides along it.
 
 ![Isaac in Vale walks right into the wall beside the Sanctum, then up and right along it, the screen at twice its size beside a box around his feet magnified six times. Every point `Map_CheckObjectStep` tested for him that frame is marked, green where the ground was open and red where it was not, with a line to it from his feet, and the heading the step took in yellow. Walking freely he makes five probes, 8 pixels the way the pad points and 22.5 and 45 degrees either side, all open; against the wall the pad's way fails and up to 14 probes fan out round him, the first heading whose five probes all pass sliding him along the wall.](https://alchemy.pascalpixel.com/guides/field/player-probes.gif)
 
+The leader walks at one pixel a frame, and runs at one and a half while a
+dash button is held. Before each step the game tests the ground 8 pixels
+ahead. If the leader is walking into a wall, it tries directions further and
+further to either side, and takes the first one that is open, so the leader
+slides along the wall instead of stopping dead.
+
 When the scene loop gives control back to the player, it starts one of the
-engine's scripts on the leader: `SC_PLAYER` on a layered map, `SC_WORLD` on
-the world map, `SC_KEYS` (8-pixel steps by the pad) while climbing, or only
-`SC_KEY_COUNT`, which checks the configured keys, while the party is carried
-through the air.
+engine's scripts on the leader: `SC_PLAYER` on a town or dungeon map,
+`SC_WORLD` on the world map, `SC_KEYS` (8-pixel steps by the pad) while
+climbing, or only `SC_KEY_COUNT`, which checks the configured buttons, while
+the party is carried through the air.
 
 Each control sets the leader's `speedLimit` and `acceleration` from the
-speeds named at the top of `field/player_control.c`. On a layered map,
-`FieldObject_UpdatePlayerControl` walks at `FIELD_WALK_SPEED` (1 pixel a
-frame) and runs at `FIELD_RUN_SPEED` (1.5) while a dash key is held, gaining
-`FIELD_ACCELERATION` (a quarter pixel) a frame. With `FLAG_FAST_WALK` set,
-holding B moves at `FIELD_FAST_WALK_SPEED` (4); no ☀️ code sets that flag. On
-the world map, `Object_MoveOnWorldMap` walks at `WORLD_MAP_WALK_SPEED` (half a
-pixel a frame) and runs at `WORLD_MAP_RUN_SPEED` (1), and L raises the limit
-to `WORLD_MAP_FAST_SPEED` (4) while it repeats.
+speeds named at the top of `field/player_control.c`. On a town or dungeon
+map, `FieldObject_UpdatePlayerControl` walks at `FIELD_WALK_SPEED` (1 pixel a
+frame) and runs at `FIELD_RUN_SPEED` (1.5) while a dash button is held,
+gaining `FIELD_ACCELERATION` (a quarter pixel) a frame. With `FLAG_FAST_WALK`
+set, holding B moves at `FIELD_FAST_WALK_SPEED` (4); no ☀️ code sets that
+flag. On the world map, `Object_MoveOnWorldMap` walks at
+`WORLD_MAP_WALK_SPEED` (half a pixel a frame) and runs at
+`WORLD_MAP_RUN_SPEED` (1), and L raises the limit to `WORLD_MAP_FAST_SPEED`
+(4) while it repeats.
 
-Before each step the control probes ahead with the ground checks below. On a
-layered map it tries 8 pixels the way the pad points and the headings 22.5
-and 45 degrees either side, then headings up to 67.5 degrees off, so a leader
-pushed into a wall slides along it. On the world map the probe reaches
-`WORLD_MAP_PROBE_RADIUS`. The edition block at the top of
-`field/player_control.c` chooses what differs:
+Before each step the control tests the ground ahead with the checks below. On
+a town or dungeon map it tries 8 pixels the way the pad points and the
+headings 22.5 and 45 degrees either side, then headings up to 67.5 degrees
+off. On the world map the test reaches `WORLD_MAP_PROBE_RADIUS`. The edition
+block at the top of `field/player_control.c` chooses what differs:
 
 | | Japanese | English on |
 | --- | --- | --- |
@@ -238,17 +288,18 @@ R raises `FIELD_EVENT_WORLD_MAP_PICTURE`, which opens [the world map
 screen](../object/README.md#the-world-map-screen), and L
 `FIELD_EVENT_WORLD_MAP_ZOOM`, which zooms the view out.
 
-Speeds are 16.16 fixed-point pixels a frame.
+Speeds are 16.16 fixed-point pixels a frame: the top 16 bits are whole
+pixels and the low 16 bits a fraction, so `0x10000` is one pixel.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame |
-| `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash key held |
+| `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash button held |
 | `FIELD_ACCELERATION` | `0x4000` | a quarter pixel a frame faster each frame |
 | `FIELD_FAST_WALK_SPEED` | `0x40000` | 4 pixels a frame, B held with `FLAG_FAST_WALK` |
 | `FIELD_FAST_WALK_ACCELERATION` | `0x10000` | 1 pixel a frame faster each frame |
 | `WORLD_MAP_WALK_SPEED` | `0x8000` | half a pixel a frame |
-| `WORLD_MAP_RUN_SPEED` | `0x10000` | 1 pixel a frame, with a dash key held |
+| `WORLD_MAP_RUN_SPEED` | `0x10000` | 1 pixel a frame, with a dash button held |
 | `WORLD_MAP_ACCELERATION` | `0x4000` | a quarter pixel a frame faster each frame, walking |
 | `WORLD_MAP_RUN_ACCELERATION` | `0x14000` | 1.25 pixels a frame faster each frame, running |
 | `WORLD_MAP_FAST_SPEED` | `0x40000` | 4 pixels a frame, while L repeats |
@@ -256,39 +307,28 @@ Speeds are 16.16 fixed-point pixels a frame.
 | `FIELD_EVENT_WORLD_MAP_PICTURE` | -888 | R on the world map: the world map screen |
 | `FIELD_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: zoom the view out |
 
-## The ground under an object
+## How high a step can go
 
-The engine answers how high the ground is at a point, and whether an object
-may step there, from the cell under the point in the map layer the object
-follows.
+Every spot on a map has a height. The leader can step up onto ground at most
+8 pixels higher, or down onto ground at most 12 pixels lower; anything
+steeper blocks the way as surely as a wall. Most of the game's walls are made
+this way, by height, rather than by marking a spot as a wall: Goma Cave has no
+wall marks at all, only ridges of ground 32 pixels high at the foot of each
+cliff. [Maps](../map/README.md#cells) draws the rule from the side.
 
-```mermaid
-flowchart TD
-    probe["Map_CheckObjectStep(object, point)"] --> map{{"a map loaded?"}}
-    map -->|no| open["MAP_STEP_OPEN"]
-    map -->|yes| cell["the cell under the point,<br/>in the layer terrainId names"]
-    cell --> wall{{"MAP_CELL_WALL?"}}
-    wall -->|yes| w["MAP_STEP_WALL"]
-    wall -->|no| height["the shape's height function<br/>gives the ground there"]
-    height --> high{{"more than 8 pixels up?"}}
-    high -->|yes| h["MAP_STEP_TOO_HIGH"]
-    high -->|no| low{{"more than 12 pixels down?"}}
-    low -->|yes| l["MAP_STEP_TOO_LOW"]
-    low -->|no| open
-```
+A map is a grid of 16-pixel squares, its cells, and each cell has a shape
+that gives the height of every point in it. An object's `terrainId` names the
+map layer whose ground it follows. Code that asks about the ground at a point
+reads the cell there in that layer and looks up its shape: the low four bits
+of the shape's first byte pick one of `TERRAIN_KIND_COUNT` (16) functions in
+`gMap_TerrainHeightFunctions`, which works the height out from the shape's
+three height samples (`Map_GetTerrainHeight`). Walls and heights can
+therefore differ from one layer to the next.
 
-An object's `terrainId` names the map layer whose ground it follows. Code
-that asks about the ground at a point reads the cell there in that layer's
-window and looks up its shape: the low four bits of the shape's first byte
-pick one of `TERRAIN_KIND_COUNT` (16) functions in
-`gMap_TerrainHeightFunctions`, which interpolates the shape's three height
-samples (`Map_GetTerrainHeight`). Walls and heights can therefore differ
-from one layer to the next.
-
-`Map_CheckObjectStep` (`field/terrain.c`) decides each probe:
-`MAP_STEP_WALL` for a `MAP_CELL_WALL` cell, `MAP_STEP_TOO_HIGH` for ground
-more than 8 pixels above the object's, `MAP_STEP_TOO_LOW` for ground more
-than 12 pixels below, and `MAP_STEP_OPEN` otherwise. On the world map,
+`Map_CheckObjectStep` (`field/terrain.c`) decides each test: `MAP_STEP_WALL`
+for a cell marked `MAP_CELL_WALL`, `MAP_STEP_TOO_HIGH` for ground more than 8
+pixels above the object's, `MAP_STEP_TOO_LOW` for ground more than 12 pixels
+below, and `MAP_STEP_OPEN` otherwise. On the world map,
 `CheckWorldMapWalkable` asks `GetWorldMapCollision` instead, which reads a
 4-bit collision value from the world map's upper collision layer where it
 has one, else the lower.
@@ -305,28 +345,34 @@ describes.
 | `MAP_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
 | `MAP_STEP_WALL` | 2 | the cell there is a wall (`MAP_CELL_WALL`) |
 
-## Layered maps on screen
+## Towns and dungeons on screen
 
-A town or dungeon is drawn as three map layers on three backgrounds, whose
-hardware priorities put each layer in front of or behind the actors; the
-picture at the top of this page takes Vale apart into them.
+A town or dungeon is drawn as three flat layers stacked on top of each other,
+with the characters between them.
+
+![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
+
+The ground is at the back, then a middle layer, and in front an overhead
+layer of roofs and treetops. On most maps the characters are drawn between
+the middle and overhead layers, which is how Isaac can walk behind a roof.
 
 `Map_LoadLayeredScene` loads a map from its row of `gMap_LayeredScenes`;
 [Maps](../map/README.md) describes the data and where each part is decoded.
-The three map layers are drawn on three of the four backgrounds:
-`MAP_LAYER_GROUND` on `BG3`, `MAP_LAYER_MIDDLE` on `BG2` and
-`MAP_LAYER_OVERHEAD` on `BG1`. `BG0` is left for the windows.
+The console has four background layers, and the three map layers are drawn on
+three of them: `MAP_LAYER_GROUND` on `BG3`, `MAP_LAYER_MIDDLE` on `BG2` and
+`MAP_LAYER_OVERHEAD` on `BG1`. `BG0` is left for the windows, where messages
+and menus are drawn.
 
-Depth comes from the hardware's priorities, not from code. Each layer's
-priority comes from the map's header, and a lower number is drawn nearer the
-front. The field draws sprites at priority 2, and a sprite wins a tie with a
-background. Of the 182 maps, 101 give the layers 3, 2 and 1, so the ground is
-at the back, the middle layer under the actors and the overhead layer over
-them, as with the Sanctum's roof and the tree top in front of Isaac above.
-Another 49 give 3, 1 and 2, which puts the middle layer over the actors and
-the overhead layer under them, 15 give 3, 1 and 1, and the rest use other
-orders. A priority of 0 leaves the layer off; nine maps show only their
-ground.
+Which layer is in front comes from the console's priorities, not from code.
+Each layer's priority comes from the map's header, and a lower number is
+drawn nearer the front. The field draws sprites at priority 2, and a sprite
+wins a tie with a background. Of the 182 maps, 101 give the layers 3, 2 and 1,
+so the ground is at the back, the middle layer under the actors and the
+overhead layer over them, as with the Sanctum's roof and the tree top in front
+of Isaac above. Another 49 give 3, 1 and 2, which puts the middle layer over
+the actors and the overhead layer under them, 15 give 3, 1 and 1, and the rest
+use other orders. A priority of 0 leaves the layer off; nine maps show only
+their ground.
 
 Each layer scrolls by its own parallax and drift from the header, so a layer
 can move at its own rate as the view moves or drift while it stands still.
@@ -349,33 +395,36 @@ The maps are the rows of `gMap_LayeredScenes` (`layered.tsv`).
 | `MAP_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
 | `MAP_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
 
-## The world map view
+## The world map in perspective
 
-The world map is a flat map that the display tilts into perspective by
-giving every scanline of an affine background its own scale.
+The world map is a flat map, like a town's, that the console tilts so that it
+seems to stretch away towards the horizon.
 
-![The world map's screen above the ground as video memory holds it, laid flat: as the party walks south from Vale and then holds L to zoom out, a lit trapezoid on the flat ground shows every pixel some screen line reads, wider at the top of the screen than at the bottom, with five lines picked out in the same colours on both. Zoomed out, the lines spread apart and leave rows of the ground unread between them.](https://alchemy.pascalpixel.com/guides/field/world-map-footprint.gif)
+![Above, the world map's screen as Isaac leaves Vale, tilted into perspective, with five of its lines picked out in colour from the top of the screen to the bottom. Below, the same part of the world laid flat, with Vale and Vault marked. A trapezoid around Isaac shows the part of the flat map the screen reads: each coloured screen line reads the straight strip of the same colour. The lines near the top of the screen read strips that are farther away and wider, so the area read is a trapezoid, wide at the far end.](https://alchemy.pascalpixel.com/illustrations/field/world-map-footprint.svg)
 
-![The world map as the party first leaves Vale, at twice the GBA's size, beside each scanline's width scale drawn as a bar on its own line: the scale falls steadily from 0.61 on the top line to 0.44 on the bottom one, so a line near the top covers more of the map](https://alchemy.pascalpixel.com/guides/field/world-map-scanlines.png)
+It tilts the map one screen line at a time: each of the screen's 160 lines
+shows one straight strip of the flat map, and lines near the top show strips
+that are farther away and wider, squeezed to fit, so distant ground looks
+smaller. Together the strips cover a trapezoid of the flat map around the
+party.
 
-`BG2` and `BG3` are affine backgrounds, which the hardware scales and rotates
-as it draws, and the field gives every scanline its own scale, so a line
-higher on the screen covers more of the map than a line lower down.
+The console can scale and rotate two of its background layers as it draws
+them, `BG2` and `BG3`, and it reads their scale and position afresh for every
+line if the game changes them between lines. The field gives every line its
+own scale: as the party leaves Vale it falls steadily from 0.61 on the top
+line to 0.44 on the bottom one, so a line near the top covers more of the map.
 
 `WorldMap_BuildScanlineTable` gives each screen line a width scale and a
 ground distance, or zeros for a line above the horizon. It runs when the world
 map is set up and again only if the camera's pitch changes, which nothing in
 the game does, and at that one pitch every line meets the ground. Each frame
 `Transform_UpdateVertices`, an ARM routine run from RAM, turns them into a
-page of affine values. `MapAnimation_ApplyAffineFrame` sets the first line's
-values and starts a DMA that runs in each HBlank, the pause after a scanline
-is drawn, to feed the next line its own. There are two pages, and alternate
-frames use them.
-
-Each screen line reads one straight row of the flat ground, and its affine
-values set how wide that row is and where it lies. Together the 160 lines
-sample a trapezoid around the party; when the player holds L to zoom out, the
-lines spread so far apart that some rows of the ground are never drawn.
+page of values for the console. `MapAnimation_ApplyAffineFrame` sets the first
+line's values and starts a DMA, a copy the console makes by itself, that runs
+in each HBlank, the pause after a line is drawn, to feed the next line its
+own. There are two pages, and alternate frames use them. When the player
+holds L to zoom out, the lines spread so far apart that some rows of the
+ground are never drawn.
 
 The ground is unpacked a square at a time around the party
 (`Map_UpdateCurrentTileBlock`), and `Map_PreloadCurrentTileBlock` loads at
@@ -385,9 +434,9 @@ chooses between the two graphics sets of `gWorldMap_GraphicsResources` by the
 `WORLD_MAP_REGION_SNOWFIELD`.
 
 When a menu or event starts, `WorldMap_StartStillView` draws the current
-affine frame into ordinary 256-colour tiles on `BG1` with `TileMap_DrawRows`,
-an ARM routine run from RAM (through `TileMap_DrawRowsFromRam`), and switches
-the display to `DISPCNT_MODE_0`, in which no background is affine.
+frame into ordinary 256-colour tiles on `BG1` with `TileMap_DrawRows`, an ARM
+routine run from RAM (through `TileMap_DrawRowsFromRam`), and switches the
+display to `DISPCNT_MODE_0`, in which no background is scaled.
 `Map_LoadAreaGraphics` reloads the area's palette and tiles afterwards and
 returns to the moving view.
 

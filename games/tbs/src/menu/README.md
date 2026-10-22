@@ -10,7 +10,7 @@ explains how the field menu opens a screen, how the field is held still
 behind it, how Start closes a screen from any depth and how Psynergy and
 items meant for the field reach it; this page gives each screen's work and
 steps. The windows, messages and icons the screens are drawn with are in
-[Windows](../window/README.md), which also draws the row of four icons
+[Windows](../window/README.md), which also draws the row of command icons
 (`Menu_RunTopSelection` in `window/window/selection.c`). The counters that
 share the menu work are in [Shops](../shop/README.md).
 

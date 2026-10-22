@@ -86,13 +86,15 @@ language, and the code names each message by its linker symbol
 
 ## Field menu screens
 
-The field menu's row of four icons is drawn by `Menu_RunTopSelection` in the
-window code, which calls the chosen screen through the far-call table
+The field menu's row of icons is drawn by `Menu_RunTopSelection` in the
+window code. `Menu_SelectTopEntry` leaves out the Djinn icon while the party
+owns no Djinni, so the row has three icons until the first Djinni joins and
+four after. `Menu_RunTopSelection` which calls the chosen screen through the far-call table
 `system/far_call/MENU.S`: `PsynergyMenu_Run`, `DjinnMenu_Run`,
 `ItemMenu_Run` or `StatusMenu_Run`. Each screen is an ordinary function with
 its own command loop that waits a frame at a time, and a command may run a
 further loop inside it. When the player backs out, the screen returns and
-the four icons come up again.
+the icons come up again.
 
 All four screens work in one heap block, `HEAP_SLOT_MENU`
 (`MENU_WORK_SIZE`, 2,672 bytes), reached as `gMenuWork`. Each screen reads
@@ -127,7 +129,7 @@ cancelled, so the loops unwind one after another without any of them
 knowing how deep the player was, and the screen returns as if the player had
 backed out of it.
 
-![The player picks Isaac and his Cure on the Psynergy screen, presses Start, and the screen closes straight back to the four icons](https://alchemy.pascalpixel.com/guides/menu/menu-start.gif)
+![The player picks Isaac and his Cure on the Psynergy screen, presses Start, and the screen closes straight back to the icons](https://alchemy.pascalpixel.com/guides/menu/menu-start.gif)
 
 The Djinn screen has no watch task: its choosers test Start themselves,
 play the same sound and return `DJINN_RESULT_START`, which ends the screen's

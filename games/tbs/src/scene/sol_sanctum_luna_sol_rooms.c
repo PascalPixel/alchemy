@@ -48,9 +48,7 @@
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights), is never reached.
 ///
 /// Open questions:
-/// - XXX: SE_107, SE_171, SE_187, SE_190, SE_201, SE_220 and SE_246, and
-///   MUS_017 and MUS_021, have no proven names; a recording of the trap, the
-///   lights flashing and the floor opening would settle them.
+/// - None.
 
 #include "game_state.h"
 #include "unit/scene/sol_sanctum_luna_sol_rooms.h"

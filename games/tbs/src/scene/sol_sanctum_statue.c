@@ -46,9 +46,6 @@
 /// - XXX (picture): what the three drifting rows of sprites
 ///   (graphics/sol_sanctum_statue/rows.png) are; a render of the room with the
 ///   rows outlined would show it.
-/// - XXX: SE_185, SE_186, SE_188, SE_189, SE_200, SE_246 and SE_289 have no
-///   proven names; a recording of a statue being pushed, a seal opening, a beam
-///   shining and the floor opening would settle them.
 
 #include "game_state.h"
 #include "version.h"

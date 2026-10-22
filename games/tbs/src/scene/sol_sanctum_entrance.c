@@ -45,9 +45,6 @@
 ///   back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH); likely cells that no
 ///   longer open the door, which walking north into it at that point would
 ///   settle.
-/// - XXX: SE_181, SE_182, SE_183 and SE_185 have no proven names; a recording
-///   of the door opening, a jewel being set and a statue being pushed would
-///   settle them.
 
 #include "game_state.h"
 #include "unit/field/field.h"

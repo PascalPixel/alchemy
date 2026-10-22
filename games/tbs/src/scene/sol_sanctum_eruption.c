@@ -33,9 +33,6 @@
 ///   settle it.
 /// - XXX (picture): what ACTOR_RISING_EFFECT, a blank actor scaled with each
 ///   departing actor, draws; a render of Alex rising away would show it.
-/// - XXX: MUS_017, MUS_023, MUS_063 and SE_107, SE_141, SE_144, SE_145,
-///   SE_190, SE_201, SE_214, SE_246, SE_289, SE_292 and SE_308 have no proven
-///   names; a recording of the scene would settle them.
 
 #include "script.h"
 #include "game_state.h"

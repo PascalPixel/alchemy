@@ -41,8 +41,6 @@
 ///   reader of actor 22 elsewhere in the engine would settle it.
 /// - XXX: what VAULT_CELL_PASSAGE_ALTERNATE and _USUAL switch between; a
 ///   render of the passage's cells with each collision would settle it.
-/// - XXX: SE_100, the bell's sound, is also the shop's repair sound
-///   (shop/repair.c); a recording of both would settle its name.
 
 #include "game_state.h"
 #include "animspr.h"

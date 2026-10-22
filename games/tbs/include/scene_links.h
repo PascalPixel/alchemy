@@ -2823,17 +2823,17 @@ enum {
 enum {
   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_MOUTH = 1,
   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
-  VAULT_CAVE_PASSAGE_NORTH_FROM_POOL_WEST = 3,
-  VAULT_CAVE_PASSAGE_NORTH_FROM_POOL_EAST = 4,
-  VAULT_CAVE_PASSAGE_POOL_FROM_NORTH_WEST =
+  VAULT_CAVE_PASSAGE_NORTH_FROM_WATER_ROOM_WEST = 3,
+  VAULT_CAVE_PASSAGE_NORTH_FROM_WATER_ROOM_EAST = 4,
+  VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST =
       5, ///< ★ Named from what the player sees: the room of water where the
          ///< switch stands (its render)
   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST = 6,
   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST = 7,
-  VAULT_CAVE_PASSAGE_POOL_FROM_CHEST =
+  VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST =
       8, ///< ★ Named from what the player sees: the room of water where the
          ///< switch stands (its render)
-  VAULT_CAVE_PASSAGE_CHEST_FROM_POOL =
+  VAULT_CAVE_PASSAGE_CHEST_FROM_WATER_ROOM =
       9, ///< ★ Named from what the player sees: the room holding the cave's one
          ///< chest (its render)
   VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT = 10,
@@ -2843,7 +2843,7 @@ enum {
   VAULT_CAVE_PASSAGE_CHEST_FROM_LADDER =
       12, ///< ★ Named from what the player sees: the room holding the cave's
           ///< one chest (its render)
-  VAULT_CAVE_PASSAGE_POOL_FROM_NORTH_EAST =
+  VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST =
       13, ///< ★ Named from what the player sees: the room of water where the
           ///< switch stands (its render)
 };
@@ -2851,19 +2851,19 @@ enum {
 enum {
   VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_MOUTH = 1,
   VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_NORTHWEST = 2,
-  VAULT_CAVE_PASSAGE_NORTH_TO_POOL_WEST =
+  VAULT_CAVE_PASSAGE_NORTH_TO_WATER_ROOM_WEST =
       3, ///< ★ Named from what the player sees: the room of water where the
          ///< switch stands (its render)
-  VAULT_CAVE_PASSAGE_NORTH_TO_POOL_EAST =
+  VAULT_CAVE_PASSAGE_NORTH_TO_WATER_ROOM_EAST =
       4, ///< ★ Named from what the player sees: the room of water where the
          ///< switch stands (its render)
-  VAULT_CAVE_PASSAGE_POOL_TO_NORTH_WEST = 5,
+  VAULT_CAVE_PASSAGE_WATER_ROOM_TO_NORTH_WEST = 5,
   VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_EAST = 6,
   VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_SOUTHEAST = 7,
-  VAULT_CAVE_PASSAGE_POOL_TO_CHEST =
+  VAULT_CAVE_PASSAGE_WATER_ROOM_TO_CHEST =
       8, ///< ★ Named from what the player sees: the room holding the cave's one
          ///< chest (its render)
-  VAULT_CAVE_PASSAGE_CHEST_TO_POOL =
+  VAULT_CAVE_PASSAGE_CHEST_TO_WATER_ROOM =
       9, ///< ★ Named from what the player sees: the room of water where the
          ///< switch stands (its render)
   VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT = 10,
@@ -2873,30 +2873,30 @@ enum {
   VAULT_CAVE_PASSAGE_CHEST_TO_LADDER =
       12, ///< ★ Named from what the player sees: the ladder down from Vault's
           ///< hidden passage (its render)
-  VAULT_CAVE_PASSAGE_POOL_TO_NORTH_EAST = 13,
+  VAULT_CAVE_PASSAGE_WATER_ROOM_TO_NORTH_EAST = 13,
 };
 
 /// SceneId_VaultCaveVambrace's entrances.
 enum {
   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH = 1,
   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH = 2,
-  VAULT_CAVE_VAMBRACE_NORTH_FROM_PUDDLES = 3,
+  VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM = 3,
   VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST = 4,
   VAULT_CAVE_VAMBRACE_WEST_FROM_NORTH = 5,
   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTHWEST = 6,
   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_SOUTH = 7,
-  VAULT_CAVE_VAMBRACE_PUDDLES_FROM_NORTH =
+  VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_NORTH =
       8, ///< ★ Named from what the player sees: the room of six puddles that
          ///< Frost freezes, under falling objects (its render)
-  VAULT_CAVE_VAMBRACE_PUDDLES_FROM_SOUTH =
+  VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_SOUTH =
       9, ///< ★ Named from what the player sees: the room of six puddles that
          ///< Frost freezes, under falling objects (its render)
   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH = 10,
-  VAULT_CAVE_VAMBRACE_SOUTH_FROM_PUDDLES = 11,
-  VAULT_CAVE_VAMBRACE_CHEST_FROM_PUDDLES =
+  VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM = 11,
+  VAULT_CAVE_VAMBRACE_CHEST_FROM_FROST_ROOM =
       13, ///< ★ Named from what the player sees: the room behind the bush
           ///< holding the Vambrace chest (its render)
-  VAULT_CAVE_VAMBRACE_PUDDLES_FROM_CHEST =
+  VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST =
       14, ///< ★ Named from what the player sees: the room of six puddles that
           ///< Frost freezes, under falling objects (its render)
 };
@@ -2904,23 +2904,23 @@ enum {
 enum {
   VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_NORTH = 1,
   VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_NORTH = 2,
-  VAULT_CAVE_VAMBRACE_NORTH_TO_PUDDLES =
+  VAULT_CAVE_VAMBRACE_NORTH_TO_FROST_ROOM =
       3, ///< ★ Named from what the player sees: the room of six puddles that
          ///< Frost freezes, under falling objects (its render)
   VAULT_CAVE_VAMBRACE_NORTH_TO_WEST = 4,
   VAULT_CAVE_VAMBRACE_WEST_TO_NORTH = 5,
   VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTHWEST = 6,
   VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_SOUTH = 7,
-  VAULT_CAVE_VAMBRACE_PUDDLES_TO_NORTH = 8,
-  VAULT_CAVE_VAMBRACE_PUDDLES_TO_SOUTH = 9,
+  VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_NORTH = 8,
+  VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_SOUTH = 9,
   VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_SOUTH = 10,
-  VAULT_CAVE_VAMBRACE_SOUTH_TO_PUDDLES =
+  VAULT_CAVE_VAMBRACE_SOUTH_TO_FROST_ROOM =
       11, ///< ★ Named from what the player sees: the room of six puddles that
           ///< Frost freezes, under falling objects (its render)
-  VAULT_CAVE_VAMBRACE_PUDDLES_TO_CHEST =
+  VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_CHEST =
       13, ///< ★ Named from what the player sees: the room behind the bush
           ///< holding the Vambrace chest (its render)
-  VAULT_CAVE_VAMBRACE_CHEST_TO_PUDDLES =
+  VAULT_CAVE_VAMBRACE_CHEST_TO_FROST_ROOM =
       14, ///< ★ Named from what the player sees: the room of six puddles that
           ///< Frost freezes, under falling objects (its render)
 };

@@ -1,69 +1,54 @@
 /// @file
 /// Sol Sanctum (SceneId_SolSanctumStatue), the room of what Kraden calls the
-/// statue puzzle.
+/// statue puzzle, off the Luna and Sol rooms (SceneId_SolSanctumLunaSolRooms)
+/// and leading on to a room with a Psynergy Stone
+/// (SceneId_SolSanctumPsynergyStone).
 ///
-/// Isaac, Garet and Jenna have come into the sanctum with Kraden, the sage
-/// who teaches in Vale, looking for the hidden passage that two strangers,
-/// Saturos and Menardi, spoke of. Kraden has found the Luna and Sol rooms
-/// (SceneId_SolSanctumLunaSolRooms) and waits there, sending the party to look
-/// farther up the passage; this room opens off them
-/// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to
-/// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE), and
-/// SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE leads into a room with a
-/// Psynergy Stone (SceneId_SolSanctumPsynergyStone).
+/// Eight winged statues stand around a ninth, the centre statue, which bears a
+/// sun disc. Four can be pushed, or moved with Move, onto seals in the floor;
+/// two others, pushed in front of the centre statue, shine a beam at it; the
+/// last two never move. Walking into a statue pushes it a cell
+/// (SolSanctumStatue_PushStatue), and Move ends in a check of where it stands.
+/// Each move's event row carries the flag of what it achieves (a seal open, a
+/// beam shining, the centre statue moved), so a statue stops answering once it
+/// has done its part, and SolSanctumStatue_Initialize redraws the room from
+/// those story flags on every entry.
 ///
-/// Eight statues stand here around a ninth in the centre. Four can be pushed,
-/// or moved with Move, onto seals in the floor; two others, pushed in front
-/// of the centre statue, shine a beam at it; the last two never move. Each
-/// statue answers both ways: walking into it pushes it a cell
-/// (SolSanctumStatue_PushStatue), and Move ends in a check of where it
-/// stands. Every move's event row carries the flag of what it achieves (a
-/// seal open, a beam shining, the centre statue moved), so a statue stops
-/// answering once it has done its part; SolSanctumStatue_Initialize redraws
-/// the room from those story flags on every entry, statues in their places
-/// and seals and beams drawn in.
-///
-/// The puzzle is a trap, and the room's logic follows it in story order:
+/// The puzzle is a trap, and the room follows the story flags in order:
 /// - Until the centre statue has moved (FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED),
-///   the scene cuts away when a seal first opens (SolSanctumStatue_OpenSeal):
-///   SolSanctumStatue_SelectStoryExit takes
-///   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED to the
-///   Luna and Sol rooms, where the quarter of the pictures the seal lights
-///   flashes and lights fall through the Luna room around Kraden
-///   (FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) and he cries `Stop!!! You're
-///   about to make a big mistake!` He runs here after the party
-///   (SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED) to
-///   warn that moving one statue springs the sanctum's trap, set by someone who
-///   hid something very important here, perhaps the key to Alchemy, and that
-///   the light must be the key to the secret
-///   (SolSanctumStatue_ExplainStatuePuzzle, once,
-///   FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED). After that a seal opened too
-///   soon closes again: its statue slides back and the leader jumps clear.
-/// - The beams are the way through. With both shining, the floor before the
-///   centre statue opens (SolSanctumStatue_OpenCentralHole), and the centre
-///   statue, moved south with Move, slides into the hole and the room shakes:
-///   `Something clicked!` (Event_CenterStatueMoved).
-/// - From then on the seals stay open. The first one opened cuts away by
-///   SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED: in the
-///   Luna and Sol rooms the quarter it lights only flashes, and Kraden runs off
-///   to see what Isaac has found
-///   (FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING), and he comes here
-///   (SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED) to find
-///   the hole. Garet and Jenna tell him how it opened; he decides that the
-///   statue puzzle was the trap and the centre statue there to disarm it, and
-///   goes back to watch from the Luna room
-///   (SolSanctumStatue_ExplainTrapDisarmed, once,
-///   FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED). Once all four seals are open,
-///   the picture of Luna in the Luna and Sol rooms has changed to Sol, and
-///   the way on is found there.
+///   the first seal opened cuts away to the Luna and Sol rooms, where the trap
+///   is sprung
+///   (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED,
+///   FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN). Kraden then comes here to explain
+///   that moving one statue springs the sanctum's trap
+///   (SolSanctumStatue_ExplainStatuePuzzle,
+///   FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED), and from then on a seal opened
+///   too soon closes again: its statue slides back and the leader jumps clear.
+/// - With both beams shining, the floor before the centre statue opens
+///   (SolSanctumStatue_OpenCentralHole), and the centre statue, moved south
+///   with Move, drops into it (Event_CenterStatueMoved).
+/// - From then on the seals stay open. The first one opened cuts away to the
+///   Luna and Sol rooms with the trap disarmed
+///   (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED), and
+///   Kraden comes here to find the hole (SolSanctumStatue_ExplainTrapDisarmed,
+///   FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED). Once all four seals are open
+///   (FLAG_SOL_SANCTUM_ALL_SEALS_OPEN), the way on is found in the Luna and Sol
+///   rooms.
 ///
-/// Both of Kraden's visits are scripted scenes that hold Jenna and Garet in
-/// place beside the leader, then walk them back into the party; any other
-/// arrival hides them. Retreat does not work here, a callback draws three
-/// rows of sprites that drift sideways at different speeds
-/// (SolSanctumStatue_UpdateScrollingSprites), and once Mt. Aleph has erupted
-/// (FLAG_SOL_SANCTUM_ERUPTED) the room rumbles and shakes gently, as the rest
-/// of the sanctum does.
+/// Both of Kraden's visits hold Jenna and Garet in place beside the leader,
+/// then walk them back into the party; any other arrival hides them. Retreat
+/// does not work here, a callback draws three rows of sprites that drift
+/// sideways at different speeds (SolSanctumStatue_UpdateScrollingSprites), and
+/// once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED) the room rumbles and
+/// shakes, as the rest of the sanctum does.
+///
+/// Open questions:
+/// - XXX (picture): what the three drifting rows of sprites
+///   (graphics/sol_sanctum_statue/rows.png) are; a render of the room with the
+///   rows outlined would show it.
+/// - XXX: SE_185, SE_186, SE_188, SE_189, SE_200, SE_246 and SE_289 have no
+///   proven names; a recording of a statue being pushed, a seal opening, a beam
+///   shining and the floor opening would settle them.
 
 #include "game_state.h"
 #include "version.h"
@@ -101,9 +86,17 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
+/// Set once Kraden has found the hole and explained the disarmed trap.
+/// ★ Named from the game: "So the statue puzzle was the trap..."
+/// (MsgSolSanctumKradenYouFoundIt)
 #define FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED 0x30a
+/// Set once Kraden has explained the statue puzzle's trap.
+/// ★ Named from the game: "But if you just move one statue, you'll be caught
+/// in the sanctum's trap." (MsgSolSanctumWait)
 #define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED 0x30b
 
+// The third patch draws the back row of drifting sprites 6 pixels below the
+// other two rather than 8.
 #if TBS_PATCH_3
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
 #else
@@ -499,7 +492,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(10);
@@ -508,10 +501,10 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
   Engine_EventWait(40);
   // Kraden: "This is a most interesting mechanism you've found, Isaac."
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(JENNA, 3);
+  Engine_ActorSetAnimation(JENNA, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(40);
   // Kraden: "But this is clearly... some kind of trap." All three start.
@@ -525,7 +518,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_SayThenWait(GARET, 6);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
   Engine_EventWait(40);
@@ -543,7 +536,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Camera_MoveTo(PIXELS(288), -1, PIXELS(171), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(80);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
+  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Engine_EventWait(20);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
@@ -563,13 +556,13 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   // Kraden: they are looking in the right place, but moving one statue
   // springs the trap. Jenna: why would anyone put a trap here?
   Event_SayThenWait(ACTOR_KRADEN, 6);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 20);
   Engine_ActorShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Event_SayThenWait(JENNA, 6);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Engine_EventWait(40);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
@@ -581,7 +574,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceEachOther(GARET, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(40);
@@ -607,7 +600,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_EventWait(60);
   Event_SayThenWait(GARET, 6);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   Engine_EventWait(20);
@@ -626,7 +619,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(30);
   Event_SayThenWait(ACTOR_KRADEN, 6);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Camera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 574, 323);
   Engine_ActorSetPosition(ACTOR_KRADEN, 0, 0);
@@ -640,10 +633,10 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   // Jenna: "let's see if we can't figure this out ourselves."
   Event_SayThenWait(JENNA, 6);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
-  Engine_ActorSetAnimation(JENNA, 2);
+  Engine_ActorSetAnimation(JENNA, ANIM_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Engine_ActorSetDestination(JENNA, leader->x.part.pixel,
@@ -945,7 +938,9 @@ s32 SolSanctumStatue_Initialize(void) {
   return 0;
 }
 
-/// Loads three graphic strips and initializes their scrolling sprite rows.
+/// Loads the three strips of graphics and fills in a row of sprites for each:
+/// 32 by 8 pixels (attributes 0 and 1, 0x40004000: the wide shape, size 1),
+/// at the lowest priority (3), in palettes 10, 13 and 0.
 static void SolSanctumStatue_InitializeScrollingSprites(void) {
   u32 column;
   s32 tile;
@@ -1189,7 +1184,7 @@ static void Event_PushCenterStatueNorth(void) {
       Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       Object_GetById(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
       movingActor = Object_GetById(ACTOR_PARTY_LEADER);
       Actor_SetDestination(ACTOR_PARTY_LEADER, movingActor->x.part.pixel, 136);
       Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
@@ -1304,7 +1299,7 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   Actor_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Object_GetById(statueId)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Engine_ActorSetDestination(ACTOR_PARTY_LEADER, (leaderColumn << 4) + 8,
                              (leaderRow << 4) + 8);
   statueX = statueColumn << 4;
@@ -1732,25 +1727,25 @@ u32 gSolSanctumStatue_Exits[] = {
 struct ScenePlacement gSolSanctumStatue_Placements[] = {
     { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(488), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(664), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(488), 0, PIXELS(200), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(216), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(664), 0, PIXELS(200), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0xc9, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(360), 0, PIXELS(216), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0xca, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SUN_DISC_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(288), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xcc, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SUN_DISC, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(1608), 0, PIXELS(1608), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(560), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },

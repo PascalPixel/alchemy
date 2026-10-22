@@ -50,9 +50,10 @@
 /// - FLAG_SCENE_TEMP_44: the guards are marching the party down.
 ///
 /// Open questions:
-/// - XXX: where GATE_EXIT_THIRD, the gates' third road, would have led;
-///   gGateExits has no row for it, so a recording of the leader on
-///   TRIGGER_THIRD_ROAD would show what the engine does with it.
+/// - XXX (no evidence): where GATE_EXIT_THIRD, the gates' third road, was
+///   meant to lead; gGateExits has no row for it, so the engine's fallback
+///   sends it to LunpaFortressGroundFloor's default entrance, and nothing else
+///   in the ROM names a destination for it.
 
 #include "game_state.h"
 #include "version.h"

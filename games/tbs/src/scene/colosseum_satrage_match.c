@@ -41,14 +41,6 @@
 /// what it takes for a dream.
 ///
 /// Open questions:
-/// - XXX: what the four pieces in the lifts' sprite lying on the Board Walk
-///   (BOARD_WALK_FIRST_LIFT_PIECE) are; a render of the Board Walk would settle
-///   it.
-/// - XXX: which stage the three rolling logs (ROLLING_LOG_WEST and the two
-///   after it) belong to, and why only two of them roll; a render of their
-///   cells would settle the first.
-/// - XXX: whether anything sets FLAG_SCENE_TEMP_10, the condition of the
-///   arena's touch row; colosseum_azart_match.c asks the same.
 /// - XXX (picture): the shifting floor's lifts alternating their routes every
 ///   COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES, with the cells they copy.
 
@@ -194,7 +186,11 @@ enum ColosseumSatrageMatchActor {
   /// ColosseumSatrageMatch_Initialize stands them west to east, at columns 73,
   /// 76 and 79, until they have been moved.
   MINI_MAZE_FIRST_PILLAR,
-  ROLLING_LOG_WEST = MINI_MAZE_FIRST_PILLAR + 3, ///< the Board Walk's logs
+  /// The Board Walk's three logs, in the room of its stone pillars
+  /// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/map-1.png):
+  /// the western and eastern logs roll, and the center one never does
+  /// (ColosseumSatrageMatch_UnusedRollCenterLogNorth).
+  ROLLING_LOG_WEST = MINI_MAZE_FIRST_PILLAR + 3,
   ROLLING_LOG_EAST,
   ROLLING_LOG_CENTER,
   FORCE_TARGET,
@@ -207,11 +203,14 @@ enum ColosseumSatrageMatchActor {
   /// lifts' operator runs.
   COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT,
   COLOSSEUM_SATRAGE_MATCH_LAST_LIFT = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 3,
-  /// Four pieces in the lifts' sprite, lying on the Board Walk; nothing but
+  /// Four platforms in the lifts' sprite laid across the water channel at the
+  /// Board Walk's south edge, drawn underfoot; nothing but
   /// ColosseumSatrageMatch_Initialize touches them.
-  BOARD_WALK_FIRST_LIFT_PIECE,
+  /// ★ Named from what the player sees: four white platforms across a water
+  /// channel (its render)
+  BOARD_WALK_FIRST_PLATFORM,
   /// Knocked down onto the Board Walk by Force on FORCE_TARGET.
-  FALLING_OBSTACLE = BOARD_WALK_FIRST_LIFT_PIECE + 4,
+  FALLING_OBSTACLE = BOARD_WALK_FIRST_PLATFORM + 4,
   /// "The operator of the lifts", as the shifting floor stage's attendant
   /// calls him: a young man with fair hair.
   LIFT_OPERATOR,
@@ -800,8 +799,8 @@ static void Event_HaltLifts(void) {
 /// Reaching Colosseum Final 2's arena: the leader takes a prize (the Chain Mail
 /// if first, the Cotton Shirt if second), and he and Satrage face off and
 /// fight; the battle's group follows who took the mail.
-/// The arena's touch row waits on FLAG_SCENE_TEMP_10 being clear, and nothing
-/// here sets it.
+/// The arena's touch row waits on FLAG_SCENE_TEMP_10 being clear, which
+/// nothing in the game sets (colosseum_azart_match.c's Event_ReachArena).
 static void Event_ReachArena(void) {
   s32 rivalFinishedFirst;
   s32 refreshCount;
@@ -833,8 +832,8 @@ static void Event_ReachArena(void) {
   Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 112, 256);
   Engine_ActorWalkToAndWait(OPPONENT, 96, 0x100);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
-  Engine_ActorSetAnimation(OPPONENT, 9);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LUNGE);
+  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
    * unfolded; as 3 - rivalFinishedFirst, which shares r5's 3 with
@@ -875,10 +874,10 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
 #endif
   if (result < 0) {
-    Engine_ActorSetAnimation(OPPONENT, 10);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_ARMS_RAISED);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
   } else {
-    Engine_ActorSetAnimation(OPPONENT, 8);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_DEFEATED);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   Engine_TaskWait(1);
@@ -908,7 +907,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   Map_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   Map_CopyCellAttributes(48, 10, 5, 6, 120, 10);
-  for (obstacleId = BOARD_WALK_FIRST_LIFT_PIECE; obstacleId <= FALLING_OBSTACLE;
+  for (obstacleId = BOARD_WALK_FIRST_PLATFORM; obstacleId <= FALLING_OBSTACLE;
        obstacleId++) {
     actor = Object_GetById(obstacleId);
     Object_SetMode(actor, 4);
@@ -1018,7 +1017,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
                                TASK_PRIORITY_SCENE + 5);
     Scheduler_SetTaskFlags(ColosseumSatrageMatch_UpdateLifts, 1);
   }
-  Engine_ActorSetAnimation(OPPONENT, 9);
+  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
   gGameState.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(PRIZE_B, ITEM_COTTON_SHIRT);
   Colosso_ShowItemIcon(PRIZE_A, ITEM_CHAIN_MAIL);
@@ -1329,7 +1328,7 @@ static void Event_TalkToWallAttendant(s32 attendant) {
     Camera_SetSpeed(0x4000, 0x800);
     Camera_MoveTo(PIXELS(536), -1, PIXELS(160), 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x400000,
                              actor->z.fixed);

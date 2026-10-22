@@ -46,9 +46,6 @@
 ///   Douse and FLAG_SCENE_TEMP_04 its puddle frozen.
 ///
 /// Open questions:
-/// - XXX: what TunnelRuinsGreatStatue's fifteenth actor is, in sprite 0x114 at
-///   (232, 248), drawn at three fifths of its size with no collision and named
-///   by no event; a render of its room would show it.
 /// - XXX (picture): the balance platforms taken apart, each carved stone's
 ///   weight beside the heights gTunnelRuins_BalanceHeights gives the two
 ///   platforms.
@@ -222,7 +219,9 @@ static void TunnelRuins_MarkPushPillarCells(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Refreshes the actor presentation after its shrink script finishes.
+/// Turns off the shadow of the Venus Lighthouse model once
+/// gTunnelRuins_ShrinkScript has shrunk it
+/// (https://alchemy.pascalpixel.com/places/tunnel-ruins-great-statue/map-1.png).
 static s32
 TunnelRuins_RefreshActorAfterShrinking(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -2080,8 +2079,11 @@ struct ScenePlacement gTunnelRuinsGreatStatuePlacements[] = {
      TALK_KEEP_FACING, 0},
     {SPRITE_PUDDLE, 0, ACTOR_STAND, PIXELS(728), 0, PIXELS(184), FACING_NORTH,
      TALK_KEEP_FACING, 0},
-    {0x114, 0, (s32)gTunnelRuins_ShrinkScript, PIXELS(232), 0, PIXELS(248),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
+    // A model of Venus Lighthouse on the floor before the Great Statue: the
+    // world map's tower, at three fifths of its size, with no collision
+    // and no shadow.
+    {SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, 0, (s32)gTunnelRuins_ShrinkScript,
+     PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };
 

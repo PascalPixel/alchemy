@@ -54,14 +54,7 @@
 ///   leads ashore to Tolbi Docks (SceneId_TolbiDocks).
 ///
 /// Open questions:
-/// - XXX: what SEA_LANDING_SPOT, a blank actor (SPRITE_BLANK) that grows where
-///   the monster drops onto the deck, shows: likely its shadow, because it
-///   grows before the monster falls onto it; a recording of
-///   TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK would settle it.
-/// - XXX: what SE_146, SE_147, SE_149, SE_181 and SE_240 sound like; hearing
-///   each where a cutscene plays it would name it in songs.h.
-/// - XXX (picture): the oars: the four stroke oars and the eight at the sides
-///   that copy them, labelled by seat, while the ship is rowed.
+/// - None.
 
 #include "script.h"
 #include "flags.h"
@@ -173,7 +166,9 @@ enum TolbiShipDeckActor {
   /// render)
   ACTOR_FIRST_STROKE_OAR = ACTOR_FIRST_PLACED,
   /// The eight oars at the ship's sides: four at x 132, then four at x 300,
-  /// which are drawn mirrored (SPRITE_OAR).
+  /// which are drawn mirrored (SPRITE_OAR). The rowing deck's map shows them
+  /// out while the ship is rowed
+  /// (https://alchemy.pascalpixel.com/places/tolbi-ship-deck_tolbi-ship-rowing/map-0.png).
   /// ★ Named from what the player sees: an oar dipping into the water (its
   /// render)
   ACTOR_FIRST_OAR = ACTOR_FIRST_STROKE_OAR + 4,
@@ -246,9 +241,11 @@ enum TolbiShipDeckActor {
   /// other, as gTolbiShipInteriors_ThirdAttackMonsters places them, which go
   /// below; the last drops onto the deck.
   SEA_THIRD_ATTACK_MONSTER = SEA_FIRST_LEAPING_MONSTER + 4,
-  /// A sprite that grows from a tenth of its size where the last of them drops.
-  /// XXX: likely its shadow, because it grows before the monster falls onto it.
-  SEA_LANDING_SPOT = SEA_THIRD_ATTACK_MONSTER + 3,
+  /// The falling monster's shadow, standing in for its own while it drops: a
+  /// blank sprite (SPRITE_BLANK) draws only its shadow, which grows from a
+  /// tenth of its size where the monster will land and goes the moment the
+  /// monster lands and its own shadow is switched on.
+  SEA_FALLING_MONSTER_SHADOW = SEA_THIRD_ATTACK_MONSTER + 3,
   /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_KRAKEN and at anchor
   /// (gTolbiShipDeck_KrakenPlacements, after Garet, Ivan and Mia in their own
   /// slots): the Kraken, which the party charges; at anchor the same rows
@@ -1805,28 +1802,30 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(80);
   Engine_AudioPlayCue(SE_147);
-  monster = Object_GetById(SEA_LANDING_SPOT);
-  monster->scaleX = 0x1999;
-  monster->scaleY = 0x1999;
+  // The shadow grows where the monster will land, then it drops from 80
+  // pixels up.
+  monster = Object_GetById(SEA_FALLING_MONSTER_SHADOW);
+  monster->scaleX = Q16_ONE / 10;
+  monster->scaleY = Q16_ONE / 10;
   monster->x.fixed = PIXELS(194);
   monster->z.fixed = PIXELS(642);
   for (frame = 0; (u32)frame < 16; frame++) {
-    monster->scaleX += 0xf5c;
-    monster->scaleY += 0xf5c;
+    monster->scaleX += 3 * Q16_ONE / 50;
+    monster->scaleY += 3 * Q16_ONE / 50;
     Engine_TaskWait(1);
   }
   monster = Object_GetById(SEA_THIRD_ATTACK_MONSTER + 2);
-  monster->scaleX = 0x11999;
-  monster->scaleY = 0x11999;
+  monster->scaleX = 11 * Q16_ONE / 10;
+  monster->scaleY = 11 * Q16_ONE / 10;
   monster->x.fixed = PIXELS(194);
   monster->y.fixed = PIXELS(80);
   monster->z.fixed = PIXELS(642);
   monster->facing = FACING_SOUTH + FACING_STEP;
-  monster->bounce = 0x6666;
+  monster->bounce = 2 * Q16_ONE / 5;
   monster->gravity = PIXELS(2);
   Engine_EventWait(80);
   Engine_AudioPlayCue(SE_147);
-  Engine_ActorSetPosition(SEA_LANDING_SPOT, 0, 0);
+  Engine_ActorSetPosition(SEA_FALLING_MONSTER_SHADOW, 0, 0);
   record = Object_GetById(SEA_THIRD_ATTACK_MONSTER + 2);
   Engine_ActorSetSpriteFlags(record, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);

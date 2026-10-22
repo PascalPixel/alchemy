@@ -52,13 +52,6 @@
 /// Isaac's friends tell him he was only dreaming of the finals.
 ///
 /// Open questions:
-/// - XXX: whether anything sets FLAG_SCENE_TEMP_10, the condition of the
-///   arena's touch row in all three finals stages; nothing in the overlays
-///   does, and a search of the main image's flag writes would settle whether
-///   the arena can ever be closed.
-/// - XXX: what the warriors' animations in the arena show (the leader's 16,
-///   28 and 35, the opponent's 8, 9 and 10); a recording of the arena before
-///   and after the battle would settle it.
 /// - XXX (picture): the race, the leader against the opponent's recorded path,
 ///   with the gauge that shows how near each is to the finish
 ///   (Colosso_StartRaceGauge).
@@ -554,8 +547,10 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
 /// Shield if first, the Padded Gloves if second), and he and Azart face off and
 /// fight; the battle's group follows who took the shield.
-/// The arena's touch row waits on FLAG_SCENE_TEMP_10 being clear, and nothing
-/// here sets it.
+/// The arena's touch row, in all three finals stages, waits on
+/// FLAG_SCENE_TEMP_10 being clear, and nothing in the game sets it: no scene
+/// code, no object script (none uses SC_FLAG_ON) and none of the main image's
+/// flag writers reaches it, so the arena is never closed.
 static void Event_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -586,8 +581,8 @@ static void Event_ReachArena(void) {
   Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
   Actor_WalkToAndWait(OPPONENT, 1312, 192);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
-  Engine_ActorSetAnimation(OPPONENT, 9);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LUNGE);
+  Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_FIGHTING_STANCE);
   Engine_EventWait(10);
   /* FAKEMATCH(temporary): base, set to 0 at the top, keeps the + 1 unfolded;
    * as 1 - approach, 1 of 106 instructions differ in tbs-en. */
@@ -636,10 +631,10 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
 #endif
   if (result < 0) {
-    Engine_ActorSetAnimation(OPPONENT, 10);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_ARMS_RAISED);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
   } else {
-    Engine_ActorSetAnimation(OPPONENT, 8);
+    Engine_ActorSetAnimation(OPPONENT, WARRIOR_ANIM_DEFEATED);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   Engine_TaskWait(1);

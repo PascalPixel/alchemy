@@ -22,19 +22,21 @@
 ///   Karagol. The snack vendor gives away his leftover corn, once
 ///   (FLAG_TOLBI_CORN_GIVEN).
 ///
-/// In every stage two children run a loop around the plaza
+/// In every stage two children run a small loop south-east of the fountain
 /// (gTolbiOlderBrotherRun, gTolbiYoungerSisterRun), each stopping when it runs
 /// up behind the other or finds the leader in its way (Tolbi_UpdateKid), and
-/// quarrel over their allowance. A visitor testing his luck stands at the
-/// gate of Tolbi Spring; once the party agrees to go first he steps aside for
-/// good (Tolbi_TalkToSpringVisitor, FLAG_TOLBI_SPRING_OPENED), and the gate
-/// (TOLBI_CELL_SPRING_GATE) leads into Tolbi Spring (TOLBI_TO_TOLBI_SPRING).
-/// Ember, a Mars Djinni, joins the party when spoken to. Growth raises a
-/// sprout and Frost freezes a puddle, each a scene flag kept only through a
-/// return that keeps the party's position; Reveal uncovers a chest with Power
-/// Bread, and a barrel and a jar hold 9 coins and a Lucky Medal (during the
-/// festival, the editions from TBS_PATCH_1 on find the jar only when the
-/// party faces north).
+/// quarrel over their allowance; the recording of talking to the brother
+/// shows them running it
+/// (https://alchemy.pascalpixel.com/places/tolbi/events/Tolbi_TalkToOlderBrother.gif).
+/// A visitor testing his luck stands at the gate of Tolbi Spring; once the
+/// party agrees to go first he steps aside for good (Tolbi_TalkToSpringVisitor,
+/// FLAG_TOLBI_SPRING_OPENED), and the gate (TOLBI_CELL_SPRING_GATE) leads into
+/// Tolbi Spring (TOLBI_TO_TOLBI_SPRING). Ember, a Mars Djinni, joins the party
+/// when spoken to. Growth raises a sprout and Frost freezes a puddle, each a
+/// scene flag kept only through a return that keeps the party's position;
+/// Reveal uncovers a chest with Power Bread, and a barrel and a jar hold 9
+/// coins and a Lucky Medal (during the festival, the editions from TBS_PATCH_1
+/// on find the jar only when the party faces north).
 ///
 /// The doors from TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_SANCTUM, whose cells carry
 /// their exits' numbers, lead into Tolbi's houses, inns and shops and into
@@ -46,17 +48,10 @@
 /// out onto the world map.
 ///
 /// Open questions:
-/// - XXX: what reads the event work's word at 0x1f4 (EVENT_WORK_1F4), which
-///   Tolbi_MeetSearchingSoldiers sets to the poster before the yes/no choice
-///   under the "Missing Person" window; tracing the window's side object
-///   (UiWindow_CreateWithSideObject) would settle it and give the field its
-///   name in struct EventWork.
 /// - XXX (no evidence): whether the four messages after
 ///   MsgTolbiSpringOhThereAreAlwaysScalpersAt (`The finals are about to
 ///   start.` and the rest) were the festival family's finals-day lines; no
 ///   row or code shows them, and the family repeats its festival lines.
-/// - XXX (picture): the children's loop around the plaza, each child's path
-///   drawn and the leader's cell where they stop.
 
 #include "unit/scene/tolbi.h"
 #include "djinn_ids.h"
@@ -138,7 +133,7 @@ static s32 Tolbi_KidStopForTarget(struct FieldActor *kid,
   return stopped;
 }
 
-// The update of the two children running around the plaza. Each stops when
+// The update of the two children running their loop. Each stops when
 // it runs up behind the other, and otherwise when the party leader is in its
 // way. While the party talks to someone or Mind Read shows thoughts (the range
 // widens to 26 pixels), the child being talked to stops whatever the
@@ -463,7 +458,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
-  // The two children run their loops around the plaza.
+  // The two children run their loop south-east of the fountain.
   Actor_SetPosition(TOLBI_OLDER_BROTHER, PIXELS(352), PIXELS(352));
   Actor_SetActionScript(TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
   actor = Object_GetById(TOLBI_OLDER_BROTHER);
@@ -596,12 +591,13 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Engine_EventWait(20);
 
   // "Have you seen anyone who looks like this?", under a "Missing Person"
-  // window showing the poster.
+  // window showing Babi's portrait. The poster, placed with Babi's sprite,
+  // becomes the speaker so that answering closes that portrait window.
   Event_OpenMessage(TOLBI_SOLDIER_A, 0);
   Engine_EventWait(25);
-  UiWindow_CreateWithSideObject(52, 0, 12, 7);
+  UiWindow_CreateWithSideObject(SPRITE_BABI, 0, 12, 7);
   UiText_OpenMessageWindow((firstMsg + 3), 11, 12, 2);
-  EVENT_WORK_1F4 = TOLBI_MISSING_PERSON_POSTER;
+  gEventWork->speaker = TOLBI_MISSING_PERSON_POSTER;
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
     Engine_EventWait(20);
@@ -687,7 +683,8 @@ s32 gTolbiMirroredActor[] = {
     SC_END,
 };
 
-/// The older brother runs a loop of eight points around the plaza.
+/// The older brother runs a loop of eight points, 32 pixels across, south-east
+/// of the fountain.
 s32 gTolbiOlderBrotherRun[] = {
     SC_ARG(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),

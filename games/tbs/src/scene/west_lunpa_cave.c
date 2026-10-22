@@ -38,8 +38,7 @@
 /// camera bounds, so Frost can never reach it (Event_UnusedFreezePuddle).
 ///
 /// Open questions:
-/// - XXX: whether WagonChoice_Run's gotos only force a layout; rewriting its
-///   questions as loops and comparing the bytes would settle it.
+/// - None.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -670,6 +669,11 @@ static void Reunion_Converse(void) {
 /// apology that he cannot wait, after which Mia asks whether the party will
 /// stay; a no to Mia's "You do want to go with them?" leaves Ivan confused and
 /// Garet asking again.
+///
+/// The gotos are the conversation's own shape, not a forced layout: two of
+/// them enter the middle of the other branch (a no to riding joins the
+/// nothing-left check, and Mia's question joins Bunza's), which structured
+/// C could only write by repeating those questions' calls.
 static void WagonChoice_Run(void) {
   s32 wagon;
   s32 insisted;

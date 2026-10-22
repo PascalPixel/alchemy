@@ -93,7 +93,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
   // A party member chooses in the menu.
   if (unit->classIndex != CLASS_INDEX_ENEMY)
     return;
-  if (retry != 0 && request->command != CMD_ABILITY)
+  if (retry != 0 && request->command != COMMAND_ABILITY)
     return;
 
   enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(unit->classId);
@@ -144,13 +144,13 @@ select_again:
   useItem = (*itemActionMask >> selection) & 1;
   useItem &= itemsAllowed;
   abilityId = enemy->actions[selection];
-  request->command = CMD_ABILITY;
+  request->command = COMMAND_ABILITY;
   if (useItem != 0 && retry != 0) {
     if (!(ITEM_ID_MASK & unit->inventory[0])) {
       useItem = 0;
       if (enemy->targetStrategy == STRATEGY_MOST_HP) {
-        request->command = CMD_ITEM;
-        // XXX: the parameter is the ability Can't Use, yet CMD_ITEM
+        request->command = COMMAND_ITEM;
+        // XXX: the parameter is the ability Can't Use, yet COMMAND_ITEM
         // reads its parameter as an inventory slot (BattleCommand_BuildPlan);
         // a Brigand or Rat Fighter (STRATEGY_MOST_HP, item places) out of
         // items would show what the player sees.
@@ -165,7 +165,7 @@ select_again:
       if (item->useType == ITEM_USE_CONSUMED) {
         itemAction = BattleActGet(item->actionId);
         abilityId = item->actionId;
-        request->command = CMD_ITEM;
+        request->command = COMMAND_ITEM;
         flags = itemAction->flags;
         request->parameter = 0;
         switch (flags) {
@@ -190,15 +190,15 @@ select_again:
     effect = ability->effect;
     switch (effect) {
     case ABILITY_EFFECT_DEFEND:
-      request->command = CMD_DEFEND;
+      request->command = COMMAND_DEFEND;
       request->target = Battle_FindTaggedSlotByValue(request->unitId);
       break;
     case ABILITY_EFFECT_TOTAL_DEFENSE:
-      request->command = CMD_DEFEND2;
+      request->command = COMMAND_DEFEND2;
       request->target = Battle_FindTaggedSlotByValue(request->unitId);
       break;
     case ABILITY_EFFECT_FLEE:
-      request->command = CMD_FLEE;
+      request->command = COMMAND_FLEE;
       request->target = Battle_FindTaggedSlotByValue(request->unitId);
       break;
     }
@@ -207,8 +207,8 @@ select_again:
     // the enemy's turn.
     if (retry == 0) {
       switch (request->command) {
-      case CMD_DEFEND:
-      case CMD_DEFEND2:
+      case COMMAND_DEFEND:
+      case COMMAND_DEFEND2:
         break;
       default:
         goto done;
@@ -217,8 +217,9 @@ select_again:
 
     // Psynergy: an enemy whose strategy is not STRATEGY_MOST_HP avoids it
     // without the PP, and with STRATEGY_RANDOM also while sealed.
-    if (request->command != CMD_ITEM && Ability_IsPsynergy(abilityId) != 0) {
-      request->command = CMD_PSYNERGY;
+    if (request->command != COMMAND_ITEM &&
+        Ability_IsPsynergy(abilityId) != 0) {
+      request->command = COMMAND_PSYNERGY;
       request->parameter = abilityId;
       if (ability->ppCost > unit->pp &&
           enemy->targetStrategy != STRATEGY_MOST_HP)
@@ -229,15 +230,15 @@ select_again:
     // A challenged enemy won't flee, and at its turn it no longer chooses a
     // guard (guards are settled as the round is built): both pick again.
     command = request->command;
-    if (command == CMD_FLEE && (u8)unit->challenge != 0)
+    if (command == COMMAND_FLEE && (u8)unit->challenge != 0)
       goto next_candidate;
-    if (retry != 0 && (command == CMD_DEFEND || command == CMD_DEFEND2))
+    if (retry != 0 && (command == COMMAND_DEFEND || command == COMMAND_DEFEND2))
       goto next_candidate;
 
-    if (command == CMD_ABILITY) {
+    if (command == COMMAND_ABILITY) {
       request->parameter = abilityId;
       if (abilityId == ABILITY_ATTACK)
-        request->command = CMD_ATTACK;
+        request->command = COMMAND_ATTACK;
     }
 
     // The target. With no one listed on the side (TARGET_PICK_SIDE_EMPTY) a
@@ -292,7 +293,7 @@ select_again:
 next_candidate:
   // On the 18th failed pick, defend.
   if (needsChoice != 0 && failedChoices > 16) {
-    request->command = CMD_DEFEND;
+    request->command = COMMAND_DEFEND;
     needsChoice = 0;
   }
   failedChoices++;

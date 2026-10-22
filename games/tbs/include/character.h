@@ -90,7 +90,7 @@ struct DjinnDefinition {
 /// BattleCommand_SelectAutomatic: with any strategy but STRATEGY_MOST_HP an
 /// enemy skips Psynergy it lacks the PP for, and with STRATEGY_RANDOM any
 /// Psynergy while sealed; with STRATEGY_MOST_HP, an enemy that picks an item
-/// place with no items left still commands CMD_ITEM.
+/// place with no items left still commands COMMAND_ITEM.
 enum EnemyTargetStrategy {
   STRATEGY_MOST_HP = 0,
   STRATEGY_MOST_MAX_HP = 1,

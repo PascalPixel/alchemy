@@ -84,7 +84,7 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   return standbyCount;
 }
 
-// CMD_DJINN's parameter: the Djinni's element in bits 11..8, its index in
+// COMMAND_DJINN's parameter: the Djinni's element in bits 11..8, its index in
 // bits 7..0.
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v) ((v) & 255)
@@ -279,13 +279,13 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   }
   // A bound unit (restraint bit 0) loses one action in four,
   // except Defend.
-  if ((actor->restraint & RESTRAINT_BOUND) && request->command != CMD_DEFEND &&
-      (BattleRandomFar() & 3) == 0) {
+  if ((actor->restraint & RESTRAINT_BOUND) &&
+      request->command != COMMAND_DEFEND && (BattleRandomFar() & 3) == 0) {
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiText_ShowMessageAndWaitCoreFar(MsgIsBound);
     return PLAN_REPORTED;
   }
-  if (request->command == CMD_NONE)
+  if (request->command == COMMAND_NONE)
     return PLAN_NO_ACTION;
   abilityId = ABILITY_ATTACK;
   {
@@ -304,7 +304,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
   // PLAN_NO_ACTION.
   //----------------------------------------------------------------------
   switch (request->command) {
-  case CMD_FLEE:
+  case COMMAND_FLEE:
     if ((u16)request->unitId <= ALLY_MAX) {
       UiText_ShowMessageAndWaitCoreFar(MsgPartyFlees);
     } else {
@@ -315,7 +315,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     plan->outcome = PLAN_SHOW_FLEE;
     return 0;
 
-  case CMD_ATTACK:
+  case COMMAND_ATTACK:
     // A weapon unleash replaces the action with its ability.
     abilityId = RollWeaponUnleashFar(actor);
     if (BattlePlan_SetTargets(abilityId) == PLAN_REPORTED)
@@ -331,7 +331,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     }
     break;
 
-  case CMD_PSYNERGY: {
+  case COMMAND_PSYNERGY: {
     struct BattleAct *ability;
     s32 canCast = 1;
 
@@ -361,7 +361,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     }
   } break;
 
-  case CMD_ITEM: {
+  case COMMAND_ITEM: {
     struct ItemDefinition *item;
 
     // A slot of -1: an earlier command this round used the item up
@@ -408,16 +408,16 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     }
   } break;
 
-  case CMD_DEFEND:
-  case CMD_DEFEND2:
+  case COMMAND_DEFEND:
+  case COMMAND_DEFEND2:
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiText_ShowMessageAndWaitCoreFar(MsgActorDefends);
     return PLAN_REPORTED;
 
-  case CMD_NONE:
+  case COMMAND_NONE:
     return PLAN_NO_ACTION;
 
-  case CMD_ABILITY: {
+  case COMMAND_ABILITY: {
     s32 message;
 
     abilityId = request->parameter;
@@ -488,7 +488,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     UiText_ShowMessageAndWaitCoreFar(message);
   } break;
 
-  case CMD_DJINN:
+  case COMMAND_DJINN:
     // A Djinni not set: one ready again is set, with its own short scene
     // played through the event queue, and nothing else happens
     // (PLAN_NO_ACTION); one still recovering says so (PLAN_REPORTED). A set
@@ -553,7 +553,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     }
     break;
 
-  case CMD_SUMMON: {
+  case COMMAND_SUMMON: {
     const struct SummonDefinition *summon;
     struct DjinnRecoveryList *list;
     s32 side;
@@ -781,7 +781,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       plan->presentationFlags |= 1 << STAGING_VARIANT_SHIFT;
   }
   // An item is staged as an item, unless its ability takes the whole screen.
-  if (request->command == CMD_ITEM && plan->outcome != PLAN_SHOW_SUMMON &&
+  if (request->command == COMMAND_ITEM && plan->outcome != PLAN_SHOW_SUMMON &&
       plan->outcome != PLAN_SHOW_FULL_SCREEN)
     plan->outcome = PLAN_SHOW_ITEM;
   plan->command = request->command;

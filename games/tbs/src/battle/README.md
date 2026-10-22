@@ -97,7 +97,7 @@ drawn again, and after 18 failed picks the enemy defends.
 
 An ability whose added effect is Defend, Total Defense or Flee is never used
 as an ability. `BattleCommand_SelectAutomatic` turns it into the command
-`CMD_DEFEND`, `CMD_DEFEND2` or `CMD_FLEE`, aimed at the enemy itself, so the
+`COMMAND_DEFEND`, `COMMAND_DEFEND2` or `COMMAND_FLEE`, aimed at the enemy itself, so the
 guard is raised with the party's before anyone acts.
 
 ### First strikes and escape
@@ -143,24 +143,24 @@ has been shown.
 
 The command the actor chose decides which ability id the plan carries.
 
-- `CMD_ATTACK` is `ABILITY_ATTACK`, unless the equipped weapon unleashes
+- `COMMAND_ATTACK` is `ABILITY_ATTACK`, unless the equipped weapon unleashes
   (`RollWeaponUnleashFar`): then the weapon's `unleash_action` replaces it,
   at a chance of five times its `unleash_chance` percent plus what the
   equipment adds. The player reads `<unit>'s <weapon> lets out a howl!` and
   then the ability's name.
-- `CMD_PSYNERGY` is the ability chosen in the menu. Its PP cost is paid here,
+- `COMMAND_PSYNERGY` is the ability chosen in the menu. Its PP cost is paid here,
   only when the cast goes ahead: a sealed caster, or one short of PP, pays
   nothing.
-- `CMD_DJINN` reads the Djinni's ability from `../game/djinn.tsv`
+- `COMMAND_DJINN` reads the Djinni's ability from `../game/djinn.tsv`
   (`Djinn_GetAbilityIdFar`). Only a set Djinni is unleashed, and it then goes
   on standby; one on standby is set again instead, and one still recovering
   says so.
-- `CMD_ITEM` takes the item's `action_id`. An item with none, or a broken
+- `COMMAND_ITEM` takes the item's `action_id`. An item with none, or a broken
   one, makes the user defend. What using it costs is the item's `use_type`
   ([Game rules](../game/README.md)), spent in `staging.c` after the effect.
-- `CMD_SUMMON` takes the summon's ability from `../game/summons.tsv` and
+- `COMMAND_SUMMON` takes the summon's ability from `../game/summons.tsv` and
   marks the standby Djinn it uses.
-- `CMD_ABILITY` is an enemy's ability, chosen as above.
+- `COMMAND_ABILITY` is an enemy's ability, chosen as above.
 
 The plan takes its element from the ability's row, except that a plain
 Attack strikes with the weapon's element, or an enemy's with its own
@@ -168,16 +168,16 @@ Attack strikes with the weapon's element, or an enemy's with its own
 
 | Command | Value | Ability |
 | --- | --- | --- |
-| `CMD_ATTACK` | 0 | `ABILITY_ATTACK`, or the weapon's unleash |
-| `CMD_PSYNERGY` | 1 | the ability chosen in the menu |
-| `CMD_ITEM` | 2 | the item's `action_id` |
-| `CMD_DEFEND` | 3 | Defend |
-| `CMD_ABILITY` | 4 | an enemy's ability |
-| `CMD_DJINN` | 5 | the Djinni's ability |
-| `CMD_SUMMON` | 6 | the summon's ability |
-| `CMD_DEFEND2` | 7 | an enemy's Total Defense |
-| `CMD_NONE` | 8 | nothing this turn |
-| `CMD_FLEE` | 99 | running away |
+| `COMMAND_ATTACK` | 0 | `ABILITY_ATTACK`, or the weapon's unleash |
+| `COMMAND_PSYNERGY` | 1 | the ability chosen in the menu |
+| `COMMAND_ITEM` | 2 | the item's `action_id` |
+| `COMMAND_DEFEND` | 3 | Defend |
+| `COMMAND_ABILITY` | 4 | an enemy's ability |
+| `COMMAND_DJINN` | 5 | the Djinni's ability |
+| `COMMAND_SUMMON` | 6 | the summon's ability |
+| `COMMAND_DEFEND2` | 7 | an enemy's Total Defense |
+| `COMMAND_NONE` | 8 | nothing this turn |
+| `COMMAND_FLEE` | 99 | running away |
 
 ### Targets and range
 
@@ -358,7 +358,7 @@ an attack's power is only added to the blow, so Attack, whose power is 0,
 still strikes. Ember is `ABILITY_KIND_HEAL_PP` with a power of 0: its PP
 comes from its added effect.
 
-A summon called with `CMD_SUMMON` adds 3 percent of the target's maximum HP
+A summon called with `COMMAND_SUMMON` adds 3 percent of the target's maximum HP
 to the power for each Djinni it uses, so 3 to 12 percent. HP healing,
 attacks and HP damage then add a random 0 to 3; an added effect's damage, PP
 damage and PP healing do not. A guarding target takes half the damage, or a

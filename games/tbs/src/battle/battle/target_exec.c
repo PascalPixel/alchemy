@@ -219,7 +219,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // The actor's power in the ability's element; items always use 100. (Here
   // and below the element is read from the plan again, as the bytes need.)
   if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
-      plan->command != CMD_ITEM)
+      plan->command != COMMAND_ITEM)
     elementPower = actor->element[plan->element].power;
   else
     elementPower = 100;
@@ -231,7 +231,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   // enemy it fells then gives more coins and experience and a better chance
   // of its item (BattleEnemy_RecordDefeat). The chance is the power less
   // the resistance, plus 30, in percent; the event's operand is unused.
-  if (plan->command == CMD_DJINN &&
+  if (plan->command == COMMAND_DJINN &&
       (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER) &&
       affinity > 0) {
     s32 chance;
@@ -442,7 +442,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         }
         // In the Djinn tutorial a Djinni's blow always leaves 1 HP.
         if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0 &&
-            plan->command == CMD_DJINN && hp <= amount) {
+            plan->command == COMMAND_DJINN && hp <= amount) {
           amount = hp - 1;
         }
       }
@@ -574,7 +574,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           elementBonus = 0;
         power = ability->power;
         // A summon adds 3% of the target's max HP for each Djinni it costs.
-        if (plan->command == CMD_SUMMON) {
+        if (plan->command == COMMAND_SUMMON) {
           s32 maxHpPercent;
 
           switch (abilityId) {
@@ -631,7 +631,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
         REDUCE_BY_GUARD(amount, target);
         // In the Djinn tutorial a summon always fells its target.
         if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0 &&
-            plan->command == CMD_SUMMON && newHp > amount) {
+            plan->command == COMMAND_SUMMON && newHp > amount) {
           amount = newHp;
         }
       }

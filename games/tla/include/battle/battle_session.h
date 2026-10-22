@@ -33,16 +33,16 @@ struct BattleObj {
 /// BattleActionRecord.command and BattlePlan's copy of it: what a unit does
 /// on its turn.
 enum BattleCommand {
-  CMD_ATTACK = 0,
-  CMD_PSYNERGY = 1,
-  CMD_ITEM = 2,
-  CMD_DEFEND = 3,
-  CMD_ABILITY = 4, ///< an enemy's ability
-  CMD_DJINN = 5,
-  CMD_SUMMON = 6,
-  CMD_DEFEND2 = 7, ///< an enemy's Total Defense (effect 47)
-  CMD_NONE = 8,    ///< nothing this turn
-  CMD_FLEE = 99
+  COMMAND_ATTACK = 0,
+  COMMAND_PSYNERGY = 1,
+  COMMAND_ITEM = 2,
+  COMMAND_DEFEND = 3,
+  COMMAND_ABILITY = 4, ///< an enemy's ability
+  COMMAND_DJINN = 5,
+  COMMAND_SUMMON = 6,
+  COMMAND_DEFEND2 = 7, ///< an enemy's Total Defense (effect 47)
+  COMMAND_NONE = 8,    ///< nothing this turn
+  COMMAND_FLEE = 99
 };
 
 /// A unit's chosen action for the turn: its command, the command's parameter,

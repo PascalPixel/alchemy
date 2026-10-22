@@ -34,7 +34,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     entry = &entries[index];
     entry->unitId = unitId;
     entry->priority = unit->agi;
-    entry->command = CMD_ATTACK;
+    entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
     entry->target = FIRST_ENEMY_UNIT;
     count++;
@@ -53,7 +53,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     entry->priority = unit->agi >> 1;
     if (entry->priority != 0)
       entry->priority += (Random16() * unit->agi) >> 16;
-    entry->command = CMD_ATTACK;
+    entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
     entry->target = (Random16() * targetRange) >> 16;
     count++;
@@ -113,20 +113,20 @@ s32 BattlePresentation_RunAction(struct BattleActionRecord *action) {
   UiWork_ClearValueNameTablesFar();
 
   switch (action->command) {
-  case CMD_FLEE:
+  case COMMAND_FLEE:
     UiText_ShowMessageAndWaitCoreFar(MsgPartyFlees);
     if (BattleEscape_PlayRun(action) != 0)
       return 1;
     break;
-  case CMD_DEFEND:
+  case COMMAND_DEFEND:
     WaitFrames(45);
     BattlePresentation_ShowDefendMessage(action);
     break;
-  case CMD_ITEM:
+  case COMMAND_ITEM:
     WaitFrames(45);
     BattlePresentation_RunUnitAction(action);
     break;
-  case CMD_ATTACK:
+  case COMMAND_ATTACK:
   default: {
     struct BattlePresentationTransition *transition = gTransitionWork;
     transition->flag = 0;
@@ -134,7 +134,7 @@ s32 BattlePresentation_RunAction(struct BattleActionRecord *action) {
     transition->flag = 0;
     break;
   }
-  case CMD_PSYNERGY:
+  case COMMAND_PSYNERGY:
     BattlePresentation_RunPairedUnitTransition(action);
     break;
   }
@@ -213,7 +213,7 @@ s32 BattlePresentation_ShowDefendMessage(
 /// the caster raises its hand; the target side fades out, its living units
 /// are readied alone, the Psynergy's effect (kind action->parameter) plays
 /// on them, and everyone fades back in. Returns -1 for an invalid actor or
-/// target. Called by BattlePresentation_RunAction for CMD_PSYNERGY. Writes
+/// target. Called by BattlePresentation_RunAction for COMMAND_PSYNERGY. Writes
 /// REG_BLDCNT and REG_BLDALPHA and the actors' record modes, and leaves the
 /// battle objects readied again.
 s32 BattlePresentation_RunPairedUnitTransition(
@@ -389,8 +389,9 @@ s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
 /// Auto battle: an attack or an item. Turns the camera to the actor's side,
 /// poses the actor and plays the effect (kind action->parameter) on the
 /// first living unit of the target's side, then sends both back. Returns -1
-/// for an invalid actor. Called by BattlePresentation_RunAction for CMD_ATTACK,
-/// CMD_ITEM and any other command but fleeing, defending and Psynergy.
+/// for an invalid actor. Called by BattlePresentation_RunAction for
+/// COMMAND_ATTACK, COMMAND_ITEM and any other command but fleeing, defending
+/// and Psynergy.
 s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition = gTransitionWork;

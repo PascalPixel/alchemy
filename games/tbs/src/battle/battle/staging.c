@@ -803,7 +803,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
       u32 row;
 
       for (row = 0; row < BATTLE_ACTION_CAPACITY; row++) {
-        if (battle->actions[row].command == CMD_ITEM &&
+        if (battle->actions[row].command == COMMAND_ITEM &&
             battle->actions[row].unitId == selection->unitId) {
           if (battle->actions[row].parameter == index)
             battle->actions[row].parameter = -1;

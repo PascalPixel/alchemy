@@ -138,7 +138,7 @@ void BattleUnit_ResetGuardLevels(void) {
 /// party that struck first always gets away; no one gets away from a battle
 /// that forbids it. Every attempt counts toward the next. Returns 1 when
 /// the party gets away. Called by BattlePresentation_BuildActions when the
-/// first action is CMD_FLEE. Each roll, even a successful one, raises
+/// first action is COMMAND_FLEE. Each roll, even a successful one, raises
 /// gBattleWork->escapeFailures.
 s32 BattleEscape_CheckSuccess(void) {
   s32 escaped;
@@ -183,7 +183,7 @@ s32 BattleEscape_CheckSuccess(void) {
 
 /// The party's actions for the round, from the command menu: a member who
 /// is asleep, confused, charmed or stunned loses each of their turns
-/// (CMD_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
+/// (COMMAND_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
 /// Returns how many actions there are, or -1 if the menu gave up. Called by
 /// BattlePresentation_BuildActions. Fills entries.
 s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries) {
@@ -209,7 +209,7 @@ s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries) {
         struct BattleActionRecord *entry = &entries[entryCount];
         entry->unitId = unitIds[unitIndex];
         entry->priority = unit->agi;
-        entry->command = CMD_NONE;
+        entry->command = COMMAND_NONE;
         entry->parameter = 0;
         entry->target = TARGET_NONE_PARTY;
         entryCount++;
@@ -299,7 +299,7 @@ s32 BattlePresentation_BuildOpponentEntries(
       }
 
       if (unit->sleep != 0 || unit->stun != 0) {
-        entry->command = CMD_NONE;
+        entry->command = COMMAND_NONE;
         entry->parameter = 0;
         entry->target = TARGET_NONE_ENEMY;
       } else {
@@ -333,7 +333,7 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
   for (actionIndex = 0; actionIndex < count; actionIndex++) {
     struct BattleActionRecord *entry = &entries[actionIndex];
 
-    if (entry->command == CMD_DJINN) {
+    if (entry->command == COMMAND_DJINN) {
       struct BattleAct *action;
 
       // parameter: the Djinni's element in bits 8 to 11, its number below.
@@ -663,7 +663,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
     if (count < 0)
       goto finish;
     // A failed escape turns the round into one the enemies began.
-    if (count != 0 && actions[0].command == CMD_FLEE &&
+    if (count != 0 && actions[0].command == COMMAND_FLEE &&
         BattleEscape_CheckSuccess() == 0)
       *encounterMode = BATTLE_ENCOUNTER_ENEMIES_FIRST;
   } else {
@@ -695,11 +695,13 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
 
     remainingActions = count;
     do {
-      if (action->command == CMD_DEFEND || action->command == CMD_DEFEND2) {
+      if (action->command == COMMAND_DEFEND ||
+          action->command == COMMAND_DEFEND2) {
         unit = UnitGetFar(action->unitId);
         // Half the damage, or a tenth.
-        unit->guardLevel =
-            action->command == CMD_DEFEND ? GUARD_DEFEND : GUARD_TOTAL_DEFENSE;
+        unit->guardLevel = action->command == COMMAND_DEFEND
+                               ? GUARD_DEFEND
+                               : GUARD_TOTAL_DEFENSE;
       }
       action++;
       remainingActions--;

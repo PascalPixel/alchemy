@@ -259,7 +259,7 @@ enum BattleCastKind {
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
 
-/// BattleActionRecord.target of a held unit's lost turn (CMD_NONE, from
+/// BattleActionRecord.target of a held unit's lost turn (COMMAND_NONE, from
 /// BattlePresentation_BuildOpponentEntries and
 /// BattlePresentation_BuildUnitEntries): as a place code, place 0 of the other
 /// side, 0x100 the party's for an enemy and 0x180 the enemies' for a party

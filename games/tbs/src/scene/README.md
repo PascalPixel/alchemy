@@ -189,8 +189,8 @@ static void Event_PatrolPairThrowsPartyOut(void) {
   EV_BEGIN();
   Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
   Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
-  OBJ_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
-  OBJ_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
+  OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJECT_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
   Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
@@ -201,8 +201,8 @@ static void Event_PatrolPairThrowsPartyOut(void) {
 `EV_BEGIN` stops the leader and makes it the speaker, and `EV_END` returns the
 camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
 `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an actor.
-`OBJ_POS_SET`, `OBJ_WALK`, `OBJ_SPEED`, `OBJ_DIR`, `OBJ_FACE` and `OBJ_MODE`
-move, turn and animate actors by number (`OBJ_MODE` takes an `enum
+`OBJECT_POS_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`
+move, turn and animate actors by number (`OBJECT_MODE` takes an `enum
 ActorAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
 game flags, and `SE(n)` plays a sound from `songs.h`.
 

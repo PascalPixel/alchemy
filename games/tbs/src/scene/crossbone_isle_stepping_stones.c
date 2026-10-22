@@ -825,8 +825,8 @@ static void Event_FlipWaterSwitch(void) {
     Object_GetById(ACTOR_WATER)->motionFlags = waterRaised;
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    OBJ_POS_SET(ACTOR_WATER, 272, 416);
-    OBJ_MODE(ACTOR_WATER, 1);
+    OBJECT_POS_SET(ACTOR_WATER, 272, 416);
+    OBJECT_MODE(ACTOR_WATER, 1);
     Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateCloseSteps, 80, 24);
     Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateFootSteps, 80, 28);
     Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
@@ -842,8 +842,8 @@ static void Event_FlipWaterSwitch(void) {
     Object_GetById(ACTOR_WATER)->motionFlags = 0;
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    OBJ_POS_SET(ACTOR_WATER, 272, 436);
-    OBJ_MODE(ACTOR_WATER, 2);
+    OBJECT_POS_SET(ACTOR_WATER, 272, 436);
+    OBJECT_MODE(ACTOR_WATER, 2);
     Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
     Map_AnimateCells(gCrossboneIsleSteppingStones_FloodgateOpenSteps, 80, 24);
     CrossboneIsleSteppingStones_AnimateWaterLevel();
@@ -1399,7 +1399,7 @@ static void Event_FreezeThirdPuddle(void) {
       Object_GetById(ACTOR_SECOND_PUDDLE)->update = (void (*)(
           union FieldObject *))CrossboneIsleSteppingStones_SpawnThawParticle;
 #endif
-      OBJ_MODE(ACTOR_SECOND_PUDDLE, 6);
+      OBJECT_MODE(ACTOR_SECOND_PUDDLE, 6);
       ObjectMotion_WaitForAnimationChange(ACTOR_SECOND_PUDDLE);
       Object_GetById(ACTOR_SECOND_PUDDLE)->update =
           (void (*)(union FieldObject *))set;
@@ -1650,7 +1650,7 @@ s32 Scene_Initialize(void) {
   } else if (gGameState.scene == (s32)&SceneId_CrossboneIsleDragonStatue) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
-    OBJ_MODE(ACTOR_SINKING_BOULDER, 2);
+    OBJECT_MODE(ACTOR_SINKING_BOULDER, 2);
     Engine_ActorSetChildValue(ACTOR_SINKING_BOULDER, 6);
     FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG);
     FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);

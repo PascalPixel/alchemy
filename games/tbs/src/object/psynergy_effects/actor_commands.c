@@ -5,7 +5,7 @@
 #include "../psynergy_effects_internal.h"
 
 /// Returns an actor, or NULL if it does not exist. Scene scripts reach it
-/// through Actor_Get and OBJ_GET; it is the far-callable form of
+/// through Actor_Get and OBJECT_GET; it is the far-callable form of
 /// ObjectTable_Get that the other banks use.
 struct FieldActor *Object_GetById(s32 actor) {
   struct FieldActor *object = ObjectTable_Get(actor);
@@ -17,7 +17,7 @@ struct FieldActor *Object_GetById(s32 actor) {
 
 /// The event command "set actor speed": its top speed and acceleration, 16.16
 /// pixels per frame. Writes the actor's speedLimit and acceleration. Scene
-/// scripts reach it as Engine_ActorSetSpeed (OBJ_SPEED, Actor_SetSpeed).
+/// scripts reach it as Engine_ActorSetSpeed (OBJECT_SPEED, Actor_SetSpeed).
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -128,8 +128,8 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
 }
 
 /// The event command "walk actor to": the actor walks (animation 2) toward
-/// (x, z), in pixels. Scene scripts reach it as Engine_ActorWalkTo (OBJ_WALK,
-/// Actor_WalkTo); the link lobby calls it too.
+/// (x, z), in pixels. Scene scripts reach it as Engine_ActorWalkTo
+/// (OBJECT_WALK, Actor_WalkTo); the link lobby calls it too.
 void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -279,7 +279,7 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
 /// The event command "set actor position": puts the actor at (x, z), 16.16
 /// pixels, at rest. An actor that follows the ground (ACTOR_FOLLOWS_TERRAIN)
 /// keeps its height above the terrain at the new place. Clears its velocity and
-/// targets. Scene scripts reach it as Engine_ActorSetPosition (OBJ_POS_SET,
+/// targets. Scene scripts reach it as Engine_ActorSetPosition (OBJECT_POS_SET,
 /// Actor_SetPosition); Motion_LaunchFromFocusedObject calls it too.
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object;
@@ -362,7 +362,7 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
 
 /// The event command "set actor animation" (1 stands, 2 walks, 3 nods, 4 shakes
 /// the head and so on). Scene scripts reach it as Engine_ActorSetAnimation
-/// (OBJ_MODE, Actor_SetAnimation); Event_AskYesNoWithActorAnimation and
+/// (OBJECT_MODE, Actor_SetAnimation); Event_AskYesNoWithActorAnimation and
 /// Motion_SetModeAndWaitAnimation call it too.
 void Object_SetModeById(u32 objectId, s32 animation) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -622,8 +622,8 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
 
 /// The event command "actor face actor": turns the first actor at once to face
 /// the second, then waits wait frames. Writes the first actor's angle. Scene
-/// scripts reach it as Engine_ActorFaceActor (OBJ_FACE, Actor_FaceActor); the
-/// link lobby calls it too.
+/// scripts reach it as Engine_ActorFaceActor (OBJECT_FACE, Actor_FaceActor);
+/// the link lobby calls it too.
 void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   struct ObjectRuntime *first;
   struct ObjectRuntime *second;
@@ -877,7 +877,7 @@ void Object_ResetTargetAndSetMode1(u32 objectId) {
 /// The event command "actor face direction": the actor turns toward angle
 /// (0x10000 a full turn; ObjectMotion_StepAngle), then the event waits wait
 /// frames. Writes the angle to the actor's action. Scene scripts reach it as
-/// Engine_ActorFaceDirection (OBJ_DIR, Actor_FaceDirection); the Djinni,
+/// Engine_ActorFaceDirection (OBJECT_DIR, Actor_FaceDirection); the Djinni,
 /// Retreat and climbing events and Actor_JumpDownLedge call it too.
 void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);

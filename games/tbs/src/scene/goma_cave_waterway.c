@@ -143,7 +143,7 @@ s32 Scene_Initialize(void) {
         stump = Object_GetById(ACTOR_STUMP);
         Engine_ActorSetSpriteFlags(stump, 0);
         Object_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
+        OBJECT_MODE(ACTOR_STUMP, STUMP_ANIM_SINK);
         Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -177,7 +177,7 @@ static void GomaCaveWaterway_LeapStump(s32 stumpId) {
     stump->targetX = ACTOR_NO_TARGET;
   }
   stump->update = GomaCaveWaterway_SpinStump;
-  OBJ_SPEED(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
+  OBJECT_SPEED(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
   Actor_SetDestination(stumpId, 376, 288);
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -219,7 +219,7 @@ static void GomaCaveWaterway_LeapStump(s32 stumpId) {
                         EFFECT_SCALE_TO_TARGET,
                     &options);
   Engine_AudioPlayCue(SE_CAST);
-  OBJ_MODE(stumpId, STUMP_ANIM_SPLASH);
+  OBJECT_MODE(stumpId, STUMP_ANIM_SPLASH);
   Map_WaitForShakeToSettle();
 }
 

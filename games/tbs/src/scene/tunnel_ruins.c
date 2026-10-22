@@ -756,10 +756,10 @@ static void Event_SinkPillarA(void) {
     WAIT(30);
     Actor_Get(ACTOR_SINKING_PILLAR_A)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
-    OBJ_MODE(ACTOR_SINKING_PILLAR_A, 3);
+    OBJECT_MODE(ACTOR_SINKING_PILLAR_A, 3);
     Engine_ObjectDispatchRelease(overlay);
     Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-    OBJ_POS_SET(ACTOR_PUDDLE_A, 744, 136);
+    OBJECT_POS_SET(ACTOR_PUDDLE_A, 744, 136);
     TunnelRuins_AnimateLoweringImpact(58, 49, 8);
     WAIT(20);
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
@@ -785,9 +785,9 @@ static void Event_PushSinkingPillarA(void) {
 static void Event_FreezePuddleA(void) {
   u8 *flags;
 
-  OBJ_MODE(ACTOR_PUDDLE_A, 1);
+  OBJECT_MODE(ACTOR_PUDDLE_A, 1);
   Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 0);
-  OBJ_MODE(ACTOR_PUDDLE_A, 2);
+  OBJECT_MODE(ACTOR_PUDDLE_A, 2);
   flags = &Object_GetById(ACTOR_PUDDLE_A)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_SCENE_TEMP_00);
@@ -835,10 +835,10 @@ static void Event_SinkPillarB(void) {
       WAIT(30);
       Actor_Get(ACTOR_SINKING_PILLAR_B)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
-      OBJ_MODE(ACTOR_SINKING_PILLAR_B, 3);
+      OBJECT_MODE(ACTOR_SINKING_PILLAR_B, 3);
       Engine_ObjectDispatchRelease(overlay);
       Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-      OBJ_POS_SET(ACTOR_PUDDLE_B, 776, 232);
+      OBJECT_POS_SET(ACTOR_PUDDLE_B, 776, 232);
       TunnelRuins_AnimateLoweringImpact(58, 45, 14);
       WAIT(20);
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
@@ -880,9 +880,9 @@ static void Event_DousePillarB(void) {
 static void Event_FreezePuddleB(void) {
   u8 *flags;
 
-  OBJ_MODE(ACTOR_PUDDLE_B, 1);
+  OBJECT_MODE(ACTOR_PUDDLE_B, 1);
   Engine_ActorSetChildValue(ACTOR_PUDDLE_B, 0);
-  OBJ_MODE(ACTOR_PUDDLE_B, 2);
+  OBJECT_MODE(ACTOR_PUDDLE_B, 2);
   flags = &Object_GetById(ACTOR_PUDDLE_B)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_SCENE_TEMP_01);
@@ -896,7 +896,7 @@ static void Event_FreezePuddleB(void) {
 /// Reached by searching cell code 40 in TunnelRuinsGreatStatue.
 static void Event_ReadFirstStatue(void) {
   EV_BEGIN();
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
       FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
@@ -952,9 +952,9 @@ static void Event_FreezeDousePuddle(void) {
 
   EV_BEGIN();
   Engine_ActorSetSpritePriority(ACTOR_DOUSE_PUDDLE, 1);
-  OBJ_MODE(ACTOR_DOUSE_PUDDLE, 1);
+  OBJECT_MODE(ACTOR_DOUSE_PUDDLE, 1);
   Engine_ActorSetChildValue(ACTOR_DOUSE_PUDDLE, 0);
-  OBJ_MODE(ACTOR_DOUSE_PUDDLE, 2);
+  OBJECT_MODE(ACTOR_DOUSE_PUDDLE, 2);
 
   {
     u8 *flag = &Object_GetById(ACTOR_DOUSE_PUDDLE)->priorityFlags;
@@ -1003,8 +1003,8 @@ static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
 static void TunnelRuins_SettleBalance(s32 wait) {
   u32 i;
 
-  OBJ_SPEED(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
-  OBJ_SPEED(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_SPEED(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJECT_SPEED(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
   if (wait != 0) {
     Engine_AudioPlayCue(SE_180);
   }
@@ -1064,7 +1064,7 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
     Object_GetById(actorId)->timer = candidateId;
   }
 
-  OBJ_SPEED(actorId, PIXELS(4), PIXELS(2));
+  OBJECT_SPEED(actorId, PIXELS(4), PIXELS(2));
 
   {
     struct FieldActor *actor = Object_GetById(actorId);
@@ -1217,8 +1217,8 @@ static void Event_ShowFalseStatues(void) {
   Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
   MapObject_SetPosition(100, 0, 0);
   MapObject_SetPosition(101, 0, 0);
-  OBJ_POS_SET(ACTOR_VANISHING_STATUE_A, 136, 792);
-  OBJ_POS_SET(ACTOR_VANISHING_STATUE_B, 792, 696);
+  OBJECT_POS_SET(ACTOR_VANISHING_STATUE_A, 136, 792);
+  OBJECT_POS_SET(ACTOR_VANISHING_STATUE_B, 792, 696);
 }
 
 /// Reveal makes the two false statues vanish. As it shows what is hidden, the
@@ -1365,7 +1365,7 @@ static void Event_PushLadyStatue(void) {
 /// cell code 42 in TunnelRuinsLadyStatues.
 static void Event_ReadSecondStatue(void) {
   EV_BEGIN();
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
   EV_END();
 }
@@ -1552,7 +1552,7 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH:
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SINKING_PILLAR_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SINKING_PILLAR_B), 0);
-      OBJ_MODE(ACTOR_SINKING_PILLAR_A, 2);
+      OBJECT_MODE(ACTOR_SINKING_PILLAR_A, 2);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PUDDLE_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PUDDLE_B), 0);
       Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 15);
@@ -1562,33 +1562,33 @@ s32 TunnelRuins_Initialize(void) {
         Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
         Object_GetById(ACTOR_SINKING_PILLAR_A)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_MODE(ACTOR_SINKING_PILLAR_A, 3);
+        OBJECT_MODE(ACTOR_SINKING_PILLAR_A, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-        OBJ_POS_SET(ACTOR_SINKING_PILLAR_A, 744, 136);
+        OBJECT_POS_SET(ACTOR_SINKING_PILLAR_A, 744, 136);
         Object_GetById(ACTOR_SINKING_PILLAR_A)->y.fixed = -PIXELS(16);
-        OBJ_POS_SET(ACTOR_PUDDLE_A, 744, 136);
+        OBJECT_POS_SET(ACTOR_PUDDLE_A, 744, 136);
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_00)) {
         Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 0);
-        OBJ_MODE(ACTOR_PUDDLE_A, 5);
+        OBJECT_MODE(ACTOR_PUDDLE_A, 5);
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_02))
-        OBJ_MODE(ACTOR_SINKING_PILLAR_B, 2);
+        OBJECT_MODE(ACTOR_SINKING_PILLAR_B, 2);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR)) {
         Map_CopyCellsTo(59, 8, 45, 14, 1, 3);
         Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
         Object_GetById(ACTOR_SINKING_PILLAR_B)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_MODE(ACTOR_SINKING_PILLAR_B, 3);
+        OBJECT_MODE(ACTOR_SINKING_PILLAR_B, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-        OBJ_POS_SET(ACTOR_SINKING_PILLAR_B, 776, 232);
+        OBJECT_POS_SET(ACTOR_SINKING_PILLAR_B, 776, 232);
         Object_GetById(ACTOR_SINKING_PILLAR_B)->y.fixed = -PIXELS(16);
         Engine_ActorSetPosition(ACTOR_PUDDLE_B, PIXELS(776), PIXELS(232));
         FLAG_SET(FLAG_SCENE_TEMP_02);
       }
       if (FLAG_CHECK(FLAG_SCENE_TEMP_01)) {
         Engine_ActorSetChildValue(ACTOR_PUDDLE_B, 0);
-        OBJ_MODE(ACTOR_PUDDLE_B, 5);
+        OBJECT_MODE(ACTOR_PUDDLE_B, 5);
       }
       break;
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS:
@@ -1623,9 +1623,9 @@ s32 TunnelRuins_Initialize(void) {
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_A, 6);
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_B, 6);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
-        OBJ_POS_SET(ACTOR_EAST_PILLAR_A, 728, 312);
+        OBJECT_POS_SET(ACTOR_EAST_PILLAR_A, 728, 312);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
-        OBJ_POS_SET(ACTOR_EAST_PILLAR_B, 744, 312);
+        OBJECT_POS_SET(ACTOR_EAST_PILLAR_B, 744, 312);
       TunnelRuins_MarkPushPillarCells();
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST:
@@ -1640,7 +1640,7 @@ s32 TunnelRuins_Initialize(void) {
       if (!FLAG_CHECK(FLAG_SCENE_TEMP_04))
         break;
       Engine_ActorSetChildValue(ACTOR_DOUSE_PUDDLE, 0);
-      OBJ_MODE(ACTOR_DOUSE_PUDDLE, 5);
+      OBJECT_MODE(ACTOR_DOUSE_PUDDLE, 5);
       Engine_MapCopyCellAttributes(
           26, 8, 1, 1, Object_GetById(ACTOR_DOUSE_PUDDLE)->x.fixed >> 20,
           Object_GetById(ACTOR_DOUSE_PUDDLE)->z.fixed >> 20);
@@ -1679,12 +1679,12 @@ s32 TunnelRuins_Initialize(void) {
         Object_GetById(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
         Object_GetById(ACTOR_BALANCE_WEST)->timer = 2;
         Object_GetById(ACTOR_BALANCE_EAST)->timer = 4;
-        OBJ_POS_SET(ACTOR_CARRY_STONE_A, 200, 152);
+        OBJECT_POS_SET(ACTOR_CARRY_STONE_A, 200, 152);
         Object_GetById(ACTOR_CARRY_STONE_A)->timer = ACTOR_BALANCE_EAST;
         Object_GetById(ACTOR_CARRY_STONE_A)->update = UPDATE_RIDE_STONE_BELOW;
         Object_GetById(ACTOR_CARRY_STONE_A)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        OBJ_POS_SET(ACTOR_CARRY_STONE_B, 200, 152);
+        OBJECT_POS_SET(ACTOR_CARRY_STONE_B, 200, 152);
         Object_GetById(ACTOR_CARRY_STONE_B)->timer = ACTOR_CARRY_STONE_A;
         Object_GetById(ACTOR_CARRY_STONE_B)->update = UPDATE_RIDE_STONE_BELOW;
         Object_GetById(ACTOR_CARRY_STONE_B)->priorityFlags |=
@@ -1722,11 +1722,11 @@ s32 TunnelRuins_Initialize(void) {
       WAIT(1);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         Map_CopyCells(24, 59, 1, 2, 32, 46);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_A, 408, 792);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_B, 376, 792);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_C, 408, 760);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_D, 376, 760);
-        OBJ_POS_SET(ACTOR_LADY_STATUE_E, 392, 776);
+        OBJECT_POS_SET(ACTOR_LADY_STATUE_A, 408, 792);
+        OBJECT_POS_SET(ACTOR_LADY_STATUE_B, 376, 792);
+        OBJECT_POS_SET(ACTOR_LADY_STATUE_C, 408, 760);
+        OBJECT_POS_SET(ACTOR_LADY_STATUE_D, 376, 760);
+        OBJECT_POS_SET(ACTOR_LADY_STATUE_E, 392, 776);
       }
       Object_GetById(ACTOR_LADY_STATUE_A)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
@@ -1743,8 +1743,8 @@ s32 TunnelRuins_Initialize(void) {
       Engine_ActorSetChildValue(ACTOR_LADY_STATUE_C, 4);
       Engine_ActorSetChildValue(ACTOR_LADY_STATUE_D, 10);
       Engine_ActorSetChildValue(ACTOR_LADY_STATUE_E, 0);
-      OBJ_MODE(ACTOR_LADY_STATUE_A, 2);
-      OBJ_MODE(ACTOR_LADY_STATUE_E, 2);
+      OBJECT_MODE(ACTOR_LADY_STATUE_A, 2);
+      OBJECT_MODE(ACTOR_LADY_STATUE_E, 2);
       Engine_MapCopyCellAttributes(
           20, 56, 1, 1, Object_GetById(ACTOR_LADY_STATUE_A)->x.fixed >> 20,
           Object_GetById(ACTOR_LADY_STATUE_A)->z.fixed >> 20);

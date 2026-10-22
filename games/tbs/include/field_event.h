@@ -9,7 +9,7 @@
 /// It is a habit of the whole game written once, as declarations and macros: a
 /// layer, not a compiler-steering device (AGENTS.md S2). The event.h commands
 /// and field_service.h are written over it. A scene's event reads `EV_BEGIN();
-/// Engine_ActorStop(9); OBJ_FACE(9, ACTOR_PARTY_LEADER, 0); EV_END();`.
+/// Engine_ActorStop(9); OBJECT_FACE(9, ACTOR_PARTY_LEADER, 0); EV_END();`.
 
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"

@@ -145,7 +145,7 @@ struct EffectDescriptor {
   s32 result;    ///< below 0x10000 a message, else a function to call
 };
 
-#define OBJ_LAST 66 ///< the last actor slot searched
+#define OBJECT_LAST 66 ///< the last actor slot searched
 
 //--------------------------------------------------------------------------
 // The map's marker actors (chests and Psynergy stones)

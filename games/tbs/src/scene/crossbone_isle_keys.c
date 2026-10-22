@@ -299,16 +299,16 @@ static void Event_BaneFirstEscape(void) {
     Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     Engine_CameraMoveToActor(ACTOR_BANE, 1);
     Engine_CameraWaitForMove();
-    OBJ_DIR(ACTOR_BANE, FACING_EAST, 20);
+    OBJECT_DIR(ACTOR_BANE, FACING_EAST, 20);
     Actor_SetAttachedEffect(ACTOR_BANE, 0x102);
     Engine_ActorRunRepeatedMotion(ACTOR_BANE, 2);
     WAIT(20);
-    OBJ_SPEED(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
+    OBJECT_SPEED(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
     SE(SE_JUMP);
     djinni = Object_GetById(ACTOR_BANE);
     djinni->velocityY = PIXELS(8);
     Actor_WalkToAndWait(ACTOR_BANE, 584, 680);
-    OBJ_DIR(ACTOR_BANE, FACING_SOUTH, 20);
+    OBJECT_DIR(ACTOR_BANE, FACING_SOUTH, 20);
     EV_END();
   }
 }
@@ -331,21 +331,21 @@ static void Event_BaneSecondEscape(void) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Engine_CameraMoveToActor(ACTOR_BANE, 1);
       Engine_CameraWaitForMove();
-      OBJ_DIR(ACTOR_BANE, FACING_SOUTH, 20);
+      OBJECT_DIR(ACTOR_BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(ACTOR_BANE, 0x102);
       Engine_ActorRunRepeatedMotion(ACTOR_BANE, 2);
       WAIT(20);
-      OBJ_SPEED(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
+      OBJECT_SPEED(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
       SE(SE_JUMP);
       jumpingDjinni = Object_GetById(ACTOR_BANE);
       jumpingDjinni->velocityY = PIXELS(10);
       Actor_WalkToAndWait(ACTOR_BANE, 584, 664);
-      OBJ_DIR(ACTOR_BANE, FACING_SOUTH, 20);
+      OBJECT_DIR(ACTOR_BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(ACTOR_BANE, 0x102);
       WAIT(30);
 
       // Dash across the platforms, then shake the room on landing.
-      OBJ_SPEED(ACTOR_BANE, PIXELS(8), PIXELS(1) / 4);
+      OBJECT_SPEED(ACTOR_BANE, PIXELS(8), PIXELS(1) / 4);
       Actor_WalkToAndWait(ACTOR_BANE, 664, 664);
       Actor_WalkToAndWait(ACTOR_BANE, 744, 664);
       Actor_WalkToAndWait(ACTOR_BANE, 824, 664);
@@ -357,7 +357,7 @@ static void Event_BaneSecondEscape(void) {
       WAIT(30);
 
       // Leave the Djinni tilted while its scale animation continues.
-      OBJ_POS_SET(ACTOR_BANE, 888, 664);
+      OBJECT_POS_SET(ACTOR_BANE, 888, 664);
       spinningDjinni = Object_GetById(ACTOR_BANE);
       spinningDjinni->sprite->rotation = 0xf800;
       spinningDjinni->facing = 0;
@@ -388,18 +388,18 @@ static void Event_BaneLastEscape(void) {
     SE(SE_JUMP);
     djinni = Object_GetById(ACTOR_BANE);
     djinni->velocityY = PIXELS(8);
-    OBJ_DIR(ACTOR_BANE, FACING_WEST, 30);
+    OBJECT_DIR(ACTOR_BANE, FACING_WEST, 30);
     Actor_SetAttachedEffect(ACTOR_BANE, 0x102);
     Engine_ActorRunRepeatedMotion(ACTOR_BANE, 2);
     WAIT(20);
-    OBJ_SPEED(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
+    OBJECT_SPEED(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
     SE(SE_JUMP);
     djinni = Object_GetById(ACTOR_BANE);
     djinni->velocityY = PIXELS(4);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 680);
     WAIT(10);
     Actor_SetAttachedEffect(ACTOR_BANE, 0x101);
-    OBJ_SPEED(ACTOR_BANE, PIXELS(2), PIXELS(1));
+    OBJECT_SPEED(ACTOR_BANE, PIXELS(2), PIXELS(1));
     Actor_WalkToAndWait(ACTOR_BANE, 880, 696);
     Actor_WalkToAndWait(ACTOR_BANE, 882, 704);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 712);
@@ -409,9 +409,9 @@ static void Event_BaneLastEscape(void) {
     Actor_WalkToAndWait(ACTOR_BANE, 880, 744);
     Actor_WalkToAndWait(ACTOR_BANE, 878, 752);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 760);
-    OBJ_POS_SET(ACTOR_BANE, 856, 824);
+    OBJECT_POS_SET(ACTOR_BANE, 856, 824);
     WAIT(10);
-    OBJ_DIR(ACTOR_BANE, FACING_NORTH, 20);
+    OBJECT_DIR(ACTOR_BANE, FACING_NORTH, 20);
     Actor_SetAttachedEffect(ACTOR_BANE, 0x100);
     djinni = Object_GetById(ACTOR_BANE);
 #ifdef UBFIX
@@ -459,7 +459,7 @@ static void Event_BaneKeepsAway(void) {
 /// Halt on Bane in CrossboneIsleBane: it freezes in place.
 static void Event_HaltBane(void) {
   EV_BEGIN();
-  OBJ_MODE(ACTOR_BANE, 0);
+  OBJECT_MODE(ACTOR_BANE, 0);
   EV_END();
 }
 
@@ -618,14 +618,14 @@ static void Event_ShowRedKey(void) {
 /// hidden again.
 static void Event_HideRedKey(void) {
   Map_CopyCells(24, 48, 1, 2, 25, 48);
-  OBJ_POS_SET(ACTOR_RED_KEY, 8, 8);
+  OBJECT_POS_SET(ACTOR_RED_KEY, 8, 8);
 }
 
 /// Collects the selected key, hides its actor and remembers it was taken.
 static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
                                                 s32 collectedFlag) {
   Engine_ItemShowFound(itemId, 3);
-  OBJ_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_STAND);
   Engine_PartyGiveItem(itemId, 0);
   Engine_ActorSetPosition(actorId, 0, 0);
   Engine_GameFlagSet(collectedFlag);
@@ -682,8 +682,8 @@ static void Event_DodgeFirstPursuer(void) {
   struct FieldActor *leader;
 
   EV_BEGIN();
-  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
-  OBJ_SPEED(ACTOR_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
+  OBJECT_SPEED(ACTOR_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
   SE(SE_188);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -723,8 +723,8 @@ static void Event_DodgeSecondPursuer(void) {
   struct FieldActor *leader;
 
   EV_BEGIN();
-  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  OBJ_SPEED(ACTOR_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+  OBJECT_SPEED(ACTOR_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
   SE(SE_188);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -792,8 +792,8 @@ static void Event_DodgeThirdPursuer(void) {
 
   if (gGameState.pausedObject != ACTOR_THIRD_STATUE) {
     EV_BEGIN();
-    OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-    OBJ_SPEED(ACTOR_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
+    OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+    OBJECT_SPEED(ACTOR_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
     SE(SE_188);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
@@ -821,7 +821,7 @@ static void Event_DodgeFourthPursuer(void) {
 
   if (gGameState.pausedObject != ACTOR_FOURTH_STATUE) {
     EV_BEGIN();
-    OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+    OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_ActorSetSpeed(ACTOR_FOURTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
     Engine_AudioPlayCue(SE_188);
     leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
@@ -877,8 +877,8 @@ static void Event_DodgeFifthPursuer(void) {
   struct FieldActor *leader;
 
   EV_BEGIN();
-  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  OBJ_SPEED(ACTOR_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
+  OBJECT_SPEED(ACTOR_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
   SE(SE_188);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -1076,7 +1076,7 @@ static void Event_PushFirstPillar(void) {
 /// restored.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Scheduler_RemoveCallback(CrossboneIsleKeys_FollowSecondPillar);
-  OBJ_POS_SET(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
+  OBJECT_POS_SET(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
   if (FLAG_CHECK(BANE_LOOKED_EAST_FLAG) != 0) {
     Map_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
@@ -1294,16 +1294,16 @@ UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
   switch (gCrossboneIsleKeys_IconTimer) {
   case 12:
     if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
-      OBJ_POS_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
+      OBJECT_POS_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
     }
     if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
-      OBJ_POS_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
+      OBJECT_POS_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
     }
     if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
-      OBJ_POS_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
+      OBJECT_POS_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
     }
     if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
-      OBJ_POS_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
+      OBJECT_POS_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
     }
     break;
   case 10:
@@ -1335,16 +1335,16 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
   Colosso_ShowItemIcon(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY);
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
-    OBJ_POS_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
+    OBJECT_POS_SET(ACTOR_FIRST_BLUE_KEY, 232, 872);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
-    OBJ_POS_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
+    OBJECT_POS_SET(ACTOR_SECOND_BLUE_KEY, 296, 824);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
-    OBJ_POS_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
+    OBJECT_POS_SET(ACTOR_THIRD_BLUE_KEY, 328, 760);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
-    OBJ_POS_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
+    OBJECT_POS_SET(ACTOR_FOURTH_BLUE_KEY, 360, 872);
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
     CrossboneIsleKeys_OpenBlueDoor(0);
@@ -1397,7 +1397,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
                              TASK_PRIORITY_SCENE);
   MapObject_SetPosition(107, 0, 0);
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
-    OBJ_MODE(ACTOR_SECOND_PILLAR_CHEST, 2);
+    OBJECT_MODE(ACTOR_SECOND_PILLAR_CHEST, 2);
   }
   Event_UpdateFirstPillarTerrain();
   Event_UpdateSecondPillarTerrain();
@@ -1412,13 +1412,13 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
   if (FLAG_CHECK(BANE_PUDDLE_FROZEN_FLAG) != 0) {
     Event_FreezePuddle();
-    OBJ_MODE(ACTOR_PUDDLE, 5);
+    OBJECT_MODE(ACTOR_PUDDLE, 5);
   }
 
   // Restore the surviving Djinni at the last completed escape stage.
   if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
-      OBJ_POS_SET(ACTOR_BANE, 856, 824);
+      OBJECT_POS_SET(ACTOR_BANE, 856, 824);
       djinni = Object_GetById(ACTOR_BANE);
 #ifdef UBFIX
       djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
@@ -1427,14 +1427,14 @@ static void CrossboneIsleKeys_InitializeBane(void) {
           (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     } else if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
-      OBJ_POS_SET(ACTOR_BANE, 888, 664);
+      OBJECT_POS_SET(ACTOR_BANE, 888, 664);
       djinni = Object_GetById(ACTOR_BANE);
       djinni->sprite->rotation = 0;
       ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)djinni, 16);
     } else if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
-      OBJ_POS_SET(ACTOR_BANE, 584, 680);
+      OBJECT_POS_SET(ACTOR_BANE, 584, 680);
     } else {
-      OBJ_POS_SET(ACTOR_BANE, 584, 664);
+      OBJECT_POS_SET(ACTOR_BANE, 584, 664);
     }
   }
 }

@@ -465,7 +465,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
       FLAG_CHECK((gGameState.scene + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                       (s32)&SceneId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
-    OBJ_POS_SET(ACTOR_SINKING_PILLAR, 650, 168);
+    OBJECT_POS_SET(ACTOR_SINKING_PILLAR, 650, 168);
     actor->y.fixed = -PIXELS(32);
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SINKING_PILLAR), 0);
     Engine_ActorSetSpritePriority(ACTOR_SINKING_PILLAR, 3);
@@ -611,7 +611,7 @@ static void Event_OpenEastDoor(void) {
 /// (ENTRANCE_AFTER_BATTLE): the door opens, and the party walks through.
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   EV_BEGIN();
-  OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+  OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   FLAG_SET((gGameState.scene +
@@ -721,25 +721,25 @@ static void CrossboneIsle_RestoreIvy(void) {
 
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
-    OBJ_POS_SET(ACTOR_FIRST_IVY, 968, 968);
+    OBJECT_POS_SET(ACTOR_FIRST_IVY, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
-    OBJ_POS_SET(ACTOR_FIRST_IVY + 1, 968, 968);
+    OBJECT_POS_SET(ACTOR_FIRST_IVY + 1, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 1);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
-    OBJ_POS_SET(ACTOR_FIRST_IVY + 2, 968, 968);
+    OBJECT_POS_SET(ACTOR_FIRST_IVY + 2, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 2);
     actor->scaleY = 8 * Q16_ONE / 5;
   }
   if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
-    OBJ_POS_SET(ACTOR_FIRST_IVY + 3, 968, 968);
+    OBJECT_POS_SET(ACTOR_FIRST_IVY + 3, 968, 968);
   } else {
     actor = Actor_Get(ACTOR_FIRST_IVY + 3);
     // BUG: no fourth ivy is placed, so its slot is empty (ObjectTable_ClearAll)
@@ -856,8 +856,8 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 actorId,
 
 /// Runs the two animation changes used when touching a puzzle log.
 static void CrossboneIsle_AnimateTouchedLog(int actorId) {
-  OBJ_MODE(actorId, 1);
-  OBJ_MODE(actorId, 2);
+  OBJECT_MODE(actorId, 1);
+  OBJECT_MODE(actorId, 2);
 }
 
 /// Draws all twelve log footprints in Crossbone Isle Cave

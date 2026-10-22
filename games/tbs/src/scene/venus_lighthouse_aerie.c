@@ -3160,7 +3160,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   s32 phase;
   s32 angle;
 
-  center = OBJ_GET(23);
+  center = OBJECT_GET(23);
   map = gMapWork[0];
   drift = (u32)(Random_Next() * 48) >> 16 << 16;
   if ((s16)(map->viewY >> 16) <= 129) {

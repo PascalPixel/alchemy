@@ -412,5 +412,5 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                           value);
     }
     actorId++;
-  } while (actorId <= OBJ_LAST);
+  } while (actorId <= OBJECT_LAST);
 }

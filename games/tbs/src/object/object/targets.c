@@ -52,7 +52,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   nearestDistance = 32;
   source = ObjectTable_Get(id);
   if (source != 0) {
-    for (actorIndex = 0; actorIndex <= OBJ_LAST; actorIndex++) {
+    for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
       if (actorIndex == id)
         continue;
 
@@ -132,7 +132,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
   // The facing rounded to the nearest of the four quarter turns.
   facingQuadrant = (source->angle + 0x2000) & 0xc000;
-  for (actorIndex = 0; actorIndex <= OBJ_LAST; actorIndex++) {
+  for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
     if (actorIndex == id)
       continue;
 

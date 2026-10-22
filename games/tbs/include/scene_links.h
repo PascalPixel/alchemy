@@ -3811,35 +3811,35 @@ enum {
          ///< room holds the sanctum; through TOLBI_TO_SANCTUM
   TOLBI_INTERIORS_INN =
       9, ///< the room behind Tolbi's inn door; through TOLBI_TO_INN
-  TOLBI_INTERIORS_INN_FROM_INN_CORRIDOR =
+  TOLBI_INTERIORS_INN_FROM_INN_PASSAGE =
       10, ///< ★ Named from the game: "Inn Full"
           ///< (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
-  TOLBI_INTERIORS_INN_CORRIDOR_FROM_INN =
+  TOLBI_INTERIORS_INN_PASSAGE_FROM_INN =
       11, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHWEST =
+  TOLBI_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST =
       12, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_SOUTHEAST =
+  TOLBI_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST =
       13, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHWEST =
+  TOLBI_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_NORTHWEST =
       14, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_CORRIDOR_FROM_GUEST_ROOM_NORTHEAST =
+  TOLBI_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_NORTHEAST =
       15, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_CORRIDOR =
+  TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE =
       16, ///< ★ Named from what the player sees: the guest room through the
           ///< east opening on the corridor's south side, where stranded
           ///< passengers argue (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_CORRIDOR =
+  TOLBI_INTERIORS_GUEST_ROOM_SOUTHWEST_FROM_INN_PASSAGE =
       17, ///< ★ Named from what the player sees: the guest room through the
           ///< west opening on the inn corridor's south side (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_CORRIDOR =
+  TOLBI_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE =
       18, ///< ★ Named from what the player sees: the guest room behind the west
           ///< door in the inn corridor's north wall (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_CORRIDOR =
+  TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE =
       19, ///< ★ Named from what the player sees: the guest room behind the east
           ///< door in the corridor's north wall, where a woman hides a Lucky
           ///< Medal (its render)
@@ -3856,36 +3856,36 @@ enum {
   TOLBI_INTERIORS_HOUSE_SOUTHWEST_TO_TOLBI = 7,
   TOLBI_INTERIORS_SANCTUM_TO_TOLBI = 8,
   TOLBI_INTERIORS_TO_TOLBI_WEST = 9,
-  TOLBI_INTERIORS_INN_TO_INN_CORRIDOR =
+  TOLBI_INTERIORS_INN_TO_INN_PASSAGE =
       10, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_INN_CORRIDOR_TO_INN =
+  TOLBI_INTERIORS_INN_PASSAGE_TO_INN =
       11, ///< ★ Named from the game: "Inn Full"
           ///< (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
-  TOLBI_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHWEST =
+  TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST =
       12, ///< ★ Named from what the player sees: the guest room through the
           ///< west opening on the inn corridor's south side (its render)
-  TOLBI_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_SOUTHEAST =
+  TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST =
       13, ///< ★ Named from what the player sees: the guest room through the
           ///< east opening on the corridor's south side, where stranded
           ///< passengers argue (its render)
-  TOLBI_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHWEST =
+  TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST =
       14, ///< ★ Named from what the player sees: the guest room behind the west
           ///< door in the inn corridor's north wall (its render)
-  TOLBI_INTERIORS_INN_CORRIDOR_TO_GUEST_ROOM_NORTHEAST =
+  TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST =
       15, ///< ★ Named from what the player sees: the guest room behind the east
           ///< door in the corridor's north wall, where a woman hides a Lucky
           ///< Medal (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_TO_INN_CORRIDOR =
+  TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE =
       16, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_SOUTHWEST_TO_INN_CORRIDOR =
+  TOLBI_INTERIORS_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE =
       17, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_NORTHWEST_TO_INN_CORRIDOR =
+  TOLBI_INTERIORS_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE =
       18, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
-  TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_CORRIDOR =
+  TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE =
       19, ///< ★ Named from what the player sees: the corridor at the foot of
           ///< the inn's stairs, lined with guest-room doors (its render)
 };

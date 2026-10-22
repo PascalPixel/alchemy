@@ -1,49 +1,39 @@
 /// @file
-/// The buildings of Suhalla (SceneId_SuhallaInteriors): the village's houses,
-/// its one shop and its inn, which the area names call Suhalla, and Suhalla
-/// Sanctum, as the same scene is named at SUHALLA_INTERIORS_SANCTUM and
-/// SUHALLA_INTERIORS_SANCTUM_NORTH.
+/// The buildings of Suhalla: one scene (SceneId_SuhallaInteriors) whose rooms
+/// are told apart by the entrance the party comes in by, and whose area name
+/// follows it:
 ///
-/// - Suhalla, the houses, shop and inn behind the village's doors
-///   (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST, SUHALLA_TO_HOUSE_NORTHEAST and
-///   SUHALLA_TO_HOUSE_EAST lead to the entrances of the same numbers, and
-///   leaving by them goes back out). Doors join the inn to its two guest
-///   rooms, and a ladder to its loft.
-/// - Suhalla Sanctum, behind the village's wide door (SUHALLA_TO_SANCTUM, to
-///   SUHALLA_INTERIORS_SANCTUM), whose Healer offers the sanctum's services.
+/// - Suhalla: the houses, the shop and the inn behind the village's doors,
+///   whose exits from the village (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST,
+///   SUHALLA_TO_HOUSE_NORTHEAST and SUHALLA_TO_HOUSE_EAST) lead to the
+///   entrances of the same numbers. Doorways join the inn to its two guest
+///   rooms, and a ladder to its loft, climbed through two exit regions.
+/// - Suhalla Sanctum: behind the village's wide door (SUHALLA_TO_SANCTUM),
+///   with SUHALLA_INTERIORS_SANCTUM_NORTH as its second entrance.
 ///
-/// The rooms' people and talk come in two sets, chosen by whether Babi has
-/// held his audience after Colosso (FLAG_BABI_SPOKE_AFTER_COLOSSO). Before
-/// it, Suhalla talks of Lalivero across the Nol River, under Tolbi's rule and
-/// out of reach, and of the travelers the sandstorms will send its inn once
-/// Tolbi's festival ends. The merchant, the innkeeper and the Healer serve
-/// the party across their counters and otherwise chat by the same flag.
+/// The rooms' people and talk come in two sets, each a placement table and an
+/// event table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO. Before Babi's
+/// audience after Colosso the village talks of Lalivero across the Nol River,
+/// out of reach under Tolbi's rule; after it, two of the soldiers who were
+/// escorting Sheba home lie wounded in a house, travelers the sandstorms blew
+/// back fill the inn, and an old woman half remembers a saying about the
+/// death storms. The two tables agree up to ACTOR_HEALER; the travelers stand
+/// off the map until the audience.
 ///
-/// At that audience Babi sent the party to Venus Lighthouse with Iodem, who
-/// commands his soldiers and travels with the party; Sheba, the holy child of
-/// Lalivero whom Babi held as a hostage, had already left Tolbi for Lalivero
-/// with soldiers bound for Babi Lighthouse. Afterwards two of those soldiers
-/// lie wounded in the house of a man who, his daughter says, aids anyone in
-/// trouble; the inn is full of travelers the storms blew back, and an old
-/// man and an old woman talk of the death storms in the middle of the Suhalla;
-/// she says there was a saying about them she cannot remember, and Mind Read
-/// finds half of it, `"Ye who seek..." Something about eyes of truth...`
-/// Stepping into that house (cell code 50) runs a scripted scene once
-/// (Event_IodemQuestionsWoundedSoldiers, FLAG_IODEM_MET_WOUNDED_SOLDIERS):
-/// Iodem steps out of the party to question the soldiers, who woke in these
-/// beds and do not know where Sheba is, only that she was not in the sandstorm,
-/// and who warn that monsters cause the storms, that others got through them
-/// with water and slew the beasts. Iodem asks whether these others are the ones
-/// the party is following and, whatever the answer, resolves to find Sheba and
-/// to cross the Suhalla Desert after them, then rejoins the party. Iodem only
-/// does this before he has reached Babi Lighthouse
-/// (FLAG_IODEM_AT_BABI_LIGHTHOUSE); what he says in the desert and at Suhalla
-/// Gate later depends on FLAG_IODEM_MET_WOUNDED_SOLDIERS.
+/// Stepping into the wounded soldiers' house (touch cell 50) plays
+/// Event_IodemQuestionsWoundedSoldiers once, while Iodem travels with the
+/// party and has not yet reached Babi Lighthouse. It sets
+/// FLAG_IODEM_MET_WOUNDED_SOLDIERS either way, which Iodem's lines in the
+/// Suhalla Desert and at Suhalla Gate read. The merchant, the innkeeper and
+/// the Healer serve a leader who faces north across their counters, and
+/// otherwise talk by the same flag. Searching the ovens finds a Smoke Bomb
+/// once (FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB) and shows what is cooking.
 ///
-/// Searching the ovens finds a Smoke Bomb, once
-/// (FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB), and shows what is cooking, except
-/// at the Smoke Bomb's oven: its find always answers first, so the cactus steak
-/// line there is unused.
+/// Unused: the cactus steak line at the Smoke Bomb's oven, whose item row
+/// always answers first, and the entrance SUHALLA_INTERIORS_HOUSE_WEST_UNUSED,
+/// to which no exit leads.
+///
+/// Open questions: none.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -59,6 +49,7 @@
 #include "item_ids.h"
 #include "flags.h"
 #include "songs.h"
+#include "field_runtime.h"
 
 /// The actors, numbering the rows of gSuhallaInteriorsPlacements and of
 /// gSuhallaInteriorsPlacementsAfterAudience from ACTOR_FIRST_PLACED; the two
@@ -142,7 +133,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 const struct SceneRegion *Scene_GetRegions(void) {
-  return (const struct SceneRegion *)gSuhallaInteriorsRegions;
+  return gSuhallaInteriorsRegions;
 }
 
 const u32 *Scene_GetExits(void) { return gSuhallaInteriorsExits; }
@@ -272,7 +263,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_IODEM, 78643, 39321);
+    Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
     Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
     Event_Wait(30);
@@ -287,7 +278,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
-    Actor_SetSpeed(ACTOR_IODEM, 78643, 39321);
+    Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -24);
     Actor_WalkByAndWait(ACTOR_IODEM, 48, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
@@ -306,7 +297,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, 4);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
@@ -318,13 +309,13 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_StartRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 78643, 39321);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 104);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Event_Wait(20);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, 4);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(20);
@@ -347,13 +338,13 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_NORTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(40);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, 3);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, 4);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
@@ -376,10 +367,10 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(40);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, 3);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, 4);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
@@ -406,13 +397,13 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, 3);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_NORTH, ANIM_NOD);
     Event_Wait(30);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, 4);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
@@ -439,7 +430,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, 4);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_SOLDIER_SOUTH, 0);
     Event_Wait(10);
@@ -467,7 +458,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SOLDIER_SOUTH, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Event_Wait(30);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, 3);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
     Event_ShowMessage(ACTOR_IODEM, 0);
     Event_Wait(10);
@@ -499,11 +490,11 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_IODEM, 3);
+    Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
     Event_PlayCue(MUS_030);
-    Actor_SetSpeed(ACTOR_IODEM, 78643, 39321);
-    Actor_SetAnimation(ACTOR_IODEM, 2);
+    Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
+    Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
@@ -540,8 +531,8 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gEventWork->transitionFrames = 24;
   // Nearer to talk to, across their counters.
-  Object_GetById(ACTOR_MERCHANT)->collisionFlags |= 4;
-  Object_GetById(ACTOR_INNKEEPER)->collisionFlags |= 4;
+  Object_GetById(ACTOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
+  Object_GetById(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
   // Each soldier lies a quarter turn over, with no shadow.
   actor = Object_GetById(ACTOR_SOLDIER_SOUTH);
   actor->sprite->flags = 0;
@@ -588,10 +579,10 @@ struct SceneEntrance gSuhallaInteriorsEntrances[] = {
 };
 
 // clang-format off
-s16 gSuhallaInteriorsRegions[] = {
-    83, 28, 356, 91, 36, 364, -1, 14,
-    83, -20, 596, 91, -12, 604, -1, 15,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gSuhallaInteriorsRegions[] = {
+    {83, 28, 356, 91, 36, 364, CONDITION_ALWAYS, SUHALLA_INTERIORS_INN_TO_LOFT},
+    {83, -20, 596, 91, -12, 604, CONDITION_ALWAYS, SUHALLA_INTERIORS_LOFT_TO_INN},
+    {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
 u32 gSuhallaInteriorsExits[] = {

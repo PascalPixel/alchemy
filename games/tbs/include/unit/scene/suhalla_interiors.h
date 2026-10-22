@@ -13,7 +13,7 @@ const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gSuhallaInteriorsEntrances[];
-extern s16 gSuhallaInteriorsRegions[];
+extern struct SceneRegion gSuhallaInteriorsRegions[];
 extern u32 gSuhallaInteriorsExits[];
 extern struct ScenePlacement gSuhallaInteriorsPlacements[];
 extern struct ScenePlacement gSuhallaInteriorsPlacementsAfterAudience[];

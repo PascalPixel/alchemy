@@ -7,11 +7,11 @@
 // A recovering Djinni's turns left: its digits and their x in the list, in
 // pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define TURNS_DIGITS 1
-#define TURNS_X 48
+#define DJINN_RECOVERY_DIGITS 1
+#define DJINN_RECOVERY_X 48
 #else
-#define TURNS_DIGITS 2
-#define TURNS_X 40
+#define DJINN_RECOVERY_DIGITS 2
+#define DJINN_RECOVERY_X 40
 #endif
 
 /// The party status window's layout, whose Djinn column the menu blinks.
@@ -266,7 +266,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             UiText_DrawNumberAtOffset(
                 (s32)((encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                       DJINN_ENTRY_RECOVERY_SHIFT),
-                TURNS_DIGITS, listWindow, TURNS_X, j * 16);
+                DJINN_RECOVERY_DIGITS, listWindow, DJINN_RECOVERY_X, j * 16);
           }
           UiWork_SetParameterNibble(15);
           j++;

@@ -321,10 +321,10 @@ void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
 // while a menu is open.
 #if TBS_PATCH_2
 
-#define PARTICLES_PAUSE_FOR_MENU 1
+#define REVEAL_SPARKLES_PAUSE_FOR_MENU 1
 #endif
 
-#if defined(PARTICLES_PAUSE_FOR_MENU)
+#if defined(REVEAL_SPARKLES_PAUSE_FOR_MENU)
 /// In gEventWork, the byte after queuedSound: Menu_RunTopSelection sets it
 /// once Menu_SelectTopEntry first returns, a cancel included, and clears it as
 /// it returns.
@@ -360,7 +360,7 @@ void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   struct ObjectRuntime *object;
   u32 randomRadius;
 
-#if defined(PARTICLES_PAUSE_FOR_MENU)
+#if defined(REVEAL_SPARKLES_PAUSE_FOR_MENU)
   if (*(s8 *)((u8 *)gEventWork + MENU_OPEN_OFFSET) != 0)
     return;
 #endif
@@ -471,5 +471,5 @@ void FieldEffect_SpawnNearbyMarkers(void) {
 
 #undef EFFECT_OBJECT_COUNT
 #undef EFFECT_OBJECT_POOL
-#undef PARTICLES_PAUSE_FOR_MENU
+#undef REVEAL_SPARKLES_PAUSE_FOR_MENU
 #undef MENU_OPEN_OFFSET

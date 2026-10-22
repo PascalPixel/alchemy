@@ -167,7 +167,7 @@ void FieldEvent_ShowMessageThenWait(s32 actor, s32 flags, s32 wait);
 s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags);
 void FieldEvent_EmptyCallback(void);
 void Event_ShowSpeakerMessage(s32 speaker);
-void ObjectTable_CallRefreshHook(s32 unused0, s32 unused1, s32 x, s32 y);
+void Event_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 void ObjectTable_RunIfActive(s32 actor);
 void FieldEvent_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,

@@ -15,7 +15,7 @@ struct BattleUnit;
 /// A character's definition: the growth curves of its stats, its element
 /// bonus, starting level and starting equipment.
 struct CharacterDefinition {
-  u8 unk00[0x50]; ///< Twenty words in chars.tsv; not named by any TBS code.
+  u8 reserved[0x50]; ///< twenty words, 0 in every row; read by no code
   /// The growth curves: each stat at levels 0, 20, 40, 60, 80 and 100. A
   /// level up adds a twentieth of the step around the new level, with a
   /// random part; level 1 adds the first point (Unit_LevelUp).
@@ -63,8 +63,8 @@ struct ClassDefinition {
   u8 unk0e[2];                       ///< Padding in classes.tsv.
   struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
   /// [0] to [2]: the ability effects the class is weak to
-  /// (BattleTarget_IsWeakToEffect); [3] is not read there.
-  u8 unk50[4];
+  /// (BattleTarget_IsWeakToEffect); [3] is 0 in every row and not read.
+  u8 weakEffects[4];
 };
 
 /// A Djinni: its ability and the stat bonuses it gives while set.
@@ -147,7 +147,7 @@ struct EnemyDefinition {
   u16 actions[8]; ///< the abilities the enemy chooses from
   /// [0] to [2]: the ability effects the enemy is weak to
   /// (BattleTarget_IsWeakToEffect); [3] is 0 in every row.
-  u8 unk48[4];
+  u8 weakEffects[4];
   u16 coins; ///< coins won
   s16 item;  ///< the item it may leave, 0 for none
   /// The chance of the item: 1 in 2 to the power itemChance - 1, two powers

@@ -182,7 +182,7 @@ A message is written at `work->count`, ends with 0, and is known only by the
 index it starts at, which `UiText_BuildRenderEntries` returns; asking for
 message -1 returns the last message's start again. No space is reserved, so
 later decoding that wraps round overwrites the message.
-A message longer than the ring is cut at the ring's length.
+A message longer than the ring is cut at the ring's length; none in the game is (below).
 
 ## Typing
 
@@ -288,10 +288,15 @@ used, the control codes from what the decoder and the channel do with each,
 and the screens from the English release's text they show. Messages are
 named by their linker symbols, made from their English text.
 
-- XXX: why there are three channels, and why the international editions gave
-  up four windows when they doubled the ring.
-- XXX: what a message longer than the ring was meant to do: the decoder stops
-  after one ring's length, and its terminator then lands on the message's own
-  start.
-- XXX: `unknownBeforeValues` in `struct UiRenderWork`, the bytes before the
-  argument table, which the TBS code never names.
+A message longer than the ring would be cut, its terminator landing on its own
+start, but no message is that long. Counting each control code and line break
+as one code, before the arguments are filled in, the longest message of each
+edition's text is the Lucky Dice rules, at 200 of the Japanese ring's 256
+codes and at most 446 (Italian) of the others' 512. The two bytes before the
+argument table, `padding` in `struct UiRenderWork`, align `values` to a word
+in every edition, and nothing reads them.
+
+- XXX (no evidence): why there are three channels, and why the international
+  editions gave up four windows when they doubled the ring; the code shows
+  only the counts each edition uses, and only Camelot's sources could say how
+  they were chosen.

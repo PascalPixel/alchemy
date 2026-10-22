@@ -239,7 +239,16 @@ in them, and the item effect kinds from what `UnitCalc` does with each. Flags
 48 to 127 are the Djinn's found flags because `Djinn_AddToLeastLoadedOwner`
 sets flag `FLAG_DJINNI_0` + 20 × element + index when a Djinni joins.
 
-- XXX: the `unknown_` and `unk_` columns of the tables; the code that reads
-  each would settle it.
-- XXX: what rows 269 to 323 of `items.tsv` were for, as they have no name
-  message.
+The tables keep no unknown columns. `chars.tsv`'s first twenty words
+(`CharacterDefinition.reserved`) and `summons.tsv`'s two bytes after the
+ability (`SummonDefinition.reserved`) are 0 in every row and read by no code.
+The last byte of `classes.tsv`, `weak_effect3`, is the fourth weak effect,
+which `BattleTarget_IsWeakToEffect` stops short of; it too is 0 in every row,
+as is the enemies' fourth (`EnemyDefinition.weakEffects`).
+
+Rows 269 to 323 of `items.tsv` are 55 copies of one row: a weapon only Isaac
+can equip, priced 100 coins, with Attack 11, no icon and no name message.
+Nothing gives one: the shops' stock table (`shop/artifacts.c`) and the
+scripts name no item past `ITEM_CLERICS_RING` (268), no enemy in
+`enemies.tsv` carries or drops one, and the debug item browser covers 0 to 269
+and skips items without an icon. They are filler to 324 rows.

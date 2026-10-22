@@ -225,7 +225,10 @@ enum BattlePlanStaging {
 #define STAGING_BY_ID_RANGE 0x4000 ///< BattleFx_DispatchByIdRangeFar
 #define STAGING_SCENE 0x8000       ///< BattleFx_RunSceneEffectFar, actor's view
 #define STAGING_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
-#define STAGING_OTHER_SIDE 0x20000 ///< played from the other side
+/// Plays the effect on the side opposite its targets. Unused: no row of
+/// actflags.tsv in either game sets it and no code adds it, so the flip in
+/// BattlePresentation_RunUnitTransition never happens.
+#define STAGING_OTHER_SIDE 0x20000
 
 /// The effect kind Severe Blow alone has: the status window drops its PP row
 /// while it plays.

@@ -12,7 +12,10 @@
 enum BattleEffectSide { EFFECT_SIDE_ENEMIES, EFFECT_SIDE_PARTY };
 
 /// What a critical hit adds to an attack's effect kind:
-/// BattlePresentation_RunAttack plays the critical version of the blow.
+/// BattlePresentation_RunAttack plays the critical version of the blow. Only
+/// plain attacks score critical hits, and their kinds are 1 to 5, all
+/// dispatched by id range, so it reaches kinds 201 to 205: the ring and spark
+/// scene, the same for each.
 #define EFFECT_KIND_CRITICAL_OFFSET 200
 
 /// The command shared by an effect's caller, dispatcher and handlers.

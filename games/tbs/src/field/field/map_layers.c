@@ -195,7 +195,7 @@ struct LayeredSceneHeader {
   /// Each layer's BG priority, 1 to 3; 0 leaves the layer off.
   u8 priority[3];
   u8 charBase[3]; ///< each layer's BG char block
-  u16 unk0a;      ///< not read by Map_LoadLayeredScene
+  u16 reserved;   ///< 0 in every map of both games; nothing reads it
   struct LayeredSceneLayer layers[3];
   // Offsets from the header's start: type-01 packed data, but for the
   // markers, which are read in place.

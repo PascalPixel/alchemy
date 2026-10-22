@@ -171,7 +171,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  if ((s16)field->descriptor != 0 || ui->mode != 0) {
+  if ((s16)field->talk != 0 || ui->mode != 0) {
     range = 26;
     if ((*kidFlags & KID_TALKING) != 0) {
       force = 1;

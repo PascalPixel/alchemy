@@ -68,10 +68,10 @@ s32 Shop_SelectRepair(s32 unitId);
 void Shop_RepairItem(s32 unitId, s32 slot);
 void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow);
 
-s32 EventTable_GetRowLimit(void);
-void EventTable_ApplyRowAbilities(s32 stockRow);
-s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output);
-s32 EventTable_GetRowType(s32 stockRow);
+s32 ShopStock_GetRowCount(void);
+void ShopStock_AddArtifacts(s32 stockRow);
+s32 ShopStock_CopyItems(s32 stockRow, s16 *output);
+s32 ShopStock_GetType(s32 stockRow);
 
 s32 Shop_ServicePrice(s32 unitId, s32 serviceKind);
 s32 Shop_CanServe(s32 unitId, s32 serviceKind);

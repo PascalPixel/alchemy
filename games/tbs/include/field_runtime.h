@@ -106,17 +106,17 @@ struct FieldWork {
   /// The twelve requests: each nonzero value asks the field loop for one
   /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
-  s16 action;     ///< a step event (1 to 239) for Scene_RunTouchOrExit
-  s16 input;      ///< a tile code (252 to 254) for Field_RunPushTileEvent
-  s16 exit;       ///< the exit taken, which ends the scene
-  s16 menu;       ///< open the main menu
-  s16 examine;    ///< the A button: examine what is ahead
-  s16 start;      ///< the Start button: open the pause menu
-  u16 descriptor; ///< an actor's event, as actor | 0x1000
-  s16 tile;       ///< a tile's collision code, for Field_SearchTile
-  s16 battle;     ///< the enemy group of a random encounter
-  s16 command;    ///< a field Psynergy to use, as owner << 10 | Psynergy
-  s16 item;       ///< an item to use, packed as Field_UseItem reads it
+  s16 action;   ///< a step event (1 to 239) for Scene_RunTouchOrExit
+  s16 pushTile; ///< a tile code (252 to 254) for Field_RunPushTileEvent
+  s16 exit;     ///< the exit taken, which ends the scene
+  s16 menu;     ///< open the main menu
+  s16 examine;  ///< the A button: examine what is ahead
+  s16 start;    ///< the Start button: open the pause menu
+  u16 talk;     ///< an actor's event, as actor | 0x1000
+  s16 tile;     ///< a tile's collision code, for Field_SearchTile
+  s16 battle;   ///< the enemy group of a random encounter
+  s16 psynergy; ///< a field Psynergy to use, as owner << 10 | Psynergy
+  s16 item;     ///< an item to use, packed as Field_UseItem reads it
   /// A raised event for Scene_RunRaisedEvent, or an enum FieldEventCode.
   s16 event;
   ///@}
@@ -180,7 +180,7 @@ STATIC_ASSERT(offsetof(struct FieldWork, events) == 0x10);
 STATIC_ASSERT(offsetof(struct FieldWork, actors) == 0x14);
 STATIC_ASSERT(offsetof(struct FieldWork, markers) == 0x11c);
 STATIC_ASSERT(offsetof(struct FieldWork, action) == 0x16c);
-STATIC_ASSERT(offsetof(struct FieldWork, descriptor) == 0x178);
+STATIC_ASSERT(offsetof(struct FieldWork, talk) == 0x178);
 STATIC_ASSERT(offsetof(struct FieldWork, battle) == 0x17c);
 STATIC_ASSERT(offsetof(struct FieldWork, event) == 0x182);
 STATIC_ASSERT(offsetof(struct FieldWork, blockedSteps) == 0x19c);

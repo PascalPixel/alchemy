@@ -4,7 +4,7 @@
 
 #include "../effect_internal.h"
 
-// The triangle effects (Bind, Luff and BattleFx_RunTriangleStrike) spin a
+// The triangle effects (Bind, Luff and BattleFx_RunUnusedTriangleStrike) spin a
 // shrinking triangle onto the first target for 64 frames and then stand a
 // rune there. The triangle is drawn as the ring and star effects draw their
 // outlines: its corners are projected onto the canvas and stored in the
@@ -290,16 +290,19 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-/// The spinning triangle and rune of BattleFx_RunBind without the Djinni; on
-/// frame 46 the user steps up to the first target.
+/// Unused: no row of actflags.tsv in either game names its kind, and the
+/// handler table is reached with no other kind (BattleFx_RunTableEffect), so
+/// the player never sees it. It would show the spinning triangle and rune of
+/// BattleFx_RunBind without the Djinni, with the user stepping up to the
+/// first target on frame 46.
 ///
-/// Abilities: none (BATTLE_FX_TRIANGLE_STRIKE).
+/// Abilities: none (BATTLE_FX_UNUSED_TRIANGLE_STRIKE).
 ///
 /// It reads its own copy of the vertex, gBind_TriangleStrikeVertex, which
 /// holds the same point as Bind's (gBind_Vertex). Changes the same state as
 /// BattleFx_RunBind, on the narrow canvas at priority 0, and starts the
 /// user's approach through BattleMotion_ApproachTargetFar.
-void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
+void BattleFx_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   // World input and projected vertices reuse one coordinate workspace.
   union {

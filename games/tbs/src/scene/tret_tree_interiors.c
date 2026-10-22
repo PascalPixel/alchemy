@@ -822,7 +822,7 @@ static void TretPalette_UpdateSceneTint(void) {
   fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
   paletteWork = WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER);
   sourceColors = paletteWork->palette;
-  if (fieldWork->command != 0)
+  if (fieldWork->psynergy != 0)
     return;
   if ((gFrameCount & 31) != 0)
     return;

@@ -171,13 +171,40 @@ the same. The cue layer's come from what `AudioCommand_Play` does with each
 range of numbers, and the songs' from `songs.h`, where a song without a
 proven name keeps its number (`MUS_070`, `SE_188`).
 
-- XXX: what the five mixer records change in the mix, and why `MUS_067`,
-  `MUS_070` and `MUS_075` take record 3. A disassembly of the records against
-  the render loop they patch would settle the first.
-- XXX: whether a library call dropped by the lock is ever noticeable in the
-  game.
-- XXX: why sound effects that name `SOUND_PLAYER_EFFECT_LAST` search only
-  players 4 to 7.
+The mixer records are the last step of `IwramSoundRenderFrame`'s loop. Each
+pass loads four words of the mix buffer, two 16-bit samples to a word, and
+writes them out to the two hardware buffers, reading back first what those
+buffers held from the previous time round (`fp` from the first, `ip` from the
+second, `0x630` bytes on). The record then works out what the mix buffer
+starts the next frame with, from this frame's mix and those older samples,
+and stores it. Record 2, which most music uses, keeps a quarter of the mix
+plus an eighth of each buffer's old samples, each channel from its own buffer
+(in the shifts' units: the mix `>> 18`, the old samples `>> 19`). Record 3
+swaps the weights, an eighth of the mix and a quarter of the old samples, so
+more of what has already played carries into the next frame. Record 0 makes
+both channels one value from the two buffers together, record 1 crosses each
+channel's old samples with the other's, and record 4 clears the mix buffer, so
+nothing carries over. Record 3 is the title's music and the ending's: `MUS_070`
+over the title intro, `MUS_075` over the title shown after the prologue, and
+`MUS_067` through the credits and as the Lemurian ship sails off
+(`menu/title.c`, `scene/lemurian_ship.c`). Record 4 is the link battle's.
+
+A library call is dropped only when it meets another that holds the lock, and
+library calls all run on the main thread, one after another, except from a
+VBlank task. A call graph of the tbs-en build finds one VBlank task that
+reaches the library: `ReelGame_RunFrame`, the slot machine's frame, which
+plays its sounds from the VBlank. Its sounds can be dropped only if the VBlank
+arrives while a main-loop task is inside a library call; while the slot
+machine runs, the main thread only draws and waits, and no message types, so
+in practice nothing is dropped.
+
+A sound effect that names `SOUND_PLAYER_EFFECT_LAST` searches only players 4
+to 7 because players 2 and 3 have sounds of their own in the song table:
+player 2 the interface's (`SE_MENU_CONFIRM`, `SE_MENU_CANCEL`,
+`SE_MENU_ERROR`, `SE_SHOP_PURCHASE`) and player 3 the field's and battle's
+actions (`SE_CAST`, `SE_IMPACT`, `SE_HEAVY_IMPACT`, `SE_DOOR_OPEN`). A
+floating effect therefore never cuts those off.
+
 - XXX (picture): no picture yet takes a frame's sound apart, such as the eight players'
   tracks drawn as rows while a fanfare silences the music and it fades back
   in.

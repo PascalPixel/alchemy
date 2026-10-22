@@ -13,7 +13,7 @@
 ///
 ///   Shops           run.c: Shop_Run; buy.c: Shop_SelectBuy; sell.c:
 ///                   Shop_SelectSell; repair.c: Shop_SelectRepair
-///   Stock           artifacts.c: EventTable_ApplyRowAbilities,
+///   Stock           artifacts.c: ShopStock_AddArtifacts,
 ///                   Shop_BuySpecialItem
 ///   Sanctum         sanctum.c: Sanctum_RunPartyService
 ///   Inn             inn.c: Inn_CheckIn

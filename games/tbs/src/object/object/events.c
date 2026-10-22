@@ -199,7 +199,7 @@ s32 Scene_FindActorTalkEvent(s32 id) {
 /// -1 when there was none or such a line stood in for it; Field_RunScene
 /// ignores the result.
 ///
-/// Called by Field_RunScene for its talk request (work->descriptor). Resumes
+/// Called by Field_RunScene for its talk request (work->talk). Resumes
 /// the stopped actor and sets gGameState.pausedObject back to -1 afterwards.
 s32 Scene_TalkToActor(s32 id) {
   struct ScenePlacement *placement = Scene_FindActorPlacement(id);
@@ -392,7 +392,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
 /// MAP_CELL_JUMP_FORWARD, and MAP_CELL_JUMP_FORWARD_UNREACHED), once it has
 /// pushed for more than 12 frames; the count then restarts.
 ///
-/// Called by Field_RunScene for its push request (work->input), which
+/// Called by Field_RunScene for its push request (work->pushTile), which
 /// Field_ProcessStep raises for MAP_CELL_LEDGE to MAP_CELL_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
 s32 Field_RunPushTileEvent(s32 collisionCode) {

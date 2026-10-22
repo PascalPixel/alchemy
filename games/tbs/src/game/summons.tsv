@@ -1,4 +1,4 @@
-ability:u16	unknown_020:u8	unknown_021:u8	djinn0:u8	djinn1:u8	djinn2:u8	djinn3:u8
+ability:u16	reserved_02:u8	reserved_03:u8	djinn0:u8	djinn1:u8	djinn2:u8	djinn3:u8
 380	0	0	1	0	0	0
 386	0	0	0	1	0	0
 392	0	0	0	0	1	0

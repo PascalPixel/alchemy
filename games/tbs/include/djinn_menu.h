@@ -52,6 +52,10 @@ struct DjinnMenuWork {
   s8 selectedColumn[2]; ///< each pane's member, in owners
   u8 unk01e[6];         ///< not named by TBS code
   struct UiWindow *window;
+  /// Never given a window, so NULL from UiWindow_InitializeWork on; the preview
+  /// still redraws it, which reads the window's place from the BIOS. Outside
+  /// the BIOS that returns the last BIOS instruction fetched, whose low half
+  /// as a width is over 30, so UiWindow_DrawFrame draws nothing.
   struct UiWindow *unknownWindow028;
   u8 unk02c[4]; ///< not named by TBS code
   struct UiWindow *listWindow;

@@ -201,8 +201,10 @@ that waits.
 
 `WaitFrames` must not be called from inside a task: the nested call would find
 its stack below the top again and overwrite `gSavedStack` and
-`gSavedStackSize`, which still hold the outer caller's frames. XXX: nothing
-guards against this, and whether any task does it isn't known.
+`gSavedStackSize`, which still hold the outer caller's frames. `WaitFrames`
+itself doesn't check, but it sets `gSchedulerStatus` while it runs the
+main-loop tasks, and code a task may reach tests it before waiting
+(`BattleObj_SpawnObjectsForList`). No task waits (below).
 
 ## The heap
 
@@ -371,7 +373,17 @@ above the heap's end is at most 512. `ewram.s` lays EWRAM out in 4 KB groups
 fourth), and `gSavedStack` is the last cell of the third, sized to reach the
 fourth. It could hold a stack that had run 2,640 bytes into the heap.
 
-- XXX: whether any task calls `WaitFrames`, which would overwrite the saved
-  stack; a trace of the `WaitFrames` calls made while a scheduler pass is
-  running would settle it.
-- XXX: what `RuntimeDispatch_` and the other reserved empty exports were for.
+No task waits. A call graph of the tbs-en build's objects, main image and
+overlays, from each function the code hands to the scheduler, each object
+hook and each `SC_CALL` callback, finds nine tasks with a path of calls to
+`WaitFrames`, and none takes it: the scene tasks turn actors with a wait of 0
+(`Engine_ActorFaceDirection`), the world map's lighthouse jitter moves the
+camera with a glide, the slot machine and the link countdown open instant
+windows (`UI_WINDOW_INSTANT`), and battle playback's sprite respawn tests
+`gSchedulerStatus`. The tenth path is the debug scene selector, which only
+the unused `DebugMenu_ScheduleSceneSelector` would schedule as a task.
+
+- XXX (no evidence): what the five empty exports after the fades
+  (`RuntimeDispatch_ReservedNoOpA` to `E`) were for; they are empty in both
+  games, nothing calls them, and each is reached only through a bare veneer,
+  so no code shows what they were to do.

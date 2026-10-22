@@ -379,16 +379,19 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
 /// the 59 frames between.
 #define ORBITING_SPIRALS_LIFE 60
 
-/// Four spirals circle 40 pixels above each target in turn, 16 frames apart,
-/// for 59 frames each, 16 pixels out from the centre; each target takes its
-/// damage pose 32 frames into its turn.
+/// Unused: no row of actflags.tsv in either game names its kind, and the
+/// handler table is reached with no other kind (BattleFx_RunTableEffect), so
+/// the player never sees it. Four spirals would circle 40 pixels above each
+/// target in turn, 16 frames apart, for 59 frames each, 16 pixels out from
+/// the centre; each target would take its damage pose 32 frames into its
+/// turn.
 ///
-/// Abilities: none (BATTLE_FX_ORBITING_SPIRALS).
+/// Abilities: none (BATTLE_FX_UNUSED_ORBITING_SPIRALS).
 ///
 /// The effect layer ripples throughout, through
 /// BattleFx_ArmBg2AffineHBlankDma, which it adds and removes. It never lets
 /// the battle show damage, and leaves the targets' flash timers alone.
-void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
+void BattleFx_RunUnusedOrbitingSpirals(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;

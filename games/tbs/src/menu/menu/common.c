@@ -936,16 +936,16 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;
 
-  src = gMenu_ListOrderDefault;
+  src = gMenu_ListOrderItemsFirst;
   switch (mode) {
   case LIST_SORT_EQUIPPED_THEN_ITEMS:
-    src = gMenu_ListOrderMode0;
+    src = gMenu_ListOrderEquippedThenItems;
     break;
   case LIST_SORT_EQUIPPED_THEN_EQUIPMENT:
-    src = gMenu_ListOrderMode1;
+    src = gMenu_ListOrderEquippedThenEquipment;
     break;
   case LIST_SORT_EQUIPMENT_FIRST:
-    src = gMenu_ListOrderMode2;
+    src = gMenu_ListOrderEquipmentFirst;
     break;
   }
   *order = *src;

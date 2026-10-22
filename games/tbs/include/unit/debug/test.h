@@ -19,6 +19,6 @@ extern u32 gMenuTest_Exits[];
 extern struct ScenePlacement gMenuTest_Placements[];
 extern struct SceneEvent gMenuTest_Events[];
 extern s32 gMenuTest_SlotOffsets;
-extern s32 gMenuTest_BenchmarkCharacter;
+extern s32 gMenuTest_FillLetter;
 
 #endif

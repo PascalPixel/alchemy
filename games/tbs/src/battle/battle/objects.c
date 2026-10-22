@@ -171,7 +171,7 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
     s32 classId;
     flags |= ICON_STUN;
     classId = unit->classId;
-    // Summon_LayoutPositions also tests these two classes.
+    // BattlePlacement_LayoutEnemies also tests these two classes.
     if (classId == ENEMY_KRAKEN || classId == ENEMY_FUSION_DRAGON)
       flags &= ~ICON_STUN;
   }

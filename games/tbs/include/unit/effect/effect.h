@@ -69,7 +69,7 @@ enum BattleFxKind {
   BATTLE_FX_WEAKEN = 31,
   BATTLE_FX_TAINT = 32,
   BATTLE_FX_DELUDE = 33,
-  BATTLE_FX_ORBITING_SPIRALS = 34, ///< no ability uses it
+  BATTLE_FX_UNUSED_ORBITING_SPIRALS = 34, ///< no ability uses it
   BATTLE_FX_HEARTRENDER = 35,
   BATTLE_FX_PARALYZE = 36,
   BATTLE_FX_SLEEP = 37,
@@ -101,7 +101,7 @@ enum BattleFxKind {
   BATTLE_FX_DEMON_FIRE = 64,
   BATTLE_FX_VORPAL_SLASH = 65,
   BATTLE_FX_DROWN = 66,
-  BATTLE_FX_TRIANGLE_STRIKE = 67, ///< no ability uses it
+  BATTLE_FX_UNUSED_TRIANGLE_STRIKE = 67, ///< no ability uses it
   BATTLE_FX_ASTRAL_BLAST = 68,
   BATTLE_FX_GRANITE = 200,
   BATTLE_FX_REVIVE_201 = 201,
@@ -187,7 +187,8 @@ enum BattleFxKind {
   BATTLE_FX_OUTER_SPACE = 384,
   BATTLE_FX_DRAGON_DRIVER = 385,
   BATTLE_FX_DRAIN_FANG = 386,
-  BATTLE_FX_SEVERE_BLOW_LEAP = 387, ///< no ability uses it
+  BATTLE_FX_UNUSED_SEVERE_BLOW_LEAP = 387, ///< no ability uses it; The Lost
+                                           ///< Age's Severe Blow does
   BATTLE_FX_THRASH = 388,
   BATTLE_FX_RECOVERY = 389,
   BATTLE_FX_FIRE_BLESSING = 400,
@@ -334,7 +335,7 @@ void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 // planet_diver.c
 void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect);
 void BattleFx_RunHaunt(struct BattleEffectArgument *effect);
-void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect);
+void BattleFx_RunUnusedOrbitingSpirals(struct BattleEffectArgument *effect);
 
 // gathering_lights.c
 void BattleFx_RunDemonNight(struct BattleEffectArgument *effect);
@@ -370,7 +371,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect);
 // bind.c
 void Graphics_ConvertBackgroundToBlueRamp(void);
 void BattleFx_RunBind(struct BattleEffectArgument *effect);
-void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect);
+void BattleFx_RunUnusedTriangleStrike(struct BattleEffectArgument *effect);
 
 // stars.c
 void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect);
@@ -648,7 +649,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect);
 
 // thrash.c
 void BattleFx_RunThrash(struct BattleEffectArgument *effect);
-void BattleFx_RunSevereBlowLeap(struct BattleEffectArgument *effect);
+void BattleFx_RunUnusedSevereBlowLeap(struct BattleEffectArgument *effect);
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect);
 void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect);
 void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode);

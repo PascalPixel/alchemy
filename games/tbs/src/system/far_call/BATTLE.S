@@ -15,7 +15,7 @@ FarCall_BattleTable:
 	export BattleBackground_LoadFar, BattleBackground_Load
 	export BattlePresentation_SetPaletteLevelFar, BattlePresentation_SetPaletteLevel
 	overlay_veneer BattleClass_GetEffectHeight
-	export Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged
+	export BattleClass_HasHeavyImpactFar, BattleClass_HasHeavyImpact
 	overlay_veneer BattleClass_GetAttackHop
 	overlay_veneer BattleClass_IsSmall
 	export BattleUnit_GetEffectHeightFar, BattleUnit_GetEffectHeight

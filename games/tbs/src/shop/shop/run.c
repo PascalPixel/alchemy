@@ -109,13 +109,13 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct UiWindow *window;
   s32 action = 0;
 
-  if (stockRow >= EventTable_GetRowLimit() || stockRow < 0)
+  if (stockRow >= ShopStock_GetRowCount() || stockRow < 0)
     stockRow = SHOP_STOCK_ROW_EMPTY;
   // Seed this location's artifact stock before creating the shop UI.
-  EventTable_ApplyRowAbilities(stockRow);
+  ShopStock_AddArtifacts(stockRow);
   Shop_InitializeCursorWork();
   shop = gMenuWork;
-  shop->shopType = EventTable_GetRowType(stockRow);
+  shop->shopType = ShopStock_GetType(stockRow);
   // Xian's shops are the warriors' shops, which greet differently.
   if (stockRow == SHOP_STOCK_ROW_XIAN_WEAPONS)
     shop->warriorShop = 1;
@@ -145,7 +145,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
     action = Menu_SelectShopCommandFar(action);
     shop->partyAction = action;
     if (action == SHOP_ACTION_BUY) {
-      shop->stockCount = EventTable_CopyRowHeader(stockRow, shop->stockItemIds);
+      shop->stockCount = ShopStock_CopyItems(stockRow, shop->stockItemIds);
       UiMessage_ShowAndWait(MsgWhatWouldYouLike);
       Shop_SelectBuy();
     } else if (action == SHOP_ACTION_SELL) {

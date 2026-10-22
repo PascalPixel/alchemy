@@ -24,15 +24,15 @@ void Field_ClearRequests(void) {
   noRequest = 0;
   work = (struct FieldWork *)gEventWork;
   work->action = noRequest;
-  work->input = 0;
+  work->pushTile = 0;
   work->exit = 0;
   work->menu = 0;
   work->examine = 0;
   work->start = 0;
-  work->descriptor = 0;
+  work->talk = 0;
   work->tile = 0;
   work->battle = 0;
-  work->command = 0;
+  work->psynergy = 0;
   work->item = 0;
   work->event = 0;
 }
@@ -44,10 +44,22 @@ void Field_ClearRequests(void) {
 s32 Field_CountRequests(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-  return work->action + work->input + work->exit + work->menu + work->examine +
-         work->start + (s16)work->descriptor + work->tile +
-         (s16)work->descriptor + work->battle + work->command + work->item +
+  // BUG: a sum can be 0 with requests pending. Field_ProcessStep raises event
+  // FIELD_EVENT_PARTY_FELL (-1) on the frame a member falls to poison, and
+  // the action request is the cell's event code, 1 on a touch event 1's cells
+  // (154 maps have them); together they sum to 0, and both wait until another
+  // request breaks the tie, by which time a later cell's code may have
+  // replaced the action. BUGFIX tests each request instead.
+#ifdef BUGFIX
+  return work->action | work->pushTile | work->exit | work->menu |
+         work->examine | work->start | (s16)work->talk | work->tile |
+         work->battle | work->psynergy | work->item | work->event;
+#else
+  return work->action + work->pushTile + work->exit + work->menu +
+         work->examine + work->start + (s16)work->talk + work->tile +
+         (s16)work->talk + work->battle + work->psynergy + work->item +
          work->event;
+#endif
 }
 
 /// Returns the collision code of the map cell 16 pixels ahead of the party
@@ -239,7 +251,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (event >= MAP_CELL_EVENT_FIRST && event <= MAP_CELL_EVENT_LAST)
     work->action = event;
   if (event >= MAP_CELL_LEDGE && event <= MAP_CELL_JUMP_FORWARD)
-    work->input = event;
+    work->pushTile = event;
 
   // Only while walking (not climbing) towards a target.
   if (gGameState.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
@@ -302,8 +314,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
         gGameState.avoidDistance = 1;
         // Raise Avoid as a Psynergy request that pays no PP; Avoid's end
         // handler says it wore off.
-        if (work->command == 0)
-          work->command = ACT_PACKED | ABILITY_AVOID;
+        if (work->psynergy == 0)
+          work->psynergy = ACT_PACKED | ABILITY_AVOID;
       }
     }
   }

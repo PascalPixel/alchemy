@@ -206,7 +206,7 @@ ranges, so returning from a battle restores the room as it was left.
 ## Field Psynergy
 
 Field Psynergy goes through the scene loop and the scene's event table.
-Choosing it from the menu or a shortcut key raises the `command` request, and
+Choosing it from the menu or a shortcut key raises the `psynergy` request, and
 `Field_UsePsynergy` checks it can be used there, pays the PP and looks up the
 scene's Psynergy events for what the leader faces. It runs the
 `PSYNERGY_PHASE_BEFORE_CAST` event, plays the effect for the ability's field

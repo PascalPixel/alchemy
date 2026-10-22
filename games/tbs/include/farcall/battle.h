@@ -27,7 +27,7 @@ void BattleBackground_LoadFar(s32 mode, s32 resource, s32 level);
 void BattlePresentation_SetPaletteLevelFar(s32 unused, s32 level);
 /// Returns 1 for a class whose blow lands with SE_HEAVY_IMPACT instead of
 /// SE_133, and 0 out of range; the beam effects ask it.
-s32 Summon_IsEntrySecondaryFlaggedFar(s32 index);
+s32 BattleClass_HasHeavyImpactFar(s32 index);
 /// Returns the height above a unit where its effects play, in 16.16 pixels.
 s32 BattleUnit_GetEffectHeightFar(s32 id);
 /// Sends a unit leaping three quarters of the way to its target, arriving in

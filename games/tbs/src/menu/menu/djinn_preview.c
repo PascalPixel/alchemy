@@ -559,7 +559,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   UiWindow_CloseIfOpen((struct UiWindow **)&menu->window, 1);
   UiWindow_CloseIfOpen(&menu->secondWindow, 1);
   RenderOutput_RedrawSavedRectFar(menu->listWindow);
+  // BUG: no window is ever made in unknownWindow028 (DjinnMenuWork), so this
+  // redraws through NULL; see the field. BUGFIX skips it.
+#ifndef BUGFIX
   RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->unknownWindow028);
+#endif
   RenderOutput_RedrawSavedRectFar(menu->statusWindow);
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
   WaitFrames(1);
@@ -715,7 +719,11 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   UiWindow_CloseIfOpen(leftWindowSlot, 1);
   UiWindow_CloseIfOpen(rightWindowSlot, 1);
   RenderOutput_RedrawSavedRectFar(menu->listWindow);
+  // BUG: no window is ever made in unknownWindow028 (DjinnMenuWork), so this
+  // redraws through NULL; see the field. BUGFIX skips it.
+#ifndef BUGFIX
   RenderOutput_RedrawSavedRectFar((struct UiWindow *)menu->unknownWindow028);
+#endif
   RenderOutput_RedrawSavedRectFar(menu->statusWindow);
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
   WaitFrames(1);

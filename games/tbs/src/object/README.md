@@ -112,12 +112,12 @@ starts again from the top after each one it handles:
 | 2 | `event` | run a raised event, or one of the codes below |
 | 3 | `battle` | a random or requested battle against this enemy group |
 | 4 | `action` | a touch event or exit on the cell stepped onto (`MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST`) |
-| 5 | `input` | a ledge, climbing spot or jump the leader pushes against (`Field_RunPushTileEvent`) |
-| 6 | `examine` | the A button: becomes `descriptor` for an actor ahead with a talk event, else `tile` for a searchable cell ahead, else `menu` |
+| 5 | `pushTile` | a ledge, climbing spot or jump the leader pushes against (`Field_RunPushTileEvent`) |
+| 6 | `examine` | the A button: becomes `talk` for an actor ahead with a talk event, else `tile` for a searchable cell ahead, else `menu` |
 | 7 | `menu` | the main menu |
-| 8 | `descriptor` | talk to an actor (`Scene_TalkToActor`) |
+| 8 | `talk` | talk to an actor (`Scene_TalkToActor`) |
 | 9 | `tile` | search a cell (`Field_SearchTile`) |
-| 10 | `command` | use Psynergy (`Field_UsePsynergy`) |
+| 10 | `psynergy` | use Psynergy (`Field_UsePsynergy`) |
 | 11 | `item` | use an item (`Field_UseItem`) |
 | 12 | `start` | the pause menu |
 
@@ -174,8 +174,11 @@ Cloak is active, or on a zone with rate 0. Otherwise:
 ![Isaac runs back and forth in Goma Cave until the screen flashes white and goes black, and the battle opens on the party facing a group of monsters with `Wild Mushroom 1 appeared!`](https://alchemy.pascalpixel.com/guides/object/random-battle.gif)
 
 There is also no battle while flag 5 (`FLAG_IN_PARTY` for Jenna) is set and her
-experience is above 130. XXX: why is unknown; where her experience stands when
-she is in the party would settle it.
+experience is above 130. Jenna is in the party only from Vale to the Sol
+Sanctum's eruption, and she joins at level 1 with no experience, so the rule
+ends the Sol Sanctum's random battles once she has fought her way to just
+short of level 4 (158 experience). XXX: likely a cap on how strong the party
+can grow before the journey begins, because the rule can act nowhere else.
 
 `Encounter_SelectSceneZones` gives a field scene its zones from
 `gBattle_LocationRules` (`location_rules.s`): the first rule for the scene and
@@ -206,7 +209,7 @@ always play `MUS_018`.
 
 ### How field Psynergy reaches its effect
 
-Choosing Psynergy on the field raises the `command` request, and the loop calls
+Choosing Psynergy on the field raises the `psynergy` request, and the loop calls
 `Field_UsePsynergy` ([`object/psynergy.c`](object/psynergy.c)). It refuses in
 the Battle Arena (`FLAG_IN_BATTLE_ARENA`) and Reveal on the world map; Retreat
 refuses where `FLAG_RETREAT_BLOCKED` is set and otherwise asks first and sets
@@ -314,21 +317,31 @@ with each; the encounter columns from what `Encounter_SelectEnemyGroup`
 computes with them; the zone names in `encounter.tsv` from the places whose
 rules select them.
 
-- XXX: `Field_CountRequests` adds the requests together (`descriptor` twice)
-  and tests the sum. A negative event code raised together with a positive
-  request could sum to zero and hide both; whether that ever happens is not
-  known.
-- XXX: the request fields' names (`descriptor` for talking, `command` for
-  Psynergy, `input` for a pushed cell) say less than their handlers; they are
-  shared with other folders and wait for a rename.
-- XXX: the encounter rule that ends battles while Jenna has more than 130
-  experience (above).
-- XXX: `Scene_ResetFlagsOnEnter` also clears flags `0x80` to `0xdf` on every
-  ordinary entrance, even within a group; what they hold is unnamed.
-- XXX: nothing in the scenes calls the `Event_ShowSpeakerMessage` and
-  `Event_ShowMessageAtPosition` entry points. Their position limits resemble
-  pixels, but their window service takes tiles; a caller would settle the
-  conversion ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
+`Field_CountRequests` adds the requests together (`talk` twice) and tests the
+sum, so a negative event code raised with a positive request can hide both.
+It can happen: `Field_ProcessStep` raises `FIELD_EVENT_PARTY_FELL` (-1) on
+the frame a member falls to poison, and the `action` request is the cell's
+event code, 1 on the cells of a touch event 1, which 154 maps have. Both then
+wait until another request makes the sum non-zero, by which time a later
+cell's code may have replaced the action. It is marked `// BUG:`, and
+`BUGFIX` tests each request instead.
+
+`Scene_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary
+entrance, even within a group: the Djinn's hiding flags
+(`FLAG_DJINNI_HIDING_0` and the 79 after it), which keep a Djinni that got
+away out of its room until the room is entered again, and 16 more after them
+that nothing else uses.
+
+`Event_ShowSpeakerMessage`, `Event_ShowMessageAtPosition` and
+`Event_ForwardShowMessageAtPosition` are unused: each is reached only through
+a bare veneer in `system/far_call/OBJECT.S`, which has no symbol for code to
+call ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
+
+- XXX (no evidence): what units `Event_ShowSpeakerMessage` and
+  `Event_ShowMessageAtPosition` expected; they clamp a position to 8 to 312
+  and 20 to 220, more than the 240 by 160 screen, and pass it to a window
+  service that takes tiles, and with no caller in the ROM nothing shows what
+  they were given.
 - XXX (picture): the request loop has no take-apart picture: a frame-by-frame strip of
   the request fields as a cutscene raises an exit with another request would
   show the order.

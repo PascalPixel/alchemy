@@ -77,6 +77,17 @@ enum ActorAnimation {
   /// number to such a pose (spr_000.png to spr_003.png).
   ANIM_COLLAPSE = 19,
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
+  /// The arrivals and leavings of the animated exits (enum ExitStyle), each
+  /// four frames of the leader turning: an arrival grows from a small figure
+  /// seen side-on to full size facing the player, a leaving turns from his
+  /// back to side-on as he shrinks and is then hidden. The alternate pair has
+  /// its own drawings of the same turns.
+  ///@{
+  ANIM_LEADER_ARRIVE_ALTERNATE = 23,
+  ANIM_LEADER_ARRIVE = 24,
+  ANIM_LEADER_LEAVE_ALTERNATE = 25,
+  ANIM_LEADER_LEAVE = 26,
+  ///@}
   /// Spinning round once, then drawn blank (ANIM_CMD_BLANK).
   ANIM_LEADER_SPIN_AWAY = 27,
   ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head

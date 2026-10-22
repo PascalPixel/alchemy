@@ -192,10 +192,14 @@ on the real unit for a moment and restores the unit from a copy.
 
 Pressing A while holding L on the Item screen's member row sorts that
 member's items, each press moving on to the next of the four orders in
-`menudata.c` (`gMenu_ListOrderMode0`, `Mode1`, `Mode2` and `Default`). An
-order lists item types a byte at a time; a type plus `LIST_ORDER_EQUIPPED`
-takes only the equipped items of that type, and `LIST_ORDER_END` ends the
-order.
+`menudata.c`, named by `enum ListSort`: the equipped items, then the items
+that aren't equipment, then the other equipment
+(`gMenu_ListOrderEquippedThenItems`); the equipped items, then the other
+equipment, then the rest (`gMenu_ListOrderEquippedThenEquipment`); the
+equipment first (`gMenu_ListOrderEquipmentFirst`); and the items that aren't
+equipment first (`gMenu_ListOrderItemsFirst`). An order lists item types a
+byte at a time; a type plus `LIST_ORDER_EQUIPPED` takes only the equipped
+items of that type, and `LIST_ORDER_END` ends the order.
 
 ## Editions
 
@@ -217,12 +221,24 @@ Screen and prefix names follow what each screen shows in the English
 release. The menu's two flags are named from what sets and tests them, and
 the sort orders from the item types they list.
 
-- XXX: the `unk` fields of the menu work's views.
-- XXX: why the Start watch is a game flag (`FLAG_MENU_START_PRESSED`) rather
-  than a variable; [Menus, windows and shops](../../menus.md#why-the-layer-is-shaped-this-way)
-  gives the likely reason.
-- XXX: what `gMenu_ListOrderMode0` to `Mode2` order for the player; naming
-  them needs each order's item types read against the English item names.
+Every view of the menu work names only what its own screen reads and writes;
+its `unk` byte runs are the bytes other screens' views use, and the screen
+never touches them, since `UiWindow_InitializeWork` clears the whole work as
+each screen opens. Three window handles have no window behind them: the
+Status screen's `unknownWindow028` (`struct CharacterMenuState`), which it
+only clears, and the Item screen's `unknownWindow38` and `unknownWindow40`
+(`struct InventoryMenuState`), which it only closes, so they stay NULL and
+closing them does nothing. The Djinn screen's `unknownWindow028`
+(`struct DjinnMenuWork`) is never given a window either, but its preview
+redraws it as it closes (a `// BUG:` in `djinn_preview.c`). That reads the
+window's place through NULL, from the BIOS, which outside the BIOS returns the
+last BIOS instruction fetched; as a width that is over 30, so
+`UiWindow_DrawFrame` draws nothing.
+
+- XXX (no evidence): why the Start watch is a game flag
+  (`FLAG_MENU_START_PRESSED`) rather than a variable; the task that sets it
+  and every test are in the menu's own code, so nothing in the ROM needs it to
+  be a flag, and only Camelot's sources could say why it is one.
 - XXX (picture): no picture yet takes a screen apart into its windows and the menu
   work's views; a render of the Item screen with each window outlined and
   labelled by the struct that draws it would show it.

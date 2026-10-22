@@ -203,9 +203,9 @@ because only one of them can run at a time; the same arrangement is why a
 counter and the field menu are never open together. Field Psynergy is passed
 back as a request because it needs the field running, the leader facing
 something and the scene's events, none of which exist while the menu runs.
-Start is a game flag rather than a variable. XXX: likely so that code in
-other banks can test it through the flag calls it already imports; the
-bytes show only that every test goes through `GameFlag_TestFar`.
+Start is a game flag rather than a variable, although the task that sets it
+and every test of it are in the menu's own code. XXX: why; nothing in the ROM
+needs it to be a flag.
 
 ## Limits
 

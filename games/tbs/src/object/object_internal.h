@@ -123,7 +123,7 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
 // A field Psynergy or item use, packed into one value (items.c, psynergy.c),
-// as work->command and work->item hold it. bits: 13..10 the user (13 is
+// as work->psynergy and work->item hold it. bits: 13..10 the user (13 is
 // ACT_PACKED) | 9..0 the Psynergy or item. Since ACT_PACKED is the user's top
 // bit, a packed use names user 8 or above.
 #define ABILITY_ID(c) ((c) & 0x3ff)    ///< the Psynergy

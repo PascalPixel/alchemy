@@ -26,20 +26,20 @@ u8 gUiMenu_CursorBobY[9] = {0, 0xff, 0xff, 0xfe, 0xfe, 0xff, 0xff, 0, 0};
 // ItemType enumerator names.
 // clang-format off
 /// LIST_SORT_ITEMS_FIRST: the items that are not equipment first.
-u8 gMenu_ListOrderDefault[11] = {
+u8 gMenu_ListOrderItemsFirst[11] = {
     ITEM_TYPE_NONE, ITEM_TYPE_WEAPON, ITEM_TYPE_HELM, ITEM_TYPE_SHIELD,
     ITEM_TYPE_ARMOR, ITEM_TYPE_BOOTS, ITEM_TYPE_PSYNERGY, ITEM_TYPE_UNUSED, ITEM_TYPE_RING,
     ITEM_TYPE_SHIRT, LIST_ORDER_END,
 };
 /// LIST_SORT_EQUIPMENT_FIRST: the equipment first, the rest last.
-u8 gMenu_ListOrderMode2[11] = {
+u8 gMenu_ListOrderEquipmentFirst[11] = {
     ITEM_TYPE_WEAPON, ITEM_TYPE_HELM, ITEM_TYPE_SHIELD, ITEM_TYPE_ARMOR,
     ITEM_TYPE_BOOTS, ITEM_TYPE_PSYNERGY, ITEM_TYPE_UNUSED, ITEM_TYPE_RING, ITEM_TYPE_SHIRT,
     ITEM_TYPE_NONE, LIST_ORDER_END,
 };
 /// LIST_SORT_EQUIPPED_THEN_EQUIPMENT: the equipped items, the other equipment,
 /// then the rest.
-u8 gMenu_ListOrderMode1[20] = {
+u8 gMenu_ListOrderEquippedThenEquipment[20] = {
     LIST_ORDER_EQUIPPED | ITEM_TYPE_WEAPON, LIST_ORDER_EQUIPPED | ITEM_TYPE_HELM,
     LIST_ORDER_EQUIPPED | ITEM_TYPE_SHIELD, LIST_ORDER_EQUIPPED | ITEM_TYPE_ARMOR,
     LIST_ORDER_EQUIPPED | ITEM_TYPE_BOOTS, LIST_ORDER_EQUIPPED | ITEM_TYPE_PSYNERGY,
@@ -52,7 +52,7 @@ u8 gMenu_ListOrderMode1[20] = {
 /// LIST_SORT_EQUIPPED_THEN_ITEMS: the equipped items, the items that are not
 /// equipment, then the other equipment. ItemMenu_SelectItem's list also sorts
 /// by it.
-u8 gMenu_ListOrderMode0[20] = {
+u8 gMenu_ListOrderEquippedThenItems[20] = {
     LIST_ORDER_EQUIPPED | ITEM_TYPE_WEAPON, LIST_ORDER_EQUIPPED | ITEM_TYPE_HELM,
     LIST_ORDER_EQUIPPED | ITEM_TYPE_SHIELD, LIST_ORDER_EQUIPPED | ITEM_TYPE_ARMOR,
     LIST_ORDER_EQUIPPED | ITEM_TYPE_BOOTS, LIST_ORDER_EQUIPPED | ITEM_TYPE_PSYNERGY,

@@ -47,6 +47,9 @@ enum { TASK_PRIORITY_SCENE = 3200 };
 
 /// Animation numbers of an actor's sprite, for Engine_ActorSetAnimation.
 enum ActorAnimation {
+  /// Standing still: nearly every sprite's first frame held, without the
+  /// blinks and small gestures of ANIM_STAND.
+  ANIM_STILL = 0,
   ANIM_STAND = 1,
   ANIM_WALK = 2,
   ANIM_NOD = 3,
@@ -58,6 +61,9 @@ enum ActorAnimation {
   /// The leader leaning into what it pushes, as scenes play it while a statue
   /// or stone pillar slides ahead of it.
   ANIM_PUSH = 8,
+  /// Holding out a glowing hand, as the party's sprites cast Psynergy
+  /// (spr_000.png, spr_001.png).
+  ANIM_CAST_PSYNERGY = 17,
   ANIM_LEADER_LEAN_BACK = 22,  ///< leaning back, his head thrown back
   ANIM_LEADER_ARMS_RAISED = 28 ///< both arms raised over his head
 };

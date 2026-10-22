@@ -74,6 +74,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)
   SPRITE_CAPPED_PILLAR = 0xfd,
+  /// The pillar on the Road to Babi Lighthouse that Move or Carry shifts.
+  /// ★ Named from what the player sees: a short grey stone pillar carved with a
+  /// spiral (its render)
+  SPRITE_CARVED_PILLAR = 0x100,
   /// The platforms of Venus Lighthouse and the Tunnel Ruins that rise or sink
   /// with the weight set down on them.
   /// ★ Named from what the player sees: a small white pillar on its base
@@ -87,6 +91,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a sparkle of light that shrinks away
   /// (its render)
   SPRITE_SPARKLE = 285,
+  /// The two halves of Babi Lighthouse's stone door, which slide apart.
+  /// ★ Named from what the player sees: half of a dark stone door (its
+  /// render)
+  SPRITE_STONE_DOOR_HALF = 0x128,
   /// The statues that chase the leader in Crossbone Isle, and those of the
   /// Tunnel Ruins and Venus Lighthouse.
   /// ★ Named from what the player sees: a statue of a woman in a long robe

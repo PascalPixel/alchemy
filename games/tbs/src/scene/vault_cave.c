@@ -46,7 +46,7 @@
 ///   the leader is 16 pixels or more above the floor, the puddles are drawn
 ///   beneath him. The six frozen states are FLAG_SCENE_TEMP_00 to _05, read by
 ///   index, and the room's entry code freezes again every puddle whose flag is
-///   set. Whirlwind blows away a bush (ACTOR_BUSH) for as long as the party
+///   set. Whirlwind blows away ivy (ACTOR_IVY) for as long as the party
 ///   stays in the cave (FLAG_WHIRLWIND_USED, a place flag). A chest holds the
 ///   Vambrace.
 /// - Vault Cave (SceneId_VaultCaveMouth). In its northern room four
@@ -63,6 +63,11 @@
 /// The pushes share VaultCave_PushPillarAhead, which moves the pillar the
 /// leader faces one cell unless another actor or the terrain is in the way, and
 /// the water drops run as scene callbacks started by Scene_Initialize.
+///
+/// Open questions:
+/// - XXX: SE_106, SE_155, SE_156, SE_163, SE_204 and SE_238 have no proven
+///   names; a recording of the switch, a pillar reaching its switch, a puddle
+///   freezing and a drop landing would settle them.
 
 #include "game_state.h"
 #include "unit/field/field.h"
@@ -109,8 +114,22 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source);
 
 #define TILE(position) ((position) / 0x100000)
 
-/// Scene flags. The six puddles of SceneId_VaultCaveVambrace keep their frozen
-/// state in six flags in a row, read by index as well.
+/// The collision codes of the cells the events answer.
+enum VaultCaveCell {
+  VAULT_CAVE_CELL_SWITCH = 20, ///< the switch SceneId_VaultCavePassage flips
+  /// The cells of SceneId_VaultCaveMouth's northern pillar, pushed.
+  VAULT_CAVE_CELL_NORTHERN_PILLAR = 50,
+  /// The cells of SceneId_VaultCaveVambrace's southern pillar, pushed.
+  VAULT_CAVE_CELL_SOUTHERN_PILLAR = 60,
+  /// ★ Named from the game: "The door is tightly locked."
+  /// (MsgFieldDoorTightlyLocked)
+  VAULT_CAVE_CELL_LOCKED_DOOR = 99,
+  VAULT_CAVE_CELL_CHEST = 100
+};
+
+/// Scene flags, and one place flag. The six puddles of
+/// SceneId_VaultCaveVambrace keep their frozen state in six flags in a row,
+/// read by index as well.
 enum {
   /// The upper western puddle, the first of the six.
   /// ★ Named from what the player sees: six puddles of water in the floor of
@@ -135,13 +154,13 @@ enum {
   /// ★ Named from what the player sees: the pillar the leader pushes toward
   /// its switch in the northern room of SceneId_VaultCaveMouth (its render)
   FLAG_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
-  /// Whirlwind has blown the bush away.
+  /// Whirlwind has blown the ivy away.
   /// ★ Named from the game: "Whirlwind" (MsgAbilityName)
-  FLAG_WHIRLWIND_USED = FLAG_SCENE_TEMP_00 + 0x100
+  FLAG_WHIRLWIND_USED = FLAG_PLACE_TEMP_00
 };
 
 /// The actors of SceneId_VaultCaveVambrace, numbering the rows of
-/// gVaultCavePlacements2.
+/// gVaultCaveVambrace_Placements.
 enum VaultCaveVambraceActor {
   /// A pillar, drawn as ACTOR_SOUTHERN_PILLAR is, two cells east of the
   /// southern switch, drawn underfoot when the party arrives by
@@ -182,15 +201,15 @@ enum VaultCaveVambraceActor {
   /// ★ Named from what the player sees: the easternmost puddle, between the
   /// rows (its render)
   ACTOR_FAR_EAST_PUDDLE,
-  /// A bush, as in bilibin.c, drawn half as tall again, placed
+  /// Ivy (SPRITE_IVY), as in bilibin.c, drawn half as tall again, placed
   /// until Whirlwind blows it away (FLAG_WHIRLWIND_USED).
-  /// ★ Named from what the player sees: a leafy green bush against the cave
+  /// ★ Named from what the player sees: leafy green ivy against the cave
   /// wall (its render)
-  ACTOR_BUSH
+  ACTOR_IVY
 };
 
 /// The actors of SceneId_VaultCaveMouth, numbering the rows of
-/// gVaultCavePlacements3. The northern switch is map cell (16, 12).
+/// gVaultCaveMouth_Placements. The northern switch is map cell (16, 12).
 enum VaultCaveMouthActor {
   /// A pillar two cells east of the northern switch.
   /// ★ Named from what the player sees: a pink stone pillar with a flame
@@ -216,49 +235,49 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_VaultCavePassage) {
-    return gVaultCaveEntrances1;
+    return gVaultCavePassage_Entrances;
   }
   if (scene == (s32)&SceneId_VaultCaveVambrace) {
-    return gVaultCaveEntrances2;
+    return gVaultCaveVambrace_Entrances;
   }
   if (scene == (s32)&SceneId_VaultCaveMouth) {
-    return gVaultCaveEntrances3;
+    return gVaultCaveMouth_Entrances;
   }
-  return gVaultCaveEntrancesOther;
+  return gVaultCave_FallbackEntrances;
 }
 
 /// Returns the region boxes used by the cave exits.
-const struct SceneRegion *Scene_GetRegions(void) { return gVaultCaveRegions; }
+const struct SceneRegion *Scene_GetRegions(void) { return gVaultCave_Regions; }
 
 const u32 *Scene_GetExits(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_VaultCavePassage) {
-    return gVaultCaveExits1;
+    return gVaultCavePassage_Exits;
   }
   if (scene == (s32)&SceneId_VaultCaveVambrace) {
-    return gVaultCaveExits2;
+    return gVaultCaveVambrace_Exits;
   }
   if (scene == (s32)&SceneId_VaultCaveMouth) {
-    return gVaultCaveExits3;
+    return gVaultCaveMouth_Exits;
   }
-  return gVaultCaveExitsOther;
+  return gVaultCave_FallbackExits;
 }
 
-/// Selects the pillars, water drops, puddles and bush of the room.
+/// Selects the pillars, water drops, puddles and ivy of the room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_VaultCavePassage) {
-    return gVaultCavePlacements1;
+    return gVaultCavePassage_Placements;
   }
   if (scene == (s32)&SceneId_VaultCaveVambrace) {
-    return gVaultCavePlacements2;
+    return gVaultCaveVambrace_Placements;
   }
   if (scene == (s32)&SceneId_VaultCaveMouth) {
-    return gVaultCavePlacements3;
+    return gVaultCaveMouth_Placements;
   }
-  return gVaultCavePlacementsOther;
+  return gVaultCave_FallbackPlacements;
 }
 
 /// Finds a placed actor with collision enabled at the requested map cell.
@@ -377,10 +396,10 @@ static void VaultCave_PushPillarAhead(void) {
   Object_SetMode(leader, 1);
 }
 
-/// Whirlwind blows the bush away.
-/// It's cast on ACTOR_BUSH in VaultCaveVambrace's puddle room, and the bush
-/// stays gone for as long as the party stays in the cave (FLAG_WHIRLWIND_USED
-/// is a place flag).
+/// Whirlwind blows the ivy away.
+/// It is cast on ACTOR_IVY in the puddle room of SceneId_VaultCaveVambrace,
+/// and the ivy stays gone for as long as the party stays in the cave
+/// (FLAG_WHIRLWIND_USED is a place flag).
 static void Event_UseWhirlwind(void) {
   Engine_GameFlagSet(FLAG_WHIRLWIND_USED);
 }
@@ -396,15 +415,15 @@ const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_VaultCavePassage) {
-    return gVaultCaveEvents1;
+    return gVaultCavePassage_Events;
   }
   if (scene == (s32)&SceneId_VaultCaveVambrace) {
-    return gVaultCaveEvents2;
+    return gVaultCaveVambrace_Events;
   }
   if (scene == (s32)&SceneId_VaultCaveMouth) {
-    return gVaultCaveEvents3;
+    return gVaultCaveMouth_Events;
   }
-  return gVaultCaveEventsOther;
+  return gVaultCave_FallbackEvents;
 }
 
 /// Tests the southern pillar's cell, rounding fixed coordinates toward zero.
@@ -990,7 +1009,7 @@ s32 Scene_Initialize(void) {
   }
   if (gGameState.scene == (s32)&SceneId_VaultCaveVambrace) {
     if (Engine_GameFlagIsSet(FLAG_WHIRLWIND_USED) == 0) {
-      Object_GetById(ACTOR_BUSH)->scaleY = 0x18000;
+      Object_GetById(ACTOR_IVY)->scaleY = 0x18000;
     }
     switch (gGameState.entrance) {
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:
@@ -1114,12 +1133,12 @@ const s32 gVaultCave_PuffScript[] = {
     SC_FREE,
 };
 
-struct SceneEntrance gVaultCaveEntrancesOther[] = {
+struct SceneEntrance gVaultCave_FallbackEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gVaultCaveEntrances1[] = {
+struct SceneEntrance gVaultCavePassage_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_MOUTH, CONDITION_ALWAYS, 424, 0, 216, FACING_SOUTH, 0, 72, 8, 480, 320, 0 },
     { VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_NORTHWEST, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 72, 8, 480, 320, 0 },
@@ -1137,7 +1156,7 @@ struct SceneEntrance gVaultCaveEntrances1[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gVaultCaveEntrances2[] = {
+struct SceneEntrance gVaultCaveVambrace_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH, CONDITION_ALWAYS, 136, 0, 104, FACING_SOUTH, 0, 40, 8, 400, 328, 0 },
     { VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH, CONDITION_ALWAYS, 344, 0, 152, FACING_SOUTH, 0, 40, 8, 400, 328, 0 },
@@ -1155,7 +1174,7 @@ struct SceneEntrance gVaultCaveEntrances2[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gVaultCaveEntrances3[] = {
+struct SceneEntrance gVaultCaveMouth_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VAULT_CAVE_MOUTH_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 312, 0, 664, FACING_NORTH, 0, 200, 520, 440, 680, 0 },
     { VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_PASSAGE, CONDITION_ALWAYS, 312, 0, 600, FACING_SOUTH, 0, 200, 520, 440, 680, 0 },
@@ -1166,16 +1185,16 @@ struct SceneEntrance gVaultCaveEntrances3[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneRegion gVaultCaveRegions[] = {
+struct SceneRegion gVaultCave_Regions[] = {
     { 447, 47, 783, 463, 63, 799, -1, VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT },
     { -1, 0, 0, 0, 0, 0, 0, 0 },
 };
 
-u32 gVaultCaveExitsOther[] = {
+u32 gVaultCave_FallbackExits[] = {
     SCENE_EXITS_END,
 };
 
-u32 gVaultCaveExits1[] = {
+u32 gVaultCavePassage_Exits[] = {
     SCENE_EXITS(VaultCavePassage),
     SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_MOUTH, VaultCaveMouth, VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_PASSAGE),
     SCENE_EXIT(VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_NORTHWEST, VaultCaveVambrace, VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH),
@@ -1196,7 +1215,7 @@ u32 gVaultCaveExits1[] = {
     SCENE_EXITS_END,
 };
 
-u32 gVaultCaveExits2[] = {
+u32 gVaultCaveVambrace_Exits[] = {
     SCENE_EXITS(VaultCaveVambrace),
     SCENE_EXIT(VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_NORTH, VaultCavePassage, VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_NORTHWEST),
     SCENE_EXIT(VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_NORTH, VaultCaveMouth, VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH),
@@ -1214,7 +1233,7 @@ u32 gVaultCaveExits2[] = {
     SCENE_EXITS_END,
 };
 
-u32 gVaultCaveExits3[] = {
+u32 gVaultCaveMouth_Exits[] = {
     SCENE_EXITS(VaultCaveMouth),
     SCENE_EXIT(VAULT_CAVE_MOUTH_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH),
     SCENE_EXIT(VAULT_CAVE_MOUTH_TO_VAULT_CAVE_PASSAGE, VaultCavePassage, VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_MOUTH),
@@ -1225,15 +1244,15 @@ u32 gVaultCaveExits3[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gVaultCavePlacementsOther[] = {
+struct ScenePlacement gVaultCave_FallbackPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gVaultCavePlacements1[] = {
+struct ScenePlacement gVaultCavePassage_Placements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gVaultCavePlacements2[] = {
+struct ScenePlacement gVaultCaveVambrace_Placements[] = {
     { 0x12b, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(280), 0, PIXELS(876), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x12b, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1262,12 +1281,12 @@ struct ScenePlacement gVaultCavePlacements2[] = {
         PIXELS(424), 0, PIXELS(552), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(456), 0, PIXELS(536), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xf8, FLAG_WHIRLWIND_USED, ACTOR_STAND,
+    { SPRITE_IVY, FLAG_WHIRLWIND_USED, ACTOR_STAND,
         PIXELS(456), 0, PIXELS(456), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gVaultCavePlacements3[] = {
+struct ScenePlacement gVaultCaveMouth_Placements[] = {
     { 0x12b, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(296), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x12b, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1285,11 +1304,11 @@ struct ScenePlacement gVaultCavePlacements3[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gVaultCaveEventsOther[] = {
+struct SceneEvent gVaultCave_FallbackEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gVaultCaveEvents1[] = {
+struct SceneEvent gVaultCavePassage_Events[] = {
     { EVENT_EXIT | EXIT_STYLE_ANIMATED, 1, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_MOUTH },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 2, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_TO_VAULT_CAVE_VAMBRACE_NORTHWEST },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_NORTH_TO_WATER_ROOM_WEST },
@@ -1303,13 +1322,13 @@ struct SceneEvent gVaultCaveEvents1[] = {
     { EVENT_EXIT, 11, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_LADDER_TO_CHEST },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_CHEST_TO_LADDER },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, VAULT_CAVE_PASSAGE_WATER_ROOM_TO_NORTH_EAST },
-    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FlipSwitch) },
-    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_PASSAGE_MIMIC_BEATEN, FIND_MIMIC | 3 },
+    { SEARCH(SEARCH_UNNAMED), VAULT_CAVE_CELL_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FlipSwitch) },
+    { SEARCH(SEARCH_UNNAMED), VAULT_CAVE_CELL_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
+    { SEARCH(SEARCH_CHEST), VAULT_CAVE_CELL_CHEST, FLAG_VAULT_CAVE_PASSAGE_MIMIC_BEATEN, FIND_MIMIC | 3 },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gVaultCaveEvents2[] = {
+struct SceneEvent gVaultCaveVambrace_Events[] = {
     { EVENT_EXIT | EXIT_STYLE_ANIMATED, 1, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_PASSAGE_NORTH },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 2, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_TO_VAULT_CAVE_MOUTH_NORTH },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_NORTH_TO_FROST_ROOM },
@@ -1323,31 +1342,31 @@ struct SceneEvent gVaultCaveEvents2[] = {
     { EVENT_EXIT, 11, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_SOUTH_TO_FROST_ROOM },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_FROST_ROOM_TO_CHEST },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, VAULT_CAVE_VAMBRACE_CHEST_TO_FROST_ROOM },
-    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_VAMBRACE_CHEST, FIND_ITEM(ITEM_VAMBRACE) },
-    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
+    { SEARCH(SEARCH_CHEST), VAULT_CAVE_CELL_CHEST, FLAG_VAULT_CAVE_VAMBRACE_CHEST, FIND_ITEM(ITEM_VAMBRACE) },
+    { SEARCH(SEARCH_UNNAMED), VAULT_CAVE_CELL_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHERN_PILLAR, FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(Event_MoveSouthernPillar) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 60, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushSouthernPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, VAULT_CAVE_CELL_SOUTHERN_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushSouthernPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WEST_UPPER_PUDDLE, FLAG_WEST_UPPER_FROZEN, EVENT_SCRIPT(Event_FreezeWestUpperPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WEST_LOWER_PUDDLE, FLAG_WEST_LOWER_FROZEN, EVENT_SCRIPT(Event_FreezeWestLowerPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_INNER_WEST_LOWER_PUDDLE, FLAG_INNER_WEST_LOWER_FROZEN, EVENT_SCRIPT(Event_FreezeInnerWestLowerPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_UPPER_PUDDLE, FLAG_EAST_UPPER_FROZEN, EVENT_SCRIPT(Event_FreezeEastUpperPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_LOWER_PUDDLE, FLAG_EAST_LOWER_FROZEN, EVENT_SCRIPT(Event_FreezeEastLowerPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FAR_EAST_PUDDLE, FLAG_FAR_EAST_FROZEN, EVENT_SCRIPT(Event_FreezeFarEastPuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH, FLAG_WHIRLWIND_USED, EVENT_SCRIPT(Event_UseWhirlwind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_WHIRLWIND_USED, EVENT_SCRIPT(Event_UseWhirlwind) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gVaultCaveEvents3[] = {
+struct SceneEvent gVaultCaveMouth_Events[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_REVISIT },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 2, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_CAVE_PASSAGE },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED, 3, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_SOUTH },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_SOUTH_TO_NORTH },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_NORTH_TO_SOUTH },
     { EVENT_EXIT | EXIT_STYLE_ANIMATED, 6, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushNorthernPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, VAULT_CAVE_CELL_NORTHERN_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushNorthernPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHERN_PILLAR, FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH, EVENT_SCRIPT(Event_MoveNorthernPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
-    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
+    { SEARCH(SEARCH_UNNAMED), VAULT_CAVE_CELL_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
     { SCENE_EVENTS_END },
 };
 

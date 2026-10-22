@@ -128,7 +128,7 @@ static void ItemLevel_AdjustPartyLevels(s32 amount) {
 /// B closes the window and recalculates the original four heroes. Talking to
 /// ACTOR_LEVEL_EDITOR: under `Raise everyone's level.` it shows the leader's
 /// name and level; Start or Select raises the whole party five levels with
-/// fanfare MUS_093, A one level with MUS_091.
+/// fanfare MUS_FANFARE_LARGE, A one level with MUS_FANFARE_SMALL.
 static void ItemLevel_RunLevelEditor(void) {
   struct BattleUnit *unit;
   struct UiWindow *window;
@@ -157,13 +157,13 @@ static void ItemLevel_RunLevelEditor(void) {
     // Start/Select add five levels; A adds one. Tests remain independent.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
       ItemLevel_AdjustPartyLevels(5);
-      Engine_AudioPlayCue(MUS_093);
+      Engine_AudioPlayCue(MUS_FANFARE_LARGE);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
       ItemLevel_AdjustPartyLevels(1);
-      Engine_AudioPlayCue(MUS_091);
+      Engine_AudioPlayCue(MUS_FANFARE_SMALL);
       redraw = 1;
     }
 

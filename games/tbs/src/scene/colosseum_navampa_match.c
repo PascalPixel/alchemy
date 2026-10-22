@@ -112,6 +112,7 @@
 #include "colosso_gauge.h"
 #include "macros.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared. Each use is tagged.
@@ -687,7 +688,7 @@ static void Event_RollLongLog(void) {
   ObjectDispatch_StartCamera((struct DispatchObject *)work->viewCenter,
                              (s32)log);
   Actor_SetSpeed(actor, PIXELS(1) / 2, acceleration);
-  Event_PlayCue(SE_239);
+  Event_PlayCue(SE_HEAVY_MOVE);
   Object_SetMode(rider, 2);
   Engine_ObjectSetPosition(rider, (steps * step * PIXELS(1)) + rider->x.fixed,
                            0, rider->z.fixed);
@@ -711,7 +712,7 @@ static void Event_RollLongLog(void) {
   } else {
     Object_SetMode(log, 1);
     Event_PlayCue(SE_STOP_SLOT3);
-    Event_PlayCue(SE_213);
+    Event_PlayCue(SE_HEAVY_STOP);
     column = x >> 20;
     Map_CopyCellAttributes(85, 9, 1, 4, column, 9);
     Map_CopyCellAttributes(85, 9, 1, 4, column, 61);
@@ -1118,7 +1119,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     Engine_ActorDestroy(MOVING_SIDEWALK_ATTENDANT);
     Engine_ActorDestroy(LOG_ROLLING_ATTENDANT);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Engine_AudioPlayCue(MUS_017);
+      Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       Object_LinkObjectAndSetCallback(GARET, ACTOR_PARTY_LEADER);
@@ -1245,7 +1246,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Engine_ActorDestroy(PRIZE_A);
   Engine_ActorDestroy(PRIZE_B);
   Party_RestoreHpPp(1);
-  Engine_AudioPlayCue(MUS_017);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Engine_EventBegin();
   Actor_SetPosition(OPPONENT, PIXELS(1544), PIXELS(192));
   if (battleResult < 0) {
@@ -1970,21 +1971,21 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
     Engine_TaskWait(1);
   }
 
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Engine_AudioPlayCue(SE_236);
+  Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
   Engine_EventWait(60);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
-  Engine_AudioPlayCue(SE_236);
+  Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
   Engine_EventWait(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Engine_AudioPlayCue(SE_236);
+  Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
   Engine_EventWait(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
-  Engine_AudioPlayCue(SE_237);
+  Engine_AudioPlayCue(SE_COLOSSO_GO);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
   Engine_GameFlagSet(FLAG_IN_TOWN);
@@ -2027,7 +2028,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
   }
   Engine_AudioPlayCue(MUS_SILENCE);
   Engine_EventWait(30);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
 }

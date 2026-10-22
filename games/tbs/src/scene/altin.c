@@ -698,7 +698,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
     beast->y.fixed += -0x18000;
     if (beast->y.fixed < beast->terrainHeight) {
       if (fieldObject->effect.countdown != 0) {
-        Event_PlayCue(SE_229);
+        Event_PlayCue(SE_SPLASH);
         fieldObject->effect.countdown = 0;
         beast->work = 4;
         Map_SetShake(0, 0x10000, 0x10000);
@@ -731,7 +731,7 @@ static void Beast_HopAway(void) {
   Actor_SetSpeed(ACTOR_WATER_BEAST, 0x13333, 0x9999);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
-  Event_PlayCue(SE_229);
+  Event_PlayCue(SE_SPLASH);
   Engine_ActorDestroy(ACTOR_WATER_BEAST);
   Map_SetShake(0, 0x10000, 0x10000);
   Engine_EventWait(4);

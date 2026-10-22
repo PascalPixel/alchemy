@@ -87,9 +87,9 @@ void FieldFx_UpdateLightning(void) {
       work->timer =
           ((intervalDraw * 400) >> 16) - ((intervalJitter * 100) >> 16) + 150;
       if (work->loud != 0)
-        AudioCommand_PlayFar(SE_172);
+        AudioCommand_PlayFar(SE_THUNDER_LOUD);
       else
-        AudioCommand_PlayFar(SE_171);
+        AudioCommand_PlayFar(SE_THUNDER);
     }
     // fall through
   case 5:

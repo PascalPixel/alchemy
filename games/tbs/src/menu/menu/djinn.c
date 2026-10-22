@@ -391,7 +391,7 @@ s32 DjinnMenu_RunScreen(void) {
       // Confirmed: apply it at once.
       // Fall through.
     case DJINN_STEP_APPLY_SET:
-      AudioCommand_PlayFar(SE_139);
+      AudioCommand_PlayFar(SE_DJINNI_SET);
       Djinn_ActivateFar(menu->shownOwner[0], menu->pairElement[0],
                         menu->pairIndex[0]);
       result = DjinnRecovery_RemoveFar(
@@ -1367,7 +1367,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         DjinnRecovery_AddStandbyFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                                     DJINN_NUMBER(djinn));
       } else {
-        AudioCommand_PlayFar(SE_139);
+        AudioCommand_PlayFar(SE_DJINNI_SET);
         Djinn_ActivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
                           DJINN_NUMBER(djinn));
         DjinnRecovery_RemoveFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn),
@@ -1439,7 +1439,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (groupMode) {
         setAll ^= 1;
         if (setAll)
-          AudioCommand_PlayFar(SE_139);
+          AudioCommand_PlayFar(SE_DJINNI_SET);
         else
           AudioCommand_PlayFar(SE_175);
         for (i = 0; i < menu->ownerCount; i++) {

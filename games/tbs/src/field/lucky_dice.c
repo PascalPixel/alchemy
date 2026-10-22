@@ -486,7 +486,7 @@ void LuckyDice_Run(void) {
     if (state == LUCKY_DICE_RESULT || state == LUCKY_DICE_PAYOUT) {
       for (index = 0; index != DICE_RESULT_COUNT; index++) {
         if (resultTimer == index * 5) {
-          AudioCommand_PlayFar(SE_303);
+          AudioCommand_PlayFar(SE_LUCKY_DICE_NUMBER);
         }
         if (resultTimer >= index * 5) {
           sprites->obj[spriteCount].attr01 =
@@ -618,7 +618,7 @@ void LuckyDice_Run(void) {
         break;
       }
       if (gKeysRepeat & KEY_A) {
-        AudioCommand_PlayFar(SE_302);
+        AudioCommand_PlayFar(SE_LUCKY_DICE_THROW);
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         state = LUCKY_DICE_ROLL;
         bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
@@ -903,7 +903,7 @@ void LuckyDice_Run(void) {
           }
           UiText_DrawNumberInWindowFar(gGameState.coins, 6,
                                        sprites->coinsWindow, 0, 0);
-          AudioCommand_PlayFar(MUS_093);
+          AudioCommand_PlayFar(MUS_FANFARE_LARGE);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -927,7 +927,7 @@ void LuckyDice_Run(void) {
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            AudioCommand_PlayFar(MUS_091);
+            AudioCommand_PlayFar(MUS_FANFARE_SMALL);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -935,7 +935,7 @@ void LuckyDice_Run(void) {
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            AudioCommand_PlayFar(MUS_092);
+            AudioCommand_PlayFar(MUS_FANFARE_MEDIUM);
           }
         }
       }

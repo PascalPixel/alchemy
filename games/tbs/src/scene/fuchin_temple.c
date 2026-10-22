@@ -633,7 +633,7 @@ static void FuchinTemple_ToppleTreeWest(void) {
   tree->y.fixed = 0x120000;
   tree->targetY = 0x120000;
 
-  Engine_AudioPlayCue(SE_227);
+  Engine_AudioPlayCue(SE_TOPPLE);
 
   FieldFx_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed, tree->z.fixed + 0x80000,
                 0xffffcccd, 0x6666, 0, 0, 0);
@@ -661,7 +661,7 @@ static void FuchinTemple_ToppleTreeEast(void) {
   tree->y.fixed = 0x120000;
   tree->targetY = 0x120000;
   tree->scaleX = 0xffff3334;
-  Engine_AudioPlayCue(SE_227);
+  Engine_AudioPlayCue(SE_TOPPLE);
   FieldFx_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed, tree->z.fixed + 0x80000,
                 0x10000, 0x3333, 0, 0, 0);
   FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000, 0xcccc,
@@ -685,7 +685,7 @@ static void FuchinTemple_ToppleTreeNorth(void) {
   } while (stepIndex < 4);
   rotation = 0;
   tree->sprite->rotation = rotation;
-  Engine_AudioPlayCue(SE_227);
+  Engine_AudioPlayCue(SE_TOPPLE);
   FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
                 0xffff3334, 0, 0xffffcccd, 0, 0);
   FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
@@ -717,7 +717,7 @@ static void FuchinTemple_ToppleTreeSouth(void) {
   tree->sprite->rotation = 0;
   tree->z.fixed += 0x180000;
   tree->targetZ = ACTOR_NO_TARGET;
-  Engine_AudioPlayCue(SE_227);
+  Engine_AudioPlayCue(SE_TOPPLE);
 
   FieldFx_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000, -0xcccc,
                 0, 0x3333, 0, 0);

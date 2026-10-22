@@ -91,6 +91,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 static void ColosseumEntrance_ApplyArrivalState(void);
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker);
@@ -1345,12 +1346,12 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Event_PlayCue(SE_107);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_EventWait(10);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Actor_SetSpeed(ACTOR_CLEARING_WARRIOR, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 208, 928);
-  Event_PlayCue(MUS_092);
+  Event_PlayCue(MUS_FANFARE_MEDIUM);
   Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTHEAST + FACING_STEP,
                       20);
   Engine_ActorSetAnimation(ACTOR_CLEARING_WARRIOR, 9);

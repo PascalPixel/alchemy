@@ -75,6 +75,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "item_ids.h"
 #include "fx_scene.h"
 
@@ -270,7 +271,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   actor = Object_GetById(ACTOR_WISE_ONE);
   actor->motionFlags = 5;
   sparkles->stopped = 1;
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(150);
@@ -311,7 +312,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_EventWait(80);
   sparkles->stopped = 1;
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   SolSanctumEruption_SetMaterializationTint(0, 20, 60);
@@ -876,7 +877,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_TaskRemoveCallback(SolSanctumEruption_UpdateEmberFrequency);
   gEmberMask = 3;
   Engine_EventWait(80);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   ColorBuffer_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(40);
   Engine_EventWait(40);
@@ -1153,7 +1154,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_EventWait(40);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(40);
   sparkles->stopped = 1;
@@ -1231,7 +1232,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_EventWait(30);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_TaskRemoveCallback(SolSanctumEruption_FlickerFirstCollapseTiles);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   flickerDelay = 16;
@@ -1410,7 +1411,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_EventWait(30);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_TaskRemoveCallback(SolSanctumEruption_FlickerSecondCollapseTiles);
   Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   flickerDelay = 8;
@@ -1445,7 +1446,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
                              TASK_PRIORITY_SCENE);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventWait(30);
   Engine_TaskRemoveCallback(SolSanctumEruption_FlickerFirstCollapseTiles);
   Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
@@ -1484,7 +1485,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Event_PlayCue(SE_289);
+  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventWait(20);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1772,7 +1773,7 @@ static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
     Engine_AudioPlayCue(SE_308);
     Engine_ColorBufferApplyTarget(0x203a52, 1);
   } else {
-    Engine_AudioPlayCue(SE_289);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
     Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   }
   Engine_ColorBufferInterpolate(frames);

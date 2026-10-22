@@ -87,6 +87,7 @@
 #include "display_transition.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 /// The palace's actors are placed by one of three tables, as the story goes on:
 /// before Babi is rescued (gBabiPalace_PlacementsBabiMissing), during the
@@ -2295,7 +2296,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimation(MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(IVAN, ANIM_NOD);
   Event_Wait(30);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);

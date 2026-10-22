@@ -107,6 +107,7 @@
 #include "colosso_gauge.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "macros.h"
 
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES 120
@@ -383,7 +384,7 @@ static void Event_KnockDownObstacle(void) {
   GameFlag_Set(FLAG_OBSTACLE_KNOCKED_DOWN);
   obstacle->acceleration = 0x1999;
   obstacle->speed = 0x13333;
-  Engine_AudioPlayCue(SE_227);
+  Engine_AudioPlayCue(SE_TOPPLE);
   // Spin through the fall, then settle the obstacle at its final height.
   FieldObject_SetPosition(obstacle, PIXELS(336), PIXELS(10), PIXELS(264));
   for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
@@ -591,12 +592,12 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Object_SetMode(pusherActor, 2);
   Engine_ObjectSetPosition(pusherActor, pusherActor->x.fixed + offsetX, 0,
                            pusherActor->z.fixed + offsetZ);
-  Engine_AudioPlayCue(SE_239);
+  Engine_AudioPlayCue(SE_HEAVY_MOVE);
   FieldObject_WaitForMove(pusherActor);
   Object_SetMode(pusherActor, 1);
   FieldObject_WaitForMove(log);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
-  Engine_AudioPlayCue(SE_213);
+  Engine_AudioPlayCue(SE_HEAVY_STOP);
   Object_SetMode(log, 1);
   Engine_EventWait(15);
   Engine_EventEnd();
@@ -1061,7 +1062,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Engine_ActorDestroy(WALL_ATTENDANT);
     Engine_ActorDestroy(BOARD_WALK_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      Engine_AudioPlayCue(MUS_017);
+      Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumSatrageMatch_ShowRoundStartLettering(2);
@@ -1402,7 +1403,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Engine_EventWait(6);
   obstacle->speed = 0x8000;
   obstacle->acceleration = 0x3333;
-  Engine_AudioPlayCue(SE_239);
+  Engine_AudioPlayCue(SE_HEAVY_MOVE);
   Object_SetMode(obstacle, 3);
   Engine_ObjectSetPosition(obstacle, column, 0, row);
   Engine_EventWait(6);
@@ -1416,7 +1417,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   FieldObject_WaitForMove(obstacle);
   Object_SetMode(obstacle, 1);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
-  Engine_AudioPlayCue(SE_213);
+  Engine_AudioPlayCue(SE_HEAVY_STOP);
   Engine_EventWait(15);
 }
 
@@ -1540,21 +1541,21 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     Engine_TaskWait(1);
   }
 
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Engine_AudioPlayCue(SE_236);
+  Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
   Engine_EventWait(60);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
-  Engine_AudioPlayCue(SE_236);
+  Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
   Engine_EventWait(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Engine_AudioPlayCue(SE_236);
+  Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
   Engine_EventWait(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
-  Engine_AudioPlayCue(SE_237);
+  Engine_AudioPlayCue(SE_COLOSSO_GO);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
   Engine_GameFlagSet(FLAG_IN_TOWN);
@@ -1597,7 +1598,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
   }
   Engine_AudioPlayCue(MUS_SILENCE);
   Engine_EventWait(30);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
 }

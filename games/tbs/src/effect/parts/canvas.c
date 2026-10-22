@@ -498,7 +498,7 @@ void BattleFx_EndCanvasLayer(void) {
   struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
   s32 i;
 
-  AudioCommand_PlayFar(SE_289);
+  AudioCommand_PlayFar(AUDIO_CUE_FADE_SLOT3);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
   // The battle's projection centre, which Camera_ApplyShake moves.

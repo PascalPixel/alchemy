@@ -254,7 +254,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
     ball->y = (Random16() & 63) - 80;
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-  AudioCommand_PlayFar(SE_171);
+  AudioCommand_PlayFar(SE_THUNDER);
   frame = 0;
   angle = 0x8000; // 180 degrees
   do {

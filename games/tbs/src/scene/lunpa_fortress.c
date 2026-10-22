@@ -114,6 +114,7 @@
 #include "flags.h"
 #include "djinn_ids.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "fixed_math.h"
 #include "io_reg.h"
 
@@ -1774,7 +1775,7 @@ static void Event_FindHammet(void) {
     Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 4);
   } else {
     OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
-    SE(MUS_017);
+    SE(AUDIO_CUE_FADE_BGM);
     WAIT(30);
     // Ivan recognizes Hammet before Dodonpa interrupts the reunion.
     messageBase = MsgLunpaTimeEat;
@@ -1954,7 +1955,7 @@ static void Event_FindHammet(void) {
     Actor_SetDestinationOffset(TOADONPA_DODONPA, 8, -8);
     OBJ_FACE(TOADONPA_DODONPA, TOADONPA_BOSS, 0);
     LunpaFortress_ActivateLeverTrap();
-    SE(MUS_052);
+    SE(MUS_BOSS_BATTLE);
     MESSAGE_SET(messageBase + 23);
     MESSAGE_PUT(TOADONPA_DODONPA, 0);
     WAIT(60);
@@ -2639,7 +2640,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   Engine_ActorWaitForMove(TOADONPA_HAMMET);
   OBJ_WALK(TOADONPA_HAMMET, 352, 360);
   WAIT(20);
-  SE(MUS_017);
+  SE(AUDIO_CUE_FADE_BGM);
   gEventWork->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Engine_EventCloseScreen();

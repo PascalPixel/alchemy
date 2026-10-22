@@ -62,6 +62,7 @@
 #include "text/msg_ids.h"
 #include "objcmd.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "fixed_math.h"
 
 /// The map's actors after Garet's, Ivan's and Mia's party slots, numbering the
@@ -366,7 +367,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST,
                                         20);
   KolimaForestEntrance_FaceActorAndWait(IVAN, FACING_NORTH, 10);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Event_PlayCue(SE_206);
   ColorBuffer_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(1);
@@ -518,7 +519,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_EventWait(300);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_EventWait(120);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   ColorBuffer_ApplyTarget(0x10000, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
@@ -1036,7 +1037,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       KolimaForestEntrance_ShowMessageAndWait(IVAN, 20);
     }
   }
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);

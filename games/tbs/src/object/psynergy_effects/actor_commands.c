@@ -569,7 +569,7 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
   object = (struct ObjectRuntime *)Object_GetById(actor);
   startZ = object->z;
   if (object != 0) {
-    AudioCommand_PlayFar(SE_289);
+    AudioCommand_PlayFar(AUDIO_CUE_FADE_SLOT3);
     ObjectDispatch_SelectAnimationFar(object, pose);
     WaitFrames(10);
 

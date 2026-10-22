@@ -118,6 +118,7 @@
 #include "field_runtime.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "item_ids.h"
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
@@ -578,7 +579,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Object_SetMode(leader, ANIM_PUSH);
   moveRate = PIXELS(1) / 5;
   Engine_TaskWait(15);
-  Engine_AudioPlayCue(SE_185);
+  Engine_AudioPlayCue(SE_PUSH);
   pillar->speed = moveRate;
   pillar->acceleration = moveRate;
   Engine_ObjectSetPosition(pillar, targetPosition.x, targetPosition.y,
@@ -1793,7 +1794,7 @@ static void Event_StepOnWallSwitch(void) {
       GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED);
       Map_CopyCellsTo(26, 33, 19, 33, 1, 1);
       Engine_EventWait(30);
-      Engine_AudioPlayCue(SE_239);
+      Engine_AudioPlayCue(SE_HEAVY_MOVE);
       Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
       Engine_EventWait(20);
       dustX = PIXELS(288);
@@ -2129,7 +2130,7 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
   westSupport->y.fixed = gVenusBalancePlatformHeights[westSupport->timer];
   eastSupport->y.fixed = gVenusBalancePlatformHeights[eastSupport->timer];
   if (waitFrames != 0) {
-    Engine_AudioPlayCue(SE_289);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   }
   for (pillarIndex = 0; pillarIndex < 5; pillarIndex++) {
     struct FieldActor *actor = Object_GetById(pillarIndex + ACTOR_BALANCE_WEST);
@@ -2346,7 +2347,7 @@ static void Event_StepOnWestWallSwitch(void) {
       Map_CopyCellsTo(44, 83, 44, 80, 3, 3);
       Engine_EventWait(30);
       Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-      Engine_AudioPlayCue(SE_239);
+      Engine_AudioPlayCue(SE_HEAVY_MOVE);
       Engine_EventWait(20);
       dustX = PIXELS(616);
       column = 0;
@@ -2419,7 +2420,7 @@ static void Event_StepOnEastWallSwitch(void) {
       Engine_AudioPlayCue(SE_161);
       Engine_EventWait(30);
       Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-      Engine_AudioPlayCue(SE_239);
+      Engine_AudioPlayCue(SE_HEAVY_MOVE);
       Engine_EventWait(20);
       dustX = PIXELS(704);
       column = 61;
@@ -3427,7 +3428,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
     Engine_TaskWait(3);
     Map_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
   }
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventWait(60);
   Engine_EventRequestExit(
       VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH);
@@ -3695,7 +3696,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_EventWait(60);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Engine_ActorSetSpritePriority(ACTOR_RISING_PLATFORM, 1);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Event_PlayCue(SE_308);
   GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
   // Raise the leader, terrain contact and platform by the same pixel each

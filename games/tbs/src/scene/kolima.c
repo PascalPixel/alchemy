@@ -88,6 +88,7 @@
 #include "palbuf.h"
 #include "field_runtime.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "item_ids.h"
 
 static void Kolima_WitnessForestCurse(void);
@@ -822,7 +823,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 20);
   Kolima_FaceActorAndWait(IVAN, FACING_NORTH, 10);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Event_PlayCue(SE_206);
   ColorBuffer_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(1);
@@ -988,7 +989,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_EventWait(300);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_EventWait(120);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
@@ -1504,7 +1505,7 @@ static void Kolima_WitnessForestCurse(void) {
     }
   }
   // Reunite the party and remember that the first visit has played.
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Actor_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);

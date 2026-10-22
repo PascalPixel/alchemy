@@ -1823,7 +1823,7 @@ s32 ItemMenu_ChooseCommand(void) {
           AudioCommand_PlayFar(SE_MENU_CONFIRM);
           break;
         case ITEM_COMMAND_REMOVE:
-          AudioCommand_PlayFar(SE_117); // Remove
+          AudioCommand_PlayFar(SE_ITEM_REMOVE); // Remove
           break;
         default:
           AudioCommand_PlayFar(SE_MENU_CONFIRM);

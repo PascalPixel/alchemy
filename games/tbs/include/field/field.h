@@ -167,8 +167,8 @@ extern const u8 gWorldMapPalettes[];
 /// Which of the two guides' turns Kalay_AlternateGuidesPacing is at, 0 to 4.
 extern s32 gKalay_DanceStep;
 /// The percent chance that a line above the split shows the shaken scroll: 0
-/// when the rumble starts (SE_231), then a point higher each frame up to 101
-/// (KolimaForestFloodgate_FlipFloodgateSwitch).
+/// when the rumble starts (SE_WATER_LEVEL), then a point higher each frame up
+/// to 101 (KolimaForestFloodgate_FlipFloodgateSwitch).
 extern u32 gKolimaForestFloodgate_ShakeChance;
 /// The background scroll words captured each frame for the shaken lines.
 extern u32 gKolimaForestFloodgate_ShakeScroll[];

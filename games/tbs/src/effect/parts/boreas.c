@@ -385,7 +385,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   // waiting i / 2 frames (its negative variant) before it shows.
   BattleFx_SetupBlendedDisplay();
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  AudioCommand_PlayFar(SE_289);
+  AudioCommand_PlayFar(AUDIO_CUE_FADE_SLOT3);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].x = ((Random16() & 127) + 64) << 16;

@@ -85,6 +85,7 @@
 #include "item_ids.h"
 #include "macros.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 /// The actors, numbering gKolimaForestTreePlacements' rows from
 /// ACTOR_FIRST_PLACED.
@@ -328,7 +329,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   ColorBuffer_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   gKolimaForestTreePlaySparkSound = 1;
   FieldScheduler_AddCallback(KolimaForestTree_SpawnRejectionSpark,
                              TASK_PRIORITY_SCENE);
@@ -424,7 +425,7 @@ static void KolimaForestTree_RestoreTret(void) {
   includeMia = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 212);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   Engine_MessageShowCentered(MsgKolimaWaterHermesSeepedIntoTret, 1);
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -747,7 +748,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 10);
   KolimaForestTree_NodTogether();
-  Event_PlayCue(MUS_017);
+  Event_PlayCue(AUDIO_CUE_FADE_BGM);
   // Rejoin the party and exchange the used water for its empty bottle.
   finalActions = gKolimaForestTree_RejoinPartyActions;
   Actor_SetActionScript(GARET, finalActions);

@@ -375,7 +375,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   *flags = saved;
   if (to->collisionCode == state->terrainCode && state->stepEffect == NULL) {
     Object_SetMode(actor, 18);
-    Engine_AudioPlayCue(SE_241);
+    Engine_AudioPlayCue(SE_WATER_MOVE);
     for (i = 0;; i++) {
       if ((i & 15) == 0)
         MercuryLighthouse_SpawnRipple(actor);

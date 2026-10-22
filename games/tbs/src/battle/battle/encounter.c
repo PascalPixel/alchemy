@@ -157,7 +157,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     }
   } else {
     AudioCommand_PlayFar(MUS_051);
-    AudioCommand_PlayFar(MUS_076);
+    AudioCommand_PlayFar(MUS_COLOSSO_BATTLE);
   }
 
   // The units, the windows and the background.
@@ -322,7 +322,7 @@ won:
     }
     Battle_AwardSpoils();
   }
-  AudioCommand_PlayFar(MUS_017);
+  AudioCommand_PlayFar(AUDIO_CUE_FADE_BGM);
   Fade_ToBlack(30);
   Fade_Wait();
   result = battle->spoils.defeated;
@@ -350,14 +350,14 @@ party_lost:
   else
     UiText_ShowMessageAndWaitCoreFar(MsgPartyDefeated);
   BattlePresentation_WaitForAdvance();
-  AudioCommand_PlayFar(MUS_017);
+  AudioCommand_PlayFar(AUDIO_CUE_FADE_BGM);
   Fade_ToBlack(30);
   result = ENCOUNTER_PARTY_LOST;
   Fade_Wait();
   goto finished;
 
 fled:
-  AudioCommand_PlayFar(MUS_017);
+  AudioCommand_PlayFar(AUDIO_CUE_FADE_BGM);
   Fade_ToBlack(30);
   Fade_Wait();
   result = ENCOUNTER_FLED;

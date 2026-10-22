@@ -615,7 +615,7 @@ static void LamakanDesert_BatheInOasis(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   SceneActor_WaitObjectBelowHeight(leader,
                                    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
-  Event_PlayCue(SE_241);
+  Event_PlayCue(SE_WATER_MOVE);
   {
     struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 

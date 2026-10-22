@@ -83,6 +83,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "ability_ids.h"
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
@@ -1163,7 +1164,7 @@ static void Event_CenterStatueMoved(void) {
         Engine_EventWait(30);
         Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
         Engine_EventWait(40);
-        Engine_AudioPlayCue(SE_289);
+        Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
         Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         Engine_EventWait(10);
         Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -1195,7 +1196,7 @@ static void Event_PushCenterStatueNorth(void) {
   if (movingActor != 0) {
     if ((movingActor->z.fixed >> 20) == 8) {
       Engine_EventBegin();
-      Event_PlayCue(SE_185);
+      Event_PlayCue(SE_PUSH);
       Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       Object_GetById(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1310,7 +1311,7 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   s32 statueZ;
 
   Engine_EventBegin();
-  Engine_AudioPlayCue(SE_185);
+  Engine_AudioPlayCue(SE_PUSH);
   Actor_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Object_GetById(statueId)->steeringFlags &= ~ACTOR_FACES_MOTION;

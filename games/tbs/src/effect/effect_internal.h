@@ -33,6 +33,7 @@
 #include "dma.h"
 #include "resource_ids.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "battle_effect.h"
 #include "fixed_math.h"
 #include "callback_scheduler.h"

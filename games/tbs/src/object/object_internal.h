@@ -58,6 +58,7 @@
 #include "owner_value.h"
 #include "party_state.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "fixed_math.h"
 #include "item_gift.h"
 #include "battle_calc.h"

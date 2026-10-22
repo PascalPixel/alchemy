@@ -186,7 +186,7 @@ static void Event_PushWestPillar(void) {
   WAIT(20);
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   OBJ_SPEED(ACTOR_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
-  SE(SE_185);
+  SE(SE_PUSH);
   // 16 pixels east from trigger 5, west from trigger 6.
   offsetX = (11 - (work->touchedTrigger << 1)) << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);

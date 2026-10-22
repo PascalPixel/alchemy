@@ -385,11 +385,11 @@ s32 TolbiSpring_Initialize(void) {
       coinChange = gGameState.coins - *(s32 *)gSceneState;
       if (coinChange > 0) {
         if (coinChange > 19999) {
-          Engine_AudioPlayCue(MUS_093);
+          Engine_AudioPlayCue(MUS_FANFARE_LARGE);
         } else if (coinChange > 4999) {
-          Engine_AudioPlayCue(MUS_092);
+          Engine_AudioPlayCue(MUS_FANFARE_MEDIUM);
         } else {
-          Engine_AudioPlayCue(MUS_091);
+          Engine_AudioPlayCue(MUS_FANFARE_SMALL);
         }
         Engine_EventWait(20);
         Engine_EventSetMessage(MsgTolbiYaWonNumber);
@@ -688,7 +688,7 @@ prompt:
     UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
   }
   Task_Wait(5);
-  Event_PlayCue(SE_116);
+  Event_PlayCue(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
     if (gKeysPressed & KEY_A) {
       Event_PlayCue(SE_MENU_CONFIRM);
@@ -762,7 +762,7 @@ prompt:
     UiText_DrawCharacterAtOffset(result, window, 0, 0);
     UiText_DrawCharacterAtOffset(result + 1, window, 0, 8);
     Task_Wait(5);
-    Event_PlayCue(SE_116);
+    Event_PlayCue(SE_TOLBI_SPRING_TOSS_PROMPT);
     for (;;) {
       if (gKeysPressed & KEY_A) {
         Event_PlayCue(SE_MENU_CONFIRM);
@@ -798,7 +798,7 @@ prompt:
         Party_AdjustCoins(((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
                               ->coins[result]);
 #endif
-        Event_PlayCue(MUS_091);
+        Event_PlayCue(MUS_FANFARE_SMALL);
 #ifdef UBFIX
         UiWork_PushValueSlot(gTolbiSpring_CoinPrizes[result], 5);
 #else
@@ -1283,7 +1283,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           toss->velocity.z = -deltaZ * speed / distance;
           toss->attractionFrames = toss->attractionFrames - 100;
         }
-        Engine_AudioPlayCue(SE_301);
+        Engine_AudioPlayCue(SE_TOLBI_SPRING_OBSTACLE_HIT);
         nextMode = (obstacle->speedMode + 1) % 3;
         obstacle->reactionFrames = 36;
         obstacle->speedMode = nextMode;

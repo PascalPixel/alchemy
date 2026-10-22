@@ -78,6 +78,7 @@
 #include "heap_state.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "item_ids.h"
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
@@ -341,7 +342,7 @@ static void Event_KradenFindsHeartOfSanctum(void) {
     Engine_EventBegin();
     // The leader walks in as the music changes.
     Engine_EventSetMessage(MsgSolSanctumFound);
-    Engine_AudioPlayCue(MUS_017);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 232);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
@@ -842,7 +843,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Event_PlayCue(SE_171);
+  Event_PlayCue(SE_THUNDER);
   ColorBuffer_ApplyTarget(0x10005, 1);
   Engine_ColorBufferInterpolate(8);
   Engine_EventWait(32);

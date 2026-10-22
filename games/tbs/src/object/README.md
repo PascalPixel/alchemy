@@ -207,7 +207,7 @@ the `battle` request, so the battle starts when the event returns.
 `gEncounter_BattleMusic` (`battle_cue.c`) is one list: a song marker (bit 15
 set), then the `(zone << 4) + slot` keys that use it, ended by 0. A key takes
 the last song before it, so the table stores each song once. Link battles
-always play `MUS_018`.
+always play `AUDIO_CUE_KEEP_BGM`.
 
 ### How field Psynergy reaches its effect
 

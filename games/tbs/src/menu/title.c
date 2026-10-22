@@ -42,6 +42,7 @@
 #include "field_scene.h"
 #include "map_scroll.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
@@ -81,7 +82,7 @@ s32 Title_Run(void) {
   // press.
   if (gGameState.entrance == 10) {
     Object_GetById(gGameState.selectedActor)->motionFlags = 0;
-    Engine_AudioPlayCue(MUS_075);
+    Engine_AudioPlayCue(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     Engine_TaskWait(120);
     waitFrames = 0;
@@ -96,11 +97,11 @@ s32 Title_Run(void) {
     return 0;
   }
   if (gGameState.entrance == 9) {
-    Engine_AudioPlayCue(MUS_067);
+    Engine_AudioPlayCue(MUS_ENDING);
     // The credits: DisplayScroll_RunSlideshow, through the scroll far-call
     // table.
     ScrollFar_Entry00(0);
-    Engine_AudioPlayCue(MUS_017);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
     Fade_ToBlack(60);
     Fade_Wait();
     Engine_EventWait(240);
@@ -121,11 +122,11 @@ s32 Title_Run(void) {
       PaletteFar_Entry20(0);
       // With no save file (or no backup memory) there is no title intro.
       if (SaveState_ScanRecordFlags() > 0) {
-        Engine_AudioPlayCue(MUS_070);
+        Engine_AudioPlayCue(MUS_TITLE);
         // Title_ShowIntro with its prompt returns 0 when a minute passes
         // without A or Start: fade out and start again from the logos.
         if (PaletteFar_Entry00(1) == 0) {
-          Engine_AudioPlayCue(MUS_017);
+          Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
           Fade_ToBlack(30);
           Fade_Wait();
           waitFrames = 0;
@@ -144,13 +145,13 @@ s32 Title_Run(void) {
     Event_SetDestination((s32)&SceneId_Clear, CLEAR_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
-    Engine_AudioPlayCue(MUS_064);
+    Engine_AudioPlayCue(MUS_TITLE_AFTER_PROLOGUE);
     PaletteFar_Entry00(0);
     Party_EndChildhood();
     Event_SetDestination((s32)&SceneId_Vale, VALE_FROM_TITLE);
-    Engine_AudioPlayCue(MUS_017);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   }
-  Engine_AudioPlayCue(MUS_017);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Fade_ToBlack(30);
   Fade_Wait();
   Engine_EventWait(60);

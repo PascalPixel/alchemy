@@ -59,7 +59,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
                       0x20000);
   sprite->image.objectMode = 1;
   sprite->shadow.objectMode = 1;
-  Engine_AudioPlayCue(SE_252);
+  Engine_AudioPlayCue(SE_COLOSSO_WARRIOR_APPEAR);
   for (i = 0; i <= 15; i += 2) {
     actor->scaleX = (i << 12) + 0x1000;
     actor->scaleY = 0x1f000 - (i << 12);

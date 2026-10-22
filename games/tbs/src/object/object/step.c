@@ -289,7 +289,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       work->walkingDistance = accumulatedDistance & 0xffff;
       Party_AddPp(amount, 0);
       if (DjinnRecovery_TickFar())
-        AudioCommand_PlayFar(SE_139);
+        AudioCommand_PlayFar(SE_DJINNI_SET);
       Event_ClearInvalidPackedValues();
       partyHurt = Party_ApplyPoisonDamage();
     }

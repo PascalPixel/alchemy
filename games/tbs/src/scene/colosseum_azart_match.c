@@ -116,6 +116,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared. Each use is tagged.
@@ -494,7 +495,7 @@ static void Event_PushPipeworksPillar(void) {
   Engine_EventWait(6);
   actor->speed = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
-  Event_PlayCue(SE_239);
+  Event_PlayCue(SE_HEAVY_MOVE);
   Object_SetMode(actor, 2);
   Engine_ObjectSetPosition(actor, actor->x.fixed - PIXELS(48), 0,
                            actor->z.fixed);
@@ -513,7 +514,7 @@ static void Event_PushPipeworksPillar(void) {
   FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
   Event_PlayCue(SE_STOP_SLOT3);
-  Event_PlayCue(SE_213);
+  Event_PlayCue(SE_HEAVY_STOP);
   Engine_EventWait(15);
   Engine_EventEnd();
   Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);
@@ -757,7 +758,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Engine_ActorDestroy(BRIDGE_ATTENDANT);
     Engine_ActorDestroy(LUMBER_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      Engine_AudioPlayCue(MUS_017);
+      Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumAzartMatch_MarkFinishTerrain(GARET);
@@ -1246,21 +1247,21 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     while (AudioCommand_GetStateByte() != 0) {
       Engine_TaskWait(1);
     }
-    Engine_AudioPlayCue(SE_289);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
     Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
-    Engine_AudioPlayCue(SE_236);
+    Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
     Engine_EventWait(60);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 1);
-    Engine_AudioPlayCue(SE_236);
+    Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
     Engine_EventWait(60);
     Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
-    Engine_AudioPlayCue(SE_236);
+    Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
     Engine_EventWait(60);
     Colosso_LoadLettering(COLOSSO_PICTURE_GO);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_GO, 0);
-    Engine_AudioPlayCue(SE_237);
+    Engine_AudioPlayCue(SE_COLOSSO_GO);
     Audio_PlayCueFromEventWork();
     Engine_EventEnd();
     Engine_GameFlagSet(FLAG_IN_TOWN);
@@ -1305,7 +1306,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
   }
   Engine_AudioPlayCue(MUS_SILENCE);
   Engine_EventWait(30);
-  Engine_AudioPlayCue(SE_289);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
 }

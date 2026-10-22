@@ -442,7 +442,7 @@ void ReelGame_RunFrame(void) {
           for (k = 0; k != work->bet; k++)
             PartyInventory_RemoveFar(ITEM_GAME_TICKET);
           UiWork_FinalizeFar(work->subWindow, 1);
-          AudioCommand_PlayFar(SE_304);
+          AudioCommand_PlayFar(SE_LUCKY_WHEELS_SPIN);
         }
       }
     } else if (work->state == REEL_CHOOSING_HOLDS) {
@@ -464,10 +464,10 @@ void ReelGame_RunFrame(void) {
             work->reels[i].stop = -1;
           }
         } else if (work->cursor <= 4) {
-          AudioCommand_PlayFar(SE_305);
+          AudioCommand_PlayFar(SE_LUCKY_WHEELS_HOLD);
           work->reels[work->cursor].held ^= 1;
         } else if (allHeld == 0) {
-          AudioCommand_PlayFar(SE_304);
+          AudioCommand_PlayFar(SE_LUCKY_WHEELS_SPIN);
           work->state = REEL_SPINNING;
           work->cursor = 0;
           for (i = 0; i != 5; i++)
@@ -559,7 +559,7 @@ void ReelGame_RunFrame(void) {
       objMode = 0;
       if (work->timer == 60) {
         work->state = REEL_SHOWING_WIN;
-        AudioCommand_PlayFar(MUS_093);
+        AudioCommand_PlayFar(MUS_FANFARE_LARGE);
         work->timer = 0;
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -606,7 +606,7 @@ void ReelGame_RunFrame(void) {
           for (i = 0; i != 5; i++) {
             if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
               work->reels[i].stop = (Random16() & 3) + 4;
-              AudioCommand_PlayFar(SE_307);
+              AudioCommand_PlayFar(SE_LUCKY_WHEELS_STOP);
               break;
             }
           }
@@ -672,7 +672,7 @@ void ReelGame_RunFrame(void) {
         if (hits != 0) {
           save->wonPrizes[hits] = -1;
           work->state = REEL_WON;
-          AudioCommand_PlayFar(SE_171);
+          AudioCommand_PlayFar(SE_THUNDER);
           fx->transferMode = CANVAS_COPY_AND_CLEAR;
           fx->transferValue = 0;
           REG_BLDCNT = 0;

@@ -216,7 +216,7 @@ void DisplayScroll_StepPositionEveryFourFrames(void) {
 /// while the staff names scroll over it, then restores the display for the
 /// following screen. Reached through the scroll far-call table at the end of
 /// the game: Title_Run calls it as ScrollFar_Entry00 at the title scene's
-/// entrance 9, MUS_067 playing, before the clear screen. Its waits come to
+/// entrance 9, MUS_ENDING playing, before the clear screen. Its waits come to
 /// 11223 frames, about 3 minutes 8 seconds, besides the loads: a 300-frame
 /// lead, then 33 slides of a 64-frame fade and a 267-frame hold, the last a
 /// fade to black. Returns 0 with BG2, BG3 and blending off and the OAM copy

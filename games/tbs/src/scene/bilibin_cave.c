@@ -580,7 +580,7 @@ static void Event_PushActorAhead(void) {
 
   Object_SetMode(leader, 8);
   Engine_TaskWait(15);
-  Engine_AudioPlayCue(SE_185);
+  Engine_AudioPlayCue(SE_PUSH);
 
   target->speed = PIXELS(1) / 5;
   target->acceleration = PIXELS(1) / 5;

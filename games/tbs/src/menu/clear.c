@@ -44,6 +44,7 @@
 #include "uiwindow.h"
 #include "text/msg_ids.h"
 #include "songs.h"
+#include "audio_engine_symbols.h"
 #include "frame.h"
 #include "map_scroll.h"
 #include "flags.h"
@@ -465,7 +466,7 @@ s32 SaveMenu_Run(void) {
     }
     Engine_EventWait(60);
     Engine_EventCloseScreen();
-    Engine_AudioPlayCue(MUS_017);
+    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
     Engine_EventWait(0x12c);
     Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_CLEAR);
     return 0;
@@ -927,7 +928,7 @@ menu_top:;
 leave:;
   gEventWork->requestedExit = 0x3e7;
   Engine_EventWait(30);
-  Engine_AudioPlayCue(MUS_017);
+  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(60);

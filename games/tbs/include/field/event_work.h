@@ -47,9 +47,13 @@ struct EventWork {
   u16 message;            ///< the next message, advanced as each window opens
   u8 unk1da[6];           ///< FieldWork's unk1da to unk1de
   struct FieldActor *viewCenter; ///< the object the map view follows
-  u8 unk1e4[0xade];              ///< not named by TBS code through this view
-  u16 choiceMessage;             ///< Message containing the choices.
-  u16 unkcc4; ///< FieldWork's nameWidth; Colosso sets it to 4
+  u8 unk1e4[0x10];               ///< not named by TBS code through this view
+  /// The actor speaking; the yes/no choice closes the portrait window of its
+  /// sprite once answered (Event_AskYesNoWithActorAnimation).
+  s32 speaker;
+  u8 unk1f8[0xaca];  ///< not named by TBS code through this view
+  u16 choiceMessage; ///< Message containing the choices.
+  u16 unkcc4;        ///< FieldWork's nameWidth; Colosso sets it to 4
 };
 
 STATIC_ASSERT(offsetof(struct EventWork, placedActors) == 0x34);
@@ -68,6 +72,7 @@ STATIC_ASSERT(offsetof(struct EventWork, startTransition) == 0x1c0);
 STATIC_ASSERT(offsetof(struct EventWork, transitionFrames) == 0x1c8);
 STATIC_ASSERT(offsetof(struct EventWork, message) == 0x1d8);
 STATIC_ASSERT(offsetof(struct EventWork, viewCenter) == 0x1e0);
+STATIC_ASSERT(offsetof(struct EventWork, speaker) == 0x1f4);
 STATIC_ASSERT(offsetof(struct EventWork, choiceMessage) == 0xcc2);
 
 #endif

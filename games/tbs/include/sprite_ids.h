@@ -67,9 +67,18 @@ enum SpriteId {
   /// ★ Named from what the player sees: a round floating platform (its
   /// render)
   SPRITE_FLOATING_PLATFORM = 0xf2,
+  /// The keys the scenes show: the barricade key McCoy tosses to the party,
+  /// and Lunpa Fortress's Cell Key.
+  /// ★ Named from what the player sees: a golden key (spr_245.png)
+  SPRITE_KEY = 0xf5,
   /// ★ Named from what the player sees: an unlit torch on its stand (its
   /// render)
   SPRITE_TORCH = 0xf6,
+  /// The ivy Whirlwind blows away, in Goma Cave, Vault, Bilibin, Lunpa
+  /// Fortress and Crossbone Isle, and a patch outside McCoy's Palace.
+  /// ★ Named from the game: "It looks like it's trapped in the ivy."
+  /// (MsgGomaNoUsePsynergy)
+  SPRITE_IVY = 0xf8,
   /// The pillars Move shifts in the Tunnel Ruins and the lighthouses.
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)

@@ -418,7 +418,7 @@ static void Event_TakeExitToValeGateWest(void) {
 /// Reached by cell code 5, the inn's stairs; climbs to its guest room at
 /// VALE_INTERIORS_INN_INN_FROM_DOWNSTAIRS.
 static void Event_TakeExitToInnUpstairs(void) {
-  Engine_AudioPlayCue(SE_128);
+  Engine_AudioPlayCue(SE_STAIRS_UP);
   ValeInteriorsInn_CloseScreenAndExit(5);
 }
 
@@ -433,20 +433,20 @@ static void Event_TakeExitToVale(void) {
 /// Reached by cell code 7, the stairs of Isaac's house; climbs to its upper
 /// floor.
 static void Event_TakeExitToIsaacsHouseUpstairs(void) {
-  Engine_AudioPlayCue(SE_128);
+  Engine_AudioPlayCue(SE_STAIRS_UP);
   ValeInteriorsInn_CloseScreenAndExit(7);
 }
 
 /// Reached by cell code 8, the stairs of the inn's guest room; goes back down.
 static void Event_TakeExitToInnDownstairs(void) {
-  Engine_AudioPlayCue(SE_129);
+  Engine_AudioPlayCue(SE_STAIRS_DOWN);
   ValeInteriorsInn_CloseScreenAndExit(8);
 }
 
 /// Reached by cell code 9, the stairs on the upper floor of Isaac's house; goes
 /// back down.
 static void Event_TakeExitToIsaacsHouseDownstairs(void) {
-  Engine_AudioPlayCue(SE_129);
+  Engine_AudioPlayCue(SE_STAIRS_DOWN);
   ValeInteriorsInn_CloseScreenAndExit(9);
 }
 

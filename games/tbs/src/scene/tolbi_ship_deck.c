@@ -2947,7 +2947,7 @@ const s32 gTolbiShipDeck_DeckEventActions[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(140), 0, PIXELS(586)),
     SC_SYNC,
-    SC_SE(153),
+    SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, 0x80000),
     SC_MOVE(PIXELS(184), 0, PIXELS(598)),
     SC_SYNC,

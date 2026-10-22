@@ -81,8 +81,8 @@ extern u16 gMusicVolumeStep;
 extern u16 gMusicPitch;
 extern u16 gMusicPitchTarget;
 extern u16 gMusicPitchStep;
-/// The music cue AudioCommand_Play last chose: 0xff before any, MUS_019 after
-/// a fade; asking for it again changes nothing.
+/// The music cue AudioCommand_Play last chose: 0xff before any, MUS_SILENCE
+/// after a fade; asking for it again changes nothing.
 extern u8 gAudioSecondaryState;
 /// Set by AudioCommand_UpdateToggleMask; nothing in TBS reads it.
 extern u8 gAudio_CommandMask;

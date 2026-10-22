@@ -191,7 +191,7 @@ s32 Field_RunScene(s32 entrance) {
               } else {
                 ObjectDispatch_SelectAnimationFar(actor, 19);
               }
-              AudioCommand_PlayFar(MUS_059);
+              AudioCommand_PlayFar(MUS_DEFEAT);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated,
                                                      1);
               vitals = UnitGetFar(gGameState.selectedActor);

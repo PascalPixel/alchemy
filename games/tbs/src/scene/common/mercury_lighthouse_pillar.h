@@ -383,7 +383,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
         break;
       Engine_TaskWait(1);
     }
-    Engine_AudioPlayCue(SE_288);
+    Engine_AudioPlayCue(SE_STOP_SLOT3);
     Engine_TaskWait(1);
     actor->x.fixed = state->targetX;
     actor->z.fixed = state->targetZ;

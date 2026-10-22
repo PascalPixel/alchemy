@@ -253,7 +253,7 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
           // flashes again 16 frames later.
           if (STREAKS_VALUE(mode, STREAKS_HIT)) {
             if (frame == k * STREAKS_TARGET_DELAY + 24) {
-              AudioCommand_PlayFar(SE_133);
+              AudioCommand_PlayFar(SE_IMPACT);
               if (k == 0) // the first hit lets the battle show the damage
                 EFFECT_SHOW_DAMAGE(-1);
               ObjectGroup_UpdateMembers(work->effect->actors[k],

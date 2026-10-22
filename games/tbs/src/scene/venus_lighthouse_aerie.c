@@ -482,7 +482,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MOVING_PILLAR), 1);
   Actor_SetDestination(ACTOR_MOVING_PILLAR, 515, 171);
   Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, 516, 121);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
   ObjectMotion_WaitForAnimationChange(0);
@@ -1050,7 +1050,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   Actor_WalkToAndWait(SHEBA, 260, 186);
   Engine_ActorFaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_WalkToAndWait(SHEBA, 276, 192);
-  Event_PlayCue(MUS_019);
+  Event_PlayCue(MUS_SILENCE);
   object = Object_GetById(ACTOR_MENARDI);
   object->facing = FACING_SOUTH + FACING_STEP;
   Engine_TaskWait(1);
@@ -2309,8 +2309,8 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   struct FieldActor *upper;
   struct FieldActor *actor;
 
-  Engine_AudioPlayCue(MUS_019);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(MUS_SILENCE);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);

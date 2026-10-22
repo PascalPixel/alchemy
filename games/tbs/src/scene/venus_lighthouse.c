@@ -1682,7 +1682,7 @@ static void Event_StepOnWallSwitch(void) {
       scrollLayer->offsetX = scrollLayer->offsetX / 0x10000 << 16;
       Map_CopyCellAttributes(15, 32, 3, 1, 9, 32);
       Map_CopyCellAttributes(12, 32, 3, 1, 15, 32);
-      Engine_AudioPlayCue(SE_288);
+      Engine_AudioPlayCue(SE_STOP_SLOT3);
       Engine_AudioPlayCue(SE_188);
       Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
@@ -2223,7 +2223,7 @@ static void Event_StepOnWestWallSwitch(void) {
       }
       scrollLayer->offsetX += 0x8000;
       scrollLayer->offsetX = scrollLayer->offsetX / 0x10000 << 16;
-      Engine_AudioPlayCue(SE_288);
+      Engine_AudioPlayCue(SE_STOP_SLOT3);
       Engine_AudioPlayCue(SE_188);
       Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
@@ -2295,7 +2295,7 @@ static void Event_StepOnEastWallSwitch(void) {
       }
       scrollLayer->offsetX += 0x8000;
       scrollLayer->offsetX = scrollLayer->offsetX / 0x10000 << 16;
-      Engine_AudioPlayCue(SE_288);
+      Engine_AudioPlayCue(SE_STOP_SLOT3);
       Engine_AudioPlayCue(SE_188);
       Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();

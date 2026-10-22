@@ -81,7 +81,7 @@ u32 BattleClass_GetAttackHop(u32 index) {
 }
 
 /// Returns 1 for a class whose blow lands with SE_HEAVY_IMPACT instead of
-/// SE_133; 0 out of range.
+/// SE_IMPACT; 0 out of range.
 /// Called by the beam effects (beams.c) through its far stub.
 s32 Summon_IsEntrySecondaryFlagged(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)

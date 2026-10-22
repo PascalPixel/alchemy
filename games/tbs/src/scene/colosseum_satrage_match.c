@@ -461,7 +461,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   }
   Engine_AudioPlayCue(SE_226);
   FieldObject_WaitForMove(pusher);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Object_SetMode(log, 2);
   Engine_EventEnd();
 }
@@ -541,7 +541,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   FieldObject_WaitForMove(pusherActor);
   Object_SetMode(pusherActor, 1);
   FieldObject_WaitForMove(log);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_213);
   Object_SetMode(log, 1);
   Engine_EventWait(15);
@@ -1354,7 +1354,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Object_SetMode(pusherActor, 1);
   FieldObject_WaitForMove(obstacle);
   Object_SetMode(obstacle, 1);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_213);
   Engine_EventWait(15);
 }
@@ -1452,7 +1452,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
-    Engine_AudioPlayCue(MUS_089);
+    Engine_AudioPlayCue(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
     Engine_EventWait(120);
@@ -1534,7 +1534,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
-  Engine_AudioPlayCue(MUS_019);
+  Engine_AudioPlayCue(MUS_SILENCE);
   Engine_EventWait(30);
   Engine_AudioPlayCue(SE_289);
   Engine_EventCloseScreen();
@@ -1843,7 +1843,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
 
   Engine_AudioPlayCue(SE_238);
   FieldObject_WaitForMove(obstacle);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
 
   obstacle->x.fixed = destination.x;
   obstacle->z.fixed = destination.z;

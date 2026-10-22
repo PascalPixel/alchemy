@@ -305,8 +305,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
-            AudioCommand_PlayFar(SE_133);
-            EFFECT_SHOW_DAMAGE(SE_133);
+            AudioCommand_PlayFar(SE_IMPACT);
+            EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
           // A heavy hit lights every spark at once; otherwise the hit
           // lights the next 32. Each hit also starts 8 smoke puffs, the
@@ -395,9 +395,9 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         work->shakeFrames = 4;
         if (frame > (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) * 4 - 4) *
                         TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES))
-          EFFECT_SHOW_DAMAGE(SE_133);
+          EFFECT_SHOW_DAMAGE(SE_IMPACT);
         else
-          AudioCommand_PlayFar(SE_133);
+          AudioCommand_PlayFar(SE_IMPACT);
         for (i = 0; i != 64; i++) {
           struct EffectStep *step =
               &TARGET_STRIKE_SPARKS[frame /

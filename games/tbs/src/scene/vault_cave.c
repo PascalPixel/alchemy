@@ -365,7 +365,7 @@ static void VaultCave_PushPillarAhead(void) {
   leader->acceleration = 0x3333;
   Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
   FieldObject_WaitForMove(pillar);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   pillar->x.fixed = destination.x;
   pillar->z.fixed = destination.z;
   pillar->velocityX = 0;
@@ -706,7 +706,7 @@ static void VaultCave_RunRumble(void) {
   } while (frame <= 69);
   // Replace the mechanism's map cells after the fade completes.
   Map_CopyCells(19, 83, 15, 8, 19, 91);
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Engine_MapRedraw();
   Engine_MapRenderWaitForValues();
   Engine_EventEnd();

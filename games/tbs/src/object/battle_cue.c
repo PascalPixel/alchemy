@@ -3,8 +3,8 @@
 
 /// Battle music: each song as 0x8000 | song, followed by the encounters that
 /// use it as (zone << 4) + slot, ended by 0 (FieldFx_SelectBattleCue).
-/// The songs are MUS_054, MUS_053, MUS_052, MUS_076, MUS_051 and MUS_050.
-/// MUS_050 is listed last with no encounters: a key the list does not hold,
+/// The songs are MUS_054, MUS_053, MUS_052, MUS_076, MUS_051 and MUS_BATTLE.
+/// MUS_BATTLE is listed last with no encounters: a key the list does not hold,
 /// such as the Djinni battles' 0, ends the search with it, so it is every
 /// other battle's music. Link battles skip the list and take MUS_018.
 const u16 gEncounter_BattleMusic[35] = {

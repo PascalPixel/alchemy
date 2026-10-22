@@ -633,7 +633,7 @@ static void CollapseFromHeat(void) {
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
         &puff);
   }
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -946,7 +946,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
       Map_CopyCells(43, 56, 4, 2, 116, 126);
     } else if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
       v5 = 124;
-      FieldFx_SetQueuedSoundAndPlay(169);
+      FieldFx_SetQueuedSoundAndPlay(SE_169);
       Map_CopyCells(8, 14, 4, 4, 64, v5);
       Map_CopyCells(6, 18, 4, 4, 68, v5);
       Map_CopyCells(10, 21, 4, 4, 72, v5);

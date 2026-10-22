@@ -31,7 +31,7 @@
 /// (MsgVaultHmmmItMustBeHidingSomewhere)
 #define FLAG_DJINNI_HIDING_0 128
 /// The next scene change is silent: the scene loader clears it in place of
-/// playing SE_288, once. The world map sets it after its lighthouse
+/// playing SE_STOP_SLOT3, once. The world map sets it after its lighthouse
 /// transition.
 #define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
 /// Set as a battle starts, cleared as a field scene starts.

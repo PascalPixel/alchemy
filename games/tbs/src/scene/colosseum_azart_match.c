@@ -361,7 +361,7 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   Engine_AudioPlayCue(SE_226);
   FieldObject_WaitForMove(leader);
   Object_SetMode(actor, 2);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_EventEnd();
 }
 
@@ -479,7 +479,7 @@ static void Event_PushPipeworksPillar(void) {
   Engine_ActorSetAnimation(leaderId, 1);
   FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_213);
   Engine_EventWait(15);
   Engine_EventEnd();
@@ -1179,7 +1179,7 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
-    Engine_AudioPlayCue(MUS_089);
+    Engine_AudioPlayCue(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
     Engine_EventWait(120);
@@ -1255,7 +1255,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
-  Engine_AudioPlayCue(MUS_019);
+  Engine_AudioPlayCue(MUS_SILENCE);
   Engine_EventWait(30);
   Engine_AudioPlayCue(SE_289);
   Engine_EventCloseScreen();
@@ -1494,7 +1494,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 
   Engine_AudioPlayCue(SE_238);
   FieldObject_WaitForMove(target);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;

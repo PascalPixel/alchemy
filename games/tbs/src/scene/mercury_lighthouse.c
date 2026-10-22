@@ -752,7 +752,7 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
     destinationColumn += 2;
     sourceColumn += 2;
   } while (step <= 2);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Map_CopyCellAttributes(106, 33, 4, 5, 42, 33);
   Engine_MapRenderWaitForValues();
 }

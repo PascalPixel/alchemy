@@ -125,7 +125,7 @@ void FieldFx_RunVenusDjinnCapture(s32 djinniId) {
   }
 
   WaitFrames(100);
-  AudioCommand_PlayFar(SE_288);
+  AudioCommand_PlayFar(SE_STOP_SLOT3);
   WaitFrames(1);
   AudioCommand_PlayFar(SE_151);
   position.x = leader->x;

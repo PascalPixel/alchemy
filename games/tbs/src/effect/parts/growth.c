@@ -242,7 +242,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
               do {
                 if (frame == reactFrame) {
                   if (!(i & 1)) {
-                    AudioCommand_PlayFar(SE_133);
+                    AudioCommand_PlayFar(SE_IMPACT);
                   }
                   ObjectGroup_UpdateMembers(work->effect->actors[n],
                                             SPRITE_COLOR_WHITE, POSE_DAMAGE, n,

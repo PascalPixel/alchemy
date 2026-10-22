@@ -778,7 +778,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   }
   Engine_AudioPlayCue(SE_226);
   FieldObject_WaitForMove(selectedActor);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   EV_END();
 }
 

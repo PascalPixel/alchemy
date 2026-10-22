@@ -654,7 +654,7 @@ static void Event_PushLogOffLedge(void) {
   Engine_EventWait(15);
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Engine_EventWait(4);
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_239);
   Actor_SetSpeed(ACTOR_WEST_LOG, 0x8000, 0x1999);
   Engine_ActorSetAnimation(ACTOR_WEST_LOG, 2);
@@ -666,7 +666,7 @@ static void Event_PushLogOffLedge(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
   Engine_ActorWaitForMove(ACTOR_WEST_LOG);
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_213);
   Engine_ActorSetAnimation(ACTOR_WEST_LOG, 3);
   Object_GetById(ACTOR_WEST_LOG)->motionFlags =

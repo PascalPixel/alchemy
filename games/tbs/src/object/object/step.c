@@ -395,7 +395,7 @@ void Party_AddHp(s32 amount, s32 percent) {
     if (amount < -10)
       AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     else
-      AudioCommand_PlayFar(SE_133);
+      AudioCommand_PlayFar(SE_IMPACT);
   } else {
     AudioCommand_PlayFar(SE_RECOVERY);
   }
@@ -459,7 +459,7 @@ s32 Party_ApplyPoisonDamage(void) {
   if (worstPoison != 0) {
     ColorBuffer_SetSource(0x1ff, 0);
     ColorBuffer_StartInterpolation(4);
-    AudioCommand_PlayFar(SE_133);
+    AudioCommand_PlayFar(SE_IMPACT);
   }
 
   return worstPoison;

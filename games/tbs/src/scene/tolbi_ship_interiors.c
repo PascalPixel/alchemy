@@ -1963,7 +1963,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Engine_ActorSetAnimationAndWait(CABIN_CAPTAIN, 3);
   TolbiShipInteriors_Say(CABIN_CAPTAIN);
   Actor_FaceDirection(CABIN_CAPTAIN, FACING_WEST, 20);
-  Event_PlayCue(MUS_019);
+  Event_PlayCue(MUS_SILENCE);
   Engine_ActorStartRepeatedMotion(CABIN_CAPTAIN, 2);
   captainSpeech = SPEAKER(CABIN_CAPTAIN, 8);
   Actor_ShowEmote(CABIN_CAPTAIN, 0x100, 80);
@@ -3874,7 +3874,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   TolbiShipInteriors_InstallRowingDeckActors(16);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174), 0x1000001);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCENE, 1, 20);
-  Event_PlayCue(MUS_019);
+  Event_PlayCue(MUS_SILENCE);
   Event_PlayCue(SE_181);
   Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Engine_EventWait(10);

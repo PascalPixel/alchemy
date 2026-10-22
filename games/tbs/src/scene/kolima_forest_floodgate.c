@@ -333,7 +333,7 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_ActorWaitForMove(SHORT_LOG);
   Engine_ActorSetAnimation(SHORT_LOG, 1);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_213);
   Map_CopyCellAttributes(5, 9, 1, 4, 6, 9);
   Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
@@ -360,7 +360,7 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_ActorWaitForMove(SHORT_LOG);
   Engine_ActorSetAnimation(SHORT_LOG, 1);
-  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_213);
   Map_CopyCellAttributes(5, 9, 1, 4, 4, 9);
   Map_CopyCellAttributes(0, 0, 1, 4, 6, 9);
@@ -573,7 +573,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldObject_WaitForMove(actor);
   Object_SetMode(actor, 1);
-  Event_PlayCue(SE_288);
+  Event_PlayCue(SE_STOP_SLOT3);
   Event_PlayCue(SE_213);
   Engine_EventWait(15);
   Engine_EventEnd();

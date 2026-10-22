@@ -104,7 +104,7 @@ s32 Title_Run(void) {
     Fade_ToBlack(60);
     Fade_Wait();
     Engine_EventWait(240);
-    Engine_AudioPlayCue(MUS_019);
+    Engine_AudioPlayCue(MUS_SILENCE);
     Event_SetDestination((s32)&SceneId_Clear, CLEAR_FROM_TITLE);
     return 0;
   }
@@ -115,7 +115,7 @@ s32 Title_Run(void) {
   RuntimeDispatch_NoOpHook((s32)&ResourceId_PaletteFarCalls);
   if (gGameState.entrance == 2) {
     for (;;) {
-      Engine_AudioPlayCue(MUS_019);
+      Engine_AudioPlayCue(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowAnimatedSplash).
       Title_ShowSplashScreen(0);
       PaletteFar_Entry20(0);
@@ -154,7 +154,7 @@ s32 Title_Run(void) {
   Fade_ToBlack(30);
   Fade_Wait();
   Engine_EventWait(60);
-  Engine_AudioPlayCue(MUS_019);
+  Engine_AudioPlayCue(MUS_SILENCE);
   return 0;
 }
 

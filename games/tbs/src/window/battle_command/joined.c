@@ -156,7 +156,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     JOINED_QUEUE_TEXT(window, text, 36, 2, zero);
 
-    AudioCommand_PlayFar(MUS_081);
+    AudioCommand_PlayFar(MUS_JOINED);
 
     do {
       Runtime_PushSlotEntry(entry, 250);
@@ -213,7 +213,7 @@ void Party_ShowJoinedMessage(s32 member) {
     UiWork_PushValueSlot(member, MSG_ARG_ACTOR);
     JOINED_QUEUE_TEXT(window, UiText_BuildRenderEntriesMode1(MsgJoinedParty),
                       36, 2, 0);
-    AudioCommand_PlayFar(MUS_081);
+    AudioCommand_PlayFar(MUS_JOINED);
     do {
       Runtime_PushSlotEntry(entry, 250);
       WaitFrames(1);
@@ -283,7 +283,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
                       UiText_BuildRenderEntriesMode1(MsgPairJoinedParty), 68, 2,
                       zero);
 
-    AudioCommand_PlayFar(MUS_081);
+    AudioCommand_PlayFar(MUS_JOINED);
 
     do {
       Runtime_PushSlotEntry(entry1, 250);

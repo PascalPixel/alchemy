@@ -97,7 +97,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
     else
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[work->effect->variant] >> 1) + 108)
-      EFFECT_SHOW_DAMAGE(SE_133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // Re-centre the camera's focus at full zoom, then project from it.
     BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
     EFFECT_VIEW_FROM_CAMERA(camera);

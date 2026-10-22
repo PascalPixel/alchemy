@@ -3,6 +3,16 @@
 
 /// @file
 /// The screen blend's globals and the graphics routines.
+///
+/// Many of the routines declared here are handwritten ARM code that the game
+/// never runs where it lies: each loader copies it to RAM first, with
+/// RamCode_Load or RamCode_LoadSlot (system/ramcode.h) or a DMA into a stack
+/// array, and calls the copy. Such a routine is declared as an array of
+/// bytes. A symbol ending in CodeSize is the length in bytes of the code the
+/// loader copies: it is not an object, but an address the linker sets equal
+/// to the length (in the routine's assembly file, or constants.ld where the
+/// end is the next routine), so the loader reads it by casting it to a
+/// number.
 
 #include "types.h"
 #include "edition.h"
@@ -10,30 +20,60 @@
 
 struct UiWindow;
 
+/// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gBlendBrighten;
 /* FAKEMATCH(volatile): the fades load the duration back after storing it; as
  * plain u8, 13 of 29 instructions differ in tbs-en (Fade_Start). */
-extern volatile u8 gBlendDuration;
+extern volatile u8 gBlendDuration; ///< the fade's length in frames, 0 when idle
+/// Frames until the running fade reaches its target; Fade_Update counts it
+/// down.
 extern u8 gBlendFramesLeft;
+/// The BLDCNT first-target layers the screen fade covers (the low six bits).
 extern u16 gBlendLayers;
+/// The brightness the running fade started from, 0 to 16.
 extern u8 gBlendStartLevel;
 /* FAKEMATCH(volatile): Fade_Update loads the target twice, for the level and
  * for the delta; as plain u8, 11 of 46 instructions differ in tbs-en. */
-extern volatile u8 gBlendTargetLevel;
+extern volatile u8 gBlendTargetLevel; ///< the brightness the fade ends at
+/// The two page arrow tiles, 4bpp, that Link_DrawShiftedTilePair slides
+/// outward over the window frame's top edge.
 extern u8 gRomShiftedTilePair[];
+/// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
+/// stack to run.
 extern const u32 RelocatedQ16DotProduct[];
+/// Resource_Decode2 through its type-2 command loop, which
+/// Resource_DecodeType2 copies to the heap.
 extern u8 Resource_Decode2CodeSize[];
+/// Resource_DecodeByteLzArm: how much Resource_DecodeByteLz allocates for it.
 extern u8 Resource_DecodeByteLzCodeSize[];
+/// The Japanese status panel's PP row, "EP    /": label and slash in one
+/// string, drawn by the unit summary in menu/menu/common.c.
 extern const u8 gUi_PpRowString[];
+/// A one-entry table of sprite tiles: the pointing hand cursor
+/// (gResource_FixedBlockBTiles), returned by Ui_GetTableWordZero.
 extern s32 gUi_FixedTileBlocks[];
+/// The Japanese status panel's HP row, "HP    /", the slash already in its
+/// cell at 48.
 extern const u8 gUi_HpRowString[];
+/// The HP label outside Japan, in each language's form ("KP" in German, "PV"
+/// in Spanish and French, "PS" in Italian).
 extern const u8 gUi_HpString[];
+/// The PP label outside Japan, which every language writes "PP".
 extern const u8 gUi_PpString[];
+/// The slash between a current and maximum figure on the status panel,
+/// outside Japan.
 extern const u8 gUi_SlashString[];
+/// The compressed item icons, indexed by an item's icon field.
 extern u8 *gUiIcon_ItemIconPointers[];
+/// The end of gUiIcon_ItemIconPointers, so UiIcon_CountItemIcons can count
+/// them.
 extern u8 *gUiIcon_ItemIconPointersEnd[];
+/// The other compressed icons, among them the status screen's condition
+/// icons.
 extern u8 *gUiIcon_MiscIconPointers[];
+/// The compressed Psynergy icons, drawn over the shared icon frame.
 extern u8 *gUiIcon_PsynergyIconPointers[];
+/// The end of gUiIcon_PsynergyIconPointers, for UiIcon_CountPsynergyIcons.
 extern u8 *gUiIcon_PsynergyIconPointersEnd[];
 
 struct AnimationObject;
@@ -55,26 +95,59 @@ struct UiWindow;
 struct Vec2;
 struct WorkspaceWork;
 
+// The pixel shading kernels and their sizes: each
+// ColorBuffer_BackupAnd... function in runtime/decompress.c copies its
+// kernel onto its own stack and runs it there.
+/// ColorBuffer_BrightenKernel, for ColorBuffer_BackupAndBrighten.
 extern u8 ColorBuffer_BackupAndBrightenCodeSize[];
+/// ColorBuffer_BrightenPartialKernel, for
+/// ColorBuffer_BackupAndBrightenPartial.
 extern u8 ColorBuffer_BackupAndBrightenPartialCodeSize[];
+/// ColorBuffer_DarkenKernel, for ColorBuffer_BackupAndDarken.
 extern u8 ColorBuffer_BackupAndDarkenCodeSize[];
+/// ColorBuffer_DarkenPartialKernel, for ColorBuffer_BackupAndDarkenPartial.
 extern u8 ColorBuffer_BackupAndDarkenPartialCodeSize[];
+/// ColorBuffer_HalveKernel, for ColorBuffer_BackupAndHalve.
 extern u8 ColorBuffer_BackupAndHalveCodeSize[];
+/// ColorBuffer_HalveNonzeroKernel, for ColorBuffer_BackupAndHalveNonzero.
 extern u8 ColorBuffer_BackupAndHalveNonzeroCodeSize[];
+/// ColorBuffer_ScaleNonzeroThreeQuartersKernel, for
+/// ColorBuffer_BackupAndScaleNonzeroThreeQuarters.
 extern u8 ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize[];
+/// ColorBuffer_ScaleThreeQuartersKernel, for
+/// ColorBuffer_BackupAndScaleThreeQuarters.
 extern u8 ColorBuffer_BackupAndScaleThreeQuartersCodeSize[];
+/// Raises each pixel step by an amount, capped at 63, after backing the
+/// buffer up.
 extern const u8 ColorBuffer_BrightenKernel[];
+/// Brightens as ColorBuffer_BrightenKernel, writing back only groups of four
+/// pixels not all at 63 already.
 extern const u8 ColorBuffer_BrightenPartialKernel[];
+/// Lowers each pixel step by an amount, stopping at 0, after backing the
+/// buffer up.
 extern const u8 ColorBuffer_DarkenKernel[];
+/// Darkens as ColorBuffer_DarkenKernel, writing back only groups of four
+/// pixels not all 0 already.
 extern const u8 ColorBuffer_DarkenPartialKernel[];
+/// Halves each pixel step; the battle effect canvas's transfers use it.
 extern const u8 ColorBuffer_HalveKernel[];
+/// Halves each pixel step, skipping all-zero groups; the slot reels' canvas
+/// uses it.
 extern const u8 ColorBuffer_HalveNonzeroKernel[];
+/// Scales each pixel step to three quarters, skipping all-zero groups.
 extern const u8 ColorBuffer_ScaleNonzeroThreeQuartersKernel[];
+/// Scales each pixel step to three quarters.
 extern const u8 ColorBuffer_ScaleThreeQuartersKernel[];
 #ifndef OWN_gRenderSlotHeads
+/// The 256 depth slots' list heads that every drawn sprite is linked into
+/// (Runtime_PushSlotEntry); Render_ResetFrame empties them each frame.
 extern void *gRenderSlotHeads[];
 #endif
+/// HEAP_SLOT_PARTY_STATUS: the party status window's layout (struct
+/// PartyStatusWindow), right after gWindowWork in IWRAM.
 extern u8 gPartyStatusWork[];
+/// HEAP_SLOT_SELECTION_WORKSPACE: struct SelectionWorkspace, which only two
+/// unused functions touch.
 extern u8 gSelectionWorkspace[];
 extern const struct ArticleTable gUiText_ArticleTable;
 /// One row's masks for a pair of bar-pattern tiles: a word XORed into each
@@ -83,67 +156,157 @@ struct TileMask {
   u32 word0;
   u32 word1;
 };
+/// The six row patterns that mark the battle menus' range icons, colour 5
+/// over a colour-4 fill, read by Menu_BuildLocalizedPatternTiles.
 extern const struct TileMask gMenu_BarPatternRows[];
+/// The credits' 8x8 one-bit font, ASCII 0x20 to 0x7f.
 extern const u8 gDisplayScroll_Font[];
 extern const u8 gDisplayTransition_DitherTable[];
 extern s8 gDisplayTransition_EdgeOffsets[];
 extern u8 gDisplayTransition_NoiseWidths[];
+/// The resource bank's far-call stubs, listed in the resource directory as
+/// both ResourceFarCalls and ResourceFarCallsAlternate.
 extern const u8 FarCall_ResourceTable[];
+/// The colour index Render_DecodeFrame paints every pixel of a layer drawn
+/// with SPRITE_COLOR_FILL; the sprite viewer sets it to 3.
 extern u8 gDecodeFillByte;
+/// HEAP_SLOT_PALETTE_CYCLES: the queue of palette cycles, which no code in
+/// the game ever starts.
 extern struct PaletteSnapshotWork *gPaletteWork;
+/// Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as
+/// colour 10, the second leaves every colour as it is.
 extern u16 gGraphics_ExpandNibbleTable[];
+/// HEAP_SLOT_ANIMATION_SPRITES: the object system's sprite pool, which the
+/// field animation and the sprite viewer walk.
 extern struct AnimationObject *gSpriteObjects;
 #ifndef OWN_Menu_CursorObjectTiles
+/// The right-pointing arrow cursor, an 8x16 sprite of 256 colours, beside
+/// its left-pointing twin.
 extern const u8 gMenu_CursorObjectTiles[];
 #endif
+/// The Japanese name entry's second keyboard, which Select switches to.
 extern const u8 gNameEntry_AlternateKeyboardTilemap[];
+/// Eight offsets, 0 to 3 and back, that make the name entry caret circle:
+/// the x offset leads the y offset by five steps.
 extern s8 gNameEntry_CaretWave[];
+/// The kana that take the voiced mark, as first and last pairs ended by 0.
 extern const u8 gNameEntry_VoicedMarkRanges[];
+/// The Delete key's label on the German, Spanish and French name entry
+/// keyboards ("ENT", "SUP", "EFF").
 extern u8 gNameEntry_DeleteKeyLabel[];
+/// The End key's label on the German, Spanish and French keyboards ("ENDE",
+/// "FIN", "FIN").
 extern u8 gNameEntry_EndKeyLabel[];
+/// The kana that take the semi-voiced mark, in the same pairs.
 extern const u8 gNameEntry_SemivoicedMarkRanges[];
+/// The name entry keyboard's compressed tilemap, the Spanish edition's with
+/// its own letters.
 extern const u8 gNameEntry_KeyboardTilemap[];
+/// 224 zeroed bytes right after Render_DecodeFrame's code and tables; its
+/// address ends the stretch the field sprites' draw copies to RAM.
 extern const u8 gRender_DecodeFrameBuffer[];
+/// The type-2 resource decoder's ARM entry: it returns 4 unless the stream's
+/// first byte says type 2.
 extern const u8 Resource_Decode2[];
+/// The byte-oriented LZ decoder, run by Resource_DecodeByteLz from a heap
+/// copy.
 extern const u8 Resource_DecodeByteLzArm[];
+/// The halfword LZ decoder that Resource_DecompressHalfwords runs from its
+/// stack.
 extern const u8 Resource_DecodeHalfwordLz[];
+/// The type-01 resource decoder, run by Resource_DecodeType01 from a heap
+/// copy.
 extern const u8 Resource_DecodeType01Arm[];
+/// Resource_DecodeType01Arm, which Resource_DecodeType01 copies to the heap.
 extern u8 Resource_DecodeType01CodeSize[];
+/// Resource_DecodeHalfwordLz, copied onto the stack by
+/// Resource_DecompressHalfwords.
 extern u8 Resource_DecompressHalfwordsCodeSize[];
+/// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
+/// name entry and the talk choices.
 extern u8 gResource_FixedBlockBTiles[];
+/// The 16x16 sprite the name entry screen shows as its name caret.
 extern const u8 gResource_FixedBlockATiles[];
+/// Decodes a credits slide's packed picture into 8bpp tiles, adding a palette
+/// offset to each pixel; it relocates its own command table wherever it's
+/// copied.
 extern const u8 Tile_ExpandSlide[];
+/// Tile_ExpandSlide with its command table, copied into
+/// HEAP_SLOT_TEMP_RENDERER for each slide.
 extern u8 Tile_ExpandSlideCodeSize[];
+/// Decodes one Huffman-coded symbol of a message for a struct TextReader.
 extern const u8 Text_DecodeSymbol[];
+/// Text_DecodeSymbol, which the message decoders copy into heap slot
+/// TEXT_WORK_BLOCK.
 extern u8 Text_DecodeSymbolCodeSize[];
+/// Tile_BuildMetatiles, copied to the heap by UiWindow_FillFromScene for
+/// each frame of a window transition.
 extern u8 Tile_BuildMetatilesCodeSize[];
+/// Interleaves a field map's three decoded cell planes into cell words, for
+/// TileMap_ConvertBuffer.
 extern const u8 Tile_ConvertMap[];
+/// Tile_ConvertMap, which TileMap_ConvertBuffer runs from a heap copy.
 extern u8 Tile_ConvertMapCodeSize[];
+/// Unpacks a compressed icon into a glyph transfer's input buffer.
 extern const u8 Tile_Decompress4bpp[];
+/// Tile_Decompress4bpp, which UiIcon_Decode copies into
+/// HEAP_SLOT_TEMP_RENDERER.
 extern u8 Tile_Decompress4bppCodeSize[];
+/// Packs an unpacked icon into 4bpp tiles over the layers already drawn
+/// there.
 extern const u8 Tile_ExpandMasked[];
+/// Tile_ExpandMasked, which UiIcon_Decode loads for an icon's upper layers.
 extern u8 Tile_ExpandMaskedCodeSize[];
+/// Packs an unpacked icon into 4bpp tiles, overwriting every pixel.
 extern const u8 Tile_ExpandOpaque[];
+/// Tile_ExpandOpaque, which UiIcon_Decode loads for an icon's first layer.
 extern u8 Tile_ExpandOpaqueCodeSize[];
+/// The title screen's "Press Start" prompt, byte-LZ compressed, in each
+/// language.
 extern const u8 gTitle_PromptTiles[];
+/// The eight scales, in 1/65536, that Ui_ApplyTableScaleToObject pulses the
+/// options menu's selected icon through.
 extern s32 gUi_ObjectPulseScales[];
+/// The pixel offsets RenderOutput_BobPair moves a sprite pair up and down
+/// by.
 extern const u8 gUi_PairBobOffsets[];
+/// The icon count's digits: 0 to 9, then the tens 1 to 3.
 extern u8 *gUiIcon_DigitPointers[];
+/// The three icon frames; frame 2 is the one item and Psynergy icons share.
 extern u8 *gUiIcon_FramePointerTable[];
+/// The three marks ItemIcon_Compose draws over an item icon: 0 on a broken
+/// item, 1 on an equipped one and 2 on a cursed one.
 extern u8 *gUiIcon_MarkPointers[];
+/// The command icons' overlays, all 43 entries the same picture.
 extern u8 *gUiIcon_OverlayPointerTable[];
+/// The menus' hand cursor and gem, 16x16 4bpp sprites; the hand is loaded
+/// by UiIcon_CreateWithResourceVariant.
 extern u8 gUiIcon_ResourceTiles[];
 extern const s8 gUiSprite_BounceOffsets[];
+/// The animated page arrow's frames, 8x16 sprites of 256 colours, 128 bytes
+/// each.
 extern const u8 gUiSprite_CursorFrameTiles[];
 extern const s8 gUiSprite_WobbleOffsets[][2];
+/// For each of the 16 text colours, the pen the font's light shade takes in
+/// the UI palette.
 extern const u8 gUiText_ColourPens[];
+/// UiText_DrawGlyphArm, copied to the heap for each character drawn.
 extern u8 UiText_DrawGlyphCodeSize[];
+/// Each main font glyph's width in pixels, from the space (0x20) on.
 extern const u8 gUiText_GlyphWidths[];
 extern const struct ArticleTable gUiText_IndefiniteArticles;
+/// Points a struct TextReader at a message's compressed bits and first
+/// context.
 extern const u8 UiText_LookupMessageArm[];
+/// UiText_LookupMessageArm; UiText_LookupMessage frees its copy on return.
 extern u8 UiText_LookupMessageCodeSize[];
+/// The party status window's column lines, ended by -1: the Djinn column's
+/// first, then one between members.
 extern const s8 gUiWindow_PartyColumnOffsets[];
 #ifndef OWN_FarCall_EffectTable
+/// The battle effect bank's far-call table, declared as a function so that a
+/// call reaches its first stub, BattleFx_BuildBlitterFar; nothing in this
+/// game calls it by this name.
 s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags,
                         u32 mode);
 #endif

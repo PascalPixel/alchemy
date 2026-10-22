@@ -70,7 +70,7 @@ s32 Unit_RefreshPsynergy(s32 owner) {
   struct BattleUnit *unit;
   struct OwnerActionSlot *abilities;
   struct ClassDefinition *classDefinition;
-  struct ItemDefinition *itemDefinition;
+  struct ItemDefinition *item;
   s32 slot;
   s32 sourceIndex;
   u16 originFlag;
@@ -136,12 +136,12 @@ s32 Unit_RefreshPsynergy(s32 owner) {
       continue;
     if (!(unit->inventory[sourceIndex] & INVENTORY_EQUIPPED))
       continue;
-    itemDefinition = Item_GetDirect(unit->inventory[sourceIndex]);
-    if (itemDefinition->useType != ITEM_USE_TEACHES)
+    item = Item_GetDirect(unit->inventory[sourceIndex]);
+    if (item->useType != ITEM_USE_TEACHES)
       continue;
     for (slot = 0; slot < 32; slot++) {
       if ((PSYNERGY_ACTION_AT(abilities, slot) & OWNER_ACTION_ID_MASK) ==
-          itemDefinition->actionId)
+          item->actionId)
         break;
     }
     if (slot != 32)
@@ -149,7 +149,7 @@ s32 Unit_RefreshPsynergy(s32 owner) {
     for (slot = 0; slot < 32; slot++) {
       if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
         PSYNERGY_ACTION_AT(abilities, slot) =
-            itemDefinition->actionId | OWNER_ACTION_ITEM;
+            item->actionId | OWNER_ACTION_ITEM;
         break;
       }
     }

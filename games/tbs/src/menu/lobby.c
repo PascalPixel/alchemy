@@ -692,7 +692,7 @@ static s32 LinkLobby_SendPartyRecords(void) {
   s32 j;
   s32 k;
   u32 size;
-  struct DjinnRecoveryList *recoveryList;
+  struct DjinnRecoveryList *list;
 
   size = LOBBY_UNIT_RECORD_BYTES;
   heap = Runtime_BumpAllocateAlternatePool(size);
@@ -778,19 +778,18 @@ next:
     s32 timeout;
     s32 tries;
 
-    recoveryList = &((struct DjinnRecoveryTable *)heap)->list;
+    list = &((struct DjinnRecoveryTable *)heap)->list;
     tries = 0;
     timeout = LOBBY_SEND_TIMEOUT_FRAMES;
     // Give each Djinni on the list its owner's number on the partner's side,
     // and drop those of members not sent (peerSlots 0).
-    for (j = 0; j < recoveryList->count; j++) {
-      recoveryList->entries[j].unitId =
-          peerSlots[recoveryList->entries[j].unitId];
-      if (recoveryList->entries[j].unitId == 0) {
-        for (k = j; k < recoveryList->count - 1; k++) {
-          recoveryList->entries[k] = recoveryList->entries[k + 1];
+    for (j = 0; j < list->count; j++) {
+      list->entries[j].unitId = peerSlots[list->entries[j].unitId];
+      if (list->entries[j].unitId == 0) {
+        for (k = j; k < list->count - 1; k++) {
+          list->entries[k] = list->entries[k + 1];
         }
-        recoveryList->count--;
+        list->count--;
         j--;
       }
     }
@@ -1499,7 +1498,7 @@ static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
 s32 LinkLobby_RunRoundResult(void) {
   s32 i;
   u32 score;
-  struct EventWork *eventWork;
+  struct EventWork *work;
   void (*callback)(void);
 
   gLinkLobbyCallFrames = 0;
@@ -1628,9 +1627,9 @@ s32 LinkLobby_RunRoundResult(void) {
     // The battle broke off instead (Battle_RunEncounter set
     // FLAG_PLACE_TEMP_E8): report the link lost and restart it.
     if (GameFlag_IsSet(FLAG_PLACE_TEMP_E8)) {
-      eventWork = gEventWork;
+      work = gEventWork;
       Engine_GameFlagClear(FLAG_PLACE_TEMP_E8);
-      eventWork->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+      work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
       Engine_GameFlagClear(FLAG_PLACE_TEMP_04);
       Engine_TaskWait(20);
       LinkLobby_InitializeSerial();

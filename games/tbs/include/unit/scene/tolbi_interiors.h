@@ -20,6 +20,6 @@ extern struct SceneEvent gTolbiInteriorsEventsFestival[];
 extern struct SceneEvent gTolbiInteriorsEventsFinalsDay[];
 extern struct SceneEvent gTolbiInteriorsEventsAfterColosso[];
 extern u16 gTolbiInteriorsDoorOpening[];
-extern struct MapCellAnim gTolbiInteriorsDoors[];
+extern struct MapCellAnimation gTolbiInteriorsDoors[];
 
 #endif

@@ -12,8 +12,8 @@ struct SceneEvent;
 struct ScenePlacement;
 struct UiWindow;
 
-s32 Engine_FieldFxPlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
-                                                 s32 mode);
+s32 Engine_FieldEffectPlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
+                                                     s32 mode);
 void Engine_DjinnJoinParty(s32 slot, s32 element, s32 djinn);
 void Engine_EncounterRequestBattle(s32 zone_no, s32 slot_no);
 struct UiWindow *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height,

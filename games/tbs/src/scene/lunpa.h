@@ -149,6 +149,6 @@ enum { PILLAR_TOP_HEIGHT = PIXELS(16), CELL_SIZE = PIXELS(16) };
 
 enum { MAP_OBJECT_PSYNERGY_STONE = 102 };
 
-extern struct MapCellAnim gLunpaDoors[];
+extern struct MapCellAnimation gLunpaDoors[];
 
 #endif

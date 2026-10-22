@@ -8,10 +8,10 @@
 #define SPRITE_ISAAC_MACHETE 480
 #define SPRITE_GARET_MACHETE 482
 
-/// BattleObj.scale and MotionObject scales are 16.16 fixed point.
+/// BattleObject.scale and MotionObject scales are 16.16 fixed point.
 #define SCALE_ONE 0x10000
 
-/// BattleObj.effect as a battle object is made: the sprite
+/// BattleObject.effect as a battle object is made: the sprite
 /// BattleObject_SpawnObjectsForList adds as a layer of every one-part body
 /// (NARROW_EFFECT_SPRITE on a body 32 pixels wide). Its 64 by 64 picture
 /// (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse along its
@@ -31,7 +31,7 @@
 /// BattleUnit_RefreshPlacement and by BattleTarget_Execute for an enemy that
 /// joins. Fills in actor, creates a field object for it and, for an enemy,
 /// claims its sprite slots.
-void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
+void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
   s32 palette;
@@ -380,10 +380,10 @@ s32 Enemy_Update(void) {
     s32 unitId = battle->enemyIds[enemyIndex];
 
     if (unitId != BATTLE_UNIT_REMOVED) {
-      struct BattleObj *object = BattleObject_Get(unitId);
+      struct BattleObject *battleObject = BattleObject_Get(unitId);
 
-      object->anchorX = xPositions[enemyIndex] * 65536;
-      object->anchorZ = zPositions[enemyIndex] * 65536;
+      battleObject->anchorX = xPositions[enemyIndex] * 65536;
+      battleObject->anchorZ = zPositions[enemyIndex] * 65536;
     }
   }
 }

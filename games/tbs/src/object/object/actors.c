@@ -297,7 +297,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
     struct AnimationEntry *meta =
         (struct AnimationEntry *)ResourceMetadata_RegisterFar(object->animation,
                                                               23);
-    meta->param = SPRITE_COLOR_HIDDEN;
+    meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }
   ((struct MapScrollWork *)gMapWork[0])->origin = &camera->x;
@@ -594,7 +594,7 @@ void ObjectTable_Restore(void) {
   s32 y;
   s32 *leaderId = &gGameState.selectedActor;
   struct EventWork **fieldWork = &gEventWork;
-  struct MapScrollWork **mapWork = (struct MapScrollWork **)gMapWork;
+  struct MapScrollWork **map = (struct MapScrollWork **)gMapWork;
 
   restoredCount = 0;
   actorIndex = *indices++;
@@ -622,7 +622,7 @@ void ObjectTable_Restore(void) {
       // Re-anchor the camera only when restoring the selected leader.
       if (actorIndex == *leaderId) {
         camera = ((struct FieldWork *)*fieldWork)->camera;
-        cameraPosition = (*mapWork)->origin;
+        cameraPosition = (*map)->origin;
         y = object->y;
         camera->terrainHeight = y;
         camera->y = y;

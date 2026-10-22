@@ -45,21 +45,22 @@ void ObjectSystem_InitializeFar(s32 mode);
 /// `no`.
 void ObjectDispatch_SelectAnimationFar(void *raw, s32 no);
 /// Sets the timer step of every sprite of an object (16 is normal speed).
-void ObjectDispatch_SetAnimationSpeedFar(struct DispatchObject *obj, s32 val);
+void ObjectDispatch_SetAnimationSpeedFar(struct DispatchObject *object,
+                                         s32 val);
 /// Gives an object `script` and runs it from the top, clearing the cursor, the
 /// pause, the loop count and the last flag test.
-void ObjectDispatch_InitializeFar(struct DispatchObject *obj,
+void ObjectDispatch_InitializeFar(struct DispatchObject *object,
                                   const s32 *script);
 /// Hands an object to the player's control on a layered map (SC_PLAYER).
-void ObjectDispatch_StartPlayerControlFar(struct DispatchObject *obj);
+void ObjectDispatch_StartPlayerControlFar(struct DispatchObject *object);
 /// Hands an object to the player's control on the world map (SC_WORLD).
-void ObjectDispatch_StartWorldMapControlFar(struct DispatchObject *obj);
+void ObjectDispatch_StartWorldMapControlFar(struct DispatchObject *object);
 /// Runs the script that walks an object wherever the keys point (SC_KEYS),
 /// which the leader gets when gGameState.movementMode is 1.
-void ObjectDispatch_StartMoveByKeysFar(struct DispatchObject *obj);
+void ObjectDispatch_StartMoveByKeysFar(struct DispatchObject *object);
 /// Runs SC_KEY_COUNT on an object every frame, which the leader gets when
 /// gGameState.movementMode is 2.
-void ObjectDispatch_StartKeyCheckFar(struct DispatchObject *obj);
+void ObjectDispatch_StartKeyCheckFar(struct DispatchObject *object);
 #ifndef OWN_Object_CreateFar
 /// Creates a field object at (x, y, z) in 16.16 pixels, or returns 0 when none
 /// is free (FieldObject_Create). `id / 4096` is its enum ObjectCreateKind and
@@ -67,13 +68,13 @@ void ObjectDispatch_StartKeyCheckFar(struct DispatchObject *obj);
 struct ObjectRuntime *Object_CreateFar(s32 id, s32 x, s32 y, s32 z);
 #endif
 /// Releases an object's sprites and zeroes it, so it can be handed out again.
-void ObjectDispatch_ReleaseFar(struct DispatchObject *obj);
+void ObjectDispatch_ReleaseFar(struct DispatchObject *object);
 /// Puts an object on the camera script (SC_CAMERA); following a leader, it
 /// moves at most 4 pixels a frame.
-void ObjectDispatch_StartCameraFar(struct DispatchObject *obj, s32 arg);
+void ObjectDispatch_StartCameraFar(struct DispatchObject *object, s32 arg);
 /// Places an object at (x, y, z) in 16.16 pixels and stops it, clearing its
 /// movement target.
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *obj, s32 x,
+void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
                                          s32 y, s32 z);
 /// Clears one step of a sprite's pixel-by-pixel dissolve in its OBJ VRAM tiles
 /// (Map_RenderAnimatedTileFrame); `pos` is the step, 0 to 127.
@@ -100,7 +101,7 @@ void Map_UpdateCurrentTileBlockFar(void);
 /// snowfield set where the ground there is WORLD_MAP_REGION_SNOWFIELD.
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 /// Leaves an object standing still on the idle script, a lone SC_END.
-void ObjectDispatch_StartIdleFar(struct DispatchObject *obj);
+void ObjectDispatch_StartIdleFar(struct DispatchObject *object);
 /// Waits until an object's script reaches SC_END, giving up after 300 frames
 /// (five seconds).
 void ObjectDispatch_WaitForValue16Far(void *raw);
@@ -123,8 +124,8 @@ void Map_PlayMetatileCopySequenceFar(u16 *command, s32 destination_x,
 /// Copies the block numbers of a rectangle of cells, keeping the destination's
 /// attributes, and redraws what's on screen; the destination comes before the
 /// size.
-void Map_CopyMetatileIndicesRectFar(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y,
-                                    u32 width, u32 height);
+void Map_CopyMetatileIndicesRectFar(s32 sourceX, s32 sourceY, u32 dst_x,
+                                    u32 dst_y, u32 width, u32 height);
 /// Restarts tile animation channel `no` by clearing its paused byte.
 void Map_ClearLayerEntryFlagFar(u32 no);
 /// Pauses tile animation channel `no` by setting its paused byte.
@@ -142,15 +143,15 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 y);
 s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 y);
 /// Copies a rectangle of cells whole, block numbers and attributes, and draws
 /// the copied cells that are in view.
-void Map_CopyMetatileCellsRectFar(s32 srcX, s32 srcY, s32 width, s32 height,
-                                  s32 dst_x, s32 dst_y);
+void Map_CopyMetatileCellsRectFar(s32 sourceX, s32 sourceY, s32 width,
+                                  s32 height, s32 dst_x, s32 dst_y);
 /// Copies only the attributes (flags, collision and shape) of a rectangle of
 /// cells. Nothing is redrawn, since attributes don't show.
-void Map_CopyCellAttributeRectFar(s32 srcX, s32 srcY, s32 width, s32 height,
-                                  s32 dst_x, s32 dst_y);
+void Map_CopyCellAttributeRectFar(s32 sourceX, s32 sourceY, s32 width,
+                                  s32 height, s32 dst_x, s32 dst_y);
 /// Copies only the block numbers of a rectangle of cells, the size before the
 /// destination, and redraws the cells in view.
-void Map_CopyCellIndexRectFar(s32 srcX, s32 srcY, s32 width, s32 height,
+void Map_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width, s32 height,
                               s32 dst_x, s32 dst_y);
 /// Puts world map tile (x / 16, y / 16) into the tile grid at
 /// (px / 16, py / 16), drawing it at once when it's next to the view.
@@ -160,11 +161,12 @@ void Map_SetWindowCellTileFar(s32 x, s32 y, s32 px, s32 py);
 s32 Map_CheckObjectStepFar(struct ObjectRuntime *object,
                            struct FieldPosition *position);
 /// Sets the flags of a one-sprite object's sprite (bit 0 draws its shadow).
-void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *obj,
+void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object,
                                            u32 flags);
 /// Sets the OAM blend mode of a one-sprite object's sprite; an object with high
 /// kind bits set is left alone.
-void ObjectDispatch_SetChildBlendModeFar(struct DispatchObject *obj, u32 mode);
+void ObjectDispatch_SetChildBlendModeFar(struct DispatchObject *object,
+                                         u32 mode);
 /// Changes the screen shake, leaving alone an axis whose argument is negative.
 /// Amplitudes are in 16.16 pixels, the decay a 16.16 factor per frame.
 void Map_SetScreenShakeFar(s32 value0, s32 value1, s32 value2);
@@ -182,7 +184,7 @@ void ObjectSystem_ResumeProjectionAndHideLayersFar(void);
 s32 CheckMapPositionCellOccupiedFar(struct WorldPosition *position);
 /// Adds a layer playing animation `no` to a one-sprite object's sprite; a
 /// negative `no` does nothing.
-void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *obj,
+void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *object,
                                              s32 no);
 /// Freezes the world map's perspective view as a still picture on BG1, so a
 /// menu or event can use the window and VBlank.
@@ -192,7 +194,7 @@ void WorldMap_StartStillViewFar(void);
 void Map_LoadAreaGraphicsFar(void);
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
 /// except hidden ones.
-void Animation_ApplyChildValuesFar(struct DispatchObject *obj, u32 val);
+void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 val);
 /// Sets every layer of a sprite to colour mode `value`, skipping those drawn
 /// hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for redrawing.
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *raw_parent, u32 value);

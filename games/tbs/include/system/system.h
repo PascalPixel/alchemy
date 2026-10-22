@@ -180,7 +180,8 @@ extern const u32 BattleEffect_TransparentForward[];
 extern const u32 BattleEffect_CopyReverse[];
 /// Copy, one pixel, left to right.
 extern const u32 BattleEffect_CopyForward[];
-/// The basic sprite palettes 0 to 13, 224 colours (Palette_LoadBasicObjColors).
+/// The basic sprite palettes 0 to 13, 224 colours
+/// (Palette_LoadBasicSpriteColors).
 extern const u8 gSystem_BasicColorPalette[];
 /// The sprite tile uploader, run from HEAP_SLOT_FRAME_UPLOADER.
 extern u8 Tile_CopyStrided[];

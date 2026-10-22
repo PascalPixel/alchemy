@@ -15,22 +15,22 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *object = state->objects[index];
+    struct AnimationObject *animation = state->objects[index];
 
-    if (object != NULL) {
-      ResourceObject_ReleaseFar(object);
+    if (animation != NULL) {
+      ResourceObject_ReleaseFar(animation);
       state->objects[index] = NULL;
     }
   }
 
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *object =
+    struct AnimationObject *animation =
         ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[index]);
 
-    if (object != NULL) {
-      AnimationObject_SelectAnimationFar(object, 2);
+    if (animation != NULL) {
+      AnimationObject_SelectAnimationFar(animation, 2);
     }
-    state->objects[index] = object;
+    state->objects[index] = animation;
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0x20;
   }
@@ -80,19 +80,19 @@ void FourObjectMotion_UpdateAllPositions(void) {
 
   index = 0;
   while (1) {
-    struct AnimationObject *object = state->objects[index];
+    struct AnimationObject *animation = state->objects[index];
 
-    if (object != 0) {
+    if (animation != 0) {
       u32 vertical = FOUR_OBJECT_MOTION_ORIGIN_Y -
                      ((s32)state->verticalOrigins[index] << 16);
-      object->image.priority = 0;
+      animation->image.priority = 0;
       scale.x = FOUR_OBJECT_MOTION_FULL_SCALE;
       scale.y = FOUR_OBJECT_MOTION_FULL_SCALE;
       placement.x = (s32)state->positionsX[index] << 16;
       placement.height = vertical;
       placement.y = ((s32)state->positionsY[index] << 16) + vertical;
       placement.groundHeight = 0;
-      Object_ApplyProjectedPlacementFar(object, &placement, &scale, 0x4000);
+      Object_ApplyProjectedPlacementFar(animation, &placement, &scale, 0x4000);
     }
     index += 1;
     if (index > 3)
@@ -114,9 +114,9 @@ void FourObjectMotion_UpdateBottomRow(void) {
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   objectIndex = 0;
   do {
-    struct AnimationObject *object = menu->objects[objectIndex];
+    struct AnimationObject *animation = menu->objects[objectIndex];
 
-    if (object != 0) {
+    if (animation != 0) {
       u32 projectedY =
           (241u << 17) - ((u32)(s32)menu->verticalOrigins[objectIndex] << 16);
       s32 phase;
@@ -126,7 +126,7 @@ void FourObjectMotion_UpdateBottomRow(void) {
        * 120 instructions differ in tbs-en. */
       register s32 rowY asm("r2");
 
-      object->image.priority = 0;
+      animation->image.priority = 0;
       // A negative phase is a fixed scale of -phase; otherwise the scale
       // closes a third of its gap to full size (0x10000) each frame.
       phase = menu->phases[objectIndex];
@@ -147,7 +147,7 @@ void FourObjectMotion_UpdateBottomRow(void) {
       limit = 0x8000;
       if (rowY >= 0)
         limit = 0x4000;
-      Object_ApplyProjectedPlacementFar(object, &placement, &scale, limit);
+      Object_ApplyProjectedPlacementFar(animation, &placement, &scale, limit);
     }
     objectIndex++;
   } while (objectIndex <= 3);
@@ -162,20 +162,20 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *object = state->objects[index];
+    struct AnimationObject *animation = state->objects[index];
 
-    if (object != NULL) {
-      ResourceObject_ReleaseFar(object);
+    if (animation != NULL) {
+      ResourceObject_ReleaseFar(animation);
       state->objects[index] = NULL;
     }
   }
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *object =
+    struct AnimationObject *animation =
         ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[index]);
 
-    if (object != NULL)
-      AnimationObject_SelectAnimationFar(object, 2);
-    state->objects[index] = object;
+    if (animation != NULL)
+      AnimationObject_SelectAnimationFar(animation, 2);
+    state->objects[index] = animation;
     state->phases[index] = 0x10000;
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0xc8;
@@ -219,12 +219,12 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
     state->objects[index] = NULL;
   }
   {
-    struct AnimationObject *object =
+    struct AnimationObject *animation =
         ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[resourceKind]);
 
-    if (object != NULL)
-      AnimationObject_SelectAnimationFar(object, value);
-    state->objects[index] = object;
+    if (animation != NULL)
+      AnimationObject_SelectAnimationFar(animation, value);
+    state->objects[index] = animation;
   }
   return 1;
 }
@@ -234,11 +234,11 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(FourObjectMotion_ClearSlotsAndScheduleAlt,
 
 /// Starts the walking animation (1) of each party figure. Nothing calls it.
 UNUSED void Menu_StartPartyFiguresWalking(void) {
-  struct InventoryMenuState *state = gMenuWork;
+  struct InventoryMenuState *menu = gMenuWork;
   s32 index;
 
-  for (index = 0; index < state->partyCount; ++index) {
-    AnimationObject_SelectAnimationFar(state->ownerObjects[index], 1);
+  for (index = 0; index < menu->partyCount; ++index) {
+    AnimationObject_SelectAnimationFar(menu->ownerObjects[index], 1);
   }
 }
 

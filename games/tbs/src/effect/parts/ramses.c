@@ -49,7 +49,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   s32 i;
   s32 k;
 
-  slots = &gBattleFxWork[1];
+  slots = &gBattleEffectWork[1];
   canvas = slots[0];
   work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
@@ -70,12 +70,12 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   // animations.
   BattleEffect_SpawnObjects(9, 379, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
-    struct AnimationObject *object = ResourceObject_CreateFar(390);
+    struct AnimationObject *animation = ResourceObject_CreateFar(390);
 
-    work->objects[9 + i] = object;
-    if (object != 0) {
-      object->flags = 0;
-      AnimationObject_SelectAnimationFar(object, i % 3);
+    work->objects[9 + i] = animation;
+    if (animation != 0) {
+      animation->flags = 0;
+      AnimationObject_SelectAnimationFar(animation, i % 3);
       work->objects[9 + i]->image.priority = 1;
     }
   }

@@ -741,7 +741,7 @@ u16 gKalayInteriors_DoorCellSteps[] = {
     MAP_CELL_STEPS_END,
 };
 
-struct MapCellAnim gKalayInteriors_DoorCells[] = {
+struct MapCellAnimation gKalayInteriors_DoorCells[] = {
     {gKalayInteriors_DoorCellSteps, 34, 98},
     {gKalayInteriors_DoorCellSteps, 39, 98},
     {gKalayInteriors_DoorCellSteps, 50, 96},

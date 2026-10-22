@@ -8,7 +8,7 @@
 ///   searching the other door finds it "tightly locked". Retreat does not work
 ///   here. The way down leads to SceneId_Vale, except between the eruption
 ///   (FLAG_SOL_SANCTUM_ERUPTED) and the party leaving Vale
-///   (FLAG_PARTY_LEFT_VALE), when it leads to SceneId_ValeEruption. After the
+///   (FLAG_VALE_PARTY_LEFT), when it leads to SceneId_ValeEruption. After the
 ///   eruption the ground rumbles now and then; once the party has left Vale a
 ///   man stands in the path and warns everyone away.
 /// - Sol Sanctum (SceneId_SolSanctumReliefs), the rooms inside the door, which
@@ -661,7 +661,7 @@ s32 SolSanctumEntrance_Initialize(void) {
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH),
 /// the door is locked: its row becomes SOL_ENTRANCE_CELL_LOCKED_DOOR and the
 /// cells before it plain ground; once the party has left Vale
-/// (FLAG_PARTY_LEFT_VALE), the
+/// (FLAG_VALE_PARTY_LEFT), the
 /// man who warns everyone away, placed off the map until then, stands in the
 /// path and the three cells across it change.
 static void SolSanctumEntrance_ApplyEntryState(void) {
@@ -678,7 +678,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
     Map_CopyCellAttributes(5, 6, 1, 1, 8, 6);
     Map_CopyCellAttributes(0, 1, 3, 1, 6, 5);
   }
-  if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Actor_SetPosition(ACTOR_WARNING_MAN, PIXELS(120), PIXELS(232));
     Map_CopyCellAttributes(2, 10, 1, 1, 6, 14);
     Map_CopyCellAttributes(2, 10, 1, 1, 7, 14);
@@ -1348,7 +1348,7 @@ u32 gSolSanctumEntrance_Exits[] = {
     SCENE_EXIT_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
                   FLAG_SOL_SANCTUM_ERUPTED),
     SCENE_EXIT_IF(SOL_ENTRANCE_TO_VALE, ValeEruption,
-                  VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_PARTY_LEFT_VALE),
+                  VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
     SCENE_EXIT_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
                   EXIT_FLAG_NONE),
     SCENE_EXIT_IF(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, SolSanctumReliefs,

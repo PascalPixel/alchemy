@@ -58,7 +58,7 @@ void MusicTrack_SetVoiceLength(struct SoundPlayer *player,
                                struct SoundTrack *track);
 void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player,
                                    struct SoundTrack *track);
-void Runtime_CallWorkEntryWithArgs();
+void Runtime_CallWorkEntryWithArguments();
 
 /// The command table AudioEngine_Initialize copies into gSound_CommandTable
 /// (Sound_LoadCommandTable, 36 entries): entries 0 to 29 run song bytes 0xB1
@@ -193,12 +193,12 @@ const u8 gSound_ClockLengths[] = {
 
 /// The extended commands, song byte 0xCD and then the index: 1, 2 and 4 to 11
 /// set a field of the track's voice or its note tail, and 0 and 3 end the
-/// track (Runtime_CallWorkEntryWithArgs).
+/// track (Runtime_CallWorkEntryWithArguments).
 const SoundCommand gSound_ExtendedCommandTable[] = {
-    (SoundCommand)Runtime_CallWorkEntryWithArgs,
+    (SoundCommand)Runtime_CallWorkEntryWithArguments,
     MusicTrack_ReadVoiceTarget,
     MusicTrack_SetVoiceKind,
-    (SoundCommand)Runtime_CallWorkEntryWithArgs,
+    (SoundCommand)Runtime_CallWorkEntryWithArguments,
     MusicTrack_SetVoiceAttack,
     MusicTrack_SetVoiceDecay,
     MusicTrack_SetVoiceSustain,

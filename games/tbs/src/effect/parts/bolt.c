@@ -6,8 +6,8 @@
 
 /// The second blitter, made anew for each glint with its random flip.
 #define BOLT_GLINT_BLITTER                                                     \
-  ((DrawRectangle *)                                                           \
-       gBattleFxWork)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT]
+  ((DrawRectangle *)gBattleEffectWork)[HEAP_SLOT_BLITTER_ALTERNATE -           \
+                                       HEAP_SLOT_BATTLE_EFFECT]
 
 /// The columns of a gBolt_Counts row.
 enum {

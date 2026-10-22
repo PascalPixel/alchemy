@@ -181,7 +181,7 @@ struct SoundNote {
   struct SoundTrack *track;
   /// The note started after this one in the track's list (nearer its head);
   /// NULL at the head.
-  struct SoundNote *prev;
+  struct SoundNote *previous;
   /// The note started before this one in the track's list; NULL at the end.
   struct SoundNote *next;
   u8 unk38[8]; ///< Not named by TBS code.
@@ -415,7 +415,7 @@ struct SoundWork {
   u8 transferPeriod; ///< Frames the buffers hold: 0x630 / frameSamples.
   /// Nonzero: the mixer stops taking notes once the scanline passes this
   /// many lines after its start. Sound_MaxLines, 0.
-  u8 maxLines;
+  u8 lineLimit;
   u8 unk0d[3];      ///< Not named by TBS code.
   u32 frameSamples; ///< Samples mixed a frame, from gSound_FrameLengths.
   u32 outputRate;   ///< Samples a second: frameSamples * 59.7275, rounded.

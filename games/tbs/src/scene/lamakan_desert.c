@@ -49,7 +49,7 @@
 /// Open questions:
 ///
 /// - XXX (no evidence): why the patched editions (TBS_PATCH_3) set
-///   FLAG_REACHED_KALAY on coming back from the Manticore's battle, so that a
+///   FLAG_KALAY_REACHED on coming back from the Manticore's battle, so that a
 ///   party that has beaten the Manticore counts as having reached Kalay before
 ///   it enters the town; the code shows the effect, but only Camelot's notes
 ///   for the patch would say what it fixed.
@@ -244,13 +244,13 @@ const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 /// The pits, the Manticore and Smog of each map. Arriving at
 /// LamakanDesertManticore's LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, the
 /// way back from the Manticore's battle, marks it beaten; in the patched
-/// editions it also sets FLAG_REACHED_KALAY.
+/// editions it also sets FLAG_KALAY_REACHED.
 const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LamakanDesertManticore) {
     if (gGameState.entrance == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       Engine_GameFlagSet(FLAG_LAMAKAN_MANTICORE_BEATEN);
 #if TBS_PATCH_3
-      Engine_GameFlagSet(FLAG_REACHED_KALAY);
+      Engine_GameFlagSet(FLAG_KALAY_REACHED);
 #endif
     }
   }
@@ -679,18 +679,18 @@ static void LamakanDesert_BatheInOasis(void) {
 /// frame adds a step of heat and kicks up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
   struct FieldActor *actor;
-  struct EventWork *event;
+  struct EventWork *work;
   struct EffectOptions params;
   s32 dx;
   s32 z;
   s32 phase;
   actor = Object_GetById(gGameState.selectedActor);
-  event = gEventWork;
+  work = gEventWork;
   if (actor->targetX == ACTOR_NO_TARGET) {
     return;
   }
   gGameState.hazardSteps++;
-  if (event->touchedTrigger == LAMAKAN_DESERT_CELL_SLOPE) {
+  if (work->touchedTrigger == LAMAKAN_DESERT_CELL_SLOPE) {
     return;
   }
   if (actor->speed <= 0x10000) {
@@ -820,10 +820,10 @@ static void LamakanDesert_SlideDownDune(void) {
 
   HeatGauge_CountStep();
   {
-    struct EventWork *event = gEventWork;
+    struct EventWork *work = gEventWork;
 
     id = gGameState.selectedActor;
-    center = event->viewCenter;
+    center = work->viewCenter;
   }
   actor = Object_GetById(id);
   // First check for a ledge immediately below the sliding actor.

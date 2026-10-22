@@ -32,13 +32,13 @@ void _call_via_r3(s32, s32);
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
 /// also moves gGameState.pausedObject to the actor it stops.
 void FieldEffect_Run(void) {
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct FieldWork *runtime;
   s32 kind;
   s32 targetId;
   s32 nearestTargetId;
 
-  scene = *(gWorkSlot + HEAP_SLOT_FX);
+  scene = *(gWorkSlot + HEAP_SLOT_EFFECT);
   runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
   kind = scene->fieldKind;
   targetId = scene->secondObjectId;
@@ -124,7 +124,7 @@ void FieldEffect_Run(void) {
 /// Whirlwind, Catch) tell that a scene event decides what happens to the
 /// target. Halt also moves gGameState.pausedObject to the target.
 void FieldEffect_DispatchRequestKind(void) {
-  struct FieldFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
+  struct FieldEffectScene *scene = *(gWorkSlot + HEAP_SLOT_EFFECT);
   struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
   s32 kind = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
@@ -199,7 +199,7 @@ void FieldEffect_DispatchRequestKind(void) {
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
 /// whose effect stays up through the after event, the conversation it reads.
 void FieldEffect_ClearChildValueOnMismatch(void) {
-  struct FieldFxScene *scene = gEffectWork;
+  struct FieldEffectScene *scene = gEffectWork;
 
   if (scene->fieldKind == FIELD_KIND_MIND_READ) {
     FieldEffect_FinishSceneAndReleaseHeapBlock();
@@ -215,7 +215,7 @@ void FieldEffect_ClearChildValueOnMismatch(void) {
 void FieldEvent_RunTypeHandler(void) {
   u32 kind;
 
-  kind = ((struct FieldFxScene *)gEffectWork)->fieldKind;
+  kind = ((struct FieldEffectScene *)gEffectWork)->fieldKind;
   switch (kind) {
   case FIELD_KIND_REVEAL:
     ResetSceneTransitionEffect();
@@ -294,7 +294,7 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
           spritePart = *parts++;
           param = *frameCount % 6;
           remainingParts--;
-          spritePart->param = param;
+          spritePart->colorMode = param;
         } while (remainingParts != 0);
       }
       animation->dirty = 1;
@@ -372,7 +372,7 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
 /// flag bit 2) and has no shadow; its creator releases it, or its script
 /// frees it.
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct FieldFxScene *work = gEffectWork;
+  struct FieldEffectScene *work = gEffectWork;
   struct ObjectRuntime *object;
 
   object = Object_CreateFar(kind, x, y, z);

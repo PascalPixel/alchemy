@@ -46,15 +46,15 @@ struct GroundParticle {
   u16 priority : 2;    ///< 1.
   u16 palette : 4;     ///< 13; not named by the effects.
   ///@}
-  u8 attr3[2]; ///< OAM attribute 3, cleared with the others.
-  s32 posX;    ///< World position, in 16.16 pixels.
-  s32 posY;    ///< The ground's height there.
-  s32 posZ;    ///< World position, in 16.16 pixels.
-  s32 delay;   ///< Motes: height risen; sparkles: phase within a burst.
-  u16 timer;   ///< Frames left; zero frees the particle.
+  u8 attr3[2];   ///< OAM attribute 3, cleared with the others.
+  s32 positionX; ///< World position, in 16.16 pixels.
+  s32 positionY; ///< The ground's height there.
+  s32 positionZ; ///< World position, in 16.16 pixels.
+  s32 delay;     ///< Motes: height risen; sparkles: phase within a burst.
+  u16 timer;     ///< Frames left; zero frees the particle.
 };
 
-STATIC_ASSERT(offsetof(struct GroundParticle, posX) == 0x0c);
+STATIC_ASSERT(offsetof(struct GroundParticle, positionX) == 0x0c);
 STATIC_ASSERT(sizeof(struct GroundParticle) == 0x20);
 
 /// HEAP_SLOT_GROUND_PARTICLES while ground particles, motes or sparkles run.

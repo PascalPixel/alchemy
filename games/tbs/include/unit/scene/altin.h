@@ -33,6 +33,6 @@ extern u16 gAltinVillage_EastDoorCells[];
 extern u16 gAltinVillage_NorthwestDoorCells[];
 extern u16 gAltinVillage_NorthAndWestDoorCells[];
 extern u16 gAltinVillage_NortheastDoorCells[];
-extern struct MapCellAnim gAltinVillage_Doors[];
+extern struct MapCellAnimation gAltinVillage_Doors[];
 
 #endif

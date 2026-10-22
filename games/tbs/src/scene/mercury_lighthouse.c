@@ -24,7 +24,7 @@
 ///   FLAG_MIA_SENSED_SOMEONE_INSIDE). Move on the statue
 ///   (MercuryLighthouse_MiaOpensEntranceWithPly): Mia saw the force that pushed
 ///   it, learns the word Psynergy, opens the door with Ply, the power handed
-///   down in her clan, and goes in (FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE).
+///   down in her clan, and goes in (FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA).
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE, through the
 ///   door, leads into MercuryLighthouseEntrance.
 /// - SceneId_MercuryLighthouseLower. Mia is blocked again by a statue that was
@@ -598,9 +598,9 @@ static void MercuryLighthouse_PushChannelPipes(void) {
 /// MercuryLighthouseMiddle, touching trigger 2, 3 or 4 once the stairs are
 /// raised, or 46: the leader is carried to the landing in a trail of sparkles.
 static void MercuryLighthouse_WalkLeaderIn(void) {
-  struct EventWork *eventWork;
+  struct EventWork *work;
 
-  eventWork = gEventWork;
+  work = gEventWork;
   Engine_EventStart();
   FieldScheduler_AddCallback(MercuryLighthouse_SparkleAroundLeader,
                              TASK_PRIORITY_SCENE);
@@ -609,11 +609,11 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Engine_AudioPlayCue(SE_228);
   // Each touched entry has its own landing point; the patched path waits first.
-  if (eventWork->touchedTrigger == 2) {
+  if (work->touchedTrigger == 2) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 232, 616);
-  } else if (eventWork->touchedTrigger == 3) {
+  } else if (work->touchedTrigger == 3) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 360, 728);
-  } else if (eventWork->touchedTrigger == 4) {
+  } else if (work->touchedTrigger == 4) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 248, 792);
   } else {
     MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY(ACTOR_PARTY_LEADER, 696, 592);
@@ -785,7 +785,7 @@ static void MercuryLighthouse_SprayAtFountain(void) {
 
 /// Opens the fountain row by row and starts its continuous spray.
 static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
-  struct EffectOptions *effectOptions;
+  struct EffectOptions *options;
   s32 row;
   s32 rowOffset;
   s32 particleX;
@@ -797,17 +797,17 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   s32 velocityX;
   s32 velocityZ;
   s32 nextRow;
-  struct EffectOptions options;
+  struct EffectOptions optionsStorage;
 
   Map_CopyCellsTo(78, 59, 110, 36, 1, 1);
   Map_CopyCellsTo(76, 59, 109, 36, 1, 1);
-  effectOptions = &options;
+  options = &optionsStorage;
   // The shared initializer grows this path from 0x150 to 0x154 bytes and
   // moves its palette store after the scales; the stop path also reorders
   // stores. Keep the ordinary assignments, without a new steering wrapper.
-  effectOptions->palette = 7;
-  effectOptions->startScaleX = Q16_ONE / 2;
-  effectOptions->startScaleY = Q16_ONE / 2;
+  options->palette = 7;
+  options->startScaleX = Q16_ONE / 2;
+  options->startScaleY = Q16_ONE / 2;
   row = 0;
   // Reveal each row while its edge emits particles in the two horizontal axes.
   do {
@@ -824,8 +824,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
         randomZ = Random_Next();
         velocityZ = ((u32)(randomZ << 3) >> 16) * 0x3333 - 0xcccc;
         FieldEffect_Spawn(particleX, 0, PIXELS(584), velocityX, 0, velocityZ,
-                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-                          effectOptions);
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
         Engine_EventWait(1);
       } else {
         negativeIndex = -particleIndex;
@@ -853,20 +852,20 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
 
 /// Restores the fountain tiles and stops its continuous spray.
 static void MercuryLighthouse_StopFountainSpray(void) {
-  struct EffectOptions *effectOptions;
+  struct EffectOptions *options;
   s32 row;
   s32 particleIndex;
   s32 offsetX;
   s32 random;
   s32 particleX;
   s32 particleZ;
-  struct EffectOptions options;
+  struct EffectOptions optionsStorage;
 
   Map_CopyCellsTo(78, 58, 110, 36, 1, 1);
-  effectOptions = &options;
-  effectOptions->palette = 5;
-  effectOptions->startScaleX = Q16_ONE / 2;
-  effectOptions->startScaleY = Q16_ONE / 2;
+  options = &optionsStorage;
+  options->palette = 5;
+  options->startScaleX = Q16_ONE / 2;
+  options->startScaleY = Q16_ONE / 2;
   row = 0;
   do {
     offsetX = -PIXELS(2);
@@ -878,8 +877,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
                     << 16;
         particleX = (offsetX - (row << 19)) + PIXELS(728);
         FieldEffect_Spawn(particleX, 0, particleZ, -0x4000, 0, 0,
-                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-                          effectOptions);
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
         Engine_EventWait(1);
       }
       particleIndex++;
@@ -1048,9 +1046,9 @@ static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
 
 /// Opens the selected stone door with particles along its moving edge.
 static void MercuryLighthouse_OpenStoneDoor(s32 side) {
-  struct EffectOptions options;
+  struct EffectOptions optionsStorage;
   u32 particleIndex;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions *options;
   u32 row;
 
   Engine_AudioPlayCue(SE_211);
@@ -1064,10 +1062,10 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
     Map_CopyCellsTo(115, 57, 116, 44, 1, 1);
     Map_CopyCellsTo(113, 57, 115, 44, 1, 1);
   }
-  effectOptions = &options;
-  effectOptions->palette = 7;
-  effectOptions->startScaleX = Q16_ONE / 2;
-  effectOptions->startScaleY = Q16_ONE / 2;
+  options = &optionsStorage;
+  options->palette = 7;
+  options->startScaleX = Q16_ONE / 2;
+  options->startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 1; row++) {
     for (particleIndex = 0; particleIndex <= 7; particleIndex++) {
       if (particleIndex & 1) {
@@ -1077,21 +1075,21 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
               PIXELS(704) + (row * 16 + particleIndex) * PIXELS(1),
               MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
               MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
-              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, effectOptions);
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
         } else if (side == 1) {
           FieldEffect_Spawn(
               PIXELS(800) + (row * 16 + particleIndex) * PIXELS(1), 0,
               PIXELS(746),
               MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
               MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
-              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, effectOptions);
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
         } else {
           FieldEffect_Spawn(
               PIXELS(812) + (row * 16 + particleIndex) * -PIXELS(1), 0,
               PIXELS(714),
               MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc, 0,
               MercuryLighthouse_RandomDoorParticleSpeed() + -0xcccc,
-              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, effectOptions);
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
         }
         Engine_EventWait(1);
       }
@@ -1692,7 +1690,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Engine_ActorSetPosition(GARET, 0, 0);
     Engine_ActorWaitForMove(IVAN);
     Engine_ActorSetPosition(IVAN, 0, 0);
-    Engine_GameFlagSet(FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE);
+    Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA);
   }
   Engine_EventEnd();
 }
@@ -1742,8 +1740,8 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
 /// Raises an actor into the passage with sparks for 48 ticks, two frames each.
 /// Its upward displacement accelerates by about 0.1 pixel per tick.
 static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options;
   struct FieldActor *actor;
   u32 frame;
   s32 particleX;
@@ -1755,11 +1753,11 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   Engine_ActorSetSpriteFlags(actor, 0);
   Actor_SetChildValue(actorId, 0x100);
   Engine_AudioPlayCue(SE_221);
-  effectOptions = &options;
-  effectOptions->priority = 1;
-  effectOptions->palette = 5;
-  effectOptions->type = SPRITE_GLINT;
-  effectOptions->script = gMercuryLighthouse_SparkBurstScript;
+  options = &optionsStorage;
+  options->priority = 1;
+  options->palette = 5;
+  options->type = SPRITE_GLINT;
+  options->script = gMercuryLighthouse_SparkBurstScript;
   for (frame = 0; frame <= 47; frame++) {
     if (frame <= 31)
       MercuryLighthouse_SparkleNear(actor->x.fixed, actor->y.fixed,
@@ -1774,7 +1772,7 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
       FieldEffect_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, 0,
                         EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        effectOptions);
+                        options);
     }
     actor->y.fixed += frame * 0x1999;
     actor->targetY = actor->y.fixed;
@@ -1791,7 +1789,7 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 /// WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends at
 /// the aerie).
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
-  struct EffectOptions *effectOptions;
+  struct EffectOptions *options;
   s32 rowOffset;
   u32 random;
   s32 zero;
@@ -1799,7 +1797,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 particleIndex;
   s32 particleX;
   s32 particleVelocityX;
-  struct EffectOptions options;
+  struct EffectOptions optionsStorage;
 
   Engine_EventStart();
   Engine_EventWait(20);
@@ -1808,11 +1806,11 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
   Map_CopyCellsTo(45, 77, 45, 73, 9, 4);
   Engine_EventWait(30);
-  effectOptions = &options;
-  effectOptions->priority = 1;
-  effectOptions->palette = 5;
-  effectOptions->type = SPRITE_GLINT;
-  effectOptions->script = gMercuryLighthouse_SparkBurstScript;
+  options = &optionsStorage;
+  options->priority = 1;
+  options->palette = 5;
+  options->type = SPRITE_GLINT;
+  options->script = gMercuryLighthouse_SparkBurstScript;
   zero = 0;
   wave = zero;
   // Two bursts spread sparks across the water before it begins to part.
@@ -1835,7 +1833,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     FieldEffect_Spawn(particleX, 0, z, 0, 0, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | 1,
-                      effectOptions);
+                      options);
     Engine_EventWait(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
@@ -1864,7 +1862,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     FieldEffect_Spawn(particleX, 0, z, 0, 0, particleSpeed,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | 1,
-                      effectOptions);
+                      options);
     Engine_EventWait(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
@@ -1872,11 +1870,11 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Engine_AudioPlayCue(SE_141);
   Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Engine_EventWait(60);
-  effectOptions->palette = 7;
-  effectOptions->startScaleX = 7 * Q16_ONE / 10;
-  effectOptions->startScaleY = 7 * Q16_ONE / 10;
-  effectOptions->targetScaleX = 6 * Q16_ONE / 5;
-  effectOptions->targetScaleY = 6 * Q16_ONE / 5;
+  options->palette = 7;
+  options->startScaleX = 7 * Q16_ONE / 10;
+  options->startScaleY = 7 * Q16_ONE / 10;
+  options->targetScaleX = 6 * Q16_ONE / 5;
+  options->targetScaleY = 6 * Q16_ONE / 5;
   zero = 0;
   wave = zero;
   // Reveal the opening one map row at a time, trailing a stream of particles.
@@ -1893,10 +1891,10 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
       particleVelocityX =
           (0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16)) - 0x6664;
       particleSpeed = 0x1999 * ((u32)(Engine_RandomNext() << 3) >> 16);
-      FieldEffect_Spawn(
-          particleX, 0,
-          ((-((u32)particleIndex >> 1) - rowOffset) << 16) + PIXELS(192),
-          particleVelocityX, 0, particleSpeed, 0xd0001, effectOptions);
+      FieldEffect_Spawn(particleX, 0,
+                        ((-((u32)particleIndex >> 1) - rowOffset) << 16) +
+                            PIXELS(192),
+                        particleVelocityX, 0, particleSpeed, 0xd0001, options);
       particleIndex = (particleIndex + 1);
       Engine_EventWait(2);
     } while ((u32)particleIndex <= 31);
@@ -2137,17 +2135,17 @@ static void MercuryLighthouse_RaiseStairsWithSparkles(void) {
 /// Lowers the stairs as the stair pipe moves away (the push's callback):
 /// three steps of cells redrawn, each in a scatter of sparkles.
 static void MercuryLighthouse_LowerStairsWithSparkles(void) {
-  struct EffectOptions options;
-  struct EffectOptions *effectOptions;
+  struct EffectOptions optionsStorage;
+  struct EffectOptions *options;
   u32 row;
   u32 particleIndex;
   s32 offsetZ;
 
   Map_CopyCellsTo(76, 61, 74, 38, 1, 1);
-  effectOptions = &options;
-  effectOptions->palette = 5;
-  effectOptions->startScaleX = Q16_ONE / 2;
-  effectOptions->startScaleY = Q16_ONE / 2;
+  options = &optionsStorage;
+  options->palette = 5;
+  options->startScaleX = Q16_ONE / 2;
+  options->startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 2; row++) {
     offsetZ = -PIXELS(2);
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
@@ -2156,12 +2154,12 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
           FieldEffect_Spawn(
               (105 - (((u32)Engine_RandomNext() * 5) >> 16)) << 16, 0,
               offsetZ - (row << 19) + PIXELS(558), 0, 0, -0x4000,
-              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, effectOptions);
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
         } else {
           FieldEffect_Spawn(
               (((row << 2) + particleIndex) << 17) + PIXELS(183), 0,
               (0x26c - (((u32)Engine_RandomNext() * 5) >> 16)) << 16, 0x4000, 0,
-              0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, effectOptions);
+              0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
         }
         Engine_EventWait(1);
       }
@@ -2661,7 +2659,7 @@ s32 MercuryLighthouse_Initialize(void) {
                                    TASK_PRIORITY_SCENE);
         break;
       }
-      if (!Engine_GameFlagIsSet(FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE)) {
+      if (!Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
         if (!Engine_GameFlagIsSet(FLAG_MIA_SENSED_SOMEONE_INSIDE)) {
           Engine_ActorFaceDirection(MIA, FACING_EAST, 0);
           Engine_ActorSetAnimation(MIA, 16);
@@ -2885,7 +2883,7 @@ static void MercuryLighthouse_RideLift(void) {
 
 /// Mia casts Ply on the Ply target, moved onto the door.
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
-  struct FieldFxScene *effectWork;
+  struct FieldEffectScene *effectWork;
   u8 flags;
 
   effectWork = gEffectWork;
@@ -3042,7 +3040,7 @@ s32 gMercuryLighthouse_SparkBurstScript[] = {
 s32 gMercuryLighthouse_PushScriptA[] = {
     SC_WAIT(45),
     SC_SET(SW_SPEED, 0xcccc),
-    SC_SET(SW_ACCEL, 0x3333),
+    SC_SET(SW_ACCELERATION, 0x3333),
     SC_CALL(MercuryLighthouse_StartStatueSpray),
     SC_MOVE(PIXELS(792), 0, PIXELS(712)),
     SC_SYNC,
@@ -3052,7 +3050,7 @@ s32 gMercuryLighthouse_PushScriptA[] = {
 s32 gMercuryLighthouse_PushScriptB[] = {
     SC_WAIT(60),
     SC_SET(SW_SPEED, 0xcccc),
-    SC_SET(SW_ACCEL, 0x3333),
+    SC_SET(SW_ACCELERATION, 0x3333),
     SC_CALL(MercuryLighthouse_StartStatueSpray),
     SC_MOVE(PIXELS(792), 0, PIXELS(744)),
     SC_SYNC,
@@ -3063,7 +3061,7 @@ s32 gMercuryLighthouse_PushScriptB[] = {
 s32 gMercuryLighthouse_PushScriptD[] = {
     SC_WAIT(60),
     SC_SET(SW_SPEED, 0xcccc),
-    SC_SET(SW_ACCEL, 0x3333),
+    SC_SET(SW_ACCELERATION, 0x3333),
     SC_CALL(MercuryLighthouse_StartStatueSpray),
     SC_MOVE(PIXELS(824), 0, PIXELS(744)),
     SC_SYNC,
@@ -3423,8 +3421,8 @@ struct SceneEvent gMercuryLighthouseEventsOther[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_LeaveWaterfallByPassage) },
     { EVENT_TALK, MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT_SCRIPT(MercuryLighthouse_MiaSensesSomeoneInside) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT_SCRIPT(MercuryLighthouse_MiaSensesSomeoneInside) },
-    { EVENT_TALK, MIA, FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE, EVENT_SCRIPT(MercuryLighthouse_MiaDiscussesBlockedEntrance) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), MIA, FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE, MSGNO(MsgMercuryLighthouseSomeoneDoesntWantMeToGet) },
+    { EVENT_TALK, MIA, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, EVENT_SCRIPT(MercuryLighthouse_MiaDiscussesBlockedEntrance) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), MIA, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, MSGNO(MsgMercuryLighthouseSomeoneDoesntWantMeToGet) },
     { EVENT_TALK, ACTOR_FIRST_VISITOR, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseTheLegendsSaidThatIfThe) },
     { EVENT_TALK, ACTOR_FIRST_VISITOR + 1, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseOurFountainIsBackTheySay) },
     { EVENT_TALK, ACTOR_FIRST_VISITOR + 2, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseIDrankTheHealingWaterAnd) },
@@ -3437,7 +3435,7 @@ struct SceneEvent gMercuryLighthouseEventsOther[] = {
     { SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_ReadHermesFountainInscription) },
     { SEARCH(SEARCH_UNNAMED), 5, FLAG_HERMES_WATER_TAKEN, EVENT_SCRIPT(MercuryLighthouse_InspectHealingFountain) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOOR_STATUE, FLAG_IMIL_MET_MIA, 0 },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOOR_STATUE, FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE, EVENT_SCRIPT(MercuryLighthouse_MiaOpensEntranceWithPly) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOOR_STATUE, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, EVENT_SCRIPT(MercuryLighthouse_MiaOpensEntranceWithPly) },
     { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_WATERFALL_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_PlyOpensWaterfallPassage) },
     { PSYNERGY_IN_AREA(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT_SCRIPT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { USE_ITEM(ITEM_EMPTY_BOTTLE), 5, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), EVENT_SCRIPT(MercuryLighthouse_FillHermesWaterBottle) },

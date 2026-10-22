@@ -14,7 +14,7 @@ void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct FieldFxScene *work = gEffectWork;
+  struct FieldEffectScene *work = gEffectWork;
   s32 i;
 
   for (i = 0; i < 2; ++i) {

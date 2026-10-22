@@ -39,7 +39,7 @@ u32 BattleParty_IsUnitListed(u32 unitId) {
 /// elements
 s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   u16 unitIds[8];
-  struct DjinnRecoveryList *recoveryList;
+  struct DjinnRecoveryList *list;
   s32 unitCount;
   s32 standbyCount;
   s32 recoveryIndex;
@@ -55,31 +55,29 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
     enemySide = DJINN_RECOVERY_OPPONENT;
-  recoveryList =
-      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(enemySide))
-           ->list;
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(enemySide))
+              ->list;
   if (counts != 0)
     for (unitOrElementIndex = ELEMENT_COUNT - 1; unitOrElementIndex >= 0;
          unitOrElementIndex--)
       counts[unitOrElementIndex] = 0;
   recoveryIndex = 0;
-  if (recoveryList->count != 0) {
+  if (list->count != 0) {
     do {
-      if (recoveryList->entries[recoveryIndex].turns ==
-          DJINN_RECOVERY_AFTER_BATTLE) {
+      if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
         for (unitOrElementIndex = 0; unitOrElementIndex < unitCount;
              unitOrElementIndex++)
           if (unitIds[unitOrElementIndex] ==
-              recoveryList->entries[recoveryIndex].unitId)
+              list->entries[recoveryIndex].unitId)
             break;
         if (unitOrElementIndex != unitCount) {
           if (counts != 0)
-            counts[recoveryList->entries[recoveryIndex].element]++;
+            counts[list->entries[recoveryIndex].element]++;
           standbyCount++;
         }
       }
       recoveryIndex++;
-    } while (recoveryIndex != recoveryList->count);
+    } while (recoveryIndex != list->count);
   }
   return standbyCount;
 }
@@ -357,7 +355,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       plan->failure = PLAN_FAILURE_NONE;
       actor->pp -= ability->ppCost;
       Unit_UpdateRatiosFar(request->unitId);
-      CLAMP(actor->pp, 0, actor->maxPp);
+      CLAMP(actor->pp, 0, actor->ppMax);
     }
   } break;
 

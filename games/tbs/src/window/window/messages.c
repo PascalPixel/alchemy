@@ -350,7 +350,7 @@ void UiWork_FinalizePendingCore(void) {
 /// mode (enum CenteredMessageMode) gives.
 /// The speaker's voice blips are reset afterwards.
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   struct UiWindow *messageWindow;
   s32 x;
   s32 y;
@@ -358,14 +358,14 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
   s32 height;
   s32 entryIndex;
 
-  render = UI_WORK;
+  work = UI_WORK;
   x = 8;
   y = 8;
   // the window starts as NULL, though every path that reads it assigns it
   // first; the same zero is the style argument below
   messageWindow = NULL;
   entryIndex = UiText_BuildRenderEntries(message, 1);
-  if (render->entries[entryIndex] != 0) {
+  if (work->entries[entryIndex] != 0) {
     UiText_GetResourceDimensions(message, &x, &y, (u32 *)&width,
                                  (u32 *)&height);
     x = (30 - width) >> 1;
@@ -390,8 +390,8 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset) {
           WaitFrames(1);
       } else
         UiWork_Finalize(messageWindow, 1);
-      render->speakerVoiceSound = 0;
-      render->speakerVoiceCountdown = 0;
+      work->speakerVoiceSound = 0;
+      work->speakerVoiceCountdown = 0;
     }
   }
 }

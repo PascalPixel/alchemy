@@ -62,7 +62,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
 
   innkeeper = Object_GetByIdFar(objectId);
   state->resourceId =
-      ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animId;
+      ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
   innkeeperWindow =
       UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
 
@@ -91,7 +91,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
 
     innkeeper = Object_GetByIdFar(objectId);
     state->resourceId =
-        ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animId;
+        ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
     innkeeperWindow =
         UiWindow_CreateWithSideObjectFar(state->resourceId, 0, 0, 0);
     UiMessage_ShowAndWait(messageBase +
@@ -112,7 +112,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   s32 memberCount;
   s32 memberIndex;
   struct BattleUnit *unit;
-  struct FieldWork *fieldWork;
+  struct FieldWork *work;
 
   memberCount = Party_ListActiveOwnersFar(partyMemberIds);
   // Charge once and restore only party members who are alive.
@@ -121,8 +121,8 @@ void Inn_PlaySleep(s32 roomPrice) {
   for (memberIndex = 0; memberIndex < memberCount; memberIndex++) {
     unit = Unit_GetFar(partyMemberIds[memberIndex]);
     if (unit->hp != 0) {
-      unit->hp = unit->maxHp;
-      unit->pp = unit->maxPp;
+      unit->hp = unit->hpMax;
+      unit->pp = unit->ppMax;
       Unit_UpdateRatiosFar(partyMemberIds[memberIndex]);
     }
   }
@@ -130,9 +130,9 @@ void Inn_PlaySleep(s32 roomPrice) {
   // Sleep between the two screen-transition halves and the rest sound.
   // The night's fades take 60 frames each; the 16 set at the end is what
   // the field's transitions take again afterward
-  fieldWork = (struct FieldWork *)gEventWork;
-  fieldWork->transition = 0x209;
-  fieldWork->transitionFrames = 60;
+  work = (struct FieldWork *)gEventWork;
+  work->transition = 0x209;
+  work->transitionFrames = 60;
   WaitFrames(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();

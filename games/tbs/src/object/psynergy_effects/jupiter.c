@@ -14,8 +14,8 @@
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
-  struct FieldFxScene *scene;
-  struct EffectSlot *slot;
+  struct FieldEffectScene *scene;
+  struct EffectSlot *effect;
   s32 scale;
   s32 remainingParticles;
 
@@ -48,21 +48,21 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)djinni);
   AudioCommand_PlayFar(SE_164);
-  slot = scene->slots;
+  effect = scene->effects;
   remainingParticles = 23;
   // One a frame, each with a random sprite param of 0 to 6.
   do {
-    EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(slot, FieldEffect_RunAngledApproachPhases);
-    EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+    EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    EffectSlot_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
+    EffectSlot_SetObjectMode(effect, 7);
+    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               (Random16() * 7) >> 16);
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
-    slot->scaleY = scale;
-    slot->scaleX = scale;
+    effect->scaleY = scale;
+    effect->scaleX = scale;
     remainingParticles--;
     WaitFrames(1);
-    slot++;
+    effect++;
   } while (remainingParticles >= 0);
 
   // The leader turns to face south (0x4000) and plays animation 28.
@@ -144,8 +144,8 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = 0x50000;
-    effect->maxSpeed = 0x50000;
-    effect->limitTurnStep = state;
+    effect->speedMax = 0x50000;
+    effect->turnStepLimited = state;
     effect->state++;
 
     // At the leader's sprite priority, until MARS_SPARK_RISING brings it in
@@ -178,9 +178,9 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    position.x = owner->pos.x;
-    position.y = owner->pos.y + 0x140000;
-    position.z = owner->pos.z;
+    position.x = owner->position.x;
+    position.y = owner->position.y + 0x140000;
+    position.z = owner->position.z;
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(0x40000, Random16(), &position);
     effect->targetX = position.x;

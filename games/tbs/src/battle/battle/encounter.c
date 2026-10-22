@@ -64,7 +64,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
                                       LINK_OWNER_STATES_SIZE);
   transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
   Runtime_AllocateBlock(11, 0x280);
-  focus = camera->pos;
+  focus = camera->focus;
   /* FAKEMATCH(dead): result set to 0, a store no read sees, whose register
    * CSE takes the setup's zeros from; without it, 122 of 645 instructions
    * differ in tbs-en. */

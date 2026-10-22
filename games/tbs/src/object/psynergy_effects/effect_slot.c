@@ -49,9 +49,9 @@ void FieldEffect_DrawScaledObject(struct EffectSlot *object) {
     Object_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
 }
 
-/// Moves an effect slot toward its target, turning at most maxTurnStep a
-/// frame when limitTurnStep is set and speeding up by acceleration to maxSpeed.
-/// A slot that stops at its target lands on it once within 8 pixels.
+/// Moves an effect slot toward its target, turning at most turnStepMax a
+/// frame when turnStepLimited is set and speeding up by acceleration to
+/// speedMax. A slot that stops at its target lands on it once within 8 pixels.
 void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   s32 deltaX;
   s32 deltaZ;
@@ -83,15 +83,15 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
     }
   }
   angle = ArcTan2(deltaZ, deltaX);
-  if (effect->limitTurnStep != 0) {
+  if (effect->turnStepLimited != 0) {
     heading = effect->heading;
     turn = angle - heading;
-    if ((turn >= 0 ? turn : -turn) >= effect->maxTurnStep) {
+    if ((turn >= 0 ? turn : -turn) >= effect->turnStepMax) {
       if (turn < 0) {
-        if (-turn > effect->maxTurnStep)
-          turn = -effect->maxTurnStep;
-      } else if (turn > effect->maxTurnStep) {
-        turn = effect->maxTurnStep;
+        if (-turn > effect->turnStepMax)
+          turn = -effect->turnStepMax;
+      } else if (turn > effect->turnStepMax) {
+        turn = effect->turnStepMax;
       }
       angle = turn + heading;
     }
@@ -99,8 +99,8 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   facing = (u16)angle;
   effect->heading = facing;
   speed = effect->speed + effect->acceleration;
-  if (speed > effect->maxSpeed)
-    speed = effect->maxSpeed;
+  if (speed > effect->speedMax)
+    speed = effect->speedMax;
   angle = facing;
   effect->speed = speed;
   effect->x += Iwram_MulQ16(Trig_Cos(angle), speed);
@@ -148,24 +148,24 @@ void EffectSlot_SetCallback(struct EffectSlot *effect,
 /// Fills an effect slot with a new sprite of kind at (x, z): stopping at its
 /// target, top speed 2, acceleration and scale 1, drawn, animation 1. The
 /// slot owns the sprite until FieldEffect_ClearOwnedSlot. Its turn is limited
-/// with maxTurnStep 0, so it holds heading 0 until its callback clears
-/// limitTurnStep or gives a step, as the first states of the callbacks that
+/// with turnStepMax 0, so it holds heading 0 until its callback clears
+/// turnStepLimited or gives a step, as the first states of the callbacks that
 /// steer to a target do.
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   s32 unit;
-  struct AnimationObject *object;
+  struct AnimationObject *animation;
 
   Dma_Fill32(0, effect, sizeof *effect);
-  object = ResourceObject_CreateFar(kind);
-  effect->object = object;
-  if (object != NULL)
-    object->image.priority = 0;
+  animation = ResourceObject_CreateFar(kind);
+  effect->object = animation;
+  if (animation != NULL)
+    animation->image.priority = 0;
   EffectSlot_SetPosition(effect, x, z);
-  /* FAKEMATCH(temporary): 1.0 in a local set before maxSpeed takes r2 beside
+  /* FAKEMATCH(temporary): 1.0 in a local set before speedMax takes r2 beside
      2.0, which lets sched2 load the object ahead of the three stores; as the
      constant in the chain, 12 of 74 instructions differ in tbs-en. */
   unit = 0x10000;
-  effect->maxSpeed = 0x20000;
+  effect->speedMax = 0x20000;
   effect->acceleration = effect->scaleY = effect->scaleX = unit;
   effect->originX = x;
   effect->originZ = z;
@@ -177,7 +177,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
     sprite->flags = 0;
   }
   effect->stopAtTarget = 1;
-  effect->limitTurnStep = 1;
+  effect->turnStepLimited = 1;
   effect->updateMotion = 1;
   effect->render = 1;
   effect->active = 1;
@@ -189,8 +189,8 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
 /// Frees an effect slot and its sprite, clearing the slot to zero (inactive).
 /// Slot callbacks call it on their own slot as their last state; the slot
 /// update then neither moves nor draws it.
-void FieldEffect_ClearOwnedSlot(struct EffectSlot *slot) {
-  if (slot->object)
-    ResourceObject_ReleaseFar(slot->object);
-  Dma_Fill32(0, slot, sizeof *slot);
+void FieldEffect_ClearOwnedSlot(struct EffectSlot *effect) {
+  if (effect->object)
+    ResourceObject_ReleaseFar(effect->object);
+  Dma_Fill32(0, effect, sizeof *effect);
 }

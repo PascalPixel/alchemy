@@ -77,7 +77,7 @@ void Colosso_StartOpponent(s32 resource) {
     recorder->mirror = 1;
     recorder->actor = work->gauge.opponentActor;
     recorder->still = 0;
-    recorder->pos = 0;
+    recorder->pathIndex = 0;
   }
   FieldScheduler_AddCallback(Colosso_UpdatePathOpponent, 0xc85);
 }

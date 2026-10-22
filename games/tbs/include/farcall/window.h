@@ -98,7 +98,7 @@ void UiText_DrawNumberInWindowFar(s32 arg0, s32 arg1, struct UiWindow *arg2,
                                   s32 arg3, s32 arg4);
 /// Sets the colour (0 to 15) text is drawn in from now on; the menus colour HP
 /// figures with it and put colour 15 back after.
-void UiWork_SetParamNibbleFar(s32 param);
+void UiWork_SetParameterNibbleFar(s32 param);
 /// Shows the picture in VRAM cache slot as a sprite in a window, (offsetX,
 /// offsetY) pixels in from its inner corner. Returns NULL, releasing the slot,
 /// when every output is in use.

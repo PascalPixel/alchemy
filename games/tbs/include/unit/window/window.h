@@ -515,7 +515,7 @@ void UiWork_SetAltFlagAndClearTable(s32 flag);
 void UiRender_ReservedNoOp(void);
 void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
                               u32 y2);
-void UiWork_SetParamNibble(s32 param);
+void UiWork_SetParameterNibble(s32 param);
 void UiWork_SetRenderWord(u16 value);
 void UiText_DrawResource(s32 message, struct UiWindow *window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffset(s32 message, const struct UiWindow *window,

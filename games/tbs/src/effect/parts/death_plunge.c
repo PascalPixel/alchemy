@@ -42,8 +42,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
    * for 4 bytes of frame; as one DrawRectangle, 7 of 363 instructions differ
    * in tbs-en. */
   BlitterPair draw;
-  struct BattleObj *first;
-  struct BattleObj *second;
+  struct BattleObject *first;
+  struct BattleObject *second;
   struct MotionObject *user;
   struct MotionObject *target;
   s32 x;

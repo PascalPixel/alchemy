@@ -145,7 +145,7 @@ s32 ItemMenu_Run(void) {
     struct ItemPickerResult *selection =
         cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
 
-    selection->chosenItem = (owner << 10) | (item & ITEM_ID_MASK);
+    selection->chosenItem = (owner << 10) | (item & INVENTORY_ITEM_ID_MASK);
     selection->chosenSlot = screen->selectedSlots[0];
   }
 
@@ -313,8 +313,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->completionFlag = 1;
       }
       if (command == ITEM_COMMAND_USE) {
-        if (FieldEffect_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) !=
-            0) {
+        if (FieldEffect_HasTriggerFar(menu->selectedItems[0] &
+                                      INVENTORY_ITEM_ID_MASK) != 0) {
           done = 1;
           // The international editions report target 0 (command is
           // ITEM_COMMAND_USE here) and the bare item id; the Japanese ones the
@@ -323,7 +323,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #if TBS_PATCH_1
           *ownerOut = menu->paneOwner[0];
           *targetOut = command;
-          *itemOut = menu->selectedItems[0] & ITEM_ID_MASK;
+          *itemOut = menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK;
 #else
           *ownerOut = owner;
           *targetOut = chosen;
@@ -356,7 +356,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           done = 1;
           *ownerOut = menu->paneOwner[0];
           *targetOut = menu->paneOwner[1];
-          *itemOut = menu->selectedItems[0] & ITEM_ID_MASK;
+          *itemOut = menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK;
           menuResult = 1;
         }
       }
@@ -393,7 +393,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if (chosen != -1) {
 #endif
         command = 0;
-        if (ItemMenu_IsSpecial(menu->selectedItems[0] & ITEM_ID_MASK) != 0) {
+        if (ItemMenu_IsSpecial(menu->selectedItems[0] &
+                               INVENTORY_ITEM_ID_MASK) != 0) {
           command = STATUS_PANEL_STATS;
         }
         result = ItemMenu_Use();
@@ -445,7 +446,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     // Drop the item, or some of a stack, after confirming.
     case ITEM_STEP_DROP:
       ItemMenu_HideAllIcons();
-      item = Item_GetDirectFar(menu->selectedItems[0] & ITEM_ID_MASK);
+      item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
       result = 0;
       if ((item->flags & ITEM_STACKABLE) != 0) {
         heldCount = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
@@ -459,10 +460,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       menu->paneOwner[1] = 0;
-      Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM,
-                                     (menu->selectedItems[0] & ITEM_ID_MASK) |
-                                         (result << INVENTORY_QUANTITY_SHIFT),
-                                     (u8)menu->selectedItemIcon->index, 0);
+      Resource_LoadByModeIntoSlotFar(
+          ICON_KIND_ITEM,
+          (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) |
+              (result << INVENTORY_QUANTITY_SHIFT),
+          (u8)menu->selectedItemIcon->index, 0);
       menu->selectedItemIcon->active = ICON_SHOWN;
       menu->selectedItemIcon->x = 120;
       menu->selectedItemIcon->y = 28;
@@ -478,7 +480,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Unit_GetFar(command);
         for (removedCount = 0; removedCount < result + 1; removedCount++) {
           Inventory_RemoveFar(command, menu->selectedSlots[0]);
-          Item_AdjustCounterFar(menu->selectedItems[0] & ITEM_ID_MASK, 1);
+          Item_AdjustCounterFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK,
+                                1);
         }
         Unit_CalculateFar(command);
 #else
@@ -486,7 +489,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Unit_GetFar(owner);
         for (removedCount = 0; removedCount < result + 1; removedCount++) {
           Inventory_RemoveFar(owner, menu->selectedSlots[0]);
-          Item_AdjustCounterFar(menu->selectedItems[0] & ITEM_ID_MASK, 1);
+          Item_AdjustCounterFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK,
+                                1);
         }
         Unit_CalculateFar(owner);
 #endif
@@ -511,12 +515,13 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     // inventory offers a trade instead; the new holder may equip it.
     case ITEM_STEP_GIVE:
       transferFailed = 0;
-      item = Item_GetDirectFar(menu->selectedItems[0] & ITEM_ID_MASK);
+      item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
       if ((item->flags & ITEM_STACKABLE) != 0) {
         // A receiver with a full stack of it takes none; one with no free
         // slot and none of it must trade.
-        heldCount = InventoryMenu_GetItemQuantity(
-            menu->paneOwner[1], menu->selectedItems[0] & ITEM_ID_MASK);
+        heldCount = InventoryMenu_GetItemQuantity(menu->paneOwner[1],
+                                                  menu->selectedItems[0] &
+                                                      INVENTORY_ITEM_ID_MASK);
         if (heldCount == ITEM_STACK_MAX) {
           transferFailed = 1;
         }
@@ -546,7 +551,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           for (command = 0; command < result + 1; command++) {
             heldCount = Inventory_AddItemFar(
                 menu->paneOwner[1],
-                menu->selectedItems[0] & (ITEM_ID_MASK | INVENTORY_BROKEN));
+                menu->selectedItems[0] &
+                    (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
             if (heldCount != -1) {
               Inventory_RemoveFar(menu->paneOwner[0], menu->selectedSlots[0]);
               menu->selectedSlots[1] = heldCount;
@@ -556,9 +562,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           }
         }
       } else {
-        result = Inventory_AddItemFar(menu->paneOwner[1],
-                                      menu->selectedItems[0] &
-                                          (ITEM_ID_MASK | INVENTORY_BROKEN));
+        result = Inventory_AddItemFar(
+            menu->paneOwner[1],
+            menu->selectedItems[0] &
+                (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
           state = ITEM_STEP_TRADE;
           break;
@@ -577,7 +584,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       result = 1;
       if (transferFailed == 0) {
         menu->paneOwner[0] = menu->paneOwner[1];
-        menu->selectedItems[0] &= ITEM_ID_MASK;
+        menu->selectedItems[0] &= INVENTORY_ITEM_ID_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
         ItemMenu_SetMessageWindowHeight6();
 #endif
@@ -665,7 +672,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       while (targetQuantity <= 29) {
         // The receiver cannot trade away a worn item that will not come off.
         if ((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
-          item = Item_GetDirectFar(menu->selectedItems[1] & ITEM_ID_MASK);
+          item = Item_GetDirectFar(menu->selectedItems[1] &
+                                   INVENTORY_ITEM_ID_MASK);
           if ((item->flags & ITEM_CANNOT_UNEQUIP) != 0) {
             transferFailed = 1;
           }
@@ -684,9 +692,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       targetQuantity++;
       // Then give each the other's items.
       while (sourceQuantity != 0) {
-        result = Inventory_AddItemFar(menu->paneOwner[1],
-                                      menu->selectedItems[0] &
-                                          (ITEM_ID_MASK | INVENTORY_BROKEN));
+        result = Inventory_AddItemFar(
+            menu->paneOwner[1],
+            menu->selectedItems[0] &
+                (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
           transferFailed = 1;
           break;
@@ -695,9 +704,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         sourceQuantity--;
       }
       while (targetQuantity != 0) {
-        result = Inventory_AddItemFar(menu->paneOwner[0],
-                                      menu->selectedItems[1] &
-                                          (ITEM_ID_MASK | INVENTORY_BROKEN));
+        result = Inventory_AddItemFar(
+            menu->paneOwner[0],
+            menu->selectedItems[1] &
+                (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
           transferFailed = 1;
           break;
@@ -728,7 +738,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 #endif
         RenderOutput_RedrawSavedRectFar(menu->messageWindow);
         menu->paneOwner[0] = menu->paneOwner[1];
-        menu->selectedItems[0] &= ITEM_ID_MASK;
+        menu->selectedItems[0] &= INVENTORY_ITEM_ID_MASK;
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
         if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
@@ -879,7 +889,7 @@ s32 ItemMenu_Use(void) {
     return result;
   }
 
-  Item_PlayUseAnimation(menu->selectedItems[0] & ITEM_ID_MASK);
+  Item_PlayUseAnimation(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
   Unit_CalculateFar(menu->paneOwner[0]);
   Unit_CalculateFar(menu->paneOwner[1]);
   return 1;
@@ -918,7 +928,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 /// slot of the same number. The item, Psynergy and Status screens call it for
 /// the window that holds their icons; the sprites are that window's render
 /// outputs and go back to the pool when it closes.
-void Menu_SpawnIconEntries(struct InventoryMenuState *state,
+void Menu_SpawnIconEntries(struct InventoryMenuState *menu,
                            struct UiWindow *window) {
   struct RenderOutput **firstIcons;
   s32 firstSlot;
@@ -932,7 +942,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
 
   firstSlot = 0;
   firstY = 0xA8;
-  firstIcons = &state->entryIcons[0];
+  firstIcons = &menu->entryIcons[0];
   do {
     *firstIcons++ = RenderOutput_CreateFromResourceFar(
         ICON_KIND_ITEM, firstSlot, window, 0xF8, firstY);
@@ -941,7 +951,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
 
   secondSlot = 8;
   secondY = 0xA8;
-  secondIcons = &state->entryIcons[8];
+  secondIcons = &menu->entryIcons[8];
   do {
     *secondIcons++ = RenderOutput_CreateFromResourceFar(
         ICON_KIND_ITEM, secondSlot, window, 0x100, secondY);
@@ -950,7 +960,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
 
   remainingSlot = 16;
   remainingY = 0xA8;
-  remainingIcons = &state->entryIcons[16];
+  remainingIcons = &menu->entryIcons[16];
   do {
     *remainingIcons++ = RenderOutput_CreateFromResourceFar(
         ICON_KIND_ITEM, remainingSlot, window, 0x100, remainingY);
@@ -1225,7 +1235,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         if (ownerIndex != menu->paneIndex[0]) {
           heldCount = InventoryMenu_GetItemQuantity(menu->ownerIds[ownerIndex],
                                                     menu->selectedItems[0] &
-                                                        ITEM_ID_MASK);
+                                                        INVENTORY_ITEM_ID_MASK);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
           if (ItemMenu_CountItems(menu->ownerIds[ownerIndex]) ==
@@ -1259,7 +1269,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       }
       // Using: the member's status, and the item's name once.
       if (mode == ITEM_TARGET_USE) {
-        if (ItemMenu_IsSpecial(menu->selectedItems[0] & ITEM_ID_MASK))
+        if (ItemMenu_IsSpecial(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK))
           Menu_DrawOwnerStatusPanel(menu->statusWindow,
                                     menu->ownerIds[ownerIndex],
                                     menu->selectedSlots[0], STATUS_PANEL_STATS);
@@ -1269,9 +1279,10 @@ s32 ItemMenu_SelectTarget(s32 mode) {
               menu->selectedSlots[0], STATUS_PANEL_EXPERIENCE);
         if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !descriptionShown) {
           MENU_RESET_INFO_WINDOW((void *)menu->infoWindow);
-          MENU_DRAW_INFO_TEXT((menu->selectedItems[0] & ITEM_ID_MASK) +
-                                  MsgItemPlainName,
-                              menu->infoWindow, 0, 0);
+          MENU_DRAW_INFO_TEXT(
+              (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
+                  MsgItemPlainName,
+              menu->infoWindow, 0, 0);
           descriptionShown = 1;
         } else {
           GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
@@ -1333,7 +1344,8 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
     memberIndex = 0;
     do {
       if (Item_CanOwnerEquip(menu->ownerIds[memberIndex],
-                             menu->selectedItems[0] & ITEM_ID_MASK) != 0) {
+                             menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) !=
+          0) {
         struct AnimationObject *partyFigure = menu->ownerObjects[memberIndex];
         AnimationObject_SelectAnimationFar(partyFigure, 3);
       } else {
@@ -1412,7 +1424,7 @@ s32 ItemMenu_CountItems(s32 ownerId) {
   inventory = Unit_GetFar(ownerId)->inventory;
   remainingSlots = INVENTORY_SLOTS - 1;
   do {
-    maskedItemId = ITEM_ID_MASK & *inventory;
+    maskedItemId = INVENTORY_ITEM_ID_MASK & *inventory;
     inventory += 1;
     if (maskedItemId != 0) {
       count += 1;
@@ -1435,7 +1447,7 @@ s32 InventoryMenu_GetItemQuantity(s32 ownerId, s32 itemId) {
   slotIndex = 0;
   do {
     if (unit->inventory[slotIndex] != 0 &&
-        (unit->inventory[slotIndex] & ITEM_ID_MASK) == itemId) {
+        (unit->inventory[slotIndex] & INVENTORY_ITEM_ID_MASK) == itemId) {
 #if TBS_PATCH_4
       quantity += (unit->inventory[slotIndex] & INVENTORY_QUANTITY_MASK) >>
                   INVENTORY_QUANTITY_SHIFT;
@@ -1542,7 +1554,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
 
   if (mode == 1)
     panelStyle = STATUS_PANEL_LOWER_ONLY;
-  switch (Item_GetDirectFar(inventoryEntry & ITEM_ID_MASK)->type) {
+  switch (Item_GetDirectFar(inventoryEntry & INVENTORY_ITEM_ID_MASK)->type) {
   case ITEM_TYPE_NONE: // usable items
     Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, panelStyle);
     break;
@@ -1725,7 +1737,7 @@ s32 ItemMenu_ChooseCommand(void) {
     ItemMenu_DrawItemHead();
     ItemMenu_DrawCommands(commandStates, messageWindow);
     MENU_RESET_INFO_WINDOW((void *)menu->infoWindow);
-    MENU_DRAW_INFO_TEXT((menu->selectedItems[0] & ITEM_ID_MASK) +
+    MENU_DRAW_INFO_TEXT((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
                             MsgItemPlainName,
                         menu->infoWindow, 0, 0);
   }
@@ -1877,7 +1889,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   struct ItemDefinition *item;
 
   menu = gMenuWork;
-  item = Item_GetDirectFar(ITEM_ID_MASK & menu->selectedItems[0]);
+  item = Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0]);
 
   if (item->type == 0) { // usable items
     commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
@@ -1896,8 +1908,8 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   if (menu->selectedItems[0] & INVENTORY_BROKEN)
     commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_DISABLED;
 
-  if (Item_CanOwnerEquip(menu->paneOwner[0],
-                         menu->selectedItems[0] & ITEM_ID_MASK) == 0) {
+  if (Item_CanOwnerEquip(menu->paneOwner[0], menu->selectedItems[0] &
+                                                 INVENTORY_ITEM_ID_MASK) == 0) {
     commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_DISABLED;
   }
 
@@ -1920,7 +1932,8 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     }
   }
 
-  if (FieldEffect_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) != 0)
+  if (FieldEffect_HasTriggerFar(menu->selectedItems[0] &
+                                INVENTORY_ITEM_ID_MASK) != 0)
     commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
 
   if (menu->partyCount <= 1)
@@ -1938,42 +1951,42 @@ void ItemMenu_DrawCommands(const s8 *commandStates, struct UiWindow *window) {
   s32 useState;
   u32 firstCommandMessage;
 
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   useState = commandStates[ITEM_COMMAND_USE];
   disabled = ITEM_COMMAND_STATE_DISABLED;
   if (useState == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
 
   firstCommandMessage = MsgItemCommandUse;
   UiText_DrawCharacterAtOffsetFar(firstCommandMessage, window, 0, 24); // "Use"
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
   UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 1, window,
                                   ITEM_COMMAND_TEXT_X,
                                   24); // "Equip"
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_GIVE] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
   UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 2, window, 0,
                                   32); // "Give"
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_DROP] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
   UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 3, window, 80,
                                   32); // "Drop"
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_INSPECT] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
   UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 4, window, 80,
                                   24); // "Details"
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
-    UiWork_SetParamNibbleFar(TEXT_COLOR_DISABLED);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
   // "Remove"
   UiText_DrawCharacterAtOffsetFar(firstCommandMessage + 5, window,
                                   ITEM_COMMAND_TEXT_X, 32);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
 }
 
 /// Says how ownerId can use inventoryEntry from the item menu (enum
@@ -1981,11 +1994,11 @@ void ItemMenu_DrawCommands(const s8 *commandStates, struct UiWindow *window) {
 /// can wear it.
 s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   s32 itemId = inventoryEntry;
-  struct ItemDefinition *itemDefinition;
+  struct ItemDefinition *item;
   s32 result = ITEM_USE_MODE_UNUSABLE;
 
-  itemId &= ITEM_ID_MASK;
-  itemDefinition = Item_GetDirectFar(itemId);
+  itemId &= INVENTORY_ITEM_ID_MASK;
+  item = Item_GetDirectFar(itemId);
 
   if (FieldEffect_HasTriggerFar(itemId) != 0) {
     return ITEM_USE_MODE_FROM_FIELD;
@@ -1993,11 +2006,11 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
 
   {
     struct BattleAct *action =
-        BattleAction_Get(itemDefinition->actionId & OWNER_ACTION_ID_MASK);
+        BattleAction_Get(item->actionId & OWNER_ACTION_ID_MASK);
 
-    if (itemDefinition->actionId != 0) {
-      if (itemDefinition->type != ITEM_TYPE_NONE) {
-        if (itemDefinition->useType != ITEM_USE_TEACHES) {
+    if (item->actionId != 0) {
+      if (item->type != ITEM_TYPE_NONE) {
+        if (item->useType != ITEM_USE_TEACHES) {
           if (Item_CanOwnerEquip(ownerId, itemId) != 0) {
             result = ITEM_USE_MODE_CHOOSE_MEMBER;
           }
@@ -2033,8 +2046,8 @@ void ItemMenu_TryBreak(void) {
 
   menu = gMenuWork;
   // One time in eight: 0x2000 of Random16's 0x10000 values.
-  if ((Item_GetDirectFar(ITEM_ID_MASK & menu->selectedItems[0])->useType ==
-       ITEM_USE_MAY_BREAK) &&
+  if ((Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0])
+           ->useType == ITEM_USE_MAY_BREAK) &&
       (Random16() < 0x2000U)) {
     Inventory_BreakFar(menu->paneOwner[0], menu->selectedSlots[0]);
     AudioCommand_PlayFar(SE_ITEM_BREAK);
@@ -2174,7 +2187,7 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
 
   row = 0;
   bestowsPsynergy = 0;
-  def = Item_GetDirectFar(inventoryEntry & ITEM_ID_MASK);
+  def = Item_GetDirectFar(inventoryEntry & INVENTORY_ITEM_ID_MASK);
   // Equipment: a heading, then its Attack and Defense bonuses.
   if (def->type != ITEM_TYPE_NONE) {
     hasEffects = 0;
@@ -2469,9 +2482,9 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   // How many each member holds now.
   if (dropMode == 0)
     receiverCount = InventoryMenu_GetItemQuantity(
-        menu->paneOwner[1], menu->selectedItems[0] & ITEM_ID_MASK);
+        menu->paneOwner[1], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
   ownerCount = InventoryMenu_GetItemQuantity(
-      menu->paneOwner[0], menu->selectedItems[0] & ITEM_ID_MASK);
+      menu->paneOwner[0], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
   // Two dial sprites, left and right of the number.
   block = Resource_FindFreeEntry();
   if (block != 96) { // 96 (VRAM_CACHE_ENTRY_COUNT): no free VRAM block
@@ -2496,8 +2509,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         VramCache_Load(block, 256, tiles);
         UiText_DrawNumberInWindowFar(quantity + 1, 2, window, 32, 32);
         UiText_DrawCharacterAtOffsetFar(
-            (menu->selectedItems[0] & ITEM_ID_MASK) + MsgItemName, window, 16,
-            8);
+            (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) + MsgItemName,
+            window, 16, 8);
         UiText_DrawNumberInWindowFar(ownerCount - quantity - 1, 2, window, 16,
                                      24);
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -2564,9 +2577,9 @@ void ItemMenu_DrawItemHead(void) {
   UiIcon_PrepareObject(menu->selectedItemIcon);
   UiText_DrawStringAtOffsetFar(Unit_GetFar(menu->paneOwner[0])->name,
                                menu->messageWindow, 16, 0);
-  UiText_DrawCharacterAtOffsetFar((menu->selectedItems[0] & ITEM_ID_MASK) +
-                                      MsgItemName,
-                                  menu->messageWindow, 16, 8);
+  UiText_DrawCharacterAtOffsetFar(
+      (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) + MsgItemName,
+      menu->messageWindow, 16, 8);
 }
 
 /// Asks whether to drop item (an inventory entry): its name, the question, and
@@ -2581,7 +2594,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   s32 changed = 1;
 
   window = UiWindow_CreateFar(13, 3, 17, 10, 2);
-  itemId = item & ITEM_ID_MASK;
+  itemId = item & INVENTORY_ITEM_ID_MASK;
   Item_GetDirectFar(itemId);
   UiText_DrawCharacterAtOffsetFar(itemId + MsgItemName, window, 24, 0);
   question = MsgConfirmDrop;
@@ -2785,7 +2798,7 @@ s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *ownerWork,
 
   index = pageState->selectedIndex;
   if (menu->items[index] != 0) {
-    s32 name = (menu->items[index] & ITEM_ID_MASK) + MsgItemPlainName;
+    s32 name = (menu->items[index] & INVENTORY_ITEM_ID_MASK) + MsgItemPlainName;
     MENU_DRAW_INFO_TEXT(name, menu->infoWindow, 0, 0);
   }
 
@@ -2837,9 +2850,9 @@ s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
   if (visibleCount > row) {
     entry = &menu->items[firstEntry];
     do {
-      UiText_DrawCharacterAtOffsetFar((entry[0] & ITEM_ID_MASK) + MsgItemName,
-                                      menu->itemWindow, ITEM_LIST_NAME_X,
-                                      row * 16 + 8);
+      UiText_DrawCharacterAtOffsetFar(
+          (entry[0] & INVENTORY_ITEM_ID_MASK) + MsgItemName, menu->itemWindow,
+          ITEM_LIST_NAME_X, row * 16 + 8);
       row++;
       entry++;
     } while (visibleCount > row);
@@ -2924,7 +2937,7 @@ s32 ItemMenu_RunList(s32 paneIndex) {
           // 1 and 1.5 times its size, from its first step, in depth slot 250.
           // UiIcon_PrepareObject stills it again when the cursor leaves.
           icon->active = 9;
-          icon->animStep = 0;
+          icon->animationStep = 0;
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->partyCount; i++) {
@@ -2936,7 +2949,7 @@ s32 ItemMenu_RunList(s32 paneIndex) {
       if ((gFrameCount & 31) == 0) {
         for (i = 0; i < menu->partyCount; i++) {
           if (Item_CanOwnerEquip(menu->ownerIds[i],
-                                 ITEM_ID_MASK &
+                                 INVENTORY_ITEM_ID_MASK &
                                      menu->items[state.selectedIndex]) != 0) {
             AnimationObject_SelectAnimationFar(menu->ownerObjects[i], 3);
           }

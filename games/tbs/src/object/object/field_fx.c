@@ -10,7 +10,7 @@ STATIC_ASSERT(offsetof(struct ObjectRuntime, animation) == 0x50);
 
 /// An object of the 64-object pool (struct ObjectRuntime, 0x70 bytes), seen
 /// as the found item's picture, the sparkles and the Reveal marks use it.
-struct EffectObj {
+struct EffectObject {
   /// The script pointer, as a word; 0 while the pool object is free.
   s32 scriptWord;
   u8 pad0[0x24];
@@ -22,22 +22,23 @@ struct EffectObj {
   u8 pad2[4];
   struct AnimationObject *animation;
   u8 pad3[24];
-  void (*updateHook)(union FieldObject *object); ///< frame hook at offset 0x6c
+  void (*updateHook)(
+      union FieldObject *fieldObject); ///< frame hook at offset 0x6c
 };
 
-STATIC_ASSERT(sizeof(struct EffectObj) == 0x70);
-STATIC_ASSERT(offsetof(struct EffectObj, updateHook) == 0x6c);
+STATIC_ASSERT(sizeof(struct EffectObject) == 0x70);
+STATIC_ASSERT(offsetof(struct EffectObject, updateHook) == 0x6c);
 
 /// ObjectSystem_Initialize allocates 64 ObjectRuntime records in
 /// HEAP_SLOT_OBJECT_POOL.
 #define EFFECT_OBJECT_COUNT 64
 #ifdef UBFIX
-#define EFFECT_OBJECT_POOL ((struct EffectObj *)gObjectSlots)
+#define EFFECT_OBJECT_POOL ((struct EffectObject *)gObjectSlots)
 #else
 // UB: gObjectSlots and gEventWork are separate globals. The named pool load
 // changes register allocation and shrinks StartRandomParticleEmitter from 0x158
 // to 0x156 bytes in tbs-en; keep the native read here.
-#define EFFECT_OBJECT_POOL (*(struct EffectObj **)((u8 *)&gEventWork - 88))
+#define EFFECT_OBJECT_POOL (*(struct EffectObject **)((u8 *)&gEventWork - 88))
 #endif
 
 /// Keeps the party leader off the markers: a leader within 16 pixels of a
@@ -86,14 +87,14 @@ void Marker_MoveLeaderAway(void) {
 /// Starts the particle script and its first child at priority 1, if the spawn
 /// succeeded. Allocation failure leaves the effect absent. The script sinks
 /// the sparkle a quarter pixel a frame for 60 frames, then frees it.
-static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
+static inline void Object_InitializeSparkle(struct ObjectRuntime *object) {
   // Sharing the offset and spawn as well changes literal/argument load order in
   // both emitters, without changing their sizes.
-  if (obj != 0) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+  if (object != 0) {
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                  gFieldEffect_ParticleScript);
-    ObjectDispatch_SelectAnimationFar(obj, 0);
-    ((struct AnimationObject *)obj->animation)->image.priority = 1;
+    ObjectDispatch_SelectAnimationFar(object, 0);
+    ((struct AnimationObject *)object->animation)->image.priority = 1;
   }
 }
 
@@ -104,7 +105,7 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   struct ObjectRuntime *emitter = (struct ObjectRuntime *)fieldObject;
   union PolarOffsetPosition position;
-  struct ObjectRuntime *obj;
+  struct ObjectRuntime *object;
   u32 randomRadius;
 
   // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
@@ -122,9 +123,9 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   position.vector.z = emitter->z;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  obj = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                     position.vector.z);
-  Object_InitializeSparkle(obj);
+  object = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                        position.vector.z);
+  Object_InitializeSparkle(object);
 }
 
 /// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
@@ -137,8 +138,9 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 /// VRAM. The caller owns the picture: Field_SearchTile releases it once the
 /// find is told. Called by Field_SearchTile for coins and items found, and by
 /// FieldEffect_PlayCueAndStartEmitterOnTarget.
-struct EffectObj *FieldEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
-  struct EffectObj *picture;
+struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 actor,
+                                                            s32 item) {
+  struct EffectObject *picture;
 
   s32 work = (s32)gEventWork;
   u32 actorOffset = (actor * 4) + 0x14; // EventWork's actors[actor]
@@ -161,7 +163,7 @@ struct EffectObj *FieldEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
 
   if (((struct FieldWork *)work)->revealActive != 0) {
     // Stop both the marker emitters and the sparkle actors they already made.
-    struct EffectObj *effect = EFFECT_OBJECT_POOL;
+    struct EffectObject *effect = EFFECT_OBJECT_POOL;
 
     // work now counts the actors left.
     work = EFFECT_OBJECT_COUNT - 1;
@@ -181,8 +183,8 @@ struct EffectObj *FieldEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   }
 
   WaitFrames(3);
-  picture = (struct EffectObj *)Object_CreateFar(SPRITE_BLANK, pictureX,
-                                                 16 << 16, srcZ);
+  picture = (struct EffectObject *)Object_CreateFar(SPRITE_BLANK, pictureX,
+                                                    16 << 16, srcZ);
   if (picture == 0)
     return 0;
 
@@ -262,9 +264,9 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
     if (flags & 1) {
       ObjectDispatch_SetSingleChildFlagsFar(object, 0);
       ObjectDispatch_InitializeFar(object, gFieldEffect_ParticleEmitterScript);
-      ((struct EffectObj *)object)->velocityY = 0x20000;
-      ((struct EffectObj *)object)->gravity = 0x4000;
-      ((struct EffectObj *)object)->updateHook = ItemDisplay_EmitSparkles;
+      ((struct EffectObject *)object)->velocityY = 0x20000;
+      ((struct EffectObject *)object)->gravity = 0x4000;
+      ((struct EffectObject *)object)->updateHook = ItemDisplay_EmitSparkles;
     }
     if (flags == 3) {
       WaitFrames(60);
@@ -288,7 +290,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
   struct FieldActor *leader = ObjectTable_Get(gGameState.selectedActor);
   void *iconBuffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
-  struct EffectObj *object = (struct EffectObj *)Object_CreateFar(
+  struct EffectObject *object = (struct EffectObject *)Object_CreateFar(
       22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
 
   if (object != 0) {
@@ -319,10 +321,10 @@ void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
 // while a menu is open.
 #if TBS_PATCH_2
 
-#define PARTICLES_PAUSE_FOR_MENU 1
+#define REVEAL_SPARKLES_PAUSE_FOR_MENU 1
 #endif
 
-#if defined(PARTICLES_PAUSE_FOR_MENU)
+#if defined(REVEAL_SPARKLES_PAUSE_FOR_MENU)
 /// In gEventWork, the byte after queuedSound: Menu_RunTopSelection sets it
 /// once Menu_SelectTopEntry first returns, a cancel included, and clears it as
 /// it returns.
@@ -333,7 +335,7 @@ void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
 /// Menu_SelectTopEntry returns, a cancel included, while Reveal is active.
 void FieldEffect_ClearRandomParticles(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
-    struct EffectObj *effect = EFFECT_OBJECT_POOL;
+    struct EffectObject *effect = EFFECT_OBJECT_POOL;
     s32 remainingActors = EFFECT_OBJECT_COUNT - 1;
 
     do {
@@ -355,10 +357,10 @@ void FieldEffect_ClearRandomParticles(void) {
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   const struct FieldActor *source = (const struct FieldActor *)fieldObject;
   union PolarOffsetPosition position;
-  struct ObjectRuntime *obj;
+  struct ObjectRuntime *object;
   u32 randomRadius;
 
-#if defined(PARTICLES_PAUSE_FOR_MENU)
+#if defined(REVEAL_SPARKLES_PAUSE_FOR_MENU)
   if (*(s8 *)((u8 *)gEventWork + MENU_OPEN_OFFSET) != 0)
     return;
 #endif
@@ -370,9 +372,9 @@ void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   position.vector.z = source->z.fixed;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  obj = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                     position.vector.z);
-  Object_InitializeSparkle(obj);
+  object = Object_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                        position.vector.z);
+  Object_InitializeSparkle(object);
 }
 
 /// Returns 1 while Reveal is active, else 0. Run by a Reveal marker's object
@@ -454,7 +456,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
                                              gFieldEffect_MarkerParticleScript);
                 ObjectDispatch_SetSingleChildFlagsFar(
                     (struct DispatchObject *)actor, 0);
-                ((struct EffectObj *)actor)->updateHook =
+                ((struct EffectObject *)actor)->updateHook =
                     RevealMarker_EmitSparkles;
               }
             }
@@ -469,5 +471,5 @@ void FieldEffect_SpawnNearbyMarkers(void) {
 
 #undef EFFECT_OBJECT_COUNT
 #undef EFFECT_OBJECT_POOL
-#undef PARTICLES_PAUSE_FOR_MENU
+#undef REVEAL_SPARKLES_PAUSE_FOR_MENU
 #undef MENU_OPEN_OFFSET

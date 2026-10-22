@@ -72,7 +72,7 @@ void ObjectSystem_UpdateCamera(void) {
    * in tbs-en. */
   UNUSED struct ObjectCameraPoint unusedPoints[3];
   s32 objectIndex;
-  struct MapScrollWork *mapWork;
+  struct MapScrollWork *map;
   s32 viewX;
   s32 viewZ;
   struct ObjectSystemWork *system;
@@ -95,15 +95,15 @@ void ObjectSystem_UpdateCamera(void) {
   // UB: map and system work are separate globals, beyond gObjectSlots.
   // Reading their named slots adds eight bytes in the forced EN build.
 #ifdef UBFIX
-  mapWork = gMapWork[0];
+  map = gMapWork[0];
 #else
-  mapWork = *(struct MapScrollWork **)(((u8 *)&gObjectSlots) + 12);
+  map = *(struct MapScrollWork **)(((u8 *)&gObjectSlots) + 12);
 #endif
 #ifdef UBFIX
-  viewX = mapWork->viewX & 0xffff0000;
-  viewZ = mapWork->viewY & 0xffff0000;
+  viewX = map->viewX & 0xffff0000;
+  viewZ = map->viewY & 0xffff0000;
 #else
-  viewCoordinates = &mapWork->viewX;
+  viewCoordinates = &map->viewX;
   viewX = viewCoordinates[0] & 0xffff0000;
   viewZ = viewCoordinates[1] & 0xffff0000;
 #endif
@@ -149,7 +149,7 @@ void ObjectSystem_UpdateCamera(void) {
           screenTop < 0xe00000) {
         // The cell under the object: x and z >> 20 are 16-pixel cells, and a
         // row holds 128 of them.
-        tile = &((struct ObjectCameraTile *)mapWork->layers[object->layer]
+        tile = &((struct ObjectCameraTile *)map->layers[object->layer]
                      .cells)[(object->x >> 20) + ((object->z >> 20) << 7)];
         if (object->flags & ACTOR_PRIORITY_AUTOMATIC) {
           priority = tile->priority;

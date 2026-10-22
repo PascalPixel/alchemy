@@ -244,12 +244,10 @@ enum {
   FLAG_WATER_DRAINED = FLAG_SCENE_TEMP_42
 };
 
-enum {
-  SHOP_ALTIN_WEAPONS = 19,
-  SHOP_ALTIN_ARMOR = 20,
-  SHOP_ALTIN_ITEMS = 21,
-  INN_ALTIN = 6
-};
+enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
+
+/// Altin's inn, as Engine_InnOpen numbers the inns.
+enum { ALTIN_INN = 6 };
 
 /// The doors of the village, by their index in gAltinVillage_Doors.
 enum {
@@ -569,7 +567,7 @@ static void Houses_TalkToInnkeeper(void) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   if (ALTIN_FACES_COUNTER(leader->facing)) {
-    Engine_InnOpen(INN_ALTIN, ACTOR_INNKEEPER);
+    Engine_InnOpen(ALTIN_INN, ACTOR_INNKEEPER);
     return;
   }
 
@@ -591,7 +589,7 @@ static void Houses_TalkToInnkeeper(void) {
 /// in two halves by hand; the others play their opening pictures.
 static void Village_EnterDoor(void) {
   u32 actorId;
-  struct EventWork *event;
+  struct EventWork *work;
   struct FieldActor *actor;
   s32 doorIndex;
   u8 *doorBytes;
@@ -601,7 +599,7 @@ static void Village_EnterDoor(void) {
   s32 row;
   s32 rightColumn;
 
-  event = gEventWork;
+  work = gEventWork;
   Engine_EventStart();
   for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
     actor = Object_GetById(actorId);
@@ -614,7 +612,7 @@ static void Village_EnterDoor(void) {
   // number by shifts; indexing the structs loads the fields differently.
   doorBytes = (u8 *)gAltinVillage_Doors;
   doorIndex =
-      ((*(u16 *)&event->touchedTrigger - FIRST_DOOR_TRIGGER) << 16) >> 16;
+      ((*(u16 *)&work->touchedTrigger - FIRST_DOOR_TRIGGER) << 16) >> 16;
   doorByteOffset = doorIndex << 3;
   coordinatesByteOffset = doorByteOffset + 4;
   column = *(s16 *)(doorBytes + coordinatesByteOffset);
@@ -658,7 +656,7 @@ static void Village_EnterDoor(void) {
     }
   }
   Engine_EventWait(10);
-  Engine_EventRequestExit(event->touchedTrigger);
+  Engine_EventRequestExit(work->touchedTrigger);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();
@@ -821,7 +819,7 @@ static void Village_ApplyWaterLevel(void) {
   } else {
     FieldEffect_SetQueuedSoundAndPlay(SE_170);
     Actor_SetChildValue(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
-    Engine_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIM_SPIT);
+    Engine_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
   }
   if (gGameState.entrance == ALTIN_FROM_SANCTUM) {
@@ -980,31 +978,31 @@ static void Village_ScareOffBeast(void) {
 s32 gAltinHouses_CookScript[] = {
     SC_ADD(SW_COLLISION, 128),
     SC_SET(SW_SPEED, 0x26666),
-    SC_SET(SW_ACCEL, 0x13333),
+    SC_SET(SW_ACCELERATION, 0x13333),
     SC_LABEL(1),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(342), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_ARG(ANIMATION_NOD),
+    SC_ANIMATION(ANIMATION_NOD),
     SC_WAIT(30),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(356), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_ARG(ANIMATION_NOD),
+    SC_ANIMATION(ANIMATION_NOD),
     SC_WAIT(50),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(342), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_ARG(ANIMATION_NOD),
+    SC_ANIMATION(ANIMATION_NOD),
     SC_WAIT(20),
-    SC_ARG(ANIMATION_WALK),
+    SC_ANIMATION(ANIMATION_WALK),
     SC_MOVE(PIXELS(ALTIN_COOK_LAST_POT_X), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_ARG(ANIMATION_NOD),
+    SC_ANIMATION(ANIMATION_NOD),
     SC_WAIT(30),
     SC_SET(SW_FACING, FACING_EAST + FACING_STEP),
     SC_WAIT(90),
@@ -1443,7 +1441,7 @@ u16 gAltinVillage_NortheastDoorCells[] = {
 };
 
 /// Each door trigger's opening picture and cell, from trigger 2.
-struct MapCellAnim gAltinVillage_Doors[] = {
+struct MapCellAnimation gAltinVillage_Doors[] = {
     {gAltinVillage_SouthwestDoorCells, 41, 5},
     {gAltinVillage_SanctumDoorCells, 51, 6},
     {gAltinVillage_NorthwestDoorCells, 57, 17},

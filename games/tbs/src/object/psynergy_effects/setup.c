@@ -7,7 +7,7 @@
 /// Scheduler callback: updates the 24 effect slots.
 void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateSceneSlots(); }
 
-/// Prepares the work of the Psynergy effect for ability (HEAP_SLOT_FX) and
+/// Prepares the work of the Psynergy effect for ability (HEAP_SLOT_EFFECT) and
 /// loads its spark tiles. Called again while an effect resolves, it only
 /// switches the ability.
 ///
@@ -21,15 +21,15 @@ void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateSceneSlots(); }
 void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
   struct MapScrollWork *map = *(gWorkSlot + 8);
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
   s32 running;
 
   running = ev->resolvingAction;
   if (running == 0) {
-    work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof *work);
+    work = Runtime_AllocateHeapBlock(HEAP_SLOT_EFFECT, sizeof *work);
     Dma_Fill32(running, work, sizeof *work);
   } else {
-    work = *(gWorkSlot + HEAP_SLOT_FX);
+    work = *(gWorkSlot + HEAP_SLOT_EFFECT);
   }
   work->action = abilityId;
   work->fieldKind = BattleAction_Get(abilityId)->type0c;
@@ -70,7 +70,7 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
   struct ScriptMotionObject *user;
   struct ScriptMotionObject *target;
   s32 dir;
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
 
   work = gEffectWork;
   work->firstObjectId = userId;
@@ -86,9 +86,9 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
     work->savedCallback = target->hook;
     work->savedScript = (const s32 *)target->script;
     {
-      struct AnimationObject *anim =
+      struct AnimationObject *animation =
           ((struct ObjectRuntime *)target)->animation;
-      u8 pal = anim->entries[0]->param;
+      u8 pal = animation->entries[0]->colorMode;
 
       work->savedPalette = pal;
     }
@@ -106,7 +106,7 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
 /// Stops the caster's per-frame hook and restores its colours (sprite param
 /// 0), then waits a frame.
 void FieldEffect_StopCasterHook(void) {
-  struct FieldFxScene *work = gEffectWork;
+  struct FieldEffectScene *work = gEffectWork;
   struct ScriptMotionObject *user = work->mainObject;
 
   user->hook = NULL;
@@ -124,9 +124,9 @@ void FieldEffect_StopCasterHook(void) {
 /// effect's work.
 void FieldEffect_End(void) {
 #ifndef UBFIX
-  struct FieldFxScene **sceneCell;
+  struct FieldEffectScene **sceneCell;
 #endif
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct FieldWork *runtime;
   struct MapScrollWork *map;
   struct EffectSlot *sceneObject;
@@ -139,13 +139,13 @@ void FieldEffect_End(void) {
 #else
   // Indexing beyond the scalar global is undefined in C. Named slots add
   // 8 bytes to this function in the forced native EN build (0xf8 -> 0x100).
-  sceneCell = (struct FieldFxScene **)&gEffectWork;
+  sceneCell = (struct FieldEffectScene **)&gEffectWork;
   scene = *sceneCell;
   runtime = *(struct FieldWork **)((u8 *)sceneCell - 116);
   map = *(struct MapScrollWork **)((u8 *)sceneCell - 192);
 #endif
   for (remaining = 0; remaining < 24; remaining++) {
-    sceneObject = &scene->slots[remaining];
+    sceneObject = &scene->effects[remaining];
     if (sceneObject->active != 0)
       FieldEffect_ClearOwnedSlot(sceneObject);
   }
@@ -191,7 +191,7 @@ void FieldEffect_End(void) {
     if (scene->fieldKind != FIELD_KIND_REVEAL)
       runtime->effectTimerRunning = 1;
     FieldEffect_PlayQueuedSound();
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_EFFECT);
   }
 }
 
@@ -207,7 +207,7 @@ void EventObject_Initialize(void) {
   s32 ability;
   s32 announcedAbility;
   struct FieldActor *caster;
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   void *renderState;
 
   scene = *(void **)Ram_EffectWork;

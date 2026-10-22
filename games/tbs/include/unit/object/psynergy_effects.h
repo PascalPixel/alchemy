@@ -350,10 +350,10 @@ void Ui_SetBank15PaletteAndClearRenderMode(void);
 s32 Input_GetDpadAngle(u32 unused);
 void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject);
 void FieldEffect_SteerPushedTarget(s32 targetId);
-void FieldEffect_UpdateOrbitAndReturn(struct EffectSlot *slot);
+void FieldEffect_UpdateOrbitAndReturn(struct EffectSlot *effect);
 void FieldEffect_RunMove(void);
 void *FieldEffect_StartItemBreak(void *object);
-void FieldEffect_SnapScaleToFull(struct MotionObject *obj);
+void FieldEffect_SnapScaleToFull(struct MotionObject *object);
 void UpdateRisingParticleBurst(void *object);
 void ObjectDispatch_ApplyValueToKind200Children(s32 value);
 void FieldEffect_WatchLeaderDistance(void);
@@ -365,7 +365,7 @@ void FieldEffect_SpawnBurstParticleField(void);
 void FieldEffect_RunLiftOnTarget(s32 unused);
 struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                      s32 angle);
-void FieldEffect_UpdateRadialBurst(struct EffectSlot *slot);
+void FieldEffect_UpdateRadialBurst(struct EffectSlot *effect);
 s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter);
 void FieldEffect_RunForceOnTarget(s32 unused);
 void FieldEffect_RunForce(void);
@@ -392,7 +392,7 @@ void FieldEffect_SpawnFallingParticles(void);
 void FieldEffect_SteerLiftedTarget(s32 targetId);
 struct MotionObject *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                      s32 angle);
-void FieldEffect_UpdateParticleMotionAndScale(union FieldObject *object);
+void FieldEffect_UpdateParticleMotionAndScale(union FieldObject *fieldObject);
 void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin);
 void FieldEffect_WanderAroundAnchor(union FieldObject *fieldObject);
 void FieldEffect_CircleAnchor(union FieldObject *fieldObject);
@@ -410,7 +410,7 @@ void FieldEffect_RunCatchOnTarget(s32 unused);
 void FieldEffect_RunCatch(void);
 void FieldEffect_UpdateSpinAngle(union FieldObject *fieldObject);
 void FieldEffect_UpdateDescendingObject(union FieldObject *fieldObject);
-void FieldEffect_UpdateRadialLaunch(struct EffectSlot *slot);
+void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect);
 void FieldEffect_RunRetreat(void);
 void FieldEffect_UpdateDescendingParticlePositiveArc(
     union FieldObject *fieldObject);
@@ -430,7 +430,7 @@ void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z);
 void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode);
 void EffectSlot_SetCallback(struct EffectSlot *effect, EffectCallback callback);
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z);
-void FieldEffect_ClearOwnedSlot(struct EffectSlot *slot);
+void FieldEffect_ClearOwnedSlot(struct EffectSlot *effect);
 
 void FieldEffect_SetupResourcesAndWindow(void);
 void FieldEffect_CleanupResourcesAndWindow(void);

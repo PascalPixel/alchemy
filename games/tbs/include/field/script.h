@@ -62,7 +62,7 @@ struct ScriptOperands {
   u32 velocityY;     ///< SW_VELOCITY_Y
   u32 velocityZ;     ///< SW_VELOCITY_Z
   u32 speedLimit;    ///< SW_SPEED
-  u32 acceleration;  ///< SW_ACCEL
+  u32 acceleration;  ///< SW_ACCELERATION
   u32 targetX;       ///< SW_TARGET_X; 0x80000000 when unset
   u32 targetY;       ///< SW_TARGET_Y
   u32 targetZ;       ///< SW_TARGET_Z

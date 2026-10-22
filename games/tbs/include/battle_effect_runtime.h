@@ -13,16 +13,16 @@
 
 /// An actor's animated sprite (struct AnimationObject), as far as the pointer
 /// to its sprite id.
-struct FieldFxSpeakerSprite {
+struct FieldEffectSpeakerSprite {
   u8 unk00[0x28]; ///< AnimationObject's fields before its layers
   /// AnimationObject.entries[0], its first layer, whose first halfword is the
-  /// sprite id it shows (AnimationEntry.animId); null for none.
+  /// sprite id it shows (AnimationEntry.animationId); null for none.
   s16 *value28;
 };
 
 /// A field actor as the speaker lookup reads it: its kind (1 for an animated
 /// sprite) and that sprite.
-struct FieldFxSpeakerObject {
+struct FieldEffectSpeakerObject {
   u8 unk00[0x24];
   s32 unk24;
   u8 unk28[4];
@@ -33,13 +33,13 @@ struct FieldFxSpeakerObject {
   u8 unk3c[4];
   s32 unk40;
   u8 unk44[0x0c];
-  struct FieldFxSpeakerSprite *animation; ///< ObjectRuntime.animation
+  struct FieldEffectSpeakerSprite *animation; ///< ObjectRuntime.animation
   u8 kind; ///< ObjectRuntime.animationKind: 1 for one animated sprite
 };
 
 /// A speaker definition, a row of gFieldEffect_DefinitionTable: a sprite, its
 /// voice (0xff for none) and the flags that choose its idle line.
-struct FieldFxDefinition {
+struct FieldEffectDefinition {
   u16 id; ///< the sprite id
   /// The first of its four voice blip sounds, less 256: a message plays sound
   /// 256 + value as it types (FieldEffect_GetResourceId); 0xff for none.

@@ -87,7 +87,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   DrawRectangle draw[2];
   s32 frame;
 
-  slots = gBattleFxWork;
+  slots = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);

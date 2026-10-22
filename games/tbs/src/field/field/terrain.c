@@ -364,7 +364,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 /// Called through Map_GetCellAttributeLowNibbleFar by the Psynergy Move
 /// effect.
 s32 Map_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
-  struct MapState *state = gMapWork[0];
+  struct MapState *mapState = gMapWork[0];
   struct MapCell *cells;
   s32 cellX;
   s32 cellY;
@@ -373,8 +373,8 @@ s32 Map_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   x >>= 16;
   y >>= 16;
   cells = (struct MapCell *)gMapCellBuffer;
-  if (state != 0) {
-    cells = state->layers[layer & 3].cells;
+  if (mapState != 0) {
+    cells = mapState->layers[layer & 3].cells;
   }
   cellX = x / 16;
   cellY = y / 16;
@@ -389,16 +389,16 @@ s32 Map_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
 /// through GetMapCellCollisionFar by the Psynergy climbing and by scenes
 /// (Altin Peak, Colosso, Imil, Crossbone Isle).
 s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
-  struct MapState *state;
+  struct MapState *mapState;
   struct MapCell *cell;
 
-  state = gMapWork[0];
+  mapState = gMapWork[0];
   x >>= 20;
   y >>= 20;
   // Before the map work exists, the grid is read from its start.
   cell = (struct MapCell *)gMapCellBuffer;
-  if (state != NULL) {
-    cell = state->layers[layer & 3].cells;
+  if (mapState != NULL) {
+    cell = mapState->layers[layer & 3].cells;
   }
   cell += x + (y << 7);
   return cell->collisionCode;
@@ -410,13 +410,13 @@ s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
 /// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
 /// Sanctum).
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
-  struct MapState *state = gMapWork[0];
+  struct MapState *mapState = gMapWork[0];
 
   x >>= 20;
   y >>= 20;
   // Without the map work there is no layer to write to.
-  if (state != NULL) {
-    struct MapCell *cell = state->layers[layer & 3].cells;
+  if (mapState != NULL) {
+    struct MapCell *cell = mapState->layers[layer & 3].cells;
 
     cell += x + (y << 7);
     cell->collisionCode = collisionCode;
@@ -429,11 +429,11 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
 UNUSED s32 Map_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / 16;
   s32 cellY = y / 16;
-  struct MapCell *mapCell =
+  struct MapCell *cell =
       (struct MapCell *)gMapCellBuffer + (cellX + cellY * 128);
 
   // The high byte of the block word; its top two bits are flags.
-  return ((u8 *)&mapCell->metatileAndFlags)[1] >> 6;
+  return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
 }
 
 /// Returns whether an object can step to position, an enum MapStepCheck:

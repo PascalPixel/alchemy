@@ -68,7 +68,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   s32 formationVelocityX;
   s32 formationVelocityZ;
   s32 savedBg1ScrollX;
-  struct BattleBackgroundView *background;
+  struct BattleBackgroundView *view;
   s32 j;
   s32 emittedSparks;
   s32 sparkOriginX;
@@ -131,11 +131,11 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   formationVelocityX = -0x40000;
   formationVelocityZ = -0x80000;
   savedBg1ScrollX = gBgScroll[1].x;
-  background = (struct BattleBackgroundView *)CANVAS_SLOT(
+  view = (struct BattleBackgroundView *)CANVAS_SLOT(
       cache, HEAP_SLOT_BATTLE_BACKGROUND);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   // The scene owns BG1's scroll until the second stage.
-  background->busy = 1;
+  view->busy = 1;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   blit[0] = (DrawRectangle)CANVAS_SLOT(cache, HEAP_SLOT_BLITTER);
@@ -480,7 +480,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   // columns: column i drops onto target i's x (halved for the wide canvas)
   // when there is one, otherwise onto a random x from 32 to 63.
   gBgScroll[1].x = savedBg1ScrollX;
-  background->busy = 0;
+  view->busy = 0;
   Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
   BattleEffect_SetupBlendedDisplay();
   Scheduler_RemoveCallback(Graphics_ResetBg2Pa);

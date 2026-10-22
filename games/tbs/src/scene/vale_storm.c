@@ -1623,7 +1623,7 @@ static void ValeStorm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
       do {
         struct AnimationEntry *entry = *entries++;
         if (entry != NULL && entry->script != NULL) {
-          entry->param = animationParameter;
+          entry->colorMode = animationParameter;
         }
         remainingEntries--;
       } while (remainingEntries != 0);
@@ -2908,7 +2908,7 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct FieldFxScene *work = gEffectWork;
+  struct FieldEffectScene *work = gEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(SE_JUMP);
@@ -3017,20 +3017,20 @@ u8 gValeStorm_FrameModes[] = {7, 0, 0, 0};
 
 /// The stout man runs off toward the plaza after shoving Isaac.
 s32 gValeStorm_ShovingManScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(185), 0, PIXELS(824)),
-    SC_SYNC,   SC_MOVE(PIXELS(179), 0, PIXELS(836)),
-    SC_SYNC,   SC_MOVE(PIXELS(226), 0, PIXELS(840)),
-    SC_SYNC,   SC_MOVE(PIXELS(226), 0, PIXELS(944)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(185), 0, PIXELS(824)),
+    SC_SYNC,         SC_MOVE(PIXELS(179), 0, PIXELS(836)),
+    SC_SYNC,         SC_MOVE(PIXELS(226), 0, PIXELS(840)),
+    SC_SYNC,         SC_MOVE(PIXELS(226), 0, PIXELS(944)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
+    SC_ANIMATION(1), SC_END,
 };
 
 /// Garet runs up to Isaac (Event_UnusedGaretJoinsIsaac).
 s32 gValeStorm_UnusedGaretRunsUpScript[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(345), 0, PIXELS(612)),
-    SC_SYNC,   SC_MOVE(PIXELS(311), 0, PIXELS(638)),
-    SC_SYNC,   SC_MOVE(PIXELS(256), 0, PIXELS(608)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(345), 0, PIXELS(612)),
+    SC_SYNC,         SC_MOVE(PIXELS(311), 0, PIXELS(638)),
+    SC_SYNC,         SC_MOVE(PIXELS(256), 0, PIXELS(608)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
@@ -3053,21 +3053,21 @@ s32 gValeStorm_UnusedGaretPantingScript[] = {
 
 /// The Boulder on the mountainside, in animation 2 until it slips.
 s32 gValeStorm_BoulderWaits[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_END,
 };
 
 /// Isaac and Garet run to where they see the elders hold the Boulder
 /// (Event_WatchBoulderFall), and face each other.
 s32 gValeStorm_BoulderFallLeaderPath[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(94), 0, PIXELS(564)), SC_SYNC,
-    SC_ARG(1), SC_SET(SW_FACING, FACING_WEST),      SC_WAIT(30),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(94), 0, PIXELS(564)), SC_SYNC,
+    SC_ANIMATION(1), SC_SET(SW_FACING, FACING_WEST),      SC_WAIT(30),
     SC_END,
 };
 
 s32 gValeStorm_BoulderFallGaretPath[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(76), 0, PIXELS(564)), SC_SYNC,
-    SC_ARG(1), SC_SET(SW_FACING, FACING_EAST),      SC_WAIT(30),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(76), 0, PIXELS(564)), SC_SYNC,
+    SC_ANIMATION(1), SC_SET(SW_FACING, FACING_EAST),      SC_WAIT(30),
     SC_END,
 };
 
@@ -3076,23 +3076,23 @@ s32 gValeStorm_BoulderFallGaretPath[] = {
 // and Dora north.
 
 s32 gValeStorm_DoraRunsIntoRiversideHouse[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(178), 0, PIXELS(1190)),
-    SC_SYNC,   SC_MOVE(PIXELS(149), 0, PIXELS(1194)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(178), 0, PIXELS(1190)),
+    SC_SYNC,         SC_MOVE(PIXELS(149), 0, PIXELS(1194)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeStorm_JennaRunsIntoRiversideHouse[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(198), 0, PIXELS(1176)),
-    SC_SYNC,   SC_MOVE(PIXELS(170), 0, PIXELS(1195)),
-    SC_SYNC,   SC_MOVE(PIXELS(149), 0, PIXELS(1194)),
-    SC_SYNC,   SC_MOVE(PIXELS(149), 0, PIXELS(1175)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(198), 0, PIXELS(1176)),
+    SC_SYNC,         SC_MOVE(PIXELS(170), 0, PIXELS(1195)),
+    SC_SYNC,         SC_MOVE(PIXELS(149), 0, PIXELS(1194)),
+    SC_SYNC,         SC_MOVE(PIXELS(149), 0, PIXELS(1175)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
+    SC_ANIMATION(1), SC_END,
 };
 
 s32 gValeStorm_DoraComesOutOfRiversideHouse[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(30),
     SC_POSITION(PIXELS(102), 0, PIXELS(1189)),
@@ -3101,13 +3101,13 @@ s32 gValeStorm_DoraComesOutOfRiversideHouse[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(84), 0, PIXELS(1228)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_END,
 };
 
 s32 gValeStorm_JennaComesOutOfRiversideHouse[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(30),
     SC_POSITION(PIXELS(102), 0, PIXELS(1189)),
@@ -3116,57 +3116,57 @@ s32 gValeStorm_JennaComesOutOfRiversideHouse[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(120), 0, PIXELS(1228)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_END,
 };
 
 s32 gValeStorm_DoraHeadsNorth[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(50), 0, PIXELS(1214)),
-    SC_SYNC,   SC_MOVE(PIXELS(46), 0, PIXELS(1130)),
-    SC_SYNC,   SC_MOVE(PIXELS(67), 0, PIXELS(1100)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(50), 0, PIXELS(1214)),
+    SC_SYNC,         SC_MOVE(PIXELS(46), 0, PIXELS(1130)),
+    SC_SYNC,         SC_MOVE(PIXELS(67), 0, PIXELS(1100)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeStorm_JennaHeadsForPlaza[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(153), 0, PIXELS(1251)),
-    SC_SYNC,   SC_MOVE(PIXELS(177), 0, PIXELS(1357)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(153), 0, PIXELS(1251)),
+    SC_SYNC,         SC_MOVE(PIXELS(177), 0, PIXELS(1357)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
+    SC_ANIMATION(1), SC_END,
 };
 
 /// Dora leaves to the west once she has asked the boys to help.
 s32 gValeStorm_DoraLeavesForHelp[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(123), 0, PIXELS(1078)),
-    SC_SYNC,   SC_MOVE(PIXELS(148), 0, PIXELS(1078)),
-    SC_SYNC,   SC_MOVE(PIXELS(148), 0, PIXELS(1064)),
-    SC_SYNC,   SC_MOVE(PIXELS(35), 0, PIXELS(1064)),
-    SC_SYNC,   SC_POSITION(0, 0, 0),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(123), 0, PIXELS(1078)),
+    SC_SYNC,         SC_MOVE(PIXELS(148), 0, PIXELS(1078)),
+    SC_SYNC,         SC_MOVE(PIXELS(148), 0, PIXELS(1064)),
+    SC_SYNC,         SC_MOVE(PIXELS(35), 0, PIXELS(1064)),
+    SC_SYNC,         SC_POSITION(0, 0, 0),
+    SC_ANIMATION(1), SC_END,
 };
 
 /// Dora runs down to the river when Jenna comes back
 /// (Event_BoulderSweepsThemAway).
 s32 gValeStorm_DoraRunsToRiver[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(102), 0, PIXELS(1236)),
-    SC_SYNC,   SC_MOVE(PIXELS(148), 0, PIXELS(1256)),
-    SC_SYNC,   SC_MOVE(PIXELS(177), 0, PIXELS(1303)),
-    SC_SYNC,   SC_ARG(1),
+    SC_ANIMATION(2), SC_MOVE(PIXELS(102), 0, PIXELS(1236)),
+    SC_SYNC,         SC_MOVE(PIXELS(148), 0, PIXELS(1256)),
+    SC_SYNC,         SC_MOVE(PIXELS(177), 0, PIXELS(1303)),
+    SC_SYNC,         SC_ANIMATION(1),
     SC_END,
 };
 
 /// The way down to the riverbank that each of the party and the strongman
 /// takes in turn as the Boulder comes, then each one's place there.
 s32 gValeStorm_ToRiverbankPath[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(137), 0, PIXELS(1379)),
-    SC_SYNC,   SC_MOVE(PIXELS(114), 0, PIXELS(1416)),
-    SC_SYNC,   SC_MOVE(PIXELS(95), 0, PIXELS(1416)),
-    SC_SYNC,   SC_MOVE(PIXELS(83), 0, PIXELS(1427)),
-    SC_SYNC,   SC_MOVE(PIXELS(154), 0, PIXELS(1430)),
-    SC_SYNC,   SC_MOVE(PIXELS(179), 0, PIXELS(1398)),
-    SC_SYNC,   SC_MOVE(PIXELS(179), 0, PIXELS(1361)),
-    SC_SYNC,   SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(137), 0, PIXELS(1379)),
+    SC_SYNC,         SC_MOVE(PIXELS(114), 0, PIXELS(1416)),
+    SC_SYNC,         SC_MOVE(PIXELS(95), 0, PIXELS(1416)),
+    SC_SYNC,         SC_MOVE(PIXELS(83), 0, PIXELS(1427)),
+    SC_SYNC,         SC_MOVE(PIXELS(154), 0, PIXELS(1430)),
+    SC_SYNC,         SC_MOVE(PIXELS(179), 0, PIXELS(1398)),
+    SC_SYNC,         SC_MOVE(PIXELS(179), 0, PIXELS(1361)),
+    SC_SYNC,         SC_END,
 };
 
 // Where each one stops on the bank to hear the Boulder coming.
@@ -3174,25 +3174,25 @@ s32 gValeStorm_ToRiverbankPath[] = {
 s32 gValeStorm_ExhaustedStrongmanGatherPath[] = {
     SC_MOVE(PIXELS(184), 0, PIXELS(1309)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
     SC_END,
 };
 
 s32 gValeStorm_JennaGatherPath[] = {
-    SC_MOVE(PIXELS(165), 0, PIXELS(1306)), SC_SYNC, SC_ARG(1),
+    SC_MOVE(PIXELS(165), 0, PIXELS(1306)), SC_SYNC, SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST),   SC_END,
 };
 
 s32 gValeStorm_LeaderGatherPath[] = {
-    SC_MOVE(PIXELS(183), 0, PIXELS(1325)), SC_SYNC, SC_ARG(1),
+    SC_MOVE(PIXELS(183), 0, PIXELS(1325)), SC_SYNC, SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST),   SC_END,
 };
 
 s32 gValeStorm_GaretGatherPath[] = {
     SC_MOVE(PIXELS(166), 0, PIXELS(1325)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
     SC_END,
 };
@@ -3216,9 +3216,9 @@ s32 gValeStorm_SquashAndStretchScript[] = {
 /// ValeStorm_ShowBoulderSweepingDownriver waits on, and two of its landings
 /// start a shake countdown in SW_TIMER.
 s32 gValeStorm_BoulderRollsDownriver[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(3)),
-    SC_SET(SW_ACCEL, PIXELS(1)),
+    SC_SET(SW_ACCELERATION, PIXELS(1)),
     SC_SET(SW_TIMER, 0),
     SC_SET(SW_WORK, 1),
     SC_SET(SW_SCALE_X, 2 * Q16_ONE),
@@ -3241,23 +3241,23 @@ s32 gValeStorm_BoulderRollsDownriver[] = {
     SC_SYNC,
     SC_SE(SE_145),
     SC_SET(SW_SPEED, PIXELS(3) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1) / 2),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 2),
     SC_SET(SW_TIMER, 60),
     SC_SET(SW_WORK, 6),
     SC_MOVE(PIXELS(161), PIXELS(107), PIXELS(1050)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(3) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(3) / 5),
     SC_SET(SW_WORK, 7),
     SC_MOVE(PIXELS(177), PIXELS(96), PIXELS(1062)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(5) / 2),
-    SC_SET(SW_ACCEL, PIXELS(4) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(4) / 5),
     SC_SET(SW_WORK, 8),
     SC_MOVE(PIXELS(201), PIXELS(74), PIXELS(1074)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(3)),
-    SC_SET(SW_ACCEL, PIXELS(1)),
+    SC_SET(SW_ACCELERATION, PIXELS(1)),
     SC_SET(SW_WORK, 9),
     SC_MOVE(PIXELS(225), -PIXELS(64), PIXELS(1086)),
     SC_SYNC,

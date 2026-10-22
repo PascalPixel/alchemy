@@ -459,20 +459,20 @@ void FieldEvent_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                        s32 second, s32 secondX, s32 secondY,
                                        s32 secondPortraitX,
                                        s32 secondPortraitY) {
-  struct FieldWork *field = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 firstSprite = ObjectTable_ReadActiveValue(first);
   s32 secondSprite = ObjectTable_ReadActiveValue(second);
   s32 firstWindow;
   s32 secondWindow;
 
   firstWindow = (s32)UiText_OpenMessageWindowFar(
-      field->message++, firstX, firstY,
+      work->message++, firstX, firstY,
       FieldEffect_GetResourceId(firstSprite) << 16);
   UiWindow_CreateWithSideObjectFar(firstSprite, 0, firstPortraitX,
                                    firstPortraitY);
 
   secondWindow = (s32)UiText_OpenMessageWindowFar(
-      field->message++, secondX, secondY,
+      work->message++, secondX, secondY,
       FieldEffect_GetResourceId(secondSprite) << 16);
   UiWindow_CreateWithSideObjectFar(secondSprite, 0, secondPortraitX,
                                    secondPortraitY);

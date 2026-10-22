@@ -112,7 +112,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
 /// Orbiting skulls: three skulls circle each target in turn, 16 frames
 /// apart, for 64 frames each, a third of a turn apart on a circle of 8
 /// pixels around the target. Runs with the effect already in
-/// gBattleFxWork.
+/// gBattleEffectWork.
 ///
 /// Nothing calls it. Copies the skull palette over the first 128 bytes of BG
 /// palette RAM; writes REG_BG2PA, REG_BG2X and REG_BLDALPHA; keeps each

@@ -158,7 +158,7 @@ extern s32 gSerialSendSource;
 /// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
 /// runtime.c)
 extern volatile u16 gSerialSendSize;
-extern s32 gSerialReceiveDest;
+extern s32 gSerialReceiveDestination;
 /// volatile: tagged where it steers, in LinkBattle_ReceiveActions (tbs
 /// battle.c) and LinkLobby_ReceivePartyRecords (tbs lobby.c)
 extern volatile u16 gSerialReceivedSize;
@@ -201,7 +201,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void) {
   state->status = 0x80;
   gSerialSendSource = zero;
   gSerialSendSize = zero;
-  gSerialReceiveDest = zero;
+  gSerialReceiveDestination = zero;
   *(u8 *)&state->peerFlags = zero;
   *(u8 *)&state->flags = zero;
   gSerialReceivedSize = zero;

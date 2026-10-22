@@ -19,8 +19,8 @@
 ///   and Mercury Lighthouse's scripted battles). Back from it
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN), Mia nods to
 ///   the leader and goes on into the lighthouse
-///   (FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE); cell code 10 by the doorway brings
-///   the party back to
+///   (FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA); cell code 10 by the doorway
+///   brings the party back to
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, so this plays
 ///   even if the party wandered off. Six statues line the way to the doorway.
 /// - The pool. An inscription (cell code 1) reads `He who honors the heart of
@@ -304,7 +304,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 speedRoll;
   s32 velocityY;
   struct EffectOptions *effectData;
-  struct EffectOptions effectOptions;
+  struct EffectOptions options;
 
   leaderColumn = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
   leaderRow = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16);
@@ -318,7 +318,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(40);
     sparkIndex = 0;
-    effectData = &effectOptions;
+    effectData = &options;
     velocityZ = 0;
     do {
       effectData->priority = 1;
@@ -452,7 +452,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   switch (gGameState.entrance) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
     // Until Mia has gone in, arriving here plays the Lizard Man scene.
-    if (!GameFlag_IsSet(FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE))
+    if (!GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
       Engine_EventRequestExit(
           MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_BEFORE_LIZARD_MAN);
     // Both doorway entrances mirror the east side's statues.
@@ -669,7 +669,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 /// Mercury Lighthouse, the doorway, at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, back from the
 /// Lizard Man battle, once: Mia nods to the leader and goes on into the
-/// lighthouse. Sets FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE.
+/// lighthouse. Sets FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA.
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   struct FieldActor *actor;
 
@@ -697,7 +697,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorWaitForMove(MIA);
     Actor_SetPosition(MIA, 0, 0);
-    GameFlag_Set(FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE);
+    GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA);
     gEventWork->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     Engine_EventEnd();
@@ -807,37 +807,37 @@ const s32 *gEffectScripts[] = {
 
 s32 gMercuryLighthouseEntrance_LizardManStepCentre[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SET(SW_STEERING, 0),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(136), 0, PIXELS(152)),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gMercuryLighthouseEntrance_LizardManStepWest[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SET(SW_STEERING, 0),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(120), 0, PIXELS(152)),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gMercuryLighthouseEntrance_LizardManStepEast[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SET(SW_STEERING, 0),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(152), 0, PIXELS(152)),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 

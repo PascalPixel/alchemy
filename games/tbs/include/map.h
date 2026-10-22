@@ -92,7 +92,7 @@ struct MapState {
   u16 flags;       ///< REG_DISPCNT bits; Map_SetShownLayers sets BG1 to BG3
   u8 wideTiles;    ///< nonzero: tile animations copy 64-byte tiles
   u8 unk17;        ///< MapScrollWork's footprints; Bilibin Cave sets it
-  struct MapAnimation anim[16];
+  struct MapAnimation animations[16];
   struct BlendScriptState blend;
   u8 unke4[0x1f]; ///< MapScrollWork's view, bounds and shown layers
   /// The last BLDCNT the blend script wrote; with mode 1 in bits 7..6 its
@@ -107,7 +107,7 @@ struct MapState {
 STATIC_ASSERT(sizeof(struct MapAnimation) == 12);
 STATIC_ASSERT(offsetof(struct MapState, flags) == 0x14);
 STATIC_ASSERT(offsetof(struct MapState, wideTiles) == 0x16);
-STATIC_ASSERT(offsetof(struct MapState, anim) == 0x18);
+STATIC_ASSERT(offsetof(struct MapState, animations) == 0x18);
 STATIC_ASSERT(offsetof(struct MapState, blend) == 0xd8);
 STATIC_ASSERT(offsetof(struct MapState, layers) == 0x130);
 

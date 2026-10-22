@@ -254,8 +254,8 @@ struct BattleUnit {
   u8 level;        ///< 1 to 99 for a character
   s16 baseHp;      ///< before equipment, Djinn and class (Unit_Calculate)
   s16 basePp;      ///< before equipment, Djinn and class (Unit_Calculate)
-  s16 hpGauge;     ///< hp / maxHp in 0..0x4000; 1 while any HP remains
-  s16 ppGauge;     ///< pp / maxPp in 0..0x4000; 1 while any PP remains
+  s16 hpGauge;     ///< hp / hpMax in 0..0x4000; 1 while any HP remains
+  s16 ppGauge;     ///< pp / ppMax in 0..0x4000; 1 while any PP remains
   u16 baseAttack;  ///< before equipment, Djinn, class and stages
   u16 baseDefense; ///< before equipment, Djinn, class and stages
   u16 baseAgility; ///< before equipment, Djinn, class and stages
@@ -270,8 +270,8 @@ struct BattleUnit {
   /// element preset, a character's from its element levels
   /// (Unit_CalculateBaseElements).
   struct BattleElementStats baseElement[ELEMENT_COUNT];
-  s16 maxHp; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
-  s16 maxPp; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
+  s16 hpMax; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
+  s16 ppMax; ///< 0 to 1999 for a character, 9999 for an enemy (Unit_Calculate)
   s16 hp;    ///< current HP, 0 when downed
   s16 pp;    ///< current PP
   u16 atk;   ///< Attack, 0 to 999 (Unit_Calculate)
@@ -429,10 +429,10 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
 // are scheduled across the store before them.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
-    (unit)->hpGauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->maxHp);        \
+    (unit)->hpGauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->hpMax);        \
     if ((unit)->hpGauge == 0 && (unit)->hp != 0)                               \
       (unit)->hpGauge = 1;                                                     \
-    (unit)->ppGauge = Vitals_Clamp(((unit)->pp << 14) / (unit)->maxPp);        \
+    (unit)->ppGauge = Vitals_Clamp(((unit)->pp << 14) / (unit)->ppMax);        \
     if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
       (unit)->ppGauge = 1;                                                     \
   } while (0)

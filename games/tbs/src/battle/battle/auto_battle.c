@@ -381,8 +381,8 @@ s32 BattlePresentation_RunApproachAction(struct BattleActionRecord *input) {
 
   WaitFrames(4);
   BattleEffect_DispatchByIdRangeFar(&work.effect);
-  ObjMotRst(work.effect.actors[0]);
-  ObjMotRst(work.effect.actor);
+  BattleMotion_ReturnToSpot(work.effect.actors[0]);
+  BattleMotion_ReturnToSpot(work.effect.actor);
   return 0;
 }
 
@@ -448,7 +448,7 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
       work.savedAnimationParameters[targetIndex][entryIndex] =
-          animation->entries[entryIndex]->param;
+          animation->entries[entryIndex]->colorMode;
   }
   /* FAKEMATCH(one-pass): the five effects in a one-pass block, which places
    * each call's argument before its kind's store; as plain statements, 43 of
@@ -468,8 +468,8 @@ s32 BattlePresentation_RunUnitAction(struct BattleActionRecord *action) {
     ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.count; targetIndex++)
-    ObjMotRst(work.effect.actors[targetIndex]);
-  ObjMotRst(work.effect.actor);
+    BattleMotion_ReturnToSpot(work.effect.actors[targetIndex]);
+  BattleMotion_ReturnToSpot(work.effect.actor);
   return 0;
 }
 
@@ -483,7 +483,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
                                         u8 *context) {
   u8 localContext[4];
   struct BattleUnit *unit;
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
 
   if (context == 0) {
     context = localContext;
@@ -539,16 +539,16 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
 /// Called by BattlePresentation_ApplyUnitDamage.
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
-  struct AnimationObject *object;
+  struct AnimationObject *animation;
   if (Unit_GetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
-    object = BattleObject_Get(unitId)->object->records;
-    AnimationObject_SelectAnimationFar(object, POSE_DAMAGE);
-    actorData = object->entries[0];
-    actorData->param = SPRITE_COLOR_GREY;
+    animation = BattleObject_Get(unitId)->object->records;
+    AnimationObject_SelectAnimationFar(animation, POSE_DAMAGE);
+    actorData = animation->entries[0];
+    actorData->colorMode = SPRITE_COLOR_GREY;
     actorData->frame = 0xFF;
     WaitFrames(4);
-    Map_RenderAnimatedTileFramesForObjectFar((u8 *)object);
+    Map_RenderAnimatedTileFramesForObjectFar((u8 *)animation);
     BattleObject_MarkForRelease(unitId);
   }
 }

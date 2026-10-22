@@ -45,7 +45,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   s32 angle;
   s32 *line;
 
-  slots = gBattleFxWork;
+  slots = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(BGCNT_WRAP);

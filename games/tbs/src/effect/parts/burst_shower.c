@@ -22,8 +22,8 @@ enum BurstShowerMode {
   BURST_SHOWER_MODE_FACES,     ///< demon faces from 16 pixels in front
 };
 
-/// Arms DMA 0 to copy one word of gBattleFxWork's bg2xLines table into BG2X at
-/// each horizontal blank, bending BG2 line by line.
+/// Arms DMA 0 to copy one word of gBattleEffectWork's bg2xLines table into BG2X
+/// at each horizontal blank, bending BG2 line by line.
 ///
 /// Runs each frame as a scheduler callback added by the target motes, the
 /// casting impacts, Condemn, the gathering lights, Torch and Planet Diver,

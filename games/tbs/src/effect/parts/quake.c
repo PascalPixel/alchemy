@@ -165,7 +165,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
                   column * QUAKE_PILLAR_WIDTH + 8 + QUAKE_PILLAR_WIDTH &&
               screen.y >= top) {
             // 12 pixels a frame upwards, under the gravity the battle's own
-            // motions use (ObjMotRst in battle/motion.c).
+            // motions use (BattleMotion_ReturnToSpot in battle/motion.c).
             object->velocityY = 12 << 16;
             object->verticalMotionStrength = 0xab85;
           }

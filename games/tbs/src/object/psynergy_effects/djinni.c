@@ -75,7 +75,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // sprite: the Venus sprite (90) takes param 2, Mars (92) 10, and Mercury
   // (91) and Jupiter (93) 9 (the scenes' Djinni placements show which
   // sprite is which element). They share one VRAM cache entry.
-  sprite = djinni->sprite->entries[0]->animId;
+  sprite = djinni->sprite->entries[0]->animationId;
   tint = 9;
   if (sprite == 90)
     tint = 2;
@@ -198,29 +198,30 @@ void FieldObject_PlaceSceneActors(void) {
     if (event - DJINNI_EVENT_0 <= 80 && gGameState.sceneChangeReason > 0) {
       for (id = 8; id <= 65; id++) {
         struct ScenePlacement *desc = Scene_FindActorPlacement(id);
-        struct ObjectRuntime *obj;
+        struct ObjectRuntime *object;
 
         if (desc == NULL ||
             desc->condition - FLAG_DJINNI_0 != event - DJINNI_EVENT_0)
           continue;
-        obj = ObjectTable_Get(id);
-        if (obj == NULL)
+        object = ObjectTable_Get(id);
+        if (object == NULL)
           continue;
         // Without DJINN_NO_HOP, back at its placement in a new actor's
         // ground state: no ground height yet, following the terrain and
         // falling.
         if (flags == 0) {
-          obj->terrainHeight = flags;
-          obj->flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-          Object_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
+          object->terrainHeight = flags;
+          object->flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+          Object_SetPositionAndResetMotionFar(object, desc->x, desc->y,
+                                              desc->z);
         } else {
           struct ObjectRuntime *leader =
               ObjectTable_Get(gGameState.selectedActor);
 
-          Object_SetPositionAndResetMotionFar(obj, leader->x, leader->y,
+          Object_SetPositionAndResetMotionFar(object, leader->x, leader->y,
                                               leader->z - (32 << 16));
         }
-        ObjectDispatch_SelectAnimationFar(obj, 1);
+        ObjectDispatch_SelectAnimationFar(object, 1);
       }
     }
   }
@@ -291,7 +292,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
 /// Scheduler callback: updates the 24 effect slots.
 void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateSceneSlots(); }
 
-/// Allocates and clears the effect slots (HEAP_SLOT_FX) and starts their
+/// Allocates and clears the effect slots (HEAP_SLOT_EFFECT) and starts their
 /// update callback. The block is a whole effect scene, gEffectWork, the slot
 /// a Psynergy effect's scene also takes. Called by the Djinn joining effects
 /// (jupiter.c, mars.c, venus.c and mercury.c) and Altmiller Cave's scene;
@@ -299,8 +300,9 @@ void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateSceneSlots(); }
 void FieldEffect_InitializeSlots(void) {
   void *work;
 
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof(struct FieldFxScene));
-  Dma_Fill32(0, work, sizeof(struct FieldFxScene));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_EFFECT,
+                                   sizeof(struct FieldEffectScene));
+  Dma_Fill32(0, work, sizeof(struct FieldEffectScene));
   // 3200 is SCHEDULER_KEY_MAIN_LOOP: the slots update once a frame.
   Scheduler_AddOrUpdateCallback(FieldEffect_UpdateAllSlots, 3200);
 }
@@ -309,17 +311,17 @@ void FieldEffect_InitializeSlots(void) {
 /// use and releases their heap block, gEffectWork with it. Then waits a
 /// frame. Pairs with FieldEffect_InitializeSlots.
 void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
-  struct FieldFxScene *scene = gEffectWork;
-  struct EffectSlot *slot;
+  struct FieldEffectScene *scene = gEffectWork;
+  struct EffectSlot *effect;
   s32 i;
 
   Scheduler_RemoveCallback(FieldEffect_UpdateAllSlots);
   for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
-    slot = &scene->slots[i];
-    if (slot->active != 0)
-      FieldEffect_ClearOwnedSlot(slot);
+    effect = &scene->effects[i];
+    if (effect->active != 0)
+      FieldEffect_ClearOwnedSlot(effect);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_EFFECT);
   WaitFrames(1);
 }
 

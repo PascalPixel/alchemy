@@ -220,13 +220,11 @@ enum ImilTownFlag {
   FLAG_IMIL_SNOWMAN_MOVED = FLAG_SCENE_TEMP_03
 };
 
-/// Imil's shops and inn, by their numbers in the shop and inn tables.
-enum {
-  SHOP_IMIL_WEAPONS = 10,
-  SHOP_IMIL_ARMOR = 11,
-  SHOP_IMIL_ITEMS = 12,
-  INN_IMIL = 4
-};
+/// Imil's shops, by their numbers in the shop table.
+enum { SHOP_IMIL_WEAPONS = 10, SHOP_IMIL_ARMOR = 11, SHOP_IMIL_ITEMS = 12 };
+
+/// Imil's inn, as Engine_InnOpen numbers the inns.
+enum { IMIL_INN = 4 };
 
 /// The weapon and armor counters' trigger cells in the houses: searching one
 /// facing north reaches its seller.
@@ -257,13 +255,13 @@ enum { TRIGGER_WEAPON_COUNTER = 10, TRIGGER_ARMOR_COUNTER = 11 };
 enum ImilAnimation {
   /// Lying in bed, only the head above the covers: the old man
   /// (SPRITE_OLD_MAN_WITH_CANE, spr_103.png) and the sick sellers.
-  IMIL_ANIM_LIE_IN_BED = 5,
-  IMIL_ANIM_SIT_UP = 7, ///< the old man sits up in bed
-  /// The old man lies back down, then IMIL_ANIM_LIE_IN_BED.
-  IMIL_ANIM_LIE_BACK = 8,
+  IMIL_ANIMATION_LIE_IN_BED = 5,
+  IMIL_ANIMATION_SIT_UP = 7, ///< the old man sits up in bed
+  /// The old man lies back down, then IMIL_ANIMATION_LIE_IN_BED.
+  IMIL_ANIMATION_LIE_BACK = 8,
   /// The strongman's knee bends, over and over (SPRITE_STRONGMAN,
   /// spr_116.png).
-  IMIL_ANIM_SQUATS = 9
+  IMIL_ANIMATION_SQUATS = 9
 };
 
 static void Imil_MeetMiaAtOldCouplesHouse(void);
@@ -425,7 +423,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTHEAST + FACING_STEP, 10);
     Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                             IMIL_ANIM_SQUATS);
+                             IMIL_ANIMATION_SQUATS);
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilOneTwoThreeFour));
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
@@ -439,7 +437,7 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTHEAST + FACING_STEP, 10);
     Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                             IMIL_ANIM_SQUATS);
+                             IMIL_ANIMATION_SQUATS);
   }
 
   Engine_EventEnd();
@@ -464,11 +462,11 @@ static void Imil_TalkToOldMan(void) {
   } else {
     if (GameFlag_IsSet(FLAG_IMIL_MET_MIA) != 0) {
       Engine_EventStart();
-      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_SIT_UP);
+      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
       Engine_MapAnimateCells(gImil_CellStepsA, 10, 69);
       Engine_EventSetMessage(MsgMercuryFeelMuchBetter);
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
-      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_BACK);
+      Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
       Map_AnimateCells(gImil_CellStepsB, 10, 69);
       Engine_EventEnd();
     } else {
@@ -612,12 +610,12 @@ static void Imil_ReadApprenticeMind(void) {
 /// stops, the door opens and the leader walks in; the Sanctum's door
 /// (IMIL_TO_IMIL_INTERIORS_NORTHEAST) has its own sound and a slower walk.
 static void Imil_OpenDoorAndExit(void) {
-  struct EventWork *event;
+  struct EventWork *work;
   struct FieldActor *actor;
   u32 i;
   s32 exit;
 
-  event = gEventWork;
+  work = gEventWork;
   Engine_EventStart();
   for (i = ACTOR_FIRST_PLACED; i <= 65; i++) {
     actor = Object_GetById(i);
@@ -625,7 +623,7 @@ static void Imil_OpenDoorAndExit(void) {
       actor->motionFlags = 0;
     }
   }
-  exit = (s16)(event->touchedTrigger - 50);
+  exit = (s16)(work->touchedTrigger - 50);
   if (exit == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
     Engine_AudioPlayCue(SE_188);
   } else {
@@ -773,7 +771,7 @@ static void Imil_TalkToInnkeeper(void) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
-    Engine_InnOpen(INN_IMIL, ACTOR_INNKEEPER);
+    Engine_InnOpen(IMIL_INN, ACTOR_INNKEEPER);
   } else {
     Engine_EventStart();
     Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
@@ -834,7 +832,7 @@ s32 Imil_Initialize(void) {
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ActorSetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
-                             IMIL_ANIM_SQUATS);
+                             IMIL_ANIMATION_SQUATS);
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       Engine_GameFlagClear(FLAG_IMIL_NO_FOOTPRINTS);
       Engine_GameFlagClear(FLAG_IMIL_FOOTPRINTS);
@@ -872,7 +870,7 @@ s32 Imil_Initialize(void) {
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MANS_BED), 0);
         Engine_ActorSetPosition(ACTOR_OLD_MAN, PIXELS(174), PIXELS(164));
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MAN), 0);
-        Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_IN_BED);
+        Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_IN_BED);
         Actor_SetPosition(ACTOR_OLD_WOMAN, PIXELS(168), PIXELS(152));
         Object_GetById(ACTOR_OLD_WOMAN)->facing =
             FACING_SOUTHEAST + FACING_STEP;
@@ -911,9 +909,11 @@ s32 Imil_Initialize(void) {
       } else {
         Object_GetById(ACTOR_WEAPON_MERCHANT)->scaleX = -Q16_ONE;
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEAPON_MERCHANT), 0);
-        Engine_ActorSetAnimation(ACTOR_WEAPON_MERCHANT, IMIL_ANIM_LIE_IN_BED);
+        Engine_ActorSetAnimation(ACTOR_WEAPON_MERCHANT,
+                                 IMIL_ANIMATION_LIE_IN_BED);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ARMOR_MERCHANT), 0);
-        Engine_ActorSetAnimation(ACTOR_ARMOR_MERCHANT, IMIL_ANIM_LIE_IN_BED);
+        Engine_ActorSetAnimation(ACTOR_ARMOR_MERCHANT,
+                                 IMIL_ANIMATION_LIE_IN_BED);
       }
     } else if (entrance == IMIL_INTERIORS_HOUSE_WEST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -932,7 +932,8 @@ s32 Imil_Initialize(void) {
         Object_GetById(ACTOR_ITEM_MERCHANTS_DAUGHTER)->collisionFlags |= 4;
         Object_GetById(ACTOR_ITEM_MERCHANT)->scaleX = -Q16_ONE;
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ITEM_MERCHANT), 0);
-        Engine_ActorSetAnimation(ACTOR_ITEM_MERCHANT, IMIL_ANIM_LIE_IN_BED);
+        Engine_ActorSetAnimation(ACTOR_ITEM_MERCHANT,
+                                 IMIL_ANIMATION_LIE_IN_BED);
       }
     } else if (entrance == IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -1019,7 +1020,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageAndWait(MIA, 0, 40);
   Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0, 20);
   Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_SIT_UP);
+  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
   Map_AnimateCells(gImil_CellStepsA, 10, 69);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -1027,7 +1028,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageAndWait(MIA, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_OLD_MAN, 1);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIM_LIE_BACK);
+  Engine_ActorSetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
   Map_AnimateCells(gImil_CellStepsB, 10, 69);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
@@ -1188,7 +1189,7 @@ static void Imil_OldManBobsAndSpeaks(void) {
 }
 
 static void Imil_MiaCastsPlyOnOldMan(void) {
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
 
   Engine_PsynergyStart(ABILITY_PLY, 1);
   work = gEffectWork;
@@ -1220,24 +1221,24 @@ static void Imil_InitializeRisingEffect(struct FieldActor *work) {
 
 /// Moves and enlarges an ambient effect, then releases it when its timer
 /// expires.
-static void Imil_UpdateRisingEffect(union FieldObject *object) {
-  object->effect.x += (s16)object->effect.spin << 8;
-  object->effect.y += PIXELS(1) / 2;
-  object->effect.scaleX += 3 * Q16_ONE / 100;
-  object->effect.scaleY += 3 * Q16_ONE / 100;
-  object->effect.spin += 2;
-  if (--object->effect.countdown == 0) {
-    Engine_ObjectDispatchRelease(&object->actor);
+static void Imil_UpdateRisingEffect(union FieldObject *fieldObject) {
+  fieldObject->effect.x += (s16)fieldObject->effect.spin << 8;
+  fieldObject->effect.y += PIXELS(1) / 2;
+  fieldObject->effect.scaleX += 3 * Q16_ONE / 100;
+  fieldObject->effect.scaleY += 3 * Q16_ONE / 100;
+  fieldObject->effect.spin += 2;
+  if (--fieldObject->effect.countdown == 0) {
+    Engine_ObjectDispatchRelease(&fieldObject->actor);
   }
 }
 
 /// Initializes a newly created ambient effect for its one-second rise.
-static inline void Imil_StartRisingEffect(union FieldObject *object) {
-  if (object != NULL) {
-    Imil_InitializeRisingEffect(&object->actor);
-    object->effect.countdown = 60;
-    object->effect.update = Imil_UpdateRisingEffect;
-    Object_SetMode(&object->actor, 5);
+static inline void Imil_StartRisingEffect(union FieldObject *fieldObject) {
+  if (fieldObject != NULL) {
+    Imil_InitializeRisingEffect(&fieldObject->actor);
+    fieldObject->effect.countdown = 60;
+    fieldObject->effect.update = Imil_UpdateRisingEffect;
+    Object_SetMode(&fieldObject->actor, 5);
   }
 }
 
@@ -1247,33 +1248,33 @@ static void Imil_SpawnAmbientEffects(void) {
   // volatile: the type of &gFrameCount (tagged in frame.h); the six editions
   // build the same bytes without it
   volatile u32 *frame;
-  union FieldObject *object;
+  union FieldObject *fieldObject;
 
   frame = &gFrameCount;
   if (((u32)*frame % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(463),
-                                                0, PIXELS(292));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(463), 0, PIXELS(292));
+    Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 30) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(320),
-                                                PIXELS(32), PIXELS(356));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(320), PIXELS(32), PIXELS(356));
+    Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 10) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(118),
-                                                0, PIXELS(70));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(118), 0, PIXELS(70));
+    Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 50) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(342),
-                                                0, PIXELS(124));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(342), 0, PIXELS(124));
+    Imil_StartRisingEffect(fieldObject);
   }
   if (((u32)(*frame + 80) % (u32)60) == 0) {
-    object = (union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(431),
-                                                0, PIXELS(171));
-    Imil_StartRisingEffect(object);
+    fieldObject = (union FieldObject *)Object_Create(
+        SPRITE_DUST_PUFF, PIXELS(431), 0, PIXELS(171));
+    Imil_StartRisingEffect(fieldObject);
   }
 }
 
@@ -1539,7 +1540,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
 }
 
 /// While sliding on Imil's ice, the leader turns toward the held direction.
-static void Imil_TurnSlidingActor(union FieldObject *object) {
+static void Imil_TurnSlidingActor(union FieldObject *fieldObject) {
   struct FieldActor *actor;
   s32 z;
   s32 t;
@@ -1547,7 +1548,7 @@ static void Imil_TurnSlidingActor(union FieldObject *object) {
   u16 prev;
   s32 n;
 
-  actor = &object->actor;
+  actor = &fieldObject->actor;
   n = (u16)actor->timer;
   z = 0;
   t = ((s16 *)&actor->timer)[z];
@@ -1701,7 +1702,7 @@ s32 gImil_ShiverScript[] = {
 };
 
 s32 gImil_OldWomanHurryScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(136), 0, PIXELS(192)),
     SC_SYNC,
     SC_MOVE(PIXELS(136), 0, PIXELS(136)),
@@ -1709,15 +1710,15 @@ s32 gImil_OldWomanHurryScript[] = {
     SC_MOVE(PIXELS(149), 0, PIXELS(116)),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_EAST),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gImil_LeaderStepAsideScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(155), 0, PIXELS(135)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, 0xd000),
     SC_END,
     SC_ADD(SW_SCALE_Y, 3 * Q16_ONE / 8),
@@ -1752,7 +1753,7 @@ s32 gImil_SparkScript[] = {
 };
 
 s32 gImil_MiaCheckRoomScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(177), 0, PIXELS(136)),
     SC_SYNC,
     SC_MOVE(PIXELS(161), 0, PIXELS(124)),
@@ -1762,12 +1763,12 @@ s32 gImil_MiaCheckRoomScript[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(135), 0, PIXELS(189)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gImil_MiaRunOutScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(165), 0, PIXELS(207)),
     SC_SYNC,
     SC_SET(0x23, 1),
@@ -1786,7 +1787,7 @@ s32 gImil_FaceTargetScript[] = {
 };
 
 s32 gImil_FollowMiaOutScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(132), 0, PIXELS(206)),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

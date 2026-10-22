@@ -26,10 +26,10 @@ extern const s8 gBattlePlacement_StepPairs[];
 /// player's object, which it leaves alone.
 extern u8 gPlayerObjectId[];
 /// Each weapon's kind: bits 15..9 the kind, which indexes the
-/// gBattleUnit_WeaponAnims tables, and 8..0 the item id; ended by 0xffff
+/// gBattleUnit_WeaponAnimations tables, and 8..0 the item id; ended by 0xffff
 /// (BattleUnit_GetWeaponKind).
 extern u16 gResource_SlotAssignments[];
-struct BattleObj;
+struct BattleObject;
 
 struct AnimationEntry;
 struct AnimationObject;
@@ -42,7 +42,7 @@ struct BattleEffectArgument;
 struct BattleEventState;
 struct BattleGroupOrder;
 struct BattleLocationRule;
-struct BattleObj;
+struct BattleObject;
 struct BattlePlan;
 struct BattlePresentationTransition;
 struct BattleSummonState;
@@ -66,7 +66,7 @@ struct ScriptObjectEntry;
 struct BattleSource;
 struct SparkObject;
 struct TransitionActorList;
-struct WaveFxWork;
+struct WaveEffectWork;
 
 /// The battle camera (struct BattleCamera) as the effects that swing it see it.
 struct CameraWork {
@@ -81,11 +81,11 @@ struct EffectVector {
 };
 /// One of the star field's three rings, moving outward on the effect canvas.
 struct Ring {
-  s32 x;    ///< 1/1024 canvas pixels
-  s32 y;    ///< 1/1024 canvas pixels
-  s32 velX; ///< 1/1024 canvas pixels per frame
-  s32 velY; ///< 1/1024 canvas pixels per frame
-  s32 age;  ///< frames
+  s32 x;         ///< 1/1024 canvas pixels
+  s32 y;         ///< 1/1024 canvas pixels
+  s32 velocityX; ///< 1/1024 canvas pixels per frame
+  s32 velocityY; ///< 1/1024 canvas pixels per frame
+  s32 age;       ///< frames
 };
 /// The position an item-break effect spawns its objects and shards from.
 struct ScatterPosition {
@@ -127,13 +127,13 @@ extern const u8 gBattlePresentation_CurtainTiles[];
 /// time into the curtain's first tile.
 extern const u8 gBattlePresentation_TileVariants[];
 /// Garet's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
-extern u16 gBattleUnit_WeaponAnimsGaret[];
+extern u16 gBattleUnit_WeaponAnimationsGaret[];
 /// Ivan's weapon sprite by weapon kind.
-extern u16 gBattleUnit_WeaponAnimsIvan[];
+extern u16 gBattleUnit_WeaponAnimationsIvan[];
 /// Mia's weapon sprite by weapon kind.
-extern u16 gBattleUnit_WeaponAnimsMia[];
+extern u16 gBattleUnit_WeaponAnimationsMia[];
 /// Jenna's weapon sprite by weapon kind; Felix draws none.
-extern u16 gBattleUnit_WeaponAnimsJenna[];
+extern u16 gBattleUnit_WeaponAnimationsJenna[];
 /// The size of BitDecoder_DecodeImage, which BattleBackground_Load copies to
 /// HEAP_SLOT_TEMP_RENDERER; constants.ld defines it as an address equal to the
 /// size.
@@ -157,12 +157,12 @@ extern u16 gEncounter_EnemyGroupTable[];
 #ifndef OWN_gBattleBgFxWork
 /// The HEAP_SLOT_MIND_READ work slot: Mind Read's wave work while its effect
 /// runs.
-extern struct WaveFxWork *gBattleBgFxWork;
+extern struct WaveEffectWork *gBattleBgEffectWork;
 #endif
 #ifndef OWN_gBattleFxWork
 /// The work slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sheet:
 /// the running battle effect's BattleEffectWork first.
-extern void *gBattleFxWork[];
+extern void *gBattleEffectWork[];
 #endif
 #ifndef OWN_gBattleOwnerStates
 /// The HEAP_SLOT_LINK_OWNER_STATES work slot: the six enemy battle units,
@@ -189,7 +189,7 @@ extern const u8 gObjectMotion_LinkedActionScript[];
 /// (Scene_SetDefeatReturnPoint).
 extern const s16 gParty_PairResolveRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
-extern u16 gBattleUnit_WeaponAnimsIsaac[];
+extern u16 gBattleUnit_WeaponAnimationsIsaac[];
 /// The 20 enemy classes whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
 extern u16 gBattleFormation_LevelMatchedEnemies[];

@@ -13,7 +13,7 @@ struct BattleUnit;
 /// An inventory entry's parts, and a unit's slot count.
 /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item id
 enum InventoryEncoding {
-  ITEM_ID_MASK = 0x1ff,
+  INVENTORY_ITEM_ID_MASK = 0x1ff,
   INVENTORY_EQUIPPED = 0x200,
   INVENTORY_BROKEN = 0x400,
   /// The item id with its broken and equipped bits, all but the quantity.

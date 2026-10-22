@@ -115,7 +115,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   s32 originX;
   s32 originY;
 
-  cursor = gBattleFxWork;
+  cursor = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -466,7 +466,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
   s32 i;
   s32 paletteId;
 
-  cursor = gBattleFxWork;
+  cursor = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   EFFECT_START_NARROW_CANVAS(0);

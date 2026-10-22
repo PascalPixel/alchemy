@@ -11,12 +11,12 @@
 /// The event command "set view bounds": the camera keeps the screen inside
 /// these map coordinates (Camera_MoveWithinMapBounds).
 void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
-  struct MapScrollWork *work = gMapWork[0];
+  struct MapScrollWork *map = gMapWork[0];
 
-  work->minX = minX;
-  work->minY = minY;
-  work->maxX = maxX;
-  work->maxY = maxY;
+  map->minX = minX;
+  map->minY = minY;
+  map->maxX = maxX;
+  map->maxY = maxY;
 }
 
 // Scheduler callback: moves the zoom one step from its previous value toward
@@ -29,31 +29,31 @@ void FieldEffect_StepRatioTransition(void) {
 #else
 s32 FieldEffect_StepRatioTransition(void) {
 #endif
-  struct PerspectiveWork *work;
+  struct PerspectiveWork *perspective;
   s16 *frames;
   s32 *from;
   s16 *step;
   s32 zoom;
   s32 delta;
 
-  work = gMapWork[0];
+  perspective = gMapWork[0];
   if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
                                                  sizeof(struct FieldWork)))
           ->camera->movementState != 0)
     return;
-  frames = (s16 *)&work->zoomTransitionFrames;
+  frames = (s16 *)&perspective->zoomTransitionFrames;
   if (*frames == 0)
     return;
-  from = &work->previousZoom;
-  delta = work->zoom - *from;
-  step = &work->zoomTransitionStep;
+  from = &perspective->previousZoom;
+  delta = perspective->zoom - *from;
+  step = &perspective->zoomTransitionStep;
   (*step)++;
   /* FAKEMATCH(wrapper): the division written as a call to __divsi3, an
    * ordinary call where the operator makes a libcall block; as
    * delta * *step / *frames, 93 of 87 instructions differ in tbs-en. */
   zoom = *from + __divsi3(delta * *step, *frames);
-  work->distance = Iwram_MulQ16(work->farPlane, zoom);
-  gScanlinePitch = work->pitch + 1;
+  perspective->distance = Iwram_MulQ16(perspective->farPlane, zoom);
+  gScanlinePitch = perspective->pitch + 1;
   if (*step == *frames) {
     *frames = 0;
 #ifdef UBFIX
@@ -70,7 +70,7 @@ s32 FieldEffect_StepRatioTransition(void) {
 /// (farPlane times it, FieldEffect_StepRatioTransition): a zoom of 2 halves the
 /// distance. Event_WaitForZoomTransition waits for it.
 void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
-  struct PerspectiveWork *work = gMapWork[0];
+  struct PerspectiveWork *perspective = gMapWork[0];
   s32 inverse;
 
   if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
@@ -80,10 +80,10 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   {
     inverse = Iwram_RatioMulQ14(zoom, 0x10000); // 1 / zoom
   }
-  work->previousZoom = work->zoom;
-  work->zoom = inverse;
-  work->zoomTransitionFrames = frames;
-  work->zoomTransitionStep = 0;
+  perspective->previousZoom = perspective->zoom;
+  perspective->zoom = inverse;
+  perspective->zoomTransitionFrames = frames;
+  perspective->zoomTransitionStep = 0;
   // 0xc94: a main-loop callback (high byte 0xc, as SCHEDULER_KEY_MAIN_LOOP)
   // at priority 0x94.
 #ifdef UBFIX
@@ -98,17 +98,17 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
 /// frames).
 void Event_WaitForZoomTransition(void) {
   s32 frames;
-  struct PerspectiveWork *work = gMapWork[0];
+  struct PerspectiveWork *perspective = gMapWork[0];
 
   if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
                                                  sizeof(struct FieldWork)))
           ->mode == MODE_WORLD_MAP) {
     frames = 0;
-    if (*(s16 *)&work->zoomTransitionFrames != 0) {
+    if (*(s16 *)&perspective->zoomTransitionFrames != 0) {
       do {
         WaitFrames(1);
         frames++;
-      } while (frames < 300 && *(s16 *)&work->zoomTransitionFrames != 0);
+      } while (frames < 300 && *(s16 *)&perspective->zoomTransitionFrames != 0);
     }
   }
 }

@@ -26,7 +26,7 @@
 /// sound and goes on), or -1 when cancelled or when the link battle's time
 /// runs out. The Djinn tutorial presses A every 120 frames.
 s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
-  struct CursorSprite cursor;
+  struct CursorSprite cursorStorage;
   struct MenuSprite sprites[4];
   u8 learnedSummons[33]; // The callable summons, in menu order
   u8 orderedSummons[33]; // Those standby can pay for first
@@ -36,7 +36,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   s32 glyph;
   s32 count;
   struct UiWindow *window;
-  struct UiRenderWork *render;
+  struct UiRenderWork *work;
   s32 drawnRow, drawnFirstEntry, selectedRow, firstEntry;
   s32 cursorHandle;
   struct UiWindow *description, *counts;
@@ -51,7 +51,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   s32 pressed, repeated, result;
   s32 index;
 
-  render = UI_WORK;
+  work = UI_WORK;
   drawnRow = -1;
   drawnFirstEntry = -1;
   // One 16x16 sprite.
@@ -117,13 +117,13 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    cur = &cursor;
+    cur = &cursorStorage;
 
     //------------------------------------------------------------------
     // Redraw when the page or row changes.
     //------------------------------------------------------------------
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
-      render->menuBusy = 1;
+      work->menuBusy = 1;
       Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
                           window->width - 2, 1, 15);
       Ui_FillVramBlockPattern();
@@ -156,7 +156,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
           s32 element;
 
           for (element = 0; element <= 3; element++) {
-            UiWindow_SetTilemapEntry(counts, element + SUMMON_ELEMENT_TILE,
+            UiWindow_SetTilemapEntry(counts, element + LIST_TILE_SUMMON_ELEMENT,
                                      element * 2, 0, 0);
             UiWindow_PutGlyph(counts, standby[element] + '0', element * 2 + 1,
                               0, GLYPH_DRAW_CHARACTER);
@@ -184,13 +184,14 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
             sprites[index].oam.f.tile = glyph;
             // A summon the party cannot afford is drawn in colour 2.
             if (!affordable)
-              UiWork_SetParamNibble(2);
+              UiWork_SetParameterNibble(2);
             UiText_DrawCharacterAtOffset(
                 SummonDefinition_Get(id)->nameMessageId + MsgAbilityName,
                 window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
-                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE,
+                UiWindow_SetTilemapEntry(window,
+                                         element + LIST_TILE_SUMMON_ELEMENT,
                                          col * 2 + SUMMON_COST_X, y, 0);
                 UiWindow_PutGlyph(window, summon->djinnRequired[element] + '0',
                                   col * 2 + SUMMON_COST_X + 1, y,
@@ -198,7 +199,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
                 col++;
               }
             }
-            UiWork_SetParamNibble(15);
+            UiWork_SetParameterNibble(15);
             visibleSummons[index++] = 1;
             if (index <= 3 &&
                 (id = orderedSummons[firstEntry + index]) != SUMMON_END)
@@ -222,8 +223,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
       }
       Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
                           window->width - 2, 1, 14);
-      render->dirty = 1;
-      render->menuBusy = 0;
+      work->dirty = 1;
+      work->menuBusy = 0;
     }
 
     //------------------------------------------------------------------
@@ -246,7 +247,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     /* FAKEMATCH(temporary): the cursor pushed through sprite, re-pointed at it
      * here, keeps the frame loop's registers; as &cursor or cur pushed
      * directly, 41 of 946 instructions differ in tbs-en. */
-    sprite = (struct MenuSprite *)&cursor;
+    sprite = (struct MenuSprite *)&cursorStorage;
     Runtime_PushSlotEntry(sprite, 242);
 
     // Blink required elements' standby counts every eight frames.
@@ -276,7 +277,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
                                window->width - (count + 3) / 4 - 3, -1, 0);
       UiWindow_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                                -1, 0);
-      UiRender_MarkRow(render, window->y - 1);
+      UiRender_MarkRow(work, window->y - 1);
     }
 
     //------------------------------------------------------------------

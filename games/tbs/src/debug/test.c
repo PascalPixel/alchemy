@@ -242,7 +242,7 @@ static void DebugMenu_IgnorePsynergy(void) {}
 /// sets the effect's childMode, and Force's shot then leaves its target where
 /// it is (object/psynergy_effects/force.c).
 static void DebugMenu_EnableEffectChildMode(void) {
-  ((struct FieldFxScene *)gEffectWork)->childMode = 1;
+  ((struct FieldEffectScene *)gEffectWork)->childMode = 1;
 }
 
 #if TBS_PATCH_3

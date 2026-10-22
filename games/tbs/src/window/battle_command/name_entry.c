@@ -248,7 +248,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_GetFar(member)->name;
-  struct UiRenderWork *render = UI_WORK;
+  struct UiRenderWork *work = UI_WORK;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct UiWindow *keyboardWindow;
@@ -270,7 +270,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   UiText_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);
 #endif
   UiWindow_DrawDividerLine(keyboardWindow, 18, 0, 18, 7);
-  render->dirty = textDirty;
+  work->dirty = textDirty;
   // A zero byte before editedName, as in the Japanese entry, where it is the
   // letter before the first; nothing here reads it.
   text[0] = result;
@@ -480,7 +480,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
 
       cell = ((keyboardWindow->y + keyRow + 1) << 5) + tx;
       // Key glyphs use the low byte of the mirrored tilemap entries.
-      letter = ((u8 *)&render->tilemap)[cell * 2];
+      letter = ((u8 *)&work->tilemap)[cell * 2];
       if (letterCount == NAME_MAX_LETTERS)
         continue;
       *end++ = letter;
@@ -524,7 +524,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   u8 text[NAME_MAX_BYTES + 2];
   u8 *editedName = text + 1;
   u8 *originalName = Unit_GetFar(member)->name;
-  struct UiRenderWork *render = UI_WORK;
+  struct UiRenderWork *work = UI_WORK;
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct UiWindow *keyboardWindow;
@@ -542,7 +542,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   UiWindow_CreateWithSideObject(UiText_GetSpeakerPortrait(member), 0, 3, 1);
   UiWindow_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
   UiWindow_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
-  render->dirty = textDirty;
+  work->dirty = textDirty;
   // A zero byte before editedName: the letter before the first, which
   // NameEntry_AcceptsMark reads when a voicing mark is entered first.
   text[0] = result;
@@ -714,7 +714,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       else
         UiWindow_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
       UiWindow_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
-      render->dirty = 1;
+      work->dirty = 1;
       continue;
     }
     if (gKeysRepeat & KEY_B) {
@@ -793,7 +793,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
 
       cell = ((keyboardWindow->y + keyRow + 1) << 5) + tx;
       // Key glyphs use the low byte of the mirrored tilemap entries.
-      letter = ((u8 *)&render->tilemap)[cell * 2];
+      letter = ((u8 *)&work->tilemap)[cell * 2];
       // The keyboard's dakuten key.
       if (letter == 0xfe)
         letter = NAME_VOICED_MARK;

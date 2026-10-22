@@ -319,7 +319,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Jumps the leader to the requested destination when nothing blocks it there;
 /// returns 1 when it jumped. Only the editions before the first patch have it;
 /// the patched ones look ahead instead (Engine_LeaderCheckAhead).
-static s32 VaultInteriors_TryJumpTo(struct FieldPosition *pos) {
+static s32 VaultInteriors_TryJumpTo(struct FieldPosition *position) {
   struct FieldActor *leader;
   u8 *flags;
   u8 savedMotionFlags;
@@ -327,7 +327,7 @@ static s32 VaultInteriors_TryJumpTo(struct FieldPosition *pos) {
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   flags = &leader->motionFlags;
   savedMotionFlags = *flags;
-  if (FieldObject_CheckMovementCollision(leader, pos) == 0) {
+  if (FieldObject_CheckMovementCollision(leader, position) == 0) {
     Engine_EventStart();
     Object_SetMode(leader, 6);
     Engine_TaskWait(6);
@@ -338,9 +338,9 @@ static s32 VaultInteriors_TryJumpTo(struct FieldPosition *pos) {
     leader->velocityY = PIXELS(4);
     *flags &= 0x7e;
     Engine_ActorSetSpriteFlags(leader, 0);
-    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
-                              ((union FieldCoordinate *)&pos->x)->part.pixel,
-                              ((union FieldCoordinate *)&pos->z)->part.pixel);
+    Engine_ActorMoveToAndWait(
+        ACTOR_PARTY_LEADER, ((union FieldCoordinate *)&position->x)->part.pixel,
+        ((union FieldCoordinate *)&position->z)->part.pixel);
     Object_SetMode(leader, 6);
     Engine_ActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     Engine_TaskWait(6);
@@ -363,7 +363,7 @@ static void Event_JumpAcrossRoofGap(void) {
   s32 z;
 #if !TBS_PATCH_1
   struct FieldPosition target;
-  struct FieldPosition *pos;
+  struct FieldPosition *position;
   struct FieldActor *leader;
 #endif
 
@@ -373,11 +373,11 @@ static void Event_JumpAcrossRoofGap(void) {
     Engine_LeaderCheckAhead();
 #else
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    pos = &target;
-    SET_POSITION(pos, leader->x.fixed,
+    position = &target;
+    SET_POSITION(position, leader->x.fixed,
                  Object_GetById(ACTOR_PARTY_LEADER)->y.fixed,
                  Object_GetById(ACTOR_PARTY_LEADER)->z.fixed - PIXELS(30));
-    VaultInteriors_TryJumpTo(pos);
+    VaultInteriors_TryJumpTo(position);
 #endif
     x = 42;
     z = 85;
@@ -388,11 +388,11 @@ static void Event_JumpAcrossRoofGap(void) {
     Engine_LeaderCheckAhead();
 #else
     leader = Object_GetById(ACTOR_PARTY_LEADER);
-    pos = &target;
-    SET_POSITION(pos, leader->x.fixed,
+    position = &target;
+    SET_POSITION(position, leader->x.fixed,
                  Object_GetById(ACTOR_PARTY_LEADER)->y.fixed,
                  Object_GetById(ACTOR_PARTY_LEADER)->z.fixed + PIXELS(30));
-    VaultInteriors_TryJumpTo(pos);
+    VaultInteriors_TryJumpTo(position);
 #endif
     x = 42;
     z = 85;
@@ -2678,9 +2678,9 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   struct FieldActor *actor;
   s32 aftermath;
   s32 rod;
-  struct EventWork *event;
+  struct EventWork *work;
 
-  event = gEventWork;
+  work = gEventWork;
   GameFlag_Set(FLAG_VAULT_THIEVES_JAILED);
   // With the screen still closed, the chests go back along the wall and the
   // thieves stand tied before the mayor.
@@ -3112,7 +3112,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
   {
-    u16 *slot = &event->message;
+    u16 *slot = &work->message;
     s32 saved = (s16)*slot;
 
     if (VaultInteriors_GetIvanVenusDjinnCount() != 0) {
@@ -3612,26 +3612,26 @@ s32 gVaultInteriors_ActionTable[] = {
 };
 
 s32 gVaultInteriors_FirstThiefEntryScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(776), 0, PIXELS(408)),
     SC_SYNC,
     SC_MOVE(PIXELS(776), 0, PIXELS(400)),
     SC_SYNC,
     SC_MOVE(PIXELS(800), 0, PIXELS(400)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, 0x3000),
     SC_WAIT(20),
     SC_END,
 };
 
 s32 gVaultInteriors_SecondThiefEntryScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(776), 0, PIXELS(408)),
     SC_SYNC,
     SC_MOVE(PIXELS(776), 0, PIXELS(416)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, 0x3000),
     SC_WAIT(20),
     SC_END,
@@ -3639,31 +3639,31 @@ s32 gVaultInteriors_SecondThiefEntryScript[] = {
 
 s32 gVaultInteriors_VaultScriptA[] = {
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(776), 0, PIXELS(408)),
     SC_SYNC,
     SC_MOVE(PIXELS(744), 0, PIXELS(408)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gVaultInteriors_VaultScriptB[] = {
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_MOVE(PIXELS(776), 0, PIXELS(408)),
     SC_SYNC,
     SC_MOVE(PIXELS(744), 0, PIXELS(408)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gVaultInteriors_VaultScriptC[] = {
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(792), 0, PIXELS(408)),
     SC_SYNC,
     SC_MOVE(PIXELS(808), 0, PIXELS(440)),
@@ -3674,7 +3674,7 @@ s32 gVaultInteriors_VaultScriptC[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(856), 0, PIXELS(408)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(10),
     SC_END,
@@ -3682,7 +3682,7 @@ s32 gVaultInteriors_VaultScriptC[] = {
 
 s32 gVaultInteriors_VaultScriptD[] = {
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(808), 0, PIXELS(408)),
     SC_SYNC,
     SC_MOVE(PIXELS(808), 0, PIXELS(456)),
@@ -3691,7 +3691,7 @@ s32 gVaultInteriors_VaultScriptD[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(856), 0, PIXELS(424)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(10),
     SC_END,
@@ -3699,7 +3699,7 @@ s32 gVaultInteriors_VaultScriptD[] = {
 
 s32 gVaultInteriors_VaultScriptE[] = {
     SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(840), 0, PIXELS(456)),
     SC_SYNC,
     SC_MOVE(PIXELS(808), 0, PIXELS(456)),
@@ -3708,7 +3708,7 @@ s32 gVaultInteriors_VaultScriptE[] = {
     SC_SYNC,
     SC_MOVE(PIXELS(776), 0, PIXELS(408)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
@@ -3722,170 +3722,170 @@ s32 gVaultInteriors_VaultScriptE[] = {
 // feet, west to east; the thief's 1 and 2 beside the west and east beds, 3
 // and 4 the south-west and south-east corners.
 s32 gVaultInteriors_SuspectToWestBedHead[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(104), 0, PIXELS(632)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectRoundToWestBedHead[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(72), 0, PIXELS(696)),
     SC_SYNC,
     SC_MOVE(PIXELS(80), 0, PIXELS(640)),
     SC_SYNC,
     SC_MOVE(PIXELS(104), 0, PIXELS(632)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectToMiddleBedHead[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(168), 0, PIXELS(632)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectToEastBedHead[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(232), 0, PIXELS(632)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectRoundToEastBedHead[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(264), 0, PIXELS(696)),
     SC_SYNC,
     SC_MOVE(PIXELS(264), 0, PIXELS(632)),
     SC_SYNC,
     SC_MOVE(PIXELS(232), 0, PIXELS(632)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectToWestBedFoot[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(104), 0, PIXELS(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectRoundToWestBedFoot[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(80), 0, PIXELS(640)),
     SC_SYNC,
     SC_MOVE(PIXELS(72), 0, PIXELS(696)),
     SC_SYNC,
     SC_MOVE(PIXELS(104), 0, PIXELS(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectToMiddleBedFoot[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(168), 0, PIXELS(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectToEastBedFoot[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(232), 0, PIXELS(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectRoundToEastBedFoot[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(264), 0, PIXELS(632)),
     SC_SYNC,
     SC_MOVE(PIXELS(264), 0, PIXELS(696)),
     SC_SYNC,
     SC_MOVE(PIXELS(232), 0, PIXELS(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectAcrossToWestOfBeds[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(168), 0, PIXELS(648)),
     SC_SYNC,
     SC_MOVE(PIXELS(72), 0, PIXELS(648)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectToWestOfBeds[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(72), 0, PIXELS(648)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectAcrossToEastOfBeds[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(168), 0, PIXELS(648)),
     SC_SYNC,
     SC_MOVE(PIXELS(264), 0, PIXELS(648)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectToEastOfBeds[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(264), 0, PIXELS(648)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectToSouthWestCorner[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(72), 0, PIXELS(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectAlongToSouthWestCorner[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(120), 0, PIXELS(696)),
     SC_SYNC,
     SC_MOVE(PIXELS(72), 0, PIXELS(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectToSouthEastCorner[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(264), 0, PIXELS(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gVaultInteriors_SuspectAlongToSouthEastCorner[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(168), 0, PIXELS(696)),
     SC_SYNC,
     SC_MOVE(PIXELS(264), 0, PIXELS(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 

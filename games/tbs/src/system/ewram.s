@@ -75,8 +75,8 @@ gSerialBlockSequence:
 	.global gBattleRandomSeed
 gBattleRandomSeed:
 	.space 0x00000004
-	.global gSerialReceiveDest
-gSerialReceiveDest:
+	.global gSerialReceiveDestination
+gSerialReceiveDestination:
 	.space 0x00000004
 	.global gSavedStack
 gSavedStack:

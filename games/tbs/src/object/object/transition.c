@@ -38,10 +38,10 @@ void FieldEffect_StartWindowHBlankDma(void) {
 /// line, or, when that is 0, edges moving from left x0 and right y0 to left
 /// x1 and right y1 down the run.
 struct TransitionSpan {
-  u16 cnt; ///< lines; 0 for an unused run
+  u16 count; ///< lines; 0 for an unused run
   /// The (left << 8 | right) pair every line of the run takes, or 0 for the
   /// sloped edges below.
-  u16 val;
+  u16 value;
   u8 x0; ///< screen pixels: the left edge on the run's first line
   u8 x1; ///< screen pixels: the left edge the run moves toward
   u8 y0; ///< screen pixels: the right edge on the run's first line
@@ -86,7 +86,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
   s32 *viewLeader;
   s32 *viewInverse7;
 #endif
-  struct ObjectRuntime *obj;
+  struct ObjectRuntime *object;
   u32 i;
   s32 k;
   s32 lineCount;
@@ -194,8 +194,8 @@ void DisplayTransition_UpdateScanlineTable(void) {
     // Three runs of lines, each one fixed edge pair or a slope between two.
     for (i = 0; i < 3; i++) {
       span = &shape->spans[i];
-      lineCount = span->cnt;
-      right = span->val;
+      lineCount = span->count;
+      right = span->value;
       if (lineCount != 0) {
         if (right != 0) {
           for (k = 0; k < lineCount; k++) {
@@ -339,9 +339,9 @@ void DisplayTransition_UpdateScanlineTable(void) {
     cameraY = viewInverse[1] & 0xffff0000;
 #endif
     // Centred on the leader's place on screen, 16 pixels above its feet.
-    obj = ObjectTable_Get(gGameState.selectedActor);
-    centerX = (obj->x - ax) / 0x10000;
-    centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 16;
+    object = ObjectTable_Get(gGameState.selectedActor);
+    centerX = (object->x - ax) / 0x10000;
+    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     // The frame counter is read here, where WINDOW_TRANSITION_RIPPLE forms
     // its index, and the value is not used.
     gFrameCount;
@@ -456,9 +456,9 @@ void DisplayTransition_UpdateScanlineTable(void) {
     ax = viewLeader[0] & 0xffff0000;
     cameraY = viewLeader[1] & 0xffff0000;
 #endif
-    obj = ObjectTable_Get(gGameState.selectedActor);
-    centerX = (obj->x - ax) / 0x10000;
-    centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 16;
+    object = ObjectTable_Get(gGameState.selectedActor);
+    centerX = (object->x - ax) / 0x10000;
+    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;
@@ -506,11 +506,11 @@ void DisplayTransition_UpdateScanlineTable(void) {
     ax = viewInverse7[0] & 0xffff0000;
     cameraY = viewInverse7[1] & 0xffff0000;
 #endif
-    obj = ObjectTable_Get(gGameState.selectedActor);
-    centerX = (obj->x - ax) / 0x10000;
+    object = ObjectTable_Get(gGameState.selectedActor);
+    centerX = (object->x - ax) / 0x10000;
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
-    centerY = ((obj->z - obj->y) - cameraY) / 0x10000 - 8;
+    centerY = ((object->z - object->y) - cameraY) / 0x10000 - 8;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
     // not used.
     gFrameCount;

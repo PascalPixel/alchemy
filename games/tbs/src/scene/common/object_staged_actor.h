@@ -181,8 +181,8 @@ static s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
 #ifdef UBFIX
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the way.
-static void StagedActor_StopBlockedMotion(union FieldObject *object) {
-  struct FieldActor *actor = (struct FieldActor *)object;
+static void StagedActor_StopBlockedMotion(union FieldObject *fieldObject) {
+  struct FieldActor *actor = (struct FieldActor *)fieldObject;
 #else
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the way.
@@ -202,7 +202,7 @@ static s32 StagedActor_StopBlockedMotion(struct FieldActor *actor) {
   target = StagedActor_FindAtTile(&probe, actor);
   if (target != 0) {
     u32 i = 0;
-    s32 kind = target->sprite->entries[0]->animId;
+    s32 kind = target->sprite->entries[0]->animationId;
     s32 *kinds = gStagedActor_FootprintKinds;
 
     do {
@@ -259,7 +259,7 @@ static struct FieldActor *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
     if (actor == NULL)
       continue;
 #endif
-    kind = actor->sprite->entries[0]->animId;
+    kind = actor->sprite->entries[0]->animationId;
     for (j = 0; j < 6; j++) {
       if (kind == gStagedActor_FootprintKinds[j]) {
         s32 x, z, left, top, right, bottom;
@@ -565,7 +565,7 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
 /// Block large thing id's cells (collision 255) where it stands, through the
 /// map's layer 1 offset; returns 0 when its sprite is no large thing.
 UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
-  struct MapScrollWork *work = gMapWork[0];
+  struct MapScrollWork *map = gMapWork[0];
   struct FieldActor *actor = Object_GetById(id);
   struct StagedActorProbe probe;
   u32 idx = 0;
@@ -579,7 +579,8 @@ UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
   s32 dstZ;
 
   for (idx = 0; idx <= 5; idx++) {
-    if (actor->sprite->entries[0]->animId == gStagedActor_FootprintKinds[idx]) {
+    if (actor->sprite->entries[0]->animationId ==
+        gStagedActor_FootprintKinds[idx]) {
       probe.footprintIndex = idx;
       break;
     }
@@ -610,8 +611,8 @@ UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
   probe.position.z += gStagedActor_FootprintBounds[offset + 1] << 16;
   probe.position.x >>= 20;
   probe.position.z >>= 20;
-  idx = work->layers[1].offsetX >> 20;
-  dstZ = work->layers[1].offsetY >> 20;
+  idx = map->layers[1].offsetX >> 20;
+  dstZ = map->layers[1].offsetY >> 20;
   Engine_MapCopyCellAttributes(probe.position.x, probe.position.z, width,
                                height, idx + probe.position.x,
                                dstZ + probe.position.z);

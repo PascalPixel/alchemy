@@ -5,6 +5,6 @@
 
 union FieldObject;
 
-void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *object);
+void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *fieldObject);
 
 #endif

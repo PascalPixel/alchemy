@@ -132,7 +132,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   s32 created;
   struct ItemDefinition *def;
   u32 item;
-  struct InventoryMenuState *state;
+  struct InventoryMenuState *menu;
   struct BattleUnit *unit;
   struct UiWindow *window;
   s32 ailmentRows;
@@ -140,14 +140,14 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   u8 ailments[8];
 
   created = 0;
-  state = gMenuWork;
+  menu = gMenuWork;
   unit = Unit_GetFar(owner);
   item = unit->inventory[slot];
-  def = Item_GetDirectFar(item & ITEM_ID_MASK);
+  def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    created = UiWindow_UpdateOrCreate(&state->statusWindow, 0, 5, 13, 12,
+    created = UiWindow_UpdateOrCreate(&menu->statusWindow, 0, 5, 13, 12,
                                       WINDOW_KEEP_EXISTING | 2);
-  window = state->statusWindow;
+  window = menu->statusWindow;
 
   // The name, then each ailment the member has, one row each; the level
   // takes the third row when no more than one ailment is shown.
@@ -156,7 +156,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     // top 88 by 32 pixels a frame later. A new window is blank.
     if (!created) {
       WaitFrames(1);
-      UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
+      UiWindow_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
     }
     UiText_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
     CharacterMenu_BuildAvailability(ailments, 1, owner);
@@ -191,11 +191,11 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   // Clear the lower part and redraw the member's portrait.
   if (!created) {
     WaitFrames(1);
-    UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 32, 88, 80);
+    UiWindow_ClearInteriorTilesFar(menu->statusWindow, 0, 32, 88, 80);
   }
   RenderOutput_ClearListFar(window);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    state->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
+    menu->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
 
   switch (mode & STATUS_PANEL_KIND_MASK) {
   case STATUS_PANEL_EXPERIENCE:
@@ -225,7 +225,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     // unit back as it was.
     backup = MemAlloc(sizeof(struct BattleUnit));
     Owner_Copy(backup, unit);
-    if (state->equipPreview)
+    if (menu->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
       Inventory_EquipFar(owner, slot);
@@ -357,22 +357,22 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   // digits.
   UiText_DrawStringAtOffsetFar(gUi_HpString, window, 0, 40);
   UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 40);
-  value = unit->maxHp;
+  value = unit->hpMax;
   UiText_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
-  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
+  if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
-    UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
   }
   UiText_DrawNumberRightAligned(value, window, 48, 40);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawStringAtOffsetFar(gUi_PpString, window, 0, 48);
   UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
   value = unit->pp;
   UiText_DrawNumberRightAligned(value, window, 48, 48);
-  value = unit->maxPp;
+  value = unit->ppMax;
   UiText_DrawNumberRightAligned(value, window, 88, 48);
 #else
   // Each row string ("HP    /" and "EP    /") holds the label and the slash,
@@ -381,21 +381,21 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   // from 16 at the font's widths, the maximum from 56 a cell a character,
   // ending at 88.
   UiText_DrawStringInWindowFar((u8 *)gUi_HpRowString, window, 0, 40);
-  value = unit->maxHp;
+  value = unit->hpMax;
   UiText_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
-  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP);
+  if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
-    UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP);
+    UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
   }
   UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
-  UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
   UiText_DrawStringInWindowFar((u8 *)gUi_PpRowString, window, 0, 48);
   value = unit->pp;
   UiText_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
-  value = unit->maxPp;
+  value = unit->ppMax;
   UiText_DrawNumberInWindowFar(value, 4, window, 56, 48);
 #endif
 }
@@ -909,7 +909,7 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
         if ((order[pass] & LIST_ORDER_EQUIPPED) &&
             (items[i] & INVENTORY_EQUIPPED) == 0)
           continue;
-        value = items[i] & ITEM_ID_MASK;
+        value = items[i] & INVENTORY_ITEM_ID_MASK;
         if (best < value) {
           bestSlot = i;
           best = value;
@@ -1290,14 +1290,20 @@ void Menu_EnsureCancelSound(void) {
 
 /// Makes the text drawn after it colour 15 (TEXT_COLOR_NORMAL). Nothing calls
 /// it or the two after it; the status panel sets its colours with
-/// UiWork_SetParamNibbleFar.
-void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL); }
+/// UiWork_SetParameterNibbleFar.
+void UiPalette_SetColor15(void) {
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+}
 
 /// Makes the text drawn after it colour 2 (TEXT_COLOR_NO_HP).
-void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP); }
+void UiPalette_SetColor2(void) {
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
+}
 
 /// Makes the text drawn after it colour 4 (TEXT_COLOR_LOW_HP).
-void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP); }
+void UiPalette_SetColor4(void) {
+  UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
+}
 
 #undef STATUS_PANEL_TEXT_X
 #undef STATUS_PANEL_CANNOT_EQUIP_X

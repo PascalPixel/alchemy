@@ -153,4 +153,6 @@ s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 /// as a number. Called by the Djinn menu and the battle party status, which
 /// copy its first 16 colours into a background palette themselves (BG palette
 /// 5 and 14).
-s32 Palette_GetBasicObjColors(void) { return (s32)gSystem_BasicColorPalette; }
+s32 Palette_GetBasicSpriteColors(void) {
+  return (s32)gSystem_BasicColorPalette;
+}

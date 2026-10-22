@@ -159,7 +159,7 @@ enum {
 #endif
 
 // Outside Japan the coins window is a tile wider, and every counter's item
-// description (Shop_DrawMsg, buy.c) is drawn as tiles
+// description (Shop_DrawMessage, buy.c) is drawn as tiles
 // (UiText_DrawCharacterAtOffsetFar) rather than into a text canvas.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_MONEY_WINDOW_WIDTH 12

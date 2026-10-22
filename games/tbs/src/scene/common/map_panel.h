@@ -10,18 +10,19 @@
 // or not), straight into the background's tile map.
 
 /// Draws the width by height cells at cell (x, y) of the map into screen block
-/// 5 from cell (destX, destY), wrapped to 16 by 16 cells, in band plane (16
-/// cell rows each): each cell is its block's tiles from Ram_MapBlocks.
+/// 5 from cell (destinationX, destinationY), wrapped to 16 by 16 cells, in band
+/// plane (16 cell rows each): each cell is its block's tiles from
+/// Ram_MapBlocks.
 static void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane,
-                              s32 destX, s32 destY) {
+                              s32 destinationX, s32 destinationY) {
   u32 *cell = (u32 *)Ram_MapCellBuffer + (y * 128 + x);
   s32 row;
   s32 col;
   s32 end;
 
-  for (row = destY; row < destY + height; row++) {
-    col = destX;
-    if (col < destX + width)
+  for (row = destinationY; row < destinationY + height; row++) {
+    col = destinationX;
+    if (col < destinationX + width)
       do {
         u16 tile = 0xfff & *cell++;
         u16 offset = tile * 8;
@@ -37,9 +38,9 @@ static void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane,
         *dst = *src;
 
         /* FAKEMATCH(temporary): end takes the bound where the loop tests it,
-         * apart from the guard's destX + width; as ++col < destX + width, 12
-         * of 80 instructions differ in tbs-en. */
-      } while (end = destX + width, ++col < end);
+         * apart from the guard's destinationX + width; as ++col < destinationX
+         * + width, 12 of 80 instructions differ in tbs-en. */
+      } while (end = destinationX + width, ++col < end);
     cell += 128 - width;
   }
 }

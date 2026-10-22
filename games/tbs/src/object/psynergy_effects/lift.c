@@ -13,7 +13,7 @@
 /// It leaves the target raised and floating (motion flag bit 2), with its
 /// update set to ObjectGroup_ApplyRandomChildValues.
 void FieldEffect_RunLiftOnTarget(s32 unused) {
-  struct FieldFxScene *work;
+  struct FieldEffectScene *work;
   struct DispatchObject *caster;
   struct FieldActor *target;
   struct MotionObject *pair[2];
@@ -121,34 +121,34 @@ struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
 /// Effect slot callback of a particle that scatters 25 pixels from its origin
 /// in a random direction, then gathers beside the main object and is freed.
 /// Set on Force's 12 flashes by FieldEffect_RunForce in force.c.
-void FieldEffect_UpdateRadialBurst(struct EffectSlot *slot) {
+void FieldEffect_UpdateRadialBurst(struct EffectSlot *effect) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
-  struct FieldFxScene *scene = gEffectWork;
+  struct FieldEffectScene *scene = gEffectWork;
   struct EffectVector pos;
   s32 state;
 
 again:
-  state = slot->state;
+  state = effect->state;
   if (state == OUT_AND_BACK_AIM_OUT) {
     // 25 pixels from the origin, in a random direction.
-    pos.x = slot->originX;
-    pos.z = slot->originZ;
+    pos.x = effect->originX;
+    pos.z = effect->originZ;
     Vector_AddPolarOffset(25 << 16, (u16)Random16(), &pos);
-    slot->targetX = pos.x;
-    slot->targetZ = pos.z;
-    slot->acceleration = 3 << 16;
-    slot->maxSpeed = 3 << 16;
-    slot->limitTurnStep = 0;
-    slot->state++;
+    effect->targetX = pos.x;
+    effect->targetZ = pos.z;
+    effect->acceleration = 3 << 16;
+    effect->speedMax = 3 << 16;
+    effect->turnStepLimited = 0;
+    effect->state++;
     return;
   }
 
   if (state == OUT_AND_BACK_FLYING_OUT) {
     // On arrival, go straight on.
-    if (EffectSlot_HasPendingTarget(slot) == 0) {
-      slot->state++;
+    if (EffectSlot_HasPendingTarget(effect) == 0) {
+      effect->state++;
       goto again;
     }
     return;
@@ -165,17 +165,17 @@ again:
     Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos);
-    slot->targetX = pos.x;
-    slot->targetZ = pos.z;
-    slot->maxTurnStep = 0x800;
-    slot->limitTurnStep = 1;
-    slot->state++;
+    effect->targetX = pos.x;
+    effect->targetZ = pos.z;
+    effect->turnStepMax = 0x800;
+    effect->turnStepLimited = 1;
+    effect->state++;
     return;
   }
 
   if (state == OUT_AND_BACK_FLYING_BACK &&
-      EffectSlot_HasPendingTarget(slot) == 0)
-    FieldEffect_ClearOwnedSlot(slot);
+      EffectSlot_HasPendingTarget(effect) == 0)
+    FieldEffect_ClearOwnedSlot(effect);
 }
 
 /// A heavy impact: places object 0x11b 32 pixels below the source for 20

@@ -329,7 +329,7 @@ void CgbAudio_Initialize(struct CgbNote *notes) {
   work->cgbUpdate = Cgb_UpdateChannels;
   work->cgbMute = CgbChannel_Mute;
   work->cgbFrequency = Cgb_KeyToFrequency;
-  work->maxLines = SOUND_MAX_LINES;
+  work->lineLimit = SOUND_MAX_LINES;
 
   // Clear note state, then assign the four hardware routing masks: channel
   // n's NR51 bits, n - 1 for the right speaker and n + 3 for the left.

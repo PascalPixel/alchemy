@@ -36,7 +36,7 @@ struct MapScrollWork {
   u16 flags;     ///< REG_DISPCNT bits: objects and the BG1 to BG3 shown
   u8 wideTiles;  ///< nonzero: tile animations copy 64-byte tiles
   u8 footprints; ///< nonzero: the leader leaves footprints
-  struct MapAnimation anim[16];
+  struct MapAnimation animations[16];
   struct BlendScriptState blend;
   s32 viewX, viewY;           ///< the view's top left, 16.16 fixed-point pixels
   s32 minX, minY, maxX, maxY; ///< 16.16 fixed-point pixels
@@ -55,7 +55,7 @@ struct MapScrollWork {
 STATIC_ASSERT(sizeof(struct MapLayerScroll) == 0x30);
 STATIC_ASSERT(offsetof(struct MapLayerScroll, cells) == 0x2c);
 STATIC_ASSERT(sizeof(struct MapScrollWork) == 0x194);
-STATIC_ASSERT(offsetof(struct MapScrollWork, anim) == 0x18);
+STATIC_ASSERT(offsetof(struct MapScrollWork, animations) == 0x18);
 STATIC_ASSERT(offsetof(struct MapScrollWork, blend) == 0xd8);
 STATIC_ASSERT(offsetof(struct MapScrollWork, viewX) == 0xe4);
 STATIC_ASSERT(offsetof(struct MapScrollWork, animationActive) == 0xfc);

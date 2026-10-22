@@ -49,7 +49,7 @@
 #include "flags.h"
 
 /// The sprout's animation once Growth has grown it.
-enum { SPROUT_ANIM_GROWN = 4 };
+enum { SPROUT_ANIMATION_GROWN = 4 };
 
 /// Suhalla's people and its sprout, numbering the rows of both placement
 /// tables from ACTOR_FIRST_PLACED: gSuhallaPlacementsLater places the same
@@ -226,7 +226,7 @@ s32 Scene_Initialize(void) {
 
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
     Event_GrowSprout();
-    Engine_ActorSetAnimation(ACTOR_SPROUT, SPROUT_ANIM_GROWN);
+    Engine_ActorSetAnimation(ACTOR_SPROUT, SPROUT_ANIMATION_GROWN);
   }
   return 0;
 }

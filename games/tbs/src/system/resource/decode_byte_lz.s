@@ -252,8 +252,8 @@ Render_BuildOamListKernel:
 	bx	lr
 	.4byte	gFrameTick
 	.4byte	IwramFillWords
-	.4byte	gObjAffineCount
-	.4byte	gObjAffineMatrices
+	.4byte	gSpriteAffineCount
+	.4byte	gSpriteAffineMatrices
 	.global LoadedRuntime_Size
 	.set LoadedRuntime_Size, . - Render_BuildOamListKernel
 .syntax unified

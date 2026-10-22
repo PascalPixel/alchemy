@@ -22,7 +22,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
     rec->dirty = 1;
     rec->flags = SPRITE_FLAG_SHADOW | SPRITE_FLAG_OUTLINED;
   } else if (phase == 2) {
-    entry->param = SPRITE_COLOR_NORMAL; // restore its colours
+    entry->colorMode = SPRITE_COLOR_NORMAL; // restore its colours
     rec->dirty = 1;
     rec->flags = SPRITE_FLAG_SHADOW;
   }
@@ -87,7 +87,7 @@ void FieldEvent_ShowStatusMessage(void) {
 /// gGameState.avoidDistance and avoidByItem; the leader's steps count the
 /// distance down by their speed (object/step.c), 2,400 pixels in all.
 void FieldEffect_RunAvoid(void) {
-  struct FieldFxScene *scene;
+  struct FieldEffectScene *scene;
   struct ArcEffectObject *object;
   struct AnimationObject *group;
   struct AnimationEntry *entry;
@@ -122,11 +122,11 @@ void FieldEffect_RunAvoid(void) {
   WaitFrames(10);
   // Flash white for 2 frames in every 5.
   for (count = 0; count < 20; count++) {
-    entry->param = SPRITE_COLOR_WHITE;
+    entry->colorMode = SPRITE_COLOR_WHITE;
     group->dirty = 1;
     WaitFrames(2);
     group->dirty = 1;
-    entry->param = SPRITE_COLOR_NORMAL;
+    entry->colorMode = SPRITE_COLOR_NORMAL;
     group->flags = SPRITE_FLAG_SHADOW;
     WaitFrames(3);
   }

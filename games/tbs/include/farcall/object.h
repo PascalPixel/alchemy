@@ -360,7 +360,7 @@ void EffectSlot_InitializeFar(struct EffectSlot *effect, s32 kind, s32 x,
                               s32 z);
 /// Frees an effect slot and its sprite; slot callbacks end with it on their
 /// own slot.
-void FieldEffect_ClearOwnedSlotFar(struct EffectSlot *slot);
+void FieldEffect_ClearOwnedSlotFar(struct EffectSlot *effect);
 /// Converts a world position in 16.16 pixels to screen x and y, in place,
 /// using the world map's perspective there.
 void Camera_WorldToScreenFar(struct EffectVector *position);

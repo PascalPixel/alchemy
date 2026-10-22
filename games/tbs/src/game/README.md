@@ -125,20 +125,20 @@ is equipped or broken, and how many of it the slot holds.
 bits 15..11   count less one   (INVENTORY_QUANTITY_SHIFT)
 bit 10        broken           (INVENTORY_BROKEN)
 bit 9         equipped         (INVENTORY_EQUIPPED)
-bits 8..0     item id          (ITEM_ID_MASK)
+bits 8..0     item id          (INVENTORY_ITEM_ID_MASK)
 ```
 
 An item, its state and its count move in one load and one store, and an
 empty slot is 0, which `Inventory_CompactSlots` relies on to close gaps. A
 stack of an `ITEM_STACKABLE` item grows to 30 (`Inventory_AddItem`). Code
-that asks which item a slot holds masks it with `ITEM_ID_MASK` first, since
+that asks which item a slot holds masks it with `INVENTORY_ITEM_ID_MASK` first, since
 the same item equipped, broken or stacked is a different halfword. The slots
 are `BattleUnit.inventory`; `enum InventoryEncoding` in `item.h` names their
 parts, and [game/inventory.c](game/inventory.c) reads and writes them.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `ITEM_ID_MASK` | `0x1ff` | the item id, 0 to 511 |
+| `INVENTORY_ITEM_ID_MASK` | `0x1ff` | the item id, 0 to 511 |
 | `INVENTORY_EQUIPPED` | `0x200` | the item is equipped |
 | `INVENTORY_BROKEN` | `0x400` | the item is broken |
 | `INVENTORY_ENTRY_MASK` | `0x7ff` | all but the count: the item with its state |
@@ -255,7 +255,7 @@ units are part of the save file.
 
 ## Limits
 
-- Item ids are 9 bits, 0 to 511 (`ITEM_ID_MASK`); `items.tsv` has 324 rows,
+- Item ids are 9 bits, 0 to 511 (`INVENTORY_ITEM_ID_MASK`); `items.tsv` has 324 rows,
   and rows 269 to 323 have no name message.
 - A unit has 15 inventory slots, and a stack holds 30.
 - 20 Djinn to an element, 519 abilities, 165 enemies (the last with no name

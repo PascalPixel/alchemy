@@ -136,11 +136,11 @@ static inline void Dma_Stop(volatile u16 *channel) {
   (particles)[i].variant = -1
 
 /// Starts a frame's 3D projection from the battle camera: resets the
-/// transform, then looks from camera->eye towards camera->pos. Effects that
+/// transform, then looks from camera->eye towards camera->focus. Effects that
 /// place pictures at battle positions do this before projecting them.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
   (Render_ResetTransformState(),                                               \
-   Transform_SetLookAt((camera)->eye, (camera)->pos))
+   Transform_SetLookAt((camera)->eye, (camera)->focus))
 
 /// Strikes target `i`: it flashes white in its damage pose for `frames`
 /// frames, counted by actor timer `i`, and is knocked back by `motion`, an enum

@@ -317,7 +317,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 /// are built when the party's commands open (Battle_CollectPartyCommands).
 enum {
   /// Element icon: + enum Element, in BG palette 5.
-  SUMMON_ELEMENT_TILE = 0x5001,
+  LIST_TILE_SUMMON_ELEMENT = 0x5001,
   /// Page n's number: + n gives digit n + 1, tile 0x301 on, the UI digits
   /// with colour 1 drawn as 10 (Graphics_ExpandVramTilesByColorTable).
   LIST_TILE_PAGE_NUMBER = 0xf301,
@@ -367,7 +367,7 @@ struct SelectionEntry {
   /// icon. unused is never read.
   u16 resource, unused;
   /// Screen pixels: the sprite's top left before the pulse moves it.
-  s32 posX, posY;
+  s32 positionX, positionY;
   s32 kind; ///< its command: MsgCommandName + kind names it
 };
 

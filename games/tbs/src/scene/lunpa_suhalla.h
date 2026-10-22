@@ -109,12 +109,10 @@ enum InteriorActor {
   ACTOR_ITEM_COUNTER
 };
 
-/// Lunpa's shops and inn, as Engine_ShopOpen and Engine_InnOpen number them.
-enum {
-  SHOP_LUNPA_ITEMS = 25,
-  SHOP_LUNPA_WEAPONS = 29,
-  SHOP_LUNPA_ARMOR = 30,
-  INN_LUNPA = 8
-};
+/// Lunpa's shops, as Engine_ShopOpen numbers them.
+enum { SHOP_LUNPA_ITEMS = 25, SHOP_LUNPA_WEAPONS = 29, SHOP_LUNPA_ARMOR = 30 };
+
+/// Lunpa's inn, as Engine_InnOpen numbers the inns.
+enum { LUNPA_INN = 8 };
 
 #endif

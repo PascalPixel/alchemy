@@ -15,8 +15,8 @@
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
-  struct FieldFxScene *effectScene;
-  struct EffectSlot *slot;
+  struct FieldEffectScene *scene;
+  struct EffectSlot *effect;
   s8 *slotState;
   s32 remaining;
   s32 scale;
@@ -28,7 +28,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     return;
 
   FieldEffect_InitializeSlots();
-  effectScene = gEffectWork;
+  scene = gEffectWork;
   // Tint the screen green: PALETTE_TRANSFORM_TINT | RGB(4, 16, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201204);
@@ -63,19 +63,19 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One rising particle a frame into each of the 24 effect slots.
-  slot = effectScene->slots;
+  effect = scene->effects;
   remaining = 23;
   do {
-    EffectSlot_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    EffectSlot_SetCallback(slot, FieldEffect_UpdateRadialSpread);
-    EffectSlot_SetObjectMode(slot, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(slot->object,
+    EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialSpread);
+    EffectSlot_SetObjectMode(effect, 7);
+    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
                                               SPRITE_COLOR_GREEN_TINT);
-    slot->scaleX = 0x8000;
-    slot->scaleY = Random16() + 0x18000;
+    effect->scaleX = 0x8000;
+    effect->scaleY = Random16() + 0x18000;
     remaining--;
     WaitFrames(1);
-    slot++;
+    effect++;
   } while (remaining >= 0);
 
   // After 140 frames every particle still in use stops rising.
@@ -86,8 +86,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     s32 nextState;
 
     nextState = VENUS_PARTICLE_LAST_RISE;
-    slotState = (s8 *)effectScene;
-    slotState += offsetof(struct FieldFxScene, slots) +
+    slotState = (s8 *)scene;
+    slotState += offsetof(struct FieldEffectScene, effects) +
                  offsetof(struct EffectSlot, state);
     remaining = 23;
     do {
@@ -189,10 +189,10 @@ void FieldEffect_UpdateRandomTargetParticle(struct EffectSlot *effect) {
     effect->x = position.x;
     effect->z = position.z - 0x640000;
     effect->acceleration = 0x30000;
-    effect->maxSpeed = Random16() * 3 + 0x30000;
+    effect->speedMax = Random16() * 3 + 0x30000;
     effect->scaleX = 0x10000;
     effect->scaleY = 0x10000;
-    effect->limitTurnStep = state;
+    effect->turnStepLimited = state;
     effect->stopAtTarget = 1;
     (*statePointer)++;
   } else if ((u8)(effect->state - MERCURY_DROPLET_FALLING) <=
@@ -206,7 +206,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct EffectSlot *effect) {
       effect->stopAtTarget = 0;
       effect->speed = 0x10000;
       effect->acceleration = 0;
-      effect->maxSpeed = Random16() + 0x23333;
+      effect->speedMax = Random16() + 0x23333;
       effect->scaleX = 0x8000;
       effect->scaleY = 0x8000;
       AudioCommand_PlayFar(SE_143);

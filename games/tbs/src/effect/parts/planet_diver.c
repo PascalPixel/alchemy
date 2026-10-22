@@ -462,9 +462,9 @@ void BattleEffect_RunUnusedOrbitingSpirals(
     member = 0;
     if (work->effect->count != 0) {
       while (member != work->effect->count) {
-        struct MotionObject *obj;
+        struct MotionObject *object;
 
-        obj = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+        object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
         // Target `member` has its turn from frame 16 * member, and takes
         // its damage pose 32 frames in.
         if (frame > member * 16 &&
@@ -475,7 +475,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(
             ObjectGroup_UpdateMembers(work->effect->actors[member], 0,
                                       POSE_DAMAGE, -1, 0);
           }
-          SET_VECTOR(point, obj->x, 40 << 16, obj->z);
+          SET_VECTOR(point, object->x, 40 << 16, object->z);
           EffectPosition_ProjectPoint(point, &screen);
 
           // The spirals (32x32) a quarter turn apart, circling once every 128

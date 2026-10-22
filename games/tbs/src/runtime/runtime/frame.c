@@ -69,14 +69,16 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   }
 }
 
-/// Frame counts used by the sleep transitions and the CPU-load peak display.
+/// Frame counts used by the sleep transitions.
 enum {
   SLEEP_IDLE_FRAMES = 3 * 60 * 60, ///< three minutes with no key held
   SLEEP_COMBO_FRAMES = 3 * 60,     ///< three seconds holding only L and R
   SLEEP_WHITE_FRAMES = 60,         ///< the white screen shown before the Stop
-  SLEEP_WAKE_FRAMES = 10,          ///< waited after waking, screen restored
-  CPU_LOAD_PEAK_FRAMES = 30        ///< how long the debug display holds a peak
+  SLEEP_WAKE_FRAMES = 10           ///< waited after waking, screen restored
 };
+
+/// Frames the debug CPU-load display holds a peak.
+enum { CPU_LOAD_PEAK_FRAMES = 30 };
 
 /// The game's frame loop: runs `frames` frames and returns. Each frame runs the
 /// scheduled main-loop tasks, builds the OAM list, measures CPU load for the

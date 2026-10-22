@@ -184,11 +184,11 @@ static void KolimaForestEntrance_PushLog(void) {
     if (res.actorSlot == ACTOR_RIVER_LOG && (res.position.x >> 20) == 20) {
       struct FieldActor *actor;
 
-      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIM_ROLL_WEST);
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Engine_EventWait(30);
       Engine_AudioPlayCue(SE_240);
-      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIM_DROP_IN);
+      Engine_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       Object_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Map_CopyCellAttributes(0, 17, 2, 4, 19, 17);
       StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
@@ -1246,21 +1246,21 @@ s32 gStagedActor_FootprintBounds[] = {
 
 /// Garet, Ivan and Mia walk to their places beside the leader.
 s32 gKolimaForestEntrance_GaretAction[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(234), 0, PIXELS(576)),
-    SC_SYNC,   SC_SET(SW_FACING, FACING_NORTHEAST),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(234), 0, PIXELS(576)),
+    SC_SYNC,         SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_ANIMATION(1), SC_END,
 };
 
 s32 gKolimaForestEntrance_IvanAction[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(234), 0, PIXELS(623)),
-    SC_SYNC,   SC_SET(SW_FACING, FACING_EAST),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(234), 0, PIXELS(623)),
+    SC_SYNC,         SC_SET(SW_FACING, FACING_EAST),
+    SC_ANIMATION(1), SC_END,
 };
 
 s32 gKolimaForestEntrance_MiaAction[] = {
-    SC_ARG(2), SC_MOVE(PIXELS(211), 0, PIXELS(602)),
-    SC_SYNC,   SC_SET(SW_FACING, FACING_NORTH),
-    SC_ARG(1), SC_END,
+    SC_ANIMATION(2), SC_MOVE(PIXELS(211), 0, PIXELS(602)),
+    SC_SYNC,         SC_SET(SW_FACING, FACING_NORTH),
+    SC_ANIMATION(1), SC_END,
 };
 
 /// The glamour presses the party down: each squashes and wobbles until
@@ -1296,7 +1296,7 @@ s32 gKolimaForestEntrance_PsynergyFieldGrowAction[] = {
 
 /// A field sinks and shrinks away over 90 frames.
 s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[] = {
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_ADD(SW_Z, -0x1999),
     SC_ADD(SW_SCALE_X, -983),
     SC_ADD(SW_SCALE_Y, -983),

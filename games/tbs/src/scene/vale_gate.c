@@ -35,12 +35,12 @@
 ///   seeing them off at the town gate: Garet's sister gives a Herb, and his
 ///   brother the Catch Beads that Aunty Dora sent, for Dora herself does not
 ///   come. VALE_GATE_TO_WORLD_MAP leads out to the world map.
-/// - After the party has left (FLAG_PARTY_LEFT_VALE), the villagers point the
+/// - After the party has left (FLAG_VALE_PARTY_LEFT), the villagers point the
 ///   way to Vault and talk of the eruption, whose sparkles they take for
 ///   crushed Psynergy Stones; a large Psynergy Stone has fallen on the hut,
 ///   whose roof ValeGate_Initialize redraws. Only now does the town gate lead
 ///   out (Event_LeaveThroughTownGate).
-/// - Back from Kalay (FLAG_REACHED_KALAY), the villagers welcome Isaac home,
+/// - Back from Kalay (FLAG_KALAY_REACHED), the villagers welcome Isaac home,
 ///   the hut's owner finds the stone gone, leaving a hole in his roof
 ///   (Event_PsynergyStoneIsGone), and a door in the north-east opens.
 ///
@@ -469,7 +469,7 @@ const struct ScenePlacement *ValeGate_GetPlacements(void) {
   if (gGameState.entrance == VALE_GATE_FROM_SANCTUM) {
     return gValeGate_DeparturePlacements;
   }
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     return gValeGate_PlacementsAfterKalay;
   }
   return gValeGate_Placements;
@@ -494,10 +494,10 @@ static void Event_UsePsynergyStone(void) {
 /// Selects the events: after Kalay, after the party has left, the farewell's
 /// (VALE_GATE_FROM_SANCTUM), the stormy night's, else the day's.
 const struct SceneEvent *ValeGate_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     return gValeGate_EventsAfterKalay;
   }
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValeGate_EventsAfterLeaving;
   }
   if (gGameState.entrance == VALE_GATE_FROM_SANCTUM) {
@@ -564,7 +564,7 @@ static void Event_DemonstratePsynergy(void) {
   s32 *origin;
 
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     message = MsgValeArentWorriedCrossing;
     Engine_EventSetMessage(message);
     // "...with just the two of you?", three or four: the flag numbered for a
@@ -636,7 +636,7 @@ static void Event_DemonstratePsynergy(void) {
 /// question.
 static void Event_AskAboutJourney(void) {
   Engine_EventStart();
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     Engine_EventSetMessage(MsgValeAnythingInterestingOnYourTrip);
     Engine_EventOpenMessage(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
@@ -647,7 +647,7 @@ static void Event_AskAboutJourney(void) {
       work->message++;
       Engine_EventAskYesNo(ACTOR_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     }
-  } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_EventSetMessage(MsgValeYouSawTheWiseOne);
     Engine_EventAskYesNo(ACTOR_CURIOUS_OLD_MAN, 0);
   } else {
@@ -663,7 +663,7 @@ static void Event_AskAboutJourney(void) {
 ///
 /// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale; in a
 /// play-through ValeGate_Initialize has hidden him by then (a BUG), so only
-/// the debug menus, setting FLAG_PARTY_LEFT_VALE without the prologue's flags,
+/// the debug menus, setting FLAG_VALE_PARTY_LEFT without the prologue's flags,
 /// reach it.
 static void Event_TalkAboutFallenStone(void) {
   Engine_EventStart();
@@ -895,11 +895,11 @@ static void Event_LeaveThroughWestPassage(void) {
 /// begun its journey.
 ///
 /// Reached by stepping on cell code 8; takes VALE_GATE_TO_WORLD_MAP once
-/// FLAG_PARTY_LEFT_VALE is set, else does nothing. The farewell
+/// FLAG_VALE_PARTY_LEFT is set, else does nothing. The farewell
 /// (Event_DepartForQuest) shows the villagers gathered at the gate and leaves
 /// by the same exit.
 static void Event_LeaveThroughTownGate(void) {
-  if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_AudioPlayCue(SE_MAP_EXIT);
     Vale_RequestBackdropExit(VALE_GATE_TO_WORLD_MAP);
   }
@@ -974,7 +974,7 @@ s32 ValeGate_Initialize(void) {
   actor->scaleY = verticalScale;
   actor = Object_GetById(ACTOR_THIRD_IVY);
   actor->scaleY = verticalScale;
-  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     Map_CopyCellsTo(97, 2, 80, 5, 2, 2);
     Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
     Engine_MapRedraw();
@@ -994,7 +994,7 @@ s32 ValeGate_Initialize(void) {
                                          gValeGate_FaceTargetActions);
       }
     } else {
-      if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
         Actor_SetPosition(ACTOR_SECOND_CHILD, PIXELS(180), PIXELS(568));
         Map_CopyCellsTo(92, 2, 80, 5, 2, 2);
         Map_CopyCellsTo(42, 53, 42, 54, 3, 1);
@@ -1016,7 +1016,7 @@ s32 ValeGate_Initialize(void) {
         actor->scaleY = 3 * Q16_ONE / 5;
         Engine_ActorSetAnimation(ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN, 5);
       } else {
-        if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
           Actor_SetPosition(ACTOR_FALLEN_STONE_SPOT, PIXELS(331), PIXELS(249));
           actor = Object_GetById(ACTOR_FALLEN_STONE_SPOT);
           Engine_ActorSetSpriteFlags(actor, 0);
@@ -2005,7 +2005,7 @@ static void ValeGate_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct FieldFxScene *work = gEffectWork;
+  struct FieldEffectScene *work = gEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(SE_131);
@@ -2132,10 +2132,10 @@ static void ValeGate_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_ERUPTED);
   Engine_GameFlagSet(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
-  Engine_GameFlagSet(FLAG_PARTY_LEFT_VALE);
+  Engine_GameFlagSet(FLAG_VALE_PARTY_LEFT);
   Engine_GameFlagSet(FLAG_VALE_FAREWELL_HERB_RECEIVED);
   Engine_GameFlagSet(FLAG_GARET_CAME_HOME);
-  Engine_GameFlagSet(FLAG_REACHED_KALAY);
+  Engine_GameFlagSet(FLAG_KALAY_REACHED);
 #else
   Engine_GameFlagSet(FLAG_TRET_DEFEATED);
   Engine_GameFlagSet(FLAG_KOLIMA_CURSE_LIFTED);
@@ -2153,24 +2153,24 @@ u8 gValeGate_UnusedPaletteSteps[] = {
 };
 
 s32 gValeGate_ChargedUpStrongmanActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(214), 0, PIXELS(721)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(40),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_MOTION, 3),
     SC_SET(SW_VELOCITY_Y, PIXELS(8)),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(214), 0, PIXELS(763)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeGate_SecondTravelerLeapActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(12)),
     SC_MOVE(PIXELS(114), PIXELS(144), PIXELS(360)),
@@ -2182,7 +2182,7 @@ s32 gValeGate_SecondTravelerLeapActions[] = {
 
 s32 gValeGate_FirstTravelerLeapActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(12)),
     SC_MOVE(PIXELS(114), PIXELS(144), PIXELS(343)),
@@ -2194,7 +2194,7 @@ s32 gValeGate_FirstTravelerLeapActions[] = {
 
 s32 gValeGate_LeaderActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SE(SE_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(PIXELS(82), PIXELS(144), PIXELS(343)),
@@ -2206,7 +2206,7 @@ s32 gValeGate_LeaderActions[] = {
 
 s32 gValeGate_StormGaretLeapActions[] = {
     SC_SET(SW_SPEED, PIXELS(2)),
-    SC_SET(SW_ACCEL, PIXELS(2)),
+    SC_SET(SW_ACCELERATION, PIXELS(2)),
     SC_SE(SE_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(PIXELS(82), PIXELS(144), PIXELS(360)),
@@ -2217,25 +2217,25 @@ s32 gValeGate_StormGaretLeapActions[] = {
 };
 
 s32 gValeGate_FirstTravelerBounceActions[] = {
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(8)),
     SC_MOVE(PIXELS(65), 0, PIXELS(328)),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(6)),
     SC_MOVE(PIXELS(31), 0, PIXELS(338)),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(0, 0, PIXELS(338)),
@@ -2245,23 +2245,23 @@ s32 gValeGate_FirstTravelerBounceActions[] = {
 };
 
 s32 gValeGate_SecondTravelerBounceActions[] = {
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SET(SW_VELOCITY_Y, PIXELS(6)),
     SC_MOVE(PIXELS(63), 0, PIXELS(374)),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SET(SW_VELOCITY_Y, PIXELS(7)),
     SC_MOVE(PIXELS(17), 0, PIXELS(338)),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(10),
-    SC_ARG(6),
+    SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_MOVE(0, 0, PIXELS(338)),
@@ -2306,7 +2306,7 @@ s32 gValeGate_FarewellChaseActions[] = {
 };
 
 s32 gValeGate_FarewellFirstChildActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(137), 0, PIXELS(639)),
     SC_SYNC,
     SC_MOVE(PIXELS(122), 0, PIXELS(692)),
@@ -2314,15 +2314,15 @@ s32 gValeGate_FarewellFirstChildActions[] = {
     SC_MOVE(PIXELS(141), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(6) / 5),
-    SC_SET(SW_ACCEL, PIXELS(3) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(3) / 5),
     SC_MOVE(PIXELS(148), 0, PIXELS(770)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeGate_FarewellSecondChildActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(137), 0, PIXELS(639)),
     SC_SYNC,
     SC_MOVE(PIXELS(122), 0, PIXELS(692)),
@@ -2330,15 +2330,15 @@ s32 gValeGate_FarewellSecondChildActions[] = {
     SC_MOVE(PIXELS(141), 0, PIXELS(746)),
     SC_SYNC,
     SC_SET(SW_SPEED, PIXELS(6) / 5),
-    SC_SET(SW_ACCEL, PIXELS(3) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(3) / 5),
     SC_MOVE(PIXELS(164), 0, PIXELS(758)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeGate_PartyDepartureActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(216), 0, PIXELS(854)),
     SC_SYNC,
     SC_MOVE(PIXELS(215), 0, PIXELS(921)),
@@ -2349,54 +2349,54 @@ s32 gValeGate_PartyDepartureActions[] = {
 
 s32 gValeGate_HutOwnerSearchActions[] = {
     SC_SET(SW_SPEED, PIXELS(1) / 2),
-    SC_SET(SW_ACCEL, PIXELS(1) / 20),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 20),
     SC_SET(SW_COLLISION, 3),
     SC_LABEL(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_WANDER_HOME(0x40000, 0x80000, 0x100000),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_WANDER_HOME(0x40000, 0x80000, 0x100000),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_WANDER_HOME(0x40000, 0x80000, 0x100000),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
 };
 
 s32 gValeGate_AideRunActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(148), 0, PIXELS(758)),
     SC_SYNC,
     SC_MOVE(PIXELS(128), 0, PIXELS(709)),
     SC_SYNC,
     SC_MOVE(PIXELS(129), 0, PIXELS(647)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValeGate_LeaderStepActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(196), 0, PIXELS(774)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gValeGate_StormGaretStepActions[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(PIXELS(196), 0, PIXELS(790)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 

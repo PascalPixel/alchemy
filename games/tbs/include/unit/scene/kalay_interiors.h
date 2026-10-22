@@ -29,6 +29,6 @@ extern struct SceneEvent gKalayInteriors_HouseEvents[];
 extern struct SceneEvent gKalayInteriors_InnEvents[];
 extern struct SceneEvent gKalayInteriors_SanctumEvents[];
 extern u16 gKalayInteriors_DoorCellSteps[];
-extern struct MapCellAnim gKalayInteriors_DoorCells[];
+extern struct MapCellAnimation gKalayInteriors_DoorCells[];
 
 #endif

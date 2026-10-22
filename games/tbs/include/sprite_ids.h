@@ -52,6 +52,11 @@ enum SpriteId {
   /// to push something in a cutscene.
   /// ★ Named from what the player sees: a large open hand (spr_215.png)
   SPRITE_MOVE_HAND = 0xd7,
+  /// A splash thrown up where something lands, as Goma Cave's stumps land
+  /// in water.
+  /// ★ Named from what the player sees: a splash of white and pale blue
+  /// spray (spr_214.png)
+  SPRITE_SPLASH = 0xd6,
   /// The statues Move or a push slides in Bilibin and its Treasury.
   /// ★ Named from what the player sees: a golden statue of a figure in a long
   /// robe (spr_243.png)

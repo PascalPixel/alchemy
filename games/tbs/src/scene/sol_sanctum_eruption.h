@@ -6,9 +6,14 @@
 #include "field_scene.h"
 
 enum CollapseActor {
-  /// A blank actor whose scale SolSanctumEruption_RaiseAndShrinkActor shrinks
-  /// with Alex's as he rises away (an open question in sol_sanctum_eruption.c).
-  ACTOR_RISING_EFFECT = ACTOR_FIRST_PLACED,
+  /// The shadow on the platform under each who leaves with Saturos: a
+  /// blank actor, whose sprite draws only its shadow, shrunk with the
+  /// departing actor, whose own shadow is turned off
+  /// (SolSanctumEruption_RaiseAndShrinkActor).
+  /// ★ Named from what the player sees: the shadow that shrinks on the
+  /// platform as each of them rises away
+  /// (https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif)
+  ACTOR_PLATFORM_SHADOW = ACTOR_FIRST_PLACED,
   /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,
   /// ★ Named from the game: "But, Saturos, there's still a chance they might

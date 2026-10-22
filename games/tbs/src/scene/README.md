@@ -117,6 +117,12 @@ only as the party leaves (`Scene_TakeExit`), and the regions at every step.
 - **Events** (`struct SceneEvent`): a control word (the kind and its detail), a
   trigger, a condition and a value, ended by `SCENE_EVENTS_END`.
 
+In Vale, where Garet's sister stands, the leader is actor 0 and the actors
+the placement rows made are numbered from `ACTOR_FIRST_PLACED`, in the order
+their rows' conditions held.
+
+![Vale at twice the GBA's size where Garet's sister stands, each actor on screen labelled with its actor number: Isaac 0, Garet's sister 18, the stone pillar 20 and two other actors, 10 and 19](https://alchemy.pascalpixel.com/guides/scene/actors.png)
+
 An event's kind says what starts it and what its trigger is:
 
 | Kind | Started by | Trigger |
@@ -269,6 +275,6 @@ their English text. Overlay numbers are their rows of the resource directory.
 - XXX: what the exit styles' leaving animations 26 and 25 and arrivals 24 and
   23 show (`enum ExitStyle`); a recording of an exit of each style would
   settle it.
-- XXX (picture): the guide has no picture. A frame of a scene with each actor labelled by
-  its placement row and actor number, and each event cell by its collision
-  code, would show how the tables meet the map.
+- XXX (picture): the actors are labelled (above), but no picture yet marks each event
+  cell by its collision code, which would show how the event table meets the
+  map.

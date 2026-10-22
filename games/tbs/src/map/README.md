@@ -1,6 +1,11 @@
 # Maps
 
-![The whole 128 by 128 cell grid of Goma Cave's map at half size, each cell drawn from its block: the ground layer's window at the top left holds the cave floor and its pool, the middle layer's below it the rock walls around a dark floor, and the overhead layer's at the top right only the glows of the torches, and the rest of the grid is empty.](https://alchemy.pascalpixel.com/guides/map/grid.png)
+![A layered map is one square grid of 128 by 128 cells, each 16 pixels square. Each of its three layers is a rectangle cut from that grid, and the map's header says where each rectangle starts. In Goma Cave's entrance room the ground layer starts at cell 0, 0 and holds the cave floor and its pool; the middle layer starts at cell 0, 34, below it, and holds the rock walls; the overhead layer starts at cell 50, 0, to the right, and holds only the glow of the torches. The rest of the grid is unused.](https://alchemy.pascalpixel.com/illustrations/map/grid-windows.svg)
+
+A town or dungeon map is one big square grid of 16-pixel cells, 128 on a
+side, and each of its three layers is a rectangle cut from that grid; the
+map's header says where each one starts, and the rest of the grid goes
+unused.
 
 The map data is kept as editable tables: 182 layered maps for the towns,
 dungeons and interiors, the world map's ground and default cells, and the
@@ -18,7 +23,12 @@ A cell is one 16 by 16 pixel square of a layered map, a 32-bit word once
 loaded, which says what is drawn there, what the ground is shaped like and
 what standing on it does.
 
-![One screen of Goma Cave, and under it the same screen with the ground of the leader's layer drawn over it at its place on the map: orange where the ground stands more than 8 pixels above the leader's, too high to step up, the rims, some cut along a cell's diagonal, that stop the leader at the foot of each cliff; white lines where the height changes; the doorway cell the leader stands in tinted blue for an exit row and labelled as the way down to the room of the pond, and two magenta cells at the top edge labelled as pushing the east stone pillar a step. The cave has no wall-coded cells; its walls are all height. A key under it says what each colour stands for.](https://alchemy.pascalpixel.com/guides/map/cells.png)
+![The ground seen from the side, with the leader standing on it. A band around the leader's feet reaches 8 pixels up and 12 pixels down. Ground ahead whose height falls inside the band can be stepped onto: a ledge 8 pixels up and a dip 8 pixels down. Ground outside it blocks the leader as a wall would: a rim 32 pixels high, like the ones at the foot of Goma Cave's cliffs, and a drop of 16 pixels. Each cell is 16 pixels wide.](https://alchemy.pascalpixel.com/illustrations/map/step-heights.svg)
+
+Every cell has a height, and a height can stop the leader just as a wall
+mark does: the leader can step up at most 8 pixels and down at most 12, so a
+sharp rise or drop blocks the way. A cell's word says how its ground is
+shaped as well as what is drawn there and what stepping on it does.
 
 A loaded cell is one word. Its low halfword holds the block number in its low
 12 bits and four flag bits above, the layer and priority an object standing
@@ -50,7 +60,7 @@ a cell's diagonal.
 
 Collision and height belong to a layer: code that asks about the ground
 reads the cell in the window of the layer the object follows, so an object
-stands in one layer at a time ([Field](../field/README.md#the-ground-under-an-object)).
+stands in one layer at a time ([Field](../field/README.md#how-high-a-step-can-go)).
 
 A cell is `struct MapCell` in [`map.h`](../../include/map.h), and its code an
 `enum MapCellCode`.
@@ -259,7 +269,7 @@ entrance puts them at (0, 0), (64, 0) and (0, 68). The picture at the top of
 this page shows Goma Cave's three windows in its grid.
 
 The ground layer shows on `BG3`, the middle layer on `BG2` and the overhead
-layer on `BG1`; [Field](../field/README.md#layered-maps-on-screen) explains
+layer on `BG1`; [Field](../field/README.md#towns-and-dungeons-on-screen) explains
 how their priorities put actors between them.
 
 ### Placeholder blocks
@@ -362,7 +372,7 @@ The tables in `default/` are the world map's too.
 `Map_InitializePerspectiveScene` loads the default cells, block attributes and
 tile animation when the world map scene starts, and
 `Map_LoadDefaultCellsAndUpdateBlock` puts the cells back after the world map's
-still view ([Field](../field/README.md#the-world-map-view)).
+still view ([Field](../field/README.md#the-world-map-in-perspective)).
 
 | Part | Size |
 | --- | --- |

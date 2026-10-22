@@ -152,7 +152,7 @@ view describes the same block.
 | `FIELD_OBJECT_COUNT` | 64 | the slots of `gObjectSlots` |
 | `FIELD_SPRITE_FOOTPRINT` | 25 | a footprint's sprite, on maps that show them |
 
-[Field](src/field/README.md#object-scripts) covers the scripts and their
+[Field](src/field/README.md#everything-that-moves-runs-a-script) covers the scripts and their
 commands, the sprites and [the views of one
 object](src/field/README.md#one-object-many-views).
 
@@ -180,9 +180,9 @@ further out to 67.5 degrees.
 | `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame, in 16.16 fixed point |
 | `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash key held |
 
-[Field](src/field/README.md#player-control) has the speeds on each kind of
+[Field](src/field/README.md#walking-and-running) has the speeds on each kind of
 map and [the ground under an
-object](src/field/README.md#the-ground-under-an-object).
+object](src/field/README.md#how-high-a-step-can-go).
 
 ## Cells and collision
 
@@ -245,7 +245,7 @@ layers of the same map. A priority of 0 leaves a layer off:
 | `MAP_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
 | `MAP_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
 
-[Field](src/field/README.md#layered-maps-on-screen) describes how the layers
+[Field](src/field/README.md#towns-and-dungeons-on-screen) describes how the layers
 are put on screen, and [Maps](src/map/README.md#one-grid-three-layers) how
 they share one grid.
 
@@ -286,7 +286,7 @@ to `DISPCNT_MODE_0`, in which no background is affine; `Map_LoadAreaGraphics`
 undoes it. The world map's own scene, its places and events, is described on
 [the front page](README.md#the-world-map).
 
-[Field](src/field/README.md#the-world-map-view) works through the scanline
+[Field](src/field/README.md#the-world-map-in-perspective) works through the scanline
 table, [Maps](src/map/README.md#the-world-maps-data) the world map's data,
 and [Field objects](src/object/README.md#the-world-map-screen) the still
 picture R brings up.

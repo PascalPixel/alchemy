@@ -34,22 +34,6 @@
 ///   show an `=` after each number.
 ///
 /// Open questions:
-/// - XXX: what the four obstacles in the spring are (sprites 0x18c and
-///   0x18d, a red creature and a green shell with a coin in
-///   graphics/sprite/spr_396.png and spr_397.png); a recording of a toss
-///   would settle it and name the sprites.
-/// - XXX: which of sprites 0x18e and 0x18f, a green and a gold token, is the
-///   coin and which the medal; a recording of a coin toss would settle it.
-/// - XXX: what TOLBI_SPRING_EAST_MIRRORED_PROP and _WEST_ show below the
-///   signs: likely their reflections in the spring, because they are the
-///   signs' sprite mirrored and drawn underfoot; a render of the scene would
-///   settle it.
-/// - XXX: what SpringTossMotion's first two bytes and SpringObstacle's last
-///   two hold (unk00, unk16); nothing in this overlay reads them, and a reader
-///   elsewhere would settle it.
-/// - XXX: what MUS_091, MUS_092, MUS_093, SE_116, SE_148, SE_216, SE_300 and
-///   SE_301 sound like; hearing each where the games play it would name it in
-///   songs.h.
 /// - XXX (picture): the toss: the token's path past the obstacles into the
 ///   five prize rings, each ring labelled with what a coin wins there.
 
@@ -155,7 +139,8 @@ enum TolbiSpringActor {
   TOLBI_SPRING_MEDAL_SHADOW = TOLBI_SPRING_COIN + 4,
   TOLBI_SPRING_MEDAL,
   /// The four obstacles that move in the spring during a toss, in the order
-  /// of sObstacles.
+  /// of sObstacles: two crabs (SPRITE_CRAB), then two turtles
+  /// (SPRITE_TURTLE).
   TOLBI_SPRING_FIRST_OBSTACLE,
   /// A sign east of the spring (SPRITE_SIGNPOST).
   /// ★ Named from the game: "If you toss a Lucky Medal"
@@ -165,10 +150,12 @@ enum TolbiSpringActor {
   /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
   /// it." (MsgTolbiFaceAwayTolbi)
   TOLBI_SPRING_COIN_SIGN,
-  /// In the signs' sprite, below each, mirrored and drawn underfoot
-  /// (TolbiSpring_Initialize); nothing talks to them.
-  TOLBI_SPRING_EAST_MIRRORED_PROP,
-  TOLBI_SPRING_WEST_MIRRORED_PROP,
+  /// The tufts of grass at the foot of each sign: the signs' sprite in its
+  /// second frame, mirrored and drawn underfoot (TolbiSpring_Initialize).
+  /// ★ Named from what the player sees: a tuft of grass at the foot of each
+  /// sign (its render)
+  TOLBI_SPRING_EAST_SIGN_GRASS,
+  TOLBI_SPRING_WEST_SIGN_GRASS,
   /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK).
   /// ★ Named from the game: "Tolbi Spring has mysterious powers."
   /// (MsgTolbiSpringTolbiSpringHasMysteriousPowersStand)
@@ -223,7 +210,7 @@ enum TolbiSpringSearchTarget {
 /// The tossed coin or medal: its last four positions for the trail, its
 /// velocity and the frames the prize rings still pull it.
 struct SpringTossMotion {
-  u8 unk00[2];
+  u8 unk00[2]; ///< never read or written, and sToss is static to this file
   s16 launchFrame;
   struct Vector3 trail[4]; ///< 16.16 fixed-point pixels
   struct Vector3 shadow;
@@ -239,7 +226,6 @@ struct SpringObstacle {
   s16 speedMode;
   s16 reactionFrames;
   s16 hitCooldownFrames;
-  u8 unk16[2];
 };
 
 static __inline__ void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
@@ -355,13 +341,13 @@ s32 TolbiSpring_Initialize(void) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Io_Write16(0x3f42, &REG_BLDCNT);
     Io_Write16(0x80c, &REG_BLDALPHA);
-    Engine_ActorSetAnimation(TOLBI_SPRING_EAST_MIRRORED_PROP, 2);
-    Engine_ActorSetAnimation(TOLBI_SPRING_WEST_MIRRORED_PROP, 2);
-    Object_GetById(TOLBI_SPRING_EAST_MIRRORED_PROP)->scaleX = -Q16_ONE;
-    Object_GetById(TOLBI_SPRING_WEST_MIRRORED_PROP)->scaleX = -Q16_ONE;
-    Object_GetById(TOLBI_SPRING_EAST_MIRRORED_PROP)->priorityFlags =
+    Engine_ActorSetAnimation(TOLBI_SPRING_EAST_SIGN_GRASS, 2);
+    Engine_ActorSetAnimation(TOLBI_SPRING_WEST_SIGN_GRASS, 2);
+    Object_GetById(TOLBI_SPRING_EAST_SIGN_GRASS)->scaleX = -Q16_ONE;
+    Object_GetById(TOLBI_SPRING_WEST_SIGN_GRASS)->scaleX = -Q16_ONE;
+    Object_GetById(TOLBI_SPRING_EAST_SIGN_GRASS)->priorityFlags =
         ACTOR_PRIORITY_UNDERFOOT;
-    Object_GetById(TOLBI_SPRING_WEST_MIRRORED_PROP)->priorityFlags =
+    Object_GetById(TOLBI_SPRING_WEST_SIGN_GRASS)->priorityFlags =
         ACTOR_PRIORITY_UNDERFOOT;
     Engine_EventOpenScreen();
     if (gGameState.entrance == TOLBI_SPRING_FROM_TOLBI) {
@@ -1509,33 +1495,33 @@ const u32 gTolbiSpring_Exits[] = {
 
 // clang-format off
 const struct ScenePlacement gTolbiSpringPlacements[] = {
-    { 0x18e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_COIN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_COIN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_COIN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_COIN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18e, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_COIN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_LUCKY_MEDAL, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_LUCKY_MEDAL, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_LUCKY_MEDAL, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_LUCKY_MEDAL, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18f, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SPRING_LUCKY_MEDAL, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRAB, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18c, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CRAB, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TURTLE, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x18d, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TURTLE, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
         PIXELS(176), 0, PIXELS(144), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },

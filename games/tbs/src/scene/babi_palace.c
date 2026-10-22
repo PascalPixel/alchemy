@@ -51,11 +51,6 @@
 ///   BABI_PALACE_AFTER_COLOSSO were made for; only the debug scene selector,
 ///   which enters any scene by entrance number, reaches them, and nothing in
 ///   the ROM says why they set the story flags they set.
-/// - XXX: what Babi's animation 5, set on every entry after Colosso, shows; a
-///   render of the throne room after Colosso would settle it.
-/// - XXX (picture): the palace's doors opening by their tile animation
-///   channels (enum BabiPalaceDoorAnim), against the outside door's cell
-///   animation (gBabiPalace_DoorCells).
 
 #include "game_state.h"
 #include "heap_state.h"
@@ -261,7 +256,9 @@ enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
 /// The palace map's tile animation channels that open its doors, for
 /// Map_ClearLayerEntryFlag (play) and Map_SetLayerEntryFlag (pause). Each
-/// scene entry pauses them, so every door is drawn shut.
+/// scene entry pauses them, so every door is drawn shut; the recording of
+/// BabiPalace_LeaveThroughDoor shows one swing open
+/// (https://alchemy.pascalpixel.com/places/babi-palace/events/BabiPalace_LeaveThroughDoor.gif).
 enum BabiPalaceDoorAnim {
   BABI_PALACE_MEETING_ROOM_DOOR_ANIM = 1, ///< the throne room's door
   BABI_PALACE_OTHER_DOORS_ANIM = 2,       ///< every door without its own
@@ -2511,7 +2508,9 @@ s32 BabiPalace_ApplyEntryState(void) {
         Actor_SetPosition(ACTOR_BABI, PIXELS(208), PIXELS(704));
         BabiPalace_MeetBabiAfterColosso();
       }
-      Actor_SetAnimation(ACTOR_BABI, 5);
+      // After Colosso Babi lies in his bed, with no shadow
+      // (https://alchemy.pascalpixel.com/places/babi-palace_colosso-over/map-18.png).
+      Actor_SetAnimation(ACTOR_BABI, BABI_ANIM_IN_BED);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_BABI), 0);
     } else if (GameFlag_IsSet(FLAG_BABI_SAVED) &&
                !GameFlag_IsSet(FLAG_BABI_PALACE_FINALS_REST_OFFERED)) {

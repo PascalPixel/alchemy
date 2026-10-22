@@ -15,7 +15,8 @@
 ///   TOLBI_INTERIORS_INN_TO_INN_PASSAGE and
 ///   TOLBI_INTERIORS_INN_PASSAGE_TO_INN join it to the inn's corridor, whose
 ///   doors lead into four guest rooms
-///   (TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST and the rest).
+///   (TOLBI_INTERIORS_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST and the rest;
+///   https://alchemy.pascalpixel.com/places/tolbi-interiors/inn-rooms.png).
 /// - Tolbi Sanctum, behind TOLBI_TO_SANCTUM (TOLBI_INTERIORS_SANCTUM), whose
 ///   healer opens the sanctum across the counter. TOLBI_INTERIORS_SANCTUM_NORTH
 ///   is where a defeat returns the party while Iodem waits at Gondowan Passage.
@@ -47,11 +48,7 @@
 /// Medal, and searching the ovens shows what is cooking.
 ///
 /// Open questions:
-/// - XXX: what the camera limits that TBS_PATCH_1 moves 8 pixels show
-///   differently; renders of the inn and the east and south rooms in tbs-ja
-///   and tbs-en would settle it.
-/// - XXX (picture): the inn, its passage and its four guest rooms, each
-///   labelled with the exits that join them.
+/// - None.
 
 #include "game_state.h"
 #include "unit/scene/tolbi_interiors.h"
@@ -75,8 +72,12 @@
 /// (MsgTolbiHeWontSailShipEven)
 #define FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN 0x300
 
-// From TBS_PATCH_1 on, the camera stops 8 pixels further at the inn and in
-// the east and south rooms.
+// From TBS_PATCH_1 on, the camera stops 8 pixels further in the inn's
+// corridor (INN) and its guest rooms, the southern pair lying east on the map
+// (EAST_ROOM) and the northern pair south of it (SOUTH_ROOM). Renders of
+// tbs-ja and tbs-en show what it fixes: before it, the last 8 pixels of these
+// rooms stayed off screen, cutting off the corridor's south openings, the
+// southern rooms' east walls and the northern rooms' doorways.
 #if !TBS_PATCH_1
 #define TOLBI_INTERIORS_INN_CAMERA_MAX_Z 736
 #define TOLBI_INTERIORS_EAST_ROOM_CAMERA_MAX_X 944
